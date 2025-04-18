@@ -42,11 +42,7 @@ export type HeaderCardV2Props = {
   /** Force values section to appear below main content */
   forceStackedLayout?: boolean
   /** Optional CTA link to display below description */
-  ctaLinkProps?: {
-    ctaLinkConfig: CTACardLink
-    ctaHref: string | undefined
-    ctaTarget?: string | undefined
-  }
+  ctaLinkConfig?: CTACardLink
 }
 
 /**
@@ -139,7 +135,7 @@ function HeaderCardV2({
   icon,
   backgroundImage,
   forceStackedLayout = false,
-  ctaLinkProps,
+  ctaLinkConfig,
 }: HeaderCardV2Props) {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
@@ -220,37 +216,36 @@ function HeaderCardV2({
 
   // ctaLink stuff
   let ctaLinkBox = null
-  if (ctaLinkProps) {
-    const { ctaLinkConfig, ctaHref, ctaTarget = '_blank' } = ctaLinkProps
-    if (ctaLinkConfig && ctaHref && ctaTarget) {
-      ctaLinkBox = (
-        <Button
-          variant="outlined"
-          component={Link}
-          href={ctaHref}
-          target={ctaTarget}
-          rel={ctaTarget === '_blank' ? 'noopener noreferrer' : undefined}
-          size="large"
-          sx={{
+  if (ctaLinkConfig) {
+    ctaLinkBox = (
+      <Button
+        variant="outlined"
+        component={Link}
+        href={ctaLinkConfig.href}
+        target={ctaLinkConfig.target}
+        rel={
+          ctaLinkConfig.target === '_blank' ? 'noopener noreferrer' : undefined
+        }
+        size="large"
+        sx={{
+          color: '#FFF',
+          '&:hover': {
             color: '#FFF',
-            '&:hover': {
-              color: '#FFF',
-              textDecorationColor: '#FFF',
-              border: '2px solid white',
-            },
-            '&:focus': { color: '#FFF' },
             textDecorationColor: '#FFF',
-            padding: '6px 24px',
-            marginTop: '22px',
-            border: '1px solid white',
-          }}
-        >
-          {/* TODO: add an external open icon like https://materialui.co/icon/open-in-new */}
-          {/*<AddAlertTwoTone sx={{ width: '24px', height: '24px' }} />*/}
-          {ctaLinkConfig.text}
-        </Button>
-      )
-    }
+            border: '2px solid white',
+          },
+          '&:focus': { color: '#FFF' },
+          textDecorationColor: '#FFF',
+          padding: '6px 24px',
+          marginTop: '22px',
+          border: '1px solid white',
+        }}
+      >
+        {/* TODO: add an external open icon like https://materialui.co/icon/open-in-new */}
+        {/*<AddAlertTwoTone sx={{ width: '24px', height: '24px' }} />*/}
+        {ctaLinkConfig.text}
+      </Button>
+    )
   }
 
   return (

@@ -21,12 +21,7 @@ export type HeaderCardProps = {
   target?: string
   icon: React.ReactNode
   headerCardVariant?: HeaderCardVariant
-  ctaLinkProps?: {
-    // just for passing on to HeaderCardV2
-    ctaLinkConfig: CTACardLink
-    ctaHref: string | undefined
-    ctaTarget?: string | undefined
-  }
+  ctaLinkConfig?: CTACardLink
 }
 
 function HeaderCard(props: HeaderCardProps) {

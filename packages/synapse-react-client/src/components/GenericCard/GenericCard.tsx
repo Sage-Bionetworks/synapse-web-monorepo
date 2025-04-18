@@ -110,29 +110,13 @@ export function GenericCard(props: GenericCardProps) {
       showFooter || useStylesForDisplayedImage ? undefined : '15px',
   }
 
-  // moving ctaLinkConfig stuff up here so HeaderCard can also recieve it
-  let ctaHref: string | undefined = undefined,
-    ctaTarget: string | undefined = undefined
-  if (ctaLinkConfig) {
-    const ctaLinkValue: string = data[schema[ctaLinkConfig.link]] || ''
-    const { href: newCtaHref, target: newCtaTarget } = getLinkParams(
-      ctaLinkValue,
-      undefined, //card link config
-      data,
-      schema,
-      rowId,
-    )
-    ctaHref = newCtaHref
-    ctaTarget = newCtaTarget
-  }
-
   if (isHeader) {
     return (
       <HeaderCard
         headerCardVariant={headerCardVariant}
         descriptionConfig={descriptionConfig}
         title={title}
-        subTitle={subTitle}
+        subTitle={subtitle}
         description={description}
         type={type}
         icon={icon}
@@ -141,7 +125,7 @@ export function GenericCard(props: GenericCardProps) {
         target={titleLinkConfiguration?.target}
         isAlignToLeftNav={true}
         secondaryLabelLimit={secondaryLabelLimit}
-        ctaLinkProps={{ ctaLinkConfig, ctaHref }}
+        ctaLinkConfig={ctaLinkConfig}
       />
     )
   }
