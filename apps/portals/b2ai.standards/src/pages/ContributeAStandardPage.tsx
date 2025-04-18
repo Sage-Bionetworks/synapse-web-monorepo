@@ -3,46 +3,53 @@ import { JsonSchemaForm } from 'synapse-react-client/components/JsonSchemaForm/J
 import {
   newStandardFormSchema,
   newStandardUiSchema,
-  doiFormSchema,
 } from '../config/newStandardConfig'
 import { useState, FormEvent } from 'react'
 import { RJSFValidationError } from '@rjsf/utils'
 
 export default function ContributeAStandard() {
-  const blankFormData: Record<string, string | null> = newStandardFormSchema
-    ? Object.fromEntries(
-        Object.keys(newStandardFormSchema?.properties ?? {}).map(id =>
-          id === 'type' ? [id, null] : [id, ''],
-        ),
-      )
-    : {}
+  const blankFormData: Record<string, string | null> = Object.fromEntries(
+    Object.keys(newStandardFormSchema?.properties ?? {}).map(id =>
+      id === 'type' ? [id, null] : [id, ''],
+    ),
+  )
 
   const [formData, setFormData] = useState(blankFormData)
 
   const getPropertyTitle = (propertyId: string): string => {
     propertyId = propertyId.replace('.', '')
-    return newStandardFormSchema?.properties[propertyId].title || propertyId
+    return newStandardFormSchema.properties![propertyId].title || propertyId
   }
 
   const handleTransformErrors = (
     errors: RJSFValidationError[],
   ): RJSFValidationError[] => {
-    console.log(errors)
-    return errors.map((error: RJSFValidationError): RJSFValidationError => {
-      error = {
-        ...error,
-        property: getPropertyTitle(error?.property),
+    return errors.reduce<RJSFValidationError[]>((acc, error) => {
+      // This error is duplicative - will occur if 'type' field does not have a selction chosen
+      // But that will also throw an 'enum'-type error, so we'll just display that one
+      if (error.name === 'type' && error.property === '.type') {
+        return acc
       }
 
-      if (error?.name === 'minLength') {
-        error = {
-          ...error,
-          message: 'Field cannot be blank',
-        }
+      const transformedError = { ...error }
+
+      // Translate the field's propertyId to its user-friendly title
+      if (transformedError.property) {
+        transformedError.property = getPropertyTitle(transformedError.property)
       }
 
-      return error
-    })
+      // More informative error message
+      if (
+        transformedError?.name === 'minLength' &&
+        transformedError?.params?.limit === 1
+      ) {
+        transformedError.message = 'field cannot be blank'
+      }
+
+      acc.push(transformedError)
+
+      return acc
+    }, [])
   }
 
   const handleSubmit = ({ formData, errors }, evt: FormEvent) => {
@@ -51,7 +58,7 @@ export default function ContributeAStandard() {
     // TODO: implement submit handler
 
     // clear form data on successful submission
-    // setFormData(blankFormData)
+    setFormData(blankFormData)
     return true
   }
 
