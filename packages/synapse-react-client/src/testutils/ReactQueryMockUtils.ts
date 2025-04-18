@@ -70,7 +70,7 @@ export function getUseQueryLoadingMock<TData>(): QueryObserverLoadingResult<
 
 export function getUseQueryErrorMock<TError>(
   error: TError,
-): UseQueryResult<null, TError> {
+): UseQueryResult<never, TError> {
   return {
     data: undefined,
     dataUpdatedAt: 0,
