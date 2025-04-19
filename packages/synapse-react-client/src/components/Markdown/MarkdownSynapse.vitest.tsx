@@ -1,50 +1,45 @@
-import mockFileEntity from '@/mocks/entity/mockFileEntity'
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import { mockEntityWikiPage } from '@/mocks/mockWiki'
-import { rest, server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client/index'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '@/utils/functions/getEndpoint'
-import { WikiPage } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
+import { describe, it, vi } from 'vitest'
 import MarkdownSynapse, {
   MarkdownSynapseProps,
   NO_WIKI_CONTENT,
 } from './MarkdownSynapse'
-import * as MarkdownProvenanceModule from './widget/MarkdownProvenanceGraph'
-import * as MarkdownSynapseImageModule from './widget/MarkdownSynapseImage'
-import * as MarkdownPlotModule from './widget/MarkdownSynapsePlot'
+import MarkdownProvenanceGraph from './widget/MarkdownProvenanceGraph'
+import MarkdownSynapseImage from './widget/MarkdownSynapseImage'
+import MarkdownSynapsePlot from './widget/MarkdownSynapsePlot'
 
-jest.mock('../Plot/SynapsePlot', () => {
-  return {
-    __esModule: true,
-    default: function MockSynapsePlot() {
-      return <span role="figure"></span>
-    },
-  }
-})
+vi.mock('./widget/MarkdownSynapseImage', () => ({
+  default: vi
+    .fn()
+    .mockReturnValue(<img data-testid={'MarkdownSynapseImage'}></img>),
+}))
+vi.mock('./widget/MarkdownSynapsePlot', () => ({
+  default: vi
+    .fn()
+    .mockReturnValue(<figure data-testid={'MarkdownSynapsePlot'}></figure>),
+}))
+vi.mock('./widget/MarkdownProvenanceGraph', () => ({
+  default: vi
+    .fn()
+    .mockReturnValue(<figure data-testid={'MarkdownProvenanceGraph'}></figure>),
+}))
 
-jest.mock('../widgets/SynapseImage', () => {
-  return {
-    __esModule: true,
-    default: function MockSynapseImage() {
-      return <img role="img"></img>
-    },
-  }
-})
+vi.mock('@/synapse-client', () => ({
+  default: {
+    getEntityWiki: vi.fn(),
+    getWikiAttachmentsFromEntity: vi.fn(),
+  },
+}))
 
-jest.mock('../ProvenanceGraph/ProvenanceGraph', () => {
-  return {
-    __esModule: true,
-    default: function MockSynapseProvenanceGraph() {
-      return <div data-testid="mockProvenanceGraph"></div>
-    },
-  }
-})
+const mockSynapseClient = vi.mocked(SynapseClient, true)
+const mockMarkdownSynapseImage = vi.mocked(MarkdownSynapseImage)
+const mockMarkdownSynapsePlot = vi.mocked(MarkdownSynapsePlot)
+const mockMarkdownProvenanceGraph = vi.mocked(MarkdownProvenanceGraph)
 
 function getComponent(props: MarkdownSynapseProps) {
   return (
@@ -59,35 +54,14 @@ const renderComponent = (
   return render(getComponent(props), { wrapper: createWrapper(synapseContext) })
 }
 
-function mockGetEntityWiki(markdown: string) {
-  server.use(
-    rest.get(
-      `${getEndpoint(
-        BackendDestinationEnum.REPO_ENDPOINT,
-      )}/repo/v1/entity/:id/wiki/:wikiId`,
-      async (req, res, ctx) => {
-        const response: WikiPage = {
-          ...mockEntityWikiPage,
-          markdown,
-        }
-        return res(ctx.status(200), ctx.json(response))
-      },
-    ),
-  )
-}
+const spyOnMath = vi.spyOn(MarkdownSynapse.prototype, 'processMath')
+
+mockSynapseClient.getWikiAttachmentsFromEntity.mockResolvedValue({ list: [] })
 
 describe('MarkdownSynapse tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
-  const mockGetWikiAttachments = jest.spyOn(
-    SynapseClient,
-    'getWikiAttachmentsFromEntity',
-  )
-
   beforeEach(() => {
-    mockGetWikiAttachments.mockClear()
+    spyOnMath.mockReset()
+    vi.clearAllMocks()
   })
 
   describe('renders with basic functionality', () => {
@@ -95,11 +69,6 @@ describe('MarkdownSynapse tests', () => {
     //  - initial render
     //  - componentDidMount
     //  - componentDidUpdate
-    const spyOnMath = jest.spyOn(MarkdownSynapse.prototype, 'processMath')
-    beforeEach(() => {
-      spyOnMath.mockReset()
-      mockGetWikiAttachments.mockClear()
-    })
 
     it('mounts correctly with markdown already loaded', () => {
       const val = 'loremipsum....'
@@ -133,16 +102,23 @@ describe('MarkdownSynapse tests', () => {
 
       const text = 'text'
       const markdownPlaceholder = `## ${text}`
-      mockGetEntityWiki(markdownPlaceholder)
+      mockSynapseClient.getEntityWiki.mockResolvedValue({
+        ...mockEntityWikiPage,
+        markdown: markdownPlaceholder,
+      })
       // we only care to mock these functions and ensure they're called
       // Full functionality will get tested in the specific widget tests
-      const getEntityWiki = jest.spyOn(SynapseClient, 'getEntityWiki')
       // mount the component
       renderComponent(props)
       // verify functions were called
-      within(await screen.findByRole('heading')).getByText(text)
-      expect(getEntityWiki).toHaveBeenCalledTimes(1)
-      expect(mockGetWikiAttachments).toHaveBeenCalledTimes(1)
+      const heading = await screen.findByRole('heading')
+      await waitFor(() => {
+        within(heading).getByText(text)
+        expect(mockSynapseClient.getEntityWiki).toHaveBeenCalledTimes(1)
+      })
+      expect(
+        mockSynapseClient.getWikiAttachmentsFromEntity,
+      ).toHaveBeenCalledTimes(1)
     })
 
     it('renders correctly inline', async () => {
@@ -172,7 +148,11 @@ describe('MarkdownSynapse tests', () => {
         wikiId: 'xxx', // placeholder
         ownerId: 'xxx', // placeholder
       }
-      mockGetEntityWiki('')
+      mockSynapseClient.getEntityWiki.mockResolvedValue({
+        ...mockEntityWikiPage,
+        markdown: '',
+      })
+
       renderComponent(props)
 
       const markdownField = screen.getByTestId('markdown')
@@ -194,7 +174,10 @@ describe('MarkdownSynapse tests', () => {
         ownerId: 'xxx', // placeholder
         showPlaceholderIfNoWikiContent: true,
       }
-      mockGetEntityWiki('')
+      mockSynapseClient.getEntityWiki.mockResolvedValue({
+        ...mockEntityWikiPage,
+        markdown: '',
+      })
       renderComponent(props)
       screen.getByText(NO_WIKI_CONTENT)
     })
@@ -202,7 +185,11 @@ describe('MarkdownSynapse tests', () => {
 
   describe('it renders a video widget', () => {
     it('do not render a video widget without token', () => {
-      mockGetEntityWiki('${video?mp4SynapseId=syn21714374}')
+      mockSynapseClient.getEntityWiki.mockResolvedValue({
+        ...mockEntityWikiPage,
+        markdown: '${video?mp4SynapseId=syn21714374}',
+      })
+
       const props: MarkdownSynapseProps = {
         ownerId: '_',
       }
@@ -219,7 +206,10 @@ describe('MarkdownSynapse tests', () => {
         .concat(`${width}`)
         .concat('}')
 
-      mockGetEntityWiki(givenMarkdown)
+      mockSynapseClient.getEntityWiki.mockResolvedValue({
+        ...mockEntityWikiPage,
+        markdown: givenMarkdown,
+      })
 
       const props: MarkdownSynapseProps = {
         ownerId: '_',
@@ -233,20 +223,11 @@ describe('MarkdownSynapse tests', () => {
   })
 
   describe('it renders an image widget', () => {
-    jest
-      .spyOn(SynapseClient, 'getEntity')
-      .mockResolvedValue(mockFileEntity.entity)
-    jest
-      .spyOn(SynapseClient, 'getFiles')
-      .mockResolvedValue({ requestedFiles: [] })
-    jest
-      .spyOn(SynapseClient, 'getWikiAttachmentsFromEntity')
-      .mockResolvedValue({ list: [] })
-
     it('renders an image from a synapseId', async () => {
-      mockGetEntityWiki(
-        '${image?synapseId=syn7809125&align=None&responsive=true}',
-      )
+      mockSynapseClient.getEntityWiki.mockResolvedValue({
+        ...mockEntityWikiPage,
+        markdown: '${image?synapseId=syn7809125&align=None&responsive=true}',
+      })
 
       const props: MarkdownSynapseProps = {
         ownerId: '_',
@@ -257,69 +238,76 @@ describe('MarkdownSynapse tests', () => {
     })
 
     it('renders an image from a file handleId', async () => {
-      mockGetEntityWiki(
-        '${image?fileName=joy%2Esvg&align=None&scale=100&responsive=true&altText=}',
-      )
+      mockSynapseClient.getEntityWiki.mockResolvedValue({
+        ...mockEntityWikiPage,
+        markdown:
+          '${image?fileName=joy%2Esvg&align=None&scale=100&responsive=true&altText=}',
+      })
 
-      const spyOnRenderImage = jest.spyOn(MarkdownSynapseImageModule, 'default')
       const props: MarkdownSynapseProps = {
         ownerId: '_',
         wikiId: '_',
       }
       renderComponent(props)
       await screen.findByRole('img')
-      expect(spyOnRenderImage).toHaveBeenCalled()
+      expect(mockMarkdownSynapseImage).toHaveBeenCalled()
     })
   })
 
   it('renders the SynapsePlot component', async () => {
-    mockGetEntityWiki(
-      '${plot?query=select "Age"%2C "Insol" from syn9872596&title=&type=BAR&barmode=GROUP&horizontal=false&showlegend=true}',
-    )
+    mockSynapseClient.getEntityWiki.mockResolvedValue({
+      ...mockEntityWikiPage,
+      markdown:
+        '${plot?query=select "Age"%2C "Insol" from syn9872596&title=&type=BAR&barmode=GROUP&horizontal=false&showlegend=true}',
+    })
 
-    const spyOnRenderPlot = jest.spyOn(MarkdownPlotModule, 'default')
     const props: MarkdownSynapseProps = {
       ownerId: '_',
       wikiId: '_',
     }
     renderComponent(props)
     await screen.findByRole('figure')
-    expect(spyOnRenderPlot).toHaveBeenCalled()
+    expect(mockMarkdownSynapsePlot).toHaveBeenCalled()
   })
 
   it('renders the ProvenanceGraph component', async () => {
-    mockGetEntityWiki(
-      '${provenance?entityList=syn12548902%2Csyn33344762&depth=3&displayHeightPx=800&showExpand=false}',
-    )
+    mockSynapseClient.getEntityWiki.mockResolvedValue({
+      ...mockEntityWikiPage,
+      markdown:
+        '${provenance?entityList=syn12548902%2Csyn33344762&depth=3&displayHeightPx=800&showExpand=false}',
+    })
 
-    const spyOnRender = jest.spyOn(MarkdownProvenanceModule, 'default')
     const props: MarkdownSynapseProps = {
       ownerId: '_',
       wikiId: '_',
     }
     renderComponent(props)
-    await screen.findByTestId('mockProvenanceGraph')
-    expect(spyOnRender).toHaveBeenCalled()
+    await screen.findByTestId('MarkdownProvenanceGraph')
+    expect(mockMarkdownProvenanceGraph).toHaveBeenCalled()
   })
   it('renders the ProvenanceGraph component when pointing to a specific entity version', async () => {
-    mockGetEntityWiki(
-      '${provenance?entityList=syn12548902%2Fversion%2F34&depth=1&displayHeightPx=500&showExpand=true}',
-    )
+    mockSynapseClient.getEntityWiki.mockResolvedValue({
+      ...mockEntityWikiPage,
+      markdown:
+        '${provenance?entityList=syn12548902%2Fversion%2F34&depth=1&displayHeightPx=500&showExpand=true}',
+    })
 
-    const spyOnRender = jest.spyOn(MarkdownProvenanceModule, 'default')
     const props: MarkdownSynapseProps = {
       ownerId: '_',
       wikiId: '_',
     }
     renderComponent(props)
-    await screen.findByTestId('mockProvenanceGraph')
-    expect(spyOnRender).toHaveBeenCalled()
+    await screen.findByTestId('MarkdownProvenanceGraph')
+    expect(mockMarkdownProvenanceGraph).toHaveBeenCalled()
   })
 
   it('renders a synapse reference', async () => {
     // note- a reference is the anchor tag inside the text that links to the bookmark down below,
     // its an inline link
-    mockGetEntityWiki('${reference?params}')
+    mockSynapseClient.getEntityWiki.mockResolvedValue({
+      ...mockEntityWikiPage,
+      markdown: '${reference?params}',
+    })
 
     const { container } = renderComponent({})
     await waitFor(() =>
@@ -330,7 +318,10 @@ describe('MarkdownSynapse tests', () => {
   it('renders a bookmark', async () => {
     // note - a bookmark is a corresponding citation for an inline reference, it provides a URL for
     // the reference.
-    mockGetEntityWiki('${reference?text=google.com}')
+    mockSynapseClient.getEntityWiki.mockResolvedValue({
+      ...mockEntityWikiPage,
+      markdown: '${reference?text=google.com}',
+    })
 
     const props: MarkdownSynapseProps = {
       ownerId: '_',
