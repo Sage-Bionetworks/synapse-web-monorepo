@@ -81,7 +81,7 @@ export default function CardDeckDesktop({
             variant="outlined" // Update variant based on cardDeckType
             href={ctaButtonURL}
             sx={{
-              width: '170px',
+              maxWidth: '200px',
               fontSize: '14px',
               boxShadow: 'none',
               borderColor: 'primary.main',

@@ -14,11 +14,15 @@
     flex-wrap: nowrap;
     align-items: flex-start;
     padding-bottom: 50px;
+    margin-left: 80px;
+    margin-right: 80px;
 
     &--b2ai {
       gap: 40px;
-      margin-left: 80px;
-      margin-right: 80px;
+    }
+
+    &--cckp {
+      gap: 20px;
     }
   }
 
@@ -37,6 +41,10 @@
 
     &--b2ai {
       box-shadow: none;
+    }
+
+    &--cckp {
+      min-height: 356px;
     }
 
     &__header__image {
