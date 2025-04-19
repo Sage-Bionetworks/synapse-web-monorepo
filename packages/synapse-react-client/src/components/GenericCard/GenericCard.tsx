@@ -125,6 +125,7 @@ export function GenericCard(props: GenericCardProps) {
         target={titleLinkConfiguration?.target}
         isAlignToLeftNav={true}
         secondaryLabelLimit={secondaryLabelLimit}
+        ctaLinkConfig={ctaLinkConfig}
       />
     )
   }

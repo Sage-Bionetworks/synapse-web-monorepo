@@ -141,6 +141,10 @@ export default function StandardsDetailsPage() {
           secondaryLabelLimit: 6,
           isHeader: true,
           headerCardVariant: 'HeaderCardV2',
+          ctaLinkConfig: {
+            text: 'View Standard on External Website',
+            link: 'url',
+          },
         }}
       />
 
