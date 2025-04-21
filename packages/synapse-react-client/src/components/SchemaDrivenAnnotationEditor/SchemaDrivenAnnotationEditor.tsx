@@ -220,6 +220,15 @@ export function SchemaDrivenAnnotationEditor(
   const liveValidate =
     liveValidateFromProps ?? shouldLiveValidate(annotations, validationSchema)
 
+  const formDataHasNoAnnotations =
+    entityJson &&
+    isEmpty(
+      omitBy(formData, (_value, key) =>
+        Object.keys(entityJson).find(k => k === key),
+      ),
+    )
+  const showHasNoAnnotationsAlert = schema === null && formDataHasNoAnnotations
+
   return (
     <div className="JsonSchemaFormContainer">
       {isLoading ? (
@@ -248,25 +257,19 @@ export function SchemaDrivenAnnotationEditor(
               </b>
             </Alert>
           )}
-          {entityJson &&
-            isEmpty(
-              omitBy(formData, (_value, key) =>
-                Object.keys(entityJson).find(k => k === key),
-              ),
-            ) &&
-            schema === null && (
-              <Alert severity="info">
-                <Box display={'flex'} alignItems={'center'} gap={0.5}>
-                  <Typography variant={'smallText1'}>
-                    <b>{entityJson.name}</b> has no annotations. Click the{' '}
-                  </Typography>
-                  <AddToList />
-                  <Typography variant={'smallText1'}>
-                    button to annotate.
-                  </Typography>
-                </Box>
-              </Alert>
-            )}
+          {showHasNoAnnotationsAlert && (
+            <Alert severity="info">
+              <Box display={'flex'} alignItems={'center'} gap={0.5}>
+                <Typography variant={'smallText1'}>
+                  <b>{entityJson.name}</b> has no annotations. Click the{' '}
+                </Typography>
+                <AddToList />
+                <Typography variant={'smallText1'}>
+                  button to annotate.
+                </Typography>
+              </Box>
+            </Alert>
+          )}
           <JsonSchemaForm
             validator={validator}
             liveValidate={liveValidate}
