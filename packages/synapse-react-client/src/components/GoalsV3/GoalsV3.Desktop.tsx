@@ -61,7 +61,7 @@ export default function GoalsV3Desktop({
               },
             }}
           >
-            <SvgIconComponent />
+            <SvgIconComponent width={24} height={24} />
           </Box>
         </Box>
         <Stack sx={{ justifyContent: 'center', alignItems: 'center' }}>
