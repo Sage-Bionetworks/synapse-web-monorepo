@@ -72,7 +72,7 @@ const GoalsV3 = ({ entityId, svgComponentMap }: GoalsV3Props) => {
   const linkColumnIndex = getFieldIndex(ExpectedColumns.LINK, queryResultBundle)
 
   const goalsDataArray: GoalsV3CardProps[] =
-    queryResultBundle?.queryResult!.queryResults.rows.map((el, index) => {
+    queryResultBundle?.queryResult!.queryResults.rows.map(el => {
       const values = el.values as string[]
       if (values.some(value => value === null)) {
         console.warn('Row has null value(s) when no nulls expected')
