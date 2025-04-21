@@ -32,7 +32,8 @@ const tableQueryResult: QueryResultBundle = {
     { id: '2', name: 'TableId', columnType: 'ENTITYID' },
     { id: '3', name: 'CountSql', columnType: 'ENTITYID' },
     { id: '5', name: 'Link', columnType: 'STRING' },
-    { id: '6', name: 'ItemOrder', columnType: 'STRING' },
+    { id: '6', name: 'iconKey', columnType: 'STRING' },
+    { id: '7', name: 'ItemOrder', columnType: 'STRING' },
   ],
   queryResult: {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
@@ -46,7 +47,8 @@ const tableQueryResult: QueryResultBundle = {
         { id: '2', name: 'TableId', columnType: 'ENTITYID' },
         { id: '3', name: 'CountSql', columnType: 'ENTITYID' },
         { id: '5', name: 'Link', columnType: 'STRING' },
-        { id: '6', name: 'ItemOrder', columnType: 'STRING' },
+        { id: '6', name: 'iconKey', columnType: 'STRING' },
+        { id: '7', name: 'ItemOrder', columnType: 'STRING' },
       ],
       rows: [
         {
@@ -57,7 +59,8 @@ const tableQueryResult: QueryResultBundle = {
             'syn21783965',
             '5',
             'Explore/Studies',
-            '149976034',
+            'methods',
+            '1',
           ],
         },
         {
@@ -68,7 +71,8 @@ const tableQueryResult: QueryResultBundle = {
             'syn20821313',
             '131',
             'Explore/Data',
-            '149976034',
+            'datasets_and_files',
+            '2',
           ],
         },
         {
@@ -79,6 +83,7 @@ const tableQueryResult: QueryResultBundle = {
             'syn22095937',
             '10',
             'Explore/Publications',
+            'publications',
             '3',
           ],
         },

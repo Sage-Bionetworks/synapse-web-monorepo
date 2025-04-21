@@ -34,36 +34,38 @@ export default function GoalsV3Desktop({
           gap: '12px',
         }}
       >
-        <Box
-          sx={{
-            width: '42px',
-            height: '42px',
-            borderRadius: '50%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            '.MuiCardActionArea-root:hover &': {
-              background: theme.palette.primary.main,
-              fill: '#FFF',
-            },
-          }}
-        >
+        {SvgIconComponent && (
           <Box
-            component="span"
             sx={{
-              width: 24,
-              height: 24,
-              svg: {
-                color: 'grey.700',
-                '.MuiCardActionArea-root:hover &': {
-                  color: '#FFF !important',
-                },
+              width: '42px',
+              height: '42px',
+              borderRadius: '50%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              '.MuiCardActionArea-root:hover &': {
+                background: theme.palette.primary.main,
+                fill: '#FFF',
               },
             }}
           >
-            <SvgIconComponent width={24} height={24} />
+            <Box
+              component="span"
+              sx={{
+                width: 24,
+                height: 24,
+                svg: {
+                  color: 'grey.700',
+                  '.MuiCardActionArea-root:hover &': {
+                    color: '#FFF !important',
+                  },
+                },
+              }}
+            >
+              <SvgIconComponent width={24} height={24} />
+            </Box>
           </Box>
-        </Box>
+        )}
         <Stack sx={{ justifyContent: 'center', alignItems: 'center' }}>
           <Typography
             variant="headline3"

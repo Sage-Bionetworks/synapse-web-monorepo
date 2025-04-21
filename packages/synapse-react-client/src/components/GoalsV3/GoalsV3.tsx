@@ -19,7 +19,7 @@ export type GoalsV3CardProps = {
   title: string
   summary: string
   link: string
-  svgIconComponent: React.FC<React.SVGProps<SVGSVGElement>>
+  svgIconComponent?: React.FC<React.SVGProps<SVGSVGElement>>
 }
 
 enum ExpectedColumns {
@@ -28,6 +28,7 @@ enum ExpectedColumns {
   TITLE = 'Title',
   SUMMARY = 'Summary',
   LINK = 'Link',
+  ICON_KEY = 'iconKey',
 }
 
 // PORTALS-2367
@@ -71,6 +72,11 @@ const GoalsV3 = ({ entityId, svgComponentMap }: GoalsV3Props) => {
   )
   const linkColumnIndex = getFieldIndex(ExpectedColumns.LINK, queryResultBundle)
 
+  const iconKeyColumnIndex = getFieldIndex(
+    ExpectedColumns.ICON_KEY,
+    queryResultBundle,
+  )
+
   const goalsDataArray: GoalsV3CardProps[] =
     queryResultBundle?.queryResult!.queryResults.rows.map(el => {
       const values = el.values as string[]
@@ -88,9 +94,11 @@ const GoalsV3 = ({ entityId, svgComponentMap }: GoalsV3Props) => {
       const title = values[titleColumnIndex]
       const summary = values[summaryColumnIndex]
       const link = values[linkColumnIndex]
+      const iconKey = values[iconKeyColumnIndex]
 
-      const svgIconComponent =
-        svgComponentMap?.[title.replace(/\s+/g, '_').toLowerCase()]
+      const svgIconComponent = iconKey
+        ? svgComponentMap?.[iconKey.toLowerCase().replace(/\s+/g, '_')]
+        : undefined
 
       return {
         countSql,
