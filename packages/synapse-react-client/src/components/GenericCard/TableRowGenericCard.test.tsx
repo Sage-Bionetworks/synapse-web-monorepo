@@ -111,6 +111,7 @@ const schema = {
   userIdList: 9,
   type: 10,
   datasetAlias: 11,
+  externalLink: 12,
 }
 
 const MOCKED_TITLE = 'MOCKED TITLE'
@@ -126,6 +127,7 @@ const MOCKED_USER_ID = `[${MOCK_USER_ID}]`
 const MOCKED_TYPE = 'folder'
 const MOCKED_SYNAPSE_LINK = 'https://www.synapse.org/#!Synapse:syn52623570'
 const MOCKED_INVALID_SYNAPSE_LINK = 'https://www.synapse.org/#!Synapse:1234560/'
+const MOCKED_EXTERNAL_LINK = 'http://example.com'
 
 const data = [
   MOCKED_TITLE,
@@ -140,6 +142,7 @@ const data = [
   MOCKED_USER_ID,
   MOCKED_TYPE,
   MOCKED_SYNAPSE_LINK,
+  MOCKED_EXTERNAL_LINK,
 ]
 
 const propsForNonHeaderMode: TableRowGenericCardProps = {
@@ -562,6 +565,58 @@ describe('TableRowGenericCard tests', () => {
         name: /download/i,
       })
       expect(button).not.toBeInTheDocument()
+    })
+  })
+
+  describe('it creates a HOW TO DOWNLOAD label', () => {
+    it('creates one label when downloadCartSynId is passed', async () => {
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          genericCardSchema: {
+            ...genericCardSchema,
+            downloadCartSynId: 'datasetAlias',
+            customSecondaryLabelConfig: {
+              key: 'How to Download',
+              value: 'this text will be replaced',
+              isVisible: (schema: Record<string, number>, data: string[]) => {
+                return Boolean(
+                  data[schema['externalLink']] || data[schema['datasetAlias']],
+                )
+              },
+            },
+          },
+        },
+        'TableEntity',
+      )
+      const howToDownloadLabel = await screen.findByText(/download cart/i, {})
+      expect(howToDownloadLabel).toBeVisible()
+    })
+
+    it('creates one label when both downloadCartSynId is not passed', async () => {
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          genericCardSchema: {
+            ...genericCardSchema,
+            customSecondaryLabelConfig: {
+              key: 'How to Download',
+              value: 'Explain how to add to download cart',
+              isVisible: (schema: Record<string, number>, data: string[]) => {
+                return Boolean(
+                  data[schema['externalLink']] || data[schema['datasetAlias']],
+                )
+              },
+            },
+          },
+        },
+        'TableEntity',
+      )
+      const howToDownloadLabel = await screen.findByText(
+        /how to add to download cart/i,
+        {},
+      )
+      expect(howToDownloadLabel).toBeVisible()
     })
   })
 })

@@ -46,18 +46,17 @@ jest.mock('../ProvenanceGraph/ProvenanceGraph', () => {
   }
 })
 
+function getComponent(props: MarkdownSynapseProps) {
+  return (
+    <MarkdownSynapse ownerId="mock_owner_id" wikiId="mock_wiki_id" {...props} />
+  )
+}
+
 const renderComponent = (
   props: MarkdownSynapseProps,
   synapseContext?: SynapseContextType,
 ) => {
-  return render(
-    <MarkdownSynapse
-      ownerId="mock_owner_id"
-      wikiId="mock_wiki_id"
-      {...props}
-    />,
-    { wrapper: createWrapper(synapseContext) },
-  )
+  return render(getComponent(props), { wrapper: createWrapper(synapseContext) })
 }
 
 function mockGetEntityWiki(markdown: string) {
@@ -112,6 +111,18 @@ describe('MarkdownSynapse tests', () => {
 
       screen.getByRole('heading')
       screen.getByText(val)
+    })
+
+    it('reprocesses markdown when markdown prop changes', () => {
+      const firstVal = 'loremipsum....'
+      const secondVal = 'dolorsit....'
+      const { rerender } = renderComponent({
+        markdown: firstVal,
+      })
+      screen.getByText(firstVal)
+
+      rerender(getComponent({ markdown: secondVal }))
+      screen.getByText(secondVal)
     })
 
     it('mounts correctly with markdown NOT already loaded', async () => {

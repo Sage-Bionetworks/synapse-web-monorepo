@@ -28,6 +28,7 @@ export const datasetQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   tableConfiguration: {
     columnLinks: datasetColumnLinks,
   },
+  defaultShowSearchBox: true,
   facetsToPlot: ['program', 'project', 'datasetType', 'assay'],
   searchConfiguration: {
     searchable: ['name', 'program', 'project', 'datasetType', 'assay'],

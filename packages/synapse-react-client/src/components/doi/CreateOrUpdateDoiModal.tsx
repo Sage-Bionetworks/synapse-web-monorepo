@@ -31,10 +31,11 @@ import {
   Select,
   Typography,
 } from '@mui/material'
+import RJSF from '@rjsf/core'
 import { DoiResourceTypeGeneral, V2Doi } from '@sage-bionetworks/synapse-client'
 import { EntityType } from '@sage-bionetworks/synapse-types'
 import { isEmpty } from 'lodash-es'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type CreateOrUpdateDoiModalProps = {
   /** Whether the dialog is open */
@@ -139,6 +140,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
       enabled: doiCanBeAppliedToVersion,
     },
   )
+  const formRef = useRef<RJSF>(null)
 
   const entityType = entity
     ? convertToEntityType(entity.concreteType)
@@ -195,15 +197,17 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
   }, [currentUser, doi, entity])
 
   function onSave() {
-    const requestDoi: V2Doi = convertFormDataToDoi(formData)
-    requestDoi.objectType = objectType
-    requestDoi.objectId = objectId
-    requestDoi.objectVersion = selectedVersionNumber
-    requestDoi.etag = doi?.etag
-    createOrUpdateDoi({
-      doi: requestDoi,
-      concreteType: 'org.sagebionetworks.repo.model.doi.v2.DoiRequest',
-    })
+    if (formRef.current && formRef.current.validateForm()) {
+      const requestDoi: V2Doi = convertFormDataToDoi(formData)
+      requestDoi.objectType = objectType
+      requestDoi.objectId = objectId
+      requestDoi.objectVersion = selectedVersionNumber
+      requestDoi.etag = doi?.etag
+      createOrUpdateDoi({
+        doi: requestDoi,
+        concreteType: 'org.sagebionetworks.repo.model.doi.v2.DoiRequest',
+      })
+    }
   }
 
   const dialogContent = (
@@ -278,6 +282,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
       )}
       <div className="JsonSchemaFormContainer">
         <JsonSchemaForm
+          formRef={formRef}
           disabled={isLoading || wasModifiedViaAPI}
           schema={doiFormSchema}
           formData={formData}
@@ -285,6 +290,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
             setFormData(e.formData)
           }}
           uiSchema={doiFormUiSchema}
+          showErrorList={false}
         />
       </div>
       {doi && (

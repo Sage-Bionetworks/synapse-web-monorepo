@@ -72,7 +72,7 @@ const CancerComplexityIntro = () => {
           <CancerComplexityIntroSubItem
             bulletColor="#ECB915"
             mainText="Access"
-            subText="Find datasets, publications, and tools."
+            subText="Download datasets, publications, and tools."
           />
         </Box>
       </Box>
