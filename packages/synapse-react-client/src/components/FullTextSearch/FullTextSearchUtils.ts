@@ -8,12 +8,35 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import * as React from 'react'
 import { getFileColumnModelId } from '../SynapseTable/SynapseTableUtils'
+import { FTSConfig } from '../SynapseTable/SearchV2'
+
+// Convert the user-provided searchText into a search expression given the current FTS configuration.
+// If configured to search using BOOLEAN mode, search expression will wrap the search text in double quotes and include the distance.
+export function getTextMatchesQueryFilter(
+  searchText: string,
+  ftsConfig: FTSConfig = {
+    textMatchesMode: 'NATURAL_LANGUAGE',
+  },
+) {
+  const { textMatchesMode, distance } = ftsConfig
+  let searchExpression = searchText
+  if (textMatchesMode == 'BOOLEAN') {
+    searchExpression = `"${searchText.replaceAll('"', '')}" @${distance}`
+  }
+  const textMatchesQueryFilter: TextMatchesQueryFilter = {
+    concreteType: 'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
+    searchExpression,
+    searchMode: ftsConfig.textMatchesMode,
+  }
+  return textMatchesQueryFilter
+}
 
 export function updateQueryUsingSearchTerm(
   queryBundleRequest: QueryBundleRequest,
   columnModels: ColumnModel[] | undefined,
   searchText: string,
   setSearchText: React.Dispatch<React.SetStateAction<string>>,
+  ftsConfig?: FTSConfig,
 ): QueryBundleRequest {
   const { additionalFilters = [] } = queryBundleRequest.query
   const synIdColumnModelId = getFileColumnModelId(columnModels)
@@ -43,11 +66,10 @@ export function updateQueryUsingSearchTerm(
     }
     additionalFilters.push(singleValueQueryFilter)
   } else {
-    const textMatchesQueryFilter: TextMatchesQueryFilter = {
-      concreteType:
-        'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
-      searchExpression: searchText,
-    }
+    const textMatchesQueryFilter = getTextMatchesQueryFilter(
+      searchText,
+      ftsConfig,
+    )
     // PORTALS-2093: does this additional filter already exist?
     const found = additionalFilters.find(
       filter =>

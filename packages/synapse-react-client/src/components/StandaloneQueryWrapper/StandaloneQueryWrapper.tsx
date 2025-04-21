@@ -10,7 +10,10 @@ import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import FullTextSearch from '../FullTextSearch/FullTextSearch'
-import { QueryContextConsumer } from '../QueryContext/QueryContext'
+import {
+  QueryContextConsumer,
+  QueryContextType,
+} from '../QueryContext/QueryContext'
 import {
   QueryVisualizationContextConsumer,
   QueryVisualizationWrapper,
@@ -187,7 +190,7 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
                       )}
                       {entity && isTable(entity) && entity.isSearchEnabled ? (
                         <FullTextSearch
-                          helpUrl={searchConfiguration?.fullTextSearchHelpURL}
+                          ftsConfig={searchConfiguration?.ftsConfig}
                         />
                       ) : (
                         <SearchV2
