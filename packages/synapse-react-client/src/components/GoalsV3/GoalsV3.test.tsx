@@ -1,9 +1,5 @@
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import {
-  BatchFileResult,
-  QueryResultBundle,
-} from '@sage-bionetworks/synapse-types'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { SynapseClient } from '../../index'
@@ -21,6 +17,13 @@ jest.mock('../QueryCount/QueryCount', () => ({
   },
 }))
 
+const DummySvgIcon = () => <svg data-testid="dummy-icon" />
+
+const mockSvgComponentMap = {
+  datasets_and_files: DummySvgIcon,
+  methods: DummySvgIcon,
+  publications: DummySvgIcon,
+}
 const tableQueryResult: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
   selectColumns: [
@@ -63,7 +66,7 @@ const tableQueryResult: QueryResultBundle = {
         {
           rowId: 2,
           values: [
-            'Datasets & Files',
+            'Datasets and Files',
             'Collected from samples and cell lines across a spectrum of genomic assays and neuropsychiatric diseases.',
             'syn20821313',
             '131',
@@ -89,45 +92,24 @@ const tableQueryResult: QueryResultBundle = {
   },
 }
 
-const mockFileResult = [
-  {
-    fileHandleId: '149976034',
-    preSignedURL: 'https://mockurl.com/orangecat.jpeg',
-  },
-  {
-    fileHandleId: '149976044',
-    preSignedURL: 'https://mockurl.com/tabbycat.jpeg',
-  },
-  {
-    fileHandleId: '149976045',
-    preSignedURL: 'https://mockurl.com/blackcat.jpeg',
-  },
-]
-
-const mockBatchFileResult: BatchFileResult = {
-  requestedFiles: mockFileResult,
-}
-
 beforeEach(() => {
   jest.clearAllMocks()
-  jest.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
   jest
     .spyOn(SynapseClient, 'getQueryTableResults')
     .mockResolvedValue(tableQueryResult)
 })
-beforeAll(() => server.listen())
-afterEach(() => server.resetHandlers())
-afterAll(() => server.close())
 
 describe('GoalsV2 Desktop', () => {
   test('renders the component with provided props', async () => {
-    render(<GoalsV3 entityId="syn22315959" />, { wrapper: createWrapper() })
+    render(
+      <GoalsV3 entityId="syn22315959" svgComponentMap={mockSvgComponentMap} />,
+      { wrapper: createWrapper() },
+    )
 
     await waitFor(() => {
-      const images = screen.getAllByRole('img')
-      expect(images).toHaveLength(3)
+      expect(screen.getAllByTestId('dummy-icon')).toHaveLength(3)
       expect(screen.getByText('Methods')).toBeInTheDocument()
-      expect(screen.getByText('Datasets & Files')).toBeInTheDocument()
+      expect(screen.getByText('Datasets and Files')).toBeInTheDocument()
       expect(screen.getByText('Publications')).toBeInTheDocument()
       expect(screen.getByText('131')).toBeInTheDocument()
     })

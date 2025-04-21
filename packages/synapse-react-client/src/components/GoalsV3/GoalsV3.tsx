@@ -11,6 +11,7 @@ import GoalsV3Mobile from './GoalsV3.Mobile'
 
 export type GoalsV3Props = {
   entityId: string
+  svgComponentMap: Record<string, React.FC<React.SVGProps<SVGSVGElement>>>
 }
 
 export type GoalsV3CardProps = {
@@ -18,7 +19,7 @@ export type GoalsV3CardProps = {
   title: string
   summary: string
   link: string
-  asset: string
+  svgIconComponent: React.FC<React.SVGProps<SVGSVGElement>>
 }
 
 enum ExpectedColumns {
@@ -27,13 +28,12 @@ enum ExpectedColumns {
   TITLE = 'Title',
   SUMMARY = 'Summary',
   LINK = 'Link',
-  ASSET = 'Asset',
 }
 
 // PORTALS-2367
 const GOALSV2_DESKTOP_MIN_BREAKPOINT = 1200
 
-const GoalsV3 = ({ entityId }: GoalsV3Props) => {
+const GoalsV3 = ({ entityId, svgComponentMap }: GoalsV3Props) => {
   const showDesktop = useShowDesktop(GOALSV2_DESKTOP_MIN_BREAKPOINT)
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -50,10 +50,7 @@ const GoalsV3 = ({ entityId }: GoalsV3Props) => {
   const { data: queryResultBundle } =
     useGetQueryResultBundle(queryBundleRequest)
 
-  const { assets: goalAssets, error } = useGetGoalData(
-    entityId,
-    queryResultBundle,
-  )
+  const { error } = useGetGoalData(entityId, queryResultBundle)
 
   const tableIdColumnIndex = getFieldIndex(
     ExpectedColumns.TABLEID,
@@ -91,13 +88,16 @@ const GoalsV3 = ({ entityId }: GoalsV3Props) => {
       const title = values[titleColumnIndex]
       const summary = values[summaryColumnIndex]
       const link = values[linkColumnIndex]
-      const asset = goalAssets?.[index] ?? ''
+
+      const svgIconComponent =
+        svgComponentMap?.[title.replace(/\s+/g, '_').toLowerCase()]
+
       return {
         countSql,
         title,
         summary,
         link,
-        asset,
+        svgIconComponent,
       }
     }) ?? []
 
