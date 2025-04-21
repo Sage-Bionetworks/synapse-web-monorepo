@@ -1,5 +1,9 @@
 import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
+import type {
+  UserSubmissionSearchRequest,
+  UserSubmissionSearchResponse,
+} from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   ACTSubmissionStatus,
@@ -33,6 +37,55 @@ export default function useGetDataAccessSubmission(
       String(submissionId.toString()),
     ),
     queryFn: () => SynapseClient.getSubmissionById(submissionId, accessToken),
+  })
+}
+
+/**
+ * Retrieve a list of submissions for a given access requirement ID, where the calling user is an accessor. Allows to
+ * optionally filter by accessRequirement Ids, submission state and sort by the associated fields in the
+ * SubmissionSearchSort.
+ *
+ * https://rest-docs.synapse.org/rest/POST/dataAccessSubmission/userRequests.html
+ * @param params
+ * @param options
+ */
+export function useSearchAccessSubmissionUserRequestsInfinite<
+  TData = InfiniteData<UserSubmissionSearchResponse>,
+>(
+  params?: UserSubmissionSearchRequest,
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      UserSubmissionSearchResponse,
+      SynapseClientError,
+      TData,
+      UserSubmissionSearchResponse,
+      QueryKey,
+      UserSubmissionSearchResponse['nextPageToken']
+    >
+  >,
+) {
+  const { keyFactory, synapseClient } = useSynapseContext()
+
+  return useInfiniteQuery<
+    UserSubmissionSearchResponse,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    UserSubmissionSearchResponse['nextPageToken']
+  >({
+    ...options,
+    queryKey: keyFactory.searchDataAccessSubmissionUserRequestsQueryKey(params),
+    queryFn: context =>
+      synapseClient.dataAccessServicesClient.postRepoV1DataAccessSubmissionUserRequests(
+        {
+          userSubmissionSearchRequest: {
+            ...params,
+            nextPageToken: context.pageParam,
+          },
+        },
+      ),
+    initialPageParam: undefined,
+    getNextPageParam: page => page.nextPageToken,
   })
 }
 
