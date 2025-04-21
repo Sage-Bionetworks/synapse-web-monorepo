@@ -10,16 +10,15 @@ import headerBackground from '../assets/cckp-header-background.jpeg'
 const CancerComplexityHeader = () => {
   const searchPlaceholder = 'Search for cancer related data and resources'
   const searchExampleTerms = [
-    'Justo Turpis',
-    'Nostra',
-    'Fames',
-    'Rhoncus',
-    'Pharetra enim',
-    'Aliquet',
-    'Ridiculus',
-    'Penatibus',
-    'Accumsan quisque',
-    'Patient Advocacy',
+    'metastasis',
+    'tumor-immune microenvironment',
+    'drug resistance',
+    'triple-negative breast cancer',
+    'ARACNe',
+    'Cytoscape',
+    'spatial transcriptomics',
+    'multiplex imaging',
+    'lecture series',
   ]
   const isFeatureEnabled = useGetFeatureFlag(
     FeatureFlagEnum.PORTAL_SEARCH_HEADER,
