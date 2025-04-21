@@ -124,3 +124,39 @@ export const DirectlyProvidedSchema: Story = {
     },
   },
 }
+
+export const ConditionalOnEntityField: Story = {
+  args: {
+    validationSchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+
+      properties: {
+        concreteType: {
+          type: 'string',
+        },
+      },
+      if: {
+        properties: {
+          concreteType: {
+            const: 'org.sagebionetworks.repo.model.FileEntity',
+          },
+        },
+
+        required: ['concreteType'],
+      },
+
+      then: {
+        properties: {
+          fileType: {
+            type: 'string',
+          },
+        },
+
+        required: ['fileType'],
+      },
+    },
+
+    entityId: 'syn55166058',
+  },
+}

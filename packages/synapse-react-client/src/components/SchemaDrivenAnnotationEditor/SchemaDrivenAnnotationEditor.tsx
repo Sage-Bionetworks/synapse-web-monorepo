@@ -5,7 +5,6 @@ import {
   useGetSchemaBinding,
   useUpdateViaJson,
 } from '@/synapse-queries'
-import { entityJsonKeys } from '@/utils/functions/EntityTypeUtils'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -15,12 +14,11 @@ import RJSF from '@rjsf/core'
 import { RJSFValidationError } from '@rjsf/utils'
 import validator from '@rjsf/validator-ajv8'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import {
-  ENTITY_CONCRETE_TYPE,
-  EntityJson,
-} from '@sage-bionetworks/synapse-types'
-import { JSONSchema7, JSONSchema7Definition } from 'json-schema'
+import { EntityJson } from '@sage-bionetworks/synapse-types'
+import { JSONSchema7 } from 'json-schema'
+import { omitBy } from 'lodash-es'
 import isEmpty from 'lodash-es/isEmpty'
+import noop from 'lodash-es/noop'
 import {
   RefObject,
   useCallback,
@@ -38,11 +36,14 @@ import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import {
   dropNullishArrayValues,
   dropNullValues,
+  getAllPropertiesInFlatObjectSchema,
   getFriendlyPropertyName,
+  getJsonSchemaForForm,
+  getSchemaIdForConcreteType,
   getTransformErrors,
+  getUiSchemaForForm,
   shouldLiveValidate,
 } from './AnnotationEditorUtils'
-import { AdditionalPropertiesSchemaField } from './field/AdditionalPropertiesSchemaField'
 import SynapseAnnotationsRJSFObjectField from './field/SynapseAnnotationsRJSFObjectField'
 import { ObjectFieldTemplate } from './template/ObjectFieldTemplate'
 import SynapseAnnotationsWrapIfAdditionalTemplate from './template/SynapseAnnotationsWrapIfAdditionalTemplate'
@@ -67,27 +68,6 @@ export type SchemaDrivenAnnotationEditorProps = {
   onChange?: (annotations: Record<string, unknown>) => void
   /** If true, the editor will not render its own submit UI. */
   hideActions?: boolean
-}
-
-/**
- * patternProperties lets us define how to treat additionalProperties in a JSON schema by property name.
- * In all cases, let's ban properties that collide with entity properties by making their schema "not: {}"
- */
-function getPatternPropertiesBannedKeys(
-  concreteType?: ENTITY_CONCRETE_TYPE,
-): Record<string, JSONSchema7Definition> {
-  if (!concreteType) {
-    return {}
-  }
-  // for each property (e.g. id, name, etag, etc.)
-  //  Add to the JSON Schema `"^id$": { "not": {} }` to ban the property from being added as an additional property.
-  return entityJsonKeys[concreteType].reduce(
-    (current: Record<string, JSONSchema7Definition>, item) => {
-      current[`^${item}$`] = { not: {} }
-      return current
-    },
-    {},
-  )
 }
 
 /**
@@ -123,7 +103,7 @@ export function SchemaDrivenAnnotationEditor(
     },
     onCancel,
     formRef: formRefFromParent,
-    onChange,
+    onChange = noop,
     hideActions = false,
   } = props
   const localRef = useRef<RJSF>(null)
@@ -163,26 +143,17 @@ export function SchemaDrivenAnnotationEditor(
     undefined,
   )
 
-  /**
-   * patternProperties lets us define how to treat additionalProperties in a JSON schema by property name.
-   * In all cases, let's ban properties that collide with entity properties by making their schema "not: {}"
-   */
-  const patternPropertiesBannedKeys = useMemo(
-    () => getPatternPropertiesBannedKeys(entityJson?.concreteType),
-    [entityJson?.concreteType],
-  )
-
   const transformErrors = useCallback(
     getTransformErrors(entityJson?.concreteType),
     [entityJson?.concreteType],
   )
 
   useEffect(() => {
-    if (annotations) {
+    if (data?.entity) {
       // Put the annotations into a state variable so it can be modified by the form.
-      setFormData(annotations)
+      setFormData(data?.entity)
     }
-  }, [annotations])
+  }, [data?.entity])
 
   const { data: schema, isLoading: isLoadingBinding } = useGetSchemaBinding(
     entityId!,
@@ -193,15 +164,41 @@ export function SchemaDrivenAnnotationEditor(
     },
   )
 
+  // The full schema which is bound to the entity
   const { data: fetchedValidationSchema, isLoading: isLoadingSchema } =
     useGetSchema(schemaId ?? schema?.jsonSchemaVersionInfo.$id ?? '', {
       enabled: !!schemaId || !!schema,
       throwOnError: true,
     })
-
   const validationSchema = validationSchemaFromProps || fetchedValidationSchema
 
-  const isLoading = isLoadingBinding || isLoadingSchema
+  const concreteTypeSchemaId = getSchemaIdForConcreteType(
+    entityJson?.concreteType ?? '',
+  )
+  // The schema for the entity type (e.g. FileEntity, TableEntity, etc.)
+  const { data: schemaForEntityType, isLoading: isLoadingEntityTypeSchema } =
+    useGetSchema(concreteTypeSchemaId ?? '', {
+      enabled: !!concreteTypeSchemaId,
+      throwOnError: true,
+    })
+
+  const entitySchemaBaseProperties: JSONSchema7['properties'] = useMemo(
+    () => getAllPropertiesInFlatObjectSchema(schemaForEntityType ?? {}),
+    [schemaForEntityType],
+  )
+
+  const formSchema = useMemo(
+    () => getJsonSchemaForForm(validationSchema, entitySchemaBaseProperties),
+    [entitySchemaBaseProperties, validationSchema],
+  )
+
+  const uiSchema = useMemo(
+    () => getUiSchemaForForm(entitySchemaBaseProperties),
+    [entitySchemaBaseProperties],
+  )
+
+  const isLoading =
+    isLoadingBinding || isLoadingSchema || isLoadingEntityTypeSchema
 
   const { mutate, isPending: updateIsPending } = useUpdateViaJson({
     onSuccess: () => {
@@ -251,19 +248,25 @@ export function SchemaDrivenAnnotationEditor(
               </b>
             </Alert>
           )}
-          {entityJson && isEmpty(formData) && schema === null && (
-            <Alert severity="info">
-              <Box display={'flex'} alignItems={'center'} gap={0.5}>
-                <Typography variant={'smallText1'}>
-                  <b>{entityJson.name}</b> has no annotations. Click the{' '}
-                </Typography>
-                <AddToList />
-                <Typography variant={'smallText1'}>
-                  button to annotate.
-                </Typography>
-              </Box>
-            </Alert>
-          )}
+          {entityJson &&
+            isEmpty(
+              omitBy(formData, (_value, key) =>
+                Object.keys(entityJson).find(k => k === key),
+              ),
+            ) &&
+            schema === null && (
+              <Alert severity="info">
+                <Box display={'flex'} alignItems={'center'} gap={0.5}>
+                  <Typography variant={'smallText1'}>
+                    <b>{entityJson.name}</b> has no annotations. Click the{' '}
+                  </Typography>
+                  <AddToList />
+                  <Typography variant={'smallText1'}>
+                    button to annotate.
+                  </Typography>
+                </Box>
+              </Alert>
+            )}
           <JsonSchemaForm
             validator={validator}
             liveValidate={liveValidate}
@@ -290,32 +293,12 @@ export function SchemaDrivenAnnotationEditor(
             widgets={{
               TextWidget: TextWidget,
             }}
-            schema={
-              {
-                ...(validationSchema ?? {}),
-                patternProperties: {
-                  ...(validationSchema?.patternProperties ?? {}),
-                  ...patternPropertiesBannedKeys,
-                },
-                additionalProperties:
-                  validationSchema?.additionalProperties ?? true,
-              } as JSONSchema7
-            }
-            uiSchema={{
-              'ui:globalOptions': {
-                copyable: false,
-                duplicateKeySuffixSeparator: '_',
-              },
-              additionalProperties: {
-                'ui:field': AdditionalPropertiesSchemaField,
-              },
-            }}
+            schema={formSchema}
+            uiSchema={uiSchema}
             transformErrors={transformErrors}
             formData={formData}
             onChange={({ formData }) => {
-              if (onChange) {
-                onChange(formData)
-              }
+              onChange(formData)
               setFormData(formData)
               setValidationError(undefined)
             }}
