@@ -69,44 +69,13 @@ const data: UserSubmissionSearchResult[] = [
   },
 ]
 
-mockUseSearchAccessSubmissionUserRequestsInfinite.mockReturnValue({
-  data: {
-    pages: [
-      {
-        results: data,
-      },
-    ],
-  },
-  error: null,
-  isError: false,
-  isPending: false,
-  isLoading: false,
-  isLoadingError: false,
-  isRefetchError: false,
-  isSuccess: true,
-  status: 'success',
-  fetchNextPage: jest.fn(),
-  fetchPreviousPage: jest.fn(),
-  hasNextPage: false,
-  hasPreviousPage: false,
-  isFetchingNextPage: false,
-  isFetchingPreviousPage: false,
-  dataUpdatedAt: 0,
-  errorUpdatedAt: 0,
-  failureCount: 0,
-  failureReason: null,
-  errorUpdateCount: 0,
-  isFetched: false,
-  isFetchedAfterMount: false,
-  isFetching: false,
-  isInitialLoading: false,
-  isPaused: false,
-  isPlaceholderData: false,
-  isRefetching: false,
-  isStale: false,
-  refetch: jest.fn(),
-  fetchStatus: 'idle',
-})
+mockUseSearchAccessSubmissionUserRequestsInfinite.mockReturnValue(
+  getUseInfiniteQuerySuccessMock([
+    {
+      results: data,
+    },
+  ]),
+)
 
 describe('UserAccessRequestHistoryTable', () => {
   it('Displays table of data', async () => {
@@ -151,5 +120,41 @@ describe('UserAccessRequestHistoryTable', () => {
     expect(within(rows[4]).getAllByRole('cell')[1]).toHaveTextContent(
       'Submitted',
     )
+  })
+
+  it('Handles pagination', async () => {
+    const hasNextPage = true
+    mockUseSearchAccessSubmissionUserRequestsInfinite.mockReturnValue(
+      getUseInfiniteQuerySuccessMock(
+        [
+          {
+            results: data,
+            nextPageToken: 'nextPageToken',
+          },
+        ],
+        hasNextPage,
+      ),
+    )
+    const router = createMemoryRouter([
+      {
+        path: '/',
+        element: <UserAccessRequestHistoryPage />,
+      },
+    ])
+    render(<RouterProvider router={router} />)
+
+    screen.getByText('History of your access requests')
+    const button = await screen.findByRole('button', { name: 'Load More' })
+
+    const mockDataHookResults =
+      mockUseSearchAccessSubmissionUserRequestsInfinite.mock.results
+    const lastDataHookResult =
+      mockDataHookResults[mockDataHookResults.length - 1]
+    const mockFetchNextPage = jest.mocked(
+      lastDataHookResult.value.fetchNextPage,
+    )
+
+    await userEvent.click(button)
+    expect(mockFetchNextPage).toHaveBeenCalled()
   })
 })
