@@ -1,19 +1,26 @@
 import { GoalsV3CardProps } from './GoalsV3'
 import QueryCount from '../QueryCount/QueryCount'
-import { Stack, Typography } from '@mui/material'
-import { Card, CardActionArea, CardMedia } from '@mui/material'
+import { Box, Stack, Typography, useTheme } from '@mui/material'
+import { Card, CardActionArea } from '@mui/material'
 
 export default function GoalsV3Desktop({
-  asset,
   link,
   countSql,
   title,
+  svgIconComponent,
 }: GoalsV3CardProps) {
+  const theme = useTheme()
+  const SvgIconComponent = svgIconComponent
   return (
     <Card
       sx={{
+        maxWidth: '470px',
         display: 'flex',
         flex: '1 0 0',
+        borderRadius: '3px',
+        '&:hover': {
+          border: `1px solid ${theme.palette.primary.main}`,
+        },
       }}
     >
       <CardActionArea
@@ -27,12 +34,38 @@ export default function GoalsV3Desktop({
           gap: '12px',
         }}
       >
-        <CardMedia
-          component="img"
-          sx={{ width: 24, height: 24 }}
-          image={asset}
-          alt={title}
-        />
+        {SvgIconComponent && (
+          <Box
+            sx={{
+              width: '42px',
+              height: '42px',
+              borderRadius: '50%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              '.MuiCardActionArea-root:hover &': {
+                background: theme.palette.primary.main,
+                fill: '#FFF',
+              },
+            }}
+          >
+            <Box
+              component="span"
+              sx={{
+                width: 24,
+                height: 24,
+                svg: {
+                  color: 'grey.700',
+                  '.MuiCardActionArea-root:hover &': {
+                    color: '#FFF !important',
+                  },
+                },
+              }}
+            >
+              <SvgIconComponent width={24} height={24} />
+            </Box>
+          </Box>
+        )}
         <Stack sx={{ justifyContent: 'center', alignItems: 'center' }}>
           <Typography
             variant="headline3"

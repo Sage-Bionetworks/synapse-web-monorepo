@@ -28,47 +28,47 @@ export const columnIconConfigs: ColumnIconConfigs = {
     dataType: {
       bioChemicalPhysical: {
         icon: 'bioChemicalPhysical',
-        label: 'Bio Chemical Physical Data Available',
+        label: 'Bio Chemical Physical',
       },
       clinical: {
         icon: 'clinical',
-        label: 'Clinical Data Available',
+        label: 'Clinical',
       },
       computationalTool: {
         icon: 'computationalTool',
-        label: 'Computational Tool Data Available',
+        label: 'Computational Tool',
       },
       dataReuse: {
         icon: 'dataReuse',
-        label: 'Data Reuse Data Available',
+        label: 'Data Reuse',
       },
       epigenomeProfiling: {
         icon: 'chromatin',
-        label: 'Epigenome Profiling Data Available',
+        label: 'Epigenome Profiling',
       },
       expressionProfiling: {
         icon: 'geneExpression',
-        label: 'Expression Profiling Data Available',
+        label: 'Expression Profiling',
       },
       genomeProfiling: {
         icon: 'geneVariants',
-        label: 'Genome Profiling Data Available',
+        label: 'Genome Profiling',
       },
-      imaging: { icon: 'imaging', label: 'Image Data Available' },
+      imaging: { icon: 'imaging', label: 'Image' },
       inSilicoModel: {
         icon: 'inSilicoModel',
-        label: 'In Silico Model Data Available',
+        label: 'In Silico Model',
       },
       modelSystem: {
         icon: 'modelSystem',
-        label: 'Model System Data Available',
+        label: 'Model System',
       },
-      proteomics: { icon: 'proteomics', label: 'Proteomics Data Available' },
+      proteomics: { icon: 'proteomics', label: 'Proteomics' },
       spatialProfiling: {
         icon: 'spatialProfiling',
-        label: 'Spatial Profiling Data Available',
+        label: 'Spatial Profiling',
       },
-      other: { icon: 'other', label: 'Other Data Available' },
+      other: { icon: 'other', label: 'Other' },
     },
   },
 }

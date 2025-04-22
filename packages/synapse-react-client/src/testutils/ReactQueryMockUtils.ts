@@ -1,6 +1,7 @@
 import {
   QueryObserverLoadingResult,
   QueryObserverSuccessResult,
+  UseInfiniteQueryResult,
   UseMutationResult,
   UseQueryResult,
 } from '@tanstack/react-query'
@@ -145,4 +146,44 @@ export function getUseMutationPendingMock<
     isPending: true,
     submittedAt: 0,
   } satisfies UseMutationResult<TData, TError, TVariables>
+}
+
+export function getUseInfiniteQuerySuccessMock<TData>(
+  pages: TData[],
+  hasNextPage = false,
+) {
+  return {
+    data: {
+      pages: pages,
+    },
+    error: null,
+    isError: false,
+    isPending: false,
+    isLoading: false,
+    isLoadingError: false,
+    isRefetchError: false,
+    isSuccess: true,
+    status: 'success',
+    fetchNextPage: jest.fn(),
+    fetchPreviousPage: jest.fn(),
+    hasNextPage: hasNextPage,
+    hasPreviousPage: false,
+    isFetchingNextPage: false,
+    isFetchingPreviousPage: false,
+    dataUpdatedAt: 0,
+    errorUpdatedAt: 0,
+    failureCount: 0,
+    failureReason: null,
+    errorUpdateCount: 0,
+    isFetched: false,
+    isFetchedAfterMount: false,
+    isFetching: false,
+    isInitialLoading: false,
+    isPaused: false,
+    isPlaceholderData: false,
+    isRefetching: false,
+    isStale: false,
+    refetch: jest.fn(),
+    fetchStatus: 'idle',
+  } satisfies UseInfiniteQueryResult<{ pages: TData[] }, never>
 }
