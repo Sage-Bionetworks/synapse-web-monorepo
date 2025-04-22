@@ -75,11 +75,11 @@ export default function HomePage() {
           }}
         />
       </SectionLayout>
-      <AMPALSPublishingRequirements />
       {/* <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <Goals entityId={'syn23518009'} />
       </SectionLayout> */}
       <HowToAccessData />
+      <AMPALSPublishingRequirements />
       <ALLALSSlat />
 
       <div className={'home-bg-dark'}>
