@@ -24,11 +24,11 @@ const routes: RouteObject[] = [
         <FullWidthAlert
           sx={{ m: 0 }}
           isGlobal={false}
-          variant={'warning'}
+          variant={'info'}
           show={true}
           title={''}
           description={
-            'Data access to the AACR Project GENIE Registry is offline to ensure compliance with new U.S. regulations and users will be notified once the registry is online again. We apologize for any inconvenience.'
+            'Access to the AACR Project GENIE Registry has been restored. To regain access, users are required to submit a new data access request in compliance with new U.S. regulations, agree to the updated terms of use, and provide additional required information. Thank you for your patience and understanding.'
           }
         />
         <SurveyToast
