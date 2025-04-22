@@ -12,6 +12,7 @@ import {
 import {
   DiscussionSearchRequest,
   EntityLookupRequest,
+  type UserSubmissionSearchRequest,
 } from '@sage-bionetworks/synapse-client'
 import { OIDCAuthorizationRequest } from '@sage-bionetworks/synapse-client/generated/models/OIDCAuthorizationRequest'
 import { PrincipalAliasRequest } from '@sage-bionetworks/synapse-client/generated/models/PrincipalAliasRequest'
@@ -530,7 +531,13 @@ export class KeyFactory {
   }
 
   public searchDataAccessSubmissionQueryKey(params?: SubmissionSearchRequest) {
-    return this.getKey('accessSubmissionSearch', params)
+    return this.getKey('accessSubmissionSearch', 'reviewer', params)
+  }
+
+  public searchDataAccessSubmissionUserRequestsQueryKey(
+    params?: UserSubmissionSearchRequest,
+  ) {
+    return this.getKey('accessSubmissionSearch', 'user', params)
   }
 
   public getApprovedSubmissionInfoQueryKey(
