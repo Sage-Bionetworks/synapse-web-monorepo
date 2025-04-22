@@ -100,6 +100,38 @@ export function getUseQueryErrorMock<TError>(
   }
 }
 
+/**
+ * Mock for useQuery with status 'idle', e.g. when the query is disabled.
+ */
+export function getUseQueryIdleMock(): UseQueryResult<never, never> {
+  return {
+    data: undefined,
+    dataUpdatedAt: 0,
+    error: null,
+    errorUpdateCount: 1,
+    errorUpdatedAt: Date.now(),
+    failureCount: 1,
+    isError: false,
+    isFetched: false,
+    isFetchedAfterMount: false,
+    isFetching: false,
+    isLoadingError: false,
+    isPlaceholderData: false,
+    isRefetchError: false,
+    isRefetching: false,
+    isStale: false,
+    isSuccess: false,
+    refetch: jest.fn(),
+    status: 'pending',
+    failureReason: null,
+    fetchStatus: 'idle',
+    isInitialLoading: false,
+    isPaused: true,
+    isLoading: false,
+    isPending: true,
+  }
+}
+
 export function getUseMutationMock<TData = any, TError = any, TVariables = any>(
   data?: TData,
 ) {

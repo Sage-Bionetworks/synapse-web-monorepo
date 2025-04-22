@@ -3,12 +3,10 @@ import { formatDate } from '@/utils/functions/DateFormatter'
 import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
 import { Button, Stack, Typography } from '@mui/material'
 import {
-  Direction,
   SubmissionReviewerFilterType,
   SubmissionSearchRequest,
   SubmissionSearchResult,
   SubmissionSearchSort,
-  SubmissionSortField,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
 import {
@@ -26,6 +24,7 @@ import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import { UserBadge } from '../UserCard/UserBadge'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
+import { getSortApiRequestFromTableSortState } from './UserAccessRequestHistory/SubmissionSortStateTranslator'
 
 const columnHelper = createColumnHelper<SubmissionSearchResult>()
 const columns = [
@@ -108,27 +107,6 @@ export type AccessRequestSubmissionTableProps = {
   reviewerFilterType?: SubmissionReviewerFilterType
 }
 
-function getSortApiRequestFromTableSortState(
-  sortingState: SortingState,
-): SubmissionSearchSort[] | undefined {
-  if (sortingState.length === 0) {
-    return undefined
-  }
-  const sort = sortingState[0]
-  let field: SubmissionSortField = SubmissionSortField.CREATED_ON
-  if (sort.id === 'createdOn') {
-    field = SubmissionSortField.CREATED_ON
-  } else if (sort.id === 'modifiedOn') {
-    field = SubmissionSortField.MODIFIED_ON
-  }
-  return [
-    {
-      field,
-      direction: sort.desc ? Direction.DESC : Direction.ASC,
-    },
-  ]
-}
-
 export function AccessRequestSubmissionTable({
   showSubmitter = false,
   showStatus = false,
@@ -153,7 +131,9 @@ export function AccessRequestSubmissionTable({
       submissionState,
       reviewerId,
       reviewerFilterType,
-      sort: getSortApiRequestFromTableSortState(tableSortState),
+      sort: getSortApiRequestFromTableSortState(tableSortState) as
+        | SubmissionSearchSort[] // cast to synapse-types (not OpenAPI-defined) type
+        | undefined,
     }),
     [
       accessorId,

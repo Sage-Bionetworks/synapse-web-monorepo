@@ -1,6 +1,7 @@
 import { mockManagedACTAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
 import {
   mockApprovedSubmission,
+  mockCancelledSubmission,
   mockRejectedSubmission,
   mockSubmissions,
   mockSubmittedSubmission,
@@ -9,11 +10,17 @@ import { rest, server } from '@/mocks/msw/server'
 import { mockActTeam } from '@/mocks/team/mockTeam'
 import {
   MOCK_USER_ID,
+  MOCK_USER_ID_2,
   MOCK_USER_ID_3,
   MOCK_USER_NAME,
   MOCK_USER_NAME_2,
   MOCK_USER_NAME_3,
 } from '@/mocks/user/mock_user_profile'
+import {
+  getUseQueryErrorMock,
+  getUseQueryIdleMock,
+  getUseQuerySuccessMock,
+} from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ACCESS_REQUIREMENT_ACL,
@@ -25,6 +32,10 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
+import {
+  AccessApproval,
+  SynapseClientError,
+} from '@sage-bionetworks/synapse-client'
 import {
   ACCESS_TYPE,
   AccessControlList,
@@ -40,8 +51,11 @@ import {
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import failOnConsoleError from 'jest-fail-on-console'
-import * as RejectDataAccessRequestModalModule from './RejectDataAccessRequestModal'
+import * as RejectDataAccessRequestModalModule from '../RejectDataAccessRequestModal'
 import SubmissionPage, { SubmissionPageProps } from './SubmissionPage'
+import { useGetUserAccessApproval } from '@/synapse-queries/dataaccess/useAccessApprovals'
+import AccessRequirementList from '@/components/AccessRequirementList/AccessRequirementList'
+import { CancelDataAccessRequestConfirmationModal } from './CancelDataAccessRequestConfirmationModal'
 
 function renderComponent(props: SubmissionPageProps) {
   render(<SubmissionPage {...props} />, {
@@ -50,13 +64,19 @@ function renderComponent(props: SubmissionPageProps) {
 }
 
 const SUBMITTED_SUBMISSION_ID = mockSubmittedSubmission.id
+const CANCELLED_SUBMISSION_ID = mockCancelledSubmission.id
 const APPROVED_SUBMISSION_ID = mockApprovedSubmission.id
 const REJECTED_SUBMISSION_ID = mockRejectedSubmission.id
 
 const onServerReceivedUpdate = jest.fn()
 
+jest.mock('./CancelDataAccessRequestConfirmationModal')
+jest.mock('@/synapse-queries/dataaccess/useAccessApprovals')
+
+jest.mock('@/components/AccessRequirementList/AccessRequirementList')
+
 // Mock links to file handles
-jest.mock('../../../src/components/widgets/FileHandleLink', () => ({
+jest.mock('../../widgets/FileHandleLink', () => ({
   FileHandleLink: ({
     fileHandleAssociation,
   }: {
@@ -69,7 +89,7 @@ jest.mock('../../../src/components/widgets/FileHandleLink', () => ({
 }))
 
 // Mock the access requirement wiki
-jest.mock('../../../src/components/Markdown/MarkdownSynapse', () => ({
+jest.mock('../../Markdown/MarkdownSynapse', () => ({
   __esModule: true,
   default: () => <div>Wiki Contents...</div>,
 }))
@@ -78,6 +98,37 @@ jest.mock('../../../src/components/Markdown/MarkdownSynapse', () => ({
 const mockRejectDataAccessRequestModal = jest
   .spyOn(RejectDataAccessRequestModalModule, 'default')
   .mockImplementation(() => <div data-testid="RejectDataAccessRequestModal" />)
+
+const mockCancelSubmissionModal = jest
+  .mocked(CancelDataAccessRequestConfirmationModal)
+  .mockImplementation(() => (
+    <div data-testid={'CancelDataAccessRequestConfirmationModal'} />
+  ))
+
+const mockAccessRequirementList = jest
+  .mocked(AccessRequirementList)
+  .mockImplementation(() => {
+    return <div data-testid="AccessRequirementList" />
+  })
+
+const mockGetUserAccessApproval = jest
+  .mocked(useGetUserAccessApproval)
+  .mockReturnValue(getUseQueryIdleMock())
+
+const mockAccessApproval: AccessApproval = {
+  id: 123,
+  etag: '0000-etag',
+  createdOn: new Date().toISOString(),
+  modifiedOn: new Date().toISOString(),
+  createdBy: String(MOCK_USER_ID_2),
+  modifiedBy: String(MOCK_USER_ID_2),
+  requirementId: mockManagedACTAccessRequirement.id,
+  requirementVersion: mockManagedACTAccessRequirement.versionNumber,
+  submitterId: String(MOCK_USER_ID),
+  accessorId: String(MOCK_USER_ID),
+  expiredOn: undefined,
+  state: 'APPROVED',
+}
 
 describe('Submission Page tests', () => {
   failOnConsoleError()
@@ -157,6 +208,7 @@ describe('Submission Page tests', () => {
   it('Renders all fields', async () => {
     renderComponent({
       submissionId: SUBMITTED_SUBMISSION_ID,
+      isReviewer: true,
     })
 
     await screen.findByText('Status')
@@ -211,6 +263,7 @@ describe('Submission Page tests', () => {
   it('Allows approving a SUBMITTED submission', async () => {
     renderComponent({
       submissionId: SUBMITTED_SUBMISSION_ID,
+      isReviewer: true,
     })
 
     const approveButton = await screen.findByRole('button', { name: 'Approve' })
@@ -223,7 +276,7 @@ describe('Submission Page tests', () => {
     const approveConfirmButton = await within(confirmationDialog).findByRole(
       'button',
       {
-        name: 'Approve',
+        name: 'Approve Request',
       },
     )
 
@@ -242,6 +295,7 @@ describe('Submission Page tests', () => {
   it('Shows the rejection modal', async () => {
     renderComponent({
       submissionId: SUBMITTED_SUBMISSION_ID,
+      isReviewer: true,
     })
 
     // The modal is not rendered
@@ -268,6 +322,7 @@ describe('Submission Page tests', () => {
   it('Does not render action buttons for an APPROVED submission', () => {
     renderComponent({
       submissionId: APPROVED_SUBMISSION_ID,
+      isReviewer: true,
     })
 
     expect(
@@ -281,6 +336,7 @@ describe('Submission Page tests', () => {
   it('Does not render action buttons for a REJECTED submission', () => {
     renderComponent({
       submissionId: REJECTED_SUBMISSION_ID,
+      isReviewer: true,
     })
 
     expect(
@@ -321,6 +377,7 @@ describe('Submission Page tests', () => {
 
     renderComponent({
       submissionId: SUBMITTED_SUBMISSION_ID,
+      isReviewer: true,
     })
 
     // User 1 now appears as the submitter, modifier, an accessor, and the Reviewer
@@ -333,5 +390,208 @@ describe('Submission Page tests', () => {
 
     // When an ACL exists, don't show the ACT as the reviewer
     expect(screen.queryByText(mockActTeam.name)).not.toBeInTheDocument()
+  })
+
+  describe('Viewing page as an accessor', () => {
+    it('supports canceling a SUBMITTED request', async () => {
+      mockGetUserAccessApproval.mockReturnValue(
+        getUseQueryErrorMock(
+          new SynapseClientError(
+            404,
+            'Not found',
+            expect.getState().currentTestName!,
+          ),
+        ),
+      )
+
+      renderComponent({
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: false,
+      })
+
+      await screen.findByText('Status')
+      await screen.findByText('SUBMITTED')
+
+      const cancelRequestButton = await screen.findByRole('button', {
+        name: 'Cancel Request',
+      })
+
+      await userEvent.click(cancelRequestButton)
+
+      expect(mockCancelSubmissionModal).toHaveBeenLastCalledWith(
+        {
+          open: true,
+          submissionId: String(SUBMITTED_SUBMISSION_ID),
+          accessRequirementId: String(mockManagedACTAccessRequirement.id),
+          onClose: expect.any(Function),
+        },
+        expect.anything(),
+      )
+      expect(mockAccessRequirementList).not.toHaveBeenCalled()
+    })
+
+    it('supports updating an APPROVED and unexpired request', async () => {
+      const futureDate = new Date()
+      futureDate.setFullYear(futureDate.getFullYear() + 1)
+      mockGetUserAccessApproval.mockReturnValue(
+        getUseQuerySuccessMock({
+          ...mockAccessApproval,
+          expiredOn: futureDate.toISOString(),
+          state: 'APPROVED',
+        }),
+      )
+      renderComponent({
+        submissionId: APPROVED_SUBMISSION_ID,
+        isReviewer: false,
+      })
+
+      await screen.findByText('Status')
+      await screen.findByText('APPROVED')
+
+      const updateRequestButton = await screen.findByRole('button', {
+        name: 'Update Request',
+      })
+
+      await userEvent.click(updateRequestButton)
+    })
+
+    it('supports updating an APPROVED and expired request', async () => {
+      const pastDate = new Date()
+      pastDate.setFullYear(pastDate.getFullYear() - 1)
+      mockGetUserAccessApproval.mockReturnValue(
+        getUseQuerySuccessMock({
+          ...mockAccessApproval,
+          expiredOn: pastDate.toISOString(),
+          state: 'APPROVED',
+        }),
+      )
+      renderComponent({
+        submissionId: APPROVED_SUBMISSION_ID,
+        isReviewer: false,
+      })
+
+      await screen.findByText('Status')
+      await screen.findByText('Expired')
+
+      const updateRequestButton = await screen.findByRole('button', {
+        name: 'Update Request',
+      })
+
+      await userEvent.click(updateRequestButton)
+
+      expect(mockAccessRequirementList).toHaveBeenLastCalledWith(
+        {
+          renderAsModal: true,
+          accessRequirementFromProps: [mockManagedACTAccessRequirement],
+          onHide: expect.any(Function),
+        },
+        expect.anything(),
+      )
+      expect(mockCancelSubmissionModal).not.toHaveBeenCalledWith(
+        expect.objectContaining({ open: true }),
+        expect.anything(),
+      )
+    })
+
+    it('supports updating a CANCELLED request', async () => {
+      mockGetUserAccessApproval.mockReturnValue(
+        getUseQueryErrorMock(
+          new SynapseClientError(
+            404,
+            'Not found',
+            expect.getState().currentTestName!,
+          ),
+        ),
+      )
+
+      renderComponent({
+        submissionId: CANCELLED_SUBMISSION_ID,
+        isReviewer: false,
+      })
+
+      await screen.findByText('Status')
+      await screen.findByText('CANCELLED')
+
+      const modifyRequestButton = await screen.findByRole('button', {
+        name: 'Modify Request',
+      })
+
+      await userEvent.click(modifyRequestButton)
+
+      expect(mockAccessRequirementList).toHaveBeenLastCalledWith(
+        {
+          renderAsModal: true,
+          accessRequirementFromProps: [mockManagedACTAccessRequirement],
+          onHide: expect.any(Function),
+        },
+        expect.anything(),
+      )
+      expect(mockCancelSubmissionModal).not.toHaveBeenCalledWith(
+        expect.objectContaining({ open: true }),
+        expect.anything(),
+      )
+    })
+
+    it('supports updating a REJECTED request', async () => {
+      const pastDate = new Date()
+      pastDate.setFullYear(pastDate.getFullYear() - 1)
+      mockGetUserAccessApproval.mockReturnValue(
+        getUseQueryErrorMock(
+          new SynapseClientError(
+            404,
+            'Not found',
+            expect.getState().currentTestName!,
+          ),
+        ),
+      )
+
+      renderComponent({
+        submissionId: REJECTED_SUBMISSION_ID,
+        isReviewer: false,
+      })
+
+      await screen.findByText('Status')
+      await screen.findByText('REJECTED')
+
+      const modifyRequestButton = await screen.findByRole('button', {
+        name: 'Modify Request',
+      })
+
+      await userEvent.click(modifyRequestButton)
+
+      expect(mockAccessRequirementList).toHaveBeenLastCalledWith(
+        {
+          renderAsModal: true,
+          accessRequirementFromProps: [mockManagedACTAccessRequirement],
+          onHide: expect.any(Function),
+        },
+        expect.anything(),
+      )
+      expect(mockCancelSubmissionModal).not.toHaveBeenCalledWith(
+        expect.objectContaining({ open: true }),
+        expect.anything(),
+      )
+    })
+
+    it('hides certain ui elements that should not be shown to accessors', () => {
+      renderComponent({
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: false,
+      })
+
+      // approve/reject buttons
+      expect(
+        screen.queryByRole('button', { name: 'Approve' }),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: 'Reject' }),
+      ).not.toBeInTheDocument()
+
+      // Assigned reviewer
+      expect(screen.queryByText('Assigned Reviewer')).not.toBeInTheDocument()
+
+      // Modified by
+      expect(screen.queryByText('Modified By')).not.toBeInTheDocument()
+    })
   })
 })
