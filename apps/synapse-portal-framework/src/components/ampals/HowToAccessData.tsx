@@ -1,4 +1,4 @@
-import { Stack, Link, Button, Box, Typography } from '@mui/material'
+import { Stack, Box, Typography } from '@mui/material'
 import { ReactComponent as HowToAccessDataLogo } from '../../../../portals/ampals/src/config/style/howToAccessDataLogo.svg'
 import { ReactComponent as GeneExpressionOmnibusLogo } from '../../../../portals/ampals/src/config/style/geneExpressionOmnibus.svg'
 import { ReactComponent as RDCADAP } from '../../../../portals/ampals/src/config/style/RDCADAP.svg'
