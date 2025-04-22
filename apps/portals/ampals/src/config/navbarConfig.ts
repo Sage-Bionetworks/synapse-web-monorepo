@@ -23,8 +23,8 @@ export const navbarConfig: NavbarConfig = {
         { name: 'Collections', path: '/Explore/Collections' },
         { name: 'Datasets', path: '/Explore/Datasets' },
         {
-          name: 'All Data',
-          path: '/Explore/All Data',
+          name: 'Files',
+          path: '/Explore/Files',
         },
       ],
     },

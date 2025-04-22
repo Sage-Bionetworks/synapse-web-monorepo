@@ -25,6 +25,7 @@ import IconSvg from '../IconSvg/IconSvg'
 import { QueryContextType } from '../QueryContext'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
 import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
+import { ReadonlyDeep } from 'type-fest'
 
 type SearchState = {
   show: boolean
@@ -48,7 +49,19 @@ export type SearchV2Props = {
   defaultColumn?: string
   searchable?: SearchableColumnsV2
   lockedColumn?: LockedColumn
-  fullTextSearchHelpURL?: string
+  /**
+   * PLFM-8897, PORTALS-3534: Full-Text Search configuration.
+   * For Tables that have FTS enabled...
+   * If specified, use the specified mode and distance (if BOOLEAN mode). Otherwise default to NATURAL_LANGUAGE mode.
+   */
+  ftsConfig?: ReadonlyDeep<FTSConfig>
+}
+
+export type TextMatchesMode = 'NATURAL_LANGUAGE' | 'BOOLEAN'
+export type FTSConfig = {
+  textMatchesMode: TextMatchesMode
+  distance?: number // In BOOLEAN mode, this operator tests whether two or more words all start within a specified distance from each other, measured in words.
+  searchHelpURL?: string
 }
 
 type InternalSearchProps = SearchV2Props & {

@@ -25,7 +25,9 @@ export const datasetSchema: TableToGenericCardMapping = {
     key: CUSTOM_LABEL_KEY,
     value: CUSTOM_LABEL_VALUE,
     isVisible: (schema: Record<string, number>, data: string[]) => {
-      return Boolean(data[schema['externalLink']])
+      return Boolean(
+        data[schema['externalLink']] || data[schema['datasetAlias']],
+      )
     },
   },
   secondaryLabels: [
@@ -39,6 +41,7 @@ export const datasetSchema: TableToGenericCardMapping = {
     'consortium',
   ],
   dataTypeIconNames: 'dataType',
+  downloadCartSynId: 'datasetAlias',
 }
 
 export const datasetCardConfiguration: CardConfiguration = {
@@ -82,6 +85,10 @@ export const datasetsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   hideDownload: true,
   initialExpandedFacetControls: ['assay', 'species', 'tissue', 'theme'],
   searchConfiguration: {
+    ftsConfig: {
+      textMatchesMode: 'BOOLEAN',
+      distance: 3,
+    },
     searchable: [
       'datasetName',
       'description',

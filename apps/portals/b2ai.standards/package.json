@@ -1,5 +1,5 @@
 {
-  "name": "standards",
+  "name": "b2ai.standards",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -26,7 +26,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap standards",
+    "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap b2ai.standards",
     "preview": "vite preview",
     "type-check": "tsc --build",
     "lint": "eslint src",

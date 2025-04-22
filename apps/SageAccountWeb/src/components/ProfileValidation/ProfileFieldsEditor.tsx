@@ -2,6 +2,7 @@ import { StyledFormControl } from '@/components/StyledComponents'
 import { Box, TextField, useTheme } from '@mui/material'
 import { VerificationSubmission } from '@sage-bionetworks/synapse-types'
 import { ChangeEvent, useState } from 'react'
+import RORInstitutionField from 'synapse-react-client/components/RORInstitutionField/RORInstitutionField'
 import { ContinueButton } from './ContinueButton'
 
 const keysToValidate = ['firstName', 'lastName', 'location', 'company']
@@ -41,6 +42,14 @@ export const ProfileFieldsEditor = (props: ProfileFieldsEditorProps) => {
       [event.target.name]: event.target.value,
     }))
   }
+
+  function handleCompanyChange(value: string) {
+    setValues(values => ({
+      ...values,
+      company: value,
+    }))
+  }
+
   return (
     <>
       <Box
@@ -83,14 +92,9 @@ export const ProfileFieldsEditor = (props: ProfileFieldsEditorProps) => {
           margin="normal"
           required
         >
-          <TextField
-            fullWidth
-            label={'Current Affiliation'}
-            id="company"
-            name="company"
-            onChange={handleChange}
+          <RORInstitutionField
+            onChange={value => handleCompanyChange(value || '')}
             value={values.company || ''}
-            error={!!errors.company}
           />
         </StyledFormControl>
         <StyledFormControl

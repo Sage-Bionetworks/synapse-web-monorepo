@@ -29,6 +29,7 @@ import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter/EnumFac
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
 import SynapseTableCell from './SynapseTableCell'
 import { useSynapseTableContext } from './SynapseTableContext'
+import { useInView } from 'react-intersection-observer'
 
 // Add a prefix to these column IDs so they don't collide with actual column names
 const columnIdPrefix =
@@ -179,10 +180,24 @@ const getEntityOrRowVersion = (
 }
 
 function AccessCell(props: CellContext<Row, unknown>) {
+  const { showExternalAccessIcon } = useSynapseTableContext()
+  const { ref, inView } = useInView({ triggerOnce: true })
   const entityId = getEntityOrRowId(props)!
+
+  // If showExternalAccessIcon is true, defer rendering until the cell is in view to limit simultaneous API calls
+  const canRenderAccessIcon =
+    !showExternalAccessIcon || (showExternalAccessIcon && inView)
+
   return (
-    <div data-testid={'AccessCell'}>
-      <HasAccessV2 key={entityId} entityId={entityId} showButtonText={false} />
+    <div ref={ref} data-testid="AccessCell">
+      {canRenderAccessIcon && (
+        <HasAccessV2
+          key={entityId}
+          entityId={entityId}
+          showButtonText={false}
+          showExternalAccessIcon={showExternalAccessIcon}
+        />
+      )}
     </div>
   )
 }

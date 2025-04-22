@@ -16,13 +16,17 @@ export const searchPageTabs = [
     title: 'Datasets',
     path: 'Datasets',
   },
+  {
+    title: 'Files',
+    path: 'Files',
+  },
 ] as const satisfies PortalSearchTabConfig[]
 
 const portalSearchPageConfigs = [
   configs.programs,
   configs.collections,
   configs.datasets,
-  configs.data,
+  configs.files,
 ]
 
 export const searchPageChildRoutes: RouteObject[] = [
@@ -61,6 +65,16 @@ export const searchPageChildRoutes: RouteObject[] = [
     element: (
       <PortalSearchPage
         selectedTabIndex={2}
+        configs={portalSearchPageConfigs}
+        searchPageTabs={searchPageTabs}
+      />
+    ),
+  },
+  {
+    path: searchPageTabs[3].path,
+    element: (
+      <PortalSearchPage
+        selectedTabIndex={3}
         configs={portalSearchPageConfigs}
         searchPageTabs={searchPageTabs}
       />
