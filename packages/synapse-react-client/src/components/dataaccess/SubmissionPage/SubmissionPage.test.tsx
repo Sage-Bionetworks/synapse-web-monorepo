@@ -51,6 +51,7 @@ import {
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import failOnConsoleError from 'jest-fail-on-console'
+import { useNavigate } from 'react-router'
 import * as RejectDataAccessRequestModalModule from '../RejectDataAccessRequestModal'
 import SubmissionPage, { SubmissionPageProps } from './SubmissionPage'
 import { useGetUserAccessApproval } from '@/synapse-queries/dataaccess/useAccessApprovals'
@@ -70,6 +71,7 @@ const REJECTED_SUBMISSION_ID = mockRejectedSubmission.id
 
 const onServerReceivedUpdate = jest.fn()
 
+jest.mock('react-router')
 jest.mock('./CancelDataAccessRequestConfirmationModal')
 jest.mock('@/synapse-queries/dataaccess/useAccessApprovals')
 
@@ -87,6 +89,8 @@ jest.mock('../../widgets/FileHandleLink', () => ({
     </div>
   ),
 }))
+
+jest.mocked(useNavigate).mockReturnValue(jest.fn())
 
 // Mock the access requirement wiki
 jest.mock('../../Markdown/MarkdownSynapse', () => ({
@@ -484,6 +488,7 @@ describe('Submission Page tests', () => {
           renderAsModal: true,
           accessRequirementFromProps: [mockManagedACTAccessRequirement],
           onHide: expect.any(Function),
+          onSubmissionCreated: expect.any(Function),
         },
         expect.anything(),
       )
@@ -523,6 +528,7 @@ describe('Submission Page tests', () => {
           renderAsModal: true,
           accessRequirementFromProps: [mockManagedACTAccessRequirement],
           onHide: expect.any(Function),
+          onSubmissionCreated: expect.any(Function),
         },
         expect.anything(),
       )
@@ -564,6 +570,7 @@ describe('Submission Page tests', () => {
           renderAsModal: true,
           accessRequirementFromProps: [mockManagedACTAccessRequirement],
           onHide: expect.any(Function),
+          onSubmissionCreated: expect.any(Function),
         },
         expect.anything(),
       )

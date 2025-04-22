@@ -115,6 +115,9 @@ const routes: RouteObject[] = [
   },
 ]
 
+/**
+ * Component that renders User Access Request history table & submission page. Handles routing internally.
+ */
 export function UserAccessRequestHistoryPlace(props: ReviewerDashboardProps) {
   const {
     routerBaseName = '/RequestHistory:default',
