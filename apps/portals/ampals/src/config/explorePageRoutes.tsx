@@ -3,7 +3,7 @@ import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
 import { datasetCollectionsCardContainerLogicProps } from './synapseConfigs/datasetcollections'
 import { datasetQueryWrapperPlotNavProps } from './synapseConfigs/datasets'
 import { programsCardContainerLogicProps } from './synapseConfigs/programs'
-import { dataQueryWrapperPlotNavProps } from './synapseConfigs'
+import { filesQueryWrapperPlotNavProps } from './synapseConfigs'
 
 const explorePageRoutes: RouteObject[] = [
   {
@@ -23,8 +23,8 @@ const explorePageRoutes: RouteObject[] = [
     element: <QueryWrapperPlotNav {...datasetQueryWrapperPlotNavProps} />,
   },
   {
-    path: 'All Data',
-    element: <QueryWrapperPlotNav {...dataQueryWrapperPlotNavProps} />,
+    path: 'Files',
+    element: <QueryWrapperPlotNav {...filesQueryWrapperPlotNavProps} />,
   },
 ]
 
