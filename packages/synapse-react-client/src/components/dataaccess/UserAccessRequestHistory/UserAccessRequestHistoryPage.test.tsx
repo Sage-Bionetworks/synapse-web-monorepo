@@ -6,10 +6,12 @@ import {
   MOCK_USER_ID_3,
 } from '@/mocks/user/mock_user_profile'
 import { useSearchAccessSubmissionUserRequestsInfinite } from '@/synapse-queries/dataaccess/useDataAccessSubmission'
+import { getUseInfiniteQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { UserSubmissionSearchResult } from '@sage-bionetworks/synapse-client'
 import { SubmissionState } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 
 jest.mock('@/utils/functions/DateFormatter')
@@ -69,16 +71,16 @@ const data: UserSubmissionSearchResult[] = [
   },
 ]
 
-mockUseSearchAccessSubmissionUserRequestsInfinite.mockReturnValue(
-  getUseInfiniteQuerySuccessMock([
-    {
-      results: data,
-    },
-  ]),
-)
-
 describe('UserAccessRequestHistoryTable', () => {
   it('Displays table of data', async () => {
+    mockUseSearchAccessSubmissionUserRequestsInfinite.mockReturnValue(
+      getUseInfiniteQuerySuccessMock([
+        {
+          results: data,
+        },
+      ]),
+    )
+
     const router = createMemoryRouter([
       {
         path: '/',
