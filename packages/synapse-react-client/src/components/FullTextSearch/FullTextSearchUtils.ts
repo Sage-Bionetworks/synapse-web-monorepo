@@ -10,6 +10,25 @@ import * as React from 'react'
 import { getFileColumnModelId } from '../SynapseTable/SynapseTableUtils'
 import { FTSConfig } from '../SynapseTable/SearchV2'
 
+/**
+ * Expects a search expression of the form: "searchText" @3
+ * In this example, this function will return the following string via a regex: searchText
+ */
+export function getSearchTextFromBooleanModeSearchExpression(
+  searchExpression: string,
+) {
+  /**
+   * ^"(.+?)": Matches the opening double quote and lazily captures any characters until the next quote.
+   * \s*@\d+$: Matches optional whitespace, the @ symbol, and one or more digits at the end.
+   */
+  const match = searchExpression.match(/^"(.+?)"\s*@\d+$/)
+  if (match) {
+    return match[1]
+  } else {
+    return ''
+  }
+}
+
 // Convert the user-provided searchText into a search expression given the current FTS configuration.
 // If configured to search using BOOLEAN mode, search expression will wrap the search text in double quotes and include the distance.
 export function getTextMatchesQueryFilter(
