@@ -7,19 +7,16 @@ import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { updateQueryUsingSearchTerm } from './FullTextSearchUtils'
+import { FTSConfig } from '../SynapseTable/SearchV2'
 
 // See PLFM-7011
 const MIN_SEARCH_QUERY_LENGTH = 3
 
 export type FullTextSearchProps = {
-  helpMessage?: string
-  helpUrl?: string
+  ftsConfig?: FTSConfig
 }
 
-export function FullTextSearch({
-  helpMessage = 'This search bar is powered by MySQL Full Text Search.',
-  helpUrl,
-}: FullTextSearchProps) {
+export function FullTextSearch({ ftsConfig }: FullTextSearchProps) {
   const { executeQueryRequest } = useQueryContext()
   const { showSearchBar } = useQueryVisualizationContext()
   const [searchText, setSearchText] = useState('')
@@ -44,6 +41,7 @@ export function FullTextSearch({
           columnModels,
           searchText,
           setSearchText,
+          ftsConfig,
         ),
       )
     }
@@ -87,8 +85,10 @@ export function FullTextSearch({
                     />
                   )}
                   <HelpPopover
-                    markdownText={helpMessage}
-                    helpUrl={helpUrl}
+                    markdownText={
+                      'This search bar is powered by MySQL Full Text Search.'
+                    }
+                    helpUrl={ftsConfig?.searchHelpURL}
                     placement="left"
                   />
                 </>

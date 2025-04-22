@@ -1,4 +1,5 @@
 import { ExternalAnalysisPlatform } from 'synapse-react-client/components/SynapseTable/export/ExternalAnalysisPlatformsConstants'
+import { SearchV2Props } from 'synapse-react-client/components/SynapseTable/SearchV2'
 
 export const dataSql = 'SELECT * FROM syn52234677'
 export const dataOnStudiesPageSql =
@@ -23,8 +24,14 @@ export const whatWeDoSql = 'SELECT * FROM syn64130706'
 export const featuredResearchSql =
   'SELECT * FROM syn64542019 ORDER BY order ASC'
 
-export const defaultSearchConfiguration = {
-  fullTextSearchHelpURL: 'https://help.eliteportal.org/help/search-tips',
+export const defaultSearchConfiguration: Omit<
+  SearchV2Props,
+  'queryContext' | 'queryVisualizationContext'
+> = {
+  ftsConfig: {
+    textMatchesMode: 'NATURAL_LANGUAGE',
+    searchHelpURL: 'https://help.eliteportal.org/help/search-tips',
+  },
 }
 export const cavaticaConnectAccountURL =
   'https://help.eliteportal.org/help/analysis-environments#IntegrationwithAnalysis&ComputeEnvironments-GainingAccess'

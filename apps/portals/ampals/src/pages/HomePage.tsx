@@ -12,6 +12,9 @@ import {
 } from 'synapse-react-client'
 import { OrientationBanner } from 'synapse-react-client'
 import { goalsTableEntityId } from '@/config/resources'
+import { ReactComponent as DatasetsIcon } from '../../src/config/style/datasets.svg'
+import { ReactComponent as FilesIcon } from '../../src/config/style/files.svg'
+import { ReactComponent as ProjectsIcon } from '../../src/config/style/projects.svg'
 
 //TODO
 export default function HomePage() {
@@ -61,7 +64,14 @@ export default function HomePage() {
           },
         }}
       >
-        <GoalsV3 entityId={goalsTableEntityId} />
+        <GoalsV3
+          entityId={goalsTableEntityId}
+          svgComponentMap={{
+            datasets: DatasetsIcon,
+            files: FilesIcon,
+            projects: ProjectsIcon,
+          }}
+        />
       </SectionLayout>
       {/* <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <Goals entityId={'syn23518009'} />

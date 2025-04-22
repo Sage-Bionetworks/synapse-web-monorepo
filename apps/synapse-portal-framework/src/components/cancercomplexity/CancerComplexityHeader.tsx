@@ -1,8 +1,5 @@
 import { Box, Typography, Link } from '@mui/material'
 import HeaderSearchBox from '../HeaderSearchBox'
-import Header from '../Header'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
-import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries'
 import { AddAlertTwoTone } from '@mui/icons-material'
 import { TypeAnimation } from 'react-type-animation'
 import headerBackground from '../assets/cckp-header-background.jpeg'
@@ -10,20 +7,16 @@ import headerBackground from '../assets/cckp-header-background.jpeg'
 const CancerComplexityHeader = () => {
   const searchPlaceholder = 'Search for cancer related data and resources'
   const searchExampleTerms = [
-    'Justo Turpis',
-    'Nostra',
-    'Fames',
-    'Rhoncus',
-    'Pharetra enim',
-    'Aliquet',
-    'Ridiculus',
-    'Penatibus',
-    'Accumsan quisque',
-    'Patient Advocacy',
+    'metastasis',
+    'tumor-immune microenvironment',
+    'drug resistance',
+    'triple-negative breast cancer',
+    'ARACNe',
+    'Cytoscape',
+    'spatial transcriptomics',
+    'multiplex imaging',
+    'lecture series',
   ]
-  const isFeatureEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.PORTAL_SEARCH_HEADER,
-  )
   const roles = [
     { value: 'researcher', label: 'Researcher' },
     { value: 'principalInvestigator', label: 'Principal Investigator' },
@@ -152,44 +145,40 @@ const CancerComplexityHeader = () => {
   )
   return (
     <>
-      {isFeatureEnabled ? (
-        <header id="header">
+      <header id="header">
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', lg: 'row' },
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '20px 0',
+            background: `linear-gradient(90deg, rgba(70, 61, 201, 0.90) 25%, rgba(70, 61, 201, 0.00) 100%), url(${headerBackground}) lightgray 0px -170.097px / 100% 247.253% no-repeat;`,
+          }}
+        >
           <Box
             sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', lg: 'row' },
-              justifyContent: 'center',
-              alignItems: 'center',
-              padding: '20px 0',
-              background: `linear-gradient(90deg, rgba(70, 61, 201, 0.90) 25%, rgba(70, 61, 201, 0.00) 100%), url(${headerBackground}) lightgray 0px -170.097px / 100% 247.253% no-repeat;`,
+              margin: 0,
+              flex: 1,
+              padding: { xs: '40px', lg: '40px 80px' },
             }}
           >
-            <Box
-              sx={{
-                margin: 0,
-                flex: 1,
-                padding: { xs: '40px', lg: '40px 80px' },
-              }}
-            >
-              {content}
-            </Box>
-            <HeaderSearchBox
-              searchExampleTerms={searchExampleTerms}
-              searchPlaceholder={searchPlaceholder}
-              path="/Search"
-              roles={roles}
-              sx={{
-                flex: 1,
-                '& > :first-child': {
-                  background: 'rgba(184, 204, 226, 0.60)',
-                },
-              }}
-            />
+            {content}
           </Box>
-        </header>
-      ) : (
-        <Header />
-      )}
+          <HeaderSearchBox
+            searchExampleTerms={searchExampleTerms}
+            searchPlaceholder={searchPlaceholder}
+            path="/Search"
+            roles={roles}
+            sx={{
+              flex: 1,
+              '& > :first-child': {
+                background: 'rgba(184, 204, 226, 0.60)',
+              },
+            }}
+          />
+        </Box>
+      </header>
     </>
   )
 }
