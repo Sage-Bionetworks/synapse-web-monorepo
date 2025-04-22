@@ -28,11 +28,11 @@ export const columnIconConfigs: ColumnIconConfigs = {
     dataType: {
       bioChemicalPhysical: {
         icon: 'bioChemicalPhysical',
-        label: 'Bio Chemical Physical',
+        label: 'Bio Chemical Physical Data',
       },
       clinical: {
         icon: 'clinical',
-        label: 'Clinical',
+        label: 'Clinical Data',
       },
       computationalTool: {
         icon: 'computationalTool',
@@ -44,17 +44,17 @@ export const columnIconConfigs: ColumnIconConfigs = {
       },
       epigenomeProfiling: {
         icon: 'chromatin',
-        label: 'Epigenome Profiling',
+        label: 'Epigenome Profiling Data',
       },
       expressionProfiling: {
         icon: 'geneExpression',
-        label: 'Expression Profiling',
+        label: 'Expression Profiling Data',
       },
       genomeProfiling: {
         icon: 'geneVariants',
-        label: 'Genome Profiling',
+        label: 'Genome Profiling Data',
       },
-      imaging: { icon: 'imaging', label: 'Image' },
+      imaging: { icon: 'imaging', label: 'Imaging Data' },
       inSilicoModel: {
         icon: 'inSilicoModel',
         label: 'In Silico Model',
@@ -63,10 +63,10 @@ export const columnIconConfigs: ColumnIconConfigs = {
         icon: 'modelSystem',
         label: 'Model System',
       },
-      proteomics: { icon: 'proteomics', label: 'Proteomics' },
+      proteomics: { icon: 'proteomics', label: 'Proteomics Data' },
       spatialProfiling: {
         icon: 'spatialProfiling',
-        label: 'Spatial Profiling',
+        label: 'Spatial Profiling Data',
       },
       other: { icon: 'other', label: 'Other' },
     },
