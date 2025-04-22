@@ -40,6 +40,7 @@ export interface ColumnMultiValueFunctionQueryFilter {
   function: ColumnMultiValueFunction // Determines the filter operation to perform
   values: string[] // Values to used with the filter.
 }
+export type TextMatchesMode = 'NATURAL_LANGUAGE' | 'BOOLEAN'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/TextMatchesQueryFilter.html
 export const TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE =
@@ -50,6 +51,7 @@ export interface TextMatchesQueryFilter {
   concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE
   isDefiningCondition?: boolean //When null (default) or false, this condition will be applied to WHERE clause of table/view query.  When set to true, for a query against a VirtualTable, this condition will be applied to the WHERE clause of the VirtualTable's definingSQL
   searchExpression: string
+  searchMode?: TextMatchesMode
 }
 
 export type QueryFilter =
