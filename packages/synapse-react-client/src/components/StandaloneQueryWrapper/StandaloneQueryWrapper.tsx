@@ -10,10 +10,7 @@ import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import FullTextSearch from '../FullTextSearch/FullTextSearch'
-import {
-  QueryContextConsumer,
-  QueryContextType,
-} from '../QueryContext/QueryContext'
+import { QueryContextConsumer } from '../QueryContext/QueryContext'
 import {
   QueryVisualizationContextConsumer,
   QueryVisualizationWrapper,
