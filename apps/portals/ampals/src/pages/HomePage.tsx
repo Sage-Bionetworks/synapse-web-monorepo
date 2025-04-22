@@ -133,6 +133,7 @@ export default function HomePage() {
         maxBarCount={20}
         setName="# People per data type (all datastes)"
         combinationName="# of Files"
+        sx={{ line: { strokeWidth: '3px', strokeOpacity: '1' } }}
         // onClick={handleUpsetPlotClick}
         // summaryLinkText='Explore All Data'
         // summaryLink='/Explore/Data'

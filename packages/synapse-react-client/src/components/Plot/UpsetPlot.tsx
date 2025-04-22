@@ -23,11 +23,11 @@ import { SizeMe } from 'react-sizeme'
 import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { ErrorBanner } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
-import { Box } from '@mui/material'
+import { Box, SxProps, useTheme } from '@mui/material'
 
 export type UpsetPlotProps = {
   sql: string // first column should contain values, second column should contain a single set value.  ie. SELECT distinct individualID, assay FROM syn20821313
-  rgbIndex: number // color plot based on portal
+  rgbIndex?: number // color plot based on portal
   customColor?: string
   maxBarCount?: number // will show all if not set
   setName?: string // instead of "Set Size"
@@ -35,6 +35,7 @@ export type UpsetPlotProps = {
   height?: number
   summaryLinkText?: string // text for home page link below chart
   summaryLink?: string // url for home page link below chart
+  sx?: SxProps
 } & Pick<UpSetSelectionProps, 'onClick'>
 
 export type UpsetPlotData = {
@@ -56,16 +57,24 @@ export function UpsetPlot({
   summaryLink,
   onClick,
   customColor,
+  sx,
 }: UpsetPlotProps) {
   const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState<boolean>()
   const [data, setData] = useState<UpsetPlotData>()
   const [error, setError] = useState<string>()
   const [selection, setSelection] = useState(null as ISetLike<any> | null)
+  const theme = useTheme()
 
-  const { colorPalette } = getColorPalette(rgbIndex, 2)
-  const plotColor = rgbIndex ? colorPalette[0] : customColor
-  const selectionColor = rgbIndex ? colorPalette[0] : customColor
+  let plotColor: string, selectionColor: string
+  if (rgbIndex) {
+    const { colorPalette } = getColorPalette(rgbIndex, 2)
+    plotColor = colorPalette[0]
+    selectionColor = colorPalette[0]
+  } else {
+    plotColor = customColor || theme.palette.primary.main
+    selectionColor = customColor || theme.palette.primary.main
+  }
 
   const updateFontSizes: UpSetFontSizes = {
     setLabel: '14px',
@@ -162,13 +171,17 @@ export function UpsetPlot({
     }
   }, [sql, accessToken])
 
+  console.log('sets', data?.sets)
+  console.log('combinations', data?.combinations)
+  console.log('d', data?.combinations.slice(0, 5))
+  // .upsetLine-upset-dcv07xnnr
   return (
     <>
       {isLoading && loadingScreen}
       {!isLoading && data && (
         <SizeMe>
           {({ size }) => (
-            <Box className="UpsetPlot">
+            <Box className="UpsetPlot" sx={{ ...sx }}>
               <UpSetJS
                 sets={data.sets}
                 combinations={data.combinations}
