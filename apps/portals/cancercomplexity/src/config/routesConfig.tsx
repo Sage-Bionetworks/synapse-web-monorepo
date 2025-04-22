@@ -68,12 +68,15 @@ const routes: RouteObject[] = [
                 <ConsortiaGoals />
               </SectionLayout>
             </div>
-            <div className={'home-bg-dark'}>
-              <p className={'title center-title'}>
-                What Resources Are Available
-              </p>
+            <SectionLayout
+              title="What Resources are Available?"
+              centerTitle
+              ContainerProps={{
+                className: 'home-spacer',
+              }}
+            >
               <CardDeck {...availableResearchCardDeckConfig} />
-            </div>
+            </SectionLayout>
 
             <SectionLayout
               title={
