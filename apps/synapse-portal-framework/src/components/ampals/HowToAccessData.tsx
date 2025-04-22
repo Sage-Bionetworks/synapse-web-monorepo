@@ -39,13 +39,14 @@ const HowToAccessData = () => {
         <Typography variant="headline1" sx={{ lineHeight: 'normal' }}>
           How to Access Data
         </Typography>
-        <Button
+        {/* Todo */}
+        {/* <Button
           variant="contained"
           component={Link}
           sx={{ width: { xs: '100%', sm: 'fit-content' }, padding: '6px 24px' }}
         >
           More about accessing data
-        </Button>
+        </Button> */}
         <Box sx={{ marginTop: 'auto' }}>
           <HowToAccessDataLogo />
         </Box>
@@ -120,9 +121,10 @@ const HowToAccessData = () => {
               data, and you may need to make multiple requests to access data
               from them.
             </Typography>
-            <Link>
+            {/* Todo */}
+            {/* <Link>
               Learn more about accessing data from the ALS Knowledge Portal
-            </Link>
+            </Link> */}
           </Stack>
           <Box
             sx={{
