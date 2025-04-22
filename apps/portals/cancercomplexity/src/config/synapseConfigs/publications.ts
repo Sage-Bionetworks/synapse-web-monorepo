@@ -80,6 +80,10 @@ export const publicationsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     { columnName: 'publicationYear', direction: Direction.DESC },
   ],
   searchConfiguration: {
+    ftsConfig: {
+      textMatchesMode: 'BOOLEAN',
+      distance: 3,
+    },
     searchable: [
       'publicationTitle',
       'authors',

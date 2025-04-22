@@ -85,6 +85,10 @@ export const datasetsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   hideDownload: true,
   initialExpandedFacetControls: ['assay', 'species', 'tissue', 'theme'],
   searchConfiguration: {
+    ftsConfig: {
+      textMatchesMode: 'BOOLEAN',
+      distance: 3,
+    },
     searchable: [
       'datasetName',
       'description',
