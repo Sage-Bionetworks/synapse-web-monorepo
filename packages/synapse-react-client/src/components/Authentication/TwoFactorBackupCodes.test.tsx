@@ -56,9 +56,7 @@ describe('TwoFactorBackupCodes', () => {
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Copy to Clipboard' }),
-    )
+    await userEvent.click(screen.getByRole('button', { name: 'Copy Codes' }))
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       newCodes.codes.join('\n'),
     )
@@ -89,9 +87,7 @@ describe('TwoFactorBackupCodes', () => {
       { exact: false },
     )
 
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Copy to Clipboard' }),
-    )
+    await userEvent.click(screen.getByRole('button', { name: 'Copy Codes' }))
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       newCodes.codes.join('\n'),
     )
