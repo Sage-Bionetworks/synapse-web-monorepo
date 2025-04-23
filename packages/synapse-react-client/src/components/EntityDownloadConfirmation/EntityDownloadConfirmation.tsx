@@ -70,6 +70,7 @@ export function EntityDownloadConfirmation({
 
   if (isLoading) {
     if (
+      entityConcreteType &&
       entityConcreteType !== 'org.sagebionetworks.repo.model.Folder' &&
       entityConcreteType !==
         'org.sagebionetworks.repo.model.table.TableEntity' &&

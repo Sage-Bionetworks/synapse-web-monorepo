@@ -691,6 +691,34 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     ).toBe(false)
   })
 
+  it('Does not convert string annotations with commas to arrays (SWC-7313)', async () => {
+    const stringAnnotationWithCommas = 'my string annotation, with commas'
+    server.use(
+      rest.get(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
+          ':entityId',
+        )}`,
+
+        async (req, res, ctx) => {
+          const response = cloneDeep(mockFileEntity).json
+          // Delete the other annotation keys
+          delete response.myStringKey
+          delete response.myIntegerKey
+          delete response.myFloatKey
+
+          // Add string with commas
+          response.myStringAnnotationWithCommas = stringAnnotationWithCommas
+          delete response.stringArray
+          return res(ctx.status(200), ctx.json(response))
+        },
+      ), // showStringArray will be true but stringArray will have no data
+      noSchemaHandler,
+    )
+    await renderComponent()
+
+    await screen.findByDisplayValue(stringAnnotationWithCommas)
+  })
+
   describe('Passes entity data to the Form component to compute conditional fields', () => {
     it('shows a conditional field where the concreteType matches FileEntity', async () => {
       server.use(

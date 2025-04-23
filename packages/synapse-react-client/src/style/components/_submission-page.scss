@@ -2,33 +2,21 @@
 @use '../abstracts/mixins' as SrcMixins;
 @use 'sass:map';
 .SubmissionPage {
-  @media screen and (min-width: map.get(SRC.$breakpoints, 'medium')) {
-    display: flex;
-    .SubmissionSummary {
-      width: 375px;
-      max-width: 400px;
-      padding-right: 40px;
-    }
-    .SubmissionRightPane {
-      flex-grow: 1;
-    }
-  }
   .ButtonContainer {
     display: flex;
     gap: 10px;
+    margin-bottom: 16px;
     button {
       font-size: 16px;
-      color: white;
       flex-grow: 1;
       flex-basis: 0;
     }
   }
   .SubmissionSummary {
     margin-bottom: 15px;
-    min-width: 320px;
     .SubmissionSummaryGrid {
       display: grid;
-      column-gap: 10px;
+      gap: 8px;
       // Grid column maximum is 50% minus 5px to account for the column gap
       grid-template-columns: minmax(auto, calc(50% - 5px)) minmax(
           auto,
@@ -64,6 +52,4 @@
       margin: 40px;
     }
   }
-
-  @include SrcMixins.MuiTypographyTopMargins();
 }
