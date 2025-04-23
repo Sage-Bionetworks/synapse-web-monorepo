@@ -1,0 +1,1 @@
+const D={ASC:"ASC",DESC:"DESC"},t={MODIFIED_ON:"MODIFIED_ON",CREATED_ON:"CREATED_ON"};function E(o){if(o.length===0)return;const e=o[0];let i=t.CREATED_ON;return e.id==="createdOn"?i=t.CREATED_ON:e.id==="modifiedOn"&&(i=t.MODIFIED_ON),[{field:i,direction:e.desc?D.DESC:D.ASC}]}export{E as g};
