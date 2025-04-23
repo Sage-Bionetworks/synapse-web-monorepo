@@ -54,7 +54,7 @@ export const peopleQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   searchConfiguration: {
     ftsConfig: {
       textMatchesMode: 'BOOLEAN',
-      distance: 3,
+      distance: 20,
     },
     searchable: [
       'name',
