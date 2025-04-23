@@ -193,6 +193,7 @@ const downloadListQueryKeys = {
 const ACCESS_REQUIREMENT_QUERY_KEY = 'accessRequirement'
 const ROOT_WIKI_PAGE_KEY_QUERY_KEY = 'rootWikiPageKey'
 const WIKI_PAGE_QUERY_KEY = 'wikiPage'
+const DATA_ACCESS_SUBMISSION_QUERY_KEY = 'dataAccessSubmission'
 
 /**
  * Returns a react-query Query Key.
@@ -447,6 +448,10 @@ export class KeyFactory {
     return this.getKey('accessApprovalSearch', params)
   }
 
+  public getUserAccessApprovalQueryKey(submissionId: string) {
+    return this.getKey('accessApproval', submissionId)
+  }
+
   public getAccessRequirementQueryKey(id?: string) {
     return this.getKey(ACCESS_REQUIREMENT_QUERY_KEY, id)
   }
@@ -526,18 +531,33 @@ export class KeyFactory {
     )
   }
 
-  public getDataAccessSubmissionQueryKey(id?: string) {
-    return this.getKey('dataAccessSubmission', id)
+  // Returns key that can be used to invalidate all data access submission queries
+  public getDataAccessSubmissionQueryKey() {
+    return this.getKey(DATA_ACCESS_SUBMISSION_QUERY_KEY)
+  }
+
+  public getDataAccessSubmissionByIdQueryKey(id: string) {
+    return this.getKey(DATA_ACCESS_SUBMISSION_QUERY_KEY, 'byId', id)
   }
 
   public searchDataAccessSubmissionQueryKey(params?: SubmissionSearchRequest) {
-    return this.getKey('accessSubmissionSearch', 'reviewer', params)
+    return this.getKey(
+      DATA_ACCESS_SUBMISSION_QUERY_KEY,
+      'search',
+      'reviewer',
+      params,
+    )
   }
 
   public searchDataAccessSubmissionUserRequestsQueryKey(
     params?: UserSubmissionSearchRequest,
   ) {
-    return this.getKey('accessSubmissionSearch', 'user', params)
+    return this.getKey(
+      DATA_ACCESS_SUBMISSION_QUERY_KEY,
+      'search',
+      'user',
+      params,
+    )
   }
 
   public getApprovedSubmissionInfoQueryKey(

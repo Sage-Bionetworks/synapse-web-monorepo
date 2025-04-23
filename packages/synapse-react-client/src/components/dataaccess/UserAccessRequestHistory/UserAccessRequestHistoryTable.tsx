@@ -1,13 +1,10 @@
+import { getSortApiRequestFromTableSortState } from '@/components/dataaccess/UserAccessRequestHistory/SubmissionSortStateTranslator'
 import { SkeletonTable } from '@/components/Skeleton'
+import UserOrTeamBadge from '@/components/UserOrTeamBadge/UserOrTeamBadge'
 import { useSearchAccessSubmissionUserRequestsInfinite } from '@/synapse-queries/dataaccess/useDataAccessSubmission'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { Button, Typography } from '@mui/material'
-import {
-  Direction,
-  SubmissionSearchSort,
-  SubmissionSortField,
-  UserSubmissionSearchResult,
-} from '@sage-bionetworks/synapse-client'
+import { UserSubmissionSearchResult } from '@sage-bionetworks/synapse-client'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -20,7 +17,6 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import ColumnHeader from '../../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../../TanStackTable/StyledTanStackTable'
-import UserOrTeamBadge from '@/components/UserOrTeamBadge/UserOrTeamBadge'
 import { USER_ACCESS_HISTORY_SUBMISSION_SUBPATH } from './RouteConstants'
 
 const columnHelper = createColumnHelper<UserSubmissionSearchResult>()
@@ -95,27 +91,6 @@ const columns = [
     enableColumnFilter: false,
   }),
 ]
-
-function getSortApiRequestFromTableSortState(
-  sortingState: SortingState,
-): SubmissionSearchSort[] | undefined {
-  if (sortingState.length === 0) {
-    return undefined
-  }
-  const sort = sortingState[0]
-  let field: SubmissionSortField = SubmissionSortField.CREATED_ON
-  if (sort.id === 'createdOn') {
-    field = SubmissionSortField.CREATED_ON
-  } else if (sort.id === 'modifiedOn') {
-    field = SubmissionSortField.MODIFIED_ON
-  }
-  return [
-    {
-      field,
-      direction: sort.desc ? Direction.DESC : Direction.ASC,
-    },
-  ]
-}
 
 export function UserAccessRequestHistoryTable() {
   const [tableSortState, setTableSortState] = useState<SortingState>([

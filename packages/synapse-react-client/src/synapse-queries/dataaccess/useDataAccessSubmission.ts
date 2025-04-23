@@ -33,7 +33,7 @@ export default function useGetDataAccessSubmission(
 
   return useQuery({
     ...options,
-    queryKey: keyFactory.getDataAccessSubmissionQueryKey(
+    queryKey: keyFactory.getDataAccessSubmissionByIdQueryKey(
       String(submissionId.toString()),
     ),
     queryFn: () => SynapseClient.getSubmissionById(submissionId, accessToken),
@@ -154,7 +154,7 @@ export function useUpdateDataAccessSubmissionState(
       })
       // Update the query data for the updated submission
       queryClient.setQueryData(
-        keyFactory.getDataAccessSubmissionQueryKey(variables.submissionId),
+        keyFactory.getDataAccessSubmissionByIdQueryKey(variables.submissionId),
         updatedSubmission,
       )
 
@@ -199,16 +199,19 @@ export function useSubmitDataAccessRequest(
       return SynapseClient.submitDataAccessRequest(request, accessToken!)
     },
     onSuccess: async (data, variables, ctx) => {
-      // Invalidate the status of the relevant AR
-      await queryClient.invalidateQueries({
-        queryKey: keyFactory.getAccessRequirementStatusQueryKey(
-          variables.accessRequirementId,
-        ),
-      })
-      // Invalidate all searches, in case it was an AR reviewer who created this submission
-      await queryClient.invalidateQueries({
-        queryKey: keyFactory.searchDataAccessSubmissionQueryKey(),
-      })
+      await Promise.all([
+        // Invalidate the status of the relevant AR
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getAccessRequirementStatusQueryKey(
+            variables.accessRequirementId,
+          ),
+        }),
+        // Invalidate all searches for AR submissions
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getDataAccessSubmissionQueryKey(),
+        }),
+      ])
+
       if (options?.onSuccess) {
         await options.onSuccess(data, variables, ctx)
       }
