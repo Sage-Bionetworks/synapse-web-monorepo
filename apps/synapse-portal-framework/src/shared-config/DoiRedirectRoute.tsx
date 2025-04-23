@@ -5,8 +5,13 @@ export type DoiRedirectConfig<TResourceType extends string> = (
   resourceId: string,
 ) => string
 
-// Portal DOI IDs are of the form "RESOURCETYPE.RESOURCEID". For example, `STUDY.syn123`.
-
+/**
+ * Component to redirect the Portal DOI ID to the resource in the portal.
+ * Portal DOI IDs are of the form "RESOURCETYPE.RESOURCEID". For example, `STUDY.syn123`.
+ *
+ * If no id is provided in the URLSearchParams, the user is redirected to the home page.
+ * @param props contains the redirectConfig function that maps the resource type/ID to the URL of the resource in the portal
+ */
 function DoiRedirectComponent<TResourceType extends string>(props: {
   redirectConfig: DoiRedirectConfig<TResourceType>
 }) {
@@ -21,15 +26,21 @@ function DoiRedirectComponent<TResourceType extends string>(props: {
     return <Navigate to={'/'} replace={true} />
   }
 
+  // Only split on the first `.` -- the ID may contain `.` itself
   const [resourceType, resourceId] = doiId.split('.', 2)
 
   const redirectUrl = redirectConfig(resourceType as TResourceType, resourceId)
   return <Navigate to={redirectUrl} replace={true} />
 }
 
+/**
+ * Creates a route to handle redirecting the ID specified in a Portal DOI to the resource in the portal.
+ * @param config a function that maps the resource type/ID to the URL of the resource in the portal
+ */
 export function getDoiRedirectRoute<TResourceType extends string>(
   config: DoiRedirectConfig<TResourceType>,
 ): RouteObject {
+  // e.g., maps /doi?id=MYRESOURCE.syn123 to /Explore/MyResource/DetailsPage?myResourceId=syn123
   return {
     path: 'doi',
     element: <DoiRedirectComponent redirectConfig={config} />,
