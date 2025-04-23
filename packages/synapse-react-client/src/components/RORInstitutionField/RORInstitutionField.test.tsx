@@ -5,7 +5,7 @@ import {
   getUseQuerySuccessMock,
 } from '@/testutils/ReactQueryMockUtils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 jest.mock('@/synapse-queries/ror')
@@ -65,6 +65,14 @@ const mockUseSearchRegistry = jest.mocked(useSearchRegistry).mockReturnValue(
 )
 
 describe('RORInstitutionField', () => {
+  const user = userEvent.setup({ advanceTimers: jest.runAllTimers })
+  beforeAll(() => {
+    jest.useFakeTimers()
+  })
+  afterAll(() => {
+    jest.useRealTimers()
+  })
+
   it('displays the value prop', () => {
     const value1 = 'some value'
     const value2 = 'some other value'
@@ -82,7 +90,7 @@ describe('RORInstitutionField', () => {
     render(<RORInstitutionField onChange={mockOnChange} />)
 
     const input = screen.getByRole('combobox')
-    await userEvent.type(input, 'my organization')
+    await user.type(input, 'my organization')
 
     expect(input).toHaveValue('my organization')
     expect(mockOnChange).toHaveBeenLastCalledWith('my organization')
@@ -94,12 +102,16 @@ describe('RORInstitutionField', () => {
     render(<RORInstitutionField onChange={mockOnChange} />)
 
     const input = screen.getByRole('combobox')
-    await userEvent.type(input, 'sage bionetworks')
+    await user.type(input, 'sage bionetworks')
+
+    act(() => {
+      jest.advanceTimersByTime(500)
+    })
 
     const option = await screen.findByRole('option', {
       name: 'Sage Bionetworks',
     })
-    await userEvent.click(option)
+    await user.click(option)
     expect(mockOnChange).toHaveBeenLastCalledWith('Sage Bionetworks')
   })
 
@@ -118,7 +130,13 @@ describe('RORInstitutionField', () => {
     render(<RORInstitutionField onChange={mockOnChange} />)
 
     const input = screen.getByRole('combobox')
-    await userEvent.type(input, 'my organization')
+    await user.type(input, 'my organization')
+
+    // Simulate the debounce so the API call is attempted
+    act(() => {
+      jest.advanceTimersByTime(500)
+    })
+
     await waitFor(() => {
       expect(screen.queryByRole('option')).not.toBeInTheDocument()
     })
