@@ -1,7 +1,6 @@
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
 import { mockSchemaBinding } from '@/mocks/mockSchema'
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
-import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
 import { rest, server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ENTITY_JSON } from '@/utils/APIConstants'
@@ -28,9 +27,6 @@ function renderComponent(wrapperProps?: SynapseContextType) {
 describe('AnnotationsTable tests', () => {
   // Handle the msw lifecycle:
   beforeAll(() => server.listen())
-  beforeEach(() => {
-    server.use(getFeatureFlagsOverride())
-  })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
@@ -76,7 +72,7 @@ describe('AnnotationsTable tests', () => {
       ),
     )
     renderComponent()
-    await screen.findByText('This Project has no annotations.')
+    await screen.findByText('This File has no annotations.')
   })
 
   it.todo('Handles scenario where derived annotations are pending')

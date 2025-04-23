@@ -1,9 +1,66 @@
+import { AdditionalPropertiesSchemaField } from '@/components/SchemaDrivenAnnotationEditor/field/AdditionalPropertiesSchemaField'
 import { entityJsonKeys } from '@/utils/functions/EntityTypeUtils'
 import { RJSFValidationError } from '@rjsf/utils'
 import { ENTITY_CONCRETE_TYPE } from '@sage-bionetworks/synapse-types'
 import { JSONSchema7 } from 'json-schema'
+import jsonpath from 'jsonpath'
 import { flatMap, groupBy, isEmpty } from 'lodash-es'
 
+/**
+ * Generates a JSON schema for the form UI based on the provided validation schema and entity schema base properties.
+ *
+ * To meet the requirements of the desired form to display, we cannot simply show the validation schema. This is because
+ * validation schemas may use conditional logic based on default entity properties (e.g. concreteType) to show/hide fields.
+ * This method combines the validation schema with the entity schema base properties to create a new schema that will yield
+ * the expected form with desired logic.
+ * @param validationSchema
+ * @param entitySchemaBaseProperties
+ */
+export function getJsonSchemaForForm(
+  validationSchema: JSONSchema7 = {},
+  entitySchemaBaseProperties: JSONSchema7['properties'] = undefined,
+): JSONSchema7 {
+  return {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    // Spread the validation schema to ensure definitions are included
+    // The definitions get lost if we simply put the entire schema in `allOf`
+    ...validationSchema,
+    allOf: [
+      ...(validationSchema.allOf || []),
+      // Add in the entity properties
+      {
+        type: 'object',
+        properties: entitySchemaBaseProperties,
+      },
+    ],
+    // Always allow adding additional annotations (though it may violate the validationSchema)
+    additionalProperties: true,
+  }
+}
+
+/**
+ * Generates the UiSchema for the annotations editor.
+ * @param entitySchemaBaseProperties
+ */
+export function getUiSchemaForForm(
+  entitySchemaBaseProperties: JSONSchema7['properties'] = {},
+) {
+  // Each 'base' entity field (id, name, concreteType, etc.) should be hidden
+  const uiSchemaWithHiddenEntityProperties = Object.keys(
+    entitySchemaBaseProperties,
+  ).reduce((prev, curr) => ({ ...prev, [curr]: { 'ui:widget': 'hidden' } }), {})
+
+  return {
+    ...uiSchemaWithHiddenEntityProperties,
+    'ui:globalOptions': {
+      copyable: false, // copy button clutters the UI, is not very useful since schemas are flat objects
+      duplicateKeySuffixSeparator: '_', // the default duplicateKeySuffixSeparator creates invalid annotation keys
+    },
+    additionalProperties: {
+      'ui:field': AdditionalPropertiesSchemaField,
+    },
+  }
+}
 /**
  * Strips null values from arrays in the provided form data. If the array is empty after
  * removing null values, the key is removed from the form data.
@@ -144,4 +201,41 @@ export function shouldLiveValidate(
   const hasExistingAnnotations =
     existingAnnotations && Object.keys(existingAnnotations).length > 0
   return Boolean(hasExistingAnnotations && validationSchema)
+}
+
+/**
+ * Returns all possible properties in the schema, including those in nested schemas/definitions. Note that this function
+ * only works for 'flat objects', i.e. the schema must
+ *  - define an object AND
+ *  - the properties of the object cannot be objects
+ * which is compatible with how Synapse Annotations are defined.
+ * @param resolvedSchema
+ */
+export function getAllPropertiesInFlatObjectSchema(
+  resolvedSchema: JSONSchema7,
+): JSONSchema7['properties'] {
+  const allProperties = {}
+  const foundPropertiesObjects = jsonpath.query(resolvedSchema, '$..properties')
+  for (const propertiesObject of foundPropertiesObjects) {
+    Object.assign(allProperties, propertiesObject)
+  }
+
+  return allProperties
+}
+
+/**
+ * Get the Synapse entity schema ID for a particular concrete type.
+ * @param concreteType
+ */
+export function getSchemaIdForConcreteType(
+  concreteType: string,
+): string | null {
+  if (!concreteType || !concreteType.startsWith('org.sagebionetworks')) {
+    return null
+  }
+  // e.g. 'org.sagebionetworks.repo.model.FileEntity' -> 'org.sagebionetworks-repo.model.FileEntity'
+  return (
+    'org.sagebionetworks-' +
+    concreteType.substring('org.sagebionetworks'.length + 1)
+  )
 }
