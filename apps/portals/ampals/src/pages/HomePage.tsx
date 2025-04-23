@@ -2,6 +2,7 @@ import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/compon
 import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSHeader'
 import ALLALSSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/ALLALSSlat'
 import AMPALSPublishingRequirements from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSPublishingRequirements'
+import HowToAccessData from '@sage-bionetworks/synapse-portal-framework/components/ampals/HowToAccessData'
 // import { dataSql } from '../config/resources'
 // import { FeaturedDataTabs } from 'synapse-react-client'
 // import columnAliases from '../config/columnAliases'
@@ -74,10 +75,11 @@ export default function HomePage() {
           }}
         />
       </SectionLayout>
-      <AMPALSPublishingRequirements />
       {/* <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <Goals entityId={'syn23518009'} />
       </SectionLayout> */}
+      <HowToAccessData />
+      <AMPALSPublishingRequirements />
       <ALLALSSlat />
 
       <div className={'home-bg-dark'}>
