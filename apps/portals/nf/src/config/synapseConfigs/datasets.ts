@@ -44,6 +44,7 @@ export const datasetCardConfiguration: CardConfiguration = {
       'yearProcessed',
       'visualizeDataOn',
     ],
+    dataTypeIconNames: 'dataType',
     downloadCartSynId: 'id',
   },
   labelLinkConfig: [
