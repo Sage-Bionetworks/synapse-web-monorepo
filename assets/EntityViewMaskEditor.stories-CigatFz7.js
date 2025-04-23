@@ -1,0 +1,9 @@
+import{j as t}from"./jsx-runtime-Du8NFWEI.js";import{r as T}from"./index-Dl6G-zuu.js";import{E as s}from"./EntityViewMaskEditor-BOqlXIzz.js";import{i as _,m as l}from"./VerificationSubmission-BUSqAuLu.js";import{P as I}from"./Paper-sJzUMfPp.js";import"./Typography-DUswyeAh.js";import"./createTheme-BmUnpyjI.js";import"./index-GEGPABih.js";import"./styled-_IoEwjFQ.js";import"./FormGroup-DORB270s.js";import"./useFormControl-CQLCXd-P.js";import"./FormControlLabel-CsBz03dH.js";import"./ButtonBase-QEdCuq5m.js";import"./useTimeout-DgmtfV4_.js";import"./TransitionGroupContext-DetLSwnr.js";import"./useEnhancedEffect-DZnfS5Iy.js";import"./useForkRef-BDoLG09A.js";import"./useIsFocusVisible-Bf3pHwKN.js";import"./useControlled-1Y2rT-1r.js";import"./Stack-D4Hv4xSj.js";import"./Checkbox-DR7k0zrm.js";import"./createSvgIcon-Cg71VSX1.js";import"./Alert-u0n1NA7e.js";import"./mergeSlotProps-D1c34xqb.js";import"./isHostComponent-DVu5iVWx.js";import"./Close-DdzXEaRM.js";import"./IconButton-CxrGCLVD.js";const B={title:"Synapse/EntityView/Mask Editor",component:s,decorators:[e=>t.jsx(I,{sx:{mx:"auto",p:4,maxWidth:"720px"},children:t.jsx(e,{})})],render:function(m){const[u,d]=T.useState(m.value);return t.jsx(s,{...m,value:u,onChange:d})}},r={args:{value:_}},o={args:{value:_|l}};var a,i,p;r.parameters={...r.parameters,docs:{...(a=r.parameters)==null?void 0:a.docs,source:{originalSource:`{
+  args: {
+    value: ENTITY_VIEW_TYPE_MASK_FILE
+  }
+}`,...(p=(i=r.parameters)==null?void 0:i.docs)==null?void 0:p.source}}};var n,E,c;o.parameters={...o.parameters,docs:{...(n=o.parameters)==null?void 0:n.docs,source:{originalSource:`{
+  args: {
+    value: ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_DOCKER
+  }
+}`,...(c=(E=o.parameters)==null?void 0:E.docs)==null?void 0:c.source}}};const G=["FileView","CustomScope"];export{o as CustomScope,r as FileView,G as __namedExportsOrder,B as default};
