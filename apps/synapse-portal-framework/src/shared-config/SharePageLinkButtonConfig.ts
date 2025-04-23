@@ -9,7 +9,7 @@ export const sharePageLinkButtonDetailPageProps: SharePageLinkButtonProps = {
     color: 'light',
     sx: {
       position: 'absolute',
-      top: '50px',
+      mt: '10px',
       right: '20px',
       zIndex: 100,
     },
@@ -22,7 +22,7 @@ export const sharePageLinkExplorePageButtonProps: SharePageLinkButtonProps = {
     color: 'primary',
     sx: {
       position: 'absolute',
-      top: '35px',
+      mt: '10px',
       right: '20px',
       zIndex: 100,
     },

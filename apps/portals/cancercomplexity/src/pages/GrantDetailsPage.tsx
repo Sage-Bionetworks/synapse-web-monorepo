@@ -24,11 +24,14 @@ import { peopleCardConfiguration } from '../config/synapseConfigs/people'
 import { projectCardConfiguration } from '../config/synapseConfigs/projects'
 import { publicationsCardConfiguration } from '../config/synapseConfigs/publications'
 import { toolsConfiguration } from '../config/synapseConfigs/tools'
+import { SharePageLinkButton } from 'synapse-react-client'
+import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 
 export default function GrantDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
   return (
     <>
+      <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
       <CardContainerLogic
         cardConfiguration={{
           ...grantsCardConfiguration,
