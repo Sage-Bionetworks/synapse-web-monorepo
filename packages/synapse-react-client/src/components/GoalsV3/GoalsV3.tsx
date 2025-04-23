@@ -118,8 +118,9 @@ const GoalsV3 = ({ entityId, svgComponentMap }: GoalsV3Props) => {
         <Box
           sx={{
             display: 'flex',
-            gap: '10px',
+            gap: showDesktop ? '10px' : '0',
             flexDirection: showDesktop ? 'row' : 'column',
+            justifyContent: 'center',
           }}
         >
           {goalsDataArray.map((row, index) => (
