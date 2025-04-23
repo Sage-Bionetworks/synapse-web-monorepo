@@ -33,6 +33,8 @@ import { searchPageChildRoutes } from '@/pages/CCKPSearchPage'
 import CancerComplexityHeader from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityHeader'
 import CancerComplexityIntro from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityIntro'
 import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
+import { SharePageLinkButton } from 'synapse-react-client'
+import { sharePageLinkExplorePageButtonProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 
 const routes: RouteObject[] = [
   {
@@ -237,7 +239,12 @@ const routes: RouteObject[] = [
       },
       {
         path: 'Explore',
-        element: <ExploreWrapper explorePaths={explorePageRoutes} />,
+        element: (
+          <>
+            <SharePageLinkButton {...sharePageLinkExplorePageButtonProps} />
+            <ExploreWrapper explorePaths={explorePageRoutes} />
+          </>
+        ),
         children: explorePageRoutes,
       },
       {
