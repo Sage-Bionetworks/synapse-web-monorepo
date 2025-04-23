@@ -7,7 +7,11 @@ import { MarkdownSynapse } from 'synapse-react-client'
 import HomePage from '../pages/HomePage'
 import explorePageRoutes from './explorePageRoutes'
 import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
+import AMPALSResearchPageLayout from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSResearchPageLayout'
 import { searchPageChildRoutes } from '@/pages/AMPALSSearchPage'
+import { Typography, Button, Link } from '@mui/material'
+
+//TO DO: help page button url(s), remove first child h2 padding-top or find some other fix, add input for header images
 
 const routes: RouteObject[] = [
   {
@@ -51,31 +55,74 @@ const routes: RouteObject[] = [
           {
             path: 'For Researchers',
             element: (
-              <MarkdownSynapse
-                ownerId="syn64892175"
-                wikiId="631452"
-                loadingSkeletonRowCount={20}
-              />
+              <AMPALSResearchPageLayout
+                sidebarTitle="Resources for ALS researchers"
+                sidebarContent={
+                  <Button
+                    variant="contained"
+                    sx={{
+                      width: '190px',
+                      borderRadius: '3px',
+                      //href: ???
+                    }}
+                  >
+                    Visit our help page
+                  </Button>
+                }
+              >
+                <MarkdownSynapse
+                  ownerId="syn64892175"
+                  wikiId="631452"
+                  loadingSkeletonRowCount={50}
+                />
+              </AMPALSResearchPageLayout>
             ),
           },
           {
             path: 'For Contributors',
             element: (
-              <MarkdownSynapse
-                ownerId="syn64892175"
-                wikiId="631451"
-                loadingSkeletonRowCount={20}
-              />
+              <AMPALSResearchPageLayout
+                sidebarTitle="How to contribute data to the ALS Knowledge Portal"
+                sidebarContent={
+                  <>
+                    <Typography>
+                      For questions or inquiries about contributing data,
+                      contact &nbsp;
+                      <Link href="mailto:name@example.com">
+                        name@example.com
+                      </Link>
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        width: '190px',
+                        borderRadius: '3px',
+                        //href: ???
+                      }}
+                    >
+                      Visit our help page
+                    </Button>
+                  </>
+                }
+              >
+                <MarkdownSynapse
+                  ownerId="syn64892175"
+                  wikiId="631451"
+                  loadingSkeletonRowCount={50}
+                />
+              </AMPALSResearchPageLayout>
             ),
           },
           {
             path: 'For Persons With Lived Experience',
             element: (
-              <MarkdownSynapse
-                ownerId="syn64892175"
-                wikiId="631453"
-                loadingSkeletonRowCount={20}
-              />
+              <AMPALSResearchPageLayout sidebarTitle="Resources for ALS patients and people with lived experience">
+                <MarkdownSynapse
+                  ownerId="syn64892175"
+                  wikiId="631453"
+                  loadingSkeletonRowCount={50}
+                />
+              </AMPALSResearchPageLayout>
             ),
           },
         ],
