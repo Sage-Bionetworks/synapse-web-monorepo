@@ -457,6 +457,20 @@ describe('Submission Page tests', () => {
       })
 
       await userEvent.click(updateRequestButton)
+
+      expect(mockAccessRequirementList).toHaveBeenLastCalledWith(
+        {
+          renderAsModal: true,
+          accessRequirementFromProps: [mockManagedACTAccessRequirement],
+          onHide: expect.any(Function),
+          onSubmissionCreated: expect.any(Function),
+        },
+        expect.anything(),
+      )
+      expect(mockCancelSubmissionModal).not.toHaveBeenCalledWith(
+        expect.objectContaining({ open: true }),
+        expect.anything(),
+      )
     })
 
     it('supports updating an APPROVED and expired request', async () => {
