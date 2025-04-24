@@ -119,7 +119,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
   const [selectedVersionNumber, setSelectedVersionNumber] =
     useState(defaultVersionNumber)
 
-  const { data: portal, isLoading: isLoadingPortal } = useGetPortal(portalId, {
+  const { data: portal } = useGetPortal(portalId!, {
     enabled: Boolean(portalId),
   })
 

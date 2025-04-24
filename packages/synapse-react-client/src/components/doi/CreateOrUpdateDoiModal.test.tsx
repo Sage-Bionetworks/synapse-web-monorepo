@@ -14,11 +14,7 @@ import {
   getUseQueryIdleMock,
   getUseQuerySuccessMock,
 } from '@/testutils/ReactQueryMockUtils'
-import {
-  DoiObjectType,
-  DoiRequest,
-  V2Doi,
-} from '@sage-bionetworks/synapse-client'
+import { DoiObjectType, DoiRequest } from '@sage-bionetworks/synapse-client'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CreateOrUpdateDoiModal } from './CreateOrUpdateDoiModal'

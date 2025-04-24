@@ -23,6 +23,7 @@ import {
 import { ReactNode } from 'react'
 import CopyToClipboardString from '../../../CopyToClipboardString/CopyToClipboardString'
 import { HasAccessV2 } from '../../../HasAccess/HasAccessV2'
+import { DoiObjectType } from '@sage-bionetworks/synapse-client'
 
 export type EntityProperty = {
   key: string
@@ -84,9 +85,7 @@ export function useGetEntityTitleBarProperties(
     isVersionableEntity(bundle.entity) &&
     bundle.entity.isLatestVersion
   const { data: versionlessDOIAssociation } = useGetDOIAssociation(
-    entityId,
-    undefined,
-    'ENTITY',
+    { id: entityId, version: undefined, type: DoiObjectType.ENTITY },
     {
       enabled: useFallbackVersionlessDOI,
     },
