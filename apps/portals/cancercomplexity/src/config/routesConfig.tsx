@@ -8,7 +8,6 @@ import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/compon
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
 import {
-  CardDeck,
   RssFeedCards,
   ThemesPlot,
   Programs,
@@ -22,7 +21,6 @@ import ToolsDetailsPage from '../pages/ToolsDetailsPage'
 import explorePageRoutes from './explorePageRoutes'
 import {
   consortiaHomePageConfig,
-  availableResearchCardDeckConfig,
 } from './synapseConfigs/consortiaHomePage'
 import { MC2Supplement } from './synapseConfigs/MC2Supplement'
 import {
@@ -70,7 +68,7 @@ const routes: RouteObject[] = [
                 <ConsortiaGoals />
               </SectionLayout>
             </div>
-            <SectionLayout
+            {/* <SectionLayout
               title="What Resources are Available?"
               centerTitle
               ContainerProps={{
@@ -78,7 +76,7 @@ const routes: RouteObject[] = [
               }}
             >
               <CardDeck {...availableResearchCardDeckConfig} />
-            </SectionLayout>
+            </SectionLayout> */}
 
             <SectionLayout
               title={
