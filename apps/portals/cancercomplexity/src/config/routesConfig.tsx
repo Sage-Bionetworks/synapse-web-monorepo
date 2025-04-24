@@ -68,7 +68,7 @@ const routes: RouteObject[] = [
                 <ConsortiaGoals />
               </SectionLayout>
             </div>
-            <SectionLayout
+            {/* <SectionLayout
               title="What Resources are Available?"
               centerTitle
               ContainerProps={{
@@ -76,7 +76,7 @@ const routes: RouteObject[] = [
               }}
             >
               <CardDeck {...availableResearchCardDeckConfig} />
-            </SectionLayout>
+            </SectionLayout> */}
 
             <SectionLayout
               title={
