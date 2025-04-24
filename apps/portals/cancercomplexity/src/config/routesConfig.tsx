@@ -8,7 +8,6 @@ import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/compon
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
 import {
-  CardDeck,
   RssFeedCards,
   ThemesPlot,
   Programs,
