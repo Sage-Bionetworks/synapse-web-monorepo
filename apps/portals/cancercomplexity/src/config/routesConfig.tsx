@@ -21,7 +21,6 @@ import ToolsDetailsPage from '../pages/ToolsDetailsPage'
 import explorePageRoutes from './explorePageRoutes'
 import {
   consortiaHomePageConfig,
-  availableResearchCardDeckConfig,
 } from './synapseConfigs/consortiaHomePage'
 import { MC2Supplement } from './synapseConfigs/MC2Supplement'
 import {
