@@ -1,16 +1,36 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import StandardsHeader from '@sage-bionetworks/synapse-portal-framework/components/b2ai.standards/StandardsHeader'
 import StandardsContributeToTheRegistry from '@sage-bionetworks/synapse-portal-framework/components/b2ai.standards/StandardsContributeToTheRegistry'
+import { dataSql, standardsChallengeTableId } from '../config/resources'
+import { FeaturedDataTabs, CardDeck } from 'synapse-react-client'
 import CTASectionWrapper from 'synapse-react-client/components/CTASectionWrapper/CTASectionWrapper'
-import { dataSql } from '../config/resources'
-import { FeaturedDataTabs } from 'synapse-react-client'
 import columnAliases from '../config/columnAliases'
 
-//TODO
 export default function HomePage() {
   return (
     <>
       <StandardsHeader dataSql={dataSql} />
+      <div>
+        <h2 className="title center-title">
+          Standards Related to Bridge2AI Challenges
+        </h2>
+      </div>
+      <CardDeck
+        entityId={standardsChallengeTableId}
+        titleColumnName={'title'}
+        descriptionColumnName={'description'}
+        ctaButtonTextColumnName={'buttonText'}
+        ctaButtonURLColumnName={'buttonURL'}
+        headerImageFileHandleColumnName={'headerImage'}
+        cardDeckType="b2ai"
+        linkConfig={{
+          isMarkdown: false,
+          overrideLinkURLColumnName: 'buttonURL',
+          baseURL: 'Explore/',
+          URLColumnName: '',
+          matchColumnName: '',
+        }}
+      />
       {/* <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <Goals entityId={'syn23518009'} />
       </SectionLayout> */}

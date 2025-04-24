@@ -7,7 +7,12 @@ import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/component
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
-import { Programs, RssFeedCards, ThemesPlot } from 'synapse-react-client'
+import {
+  CardDeck,
+  RssFeedCards,
+  ThemesPlot,
+  Programs,
+} from 'synapse-react-client'
 import DatasetsDetailsPage from '../pages/DatasetsDetailsPage'
 import EducationalResourcesDetailsPage from '../pages/EducationalResourcesDetailsPage'
 import GrantDetailsPage from '../pages/GrantDetailsPage'
@@ -15,7 +20,10 @@ import PeopleDetailsPage from '../pages/PeopleDetailsPage'
 import PublicationsDetailsPage from '../pages/PublicationsDetailsPage'
 import ToolsDetailsPage from '../pages/ToolsDetailsPage'
 import explorePageRoutes from './explorePageRoutes'
-import consortiaHomePageConfig from './synapseConfigs/consortiaHomePage'
+import {
+  consortiaHomePageConfig,
+  availableResearchCardDeckConfig,
+} from './synapseConfigs/consortiaHomePage'
 import { MC2Supplement } from './synapseConfigs/MC2Supplement'
 import {
   onIndividualThemeBarPlotPointClick,
@@ -25,6 +33,8 @@ import { searchPageChildRoutes } from '@/pages/CCKPSearchPage'
 import CancerComplexityHeader from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityHeader'
 import CancerComplexityIntro from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityIntro'
 import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
+import { SharePageLinkButton } from 'synapse-react-client'
+import { sharePageLinkExplorePageButtonProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 
 const routes: RouteObject[] = [
   {
@@ -60,6 +70,16 @@ const routes: RouteObject[] = [
                 <ConsortiaGoals />
               </SectionLayout>
             </div>
+            <SectionLayout
+              title="What Resources are Available?"
+              centerTitle
+              ContainerProps={{
+                className: 'home-spacer',
+              }}
+            >
+              <CardDeck {...availableResearchCardDeckConfig} />
+            </SectionLayout>
+
             <SectionLayout
               title={
                 'What Research Themes are Scientists Currently Focusing On?'
@@ -219,7 +239,12 @@ const routes: RouteObject[] = [
       },
       {
         path: 'Explore',
-        element: <ExploreWrapper explorePaths={explorePageRoutes} />,
+        element: (
+          <>
+            <SharePageLinkButton {...sharePageLinkExplorePageButtonProps} />
+            <ExploreWrapper explorePaths={explorePageRoutes} />
+          </>
+        ),
         children: explorePageRoutes,
       },
       {

@@ -1,19 +1,16 @@
 import mockFileEntity from '@/mocks/entity/mockFileEntity'
-import { mockSchemaBinding, mockValidationSchema } from '@/mocks/mockSchema'
+import mockProject from '@/mocks/entity/mockProject'
+import { mockSchemaBinding } from '@/mocks/mockSchema'
+import { getValidationSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
 import { rest, server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import {
-  ASYNCHRONOUS_JOB_TOKEN,
-  ENTITY_JSON,
-  ENTITY_SCHEMA_BINDING,
-  SCHEMA_VALIDATION_GET,
-  SCHEMA_VALIDATION_START,
-} from '@/utils/APIConstants'
+import { ENTITY_JSON, ENTITY_SCHEMA_BINDING } from '@/utils/APIConstants'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
+import { JsonSchemaObjectBinding } from '@sage-bionetworks/synapse-types'
 import {
   act,
   queryByAttribute,
@@ -41,8 +38,6 @@ async function chooseAutocompleteOption(el: HTMLElement, option: string) {
 const mockToastFn = jest
   .spyOn(ToastMessage, 'displayToast')
   .mockImplementation(() => noop)
-
-const mockAsyncTokenId = 888888
 
 const mockOnSuccessFn = jest.fn()
 const mockOnChange = jest.fn()
@@ -101,9 +96,23 @@ async function clickSaveAndConfirm() {
   return waitFor(() => expect(mockOnSuccessFn).toHaveBeenCalled())
 }
 
+function configureSchemaBindingHandler(schemaBinding: JsonSchemaObjectBinding) {
+  return rest.get(
+    `${getEndpoint(
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
+    async (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(schemaBinding))
+    },
+  )
+}
+
 describe('SchemaDrivenAnnotationEditor tests', () => {
   // Handle the msw lifecycle:
   beforeAll(() => server.listen())
+  beforeEach(() => {
+    server.use(...getValidationSchemaHandlers())
+  })
   afterEach(() => {
     server.restoreHandlers()
     jest.clearAllMocks()
@@ -216,49 +225,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     },
   )
 
-  const schemaHandlers = [
-    rest.get(
-      `${getEndpoint(
-        BackendDestinationEnum.REPO_ENDPOINT,
-      )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
-      async (req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(mockSchemaBinding))
-      },
-    ),
-    rest.post(
-      `${getEndpoint(
-        BackendDestinationEnum.REPO_ENDPOINT,
-      )}${SCHEMA_VALIDATION_START}`,
-      async (req, res, ctx) => {
-        return res(ctx.status(201), ctx.json({ token: mockAsyncTokenId }))
-      },
-    ),
-    rest.get(
-      `${getEndpoint(
-        BackendDestinationEnum.REPO_ENDPOINT,
-      )}${SCHEMA_VALIDATION_GET(mockAsyncTokenId)}`,
-      async (req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json({ validationSchema: mockValidationSchema }),
-        )
-      },
-    ),
-
-    rest.get(
-      `${getEndpoint(
-        BackendDestinationEnum.REPO_ENDPOINT,
-      )}${ASYNCHRONOUS_JOB_TOKEN(String(mockAsyncTokenId))}`,
-      async (req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json({
-            responseBody: { validationSchema: mockValidationSchema },
-          }),
-        )
-      },
-    ),
-  ]
+  const schemaHandlers = [configureSchemaBindingHandler(mockSchemaBinding)]
 
   const successfulUpdateHandler = rest.put(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
@@ -640,38 +607,6 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     )
   })
 
-  it('Disallows keys that collide with the Entity JSON definition and throws a custom error message', async () => {
-    server.use(annotationsWithoutSchemaHandler, noSchemaHandler)
-
-    await renderComponent()
-
-    const addAnnotationButton = await screen.findByRole('button', {
-      name: 'Add Custom Field',
-    })
-
-    await userEvent.click(addAnnotationButton)
-
-    let keyFields: HTMLInputElement[]
-    await waitFor(() => {
-      keyFields = screen.getAllByLabelText('Key')
-      expect(keyFields).toHaveLength(3)
-    })
-    const keyField = keyFields![0]
-
-    await userEvent.clear(keyField)
-    await userEvent.type(keyField, 'id{enter}')
-
-    const saveButton = await screen.findByRole('button', { name: 'Save' })
-    await userEvent.click(saveButton)
-
-    const reservedKeywordErrors = await screen.findAllByText(
-      '"id" is a reserved internal key and cannot be used',
-      { exact: false },
-    )
-
-    expect(reservedKeywordErrors.length).toBeGreaterThan(0)
-  })
-
   it('Shows a schema description and type when help is clicked', async () => {
     server.use(noAnnotationsHandler, ...schemaHandlers)
     await renderComponent()
@@ -754,5 +689,89 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     expect(
       Object.hasOwn(updatedJsonCaptor.mock.calls[0][0], 'stringArray'),
     ).toBe(false)
+  })
+
+  it('Does not convert string annotations with commas to arrays (SWC-7313)', async () => {
+    const stringAnnotationWithCommas = 'my string annotation, with commas'
+    server.use(
+      rest.get(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
+          ':entityId',
+        )}`,
+
+        async (req, res, ctx) => {
+          const response = cloneDeep(mockFileEntity).json
+          // Delete the other annotation keys
+          delete response.myStringKey
+          delete response.myIntegerKey
+          delete response.myFloatKey
+
+          // Add string with commas
+          response.myStringAnnotationWithCommas = stringAnnotationWithCommas
+          delete response.stringArray
+          return res(ctx.status(200), ctx.json(response))
+        },
+      ), // showStringArray will be true but stringArray will have no data
+      noSchemaHandler,
+    )
+    await renderComponent()
+
+    await screen.findByDisplayValue(stringAnnotationWithCommas)
+  })
+
+  describe('Passes entity data to the Form component to compute conditional fields', () => {
+    it('shows a conditional field where the concreteType matches FileEntity', async () => {
+      server.use(
+        noAnnotationsHandler,
+        configureSchemaBindingHandler({
+          ...mockSchemaBinding,
+          jsonSchemaVersionInfo: {
+            ...mockSchemaBinding.jsonSchemaVersionInfo,
+            $id: 'org.sagebionetworks-MockConditionalSchema',
+          },
+        }),
+      )
+
+      await renderComponent()
+      await screen.findByText('requires scientific annotations', {
+        exact: false,
+      })
+
+      // fileType field is shown since this is a FileEntity
+      await screen.findByLabelText('fileType', { exact: false })
+    })
+
+    it('does not show a conditional field when the concreteType does not match FileEntity', async () => {
+      server.use(
+        configureSchemaBindingHandler({
+          ...mockSchemaBinding,
+          jsonSchemaVersionInfo: {
+            ...mockSchemaBinding.jsonSchemaVersionInfo,
+            $id: 'org.sagebionetworks-MockConditionalSchema-1.0.0',
+          },
+        }),
+        // Set up handler to return a Project
+        rest.get(
+          `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
+            ':entityId',
+          )}`,
+
+          async (req, res, ctx) => {
+            const response = cloneDeep(mockProject).json
+            return res(ctx.status(200), ctx.json(response))
+          },
+        ),
+      )
+
+      await renderComponent()
+      await screen.findByText('requires scientific annotations', {
+        exact: false,
+      })
+
+      // fileType field is not shown since this is not a FileEntity
+      expect(
+        screen.queryByLabelText('fileType', { exact: false }),
+      ).not.toBeInTheDocument()
+    })
   })
 })

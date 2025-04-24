@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.4.12",
+  "version": "3.4.15",
   "private": false,
   "type": "module",
   "main": "./dist/index.cjs",
@@ -69,6 +69,7 @@
     "immutable": "4.1.0",
     "jotai": "^2.7.0",
     "json-rules-engine": "^4.1.0",
+    "jsonpath": "^1.1.1",
     "katex": "^0.16.10",
     "lodash-es": "^4.17.21",
     "markdown-it": "^14.1.0",
@@ -167,6 +168,7 @@
     "@types/jest-when": "^3.5.5",
     "@types/jquery": "^3.5.29",
     "@types/json-schema": "^7.0.15",
+    "@types/jsonpath": "^0.2.4",
     "@types/katex": "^0.10.2",
     "@types/lodash-es": "4.17.12",
     "@types/markdown-it": "^13.0.7",

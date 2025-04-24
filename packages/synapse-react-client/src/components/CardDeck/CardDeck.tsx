@@ -11,6 +11,7 @@ import { CardLink } from '../CardContainer/CardLink'
 import { getFileHandleAssociation, getLinkParams } from '../GenericCard'
 import CardDeckDesktop from './CardDeck.Desktop'
 import CardDeckMobile from './CardDeck.Mobile'
+import classNames from 'classnames'
 
 export type CardDeckProps = {
   entityId: string /* The table entity which should be queried */
@@ -82,8 +83,16 @@ export function CardDeck(props: CardDeckProps) {
     headerImageFileHandleColumnName,
     queryResultBundle,
   )
+
+  const className = `CardDeck${showDesktop ? '__Desktop' : ''}`
+
   return (
-    <div className={`CardDeck${showDesktop ? '__Desktop' : ''}`}>
+    <div
+      className={classNames(
+        className,
+        cardDeckType && `${className}--${cardDeckType}`,
+      )}
+    >
       {queryResultBundle?.queryResult!.queryResults.rows.map(el => {
         const values = el.values as string[]
         if (values.some(value => value === null)) {

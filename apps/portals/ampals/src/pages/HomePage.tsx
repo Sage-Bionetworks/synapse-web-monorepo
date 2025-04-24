@@ -1,6 +1,8 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSHeader'
 import ALLALSSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/ALLALSSlat'
+import AMPALSPublishingRequirements from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSPublishingRequirements'
+import HowToAccessData from '@sage-bionetworks/synapse-portal-framework/components/ampals/HowToAccessData'
 // import { dataSql } from '../config/resources'
 // import { FeaturedDataTabs } from 'synapse-react-client'
 // import columnAliases from '../config/columnAliases'
@@ -12,6 +14,9 @@ import {
 } from 'synapse-react-client'
 import { OrientationBanner } from 'synapse-react-client'
 import { goalsTableEntityId } from '@/config/resources'
+import { ReactComponent as DatasetsIcon } from '../../src/config/style/datasets.svg'
+import { ReactComponent as FilesIcon } from '../../src/config/style/files.svg'
+import { ReactComponent as ProjectsIcon } from '../../src/config/style/projects.svg'
 
 //TODO
 export default function HomePage() {
@@ -61,11 +66,20 @@ export default function HomePage() {
           },
         }}
       >
-        <GoalsV3 entityId={goalsTableEntityId} />
+        <GoalsV3
+          entityId={goalsTableEntityId}
+          svgComponentMap={{
+            datasets: DatasetsIcon,
+            files: FilesIcon,
+            projects: ProjectsIcon,
+          }}
+        />
       </SectionLayout>
       {/* <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
         <Goals entityId={'syn23518009'} />
       </SectionLayout> */}
+      <HowToAccessData />
+      <AMPALSPublishingRequirements />
       <ALLALSSlat />
 
       <div className={'home-bg-dark'}>

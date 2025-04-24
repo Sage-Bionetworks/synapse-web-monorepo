@@ -1,18 +1,18 @@
 import { datasetQueryWrapperPlotNavProps } from './datasets'
-import { dataQueryWrapperPlotNavProps } from './data'
+import { filesQueryWrapperPlotNavProps } from './data'
 import { datasetCollectionsCardContainerLogicProps } from './datasetcollections'
 import { programsCardContainerLogicProps } from './programs'
 
 export {
   datasetQueryWrapperPlotNavProps,
-  dataQueryWrapperPlotNavProps,
+  filesQueryWrapperPlotNavProps,
   datasetCollectionsCardContainerLogicProps,
   programsCardContainerLogicProps,
 }
 
 export default {
   datasets: datasetQueryWrapperPlotNavProps,
-  data: dataQueryWrapperPlotNavProps,
+  files: filesQueryWrapperPlotNavProps,
   collections: datasetCollectionsCardContainerLogicProps,
   programs: programsCardContainerLogicProps,
 }

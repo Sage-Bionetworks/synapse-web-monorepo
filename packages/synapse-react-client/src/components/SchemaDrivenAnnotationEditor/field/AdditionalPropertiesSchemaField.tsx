@@ -206,11 +206,16 @@ export function AdditionalPropertiesSchemaField<
 
   const itemsSchema = getSchemaForPropertyType(propertyType)
 
-  // If the additional property has not yet been coerced to an array, trigger an update to coerce and render nothing.
-  // We must do this because RJSF does not currently batch these kinds of updates
-  // See https://github.com/rjsf-team/react-jsonschema-form/issues/3367
+  useEffect(() => {
+    // If the additional property has not yet been coerced to an array, trigger an update to coerce and render nothing.
+    // We must do this because RJSF does not currently batch these kinds of updates
+    // See https://github.com/rjsf-team/react-jsonschema-form/issues/3367
+    if (!Array.isArray(formData)) {
+      onChange(convertToArray(formData) as unknown as T)
+    }
+  }, [formData, onChange])
+
   if (!Array.isArray(formData)) {
-    onChange(convertToArray(formData) as unknown as T)
     return <></>
   }
 

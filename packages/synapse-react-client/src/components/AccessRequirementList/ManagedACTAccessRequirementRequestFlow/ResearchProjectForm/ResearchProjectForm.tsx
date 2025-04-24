@@ -288,19 +288,19 @@ function ConfirmationScreenContent(props: { isIDURequired: boolean }) {
       <Typography variant="body1" gutterBottom>
         Here are some common reasons a request is rejected:
       </Typography>
-      <Box component="ul" sx={{ 'li::marker': { content: '"\u274C  "' } }}>
+      <Box component="ul">
         <Typography component={'li'} variant="body1" gutterBottom>
-          Your <i>Project Lead</i> is not a full name (first and last)
+          Is your <i>Project Lead</i> a full name (first and last)?
         </Typography>
         <Typography component={'li'} variant="body1" gutterBottom>
-          The <i>Institution</i> name you provided was abbreviated and therefore
-          not verifiable - you must give the full name of your institution, so
-          we can look it up.
+          Is the <i>Institution</i> name you provided unabbreviated and
+          verifiable? You must give the full name of your institution, so we can
+          look it up.
         </Typography>
         {isIDURequired && (
           <Typography component={'li'} variant="body1" gutterBottom>
-            You did not provide clear <i>study objectives</i> or your{' '}
-            <i>study design</i> and <i>analysis plan</i> in the IDU section.
+            Did you provide clear <i>study objectives</i> and your{' '}
+            <i>study design</i> and <i>analysis plan</i> in the IDU section?
           </Typography>
         )}
       </Box>

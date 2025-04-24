@@ -63,6 +63,10 @@ export const toolsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     'inputData',
   ],
   searchConfiguration: {
+    ftsConfig: {
+      textMatchesMode: 'BOOLEAN',
+      distance: 3,
+    },
     searchable: [
       'toolName',
       'description',

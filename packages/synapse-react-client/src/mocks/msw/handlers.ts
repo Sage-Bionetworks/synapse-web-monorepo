@@ -1,3 +1,4 @@
+import { getValidationSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -79,6 +80,7 @@ const getHandlers = (backendOrigin: string, portalOrigin?: string) => [
   ...getDoiHandler(backendOrigin),
   ...getShortIoHandlers(),
   ...getWebhookHandlers(backendOrigin),
+  ...getValidationSchemaHandlers(backendOrigin),
 ]
 
 const handlers = getHandlers(
