@@ -203,9 +203,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
           >
             <QueryWrapperErrorBoundary>
               {isFullTextSearchEnabled ? (
-                <FullTextSearch
-                  helpUrl={searchConfiguration?.fullTextSearchHelpURL}
-                />
+                <FullTextSearch ftsConfig={searchConfiguration?.ftsConfig} />
               ) : (
                 <SearchV2
                   {...searchConfiguration}

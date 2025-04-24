@@ -4,7 +4,7 @@ import {
   StandaloneQueryWrapperProps,
 } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
-import { dataSql } from '../resources'
+import { filesSql } from '../resources'
 
 const rgbIndex = 0
 // export const dataColumnLinks: LabelLinkConfig = [
@@ -16,21 +16,23 @@ const rgbIndex = 0
 //   },
 // ]
 
-export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+export const filesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   rgbIndex,
   shouldDeepLink: true,
-  sql: dataSql,
-  name: 'Data',
+  sql: filesSql,
+  name: 'Files',
   columnAliases,
   defaultShowSearchBox: true,
   tableConfiguration: {
     // columnLinks: dataColumnLinks,
+    showAccessColumn: true,
+    showExternalAccessIcon: true,
   },
   // facetsToPlot: ['program', 'project'],
 }
 
-export const dataDetailPageProps: StandaloneQueryWrapperProps = {
-  sql: dataSql,
+export const filesDetailPageProps: StandaloneQueryWrapperProps = {
+  sql: filesSql,
   rgbIndex,
   // columnLinks: dataColumnLinks,
   hideDownload: true,
