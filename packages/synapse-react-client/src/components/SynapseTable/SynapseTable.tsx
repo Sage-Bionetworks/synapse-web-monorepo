@@ -41,6 +41,7 @@ import { useTableSort } from './useTableSort'
 export type SynapseTableConfiguration = Pick<
   SynapseTableProps,
   | 'showAccessColumn'
+  | 'showExternalAccessIcon'
   | 'showAccessColumnHeader'
   | 'showDownloadColumn'
   | 'hideDownload'
@@ -57,6 +58,15 @@ export type SynapseTableProps = {
 
   /** If true and entity is a view or dataset, renders a column that represents if the caller has permission to download the entity represented by the row */
   showAccessColumn?: boolean
+  /**
+   * If true, the component will show enhanced UI for the case where
+   * - the entity is a FileEntity, AND
+   * - the caller has permission to fetch the dataFileHandle, AND
+   * - the dataFileHandle is an instance of ExternalFileHandleInterface (i.e. the file is not controlled by Synapse)
+   * Note that this requires an additional API call that cannot be batched, so it should be avoided in bulk  contexts if possible.
+   * @default false
+   */
+  showExternalAccessIcon?: boolean
   showAccessColumnHeader?: boolean
   /** @deprecated use showDirectDownloadColumn */
   showDownloadColumn?: boolean
@@ -78,6 +88,7 @@ export function SynapseTable(props: SynapseTableProps) {
     rowSet,
     isLoadingNewPage,
     showAccessColumn,
+    showExternalAccessIcon,
     showAccessColumnHeader,
     showDirectDownloadColumn = showDownloadColumn,
     hideAddToDownloadListColumn = hideDownload,
@@ -101,8 +112,13 @@ export function SynapseTable(props: SynapseTableProps) {
 
   const { columnsToShowInTable, NoContentPlaceholder } =
     useQueryVisualizationContext()
-  const synapseTableContext = useMemo(() => ({ columnLinks }), [columnLinks])
-
+  const synapseTableContext = useMemo(
+    () => ({
+      columnLinks,
+      showExternalAccessIcon,
+    }),
+    [columnLinks, showExternalAccessIcon],
+  )
   const isLoggedIn = !!useSynapseContext().accessToken
 
   const [isExportTableDownloadOpen, setIsExportTableDownloadOpen] =

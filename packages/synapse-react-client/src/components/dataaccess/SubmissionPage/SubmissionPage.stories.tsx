@@ -5,6 +5,7 @@ import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService
 import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
 import { getWikiHandlers } from '@/mocks/msw/handlers/wikiHandlers'
 import mockRejectionReasonsTableQueryResultBundle from '@/mocks/query/mockRejectionReasonsTableQueryResultBundle'
+import { MOCK_USER_ID_2 } from '@/mocks/user/mock_user_profile'
 import {
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
@@ -85,7 +86,7 @@ export const Demo: Story = {
                 etag: 'f4fbd4f2-751d-40dd-9421-1d2693231217',
                 resourceAccess: [
                   {
-                    principalId: 3350396,
+                    principalId: MOCK_USER_ID_2,
                     accessType: ['REVIEW_SUBMISSIONS'],
                   },
                 ],
@@ -105,6 +106,7 @@ export const Demo: Story = {
     },
   },
   args: {
+    isReviewer: true,
     submissionId: 1,
   },
 }

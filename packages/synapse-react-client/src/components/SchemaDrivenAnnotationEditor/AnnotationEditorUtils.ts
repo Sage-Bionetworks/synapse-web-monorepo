@@ -122,14 +122,11 @@ export function getTransformErrors(concreteType?: ENTITY_CONCRETE_TYPE) {
 /**
  * Custom annotations in Synapse are always arrays. This function converts initial data to be an array type.
  * If the initial data is an array, return the data itself.
- * If the initial data is a string, returns an array of substrings separated by commas.
  * Otherwise, wrap the data in an array.
  */
 export function convertToArray<T>(value: T): Array<unknown> {
   if (Array.isArray(value)) {
     return value
-  } else if (typeof value === 'string') {
-    return value.split(',').map(s => s.trim()) // split a string of comma-separated values, then trim whitespace
   } else {
     return [value]
   }

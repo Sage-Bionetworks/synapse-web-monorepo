@@ -114,6 +114,27 @@ describe('CreateOrUpdateDoiModal', () => {
     await screen.findByDisplayValue('Last, First') // matching the mockUserProfile data
   })
 
+  it('blocks submission when data violates the form schema', async () => {
+    const mockMutate = jest.fn()
+    mockUseCreateOrUpdateDOI.mockReturnValue({
+      ...getUseMutationMock(),
+      mutate: mockMutate,
+    })
+
+    mockUseGetDOI.mockReturnValue(getUseQuerySuccessMock(null))
+
+    render(<CreateOrUpdateDoiModal {...defaultProps} />)
+
+    const pubYearInput = await screen.findByLabelText(/Publication Year/i)
+    await userEvent.clear(pubYearInput)
+
+    const saveButton = screen.getByText(/Save/i)
+    await userEvent.click(saveButton)
+
+    await screen.findByText("must have required property 'Publication Year'")
+    expect(mockMutate).not.toHaveBeenCalled()
+  })
+
   it('calls mutate when the form is submitted', async () => {
     const mockMutate = jest.fn()
     mockUseCreateOrUpdateDOI.mockReturnValue({

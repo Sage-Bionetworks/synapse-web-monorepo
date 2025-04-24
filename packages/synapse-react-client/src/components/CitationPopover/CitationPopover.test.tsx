@@ -3,7 +3,6 @@ import {
   getUseQueryLoadingMock,
   getUseQuerySuccessMock,
 } from '@/testutils/ReactQueryMockUtils'
-import { UseQueryResult } from '@tanstack/react-query'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import CitationPopover from './CitationPopover'
@@ -48,7 +47,7 @@ describe('CitationPopover tests', () => {
 
   it('opens popover when button is clicked and fetches citation', async () => {
     render(<CitationPopover {...mockProps} />)
-    openPopover()
+    await openPopover()
 
     await screen.findByRole('dialog', {
       name: /Citation options/i,
@@ -67,7 +66,7 @@ describe('CitationPopover tests', () => {
 
   it('shows menu options when select button is clicked with bibtex as default', async () => {
     render(<CitationPopover {...mockProps} />)
-    openPopover()
+    await openPopover()
 
     await screen.findByRole('dialog', {
       name: /Citation options/i,
@@ -88,7 +87,7 @@ describe('CitationPopover tests', () => {
 
   it('displays boilerplate text when available', async () => {
     render(<CitationPopover {...mockProps} />)
-    openPopover()
+    await openPopover()
 
     await screen.findByText(content =>
       content.includes('Some boilerplate text'),
@@ -101,7 +100,7 @@ describe('CitationPopover tests', () => {
     Object.assign(navigator, {
       clipboard: { writeText: mockWriteText },
     })
-    openPopover()
+    await openPopover()
 
     await screen.findByRole('dialog', {
       name: /Citation options/i,
@@ -122,7 +121,7 @@ describe('CitationPopover tests', () => {
   it('downloads citation', async () => {
     render(<CitationPopover {...mockProps} />)
     const { title } = mockProps
-    openPopover()
+    await openPopover()
 
     await screen.findByRole('dialog', {
       name: /Citation options/i,
@@ -149,7 +148,7 @@ describe('CitationPopover tests', () => {
     mockUseCitation.mockReturnValue(getUseQueryLoadingMock())
 
     render(<CitationPopover {...mockProps} />)
-    openPopover()
+    await openPopover()
 
     await screen.findByRole('dialog', {
       name: /Citation options/i,
@@ -161,12 +160,10 @@ describe('CitationPopover tests', () => {
   it('displays error message', async () => {
     const mockError = new Error('Failed to fetch citation.')
 
-    mockUseCitation.mockReturnValue(
-      getUseQueryErrorMock(mockError) as UseQueryResult<string, Error>,
-    )
+    mockUseCitation.mockReturnValue(getUseQueryErrorMock(mockError))
 
     render(<CitationPopover {...mockProps} />)
-    openPopover()
+    await openPopover()
 
     await screen.findByRole('dialog', {
       name: /Citation options/i,

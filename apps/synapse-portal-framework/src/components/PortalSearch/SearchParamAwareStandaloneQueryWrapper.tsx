@@ -1,4 +1,4 @@
-import { Query } from '@sage-bionetworks/synapse-types'
+import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 import { useMemo } from 'react'
 import { useSearchParams } from 'react-router'
 import {
@@ -6,10 +6,9 @@ import {
   StandaloneQueryWrapper,
   StandaloneQueryWrapperProps,
 } from 'synapse-react-client'
-import {
-  generateInitQueryRequest,
-  getQueryFromProps,
-} from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
+import { getTextMatchesQueryFilter } from 'synapse-react-client/components/FullTextSearch/FullTextSearchUtils'
+import { generateInitQueryRequest } from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
+import { FTS_SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctions'
 
 export type SearchParamAwareStandaloneQueryWrapperProps = {
   isVisible: boolean
@@ -20,16 +19,25 @@ export function SearchParamAwareStandaloneQueryWrapper(
 ) {
   const { isVisible, standaloneQueryWrapperProps } = props
   const [searchParams] = useSearchParams()
-  const searchParamsRecords = useMemo(() => {
-    if (searchParams) {
-      return Object.fromEntries(searchParams.entries())
-    }
-    return undefined
-  }, [searchParams])
+  const { searchConfiguration, sql } = standaloneQueryWrapperProps
 
-  // FTS_SEARCH_ROLE is used for search page behavior and should not be passed to the QueryWrapper to instantiate a filter.
-  const { FTS_SEARCH_ROLE: _, ...filteredSearchParams } =
-    searchParamsRecords || {}
+  const searchText = searchParams.get(FTS_SEARCH_TERM)
+  const textMatchesQueryFilter: TextMatchesQueryFilter | undefined =
+    useMemo(() => {
+      if (searchText) {
+        return getTextMatchesQueryFilter(
+          searchText,
+          searchConfiguration?.ftsConfig,
+        )
+      }
+      return undefined
+    }, [searchText, searchConfiguration?.ftsConfig])
+
+  // create the FTS filter
+  const query: Query = {
+    sql: sql!,
+    additionalFilters: textMatchesQueryFilter ? [textMatchesQueryFilter] : [],
+  }
 
   // if is visible, render a StandaloneQueryWrapper.
   // if not, just run the query wrapper with the query request derived from the search params (to populate the cache and return the count)
@@ -38,15 +46,12 @@ export function SearchParamAwareStandaloneQueryWrapper(
       <StandaloneQueryWrapper
         {...standaloneQueryWrapperProps}
         shouldDeepLink={false}
-        searchParams={filteredSearchParams}
+        query={query}
       />
     )
   }
   //else
-  const query: Query = getQueryFromProps({
-    ...standaloneQueryWrapperProps,
-    searchParams: filteredSearchParams,
-  })
+
   const derivedQueryRequestFromSearchParams = generateInitQueryRequest(query)
   return (
     <QueryWrapper

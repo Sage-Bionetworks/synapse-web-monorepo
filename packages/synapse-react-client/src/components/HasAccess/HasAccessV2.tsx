@@ -1,11 +1,16 @@
 import SynapseClient from '@/synapse-client'
-import { useGetRestrictionInformation } from '@/synapse-queries'
-import { useSynapseContext } from '@/utils'
+import {
+  useGetEntityBundle,
+  useGetRestrictionInformation,
+} from '@/synapse-queries'
+import { SynapseClientError, useSynapseContext } from '@/utils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { Box, Button, Theme, useTheme } from '@mui/material'
 import {
   AccessRequirement,
+  EntityBundle,
+  FileHandle,
   RestrictableObjectType,
   RestrictionLevel,
 } from '@sage-bionetworks/synapse-types'
@@ -14,12 +19,26 @@ import AccessRequirementList, {
   checkHasUnsupportedRequirement,
 } from '../AccessRequirementList/AccessRequirementList'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
+import {
+  implementsExternalFileHandleInterface,
+  isFileEntity,
+} from '@/utils/types/IsType'
+import { UseQueryOptions } from '@tanstack/react-query'
 
 export type HasAccessProps = {
   onHide?: () => void
   entityId: string
   className?: string
   showButtonText?: boolean
+  /**
+   * If true, the component will show enhanced UI for the case where
+   * - the entity is a FileEntity, AND
+   * - the caller has permission to fetch the dataFileHandle, AND
+   * - the dataFileHandle is an instance of ExternalFileHandleInterface (i.e. the file is not controlled by Synapse)
+   * Note that this requires an additional API call that cannot be batched, so it should be avoided in bulk  contexts if possible.
+   * @default false
+   */
+  showExternalAccessIcon?: boolean
 }
 
 const buttonSx = { p: '0px', minWidth: 'unset' }
@@ -30,6 +49,7 @@ export enum RestrictionUiType {
   AccessBlockedByRestriction = 'AccessBlockedByRestriction',
   AccessBlockedByACL = 'AccessBlockedByACL',
   AccessBlockedToAnonymous = 'AccessBlockedToAnonymous',
+  AccessibleExternalFileHandle = 'AccessibleExternalFileHandle',
 }
 
 const iconConfiguration: Record<
@@ -51,17 +71,20 @@ const iconConfiguration: Record<
     color: theme => theme.palette.warning.main,
     tooltipText: 'You do not have download access for this item.',
   },
-
   [RestrictionUiType.AccessibleWithTerms]: {
     icon: 'accessOpen',
     color: theme => theme.palette.success.main,
     tooltipText: 'View Terms',
   },
-
   [RestrictionUiType.Accessible]: {
     icon: 'accessOpen',
     color: theme => theme.palette.success.main,
     tooltipText: '',
+  },
+  [RestrictionUiType.AccessibleExternalFileHandle]: {
+    icon: 'linkOff',
+    color: theme => theme.palette.grey[700],
+    tooltipText: 'Access may be controlled by an external system.',
   },
 }
 
@@ -95,6 +118,9 @@ function AccessIcon(props: { restrictionUiType: RestrictionUiType }) {
  */
 export function useGetRestrictionUiType(
   entityId: string,
+  useGetIsExternalFileHandleOptions: Partial<
+    UseQueryOptions<EntityBundle, SynapseClientError, boolean>
+  >,
 ): RestrictionUiType | undefined {
   const { accessToken } = useSynapseContext()
   const isSignedIn = Boolean(accessToken)
@@ -104,8 +130,21 @@ export function useGetRestrictionUiType(
     objectId: entityId,
   })
 
+  const { data: isExternalFileHandle, isLoading: isLoadingExternalFile } =
+    useGetIsExternalFileHandle(entityId, {
+      enabled: useGetIsExternalFileHandleOptions.enabled,
+    })
+
   if (!restrictionInformation) {
     return undefined
+  }
+
+  if (isLoadingExternalFile) {
+    return undefined
+  }
+
+  if (isExternalFileHandle) {
+    return RestrictionUiType.AccessibleExternalFileHandle
   }
 
   if (restrictionInformation.hasUnmetAccessRequirement) {
@@ -127,6 +166,33 @@ export function useGetRestrictionUiType(
 }
 
 /**
+ * This hook determines if
+ * - the entity is a FileEntity, AND
+ * - the caller has permission to fetch the dataFileHandle, AND
+ * - the dataFileHandle is an instance of ExternalFileHandleInterface (i.e. the file is not controlled by Synapse)
+ * Note that this requires an additional API call that cannot be batched, so it should be avoided in bulk contexts if possible.
+ */
+function useGetIsExternalFileHandle(
+  entityId: string,
+  options: Partial<UseQueryOptions<EntityBundle, SynapseClientError, boolean>>,
+) {
+  return useGetEntityBundle(entityId, undefined, undefined, {
+    ...options,
+    select: bundle => {
+      if (!isFileEntity(bundle.entity)) {
+        return false
+      }
+      const fileEntity = bundle.entity
+      const fileHandles = bundle.fileHandles
+      const fileHandle: FileHandle | undefined = fileHandles?.find(
+        fileHandle => fileHandle.id === fileEntity.dataFileHandleId,
+      )
+      return fileHandle && implementsExternalFileHandleInterface(fileHandle)
+    },
+  })
+}
+
+/**
  * HasAccess shows if the user has access to the file or not. If the user doesn't have access due to a restriction,
  * then a link will be shown that opens a modal with steps to request access.
  */
@@ -137,9 +203,14 @@ export function HasAccessV2(props: HasAccessProps) {
     AccessRequirement[]
   >([])
 
-  const { entityId, showButtonText = true } = props
-
-  const restrictionUiTypeValue = useGetRestrictionUiType(entityId)
+  const {
+    entityId,
+    showButtonText = true,
+    showExternalAccessIcon = false,
+  } = props
+  const restrictionUiTypeValue = useGetRestrictionUiType(entityId, {
+    enabled: showExternalAccessIcon,
+  })
 
   const { accessToken } = useSynapseContext()
 

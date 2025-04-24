@@ -119,11 +119,10 @@ export default function ManagedACTAccessRequirementItem(
         )}
         {accessRequirementStatus?.currentSubmissionStatus?.state ===
           SubmissionState.CANCELLED && (
-          <Alert
-            className={'access-requirement-list-alert'}
-            severity={'success'}
-          >
-            <strong>Your data access request has been canceled.</strong>
+          <Alert className={'access-requirement-list-alert'} severity={'info'}>
+            <Typography variant={'body1'}>
+              Your data access request has been canceled.
+            </Typography>
           </Alert>
         )}
       </div>

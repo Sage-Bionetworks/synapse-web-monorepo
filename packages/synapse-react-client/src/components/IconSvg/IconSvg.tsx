@@ -84,6 +84,7 @@ import {
   LabelTwoTone,
   LanguageTwoTone,
   LayersTwoTone,
+  LinkOffTwoTone,
   LinkTwoTone,
   ListTwoTone,
   LockOpenTwoTone,
@@ -202,6 +203,7 @@ export const IconStrings = [
   'fileOutlined',
   'folder',
   'link',
+  'linkOff',
   'table',
   'public',
   'people',
@@ -456,6 +458,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <CreateNewFolderTwoTone {...otherProps} />
     case 'link':
       return <LinkTwoTone {...otherProps} />
+    case 'linkOff':
+      return <LinkOffTwoTone {...otherProps} />
     case 'table':
       return <TableChartTwoTone {...otherProps} />
     case 'tableview':
