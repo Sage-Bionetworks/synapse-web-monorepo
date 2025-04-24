@@ -6,6 +6,9 @@ import { FeaturedDataTabs, CardDeck } from 'synapse-react-client'
 import CTASectionWrapper from 'synapse-react-client/components/CTASectionWrapper/CTASectionWrapper'
 import columnAliases from '../config/columnAliases'
 
+/* kludgy but currently using hard-coded URLs for GC Explore links, like
+http://localhost:3001/Explore?QueryWrapper0=%7B%22sql%22%3A%22%5Cn++++SELECT%5Cn++++++++concat%28%27%5B%27%2C+acronym%2C+%27%5D%28%2FExplore%2FStandard%2FDetailsPage%3Fid%3D%27%2C+id%2C+%27%29%27%29+as+acronym%2C%5Cn++++++++++++name%2C+category%2C+collections%2C+relevantOrgAcronyms+as+organizations%2C+isOpen%2C+registration+FROM+syn65676531%5Cn%22%2C%22limit%22%3A5%2C%22selectedFacets%22%3A%5B%7B%22concreteType%22%3A%22org.sagebionetworks.repo.model.table.FacetColumnValuesRequest%22%2C%22columnName%22%3A%22relevantOrgAcronyms%22%2C%22facetValues%22%3A%5B%22Functional+Genomics+Grand+Challenge%22%5D%7D%5D%7D
+*/
 export default function HomePage() {
   return (
     <>
@@ -60,10 +63,10 @@ export default function HomePage() {
                 explorePagePath: '/Explore',
                 exploreObjectType: 'Standards',
                 plotsConfig: {
-                  sql: `${dataSql} where organizations is not null`,
+                  sql: `${dataSql} where relevantOrgNames is not null`,
                   configs: [
                     {
-                      facetsToPlot: ['topic', 'organizations'],
+                      facetsToPlot: ['topic', 'relevantOrgNames'],
                       unitDescription: 'standard',
                       plotType: 'BAR',
                       columnAliases: columnAliases,
