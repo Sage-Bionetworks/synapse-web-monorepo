@@ -156,15 +156,4 @@ describe('Linkify tests', () => {
       `https://bioregistry.io/rrid:AB_262044`,
     )
   })
-  test('auto-links Antibiotic Resistance Ontology ids using the bioregistry provider', () => {
-    const value = 'ARO:1000001'
-    const { container } = render(<Linkify text={value} />, {
-      wrapper: createWrapper(),
-    })
-
-    const link = container.querySelector('a')!
-    expect(link.getAttribute('href')).toEqual(
-      `https://bioregistry.io/ARO:1000001`,
-    )
-  })
 })

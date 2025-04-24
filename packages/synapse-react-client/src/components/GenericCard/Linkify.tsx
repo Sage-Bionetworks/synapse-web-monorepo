@@ -89,12 +89,6 @@ const rridRule: LinkifyRule = {
     return `https://bioregistry.io/${value}`
   },
 }
-const aroRule: LinkifyRule = {
-  regex: /(ARO:\d{7})/,
-  onMatch: value => {
-    return `https://bioregistry.io/${value}`
-  },
-}
 
 const rules: LinkifyRule[] = [
   httpRule,
@@ -102,7 +96,6 @@ const rules: LinkifyRule[] = [
   ftpRule,
   synapseIdRule,
   rridRule,
-  aroRule,
   pubMedRule,
   sciCrunchResolverRule,
   mutationIdRule,
