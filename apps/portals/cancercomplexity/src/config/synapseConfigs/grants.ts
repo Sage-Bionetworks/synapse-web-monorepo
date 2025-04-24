@@ -60,7 +60,7 @@ export const grantQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   searchConfiguration: {
     ftsConfig: {
       textMatchesMode: 'BOOLEAN',
-      distance: 3,
+      distance: 80,
     },
     searchable: [
       'grantName',

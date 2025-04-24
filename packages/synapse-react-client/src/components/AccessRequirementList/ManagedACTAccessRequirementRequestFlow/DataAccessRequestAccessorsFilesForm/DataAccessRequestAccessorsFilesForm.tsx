@@ -100,7 +100,7 @@ export type DataAccessRequestAccessorsFilesFormProps = {
   subjectType: RestrictableObjectType
   /* The access requirement to which the user is requesting access */
   managedACTAccessRequirement: ManagedACTAccessRequirement
-  onSubmissionCreated: () => void
+  onSubmissionCreated: (submissionId: string) => void
   researchProjectId: string
   onHide: () => void
   /* Callback invoked when the user clicks cancel. The unsaved, modified dataAccessRequest is returned so the calling component may prompt the user to save this data */
@@ -169,8 +169,8 @@ export default function DataAccessRequestAccessorsFilesForm(
 
   const { mutate: submit, isPending: submitDataAccessRequestIsPending } =
     useSubmitDataAccessRequest({
-      onSuccess: () => {
-        onSubmissionCreated()
+      onSuccess: submission => {
+        onSubmissionCreated(submission.submissionId)
       },
       onError: onError,
     })

@@ -95,6 +95,7 @@ export const ProfileFieldsEditor = (props: ProfileFieldsEditorProps) => {
           <RORInstitutionField
             onChange={value => handleCompanyChange(value || '')}
             value={values.company || ''}
+            error={!!errors.company}
           />
         </StyledFormControl>
         <StyledFormControl

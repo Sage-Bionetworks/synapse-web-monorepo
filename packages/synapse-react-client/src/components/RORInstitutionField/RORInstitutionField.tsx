@@ -1,6 +1,12 @@
 import { ROROrganization } from '@/ror-client/types/ROROrganization'
 import { useSearchRegistry } from '@/synapse-queries/ror'
-import { Autocomplete, Box, TextField, Typography } from '@mui/material'
+import {
+  Autocomplete,
+  Box,
+  TextField,
+  TextFieldProps,
+  Typography,
+} from '@mui/material'
 import { useDebouncedEffect } from '@react-hookz/web'
 import noop from 'lodash-es/noop'
 import { useState } from 'react'
@@ -8,12 +14,11 @@ import { useState } from 'react'
 export type RORLinkedInstitutionFieldProps = {
   value?: string
   onChange?: (value: string | undefined, rorIdentifier?: string) => void
+  error?: TextFieldProps['error']
 }
 
 function getOrganizationDisplayName(organization: ROROrganization) {
-  return organization.names.find(name =>
-    name.types.includes('ror_display'),
-  )!
+  return organization.names.find(name => name.types.includes('ror_display'))!
 }
 
 /**
@@ -25,7 +30,7 @@ function getOrganizationDisplayName(organization: ROROrganization) {
 export default function RORInstitutionField(
   props: RORLinkedInstitutionFieldProps,
 ) {
-  const { value: valueFromProps, onChange = noop } = props
+  const { value: valueFromProps, onChange = noop, error } = props
 
   const isControlled = valueFromProps !== undefined
 
@@ -66,6 +71,7 @@ export default function RORInstitutionField(
           {...params}
           label="Current Affiliation"
           placeholder={'Type to search, or enter free text.'}
+          error={error}
         />
       )}
       inputValue={isControlled ? valueFromProps : internalInputValue}

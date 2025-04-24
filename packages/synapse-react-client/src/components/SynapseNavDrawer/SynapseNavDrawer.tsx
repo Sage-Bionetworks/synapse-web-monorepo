@@ -537,6 +537,13 @@ export function SynapseNavDrawer({
                   </a>
                   <a
                     className="SRC-whiteText"
+                    onClick={() => gotoPlace(`/RequestHistory:default`)}
+                    rel="noopener noreferrer"
+                  >
+                    Access Requests
+                  </a>
+                  <a
+                    className="SRC-whiteText"
                     onClick={() => gotoPlace(`/Following:0`)}
                     rel="noopener noreferrer"
                   >
@@ -545,7 +552,7 @@ export function SynapseNavDrawer({
                   <a
                     className="SRC-whiteText"
                     onClick={() => {
-                      signOut()
+                      void signOut()
                     }}
                     rel="noopener noreferrer"
                   >

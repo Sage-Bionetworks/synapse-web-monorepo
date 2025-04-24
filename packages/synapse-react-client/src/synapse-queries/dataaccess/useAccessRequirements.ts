@@ -530,12 +530,19 @@ export function useCancelDataAccessRequest(
     mutationFn: request =>
       SynapseClient.cancelDataAccessRequest(request.submissionId, accessToken!),
     onSuccess: async (data, variables, ctx) => {
-      // Invalidate query for AR status
-      await queryClient.invalidateQueries({
-        queryKey: keyFactory.getAccessRequirementStatusQueryKey(
-          String(variables.accessRequirementId),
-        ),
-      })
+      await Promise.all([
+        // Invalidate data access submission queries
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getDataAccessSubmissionQueryKey(),
+        }),
+        // Invalidate query for AR status
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getAccessRequirementStatusQueryKey(
+            String(variables.accessRequirementId),
+          ),
+        }),
+      ])
+
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }

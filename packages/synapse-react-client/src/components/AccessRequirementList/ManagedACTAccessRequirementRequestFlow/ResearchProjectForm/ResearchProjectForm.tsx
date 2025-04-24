@@ -299,7 +299,7 @@ function ConfirmationScreenContent(props: { isIDURequired: boolean }) {
         </Typography>
         {isIDURequired && (
           <Typography component={'li'} variant="body1" gutterBottom>
-            Did you provide clear <i>study objectives</i> or your{' '}
+            Did you provide clear <i>study objectives</i> and your{' '}
             <i>study design</i> and <i>analysis plan</i> in the IDU section?
           </Typography>
         )}
