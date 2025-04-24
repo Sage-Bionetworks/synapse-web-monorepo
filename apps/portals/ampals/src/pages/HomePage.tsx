@@ -1,6 +1,7 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSHeader'
 import ALLALSSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/ALLALSSlat'
+import AMPALSExploretheData from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSExploretheData'
 // import { dataSql } from '../config/resources'
 // import { FeaturedDataTabs } from 'synapse-react-client'
 // import columnAliases from '../config/columnAliases'
@@ -9,15 +10,12 @@ import {
   FullWidthAlert,
   CardGridWithLinks,
   GoalsV3,
-  UpsetPlot,
 } from 'synapse-react-client'
 import { OrientationBanner } from 'synapse-react-client'
 import { goalsTableEntityId, upsetPlotSql } from '@/config/resources'
-import { Box, Button, styled, Typography, useTheme } from '@mui/material'
 
 //TODO
 export default function HomePage() {
-  const theme = useTheme()
   const moreResourcesCards = [
     {
       title: 'For Researchers',
@@ -66,120 +64,8 @@ export default function HomePage() {
       >
         <GoalsV3 entityId={goalsTableEntityId} />
       </SectionLayout>
-      <h2>Explore the data</h2>
-      <p>
-        Use this UpSet Plot to explore the intersections of different datasets
-        available in the portal. The bars represent the overlap between
-        datasets, helping you easily identify shared data points across multiple
-        sources for more targeted research.
-      </p>
-      <Button
-        variant="contained"
-        href="https://www.all-als.org/"
-        target="_blank"
-        rel="noopener noreferrer"
-        sx={{
-          padding: '6px 24px',
-          whiteSpace: 'nowrap',
-          height: '38px',
-          width: { xs: '100%', md: 'fit-content' },
-          bordeRadius: '3px',
-          display: 'flex',
-          gap: '10px',
-        }}
-      >
-        <Typography
-          sx={{ fontSize: '18px', fontWeight: '600', lineHeight: '144%' }}
-        >
-          View All Datasets
-        </Typography>
-      </Button>
-      {/* <Box
-        sx={{
-          width: '100%',
-          height: '400px',
-          '& .upsetjs svg': {
-            fontFamily: "'DM Sans', sans-serif",
-          },
-          '& .upsetjs text': {
-            fontSize: '14px',
-            fill: '#333',
-          },
-          '& .upsetjs g.bars > g:first-of-type rect': {
-            fill: '#4578c6',
-          },
-          '& .upsetjs g.bars > g:not(:first-of-type) rect': {
-            fill: 'url(#diagonalHatch)',
-            fillOpacity: 0.2,
-          },
-          '& .upsetjs line': {
-            stroke: 'none',
-          },
-        }}
-      >
-        <UpsetPlot
-          sql={upsetPlotSql}
-          rgbIndex={0}
-          maxBarCount={20}
-          setName="# People per data type (all datastes)"
-          combinationName="# of Files"
-          // onClick={handleUpsetPlotClick}
-          // summaryLinkText='Explore All Data'
-          // summaryLink='/Explore/Data'
-        />
-      </Box> */}
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        style={{ position: 'absolute', width: 0, height: 0 }}
-      >
-        <defs>
-          <pattern
-            id="diagonalHatchPattern"
-            x="0"
-            y="0"
-            width="10"
-            height="10"
-            patternUnits="userSpaceOnUse"
-          >
-            {/* Draw a backward slash line pattern going from top-left to bottom-right */}
-            <line
-              x1="0"
-              y1="0"
-              x2="10"
-              y2="10"
-              stroke={theme.palette.grey[700]}
-              strokeWidth="1"
-            />
-          </pattern>
-        </defs>
-      </svg>
-      <UpsetPlot
-        sql={upsetPlotSql}
-        customColor={'#2360A6'}
-        maxBarCount={20}
-        setName="# People per data type (all datastes)"
-        combinationName="# of Files"
-        sx={{
-          '& [data-upset="cs"]:hover line': {
-            strokeWidth: '3px',
-            strokeOpacity: '1',
-          },
-          '& rect[class^="fillPrimary-upset-"]': {
-            fill: 'url(#diagonalHatchPattern)',
-            border: '2px solid',
-            borderColor: 'grey.700',
-          },
-
-          // '.interactive-upset': {
-          //   line: { strokeWidth: '3px', strokeOpacity: '1' },
-          // },
-        }}
-        // onClick={handleUpsetPlotClick}
-        // summaryLinkText='Explore All Data'
-        // summaryLink='/Explore/Data'
-      />
+      <AMPALSExploretheData sql={upsetPlotSql} />
       <ALLALSSlat />
-
       <div className={'home-bg-dark'}>
         <SectionLayout
           title={'Featured Datasets'}
