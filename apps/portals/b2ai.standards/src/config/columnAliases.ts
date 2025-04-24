@@ -1,5 +1,5 @@
 export default {
-  organizations: 'Relevant Organizations',
+  relevantOrgNames: 'Relevant Organizations',
   standardName: 'Name of Standard',
   isOpen: 'Is Open?',
   registration: 'Requires Registration?',

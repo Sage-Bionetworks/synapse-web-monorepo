@@ -45,7 +45,7 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   facetsToPlot: [
     'topic',
     // 'Organizations',
-    'relevantOrgName',
+    'relevantOrgNames',
   ],
   initialPlotType: 'BAR',
 }
