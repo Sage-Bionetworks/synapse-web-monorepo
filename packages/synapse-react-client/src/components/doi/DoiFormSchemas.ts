@@ -27,7 +27,7 @@ export const doiFormSchema: RJSFSchema = {
   type: 'object',
   properties: {
     titles: {
-      description: 'The title or titles of your work. One per line.',
+      description: 'The title or titles of your work.',
       type: 'array',
       items: {
         type: 'string',
@@ -52,7 +52,7 @@ export const doiFormSchema: RJSFSchema = {
       type: 'integer',
       title: 'Publication Year',
       description:
-        'The year your work became or will become public. May be at most one year in the future.',
+        'The year this work became or will become public. May be at most one year in the future.',
     },
   },
   required: ['titles', 'creators', 'resourceTypeGeneral', 'publicationYear'],
