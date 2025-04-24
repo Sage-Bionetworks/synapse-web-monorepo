@@ -4,13 +4,12 @@ import {
   ContainerProps,
   Typography,
   Button,
-  Link,
 } from '@mui/material'
 import { PropsWithChildren, ReactNode } from 'react'
 
 type AMPALSResearchPageLayoutProps = PropsWithChildren<{
   ContainerProps?: ContainerProps
-  title?: string
+  headerImage
   sidebarTitle?: string
   sidebarContent?: ReactNode
 }>
