@@ -58,6 +58,9 @@ const routes: RouteObject[] = [
               <AMPALSResearchPageLayout
                 sidebarTitle="Resources for ALS researchers"
                 sidebarContent={
+                  {
+                    /* COMMENT OUT BUTTON UNTIL HELP PAGE URL IS KNOWN               
+                    <>
                   <Button
                     variant="contained"
                     sx={{
@@ -68,6 +71,8 @@ const routes: RouteObject[] = [
                   >
                     Visit our help page
                   </Button>
+                  </>} */
+                  }
                 }
               >
                 <MarkdownSynapse
@@ -92,6 +97,7 @@ const routes: RouteObject[] = [
                         name@example.com
                       </Link>
                     </Typography>
+                    {/* COMMENT OUT BUTTON UNTIL HELP PAGE URL IS KNOWN
                     <Button
                       variant="contained"
                       sx={{
@@ -101,7 +107,7 @@ const routes: RouteObject[] = [
                       }}
                     >
                       Visit our help page
-                    </Button>
+                    </Button> */}
                   </>
                 }
               >
