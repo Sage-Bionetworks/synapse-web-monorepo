@@ -40,8 +40,12 @@ export function getTextMatchesQueryFilter(
   const { textMatchesMode, distance = 0 } = ftsConfig
   let searchExpression = searchText
   if (textMatchesMode == 'BOOLEAN') {
-    const searchTextWordLength = searchText.trim().split(/\s+/).length
-    const distanceToUse = Math.max(distance, searchTextWordLength + 1)
+    //split by non-word character and ignore empty strings
+    const searchTextWordLength = searchText
+      .trim()
+      .split(/\W+/)
+      .filter(word => word.length > 0).length
+    const distanceToUse = Math.max(distance, searchTextWordLength)
     searchExpression = `"${searchText.replaceAll('"', '')}" @${distanceToUse}`
   }
   const textMatchesQueryFilter: TextMatchesQueryFilter = {
