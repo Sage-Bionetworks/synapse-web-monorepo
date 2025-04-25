@@ -143,9 +143,9 @@ class CardFooter extends Component<CardFooterProps, State> {
         data-testid="CardFooter"
         className={`SRC-cardMetadata ${this.props.className ?? ''}`}
       >
+        {cardTopContent}
         <table>
           <tbody>
-            {cardTopContent}
             {this.renderRows(valuesFiltered, limit, isDesktop)}
             {hasMoreValuesThanLimit && (
               <tr className="SRC-cardRow">
