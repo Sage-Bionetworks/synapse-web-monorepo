@@ -37,10 +37,12 @@ export function getTextMatchesQueryFilter(
     textMatchesMode: 'NATURAL_LANGUAGE',
   },
 ) {
-  const { textMatchesMode, distance } = ftsConfig
+  const { textMatchesMode, distance = 0 } = ftsConfig
   let searchExpression = searchText
   if (textMatchesMode == 'BOOLEAN') {
-    searchExpression = `"${searchText.replaceAll('"', '')}" @${distance}`
+    const searchTextWordLength = searchText.split(/\s+/).length
+    const distanceToUse = Math.max(distance, searchTextWordLength)
+    searchExpression = `"${searchText.replaceAll('"', '')}" @${distanceToUse}`
   }
   const textMatchesQueryFilter: TextMatchesQueryFilter = {
     concreteType: 'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
