@@ -41,7 +41,7 @@ export function getTextMatchesQueryFilter(
   let searchExpression = searchText
   if (textMatchesMode == 'BOOLEAN') {
     const searchTextWordLength = searchText.trim().split(/\s+/).length
-    const distanceToUse = Math.max(distance, searchTextWordLength)
+    const distanceToUse = Math.max(distance, searchTextWordLength + 1)
     searchExpression = `"${searchText.replaceAll('"', '')}" @${distanceToUse}`
   }
   const textMatchesQueryFilter: TextMatchesQueryFilter = {

@@ -226,8 +226,8 @@ describe('FullTextSearch tests', () => {
             {
               concreteType:
                 'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
-              // verify distance of 13 is used
-              searchExpression: `"${searchQuery}" @13`,
+              // verify distance of 14 (wordcount + 1) is used
+              searchExpression: `"${searchQuery}" @14`,
               searchMode: 'BOOLEAN',
             },
           ],
