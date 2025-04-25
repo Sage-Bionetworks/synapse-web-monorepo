@@ -61,7 +61,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
                 displayedColumns={[
                   'standardName',
                   'SDO',
-                  'organizations',
+                  'relevantOrgNames',
                   'isOpen',
                   'registration',
                 ]}

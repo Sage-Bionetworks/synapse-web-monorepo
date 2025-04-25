@@ -144,4 +144,16 @@ describe('Linkify tests', () => {
       `https://identifiers.org/cbioportal:nst_nfosi_ntap`,
     )
   })
+
+  test('auto-links Research Resource Identification ids using the bioregistry provider', () => {
+    const value = 'rrid:AB_262044'
+    const { container } = render(<Linkify text={value} />, {
+      wrapper: createWrapper(),
+    })
+
+    const link = container.querySelector('a')!
+    expect(link.getAttribute('href')).toEqual(
+      `https://bioregistry.io/rrid:AB_262044`,
+    )
+  })
 })

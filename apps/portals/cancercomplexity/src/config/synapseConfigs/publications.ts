@@ -82,7 +82,7 @@ export const publicationsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   searchConfiguration: {
     ftsConfig: {
       textMatchesMode: 'BOOLEAN',
-      distance: 3,
+      distance: 12,
     },
     searchable: [
       'publicationTitle',

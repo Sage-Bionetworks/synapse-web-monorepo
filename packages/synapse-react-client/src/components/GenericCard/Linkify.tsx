@@ -83,12 +83,19 @@ const cbioPortalRule: LinkifyRule = {
     return `https://identifiers.org/${value}`
   },
 }
+const rridRule: LinkifyRule = {
+  regex: /(rrid:[a-zA-Z]+.+)/,
+  onMatch: value => {
+    return `https://bioregistry.io/${value}`
+  },
+}
 
 const rules: LinkifyRule[] = [
   httpRule,
   httpsRule,
   ftpRule,
   synapseIdRule,
+  rridRule,
   pubMedRule,
   sciCrunchResolverRule,
   mutationIdRule,
