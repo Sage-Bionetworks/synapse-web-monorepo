@@ -14,12 +14,23 @@ const columnAliases = {
   studyId: 'Study Name',
 }
 
+const CUSTOM_LABEL_KEY = 'HOW TO DOWNLOAD'
+const CUSTOM_LABEL_VALUE =
+  'This file is hosted externally, follow the External Link, below'
+
 export const datasetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: {
     type: SynapseConstants.DATASET,
     title: 'title',
     description: 'description',
+    customSecondaryLabelConfig: {
+      key: CUSTOM_LABEL_KEY,
+      value: CUSTOM_LABEL_VALUE,
+      isVisible: (schema: Record<string, number>, data: string[]) => {
+        return Boolean(data[schema['id']])
+      },
+    },
     secondaryLabels: [
       // 'assay',
       'studyId',
@@ -33,6 +44,8 @@ export const datasetCardConfiguration: CardConfiguration = {
       'yearProcessed',
       'visualizeDataOn',
     ],
+    dataTypeIconNames: 'dataType',
+    downloadCartSynId: 'id',
   },
   labelLinkConfig: [
     {

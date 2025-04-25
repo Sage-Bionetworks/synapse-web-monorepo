@@ -1887,6 +1887,15 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.3.1
         version: 4.3.1(vite@5.4.3(@types/node@20.14.10)(sass@1.77.6)(terser@5.37.0))
+      '@vitest/coverage-v8':
+        specifier: ^1.6.0
+        version: 1.6.0(vitest@1.6.0)
+      '@vitest/ui':
+        specifier: ^1.6.0
+        version: 1.6.0(vitest@1.6.0)
+      '@vitest/utils':
+        specifier: ^1.6.0
+        version: 1.6.0
       '@welldone-software/why-did-you-render':
         specifier: ^8.0.3
         version: 8.0.3(react@18.2.0)
@@ -1998,6 +2007,9 @@ importers:
       vite-config:
         specifier: workspace:*
         version: link:../vite-config
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
       weak-napi:
         specifier: ^2.0.2
         version: 2.0.2

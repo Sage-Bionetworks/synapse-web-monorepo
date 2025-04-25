@@ -2,7 +2,7 @@ import { KeyFactory } from '@/synapse-queries'
 import FullContextProvider from '@/utils/context/FullContextProvider'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
 import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
-import { createContext } from 'react'
+import { createContext, PropsWithChildren } from 'react'
 
 export const MOCK_ACCESS_TOKEN = 'mock-access-token'
 
@@ -25,12 +25,10 @@ export const MOCK_CONTEXT = createContext(MOCK_CONTEXT_VALUE)
  *
  * If using @testing-library/react, see {@link TestingLibraryUtils#createWrapper}
  */
-export const SynapseTestContext = jest
-  .fn()
-  .mockImplementation(({ children }) => {
-    return (
-      <FullContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
-        {children}
-      </FullContextProvider>
-    )
-  })
+export function SynapseTestContext({ children }: PropsWithChildren) {
+  return (
+    <FullContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
+      {children}
+    </FullContextProvider>
+  )
+}

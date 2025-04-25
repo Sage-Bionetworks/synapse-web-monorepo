@@ -61,7 +61,7 @@ export const educationQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   searchConfiguration: {
     ftsConfig: {
       textMatchesMode: 'BOOLEAN',
-      distance: 3,
+      distance: 20,
     },
     searchable: ['title', 'description'],
   },
