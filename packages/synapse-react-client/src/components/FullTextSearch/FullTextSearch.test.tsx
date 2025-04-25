@@ -194,7 +194,7 @@ describe('FullTextSearch tests', () => {
     it('adds the appropriate filter when searching in BOOLEAN mode where the search term word length is larger than distance', () => {
       const columnModels = mockQueryResultBundle.columnModels
       const searchQuery =
-        'a long search term sentence  that exceeds the     distance set by the config'
+        '    a long search term sentence  that exceeds the     distance set by the config       '
       const setSearchText = jest.fn()
       const booleanModeDistance = 3
       const ftsConfig: FTSConfig = {
