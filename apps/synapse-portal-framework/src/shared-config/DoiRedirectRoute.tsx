@@ -27,7 +27,14 @@ function DoiRedirectComponent<TResourceType extends string>(props: {
   }
 
   // Only split on the first `.` -- the ID may contain `.` itself
-  const [resourceType, resourceId] = doiId.split('.', 2)
+  const parts = doiId.split('.', 2)
+  if (parts.length !== 2) {
+    console.error(
+      `Could not redirect to DOI: malformed id '${doiId}' provided in the URLSearchParams.`,
+    )
+    return <Navigate to={'/'} replace={true} />
+  }
+  const [resourceType, resourceId] = parts
 
   const redirectUrl = redirectConfig(resourceType as TResourceType, resourceId)
   return <Navigate to={redirectUrl} replace={true} />
