@@ -8,8 +8,10 @@ export const standardsChallengeTableId = STANDARDS_CHALLENGE_TABLE_ID
 export const dataSql = `
     SELECT
         concat('[', acronym, '](/Explore/Standard/DetailsPage?id=', id, ')') as acronym,
-            name, category, collections, relevantOrgNames as organizations, isOpen, registration FROM ${DST_TABLE_ID}
+            name, category, collections, relevantOrgNames, isOpen, registration FROM ${DST_TABLE_ID}
 `
+// name, category, collections, relevantOrgNames as organizations, isOpen, registration FROM ${DST_TABLE_ID}
+
 // removed topic column above to address @jay-hodgson's comment
 //  https://github.com/Sage-Bionetworks/synapse-web-monorepo/pull/1612#discussion_r2029425831
 //  Topic still shows up as a facet on the explore page but not as a column,
@@ -27,7 +29,7 @@ export const standardsDetailsPageSQL = `
             category,
             collections,
             topic as topics,
-            relevantOrgNames as organizations,
+            relevantOrgNames,
             COALESCE(responsibleOrgName, 'No responsible org listed') as SDO,
             isOpen,
             relatedTo,
@@ -35,3 +37,4 @@ export const standardsDetailsPageSQL = `
             registration
     FROM ${DST_TABLE_ID}
 `
+// relevantOrgNames as organizations,
