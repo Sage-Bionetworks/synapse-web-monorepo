@@ -1,8 +1,14 @@
+import ChallengesCardDeck from '@/components/ChallengesCardDeck'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import StandardsHeader from '@sage-bionetworks/synapse-portal-framework/components/b2ai.standards/StandardsHeader'
 import StandardsContributeToTheRegistry from '@sage-bionetworks/synapse-portal-framework/components/b2ai.standards/StandardsContributeToTheRegistry'
-import { dataSql, standardsChallengeTableId } from '../config/resources'
-import { FeaturedDataTabs, CardDeck } from 'synapse-react-client'
+import TableQueryCardDeck from 'synapse-react-client/components/CardDeck/TableQueryCardDeck'
+import {
+  dataSql,
+  DST_TABLE_COLUMN_NAMES,
+  standardsChallengeTableId,
+} from '../config/resources'
+import { FeaturedDataTabs } from 'synapse-react-client'
 import CTASectionWrapper from 'synapse-react-client/components/CTASectionWrapper/CTASectionWrapper'
 import columnAliases from '../config/columnAliases'
 
@@ -18,7 +24,8 @@ export default function HomePage() {
           Standards Related to Bridge2AI Challenges
         </h2>
       </div>
-      <CardDeck
+      <ChallengesCardDeck />
+      <TableQueryCardDeck
         entityId={standardsChallengeTableId}
         titleColumnName={'title'}
         descriptionColumnName={'description'}
@@ -63,10 +70,13 @@ export default function HomePage() {
                 explorePagePath: '/Explore',
                 exploreObjectType: 'Standards',
                 plotsConfig: {
-                  sql: `${dataSql} where relevantOrgNames is not null`,
+                  sql: `${dataSql} where ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES} is not null`,
                   configs: [
                     {
-                      facetsToPlot: ['topic', 'relevantOrgNames'],
+                      facetsToPlot: [
+                        'topic',
+                        DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
+                      ],
                       unitDescription: 'standard',
                       plotType: 'BAR',
                       columnAliases: columnAliases,

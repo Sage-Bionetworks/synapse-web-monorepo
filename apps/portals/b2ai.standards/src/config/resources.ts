@@ -1,5 +1,7 @@
 const DST_TABLE_ID = 'syn65676531.16'
 const STANDARDS_CHALLENGE_TABLE_ID = 'syn65913973'
+
+export const DST_TABLE_COLUMN_NAMES = { RELEVANT_ORG_NAMES: 'relevantOrgNames' }
 // can replace with specific version if wanted
 
 export const standardsChallengeTableId = STANDARDS_CHALLENGE_TABLE_ID
@@ -8,7 +10,7 @@ export const standardsChallengeTableId = STANDARDS_CHALLENGE_TABLE_ID
 export const dataSql = `
     SELECT
         concat('[', acronym, '](/Explore/Standard/DetailsPage?id=', id, ')') as acronym,
-            name, category, collections, relevantOrgNames, isOpen, registration FROM ${DST_TABLE_ID}
+            name, category, collections, ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration FROM ${DST_TABLE_ID}
 `
 // name, category, collections, relevantOrgNames as organizations, isOpen, registration FROM ${DST_TABLE_ID}
 
@@ -29,7 +31,7 @@ export const standardsDetailsPageSQL = `
             category,
             collections,
             topic as topics,
-            relevantOrgNames,
+            ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES},
             COALESCE(responsibleOrgName, 'No responsible org listed') as SDO,
             isOpen,
             relatedTo,
