@@ -56,6 +56,9 @@ const CHALLENGE_CARDS: CardDeckCardProps[] = [
   },
 ]
 
+/**
+ * Card view of challenges for the home page
+ */
 export function ChallengesCardDeck() {
   return <CardDeck cards={CHALLENGE_CARDS} cardDeckType="b2ai" />
 }
