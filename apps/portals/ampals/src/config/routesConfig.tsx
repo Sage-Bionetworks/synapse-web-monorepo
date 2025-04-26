@@ -9,7 +9,11 @@ import explorePageRoutes from './explorePageRoutes'
 import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import AMPALSResearchPageLayout from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSResearchPageLayout'
 import { searchPageChildRoutes } from '@/pages/AMPALSSearchPage'
-import { Typography, Button, Link } from '@mui/material'
+import { Typography, Link } from '@mui/material'
+//import header images for Resources pages
+import ResearcherResourcesHeaderSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/researcher_resources_slat.png'
+import ContributorResourcesHeaderSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/data_contributor_resources_slat.png'
+import PWLEResourcesHeaderSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/pwles_resources_slat.png'
 
 //TO DO: help page button url(s), remove first child h2 padding-top or find some other fix, add input for header images
 
@@ -56,24 +60,8 @@ const routes: RouteObject[] = [
             path: 'For Researchers',
             element: (
               <AMPALSResearchPageLayout
+                headerImageURL={ResearcherResourcesHeaderSlat}
                 sidebarTitle="Resources for ALS researchers"
-                sidebarContent={
-                  {
-                    /* COMMENT OUT BUTTON UNTIL HELP PAGE URL IS KNOWN               
-                    <>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      width: '190px',
-                      borderRadius: '3px',
-                      //href: ???
-                    }}
-                  >
-                    Visit our help page
-                  </Button>
-                  </>} */
-                  }
-                }
               >
                 <MarkdownSynapse
                   ownerId="syn64892175"
@@ -87,6 +75,7 @@ const routes: RouteObject[] = [
             path: 'For Contributors',
             element: (
               <AMPALSResearchPageLayout
+                headerImageURL={ContributorResourcesHeaderSlat}
                 sidebarTitle="How to contribute data to the ALS Knowledge Portal"
                 sidebarContent={
                   <>
@@ -97,17 +86,6 @@ const routes: RouteObject[] = [
                         name@example.com
                       </Link>
                     </Typography>
-                    {/* COMMENT OUT BUTTON UNTIL HELP PAGE URL IS KNOWN
-                    <Button
-                      variant="contained"
-                      sx={{
-                        width: '190px',
-                        borderRadius: '3px',
-                        //href: ???
-                      }}
-                    >
-                      Visit our help page
-                    </Button> */}
                   </>
                 }
               >
@@ -122,7 +100,10 @@ const routes: RouteObject[] = [
           {
             path: 'For Persons With Lived Experience',
             element: (
-              <AMPALSResearchPageLayout sidebarTitle="Resources for ALS patients and people with lived experience">
+              <AMPALSResearchPageLayout
+                headerImageURL={PWLEResourcesHeaderSlat}
+                sidebarTitle="Resources for ALS patients and people with lived experience"
+              >
                 <MarkdownSynapse
                   ownerId="syn64892175"
                   wikiId="631453"
