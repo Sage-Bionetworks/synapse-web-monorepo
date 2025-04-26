@@ -132,7 +132,6 @@ export function GenericCard(props: GenericCardProps) {
 
   return (
     <div style={style} className={'SRC-portalCard'}>
-      {/*cardTopContent*/}
       <div className={'SRC-portalCardMain'}>
         {icon}
         <div className="SRC-cardContent">
