@@ -1,6 +1,7 @@
 import { Box, Skeleton, Tooltip, Typography } from '@mui/material'
 import { useState } from 'react'
 import { HelpPopover, IconSvg, SynapseQueries } from 'synapse-react-client'
+import { copyStringToClipboard } from 'synapse-react-client/utils/functions/StringUtils'
 
 export function HeadlineWithLinkDerivedFromEntityId(props: {
   id: string
@@ -76,7 +77,7 @@ export function HeadlineWithLink(props: {
                   '',
                 )
                 const url = `${urlWithoutHash}#${id}`
-                navigator.clipboard.writeText(url).then(() => {
+                copyStringToClipboard(url, () => {
                   setCopied(true)
                 })
               }}

@@ -3,6 +3,7 @@ import { createRef, RefObject, SyntheticEvent, useState } from 'react'
 import { ToastMessage } from './ToastMessage/ToastMessage'
 import { BoxProps } from '@mui/material'
 import IconSvg from './IconSvg'
+import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 export type CopyToClipboardIconProps = BoxProps & {
   value: string
@@ -21,9 +22,7 @@ export function CopyToClipboardIcon({
     (ref: RefObject<HTMLElement>, value: string) => (event: SyntheticEvent) => {
       event.preventDefault()
 
-      // use the Clipboard API
-      // https://caniuse.com/mdn-api_clipboard_writetext
-      navigator.clipboard.writeText(value).then(() => {
+      copyStringToClipboard(value, () => {
         // show modal and hide after 4 seconds, the timing is per Material Design
         setShowModal(true)
         // hide after 4 seconds

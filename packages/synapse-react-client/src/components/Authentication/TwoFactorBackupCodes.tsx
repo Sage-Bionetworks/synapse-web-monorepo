@@ -21,6 +21,7 @@ import IconSvg from '../IconSvg/IconSvg'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import { RecoveryCodeGrid } from './RecoveryCodeGrid'
 import { RegenerateBackupCodesWarning } from './RegenerateBackupCodesWarning'
+import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 export type TwoFactorBackupCodesProps = {
   /* Whether to show a warning before generating new codes, to prevent users from overwriting their existing codes */
@@ -63,7 +64,7 @@ export default function TwoFactorBackupCodes(props: TwoFactorBackupCodesProps) {
 
   const copyCodesToClipboard = useCallback(() => {
     const codes = (recoveryCodes?.codes || []).join('\n')
-    navigator.clipboard.writeText(codes).then(() => {
+    copyStringToClipboard(codes, () => {
       displayToast('Recovery codes copied to clipboard', 'success')
     })
   }, [recoveryCodes])

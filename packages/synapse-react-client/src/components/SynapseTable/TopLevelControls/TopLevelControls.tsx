@@ -31,6 +31,7 @@ import {
   getNumberOfResultsToInvokeAction,
   getNumberOfResultsToInvokeActionCopy,
 } from './TopLevelControlsUtils'
+import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
   'SendToAnalysisPlatformTopLevelControlButton'
@@ -289,11 +290,12 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                   : 'Copy this search to the clipboard'
               }
               callbackFn={() => {
-                navigator.clipboard.writeText(window.location.href)
-                setHasRecentlyCopiedToClipboard(true)
-                setTimeout(() => {
-                  setHasRecentlyCopiedToClipboard(false)
-                }, 3000)
+                copyStringToClipboard(window.location.href, () => {
+                  setHasRecentlyCopiedToClipboard(true)
+                  setTimeout(() => {
+                    setHasRecentlyCopiedToClipboard(false)
+                  }, 3000)
+                })
               }}
               darkTheme={true}
               icon={'clipboard'}

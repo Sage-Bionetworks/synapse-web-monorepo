@@ -11,6 +11,7 @@ import {
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { useQueryContext } from '../QueryContext/QueryContext'
 import { displayToast } from '../ToastMessage/ToastMessage'
+import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 type EntityIDColumnCopyIconProps = Omit<InteractiveCopyIdsIconProps, 'onCopy'>
 
@@ -78,8 +79,7 @@ const EntityIDColumnCopyIcon = (props: EntityIDColumnCopyIconProps) => {
           return `${row.values[0]}`
         })
         .join('\n')
-      // https://caniuse.com/mdn-api_clipboard_writetext
-      navigator.clipboard.writeText(synIDs).then(() => {
+      copyStringToClipboard(synIDs, () => {
         displayToast('Successfully copied to clipboard')
         setIdData(undefined)
       })

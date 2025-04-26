@@ -75,3 +75,25 @@ export function validatePassword(newPassword: string) {
   }
   return undefined
 }
+
+export function copyStringToClipboard(
+  value: string,
+  onSuccess: () => void,
+  onError?: (error: any) => void,
+): void {
+  // PORTALS-3571: setTimeout necessary on Safari
+  setTimeout(() => {
+    // use the Clipboard API
+    // https://caniuse.com/mdn-api_clipboard_writetext
+    navigator.clipboard
+      .writeText(value)
+      .then(onSuccess)
+      .catch(error => {
+        if (onError) {
+          onError(error)
+        } else {
+          console.error('Copy failed:', error)
+        }
+      })
+  }, 0)
+}

@@ -1,6 +1,7 @@
 import { Stack, Tooltip, Typography, TypographyProps } from '@mui/material'
 import { SyntheticEvent, useState } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
+import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 export type CopyToClipboardStringProps = {
   value: string
@@ -17,9 +18,7 @@ export function CopyToClipboardString(props: CopyToClipboardStringProps) {
   const copyToClipboard = (event: SyntheticEvent) => {
     event.preventDefault()
 
-    // use the Clipboard API
-    // https://caniuse.com/mdn-api_clipboard_writetext
-    navigator.clipboard.writeText(value).then(() => {
+    copyStringToClipboard(value, () => {
       setTooltipText('Copied to clipboard')
     })
   }
