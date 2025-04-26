@@ -20,6 +20,7 @@ export type HeaderCardProps = {
   target?: string
   icon: React.ReactNode
   headerCardVariant?: HeaderCardVariant
+  cardTopContent?: React.ReactNode
 }
 
 function HeaderCard(props: HeaderCardProps) {
@@ -36,6 +37,7 @@ function HeaderCard(props: HeaderCardProps) {
     target,
     icon,
     headerCardVariant = 'HeaderCard',
+    cardTopContent,
   } = props
 
   // store old document title and description so that we can restore when this component is removed
@@ -118,6 +120,7 @@ function HeaderCard(props: HeaderCardProps) {
                   }}
                 />
                 <div className="SRC-cardContent">
+                  {cardTopContent}
                   {values && (
                     <CardFooter
                       isHeader={true}
