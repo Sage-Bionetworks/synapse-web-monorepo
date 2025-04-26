@@ -14,6 +14,7 @@ export function FileEntityMD5Cell(
     row.original.entityId,
     row.original.versionNumber,
   )
+  // TODO: Use copyStringToClipboard?  Is this mutation necessary?
   const { mutate: copyMd5ToClipboard } = useMutation({
     mutationFn: (md5: string) => navigator.clipboard.writeText(md5),
     onSuccess: () => displayToast('MD5 copied to the clipboard', 'success'),
