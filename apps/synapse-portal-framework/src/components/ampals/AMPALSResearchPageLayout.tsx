@@ -1,21 +1,21 @@
-import {
-  Box,
-  Container,
-  ContainerProps,
-  Typography,
-  Button,
-} from '@mui/material'
+import { Box, Container, ContainerProps, Typography } from '@mui/material'
 import { PropsWithChildren, ReactNode } from 'react'
 
 type AMPALSResearchPageLayoutProps = PropsWithChildren<{
   ContainerProps?: ContainerProps
-  headerImage
+  headerImageURL?: string
   sidebarTitle?: string
   sidebarContent?: ReactNode
 }>
 
 const AMPALSResearchPageLayout = (props: AMPALSResearchPageLayoutProps) => {
-  const { ContainerProps, children, sidebarTitle, sidebarContent } = props
+  const {
+    ContainerProps,
+    children,
+    sidebarTitle,
+    sidebarContent,
+    headerImageURL,
+  } = props
   return (
     <Container
       {...ContainerProps}
@@ -31,6 +31,9 @@ const AMPALSResearchPageLayout = (props: AMPALSResearchPageLayoutProps) => {
           width: '100%',
           height: '180px',
           backgroundColor: '#2360A6',
+          backgroundImage: `url(${headerImageURL})`,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
           display: 'flex',
           alignItems: 'center',
         }}
@@ -46,7 +49,6 @@ const AMPALSResearchPageLayout = (props: AMPALSResearchPageLayoutProps) => {
         >
           Resources
         </Typography>
-        <Button></Button>
       </Box>
       <Box
         sx={{
