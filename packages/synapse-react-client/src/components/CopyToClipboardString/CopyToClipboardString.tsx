@@ -18,7 +18,7 @@ export function CopyToClipboardString(props: CopyToClipboardStringProps) {
   const copyToClipboard = (event: SyntheticEvent) => {
     event.preventDefault()
 
-    copyStringToClipboard(value, () => {
+    copyStringToClipboard(value).then(() => {
       setTooltipText('Copied to clipboard')
     })
   }

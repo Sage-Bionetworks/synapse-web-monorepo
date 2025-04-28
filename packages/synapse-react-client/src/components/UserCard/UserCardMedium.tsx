@@ -49,7 +49,7 @@ const copyToClipboard =
   (event: SyntheticEvent) => {
     event.preventDefault()
 
-    copyStringToClipboard(value, () => {
+    copyStringToClipboard(value).then(() => {
       onCopy()
     })
   }

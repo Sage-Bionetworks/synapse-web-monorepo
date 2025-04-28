@@ -77,7 +77,7 @@ export function HeadlineWithLink(props: {
                   '',
                 )
                 const url = `${urlWithoutHash}#${id}`
-                copyStringToClipboard(url, () => {
+                copyStringToClipboard(url).then(() => {
                   setCopied(true)
                 })
               }}

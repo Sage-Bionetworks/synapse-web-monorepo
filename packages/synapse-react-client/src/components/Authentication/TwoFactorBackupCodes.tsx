@@ -64,7 +64,7 @@ export default function TwoFactorBackupCodes(props: TwoFactorBackupCodesProps) {
 
   const copyCodesToClipboard = useCallback(() => {
     const codes = (recoveryCodes?.codes || []).join('\n')
-    copyStringToClipboard(codes, () => {
+    copyStringToClipboard(codes).then(() => {
       displayToast('Recovery codes copied to clipboard', 'success')
     })
   }, [recoveryCodes])

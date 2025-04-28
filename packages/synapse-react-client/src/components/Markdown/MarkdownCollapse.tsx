@@ -94,8 +94,7 @@ export const MarkdownCollapse = (props: MarkdownCollapseProps) => {
               variant="smallLink"
               onClick={() => {
                 if (plainText) {
-                  copyStringToClipboard(
-                    plainText,
+                  copyStringToClipboard(plainText).then(
                     () => {
                       displayToast('Successfully copied to the clipboard')
                     },

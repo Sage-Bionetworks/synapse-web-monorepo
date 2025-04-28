@@ -352,7 +352,7 @@ export default function DownloadListTable() {
           return `${item.fileEntityId}.${item.versionNumber}`
         })
         .join('\n')
-      copyStringToClipboard(synIDs, () => {
+      copyStringToClipboard(synIDs).then(() => {
         displayToast('Successfully copied to clipboard')
       })
       setCopyingAllSynapseIDs(false)

@@ -290,7 +290,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                   : 'Copy this search to the clipboard'
               }
               callbackFn={() => {
-                copyStringToClipboard(window.location.href, () => {
+                copyStringToClipboard(window.location.href).then(() => {
                   setHasRecentlyCopiedToClipboard(true)
                   setTimeout(() => {
                     setHasRecentlyCopiedToClipboard(false)

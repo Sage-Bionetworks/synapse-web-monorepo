@@ -17,7 +17,7 @@ export function SharePageLinkButton({
   buttonProps,
 }: SharePageLinkButtonProps) {
   const copyToClipboard = useCallback((value: string) => {
-    copyStringToClipboard(value, () => {
+    copyStringToClipboard(value).then(() => {
       displayToast('Page URL copied to the clipboard', 'success')
     })
   }, [])

@@ -79,7 +79,7 @@ const EntityIDColumnCopyIcon = (props: EntityIDColumnCopyIconProps) => {
           return `${row.values[0]}`
         })
         .join('\n')
-      copyStringToClipboard(synIDs, () => {
+      copyStringToClipboard(synIDs).then(() => {
         displayToast('Successfully copied to clipboard')
         setIdData(undefined)
       })

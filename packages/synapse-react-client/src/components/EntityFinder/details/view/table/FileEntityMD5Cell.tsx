@@ -5,6 +5,7 @@ import { CellContext } from '@tanstack/react-table'
 import { displayToast } from '../../../../ToastMessage/index'
 import { EntityFinderTableViewRowData } from '../DetailsView'
 import { FileHandleWithPreview } from './TableCellTypes'
+import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 export function FileEntityMD5Cell(
   props: CellContext<EntityFinderTableViewRowData, unknown>,
@@ -14,9 +15,8 @@ export function FileEntityMD5Cell(
     row.original.entityId,
     row.original.versionNumber,
   )
-  // TODO: Use copyStringToClipboard?  Is this mutation necessary?
   const { mutate: copyMd5ToClipboard } = useMutation({
-    mutationFn: (md5: string) => navigator.clipboard.writeText(md5),
+    mutationFn: (md5: string) => copyStringToClipboard(md5),
     onSuccess: () => displayToast('MD5 copied to the clipboard', 'success'),
   })
   if (isLoadingEntityBundle) {

@@ -27,7 +27,7 @@ export function CopyToClipboardInput({
     (ref: RefObject<HTMLElement>, value: string) => (event: SyntheticEvent) => {
       event.preventDefault()
 
-      copyStringToClipboard(value, () => {
+      copyStringToClipboard(value).then(() => {
         // show modal and hide after 4 seconds, the timing is per Material Design
         setShowModal(true)
         // hide after 4 seconds
