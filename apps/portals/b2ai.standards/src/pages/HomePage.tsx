@@ -1,4 +1,4 @@
-import ChallengesCardDeck from '@/components/ChallengesCardDeck'
+// import ChallengesCardDeck from '@/components/ChallengesCardDeck'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import StandardsHeader from '@sage-bionetworks/synapse-portal-framework/components/b2ai.standards/StandardsHeader'
 import StandardsContributeToTheRegistry from '@sage-bionetworks/synapse-portal-framework/components/b2ai.standards/StandardsContributeToTheRegistry'
@@ -24,7 +24,8 @@ export default function HomePage() {
           Standards Related to Bridge2AI Challenges
         </h2>
       </div>
-      <ChallengesCardDeck />
+      {/* TODO: Replace TableQueryCardDeck with ChallengesCardDeck */}
+      {/*<ChallengesCardDeck />*/}
       <TableQueryCardDeck
         entityId={standardsChallengeTableId}
         titleColumnName={'title'}
