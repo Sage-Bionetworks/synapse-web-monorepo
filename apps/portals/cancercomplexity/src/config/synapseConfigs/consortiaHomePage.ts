@@ -1,4 +1,5 @@
-import type { ProgramsProps, CardDeckProps } from 'synapse-react-client'
+import type { ProgramsProps } from 'synapse-react-client'
+import { TableQueryCardDeckProps } from 'synapse-react-client/components/CardDeck/TableQueryCardDeck'
 
 export const consortiaHomePageConfig: ProgramsProps = {
   entityId: 'syn34267412',
@@ -16,7 +17,7 @@ export const consortiaHomePageConfig: ProgramsProps = {
   },
 }
 
-export const availableResearchCardDeckConfig: CardDeckProps = {
+export const availableResearchCardDeckConfig: TableQueryCardDeckProps = {
   entityId: 'syn66276142',
   titleColumnName: 'title',
   descriptionColumnName: 'description',
