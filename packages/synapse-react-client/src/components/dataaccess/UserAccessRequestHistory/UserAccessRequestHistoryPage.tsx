@@ -38,8 +38,8 @@ export function UserAccessRequestHistoryPage() {
         by others, which you were named as a requester on.
       </Typography>
       <Typography variant="body1" gutterBottom>
-        Note: Requests which have expired or manually revoked will appear as
-        &#147;Approved&#148;.
+        Note: Requests where your access has been revoked will appear as
+        &quot;Approved&quot;.
       </Typography>
       {faqContent.length > 0 && (
         <>

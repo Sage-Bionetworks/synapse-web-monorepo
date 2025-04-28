@@ -1,10 +1,14 @@
-const DST_TABLE_ID = 'syn65676531.16'
 const STANDARDS_CHALLENGE_TABLE_ID = 'syn65913973'
 
 export const DST_TABLE_COLUMN_NAMES = { RELEVANT_ORG_NAMES: 'relevantOrgNames' }
-// can replace with specific version if wanted
 
 export const standardsChallengeTableId = STANDARDS_CHALLENGE_TABLE_ID
+
+let DST_TABLE_ID = 'syn65676531'
+// const CURRENT_TABLE_VERSIONS_ID = 'syn66330007'
+// const DST_TABLE_VERSION = execute_somehow(`SELECT version_to_use FROM ${CURRENT_TABLE_VERSIONS_ID} WHERE table_id = '${DST_TABLE_ID}'`)
+const DST_TABLE_VERSION = '18'
+DST_TABLE_ID = `${DST_TABLE_ID}.${DST_TABLE_VERSION}`
 
 // for the Explore page table:
 export const dataSql = `
