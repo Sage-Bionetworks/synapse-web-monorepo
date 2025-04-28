@@ -14,6 +14,7 @@ import { Typography, Link } from '@mui/material'
 import ResearcherResourcesHeaderSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/researcher_resources_slat.png'
 import ContributorResourcesHeaderSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/data_contributor_resources_slat.png'
 import PWLEResourcesHeaderSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/pwles_resources_slat.png'
+import PublishingRequirementsSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/publishing_requirements.png'
 
 //TO DO: help page button url(s), remove first child h2 padding-top or find some other fix, add input for header images
 
@@ -107,6 +108,21 @@ const routes: RouteObject[] = [
                 <MarkdownSynapse
                   ownerId="syn64892175"
                   wikiId="631453"
+                  loadingSkeletonRowCount={50}
+                />
+              </AMPALSResearchPageLayout>
+            ),
+          },
+          {
+            path: 'Requirements for Publication',
+            element: (
+              <AMPALSResearchPageLayout
+                headerImageURL={PublishingRequirementsSlat}
+                sidebarTitle="Using data from the ALS Knowledge Portal in publications"
+              >
+                <MarkdownSynapse
+                  ownerId="syn64892175"
+                  wikiId="632170"
                   loadingSkeletonRowCount={50}
                 />
               </AMPALSResearchPageLayout>
