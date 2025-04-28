@@ -52,7 +52,6 @@ export default function HomePage() {
         }}
       />
       <AMPALSHeader headerSvgURL={headerSvg} />
-      {/* <GoalsV2 entityId={goalsSql} dataLink={''} /> */}
       <SectionLayout
         title={'Our ALS Resources'}
         centerTitle
