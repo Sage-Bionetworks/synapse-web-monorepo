@@ -53,8 +53,6 @@ const AMPALSExploretheData = ({ sql }: AMPALSExploretheDataProps) => {
           explorePath: 'Datasets',
           columnName: 'dataTypes',
         })}
-        // summaryLinkText='Explore All Data'
-        // summaryLink='/Explore/Data'
       />
     </Box>
   )

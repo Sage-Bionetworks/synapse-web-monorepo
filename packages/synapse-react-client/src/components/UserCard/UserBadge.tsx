@@ -166,7 +166,6 @@ export function UserBadge(props: UserBadgeProps) {
         {fullName ? ')' : ''}
         {showAccountLevelIcon && accountLevelIcon}
       </Tag>
-      <p>moderator</p>
     </>
   )
 }
