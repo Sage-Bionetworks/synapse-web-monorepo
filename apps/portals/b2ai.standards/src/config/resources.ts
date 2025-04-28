@@ -1,11 +1,8 @@
+const DST_TABLE_ID = 'syn66330015' // points to DST_denormalized_current.
+// To change DST_denormalized version, change it in that materialized view definition.
+
 const STANDARDS_CHALLENGE_TABLE_ID = 'syn65913973'
 export const standardsChallengeTableId = STANDARDS_CHALLENGE_TABLE_ID
-
-let DST_TABLE_ID = 'syn65676531'
-// const CURRENT_TABLE_VERSIONS_ID = 'syn66330007'
-// const DST_TABLE_VERSION = execute_somehow(`SELECT version_to_use FROM ${CURRENT_TABLE_VERSIONS_ID} WHERE table_id = '${DST_TABLE_ID}'`)
-const DST_TABLE_VERSION = '18'
-DST_TABLE_ID = `${DST_TABLE_ID}.${DST_TABLE_VERSION}`
 
 // for the Explore page table:
 export const dataSql = `
