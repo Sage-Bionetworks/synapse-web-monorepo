@@ -38,6 +38,18 @@ export const navbarConfig: NavbarConfig = {
           name: 'For Persons With Lived Experience',
           path: '/Resources/For Persons With Lived Experience',
         },
+        {
+          name: 'Requirements for Publication',
+          path: '/Resources/Requirements for Publication',
+        },
+        {
+          name: 'Frequently Asked Questions',
+          path: '/Resources/Frequently Asked Questions',
+        },
+        {
+          name: 'Contribute Data',
+          path: '/Resources/Contribute Data',
+        },
       ],
     },
     {

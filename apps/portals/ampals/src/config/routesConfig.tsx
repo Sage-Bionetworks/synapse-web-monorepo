@@ -132,6 +132,37 @@ const routes: RouteObject[] = [
               </AMPALSResearchPageLayout>
             ),
           },
+          {
+            path: 'Frequently Asked Questions',
+            element: (
+              <AMPALSResearchPageLayout
+                headerTitle="Frequently Asked Questions"
+                headerImageURL={PublishingRequirementsSlat}
+              >
+                <MarkdownSynapse
+                  ownerId="syn64892175"
+                  wikiId="632170"
+                  loadingSkeletonRowCount={50}
+                />
+              </AMPALSResearchPageLayout>
+            ),
+          },
+          {
+            path: 'Contribute Data',
+            element: (
+              <AMPALSResearchPageLayout
+                headerTitle="Contribute Data"
+                headerImageURL={PublishingRequirementsSlat}
+                sidebarTitle="How to contribute data to the ALS Knowledge Portal"
+              >
+                <MarkdownSynapse
+                  ownerId="syn64892175"
+                  wikiId="632170"
+                  loadingSkeletonRowCount={50}
+                />
+              </AMPALSResearchPageLayout>
+            ),
+          },
         ],
       },
       {
