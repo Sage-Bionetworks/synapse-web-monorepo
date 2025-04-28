@@ -3,7 +3,7 @@ import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/
 import ALLALSSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/ALLALSSlat'
 import AMPALSPublishingRequirements from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSPublishingRequirements'
 import HowToAccessData from '@sage-bionetworks/synapse-portal-framework/components/ampals/HowToAccessData'
-import AMPALSExploretheData from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSExploretheData'
+// import AMPALSExploretheData from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSExploretheData'
 // import { dataSql } from '../config/resources'
 // import { FeaturedDataTabs } from 'synapse-react-client'
 // import columnAliases from '../config/columnAliases'
@@ -14,7 +14,7 @@ import {
   GoalsV3,
 } from 'synapse-react-client'
 import { OrientationBanner } from 'synapse-react-client'
-import { goalsTableEntityId, upsetPlotSql } from '@/config/resources'
+import { goalsTableEntityId } from '@/config/resources'
 import { ReactComponent as DatasetsIcon } from '../../src/config/style/datasets.svg'
 import { ReactComponent as FilesIcon } from '../../src/config/style/files.svg'
 import { ReactComponent as ProjectsIcon } from '../../src/config/style/projects.svg'
@@ -76,7 +76,7 @@ export default function HomePage() {
           }}
         />
       </SectionLayout>
-      <AMPALSExploretheData sql={upsetPlotSql} />
+      {/* <AMPALSExploretheData sql={upsetPlotSql} /> */}
       <HowToAccessData />
       <AMPALSPublishingRequirements />
       <ALLALSSlat />

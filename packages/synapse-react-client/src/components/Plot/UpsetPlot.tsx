@@ -5,6 +5,7 @@ import { SynapseConstants } from '@/utils'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { ReactComponent as DiagonalLinePattern } from '@/assets/illustrations/diagonalLinePattern.svg'
 
 import UpSetJS, {
   extractSets,
@@ -30,13 +31,13 @@ export type UpsetPlotProps = {
   rgbIndex?: number // color plot based on portal
   customPlotColor?: string
   selectionOpacity?: number
+  variant?: 'ampals'
   maxBarCount?: number // will show all if not set
   setName?: string // instead of "Set Size"
   combinationName?: string // instead of "Intersection Size"
   height?: number
   summaryLinkText?: string // text for home page link below chart
   summaryLink?: string // url for home page link below chart
-  sx?: SxProps
 } & Pick<UpSetSelectionProps, 'onClick'>
 
 export type UpsetPlotData = {
@@ -49,6 +50,7 @@ export type UpsetPlotData = {
  */
 export function UpsetPlot({
   sql,
+  variant,
   rgbIndex,
   maxBarCount,
   setName,
@@ -59,7 +61,6 @@ export function UpsetPlot({
   onClick,
   customPlotColor,
   selectionOpacity,
-  sx,
 }: UpsetPlotProps) {
   const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState<boolean>()
@@ -68,8 +69,53 @@ export function UpsetPlot({
   const [selection, setSelection] = useState(null as ISetLike<any> | null)
   const theme = useTheme()
 
+  const variantStyles: Record<string, SxProps> = {
+    ampals: {
+      width: '100%',
+      '& .selectionHint-upset-': {
+        stroke: 'transparent !important',
+      },
+      '& [class^="selectionHint-upset-"]': {
+        stroke: 'transparent !important',
+      },
+      '& g[class^="interactive-upset-"]:hover line[class^="upsetLine-"]': {
+        stroke: theme.palette.primary.main,
+        strokeWidth: '4px',
+        strokeOpacity: 1,
+      },
+      '& g[class^="interactive-upset-"]:hover circle[class^="fillNotMember-upset-"]':
+        {
+          opacity: 0.2,
+        },
+      '& line[class^="upsetLine-"]': {
+        strokeOpacity: 0,
+      },
+      '& rect[class^="fillPrimary-upset-"]': {
+        fill: 'url(#diagonalLinePattern)',
+        stroke: theme.palette.grey[700],
+        strokeWidth: 2,
+      },
+      '& circle[class^="fillNotMember-upset-"]': {
+        stroke: theme.palette.grey[600],
+        strokeWidth: 2,
+      },
+      '& text[class^="sChartTextStyle-upset-"], & text[class^="cChartTextStyle-upset-"]':
+        {
+          fontWeight: 700,
+          fill: theme.palette.grey[800],
+          lineHeight: '150%',
+        },
+      '& text[class^="cChartTextStyle-upset-"]': {
+        transform: 'translate(-60px, 190px) rotate(-90deg)',
+      },
+      '& text[class^="sChartTextStyle-upset-"]': {
+        transform: 'translate(-10px, 100px) rotate(-90deg)',
+      },
+    },
+  }
+
   let plotColor: string, selectionColor: string
-  if (rgbIndex) {
+  if (rgbIndex != null) {
     const { colorPalette } = getColorPalette(rgbIndex, 2)
     plotColor = colorPalette[0]
     selectionColor = colorPalette[0]
@@ -173,49 +219,63 @@ export function UpsetPlot({
     }
   }, [sql, accessToken])
 
-  console.log('sets', data?.sets)
-  console.log('combinations', data?.combinations)
-  console.log('d', data?.combinations.slice(0, 5))
-  // .upsetLine-upset-dcv07xnnr
   return (
     <>
       {isLoading && loadingScreen}
       {!isLoading && data && (
         <SizeMe>
           {({ size }) => (
-            <Box className="UpsetPlot" sx={{ ...sx }}>
-              <UpSetJS
-                sets={data.sets}
-                combinations={data.combinations}
-                width={size.width!}
-                height={height}
-                onHover={setSelection}
-                onClick={onClick}
-                selection={selection}
-                color={plotColor}
-                selectionColor={selectionColor}
-                hoverHintColor={'orange'}
-                hasSelectionOpacity={selectionOpacity ? selectionOpacity : 0.3}
-                // alternatingBackgroundColor={false}
-                setName={setName?.toUpperCase()}
-                combinationName={combinationName?.toUpperCase()}
-                fontFamily="'DM Sans', sans-serif"
-                fontSizes={updateFontSizes}
-                exportButtons={false}
-                notMemberColor="transparent"
-              />
-              {summaryLink && summaryLinkText && (
-                <div className="UpsetPlot__summary">
-                  <LargeButton
-                    color="secondary"
-                    variant="contained"
-                    href={summaryLink}
-                  >
-                    {summaryLinkText}
-                  </LargeButton>
-                </div>
+            <>
+              {variantStyles['ampals'] && (
+                <Box
+                  sx={{
+                    '& path': {
+                      stroke: '#D9D9D9 !important',
+                    },
+                  }}
+                >
+                  <DiagonalLinePattern />
+                </Box>
               )}
-            </Box>
+              <Box
+                className="UpsetPlot"
+                sx={variant ? variantStyles[variant] : undefined}
+              >
+                <UpSetJS
+                  sets={data.sets}
+                  combinations={data.combinations}
+                  width={size.width!}
+                  height={height}
+                  onHover={setSelection}
+                  onClick={onClick}
+                  selection={selection}
+                  color={plotColor}
+                  selectionColor={selectionColor}
+                  hoverHintColor={'orange'}
+                  hasSelectionOpacity={
+                    selectionOpacity ? selectionOpacity : 0.3
+                  }
+                  // alternatingBackgroundColor={false}
+                  setName={setName}
+                  combinationName={combinationName}
+                  fontFamily="'DM Sans', sans-serif"
+                  fontSizes={updateFontSizes}
+                  exportButtons={false}
+                  notMemberColor="transparent"
+                />
+                {summaryLink && summaryLinkText && (
+                  <div className="UpsetPlot__summary">
+                    <LargeButton
+                      color="secondary"
+                      variant="contained"
+                      href={summaryLink}
+                    >
+                      {summaryLinkText}
+                    </LargeButton>
+                  </div>
+                )}
+              </Box>
+            </>
           )}
         </SizeMe>
       )}

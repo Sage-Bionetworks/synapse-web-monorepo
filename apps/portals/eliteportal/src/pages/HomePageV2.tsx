@@ -1,7 +1,7 @@
 import analyzetheclouds from '@/assets/analyzetheclouds.png'
 import computationaltools from '@/assets/computationaltools.png'
 import headerbackgroundvideo from '@/assets/header-video.mp4'
-import { handleUpsetPlotClick } from '@/config/synapseConfigs/handleUpsetPlotClick'
+import { handleUpsetPlotClick } from '@sage-bionetworks/synapse-portal-framework/utils/handleUpsetPlotClick'
 import { Box, Link, Typography, useTheme } from '@mui/material'
 import ELContributeYourData from '@sage-bionetworks/synapse-portal-framework/components/eliteportal/ELContributeYourData'
 import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/components/eliteportal/ELGettingStarted'
@@ -22,6 +22,7 @@ import {
   UpsetPlot,
 } from 'synapse-react-client'
 import {
+  cohortBuilderSql,
   dataSql,
   featuredResearchSql,
   goalsV2Table,
@@ -182,9 +183,13 @@ export default function HomePage() {
           sql={upsetPlotSql}
           rgbIndex={0}
           maxBarCount={20}
-          setName="Set size"
-          combinationName="Intersection size"
-          onClick={handleUpsetPlotClick}
+          setName="SET SIZE"
+          combinationName="INTERSECTION SIZE"
+          onClick={handleUpsetPlotClick({
+            sql: cohortBuilderSql,
+            explorePath: 'Cohort Builder',
+            columnName: 'dataTypes',
+          })}
           // summaryLinkText='Explore All Data'
           // summaryLink='/Explore/Data'
         />

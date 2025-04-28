@@ -54,3 +54,20 @@ export const ElitePortalDemo: Story = {
     },
   },
 }
+
+export const AMPALSPortalVariant: Story = {
+  args: {
+    sql: 'SELECT individualID, assay FROM syn51489960 WHERE metadataType IS NULL and assay IS NOT NULL',
+    maxBarCount: 20,
+    setName: 'Set size',
+    combinationName: 'Intersection size',
+    variant: 'ampals',
+    onClick: (selection, event) => {
+      console.log(
+        'onClick() has been called with this selection and event',
+        selection,
+        event,
+      )
+    },
+  },
+}
