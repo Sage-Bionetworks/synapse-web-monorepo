@@ -61,6 +61,7 @@ const routes: RouteObject[] = [
             path: 'For Researchers',
             element: (
               <AMPALSResearchPageLayout
+                headerTitle="Resources"
                 headerImageURL={ResearcherResourcesHeaderSlat}
                 sidebarTitle="Resources for ALS researchers"
               >
@@ -76,6 +77,7 @@ const routes: RouteObject[] = [
             path: 'For Contributors',
             element: (
               <AMPALSResearchPageLayout
+                headerTitle="Resources"
                 headerImageURL={ContributorResourcesHeaderSlat}
                 sidebarTitle="How to contribute data to the ALS Knowledge Portal"
                 sidebarContent={
@@ -102,6 +104,7 @@ const routes: RouteObject[] = [
             path: 'For Persons With Lived Experience',
             element: (
               <AMPALSResearchPageLayout
+                headerTitle="Resources"
                 headerImageURL={PWLEResourcesHeaderSlat}
                 sidebarTitle="Resources for ALS patients and people with lived experience"
               >
@@ -117,6 +120,7 @@ const routes: RouteObject[] = [
             path: 'Requirements for Publication',
             element: (
               <AMPALSResearchPageLayout
+                headerTitle="Requirements for Publication"
                 headerImageURL={PublishingRequirementsSlat}
                 sidebarTitle="Using data from the ALS Knowledge Portal in publications"
               >

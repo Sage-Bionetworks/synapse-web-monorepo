@@ -3,6 +3,7 @@ import { PropsWithChildren, ReactNode } from 'react'
 
 type AMPALSResearchPageLayoutProps = PropsWithChildren<{
   ContainerProps?: ContainerProps
+  headerTitle?: string
   headerImageURL?: string
   sidebarTitle?: string
   sidebarContent?: ReactNode
@@ -12,9 +13,10 @@ const AMPALSResearchPageLayout = (props: AMPALSResearchPageLayoutProps) => {
   const {
     ContainerProps,
     children,
+    headerTitle,
+    headerImageURL,
     sidebarTitle,
     sidebarContent,
-    headerImageURL,
   } = props
   return (
     <Container
@@ -47,7 +49,7 @@ const AMPALSResearchPageLayout = (props: AMPALSResearchPageLayoutProps) => {
             fontSize: '48px',
           }}
         >
-          Resources
+          {headerTitle}
         </Typography>
       </Box>
       <Box
