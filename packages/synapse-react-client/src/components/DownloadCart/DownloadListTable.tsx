@@ -36,6 +36,7 @@ import { displayToast } from '../ToastMessage'
 import { UserBadge } from '../UserCard/UserBadge'
 import DirectProgrammaticDownload from './DirectProgrammaticDownload'
 import DownloadListStats from './DownloadListStats'
+import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
 
@@ -351,8 +352,7 @@ export default function DownloadListTable() {
           return `${item.fileEntityId}.${item.versionNumber}`
         })
         .join('\n')
-      // https://caniuse.com/mdn-api_clipboard_writetext
-      navigator.clipboard.writeText(synIDs).then(() => {
+      copyStringToClipboard(synIDs).then(() => {
         displayToast('Successfully copied to clipboard')
       })
       setCopyingAllSynapseIDs(false)

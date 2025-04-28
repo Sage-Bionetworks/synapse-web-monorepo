@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query'
 import { displayToast } from '../ToastMessage'
 import IconSvg from '../IconSvg'
 import { Button, ButtonProps } from '@mui/material'
+import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 export type SharePageLinkButtonProps = {
   shortIoPublicApiKey?: string
@@ -16,7 +17,7 @@ export function SharePageLinkButton({
   buttonProps,
 }: SharePageLinkButtonProps) {
   const copyToClipboard = useCallback((value: string) => {
-    navigator.clipboard.writeText(value).then(() => {
+    copyStringToClipboard(value).then(() => {
       displayToast('Page URL copied to the clipboard', 'success')
     })
   }, [])
