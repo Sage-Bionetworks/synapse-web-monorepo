@@ -1,6 +1,9 @@
-const DST_TABLE_ID = 'syn65676531.16'
+const DST_TABLE_ID = 'syn66330015' // points to DST_denormalized_current.
+// To change DST_denormalized version, change it in that materialized view definition.
+
 const STANDARDS_CHALLENGE_TABLE_ID = 'syn65913973'
-// can replace with specific version if wanted
+
+export const DST_TABLE_COLUMN_NAMES = { RELEVANT_ORG_NAMES: 'relevantOrgNames' }
 
 export const standardsChallengeTableId = STANDARDS_CHALLENGE_TABLE_ID
 
@@ -8,7 +11,7 @@ export const standardsChallengeTableId = STANDARDS_CHALLENGE_TABLE_ID
 export const dataSql = `
     SELECT
         concat('[', acronym, '](/Explore/Standard/DetailsPage?id=', id, ')') as acronym,
-            name, category, collections, relevantOrgNames, isOpen, registration FROM ${DST_TABLE_ID}
+            name, category, collections, ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration FROM ${DST_TABLE_ID}
 `
 // name, category, collections, relevantOrgNames as organizations, isOpen, registration FROM ${DST_TABLE_ID}
 
@@ -29,7 +32,7 @@ export const standardsDetailsPageSQL = `
             category,
             collections,
             topic as topics,
-            relevantOrgNames,
+            ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES},
             COALESCE(responsibleOrgName, 'No responsible org listed') as SDO,
             isOpen,
             relatedTo,

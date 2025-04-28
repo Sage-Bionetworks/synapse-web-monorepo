@@ -38,10 +38,28 @@ function UserSubmissionPageRouteRenderer() {
 }
 
 /**
- * Layout for UserAccessRequestHistory pages. Includes breadcrumbs and a header with title.
+ * Layout for UserAccessRequestHistory pages. Includes header with title.
  * @constructor
  */
-function UserAccessRequestHistoryLayout() {
+function UserAccessRequestHistoryPageLayout() {
+  return (
+    <>
+      <div className="pageHeader">
+        <div className="grid">
+          <h3 className="pageHeaderTitle">Access Requests</h3>
+        </div>
+      </div>
+      <Box sx={{ px: 5, py: 3 }}>
+        <Outlet />
+      </Box>
+    </>
+  )
+}
+
+/**
+ * Breadcrumb layout for UserAccessRequestHistory pages. Displays breadcrumbs for navigation.
+ */
+function UserAccessRequestHistoryBreadcrumbLayout() {
   const { submissionId } = useParams<{ [SUBMISSION_ID_PARAM]: string }>()
   const location = useLocation()
 
@@ -63,49 +81,48 @@ function UserAccessRequestHistoryLayout() {
 
   return (
     <>
-      <div className="pageHeader">
-        <div className="grid">
-          <h3 className="pageHeaderTitle">Access Requests</h3>
-        </div>
-      </div>
-      <Box sx={{ px: 5, py: 3 }}>
-        <Breadcrumbs
-          items={breadcrumbItems}
-          sx={{
-            mt: 2,
-            mb: 4,
-            ['& .MuiLink-root']: {
+      <Breadcrumbs
+        items={breadcrumbItems}
+        sx={{
+          mt: 2,
+          mb: 4,
+          ['& .MuiLink-root']: {
+            color: 'text.secondary',
+            letterSpacing: 0,
+            '&:visited': {
               color: 'text.secondary',
-              letterSpacing: 0,
-              '&:visited': {
-                color: 'text.secondary',
-              },
             },
-            '& .MuiSvgIcon-root': {
-              color: 'grey.500',
-            },
-          }}
-        />
-        <Outlet />
-      </Box>
+          },
+          '& .MuiSvgIcon-root': {
+            color: 'grey.500',
+          },
+        }}
+      />
+      <Outlet />
     </>
   )
 }
 
 const routes: RouteObject[] = [
   {
-    element: <UserAccessRequestHistoryLayout />,
+    element: <UserAccessRequestHistoryPageLayout />,
     children: [
       {
         path: '/',
         children: [
           { index: true, element: <UserAccessRequestHistoryPage /> },
           {
-            path: `${USER_ACCESS_HISTORY_SUBMISSION_SUBPATH}`,
+            // Do not display the breadcrumbs on the `index` page
+            element: <UserAccessRequestHistoryBreadcrumbLayout />,
             children: [
               {
-                path: `:${SUBMISSION_ID_PARAM}`,
-                element: <UserSubmissionPageRouteRenderer />,
+                path: `${USER_ACCESS_HISTORY_SUBMISSION_SUBPATH}`,
+                children: [
+                  {
+                    path: `:${SUBMISSION_ID_PARAM}`,
+                    element: <UserSubmissionPageRouteRenderer />,
+                  },
+                ],
               },
             ],
           },
