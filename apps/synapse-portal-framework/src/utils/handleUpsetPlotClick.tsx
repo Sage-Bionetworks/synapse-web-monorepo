@@ -4,17 +4,20 @@ import {
   COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
 import { ISetCombination, ISet, UpSetSelectionProps } from '@upsetjs/react'
+import { NavigateFunction } from 'react-router'
 
 type HandleUpsetPlotClickOptions = {
   sql: string
   explorePath: string
   columnName: string
+  navigate: NavigateFunction
 }
 
 export function handleUpsetPlotClick({
   sql,
   explorePath,
   columnName,
+  navigate,
 }: HandleUpsetPlotClickOptions): UpSetSelectionProps['onClick'] {
   return selection => {
     const clickedSets = Array.from(
@@ -38,6 +41,6 @@ export function handleUpsetPlotClick({
       JSON.stringify(query),
     )}`
 
-    window.location.assign(url)
+    navigate(url)
   }
 }

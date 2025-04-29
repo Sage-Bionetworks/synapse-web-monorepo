@@ -31,9 +31,11 @@ import {
   upsetPlotSql,
   whatWeDoSql,
 } from '../config/resources'
+import { useNavigate } from 'react-router'
 
 export default function HomePage() {
   const theme = useTheme()
+  const navigate = useNavigate()
 
   const styledPortalFeatureHighlightsSummaryText = (
     <>
@@ -183,12 +185,14 @@ export default function HomePage() {
           sql={upsetPlotSql}
           rgbIndex={0}
           maxBarCount={20}
-          setName="SET SIZE"
-          combinationName="INTERSECTION SIZE"
+          setName="Set Size"
+          combinationName="Intersection Size"
+          uppercaseLabels={true}
           onClick={handleUpsetPlotClick({
             sql: cohortBuilderSql,
             explorePath: 'Cohort Builder',
             columnName: 'dataTypes',
+            navigate,
           })}
           // summaryLinkText='Explore All Data'
           // summaryLink='/Explore/Data'

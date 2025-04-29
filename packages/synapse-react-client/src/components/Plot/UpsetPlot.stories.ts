@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import UpsetPlot from './UpsetPlot'
 import { Query } from '@sage-bionetworks/synapse-types'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Home Page/UpsetPlot',
@@ -45,13 +46,8 @@ export const ElitePortalDemo: Story = {
     maxBarCount: 20,
     setName: 'Set size',
     combinationName: 'Intersection size',
-    onClick: (selection, event) => {
-      console.log(
-        'onClick() has been called with this selection and event',
-        selection,
-        event,
-      )
-    },
+    uppercaseLabels: true,
+    onClick: fn(),
   },
 }
 
@@ -62,12 +58,6 @@ export const AMPALSPortalVariant: Story = {
     setName: 'Set size',
     combinationName: 'Intersection size',
     variant: 'ampals',
-    onClick: (selection, event) => {
-      console.log(
-        'onClick() has been called with this selection and event',
-        selection,
-        event,
-      )
-    },
+    onClick: fn(),
   },
 }

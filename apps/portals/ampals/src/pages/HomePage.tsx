@@ -3,7 +3,7 @@ import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/
 import ALLALSSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/ALLALSSlat'
 import AMPALSPublishingRequirements from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSPublishingRequirements'
 import HowToAccessData from '@sage-bionetworks/synapse-portal-framework/components/ampals/HowToAccessData'
-// import AMPALSExploretheData from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSExploretheData'
+// import AMPALSExploreTheData from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSExploreTheData'
 // import { dataSql } from '../config/resources'
 // import { FeaturedDataTabs } from 'synapse-react-client'
 // import columnAliases from '../config/columnAliases'
@@ -75,7 +75,7 @@ export default function HomePage() {
           }}
         />
       </SectionLayout>
-      {/* <AMPALSExploretheData sql={upsetPlotSql} /> */}
+      {/* <AMPALSExploreTheData sql={upsetPlotSql} /> */}
       <HowToAccessData />
       <AMPALSPublishingRequirements />
       <ALLALSSlat />

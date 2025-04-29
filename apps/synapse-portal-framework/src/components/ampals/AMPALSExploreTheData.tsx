@@ -1,13 +1,15 @@
 import { Box, useTheme } from '@mui/material'
 import { PortalSectionHeader, UpsetPlot } from 'synapse-react-client'
 import { handleUpsetPlotClick } from '@/utils/handleUpsetPlotClick'
+import { useNavigate } from 'react-router'
 
-type AMPALSExploretheDataProps = {
+type AMPALSExploreTheDataProps = {
   sql: string
 }
 
-const AMPALSExploretheData = ({ sql }: AMPALSExploretheDataProps) => {
+const AMPALSExploreTheData = ({ sql }: AMPALSExploreTheDataProps) => {
   const theme = useTheme()
+  const navigate = useNavigate()
 
   return (
     <Box sx={{ padding: { xs: '40px', lg: '80px' } }}>
@@ -52,9 +54,10 @@ const AMPALSExploretheData = ({ sql }: AMPALSExploretheDataProps) => {
           sql: 'SELECT * FROM syn52234652', // todo: update this to the correct sql
           explorePath: 'Datasets',
           columnName: 'dataTypes',
+          navigate,
         })}
       />
     </Box>
   )
 }
-export default AMPALSExploretheData
+export default AMPALSExploreTheData
