@@ -146,7 +146,7 @@ const routes: RouteObject[] = [
               <AMPALSResearchPageLayout headerTitle="Frequently Asked Questions">
                 <MarkdownSynapse
                   ownerId="syn64892175"
-                  wikiId="632170"
+                  wikiId="632193"
                   loadingSkeletonRowCount={50}
                 />
               </AMPALSResearchPageLayout>
