@@ -25,6 +25,7 @@ import { UserBadge } from '../UserCard/UserBadge'
 import { DiscussionReply } from './DiscussionReply'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import { SubscribersModal } from './SubscribersModal'
+import { useGetModerators } from '@/synapse-queries/forum/useForum'
 
 export type DiscussionThreadProps = {
   threadId: string
@@ -59,6 +60,8 @@ export function DiscussionThread(props: DiscussionThreadProps) {
       enabled: !!threadData,
     },
   )
+
+  console.log('threadData', threadData)
 
   const { subscription, toggleSubscribed, isLoading } = useSubscription(
     threadId,
@@ -99,6 +102,13 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   } = useGetRepliesInfinite(threadId, orderByDatePosted, limit)
   const replies = replyData?.pages.flatMap(page => page.results) ?? []
 
+  console.log('threadid', threadId) // 11937
+  const { data: moderatorList } = useGetModerators(threadData?.forumId ?? '')
+  const isCurrentUserModerator = moderatorList?.results.includes(
+    currentUserProfile?.ownerId ?? '',
+  )
+  console.log('mod?', isCurrentUserModerator)
+
   return (
     <div className="DiscussionThread">
       {threadData && threadBody ? (
@@ -133,6 +143,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
             withAvatar={true}
             avatarSize="MEDIUM"
             showCardOnHover={true}
+            isModerator={isCurrentUserModerator}
           />
           <Box
             sx={theme => ({
@@ -257,7 +268,11 @@ export function DiscussionThread(props: DiscussionThreadProps) {
       </Box>
       <div>
         {replies.map(reply => (
-          <DiscussionReply key={reply.id} reply={reply} />
+          <DiscussionReply
+            key={reply.id}
+            reply={reply}
+            isModerator={isCurrentUserModerator}
+          />
         ))}
       </div>
       {replies.length > 0 && (

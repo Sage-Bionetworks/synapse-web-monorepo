@@ -3,7 +3,7 @@ import { useGetUserBundle } from '@/synapse-queries/user/useUserBundle'
 import { SynapseConstants } from '@/utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { useOverlay } from '@/utils/hooks/useOverlay'
-import { Box, Link, Skeleton } from '@mui/material'
+import { Box, Chip, Link, Skeleton } from '@mui/material'
 import { CSSProperties, useMemo, useRef } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 import { AvatarSize } from './Avatar'
@@ -30,6 +30,8 @@ export type UserBadgeProps = {
   showFullName?: boolean
 
   className?: string
+
+  isModerator?: boolean
 }
 
 const TIMER_DELAY_SHOW = 250 // milliseconds
@@ -48,6 +50,7 @@ export function UserBadge(props: UserBadgeProps) {
     avatarSize = 'SMALL',
     className,
     showFullName = false,
+    isModerator = false,
   } = props
   let { link } = props
 
@@ -166,6 +169,17 @@ export function UserBadge(props: UserBadgeProps) {
         {fullName ? ')' : ''}
         {showAccountLevelIcon && accountLevelIcon}
       </Tag>
+      {isModerator && (
+        <Chip
+          sx={{
+            borderRadius: 1,
+            backgroundColor: 'blue',
+            color: '#FFF',
+            fontWeight: 600,
+          }}
+          label="Moderator"
+        />
+      )}
     </>
   )
 }
