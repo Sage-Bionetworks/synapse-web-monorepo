@@ -1,9 +1,16 @@
 import healthSvg from '@/assets/health.svg?url'
 import soundSvg from '@/assets/sound.svg?url'
 import { dataSql, DST_TABLE_COLUMN_NAMES } from '@/config/resources'
-import { Query } from '@sage-bionetworks/synapse-types'
+import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { CardDeck } from 'synapse-react-client/components/CardDeck/CardDeck'
 import { CardDeckCardProps } from 'synapse-react-client/components/CardDeck/CardDeckCardProps'
+import { useGetQueryResultBundle } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
+import useShowDesktop from 'synapse-react-client/utils/hooks/useShowDesktop'
+import { ErrorBanner, SynapseConstants } from 'synapse-react-client'
+import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
+import ResourcesDesktop from 'synapse-react-client/components/Resources/Resources.Desktop'
+import ResourcesMobile from 'synapse-react-client/components/Resources/Resources.Mobile'
+import { Data } from 'synapse-react-client/components/Resources/Resources'
 
 function createExplorePageLink(query: Query): string {
   return `/Explore?QueryWrapper0=${encodeURIComponent(JSON.stringify(query))}`
@@ -60,6 +67,56 @@ const CHALLENGE_CARDS: CardDeckCardProps[] = [
  * Card view of challenges for the home page
  */
 export function ChallengesCardDeck() {
+  /*
+  const { entityId } = props
+  const showDesktop = useShowDesktop()
+
+  const queryBundleRequest: QueryBundleRequest = {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId,
+    partMask:
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    query: {
+      sql: `SELECT Name, Wiki FROM ${entityId} ORDER BY ItemOrder`,
+    },
+  }
+  const { data: queryResultBundle, error } =
+    useGetQueryResultBundle(queryBundleRequest)
+
+  const nameIndex = getFieldIndex(ExpectedColumns.NAME, queryResultBundle)
+  const wikiIndex = getFieldIndex(ExpectedColumns.WIKI, queryResultBundle)
+  const data: Data =
+    queryResultBundle?.queryResult?.queryResults.rows.map(el => {
+      const values = el.values as string[]
+      if (values.some(value => value === null)) {
+        console.warn('Row has null value(s) when no nulls expected')
+      }
+
+      const name = values[nameIndex]
+      const wikiValue = values[wikiIndex] ?? ''
+      const split = wikiValue.split('/')
+      const ownerId = split[0]
+      const wikiId = split[2]
+      return {
+        name,
+        ownerId,
+        wikiId,
+      }
+    }) ?? []
+  return (
+    <div className="Resources">
+      <ErrorBanner error={error} />
+      {showDesktop ? (
+        <ResourcesDesktop data={data} />
+      ) : (
+        <ResourcesMobile data={data} />
+      )}
+    </div>
+  )
+  const results = useGetQueryResultBundle(`SELECT`)
+  const {data, isLoading, } = results
+  */
   return <CardDeck cards={CHALLENGE_CARDS} cardDeckType="b2ai" />
 }
 
