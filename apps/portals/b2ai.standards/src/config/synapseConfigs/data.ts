@@ -5,7 +5,7 @@ import {
   StandaloneQueryWrapperProps,
 } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
-import { dataSql } from '../resources'
+import { dataSql, DST_TABLE_COLUMN_NAMES } from '../resources'
 
 const dataRgbIndex = 0
 export const dataColumnLinks: LabelLinkConfig = [
@@ -45,7 +45,7 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   facetsToPlot: [
     'topic',
     // 'Organizations',
-    'relevantOrgName',
+    DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
   ],
   initialPlotType: 'BAR',
 }

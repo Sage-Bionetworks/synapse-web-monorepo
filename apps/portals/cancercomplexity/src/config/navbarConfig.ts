@@ -7,6 +7,10 @@ export const navbarConfig: NavbarConfig = {
       path: '/',
       children: [
         { name: 'Portal Goals', path: '/#Portal Goals' },
+        // {
+        //   name: 'What Resources are Available?',
+        //   path: '/#What Resources are Available?',
+        // },
         {
           name: 'What Research Themes are Scientists Currently Focusing On?',
           path: '/#What Research Themes are Scientists Currently Focusing On?',

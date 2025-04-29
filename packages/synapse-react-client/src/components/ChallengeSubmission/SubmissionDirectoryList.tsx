@@ -458,10 +458,7 @@ function SubmissionDirectoryList({
             To learn more about how to create and submit the Docker containers
             using command line, see our{' '}
             <Link
-              to={{
-                pathname:
-                  'https://github.com/Sage-Bionetworks-Challenges/sample-model-templates#build-your-model',
-              }}
+              to="https://github.com/Sage-Bionetworks-Challenges/sample-model-templates#build-your-model"
               target="_blank"
             >
               Docker model submission guide

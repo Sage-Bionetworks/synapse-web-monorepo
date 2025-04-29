@@ -52,6 +52,10 @@ export const peopleQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   name: 'People',
   facetsToPlot: ['consortium', 'grantNumber'],
   searchConfiguration: {
+    ftsConfig: {
+      textMatchesMode: 'BOOLEAN',
+      distance: 20,
+    },
     searchable: [
       'name',
       'grantName',

@@ -26,7 +26,8 @@ import {
   SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
-import { groupBy, noop } from 'lodash-es'
+import noop from 'lodash-es/noop'
+import groupBy from 'lodash-es/groupBy'
 import { ReactNode, useMemo, useState } from 'react'
 import StandaloneLoginForm from '../Authentication/StandaloneLoginForm'
 import { DialogBaseTitle } from '../DialogBase'
@@ -59,6 +60,8 @@ export type AccessRequirementListProps = {
   accessRequirementFromProps?: Array<AccessRequirement>
   /* If provided, displays these actions on when viewing all ARs */
   customDialogActions?: ReactNode
+  /* Optional callback invoked if a submission is created via this component */
+  onSubmissionCreated?: (submissionId: string) => void
 } & (
   | {
       /**
@@ -158,6 +161,7 @@ export default function AccessRequirementList(
     numberOfFilesAffected,
     requestObjectName,
     customDialogActions,
+    onSubmissionCreated = noop,
   } = props
 
   const isShowingRequirementsForEntity = 'entityId' in props
@@ -368,8 +372,9 @@ export default function AccessRequirementList(
               dataAccessRequest: dataAccessRequestInProgress,
             })
           }}
-          onSubmissionCreated={() => {
+          onSubmissionCreated={submissionId => {
             requestDataStepCallback({ step: RequestDataStep.COMPLETE })
+            onSubmissionCreated(submissionId)
           }}
           onBackClicked={() => {
             requestDataStepCallback({

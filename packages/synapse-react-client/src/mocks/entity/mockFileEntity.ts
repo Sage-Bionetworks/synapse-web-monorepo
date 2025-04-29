@@ -187,7 +187,7 @@ const mockFileEntityJson: EntityJson = {
   createdBy: mockFileEntity.createdBy!,
   modifiedBy: mockFileEntity.modifiedBy!,
   parentId: 'syn4489',
-  concreteType: 'org.sagebionetworks.repo.model.Project',
+  concreteType: 'org.sagebionetworks.repo.model.FileEntity',
   myStringKey: 'myValue',
   myIntegerKey: [4325435345213, 4321],
   myFloatKey: [1.5, 17 / 13],

@@ -35,6 +35,7 @@ import {
   useApplicationSessionContext,
   useSynapseContext,
 } from 'synapse-react-client'
+import RORInstitutionField from 'synapse-react-client/components/RORInstitutionField/RORInstitutionField'
 import UniversalCookies from 'universal-cookie'
 import { ConfigureEmail } from './ConfigureEmail'
 import { ProfileAvatar } from './ProfileAvatar'
@@ -383,13 +384,9 @@ export const AccountSettings = () => {
                     variant="standard"
                     margin={formControlMargin}
                   >
-                    <TextField
-                      label={'Institutional affiliation'}
-                      id="company"
-                      name="company"
-                      fullWidth
-                      onChange={e => setCompany(e.target.value)}
-                      value={company}
+                    <RORInstitutionField
+                      onChange={value => setCompany(value)}
+                      value={company || ''}
                     />
                   </StyledFormControl>
                   <TextField

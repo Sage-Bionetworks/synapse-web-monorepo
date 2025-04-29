@@ -62,8 +62,11 @@ const tools: QueryWrapperPlotNavProps = {
   columnAliases,
   defaultShowSearchBox: true,
   searchConfiguration: {
-    fullTextSearchHelpURL:
-      'https://help.nf.synapse.org/NFdocs/Tips-for-Search.2640478225.html',
+    ftsConfig: {
+      textMatchesMode: 'NATURAL_LANGUAGE',
+      searchHelpURL:
+        'https://help.nf.synapse.org/NFdocs/Tips-for-Search.2640478225.html',
+    },
   },
 }
 

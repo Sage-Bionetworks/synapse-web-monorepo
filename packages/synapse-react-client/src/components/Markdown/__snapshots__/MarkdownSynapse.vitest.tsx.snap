@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`MarkdownSynapse tests Snapshot tests supports bootstrap rows and columns 1`] = `
+exports[`MarkdownSynapse tests > Snapshot tests > supports bootstrap rows and columns 1`] = `
 <div>
   <div
     class="markdown"
@@ -63,7 +63,7 @@ exports[`MarkdownSynapse tests Snapshot tests supports bootstrap rows and column
 </div>
 `;
 
-exports[`MarkdownSynapse tests Snapshot tests works with a br statement and loose text 1`] = `
+exports[`MarkdownSynapse tests > Snapshot tests > works with a br statement and loose text 1`] = `
 <div>
   <div
     class="markdown"
@@ -100,7 +100,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with a br statement and loos
 </div>
 `;
 
-exports[`MarkdownSynapse tests Snapshot tests works with header and a link 1`] = `
+exports[`MarkdownSynapse tests > Snapshot tests > works with header and a link 1`] = `
 <div>
   <div
     class="markdown"
@@ -131,7 +131,7 @@ exports[`MarkdownSynapse tests Snapshot tests works with header and a link 1`] =
 </div>
 `;
 
-exports[`MarkdownSynapse tests Snapshot tests works with two inline widgets 1`] = `
+exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 1`] = `
 <div>
   <div
     class="markdown"

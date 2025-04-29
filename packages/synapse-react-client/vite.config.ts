@@ -5,6 +5,7 @@ import { ConfigBuilder } from 'vite-config'
  * Vite config to generate the ESM & CJS bundles for Synapse React Client.
  */
 const config = new ConfigBuilder()
+  .setIncludeVitestConfig(true)
   .setIncludeReactConfig(true)
   .setIncludeLibraryConfig(true, {
     except: [
@@ -19,6 +20,11 @@ const config = new ConfigBuilder()
     build: {
       // Do not clean the output directory before building, since we build ESM/CJS and UMD separately.
       emptyOutDir: false,
+    },
+    test: {
+      // require vitest tests to be .vitest.ts(x) while we migrate from Jest
+      include: ['**/*.vitest.?(c|m)[jt]s?(x)'],
+      setupFiles: ['./src/testutils/vitest.setup.ts'],
     },
   })
   .build()

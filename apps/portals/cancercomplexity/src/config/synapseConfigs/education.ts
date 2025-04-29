@@ -59,6 +59,10 @@ export const educationQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   name: 'Educational Resources',
   facetsToPlot: ['topic', 'activityType'],
   searchConfiguration: {
+    ftsConfig: {
+      textMatchesMode: 'BOOLEAN',
+      distance: 20,
+    },
     searchable: ['title', 'description'],
   },
 }

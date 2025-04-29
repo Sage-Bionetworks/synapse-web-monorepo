@@ -27,6 +27,7 @@ import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import SelectionCriteriaPill, {
   SelectionCriteriaPillProps,
 } from './SelectionCriteriaPill'
+import { getSearchTextFromBooleanModeSearchExpression } from '@/components/FullTextSearch/FullTextSearchUtils'
 
 const MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS = 4
 
@@ -91,10 +92,16 @@ function getPillPropsFromTextMatchesQueryFilter(
   queryFilter: TextMatchesQueryFilter,
   queryContext: QueryContextType,
 ): SelectionCriteriaPillProps {
+  const innerText =
+    queryFilter.searchMode == 'NATURAL_LANGUAGE'
+      ? queryFilter.searchExpression
+      : getSearchTextFromBooleanModeSearchExpression(
+          queryFilter.searchExpression,
+        )
   return {
     key: `queryFilter-${queryFilter.concreteType}-${queryFilter.searchExpression}`,
-    innerText: queryFilter.searchExpression,
-    tooltipText: `Text matches: "${queryFilter.searchExpression}"`,
+    innerText,
+    tooltipText: `Text matches: "${innerText}"`,
     onRemoveFilter: () => {
       queryContext.removeQueryFilter(queryFilter)
     },

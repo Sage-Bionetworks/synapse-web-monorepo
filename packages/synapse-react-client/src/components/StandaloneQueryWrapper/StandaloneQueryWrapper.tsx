@@ -187,7 +187,7 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
                       )}
                       {entity && isTable(entity) && entity.isSearchEnabled ? (
                         <FullTextSearch
-                          helpUrl={searchConfiguration?.fullTextSearchHelpURL}
+                          ftsConfig={searchConfiguration?.ftsConfig}
                         />
                       ) : (
                         <SearchV2

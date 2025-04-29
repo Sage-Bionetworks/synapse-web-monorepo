@@ -58,6 +58,10 @@ export const grantQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   name: 'Grants',
   facetsToPlot: ['consortium', 'grantType'],
   searchConfiguration: {
+    ftsConfig: {
+      textMatchesMode: 'BOOLEAN',
+      distance: 80,
+    },
     searchable: [
       'grantName',
       'abstract',

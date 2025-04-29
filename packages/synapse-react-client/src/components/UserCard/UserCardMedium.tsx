@@ -18,6 +18,7 @@ import { ToastMessage } from '../ToastMessage/ToastMessage'
 import { Avatar } from './Avatar'
 import UserCardContextMenu, { MenuAction } from './UserCardContextMenu'
 import { UserCardLarge } from './UserCardLarge'
+import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 export type UserCardMediumProps = {
   userProfile: UserProfile
@@ -48,9 +49,7 @@ const copyToClipboard =
   (event: SyntheticEvent) => {
     event.preventDefault()
 
-    // use the Clipboard API
-    // https://caniuse.com/mdn-api_clipboard_writetext
-    navigator.clipboard.writeText(value).then(() => {
+    copyStringToClipboard(value).then(() => {
       onCopy()
     })
   }

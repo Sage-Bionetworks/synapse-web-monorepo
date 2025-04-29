@@ -125,14 +125,13 @@ export function GenericCard(props: GenericCardProps) {
         target={titleLinkConfiguration?.target}
         isAlignToLeftNav={true}
         secondaryLabelLimit={secondaryLabelLimit}
-        ctaLinkConfig={ctaLinkConfig}
+        cardTopContent={cardTopContent}
       />
     )
   }
 
   return (
     <div style={style} className={'SRC-portalCard'}>
-      {cardTopContent}
       <div className={'SRC-portalCardMain'}>
         {icon}
         <div className="SRC-cardContent">
@@ -210,6 +209,7 @@ export function GenericCard(props: GenericCardProps) {
           values={labels}
           columnIconOptions={columnIconOptions}
           className={useStylesForDisplayedImage ? undefined : 'hasIcon'}
+          cardTopContent={cardTopContent}
         />
       )}
     </div>
