@@ -31,10 +31,11 @@ export const standardsDetailsPageSQL = `
             collections,
             topic as topics,
             ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES},
-            COALESCE(responsibleOrgName, 'No responsible org listed') as SDO,
+            responsibleOrgName as SDO,
             isOpen,
             relatedTo,
             trainingResources,
             registration
     FROM ${DST_TABLE_ID}
 `
+// COALESCE(responsibleOrgName, 'No responsible org listed') as SDO,
