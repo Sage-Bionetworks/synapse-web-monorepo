@@ -32,8 +32,14 @@ export const navbarConfig: NavbarConfig = {
       name: 'Resources',
       path: '/Resources',
       children: [
-        { name: 'For Researchers', path: '/Resources/For Researchers' },
-        { name: 'For Contributors', path: '/Resources/For Contributors' },
+        {
+          name: 'For Researchers',
+          path: '/Resources/For Researchers',
+        },
+        {
+          name: 'For Contributors',
+          path: '/Resources/For Contributors',
+        },
         {
           name: 'For Persons With Lived Experience',
           path: '/Resources/For Persons With Lived Experience',
@@ -45,10 +51,6 @@ export const navbarConfig: NavbarConfig = {
         {
           name: 'Frequently Asked Questions',
           path: '/Resources/Frequently Asked Questions',
-        },
-        {
-          name: 'Contribute Data',
-          path: '/Resources/Contribute Data',
         },
       ],
     },

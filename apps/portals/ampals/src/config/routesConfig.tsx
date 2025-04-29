@@ -152,23 +152,23 @@ const routes: RouteObject[] = [
               </AMPALSResearchPageLayout>
             ),
           },
-          {
-            path: 'Contribute Data',
-            element: (
-              <AMPALSResearchPageLayout
-                headerTitle="Contribute Data"
-                headerImageURL={ContributeDataSlat}
-                sidebarTitle="How to contribute data to the ALS Knowledge Portal"
-              >
-                <MarkdownSynapse
-                  ownerId="syn64892175"
-                  wikiId="632170"
-                  loadingSkeletonRowCount={50}
-                />
-              </AMPALSResearchPageLayout>
-            ),
-          },
         ],
+      },
+      {
+        path: 'Contribute Data',
+        element: (
+          <AMPALSResearchPageLayout
+            headerTitle="Contribute Data"
+            headerImageURL={ContributeDataSlat}
+            sidebarTitle="How to contribute data to the ALS Knowledge Portal"
+          >
+            <MarkdownSynapse
+              ownerId="syn64892175"
+              wikiId="632170"
+              loadingSkeletonRowCount={50}
+            />
+          </AMPALSResearchPageLayout>
+        ),
       },
       {
         path: 'About',
