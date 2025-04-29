@@ -16,6 +16,7 @@ import {
   CTACardLink,
 } from '../CardContainerLogic/CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
+import { GenericCardProps } from '@/components/GenericCard/GenericCard'
 
 export type HeaderCardV2Props = {
   /** Type label displayed at the top of the card */
@@ -45,7 +46,7 @@ export type HeaderCardV2Props = {
   /** Force values section to appear below main content */
   forceStackedLayout?: boolean
   /** Optional CTA link to display below description */
-  ctaLinkConfig?: CTACardLink
+  ctaLinkConfig?: GenericCardProps['ctaLinkConfig']
 }
 
 /**

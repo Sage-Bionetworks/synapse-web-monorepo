@@ -27,7 +27,7 @@ import {
   Table,
 } from '@sage-bionetworks/synapse-types'
 import React, { useState } from 'react'
-import { TargetEnum } from '../CardContainerLogic'
+import { TargetEnum } from '@/components/CardContainerLogic/CardContainerLogic'
 import CitationPopover from '../CitationPopover'
 import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import { HeaderCardVariant } from '../HeaderCard'

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
 import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
+import { GenericCardProps } from '@/components/GenericCard/GenericCard'
 import HeaderCardV2 from './HeaderCard/HeaderCardV2'
 
 export type HeaderCardVariant = 'HeaderCard' | 'HeaderCardV2'
@@ -21,6 +22,7 @@ export type HeaderCardProps = {
   icon: React.ReactNode
   headerCardVariant?: HeaderCardVariant
   cardTopContent?: React.ReactNode
+  ctaLinkConfig?: GenericCardProps['ctaLinkConfig']
 }
 
 function HeaderCard(props: HeaderCardProps) {

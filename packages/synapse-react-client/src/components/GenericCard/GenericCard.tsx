@@ -9,7 +9,7 @@ import { CardFooter } from '../row_renderers/utils'
 import { FileHandleLink } from '../widgets/FileHandleLink'
 import { CollapsibleDescription } from './CollapsibleDescription'
 
-type GenericCardProps = {
+export type GenericCardProps = {
   /** String representing the 'type' of object. This is displayed as a label on the card. */
   type: string
   /** The title displayed on the card. */
@@ -123,6 +123,7 @@ export function GenericCard(props: GenericCardProps) {
         values={labels}
         href={titleLinkConfiguration?.href}
         target={titleLinkConfiguration?.target}
+        ctaLinkConfig={ctaLinkConfig}
         isAlignToLeftNav={true}
         secondaryLabelLimit={secondaryLabelLimit}
         cardTopContent={cardTopContent}
