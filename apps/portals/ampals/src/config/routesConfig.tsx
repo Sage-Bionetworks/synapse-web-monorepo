@@ -136,10 +136,7 @@ const routes: RouteObject[] = [
           {
             path: 'Frequently Asked Questions',
             element: (
-              <AMPALSResearchPageLayout
-                headerTitle="Frequently Asked Questions"
-                headerImageURL={PublishingRequirementsSlat}
-              >
+              <AMPALSResearchPageLayout headerTitle="Frequently Asked Questions">
                 <MarkdownSynapse
                   ownerId="syn64892175"
                   wikiId="632170"

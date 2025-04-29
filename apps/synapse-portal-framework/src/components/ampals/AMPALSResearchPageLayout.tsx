@@ -32,7 +32,7 @@ const AMPALSResearchPageLayout = (props: AMPALSResearchPageLayoutProps) => {
         sx={{
           width: '100%',
           height: '180px',
-          backgroundColor: '#2360A6',
+          backgroundColor: '#0655B0',
           backgroundImage: `url(${headerImageURL})`,
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
