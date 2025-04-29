@@ -45,6 +45,9 @@ type ElementWithTooltipProps = PropsWithChildren<{
   darkTheme?: boolean
   size?: string
   icon?: ReactNode
+  /** The items to show in the menu -- NOTE: this cannot be a Fragment!
+   * @see https://stackoverflow.com/questions/75083605/mui-the-menu-component-doesnt-accept-a-fragment-as-a-child-consider-providing
+   */
   menuItems?: React.ReactNode
 }>
 
