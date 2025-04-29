@@ -96,7 +96,7 @@ export const HtmlRenderingTest: Story = {
 
 export const LargeHtmlFileRenderingTest: Story = {
   args: {
-    ownerId: 'syn38870076',
+    ownerId: 'syn66340468',
   },
 }
 

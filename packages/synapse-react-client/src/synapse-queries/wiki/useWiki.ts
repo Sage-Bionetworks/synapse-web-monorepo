@@ -1,11 +1,17 @@
 import {
   createWikiPage,
   getRootWikiPageKey,
+  getWikiAttachmentsFromEntity,
   getWikiPage,
   updateWikiPage,
 } from '@/synapse-client'
-import { SynapseClientError, useSynapseContext } from '@/utils'
 import {
+  SynapseClientError,
+  SynapseContextType,
+  useSynapseContext,
+} from '@/utils'
+import {
+  FileHandleResults,
   ObjectType,
   WikiPage,
   WikiPageKey,
@@ -18,21 +24,32 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query'
 
+function getRootWikiPageKeyQueryOptions(
+  objectType: ObjectType,
+  objectId: string,
+  synapseContext: SynapseContextType,
+): UseQueryOptions<WikiPageKey | null, SynapseClientError> {
+  const { keyFactory, accessToken } = synapseContext
+  return {
+    queryKey: keyFactory.getRootWikiPageKeyQueryKey(objectType, objectId),
+    queryFn: () => getRootWikiPageKey(accessToken, objectType, objectId),
+  }
+}
+
 export const useGetRootWikiPageKey = (
   ownerObjectType: ObjectType,
   ownerObjectId: string,
   options?: Partial<UseQueryOptions<WikiPageKey | null, SynapseClientError>>,
 ) => {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const synapseContext = useSynapseContext()
 
   return useQuery({
     ...options,
-    queryKey: keyFactory.getRootWikiPageKeyQueryKey(
+    ...getRootWikiPageKeyQueryOptions(
       ownerObjectType,
       ownerObjectId,
+      synapseContext,
     ),
-    queryFn: () =>
-      getRootWikiPageKey(accessToken, ownerObjectType, ownerObjectId),
   })
 }
 
@@ -40,12 +57,67 @@ export const useGetWikiPage = (
   wikiPageKey: WikiPageKey,
   options?: Partial<UseQueryOptions<WikiPage, SynapseClientError>>,
 ) => {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const synapseContext = useSynapseContext()
+  const { accessToken, keyFactory } = synapseContext
+  const queryClient = useQueryClient()
 
   return useQuery({
     ...options,
     queryKey: keyFactory.getWikiPageQueryKey(wikiPageKey),
-    queryFn: () => getWikiPage(accessToken, wikiPageKey),
+    queryFn: async () => {
+      let wikiPageId = wikiPageKey.wikiPageId
+      if (!wikiPageId) {
+        const rootWikiPageKey = await queryClient.fetchQuery(
+          getRootWikiPageKeyQueryOptions(
+            wikiPageKey.ownerObjectType,
+            wikiPageKey.ownerObjectId,
+            synapseContext,
+          ),
+        )
+        if (rootWikiPageKey) {
+          wikiPageId = rootWikiPageKey.wikiPageId
+        }
+      }
+      return getWikiPage(accessToken, {
+        ...wikiPageKey,
+        wikiPageId: wikiPageId,
+      })
+    },
+  })
+}
+
+export function useGetWikiAttachments(
+  wikiPageKey: WikiPageKey,
+  options?: Partial<UseQueryOptions<FileHandleResults, SynapseClientError>>,
+) {
+  const synapseContext = useSynapseContext()
+  const { accessToken, keyFactory } = synapseContext
+  const queryClient = useQueryClient()
+
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getWikiAttachmentsQueryKey(wikiPageKey),
+    queryFn: async () => {
+      let wikiPageId = wikiPageKey.wikiPageId
+      if (!wikiPageId) {
+        const rootWikiPageKey = await queryClient.fetchQuery(
+          getRootWikiPageKeyQueryOptions(
+            wikiPageKey.ownerObjectType,
+            wikiPageKey.ownerObjectId,
+            synapseContext,
+          ),
+        )
+        if (rootWikiPageKey) {
+          wikiPageId = rootWikiPageKey.wikiPageId
+        }
+      }
+      return getWikiAttachmentsFromEntity(
+        accessToken,
+        wikiPageKey.ownerObjectId,
+        wikiPageId,
+        wikiPageKey.ownerObjectType,
+      )
+    },
   })
 }
 
