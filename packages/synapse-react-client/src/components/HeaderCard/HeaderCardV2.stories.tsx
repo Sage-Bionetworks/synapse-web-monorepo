@@ -1,5 +1,4 @@
 import { Study } from '@/assets/themed_icons'
-import { LaunchOutlined } from '@mui/icons-material'
 import type { Meta, StoryObj } from '@storybook/react'
 import HeaderCardV2 from './HeaderCardV2'
 
@@ -88,7 +87,6 @@ export const WithMultipleButtons: Story = {
     ],
   },
 }
- */
 
 export const WithStackedLayout: Story = {
   args: {
@@ -112,6 +110,7 @@ export const WithStackedLayout: Story = {
     ],
   },
 }
+ */
 
 export const StudyHeaderCardV2: Story = {
   args: {

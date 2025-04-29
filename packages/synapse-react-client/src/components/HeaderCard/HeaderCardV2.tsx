@@ -11,10 +11,7 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material'
-import {
-  DescriptionConfig,
-  CTACardLink,
-} from '../CardContainerLogic/CardContainerLogic'
+import { DescriptionConfig } from '../CardContainerLogic/CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
 import { GenericCardProps } from '@/components/GenericCard/GenericCard'
 
