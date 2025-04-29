@@ -10,7 +10,7 @@ import {
   FacetColumnValuesRequest,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import { groupBy, noop, sortBy } from 'lodash-es'
+import { groupBy, noop, sortBy, union } from 'lodash-es'
 import { Suspense, useCallback, useMemo, useState } from 'react'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import { useQueryContext } from '../../QueryContext'
@@ -177,12 +177,17 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
    * When the data facets change, reset the initially-selected chips
    */
   useDeepCompareEffectNoCheck(() => {
-    // Select the first three facet columns, plus any columns where a facet is already filtered
+    // Select the first three facet columns, plus any columns where a facet is already filtered,
+    // (PORTALS-3513) plus the initially expanded filters and any filters that the user explicitly expanded
+    const expandedFacets = union(
+      initialExpandedFacetControls ?? [],
+      Array.from(facetColumnsShown),
+    )
     setFacetColumnsShown(
       getDefaultShownFacetFilters(
         allFacetColumns,
         lastRequest.query.selectedFacets,
-        initialExpandedFacetControls,
+        expandedFacets,
       ),
     )
   }, [facets])
