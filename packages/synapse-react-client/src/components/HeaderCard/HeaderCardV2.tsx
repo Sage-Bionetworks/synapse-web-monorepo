@@ -11,7 +11,10 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material'
-import { DescriptionConfig, CTACardLink } from '../CardContainerLogic'
+import {
+  DescriptionConfig,
+  CTACardLink,
+} from '../CardContainerLogic/CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
 
 export type HeaderCardV2Props = {

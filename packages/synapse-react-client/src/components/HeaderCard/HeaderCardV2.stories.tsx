@@ -34,6 +34,7 @@ export const Default: Story = {
   },
 }
 
+/*
 export const DicomCard: Story = {
   args: {
     type: 'DICOM',
@@ -46,7 +47,7 @@ export const DicomCard: Story = {
       { columnDisplayName: 'BASED ON', value: 'None' },
     ],
     icon: <Study />,
-    ctaButtons: [
+    ctaButtons: [     // this isn't working anymore
       {
         label: 'View Standard on External Website',
         variant: 'outlined',
@@ -63,7 +64,7 @@ export const WithMultipleButtons: Story = {
   args: {
     ...DicomCard.args,
     title: 'DICOM with Multiple Actions',
-    ctaButtons: [
+    ctaButtons: [     // this isn't working anymore
       {
         label: 'View Standard on External Website',
         variant: 'outlined',
@@ -87,6 +88,7 @@ export const WithMultipleButtons: Story = {
     ],
   },
 }
+ */
 
 export const WithStackedLayout: Story = {
   args: {
