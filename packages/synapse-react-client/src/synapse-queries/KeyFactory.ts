@@ -402,8 +402,19 @@ export class KeyFactory {
       wikiPageKey.wikiPageId,
     )
   }
+
   public getWikiPageKey(ownerId: string, wikiPageId: string) {
     return this.getKey('ownerId', ownerId, 'wikiPageId', wikiPageId)
+  }
+
+  public getWikiAttachmentsQueryKey(wikiPageKey: WikiPageKey) {
+    return this.getKey(
+      WIKI_PAGE_QUERY_KEY,
+      wikiPageKey.ownerObjectType,
+      wikiPageKey.ownerObjectId,
+      wikiPageKey.wikiPageId,
+      'attachments',
+    )
   }
 
   public getFullTableQueryResultQueryKey(
