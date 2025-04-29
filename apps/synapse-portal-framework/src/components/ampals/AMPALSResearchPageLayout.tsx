@@ -84,6 +84,15 @@ const AMPALSResearchPageLayout = (props: AMPALSResearchPageLayoutProps) => {
             marginTop: '0px',
             width: '720px',
             height: 'auto',
+            '&h1.first-child': {
+              marginTop: '0px', // remove first child h1 padding-top
+            },
+            '&h2.first-child': {
+              marginTop: '0px', // remove first child h2 padding-top
+            },
+            '&h3.first-child': {
+              marginTop: '0px', // remove first child h3 padding-top
+            },
           }}
         >
           {children}
