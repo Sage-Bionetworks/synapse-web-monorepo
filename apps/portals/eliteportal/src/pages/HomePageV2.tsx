@@ -187,7 +187,6 @@ export default function HomePage() {
           maxBarCount={20}
           setName="Set Size"
           combinationName="Intersection Size"
-          uppercaseLabels={true}
           onClick={handleUpsetPlotClick({
             sql: cohortBuilderSql,
             explorePath: 'Cohort Builder',

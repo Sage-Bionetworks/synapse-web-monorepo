@@ -46,7 +46,6 @@ export const ElitePortalDemo: Story = {
     maxBarCount: 20,
     setName: 'Set size',
     combinationName: 'Intersection size',
-    uppercaseLabels: true,
     onClick: fn(),
   },
 }

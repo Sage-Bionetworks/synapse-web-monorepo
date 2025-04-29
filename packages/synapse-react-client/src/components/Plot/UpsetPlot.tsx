@@ -38,7 +38,6 @@ export type UpsetPlotProps = {
   height?: number
   summaryLinkText?: string // text for home page link below chart
   summaryLink?: string // url for home page link below chart
-  uppercaseLabels?: boolean
 } & Pick<UpSetSelectionProps, 'onClick'>
 
 export type UpsetPlotData = {
@@ -62,7 +61,6 @@ export function UpsetPlot({
   onClick,
   customPlotColor,
   selectionOpacity,
-  uppercaseLabels,
 }: UpsetPlotProps) {
   const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState<boolean>()
@@ -70,12 +68,14 @@ export function UpsetPlot({
   const [error, setError] = useState<string>()
   const [selection, setSelection] = useState(null as ISetLike<any> | null)
   const theme = useTheme()
-  const formattedSetName = uppercaseLabels ? setName?.toUpperCase() : setName
-  const formattedCombinationName = uppercaseLabels
-    ? combinationName?.toUpperCase()
-    : combinationName
 
   const variantStyles: Record<string, SxProps> = {
+    default: {
+      'text[class^="sChartTextStyle-upset-"], text[class^= "cChartTextStyle-upset-"]':
+        {
+          textTransform: 'uppercase',
+        },
+    },
     ampals: {
       width: '100%',
       '& .selectionHint-upset-': {
@@ -245,7 +245,7 @@ export function UpsetPlot({
               )}
               <Box
                 className="UpsetPlot"
-                sx={variant ? variantStyles[variant] : undefined}
+                sx={variant ? variantStyles[variant] : variantStyles['default']}
               >
                 <UpSetJS
                   sets={data.sets}
@@ -262,8 +262,8 @@ export function UpsetPlot({
                     selectionOpacity ? selectionOpacity : 0.3
                   }
                   // alternatingBackgroundColor={false}
-                  setName={formattedSetName}
-                  combinationName={formattedCombinationName}
+                  setName={setName}
+                  combinationName={combinationName}
                   fontFamily="'DM Sans', sans-serif"
                   fontSizes={updateFontSizes}
                   exportButtons={false}
