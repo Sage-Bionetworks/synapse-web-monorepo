@@ -18,7 +18,7 @@ import { Box } from '@mui/material'
 
 export type DiscussionReplyProps = {
   reply: DiscussionReplyBundle
-  isModerator?: boolean
+  moderatorList?: string[]
   onClickLink?: () => void
 }
 
@@ -26,11 +26,7 @@ const DEFAULT_ON_CLICK_LINK = () =>
   alert('This functionality has not been implemented yet')
 
 export function DiscussionReply(props: DiscussionReplyProps) {
-  const {
-    reply,
-    onClickLink = DEFAULT_ON_CLICK_LINK,
-    isModerator = false,
-  } = props
+  const { reply, onClickLink = DEFAULT_ON_CLICK_LINK, moderatorList } = props
   const [showReplyModal, setShowReplyModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
@@ -45,6 +41,7 @@ export function DiscussionReply(props: DiscussionReplyProps) {
   })
 
   const isCurrentUserAuthor = reply.createdBy == currentUserProfile?.ownerId
+  const isReplyAuthorModerator = moderatorList?.includes(reply.createdBy)
 
   return (
     <div className="reply-container">
@@ -60,7 +57,7 @@ export function DiscussionReply(props: DiscussionReplyProps) {
                   withAvatar={true}
                   avatarSize="MEDIUM"
                   showCardOnHover={true}
-                  isModerator={isModerator}
+                  isModerator={isReplyAuthorModerator}
                 />
                 <div className="message-body">
                   <MarkdownSynapse

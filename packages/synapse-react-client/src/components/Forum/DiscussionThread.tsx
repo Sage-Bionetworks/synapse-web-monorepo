@@ -61,8 +61,6 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     },
   )
 
-  console.log('threadData', threadData)
-
   const { subscription, toggleSubscribed, isLoading } = useSubscription(
     threadId,
     SubscriptionObjectType.THREAD,
@@ -102,12 +100,11 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   } = useGetRepliesInfinite(threadId, orderByDatePosted, limit)
   const replies = replyData?.pages.flatMap(page => page.results) ?? []
 
-  console.log('threadid', threadId) // 11937
   const { data: moderatorList } = useGetModerators(threadData?.forumId ?? '')
-  const isCurrentUserModerator = moderatorList?.results.includes(
-    currentUserProfile?.ownerId ?? '',
+
+  const isAuthorModerator = moderatorList?.results.includes(
+    threadData?.createdBy ?? '',
   )
-  console.log('mod?', isCurrentUserModerator)
 
   return (
     <div className="DiscussionThread">
@@ -143,7 +140,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
             withAvatar={true}
             avatarSize="MEDIUM"
             showCardOnHover={true}
-            isModerator={isCurrentUserModerator}
+            isModerator={isAuthorModerator}
           />
           <Box
             sx={theme => ({
@@ -271,7 +268,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           <DiscussionReply
             key={reply.id}
             reply={reply}
-            isModerator={isCurrentUserModerator}
+            moderatorList={moderatorList?.results}
           />
         ))}
       </div>

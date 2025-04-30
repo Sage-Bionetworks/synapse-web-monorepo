@@ -172,10 +172,16 @@ export function UserBadge(props: UserBadgeProps) {
       {isModerator && (
         <Chip
           sx={{
-            borderRadius: 1,
-            backgroundColor: 'blue',
+            borderRadius: '5px',
+            backgroundColor: '#395979',
             color: '#FFF',
-            fontWeight: 600,
+            fontWeight: 700,
+            fontSize: '12px',
+            marginLeft: '8px',
+            height: 'unset',
+            '& .MuiChip-label': {
+              padding: '5px 6px',
+            },
           }}
           label="Moderator"
         />
