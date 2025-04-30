@@ -1,8 +1,8 @@
 import { useSynapseContext } from '@/utils/index'
 import {
-  AccessControlList,
   Portal,
   SynapseClientError,
+  type UserPortalPermissions,
 } from '@sage-bionetworks/synapse-client'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 
@@ -20,17 +20,18 @@ export function useGetPortal(
       }),
   })
 }
-export function useGetPortalAcl(
+
+export function useGetUserPortalPermissions(
   portalId: string,
-  options?: Partial<UseQueryOptions<AccessControlList, SynapseClientError>>,
+  options?: Partial<UseQueryOptions<UserPortalPermissions, SynapseClientError>>,
 ) {
   const { synapseClient, keyFactory } = useSynapseContext()
-  return useQuery<AccessControlList, SynapseClientError>({
+  return useQuery<UserPortalPermissions, SynapseClientError>({
     ...options,
-    queryKey: keyFactory.getPortalAclKey(portalId),
+    queryKey: keyFactory.getPortalPermissionsKey(portalId),
 
     queryFn: () =>
-      synapseClient.portalsServicesClient.getRepoV1PortalPortalIdAcl({
+      synapseClient.portalsServicesClient.getRepoV1PortalPortalIdPermissions({
         portalId,
       }),
   })

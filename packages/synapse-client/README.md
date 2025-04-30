@@ -14,7 +14,7 @@ At this time, the only published versions of the Synapse OpenAPI definition are 
 We commit a stable copy of the OpenAPI definition to version control to ensure our generated code is consistent and does not cause unexpected regressions as the OpenAPI definition changes.
 
 To update the OpenAPI definition, run `pnpm get-spec` to get the latest production OpenAPI definition, which will be saved in `./src/spec/openapispecification.json`.
-You can also run `pnpm get-spec:staging` to get the OpenAPI definition associated with the current staging release. After retrieving the specification, you will once again need to run `pnpm build`.
+You can also run `pnpm get-spec:staging` to get the OpenAPI definition associated with the current staging release. After retrieving the specification, you will once again need to run `pnpm generate` and `pnpm build`.
 Once you have new models built, tests and type-checking on the full project should be run to ensure the new spec does not introduce errors. Our CI process will catch this automatically.
 
 ## Upgrading the openapi-generator version and overriding templates

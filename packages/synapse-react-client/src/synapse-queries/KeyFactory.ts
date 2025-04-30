@@ -977,7 +977,7 @@ export class KeyFactory {
     return this.getKey('portal', portalId)
   }
 
-  public getPortalAclKey(portalId: string) {
-    return this.getKey('portal', portalId, 'acl')
+  public getPortalPermissionsKey(portalId: string) {
+    return this.getKey('portal', portalId, 'permissions')
   }
 }
