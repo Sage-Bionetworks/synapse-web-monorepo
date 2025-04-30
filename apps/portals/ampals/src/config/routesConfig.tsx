@@ -11,11 +11,11 @@ import AMPALSResearchPageLayout from '@sage-bionetworks/synapse-portal-framework
 import { searchPageChildRoutes } from '@/pages/AMPALSSearchPage'
 import { Typography, Link } from '@mui/material'
 //import header images for Resources pages
-import ResearcherResourcesHeaderSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/researcher_resources_slat.png'
-import ContributorResourcesHeaderSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/data_contributor_resources_slat.png'
-import PWLEResourcesHeaderSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/pwles_resources_slat.png'
-import PublishingRequirementsSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/publishing_requirements.png'
-import ContributeDataSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/contribute_data_slat.png'
+import researcherResourcesHeaderSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/researcher_resources_slat.png'
+import contributorResourcesHeaderSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/data_contributor_resources_slat.png'
+import pwleResourcesHeaderSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/pwles_resources_slat.png'
+import publishingRequirementsSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/publishing_requirements.png'
+import contributeDataSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/contribute_data_slat.png'
 
 //TO DO: help page button url(s), remove first child h2 padding-top or find some other fix, add input for header images
 
@@ -63,7 +63,7 @@ const routes: RouteObject[] = [
             element: (
               <AMPALSResearchPageLayout
                 headerTitle="Resources"
-                headerImageURL={ResearcherResourcesHeaderSlat}
+                headerImageURL={researcherResourcesHeaderSlat}
                 sidebarTitle="Resources for ALS researchers"
               >
                 <MarkdownSynapse
@@ -79,7 +79,7 @@ const routes: RouteObject[] = [
             element: (
               <AMPALSResearchPageLayout
                 headerTitle="Resources"
-                headerImageURL={ContributorResourcesHeaderSlat}
+                headerImageURL={contributorResourcesHeaderSlat}
                 sidebarTitle="How to contribute data to the ALS Knowledge Portal"
                 sidebarContent={
                   <>
@@ -106,7 +106,7 @@ const routes: RouteObject[] = [
             element: (
               <AMPALSResearchPageLayout
                 headerTitle="Resources"
-                headerImageURL={PWLEResourcesHeaderSlat}
+                headerImageURL={pwleResourcesHeaderSlat}
                 sidebarTitle="Resources for ALS patients and people with lived experience"
               >
                 <MarkdownSynapse
@@ -122,7 +122,7 @@ const routes: RouteObject[] = [
             element: (
               <AMPALSResearchPageLayout
                 headerTitle="Requirements for Publication"
-                headerImageURL={PublishingRequirementsSlat}
+                headerImageURL={publishingRequirementsSlat}
                 sidebarTitle="Using data from the ALS Knowledge Portal in publications"
               >
                 <MarkdownSynapse
@@ -169,7 +169,7 @@ const routes: RouteObject[] = [
         element: (
           <AMPALSResearchPageLayout
             headerTitle="Contribute Data"
-            headerImageURL={ContributeDataSlat}
+            headerImageURL={contributeDataSlat}
             sidebarTitle="How to contribute data to the ALS Knowledge Portal"
           >
             <MarkdownSynapse

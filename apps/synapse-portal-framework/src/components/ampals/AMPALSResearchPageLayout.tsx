@@ -72,7 +72,7 @@ const AMPALSResearchPageLayout = (props: AMPALSResearchPageLayoutProps) => {
             sx={{
               fontWeight: 700,
               fontSize: '24px',
-              color: '#353A3F',
+              color: 'grey-900',
             }}
           >
             {sidebarTitle}
@@ -82,7 +82,7 @@ const AMPALSResearchPageLayout = (props: AMPALSResearchPageLayoutProps) => {
         <Box
           sx={{
             marginTop: '0px',
-            width: '720px',
+            maxWidth: '720px',
             height: 'auto',
             '&h1.first-child': {
               marginTop: '0px', // remove first child h1 padding-top
