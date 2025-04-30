@@ -233,6 +233,8 @@ export function UpsetPlot({
           {({ size }) => (
             <>
               {variantStyles['ampals'] && (
+                // Render DiagonalLinePattern so UpsetPlot can use `fill: url(#diagonalLinePattern)`.
+                // Must be defined within the same SVG element as the plot to ensure the pattern is available in the DOM.
                 <Box
                   sx={{
                     '& path': {
