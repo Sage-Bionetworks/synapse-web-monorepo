@@ -52,9 +52,9 @@ describe('PortalsDoiSerializer', () => {
       )
     })
 
-    it('properly escapes special characters', () => {
-      const expected = '{"__type":"STUDY","studyId":"syn&123"}'
-      const actual = serializer.serialize('STUDY', { studyId: 'syn&123' })
+    it('properly escapes reserved characters', () => {
+      const expected = '{"__type":"STUDY","studyId":"syn\\"123"}'
+      const actual = serializer.serialize('STUDY', { studyId: 'syn"123' })
       expect(actual).toEqual(expected)
     })
   })
@@ -72,6 +72,14 @@ describe('PortalsDoiSerializer', () => {
       const expected = ['DATASET', { foo: '123', bar: '456' }]
       const actual = serializer.deserialize(
         '{"__type":"DATASET","foo":"123","bar":"456"}',
+      )
+      expect(actual).toEqual(expected)
+    })
+
+    it('deserializes with an escaped character', () => {
+      const expected = ['STUDY', { studyId: 'syn"123' }]
+      const actual = serializer.deserialize(
+        '{"__type":"STUDY","studyId":"syn\\"123"}',
       )
       expect(actual).toEqual(expected)
     })
