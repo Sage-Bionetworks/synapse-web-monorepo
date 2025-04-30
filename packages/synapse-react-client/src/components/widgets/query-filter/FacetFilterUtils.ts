@@ -22,10 +22,16 @@ export function getDefaultShownFacetFilters(
     const initialExpandedFacetControlsSet = new Set(
       initialExpandedFacetControls,
     )
+    const availableInitialExpandedFacetControls = facetColumns.filter(
+      columnName => initialExpandedFacetControlsSet.has(columnName),
+    )
+    const fillerExpandedFacetControls =
+      availableInitialExpandedFacetControls.length < 3
+        ? facetColumns.slice(0, 3)
+        : []
     return new Set([
-      ...facetColumns.filter(columnName =>
-        initialExpandedFacetControlsSet.has(columnName),
-      ),
+      ...fillerExpandedFacetControls,
+      ...availableInitialExpandedFacetControls,
       ...columnsWithExistingFilters,
     ])
   }
