@@ -1,8 +1,18 @@
+import PortalsDoiIdSerializer from '@/utils/PortalsDoiIdSerializer'
 import { RouteObject, Navigate, useSearchParams } from 'react-router'
 
-export type DoiRedirectConfig<TResourceType extends string> = (
+/**
+ * Given a resource type and set of key,value pairs that comprise the resource key, returns the URL to redirect to.
+ */
+export type PortalResourceRedirector<
+  TResourceType extends string,
+  TResourceTypeAttributes extends Record<string, string> = Record<
+    string,
+    string
+  >,
+> = (
   resourceType: TResourceType,
-  resourceId: string,
+  resourceKey: TResourceTypeAttributes,
 ) => string
 
 /**
@@ -13,43 +23,56 @@ export type DoiRedirectConfig<TResourceType extends string> = (
  * @param props contains the redirectConfig function that maps the resource type/ID to the URL of the resource in the portal
  */
 function DoiRedirectComponent<TResourceType extends string>(props: {
-  redirectConfig: DoiRedirectConfig<TResourceType>
+  redirector: PortalResourceRedirector<TResourceType>
+  deserializer: PortalsDoiIdSerializer<TResourceType>
 }) {
-  const { redirectConfig } = props
+  const { redirector, deserializer } = props
   const [searchParams] = useSearchParams()
   const doiId = searchParams.get('id')
+
+  let redirectUrl: string = '/'
 
   if (!doiId) {
     console.error(
       'Could not redirect to DOI: no id provided in the URLSearchParams.',
     )
-    return <Navigate to={'/'} replace={true} />
+  } else {
+    try {
+      const attributes = deserializer.deserialize(doiId)
+      redirectUrl = redirector(attributes.type, attributes)
+    } catch (e) {
+      console.error(
+        `Could not redirect to DOI: error deserializing id '${doiId}' provided in the URLSearchParams.`,
+        e,
+      )
+    }
   }
 
-  // Only split on the first `.` -- the ID may contain `.` itself
-  const parts = doiId.split('.', 2)
-  if (parts.length !== 2) {
-    console.error(
-      `Could not redirect to DOI: malformed id '${doiId}' provided in the URLSearchParams.`,
-    )
-    return <Navigate to={'/'} replace={true} />
-  }
-  const [resourceType, resourceId] = parts
-
-  const redirectUrl = redirectConfig(resourceType as TResourceType, resourceId)
   return <Navigate to={redirectUrl} replace={true} />
 }
 
 /**
  * Creates a route to handle redirecting the ID specified in a Portal DOI to the resource in the portal.
- * @param config a function that maps the resource type/ID to the URL of the resource in the portal
+ * @param configuration.redirector a function that maps the resource type/ID to the URL of the resource in the portal
+ * @param configuration.deserializer a class that can deserialize a portal ID to extract the resource key to pass to the redirector
  */
-export function getDoiRedirectRoute<TResourceType extends string>(
-  config: DoiRedirectConfig<TResourceType>,
-): RouteObject {
-  // e.g., maps /doi?id=MYRESOURCE.syn123 to /Explore/MyResource/DetailsPage?myResourceId=syn123
+export function getDoiRedirectRoute<
+  TResourceType extends string,
+>(configuration: {
+  redirector: PortalResourceRedirector<TResourceType>
+  deserializer: PortalsDoiIdSerializer<TResourceType>
+}): RouteObject {
+  const { redirector, deserializer } = configuration
+  // e.g., maps /doi?id=foo to /Explore/MyResource/DetailsPage?myResourceId=bar
+  // The logic for parsing the DOI ID to get the resource information is handled by the deserializer
+  // The logic for redirecting to the details page given the resource information is handled by the redirector
   return {
     path: 'doi',
-    element: <DoiRedirectComponent redirectConfig={config} />,
+    element: (
+      <DoiRedirectComponent
+        redirector={redirector}
+        deserializer={deserializer}
+      />
+    ),
   }
 }

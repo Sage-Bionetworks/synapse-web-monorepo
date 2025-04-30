@@ -1,4 +1,4 @@
-import { doiRedirectConfig } from '@/config/doiRedirectConfig'
+import { doiRedirector, doiSerializer } from '@/config/doiRedirector'
 import HomePage from '@/pages/HomePage'
 import ProgramDetailsPage from '@/pages/ProgramDetailsPage'
 import ProjectDetailsPage from '@/pages/ProjectDetailsPage'
@@ -42,7 +42,10 @@ const routes: RouteObject[] = [
     ),
     children: [
       ...sharedRoutes,
-      getDoiRedirectRoute(doiRedirectConfig),
+      getDoiRedirectRoute({
+        redirector: doiRedirector,
+        deserializer: doiSerializer,
+      }),
       {
         index: true,
         element: <HomePage />,
