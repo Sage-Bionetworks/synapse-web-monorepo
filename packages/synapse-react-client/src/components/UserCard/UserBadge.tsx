@@ -31,7 +31,7 @@ export type UserBadgeProps = {
 
   className?: string
 
-  isModerator?: boolean
+  showModeratorBadge?: boolean
 }
 
 const TIMER_DELAY_SHOW = 250 // milliseconds
@@ -50,7 +50,7 @@ export function UserBadge(props: UserBadgeProps) {
     avatarSize = 'SMALL',
     className,
     showFullName = false,
-    isModerator = false,
+    showModeratorBadge = false,
   } = props
   let { link } = props
 
@@ -169,7 +169,7 @@ export function UserBadge(props: UserBadgeProps) {
         {fullName ? ')' : ''}
         {showAccountLevelIcon && accountLevelIcon}
       </Tag>
-      {isModerator && (
+      {showModeratorBadge && (
         <Chip
           sx={{
             borderRadius: '5px',

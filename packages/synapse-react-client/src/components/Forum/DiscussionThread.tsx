@@ -140,7 +140,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
             withAvatar={true}
             avatarSize="MEDIUM"
             showCardOnHover={true}
-            isModerator={isAuthorModerator}
+            showModeratorBadge={isAuthorModerator}
           />
           <Box
             sx={theme => ({
@@ -264,13 +264,18 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         )}
       </Box>
       <div>
-        {replies.map(reply => (
-          <DiscussionReply
-            key={reply.id}
-            reply={reply}
-            moderatorList={moderatorList?.results}
-          />
-        ))}
+        {replies.map(reply => {
+          const isReplyAuthorModerator = moderatorList?.results.includes(
+            reply.createdBy,
+          )
+          return (
+            <DiscussionReply
+              key={reply.id}
+              reply={reply}
+              isReplyAuthorModerator={isReplyAuthorModerator}
+            />
+          )
+        })}
       </div>
       {replies.length > 0 && (
         <Box
