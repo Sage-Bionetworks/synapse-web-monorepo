@@ -258,7 +258,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
         <TextField
           label={'Publisher'}
           fullWidth
-          value={portal?.name || null}
+          value={portal?.name || ''}
           disabled
         />
       )}
