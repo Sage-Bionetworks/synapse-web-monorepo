@@ -184,10 +184,10 @@ describe('FacetFilterControls tests', () => {
         getDefaultShownFacetFilters(
           allFacetColumnNames,
           [],
-          ['UnavailableColumn1'],
+          ['UnavailableColumn1', 'Lemon'],
         ),
         // first three facet column names should be included
-      ).toEqual(new Set(['Year', 'Make', 'Model']))
+      ).toEqual(new Set(['Year', 'Make', 'Model', 'Lemon']))
     })
   })
 })
