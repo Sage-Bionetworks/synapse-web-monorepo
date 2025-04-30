@@ -1,4 +1,5 @@
 import WideButton from '@/components/styled/WideButton'
+import { Link as RouterLink } from 'react-router'
 
 export type ButtonLinkWidgetParams = {
   align?: string
@@ -22,12 +23,25 @@ export default function MarkdownButton(
   }
   const buttonIsCenterAligned = alignLowerCase === 'center'
   const buttonColor = highlight ? 'secondary' : 'neutral'
+  const isExternalLink =
+    widgetParamsMapped.url?.startsWith('http://') ||
+    widgetParamsMapped.url?.startsWith('https://')
   const button = (
     <WideButton
-      href={widgetParamsMapped.url}
       className={buttonClasses}
       variant="contained"
       color={buttonColor}
+      {...(isExternalLink
+        ? {
+            href: widgetParamsMapped.url,
+            target: '_blank',
+            rel: 'noopener noreferrer',
+            component: 'a',
+          }
+        : {
+            to: widgetParamsMapped.url,
+            component: RouterLink,
+          })}
       sx={{
         '&:hover': {
           backgroundColor: highlight ? undefined : 'secondary.main',
