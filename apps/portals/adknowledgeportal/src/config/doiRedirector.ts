@@ -6,7 +6,8 @@ import PortalsDoiIdSerializer from '@sage-bionetworks/synapse-portal-framework/u
  *
  * To add a new resource type:
  *  1. Add the resource type to the string literal
- *  2. Add a case to the switch statement in the doiRedirectConfig function.
+ *  2. Define the ordered key set that defines this resource in `RESOURCE_TYPE_KEY_CONFIGURATION`
+ *  3. Add a case to the switch statement in the doiRedirectConfig function.
  */
 
 type ADKPResourceType = 'STUDY'
