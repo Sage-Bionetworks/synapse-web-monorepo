@@ -22,30 +22,26 @@ export function ColumnSelection(props: ColumnSelectionProps) {
       tooltipText={'Show/Hide Columns'}
       icon={darkTheme ? 'columnsdark' : 'columns'}
       darkTheme={darkTheme}
-      menuItems={
-        <>
-          {headers?.map(header => {
-            const { name } = header
-            const isCurrentColumnSelected = isColumnSelected.includes(name)
-            const iconStyle: CSSProperties = {
-              width: '11px',
-              marginRight: '10px',
-              visibility: isCurrentColumnSelected ? undefined : 'hidden',
-            }
-            const maybeShowPrimaryColor = isCurrentColumnSelected
-              ? 'SRC-primary-text-color'
-              : ''
-            return (
-              <MenuItem onClick={() => toggleColumnSelection(name)} key={name}>
-                <span className={maybeShowPrimaryColor} style={iconStyle}>
-                  <IconSvg icon="check" sx={{ width: '14px' }} />
-                </span>
-                {getColumnDisplayName(name)}
-              </MenuItem>
-            )
-          })}
-        </>
-      }
+      menuItems={headers?.map(header => {
+        const { name } = header
+        const isCurrentColumnSelected = isColumnSelected.includes(name)
+        const iconStyle: CSSProperties = {
+          width: '11px',
+          marginRight: '10px',
+          visibility: isCurrentColumnSelected ? undefined : 'hidden',
+        }
+        const maybeShowPrimaryColor = isCurrentColumnSelected
+          ? 'SRC-primary-text-color'
+          : ''
+        return (
+          <MenuItem onClick={() => toggleColumnSelection(name)} key={name}>
+            <span className={maybeShowPrimaryColor} style={iconStyle}>
+              <IconSvg icon="check" sx={{ width: '14px' }} />
+            </span>
+            {getColumnDisplayName(name)}
+          </MenuItem>
+        )
+      })}
     />
   )
 }
