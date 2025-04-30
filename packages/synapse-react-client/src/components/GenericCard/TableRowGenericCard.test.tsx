@@ -1,7 +1,7 @@
 import { CardLink } from '@/components/CardContainer/CardLink'
+import { getLinkParams } from '@/components/GenericCard/CardUtils'
 import TableRowGenericCard, {
   TableToGenericCardMapping,
-  getLinkParams,
   TableRowGenericCardProps,
 } from './TableRowGenericCard'
 import { mockFileViewEntity } from '@/mocks/entity/mockFileView'

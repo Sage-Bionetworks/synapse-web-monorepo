@@ -1,3 +1,4 @@
+import { getValueOrMultiValue } from '@/components/index'
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
 import ChipContainer from '@/components/row_renderers/utils/ChipContainer'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
@@ -6,10 +7,7 @@ import { DATASET } from '@/utils/SynapseConstants'
 import { Button } from '@mui/material'
 import { ColumnModel, SelectColumn } from '@sage-bionetworks/synapse-types'
 import { Component, MouseEvent } from 'react'
-import {
-  TableToGenericCardMapping,
-  getValueOrMultiValue,
-} from '../GenericCard/TableRowGenericCard'
+import { TableToGenericCardMapping } from '../GenericCard/TableRowGenericCard'
 import { QueryVisualizationContextType } from '../QueryVisualizationWrapper'
 import { CardFooter, Icon } from './utils'
 
