@@ -159,5 +159,35 @@ describe('FacetFilterControls tests', () => {
         ]),
       ).toEqual(new Set(['Year', 'Make', 'Model']))
     })
+
+    it('includes initialExpandedFacetControlsSet if columns are available', () => {
+      expect(
+        getDefaultShownFacetFilters(
+          allFacetColumnNames,
+          [
+            {
+              concreteType:
+                'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+              columnName: 'Make',
+              facetValues: ['Honda', 'Ford'],
+            },
+          ],
+          ['Price', 'EnteredBy', 'Lemon'],
+        ),
+        // Make is included because a value was selected.
+        // Default columns 'Year' and 'Model' (from top 3 columns) not included
+      ).toEqual(new Set(['Make', 'Price', 'EnteredBy', 'Lemon']))
+    })
+    it('if initialExpandedFacetControlsSet is small, initializes with default columns', () => {
+      expect(
+        // user expanded column that is no longer available in the current query result facets
+        getDefaultShownFacetFilters(
+          allFacetColumnNames,
+          [],
+          ['UnavailableColumn1'],
+        ),
+        // first three facet column names should be included
+      ).toEqual(new Set(['Year', 'Make', 'Model']))
+    })
   })
 })
