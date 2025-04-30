@@ -234,7 +234,8 @@ export function UpsetPlot({
             <>
               {variantStyles['ampals'] && (
                 // Render DiagonalLinePattern so UpsetPlot can use `fill: url(#diagonalLinePattern)`.
-                // Must be defined within the same SVG element as the plot to ensure the pattern is available in the DOM.
+                // The SVG element must be added to the DOM so we can reference its ID (which is set in the SVG file) in the `fill` style
+                // Ideally, we would reference the asset URL imported by Vite, but this isn't working.
                 <Box
                   sx={{
                     '& path': {
