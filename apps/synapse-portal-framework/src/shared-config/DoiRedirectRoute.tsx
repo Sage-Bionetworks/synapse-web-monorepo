@@ -17,14 +17,16 @@ export type PortalResourceRedirector<
 
 /**
  * Component to redirect the Portal DOI ID to the resource in the portal.
- * Portal DOI IDs are of the form "RESOURCETYPE.RESOURCEID". For example, `STUDY.syn123`.
+ * Portal DOI IDs are a JSON string with ordered attributes. A deserializer and redirector are provided to
  *
- * If no id is provided in the URLSearchParams, the user is redirected to the home page.
- * @param props contains the redirectConfig function that maps the resource type/ID to the URL of the resource in the portal
+ * 1. Deserialize the ID to get the resource type and key attributes
+ * 2. Use the resource type and key attributes to get the URL to redirect
+ *
+ * If no id is provided in the URLSearchParams, or if the deserializer or redirector throw an error, the user is redirected to the home page.
  */
 function DoiRedirectComponent<TResourceType extends string>(props: {
-  redirector: PortalResourceRedirector<TResourceType>
   deserializer: PortalsDoiIdSerializer<TResourceType>
+  redirector: PortalResourceRedirector<TResourceType>
 }) {
   const { redirector, deserializer } = props
   const [searchParams] = useSearchParams()
@@ -38,8 +40,8 @@ function DoiRedirectComponent<TResourceType extends string>(props: {
     )
   } else {
     try {
-      const attributes = deserializer.deserialize(doiId)
-      redirectUrl = redirector(attributes.type, attributes)
+      const [resourceType, keyAttributes] = deserializer.deserialize(doiId)
+      redirectUrl = redirector(resourceType, keyAttributes)
     } catch (e) {
       console.error(
         `Could not redirect to DOI: error deserializing id '${doiId}' provided in the URLSearchParams.`,
