@@ -3,7 +3,7 @@ import { CreateOrUpdateDoiModal } from '@/components/doi/CreateOrUpdateDoiModal'
 import { useGetDOIAssociation } from '@/synapse-queries/doi/useDOI'
 import { useGetUserPortalPermissions } from '@/synapse-queries/portal/usePortal'
 import { CreateTwoTone } from '@mui/icons-material'
-import { IconButton, Skeleton, Tooltip, Typography } from '@mui/material'
+import { Box, IconButton, Skeleton, Tooltip } from '@mui/material'
 import Link from '@mui/material/Link'
 import { useState } from 'react'
 
@@ -45,18 +45,34 @@ function PortalDOI(props: PortalDOIProps) {
         objectId={resourceId}
         portalId={portalId}
       />
-      <Typography component={'div'}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 0.5,
+          // set height to 0 to prevent expanding the table row
+          height: 0,
+        }}
+      >
         {doi && (
           <>
             <Link href={doi.doiUrl} target={'_blank'}>
               {doi.doiUrl}
             </Link>
-            <CopyToClipboardIcon value={doi.doiUrl!} />
+            <CopyToClipboardIcon
+              size="small"
+              value={doi.doiUrl!}
+              sx={{ color: 'inherit' }}
+            />
 
             {canMintDoi && (
               <Tooltip title={`Edit DOI`}>
-                <IconButton onClick={() => setShowEditModal(true)}>
-                  <CreateTwoTone />
+                <IconButton
+                  onClick={() => setShowEditModal(true)}
+                  size="small"
+                  sx={{ color: 'inherit' }}
+                >
+                  <CreateTwoTone fontSize={'inherit'} />
                 </IconButton>
               </Tooltip>
             )}
@@ -67,7 +83,7 @@ function PortalDOI(props: PortalDOIProps) {
             Click to Create a DOI
           </Link>
         )}
-      </Typography>
+      </Box>
     </>
   )
 }
