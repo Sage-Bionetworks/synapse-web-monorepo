@@ -20,6 +20,7 @@ type CardFooterProps = {
   secondaryLabelLimit?: number
   columnIconOptions?: ColumnIconConfigs
   className?: string
+  cardTopContent?: React.ReactNode
 }
 
 class CardFooter extends Component<CardFooterProps, State> {
@@ -131,7 +132,7 @@ class CardFooter extends Component<CardFooterProps, State> {
   }
 
   render() {
-    const { values, secondaryLabelLimit = 3 } = this.props
+    const { values, secondaryLabelLimit = 3, cardTopContent } = this.props
     const { isShowMoreOn, isDesktop } = this.state
     const valuesFiltered = values.filter(el => Boolean(el.value))
     const hasMoreValuesThanLimit = valuesFiltered.length > secondaryLabelLimit
@@ -142,6 +143,7 @@ class CardFooter extends Component<CardFooterProps, State> {
         data-testid="CardFooter"
         className={`SRC-cardMetadata ${this.props.className ?? ''}`}
       >
+        {cardTopContent}
         <table>
           <tbody>
             {this.renderRows(valuesFiltered, limit, isDesktop)}

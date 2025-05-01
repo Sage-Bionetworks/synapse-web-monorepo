@@ -143,7 +143,7 @@ export default function TwoFactorBackupCodes(props: TwoFactorBackupCodesProps) {
               onClick={copyCodesToClipboard}
               disabled={!recoveryCodes}
             >
-              Copy to Clipboard
+              Copy Codes
             </Button>
             <Button
               variant={'outlined'}

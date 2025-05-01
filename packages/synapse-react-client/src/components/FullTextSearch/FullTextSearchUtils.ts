@@ -9,6 +9,7 @@ import {
 import * as React from 'react'
 import { getFileColumnModelId } from '../SynapseTable/SynapseTableUtils'
 import { FTSConfig } from '../SynapseTable/SearchV2'
+import { getWordCount } from '../TextField/TextFieldWithWordLimit'
 
 /**
  * Expects a search expression of the form: "searchText" @3
@@ -40,7 +41,8 @@ export function getTextMatchesQueryFilter(
   const { textMatchesMode, distance = 0 } = ftsConfig
   let searchExpression = searchText
   if (textMatchesMode == 'BOOLEAN') {
-    const searchTextWordLength = searchText.trim().split(/\s+/).length
+    //split by non-word character and ignore empty strings
+    const searchTextWordLength = getWordCount(searchText)
     const distanceToUse = Math.max(distance, searchTextWordLength)
     searchExpression = `"${searchText.replaceAll('"', '')}" @${distanceToUse}`
   }
