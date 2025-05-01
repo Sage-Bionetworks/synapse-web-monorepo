@@ -56,7 +56,7 @@ export function getCandidateDoiId(args: {
       return acc
     }, {} as Record<string, string>)
 
-  if (!doiAttributes) {
+  if (!doiAttributes || Object.keys(doiAttributes).length === 0) {
     return undefined
   }
 
