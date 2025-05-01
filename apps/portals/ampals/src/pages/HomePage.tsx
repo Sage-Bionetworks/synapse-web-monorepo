@@ -3,6 +3,7 @@ import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/
 import ALLALSSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/ALLALSSlat'
 import AMPALSPublishingRequirements from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSPublishingRequirements'
 import HowToAccessData from '@sage-bionetworks/synapse-portal-framework/components/ampals/HowToAccessData'
+// import AMPALSExploreTheData from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSExploreTheData'
 // import { dataSql } from '../config/resources'
 // import { FeaturedDataTabs } from 'synapse-react-client'
 // import columnAliases from '../config/columnAliases'
@@ -57,7 +58,6 @@ export default function HomePage() {
         }}
       />
       <AMPALSHeader headerSvgURL={headerSvg} />
-      {/* <GoalsV2 entityId={goalsSql} dataLink={''} /> */}
       <SectionLayout
         title={'Our ALS Resources'}
         centerTitle
@@ -81,13 +81,10 @@ export default function HomePage() {
           }}
         />
       </SectionLayout>
-      {/* <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
-        <Goals entityId={'syn23518009'} />
-      </SectionLayout> */}
+      {/* <AMPALSExploreTheData sql={upsetPlotSql} /> */}
       <HowToAccessData />
       <AMPALSPublishingRequirements />
       <ALLALSSlat />
-
       <div className={'home-bg-dark'}>
         <SectionLayout
           title={'Featured Datasets'}
