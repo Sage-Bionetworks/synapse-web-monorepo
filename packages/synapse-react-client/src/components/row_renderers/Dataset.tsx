@@ -1,4 +1,4 @@
-import { getValueOrMultiValue } from '@/components/index'
+import { getValueOrMultiValue } from '@/components/GenericCard/CardUtils'
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
 import ChipContainer from '@/components/row_renderers/utils/ChipContainer'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
