@@ -12,7 +12,7 @@
     "lint": "nx run-many --target=lint --quiet",
     "test": "nx run-many --target=test --coverage",
     "clean": "nx run-many --target=clean",
-    "type-check": "nx run-many --target=type-check"
+    "type-check": "tsc --build"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.3",

@@ -2,7 +2,7 @@
 /* eslint-env mocha */
 
 const assert = require('node:assert')
-const fn = require('../')
+const fn = require('../index.cjs')
 
 describe('CJS', () => {
   it('require', () => {
