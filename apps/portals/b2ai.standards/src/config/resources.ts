@@ -1,12 +1,23 @@
 const DST_TABLE_ID = 'syn66330015' // DST_denormalized_current
 const STANDARDS_CHALLENGE_TABLE_ID = 'syn65913973'
-const DATASET_TABLE_ID = 'syn65913973'
+const DATASET_TABLE_ID = 'syn66330217'
+const ORGANIZATION_TABLE_ID = 'syn63096836'
 
 export const DST_TABLE_COLUMN_NAMES = { RELEVANT_ORG_NAMES: 'relevantOrgNames' }
+export const ORG_TABLE_COLUMN_NAMES = {
+  ID: 'id',
+  NAME: 'name',
+  DESCRIPTION: 'description',
+}
+export const CHALLENGES_TABLE_COLUMN_NAMES = {
+  ORG_ID: 'organizationId',
+  IMG_HANDLE_ID: 'headerImage',
+}
 // can replace with specific version if wanted
 
-export const standardsChallengeTableId = STANDARDS_CHALLENGE_TABLE_ID
+export const challengesTableId = STANDARDS_CHALLENGE_TABLE_ID
 export const dataSetTableId = DATASET_TABLE_ID
+export const organizationTableId = ORGANIZATION_TABLE_ID
 
 // for the Explore page table:
 export const dataSql = `
