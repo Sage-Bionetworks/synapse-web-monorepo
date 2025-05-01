@@ -41,6 +41,7 @@ import { VerificationServicesApi } from './generated/apis/VerificationServicesAp
 import { WebhookServicesApi } from './generated/apis/WebhookServicesApi'
 import { WikiPageServices2Api } from './generated/apis/WikiPageServices2Api'
 import { WikiPageServicesApi } from './generated/apis/WikiPageServicesApi'
+import { PortalsServicesApi } from './generated/apis/PortalsServicesApi'
 import { ErrorResponse } from './generated/models/ErrorResponse'
 import {
   Configuration,
@@ -126,6 +127,7 @@ export class SynapseClient {
   public membershipRequestServicesClient: MembershipRequestServicesApi
   public messageServicesClient: MessageServicesApi
   public openIDConnectServicesClient: OpenIDConnectServicesApi
+  public portalsServicesClient: PortalsServicesApi
   public principalServicesClient: PrincipalServicesApi
   public projectSettingsServicesClient: ProjectSettingsServicesApi
   public recycleBinServicesClient: RecycleBinServicesApi
@@ -200,6 +202,7 @@ export class SynapseClient {
     this.openIDConnectServicesClient = new OpenIDConnectServicesApi(
       configuration,
     )
+    this.portalsServicesClient = new PortalsServicesApi(configuration)
     this.principalServicesClient = new PrincipalServicesApi(configuration)
     this.projectSettingsServicesClient = new ProjectSettingsServicesApi(
       configuration,
