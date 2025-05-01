@@ -39,6 +39,12 @@ export default function HomePage() {
         'Visit this page for links to external resources with information about clinical trials, ongoing research, and community.',
       link: '/Resources/For Persons with Lived Experience',
     },
+    {
+      title: 'Publishing Requirements',
+      description:
+        'Learn about the requirements for publishing data in this portal.',
+      link: '/Resources/Publishing Requirements',
+    },
   ]
   return (
     <>
