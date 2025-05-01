@@ -241,6 +241,9 @@ export function UpsetPlot({
                     '& path': {
                       stroke: '#D9D9D9 !important',
                     },
+                    width: 0,
+                    height: 0,
+                    position: 'absolute',
                   }}
                 >
                   <DiagonalLinePattern />

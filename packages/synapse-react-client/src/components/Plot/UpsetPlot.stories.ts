@@ -43,7 +43,7 @@ export const ElitePortalDemo: Story = {
   args: {
     sql: 'SELECT individualID, assay FROM syn51489960 WHERE metadataType IS NULL and assay IS NOT NULL',
     rgbIndex: 0,
-    maxBarCount: 20,
+    maxBarCount: 10,
     setName: 'Set size',
     combinationName: 'Intersection size',
     onClick: fn(),
@@ -53,7 +53,7 @@ export const ElitePortalDemo: Story = {
 export const AMPALSPortalVariant: Story = {
   args: {
     sql: 'SELECT individualID, assay FROM syn51489960 WHERE metadataType IS NULL and assay IS NOT NULL',
-    maxBarCount: 20,
+    maxBarCount: 10,
     setName: 'Set size',
     combinationName: 'Intersection size',
     variant: 'ampals',
