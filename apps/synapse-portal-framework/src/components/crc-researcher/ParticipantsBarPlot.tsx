@@ -1,18 +1,18 @@
-import { CSSProperties, useEffect, useState } from 'react'
+import {
+  QueryBundleRequest,
+  QueryResultBundle,
+  RowSet,
+} from '@sage-bionetworks/synapse-types'
+import cloneDeep from 'lodash-es/cloneDeep'
 import Plotly from 'plotly.js-basic-dist'
-import _ from 'lodash-es'
+import { CSSProperties, useEffect, useState } from 'react'
+import { PlotParams } from 'react-plotly.js'
 import {
   GraphItem,
   SynapseClient,
   SynapseConstants,
   SynapseUtilityFunctions,
 } from 'synapse-react-client'
-import {
-  QueryBundleRequest,
-  QueryResultBundle,
-  RowSet,
-} from '@sage-bionetworks/synapse-types'
-import { PlotParams } from 'react-plotly.js'
 import Plot from 'synapse-react-client/components/Plot/Plot'
 
 export type ParticipantsBarPlotProps = {
@@ -124,7 +124,7 @@ function getLayout(
   layoutConfig: Partial<Plotly.LayoutAxis>,
   totalNumberOfResults: number,
 ): Partial<Plotly.LayoutAxis> {
-  const layout = _.cloneDeep(layoutConfig)
+  const layout = cloneDeep(layoutConfig)
   ;(layout as any).xaxis = {
     visible: false,
   }
