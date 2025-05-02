@@ -1,22 +1,21 @@
-import { Box, IconButton } from '@mui/material'
-import { createRef, RefObject, SyntheticEvent, useState } from 'react'
-import { ToastMessage } from './ToastMessage/ToastMessage'
-import { BoxProps } from '@mui/material'
-import IconSvg from './IconSvg'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
+import { IconButton, IconButtonProps, Tooltip } from '@mui/material'
+import { createRef, RefObject, SyntheticEvent, useState } from 'react'
+import IconSvg from './IconSvg'
+import { ToastMessage } from './ToastMessage/ToastMessage'
 
-export type CopyToClipboardIconProps = BoxProps & {
+export type CopyToClipboardIconProps = IconButtonProps & {
   value: string
-  size?: number
+  sizePx?: number
 }
 
 export function CopyToClipboardIcon({
   value,
-  size = 16,
+  sizePx = 16,
   ...props
 }: CopyToClipboardIconProps) {
   const [showModal, setShowModal] = useState(false)
-  const ref = createRef<HTMLDivElement>()
+  const ref = createRef<HTMLButtonElement>()
 
   const copyToClipboard =
     (ref: RefObject<HTMLElement>, value: string) => (event: SyntheticEvent) => {
@@ -33,25 +32,28 @@ export function CopyToClipboardIcon({
     }
 
   return (
-    <>
-      <ToastMessage
-        text="Successfully copied to clipboard"
-        show={showModal}
-        autohide={true}
-      ></ToastMessage>
-      <Box display="flex" ref={ref} {...props}>
-        <IconButton
-          onClick={copyToClipboard(ref, value)}
-          aria-label="Copy to clipboard"
-        >
-          <IconSvg
-            icon="contentCopy"
-            wrap={false}
-            sx={{ width: `${size}px`, height: `${size}px` }}
-          />
-        </IconButton>
-      </Box>
-    </>
+    <Tooltip title={'Copy to Clipboard'}>
+      <IconButton
+        ref={ref}
+        {...props}
+        onClick={copyToClipboard(ref, value)}
+        aria-label="Copy to clipboard"
+      >
+        <ToastMessage
+          text="Successfully copied to clipboard"
+          show={showModal}
+          autohide={true}
+        />
+        <IconSvg
+          icon="contentCopy"
+          wrap={false}
+          fontSize={'inherit'}
+          sx={
+            sizePx ? { width: `${sizePx}px`, height: `${sizePx}px` } : undefined
+          }
+        />
+      </IconButton>
+    </Tooltip>
   )
 }
 

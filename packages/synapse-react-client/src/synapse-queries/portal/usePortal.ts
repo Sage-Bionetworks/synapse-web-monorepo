@@ -21,12 +21,14 @@ export function useGetPortal(
   })
 }
 
-export function useGetUserPortalPermissions(
+export function useGetUserPortalPermissions<TData = UserPortalPermissions>(
   portalId: string,
-  options?: Partial<UseQueryOptions<UserPortalPermissions, SynapseClientError>>,
+  options?: Partial<
+    UseQueryOptions<UserPortalPermissions, SynapseClientError, TData>
+  >,
 ) {
   const { synapseClient, keyFactory } = useSynapseContext()
-  return useQuery<UserPortalPermissions, SynapseClientError>({
+  return useQuery({
     ...options,
     queryKey: keyFactory.getPortalPermissionsKey(portalId),
 
