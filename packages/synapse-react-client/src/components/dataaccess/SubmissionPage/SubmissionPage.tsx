@@ -13,7 +13,7 @@ import { useGetUserAccessApproval } from '@/synapse-queries/dataaccess/useAccess
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
 import { Button, Skeleton, Stack, Typography } from '@mui/material'
-import Grid2 from '@mui/material/Unstable_Grid2'
+import Grid2 from '@mui/material/Grid2'
 import {
   ACCESS_TYPE,
   FileHandleAssociateType,
@@ -212,7 +212,14 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           onClose={() => setShowRejectionDialog(false)}
         />
       )}
-      <Grid2 xs={12} sm={4} lg={3} className="SubmissionSummary">
+      <Grid2
+        className="SubmissionSummary"
+        size={{
+          xs: 12,
+          sm: 4,
+          lg: 3,
+        }}
+      >
         <Typography variant="dataFieldKey" gutterBottom>
           Status
         </Typography>
@@ -442,7 +449,13 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           </Typography>
         </div>
       </Grid2>
-      <Grid2 xs={12} sm={8} lg={9}>
+      <Grid2
+        size={{
+          xs: 12,
+          sm: 8,
+          lg: 9,
+        }}
+      >
         <Stack sx={{ gap: 2 }}>
           <SynapseErrorBoundary>
             {submission ? (
