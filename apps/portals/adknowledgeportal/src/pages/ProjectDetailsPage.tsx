@@ -43,7 +43,7 @@ import { CardContainerLogic } from 'synapse-react-client/components/CardContaine
 import StandaloneQueryWrapper from 'synapse-react-client/components/StandaloneQueryWrapper'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
-export default function ProjectDetailsPage() {
+function ProjectDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
 
   return (
@@ -174,3 +174,5 @@ export default function ProjectDetailsPage() {
     </>
   )
 }
+
+export default ProjectDetailsPage

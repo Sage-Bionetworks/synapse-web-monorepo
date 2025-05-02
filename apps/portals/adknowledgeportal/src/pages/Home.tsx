@@ -9,7 +9,7 @@ import RssFeedCards from 'synapse-react-client/components/RssFeedCards/RssFeedCa
 import { UserCardListRotate } from 'synapse-react-client/components/UserCardList/UserCardListRotate'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
-export default function HomePage() {
+function Home() {
   return (
     <>
       <Header />
@@ -200,3 +200,5 @@ export default function HomePage() {
     </>
   )
 }
+
+export default Home

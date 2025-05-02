@@ -39,12 +39,12 @@ const studyDetailsPageTabs: DetailsPageTabConfig[] = [
   },
 ]
 
-export const studiesDetailsPageProps: DetailsPageProps = {
+const studiesDetailsPageProps: DetailsPageProps = {
   sql: studiesSql,
   sqlOperator: ColumnSingleValueFilterOperator.LIKE,
 }
 
-export function StudyDetailsPage() {
+function StudyDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
 
   const study = searchParams[STUDY_TABLE_COLUMN_NAMES.STUDY]

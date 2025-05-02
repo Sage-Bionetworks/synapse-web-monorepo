@@ -95,7 +95,7 @@ const studyDetailsTabContent: DetailsPageSectionLayoutType[] = [
   },
 ]
 
-export function StudyDetailsTab() {
+function StudyDetailsTab() {
   return <DetailsPageContent content={studyDetailsTabContent} />
 }
 

@@ -140,7 +140,7 @@ const studyDataTabContent: DetailsPageSectionLayoutType[] = [
   },
 ]
 
-export function StudyDataTab() {
+function StudyDataTab() {
   return <DetailsPageContent content={studyDataTabContent} />
 }
 

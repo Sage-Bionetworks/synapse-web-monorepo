@@ -1,80 +1,60 @@
-import { lazy } from 'react'
+import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import { RouteObject } from 'react-router'
-import { programsSql } from './resources'
-import { computationalToolsQueryWrapperPlotNavProps } from './synapseConfigs/computational_tools'
-import { dataQueryWrapperPlotNavProps } from './synapseConfigs/data'
-import { experimentalToolsQueryWrapperPlotNavProps } from './synapseConfigs/experimental_tools'
-import { peopleQueryWrapperPlotNavProps } from './synapseConfigs/people'
-import programs from './synapseConfigs/programs'
-import { projectsQueryWrapperPlotNavProps } from './synapseConfigs/projects'
-import { publicationsQueryWrapperPlotNavProps } from './synapseConfigs/publications'
-import { results } from './synapseConfigs/results'
-import { studiesQueryWrapperPlotNavProps } from './synapseConfigs/studies'
-import { targetEnablingResourcesQueryWrapperPlotNavProps } from './synapseConfigs/target_enabling_resources'
-
-const CardContainerLogic = lazy(
-  () => import('synapse-react-client/components/CardContainerLogic'),
-)
-const MarkdownSynapse = lazy(
-  () => import('synapse-react-client/components/Markdown/MarkdownSynapse'),
-)
-const QueryWrapperPlotNav = lazy(
-  () => import('synapse-react-client/components/QueryWrapperPlotNav'),
-)
 
 export const explorePageRoutes: RouteObject[] = [
   {
     path: 'Programs',
-    element: (
-      <CardContainerLogic cardConfiguration={programs} sql={programsSql} />
-    ),
+    lazy: () =>
+      import('@/pages/Explore/programs').then(convertModuleToRouteObject),
   },
   {
     path: 'Projects',
-    element: <QueryWrapperPlotNav {...projectsQueryWrapperPlotNavProps} />,
+    lazy: () =>
+      import('@/pages/Explore/projects').then(convertModuleToRouteObject),
   },
   {
     path: 'Studies',
-    element: <QueryWrapperPlotNav {...studiesQueryWrapperPlotNavProps} />,
+    lazy: () =>
+      import('@/pages/Explore/studies').then(convertModuleToRouteObject),
   },
   {
     path: 'Data',
-    element: <QueryWrapperPlotNav {...dataQueryWrapperPlotNavProps} />,
+    lazy: () => import('@/pages/Explore/data').then(convertModuleToRouteObject),
   },
   {
     path: 'Publications',
-    element: <QueryWrapperPlotNav {...publicationsQueryWrapperPlotNavProps} />,
+    lazy: () =>
+      import('@/pages/Explore/publications').then(convertModuleToRouteObject),
   },
   {
     path: 'People',
-    element: <QueryWrapperPlotNav {...peopleQueryWrapperPlotNavProps} />,
+    lazy: () =>
+      import('@/pages/Explore/people').then(convertModuleToRouteObject),
   },
   {
     path: 'Experimental Models',
-    element: (
-      <QueryWrapperPlotNav {...experimentalToolsQueryWrapperPlotNavProps} />
-    ),
+    lazy: () =>
+      import('@/pages/Explore/experimental_models').then(
+        convertModuleToRouteObject,
+      ),
   },
   {
     path: 'Computational Tools',
-    element: (
-      <QueryWrapperPlotNav {...computationalToolsQueryWrapperPlotNavProps} />
-    ),
+    lazy: () =>
+      import('@/pages/Explore/computational_tools').then(
+        convertModuleToRouteObject,
+      ),
   },
   {
     path: 'Target Enabling Resources',
-    element: (
-      <QueryWrapperPlotNav
-        {...targetEnablingResourcesQueryWrapperPlotNavProps}
-      />
-    ),
+    lazy: () =>
+      import('@/pages/Explore/target_enabling_resources').then(
+        convertModuleToRouteObject,
+      ),
   },
   {
     path: 'Results',
-    element: (
-      <div style={results.style}>
-        <MarkdownSynapse {...results.props} />
-      </div>
-    ),
+    lazy: () =>
+      import('@/pages/Explore/results').then(convertModuleToRouteObject),
   },
 ]
