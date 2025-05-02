@@ -111,6 +111,7 @@ function EvaluationQueueList({
         getRowClassName={params =>
           params.indexRelativeToCurrentPage % 2 === 0 ? 'Mui-even' : 'Mui-odd'
         }
+        showToolbar
       />
       <Box
         sx={{
