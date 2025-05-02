@@ -1,6 +1,6 @@
 {
   "name": "@sage-bionetworks/synapse-client",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "type": "module",
   "module": "./dist/index.js",
@@ -26,6 +26,7 @@
     "rimraf": "^5.0.5",
     "tslib": "^2.6.2",
     "tsx": "^4.19.1",
+    "typescript": "5.8.3",
     "undici": "^6.19.4",
     "vite": "^5.4.3",
     "vite-config": "workspace:*",
