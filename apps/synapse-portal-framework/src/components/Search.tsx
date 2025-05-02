@@ -32,22 +32,24 @@ const Search = ({ onSearch }: SearchProps) => {
                 onSearch(searchText)
               }
             }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Button
-                    variant="contained"
-                    sx={{
-                      px: '25px',
-                      py: '9px',
-                      borderRadius: '0px 4px 4px 0px',
-                    }}
-                    onClick={() => onSearch(searchText)}
-                  >
-                    Search
-                  </Button>
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button
+                      variant="contained"
+                      sx={{
+                        px: '25px',
+                        py: '9px',
+                        borderRadius: '0px 4px 4px 0px',
+                      }}
+                      onClick={() => onSearch(searchText)}
+                    >
+                      Search
+                    </Button>
+                  </InputAdornment>
+                ),
+              },
             }}
           />
         </div>

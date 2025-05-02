@@ -14,7 +14,6 @@ import {
   Grid as Grid2,
   TextField,
 } from '@mui/material'
-// import Grid2 from '@mui/material/Grid2'
 import { DateTimeValidationError } from '@mui/x-date-pickers'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
@@ -278,7 +277,7 @@ export function EvaluationRoundEditor({
             <h5>DURATION</h5>
 
             <Grid2 container>
-              <Grid2 item xs={6}>
+              <Grid2 size={6}>
                 <DateTimePicker
                   label="Round Start"
                   value={startDate}
@@ -295,7 +294,7 @@ export function EvaluationRoundEditor({
                   }}
                 />
               </Grid2>
-              <Grid2 item xs={6}>
+              <Grid2 size={6}>
                 <DateTimePicker
                   label="Round End"
                   value={endDate}
@@ -316,15 +315,17 @@ export function EvaluationRoundEditor({
             <TextField
               fullWidth
               label="Total Submissions / Round"
-              inputProps={{
-                pattern: '[0-9]*',
-              }}
               value={totalSubmissionLimit}
               onChange={event => setTotalSubmissionLimit(event.target.value)}
               // Chrome for some reason decides to autofill this input box with email address, so we must disable autofill
               // this is a hacky, but consistent way to disable autofill because Chrome does not respect the spec :(
               // https://bugs.chromium.org/p/chromium/issues/detail?id=914451
               autoComplete="new-password"
+              slotProps={{
+                htmlInput: {
+                  pattern: '[0-9]*',
+                },
+              }}
             />
             <Box sx={{ my: 2 }}>
               <Button

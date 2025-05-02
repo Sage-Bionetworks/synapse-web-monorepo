@@ -243,8 +243,10 @@ export function CreateOAuthModal({
       id="sectorURI"
       label="Sector Identifier URI"
       margin="normal"
-      InputLabelProps={{ sx: dangerLabelSx }}
       fullWidth
+      slotProps={{
+        inputLabel: { sx: dangerLabelSx },
+      }}
     />
   )
 
@@ -254,7 +256,6 @@ export function CreateOAuthModal({
         <div key={idx}>
           <TextField
             required={idx === 0}
-            InputLabelProps={{ sx: dangerLabelSx }}
             label={idx === 0 && 'Redirect URI(s)'}
             name="uri"
             fullWidth
@@ -263,16 +264,20 @@ export function CreateOAuthModal({
             value={singleUri.uri}
             placeholder="https://"
             type="text"
-            InputProps={{
-              endAdornment: redirectUris.length > 1 && (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => handleRedirectUriRemove(idx)}>
-                    <DeleteTwoToneIcon sx={{ color: 'error.main' }} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
             margin={idx === 0 ? 'normal' : 'dense'}
+            slotProps={{
+              input: {
+                endAdornment: redirectUris.length > 1 && (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => handleRedirectUriRemove(idx)}>
+                      <DeleteTwoToneIcon sx={{ color: 'error.main' }} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+
+              inputLabel: { sx: dangerLabelSx },
+            }}
           />
           {redirectUris.length - 1 === idx && (
             <Button

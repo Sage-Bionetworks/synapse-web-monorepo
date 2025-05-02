@@ -268,32 +268,34 @@ export function EntityFinder({
                 }
               }
             }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-              endAdornment: searchTerms ? (
-                <InputAdornment position="end">
-                  <IconButton
-                    size={'small'}
-                    onClick={() => {
-                      setSearchInput('')
-                      setSearchTerms(undefined)
-                      setSearchActive(false)
-                    }}
-                    aria-label="Clear Search"
-                    disabled={!searchInput && !searchActive}
-                  >
-                    <ClearIcon />
-                  </IconButton>
-                </InputAdornment>
-              ) : undefined,
-            }}
             sx={{
               maxWidth: { xs: '100%', md: '350px' },
               flex: '1 1 350px',
+            }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+                endAdornment: searchTerms ? (
+                  <InputAdornment position="end">
+                    <IconButton
+                      size={'small'}
+                      onClick={() => {
+                        setSearchInput('')
+                        setSearchTerms(undefined)
+                        setSearchActive(false)
+                      }}
+                      aria-label="Clear Search"
+                      disabled={!searchInput && !searchActive}
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ) : undefined,
+              },
             }}
           />
         </Box>

@@ -100,10 +100,12 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
                 type="text"
                 placeholder="PackageName"
                 sx={{ width: '233px' }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">.zip</InputAdornment>
-                  ),
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">.zip</InputAdornment>
+                    ),
+                  },
                 }}
               />
               <Button

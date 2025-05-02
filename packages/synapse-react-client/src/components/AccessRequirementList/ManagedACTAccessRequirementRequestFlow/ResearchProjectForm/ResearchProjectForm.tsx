@@ -198,9 +198,11 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
                 value={projectLead}
                 required
                 onChange={e => setProjectLead(e.target.value)}
-                InputLabelProps={{
-                  // allows floating the help popover all the way to the right
-                  sx: { width: '100%' },
+                slotProps={{
+                  inputLabel: {
+                    // allows floating the help popover all the way to the right
+                    sx: { width: '100%' },
+                  },
                 }}
               />
               <TextField

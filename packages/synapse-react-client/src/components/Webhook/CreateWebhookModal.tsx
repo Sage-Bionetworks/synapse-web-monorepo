@@ -254,12 +254,14 @@ export default function CreateWebhookModal(props: CreateWebhookModalProps) {
                 onChange={e => {
                   setObjectId(e.target.value)
                 }}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton onClick={() => setShowEntityFinder(true)}>
-                      <SearchOutlined />
-                    </IconButton>
-                  ),
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <IconButton onClick={() => setShowEntityFinder(true)}>
+                        <SearchOutlined />
+                      </IconButton>
+                    ),
+                  },
                 }}
               />
             </Grid>

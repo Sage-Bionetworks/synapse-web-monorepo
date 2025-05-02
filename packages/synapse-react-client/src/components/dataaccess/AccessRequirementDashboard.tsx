@@ -146,12 +146,14 @@ export function AccessRequirementDashboard(
             onChange={e => {
               setNameOrID(e.target.value)
             }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <SearchOutlined />
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <SearchOutlined />
+                  </InputAdornment>
+                ),
+              },
             }}
           />
         </div>

@@ -362,24 +362,26 @@ export function SynapseChat({
             onChange={e => setUserChatTextfieldValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={`Message ${chatbotName}`}
-            InputProps={{
-              sx: { borderRadius: 96.6 },
-              endAdornment: (
-                <IconButton
-                  disabled={isDisabled}
-                  onClick={handleSendMessage}
-                  sx={{
-                    ml: '7px',
-                    mr: '-8px',
-                    color: sendMessageButtonColor,
-                    borderStyle: 'solid',
-                    borderWidth: isDisabled ? '1px' : '2px',
-                    borderColor: isDisabled ? 'gray' : sendMessageButtonColor,
-                  }}
-                >
-                  <ArrowUpward />
-                </IconButton>
-              ),
+            slotProps={{
+              input: {
+                sx: { borderRadius: 96.6 },
+                endAdornment: (
+                  <IconButton
+                    disabled={isDisabled}
+                    onClick={handleSendMessage}
+                    sx={{
+                      ml: '7px',
+                      mr: '-8px',
+                      color: sendMessageButtonColor,
+                      borderStyle: 'solid',
+                      borderWidth: isDisabled ? '1px' : '2px',
+                      borderColor: isDisabled ? 'gray' : sendMessageButtonColor,
+                    }}
+                  >
+                    <ArrowUpward />
+                  </IconButton>
+                ),
+              },
             }}
           />
           <Typography

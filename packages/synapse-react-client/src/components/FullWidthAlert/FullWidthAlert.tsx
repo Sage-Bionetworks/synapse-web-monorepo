@@ -201,8 +201,10 @@ function FullWidthAlert(props: FullWidthAlertProps) {
             ...globalAlertSx,
           }}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          TransitionProps={{
-            appear: false,
+          slotProps={{
+            transition: {
+              appear: false,
+            },
           }}
         >
           {alert}

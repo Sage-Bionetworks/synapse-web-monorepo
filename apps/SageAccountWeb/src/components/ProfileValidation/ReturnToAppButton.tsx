@@ -51,7 +51,12 @@ export function ReturnToAppButton({ children }: PropsWithChildren) {
           </Stack>
         </DialogTitle>
         <DialogContent dividers>
-          <Typography variant="body1" paragraph>
+          <Typography
+            variant="body1"
+            sx={{
+              marginBottom: '16px',
+            }}
+          >
             If you cancel verification, you'll still be able to use portions of
             the application which are available to registered users, but your
             access will be restricted.
