@@ -1,5 +1,5 @@
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, forwardRef, ForwardedRef } from 'react'
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
 import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
@@ -23,7 +23,10 @@ export type HeaderCardProps = {
   cardTopContent?: React.ReactNode
 }
 
-function HeaderCard(props: HeaderCardProps) {
+const HeaderCard = forwardRef(function HeaderCard(
+  props: HeaderCardProps,
+  ref: ForwardedRef<HTMLDivElement>,
+) {
   const {
     type,
     title,
@@ -78,6 +81,7 @@ function HeaderCard(props: HeaderCardProps) {
 
   return (
     <div
+      ref={ref}
       className={`SRC-portalCard SRC-portalCardHeader ${
         isAlignToLeftNav ? 'isAlignToLeftNav' : ''
       }`}
@@ -136,6 +140,6 @@ function HeaderCard(props: HeaderCardProps) {
       </div>
     </div>
   )
-}
+})
 
 export default HeaderCard
