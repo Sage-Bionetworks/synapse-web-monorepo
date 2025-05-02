@@ -111,11 +111,13 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
       <Collapse sx={{ mt: 2 }} in={showPasteNewValuesForm}>
         <TextField
           multiline
-          InputProps={{ inputProps: { 'aria-label': 'CSV or TSV to Append' } }}
           rows={5}
           placeholder={'Place comma or tab delimited values here'}
           value={pastedValues}
           onChange={e => setPastedValues(e.target.value)}
+          slotProps={{
+            input: { inputProps: { 'aria-label': 'CSV or TSV to Append' } },
+          }}
         />
         <Box
           sx={{

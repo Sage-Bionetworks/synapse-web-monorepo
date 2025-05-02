@@ -248,7 +248,9 @@ export const EntityUpload = forwardRef(function EntityUpload(
               onClose={handleClose}
               anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
               transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-              TransitionComponent={Fade}
+              slots={{
+                transition: Fade,
+              }}
             >
               <MenuItem
                 onClick={() => {

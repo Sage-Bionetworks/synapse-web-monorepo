@@ -25,20 +25,22 @@ function TextFieldWithTzShown(props: TextFieldProps) {
   return (
     <TextField
       {...props}
-      InputProps={{
-        ...props.InputProps,
-        endAdornment: (
-          <>
-            <Box
-              sx={{
-                ml: 0.5,
-              }}
-            >
-              {tzDisplay}
-            </Box>
-            {props.InputProps?.endAdornment}
-          </>
-        ),
+      slotProps={{
+        input: {
+          ...props.slotProps?.input,
+          endAdornment: (
+            <>
+              <Box
+                sx={{
+                  ml: 0.5,
+                }}
+              >
+                {tzDisplay}
+              </Box>
+              {props.slotProps?.input?.endAdornment}
+            </>
+          ),
+        },
       }}
     />
   )

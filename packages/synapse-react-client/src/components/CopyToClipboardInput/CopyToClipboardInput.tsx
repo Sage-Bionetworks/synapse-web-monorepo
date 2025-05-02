@@ -58,18 +58,21 @@ export function CopyToClipboardInput({
             width: inputWidth,
           }}
           value={value}
-          inputProps={{
-            readOnly: true,
-            onClick: copyToClipboard(ref, value),
-          }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={copyToClipboard(ref, value)}>
-                  <ContentCopyIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={copyToClipboard(ref, value)}>
+                    <ContentCopyIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+
+            htmlInput: {
+              readOnly: true,
+              onClick: copyToClipboard(ref, value),
+            },
           }}
         />
       </Box>

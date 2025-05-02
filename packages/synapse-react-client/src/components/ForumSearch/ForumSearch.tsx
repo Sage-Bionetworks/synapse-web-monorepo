@@ -99,25 +99,6 @@ export const ForumSearch = (props: ForumSearchProps) => {
               width: '100%',
             },
           })}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-            endAdornment: searchInput && (
-              <InputAdornment position="end">
-                <IconButton
-                  size={'small'}
-                  onClick={() => {
-                    onResetSearch()
-                  }}
-                >
-                  <IconSvg icon="clear" wrap={false} />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
           type="search"
           placeholder="Search discussions"
           value={searchInput}
@@ -128,6 +109,27 @@ export const ForumSearch = (props: ForumSearchProps) => {
             if (event.key === 'Enter') {
               onSearch()
             }
+          }}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+              endAdornment: searchInput && (
+                <InputAdornment position="end">
+                  <IconButton
+                    size={'small'}
+                    onClick={() => {
+                      onResetSearch()
+                    }}
+                  >
+                    <IconSvg icon="clear" wrap={false} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
           }}
         />
       </div>

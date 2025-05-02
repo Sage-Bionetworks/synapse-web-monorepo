@@ -153,7 +153,9 @@ export function Range(props: RangeProps) {
                   max: values.max,
                 })
               }
-              inputProps={{ 'aria-label': 'min' }}
+              slotProps={{
+                htmlInput: { 'aria-label': 'min' },
+              }}
             />
           </Box>
           <Box key="range_max">
@@ -167,7 +169,9 @@ export function Range(props: RangeProps) {
                   min: values.min,
                 })
               }
-              inputProps={{ 'aria-label': 'max' }}
+              slotProps={{
+                htmlInput: { 'aria-label': 'max' },
+              }}
             />
           </Box>
         </>

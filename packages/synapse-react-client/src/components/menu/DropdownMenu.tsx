@@ -242,11 +242,13 @@ export function DropdownMenu(props: DropdownMenuProps) {
                                 )}
                               </ListItemIcon>
                               <ListItemText
-                                primaryTypographyProps={{
-                                  variant: 'smallText1',
-                                  sx: item.textSx,
-                                }}
                                 sx={{ marginTop: 0 }}
+                                slotProps={{
+                                  primary: {
+                                    variant: 'smallText1',
+                                    sx: item.textSx,
+                                  },
+                                }}
                               >
                                 {item.text}
                               </ListItemText>

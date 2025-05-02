@@ -180,7 +180,7 @@ export default function LastLoginInfo(props: LastLoginInfoProps) {
           <Tooltip
             title={tooltipText}
             placement={'top'}
-            componentsProps={{
+            slotProps={{
               tooltip: {
                 sx: {
                   bgcolor: '#63676C',

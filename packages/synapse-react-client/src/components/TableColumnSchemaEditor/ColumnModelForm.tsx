@@ -209,20 +209,22 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                   },
                 })
               }}
-              InputProps={{
-                disableInjectingGlobalStyles:
-                  DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
-                sx: fieldSx,
-                slotProps: {
-                  input: {
-                    'aria-label': 'Name',
-                  },
-                },
-              }}
               disabled={disabled}
               fullWidth
               error={!!errorsByField['name']}
               helperText={errorsByField['name']}
+              slotProps={{
+                input: {
+                  disableInjectingGlobalStyles:
+                    DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
+                  sx: fieldSx,
+                  slotProps: {
+                    input: {
+                      'aria-label': 'Name',
+                    },
+                  },
+                },
+              }}
             />
           )}
         </Box>
@@ -541,43 +543,45 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
               }}
               disabled={disabled}
               fullWidth
-              InputProps={{
-                disableInjectingGlobalStyles:
-                  DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
-                sx: fieldSx,
-                endAdornment: (
-                  <Tooltip
-                    title={
-                      <>
-                        <p>
-                          <Link
-                            href={
-                              'https://dev.mysql.com/doc/refman/8.0/en/json.html#json-path-syntax'
-                            }
-                          >
-                            Please use a valid JSON Path selector, following
-                            this format.
-                          </Link>
-                        </p>
-                        <p>
-                          This field is for linking the sub-column facet to the
-                          corresponding location in the JSON data, so that it
-                          can be used as facet filter. The correct selector will
-                          point to the key referenced in the sub-column JSON
-                          Path.
-                        </p>
-                      </>
-                    }
-                  >
-                    <InfoTwoTone sx={{ color: 'grey.700' }} />
-                  </Tooltip>
-                ),
-                slotProps: {
-                  input: { 'aria-label': 'JSON Path' },
-                },
-              }}
               error={!!errorsByField['jsonPath']}
               helperText={errorsByField['jsonPath']}
+              slotProps={{
+                input: {
+                  disableInjectingGlobalStyles:
+                    DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
+                  sx: fieldSx,
+                  endAdornment: (
+                    <Tooltip
+                      title={
+                        <>
+                          <p>
+                            <Link
+                              href={
+                                'https://dev.mysql.com/doc/refman/8.0/en/json.html#json-path-syntax'
+                              }
+                            >
+                              Please use a valid JSON Path selector, following
+                              this format.
+                            </Link>
+                          </p>
+                          <p>
+                            This field is for linking the sub-column facet to
+                            the corresponding location in the JSON data, so that
+                            it can be used as facet filter. The correct selector
+                            will point to the key referenced in the sub-column
+                            JSON Path.
+                          </p>
+                        </>
+                      }
+                    >
+                      <InfoTwoTone sx={{ color: 'grey.700' }} />
+                    </Tooltip>
+                  ),
+                  slotProps: {
+                    input: { 'aria-label': 'JSON Path' },
+                  },
+                },
+              }}
             />
           </Box>
         </Box>
