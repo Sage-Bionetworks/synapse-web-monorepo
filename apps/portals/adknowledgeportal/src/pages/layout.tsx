@@ -1,7 +1,6 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
 import SurveyToast from '@sage-bionetworks/synapse-portal-framework/components/SurveyToast'
-import { Outlet } from 'react-router'
 
 export function Layout() {
   return (
