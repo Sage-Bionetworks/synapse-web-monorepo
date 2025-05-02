@@ -27,7 +27,7 @@ import {
   RestrictableObjectType,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   useGetCurrentUserProfile,
   useGetDataAccessRequestForUpdate,
@@ -37,7 +37,6 @@ import {
 import { useSynapseContext } from '../../../../utils'
 import { SynapseErrorBoundary } from '../../../error/ErrorBanner'
 import IconSvg from '../../../IconSvg/IconSvg'
-import TextField from '../../../TextField/TextField'
 import DataAccessRequestAccessorsEditor, {
   DataAccessRequestAccessorsEditorProps,
 } from '../DataAccessRequestAccessorsEditor'
@@ -437,8 +436,9 @@ export default function DataAccessRequestAccessorsFilesForm(
 
             {(managedACTAccessRequirement?.isDUCRequired ||
               managedACTAccessRequirement?.isIRBApprovalRequired ||
-              managedACTAccessRequirement?.areOtherAttachmentsRequired ||
-              isRenewal) && <Divider sx={{ my: 4 }} />}
+              managedACTAccessRequirement?.areOtherAttachmentsRequired) && (
+              <Divider sx={{ my: 4 }} />
+            )}
             {/* DUC */}
             {managedACTAccessRequirement?.isDUCRequired && (
               <>
@@ -488,8 +488,9 @@ export default function DataAccessRequestAccessorsFilesForm(
                   />
                 </SynapseErrorBoundary>
                 {(managedACTAccessRequirement?.isIRBApprovalRequired ||
-                  managedACTAccessRequirement?.areOtherAttachmentsRequired ||
-                  isRenewal) && <Divider sx={{ my: 4 }} />}
+                  managedACTAccessRequirement?.areOtherAttachmentsRequired) && (
+                  <Divider sx={{ my: 4 }} />
+                )}
               </>
             )}
 
@@ -516,8 +517,9 @@ export default function DataAccessRequestAccessorsFilesForm(
                     fileHandleAssociations={irbFileHandleAssociation}
                   />
                 </SynapseErrorBoundary>
-                {(managedACTAccessRequirement?.areOtherAttachmentsRequired ||
-                  isRenewal) && <Divider sx={{ my: 4 }} />}
+                {managedACTAccessRequirement?.areOtherAttachmentsRequired && (
+                  <Divider sx={{ my: 4 }} />
+                )}
               </>
             )}
 
@@ -544,40 +546,39 @@ export default function DataAccessRequestAccessorsFilesForm(
                       onClearAttachment={onClearAttachment}
                     />
                   </SynapseErrorBoundary>
-
-                  {isRenewal && <Divider sx={{ my: 4 }} />}
                 </>
               )
             }
 
             {
+              // SWC-7319 - Per GovernanceInnovation, do not show these fields on renewal
               // Publications & Summary of Use
-              isRenewal && (
-                <>
-                  <TextField
-                    id={'publications'}
-                    label={'Publication(s)'}
-                    disabled={submitDataAccessRequestIsPending}
-                    multiline
-                    rows={3}
-                    value={publication}
-                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-                      setPublication(e.target.value)
-                    }
-                  />
-                  <TextField
-                    id={'summaryOfUse'}
-                    label={'Summary of use'}
-                    value={summaryOfUse}
-                    disabled={submitDataAccessRequestIsPending}
-                    multiline
-                    rows={3}
-                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-                      setSummaryOfUse(e.target.value)
-                    }
-                  />
-                </>
-              )
+              // isRenewal && (
+              //   <>
+              //     <TextField
+              //       id={'publications'}
+              //       label={'Publication(s)'}
+              //       disabled={submitDataAccessRequestIsPending}
+              //       multiline
+              //       rows={3}
+              //       value={publication}
+              //       onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+              //         setPublication(e.target.value)
+              //       }
+              //     />
+              //     <TextField
+              //       id={'summaryOfUse'}
+              //       label={'Summary of use'}
+              //       value={summaryOfUse}
+              //       disabled={submitDataAccessRequestIsPending}
+              //       multiline
+              //       rows={3}
+              //       onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+              //         setSummaryOfUse(e.target.value)
+              //       }
+              //     />
+              //   </>
+              // )
             }
           </Box>
         </ManagedACTAccessRequirementFormWikiWrapper>

@@ -152,6 +152,16 @@ const routes: RouteObject[] = [
               </AMPALSResearchPageLayout>
             ),
           },
+          {
+            path: 'Publishing Requirements',
+            element: (
+              <MarkdownSynapse
+                ownerId="syn64892175"
+                wikiId="632170"
+                loadingSkeletonRowCount={20}
+              />
+            ),
+          },
         ],
       },
       {

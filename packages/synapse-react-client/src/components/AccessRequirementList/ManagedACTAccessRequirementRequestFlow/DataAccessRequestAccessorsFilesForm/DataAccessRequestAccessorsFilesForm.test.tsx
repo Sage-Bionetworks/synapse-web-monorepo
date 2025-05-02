@@ -447,12 +447,18 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('should show publications and summary of use for a renewal', async () => {
+  it('SWC-7319 - should not show publications and summary of use for a renewal', () => {
     mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_RENEWAL)
     renderComponent(defaultProps)
-    await screen.findByLabelText(PUBLICATIONS_FIELD_LABEL_TEXT)
-    await screen.findByLabelText(SUMMARY_OF_USE_FIELD_LABEL_TEXT)
+
+    expect(
+      screen.queryByLabelText(PUBLICATIONS_FIELD_LABEL_TEXT),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByLabelText(SUMMARY_OF_USE_FIELD_LABEL_TEXT),
+    ).not.toBeInTheDocument()
   })
+
   it('should not show publications and summary of use for a request', () => {
     mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
     renderComponent(defaultProps)

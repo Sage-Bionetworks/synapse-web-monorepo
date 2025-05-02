@@ -23,8 +23,8 @@
     "react-router": "^7.1.1",
     "react-spinners": "^0.13.8",
     "react-switch": "^7.0.0",
-    "sass": "^1.71.1",
     "react-type-animation": "^3.2.0",
+    "sass": "^1.71.1",
     "synapse-react-client": "workspace:*"
   },
   "peerDependencies": {
@@ -44,6 +44,7 @@
     "@testing-library/user-event": "^14.5.2",
     "@types/katex": "^0.5.0",
     "@types/lodash": "^4.17.0",
+    "@types/lodash-es": "^4.17.12",
     "@types/node": "^20.14.10",
     "@types/plotly.js": "^2.29.2",
     "@types/react": "18.2.64",
@@ -69,7 +70,7 @@
     "stream-http": "^3.2.0",
     "timers-browserify": "^2.0.12",
     "tslib": "^2.6.2",
-    "typescript": "5.5.2",
+    "typescript": "5.8.3",
     "url": "^0.11.3",
     "util": "^0.12.5",
     "vite": "^5.4.3",

@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import UpsetPlot from './UpsetPlot'
 import { Query } from '@sage-bionetworks/synapse-types'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Home Page/UpsetPlot',
@@ -42,15 +43,20 @@ export const ElitePortalDemo: Story = {
   args: {
     sql: 'SELECT individualID, assay FROM syn51489960 WHERE metadataType IS NULL and assay IS NOT NULL',
     rgbIndex: 0,
-    maxBarCount: 20,
+    maxBarCount: 10,
     setName: 'Set size',
     combinationName: 'Intersection size',
-    onClick: (selection, event) => {
-      console.log(
-        'onClick() has been called with this selection and event',
-        selection,
-        event,
-      )
-    },
+    onClick: fn(),
+  },
+}
+
+export const AMPALSPortalVariant: Story = {
+  args: {
+    sql: 'SELECT individualID, assay FROM syn51489960 WHERE metadataType IS NULL and assay IS NOT NULL',
+    maxBarCount: 10,
+    setName: 'Set size',
+    combinationName: 'Intersection size',
+    variant: 'ampals',
+    onClick: fn(),
   },
 }

@@ -1,5 +1,11 @@
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
-import React, { useState, useEffect, useRef } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  forwardRef,
+  ForwardedRef,
+} from 'react'
 import {
   Box,
   Card,
@@ -129,22 +135,26 @@ export type HeaderCardV2Props = {
  *    - Responsive typography
  *    - Optional left-nav alignment
  */
-function HeaderCardV2({
-  type,
-  title,
-  subTitle = '',
-  description,
-  values,
-  secondaryLabelLimit,
-  isAlignToLeftNav,
-  descriptionConfig,
-  href,
-  target,
-  icon,
-  backgroundImage,
-  forceStackedLayout = false,
-  ctaButtons,
-}: HeaderCardV2Props) {
+const HeaderCardV2 = forwardRef(function HeaderCardV2(
+  props: HeaderCardV2Props,
+  ref: ForwardedRef<HTMLDivElement>,
+) {
+  const {
+    // type,
+    title,
+    subTitle = '',
+    description,
+    values,
+    // secondaryLabelLimit,
+    isAlignToLeftNav,
+    descriptionConfig,
+    href,
+    target,
+    icon,
+    backgroundImage,
+    forceStackedLayout = false,
+    ctaButtons,
+  } = props
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   // State for dynamic layout
@@ -232,6 +242,8 @@ function HeaderCardV2({
 
   return (
     <Card
+      component={'div'}
+      ref={ref}
       sx={{
         borderRadius: 0,
         boxShadow: 'none',
@@ -407,7 +419,7 @@ function HeaderCardV2({
       </Box>
     </Card>
   )
-}
+})
 
 type MetadataTableProps = {
   data: CardLabel[]
