@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash'
+import { isEmpty } from 'lodash-es'
 import {
   dataSql,
   DST_TABLE_COLUMN_NAMES,
