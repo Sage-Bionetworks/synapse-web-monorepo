@@ -25,10 +25,20 @@ export default function RegisterPageLogoutPrompt(
       }}
     >
       {logo}
-      <Typography variant={'headline3'} my={1}>
+      <Typography
+        variant={'headline3'}
+        sx={{
+          my: 1,
+        }}
+      >
         Already Logged In
       </Typography>
-      <Typography variant={'smallText1'} my={1}>
+      <Typography
+        variant={'smallText1'}
+        sx={{
+          my: 1,
+        }}
+      >
         To register an account, please log out first
       </Typography>
       <Button

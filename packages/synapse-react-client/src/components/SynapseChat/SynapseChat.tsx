@@ -236,11 +236,13 @@ export function SynapseChat({
     latestTraceEvent?.friendlyMessage ?? 'Processing...'
   return (
     <Box
-      display="flex"
-      flexDirection="column"
-      justifyContent="space-between"
-      maxWidth="1100px"
-      mx="auto"
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        maxWidth: '1100px',
+        mx: 'auto',
+      }}
     >
       {!hideTitle && (
         <Typography

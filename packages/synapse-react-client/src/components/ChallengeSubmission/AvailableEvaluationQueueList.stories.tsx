@@ -13,7 +13,11 @@ const meta: Meta = {
   component: AvailableEvaluationQueueList,
   decorators: [
     Story => (
-      <Box maxWidth="600px">
+      <Box
+        sx={{
+          maxWidth: '600px',
+        }}
+      >
         <Story />
       </Box>
     ),

@@ -117,7 +117,13 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
           value={pastedValues}
           onChange={e => setPastedValues(e.target.value)}
         />
-        <Box my={1} display={'flex'} justifyContent={'flex-end'}>
+        <Box
+          sx={{
+            my: 1,
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}
+        >
           <Button onClick={() => setShowPasteNewValuesForm(false)}>
             Cancel
           </Button>
@@ -137,9 +143,11 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
                 return (
                   <Typography
                     component={'li'}
-                    lineHeight={1.5}
                     key={index}
                     variant={'smallText1'}
+                    sx={{
+                      lineHeight: 1.5,
+                    }}
                   >
                     {error.row ? `At ${error.row}: ` : ''}
                     {error.message}

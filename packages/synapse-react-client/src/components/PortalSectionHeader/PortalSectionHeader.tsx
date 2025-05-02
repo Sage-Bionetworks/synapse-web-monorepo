@@ -50,9 +50,9 @@ const PortalSectionHeader = ({
       >
         <Typography
           variant="headline2"
-          paddingTop="30px"
-          color="grey.1000"
           sx={theme => ({
+            paddingTop: '30px',
+            color: 'grey.1000',
             fontSize: { xs: '24px', md: '32px' },
             borderTop: '4px solid',
             borderColor: 'grey.400',

@@ -108,7 +108,13 @@ function AccountCreatedPage() {
                   </Link>
                 </Typography>
 
-                <Grid container spacing={4} mx={{ paddingTop: '20px' }}>
+                <Grid
+                  container
+                  spacing={4}
+                  sx={{
+                    mx: { paddingTop: '20px' },
+                  }}
+                >
                   {sourceAppConfigs?.map(config => {
                     if (
                       config.appId != sourceApp?.appId &&

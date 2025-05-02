@@ -151,7 +151,13 @@ export default function FavoritesPage() {
       />
       <StyledTanStackTable table={favoritesTable} fullWidth={false} />
       {!hasFavoritesMatchingQuery && !isLoading && (
-        <Stack sx={{ textAlign: 'center' }} my={2} gap={1}>
+        <Stack
+          sx={{
+            my: 2,
+            gap: 1,
+            textAlign: 'center',
+          }}
+        >
           <NoSearchResults height={'150px'} />
           {data?.results.length == 0 ? (
             <p>You currently have no favorites</p>

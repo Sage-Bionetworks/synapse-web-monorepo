@@ -13,13 +13,22 @@ function StatFlex({ value, label }: ReleaseCardStat) {
   return (
     <Stack
       direction="column"
-      alignItems="center"
-      padding={{ xs: '20px 10px', md: '20px 40px' }}
-      gap="10px"
-      width={{ xs: 'unset', lg: '200px' }} // ensure that stats are aligned when multiple cards are stacked vertically
+      sx={{
+        alignItems: 'center',
+        padding: { xs: '20px 10px', md: '20px 40px' },
+        gap: '10px',
+        // ensure that stats are aligned when multiple cards are stacked vertically
+        width: { xs: 'unset', lg: '200px' },
+      }}
     >
       <Typography variant="headline1">{value}</Typography>
-      <Typography variant="body1" lineHeight="20px" color="grey.700">
+      <Typography
+        variant="body1"
+        sx={{
+          lineHeight: '20px',
+          color: 'grey.700',
+        }}
+      >
         {label}
       </Typography>
     </Stack>
@@ -62,16 +71,31 @@ export function ReleaseCardLarge({
       className={`ReleaseCard ${
         includePortalCardClass ? 'SRC-portalCard' : ''
       }`}
-      minWidth="200px"
+      sx={{
+        minWidth: '200px',
+      }}
     >
       <Stack
         direction={{ xs: 'column', lg: 'row' }}
-        justifyContent="space-between"
-        gap="20px"
-        padding="20px"
+        sx={{
+          justifyContent: 'space-between',
+          gap: '20px',
+          padding: '20px',
+        }}
       >
-        <Stack direction="column" gap="20px">
-          <Stack direction="row" alignItems="center" gap="10px">
+        <Stack
+          direction="column"
+          sx={{
+            gap: '20px',
+          }}
+        >
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: 'center',
+              gap: '10px',
+            }}
+          >
             <CalendarTodayTwoTone sx={{ color: 'grey.700' }} />
             <Typography variant="headline1">
               {releaseCardConfig.prependRelease && 'Release '}
@@ -80,8 +104,10 @@ export function ReleaseCardLarge({
           </Stack>
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
-            alignItems={{ xs: 'flex-start', sm: 'center' }}
-            gap="20px"
+            sx={{
+              alignItems: { xs: 'flex-start', sm: 'center' },
+              gap: '20px',
+            }}
           >
             {primaryBtnConfig && primaryBtnPathAndQuery && (
               <Button
@@ -103,10 +129,12 @@ export function ReleaseCardLarge({
         <Divider /> {/* divides stacks when page is narrow */}
         <Stack
           direction="row"
-          gap={{ xs: 0, lg: '10px' }}
-          alignItems="center"
-          justifyContent={{ xs: 'space-evenly', lg: 'unset' }}
-          flexWrap={{ xs: 'wrap', lg: 'nowrap' }}
+          sx={{
+            gap: { xs: 0, lg: '10px' },
+            alignItems: 'center',
+            justifyContent: { xs: 'space-evenly', lg: 'unset' },
+            flexWrap: { xs: 'wrap', lg: 'nowrap' },
+          }}
         >
           <StatFlex {...releaseDate} />
           {stats.map(stat => {

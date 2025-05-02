@@ -80,8 +80,12 @@ export default function TwoFactorAuthSettingsPanel(
       <ConditionalWrapper condition={isLoading} wrapper={Skeleton}>
         <Typography
           variant={'body1'}
-          color={isActivated ? 'success.main' : 'error.main'}
-          sx={{ my: 2, display: 'flex', alignItems: 'center' }}
+          sx={{
+            color: isActivated ? 'success.main' : 'error.main',
+            my: 2,
+            display: 'flex',
+            alignItems: 'center',
+          }}
         >
           <IconSvg
             icon={isActivated ? 'check' : 'cross'}
@@ -100,7 +104,7 @@ export default function TwoFactorAuthSettingsPanel(
         Certain data may require 2FA to be turned on for your account in order
         to request access.
       </Typography>
-      <Stack direction={'row'} gap={1}>
+      <Stack direction={'row'} sx={{ gap: 1 }}>
         <ConditionalWrapper condition={isLoadingStatus} wrapper={Skeleton}>
           <Button
             variant={'outlined'}

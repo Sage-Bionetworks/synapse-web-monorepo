@@ -138,11 +138,13 @@ function FullWidthAlert(props: FullWidthAlertProps) {
     >
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
-        alignItems={{ xs: 'start', sm: 'center' }}
         spacing={{ xs: 1, sm: 2 }}
-        gap={{ xs: '8px', sm: 'initial' }}
-        display="flex"
-        justifyContent="space-between"
+        sx={{
+          alignItems: { xs: 'start', sm: 'center' },
+          gap: { xs: '8px', sm: 'initial' },
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}
       >
         <Box>
           {title && <AlertTitle>{title}</AlertTitle>}
@@ -154,10 +156,10 @@ function FullWidthAlert(props: FullWidthAlertProps) {
           <Stack
             spacing={{ xs: 1, lg: 2 }}
             direction={{ xs: 'row', sm: 'column', lg: 'row' }}
-            alignItems="center"
-            display="flex"
-            flexShrink={0}
             sx={theme => ({
+              alignItems: 'center',
+              display: 'flex',
+              flexShrink: 0,
               gap: { xs: '8px', sm: 'initial' },
               flexWrap: { xs: 'wrap', sm: 'nowrap' },
               width: { xs: '100%', sm: 'initial' },

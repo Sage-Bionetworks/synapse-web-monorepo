@@ -77,10 +77,20 @@ export function BlockingLoader({
           value={(currentProgress! / totalProgress!) * 100}
         />
       </div>
-      <Typography variant="headline3" mb={2}>
+      <Typography
+        variant="headline3"
+        sx={{
+          mb: 2,
+        }}
+      >
         {headlineText}
       </Typography>
-      <Typography variant="hintText" mb={2}>
+      <Typography
+        variant="hintText"
+        sx={{
+          mb: 2,
+        }}
+      >
         {hintText}
       </Typography>
     </>
@@ -96,10 +106,12 @@ export function BlockingLoader({
       }}
     >
       <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        flexDirection="column"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+        }}
       >
         {totalProgress ? (
           barLoader
@@ -109,7 +121,9 @@ export function BlockingLoader({
             <Typography
               variant="headline3"
               data-testid="spinner-hint-text"
-              mb={2}
+              sx={{
+                mb: 2,
+              }}
             >
               {hintText}
             </Typography>

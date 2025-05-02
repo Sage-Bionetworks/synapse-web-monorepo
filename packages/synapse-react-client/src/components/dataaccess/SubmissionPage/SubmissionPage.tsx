@@ -486,7 +486,11 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               Contents of the Access Request
               <hr />
             </Typography>
-            <Stack gap={2}>
+            <Stack
+              sx={{
+                gap: 2,
+              }}
+            >
               {submission?.researchProjectSnapshot
                 ?.intendedDataUseStatement && (
                 <section>

@@ -89,9 +89,21 @@ function TeamSubjectsSelector(props: TeamSubjectsSelectorProps) {
 
   return (
     <>
-      <Box display="flex" flexWrap="wrap" gap="0px 15px" pb="10px">
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '0px 15px',
+          pb: '10px',
+        }}
+      >
         {teamSubjects.length === 0 && (
-          <Typography variant="body1Italic" pb={2}>
+          <Typography
+            variant="body1Italic"
+            sx={{
+              pb: 2,
+            }}
+          >
             {NO_TEAMS_SELECTED}
           </Typography>
         )}
@@ -100,9 +112,11 @@ function TeamSubjectsSelector(props: TeamSubjectsSelectorProps) {
             <Stack
               key={subject.id}
               direction="row"
-              alignItems="center"
-              pb={1}
               data-testid="selected-team"
+              sx={{
+                alignItems: 'center',
+                pb: 1,
+              }}
             >
               <TeamBadgeOrError teamId={subject.id} />
               <IconButton
@@ -121,7 +135,14 @@ function TeamSubjectsSelector(props: TeamSubjectsSelectorProps) {
         })}
       </Box>
       <InputLabel htmlFor="teamIDs">Add Team IDs</InputLabel>
-      <Stack direction="row" gap={1} alignItems="center" mb={2}>
+      <Stack
+        direction="row"
+        sx={{
+          gap: 1,
+          alignItems: 'center',
+          mb: 2,
+        }}
+      >
         <TextField
           id="teamIDs"
           name="teamIDs"

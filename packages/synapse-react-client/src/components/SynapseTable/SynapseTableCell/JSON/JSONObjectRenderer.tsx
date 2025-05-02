@@ -14,7 +14,12 @@ function JSONObjectKeyValuePair(props: JSONObjectKeyValuePairProps) {
   const { keyName, value } = props
 
   return (
-    <Box display={'flex'} mb={1}>
+    <Box
+      sx={{
+        display: 'flex',
+        mb: 1,
+      }}
+    >
       <Typography variant={'smallText1'}>
         <JSONPrimitiveRenderer value={keyName} />
       </Typography>

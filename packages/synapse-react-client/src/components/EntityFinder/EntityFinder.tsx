@@ -212,13 +212,12 @@ export function EntityFinder({
     <SynapseErrorBoundary>
       <div className="EntityFinder">
         <Box
-          display="flex"
-          justifyContent="space-between"
-          mb={2.5}
-          flexWrap={'wrap'}
-          rowGap={2}
-          columnGap={4}
           sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            mb: 2.5,
+            rowGap: 2,
+            columnGap: 4,
             flexWrap: { xs: 'wrap', md: 'nowrap' },
           }}
         >
@@ -231,7 +230,13 @@ export function EntityFinder({
             <Tab
               value={EntityFinderTab.SELECTED}
               label={
-                <Stack direction={'row'} gap={0.5} alignItems={'center'}>
+                <Stack
+                  direction={'row'}
+                  sx={{
+                    gap: 0.5,
+                    alignItems: 'center',
+                  }}
+                >
                   <span>Selected</span>
                   <Chip
                     size={'small'}

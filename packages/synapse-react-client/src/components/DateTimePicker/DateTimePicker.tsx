@@ -29,7 +29,13 @@ function TextFieldWithTzShown(props: TextFieldProps) {
         ...props.InputProps,
         endAdornment: (
           <>
-            <Box ml={0.5}>{tzDisplay}</Box>
+            <Box
+              sx={{
+                ml: 0.5,
+              }}
+            >
+              {tzDisplay}
+            </Box>
             {props.InputProps?.endAdornment}
           </>
         ),

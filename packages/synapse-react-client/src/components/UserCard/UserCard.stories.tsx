@@ -58,7 +58,11 @@ export const MediumUserCardWithActions: Story = {
   decorators: [
     Story => {
       return (
-        <Box maxWidth={'450px'}>
+        <Box
+          sx={{
+            maxWidth: '450px',
+          }}
+        >
           <Story />
         </Box>
       )

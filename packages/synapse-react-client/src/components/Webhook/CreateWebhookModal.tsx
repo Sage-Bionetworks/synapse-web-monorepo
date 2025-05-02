@@ -53,10 +53,12 @@ const NEW_ENDPOINT_CONTACT_FORM_URL = `https://sagebionetworks.jira.com/serviced
 function UpdateWarningWrapper(props: PropsWithChildren) {
   return (
     <Box
-      sx={{ backgroundColor: 'rgb(178, 36, 42, 0.03)' }}
-      mt="10px"
-      py={2}
-      px={4}
+      sx={{
+        mt: '10px',
+        py: 2,
+        px: 4,
+        backgroundColor: 'rgb(178, 36, 42, 0.03)',
+      }}
     >
       <Typography sx={{ my: 1 }} color="error" variant="headline3" gutterBottom>
         DANGER ZONE

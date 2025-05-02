@@ -45,13 +45,13 @@ export function CopyToClipboardInput({
         autohide={true}
       ></ToastMessage>
       <Box
-        display="flex"
-        justifyContent="center"
+        ref={ref}
         sx={{
+          display: 'flex',
+          justifyContent: 'center',
           my: 2,
           mx: 0,
         }}
-        ref={ref}
       >
         <TextField
           sx={{

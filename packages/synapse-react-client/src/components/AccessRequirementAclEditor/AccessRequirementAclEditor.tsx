@@ -4,6 +4,7 @@ import {
   useGetAccessRequirementACL,
   useUpdateAccessRequirementACL,
 } from '@/synapse-queries'
+import { spreadSx } from '@/theme/spreadSx'
 import { PermissionLevel } from '@/utils/PermissionLevelToAccessType'
 import { Alert, Box, Stack, Typography } from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
@@ -148,16 +149,40 @@ export const AccessRequirementAclEditor = forwardRef(
     )
 
     return (
-      <Stack gap="20px" direction="column">
+      <Stack
+        direction="column"
+        sx={{
+          gap: '20px',
+        }}
+      >
         <Box>
-          <Typography variant="headline3" mb="10px">
+          <Typography
+            variant="headline3"
+            sx={{
+              mb: '10px',
+            }}
+          >
             Guide to AR permissions
           </Typography>
-          <Typography sx={textSx} mb="10px">
+          <Typography
+            sx={spreadSx(
+              {
+                mb: '10px',
+              },
+              textSx,
+            )}
+          >
             <span style={{ fontStyle: 'italic' }}>Can Review</span> means a user
             or team has access request review permission for this AR.
           </Typography>
-          <Typography sx={textSx} mb="10px">
+          <Typography
+            sx={spreadSx(
+              {
+                mb: '10px',
+              },
+              textSx,
+            )}
+          >
             <span style={{ fontStyle: 'italic' }}>Exempt Eligible</span> users
             and teams can bypass access requirements for entities they have been
             granted &quot;edit and delete&quot; permission on, via the

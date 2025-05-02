@@ -396,7 +396,11 @@ function FacetNavPanel(props: FacetNavPanelProps) {
             />
           )}
           {isModalView && (
-            <Stack gap={2}>
+            <Stack
+              sx={{
+                gap: 2,
+              }}
+            >
               <StyledFormControl>
                 <InputLabel
                   sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
