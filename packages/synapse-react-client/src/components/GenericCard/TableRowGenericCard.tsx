@@ -11,7 +11,7 @@ import {
   useShowDoiCardLabel,
 } from '@/components/GenericCard/PortalDOI/PortalDOIUtils'
 import { useGetEntity } from '@/synapse-queries'
-import { SynapseConstants } from '@/utils'
+import * as SynapseConstants from '@/utils/SynapseConstants'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import {
   isDatasetCollection,
@@ -29,6 +29,7 @@ import {
   Table,
 } from '@sage-bionetworks/synapse-types'
 import React, { useState } from 'react'
+import { useInView } from 'react-intersection-observer'
 import { TargetEnum } from '../CardContainerLogic'
 import CitationPopover from '../CitationPopover'
 import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
@@ -150,6 +151,8 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   const { entityId, versionNumber } = useQueryContext()
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
+  const { ref, inView: cardIsInView } = useInView()
+
   const { data: table } = useGetEntity<Table>(entityId, versionNumber)
 
   const {
@@ -243,7 +246,12 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   const customLabelConfig = genericCardSchema.customSecondaryLabelConfig
 
   // PORTALS-3549 - if a DOI exists or can be created by the current user, show it
-  if (showDoiCardLabel && portalDoiConfiguration && candidateDoiId) {
+  if (
+    showDoiCardLabel &&
+    portalDoiConfiguration &&
+    candidateDoiId &&
+    cardIsInView
+  ) {
     values.push({
       columnDisplayName: 'DOI',
       value: (
@@ -350,6 +358,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
 
   return (
     <GenericCard
+      ref={ref}
       icon={
         <GenericCardIcon
           type={

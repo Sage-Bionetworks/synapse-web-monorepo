@@ -1,9 +1,11 @@
 import { CardLink } from '@/components/CardContainer/CardLink'
 import { getLinkParams } from '@/components/GenericCard/CardUtils'
-import TableRowGenericCard, {
-  TableToGenericCardMapping,
-  TableRowGenericCardProps,
-} from './TableRowGenericCard'
+import PortalDOI from '@/components/GenericCard/PortalDOI/PortalDOI'
+import {
+  getCandidateDoiId,
+  useShowDoiCardLabel,
+} from '@/components/GenericCard/PortalDOI/PortalDOIUtils'
+import IconSvg, * as IconSvgModule from '@/components/IconSvg/IconSvg'
 import { mockFileViewEntity } from '@/mocks/entity/mockFileView'
 import mockTableEntityData, {
   mockTableEntity,
@@ -20,17 +22,44 @@ import {
   ColumnTypeEnum,
   FileHandleAssociateType,
 } from '@sage-bionetworks/synapse-types'
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { cloneDeep } from 'lodash-es'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
+import { beforeEach, describe, it, test, vi } from 'vitest'
 import { TargetEnum } from '../CardContainerLogic'
 import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
-import * as IconSvg from '../IconSvg/IconSvg'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'
 import QueryWrapper from '../QueryWrapper'
-import * as FileHandleLinkModule from '../widgets/FileHandleLink'
-import * as ImageFileHandleModule from '../widgets/ImageFileHandle'
+import { FileHandleLink } from '../widgets/FileHandleLink'
+import { ImageFileHandle } from '../widgets/ImageFileHandle'
 import { CARD_SHORT_DESCRIPTION_CSS } from './CollapsibleDescription'
+import TableRowGenericCard, {
+  TableRowGenericCardProps,
+  TableToGenericCardMapping,
+} from './TableRowGenericCard'
+
+vi.mock('@/components/GenericCard/PortalDOI/PortalDOI', () => ({
+  __esModule: true,
+  default: vi.fn().mockReturnValue(<div data-testid="PortalDOI" />),
+}))
+vi.mock('@/components/GenericCard/PortalDOI/PortalDOIUtils')
+vi.mock('../widgets/FileHandleLink', () => ({
+  FileHandleLink: vi.fn().mockReturnValue(<div data-testid="FileHandleLink" />),
+}))
+vi.mock('../widgets/ImageFileHandle', () => ({
+  ImageFileHandle: vi
+    .fn()
+    .mockReturnValue(<img data-testid="ImageFileHandle" />),
+}))
+vi.mock('../EntityDownloadConfirmation', () => ({
+  EntityDownloadConfirmation: vi
+    .fn()
+    .mockReturnValue(<div data-testid="EntityDownloadConfirmation" />),
+}))
+vi.mock('@/components/IconSvg/IconSvg', async importOriginal => ({
+  ...(await importOriginal<typeof IconSvgModule>()),
+  default: vi.fn().mockReturnValue(<img data-testid="IconSvg" />),
+}))
 
 const renderComponent = (
   props: TableRowGenericCardProps,
@@ -57,24 +86,13 @@ const renderComponent = (
   )
 }
 
-mockAllIsIntersecting(true)
-const mockIconSvg = jest
-  .spyOn(IconSvg, 'default')
-  .mockImplementation(() => <div data-testid="IconSvg" />)
-
-const mockFileHandleLink = jest
-  .spyOn(FileHandleLinkModule, 'FileHandleLink')
-  .mockImplementation(() => <div data-testid="FileHandleLink" />)
-
-const mockImageFileHandle = jest
-  .spyOn(ImageFileHandleModule, 'ImageFileHandle')
-  .mockImplementation(() => <div data-testid="ImageFileHandle" />)
-
-jest.mock('../EntityDownloadConfirmation', () => ({
-  EntityDownloadConfirmation: jest.fn(() => (
-    <div data-testid="EntityDownloadConfirmation" />
-  )),
-}))
+// mockAllIsIntersecting(true)
+const mockFileHandleLink = vi.mocked(FileHandleLink)
+const mockImageFileHandle = vi.mocked(ImageFileHandle)
+const mockGetCandidateDoiId = vi.mocked(getCandidateDoiId)
+const mockUseShowPortalDoi = vi.mocked(useShowDoiCardLabel)
+const mockEntityDownloadConfirmation = vi.mocked(EntityDownloadConfirmation)
+const mockIconSvg = vi.mocked(IconSvg)
 
 const iconOptions = {
   'AMP-AD': 'MOCKED_IMG_SVG_STRING',
@@ -167,6 +185,7 @@ const propsForHeaderMode: TableRowGenericCardProps = {
 describe('TableRowGenericCard tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
+    vi.clearAllMocks()
     registerTableQueryResult(
       {
         ...mockQueryBundleRequest.query,
@@ -185,9 +204,9 @@ describe('TableRowGenericCard tests', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
-  test('renders the correct UI in non header mode', () => {
+  test('renders the correct UI in non header mode', async () => {
     const { container } = renderComponent(propsForNonHeaderMode, 'TableEntity')
-    screen.getByRole('img')
+    await screen.findByRole('img')
     within(container.querySelector('div.SRC-type')!).getByText(commonProps.type)
     within(container.querySelector('a')!).getByText(data[0])
     within(
@@ -259,9 +278,6 @@ describe('TableRowGenericCard tests', () => {
     ]
 
     test('Renders a FileHandleLink with an EntityView associate type', async () => {
-      const mockFileHandleLink = jest
-        .spyOn(FileHandleLinkModule, 'FileHandleLink')
-        .mockImplementation(() => <div data-testid="FileHandleLink" />)
       renderComponent(
         {
           ...propsForNonHeaderMode,
@@ -525,9 +541,6 @@ describe('TableRowGenericCard tests', () => {
     }
 
     it('renders the button', async () => {
-      const mockEntityDownloadConfirmation = jest.mocked(
-        EntityDownloadConfirmation,
-      )
       mockEntityDownloadConfirmation.mockImplementation(() => (
         <div data-testid="EntityDownloadConfirmation" />
       ))
@@ -540,9 +553,6 @@ describe('TableRowGenericCard tests', () => {
     })
 
     it('does not render the button with invalid synID', () => {
-      const mockEntityDownloadConfirmation = jest.mocked(
-        EntityDownloadConfirmation,
-      )
       mockEntityDownloadConfirmation.mockImplementation(() => (
         <div data-testid="EntityDownloadConfirmation" />
       ))
@@ -618,5 +628,75 @@ describe('TableRowGenericCard tests', () => {
       )
       expect(howToDownloadLabel).toBeVisible()
     })
+  })
+
+  test('PortalDOI is shown based on hook result', async () => {
+    mockGetCandidateDoiId.mockReturnValue('someDoiString')
+    mockUseShowPortalDoi.mockReturnValue(true)
+
+    renderComponent(
+      {
+        ...propsForNonHeaderMode,
+        genericCardSchema: {
+          ...genericCardSchema,
+          portalDoiConfiguration: {
+            resourceType: 'RESOURCE_TYPE',
+            resourceIdKeyColumns: ['title', 'subTitle'],
+            portalId: '12345',
+            serializeDoiString: vi.fn(),
+          },
+        },
+      },
+      'TableEntity',
+    )
+
+    // Not shown until the intersection observer is triggered
+    expect(screen.queryByText('DOI')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('PortalDOI')).not.toBeInTheDocument()
+
+    act(() => {
+      mockAllIsIntersecting(true)
+    })
+
+    await screen.findByText('DOI')
+    await screen.findByTestId('PortalDOI')
+
+    expect(PortalDOI).toHaveBeenCalledWith(
+      {
+        portalId: '12345',
+        resourceId: 'someDoiString',
+      },
+      expect.anything(),
+    )
+  })
+
+  test('PortalDOI is not shown when showDoiCardLabel is false', () => {
+    mockGetCandidateDoiId.mockReturnValue('someDoiString')
+    mockUseShowPortalDoi.mockReturnValue(false)
+
+    renderComponent(
+      {
+        ...propsForNonHeaderMode,
+        genericCardSchema: {
+          ...genericCardSchema,
+          portalDoiConfiguration: {
+            resourceType: 'RESOURCE_TYPE',
+            resourceIdKeyColumns: ['title', 'subTitle'],
+            portalId: '12345',
+            serializeDoiString: vi.fn(),
+          },
+        },
+      },
+      'TableEntity',
+    )
+
+    act(() => {
+      mockAllIsIntersecting(true)
+    })
+
+    expect(screen.queryByText('DOI')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('PortalDOI')).not.toBeInTheDocument()
+
+    expect(PortalDOI).not.toHaveBeenCalled()
   })
 })
