@@ -10,7 +10,7 @@ import PortalsDoiIdSerializer from '@sage-bionetworks/synapse-portal-framework/u
  *  3. Add a case to the switch statement in the doiRedirectConfig function.
  */
 
-type ADKPResourceType = 'STUDY'
+export type ADKPResourceType = 'STUDY'
 
 /** This configuration defines how each resource type maps to its DOI ID.
  * Once DOIs have been created for a particular resource type, that resource type's key (including order) CANNOT CHANGE
@@ -18,7 +18,7 @@ type ADKPResourceType = 'STUDY'
  *
  * `as const` provides additional type safety in the `doiRedirector` function.
  */
-const RESOURCE_TYPE_KEY_CONFIGURATION = {
+export const RESOURCE_TYPE_KEY_CONFIGURATION = {
   STUDY: ['Study'],
 } as const satisfies Record<ADKPResourceType, string[]>
 

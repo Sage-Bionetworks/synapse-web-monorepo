@@ -1,5 +1,5 @@
 import { CardLink } from '@/components/CardContainer/CardLink'
-import { getValueOrMultiValue } from '@/components/GenericCard/TableRowGenericCard'
+import { getValueOrMultiValue } from '@/components/GenericCard/CardUtils'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { getColumnIndex } from '@/utils/functions/index'
 import { Link, Tooltip } from '@mui/material'
