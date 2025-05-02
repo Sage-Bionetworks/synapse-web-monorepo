@@ -350,7 +350,9 @@ describe('MarkdownSynapse tests', () => {
         markdown:
           '${buttonlink?text=sometext&url=#/Help/How%20It%20Works&highlight=true}${buttonlink?text=APPLY&url=#/Apply&highlight=true} ',
       })
-      await waitFor(() => expect(container).toMatchSnapshot())
+
+      await screen.findByText('APPLY')
+      expect(container).toMatchSnapshot()
     })
     it('supports bootstrap rows and columns', () => {
       const { container } = renderComponent({

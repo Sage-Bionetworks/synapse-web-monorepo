@@ -168,22 +168,3 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 
   </div>
 </div>
 `;
-
-exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 2`] = `
-<div>
-  <div
-    class="markdown"
-    data-testid="markdown"
-  >
-    <span
-      class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
-    >
-      <p
-        class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
-      />
-      
-
-    </span>
-  </div>
-</div>
-`;
