@@ -12,7 +12,7 @@ import { getColorPalette } from '../ColorGradient/ColorGradient'
 import {
   getFileHandleAssociation,
   getLinkParams,
-} from '../GenericCard/TableRowGenericCard'
+} from '../GenericCard/CardUtils'
 import ProgramsDesktop from './Programs.Desktop'
 import ProgramsMobile from './Programs.Mobile'
 
