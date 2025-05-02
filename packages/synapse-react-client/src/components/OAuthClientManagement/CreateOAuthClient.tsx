@@ -10,7 +10,7 @@ import {
   Alert,
   Box,
   Button,
-  Grid,
+  GridLegacy as Grid,
   IconButton,
   InputAdornment,
   MenuItem,

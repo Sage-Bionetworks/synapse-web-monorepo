@@ -12,8 +12,7 @@ import { useGetCurrentUserProfile } from '@/synapse-queries/user'
 import { useGetUserAccessApproval } from '@/synapse-queries/dataaccess/useAccessApprovals'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
-import { Button, Skeleton, Stack, Typography } from '@mui/material'
-import Grid2 from '@mui/material/Grid2'
+import { Button, Grid, Skeleton, Stack, Typography } from '@mui/material'
 import {
   ACCESS_TYPE,
   FileHandleAssociateType,
@@ -177,7 +176,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
   }, [isExpired, isLoadingAccessApproval, submission])
 
   return (
-    <Grid2 container={true} spacing={4} className="SubmissionPage">
+    <Grid container={true} spacing={4} className="SubmissionPage">
       {showUpdateRequestDialog && accessRequirement && (
         <AccessRequirementList
           renderAsModal={true}
@@ -212,7 +211,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           onClose={() => setShowRejectionDialog(false)}
         />
       )}
-      <Grid2
+      <Grid
         className="SubmissionSummary"
         size={{
           xs: 12,
@@ -448,8 +447,8 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             )}
           </Typography>
         </div>
-      </Grid2>
-      <Grid2
+      </Grid>
+      <Grid
         size={{
           xs: 12,
           sm: 8,
@@ -553,7 +552,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             </Stack>
           </section>
         </Stack>
-      </Grid2>
-    </Grid2>
+      </Grid>
+    </Grid>
   )
 }

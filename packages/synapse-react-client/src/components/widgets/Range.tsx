@@ -100,12 +100,11 @@ export function Range(props: RangeProps) {
               <DatePicker
                 label="From"
                 slotProps={{
-                  textField: props => ({
+                  textField: {
                     inputProps: {
-                      ...props.inputProps,
                       'aria-label': 'min',
                     },
-                  }),
+                  },
                 }}
                 value={values.min ? dayjs(values.min) : null}
                 onChange={date =>
@@ -122,12 +121,11 @@ export function Range(props: RangeProps) {
               <DatePicker
                 label="To"
                 slotProps={{
-                  textField: props => ({
+                  textField: {
                     inputProps: {
-                      ...props.inputProps,
                       'aria-label': 'max',
                     },
-                  }),
+                  },
                 }}
                 value={values.max ? dayjs(values.max) : null}
                 onChange={date =>

@@ -8,7 +8,7 @@ import {
   BUNDLE_MASK_QUERY_SELECT_COLUMNS,
 } from '@/utils/SynapseConstants'
 import { Box, Chip, Link as MuiLink, Skeleton, Typography } from '@mui/material'
-import Grid from '@mui/material/Grid2'
+import Grid from '@mui/material/Grid'
 import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import PortalSectionHeader from '../PortalSectionHeader'

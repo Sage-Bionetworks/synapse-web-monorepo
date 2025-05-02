@@ -1,5 +1,4 @@
-import { TypographyOptions } from '@mui/material/styles/createTypography'
-import { Palette } from '@mui/material/styles/createPalette'
+import { Palette, TypographyVariantsOptions } from '@mui/material/styles'
 
 export const defaultFontFamily = ['DM Sans', 'sans-serif'].join(',')
 export const monospaceFontFamily = [
@@ -16,7 +15,7 @@ const defaultStyles = {
 
 export const typographyOptions: (
   palette: Palette,
-) => TypographyOptions = palette => ({
+) => TypographyVariantsOptions = palette => ({
   fontFamily: defaultFontFamily,
   headline1: {
     ...defaultStyles,
