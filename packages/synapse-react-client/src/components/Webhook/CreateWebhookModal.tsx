@@ -18,7 +18,7 @@ import {
   Switch,
   TextField,
   Typography,
-  Unstable_Grid2 as Grid,
+  Grid2 as Grid,
 } from '@mui/material'
 import {
   ErrorResponseCode,
@@ -192,7 +192,7 @@ export default function CreateWebhookModal(props: CreateWebhookModalProps) {
       content={
         <>
           <Grid container spacing={2}>
-            <Grid xs={12}>
+            <Grid size={12}>
               <Typography variant={'body1'} gutterBottom>
                 Specify the ID of the entity and the types of events you would
                 like to receive. Once you complete this step, Synapse will send
@@ -201,7 +201,12 @@ export default function CreateWebhookModal(props: CreateWebhookModalProps) {
                 verified endpoint.
               </Typography>
             </Grid>
-            <Grid xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+              }}
+            >
               <EntityFinderModal
                 configuration={{
                   initialScope: FinderScope.ALL_PROJECTS,
@@ -256,7 +261,7 @@ export default function CreateWebhookModal(props: CreateWebhookModalProps) {
                 }}
               />
             </Grid>
-            <Grid xs={6}>
+            <Grid size={6}>
               <FormControlLabel
                 control={<Switch />}
                 labelPlacement={'top'}
@@ -267,7 +272,12 @@ export default function CreateWebhookModal(props: CreateWebhookModalProps) {
                 }}
               />
             </Grid>
-            <Grid xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+              }}
+            >
               <FormGroup>
                 <InputLabel required>Events</InputLabel>
                 {Object.values(SynapseEventType).map(eventType => (
@@ -292,7 +302,7 @@ export default function CreateWebhookModal(props: CreateWebhookModalProps) {
                 ))}
               </FormGroup>
             </Grid>
-            <Grid xs={12}>
+            <Grid size={12}>
               <RevalidationFieldsWrapper>
                 <TextField
                   label={'Endpoint'}

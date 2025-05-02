@@ -14,7 +14,7 @@ import {
   Grid as Grid2,
   TextField,
 } from '@mui/material'
-// import Grid2 from '@mui/material/Unstable_Grid2'
+// import Grid2 from '@mui/material/Grid2'
 import { DateTimeValidationError } from '@mui/x-date-pickers'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
