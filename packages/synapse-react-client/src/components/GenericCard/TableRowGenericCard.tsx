@@ -30,7 +30,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import React, { useState } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { TargetEnum } from '../CardContainerLogic'
+import { TargetEnum } from '@/utils/html/TargetEnum'
 import CitationPopover from '../CitationPopover'
 import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import { HeaderCardVariant } from '../HeaderCard'

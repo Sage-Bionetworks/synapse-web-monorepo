@@ -13,7 +13,7 @@ import {
   FileHandleAssociation,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
-import { TargetEnum } from '../CardContainerLogic/CardContainerLogic'
+import { TargetEnum } from '@/utils/html/TargetEnum'
 
 export const getFileHandleAssociation = (
   table?: Entity,
