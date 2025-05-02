@@ -299,12 +299,12 @@ function TableColumnSchemaFormInternal(
         annotationColumnModelsQuery={annotationColumnModelsQuery}
       />
       <Box
-        display={'grid'}
         sx={{
+          display: 'grid',
+          gap: '8px',
           gridTemplateColumns: COLUMN_SCHEMA_FORM_GRID_TEMPLATE_COLUMNS,
           py: 2.5,
         }}
-        gap={'8px'}
       >
         <ColumnHeader>{/* Checkbox */}</ColumnHeader>
         <ColumnHeader sx={{ gridColumn: '2 / span 2' }}>
@@ -337,8 +337,12 @@ function TableColumnSchemaFormInternal(
           )
         })}
       </Box>
-
-      <Box display={'flex'} gap={1}>
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 1,
+        }}
+      >
         <Button
           variant={'outlined'}
           onClick={() => {

@@ -299,7 +299,12 @@ export function CreateOAuthModal({
       )}
       {!updateIsPending && (
         <>
-          <Typography variant="body1" mb={'10px'}>
+          <Typography
+            variant="body1"
+            sx={{
+              mb: '10px',
+            }}
+          >
             To protect you and your users, your consent screen and application
             will need to be verified by Sage Bionetworks. Before your consent
             screen and application are verified by Sage Bionetworks, you can
@@ -395,9 +400,11 @@ export function CreateOAuthModal({
           </Grid>
           {isEdit && (
             <Box
-              sx={{ backgroundColor: 'rgb(178, 36, 42, 0.03)' }}
-              mt="10px"
-              padding={1}
+              sx={{
+                mt: '10px',
+                padding: 1,
+                backgroundColor: 'rgb(178, 36, 42, 0.03)',
+              }}
             >
               <Typography sx={{ my: 1 }} color="error" variant="headline3">
                 DANGER ZONE

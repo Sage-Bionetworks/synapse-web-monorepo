@@ -52,9 +52,20 @@ export function DialogBaseTitle(props: DialogBaseTitleProps) {
   } = props
   return (
     <DialogTitle>
-      <Stack direction="row" alignItems={'center'} gap={'5px'}>
+      <Stack
+        direction="row"
+        sx={{
+          alignItems: 'center',
+          gap: '5px',
+        }}
+      >
         {title}
-        <Box component={'span'} fontSize={'14px'}>
+        <Box
+          component={'span'}
+          sx={{
+            fontSize: '14px',
+          }}
+        >
           {titleHelpPopoverProps && <HelpPopover {...titleHelpPopoverProps} />}
         </Box>
         <Box sx={{ flexGrow: 1 }} />

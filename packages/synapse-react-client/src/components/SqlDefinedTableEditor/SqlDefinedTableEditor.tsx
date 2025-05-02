@@ -3,8 +3,18 @@ import { TextFieldProps } from '@mui/material/TextField'
 import { EntityType } from '@sage-bionetworks/synapse-types'
 
 const MATERIALIZED_VIEW_HELP = (
-  <Box mb={2.5}>
-    <Typography variant={'body1'} color={'grey.700'} mb={1.25}>
+  <Box
+    sx={{
+      mb: 2.5,
+    }}
+  >
+    <Typography
+      variant={'body1'}
+      sx={{
+        color: 'grey.700',
+        mb: 1.25,
+      }}
+    >
       If you store normalized data in Synapse tables, views, or datasets, you
       can combine separate data sources using Materialized Views. A materialized
       view is a type of Synapse table that is defined using a Synapse SQL
@@ -26,8 +36,18 @@ const MATERIALIZED_VIEW_HELP = (
 )
 
 const VIRTUAL_TABLE_HELP = (
-  <Box mb={2.5}>
-    <Typography variant={'body1'} color={'grey.700'} mb={1.25}>
+  <Box
+    sx={{
+      mb: 2.5,
+    }}
+  >
+    <Typography
+      variant={'body1'}
+      sx={{
+        color: 'grey.700',
+        mb: 1.25,
+      }}
+    >
       A Synapse Virtual Table is a type of table that is defined by a Synapse
       SQL query. Any query on a Virtual Table will execute the defining SQL
       statement on the referenced table. The defining SQL of a Virtual Table

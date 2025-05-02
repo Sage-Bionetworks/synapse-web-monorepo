@@ -28,7 +28,11 @@ const faqContent: FaqItem[] = [
 
 export function UserAccessRequestHistoryPage() {
   return (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       <Typography variant="headline1" gutterBottom>
         History of your access requests
       </Typography>

@@ -148,9 +148,11 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
   return (
     <>
       <Box
-        display={'grid'}
-        gridColumn={'1 / span 10'}
-        gridTemplateColumns={'subgrid'}
+        sx={{
+          display: 'grid',
+          gridColumn: '1 / span 10',
+          gridTemplateColumns: 'subgrid',
+        }}
       >
         {isJsonSubColumn && (
           <Box sx={{ gridColumn: '1 / span 1' }}>
@@ -159,9 +161,9 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
         )}
         <Box
           data-testid={`ColumnModelForm`}
-          display={'flex'}
-          alignItems={'start'}
           sx={{
+            display: 'flex',
+            alignItems: 'start',
             gridColumn: isJsonSubColumn ? '2 / span 1' : ' 1 / span 1',
             // Checkbox is offset from top; vertical centering causes issues when validation errors are displayed
             mt: isJsonSubColumn ? '0px' : '5px',
@@ -181,8 +183,8 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
           />
         </Box>
         <Box
-          my={isDefaultColumn ? 'auto' : undefined}
           sx={{
+            my: isDefaultColumn ? 'auto' : undefined,
             gridColumn: isJsonSubColumn
               ? /* If this is a JSON Subcolumn, we reduce the width of this grid column to create space to render the visual hierarchical line */
                 '3 / span 1'
@@ -224,7 +226,11 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
             />
           )}
         </Box>
-        <Box my={isDefaultColumn ? 'auto' : undefined}>
+        <Box
+          sx={{
+            my: isDefaultColumn ? 'auto' : undefined,
+          }}
+        >
           {isDefaultColumn ? (
             getColumnTypeFriendlyName(columnModel.columnType)
           ) : (
@@ -265,7 +271,11 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
             </FormControl>
           )}
         </Box>
-        <Box my={isDefaultColumn ? 'auto' : undefined}>
+        <Box
+          sx={{
+            my: isDefaultColumn ? 'auto' : undefined,
+          }}
+        >
           {isDefaultColumn ? (
             (columnModel as ColumnModelFormData).maximumSize ?? ''
           ) : (
@@ -307,7 +317,11 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
             />
           )}
         </Box>
-        <Box my={isDefaultColumn ? 'auto' : undefined}>
+        <Box
+          sx={{
+            my: isDefaultColumn ? 'auto' : undefined,
+          }}
+        >
           {isDefaultColumn ? (
             (columnModel as ColumnModelFormData).maximumListLength ?? ''
           ) : (
@@ -348,7 +362,11 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
             />
           )}
         </Box>
-        <Box my={isDefaultColumn ? 'auto' : undefined}>
+        <Box
+          sx={{
+            my: isDefaultColumn ? 'auto' : undefined,
+          }}
+        >
           {isDefaultColumn ? (
             renderDefaultValue(
               (columnModel as ColumnModelFormData)?.defaultValue,
@@ -488,9 +506,11 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
       </Box>
       {isJsonSubColumn && (
         <Box
-          display={'grid'}
-          gridColumn={'1 / span 10'}
-          gridTemplateColumns={'subgrid'}
+          sx={{
+            display: 'grid',
+            gridColumn: '1 / span 10',
+            gridTemplateColumns: 'subgrid',
+          }}
         >
           <Box
             sx={{

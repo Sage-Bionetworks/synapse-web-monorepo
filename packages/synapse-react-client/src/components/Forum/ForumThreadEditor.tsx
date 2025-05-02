@@ -143,7 +143,12 @@ export function ForumThreadEditor(props: ForumThreadEditorProps) {
       ) : (
         <>
           {editorContent}
-          <Box display="flex" justifyContent="flex-end">
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+            }}
+          >
             <ConfirmationButtons
               onCancel={onClose}
               onConfirm={() => onSave(text, title)}

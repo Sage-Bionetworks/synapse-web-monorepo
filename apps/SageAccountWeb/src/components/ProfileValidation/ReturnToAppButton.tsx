@@ -36,7 +36,13 @@ export function ReturnToAppButton({ children }: PropsWithChildren) {
       {element}
       <Dialog open={open} fullWidth maxWidth="sm">
         <DialogTitle>
-          <Stack direction="row" alignItems={'center'} gap={'5px'}>
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: 'center',
+              gap: '5px',
+            }}
+          >
             Cancel verification?
             <Box sx={{ flexGrow: 1 }} />
             <IconButton aria-label={'Close'} onClick={onClose}>

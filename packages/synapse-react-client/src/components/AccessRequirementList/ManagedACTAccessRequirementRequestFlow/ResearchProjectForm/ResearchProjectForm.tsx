@@ -142,7 +142,13 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
   return (
     <>
       <DialogTitle>
-        <Stack direction="row" alignItems={'center'} gap={'5px'}>
+        <Stack
+          direction="row"
+          sx={{
+            alignItems: 'center',
+            gap: '5px',
+          }}
+        >
           Request Access
           <Box sx={{ flexGrow: 1 }} />
           <IconButton onClick={onHide}>
@@ -282,7 +288,13 @@ function ConfirmationScreenContent(props: { isIDURequired: boolean }) {
   const { isIDURequired } = props
   return (
     <DialogContent>
-      <Typography variant="body1" fontWeight={700} gutterBottom>
+      <Typography
+        variant="body1"
+        gutterBottom
+        sx={{
+          fontWeight: 700,
+        }}
+      >
         Double-check your submission before continuing!
       </Typography>
       <Typography variant="body1" gutterBottom>

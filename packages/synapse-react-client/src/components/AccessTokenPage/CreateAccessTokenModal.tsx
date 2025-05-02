@@ -67,7 +67,13 @@ export function CreateAccessTokenModal(props: CreateAccessTokenModalProps) {
   const dialogContent = createdTokenResponse ? (
     <>
       <Typography variant={'body1'}>
-        <Typography variant={'body1'} component={'span'} fontWeight={700}>
+        <Typography
+          variant={'body1'}
+          component={'span'}
+          sx={{
+            fontWeight: 700,
+          }}
+        >
           This token will not be able to be retrieved again.
         </Typography>{' '}
         If needed, generate a new personal access token, and delete this one.
@@ -94,7 +100,12 @@ export function CreateAccessTokenModal(props: CreateAccessTokenModalProps) {
         sx={{ mb: 2 }}
       />
       <Typography variant="label">Token Permissions</Typography>
-      <Stack gap={2} my={1}>
+      <Stack
+        sx={{
+          gap: 2,
+          my: 1,
+        }}
+      >
         <div>
           <FormControlLabel
             control={<Checkbox />}
@@ -102,7 +113,12 @@ export function CreateAccessTokenModal(props: CreateAccessTokenModalProps) {
             checked={viewAccess}
             onChange={() => setViewAccess(!viewAccess)}
           />
-          <Typography variant={'smallText1'} color={'grey.700'}>
+          <Typography
+            variant={'smallText1'}
+            sx={{
+              color: 'grey.700',
+            }}
+          >
             {scopeDescriptions.view.description}. Required to use Synapse
             programmatic clients.
           </Typography>
@@ -114,7 +130,12 @@ export function CreateAccessTokenModal(props: CreateAccessTokenModalProps) {
             checked={downloadAccess}
             onChange={() => setDownloadAccess(!downloadAccess)}
           />
-          <Typography variant={'smallText1'} color={'grey.700'}>
+          <Typography
+            variant={'smallText1'}
+            sx={{
+              color: 'grey.700',
+            }}
+          >
             {scopeDescriptions.download.description}
           </Typography>
         </div>
@@ -125,7 +146,12 @@ export function CreateAccessTokenModal(props: CreateAccessTokenModalProps) {
             checked={modifyAccess}
             onChange={() => setModifyAccess(!modifyAccess)}
           />
-          <Typography variant={'smallText1'} color={'grey.700'}>
+          <Typography
+            variant={'smallText1'}
+            sx={{
+              color: 'grey.700',
+            }}
+          >
             {scopeDescriptions.modify.description}
           </Typography>
         </div>

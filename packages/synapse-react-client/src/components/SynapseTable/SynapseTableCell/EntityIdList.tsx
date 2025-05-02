@@ -15,7 +15,11 @@ function EntityIdList(props: EntityIdListProps) {
   )
 
   return (
-    <Stack gap={1}>
+    <Stack
+      sx={{
+        gap: 1,
+      }}
+    >
       {entityHeaders?.results.map(header => (
         <EntityLink key={header.id} entity={header} {...rest} />
       ))}

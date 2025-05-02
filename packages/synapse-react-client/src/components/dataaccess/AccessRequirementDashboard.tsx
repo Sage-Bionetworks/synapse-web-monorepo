@@ -155,7 +155,13 @@ export function AccessRequirementDashboard(
             }}
           />
         </div>
-        <Box display="flex" gap="5px" alignItems="stretch">
+        <Box
+          sx={{
+            display: 'flex',
+            gap: '5px',
+            alignItems: 'stretch',
+          }}
+        >
           <TextField
             label="Filter by Project"
             id="project-id-filter"

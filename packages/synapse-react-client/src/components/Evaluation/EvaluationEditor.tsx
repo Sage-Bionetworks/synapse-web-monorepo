@@ -128,7 +128,11 @@ export function EvaluationEditor({
         <h4>{evaluation.id ? 'Edit' : 'Create'} Evaluation Queue</h4>
         <EvaluationEditorDropdown onClick={onSave} onDelete={onDelete} />
       </Box>
-      <Stack gap={2}>
+      <Stack
+        sx={{
+          gap: 2,
+        }}
+      >
         <TextField
           label={'Name'}
           fullWidth

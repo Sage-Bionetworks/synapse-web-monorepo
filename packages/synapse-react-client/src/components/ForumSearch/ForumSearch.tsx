@@ -19,7 +19,11 @@ import { displayToast } from '../ToastMessage/ToastMessage'
 
 const NoSearchResultComponent = () => {
   return (
-    <Box textAlign={'center'}>
+    <Box
+      sx={{
+        textAlign: 'center',
+      }}
+    >
       <NoSearchResults height="181px" sx={{ pt: '40px', pb: '10px' }} />
       <Typography variant="body1">No results with this query</Typography>
       <Typography variant="body1Italic">
@@ -145,8 +149,10 @@ export const ForumSearch = (props: ForumSearchProps) => {
                 <Typography
                   variant="body1Italic"
                   className="ResultsText"
-                  my={2}
-                  mx={1}
+                  sx={{
+                    my: 2,
+                    mx: 1,
+                  }}
                 >
                   Results for &quot;{lastSearchTerm}&quot; in {entity?.name}:
                 </Typography>

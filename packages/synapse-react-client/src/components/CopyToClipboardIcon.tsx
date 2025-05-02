@@ -1,3 +1,4 @@
+import { spreadSx } from '@/theme/spreadSx'
 import { Box, IconButton } from '@mui/material'
 import { createRef, RefObject, SyntheticEvent, useState } from 'react'
 import { ToastMessage } from './ToastMessage/ToastMessage'
@@ -39,7 +40,16 @@ export function CopyToClipboardIcon({
         show={showModal}
         autohide={true}
       ></ToastMessage>
-      <Box display="flex" ref={ref} {...props}>
+      <Box
+        ref={ref}
+        {...props}
+        sx={spreadSx(
+          {
+            display: 'flex',
+          },
+          props.sx,
+        )}
+      >
         <IconButton
           onClick={copyToClipboard(ref, value)}
           aria-label="Copy to clipboard"

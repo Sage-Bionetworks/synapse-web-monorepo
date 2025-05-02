@@ -173,7 +173,12 @@ export const ConfigureEmail = (props: ConfigureEmailProps) => {
           )
         }
       })}
-      <Stack my={2} gap={2}>
+      <Stack
+        sx={{
+          my: 2,
+          gap: 2,
+        }}
+      >
         <TextField
           label={'Add an email address'}
           id="additionalEmail"

@@ -47,7 +47,14 @@ export default function SynapseAnnotationsWrapIfAdditionalTemplate<
 
   return (
     <div className={classNames}>
-      <Grid container my={1} columnSpacing={2} rowSpacing={0}>
+      <Grid
+        container
+        columnSpacing={2}
+        rowSpacing={0}
+        sx={{
+          my: 1,
+        }}
+      >
         <Grid item xs={3}>
           <TextField
             fullWidth={true}

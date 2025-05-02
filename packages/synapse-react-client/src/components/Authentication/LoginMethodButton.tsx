@@ -45,12 +45,18 @@ export default function LoginMethodButton(props: LoginMethodButtonProps) {
           sx={{ ...buttonSx, height: '74px', py: 1.5 }}
           data-testid="button-with-last-login-info"
         >
-          <Box flexDirection="column">
+          <Box
+            sx={{
+              flexDirection: 'column',
+            }}
+          >
             <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              mb="10px"
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                mb: '10px',
+              }}
             >
               <IconSvg icon={iconName} sx={{ ...iconSx, mr: 1, ml: -0.5 }} />
               {buttonText}

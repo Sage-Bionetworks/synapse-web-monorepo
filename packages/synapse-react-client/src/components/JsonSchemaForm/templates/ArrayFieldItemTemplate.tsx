@@ -38,21 +38,32 @@ export default function ArrayFieldItemTemplate<
   return (
     <Grid
       container
-      gap={2}
-      justifyContent={'space-between'}
       className={`array-item`}
+      sx={{
+        gap: 2,
+        justifyContent: 'space-between',
+      }}
     >
       <Grid item={true} xs>
-        <Box mb={2}>{children}</Box>
+        <Box
+          sx={{
+            mb: 2,
+          }}
+        >
+          {children}
+        </Box>
       </Grid>
       {hasToolbar && (
         <Grid
           item={true}
-          sx={{ alignSelf: 'start', my: 1 }}
-          display={'flex'}
-          flexDirection={'row'}
-          gap={1}
-          justifyContent={'flex-start'}
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: 1,
+            justifyContent: 'flex-start',
+            alignSelf: 'start',
+            my: 1,
+          }}
         >
           {(hasMoveUp || hasMoveDown) && (
             <MoveUpButton

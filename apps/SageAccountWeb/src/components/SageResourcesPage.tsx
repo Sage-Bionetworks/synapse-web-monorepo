@@ -105,7 +105,13 @@ export function SageResourcesPageInternal() {
             py: theme.spacing(0),
           }}
         >
-          <Grid container spacing={5} mx={{ paddingTop: '20px' }}>
+          <Grid
+            container
+            spacing={5}
+            sx={{
+              mx: { paddingTop: '20px' },
+            }}
+          >
             {sourceAppConfigs?.map(config => {
               if (
                 config.isPublicized &&
