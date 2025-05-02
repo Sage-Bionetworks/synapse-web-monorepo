@@ -1412,6 +1412,9 @@ importers:
       tsx:
         specifier: ^4.19.1
         version: 4.19.1
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
       undici:
         specifier: ^6.19.4
         version: 6.19.8
