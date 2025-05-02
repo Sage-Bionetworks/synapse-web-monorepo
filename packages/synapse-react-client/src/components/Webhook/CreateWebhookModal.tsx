@@ -12,13 +12,13 @@ import {
   Checkbox,
   FormControlLabel,
   FormGroup,
+  Grid,
   IconButton,
   InputLabel,
   Link,
   Switch,
   TextField,
   Typography,
-  Grid2 as Grid,
 } from '@mui/material'
 import {
   ErrorResponseCode,

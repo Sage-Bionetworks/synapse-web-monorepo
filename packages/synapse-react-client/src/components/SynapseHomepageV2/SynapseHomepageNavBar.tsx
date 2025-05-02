@@ -14,7 +14,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import { ColorPartial } from '@mui/material/styles/createPalette'
+import type { Color } from '@mui/material/styles'
 import { MouseEvent, useState } from 'react'
 import SageResourcesPopover from '../SageResourcesPopover'
 
@@ -114,7 +114,7 @@ export function SynapseHomepageNavBar({
       {/* Logo */}
       <a onClick={() => gotoPlace(HOMEPAGE_LINK)}>
         <SynapseFullLogo
-          textColor={(theme.palette.primary as ColorPartial)[900]!}
+          textColor={(theme.palette.primary as unknown as Color)[900]}
         />
       </a>
       {/* Menu Items */}

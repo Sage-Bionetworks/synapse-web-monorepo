@@ -8,7 +8,7 @@ import {
   Box,
   Card,
   CardMedia,
-  Grid,
+  GridLegacy as Grid,
   Link,
   Skeleton,
   Typography,

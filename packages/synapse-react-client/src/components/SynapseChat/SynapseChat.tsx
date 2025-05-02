@@ -16,7 +16,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import { ColorPartial } from '@mui/material/styles/createPalette'
+import { Color } from '@mui/material/styles'
 import {
   AgentAccessLevel,
   AgentChatRequest,
@@ -224,7 +224,9 @@ export function SynapseChat({
     }
   }
 
-  const sendMessageButtonColor = (theme.palette.secondary as ColorPartial)[300]
+  const sendMessageButtonColor = (
+    theme.palette.secondary as unknown as Color
+  )[300]
   if (createAgentSessionError) {
     return (
       <Alert severity={'error'} sx={{ my: 2 }}>

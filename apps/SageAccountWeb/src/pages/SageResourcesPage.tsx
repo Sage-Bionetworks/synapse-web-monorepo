@@ -1,7 +1,7 @@
 import {
   Box,
   Button,
-  Grid,
+  GridLegacy as Grid,
   Link,
   Paper,
   Typography,
