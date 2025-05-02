@@ -38,8 +38,8 @@ export function ProjectViewCard(props: ProjectCardProps) {
         />
       )}
       <Stack
-        justifyContent={'space-between'}
         sx={{
+          justifyContent: 'space-between',
           flexGrow: 1,
           m: 2,
         }}

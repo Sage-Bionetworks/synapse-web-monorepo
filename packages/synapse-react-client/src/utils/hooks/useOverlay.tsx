@@ -72,12 +72,14 @@ export function useOverlay(
   const OverlayComponent = useCallback(
     () => (
       <Popover
-        TransitionComponent={Fade}
         anchorEl={targetRef.current}
         open={isShowing}
         anchorOrigin={anchorOrigin}
         transformOrigin={transformOrigin}
         sx={{ pointerEvents: 'none' }}
+        slots={{
+          transition: Fade,
+        }}
       >
         <Paper
           {...paperProps}

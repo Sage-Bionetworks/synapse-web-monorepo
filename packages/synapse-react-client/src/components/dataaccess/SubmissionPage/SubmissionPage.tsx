@@ -12,8 +12,7 @@ import { useGetCurrentUserProfile } from '@/synapse-queries/user'
 import { useGetUserAccessApproval } from '@/synapse-queries/dataaccess/useAccessApprovals'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
-import { Button, Skeleton, Stack, Typography } from '@mui/material'
-import Grid2 from '@mui/material/Unstable_Grid2'
+import { Button, Grid, Skeleton, Stack, Typography } from '@mui/material'
 import {
   ACCESS_TYPE,
   FileHandleAssociateType,
@@ -177,7 +176,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
   }, [isExpired, isLoadingAccessApproval, submission])
 
   return (
-    <Grid2 container={true} spacing={4} className="SubmissionPage">
+    <Grid container={true} spacing={4} className="SubmissionPage">
       {showUpdateRequestDialog && accessRequirement && (
         <AccessRequirementList
           renderAsModal={true}
@@ -212,7 +211,14 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           onClose={() => setShowRejectionDialog(false)}
         />
       )}
-      <Grid2 xs={12} sm={4} lg={3} className="SubmissionSummary">
+      <Grid
+        className="SubmissionSummary"
+        size={{
+          xs: 12,
+          sm: 4,
+          lg: 3,
+        }}
+      >
         <Typography variant="dataFieldKey" gutterBottom>
           Status
         </Typography>
@@ -441,8 +447,14 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             )}
           </Typography>
         </div>
-      </Grid2>
-      <Grid2 xs={12} sm={8} lg={9}>
+      </Grid>
+      <Grid
+        size={{
+          xs: 12,
+          sm: 8,
+          lg: 9,
+        }}
+      >
         <Stack sx={{ gap: 2 }}>
           <SynapseErrorBoundary>
             {submission ? (
@@ -473,7 +485,11 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               Contents of the Access Request
               <hr />
             </Typography>
-            <Stack gap={2}>
+            <Stack
+              sx={{
+                gap: 2,
+              }}
+            >
               {submission?.researchProjectSnapshot
                 ?.intendedDataUseStatement && (
                 <section>
@@ -536,7 +552,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             </Stack>
           </section>
         </Stack>
-      </Grid2>
-    </Grid2>
+      </Grid>
+    </Grid>
   )
 }

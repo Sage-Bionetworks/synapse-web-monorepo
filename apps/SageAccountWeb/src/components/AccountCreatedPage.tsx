@@ -1,4 +1,4 @@
-import { Button, Grid, Link, Typography } from '@mui/material'
+import { Button, GridLegacy as Grid, Link, Typography } from '@mui/material'
 import { Link as RouterLink } from 'react-router'
 import {
   processRedirectURLInOneSage,
@@ -113,7 +113,13 @@ export const AccountCreatedPage = (props: AccountCreatedPageProps) => {
                   </Link>
                 </Typography>
 
-                <Grid container spacing={4} mx={{ paddingTop: '20px' }}>
+                <Grid
+                  container
+                  spacing={4}
+                  sx={{
+                    mx: { paddingTop: '20px' },
+                  }}
+                >
                   {sourceAppConfigs?.map(config => {
                     if (
                       config.appId != sourceApp?.appId &&

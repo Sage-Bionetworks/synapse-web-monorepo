@@ -58,10 +58,12 @@ export function AccountLevelBadges({ userId }: AccountLevelBadgesProps) {
       <ConfirmationDialog {...revokeCertificationConfirmationDialogProps} />
       {hasBadges && (
         <Box
-          display="flex"
-          gap="10px"
-          justifyContent="flex-start"
-          flexWrap="wrap"
+          sx={{
+            display: 'flex',
+            gap: '10px',
+            justifyContent: 'flex-start',
+            flexWrap: 'wrap',
+          }}
         >
           {Object.entries(badgeStatuses).map(([key, value]) => {
             const badgeType = key as AccountLevelBadgeType

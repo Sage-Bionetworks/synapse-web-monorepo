@@ -36,7 +36,13 @@ export default function TeamBadge(props: TeamBadgeProps) {
   const Tag = disableHref ? 'span' : Link
 
   return (
-    <Box component={'span'} display={'inline-flex'} alignItems={'center'}>
+    <Box
+      component={'span'}
+      sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+      }}
+    >
       <IconSvg icon={icon} fontSize={'small'} />
       <Tag
         style={{ marginLeft: '5px' }}

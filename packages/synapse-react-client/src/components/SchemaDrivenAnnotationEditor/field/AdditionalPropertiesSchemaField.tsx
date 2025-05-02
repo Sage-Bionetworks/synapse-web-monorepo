@@ -8,7 +8,7 @@ import { isEqual } from 'lodash-es'
 import { useEffect, useState } from 'react'
 import FullWidthAlert from '../../FullWidthAlert/FullWidthAlert'
 import { convertToArray } from '../AnnotationEditorUtils'
-import { Grid, InputLabel } from '@mui/material'
+import { GridLegacy as Grid, InputLabel } from '@mui/material'
 import { AdditionalPropertyContextProvider } from '../template/AdditionalPropertyContext'
 
 // Matches ####-##-##T##:##:##.###Z, e.g. 1970-01-01T12:00:000Z

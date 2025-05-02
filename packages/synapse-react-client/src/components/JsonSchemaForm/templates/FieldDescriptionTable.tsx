@@ -41,7 +41,13 @@ export default function FieldDescriptionTable(
 
   return (
     <Collapse className="field-description" in={true}>
-      <Box component="table" className="FieldDescriptionTable" mb={1}>
+      <Box
+        component="table"
+        className="FieldDescriptionTable"
+        sx={{
+          mb: 1,
+        }}
+      >
         <tbody>
           {description && (
             <tr>

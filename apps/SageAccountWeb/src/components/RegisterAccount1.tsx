@@ -210,7 +210,13 @@ export const RegisterAccount1 = () => {
   if (isSignedIn) {
     return (
       <StyledOuterContainer className="RegisterAccount1">
-        <Box mx={'auto'} mt={15} width={'fit-content'}>
+        <Box
+          sx={{
+            mx: 'auto',
+            mt: 15,
+            width: 'fit-content',
+          }}
+        >
           <RegisterPageLogoutPrompt
             onLogout={() => {
               void sessionContext.refreshSession()
@@ -231,9 +237,9 @@ export const RegisterAccount1 = () => {
               <Box sx={{ py: 10, px: 8, height: '100%', position: 'relative' }}>
                 <BackButtonForPage page={page} setPage={setPage} />
                 <Box
-                  display="flex"
-                  flexDirection="column"
                   sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
                     minHeight: { xs: '100%', md: '530px' },
                   }}
                 >
@@ -267,7 +273,15 @@ export const RegisterAccount1 = () => {
                           Create account with your email
                         </Button>
                       </div>
-                      {lastLoginInfo && <Box mt="auto">{lastLoginInfo}</Box>}
+                      {lastLoginInfo && (
+                        <Box
+                          sx={{
+                            mt: 'auto',
+                          }}
+                        >
+                          {lastLoginInfo}
+                        </Box>
+                      )}
                     </>
                   )}
                   {page === Pages.EMAIL_REGISTRATION && (

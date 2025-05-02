@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@mui/material": "^7.0.2",
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
-    "@mui/material": "^5.15.13",
     "katex": "^0.16.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

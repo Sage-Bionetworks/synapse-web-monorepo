@@ -8,13 +8,36 @@ import { formatReleaseCardData } from './ReleaseCardUtils'
 function StatGrid({ value, label }: ReleaseCardStat) {
   return (
     <>
-      <Box gridColumn="span 1" gridRow="span 1" justifySelf="flex-end">
-        <Typography variant="body1" lineHeight="20px">
+      <Box
+        sx={{
+          gridColumn: 'span 1',
+          gridRow: 'span 1',
+          justifySelf: 'flex-end',
+        }}
+      >
+        <Typography
+          variant="body1"
+          sx={{
+            lineHeight: '20px',
+          }}
+        >
           {value}
         </Typography>
       </Box>
-      <Box gridColumn="span 1" gridRow="span 1" justifySelf="flex-start">
-        <Typography variant="body1" lineHeight="20px" color="grey.700">
+      <Box
+        sx={{
+          gridColumn: 'span 1',
+          gridRow: 'span 1',
+          justifySelf: 'flex-start',
+        }}
+      >
+        <Typography
+          variant="body1"
+          sx={{
+            lineHeight: '20px',
+            color: 'grey.700',
+          }}
+        >
           {label}
         </Typography>
       </Box>
@@ -52,33 +75,56 @@ export function ReleaseCardMedium({
       className={`ReleaseCard ${
         includePortalCardClass ? 'SRC-portalCard' : ''
       }`}
-      display="grid"
-      gridTemplateColumns={`repeat(${nCols}, 1fr)`} // columns are controlled by this component, not the parent grid
-      columnGap="10px"
-      gridTemplateRows="subgrid" // rows are controlled by parent grid, so text will be aligned across cards
-      gridRow={`span ${nRows}`} // ensures that card spans the correct number of rows in the parent grid
-      rowGap="0px" // prevent parent grid from applying its gap to the subgrid rows
-      alignItems="center"
-      justifyItems="center"
-      textAlign="center"
-      padding="30px 40px 40px"
-      my={0} // remove margin added by .SRC-portalCard - CardContainer list will set the gap between cards
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${nCols}, 1fr)`, // columns are controlled by this component, not the parent grid
+        columnGap: '10px',
+        gridTemplateRows: 'subgrid', // rows are controlled by parent grid, so text will be aligned across cards
+        gridRow: `span ${nRows}`, // ensures that card spans the correct number of rows in the parent grid
+        rowGap: '0px', // prevent parent grid from applying its gap to the subgrid rows
+        alignItems: 'center',
+        justifyItems: 'center',
+        textAlign: 'center',
+        padding: '30px 40px 40px',
+        my: 0, // remove margin added by .SRC-portalCard - CardContainer list will set the gap between cards
+      }}
     >
-      <Box gridColumn={SPAN_ALL_COLS} gridRow="span 1" alignSelf="end">
+      <Box
+        sx={{
+          gridColumn: SPAN_ALL_COLS,
+          gridRow: 'span 1',
+          alignSelf: 'end',
+        }}
+      >
         <Typography variant="headline1">{releaseName}</Typography>
       </Box>
-      <Box gridColumn={SPAN_ALL_COLS} gridRow="span 1" mb="30px">
+      <Box
+        sx={{
+          gridColumn: SPAN_ALL_COLS,
+          gridRow: 'span 1',
+          mb: '30px',
+        }}
+      >
         <Typography
           variant="body1"
-          lineHeight="20px"
-          fontStyle="italic"
-          color="grey.800"
+          sx={{
+            lineHeight: '20px',
+            fontStyle: 'italic',
+            color: 'grey.800',
+          }}
         >{`Released ${releaseDate.value}`}</Typography>
       </Box>
       {stats.map(stat => (
         <StatGrid key={stat.label} {...stat} />
       ))}
-      <Box gridColumn={SPAN_ALL_COLS} gridRow="span 1" mt="20px" mb="5px">
+      <Box
+        sx={{
+          gridColumn: SPAN_ALL_COLS,
+          gridRow: 'span 1',
+          mt: '20px',
+          mb: '5px',
+        }}
+      >
         <Button
           component={ReactRouterLink}
           to={releaseCardConfig.requestAccessPath}
@@ -87,14 +133,21 @@ export function ReleaseCardMedium({
           Request Access
         </Button>
       </Box>
-      <Box gridColumn={SPAN_ALL_COLS} gridRow="span 1">
+      <Box
+        sx={{
+          gridColumn: SPAN_ALL_COLS,
+          gridRow: 'span 1',
+        }}
+      >
         {releaseEntityId && (
           <Link
             href={`${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${releaseEntityId}`}
             target="_blank"
             rel="noreferrer"
-            fontSize="14px"
-            sx={{ textDecoration: 'none' }}
+            sx={{
+              fontSize: '14px',
+              textDecoration: 'none',
+            }}
           >
             View on Synapse.org
           </Link>

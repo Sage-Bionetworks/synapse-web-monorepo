@@ -51,11 +51,11 @@ const FeaturedResearchCard = ({
   }
   return (
     <Box
-      display={'flex'}
-      gap={'30px'}
-      borderBottom={'1px solid'}
-      padding={'24px 0'}
       sx={{
+        display: 'flex',
+        gap: '30px',
+        borderBottom: '1px solid',
+        padding: '24px 0',
         borderColor: 'grey.300',
         flexDirection: {
           xs: 'column',
@@ -63,8 +63,19 @@ const FeaturedResearchCard = ({
         },
       }}
     >
-      <Stack useFlexGap gap={'10px'}>
-        <Typography variant="headline2" color="gray.1000" fontSize={'21px'}>
+      <Stack
+        useFlexGap
+        sx={{
+          gap: '10px',
+        }}
+      >
+        <Typography
+          variant="headline2"
+          sx={{
+            color: 'gray.1000',
+            fontSize: '21px',
+          }}
+        >
           <Link
             href={research.values[linkColIndex] ?? ''}
             target="_blank"
@@ -79,7 +90,12 @@ const FeaturedResearchCard = ({
             {research.values[titleColIndex]}
           </Link>
         </Typography>
-        <Typography lineHeight={'normal'} color={'grey.600'}>
+        <Typography
+          sx={{
+            lineHeight: 'normal',
+            color: 'grey.600',
+          }}
+        >
           {research.values[publicationDateColIndex] &&
             formatDate(
               dayjs(Number(research.values[publicationDateColIndex])),
@@ -141,7 +157,12 @@ const FeaturedResearchTopCard = ({
           }}
         />
       </Fade>
-      <Stack useFlexGap gap={'16px'}>
+      <Stack
+        useFlexGap
+        sx={{
+          gap: '16px',
+        }}
+      >
         <Typography
           variant="headline2"
           sx={{ color: 'grey.1000', fontSize: { xs: '24px', md: '36px' } }}
@@ -160,7 +181,12 @@ const FeaturedResearchTopCard = ({
             {research.values[titleColIndex]}
           </Link>
         </Typography>
-        <Typography fontSize={'18px'} lineHeight={'22.4px'}>
+        <Typography
+          sx={{
+            fontSize: '18px',
+            lineHeight: '22.4px',
+          }}
+        >
           {research.values[descriptionColIndex] ?? ''}
         </Typography>
         <Link href={research.values[linkColIndex] ?? ''} target={'_blank'}>
@@ -251,7 +277,11 @@ function FeaturedResearch(props: FeaturedResearchProps) {
         <Box sx={{ display: { xs: 'none', md: 'block' } }}>
           {featuredResearchHeader}
         </Box>
-        <Stack gap="16px">
+        <Stack
+          sx={{
+            gap: '16px',
+          }}
+        >
           {remainingCards.map((research, index) => (
             <FeaturedResearchCard
               entityId={entityId}

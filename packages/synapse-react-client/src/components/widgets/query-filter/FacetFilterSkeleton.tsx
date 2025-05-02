@@ -2,7 +2,13 @@ import { Box, Skeleton, Stack } from '@mui/material'
 
 export function FacetFilterSkeleton() {
   const facetFilterFormRow = (
-    <Stack direction={'row'} gap={'10px'} sx={{ my: 1 }}>
+    <Stack
+      direction={'row'}
+      sx={{
+        gap: '10px',
+        my: 1,
+      }}
+    >
       <Skeleton width={'15px'} />
       <Skeleton width={'40%'} />
     </Stack>

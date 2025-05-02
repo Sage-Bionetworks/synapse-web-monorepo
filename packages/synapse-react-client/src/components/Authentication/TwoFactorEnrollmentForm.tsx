@@ -5,7 +5,18 @@ import {
   useStartTwoFactorEnrollment,
 } from '@/synapse-queries/auth/useTwoFactorEnrollment'
 import { StyledComponent } from '@emotion/styled'
-import { Box, BoxProps, Button, Divider, IconButton, Link, Paper, Stack, styled, Typography } from '@mui/material'
+import {
+  Box,
+  BoxProps,
+  Button,
+  Divider,
+  IconButton,
+  Link,
+  Paper,
+  Stack,
+  styled,
+  Typography,
+} from '@mui/material'
 import { TotpSecret } from '@sage-bionetworks/synapse-types'
 import { toCanvas } from 'qrcode'
 import { useEffect, useRef, useState } from 'react'
@@ -216,10 +227,12 @@ export default function TwoFactorEnrollmentForm(
               />
             </Box>
             <Box
-              display={'flex'}
-              justifyContent={'center'}
-              alignItems={'middle'}
-              height={'auto'}
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'middle',
+                height: 'auto',
+              }}
             >
               {!hasQrCode && <SynapseSpinner size={50} />}
               <canvas
@@ -250,7 +263,13 @@ export default function TwoFactorEnrollmentForm(
                 })
               }}
             >
-              <Stack direction={'row'} gap={2} height={'48px'}>
+              <Stack
+                direction={'row'}
+                sx={{
+                  gap: 2,
+                  height: '48px',
+                }}
+              >
                 <TextField
                   noWrapInFormControl
                   inputProps={{ maxLength: totpSecret?.digits }}

@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@mui/icons-material": "^5.15.13",
-    "@mui/material": "^5.15.13",
+    "@mui/icons-material": "^7.0.2",
+    "@mui/material": "^7.0.2",
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "katex": "^0.16.10",
