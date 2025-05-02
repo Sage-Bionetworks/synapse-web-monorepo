@@ -1,12 +1,16 @@
-import SynapseClient from '@/synapse-client'
+import { allowNotFoundError } from '@/synapse-client/SynapseClientUtils'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
+  V2Doi as Doi,
+  DoiAssociation,
   DoiRequest,
   DoiResponse,
+  GetRepoV1DoiRequest,
   waitForAsyncResult,
+  GetRepoV1DoiAssociationRequest,
+  DoiObjectType,
 } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { Doi, DoiAssociation } from '@sage-bionetworks/synapse-types'
 import {
   useMutation,
   UseMutationOptions,
@@ -16,43 +20,34 @@ import {
 } from '@tanstack/react-query'
 
 export function useGetDOIAssociation(
-  objectId: string,
-  versionNumber?: number,
-  objectType = 'ENTITY',
+  request: GetRepoV1DoiAssociationRequest,
   options?: Partial<UseQueryOptions<DoiAssociation | null, SynapseClientError>>,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { synapseClient, keyFactory } = useSynapseContext()
   return useQuery({
     ...options,
-    queryKey: keyFactory.getDOIAssociationQueryKey(
-      objectType,
-      objectId,
-      versionNumber,
-    ),
+    queryKey: keyFactory.getDOIAssociationQueryKey(request),
 
     queryFn: () =>
-      SynapseClient.getDOIAssociation(
-        accessToken,
-        objectId,
-        versionNumber,
-        objectType,
+      allowNotFoundError(() =>
+        synapseClient.doiServicesClient.getRepoV1DoiAssociation(request),
       ),
   })
 }
 
 export function useGetDOI(
-  objectId: string,
-  versionNumber?: number,
-  objectType = 'ENTITY',
+  request: GetRepoV1DoiRequest,
   options?: Partial<UseQueryOptions<Doi | null, SynapseClientError>>,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { synapseClient, keyFactory } = useSynapseContext()
   return useQuery({
     ...options,
-    queryKey: keyFactory.getDOIQueryKey(objectType, objectId, versionNumber),
+    queryKey: keyFactory.getDOIQueryKey(request),
 
     queryFn: () =>
-      SynapseClient.getDOI(accessToken, objectId, versionNumber, objectType),
+      allowNotFoundError(() =>
+        synapseClient.doiServicesClient.getRepoV1Doi(request),
+      ),
   })
 }
 
@@ -89,19 +84,14 @@ export function useCreateOrUpdateDOI(
       }
       const requestDoi = args[1].doi
       if (requestDoi) {
+        const matchingRequestObject: GetRepoV1DoiAssociationRequest = {
+          id: requestDoi.objectId!,
+          type: requestDoi.objectType as DoiObjectType,
+          portalId: requestDoi.portalId,
+          version: requestDoi.objectVersion,
+        }
         queryClient.invalidateQueries({
-          queryKey: keyFactory.getDOIAssociationQueryKey(
-            requestDoi.objectType!,
-            requestDoi.objectId!,
-            requestDoi.objectVersion,
-          ),
-        })
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getDOIQueryKey(
-            requestDoi.objectType!,
-            requestDoi.objectId!,
-            requestDoi.objectVersion,
-          ),
+          queryKey: keyFactory.getDOIQueryKey(matchingRequestObject),
         })
       }
     },

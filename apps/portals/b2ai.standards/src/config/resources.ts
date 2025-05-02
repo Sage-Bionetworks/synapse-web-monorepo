@@ -1,4 +1,6 @@
-const DST_TABLE_ID = 'syn66330015' // DST_denormalized_current
+const DST_TABLE_ID = 'syn66330015' // points to DST_denormalized_current.
+// To change DST_denormalized version, change it in that materialized view definition.
+
 const STANDARDS_CHALLENGE_TABLE_ID = 'syn65913973'
 const DATASET_TABLE_ID = 'syn66330217'
 const ORGANIZATION_TABLE_ID = 'syn63096836'

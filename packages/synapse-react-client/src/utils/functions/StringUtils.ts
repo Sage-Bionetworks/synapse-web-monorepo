@@ -75,3 +75,14 @@ export function validatePassword(newPassword: string) {
   }
   return undefined
 }
+
+export function copyStringToClipboard(value: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    // PORTALS-3571: setTimeout necessary on Safari
+    setTimeout(() => {
+      // use the Clipboard API
+      // https://caniuse.com/mdn-api_clipboard_writetext
+      navigator.clipboard.writeText(value).then(resolve).catch(reject)
+    }, 0)
+  })
+}

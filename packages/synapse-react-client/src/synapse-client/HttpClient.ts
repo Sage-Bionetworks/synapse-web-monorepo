@@ -26,7 +26,7 @@ export const doPost = <T>(
     headers: {
       Accept: '*/*',
       'Access-Control-Request-Headers': 'authorization',
-      'Content-Type': 'application/json; charset=utf8',
+      'Content-Type': 'application/json; charset=UTF-8',
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
     },
     method: 'POST',
@@ -89,7 +89,7 @@ export const doPut = <T>(
     headers: {
       Accept: '*/*',
       'Access-Control-Request-Headers': 'authorization',
-      'Content-Type': 'application/json; charset=utf8',
+      'Content-Type': 'application/json; charset=UTF-8',
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
     },
     method: 'PUT',

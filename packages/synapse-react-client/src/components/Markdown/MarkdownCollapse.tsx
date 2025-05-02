@@ -7,6 +7,7 @@ import {
   KeyboardArrowDownTwoTone,
   KeyboardArrowUpTwoTone,
 } from '@mui/icons-material'
+import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 export type MarkdownCollapseProps = {
   // The text that should be shown.  If not given, will default to "full text"
@@ -93,14 +94,14 @@ export const MarkdownCollapse = (props: MarkdownCollapseProps) => {
               variant="smallLink"
               onClick={() => {
                 if (plainText) {
-                  navigator.clipboard
-                    .writeText(plainText)
-                    .then(() => {
+                  copyStringToClipboard(plainText).then(
+                    () => {
                       displayToast('Successfully copied to the clipboard')
-                    })
-                    .catch(err => {
+                    },
+                    err => {
                       console.error(err)
-                    })
+                    },
+                  )
                 }
               }}
               sx={{

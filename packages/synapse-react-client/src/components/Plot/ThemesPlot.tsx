@@ -8,7 +8,6 @@ import {
   QueryResultBundle,
   RowSet,
 } from '@sage-bionetworks/synapse-types'
-import _ from 'lodash-es'
 import Plotly from 'plotly.js-basic-dist'
 import { useEffect, useState } from 'react'
 import { RequiredKeysOf } from 'type-fest'
@@ -21,6 +20,9 @@ import {
   GraphItem,
   PlotProps,
 } from './types'
+import first from 'lodash-es/first'
+import orderBy from 'lodash-es/orderBy'
+import cloneDeep from 'lodash-es/cloneDeep'
 
 export type ThemesPlotProps = {
   onPointClick: ({ facetValue, type, event }: ClickCallbackParams) => void
@@ -192,7 +194,7 @@ const fadeColors = (colors: { [key: string]: string }, opacity: string) => {
 }
 
 const getTooltip = (data: GraphItem[], filter: string) => {
-  return _.first(data.filter(item => item.y === filter).map(item => item.info))
+  return first(data.filter(item => item.y === filter).map(item => item.info))
 }
 
 export function ThemesPlot({
@@ -251,10 +253,8 @@ export function ThemesPlot({
       .sort((a, b) => b.count - a.count)
       .map(item => item.y)
     xMaxForDotPlot = Math.max(...dotPlotQueryData.map(item => Number(item.x)))
-    topBarPlotDataSorted = _.orderBy(getTotalsByProp(topBarPlotData, 'y'), [
-      'y',
-    ])
-    xLabelsForTopBarPlot = _.orderBy(
+    topBarPlotDataSorted = orderBy(getTotalsByProp(topBarPlotData, 'y'), ['y'])
+    xLabelsForTopBarPlot = orderBy(
       getTotalsByProp<TotalsGroupByGroup>(topBarPlotData, 'group'),
       ['group'],
     ).map(item => item.group)
@@ -295,7 +295,7 @@ export function ThemesPlot({
               <div className="ThemesPlot__topBarPlot__plot">
                 <BarPlot
                   style={{ width: '100%', height: '100%' }}
-                  layoutConfig={_.cloneDeep(barLayoutConfig)}
+                  layoutConfig={cloneDeep(barLayoutConfig)}
                   optionsConfig={{ ...optionsConfig }}
                   plotData={topBarPlotData}
                   isTop={true}

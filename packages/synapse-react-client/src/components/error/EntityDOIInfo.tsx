@@ -1,5 +1,6 @@
 import { useGetDOI } from '@/synapse-queries/doi/useDOI'
 import { Box, Typography } from '@mui/material'
+import { DoiObjectType } from '@sage-bionetworks/synapse-client'
 
 export type EntityDOIInfoProps = {
   entityId: string
@@ -8,9 +9,12 @@ export type EntityDOIInfoProps = {
 
 export default function EntityDOIInfo(props: EntityDOIInfoProps) {
   const { entityId, version } = props
-  const { data: doi } = useGetDOI(entityId, version, 'ENTITY', {
-    enabled: !!entityId,
-  })
+  const { data: doi } = useGetDOI(
+    { id: entityId, version, type: DoiObjectType.ENTITY },
+    {
+      enabled: !!entityId,
+    },
+  )
   if (!doi) {
     return <></>
   }
@@ -30,9 +34,9 @@ export default function EntityDOIInfo(props: EntityDOIInfoProps) {
       </Typography>
       <Box>
         <Typography variant="body1">
-          {doi.creators.map(doiCreator => doiCreator.creatorName).join(', & ')}{' '}
+          {doi.creators?.map(doiCreator => doiCreator.creatorName).join(', & ')}{' '}
           ({doi.publicationYear}).{' '}
-          {doi.titles.map(doiTitle => `${doiTitle.title}.`)} Synapse.
+          {doi.titles?.map(doiTitle => `${doiTitle.title}.`)} Synapse.
           https://doi.org/{doi.doiUri}
         </Typography>
       </Box>

@@ -15762,191 +15762,6 @@
         }
       }
     },
-    "/repo/v1/projectSettings/{id}": {
-      "get": {
-        "tags": ["Project Settings Services"],
-        "operationId": "get-/repo/v1/projectSettings/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "the ID of the ,<a href=\"${org.sagebionetworks.repo.model.project.ProjectSetting}\">,ProjectSetting,</a>",
-            "schema": { "type": "string" }
-          }
-        ],
-        "security": [{ "bearerAuth": [] }],
-        "responses": {
-          "200": {
-            "description": "the ,<a href=\"${org.sagebionetworks.repo.model.project.ProjectSetting}\">,ProjectSetting,</a>, with the corresponding ID, if it exists.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.ProjectSetting"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Project Settings Services"],
-        "operationId": "delete-/repo/v1/projectSettings/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "The ID of the ,<a href=\"${org.sagebionetworks.repo.model.project.ProjectSetting}\">,ProjectSetting,</a>,. This is not the ID of the project.",
-            "schema": { "type": "string" }
-          }
-        ],
-        "security": [{ "bearerAuth": [] }],
-        "responses": { "204": { "description": "Void" } }
-      }
-    },
-    "/repo/v1/projectSettings/{projectId}/type/{type}": {
-      "get": {
-        "tags": ["Project Settings Services"],
-        "operationId": "get-/repo/v1/projectSettings/{projectId}/type/{type}",
-        "parameters": [
-          {
-            "name": "projectId",
-            "in": "path",
-            "required": true,
-            "description": "the ID of the project",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "type",
-            "in": "path",
-            "required": true,
-            "description": "The ,<a href=\"${org.sagebionetworks.repo.model.project.ProjectSettingsType}\">,ProjectSettingsType,</a>, to get.",
-            "schema": {
-              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.ProjectSettingsType"
-            }
-          }
-        ],
-        "security": [{ "bearerAuth": [] }],
-        "responses": {
-          "200": {
-            "description": "Auto-generated description",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.ProjectSetting"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/repo/v1/projectSettings": {
-      "post": {
-        "tags": ["Project Settings Services"],
-        "operationId": "post-/repo/v1/projectSettings",
-        "parameters": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.ProjectSetting"
-              }
-            }
-          },
-          "required": true
-        },
-        "security": [{ "bearerAuth": [] }],
-        "responses": {
-          "201": {
-            "description": "The created ,<a href=\"${org.sagebionetworks.repo.model.project.ProjectSetting}\">,ProjectSetting,</a>,.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.ProjectSetting"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": ["Project Settings Services"],
-        "operationId": "put-/repo/v1/projectSettings",
-        "parameters": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.ProjectSetting"
-              }
-            }
-          },
-          "required": true
-        },
-        "security": [{ "bearerAuth": [] }],
-        "responses": { "200": { "description": "Void" } }
-      }
-    },
-    "/repo/v1/storageLocation": {
-      "post": {
-        "tags": ["Project Settings Services"],
-        "operationId": "post-/repo/v1/storageLocation",
-        "parameters": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.StorageLocationSetting"
-              }
-            }
-          },
-          "required": true
-        },
-        "security": [{ "bearerAuth": [] }],
-        "responses": {
-          "201": {
-            "description": "Auto-generated description",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.StorageLocationSetting"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/repo/v1/storageLocation/{id}": {
-      "get": {
-        "tags": ["Project Settings Services"],
-        "operationId": "get-/repo/v1/storageLocation/{id}",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "the ID of the storage location setting.",
-            "schema": { "type": "number" }
-          }
-        ],
-        "security": [{ "bearerAuth": [] }],
-        "responses": {
-          "200": {
-            "description": "Auto-generated description",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.StorageLocationSetting"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/repo/v1/portal": {
       "post": {
         "tags": ["Portals Services"],
@@ -16138,6 +15953,218 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/org.sagebionetworks.repo.model.AccessControlList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repo/v1/portal/{portalId}/permissions": {
+      "get": {
+        "tags": ["Portals Services"],
+        "operationId": "get-/repo/v1/portal/{portalId}/permissions",
+        "parameters": [
+          {
+            "name": "portalId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Auto-generated description",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.auth.UserPortalPermissions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repo/v1/projectSettings/{id}": {
+      "get": {
+        "tags": ["Project Settings Services"],
+        "operationId": "get-/repo/v1/projectSettings/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "the ID of the ,<a href=\"${org.sagebionetworks.repo.model.project.ProjectSetting}\">,ProjectSetting,</a>",
+            "schema": { "type": "string" }
+          }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "the ,<a href=\"${org.sagebionetworks.repo.model.project.ProjectSetting}\">,ProjectSetting,</a>, with the corresponding ID, if it exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.ProjectSetting"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Project Settings Services"],
+        "operationId": "delete-/repo/v1/projectSettings/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the ,<a href=\"${org.sagebionetworks.repo.model.project.ProjectSetting}\">,ProjectSetting,</a>,. This is not the ID of the project.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "204": { "description": "Void" } }
+      }
+    },
+    "/repo/v1/projectSettings/{projectId}/type/{type}": {
+      "get": {
+        "tags": ["Project Settings Services"],
+        "operationId": "get-/repo/v1/projectSettings/{projectId}/type/{type}",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "description": "the ID of the project",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "description": "The ,<a href=\"${org.sagebionetworks.repo.model.project.ProjectSettingsType}\">,ProjectSettingsType,</a>, to get.",
+            "schema": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.ProjectSettingsType"
+            }
+          }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Auto-generated description",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.ProjectSetting"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repo/v1/projectSettings": {
+      "post": {
+        "tags": ["Project Settings Services"],
+        "operationId": "post-/repo/v1/projectSettings",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.ProjectSetting"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "201": {
+            "description": "The created ,<a href=\"${org.sagebionetworks.repo.model.project.ProjectSetting}\">,ProjectSetting,</a>,.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.ProjectSetting"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Project Settings Services"],
+        "operationId": "put-/repo/v1/projectSettings",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.ProjectSetting"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Void" } }
+      }
+    },
+    "/repo/v1/storageLocation": {
+      "post": {
+        "tags": ["Project Settings Services"],
+        "operationId": "post-/repo/v1/storageLocation",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.StorageLocationSetting"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "201": {
+            "description": "Auto-generated description",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.StorageLocationSetting"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repo/v1/storageLocation/{id}": {
+      "get": {
+        "tags": ["Project Settings Services"],
+        "operationId": "get-/repo/v1/storageLocation/{id}",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "the ID of the storage location setting.",
+            "schema": { "type": "number" }
+          }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Auto-generated description",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.project.StorageLocationSetting"
                 }
               }
             }
@@ -19118,6 +19145,11 @@
         },
         "description": "Represents a reference to the id and version of an entity to be used in collections."
       },
+      "org.sagebionetworks.repo.model.auth.UserPortalPermissions": {
+        "type": "object",
+        "properties": { "canMintDoi": { "type": "boolean" } },
+        "description": "The permissions that a user has for a specific Synapse portal."
+      },
       "org.sagebionetworks.repo.model.project.ProxyStorageLocationSettings": {
         "type": "object",
         "properties": {
@@ -19407,19 +19439,6 @@
         "required": ["concreteType"],
         "discriminator": { "propertyName": "concreteType" }
       },
-      "org.sagebionetworks.repo.model.agent.AgentChatResponse": {
-        "type": "object",
-        "properties": {
-          "concreteType": {
-            "type": "string",
-            "enum": ["org.sagebionetworks.repo.model.agent.AgentChatResponse"]
-          },
-          "sessionId": { "type": "string" },
-          "responseText": { "type": "string" }
-        },
-        "description": "The response to an agent chat request.",
-        "required": ["concreteType"]
-      },
       "org.sagebionetworks.repo.model.audit.AccessRecord": {
         "type": "object",
         "properties": {
@@ -19463,6 +19482,19 @@
           "authenticationMethod": { "type": "string" }
         },
         "description": "Data recored from a single web-services methods."
+      },
+      "org.sagebionetworks.repo.model.agent.AgentChatResponse": {
+        "type": "object",
+        "properties": {
+          "concreteType": {
+            "type": "string",
+            "enum": ["org.sagebionetworks.repo.model.agent.AgentChatResponse"]
+          },
+          "sessionId": { "type": "string" },
+          "responseText": { "type": "string" }
+        },
+        "description": "The response to an agent chat request.",
+        "required": ["concreteType"]
       },
       "org.sagebionetworks.repo.model.table.FacetColumnRequest": {
         "type": "object",
@@ -24687,17 +24719,6 @@
         },
         "description": "Response from adding a part to multi-part upload or copy."
       },
-      "org.sagebionetworks.repo.model.agent.TraceEventsRequest": {
-        "type": "object",
-        "properties": {
-          "jobId": { "type": "string" },
-          "newerThanTimestamp": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "description": "A request to get a single page of trace events for a specified asynchronous job."
-      },
       "org.sagebionetworks.repo.model.principal.AccountCreationToken": {
         "type": "object",
         "properties": {
@@ -24708,6 +24729,17 @@
           "encodedMembershipInvtnSignedToken": { "type": "string" }
         },
         "description": "Information needed to start the process of creating a new account."
+      },
+      "org.sagebionetworks.repo.model.agent.TraceEventsRequest": {
+        "type": "object",
+        "properties": {
+          "jobId": { "type": "string" },
+          "newerThanTimestamp": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "A request to get a single page of trace events for a specified asynchronous job."
       },
       "org.sagebionetworks.repo.model.search.query.SearchFieldName": {
         "type": "string",

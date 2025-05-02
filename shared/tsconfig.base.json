@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
-    "outDir": "${configDir}/build",
-    "noEmit": true,
+    "outDir": "${configDir}/node_modules/.cache/.tsc_cache/build",
     "strict": true,
-    "composite": false,
+    "composite": true,
     "declaration": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
