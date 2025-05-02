@@ -12,6 +12,8 @@ import {
 import {
   DiscussionSearchRequest,
   EntityLookupRequest,
+  GetRepoV1DoiAssociationRequest,
+  GetRepoV1DoiRequest,
   type UserSubmissionSearchRequest,
 } from '@sage-bionetworks/synapse-client'
 import { OIDCAuthorizationRequest } from '@sage-bionetworks/synapse-client/generated/models/OIDCAuthorizationRequest'
@@ -704,26 +706,12 @@ export class KeyFactory {
     return this.getKey('currentUserHasAuthorizedClient', request)
   }
 
-  public getDOIAssociationQueryKey(
-    objectType: string,
-    objectId: string,
-    versionNumber?: number,
-  ) {
-    return this.getKey([
-      'doi',
-      'association',
-      objectType,
-      objectId,
-      versionNumber,
-    ])
+  public getDOIAssociationQueryKey(request: GetRepoV1DoiAssociationRequest) {
+    return this.getKey(['doi', request, 'association'])
   }
 
-  public getDOIQueryKey(
-    objectType: string,
-    objectId: string,
-    versionNumber?: number,
-  ) {
-    return this.getKey(['doi', objectType, objectId, versionNumber])
+  public getDOIQueryKey(request: GetRepoV1DoiRequest) {
+    return this.getKey(['doi', request])
   }
 
   public getAllSubscribersQueryKey() {
@@ -983,5 +971,13 @@ export class KeyFactory {
 
   public getFileContentKey(fileURL?: string) {
     return this.getKey('fileContent', fileURL)
+  }
+
+  public getPortalKey(portalId: string) {
+    return this.getKey('portal', portalId)
+  }
+
+  public getPortalPermissionsKey(portalId: string) {
+    return this.getKey('portal', portalId, 'permissions')
   }
 }

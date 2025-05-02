@@ -5,6 +5,7 @@ import {
   UseMutationResult,
   UseQueryResult,
 } from '@tanstack/react-query'
+import noop from 'lodash-es/noop'
 
 export function getUseQuerySuccessMock<TData>(
   data: TData,
@@ -27,7 +28,7 @@ export function getUseQuerySuccessMock<TData>(
     isRefetching: false,
     isStale: false,
     isSuccess: true,
-    refetch: jest.fn(),
+    refetch: noop as any,
     status: 'success',
     failureReason: null,
     fetchStatus: 'idle',
@@ -37,8 +38,8 @@ export function getUseQuerySuccessMock<TData>(
   }
 }
 
-export function getUseQueryLoadingMock<TData>(): QueryObserverLoadingResult<
-  TData,
+export function getUseQueryLoadingMock(): QueryObserverLoadingResult<
+  never,
   never
 > {
   return {
@@ -59,7 +60,7 @@ export function getUseQueryLoadingMock<TData>(): QueryObserverLoadingResult<
     isRefetching: false,
     isStale: false,
     isSuccess: false,
-    refetch: jest.fn(),
+    refetch: noop as any,
     status: 'pending',
     failureReason: null,
     fetchStatus: 'fetching',
@@ -121,7 +122,7 @@ export function getUseQueryIdleMock(): UseQueryResult<never, never> {
     isRefetching: false,
     isStale: false,
     isSuccess: false,
-    refetch: jest.fn(),
+    refetch: noop as any,
     status: 'pending',
     failureReason: null,
     fetchStatus: 'idle',
