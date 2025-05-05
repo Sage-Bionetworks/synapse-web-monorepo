@@ -37,12 +37,14 @@ export const tableQueryUseQueryDefaults = {
  * @deprecated - use useGetQueryResultBundleWithAsyncStatus. That hook can be renamed and this can be removed
  *  when all cases are using useGetQueryResultBundleWithAsyncStatus
  */
-export default function useGetQueryResultBundle(
+export default function useGetQueryResultBundle<TData = QueryResultBundle>(
   queryBundleRequest: QueryBundleRequest,
-  options?: Partial<UseQueryOptions<QueryResultBundle, SynapseClientError>>,
+  options?: Partial<
+    UseQueryOptions<QueryResultBundle, SynapseClientError, TData>
+  >,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery({
+  return useQuery<QueryResultBundle, SynapseClientError, TData>({
     ...tableQueryUseQueryDefaults,
     ...options,
     queryKey: keyFactory.getEntityTableQueryResultQueryKey(

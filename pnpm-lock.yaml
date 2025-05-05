@@ -450,6 +450,9 @@ importers:
       katex:
         specifier: ^0.16.10
         version: 0.16.10
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
       pluralize:
         specifier: ^8.0.0
         version: 8.0.0
@@ -1967,7 +1970,7 @@ importers:
         version: 1.0.1
       postcss-normalize:
         specifier: ^10.0.1
-        version: 10.0.1(browserslist@4.23.3)(postcss@8.4.39)
+        version: 10.0.1(browserslist@4.23.2)(postcss@8.4.39)
       prettier:
         specifier: ^2.8.8
         version: 2.8.8
@@ -7565,7 +7568,6 @@ packages:
     resolution: {integrity: sha512-NXeHXtFLZd6QGbS5af9tiwIoI+BVptHUcGkkF/ouvEPa+ZiZvK0xek4Yh6cd5jNDEg8P+tIA5xxB2ZC/RnqXyw==}
     peerDependencies:
       eslint: '>= 5'
-    bundledDependencies: []
 
   eslint-plugin-jest-dom@5.5.0:
     resolution: {integrity: sha512-CRlXfchTr7EgC3tDI7MGHY6QjdJU5Vv2RPaeeGtkXUHnKZf04kgzMPIJUXt4qKCvYWVVIEo9ut9Oq1vgXAykEA==}
@@ -8830,7 +8832,6 @@ packages:
     resolution: {integrity: sha512-Quz3MvAwHxVYNXsOByL7xI5EB2WYOeFswqaHIA3qOK3isRWTxiplBEocmmru6XmxDB2L7jDNYtYA4FyimoAFEw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
-    bundledDependencies: []
 
   jsonfile@4.0.0:
     resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
@@ -16320,7 +16321,7 @@ snapshots:
       std-env: 3.7.0
       strip-literal: 2.1.0
       test-exclude: 6.0.0
-      vitest: 1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
+      vitest: 1.6.0(@types/node@20.17.12)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -16374,7 +16375,7 @@ snapshots:
       pathe: 1.1.2
       picocolors: 1.0.1
       sirv: 2.0.4
-      vitest: 1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
+      vitest: 1.6.0(@types/node@20.17.12)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
 
   '@vitest/utils@1.6.0':
     dependencies:
@@ -21273,6 +21274,11 @@ snapshots:
 
   possible-typed-array-names@1.0.0: {}
 
+  postcss-browser-comments@4.0.0(browserslist@4.23.2)(postcss@8.4.39):
+    dependencies:
+      browserslist: 4.23.2
+      postcss: 8.4.39
+
   postcss-browser-comments@4.0.0(browserslist@4.23.3)(postcss@8.4.39):
     dependencies:
       browserslist: 4.23.3
@@ -21285,6 +21291,14 @@ snapshots:
     optionalDependencies:
       postcss: 8.4.39
       ts-node: 10.9.2(@types/node@20.14.10)(typescript@5.8.3)
+
+  postcss-normalize@10.0.1(browserslist@4.23.2)(postcss@8.4.39):
+    dependencies:
+      '@csstools/normalize.css': 12.1.1
+      browserslist: 4.23.2
+      postcss: 8.4.39
+      postcss-browser-comments: 4.0.0(browserslist@4.23.2)(postcss@8.4.39)
+      sanitize.css: 13.0.0
 
   postcss-normalize@10.0.1(browserslist@4.23.3)(postcss@8.4.39):
     dependencies:

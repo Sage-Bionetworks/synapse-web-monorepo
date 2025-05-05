@@ -2,7 +2,6 @@ import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
 import React, {
   useState,
   useEffect,
-  useRef,
   forwardRef,
   ForwardedRef,
 } from 'react'
@@ -96,7 +95,6 @@ export type HeaderCardV2Props = {
  * - Default: Icon + Content | Metadata (on desktop)
  * - Stacked: Full width content with metadata below
  * - Mobile: All sections stack vertically
- * - Height-Based: Stacks when metadata height exceeds description height
  *
  * @component
  * @example
@@ -117,7 +115,6 @@ export type HeaderCardV2Props = {
  * 1. Responsive Layout:
  *    - Uses MUI Grid for flexible layouts
  *    - Switches to stacked layout on mobile, when forceStackedLayout is true,
- *      or when the metadata table height exceeds the description height
  *
  * 2. Meta Tags:
  *    - Manages document title and meta description
@@ -157,40 +154,6 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
   } = props
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
-  // State for dynamic layout
-  // const [useStackedLayout, setUseStackedLayout] = useState(
-  //   forceStackedLayout || isMobile,
-  // )
-
-  // Refs for measuring heights
-  const descriptionRef = useRef<HTMLDivElement>(null)
-  const metadataRef = useRef<HTMLDivElement>(null)
-  const [descriptionHeight, setDescriptionHeight] = useState<number>(0)
-  const [metadataHeight, setMetadataHeight] = useState<number>(0)
-  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth)
-
-  useEffect(() => {
-    // Only set up height checking if not already forced to stack
-    if (forceStackedLayout || isMobile) {
-      return
-    }
-
-    const dHeight = descriptionRef.current?.offsetHeight || 0
-    const mHeight = metadataRef.current?.offsetHeight || 0
-    // const { dHeight } = descriptionRef.current.getBoundingClientRect();
-    setDescriptionHeight(dHeight)
-    // const { mHight } = metadataRef.current.getBoundingClientRect();
-    setMetadataHeight(mHeight)
-
-    const sww = () => setWindowWidth(window.innerWidth)
-
-    window.addEventListener('resize', sww)
-
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', sww)
-    }
-  }, [forceStackedLayout, isMobile, values, description, windowWidth])
 
   let useStackedLayout = false
   if (forceStackedLayout || isMobile) {
@@ -200,12 +163,6 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
     // as per https://github.com/bridge2ai/b2ai-standards-registry/issues/210#issuecomment-2773706202,
     // constrain metadata to 5-line expandable block
   }
-  console.log({
-    windowWidth,
-    useStackedLayout,
-    descriptionHeight,
-    metadataHeight,
-  })
 
   // Meta tags handling
   const descriptionElement: Element | null = document.querySelector(
@@ -272,24 +229,10 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
         isAlignToLeftNav ? 'isAlignToLeftNav' : ''
       }`}
     >
-      {/* <Typography
-        className="SRC-type"
-        sx={{
-          fontSize: '14px',
-          textTransform: 'uppercase',
-          fontWeight: 700,
-          color: '#000000',
-        }}
-      >
-        {type}
-      </Typography> */}
-
       <Box
         sx={{
-          // align: 'center',
           marginLeft: 'auto',
           marginRight: 'auto',
-          // border: '1px solid #000',
           maxWidth: '1400px',
           display: 'grid',
           gridTemplateColumns: '1fr 12fr 1fr',
@@ -322,7 +265,6 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
             {/* Title */}
             <Typography
               sx={{
-                // fontWeight: 700,
                 mb: 1,
                 fontSize: '2.5rem',
                 letterSpacing: '0.1em', // Add letter spacing
@@ -368,7 +310,6 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
           }}
         >
           <Box
-            ref={descriptionRef}
             style={{
               flexBasis: useStackedLayout ? '100%' : 'min(65ch, 100%)',
               width: useStackedLayout ? '100%' : 'auto',
@@ -382,9 +323,8 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
           </Box>
           {values && (
             <Box
-              ref={metadataRef}
               sx={{
-                width: useStackedLayout ? '100%' : 'auto',
+                width: useStackedLayout ? '100%' : '30%',
                 marginTop: useStackedLayout ? 2 : 0,
                 alignItems: 'flex-start',
               }}
