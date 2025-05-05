@@ -146,6 +146,44 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 
         <span>
           <a
             class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary  css-3e7xbu-MuiButtonBase-root-MuiButton-root-WideButton"
+            href="#/Help/How It Works"
+            tabindex="0"
+          >
+            sometext
+          </a>
+        </span>
+        <span>
+          <a
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary  css-3e7xbu-MuiButtonBase-root-MuiButton-root-WideButton"
+            href="#/Apply"
+            tabindex="0"
+          >
+            APPLY
+          </a>
+        </span>
+      </p>
+      
+
+    </span>
+  </div>
+</div>
+`;
+
+exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets inside Router 1`] = `
+<div>
+  <div
+    class="markdown"
+    data-testid="markdown"
+  >
+    <span
+      class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+    >
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+      >
+        <span>
+          <a
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary  css-3e7xbu-MuiButtonBase-root-MuiButton-root-WideButton"
             data-discover="true"
             href="/#/Help/How It Works"
             tabindex="0"
