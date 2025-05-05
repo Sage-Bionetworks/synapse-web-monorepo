@@ -10,11 +10,19 @@ type SectionLayoutProps = PropsWithChildren<{
   centerTitle?: boolean
   subtitle?: string
   helpText?: string
+  customMaxWidth?: string
 }>
 
 export function SectionLayout(props: SectionLayoutProps) {
-  const { ContainerProps, title, centerTitle, subtitle, helpText, children } =
-    props
+  const {
+    ContainerProps,
+    title,
+    centerTitle,
+    subtitle,
+    helpText,
+    children,
+    customMaxWidth,
+  } = props
   const { hash, pathname } = useLocation()
 
   const scrollToRef = useRef(null)
@@ -39,9 +47,12 @@ export function SectionLayout(props: SectionLayoutProps) {
 
   return (
     <Container
-      maxWidth={'lg'}
-      {...ContainerProps}
-      sx={{ overflow: 'auto', ...ContainerProps?.sx }}
+      maxWidth={customMaxWidth ? false : 'lg'}
+      sx={{
+        overflow: 'auto',
+        ...ContainerProps?.sx,
+        maxWidth: customMaxWidth ?? undefined,
+      }}
     >
       {scrollToJsx}
       {title && (

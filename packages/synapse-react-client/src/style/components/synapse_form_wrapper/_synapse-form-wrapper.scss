@@ -140,7 +140,13 @@
     overflow: hidden;
     width: 100%;
     clear: both;
-    padding: SrcVariables.$space-unit 0 1rem SrcVariables.$space-unit;
+    @media (min-width: map-get(SrcVariables.$breakpoints, 'small')) {
+      padding: SrcVariables.$space-unit SrcVariables.$space-unit 1rem
+        SrcVariables.$space-unit;
+    }
+    @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+      padding: SrcVariables.$space-unit 0 1rem SrcVariables.$space-unit;
+    }
 
     background-color: SrcVariables.$gray-light;
 
@@ -150,9 +156,17 @@
   }
 
   .right-top-actions {
-    position: absolute;
-    right: 0;
-    top: 0;
+    @media (max-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
   }
 
   .notification-area {
@@ -172,9 +186,14 @@
       display: block;
       font-size: 1.8rem;
       margin-bottom: 1rem;
+      @media (max-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+        text-align: center;
+      }
     }
     .json-forms-menu {
-      padding-right: 3rem;
+      @media (min-width: map-get(SrcVariables.$breakpoints, 'large')) {
+        padding-right: 3rem;
+      }
     }
   }
 
@@ -182,8 +201,11 @@
     flex-direction: column;
     flex-wrap: wrap;
     flex-basis: 100%;
-    flex: 3;
+    flex: 2;
     margin-top: 1rem;
+    @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+      flex: 3;
+    }
   }
   .scroll-area {
     height: 100%;
@@ -250,8 +272,9 @@
     margin-right: 10rem;
   }
   .submissionInputForm {
-    margin-right: 10rem;
-
+    @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+      margin-right: 10rem;
+    }
     .help-block {
       font-style: italic;
       font-weight: 400;
@@ -270,18 +293,28 @@
         color: SrcVariables.$gray-formtext;
         display: block;
         margin-bottom: 0;
+        @media (max-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+          margin-bottom: 10px;
+        }
       }
       .form-group {
         float: left;
         margin-bottom: 0;
 
         label {
-          font-size: 1.3rem;
+          @media (min-width: map-get(SrcVariables.$breakpoints, 'small')) {
+            font-size: 1.2rem;
+          }
+          @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+            font-size: 1.3rem;
+          }
           font-weight: normal;
         }
       }
       .form-group + .form-group {
-        margin-left: 1.5rem;
+        @media (min-width: map-get(SrcVariables.$breakpoints, 'large')) {
+          margin-left: 1.5rem;
+        }
       }
     }
   }
@@ -324,6 +357,13 @@
   }
 
   .array-item {
+    @media (max-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+      display: flex;
+      flex-direction: column-reverse;
+      .col-xs-9 {
+        width: unset;
+      }
+    }
     border: 1px solid SrcVariables.$gray-dark;
     padding: 2rem 1rem;
     overflow: auto;
@@ -359,6 +399,9 @@
   }
 
   .array-item-toolbox {
+    @media (max-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+      margin-bottom: 10px;
+    }
     button,
     button:hover {
       background-color: transparent;
@@ -417,10 +460,16 @@
   .toggle-help-label {
     line-height: 3em;
     border: 1px solid SrcVariables.$gray-light;
-
-    padding: 0 1em;
-    margin: 0 1em;
     font-size: 0.85em;
+
+    @media (min-width: map-get(SrcVariables.$breakpoints, 'small')) {
+      margin: 0 2em 0 0;
+    }
+
+    @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+      padding: 0 1em;
+      margin: 0 1em;
+    }
   }
 
   .toggle-help {
@@ -466,8 +515,13 @@
 
   /*---- form classes -----*/
   .experiments-list legend ~ .field-description {
-    font-size: 1.4rem;
     font-style: italic;
+    @media (min-width: map-get(SrcVariables.$breakpoints, 'small')) {
+      font-size: 1rem;
+    }
+    @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+      font-size: 1.4rem;
+    }
   }
 }
 
