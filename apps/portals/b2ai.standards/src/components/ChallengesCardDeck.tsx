@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash-es'
+import isEmpty from 'lodash-es/isEmpty'
 import {
   dataSql,
   DST_TABLE_COLUMN_NAMES,
@@ -29,9 +29,7 @@ function createExplorePageLink(query: Query): string {
   return `/Explore?QueryWrapper0=${encodeURIComponent(JSON.stringify(query))}`
 }
 
-type ObjList = {
-  [key: string]: string
-}[]
+type ObjList = Record<string, string>[]
 type useTableFetchProps = {
   entityId: string
   columns: string[]
@@ -60,37 +58,30 @@ export function useTableFetch({
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     query: { sql },
   }
-  const queryResultBundle = useGetQueryResultBundle(queryBundleRequest, {
+  return useGetQueryResultBundle(queryBundleRequest, {
     enabled: shouldRun,
+    select: (data) => {
+        const colIndexes = columns.map(column => ({
+          column,
+          index: getFieldIndex(column, queryResultBundle.data),
+        }))
+        return data?.queryResult?.queryResults.rows.map(el => {
+          const values = el.values as string[]
+          if (values.some(value => value === null)) {
+            console.warn('Row has null value(s) when no nulls expected')
+          }
+          const result = {}
+          colIndexes.forEach(({ column, index }) => {
+            result[column] = values[index]
+          })
+          return result
+        }) ?? []
+    }
   })
-
-  if (!shouldRun || error || !queryResultBundle?.data) {
-    return { data, error }
-  }
-
-  const colIndexes = columns.map(column => ({
-    column,
-    index: getFieldIndex(column, queryResultBundle.data),
-  }))
-
-  data =
-    queryResultBundle?.data?.queryResult?.queryResults.rows.map(el => {
-      const values = el.values as string[]
-      if (values.some(value => value === null)) {
-        console.warn('Row has null value(s) when no nulls expected')
-      }
-      const result = {}
-      colIndexes.forEach(({ column, index }) => {
-        result[column] = values[index]
-      })
-      return result
-    }) ?? []
-
-  return { data, error }
 }
 
 export function ChallengesCardDeck() {
-  const { data: challengesData = [], error: challengesError } = useTableFetch({
+  const { data: challengesData = [], error: challengesError, isLoading: isLoadingChallengesTableQuery } = useTableFetch({
     entityId: challengesTableId,
     columns: [
       CHALLENGES_TABLE_COLUMN_NAMES.ORG_ID,
@@ -101,7 +92,7 @@ export function ChallengesCardDeck() {
   const {
     data: challengesEntity,
     error: challengesEntityError,
-    isLoading,
+    isLoading: isLoadingChallengesEntity,
   } = useGetEntity(challengesTableId)
 
   const gcOrgIds = challengesData
@@ -114,7 +105,7 @@ export function ChallengesCardDeck() {
     ORG_TABLE_COLUMN_NAMES.NAME,
     ORG_TABLE_COLUMN_NAMES.DESCRIPTION,
   ]
-  const { data: gcOrgData, error: gcOrgError } = useTableFetch({
+  const { data: gcOrgData, error: gcOrgError, isLoading: isLoadingOrgsTableQuery } = useTableFetch({
     entityId: organizationTableId,
     columns: orgCols,
     sql: `SELECT ${orgCols.join(
@@ -132,14 +123,9 @@ export function ChallengesCardDeck() {
   if (gcOrgError) {
     return <ErrorBanner error={gcOrgError} />
   }
+  const isLoading = isLoadingChallengesTableQuery || isLoadingChallengesEntity  || isLoadingOrgsTableQuery
   if (isLoading) {
-    return <div style={{}}>Loading Challenges entity</div>
-  }
-  if (isEmpty(challengesData)) {
-    return <div style={{}}>Loading Challenges table</div>
-  }
-  if (isEmpty(gcOrgData)) {
-    return <div style={{}}>Loading org data for GCs</div>
+    return <div>Loading...</div>
   }
 
   const orgs = {}
