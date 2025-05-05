@@ -12,7 +12,7 @@
     "lint": "nx run-many --target=lint --quiet",
     "test": "nx run-many --target=test --coverage",
     "clean": "nx run-many --target=clean",
-    "type-check": "nx run-many --target=type-check"
+    "type-check": "tsc --build"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.3",
@@ -32,7 +32,7 @@
     "nx": "19.7.3",
     "prettier": "^2.8.8",
     "rimraf": "^5.0.5",
-    "typescript": "5.5.2",
+    "typescript": "5.8.3",
     "typescript-eslint": "^8.16.0"
   },
   "npmClient": "pnpm",

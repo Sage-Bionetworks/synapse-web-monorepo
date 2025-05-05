@@ -9,6 +9,7 @@ import {
   useGetEntity,
   useGetVersions,
 } from '@/synapse-queries/entity/useEntity'
+import { useGetPortal } from '@/synapse-queries/portal/usePortal'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user/useUserBundle'
 import {
   convertToEntityType,
@@ -29,10 +30,15 @@ import {
   Link,
   MenuItem,
   Select,
+  TextField,
   Typography,
 } from '@mui/material'
 import RJSF from '@rjsf/core'
-import { DoiResourceTypeGeneral, V2Doi } from '@sage-bionetworks/synapse-client'
+import {
+  DoiObjectType,
+  DoiResourceTypeGeneral,
+  V2Doi,
+} from '@sage-bionetworks/synapse-client'
 import { EntityType } from '@sage-bionetworks/synapse-types'
 import { isEmpty } from 'lodash-es'
 import { useEffect, useRef, useState } from 'react'
@@ -43,11 +49,13 @@ type CreateOrUpdateDoiModalProps = {
   /** Callback to call when the dialog is closed */
   onClose: () => void
   /** The type of object */
-  objectType: V2Doi['objectType']
+  objectType: DoiObjectType
   /** The ID of the object */
   objectId: string
   /** The optional version number of the object used to populate the form. */
   defaultVersionNumber?: number
+  /** If minting a DOI for a portal, the ID of the portal object in Synapse */
+  portalId?: string
 }
 
 type DoiFormData = {
@@ -100,9 +108,20 @@ function convertFormDataToDoi(formData: DoiFormData): V2Doi {
 }
 
 export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
-  const { open, onClose, objectType, objectId, defaultVersionNumber } = props
+  const {
+    open,
+    onClose,
+    objectType,
+    objectId,
+    defaultVersionNumber,
+    portalId,
+  } = props
   const [selectedVersionNumber, setSelectedVersionNumber] =
     useState(defaultVersionNumber)
+
+  const { data: portal } = useGetPortal(portalId!, {
+    enabled: Boolean(portalId),
+  })
 
   const [formData, setFormData] = useState<DoiFormData>({
     titles: [''],
@@ -120,9 +139,12 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
     },
   )
   const { data: doi, isLoading: isLoadingDoi } = useGetDOI(
-    objectId,
-    selectedVersionNumber,
-    objectType,
+    {
+      id: objectId,
+      version: selectedVersionNumber,
+      type: objectType,
+      portalId: portalId,
+    },
     {
       staleTime: Infinity,
       throwOnError: true,
@@ -130,7 +152,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
   )
 
   const doiCanBeAppliedToVersion =
-    objectType === 'ENTITY' && entity && isVersionableEntity(entity)
+    objectType === DoiObjectType.ENTITY && entity && isVersionableEntity(entity)
 
   const { data: entityVersions } = useGetVersions(
     objectId,
@@ -216,7 +238,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
         Minting a DOI allows you to credit contributors and makes it easy to
         cite your work.
       </Typography>
-      <Typography variant={'body1'} gutterBottom>
+      <Typography variant={'body1'} gutterBottom sx={{ mb: 2 }}>
         Note that while the DOI and its associated metadata will be publicly
         visible outside of Synapse, your data will still adhere to its existing
         access conditions. If your data is private, it will remain restricted,
@@ -232,6 +254,14 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
         </Link>
         .
       </Typography>
+      {portalId && (
+        <TextField
+          label={'Publisher'}
+          fullWidth
+          value={portal?.name || ''}
+          disabled
+        />
+      )}
       {doiCanBeAppliedToVersion && (
         <StyledFormControl className="limit-type" fullWidth sx={{ my: 2 }}>
           <InputLabel

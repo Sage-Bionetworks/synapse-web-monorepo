@@ -116,7 +116,7 @@ export function useFramebuster(): boolean {
       // If not sandboxed, make sure not to show any portal content (in case they block window unload via onbeforeunload)
       setIsFramed(true)
       // If sandboxed, this call will cause an uncaught js exception and portal will not load.
-      window.top.location = window.location
+      window.top.location.href = window.location.toString()
     }
   }, [])
   return isFramed
