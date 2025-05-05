@@ -43,7 +43,7 @@ export function useTableFetch({
   sql, // if filters or aliases or anything are needed, pass in whole sql query
   shouldRun = true, // if calling before ready, send false
 }: useTableFetchProps) {
-  let data: ObjList = []
+  const data: ObjList = []
   const error = undefined
 
   if (!sql) {
@@ -60,12 +60,13 @@ export function useTableFetch({
   }
   return useGetQueryResultBundle(queryBundleRequest, {
     enabled: shouldRun,
-    select: (data) => {
-        const colIndexes = columns.map(column => ({
-          column,
-          index: getFieldIndex(column, queryResultBundle.data),
-        }))
-        return data?.queryResult?.queryResults.rows.map(el => {
+    select: data => {
+      const colIndexes = columns.map(column => ({
+        column,
+        index: getFieldIndex(column, data),
+      }))
+      const results =
+        data?.queryResult?.queryResults.rows.map(el => {
           const values = el.values as string[]
           if (values.some(value => value === null)) {
             console.warn('Row has null value(s) when no nulls expected')
@@ -76,12 +77,17 @@ export function useTableFetch({
           })
           return result
         }) ?? []
-    }
+      return results
+    },
   })
 }
 
 export function ChallengesCardDeck() {
-  const { data: challengesData = [], error: challengesError, isLoading: isLoadingChallengesTableQuery } = useTableFetch({
+  const {
+    data: challengesData = [],
+    error: challengesError,
+    isLoading: isLoadingChallengesTableQuery,
+  } = useTableFetch({
     entityId: challengesTableId,
     columns: [
       CHALLENGES_TABLE_COLUMN_NAMES.ORG_ID,
@@ -105,7 +111,11 @@ export function ChallengesCardDeck() {
     ORG_TABLE_COLUMN_NAMES.NAME,
     ORG_TABLE_COLUMN_NAMES.DESCRIPTION,
   ]
-  const { data: gcOrgData, error: gcOrgError, isLoading: isLoadingOrgsTableQuery } = useTableFetch({
+  const {
+    data: gcOrgData,
+    error: gcOrgError,
+    isLoading: isLoadingOrgsTableQuery,
+  } = useTableFetch({
     entityId: organizationTableId,
     columns: orgCols,
     sql: `SELECT ${orgCols.join(
@@ -123,7 +133,10 @@ export function ChallengesCardDeck() {
   if (gcOrgError) {
     return <ErrorBanner error={gcOrgError} />
   }
-  const isLoading = isLoadingChallengesTableQuery || isLoadingChallengesEntity  || isLoadingOrgsTableQuery
+  const isLoading =
+    isLoadingChallengesTableQuery ||
+    isLoadingChallengesEntity ||
+    isLoadingOrgsTableQuery
   if (isLoading) {
     return <div>Loading...</div>
   }
