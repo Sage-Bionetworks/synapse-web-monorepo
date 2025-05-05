@@ -230,12 +230,13 @@ export default function Navbar() {
                       <strong>{userProfile.userName}</strong>
                     </div>
                     <Divider sx={{ my: 0 }} />
-                    {synapseQuickLinks.map(el => {
+                    {synapseQuickLinks.map((el, i) => {
                       const borderBottomClass = el.hasBorder
                         ? 'border-bottom-1'
                         : ''
                       return (
                         <MenuItem
+                          key={i}
                           component="a"
                           className={`dropdown-item SRC-primary-background-color-hover  ${borderBottomClass}`}
                           href={`${getEndpoint(
