@@ -1,5 +1,5 @@
 import WideButton from '@/components/styled/WideButton'
-import { Link as RouterLink } from 'react-router'
+import { Link as RouterLink, useInRouterContext } from 'react-router'
 
 export type ButtonLinkWidgetParams = {
   align?: string
@@ -26,22 +26,37 @@ export default function MarkdownButton(
   const isExternalLink =
     widgetParamsMapped.url?.startsWith('http://') ||
     widgetParamsMapped.url?.startsWith('https://')
+  const inRouterContext = useInRouterContext()
+
+  let linkProps: Record<string, any> = {}
+
+  if (isExternalLink) {
+    linkProps = {
+      href: widgetParamsMapped.url,
+      target: '_blank',
+      rel: 'noopener noreferrer',
+      component: 'a',
+    }
+  } else if (inRouterContext) {
+    // For internal links, if we are in a react-router context, we want to use the RouterLink
+    linkProps = {
+      to: widgetParamsMapped.url,
+      component: RouterLink,
+    }
+  } else {
+    linkProps = {
+      href: widgetParamsMapped.url,
+      component: 'a',
+    }
+  }
+
+  console.log('is component router', useInRouterContext())
   const button = (
     <WideButton
       className={buttonClasses}
       variant="contained"
       color={buttonColor}
-      {...(isExternalLink
-        ? {
-            href: widgetParamsMapped.url,
-            target: '_blank',
-            rel: 'noopener noreferrer',
-            component: 'a',
-          }
-        : {
-            to: widgetParamsMapped.url,
-            component: RouterLink,
-          })}
+      {...linkProps}
       sx={{
         '&:hover': {
           backgroundColor: highlight ? undefined : 'secondary.main',

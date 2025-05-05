@@ -347,15 +347,20 @@ describe('MarkdownSynapse tests', () => {
       expect(container).toMatchSnapshot()
     })
     it('works with two inline widgets', () => {
+      const { container } = renderComponent({
+        markdown:
+          '${buttonlink?text=sometext&url=#/Help/How%20It%20Works&highlight=true}${buttonlink?text=APPLY&url=#/Apply&highlight=true} ',
+      })
+      expect(container).toMatchSnapshot()
+    })
+    it('works with two inline widgets inside Router', () => {
       const component = getComponent({
         markdown:
           '${buttonlink?text=sometext&url=#/Help/How%20It%20Works&highlight=true}${buttonlink?text=APPLY&url=#/Apply&highlight=true} ',
       })
-
       const { container } = render(<MemoryRouter>{component}</MemoryRouter>, {
         wrapper: createWrapper(),
       })
-
       expect(container).toMatchSnapshot()
     })
     it('supports bootstrap rows and columns', () => {
