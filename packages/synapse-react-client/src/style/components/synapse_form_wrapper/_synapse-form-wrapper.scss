@@ -186,8 +186,9 @@
       display: block;
       font-size: 1.8rem;
       margin-bottom: 1rem;
-      @media (max-width: map-get(SrcVariables.$breakpoints, 'medium')) {
-        text-align: center;
+      text-align: center;
+      @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+        text-align: left;
       }
     }
     .json-forms-menu {
@@ -201,7 +202,6 @@
     flex-direction: column;
     flex-wrap: wrap;
     flex-basis: 100%;
-    flex: 2;
     margin-top: 1rem;
     @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
       flex: 3;
@@ -267,7 +267,9 @@
   /*--- form ---*/
 
   .static-screen {
-    margin-right: 10rem;
+    @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+      margin-right: 10rem;
+    }
   }
   .submissionInputForm {
     @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
@@ -296,21 +298,20 @@
         }
       }
       .form-group {
-        float: left;
         margin-bottom: 0;
-
+        float: left;
         label {
-          @media (min-width: map-get(SrcVariables.$breakpoints, 'small')) {
+          @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
             font-size: 1.2rem;
           }
-          @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+          @media (min-width: map-get(SrcVariables.$breakpoints, 'large')) {
             font-size: 1.3rem;
           }
           font-weight: normal;
         }
       }
       .form-group + .form-group {
-        @media (min-width: map-get(SrcVariables.$breakpoints, 'large')) {
+        @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
           margin-left: 1.5rem;
         }
       }
