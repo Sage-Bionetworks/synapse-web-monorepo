@@ -1,11 +1,9 @@
-import isEmpty from 'lodash-es/isEmpty'
 import {
+  CHALLENGES_TABLE_COLUMN_NAMES,
+  challengesTableId,
   dataSql,
   DST_TABLE_COLUMN_NAMES,
   ORG_TABLE_COLUMN_NAMES,
-  CHALLENGES_TABLE_COLUMN_NAMES,
-  challengesTableId,
-  // dataSetTableId,
   organizationTableId,
 } from '@/config/resources'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
@@ -29,7 +27,6 @@ function createExplorePageLink(query: Query): string {
   return `/Explore?QueryWrapper0=${encodeURIComponent(JSON.stringify(query))}`
 }
 
-type ObjList = Record<string, string>[]
 type useTableFetchProps = {
   entityId: string
   columns: string[]
@@ -43,9 +40,6 @@ export function useTableFetch({
   sql, // if filters or aliases or anything are needed, pass in whole sql query
   shouldRun = true, // if calling before ready, send false
 }: useTableFetchProps) {
-  const data: ObjList = []
-  const error = undefined
-
   if (!sql) {
     sql = `SELECT ${columns.join(', ')} FROM ${entityId}`
   }
@@ -65,7 +59,7 @@ export function useTableFetch({
         column,
         index: getFieldIndex(column, data),
       }))
-      const results =
+      const results: Record<string, string>[] =
         data?.queryResult?.queryResults.rows.map(el => {
           const values = el.values as string[]
           if (values.some(value => value === null)) {
@@ -142,7 +136,7 @@ export function ChallengesCardDeck() {
   }
 
   const orgs = {}
-  gcOrgData.forEach(org => {
+  gcOrgData!.forEach(org => {
     orgs[org[ORG_TABLE_COLUMN_NAMES.ID]] = org
   })
 
