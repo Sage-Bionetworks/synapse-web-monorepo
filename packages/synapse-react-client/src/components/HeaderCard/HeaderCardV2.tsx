@@ -10,23 +10,15 @@ import {
   Card,
   Typography,
   Link,
-  Stack,
+  // Stack,
   Button,
-  ButtonProps,
+  // ButtonProps,
   useTheme,
   useMediaQuery,
 } from '@mui/material'
 import { DescriptionConfig } from '../CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
-
-interface CTAButton {
-  label: string
-  href?: string
-  variant?: ButtonProps['variant']
-  sx?: ButtonProps['sx']
-  endIcon?: React.ReactNode
-  // Add other button props as needed
-}
+import { GenericCardProps } from '@/components/GenericCard/GenericCard'
 
 export type HeaderCardV2Props = {
   /** Type label displayed at the top of the card */
@@ -55,28 +47,31 @@ export type HeaderCardV2Props = {
   backgroundImage?: string
   /** Force values section to appear below main content */
   forceStackedLayout?: boolean
-  /** Optional array of CTA buttons to display below description */
-  ctaButtons?: CTAButton[]
+  /** Optional CTA link to display below description */
+  ctaLinkConfig?: GenericCardProps['ctaLinkConfig']
 }
 
 /**
- * HeaderCardV2 Component
+ * HeaderCardV2 Component   OUT OF DATE COMMENTS
  *
  * A material-UI based card component for displaying detailed information with metadata.
  * This component supports responsive layouts, background images, and dynamic content
  * organization.
  *
  * Layout Structure:
- * ┌───────────────────────────────────────────────────────────────┐
- * │ ┌─────┐  Type Label                                           │
- * │ │Icon │  Title                                                │
- * │ │     │  Subtitle                                             │
- * │ └─────┘                                                       │
- * │         Description                     Metadata              │
- * │         [Show More/Less]                --------              │
- * │                                         Label 1    Value 1    │
- * │         [CTA Buttons]                   Label 2    Value 2    │
- * └───────────────────────────────────────────────────────────────┘
+
+  ```
+┌───────────────────────────────────────────────────────────────┐
+│ ┌─────┐  Type Label                                           │
+│ │Icon │  Title                                                │
+│ │     │  Subtitle                                             │
+│ └─────┘                                                       │
+│         Description                     Metadata              │
+│         [Show More/Less]                --------              │
+│                                         Label 1    Value 1    │
+│         [External Site Button]          Label 2    Value 2    │
+└───────────────────────────────────────────────────────────────┘
+ ```
  *
  * Features:
  * - Responsive layout with configurable breakpoints
@@ -105,9 +100,7 @@ export type HeaderCardV2Props = {
  *   description="Study description"
  *   values={[['Status', 'Active'], ['Access', 'Public']]}
  *   icon={<StudyIcon />}
- *   ctaButtons={[
- *     { label: 'View Details', variant: 'contained' }
- *   ]}
+ *   ctaLinkConfig={{text: "View Standard on External Website", link: "url"}}
  * />
  * ```
 
@@ -124,7 +117,7 @@ export type HeaderCardV2Props = {
  *    - Icon: Optional, maintains aspect ratio
  *    - Main Content: Type, title, subtitle, description
  *    - Metadata: Right-aligned or stacked key-value pairs
- *    - CTA Buttons: Optional action buttons below description
+ *    - CTA Button: Optional button link to external site
  *
  * 4. Styling:
  *    - Background image support with overlay
@@ -150,7 +143,7 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
     icon,
     backgroundImage,
     forceStackedLayout = false,
-    ctaButtons,
+    ctaLinkConfig,
   } = props
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
@@ -196,6 +189,40 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
       descriptionElement?.setAttribute('content', docDescription)
     }
   }, [title, description, subTitle, docTitle, docDescription])
+
+  // ctaLink stuff
+  let ctaLinkBox = null
+  if (ctaLinkConfig) {
+    ctaLinkBox = (
+      <Button
+        variant="outlined"
+        component={Link}
+        href={ctaLinkConfig.href}
+        target={ctaLinkConfig.target}
+        rel={
+          ctaLinkConfig.target === '_blank' ? 'noopener noreferrer' : undefined
+        }
+        size="large"
+        sx={{
+          color: '#FFF',
+          '&:hover': {
+            color: '#FFF',
+            textDecorationColor: '#FFF',
+            border: '2px solid white',
+          },
+          '&:focus': { color: '#FFF' },
+          textDecorationColor: '#FFF',
+          padding: '6px 24px',
+          marginTop: '22px',
+          border: '1px solid white',
+        }}
+      >
+        {/* TODO: add an external open icon like https://materialui.co/icon/open-in-new */}
+        {/*<AddAlertTwoTone sx={{ width: '24px', height: '24px' }} />*/}
+        {ctaLinkConfig.text}
+      </Button>
+    )
+  }
 
   return (
     <Card
@@ -320,6 +347,7 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
               descriptionSubTitle=""
               descriptionConfig={descriptionConfiguration}
             />
+            {ctaLinkBox}
           </Box>
           {values && (
             <Box
@@ -333,29 +361,6 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
             </Box>
           )}
         </Box>
-
-        {ctaButtons && ctaButtons.length > 0 && (
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            spacing={2}
-            sx={{ mt: 2 }}
-          >
-            {ctaButtons.map((buttonProps, index) => (
-              <Button
-                key={index}
-                variant={buttonProps.variant || 'contained'}
-                href={buttonProps.href}
-                sx={{
-                  width: { xs: '100%', sm: 'auto' },
-                  ...(buttonProps.sx || {}),
-                }}
-                endIcon={buttonProps.endIcon}
-              >
-                {buttonProps.label}
-              </Button>
-            ))}
-          </Stack>
-        )}
       </Box>
     </Card>
   )

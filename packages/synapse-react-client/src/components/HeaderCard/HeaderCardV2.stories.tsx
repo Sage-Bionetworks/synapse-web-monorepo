@@ -1,5 +1,4 @@
 import { Study } from '@/assets/themed_icons'
-import { LaunchOutlined } from '@mui/icons-material'
 import type { Meta, StoryObj } from '@storybook/react'
 import HeaderCardV2 from './HeaderCardV2'
 
@@ -34,6 +33,7 @@ export const Default: Story = {
   },
 }
 
+/*
 export const DicomCard: Story = {
   args: {
     type: 'DICOM',
@@ -46,7 +46,7 @@ export const DicomCard: Story = {
       { columnDisplayName: 'BASED ON', value: 'None' },
     ],
     icon: <Study />,
-    ctaButtons: [
+    ctaButtons: [     // this isn't working anymore
       {
         label: 'View Standard on External Website',
         variant: 'outlined',
@@ -63,7 +63,7 @@ export const WithMultipleButtons: Story = {
   args: {
     ...DicomCard.args,
     title: 'DICOM with Multiple Actions',
-    ctaButtons: [
+    ctaButtons: [     // this isn't working anymore
       {
         label: 'View Standard on External Website',
         variant: 'outlined',
@@ -110,6 +110,7 @@ export const WithStackedLayout: Story = {
     ],
   },
 }
+ */
 
 export const StudyHeaderCardV2: Story = {
   args: {
