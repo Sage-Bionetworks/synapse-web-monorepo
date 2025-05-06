@@ -69,7 +69,7 @@ const routes: RouteObject[] = [
             ),
           },
           {
-            path: 'TEST PATH',
+            path: 'TEST PATH 2',
             element: (
               <MarkdownSynapse
                 ownerId="syn64892175"
