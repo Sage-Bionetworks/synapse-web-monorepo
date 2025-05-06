@@ -6,10 +6,10 @@ import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-conf
 import { RouteObject } from 'react-router'
 import {
   Goals,
-  MarkdownSynapse,
   SynapseConstants,
   UserCardListGroups,
 } from 'synapse-react-client'
+import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { ProjectDetailsPage } from '../pages/ProjectDetailsPage'
 import StudyDetailsPage from '../pages/StudyDetailsPage'
 import explorePageRoutes from './explorePageRoutes'

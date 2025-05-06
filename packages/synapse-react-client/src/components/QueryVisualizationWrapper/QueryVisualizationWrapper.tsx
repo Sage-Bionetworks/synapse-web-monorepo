@@ -6,7 +6,7 @@ import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { useQueryContext } from '../QueryContext'
 import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
-import { NoContentPlaceholderType } from '../SynapseTable'
+import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import { ExternalAnalysisPlatform } from '../SynapseTable/export/ExternalAnalysisPlatformsConstants'
 import NoContentPlaceholderComponent from './NoContentPlaceholder'
 import {

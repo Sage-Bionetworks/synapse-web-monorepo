@@ -5,6 +5,7 @@ import {
   convertDoiToLink,
   SYNAPSE_ENTITY_ID_REGEX,
 } from '@/utils/functions/RegularExpressions'
+import { TargetEnum } from '@/utils/html/TargetEnum'
 import {
   ColumnModel,
   ColumnType,
@@ -13,7 +14,6 @@ import {
   FileHandleAssociation,
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
-import { TargetEnum } from '../CardContainerLogic/CardContainerLogic'
 
 export const getFileHandleAssociation = (
   table?: Entity,

@@ -139,8 +139,8 @@ importers:
         specifier: ^5.0.7
         version: 5.0.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       sass:
         specifier: ^1.71.1
         version: 1.77.6
@@ -302,8 +302,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -357,8 +357,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -406,8 +406,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -451,6 +451,9 @@ importers:
       katex:
         specifier: ^0.16.10
         version: 0.16.10
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
       pluralize:
         specifier: ^8.0.0
         version: 8.0.0
@@ -461,8 +464,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -510,8 +513,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -562,8 +565,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -614,8 +617,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -666,8 +669,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -730,8 +733,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-type-animation:
         specifier: ^3.2.0
         version: 3.2.0(prop-types@15.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -782,8 +785,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -840,8 +843,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -892,8 +895,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -962,8 +965,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       sass:
         specifier: ^1.71.1
         version: 1.77.6
@@ -1149,8 +1152,8 @@ importers:
         specifier: ^2.6.0
         version: 2.6.0(plotly.js@2.33.0(mapbox-gl@1.13.3))(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-spinners:
         specifier: ^0.13.8
         version: 0.13.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1633,8 +1636,8 @@ importers:
         specifier: ^4.2.6
         version: 4.2.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-select:
         specifier: ^5.8.0
         version: 5.8.0(@types/react@18.3.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -10037,8 +10040,8 @@ packages:
       react: ^16.14.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.14.0 || ^17.0.0 || ^18.0.0
 
-  react-router@7.1.1:
-    resolution: {integrity: sha512-39sXJkftkKWRZ2oJtHhCxmoCrBCULr/HAH4IT5DHlgu/Q0FCPV0S4Lx+abjDTx/74xoZzNYDYbOZWlJjruyuDQ==}
+  react-router@7.5.3:
+    resolution: {integrity: sha512-3iUDM4/fZCQ89SXlDa+Ph3MevBrozBAI655OAfWQlTm9nBR0IKlrmNwFow5lPHttbwvITZfkeeeZFP6zt3F7pw==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: '>=18'
@@ -10428,9 +10431,6 @@ packages:
 
   set-blocking@2.0.0:
     resolution: {integrity: sha512-KiKBS8AnWGEyLzofFfmvKwpdPzqiy16LvQfK3yv/fVH7Bj13/wl3JSR1J+rfgRE9q7xUJK4qvgS8raSOeLUehw==}
-
-  set-cookie-parser@2.6.0:
-    resolution: {integrity: sha512-RVnVQxTXuerk653XfuliOxBP81Sf0+qfQE73LIYKcyMYHG94AuH0kgrQpRDuTZnSmjpysHmzxJXKNfa6PjFhyQ==}
 
   set-cookie-parser@2.7.1:
     resolution: {integrity: sha512-IOc8uWeOZgnb3ptbCURJWNjWUPcO3ZnTTdzsurqERrP6nPyv+paC55vJM0LpOlT2ne+Ix+9+CRG1MNLlyZ4GjQ==}
@@ -14084,7 +14084,7 @@ snapshots:
   '@mswjs/cookies@0.2.2':
     dependencies:
       '@types/set-cookie-parser': 2.4.7
-      set-cookie-parser: 2.6.0
+      set-cookie-parser: 2.7.1
 
   '@mswjs/cookies@1.1.1': {}
 
@@ -21554,9 +21554,8 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  react-router@7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  react-router@7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
-      '@types/cookie': 0.6.0
       cookie: 1.0.2
       react: 18.2.0
       set-cookie-parser: 2.7.1
@@ -22094,8 +22093,6 @@ snapshots:
       randombytes: 2.1.0
 
   set-blocking@2.0.0: {}
-
-  set-cookie-parser@2.6.0: {}
 
   set-cookie-parser@2.7.1: {}
 

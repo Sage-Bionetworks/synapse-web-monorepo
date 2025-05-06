@@ -3,10 +3,10 @@ import Header from '@sage-bionetworks/synapse-portal-framework/components/Header
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { RouteObject } from 'react-router'
 import {
-  Markdown,
   SynapseFormSubmissionGrid,
   SynapseFormWrapper,
 } from 'synapse-react-client'
+import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
 const routes: RouteObject[] = [
   {

@@ -345,11 +345,13 @@ describe('MarkdownSynapse tests', () => {
       })
       expect(container).toMatchSnapshot()
     })
-    it('works with two inline widgets', () => {
+    it('works with two inline widgets', async () => {
       const { container } = renderComponent({
         markdown:
           '${buttonlink?text=sometext&url=#/Help/How%20It%20Works&highlight=true}${buttonlink?text=APPLY&url=#/Apply&highlight=true} ',
       })
+
+      await screen.findByText('APPLY')
       expect(container).toMatchSnapshot()
     })
     it('supports bootstrap rows and columns', () => {

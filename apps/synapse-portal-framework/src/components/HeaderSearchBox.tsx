@@ -185,6 +185,7 @@ const HeaderSearchBox = ({
             {searchExampleTerms &&
               searchExampleTerms.map(term => (
                 <Button
+                  key={term}
                   variant="contained"
                   onClick={() => handleTermClick(term)}
                   sx={{
