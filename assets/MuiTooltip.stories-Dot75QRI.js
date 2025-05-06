@@ -1,0 +1,10 @@
+import{j as r}from"./jsx-runtime-Du8NFWEI.js";import{T as a}from"./Tooltip-CIKCv17A.js";import{w as m,u as l}from"./index-SqWy7oMY.js";import{I as c}from"./InfoTwoTone-Cn0cOZ_j.js";import{L as d}from"./Link-C37sfSRl.js";import"./index-Dl6G-zuu.js";import"./createTheme-BoQYKx5k.js";import"./index-GEGPABih.js";import"./index-DRltcjjn.js";import"./styled-BMGIoXl7.js";import"./useTheme-B4ZZkoF-.js";import"./Popper-YUaVwGty.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-BcJKh-mH.js";import"./mergeSlotProps-D_dLvIWz.js";import"./isHostComponent-DVu5iVWx.js";import"./useForkRef-BDoLG09A.js";import"./index-BIzb42Jq.js";import"./useEnhancedEffect-DZnfS5Iy.js";import"./utils-D16j0ClI.js";import"./TransitionGroupContext-DetLSwnr.js";import"./useTimeout-DgmtfV4_.js";import"./useControlled-1Y2rT-1r.js";import"./useId-BkqTTtmk.js";import"./useIsFocusVisible-Bf3pHwKN.js";import"./createSvgIcon-DrH8-ApS.js";import"./Typography-D3xYwoES.js";const e=o=>r.jsx(a,{...o});try{e.displayName="Tooltip",e.__docgenInfo={description:"",displayName:"Tooltip",props:{ref:{defaultValue:null,description:"",name:"ref",required:!1,type:{name:"Ref<unknown>"}}}}}catch{}const O={title:"UI/MUI/Tooltip",component:e,parameters:{design:{type:"figma",url:"https://www.figma.com/file/0oPm5lLSUva8kyfVNMS6FA/Sage-Style-%26-Component-Library?node-id=187%3A6615"}},play:async({canvasElement:o})=>{const s=m(o).getByTestId("tooltipAnchor");await l.hover(s)}},t={name:"Tooltip",args:{children:r.jsx(c,{"data-testid":"tooltipAnchor"}),title:r.jsxs("p",{children:["This is some text, and"," ",r.jsx(d,{href:"https://synapse.org/",children:"here is a link"}),"."]})}};var i,p,n;t.parameters={...t.parameters,docs:{...(i=t.parameters)==null?void 0:i.docs,source:{originalSource:`{
+  name: 'Tooltip',
+  args: {
+    children: <InfoTwoTone data-testid={'tooltipAnchor'} />,
+    title: <p>
+        This is some text, and{' '}
+        <Link href={'https://synapse.org/'}>here is a link</Link>.
+      </p>
+  }
+}`,...(n=(p=t.parameters)==null?void 0:p.docs)==null?void 0:n.source}}};const P=["Demo"];export{t as Demo,P as __namedExportsOrder,O as default};
