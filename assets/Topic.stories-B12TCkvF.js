@@ -1,0 +1,10 @@
+import{T as m}from"./Topic-DS4Aflli.js";import{f as p}from"./index-SqWy7oMY.js";import"./jsx-runtime-Du8NFWEI.js";import"./index-Dl6G-zuu.js";import"./ConditionalWrapper-Be926PbJ.js";import"./IconSvg-BSurUVGX.js";import"./createSvgIcon-DrH8-ApS.js";import"./createTheme-BoQYKx5k.js";import"./index-GEGPABih.js";import"./styled-BMGIoXl7.js";import"./spreadSx-CwcO6WA9.js";import"./useTheme-B4ZZkoF-.js";import"./Tooltip-CIKCv17A.js";import"./index-DRltcjjn.js";import"./Popper-YUaVwGty.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-BcJKh-mH.js";import"./mergeSlotProps-D_dLvIWz.js";import"./isHostComponent-DVu5iVWx.js";import"./useForkRef-BDoLG09A.js";import"./index-BIzb42Jq.js";import"./useEnhancedEffect-DZnfS5Iy.js";import"./utils-D16j0ClI.js";import"./TransitionGroupContext-DetLSwnr.js";import"./useTimeout-DgmtfV4_.js";import"./useControlled-1Y2rT-1r.js";import"./useId-BkqTTtmk.js";import"./useIsFocusVisible-Bf3pHwKN.js";import"./LayersTwoTone-CMTGtTmF.js";import"./ContentCopyTwoTone-Cz1EZlai.js";import"./HelpOutlineTwoTone-DAzxeOov.js";import"./ErrorOutlined-BQG7G4Lq.js";import"./GetAppTwoTone-Q9RFiIkz.js";import"./InfoOutlined-sdaAyk9N.js";import"./DeleteTwoTone-DdO2TNwv.js";import"./CheckCircleTwoTone-BxJ-qX7O.js";import"./Stack-BcBUfnl7.js";import"./Button-CgNBwHku.js";import"./ButtonBase-CTLL4EY5.js";import"./Skeleton-DwKQ5_E5.js";import"./Link-C37sfSRl.js";import"./Typography-D3xYwoES.js";const V={title:"Synapse/Following/Topic",component:m,tags:["autodocs"]},o={name:"Topic",args:{isSubscribed:!0,isLoading:!1,icon:"discussion",name:"Help me understand this project!",onToggleSubscribe:p()}};var r,i,t;o.parameters={...o.parameters,docs:{...(r=o.parameters)==null?void 0:r.docs,source:{originalSource:`{
+  name: 'Topic',
+  args: {
+    isSubscribed: true,
+    isLoading: false,
+    icon: 'discussion',
+    name: 'Help me understand this project!',
+    onToggleSubscribe: fn()
+  }
+}`,...(t=(i=o.parameters)==null?void 0:i.docs)==null?void 0:t.source}}};const W=["Demo"];export{o as Demo,W as __namedExportsOrder,V as default};
