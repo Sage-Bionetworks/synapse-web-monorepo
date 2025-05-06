@@ -72,7 +72,8 @@ jobs:
           fetch-depth: 0
       - name: Check if any E2E tests ran
         run: |
-          if [ -d "${{ env.PW_ALL_BLOBS_DIR }}"]; then
+          cd ${{ env.PORTALS_E2E_SUBDIR }};
+          if [ ! -d "${{ env.PW_ALL_BLOBS_DIR }}"]; then
             exit 0
           fi
       - uses: ./.github/actions/pnpm-setup-action
