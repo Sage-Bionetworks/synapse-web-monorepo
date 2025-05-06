@@ -1,4 +1,5 @@
 import WideButton from '@/components/styled/WideButton'
+import { ButtonProps } from '@mui/material'
 import { Link as RouterLink, useInRouterContext } from 'react-router'
 
 export type ButtonLinkWidgetParams = {
@@ -28,7 +29,7 @@ export default function MarkdownButton(
     widgetParamsMapped.url?.startsWith('https://')
   const inRouterContext = useInRouterContext()
 
-  let linkProps: Record<string, any> = {}
+  let linkProps: Partial<ButtonProps> & { target?: string; to?: string } = {}
 
   if (isExternalLink) {
     linkProps = {
@@ -50,7 +51,6 @@ export default function MarkdownButton(
     }
   }
 
-  console.log('is component router', useInRouterContext())
   const button = (
     <WideButton
       className={buttonClasses}
