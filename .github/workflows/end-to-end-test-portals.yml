@@ -38,7 +38,7 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
       - name: Build portal
-        run: pnpm nx run portals-e2e:portal:build
+        run: pnpm nx affected -t portals-e2e:portal:build
         env:
           PORTAL: ${{ matrix.PORTAL }}
       - name: Install Playwright Browsers
@@ -46,7 +46,7 @@ jobs:
           cd "${{ env.PORTALS_E2E_SUBDIR }}"
           pnpm playwright install --with-deps
       - name: Run e2e tests
-        run: pnpm nx run portals-e2e:e2e
+        run: pnpm nx affected -t portals-e2e:e2e
         env:
           PORTAL: ${{ matrix.PORTAL }}
       - name: Upload blob report to GitHub Actions Artifacts
