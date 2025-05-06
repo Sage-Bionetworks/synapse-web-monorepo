@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface  */
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-
-import '@mui/material/styles'
+import type {} from '@mui/material/styles'
+import type {} from '@mui/material/Typography'
 
 // If creating a new Typography variant, add it to this list.
 type CustomTypographyVariants =
