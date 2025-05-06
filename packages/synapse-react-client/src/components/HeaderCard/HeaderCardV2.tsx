@@ -1,10 +1,5 @@
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
-import React, {
-  useState,
-  useEffect,
-  forwardRef,
-  ForwardedRef,
-} from 'react'
+import React, { useState, useEffect, forwardRef, ForwardedRef } from 'react'
 import {
   Box,
   Card,

@@ -1,14 +1,16 @@
-import SynapseClient from '@/synapse-client'
+import * as SynapseClient from '@/synapse-client/SynapseClient'
 import {
   getInfiniteQueryResultBundleOptions,
   KeyFactory,
   tableQueryUseQueryDefaults,
 } from '@/synapse-queries'
-import { LockedColumn, SynapseClientError, useSynapseContext } from '@/utils'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
   partitionQueryBundleRequestIntoRowsAndMetadata,
   removeLockedColumnFromFacetData,
 } from '@/utils/functions/queryUtils'
+import { LockedColumn } from '@/utils/types/LockedColumn'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import {
   AsynchronousJobStatus,
   QueryBundleRequest,

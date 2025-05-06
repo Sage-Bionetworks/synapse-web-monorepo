@@ -8,11 +8,8 @@ import { studyCardConfiguration } from '@/config/synapseConfigs/studies'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import {
-  CardContainerLogic,
-  MarkdownSynapse,
-  QueryWrapperPlotNav,
-} from 'synapse-react-client'
+import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
+import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
 export default function OrganizationDetailsTab() {
   const { value: fundingAgency } = useDetailsPageContext('fundingAgency')

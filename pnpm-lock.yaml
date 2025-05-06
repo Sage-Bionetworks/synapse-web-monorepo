@@ -138,8 +138,8 @@ importers:
         specifier: ^5.0.7
         version: 5.0.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       sass:
         specifier: ^1.71.1
         version: 1.77.6
@@ -301,8 +301,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -356,8 +356,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -405,8 +405,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -463,8 +463,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -512,8 +512,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -564,8 +564,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -616,8 +616,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -668,8 +668,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -732,8 +732,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-type-animation:
         specifier: ^3.2.0
         version: 3.2.0(prop-types@15.8.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -784,8 +784,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -842,8 +842,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -894,8 +894,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -964,8 +964,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       sass:
         specifier: ^1.71.1
         version: 1.77.6
@@ -1151,8 +1151,8 @@ importers:
         specifier: ^2.6.0
         version: 2.6.0(plotly.js@2.33.0(mapbox-gl@1.13.3))(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-spinners:
         specifier: ^0.13.8
         version: 0.13.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1635,8 +1635,8 @@ importers:
         specifier: ^4.2.6
         version: 4.2.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-router:
-        specifier: ^7.1.1
-        version: 7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^7.5.3
+        version: 7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-select:
         specifier: ^5.8.0
         version: 5.8.0(@types/react@18.3.12)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1970,7 +1970,7 @@ importers:
         version: 1.0.1
       postcss-normalize:
         specifier: ^10.0.1
-        version: 10.0.1(browserslist@4.23.2)(postcss@8.4.39)
+        version: 10.0.1(browserslist@4.23.3)(postcss@8.4.39)
       prettier:
         specifier: ^2.8.8
         version: 2.8.8
@@ -7568,6 +7568,7 @@ packages:
     resolution: {integrity: sha512-NXeHXtFLZd6QGbS5af9tiwIoI+BVptHUcGkkF/ouvEPa+ZiZvK0xek4Yh6cd5jNDEg8P+tIA5xxB2ZC/RnqXyw==}
     peerDependencies:
       eslint: '>= 5'
+    bundledDependencies: []
 
   eslint-plugin-jest-dom@5.5.0:
     resolution: {integrity: sha512-CRlXfchTr7EgC3tDI7MGHY6QjdJU5Vv2RPaeeGtkXUHnKZf04kgzMPIJUXt4qKCvYWVVIEo9ut9Oq1vgXAykEA==}
@@ -8832,6 +8833,7 @@ packages:
     resolution: {integrity: sha512-Quz3MvAwHxVYNXsOByL7xI5EB2WYOeFswqaHIA3qOK3isRWTxiplBEocmmru6XmxDB2L7jDNYtYA4FyimoAFEw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
+    bundledDependencies: []
 
   jsonfile@4.0.0:
     resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
@@ -10041,8 +10043,8 @@ packages:
       react: ^16.14.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.14.0 || ^17.0.0 || ^18.0.0
 
-  react-router@7.1.1:
-    resolution: {integrity: sha512-39sXJkftkKWRZ2oJtHhCxmoCrBCULr/HAH4IT5DHlgu/Q0FCPV0S4Lx+abjDTx/74xoZzNYDYbOZWlJjruyuDQ==}
+  react-router@7.5.3:
+    resolution: {integrity: sha512-3iUDM4/fZCQ89SXlDa+Ph3MevBrozBAI655OAfWQlTm9nBR0IKlrmNwFow5lPHttbwvITZfkeeeZFP6zt3F7pw==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       react: '>=18'
@@ -10432,9 +10434,6 @@ packages:
 
   set-blocking@2.0.0:
     resolution: {integrity: sha512-KiKBS8AnWGEyLzofFfmvKwpdPzqiy16LvQfK3yv/fVH7Bj13/wl3JSR1J+rfgRE9q7xUJK4qvgS8raSOeLUehw==}
-
-  set-cookie-parser@2.6.0:
-    resolution: {integrity: sha512-RVnVQxTXuerk653XfuliOxBP81Sf0+qfQE73LIYKcyMYHG94AuH0kgrQpRDuTZnSmjpysHmzxJXKNfa6PjFhyQ==}
 
   set-cookie-parser@2.7.1:
     resolution: {integrity: sha512-IOc8uWeOZgnb3ptbCURJWNjWUPcO3ZnTTdzsurqERrP6nPyv+paC55vJM0LpOlT2ne+Ix+9+CRG1MNLlyZ4GjQ==}
@@ -14088,7 +14087,7 @@ snapshots:
   '@mswjs/cookies@0.2.2':
     dependencies:
       '@types/set-cookie-parser': 2.4.7
-      set-cookie-parser: 2.6.0
+      set-cookie-parser: 2.7.1
 
   '@mswjs/cookies@1.1.1': {}
 
@@ -16321,7 +16320,7 @@ snapshots:
       std-env: 3.7.0
       strip-literal: 2.1.0
       test-exclude: 6.0.0
-      vitest: 1.6.0(@types/node@20.17.12)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
+      vitest: 1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -16375,7 +16374,7 @@ snapshots:
       pathe: 1.1.2
       picocolors: 1.0.1
       sirv: 2.0.4
-      vitest: 1.6.0(@types/node@20.17.12)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
+      vitest: 1.6.0(@types/node@20.14.10)(@vitest/ui@1.6.0)(jsdom@21.1.2)(sass@1.77.6)(terser@5.37.0)
 
   '@vitest/utils@1.6.0':
     dependencies:
@@ -21274,11 +21273,6 @@ snapshots:
 
   possible-typed-array-names@1.0.0: {}
 
-  postcss-browser-comments@4.0.0(browserslist@4.23.2)(postcss@8.4.39):
-    dependencies:
-      browserslist: 4.23.2
-      postcss: 8.4.39
-
   postcss-browser-comments@4.0.0(browserslist@4.23.3)(postcss@8.4.39):
     dependencies:
       browserslist: 4.23.3
@@ -21291,14 +21285,6 @@ snapshots:
     optionalDependencies:
       postcss: 8.4.39
       ts-node: 10.9.2(@types/node@20.14.10)(typescript@5.8.3)
-
-  postcss-normalize@10.0.1(browserslist@4.23.2)(postcss@8.4.39):
-    dependencies:
-      '@csstools/normalize.css': 12.1.1
-      browserslist: 4.23.2
-      postcss: 8.4.39
-      postcss-browser-comments: 4.0.0(browserslist@4.23.2)(postcss@8.4.39)
-      sanitize.css: 13.0.0
 
   postcss-normalize@10.0.1(browserslist@4.23.3)(postcss@8.4.39):
     dependencies:
@@ -21591,9 +21577,8 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  react-router@7.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  react-router@7.5.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
-      '@types/cookie': 0.6.0
       cookie: 1.0.2
       react: 18.2.0
       set-cookie-parser: 2.7.1
@@ -22131,8 +22116,6 @@ snapshots:
       randombytes: 2.1.0
 
   set-blocking@2.0.0: {}
-
-  set-cookie-parser@2.6.0: {}
 
   set-cookie-parser@2.7.1: {}
 

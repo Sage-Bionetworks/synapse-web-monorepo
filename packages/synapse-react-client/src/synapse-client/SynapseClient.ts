@@ -1,9 +1,5 @@
-import {
-  ACCESS_TOKEN_COOKIE_KEY,
-  getCookieDomain,
-  OAuth2State,
-  SynapseConstants,
-} from '@/utils'
+import { ACCESS_TOKEN_COOKIE_KEY, getCookieDomain, OAuth2State } from '@/utils'
+import * as SynapseConstants from '@/utils/SynapseConstants'
 import {
   ACCESS_APPROVAL,
   ACCESS_APPROVAL_BY_ID,
