@@ -51,7 +51,7 @@ export function SectionLayout(props: SectionLayoutProps) {
       sx={{
         overflow: 'auto',
         ...ContainerProps?.sx,
-        maxWidth: customMaxWidth ?? undefined,
+        ...(customMaxWidth && { maxWidth: customMaxWidth }),
       }}
     >
       {scrollToJsx}

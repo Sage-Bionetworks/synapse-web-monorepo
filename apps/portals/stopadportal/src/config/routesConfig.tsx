@@ -27,7 +27,7 @@ const routes: RouteObject[] = [
       {
         path: 'Apply',
         element: (
-          <>
+          <SectionLayout>
             <Markdown ownerId="syn20717442" wikiId="595813" />
             <SynapseFormSubmissionGrid
               pathpart="/Apply/FormSubmission"
@@ -35,7 +35,7 @@ const routes: RouteObject[] = [
               itemNoun="Compound"
               formClass="drug-upload-tool"
             />
-          </>
+          </SectionLayout>
         ),
       },
       {
