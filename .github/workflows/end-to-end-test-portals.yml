@@ -45,6 +45,14 @@ jobs:
         run: |
           cd "${{ env.PORTALS_E2E_SUBDIR }}"
           pnpm playwright install --with-deps
+
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v4
+
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
+
       - name: Run e2e tests
         run: pnpm nx affected -t portals-e2e:e2e
         env:
