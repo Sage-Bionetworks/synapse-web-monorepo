@@ -509,9 +509,7 @@
   /*---- form classes -----*/
   .experiments-list legend ~ .field-description {
     font-style: italic;
-    @media (min-width: map-get(SrcVariables.$breakpoints, 'small')) {
-      font-size: 1rem;
-    }
+    font-size: 1rem;
     @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
       font-size: 1.4rem;
     }
