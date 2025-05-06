@@ -84,7 +84,13 @@ jobs:
             exit 0
           fi
       - name: Merge into HTML Report
-        run: cd ${{ env.PORTALS_E2E_SUBDIR }}; pnpm exec playwright merge-reports --reporter html ./"${{ env.PW_ALL_BLOBS_DIR }}"
+        run: |
+          cd ${{ env.PORTALS_E2E_SUBDIR }}; 
+          if [ ! -d "${{ env.PW_ALL_BLOBS_DIR }}" ]; then
+            exit 0
+          else
+            pnpm exec playwright merge-reports --reporter html ./"${{ env.PW_ALL_BLOBS_DIR }}"
+          fi
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:
