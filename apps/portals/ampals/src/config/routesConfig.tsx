@@ -11,11 +11,11 @@ import AMPALSResearchPageLayout from '@sage-bionetworks/synapse-portal-framework
 import { searchPageChildRoutes } from '@/pages/AMPALSSearchPage'
 import { Typography, Link } from '@mui/material'
 //import header images for Resources pages
-import researcherResourcesHeaderSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/researcher_resources_slat.png'
-import contributorResourcesHeaderSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/data_contributor_resources_slat.png'
-import pwleResourcesHeaderSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/pwles_resources_slat.png'
-import publishingRequirementsSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/publishing_requirements.png'
-import contributeDataSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/assets/contribute_data_slat.png'
+import researcherResourcesHeaderSlat from '../assets/researcher_resources_slat.png'
+import contributorResourcesHeaderSlat from '../assets/data_contributor_resources_slat.png'
+import pwleResourcesHeaderSlat from '../assets/pwles_resources_slat.png'
+import publishingRequirementsSlat from '../assets/publishing_requirements.png'
+import contributeDataSlat from '../assets/contribute_data_slat.png'
 
 //TO DO: help page button url(s), remove first child h2 padding-top or find some other fix, add input for header images
 
