@@ -41,7 +41,7 @@ const routes: RouteObject[] = [
       {
         path: 'Apply/FormSubmission',
         element: (
-          <SectionLayout>
+          <SectionLayout ContainerProps={{ maxWidth: false }}>
             <SynapseFormWrapper
               formSchemaEntityId="syn20680102"
               fileNamePath="naming.compound_name"
