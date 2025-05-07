@@ -1,23 +1,23 @@
 import { Box, Typography } from '@mui/material'
 import { useNavigate } from 'react-router'
-import {
-  LoginMethod,
-  restoreLastPlace,
-  StandaloneLoginForm,
-  storeLastPlace,
-  SynapseConstants,
-  SystemUseNotification,
-  useApplicationSessionContext,
-  useLastLoginInfoState,
-} from 'synapse-react-client'
-import { backButtonSx } from './components/BackButton.js'
-import { SourceAppDescription, SourceAppLogo } from './components/SourceApp.js'
+import { backButtonSx } from '../components/BackButton.js'
+import { SourceAppDescription, SourceAppLogo } from '../components/SourceApp.js'
 import {
   StyledInnerContainer,
   StyledOuterContainer,
-} from './components/StyledComponents.js'
-import { useSourceApp } from './components/useSourceApp'
-import { RESET_2FA_ROUTE, RESET_2FA_SIGNED_TOKEN_PARAM } from './Constants'
+} from '../components/StyledComponents.js'
+import { useSourceApp } from '../components/useSourceApp.js'
+import { RESET_2FA_ROUTE, RESET_2FA_SIGNED_TOKEN_PARAM } from '../Constants.js'
+import StandaloneLoginForm from 'synapse-react-client/components/Authentication/StandaloneLoginForm'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { LoginMethod } from 'synapse-react-client/components/Authentication/LoginMethod'
+import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
+import { useLastLoginInfoState } from 'synapse-react-client/components/Authentication/LastLoginInfo'
+import {
+  restoreLastPlace,
+  storeLastPlace,
+} from 'synapse-react-client/utils/AppUtils/AppUtils'
+import SystemUseNotification from 'synapse-react-client/components/SystemUseNotification/SystemUseNotification'
 
 export type LoginPageProps = {
   returnToUrl?: string

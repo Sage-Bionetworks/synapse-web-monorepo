@@ -9,30 +9,31 @@ import {
 import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
 import { SyntheticEvent, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY } from '../hooks/useMaybePromptToSignTermsOfService'
+import { StyledOuterContainer } from '../components/StyledComponents'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import {
-  displayToast,
-  GovernanceMarkdownGithub,
+  useSignTermsOfService,
+  useTermsOfServiceInfo,
+  useTermsOfServiceStatus,
+} from 'synapse-react-client/synapse-queries/termsOfService/useTermsOfService'
+import {
   processRedirectURLInOneSage,
   restoreLastPlace,
-  SynapseContextUtils,
-  SynapseQueries,
-} from 'synapse-react-client'
-import { SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY } from '../hooks/useMaybePromptToSignTermsOfService'
-import { StyledOuterContainer } from './StyledComponents'
+} from 'synapse-react-client/utils/AppUtils/AppUtils'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import { GovernanceMarkdownGithub } from 'synapse-react-client/components/Markdown/MarkdownGithub'
 
-export function SignUpdatedTermsOfUsePage() {
+function SignUpdatedTermsOfUsePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isCheckboxSelected, setIsCheckboxSelected] = useState(false)
-  const { accessToken } = SynapseContextUtils.useSynapseContext()
-  const { mutate: signTermsOfService } = SynapseQueries.useSignTermsOfService()
+  const { accessToken } = useSynapseContext()
+  const { mutate: signTermsOfService } = useSignTermsOfService()
   const navigate = useNavigate()
-  const { data: tosInfo } = SynapseQueries.useTermsOfServiceInfo()
-  const { data: tosStatus } = SynapseQueries.useTermsOfServiceStatus(
-    accessToken,
-    {
-      enabled: !!accessToken,
-    },
-  )
+  const { data: tosInfo } = useTermsOfServiceInfo()
+  const { data: tosStatus } = useTermsOfServiceStatus(accessToken, {
+    enabled: !!accessToken,
+  })
 
   const redirectAfterSignOrSkip = () => {
     const didRedirect = restoreLastPlace(navigate)
@@ -137,3 +138,5 @@ export function SignUpdatedTermsOfUsePage() {
     </StyledOuterContainer>
   )
 }
+
+export default SignUpdatedTermsOfUsePage

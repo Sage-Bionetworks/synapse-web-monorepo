@@ -6,7 +6,7 @@ import { userEvent } from '@testing-library/user-event'
 import { vitest } from 'vitest'
 import { RESET_2FA_SIGNED_TOKEN_PARAM } from '../../Constants'
 import TestWrapper, { TestWrapperProps } from '../../tests/TestWrapper'
-import { ResetTwoFactorAuth } from './ResetTwoFactorAuth'
+import { ResetTwoFactorAuth } from '../../pages/ResetTwoFactorAuth'
 
 describe('ResetTwoFactorAuth', () => {
   beforeAll(() => {

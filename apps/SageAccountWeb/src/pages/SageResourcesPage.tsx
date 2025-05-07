@@ -8,20 +8,19 @@ import {
   useTheme,
 } from '@mui/material'
 import { Link as RouterLink } from 'react-router'
-import { ShowMore, SynapseHookUtils } from 'synapse-react-client'
 import { sourceAppConfigTableID } from '../resources'
-import { StyledOuterContainer } from './StyledComponents'
+import { StyledOuterContainer } from '@/components/StyledComponents'
 import {
   SourceAppProvider,
   SYNAPSE_SOURCE_APP_ID,
   useSourceApp,
-} from './useSourceApp'
+} from '@/components/useSourceApp'
+import ShowMore from 'synapse-react-client/components/ShowMore/ShowMore'
+import { useSourceAppConfigs } from 'synapse-react-client/utils/hooks/useSourceAppConfigs'
 
-export function SageResourcesPageInternal() {
+function SageResourcesPageInternal() {
   const theme = useTheme()
-  const sourceAppConfigs = SynapseHookUtils.useSourceAppConfigs(
-    sourceAppConfigTableID,
-  )
+  const sourceAppConfigs = useSourceAppConfigs(sourceAppConfigTableID)
   const sageSourceAppConfig = useSourceApp()
   return (
     <StyledOuterContainer>
@@ -140,7 +139,7 @@ export function SageResourcesPageInternal() {
   )
 }
 
-export function SageResourcesPage() {
+function SageResourcesPage() {
   return (
     // This page should always use the Synapse resources and theme
     <SourceAppProvider sourceAppId={SYNAPSE_SOURCE_APP_ID}>
@@ -148,3 +147,5 @@ export function SageResourcesPage() {
     </SourceAppProvider>
   )
 }
+
+export default SageResourcesPage

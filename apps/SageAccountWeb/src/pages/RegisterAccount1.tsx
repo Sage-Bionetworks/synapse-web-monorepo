@@ -17,28 +17,27 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react'
 import { Link as RouterLink, useLocation } from 'react-router'
-import {
-  displayToast,
-  IconSvg,
-  LastLoginInfo,
-  RegisterPageLogoutPrompt,
-  SynapseClient,
-  SynapseClientError,
-  SynapseConstants,
-  useApplicationSessionContext,
-  useLastLoginInfo,
-  useSynapseContext,
-} from 'synapse-react-client'
 import { useAppContext } from '../AppContext'
-import { BackButton } from './BackButton'
-import { EmailConfirmationPage } from './EmailConfirmationPage'
-import { SourceAppLogo } from './SourceApp'
+import { BackButton } from '@/components/BackButton'
+import { EmailConfirmationPage } from '@/components/EmailConfirmationPage'
+import { SourceAppLogo } from '@/components/SourceApp'
 import {
   StyledFormControl,
   StyledInnerContainer,
   StyledOuterContainer,
-} from './StyledComponents'
-import { SYNAPSE_SOURCE_APP_ID, useSourceApp } from './useSourceApp'
+} from '@/components/StyledComponents'
+import { SYNAPSE_SOURCE_APP_ID, useSourceApp } from '@/components/useSourceApp'
+import SynapseClient from 'synapse-react-client/synapse-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
+import LastLoginInfo, {
+  useLastLoginInfo,
+} from 'synapse-react-client/components/Authentication/LastLoginInfo'
+import RegisterPageLogoutPrompt from 'synapse-react-client/components/RegisterPageLogoutPrompt/RegisterPageLogoutPrompt'
+import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
 
 export enum Pages {
   CHOOSE_REGISTRATION,
@@ -75,7 +74,7 @@ function handleError(e: unknown) {
   }
 }
 
-export const RegisterAccount1 = () => {
+const RegisterAccount1 = () => {
   const { accessToken } = useSynapseContext()
   const isSignedIn = !!accessToken
   const appContext = useAppContext()
@@ -202,10 +201,9 @@ export const RegisterAccount1 = () => {
     }
   }
 
-  const lastLoginInfo = LastLoginInfo({
-    display: 'box',
-    ...useLastLoginInfo(),
-  })
+  const loginInfo = useLastLoginInfo()
+
+  const lastLoginInfo = <LastLoginInfo display="box" {...loginInfo} />
 
   if (isSignedIn) {
     return (
@@ -417,3 +415,5 @@ export const RegisterAccount1 = () => {
     </>
   )
 }
+
+export default RegisterAccount1

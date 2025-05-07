@@ -1,9 +1,10 @@
 import ReturnArrow from '@/assets/ReturnArrow.svg?url'
 import { Link, Paper } from '@mui/material'
 import { Link as RouterLink } from 'react-router'
-import { CertificationQuiz as Quiz, MuiContainer } from 'synapse-react-client'
+import CertificationQuiz from 'synapse-react-client/components/CertificationQuiz/CertificationQuiz'
+import { MuiContainer } from 'synapse-react-client/components/MuiContainer'
 
-export const CertificationQuiz = () => {
+function CertificationQuizPage() {
   return (
     <div className="ProfileValidation blue-background">
       <MuiContainer style={{ padding: '40px' }}>
@@ -24,9 +25,11 @@ export const CertificationQuiz = () => {
             <img className="arrow-icon" src={ReturnArrow} alt="return arrow" />
             Return to Account Settings
           </Link>
-          <Quiz />
+          <CertificationQuiz />
         </Paper>
       </MuiContainer>
     </div>
   )
 }
+
+export default CertificationQuizPage

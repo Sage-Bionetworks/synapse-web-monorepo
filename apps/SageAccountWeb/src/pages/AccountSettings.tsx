@@ -22,27 +22,25 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { RefObject, useEffect, useRef, useState } from 'react'
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router'
-import {
-  ChangePassword,
-  CookiePreferencesDialog,
-  displayToast,
-  IconSvg,
-  SynapseClient,
-  SynapseConstants,
-  SynapseHookUtils,
-  SynapseQueries,
-  TwoFactorAuthSettingsPanel,
-  useApplicationSessionContext,
-  useSynapseContext,
-} from 'synapse-react-client'
 import RORInstitutionField from 'synapse-react-client/components/RORInstitutionField/RORInstitutionField'
 import UniversalCookies from 'universal-cookie'
-import { ConfigureEmail } from './ConfigureEmail'
-import { ProfileAvatar } from './ProfileAvatar'
-import { ORCiDButton } from './ProfileValidation/ORCiDButton'
-import { UnbindORCiDDialog } from './ProfileValidation/UnbindORCiD'
-import { StyledFormControl } from './StyledComponents'
-import AccountSettingsTopBar from './AccountSettingsTopBar'
+import { ConfigureEmail } from '../components/ConfigureEmail'
+import { ProfileAvatar } from '../components/ProfileAvatar'
+import { ORCiDButton } from '../components/ProfileValidation/ORCiDButton'
+import { UnbindORCiDDialog } from '../components/ProfileValidation/UnbindORCiD'
+import { StyledFormControl } from '../components/StyledComponents'
+import AccountSettingsTopBar from '../components/AccountSettingsTopBar'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
+import { useCookiePreferences } from 'synapse-react-client/utils/hooks/useCookiePreferences'
+import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/featureflags/useGetFeatureFlag'
+import SynapseClient from 'synapse-react-client/synapse-client'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import ChangePassword from 'synapse-react-client/components/ChangePassword/ChangePassword'
+import TwoFactorAuthSettingsPanel from 'synapse-react-client/components/Authentication/TwoFactorAuthSettingsPanel'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import CookiePreferencesDialog from 'synapse-react-client/components/CookiesNotification/CookiePreferencesDialog'
 
 function CompletionStatus({ isComplete }: { isComplete: boolean | undefined }) {
   return (
@@ -60,7 +58,7 @@ function CompletionStatus({ isComplete }: { isComplete: boolean | undefined }) {
   )
 }
 
-export const AccountSettings = () => {
+const AccountSettings = () => {
   const { accessToken } = useSynapseContext()
   const { hash } = useLocation()
   const [userProfile, setUserProfile] = useState<UserProfile>()
@@ -94,15 +92,13 @@ export const AccountSettings = () => {
   const webhooksRef = useRef<HTMLDivElement>(null)
   const cookieManagementRef = useRef<HTMLDivElement>(null)
   const signOutSectionRef = useRef<HTMLDivElement>(null)
-  const [cookiePreferences] = SynapseHookUtils.useCookiePreferences()
+  const [cookiePreferences] = useCookiePreferences()
   const [isCookiePrefsDialogVisible, setIsCookiePrefsDialogVisible] =
     useState(false)
 
   const { clearSession } = useApplicationSessionContext()
 
-  const showWebhooks = SynapseQueries.useGetFeatureFlag(
-    FeatureFlagEnum.WEBHOOKS_UI,
-  )
+  const showWebhooks = useGetFeatureFlag(FeatureFlagEnum.WEBHOOKS_UI)
 
   const cookies = new UniversalCookies()
   const [isUTCTime, setUTCTime] = useState<string>(
@@ -816,3 +812,5 @@ export const AccountSettings = () => {
     </div>
   )
 }
+
+export default AccountSettings
