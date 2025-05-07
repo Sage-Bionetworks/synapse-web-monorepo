@@ -40,11 +40,13 @@ jobs:
         uses: nrwl/nx-set-shas@v4
 
       - uses: ./.github/actions/pnpm-setup-action
-      - name: Echo affected projects
+      - name: Save affected projects to environment variable
         run: |
-          pnpm nx show projects --affected
+          echo "{AFFECTED_PROJECTS}={pnpm nx show projects --affected}" >> "$GITHUB_ENV"
 
-      - uses: ./.github/actions/pnpm-setup-action
+      - name: TEST Check github env for variable
+        run: |
+          echo $AFFECTED_PROJECTS
       - name: Build portal
         run: pnpm nx affected -t portals-e2e:portal:build
         env:
