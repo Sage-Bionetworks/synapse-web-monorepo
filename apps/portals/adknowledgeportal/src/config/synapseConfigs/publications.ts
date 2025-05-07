@@ -1,9 +1,9 @@
 import { Direction } from '@sage-bionetworks/synapse-types'
-import {
+import type {
   CardConfiguration,
   QueryWrapperPlotNavProps,
-  SynapseConstants,
 } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { publicationsSql } from '../resources'
 
 const rgbIndex = 5

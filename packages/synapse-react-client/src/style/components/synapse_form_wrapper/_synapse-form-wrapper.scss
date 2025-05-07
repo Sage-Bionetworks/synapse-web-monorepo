@@ -206,9 +206,7 @@
 
   .step-exclude-directions {
     font-style: italic;
-
     vertical-align: middle;
-    @include SrcMixins.calc(line-height, '#{SrcVariables.$space-unit} * 2');
     @include SrcMixins.calc(height, '#{SrcVariables.$space-unit} * 2');
     button.btn-link {
       color: SrcVariables.$primary-action-color;

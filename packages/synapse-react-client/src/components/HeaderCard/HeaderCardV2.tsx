@@ -1,33 +1,19 @@
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  forwardRef,
-  ForwardedRef,
-} from 'react'
+import React, { useState, useEffect, forwardRef, ForwardedRef } from 'react'
 import {
   Box,
   Card,
   Typography,
   Link,
-  Stack,
+  // Stack,
   Button,
-  ButtonProps,
+  // ButtonProps,
   useTheme,
   useMediaQuery,
 } from '@mui/material'
 import { DescriptionConfig } from '../CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
-
-interface CTAButton {
-  label: string
-  href?: string
-  variant?: ButtonProps['variant']
-  sx?: ButtonProps['sx']
-  endIcon?: React.ReactNode
-  // Add other button props as needed
-}
+import { GenericCardProps } from '@/components/GenericCard/GenericCard'
 
 export type HeaderCardV2Props = {
   /** Type label displayed at the top of the card */
@@ -56,28 +42,31 @@ export type HeaderCardV2Props = {
   backgroundImage?: string
   /** Force values section to appear below main content */
   forceStackedLayout?: boolean
-  /** Optional array of CTA buttons to display below description */
-  ctaButtons?: CTAButton[]
+  /** Optional CTA link to display below description */
+  ctaLinkConfig?: GenericCardProps['ctaLinkConfig']
 }
 
 /**
- * HeaderCardV2 Component
+ * HeaderCardV2 Component   OUT OF DATE COMMENTS
  *
  * A material-UI based card component for displaying detailed information with metadata.
  * This component supports responsive layouts, background images, and dynamic content
  * organization.
  *
  * Layout Structure:
- * ┌───────────────────────────────────────────────────────────────┐
- * │ ┌─────┐  Type Label                                           │
- * │ │Icon │  Title                                                │
- * │ │     │  Subtitle                                             │
- * │ └─────┘                                                       │
- * │         Description                     Metadata              │
- * │         [Show More/Less]                --------              │
- * │                                         Label 1    Value 1    │
- * │         [CTA Buttons]                   Label 2    Value 2    │
- * └───────────────────────────────────────────────────────────────┘
+
+  ```
+┌───────────────────────────────────────────────────────────────┐
+│ ┌─────┐  Type Label                                           │
+│ │Icon │  Title                                                │
+│ │     │  Subtitle                                             │
+│ └─────┘                                                       │
+│         Description                     Metadata              │
+│         [Show More/Less]                --------              │
+│                                         Label 1    Value 1    │
+│         [External Site Button]          Label 2    Value 2    │
+└───────────────────────────────────────────────────────────────┘
+ ```
  *
  * Features:
  * - Responsive layout with configurable breakpoints
@@ -96,7 +85,6 @@ export type HeaderCardV2Props = {
  * - Default: Icon + Content | Metadata (on desktop)
  * - Stacked: Full width content with metadata below
  * - Mobile: All sections stack vertically
- * - Height-Based: Stacks when metadata height exceeds description height
  *
  * @component
  * @example
@@ -107,9 +95,7 @@ export type HeaderCardV2Props = {
  *   description="Study description"
  *   values={[['Status', 'Active'], ['Access', 'Public']]}
  *   icon={<StudyIcon />}
- *   ctaButtons={[
- *     { label: 'View Details', variant: 'contained' }
- *   ]}
+ *   ctaLinkConfig={{text: "View Standard on External Website", link: "url"}}
  * />
  * ```
 
@@ -117,7 +103,6 @@ export type HeaderCardV2Props = {
  * 1. Responsive Layout:
  *    - Uses MUI Grid for flexible layouts
  *    - Switches to stacked layout on mobile, when forceStackedLayout is true,
- *      or when the metadata table height exceeds the description height
  *
  * 2. Meta Tags:
  *    - Manages document title and meta description
@@ -127,7 +112,7 @@ export type HeaderCardV2Props = {
  *    - Icon: Optional, maintains aspect ratio
  *    - Main Content: Type, title, subtitle, description
  *    - Metadata: Right-aligned or stacked key-value pairs
- *    - CTA Buttons: Optional action buttons below description
+ *    - CTA Button: Optional button link to external site
  *
  * 4. Styling:
  *    - Background image support with overlay
@@ -153,44 +138,10 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
     icon,
     backgroundImage,
     forceStackedLayout = false,
-    ctaButtons,
+    ctaLinkConfig,
   } = props
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
-  // State for dynamic layout
-  // const [useStackedLayout, setUseStackedLayout] = useState(
-  //   forceStackedLayout || isMobile,
-  // )
-
-  // Refs for measuring heights
-  const descriptionRef = useRef<HTMLDivElement>(null)
-  const metadataRef = useRef<HTMLDivElement>(null)
-  const [descriptionHeight, setDescriptionHeight] = useState<number>(0)
-  const [metadataHeight, setMetadataHeight] = useState<number>(0)
-  const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth)
-
-  useEffect(() => {
-    // Only set up height checking if not already forced to stack
-    if (forceStackedLayout || isMobile) {
-      return
-    }
-
-    const dHeight = descriptionRef.current?.offsetHeight || 0
-    const mHeight = metadataRef.current?.offsetHeight || 0
-    // const { dHeight } = descriptionRef.current.getBoundingClientRect();
-    setDescriptionHeight(dHeight)
-    // const { mHight } = metadataRef.current.getBoundingClientRect();
-    setMetadataHeight(mHeight)
-
-    const sww = () => setWindowWidth(window.innerWidth)
-
-    window.addEventListener('resize', sww)
-
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', sww)
-    }
-  }, [forceStackedLayout, isMobile, values, description, windowWidth])
 
   let useStackedLayout = false
   if (forceStackedLayout || isMobile) {
@@ -200,12 +151,6 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
     // as per https://github.com/bridge2ai/b2ai-standards-registry/issues/210#issuecomment-2773706202,
     // constrain metadata to 5-line expandable block
   }
-  console.log({
-    windowWidth,
-    useStackedLayout,
-    descriptionHeight,
-    metadataHeight,
-  })
 
   // Meta tags handling
   const descriptionElement: Element | null = document.querySelector(
@@ -240,6 +185,40 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
     }
   }, [title, description, subTitle, docTitle, docDescription])
 
+  // ctaLink stuff
+  let ctaLinkBox = null
+  if (ctaLinkConfig) {
+    ctaLinkBox = (
+      <Button
+        variant="outlined"
+        component={Link}
+        href={ctaLinkConfig.href}
+        target={ctaLinkConfig.target}
+        rel={
+          ctaLinkConfig.target === '_blank' ? 'noopener noreferrer' : undefined
+        }
+        size="large"
+        sx={{
+          color: '#FFF',
+          '&:hover': {
+            color: '#FFF',
+            textDecorationColor: '#FFF',
+            border: '2px solid white',
+          },
+          '&:focus': { color: '#FFF' },
+          textDecorationColor: '#FFF',
+          padding: '6px 24px',
+          marginTop: '22px',
+          border: '1px solid white',
+        }}
+      >
+        {/* TODO: add an external open icon like https://materialui.co/icon/open-in-new */}
+        {/*<AddAlertTwoTone sx={{ width: '24px', height: '24px' }} />*/}
+        {ctaLinkConfig.text}
+      </Button>
+    )
+  }
+
   return (
     <Card
       component={'div'}
@@ -272,24 +251,10 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
         isAlignToLeftNav ? 'isAlignToLeftNav' : ''
       }`}
     >
-      {/* <Typography
-        className="SRC-type"
-        sx={{
-          fontSize: '14px',
-          textTransform: 'uppercase',
-          fontWeight: 700,
-          color: '#000000',
-        }}
-      >
-        {type}
-      </Typography> */}
-
       <Box
         sx={{
-          // align: 'center',
           marginLeft: 'auto',
           marginRight: 'auto',
-          // border: '1px solid #000',
           maxWidth: '1400px',
           display: 'grid',
           gridTemplateColumns: '1fr 12fr 1fr',
@@ -322,7 +287,6 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
             {/* Title */}
             <Typography
               sx={{
-                // fontWeight: 700,
                 mb: 1,
                 fontSize: '2.5rem',
                 letterSpacing: '0.1em', // Add letter spacing
@@ -368,7 +332,6 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
           }}
         >
           <Box
-            ref={descriptionRef}
             style={{
               flexBasis: useStackedLayout ? '100%' : 'min(65ch, 100%)',
               width: useStackedLayout ? '100%' : 'auto',
@@ -379,12 +342,12 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
               descriptionSubTitle=""
               descriptionConfig={descriptionConfiguration}
             />
+            {ctaLinkBox}
           </Box>
           {values && (
             <Box
-              ref={metadataRef}
               sx={{
-                width: useStackedLayout ? '100%' : 'auto',
+                width: useStackedLayout ? '100%' : '30%',
                 marginTop: useStackedLayout ? 2 : 0,
                 alignItems: 'flex-start',
               }}
@@ -393,29 +356,6 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
             </Box>
           )}
         </Box>
-
-        {ctaButtons && ctaButtons.length > 0 && (
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            spacing={2}
-            sx={{ mt: 2 }}
-          >
-            {ctaButtons.map((buttonProps, index) => (
-              <Button
-                key={index}
-                variant={buttonProps.variant || 'contained'}
-                href={buttonProps.href}
-                sx={{
-                  width: { xs: '100%', sm: 'auto' },
-                  ...(buttonProps.sx || {}),
-                }}
-                endIcon={buttonProps.endIcon}
-              >
-                {buttonProps.label}
-              </Button>
-            ))}
-          </Stack>
-        )}
       </Box>
     </Card>
   )
