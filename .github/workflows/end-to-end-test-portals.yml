@@ -39,6 +39,9 @@ jobs:
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v4
 
+      - name: Echo effected projects
+        run: nx show projects --affected
+
       - uses: ./.github/actions/pnpm-setup-action
       - name: Build portal
         run: pnpm nx affected -t portals-e2e:portal:build
