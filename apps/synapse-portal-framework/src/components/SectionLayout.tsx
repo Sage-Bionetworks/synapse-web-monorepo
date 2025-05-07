@@ -39,7 +39,8 @@ export function SectionLayout(props: SectionLayoutProps) {
 
   return (
     <Container
-      maxWidth={ContainerProps?.maxWidth ?? 'lg'}
+      maxWidth={'lg'}
+      {...ContainerProps}
       sx={{
         overflow: 'auto',
         ...ContainerProps?.sx,
