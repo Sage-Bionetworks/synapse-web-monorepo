@@ -39,14 +39,17 @@ jobs:
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v4
 
+      - uses: ./.github/actions/pnpm-setup-action
       - name: Echo affected projects
-        run: pnpm nx show projects --affected
+        run: |
+          pnpm nx show projects --affected
 
       - uses: ./.github/actions/pnpm-setup-action
       - name: Build portal
         run: pnpm nx affected -t portals-e2e:portal:build
         env:
           PORTAL: ${{ matrix.PORTAL }}
+
       - name: Install Playwright Browsers
         run: |
           cd "${{ env.PORTALS_E2E_SUBDIR }}"
