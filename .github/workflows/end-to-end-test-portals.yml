@@ -42,7 +42,7 @@ jobs:
       - uses: ./.github/actions/pnpm-setup-action
       - name: Save affected projects to environment variable
         run: |
-          echo "AFFECTED_PROJECTS={pnpm nx show projects --affected}" >> "$GITHUB_ENV"
+          echo "AFFECTED_PROJECTS={(pnpm nx show projects --affected)}" >> "$GITHUB_ENV"
 
       - name: TEST Check github env for variable
         run: echo ${{ env.AFFECTED_PROJECTS }}
