@@ -42,11 +42,10 @@ jobs:
       - uses: ./.github/actions/pnpm-setup-action
       - name: Save affected projects to environment variable
         run: |
-          echo "{AFFECTED_PROJECTS}={pnpm nx show projects --affected}" >> "$GITHUB_ENV"
+          echo "AFFECTED_PROJECTS={pnpm nx show projects --affected}" >> "$GITHUB_ENV"
 
       - name: TEST Check github env for variable
-        run: |
-          echo $AFFECTED_PROJECTS
+        run: echo ${{ env.AFFECTED_PROJECTS }}
       - name: Build portal
         run: pnpm nx affected -t portals-e2e:portal:build
         env:
