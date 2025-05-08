@@ -19,9 +19,9 @@
     "playwright:update": "pnpm add -D @playwright/test@latest; pnpm playwright install"
   },
   "devDependencies": {
-    "@playwright/test": "^1.48.0",
-    "@types/node": "^20.14.10",
-    "dotenv": "^16.4.5",
+    "@playwright/test": "catalog:",
+    "@types/node": "catalog:",
+    "dotenv": "catalog:",
     "tslib": "^2.6.2",
     "typescript": "5.5.2"
   }
