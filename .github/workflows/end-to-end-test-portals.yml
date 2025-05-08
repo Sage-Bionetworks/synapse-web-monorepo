@@ -45,6 +45,8 @@ jobs:
           pnpm nx show projects --affected
           affected=$(pnpm nx show projects --affected)
 
+          echo "print affected variable: '$affected'"
+
           for project in "${affected[@]}"; do
             echo "Comparing: '$project' with '${{ matrix.PORTAL }}'"
             if [[ "$project" == "${{ matrix.PORTAL }}" ]]; then
