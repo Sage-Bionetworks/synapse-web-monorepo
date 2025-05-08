@@ -1,5 +1,5 @@
 import { ColumnType } from '@sage-bionetworks/synapse-types'
-import { screen } from '@testing-library/react'
+import { ByRoleOptions, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 export async function addColumnModelToForm(
@@ -43,12 +43,11 @@ export async function modifyColumnModelInForm(
 
 export async function verifyTooltipText(
   element: Element,
-  text: string | RegExp,
+  text: ByRoleOptions['name'],
   user: typeof userEvent | ReturnType<(typeof userEvent)['setup']> = userEvent,
   timeout?: number,
 ) {
   await user.hover(element)
-  const tooltip = await screen.findByRole('tooltip', undefined, { timeout })
-  expect(tooltip).toHaveTextContent(text)
+  await screen.findByRole('tooltip', { name: text }, { timeout })
   await user.unhover(element)
 }

@@ -235,7 +235,7 @@ const AccountSettings = () => {
       <AccountSettingsTopBar accountSettingsPanelConfig={menuConfigArray} />
       <div className="panel-wrapper-bg with-account-setting">
         <Container
-          maxWidth="md"
+          maxWidth="lg"
           sx={{ paddingTop: '100px', position: 'relative' }}
         >
           <Box sx={{ display: 'flex', my: { xs: '10px', sm: '60px' } }}>

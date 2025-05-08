@@ -172,7 +172,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
                 ​
               </span>
               <div
-                class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary  css-1w96hhp-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary css-1w96hhp-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
               >
                 <div
                   aria-controls=":r0:"
