@@ -1,4 +1,3 @@
-import { ONE_TIME_PASSWORD_STEP } from '@/components'
 import SynapseClient from '@/synapse-client'
 import { useResetTwoFactorAuth } from '@/synapse-queries'
 import {
@@ -18,6 +17,7 @@ import { noop } from 'lodash-es'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../SynapseConstants'
 import { useOneSageURL } from './useOneSageURL'
+import { ONE_TIME_PASSWORD_STEP } from '@/components/Authentication/OneTimePasswordForm'
 
 export type UseLoginOptions = {
   sessionCallback?: () => void

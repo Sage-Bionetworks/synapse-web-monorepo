@@ -1,4 +1,5 @@
 @use '@sage-bionetworks/synapse-portal-framework/src/style/variables' as Portal;
+@use 'synapse-react-client/dist/style/abstracts/variables' as SrcVariables;
 
 #header,
 #footer {
@@ -26,4 +27,10 @@ footer {
 
 .stop-ad-home-page {
   margin-top: 20px;
+}
+
+#home-link {
+  @media (max-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+    font-size: 18px;
+  }
 }

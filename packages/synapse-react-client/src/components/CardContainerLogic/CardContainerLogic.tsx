@@ -49,13 +49,6 @@ export interface EntityImage {
   isEntityImage: boolean
 }
 
-export enum TargetEnum {
-  CURRENT_WINDOW = '_self',
-  NEW_WINDOW = '_blank',
-  PARENT_FRAME = '_parent',
-  FULL_WINDOW_BODY = '_top',
-}
-
 export type MarkdownLink = {
   isMarkdown: true
   // the columns whos value will be used for the markdown

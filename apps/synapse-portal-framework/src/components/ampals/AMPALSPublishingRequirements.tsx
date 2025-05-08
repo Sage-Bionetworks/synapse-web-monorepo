@@ -1,3 +1,4 @@
+import { Link } from '@mui/material'
 import { CTASectionWrapper, PortalSectionHeader } from 'synapse-react-client'
 
 function AMPALSPublishingRequirements() {
@@ -9,11 +10,11 @@ function AMPALSPublishingRequirements() {
       summaryText={
         <>
           If you use AMP-ALS Knowledge Portal data in your manuscript, you must
-          first submit it to us for review.
-          {/* Todo */}
-          {/* Use our {''}
+          first submit it to us for review. Use our{' '}
           <Link
-            href="https://example.com/path-to-publication-review-form"
+            href="https://docs.google.com/forms/d/e/1FAIpQLSfjsLpVDzxRSs83qL_i4G8cq_DUYMGK8J10PKj3p9vve-0ftw/viewform"
+            target="_blank"
+            rel="noopener noreferrer"
             sx={{
               color: '#FFF !important',
               whiteSpace: 'nowrap',
@@ -22,12 +23,11 @@ function AMPALSPublishingRequirements() {
           >
             publication review form
           </Link>{' '}
-          to send your manuscript. */}
+          to send your manuscript.
         </>
       }
-      // Todo
-      // buttonText="Learn more"
-      // link="Resources/Publishing Requirements"
+      buttonText="Learn more"
+      link="Resources/Publishing Requirements"
       sx={{
         h2: {
           color: 'primary.contrastText',

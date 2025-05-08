@@ -1,10 +1,8 @@
 import { PropsWithChildren } from 'react'
 import { Outlet } from 'react-router'
-import {
-  CookiesNotification,
-  SynapseErrorBoundary,
-  SynapseToastContainer,
-} from 'synapse-react-client'
+import CookiesNotification from 'synapse-react-client/components/CookiesNotification/CookiesNotification'
+import { SynapseErrorBoundary } from 'synapse-react-client/components/error/ErrorBanner'
+import { SynapseToastContainer } from 'synapse-react-client/components/ToastMessage'
 import AppInitializer from './components/AppInitializer'
 import Footer from './components/Footer'
 import Navbar from './components/navbar/Navbar'

@@ -1,5 +1,5 @@
 import IconSvg, { type2SvgIconName } from '@/components/IconSvg/IconSvg'
-import { IconProps } from '@/components/index'
+import { IconProps } from '@/components/Icon/Icon'
 import { Icon } from '@/components/row_renderers/utils/index'
 import { ImageFileHandle } from '@/components/widgets/ImageFileHandle'
 import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'

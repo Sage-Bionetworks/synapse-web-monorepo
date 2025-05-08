@@ -1,4 +1,4 @@
-import { MarkdownSynapseProps } from 'synapse-react-client'
+import { MarkdownSynapseProps } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { transformStringIntoMarkdownProps } from '../../transformStringIntoMarkdownProps'
 import { useDetailsPageContext } from '../DetailsPageContext'
 

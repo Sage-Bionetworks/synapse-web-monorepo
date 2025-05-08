@@ -1,7 +1,6 @@
-import {
-  QueryWrapperPlotNavProps,
-  SynapseConstants,
-} from 'synapse-react-client'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+
 import { peopleSql } from '../resources'
 
 const rgbIndex = 2

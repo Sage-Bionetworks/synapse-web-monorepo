@@ -10,7 +10,7 @@ import StandaloneQueryWrapper, {
   StandaloneQueryWrapperProps,
 } from './StandaloneQueryWrapper'
 
-jest.mock('../../synapse-client/index', () => ({
+jest.mock('../../synapse-client/SynapseClient', () => ({
   getEntity: jest.fn(),
   getQueryTableAsyncJobResults: jest.fn(),
 }))

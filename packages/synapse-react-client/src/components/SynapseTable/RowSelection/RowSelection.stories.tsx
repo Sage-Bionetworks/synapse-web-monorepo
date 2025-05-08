@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { displayToast } from '../../../index'
+import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import { GetApp } from '@mui/icons-material'
 import { RowSelectionUI, RowSelectionUIProps } from './RowSelectionUI'
 import { Button } from '@mui/material'
