@@ -4,6 +4,711 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@apidevtools/json-schema-ref-parser':
+      specifier: ^9.1.2
+      version: 9.1.2
+    '@aws-sdk/client-s3':
+      specifier: ^3.803.0
+      version: 3.803.0
+    '@aws-sdk/lib-storage':
+      specifier: ^3.803.0
+      version: 3.803.0
+    '@babel/cli':
+      specifier: ^7.27.2
+      version: 7.27.2
+    '@babel/core':
+      specifier: ^7.27.1
+      version: 7.27.1
+    '@babel/plugin-proposal-class-properties':
+      specifier: ^7.18.6
+      version: 7.18.6
+    '@babel/plugin-proposal-object-rest-spread':
+      specifier: ^7.20.7
+      version: 7.20.7
+    '@babel/plugin-syntax-dynamic-import':
+      specifier: ^7.8.3
+      version: 7.8.3
+    '@babel/plugin-transform-react-jsx':
+      specifier: ^7.27.1
+      version: 7.27.1
+    '@babel/plugin-transform-runtime':
+      specifier: ^7.27.1
+      version: 7.27.1
+    '@babel/preset-env':
+      specifier: ^7.27.2
+      version: 7.27.2
+    '@babel/preset-react':
+      specifier: ^7.27.1
+      version: 7.27.1
+    '@babel/preset-typescript':
+      specifier: ^7.27.1
+      version: 7.27.1
+    '@babel/runtime':
+      specifier: ^7.27.1
+      version: 7.27.1
+    '@babel/types':
+      specifier: ^7.27.1
+      version: 7.27.1
+    '@brainhubeu/react-carousel':
+      specifier: 1.19.26
+      version: 1.19.26
+    '@emotion/core':
+      specifier: ^11.0.0
+      version: 11.0.0
+    '@emotion/react':
+      specifier: ^11.14.0
+      version: 11.14.0
+    '@emotion/styled':
+      specifier: ^11.14.0
+      version: 11.14.0
+    '@eslint/compat':
+      specifier: ^1.2.9
+      version: 1.2.9
+    '@eslint/eslintrc':
+      specifier: ^3.3.1
+      version: 3.3.1
+    '@eslint/js':
+      specifier: ^9.26.0
+      version: 9.26.0
+    '@faker-js/faker':
+      specifier: ^8.4.1
+      version: 8.4.1
+    '@googlemaps/jest-mocks':
+      specifier: ^2.22.6
+      version: 2.22.6
+    '@jest/reporters':
+      specifier: ^29.7.0
+      version: 29.7.0
+    '@juggle/resize-observer':
+      specifier: ^3.4.0
+      version: 3.4.0
+    '@mui/icons-material':
+      specifier: ^5.17.1
+      version: 5.17.1
+    '@mui/material':
+      specifier: ^5.17.1
+      version: 5.17.1
+    '@mui/system':
+      specifier: ^5.17.1
+      version: 5.17.1
+    '@mui/utils':
+      specifier: ^5.17.1
+      version: 5.17.1
+    '@mui/x-data-grid':
+      specifier: ^6.20.4
+      version: 6.20.4
+    '@mui/x-date-pickers':
+      specifier: ^6.20.2
+      version: 6.20.2
+    '@open-draft/deferred-promise':
+      specifier: ^2.2.0
+      version: 2.2.0
+    '@openapitools/openapi-generator-cli':
+      specifier: ^2.20.0
+      version: 2.20.0
+    '@playwright/test':
+      specifier: ^1.52.0
+      version: 1.52.0
+    '@popperjs/core':
+      specifier: ^2.11.8
+      version: 2.11.8
+    '@react-google-maps/api':
+      specifier: ^2.20.6
+      version: 2.20.6
+    '@react-hook/resize-observer':
+      specifier: ^1.2.6
+      version: 1.2.6
+    '@react-hookz/web':
+      specifier: ^23.1.0
+      version: 23.1.0
+    '@rjsf/core':
+      specifier: 5.24.8
+      version: 5.24.8
+    '@rjsf/mui':
+      specifier: 5.24.8
+      version: 5.24.8
+    '@rjsf/utils':
+      specifier: 5.24.8
+      version: 5.24.8
+    '@rjsf/validator-ajv8':
+      specifier: 5.24.8
+      version: 5.24.8
+    '@rollup/plugin-babel':
+      specifier: ^6.0.4
+      version: 6.0.4
+    '@rollup/plugin-node-resolve':
+      specifier: ^15.3.1
+      version: 15.3.1
+    '@rollup/plugin-terser':
+      specifier: ^0.4.4
+      version: 0.4.4
+    '@storybook/addon-actions':
+      specifier: ^8.6.12
+      version: 8.6.12
+    '@storybook/addon-designs':
+      specifier: ^8.2.1
+      version: 8.2.1
+    '@storybook/addon-essentials':
+      specifier: ^8.6.12
+      version: 8.6.12
+    '@storybook/addon-interactions':
+      specifier: ^8.6.12
+      version: 8.6.12
+    '@storybook/addon-links':
+      specifier: ^8.6.12
+      version: 8.6.12
+    '@storybook/addon-themes':
+      specifier: ^8.6.12
+      version: 8.6.12
+    '@storybook/manager-api':
+      specifier: ^8.6.12
+      version: 8.6.12
+    '@storybook/react':
+      specifier: ^8.6.12
+      version: 8.6.12
+    '@storybook/react-vite':
+      specifier: ^8.6.12
+      version: 8.6.12
+    '@storybook/test':
+      specifier: ^8.6.12
+      version: 8.6.12
+    '@storybook/theming':
+      specifier: ^8.6.12
+      version: 8.6.12
+    '@svgr/plugin-jsx':
+      specifier: ^8.1.0
+      version: 8.1.0
+    '@tanstack/query-core':
+      specifier: 5.22.2
+      version: 5.22.2
+    '@tanstack/react-query':
+      specifier: 5.22.2
+      version: 5.22.2
+    '@tanstack/react-query-devtools':
+      specifier: 5.24.0
+      version: 5.24.0
+    '@tanstack/react-table':
+      specifier: ^8.21.3
+      version: 8.21.3
+    '@tanstack/react-virtual':
+      specifier: ^3.13.8
+      version: 3.13.8
+    '@testing-library/dom':
+      specifier: ^10.4.0
+      version: 10.4.0
+    '@testing-library/jest-dom':
+      specifier: ^6.6.3
+      version: 6.6.3
+    '@testing-library/user-event':
+      specifier: ^14.6.1
+      version: 14.6.1
+    '@types/brainhubeu__react-carousel':
+      specifier: 1.15.0
+      version: 1.15.0
+    '@types/dagre':
+      specifier: ^0.7.52
+      version: 0.7.52
+    '@types/google.maps':
+      specifier: ^3.58.1
+      version: 3.58.1
+    '@types/history':
+      specifier: ^4.7.11
+      version: 4.7.11
+    '@types/isomorphic-fetch':
+      specifier: ^0.0.36
+      version: 0.0.36
+    '@types/jest':
+      specifier: ^29.5.14
+      version: 29.5.14
+    '@types/jest-when':
+      specifier: ^3.5.5
+      version: 3.5.5
+    '@types/jquery':
+      specifier: ^3.5.32
+      version: 3.5.32
+    '@types/json-schema':
+      specifier: ^7.0.15
+      version: 7.0.15
+    '@types/jsonpath':
+      specifier: ^0.2.4
+      version: 0.2.4
+    '@types/lodash':
+      specifier: ^4.17.16
+      version: 4.17.16
+    '@types/markdown-it':
+      specifier: ^13.0.9
+      version: 13.0.9
+    '@types/minimist':
+      specifier: ^1.2.5
+      version: 1.2.5
+    '@types/node':
+      specifier: ^20.17.41
+      version: 20.17.41
+    '@types/papaparse':
+      specifier: ^5.3.15
+      version: 5.3.15
+    '@types/plotly.js':
+      specifier: ^2.35.5
+      version: 2.35.5
+    '@types/plotly.js-basic-dist':
+      specifier: ^1.54.4
+      version: 1.54.4
+    '@types/pluralize':
+      specifier: ^0.0.29
+      version: 0.0.29
+    '@types/qrcode':
+      specifier: ^1.5.5
+      version: 1.5.5
+    '@types/react-addons-css-transition-group':
+      specifier: ^15.0.10
+      version: 15.0.10
+    '@types/react-easy-crop':
+      specifier: ^2.0.0
+      version: 2.0.0
+    '@types/react-mailchimp-subscribe':
+      specifier: ^2.1.4
+      version: 2.1.4
+    '@types/react-plotly.js':
+      specifier: ^2.6.3
+      version: 2.6.3
+    '@types/react-tooltip':
+      specifier: ^4.2.4
+      version: 4.2.4
+    '@types/react-transition-group':
+      specifier: ^4.4.12
+      version: 4.4.12
+    '@types/react-virtualized-auto-sizer':
+      specifier: ^1.0.8
+      version: 1.0.8
+    '@types/react-window':
+      specifier: ^1.8.8
+      version: 1.8.8
+    '@types/shortid':
+      specifier: ^0.0.29
+      version: 0.0.29
+    '@types/spark-md5':
+      specifier: ^3.0.5
+      version: 3.0.5
+    '@types/tinycolor2':
+      specifier: ^1.4.6
+      version: 1.4.6
+    '@types/ua-parser-js':
+      specifier: ^0.7.39
+      version: 0.7.39
+    '@types/xml2js':
+      specifier: ^0.4.14
+      version: 0.4.14
+    '@upsetjs/react':
+      specifier: ^1.11.0
+      version: 1.11.0
+    '@vitejs/plugin-react':
+      specifier: ^4.4.1
+      version: 4.4.1
+    '@vitest/coverage-v8':
+      specifier: ^1.6.1
+      version: 1.6.1
+    '@vitest/ui':
+      specifier: ^1.6.1
+      version: 1.6.1
+    '@vitest/utils':
+      specifier: ^1.6.1
+      version: 1.6.1
+    '@welldone-software/why-did-you-render':
+      specifier: ^8.0.3
+      version: 8.0.3
+    animate.css:
+      specifier: ^4.1.1
+      version: 4.1.1
+    assert:
+      specifier: ^2.1.0
+      version: 2.1.0
+    babel-jest:
+      specifier: ^29.7.0
+      version: 29.7.0
+    babel-loader:
+      specifier: ^9.2.1
+      version: 9.2.1
+    buffer:
+      specifier: ^6.0.3
+      version: 6.0.3
+    c8:
+      specifier: ^8.0.1
+      version: 8.0.1
+    chromatic:
+      specifier: ^11.28.2
+      version: 11.28.2
+    classnames:
+      specifier: ^2.5.1
+      version: 2.5.1
+    clone-deep:
+      specifier: ^4.0.1
+      version: 4.0.1
+    copyfiles:
+      specifier: ^2.4.1
+      version: 2.4.1
+    core-js:
+      specifier: ^3.42.0
+      version: 3.42.0
+    dagre:
+      specifier: ^0.8.5
+      version: 0.8.5
+    dayjs:
+      specifier: ^1.11.13
+      version: 1.11.13
+    dompurify:
+      specifier: ^3.2.5
+      version: 3.2.5
+    dotenv:
+      specifier: ^16.5.0
+      version: 16.5.0
+    dotenv-cli:
+      specifier: ^7.4.4
+      version: 7.4.4
+    eslint:
+      specifier: ^9.26.0
+      version: 9.26.0
+    eslint-plugin-barrel-files:
+      specifier: ^2.1.1
+      version: 2.1.1
+    eslint-plugin-jest:
+      specifier: ^28.11.0
+      version: 28.11.0
+    eslint-plugin-jest-dom:
+      specifier: ^5.5.0
+      version: 5.5.0
+    eslint-plugin-react:
+      specifier: ^7.37.5
+      version: 7.37.5
+    eslint-plugin-react-hooks:
+      specifier: ^5.2.0
+      version: 5.2.0
+    eslint-plugin-storybook:
+      specifier: ^0.11.6
+      version: 0.11.6
+    eslint-plugin-testing-library:
+      specifier: ^7.1.1
+      version: 7.1.1
+    https-browserify:
+      specifier: ^1.0.0
+      version: 1.0.0
+    husky:
+      specifier: ^9.1.7
+      version: 9.1.7
+    identity-obj-proxy:
+      specifier: ^3.0.0
+      version: 3.0.0
+    immutable:
+      specifier: 4.1.0
+      version: 4.1.0
+    isomorphic-fetch:
+      specifier: ^3.0.0
+      version: 3.0.0
+    jest:
+      specifier: ^29.7.0
+      version: 29.7.0
+    jest-environment-jsdom:
+      specifier: ^29.7.0
+      version: 29.7.0
+    jest-fail-on-console:
+      specifier: ^3.3.1
+      version: 3.3.1
+    jest-html-reporter:
+      specifier: ^3.10.2
+      version: 3.10.2
+    jest-when:
+      specifier: ^3.7.0
+      version: 3.7.0
+    jotai:
+      specifier: ^2.12.4
+      version: 2.12.4
+    jotai-devtools:
+      specifier: ^0.6.3
+      version: 0.6.3
+    jsdom:
+      specifier: ^21.1.2
+      version: 21.1.2
+    json-rules-engine:
+      specifier: ^4.1.0
+      version: 4.1.0
+    jsonpath:
+      specifier: ^1.1.1
+      version: 1.1.1
+    katex:
+      specifier: ^0.16.22
+      version: 0.16.22
+    lodash:
+      specifier: ^4.17.21
+      version: 4.17.21
+    lodash-es:
+      specifier: ^4.17.21
+      version: 4.17.21
+    markdown-it-br:
+      specifier: ^1.0.0
+      version: 1.0.0
+    markdown-it-center-text:
+      specifier: ^1.0.4
+      version: 1.0.4
+    markdown-it-inline-comments:
+      specifier: ^1.0.1
+      version: 1.0.1
+    markdown-it-strikethrough-alt:
+      specifier: ^1.0.0
+      version: 1.0.0
+    markdown-it-sub-alt:
+      specifier: ^1.0.0
+      version: 1.0.0
+    markdown-it-sup-alt:
+      specifier: ^1.0.2
+      version: 1.0.2
+    markdown-it-synapse-heading:
+      specifier: ^1.0.1
+      version: 1.0.1
+    markdown-it-synapse-math:
+      specifier: ^3.0.5
+      version: 3.0.5
+    memfs:
+      specifier: ^3.5.3
+      version: 3.5.3
+    minimist:
+      specifier: ^1.2.8
+      version: 1.2.8
+    mocha:
+      specifier: ^10.8.2
+      version: 10.8.2
+    msw-storybook-addon:
+      specifier: ^1.10.0
+      version: 1.10.0
+    mui-one-time-password-input:
+      specifier: ^2.0.3
+      version: 2.0.3
+    nx:
+      specifier: 19.7.3
+      version: 19.7.3
+    object-assign:
+      specifier: ^4.1.1
+      version: 4.1.1
+    p-limit:
+      specifier: ^6.2.0
+      version: 6.2.0
+    papaparse:
+      specifier: ^5.5.2
+      version: 5.5.2
+    path-browserify:
+      specifier: ^1.0.1
+      version: 1.0.1
+    plotly.js:
+      specifier: 2.28.0
+      version: 2.28.0
+    plotly.js-basic-dist:
+      specifier: ^2.35.3
+      version: 2.35.3
+    pluralize:
+      specifier: ^8.0.0
+      version: 8.0.0
+    postcss-normalize:
+      specifier: ^10.0.1
+      version: 10.0.1
+    prettier:
+      specifier: ^2.8.8
+      version: 2.8.8
+    process:
+      specifier: ^0.11.10
+      version: 0.11.10
+    qrcode:
+      specifier: ^1.5.4
+      version: 1.5.4
+    raf:
+      specifier: ^3.4.1
+      version: 3.4.1
+    react:
+      specifier: ^18.3.1
+      version: 18.3.1
+    react-cookie:
+      specifier: 4.0.0
+      version: 4.0.0
+    react-datetime:
+      specifier: ^3.3.1
+      version: 3.3.1
+    react-dom:
+      specifier: ^18.3.1
+      version: 18.3.1
+    react-easy-crop:
+      specifier: ^5.4.1
+      version: 5.4.1
+    react-error-boundary:
+      specifier: ^3.1.4
+      version: 3.1.4
+    react-inspector:
+      specifier: ^6.0.2
+      version: 6.0.2
+    react-intersection-observer:
+      specifier: ^9.16.0
+      version: 9.16.0
+    react-mailchimp-subscribe:
+      specifier: ^2.1.3
+      version: 2.1.3
+    react-plotly.js:
+      specifier: ^2.6.0
+      version: 2.6.0
+    react-popper:
+      specifier: ^2.3.0
+      version: 2.3.0
+    react-reflex:
+      specifier: ^4.2.7
+      version: 4.2.7
+    react-router:
+      specifier: ^7.5.3
+      version: 7.5.3
+    react-select:
+      specifier: ^5.10.1
+      version: 5.10.1
+    react-select-event:
+      specifier: ^5.5.1
+      version: 5.5.1
+    react-sizeme:
+      specifier: ^3.0.2
+      version: 3.0.2
+    react-spinners:
+      specifier: ^0.13.8
+      version: 0.13.8
+    react-switch:
+      specifier: ^7.1.0
+      version: 7.1.0
+    react-test-renderer:
+      specifier: ^18.3.1
+      version: 18.3.1
+    react-transition-group:
+      specifier: ^4.4.5
+      version: 4.4.5
+    react-type-animation:
+      specifier: ^3.2.0
+      version: 3.2.0
+    react-virtualized-auto-sizer:
+      specifier: ^1.0.26
+      version: 1.0.26
+    react-vtree:
+      specifier: 3.0.0-beta.3
+      version: 3.0.0-beta.3
+    react-window:
+      specifier: ^1.8.11
+      version: 1.8.11
+    reactflow:
+      specifier: ^11.11.4
+      version: 11.11.4
+    rimraf:
+      specifier: ^5.0.10
+      version: 5.0.10
+    rollup:
+      specifier: ^4.40.2
+      version: 4.40.2
+    rss-parser:
+      specifier: ^3.13.0
+      version: 3.13.0
+    sass:
+      specifier: ^1.87.0
+      version: 1.87.0
+    schema-dts:
+      specifier: ^1.1.5
+      version: 1.1.5
+    shortid:
+      specifier: ^2.2.17
+      version: 2.2.17
+    source-map-explorer:
+      specifier: ^2.5.3
+      version: 2.5.3
+    spark-md5:
+      specifier: ^3.0.2
+      version: 3.0.2
+    storybook:
+      specifier: ^8.6.12
+      version: 8.6.12
+    stream-browserify:
+      specifier: ^3.0.0
+      version: 3.0.0
+    stream-http:
+      specifier: ^3.2.0
+      version: 3.2.0
+    svgo:
+      specifier: ^3.3.2
+      version: 3.3.2
+    timers-browserify:
+      specifier: ^2.0.12
+      version: 2.0.12
+    tinycolor2:
+      specifier: ^1.6.0
+      version: 1.6.0
+    tslib:
+      specifier: ^2.8.1
+      version: 2.8.1
+    tsup:
+      specifier: ^8.4.0
+      version: 8.4.0
+    tsx:
+      specifier: ^4.19.4
+      version: 4.19.4
+    type-fest:
+      specifier: ^4.41.0
+      version: 4.41.0
+    typescript-eslint:
+      specifier: ^8.32.0
+      version: 8.32.0
+    ua-parser-js:
+      specifier: ^1.0.40
+      version: 1.0.40
+    undici:
+      specifier: ^6.21.2
+      version: 6.21.2
+    universal-cookie:
+      specifier: ^4.0.4
+      version: 4.0.4
+    url:
+      specifier: ^0.11.4
+      version: 0.11.4
+    use-deep-compare-effect:
+      specifier: ^1.8.1
+      version: 1.8.1
+    util:
+      specifier: ^0.12.5
+      version: 0.12.5
+    vite:
+      specifier: ^5.4.19
+      version: 5.4.19
+    vite-plugin-dts:
+      specifier: ^4.5.3
+      version: 4.5.3
+    vite-plugin-externalize-deps:
+      specifier: ^0.8.0
+      version: 0.8.0
+    vite-plugin-html:
+      specifier: ^3.2.2
+      version: 3.2.2
+    vite-plugin-node-polyfills:
+      specifier: 0.17.0
+      version: 0.17.0
+    vite-plugin-svgr:
+      specifier: ^4.3.0
+      version: 4.3.0
+    vite-tsconfig-paths:
+      specifier: ^5.1.4
+      version: 5.1.4
+    vitest:
+      specifier: ^1.6.1
+      version: 1.6.1
+    weak-napi:
+      specifier: ^2.0.2
+      version: 2.0.2
+    whatwg-fetch:
+      specifier: ^3.6.20
+      version: 3.6.20
+    xss:
+      specifier: ^1.0.15
+      version: 1.0.15
+    zod:
+      specifier: ^3.24.4
+      version: 3.24.4
+
 overrides:
   word-wrap: ^1.2.4
   semver: ^7.5.4
@@ -17,7 +722,7 @@ overrides:
 
 patchedDependencies:
   '@jsdevtools/ono@7.1.3':
-    hash: ftv5fxgpd6wo7ilbdz5gio2woe
+    hash: e5a9bfe6851c832fa91d599346fd2ba530d143db8d386d94a842aaa87a9d4c46
     path: patches/@jsdevtools__ono@7.1.3.patch
 
 importers:
@@ -25,88 +730,88 @@ importers:
   .:
     devDependencies:
       '@eslint/compat':
-        specifier: ^1.2.9
+        specifier: 'catalog:'
         version: 1.2.9(eslint@9.26.0)
       '@eslint/eslintrc':
-        specifier: ^3.3.1
+        specifier: 'catalog:'
         version: 3.3.1
       '@eslint/js':
-        specifier: ^9.26.0
+        specifier: 'catalog:'
         version: 9.26.0
       dotenv-cli:
-        specifier: ^7.4.4
+        specifier: 'catalog:'
         version: 7.4.4
       eslint:
-        specifier: ^9.26.0
+        specifier: 'catalog:'
         version: 9.26.0
       eslint-plugin-barrel-files:
-        specifier: ^2.1.1
+        specifier: 'catalog:'
         version: 2.1.1(eslint@9.26.0)
       eslint-plugin-jest:
-        specifier: ^28.11.0
+        specifier: 'catalog:'
         version: 28.11.0(@typescript-eslint/eslint-plugin@8.32.0(@typescript-eslint/parser@8.32.0(eslint@9.26.0)(typescript@5.8.3))(eslint@9.26.0)(typescript@5.8.3))(eslint@9.26.0)(jest@29.7.0(@types/node@20.17.41)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@20.17.41)(typescript@5.8.3)))(typescript@5.8.3)
       eslint-plugin-jest-dom:
-        specifier: ^5.5.0
+        specifier: 'catalog:'
         version: 5.5.0(@testing-library/dom@10.4.0)(eslint@9.26.0)
       eslint-plugin-react:
-        specifier: ^7.37.5
+        specifier: 'catalog:'
         version: 7.37.5(eslint@9.26.0)
       eslint-plugin-react-hooks:
-        specifier: ^5.2.0
+        specifier: 'catalog:'
         version: 5.2.0(eslint@9.26.0)
       eslint-plugin-storybook:
-        specifier: ^0.11.6
+        specifier: 'catalog:'
         version: 0.11.6(eslint@9.26.0)(typescript@5.8.3)
       eslint-plugin-testing-library:
-        specifier: ^7.1.1
+        specifier: 'catalog:'
         version: 7.1.1(eslint@9.26.0)(typescript@5.8.3)
       husky:
-        specifier: ^9.1.7
+        specifier: 'catalog:'
         version: 9.1.7
       lint-staged:
         specifier: ^15.5.2
         version: 15.5.2
       nx:
-        specifier: 19.7.3
+        specifier: 'catalog:'
         version: 19.7.3
       prettier:
-        specifier: ^2.8.8
+        specifier: 'catalog:'
         version: 2.8.8
       rimraf:
-        specifier: ^5.0.10
+        specifier: 'catalog:'
         version: 5.0.10
       typescript:
         specifier: 5.8.3
         version: 5.8.3
       typescript-eslint:
-        specifier: ^8.32.0
+        specifier: 'catalog:'
         version: 8.32.0(eslint@9.26.0)(typescript@5.8.3)
 
   apps/SageAccountWeb:
     dependencies:
       '@emotion/core':
-        specifier: ^11.0.0
+        specifier: 'catalog:'
         version: 11.0.0
       '@emotion/react':
-        specifier: ^11.14.0
+        specifier: 'catalog:'
         version: 11.14.0(@types/react@18.3.12)(react@18.3.1)
       '@emotion/styled':
-        specifier: ^11.14.0
+        specifier: 'catalog:'
         version: 11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
       '@mui/icons-material':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
       '@mui/material':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@mui/system':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
       '@mui/utils':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@types/react@18.3.12)(react@18.3.1)
       '@react-hookz/web':
-        specifier: ^23.1.0
+        specifier: 'catalog:'
         version: 23.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@sage-bionetworks/synapse-client':
         specifier: workspace:*
@@ -115,59 +820,59 @@ importers:
         specifier: workspace:*
         version: link:../../packages/synapse-types
       '@tanstack/react-query':
-        specifier: 5.22.2
+        specifier: 'catalog:'
         version: 5.22.2(react@18.3.1)
       katex:
-        specifier: ^0.16.22
+        specifier: 'catalog:'
         version: 0.16.22
       lodash-es:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       plotly.js-basic-dist:
-        specifier: ^2.35.3
+        specifier: 'catalog:'
         version: 2.35.3
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-cookie:
-        specifier: 4.0.0
+        specifier: 'catalog:'
         version: 4.0.0(react@18.3.1)
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-easy-crop:
-        specifier: ^5.4.1
+        specifier: 'catalog:'
         version: 5.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-router:
-        specifier: ^7.5.3
+        specifier: 'catalog:'
         version: 7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       sass:
-        specifier: ^1.87.0
+        specifier: 'catalog:'
         version: 1.87.0
       synapse-react-client:
         specifier: workspace:*
         version: link:../../packages/synapse-react-client
       universal-cookie:
-        specifier: ^4.0.4
+        specifier: 'catalog:'
         version: 4.0.4
     devDependencies:
       '@testing-library/jest-dom':
-        specifier: ^6.6.3
+        specifier: 'catalog:'
         version: 6.6.3
       '@testing-library/react':
         specifier: ^16.3.0
         version: 16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@testing-library/user-event':
-        specifier: ^14.6.1
+        specifier: 'catalog:'
         version: 14.6.1(@testing-library/dom@10.4.0)
       '@types/katex':
         specifier: ^0.5.0
         version: 0.5.0
       '@types/node':
-        specifier: ^20.17.41
+        specifier: 'catalog:'
         version: 20.17.41
       '@types/plotly.js':
-        specifier: ^2.35.5
+        specifier: 'catalog:'
         version: 2.35.5
       '@types/react':
         specifier: 18.3.12
@@ -176,109 +881,109 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       '@types/react-easy-crop':
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/react-plotly.js':
-        specifier: ^2.6.3
+        specifier: 'catalog:'
         version: 2.6.3
       '@types/react-tooltip':
-        specifier: ^4.2.4
+        specifier: 'catalog:'
         version: 4.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@vitest/coverage-v8':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(vitest@1.6.1)
       '@vitest/ui':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(vitest@1.6.1)
       '@vitest/utils':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1
       assert:
-        specifier: ^2.1.0
+        specifier: 'catalog:'
         version: 2.1.0
       buffer:
-        specifier: ^6.0.3
+        specifier: 'catalog:'
         version: 6.0.3
       https-browserify:
-        specifier: ^1.0.0
+        specifier: 'catalog:'
         version: 1.0.0
       identity-obj-proxy:
-        specifier: ^3.0.0
+        specifier: 'catalog:'
         version: 3.0.0
       jsdom:
-        specifier: ^21.1.2
+        specifier: 'catalog:'
         version: 21.1.2
       memfs:
-        specifier: ^3.5.3
+        specifier: 'catalog:'
         version: 3.5.3
       msw:
         specifier: ^2.7.6
         version: 2.7.6(@types/node@20.17.41)(typescript@5.8.3)
       path-browserify:
-        specifier: ^1.0.1
+        specifier: 'catalog:'
         version: 1.0.1
       pluralize:
-        specifier: ^8.0.0
+        specifier: 'catalog:'
         version: 8.0.0
       prettier:
-        specifier: ^2.8.8
+        specifier: 'catalog:'
         version: 2.8.8
       process:
-        specifier: ^0.11.10
+        specifier: 'catalog:'
         version: 0.11.10
       source-map-explorer:
-        specifier: ^2.5.3
+        specifier: 'catalog:'
         version: 2.5.3
       stream-browserify:
-        specifier: ^3.0.0
+        specifier: 'catalog:'
         version: 3.0.0
       stream-http:
-        specifier: ^3.2.0
+        specifier: 'catalog:'
         version: 3.2.0
       timers-browserify:
-        specifier: ^2.0.12
+        specifier: 'catalog:'
         version: 2.0.12
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       type-fest:
-        specifier: ^4.41.0
+        specifier: 'catalog:'
         version: 4.41.0
       typescript:
         specifier: 5.8.3
         version: 5.8.3
       url:
-        specifier: ^0.11.4
+        specifier: 'catalog:'
         version: 0.11.4
       util:
-        specifier: ^0.12.5
+        specifier: 'catalog:'
         version: 0.12.5
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
       vite-config:
         specifier: workspace:*
         version: link:../../packages/vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
       whatwg-fetch:
-        specifier: ^3.6.20
+        specifier: 'catalog:'
         version: 3.6.20
 
   apps/portals-e2e:
     devDependencies:
       '@playwright/test':
-        specifier: ^1.52.0
+        specifier: 'catalog:'
         version: 1.52.0
       '@types/node':
-        specifier: ^20.17.41
+        specifier: 'catalog:'
         version: 20.17.41
       dotenv:
-        specifier: ^16.5.0
+        specifier: 'catalog:'
         version: 16.5.0
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       typescript:
         specifier: 5.5.2
@@ -293,22 +998,22 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/synapse-types
       katex:
-        specifier: ^0.16.22
+        specifier: 'catalog:'
         version: 0.16.22
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-router:
-        specifier: ^7.5.3
+        specifier: 'catalog:'
         version: 7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
     devDependencies:
       '@types/react':
@@ -318,10 +1023,10 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       sass:
-        specifier: ^1.87.0
+        specifier: 'catalog:'
         version: 1.87.0
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       typescript:
         specifier: 5.8.3
@@ -330,13 +1035,13 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
   apps/portals/ampals:
     dependencies:
       '@mui/material':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@sage-bionetworks/synapse-portal-framework':
         specifier: workspace:*
@@ -345,25 +1050,25 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/synapse-types
       katex:
-        specifier: ^0.16.22
+        specifier: 'catalog:'
         version: 0.16.22
       pluralize:
-        specifier: ^8.0.0
+        specifier: 'catalog:'
         version: 8.0.0
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-router:
-        specifier: ^7.5.3
+        specifier: 'catalog:'
         version: 7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
     devDependencies:
       '@types/react':
@@ -373,10 +1078,10 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       sass:
-        specifier: ^1.87.0
+        specifier: 'catalog:'
         version: 1.87.0
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       typescript:
         specifier: 5.8.3
@@ -385,7 +1090,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
   apps/portals/arkportal:
@@ -397,22 +1102,22 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/synapse-types
       katex:
-        specifier: ^0.16.22
+        specifier: 'catalog:'
         version: 0.16.22
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-router:
-        specifier: ^7.5.3
+        specifier: 'catalog:'
         version: 7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
     devDependencies:
       '@types/react':
@@ -422,10 +1127,10 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       sass:
-        specifier: ^1.87.0
+        specifier: 'catalog:'
         version: 1.87.0
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       typescript:
         specifier: 5.8.3
@@ -434,13 +1139,13 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
   apps/portals/b2ai.standards:
     dependencies:
       '@mui/material':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@sage-bionetworks/synapse-portal-framework':
         specifier: workspace:*
@@ -449,28 +1154,28 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/synapse-types
       katex:
-        specifier: ^0.16.22
+        specifier: 'catalog:'
         version: 0.16.22
       lodash-es:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       pluralize:
-        specifier: ^8.0.0
+        specifier: 'catalog:'
         version: 8.0.0
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-router:
-        specifier: ^7.5.3
+        specifier: 'catalog:'
         version: 7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
     devDependencies:
       '@types/react':
@@ -480,10 +1185,10 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       sass:
-        specifier: ^1.87.0
+        specifier: 'catalog:'
         version: 1.87.0
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       typescript:
         specifier: 5.8.3
@@ -492,7 +1197,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
   apps/portals/bsmn:
@@ -504,22 +1209,22 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/synapse-types
       katex:
-        specifier: ^0.16.22
+        specifier: 'catalog:'
         version: 0.16.22
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-router:
-        specifier: ^7.5.3
+        specifier: 'catalog:'
         version: 7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
     devDependencies:
       '@types/react':
@@ -529,10 +1234,10 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       sass:
-        specifier: ^1.87.0
+        specifier: 'catalog:'
         version: 1.87.0
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       typescript:
         specifier: 5.8.3
@@ -541,13 +1246,13 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
   apps/portals/cancercomplexity:
     dependencies:
       '@mui/material':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@sage-bionetworks/synapse-portal-framework':
         specifier: workspace:*
@@ -556,22 +1261,22 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/synapse-types
       katex:
-        specifier: ^0.16.22
+        specifier: 'catalog:'
         version: 0.16.22
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-router:
-        specifier: ^7.5.3
+        specifier: 'catalog:'
         version: 7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
     devDependencies:
       '@types/react':
@@ -581,10 +1286,10 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       sass:
-        specifier: ^1.87.0
+        specifier: 'catalog:'
         version: 1.87.0
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       typescript:
         specifier: 5.8.3
@@ -593,13 +1298,13 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
   apps/portals/challenges:
     dependencies:
       '@mui/material':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@sage-bionetworks/synapse-portal-framework':
         specifier: workspace:*
@@ -608,22 +1313,22 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/synapse-types
       katex:
-        specifier: ^0.16.22
+        specifier: 'catalog:'
         version: 0.16.22
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-router:
-        specifier: ^7.5.3
+        specifier: 'catalog:'
         version: 7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
     devDependencies:
       '@types/react':
@@ -633,10 +1338,10 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       sass:
-        specifier: ^1.87.0
+        specifier: 'catalog:'
         version: 1.87.0
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       typescript:
         specifier: 5.8.3
@@ -645,7 +1350,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
   apps/portals/digitalhealth:
@@ -657,25 +1362,25 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/synapse-types
       katex:
-        specifier: ^0.16.22
+        specifier: 'catalog:'
         version: 0.16.22
       pluralize:
-        specifier: ^8.0.0
+        specifier: 'catalog:'
         version: 8.0.0
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-router:
-        specifier: ^7.5.3
+        specifier: 'catalog:'
         version: 7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
     devDependencies:
       '@types/react':
@@ -685,10 +1390,10 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       sass:
-        specifier: ^1.87.0
+        specifier: 'catalog:'
         version: 1.87.0
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       typescript:
         specifier: 5.8.3
@@ -697,19 +1402,19 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
   apps/portals/eliteportal:
     dependencies:
       '@mui/icons-material':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
       '@mui/material':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@mui/utils':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@types/react@18.3.12)(react@18.3.1)
       '@sage-bionetworks/synapse-portal-framework':
         specifier: workspace:*
@@ -718,31 +1423,31 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/synapse-types
       '@upsetjs/react':
-        specifier: ^1.11.0
+        specifier: 'catalog:'
         version: 1.11.0(react@18.3.1)
       katex:
-        specifier: ^0.16.22
+        specifier: 'catalog:'
         version: 0.16.22
       pluralize:
-        specifier: ^8.0.0
+        specifier: 'catalog:'
         version: 8.0.0
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-router:
-        specifier: ^7.5.3
+        specifier: 'catalog:'
         version: 7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-type-animation:
-        specifier: ^3.2.0
+        specifier: 'catalog:'
         version: 3.2.0(prop-types@15.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
     devDependencies:
       '@types/react':
@@ -752,10 +1457,10 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       sass:
-        specifier: ^1.87.0
+        specifier: 'catalog:'
         version: 1.87.0
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       typescript:
         specifier: 5.8.3
@@ -764,7 +1469,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
   apps/portals/genie:
@@ -776,22 +1481,22 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/synapse-types
       katex:
-        specifier: ^0.16.22
+        specifier: 'catalog:'
         version: 0.16.22
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-router:
-        specifier: ^7.5.3
+        specifier: 'catalog:'
         version: 7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
     devDependencies:
       '@types/react':
@@ -801,10 +1506,10 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       sass:
-        specifier: ^1.87.0
+        specifier: 'catalog:'
         version: 1.87.0
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       typescript:
         specifier: 5.8.3
@@ -813,16 +1518,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
   apps/portals/nf:
     dependencies:
       '@mui/icons-material':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
       '@mui/material':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@sage-bionetworks/synapse-portal-framework':
         specifier: workspace:*
@@ -831,25 +1536,25 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/synapse-types
       katex:
-        specifier: ^0.16.22
+        specifier: 'catalog:'
         version: 0.16.22
       pluralize:
-        specifier: ^8.0.0
+        specifier: 'catalog:'
         version: 8.0.0
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-router:
-        specifier: ^7.5.3
+        specifier: 'catalog:'
         version: 7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
     devDependencies:
       '@types/react':
@@ -859,10 +1564,10 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       sass:
-        specifier: ^1.87.0
+        specifier: 'catalog:'
         version: 1.87.0
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       typescript:
         specifier: 5.8.3
@@ -871,7 +1576,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
   apps/portals/stopadportal:
@@ -883,25 +1588,25 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/synapse-types
       katex:
-        specifier: ^0.16.22
+        specifier: 'catalog:'
         version: 0.16.22
       pluralize:
-        specifier: ^8.0.0
+        specifier: 'catalog:'
         version: 8.0.0
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-router:
-        specifier: ^7.5.3
+        specifier: 'catalog:'
         version: 7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
     devDependencies:
       '@types/react':
@@ -911,10 +1616,10 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       sass:
-        specifier: ^1.87.0
+        specifier: 'catalog:'
         version: 1.87.0
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       typescript:
         specifier: 5.8.3
@@ -923,58 +1628,58 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
   apps/synapse-oauth-signin:
     dependencies:
       '@emotion/react':
-        specifier: ^11.14.0
+        specifier: 'catalog:'
         version: 11.14.0(@types/react@18.3.12)(react@18.3.1)
       '@emotion/styled':
-        specifier: ^11.14.0
+        specifier: 'catalog:'
         version: 11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
       '@mui/icons-material':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
       '@mui/material':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-hookz/web':
-        specifier: ^23.1.0
+        specifier: 'catalog:'
         version: 23.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-query':
-        specifier: 5.22.2
+        specifier: 'catalog:'
         version: 5.22.2(react@18.3.1)
       katex:
-        specifier: ^0.16.22
+        specifier: 'catalog:'
         version: 0.16.22
       lodash-es:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       plotly.js-basic-dist:
-        specifier: ^2.35.3
+        specifier: 'catalog:'
         version: 2.35.3
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-cookie:
-        specifier: 4.0.0
+        specifier: 'catalog:'
         version: 4.0.0(react@18.3.1)
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-router:
-        specifier: ^7.5.3
+        specifier: 'catalog:'
         version: 7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       sass:
-        specifier: ^1.87.0
+        specifier: 'catalog:'
         version: 1.87.0
       synapse-react-client:
         specifier: workspace:*
         version: link:../../packages/synapse-react-client
       universal-cookie:
-        specifier: ^4.0.4
+        specifier: 'catalog:'
         version: 4.0.4
     devDependencies:
       '@sage-bionetworks/synapse-types':
@@ -984,22 +1689,22 @@ importers:
         specifier: 16.0.1
         version: 16.0.1(@testing-library/dom@10.4.0)(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@testing-library/user-event':
-        specifier: ^14.6.1
+        specifier: 'catalog:'
         version: 14.6.1(@testing-library/dom@10.4.0)
       '@types/isomorphic-fetch':
-        specifier: ^0.0.36
+        specifier: 'catalog:'
         version: 0.0.36
       '@types/jest':
-        specifier: ^29.5.14
+        specifier: 'catalog:'
         version: 29.5.14
       '@types/katex':
         specifier: ^0.5.0
         version: 0.5.0
       '@types/node':
-        specifier: ^20.17.41
+        specifier: 'catalog:'
         version: 20.17.41
       '@types/plotly.js':
-        specifier: ^2.35.5
+        specifier: 'catalog:'
         version: 2.35.5
       '@types/react':
         specifier: 18.3.12
@@ -1008,296 +1713,296 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       '@types/react-plotly.js':
-        specifier: ^2.6.3
+        specifier: 'catalog:'
         version: 2.6.3
       '@types/react-tooltip':
-        specifier: ^4.2.4
+        specifier: 'catalog:'
         version: 4.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@vitest/coverage-v8':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(vitest@1.6.1)
       '@vitest/ui':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(vitest@1.6.1)
       '@vitest/utils':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1
       assert:
-        specifier: ^2.1.0
+        specifier: 'catalog:'
         version: 2.1.0
       buffer:
-        specifier: ^6.0.3
+        specifier: 'catalog:'
         version: 6.0.3
       https-browserify:
-        specifier: ^1.0.0
+        specifier: 'catalog:'
         version: 1.0.0
       identity-obj-proxy:
-        specifier: ^3.0.0
+        specifier: 'catalog:'
         version: 3.0.0
       isomorphic-fetch:
-        specifier: ^3.0.0
+        specifier: 'catalog:'
         version: 3.0.0(encoding@0.1.13)
       jsdom:
-        specifier: ^21.1.2
+        specifier: 'catalog:'
         version: 21.1.2
       lint-staged:
         specifier: ^13.3.0
         version: 13.3.0(enquirer@2.3.6)
       memfs:
-        specifier: ^3.5.3
+        specifier: 'catalog:'
         version: 3.5.3
       msw:
         specifier: ^1.3.5
         version: 1.3.5(encoding@0.1.13)(typescript@5.8.3)
       object-assign:
-        specifier: ^4.1.1
+        specifier: 'catalog:'
         version: 4.1.1
       path-browserify:
-        specifier: ^1.0.1
+        specifier: 'catalog:'
         version: 1.0.1
       pluralize:
-        specifier: ^8.0.0
+        specifier: 'catalog:'
         version: 8.0.0
       postcss-normalize:
-        specifier: ^10.0.1
+        specifier: 'catalog:'
         version: 10.0.1(browserslist@4.24.5)(postcss@8.5.3)
       prettier:
-        specifier: ^2.8.8
+        specifier: 'catalog:'
         version: 2.8.8
       process:
-        specifier: ^0.11.10
+        specifier: 'catalog:'
         version: 0.11.10
       source-map-explorer:
-        specifier: ^2.5.3
+        specifier: 'catalog:'
         version: 2.5.3
       stream-browserify:
-        specifier: ^3.0.0
+        specifier: 'catalog:'
         version: 3.0.0
       stream-http:
-        specifier: ^3.2.0
+        specifier: 'catalog:'
         version: 3.2.0
       timers-browserify:
-        specifier: ^2.0.12
+        specifier: 'catalog:'
         version: 2.0.12
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       typescript:
         specifier: 5.8.3
         version: 5.8.3
       url:
-        specifier: ^0.11.4
+        specifier: 'catalog:'
         version: 0.11.4
       util:
-        specifier: ^0.12.5
+        specifier: 'catalog:'
         version: 0.12.5
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
       vite-config:
         specifier: workspace:*
         version: link:../../packages/vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
   apps/synapse-portal-framework:
     dependencies:
       '@emotion/react':
-        specifier: ^11.14.0
+        specifier: 'catalog:'
         version: 11.14.0(@types/react@18.3.12)(react@18.3.1)
       '@emotion/styled':
-        specifier: ^11.14.0
+        specifier: 'catalog:'
         version: 11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
       '@mui/icons-material':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
       '@mui/material':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-hookz/web':
-        specifier: ^23.1.0
+        specifier: 'catalog:'
         version: 23.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@sage-bionetworks/synapse-types':
         specifier: workspace:*
         version: link:../../packages/synapse-types
       '@tanstack/react-query':
-        specifier: 5.22.2
+        specifier: 'catalog:'
         version: 5.22.2(react@18.3.1)
       '@upsetjs/react':
-        specifier: ^1.11.0
+        specifier: 'catalog:'
         version: 1.11.0(react@18.3.1)
       clone-deep:
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.1
       dayjs:
-        specifier: ^1.11.13
+        specifier: 'catalog:'
         version: 1.11.13
       katex:
-        specifier: ^0.16.22
+        specifier: 'catalog:'
         version: 0.16.22
       lodash:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       lodash-es:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       plotly.js-basic-dist:
-        specifier: ^2.35.3
+        specifier: 'catalog:'
         version: 2.35.3
       react-cookie:
-        specifier: 4.0.0
+        specifier: 'catalog:'
         version: 4.0.0(react@18.3.1)
       react-plotly.js:
-        specifier: ^2.6.0
+        specifier: 'catalog:'
         version: 2.6.0(plotly.js@2.33.0(mapbox-gl@1.13.3))(react@18.3.1)
       react-router:
-        specifier: ^7.5.3
+        specifier: 'catalog:'
         version: 7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-spinners:
-        specifier: ^0.13.8
+        specifier: 'catalog:'
         version: 0.13.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-switch:
-        specifier: ^7.1.0
+        specifier: 'catalog:'
         version: 7.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-type-animation:
-        specifier: ^3.2.0
+        specifier: 'catalog:'
         version: 3.2.0(prop-types@15.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       sass:
-        specifier: ^1.87.0
+        specifier: 'catalog:'
         version: 1.87.0
       synapse-react-client:
         specifier: workspace:*
         version: link:../../packages/synapse-react-client
     devDependencies:
       '@testing-library/jest-dom':
-        specifier: ^6.6.3
+        specifier: 'catalog:'
         version: 6.6.3
       '@testing-library/react':
         specifier: ^16.3.0
         version: 16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@testing-library/user-event':
-        specifier: ^14.6.1
+        specifier: 'catalog:'
         version: 14.6.1(@testing-library/dom@10.4.0)
       '@types/katex':
         specifier: ^0.5.0
         version: 0.5.0
       '@types/lodash':
-        specifier: ^4.17.16
+        specifier: 'catalog:'
         version: 4.17.16
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
       '@types/node':
-        specifier: ^20.17.41
+        specifier: 'catalog:'
         version: 20.17.41
       '@types/plotly.js':
-        specifier: ^2.35.5
+        specifier: 'catalog:'
         version: 2.35.5
       '@types/react':
         specifier: 18.3.12
         version: 18.3.12
       '@types/react-plotly.js':
-        specifier: ^2.6.3
+        specifier: 'catalog:'
         version: 2.6.3
       '@vitest/coverage-v8':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(vitest@1.6.1)
       '@vitest/ui':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(vitest@1.6.1)
       '@vitest/utils':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1
       assert:
-        specifier: ^2.1.0
+        specifier: 'catalog:'
         version: 2.1.0
       buffer:
-        specifier: ^6.0.3
+        specifier: 'catalog:'
         version: 6.0.3
       dotenv:
-        specifier: ^16.5.0
+        specifier: 'catalog:'
         version: 16.5.0
       https-browserify:
-        specifier: ^1.0.0
+        specifier: 'catalog:'
         version: 1.0.0
       identity-obj-proxy:
-        specifier: ^3.0.0
+        specifier: 'catalog:'
         version: 3.0.0
       jsdom:
-        specifier: ^21.1.2
+        specifier: 'catalog:'
         version: 21.1.2
       memfs:
-        specifier: ^3.5.3
+        specifier: 'catalog:'
         version: 3.5.3
       path-browserify:
-        specifier: ^1.0.1
+        specifier: 'catalog:'
         version: 1.0.1
       pluralize:
-        specifier: ^8.0.0
+        specifier: 'catalog:'
         version: 8.0.0
       postcss-normalize:
-        specifier: ^10.0.1
+        specifier: 'catalog:'
         version: 10.0.1(browserslist@4.24.5)(postcss@8.5.3)
       process:
-        specifier: ^0.11.10
+        specifier: 'catalog:'
         version: 0.11.10
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       source-map-explorer:
-        specifier: ^2.5.3
+        specifier: 'catalog:'
         version: 2.5.3
       stream-browserify:
-        specifier: ^3.0.0
+        specifier: 'catalog:'
         version: 3.0.0
       stream-http:
-        specifier: ^3.2.0
+        specifier: 'catalog:'
         version: 3.2.0
       timers-browserify:
-        specifier: ^2.0.12
+        specifier: 'catalog:'
         version: 2.0.12
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       typescript:
         specifier: 5.8.3
         version: 5.8.3
       url:
-        specifier: ^0.11.4
+        specifier: 'catalog:'
         version: 0.11.4
       util:
-        specifier: ^0.12.5
+        specifier: 'catalog:'
         version: 0.12.5
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
       vite-config:
         specifier: workspace:*
         version: link:../../packages/vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
       whatwg-fetch:
-        specifier: ^3.6.20
+        specifier: 'catalog:'
         version: 3.6.20
 
   packages/markdown-it-container:
     devDependencies:
       '@rollup/plugin-babel':
-        specifier: ^6.0.4
+        specifier: 'catalog:'
         version: 6.0.4(@babel/core@7.27.1)(@types/babel__core@7.20.5)(rollup@4.40.2)
       '@rollup/plugin-node-resolve':
-        specifier: ^15.3.1
+        specifier: 'catalog:'
         version: 15.3.1(rollup@4.40.2)
       '@rollup/plugin-terser':
-        specifier: ^0.4.4
+        specifier: 'catalog:'
         version: 0.4.4(rollup@4.40.2)
       c8:
-        specifier: ^8.0.1
+        specifier: 'catalog:'
         version: 8.0.1
       markdown-it:
         specifier: ^13.0.2
@@ -1306,25 +2011,25 @@ importers:
         specifier: ^0.1.6
         version: 0.1.6
       mocha:
-        specifier: ^10.8.2
+        specifier: 'catalog:'
         version: 10.8.2
       rollup:
-        specifier: ^4.40.2
+        specifier: 'catalog:'
         version: 4.40.2
 
   packages/markdown-it-synapse:
     devDependencies:
       '@types/markdown-it':
-        specifier: ^13.0.9
+        specifier: 'catalog:'
         version: 13.0.9
       '@types/node':
-        specifier: ^20.17.41
+        specifier: 'catalog:'
         version: 20.17.41
       '@vitest/coverage-v8':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(vitest@1.6.1)
       '@vitest/ui':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(vitest@1.6.1)
       markdown-it:
         specifier: ^14.1.0
@@ -1333,10 +2038,10 @@ importers:
         specifier: ~0.1.6
         version: 0.1.6
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       tsup:
-        specifier: ^8.4.0
+        specifier: 'catalog:'
         version: 8.4.0(@microsoft/api-extractor@7.52.7(@types/node@20.17.41))(postcss@8.5.3)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.1)
       typescript:
         specifier: 5.8.3
@@ -1345,22 +2050,22 @@ importers:
         specifier: workspace:*
         version: link:../vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
   packages/markdown-it-synapse-table:
     devDependencies:
       '@types/markdown-it':
-        specifier: ^13.0.9
+        specifier: 'catalog:'
         version: 13.0.9
       '@types/node':
-        specifier: ^20.17.41
+        specifier: 'catalog:'
         version: 20.17.41
       '@vitest/coverage-v8':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(vitest@1.6.1)
       '@vitest/ui':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(vitest@1.6.1)
       markdown-it:
         specifier: ^14.1.0
@@ -1369,130 +2074,130 @@ importers:
         specifier: ~0.1.6
         version: 0.1.6
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       typescript:
         specifier: 5.8.3
         version: 5.8.3
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
       vite-config:
         specifier: workspace:*
         version: link:../vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
   packages/synapse-client:
     devDependencies:
       '@openapitools/openapi-generator-cli':
-        specifier: ^2.20.0
+        specifier: 'catalog:'
         version: 2.20.0(encoding@0.1.13)
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
       '@types/minimist':
-        specifier: ^1.2.5
+        specifier: 'catalog:'
         version: 1.2.5
       '@vitest/ui':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(vitest@1.6.1)
       lodash-es:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       minimist:
-        specifier: ^1.2.8
+        specifier: 'catalog:'
         version: 1.2.8
       msw:
         specifier: ^2.7.6
         version: 2.7.6(@types/node@20.17.41)(typescript@5.8.3)
       rimraf:
-        specifier: ^5.0.10
+        specifier: 'catalog:'
         version: 5.0.10
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       tsx:
-        specifier: ^4.19.4
+        specifier: 'catalog:'
         version: 4.19.4
       typescript:
         specifier: 5.8.3
         version: 5.8.3
       undici:
-        specifier: ^6.21.2
+        specifier: 'catalog:'
         version: 6.21.2
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
       vite-config:
         specifier: workspace:*
         version: link:../vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
   packages/synapse-react-client:
     dependencies:
       '@apidevtools/json-schema-ref-parser':
-        specifier: ^9.1.2
+        specifier: 'catalog:'
         version: 9.1.2
       '@aws-sdk/client-s3':
-        specifier: ^3.803.0
+        specifier: 'catalog:'
         version: 3.803.0
       '@aws-sdk/lib-storage':
-        specifier: ^3.803.0
+        specifier: 'catalog:'
         version: 3.803.0(@aws-sdk/client-s3@3.803.0)
       '@brainhubeu/react-carousel':
-        specifier: 1.19.26
+        specifier: 'catalog:'
         version: 1.19.26(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@emotion/react':
-        specifier: ^11.14.0
+        specifier: 'catalog:'
         version: 11.14.0(@types/react@18.3.12)(react@18.3.1)
       '@emotion/styled':
-        specifier: ^11.14.0
+        specifier: 'catalog:'
         version: 11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
       '@mui/icons-material':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
       '@mui/material':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@mui/system':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
       '@mui/utils':
-        specifier: ^5.17.1
+        specifier: 'catalog:'
         version: 5.17.1(@types/react@18.3.12)(react@18.3.1)
       '@mui/x-data-grid':
-        specifier: ^6.20.4
+        specifier: 'catalog:'
         version: 6.20.4(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mui/system@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@mui/x-date-pickers':
-        specifier: ^6.20.2
+        specifier: 'catalog:'
         version: 6.20.2(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mui/system@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(date-fns@2.30.0)(dayjs@1.11.13)(moment@2.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@popperjs/core':
-        specifier: ^2.11.8
+        specifier: 'catalog:'
         version: 2.11.8
       '@react-google-maps/api':
-        specifier: ^2.20.6
+        specifier: 'catalog:'
         version: 2.20.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@react-hook/resize-observer':
-        specifier: ^1.2.6
+        specifier: 'catalog:'
         version: 1.2.6(react@18.3.1)
       '@react-hookz/web':
-        specifier: ^23.1.0
+        specifier: 'catalog:'
         version: 23.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@rjsf/core':
-        specifier: 5.24.8
+        specifier: 'catalog:'
         version: 5.24.8(@rjsf/utils@5.24.8(react@18.3.1))(react@18.3.1)
       '@rjsf/mui':
-        specifier: 5.24.8
+        specifier: 'catalog:'
         version: 5.24.8(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@mui/icons-material@5.17.1(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@rjsf/core@5.24.8(@rjsf/utils@5.24.8(react@18.3.1))(react@18.3.1))(@rjsf/utils@5.24.8(react@18.3.1))(react@18.3.1)
       '@rjsf/utils':
-        specifier: 5.24.8
+        specifier: 'catalog:'
         version: 5.24.8(react@18.3.1)
       '@rjsf/validator-ajv8':
-        specifier: 5.24.8
+        specifier: 'catalog:'
         version: 5.24.8(@rjsf/utils@5.24.8(react@18.3.1))
       '@sage-bionetworks/markdown-it-container':
         specifier: workspace:*
@@ -1504,329 +2209,329 @@ importers:
         specifier: workspace:*
         version: link:../synapse-types
       '@tanstack/query-core':
-        specifier: 5.22.2
+        specifier: 'catalog:'
         version: 5.22.2
       '@tanstack/react-query':
-        specifier: 5.22.2
+        specifier: 'catalog:'
         version: 5.22.2(react@18.3.1)
       '@tanstack/react-query-devtools':
-        specifier: 5.24.0
+        specifier: 'catalog:'
         version: 5.24.0(@tanstack/react-query@5.22.2(react@18.3.1))(react@18.3.1)
       '@tanstack/react-table':
-        specifier: ^8.21.3
+        specifier: 'catalog:'
         version: 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-virtual':
-        specifier: ^3.13.8
+        specifier: 'catalog:'
         version: 3.13.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@upsetjs/react':
-        specifier: ^1.11.0
+        specifier: 'catalog:'
         version: 1.11.0(react@18.3.1)
       animate.css:
-        specifier: ^4.1.1
+        specifier: 'catalog:'
         version: 4.1.1
       classnames:
-        specifier: ^2.5.1
+        specifier: 'catalog:'
         version: 2.5.1
       dagre:
-        specifier: ^0.8.5
+        specifier: 'catalog:'
         version: 0.8.5
       dayjs:
-        specifier: ^1.11.13
+        specifier: 'catalog:'
         version: 1.11.13
       dompurify:
-        specifier: ^3.2.5
+        specifier: 'catalog:'
         version: 3.2.5
       immutable:
-        specifier: 4.1.0
+        specifier: 'catalog:'
         version: 4.1.0
       jotai:
-        specifier: ^2.12.4
+        specifier: 'catalog:'
         version: 2.12.4(@types/react@18.3.12)(react@18.3.1)
       json-rules-engine:
-        specifier: ^4.1.0
+        specifier: 'catalog:'
         version: 4.1.0
       jsonpath:
-        specifier: ^1.1.1
+        specifier: 'catalog:'
         version: 1.1.1
       katex:
-        specifier: ^0.16.22
+        specifier: 'catalog:'
         version: 0.16.22
       lodash-es:
-        specifier: ^4.17.21
+        specifier: 'catalog:'
         version: 4.17.21
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
       markdown-it-br:
-        specifier: ^1.0.0
+        specifier: 'catalog:'
         version: 1.0.0
       markdown-it-center-text:
-        specifier: ^1.0.4
+        specifier: 'catalog:'
         version: 1.0.4
       markdown-it-inline-comments:
-        specifier: ^1.0.1
+        specifier: 'catalog:'
         version: 1.0.1
       markdown-it-strikethrough-alt:
-        specifier: ^1.0.0
+        specifier: 'catalog:'
         version: 1.0.0
       markdown-it-sub-alt:
-        specifier: ^1.0.0
+        specifier: 'catalog:'
         version: 1.0.0
       markdown-it-sup-alt:
-        specifier: ^1.0.2
+        specifier: 'catalog:'
         version: 1.0.2
       markdown-it-synapse:
         specifier: workspace:*
         version: link:../markdown-it-synapse
       markdown-it-synapse-heading:
-        specifier: ^1.0.1
+        specifier: 'catalog:'
         version: 1.0.1
       markdown-it-synapse-math:
-        specifier: ^3.0.5
+        specifier: 'catalog:'
         version: 3.0.5
       markdown-it-synapse-table:
         specifier: workspace:*
         version: link:../markdown-it-synapse-table
       mui-one-time-password-input:
-        specifier: ^2.0.3
+        specifier: 'catalog:'
         version: 2.0.3(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       papaparse:
-        specifier: ^5.5.2
+        specifier: 'catalog:'
         version: 5.5.2
       plotly.js:
-        specifier: 2.28.0
+        specifier: 'catalog:'
         version: 2.28.0(mapbox-gl@1.13.3)
       plotly.js-basic-dist:
-        specifier: ^2.35.3
+        specifier: 'catalog:'
         version: 2.35.3
       pluralize:
-        specifier: ^8.0.0
+        specifier: 'catalog:'
         version: 8.0.0
       qrcode:
-        specifier: ^1.5.4
+        specifier: 'catalog:'
         version: 1.5.4
       raf:
-        specifier: ^3.4.1
+        specifier: 'catalog:'
         version: 3.4.1
       react-datetime:
-        specifier: ^3.3.1
+        specifier: 'catalog:'
         version: 3.3.1(moment@2.30.1)(react@18.3.1)
       react-error-boundary:
-        specifier: ^3.1.4
+        specifier: 'catalog:'
         version: 3.1.4(react@18.3.1)
       react-hot-toast:
         specifier: 2.2.0
         version: 2.2.0(csstype@3.1.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-inspector:
-        specifier: ^6.0.2
+        specifier: 'catalog:'
         version: 6.0.2(react@18.3.1)
       react-intersection-observer:
-        specifier: ^9.16.0
+        specifier: 'catalog:'
         version: 9.16.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-mailchimp-subscribe:
-        specifier: ^2.1.3
+        specifier: 'catalog:'
         version: 2.1.3(react@18.3.1)
       react-plotly.js:
-        specifier: ^2.6.0
+        specifier: 'catalog:'
         version: 2.6.0(plotly.js@2.28.0(mapbox-gl@1.13.3))(react@18.3.1)
       react-popper:
-        specifier: ^2.3.0
+        specifier: 'catalog:'
         version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-reflex:
-        specifier: ^4.2.7
+        specifier: 'catalog:'
         version: 4.2.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-router:
-        specifier: ^7.5.3
+        specifier: 'catalog:'
         version: 7.5.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-select:
-        specifier: ^5.10.1
+        specifier: 'catalog:'
         version: 5.10.1(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-sizeme:
-        specifier: ^3.0.2
+        specifier: 'catalog:'
         version: 3.0.2
       react-switch:
-        specifier: ^7.1.0
+        specifier: 'catalog:'
         version: 7.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-transition-group:
-        specifier: ^4.4.5
+        specifier: 'catalog:'
         version: 4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-type-animation:
-        specifier: ^3.2.0
+        specifier: 'catalog:'
         version: 3.2.0(prop-types@15.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-virtualized-auto-sizer:
-        specifier: ^1.0.26
+        specifier: 'catalog:'
         version: 1.0.26(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-vtree:
-        specifier: 3.0.0-beta.3
+        specifier: 'catalog:'
         version: 3.0.0-beta.3(react-dom@18.3.1(react@18.3.1))(react-window@1.8.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       react-window:
-        specifier: ^1.8.11
+        specifier: 'catalog:'
         version: 1.8.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       reactflow:
-        specifier: ^11.11.4
+        specifier: 'catalog:'
         version: 11.11.4(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       rss-parser:
-        specifier: ^3.13.0
+        specifier: 'catalog:'
         version: 3.13.0
       sass:
-        specifier: ^1.87.0
+        specifier: 'catalog:'
         version: 1.87.0
       schema-dts:
-        specifier: ^1.1.5
+        specifier: 'catalog:'
         version: 1.1.5
       shortid:
-        specifier: ^2.2.17
+        specifier: 'catalog:'
         version: 2.2.17
       spark-md5:
-        specifier: ^3.0.2
+        specifier: 'catalog:'
         version: 3.0.2
       tinycolor2:
-        specifier: ^1.6.0
+        specifier: 'catalog:'
         version: 1.6.0
       tslib:
-        specifier: ^2.8.1
+        specifier: 'catalog:'
         version: 2.8.1
       ua-parser-js:
-        specifier: ^1.0.40
+        specifier: 'catalog:'
         version: 1.0.40
       universal-cookie:
-        specifier: ^4.0.4
+        specifier: 'catalog:'
         version: 4.0.4
       use-deep-compare-effect:
-        specifier: ^1.8.1
+        specifier: 'catalog:'
         version: 1.8.1(react@18.3.1)
       xss:
-        specifier: ^1.0.15
+        specifier: 'catalog:'
         version: 1.0.15
       zod:
-        specifier: ^3.24.4
+        specifier: 'catalog:'
         version: 3.24.4
     devDependencies:
       '@babel/cli':
-        specifier: ^7.27.2
+        specifier: 'catalog:'
         version: 7.27.2(@babel/core@7.27.1)
       '@babel/core':
-        specifier: ^7.27.1
+        specifier: 'catalog:'
         version: 7.27.1
       '@babel/plugin-proposal-class-properties':
-        specifier: ^7.18.6
+        specifier: 'catalog:'
         version: 7.18.6(@babel/core@7.27.1)
       '@babel/plugin-proposal-object-rest-spread':
-        specifier: ^7.20.7
+        specifier: 'catalog:'
         version: 7.20.7(@babel/core@7.27.1)
       '@babel/plugin-syntax-dynamic-import':
-        specifier: ^7.8.3
+        specifier: 'catalog:'
         version: 7.8.3(@babel/core@7.27.1)
       '@babel/plugin-transform-react-jsx':
-        specifier: ^7.27.1
+        specifier: 'catalog:'
         version: 7.27.1(@babel/core@7.27.1)
       '@babel/plugin-transform-runtime':
-        specifier: ^7.27.1
+        specifier: 'catalog:'
         version: 7.27.1(@babel/core@7.27.1)
       '@babel/preset-env':
-        specifier: ^7.27.2
+        specifier: 'catalog:'
         version: 7.27.2(@babel/core@7.27.1)
       '@babel/preset-react':
-        specifier: ^7.27.1
+        specifier: 'catalog:'
         version: 7.27.1(@babel/core@7.27.1)
       '@babel/preset-typescript':
-        specifier: ^7.27.1
+        specifier: 'catalog:'
         version: 7.27.1(@babel/core@7.27.1)
       '@babel/runtime':
-        specifier: ^7.27.1
+        specifier: 'catalog:'
         version: 7.27.1
       '@babel/types':
-        specifier: ^7.27.1
+        specifier: 'catalog:'
         version: 7.27.1
       '@faker-js/faker':
-        specifier: ^8.4.1
+        specifier: 'catalog:'
         version: 8.4.1
       '@googlemaps/jest-mocks':
-        specifier: ^2.22.6
+        specifier: 'catalog:'
         version: 2.22.6
       '@jest/reporters':
-        specifier: ^29.7.0
+        specifier: 'catalog:'
         version: 29.7.0
       '@juggle/resize-observer':
-        specifier: ^3.4.0
+        specifier: 'catalog:'
         version: 3.4.0
       '@open-draft/deferred-promise':
-        specifier: ^2.2.0
+        specifier: 'catalog:'
         version: 2.2.0
       '@storybook/addon-actions':
-        specifier: ^8.6.12
+        specifier: 'catalog:'
         version: 8.6.12(storybook@8.6.12(prettier@2.8.8))
       '@storybook/addon-designs':
-        specifier: ^8.2.1
+        specifier: 'catalog:'
         version: 8.2.1(@storybook/blocks@8.6.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.12(prettier@2.8.8)))(@storybook/components@8.6.12(storybook@8.6.12(prettier@2.8.8)))(@storybook/theming@8.6.12(storybook@8.6.12(prettier@2.8.8)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@storybook/addon-essentials':
-        specifier: ^8.6.12
+        specifier: 'catalog:'
         version: 8.6.12(@types/react@18.3.12)(storybook@8.6.12(prettier@2.8.8))
       '@storybook/addon-interactions':
-        specifier: ^8.6.12
+        specifier: 'catalog:'
         version: 8.6.12(storybook@8.6.12(prettier@2.8.8))
       '@storybook/addon-links':
-        specifier: ^8.6.12
+        specifier: 'catalog:'
         version: 8.6.12(react@18.3.1)(storybook@8.6.12(prettier@2.8.8))
       '@storybook/addon-themes':
-        specifier: ^8.6.12
+        specifier: 'catalog:'
         version: 8.6.12(storybook@8.6.12(prettier@2.8.8))
       '@storybook/manager-api':
-        specifier: ^8.6.12
+        specifier: 'catalog:'
         version: 8.6.12(storybook@8.6.12(prettier@2.8.8))
       '@storybook/react':
-        specifier: ^8.6.12
+        specifier: 'catalog:'
         version: 8.6.12(@storybook/test@8.6.12(storybook@8.6.12(prettier@2.8.8)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.12(prettier@2.8.8))(typescript@5.8.3)
       '@storybook/react-vite':
-        specifier: ^8.6.12
+        specifier: 'catalog:'
         version: 8.6.12(@storybook/test@8.6.12(storybook@8.6.12(prettier@2.8.8)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.40.2)(storybook@8.6.12(prettier@2.8.8))(typescript@5.8.3)(vite@5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0))
       '@storybook/test':
-        specifier: ^8.6.12
+        specifier: 'catalog:'
         version: 8.6.12(storybook@8.6.12(prettier@2.8.8))
       '@storybook/theming':
-        specifier: ^8.6.12
+        specifier: 'catalog:'
         version: 8.6.12(storybook@8.6.12(prettier@2.8.8))
       '@svgr/plugin-jsx':
-        specifier: ^8.1.0
+        specifier: 'catalog:'
         version: 8.1.0(@svgr/core@8.1.0(typescript@5.8.3))
       '@testing-library/dom':
-        specifier: ^10.4.0
+        specifier: 'catalog:'
         version: 10.4.0
       '@testing-library/jest-dom':
-        specifier: ^6.6.3
+        specifier: 'catalog:'
         version: 6.6.3
       '@testing-library/react':
         specifier: ^16.3.0
         version: 16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@testing-library/user-event':
-        specifier: ^14.6.1
+        specifier: 'catalog:'
         version: 14.6.1(@testing-library/dom@10.4.0)
       '@types/brainhubeu__react-carousel':
-        specifier: 1.15.0
+        specifier: 'catalog:'
         version: 1.15.0
       '@types/dagre':
-        specifier: ^0.7.52
+        specifier: 'catalog:'
         version: 0.7.52
       '@types/google.maps':
-        specifier: ^3.58.1
+        specifier: 'catalog:'
         version: 3.58.1
       '@types/history':
-        specifier: ^4.7.11
+        specifier: 'catalog:'
         version: 4.7.11
       '@types/jest':
-        specifier: ^29.5.14
+        specifier: 'catalog:'
         version: 29.5.14
       '@types/jest-when':
-        specifier: ^3.5.5
+        specifier: 'catalog:'
         version: 3.5.5
       '@types/jquery':
-        specifier: ^3.5.32
+        specifier: 'catalog:'
         version: 3.5.32
       '@types/json-schema':
-        specifier: ^7.0.15
+        specifier: 'catalog:'
         version: 7.0.15
       '@types/jsonpath':
-        specifier: ^0.2.4
+        specifier: 'catalog:'
         version: 0.2.4
       '@types/katex':
         specifier: ^0.10.2
@@ -1835,205 +2540,205 @@ importers:
         specifier: 4.17.12
         version: 4.17.12
       '@types/markdown-it':
-        specifier: ^13.0.9
+        specifier: 'catalog:'
         version: 13.0.9
       '@types/node':
-        specifier: ^20.17.41
+        specifier: 'catalog:'
         version: 20.17.41
       '@types/papaparse':
-        specifier: ^5.3.15
+        specifier: 'catalog:'
         version: 5.3.15
       '@types/plotly.js':
-        specifier: ^2.35.5
+        specifier: 'catalog:'
         version: 2.35.5
       '@types/plotly.js-basic-dist':
-        specifier: ^1.54.4
+        specifier: 'catalog:'
         version: 1.54.4
       '@types/pluralize':
-        specifier: ^0.0.29
+        specifier: 'catalog:'
         version: 0.0.29
       '@types/qrcode':
-        specifier: ^1.5.5
+        specifier: 'catalog:'
         version: 1.5.5
       '@types/react':
         specifier: 18.3.12
         version: 18.3.12
       '@types/react-addons-css-transition-group':
-        specifier: ^15.0.10
+        specifier: 'catalog:'
         version: 15.0.10
       '@types/react-dom':
         specifier: 18.3.1
         version: 18.3.1
       '@types/react-mailchimp-subscribe':
-        specifier: ^2.1.4
+        specifier: 'catalog:'
         version: 2.1.4
       '@types/react-plotly.js':
-        specifier: ^2.6.3
+        specifier: 'catalog:'
         version: 2.6.3
       '@types/react-transition-group':
-        specifier: ^4.4.12
+        specifier: 'catalog:'
         version: 4.4.12(@types/react@18.3.12)
       '@types/react-virtualized-auto-sizer':
-        specifier: ^1.0.8
+        specifier: 'catalog:'
         version: 1.0.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/react-window':
-        specifier: ^1.8.8
+        specifier: 'catalog:'
         version: 1.8.8
       '@types/shortid':
-        specifier: ^0.0.29
+        specifier: 'catalog:'
         version: 0.0.29
       '@types/spark-md5':
-        specifier: ^3.0.5
+        specifier: 'catalog:'
         version: 3.0.5
       '@types/tinycolor2':
-        specifier: ^1.4.6
+        specifier: 'catalog:'
         version: 1.4.6
       '@types/ua-parser-js':
-        specifier: ^0.7.39
+        specifier: 'catalog:'
         version: 0.7.39
       '@types/xml2js':
-        specifier: ^0.4.14
+        specifier: 'catalog:'
         version: 0.4.14
       '@vitejs/plugin-react':
-        specifier: ^4.4.1
+        specifier: 'catalog:'
         version: 4.4.1(vite@5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0))
       '@vitest/coverage-v8':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(vitest@1.6.1)
       '@vitest/ui':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(vitest@1.6.1)
       '@vitest/utils':
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1
       '@welldone-software/why-did-you-render':
-        specifier: ^8.0.3
+        specifier: 'catalog:'
         version: 8.0.3(react@18.3.1)
       babel-jest:
-        specifier: ^29.7.0
+        specifier: 'catalog:'
         version: 29.7.0(@babel/core@7.27.1)
       babel-loader:
-        specifier: ^9.2.1
+        specifier: 'catalog:'
         version: 9.2.1(@babel/core@7.27.1)(webpack@5.93.0(esbuild@0.25.4))
       buffer:
-        specifier: ^6.0.3
+        specifier: 'catalog:'
         version: 6.0.3
       chromatic:
-        specifier: ^11.28.2
+        specifier: 'catalog:'
         version: 11.28.2
       copyfiles:
-        specifier: ^2.4.1
+        specifier: 'catalog:'
         version: 2.4.1
       core-js:
-        specifier: ^3.42.0
+        specifier: 'catalog:'
         version: 3.42.0
       https-browserify:
-        specifier: ^1.0.0
+        specifier: 'catalog:'
         version: 1.0.0
       identity-obj-proxy:
-        specifier: ^3.0.0
+        specifier: 'catalog:'
         version: 3.0.0
       jest:
-        specifier: ^29.7.0
+        specifier: 'catalog:'
         version: 29.7.0(@types/node@20.17.41)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@20.17.41)(typescript@5.8.3))
       jest-environment-jsdom:
-        specifier: ^29.7.0
+        specifier: 'catalog:'
         version: 29.7.0
       jest-fail-on-console:
-        specifier: ^3.3.1
+        specifier: 'catalog:'
         version: 3.3.1
       jest-html-reporter:
-        specifier: ^3.10.2
+        specifier: 'catalog:'
         version: 3.10.2(jest@29.7.0(@types/node@20.17.41)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@20.17.41)(typescript@5.8.3)))(typescript@5.8.3)
       jest-when:
-        specifier: ^3.7.0
+        specifier: 'catalog:'
         version: 3.7.0(jest@29.7.0(@types/node@20.17.41)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@20.17.41)(typescript@5.8.3)))
       jotai-devtools:
-        specifier: ^0.6.3
+        specifier: 'catalog:'
         version: 0.6.3(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)
       jsdom:
-        specifier: ^21.1.2
+        specifier: 'catalog:'
         version: 21.1.2
       memfs:
-        specifier: ^3.5.3
+        specifier: 'catalog:'
         version: 3.5.3
       msw:
         specifier: ^1.3.5
         version: 1.3.5(encoding@0.1.13)(typescript@5.8.3)
       msw-storybook-addon:
-        specifier: ^1.10.0
+        specifier: 'catalog:'
         version: 1.10.0(msw@1.3.5(encoding@0.1.13)(typescript@5.8.3))
       p-limit:
-        specifier: ^6.2.0
+        specifier: 'catalog:'
         version: 6.2.0
       path-browserify:
-        specifier: ^1.0.1
+        specifier: 'catalog:'
         version: 1.0.1
       postcss-normalize:
-        specifier: ^10.0.1
+        specifier: 'catalog:'
         version: 10.0.1(browserslist@4.24.5)(postcss@8.5.3)
       prettier:
-        specifier: ^2.8.8
+        specifier: 'catalog:'
         version: 2.8.8
       process:
-        specifier: ^0.11.10
+        specifier: 'catalog:'
         version: 0.11.10
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-select-event:
-        specifier: ^5.5.1
+        specifier: 'catalog:'
         version: 5.5.1
       react-test-renderer:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       storybook:
-        specifier: ^8.6.12
+        specifier: 'catalog:'
         version: 8.6.12(prettier@2.8.8)
       stream-browserify:
-        specifier: ^3.0.0
+        specifier: 'catalog:'
         version: 3.0.0
       stream-http:
-        specifier: ^3.2.0
+        specifier: 'catalog:'
         version: 3.2.0
       timers-browserify:
-        specifier: ^2.0.12
+        specifier: 'catalog:'
         version: 2.0.12
       type-fest:
-        specifier: ^4.41.0
+        specifier: 'catalog:'
         version: 4.41.0
       typescript:
         specifier: 5.8.3
         version: 5.8.3
       util:
-        specifier: ^0.12.5
+        specifier: 'catalog:'
         version: 0.12.5
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
       vite-config:
         specifier: workspace:*
         version: link:../vite-config
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
       weak-napi:
-        specifier: ^2.0.2
+        specifier: 'catalog:'
         version: 2.0.2
       whatwg-fetch:
-        specifier: ^3.6.20
+        specifier: 'catalog:'
         version: 3.6.20
 
   packages/synapse-types:
     devDependencies:
       '@types/node':
-        specifier: ^20.17.41
+        specifier: 'catalog:'
         version: 20.17.41
       rimraf:
-        specifier: ^5.0.10
+        specifier: 'catalog:'
         version: 5.0.10
       typescript:
         specifier: 5.5.2
@@ -2052,40 +2757,40 @@ importers:
         version: 1.6.1
     devDependencies:
       '@svgr/plugin-jsx':
-        specifier: ^8.1.0
+        specifier: 'catalog:'
         version: 8.1.0(@svgr/core@8.1.0(typescript@5.8.3))
       '@vitejs/plugin-react':
-        specifier: ^4.4.1
+        specifier: 'catalog:'
         version: 4.4.1(vite@5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0))
       svgo:
-        specifier: ^3.3.2
+        specifier: 'catalog:'
         version: 3.3.2
       typescript:
         specifier: 5.8.3
         version: 5.8.3
       vite:
-        specifier: ^5.4.19
+        specifier: 'catalog:'
         version: 5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0)
       vite-plugin-dts:
-        specifier: ^4.5.3
+        specifier: 'catalog:'
         version: 4.5.3(@types/node@20.17.41)(rollup@4.40.2)(typescript@5.8.3)(vite@5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0))
       vite-plugin-externalize-deps:
-        specifier: ^0.8.0
+        specifier: 'catalog:'
         version: 0.8.0(vite@5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0))
       vite-plugin-html:
-        specifier: ^3.2.2
+        specifier: 'catalog:'
         version: 3.2.2(vite@5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0))
       vite-plugin-node-polyfills:
-        specifier: 0.17.0
+        specifier: 'catalog:'
         version: 0.17.0(rollup@4.40.2)(vite@5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0))
       vite-plugin-svgr:
-        specifier: ^4.3.0
+        specifier: 'catalog:'
         version: 4.3.0(rollup@4.40.2)(typescript@5.8.3)(vite@5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0))
       vite-tsconfig-paths:
-        specifier: ^5.1.4
+        specifier: 'catalog:'
         version: 5.1.4(typescript@5.8.3)(vite@5.4.19(@types/node@20.17.41)(sass@1.87.0)(terser@5.39.0))
       vitest:
-        specifier: ^1.6.1
+        specifier: 'catalog:'
         version: 1.6.1(@types/node@20.17.41)(@vitest/ui@1.6.1)(jsdom@21.1.2)(sass@1.87.0)(terser@5.39.0)
 
 packages:
@@ -7252,7 +7957,6 @@ packages:
     resolution: {integrity: sha512-X41YRfKkVCooILai2N0aN0Q5O0imu+MbNt894QWU683A82xJJXIR01dEqxwYJ91M6IdExtyFB3GCOJb4eBMBMQ==}
     peerDependencies:
       eslint: '>= 5'
-    bundledDependencies: []
 
   eslint-plugin-jest-dom@5.5.0:
     resolution: {integrity: sha512-CRlXfchTr7EgC3tDI7MGHY6QjdJU5Vv2RPaeeGtkXUHnKZf04kgzMPIJUXt4qKCvYWVVIEo9ut9Oq1vgXAykEA==}
@@ -8564,7 +9268,6 @@ packages:
     resolution: {integrity: sha512-Quz3MvAwHxVYNXsOByL7xI5EB2WYOeFswqaHIA3qOK3isRWTxiplBEocmmru6XmxDB2L7jDNYtYA4FyimoAFEw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
-    bundledDependencies: []
 
   jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
@@ -11518,7 +12221,7 @@ snapshots:
 
   '@apidevtools/json-schema-ref-parser@9.1.2':
     dependencies:
-      '@jsdevtools/ono': 7.1.3(patch_hash=ftv5fxgpd6wo7ilbdz5gio2woe)
+      '@jsdevtools/ono': 7.1.3(patch_hash=e5a9bfe6851c832fa91d599346fd2ba530d143db8d386d94a842aaa87a9d4c46)
       '@types/json-schema': 7.0.15
       call-me-maybe: 1.0.2
       js-yaml: 4.1.0
@@ -13460,7 +14163,7 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
     optional: true
 
-  '@jsdevtools/ono@7.1.3(patch_hash=ftv5fxgpd6wo7ilbdz5gio2woe)': {}
+  '@jsdevtools/ono@7.1.3(patch_hash=e5a9bfe6851c832fa91d599346fd2ba530d143db8d386d94a842aaa87a9d4c46)': {}
 
   '@juggle/resize-observer@3.4.0': {}
 
@@ -17345,7 +18048,7 @@ snapshots:
 
   dotenv-expand@11.0.7:
     dependencies:
-      dotenv: 16.4.7
+      dotenv: 16.5.0
 
   dotenv-expand@8.0.3: {}
 
@@ -20298,7 +21001,7 @@ snapshots:
       bl: 4.1.0
       chalk: 4.1.2
       cli-cursor: 3.1.0
-      cli-spinners: 2.6.1
+      cli-spinners: 2.9.2
       is-interactive: 1.0.0
       log-symbols: 4.1.0
       strip-ansi: 6.0.1

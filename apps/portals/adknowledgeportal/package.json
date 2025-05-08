@@ -6,21 +6,21 @@
   "dependencies": {
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
-    "katex": "^0.16.22",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router": "^7.5.3",
+    "katex": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-router": "catalog:",
     "synapse-react-client": "workspace:*",
-    "vite": "^5.4.19"
+    "vite": "catalog:"
   },
   "devDependencies": {
-    "@types/react": "18.3.12",
-    "@types/react-dom": "18.3.1",
-    "sass": "^1.87.0",
-    "tslib": "^2.8.1",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "sass": "catalog:",
+    "tslib": "catalog:",
     "typescript": "5.8.3",
     "vite-config": "workspace:*",
-    "vitest": "^1.6.1"
+    "vitest": "catalog:"
   },
   "scripts": {
     "start": "vite",
