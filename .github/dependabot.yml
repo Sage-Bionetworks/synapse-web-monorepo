@@ -11,13 +11,3 @@ updates:
     directory: '/'
     schedule:
       interval: 'daily'
-
-  # Maintain dependencies
-  - package-ecosystem: 'npm'
-    directory: '/packages'
-    schedule:
-      interval: 'daily'
-  - package-ecosystem: 'npm'
-    directory: '/apps'
-    schedule:
-      interval: 'daily'
