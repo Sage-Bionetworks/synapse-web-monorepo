@@ -44,8 +44,10 @@ jobs:
         run: |
           pnpm nx show projects --affected
           affected=$(pnpm nx show projects --affected)
+          affected_array=($affected)
+          echo "affected array: ${affected_array[0]}"
 
-          echo "print affected variable: '$affected'"
+          echo "print affected variable: '$affected[@]'"
 
           for project in "${affected[@]}"; do
             echo "Comparing: '$project' with '${{ matrix.PORTAL }}'"
