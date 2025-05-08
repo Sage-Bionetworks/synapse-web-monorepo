@@ -2,12 +2,21 @@
 version: 2
 updates:
   # Check for updates to GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "daily"
+      interval: 'daily'
   # Maintain dependencies from npm
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "daily"
+      interval: 'daily'
+  # Maintain dependencies
+  - package-ecosystem: 'npm'
+    directory: '/packages'
+    schedule:
+      interval: 'daily'
+  - package-ecosystem: 'npm'
+    directory: '/apps'
+    schedule:
+      interval: 'daily'
