@@ -42,6 +42,7 @@ jobs:
       - uses: ./.github/actions/pnpm-setup-action
       - name: Save affected projects to environment variable
         run: |
+          pnpm nx show projects --affected
           echo "AFFECTED_PROJECTS=$(pnpm nx show projects --affected)" >> "$GITHUB_ENV"
 
       - name: Build portal
