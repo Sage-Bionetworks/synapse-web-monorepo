@@ -56,7 +56,7 @@ const routes: RouteObject[] = [
           {
             // PORTALS-2001 - we renamed "Experimental Tools" to "Experimental Models"
             // 'Experimental Tools' not included in explorePageRoutes because it is legacy
-            path: 'Experimental ToolsTST',
+            path: 'Experimental ToolsTST1',
             lazy: () =>
               import('@/pages/Explore/experimental_tools').then(
                 convertModuleToRouteObject,
