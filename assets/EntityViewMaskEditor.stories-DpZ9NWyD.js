@@ -1,9 +1,0 @@
-import{j as t}from"./jsx-runtime-Du8NFWEI.js";import{r as T}from"./index-Dl6G-zuu.js";import{E as i}from"./EntityViewMaskEditor-D_BMDehs.js";import{i as _,m as l}from"./VerificationSubmission-CX6Xq4We.js";import{P as I}from"./Paper-B6Fumrsg.js";import"./Typography-D3xYwoES.js";import"./createTheme-BoQYKx5k.js";import"./index-GEGPABih.js";import"./styled-BMGIoXl7.js";import"./FormGroup-CmnQirku.js";import"./useFormControl-f2Zb6bR-.js";import"./formControlState-Dq1zat_P.js";import"./FormControlLabel-CFPzq4BM.js";import"./Stack-BcBUfnl7.js";import"./Checkbox-CbltaRqm.js";import"./SwitchBase-CFGnpwAh.js";import"./ButtonBase-CTLL4EY5.js";import"./useTimeout-DgmtfV4_.js";import"./TransitionGroupContext-DetLSwnr.js";import"./useEnhancedEffect-DZnfS5Iy.js";import"./useForkRef-BDoLG09A.js";import"./useIsFocusVisible-Bf3pHwKN.js";import"./useControlled-1Y2rT-1r.js";import"./createSvgIcon-DrH8-ApS.js";import"./Alert-BoiUXBFA.js";import"./mergeSlotProps-D_dLvIWz.js";import"./isHostComponent-DVu5iVWx.js";import"./Close-N0BBw2gu.js";import"./IconButton-QXhlbi2Z.js";const H={title:"Synapse/EntityView/Mask Editor",component:i,decorators:[e=>t.jsx(I,{sx:{mx:"auto",p:4,maxWidth:"720px"},children:t.jsx(e,{})})],render:function(m){const[u,d]=T.useState(m.value);return t.jsx(i,{...m,value:u,onChange:d})}},r={args:{value:_}},o={args:{value:_|l}};var s,a,p;r.parameters={...r.parameters,docs:{...(s=r.parameters)==null?void 0:s.docs,source:{originalSource:`{
-  args: {
-    value: ENTITY_VIEW_TYPE_MASK_FILE
-  }
-}`,...(p=(a=r.parameters)==null?void 0:a.docs)==null?void 0:p.source}}};var n,E,c;o.parameters={...o.parameters,docs:{...(n=o.parameters)==null?void 0:n.docs,source:{originalSource:`{
-  args: {
-    value: ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_DOCKER
-  }
-}`,...(c=(E=o.parameters)==null?void 0:E.docs)==null?void 0:c.source}}};const J=["FileView","CustomScope"];export{o as CustomScope,r as FileView,J as __namedExportsOrder,H as default};
