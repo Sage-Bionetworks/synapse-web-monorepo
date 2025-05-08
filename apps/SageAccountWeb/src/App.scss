@@ -123,12 +123,6 @@ $wrapper-width: 955px;
 }
 
 @media (max-width: $wrapper-width) {
-  .panel-wrapper-bg {
-    background: #fff
-      url('https://s3.amazonaws.com/static.synapse.org/images/SynapseMobileLogInFull.svg')
-      50% 50%;
-    background-size: contain;
-  }
   .panel-wrapper {
     &.with-login-panel-bg {
       background: none;
