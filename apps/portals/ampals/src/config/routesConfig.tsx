@@ -102,7 +102,7 @@ const routes: RouteObject[] = [
             ),
           },
           {
-            path: 'TEST PATH 3',
+            path: 'TEST PATH 4',
             element: (
               <AMPALSResearchPageLayout
                 headerTitle="Resources"
