@@ -4,11 +4,11 @@ import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-fra
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import {
   CardContainerLogic,
-  Markdown,
   SynapseConstants,
   TimelinePlot,
 } from 'synapse-react-client'
 import DynamicFormModal from 'synapse-react-client/components/DynamicForm/DynamicFormModal'
+import Markdown from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
 export default function ToolDetailsPageObservationsTab() {
   return (

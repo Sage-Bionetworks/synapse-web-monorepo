@@ -2,7 +2,7 @@ import { scrollToWithOffset } from '@/utils'
 import { Box, Container, ContainerProps } from '@mui/material'
 import { PropsWithChildren, useEffect, useRef } from 'react'
 import { useLocation } from 'react-router'
-import { HelpPopover } from 'synapse-react-client'
+import { HelpPopover } from 'synapse-react-client/components/HelpPopover/HelpPopover'
 
 type SectionLayoutProps = PropsWithChildren<{
   ContainerProps?: ContainerProps
@@ -41,7 +41,10 @@ export function SectionLayout(props: SectionLayoutProps) {
     <Container
       maxWidth={'lg'}
       {...ContainerProps}
-      sx={{ overflow: 'auto', ...ContainerProps?.sx }}
+      sx={{
+        overflow: 'auto',
+        ...ContainerProps?.sx,
+      }}
     >
       {scrollToJsx}
       {title && (

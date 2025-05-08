@@ -38,8 +38,8 @@ export function getUseQuerySuccessMock<TData>(
   }
 }
 
-export function getUseQueryLoadingMock<TData>(): QueryObserverLoadingResult<
-  TData,
+export function getUseQueryLoadingMock(): QueryObserverLoadingResult<
+  never,
   never
 > {
   return {
@@ -60,7 +60,7 @@ export function getUseQueryLoadingMock<TData>(): QueryObserverLoadingResult<
     isRefetching: false,
     isStale: false,
     isSuccess: false,
-    refetch: jest.fn(),
+    refetch: noop as any,
     status: 'pending',
     failureReason: null,
     fetchStatus: 'fetching',

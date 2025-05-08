@@ -1,4 +1,4 @@
-import { NoContentPlaceholderType } from '../SynapseTable'
+import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import SearchResultsNotFound from '../SynapseTable/SearchResultsNotFound'
 import ThisTableIsEmpty from '../SynapseTable/TableIsEmpty'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'

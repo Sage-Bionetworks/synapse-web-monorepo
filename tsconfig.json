@@ -1,11 +1,34 @@
 {
   "extends": "./shared/tsconfig.base.json",
-  "files": ["eslint.config.mjs"],
   "include": [],
+  "exclude": ["eslint.config.mjs"],
   "compilerOptions": {
     "rootDir": ".",
-    "outDir": "build",
-    "allowJs": true,
-    "composite": false
-  }
+    "allowJs": true
+  },
+  "references": [
+    { "path": "./apps/portals/adknowledgeportal" },
+    { "path": "./apps/portals/ampals" },
+    { "path": "./apps/portals/arkportal" },
+    { "path": "./apps/portals/b2ai.standards" },
+    { "path": "./apps/portals/bsmn" },
+    { "path": "./apps/portals/cancercomplexity" },
+    { "path": "./apps/portals/challenges" },
+    { "path": "./apps/portals/digitalhealth" },
+    { "path": "./apps/portals/eliteportal" },
+    { "path": "./apps/portals/genie" },
+    { "path": "./apps/portals/nf" },
+    { "path": "./apps/portals/stopadportal" },
+    { "path": "./apps/portals-e2e" },
+    { "path": "./apps/SageAccountWeb" },
+    { "path": "./apps/synapse-oauth-signin" },
+    { "path": "./apps/synapse-portal-framework" },
+    { "path": "./packages/markdown-it-container" },
+    { "path": "./packages/markdown-it-synapse" },
+    { "path": "./packages/markdown-it-synapse-table" },
+    { "path": "./packages/synapse-client" },
+    { "path": "./packages/synapse-react-client" },
+    { "path": "./packages/synapse-types" },
+    { "path": "./packages/vite-config" }
+  ]
 }

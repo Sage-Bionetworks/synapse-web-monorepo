@@ -1,18 +1,12 @@
 {
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
-    "composite": true,
     "rootDir": "./src",
-    "baseUrl": ".",
-    "outDir": "../../node_modules/.cache/.tsc_cache/synapse-portal-framework/build",
-    "noEmit": false,
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "resolveJsonModule": true,
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false,
-    "moduleResolution": "bundler",
     "types": ["vite/client"],
     "paths": {
       "@/*": ["./src/*"],

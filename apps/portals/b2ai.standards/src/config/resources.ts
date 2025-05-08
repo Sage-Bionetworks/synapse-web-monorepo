@@ -2,10 +2,24 @@ const DST_TABLE_ID = 'syn66330015' // points to DST_denormalized_current.
 // To change DST_denormalized version, change it in that materialized view definition.
 
 const STANDARDS_CHALLENGE_TABLE_ID = 'syn65913973'
+const DATASET_TABLE_ID = 'syn66330217'
+const ORGANIZATION_TABLE_ID = 'syn63096836'
 
 export const DST_TABLE_COLUMN_NAMES = { RELEVANT_ORG_NAMES: 'relevantOrgNames' }
+export const ORG_TABLE_COLUMN_NAMES = {
+  ID: 'id',
+  NAME: 'name',
+  DESCRIPTION: 'description',
+}
+export const CHALLENGES_TABLE_COLUMN_NAMES = {
+  ORG_ID: 'organizationId',
+  IMG_HANDLE_ID: 'headerImage',
+}
+// can replace with specific version if wanted
 
-export const standardsChallengeTableId = STANDARDS_CHALLENGE_TABLE_ID
+export const challengesTableId = STANDARDS_CHALLENGE_TABLE_ID
+export const dataSetTableId = DATASET_TABLE_ID
+export const organizationTableId = ORGANIZATION_TABLE_ID
 
 // for the Explore page table:
 export const dataSql = `
@@ -13,8 +27,6 @@ export const dataSql = `
         concat('[', acronym, '](/Explore/Standard/DetailsPage?id=', id, ')') as acronym,
             name, category, collections, ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration FROM ${DST_TABLE_ID}
 `
-// name, category, collections, relevantOrgNames as organizations, isOpen, registration FROM ${DST_TABLE_ID}
-
 // removed topic column above to address @jay-hodgson's comment
 //  https://github.com/Sage-Bionetworks/synapse-web-monorepo/pull/1612#discussion_r2029425831
 //  Topic still shows up as a facet on the explore page but not as a column,
@@ -33,11 +45,11 @@ export const standardsDetailsPageSQL = `
             collections,
             topic as topics,
             ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES},
-            COALESCE(responsibleOrgName, 'No responsible org listed') as SDO,
+            responsibleOrgName as SDO,
             isOpen,
             relatedTo,
             trainingResources,
             registration
     FROM ${DST_TABLE_ID}
 `
-// relevantOrgNames as organizations,
+// COALESCE(responsibleOrgName, 'No responsible org listed') as SDO,

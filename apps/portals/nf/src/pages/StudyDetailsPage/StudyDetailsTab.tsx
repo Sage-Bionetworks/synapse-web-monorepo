@@ -7,10 +7,8 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import {
-  CardContainerLogic,
-  NoContentPlaceholderType,
-} from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client'
+import { NoContentPlaceholderType } from 'synapse-react-client/components/SynapseTable/NoContentPlaceholderType'
 
 export function StudyDetailsTab() {
   const { value: studyId } = useDetailsPageContext('studyId')

@@ -42,9 +42,9 @@ export function PortalFullTextSearchField({
       onChange={event => {
         setSearchInput(event.target.value)
       }}
-      onKeyDown={(event: any) => {
-        if (event.key === 'Enter') {
-          const trimmedInput = event.target.value.trim()
+      onKeyDown={event => {
+        const trimmedInput = (event.target as HTMLInputElement).value.trim()
+        if (event.key === 'Enter' && trimmedInput.length > 0) {
           if (path) {
             const params = new URLSearchParams()
             params.set(FTS_SEARCH_TERM, trimmedInput)

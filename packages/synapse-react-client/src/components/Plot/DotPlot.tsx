@@ -1,4 +1,7 @@
-import _, { countBy } from 'lodash-es'
+import cloneDeep from 'lodash-es/cloneDeep'
+import countBy from 'lodash-es/countBy'
+import noop from 'lodash-es/noop'
+import uniq from 'lodash-es/uniq'
 import Plotly from 'plotly.js-basic-dist'
 import { CSSProperties } from 'react'
 import Plot from './Plot'
@@ -30,7 +33,7 @@ function getLayout(
   dotPlotLayoutConfig: Partial<Plotly.Layout>,
   layoutOptions?: LayoutOptions,
 ): Partial<Plotly.Layout> {
-  const result = _.cloneDeep(dotPlotLayoutConfig)
+  const result = cloneDeep(dotPlotLayoutConfig)
   if (!layoutOptions) {
     return result
   }
@@ -166,7 +169,7 @@ function getPlotDataPoints(
   markerSymbols?: Dictionary,
 ): Plotly.Data[] {
   const isFakeData = ySorted === undefined
-  const groups = _.uniq(graphItems.map(item => item.group))
+  const groups = uniq(graphItems.map(item => item.group))
   const defaultSymbols = [
     'y-down',
     'triangle-up',
@@ -257,7 +260,7 @@ function DotPlot({
       style={style}
       data={getPlotDataPoints(plotData, plotStyle, pointsTypes, markerSymbols)}
       config={optionsConfig}
-      onClick={e => (onClick ? onClick(e) : _.noop)}
+      onClick={e => (onClick ? onClick(e) : noop)}
     />
   )
 }

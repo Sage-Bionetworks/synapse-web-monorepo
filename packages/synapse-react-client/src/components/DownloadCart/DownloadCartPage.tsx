@@ -332,3 +332,5 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
     </div>
   )
 }
+
+export default DownloadCartPage

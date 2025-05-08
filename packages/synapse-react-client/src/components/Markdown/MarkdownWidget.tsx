@@ -1,28 +1,34 @@
+import { lazy, Suspense } from 'react'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
-import MarkdownButton, { ButtonLinkWidgetParams } from './widget/MarkdownButton'
-import MarkdownEntityPreview, {
-  MarkdownEntityPreviewProps,
-} from './widget/MarkdownEntityPreview'
-import MarkdownIDUReport, {
-  MarkdownIDUReportProps,
-} from './widget/MarkdownIDUReport'
-import MarkdownProvenanceGraph, {
-  MarkdownProvenanceGraphProps,
-} from './widget/MarkdownProvenanceGraph'
-import MarkdownSynapseImage, {
-  ImageWidgetParams,
-} from './widget/MarkdownSynapseImage'
-import MarkdownSynapsePlot, {
-  MarkdownSynapsePlotProps,
-} from './widget/MarkdownSynapsePlot'
-import MarkdownSynapseTable, {
-  MarkdownSynapseTableProps,
-} from './widget/MarkdownSynapseTable'
-import MarkdownTableOfContents from './widget/MarkdownTableOfContents'
-import MarkdownUserOrTeamBadge, {
-  MarkdownUserOrTeamBadgeProps,
-} from './widget/MarkdownUserOrTeamBadge'
-import MarkdownVideo, { MarkdownVideoProps } from './widget/MarkdownVideo'
+import type { ButtonLinkWidgetParams } from './widget/MarkdownButton'
+import type { MarkdownEntityPreviewProps } from './widget/MarkdownEntityPreview'
+import type { MarkdownIDUReportProps } from './widget/MarkdownIDUReport'
+import type { MarkdownProvenanceGraphProps } from './widget/MarkdownProvenanceGraph'
+import type { ImageWidgetParams } from './widget/MarkdownSynapseImage'
+import type { MarkdownSynapsePlotProps } from './widget/MarkdownSynapsePlot'
+import type { MarkdownSynapseTableProps } from './widget/MarkdownSynapseTable'
+import type { MarkdownUserOrTeamBadgeProps } from './widget/MarkdownUserOrTeamBadge'
+import type { MarkdownVideoProps } from './widget/MarkdownVideo'
+
+// Lazy load all widgets -- some can be large & cyclical component trees that will prevent bundle-splitting if we do not dynamically import them
+const MarkdownVideo = lazy(() => import('./widget/MarkdownVideo'))
+const MarkdownEntityPreview = lazy(
+  () => import('./widget/MarkdownEntityPreview'),
+)
+const MarkdownIDUReport = lazy(() => import('./widget/MarkdownIDUReport'))
+const MarkdownProvenanceGraph = lazy(
+  () => import('./widget/MarkdownProvenanceGraph'),
+)
+const MarkdownSynapseImage = lazy(() => import('./widget/MarkdownSynapseImage'))
+const MarkdownSynapsePlot = lazy(() => import('./widget/MarkdownSynapsePlot'))
+const MarkdownUserOrTeamBadge = lazy(
+  () => import('./widget/MarkdownUserOrTeamBadge'),
+)
+const MarkdownButton = lazy(() => import('./widget/MarkdownButton'))
+const MarkdownSynapseTable = lazy(() => import('./widget/MarkdownSynapseTable'))
+const MarkdownTableOfContents = lazy(
+  () => import('./widget/MarkdownTableOfContents'),
+)
 
 type ButtonLink = {
   widgetType: 'buttonlink'
@@ -122,10 +128,12 @@ function MarkdownWidget(props: MarkdownWidgetProps) {
 }
 
 export default function MarkdownWidgetWithWrapper(props: MarkdownWidgetProps) {
-  // Wrap the widget in an error boundary.
+  // Wrap the widget in an error boundary and suspense
   return (
     <SynapseErrorBoundary>
-      <MarkdownWidget {...props} />
+      <Suspense>
+        <MarkdownWidget {...props} />
+      </Suspense>
     </SynapseErrorBoundary>
   )
 }

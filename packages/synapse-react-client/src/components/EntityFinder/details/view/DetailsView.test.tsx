@@ -129,20 +129,14 @@ function renderComponent(
 }
 
 describe('DetailsView tests', () => {
-  // Stub for getBoundingClientRect, required by @tanstack/react-virtual to work in tests
-  jest
-    .spyOn(Element.prototype, 'getBoundingClientRect')
-    .mockImplementation(() => ({
-      width: 1200,
-      height: 600,
-      top: 0,
-      left: 0,
-      bottom: 0,
-      right: 0,
-      x: 0,
-      y: 0,
-      toJSON: () => {},
-    }))
+  // Stub HTMLElement.offsetHeight and HTMLElement.offsetWidth, required by @tanstack/react-virtual to work in tests
+  // See https://github.com/TanStack/virtual/issues/641#issuecomment-2851908893
+  Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
+    value: 800,
+  })
+  Object.defineProperty(HTMLElement.prototype, 'offsetWidth', {
+    value: 800,
+  })
 
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())

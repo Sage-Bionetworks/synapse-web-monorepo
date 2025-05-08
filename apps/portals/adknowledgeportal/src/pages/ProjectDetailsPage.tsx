@@ -39,13 +39,11 @@ import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-fra
 import ToggleSynapseObjects from '@sage-bionetworks/synapse-portal-framework/components/ToggleSynapseObjects'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import {
-  CardContainerLogic,
-  StandaloneQueryWrapper,
-  SynapseConstants,
-} from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic'
+import StandaloneQueryWrapper from 'synapse-react-client/components/StandaloneQueryWrapper'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
-export default function ProjectDetailsPage() {
+function ProjectDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
 
   return (
@@ -176,3 +174,5 @@ export default function ProjectDetailsPage() {
     </>
   )
 }
+
+export default ProjectDetailsPage

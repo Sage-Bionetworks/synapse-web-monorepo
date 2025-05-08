@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import { HeadlineWithLink } from './HeadlineWithLink'
-import { SynapseErrorBoundary } from 'synapse-react-client'
+import { SynapseErrorBoundary } from 'synapse-react-client/components/error/ErrorBanner'
 
 /**
  * Describes a section of a portals DetailsPage. Using this interface allows us to render

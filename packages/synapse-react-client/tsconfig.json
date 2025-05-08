@@ -1,14 +1,9 @@
 {
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
-    "composite": true,
     "rootDir": "./src",
-    "outDir": "../../node_modules/.cache/.tsc_cache/synapse-react-client/build",
-    "module": "esnext",
     "target": "esnext",
-    "moduleResolution": "bundler",
     "allowJs": true,
-    "noEmit": false,
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {

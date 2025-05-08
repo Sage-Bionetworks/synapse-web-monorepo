@@ -340,3 +340,45 @@ export const NotCertified: Story = {
     isAuthenticated: true,
   },
 }
+
+export const RejectedRequirement: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        ...getEntityHandlers(MOCK_REPO_ORIGIN),
+        getCurrentUserCertifiedValidatedHandler(MOCK_REPO_ORIGIN, true, true),
+        ...getTwoFactorAuthStatusHandler(true),
+        ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
+        ...getAccessRequirementEntityBindingHandlers(
+          MOCK_REPO_ORIGIN,
+          undefined,
+          [mockManagedACTAccessRequirement],
+        ),
+        ...getAccessRequirementStatusHandlers(MOCK_REPO_ORIGIN, [
+          {
+            accessRequirementId: mockManagedACTAccessRequirement.id.toString(),
+            concreteType:
+              'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus',
+            isApproved: false,
+            /* Current submission status. Will be undefined if no submission has been created */
+            currentSubmissionStatus: {
+              submissionId: mockApprovedSubmission.id,
+              submittedBy: mockApprovedSubmission.submittedBy,
+              modifiedOn: mockApprovedSubmission.modifiedOn,
+              state: SubmissionState.REJECTED,
+              rejectedReason:
+                "Thank you for requesting access, but you were rejected. Here's why:\n * You did not meet the requirements.\n * Another reason: you did not meet the requirements.\nFeel free to apply again.",
+            },
+          },
+        ]),
+        ...getWikiHandlers(MOCK_REPO_ORIGIN),
+        ...getResearchProjectHandlers(MOCK_REPO_ORIGIN),
+      ],
+    },
+  },
+  args: {
+    entityId: mockFileEntity.id,
+    isAuthenticated: true,
+    renderAsModal: true,
+  },
+}

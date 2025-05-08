@@ -25,9 +25,9 @@ export function CardDeck(props: CardDeckProps) {
         cardDeckType && `${className}--${cardDeckType}`,
       )}
     >
-      {cards.map(card => {
+      {cards.map((card, i) => {
         return showDesktop ? (
-          <CardDeckDesktop cardDeckType={cardDeckType} {...card} />
+          <CardDeckDesktop key={i} cardDeckType={cardDeckType} {...card} />
         ) : (
           <CardDeckMobile cardDeckType={cardDeckType} {...card} />
         )

@@ -27,26 +27,21 @@ export const Demo: Story = {
 }
 
 export const AccessTokenCardWarningDialog: Story = {
-  render: args => (
-    <WarningDialog
-      {...args}
-      content={
-        <>
-          <p>
-            If you delete this token, any applications using it will stop
-            working. This action cannot be undone.
-          </p>
-          <p className="SRC-boldText">
-            Are you sure you want to delete this token?
-          </p>
-        </>
-      }
-    />
-  ),
   args: {
     ...Demo.args,
     title: 'Confirm Deletion',
     confirmButtonText: 'Delete Token',
     confirmButtonColor: 'error',
+    content: (
+      <>
+        <p>
+          If you delete this token, any applications using it will stop working.
+          This action cannot be undone.
+        </p>
+        <p className="SRC-boldText">
+          Are you sure you want to delete this token?
+        </p>
+      </>
+    ),
   },
 }

@@ -33,7 +33,7 @@ export const dataColumnLinks: LabelLinkConfig = [
 export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   rgbIndex: dataRgbIndex,
   shouldDeepLink: true,
-  hideDownload: true,
+  hideDownload: false,
   sql: dataSql,
   name: 'Standards',
   columnAliases,

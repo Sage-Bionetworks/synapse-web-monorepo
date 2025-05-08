@@ -1,4 +1,4 @@
-import { LockedColumn } from '@/utils'
+import { LockedColumn } from '@/utils/types/LockedColumn'
 import { hasResettableFilters as hasResettableFiltersUtil } from '@/utils/functions/queryUtils'
 import useImmutableTableQuery from '@/utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import {
@@ -6,7 +6,7 @@ import {
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { Provider, useSetAtom } from 'jotai'
-import { noop } from 'lodash-es'
+import noop from 'lodash-es/noop'
 import { PropsWithChildren, useCallback, useEffect, useMemo } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { ConfirmationDialog } from '../ConfirmationDialog'

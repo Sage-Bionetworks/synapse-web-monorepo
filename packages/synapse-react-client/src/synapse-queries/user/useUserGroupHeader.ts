@@ -1,7 +1,12 @@
 import SynapseClient from '@/synapse-client'
-import { SynapseClientError, useSynapseContext } from '@/utils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { TYPE_FILTER, UserGroupHeader } from '@sage-bionetworks/synapse-types'
-import { useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query'
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
 
 /**
  * Get a single UserGroupHeader, utilizing a react-query cache.  This is always an unauthenticated call

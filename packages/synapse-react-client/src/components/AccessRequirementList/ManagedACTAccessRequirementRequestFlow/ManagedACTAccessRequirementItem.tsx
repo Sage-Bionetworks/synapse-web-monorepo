@@ -109,12 +109,17 @@ export default function ManagedACTAccessRequirementItem(
         {accessRequirementStatus?.currentSubmissionStatus?.state ===
           SubmissionState.REJECTED && (
           <Alert className={'access-requirement-list-alert'} severity={'error'}>
-            <>
+            <Typography variant={'body1'} gutterBottom>
               <strong>Your data access request has been rejected.</strong>
-              <br />
+            </Typography>
+            <Typography
+              variant={'body1'}
+              gutterBottom
+              sx={{ whiteSpace: 'pre-line' }}
+            >
               {accessRequirementStatus?.currentSubmissionStatus
                 .rejectedReason || ''}
-            </>
+            </Typography>
           </Alert>
         )}
         {accessRequirementStatus?.currentSubmissionStatus?.state ===

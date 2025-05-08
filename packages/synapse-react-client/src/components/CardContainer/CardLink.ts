@@ -1,4 +1,4 @@
-import { TargetEnum } from '@/components/index'
+import { TargetEnum } from '@/utils/html/TargetEnum'
 
 /**
  * Defines the configuration for a link that will be rendered in the card

@@ -13,14 +13,15 @@ import pluralize from 'pluralize'
 import { useMemo } from 'react'
 import { Outlet, useLocation } from 'react-router'
 import { BarLoader } from 'react-spinners'
-import {
-  SynapseConstants,
-  SynapseQueries,
-  SynapseUtilityFunctions,
-} from 'synapse-react-client'
 import { DetailsPageContextProvider } from './DetailsPageContext'
 import { DetailsPageDocumentMetadata } from './DetailsPageDocumentMetadata'
 import { useScrollOnMount } from './utils'
+import {
+  parseEntityIdFromSqlStatement,
+  getAdditionalFilters,
+} from 'synapse-react-client/utils/functions/SqlFunctions'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { useGetQueryResultBundleWithAsyncStatus } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 
 const goToExplorePage = () => {
   /*
@@ -62,8 +63,8 @@ export default function DetailsPage(props: DetailsPageProps) {
   useScrollOnMount()
 
   const queryBundleRequest = useMemo(() => {
-    const entityId = SynapseUtilityFunctions.parseEntityIdFromSqlStatement(sql)
-    const additionalFilters = SynapseUtilityFunctions.getAdditionalFilters(
+    const entityId = parseEntityIdFromSqlStatement(sql)
+    const additionalFilters = getAdditionalFilters(
       searchParams,
       sqlOperator,
       additionalFiltersSessionStorageKey,
@@ -85,7 +86,7 @@ export default function DetailsPage(props: DetailsPageProps) {
     isLoading,
     isSuccess,
     error: hasError,
-  } = SynapseQueries.useGetQueryResultBundleWithAsyncStatus(queryBundleRequest)
+  } = useGetQueryResultBundleWithAsyncStatus(queryBundleRequest)
 
   const queryResultBundle = asyncJobStatus?.responseBody
 

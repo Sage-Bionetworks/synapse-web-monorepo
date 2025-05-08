@@ -20,6 +20,7 @@ import MarkdownSynapse, {
 import MarkdownProvenanceGraph from './widget/MarkdownProvenanceGraph'
 import MarkdownSynapseImage from './widget/MarkdownSynapseImage'
 import MarkdownSynapsePlot from './widget/MarkdownSynapsePlot'
+import { MemoryRouter } from 'react-router'
 import * as MarkdownUtils from './MarkdownUtils'
 
 vi.mock('./widget/MarkdownSynapseImage', () => ({
@@ -393,10 +394,22 @@ describe('MarkdownSynapse tests', () => {
       })
       expect(container).toMatchSnapshot()
     })
-    it('works with two inline widgets', () => {
+    it('works with two inline widgets', async () => {
       const { container } = renderComponent({
         markdown:
           '${buttonlink?text=sometext&url=#/Help/How%20It%20Works&highlight=true}${buttonlink?text=APPLY&url=#/Apply&highlight=true} ',
+      })
+
+      await screen.findByText('APPLY')
+      expect(container).toMatchSnapshot()
+    })
+    it('works with two inline widgets inside Router', () => {
+      const component = getComponent({
+        markdown:
+          '${buttonlink?text=sometext&url=#/Help/How%20It%20Works&highlight=true}${buttonlink?text=APPLY&url=#/Apply&highlight=true} ',
+      })
+      const { container } = render(<MemoryRouter>{component}</MemoryRouter>, {
+        wrapper: createWrapper(),
       })
       expect(container).toMatchSnapshot()
     })

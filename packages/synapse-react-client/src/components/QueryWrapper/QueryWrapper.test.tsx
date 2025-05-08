@@ -10,7 +10,7 @@ import {
 import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { SetStateAction, useAtomValue, useSetAtom } from 'jotai'
 import { cloneDeep } from 'lodash-es'
 import { QueryContextType, useQueryContext } from '../QueryContext'
 import { QueryWrapper, QueryWrapperProps } from './QueryWrapper'
@@ -25,7 +25,7 @@ const getQueryTableAsyncJobResultsSpy = jest.spyOn(
 let providedContext: QueryContextType | undefined
 const renderedTextConfirmation = 'QueryWrapper rendered!'
 let selectedRows: Row[] | undefined
-let setSelectedRows: ReturnType<typeof useSetAtom> | undefined
+let setSelectedRows: ((value: SetStateAction<Row[]>) => void) | undefined
 
 const QueryContextReceiver = () => {
   // An error would be thrown if context was not provided by QueryWrapper

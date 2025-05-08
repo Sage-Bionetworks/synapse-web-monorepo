@@ -40,9 +40,9 @@ const oldWindowOpen = window.open
  * See https://www.benmvp.com/blog/mocking-window-location-methods-jest-jsdom/
  */
 beforeAll(() => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore - TS doesn't allow us to delete location. Not an issue because we're immediately replacing it with the mock
+  // @ts-expect-error - TS doesn't allow us to delete location. Not an issue because we're immediately replacing it with the mock
   delete window.location
+  // @ts-expect-error - TS 5.8.3 broke reassigning `window.location` - https://github.com/microsoft/TypeScript/issues/61335
   window.location = Object.defineProperties(
     {},
     {
@@ -66,6 +66,7 @@ beforeAll(() => {
 afterAll(() => {
   // restore `window.location` to the original `jsdom`
   // `Location` object
+  // @ts-expect-error - TS 5.8.3 broke reassigning `window.location` - https://github.com/microsoft/TypeScript/issues/61335
   window.location = oldWindowLocation
   window.open = oldWindowOpen
 })

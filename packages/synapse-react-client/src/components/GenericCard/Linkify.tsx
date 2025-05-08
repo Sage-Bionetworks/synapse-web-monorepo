@@ -1,6 +1,6 @@
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { Link } from '@mui/material'
-import { TargetEnum } from '../CardContainerLogic'
+import { TargetEnum } from '@/utils/html/TargetEnum'
 
 export type LinkifyProps = {
   text?: string

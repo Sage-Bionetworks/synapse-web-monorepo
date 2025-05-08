@@ -1,10 +1,7 @@
 {
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
-    "composite": true,
     "rootDir": ".",
-    "outDir": "../../node_modules/.cache/.tsc_cache/markdown-it-synapse-table/build",
-    "noEmit": false,
     "target": "esnext",
     "strictNullChecks": false,
     "noImplicitAny": false,

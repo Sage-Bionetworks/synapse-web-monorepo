@@ -11,7 +11,6 @@ import SynapseClient from '@/synapse-client/index'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { FormData, StatusEnum } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
-import _ from 'lodash-es'
 import * as SynapseFormModule from './SynapseForm'
 import { IFormData } from './SynapseForm'
 import * as SynapseFormUtils from './SynapseFormUtils'
@@ -19,6 +18,8 @@ import SynapseFormWrapper, {
   SynapseFormWrapperProps,
   UploadToolSearchParams,
 } from './SynapseFormWrapper'
+import cloneDeep from 'lodash-es/cloneDeep'
+import set from 'lodash-es/set'
 
 const mockSynapseForm = jest
   .spyOn(SynapseFormModule, 'default')
@@ -285,8 +286,8 @@ describe('SynapseFormWrapper', () => {
         .spyOn(SynapseClient, 'updateFormData')
         .mockResolvedValue(mockSubmittedFormData)
 
-      const formData = _.cloneDeep(formschemaJson) as unknown as IFormData
-      _.set(formData, props.fileNamePath, 'someName')
+      const formData = cloneDeep(formschemaJson) as unknown as IFormData
+      set(formData, props.fileNamePath, 'someName')
 
       renderComponent(props)
 
@@ -317,8 +318,8 @@ describe('SynapseFormWrapper', () => {
         .spyOn(SynapseClient, 'updateFormData')
         .mockResolvedValue(mockSubmittedFormData)
 
-      const formData = _.cloneDeep(formschemaJson) as unknown as IFormData
-      _.set(formData, props.fileNamePath, 'someName')
+      const formData = cloneDeep(formschemaJson) as unknown as IFormData
+      set(formData, props.fileNamePath, 'someName')
 
       renderComponent(_props)
 
@@ -345,10 +346,10 @@ describe('SynapseFormWrapper', () => {
         .spyOn(SynapseClient, 'submitFormData')
         .mockResolvedValue(mockSubmittedFormData)
 
-      const formData: IFormData = _.cloneDeep(
+      const formData: IFormData = cloneDeep(
         formschemaJson,
       ) as unknown as IFormData
-      _.set(formData, props.fileNamePath, 'someName')
+      set(formData, props.fileNamePath, 'someName')
 
       renderComponent(props)
 

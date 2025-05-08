@@ -45,7 +45,7 @@ export default function AuthenticationMethodSelection(
     SynapseClient.oAuthUrlRequest(provider, redirectUrl, state)
       .then(data => {
         // Send the user to the authorization URL
-        window.location = data.authorizationUrl as unknown as Location
+        window.location.href = data.authorizationUrl
       })
       .catch((err: SynapseClientError) => {
         console.log('Error on oAuth url ', err)

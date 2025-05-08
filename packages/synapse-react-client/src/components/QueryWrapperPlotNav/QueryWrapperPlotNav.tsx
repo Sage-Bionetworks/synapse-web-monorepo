@@ -1,4 +1,5 @@
 import { QueryOrDeprecatedSearchParams } from '@/components/CardContainerLogic/CardContainerLogic'
+import { NoContentPlaceholderType } from '@/components/SynapseTable/NoContentPlaceholderType'
 import { useGetEntity } from '@/synapse-queries'
 import { SynapseConstants } from '@/utils'
 import {
@@ -27,10 +28,7 @@ import {
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
 import { isRowSelectionVisibleAtom } from '../QueryWrapper/TableRowSelectionState'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
-import {
-  NoContentPlaceholderType,
-  SynapseTableConfiguration,
-} from '../SynapseTable'
+import { SynapseTableConfiguration } from '../SynapseTable'
 import SearchV2, { SearchV2Props } from '../SynapseTable/SearchV2'
 import SqlEditor from '../SynapseTable/SqlEditor'
 import TopLevelControls, {

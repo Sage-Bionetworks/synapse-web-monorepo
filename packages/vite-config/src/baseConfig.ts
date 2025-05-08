@@ -24,9 +24,6 @@ const baseConfig: UserConfig = defineConfig({
     __DEV__: JSON.stringify(false),
   },
   optimizeDeps: {
-    // In the dev server, Vite doesn't automatically optimize plotly.js-basic-dist when it should. This causes a broken import
-    // This is probably because plotly.js-basic-dist is a UMD module, and we load the entire object returned by the UMD module into react-plotly.js.
-    include: ['plotly.js-basic-dist'],
     esbuildOptions: {
       // Node.js global to browser globalThis
       define: {

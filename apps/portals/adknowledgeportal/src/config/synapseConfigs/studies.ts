@@ -1,9 +1,14 @@
+import {
+  ADKPResourceType,
+  doiSerializer,
+  RESOURCE_TYPE_KEY_CONFIGURATION,
+} from '@/config/doiRedirector'
 import type {
   CardConfiguration,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
-import { SynapseConstants } from 'synapse-react-client'
-import { studiesSql } from '../resources'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { studiesSql, SYNAPSE_PORTAL_ID } from '../resources'
 
 export const STUDY_TABLE_COLUMN_NAMES = {
   STUDY: 'Study',
@@ -54,6 +59,13 @@ export const studyCardConfiguration: CardConfiguration = {
       'Program',
       'Grant Number',
     ],
+    portalDoiConfiguration: {
+      portalId: SYNAPSE_PORTAL_ID,
+      resourceType: 'STUDY',
+      resourceIdKeyColumns: RESOURCE_TYPE_KEY_CONFIGURATION['STUDY'],
+      serializeDoiString: (type, attrs) =>
+        doiSerializer.serialize(type as ADKPResourceType, attrs),
+    },
   },
 }
 export const studyColumnAliases = {

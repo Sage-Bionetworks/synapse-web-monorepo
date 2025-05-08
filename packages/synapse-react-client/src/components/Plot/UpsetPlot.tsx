@@ -5,6 +5,7 @@ import { SynapseConstants } from '@/utils'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { ReactComponent as DiagonalLinePattern } from '@/assets/illustrations/diagonalLinePattern.svg'
 
 import UpSetJS, {
   extractSets,
@@ -23,10 +24,14 @@ import { SizeMe } from 'react-sizeme'
 import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { ErrorBanner } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
+import { Box, SxProps, useTheme } from '@mui/material'
 
 export type UpsetPlotProps = {
   sql: string // first column should contain values, second column should contain a single set value.  ie. SELECT distinct individualID, assay FROM syn20821313
-  rgbIndex: number // color plot based on portal
+  rgbIndex?: number // color plot based on portal
+  customPlotColor?: string
+  selectionOpacity?: number
+  variant?: 'ampals'
   maxBarCount?: number // will show all if not set
   setName?: string // instead of "Set Size"
   combinationName?: string // instead of "Intersection Size"
@@ -45,6 +50,7 @@ export type UpsetPlotData = {
  */
 export function UpsetPlot({
   sql,
+  variant,
   rgbIndex,
   maxBarCount,
   setName,
@@ -53,14 +59,77 @@ export function UpsetPlot({
   summaryLinkText,
   summaryLink,
   onClick,
+  customPlotColor,
+  selectionOpacity,
 }: UpsetPlotProps) {
   const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState<boolean>()
   const [data, setData] = useState<UpsetPlotData>()
   const [error, setError] = useState<string>()
   const [selection, setSelection] = useState(null as ISetLike<any> | null)
+  const theme = useTheme()
 
-  const { colorPalette } = getColorPalette(rgbIndex, 2)
+  const variantStyles: Record<string, SxProps> = {
+    default: {
+      'text[class^="sChartTextStyle-upset-"], text[class^= "cChartTextStyle-upset-"]':
+        {
+          textTransform: 'uppercase',
+        },
+    },
+    ampals: {
+      width: '100%',
+      '& .selectionHint-upset-': {
+        stroke: 'transparent !important',
+      },
+      '& [class^="selectionHint-upset-"]': {
+        stroke: 'transparent !important',
+      },
+      '& g[class^="interactive-upset-"]:hover line[class^="upsetLine-"]': {
+        stroke: theme.palette.primary.main,
+        strokeWidth: '4px',
+        strokeOpacity: 1,
+      },
+      '& g[class^="interactive-upset-"]:hover circle[class^="fillNotMember-upset-"]':
+        {
+          opacity: 0.2,
+        },
+      '& line[class^="upsetLine-"]': {
+        strokeOpacity: 0,
+      },
+      '& rect[class^="fillPrimary-upset-"]': {
+        fill: 'url(#diagonalLinePattern)',
+        stroke: theme.palette.grey[700],
+        strokeWidth: 2,
+      },
+      '& circle[class^="fillNotMember-upset-"]': {
+        stroke: theme.palette.grey[600],
+        strokeWidth: 2,
+      },
+      '& text[class^="sChartTextStyle-upset-"], & text[class^="cChartTextStyle-upset-"]':
+        {
+          fontWeight: 700,
+          fill: theme.palette.grey[800],
+          lineHeight: '150%',
+        },
+      '& text[class^="cChartTextStyle-upset-"]': {
+        transform: 'translate(-60px, 190px) rotate(-90deg)',
+      },
+      '& text[class^="sChartTextStyle-upset-"]': {
+        transform: 'translate(-10px, 100px) rotate(-90deg)',
+      },
+    },
+  }
+
+  let plotColor: string, selectionColor: string
+  if (rgbIndex != null) {
+    const { colorPalette } = getColorPalette(rgbIndex, 2)
+    plotColor = colorPalette[0]
+    selectionColor = colorPalette[0]
+  } else {
+    plotColor = theme.palette.grey[700]
+    selectionColor = customPlotColor || theme.palette.primary.main
+  }
+
   const updateFontSizes: UpSetFontSizes = {
     setLabel: '14px',
   }
@@ -162,38 +231,63 @@ export function UpsetPlot({
       {!isLoading && data && (
         <SizeMe>
           {({ size }) => (
-            <div className="UpsetPlot">
-              <UpSetJS
-                sets={data.sets}
-                combinations={data.combinations}
-                width={size.width!}
-                height={height}
-                onHover={setSelection}
-                onClick={onClick}
-                selection={selection}
-                color={colorPalette[0]}
-                selectionColor={colorPalette[0]}
-                hasSelectionOpacity={0.3}
-                // alternatingBackgroundColor={false}
-                setName={setName?.toUpperCase()}
-                combinationName={combinationName?.toUpperCase()}
-                fontFamily="'DM Sans', sans-serif"
-                fontSizes={updateFontSizes}
-                exportButtons={false}
-                notMemberColor="transparent"
-              />
-              {summaryLink && summaryLinkText && (
-                <div className="UpsetPlot__summary">
-                  <LargeButton
-                    color="secondary"
-                    variant="contained"
-                    href={summaryLink}
-                  >
-                    {summaryLinkText}
-                  </LargeButton>
-                </div>
+            <>
+              {variantStyles['ampals'] && (
+                // Render DiagonalLinePattern so UpsetPlot can use `fill: url(#diagonalLinePattern)`.
+                // The SVG element must be added to the DOM so we can reference its ID (which is set in the SVG file) in the `fill` style
+                // Ideally, we would reference the asset URL imported by Vite, but this isn't working.
+                <Box
+                  sx={{
+                    '& path': {
+                      stroke: '#D9D9D9 !important',
+                    },
+                    width: 0,
+                    height: 0,
+                    position: 'absolute',
+                  }}
+                >
+                  <DiagonalLinePattern />
+                </Box>
               )}
-            </div>
+              <Box
+                className="UpsetPlot"
+                sx={variant ? variantStyles[variant] : variantStyles['default']}
+              >
+                <UpSetJS
+                  sets={data.sets}
+                  combinations={data.combinations}
+                  width={size.width!}
+                  height={height}
+                  onHover={setSelection}
+                  onClick={onClick}
+                  selection={selection}
+                  color={plotColor}
+                  selectionColor={selectionColor}
+                  hoverHintColor={'orange'}
+                  hasSelectionOpacity={
+                    selectionOpacity ? selectionOpacity : 0.3
+                  }
+                  // alternatingBackgroundColor={false}
+                  setName={setName}
+                  combinationName={combinationName}
+                  fontFamily="'DM Sans', sans-serif"
+                  fontSizes={updateFontSizes}
+                  exportButtons={false}
+                  notMemberColor="transparent"
+                />
+                {summaryLink && summaryLinkText && (
+                  <div className="UpsetPlot__summary">
+                    <LargeButton
+                      color="secondary"
+                      variant="contained"
+                      href={summaryLink}
+                    >
+                      {summaryLinkText}
+                    </LargeButton>
+                  </div>
+                )}
+              </Box>
+            </>
           )}
         </SizeMe>
       )}

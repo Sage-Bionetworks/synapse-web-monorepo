@@ -4,22 +4,21 @@ import { useLocation, useNavigate } from 'react-router'
 import {
   DiscussionThread,
   ForumPage,
-  SynapseQueries,
-  SynapseUtilityFunctions,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/Forum'
+import { useGetEntityForum } from 'synapse-react-client/synapse-queries/entity/useGetEntityForum'
+import { getIgnoredQueryFilterSearchParamKey } from 'synapse-react-client/utils/functions/SqlFunctions'
 
 const ProjectDiscussionForum = () => {
   const urlSearchParams = new URLSearchParams(window.location.search)
   const entityId = urlSearchParams.get('id') ?? ''
-  const threadIdSearchParamKey: string =
-    SynapseUtilityFunctions.getIgnoredQueryFilterSearchParamKey(
-      'threadId',
-      'forum',
-    )
+  const threadIdSearchParamKey: string = getIgnoredQueryFilterSearchParamKey(
+    'threadId',
+    'forum',
+  )
   const threadId = urlSearchParams.get(threadIdSearchParamKey) ?? ''
   const location = useLocation()
   const navigate = useNavigate()
-  const { data: forum } = SynapseQueries.useGetEntityForum(entityId)
+  const { data: forum } = useGetEntityForum(entityId)
   const updateThreadId = (threadId?: string) => {
     const searchParams = new URLSearchParams(location.search)
     if (threadId) {

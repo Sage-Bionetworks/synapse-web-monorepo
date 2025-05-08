@@ -1,14 +1,10 @@
 {
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
-    "composite": true,
     "rootDir": "./src",
     "outDir": "./dist",
-    "module": "esnext",
     "target": "esnext",
-    "moduleResolution": "bundler",
     "allowJs": false,
-    "noEmit": false,
     "emitDeclarationOnly": false,
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,

@@ -1,25 +1,27 @@
+import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClient'
 import { PropsWithChildren, useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
-import {
-  ApplicationSessionManager,
-  storeRedirectURLForOneSageLoginAndGotoURL,
-  SynapseClient,
-  SynapseConstants,
-  SynapseHookUtils,
-  useFramebuster,
-} from 'synapse-react-client'
+import useGoogleAnalytics from 'synapse-react-client/utils/analytics/useGoogleAnalytics'
+import ApplicationSessionManager from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionManager'
 import RedirectDialog, { redirectInstructionsMap } from './RedirectDialog'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { useCookiePreferences } from 'synapse-react-client/utils/hooks/useCookiePreferences'
+import {
+  storeRedirectURLForOneSageLoginAndGotoURL,
+  useFramebuster,
+} from 'synapse-react-client/utils/AppUtils'
+import { useOneSageURL } from 'synapse-react-client/utils/hooks/useOneSageURL'
 
 const COOKIE_CONFIG_KEY = 'org.sagebionetworks.security.cookies.portal.config'
 
 function AppInitializer(props: PropsWithChildren<Record<never, never>>) {
-  const [cookiePreferences] = SynapseHookUtils.useCookiePreferences()
+  const [cookiePreferences] = useCookiePreferences()
   const [cookies, setCookie] = useCookies([COOKIE_CONFIG_KEY])
   const [redirectUrl, setRedirectUrl] = useState<string | undefined>(undefined)
 
   const isFramed = useFramebuster()
-  SynapseHookUtils.useGoogleAnalytics()
-  const oneSageURL = SynapseHookUtils.useOneSageURL()
+  useGoogleAnalytics()
+  const oneSageURL = useOneSageURL()
   useEffect(() => {
     /**
      * If this is an anchor with the SRC-SIGN-IN-CLASS CSS class, then go to One Sage to sign in.

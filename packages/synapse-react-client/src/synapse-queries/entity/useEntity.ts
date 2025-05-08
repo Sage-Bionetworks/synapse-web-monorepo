@@ -4,9 +4,11 @@
 
 import SynapseClient from '@/synapse-client'
 import { allowNotFoundError } from '@/synapse-client/SynapseClientUtils'
-import { createTableUpdateTransactionRequest, SynapseClientError, useSynapseContext } from '@/utils'
 import { entityJsonKeys } from '@/utils/functions/EntityTypeUtils'
-import { EntityLookupRequest } from '@sage-bionetworks/synapse-client'
+import {
+  EntityLookupRequest,
+  SynapseClientError,
+} from '@sage-bionetworks/synapse-client'
 import {
   AccessControlList,
   ColumnModel,
@@ -44,6 +46,8 @@ import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 import { KeyFactory } from '../KeyFactory'
 import { invalidateAllQueriesForEntity } from '../QueryFilterUtils'
 import { useGetEntityBundleQueryOptions } from './useEntityBundle'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { createTableUpdateTransactionRequest } from '@/utils/functions/TableColumnSchemaUtils'
 
 export function useGetEntityQueryOptions<T extends Entity>() {
   const { keyFactory, accessToken } = useSynapseContext()

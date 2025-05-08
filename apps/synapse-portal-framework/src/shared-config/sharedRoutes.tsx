@@ -1,19 +1,11 @@
 import RedirectWithQuery from '@/components/RedirectWithQuery'
+import { convertModuleToRouteObject } from '@/utils/convertModuleToRouteObject'
 import { RouteObject } from 'react-router'
-import { DownloadCartPage, ErrorPage, SynapseErrorType } from 'synapse-react-client'
 
 const routes: RouteObject[] = [
   {
     path: '*',
-    element: (
-      <ErrorPage
-        type={SynapseErrorType.NOT_FOUND}
-        message={''}
-        gotoPlace={() => {
-          // not necessary for NOT_FOUND page
-        }}
-      />
-    ),
+    lazy: () => import('@/pages/ErrorPage').then(convertModuleToRouteObject),
   },
   {
     // Handles redirecting '/Home' to '/'
@@ -22,16 +14,8 @@ const routes: RouteObject[] = [
   },
   {
     path: 'DownloadCart',
-    element: (
-      <DownloadCartPage
-        onViewSharingSettingsClicked={benefactorEntityId => {
-          window.open(
-            `https://www.synapse.org/Synapse:${benefactorEntityId}`,
-            '_blank',
-          )
-        }}
-      />
-    ),
+    lazy: () =>
+      import('@/pages/DownloadCartPage').then(convertModuleToRouteObject),
   },
 ]
 

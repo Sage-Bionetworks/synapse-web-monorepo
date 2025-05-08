@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36">
+  <defs>
+    <pattern
+      id="diagonalLinePattern"
+      patternUnits="userSpaceOnUse"
+      width="36"
+      height="36"
+    >
+      <g>
+        <path d="M54.24 85.7393L-17.76 13.7393" stroke="black" stroke-width="1.125" />
+        <path d="M54.24 76.7393L-17.76 4.73926" stroke="black" stroke-width="1.125" />
+        <path d="M54.24 67.7393L-17.76 -4.26074" stroke="black" stroke-width="1.125" />
+        <path d="M54.24 58.7393L-17.76 -13.2607" stroke="black" stroke-width="1.125" />
+        <path d="M54.24 49.7393L-17.76 -22.2607" stroke="black" stroke-width="1.125" />
+        <path d="M54.24 40.7393L-17.76 -31.2607" stroke="black" stroke-width="1.125" />
+        <path d="M54.24 31.7393L-17.76 -40.2607" stroke="black" stroke-width="1.125" />
+        <path d="M54.24 22.7393L-17.76 -49.2607" stroke="black" stroke-width="1.125" />
+      </g>
+    </pattern>
+  </defs>
+</svg>

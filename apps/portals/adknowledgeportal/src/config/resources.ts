@@ -1,5 +1,7 @@
 import { ExternalAnalysisPlatform } from 'synapse-react-client/components/SynapseTable/export/ExternalAnalysisPlatformsConstants'
 
+export const SYNAPSE_PORTAL_ID = '1001'
+
 export const computationalSql = 'Select * from syn20337467'
 export const dataSql = 'SELECT * FROM syn11346063.71'
 export const dataOnStudiesPageSql =

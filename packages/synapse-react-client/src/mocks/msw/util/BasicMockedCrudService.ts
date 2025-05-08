@@ -48,7 +48,7 @@ export default class BasicMockedCrudService<
   }
 
   create(newItem: SetOptional<T, TIDField>): T {
-    const cloned = cloneDeep(newItem)
+    const cloned = cloneDeep(newItem) as unknown as T
     const idField = this.idField
     if (idField && this.autoGenerateId) {
       cloned[idField] = uniqueId() as T[TIDField] // TODO -- support non-string IDs
@@ -60,8 +60,8 @@ export default class BasicMockedCrudService<
       )
     }
 
-    this.data.push(cloned as T)
-    return cloned as T
+    this.data.push(cloned)
+    return cloned
   }
 
   update(id: T[keyof T], data: T, strategy: 'merge' | 'replace' = 'replace') {

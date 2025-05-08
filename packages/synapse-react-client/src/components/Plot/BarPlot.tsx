@@ -1,8 +1,10 @@
-import _ from 'lodash-es'
+import cloneDeep from 'lodash-es/cloneDeep'
+import noop from 'lodash-es/noop'
+import uniq from 'lodash-es/uniq'
 import Plotly from 'plotly.js-basic-dist'
 import { CSSProperties } from 'react'
-import { BarPlotColors, GraphItem, PlotStyle } from './types'
 import Plot from './Plot'
+import { BarPlotColors, GraphItem, PlotStyle } from './types'
 
 export type BarPlotProps = {
   isTop: boolean
@@ -32,7 +34,7 @@ function getBarPlotDataPoints(
   if (filter) {
     data = data.filter(item => item.y === filter)
   }
-  const groups = _.uniq(data.map(item => item['group'])).sort()
+  const groups = uniq(data.map(item => item['group'])).sort()
   const result: any[] = []
   const defaultColors = [`(28,118,175,1)`, `rgba(91,176,181,1)`]
 
@@ -61,7 +63,7 @@ function getLayout(
   layoutConfig: Partial<Plotly.Layout>,
   { isTop, maxValue, backgroundColor }: LayoutOptions,
 ): Partial<Plotly.Layout> {
-  const layout = _.cloneDeep(layoutConfig)
+  const layout = cloneDeep(layoutConfig)
   layout.xaxis = {
     visible: false,
     range: [0, maxValue],
@@ -110,7 +112,7 @@ function BarPlot({
       })}
       config={optionsConfig}
       data={getBarPlotDataPoints(plotData, label, colors)}
-      onClick={e => (onClick ? onClick(e) : _.noop)}
+      onClick={e => (onClick ? onClick(e) : noop)}
     />
   )
 }

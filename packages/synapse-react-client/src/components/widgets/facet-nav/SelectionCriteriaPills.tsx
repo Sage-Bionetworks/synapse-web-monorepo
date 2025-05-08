@@ -88,16 +88,17 @@ function getPillPropsFromColumnQueryFilter(
   })
 }
 
-function getPillPropsFromTextMatchesQueryFilter(
+export function getPillPropsFromTextMatchesQueryFilter(
   queryFilter: TextMatchesQueryFilter,
   queryContext: QueryContextType,
 ): SelectionCriteriaPillProps {
-  const innerText =
-    queryFilter.searchMode == 'NATURAL_LANGUAGE'
-      ? queryFilter.searchExpression
-      : getSearchTextFromBooleanModeSearchExpression(
-          queryFilter.searchExpression,
-        )
+  let innerText = queryFilter.searchExpression
+  if (queryFilter.searchMode == 'BOOLEAN') {
+    innerText = getSearchTextFromBooleanModeSearchExpression(
+      queryFilter.searchExpression,
+    )
+  }
+
   return {
     key: `queryFilter-${queryFilter.concreteType}-${queryFilter.searchExpression}`,
     innerText,

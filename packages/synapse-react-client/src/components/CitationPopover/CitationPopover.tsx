@@ -246,13 +246,10 @@ function CitationPopover({
             <CopyToClipboardIcon
               value={citation || ''}
               sx={{
-                '.MuiIconButton-root': {
-                  width: '100%',
-                  borderRadius: 0,
-                  padding: '6px 16px',
-                  border: '1px solid',
-                  borderColor: 'primary.main',
-                },
+                borderRadius: 0,
+                padding: '6px 16px',
+                border: '1px solid',
+                borderColor: 'primary.main',
               }}
             />
           </Box>

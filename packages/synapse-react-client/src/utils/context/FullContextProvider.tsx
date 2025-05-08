@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@/theme'
+import { ThemeProvider } from '@/theme/ThemeProvider'
 import { ThemeOptions } from '@mui/material'
 import {
   QueryClient,
