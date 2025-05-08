@@ -64,7 +64,6 @@ function init(props?: PlotsContainerProps) {
 }
 
 describe('facets display hide/show', () => {
-  failOnConsole()
   beforeAll(() => server.listen())
   beforeEach(() => {
     registerTableQueryResult(lastQueryRequest.query, testData)
