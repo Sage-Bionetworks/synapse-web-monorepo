@@ -53,19 +53,19 @@ jobs:
             echo "PROJECT_AFFECTED=false" >> "$GITHUB_ENV"
 
       - name: Build portal
-        if: ${{ PROJECT_AFFECTED == 'true' }}
+        if: ${{ env.PROJECT_AFFECTED == 'true' }}
         run: pnpm nx affected -t portals-e2e:portal:build
         env:
           PORTAL: ${{ matrix.PORTAL }}
 
       - name: Install Playwright Browsers
-        if: ${{ PROJECT_AFFECTED == 'true' }}
+        if: ${{ env.PROJECT_AFFECTED == 'true' }}
         run: |
           cd "${{ env.PORTALS_E2E_SUBDIR }}"
           pnpm playwright install --with-deps
 
       - name: Run e2e tests
-        if: ${{ PROJECT_AFFECTED == 'true' }}
+        if: ${{ env.PROJECT_AFFECTED == 'true' }}
         run: pnpm nx affected -t portals-e2e:e2e
         env:
           PORTAL: ${{ matrix.PORTAL }}
