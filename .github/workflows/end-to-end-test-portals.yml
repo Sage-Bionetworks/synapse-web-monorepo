@@ -42,14 +42,18 @@ jobs:
       - uses: ./.github/actions/pnpm-setup-action
       - name: Save affected projects to environment variable
         run: |
+          pnpm nx show projects --affected
           affected=$(pnpm nx show projects --affected)
 
           for project in "${affected[@]}"; do
+            echo "Comparing: '$project' with '${{ matrix.PORTAL }}'"
             if [[ "$project" == "${{ matrix.PORTAL }}" ]]; then
+              echo "Found affected project: $project"
               echo "PROJECT_AFFECTED=true" >> "$GITHUB_ENV"
               exit 0
             fi
             done
+            echo "No match found, setting PROJECT_AFFECTED=false"
             echo "PROJECT_AFFECTED=false" >> "$GITHUB_ENV"
 
       - name: Build portal
