@@ -136,7 +136,7 @@ export const ResetPassword = (props: ResetPasswordProps) => {
           ) : (
             <div>
               <Typography variant="headline2">Reset your password</Typography>
-              <Typography variant="subtitle1">
+              <Typography variant="body1">
                 Please enter your email address or username and we&apos;ll send
                 you instructions to reset your password
               </Typography>
