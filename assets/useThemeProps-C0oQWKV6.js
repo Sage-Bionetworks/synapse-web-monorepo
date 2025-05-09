@@ -1,1 +1,0 @@
-import{d as m}from"./DefaultPropsProvider-KGD77BW7.js";import{T as o}from"./createTheme-m5mgIdCN.js";import{u as s}from"./Stack-DJs_SaLV.js";function a({props:e,name:r}){return s({props:e,name:r,defaultTheme:m,themeId:o})}export{a as u};
