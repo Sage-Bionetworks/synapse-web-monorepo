@@ -1,22 +1,20 @@
 import { useEffect, useState } from 'react'
 import { useAppContext } from '../AppContext'
 import {
-  displayToast,
-  SynapseClient,
-  SynapseContextUtils,
-} from 'synapse-react-client'
-import {
   InviteeVerificationSignedToken,
   isMembershipInvtnSignedToken,
   MembershipInvitation,
   SignedTokenInterface,
 } from '@sage-bionetworks/synapse-types'
+import SynapseClient from 'synapse-react-client/synapse-client'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 
 export default function useMembershipInvitationTokenHandler():
   | MembershipInvitation
   | undefined {
   const context = useAppContext()
-  const { accessToken } = SynapseContextUtils.useSynapseContext()
+  const { accessToken } = useSynapseContext()
   const [signedToken, setSignedToken] = useState<
     SignedTokenInterface | undefined
   >(context.signedToken)

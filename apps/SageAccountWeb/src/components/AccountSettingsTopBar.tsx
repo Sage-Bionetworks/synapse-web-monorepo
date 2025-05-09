@@ -3,14 +3,12 @@ import { BadgeOutlined } from '@mui/icons-material'
 import { Box, SxProps, Typography } from '@mui/material'
 import { useSourceApp } from './useSourceApp'
 import { useAppContext } from '../AppContext'
-import {
-  SynapseClient,
-  useApplicationSessionContext,
-} from 'synapse-react-client'
 import { IconButton } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
+import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
+import { signOut } from 'synapse-react-client/synapse-client/SynapseClient'
 
 interface AccountSettingsTopBarProps {
   accountSettingsPanelConfig: Array<{
@@ -105,7 +103,7 @@ const AccountSettingsTopBar: React.FC<AccountSettingsTopBarProps> = ({
               onClick={() => {
                 handleClose()
                 if (item.ref === signOutSectionRef) {
-                  SynapseClient.signOut().then(() => {
+                  signOut().then(() => {
                     refreshSession()
                   })
                 } else if (item.ref) {

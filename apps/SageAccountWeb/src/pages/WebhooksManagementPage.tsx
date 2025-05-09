@@ -1,11 +1,14 @@
 import { Box, Container, Paper } from '@mui/material'
-import { WebhookDashboard } from 'synapse-react-client'
-import { BackButton } from './BackButton'
-import { SourceAppLogo } from './SourceApp'
-import { StyledOuterContainer } from './StyledComponents'
-import { SourceAppProvider, SYNAPSE_SOURCE_APP_ID } from './useSourceApp'
+import { BackButton } from '@/components/BackButton'
+import { SourceAppLogo } from '@/components/SourceApp'
+import { StyledOuterContainer } from '@/components/StyledComponents'
+import {
+  SourceAppProvider,
+  SYNAPSE_SOURCE_APP_ID,
+} from '@/components/useSourceApp'
+import WebhookDashboard from 'synapse-react-client/components/Webhook/WebhookDashboard'
 
-export function WebhooksManagementPageInternal() {
+function WebhooksManagementPageInternal() {
   return (
     <StyledOuterContainer>
       <Container>
@@ -28,7 +31,8 @@ export function WebhooksManagementPageInternal() {
     </StyledOuterContainer>
   )
 }
-export function WebhookManagementPage() {
+
+function WebhookManagementPage() {
   // Webhooks are exclusively for Synapse, so use the Synapse theme
   return (
     <SourceAppProvider sourceAppId={SYNAPSE_SOURCE_APP_ID}>
@@ -36,3 +40,5 @@ export function WebhookManagementPage() {
     </SourceAppProvider>
   )
 }
+
+export default WebhookManagementPage

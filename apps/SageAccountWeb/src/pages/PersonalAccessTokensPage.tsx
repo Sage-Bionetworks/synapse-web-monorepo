@@ -1,11 +1,14 @@
-import { SourceAppLogo } from './SourceApp'
-import { StyledOuterContainer } from './StyledComponents'
+import { SourceAppLogo } from '@/components/SourceApp'
+import { StyledOuterContainer } from '@/components/StyledComponents'
 import { Box, Paper, Typography } from '@mui/material'
-import { BackButton } from './BackButton'
-import { AccessTokenPage } from 'synapse-react-client'
-import { SourceAppProvider, SYNAPSE_SOURCE_APP_ID } from './useSourceApp'
+import { BackButton } from '@/components/BackButton'
+import {
+  SourceAppProvider,
+  SYNAPSE_SOURCE_APP_ID,
+} from '@/components/useSourceApp'
+import { AccessTokenPage } from 'synapse-react-client/components/AccessTokenPage/AccessTokenPage'
 
-export function PersonalAccessTokensPageInternal() {
+function PersonalAccessTokensPageInternal() {
   return (
     <StyledOuterContainer className="PersonalAccessTokenPage">
       <Paper
@@ -36,7 +39,7 @@ export function PersonalAccessTokensPageInternal() {
   )
 }
 
-export function PersonalAccessTokensPage() {
+function PersonalAccessTokensPage() {
   // PersonalAccessTokens are exclusively for Synapse, so use the Synapse theme
   return (
     <SourceAppProvider sourceAppId={SYNAPSE_SOURCE_APP_ID}>
@@ -44,3 +47,5 @@ export function PersonalAccessTokensPage() {
     </SourceAppProvider>
   )
 }
+
+export default PersonalAccessTokensPage

@@ -9,15 +9,13 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router'
-import {
-  displayToast,
-  SynapseClient,
-  UserOrTeamBadge,
-} from 'synapse-react-client'
 import { useAppContext } from '../AppContext'
-import { StyledOuterContainer } from './StyledComponents'
+import { StyledOuterContainer } from '../components/StyledComponents'
+import SynapseClient from 'synapse-react-client/synapse-client'
+import UserOrTeamBadge from 'synapse-react-client/components/UserOrTeamBadge/UserOrTeamBadge'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 
-export function JoinTeamPage() {
+function JoinTeamPage() {
   const context = useAppContext()
   const theme = useTheme()
   const [joinTeamToken, setJoinTeamToken] = useState<JoinTeamSignedToken>()
@@ -173,3 +171,5 @@ export function JoinTeamPage() {
     </StyledOuterContainer>
   )
 }
+
+export default JoinTeamPage

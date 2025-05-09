@@ -1,30 +1,32 @@
 import { SyntheticEvent, useState } from 'react'
-import {
-  displayToast,
-  TermsAndConditions,
-  IconSvg,
-  SynapseContextUtils,
-  SynapseQueries,
-} from 'synapse-react-client'
-import { SourceAppLogo } from './SourceApp'
+import { SourceAppLogo } from '../components/SourceApp'
 import { Box, Button, useTheme } from '@mui/material'
-import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
-import { TermsOfUseRightPanelText } from './TermsOfUseRightPanelText'
-import { TermsAndConditionsLink } from './TermsAndConditionsLink'
-import { useSourceApp } from './useSourceApp'
+import {
+  StyledInnerContainer,
+  StyledOuterContainer,
+} from '../components/StyledComponents'
+import { TermsOfUseRightPanelText } from '../components/TermsOfUseRightPanelText'
+import { TermsAndConditionsLink } from '../components/TermsAndConditionsLink'
+import { useSourceApp } from '../components/useSourceApp'
+import TermsAndConditions from 'synapse-react-client/components/TermsAndConditions/TermsAndConditions'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import {
+  useSignTermsOfService,
+  useTermsOfServiceInfo,
+} from 'synapse-react-client/synapse-queries/termsOfService/useTermsOfService'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
 
-export type TermsOfUsePageProps = {}
-
-export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
+function TermsOfUsePage() {
   const theme = useTheme()
   const [isLoading, setIsLoading] = useState(false)
   const [isFormComplete, setIsFormComplete] = useState(false)
   const [isDone, setIsDone] = useState(false)
-  const { accessToken } = SynapseContextUtils.useSynapseContext()
+  const { accessToken } = useSynapseContext()
   const sourceApp = useSourceApp()
 
-  const { mutate: signTermsOfService } = SynapseQueries.useSignTermsOfService()
-  const { data: tosInfo } = SynapseQueries.useTermsOfServiceInfo()
+  const { mutate: signTermsOfService } = useSignTermsOfService()
+  const { data: tosInfo } = useTermsOfServiceInfo()
 
   const onSignTermsOfUse = async (event: SyntheticEvent) => {
     event.preventDefault()
@@ -126,3 +128,5 @@ export const TermsOfUsePage = (props: TermsOfUsePageProps) => {
     </StyledOuterContainer>
   )
 }
+
+export default TermsOfUsePage

@@ -3,21 +3,19 @@ import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/gen
 import { TwoFactorAuthResetToken } from '@sage-bionetworks/synapse-types'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
-import {
-  displayToast,
-  PasswordField,
-  StandaloneLoginForm,
-  SynapseQueries,
-  useApplicationSessionContext,
-  useQuerySearchParam,
-} from 'synapse-react-client'
-import { RESET_2FA_SIGNED_TOKEN_PARAM } from '../../Constants'
-import { hexDecodeAndDeserialize } from '../../URLUtils'
-import { BackButton } from '../BackButton'
-import { LeftRightPanel } from '../LeftRightPanel'
-import { SourceAppLogo } from '../SourceApp'
+import { RESET_2FA_SIGNED_TOKEN_PARAM } from '../Constants'
+import { hexDecodeAndDeserialize } from '../URLUtils'
+import { BackButton } from '@/components/BackButton'
+import { LeftRightPanel } from '@/components/LeftRightPanel'
+import { SourceAppLogo } from '@/components/SourceApp'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import { useDisableTwoFactorAuthWithResetToken } from 'synapse-react-client/synapse-queries/auth/useTwoFactorEnrollment'
+import PasswordField from 'synapse-react-client/components/Authentication/PasswordField'
+import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
+import { useQuerySearchParam } from 'synapse-react-client/utils/hooks/useQuerySearchParam'
+import StandaloneLoginForm from 'synapse-react-client/components/Authentication/StandaloneLoginForm'
 
-export function ResetTwoFactorAuth() {
+function ResetTwoFactorAuth() {
   const navigate = useNavigate()
   const { refreshSession, twoFactorAuthSSOErrorResponse } =
     useApplicationSessionContext()
@@ -53,7 +51,7 @@ export function ResetTwoFactorAuth() {
     isPending,
     error,
     reset: resetDisable2FAMutation,
-  } = SynapseQueries.useDisableTwoFactorAuthWithResetToken({
+  } = useDisableTwoFactorAuthWithResetToken({
     onSuccess: () => {
       displayToast('2FA has been successfully disabled on your account.')
       navigate('/authenticated/myaccount')
@@ -189,3 +187,5 @@ export function ResetTwoFactorAuth() {
     </>
   )
 }
+
+export default ResetTwoFactorAuth
