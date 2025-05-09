@@ -1,4 +1,4 @@
-import { ColumnIconConfigs } from 'synapse-react-client'
+import type { ColumnIconConfigs } from 'synapse-react-client'
 
 export const detailPageLinks = [
   {

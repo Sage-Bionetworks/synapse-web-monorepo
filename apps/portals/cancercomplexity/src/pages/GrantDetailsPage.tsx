@@ -6,7 +6,6 @@ import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
-import { CardContainerLogic } from 'synapse-react-client'
 import columnAliases from '../config/columnAliases'
 import {
   datasetsSql,
@@ -24,10 +23,11 @@ import { peopleCardConfiguration } from '../config/synapseConfigs/people'
 import { projectCardConfiguration } from '../config/synapseConfigs/projects'
 import { publicationsCardConfiguration } from '../config/synapseConfigs/publications'
 import { toolsConfiguration } from '../config/synapseConfigs/tools'
-import { SharePageLinkButton } from 'synapse-react-client'
 import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
+import SharePageLinkButton from 'synapse-react-client/components/SharePageLinkButton'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
 
-export default function GrantDetailsPage() {
+function GrantDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
   return (
     <>
@@ -173,3 +173,5 @@ export default function GrantDetailsPage() {
     </>
   )
 }
+
+export default GrantDetailsPage

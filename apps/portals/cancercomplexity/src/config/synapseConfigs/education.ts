@@ -1,10 +1,10 @@
 import educationalResourceSvg from '@/config/style/EducationalResource.svg?url'
-import {
+import type {
   CardConfiguration,
   IconOptions,
   QueryWrapperPlotNavProps,
-  SynapseConstants,
 } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { educationSql } from '../resources'
 import { citationBoilerplateText } from './commonProps'

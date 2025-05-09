@@ -1,10 +1,10 @@
-import {
+import type {
   CardConfiguration,
   IconOptions,
   QueryWrapperPlotNavProps,
-  SynapseComponents,
-  SynapseConstants,
 } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { Project as ProjectIcon } from 'synapse-react-client/assets/themed_icons/Project'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { grantsSql } from '../resources'
 
@@ -28,7 +28,7 @@ export const grantsSchema: TableToGenericCardMapping = {
 
 // TODO: Change iconOptions type to map () => string | JSX.Element and remove cast
 const iconOptions: IconOptions = {
-  Grant: SynapseComponents.ProjectIcon as unknown as string,
+  Grant: ProjectIcon as unknown as string,
 }
 
 export const grantsCardConfiguration: CardConfiguration = {
