@@ -1,17 +1,14 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
-import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
-import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import TabbedSynapseObjects from '@sage-bionetworks/synapse-portal-framework/components/TabbedSynapseObjects'
+import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
+import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import { RouteObject } from 'react-router'
-import { CardContainerLogic } from 'synapse-react-client'
 import {
-  challengeCardConfiguration,
-  ChallengeDetailsPage,
-  challengeDetailsPageTabRoutes,
-  challengeTitleLinkConfig,
-} from './pages/ChallengeDetailsPage'
-import { challengeProjectsSql } from './resources'
+  COMMUNITY_PATH,
+  INSTRUCTIONS_PATH,
+  NEWS_PATH,
+  OVERVIEW_PATH,
+} from './challengeDetailsPageTabConfig'
 
 const routes: RouteObject[] = [
   {
@@ -21,65 +18,56 @@ const routes: RouteObject[] = [
       ...sharedRoutes,
       {
         index: true,
-        element: (
-          <>
-            <Header />
-            <SectionLayout
-              title="Listed Challenges"
-              subtitle="Explore and join our currently running challenges, or browse completed ones and review their findings."
-              centerTitle
-              ContainerProps={{ className: 'home-spacer' }}
-            >
-              <TabbedSynapseObjects
-                centerTabs
-                tabConfigs={[
-                  // Add list of challenge project cards
-                  {
-                    label: 'Active',
-                    element: (
-                      <CardContainerLogic
-                        sql={`${challengeProjectsSql} where Status='Active'`}
-                        cardConfiguration={{
-                          ...challengeCardConfiguration,
-                          titleLinkConfig: challengeTitleLinkConfig,
-                        }}
-                      />
-                    ),
-                  },
-                  {
-                    label: 'Upcoming',
-                    element: (
-                      <CardContainerLogic
-                        sql={`${challengeProjectsSql} where Status='Upcoming'`}
-                        cardConfiguration={{
-                          ...challengeCardConfiguration,
-                          titleLinkConfig: challengeTitleLinkConfig,
-                        }}
-                      />
-                    ),
-                  },
-                  {
-                    label: 'Completed',
-                    element: (
-                      <CardContainerLogic
-                        sql={`${challengeProjectsSql} where Status='Closed'`}
-                        cardConfiguration={{
-                          ...challengeCardConfiguration,
-                          titleLinkConfig: challengeTitleLinkConfig,
-                        }}
-                      />
-                    ),
-                  },
-                ]}
-              />
-            </SectionLayout>
-          </>
-        ),
+        lazy: () => import('@/pages/Home').then(convertModuleToRouteObject),
       },
       {
         path: 'Challenges/DetailsPage',
-        element: <ChallengeDetailsPage />,
-        children: challengeDetailsPageTabRoutes,
+        lazy: () =>
+          import('@/pages/ChallengeDetailsPage').then(
+            convertModuleToRouteObject,
+          ),
+        children: [
+          {
+            index: true,
+            element: <RedirectWithQuery to={OVERVIEW_PATH} />,
+          },
+          {
+            path: OVERVIEW_PATH,
+            lazy: () =>
+              import('@/pages/ChallengeDetailsPageTabContent/OverviewTab').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: INSTRUCTIONS_PATH,
+            lazy: () =>
+              import(
+                '@/pages/ChallengeDetailsPageTabContent/InstructionsTab'
+              ).then(convertModuleToRouteObject),
+          },
+          {
+            path: NEWS_PATH,
+            lazy: () =>
+              import('@/pages/ChallengeDetailsPageTabContent/NewsTab').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: COMMUNITY_PATH,
+            lazy: () =>
+              import(
+                '@/pages/ChallengeDetailsPageTabContent/CommunityTab'
+              ).then(convertModuleToRouteObject),
+          },
+          {
+            // Task tab last so we attempt to match the other paths first before using the slug
+            path: ':taskId',
+            lazy: () =>
+              import('@/pages/ChallengeDetailsPageTabContent/TaskTab').then(
+                convertModuleToRouteObject,
+              ),
+          },
+        ],
       },
     ],
   },
