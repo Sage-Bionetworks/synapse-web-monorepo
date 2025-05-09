@@ -3,12 +3,12 @@ import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-fra
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { CardContainerLogic } from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic'
 import { publicationsSql, studiesSql } from '../config/resources'
 import { publicationsCardConfiguration } from '../config/synapseConfigs/publications'
 import { studyCardConfiguration } from '../config/synapseConfigs/studies'
 
-export default function StudyDetailsPage() {
+function StudyDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
 
   return (
@@ -62,3 +62,5 @@ export default function StudyDetailsPage() {
     </>
   )
 }
+
+export default StudyDetailsPage

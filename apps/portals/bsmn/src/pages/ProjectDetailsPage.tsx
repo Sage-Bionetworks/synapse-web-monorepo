@@ -2,7 +2,7 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { CardContainerLogic, SynapseConstants } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import {
   peopleSql,
   projectsSql,
@@ -14,8 +14,9 @@ import { projectCardConfiguration } from '../config/synapseConfigs/projects'
 import { publicationsCardConfiguration } from '../config/synapseConfigs/publications'
 import { studyCardConfiguration } from '../config/synapseConfigs/studies'
 import { toolCardConfiguration } from '../config/synapseConfigs/tools'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic'
 
-export function ProjectDetailsPage() {
+function ProjectDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
 
   return (
@@ -89,3 +90,5 @@ export function ProjectDetailsPage() {
     </>
   )
 }
+
+export default ProjectDetailsPage
