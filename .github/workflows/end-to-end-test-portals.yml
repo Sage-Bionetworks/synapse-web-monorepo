@@ -40,24 +40,22 @@ jobs:
         uses: nrwl/nx-set-shas@v4
 
       - uses: ./.github/actions/pnpm-setup-action
-      - name: Save affected projects to environment variable
+      - name: Determine if portal has had any changes
         run: |
-          pnpm nx show projects --affected
           affected=$(pnpm nx show projects --affected)
           affected_array=($affected)
-          echo "affected array[0]: ${affected_array[0]}"
 
-          echo "affected array: ${affected_array[@]}"
+          echo "Affected projects: ${affected_array[@]}"
 
           for project in "${affected_array[@]}"; do
             echo "Comparing: '$project' with '${{ matrix.PORTAL }}'"
             if [[ "$project" == "${{ matrix.PORTAL }}" ]]; then
-              echo "Found affected project: $project"
+              echo "Project is affected; setting PROJECT_AFFECTED=true"
               echo "PROJECT_AFFECTED=true" >> "$GITHUB_ENV"
               exit 0
             fi
             done
-            echo "No match found, setting PROJECT_AFFECTED=false"
+            echo "Project is not affected; setting PROJECT_AFFECTED=false"
             echo "PROJECT_AFFECTED=false" >> "$GITHUB_ENV"
 
       - name: Build portal
