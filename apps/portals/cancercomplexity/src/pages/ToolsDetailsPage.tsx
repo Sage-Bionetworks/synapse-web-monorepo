@@ -65,7 +65,7 @@ export default function ToolsDetailsPage() {
                       cardConfiguration={grantsCardConfiguration}
                       sql={grantsSql}
                       columnAliases={columnAliases}
-                      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                      sqlOperator={ColumnSingleValueFilterOperator.IN}
                       searchParams={{
                         grantNumber: value!,
                       }}
