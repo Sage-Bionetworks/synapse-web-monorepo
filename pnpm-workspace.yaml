@@ -1,3 +1,5 @@
 packages:
   - 'apps/**/*'
-  - "packages/*"
+  - 'packages/*'
+catalog:
+  react-router: ^7.5.3
