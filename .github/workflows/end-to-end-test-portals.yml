@@ -60,7 +60,7 @@ jobs:
 
       - name: Build portal
         if: ${{ env.PROJECT_AFFECTED == 'true' }}
-        run: pnpm nx affected -t portals-e2e:portal:build
+        run: pnpm nx run portals-e2e:portal:build
         env:
           PORTAL: ${{ matrix.PORTAL }}
 
@@ -72,7 +72,7 @@ jobs:
 
       - name: Run e2e tests
         if: ${{ env.PROJECT_AFFECTED == 'true' }}
-        run: pnpm nx affected -t portals-e2e:e2e
+        run: pnpm nx run portals-e2e:e2e
         env:
           PORTAL: ${{ matrix.PORTAL }}
 
