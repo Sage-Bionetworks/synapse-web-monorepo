@@ -11,7 +11,7 @@
     "pluralize": "^8.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router": "catalog:",
+    "react-router": "catalog:default",
     "synapse-react-client": "workspace:*",
     "vite": "^5.4.19"
   },
