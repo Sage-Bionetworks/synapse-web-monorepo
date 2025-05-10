@@ -67,7 +67,7 @@ export default function PublicationsDetailsPage() {
                       cardConfiguration={grantsCardConfiguration}
                       sql={grantsSql}
                       columnAliases={columnAliases}
-                      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                      sqlOperator={ColumnSingleValueFilterOperator.IN}
                       searchParams={{
                         grantNumber: value!,
                       }}
