@@ -6,7 +6,7 @@ import {
   ObjectType,
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
@@ -15,6 +15,7 @@ import { displayToast } from '../ToastMessage/ToastMessage'
 import { UserBadge } from '../UserCard/UserBadge'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import { Box } from '@mui/material'
+import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 export type DiscussionReplyProps = {
   reply: DiscussionReplyBundle
@@ -22,8 +23,13 @@ export type DiscussionReplyProps = {
   onClickLink?: () => void
 }
 
-const DEFAULT_ON_CLICK_LINK = () =>
-  alert('This functionality has not been implemented yet')
+// 11978
+const DEFAULT_ON_CLICK_LINK = (id: string) => {
+  const baseUrl = `${window.location.origin}${window.location.pathname}`
+  const url = `${baseUrl}#${id}`
+  copyStringToClipboard(url)
+  console.log('Copied thread URL:', url)
+}
 
 export function DiscussionReply(props: DiscussionReplyProps) {
   const {
@@ -36,6 +42,7 @@ export function DiscussionReply(props: DiscussionReplyProps) {
   const { data: currentUserProfile } = useGetCurrentUserProfile()
   const { data: entityBundle } = useGetEntityBundle(reply.projectId)
   const { data: message, isLoading } = useGetReply(reply)
+  const replyRef = useRef<HTMLDivElement>(null)
 
   const { mutate: deleteReply } = useDeleteReply({
     onSuccess: () => {
@@ -46,8 +53,25 @@ export function DiscussionReply(props: DiscussionReplyProps) {
 
   const isCurrentUserAuthor = reply.createdBy == currentUserProfile?.ownerId
 
+  useEffect(() => {
+    if (window.location.hash === `#${reply.id}` && replyRef.current) {
+      setTimeout(() => {
+        replyRef.current?.scrollIntoView({ behavior: 'smooth' })
+      }, 200)
+
+      // Optional: highlight briefly
+      replyRef.current.style.transition = 'background-color 1s ease'
+      replyRef.current.style.backgroundColor = 'rgba(255, 255, 0, 0.3)'
+      setTimeout(() => {
+        if (replyRef.current) {
+          replyRef.current.style.backgroundColor = 'transparent'
+        }
+      }, 2000)
+    }
+  }, [reply.id])
+
   return (
-    <div className="reply-container">
+    <div className="reply-container" id={reply.id} ref={replyRef}>
       {isLoading ? (
         <SkeletonTable numCols={1} numRows={4} />
       ) : (
@@ -78,7 +102,7 @@ export function DiscussionReply(props: DiscussionReplyProps) {
                       float: { sm: 'right' },
                     }}
                   >
-                    <button onClick={() => onClickLink()}>
+                    <button onClick={() => onClickLink(reply.id)}>
                       <IconSvg icon="link" />
                     </button>
                     {isCurrentUserAuthor && (
