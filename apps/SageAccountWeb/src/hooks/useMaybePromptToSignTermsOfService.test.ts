@@ -1,19 +1,29 @@
 import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
 import { renderHook, waitFor } from '@testing-library/react'
-import { useApplicationSessionContext } from 'synapse-react-client'
-import { ApplicationSessionContextType } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
+import {
+  ApplicationSessionContextType,
+  useApplicationSessionContext,
+} from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
 import { vi } from 'vitest'
 import useMaybePromptToSignTermsOfService, {
   SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY,
 } from './useMaybePromptToSignTermsOfService'
 import { useLocation, useNavigate, Location } from 'react-router'
 
-vi.mock('synapse-react-client', () => {
+vi.mock('synapse-react-client/utils/AppUtils/AppUtils', () => {
   return {
     storeLastPlace: vi.fn(),
-    useApplicationSessionContext: vi.fn(),
   }
 })
+
+vi.mock(
+  'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext',
+  () => {
+    return {
+      useApplicationSessionContext: vi.fn(),
+    }
+  },
+)
 
 vi.mock('react-router', () => {
   return {

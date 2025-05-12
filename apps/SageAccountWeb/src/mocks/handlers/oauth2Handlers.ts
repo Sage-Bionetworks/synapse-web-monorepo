@@ -1,14 +1,17 @@
 import { http, HttpResponse } from 'msw'
-import { SynapseUtilityFunctions } from 'synapse-react-client'
 import {
   ErrorResponseCode,
   LoginResponse,
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from 'synapse-react-client/utils/functions/getEndpoint'
 
 export const oauth2SuccessfulSignInHandler = http.post(
-  `${SynapseUtilityFunctions.getEndpoint(
-    SynapseUtilityFunctions.BackendDestinationEnum.REPO_ENDPOINT,
+  `${getEndpoint(
+    BackendDestinationEnum.REPO_ENDPOINT,
   )}/auth/v1/oauth2/session2`,
   () => {
     const loginResponse: LoginResponse = {
@@ -21,8 +24,8 @@ export const oauth2SuccessfulSignInHandler = http.post(
 )
 
 export const oauth2PromptFor2FAHandler = http.post(
-  `${SynapseUtilityFunctions.getEndpoint(
-    SynapseUtilityFunctions.BackendDestinationEnum.REPO_ENDPOINT,
+  `${getEndpoint(
+    BackendDestinationEnum.REPO_ENDPOINT,
   )}/auth/v1/oauth2/session2`,
   () => {
     const loginResponse: TwoFactorAuthErrorResponse = {

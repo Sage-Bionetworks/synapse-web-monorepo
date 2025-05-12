@@ -1,18 +1,17 @@
 import { Button, TextField, Typography } from '@mui/material'
-import { StyledFormControl } from './StyledComponents'
+import { StyledFormControl } from '../components/StyledComponents'
 import { SyntheticEvent, useEffect, useState } from 'react'
-import { displayToast, SynapseClient } from 'synapse-react-client'
 import {
   AliasType,
   EmailValidationSignedToken,
 } from '@sage-bionetworks/synapse-types'
 import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
-import { LeftRightPanel } from './LeftRightPanel'
-import { SourceAppLogo } from './SourceApp'
+import { LeftRightPanel } from '../components/LeftRightPanel'
+import { SourceAppLogo } from '../components/SourceApp'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import SynapseClient from 'synapse-react-client/synapse-client'
 
-export type RegisterAccount2Props = {}
-
-export const RegisterAccount2 = (props: RegisterAccount2Props) => {
+function RegisterAccount2() {
   const [isLoading, setIsLoading] = useState(false)
   const [username, setUsername] = useState('')
   const [firstName, setFirstName] = useState('')
@@ -222,3 +221,5 @@ export const RegisterAccount2 = (props: RegisterAccount2Props) => {
     </>
   )
 }
+
+export default RegisterAccount2
