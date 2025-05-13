@@ -11,7 +11,6 @@ import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { Box, Button, TextField, Typography } from '@mui/material'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
-  DiscussionReplyBundle,
   ObjectType,
   SubscriptionObjectType,
 } from '@sage-bionetworks/synapse-types'
@@ -49,13 +48,9 @@ const useNativeSearchParams = (param: string) => {
     const onChange = () => {
       setValue(getValue())
     }
-    window.addEventListener('popstate', onChange)
     window.addEventListener('pushstate', onChange)
-    window.addEventListener('replacestate', onChange)
     return () => {
-      window.removeEventListener('popstate', onChange)
       window.removeEventListener('pushstate', onChange)
-      window.removeEventListener('replacestate', onChange)
     }
   }, [])
   return value
