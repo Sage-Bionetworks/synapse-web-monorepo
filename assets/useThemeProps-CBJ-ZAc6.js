@@ -1,1 +1,0 @@
-import{d as m}from"./DefaultPropsProvider-Bb4a2h8s.js";import{T as o}from"./createTheme-C3barXkp.js";import{u as s}from"./Stack-CFcOoEe3.js";function a({props:e,name:r}){return s({props:e,name:r,defaultTheme:m,themeId:o})}export{a as u};
