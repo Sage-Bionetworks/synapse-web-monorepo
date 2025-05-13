@@ -58,12 +58,13 @@ export function DiscussionReply(props: DiscussionReplyProps) {
       replyRef.current.style.transition = 'background-color 1s ease'
       replyRef.current.style.backgroundColor = '#fbf4e0'
       replyRef.current.style.borderColor = '#f4dda3'
-      setTimeout(() => {
+      const timerId = setTimeout(() => {
         if (replyRef.current) {
           replyRef.current.style.backgroundColor = 'transparent'
           replyRef.current.style.borderColor = '#ccc'
         }
       }, 2000)
+      return () => clearTimeout(timerId)
     }
   }, [reply.id])
 

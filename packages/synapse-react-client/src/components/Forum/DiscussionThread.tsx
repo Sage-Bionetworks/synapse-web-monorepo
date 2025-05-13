@@ -16,7 +16,7 @@ import {
   SubscriptionObjectType,
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import IconSvg from '../IconSvg/IconSvg'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
@@ -50,7 +50,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   const [showSignInModal, setShowSignInModal] = useState(false)
   const [showRestoreModal, setShowRestoreModal] = useState(false)
   const [showSubscriberModal, setShowSubscriberModal] = useState(false)
-  const [replies, setReplies] = useState<DiscussionReplyBundle[]>([])
+  // const [replies, setReplies] = useState<DiscussionReplyBundle[]>([])
 
   const { threadData, threadBody, togglePin } = useGetThread(threadId)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
@@ -111,24 +111,20 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   const params = new URLSearchParams(window.location.search)
   const replyId = params.get(REPLY_ID_PARAM_KEY)
 
-  useEffect(() => {
+  const replies = useMemo(() => {
     const allReplies = replyData?.pages.flatMap(page => page.results) ?? []
     if (replyId) {
-      const filteredReplies = allReplies.filter(reply => reply.id === replyId)
-      setReplies(filteredReplies)
+      return allReplies.filter(reply => reply.id === replyId)
     } else {
-      setReplies(allReplies)
+      return allReplies
     }
-  }, [replyData?.pages, replyId])
+  }, [replyData, replyId])
 
   const handleShowAllRepliesButton = () => {
-    const allReplies = replyData?.pages.flatMap(page => page.results) ?? []
-    setReplies(allReplies)
-
     const params = new URLSearchParams(window.location.search)
     params.delete('replyid')
     const newUrl = `${window.location.pathname}?${params.toString()}`
-    window.history.replaceState({}, '', newUrl)
+    window.history.pushState({}, '', newUrl)
   }
 
   return (
