@@ -14,7 +14,7 @@ import WarningDialog from '../SynapseForm/WarningDialog'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import { UserBadge } from '../UserCard/UserBadge'
 import { ForumThreadEditor } from './ForumThreadEditor'
-import { Box, useTheme } from '@mui/material'
+import { Box } from '@mui/material'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 export type DiscussionReplyProps = {
@@ -47,7 +47,6 @@ export function DiscussionReply(props: DiscussionReplyProps) {
   })
 
   const isCurrentUserAuthor = reply.createdBy == currentUserProfile?.ownerId
-  const theme = useTheme()
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
