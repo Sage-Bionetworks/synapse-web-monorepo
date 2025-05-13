@@ -17,6 +17,8 @@ import { ForumThreadEditor } from './ForumThreadEditor'
 import { Box } from '@mui/material'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
+const REPLY_ID_PARAM_KEY = 'replyid'
+
 export type DiscussionReplyProps = {
   reply: DiscussionReplyBundle
   isReplyAuthorModerator?: boolean
@@ -25,9 +27,10 @@ export type DiscussionReplyProps = {
 
 const handleCopyLink = (id: string) => {
   const baseUrl = `${window.location.origin}${window.location.pathname}`
-  const url = `${baseUrl}?replyid=${id}`
-  copyStringToClipboard(url)
-  displayToast('Reply link copied to clipboard', 'info')
+  const url = `${baseUrl}?${REPLY_ID_PARAM_KEY}=${id}`
+  copyStringToClipboard(url).then(() =>
+    displayToast('Reply link copied to clipboard', 'info'),
+  )
 }
 
 export function DiscussionReply(props: DiscussionReplyProps) {
@@ -50,20 +53,22 @@ export function DiscussionReply(props: DiscussionReplyProps) {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const replyId = params.get('replyid')
+    const replyId = params.get(REPLY_ID_PARAM_KEY)
     if (replyId === reply.id && replyRef.current) {
       replyRef.current.style.transition = 'background-color 1s ease'
       replyRef.current.style.backgroundColor = '#fbf4e0'
+      replyRef.current.style.borderColor = '#f4dda3'
       setTimeout(() => {
         if (replyRef.current) {
           replyRef.current.style.backgroundColor = 'transparent'
+          replyRef.current.style.borderColor = '#ccc'
         }
       }, 2000)
     }
   }, [reply.id])
 
   return (
-    <div className="reply-container" id={reply.id} ref={replyRef}>
+    <div className="reply-container" id={`reply._${reply.id}`} ref={replyRef}>
       {isLoading ? (
         <SkeletonTable numCols={1} numRows={4} />
       ) : (

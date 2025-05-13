@@ -107,8 +107,9 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     threadData?.createdBy ?? '',
   )
 
+  const REPLY_ID_PARAM_KEY = 'replyid'
   const params = new URLSearchParams(window.location.search)
-  const replyId = params.get('replyid')
+  const replyId = params.get(REPLY_ID_PARAM_KEY)
 
   useEffect(() => {
     const allReplies = replyData?.pages.flatMap(page => page.results) ?? []
