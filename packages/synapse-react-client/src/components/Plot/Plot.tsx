@@ -1,5 +1,5 @@
 import { PlotParams } from 'react-plotly.js'
-import createPlotlyComponent from 'react-plotly.js/factory'
+import createPlotlyComponent from './safe-react-plotly-factory'
 import { lazy, Suspense } from 'react'
 
 // Lazy-load plotly.js since it is very large!
