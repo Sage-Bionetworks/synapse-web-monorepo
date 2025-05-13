@@ -11,11 +11,12 @@ import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { Box, Button, TextField, Typography } from '@mui/material'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
+  DiscussionReplyBundle,
   ObjectType,
   SubscriptionObjectType,
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import IconSvg from '../IconSvg/IconSvg'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
@@ -49,6 +50,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   const [showSignInModal, setShowSignInModal] = useState(false)
   const [showRestoreModal, setShowRestoreModal] = useState(false)
   const [showSubscriberModal, setShowSubscriberModal] = useState(false)
+  const [replies, setReplies] = useState<DiscussionReplyBundle[]>([])
 
   const { threadData, threadBody, togglePin } = useGetThread(threadId)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
@@ -98,13 +100,35 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     hasNextPage,
     fetchNextPage,
   } = useGetRepliesInfinite(threadId, orderByDatePosted, limit)
-  const replies = replyData?.pages.flatMap(page => page.results) ?? []
 
   const { data: moderatorList } = useGetModerators(threadData?.forumId ?? '')
 
   const isAuthorModerator = moderatorList?.results.includes(
     threadData?.createdBy ?? '',
   )
+
+  const params = new URLSearchParams(window.location.search)
+  const replyId = params.get('replyid')
+
+  useEffect(() => {
+    const allReplies = replyData?.pages.flatMap(page => page.results) ?? []
+    if (replyId) {
+      const filteredReplies = allReplies.filter(reply => reply.id === replyId)
+      setReplies(filteredReplies)
+    } else {
+      setReplies(allReplies)
+    }
+  }, [replyData?.pages, replyId])
+
+  const handleShowAllRepliesButton = () => {
+    const allReplies = replyData?.pages.flatMap(page => page.results) ?? []
+    setReplies(allReplies)
+
+    const params = new URLSearchParams(window.location.search)
+    params.delete('replyid')
+    const newUrl = `${window.location.pathname}?${params.toString()}`
+    window.history.replaceState({}, '', newUrl)
+  }
 
   return (
     <div className="DiscussionThread">
@@ -263,6 +287,29 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           />
         )}
       </Box>
+      {replyId && (
+        <Box
+          onClick={handleShowAllRepliesButton}
+          sx={{
+            backgroundColor: 'grey.300',
+            borderRadius: '3px',
+            display: 'flex',
+            alignItems: 'center',
+            width: 'fit-content',
+            padding: '2px 8px',
+            marginBottom: '12px',
+            gap: '4px',
+            cursor: 'pointer',
+          }}
+        >
+          <IconSvg
+            icon="arrowBack"
+            label="Restore deleted thread"
+            sx={{ width: '16px' }}
+          />
+          <Typography variant="smallText2">Show all replies</Typography>
+        </Box>
+      )}
       <div>
         {replies.map(reply => {
           const isReplyAuthorModerator = moderatorList?.results.includes(

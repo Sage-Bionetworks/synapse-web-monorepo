@@ -14,7 +14,7 @@ import WarningDialog from '../SynapseForm/WarningDialog'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import { UserBadge } from '../UserCard/UserBadge'
 import { ForumThreadEditor } from './ForumThreadEditor'
-import { Box } from '@mui/material'
+import { Box, useTheme } from '@mui/material'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 export type DiscussionReplyProps = {
@@ -23,20 +23,15 @@ export type DiscussionReplyProps = {
   onClickLink?: () => void
 }
 
-// 11978
-const DEFAULT_ON_CLICK_LINK = (id: string) => {
+const handleCopyLink = (id: string) => {
   const baseUrl = `${window.location.origin}${window.location.pathname}`
-  const url = `${baseUrl}#${id}`
+  const url = `${baseUrl}?replyid=${id}`
   copyStringToClipboard(url)
-  console.log('Copied thread URL:', url)
+  displayToast('Reply link copied to clipboard', 'info')
 }
 
 export function DiscussionReply(props: DiscussionReplyProps) {
-  const {
-    reply,
-    onClickLink = DEFAULT_ON_CLICK_LINK,
-    isReplyAuthorModerator = false,
-  } = props
+  const { reply, isReplyAuthorModerator = false } = props
   const [showReplyModal, setShowReplyModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
@@ -52,16 +47,14 @@ export function DiscussionReply(props: DiscussionReplyProps) {
   })
 
   const isCurrentUserAuthor = reply.createdBy == currentUserProfile?.ownerId
+  const theme = useTheme()
 
   useEffect(() => {
-    if (window.location.hash === `#${reply.id}` && replyRef.current) {
-      setTimeout(() => {
-        replyRef.current?.scrollIntoView({ behavior: 'smooth' })
-      }, 200)
-
-      // Optional: highlight briefly
+    const params = new URLSearchParams(window.location.search)
+    const replyId = params.get('replyid')
+    if (replyId === reply.id && replyRef.current) {
       replyRef.current.style.transition = 'background-color 1s ease'
-      replyRef.current.style.backgroundColor = 'rgba(255, 255, 0, 0.3)'
+      replyRef.current.style.backgroundColor = '#fbf4e0'
       setTimeout(() => {
         if (replyRef.current) {
           replyRef.current.style.backgroundColor = 'transparent'
@@ -102,8 +95,8 @@ export function DiscussionReply(props: DiscussionReplyProps) {
                       float: { sm: 'right' },
                     }}
                   >
-                    <button onClick={() => onClickLink(reply.id)}>
-                      <IconSvg icon="link" />
+                    <button onClick={() => handleCopyLink(reply.id)}>
+                      <IconSvg icon="link" label={'Copy link to this reply'} />
                     </button>
                     {isCurrentUserAuthor && (
                       <button onClick={() => setShowReplyModal(true)}>
