@@ -54,17 +54,22 @@ export function DiscussionReply(props: DiscussionReplyProps) {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const replyId = params.get(REPLY_ID_PARAM_KEY)
+    let timerId: ReturnType<typeof setTimeout>
     if (replyId === reply.id && replyRef.current) {
       replyRef.current.style.transition = 'background-color 1s ease'
       replyRef.current.style.backgroundColor = '#fbf4e0'
       replyRef.current.style.borderColor = '#f4dda3'
-      const timerId = setTimeout(() => {
+      timerId = setTimeout(() => {
         if (replyRef.current) {
           replyRef.current.style.backgroundColor = 'transparent'
           replyRef.current.style.borderColor = '#ccc'
         }
       }, 2000)
-      return () => clearTimeout(timerId)
+    }
+    return () => {
+      if (timerId) {
+        clearTimeout(timerId)
+      }
     }
   }, [reply.id])
 
