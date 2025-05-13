@@ -1,18 +1,18 @@
-import { getEntity, getFiles } from '@/synapse-client/SynapseClient'
-import { SynapseContext } from '@/utils/context/SynapseContext'
+import { ImageFileHandle } from '@/components/widgets/ImageFileHandle'
+import { useGetEntity } from '@/synapse-queries/index'
 import {
-  BatchFileRequest,
-  BatchFileResult,
   FileEntity,
   FileHandle,
   FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
-import { Component, ContextType, CSSProperties } from 'react'
+import classNames from 'classnames'
+import { CSSProperties, useMemo } from 'react'
 
 export type SynapseImageProps = {
   wikiId?: string
   synapseId?: string
+  version?: number
   fileName?: string
   fileResults?: FileHandle[]
   params: {
@@ -25,123 +25,72 @@ export type SynapseImageProps = {
   }
 }
 
-type SynapseImageState = {
-  preSignedURL: string
-}
+function SynapseImage(props: SynapseImageProps) {
+  const { synapseId, version, wikiId, fileResults, fileName, params } = props
 
-class SynapseImage extends Component<SynapseImageProps, SynapseImageState> {
-  constructor(props: SynapseImageProps) {
-    super(props)
-    this.getEntity = this.getEntity.bind(this)
-    this.getSynapseFiles = this.getSynapseFiles.bind(this)
-    this.state = {
-      preSignedURL: '',
-    }
-  }
+  const { data: fileEntity } = useGetEntity<FileEntity>(
+    synapseId || '',
+    version,
+    {
+      enabled: Boolean(synapseId),
+    },
+  )
 
-  static contextType = SynapseContext
-  declare context: NonNullable<ContextType<typeof SynapseContext>>
-
-  public getEntity() {
-    const { synapseId } = this.props
-    if (synapseId) {
-      getEntity<FileEntity>(this.context.accessToken, synapseId).then(
-        // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/FileEntity.html
-        (data: FileEntity) => {
-          const fileHandleAssociationList = [
-            {
-              associateObjectId: synapseId,
-              associateObjectType: FileHandleAssociateType.FileEntity,
-              fileHandleId: data.dataFileHandleId,
-            },
-          ]
-          this.getSynapseFiles(fileHandleAssociationList, data.dataFileHandleId)
-        },
-      )
-    }
-  }
-  public getSynapseFiles(
-    fileHandleAssociationList: FileHandleAssociation[],
-    id: string,
-  ) {
-    // overload the method for two different use cases, one where
-    // the image is attached to an entity and creates a list on the spot,
-    // the other where list is passed in from componentDidMount in MarkdownSynapse
-    const request: BatchFileRequest = {
-      includeFileHandles: false,
-      includePreSignedURLs: true,
-      includePreviewPreSignedURLs: false,
-      requestedFiles: fileHandleAssociationList,
-    }
-    getFiles(request, this.context.accessToken)
-      .then((data: BatchFileResult) => {
-        const { preSignedURL } = data.requestedFiles.filter(
-          el => el.fileHandleId === id,
-        )[0]
-        this.setState({
-          preSignedURL: preSignedURL!,
-        })
-      })
-      .catch(err => {
-        console.error('Error on getting image ', err)
-      })
-  }
-  public componentDidMount() {
-    if (!this.props.wikiId) {
-      // Get file handle as external attachment
-      this.getEntity()
-    } else {
-      // Can get presigned url right away from wiki association
-      const { fileName, fileResults = [] } = this.props
-      const { id } = fileResults.filter(el => el.fileName === fileName)[0]
-      const fileHandleAssociationList: FileHandleAssociation[] = [
-        {
-          associateObjectId: this.props.wikiId,
+  const fileHandleAssociation: FileHandleAssociation | undefined =
+    useMemo(() => {
+      if (synapseId && fileEntity) {
+        return {
+          associateObjectId: synapseId,
+          associateObjectType: FileHandleAssociateType.FileEntity,
+          fileHandleId: fileEntity.dataFileHandleId,
+        }
+      } else if (wikiId && fileName && fileResults) {
+        const { id } = fileResults.filter(el => el.fileName === fileName)[0]
+        return {
+          associateObjectId: wikiId,
           associateObjectType: FileHandleAssociateType.WikiAttachment,
           fileHandleId: id,
-        },
-      ]
-      this.getSynapseFiles(fileHandleAssociationList, id)
-    }
+        }
+      }
+      return undefined
+    }, [fileEntity, fileName, fileResults, synapseId, wikiId])
+
+  const { align = '', altText = 'synapse image' } = params
+
+  let scale = 'auto'
+  if (params.scale && params.scale !== '100') {
+    scale = `${Number(params.scale)}%`
   }
 
-  public render() {
-    const { params } = this.props
-    const { align = '', altText = 'synapse image' } = params
-
-    let scale = 'auto'
-    if (params.scale && params.scale !== '100') {
-      scale = `${Number(params.scale)}%`
-    }
-
-    const alignLowerCase = align.toLowerCase()
-    let className = ''
-    if (alignLowerCase === 'left') {
-      className = 'floatLeft'
-    }
-    if (alignLowerCase === 'right') {
-      className = 'floatright'
-    }
-    if (alignLowerCase === 'center') {
-      className = 'align-center'
-    }
-    const style: CSSProperties = {
-      maxWidth: scale,
-      height: 'auto',
-    }
-    if (!this.state.preSignedURL) {
-      return null
-    }
-    return (
-      <>
-        <img
-          alt={altText}
-          className={'img-fluid  ' + className}
-          src={this.state.preSignedURL}
-          style={style}
-        />
-      </>
-    )
+  const alignLowerCase = align.toLowerCase()
+  let className = ''
+  if (alignLowerCase === 'left') {
+    className = 'floatLeft'
   }
+  if (alignLowerCase === 'right') {
+    className = 'floatright'
+  }
+  if (alignLowerCase === 'center') {
+    className = 'align-center'
+  }
+  const style: CSSProperties = {
+    maxWidth: scale,
+    height: 'auto',
+  }
+
+  if (!fileHandleAssociation) {
+    return <></>
+  }
+
+  return (
+    <ImageFileHandle
+      fileHandleAssociation={fileHandleAssociation}
+      imgProps={{
+        alt: altText,
+        className: classNames('img-fluid', className),
+        style,
+      }}
+    />
+  )
 }
 export default SynapseImage

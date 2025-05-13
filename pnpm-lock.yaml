@@ -164,8 +164,8 @@ importers:
         specifier: ^14.6.1
         version: 14.6.1(@testing-library/dom@10.4.0)
       '@types/katex':
-        specifier: ^0.5.0
-        version: 0.5.0
+        specifier: ^0.16.7
+        version: 0.16.7
       '@types/node':
         specifier: ^20.17.41
         version: 20.17.41
@@ -996,8 +996,8 @@ importers:
         specifier: ^29.5.14
         version: 29.5.14
       '@types/katex':
-        specifier: ^0.5.0
-        version: 0.5.0
+        specifier: ^0.16.7
+        version: 0.16.7
       '@types/node':
         specifier: ^20.17.41
         version: 20.17.41
@@ -1183,8 +1183,8 @@ importers:
         specifier: ^14.6.1
         version: 14.6.1(@testing-library/dom@10.4.0)
       '@types/katex':
-        specifier: ^0.5.0
-        version: 0.5.0
+        specifier: ^0.16.7
+        version: 0.16.7
       '@types/lodash':
         specifier: ^4.17.16
         version: 4.17.16
@@ -1832,8 +1832,8 @@ importers:
         specifier: ^0.2.4
         version: 0.2.4
       '@types/katex':
-        specifier: ^0.10.2
-        version: 0.10.2
+        specifier: ^0.16.7
+        version: 0.16.7
       '@types/lodash-es':
         specifier: 4.17.12
         version: 4.17.12
@@ -5315,11 +5315,8 @@ packages:
   '@types/jsonpath@0.2.4':
     resolution: {integrity: sha512-K3hxB8Blw0qgW6ExKgMbXQv2UPZBoE2GqLpVY+yr7nMD2Pq86lsuIzyAaiQ7eMqFL5B6di6pxSkogLJEyEHoGA==}
 
-  '@types/katex@0.10.2':
-    resolution: {integrity: sha512-QYTNuhuDU22gouVoL5kLmBTguu2rPvtp7wL5U5fTFsQkM1ojfUgxFPMFrqOSUofrdWwnZEmblcobdlLXj1lVOw==}
-
-  '@types/katex@0.5.0':
-    resolution: {integrity: sha512-X8r0ssR6aN6OXIhM8ABn0OmgwBbc0efPBszCw9RgVtD3f+rWcOB1Kqgn/09/W0fnWjC8iJLGUEHCD2rXUTyjbg==}
+  '@types/katex@0.16.7':
+    resolution: {integrity: sha512-HMwFiRujE5PjrgwHQ25+bsLJgowjGjm5Z8FVSf0N6PwgJrwxH0QxzHYDcKsTfV3wva0vzrpqMTJS2jXPr5BMEQ==}
 
   '@types/linkify-it@3.0.5':
     resolution: {integrity: sha512-yg6E+u0/+Zjva+buc3EIb+29XEg4wltq7cSmd4Uc2EE/1nUVmxyzpX6gUXD0V8jIrG0r7YeOGVIbYRkxeooCtw==}
@@ -15478,9 +15475,7 @@ snapshots:
 
   '@types/jsonpath@0.2.4': {}
 
-  '@types/katex@0.10.2': {}
-
-  '@types/katex@0.5.0': {}
+  '@types/katex@0.16.7': {}
 
   '@types/linkify-it@3.0.5': {}
 
