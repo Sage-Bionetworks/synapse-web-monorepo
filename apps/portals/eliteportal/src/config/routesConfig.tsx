@@ -1,4 +1,3 @@
-import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import ELBrowseToolsPage from '@sage-bionetworks/synapse-portal-framework/components/eliteportal/ELBrowseToolsPage'
 import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
@@ -6,7 +5,6 @@ import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/compon
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
 import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
-import HomePageV2 from '../pages/HomePageV2'
 import ProjectDetailsPage from '../pages/ProjectDetailsPage'
 import StudyDetailsPage, {
   studyDetailsPageRoutes,
@@ -14,6 +12,7 @@ import StudyDetailsPage, {
 import explorePageRoutes from './explorePageRoutes'
 import { computationalSql } from './resources'
 import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
+import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 
 const routes: RouteObject[] = [
   {
@@ -28,11 +27,7 @@ const routes: RouteObject[] = [
       ...sharedRoutes,
       {
         index: true,
-        element: (
-          <HomePageThemeProvider>
-            <HomePageV2 />
-          </HomePageThemeProvider>
-        ),
+        lazy: () => import('@/pages/HomePage').then(convertModuleToRouteObject),
       },
       {
         path: 'Browse Tools',
