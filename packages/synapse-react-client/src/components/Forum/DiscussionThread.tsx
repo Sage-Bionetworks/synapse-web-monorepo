@@ -15,7 +15,7 @@ import {
   SubscriptionObjectType,
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import IconSvg from '../IconSvg/IconSvg'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
@@ -26,6 +26,7 @@ import { DiscussionReply } from './DiscussionReply'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import { SubscribersModal } from './SubscribersModal'
 import { useGetModerators } from '@/synapse-queries/forum/useForum'
+import { useNativeSearchParams } from '@/utils/hooks/useNativeSearchParams'
 
 export type DiscussionThreadProps = {
   threadId: string
@@ -98,13 +99,33 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     hasNextPage,
     fetchNextPage,
   } = useGetRepliesInfinite(threadId, orderByDatePosted, limit)
-  const replies = replyData?.pages.flatMap(page => page.results) ?? []
 
   const { data: moderatorList } = useGetModerators(threadData?.forumId ?? '')
 
   const isAuthorModerator = moderatorList?.results.includes(
     threadData?.createdBy ?? '',
   )
+
+  const REPLY_ID_PARAM_KEY = 'replyid'
+
+  const replyId = useNativeSearchParams(REPLY_ID_PARAM_KEY)
+
+  const replies = useMemo(() => {
+    const allReplies = replyData?.pages.flatMap(page => page.results) ?? []
+    if (replyId) {
+      return allReplies.filter(reply => reply.id === replyId)
+    } else {
+      return allReplies
+    }
+  }, [replyData, replyId])
+
+  const handleShowAllRepliesButton = () => {
+    const params = new URLSearchParams(window.location.search)
+    params.delete(REPLY_ID_PARAM_KEY)
+    const newUrl = `${window.location.pathname}?${params.toString()}`
+    history.pushState({}, '', newUrl)
+    window.dispatchEvent(new Event('pushstate'))
+  }
 
   return (
     <div className="DiscussionThread">
@@ -263,6 +284,29 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           />
         )}
       </Box>
+      {replyId && (
+        <Box
+          onClick={handleShowAllRepliesButton}
+          sx={{
+            backgroundColor: 'grey.300',
+            borderRadius: '3px',
+            display: 'flex',
+            alignItems: 'center',
+            width: 'fit-content',
+            padding: '2px 8px',
+            marginBottom: '12px',
+            gap: '4px',
+            cursor: 'pointer',
+          }}
+        >
+          <IconSvg
+            icon="arrowBack"
+            label="Restore deleted thread"
+            sx={{ width: '16px' }}
+          />
+          <Typography variant="smallText2">Show all replies</Typography>
+        </Box>
+      )}
       <div>
         {replies.map(reply => {
           const isReplyAuthorModerator = moderatorList?.results.includes(
