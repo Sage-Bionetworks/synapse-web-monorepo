@@ -9,7 +9,6 @@ import ProjectDetailsPage from '../pages/ProjectDetailsPage'
 import StudyDetailsPage, {
   studyDetailsPageRoutes,
 } from '../pages/StudyDetailsPage'
-import explorePageRoutes from './explorePageRoutes'
 import { computationalSql } from './resources'
 import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
@@ -40,8 +39,55 @@ const routes: RouteObject[] = [
       },
       {
         path: 'Explore',
-        element: <ExploreWrapper explorePaths={explorePageRoutes} />,
-        children: explorePageRoutes,
+        lazy: () =>
+          import('@/pages/Explore/layout').then(convertModuleToRouteObject),
+        children: [
+          {
+            path: 'Data',
+            lazy: () =>
+              import('@/pages/Explore/data').then(convertModuleToRouteObject),
+          },
+          {
+            path: 'Cohort Builder',
+            lazy: () =>
+              import('@/pages/Explore/cohortBuilder').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'Projects',
+            lazy: () =>
+              import('@/pages/Explore/projects').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'Studies',
+            lazy: () =>
+              import('@/pages/Explore/studies').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'Publications',
+            lazy: () =>
+              import('@/pages/Explore/publications').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'Computational Tools',
+            lazy: () =>
+              import('@/pages/Explore/computationalTools').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'People',
+            lazy: () =>
+              import('@/pages/Explore/people').then(convertModuleToRouteObject),
+          },
+        ],
       },
       {
         path: 'Explore/Projects/DetailsPage',
