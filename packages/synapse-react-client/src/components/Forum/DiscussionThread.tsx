@@ -15,7 +15,7 @@ import {
   SubscriptionObjectType,
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import IconSvg from '../IconSvg/IconSvg'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
@@ -26,6 +26,7 @@ import { DiscussionReply } from './DiscussionReply'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import { SubscribersModal } from './SubscribersModal'
 import { useGetModerators } from '@/synapse-queries/forum/useForum'
+import { useNativeSearchParams } from '@/utils/hooks/useNativeSearchParams'
 
 export type DiscussionThreadProps = {
   threadId: string
@@ -36,25 +37,6 @@ const FOLLOWING_TEXT = 'You are following this topic. Click to stop following.'
 const UNFOLLOWING_TEXT = 'You are not following this topic. Click to follow.'
 const SIGN_IN_TEXT = 'You will need to sign in for access to that resource'
 const INPUT_PLACEHOLDER = 'Write a reply...'
-
-const useNativeSearchParams = (param: string) => {
-  const getValue = useCallback(
-    () => new URLSearchParams(window.location.search).get(param),
-    [param],
-  )
-
-  const [value, setValue] = useState(getValue)
-  useEffect(() => {
-    const onChange = () => {
-      setValue(getValue())
-    }
-    window.addEventListener('pushstate', onChange)
-    return () => {
-      window.removeEventListener('pushstate', onChange)
-    }
-  }, [])
-  return value
-}
 
 export function DiscussionThread(props: DiscussionThreadProps) {
   const { threadId, limit } = props
