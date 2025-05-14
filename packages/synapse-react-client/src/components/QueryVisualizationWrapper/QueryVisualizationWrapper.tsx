@@ -55,6 +55,7 @@ export type QueryVisualizationWrapperProps = {
   /** The set of external analysis platform to which the UI will support exporting data.
    * @default [] (no platforms are enabled) */
   enabledExternalAnalysisPlatforms?: ExternalAnalysisPlatform[]
+  hideVisualizationsControl?: boolean
 }
 
 /**

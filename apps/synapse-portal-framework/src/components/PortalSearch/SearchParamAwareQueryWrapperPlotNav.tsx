@@ -1,21 +1,18 @@
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 import { useMemo } from 'react'
 import { useSearchParams } from 'react-router'
-import {
-  QueryWrapper,
-  StandaloneQueryWrapper,
-  StandaloneQueryWrapperProps,
-} from 'synapse-react-client'
+import { QueryWrapperPlotNav } from 'synapse-react-client'
+import { QueryWrapper, StandaloneQueryWrapperProps } from 'synapse-react-client'
 import { getTextMatchesQueryFilter } from 'synapse-react-client/components/FullTextSearch/FullTextSearchUtils'
 import { generateInitQueryRequest } from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
 import { FTS_SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctions'
 
-export type SearchParamAwareStandaloneQueryWrapperProps = {
+export type SearchParamAwareQueryWrapperPlotNavProps = {
   isVisible: boolean
   standaloneQueryWrapperProps: StandaloneQueryWrapperProps
 }
-export function SearchParamAwareStandaloneQueryWrapper(
-  props: SearchParamAwareStandaloneQueryWrapperProps,
+export function SearchParamAwareQueryWrapperPlotNav(
+  props: SearchParamAwareQueryWrapperPlotNavProps,
 ) {
   const { isVisible, standaloneQueryWrapperProps } = props
   const [searchParams] = useSearchParams()
@@ -43,10 +40,14 @@ export function SearchParamAwareStandaloneQueryWrapper(
   // if not, just run the query wrapper with the query request derived from the search params (to populate the cache and return the count)
   if (isVisible) {
     return (
-      <StandaloneQueryWrapper
+      <QueryWrapperPlotNav
         {...standaloneQueryWrapperProps}
         shouldDeepLink={false}
         query={query}
+        hideCopyToClipboard={true}
+        defaultShowPlots={false}
+        defaultShowSearchBox={false}
+        hideVisualizationsControl={true}
       />
     )
   }
@@ -62,4 +63,4 @@ export function SearchParamAwareStandaloneQueryWrapper(
   )
 }
 
-export default SearchParamAwareStandaloneQueryWrapper
+export default SearchParamAwareQueryWrapperPlotNav
