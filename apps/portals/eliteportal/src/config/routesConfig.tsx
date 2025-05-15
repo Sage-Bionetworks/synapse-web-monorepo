@@ -125,76 +125,18 @@ const routes: RouteObject[] = [
       },
       {
         path: 'Analysis Platforms',
-        element: (
-          <SectionLayout title={'Analysis Platforms'}>
-            <Markdown
-              ownerId="syn27229419"
-              wikiId="621275"
-              loadingSkeletonRowCount={10}
-            />
-          </SectionLayout>
-        ),
+        lazy: () =>
+          import('@/pages/AnalysisPlatforms').then(convertModuleToRouteObject),
       },
       {
         path: 'Data Access',
-        element: (
-          <>
-            <SectionLayout title={'Data Access'}>
-              <Markdown
-                ownerId="syn27229419"
-                wikiId="621276"
-                loadingSkeletonRowCount={10}
-              />
-            </SectionLayout>
-            <SectionLayout title={'ADAMTS7'}>
-              <Markdown
-                ownerId="syn27229419"
-                wikiId="622372"
-                loadingSkeletonRowCount={10}
-              />
-            </SectionLayout>
-            <SectionLayout title={'ELPSCRNA'}>
-              <Markdown
-                ownerId="syn27229419"
-                wikiId="622485"
-                loadingSkeletonRowCount={10}
-              />
-            </SectionLayout>
-            {/* <SectionLayout title={'Aging PheWAS'}>
-            <Markdown
-                ownerId="syn27229419"
-                wikiId="622480"
-                loadingSkeletonRowCount={10}
-              />
-          </SectionLayout>*/}
-            <SectionLayout title={'LLFS US'}>
-              <Markdown
-                ownerId="syn27229419"
-                wikiId="622486"
-                loadingSkeletonRowCount={10}
-              />
-            </SectionLayout>
-            <SectionLayout title={'LLFS Danish'}>
-              <Markdown
-                ownerId="syn27229419"
-                wikiId="631447"
-                loadingSkeletonRowCount={10}
-              />
-            </SectionLayout>
-          </>
-        ),
+        lazy: () =>
+          import('@/pages/DataAccess').then(convertModuleToRouteObject),
       },
       {
         path: 'Contribute Data',
-        element: (
-          <SectionLayout title={'Contribute Data'}>
-            <Markdown
-              ownerId="syn27229419"
-              wikiId="621277"
-              loadingSkeletonRowCount={15}
-            />
-          </SectionLayout>
-        ),
+        lazy: () =>
+          import('@/pages/ContributeData').then(convertModuleToRouteObject),
       },
       {
         path: 'Comparative Biology',
