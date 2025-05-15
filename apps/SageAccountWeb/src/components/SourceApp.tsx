@@ -1,7 +1,7 @@
 import { Box, BoxProps, Typography } from '@mui/material'
-import { SkeletonTable } from 'synapse-react-client'
 import Skeleton from '@mui/material/Skeleton'
 import { useSourceApp } from './useSourceApp'
+import { SkeletonTable } from 'synapse-react-client/components/Skeleton/SkeletonTable'
 
 export type SourceAppProps = {
   isAccountCreationTextVisible?: boolean

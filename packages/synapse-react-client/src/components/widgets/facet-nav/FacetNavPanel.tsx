@@ -19,7 +19,7 @@ import {
   FacetColumnResultValues,
 } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
-import Plotly from 'plotly.js-basic-dist'
+import type Plotly from 'plotly.js-basic-dist'
 import { useMemo, useState } from 'react'
 import { SizeMe } from 'react-sizeme'
 import { getContrastColorPalette } from '../../ColorGradient/ColorGradient'

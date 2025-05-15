@@ -217,7 +217,6 @@ const MarkdownSynapse: MarkdownSynapseComponent = class MarkdownSynapse extends 
         element.setAttribute('processed', 'true')
         const textContent = element.textContent.replace(regEx, '')
         return katex.render(textContent, element, {
-          // @ts-expect-error
           output: 'html',
           throwOnError: false,
         })

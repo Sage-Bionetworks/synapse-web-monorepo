@@ -1,0 +1,43 @@
+import { useAppContext } from '@/AppContext'
+import useMaybePromptToSignTermsOfService from '@/hooks/useMaybePromptToSignTermsOfService'
+import { getSearchParam } from '@/URLUtils'
+import { useEffect } from 'react'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import { processRedirectURLInOneSage } from 'synapse-react-client/utils/AppUtils'
+import LoginPage from '@/pages/LoginPage'
+
+function LoggedInRedirector() {
+  const { accessToken } = useSynapseContext()
+  const appContext = useAppContext()
+
+  const isCodeSearchParam = getSearchParam('code') !== undefined
+  const isProviderSearchParam = getSearchParam('provider') !== undefined
+  const isInSSOFlow = isCodeSearchParam && isProviderSearchParam
+
+  const { mayPromptTermsOfUse } = useMaybePromptToSignTermsOfService()
+
+  useEffect(() => {
+    // User is on the root page (implied by route), logged in, not in the SSO Flow, and does not need to sign the ToS
+    // then redirect!
+    if (accessToken && !isInSSOFlow && !mayPromptTermsOfUse) {
+      // take user back to page they came from in the source app, if stored in a cookie
+      const isProcessed = processRedirectURLInOneSage()
+      if (!isProcessed && appContext?.redirectURL) {
+        // if not in the cookie, take them to the app redirect URL
+        window.location.replace(appContext?.redirectURL)
+      }
+    }
+  }, [accessToken, appContext?.redirectURL, isInSSOFlow, mayPromptTermsOfUse])
+  return <></>
+}
+
+function RootPage() {
+  const { accessToken } = useSynapseContext()
+  const isLoggedIn = Boolean(accessToken)
+  if (isLoggedIn) {
+    return <LoggedInRedirector />
+  }
+  return <LoginPage returnToUrl={'/'} />
+}
+
+export default RootPage

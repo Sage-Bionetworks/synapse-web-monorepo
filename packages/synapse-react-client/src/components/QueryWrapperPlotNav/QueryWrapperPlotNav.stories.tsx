@@ -39,7 +39,7 @@ const meta: Meta<QueryWrapperPlotNavProps> = {
     onQueryChange: fn(),
     onQueryResultBundleChange: fn(),
   },
-}
+} satisfies Meta<QueryWrapperPlotNavProps>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -323,7 +323,7 @@ export const TableRowSelectionWithCustomCommand: Story = {
     customControls: [
       {
         buttonText: 'Row Custom Command',
-        onClick: event => {
+        onClick: (event: CustomControlCallbackData) => {
           handleRowSelectionCustomCommandClick(event)
         },
         buttonID: 'RowSelectionCustomCommandButtonID',
@@ -354,7 +354,7 @@ export const TableWithNoDownloadAccess: Story = {
     hideSqlEditorControl: false,
     shouldDeepLink: false,
     // onViewSharingSettingsClicked: undefined
-    onViewSharingSettingsClicked: benefactorEntityId => {
+    onViewSharingSettingsClicked: (benefactorEntityId: string) => {
       displayToast(
         `Open the ${benefactorEntityId} Sharing Settings dialog.  If undefined, send to the entity page.`,
         'info',

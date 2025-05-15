@@ -2,38 +2,19 @@ import { Box, Button, SxProps, TextField, Typography } from '@mui/material'
 import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
 import { FormEvent, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
-import {
-  ChangePasswordWithToken,
-  displayToast,
-  SynapseClientError,
-  SynapseQueries,
-} from 'synapse-react-client'
 import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 import { BackButton } from './BackButton'
 import { LeftRightPanel } from './LeftRightPanel'
 import { SourceAppLogo } from './SourceApp'
+import { useResetPassword } from 'synapse-react-client/synapse-queries/auth/useResetPassword'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import ChangePasswordWithToken from 'synapse-react-client/components/ChangePassword/ChangePasswordWithToken'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import SetPasswordInstructions from './SetPasswordInstructions'
 
 export type ResetPasswordProps = {
   returnToUrl: string
 }
-
-export type SetPasswordInstructionsProps = {
-  title: string
-}
-
-export const SetPasswordInstructions = (
-  props: SetPasswordInstructionsProps,
-) => (
-  <div>
-    <Typography variant="headline2">{props.title}</Typography>
-    <Typography variant="smallText1">
-      We recommend using a strong, unique <strong>password</strong> of between
-      8-32 characters. A valid password must be at least 8 characters long and
-      must include letters, digits (0-9), and special characters
-      ~!@#$%^&*_-+=`|\(){}[]:;&quot;&apos;&lt;&gt;,.?/
-    </Typography>
-  </div>
-)
 
 export const ResetPassword = (props: ResetPasswordProps) => {
   const navigate = useNavigate()
@@ -42,7 +23,7 @@ export const ResetPassword = (props: ResetPasswordProps) => {
   const passwordResetTokenValue = getSearchParam('passwordResetToken')
   const [hasInitiatedResetPassword, setHasInitiatedResetPassword] =
     useState(false)
-  const { mutate, isPending } = SynapseQueries.useResetPassword({
+  const { mutate, isPending } = useResetPassword({
     onSuccess: () => {
       setHasInitiatedResetPassword(true)
       displayToast(

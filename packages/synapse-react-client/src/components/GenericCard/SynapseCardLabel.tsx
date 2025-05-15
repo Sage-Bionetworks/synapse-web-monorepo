@@ -12,11 +12,8 @@ import {
 import dayjs from 'dayjs'
 import { isEmpty } from 'lodash-es'
 import { CSSProperties, Fragment } from 'react'
-import {
-  ColumnSpecifiedLink,
-  MarkdownLink,
-  TargetEnum,
-} from '../CardContainerLogic'
+import { ColumnSpecifiedLink, MarkdownLink } from '../CardContainerLogic'
+import { TargetEnum } from '@/utils/html/TargetEnum'
 import { EntityImage } from '../CardContainerLogic/CardContainerLogic'
 import { EntityLink } from '../EntityLink'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
