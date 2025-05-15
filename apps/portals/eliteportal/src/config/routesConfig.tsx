@@ -1,27 +1,16 @@
-import App from '@sage-bionetworks/synapse-portal-framework/App'
-import ELBrowseToolsPage from '@sage-bionetworks/synapse-portal-framework/components/eliteportal/ELBrowseToolsPage'
-import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
-import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import {
   STUDY_DETAILS_PAGE_DATA_TAB_PATH,
   STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
 } from './routeConstants'
-import { computationalSql } from './resources'
-import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: (
-      <App>
-        {/* PORTALS-3508 */}
-        <RepositoryUnderReviewAlert portalSpecificDisclaimer="This repository is developed by Sage Bionetworks to host and share resources related to Exceptional Longevity research, and remains fully operational. We continue to maintain and accept longevity-related data and resources throughout this review process." />
-      </App>
-    ),
+    lazy: () => import('@/pages/RootApp').then(convertModuleToRouteObject),
     children: [
       ...sharedRoutes,
       {
@@ -30,12 +19,8 @@ const routes: RouteObject[] = [
       },
       {
         path: 'Browse Tools',
-        element: (
-          <ELBrowseToolsPage
-            popularSearchesSql={''}
-            toolsSql={computationalSql}
-          />
-        ),
+        lazy: () =>
+          import('@/pages/BrowseTools').then(convertModuleToRouteObject),
       },
       {
         path: 'Explore',
@@ -140,75 +125,35 @@ const routes: RouteObject[] = [
       },
       {
         path: 'Comparative Biology',
-        element: (
-          <SectionLayout title={'Comparative Biology'}>
-            <Markdown
-              ownerId="syn27229419"
-              wikiId="630611"
-              loadingSkeletonRowCount={15}
-            />
-          </SectionLayout>
-        ),
+        lazy: () =>
+          import('@/pages/ComparativeBiology').then(convertModuleToRouteObject),
       },
       {
         path: 'Omics Profiles in Humans',
-        element: (
-          <SectionLayout title={'Omics Profiles in Humans'}>
-            <Markdown
-              ownerId="syn27229419"
-              wikiId="630616"
-              loadingSkeletonRowCount={15}
-            />
-          </SectionLayout>
-        ),
+        lazy: () =>
+          import('@/pages/OmnicsProfilesInHumans').then(
+            convertModuleToRouteObject,
+          ),
       },
       {
         path: 'Translational Approaches',
-        element: (
-          <SectionLayout title={'Translational Approaches'}>
-            <Markdown
-              ownerId="syn27229419"
-              wikiId="630612"
-              loadingSkeletonRowCount={15}
-            />
-          </SectionLayout>
-        ),
+        lazy: () =>
+          import('@/pages/TranslationalApproaches').then(
+            convertModuleToRouteObject,
+          ),
       },
       {
         path: 'AI Models',
-        element: (
-          <SectionLayout title={'AI/ML Models'}>
-            <Markdown
-              ownerId="syn27229419"
-              wikiId="630613"
-              loadingSkeletonRowCount={15}
-            />
-          </SectionLayout>
-        ),
+        lazy: () => import('@/pages/AIModels').then(convertModuleToRouteObject),
       },
       {
         path: 'IPSCs',
-        element: (
-          <SectionLayout title={'IPSCs'}>
-            <Markdown
-              ownerId="syn27229419"
-              wikiId="630614"
-              loadingSkeletonRowCount={15}
-            />
-          </SectionLayout>
-        ),
+        lazy: () => import('@/pages/IPSCs').then(convertModuleToRouteObject),
       },
       {
         path: 'Organoids',
-        element: (
-          <SectionLayout title={'Organoids'}>
-            <Markdown
-              ownerId="syn27229419"
-              wikiId="630615"
-              loadingSkeletonRowCount={15}
-            />
-          </SectionLayout>
-        ),
+        lazy: () =>
+          import('@/pages/Organoids').then(convertModuleToRouteObject),
       },
     ],
   },
