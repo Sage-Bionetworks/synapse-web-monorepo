@@ -1,6 +1,6 @@
 import { Tooltip } from '@mui/material'
 import { NavLink, useLocation } from 'react-router'
-import { SynapseComponents } from 'synapse-react-client'
+import Icon from 'synapse-react-client/components/Icon/Icon'
 import { useDetailsPageContext } from './DetailsPageContext'
 
 export type DetailsPageTabConfig = {
@@ -43,9 +43,7 @@ function DetailsPageTab(props: DetailsPageTabConfig) {
         }}
         className={'tab-item ignoreLink'}
       >
-        {iconName && (
-          <SynapseComponents.Icon type={iconName} cssClass={iconClassName} />
-        )}
+        {iconName && <Icon type={iconName} cssClass={iconClassName} />}
         {title}
       </NavLink>
     </Tooltip>

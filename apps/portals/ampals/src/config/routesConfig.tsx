@@ -1,13 +1,10 @@
-import DatasetDetailsPage from '@/pages/DatasetDetailsPage'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
-import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
-import { MarkdownSynapse } from 'synapse-react-client'
-import HomePage from '../pages/HomePage'
-import explorePageRoutes from './explorePageRoutes'
-import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
-import { searchPageChildRoutes } from '@/pages/AMPALSSearchPage'
+//import header images for Resources pages
+import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
+
+//TO DO: help page button url(s), remove first child h2 padding-top or find some other fix, add input for header images
 
 const routes: RouteObject[] = [
   {
@@ -17,86 +14,116 @@ const routes: RouteObject[] = [
       ...sharedRoutes,
       {
         index: true,
-        element: <HomePage />,
+        lazy: () => import('@/pages/HomePage').then(convertModuleToRouteObject),
       },
       {
         path: 'Explore',
-        element: (
-          <ExploreWrapper
-            explorePaths={[
-              {
-                path: 'Programs',
-              },
-              {
-                path: 'Collections',
-              },
-              {
-                path: 'Datasets',
-              },
-              {
-                path: 'Files',
-              },
-            ]}
-          />
-        ),
-        children: explorePageRoutes,
+        lazy: () =>
+          import('@/pages/Explore/layout').then(convertModuleToRouteObject),
+        children: [
+          {
+            path: 'Programs',
+            lazy: () =>
+              import('@/pages/Explore/programs').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'Collections',
+            lazy: () =>
+              import('@/pages/Explore/collections').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'Datasets',
+            lazy: () =>
+              import('@/pages/Explore/datasets').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'Files',
+            lazy: () =>
+              import('@/pages/Explore/files').then(convertModuleToRouteObject),
+          },
+        ],
       },
       {
         path: 'Explore/Datasets/DetailsPage',
-        element: <DatasetDetailsPage />,
+        lazy: () =>
+          import('@/pages/DatasetDetailsPage').then(convertModuleToRouteObject),
       },
       {
         path: 'Resources',
         children: [
           {
             path: 'For Researchers',
-            element: (
-              <MarkdownSynapse
-                ownerId="syn64892175"
-                wikiId="631452"
-                loadingSkeletonRowCount={20}
-              />
-            ),
+            lazy: () =>
+              import('@/pages/resources/ForResearchers').then(
+                convertModuleToRouteObject,
+              ),
           },
           {
             path: 'For Contributors',
-            element: (
-              <MarkdownSynapse
-                ownerId="syn64892175"
-                wikiId="631451"
-                loadingSkeletonRowCount={20}
-              />
-            ),
+            lazy: () =>
+              import('@/pages/resources/ForContributors').then(
+                convertModuleToRouteObject,
+              ),
           },
           {
             path: 'For Persons With Lived Experience',
-            element: (
-              <MarkdownSynapse
-                ownerId="syn64892175"
-                wikiId="631453"
-                loadingSkeletonRowCount={20}
-              />
-            ),
+            lazy: () =>
+              import('@/pages/resources/ForPWLEs').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'Requirements for Publication',
+            lazy: () =>
+              import('@/pages/resources/RequirementsForPublication').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'Frequently Asked Questions',
+            lazy: () =>
+              import('@/pages/resources/FrequentlyAskedQuestions').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'Publishing Requirements',
+            lazy: () =>
+              import('@/pages/resources/PublishingRequirements').then(
+                convertModuleToRouteObject,
+              ),
           },
         ],
       },
       {
+        path: 'Contribute Data',
+        lazy: () =>
+          import('@/pages/ContributeData').then(convertModuleToRouteObject),
+      },
+      {
         path: 'About',
-        element: (
-          <SectionLayout
-            title={'About'}
-            ContainerProps={{ className: 'AboutPage' }}
-          >
-            <MarkdownSynapse
-              ownerId={'syn22130826'}
-              loadingSkeletonRowCount={20}
-            />
-          </SectionLayout>
-        ),
+        lazy: () => import('@/pages/About').then(convertModuleToRouteObject),
       },
       {
         path: 'Search',
-        children: searchPageChildRoutes,
+        children: [
+          {
+            index: true,
+            lazy: () =>
+              import('@/pages/Search').then(convertModuleToRouteObject),
+          },
+          {
+            path: ':resourceType',
+            lazy: () =>
+              import('@/pages/Search').then(convertModuleToRouteObject),
+          },
+        ],
       },
     ],
   },

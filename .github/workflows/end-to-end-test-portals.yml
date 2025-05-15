@@ -36,19 +36,46 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v4
+
       - uses: ./.github/actions/pnpm-setup-action
+      - name: Determine if portal has had any changes
+        run: |
+          affected=$(pnpm nx show projects --affected)
+          affected_array=($affected)
+
+          echo "Affected projects: ${affected_array[@]}"
+
+          for project in "${affected_array[@]}"; do
+            echo "Comparing: '$project' with '${{ matrix.PORTAL }}'"
+            if [[ "$project" == "${{ matrix.PORTAL }}" ]]; then
+              echo "Project is affected; setting PROJECT_AFFECTED=true"
+              echo "PROJECT_AFFECTED=true" >> "$GITHUB_ENV"
+              exit 0
+            fi
+            done
+            echo "Project is not affected; setting PROJECT_AFFECTED=false"
+            echo "PROJECT_AFFECTED=false" >> "$GITHUB_ENV"
+
       - name: Build portal
+        if: ${{ env.PROJECT_AFFECTED == 'true' }}
         run: pnpm nx run portals-e2e:portal:build
         env:
           PORTAL: ${{ matrix.PORTAL }}
+
       - name: Install Playwright Browsers
+        if: ${{ env.PROJECT_AFFECTED == 'true' }}
         run: |
           cd "${{ env.PORTALS_E2E_SUBDIR }}"
           pnpm playwright install --with-deps
+
       - name: Run e2e tests
+        if: ${{ env.PROJECT_AFFECTED == 'true' }}
         run: pnpm nx run portals-e2e:e2e
         env:
           PORTAL: ${{ matrix.PORTAL }}
+
       - name: Upload blob report to GitHub Actions Artifacts
         uses: actions/upload-artifact@v4
         if: ${{ always() }}
@@ -73,8 +100,20 @@ jobs:
           pattern: ${{ env.PW_ALL_BLOBS_DIR }}*
           path: ${{ env.PORTALS_E2E_SUBDIR }}/${{ env.PW_ALL_BLOBS_DIR }}
           merge-multiple: true
+      - name: Check if any E2E tests ran
+        run: |
+          cd ${{ env.PORTALS_E2E_SUBDIR }};
+          if [ ! -d "${{ env.PW_ALL_BLOBS_DIR }}" ]; then
+            exit 0
+          fi
       - name: Merge into HTML Report
-        run: cd ${{ env.PORTALS_E2E_SUBDIR }}; pnpm exec playwright merge-reports --reporter html ./"${{ env.PW_ALL_BLOBS_DIR }}"
+        run: |
+          cd ${{ env.PORTALS_E2E_SUBDIR }}; 
+          if [ ! -d "${{ env.PW_ALL_BLOBS_DIR }}" ]; then
+            exit 0
+          else
+            pnpm exec playwright merge-reports --reporter html ./"${{ env.PW_ALL_BLOBS_DIR }}"
+          fi
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:

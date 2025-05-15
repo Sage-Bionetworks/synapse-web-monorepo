@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import Portal from '@sage-bionetworks/synapse-portal-framework'
+import Portal from '@sage-bionetworks/synapse-portal-framework/Portal'
 import { navbarConfig } from './config/navbarConfig'
 import palette from './config/paletteConfig'
 import routes from './config/routesConfig'

@@ -22,7 +22,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { QueryContextType, useQueryContext } from '../../../../index'
+import { QueryContextType, useQueryContext } from '../../../QueryContext'
 import { QueryVisualizationWrapper } from '../../../QueryVisualizationWrapper'
 import QueryWrapper from '../../../QueryWrapper'
 import { EnumFacetFilter, EnumFacetFilterProps } from './EnumFacetFilter'

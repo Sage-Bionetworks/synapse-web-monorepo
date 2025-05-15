@@ -7,11 +7,7 @@ import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/component
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
-import {
-  RssFeedCards,
-  ThemesPlot,
-  Programs,
-} from 'synapse-react-client'
+import { RssFeedCards, ThemesPlot, Programs } from 'synapse-react-client'
 import DatasetsDetailsPage from '../pages/DatasetsDetailsPage'
 import EducationalResourcesDetailsPage from '../pages/EducationalResourcesDetailsPage'
 import GrantDetailsPage from '../pages/GrantDetailsPage'
@@ -19,9 +15,7 @@ import PeopleDetailsPage from '../pages/PeopleDetailsPage'
 import PublicationsDetailsPage from '../pages/PublicationsDetailsPage'
 import ToolsDetailsPage from '../pages/ToolsDetailsPage'
 import explorePageRoutes from './explorePageRoutes'
-import {
-  consortiaHomePageConfig,
-} from './synapseConfigs/consortiaHomePage'
+import { consortiaHomePageConfig } from './synapseConfigs/consortiaHomePage'
 import { MC2Supplement } from './synapseConfigs/MC2Supplement'
 import {
   onIndividualThemeBarPlotPointClick,

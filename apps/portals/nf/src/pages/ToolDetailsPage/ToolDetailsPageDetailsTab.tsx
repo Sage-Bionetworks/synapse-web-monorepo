@@ -19,12 +19,12 @@ import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import {
   CardContainerLogic,
-  MarkdownSynapse,
   StandaloneQueryWrapper,
   SubsectionRowRenderer,
   SynapseConstants,
   UserCardListRotate,
 } from 'synapse-react-client'
+import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
 export default function ToolDetailsPageDetailsTab() {
   const { value: resourceId } = useDetailsPageContext('resourceId')

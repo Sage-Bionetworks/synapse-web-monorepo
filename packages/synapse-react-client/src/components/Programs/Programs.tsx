@@ -9,7 +9,10 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { CardLink } from '../CardContainer/CardLink'
 import { getColorPalette } from '../ColorGradient/ColorGradient'
-import { getFileHandleAssociation, getLinkParams } from '../GenericCard'
+import {
+  getFileHandleAssociation,
+  getLinkParams,
+} from '../GenericCard/CardUtils'
 import ProgramsDesktop from './Programs.Desktop'
 import ProgramsMobile from './Programs.Mobile'
 
