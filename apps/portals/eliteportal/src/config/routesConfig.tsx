@@ -1,17 +1,17 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import ELBrowseToolsPage from '@sage-bionetworks/synapse-portal-framework/components/eliteportal/ELBrowseToolsPage'
-import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
 import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
-import ProjectDetailsPage from '../pages/ProjectDetailsPage'
-import StudyDetailsPage, {
-  studyDetailsPageRoutes,
-} from '../pages/StudyDetailsPage'
+import {
+  STUDY_DETAILS_PAGE_DATA_TAB_PATH,
+  STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
+} from './routeConstants'
 import { computationalSql } from './resources'
 import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
+import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 
 const routes: RouteObject[] = [
   {
@@ -91,12 +91,37 @@ const routes: RouteObject[] = [
       },
       {
         path: 'Explore/Projects/DetailsPage',
-        element: <ProjectDetailsPage />,
+        lazy: () =>
+          import('@/pages/ProjectDetailsPage').then(convertModuleToRouteObject),
       },
       {
         path: 'Explore/Studies/DetailsPage',
-        element: <StudyDetailsPage />,
-        children: studyDetailsPageRoutes,
+        lazy: () =>
+          import('@/pages/StudyDetailsPage/StudyDetailsPage').then(
+            convertModuleToRouteObject,
+          ),
+        children: [
+          {
+            index: true,
+            element: (
+              <RedirectWithQuery to={STUDY_DETAILS_PAGE_DETAILS_TAB_PATH} />
+            ),
+          },
+          {
+            path: STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
+            lazy: () =>
+              import('@/pages/StudyDetailsPage/StudyDetailsTab').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: STUDY_DETAILS_PAGE_DATA_TAB_PATH,
+            lazy: () =>
+              import('@/pages/StudyDetailsPage/StudyDataTab').then(
+                convertModuleToRouteObject,
+              ),
+          },
+        ],
       },
       {
         path: 'Analysis Platforms',
