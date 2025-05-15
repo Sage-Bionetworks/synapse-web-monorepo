@@ -103,6 +103,7 @@ type QueryWrapperPlotNavOwnProps = {
     | 'additionalFiltersSessionStorageKey'
     | 'helpConfiguration'
     | 'hideCopyToClipboard'
+    | 'showSearchBarControl'
     | 'hideVisualizationsControl'
     | 'enabledExternalAnalysisPlatforms'
   > &
@@ -371,8 +372,10 @@ function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
         defaultShowPlots={props.defaultShowPlots}
         hideCopyToClipboard={props.hideCopyToClipboard}
         defaultShowSearchBar={
-          props.defaultShowSearchBox || isFullTextSearchEnabled
+          props.showSearchBarControl &&
+          (props.defaultShowSearchBox || isFullTextSearchEnabled)
         }
+        showSearchBarControl={props.showSearchBarControl}
         showLastUpdatedOn={showLastUpdatedOn}
         noContentPlaceholderType={NoContentPlaceholderType.INTERACTIVE}
         hasCustomPlots={Array.isArray(customPlots) && customPlots.length > 0}

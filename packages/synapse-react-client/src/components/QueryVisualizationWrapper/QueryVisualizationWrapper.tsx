@@ -37,6 +37,7 @@ export type QueryVisualizationWrapperProps = {
   hiddenColumns?: string[]
   defaultShowPlots?: boolean
   hideCopyToClipboard?: boolean
+  showSearchBarControl?: boolean
   defaultShowSearchBar?: boolean
   showLastUpdatedOn?: boolean
   /** Default is INTERACTIVE */
@@ -70,6 +71,7 @@ export function QueryVisualizationWrapper(
     defaultShowSearchBar = false,
     defaultShowPlots = true,
     hideCopyToClipboard = false,
+    showSearchBarControl = true,
     unitDescription = 'result',
     helpConfiguration,
     hasCustomPlots = false,
@@ -119,7 +121,10 @@ export function QueryVisualizationWrapper(
     setShowSearchBar,
     showDownloadConfirmation,
     setShowDownloadConfirmation,
-  ] = useMutuallyExclusiveState(defaultShowSearchBar, false)
+  ] = useMutuallyExclusiveState(
+    defaultShowSearchBar && showSearchBarControl,
+    false,
+  )
 
   const [
     isShowingExportToAnalysisPlatformModal,
@@ -211,6 +216,7 @@ export function QueryVisualizationWrapper(
         setIsShowingExportToAnalysisPlatformModal,
       showFacetFilter: hasFacetedSelectColumn ? showFacetFilter : false,
       setShowFacetFilter,
+      showSearchBarControl,
       showSearchBar,
       setShowSearchBar,
       showDownloadConfirmation,

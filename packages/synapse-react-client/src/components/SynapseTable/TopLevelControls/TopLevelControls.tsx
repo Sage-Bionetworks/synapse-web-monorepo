@@ -109,6 +109,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     unitDescription,
     setShowDownloadConfirmation,
     showCopyToClipboard,
+    showSearchBarControl,
     setShowPlots,
     setShowSqlEditor,
     showFacetFilter,
@@ -276,12 +277,14 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               <Divider orientation="vertical" variant="middle" flexItem />
             </>
           )}
-          <ElementWithTooltip
-            tooltipText={'Show / Hide Search Bar'}
-            callbackFn={() => setShowSearchBar(value => !value)}
-            darkTheme={true}
-            icon={'search'}
-          />
+          {showSearchBarControl && (
+            <ElementWithTooltip
+              tooltipText={'Show / Hide Search Bar'}
+              callbackFn={() => setShowSearchBar(value => !value)}
+              darkTheme={true}
+              icon={'search'}
+            />
+          )}
           {showCopyToClipboard && (
             <ElementWithTooltip
               tooltipText={
