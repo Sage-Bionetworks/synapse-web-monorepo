@@ -179,7 +179,7 @@ export function SchemaDrivenAnnotationEditor(
   const { data: schemaForEntityType, isLoading: isLoadingEntityTypeSchema } =
     useGetSchema(concreteTypeSchemaId ?? '', {
       enabled: !!concreteTypeSchemaId,
-      throwOnError: true,
+      throwOnError: false,
     })
 
   const entitySchemaBaseProperties: JSONSchema7['properties'] = useMemo(
