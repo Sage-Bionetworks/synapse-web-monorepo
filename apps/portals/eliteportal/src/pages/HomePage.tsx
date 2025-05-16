@@ -32,8 +32,9 @@ import {
   whatWeDoSql,
 } from '../config/resources'
 import { useNavigate } from 'react-router'
+import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 
-export default function HomePage() {
+function HomePage() {
   const theme = useTheme()
   const navigate = useNavigate()
 
@@ -132,7 +133,7 @@ export default function HomePage() {
     </span>
   )
   return (
-    <>
+    <HomePageThemeProvider>
       <PortalHomePageHeader
         backgroundCss={`linear-gradient(90deg, #024472 45.5%, rgba(2, 68, 114, 0.00) 100%)`}
         title={title}
@@ -353,6 +354,8 @@ export default function HomePage() {
       <div className={'home-bg-dark'}>
         <ElNewsletterSection />
       </div>
-    </>
+    </HomePageThemeProvider>
   )
 }
+
+export default HomePage

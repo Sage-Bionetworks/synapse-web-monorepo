@@ -19,7 +19,7 @@ import { projectCardConfiguration } from '../config/synapseConfigs/projects'
 import { publicationCardProps } from '../config/synapseConfigs/publications'
 import { studyCardConfiguration } from '../config/synapseConfigs/studies'
 
-export default function ProjectDetailsPage() {
+function ProjectDetailsPage() {
   const { shortName } = useGetPortalComponentSearchParams()
 
   return (
@@ -110,3 +110,5 @@ export default function ProjectDetailsPage() {
     </>
   )
 }
+
+export default ProjectDetailsPage

@@ -4,10 +4,10 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import {
   SynapseClient,
-  SynapseConstants,
   SynapseUtilityFunctions,
   CustomControlCallbackData,
 } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 const getAllIndividualIDs = async (event: CustomControlCallbackData) => {
   const selectedFacets = event.request?.query.selectedFacets
