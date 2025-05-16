@@ -6,6 +6,7 @@ export const TABLE_IDS = {
   DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
   DataTopic: { name: 'DataTopic', id: 'syn63096835' },
+  GCDataSet: { name: 'GCDataSet', id: 'syn66527597' },
   Organization: { name: 'Organization', id: 'syn63096836' },
   UseCase: { name: 'UseCase', id: 'syn63096837' },
 }
@@ -25,7 +26,7 @@ export const CHALLENGES_TABLE_COLUMN_NAMES = {
 export const dataSql = `
     SELECT
         concat('[', acronym, '](/Explore/Standard/DetailsPage?id=', id, ')') as acronym,
-            name, category, collections, ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration FROM ${TABLE_IDS.DST_denormalized.id}
+            name, category, topic as topics, collections, ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration FROM ${TABLE_IDS.DST_denormalized.id}
 `
 // removed topic column above to address @jay-hodgson's comment
 //  https://github.com/Sage-Bionetworks/synapse-web-monorepo/pull/1612#discussion_r2029425831
@@ -34,7 +35,7 @@ export const dataSql = `
 
 // concat('/Explore/Standard/DetailsPage?id=', id) as link, acronym,
 
-// for details page:
+// for standards details page:
 export const standardsDetailsPageSQL = `
     SELECT  id,
             acronym,
@@ -53,3 +54,6 @@ export const standardsDetailsPageSQL = `
     FROM ${TABLE_IDS.DST_denormalized.id}
 `
 // COALESCE(responsibleOrgName, 'No responsible org listed') as SDO,
+
+// for DataSetExplore
+export const dataSetExploreSql = `SELECT * FROM ${TABLE_IDS.GCDataSet.id}`
