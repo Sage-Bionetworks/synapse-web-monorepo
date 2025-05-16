@@ -57,6 +57,15 @@ const StandardsHeader = (props: StandardsHeaderProps) => {
         >
           Explore research Standards
         </Button>
+        <Button
+          variant="outlined"
+          size="large"
+          color="lightPrimary"
+          href="/DataSetExplore"
+          sx={{ mt: '20px', marginLeft: '10px' }}
+        >
+          Explore data sets
+        </Button>
       </Box>
     </>
   )
