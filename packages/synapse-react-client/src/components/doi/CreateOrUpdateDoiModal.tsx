@@ -187,6 +187,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
   } = useCreateOrUpdateDOI({
     onSuccess: () => {
       displayToast('The DOI was successfully updated.', 'success')
+      onClose()
     },
   })
 
