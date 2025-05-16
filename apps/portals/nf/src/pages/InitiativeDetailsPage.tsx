@@ -12,7 +12,7 @@ import { columnAliases } from '../config/synapseConfigs/commonProps'
 import { initiativeCardConfiguration } from '../config/synapseConfigs/initiatives'
 import { studyCardConfiguration } from '../config/synapseConfigs/studies'
 
-export default function InitiativeDetailsPage() {
+function InitiativeDetailsPage() {
   const { initiative } = useGetPortalComponentSearchParams()
 
   if (!initiative) {
@@ -54,3 +54,5 @@ export default function InitiativeDetailsPage() {
     </>
   )
 }
+
+export default InitiativeDetailsPage
