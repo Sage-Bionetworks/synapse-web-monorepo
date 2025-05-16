@@ -1,0 +1,1 @@
+import{g as e,b as s}from"./createTheme-D3A4yulZ.js";function l(t){return s("MuiListItemButton",t)}const a=e("MuiListItemButton",["root","focusVisible","dense","alignItemsFlexStart","disabled","divider","gutters","selected"]);export{l as g,a as l};

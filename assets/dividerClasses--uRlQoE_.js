@@ -1,0 +1,1 @@
+import{g as t,b as e}from"./createTheme-D3A4yulZ.js";function l(i){return e("MuiDivider",i)}const s=t("MuiDivider",["root","absolute","fullWidth","inset","middle","flexItem","light","vertical","withChildren","withChildrenVertical","textAlignRight","textAlignLeft","wrapper","wrapperVertical"]);export{s as d,l as g};
