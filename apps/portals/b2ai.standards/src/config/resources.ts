@@ -26,7 +26,10 @@ export const CHALLENGES_TABLE_COLUMN_NAMES = {
 export const dataSql = `
     SELECT
         concat('[', acronym, '](/Explore/Standard/DetailsPage?id=', id, ')') as acronym,
-            name, category, topic as topics, collections, ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration FROM ${TABLE_IDS.DST_denormalized.id}
+            name, category, collections, topic as topics,
+            ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration, "usedInBridge2AI",
+            hasAIApplication
+            FROM ${TABLE_IDS.DST_denormalized.id}
 `
 // removed topic column above to address @jay-hodgson's comment
 //  https://github.com/Sage-Bionetworks/synapse-web-monorepo/pull/1612#discussion_r2029425831
