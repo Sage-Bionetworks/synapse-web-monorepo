@@ -218,6 +218,7 @@ describe('CreateOrUpdateDoiModal', () => {
       'The DOI was successfully updated.',
       'success',
     )
+    expect(defaultProps.onClose).toHaveBeenCalled()
   })
 
   it('renders versions in the list, allows selecting a version, and includes it in the request', async () => {

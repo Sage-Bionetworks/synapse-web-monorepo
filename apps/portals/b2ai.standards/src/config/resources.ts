@@ -1,3 +1,5 @@
+import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2'
+
 export const TABLE_IDS = {
   Challenges: { name: 'Challenges', id: 'syn65913973' },
   CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
@@ -57,6 +59,11 @@ export const standardsDetailsPageSQL = `
     FROM ${TABLE_IDS.DST_denormalized.id}
 `
 // COALESCE(responsibleOrgName, 'No responsible org listed') as SDO,
+
+export const dataFtsConfig: FTSConfig = {
+  textMatchesMode: 'BOOLEAN',
+  distance: 50,
+}
 
 // for DataSetExplore
 export const dataSetExploreSql = `SELECT * FROM ${TABLE_IDS.GCDataSet.id}`
