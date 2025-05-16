@@ -13,17 +13,21 @@ import {
   studyCardConfiguration,
   studyColumnAliases,
 } from '../../config/synapseConfigs/studies'
+import {
+  STUDY_DETAILS_PAGE_DATA_TAB_PATH,
+  STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
+} from '@/config/routeConstants'
 
 export const studyDetailsPageTabConfig: DetailsPageTabConfig[] = [
   {
     title: 'Study Details',
-    path: 'StudyDetails',
+    path: STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
     iconName: 'study',
     tooltip: 'Description, methods, acknowledgements and related studies',
   },
   {
     title: 'Study Data',
-    path: 'StudyData',
+    path: STUDY_DETAILS_PAGE_DATA_TAB_PATH,
     iconName: 'database',
     tooltip: 'All of the Data generated within this study',
     iconClassName: 'tab-database',
