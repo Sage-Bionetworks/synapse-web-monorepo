@@ -1,17 +1,20 @@
 import { hackathonDetailsPageRoutesConfig } from '@/pages/HackathonDetailsPage/HackathonDetailsPage'
 import { searchPageChildRoutes } from '@/pages/NFSearchPage'
 import { organizationsDetailsPageRoute } from '@/pages/OrganizationDetailsPage/OrganizationDetailsPage'
-import { toolDetailsPageRoutesConfig } from '@/pages/ToolDetailsPage/ToolDetailsPage'
-import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
-import { sharePageLinkExplorePageButtonProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 import { Navigate, RouteObject } from 'react-router'
-import { SharePageLinkButton } from 'synapse-react-client'
 import HomePage from '../pages/HomePage'
-import { studyDetailsPageRoute } from '../pages/StudyDetailsPage/StudyDetailsPage'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
-import { l } from 'node_modules/react-router/dist/development/fog-of-war-D2zsXvum.mjs'
+import {
+  STUDY_DETAILS_PAGE_ADDITIONAL_FILES_TAB_PATH,
+  STUDY_DETAILS_PAGE_DATASETS_TAB_PATH,
+  STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
+  STUDY_DETAILS_PAGE_FILES_TAB_PATH,
+  TOOLS_DETAILS_PAGE_DATA_TAB_PATH,
+  TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH,
+  TOOLS_DETAILS_PAGE_OBSERVATIONS_TAB_PATH,
+} from './routeConstants'
 
 const routes: RouteObject[] = [
   {
@@ -122,20 +125,97 @@ const routes: RouteObject[] = [
             convertModuleToRouteObject,
           ),
       },
-      studyDetailsPageRoute,
       {
         path: 'Explore/Datasets/DetailsPage',
         lazy: () =>
           import('@/pages/DatasetDetailsPage').then(convertModuleToRouteObject),
       },
-      toolDetailsPageRoutesConfig,
+      {
+        path: 'Explore/Studies/DetailsPage',
+        lazy: () =>
+          import('@/pages/StudyDetailsPage/StudyDetailsPage').then(
+            convertModuleToRouteObject,
+          ),
+        children: [
+          {
+            index: true,
+            element: (
+              <RedirectWithQuery to={STUDY_DETAILS_PAGE_DETAILS_TAB_PATH} />
+            ),
+          },
+          {
+            path: STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
+            lazy: () =>
+              import('@/pages/StudyDetailsPage/StudyDetailsTab').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: STUDY_DETAILS_PAGE_DATASETS_TAB_PATH,
+            lazy: () =>
+              import('@/pages/StudyDetailsPage/StudyDatasetsTab').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: STUDY_DETAILS_PAGE_FILES_TAB_PATH,
+            lazy: () =>
+              import('@/pages/StudyDetailsPage/StudyFilesTab').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: STUDY_DETAILS_PAGE_ADDITIONAL_FILES_TAB_PATH,
+            lazy: () =>
+              import('@/pages/StudyDetailsPage/StudyAdditionalFilesTab').then(
+                convertModuleToRouteObject,
+              ),
+          },
+        ],
+      },
+      {
+        path: 'Explore/Tools/DetailsPage',
+        lazy: () =>
+          import('@/pages/ToolDetailsPage/ToolDetailsPage').then(
+            convertModuleToRouteObject,
+          ),
+        children: [
+          {
+            index: true,
+            element: (
+              <RedirectWithQuery to={TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH} />
+            ),
+          },
+          {
+            path: TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH,
+            lazy: () =>
+              import('@/pages/ToolDetailsPage/ToolDetailsPageDetailsTab').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: TOOLS_DETAILS_PAGE_OBSERVATIONS_TAB_PATH,
+            lazy: () =>
+              import(
+                '@/pages/ToolDetailsPage/ToolDetailsPageObservationsTab'
+              ).then(convertModuleToRouteObject),
+          },
+          {
+            path: TOOLS_DETAILS_PAGE_DATA_TAB_PATH,
+            lazy: () =>
+              import('@/pages/ToolDetailsPage/ToolDetailsPageDataTab').then(
+                convertModuleToRouteObject,
+              ),
+          },
+        ],
+      },
       hackathonDetailsPageRoutesConfig,
+      organizationsDetailsPageRoute,
       {
         // PORTALS-2277 - Renamed "Hackathon Projects" to "Hackathon"
         path: 'Explore/Hackathon Projects',
         element: <RedirectWithQuery to="/Explore/Hackathon" />,
       },
-      organizationsDetailsPageRoute,
     ],
   },
 ]
