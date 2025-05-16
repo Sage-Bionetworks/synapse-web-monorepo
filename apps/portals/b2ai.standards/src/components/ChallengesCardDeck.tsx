@@ -1,10 +1,9 @@
 import {
+  TABLE_IDS,
   CHALLENGES_TABLE_COLUMN_NAMES,
-  challengesTableId,
   dataSql,
   DST_TABLE_COLUMN_NAMES,
   ORG_TABLE_COLUMN_NAMES,
-  organizationTableId,
 } from '@/config/resources'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { CardDeck } from 'synapse-react-client/components/CardDeck/CardDeck'
@@ -82,7 +81,7 @@ export function ChallengesCardDeck() {
     error: challengesError,
     isLoading: isLoadingChallengesTableQuery,
   } = useTableFetch({
-    entityId: challengesTableId,
+    entityId: TABLE_IDS.Challenges.id,
     columns: [
       CHALLENGES_TABLE_COLUMN_NAMES.ORG_ID,
       CHALLENGES_TABLE_COLUMN_NAMES.IMG_HANDLE_ID,
@@ -93,7 +92,7 @@ export function ChallengesCardDeck() {
     data: challengesEntity,
     error: challengesEntityError,
     isLoading: isLoadingChallengesEntity,
-  } = useGetEntity(challengesTableId)
+  } = useGetEntity(TABLE_IDS.Challenges.id)
 
   const gcOrgIds = challengesData
     .map(c => c[CHALLENGES_TABLE_COLUMN_NAMES.ORG_ID])
@@ -110,11 +109,11 @@ export function ChallengesCardDeck() {
     error: gcOrgError,
     isLoading: isLoadingOrgsTableQuery,
   } = useTableFetch({
-    entityId: organizationTableId,
+    entityId: TABLE_IDS.Organization.id,
     columns: orgCols,
-    sql: `SELECT ${orgCols.join(
-      ', ',
-    )} FROM ${organizationTableId} WHERE id IN (${gcOrgIds})`,
+    sql: `SELECT ${orgCols.join(', ')} FROM ${
+      TABLE_IDS.Organization.id
+    } WHERE id IN (${gcOrgIds})`,
     shouldRun: !!challengesData?.length,
   })
 

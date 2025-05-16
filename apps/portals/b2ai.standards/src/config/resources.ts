@@ -1,9 +1,15 @@
-const DST_TABLE_ID = 'syn66330015' // points to DST_denormalized_current.
-// To change DST_denormalized version, change it in that materialized view definition.
-
-const STANDARDS_CHALLENGE_TABLE_ID = 'syn65913973'
-const DATASET_TABLE_ID = 'syn66330217'
-const ORGANIZATION_TABLE_ID = 'syn63096836'
+export const TABLE_IDS = {
+  Challenges: { name: 'Challenges', id: 'syn65913973' },
+  CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
+  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531' },
+  DataSet: { name: 'DataSet', id: 'syn66330217' },
+  DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
+  DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
+  DataTopic: { name: 'DataTopic', id: 'syn63096835' },
+  GCDataSet: { name: 'GCDataSet', id: 'syn66527597' },
+  Organization: { name: 'Organization', id: 'syn63096836' },
+  UseCase: { name: 'UseCase', id: 'syn63096837' },
+}
 
 export const DST_TABLE_COLUMN_NAMES = { RELEVANT_ORG_NAMES: 'relevantOrgNames' }
 export const ORG_TABLE_COLUMN_NAMES = {
@@ -15,17 +21,12 @@ export const CHALLENGES_TABLE_COLUMN_NAMES = {
   ORG_ID: 'organizationId',
   IMG_HANDLE_ID: 'headerImage',
 }
-// can replace with specific version if wanted
-
-export const challengesTableId = STANDARDS_CHALLENGE_TABLE_ID
-export const dataSetTableId = DATASET_TABLE_ID
-export const organizationTableId = ORGANIZATION_TABLE_ID
 
 // for the Explore page table:
 export const dataSql = `
     SELECT
         concat('[', acronym, '](/Explore/Standard/DetailsPage?id=', id, ')') as acronym,
-            name, category, collections, ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration FROM ${DST_TABLE_ID}
+            name, category, topic as topics, collections, ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration FROM ${TABLE_IDS.DST_denormalized.id}
 `
 // removed topic column above to address @jay-hodgson's comment
 //  https://github.com/Sage-Bionetworks/synapse-web-monorepo/pull/1612#discussion_r2029425831
@@ -34,7 +35,7 @@ export const dataSql = `
 
 // concat('/Explore/Standard/DetailsPage?id=', id) as link, acronym,
 
-// for details page:
+// for standards details page:
 export const standardsDetailsPageSQL = `
     SELECT  id,
             acronym,
@@ -50,6 +51,9 @@ export const standardsDetailsPageSQL = `
             relatedTo,
             trainingResources,
             registration
-    FROM ${DST_TABLE_ID}
+    FROM ${TABLE_IDS.DST_denormalized.id}
 `
 // COALESCE(responsibleOrgName, 'No responsible org listed') as SDO,
+
+// for DataSetExplore
+export const dataSetExploreSql = `SELECT * FROM ${TABLE_IDS.GCDataSet.id}`
