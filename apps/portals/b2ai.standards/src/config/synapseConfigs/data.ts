@@ -9,18 +9,6 @@ import { dataSql, DST_TABLE_COLUMN_NAMES } from '../resources'
 
 const dataRgbIndex = 0
 export const dataColumnLinks: LabelLinkConfig = [
-  /* {
-    isMarkdown: false,
-    baseURL: 'Explore/Standard/DetailsPage',
-    matchColumnName: 'id',
-    URLColumnName: 'id',
-  },
-  {
-    isMarkdown: false,
-    matchColumnName: 'acronym',
-    linkColumnName: 'link',
-  },
-  */
   {
     isMarkdown: true,
     // the column whose value will be used for the markdown
