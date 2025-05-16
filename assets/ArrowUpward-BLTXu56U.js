@@ -1,0 +1,1 @@
+import{j as r}from"./jsx-runtime-3KUIpe_B.js";import{c as o}from"./createSvgIcon-50Cdg5i5.js";const p=o(r.jsx("path",{d:"m4 12 1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8z"}),"ArrowUpward");export{p as A};
