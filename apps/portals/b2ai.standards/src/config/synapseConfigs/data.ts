@@ -7,7 +7,7 @@ import {
 import columnAliases from '../columnAliases'
 import {
   dataFtsConfig,
-  dataSetExploreSql,
+  // dataSetExploreSql,
   dataSql,
   DST_TABLE_COLUMN_NAMES,
 } from '../resources'
@@ -54,6 +54,7 @@ export const dataDetailPageProps: StandaloneQueryWrapperProps = {
   sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
 }
 
+/* part of PR #1865, not ready yet
 const dataSetColumnLinks: LabelLinkConfig = [
   {
     isMarkdown: true,
@@ -72,5 +73,6 @@ export const dataSetsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     columnLinks: dataSetColumnLinks,
   },
 }
+*/
 
 export default dataQueryWrapperPlotNavProps

@@ -9,7 +9,8 @@ import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSy
 import HomePage from '../pages/HomePage'
 import {
   dataQueryWrapperPlotNavProps,
-  dataSetsQueryWrapperPlotNavProps,
+  /* part of PR #1865, not ready yet
+  dataSetsQueryWrapperPlotNavProps, */
 } from './synapseConfigs/data'
 
 const routes: RouteObject[] = [
@@ -43,23 +44,25 @@ const routes: RouteObject[] = [
         path: 'Explore/Standard/DetailsPage',
         element: <StandardsDetailsPage />,
       },
-      {
-        path: 'DataSetExplore',
-        element: (
-          <Box
-            sx={{
-              '.QueryWrapperPlotNav > *': {
-                p: '0px 20px',
-              },
-              '.QueryWrapperPlotNav > .TopLevelControls': {
-                mt: '0',
-              },
-            }}
-          >
-            <QueryWrapperPlotNav {...dataSetsQueryWrapperPlotNavProps} />
-          </Box>
-        ),
-      },
+      /* part of PR #1865, not ready yet
+    {
+      path: 'DataSetExplore',
+      element: (
+        <Box
+          sx={{
+            '.QueryWrapperPlotNav > *': {
+              p: '0px 20px',
+            },
+            '.QueryWrapperPlotNav > .TopLevelControls': {
+              mt: '0',
+            },
+          }}
+        >
+          <QueryWrapperPlotNav {...dataSetsQueryWrapperPlotNavProps} />
+        </Box>
+      ),
+    },
+    */
       {
         path: 'About',
         element: (
