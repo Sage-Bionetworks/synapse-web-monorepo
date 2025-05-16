@@ -2,8 +2,12 @@ import studyActiveHeaderSvg from '@/config/style/study-active-header.svg?url'
 import studyActiveSvg from '@/config/style/study-active.svg?url'
 import studyCompleteSvg from '@/config/style/study-complete.svg?url'
 import studyCompleteHeaderSvg from '@/config/style/study-completed-header.svg?url'
-import type { CardConfiguration, ColumnIconConfigs, QueryWrapperPlotNavProps } from 'synapse-react-client'
-import { SynapseConstants } from 'synapse-react-client'
+import type {
+  CardConfiguration,
+  ColumnIconConfigs,
+  QueryWrapperPlotNavProps,
+} from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { studiesSql } from '../resources'
 import { columnAliases } from './commonProps'
 
