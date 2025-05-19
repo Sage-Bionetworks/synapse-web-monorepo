@@ -34,7 +34,7 @@ import {
 import { useNavigate } from 'react-router'
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 
-function HomePage() {
+function HomePageInternal() {
   const theme = useTheme()
   const navigate = useNavigate()
 
@@ -133,7 +133,7 @@ function HomePage() {
     </span>
   )
   return (
-    <HomePageThemeProvider>
+    <>
       <PortalHomePageHeader
         backgroundCss={`linear-gradient(90deg, #024472 45.5%, rgba(2, 68, 114, 0.00) 100%)`}
         title={title}
@@ -354,6 +354,14 @@ function HomePage() {
       <div className={'home-bg-dark'}>
         <ElNewsletterSection />
       </div>
+    </>
+  )
+}
+
+function HomePage() {
+  return (
+    <HomePageThemeProvider>
+      <HomePageInternal />
     </HomePageThemeProvider>
   )
 }

@@ -131,7 +131,7 @@ const routes: RouteObject[] = [
       {
         path: 'Omics Profiles in Humans',
         lazy: () =>
-          import('@/pages/OmnicsProfilesInHumans').then(
+          import('@/pages/OmicsProfilesInHumans').then(
             convertModuleToRouteObject,
           ),
       },
