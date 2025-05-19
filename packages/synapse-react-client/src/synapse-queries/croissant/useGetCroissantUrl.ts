@@ -5,10 +5,19 @@ import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 /* Synapse ID of table with all Croissant data (prod only) */
 const CROISSANT_DATA_TABLE = 'syn65903895'
 
+/**
+ * Retrieves the Croissant URL for a given dataset ID and version number. Currently, we fetch the contents of a TableEntity
+ * in Synapse prod that contains the Croissant URLs for all datasets.
+ */
 export function useGetCroissantUrl(
   datasetId: number,
   datasetVersionNumber: number,
 ) {
+  /**
+   * At the time of writing, the Croissant table is small, and the number of cards that appear on a page is larger,
+   * so it is more efficient to fetch the entire table, then filter on the client-side. Consider a different approach
+   * if the table grows significantly.
+   */
   return useGetFullTableQueryResults<string | null>(
     {
       entityId: CROISSANT_DATA_TABLE,
