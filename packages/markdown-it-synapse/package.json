@@ -41,17 +41,17 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/markdown-it": "^13.0.7",
-    "@types/node": "^20.14.10",
-    "@vitest/coverage-v8": "^1.6.0",
-    "@vitest/ui": "^1.6.0",
+    "@types/markdown-it": "^13.0.9",
+    "@types/node": "^20.17.41",
+    "@vitest/coverage-v8": "^1.6.1",
+    "@vitest/ui": "^1.6.1",
     "markdown-it": "^14.1.0",
     "markdown-it-testgen": "~0.1.6",
-    "tslib": "^2.6.2",
-    "tsup": "^8.0.2",
-    "typescript": "5.5.2",
+    "tslib": "^2.8.1",
+    "tsup": "^8.4.0",
+    "typescript": "5.8.3",
     "vite-config": "workspace:*",
-    "vitest": "^1.6.0"
+    "vitest": "^1.6.1"
   },
   "directories": {
     "test": "test"

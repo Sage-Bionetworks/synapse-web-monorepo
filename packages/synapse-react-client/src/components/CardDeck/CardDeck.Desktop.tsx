@@ -1,18 +1,17 @@
+import { CardDeckCardProps } from '@/components/CardDeck/CardDeckCardProps'
 import LargeButton from '@/components/styled/LargeButton'
-import classNames from 'classnames'
-import { ImageFileHandle } from '../widgets/ImageFileHandle'
-import { CardDeckDataProps } from './CardDeck'
 import { Link } from '@mui/material'
+import classNames from 'classnames'
 
 export default function CardDeckDesktop({
   title,
   description,
   ctaButtonText,
   ctaButtonURL,
-  titleIconFileHandleAssociation,
-  headerImageFileHandleAssociation,
+  headerImage,
+  titleIcon,
   cardDeckType,
-}: CardDeckDataProps) {
+}: CardDeckCardProps) {
   return (
     <div
       className={classNames(
@@ -26,11 +25,7 @@ export default function CardDeckDesktop({
           cardDeckType && `CardDeck__Card__header__image--${cardDeckType}`,
         )}
       >
-        {headerImageFileHandleAssociation && (
-          <ImageFileHandle
-            fileHandleAssociation={headerImageFileHandleAssociation}
-          />
-        )}
+        {headerImage}
       </div>
       <div
         className={classNames(
@@ -44,11 +39,7 @@ export default function CardDeckDesktop({
             cardDeckType && `CardDeck__Card__header__icon--${cardDeckType}`,
           )}
         >
-          {titleIconFileHandleAssociation && (
-            <ImageFileHandle
-              fileHandleAssociation={titleIconFileHandleAssociation}
-            />
-          )}
+          {titleIcon}
         </div>
         <div className="CardDeck__Card__header__info">
           <span
@@ -81,7 +72,7 @@ export default function CardDeckDesktop({
             variant="outlined" // Update variant based on cardDeckType
             href={ctaButtonURL}
             sx={{
-              width: '170px',
+              maxWidth: '200px',
               fontSize: '14px',
               boxShadow: 'none',
               borderColor: 'primary.main',

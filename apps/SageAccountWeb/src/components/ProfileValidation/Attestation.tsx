@@ -1,8 +1,6 @@
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined'
 import { Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { FileUpload } from 'synapse-react-client'
-import { displayToast } from 'synapse-react-client'
 import {
   VerificationSubmission,
   UploadCallbackResp,
@@ -10,6 +8,8 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { ContinueButton } from './ContinueButton'
 import { ReturnToAppButton } from './ReturnToAppButton'
+import { FileUpload } from 'synapse-react-client/components/FileUpload/FileUpload'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 
 export type AttestationProps = {
   verificationSubmission: VerificationSubmission

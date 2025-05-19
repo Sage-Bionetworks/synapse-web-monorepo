@@ -1,3 +1,8 @@
+import { mockManagedACTAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
+import {
+  MOCK_FILE_HANDLE_ID,
+  MOCK_PREVIEW_FILE_HANDLE_ID,
+} from '@/mocks/mock_file_handle'
 import {
   AccessType,
   RestrictableObjectType,
@@ -8,11 +13,11 @@ import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 
 export const mockRejectedSubmission: Submission = {
   id: '3',
-  accessRequirementId: '9602626',
+  accessRequirementId: String(mockManagedACTAccessRequirement.id),
   accessRequirementVersion: 1,
   requestId: '1',
-  ducFileHandleId: '3997203',
-  irbFileHandleId: '3997205',
+  ducFileHandleId: String(MOCK_FILE_HANDLE_ID),
+  irbFileHandleId: String(MOCK_FILE_HANDLE_ID),
   accessorChanges: [
     {
       userId: MOCK_USER_ID.toString(),
@@ -25,7 +30,7 @@ export const mockRejectedSubmission: Submission = {
   ],
   researchProjectSnapshot: {
     id: '1',
-    accessRequirementId: '9602626',
+    accessRequirementId: String(mockManagedACTAccessRequirement.id),
     institution: 'Bage Sionetworks',
     projectLead: 'Nick G',
     intendedDataUseStatement: 'Updated IDU',
@@ -51,12 +56,15 @@ export const mockRejectedSubmission: Submission = {
 }
 export const mockSubmittedSubmission = {
   id: '1',
-  accessRequirementId: '9602626',
+  accessRequirementId: String(mockManagedACTAccessRequirement.id),
   accessRequirementVersion: 1,
   requestId: '1',
-  ducFileHandleId: '3997203',
-  irbFileHandleId: '3997205',
-  attachments: ['123456', '123457'],
+  ducFileHandleId: String(MOCK_FILE_HANDLE_ID),
+  irbFileHandleId: String(MOCK_FILE_HANDLE_ID),
+  attachments: [
+    String(MOCK_FILE_HANDLE_ID),
+    String(MOCK_PREVIEW_FILE_HANDLE_ID),
+  ],
   accessorChanges: [
     {
       userId: MOCK_USER_ID.toString(),
@@ -69,7 +77,7 @@ export const mockSubmittedSubmission = {
   ],
   researchProjectSnapshot: {
     id: '1',
-    accessRequirementId: '9602626',
+    accessRequirementId: String(mockManagedACTAccessRequirement.id),
     institution: 'Bage Sionetworks',
     projectLead: 'Nick G',
     intendedDataUseStatement:
@@ -93,12 +101,12 @@ export const mockSubmittedSubmission = {
 
 export const mockApprovedSubmission: Submission = {
   id: '2',
-  accessRequirementId: '9602626',
+  accessRequirementId: String(mockManagedACTAccessRequirement.id),
   accessRequirementVersion: 1,
   requestId: '2',
-  ducFileHandleId: '3997211',
-  irbFileHandleId: '3997213',
-  attachments: ['3997211'],
+  ducFileHandleId: String(MOCK_FILE_HANDLE_ID),
+  irbFileHandleId: String(MOCK_FILE_HANDLE_ID),
+  attachments: [String(MOCK_FILE_HANDLE_ID)],
   accessorChanges: [
     {
       userId: MOCK_USER_ID.toString(),
@@ -107,7 +115,7 @@ export const mockApprovedSubmission: Submission = {
   ],
   researchProjectSnapshot: {
     id: '2',
-    accessRequirementId: '9602626',
+    accessRequirementId: String(mockManagedACTAccessRequirement.id),
     institution: 'None',
     projectLead: 'NickACT',
     intendedDataUseStatement: 'Give me data pls',
@@ -130,12 +138,15 @@ export const mockApprovedSubmission: Submission = {
 
 export const mockDemoSubmission: Submission = {
   id: '4',
-  accessRequirementId: '9603055',
+  accessRequirementId: String(mockManagedACTAccessRequirement.id),
   accessRequirementVersion: 1,
   requestId: '1',
-  ducFileHandleId: '3997203',
-  irbFileHandleId: '3997205',
-  attachments: ['123456', '123457'],
+  ducFileHandleId: String(MOCK_FILE_HANDLE_ID),
+  irbFileHandleId: String(MOCK_FILE_HANDLE_ID),
+  attachments: [
+    String(MOCK_FILE_HANDLE_ID),
+    String(MOCK_PREVIEW_FILE_HANDLE_ID),
+  ],
   accessorChanges: [
     {
       userId: '3431185',
@@ -152,7 +163,7 @@ export const mockDemoSubmission: Submission = {
   ],
   researchProjectSnapshot: {
     id: '1',
-    accessRequirementId: '9603055',
+    accessRequirementId: String(mockManagedACTAccessRequirement.id),
     institution: 'Bage Sionetworks',
     projectLead: 'Adam H',
     intendedDataUseStatement:
@@ -174,9 +185,55 @@ export const mockDemoSubmission: Submission = {
   subjectType: RestrictableObjectType.ENTITY,
 }
 
+export const mockCancelledSubmission = {
+  id: '5',
+  accessRequirementId: String(mockManagedACTAccessRequirement.id),
+  accessRequirementVersion: 1,
+  requestId: '1',
+  ducFileHandleId: String(MOCK_FILE_HANDLE_ID),
+  irbFileHandleId: String(MOCK_FILE_HANDLE_ID),
+  attachments: [
+    String(MOCK_FILE_HANDLE_ID),
+    String(MOCK_PREVIEW_FILE_HANDLE_ID),
+  ],
+  accessorChanges: [
+    {
+      userId: MOCK_USER_ID.toString(),
+      type: AccessType.GAIN_ACCESS,
+    },
+    {
+      userId: MOCK_USER_ID_2.toString(),
+      type: AccessType.GAIN_ACCESS,
+    },
+  ],
+  researchProjectSnapshot: {
+    id: '1',
+    accessRequirementId: String(mockManagedACTAccessRequirement.id),
+    institution: 'Bage Sionetworks',
+    projectLead: 'Nick G',
+    intendedDataUseStatement:
+      'I plan to see if the data is real data, because I suspect that this is really fake data created solely for a testing environment where software engineers pretend to be the users for whom they are trying to build features.',
+    createdOn: '2022-05-10T15:49:56.292Z',
+    modifiedOn: '2022-05-10T15:49:56.292Z',
+    createdBy: MOCK_USER_ID.toString(),
+    modifiedBy: MOCK_USER_ID.toString(),
+    etag: '7ea28f9e-81cb-43be-a614-9eb1a0dabafc',
+  },
+  isRenewalSubmission: false,
+  submittedOn: '2022-05-10T15:50:19.275Z',
+  modifiedOn: '2022-05-10T15:50:19.275Z',
+  submittedBy: MOCK_USER_ID.toString(),
+  modifiedBy: MOCK_USER_ID.toString(),
+  state: SubmissionState.CANCELLED,
+  etag: '40820b64-c436-486b-8fb8-afef931fbcb3',
+  subjectId: 'syn12156790',
+  subjectType: RestrictableObjectType.ENTITY,
+} satisfies Submission
+
 export const mockSubmissions: Submission[] = [
   mockApprovedSubmission,
   mockRejectedSubmission,
   mockSubmittedSubmission,
   mockDemoSubmission,
+  mockCancelledSubmission,
 ]

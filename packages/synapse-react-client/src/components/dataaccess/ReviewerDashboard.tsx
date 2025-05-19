@@ -19,7 +19,7 @@ import OrientationBanner from '../OrientationBanner'
 import { UserHistoryDashboard } from './AccessHistoryDashboard'
 import { AccessRequirementDashboard } from './AccessRequirementDashboard'
 import { DataAccessSubmissionDashboard } from './AccessSubmissionDashboard'
-import SubmissionPage from './SubmissionPage'
+import SubmissionPage from './SubmissionPage/SubmissionPage'
 
 function LinkTab(props: { href: string; children: ReactNode; icon: IconName }) {
   const { href, children, icon } = props
@@ -153,7 +153,7 @@ function SubmissionPageRouteRenderer() {
   if (!id) {
     return <Navigate to="Submissions/" />
   }
-  return <SubmissionPage submissionId={id} />
+  return <SubmissionPage submissionId={id} isReviewer={true} />
 }
 
 export default ReviewerDashboard

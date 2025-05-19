@@ -1,7 +1,7 @@
 import { ReactComponent as SageLogo } from './assets/sage-logo.svg'
 import { ReactComponent as NCI } from './assets/nci.svg'
 import { ReactComponent as NIH } from './assets/nih.svg'
-import { SynapseConstants } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 const DevelopedBySage = () => {
   return (

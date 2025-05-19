@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react'
-import CardDeck from './CardDeck'
+import TableQueryCardDeck from './TableQueryCardDeck'
 
 const meta = {
   title: 'Home Page/CardDeck',
-  component: CardDeck,
+  component: TableQueryCardDeck,
   parameters: {
     chromatic: { viewports: [600, 1200] },
   },

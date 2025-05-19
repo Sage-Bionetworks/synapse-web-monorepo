@@ -5,6 +5,7 @@ import {
   UseMutationResult,
   UseQueryResult,
 } from '@tanstack/react-query'
+import noop from 'lodash-es/noop'
 
 export function getUseQuerySuccessMock<TData>(
   data: TData,
@@ -27,7 +28,7 @@ export function getUseQuerySuccessMock<TData>(
     isRefetching: false,
     isStale: false,
     isSuccess: true,
-    refetch: jest.fn(),
+    refetch: noop as any,
     status: 'success',
     failureReason: null,
     fetchStatus: 'idle',
@@ -37,8 +38,8 @@ export function getUseQuerySuccessMock<TData>(
   }
 }
 
-export function getUseQueryLoadingMock<TData>(): QueryObserverLoadingResult<
-  TData,
+export function getUseQueryLoadingMock(): QueryObserverLoadingResult<
+  never,
   never
 > {
   return {
@@ -59,7 +60,7 @@ export function getUseQueryLoadingMock<TData>(): QueryObserverLoadingResult<
     isRefetching: false,
     isStale: false,
     isSuccess: false,
-    refetch: jest.fn(),
+    refetch: noop as any,
     status: 'pending',
     failureReason: null,
     fetchStatus: 'fetching',
@@ -97,6 +98,38 @@ export function getUseQueryErrorMock<TError>(
     isPaused: false,
     isLoading: false,
     isPending: false,
+  }
+}
+
+/**
+ * Mock for useQuery with status 'idle', e.g. when the query is disabled.
+ */
+export function getUseQueryIdleMock(): UseQueryResult<never, never> {
+  return {
+    data: undefined,
+    dataUpdatedAt: 0,
+    error: null,
+    errorUpdateCount: 1,
+    errorUpdatedAt: Date.now(),
+    failureCount: 1,
+    isError: false,
+    isFetched: false,
+    isFetchedAfterMount: false,
+    isFetching: false,
+    isLoadingError: false,
+    isPlaceholderData: false,
+    isRefetchError: false,
+    isRefetching: false,
+    isStale: false,
+    isSuccess: false,
+    refetch: noop as any,
+    status: 'pending',
+    failureReason: null,
+    fetchStatus: 'idle',
+    isInitialLoading: false,
+    isPaused: true,
+    isLoading: false,
+    isPending: true,
   }
 }
 

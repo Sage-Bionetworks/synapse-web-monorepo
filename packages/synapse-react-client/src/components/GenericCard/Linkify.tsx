@@ -1,6 +1,6 @@
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { Link } from '@mui/material'
-import { TargetEnum } from '../CardContainerLogic'
+import { TargetEnum } from '@/utils/html/TargetEnum'
 
 export type LinkifyProps = {
   text?: string
@@ -12,8 +12,12 @@ export type LinkifyRule = {
   onMatch: (value: string) => string
 }
 
+// PORTALS-3600:  No longer match synapse IDs that are not preceded by a space or the start of the string
+// (?:(?<=\s)|^): non-capturing group that matches either:
+// (?<=\s) — a positive lookbehind for a whitespace character (ensures there's a space before), or
+// ^ — the start of the string
 const synapseIdRule: LinkifyRule = {
-  regex: /(syn\d+(?:\.\d+)?)/,
+  regex: /((?:(?<=\s)|^)syn\d+)/,
   onMatch: value => `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${value}`,
 }
 
@@ -83,12 +87,19 @@ const cbioPortalRule: LinkifyRule = {
     return `https://identifiers.org/${value}`
   },
 }
+const rridRule: LinkifyRule = {
+  regex: /(rrid:[a-zA-Z]+.+)/,
+  onMatch: value => {
+    return `https://bioregistry.io/${value}`
+  },
+}
 
 const rules: LinkifyRule[] = [
   httpRule,
   httpsRule,
   ftpRule,
   synapseIdRule,
+  rridRule,
   pubMedRule,
   sciCrunchResolverRule,
   mutationIdRule,
@@ -98,7 +109,8 @@ const rules: LinkifyRule[] = [
   arXivRule,
   cbioPortalRule,
 ]
-const splitter = new RegExp(rules.map(r => r.regex.source).join('|'), 'g')
+const allRegexes = rules.map(r => r.regex.source).join('|')
+const splitter = new RegExp(allRegexes, 'g')
 
 function Linkify({ text, className }: LinkifyProps) {
   if (text == null) {

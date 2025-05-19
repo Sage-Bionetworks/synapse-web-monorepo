@@ -13,15 +13,21 @@ import {
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import RedirectToURL from '@sage-bionetworks/synapse-portal-framework/components/RedirectToURL'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { CardContainerLogic } from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic'
 
-export default function ProgramDetailsPage() {
+function ProgramDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
 
   return (
     <>
+      {/* PORTALS-2836: redirect /Explore/Programs/DetailsPage?Program=ELITE to the ELITE portal */}
+      <RedirectToURL
+        toURL="https://eliteportal.synapse.org/"
+        search="Program=ELITE"
+      />
       <CardContainerLogic
         sql={programsSql}
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
@@ -76,3 +82,5 @@ export default function ProgramDetailsPage() {
     </>
   )
 }
+
+export default ProgramDetailsPage

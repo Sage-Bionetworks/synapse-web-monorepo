@@ -1,4 +1,6 @@
 import WideButton from '@/components/styled/WideButton'
+import { ButtonProps } from '@mui/material'
+import { Link as RouterLink, useInRouterContext } from 'react-router'
 
 export type ButtonLinkWidgetParams = {
   align?: string
@@ -22,12 +24,39 @@ export default function MarkdownButton(
   }
   const buttonIsCenterAligned = alignLowerCase === 'center'
   const buttonColor = highlight ? 'secondary' : 'neutral'
+  const isExternalLink =
+    widgetParamsMapped.url?.startsWith('http://') ||
+    widgetParamsMapped.url?.startsWith('https://')
+  const inRouterContext = useInRouterContext()
+
+  let linkProps: Partial<ButtonProps> & { target?: string; to?: string } = {}
+
+  if (isExternalLink) {
+    linkProps = {
+      href: widgetParamsMapped.url,
+      target: '_blank',
+      rel: 'noopener noreferrer',
+      component: 'a',
+    }
+  } else if (inRouterContext) {
+    // For internal links, if we are in a react-router context, we want to use the RouterLink
+    linkProps = {
+      to: widgetParamsMapped.url,
+      component: RouterLink,
+    }
+  } else {
+    linkProps = {
+      href: widgetParamsMapped.url,
+      component: 'a',
+    }
+  }
+
   const button = (
     <WideButton
-      href={widgetParamsMapped.url}
       className={buttonClasses}
       variant="contained"
       color={buttonColor}
+      {...linkProps}
       sx={{
         '&:hover': {
           backgroundColor: highlight ? undefined : 'secondary.main',

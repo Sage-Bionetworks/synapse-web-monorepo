@@ -7,9 +7,9 @@ import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-conf
 import { RouteObject } from 'react-router'
 import {
   CardContainerLogic,
-  Markdown,
   StandaloneQueryWrapper,
 } from 'synapse-react-client'
+import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import GenieHomePage from '../pages/GenieHomePage'
 import routeControlWrapperProps from './explorePageRoutes'
 import { dataReleasesSql } from './resources'

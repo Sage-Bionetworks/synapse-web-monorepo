@@ -11,18 +11,21 @@ import { useGetCurrentUserProfile } from '@/synapse-queries/user/useUserBundle'
 import {
   getUseMutationMock,
   getUseMutationPendingMock,
+  getUseQueryIdleMock,
   getUseQuerySuccessMock,
 } from '@/testutils/ReactQueryMockUtils'
-import { DoiRequest, V2Doi } from '@sage-bionetworks/synapse-client'
+import { DoiObjectType, DoiRequest } from '@sage-bionetworks/synapse-client'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CreateOrUpdateDoiModal } from './CreateOrUpdateDoiModal'
 import { displayToast } from '../ToastMessage'
+import { useGetPortal } from '@/synapse-queries/portal/usePortal'
 
 jest.mock('@/synapse-queries/doi/useDOI')
 jest.mock('@/synapse-queries/entity/useEntity')
 jest.mock('@/synapse-queries/user/useUserBundle')
 jest.mock('@/components/ToastMessage/ToastMessage')
+jest.mock('@/synapse-queries/portal/usePortal')
 
 const mockUseCreateOrUpdateDOI = jest
   .mocked(useCreateOrUpdateDOI)
@@ -33,6 +36,7 @@ const mockUseGetEntity = jest.mocked(useGetEntity).mockReturnValue(
     concreteType: 'org.sagebionetworks.repo.model.FileEntity',
   }),
 )
+
 const mockUseGetDOI = jest
   .mocked(useGetDOI)
   .mockReturnValue(getUseQuerySuccessMock(null))
@@ -42,13 +46,17 @@ const mockUseGetVersions = jest
 const mockUseGetCurrentUserProfile = jest
   .mocked(useGetCurrentUserProfile)
   .mockReturnValue(getUseQuerySuccessMock(mockUserProfileData))
+const mockUseGetPortal = jest
+  .mocked(useGetPortal)
+  .mockReturnValue(getUseQueryIdleMock())
+
 const mockDisplayToast = jest.mocked(displayToast)
 
 describe('CreateOrUpdateDoiModal', () => {
   const defaultProps = {
     open: true,
     onClose: jest.fn(),
-    objectType: 'ENTITY' as V2Doi['objectType'],
+    objectType: DoiObjectType.ENTITY,
     objectId: 'syn123',
     defaultVersionNumber: undefined,
   }
@@ -62,6 +70,9 @@ describe('CreateOrUpdateDoiModal', () => {
         'Minting a DOI allows you to credit contributors and makes it easy to cite your work.',
       ),
     ).toBeInTheDocument()
+
+    // Verify publisher field is not visible when portalId is not provided
+    expect(screen.queryByLabelText('Publisher')).not.toBeInTheDocument()
   })
 
   it('calls onClose when the Cancel button is clicked', async () => {
@@ -207,6 +218,7 @@ describe('CreateOrUpdateDoiModal', () => {
       'The DOI was successfully updated.',
       'success',
     )
+    expect(defaultProps.onClose).toHaveBeenCalled()
   })
 
   it('renders versions in the list, allows selecting a version, and includes it in the request', async () => {
@@ -305,5 +317,18 @@ describe('CreateOrUpdateDoiModal', () => {
     await waitFor(() => {
       expect(mockMutate).toHaveBeenCalledWith(expectedDoiRequest)
     })
+  })
+
+  it('Displays the Publisher field if the DOI would belong to a portal', async () => {
+    const mockPortalName = 'Test Portal'
+    mockUseGetPortal.mockReturnValue(
+      getUseQuerySuccessMock({ id: '123', name: mockPortalName }),
+    )
+
+    render(<CreateOrUpdateDoiModal {...defaultProps} portalId="123" />)
+
+    const publisherField = await screen.findByLabelText('Publisher')
+    expect(publisherField).toHaveValue(mockPortalName)
+    expect(publisherField).toBeDisabled()
   })
 })

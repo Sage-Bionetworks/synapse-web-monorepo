@@ -20,7 +20,8 @@ import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata
 import { usePrefetchTableRows } from './usePrefetchTableData'
 
 export const TablePagination = () => {
-  const { goToPage, pageSize, setPageSize, currentPage } = useQueryContext()
+  const { goToPage, pageSize, setPageSize, currentPage, currentQueryRequest } =
+    useQueryContext()
 
   const prefetchPage = usePrefetchTableRows()
 
@@ -28,9 +29,14 @@ export const TablePagination = () => {
     data: { queryCount, maxRowsPerPage },
   } = useSuspenseGetQueryMetadata()
 
+  const currentLimit = currentQueryRequest.query.limit
   const maxPageSize = maxRowsPerPage ?? pageSize
 
   const pageSizeOptions = [10, 25, 100, 500]
+  if (currentLimit && !pageSizeOptions.includes(currentLimit)) {
+    pageSizeOptions.push(currentLimit)
+    pageSizeOptions.sort((a, b) => a - b)
+  }
   const pageSizeOptionsBasedOnData = pageSizeOptions.filter(
     value => value < maxPageSize,
   )

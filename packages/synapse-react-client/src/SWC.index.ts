@@ -5,6 +5,7 @@
  * If you wish to export a component or other object to be used by SynapseWebClient, you should add it to this file.
  */
 
+import UserAccessRequestHistoryPlace from '@/components/dataaccess/UserAccessRequestHistory/UserAccessRequestHistoryPlace'
 import { EntityUploadModal } from './components/EntityUpload/EntityUploadModal'
 import { SkeletonButton } from './components/Skeleton/SkeletonButton'
 import { AccountLevelBadges } from './components/AccountLevelBadges/AccountLevelBadges'
@@ -209,6 +210,7 @@ const SynapseComponents = {
   ProjectDataAvailability,
   EntityUploadModal,
   CreateOrUpdateDoiModal,
+  UserAccessRequestHistoryPlace,
 }
 
 const Analytics = {

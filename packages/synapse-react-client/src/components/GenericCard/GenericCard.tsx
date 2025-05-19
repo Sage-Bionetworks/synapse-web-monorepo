@@ -2,14 +2,14 @@ import { GenericCardTitle } from '@/components/GenericCard/GenericCardTitle'
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
 import { Box, Link, Stack } from '@mui/material'
 import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
-import React, { CSSProperties } from 'react'
+import React, { CSSProperties, forwardRef } from 'react'
 import { ColumnIconConfigs, DescriptionConfig } from '../CardContainerLogic'
 import HeaderCard, { HeaderCardVariant } from '../HeaderCard'
 import { CardFooter } from '../row_renderers/utils'
 import { FileHandleLink } from '../widgets/FileHandleLink'
 import { CollapsibleDescription } from './CollapsibleDescription'
 
-type GenericCardProps = {
+export type GenericCardProps = {
   /** String representing the 'type' of object. This is displayed as a label on the card. */
   type: string
   /** The title displayed on the card. */
@@ -77,7 +77,10 @@ const EMPTY_CARD_LABEL_ARRAY: CardLabel[] = []
 /**
  * Generic portal card UI component with a predefined layout
  */
-export function GenericCard(props: GenericCardProps) {
+export const GenericCard = forwardRef(function GenericCard(
+  props: GenericCardProps,
+  ref: React.Ref<HTMLDivElement>,
+) {
   const {
     icon,
     type,
@@ -113,6 +116,7 @@ export function GenericCard(props: GenericCardProps) {
   if (isHeader) {
     return (
       <HeaderCard
+        ref={ref}
         headerCardVariant={headerCardVariant}
         descriptionConfig={descriptionConfig}
         title={title}
@@ -123,15 +127,16 @@ export function GenericCard(props: GenericCardProps) {
         values={labels}
         href={titleLinkConfiguration?.href}
         target={titleLinkConfiguration?.target}
+        ctaLinkConfig={ctaLinkConfig}
         isAlignToLeftNav={true}
         secondaryLabelLimit={secondaryLabelLimit}
+        cardTopContent={cardTopContent}
       />
     )
   }
 
   return (
-    <div style={style} className={'SRC-portalCard'}>
-      {cardTopContent}
+    <div style={style} ref={ref} className={'SRC-portalCard'}>
       <div className={'SRC-portalCardMain'}>
         {icon}
         <div className="SRC-cardContent">
@@ -209,10 +214,11 @@ export function GenericCard(props: GenericCardProps) {
           values={labels}
           columnIconOptions={columnIconOptions}
           className={useStylesForDisplayedImage ? undefined : 'hasIcon'}
+          cardTopContent={cardTopContent}
         />
       )}
     </div>
   )
-}
+})
 
 export default GenericCard

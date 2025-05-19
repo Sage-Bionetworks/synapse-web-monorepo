@@ -1,12 +1,16 @@
 import ErrorPage, { SynapseErrorType } from './error/ErrorPage'
 import NoContentAvailable from './SynapseTable/NoContentAvailable'
 
+/**
+ * NOTE: Avoid adding new components to this file -- import it directly instead of through index.ts
+ * See https://tkdodo.eu/blog/please-stop-using-barrel-files
+ */
+
 export * from './AccessTokenPage'
 export * from './AccountLevelBadges'
 export * from './Authentication'
 export * from './CardContainer'
 export * from './CardContainerLogic'
-export * from './CardDeck'
 export * from './CardGridWithLinks'
 export * from './RowDataTable'
 export * from './CertificationQuiz'
@@ -44,7 +48,6 @@ export * from './Icon'
 export * from './IconSvg'
 export * from './Markdown/MarkdownCollapse'
 export * from './Markdown/MarkdownEditor'
-export * from './Markdown/MarkdownSynapse'
 export * from './Markdown/MarkdownGithub'
 export * from './ModalDownload'
 export * from './OAuthClientManagement'

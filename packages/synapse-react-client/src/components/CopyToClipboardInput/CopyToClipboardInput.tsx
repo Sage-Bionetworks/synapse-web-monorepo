@@ -2,6 +2,7 @@ import { Box, IconButton, InputAdornment, TextField } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { createRef, RefObject, SyntheticEvent, useState } from 'react'
 import { ToastMessage } from '../ToastMessage/ToastMessage'
+import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 export type CopyToClipboardInputProps = {
   value: string
@@ -26,9 +27,7 @@ export function CopyToClipboardInput({
     (ref: RefObject<HTMLElement>, value: string) => (event: SyntheticEvent) => {
       event.preventDefault()
 
-      // use the Clipboard API
-      // https://caniuse.com/mdn-api_clipboard_writetext
-      navigator.clipboard.writeText(value).then(() => {
+      copyStringToClipboard(value).then(() => {
         // show modal and hide after 4 seconds, the timing is per Material Design
         setShowModal(true)
         // hide after 4 seconds

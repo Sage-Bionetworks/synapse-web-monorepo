@@ -12,6 +12,8 @@ import {
 import {
   DiscussionSearchRequest,
   EntityLookupRequest,
+  GetRepoV1DoiAssociationRequest,
+  GetRepoV1DoiRequest,
   type UserSubmissionSearchRequest,
 } from '@sage-bionetworks/synapse-client'
 import { OIDCAuthorizationRequest } from '@sage-bionetworks/synapse-client/generated/models/OIDCAuthorizationRequest'
@@ -193,6 +195,7 @@ const downloadListQueryKeys = {
 const ACCESS_REQUIREMENT_QUERY_KEY = 'accessRequirement'
 const ROOT_WIKI_PAGE_KEY_QUERY_KEY = 'rootWikiPageKey'
 const WIKI_PAGE_QUERY_KEY = 'wikiPage'
+const DATA_ACCESS_SUBMISSION_QUERY_KEY = 'dataAccessSubmission'
 
 /**
  * Returns a react-query Query Key.
@@ -447,6 +450,10 @@ export class KeyFactory {
     return this.getKey('accessApprovalSearch', params)
   }
 
+  public getUserAccessApprovalQueryKey(submissionId: string) {
+    return this.getKey('accessApproval', submissionId)
+  }
+
   public getAccessRequirementQueryKey(id?: string) {
     return this.getKey(ACCESS_REQUIREMENT_QUERY_KEY, id)
   }
@@ -526,18 +533,33 @@ export class KeyFactory {
     )
   }
 
-  public getDataAccessSubmissionQueryKey(id?: string) {
-    return this.getKey('dataAccessSubmission', id)
+  // Returns key that can be used to invalidate all data access submission queries
+  public getDataAccessSubmissionQueryKey() {
+    return this.getKey(DATA_ACCESS_SUBMISSION_QUERY_KEY)
+  }
+
+  public getDataAccessSubmissionByIdQueryKey(id: string) {
+    return this.getKey(DATA_ACCESS_SUBMISSION_QUERY_KEY, 'byId', id)
   }
 
   public searchDataAccessSubmissionQueryKey(params?: SubmissionSearchRequest) {
-    return this.getKey('accessSubmissionSearch', 'reviewer', params)
+    return this.getKey(
+      DATA_ACCESS_SUBMISSION_QUERY_KEY,
+      'search',
+      'reviewer',
+      params,
+    )
   }
 
   public searchDataAccessSubmissionUserRequestsQueryKey(
     params?: UserSubmissionSearchRequest,
   ) {
-    return this.getKey('accessSubmissionSearch', 'user', params)
+    return this.getKey(
+      DATA_ACCESS_SUBMISSION_QUERY_KEY,
+      'search',
+      'user',
+      params,
+    )
   }
 
   public getApprovedSubmissionInfoQueryKey(
@@ -684,26 +706,12 @@ export class KeyFactory {
     return this.getKey('currentUserHasAuthorizedClient', request)
   }
 
-  public getDOIAssociationQueryKey(
-    objectType: string,
-    objectId: string,
-    versionNumber?: number,
-  ) {
-    return this.getKey([
-      'doi',
-      'association',
-      objectType,
-      objectId,
-      versionNumber,
-    ])
+  public getDOIAssociationQueryKey(request: GetRepoV1DoiAssociationRequest) {
+    return this.getKey(['doi', request, 'association'])
   }
 
-  public getDOIQueryKey(
-    objectType: string,
-    objectId: string,
-    versionNumber?: number,
-  ) {
-    return this.getKey(['doi', objectType, objectId, versionNumber])
+  public getDOIQueryKey(request: GetRepoV1DoiRequest) {
+    return this.getKey(['doi', request])
   }
 
   public getAllSubscribersQueryKey() {
@@ -963,5 +971,13 @@ export class KeyFactory {
 
   public getFileContentKey(fileURL?: string) {
     return this.getKey('fileContent', fileURL)
+  }
+
+  public getPortalKey(portalId: string) {
+    return this.getKey('portal', portalId)
+  }
+
+  public getPortalPermissionsKey(portalId: string) {
+    return this.getKey('portal', portalId, 'permissions')
   }
 }

@@ -1,26 +1,19 @@
+import { CardDeckCardProps } from '@/components/CardDeck/CardDeckCardProps'
 import LargeButton from '@/components/styled/LargeButton'
-import ExpandableContent from '../home_page/ExpandableContent'
-import { ImageFileHandle } from '../widgets/ImageFileHandle'
-import { CardDeckDataProps } from './CardDeck'
 import { Link } from '@mui/material'
+import ExpandableContent from '../home_page/ExpandableContent'
 
 export default function CardDeckMobile({
   description,
   title,
-  titleIconFileHandleAssociation,
+  titleIcon,
   ctaButtonText,
   ctaButtonURL,
   cardDeckType,
-}: CardDeckDataProps) {
+}: CardDeckCardProps) {
   const titleElement = (
     <div className="CardDeck__Mobile__Header">
-      <span className="CardDeck__Mobile__Header__icon">
-        {titleIconFileHandleAssociation && (
-          <ImageFileHandle
-            fileHandleAssociation={titleIconFileHandleAssociation}
-          />
-        )}
-      </span>
+      <span className="CardDeck__Mobile__Header__icon">{titleIcon}</span>
       <span className="CardDeck__Mobile__Header__Title"> {title} </span>
     </div>
   )

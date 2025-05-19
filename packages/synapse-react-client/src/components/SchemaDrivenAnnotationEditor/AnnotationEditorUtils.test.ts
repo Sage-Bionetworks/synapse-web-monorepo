@@ -2,7 +2,9 @@ import { RJSFValidationError } from '@rjsf/utils'
 import {
   dropNullishArrayValues,
   dropNullValues,
+  getAllPropertiesInFlatObjectSchema,
   getFriendlyPropertyName,
+  getSchemaIdForConcreteType,
   getTransformErrors,
   shouldLiveValidate,
 } from './AnnotationEditorUtils'
@@ -176,5 +178,67 @@ describe('AnnotationEditorUtils tests', () => {
       }
       expect(shouldLiveValidate(annotations, undefined)).toBe(false)
     })
+  })
+
+  test('getAllPropertiesInSchema', () => {
+    const schema: JSONSchema7 = {
+      definitions: {
+        FooDefinition: {
+          type: 'object',
+          properties: {
+            a: {
+              type: 'string',
+            },
+          },
+        },
+      },
+      properties: {
+        b: {
+          type: 'string',
+        },
+      },
+
+      allOf: [
+        {
+          $ref: '#/definitions/FooDefinition',
+        },
+        {
+          properties: {
+            c: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      ],
+    }
+
+    const result = getAllPropertiesInFlatObjectSchema(schema)
+
+    expect(result).toEqual({
+      a: {
+        type: 'string',
+      },
+      b: {
+        type: 'string',
+      },
+      c: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+      },
+    })
+  })
+
+  test('getSchemaIdForConcreteType', () => {
+    const concreteType = 'org.sagebionetworks.repo.model.FileEntity'
+    const expectedSchemaId = 'org.sagebionetworks-repo.model.FileEntity'
+
+    const result = getSchemaIdForConcreteType(concreteType)
+
+    expect(result).toEqual(expectedSchemaId)
   })
 })

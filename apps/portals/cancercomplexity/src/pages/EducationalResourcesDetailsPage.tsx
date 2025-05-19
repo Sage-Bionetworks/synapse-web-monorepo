@@ -12,6 +12,8 @@ import columnAliases from '../config/columnAliases'
 import { educationSql, grantsSql } from '../config/resources'
 import { educationDetailsCardConfiguration } from '../config/synapseConfigs/education'
 import { grantsCardConfiguration } from '../config/synapseConfigs/grants'
+import { SharePageLinkButton } from 'synapse-react-client'
+import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 
 export default function EducationalResourcesDetailsPage() {
   const { title } = useGetPortalComponentSearchParams()
@@ -22,6 +24,7 @@ export default function EducationalResourcesDetailsPage() {
 
   return (
     <>
+      <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
       <CardContainerLogic
         cardConfiguration={{
           ...educationDetailsCardConfiguration,
@@ -51,7 +54,7 @@ export default function EducationalResourcesDetailsPage() {
                       cardConfiguration={grantsCardConfiguration}
                       sql={grantsSql}
                       columnAliases={columnAliases}
-                      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                      sqlOperator={ColumnSingleValueFilterOperator.IN}
                       searchParams={{
                         grantNumber: value!,
                       }}

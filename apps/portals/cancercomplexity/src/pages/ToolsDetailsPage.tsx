@@ -20,6 +20,8 @@ import { grantsCardConfiguration } from '../config/synapseConfigs/grants'
 import { peopleCardConfiguration } from '../config/synapseConfigs/people'
 import { publicationsCardConfiguration } from '../config/synapseConfigs/publications'
 import { toolsConfiguration } from '../config/synapseConfigs/tools'
+import { SharePageLinkButton } from 'synapse-react-client'
+import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 
 export default function ToolsDetailsPage() {
   const { toolName } = useGetPortalComponentSearchParams()
@@ -30,6 +32,7 @@ export default function ToolsDetailsPage() {
 
   return (
     <>
+      <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
       <CardContainerLogic
         cardConfiguration={{
           ...toolsConfiguration,
@@ -62,7 +65,7 @@ export default function ToolsDetailsPage() {
                       cardConfiguration={grantsCardConfiguration}
                       sql={grantsSql}
                       columnAliases={columnAliases}
-                      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                      sqlOperator={ColumnSingleValueFilterOperator.IN}
                       searchParams={{
                         grantNumber: value!,
                       }}
@@ -100,7 +103,7 @@ export default function ToolsDetailsPage() {
                       cardConfiguration={publicationsCardConfiguration}
                       sql={publicationSql}
                       columnAliases={columnAliases}
-                      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                      sqlOperator={ColumnSingleValueFilterOperator.IN}
                       searchParams={{
                         pubMedId: value!,
                       }}

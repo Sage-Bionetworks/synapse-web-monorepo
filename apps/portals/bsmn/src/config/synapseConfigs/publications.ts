@@ -3,7 +3,7 @@ import type {
   CardConfiguration,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
-import { SynapseConstants } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { publicationsSql } from '../resources'
 
 const rgbIndex = 5

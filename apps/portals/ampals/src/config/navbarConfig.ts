@@ -32,11 +32,25 @@ export const navbarConfig: NavbarConfig = {
       name: 'Resources',
       path: '/Resources',
       children: [
-        { name: 'For Researchers', path: '/Resources/For Researchers' },
-        { name: 'For Contributors', path: '/Resources/For Contributors' },
+        {
+          name: 'For Researchers',
+          path: '/Resources/For Researchers',
+        },
+        {
+          name: 'For Contributors',
+          path: '/Resources/For Contributors',
+        },
         {
           name: 'For Persons With Lived Experience',
           path: '/Resources/For Persons With Lived Experience',
+        },
+        {
+          name: 'Requirements for Publication',
+          path: '/Resources/Requirements for Publication',
+        },
+        {
+          name: 'Frequently Asked Questions',
+          path: '/Resources/Frequently Asked Questions',
         },
       ],
     },

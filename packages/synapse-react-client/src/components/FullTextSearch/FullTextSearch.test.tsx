@@ -191,6 +191,50 @@ describe('FullTextSearch tests', () => {
       })
       expect(setSearchText).toHaveBeenCalledWith('')
     })
+    it('adds the appropriate filter when searching in BOOLEAN mode where the search term word length is larger than distance', () => {
+      const columnModels = mockQueryResultBundle.columnModels
+      const searchQuery =
+        '    a long search-term sentence  that exceeds the     distance set (by the config)       '
+      const setSearchText = jest.fn()
+      const booleanModeDistance = 3
+      const ftsConfig: FTSConfig = {
+        textMatchesMode: 'BOOLEAN',
+        distance: booleanModeDistance,
+      }
+      const initialRequest: QueryBundleRequest = {
+        entityId: 'syn123',
+        query: {
+          sql: 'SELECT * FROM syn123',
+        },
+        partMask: 255,
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      }
+
+      const updatedRequest = updateQueryUsingSearchTerm(
+        initialRequest,
+        columnModels,
+        searchQuery,
+        setSearchText,
+        ftsConfig,
+      )
+
+      expect(updatedRequest).toEqual({
+        ...initialRequest,
+        query: {
+          ...initialRequest.query,
+          additionalFilters: [
+            {
+              concreteType:
+                'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
+              // verify distance of 13 (wordcount as split by non-word characters) is used
+              searchExpression: `"${searchQuery}" @13`,
+              searchMode: 'BOOLEAN',
+            },
+          ],
+        },
+      })
+      expect(setSearchText).toHaveBeenCalledWith('')
+    })
     it('adds the appropriate QueryFilter when searching for Synapse ID', () => {
       const columnModels = mockQueryResultBundle.columnModels
       const searchQuery = 'syn123'
