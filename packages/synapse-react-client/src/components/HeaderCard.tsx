@@ -1,4 +1,5 @@
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
+import { Box } from '@mui/material'
 import { useState, useEffect, forwardRef, ForwardedRef } from 'react'
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
@@ -23,6 +24,7 @@ export type HeaderCardProps = {
   headerCardVariant?: HeaderCardVariant
   cardTopContent?: React.ReactNode
   ctaLinkConfig?: GenericCardProps['ctaLinkConfig']
+  cardTopButtons?: React.ReactNode
 }
 
 const HeaderCard = forwardRef(function HeaderCard(
@@ -43,6 +45,7 @@ const HeaderCard = forwardRef(function HeaderCard(
     icon,
     headerCardVariant = 'HeaderCard',
     cardTopContent,
+    cardTopButtons,
   } = props
 
   // store old document title and description so that we can restore when this component is removed
@@ -89,6 +92,15 @@ const HeaderCard = forwardRef(function HeaderCard(
       }`}
     >
       <div className="container-fluid container-full-width">
+        <Box
+          sx={{
+            display: 'flex',
+            gap: '10px',
+            float: 'right',
+          }}
+        >
+          {cardTopButtons}
+        </Box>
         <div className="row">
           <div className="col-md-offset-1 col-md-10">
             <div className="SRC-portalCardMain">
