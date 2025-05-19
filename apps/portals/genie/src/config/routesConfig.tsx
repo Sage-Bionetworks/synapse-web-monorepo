@@ -15,6 +15,8 @@ import routeControlWrapperProps from './explorePageRoutes'
 import { dataReleasesSql } from './resources'
 import { currentDataReleasesProps } from './synapseConfigs/dataReleases'
 import { FullWidthAlert } from 'synapse-react-client'
+import Typography from '@mui/material/Typography'
+import { HasAccessV2 } from 'synapse-react-client/components/HasAccess/HasAccessV2'
 
 const routes: RouteObject[] = [
   {
@@ -28,7 +30,16 @@ const routes: RouteObject[] = [
           show={true}
           title={''}
           description={
-            'Access to the AACR Project GENIE Registry has been restored. To regain access, users are required to submit a new data access request in compliance with new U.S. regulations, agree to the updated terms of use, and provide additional required information. Thank you for your patience and understanding.'
+            <>
+              <Typography>
+                Access to the AACR Project GENIE Registry has been restored. To
+                regain access, users must submit a new data access request in
+                compliance with updated U.S. regulations, agree to the revised
+                terms of use, and provide additional required information. Thank
+                you for your patience and understanding.
+                <HasAccessV2 entityId="syn7222066" />
+              </Typography>
+            </>
           }
         />
         <SurveyToast
