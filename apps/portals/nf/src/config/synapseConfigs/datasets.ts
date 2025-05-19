@@ -46,7 +46,7 @@ export const datasetCardConfiguration: CardConfiguration = {
       'visualizeDataOn',
     ],
     dataTypeIconNames: 'dataType',
-    downloadCartSynId: 'id',
+    useRowIdAndVersionForDownloadCart: true,
   },
   labelLinkConfig: [
     {
