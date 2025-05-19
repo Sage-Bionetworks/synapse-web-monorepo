@@ -23,14 +23,14 @@ export function getJsonSchemaForForm(
 
   return {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    // Merge definitions
+    // Spread the validation schema to ensure all other references are included
+    // Top level properties like "$defs" get lost if we simply put the entire schema in `allOf`
+    ...validationSchema,
+    // JSON Schemas for Synapse types use "definitions", so it should be manually merged.
     definitions: {
       ...entitySchema.definitions,
       ...validationSchema.definitions,
     },
-    // Spread the validation schema to ensure all other references are included
-    // The definitions get lost if we simply put the entire schema in `allOf`
-    ...validationSchema,
     allOf: [
       ...(validationSchema.allOf || []),
       // Add in the entity properties
