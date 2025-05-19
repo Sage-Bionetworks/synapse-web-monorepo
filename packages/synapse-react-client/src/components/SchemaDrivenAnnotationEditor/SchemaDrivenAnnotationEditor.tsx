@@ -19,14 +19,7 @@ import { JSONSchema7 } from 'json-schema'
 import { omitBy } from 'lodash-es'
 import isEmpty from 'lodash-es/isEmpty'
 import noop from 'lodash-es/noop'
-import {
-  RefObject,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ConfirmationButtons,
   ConfirmationDialog,
@@ -36,11 +29,11 @@ import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import {
   dropNullishArrayValues,
   dropNullValues,
-  getAllPropertiesInFlatObjectSchema,
+  getPossibleTopLevelPropertiesInObjectSchema,
   getFriendlyPropertyName,
   getJsonSchemaForForm,
   getSchemaIdForConcreteType,
-  getTransformErrors,
+  transformErrors,
   getUiSchemaForForm,
   shouldLiveValidate,
 } from './AnnotationEditorUtils'
@@ -143,11 +136,6 @@ export function SchemaDrivenAnnotationEditor(
     undefined,
   )
 
-  const transformErrors = useCallback(
-    getTransformErrors(entityJson?.concreteType),
-    [entityJson?.concreteType],
-  )
-
   useEffect(() => {
     if (data?.entity) {
       // Put the annotations into a state variable so it can be modified by the form.
@@ -183,13 +171,14 @@ export function SchemaDrivenAnnotationEditor(
     })
 
   const entitySchemaBaseProperties: JSONSchema7['properties'] = useMemo(
-    () => getAllPropertiesInFlatObjectSchema(schemaForEntityType ?? {}),
+    () =>
+      getPossibleTopLevelPropertiesInObjectSchema(schemaForEntityType ?? {}),
     [schemaForEntityType],
   )
 
   const formSchema = useMemo(
-    () => getJsonSchemaForForm(validationSchema, entitySchemaBaseProperties),
-    [entitySchemaBaseProperties, validationSchema],
+    () => getJsonSchemaForForm(validationSchema, schemaForEntityType),
+    [validationSchema, schemaForEntityType],
   )
 
   const uiSchema = useMemo(

@@ -11,7 +11,7 @@ import { JSONSchema7Definition } from 'json-schema'
 import { useEffect } from 'react'
 import {
   convertToArray,
-  getAllPropertiesInFlatObjectSchema,
+  getPossibleTopLevelPropertiesInObjectSchema,
 } from '../AnnotationEditorUtils'
 
 /**
@@ -34,7 +34,7 @@ export function SynapseAnnotationsRJSFObjectField<
    */
   useEffect(() => {
     const newFormData: Record<string, any> = { ...formData }
-    const allProperties = getAllPropertiesInFlatObjectSchema(schema)
+    const allProperties = getPossibleTopLevelPropertiesInObjectSchema(schema)
     if (allProperties) {
       Object.entries(allProperties).forEach(([key, propertySchema]) => {
         // Since the annotations object is flat, we can safely use the property name as the key (no nested properties)

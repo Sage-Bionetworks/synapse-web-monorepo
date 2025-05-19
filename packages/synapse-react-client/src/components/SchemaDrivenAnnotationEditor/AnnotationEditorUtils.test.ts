@@ -2,13 +2,12 @@ import { RJSFValidationError } from '@rjsf/utils'
 import {
   dropNullishArrayValues,
   dropNullValues,
-  getAllPropertiesInFlatObjectSchema,
+  getPossibleTopLevelPropertiesInObjectSchema,
   getFriendlyPropertyName,
   getSchemaIdForConcreteType,
-  getTransformErrors,
+  transformErrors,
   shouldLiveValidate,
 } from './AnnotationEditorUtils'
-import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 import { JSONSchema7 } from 'json-schema'
 
 describe('AnnotationEditorUtils tests', () => {
@@ -76,7 +75,6 @@ describe('AnnotationEditorUtils tests', () => {
 
   describe('transformErrors', () => {
     it('combines errors caused by an enumeration defined using anyOf', () => {
-      const transformErrors = getTransformErrors()
       const errors: RJSFValidationError[] = [
         {
           name: 'type',
@@ -122,30 +120,6 @@ describe('AnnotationEditorUtils tests', () => {
 
       expect(transformErrors(errors)).toEqual(expected)
     })
-
-    it('returns a custom message when using a key that collides with a reserved property', () => {
-      const transformErrors = getTransformErrors(
-        FILE_ENTITY_CONCRETE_TYPE_VALUE,
-      )
-      const errors: RJSFValidationError[] = [
-        {
-          name: 'not',
-          property: "['dataFileHandleId']",
-          message: 'should NOT be valid',
-          params: {},
-          stack: "['dataFileHandleId'] should NOT be valid",
-        },
-      ]
-
-      const expected = expect.arrayContaining([
-        expect.objectContaining({
-          message:
-            '"dataFileHandleId" is a reserved internal key and cannot be used.',
-        }),
-      ])
-
-      expect(transformErrors(errors)).toEqual(expected)
-    })
   })
 
   describe('shouldLiveValidate', () => {
@@ -180,57 +154,276 @@ describe('AnnotationEditorUtils tests', () => {
     })
   })
 
-  test('getAllPropertiesInSchema', () => {
-    const schema: JSONSchema7 = {
-      definitions: {
-        FooDefinition: {
-          type: 'object',
-          properties: {
-            a: {
-              type: 'string',
-            },
-          },
-        },
-      },
-      properties: {
-        b: {
-          type: 'string',
-        },
-      },
-
-      allOf: [
-        {
-          $ref: '#/definitions/FooDefinition',
-        },
-        {
-          properties: {
-            c: {
-              type: 'array',
-              items: {
+  describe('getPossibleTopLevelPropertiesInObjectSchema', () => {
+    test('merges properties from allOf and definitions', () => {
+      const schema: JSONSchema7 = {
+        definitions: {
+          FooDefinition: {
+            type: 'object',
+            properties: {
+              a: {
                 type: 'string',
               },
             },
           },
         },
-      ],
-    }
+        properties: {
+          b: {
+            type: 'string',
+          },
+        },
 
-    const result = getAllPropertiesInFlatObjectSchema(schema)
+        allOf: [
+          {
+            $ref: '#/definitions/FooDefinition',
+          },
+          {
+            properties: {
+              c: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        ],
+      }
 
-    expect(result).toEqual({
-      a: {
-        type: 'string',
-      },
-      b: {
-        type: 'string',
-      },
-      c: {
-        type: 'array',
-        items: {
+      const result = getPossibleTopLevelPropertiesInObjectSchema(schema)
+
+      expect(result).toEqual({
+        a: {
           type: 'string',
         },
-      },
+        b: {
+          type: 'string',
+        },
+        c: {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+        },
+      })
     })
+    test('merges properties from anyOf and definitions', () => {
+      const schema: JSONSchema7 = {
+        definitions: {
+          FooDefinition: {
+            type: 'object',
+            properties: {
+              a: {
+                type: 'string',
+              },
+            },
+          },
+        },
+        properties: {
+          b: {
+            type: 'string',
+          },
+        },
+
+        anyOf: [
+          {
+            $ref: '#/definitions/FooDefinition',
+          },
+          {
+            properties: {
+              c: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        ],
+      }
+
+      const result = getPossibleTopLevelPropertiesInObjectSchema(schema)
+
+      expect(result).toEqual({
+        a: {
+          type: 'string',
+        },
+        b: {
+          type: 'string',
+        },
+        c: {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+        },
+      })
+    })
+    test('merges properties from oneOf and definitions', () => {
+      const schema: JSONSchema7 = {
+        definitions: {
+          FooDefinition: {
+            type: 'object',
+            properties: {
+              a: {
+                type: 'string',
+              },
+            },
+          },
+        },
+        properties: {
+          b: {
+            type: 'string',
+          },
+        },
+
+        oneOf: [
+          {
+            $ref: '#/definitions/FooDefinition',
+          },
+          {
+            properties: {
+              c: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        ],
+      }
+
+      const result = getPossibleTopLevelPropertiesInObjectSchema(schema)
+
+      expect(result).toEqual({
+        a: {
+          type: 'string',
+        },
+        b: {
+          type: 'string',
+        },
+        c: {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+        },
+      })
+    })
+
+    test('override inherited properties when re-defined', () => {
+      const schema: JSONSchema7 = {
+        definitions: {
+          FooDefinition: {
+            type: 'object',
+            properties: {
+              a: {
+                type: 'number',
+              },
+            },
+          },
+        },
+        properties: {
+          a: {
+            type: 'string',
+          },
+        },
+        allOf: [
+          {
+            $ref: '#/definitions/FooDefinition',
+          },
+        ],
+      }
+
+      const result = getPossibleTopLevelPropertiesInObjectSchema(schema)
+
+      expect(result).toEqual({
+        a: {
+          type: 'string',
+        },
+      })
+    })
+
+    test('handle conditional logic', () => {
+      const schema: JSONSchema7 = {
+        properties: {
+          a: {
+            type: 'string',
+          },
+        },
+        if: {
+          properties: {
+            a: {
+              const: 'foo',
+            },
+          },
+        },
+        then: {
+          properties: {
+            b: {
+              type: 'string',
+            },
+          },
+        },
+        else: {
+          properties: {
+            c: { type: 'string' },
+          },
+        },
+      }
+
+      const result = getPossibleTopLevelPropertiesInObjectSchema(schema)
+
+      expect(result).toEqual({
+        a: {
+          type: 'string',
+        },
+        b: {
+          type: 'string',
+        },
+        c: {
+          type: 'string',
+        },
+      })
+    })
+
+    test.failing(
+      'ignores properties in definitions that are not top-level',
+      () => {
+        const schema: JSONSchema7 = {
+          definitions: {
+            MyItemDefinition: {
+              type: 'object',
+              properties: {
+                ignoreMe: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+          properties: {
+            myItems: {
+              type: 'array',
+              items: {
+                $ref: '#/definitions/MyItemDefinition',
+              },
+            },
+          },
+        }
+
+        const result = getPossibleTopLevelPropertiesInObjectSchema(schema)
+
+        expect(result).toEqual({
+          myItems: {
+            type: 'array',
+            items: {
+              $ref: '#/definitions/MyItemDefinition',
+            },
+          },
+        })
+      },
+    )
   })
 
   test('getSchemaIdForConcreteType', () => {
