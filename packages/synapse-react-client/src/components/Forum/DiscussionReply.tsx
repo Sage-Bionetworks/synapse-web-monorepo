@@ -6,7 +6,7 @@ import {
   ObjectType,
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
@@ -15,6 +15,8 @@ import { displayToast } from '../ToastMessage/ToastMessage'
 import { UserBadge } from '../UserCard/UserBadge'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import { Box } from '@mui/material'
+import { copyStringToClipboard } from '@/utils/functions/StringUtils'
+import { REPLY_ID_PARAM_KEY } from './DiscussionConstants'
 
 export type DiscussionReplyProps = {
   reply: DiscussionReplyBundle
@@ -22,20 +24,22 @@ export type DiscussionReplyProps = {
   onClickLink?: () => void
 }
 
-const DEFAULT_ON_CLICK_LINK = () =>
-  alert('This functionality has not been implemented yet')
+const handleCopyLink = (id: string) => {
+  const baseUrl = `${window.location.origin}${window.location.pathname}`
+  const url = `${baseUrl}?${REPLY_ID_PARAM_KEY}=${id}`
+  copyStringToClipboard(url).then(() =>
+    displayToast('Reply link copied to clipboard', 'info'),
+  )
+}
 
 export function DiscussionReply(props: DiscussionReplyProps) {
-  const {
-    reply,
-    onClickLink = DEFAULT_ON_CLICK_LINK,
-    isReplyAuthorModerator = false,
-  } = props
+  const { reply, isReplyAuthorModerator = false } = props
   const [showReplyModal, setShowReplyModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
   const { data: entityBundle } = useGetEntityBundle(reply.projectId)
   const { data: message, isLoading } = useGetReply(reply)
+  const replyRef = useRef<HTMLDivElement>(null)
 
   const { mutate: deleteReply } = useDeleteReply({
     onSuccess: () => {
@@ -46,8 +50,30 @@ export function DiscussionReply(props: DiscussionReplyProps) {
 
   const isCurrentUserAuthor = reply.createdBy == currentUserProfile?.ownerId
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const replyId = params.get(REPLY_ID_PARAM_KEY)
+    let timerId: ReturnType<typeof setTimeout>
+    if (replyId === reply.id && replyRef.current) {
+      replyRef.current.style.transition = 'background-color 1s ease'
+      replyRef.current.style.backgroundColor = '#fbf4e0'
+      replyRef.current.style.borderColor = '#f4dda3'
+      timerId = setTimeout(() => {
+        if (replyRef.current) {
+          replyRef.current.style.backgroundColor = '#f9f9f9'
+          replyRef.current.style.borderColor = '#ccc'
+        }
+      }, 2000)
+    }
+    return () => {
+      if (timerId) {
+        clearTimeout(timerId)
+      }
+    }
+  }, [reply.id])
+
   return (
-    <div className="reply-container">
+    <div className="reply-container" id={`reply._${reply.id}`} ref={replyRef}>
       {isLoading ? (
         <SkeletonTable numCols={1} numRows={4} />
       ) : (
@@ -78,8 +104,8 @@ export function DiscussionReply(props: DiscussionReplyProps) {
                       float: { sm: 'right' },
                     }}
                   >
-                    <button onClick={() => onClickLink()}>
-                      <IconSvg icon="link" />
+                    <button onClick={() => handleCopyLink(reply.id)}>
+                      <IconSvg icon="link" label={'Copy link to this reply'} />
                     </button>
                     {isCurrentUserAuthor && (
                       <button onClick={() => setShowReplyModal(true)}>
