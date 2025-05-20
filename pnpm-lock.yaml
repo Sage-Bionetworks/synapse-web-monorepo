@@ -1486,17 +1486,17 @@ importers:
         specifier: ^23.1.0
         version: 23.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@rjsf/core':
-        specifier: 5.24.8
-        version: 5.24.8(@rjsf/utils@5.24.8(react@18.3.1))(react@18.3.1)
+        specifier: 5.24.10
+        version: 5.24.10(@rjsf/utils@5.24.10(react@18.3.1))(react@18.3.1)
       '@rjsf/mui':
-        specifier: 5.24.8
-        version: 5.24.8(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@mui/icons-material@5.17.1(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@rjsf/core@5.24.8(@rjsf/utils@5.24.8(react@18.3.1))(react@18.3.1))(@rjsf/utils@5.24.8(react@18.3.1))(react@18.3.1)
+        specifier: 5.24.10
+        version: 5.24.10(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@mui/icons-material@5.17.1(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@rjsf/core@5.24.10(@rjsf/utils@5.24.10(react@18.3.1))(react@18.3.1))(@rjsf/utils@5.24.10(react@18.3.1))(react@18.3.1)
       '@rjsf/utils':
-        specifier: 5.24.8
-        version: 5.24.8(react@18.3.1)
+        specifier: 5.24.10
+        version: 5.24.10(react@18.3.1)
       '@rjsf/validator-ajv8':
-        specifier: 5.24.8
-        version: 5.24.8(@rjsf/utils@5.24.8(react@18.3.1))
+        specifier: 5.24.10
+        version: 5.24.10(@rjsf/utils@5.24.10(react@18.3.1))
       '@sage-bionetworks/markdown-it-container':
         specifier: workspace:*
         version: link:../markdown-it-container
@@ -4291,15 +4291,15 @@ packages:
     peerDependencies:
       redux: ^3.1.0 || ^4.0.0 || ^5.0.0
 
-  '@rjsf/core@5.24.8':
-    resolution: {integrity: sha512-7YdOMl0UylldYR75rnKoQF5etibSwPQHA3rY8LEo28xyYek81ESGuqPTs37P14doBpGRL+SobggR76tYhDYO7A==}
+  '@rjsf/core@5.24.10':
+    resolution: {integrity: sha512-DJe2OECdDoBHacQKCPOAiuoEydM7ZJUUFqgcO4VswRs13QglRaEAEk4ylWR6f2gQx7wBg0u302n3VvRoHRxegQ==}
     engines: {node: '>=14'}
     peerDependencies:
       '@rjsf/utils': ^5.24.x
       react: ^16.14.0 || >=17
 
-  '@rjsf/mui@5.24.8':
-    resolution: {integrity: sha512-rA5BGeZve3CznuvlAr27KUBJY2dpMX1j6Jdg3PERTUickl2uW0SnXLKu3DEHcY1s9q9kNsvSpVDb4cGZWdW/7Q==}
+  '@rjsf/mui@5.24.10':
+    resolution: {integrity: sha512-iq8DPg8zT0yEBEN8snSl7rDBZKdT+DDreeDoJc4lZTWIiXIX4uqB9awP+RIWRwBdPZuJku08exy0oG4Xpg4mQA==}
     engines: {node: '>=14'}
     peerDependencies:
       '@emotion/react': ^11.7.0
@@ -4310,14 +4310,14 @@ packages:
       '@rjsf/utils': ^5.24.x
       react: '>=17'
 
-  '@rjsf/utils@5.24.8':
-    resolution: {integrity: sha512-Y/D1orNsTnIswp23QtWKq7QEme07/nSdnSJoK4gSsm2cDBkSCW+9KUsWSvmE7poqHwCn3zpbIaa3ZWEAQUJEEg==}
+  '@rjsf/utils@5.24.10':
+    resolution: {integrity: sha512-afsi+oKNV12p6OnBydJ0R4M87h7SaArqAhqJPqVXbMldnbPnW632THCtod5GG+IYtkqUkx0iQq2xpHw1OBf+3A==}
     engines: {node: '>=14'}
     peerDependencies:
       react: ^16.14.0 || >=17
 
-  '@rjsf/validator-ajv8@5.24.8':
-    resolution: {integrity: sha512-0l5/9CL2BhW5tUtP+vKg6o5Wpp5kuee5SPea3STtdBN/xbGf3dUX08jbKcvokTJt5552rFDcNjMZmu+C0H7ezQ==}
+  '@rjsf/validator-ajv8@5.24.10':
+    resolution: {integrity: sha512-BLMpJNjtRAlp1i/QJBxY4/tchkWpZuJ/dJbjk+75veQ5oScr2YJ0/u2NqSsJNSyT37XxNJ6w49HgxZfB9xkDIQ==}
     engines: {node: '>=14'}
     peerDependencies:
       '@rjsf/utils': ^5.24.x
@@ -14277,9 +14277,9 @@ snapshots:
       immutable: 4.3.7
       redux: 5.0.1
 
-  '@rjsf/core@5.24.8(@rjsf/utils@5.24.8(react@18.3.1))(react@18.3.1)':
+  '@rjsf/core@5.24.10(@rjsf/utils@5.24.10(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@rjsf/utils': 5.24.8(react@18.3.1)
+      '@rjsf/utils': 5.24.10(react@18.3.1)
       lodash: 4.17.21
       lodash-es: 4.17.21
       markdown-to-jsx: 7.7.6(react@18.3.1)
@@ -14287,17 +14287,17 @@ snapshots:
       prop-types: 15.8.1
       react: 18.3.1
 
-  '@rjsf/mui@5.24.8(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@mui/icons-material@5.17.1(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@rjsf/core@5.24.8(@rjsf/utils@5.24.8(react@18.3.1))(react@18.3.1))(@rjsf/utils@5.24.8(react@18.3.1))(react@18.3.1)':
+  '@rjsf/mui@5.24.10(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@mui/icons-material@5.17.1(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@rjsf/core@5.24.10(@rjsf/utils@5.24.10(react@18.3.1))(react@18.3.1))(@rjsf/utils@5.24.10(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@18.3.12)(react@18.3.1)
       '@emotion/styled': 11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
       '@mui/icons-material': 5.17.1(@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
       '@mui/material': 5.17.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@rjsf/core': 5.24.8(@rjsf/utils@5.24.8(react@18.3.1))(react@18.3.1)
-      '@rjsf/utils': 5.24.8(react@18.3.1)
+      '@rjsf/core': 5.24.10(@rjsf/utils@5.24.10(react@18.3.1))(react@18.3.1)
+      '@rjsf/utils': 5.24.10(react@18.3.1)
       react: 18.3.1
 
-  '@rjsf/utils@5.24.8(react@18.3.1)':
+  '@rjsf/utils@5.24.10(react@18.3.1)':
     dependencies:
       json-schema-merge-allof: 0.8.1
       jsonpointer: 5.0.1
@@ -14306,9 +14306,9 @@ snapshots:
       react: 18.3.1
       react-is: 18.3.1
 
-  '@rjsf/validator-ajv8@5.24.8(@rjsf/utils@5.24.8(react@18.3.1))':
+  '@rjsf/validator-ajv8@5.24.10(@rjsf/utils@5.24.10(react@18.3.1))':
     dependencies:
-      '@rjsf/utils': 5.24.8(react@18.3.1)
+      '@rjsf/utils': 5.24.10(react@18.3.1)
       ajv: 8.17.1
       ajv-formats: 2.1.1(ajv@8.17.1)
       lodash: 4.17.21
