@@ -12,14 +12,11 @@ export type StandardsHeaderProps = {
 const StandardsHeader = (props: StandardsHeaderProps) => {
   const searchPlaceholder = 'Search for a biomedical data standard'
   const searchExampleTerms = [
-    'MRI data processing',
-    'Waveform interoperability',
     'Ophthalmic imaging',
     'Integration',
     'Acquisition',
     'File formats',
     'Ontologies',
-    'Lab automation',
   ]
 
   const content = (
