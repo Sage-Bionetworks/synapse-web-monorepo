@@ -2,7 +2,11 @@ import ChallengesCardDeck from '@/components/ChallengesCardDeck'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import StandardsHeader from '@sage-bionetworks/synapse-portal-framework/components/b2ai.standards/StandardsHeader'
 import StandardsContributeToTheRegistry from '@sage-bionetworks/synapse-portal-framework/components/b2ai.standards/StandardsContributeToTheRegistry'
-import { dataSql, DST_TABLE_COLUMN_NAMES } from '../config/resources'
+import {
+  dataFtsConfig,
+  dataSql,
+  DST_TABLE_COLUMN_NAMES,
+} from '../config/resources'
 import { FeaturedDataTabs } from 'synapse-react-client'
 import CTASectionWrapper from 'synapse-react-client/components/CTASectionWrapper/CTASectionWrapper'
 import columnAliases from '../config/columnAliases'
@@ -10,7 +14,7 @@ import columnAliases from '../config/columnAliases'
 export default function HomePage() {
   return (
     <>
-      <StandardsHeader dataSql={dataSql} />
+      <StandardsHeader dataSql={dataSql} ftsConfig={dataFtsConfig} />
       <div>
         <h2 className="title center-title">
           Standards Related to Bridge2AI Challenges
