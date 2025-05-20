@@ -1,1 +1,0 @@
-import{_ as u,a as n}from"./createTheme-Dpipd2B4.js";import{r as o}from"./index-hpfWuA9c.js";import{j as a}from"./jsx-runtime-soP0eJw3.js";const l=["value"],r=o.createContext();function p(t){let{value:e}=t,s=u(t,l);return a.jsx(r.Provider,n({value:e??!0},s))}const m=()=>{const t=o.useContext(r);return t??!1};export{p as R,m as u};
