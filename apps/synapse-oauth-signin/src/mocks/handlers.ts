@@ -10,7 +10,7 @@ export function resetConsentedInMockService(newValue: boolean) {
 
 let mockPostConsentFn = vi.fn()
 
-export function setMockPostConsentFn(fn: Mock<any, any>) {
+export function setMockPostConsentFn(fn: Mock<any>) {
   mockPostConsentFn = fn
 }
 
