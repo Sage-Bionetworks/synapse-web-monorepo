@@ -4,6 +4,7 @@ function ExploreLayout() {
   return (
     <ExploreWrapper
       explorePaths={[
+        { path: 'Initiatives' },
         { path: 'Studies' },
         { path: 'Datasets' },
         { path: 'Files' },

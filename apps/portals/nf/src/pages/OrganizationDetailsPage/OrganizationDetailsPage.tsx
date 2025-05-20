@@ -5,22 +5,23 @@ import {
   DetailsPageTabConfig,
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
-import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { Outlet, RouteObject } from 'react-router'
+import { Outlet } from 'react-router'
 import { CardContainerLogic, SynapseConstants } from 'synapse-react-client'
-import OrganizationDataTab from './OrganizationDataTab'
-import OrganizationDetailsTab from './OrganizationDetailsTab'
+import {
+  ORGANIZATION_DATA_TAB_PATH,
+  ORGANIZATION_DETAILS_TAB_PATH,
+} from '@/config/routeConstants'
 
 const tabConfig: DetailsPageTabConfig[] = [
   {
     title: 'Organization Details',
-    path: 'Details',
+    path: ORGANIZATION_DETAILS_TAB_PATH,
     iconName: 'study',
   },
   {
     title: 'Organization Data',
-    path: 'Data',
+    path: ORGANIZATION_DATA_TAB_PATH,
     iconName: 'database',
     tooltip: 'All of the Data generated from this Organization’s studies',
     iconClassName: 'tab-database',
@@ -55,21 +56,4 @@ function OrganizationDetailsPage() {
   )
 }
 
-export const organizationsDetailsPageRoute: RouteObject = {
-  path: 'Organizations/DetailsPage',
-  element: <OrganizationDetailsPage />,
-  children: [
-    {
-      index: true,
-      element: <RedirectWithQuery to={tabConfig[0].path} />,
-    },
-    {
-      path: tabConfig[0].path,
-      element: <OrganizationDetailsTab />,
-    },
-    {
-      path: tabConfig[1].path,
-      element: <OrganizationDataTab />,
-    },
-  ],
-}
+export default OrganizationDetailsPage

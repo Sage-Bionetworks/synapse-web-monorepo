@@ -1,12 +1,13 @@
-import { hackathonDetailsPageRoutesConfig } from '@/pages/HackathonDetailsPage/HackathonDetailsPage'
-import { searchPageChildRoutes } from '@/pages/NFSearchPage'
-import { organizationsDetailsPageRoute } from '@/pages/OrganizationDetailsPage/OrganizationDetailsPage'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { Navigate, RouteObject } from 'react-router'
 import HomePage from '../pages/HomePage'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import {
+  HACKATHONS_DETAILS_PAGE_BACKGROUND_AND_RESULTS_TAB_PATH,
+  HACKATHONS_DETAILS_PAGE_METHODOLOGY_TAB_PATH,
+  ORGANIZATION_DATA_TAB_PATH,
+  ORGANIZATION_DETAILS_TAB_PATH,
   STUDY_DETAILS_PAGE_ADDITIONAL_FILES_TAB_PATH,
   STUDY_DETAILS_PAGE_DATASETS_TAB_PATH,
   STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
@@ -75,6 +76,13 @@ const routes: RouteObject[] = [
           import('@/pages/Explore/layout').then(convertModuleToRouteObject),
         children: [
           {
+            path: 'Initiatives',
+            lazy: () =>
+              import('@/pages/Explore/initiatives').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
             path: 'Studies',
             lazy: () =>
               import('@/pages/Explore/studies').then(
@@ -116,7 +124,18 @@ const routes: RouteObject[] = [
       },
       {
         path: 'Search',
-        children: searchPageChildRoutes,
+        children: [
+          {
+            index: true,
+            lazy: () =>
+              import('@/pages/NFSearchPage').then(convertModuleToRouteObject),
+          },
+          {
+            path: ':resourceType',
+            lazy: () =>
+              import('@/pages/NFSearchPage').then(convertModuleToRouteObject),
+          },
+        ],
       },
       {
         path: 'Explore/Initiatives/DetailsPage',
@@ -209,8 +228,71 @@ const routes: RouteObject[] = [
           },
         ],
       },
-      hackathonDetailsPageRoutesConfig,
-      organizationsDetailsPageRoute,
+      {
+        path: 'Explore/Hackathon/DetailsPage',
+        lazy: () =>
+          import('@/pages/HackathonDetailsPage/HackathonDetailsPage').then(
+            convertModuleToRouteObject,
+          ),
+        children: [
+          {
+            index: true,
+            element: (
+              <RedirectWithQuery
+                to={HACKATHONS_DETAILS_PAGE_BACKGROUND_AND_RESULTS_TAB_PATH}
+              />
+            ),
+          },
+          {
+            path: HACKATHONS_DETAILS_PAGE_BACKGROUND_AND_RESULTS_TAB_PATH,
+            lazy: () =>
+              import(
+                '@/pages/HackathonDetailsPage/HackathonBackgroundResultsTab'
+              ).then(convertModuleToRouteObject),
+          },
+          {
+            path: HACKATHONS_DETAILS_PAGE_METHODOLOGY_TAB_PATH,
+            lazy: () =>
+              import(
+                '@/pages/HackathonDetailsPage/HackathonMethodologyTab'
+              ).then(convertModuleToRouteObject),
+          },
+        ],
+      },
+      {
+        path: 'Organizations',
+        children: [
+          {
+            path: 'DetailsPage',
+            lazy: () =>
+              import(
+                '@/pages/OrganizationDetailsPage/OrganizationDetailsPage'
+              ).then(convertModuleToRouteObject),
+            children: [
+              {
+                index: true,
+                element: (
+                  <RedirectWithQuery to={ORGANIZATION_DETAILS_TAB_PATH} />
+                ),
+              },
+              {
+                path: ORGANIZATION_DETAILS_TAB_PATH,
+                lazy: () =>
+                  import(
+                    '@/pages/OrganizationDetailsPage/OrganizationDetailsTab'
+                  ).then(convertModuleToRouteObject),
+              },
+              {
+                path: ORGANIZATION_DATA_TAB_PATH,
+                lazy: () =>
+                  import(
+                    '@/pages/OrganizationDetailsPage/OrganizationDataTab'
+                  ).then(convertModuleToRouteObject),
+              },
+            ],
+          },
+        ],
+      },
       {
         // PORTALS-2277 - Renamed "Hackathon Projects" to "Hackathon"
         path: 'Explore/Hackathon Projects',

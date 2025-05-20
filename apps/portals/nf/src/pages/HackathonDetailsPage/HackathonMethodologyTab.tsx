@@ -1,7 +1,7 @@
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 
-export default function HackathonMethodologyTab() {
+function HackathonMethodologyTab() {
   return (
     <DetailsPageContent
       content={[
@@ -15,3 +15,5 @@ export default function HackathonMethodologyTab() {
     />
   )
 }
+
+export default HackathonMethodologyTab
