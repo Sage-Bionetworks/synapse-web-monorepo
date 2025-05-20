@@ -53,22 +53,3 @@ function HackathonDetailsPage() {
 }
 
 export default HackathonDetailsPage
-
-// export const hackathonDetailsPageRoutesConfig = {
-//   path: 'Explore/Hackathon/DetailsPage',
-//   element: <HackathonDetailsPage />,
-//   children: [
-//     {
-//       index: true,
-//       element: <RedirectWithQuery to={tabConfig[0].path} />,
-//     },
-//     {
-//       path: tabConfig[0].path,
-//       element: <HackathonBackgroundResultsTab />,
-//     },
-//     {
-//       path: tabConfig[1].path,
-//       element: <HackathonMethodologyTab />,
-//     },
-//   ],
-// }
