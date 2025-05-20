@@ -103,6 +103,8 @@ type QueryWrapperPlotNavOwnProps = {
     | 'additionalFiltersSessionStorageKey'
     | 'helpConfiguration'
     | 'hideCopyToClipboard'
+    | 'hideSearchBarControl'
+    | 'hideVisualizationsControl'
     | 'enabledExternalAnalysisPlatforms'
   > &
   Pick<QueryContextType, 'combineRangeFacetConfig'>
@@ -123,6 +125,7 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'hideDownload'
   | 'hideQueryCount'
   | 'hideSqlEditorControl'
+  | 'hideVisualizationsControl'
   | 'searchConfiguration'
   | 'enabledExternalAnalysisPlatforms'
   | 'cavaticaConnectAccountURL'
@@ -150,6 +153,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     hideDownload,
     hideQueryCount,
     hideSqlEditorControl,
+    hideVisualizationsControl,
     searchConfiguration,
     cavaticaConnectAccountURL,
     customControls,
@@ -224,7 +228,9 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                   hideDownload={hideDownload}
                   hideQueryCount={hideQueryCount}
                   hideFacetFilterControl={!isFaceted}
-                  hideVisualizationsControl={!isFaceted}
+                  hideVisualizationsControl={
+                    !isFaceted || hideVisualizationsControl
+                  }
                   hideSqlEditorControl={hideSqlEditorControl}
                   cavaticaConnectAccountURL={cavaticaConnectAccountURL}
                   customControls={customControls}
@@ -366,8 +372,10 @@ function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
         defaultShowPlots={props.defaultShowPlots}
         hideCopyToClipboard={props.hideCopyToClipboard}
         defaultShowSearchBar={
-          props.defaultShowSearchBox || isFullTextSearchEnabled
+          (props.defaultShowSearchBox || isFullTextSearchEnabled) &&
+          !props.hideSearchBarControl
         }
+        hideSearchBarControl={props.hideSearchBarControl}
         showLastUpdatedOn={showLastUpdatedOn}
         noContentPlaceholderType={NoContentPlaceholderType.INTERACTIVE}
         hasCustomPlots={Array.isArray(customPlots) && customPlots.length > 0}

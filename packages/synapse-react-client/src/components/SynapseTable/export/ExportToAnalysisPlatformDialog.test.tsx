@@ -44,6 +44,7 @@ const mockQueryVisualizationContext: QueryVisualizationContextType = {
   showSearchBar: false,
   showSqlEditor: false,
   unitDescription: '',
+  hideSearchBarControl: false,
 }
 
 const mockUseQueryVisualizationContext = jest
