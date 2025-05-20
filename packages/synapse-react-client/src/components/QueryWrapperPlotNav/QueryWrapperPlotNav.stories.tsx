@@ -66,7 +66,7 @@ export const DataCatalogCards: Story = {
     defaultShowPlots: false,
     defaultShowSearchBox: true,
     hideCopyToClipboard: true,
-    showSearchBarControl: true,
+    hideSearchBarControl: false,
     hideDownload: true,
     cardConfiguration: {
       type: GENERIC_CARD,

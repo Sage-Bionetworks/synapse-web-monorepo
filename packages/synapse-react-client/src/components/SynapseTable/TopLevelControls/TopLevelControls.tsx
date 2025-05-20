@@ -109,7 +109,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
     unitDescription,
     setShowDownloadConfirmation,
     showCopyToClipboard,
-    showSearchBarControl,
+    hideSearchBarControl,
     setShowPlots,
     setShowSqlEditor,
     showFacetFilter,
@@ -277,7 +277,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
               <Divider orientation="vertical" variant="middle" flexItem />
             </>
           )}
-          {showSearchBarControl && (
+          {!hideSearchBarControl && (
             <ElementWithTooltip
               tooltipText={'Show / Hide Search Bar'}
               callbackFn={() => setShowSearchBar(value => !value)}

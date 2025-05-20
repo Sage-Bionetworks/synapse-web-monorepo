@@ -48,7 +48,7 @@ export function SearchParamAwareQueryWrapperPlotNav(
         defaultShowPlots={false}
         defaultShowSearchBox={false}
         hideVisualizationsControl={true}
-        showSearchBarControl={false}
+        hideSearchBarControl={true}
         name={undefined}
       />
     )
