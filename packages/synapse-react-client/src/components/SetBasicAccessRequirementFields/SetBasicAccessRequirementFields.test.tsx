@@ -13,8 +13,7 @@ import { rest, server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import {
   confirmMarkdownSynapseTextContent,
-  expectMarkdownSynapseNotToGetWiki,
-  waitForMarkdownSynapseToGetWiki,
+  confirmMarkdownSynapseIsShown,
 } from '@/testutils/MarkdownSynapseUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ACCESS_REQUIREMENT_BY_ID } from '@/utils/APIConstants'
@@ -120,7 +119,7 @@ describe('SetBasicAccessRequirementFields', () => {
       allowDeleteTextInstructions: true,
     })
     expect(buttons.deleteTextInstructions).toBeNull()
-    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseIsShown()
   })
 
   test('displays existing wiki for self-signed AR', async () => {
@@ -130,7 +129,7 @@ describe('SetBasicAccessRequirementFields', () => {
       onError,
     })
     expect(buttons.editInstructions).toBeVisible()
-    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseIsShown()
     await confirmMarkdownSynapseTextContent(
       mockSelfSignAccessRequirementWikiPage.markdown,
     )
@@ -142,7 +141,7 @@ describe('SetBasicAccessRequirementFields', () => {
       onSave,
       onError,
     })
-    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseIsShown()
 
     expect(checkboxes.isCertifiedUserRequired).not.toBeNull()
     expect(checkboxes.isValidatedProfileRequired).not.toBeNull()
@@ -181,7 +180,6 @@ describe('SetBasicAccessRequirementFields', () => {
       onSave,
       onError,
     })
-    expectMarkdownSynapseNotToGetWiki()
 
     expect(buttons.deleteTextInstructions).toBeNull()
     expect(
@@ -195,7 +193,7 @@ describe('SetBasicAccessRequirementFields', () => {
       onSave,
       onError,
     })
-    expectMarkdownSynapseNotToGetWiki()
+
     expect(checkboxes.isCertifiedUserRequired).toBeNull()
     expect(checkboxes.isValidatedProfileRequired).toBeNull()
   })
@@ -229,7 +227,7 @@ describe('SetBasicAccessRequirementFields', () => {
     })
 
     expect(buttons.editInstructions).toBeVisible()
-    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseIsShown()
     await confirmMarkdownSynapseTextContent(
       mockACTAccessRequirementWikiPage.markdown,
     )
@@ -249,7 +247,6 @@ describe('SetBasicAccessRequirementFields', () => {
       onError,
       allowDeleteTextInstructions: true,
     })
-    expectMarkdownSynapseNotToGetWiki()
 
     expect(buttons.deleteTextInstructions).not.toBeNull()
     await user.click(buttons.deleteTextInstructions!)
@@ -275,7 +272,6 @@ describe('SetBasicAccessRequirementFields', () => {
       onError,
       allowDeleteTextInstructions: true,
     })
-    expectMarkdownSynapseNotToGetWiki()
 
     expect(buttons.deleteTextInstructions).not.toBeNull()
     await user.click(buttons.deleteTextInstructions!)
@@ -312,7 +308,7 @@ describe('SetBasicAccessRequirementFields', () => {
       onSave,
       onError,
     })
-    expectMarkdownSynapseNotToGetWiki()
+
     expect(checkboxes.isCertifiedUserRequired).toBeNull()
     expect(checkboxes.isValidatedProfileRequired).toBeNull()
   })
@@ -324,7 +320,6 @@ describe('SetBasicAccessRequirementFields', () => {
       onError,
       allowDeleteTextInstructions: true,
     })
-    expectMarkdownSynapseNotToGetWiki()
 
     expect(screen.getByText(mockToUAccessRequirement.termsOfUse!)).toBeVisible()
     expect(buttons.deleteTextInstructions).not.toBeNull()
@@ -368,7 +363,7 @@ describe('SetBasicAccessRequirementFields', () => {
       onError,
       allowDeleteTextInstructions: true,
     })
-    expectMarkdownSynapseNotToGetWiki()
+
     await user.click(buttons.deleteTextInstructions!)
 
     const confirmDialog = await screen.findByRole('dialog')
@@ -393,7 +388,7 @@ describe('SetBasicAccessRequirementFields', () => {
       onSave,
       onError,
     })
-    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseIsShown()
 
     // parent calls save
     ref?.current?.save()

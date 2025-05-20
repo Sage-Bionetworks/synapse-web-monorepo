@@ -9,7 +9,7 @@ import { rest, server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import {
   confirmMarkdownSynapseTextContent,
-  waitForMarkdownSynapseToGetWiki,
+  confirmMarkdownSynapseIsShown,
 } from '@/testutils/MarkdownSynapseUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ACCESS_REQUIREMENT_BY_ID, WIKI_PAGE_ID } from '@/utils/APIConstants'
@@ -170,7 +170,7 @@ describe('SetManagedAccessRequirementFields', () => {
     const { checkboxes, buttons, expirationPeriodInput } = await setUp()
 
     expect(buttons.editInstructions).toBeVisible()
-    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseIsShown()
 
     expect(checkboxes.isCertifiedUserRequired).toBeChecked()
     expect(checkboxes.isValidatedProfileRequired).toBeChecked()
@@ -199,7 +199,7 @@ describe('SetManagedAccessRequirementFields', () => {
     })
 
     await setUp()
-    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseIsShown()
     await confirmMarkdownSynapseTextContent(simpleWikiContent)
   })
 
@@ -210,7 +210,7 @@ describe('SetManagedAccessRequirementFields', () => {
     })
 
     await setUp()
-    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseIsShown()
     await confirmMarkdownSynapseTextContent(NO_WIKI_CONTENT)
   })
 
