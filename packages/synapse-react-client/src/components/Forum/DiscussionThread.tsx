@@ -27,6 +27,7 @@ import { ForumThreadEditor } from './ForumThreadEditor'
 import { SubscribersModal } from './SubscribersModal'
 import { useGetModerators } from '@/synapse-queries/forum/useForum'
 import { useNativeSearchParams } from '@/utils/hooks/useNativeSearchParams'
+import { REPLY_ID_PARAM_KEY } from './DiscussionConstants'
 
 export type DiscussionThreadProps = {
   threadId: string
@@ -106,9 +107,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     threadData?.createdBy ?? '',
   )
 
-  const REPLY_ID_PARAM_KEY = 'replyid'
-
-  const replyId = useNativeSearchParams(REPLY_ID_PARAM_KEY)
+  const [replyId, setReplyIdParam] = useNativeSearchParams(REPLY_ID_PARAM_KEY)
 
   const replies = useMemo(() => {
     const allReplies = replyData?.pages.flatMap(page => page.results) ?? []
@@ -120,11 +119,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   }, [replyData, replyId])
 
   const handleShowAllRepliesButton = () => {
-    const params = new URLSearchParams(window.location.search)
-    params.delete(REPLY_ID_PARAM_KEY)
-    const newUrl = `${window.location.pathname}?${params.toString()}`
-    history.pushState({}, '', newUrl)
-    window.dispatchEvent(new Event('pushstate'))
+    setReplyIdParam(null)
   }
 
   return (
@@ -285,27 +280,20 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         )}
       </Box>
       {replyId && (
-        <Box
+        <Button
+          variant="outlined"
           onClick={handleShowAllRepliesButton}
           sx={{
-            backgroundColor: 'grey.300',
-            borderRadius: '3px',
             display: 'flex',
             alignItems: 'center',
-            width: 'fit-content',
             padding: '2px 8px',
             marginBottom: '12px',
             gap: '4px',
-            cursor: 'pointer',
           }}
         >
-          <IconSvg
-            icon="arrowBack"
-            label="Restore deleted thread"
-            sx={{ width: '16px' }}
-          />
+          <IconSvg icon="arrowBack" sx={{ width: '16px' }} />
           <Typography variant="smallText2">Show all replies</Typography>
-        </Box>
+        </Button>
       )}
       <div>
         {replies.map(reply => {

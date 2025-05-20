@@ -1,6 +1,13 @@
 import { useCallback, useState, useEffect } from 'react'
 
-export const useNativeSearchParams = (param: string) => {
+/**
+ * React hook that can be used to access the current state of window.location.search.
+ * Only use this when you cannot use an equivalent hook provided by a routing library (e.g. react-router)
+ */
+
+export const useNativeSearchParams = (
+  param: string,
+): [string | null, (newValue: string | null) => void] => {
   const getValue = useCallback(
     () => new URLSearchParams(window.location.search).get(param),
     [param],
@@ -20,5 +27,19 @@ export const useNativeSearchParams = (param: string) => {
       window.removeEventListener('replacestate', onChange)
     }
   }, [])
-  return value
+
+  const setSearchParam = (newValue: string | null) => {
+    const searchParams = new URLSearchParams(window.location.search)
+    if (newValue) {
+      searchParams.set(param, newValue)
+    } else {
+      searchParams.delete(param)
+    }
+    const newUrl = `${window.location.pathname}?${searchParams.toString()}`
+    window.history.pushState({}, '', newUrl)
+    setValue(newValue)
+    window.dispatchEvent(new Event('pushstate'))
+  }
+
+  return [value, setSearchParam]
 }

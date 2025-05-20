@@ -16,8 +16,7 @@ import { UserBadge } from '../UserCard/UserBadge'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import { Box } from '@mui/material'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
-
-const REPLY_ID_PARAM_KEY = 'replyid'
+import { REPLY_ID_PARAM_KEY } from './DiscussionConstants'
 
 export type DiscussionReplyProps = {
   reply: DiscussionReplyBundle
