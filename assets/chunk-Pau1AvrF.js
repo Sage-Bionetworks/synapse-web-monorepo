@@ -1,0 +1,1 @@
+import{b as u}from"./_baseSlice-F8doVSIJ.js";import{t as i}from"./toInteger-Cou3KyGr.js";var o=Math.ceil,f=Math.max;function m(t,e,h){e===void 0?e=1:e=f(i(e),0);var n=t==null?0:t.length;if(!n||e<1)return[];for(var r=0,l=0,a=Array(o(n/e));r<n;)a[l++]=u(t,r,r+=e);return a}export{m as c};
