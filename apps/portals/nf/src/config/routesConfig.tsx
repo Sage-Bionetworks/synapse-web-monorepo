@@ -128,12 +128,12 @@ const routes: RouteObject[] = [
           {
             index: true,
             lazy: () =>
-              import('@/pages/NFSearchPage').then(convertModuleToRouteObject),
+              import('@/pages/Search').then(convertModuleToRouteObject),
           },
           {
             path: ':resourceType',
             lazy: () =>
-              import('@/pages/NFSearchPage').then(convertModuleToRouteObject),
+              import('@/pages/Search').then(convertModuleToRouteObject),
           },
         ],
       },
