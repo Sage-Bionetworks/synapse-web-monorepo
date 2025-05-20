@@ -1,7 +1,10 @@
 import GenericCardActionButton from '@/components/GenericCard/GenericCardActionButton'
 import ConditionalWrapper from '@/components/utils/ConditionalWrapper'
 import { useGetCroissantUrl } from '@/synapse-queries/croissant/useGetCroissantUrl'
+import Link from '@mui/material/Link'
 import Skeleton from '@mui/material/Skeleton'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 
 type CroissantButtonProps = {
   /** The synID of the dataset */
@@ -32,14 +35,32 @@ function CroissantButton(props: CroissantButtonProps) {
       wrapper={Skeleton}
       wrapperProps={{ role: 'progressbar' }}
     >
-      <GenericCardActionButton
-        href={croissantUrl || '#'}
-        target={'_blank'}
-        variant="outlined"
-        startIcon={'\uD83E\uDD50'} // Croissant emoji
+      <Tooltip
+        placement={'top'}
+        title={
+          <Typography>
+            Croissant is a metadata standard designed for AI-ready datasets.
+            Learn more{' '}
+            <Link
+              href={'https://mlcommons.org/working-groups/data/croissant/'}
+              target={'_blank'}
+              rel={'noopener noreferrer'}
+            >
+              here
+            </Link>
+            .
+          </Typography>
+        }
       >
-        Croissant
-      </GenericCardActionButton>
+        <GenericCardActionButton
+          href={croissantUrl || '#'}
+          target={'_blank'}
+          variant="outlined"
+          startIcon={'\uD83E\uDD50'} // Croissant emoji
+        >
+          Croissant
+        </GenericCardActionButton>
+      </Tooltip>
     </ConditionalWrapper>
   )
 }
