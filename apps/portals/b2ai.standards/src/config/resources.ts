@@ -3,7 +3,7 @@ import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2
 export const TABLE_IDS = {
   Challenges: { name: 'Challenges', id: 'syn65913973' },
   CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
-  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531' },
+  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.50' },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
   DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
