@@ -24,6 +24,8 @@ export const datasetCardConfiguration: CardConfiguration = {
   genericCardSchema: {
     type: SynapseConstants.DATASET,
     title: 'title',
+    includeCitation: true,
+    defaultCitationFormat: 'nature',
     description: 'description',
     customSecondaryLabelConfig: {
       key: CUSTOM_LABEL_KEY,
