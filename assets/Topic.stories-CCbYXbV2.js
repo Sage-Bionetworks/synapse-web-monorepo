@@ -1,0 +1,10 @@
+import{T as m}from"./Topic-xTkfbjHW.js";import{f as p}from"./index-DAxQS6_E.js";import"./jsx-runtime-DNP5ZHPF.js";import"./index-C9LqO53Z.js";import"./iframe-DzZkUbt0.js";import"./ConditionalWrapper-CdyME2LR.js";import"./IconSvg-DVy36fcc.js";import"./createSvgIcon-BtT08fNl.js";import"./createTheme-BG9REND8.js";import"./DefaultPropsProvider-CBoC3p-_.js";import"./spreadSx-CwcO6WA9.js";import"./useTheme-DaIKVKIj.js";import"./useTheme-Dqg7276U.js";import"./Tooltip--gcNUJrW.js";import"./index-DfJVQJTe.js";import"./Grow-BEsXXeLg.js";import"./resolveComponentProps-DJsKa-oF.js";import"./isHostComponent-DVu5iVWx.js";import"./useForkRef-D7H_VIUT.js";import"./index-B7SGfn2n.js";import"./utils-Bn3sr0WI.js";import"./TransitionGroupContext-CdwE7o-d.js";import"./useEventCallback-CFsLaU7U.js";import"./useTimeout-9s3akjMN.js";import"./useControlled-C6FPOIeJ.js";import"./useId-Bp9otoFB.js";import"./useIsFocusVisible-C4iYqwwm.js";import"./Popper-wFK3a8ms.js";import"./ownerDocument-DW-IO8s5.js";import"./LayersTwoTone-CwImyUqN.js";import"./ContentCopyTwoTone-D_B6wDzg.js";import"./HelpOutlineTwoTone-Bz7TfZfC.js";import"./ErrorOutlined-CfYzmiSd.js";import"./GetAppTwoTone-CFy4yj9d.js";import"./InfoOutlined-Q8-fM4At.js";import"./DeleteTwoTone-DNYgeBSo.js";import"./CheckCircleTwoTone-DooSA5RY.js";import"./Stack-C3Yli3Do.js";import"./getThemeProps-CmxBhP06.js";import"./Button-C1D6jijN.js";import"./ButtonBase-C0iYjrZq.js";import"./Skeleton-X6vAixA1.js";import"./Link-BP8bljuP.js";import"./Typography-BdVBJyiw.js";const X={title:"Synapse/Following/Topic",component:m,tags:["autodocs"]},o={name:"Topic",args:{isSubscribed:!0,isLoading:!1,icon:"discussion",name:"Help me understand this project!",onToggleSubscribe:p()}};var r,i,t;o.parameters={...o.parameters,docs:{...(r=o.parameters)==null?void 0:r.docs,source:{originalSource:`{
+  name: 'Topic',
+  args: {
+    isSubscribed: true,
+    isLoading: false,
+    icon: 'discussion',
+    name: 'Help me understand this project!',
+    onToggleSubscribe: fn()
+  }
+}`,...(t=(i=o.parameters)==null?void 0:i.docs)==null?void 0:t.source}}};const Y=["Demo"];export{o as Demo,Y as __namedExportsOrder,X as default};
