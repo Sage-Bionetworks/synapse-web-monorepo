@@ -111,6 +111,9 @@ importers:
       '@sage-bionetworks/synapse-client':
         specifier: workspace:*
         version: link:../../packages/synapse-client
+      '@sage-bionetworks/synapse-portal-framework':
+        specifier: workspace:*
+        version: link:../synapse-portal-framework
       '@sage-bionetworks/synapse-types':
         specifier: workspace:*
         version: link:../../packages/synapse-types

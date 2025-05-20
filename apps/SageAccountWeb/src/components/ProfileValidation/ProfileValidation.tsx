@@ -20,12 +20,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { SyntheticEvent, useEffect, useState } from 'react'
 import { Navigate } from 'react-router'
-import {
-  displayToast,
-  SynapseClient,
-  SynapseConstants,
-  SynapseContextUtils,
-} from 'synapse-react-client'
 import { getSearchParam } from '../../URLUtils'
 import { BackButton } from '../BackButton'
 import { SourceAppLogo } from '../SourceApp'
@@ -37,6 +31,10 @@ import { ReturnToAppButton } from './ReturnToAppButton'
 import TermsAndConditionsWrapped from './TermsAndConditionsWrapped'
 import ThankYou from './ThankYou'
 import { VerifyIdentify } from './VerifyIdentify'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClient'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 
 const IDENTITY_ATTESTATION_TEMPLATE_DOCUMENT_LINK =
   'https://help.synapse.org/__attachments/2007072795/signing_official.doc?inst-v=77bba77d-449d-4402-a8bb-6895820b38a9'
@@ -284,10 +282,9 @@ function BodyControlFactory(args: {
   }
 }
 
-export type ProfileValidationProps = {}
-
-export const ProfileValidation = (props: ProfileValidationProps) => {
-  const { accessToken } = SynapseContextUtils.useSynapseContext()
+function ProfileValidation() {
+  const { accessToken } = useSynapseContext()
+  const sourceApp = useSourceApp()
   const [verificationSubmission, setVerificationSubmission] =
     useState<VerificationSubmission>()
   const [profile, setProfile] = useState<UserProfile>()
@@ -467,10 +464,12 @@ export const ProfileValidation = (props: ProfileValidationProps) => {
             sx={theme => ({ marginTop: theme.spacing(5) })}
             endIcon={<ArrowRightAltIcon />}
           >
-            Return to {useSourceApp()?.friendlyName}
+            Return to {sourceApp?.friendlyName}
           </Button>
         </ThankYou>
       )}
     </StyledOuterContainer>
   )
 }
+
+export default ProfileValidation

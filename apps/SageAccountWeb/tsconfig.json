@@ -23,6 +23,12 @@
       "@sage-bionetworks/synapse-types/*": [
         "../../../packages/synapse-types/src/*"
       ],
+      "@sage-bionetworks/synapse-portal-framework": [
+        "../../synapse-portal-framework/src"
+      ],
+      "@sage-bionetworks/synapse-portal-framework/*": [
+        "../../synapse-portal-framework/src/*"
+      ],
       "synapse-react-client": ["../../../packages/synapse-react-client/src"],
       "synapse-react-client/*": [
         "../../../packages/synapse-react-client/src/*"
@@ -33,6 +39,7 @@
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/tests/setupTests.ts"],
   "references": [
+    { "path": "../synapse-portal-framework" },
     { "path": "../../packages/synapse-client" },
     { "path": "../../packages/synapse-react-client" },
     { "path": "../../packages/synapse-types" }

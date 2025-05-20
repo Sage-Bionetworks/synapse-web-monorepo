@@ -2,13 +2,11 @@ import { StyledEngineProvider } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PropsWithChildren } from 'react'
 import { useNavigate } from 'react-router'
-import {
-  ApplicationSessionManager,
-  SynapseToastContainer,
-} from 'synapse-react-client'
 import AppInitializer from './AppInitializer'
 import { SourceAppProvider } from './components/useSourceApp'
 import { RESET_2FA_ROUTE, RESET_2FA_SIGNED_TOKEN_PARAM } from './Constants'
+import ApplicationSessionManager from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionManager'
+import { SynapseToastContainer } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 
 const queryClient = new QueryClient({
   defaultOptions: {

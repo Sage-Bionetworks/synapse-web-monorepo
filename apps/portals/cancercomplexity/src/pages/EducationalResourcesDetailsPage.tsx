@@ -53,7 +53,7 @@ function EducationalResourcesDetailsPage() {
                       cardConfiguration={grantsCardConfiguration}
                       sql={grantsSql}
                       columnAliases={columnAliases}
-                      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                      sqlOperator={ColumnSingleValueFilterOperator.IN}
                       searchParams={{
                         grantNumber: value!,
                       }}
