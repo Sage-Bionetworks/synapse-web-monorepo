@@ -141,6 +141,7 @@ function CardContainerInternal(props: CardContainerProps) {
           schema,
           secondaryLabelLimit,
           rowId: rowData.rowId,
+          versionNumber: rowData.versionNumber,
           data: rowData.values,
           selectColumns: rowSet.headers,
           columnModels: queryMetadata.columnModels,

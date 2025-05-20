@@ -4,6 +4,7 @@ import {
   getLinkParams,
   getValueOrMultiValue,
 } from '@/components/GenericCard/CardUtils'
+import CroissantButton from '@/components/GenericCard/CroissantButton/CroissantButton'
 import { GenericCardIcon } from '@/components/GenericCard/GenericCardIcon'
 import PortalDOI from '@/components/GenericCard/PortalDOI/PortalDOI'
 import {
@@ -121,6 +122,8 @@ export type TableRowGenericCardProps = {
   data: string[]
   /** The ID of the table row */
   rowId?: number
+  /** The versionNumber of the table row */
+  versionNumber?: number
 } & CommonCardProps
 
 // SWC-6115: special rendering of the version column (for Views)
@@ -159,6 +162,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     schema,
     data,
     rowId,
+    versionNumber: rowVersionNumber,
     genericCardSchema,
     secondaryLabelLimit,
     selectColumns,
@@ -356,6 +360,16 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     ctaTarget = newCtaTarget
   }
 
+  let croissantButton = <></>
+  if (rowId && rowVersionNumber) {
+    croissantButton = (
+      <CroissantButton
+        datasetId={rowId}
+        datasetVersionNumber={rowVersionNumber}
+      />
+    )
+  }
+
   return (
     <GenericCard
       ref={ref}
@@ -437,6 +451,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       }
       cardTopButtons={
         <>
+          {croissantButton}
           {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
           {downloadCartSynIdValue && (
             <>
