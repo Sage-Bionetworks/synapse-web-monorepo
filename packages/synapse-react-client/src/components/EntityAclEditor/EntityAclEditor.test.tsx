@@ -185,6 +185,11 @@ describe('EntityAclEditor', () => {
     )
     verifyInheritsSharingSettingsFromBenefactorMessage()
 
+    expect(
+      screen.queryByText(
+        'You do not have sufficient privileges to modify the sharing settings.',
+      ),
+    ).not.toBeInTheDocument()
     // None of the ACL items should be editable since they are inherited
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
     const createLocalSharingSettingsButton = screen.getByRole('button', {

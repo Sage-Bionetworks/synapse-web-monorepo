@@ -77,6 +77,7 @@ const defaultProps: AclEditorProps = {
   removeResourceAccessItem: mockRemoveResourceAccessItem,
   showNotifyCheckbox: false,
   showAddRemovePublicButton: false,
+  isInherited: false,
 }
 
 function renderComponent(props: AclEditorProps) {
