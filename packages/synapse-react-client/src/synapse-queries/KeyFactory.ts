@@ -957,6 +957,10 @@ export class KeyFactory {
     return this.getKey('evaluation', 'paginated', request)
   }
 
+  public getEvaluationRoundsQueryKey(evaluationId: string) {
+    return this.getKey('evaluation', evaluationId, 'rounds')
+  }
+
   public chatAgentSessionHistoryQueryKey(params?: SessionHistoryRequest) {
     return this.getKey('chatHistory', params)
   }

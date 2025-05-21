@@ -1,7 +1,8 @@
+import EvaluationQueueCurrentRoundInfo from '@/components/ChallengeSubmission/EvaluationQueueCurrentRoundInfo'
 import { useGetEntityEvaluations } from '@/synapse-queries'
 import { Alert, Box, Radio, TextField, Typography } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
-import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
+import { ACCESS_TYPE, Evaluation } from '@sage-bionetworks/synapse-types'
 
 type EvaluationQueueListProps = {
   projectId: string
@@ -25,7 +26,7 @@ function EvaluationQueueList({
     accessType: ACCESS_TYPE.SUBMIT,
   })
 
-  const columns: GridColDef[] = [
+  const columns: GridColDef<Evaluation>[] = [
     {
       field: 'radiobutton',
       width: 25,
@@ -50,16 +51,18 @@ function EvaluationQueueList({
       hideable: false,
       disableColumnMenu: true,
     },
+    {
+      field: 'info',
+      width: 25,
+      sortable: false,
+      filterable: false,
+      hideable: false,
+      disableColumnMenu: true,
+      renderCell: params => (
+        <EvaluationQueueCurrentRoundInfo evaluationId={params.id as string} />
+      ),
+    },
   ]
-
-  const getRows = () => {
-    return (evaluations ?? [])?.map(evaluation => {
-      return {
-        id: evaluation.id,
-        name: evaluation.name,
-      }
-    })
-  }
 
   return (
     <Box>
@@ -70,12 +73,12 @@ function EvaluationQueueList({
           variant="h6"
           sx={{ fontSize: '18px', lineHeight: '20px', fontWeight: 700 }}
         >
-          Your Submission Directory
+          Evaluation Queues
         </Typography>
       </Box>
       <DataGrid
         columns={columns}
-        rows={getRows()}
+        rows={evaluations || []}
         hideFooter
         density="compact"
         autoHeight
