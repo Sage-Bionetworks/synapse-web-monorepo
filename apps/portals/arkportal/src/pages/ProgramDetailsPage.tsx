@@ -6,7 +6,7 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { CardContainerLogic } from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic'
 import columnAliases from '../config/columnAliases'
 import { datasetsSql, programSql, projectsSql } from '../config/resources'
 import {
@@ -16,7 +16,7 @@ import {
 } from '../config/synapseConfigs/programs'
 import { projectsCardConfiguration } from '../config/synapseConfigs/projects'
 
-export function ProgramsDetailPage() {
+function ProgramsDetailPage() {
   const searchParams = useGetPortalComponentSearchParams()
   return (
     <>
@@ -79,3 +79,5 @@ export function ProgramsDetailPage() {
     </>
   )
 }
+
+export default ProgramsDetailPage
