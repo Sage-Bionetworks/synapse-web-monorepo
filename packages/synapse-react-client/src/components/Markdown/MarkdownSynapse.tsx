@@ -6,7 +6,10 @@ import {
   processMath,
   stripHTML,
 } from '@/components/Markdown/MarkdownUtils'
-import { useGetWikiAttachments, useGetWikiPage } from '@/synapse-queries/index'
+import {
+  useGetWikiPage,
+  useGetWikiAttachments,
+} from '@/synapse-queries/wiki/useWiki'
 import { sanitize } from '@/utils/functions/SanitizeHtmlUtils'
 import { Link, Typography } from '@mui/material'
 import markdownitContainer from '@sage-bionetworks/markdown-it-container'
