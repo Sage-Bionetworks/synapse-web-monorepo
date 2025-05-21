@@ -1,1 +1,0 @@
-import{d as m}from"./DefaultPropsProvider-B8LU8o9q.js";import{T as o}from"./createTheme-DfE_l7fh.js";import{u as s}from"./Stack-CotbFTt2.js";function a({props:e,name:r}){return s({props:e,name:r,defaultTheme:m,themeId:o})}export{a as u};
