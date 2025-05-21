@@ -1,12 +1,8 @@
 import { filesSql, studiesSql } from '@/config/resources'
 import { columnAliases } from '@/config/synapseConfigs/commonProps'
 import { datasetsRgbIndex } from '@/config/synapseConfigs/datasets'
-import {
-  DetailsPageContent,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import {
-  useDetailsPageContext,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { DetailsPageTabs } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
 import { Outlet, RouteObject } from 'react-router'

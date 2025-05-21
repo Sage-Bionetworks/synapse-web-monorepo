@@ -1,8 +1,8 @@
 import {
   CardConfiguration,
   QueryWrapperPlotNavProps,
-  SynapseConstants,
 } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { datasetsSql } from '../resources'
 import { columnAliases as sharedColumnAliases } from './commonProps'
 import { studyColumnIconConfigs } from './studies'
