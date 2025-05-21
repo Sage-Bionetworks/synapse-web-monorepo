@@ -33,6 +33,7 @@ export type QueryVisualizationContextType = {
   setIsShowingExportToAnalysisPlatformModal: Dispatch<SetStateAction<boolean>>
   showFacetFilter: boolean
   setShowFacetFilter: Dispatch<SetStateAction<boolean>>
+  hideSearchBarControl: boolean
   showSearchBar: boolean
   setShowSearchBar: Dispatch<SetStateAction<boolean>>
   showDownloadConfirmation: boolean

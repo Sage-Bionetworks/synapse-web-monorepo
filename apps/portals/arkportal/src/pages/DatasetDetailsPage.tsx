@@ -4,15 +4,16 @@ import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/D
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
 import columnAliases from '../config/columnAliases'
 import { datasetsSql } from '../config/resources'
 import {
   datasetCardConfiguration,
   datasetColumnAliases,
 } from '../config/synapseConfigs/datasets'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic'
+import { QueryWrapperPlotNav } from 'synapse-react-client/components/QueryWrapperPlotNav'
 
-export function DatasetDetailsPage() {
+function DatasetDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
   return (
     <>
@@ -94,3 +95,5 @@ export function DatasetDetailsPage() {
     </>
   )
 }
+
+export default DatasetDetailsPage

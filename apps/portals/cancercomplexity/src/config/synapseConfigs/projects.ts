@@ -1,5 +1,5 @@
 import type { CardConfiguration } from 'synapse-react-client'
-import { SynapseConstants } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 
 export const projectsSchema: TableToGenericCardMapping = {

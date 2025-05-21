@@ -1,10 +1,10 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import { StandaloneQueryWrapper } from 'synapse-react-client'
-import { mc2SupplementSql } from '../resources'
+import { mc2SupplementSql } from '@/config/resources'
+import StandaloneQueryWrapper from 'synapse-react-client/components/StandaloneQueryWrapper'
 
 const rgbIndex = 8
 
-export function MC2Supplement() {
+function MC2Supplement() {
   return (
     <SectionLayout title={'MC2 Digital Pathology QC Supplement'}>
       <StandaloneQueryWrapper
@@ -26,3 +26,5 @@ export function MC2Supplement() {
     </SectionLayout>
   )
 }
+
+export default MC2Supplement

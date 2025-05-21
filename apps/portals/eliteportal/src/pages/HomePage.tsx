@@ -32,8 +32,9 @@ import {
   whatWeDoSql,
 } from '../config/resources'
 import { useNavigate } from 'react-router'
+import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 
-export default function HomePage() {
+function HomePageInternal() {
   const theme = useTheme()
   const navigate = useNavigate()
 
@@ -356,3 +357,13 @@ export default function HomePage() {
     </>
   )
 }
+
+function HomePage() {
+  return (
+    <HomePageThemeProvider>
+      <HomePageInternal />
+    </HomePageThemeProvider>
+  )
+}
+
+export default HomePage

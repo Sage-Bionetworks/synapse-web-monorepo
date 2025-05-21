@@ -14,7 +14,7 @@ import { GenericObjectType, RJSFSchema } from '@rjsf/utils'
 import { JSONSchema7, JSONSchema7Definition } from 'json-schema'
 import { ParseError } from 'papaparse'
 import { Ref, useCallback, useMemo, useState } from 'react'
-import { getTransformErrors } from '../SchemaDrivenAnnotationEditor/AnnotationEditorUtils'
+import { transformErrors } from '../SchemaDrivenAnnotationEditor/AnnotationEditorUtils'
 import useParseCsv, { UseParseCsvError } from './useParseCsv'
 
 const DEFAULT_ARRAY_ITEM_DEFINITION: JSONSchema7Definition = { type: 'string' }
@@ -73,10 +73,6 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
       }
     }
   }, [onChange, pastedValues, value, parse])
-
-  const transformErrors = useMemo(() => {
-    return getTransformErrors()
-  }, [])
 
   return (
     <Box
