@@ -14,8 +14,7 @@ type EvaluationQueueInfoProps = {
 }
 
 /**
- * Displays an information tooltip about the current round of an Evaluation Queue.
- * If there is no current round, then
+ * Displays an information tooltip about the current (or recent) round of an Evaluation Queue.
  * @param props
  * @constructor
  */
