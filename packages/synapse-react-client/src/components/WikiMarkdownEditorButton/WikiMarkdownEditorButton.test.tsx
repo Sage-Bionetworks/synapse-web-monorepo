@@ -14,8 +14,7 @@ import SynapseClient from '@/synapse-client'
 import { CreateWikiPageInput } from '@/synapse-queries'
 import {
   confirmMarkdownSynapseTextContent,
-  expectMarkdownSynapseNotToGetWiki,
-  waitForMarkdownSynapseToGetWiki,
+  confirmMarkdownSynapseIsShown,
 } from '@/testutils/MarkdownSynapseUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { WIKI_PAGE } from '@/utils/APIConstants'
@@ -300,7 +299,7 @@ describe('WikiMarkdownEditorButton', () => {
     })
 
     await waitForNotDisabled(button)
-    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseIsShown()
     await confirmMarkdownSynapseTextContent(mockEntityRootWikiPage.markdown)
   })
 
@@ -311,7 +310,7 @@ describe('WikiMarkdownEditorButton', () => {
     })
 
     await waitForNotDisabled(button)
-    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseIsShown()
     await confirmMarkdownSynapseTextContent(mockEntityWikiPage.markdown)
   })
 
@@ -324,7 +323,7 @@ describe('WikiMarkdownEditorButton', () => {
     const { button } = setUp(arProps)
 
     await waitForNotDisabled(button)
-    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseIsShown()
     await confirmMarkdownSynapseTextContent(
       mockToUAccessRequirementWikiPage.markdown,
     )
@@ -337,7 +336,6 @@ describe('WikiMarkdownEditorButton', () => {
     })
 
     await waitForNotDisabled(button)
-    expectMarkdownSynapseNotToGetWiki()
     await confirmMarkdownSynapseTextContent(NO_WIKI_CONTENT)
   })
 

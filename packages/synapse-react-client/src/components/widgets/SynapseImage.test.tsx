@@ -1,3 +1,4 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import SynapseImage from './SynapseImage'
 import { render } from '@testing-library/react'
 
@@ -11,6 +12,7 @@ it('renders without failing', () => {
         responsive: '',
       }}
     />,
+    { wrapper: createWrapper() },
   )
   expect(container).toBeDefined()
 })

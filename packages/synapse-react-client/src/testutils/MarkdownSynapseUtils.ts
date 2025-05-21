@@ -1,21 +1,10 @@
-import SynapseClient from '@/synapse-client'
 import { screen, waitFor } from '@testing-library/react'
 
-const getEntityWikiSpy = jest.spyOn(SynapseClient, 'getEntityWiki')
-const getWikiAttachmentsFromEntitySpy = jest.spyOn(
-  SynapseClient,
-  'getWikiAttachmentsFromEntity',
-)
-
-export function expectMarkdownSynapseNotToGetWiki() {
-  expect(getEntityWikiSpy).toHaveBeenCalledTimes(0)
-  expect(getWikiAttachmentsFromEntitySpy).toHaveBeenCalledTimes(0)
-}
-
-export async function waitForMarkdownSynapseToGetWiki(times: number = 1) {
+export async function confirmMarkdownSynapseIsShown(times: number = 1) {
   await waitFor(() => {
-    expect(getEntityWikiSpy).toHaveBeenCalledTimes(times)
-    expect(getWikiAttachmentsFromEntitySpy).toHaveBeenCalledTimes(times)
+    const wikiElements = screen.getAllByTestId('markdown')
+    expect(wikiElements).toHaveLength(times)
+    wikiElements.forEach(el => expect(el).not.toBeEmptyDOMElement())
   })
 }
 
