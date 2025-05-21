@@ -378,6 +378,7 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
         />
       )}
       <AclEditor
+        isInherited={updatedIsInherited}
         canEdit={getCanEditResourceAccess(
           canEdit,
           updatedIsInherited,
