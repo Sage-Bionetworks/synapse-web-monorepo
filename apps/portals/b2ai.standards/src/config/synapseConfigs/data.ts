@@ -5,7 +5,12 @@ import {
   StandaloneQueryWrapperProps,
 } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
-import { dataFtsConfig, dataSql, DST_TABLE_COLUMN_NAMES } from '../resources'
+import {
+  dataFtsConfig,
+  // dataSetExploreSql,
+  dataSql,
+  DST_TABLE_COLUMN_NAMES,
+} from '../resources'
 
 const dataRgbIndex = 0
 export const dataColumnLinks: LabelLinkConfig = [
@@ -22,7 +27,7 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   rgbIndex: dataRgbIndex,
   shouldDeepLink: true,
   hideDownload: false,
-  sql: dataSql,
+  sql: dataSql, // TODO: now that we're having more pages, this should be renamed standardsSql
   name: 'Standards',
   columnAliases,
   tableConfiguration: {
@@ -48,5 +53,26 @@ export const dataDetailPageProps: StandaloneQueryWrapperProps = {
   hideDownload: true,
   sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
 }
+
+/* part of PR #1865, not ready yet
+const dataSetColumnLinks: LabelLinkConfig = [
+  {
+    isMarkdown: true,
+    matchColumnName: 'name',
+  },
+]
+export const dataSetsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex: dataRgbIndex,
+  shouldDeepLink: true,
+  hideDownload: false,
+  sql: dataSetExploreSql,
+  name: 'DataSets',
+  columnAliases,
+  tableConfiguration: {
+    showDownloadColumn: false,
+    columnLinks: dataSetColumnLinks,
+  },
+}
+*/
 
 export default dataQueryWrapperPlotNavProps

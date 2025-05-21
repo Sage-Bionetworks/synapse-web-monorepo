@@ -57,6 +57,19 @@ const StandardsHeader = (props: StandardsHeaderProps) => {
         >
           Explore research Standards
         </Button>
+        {/* not working yet, but was part of branch that I needed to
+            get https://github.com/Sage-Bionetworks/synapse-web-monorepo/pull/1871
+            working
+        <Button
+          variant="outlined"
+          size="large"
+          color="lightPrimary"
+          href="/DataSetExplore"
+          sx={{ mt: '20px', marginLeft: '10px' }}
+        >
+          Explore data sets
+        </Button>
+        */}
       </Box>
     </>
   )
