@@ -28,7 +28,7 @@ export default function HomePage() {
       <JsonLdScript
         thing={{
           '@context': 'https://schema.org',
-          '@type': 'DataCatalog',
+          '@type': 'Dataset',
           '@id': 'https://nf.synapse.org',
           keywords: [
             'neurofibromatosis',

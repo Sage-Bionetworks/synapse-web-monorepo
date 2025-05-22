@@ -9,7 +9,7 @@ function Home() {
       <JsonLdScript
         thing={{
           '@context': 'https://schema.org',
-          '@type': 'DataCatalog',
+          '@type': 'Dataset',
           '@id': 'https://arkportal.synapse.org/',
           // "http://purl.org/dc/terms/conformsTo": {
           //     "@type": "CreativeWork",
