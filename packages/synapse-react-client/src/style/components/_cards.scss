@@ -1,5 +1,6 @@
 @use '../abstracts/variables' as SRC;
 @use 'sass:color';
+@use 'sass:map';
 
 //Variables
 $baseline-grid: 21px;
@@ -75,6 +76,18 @@ $text-color-lighter: #898989;
     .MuiLink-root {
       color: white !important;
       text-decoration-color: white !important;
+    }
+    .MuiButton-root {
+      border-color: white !important;
+      color: white !important;
+      height: 24px;
+
+      &:hover {
+        background-color: map.get(SRC.$primary-color-palette, 700);
+      }
+      &:active {
+        background-color: map.get(SRC.$primary-color-palette, 800);
+      }
     }
     .SRC-cardMetadata .SRC-row-label {
       text-transform: uppercase;

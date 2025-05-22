@@ -191,19 +191,37 @@ function EvaluationCardDropdown({
         slotProps={{ paper: { sx: { minWidth: '120px' } } }}
       >
         {permissions.canEdit && (
-          <MenuItem role="menuitem" onClick={onEdit}>
+          <MenuItem
+            role="menuitem"
+            onClick={() => {
+              handleClose()
+              onEdit()
+            }}
+          >
             Edit
           </MenuItem>
         )}
         {permissions.canChangePermissions && (
-          <MenuItem role="menuitem" onClick={onModifyAccess}>
+          <MenuItem
+            role="menuitem"
+            onClick={() => {
+              handleClose()
+              onModifyAccess()
+            }}
+          >
             Modify Access
           </MenuItem>
         )}
         {/* MUI Menu cannot have a fragment child, so we split the divider and Delete MenuItem into two separate statements */}
         {permissions.canDelete && <Divider />}
         {permissions.canDelete && (
-          <MenuItem role="menuitem" onClick={() => setDeleteWarningShow(true)}>
+          <MenuItem
+            role="menuitem"
+            onClick={() => {
+              handleClose()
+              setDeleteWarningShow(true)
+            }}
+          >
             Delete
           </MenuItem>
         )}

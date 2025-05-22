@@ -142,6 +142,7 @@ const mockQueryVisualizationContext: QueryVisualizationContextType = {
   showPlots: false,
   showSearchBar: false,
   showSqlEditor: false,
+  hideSearchBarControl: false,
 }
 const mockExportToCavatica = jest.fn()
 const mockExportToTerra = jest.fn()

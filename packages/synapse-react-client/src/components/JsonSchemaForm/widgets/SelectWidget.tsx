@@ -49,16 +49,27 @@ export const SelectWidget: Widget = (props: SelectWidgetProps) => {
     onBlur,
     onFocus,
     placeholder,
-    isClearable = true,
+    isClearable: _isClearable = true,
     rawErrors,
     registry,
   } = props
+
   const { enumOptions } = options as {
     enumOptions: EnumOptionsType[]
   }
-  const allowFreeSolo = Boolean(
-    (registry.formContext as CustomFormContext).allowFreeSoloEnum,
+
+  // If the ID includes one of these, then this is a widget used to select a schema in `oneOf` or `anyOf`.
+  // In these cases, we should not allow free solo input.
+  const isAnyOrOneOfOption = ['__oneof_select', '__anyof_select'].some(
+    multiSchemaTag => id.includes(multiSchemaTag),
   )
+
+  const allowFreeSolo =
+    !isAnyOrOneOfOption &&
+    Boolean((registry.formContext as CustomFormContext).allowFreeSoloEnum)
+
+  // any/oneOf options should not be clearable
+  const isClearable = _isClearable && !isAnyOrOneOfOption
 
   return (
     <Autocomplete

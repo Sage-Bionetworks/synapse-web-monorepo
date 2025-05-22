@@ -235,9 +235,9 @@ export const WIKI_PAGE = (
 export const WIKI_PAGE_ID = (
   ownerObjectType: ObjectType,
   ownerObjectId: string,
-  wikiPageId: string,
+  wikiPageId: string | undefined,
 ) => {
-  return `${WIKI_PAGE(ownerObjectType, ownerObjectId)}/${wikiPageId}`
+  return `${WIKI_PAGE(ownerObjectType, ownerObjectId)}/${wikiPageId ?? ''}`
 }
 
 export const SESSION_ACCESS_TOKEN = `${AUTH}/sessionAccessToken`

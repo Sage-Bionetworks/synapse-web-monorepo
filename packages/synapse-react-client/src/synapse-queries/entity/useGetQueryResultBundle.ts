@@ -377,13 +377,15 @@ export function getInfiniteQueryResultBundleOptions(
 /**
  * Fetches all rows for a table query. Only use this request if you require all rows in a table at once.
  */
-export function useGetFullTableQueryResults(
+export function useGetFullTableQueryResults<TData = QueryResultBundle>(
   queryBundleRequest: QueryBundleRequest,
-  options?: Partial<UseQueryOptions<QueryResultBundle, SynapseClientError>>,
+  options?: Partial<
+    UseQueryOptions<QueryResultBundle, SynapseClientError, TData>
+  >,
   forceAnonymous: boolean = false,
-): UseQueryResult<QueryResultBundle, SynapseClientError> {
+) {
   const { accessToken, keyFactory } = useSynapseContext()
-  return useQuery({
+  return useQuery<QueryResultBundle, SynapseClientError, TData>({
     ...tableQueryUseQueryDefaults,
     ...options,
     queryKey: keyFactory.getFullTableQueryResultQueryKey(

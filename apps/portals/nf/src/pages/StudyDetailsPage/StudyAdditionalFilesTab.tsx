@@ -1,13 +1,9 @@
 import { metadataFilesSql } from '@/config/resources'
-import {
-  DetailsPageContent,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import {
-  useDetailsPageContext,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { StandaloneQueryWrapper } from 'synapse-react-client'
 
-export default function StudyAdditionalFilesTab() {
+function StudyAdditionalFilesTab() {
   const { value: studyId } = useDetailsPageContext('studyId')
   if (studyId == null) {
     return null
@@ -39,3 +35,5 @@ export default function StudyAdditionalFilesTab() {
     ></DetailsPageContent>
   )
 }
+
+export default StudyAdditionalFilesTab

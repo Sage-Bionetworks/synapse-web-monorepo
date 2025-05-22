@@ -7,8 +7,7 @@ import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import {
   confirmMarkdownSynapseTextContent,
-  expectMarkdownSynapseNotToGetWiki,
-  waitForMarkdownSynapseToGetWiki,
+  confirmMarkdownSynapseIsShown,
 } from '@/testutils/MarkdownSynapseUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, waitFor, within } from '@testing-library/react'
@@ -50,7 +49,6 @@ describe('AccessRequirementWikiInstructions', () => {
     const { user, editBtn } = setUp(props)
 
     await confirmMarkdownSynapseTextContent(NO_WIKI_CONTENT)
-    expectMarkdownSynapseNotToGetWiki()
     expect(editBtn).not.toBeDisabled()
 
     await user.click(editBtn)
@@ -80,7 +78,7 @@ describe('AccessRequirementWikiInstructions', () => {
       expect(editDialog).not.toBeInTheDocument()
     })
 
-    await waitForMarkdownSynapseToGetWiki(2)
+    await confirmMarkdownSynapseIsShown(1)
     await confirmMarkdownSynapseTextContent(newMarkdown)
   })
 
@@ -90,7 +88,7 @@ describe('AccessRequirementWikiInstructions', () => {
     }
     const { user, editBtn } = setUp(props)
 
-    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseIsShown()
     await waitFor(() => {
       expect(screen.queryByText(NO_WIKI_CONTENT)).toBeNull()
       expect(editBtn).not.toBeDisabled()
@@ -125,7 +123,6 @@ describe('AccessRequirementWikiInstructions', () => {
     })
 
     // Verify that the data is refreshed and the new markdown is displayed
-    await waitForMarkdownSynapseToGetWiki(2)
     await confirmMarkdownSynapseTextContent(newMarkdown)
 
     // Verify no wiki page was ever created

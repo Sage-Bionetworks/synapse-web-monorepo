@@ -1,8 +1,8 @@
 import {
   CardConfiguration,
   QueryWrapperPlotNavProps,
-  SynapseConstants,
 } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { datasetsSql } from '../resources'
 import { columnAliases as sharedColumnAliases } from './commonProps'
 import { studyColumnIconConfigs } from './studies'
@@ -24,6 +24,8 @@ export const datasetCardConfiguration: CardConfiguration = {
   genericCardSchema: {
     type: SynapseConstants.DATASET,
     title: 'title',
+    includeCitation: true,
+    defaultCitationFormat: 'nature',
     description: 'description',
     customSecondaryLabelConfig: {
       key: CUSTOM_LABEL_KEY,
@@ -46,7 +48,7 @@ export const datasetCardConfiguration: CardConfiguration = {
       'visualizeDataOn',
     ],
     dataTypeIconNames: 'dataType',
-    downloadCartSynId: 'id',
+    useRowIdAndVersionForDownloadCart: true,
   },
   labelLinkConfig: [
     {

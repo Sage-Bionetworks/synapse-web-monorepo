@@ -10,7 +10,7 @@ import {
 import DynamicFormModal from 'synapse-react-client/components/DynamicForm/DynamicFormModal'
 import Markdown from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
-export default function ToolDetailsPageObservationsTab() {
+function ToolDetailsPageObservationsTab() {
   return (
     <DetailsPageContent
       hideMenu
@@ -73,3 +73,5 @@ export default function ToolDetailsPageObservationsTab() {
     />
   )
 }
+
+export default ToolDetailsPageObservationsTab

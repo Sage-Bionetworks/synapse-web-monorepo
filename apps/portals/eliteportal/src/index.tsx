@@ -1,4 +1,4 @@
-import Portal from '@sage-bionetworks/synapse-portal-framework'
+import Portal from '@sage-bionetworks/synapse-portal-framework/Portal'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import footerConfig from './config/footerConfig'

@@ -34,6 +34,7 @@ export default function MarkdownSynapseImage(
       <SynapseImage
         params={widgetParamsMapped}
         synapseId={widgetParamsMapped.synapseId}
+        version={widgetParamsMapped.version}
       />
     )
   }

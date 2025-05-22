@@ -11,7 +11,7 @@ import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types
 import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
-export default function OrganizationDetailsTab() {
+function OrganizationDetailsTab() {
   const { value: fundingAgency } = useDetailsPageContext('fundingAgency')
 
   if (fundingAgency == null) {
@@ -67,3 +67,5 @@ export default function OrganizationDetailsTab() {
     ></DetailsPageContent>
   )
 }
+
+export default OrganizationDetailsTab
