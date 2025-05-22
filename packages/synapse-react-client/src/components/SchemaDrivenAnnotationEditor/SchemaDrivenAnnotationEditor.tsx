@@ -11,7 +11,7 @@ import {
 } from '@/utils/functions/getEndpoint'
 import { Alert, Box, Divider, Link, Typography } from '@mui/material'
 import RJSF from '@rjsf/core'
-import { RJSFValidationError } from '@rjsf/utils'
+import { RJSFValidationError, WidgetProps } from '@rjsf/utils'
 import validator from '@rjsf/validator-ajv8'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { EntityJson } from '@sage-bionetworks/synapse-types'
@@ -47,7 +47,7 @@ import {
 import SynapseAnnotationsRJSFObjectField from './field/SynapseAnnotationsRJSFObjectField'
 import { ObjectFieldTemplate } from './template/ObjectFieldTemplate'
 import SynapseAnnotationsWrapIfAdditionalTemplate from './template/SynapseAnnotationsWrapIfAdditionalTemplate'
-import TextWidget from './widget/TextWidget'
+// import TextWidget from './widget/TextWidget'
 
 export type SchemaDrivenAnnotationEditorProps = {
   /** The entity whose annotations should be edited with the form */
@@ -84,6 +84,10 @@ function cleanFormData(
     cleanedFormData = dropNullishArrayValues(cleanedFormData)
   }
   return cleanedFormData
+}
+
+const TextWidget = (props: WidgetProps) => {
+  // custom text widget for placeholder
 }
 
 /**
@@ -148,12 +152,37 @@ export function SchemaDrivenAnnotationEditor(
     [entityJson?.concreteType],
   )
 
+  const formDataHasNoAnnotations =
+    entityJson &&
+    isEmpty(
+      omitBy(formData, (_value, key) =>
+        Object.keys(entityJson).find(k => k === key),
+      ),
+    )
+
+  // useEffect(() => {
+  //   if (data?.entity) {
+  //     // Put the annotations into a state variable so it can be modified by the form.
+  //     setFormData(data?.entity)
+  //   }
+  // }, [data?.entity])
+
+  // test
   useEffect(() => {
     if (data?.entity) {
-      // Put the annotations into a state variable so it can be modified by the form.
-      setFormData(data?.entity)
+      // Initialize the form data with the entity's data
+      const initialData = { ...data.entity }
+
+      // If there are no annotations, add an empty row for the user to edit
+      if (formDataHasNoAnnotations) {
+        initialData['New Annotation'] = ''
+      }
+
+      setFormData(initialData)
     }
-  }, [data?.entity])
+  }, [data?.entity, formDataHasNoAnnotations])
+
+  console.log('formData', formData)
 
   const { data: schema, isLoading: isLoadingBinding } = useGetSchemaBinding(
     entityId!,
@@ -197,6 +226,8 @@ export function SchemaDrivenAnnotationEditor(
     [entitySchemaBaseProperties],
   )
 
+  console.log('uiSchema', uiSchema)
+
   const isLoading =
     isLoadingBinding || isLoadingSchema || isLoadingEntityTypeSchema
 
@@ -220,13 +251,13 @@ export function SchemaDrivenAnnotationEditor(
   const liveValidate =
     liveValidateFromProps ?? shouldLiveValidate(annotations, validationSchema)
 
-  const formDataHasNoAnnotations =
-    entityJson &&
-    isEmpty(
-      omitBy(formData, (_value, key) =>
-        Object.keys(entityJson).find(k => k === key),
-      ),
-    )
+  // const formDataHasNoAnnotations =
+  //   entityJson &&
+  //   isEmpty(
+  //     omitBy(formData, (_value, key) =>
+  //       Object.keys(entityJson).find(k => k === key),
+  //     ),
+  //   )
   const showHasNoAnnotationsAlert = schema === null && formDataHasNoAnnotations
 
   return (
@@ -257,7 +288,7 @@ export function SchemaDrivenAnnotationEditor(
               </b>
             </Alert>
           )}
-          {showHasNoAnnotationsAlert && (
+          {/* {showHasNoAnnotationsAlert && (
             <Alert severity="info">
               <Box display={'flex'} alignItems={'center'} gap={0.5}>
                 <Typography variant={'smallText1'}>
@@ -269,7 +300,7 @@ export function SchemaDrivenAnnotationEditor(
                 </Typography>
               </Box>
             </Alert>
-          )}
+          )} */}
           <JsonSchemaForm
             validator={validator}
             liveValidate={liveValidate}
@@ -293,9 +324,9 @@ export function SchemaDrivenAnnotationEditor(
               WrapIfAdditionalTemplate:
                 SynapseAnnotationsWrapIfAdditionalTemplate,
             }}
-            widgets={{
-              TextWidget: TextWidget,
-            }}
+            // widgets={{
+            //   TextWidget: TextWidget,
+            // }}
             schema={formSchema}
             uiSchema={uiSchema}
             transformErrors={transformErrors}
