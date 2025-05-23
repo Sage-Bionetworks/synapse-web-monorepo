@@ -116,7 +116,13 @@ export const router = createBrowserRouter([
                 convertModuleToRouteObject,
               ),
           },
-
+          {
+            path: '2faRequired',
+            lazy: () =>
+              import('@/pages/MfaRequiredPage').then(
+                convertModuleToRouteObject,
+              ),
+          },
           {
             path: '2fa/enroll',
             lazy: () =>
