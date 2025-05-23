@@ -10,9 +10,29 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { QueryWrapperPlotNav } from 'synapse-react-client'
+import { QueryWrapperPlotNav } from 'synapse-react-client/components/QueryWrapperPlotNav'
+import RssFeedCards from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
 
 const StudyDataTabContent = [
+  {
+    id: 'studyNews',
+    title: 'Recent Data Updates',
+    element: (
+      <DetailsPageContextConsumer columnName={'studyKey'}>
+        {({ value }) => (
+          <RssFeedCards
+            url="https://news.eliteportal.org"
+            itemsToShow={3}
+            allowCategories={[]}
+            filter={{
+              value: value!,
+              type: 'tag',
+            }}
+          />
+        )}
+      </DetailsPageContextConsumer>
+    ),
+  },
   {
     id: 'Access Requirements',
     title: 'Access Requirements',
@@ -59,7 +79,6 @@ const StudyDataTabContent = [
       </DetailsPageContextConsumer>
     ),
   },
-
   {
     id: 'Study Data',
     title: 'Study Data',
