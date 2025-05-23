@@ -9,9 +9,8 @@ function MfaRequiredPage(props: mfaRequiredPageProps) {
   const navigate = useNavigate()
 
   return (
-    <StyledOuterContainer className="OAuthClientManagementPage">
+    <StyledOuterContainer>
       <Paper
-        className="MfaRequiredPage"
         sx={{
           m: '0 auto',
           p: {
