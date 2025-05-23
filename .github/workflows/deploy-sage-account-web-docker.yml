@@ -1,0 +1,56 @@
+name: 'Deploy SageAccountWeb Docker Image'
+
+# Deploys a Docker image with SageAccountWeb bundled with a simple HTTP server for E2E testing.
+# Not intended for production use!
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  IMAGE_NAME: sage-account-web
+
+jobs:
+  build-and-deploy-docker-image:
+    strategy:
+      matrix:
+        mode: [development, staging, production]
+    name: build-and-deploy-docker-image
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
+      attestations: write
+    steps:
+      # checkout and build
+      - name: checkout
+        uses: actions/checkout@v4
+      - uses: ./.github/actions/pnpm-setup-action
+      - name: build
+        run: pnpm nx run SageAccountWeb:build --mode=${{ matrix.mode }}
+      # Build the image using the Dockerfile in the SageAccountWeb directory
+      - name: Build image
+        working-directory: apps/SageAccountWeb
+        run: docker build -t ${{ env.IMAGE_NAME }} . --label "runnumber=${GITHUB_RUN_ID}"
+      - name: Log in to registry
+        working-directory: apps/SageAccountWeb
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Push image
+        working-directory: apps/SageAccountWeb
+        run: |
+          IMAGE_ID=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+
+          # This changes all uppercase characters to lowercase.
+          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          # This strips the git ref prefix from the version.
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          # This strips the "v" prefix from the tag name.
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+          # Tag the image as 'latest-$MODE` -- e.g. `latest-development`, `latest-staging`, `latest-production`
+          [ "$VERSION" == "main" ] && VERSION=latest-${{ matrix.mode }}
+          echo IMAGE_ID=$IMAGE_ID
+          echo VERSION=$VERSION
+          docker tag ${{ env.IMAGE_NAME }} $IMAGE_ID:$VERSION
+          docker push $IMAGE_ID:$VERSION
