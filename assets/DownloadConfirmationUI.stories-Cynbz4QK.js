@@ -1,0 +1,41 @@
+import{D as w}from"./DownloadConfirmationUI-B5fu36Br.js";import{f as a}from"./index-B82oRXOs.js";import"./jsx-runtime-d_jSGfuW.js";import"./index-CsMIurHC.js";import"./iframe-BJUV8yd-.js";import"./useFiles-Dsa3u--j.js";import"./VerificationSubmission-DsgC4t7y.js";import"./SynapseConstants-BmRSEcUC.js";import"./OrientationBanner-B-arf4vv.js";import"./index-C6EkIRZO.js";import"./spreadSx-CwcO6WA9.js";import"./react-CLp1HUW8.js";import"./FullWidthAlert-g5VY_JP0.js";import"./Alert-BRIWNOtu.js";import"./createTheme-CXF9bY3g.js";import"./resolveComponentProps-BVjKbyvI.js";import"./isHostComponent-DVu5iVWx.js";import"./useForkRef-Qy2WE2L8.js";import"./createSvgIcon-nJ4brtSX.js";import"./DefaultPropsProvider-BjdTxmMk.js";import"./Close-CcYrHUCv.js";import"./IconButton-Oayiszqv.js";import"./ButtonBase-BemfzaRk.js";import"./useTimeout-M7ILagoH.js";import"./TransitionGroupContext-BzjYJz1e.js";import"./useIsFocusVisible-CONob7Sg.js";import"./useEventCallback-BI5RiCjo.js";import"./Paper-BOIlBj0a.js";import"./Stack-B6pwuley.js";import"./getThemeProps-BkFfL3GX.js";import"./useTheme-Co028x8f.js";import"./Box-0w0QXb9q.js";import"./AlertTitle-BCj215so.js";import"./Typography-DI7kYxjv.js";import"./useTheme-DxaRAP13.js";import"./Grow-Cse7N1kt.js";import"./index-ZO1NugB6.js";import"./utils-CXikhHHF.js";import"./ClickAwayListener-BhXis3j3.js";import"./ownerDocument-DW-IO8s5.js";import"./Tooltip-CuINGH26.js";import"./index-DioXFVDj.js";import"./useControlled-2RzUJcJv.js";import"./useId-BbVskIHx.js";import"./Popper-Dpp_HX4T.js";import"./Button-S6YMXMba.js";import"./fetchWithExponentialTimeout-Cpvpsfq8.js";import"./StringUtils-tNCAfVhp.js";import"./useQuery-D3ZPFprG.js";import"./utils-C7K2lhfB.js";import"./Link-6Al-Fqj4.js";import"./Collapse-BHgec6F8.js";import"./isNil-SZ1XCHa2.js";import"./_Uint8Array-Qz23elJ2.js";import"./_baseTimes-36S_kd0L.js";import"./isObjectLike-htAwhsM6.js";import"./isArray-Dxzbedgu.js";import"./_baseIsEqual-DpmEyEs-.js";import"./_getTag-CR_tant5.js";import"./tinycolor-Begke6kS.js";import"./Fade-BMnops2P.js";import"./Skeleton-wblQ7WdV.js";import"./inputBaseClasses-CsqekATJ.js";import"./calculateFriendlyFileSize-C5bVMG5e.js";import"./CheckCircleTwoTone-C73kqWtj.js";import"./InfoTwoTone-Ds0ttC-r.js";import"./mutation-CpK9fLVW.js";import"./dayjs.min-h1P3Bc9m.js";import"./chunk-AYJ5UCUI-CJN4kzPf.js";import"./cloneDeep-DjuOrVDN.js";import"./_initCloneObject-DutgCJVD.js";import"./isEqual-DjXGrVN1.js";import"./merge-DlMI-LlY.js";import"./identity-DKeuBCMA.js";import"./useDownloadList-DfmTVcAd.js";import"./useMutation-DDvEyqjo.js";import"./useInfiniteQuery-MicTNeFL.js";import"./relativeTime-RCFJfMGB.js";import"./SkeletonInlineBlock-Br8kD0JA.js";import"./SynapseTableConstants-2qH3fDlQ.js";import"./LayersTwoTone-DhUiK460.js";const Vt={title:"Download/DownloadConfirmationUI",component:w,tags:["autodocs"],argTypes:{isAuthenticated:{type:"boolean"}},args:{isAuthenticated:!0,onAddToDownloadCart:a(),onCancel:a()}},t={args:{isAuthenticated:!0,fileCount:1e4,fileSize:1e9,isLoadingStats:!1,isAddingToDownloadCart:!1}},i={args:{isAuthenticated:!0,fileCount:1e4,fileSize:void 0,isLoadingStats:!1,isAddingToDownloadCart:!1}},o={args:{isAuthenticated:!0,fileCount:0,fileSize:void 0,isLoadingStats:!0,isAddingToDownloadCart:!1}},r={args:{isAuthenticated:!0,fileCount:1e4,fileSize:void 0,isLoadingStats:!1,isAddingToDownloadCart:!0}},e={args:{isAuthenticated:!1,fileCount:1e4,fileSize:void 0,isLoadingStats:!1,isAddingToDownloadCart:!1}};var n,s,m;t.parameters={...t.parameters,docs:{...(n=t.parameters)==null?void 0:n.docs,source:{originalSource:`{
+  args: {
+    isAuthenticated: true,
+    fileCount: 10_000,
+    fileSize: 1_000_000_000,
+    isLoadingStats: false,
+    isAddingToDownloadCart: false
+  }
+}`,...(m=(s=t.parameters)==null?void 0:s.docs)==null?void 0:m.source}}};var p,d,l;i.parameters={...i.parameters,docs:{...(p=i.parameters)==null?void 0:p.docs,source:{originalSource:`{
+  args: {
+    isAuthenticated: true,
+    fileCount: 10_000,
+    fileSize: undefined,
+    isLoadingStats: false,
+    isAddingToDownloadCart: false
+  }
+}`,...(l=(d=i.parameters)==null?void 0:d.docs)==null?void 0:l.source}}};var u,c,f;o.parameters={...o.parameters,docs:{...(u=o.parameters)==null?void 0:u.docs,source:{originalSource:`{
+  args: {
+    isAuthenticated: true,
+    fileCount: 0,
+    fileSize: undefined,
+    isLoadingStats: true,
+    isAddingToDownloadCart: false
+  }
+}`,...(f=(c=o.parameters)==null?void 0:c.docs)==null?void 0:f.source}}};var g,S,C;r.parameters={...r.parameters,docs:{...(g=r.parameters)==null?void 0:g.docs,source:{originalSource:`{
+  args: {
+    isAuthenticated: true,
+    fileCount: 10_000,
+    fileSize: undefined,
+    isLoadingStats: false,
+    isAddingToDownloadCart: true
+  }
+}`,...(C=(S=r.parameters)==null?void 0:S.docs)==null?void 0:C.source}}};var A,h,D;e.parameters={...e.parameters,docs:{...(A=e.parameters)==null?void 0:A.docs,source:{originalSource:`{
+  args: {
+    isAuthenticated: false,
+    fileCount: 10_000,
+    fileSize: undefined,
+    isLoadingStats: false,
+    isAddingToDownloadCart: false
+  }
+}`,...(D=(h=e.parameters)==null?void 0:h.docs)==null?void 0:D.source}}};const Xt=["ConfirmationWithFileSize","ConfirmationWithoutFileSize","LoadingStats","AddingToCart","Unauthenticated"];export{r as AddingToCart,t as ConfirmationWithFileSize,i as ConfirmationWithoutFileSize,o as LoadingStats,e as Unauthenticated,Xt as __namedExportsOrder,Vt as default};
