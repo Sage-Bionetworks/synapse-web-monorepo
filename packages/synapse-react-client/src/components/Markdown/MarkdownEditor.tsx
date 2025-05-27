@@ -172,7 +172,9 @@ export function MarkdownEditor({
       <div>
         {MarkdownEditorTabs[currentTab] === 'WRITE' ? (
           <TextField
-            aria-label="markdown"
+            inputProps={{
+              ['aria-label']: 'markdown',
+            }}
             onChange={e => {
               setText(e.target.value)
               handleTagModal(e.target.value)
