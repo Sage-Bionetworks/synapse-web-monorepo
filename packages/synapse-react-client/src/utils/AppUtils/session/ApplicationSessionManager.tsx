@@ -1,5 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { useTermsOfServiceStatus } from '@/synapse-queries/termsOfService/useTermsOfService'
+import { useGetTwoFactorEnrollmentStatus } from '@/synapse-queries/index.js'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import dayjs from 'dayjs'
 import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
@@ -74,6 +75,10 @@ export function ApplicationSessionManager(
   const { data: tosStatus } = useTermsOfServiceStatus(token, {
     enabled: !!token,
   })
+  const { data: twoFactorStatus } = useGetTwoFactorEnrollmentStatus({
+    enabled: !!token,
+  })
+
   const refreshSession = useCallback(async () => {
     setTwoFactorAuthSSOError(undefined)
     let token
@@ -178,6 +183,7 @@ export function ApplicationSessionManager(
         isLoadingSSO,
         twoFactorAuthSSOErrorResponse: twoFactorAuthSSOError,
         hasInitializedSession,
+        twoFactorStatus,
       }}
     >
       <SynapseContextProvider

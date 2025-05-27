@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import { processRedirectURLInOneSage } from 'synapse-react-client/utils/AppUtils'
 import LoginPage from '@/pages/LoginPage'
+import useMaybeForceEnable2FA from '@/hooks/useMaybeForceEnable2FA'
 
 function LoggedInRedirector() {
   const { accessToken } = useSynapseContext()
@@ -15,11 +16,17 @@ function LoggedInRedirector() {
   const isInSSOFlow = isCodeSearchParam && isProviderSearchParam
 
   const { mayPromptTermsOfUse } = useMaybePromptToSignTermsOfService()
+  const { mayForceEnable2FA } = useMaybeForceEnable2FA()
 
   useEffect(() => {
     // User is on the root page (implied by route), logged in, not in the SSO Flow, and does not need to sign the ToS
     // then redirect!
-    if (accessToken && !isInSSOFlow && !mayPromptTermsOfUse) {
+    if (
+      accessToken &&
+      !isInSSOFlow &&
+      !mayPromptTermsOfUse &&
+      !mayForceEnable2FA
+    ) {
       // take user back to page they came from in the source app, if stored in a cookie
       const isProcessed = processRedirectURLInOneSage()
       if (!isProcessed && appContext?.redirectURL) {
@@ -27,7 +34,13 @@ function LoggedInRedirector() {
         window.location.replace(appContext?.redirectURL)
       }
     }
-  }, [accessToken, appContext?.redirectURL, isInSSOFlow, mayPromptTermsOfUse])
+  }, [
+    accessToken,
+    appContext?.redirectURL,
+    isInSSOFlow,
+    mayPromptTermsOfUse,
+    mayForceEnable2FA,
+  ])
   return <></>
 }
 
