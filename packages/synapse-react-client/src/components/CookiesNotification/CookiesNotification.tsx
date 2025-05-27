@@ -17,14 +17,26 @@ const cookies = new UniversalCookies()
 export const alertConfig = {
   title: 'Our site uses cookies.',
   description: (
-    <Typography variant="body1">
-      We use necessary cookies and store your data to ensure our websites
-      function properly. With your consent, we would also like to use cookies to
-      remember your preferences and enhance our websites. Please review our{' '}
-      <Link href={PRIVACY_POLICY_LINK}>Privacy Policy</Link>. By clicking
-      “Accept All,” you consent to our use of cookies. You can adjust your
-      cookie preferences anytime on the Settings page.
-    </Typography>
+    <>
+      <Typography variant="body1">
+        We use necessary cookies and store your data to ensure our websites
+        function properly. With your consent, we would also like to use optional
+        cookies to remember your preferences and improve our websites. Please
+        read our <Link href={PRIVACY_POLICY_LINK}>Privacy Policy</Link> for
+        details. By clicking “Allow All,” you agree to our use of cookies. You
+        can adjust your cookie preferences anytime on the Settings page.
+      </Typography>
+      <Typography
+        variant="body1"
+        sx={{ fontSize: '14px', fontWeight: 700, mt: '20px' }}
+      >
+        Sage Terms of Service
+      </Typography>
+      <Typography variant="body1">
+        Please read our Terms of Service before using our website. If you are
+        between 13 and 18, you must submit a Child Minor Addendum for access.
+      </Typography>
+    </>
   ),
   primaryButtonText: 'ALLOW ALL',
   secondaryButtonText: 'Disable All',
