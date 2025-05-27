@@ -75,6 +75,49 @@ export const EXTERNAL_ANALYSIS_PLATFORMS: Record<
     description:
       'Terra is the world’s most trusted platform for biomedical data analysis, secure sharing, and global collaboration',
     Logo: TerraLogo,
+    PlatformInstructions: () => (
+      <>
+        <Typography variant="body1" sx={{ fontWeight: 700 }} gutterBottom>
+          You must meet these requirements from TERRA to send data:
+        </Typography>
+        <Typography
+          variant="body1"
+          component={'ol'}
+          gutterBottom
+          sx={{ marginLeft: '10px', li: { mb: 1 } }}
+        >
+          <li>
+            You must complete all required Access Actions in the next step.
+          </li>
+          <li>
+            You must be logged in to a TERRA account.{' '}
+            <Link
+              href={'https://app.terra.bio/'}
+              rel={'noopener noreferrer'}
+              target={'_blank'}
+            >
+              Click here to login or register for TERRA
+            </Link>
+            .
+          </li>
+          <li>
+            You must connect your TERRA account to Synapse.{' '}
+            <Link
+              href={'https://app.terra.bio/#profile?tab=externalIdentities'}
+              target="_blank"
+            >
+              Click here for instructions.
+            </Link>
+          </li>
+        </Typography>
+
+        <Typography variant="body1" gutterBottom>
+          Note that we cannot provide support for TERRA. Please contact TERRA’s{' '}
+          <Link href="mailto:support@terra.bio">technical support</Link> for
+          issues related to the above.
+        </Typography>
+      </>
+    ),
   },
   adworkbench: {
     name: 'AD Workbench',
