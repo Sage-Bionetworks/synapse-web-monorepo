@@ -36,7 +36,6 @@ export function ObjectFieldTemplate<
     disabled,
     formData,
     idSchema,
-    onAddClick,
     properties,
     readonly,
     registry,
@@ -45,6 +44,8 @@ export function ObjectFieldTemplate<
     title,
     uiSchema,
   } = props
+
+  const { formContext } = registry
 
   const options = getUiOptions<T, S, F>(uiSchema)
   const TitleFieldTemplate = getTemplate<'TitleFieldTemplate', T, S, F>(
@@ -153,7 +154,7 @@ export function ObjectFieldTemplate<
             sx={{ my: 2 }}
             variant="contained"
             className="object-property-expand"
-            onClick={onAddClick(schema)}
+            onClick={formContext?.customHandleAddClick?.(schema)}
             disabled={disabled || readonly}
             aria-label={'Add Custom Field'}
           >

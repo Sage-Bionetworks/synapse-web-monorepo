@@ -1,4 +1,3 @@
-import AddToList from '@/assets/icons/AddToList'
 import {
   useGetJson,
   useGetSchema,
@@ -9,14 +8,14 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { Alert, Box, Divider, Link, Typography } from '@mui/material'
+import { Alert, Box, Divider, Link } from '@mui/material'
 import RJSF from '@rjsf/core'
-import { RJSFValidationError, WidgetProps } from '@rjsf/utils'
+import { englishStringTranslator, RJSFValidationError } from '@rjsf/utils'
 import validator from '@rjsf/validator-ajv8'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { EntityJson } from '@sage-bionetworks/synapse-types'
 import { JSONSchema7 } from 'json-schema'
-import { omitBy } from 'lodash-es'
+import { add, isEqual, omitBy } from 'lodash-es'
 import isEmpty from 'lodash-es/isEmpty'
 import noop from 'lodash-es/noop'
 import {
@@ -47,7 +46,8 @@ import {
 import SynapseAnnotationsRJSFObjectField from './field/SynapseAnnotationsRJSFObjectField'
 import { ObjectFieldTemplate } from './template/ObjectFieldTemplate'
 import SynapseAnnotationsWrapIfAdditionalTemplate from './template/SynapseAnnotationsWrapIfAdditionalTemplate'
-// import TextWidget from './widget/TextWidget'
+import TextWidget from './widget/TextWidget'
+import { TranslatableString } from '@rjsf/utils'
 
 export type SchemaDrivenAnnotationEditorProps = {
   /** The entity whose annotations should be edited with the form */
@@ -86,10 +86,6 @@ function cleanFormData(
   return cleanedFormData
 }
 
-const TextWidget = (props: WidgetProps) => {
-  // custom text widget for placeholder
-}
-
 /**
  * Renders a form for editing an entity's annotations. The component also supports supplying just a schema ID,
  * but work to support annotation flows without an entity (i.e. before creating entities) is not yet complete.
@@ -108,7 +104,7 @@ export function SchemaDrivenAnnotationEditor(
     onCancel,
     formRef: formRefFromParent,
     onChange = noop,
-    hideActions = false,
+    hideActions = true,
   } = props
   const localRef = useRef<RJSF>(null)
   const ref = formRefFromParent ?? localRef
@@ -146,6 +142,9 @@ export function SchemaDrivenAnnotationEditor(
   const [formData, setFormData] = useState<Record<string, unknown> | undefined>(
     undefined,
   )
+  const [initialFormData, setInitialFormData] = useState<
+    Record<string, unknown> | undefined
+  >(undefined)
 
   const transformErrors = useCallback(
     getTransformErrors(entityJson?.concreteType),
@@ -167,22 +166,37 @@ export function SchemaDrivenAnnotationEditor(
   //   }
   // }, [data?.entity])
 
-  // test
+  const normalizeAnnotationValues = (annotations: Record<string, unknown>) => {
+    const normalized: Record<string, string[]> = {}
+    for (const [key, value] of Object.entries(annotations)) {
+      normalized[key] = Array.isArray(value)
+        ? value.map(String)
+        : [String(value)]
+    }
+    return normalized
+  }
+
   useEffect(() => {
     if (data?.entity) {
       // Initialize the form data with the entity's data
-      const initialData = { ...data.entity }
-
-      // If there are no annotations, add an empty row for the user to edit
-      if (formDataHasNoAnnotations) {
-        initialData['New Annotation'] = ''
+      const initialData = {
+        ...data.entity,
+        ...normalizeAnnotationValues(data.annotations),
       }
 
-      setFormData(initialData)
-    }
-  }, [data?.entity, formDataHasNoAnnotations])
+      const hasUserAnnotations = Object.keys(data.annotations || {}).some(
+        key => !(key in data.entity),
+      )
 
-  console.log('formData', formData)
+      // If there are no annotations, add an empty row for the user to edit
+      if (Object.keys(data.annotations).length === 0) {
+        console.log('Adding empty annotation field')
+        initialData['newKey'] = ['']
+      }
+      setFormData(initialData)
+      setInitialFormData(initialData)
+    }
+  }, [data?.entity, data?.annotations])
 
   const { data: schema, isLoading: isLoadingBinding } = useGetSchemaBinding(
     entityId!,
@@ -226,8 +240,6 @@ export function SchemaDrivenAnnotationEditor(
     [entitySchemaBaseProperties],
   )
 
-  console.log('uiSchema', uiSchema)
-
   const isLoading =
     isLoadingBinding || isLoadingSchema || isLoadingEntityTypeSchema
 
@@ -251,14 +263,58 @@ export function SchemaDrivenAnnotationEditor(
   const liveValidate =
     liveValidateFromProps ?? shouldLiveValidate(annotations, validationSchema)
 
-  // const formDataHasNoAnnotations =
-  //   entityJson &&
-  //   isEmpty(
-  //     omitBy(formData, (_value, key) =>
-  //       Object.keys(entityJson).find(k => k === key),
-  //     ),
-  //   )
-  const showHasNoAnnotationsAlert = schema === null && formDataHasNoAnnotations
+  function customTranslateString(
+    stringToTranslate: TranslatableString,
+    params?: string[],
+  ): string {
+    // console.log('Translating:', stringToTranslate, params)
+    switch (stringToTranslate) {
+      case TranslatableString.NewStringDefault:
+        return '' // Return empty string to avoid showing a default value
+      case TranslatableString.KeyLabel:
+        // return replaceStringParameters('%1 Key Name', params) // You can customize this too
+        return 'Key'
+      default:
+        return englishStringTranslator(stringToTranslate, params)
+    }
+  }
+
+  function addEmptyAnnotationField(
+    formData: Record<string, unknown> | undefined,
+    setFormData: React.Dispatch<
+      React.SetStateAction<Record<string, unknown> | undefined>
+    >,
+  ) {
+    if (!formData || typeof formData !== 'object') return
+
+    // Generate a unique key like newKey, newKey1, etc.
+    let newKey = 'newKey'
+    let i = 1
+    while (Object.prototype.hasOwnProperty.call(formData, newKey)) {
+      newKey = `newKey${i++}`
+    }
+
+    // Add the new key with an empty value (adjust [''] to '' if you're not using arrays)
+    const updatedFormData = {
+      ...formData,
+      [newKey]: [''],
+    }
+
+    setFormData(updatedFormData)
+  }
+
+  const isUnchanged = useMemo(
+    () =>
+      isEqual(
+        cleanFormData(formData, true),
+        cleanFormData(initialFormData, true),
+      ),
+    [formData, initialFormData],
+  )
+
+  console.log('Initial:', cleanFormData(initialFormData, true))
+  console.log('Current:', cleanFormData(formData, true))
+  console.log('Equal?', isUnchanged)
 
   return (
     <div className="JsonSchemaFormContainer">
@@ -288,19 +344,6 @@ export function SchemaDrivenAnnotationEditor(
               </b>
             </Alert>
           )}
-          {/* {showHasNoAnnotationsAlert && (
-            <Alert severity="info">
-              <Box display={'flex'} alignItems={'center'} gap={0.5}>
-                <Typography variant={'smallText1'}>
-                  <b>{entityJson.name}</b> has no annotations. Click the{' '}
-                </Typography>
-                <AddToList />
-                <Typography variant={'smallText1'}>
-                  button to annotate.
-                </Typography>
-              </Box>
-            </Alert>
-          )} */}
           <JsonSchemaForm
             validator={validator}
             liveValidate={liveValidate}
@@ -308,10 +351,18 @@ export function SchemaDrivenAnnotationEditor(
             formRef={ref}
             disabled={updateIsPending}
             formContext={{
+              customHandleAddClick: (_schema: JSONSchema7) => {
+                return (event: React.MouseEvent) => {
+                  event.preventDefault()
+                  addEmptyAnnotationField(formData, setFormData)
+                }
+              },
               showDerivedAnnotationPlaceholder: true,
+              translateString: customTranslateString,
               descriptionVariant: 'expand',
               descriptionFormat: 'table',
               allowFreeSoloEnum: true,
+              isUnchanged: isUnchanged,
             }}
             experimental_defaultFormStateBehavior={{
               emptyObjectFields: 'skipDefaults',
@@ -324,9 +375,9 @@ export function SchemaDrivenAnnotationEditor(
               WrapIfAdditionalTemplate:
                 SynapseAnnotationsWrapIfAdditionalTemplate,
             }}
-            // widgets={{
-            //   TextWidget: TextWidget,
-            // }}
+            widgets={{
+              TextWidget: TextWidget,
+            }}
             schema={formSchema}
             uiSchema={uiSchema}
             transformErrors={transformErrors}
@@ -337,6 +388,7 @@ export function SchemaDrivenAnnotationEditor(
               setValidationError(undefined)
             }}
             onBlur={() => {
+              // enable button to submit form
               setFormData(
                 // Clean the formData onBlur to remove null values that we will need to strip before submission
                 // This will ensure that the user gets accurate validation information since the data will match what the backend will receive
@@ -369,7 +421,7 @@ export function SchemaDrivenAnnotationEditor(
                 Annotations could not be updated: {submissionError.reason}
               </Alert>
             )}
-            {!hideActions && (
+            {hideActions && (
               <>
                 <Divider sx={{ my: 2 }} />
                 <Box
@@ -388,8 +440,10 @@ export function SchemaDrivenAnnotationEditor(
                       ref.current!.formElement.current.requestSubmit()
                     }}
                     confirmButtonProps={{
-                      children: entityId ? 'Save' : 'Validate',
+                      children: entityId ? 'Save Annotations' : 'Validate',
+                      disabled: isUnchanged, // Disable the button until the form is valid
                     }}
+                    // confirmationButtonDisabled={true}
                   />
                 </Box>
               </>

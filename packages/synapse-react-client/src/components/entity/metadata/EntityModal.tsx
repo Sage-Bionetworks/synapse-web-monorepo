@@ -111,6 +111,7 @@ export function EntityModal(props: EntityModalProps) {
   const saveAnnotationsButton = (
     <Button
       variant={'contained'}
+      // disabled={true}
       onClick={() => {
         // Workaround for https://github.com/rjsf-team/react-jsonschema-form/issues/3121
         annotationEditorFormRef.current!.formElement.current.requestSubmit()

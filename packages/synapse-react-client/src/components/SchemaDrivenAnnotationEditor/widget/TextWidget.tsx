@@ -7,6 +7,8 @@ import { Widget, WidgetProps } from '@rjsf/utils'
 export const TextWidget: Widget = (props: WidgetProps) => {
   const { BaseInputTemplate } = props.registry.templates
 
+  const placeholder = 'New Value'
+
   // options.inputType will override the input type determined via schema
   let inputType: string | undefined = undefined
   if (props.schema.type === 'number' || props.schema.type === 'integer') {
@@ -17,6 +19,7 @@ export const TextWidget: Widget = (props: WidgetProps) => {
     <BaseInputTemplate
       {...props}
       options={{ ...props.options, inputType: inputType }}
+      placeholder={placeholder}
     />
   )
 }
