@@ -191,7 +191,6 @@ export function AclEditor(props: AclEditorProps) {
               fontStyle: 'italic',
               color: 'text.secondary',
             }}
-            mb="20px"
           >
             Search for a username or team to add. You can search by username,
             first or last names, or team name.
