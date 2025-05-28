@@ -200,6 +200,8 @@ export const PERSISTENT_LOCAL_STORAGE_KEYS = [
 
 export const PRIVACY_POLICY_LINK =
   'https://www.synapse.org/TrustCenter:PrivacyPolicy'
+export const CHILD_MINOR_ADDENDUM_LINK =
+  'https://www.synapse.org/TrustCenter:ChildMinorAddendum'
 
 export const SYNAPSE_BACKEND_PRODUCTION_URL =
   'https://repo-prod.prod.sagebase.org'

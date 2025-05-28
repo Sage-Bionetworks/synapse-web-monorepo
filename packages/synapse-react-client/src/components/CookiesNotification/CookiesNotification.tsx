@@ -5,7 +5,11 @@ import {
   COOKIES_AGREEMENT_COOKIE_KEY,
   useCookiePreferences,
 } from '@/utils/hooks/useCookiePreferences'
-import { PRIVACY_POLICY_LINK } from '@/utils/SynapseConstants'
+import {
+  PRIVACY_POLICY_LINK,
+  URL_TERMS_CONDITIONS_AGREEMENT,
+  CHILD_MINOR_ADDENDUM_LINK,
+} from '@/utils/SynapseConstants'
 import { Link, Typography } from '@mui/material'
 import { useState } from 'react'
 import UniversalCookies from 'universal-cookie'
@@ -33,8 +37,11 @@ export const alertConfig = {
         Sage Terms of Service
       </Typography>
       <Typography variant="body1">
-        Please read our Terms of Service before using our website. If you are
-        between 13 and 18, you must submit a Child Minor Addendum for access.
+        Please read our{' '}
+        <Link href={URL_TERMS_CONDITIONS_AGREEMENT}>Terms of Service</Link>{' '}
+        before using our website. If you are between 13 and 18, you must submit
+        a <Link href={CHILD_MINOR_ADDENDUM_LINK}>Child Minor Addendum</Link> for
+        access.
       </Typography>
     </>
   ),
