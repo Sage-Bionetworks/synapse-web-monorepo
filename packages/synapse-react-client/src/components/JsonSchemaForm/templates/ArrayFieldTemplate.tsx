@@ -2,7 +2,7 @@ import { RJSFInputLabelWrapper } from '@/components/JsonSchemaForm/templates/RJS
 import { Box, Button } from '@mui/material'
 import {
   ADDITIONAL_PROPERTY_FLAG,
-  ArrayFieldTemplateItemType,
+  ArrayFieldItemTemplateType,
   ArrayFieldTemplateProps,
   getTemplate,
   getUiOptions,
@@ -95,29 +95,30 @@ function ArrayFieldTemplate<
                 key,
                 index,
                 ...itemProps
-              }: ArrayFieldTemplateItemType<T, S, F>) => (
+              }: ArrayFieldItemTemplateType<T, S, F>) => (
                 <ArrayFieldItemTemplate
                   key={key}
                   index={index}
                   {...itemProps}
-                  hasRemove={
+                  buttonsProps={{
+                    ...itemProps.buttonsProps,
                     // Override hasRemove to prevent removing the last item in an array (except additional properties),
                     // unless overridden by formContext
-                    isAdditionalProperty ||
-                    items.length > 1 ||
-                    Boolean(formContext?.allowRemovingLastItemInArray)
-                  }
-                  onDropIndexClick={
-                    isAdditionalProperty &&
-                    items.length == 1 &&
-                    additionalPropertyContext
-                      ? () => {
-                          return e => {
-                            additionalPropertyContext.dropProperty(e)
+                    hasRemove:
+                      isAdditionalProperty ||
+                      items.length > 1 ||
+                      Boolean(formContext?.allowRemovingLastItemInArray),
+                    onDropIndexClick:
+                      isAdditionalProperty &&
+                      items.length == 1 &&
+                      additionalPropertyContext
+                        ? () => {
+                            return e => {
+                              additionalPropertyContext.dropProperty(e)
+                            }
                           }
-                        }
-                      : itemProps.onDropIndexClick
-                  }
+                        : itemProps.buttonsProps.onDropIndexClick,
+                  }}
                 />
               ),
             )}

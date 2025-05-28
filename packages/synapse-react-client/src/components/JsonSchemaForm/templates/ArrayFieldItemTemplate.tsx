@@ -1,7 +1,9 @@
 import { Box, GridLegacy as Grid } from '@mui/material'
 import {
-  ArrayFieldTemplateItemType,
+  ArrayFieldItemTemplateType,
   FormContextType,
+  getTemplate,
+  getUiOptions,
   RJSFSchema,
   StrictRJSFSchema,
 } from '@rjsf/utils'
@@ -14,27 +16,15 @@ export default function ArrayFieldItemTemplate<
   T = any,
   S extends StrictRJSFSchema = RJSFSchema,
   F extends FormContextType = any,
->(props: ArrayFieldTemplateItemType<T, S, F>) {
-  const {
-    children,
-    disabled,
-    hasToolbar,
-    hasCopy,
-    hasMoveDown,
-    hasMoveUp,
-    hasRemove,
-    index,
-    onCopyIndexClick,
-    onDropIndexClick,
-    onReorderClick,
-    readonly,
-    uiSchema,
-    registry,
-    onAddIndexClick,
-  } = props
-  const { CopyButton, MoveDownButton, MoveUpButton, RemoveButton, AddButton } =
-    registry.templates.ButtonTemplates
-
+>(props: ArrayFieldItemTemplateType<T, S, F>) {
+  const { children, hasToolbar, uiSchema, registry, buttonsProps } = props
+  const uiOptions = getUiOptions<T, S, F>(uiSchema)
+  const ArrayFieldItemButtonsTemplate = getTemplate<
+    'ArrayFieldItemButtonsTemplate',
+    T,
+    S,
+    F
+  >('ArrayFieldItemButtonsTemplate', registry, uiOptions)
   return (
     <Grid
       container
@@ -65,46 +55,7 @@ export default function ArrayFieldItemTemplate<
             my: 1,
           }}
         >
-          {(hasMoveUp || hasMoveDown) && (
-            <MoveUpButton
-              disabled={disabled || readonly || !hasMoveUp}
-              onClick={onReorderClick(index, index - 1)}
-              uiSchema={uiSchema}
-              registry={registry}
-            />
-          )}
-          {(hasMoveUp || hasMoveDown) && (
-            <MoveDownButton
-              disabled={disabled || readonly || !hasMoveDown}
-              onClick={onReorderClick(index, index + 1)}
-              uiSchema={uiSchema}
-              registry={registry}
-            />
-          )}
-          {hasCopy && (
-            <CopyButton
-              disabled={disabled || readonly}
-              onClick={onCopyIndexClick(index)}
-              uiSchema={uiSchema}
-              registry={registry}
-            />
-          )}
-          {hasRemove && (
-            <RemoveButton
-              aria-label={`Remove`}
-              disabled={disabled || readonly}
-              onClick={onDropIndexClick(index)}
-              uiSchema={uiSchema}
-              registry={registry}
-            />
-          )}
-          <AddButton
-            disabled={disabled || readonly}
-            uiSchema={uiSchema}
-            registry={registry}
-            aria-label={`Add Item`}
-            onClick={onAddIndexClick(index + 1)}
-          />
+          <ArrayFieldItemButtonsTemplate {...buttonsProps} />
         </Grid>
       )}
     </Grid>
