@@ -65,6 +65,7 @@ export default function DateTimePicker(props: MuiDateTimePickerProps) {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <MuiDateTimePicker
+        enableAccessibleFieldDOMStructure={false}
         value={valueAsDayjs}
         slots={{
           ...slots,
