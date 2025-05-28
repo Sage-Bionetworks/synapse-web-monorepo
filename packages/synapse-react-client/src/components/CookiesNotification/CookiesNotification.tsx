@@ -30,13 +30,7 @@ export const alertConfig = {
         details. By clicking “Allow All,” you agree to our use of cookies. You
         can adjust your cookie preferences anytime on the Settings page.
       </Typography>
-      <Typography
-        variant="body1"
-        sx={{ fontSize: '14px', fontWeight: 700, mt: '20px' }}
-      >
-        Sage Terms of Service
-      </Typography>
-      <Typography variant="body1">
+      <Typography variant="smallText1" sx={{ mt: '20px' }}>
         Please read our{' '}
         <Link href={URL_TERMS_CONDITIONS_AGREEMENT}>Terms of Service</Link>{' '}
         before using our website. If you are between 13 and 18, you must submit
