@@ -1,15 +1,19 @@
 import { toolsSql } from '@/config/resources'
+import {
+  TOOLS_DETAILS_PAGE_DATA_TAB_PATH,
+  TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH,
+  TOOLS_DETAILS_PAGE_OBSERVATIONS_TAB_PATH,
+} from '@/config/routeConstants'
 import { toolsSchema } from '@/config/synapseConfigs/tools'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
 import {
   DetailsPageTabConfig,
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
-import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { Outlet, RouteObject } from 'react-router'
+import { Outlet } from 'react-router'
 import {
   CardContainerLogic,
   ErrorPage,
@@ -17,26 +21,23 @@ import {
   SynapseConstants,
   SynapseErrorType,
 } from 'synapse-react-client'
-import { toolDetailsPageDataTabRouteConfig } from './ToolDetailsPageDataTab'
-import ToolDetailsPageDetailsTab from './ToolDetailsPageDetailsTab'
-import ToolDetailsPageObservationsTab from './ToolDetailsPageObservationsTab'
 
 export const toolDetailsPageTabConfig: DetailsPageTabConfig[] = [
   {
     title: 'Details',
-    path: 'Details',
+    path: TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH,
   },
   {
     title: 'Observations',
-    path: 'Observations',
+    path: TOOLS_DETAILS_PAGE_OBSERVATIONS_TAB_PATH,
   },
   {
     title: 'Data',
-    path: 'Data',
+    path: TOOLS_DETAILS_PAGE_DATA_TAB_PATH,
   },
 ] satisfies DetailsPageTabConfig[]
 
-export default function ToolDetailsPage() {
+function ToolDetailsPage() {
   const { resourceId } = useGetPortalComponentSearchParams()
 
   if (!resourceId) {
@@ -68,22 +69,4 @@ export default function ToolDetailsPage() {
   )
 }
 
-export const toolDetailsPageRoutesConfig: RouteObject = {
-  path: 'Explore/Tools/DetailsPage',
-  element: <ToolDetailsPage />,
-  children: [
-    {
-      index: true,
-      element: <RedirectWithQuery to={'Details'} />,
-    },
-    {
-      path: 'Details',
-      element: <ToolDetailsPageDetailsTab />,
-    },
-    {
-      path: 'Observations',
-      element: <ToolDetailsPageObservationsTab />,
-    },
-    toolDetailsPageDataTabRouteConfig,
-  ],
-}
+export default ToolDetailsPage

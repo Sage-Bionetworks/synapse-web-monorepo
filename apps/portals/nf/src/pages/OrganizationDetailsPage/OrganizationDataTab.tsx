@@ -9,7 +9,7 @@ import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framewor
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
 
-export default function OrganizationDataTab() {
+function OrganizationDataTab() {
   const { value: fundingAgency } = useDetailsPageContext('fundingAgency')
 
   if (fundingAgency == null) {
@@ -60,3 +60,5 @@ export default function OrganizationDataTab() {
     ></DetailsPageContent>
   )
 }
+
+export default OrganizationDataTab

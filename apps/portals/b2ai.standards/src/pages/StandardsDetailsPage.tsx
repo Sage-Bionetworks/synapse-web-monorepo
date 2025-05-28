@@ -124,7 +124,6 @@ export default function StandardsDetailsPage() {
   }
   return (
     <>
-      {/* TODO: header card */}
       <CardContainerLogic
         query={{
           sql: dataSql,

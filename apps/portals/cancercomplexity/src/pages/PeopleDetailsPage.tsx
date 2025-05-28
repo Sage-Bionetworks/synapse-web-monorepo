@@ -3,11 +3,10 @@ import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-fra
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import {
-  CardContainerLogic,
-  ErrorPage,
+import ErrorPage, {
   SynapseErrorType,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/error/ErrorPage'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
 import columnAliases from '../config/columnAliases'
 import {
   datasetsSql,
@@ -23,7 +22,7 @@ import { peopleCardConfiguration } from '../config/synapseConfigs/people'
 import { publicationsCardConfiguration } from '../config/synapseConfigs/publications'
 import { toolsConfiguration } from '../config/synapseConfigs/tools'
 
-export default function PeopleDetailsPage() {
+function PeopleDetailsPage() {
   const { name } = useGetPortalComponentSearchParams()
 
   if (!name) {
@@ -142,3 +141,5 @@ export default function PeopleDetailsPage() {
     </>
   )
 }
+
+export default PeopleDetailsPage

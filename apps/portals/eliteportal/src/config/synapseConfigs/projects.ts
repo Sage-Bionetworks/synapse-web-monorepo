@@ -1,8 +1,8 @@
 import {
   CardConfiguration,
   QueryWrapperPlotNavProps,
-  SynapseConstants,
 } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { defaultSearchConfiguration, projectsSql } from '../resources'
 
 const rgbIndex = 4

@@ -3,11 +3,6 @@ import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-fra
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import {
-  CardContainerLogic,
-  ErrorPage,
-  SynapseErrorType,
-} from 'synapse-react-client'
 import columnAliases from '../config/columnAliases'
 import {
   datasetsSql,
@@ -20,10 +15,14 @@ import { datasetCardConfiguration } from '../config/synapseConfigs/datasets'
 import { grantsCardConfiguration } from '../config/synapseConfigs/grants'
 import { peopleCardConfiguration } from '../config/synapseConfigs/people'
 import { publicationsCardConfiguration } from '../config/synapseConfigs/publications'
-import { SharePageLinkButton } from 'synapse-react-client'
 import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
+import ErrorPage, {
+  SynapseErrorType,
+} from 'synapse-react-client/components/error/ErrorPage'
+import { SharePageLinkButton } from 'synapse-react-client/components/SharePageLinkButton'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
 
-export default function DatasetsDetailsPage() {
+function DatasetsDetailsPage() {
   const { datasetId } = useGetPortalComponentSearchParams()
 
   if (!datasetId) {
@@ -120,3 +119,5 @@ export default function DatasetsDetailsPage() {
     </>
   )
 }
+
+export default DatasetsDetailsPage

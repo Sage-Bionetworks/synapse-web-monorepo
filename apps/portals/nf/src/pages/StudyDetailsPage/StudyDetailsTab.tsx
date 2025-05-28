@@ -10,7 +10,7 @@ import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types
 import { CardContainerLogic } from 'synapse-react-client'
 import { NoContentPlaceholderType } from 'synapse-react-client/components/SynapseTable/NoContentPlaceholderType'
 
-export function StudyDetailsTab() {
+function StudyDetailsTab() {
   const { value: studyId } = useDetailsPageContext('studyId')
   if (studyId == null) {
     return null
@@ -80,3 +80,5 @@ export function StudyDetailsTab() {
     />
   )
 }
+
+export default StudyDetailsTab

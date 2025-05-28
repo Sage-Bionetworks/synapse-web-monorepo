@@ -15,7 +15,8 @@ import useDetectSSOCode from '@/utils/hooks/useDetectSSOCode'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import dayjs from 'dayjs'
-import { ReactNode, Suspense, useEffect, useMemo, useState } from 'react'
+import { atom, useAtom } from 'jotai'
+import { ReactNode, Suspense, useEffect, useMemo } from 'react'
 import { createMemoryRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 import { SynapseToastContainer } from './ToastMessage'
@@ -54,6 +55,10 @@ function overrideEndpoint(stack: SynapseStack) {
   ;(window as any)['SRC_OVERRIDE_ENDPOINT_CONFIG'] = endpointConfig
 }
 
+// Store auth token in global atom to avoid race conditions where the Story component
+// may not get the login token right away
+const authTokenAtom = atom<string | undefined>(undefined)
+
 /**
  * Wraps storybook story components to ensure that all components receive required context.
  * @param props
@@ -85,7 +90,7 @@ export function StorybookComponentWrapper(props: {
     overrideEndpoint(currentStack)
   }, [currentStack])
 
-  const [accessToken, setAccessToken] = useState<string | undefined>(undefined)
+  const [accessToken, setAccessToken] = useAtom(authTokenAtom)
 
   useDetectSSOCode()
 

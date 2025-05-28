@@ -121,6 +121,18 @@ describe('Linkify tests', () => {
     )
   })
 
+  test('auto-links doi with Synapse ID', () => {
+    const value = 'doi:10.7303/syn66339969'
+    const { container } = render(<Linkify text={value} />, {
+      wrapper: createWrapper(),
+    })
+
+    const link = container.querySelector('a')!
+    expect(link.getAttribute('href')).toEqual(
+      `https://doi.org/10.7303/syn66339969`,
+    )
+  })
+
   test('auto-links arXiv', () => {
     const value = 'arXiv:2303.07469 '
     const { container } = render(<Linkify text={value} />, {

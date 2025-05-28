@@ -29,4 +29,7 @@ export const targetEnablingResourcesDetailsPageSql =
 export const cavaticaConnectAccountURL =
   'https://help.adknowledgeportal.org/apd/Analysis-Platforms.3088482318.html'
 
-export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = ['cavatica']
+export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = [
+  'cavatica',
+  'terra',
+]

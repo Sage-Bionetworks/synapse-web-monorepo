@@ -15,19 +15,23 @@ import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
  */
 export type EntityDownloadConfirmationProps = {
   entityId: string
+  versionNumber?: number
   onIsLoadingChange: (isLoading: boolean) => void
   handleClose: () => void
 }
 
 const QueryWrapperTableDownloadConfirmation: React.FC<{
   entityId: string
+  versionNumber?: number
   onHide: () => void
-}> = ({ entityId, onHide }) => {
+}> = ({ entityId, versionNumber, onHide }) => {
   const initQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId: entityId,
     query: {
-      sql: `select * from ${entityId}`,
+      sql: `select * from ${entityId}${
+        versionNumber != undefined ? `.${versionNumber}` : ''
+      }`,
       limit: DEFAULT_PAGE_SIZE,
       sort: undefined,
       additionalFilters: undefined,
@@ -58,6 +62,7 @@ const QueryWrapperTableDownloadConfirmation: React.FC<{
  */
 export function EntityDownloadConfirmation({
   entityId,
+  versionNumber,
   handleClose,
   onIsLoadingChange,
 }: EntityDownloadConfirmationProps) {
@@ -87,6 +92,7 @@ export function EntityDownloadConfirmation({
       ) : (
         <QueryWrapperTableDownloadConfirmation
           entityId={entityId}
+          versionNumber={versionNumber}
           onHide={handleClose}
         />
       )}

@@ -1,5 +1,5 @@
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import {
+import type {
   LabelLinkConfig,
   QueryWrapperPlotNavProps,
   StandaloneQueryWrapperProps,
