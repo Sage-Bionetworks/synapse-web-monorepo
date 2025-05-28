@@ -29,23 +29,11 @@ const routes: RouteObject[] = [
               ),
           },
           {
-            path: 'Collections',
-            lazy: () =>
-              import('@/pages/Explore/collections').then(
-                convertModuleToRouteObject,
-              ),
-          },
-          {
             path: 'Datasets',
             lazy: () =>
               import('@/pages/Explore/datasets').then(
                 convertModuleToRouteObject,
               ),
-          },
-          {
-            path: 'Files',
-            lazy: () =>
-              import('@/pages/Explore/files').then(convertModuleToRouteObject),
           },
         ],
       },

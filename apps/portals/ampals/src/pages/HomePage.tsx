@@ -87,63 +87,24 @@ export default function HomePage() {
       <ALLALSSlat />
       <div className={'home-bg-dark'}>
         <SectionLayout
-          title={'Featured Datasets'}
+          title={'More Resources'}
           centerTitle
-          ContainerProps={{ className: 'home-spacer' }}
+          ContainerProps={{
+            sx: {
+              maxWidth: '100% !important',
+              padding: { xs: '40px', lg: '60px 80px 80px 80px' },
+              h2: {
+                lineHeight: 'normal',
+                margin: '0 0 40px 0',
+              },
+            },
+          }}
         >
-          <FullWidthAlert
-            sx={{ m: 0 }}
-            isGlobal={false}
-            variant={'warning'}
-            show={true}
-            title={''}
-            description={'This area is under construction'}
+          <CardGridWithLinks
+            linkText={'More Resources'}
+            cards={moreResourcesCards}
           />
-          {/* <FeaturedDataTabs
-            sql={dataSql}
-            rgbIndex={3}
-            configs={[
-              {
-                title: '',
-                icon: 'chart2',
-                explorePagePath: '/Explore',
-                exploreObjectType: 'Datasets',
-                plotsConfig: {
-                  sql: `${dataSql} where responsibleOrgName is not null`,
-                  configs: [
-                    {
-                      facetsToPlot: ['topic', 'responsibleOrgName'],
-                      unitDescription: 'dataset',
-                      plotType: 'BAR',
-                      columnAliases: columnAliases,
-                    },
-                  ],
-                },
-              },
-            ]}
-          /> */}
         </SectionLayout>
-        <div className={'home-bg-dark'}>
-          <SectionLayout
-            title={'More Resources'}
-            centerTitle
-            ContainerProps={{
-              sx: {
-                maxWidth: '100% !important',
-                padding: { xs: '40px', lg: '60px 80px 80px 80px' },
-                h2: {
-                  lineHeight: 'normal',
-                  margin: '0 0 40px 0',
-                },
-              },
-            }}
-          >
-            <CardGridWithLinks
-              linkText={'More Resources'}
-              cards={moreResourcesCards}
-            />
-          </SectionLayout>
-        </div>
       </div>
     </>
   )
