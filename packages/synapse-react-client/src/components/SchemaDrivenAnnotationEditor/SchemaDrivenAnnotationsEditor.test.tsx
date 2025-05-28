@@ -393,7 +393,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     // Remove the last element
     const removeButton = await within(
       container.querySelector('#root_country')!,
-    ).findByLabelText<HTMLButtonElement>('Remove')
+    ).findByRole<HTMLButtonElement>('button', { name: 'Remove' })
     await userEvent.click(removeButton)
 
     expect(

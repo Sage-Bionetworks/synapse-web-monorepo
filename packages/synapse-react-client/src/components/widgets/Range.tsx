@@ -98,7 +98,11 @@ export function Range(props: RangeProps) {
           <Box key="range_min">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
+                enableAccessibleFieldDOMStructure={false}
                 label="From"
+                slots={{
+                  textField: TextField,
+                }}
                 slotProps={{
                   textField: {
                     inputProps: {
@@ -119,7 +123,11 @@ export function Range(props: RangeProps) {
           <Box key="range_max">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
+                enableAccessibleFieldDOMStructure={false}
                 label="To"
+                slots={{
+                  textField: TextField,
+                }}
                 slotProps={{
                   textField: {
                     inputProps: {
