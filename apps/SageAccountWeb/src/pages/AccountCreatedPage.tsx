@@ -112,7 +112,7 @@ function AccountCreatedPage() {
                   container
                   spacing={4}
                   sx={{
-                    mx: { paddingTop: '20px' },
+                    paddingTop: '20px',
                   }}
                 >
                   {sourceAppConfigs?.map(config => {

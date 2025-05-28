@@ -108,7 +108,7 @@ function SageResourcesPageInternal() {
             container
             spacing={5}
             sx={{
-              mx: { paddingTop: '20px' },
+              paddingTop: '20px',
             }}
           >
             {sourceAppConfigs?.map(config => {
