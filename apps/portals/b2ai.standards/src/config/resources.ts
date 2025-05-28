@@ -3,7 +3,7 @@ import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2
 export const TABLE_IDS = {
   Challenges: { name: 'Challenges', id: 'syn65913973' },
   CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
-  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.50' },
+  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.54' },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
   DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
@@ -30,7 +30,7 @@ export const dataSql = `
         concat('[', acronym, '](/Explore/Standard/DetailsPage?id=', id, ')') as acronym,
             name, category, collections, topic,
             ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration, "usedInBridge2AI"
-            , hasAIApplication
+            , hasAIApplication, isMature
             FROM ${TABLE_IDS.DST_denormalized.id}
 `
 // removed topic column above to address @jay-hodgson's comment
