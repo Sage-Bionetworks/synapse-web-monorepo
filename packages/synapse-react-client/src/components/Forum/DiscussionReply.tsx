@@ -73,7 +73,12 @@ export function DiscussionReply(props: DiscussionReplyProps) {
   }, [reply.id])
 
   return (
-    <div className="reply-container" id={`reply._${reply.id}`} ref={replyRef}>
+    <div
+      className="reply-container"
+      id={`reply._${reply.id}`}
+      ref={replyRef}
+      role={'article'}
+    >
       {isLoading ? (
         <SkeletonTable numCols={1} numRows={4} />
       ) : (
@@ -95,6 +100,7 @@ export function DiscussionReply(props: DiscussionReplyProps) {
                   />
                   <span>
                     posted {formatDate(dayjs(reply.createdOn), 'M/D/YYYY')}
+                    {reply.isEdited ? <i>{' (Edited)'}</i> : null}
                   </span>
                   <Box
                     sx={{
@@ -109,12 +115,12 @@ export function DiscussionReply(props: DiscussionReplyProps) {
                     </button>
                     {isCurrentUserAuthor && (
                       <button onClick={() => setShowReplyModal(true)}>
-                        <IconSvg icon="edit" />
+                        <IconSvg icon="edit" label={'Edit reply'} />
                       </button>
                     )}
                     {entityBundle?.permissions.canModerate && (
                       <button onClick={() => setShowDeleteModal(true)}>
-                        <IconSvg icon="delete" />
+                        <IconSvg icon="delete" label={'Delete reply'} />
                       </button>
                     )}
                   </Box>
