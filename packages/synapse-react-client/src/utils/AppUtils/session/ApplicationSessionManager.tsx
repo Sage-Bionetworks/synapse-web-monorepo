@@ -1,6 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { useTermsOfServiceStatus } from '@/synapse-queries/termsOfService/useTermsOfService'
-import { useGetTwoFactorEnrollmentStatus } from '@/synapse-queries/index.js'
+import { useGetTwoFactorEnrollmentStatus } from '@/synapse-queries/auth/useTwoFactorEnrollment'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import dayjs from 'dayjs'
 import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
