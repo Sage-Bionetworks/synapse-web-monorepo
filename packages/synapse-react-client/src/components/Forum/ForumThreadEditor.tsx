@@ -116,11 +116,15 @@ export function ForumThreadEditor(props: ForumThreadEditorProps) {
           onChange={e => setTitle(e.target.value)}
         />
       )}
-      <MarkdownEditor text={text} setText={setText} />
+      <MarkdownEditor
+        placeholder={'Write a reply...'}
+        text={text}
+        setText={setText}
+      />
     </div>
   )
 
-  const confirmButtonText = updateIsPending ? 'Saving' : 'Save'
+  const confirmButtonText = updateIsPending ? 'Saving' : 'Post'
 
   return (
     <>
@@ -144,10 +148,7 @@ export function ForumThreadEditor(props: ForumThreadEditorProps) {
         <>
           {editorContent}
           <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-            }}
+            sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, my: 1 }}
           >
             <ConfirmationButtons
               onCancel={onClose}

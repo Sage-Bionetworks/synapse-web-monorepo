@@ -7,6 +7,7 @@ import {
   DiscussionReplyOrder,
   Match,
   PaginatedResults,
+  SubscriptionObjectType,
   UpdateDiscussionReply,
 } from '@sage-bionetworks/synapse-types'
 import {
@@ -122,9 +123,18 @@ export function usePostReply(
     mutationFn: (request: CreateDiscussionReply) =>
       SynapseClient.postReply(request, accessToken),
     onSuccess: async (newReply, variables, ctx) => {
-      await queryClient.invalidateQueries({
-        queryKey: keyFactory.getAllRepliesQueryKey(newReply.threadId),
-      })
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getAllRepliesQueryKey(newReply.threadId),
+        }),
+        // Posting a reply will add the subscription, so invalidate query for list of subscribers
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getSubscribersQueryKey(
+            newReply.threadId,
+            SubscriptionObjectType.THREAD,
+          ),
+        }),
+      ])
       if (options?.onSuccess) {
         await options.onSuccess(newReply, variables, ctx)
       }

@@ -428,6 +428,13 @@ export const defaultMuiThemeOptions: ThemeOptions = {
         },
       },
     },
+    MuiToggleButton: {
+      styleOverrides: {
+        root: {
+          textTransform: 'var(--synapse-button-text-transform)' as any,
+        },
+      },
+    },
     MuiTooltip: {
       defaultProps: {
         arrow: true,
