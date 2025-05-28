@@ -1,20 +1,11 @@
-import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
 import { renderHook, waitFor } from '@testing-library/react'
 import {
   ApplicationSessionContextType,
   useApplicationSessionContext,
 } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
 import { vi } from 'vitest'
-import useMaybePromptToSignTermsOfService, {
-  SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY,
-} from './useMaybePromptToSignTermsOfService'
 import { useLocation, useNavigate, Location } from 'react-router'
-
-vi.mock('synapse-react-client/utils/AppUtils/AppUtils', () => {
-  return {
-    storeLastPlace: vi.fn(),
-  }
-})
+import useMaybeForceEnable2FA from './useMaybeForceEnable2FA'
 
 vi.mock(
   'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext',
@@ -37,10 +28,9 @@ const mockApplicationSessionContext: ApplicationSessionContextType = {
   refreshSession: vi.fn(),
   clearSession: vi.fn(),
   isLoadingSSO: false,
-  termsOfServiceStatus: {
-    userId: '1234',
-    userCurrentTermsOfServiceState: TermsOfServiceState.UP_TO_DATE,
-    lastAgreementDate: new Date().toISOString(),
+  token: 'mockToken',
+  twoFactorStatus: {
+    status: 'ENABLED',
   },
 }
 
@@ -56,158 +46,87 @@ const mockNavigate = vi.fn()
 vi.mocked(useNavigate).mockReturnValue(mockNavigate)
 vi.mocked(useLocation).mockReturnValue(mockLocation)
 
-describe('useMaybeRedirectToSignTermsOfService', () => {
+describe('useMaybeForceEnable2FA', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('does not redirect and updates state to indicate no redirect when user ToS status is up to date', async () => {
+  it('does not redirect and updates state to indicate no redirect when 2FA is enabled', async () => {
     mockUseApplicationSessionContext.mockReturnValue({
       ...mockApplicationSessionContext,
-      termsOfServiceStatus: {
-        userId: '1234',
-        userCurrentTermsOfServiceState: TermsOfServiceState.UP_TO_DATE,
-        lastAgreementDate: new Date().toISOString(),
-      },
     })
 
-    const hook = renderHook(() => useMaybePromptToSignTermsOfService())
+    const hook = renderHook(() => useMaybeForceEnable2FA())
     await waitFor(() => {
-      expect(hook.result.current.mayPromptTermsOfUse).toBe(false)
+      expect(hook.result.current.mayForceEnable2FA).toBe(false)
       expect(mockNavigate).not.toHaveBeenCalled()
     })
   })
-  it('does not redirect when user ToS is MUST_AGREE_SOON and user has skipped signing updated ToS', async () => {
-    sessionStorage.setItem(SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY, 'true')
+  it('does not redirect when user is not logged in', async () => {
     mockUseApplicationSessionContext.mockReturnValue({
       ...mockApplicationSessionContext,
-      termsOfServiceStatus: {
-        userId: '1234',
-        userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_SOON,
-        lastAgreementDate: new Date().toISOString(),
-      },
+      token: undefined,
+      twoFactorStatus: undefined,
     })
 
-    const hook = renderHook(() => useMaybePromptToSignTermsOfService())
+    const hook = renderHook(() => useMaybeForceEnable2FA())
     await waitFor(() => {
-      expect(hook.result.current.mayPromptTermsOfUse).toBe(false)
+      expect(hook.result.current.mayForceEnable2FA).toBe(true)
       expect(mockNavigate).not.toHaveBeenCalled()
     })
   })
-  it('redirects to signTermsOfUse when user ToS is MUST_AGREE_SOON and user has not skipped signing updated ToS and has never signed ToU', async () => {
-    sessionStorage.removeItem(SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY)
+  it('redirects to 2faRequired when user has not enabled 2FA', async () => {
     mockUseApplicationSessionContext.mockReturnValue({
       ...mockApplicationSessionContext,
-      termsOfServiceStatus: {
-        userId: '1234',
-        userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_SOON,
-        lastAgreementDate: null,
+      twoFactorStatus: {
+        status: 'DISABLED',
       },
     })
 
-    const hook = renderHook(() => useMaybePromptToSignTermsOfService())
+    const hook = renderHook(() => useMaybeForceEnable2FA())
     await waitFor(() => {
-      expect(hook.result.current.mayPromptTermsOfUse).toBe(true)
-      expect(mockNavigate).toHaveBeenCalledWith('/authenticated/signTermsOfUse')
-    })
-  })
-  it('redirects to signTermsOfUse when user ToS is MUST_AGREE_NOW and has never signed ToU', async () => {
-    mockUseApplicationSessionContext.mockReturnValue({
-      ...mockApplicationSessionContext,
-      termsOfServiceStatus: {
-        userId: '1234',
-        userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
-        lastAgreementDate: null,
-      },
-    })
-
-    const hook = renderHook(() => useMaybePromptToSignTermsOfService())
-    await waitFor(() => {
-      expect(hook.result.current.mayPromptTermsOfUse).toBe(true)
-      expect(mockNavigate).toHaveBeenCalledWith('/authenticated/signTermsOfUse')
+      expect(hook.result.current.mayForceEnable2FA).toBe(true)
+      expect(mockNavigate).toHaveBeenCalledWith('/authenticated/2faRequired')
     })
   })
 
-  it('redirects to signUpdatedTermsOfUse when user ToS is MUST_AGREE_SOON and user has not skipped signing updated ToS and has signed ToU', async () => {
-    sessionStorage.removeItem(SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY)
-    mockUseApplicationSessionContext.mockReturnValue({
-      ...mockApplicationSessionContext,
-      termsOfServiceStatus: {
-        userId: '1234',
-        userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_SOON,
-        lastAgreementDate: new Date().toISOString(),
-      },
-    })
-
-    const hook = renderHook(() => useMaybePromptToSignTermsOfService())
-    await waitFor(() => {
-      expect(hook.result.current.mayPromptTermsOfUse).toBe(true)
-      expect(mockNavigate).toHaveBeenCalledWith(
-        '/authenticated/signUpdatedTermsOfUse',
-      )
-    })
-  })
-  it('redirects to signTermsOfUse when user ToS is MUST_AGREE_NOW and has signed ToU', async () => {
-    mockUseApplicationSessionContext.mockReturnValue({
-      ...mockApplicationSessionContext,
-      termsOfServiceStatus: {
-        userId: '1234',
-        userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
-        lastAgreementDate: new Date().toISOString(),
-      },
-    })
-
-    const hook = renderHook(() => useMaybePromptToSignTermsOfService())
-    await waitFor(() => {
-      expect(hook.result.current.mayPromptTermsOfUse).toBe(true)
-      expect(mockNavigate).toHaveBeenCalledWith(
-        '/authenticated/signUpdatedTermsOfUse',
-      )
-    })
-  })
-
-  it('does not redirect when already on signTermsOfUsePage', async () => {
+  it('does not redirect to 2faRequired if user is already on 2faRequired', async () => {
     vi.mocked(useLocation).mockReturnValue({
       ...mockLocation,
-      pathname: '/authenticated/signTermsOfUse',
+      pathname: '/authenticated/2faRequired',
     })
     mockUseApplicationSessionContext.mockReturnValue({
       ...mockApplicationSessionContext,
-      termsOfServiceStatus: {
-        userId: '1234',
-        userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
-        lastAgreementDate: null,
+      twoFactorStatus: {
+        status: 'DISABLED',
       },
     })
 
-    const hook = renderHook(() => useMaybePromptToSignTermsOfService())
+    const hook = renderHook(() => useMaybeForceEnable2FA())
     await waitFor(() => {
-      expect(hook.result.current.mayPromptTermsOfUse).toBe(true)
+      expect(hook.result.current.mayForceEnable2FA).toBe(false)
       expect(mockNavigate).not.toHaveBeenCalledWith(
-        '/authenticated/signTermsOfUse',
+        '/authenticated/2faRequired',
       )
     })
   })
-
-  it('does not redirect when already on signUpdatedTermsOfUsePage', async () => {
+  it('does not redirect to 2faRequired if user is already on 2fa enroll page', async () => {
     vi.mocked(useLocation).mockReturnValue({
       ...mockLocation,
-      pathname: '/authenticated/signUpdatedTermsOfUse',
+      pathname: '/authenticated/2fa/enroll',
     })
     mockUseApplicationSessionContext.mockReturnValue({
       ...mockApplicationSessionContext,
-      termsOfServiceStatus: {
-        userId: '1234',
-        userCurrentTermsOfServiceState: TermsOfServiceState.MUST_AGREE_NOW,
-        lastAgreementDate: new Date().toISOString(),
+      twoFactorStatus: {
+        status: 'DISABLED',
       },
     })
 
-    const hook = renderHook(() => useMaybePromptToSignTermsOfService())
+    const hook = renderHook(() => useMaybeForceEnable2FA())
     await waitFor(() => {
-      expect(hook.result.current.mayPromptTermsOfUse).toBe(true)
+      expect(hook.result.current.mayForceEnable2FA).toBe(false)
       expect(mockNavigate).not.toHaveBeenCalledWith(
-        '/authenticated/signUpdatedTermsOfUse',
+        '/authenticated/2faRequired',
       )
     })
   })
