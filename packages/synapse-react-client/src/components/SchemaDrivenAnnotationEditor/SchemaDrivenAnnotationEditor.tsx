@@ -148,6 +148,7 @@ export function SchemaDrivenAnnotationEditor(
       ),
     )
 
+  // Initialize form data, adding a placeholder key if no annotations exist
   useEffect(() => {
     if (data?.entity) {
       const initialData = data.entity
