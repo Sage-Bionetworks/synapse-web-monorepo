@@ -14,6 +14,8 @@ export const publicationCardProps: CardConfiguration = {
     type: SynapseConstants.PUBLICATION,
     title: 'title',
     subTitle: 'authors',
+    includeCitation: true,
+    defaultCitationFormat: 'nature',
     link: 'DOI',
     secondaryLabels: [
       'year',
