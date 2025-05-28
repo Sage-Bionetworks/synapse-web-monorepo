@@ -28,7 +28,7 @@ export default function ArrayFieldItemTemplate<
   return (
     <Grid
       container
-      className={`array-item`}
+      className={`rjsf-array-item`}
       sx={{
         gap: 2,
         justifyContent: 'space-between',

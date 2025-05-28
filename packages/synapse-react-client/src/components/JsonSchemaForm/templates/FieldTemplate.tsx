@@ -27,6 +27,8 @@ export function FieldTemplate<
     registry,
     uiSchema,
     schema,
+    hideError,
+    rawErrors,
   } = props
   const uiOptions = getUiOptions<T, S, F>(uiSchema)
   const WrapIfAdditionalTemplate = getTemplate<
@@ -39,8 +41,16 @@ export function FieldTemplate<
   if (hidden) {
     return <div className="hidden">{children}</div>
   }
+  const classNamesList: string[] = ['form-group', props.classNames || '']
+  if (!hideError && rawErrors && rawErrors.length > 0) {
+    classNamesList.push('has-error')
+  }
+
   return (
-    <WrapIfAdditionalTemplate {...props}>
+    <WrapIfAdditionalTemplate
+      {...props}
+      classNames={classNamesList.join(' ').trim()}
+    >
       <RJSFInputLabelWrapper<T, S, F>
         // RJSF hides labels for boolean checkboxes, but since we replaced checkboxes with a custom component, we want to show them
         hideLabel={!(displayLabel || schema.type === 'boolean')}
