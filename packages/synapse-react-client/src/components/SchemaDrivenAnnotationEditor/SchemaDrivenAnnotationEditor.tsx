@@ -366,7 +366,6 @@ export function SchemaDrivenAnnotationEditor(
               setValidationError(undefined)
             }}
             onBlur={() => {
-              // enable button to submit form
               setFormData(
                 // Clean the formData onBlur to remove null values that we will need to strip before submission
                 // This will ensure that the user gets accurate validation information since the data will match what the backend will receive
