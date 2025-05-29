@@ -41,6 +41,7 @@ import {
   transformErrors,
   getUiSchemaForForm,
   shouldLiveValidate,
+  customTranslateString,
 } from './AnnotationEditorUtils'
 import SynapseAnnotationsRJSFObjectField from './field/SynapseAnnotationsRJSFObjectField'
 import { ObjectFieldTemplate } from './template/ObjectFieldTemplate'
@@ -230,20 +231,6 @@ export function SchemaDrivenAnnotationEditor(
     )
 
   const showHasNoAnnotationsAlert = schema === null && formDataHasNoAnnotations
-
-  function customTranslateString(
-    stringToTranslate: TranslatableString,
-    params?: string[],
-  ): string {
-    switch (stringToTranslate) {
-      case TranslatableString.NewStringDefault:
-        return ''
-      case TranslatableString.KeyLabel:
-        return replaceStringParameters('%1 Key', params)
-      default:
-        return englishStringTranslator(stringToTranslate, params)
-    }
-  }
 
   return (
     <div className="JsonSchemaFormContainer">

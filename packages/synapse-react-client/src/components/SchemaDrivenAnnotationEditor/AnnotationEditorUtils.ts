@@ -1,5 +1,9 @@
 import { AdditionalPropertiesSchemaField } from '@/components/SchemaDrivenAnnotationEditor/field/AdditionalPropertiesSchemaField'
-import { RJSFValidationError } from '@rjsf/utils'
+import {
+  englishStringTranslator,
+  RJSFValidationError,
+  TranslatableString,
+} from '@rjsf/utils'
 import { JSONSchema7 } from 'json-schema'
 import jsonpath from 'jsonpath'
 import { flatMap, groupBy, isEmpty, isObject } from 'lodash-es'
@@ -233,4 +237,25 @@ export function getSchemaIdForConcreteType(
     'org.sagebionetworks-' +
     concreteType.substring('org.sagebionetworks'.length + 1)
   )
+}
+
+/**
+ * Custom string translator for react-jsonschema-form.
+ * Overrides the translation for "NewStringDefault" by returning an empty string.
+ * For all other keys, falls back to the default English string translator.
+ *
+ * @param stringToTranslate
+ * @param params -  Optional parameters used to format the translated string.
+ * @returns - The translated string.
+ */
+export function customTranslateString(
+  stringToTranslate: TranslatableString,
+  params?: string[],
+): string {
+  switch (stringToTranslate) {
+    case TranslatableString.NewStringDefault:
+      return ''
+    default:
+      return englishStringTranslator(stringToTranslate, params)
+  }
 }
