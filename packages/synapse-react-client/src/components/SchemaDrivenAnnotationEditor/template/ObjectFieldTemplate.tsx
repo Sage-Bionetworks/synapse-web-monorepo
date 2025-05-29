@@ -36,13 +36,13 @@ export function ObjectFieldTemplate<
     disabled,
     formData,
     idSchema,
+    onAddClick,
     properties,
     readonly,
     registry,
     required,
     schema,
     title,
-    onAddClick,
     uiSchema,
   } = props
 
