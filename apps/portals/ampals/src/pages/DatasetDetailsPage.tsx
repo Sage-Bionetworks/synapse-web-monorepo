@@ -36,6 +36,8 @@ export default function DatasetDetailsPage() {
         <DetailsPageContent
           content={[
             {
+              // TODO: Description will be fed by a new column in the datasets table
+              // See https://sagebionetworks.jira.com/browse/AMPALS-41?focusedCommentId=251638
               title: 'Description',
               id: 'Description',
               element: (
@@ -44,50 +46,41 @@ export default function DatasetDetailsPage() {
                 />
               ),
             },
-            {
-              title: 'Acknowledgment',
-              id: 'Acknowledgment',
-              element: (
-                <MarkdownSynapseFromColumnData
-                  columnName={'acknowledgmentStatement'}
-                />
-              ),
-            },
-            {
-              title: 'Files',
-              id: 'Files',
-              element: (
-                <DetailsPageContextConsumer>
-                  {({ context }) => {
-                    if (!context.rowData) {
-                      return null
-                    }
-                    const hasVersionNumber = Boolean(
-                      context.rowData?.versionNumber,
-                    )
-                    const sql = `SELECT * FROM syn${context.rowData?.rowId}${
-                      hasVersionNumber
-                        ? `.${context.rowData?.versionNumber}`
-                        : ''
-                    }`
-                    return (
-                      <QueryWrapperPlotNav
-                        rgbIndex={0}
-                        sql={sql}
-                        visibleColumnCount={7}
-                        tableConfiguration={{
-                          showAccessColumn: true,
-                          showDownloadColumn: true,
-                        }}
-                        shouldDeepLink={false}
-                        columnAliases={columnAliases}
-                        defaultShowPlots={false}
-                      />
-                    )
-                  }}
-                </DetailsPageContextConsumer>
-              ),
-            },
+            // {
+            //   title: 'Files',
+            //   id: 'Files',
+            //   element: (
+            //     <DetailsPageContextConsumer>
+            //       {({ context }) => {
+            //         if (!context.rowData) {
+            //           return null
+            //         }
+            //         const hasVersionNumber = Boolean(
+            //           context.rowData?.versionNumber,
+            //         )
+            //         const sql = `SELECT * FROM syn${context.rowData?.rowId}${
+            //           hasVersionNumber
+            //             ? `.${context.rowData?.versionNumber}`
+            //             : ''
+            //         }`
+            //         return (
+            //           <QueryWrapperPlotNav
+            //             rgbIndex={0}
+            //             sql={sql}
+            //             visibleColumnCount={7}
+            //             tableConfiguration={{
+            //               showAccessColumn: true,
+            //               showDownloadColumn: true,
+            //             }}
+            //             shouldDeepLink={false}
+            //             columnAliases={columnAliases}
+            //             defaultShowPlots={false}
+            //           />
+            //         )
+            //       }}
+            //     </DetailsPageContextConsumer>
+            //   ),
+            // },
           ]}
         />
       </DetailsPage>
