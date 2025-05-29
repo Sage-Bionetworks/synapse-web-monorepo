@@ -140,15 +140,6 @@ export function SchemaDrivenAnnotationEditor(
   const [formData, setFormData] = useState<Record<string, unknown> | undefined>(
     undefined,
   )
-  // const [initialFormData, setInitialFormData] = useState<any>(undefined)
-
-  const formDataHasNoAnnotations =
-    entityJson &&
-    isEmpty(
-      omitBy(formData, (_value, key) =>
-        Object.keys(entityJson).find(k => k === key),
-      ),
-    )
 
   // Initialize form data
   useEffect(() => {
@@ -229,6 +220,14 @@ export function SchemaDrivenAnnotationEditor(
 
   const liveValidate =
     liveValidateFromProps ?? shouldLiveValidate(annotations, validationSchema)
+
+  const formDataHasNoAnnotations =
+    entityJson &&
+    isEmpty(
+      omitBy(formData, (_value, key) =>
+        Object.keys(entityJson).find(k => k === key),
+      ),
+    )
 
   const showHasNoAnnotationsAlert = schema === null && formDataHasNoAnnotations
 
