@@ -14,12 +14,15 @@ export default function useMaybeForceEnable2FA() {
   useEffect(() => {
     if (twoFactorStatus !== undefined) {
       const isTwoFactorEnabled = twoFactorStatus?.status === 'ENABLED'
-      // redirect to 2FA enrollment if not enabled and not already on the 2FA pages
+      // if user is already on the 2FA pages, do not redirect (and maintain mayForceEnable2FA as true)
       if (
-        !isTwoFactorEnabled &&
-        location.pathname != '/authenticated/2fa/enroll' &&
-        location.pathname != '/authenticated/2faRequired'
+        location.pathname == '/authenticated/2fa/enroll' ||
+        location.pathname == '/authenticated/2faRequired'
       ) {
+        return
+      }
+      // redirect to 2FA enrollment if not enabled
+      if (!isTwoFactorEnabled) {
         navigate('/authenticated/2faRequired')
       } else {
         setMayForceEnable2FA(false)

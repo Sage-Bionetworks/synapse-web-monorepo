@@ -104,7 +104,7 @@ describe('useMaybeForceEnable2FA', () => {
 
     const hook = renderHook(() => useMaybeForceEnable2FA())
     await waitFor(() => {
-      expect(hook.result.current.mayForceEnable2FA).toBe(false)
+      expect(hook.result.current.mayForceEnable2FA).toBe(true)
       expect(mockNavigate).not.toHaveBeenCalledWith(
         '/authenticated/2faRequired',
       )
@@ -124,7 +124,7 @@ describe('useMaybeForceEnable2FA', () => {
 
     const hook = renderHook(() => useMaybeForceEnable2FA())
     await waitFor(() => {
-      expect(hook.result.current.mayForceEnable2FA).toBe(false)
+      expect(hook.result.current.mayForceEnable2FA).toBe(true)
       expect(mockNavigate).not.toHaveBeenCalledWith(
         '/authenticated/2faRequired',
       )
