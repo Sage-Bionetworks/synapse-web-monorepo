@@ -141,7 +141,7 @@ export function SchemaDrivenAnnotationEditor(
     undefined,
   )
 
-  // Initialize form data
+  // Set initial form data when the entity or its annotations change
   useEffect(() => {
     if (data?.entity) {
       const formData = data.entity
