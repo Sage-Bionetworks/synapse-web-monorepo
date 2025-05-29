@@ -140,7 +140,7 @@ export function SchemaDrivenAnnotationEditor(
   const [formData, setFormData] = useState<Record<string, unknown> | undefined>(
     undefined,
   )
-  const [initialFormData, setInitialFormData] = useState<any>(undefined)
+  // const [initialFormData, setInitialFormData] = useState<any>(undefined)
 
   const formDataHasNoAnnotations =
     entityJson &&
@@ -153,15 +153,14 @@ export function SchemaDrivenAnnotationEditor(
   // Initialize form data
   useEffect(() => {
     if (data?.entity) {
-      const initialData = data.entity
+      const formData = data.entity
       const hasAnnotations = annotations && Object.keys(annotations).length > 0
 
       const newFormData = !hasAnnotations
-        ? { ...initialData, newKey: [''] }
-        : initialData
+        ? { ...formData, newKey: [''] }
+        : formData
 
       setFormData(newFormData)
-      setInitialFormData(newFormData)
     }
   }, [data?.entity, annotations])
 
@@ -213,10 +212,6 @@ export function SchemaDrivenAnnotationEditor(
 
   const { mutate, isPending: updateIsPending } = useUpdateViaJson({
     onSuccess: () => {
-      // Reset initialFormData after successful save
-      const cleaned = cleanFormData(formData, true)
-      setInitialFormData(cleaned)
-      setFormData(cleaned)
       onSuccess()
     },
     onError: error => {
