@@ -16,8 +16,7 @@ export default function useMaybeForceEnable2FA() {
       const isTwoFactorEnabled = twoFactorStatus?.status === 'ENABLED'
       // if user is already on the 2FA pages, do not redirect (and maintain mayForceEnable2FA as true)
       if (
-        location.pathname == '/authenticated/2fa/enroll' ||
-        location.pathname == '/authenticated/2faRequired'
+        location.pathname.startsWith('/authenticated/2fa') // 2faRequired, 2fa/enroll, 2fa/generatecodes, etc.
       ) {
         return
       }
