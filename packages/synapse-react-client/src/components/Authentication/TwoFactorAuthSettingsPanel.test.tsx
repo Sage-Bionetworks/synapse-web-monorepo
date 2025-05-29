@@ -32,7 +32,7 @@ describe('TwoFactorAuthSettingsPanel', () => {
       hideTitle: true,
     })
     // Ensure something in the component is rendered before we query for the title
-    await screen.findByText('Inactive')
+    await screen.findByText('Required for all projects and all users.')
 
     expect(
       screen.queryByRole('heading', {
@@ -46,7 +46,6 @@ describe('TwoFactorAuthSettingsPanel', () => {
       onRegenerateBackupCodes: mockOnRegenerateBackupCodes,
     })
 
-    await screen.findByText('Active')
     await screen.findByText('Two-factor Authentication (2FA)')
 
     const regenerateCodesButton = await screen.findByRole('button', {
