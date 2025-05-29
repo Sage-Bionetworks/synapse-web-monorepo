@@ -11,12 +11,7 @@ import {
 } from '@/utils/functions/getEndpoint'
 import { Alert, Box, Divider, Link, Typography } from '@mui/material'
 import RJSF from '@rjsf/core'
-import {
-  englishStringTranslator,
-  replaceStringParameters,
-  RJSFValidationError,
-  TranslatableString,
-} from '@rjsf/utils'
+import { RJSFValidationError } from '@rjsf/utils'
 import validator from '@rjsf/validator-ajv8'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { EntityJson } from '@sage-bionetworks/synapse-types'

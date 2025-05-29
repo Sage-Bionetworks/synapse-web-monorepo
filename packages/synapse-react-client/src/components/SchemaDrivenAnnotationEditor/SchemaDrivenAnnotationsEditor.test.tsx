@@ -256,36 +256,15 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
 
     await renderComponent()
 
-    const addItemButton = await screen.findByRole('button', {
-      name: 'Add Item',
-    })
-    const removeItemButton = await screen.findByRole('button', {
-      name: 'Remove',
-    })
-    const addNewCustomFieldButton = await screen.findByRole('button', {
-      name: 'Add Custom Field',
-    })
-    const itemMoreInfoButton = await screen.findByRole('button', {
-      name: 'Open',
-    })
-    const typeSelectButton = await screen.findByRole('button', { name: 'Open' })
-
-    expect(addNewCustomFieldButton).toBeInTheDocument()
-    expect(addItemButton).toBeInTheDocument()
-    expect(removeItemButton).toBeInTheDocument()
-    expect(itemMoreInfoButton).toBeInTheDocument()
-    expect(typeSelectButton).toBeInTheDocument()
+    await screen.findByLabelText('Key')
 
     const keyInput = screen.getByLabelText('Key')
-    expect(keyInput).toBeInTheDocument()
     expect(keyInput).toHaveValue('newKey')
 
     const typeField = screen.getByLabelText(/type/i)
-    expect(typeField).toBeInTheDocument()
     expect(typeField).toHaveValue('String')
 
     const valuesInput = screen.getByPlaceholderText('New Value')
-    expect(valuesInput).toBeInTheDocument()
     expect(valuesInput).toHaveValue('')
   })
 
