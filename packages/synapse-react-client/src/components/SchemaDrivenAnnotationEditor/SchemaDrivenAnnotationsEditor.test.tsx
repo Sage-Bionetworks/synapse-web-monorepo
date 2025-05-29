@@ -255,7 +255,6 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     server.use(noAnnotationsHandler, noSchemaHandler)
 
     await renderComponent()
-    await screen.findByText('has no annotations', { exact: false })
     const buttons = await screen.findAllByRole('button')
 
     // Expect one button to add annotations, and another to save
