@@ -130,4 +130,44 @@ describe('useMaybeForceEnable2FA', () => {
       )
     })
   })
+  it('does not redirect to 2faRequired if user is signing the terms of use', async () => {
+    vi.mocked(useLocation).mockReturnValue({
+      ...mockLocation,
+      pathname: '/authenticated/signTermsOfUse',
+    })
+    mockUseApplicationSessionContext.mockReturnValue({
+      ...mockApplicationSessionContext,
+      twoFactorStatus: {
+        status: 'DISABLED',
+      },
+    })
+
+    const hook = renderHook(() => useMaybeForceEnable2FA())
+    await waitFor(() => {
+      expect(hook.result.current.mayForceEnable2FA).toBe(true)
+      expect(mockNavigate).not.toHaveBeenCalledWith(
+        '/authenticated/2faRequired',
+      )
+    })
+  })
+  it('does not redirect to 2faRequired if user is signing updated terms of use', async () => {
+    vi.mocked(useLocation).mockReturnValue({
+      ...mockLocation,
+      pathname: '/authenticated/signUpdatedTermsOfUse',
+    })
+    mockUseApplicationSessionContext.mockReturnValue({
+      ...mockApplicationSessionContext,
+      twoFactorStatus: {
+        status: 'DISABLED',
+      },
+    })
+
+    const hook = renderHook(() => useMaybeForceEnable2FA())
+    await waitFor(() => {
+      expect(hook.result.current.mayForceEnable2FA).toBe(true)
+      expect(mockNavigate).not.toHaveBeenCalledWith(
+        '/authenticated/2faRequired',
+      )
+    })
+  })
 })
