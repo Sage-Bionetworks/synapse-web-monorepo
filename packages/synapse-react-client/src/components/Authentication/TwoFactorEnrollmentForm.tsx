@@ -5,7 +5,18 @@ import {
   useStartTwoFactorEnrollment,
 } from '@/synapse-queries/auth/useTwoFactorEnrollment'
 import { StyledComponent } from '@emotion/styled'
-import { Box, BoxProps, Button, Divider, IconButton, Link, Paper, Stack, styled, Typography } from '@mui/material'
+import {
+  Box,
+  BoxProps,
+  Button,
+  Divider,
+  IconButton,
+  Link,
+  Paper,
+  Stack,
+  styled,
+  Typography,
+} from '@mui/material'
 import { TotpSecret } from '@sage-bionetworks/synapse-types'
 import { toCanvas } from 'qrcode'
 import { useEffect, useRef, useState } from 'react'
@@ -67,6 +78,8 @@ export default function TwoFactorEnrollmentForm(
   const [totp, setTotp] = useState('')
   const [hasQrCode, setHasQrCode] = useState(false)
   const [showSecretInModal, setShowSecretInModal] = useState(false)
+  // TODO: use username from enrollment response once available (or call new API, or parse access token)
+  // See https://sagebionetworks.jira.com/browse/PLFM-8817?focusedCommentId=251630
   const { data: currentUserEmail } = useGetNotificationEmail()
 
   const qrCodeCanvasElement = useRef<HTMLCanvasElement>(null)
