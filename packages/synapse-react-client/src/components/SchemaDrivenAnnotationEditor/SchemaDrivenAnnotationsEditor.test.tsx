@@ -251,14 +251,42 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     },
   )
 
-  it('Works with no annotations and no schema', async () => {
+  it('Renders a default form state with one empty key-value field when no annotations or schema are present', async () => {
     server.use(noAnnotationsHandler, noSchemaHandler)
 
     await renderComponent()
-    const buttons = await screen.findAllByRole('button')
 
-    // Renders a default form state with one empty key-value field when no annotations or schema are present
-    expect(buttons.length).toBe(7)
+    const addItemButton = await screen.findByRole('button', {
+      name: 'Add Item',
+    })
+    const removeItemButton = await screen.findByRole('button', {
+      name: 'Remove',
+    })
+    const addNewCustomFieldButton = await screen.findByRole('button', {
+      name: 'Add Custom Field',
+    })
+    const itemMoreInfoButton = await screen.findByRole('button', {
+      name: 'Open',
+    })
+    const typeSelectButton = await screen.findByRole('button', { name: 'Open' })
+
+    expect(addNewCustomFieldButton).toBeInTheDocument()
+    expect(addItemButton).toBeInTheDocument()
+    expect(removeItemButton).toBeInTheDocument()
+    expect(itemMoreInfoButton).toBeInTheDocument()
+    expect(typeSelectButton).toBeInTheDocument()
+
+    const keyInput = screen.getByLabelText('Key')
+    expect(keyInput).toBeInTheDocument()
+    expect(keyInput).toHaveValue('newKey')
+
+    const typeField = screen.getByLabelText(/type/i)
+    expect(typeField).toBeInTheDocument()
+    expect(typeField).toHaveValue('String')
+
+    const valuesInput = screen.getByPlaceholderText('New Value')
+    expect(valuesInput).toBeInTheDocument()
+    expect(valuesInput).toHaveValue('')
   })
 
   it('Fetches a schema, no annotations', async () => {
