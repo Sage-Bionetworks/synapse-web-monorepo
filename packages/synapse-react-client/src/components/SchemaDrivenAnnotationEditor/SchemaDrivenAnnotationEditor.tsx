@@ -36,6 +36,7 @@ import {
   transformErrors,
   getUiSchemaForForm,
   shouldLiveValidate,
+  customTranslateString,
 } from './AnnotationEditorUtils'
 import SynapseAnnotationsRJSFObjectField from './field/SynapseAnnotationsRJSFObjectField'
 import { ObjectFieldTemplate } from './template/ObjectFieldTemplate'
@@ -136,12 +137,19 @@ export function SchemaDrivenAnnotationEditor(
     undefined,
   )
 
+  // Set initial form data when the entity or its annotations change
   useEffect(() => {
     if (data?.entity) {
-      // Put the annotations into a state variable so it can be modified by the form.
-      setFormData(data?.entity)
+      const formData = data.entity
+      const hasAnnotations = annotations && Object.keys(annotations).length > 0
+
+      const newFormData = !hasAnnotations
+        ? { ...formData, newKey: [''] }
+        : formData
+
+      setFormData(newFormData)
     }
-  }, [data?.entity])
+  }, [data?.entity, annotations])
 
   const { data: schema, isLoading: isLoadingBinding } = useGetSchemaBinding(
     entityId!,
@@ -216,6 +224,7 @@ export function SchemaDrivenAnnotationEditor(
         Object.keys(entityJson).find(k => k === key),
       ),
     )
+
   const showHasNoAnnotationsAlert = schema === null && formDataHasNoAnnotations
 
   return (
@@ -265,6 +274,7 @@ export function SchemaDrivenAnnotationEditor(
             noHtml5Validate={true}
             formRef={ref}
             disabled={updateIsPending}
+            translateString={customTranslateString}
             formContext={{
               showDerivedAnnotationPlaceholder: true,
               descriptionVariant: 'expand',
