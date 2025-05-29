@@ -4,7 +4,6 @@ import {
 } from 'synapse-react-client'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { defaultSearchConfiguration, projectsSql } from '../resources'
-import { TargetEnum } from 'synapse-react-client/utils/html/TargetEnum'
 
 const rgbIndex = 4
 export const projectCardConfiguration: CardConfiguration = {
@@ -25,7 +24,6 @@ export const projectCardConfiguration: CardConfiguration = {
     baseURL: 'Explore/Projects/DetailsPage',
     URLColumnName: 'shortName',
     matchColumnName: 'shortName',
-    target: TargetEnum.CURRENT_WINDOW,
   },
   labelLinkConfig: [
     {

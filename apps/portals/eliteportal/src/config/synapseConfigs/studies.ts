@@ -4,7 +4,6 @@ import {
 } from 'synapse-react-client'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { defaultSearchConfiguration, studiesSql } from '../resources'
-import { TargetEnum } from 'synapse-react-client/utils/html/TargetEnum'
 
 export const studiesRgbIndex = 0
 
@@ -16,7 +15,6 @@ export const studyCardConfiguration: CardConfiguration = {
     baseURL: 'Explore/Studies/DetailsPage',
     URLColumnName: 'studyKey',
     matchColumnName: 'studyKey',
-    target: TargetEnum.CURRENT_WINDOW,
   },
   labelLinkConfig: [
     {
