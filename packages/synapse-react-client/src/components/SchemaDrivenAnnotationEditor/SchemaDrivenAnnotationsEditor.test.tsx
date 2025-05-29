@@ -257,8 +257,8 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     await renderComponent()
     const buttons = await screen.findAllByRole('button')
 
-    // Expect one button to add annotations, and another to save
-    expect(buttons.length).toBe(2)
+    // Renders a default form state with one empty key-value field when no annotations or schema are present
+    expect(buttons.length).toBe(7)
   })
 
   it('Fetches a schema, no annotations', async () => {

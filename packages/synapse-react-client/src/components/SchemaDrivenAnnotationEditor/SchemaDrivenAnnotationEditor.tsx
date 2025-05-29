@@ -11,7 +11,12 @@ import {
 } from '@/utils/functions/getEndpoint'
 import { Alert, Box, Divider, Link, Typography } from '@mui/material'
 import RJSF from '@rjsf/core'
-import { RJSFValidationError } from '@rjsf/utils'
+import {
+  englishStringTranslator,
+  replaceStringParameters,
+  RJSFValidationError,
+  TranslatableString,
+} from '@rjsf/utils'
 import validator from '@rjsf/validator-ajv8'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { EntityJson } from '@sage-bionetworks/synapse-types'
@@ -61,8 +66,6 @@ export type SchemaDrivenAnnotationEditorProps = {
   onChange?: (annotations: Record<string, unknown>) => void
   /** If true, the editor will not render its own submit UI. */
   hideActions?: boolean
-  /** Callback that is invoked when the form's dirty state changes. */
-  onFormDirtyChange?: (isDirty: boolean) => void
 }
 
 /**
@@ -100,7 +103,6 @@ export function SchemaDrivenAnnotationEditor(
     formRef: formRefFromParent,
     onChange = noop,
     hideActions = false,
-    onFormDirtyChange,
   } = props
   const localRef = useRef<RJSF>(null)
   const ref = formRefFromParent ?? localRef
@@ -148,7 +150,7 @@ export function SchemaDrivenAnnotationEditor(
       ),
     )
 
-  // Initialize form data, adding a placeholder key if no annotations exist
+  // Initialize form data
   useEffect(() => {
     if (data?.entity) {
       const initialData = data.entity
@@ -162,33 +164,6 @@ export function SchemaDrivenAnnotationEditor(
       setInitialFormData(newFormData)
     }
   }, [data?.entity, annotations])
-
-  // wraps non-array values in arrays
-  function normalizeAnnotations(data: Record<string, unknown> | undefined) {
-    if (!data) return {}
-    const cleaned = cleanFormData(data, true)
-    const normalized = { ...cleaned }
-
-    Object.entries(normalized).forEach(([key, value]) => {
-      if (typeof value === 'string') {
-        normalized[key] = Array.isArray(value) ? value : [value]
-      }
-    })
-
-    return normalized
-  }
-
-  const isUnchanged = useMemo(() => {
-    return isEqual(
-      normalizeAnnotations(formData),
-      normalizeAnnotations(initialFormData),
-    )
-  }, [formData, initialFormData])
-
-  useEffect(() => {
-    const dirty = !isUnchanged
-    onFormDirtyChange?.(dirty)
-  }, [isUnchanged, onFormDirtyChange])
 
   const { data: schema, isLoading: isLoadingBinding } = useGetSchemaBinding(
     entityId!,
@@ -262,25 +237,18 @@ export function SchemaDrivenAnnotationEditor(
 
   const showHasNoAnnotationsAlert = schema === null && formDataHasNoAnnotations
 
-  function addEmptyAnnotationField(
-    formData: Record<string, unknown> | undefined,
-    setFormData: React.Dispatch<
-      React.SetStateAction<Record<string, unknown> | undefined>
-    >,
-  ) {
-    if (!formData || typeof formData !== 'object') return
-
-    let newKey = 'newKey'
-    let i = 1
-    while (Object.prototype.hasOwnProperty.call(formData, newKey)) {
-      newKey = `newKey${i++}`
+  function customTranslateString(
+    stringToTranslate: TranslatableString,
+    params?: string[],
+  ): string {
+    switch (stringToTranslate) {
+      case TranslatableString.NewStringDefault:
+        return ''
+      case TranslatableString.KeyLabel:
+        return replaceStringParameters('%1 Key', params)
+      default:
+        return englishStringTranslator(stringToTranslate, params)
     }
-
-    const updatedFormData = {
-      ...formData,
-      [newKey]: [''],
-    }
-    setFormData(updatedFormData)
   }
 
   return (
@@ -330,17 +298,12 @@ export function SchemaDrivenAnnotationEditor(
             noHtml5Validate={true}
             formRef={ref}
             disabled={updateIsPending}
+            translateString={customTranslateString}
             formContext={{
               showDerivedAnnotationPlaceholder: true,
               descriptionVariant: 'expand',
               descriptionFormat: 'table',
               allowFreeSoloEnum: true,
-              customHandleAddClick: (_schema: JSONSchema7) => {
-                return (event: React.MouseEvent) => {
-                  event.preventDefault()
-                  addEmptyAnnotationField(formData, setFormData)
-                }
-              },
             }}
             experimental_defaultFormStateBehavior={{
               emptyObjectFields: 'skipDefaults',

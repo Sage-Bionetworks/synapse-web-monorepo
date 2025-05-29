@@ -59,7 +59,6 @@ export function EntityModal(props: EntityModalProps) {
   const [showEditCancellationWarning, setShowEditCancellationWarning] =
     useState(false)
   const [isInEditMode, setIsInEditMode] = useState(false)
-  const [isFormDirty, setIsFormDirty] = useState(false)
 
   // Need to store variable behavior for when the user confirms they want to cancel editing
   // We may return to the readonly view, or we might close the entire modal, depending on what they clicked.
@@ -112,7 +111,6 @@ export function EntityModal(props: EntityModalProps) {
   const saveAnnotationsButton = (
     <Button
       variant={'contained'}
-      disabled={!isFormDirty}
       onClick={() => {
         // Workaround for https://github.com/rjsf-team/react-jsonschema-form/issues/3121
         annotationEditorFormRef.current!.formElement.current.requestSubmit()
@@ -191,9 +189,7 @@ export function EntityModal(props: EntityModalProps) {
               entityId={entityId}
               formRef={annotationEditorFormRef}
               hideActions
-              onFormDirtyChange={setIsFormDirty}
               onSuccess={() => {
-                setIsFormDirty(false)
                 displayToast('Annotations successfully updated.', 'success')
                 setIsInEditMode(false)
               }}

@@ -23,19 +23,13 @@ const propertyTypeArray = [
   'Datetime',
 ] as const
 
-export type PropertyType = (typeof propertyTypeArray)[number] | ''
+export type PropertyType = (typeof propertyTypeArray)[number]
 
 export function guessPropertyType(list: Array<unknown>): PropertyType {
-  // if (list.length === 0) {
-  //   // The field was just added, so default to string
-  //   return 'String'
-  // }
-  // const justAdded = list[0] === ''
-  // if (justAdded) {
-  //   console.log('just added, defaulting')
-  //   return ''
-  // }
-  if (
+  if (list.length === 0) {
+    // The field was just added, so default to string
+    return 'String'
+  } else if (
     list.every(
       item => typeof item === 'number' || item === 'NaN', // "NaN" is technically a float value
     )
@@ -149,16 +143,12 @@ export function AdditionalPropertiesSchemaField<
   const { SelectWidget } = registry.widgets
 
   // The type determines which widget we show.
-  // const [propertyType, setPropertyType] = useState<PropertyType>('')
-
   const [propertyType, setPropertyType] = useState(
     guessPropertyType(convertToArray(formData)),
   )
 
   // If the property type is updated, store it in a new variable where we'll show a warning if data may be lost on coersion
   const [nextPropertyType, setNextPropertyType] = useState(propertyType)
-
-  console.log('propertyType', propertyType)
 
   /**
    * This effect is invoked whenever the user attempts to change the datatype of a custom annotation.
@@ -191,8 +181,7 @@ export function AdditionalPropertiesSchemaField<
    */
   useEffect(() => {
     function coerceDataAndUpdateWidget() {
-      if (Array.isArray(formData) && propertyType != '') {
-        console.log('coerceDataAndUpdateWidget')
+      if (Array.isArray(formData)) {
         if (formData.every(item => item == null)) {
           onDropPropertyClick(name)(new CustomEvent('dropEmptyProperty'))
         } else {
@@ -200,7 +189,7 @@ export function AdditionalPropertiesSchemaField<
             formData,
             nextPropertyType,
           ) as unknown as T
-          console.log('Saving coercedList', coercedList)
+
           // Data conversion is non-destructive or has been confirmed by the user
           setPropertyType(nextPropertyType)
           // Coerce the data to match the new type
@@ -250,23 +239,10 @@ export function AdditionalPropertiesSchemaField<
               value: type,
             })),
           }}
-          placeholder="Type"
           value={propertyType}
-          // onChange={value => {
-          //   setNextPropertyType(value as PropertyType)
-          // }}
           onChange={value => {
-            const newType = value as PropertyType
-            setNextPropertyType(newType)
+            setNextPropertyType(value as PropertyType)
           }}
-          // onChange={value => {
-          //   const newType = value as PropertyType
-          //   // If there was no previous type, immediately apply it
-          //   if (propertyType === '') {
-          //     setPropertyType(newType)
-          //   }
-          //   setNextPropertyType(newType)
-          // }}
           disabled={props.disabled}
           readOnly={props.readonly}
           required={true}
@@ -280,6 +256,14 @@ export function AdditionalPropertiesSchemaField<
       <Grid item xs={7}>
         <ArrayField
           {...props}
+          uiSchema={{
+            ...props.uiSchema,
+            'ui:title': 'Value(s)',
+            items: {
+              ...props.uiSchema?.items,
+              'ui:placeholder': 'New Value',
+            },
+          }}
           schema={{
             ...schema,
             items: {
@@ -288,7 +272,7 @@ export function AdditionalPropertiesSchemaField<
           }}
         />
       </Grid>
-      {propertyType && propertyType !== nextPropertyType && (
+      {propertyType !== nextPropertyType && (
         <FullWidthAlert
           variant="warning"
           title="Data may be lost when converting types"
