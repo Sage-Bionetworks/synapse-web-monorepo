@@ -98,7 +98,15 @@ export function useDisableTwoFactorAuth(
 export function useGetTwoFactorEnrollmentStatus(
   options?: Partial<UseQueryOptions<TwoFactorAuthStatus, SynapseClientError>>,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { accessToken } = useSynapseContext()
+  return useGetTwoFactorEnrollmentStatusWithAccessToken(accessToken, options)
+}
+
+export function useGetTwoFactorEnrollmentStatusWithAccessToken(
+  accessToken?: string, //usually we can fetch the access token from the context, but this hook is used by ApplicationSessionManager which sets the access token in the context (ApplicationSessionContextProvider)!
+  options?: Partial<UseQueryOptions<TwoFactorAuthStatus, SynapseClientError>>,
+) {
+  const { keyFactory } = useSynapseContext()
   return useQuery({
     queryKey: keyFactory.getTwoFactorAuthStatusQueryKey(),
     queryFn: () =>
