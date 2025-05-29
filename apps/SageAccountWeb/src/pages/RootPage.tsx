@@ -19,7 +19,7 @@ function LoggedInRedirector() {
   const { mayForceEnable2FA } = useMaybeForceEnable2FA()
 
   useEffect(() => {
-    // User is on the root page (implied by route), logged in, not in the SSO Flow, and does not need to sign the ToS
+    // User is on the root page (implied by route), logged in, not in the SSO Flow, and does not need to sign the ToS, and has enabled 2FA
     // then redirect!
     if (
       accessToken &&
