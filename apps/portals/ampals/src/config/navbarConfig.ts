@@ -22,10 +22,6 @@ export const navbarConfig: NavbarConfig = {
         { name: 'Programs', path: '/Explore/Programs' },
         { name: 'Collections', path: '/Explore/Collections' },
         { name: 'Datasets', path: '/Explore/Datasets' },
-        {
-          name: 'Files',
-          path: '/Explore/Files',
-        },
       ],
     },
     {
