@@ -109,10 +109,21 @@ export default function LastLoginInfo(props: LastLoginInfoProps) {
 
   const tooltipText = (
     <>
-      <Typography variant="smallText2" mb={1}>
+      <Typography
+        variant="smallText2"
+        sx={{
+          mb: 1,
+        }}
+      >
         {title}
       </Typography>
-      <Typography variant="smallText1" mb={1} color="white">
+      <Typography
+        variant="smallText1"
+        color="white"
+        sx={{
+          mb: 1,
+        }}
+      >
         {`This computer was used to sign in to an account on ${lastLoginSourceAppDefiniteArticle}${lastLoginSourceAppName}. 
           You can use the same account to sign in to ${currentSourceAppDefiniteArticle}${currentSourceAppName}.`}
       </Typography>
@@ -126,15 +137,21 @@ export default function LastLoginInfo(props: LastLoginInfoProps) {
     <>
       <Typography
         variant="smallText2"
-        mb={1}
-        sx={{ color: 'grey.900', fontSize: '12px' }}
+        sx={{
+          mb: 1,
+          color: 'grey.900',
+          fontSize: '12px',
+        }}
       >
         {title}
       </Typography>
       <Typography
         variant="smallText1"
-        mb={1}
-        sx={{ color: 'grey.900', fontSize: '12px' }}
+        sx={{
+          mb: 1,
+          color: 'grey.900',
+          fontSize: '12px',
+        }}
       >
         It looks like you already have an account, last used on{' '}
         {lastLoginSourceAppDefiniteArticle}
@@ -163,7 +180,7 @@ export default function LastLoginInfo(props: LastLoginInfoProps) {
           <Tooltip
             title={tooltipText}
             placement={'top'}
-            componentsProps={{
+            slotProps={{
               tooltip: {
                 sx: {
                   bgcolor: '#63676C',

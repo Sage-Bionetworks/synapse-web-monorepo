@@ -326,9 +326,11 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
   return (
     <div>
       <Box
-        display={'flex'}
-        justifyContent={'space-between'}
-        p={'12px 10px 10px 5px'}
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          p: '12px 10px 10px 5px',
+        }}
       >
         {showFilterControls && (
           <Typography variant="body1" sx={{ marginBottom: '10px' }}>
@@ -349,7 +351,12 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
           </Button>
         )}
       </Box>
-      <Box display={'flex'} pb={2}>
+      <Box
+        sx={{
+          display: 'flex',
+          pb: 2,
+        }}
+      >
         {table.getHeaderGroups().map(headerGroup =>
           headerGroup.headers.map(header => {
             return header.isPlaceholder ? null : (
@@ -403,12 +410,21 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
                         }}
                       >
                         {header.isPlaceholder ? null : (
-                          <Box display={'flex'} alignItems={'center'}>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                            }}
+                          >
                             {flexRender(
                               header.column.columnDef.header,
                               header.getContext(),
                             )}
-                            <Box mx={'auto'} />
+                            <Box
+                              sx={{
+                                mx: 'auto',
+                              }}
+                            />
                             {header.column.getCanSort() && (
                               <IconButton
                                 onClick={header.column.getToggleSortingHandler()}
@@ -569,9 +585,11 @@ export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
                   return (
                     <Typography
                       component={parseErrors.length > 1 ? 'li' : 'span'}
-                      lineHeight={1.5}
                       key={index}
                       variant={'smallText1'}
+                      sx={{
+                        lineHeight: 1.5,
+                      }}
                     >
                       {error}
                     </Typography>

@@ -142,7 +142,13 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
   return (
     <>
       <DialogTitle>
-        <Stack direction="row" alignItems={'center'} gap={'5px'}>
+        <Stack
+          direction="row"
+          sx={{
+            alignItems: 'center',
+            gap: '5px',
+          }}
+        >
           Request Access
           <Box sx={{ flexGrow: 1 }} />
           <IconButton onClick={onHide}>
@@ -192,9 +198,11 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
                 value={projectLead}
                 required
                 onChange={e => setProjectLead(e.target.value)}
-                InputLabelProps={{
-                  // allows floating the help popover all the way to the right
-                  sx: { width: '100%' },
+                slotProps={{
+                  inputLabel: {
+                    // allows floating the help popover all the way to the right
+                    sx: { width: '100%' },
+                  },
                 }}
               />
               <TextField
@@ -282,7 +290,13 @@ function ConfirmationScreenContent(props: { isIDURequired: boolean }) {
   const { isIDURequired } = props
   return (
     <DialogContent>
-      <Typography variant="body1" fontWeight={700} gutterBottom>
+      <Typography
+        variant="body1"
+        gutterBottom
+        sx={{
+          fontWeight: 700,
+        }}
+      >
         Double-check your submission before continuing!
       </Typography>
       <Typography variant="body1" gutterBottom>

@@ -50,7 +50,12 @@ export const ClientError = (props: { error: SynapseClientError }) => {
     return (
       <>
         <Stack direction="row" spacing={2}>
-          <Box display="flex" alignItems="center">
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
             {YOU_ARE_NOT_AUTHORIZED_MESSAGE}
           </Box>
           <Button
@@ -61,7 +66,11 @@ export const ClientError = (props: { error: SynapseClientError }) => {
           </Button>
         </Stack>
         <Collapse in={showDetailedError}>
-          <Box paddingTop={1}>
+          <Box
+            sx={{
+              paddingTop: 1,
+            }}
+          >
             <pre>{error.reason}</pre>
           </Box>
         </Collapse>

@@ -57,7 +57,10 @@ export function DatasetEditorVersionCell(props: DatasetEditorVersionCellProps) {
           }}
           onChange={event => {
             event.stopPropagation()
-            const version = parseInt((event.target as HTMLInputElement).value)
+            let version = event.target.value
+            if (typeof version === 'string') {
+              version = parseInt(version)
+            }
             toggleSelection({
               entityId: entityId,
               versionNumber: version,

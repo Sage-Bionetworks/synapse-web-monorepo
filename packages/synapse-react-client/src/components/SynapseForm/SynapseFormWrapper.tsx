@@ -172,7 +172,7 @@ class _SynapseFormWrapper extends Component<
       this.setState({
         formData: formData,
         formSchema: configData[0].content,
-        formUiSchema: configData[1].content,
+        formUiSchema: configData[1].content as unknown as UiSchema,
         formNavSchema: configData[2].content,
         isLoading: false,
       })

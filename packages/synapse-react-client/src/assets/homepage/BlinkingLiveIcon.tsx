@@ -1,6 +1,6 @@
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 import { styled } from '@mui/material'
-import { ColorPartial } from '@mui/material/styles/createPalette'
+import { Color } from '@mui/material/styles'
 
 export const LiveIcon = (props: SvgIconProps) => {
   return (
@@ -20,10 +20,10 @@ export const BlinkingLiveIcon = styled(LiveIcon)(({ theme }) => ({
   animation: 'blink 2s infinite',
   '@keyframes blink': {
     '0%, 100%': {
-      fill: (theme.palette.primary as ColorPartial)[800],
+      fill: (theme.palette.primary as unknown as Color)[800],
     },
     '50%': {
-      fill: (theme.palette.secondary as ColorPartial)[700],
+      fill: (theme.palette.secondary as unknown as Color)[700],
     },
   },
   width: '16px',

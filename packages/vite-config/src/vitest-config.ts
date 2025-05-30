@@ -19,5 +19,11 @@ export default defineConfig({
       reporter: ['text-summary', 'html-spa'],
       reportsDirectory: './coverage/cov',
     },
+    server: {
+      deps: {
+        // https://github.com/mui/mui-x/issues/17427#issuecomment-2830951458
+        inline: ['@mui/x-data-grid'],
+      },
+    },
   },
 })

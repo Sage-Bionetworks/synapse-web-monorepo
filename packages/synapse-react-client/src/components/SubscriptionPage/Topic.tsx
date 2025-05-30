@@ -21,7 +21,12 @@ export default function Topic(props: TopicProps) {
     props
 
   return (
-    <Stack flexDirection={'row'} alignItems={'center'}>
+    <Stack
+      sx={{
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}
+    >
       <Button
         sx={{ width: '80px', mr: 3 }}
         onClick={onToggleSubscribe}

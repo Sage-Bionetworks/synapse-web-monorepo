@@ -58,46 +58,49 @@ export function FullTextSearch({ ftsConfig }: FullTextSearchProps) {
         <form onSubmit={search}>
           <TextField
             sx={{ width: '100%' }}
-            inputProps={{
-              minLength: MIN_SEARCH_QUERY_LENGTH,
-              ref: searchInputRef,
-            }}
-            InputProps={{
-              startAdornment: (
-                <IconSvg
-                  icon="search"
-                  wrap={false}
-                  sx={{
-                    mr: 1,
-                    color: 'grey.600',
-                  }}
-                />
-              ),
-              endAdornment: (
-                <>
-                  {searchText.length > 0 && (
-                    <IconSvgButton
-                      icon="close"
-                      size="small"
-                      onClick={() => {
-                        setSearchText('')
-                      }}
-                    />
-                  )}
-                  <HelpPopover
-                    markdownText={
-                      'This search bar is powered by MySQL Full Text Search.'
-                    }
-                    helpUrl={ftsConfig?.searchHelpURL}
-                    placement="left"
-                  />
-                </>
-              ),
-            }}
             onChange={handleChange}
             placeholder="Enter Search Terms"
             value={searchText}
             type="text"
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <IconSvg
+                    icon="search"
+                    wrap={false}
+                    sx={{
+                      mr: 1,
+                      color: 'grey.600',
+                    }}
+                  />
+                ),
+                endAdornment: (
+                  <>
+                    {searchText.length > 0 && (
+                      <IconSvgButton
+                        icon="close"
+                        size="small"
+                        onClick={() => {
+                          setSearchText('')
+                        }}
+                      />
+                    )}
+                    <HelpPopover
+                      markdownText={
+                        'This search bar is powered by MySQL Full Text Search.'
+                      }
+                      helpUrl={ftsConfig?.searchHelpURL}
+                      placement="left"
+                    />
+                  </>
+                ),
+              },
+
+              htmlInput: {
+                minLength: MIN_SEARCH_QUERY_LENGTH,
+                ref: searchInputRef,
+              },
+            }}
           />
         </form>
       </Collapse>

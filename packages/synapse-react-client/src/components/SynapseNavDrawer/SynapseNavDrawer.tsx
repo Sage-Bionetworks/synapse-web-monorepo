@@ -441,12 +441,14 @@ export function SynapseNavDrawer({
                       }
                     }
                   }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <IconSvg icon="searchOutlined" />
-                      </InputAdornment>
-                    ),
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <IconSvg icon="searchOutlined" />
+                        </InputAdornment>
+                      ),
+                    },
                   }}
                 />
                 <div className="linkList" onClick={handleDrawerClose}>
@@ -571,13 +573,6 @@ export function SynapseNavDrawer({
                   onChange={event => {
                     setDocSiteSearchText(event.target.value)
                   }}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <IconSvg icon="searchOutlined" />
-                      </InputAdornment>
-                    ),
-                  }}
                   onKeyDown={event => {
                     if (event.key === 'Enter') {
                       if ((event.target as HTMLInputElement).value !== '') {
@@ -590,6 +585,15 @@ export function SynapseNavDrawer({
                         handleDrawerClose()
                       }
                     }
+                  }}
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <IconSvg icon="searchOutlined" />
+                        </InputAdornment>
+                      ),
+                    },
                   }}
                 />
 

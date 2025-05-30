@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useRef } from 'react'
-import { Alert, Box, ListItem, ListItemText } from '@mui/material'
-import { useTheme } from '@mui/material'
-import { ColorPartial } from '@mui/material/styles/createPalette'
 import { SmartToyTwoTone } from '@mui/icons-material'
+import { Alert, Box, ListItem, ListItemText, useTheme } from '@mui/material'
+import { Color } from '@mui/material/styles'
+import { useEffect, useMemo, useRef } from 'react'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 
 export type SynapseChatInteractionProps = {
@@ -43,7 +42,7 @@ export function SynapseChatInteraction({
         ref={ref}
         sx={{
           alignSelf: 'flex-end',
-          backgroundColor: (theme.palette.secondary as ColorPartial)[100],
+          backgroundColor: (theme.palette.secondary as unknown as Color)[100],
           borderRadius: '24px',
           maxWidth: '70%',
           display: 'block',

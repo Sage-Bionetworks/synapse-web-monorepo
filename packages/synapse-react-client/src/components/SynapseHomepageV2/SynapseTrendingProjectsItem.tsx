@@ -6,7 +6,7 @@ import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { NavigateNext } from '@mui/icons-material'
 import { Box, SxProps, Typography, useTheme } from '@mui/material'
-import { ColorPartial } from '@mui/material/styles/createPalette'
+import { Color } from '@mui/material/styles'
 
 export type SynapseTrendingProjectItemProps = {
   rank: number
@@ -54,7 +54,7 @@ export function SynapseTrendingProjectItem({
   const friendlyUserCount = userCount
     ? formatter.format(parseInt(userCount))
     : ''
-  let backgroundColor = (theme.palette.primary as ColorPartial)[700]
+  let backgroundColor = (theme.palette.primary as unknown as Color)[700]
   let borderRadius
   switch (rank) {
     case 1:

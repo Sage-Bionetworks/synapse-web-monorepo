@@ -61,15 +61,17 @@ export function EvaluationRoundLimitOptions({
         fullWidth
         className="limit-input"
         label={'Maximum Submissions'}
-        inputProps={{
-          pattern: '[0-9]*',
-        }}
         value={limitInput.maxSubmissionString}
         onChange={event => {
           onChange({
             type: limitInput.type,
             maxSubmissionString: event.target.value,
           })
+        }}
+        slotProps={{
+          htmlInput: {
+            pattern: '[0-9]*',
+          },
         }}
       />
     </>

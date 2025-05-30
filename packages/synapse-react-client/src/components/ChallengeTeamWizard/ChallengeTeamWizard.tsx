@@ -407,7 +407,13 @@ function ChallengeTeamWizard(props: ChallengeTeamWizardProps) {
       title={getStepDialogTitle(step)}
       content={
         <SynapseErrorBoundary>
-          <Box display="flex" flexDirection="column" gap={1}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 1,
+            }}
+          >
             {isLoading ? (
               <SynapseSpinner size={40} />
             ) : (

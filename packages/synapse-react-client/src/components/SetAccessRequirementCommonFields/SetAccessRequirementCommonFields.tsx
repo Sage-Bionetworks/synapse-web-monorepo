@@ -3,6 +3,7 @@ import {
   useGetAccessRequirements,
   useUpdateAccessRequirement,
 } from '@/synapse-queries'
+import { spreadSx } from '@/theme/spreadSx'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
 import {
   Alert,
@@ -322,7 +323,15 @@ export const SetAccessRequirementCommonFields = forwardRef(
         )}
         <SynapseErrorBoundary>{selectorContent}</SynapseErrorBoundary>
         {subjectsError && <Alert severity="error">{subjectsError}</Alert>}
-        <Stack direction="row" gap={1} alignItems="center" mb={1} mt={2}>
+        <Stack
+          direction="row"
+          sx={{
+            gap: 1,
+            alignItems: 'center',
+            mb: 1,
+            mt: 2,
+          }}
+        >
           <Typography component="label" htmlFor="arName" {...headerProps}>
             Name
           </Typography>
@@ -340,7 +349,15 @@ export const SetAccessRequirementCommonFields = forwardRef(
         />
         {!isEditing && subjectsType !== RestrictableObjectType.TEAM && (
           <>
-            <Typography {...headerProps} mt={2}>
+            <Typography
+              {...headerProps}
+              sx={spreadSx(
+                {
+                  mt: 2,
+                },
+                headerProps.sx,
+              )}
+            >
               Access requirement type
             </Typography>
             <RadioGroup

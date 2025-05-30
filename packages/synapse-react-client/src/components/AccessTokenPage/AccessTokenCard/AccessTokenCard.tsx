@@ -62,7 +62,12 @@ export function AccessTokenCard(props: AccessTokenCardProps) {
             If you delete this token, any applications using it will stop
             working. This action cannot be undone.
           </Typography>
-          <Typography variant={'body1'} fontWeight={'700'}>
+          <Typography
+            variant={'body1'}
+            sx={{
+              fontWeight: '700',
+            }}
+          >
             Are you sure you want to delete this token?
           </Typography>
         </>
@@ -90,12 +95,20 @@ export function AccessTokenCard(props: AccessTokenCardProps) {
     >
       {warningDialog}
       <Box
-        display={'flex'}
-        alignItems={'center'}
-        justifyContent={'space-between'}
-        height={'100%'}
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          height: '100%',
+        }}
       >
-        <Stack flexGrow={1} gap={1} justifyContent={'space-between'}>
+        <Stack
+          sx={{
+            flexGrow: 1,
+            gap: 1,
+            justifyContent: 'space-between',
+          }}
+        >
           <Typography variant={'headline3'} sx={{ fontSize: '16px' }}>
             {accessToken.name}
           </Typography>
@@ -133,7 +146,9 @@ export function AccessTokenCard(props: AccessTokenCardProps) {
             <Typography
               component={'span'}
               variant={'smallText1'}
-              color={'grey.700'}
+              sx={{
+                color: 'grey.700',
+              }}
             >
               {' | '}
             </Typography>
@@ -143,10 +158,12 @@ export function AccessTokenCard(props: AccessTokenCardProps) {
           </div>
         </Stack>
         <Box
-          alignSelf={'flex-start'}
-          display={'flex'}
-          gap={1}
-          alignItems={'center'}
+          sx={{
+            alignSelf: 'flex-start',
+            display: 'flex',
+            gap: 1,
+            alignItems: 'center',
+          }}
         >
           {isExpired && (
             <Tooltip title={EXPIRED_PAT_WARNING} placement={'top'}>

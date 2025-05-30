@@ -138,9 +138,9 @@ export const directDownloadColumn = columnHelper.display({
  * If a rowEntityIDColumnName was provided in the table config, then instead return the entityID found in
  * that cell of the current Row.
  */
-const getEntityOrRowId = (
-  props: CellContext<Row, unknown>,
-): string | undefined => {
+function getEntityOrRowId<TValue = unknown>(
+  props: CellContext<Row, TValue>,
+): string | undefined {
   const { row, table } = props
   const rowEntityIDColumnIndex = table.options.meta?.rowEntityIDColumnIndex
   const entityId =
@@ -156,7 +156,9 @@ const getEntityOrRowId = (
  * @param props
  * @returns
  */
-const isRowEntityColumn = (props: CellContext<Row, unknown>): boolean => {
+function isRowEntityColumn<TValue = unknown>(
+  props: CellContext<Row, TValue>,
+): boolean {
   const { table } = props
   return table.options.meta?.rowEntityVersionColumnIndex !== undefined
 }
@@ -166,9 +168,9 @@ const isRowEntityColumn = (props: CellContext<Row, unknown>): boolean => {
  * If a rowEntityVersionColumnName was provided in the table config, then instead return the version found in
  * that cell of the current Row.
  */
-const getEntityOrRowVersion = (
-  props: CellContext<Row, unknown>,
-): string | undefined => {
+function getEntityOrRowVersion<TValue = unknown>(
+  props: CellContext<Row, TValue>,
+): string | undefined {
   const { row, table } = props
   const rowEntityVersionColumnIndex =
     table.options.meta?.rowEntityVersionColumnIndex
