@@ -18,7 +18,7 @@ function TwoFactorAuthEnrollmentPage() {
   const navigate = useNavigate()
 
   if (!totpSecret) {
-    // Typically because the user is not signed in -- the user will be presented with login UI
+    // This can happen if the user is not signed in. In this case, the user will be presented with login UI
     // Once they have logged in, the totpSecret will be fetched.
     return null
   }
