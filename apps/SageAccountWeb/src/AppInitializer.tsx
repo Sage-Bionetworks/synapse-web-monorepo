@@ -7,6 +7,7 @@ import useMaybePromptToSignTermsOfService from './hooks/useMaybePromptToSignTerm
 import { getSearchParam } from './URLUtils'
 import { hex2ascii } from 'synapse-react-client/utils/functions/StringUtils'
 import { useFramebuster } from 'synapse-react-client/utils/AppUtils/AppUtils'
+import useMaybeForceEnable2FA from './hooks/useMaybeForceEnable2FA'
 
 function AppInitializer(props: { children?: ReactNode }) {
   const [signedToken, setSignedToken] = useState<
@@ -60,6 +61,8 @@ function AppInitializer(props: { children?: ReactNode }) {
 
   // Anywhere in the app, redirect the user to sign the ToS if required
   useMaybePromptToSignTermsOfService()
+  // Anywhere in the app, redirect the user to enable 2FA if required
+  useMaybeForceEnable2FA()
 
   return (
     <AppContextProvider
