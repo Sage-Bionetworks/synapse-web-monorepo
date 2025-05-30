@@ -90,8 +90,8 @@ export default function HomePage() {
           title={'More Resources'}
           centerTitle
           ContainerProps={{
+            maxWidth: false,
             sx: {
-              maxWidth: '100% !important',
               padding: { xs: '40px', lg: '60px 80px 80px 80px' },
               h2: {
                 lineHeight: 'normal',
