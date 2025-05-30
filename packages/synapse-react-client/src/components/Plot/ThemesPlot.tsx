@@ -165,7 +165,7 @@ const getClickTargetData = (
 const renderTopBarLegend = (
   colors: BarPlotColors | undefined,
   xLabels: string[],
-): JSX.Element => (
+) => (
   <div className="ThemesPlot__barPlotLegend">
     {xLabels.map((item, i) => (
       <div style={{ float: 'left' }} key={`topBar_${i}`}>

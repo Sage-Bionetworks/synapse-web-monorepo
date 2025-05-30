@@ -328,7 +328,7 @@ class _SynapseFormWrapper extends Component<
   renderLoader = (
     state: SynapseFormWrapperState,
     props: SynapseFormWrapperProps,
-  ): JSX.Element => {
+  ) => {
     if (
       includes([StatusEnum.ERROR, StatusEnum.ERROR_CRITICAL], state.status) &&
       props.token &&
@@ -344,7 +344,7 @@ class _SynapseFormWrapper extends Component<
     }
   }
 
-  renderNotification = (notification?: Notification): JSX.Element => {
+  renderNotification = (notification?: Notification) => {
     if (!notification) {
       return <></>
     }
