@@ -17,7 +17,6 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { times } from 'lodash-es'
 import Plotly from 'plotly.js-basic-dist'
 import { Fragment, Suspense, useMemo } from 'react'
-import { SizeMe } from 'react-sizeme'
 import Plot from '../Plot/Plot'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
@@ -37,6 +36,7 @@ import {
   FacetPlotsCardPlotContainer,
   FacetPlotsCardTitleContainer,
 } from './FacetPlotsCardGrid'
+import { useMeasure } from '@react-hookz/web'
 
 export type FacetPlotsCardProps = {
   title?: string
@@ -103,6 +103,7 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
   const { accessToken } = useSynapseContext()
   const { data: queryMetadata } = useSuspenseGetQueryMetadata()
   const { getColumnDisplayName } = useQueryVisualizationContext()
+  const [plotContainerMeasurements, plotContainerRef] = useMeasure()
 
   const facetDataArray = useMemo(() => {
     if (!facetsToPlot) {
@@ -227,29 +228,28 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
             >
               {index != 0 && <Divider sx={{ mt: 2, mb: 4 }} />}
               <Box sx={{ minHeight: '130px' }}>
-                <SizeMe monitorHeight noPlaceholder>
-                  {({ size }) => (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Plot
-                        key={`${facetsToPlot![index]}-${size.width!}`}
-                        layout={currentLayout}
-                        data={plotData?.data ?? []}
-                        style={getPlotStyle(
-                          size.width,
-                          plotType,
-                          maxPlotHeight,
-                        )}
-                        config={{ displayModeBar: false }}
-                      />
-                    </Box>
-                  )}
-                </SizeMe>
+                <Box
+                  ref={plotContainerRef}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Plot
+                    key={`${facetsToPlot![index]}-${
+                      plotContainerMeasurements?.width
+                    }`}
+                    layout={currentLayout}
+                    data={plotData?.data ?? []}
+                    style={getPlotStyle(
+                      plotContainerMeasurements?.width,
+                      plotType,
+                      maxPlotHeight,
+                    )}
+                    config={{ displayModeBar: false }}
+                  />
+                </Box>
                 <Box sx={{ mt: 4, width: '100%' }}>
                   <FacetPlotLegendTable
                     facetName={getColumnDisplayName(
