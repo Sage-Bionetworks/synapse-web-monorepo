@@ -11,7 +11,7 @@ import TwoFactorEnrollmentForm, {
   TwoFactorEnrollmentFormProps,
 } from './TwoFactorEnrollmentForm'
 
-const returnedSecret: TotpSecret = {
+const totpSecret: TotpSecret = {
   secretId: '1234',
   secret: 'ABCDEF12345',
   alg: 'SHA1',
@@ -27,10 +27,6 @@ jest.mock('qrcode', () => ({
 jest.spyOn(SynapseClient, 'getNotificationEmail').mockResolvedValue({
   email: mockUserProfileData.email,
 })
-
-const mockStart2FAEnrollment = jest
-  .spyOn(SynapseClient, 'start2FAEnrollment')
-  .mockResolvedValue(returnedSecret)
 
 const mockComplete2FAEnrollment = jest.spyOn(
   SynapseClient,
@@ -49,6 +45,7 @@ function renderComponent(props: TwoFactorEnrollmentFormProps) {
 describe('TwoFactorEnrollmentForm', () => {
   it("Bind a 2FA secret to a user's account", async () => {
     renderComponent({
+      totpSecret,
       onTwoFactorEnrollmentSuccess: onSuccessFn,
       onBackClicked: onBackClickedFn,
     })
@@ -56,7 +53,6 @@ describe('TwoFactorEnrollmentForm', () => {
     // Once the component mounts, the secret should be fetched and displayed
     await waitFor(
       () => {
-        expect(mockStart2FAEnrollment).toHaveBeenCalledTimes(1)
         const qrCodeNode = document.querySelector('canvas')
         expect(qrCodeNode).toBeDefined()
         expect(qrCodeNode).toBeVisible()
@@ -69,7 +65,7 @@ describe('TwoFactorEnrollmentForm', () => {
     await userEvent.click(showSecret)
 
     // Secret should be visible
-    await screen.findByText(returnedSecret.secret)
+    await screen.findByText(totpSecret.secret)
 
     // Close the modal
     const closeModalButton = await screen.findByRole('button', {
@@ -78,7 +74,7 @@ describe('TwoFactorEnrollmentForm', () => {
     await userEvent.click(closeModalButton)
 
     await waitFor(() => {
-      expect(screen.queryByText(returnedSecret.secret)).not.toBeInTheDocument()
+      expect(screen.queryByText(totpSecret.secret)).not.toBeInTheDocument()
     })
 
     // Enter an incorrect TOTP code
@@ -116,7 +112,7 @@ describe('TwoFactorEnrollmentForm', () => {
       expect(mockComplete2FAEnrollment).toHaveBeenCalledTimes(2)
       expect(mockComplete2FAEnrollment).toHaveBeenLastCalledWith(
         {
-          secretId: returnedSecret.secretId,
+          secretId: totpSecret.secretId,
           totp: '654321',
         },
         MOCK_CONTEXT_VALUE.accessToken,
@@ -130,16 +126,16 @@ describe('TwoFactorEnrollmentForm', () => {
       'otpauth://totp/Synapse:' +
       mockUserProfileData.email +
       '?secret=' +
-      returnedSecret.secret +
+      totpSecret.secret +
       '&issuer=Sage%20Bionetworks&algorithm=' +
-      returnedSecret.alg +
+      totpSecret.alg +
       '&digits=' +
-      String(returnedSecret.digits) +
+      String(totpSecret.digits) +
       '&period=' +
-      String(returnedSecret.period)
+      String(totpSecret.period)
     expect(
       EXPORTED_FOR_UNIT_TESTING.toOtpAuthUrl(
-        returnedSecret,
+        totpSecret,
         mockUserProfileData.email,
       ),
     ).toEqual(expected)
