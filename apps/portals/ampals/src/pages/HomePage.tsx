@@ -8,11 +8,7 @@ import HowToAccessData from '@sage-bionetworks/synapse-portal-framework/componen
 // import { FeaturedDataTabs } from 'synapse-react-client'
 // import columnAliases from '../config/columnAliases'
 import headerSvg from '../config/style/header.svg?url'
-import {
-  FullWidthAlert,
-  CardGridWithLinks,
-  GoalsV3,
-} from 'synapse-react-client'
+import { CardGridWithLinks, GoalsV3 } from 'synapse-react-client'
 import { OrientationBanner } from 'synapse-react-client'
 import { goalsTableEntityId } from '@/config/resources'
 import { ReactComponent as DatasetsIcon } from '../../src/config/style/datasets.svg'
