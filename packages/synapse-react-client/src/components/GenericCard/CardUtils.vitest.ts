@@ -88,8 +88,8 @@ describe('TableRowGenericCard tests', () => {
         schema,
       )
       expect(href1).toEqual(expectedLink)
-      // PORTALS-2254: Open DetailsPage links in a new window by default
-      expect(target1).toEqual(TargetEnum.NEW_WINDOW)
+      // PORTALS-3593: Open DetailsPage links in a current window by default
+      expect(target1).toEqual(TargetEnum.CURRENT_WINDOW)
 
       titleLinkConfig.target = TargetEnum.FULL_WINDOW_BODY
       const { href: href2, target: target2 } = getLinkParams(
