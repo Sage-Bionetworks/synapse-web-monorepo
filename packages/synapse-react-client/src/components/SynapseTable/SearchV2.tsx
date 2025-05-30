@@ -69,8 +69,8 @@ type InternalSearchProps = SearchV2Props & {
 }
 
 class _Search extends Component<InternalSearchProps, SearchState> {
-  public searchFormRef: RefObject<HTMLFormElement>
-  public radioFormRef: RefObject<HTMLFormElement>
+  public searchFormRef: RefObject<HTMLFormElement | null>
+  public radioFormRef: RefObject<HTMLFormElement | null>
 
   constructor(props: InternalSearchProps) {
     super(props)
@@ -85,7 +85,7 @@ class _Search extends Component<InternalSearchProps, SearchState> {
   }
 
   componentDidMount() {
-    // @ts-ignore
+    // @ts-expect-error
     document.addEventListener('click', this.handleClickOutsideForm)
   }
 
@@ -103,15 +103,15 @@ class _Search extends Component<InternalSearchProps, SearchState> {
   }
 
   componentWillUnmount() {
-    // @ts-ignore
+    // @ts-expect-error
     document.removeEventListener('click', this.handleClickOutsideForm)
   }
 
   handleClickOutsideForm = (event: SyntheticEvent) => {
     if (
-      // @ts-ignore
+      // @ts-expect-error
       !this.searchFormRef.current?.contains(event?.target) &&
-      // @ts-ignore
+      // @ts-expect-error
       !this.radioFormRef.current?.contains(event?.target)
     ) {
       if (this.state.didUpdateRanLast) {

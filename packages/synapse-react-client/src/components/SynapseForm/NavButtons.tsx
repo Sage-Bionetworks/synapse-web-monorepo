@@ -15,7 +15,7 @@ export interface NextStepLinkProps {
   nextStepId: string | undefined
 }
 
-export function NavButtons(props: NavButtonsProps): JSX.Element {
+export function NavButtons(props: NavButtonsProps) {
   // in wizard mode we build an array of the previous steps. In regular mode back goes to
   // a previous order step
   const canGoBack = (props: NavButtonsProps): boolean => {
@@ -71,7 +71,7 @@ export function NavButtons(props: NavButtonsProps): JSX.Element {
   )
 }
 
-export function NextStepLink(props: NextStepLinkProps): JSX.Element {
+export function NextStepLink(props: NextStepLinkProps) {
   const nextStep = props.steps.find(step => step.id === props.nextStepId)
   if (typeof nextStep === 'undefined') {
     return <></>

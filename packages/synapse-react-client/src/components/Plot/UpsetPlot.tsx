@@ -20,11 +20,11 @@ import UpSetJS, {
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { useEffect, useState } from 'react'
-import { SizeMe } from 'react-sizeme'
 import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { ErrorBanner } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
 import { Box, SxProps, useTheme } from '@mui/material'
+import { useMeasure } from '@react-hookz/web'
 
 export type UpsetPlotProps = {
   sql: string // first column should contain values, second column should contain a single set value.  ie. SELECT distinct individualID, assay FROM syn20821313
@@ -68,6 +68,8 @@ export function UpsetPlot({
   const [error, setError] = useState<string>()
   const [selection, setSelection] = useState(null as ISetLike<any> | null)
   const theme = useTheme()
+
+  const [plotContainerMeasurements, plotContainerRef] = useMeasure()
 
   const variantStyles: Record<string, SxProps> = {
     default: {
@@ -229,67 +231,62 @@ export function UpsetPlot({
     <>
       {isLoading && loadingScreen}
       {!isLoading && data && (
-        <SizeMe>
-          {({ size }) => (
-            <>
-              {variantStyles['ampals'] && (
-                // Render DiagonalLinePattern so UpsetPlot can use `fill: url(#diagonalLinePattern)`.
-                // The SVG element must be added to the DOM so we can reference its ID (which is set in the SVG file) in the `fill` style
-                // Ideally, we would reference the asset URL imported by Vite, but this isn't working.
-                <Box
-                  sx={{
-                    '& path': {
-                      stroke: '#D9D9D9 !important',
-                    },
-                    width: 0,
-                    height: 0,
-                    position: 'absolute',
-                  }}
-                >
-                  <DiagonalLinePattern />
-                </Box>
-              )}
-              <Box
-                className="UpsetPlot"
-                sx={variant ? variantStyles[variant] : variantStyles['default']}
-              >
-                <UpSetJS
-                  sets={data.sets}
-                  combinations={data.combinations}
-                  width={size.width!}
-                  height={height}
-                  onHover={setSelection}
-                  onClick={onClick}
-                  selection={selection}
-                  color={plotColor}
-                  selectionColor={selectionColor}
-                  hoverHintColor={'orange'}
-                  hasSelectionOpacity={
-                    selectionOpacity ? selectionOpacity : 0.3
-                  }
-                  // alternatingBackgroundColor={false}
-                  setName={setName}
-                  combinationName={combinationName}
-                  fontFamily="'DM Sans', sans-serif"
-                  fontSizes={updateFontSizes}
-                  exportButtons={false}
-                  notMemberColor="transparent"
-                />
-                {summaryLink && summaryLinkText && (
-                  <div className="UpsetPlot__summary">
-                    <LargeButton
-                      color="secondary"
-                      variant="contained"
-                      href={summaryLink}
-                    >
-                      {summaryLinkText}
-                    </LargeButton>
-                  </div>
-                )}
-              </Box>
-            </>
+        <>
+          {variantStyles['ampals'] && (
+            // Render DiagonalLinePattern so UpsetPlot can use `fill: url(#diagonalLinePattern)`.
+            // The SVG element must be added to the DOM so we can reference its ID (which is set in the SVG file) in the `fill` style
+            // Ideally, we would reference the asset URL imported by Vite, but this isn't working.
+            <Box
+              sx={{
+                '& path': {
+                  stroke: '#D9D9D9 !important',
+                },
+                width: 0,
+                height: 0,
+                position: 'absolute',
+              }}
+            >
+              <DiagonalLinePattern />
+            </Box>
           )}
-        </SizeMe>
+          <Box
+            className="UpsetPlot"
+            sx={variant ? variantStyles[variant] : variantStyles['default']}
+            ref={plotContainerRef}
+          >
+            <UpSetJS
+              sets={data.sets}
+              combinations={data.combinations}
+              width={plotContainerMeasurements?.width || 800}
+              height={height}
+              onHover={setSelection}
+              onClick={onClick}
+              selection={selection}
+              color={plotColor}
+              selectionColor={selectionColor}
+              hoverHintColor={'orange'}
+              hasSelectionOpacity={selectionOpacity ? selectionOpacity : 0.3}
+              // alternatingBackgroundColor={false}
+              setName={setName}
+              combinationName={combinationName}
+              fontFamily="'DM Sans', sans-serif"
+              fontSizes={updateFontSizes}
+              exportButtons={false}
+              notMemberColor="transparent"
+            />
+            {summaryLink && summaryLinkText && (
+              <div className="UpsetPlot__summary">
+                <LargeButton
+                  color="secondary"
+                  variant="contained"
+                  href={summaryLink}
+                >
+                  {summaryLinkText}
+                </LargeButton>
+              </div>
+            )}
+          </Box>
+        </>
       )}
       <ErrorBanner error={error} />
     </>

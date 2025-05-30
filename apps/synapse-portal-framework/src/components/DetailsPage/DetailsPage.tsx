@@ -4,15 +4,14 @@ import {
   Box,
   Button,
   Container,
+  LinearProgress,
   Stack,
   Typography,
-  useTheme,
 } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import { useMemo } from 'react'
 import { Outlet, useLocation } from 'react-router'
-import { BarLoader } from 'react-spinners'
 import { DetailsPageContextProvider } from './DetailsPageContext'
 import { DetailsPageDocumentMetadata } from './DetailsPageDocumentMetadata'
 import { useScrollOnMount } from './utils'
@@ -58,7 +57,6 @@ export default function DetailsPage(props: DetailsPageProps) {
 
   const searchParams = useGetPortalComponentSearchParams()
   const location = useLocation()
-  const { palette } = useTheme()
 
   useScrollOnMount()
 
@@ -128,12 +126,7 @@ export default function DetailsPage(props: DetailsPageProps) {
       >
         {isLoading && (
           <Box display={'flex'} justifyContent={'center'} my={10}>
-            <BarLoader
-              color={palette.primary.main}
-              loading={true}
-              height={5}
-              width={400}
-            />
+            <LinearProgress />
           </Box>
         )}
         {isSuccess && children}

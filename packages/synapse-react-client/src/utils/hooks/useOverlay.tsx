@@ -1,4 +1,11 @@
-import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
+import {
+  ReactNode,
+  RefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { Fade, Paper, PaperProps, Popover, PopoverProps } from '@mui/material'
 
 function resetTimer(timer: NodeJS.Timeout | null) {
@@ -11,7 +18,7 @@ const DEFAULT_DELAY_SHOW_MS = 250
 const DEFAULT_DELAY_HIDE_MS = 500
 
 export function useOverlay(
-  children: JSX.Element,
+  children: ReactNode,
   targetRef: RefObject<any>,
   delayShow = DEFAULT_DELAY_SHOW_MS,
   delayHide = DEFAULT_DELAY_HIDE_MS,
