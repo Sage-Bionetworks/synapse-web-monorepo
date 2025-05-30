@@ -160,7 +160,7 @@ export function getLinkParams(
   } else if (cardLinkConfig) {
     href = getCardLinkHref(cardLinkConfig, data, schema, rowId) ?? ''
     if (href.includes('/DetailsPage')) {
-      defaultTarget = TargetEnum.CURRENT_WINDOW
+      defaultTarget = TargetEnum.NEW_WINDOW
     }
   }
 
