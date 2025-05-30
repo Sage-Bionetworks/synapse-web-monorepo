@@ -20,6 +20,7 @@ export const navbarConfig: NavbarConfig = {
       path: '/Explore',
       children: [
         { name: 'Programs', path: '/Explore/Programs' },
+        { name: 'Collections', path: '/Explore/Collections' },
         { name: 'Datasets', path: '/Explore/Datasets' },
       ],
     },

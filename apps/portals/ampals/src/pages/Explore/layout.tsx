@@ -8,6 +8,9 @@ function ExploreLayout() {
           path: 'Programs',
         },
         {
+          path: 'Collections',
+        },
+        {
           path: 'Datasets',
         },
       ]}

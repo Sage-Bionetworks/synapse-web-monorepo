@@ -7,9 +7,17 @@ export const searchPageTabs = [
     path: 'Programs',
   },
   {
+    title: 'Collections',
+    path: 'Collections',
+  },
+  {
     title: 'Datasets',
     path: 'Datasets',
   },
 ] as const satisfies PortalSearchTabConfig[]
 
-export const portalSearchPageConfigs = [configs.programs, configs.datasets]
+export const portalSearchPageConfigs = [
+  configs.programs,
+  configs.collections,
+  configs.datasets,
+]

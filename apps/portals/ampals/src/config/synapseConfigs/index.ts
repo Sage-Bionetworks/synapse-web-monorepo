@@ -1,9 +1,14 @@
 import { datasetQueryWrapperPlotNavProps } from './datasets'
 import { programsCardContainerLogicProps } from './programs'
-
-export { datasetQueryWrapperPlotNavProps, programsCardContainerLogicProps }
+import { datasetCollectionsCardContainerLogicProps } from './datasetcollections'
+export {
+  datasetQueryWrapperPlotNavProps,
+  datasetCollectionsCardContainerLogicProps,
+  programsCardContainerLogicProps,
+}
 
 export default {
   datasets: datasetQueryWrapperPlotNavProps,
+  collections: datasetCollectionsCardContainerLogicProps,
   programs: programsCardContainerLogicProps,
 }
