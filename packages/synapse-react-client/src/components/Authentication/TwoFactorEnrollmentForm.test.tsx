@@ -1,5 +1,4 @@
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
-import { mockUserProfileData } from '@/mocks/user/mock_user_profile'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
@@ -10,6 +9,7 @@ import TwoFactorEnrollmentForm, {
   EXPORTED_FOR_UNIT_TESTING,
   TwoFactorEnrollmentFormProps,
 } from './TwoFactorEnrollmentForm'
+import { MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
 
 const returnedSecret: TotpSecret = {
   secretId: '1234',
@@ -17,16 +17,13 @@ const returnedSecret: TotpSecret = {
   alg: 'SHA1',
   digits: 6,
   period: 30,
+  username: MOCK_USER_NAME,
 }
 
 jest.mock('qrcode', () => ({
   // JSDOM doesn't fully support this, so mock it
   toCanvas: jest.fn(),
 }))
-
-jest.spyOn(SynapseClient, 'getNotificationEmail').mockResolvedValue({
-  email: mockUserProfileData.email,
-})
 
 const mockStart2FAEnrollment = jest
   .spyOn(SynapseClient, 'start2FAEnrollment')
@@ -128,7 +125,7 @@ describe('TwoFactorEnrollmentForm', () => {
   it('toOtpAuthUrl', () => {
     const expected =
       'otpauth://totp/Synapse:' +
-      mockUserProfileData.email +
+      MOCK_USER_NAME +
       '?secret=' +
       returnedSecret.secret +
       '&issuer=Sage%20Bionetworks&algorithm=' +
@@ -137,11 +134,8 @@ describe('TwoFactorEnrollmentForm', () => {
       String(returnedSecret.digits) +
       '&period=' +
       String(returnedSecret.period)
-    expect(
-      EXPORTED_FOR_UNIT_TESTING.toOtpAuthUrl(
-        returnedSecret,
-        mockUserProfileData.email,
-      ),
-    ).toEqual(expected)
+    expect(EXPORTED_FOR_UNIT_TESTING.toOtpAuthUrl(returnedSecret)).toEqual(
+      expected,
+    )
   })
 })
