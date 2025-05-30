@@ -1,0 +1,1 @@
+import{a as s}from"./toString-DYDbwbUo.js";import{b as f}from"./_baseIteratee-8edPz5q-.js";import{b as i}from"./pick-BrrzdrX-.js";import{g as m}from"./cloneDeep-BkhdAupP.js";function y(r,n){if(r==null)return{};var o=s(m(r),function(a){return[a]});return n=f(n),i(r,o,function(a,t){return n(a,t[0])})}export{y as p};
