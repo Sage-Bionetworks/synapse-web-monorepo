@@ -16,6 +16,8 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query'
 import { getAllActionsRequiredQueryFilters } from '../QueryFilterUtils'
+import { KeyFactory } from '../KeyFactory'
+import { useMemo } from 'react'
 
 export function useStartTwoFactorEnrollment(
   options?: Partial<UseMutationOptions<TotpSecret, SynapseClientError>>,
@@ -106,9 +108,12 @@ export function useGetTwoFactorEnrollmentStatusWithAccessToken(
   accessToken?: string, //usually we can fetch the access token from the context, but this hook is used by ApplicationSessionManager which sets the access token in the context (ApplicationSessionContextProvider)!
   options?: Partial<UseQueryOptions<TwoFactorAuthStatus, SynapseClientError>>,
 ) {
-  const { keyFactory } = useSynapseContext()
+  const queryKeyFactory = useMemo(
+    () => new KeyFactory(accessToken),
+    [accessToken],
+  )
   return useQuery({
-    queryKey: keyFactory.getTwoFactorAuthStatusQueryKey(),
+    queryKey: queryKeyFactory.getTwoFactorAuthStatusQueryKey(),
     queryFn: () =>
       SynapseClient.getCurrentUserTwoFactorEnrollmentStatus(accessToken),
     ...options,
