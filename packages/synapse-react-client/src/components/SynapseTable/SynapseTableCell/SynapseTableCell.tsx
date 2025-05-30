@@ -19,7 +19,10 @@ import {
 import dayjs from 'dayjs'
 import { Fragment, memo } from 'react'
 import { ColumnSpecifiedLink, MarkdownLink } from '../../CardContainerLogic'
-import { EntityImage } from '../../CardContainerLogic/CardContainerLogic'
+import {
+  EntityImage,
+  MapValueToReactComponentConfig,
+} from '../../CardContainerLogic/CardContainerLogic'
 import DirectDownload from '../../DirectDownload/DirectDownload'
 import { EntityLink, EntityLinkProps } from '../../EntityLink'
 import { SynapseCardLabel } from '../../GenericCard'
@@ -37,7 +40,12 @@ export type SynapseTableCellProps = {
   columnType: ColumnType
   columnValue: string | null
   isBold: string
-  columnLinkConfig?: CardLink | MarkdownLink | ColumnSpecifiedLink | EntityImage
+  columnLinkConfig?:
+    | CardLink
+    | MarkdownLink
+    | ColumnSpecifiedLink
+    | EntityImage
+    | MapValueToReactComponentConfig
   columnName: string
   selectColumns?: SelectColumn[]
   columnModels?: ColumnModel[]

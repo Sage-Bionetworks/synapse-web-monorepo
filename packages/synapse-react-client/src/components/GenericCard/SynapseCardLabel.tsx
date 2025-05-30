@@ -14,7 +14,10 @@ import { isEmpty } from 'lodash-es'
 import { CSSProperties, Fragment } from 'react'
 import { ColumnSpecifiedLink, MarkdownLink } from '../CardContainerLogic'
 import { TargetEnum } from '@/utils/html/TargetEnum'
-import { EntityImage } from '../CardContainerLogic/CardContainerLogic'
+import {
+  EntityImage,
+  MapValueToReactComponentConfig,
+} from '../CardContainerLogic/CardContainerLogic'
 import { EntityLink } from '../EntityLink'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { UserBadge } from '../UserCard/UserBadge'
@@ -29,6 +32,7 @@ type SynapseCardLabelProps = {
     | MarkdownLink
     | ColumnSpecifiedLink
     | EntityImage
+    | MapValueToReactComponentConfig
     | undefined
   selectColumns: SelectColumn[] | undefined
   columnModels: ColumnModel[] | undefined
@@ -52,12 +56,14 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
   if (!value) {
     return <p>{value}</p>
   }
-  const { strList, str, columnModelType } = getValueOrMultiValue({
+  const { strList, str, selectColumn } = getValueOrMultiValue({
     columnName,
     value,
     selectColumns,
     columnModels,
   })
+
+  const columnModelType = selectColumn?.columnType
 
   if (!str) {
     // the array came back empty
@@ -105,7 +111,16 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
   }
 
   let labelContent: JSX.Element
-  if ('isMarkdown' in labelLink && labelLink.isMarkdown) {
+
+  if (
+    'isMapValueToReactNodeConfig' in labelLink &&
+    labelLink.isMapValueToReactNodeConfig
+  ) {
+    const { Component } = labelLink
+    labelContent = (
+      <Component value={strList || str} selectColumn={selectColumn!} />
+    )
+  } else if ('isMarkdown' in labelLink && labelLink.isMarkdown) {
     if (strList) {
       labelContent = (
         <p>
