@@ -1,0 +1,45 @@
+import{j as u}from"./jsx-runtime-BShfRpSZ.js";import{S as d}from"./SortDown-8-jBah-X.js";import{H as g}from"./HeaderCard-CQ1F7d7L.js";import"./index-BbtDhika.js";import"./iframe-CKrYTaKd.js";import"./createSvgIcon-hcVlY0Ml.js";import"./createTheme-DKmxwRcy.js";import"./DefaultPropsProvider-cSSWhC_N.js";import"./index-Dyw9EiOM.js";import"./StringUtils-DN6u4g4A.js";import"./VerificationSubmission-BI5WaB2N.js";import"./IconSvg-CyQZ73Pq.js";import"./spreadSx-CwcO6WA9.js";import"./useTheme-BKtsw1fM.js";import"./useTheme-DuVt1FxG.js";import"./Tooltip-BhjMsB6i.js";import"./index-CmWQNtGo.js";import"./Grow-DArXpOEh.js";import"./resolveComponentProps-BVwZEvDc.js";import"./isHostComponent-DVu5iVWx.js";import"./useForkRef-IOZ1OulF.js";import"./index-C2ZmoJQv.js";import"./utils-JiBfP0T-.js";import"./TransitionGroupContext-Cve-nvmp.js";import"./useEventCallback-jwq_ByoI.js";import"./useTimeout-k-gMJ94D.js";import"./useControlled-BNOR6_Pf.js";import"./useId-C10K-7yC.js";import"./useIsFocusVisible-Dks7CKXr.js";import"./Popper-BEhyKRxf.js";import"./ownerDocument-DW-IO8s5.js";import"./LayersTwoTone-B8HJ0oAt.js";import"./ContentCopyTwoTone-CFPjs4bX.js";import"./HelpOutlineTwoTone-BIPZOyzw.js";import"./ErrorOutlined-DHy0JAKo.js";import"./GetAppTwoTone-Ba_KQcTO.js";import"./InfoOutlined-B7Sm_gxn.js";import"./DeleteTwoTone-BdoVUk18.js";import"./CheckCircleTwoTone-ly2iPN9C.js";import"./Icon-DjK0m2TF.js";import"./mouse-UMsdhBQ0.js";import"./SynapseConstants-D-g__08a.js";import"./OrientationBanner-Cvk0vZwz.js";import"./index-N1kOmd9H.js";import"./react-HYFTtNt4.js";import"./FullWidthAlert-D-sxDN5-.js";import"./Alert-C2YXBWCZ.js";import"./Close-DBkHOwqb.js";import"./IconButton-5km8qVSa.js";import"./ButtonBase-ClE2TfhF.js";import"./Paper-Bm29IVK3.js";import"./Stack-COuT9-_l.js";import"./getThemeProps-DEq8Zk9I.js";import"./Box-CWd-bsj8.js";import"./AlertTitle-D7VJteKH.js";import"./Typography-D596ILSX.js";import"./ClickAwayListener-DJDrwr3D.js";import"./Button-C3bos-pW.js";import"./ShowMore-D_iDIgXK.js";import"./HeaderCardV2-C7qdoGpM.js";import"./MarkdownSynapse-Cgf5QBr8.js";import"./useFiles-PZ8-Ka-K.js";import"./fetchWithExponentialTimeout-Cpvpsfq8.js";import"./useQuery-BY-c2cTp.js";import"./utils-BIdFCP2Y.js";import"./Link-BR06mnNh.js";import"./Collapse-D4OMLybv.js";import"./isNil-9z8ZomJ0.js";import"./_Uint8Array-DIVOU-2-.js";import"./_baseTimes-36S_kd0L.js";import"./isObjectLike-CHy9fFvj.js";import"./isArray-Dxzbedgu.js";import"./_baseIsEqual-ClNnW1Hu.js";import"./_getTag-l16BreDv.js";import"./tinycolor-Begke6kS.js";import"./Fade-RO7PwX5V.js";import"./Skeleton-CB5rBUhd.js";import"./inputBaseClasses-C06Dmsts.js";import"./calculateFriendlyFileSize-Hpnh_yqR.js";import"./InfoTwoTone-CEeh4CzQ.js";import"./mutation-Br5mjHBF.js";import"./dayjs.min-D0qkn3AN.js";import"./chunk-AYJ5UCUI-D7I6sN6G.js";import"./cloneDeep-DpCux0qf.js";import"./_initCloneObject-wn-R8NIZ.js";import"./isEqual-CVkRzbJy.js";import"./merge-BWGd7Swl.js";import"./identity-DKeuBCMA.js";import"./useMutation-D-CWI_i2.js";import"./SkeletonButton-DbqdKH1b.js";import"./SkeletonInlineBlock-BKSCAse0.js";import"./SkeletonTable-CY03LyzV.js";import"./times-BvOY06CC.js";import"./toInteger-DYzZKw_P.js";import"./isSymbol-CUREHNyO.js";import"./SkeletonParagraph-BG-y1rkA.js";import"./useMediaQuery-BYkzx4QJ.js";import"./Card-AxDQlIRq.js";const ai={title:"Synapse/HeaderCard",component:g,parameters:{layout:"centered"},tags:["autodocs"]},t={args:{type:"Standard",title:"Example Study",description:"This is an example study description that demonstrates the HeaderCard component.",values:[{columnDisplayName:"Status",value:"Active"},{columnDisplayName:"Data Type",value:"Genomics"},{columnDisplayName:"Access",value:"Public"}],secondaryLabelLimit:3,isAlignToLeftNav:!1,descriptionConfig:{showFullDescriptionByDefault:!0},icon:u.jsx(d,{})}},i={args:{...t.args,title:"Study With Subtitle",subTitle:"Principal Investigator: John Doe"}},o={args:{...t.args,title:"DICOM",description:"Radiology imaging, including templates for narrative reports and machine-generated output. DICOM® — Digital Imaging and Communications in Medicine — is the international standard for medical images and related information. It defines the formats for medical images that can be exchanged with the data and quality necessary for clinical use.",values:[{columnDisplayName:"AUTHOR NAME",value:"DICOM (@dicom)"},{columnDisplayName:"LAT UPDATED",value:"2024-01-01"},{columnDisplayName:"BASED ON",value:"None"}]}};var r,e,a;t.parameters={...t.parameters,docs:{...(r=t.parameters)==null?void 0:r.docs,source:{originalSource:`{
+  args: {
+    type: 'Standard',
+    title: 'Example Study',
+    description: 'This is an example study description that demonstrates the HeaderCard component.',
+    values: [{
+      columnDisplayName: 'Status',
+      value: 'Active'
+    }, {
+      columnDisplayName: 'Data Type',
+      value: 'Genomics'
+    }, {
+      columnDisplayName: 'Access',
+      value: 'Public'
+    }],
+    secondaryLabelLimit: 3,
+    isAlignToLeftNav: false,
+    descriptionConfig: {
+      showFullDescriptionByDefault: true
+    },
+    icon: <Study />
+  }
+}`,...(a=(e=t.parameters)==null?void 0:e.docs)==null?void 0:a.source}}};var m,n,p;i.parameters={...i.parameters,docs:{...(m=i.parameters)==null?void 0:m.docs,source:{originalSource:`{
+  args: {
+    ...Default.args,
+    title: 'Study With Subtitle',
+    subTitle: 'Principal Investigator: John Doe'
+  }
+}`,...(p=(n=i.parameters)==null?void 0:n.docs)==null?void 0:p.source}}};var s,l,c;o.parameters={...o.parameters,docs:{...(s=o.parameters)==null?void 0:s.docs,source:{originalSource:`{
+  args: {
+    ...Default.args,
+    title: 'DICOM',
+    description: 'Radiology imaging, including templates for narrative reports and machine-generated output. DICOM® — Digital Imaging and Communications in Medicine — is the international standard for medical images and related information. It defines the formats for medical images that can be exchanged with the data and quality necessary for clinical use.',
+    values: [{
+      columnDisplayName: 'AUTHOR NAME',
+      value: 'DICOM (@dicom)'
+    }, {
+      columnDisplayName: 'LAT UPDATED',
+      value: '2024-01-01'
+    }, {
+      columnDisplayName: 'BASED ON',
+      value: 'None'
+    }]
+  }
+}`,...(c=(l=o.parameters)==null?void 0:l.docs)==null?void 0:c.source}}};const mi=["Default","WithSubtitle","Dicom"];export{t as Default,o as Dicom,i as WithSubtitle,mi as __namedExportsOrder,ai as default};
