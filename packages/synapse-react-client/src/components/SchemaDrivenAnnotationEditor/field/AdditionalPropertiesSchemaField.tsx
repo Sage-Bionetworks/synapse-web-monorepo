@@ -256,6 +256,14 @@ export function AdditionalPropertiesSchemaField<
       <Grid item xs={7}>
         <ArrayField
           {...props}
+          uiSchema={{
+            ...props.uiSchema,
+            'ui:title': 'Value(s)',
+            items: {
+              ...props.uiSchema?.items,
+              'ui:placeholder': 'New Value',
+            },
+          }}
           schema={{
             ...schema,
             items: {

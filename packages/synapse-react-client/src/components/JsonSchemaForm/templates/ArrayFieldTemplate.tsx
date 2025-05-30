@@ -71,7 +71,16 @@ function ArrayFieldTemplate<
   return (
     <Box id={idSchema.$id} className={props.className}>
       <RJSFInputLabelWrapper
-        fieldLabel={<ArrayFieldTitleTemplate {...props} />}
+        fieldLabel={
+          <ArrayFieldTitleTemplate
+            idSchema={idSchema}
+            title={uiOptions.title || props.title}
+            schema={schema}
+            uiSchema={uiSchema}
+            required={props.required}
+            registry={registry}
+          />
+        }
         description={
           <ArrayFieldDescriptionTemplate
             idSchema={idSchema}

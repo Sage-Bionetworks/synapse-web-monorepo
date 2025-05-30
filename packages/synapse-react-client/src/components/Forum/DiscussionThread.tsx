@@ -8,7 +8,14 @@ import {
 import { useSubscription } from '@/synapse-queries/subscription/useSubscription'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
-import { Box, Button, TextField, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from '@mui/material'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
   ObjectType,
@@ -123,33 +130,31 @@ export function DiscussionThread(props: DiscussionThreadProps) {
   }
 
   return (
-    <div className="DiscussionThread">
+    <div className="DiscussionThread" role={'article'}>
       {threadData && threadBody ? (
         <>
-          <Box
-            sx={theme => ({
-              textAlign: 'center',
-              [theme.breakpoints.down('sm')]: {
-                display: 'flex',
-                marginBottom: defaultMargin,
-                button: {
-                  whiteSpace: 'nowrap',
-                },
-              },
-            })}
-          >
-            <Button
-              variant={orderByDatePosted ? 'contained' : 'outlined'}
-              onClick={() => setOrderByDatePosted(true)}
+          <Box sx={{ mb: 2, textAlign: 'right' }}>
+            <Typography component={'span'} sx={{ mr: 1 }}>
+              Sort:
+            </Typography>
+            <ToggleButtonGroup
+              color={'primary'}
+              exclusive
+              value={orderByDatePosted ? 'datePosted' : 'mostRecent'}
             >
-              Date Posted
-            </Button>
-            <Button
-              variant={orderByDatePosted ? 'outlined' : 'contained'}
-              onClick={() => setOrderByDatePosted(false)}
-            >
-              Most Recent
-            </Button>
+              <ToggleButton
+                value={'datePosted'}
+                onClick={() => setOrderByDatePosted(true)}
+              >
+                Date Posted
+              </ToggleButton>
+              <ToggleButton
+                value={'mostRecent'}
+                onClick={() => setOrderByDatePosted(false)}
+              >
+                Most Recent
+              </ToggleButton>
+            </ToggleButtonGroup>
           </Box>
           <UserBadge
             userId={threadData.createdBy}
@@ -190,6 +195,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           </div>
           <span>
             posted {formatDate(dayjs(threadData.createdOn), 'M/D/YYYY')}
+            {threadData.isEdited ? <i>{' (Edited)'}</i> : null}
           </span>
           <ForumThreadEditor
             isReply={false}
