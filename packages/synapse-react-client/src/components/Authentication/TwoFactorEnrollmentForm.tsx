@@ -1,11 +1,19 @@
 import { StyledOuterContainer } from '@/components/styled/LeftRightPanel'
 import { useGetNotificationEmail } from '@/synapse-queries'
-import {
-  useFinishTwoFactorEnrollment,
-  useStartTwoFactorEnrollment,
-} from '@/synapse-queries/auth/useTwoFactorEnrollment'
+import { useFinishTwoFactorEnrollment } from '@/synapse-queries/auth/useTwoFactorEnrollment'
 import { StyledComponent } from '@emotion/styled'
-import { Box, BoxProps, Button, Divider, IconButton, Link, Paper, Stack, styled, Typography } from '@mui/material'
+import {
+  Box,
+  BoxProps,
+  Button,
+  Divider,
+  IconButton,
+  Link,
+  Paper,
+  Stack,
+  styled,
+  Typography,
+} from '@mui/material'
 import { TotpSecret } from '@sage-bionetworks/synapse-types'
 import { toCanvas } from 'qrcode'
 import { useEffect, useRef, useState } from 'react'
@@ -55,6 +63,7 @@ export const TWO_FACTOR_DOCS_LINK =
   'https://help.synapse.org/docs/Managing-Your-Account.2055405596.html#Adding-Two-Factor-Authentication-(2FA)-to-your-account'
 
 export type TwoFactorEnrollmentFormProps = {
+  totpSecret: TotpSecret
   onTwoFactorEnrollmentSuccess: () => void
   onBackClicked: () => void
 }
@@ -62,7 +71,7 @@ export type TwoFactorEnrollmentFormProps = {
 export default function TwoFactorEnrollmentForm(
   props: TwoFactorEnrollmentFormProps,
 ) {
-  const { onTwoFactorEnrollmentSuccess, onBackClicked } = props
+  const { onTwoFactorEnrollmentSuccess, onBackClicked, totpSecret } = props
 
   const [totp, setTotp] = useState('')
   const [hasQrCode, setHasQrCode] = useState(false)
@@ -71,9 +80,6 @@ export default function TwoFactorEnrollmentForm(
 
   const qrCodeCanvasElement = useRef<HTMLCanvasElement>(null)
 
-  const { mutate: start2FAEnrollment, data: totpSecret } =
-    useStartTwoFactorEnrollment()
-
   const {
     mutate: finishEnrollment,
     isPending: isFinishingEnrollment,
@@ -81,12 +87,6 @@ export default function TwoFactorEnrollmentForm(
   } = useFinishTwoFactorEnrollment({
     onSuccess: onTwoFactorEnrollmentSuccess,
   })
-
-  /* When the component mounts, begin enrollment by fetching the data for the QR code. */
-  useEffect(() => {
-    start2FAEnrollment()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   useEffect(() => {
     async function createQrCode() {
@@ -99,7 +99,7 @@ export default function TwoFactorEnrollmentForm(
         setHasQrCode(true)
       }
     }
-    createQrCode()
+    void createQrCode()
   }, [totpSecret, currentUserEmail])
 
   return (
@@ -245,7 +245,7 @@ export default function TwoFactorEnrollmentForm(
               onSubmit={e => {
                 e.preventDefault()
                 finishEnrollment({
-                  secretId: totpSecret!.secretId,
+                  secretId: totpSecret.secretId,
                   totp,
                 })
               }}
