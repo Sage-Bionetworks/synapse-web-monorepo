@@ -121,8 +121,8 @@
     "zod": "^3.24.4"
   },
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.27.2",
@@ -175,9 +175,9 @@
     "@types/plotly.js-basic-dist": "^1.54.4",
     "@types/pluralize": "^0.0.29",
     "@types/qrcode": "^1.5.5",
-    "@types/react": "18.3.12",
+    "@types/react": "19.1.6",
     "@types/react-addons-css-transition-group": "^15.0.10",
-    "@types/react-dom": "18.3.1",
+    "@types/react-dom": "19.1.5",
     "@types/react-mailchimp-subscribe": "^2.1.4",
     "@types/react-plotly.js": "^2.6.3",
     "@types/react-transition-group": "^4.4.12",
@@ -216,10 +216,10 @@
     "postcss-normalize": "^10.0.1",
     "prettier": "^2.8.8",
     "process": "^0.11.10",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "react-select-event": "^5.5.1",
-    "react-test-renderer": "^18.3.1",
+    "react-test-renderer": "^19.1.0",
     "storybook": "^8.6.12",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
