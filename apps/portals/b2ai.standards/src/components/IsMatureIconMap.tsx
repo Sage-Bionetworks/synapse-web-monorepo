@@ -11,7 +11,7 @@ const mapping: Record<string, ReactNode> = {
         'This standard has one or more implementations appropriate for production use, or has undergone a review process and has been determined to be in a mature state.'
       }
     >
-      <MatureStandardIcon sx={{ color: '#edc766' }} />
+      <MatureStandardIcon sx={{ color: 'tertiary.main' }} />
     </Tooltip>
   ),
 }
