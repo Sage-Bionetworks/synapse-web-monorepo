@@ -23,6 +23,15 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { omit } from 'lodash-es'
 import { SetOptional } from 'type-fest'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  it,
+  vi,
+} from 'vitest'
 import { SynapseClient } from '../../index'
 import { ImportTableColumnsButtonProps } from './ImportTableColumnsButton'
 import TableColumnSchemaEditor, {
@@ -56,7 +65,7 @@ function MockedImportTableColumnsButton(props: ImportTableColumnsButtonProps) {
   )
 }
 
-jest.mock('./ImportTableColumnsButton', () => ({
+vi.mock('./ImportTableColumnsButton', () => ({
   __esModule: true,
   default: MockedImportTableColumnsButton,
 }))
@@ -79,13 +88,13 @@ async function setUp(props: TableColumnSchemaEditorProps) {
 }
 
 describe('TableColumnSchemaEditor', () => {
-  const mockOnColumnsUpdated = jest.fn()
-  const mockOnCancel = jest.fn()
-  const createTableUpdateTransactionRequestSpy = jest.spyOn(
+  const mockOnColumnsUpdated = vi.fn()
+  const mockOnCancel = vi.fn()
+  const createTableUpdateTransactionRequestSpy = vi.spyOn(
     TableColumnSchemaUtils,
     'createTableUpdateTransactionRequest',
   )
-  const updateTableSpy = jest.spyOn(SynapseClient, 'updateTable')
+  const updateTableSpy = vi.spyOn(SynapseClient, 'updateTable')
 
   beforeAll(() => {
     server.listen()
@@ -112,7 +121,7 @@ describe('TableColumnSchemaEditor', () => {
       }),
     )
   })
-  afterEach(() => jest.clearAllMocks())
+  afterEach(() => vi.clearAllMocks())
   afterAll(() => server.close())
 
   it('Renders a form and preloads data', async () => {
