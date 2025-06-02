@@ -1,5 +1,4 @@
 import { StyledOuterContainer } from '@/components/styled/LeftRightPanel'
-import { useGetNotificationEmail } from '@/synapse-queries'
 import { useFinishTwoFactorEnrollment } from '@/synapse-queries/auth/useTwoFactorEnrollment'
 import { StyledComponent } from '@emotion/styled'
 import {
@@ -24,12 +23,12 @@ import TextField from '../TextField/TextField'
 import TwoFactorSecretDialog from './TwoFactorSecretDialog'
 
 /**
- * Returns a URL that can be used to generate a QR code that 2FA authenticator apps can interpret
+ * Returns a URL that can be used to generate a QR code that 2FA authenticator apps can interpret.
+ * This uses the username fro TotpSecret to create the friendly name for the account in the authenticator app.
  * @param secret
- * @param subject
  */
-function toOtpAuthUrl(secret: TotpSecret, subject: string) {
-  return `otpauth://totp/Synapse:${subject}?secret=${secret.secret}&issuer=Sage%20Bionetworks&algorithm=${secret.alg}&digits=${secret.digits}&period=${secret.period}`
+function toOtpAuthUrl(secret: TotpSecret) {
+  return `otpauth://totp/Synapse:${secret.username}?secret=${secret.secret}&issuer=Sage%20Bionetworks&algorithm=${secret.alg}&digits=${secret.digits}&period=${secret.period}`
 }
 
 const Section: StyledComponent<BoxProps> = styled(
@@ -76,8 +75,6 @@ export default function TwoFactorEnrollmentForm(
   const [totp, setTotp] = useState('')
   const [hasQrCode, setHasQrCode] = useState(false)
   const [showSecretInModal, setShowSecretInModal] = useState(false)
-  const { data: currentUserEmail } = useGetNotificationEmail()
-
   const qrCodeCanvasElement = useRef<HTMLCanvasElement>(null)
 
   const {
@@ -90,17 +87,17 @@ export default function TwoFactorEnrollmentForm(
 
   useEffect(() => {
     async function createQrCode() {
-      if (totpSecret && currentUserEmail && qrCodeCanvasElement.current) {
-        await toCanvas(
-          qrCodeCanvasElement.current,
-          toOtpAuthUrl(totpSecret, currentUserEmail.email),
-          { version: 10, margin: 0, scale: 3.5 },
-        )
+      if (totpSecret && qrCodeCanvasElement.current) {
+        await toCanvas(qrCodeCanvasElement.current, toOtpAuthUrl(totpSecret), {
+          version: 10,
+          margin: 0,
+          scale: 3.5,
+        })
         setHasQrCode(true)
       }
     }
     void createQrCode()
-  }, [totpSecret, currentUserEmail])
+  }, [totpSecret])
 
   return (
     <StyledOuterContainer>
