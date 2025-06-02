@@ -63,9 +63,17 @@
         "efficacy_measure_type": {
           "type": "string",
           "title": "Efficacy Measure",
-          "enum": ["EC50", "IC50"],
-          "enumNames": ["EC50 (mg/kg)", "IC50 (nmol/L)"],
-          "uniqueItems": true
+          "uniqueItems": true,
+          "oneOf": [
+            {
+              "const": "EC50",
+              "title": "EC50 (mg/kg)"
+            },
+            {
+              "const": "IC50",
+              "title": "IC50 (nmol/L)"
+            }
+          ]
         }
       }
     },
@@ -111,18 +119,34 @@
         "data_sharing": {
           "type": "boolean",
           "default": false,
-          "enum": [true, false],
-          "enumNames": ["I agree to data sharing", "I want to discuss further"],
           "uniqueItems": true,
-          "title": "Data Sharing"
+          "title": "Data Sharing",
+          "oneOf": [
+            {
+              "const": true,
+              "title": "I agree to data sharing"
+            },
+            {
+              "const": false,
+              "title": "I want to discuss further"
+            }
+          ]
         },
         "is_off_label": {
           "type": "boolean",
           "default": false,
-          "enum": [true, false],
-          "enumNames": ["Yes", "No"],
           "uniqueItems": true,
-          "title": "Is this compound available for off label use?"
+          "title": "Is this compound available for off label use?",
+          "oneOf": [
+            {
+              "const": true,
+              "title": "Yes"
+            },
+            {
+              "const": false,
+              "title": "No"
+            }
+          ]
         },
         "chemical_name": {
           "type": "string",
@@ -162,9 +186,17 @@
         "is_solution": {
           "title": "Is the compound a solution?",
           "type": "boolean",
-          "enum": [true, false],
-          "enumNames": ["Yes", "No"],
-          "default": false
+          "default": false,
+          "oneOf": [
+            {
+              "const": true,
+              "title": "Yes"
+            },
+            {
+              "const": false,
+              "title": "No"
+            }
+          ]
         }
       },
       "dependencies": {
@@ -219,10 +251,26 @@
         },
         "therapeutic_approach": {
           "type": "string",
-          "enum": ["prophylactic", "symptomatic", "both", "unknown"],
-          "enumNames": ["Prophylactic", "Symptomatic", "Both", "Unknown"],
           "uniqueItems": true,
-          "title": "What is the therapeutic approach?"
+          "title": "What is the therapeutic approach?",
+          "oneOf": [
+            {
+              "const": "prophylactic",
+              "title": "Prophylactic"
+            },
+            {
+              "const": "symptomatic",
+              "title": "Symptomatic"
+            },
+            {
+              "const": "both",
+              "title": "Both"
+            },
+            {
+              "const": "unknown",
+              "title": "Unknown"
+            }
+          ]
         },
         "therapeutic_indication_description": {
           "type": "string",
@@ -242,45 +290,83 @@
         },
         "water_soluble": {
           "type": "string",
-          "enum": ["yes", "no", "unknown"],
-          "enumNames": ["Yes", "No", "Unknown"],
           "uniqueItems": true,
-          "title": "Is the compound water soluble?"
+          "title": "Is the compound water soluble?",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            },
+            {
+              "const": "unknown",
+              "title": "Unknown"
+            }
+          ]
         },
         "route": {
           "type": "array",
           "title": "What is the intended route of administration?",
           "items": {
             "type": "string",
-            "enum": [
-              "oral",
-              "sublingual",
-              "nasal",
-              "injection",
-              "transdermal",
-              "intrathecal",
-              "formulated_in_food",
-              "formulated_in_drinking_water"
-            ],
-            "enumNames": [
-              "Oral",
-              "Sublingual",
-              "Nasal",
-              "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
-              "Transdermal",
-              "Intrathecal",
-              "Formulated in Food",
-              "Formulated in Drinking Water"
+            "oneOf": [
+              {
+                "const": "oral",
+                "title": "Oral"
+              },
+              {
+                "const": "sublingual",
+                "title": "Sublingual"
+              },
+              {
+                "const": "nasal",
+                "title": "Nasal"
+              },
+              {
+                "const": "injection",
+                "title": "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)"
+              },
+              {
+                "const": "transdermal",
+                "title": "Transdermal"
+              },
+              {
+                "const": "intrathecal",
+                "title": "Intrathecal"
+              },
+              {
+                "const": "formulated_in_food",
+                "title": "Formulated in Food"
+              },
+              {
+                "const": "formulated_in_drinking_water",
+                "title": "Formulated in Drinking Water"
+              }
             ]
           },
           "uniqueItems": true
         },
         "orally_active": {
           "type": "string",
-          "enum": ["yes", "no", "unknown"],
-          "enumNames": ["Yes", "No", "Unknown"],
           "uniqueItems": true,
-          "title": "Is the drug orally active?"
+          "title": "Is the drug orally active?",
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            },
+            {
+              "const": "unknown",
+              "title": "Unknown"
+            }
+          ]
         }
       },
       "dependencies": {
@@ -336,25 +422,37 @@
         "species": {
           "type": "string",
           "title": "Species",
-          "enum": [
-            "mouse",
-            "rat",
-            "non_human_primate",
-            "dog",
-            "ferret",
-            "rabbit",
-            "other"
-          ],
-          "enumNames": [
-            "Mouse",
-            "Rat",
-            "Non Human Primate",
-            "Dog",
-            "Ferret",
-            "Rabbit",
-            "Other"
-          ],
-          "uniqueItems": true
+          "uniqueItems": true,
+          "oneOf": [
+            {
+              "const": "mouse",
+              "title": "Mouse"
+            },
+            {
+              "const": "rat",
+              "title": "Rat"
+            },
+            {
+              "const": "non_human_primate",
+              "title": "Non Human Primate"
+            },
+            {
+              "const": "dog",
+              "title": "Dog"
+            },
+            {
+              "const": "ferret",
+              "title": "Ferret"
+            },
+            {
+              "const": "rabbit",
+              "title": "Rabbit"
+            },
+            {
+              "const": "other",
+              "title": "Other"
+            }
+          ]
         },
         "strain": {
           "type": "string",
@@ -389,8 +487,20 @@
         "sex": {
           "type": "string",
           "title": "Subject Sex",
-          "enum": ["male", "female", "both"],
-          "enumNames": ["Male", "Female", "Both"]
+          "oneOf": [
+            {
+              "const": "male",
+              "title": "Male"
+            },
+            {
+              "const": "female",
+              "title": "Female"
+            },
+            {
+              "const": "both",
+              "title": "Both"
+            }
+          ]
         },
         "ed50": {
           "type": "string",
@@ -413,8 +523,20 @@
         "dose_regimen": {
           "type": "string",
           "title": "Dosing Regimen",
-          "enum": ["acute", "chronic", "sub_chronic"],
-          "enumNames": ["Acute", "Chronic", "Sub Chronic"]
+          "oneOf": [
+            {
+              "const": "acute",
+              "title": "Acute"
+            },
+            {
+              "const": "chronic",
+              "title": "Chronic"
+            },
+            {
+              "const": "sub_chronic",
+              "title": "Sub Chronic"
+            }
+          ]
         },
         "pretreatment_time": {
           "type": "string",
@@ -426,25 +548,39 @@
           "uniqueItems": true,
           "items": {
             "type": "string",
-            "enum": [
-              "oral",
-              "sublingual",
-              "nasal",
-              "injection",
-              "transdermal",
-              "intrathecal",
-              "formulated_in_food",
-              "formulated_in_drinking_water"
-            ],
-            "enumNames": [
-              "Oral",
-              "Sublingual",
-              "Nasal",
-              "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
-              "Transdermal",
-              "Intrathecal",
-              "Formulated in Food",
-              "Formulated in Drinking Water"
+            "oneOf": [
+              {
+                "const": "oral",
+                "title": "Oral"
+              },
+              {
+                "const": "sublingual",
+                "title": "Sublingual"
+              },
+              {
+                "const": "nasal",
+                "title": "Nasal"
+              },
+              {
+                "const": "injection",
+                "title": "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)"
+              },
+              {
+                "const": "transdermal",
+                "title": "Transdermal"
+              },
+              {
+                "const": "intrathecal",
+                "title": "Intrathecal"
+              },
+              {
+                "const": "formulated_in_food",
+                "title": "Formulated in Food"
+              },
+              {
+                "const": "formulated_in_drinking_water",
+                "title": "Formulated in Drinking Water"
+              }
             ]
           }
         },

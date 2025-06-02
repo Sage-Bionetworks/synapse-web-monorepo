@@ -96,7 +96,11 @@ export const EntityUploadModal = forwardRef(function EntityUploadModal(
             <Tab label={'Upload File'} value={UploadTab.UploadFile} />
             <Tab label={'Link to URL'} value={UploadTab.LinkToURL} />
           </Tabs>
-          <Box display={tabValue === UploadTab.UploadFile ? 'block' : 'none'}>
+          <Box
+            sx={{
+              display: tabValue === UploadTab.UploadFile ? 'block' : 'none',
+            }}
+          >
             <EntityUpload
               ref={entityUploadRef}
               entityId={entityId}
@@ -104,7 +108,11 @@ export const EntityUploadModal = forwardRef(function EntityUploadModal(
               onUploadReady={onUploadReady}
             />
           </Box>
-          <Box display={tabValue === UploadTab.LinkToURL ? 'block' : 'none'}>
+          <Box
+            sx={{
+              display: tabValue === UploadTab.LinkToURL ? 'block' : 'none',
+            }}
+          >
             <LinkToURL
               ref={linkToUrlFormRef}
               entityId={entityId}

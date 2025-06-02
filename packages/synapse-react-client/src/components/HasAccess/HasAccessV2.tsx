@@ -301,7 +301,15 @@ export function HasAccessV2(props: HasAccessProps) {
           onClick={handleGetAccess}
         >
           <AccessIcon restrictionUiType={restrictionUiTypeValue} />
-          {showButtonText && <Box ml="5px">{linkText}</Box>}
+          {showButtonText && (
+            <Box
+              sx={{
+                ml: '5px',
+              }}
+            >
+              {linkText}
+            </Box>
+          )}
         </Button>
         {displayAccessRequirement && (
           <AccessRequirementList

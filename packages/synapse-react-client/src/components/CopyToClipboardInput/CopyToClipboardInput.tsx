@@ -46,31 +46,34 @@ export function CopyToClipboardInput({
         autohide={true}
       ></ToastMessage>
       <Box
-        display="flex"
-        justifyContent="center"
+        ref={ref}
         sx={{
+          display: 'flex',
+          justifyContent: 'center',
           my: 2,
           mx: 0,
         }}
-        ref={ref}
       >
         <TextField
           sx={{
             width: inputWidth,
           }}
           value={value}
-          inputProps={{
-            readOnly: true,
-            onClick: copyToClipboard(ref, value),
-          }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={copyToClipboard(ref, value)}>
-                  <ContentCopyIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={copyToClipboard(ref, value)}>
+                    <ContentCopyIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+
+            htmlInput: {
+              readOnly: true,
+              onClick: copyToClipboard(ref, value),
+            },
           }}
         />
       </Box>

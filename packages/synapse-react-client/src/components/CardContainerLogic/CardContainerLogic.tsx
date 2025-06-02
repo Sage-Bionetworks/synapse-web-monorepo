@@ -10,9 +10,10 @@ import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import {
   Query,
   QueryBundleRequest,
+  SelectColumn,
   SortDirection,
 } from '@sage-bionetworks/synapse-types'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import ColumnFilter from '../ColumnFilter/ColumnFilter'
 import { IconSvgProps } from '../IconSvg'
 import QuerySortSelector from '../QuerySortSelector'
@@ -78,12 +79,25 @@ export type DescriptionConfig = {
   showFullDescriptionByDefault?: boolean
 }
 
+export type MapValueToReactComponentConfig = {
+  // The column to apply the mapping to
+  matchColumnName: string
+  Component: React.ComponentType<{
+    /* The value of the table cell. If the column is a _LIST type, then the LIST will be parsed and this will be a string array. */
+    value: string | string[] | null
+    selectColumn: SelectColumn
+  }>
+  // discriminator
+  isMapValueToReactNodeConfig: true
+}
+
 // Specify the indices in the values [] that should be rendered specially
 export type LabelLinkConfig = (
   | MarkdownLink
   | CardLink
   | ColumnSpecifiedLink
   | EntityImage
+  | MapValueToReactComponentConfig
 )[]
 
 export type ColumnIconConfigs = {

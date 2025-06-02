@@ -1,5 +1,12 @@
 import { useSourceAppConfigs } from '@/utils/hooks'
-import { Box, Button, Grid, Popover, Typography, useTheme } from '@mui/material'
+import {
+  Box,
+  Button,
+  GridLegacy as Grid,
+  Popover,
+  Typography,
+  useTheme,
+} from '@mui/material'
 import {
   ColumnSingleValueQueryFilter,
   ColumnSingleValueFilterOperator,

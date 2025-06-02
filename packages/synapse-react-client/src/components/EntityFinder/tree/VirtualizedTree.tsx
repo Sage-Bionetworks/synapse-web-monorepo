@@ -296,7 +296,13 @@ export function Node(
   if (isEntityHeaderNode(node)) {
     tooltipContent = (
       <div style={{ textAlign: 'center' }}>
-        <Typography display="inline" component="span" variant="smallText1">
+        <Typography
+          component="span"
+          variant="smallText1"
+          sx={{
+            display: 'inline',
+          }}
+        >
           {node.name}
           <br />
           <b>ID: </b>

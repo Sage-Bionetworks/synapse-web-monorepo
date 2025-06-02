@@ -193,7 +193,7 @@ function RenderMarkdown(props: {
 
   if (!isLoading && showPlaceholderIfNoWikiContent && markup === '') {
     return (
-      <Typography variant="body1Italic" mb={1}>
+      <Typography variant="body1Italic" sx={{ mb: 1 }}>
         {NO_WIKI_CONTENT}
       </Typography>
     )

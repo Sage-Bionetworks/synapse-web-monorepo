@@ -124,48 +124,50 @@ export default function EnumFacetFilterUI<TValue = string>(
           }}
           size={'small'}
           fullWidth={true}
-          InputProps={{
-            startAdornment: (
-              <Tooltip title={'Close search'}>
-                <IconButton
-                  size={'small'}
-                  onClick={() => {
-                    setShowSearch(false)
-                    setToggleShowAll(defaultShowAllValues)
-                  }}
-                >
-                  <IconSvg
-                    sx={{ fontSize: 'inherit' }}
-                    wrap={false}
-                    icon="arrowBack"
-                  />
-                </IconButton>
-              </Tooltip>
-            ),
-            endAdornment: searchTerm.length > 0 && (
-              <Tooltip title={'Clear'}>
-                <IconButton
-                  size={'small'}
-                  onClick={() => {
-                    setSearchText('')
-                    textInput.current?.focus()
-                  }}
-                >
-                  <IconSvg
-                    sx={{ fontSize: 'inherit' }}
-                    wrap={false}
-                    icon="close"
-                  />
-                </IconButton>
-              </Tooltip>
-            ),
-          }}
           type="text"
           placeholder="Find values"
           value={searchTerm}
           ref={textInput}
           onChange={e => {
             setSearchText(e.target.value)
+          }}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <Tooltip title={'Close search'}>
+                  <IconButton
+                    size={'small'}
+                    onClick={() => {
+                      setShowSearch(false)
+                      setToggleShowAll(defaultShowAllValues)
+                    }}
+                  >
+                    <IconSvg
+                      sx={{ fontSize: 'inherit' }}
+                      wrap={false}
+                      icon="arrowBack"
+                    />
+                  </IconButton>
+                </Tooltip>
+              ),
+              endAdornment: searchTerm.length > 0 && (
+                <Tooltip title={'Clear'}>
+                  <IconButton
+                    size={'small'}
+                    onClick={() => {
+                      setSearchText('')
+                      textInput.current?.focus()
+                    }}
+                  >
+                    <IconSvg
+                      sx={{ fontSize: 'inherit' }}
+                      wrap={false}
+                      icon="close"
+                    />
+                  </IconButton>
+                </Tooltip>
+              ),
+            },
           }}
         />
         {!showSearch && (

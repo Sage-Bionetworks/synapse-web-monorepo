@@ -102,12 +102,19 @@ export function WikiMarkdownEditor(props: WikiMarkdownEditorProps) {
       }
       actions={
         <Box
-          display="flex"
-          flexDirection="row-reverse"
-          justifyContent="space-between"
-          width="100%"
+          sx={{
+            display: 'flex',
+            flexDirection: 'row-reverse',
+            justifyContent: 'space-between',
+            width: '100%',
+          }}
         >
-          <Box display="flex" gap={1}>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 1,
+            }}
+          >
             <Button
               variant="outlined"
               disabled={isUpdatingWikiPage}

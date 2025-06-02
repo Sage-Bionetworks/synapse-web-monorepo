@@ -406,7 +406,9 @@ export const defaultMuiThemeOptions: ThemeOptions = {
     },
     MuiMenu: {
       defaultProps: {
-        TransitionComponent: TRANSITION_COMPONENT_OVERRIDE,
+        slots: {
+          transition: TRANSITION_COMPONENT_OVERRIDE,
+        },
       },
     },
     MuiMenuItem: {
@@ -436,7 +438,10 @@ export const defaultMuiThemeOptions: ThemeOptions = {
     MuiTooltip: {
       defaultProps: {
         arrow: true,
-        TransitionComponent: TRANSITION_COMPONENT_OVERRIDE,
+
+        slots: {
+          transition: TRANSITION_COMPONENT_OVERRIDE,
+        },
       },
       styleOverrides: {
         arrow: ({ theme }) => ({

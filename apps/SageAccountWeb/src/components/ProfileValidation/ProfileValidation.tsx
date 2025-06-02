@@ -54,16 +54,31 @@ const STEP_CONTENT = [
           During <strong>identity verification</strong>, our data governance
           team will check the information you provide here.
         </Typography>
-        <Typography variant="smallText1" paragraph>
+        <Typography
+          variant="smallText1"
+          sx={{
+            marginBottom: '16px',
+          }}
+        >
           <strong>First and last names</strong> are required so that we can
           verify your identity.
         </Typography>
-        <Typography variant="smallText1" paragraph>
+        <Typography
+          variant="smallText1"
+          sx={{
+            marginBottom: '16px',
+          }}
+        >
           Your <strong>Current Affiliation</strong> is the name of the group,
           company, or institution you are currently working with while
           requesting access to this application.{' '}
         </Typography>
-        <Typography variant="smallText1" paragraph>
+        <Typography
+          variant="smallText1"
+          sx={{
+            marginBottom: '16px',
+          }}
+        >
           Your <strong>Location</strong> is important because different
           regulations around data are applicable in different geographic areas.
         </Typography>{' '}
@@ -93,7 +108,12 @@ const STEP_CONTENT = [
     title: 'Submit recent identity attestation documentation.',
     body: (
       <>
-        <Typography variant="body1" paragraph>
+        <Typography
+          variant="body1"
+          sx={{
+            marginBottom: '16px',
+          }}
+        >
           This document must be current within the past month. Acceptable forms
           of documentation, <strong>in English</strong>, are any one of the
           following:{' '}
@@ -150,11 +170,21 @@ const STEP_CONTENT = [
             </Typography>
           </li>
           <li>
-            <Typography variant="body1" paragraph>
+            <Typography
+              variant="body1"
+              sx={{
+                marginBottom: '16px',
+              }}
+            >
               A copy of your professional license (e.g., a photocopy of your
               medical license).&nbsp;
             </Typography>
-            <Typography variant="body1" paragraph>
+            <Typography
+              variant="body1"
+              sx={{
+                marginBottom: '16px',
+              }}
+            >
               <i>
                 Note that a copy of a work or university identification badge is{' '}
                 <strong>not</strong> an accepted form of identity attestation

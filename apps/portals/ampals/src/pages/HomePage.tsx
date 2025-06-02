@@ -8,11 +8,7 @@ import HowToAccessData from '@sage-bionetworks/synapse-portal-framework/componen
 // import { FeaturedDataTabs } from 'synapse-react-client'
 // import columnAliases from '../config/columnAliases'
 import headerSvg from '../config/style/header.svg?url'
-import {
-  FullWidthAlert,
-  CardGridWithLinks,
-  GoalsV3,
-} from 'synapse-react-client'
+import { CardGridWithLinks, GoalsV3 } from 'synapse-react-client'
 import { OrientationBanner } from 'synapse-react-client'
 import { goalsTableEntityId } from '@/config/resources'
 import { ReactComponent as DatasetsIcon } from '../../src/config/style/datasets.svg'
@@ -87,63 +83,24 @@ export default function HomePage() {
       <ALLALSSlat />
       <div className={'home-bg-dark'}>
         <SectionLayout
-          title={'Featured Datasets'}
+          title={'More Resources'}
           centerTitle
-          ContainerProps={{ className: 'home-spacer' }}
+          ContainerProps={{
+            maxWidth: false,
+            sx: {
+              padding: { xs: '40px', lg: '60px 80px 80px 80px' },
+              h2: {
+                lineHeight: 'normal',
+                margin: '0 0 40px 0',
+              },
+            },
+          }}
         >
-          <FullWidthAlert
-            sx={{ m: 0 }}
-            isGlobal={false}
-            variant={'warning'}
-            show={true}
-            title={''}
-            description={'This area is under construction'}
+          <CardGridWithLinks
+            linkText={'More Resources'}
+            cards={moreResourcesCards}
           />
-          {/* <FeaturedDataTabs
-            sql={dataSql}
-            rgbIndex={3}
-            configs={[
-              {
-                title: '',
-                icon: 'chart2',
-                explorePagePath: '/Explore',
-                exploreObjectType: 'Datasets',
-                plotsConfig: {
-                  sql: `${dataSql} where responsibleOrgName is not null`,
-                  configs: [
-                    {
-                      facetsToPlot: ['topic', 'responsibleOrgName'],
-                      unitDescription: 'dataset',
-                      plotType: 'BAR',
-                      columnAliases: columnAliases,
-                    },
-                  ],
-                },
-              },
-            ]}
-          /> */}
         </SectionLayout>
-        <div className={'home-bg-dark'}>
-          <SectionLayout
-            title={'More Resources'}
-            centerTitle
-            ContainerProps={{
-              sx: {
-                maxWidth: '100% !important',
-                padding: { xs: '40px', lg: '60px 80px 80px 80px' },
-                h2: {
-                  lineHeight: 'normal',
-                  margin: '0 0 40px 0',
-                },
-              },
-            }}
-          >
-            <CardGridWithLinks
-              linkText={'More Resources'}
-              cards={moreResourcesCards}
-            />
-          </SectionLayout>
-        </div>
       </div>
     </>
   )

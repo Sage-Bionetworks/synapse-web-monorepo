@@ -74,7 +74,12 @@ export default function WizardChoiceButton(props: {
         </Box>
       )}
       <Box sx={{ flexGrow: 1, textAlign: 'left' }}>
-        <Typography variant={'headline2'} mb={'10px'}>
+        <Typography
+          variant={'headline2'}
+          sx={{
+            mb: '10px',
+          }}
+        >
           {title}
         </Typography>
         {descriptionNode}

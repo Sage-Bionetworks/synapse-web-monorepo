@@ -38,7 +38,13 @@ export function ReturnToAppButton({ children }: ReturnToAppButtonProps) {
       {element}
       <Dialog open={open} fullWidth maxWidth="sm">
         <DialogTitle>
-          <Stack direction="row" alignItems={'center'} gap={'5px'}>
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: 'center',
+              gap: '5px',
+            }}
+          >
             Cancel verification?
             <Box sx={{ flexGrow: 1 }} />
             <IconButton aria-label={'Close'} onClick={onClose}>
@@ -47,7 +53,12 @@ export function ReturnToAppButton({ children }: ReturnToAppButtonProps) {
           </Stack>
         </DialogTitle>
         <DialogContent dividers>
-          <Typography variant="body1" paragraph>
+          <Typography
+            variant="body1"
+            sx={{
+              marginBottom: '16px',
+            }}
+          >
             If you cancel verification, you'll still be able to use portions of
             the application which are available to registered users, but your
             access will be restricted.

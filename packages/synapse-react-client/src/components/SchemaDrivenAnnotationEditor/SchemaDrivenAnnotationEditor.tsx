@@ -257,7 +257,13 @@ export function SchemaDrivenAnnotationEditor(
           )}
           {showHasNoAnnotationsAlert && (
             <Alert severity="info">
-              <Box display={'flex'} alignItems={'center'} gap={0.5}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 0.5,
+                }}
+              >
                 <Typography variant={'smallText1'}>
                   <b>{entityJson.name}</b> has no annotations. Click the{' '}
                 </Typography>
@@ -341,9 +347,11 @@ export function SchemaDrivenAnnotationEditor(
               <>
                 <Divider sx={{ my: 2 }} />
                 <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  sx={{ gridRowStart: 5 }}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gridRowStart: 5,
+                  }}
                 >
                   <ConfirmationButtons
                     hasCancelButton={onCancel !== undefined}

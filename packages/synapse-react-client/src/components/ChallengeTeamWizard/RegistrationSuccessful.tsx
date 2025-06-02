@@ -21,7 +21,13 @@ export const RegistrationSuccessful = ({
 
   if (status === 'pending') {
     return (
-      <Box display="flex" flexDirection="column" gap={1}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1,
+        }}
+      >
         <SynapseSpinner />
       </Box>
     )

@@ -10,7 +10,7 @@ import {
   Alert,
   Box,
   Button,
-  Grid,
+  GridLegacy as Grid,
   IconButton,
   InputAdornment,
   MenuItem,
@@ -243,8 +243,10 @@ export function CreateOAuthModal({
       id="sectorURI"
       label="Sector Identifier URI"
       margin="normal"
-      InputLabelProps={{ sx: dangerLabelSx }}
       fullWidth
+      slotProps={{
+        inputLabel: { sx: dangerLabelSx },
+      }}
     />
   )
 
@@ -254,7 +256,6 @@ export function CreateOAuthModal({
         <div key={idx}>
           <TextField
             required={idx === 0}
-            InputLabelProps={{ sx: dangerLabelSx }}
             label={idx === 0 && 'Redirect URI(s)'}
             name="uri"
             fullWidth
@@ -263,16 +264,20 @@ export function CreateOAuthModal({
             value={singleUri.uri}
             placeholder="https://"
             type="text"
-            InputProps={{
-              endAdornment: redirectUris.length > 1 && (
-                <InputAdornment position="end">
-                  <IconButton onClick={() => handleRedirectUriRemove(idx)}>
-                    <DeleteTwoToneIcon sx={{ color: 'error.main' }} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
             margin={idx === 0 ? 'normal' : 'dense'}
+            slotProps={{
+              input: {
+                endAdornment: redirectUris.length > 1 && (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => handleRedirectUriRemove(idx)}>
+                      <DeleteTwoToneIcon sx={{ color: 'error.main' }} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+
+              inputLabel: { sx: dangerLabelSx },
+            }}
           />
           {redirectUris.length - 1 === idx && (
             <Button
@@ -299,7 +304,12 @@ export function CreateOAuthModal({
       )}
       {!updateIsPending && (
         <>
-          <Typography variant="body1" mb={'10px'}>
+          <Typography
+            variant="body1"
+            sx={{
+              mb: '10px',
+            }}
+          >
             To protect you and your users, your consent screen and application
             will need to be verified by Sage Bionetworks. Before your consent
             screen and application are verified by Sage Bionetworks, you can
@@ -395,9 +405,11 @@ export function CreateOAuthModal({
           </Grid>
           {isEdit && (
             <Box
-              sx={{ backgroundColor: 'rgb(178, 36, 42, 0.03)' }}
-              mt="10px"
-              padding={1}
+              sx={{
+                mt: '10px',
+                padding: 1,
+                backgroundColor: 'rgb(178, 36, 42, 0.03)',
+              }}
             >
               <Typography sx={{ my: 1 }} color="error" variant="headline3">
                 DANGER ZONE
