@@ -6,6 +6,7 @@ const esModules = [
   'mui-one-time-password-input',
   'p-limit',
   'yocto-queue',
+  '@ver0',
 ]
 
 /** @type {import('jest').Config} */
