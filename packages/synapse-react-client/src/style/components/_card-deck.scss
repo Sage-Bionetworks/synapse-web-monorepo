@@ -1,11 +1,5 @@
 @use '../abstracts/variables' as SRC;
-
-// horizontally and vertically center
-%hv-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+@use '../abstracts/mixins' as SrcMixins;
 
 .CardDeck {
   &__Desktop {
@@ -87,7 +81,7 @@
       }
 
       p {
-        @extend %space-between;
+        @include SrcMixins.space-between;
         align-items: center;
         width: 100%;
         color: white;
@@ -122,9 +116,9 @@
 
     &__summary {
       flex: 1;
-      @extend %side-padding;
+      @include SrcMixins.side-padding;
       padding-bottom: 20px;
-      @extend %space-between;
+      @include SrcMixins.space-between;
       flex-direction: column;
 
       p {
@@ -139,10 +133,10 @@
   }
 
   &__Mobile {
-    @extend %hv-center;
+    @include SrcMixins.hv-center;
 
     &__Header {
-      @extend %hv-center;
+      @include SrcMixins.hv-center;
 
       &__icon {
         img {

@@ -4,7 +4,7 @@
 
 .TreeView.SelectTree {
   background: unset;
-  max-width: $-tree-only-width;
+  max-width: EntityFinder.$tree-only-width;
 
   .Header {
     padding-left: 20px;
@@ -15,10 +15,9 @@
   .Tree {
     .Node.SelectNode {
       border-top: 1px solid white;
-      grid-template-columns: [toggle] 15px [icon] 27px [name] minmax(
-          0,
-          max-content
-        ) [badge] auto;
+      grid-template-columns:
+        [toggle] 15px [icon] 27px [name] minmax(0, max-content)
+        [badge] auto;
       padding: 16px 20px;
       .ExpandButton {
         font-size: large;
@@ -35,13 +34,15 @@
       }
     }
     .Node.SelectNode[aria-selected='true'] {
-      background: $-selected-background-color;
+      background: EntityFinder.$selected-background-color;
       &:hover {
-        @include -hover($-selected-hover-background-color);
+        @include EntityFinder.hover(
+          EntityFinder.$selected-hover-background-color
+        );
       }
     }
   }
   .Node[aria-disabled='false']:hover {
-    @include -hover();
+    @include EntityFinder.hover();
   }
 }
