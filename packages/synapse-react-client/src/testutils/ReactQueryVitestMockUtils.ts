@@ -36,6 +36,7 @@ export function getUseQuerySuccessMock<TData>(
     isInitialLoading: false,
     isPaused: false,
     isPending: false,
+    promise: Promise.resolve(data),
   }
 }
 
@@ -68,6 +69,7 @@ export function getUseQueryLoadingMock(): QueryObserverLoadingResult<
     isPending: true,
     isInitialLoading: true,
     isPaused: false,
+    promise: new Promise(() => {}),
   }
 }
 
@@ -99,6 +101,7 @@ export function getUseQueryErrorMock<TError>(
     isPaused: false,
     isLoading: false,
     isPending: false,
+    promise: undefined as any,
   }
 }
 
@@ -131,6 +134,7 @@ export function getUseQueryIdleMock(): UseQueryResult<never, never> {
     isPaused: true,
     isLoading: false,
     isPending: true,
+    promise: new Promise(() => {}),
   }
 }
 
@@ -219,5 +223,8 @@ export function getUseInfiniteQuerySuccessMock<TData>(
     isStale: false,
     refetch: vi.fn(),
     fetchStatus: 'idle',
+    isFetchNextPageError: false,
+    isFetchPreviousPageError: false,
+    promise: Promise.resolve({ pages }),
   } satisfies UseInfiniteQueryResult<{ pages: TData[] }, never>
 }

@@ -121,7 +121,9 @@ describe('TableColumnSchemaEditor', () => {
       }),
     )
   })
-  afterEach(() => vi.clearAllMocks())
+  afterEach(() => {
+    vi.clearAllMocks()
+  })
   afterAll(() => server.close())
 
   it('Renders a form and preloads data', async () => {

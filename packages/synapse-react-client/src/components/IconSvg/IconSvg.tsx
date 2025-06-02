@@ -131,7 +131,7 @@ import {
 import { Tooltip } from '@mui/material'
 import { SvgIconProps } from '@mui/material/SvgIcon'
 import { EntityType } from '@sage-bionetworks/synapse-types'
-import { Fragment, ReactNode } from 'react'
+import { ReactNode } from 'react'
 
 export const IconStrings = [
   'accessOpen',
