@@ -306,18 +306,17 @@ describe('EntityFinder tests', () => {
     act(() => {
       invokeSetConfigViaTree(configuration)
     })
-    await waitFor(() =>
-      expect(mockDetailsList).toHaveBeenCalledWith(
-        expect.objectContaining({
-          configuration: configuration, // !
-          selectableTypes: defaultProps.selectableTypes,
-          visibleTypes: [
-            ...defaultProps.visibleTypesInList!,
-            ...defaultProps.selectableTypes!,
-          ],
-        }),
-        undefined,
-      ),
+
+    expect(mockDetailsList).toHaveBeenCalledWith(
+      expect.objectContaining({
+        configuration: configuration, // !
+        selectableTypes: defaultProps.selectableTypes,
+        visibleTypes: [
+          ...defaultProps.visibleTypesInList!,
+          ...defaultProps.selectableTypes!,
+        ],
+      }),
+      undefined,
     )
 
     const reference: Reference = {

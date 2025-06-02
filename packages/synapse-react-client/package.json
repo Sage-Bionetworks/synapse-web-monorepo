@@ -140,6 +140,7 @@
     "@jest/reporters": "^29.7.0",
     "@juggle/resize-observer": "^3.4.0",
     "@open-draft/deferred-promise": "^2.2.0",
+    "@storybook/addon-a11y": "^8",
     "@storybook/addon-actions": "^8.6.12",
     "@storybook/addon-designs": "^8.2.1",
     "@storybook/addon-essentials": "^8.6.12",
