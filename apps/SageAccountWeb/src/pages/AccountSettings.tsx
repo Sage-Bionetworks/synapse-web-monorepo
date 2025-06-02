@@ -41,7 +41,7 @@ import ChangePassword from 'synapse-react-client/components/ChangePassword/Chang
 import TwoFactorAuthSettingsPanel from 'synapse-react-client/components/Authentication/TwoFactorAuthSettingsPanel'
 import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import CookiePreferencesDialog from 'synapse-react-client/components/CookiesNotification/CookiePreferencesDialog'
-import TwoFactorAuthSettingsPanelOld from '../../../../packages/synapse-react-client/src/components/Authentication/TwoFactorAuthSettingsPanelOld'
+import TwoFactorAuthSettingsPanelOld from 'synapse-react-client/components/Authentication/TwoFactorAuthSettingsPanelOld'
 
 function CompletionStatus({ isComplete }: { isComplete: boolean | undefined }) {
   return (
