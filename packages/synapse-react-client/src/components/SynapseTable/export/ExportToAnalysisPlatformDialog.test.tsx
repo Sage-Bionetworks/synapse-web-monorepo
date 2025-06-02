@@ -110,7 +110,7 @@ describe('ExportToAnalysisPlatformDialog tests', () => {
           onConfirmButtonPropsChange: expect.any(Function),
           onSuccessfulExport: expect.any(Function),
         },
-        expect.anything(),
+        undefined,
       )
 
       const finalConfirmButtonText = 'mock confirm button text'

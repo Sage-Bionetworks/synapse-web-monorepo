@@ -64,7 +64,7 @@ describe('MultiValueField', () => {
           value: ['foo', 'bar'],
           isShowingModal: false,
         }),
-        expect.anything(),
+        undefined,
       ),
     )
 
@@ -76,7 +76,7 @@ describe('MultiValueField', () => {
         expect.objectContaining({
           isShowingModal: true,
         }),
-        expect.anything(),
+        undefined,
       ),
     )
 
@@ -89,7 +89,7 @@ describe('MultiValueField', () => {
         expect.objectContaining({
           isShowingModal: false,
         }),
-        expect.anything(),
+        undefined,
       ),
     )
 
@@ -101,7 +101,7 @@ describe('MultiValueField', () => {
         expect.objectContaining({
           isShowingModal: true,
         }),
-        expect.anything(),
+        undefined,
       ),
     )
 
@@ -114,7 +114,7 @@ describe('MultiValueField', () => {
         expect.objectContaining({
           isShowingModal: false,
         }),
-        expect.anything(),
+        undefined,
       )
 
       expect(onChange).toHaveBeenCalledWith(['baz', 'qux'])

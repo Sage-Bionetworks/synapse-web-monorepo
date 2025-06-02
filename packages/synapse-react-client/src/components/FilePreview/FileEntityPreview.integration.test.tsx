@@ -154,7 +154,7 @@ describe('FileHandleContentRenderer tests', () => {
         fileHandleAssociation,
         previewType: PreviewRendererType.HTML,
       }),
-      expect.anything(),
+      undefined,
     )
   })
 
@@ -205,7 +205,7 @@ describe('FileHandleContentRenderer tests', () => {
         fileHandleAssociation,
         previewType: PreviewRendererType.ZIP,
       }),
-      expect.anything(),
+      undefined,
     )
   })
 

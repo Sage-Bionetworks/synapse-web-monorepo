@@ -100,7 +100,7 @@ export function getUseQueryErrorMock<TError>(
     isPaused: false,
     isLoading: false,
     isPending: false,
-    promise: Promise.reject(new Error(String(error))),
+    promise: undefined as any,
   }
 }
 

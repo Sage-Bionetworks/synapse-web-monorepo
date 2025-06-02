@@ -319,7 +319,7 @@ describe('Submission Page tests', () => {
         submissionId: SUBMITTED_SUBMISSION_ID,
         onClose: expect.anything(),
       },
-      expect.anything(),
+      undefined,
     )
   })
 
@@ -429,7 +429,7 @@ describe('Submission Page tests', () => {
           accessRequirementId: String(mockManagedACTAccessRequirement.id),
           onClose: expect.any(Function),
         },
-        expect.anything(),
+        undefined,
       )
       expect(mockAccessRequirementList).not.toHaveBeenCalled()
     })
@@ -465,11 +465,11 @@ describe('Submission Page tests', () => {
           onHide: expect.any(Function),
           onSubmissionCreated: expect.any(Function),
         },
-        expect.anything(),
+        undefined,
       )
       expect(mockCancelSubmissionModal).not.toHaveBeenCalledWith(
         expect.objectContaining({ open: true }),
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -504,11 +504,11 @@ describe('Submission Page tests', () => {
           onHide: expect.any(Function),
           onSubmissionCreated: expect.any(Function),
         },
-        expect.anything(),
+        undefined,
       )
       expect(mockCancelSubmissionModal).not.toHaveBeenCalledWith(
         expect.objectContaining({ open: true }),
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -544,11 +544,11 @@ describe('Submission Page tests', () => {
           onHide: expect.any(Function),
           onSubmissionCreated: expect.any(Function),
         },
-        expect.anything(),
+        undefined,
       )
       expect(mockCancelSubmissionModal).not.toHaveBeenCalledWith(
         expect.objectContaining({ open: true }),
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -586,11 +586,11 @@ describe('Submission Page tests', () => {
           onHide: expect.any(Function),
           onSubmissionCreated: expect.any(Function),
         },
-        expect.anything(),
+        undefined,
       )
       expect(mockCancelSubmissionModal).not.toHaveBeenCalledWith(
         expect.objectContaining({ open: true }),
-        expect.anything(),
+        undefined,
       )
     })
 

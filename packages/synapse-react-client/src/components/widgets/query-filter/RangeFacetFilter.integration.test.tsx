@@ -180,7 +180,7 @@ describe('RangeFacetFilter tests', () => {
         expect.objectContaining({
           in: true,
         }),
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -193,7 +193,7 @@ describe('RangeFacetFilter tests', () => {
       expect.objectContaining({
         in: false,
       }),
-      expect.anything(),
+      undefined,
     )
   })
 

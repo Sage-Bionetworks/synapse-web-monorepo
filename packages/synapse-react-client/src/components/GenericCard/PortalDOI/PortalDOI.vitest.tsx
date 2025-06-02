@@ -92,7 +92,7 @@ describe('PortalDOI', () => {
         objectId: defaultProps.resourceId,
         portalId: defaultProps.portalId,
       }),
-      expect.anything(),
+      undefined,
     )
     // Check if the mocked modal content is rendered
     expect(screen.getByTestId('CreateOrUpdateDoiModal')).toBeInTheDocument()
@@ -109,7 +109,7 @@ describe('PortalDOI', () => {
       expect.objectContaining({
         open: false,
       }),
-      expect.anything(),
+      undefined,
     )
     // Check if the mocked modal content is removed
     expect(
@@ -167,7 +167,7 @@ describe('PortalDOI', () => {
         objectId: defaultProps.resourceId,
         portalId: defaultProps.portalId,
       }),
-      expect.anything(),
+      undefined,
     )
     expect(screen.getByTestId('CreateOrUpdateDoiModal')).toBeInTheDocument()
   })

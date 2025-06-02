@@ -229,7 +229,7 @@ describe('SynapseTableCell tests', () => {
           displayTextField: 'name',
           showIcon: false,
         }),
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -250,7 +250,7 @@ describe('SynapseTableCell tests', () => {
           displayTextField: 'id',
           showIcon: false,
         }),
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -271,7 +271,7 @@ describe('SynapseTableCell tests', () => {
           displayTextField: 'name',
           showIcon: false,
         }),
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -292,7 +292,7 @@ describe('SynapseTableCell tests', () => {
           displayTextField: 'id',
           showIcon: false,
         }),
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -313,7 +313,7 @@ describe('SynapseTableCell tests', () => {
           displayTextField: 'name',
           showIcon: false,
         }),
-        expect.anything(),
+        undefined,
       )
     })
   })

@@ -426,7 +426,7 @@ describe('ResearchProjectForm', () => {
         ownerId: mockManagedACTAccessRequirementWikiPageKey.ownerObjectId,
         objectType: mockManagedACTAccessRequirementWikiPageKey.ownerObjectType,
       }),
-      expect.anything(),
+      undefined,
     )
   })
 })

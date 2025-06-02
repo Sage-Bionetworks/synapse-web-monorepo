@@ -128,7 +128,7 @@ describe('Entity Page Title Bar', () => {
       {
         entityId: defaultProps.entityId,
       },
-      expect.anything(),
+      undefined,
     )
   })
   it('Shows version info component', async () => {
@@ -143,7 +143,7 @@ describe('Entity Page Title Bar', () => {
         versionNumber: defaultProps.versionNumber,
         toggleShowVersionHistory: toggleShowVersionHistory,
       }),
-      expect.anything(),
+      undefined,
     )
   })
   it('Shows the action menu', async () => {
@@ -152,7 +152,7 @@ describe('Entity Page Title Bar', () => {
     await screen.findByTestId(ENTITY_ACTION_MENU_TEST_ID)
     expect(EntityActionMenuModule.default).toHaveBeenCalledWith(
       defaultProps.entityActionMenuProps,
-      expect.anything(),
+      undefined,
     )
   })
   it('Shows the properties', async () => {
@@ -166,7 +166,7 @@ describe('Entity Page Title Bar', () => {
         onActMemberClickAddConditionsForUse:
           defaultProps.onActMemberClickAddConditionsForUse,
       }),
-      expect.anything(),
+      undefined,
     )
   })
 })

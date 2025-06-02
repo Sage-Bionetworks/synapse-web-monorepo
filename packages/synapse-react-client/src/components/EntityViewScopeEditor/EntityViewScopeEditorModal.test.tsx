@@ -213,7 +213,7 @@ describe('EntityViewScopeEditorModal tests', () => {
           isProjectView: false,
           onChange: expect.any(Function),
         },
-        expect.anything(),
+        undefined,
       )
     })
 

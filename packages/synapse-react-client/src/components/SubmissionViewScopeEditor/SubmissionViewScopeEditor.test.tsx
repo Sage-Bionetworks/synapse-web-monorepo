@@ -37,7 +37,7 @@ describe('SubmissionViewScopeEditor tests', () => {
           selectedIds: evaluationIds,
           onChange: onChange,
         },
-        expect.anything(),
+        undefined,
       )
     })
 

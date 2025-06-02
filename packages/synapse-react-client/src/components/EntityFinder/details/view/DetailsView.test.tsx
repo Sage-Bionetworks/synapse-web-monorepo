@@ -788,7 +788,7 @@ describe('DetailsView tests', () => {
               entityId: entityHeaders[0].id,
               versionNumber: undefined,
             }),
-            expect.anything(),
+            undefined,
           ),
         )
       })
@@ -828,7 +828,7 @@ describe('DetailsView tests', () => {
               entityId: entityHeaders[0].id,
               versionNumber: versionResult.results[1].versionNumber,
             }),
-            expect.anything(),
+            undefined,
           ),
         )
       })
@@ -868,7 +868,7 @@ describe('DetailsView tests', () => {
               entityId: entityHeaders[0].id,
               versionNumber: versionResult.results[0].versionNumber,
             }),
-            expect.anything(),
+            undefined,
           ),
         )
       })

@@ -307,7 +307,7 @@ describe('EntityFinder tests', () => {
       invokeSetConfigViaTree(configuration)
     })
     await waitFor(() =>
-      expect(mockDetailsList).toHaveBeenLastCalledWith(
+      expect(mockDetailsList).toHaveBeenCalledWith(
         expect.objectContaining({
           configuration: configuration, // !
           selectableTypes: defaultProps.selectableTypes,
@@ -316,7 +316,7 @@ describe('EntityFinder tests', () => {
             ...defaultProps.selectableTypes!,
           ],
         }),
-        {},
+        undefined,
       ),
     )
 
@@ -335,7 +335,7 @@ describe('EntityFinder tests', () => {
             [reference.targetId, { targetId: reference.targetId }],
           ]),
         }),
-        {},
+        undefined,
       ),
     )
   })
@@ -397,7 +397,7 @@ describe('EntityFinder tests', () => {
               },
             },
           }),
-          {},
+          undefined,
         ),
       )
       await waitFor(() =>
@@ -418,7 +418,7 @@ describe('EntityFinder tests', () => {
               },
             },
           }),
-          {},
+          undefined,
         ),
       )
 
@@ -490,7 +490,7 @@ describe('EntityFinder tests', () => {
               headerList: entityHeaderResult.results,
             },
           }),
-          {},
+          undefined,
         ),
       )
       expect(mockGetEntityHeaders).toBeCalledTimes(1)
@@ -507,7 +507,7 @@ describe('EntityFinder tests', () => {
               headerList: entityHeaderResultWithVersion.results,
             },
           }),
-          {},
+          undefined,
         ),
       )
 

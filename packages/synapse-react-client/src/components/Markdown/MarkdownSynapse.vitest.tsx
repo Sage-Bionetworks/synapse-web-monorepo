@@ -263,7 +263,7 @@ describe('MarkdownSynapse tests', () => {
           synapseId: 'syn7809125',
           version: '2',
         },
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -290,7 +290,7 @@ describe('MarkdownSynapse tests', () => {
           responsive: 'true',
           scale: '100',
         },
-        expect.anything(),
+        undefined,
       )
     })
   })

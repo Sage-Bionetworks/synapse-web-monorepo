@@ -131,7 +131,7 @@ import {
 import { Tooltip } from '@mui/material'
 import { SvgIconProps } from '@mui/material/SvgIcon/SvgIcon'
 import { EntityType } from '@sage-bionetworks/synapse-types'
-import { Fragment } from 'react'
+import { Fragment, ReactNode } from 'react'
 
 export const IconStrings = [
   'accessOpen',
@@ -570,23 +570,44 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
 function IconSvg(props: IconSvgProps) {
   const { icon, label = '', onClick, wrap = true, ...svgIconProps } = props
 
-  const Wrapper = wrap ? 'span' : Fragment
+  const id = `icon-${icon}`
+  const role = onClick ? 'button' : 'img'
+  const style = onClick ? { cursor: 'pointer' } : {}
+
   const wrapperProps = wrap
     ? {
         'data-svg': icon,
         className: 'styled-svg-wrapper',
-        id: `icon-${icon}`,
-        role: 'img',
+        id,
+        role,
         onClick,
-        style: onClick ? { cursor: 'pointer' } : {},
+        style,
       }
     : {}
 
+  let iconNode: ReactNode
+  if (wrap) {
+    iconNode = (
+      <span {...wrapperProps}>
+        <IconMapping icon={icon} {...svgIconProps} />
+      </span>
+    )
+  } else {
+    iconNode = (
+      <IconMapping
+        icon={icon}
+        id={id}
+        role={role}
+        onClick={onClick}
+        style={style}
+        {...svgIconProps}
+      />
+    )
+  }
+
   return (
     <Tooltip placement="top" title={label}>
-      <Wrapper {...wrapperProps}>
-        <IconMapping icon={icon} {...svgIconProps} />
-      </Wrapper>
+      {iconNode}
     </Tooltip>
   )
 }

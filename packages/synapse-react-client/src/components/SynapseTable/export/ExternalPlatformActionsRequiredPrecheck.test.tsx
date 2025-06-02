@@ -199,7 +199,7 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
           onViewSharingSettingsClicked:
             mockQueryContext.onViewSharingSettingsClicked,
         },
-        expect.anything(),
+        undefined,
       )
       act(() => {
         MockTableQueryActionsRequired.mock.lastCall![0]
@@ -265,7 +265,7 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
         onViewSharingSettingsClicked:
           mockQueryContext.onViewSharingSettingsClicked,
       },
-      expect.anything(),
+      undefined,
     )
     act(() => {
       MockTableQueryActionsRequired.mock.lastCall![0]
@@ -334,7 +334,7 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
         onViewSharingSettingsClicked:
           mockQueryContext.onViewSharingSettingsClicked,
       },
-      expect.anything(),
+      undefined,
     )
     act(() => {
       MockTableQueryActionsRequired.mock.lastCall![0]

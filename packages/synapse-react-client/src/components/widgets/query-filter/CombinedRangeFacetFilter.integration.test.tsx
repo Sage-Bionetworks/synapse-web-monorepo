@@ -247,7 +247,7 @@ describe('CombinedRangeFacetFilter tests', () => {
       expect.objectContaining({
         in: true,
       }),
-      expect.anything(),
+      undefined,
     )
 
     // toggle collapse via button
@@ -257,7 +257,7 @@ describe('CombinedRangeFacetFilter tests', () => {
       expect.objectContaining({
         in: false,
       }),
-      expect.anything(),
+      undefined,
     )
   })
 
