@@ -21,7 +21,6 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import type Plotly from 'plotly.js-basic-dist'
 import { useMemo, useState } from 'react'
-import { SizeMe } from 'react-sizeme'
 import { getContrastColorPalette } from '../../ColorGradient/ColorGradient'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 import loadingScreen from '../../LoadingScreen/LoadingScreen'
@@ -32,6 +31,7 @@ import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import { EnumFacetFilter } from '../query-filter/EnumFacetFilter/EnumFacetFilter'
 import { FacetPlotLegendList } from './FacetPlotLegendList'
 import { FacetWithLabel, truncate } from './FacetPlotLegendUtils'
+import { useMeasure } from '@react-hookz/web'
 
 export type FacetNavPanelProps = {
   applyChangesToGraphSlice: (
@@ -252,7 +252,7 @@ const applyFacetFilter = (
 }
 
 export function getPlotStyle(
-  parentWidth: number | null,
+  parentWidth: number | null | undefined,
   plotType: PlotType,
   maxHeight: number,
 ): { width: string; height: string } {
@@ -301,6 +301,8 @@ function FacetNavPanel(props: FacetNavPanelProps) {
   const { data: queryMetadata, isLoading: isLoadingQueryMetadata } =
     useGetQueryMetadata()
 
+  const [plotContainerMeasurements, plotContainerRef] =
+    useMeasure<HTMLDivElement>()
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
   const [showModal, setShowModal] = useState(false)
@@ -428,30 +430,22 @@ function FacetNavPanel(props: FacetNavPanelProps) {
             role="graphics-object"
             className="FacetNavPanel__body"
           >
-            <SizeMe monitorHeight noPlaceholder>
-              {({ size }) => (
-                <div>
-                  <Plot
-                    key={`${facetToPlot.columnName}-${facetToPlot.jsonPath}-${plotType}-${size.width}`}
-                    layout={layout}
-                    data={plotData?.data ?? []}
-                    style={getPlotStyle(
-                      size.width,
-                      plotType,
-                      isModalView ? 300 : 150,
-                    )}
-                    config={{ displayModeBar: false }}
-                    onClick={evt =>
-                      applyFacetFilter(
-                        evt,
-                        facetToPlot,
-                        applyChangesToGraphSlice,
-                      )
-                    }
-                  ></Plot>
-                </div>
-              )}
-            </SizeMe>
+            <div ref={plotContainerRef}>
+              <Plot
+                key={`${facetToPlot.columnName}-${facetToPlot.jsonPath}-${plotType}-${plotContainerMeasurements?.width}`}
+                layout={layout}
+                data={plotData?.data ?? []}
+                style={getPlotStyle(
+                  plotContainerMeasurements?.width,
+                  plotType,
+                  isModalView ? 300 : 150,
+                )}
+                config={{ displayModeBar: false }}
+                onClick={evt =>
+                  applyFacetFilter(evt, facetToPlot, applyChangesToGraphSlice)
+                }
+              />
+            </div>
             <FacetPlotLegendList
               labels={plotData?.labels}
               colors={plotData?.colors}

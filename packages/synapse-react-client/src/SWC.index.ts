@@ -30,7 +30,6 @@ import { DiscussionThread } from './components/Forum/DiscussionThread'
 import FullWidthAlert from './components/FullWidthAlert/FullWidthAlert'
 import { HasAccessV2 as HasAccess } from './components/HasAccess/HasAccessV2'
 import { HelpPopover } from './components/HelpPopover/HelpPopover'
-import ProjectViewCarousel from './components/ProjectViewCarousel/ProjectViewCarousel'
 import IconSvg from './components/IconSvg/IconSvg'
 import StandaloneLoginForm from './components/Authentication/StandaloneLoginForm'
 import PageProgress from './components/PageProgress/PageProgress'
@@ -110,7 +109,6 @@ import { RejectProfileValidationRequestModal } from './components/dataaccess/Rej
 import { GovernanceMarkdownGithub } from './components/Markdown/MarkdownGithub'
 import { MarkdownGithubLatestTag } from './components/Markdown/MarkdownGithub'
 import { ProjectDataAvailability } from './components/ProjectStorage/ProjectDataAvailability'
-import { EntityFileBrowser } from './components/EntityFileBrowser'
 import { CreateOrUpdateDoiModal } from './components/doi/CreateOrUpdateDoiModal'
 
 // Also include scss in the bundle
@@ -139,11 +137,9 @@ const SynapseComponents = {
   AccountLevelBadges,
   TermsAndConditions,
   PageProgress,
-  ProjectViewCarousel,
   SynapseHomepageV2,
   SynapsePlansPage,
   SynapseFooter,
-  EntityFileBrowser,
   EntityFinder,
   ErrorPage,
   EntityBadgeIcons,
