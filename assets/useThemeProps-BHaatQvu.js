@@ -1,0 +1,1 @@
+import{d as m}from"./DefaultPropsProvider-CQhminKs.js";import{T as o}from"./createTheme-BPHeU5pH.js";import{u as s}from"./Stack-Cqm_sIC4.js";function a({props:e,name:r}){return s({props:e,name:r,defaultTheme:m,themeId:o})}export{a as u};
