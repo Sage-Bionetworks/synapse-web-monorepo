@@ -661,9 +661,6 @@ const AccountSettings = () => {
                   onRegenerateBackupCodes={() => {
                     navigate('/authenticated/2fa/generatecodes')
                   }}
-                  onBeginTwoFactorEnrollment={() => {
-                    navigate('/authenticated/2fa/enroll')
-                  }}
                 />
               </Paper>
               <Paper

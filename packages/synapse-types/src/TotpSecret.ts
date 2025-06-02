@@ -12,6 +12,8 @@ export type TotpSecret = {
   digits: number
   /* The validity period for the TOTP */
   period: number
+  /* The username of the calling user. Can be used to display a friendly name in an authenticator app. */
+  username: string
 }
 
 /**
