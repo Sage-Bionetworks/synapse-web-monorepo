@@ -7,7 +7,6 @@ import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 export default function useMaybeForceEnable2FA() {
   // Detect if two factor authentication is enabled
   const { twoFactorStatus } = useApplicationSessionContext()
-  //
   const isFeatureFlagEnabled = useGetFeatureFlag(FeatureFlagEnum.MFA_REQUIRED)
   const navigate = useNavigate()
   const location = useLocation()
