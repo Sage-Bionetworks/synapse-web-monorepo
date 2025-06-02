@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/featureflags/useGetFeatureFlag'
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 
 export default function useMaybeForceEnable2FA() {
   // Detect if two factor authentication is enabled
   const { twoFactorStatus } = useApplicationSessionContext()
+  //
+  const isFeatureFlagEnabled = useGetFeatureFlag(FeatureFlagEnum.MFA_REQUIRED)
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -23,13 +27,13 @@ export default function useMaybeForceEnable2FA() {
         return
       }
       // redirect to 2FA enrollment if not enabled
-      if (!isTwoFactorEnabled) {
+      if (!isTwoFactorEnabled && isFeatureFlagEnabled) {
         navigate('/authenticated/2faRequired')
       } else {
         setMayForceEnable2FA(false)
       }
     }
-  }, [twoFactorStatus, location.pathname, navigate])
+  }, [twoFactorStatus, location.pathname, navigate, isFeatureFlagEnabled])
 
   return { mayForceEnable2FA }
 }
