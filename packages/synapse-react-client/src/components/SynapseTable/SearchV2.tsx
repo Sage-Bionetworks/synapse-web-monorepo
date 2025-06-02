@@ -311,6 +311,7 @@ class _Search extends Component<InternalSearchProps, SearchState> {
         </Collapse>
         <div className="QueryWrapperSearchInput__dropdown_pos">
           <CSSTransition
+            nodeRef={this.radioFormRef}
             in={show}
             classNames="QueryWrapperSearchInput__animate_dropdown"
             timeout={{ enter: 0, exit: 300 }}
