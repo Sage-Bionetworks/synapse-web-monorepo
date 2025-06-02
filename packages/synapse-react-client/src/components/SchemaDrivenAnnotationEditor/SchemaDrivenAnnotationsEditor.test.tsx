@@ -251,15 +251,21 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     },
   )
 
-  it('Works with no annotations and no schema', async () => {
+  it('Renders a default form state with one empty key-value field when no annotations or schema are present', async () => {
     server.use(noAnnotationsHandler, noSchemaHandler)
 
     await renderComponent()
-    await screen.findByText('has no annotations', { exact: false })
-    const buttons = await screen.findAllByRole('button')
 
-    // Expect one button to add annotations, and another to save
-    expect(buttons.length).toBe(2)
+    await screen.findByLabelText('Key')
+
+    const keyInput = screen.getByLabelText('Key')
+    expect(keyInput).toHaveValue('newKey')
+
+    const typeField = screen.getByLabelText(/type/i)
+    expect(typeField).toHaveValue('String')
+
+    const valuesInput = screen.getByPlaceholderText('New Value')
+    expect(valuesInput).toHaveValue('')
   })
 
   it('Fetches a schema, no annotations', async () => {

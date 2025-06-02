@@ -250,4 +250,31 @@ describe('SynapseCardLabel tests', () => {
     const link = screen.getByRole('link')
     expect(link.getAttribute('href')).toEqual(`https://some-override-link.gov`)
   })
+
+  it('maps a string to a React node with MapValueToReactNodeConfig', () => {
+    const value = 'syn1234567'
+    render(
+      <SynapseCardLabel
+        value={value}
+        labelLink={{
+          isMapValueToReactNodeConfig: true,
+          matchColumnName: 'dataset',
+          Component: ({ value, selectColumn }) => {
+            return (
+              <p>
+                The value is {value} and the column is {selectColumn.name}
+              </p>
+            )
+          },
+        }}
+        isHeader={false}
+        selectColumns={selectColumns}
+        columnModels={undefined}
+        columnName={'dataset'}
+        rowData={[value]}
+      />,
+      { wrapper: createWrapper() },
+    )
+    screen.getByText('The value is syn1234567 and the column is dataset')
+  })
 })

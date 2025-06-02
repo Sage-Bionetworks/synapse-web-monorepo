@@ -27,10 +27,10 @@ export const CHALLENGES_TABLE_COLUMN_NAMES = {
 // for the Explore page table:
 export const dataSql = `
     SELECT
+        isMature,
         concat('[', acronym, '](/Explore/Standard/DetailsPage?id=', id, ')') as acronym,
             name, category, collections, topic,
-            ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration, "usedInBridge2AI"
-            , hasAIApplication, isMature
+            ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration, "usedInBridge2AI", hasAIApplication
             FROM ${TABLE_IDS.DST_denormalized.id}
 `
 // removed topic column above to address @jay-hodgson's comment

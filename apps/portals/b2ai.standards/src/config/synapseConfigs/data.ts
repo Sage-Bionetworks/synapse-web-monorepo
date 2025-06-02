@@ -1,3 +1,4 @@
+import IsMatureIconMap from '@/components/IsMatureIconMap'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import {
   LabelLinkConfig,
@@ -21,6 +22,11 @@ export const dataColumnLinks: LabelLinkConfig = [
     // If set, also show a tooltip
     // tooltipText?: string
   },
+  {
+    matchColumnName: 'isMature',
+    isMapValueToReactNodeConfig: true,
+    Component: IsMatureIconMap,
+  },
 ]
 
 export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
@@ -34,7 +40,6 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     showDownloadColumn: false,
     columnLinks: dataColumnLinks,
   },
-
   facetsToPlot: [
     'topic',
     // 'Organizations',
