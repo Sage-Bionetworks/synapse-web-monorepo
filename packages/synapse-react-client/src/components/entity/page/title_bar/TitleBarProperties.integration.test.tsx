@@ -43,6 +43,11 @@ vi.spyOn(HasAccessModule, 'HasAccessV2').mockImplementation(() => (
   <span data-testid={HAS_ACCESS_V2_DATA_TEST_ID}></span>
 ))
 
+const useGetEntityTitleBarPropertiesSpy = vi.spyOn(
+  UseGetEntityPropertiesModule,
+  'useGetEntityTitleBarProperties',
+)
+
 const mockOnActClick = vi.fn()
 
 function useEntityBundleOverride(bundle: EntityBundle) {
@@ -103,10 +108,7 @@ describe('TitleBarProperties', () => {
   describe('Show/Hide properties', () => {
     it('Shows all properties if there are 6 or less', async () => {
       // Mock useGetEntityTitleBarProperties to return 6 properties
-      vi.spyOn(
-        UseGetEntityPropertiesModule,
-        'useGetEntityTitleBarProperties',
-      ).mockImplementation(() => {
+      useGetEntityTitleBarPropertiesSpy.mockImplementation(() => {
         const properties = []
         for (let i = 1; i <= 6; i++) {
           properties.push({
@@ -129,10 +131,7 @@ describe('TitleBarProperties', () => {
     })
     it('Shows 4 properties and can expand to show more if there are > 6', async () => {
       // Mock useGetEntityTitleBarProperties to return 8 properties
-      vi.spyOn(
-        UseGetEntityPropertiesModule,
-        'useGetEntityTitleBarProperties',
-      ).mockImplementation(() => {
+      useGetEntityTitleBarPropertiesSpy.mockImplementation(() => {
         const properties = []
         for (let i = 1; i <= 8; i++) {
           properties.push({
@@ -185,10 +184,7 @@ describe('TitleBarProperties', () => {
   })
   describe('Displays individual properties', () => {
     beforeEach(() => {
-      vi.spyOn(
-        UseGetEntityPropertiesModule,
-        'useGetEntityTitleBarProperties',
-      ).mockRestore()
+      useGetEntityTitleBarPropertiesSpy.mockRestore()
     })
     it('SynID', async () => {
       renderComponent()

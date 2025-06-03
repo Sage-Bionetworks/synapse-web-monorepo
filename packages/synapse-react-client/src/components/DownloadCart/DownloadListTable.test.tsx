@@ -9,6 +9,16 @@ import {
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import DownloadListTableV2 from './DownloadListTable'
+import { copyStringToClipboard } from '@/utils/functions/StringUtils'
+
+vi.mock('@/utils/functions/StringUtils', async importOriginal => {
+  return {
+    ...(await importOriginal()),
+    copyStringToClipboard: vi.fn().mockResolvedValue('copied'),
+  }
+})
+
+const mockCopyStringToClipboard = vi.mocked(copyStringToClipboard)
 
 vi.spyOn(SynapseClient, 'removeItemsFromDownloadListV2').mockResolvedValue({
   numberOfFilesRemoved: 2,
@@ -95,30 +105,13 @@ describe('DownloadListTable tests', () => {
     expect(fileEntity2).toHaveLength(1)
   })
   describe('Copy all Synapse IDs', () => {
-    const originalClipboard = { ...global.navigator.clipboard }
-    afterEach(() => {
-      Object.assign(navigator, {
-        clipboard: originalClipboard,
-      })
-    })
-
     it('should call clipboard.writeText with the expected Synapse IDs', async () => {
-      const mockWriteText = vi.fn()
-      mockWriteText.mockResolvedValue('copied')
-      const mockClipboard = {
-        writeText: mockWriteText,
-      }
-      Object.assign(navigator, {
-        clipboard: mockClipboard,
-      })
-
       renderComponent()
 
       const copySynIDsButton = await screen.findByTestId('copySynIdsButton')
       await userEvent.click(copySynIDsButton)
 
-      expect(mockWriteText).toHaveBeenCalled()
-      expect(mockWriteText).toHaveBeenCalledWith('syn1.1\nsyn2.3')
+      expect(mockCopyStringToClipboard).toHaveBeenCalledWith('syn1.1\nsyn2.3')
     })
   })
 })

@@ -8,6 +8,110 @@ import {
 import noop from 'lodash-es/noop'
 import { Dispatch, SetStateAction, useState } from 'react'
 
+/**
+ * Returns a mock instance for useQuery, as well as functions to manipulate the mock hook's state, and
+ * mocks for function(s) returned by the hook.
+ *
+ * Example usage:
+ * ```tsx
+ * const { mock, setSuccess } = getUseQueryMock<MyDataType, MyErrorType>();
+ *
+ * // Set the mock implementation
+ * myMockedHook.mockImplementation(mock);
+ *
+ * // ...optionally verify a loading state in your component/hook
+ *
+ * // Update the hook's state to success with data
+ * act(() => { myMockedHook.setSuccess(myDataArray, true); });
+ * ```
+ */
+export function getUseQueryMock<TData = unknown, TError = unknown>() {
+  // Stable mock functions
+  const mockRefetch = vi.fn()
+
+  let currentSetValue: Dispatch<
+    SetStateAction<UseQueryResult<TData, TError>>
+  > | null = null
+
+  const setSuccess = (data: TData) => {
+    if (currentSetValue) {
+      const successState: UseQueryResult<TData, TError> = {
+        data: data,
+        status: 'success',
+        isSuccess: true,
+        isPending: false,
+        isLoading: false,
+        isError: false,
+        error: null,
+        isFetched: true,
+        isFetchedAfterMount: true,
+        isFetching: false,
+        isInitialLoading: false,
+        isLoadingError: false,
+        isRefetchError: false,
+        isRefetching: false,
+        fetchStatus: 'idle',
+        isPaused: false,
+        dataUpdatedAt: Date.now(),
+        errorUpdatedAt: 0,
+        errorUpdateCount: 0,
+        failureCount: 0,
+        failureReason: null,
+        refetch: mockRefetch,
+        isPlaceholderData: false,
+        isStale: false,
+      }
+
+      currentSetValue(successState)
+    } else {
+      console.warn(
+        'setSuccess called before mock query was rendered or setValue was captured.',
+      )
+    }
+  }
+  // let setError: (error: TError) => void = () => {}
+  // let setLoading: () => void = () => {}
+  const mock = function useMockQuery() {
+    const [value, setValue] = useState<UseQueryResult<TData, TError>>({
+      data: undefined,
+      fetchStatus: 'fetching',
+      dataUpdatedAt: 0,
+      error: null,
+      errorUpdateCount: 0,
+      errorUpdatedAt: 0,
+      failureCount: 0,
+      failureReason: null,
+      isError: false,
+      isFetched: false,
+      isFetchedAfterMount: false,
+      isFetching: false,
+      isInitialLoading: false,
+      isLoading: true,
+      isLoadingError: false,
+      isPaused: false,
+      isPending: true,
+      isPlaceholderData: false,
+      isRefetchError: false,
+      isRefetching: false,
+      isStale: false,
+      isSuccess: false,
+      refetch: mockRefetch,
+      status: 'pending',
+    })
+
+    currentSetValue = setValue
+
+    return value
+  }
+  return {
+    mock: mock,
+    mockRefetch: mockRefetch,
+    setSuccess,
+    // setError,
+    // setLoading,
+  }
+}
+
 export function getUseQuerySuccessMock<TData>(
   data: TData,
 ): QueryObserverSuccessResult<TData, never> {
@@ -294,7 +398,7 @@ export function getUseInfiniteQueryMock<TData = unknown, TError = unknown>() {
       UseInfiniteQueryResult<{ pages: TData[] }, TError>
     >({
       data: undefined,
-      fetchStatus: 'idle',
+      fetchStatus: 'fetching',
       dataUpdatedAt: 0,
       error: null,
       errorUpdateCount: 0,
