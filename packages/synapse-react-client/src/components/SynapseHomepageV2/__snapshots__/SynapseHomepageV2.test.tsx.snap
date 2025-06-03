@@ -448,110 +448,114 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
       <div
         class="MuiBox-root css-0"
       >
-        <h1
-          class="MuiTypography-root MuiTypography-headline1 css-bypmur-MuiTypography-root"
-        >
-          We partner with scientific leaders
-        </h1>
         <div
-          class="MuiBox-root css-wntgvd"
+          class="MuiBox-root css-9tr5ma"
         >
           <h1
-            class="MuiTypography-root MuiTypography-headline1 css-gacos-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-headline1 css-bypmur-MuiTypography-root"
           >
-            Synapse is your ecosystem for responsible data sharing, innovative data reuse, and collaboration.
+            We partner with scientific leaders
           </h1>
-        </div>
-        <div
-          class="MuiBox-root css-16vxqzz"
-        >
           <div
-            class="MuiBox-root css-4tws0t"
+            class="MuiBox-root css-wntgvd"
           >
-            <a
-              href="https://sloan.org/"
-              rel="noreferrer"
-              target="_blank"
+            <h1
+              class="MuiTypography-root MuiTypography-headline1 css-gacos-MuiTypography-root"
             >
-              <svg />
-            </a>
-            <a
-              href="https://www.aacr.org/"
-              rel="noreferrer"
-              target="_blank"
+              Synapse is your ecosystem for responsible data sharing, innovative data reuse, and collaboration.
+            </h1>
+          </div>
+          <div
+            class="MuiBox-root css-16vxqzz"
+          >
+            <div
+              class="MuiBox-root css-4tws0t"
             >
-              <svg />
-            </a>
-            <a
-              href="https://www.cancerresearch.org/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              <svg />
-            </a>
-            <a
-              href="https://www.ctf.org/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              <svg />
-            </a>
-            <a
-              href="https://gilbertfamilyfoundation.org/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              <svg />
-            </a>
-            <a
-              href="http://grayfoundation.org/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              <svg />
-            </a>
-            <a
-              href="https://mlcommons.org/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              <svg />
-            </a>
-            <a
-              href="https://www.cancer.gov/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              <svg />
-            </a>
-            <a
-              href="https://www.nhlbi.nih.gov/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              <svg />
-            </a>
-            <a
-              href="https://www.nia.nih.gov/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              <svg />
-            </a>
-            <a
-              href="https://www.nimh.nih.gov/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              <svg />
-            </a>
-            <a
-              href="https://www.n-tap.org/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              <svg />
-            </a>
+              <a
+                href="https://sloan.org/"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <svg />
+              </a>
+              <a
+                href="https://www.aacr.org/"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <svg />
+              </a>
+              <a
+                href="https://www.cancerresearch.org/"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <svg />
+              </a>
+              <a
+                href="https://www.ctf.org/"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <svg />
+              </a>
+              <a
+                href="https://gilbertfamilyfoundation.org/"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <svg />
+              </a>
+              <a
+                href="http://grayfoundation.org/"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <svg />
+              </a>
+              <a
+                href="https://mlcommons.org/"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <svg />
+              </a>
+              <a
+                href="https://www.cancer.gov/"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <svg />
+              </a>
+              <a
+                href="https://www.nhlbi.nih.gov/"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <svg />
+              </a>
+              <a
+                href="https://www.nia.nih.gov/"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <svg />
+              </a>
+              <a
+                href="https://www.nimh.nih.gov/"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <svg />
+              </a>
+              <a
+                href="https://www.n-tap.org/"
+                rel="noreferrer"
+                target="_blank"
+              >
+                <svg />
+              </a>
+            </div>
           </div>
         </div>
         <div
@@ -804,7 +808,7 @@ exports[`SynapseHomepageV2 Snapshot test Basic home page 1`] = `
         class="MuiBox-root css-gngfd0"
       >
         <h1
-          class="MuiTypography-root MuiTypography-headline1 css-p75j6w-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-headline1 css-l1zt5l-MuiTypography-root"
         >
           Featured datasets
         </h1>
