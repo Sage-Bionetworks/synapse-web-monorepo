@@ -51,7 +51,7 @@ export type SchemaDrivenAnnotationEditorProps = {
   /** May be used to directly provide a JSON Schema to use for the form */
   validationSchema?: JSONSchema7
   /** Optionally supply a ref to the form to handle submission externally with `formRef.current.submit()`. */
-  formRef?: RefObject<RJSF>
+  formRef?: RefObject<RJSF | null>
   /** Provide live input validation. This can cause performance degradation. By default, liveValidate will be true if an entity with a schema and existing annotations is being edited */
   liveValidate?: boolean
   /** Invoked after a successful form submission */
@@ -257,7 +257,13 @@ export function SchemaDrivenAnnotationEditor(
           )}
           {showHasNoAnnotationsAlert && (
             <Alert severity="info">
-              <Box display={'flex'} alignItems={'center'} gap={0.5}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 0.5,
+                }}
+              >
                 <Typography variant={'smallText1'}>
                   <b>{entityJson.name}</b> has no annotations. Click the{' '}
                 </Typography>
@@ -341,9 +347,11 @@ export function SchemaDrivenAnnotationEditor(
               <>
                 <Divider sx={{ my: 2 }} />
                 <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  sx={{ gridRowStart: 5 }}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gridRowStart: 5,
+                  }}
                 >
                   <ConfirmationButtons
                     hasCancelButton={onCancel !== undefined}

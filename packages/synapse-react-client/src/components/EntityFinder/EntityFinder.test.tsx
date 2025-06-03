@@ -316,7 +316,7 @@ describe('EntityFinder tests', () => {
           ...defaultProps.selectableTypes!,
         ],
       }),
-      {},
+      undefined,
     )
 
     const reference: Reference = {
@@ -334,7 +334,7 @@ describe('EntityFinder tests', () => {
             [reference.targetId, { targetId: reference.targetId }],
           ]),
         }),
-        {},
+        undefined,
       ),
     )
   })
@@ -396,7 +396,7 @@ describe('EntityFinder tests', () => {
               },
             },
           }),
-          {},
+          undefined,
         ),
       )
       await waitFor(() =>
@@ -417,7 +417,7 @@ describe('EntityFinder tests', () => {
               },
             },
           }),
-          {},
+          undefined,
         ),
       )
 
@@ -489,7 +489,7 @@ describe('EntityFinder tests', () => {
               headerList: entityHeaderResult.results,
             },
           }),
-          {},
+          undefined,
         ),
       )
       expect(mockGetEntityHeaders).toBeCalledTimes(1)
@@ -506,7 +506,7 @@ describe('EntityFinder tests', () => {
               headerList: entityHeaderResultWithVersion.results,
             },
           }),
-          {},
+          undefined,
         ),
       )
 

@@ -210,7 +210,7 @@ describe('EntityUpload', () => {
         onRemove: hookReturnValue.uploadProgress[0].remove,
         errorMessage: undefined,
       },
-      expect.anything(),
+      undefined,
     )
 
     await screen.findByText('Uploading 1 Item')
@@ -378,7 +378,7 @@ describe('EntityUpload', () => {
           usage:
             mockSynapseStorageUploadDestination.projectStorageLocationUsage,
         },
-        expect.anything(),
+        undefined,
       )
 
       expect(mockUseUploadFileEntities).toHaveBeenCalled()
@@ -396,7 +396,7 @@ describe('EntityUpload', () => {
         didUploadsExceedLimit: true,
         usage: mockSynapseStorageUploadDestination.projectStorageLocationUsage,
       },
-      expect.anything(),
+      undefined,
     )
   })
 })

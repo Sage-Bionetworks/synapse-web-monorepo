@@ -69,7 +69,13 @@ export function TableColumnSchemaFormActions(
     : 0
 
   return (
-    <Box display={'flex'} alignItems={'flex-start'} gap={1}>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 1,
+      }}
+    >
       <Button
         aria-label={'Select All'}
         variant={'outlined'}
@@ -86,7 +92,12 @@ export function TableColumnSchemaFormActions(
           indeterminate={numSelected > 0 && !allSelected}
           disabled={disabled || columnModels.length == 0}
         />
-        <Typography variant="smallText1" color={'text.secondary'}>
+        <Typography
+          variant="smallText1"
+          sx={{
+            color: 'text.secondary',
+          }}
+        >
           {numSelected} selected
         </Typography>
       </Button>
@@ -126,7 +137,13 @@ export function TableColumnSchemaFormActions(
       >
         <IconSvg fontSize={'small'} icon={'delete'} wrap={false} />
       </Button>
-      <Box flexGrow={1}>{/* spacer */}</Box>
+      <Box
+        sx={{
+          flexGrow: 1,
+        }}
+      >
+        {/* spacer */}
+      </Box>
       <Link
         sx={{ display: 'block', py: '10px', mr: '10px', textAlign: 'right' }}
         href="https://help.synapse.org/docs/Organizing-Data-With-Tables.2011038095.html"

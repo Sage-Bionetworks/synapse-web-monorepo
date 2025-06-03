@@ -152,7 +152,7 @@ export function ObjectFieldTemplate<
           <Button
             sx={{ my: 2 }}
             variant="contained"
-            className="object-property-expand"
+            className="rjsf-object-property-expand"
             onClick={onAddClick(schema)}
             disabled={disabled || readonly}
             aria-label={'Add Custom Field'}

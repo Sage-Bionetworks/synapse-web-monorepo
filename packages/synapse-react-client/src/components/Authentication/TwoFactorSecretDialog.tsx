@@ -25,7 +25,13 @@ export default function TwoFactorSecretDialog(
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>
-        <Stack direction="row" alignItems={'center'} gap={'5px'}>
+        <Stack
+          direction="row"
+          sx={{
+            alignItems: 'center',
+            gap: '5px',
+          }}
+        >
           Use this code to set up 2FA <Box sx={{ flexGrow: 1 }} />
           <IconButton aria-label={'Close'} onClick={onClose}>
             <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />

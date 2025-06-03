@@ -1,8 +1,13 @@
 import mockSyn26438037Counts from '@/mocks/query/syn26438037Counts.json'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import { Queries, render, RenderResult, screen } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
+import {
+  act,
+  Queries,
+  render,
+  RenderResult,
+  screen,
+} from '@testing-library/react'
 import { SynapseClient } from '../../index'
 import SynapsePlot, { SynapsePlotProps } from './SynapsePlot'
 

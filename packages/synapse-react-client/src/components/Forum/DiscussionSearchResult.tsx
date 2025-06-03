@@ -80,7 +80,12 @@ const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
 
   return (
     <div className="search-result-container">
-      <Box display={'grid'} gridTemplateColumns={'40px auto'}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: '40px auto',
+        }}
+      >
         <div>
           {isLoading ? (
             <Skeleton variant="circular" width="30px" height={'30px'} />

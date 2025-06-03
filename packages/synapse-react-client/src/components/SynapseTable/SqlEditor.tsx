@@ -73,33 +73,36 @@ export function SqlEditor({
       <Collapse in={showSqlEditor} timeout={{ enter: 300, exit: 300 }}>
         <form onSubmit={search}>
           <TextField
-            inputProps={{
-              ref: inputRef,
-            }}
             sx={{ width: '100%' }}
-            InputProps={{
-              startAdornment: (
-                <IconSvg
-                  icon="search"
-                  wrap={false}
-                  sx={{
-                    mr: 1,
-                    color: 'grey.600',
-                  }}
-                />
-              ),
-              endAdornment: (
-                <HelpPopover
-                  markdownText={helpMessage}
-                  helpUrl={helpUrl}
-                  placement="right"
-                />
-              ),
-            }}
             onChange={handleChange}
             placeholder="Enter Query"
             value={sql}
             type="text"
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <IconSvg
+                    icon="search"
+                    wrap={false}
+                    sx={{
+                      mr: 1,
+                      color: 'grey.600',
+                    }}
+                  />
+                ),
+                endAdornment: (
+                  <HelpPopover
+                    markdownText={helpMessage}
+                    helpUrl={helpUrl}
+                    placement="right"
+                  />
+                ),
+              },
+
+              htmlInput: {
+                ref: inputRef,
+              },
+            }}
           />
         </form>
       </Collapse>

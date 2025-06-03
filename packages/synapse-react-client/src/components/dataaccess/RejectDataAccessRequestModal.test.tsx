@@ -78,7 +78,7 @@ describe('RejectDataAccessRequestModal', () => {
           rejectionFormPromptCopy: REJECTION_FORM_PROMPT_COPY,
           tableId: REJECT_SUBMISSION_CANNED_RESPONSES_TABLE,
         },
-        expect.anything(),
+        undefined,
       )
     })
 

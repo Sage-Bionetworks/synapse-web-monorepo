@@ -259,10 +259,7 @@ describe('TableRowGenericCard tests', () => {
       'TableEntity',
     )
     screen.getByTestId('IconSvg')
-    expect(mockIconSvg).toHaveBeenCalledWith(
-      { icon: 'folder' },
-      expect.anything(),
-    )
+    expect(mockIconSvg).toHaveBeenCalledWith({ icon: 'folder' }, undefined)
   })
 
   describe('Renders a FileHandleLink when the title is a file handle', () => {
@@ -294,7 +291,7 @@ describe('TableRowGenericCard tests', () => {
           },
           displayValue: MOCKED_TITLE,
         },
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -318,7 +315,7 @@ describe('TableRowGenericCard tests', () => {
           },
           displayValue: MOCKED_TITLE,
         },
-        expect.anything(),
+        undefined,
       )
     })
   })
@@ -354,7 +351,7 @@ describe('TableRowGenericCard tests', () => {
             associateObjectType: FileHandleAssociateType.FileEntity,
           },
         },
-        expect.anything(),
+        undefined,
       )
     })
     test('Renders a ImageFileHandle with a table associate type', async () => {
@@ -379,7 +376,7 @@ describe('TableRowGenericCard tests', () => {
             associateObjectType: FileHandleAssociateType.TableEntity,
           },
         },
-        expect.anything(),
+        undefined,
       )
     })
   })
@@ -519,7 +516,7 @@ describe('TableRowGenericCard tests', () => {
         portalId: '12345',
         resourceId: 'someDoiString',
       },
-      expect.anything(),
+      undefined,
     )
   })
 

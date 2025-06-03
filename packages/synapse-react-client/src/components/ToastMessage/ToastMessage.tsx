@@ -4,6 +4,7 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import FullWidthAlert, {
   AlertButtonConfig,
 } from '../FullWidthAlert/FullWidthAlert'
+import { useRef } from 'react'
 
 export type ToastMessageProps = {
   text: string
@@ -17,14 +18,18 @@ export type ToastMessageProps = {
  * cannot handle issuing multiple toast messages. For more sophisticated cases, see {@link displayToast}
  */
 export function ToastMessage({ text, show, autohide }: ToastMessageProps) {
+  const modalRef = useRef<HTMLDivElement>(null)
   return (
     <TransitionGroup>
       {show && (
         <CSSTransition
+          nodeRef={modalRef}
           classNames="SRC-card"
           timeout={autohide ? { enter: 500, exit: 300 } : {}}
         >
-          <div className="SRC-modal">{text}</div>
+          <div className="SRC-modal" ref={modalRef}>
+            {text}
+          </div>
         </CSSTransition>
       )}
     </TransitionGroup>

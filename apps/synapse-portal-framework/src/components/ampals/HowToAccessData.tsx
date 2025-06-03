@@ -138,7 +138,7 @@ const HowToAccessData = () => {
           >
             <GeneExpressionOmnibusLogo />
             <RDCADAP />
-            <SynapseFullLogo textColor={'#2E4761'} />
+            <SynapseFullLogo color={'#2E4761'} />
           </Box>
         </Box>
       </Stack>

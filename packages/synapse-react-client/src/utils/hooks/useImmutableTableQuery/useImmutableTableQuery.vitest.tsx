@@ -1,14 +1,15 @@
-import { act, renderHook } from '@testing-library/react'
-import { cloneDeep } from 'lodash-es'
-import useImmutableTableQuery, {
-  DEBOUNCE_DELAY_MS,
-  UseImmutableTableQueryOptions,
-} from './useImmutableTableQuery'
-import * as DeepLinkingUtils from '../../functions/deepLinkingUtils'
 import {
   ColumnSingleValueFilterOperator,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
+import { act, renderHook } from '@testing-library/react'
+import { cloneDeep } from 'lodash-es'
+import { beforeEach, describe, it, test, vi } from 'vitest'
+import * as DeepLinkingUtils from '../../functions/deepLinkingUtils'
+import useImmutableTableQuery, {
+  DEBOUNCE_DELAY_MS,
+  UseImmutableTableQueryOptions,
+} from './useImmutableTableQuery'
 
 const options: UseImmutableTableQueryOptions = {
   initQueryRequest: {
@@ -71,7 +72,7 @@ const initialQueryWithFilter: QueryBundleRequest = {
 
 describe('useImmutableTableQuery tests', () => {
   beforeEach(() => {
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
 
   it('Returns the entity ID and version in the passed query', () => {
@@ -165,7 +166,7 @@ describe('useImmutableTableQuery tests', () => {
   })
 
   it('Calls onQueryChange when the query is modified', () => {
-    const onQueryChange = jest.fn()
+    const onQueryChange = vi.fn()
     const { result } = renderHook(() =>
       useImmutableTableQuery({
         ...options,
@@ -186,7 +187,7 @@ describe('useImmutableTableQuery tests', () => {
   })
 
   it('Updates the query if initQueryRequest changes', () => {
-    const onQueryChange = jest.fn()
+    const onQueryChange = vi.fn()
     const { rerender } = renderHook(props => useImmutableTableQuery(props), {
       initialProps: { ...options, onQueryChange },
     })
@@ -207,7 +208,7 @@ describe('useImmutableTableQuery tests', () => {
   })
 
   it('Updates the URL if shouldDeepLink is true', () => {
-    const mockUpdateUrl = jest
+    const mockUpdateUrl = vi
       .spyOn(DeepLinkingUtils, 'updateUrlWithNewSearchParam')
       .mockImplementation(() => {})
     const { result } = renderHook(() =>
@@ -243,7 +244,7 @@ describe('useImmutableTableQuery tests', () => {
 
   it('Updates the query on mount one is found in the URL', () => {
     const sqlInURL = 'SELECT * FROM syn123.3 WHERE "foo"=\'baz\''
-    const mockUpdateUrl = jest
+    const mockUpdateUrl = vi
       .spyOn(DeepLinkingUtils, 'getQueryRequestFromLink')
       .mockImplementation(() => {
         return {
@@ -267,7 +268,7 @@ describe('useImmutableTableQuery tests', () => {
   })
 
   it('onConfirmChange works when required', () => {
-    const onQueryChange = jest.fn()
+    const onQueryChange = vi.fn()
     const { result } = renderHook(() =>
       useImmutableTableQuery({
         ...options,
@@ -300,7 +301,7 @@ describe('useImmutableTableQuery tests', () => {
   })
 
   it('onCancelChange works when confirmation is required', () => {
-    const onQueryChange = jest.fn()
+    const onQueryChange = vi.fn()
     const { result } = renderHook(() =>
       useImmutableTableQuery({
         ...options,
@@ -333,7 +334,7 @@ describe('useImmutableTableQuery tests', () => {
   })
 
   it('does not trigger required confirmation if only pagination parameters change', () => {
-    const onQueryChange = jest.fn()
+    const onQueryChange = vi.fn()
     const { result } = renderHook(() =>
       useImmutableTableQuery({
         ...options,
@@ -1036,8 +1037,8 @@ describe('useImmutableTableQuery tests', () => {
   })
 
   it('delays committing one change with debounce delay', () => {
-    jest.useFakeTimers()
-    const onQueryChange = jest.fn()
+    vi.useFakeTimers()
+    const onQueryChange = vi.fn()
     const { result } = renderHook(() =>
       useImmutableTableQuery({
         ...options,
@@ -1057,16 +1058,16 @@ describe('useImmutableTableQuery tests', () => {
     expect(onQueryChange).not.toHaveBeenCalled()
 
     act(() => {
-      jest.advanceTimersByTime(DEBOUNCE_DELAY_MS)
+      vi.advanceTimersByTime(DEBOUNCE_DELAY_MS)
     })
     expect(onQueryChange).toHaveBeenCalledWith(JSON.stringify(newQuery.query))
 
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   it('delays committing multiple changes with debounce delay', () => {
-    jest.useFakeTimers()
-    const onQueryChange = jest.fn()
+    vi.useFakeTimers()
+    const onQueryChange = vi.fn()
     const { result } = renderHook(() =>
       useImmutableTableQuery({
         ...options,
@@ -1086,7 +1087,7 @@ describe('useImmutableTableQuery tests', () => {
     expect(onQueryChange).not.toHaveBeenCalled()
 
     act(() => {
-      jest.advanceTimersByTime(DEBOUNCE_DELAY_MS / 2)
+      vi.advanceTimersByTime(DEBOUNCE_DELAY_MS / 2)
     })
     // Still should not have been committed
     expect(onQueryChange).not.toHaveBeenCalled()
@@ -1099,23 +1100,23 @@ describe('useImmutableTableQuery tests', () => {
     })
     // Timer is reset, so advancing again by half the delay should not commit
     act(() => {
-      jest.advanceTimersByTime(DEBOUNCE_DELAY_MS / 2)
+      vi.advanceTimersByTime(DEBOUNCE_DELAY_MS / 2)
     })
     expect(onQueryChange).not.toHaveBeenCalled()
 
     // Finish the timer
     act(() => {
-      jest.advanceTimersByTime(DEBOUNCE_DELAY_MS / 2)
+      vi.advanceTimersByTime(DEBOUNCE_DELAY_MS / 2)
     })
 
     expect(onQueryChange).toHaveBeenCalledWith(JSON.stringify(newQuery2.query))
 
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   it('allows resetting the debounce timer', () => {
-    jest.useFakeTimers()
-    const onQueryChange = jest.fn()
+    vi.useFakeTimers()
+    const onQueryChange = vi.fn()
     const { result } = renderHook(() =>
       useImmutableTableQuery({
         ...options,
@@ -1135,7 +1136,7 @@ describe('useImmutableTableQuery tests', () => {
     expect(onQueryChange).not.toHaveBeenCalled()
 
     act(() => {
-      jest.advanceTimersByTime(DEBOUNCE_DELAY_MS / 2)
+      vi.advanceTimersByTime(DEBOUNCE_DELAY_MS / 2)
     })
     // Still should not have been committed
     expect(onQueryChange).not.toHaveBeenCalled()
@@ -1145,23 +1146,23 @@ describe('useImmutableTableQuery tests', () => {
     })
     // Timer is reset, so advancing again by half the delay should not commit
     act(() => {
-      jest.advanceTimersByTime(DEBOUNCE_DELAY_MS / 2)
+      vi.advanceTimersByTime(DEBOUNCE_DELAY_MS / 2)
     })
     expect(onQueryChange).not.toHaveBeenCalled()
 
     // Finish the timer
     act(() => {
-      jest.advanceTimersByTime(DEBOUNCE_DELAY_MS / 2)
+      vi.advanceTimersByTime(DEBOUNCE_DELAY_MS / 2)
     })
 
     expect(onQueryChange).toHaveBeenCalledWith(JSON.stringify(newQuery.query))
 
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   it('commits changes only when explicitly committed when noCommit', () => {
-    jest.useFakeTimers()
-    const onQueryChange = jest.fn()
+    vi.useFakeTimers()
+    const onQueryChange = vi.fn()
     const { result } = renderHook(() =>
       useImmutableTableQuery({
         ...options,
@@ -1186,6 +1187,6 @@ describe('useImmutableTableQuery tests', () => {
     })
     expect(onQueryChange).toHaveBeenCalledWith(JSON.stringify(newQuery.query))
 
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 })

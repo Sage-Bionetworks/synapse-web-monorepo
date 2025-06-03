@@ -13,7 +13,7 @@ import { signOut } from 'synapse-react-client/synapse-client/SynapseClient'
 interface AccountSettingsTopBarProps {
   accountSettingsPanelConfig: Array<{
     label: string
-    ref: RefObject<HTMLDivElement>
+    ref: RefObject<HTMLDivElement | null>
   }>
 }
 

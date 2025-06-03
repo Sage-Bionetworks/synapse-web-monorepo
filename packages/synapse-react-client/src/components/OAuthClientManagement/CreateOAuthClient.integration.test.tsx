@@ -195,7 +195,7 @@ describe('Create OAuth Client', () => {
         title: warningHeader,
         content: warningBody,
       }),
-      expect.anything(),
+      undefined,
     )
   })
 
@@ -317,7 +317,7 @@ describe('Create OAuth Client', () => {
         title: warningHeader,
         content: warningBody,
       }),
-      expect.anything(),
+      undefined,
     )
   })
 })

@@ -538,7 +538,7 @@ describe('Dataset Items Editor tests', () => {
           entityId: mockFileReference.targetId,
           versionNumber: mockFileReference.targetVersionNumber,
         }),
-        expect.anything(),
+        undefined,
       ),
     )
 
@@ -552,7 +552,7 @@ describe('Dataset Items Editor tests', () => {
           entityId: mockFileReference.targetId,
           versionNumber: 1,
         }),
-        expect.anything(),
+        undefined,
       ),
     )
 
@@ -799,7 +799,7 @@ describe('Dataset Items Editor tests', () => {
             selectableTypes: [EntityType.DATASET],
           }),
         }),
-        expect.anything(),
+        undefined,
       )
 
       await clickSave(user)

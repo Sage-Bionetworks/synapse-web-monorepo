@@ -296,7 +296,13 @@ export function Node(
   if (isEntityHeaderNode(node)) {
     tooltipContent = (
       <div style={{ textAlign: 'center' }}>
-        <Typography display="inline" component="span" variant="smallText1">
+        <Typography
+          component="span"
+          variant="smallText1"
+          sx={{
+            display: 'inline',
+          }}
+        >
           {node.name}
           <br />
           <b>ID: </b>
@@ -618,6 +624,7 @@ export const VirtualizedTree = (props: VirtualizedTreeProps) => {
   return (
     <AutoSizer disableWidth>
       {({ height }: { height: number }) => (
+        // @ts-expect-error - some issue with react-vtree types after upgrading to React 19
         <VariableSizeTree
           ref={treeInstance}
           treeWalker={memoizedTreeWalker}

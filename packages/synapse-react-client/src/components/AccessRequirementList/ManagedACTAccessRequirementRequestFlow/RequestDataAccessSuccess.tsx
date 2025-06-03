@@ -21,7 +21,13 @@ export default function RequestDataAccessSuccess(
   return (
     <>
       <DialogTitle>
-        <Stack direction="row" alignItems={'center'} gap={'5px'}>
+        <Stack
+          direction="row"
+          sx={{
+            alignItems: 'center',
+            gap: '5px',
+          }}
+        >
           Your Data Access Request Has Been Submitted
           <Box sx={{ flexGrow: 1 }} />
           <IconButton onClick={onHide}>

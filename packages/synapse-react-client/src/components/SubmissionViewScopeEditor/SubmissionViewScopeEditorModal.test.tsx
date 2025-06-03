@@ -55,16 +55,15 @@ describe('SubmissionViewScopeEditorModal tests', () => {
       scopeIds: ['123', '456'],
       concreteType: SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
     } as Entity)
-  })
-
-  it('displays the correct scope editor which can modify selection', async () => {
     jest.spyOn(SynapseClient, 'getEvaluation').mockImplementation(id => {
       return Promise.resolve({
         id: id,
         name: `Evaluation ${id}`,
       })
     })
+  })
 
+  it('displays the correct scope editor which can modify selection', async () => {
     const { saveButton, cancelButton } = await setUp({
       entityId: mockTableEntity.id,
       open: true,
@@ -81,7 +80,7 @@ describe('SubmissionViewScopeEditorModal tests', () => {
           selectedIds: ['123', '456'],
           onChange: expect.anything(),
         },
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -167,12 +166,12 @@ describe('SubmissionViewScopeEditorModal tests', () => {
           selectedIds: ['123', '456'],
           onChange: expect.anything(),
         },
-        expect.anything(),
+        undefined,
       )
     })
     const mockSubmissionView = {
       ...mockTableEntityInstance,
-      sceopIds: newScopeIds,
+      scopeIds: newScopeIds,
     }
 
     mockUpdateEntity.mockResolvedValue(mockSubmissionView)

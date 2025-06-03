@@ -153,7 +153,7 @@ async function testWikiToggle() {
       ownerId: mockManagedACTAccessRequirementWikiPageKey.ownerObjectId,
       objectType: mockManagedACTAccessRequirementWikiPageKey.ownerObjectType,
     }),
-    expect.anything(),
+    undefined,
   )
 
   toggle = await screen.findByRole('button', { name: 'Hide Terms' })
@@ -172,7 +172,7 @@ async function testWikiShownWithoutToggle() {
       ownerId: mockManagedACTAccessRequirementWikiPageKey.ownerObjectId,
       objectType: mockManagedACTAccessRequirementWikiPageKey.ownerObjectType,
     }),
-    expect.anything(),
+    undefined,
   )
 
   expect(

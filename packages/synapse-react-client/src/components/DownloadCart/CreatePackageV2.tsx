@@ -89,16 +89,23 @@ export const CreatePackageV2 = (props: CreatePackageV2Props) => {
             started.
           </span>
           {!isLoading && !bulkFileDownloadResponse && (
-            <Box display="flex" alignItems="stretch">
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'stretch',
+              }}
+            >
               <TextField
                 onChange={onChange}
                 type="text"
                 placeholder="PackageName"
                 sx={{ width: '233px' }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">.zip</InputAdornment>
-                  ),
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">.zip</InputAdornment>
+                    ),
+                  },
                 }}
               />
               <Button

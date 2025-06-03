@@ -81,7 +81,7 @@ describe('it performs basic functionality', () => {
             },
           }),
         }),
-        expect.anything(),
+        undefined,
       ),
     )
 
@@ -93,7 +93,7 @@ describe('it performs basic functionality', () => {
           columnAliases: props.columnAliases,
           noContentPlaceholderType: NoContentPlaceholderType.STATIC,
         }),
-        expect.anything(),
+        undefined,
       ),
     )
 
@@ -108,7 +108,7 @@ describe('it performs basic functionality', () => {
     await waitFor(() =>
       expect(mockCardContainer).toHaveBeenCalledWith(
         { ...props.cardConfiguration, rowSet: truncatedQueryResults },
-        expect.anything(),
+        undefined,
       ),
     )
   })

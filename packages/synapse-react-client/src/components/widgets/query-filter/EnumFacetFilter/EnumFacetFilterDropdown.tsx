@@ -82,7 +82,9 @@ function EnumFacetFilterIconDropdown(
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-        TransitionComponent={Fade}
+        slots={{
+          transition: Fade,
+        }}
       >
         {children}
       </Menu>

@@ -195,13 +195,13 @@ describe('DefaultValueField', () => {
       expect.objectContaining({
         value: dayjs(DATE_ONE),
       }),
-      expect.anything(),
+      undefined,
     )
     expect(mockDateTimePicker).toHaveBeenCalledWith(
       expect.objectContaining({
         value: dayjs(DATE_TWO),
       }),
-      expect.anything(),
+      undefined,
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'OK' }))

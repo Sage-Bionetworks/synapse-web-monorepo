@@ -310,8 +310,8 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
               <Typography
                 variant="body1"
                 color="inherit"
-                fontStyle="italic"
                 sx={{
+                  fontStyle: 'italic',
                   fontSize: '1.5rem',
                 }}
               >

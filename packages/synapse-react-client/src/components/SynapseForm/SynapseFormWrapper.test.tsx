@@ -249,7 +249,7 @@ describe('SynapseFormWrapper', () => {
           formTitle: props.formTitle,
           isWizardMode: true,
         }),
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -267,7 +267,7 @@ describe('SynapseFormWrapper', () => {
           }),
           isWizardMode: undefined,
         }),
-        expect.anything(),
+        undefined,
       )
     })
   })

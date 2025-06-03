@@ -107,7 +107,7 @@ describe('AccessSubmissionDashboard tests', () => {
         accessorId: undefined,
         reviewerId: undefined,
       }),
-      expect.anything(),
+      undefined,
     )
   })
 
@@ -138,7 +138,7 @@ describe('AccessSubmissionDashboard tests', () => {
           accessorId: undefined,
           reviewerId: undefined,
         }),
-        expect.anything(),
+        undefined,
       )
     })
   })
@@ -163,7 +163,7 @@ describe('AccessSubmissionDashboard tests', () => {
           accessorId: MOCK_USER_ID.toString(),
           reviewerId: undefined,
         }),
-        expect.anything(),
+        undefined,
       )
     })
   })
@@ -188,7 +188,7 @@ describe('AccessSubmissionDashboard tests', () => {
           accessorId: undefined,
           reviewerId: MOCK_USER_ID.toString(),
         }),
-        expect.anything(),
+        undefined,
       )
     })
   })
@@ -208,7 +208,7 @@ describe('AccessSubmissionDashboard tests', () => {
           accessorId: MOCK_USER_ID.toString(),
           reviewerId: MOCK_USER_ID.toString(),
         }),
-        expect.anything(),
+        undefined,
       ),
     )
   })

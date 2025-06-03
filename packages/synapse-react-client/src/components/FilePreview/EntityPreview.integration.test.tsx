@@ -43,7 +43,7 @@ describe('EntityPreview tests', () => {
       expect.objectContaining({
         bundle: expect.anything(),
       }),
-      expect.anything(),
+      undefined,
     )
   })
 

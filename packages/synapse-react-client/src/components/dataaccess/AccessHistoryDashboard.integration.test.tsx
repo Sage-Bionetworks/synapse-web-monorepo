@@ -151,7 +151,7 @@ describe('AccessHistoryDashboard tests', () => {
         showStatus: true,
         showSubmitter: true,
       }),
-      expect.anything(),
+      undefined,
     )
 
     await screen.findByTestId(APPROVAL_TABLE_TEST_ID)
@@ -160,7 +160,7 @@ describe('AccessHistoryDashboard tests', () => {
         accessRequirementId: undefined,
         accessorId: '',
       }),
-      expect.anything(),
+      undefined,
     )
   })
 
@@ -190,7 +190,7 @@ describe('AccessHistoryDashboard tests', () => {
         showStatus: true,
         showSubmitter: true,
       }),
-      expect.anything(),
+      undefined,
     )
 
     expect(screen.queryByTestId(APPROVAL_TABLE_TEST_ID)).not.toBeInTheDocument()
@@ -219,7 +219,7 @@ describe('AccessHistoryDashboard tests', () => {
           showStatus: true,
           showSubmitter: true,
         }),
-        expect.anything(),
+        undefined,
       )
 
       expect(mockAccessApprovalsTable).toHaveBeenCalledWith(
@@ -227,7 +227,7 @@ describe('AccessHistoryDashboard tests', () => {
           accessRequirementId: undefined,
           accessorId: MOCK_USER_ID.toString(),
         }),
-        expect.anything(),
+        undefined,
       )
     })
   })
@@ -274,7 +274,7 @@ describe('AccessHistoryDashboard tests', () => {
           showStatus: true,
           showSubmitter: true,
         }),
-        expect.anything(),
+        undefined,
       )
 
       expect(mockAccessApprovalsTable).toHaveBeenCalledWith(
@@ -282,7 +282,7 @@ describe('AccessHistoryDashboard tests', () => {
           accessRequirementId: mockAccessRequirement.id.toString(),
           accessorId: MOCK_USER_ID.toString(),
         }),
-        expect.anything(),
+        undefined,
       )
     })
   })
@@ -302,7 +302,7 @@ describe('AccessHistoryDashboard tests', () => {
           showStatus: true,
           showSubmitter: true,
         }),
-        expect.anything(),
+        undefined,
       )
 
       expect(mockAccessApprovalsTable).toHaveBeenCalledWith(
@@ -310,7 +310,7 @@ describe('AccessHistoryDashboard tests', () => {
           accessRequirementId: mockAccessRequirement.id.toString(),
           accessorId: MOCK_USER_ID.toString(),
         }),
-        expect.anything(),
+        undefined,
       )
     })
   })

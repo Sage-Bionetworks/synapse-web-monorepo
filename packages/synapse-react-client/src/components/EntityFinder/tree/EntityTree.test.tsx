@@ -220,7 +220,7 @@ describe('EntityTree tests', () => {
       rest.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${PROJECTS}`,
         async (req, res, ctx) => {
-          let response: ProjectHeaderList = {
+          const response: ProjectHeaderList = {
             results: projectsPage1,
             nextPageToken: '50a0',
           }
@@ -256,7 +256,7 @@ describe('EntityTree tests', () => {
 
     // Invoke the function
     act(() => {
-      props!.rootNodeConfiguration.fetchNextPage!()
+      props!.rootNodeConfiguration.fetchNextPage()
     })
 
     // Check that the second page of projects is now in the tree
@@ -483,7 +483,7 @@ describe('EntityTree tests', () => {
           treeNodeType: defaultProps.treeNodeType,
           selectableTypes: defaultProps.selectableTypes,
         }),
-        {},
+        undefined,
       )
     })
     // Select an entity using callback prop in child component
@@ -522,7 +522,7 @@ describe('EntityTree tests', () => {
           visibleTypes: defaultProps.visibleTypes,
           treeNodeType: defaultProps.treeNodeType,
         }),
-        {},
+        undefined,
       )
     })
   })

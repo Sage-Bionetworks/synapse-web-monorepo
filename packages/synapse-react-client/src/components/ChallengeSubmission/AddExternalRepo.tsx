@@ -23,7 +23,11 @@ function AddExternalRepo({
         value={repoName}
       />
       {errorMessage && (
-        <Box mt={1}>
+        <Box
+          sx={{
+            mt: 1,
+          }}
+        >
           <Alert severity="error">{errorMessage}</Alert>
         </Box>
       )}

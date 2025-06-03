@@ -91,7 +91,7 @@ describe('RejectProfileValidationRequestModal', () => {
           tableId: REJECT_VALIDATION_CANNED_RESPONSES_TABLE,
           children: expect.anything(),
         },
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -146,7 +146,7 @@ describe('RejectProfileValidationRequestModal', () => {
           tableId: REJECT_VALIDATION_CANNED_RESPONSES_TABLE,
           children: expect.anything(),
         },
-        expect.anything(),
+        undefined,
       )
     })
 

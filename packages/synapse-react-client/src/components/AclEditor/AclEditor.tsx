@@ -118,8 +118,17 @@ export function AclEditor(props: AclEditorProps) {
 
   return (
     <Box>
-      <Box mb="30px">
-        <Typography variant="headline3" mb="10px">
+      <Box
+        sx={{
+          mb: '30px',
+        }}
+      >
+        <Typography
+          variant="headline3"
+          sx={{
+            mb: '10px',
+          }}
+        >
           Users and Teams with Permissions
         </Typography>
 
@@ -166,17 +175,22 @@ export function AclEditor(props: AclEditorProps) {
       </Box>
       {canEdit && (
         <Box>
-          <Typography variant="headline3" mb="10px">
+          <Typography
+            variant="headline3"
+            sx={{
+              mb: '10px',
+            }}
+          >
             Add More
           </Typography>
           <Typography
             sx={{
+              mb: '20px',
               variant: 'body1',
               lineHeight: '20px',
               fontStyle: 'italic',
               color: 'text.secondary',
             }}
-            mb="20px"
           >
             Search for a username or team to add. You can search by username,
             first or last names, or team name.
@@ -201,7 +215,13 @@ export function AclEditor(props: AclEditorProps) {
               }}
             />
           </Box>
-          <Box display={'flex'} justifyContent={'space-between'} gap={2}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              gap: 2,
+            }}
+          >
             <Box>
               {showAddRemovePublicButton && (
                 <Button

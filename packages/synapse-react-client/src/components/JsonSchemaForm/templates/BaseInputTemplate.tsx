@@ -104,12 +104,15 @@ export default function BaseInputTemplate<
         onChange={onChangeOverride || _onChange}
         onBlur={_onBlur}
         onFocus={_onFocus}
-        InputLabelProps={DisplayInputLabelProps}
         {...(textFieldProps as TextFieldProps)}
-        inputProps={{
-          'aria-label': id,
-        }}
         aria-describedby={ariaDescribedByIds<T>(id, !!schema.examples)}
+        slotProps={{
+          htmlInput: {
+            'aria-label': id,
+          },
+
+          inputLabel: DisplayInputLabelProps,
+        }}
       />
       {Array.isArray(schema.examples) && (
         <datalist id={examplesId<T>(id)}>

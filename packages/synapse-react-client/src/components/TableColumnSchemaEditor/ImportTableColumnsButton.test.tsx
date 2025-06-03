@@ -97,7 +97,7 @@ describe('ImportTableColumnsButton', () => {
       expect.objectContaining({
         show: false,
       }),
-      expect.anything(),
+      undefined,
     )
 
     // Click the button
@@ -109,7 +109,7 @@ describe('ImportTableColumnsButton', () => {
         expect.objectContaining({
           show: true,
         }),
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -141,7 +141,7 @@ describe('ImportTableColumnsButton', () => {
       expect.objectContaining({
         show: false,
       }),
-      expect.anything(),
+      undefined,
     )
   })
 
@@ -155,7 +155,7 @@ describe('ImportTableColumnsButton', () => {
       expect.objectContaining({
         show: false,
       }),
-      expect.anything(),
+      undefined,
     )
 
     // Click the button
@@ -167,7 +167,7 @@ describe('ImportTableColumnsButton', () => {
         expect.objectContaining({
           show: true,
         }),
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -188,7 +188,7 @@ describe('ImportTableColumnsButton', () => {
       expect.objectContaining({
         show: false,
       }),
-      expect.anything(),
+      undefined,
     )
   })
 })

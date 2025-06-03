@@ -55,7 +55,7 @@ describe('EntityViewScopeEditor tests', () => {
             ]),
           },
         },
-        expect.anything(),
+        undefined,
       ),
     )
 
@@ -99,7 +99,7 @@ describe('EntityViewScopeEditor tests', () => {
             ]),
           },
         },
-        expect.anything(),
+        undefined,
       ),
     )
   })
@@ -138,7 +138,7 @@ describe('EntityViewScopeEditor tests', () => {
             ]),
           },
         },
-        expect.anything(),
+        undefined,
       ),
     )
   })

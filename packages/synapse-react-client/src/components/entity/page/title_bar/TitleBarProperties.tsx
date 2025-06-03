@@ -60,14 +60,18 @@ export default function TitleBarProperties(props: TitleBarPropertiesProps) {
     <Box sx={{ padding: '20px 40px' }}>
       <Stack
         direction={'row'}
-        justifyContent={'space-between'}
-        alignItems={'flex-start'}
+        sx={{
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+        }}
       >
         <Stack
           direction="row"
-          alignItems={'flex-start'}
           divider={<Divider orientation="vertical" flexItem />}
           spacing={2}
+          sx={{
+            alignItems: 'flex-start',
+          }}
         >
           {/* Always show the first 4 properties*/}
           <table>
