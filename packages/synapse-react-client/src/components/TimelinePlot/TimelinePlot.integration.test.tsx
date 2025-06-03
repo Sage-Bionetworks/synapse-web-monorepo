@@ -27,9 +27,9 @@ async function renderTimeline(props: TimelinePlotProps = timelineProps) {
 }
 
 describe('TimelinePlot tests', () => {
-  jest
-    .spyOn(SynapseClient, 'getFullQueryTableResults')
-    .mockResolvedValue(queryResultBundleJson)
+  vi.spyOn(SynapseClient, 'getFullQueryTableResults').mockResolvedValue(
+    queryResultBundleJson,
+  )
 
   it('renders all phases of the timeline plot', async () => {
     await renderTimeline()

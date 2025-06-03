@@ -15,11 +15,11 @@ const defaultProps = {
   step: 'VERIFICATION_CODE',
   hideReset2FA: false,
   loginIsPending: false,
-  onClickPromptReset2FA: jest.fn(),
-  onClickReset2FA: jest.fn(),
-  onClickUseBackupCode: jest.fn(),
-  onClickUseTOTP: jest.fn(),
-  onSubmit: jest.fn(),
+  onClickPromptReset2FA: vi.fn(),
+  onClickReset2FA: vi.fn(),
+  onClickUseBackupCode: vi.fn(),
+  onClickUseTOTP: vi.fn(),
+  onSubmit: vi.fn(),
   twoFactorAuthResetIsPending: false,
   twoFactorAuthResetIsSuccess: false,
 } satisfies OneTimePasswordFormProps
@@ -43,7 +43,7 @@ function setUp(
 }
 describe('OneTimePasswordForm', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('shows the TOTP form when the step is VERIFICATION_CODE', async () => {

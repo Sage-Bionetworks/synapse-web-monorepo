@@ -15,9 +15,9 @@ import QueryWrapper from '../../QueryWrapper'
 import FacetNavPanel, { FacetNavPanelProps } from './FacetNavPanel'
 import { truncate } from './FacetPlotLegendUtils'
 
-const mockApplyCallback = jest.fn(() => null)
-const mockHideCallback = jest.fn(() => null)
-const mockSetPlotTypeCallback = jest.fn(() => null)
+const mockApplyCallback = vi.fn(() => null)
+const mockHideCallback = vi.fn(() => null)
+const mockSetPlotTypeCallback = vi.fn(() => null)
 
 const stringFacetValues: FacetColumnResultValues = {
   facetType: 'enumeration',

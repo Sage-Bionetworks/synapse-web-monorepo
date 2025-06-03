@@ -12,7 +12,7 @@ import { ForumPage, ForumPageProps } from './ForumPage'
 const defaultProps: ForumPageProps = {
   forumId: MOCK_FORUM_ID,
   limit: 1,
-  onClickLink: jest.fn(),
+  onClickLink: vi.fn(),
 }
 
 const followRequest: Topic = {
@@ -20,8 +20,8 @@ const followRequest: Topic = {
   objectType: SubscriptionObjectType.FORUM,
 }
 
-jest.spyOn(SynapseClient, 'postSubscription')
-jest.spyOn(SynapseClient, 'deleteSubscription')
+vi.spyOn(SynapseClient, 'postSubscription')
+vi.spyOn(SynapseClient, 'deleteSubscription')
 
 function renderComponent() {
   render(<ForumPage {...defaultProps} />, {
@@ -37,7 +37,7 @@ describe('Forum Table test', () => {
 
   afterEach(() => {
     server.resetHandlers()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   afterAll(() => server.close())
 

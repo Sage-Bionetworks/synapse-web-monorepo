@@ -9,12 +9,12 @@ import mockTableEntity from '../../mocks/entity/mockTableEntity'
 import mockFileEntityData from '../../mocks/entity/mockFileEntity'
 import { mockFolderEntity } from '../../mocks/entity/mockEntity'
 
-jest.mock('../download_list/TableQueryDownloadConfirmation', () => ({
+vi.mock('../download_list/TableQueryDownloadConfirmation', () => ({
   TableQueryDownloadConfirmation: () => (
     <div data-testid="TableQueryDownloadConfirmation" />
   ),
 }))
-jest.mock('../download_list/FolderDownloadConfirmation', () => ({
+vi.mock('../download_list/FolderDownloadConfirmation', () => ({
   FolderDownloadConfirmation: () => (
     <div data-testid="FolderDownloadConfirmation" />
   ),
@@ -23,11 +23,11 @@ jest.mock('../download_list/FolderDownloadConfirmation', () => ({
 // Test comment to trigger workflow
 // mock useGetEntity; don't need second arg when creating multiple values
 // eg folder, table, file
-jest.mock('../../synapse-queries')
-const mockUseGetEntity = jest.mocked(useGetEntity)
+vi.mock('../../synapse-queries')
+const mockUseGetEntity = vi.mocked(useGetEntity)
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 
   mockUseGetEntity.mockReturnValue(
     getUseQuerySuccessMock(mockTableEntity.entity),
@@ -40,20 +40,20 @@ beforeEach(() => {
 describe('EntityDownloadConfirmation', () => {
   const propsFolder: EntityDownloadConfirmationProps = {
     entityId: 'syn7248585',
-    onIsLoadingChange: jest.fn(),
-    handleClose: jest.fn(),
+    onIsLoadingChange: vi.fn(),
+    handleClose: vi.fn(),
   }
 
   const propsTable: EntityDownloadConfirmationProps = {
     entityId: 'syn53132831',
-    onIsLoadingChange: jest.fn(),
-    handleClose: jest.fn(),
+    onIsLoadingChange: vi.fn(),
+    handleClose: vi.fn(),
   }
 
   const propsFile: EntityDownloadConfirmationProps = {
     entityId: 'syn59954313',
-    onIsLoadingChange: jest.fn(),
-    handleClose: jest.fn(),
+    onIsLoadingChange: vi.fn(),
+    handleClose: vi.fn(),
   }
 
   it('table entities show the download confirmation UI when clicked', () => {

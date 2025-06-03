@@ -6,7 +6,7 @@ import { act } from 'react-dom/test-utils'
 import { SynapseClient } from '../../index'
 import SynapsePlot, { SynapsePlotProps } from './SynapsePlot'
 
-const customPlotClickCallback = jest.fn()
+const customPlotClickCallback = vi.fn()
 
 const defaultProps: SynapsePlotProps = {
   synapsePlotWidgetParams: {
@@ -38,10 +38,10 @@ async function renderComponent(props: SynapsePlotProps) {
 
 describe('SynapsePlot', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest
-      .spyOn(SynapseClient, 'getFullQueryTableResults')
-      .mockResolvedValue(mockSyn26438037Counts as QueryResultBundle)
+    vi.clearAllMocks()
+    vi.spyOn(SynapseClient, 'getFullQueryTableResults').mockResolvedValue(
+      mockSyn26438037Counts as QueryResultBundle,
+    )
   })
 
   it('renders without crashing', async () => {

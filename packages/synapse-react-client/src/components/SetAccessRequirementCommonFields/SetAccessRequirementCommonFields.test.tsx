@@ -38,13 +38,13 @@ import {
   UNSAVED_SUBJECTS_ERROR_MESSAGE,
 } from './SetAccessRequirementCommonFields'
 
-const onSave = jest.fn()
-const onError = jest.fn()
-const createAccessRequirementSpy = jest.spyOn(
+const onSave = vi.fn()
+const onError = vi.fn()
+const createAccessRequirementSpy = vi.spyOn(
   SynapseClient,
   'createAccessRequirement',
 )
-const updateAccessRequirementSpy = jest.spyOn(
+const updateAccessRequirementSpy = vi.spyOn(
   SynapseClient,
   'updateAccessRequirement',
 )
@@ -107,7 +107,7 @@ function getRadioButtons() {
 }
 
 describe('SetAccessRequirementCommonFields', () => {
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => vi.clearAllMocks())
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())

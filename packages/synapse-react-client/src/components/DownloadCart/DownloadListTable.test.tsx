@@ -10,16 +10,16 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import DownloadListTableV2 from './DownloadListTable'
 
-jest.spyOn(SynapseClient, 'removeItemsFromDownloadListV2').mockResolvedValue({
+vi.spyOn(SynapseClient, 'removeItemsFromDownloadListV2').mockResolvedValue({
   numberOfFilesRemoved: 2,
 })
 
-jest
-  .spyOn(SynapseClient, 'getUserProfileById')
-  .mockResolvedValue(mockUserProfileData)
-jest
-  .spyOn(SynapseClient, 'getProfilePicPreviewPresignedUrl')
-  .mockResolvedValue(null)
+vi.spyOn(SynapseClient, 'getUserProfileById').mockResolvedValue(
+  mockUserProfileData,
+)
+vi.spyOn(SynapseClient, 'getProfilePicPreviewPresignedUrl').mockResolvedValue(
+  null,
+)
 
 const page1: DownloadListItemResult[] = [
   {
@@ -50,9 +50,8 @@ const page2: DownloadListItemResult[] = [
     isEligibleForPackaging: true,
   },
 ]
-jest
-  .spyOn(SynapseClient, 'getAvailableFilesToDownload')
-  .mockImplementation(request => {
+vi.spyOn(SynapseClient, 'getAvailableFilesToDownload').mockImplementation(
+  request => {
     let response: AvailableFilesResponse = {
       page: page1,
       nextPageToken: '50a0',
@@ -68,7 +67,8 @@ jest
       }
     }
     return Promise.resolve(response)
-  })
+  },
+)
 
 function renderComponent() {
   return render(
@@ -80,7 +80,7 @@ function renderComponent() {
 
 describe('DownloadListTable tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   it('loads more available download files when "show more" is clicked', async () => {
     renderComponent()
@@ -103,7 +103,7 @@ describe('DownloadListTable tests', () => {
     })
 
     it('should call clipboard.writeText with the expected Synapse IDs', async () => {
-      const mockWriteText = jest.fn()
+      const mockWriteText = vi.fn()
       mockWriteText.mockResolvedValue('copied')
       const mockClipboard = {
         writeText: mockWriteText,

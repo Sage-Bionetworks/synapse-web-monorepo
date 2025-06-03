@@ -9,9 +9,9 @@ import {
 import * as DownloadDetailsModule from './DownloadDetails'
 
 const DOWNLOAD_DETAILS_TEST_ID = 'DownloadDetails'
-jest
-  .spyOn(DownloadDetailsModule, 'default')
-  .mockImplementation(() => <div data-testid={DOWNLOAD_DETAILS_TEST_ID}></div>)
+vi.spyOn(DownloadDetailsModule, 'default').mockImplementation(() => (
+  <div data-testid={DOWNLOAD_DETAILS_TEST_ID}></div>
+))
 
 async function setUp(
   componentProps: DownloadConfirmationUIProps,
@@ -38,8 +38,8 @@ async function setUp(
   return { component, user, addButton, cancelButton, closeButton }
 }
 
-const mockOnAddToDownloadCart = jest.fn()
-const mockOnCancel = jest.fn()
+const mockOnAddToDownloadCart = vi.fn()
+const mockOnCancel = vi.fn()
 
 describe('DownloadConfirmationUI', () => {
   it('Shows download details', async () => {

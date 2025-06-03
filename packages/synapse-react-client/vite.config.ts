@@ -22,8 +22,9 @@ const config = new ConfigBuilder()
       emptyOutDir: false,
     },
     test: {
+      globals: true,
       // require vitest tests to be .vitest.ts(x) while we migrate from Jest
-      include: ['**/*.vitest.?(c|m)[jt]s?(x)'],
+      include: ['**/*.?(vi)test.?(c|m)[jt]s?(x)'],
       setupFiles: ['./src/testutils/vitest.setup.ts'],
     },
   })

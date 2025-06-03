@@ -10,7 +10,7 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ImposeRestrictionDialog from './ImposeRestrictionDialog'
 
-const mockOnClose = jest.fn()
+const mockOnClose = vi.fn()
 
 function renderComponent() {
   return render(
@@ -25,7 +25,7 @@ function renderComponent() {
   )
 }
 
-const onApplyLock = jest.fn()
+const onApplyLock = vi.fn()
 server.use(
   rest.post(
     `${getEndpoint(
@@ -39,7 +39,7 @@ server.use(
 )
 
 describe('ImposeRestrictionDialog', () => {
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => vi.clearAllMocks())
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())

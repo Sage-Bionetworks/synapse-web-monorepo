@@ -29,13 +29,13 @@ import {
 const SUBMISSION_TABLE_TEST_ID = 'AccessSubmissionTableTestId'
 const MOCK_AR_ID = '12321'
 
-const mockAccessRequestSubmissionTable = jest
+const mockAccessRequestSubmissionTable = vi
   .spyOn(AccessRequestSubmissionTableModule, 'AccessRequestSubmissionTable')
   .mockImplementation(() => {
     return <div data-testid={SUBMISSION_TABLE_TEST_ID}></div>
   })
 
-const onServiceReceivedRequest = jest.fn()
+const onServiceReceivedRequest = vi.fn()
 
 const { getLocation, LocationTracker } = getLocationTracker()
 

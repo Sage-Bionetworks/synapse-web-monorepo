@@ -6,27 +6,34 @@ import {
   useGetOAuthClientInfinite,
   useUpdateOAuthClient,
 } from '@/synapse-queries'
+import {
+  getUseInfiniteQueryMock,
+  getUseMutationMock,
+} from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { render, screen, waitFor } from '@testing-library/react'
+import {
+  OAuthClientList,
+  SynapseClientError,
+} from '@sage-bionetworks/synapse-client'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import dayjs from 'dayjs'
 import { OAuthManagement } from './OAuthManagement'
 
-jest.mock('../../../src/synapse-queries/oauth/useOAuthClient', () => {
+vi.mock('@/synapse-queries/oauth/useOAuthClient', () => {
   return {
-    useGetOAuthClientInfinite: jest.fn(),
-    useCreateOAuthClient: jest.fn(),
-    useUpdateOAuthClient: jest.fn(),
-    useDeleteOAuthClient: jest.fn(),
+    useGetOAuthClientInfinite: vi.fn(),
+    useCreateOAuthClient: vi.fn(),
+    useUpdateOAuthClient: vi.fn(),
+    useDeleteOAuthClient: vi.fn(),
   }
 })
 
-const mockFetchNextPage = jest.fn()
-const mockGetOAuthClientInfinite = useGetOAuthClientInfinite as jest.Mock
-const mockUseCreateOAuthClient = useCreateOAuthClient as jest.Mock
-const mockUseUpdateOAuthClient = useUpdateOAuthClient as jest.Mock
-const mockUseDeleteOAuthClient = useDeleteOAuthClient as jest.Mock
+const mockGetOAuthClientInfinite = vi.mocked(useGetOAuthClientInfinite)
+const mockUseCreateOAuthClient = vi.mocked(useCreateOAuthClient)
+const mockUseUpdateOAuthClient = vi.mocked(useUpdateOAuthClient)
+const mockUseDeleteOAuthClient = vi.mocked(useDeleteOAuthClient)
 
 const renderComponent = () => {
   render(<OAuthManagement />, {
@@ -34,46 +41,40 @@ const renderComponent = () => {
   })
 }
 
-const mockReturnHooks = {
-  data: {
-    pages: [mockClientList1.results[0]],
-  },
-}
-
 describe('oAuthManagement tests', () => {
+  let setGetOAuthClientInfiniteSuccess: ReturnType<
+    typeof getUseInfiniteQueryMock<OAuthClientList, SynapseClientError>
+  >['setSuccess']
+  let mockFetchNextPage: ReturnType<
+    typeof getUseInfiniteQueryMock<OAuthClientList, SynapseClientError>
+  >['mockFetchNextPage']
+
   beforeAll(() => {
     server.listen()
-    mockGetOAuthClientInfinite.mockReturnValue({
-      data: {
-        pages: [
-          {
-            results: mockClientList1.results,
-            nextTokenPage: mockClientList1.nextPageToken,
-          },
-          {
-            results: mockClientList2.results,
-            nextTokenPage: mockClientList2.nextPageToken,
-          },
-        ],
-        pageParams: [],
-      },
-      fetchNextPage: mockFetchNextPage,
-      hasNextPage: true,
-      isLoading: false,
-      isSuccess: true,
-    })
-    mockUseCreateOAuthClient.mockReturnValue({ mockReturnHooks })
-    mockUseUpdateOAuthClient.mockReturnValue({ mockReturnHooks })
-    mockUseDeleteOAuthClient.mockReturnValue({ mockReturnHooks })
+
+    const {
+      mock,
+      setSuccess,
+      mockFetchNextPage: _mockFetchNextPage,
+    } = getUseInfiniteQueryMock<OAuthClientList, SynapseClientError>()
+    mockGetOAuthClientInfinite.mockImplementation(mock)
+    setGetOAuthClientInfiniteSuccess = setSuccess
+    mockFetchNextPage = _mockFetchNextPage
+
+    mockUseCreateOAuthClient.mockReturnValue(getUseMutationMock())
+    mockUseUpdateOAuthClient.mockReturnValue(getUseMutationMock())
+    mockUseDeleteOAuthClient.mockReturnValue(getUseMutationMock())
   })
   afterEach(() => {
     server.restoreHandlers()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   afterAll(() => server.close())
 
   it('Renders all headers and a row of data', async () => {
     renderComponent()
+
+    setGetOAuthClientInfiniteSuccess([mockClientList1, mockClientList2])
 
     // Check column header
     await screen.findByText('Created')
@@ -99,18 +100,33 @@ describe('oAuthManagement tests', () => {
 
   it('Handles pagination', async () => {
     renderComponent()
+    setGetOAuthClientInfiniteSuccess([mockClientList1], true)
 
-    const loadButton = screen.queryByRole('button', { name: 'Load more' })
-    expect(
-      screen.getByRole('button', { name: 'Load more' }),
-    ).toBeInTheDocument()
+    await waitFor(() =>
+      expect(screen.getAllByRole('row')).toHaveLength(
+        mockClientList1.results.length + 1,
+      ),
+    )
 
-    await userEvent.click(loadButton!)
+    const loadMoreButton = await screen.findByRole('button', {
+      name: 'Load more',
+    })
+    await userEvent.click(loadMoreButton)
+
+    expect(mockFetchNextPage).toHaveBeenCalled()
+
+    act(() => {
+      setGetOAuthClientInfiniteSuccess(
+        [mockClientList1, mockClientList2],
+        false,
+      )
+    })
 
     await waitFor(() =>
       expect(screen.getAllByRole('row')).toHaveLength(
         mockClientList1.results.length + mockClientList2.results.length + 1,
       ),
     )
+    expect(loadMoreButton).not.toBeInTheDocument()
   })
 })

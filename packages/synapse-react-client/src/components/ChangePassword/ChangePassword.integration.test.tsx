@@ -30,18 +30,19 @@ import ChangePassword, {
 } from './ChangePassword'
 import { TWO_FACTOR_AUTH_CHANGE_PASSWORD_PROMPT } from './useChangePasswordFormState'
 
-const mockDisplayToast = jest
+const mockDisplayToast = vi
   .spyOn(ToastMessage, 'displayToast')
   .mockImplementation(() => noop)
 
-jest.mock('react-router', () => {
+vi.mock('react-router', () => {
   return {
-    Navigate: jest.fn(({ to }) => `Redirected to ${to}`),
+    Link: vi.fn(() => <></>),
+    Navigate: vi.fn(({ to }) => `Redirected to ${to}`),
   }
 })
 
-const changePasswordSpy = jest.spyOn(SynapseClient, 'changePassword')
-const reset2faSpy = jest.spyOn(SynapseClient, 'resetTwoFactorAuth')
+const changePasswordSpy = vi.spyOn(SynapseClient, 'changePassword')
+const reset2faSpy = vi.spyOn(SynapseClient, 'resetTwoFactorAuth')
 
 function renderComponent(
   changePasswordProps?: ChangePasswordProps,
@@ -142,7 +143,7 @@ async function typeAndSubmitTOTP(
 
 describe('ChangePassword tests', () => {
   beforeAll(() => server.listen())
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => vi.clearAllMocks())
   beforeEach(() => {
     server.use(getFeatureFlagsOverride())
   })

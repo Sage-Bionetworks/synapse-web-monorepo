@@ -31,7 +31,7 @@ describe('GoalsV2Desktop', () => {
   })
 
   test('opens the link when the card is clicked', async () => {
-    window.open = jest.fn()
+    window.open = vi.fn()
 
     render(
       <QueryClientProvider client={queryClient}>

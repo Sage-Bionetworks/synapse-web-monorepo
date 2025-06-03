@@ -14,15 +14,15 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 
-jest.mock('@/utils/functions/DateFormatter')
-jest.mock('@/synapse-queries/dataaccess/useDataAccessSubmission')
-jest.mock('@/components/UserOrTeamBadge/UserOrTeamBadge')
+vi.mock('@/utils/functions/DateFormatter')
+vi.mock('@/synapse-queries/dataaccess/useDataAccessSubmission')
+vi.mock('@/components/UserOrTeamBadge/UserOrTeamBadge')
 
-jest.mocked(formatDate).mockReturnValue('mock formatted date')
-jest
-  .mocked(UserOrTeamBadge)
-  .mockImplementation(() => <span data-testid={'UserOrTeamBadge'} />)
-const mockUseSearchAccessSubmissionUserRequestsInfinite = jest.mocked(
+vi.mocked(formatDate).mockReturnValue('mock formatted date')
+vi.mocked(UserOrTeamBadge).mockImplementation(() => (
+  <span data-testid={'UserOrTeamBadge'} />
+))
+const mockUseSearchAccessSubmissionUserRequestsInfinite = vi.mocked(
   useSearchAccessSubmissionUserRequestsInfinite,
 )
 
@@ -152,9 +152,7 @@ describe('UserAccessRequestHistoryTable', () => {
       mockUseSearchAccessSubmissionUserRequestsInfinite.mock.results
     const lastDataHookResult =
       mockDataHookResults[mockDataHookResults.length - 1]
-    const mockFetchNextPage = jest.mocked(
-      lastDataHookResult.value.fetchNextPage,
-    )
+    const mockFetchNextPage = vi.mocked(lastDataHookResult.value.fetchNextPage)
 
     await userEvent.click(button)
     expect(mockFetchNextPage).toHaveBeenCalled()

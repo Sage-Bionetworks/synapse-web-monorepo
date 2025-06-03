@@ -2,7 +2,7 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { FacetChip, FacetChipProps } from './FacetChip'
 
-const mockOnClick = jest.fn()
+const mockOnClick = vi.fn()
 
 const props: FacetChipProps = {
   children: 'Make',
@@ -11,7 +11,7 @@ const props: FacetChipProps = {
 }
 
 function renderComponent(props: FacetChipProps) {
-  jest.clearAllMocks()
+  vi.clearAllMocks()
   return render(<FacetChip {...props} />, {
     wrapper: createWrapper(),
   })

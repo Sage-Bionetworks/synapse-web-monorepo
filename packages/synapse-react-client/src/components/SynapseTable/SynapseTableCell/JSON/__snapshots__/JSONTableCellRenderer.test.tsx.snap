@@ -1,4 +1,1016 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`JSONTableCellRenderer > handles %p case Array of primitives 1`] = `
+<div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 css-1tqx9ty-MuiTypography-root"
+  >
+    6 items
+    <button
+      class="ExpandableTableData__expandButton"
+    >
+      <span
+        aria-label=""
+        class="styled-svg-wrapper"
+        data-mui-internal-clone-element="true"
+        data-svg="addBoxOutline"
+        id="icon-addBoxOutline"
+        role="img"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-15r5pc7-MuiSvgIcon-root"
+          data-testid="AddBoxOutlinedIcon"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V5h14zm-8-2h2v-4h4v-2h-4V7h-2v4H7v2h4z"
+          />
+        </svg>
+      </span>
+    </button>
+  </span>
+  <div
+    class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-hidden css-bz4dnt-MuiCollapse-root"
+    style="min-height: 0px;"
+  >
+    <div
+      class="MuiCollapse-wrapper MuiCollapse-vertical css-smkl36-MuiCollapse-wrapper"
+    >
+      <div
+        class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
+      >
+        <div
+          class="MuiBox-root css-70fdo6"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            foo
+          </span>
+        </div>
+        <div
+          class="MuiBox-root css-70fdo6"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            1,000
+          </span>
+        </div>
+        <div
+          class="MuiBox-root css-70fdo6"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            -25.67
+          </span>
+        </div>
+        <div
+          class="MuiBox-root css-70fdo6"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            <span
+              class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+            >
+              &lt;null value&gt;
+            </span>
+          </span>
+        </div>
+        <div
+          class="MuiBox-root css-70fdo6"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            true
+          </span>
+        </div>
+        <div
+          class="MuiBox-root css-70fdo6"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            false
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles %p case Empty array 1`] = `
+<div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+  >
+    Empty array
+  </span>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles %p case Empty object 1`] = `
+<div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+  >
+    Empty object
+  </span>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles %p case Object of primitives 1`] = `
+<div>
+  <div
+    class="MuiBox-root css-34ji4n"
+  >
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+    >
+      string
+    </span>
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+    >
+      foo
+    </span>
+  </div>
+  <div
+    class="MuiBox-root css-34ji4n"
+  >
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+    >
+      numberInt
+    </span>
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+    >
+      1,000
+    </span>
+  </div>
+  <div
+    class="MuiBox-root css-34ji4n"
+  >
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+    >
+      numberFloat
+    </span>
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+    >
+      -25.67
+    </span>
+  </div>
+  <div
+    class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-hidden css-bz4dnt-MuiCollapse-root"
+    style="min-height: 0px;"
+  >
+    <div
+      class="MuiCollapse-wrapper MuiCollapse-vertical css-smkl36-MuiCollapse-wrapper"
+    >
+      <div
+        class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
+      >
+        <div
+          class="MuiBox-root css-34ji4n"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            null
+          </span>
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+          >
+            <span
+              class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+            >
+              &lt;null value&gt;
+            </span>
+          </span>
+        </div>
+        <div
+          class="MuiBox-root css-34ji4n"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            true
+          </span>
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+          >
+            true
+          </span>
+        </div>
+        <div
+          class="MuiBox-root css-34ji4n"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            false
+          </span>
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+          >
+            false
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 css-e8wjbd-MuiTypography-root"
+  >
+    3 more
+    <button
+      class="ExpandableTableData__expandButton"
+    >
+      <span
+        aria-label=""
+        class="styled-svg-wrapper"
+        data-mui-internal-clone-element="true"
+        data-svg="addBoxOutline"
+        id="icon-addBoxOutline"
+        role="img"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-15r5pc7-MuiSvgIcon-root"
+          data-testid="AddBoxOutlinedIcon"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V5h14zm-8-2h2v-4h4v-2h-4V7h-2v4H7v2h4z"
+          />
+        </svg>
+      </span>
+    </button>
+  </span>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles %p case complex array 1`] = `
+<div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 css-1i0dbvc-MuiTypography-root"
+  >
+    Expand
+     all
+    <button
+      class="ExpandableTableData__expandButton"
+    >
+      <span
+        aria-label=""
+        class="styled-svg-wrapper"
+        data-mui-internal-clone-element="true"
+        data-svg="addBoxOutline"
+        id="icon-addBoxOutline"
+        role="img"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-15r5pc7-MuiSvgIcon-root"
+          data-testid="AddBoxOutlinedIcon"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V5h14zm-8-2h2v-4h4v-2h-4V7h-2v4H7v2h4z"
+          />
+        </svg>
+      </span>
+    </button>
+  </span>
+  <div
+    class="MuiBox-root css-yc55n3"
+  >
+    <ol
+      role="tree"
+      style="padding: 0px; margin: 0px; list-style-type: none;"
+    >
+      <li
+        aria-expanded="false"
+        role="treeitem"
+        style="color: black; line-height: 1.2; cursor: default; box-sizing: border-box; list-style: none; font-family: Menlo, monospace; font-size: 11px;"
+      >
+        <div>
+          <span
+            style="color: rgb(110, 110, 110); display: inline-block; font-size: 12px; margin-right: 3px; user-select: none; transform: rotateZ(0deg);"
+          >
+            ▶
+          </span>
+          <span
+            style="font-style: italic;"
+          >
+            (3) 
+          </span>
+          <span
+            style="font-style: italic;"
+          >
+            [
+            <span>
+              Object
+            </span>
+            , 
+            <span
+              style="color: rgb(128, 128, 128);"
+            >
+              null
+            </span>
+            , 
+            <span>
+              Array(2)
+            </span>
+            ]
+          </span>
+        </div>
+        <ol
+          role="group"
+          style="margin: 0px; padding-left: 12px;"
+        />
+      </li>
+    </ol>
+  </div>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles %p case complex object 1`] = `
+<div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 css-1i0dbvc-MuiTypography-root"
+  >
+    Expand
+     all
+    <button
+      class="ExpandableTableData__expandButton"
+    >
+      <span
+        aria-label=""
+        class="styled-svg-wrapper"
+        data-mui-internal-clone-element="true"
+        data-svg="addBoxOutline"
+        id="icon-addBoxOutline"
+        role="img"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-15r5pc7-MuiSvgIcon-root"
+          data-testid="AddBoxOutlinedIcon"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V5h14zm-8-2h2v-4h4v-2h-4V7h-2v4H7v2h4z"
+          />
+        </svg>
+      </span>
+    </button>
+  </span>
+  <div
+    class="MuiBox-root css-yc55n3"
+  >
+    <ol
+      role="tree"
+      style="padding: 0px; margin: 0px; list-style-type: none;"
+    >
+      <li
+        aria-expanded="false"
+        role="treeitem"
+        style="color: black; line-height: 1.2; cursor: default; box-sizing: border-box; list-style: none; font-family: Menlo, monospace; font-size: 11px;"
+      >
+        <div>
+          <span
+            style="color: rgb(110, 110, 110); display: inline-block; font-size: 12px; margin-right: 3px; user-select: none; transform: rotateZ(0deg);"
+          >
+            ▶
+          </span>
+          <span
+            style="font-style: italic;"
+          />
+          <span
+            style="font-style: italic;"
+          >
+            {
+            <span>
+              <span
+                style="color: rgb(136, 19, 145);"
+              >
+                foo
+              </span>
+              : 
+              <span>
+                Array(3)
+              </span>
+            </span>
+            , 
+            <span>
+              <span
+                style="color: rgb(136, 19, 145);"
+              >
+                null
+              </span>
+              : 
+              <span
+                style="color: rgb(128, 128, 128);"
+              >
+                null
+              </span>
+            </span>
+            , 
+            <span>
+              <span
+                style="color: rgb(136, 19, 145);"
+              >
+                bar
+              </span>
+              : 
+              <span
+                style="color: rgb(196, 26, 22);"
+              >
+                "
+                baz
+                "
+              </span>
+            </span>
+            , 
+            <span>
+              <span
+                style="color: rgb(136, 19, 145);"
+              >
+                zxcv
+              </span>
+              : 
+              <span>
+                Object
+              </span>
+            </span>
+            }
+          </span>
+        </div>
+        <ol
+          role="group"
+          style="margin: 0px; padding-left: 12px;"
+        />
+      </li>
+    </ol>
+  </div>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles %p case null 1`] = `
+<div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+  >
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+    >
+      &lt;null value&gt;
+    </span>
+  </span>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles %p case one item 1`] = `
+<div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+  >
+    foo
+  </span>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles %p case one null item 1`] = `
+<div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+  >
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+    >
+      &lt;null value&gt;
+    </span>
+  </span>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles Array of primitives case 1`] = `
+<div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 css-1tqx9ty-MuiTypography-root"
+  >
+    6 items
+    <button
+      class="ExpandableTableData__expandButton"
+    >
+      <span
+        aria-label=""
+        class="styled-svg-wrapper"
+        data-mui-internal-clone-element="true"
+        data-svg="addBoxOutline"
+        id="icon-addBoxOutline"
+        role="img"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-15r5pc7-MuiSvgIcon-root"
+          data-testid="AddBoxOutlinedIcon"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V5h14zm-8-2h2v-4h4v-2h-4V7h-2v4H7v2h4z"
+          />
+        </svg>
+      </span>
+    </button>
+  </span>
+  <div
+    class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-hidden css-bz4dnt-MuiCollapse-root"
+    style="min-height: 0px;"
+  >
+    <div
+      class="MuiCollapse-wrapper MuiCollapse-vertical css-smkl36-MuiCollapse-wrapper"
+    >
+      <div
+        class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
+      >
+        <div
+          class="MuiBox-root css-70fdo6"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            foo
+          </span>
+        </div>
+        <div
+          class="MuiBox-root css-70fdo6"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            1,000
+          </span>
+        </div>
+        <div
+          class="MuiBox-root css-70fdo6"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            -25.67
+          </span>
+        </div>
+        <div
+          class="MuiBox-root css-70fdo6"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            <span
+              class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+            >
+              &lt;null value&gt;
+            </span>
+          </span>
+        </div>
+        <div
+          class="MuiBox-root css-70fdo6"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            true
+          </span>
+        </div>
+        <div
+          class="MuiBox-root css-70fdo6"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            false
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles Empty array case 1`] = `
+<div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+  >
+    Empty array
+  </span>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles Empty object case 1`] = `
+<div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+  >
+    Empty object
+  </span>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles Object of primitives case 1`] = `
+<div>
+  <div
+    class="MuiBox-root css-34ji4n"
+  >
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+    >
+      string
+    </span>
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+    >
+      foo
+    </span>
+  </div>
+  <div
+    class="MuiBox-root css-34ji4n"
+  >
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+    >
+      numberInt
+    </span>
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+    >
+      1,000
+    </span>
+  </div>
+  <div
+    class="MuiBox-root css-34ji4n"
+  >
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+    >
+      numberFloat
+    </span>
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+    >
+      -25.67
+    </span>
+  </div>
+  <div
+    class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-hidden css-bz4dnt-MuiCollapse-root"
+    style="min-height: 0px;"
+  >
+    <div
+      class="MuiCollapse-wrapper MuiCollapse-vertical css-smkl36-MuiCollapse-wrapper"
+    >
+      <div
+        class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
+      >
+        <div
+          class="MuiBox-root css-34ji4n"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            null
+          </span>
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+          >
+            <span
+              class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+            >
+              &lt;null value&gt;
+            </span>
+          </span>
+        </div>
+        <div
+          class="MuiBox-root css-34ji4n"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            true
+          </span>
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+          >
+            true
+          </span>
+        </div>
+        <div
+          class="MuiBox-root css-34ji4n"
+        >
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+          >
+            false
+          </span>
+          <span
+            class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+          >
+            false
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 css-e8wjbd-MuiTypography-root"
+  >
+    3 more
+    <button
+      class="ExpandableTableData__expandButton"
+    >
+      <span
+        aria-label=""
+        class="styled-svg-wrapper"
+        data-mui-internal-clone-element="true"
+        data-svg="addBoxOutline"
+        id="icon-addBoxOutline"
+        role="img"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-15r5pc7-MuiSvgIcon-root"
+          data-testid="AddBoxOutlinedIcon"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V5h14zm-8-2h2v-4h4v-2h-4V7h-2v4H7v2h4z"
+          />
+        </svg>
+      </span>
+    </button>
+  </span>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles complex array case 1`] = `
+<div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 css-1i0dbvc-MuiTypography-root"
+  >
+    Expand
+     all
+    <button
+      class="ExpandableTableData__expandButton"
+    >
+      <span
+        aria-label=""
+        class="styled-svg-wrapper"
+        data-mui-internal-clone-element="true"
+        data-svg="addBoxOutline"
+        id="icon-addBoxOutline"
+        role="img"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-15r5pc7-MuiSvgIcon-root"
+          data-testid="AddBoxOutlinedIcon"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V5h14zm-8-2h2v-4h4v-2h-4V7h-2v4H7v2h4z"
+          />
+        </svg>
+      </span>
+    </button>
+  </span>
+  <div
+    class="MuiBox-root css-yc55n3"
+  >
+    <ol
+      role="tree"
+      style="padding: 0px; margin: 0px; list-style-type: none;"
+    >
+      <li
+        aria-expanded="false"
+        role="treeitem"
+        style="color: black; line-height: 1.2; cursor: default; box-sizing: border-box; list-style: none; font-family: Menlo, monospace; font-size: 11px;"
+      >
+        <div>
+          <span
+            style="color: rgb(110, 110, 110); display: inline-block; font-size: 12px; margin-right: 3px; user-select: none; transform: rotateZ(0deg);"
+          >
+            ▶
+          </span>
+          <span
+            style="font-style: italic;"
+          >
+            (3) 
+          </span>
+          <span
+            style="font-style: italic;"
+          >
+            [
+            <span>
+              Object
+            </span>
+            , 
+            <span
+              style="color: rgb(128, 128, 128);"
+            >
+              null
+            </span>
+            , 
+            <span>
+              Array(2)
+            </span>
+            ]
+          </span>
+        </div>
+        <ol
+          role="group"
+          style="margin: 0px; padding-left: 12px;"
+        />
+      </li>
+    </ol>
+  </div>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles complex object case 1`] = `
+<div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 css-1i0dbvc-MuiTypography-root"
+  >
+    Expand
+     all
+    <button
+      class="ExpandableTableData__expandButton"
+    >
+      <span
+        aria-label=""
+        class="styled-svg-wrapper"
+        data-mui-internal-clone-element="true"
+        data-svg="addBoxOutline"
+        id="icon-addBoxOutline"
+        role="img"
+      >
+        <svg
+          aria-hidden="true"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-15r5pc7-MuiSvgIcon-root"
+          data-testid="AddBoxOutlinedIcon"
+          focusable="false"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 16H5V5h14zm-8-2h2v-4h4v-2h-4V7h-2v4H7v2h4z"
+          />
+        </svg>
+      </span>
+    </button>
+  </span>
+  <div
+    class="MuiBox-root css-yc55n3"
+  >
+    <ol
+      role="tree"
+      style="padding: 0px; margin: 0px; list-style-type: none;"
+    >
+      <li
+        aria-expanded="false"
+        role="treeitem"
+        style="color: black; line-height: 1.2; cursor: default; box-sizing: border-box; list-style: none; font-family: Menlo, monospace; font-size: 11px;"
+      >
+        <div>
+          <span
+            style="color: rgb(110, 110, 110); display: inline-block; font-size: 12px; margin-right: 3px; user-select: none; transform: rotateZ(0deg);"
+          >
+            ▶
+          </span>
+          <span
+            style="font-style: italic;"
+          />
+          <span
+            style="font-style: italic;"
+          >
+            {
+            <span>
+              <span
+                style="color: rgb(136, 19, 145);"
+              >
+                foo
+              </span>
+              : 
+              <span>
+                Array(3)
+              </span>
+            </span>
+            , 
+            <span>
+              <span
+                style="color: rgb(136, 19, 145);"
+              >
+                null
+              </span>
+              : 
+              <span
+                style="color: rgb(128, 128, 128);"
+              >
+                null
+              </span>
+            </span>
+            , 
+            <span>
+              <span
+                style="color: rgb(136, 19, 145);"
+              >
+                bar
+              </span>
+              : 
+              <span
+                style="color: rgb(196, 26, 22);"
+              >
+                "
+                baz
+                "
+              </span>
+            </span>
+            , 
+            <span>
+              <span
+                style="color: rgb(136, 19, 145);"
+              >
+                zxcv
+              </span>
+              : 
+              <span>
+                Object
+              </span>
+            </span>
+            }
+          </span>
+        </div>
+        <ol
+          role="group"
+          style="margin: 0px; padding-left: 12px;"
+        />
+      </li>
+    </ol>
+  </div>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles null case 1`] = `
+<div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+  >
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+    >
+      &lt;null value&gt;
+    </span>
+  </span>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles one item case 1`] = `
+<div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+  >
+    foo
+  </span>
+</div>
+`;
+
+exports[`JSONTableCellRenderer > handles one null item case 1`] = `
+<div>
+  <span
+    class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+  >
+    <span
+      class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+    >
+      &lt;null value&gt;
+    </span>
+  </span>
+</div>
+`;
 
 exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
 <div>

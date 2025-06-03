@@ -59,7 +59,7 @@ describe('UserCard tests', () => {
   afterAll(() => server.close())
 
   beforeEach(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   describe('it renders the different sized cards without failing', () => {
@@ -224,7 +224,7 @@ describe('UserCard tests', () => {
     }
 
     it('renders without crashing', async () => {
-      const menuActionCallback = jest.fn()
+      const menuActionCallback = vi.fn()
       const menuActions = [
         {
           field: 'text',

@@ -39,13 +39,11 @@ import * as UseGetEntityPropertiesModule from './useGetEntityTitleBarProperties'
 
 const HAS_ACCESS_V2_DATA_TEST_ID = 'mock-has-access-v2'
 
-jest
-  .spyOn(HasAccessModule, 'HasAccessV2')
-  .mockImplementation(() => (
-    <span data-testid={HAS_ACCESS_V2_DATA_TEST_ID}></span>
-  ))
+vi.spyOn(HasAccessModule, 'HasAccessV2').mockImplementation(() => (
+  <span data-testid={HAS_ACCESS_V2_DATA_TEST_ID}></span>
+))
 
-const mockOnActClick = jest.fn()
+const mockOnActClick = vi.fn()
 
 function useEntityBundleOverride(bundle: EntityBundle) {
   server.use(
@@ -105,19 +103,20 @@ describe('TitleBarProperties', () => {
   describe('Show/Hide properties', () => {
     it('Shows all properties if there are 6 or less', async () => {
       // Mock useGetEntityTitleBarProperties to return 6 properties
-      jest
-        .spyOn(UseGetEntityPropertiesModule, 'useGetEntityTitleBarProperties')
-        .mockImplementation(() => {
-          const properties = []
-          for (let i = 1; i <= 6; i++) {
-            properties.push({
-              key: i.toString(),
-              title: `Property ${i}`,
-              value: `Value ${i}`,
-            })
-          }
-          return properties
-        })
+      vi.spyOn(
+        UseGetEntityPropertiesModule,
+        'useGetEntityTitleBarProperties',
+      ).mockImplementation(() => {
+        const properties = []
+        for (let i = 1; i <= 6; i++) {
+          properties.push({
+            key: i.toString(),
+            title: `Property ${i}`,
+            value: `Value ${i}`,
+          })
+        }
+        return properties
+      })
 
       renderComponent()
 
@@ -130,19 +129,20 @@ describe('TitleBarProperties', () => {
     })
     it('Shows 4 properties and can expand to show more if there are > 6', async () => {
       // Mock useGetEntityTitleBarProperties to return 8 properties
-      jest
-        .spyOn(UseGetEntityPropertiesModule, 'useGetEntityTitleBarProperties')
-        .mockImplementation(() => {
-          const properties = []
-          for (let i = 1; i <= 8; i++) {
-            properties.push({
-              key: i.toString(),
-              title: `Property ${i}`,
-              value: `Value ${i}`,
-            })
-          }
-          return properties
-        })
+      vi.spyOn(
+        UseGetEntityPropertiesModule,
+        'useGetEntityTitleBarProperties',
+      ).mockImplementation(() => {
+        const properties = []
+        for (let i = 1; i <= 8; i++) {
+          properties.push({
+            key: i.toString(),
+            title: `Property ${i}`,
+            value: `Value ${i}`,
+          })
+        }
+        return properties
+      })
 
       renderComponent()
 
@@ -185,9 +185,10 @@ describe('TitleBarProperties', () => {
   })
   describe('Displays individual properties', () => {
     beforeEach(() => {
-      jest
-        .spyOn(UseGetEntityPropertiesModule, 'useGetEntityTitleBarProperties')
-        .mockRestore()
+      vi.spyOn(
+        UseGetEntityPropertiesModule,
+        'useGetEntityTitleBarProperties',
+      ).mockRestore()
     })
     it('SynID', async () => {
       renderComponent()

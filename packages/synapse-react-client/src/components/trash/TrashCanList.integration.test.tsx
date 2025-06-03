@@ -51,8 +51,8 @@ const trashCanPages: PaginatedResults<TrashedEntity>[] = [
   },
 ]
 
-const onServerReceivedRestore = jest.fn()
-const onServerReceivedPurge = jest.fn()
+const onServerReceivedRestore = vi.fn()
+const onServerReceivedPurge = vi.fn()
 
 describe('TrashCanList', () => {
   beforeAll(() => server.listen())

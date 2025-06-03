@@ -13,26 +13,26 @@ import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { renderHook as _renderHook } from '@testing-library/react'
 import { useCreateFolderPath } from './useCreateFolderPath'
 
-jest.mock('../../../synapse-queries/entity/useEntity', () => ({
-  useCreateEntity: jest.fn(),
-  useGetEntityLookupQueryOptions: jest.fn(),
-  useGetEntityQueryOptions: jest.fn(),
+vi.mock('../../../synapse-queries/entity/useEntity', () => ({
+  useCreateEntity: vi.fn(),
+  useGetEntityLookupQueryOptions: vi.fn(),
+  useGetEntityQueryOptions: vi.fn(),
 }))
 
-const mockGetEntity = jest.fn()
-jest.mocked(useGetEntityQueryOptions).mockReturnValue(args => ({
+const mockGetEntity = vi.fn()
+vi.mocked(useGetEntityQueryOptions).mockReturnValue(args => ({
   queryFn: () => mockGetEntity(args),
   queryKey: ['mockGetEntityQueryKey', args],
 }))
 
-const mockLookupEntity = jest.fn()
-jest.mocked(useGetEntityLookupQueryOptions).mockReturnValue(args => ({
+const mockLookupEntity = vi.fn()
+vi.mocked(useGetEntityLookupQueryOptions).mockReturnValue(args => ({
   queryFn: () => mockLookupEntity(args),
   queryKey: ['mockLookupEntityQueryKey', args],
 }))
 
 const useCreateEntityMockReturnValue = getUseMutationMock()
-jest.mocked(useCreateEntity).mockReturnValue(useCreateEntityMockReturnValue)
+vi.mocked(useCreateEntity).mockReturnValue(useCreateEntityMockReturnValue)
 
 describe('useCreateFolderPath', () => {
   function renderHook() {
@@ -41,7 +41,7 @@ describe('useCreateFolderPath', () => {
     })
   }
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   test('existing folder', async () => {
     mockLookupEntity.mockResolvedValue(MOCK_FOLDER_ID)

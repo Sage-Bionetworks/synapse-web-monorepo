@@ -6,12 +6,12 @@ import { render, waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
 import FeaturedToolsList from './FeaturedToolsList'
 
-jest.mock('../../synapse-client', () => ({
-  getQueryTableResults: jest.fn(),
-  getUseUtcTimeFromCookie: jest.fn(() => false),
+vi.mock('../../synapse-client/SynapseClient', () => ({
+  getQueryTableResults: vi.fn(),
+  getUseUtcTimeFromCookie: vi.fn(() => false),
 }))
 
-const mockGetQueryTableResults = jest.mocked(SynapseClient.getQueryTableResults)
+const mockGetQueryTableResults = vi.mocked(SynapseClient.getQueryTableResults)
 
 const data = syn26344826Json as QueryResultBundle
 

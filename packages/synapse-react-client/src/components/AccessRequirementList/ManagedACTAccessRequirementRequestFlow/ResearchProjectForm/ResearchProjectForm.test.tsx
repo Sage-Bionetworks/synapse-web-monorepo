@@ -26,12 +26,12 @@ import ResearchProjectForm, {
 } from './ResearchProjectForm'
 
 const MARKDOWN_SYNAPSE_TEST_ID = 'MarkdownSynapseContent'
-jest.mock('../../../Markdown/MarkdownSynapse', () => ({
+vi.mock('../../../Markdown/MarkdownSynapse', () => ({
   __esModule: true,
-  default: jest.fn(),
+  default: vi.fn(),
 }))
 
-const mockMarkdownSynapse = jest.mocked(MarkdownSynapse)
+const mockMarkdownSynapse = vi.mocked(MarkdownSynapse)
 mockMarkdownSynapse.mockImplementation(
   () => (<div data-testid={MARKDOWN_SYNAPSE_TEST_ID} />) as any,
 )
@@ -40,11 +40,11 @@ const CREATED_RESEARCH_PROJECT_ID = MOCK_RESEARCH_PROJECT.id
 
 const validIduStatement = 'this must be at least 50 words long '.repeat(10)
 
-jest
-  .spyOn(SynapseClient, 'getResearchProject')
-  .mockImplementation(() => Promise.resolve(MOCK_EMPTY_RESEARCH_PROJECT))
+vi.spyOn(SynapseClient, 'getResearchProject').mockImplementation(() =>
+  Promise.resolve(MOCK_EMPTY_RESEARCH_PROJECT),
+)
 
-const mockSaveResearchProject = jest
+const mockSaveResearchProject = vi
   .spyOn(SynapseClient, 'updateResearchProject')
   .mockImplementation(submitted =>
     Promise.resolve({
@@ -53,16 +53,17 @@ const mockSaveResearchProject = jest
     }),
   )
 
-jest
-  .spyOn(SynapseClient, 'getWikiPageKeyForAccessRequirement')
-  .mockResolvedValue(mockManagedACTAccessRequirementWikiPageKey)
+vi.spyOn(SynapseClient, 'getWikiPageKeyForAccessRequirement').mockResolvedValue(
+  mockManagedACTAccessRequirementWikiPageKey,
+)
 
-jest
-  .spyOn(AccessRequirementListUtils, 'useCanShowManagedACTWikiInWizard')
-  .mockReturnValue(true)
+vi.spyOn(
+  AccessRequirementListUtils,
+  'useCanShowManagedACTWikiInWizard',
+).mockReturnValue(true)
 
-const mockOnSave = jest.fn()
-const mockOnHide = jest.fn()
+const mockOnSave = vi.fn()
+const mockOnHide = vi.fn()
 
 const defaultProps: ResearchProjectFormProps = {
   managedACTAccessRequirement: mockManagedACTAccessRequirement,
@@ -127,306 +128,314 @@ async function setUp(props: ResearchProjectFormProps) {
   }
 }
 
-describe('ResearchProjectForm', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
-
-  it('Prompts for a project lead and institution', async () => {
-    const { user, projectLeadInput, institutionInput, iduInput } = await setUp({
-      ...defaultProps,
-      managedACTAccessRequirement: {
-        ...mockManagedACTAccessRequirement,
-        isIDURequired: false,
-      },
-    })
-    expect(projectLeadInput).toBeInTheDocument()
-    expect(institutionInput).toBeInTheDocument()
-    expect(iduInput).not.toBeInTheDocument()
-
-    // Ensure the server data has finished loading by checking that the inputs are not disabled
-    await waitFor(() => {
-      expect(projectLeadInput).not.toBeDisabled()
-      expect(institutionInput).not.toBeDisabled()
+describe(
+  'ResearchProjectForm',
+  () => {
+    beforeEach(() => {
+      vi.clearAllMocks()
     })
 
-    const projectLead = 'My name'
-    const institution = 'My institution'
-    await user.type(projectLeadInput, projectLead)
-    await user.type(institutionInput, institution)
-
-    await clickSaveAndContinue(user)
-
-    await waitFor(() => {
-      expect(mockSaveResearchProject).toHaveBeenCalledWith(
-        {
-          ...MOCK_EMPTY_RESEARCH_PROJECT,
-          projectLead,
-          institution,
-        },
-        MOCK_ACCESS_TOKEN,
-      )
-      expect(mockOnSave).toHaveBeenCalledWith({
-        ...MOCK_EMPTY_RESEARCH_PROJECT,
-        id: CREATED_RESEARCH_PROJECT_ID,
-        projectLead,
-        institution,
-      })
-    })
-  })
-  it('Prompts for an IDU statement if required', async () => {
-    const { user, projectLeadInput, institutionInput, iduInput } = await setUp({
-      ...defaultProps,
-      managedACTAccessRequirement: {
-        ...mockManagedACTAccessRequirement,
-        isIDURequired: true,
-        isIDUPublic: false,
-      },
-    })
-    expect(projectLeadInput).toBeInTheDocument()
-    expect(institutionInput).toBeInTheDocument()
-    expect(iduInput).toBeInTheDocument()
-
-    // Ensure the server data has finished loading by checking that the inputs are not disabled
-    await waitFor(() => {
-      expect(projectLeadInput).not.toBeDisabled()
-      expect(institutionInput).not.toBeDisabled()
-      expect(iduInput).not.toBeDisabled()
-    })
-
-    const projectLead = 'My name'
-    const institution = 'My institution'
-    const idu = validIduStatement
-    await user.type(projectLeadInput, projectLead)
-    await user.type(institutionInput, institution)
-    await user.type(iduInput!, idu)
-
-    await clickSaveAndContinue(user)
-
-    await waitFor(() => {
-      expect(mockSaveResearchProject).toHaveBeenCalledWith(
-        {
-          ...MOCK_EMPTY_RESEARCH_PROJECT,
-          projectLead,
-          institution,
-          intendedDataUseStatement: idu,
-        },
-        MOCK_ACCESS_TOKEN,
-      )
-      expect(mockOnSave).toHaveBeenCalledWith({
-        ...MOCK_EMPTY_RESEARCH_PROJECT,
-        id: CREATED_RESEARCH_PROJECT_ID,
-        projectLead,
-        institution,
-        intendedDataUseStatement: idu,
-      })
-    })
-  })
-
-  it('informs the user if the IDU will be public', async () => {
-    const { iduInput } = await setUp({
-      ...defaultProps,
-      managedACTAccessRequirement: {
-        ...mockManagedACTAccessRequirement,
-        isIDURequired: true,
-        isIDUPublic: true,
-      },
-    })
-
-    expect(iduInput).toBeInTheDocument()
-    expect(iduInput).toHaveAccessibleDescription(
-      'This will be visible to the public',
-    )
-  })
-
-  it('Hides on the Cancel action', async () => {
-    const { user, cancelButton } = await setUp({
-      ...defaultProps,
-      managedACTAccessRequirement: {
-        ...mockManagedACTAccessRequirement,
-        isIDURequired: true,
-        isIDUPublic: false,
-      },
-    })
-
-    await user.click(cancelButton)
-
-    await waitFor(() => {
-      expect(mockOnHide).toHaveBeenCalled()
-      expect(mockSaveResearchProject).not.toHaveBeenCalled()
-    })
-  })
-
-  it('Blocks the save button if the form is invalid', async () => {
-    const {
-      user,
-      projectLeadInput,
-      institutionInput,
-      iduInput,
-      saveChangesButton,
-    } = await setUp({
-      ...defaultProps,
-      managedACTAccessRequirement: {
-        ...mockManagedACTAccessRequirement,
-        isIDURequired: true,
-        isIDUPublic: false,
-      },
-    })
-
-    await waitFor(() => {
-      expect(projectLeadInput).not.toBeDisabled()
-      expect(institutionInput).not.toBeDisabled()
-      expect(iduInput).not.toBeDisabled()
-    })
-
-    // Nothing is filled out
-    expect(saveChangesButton).toBeDisabled()
-
-    // Fill everything out
-    const projectLead = 'My name'
-    const institution = 'My institution'
-    await user.type(projectLeadInput, projectLead)
-    await user.type(institutionInput, institution)
-    await user.type(iduInput!, validIduStatement)
-
-    expect(saveChangesButton).not.toBeDisabled()
-
-    // Blocks when project lead is empty
-    await user.clear(projectLeadInput)
-    expect(saveChangesButton).toBeDisabled()
-    await user.type(projectLeadInput, projectLead)
-
-    // Blocks when institution is empty
-    await user.clear(institutionInput)
-    expect(saveChangesButton).toBeDisabled()
-    await user.type(institutionInput, institution)
-
-    // Blocks when IDU is empty
-    await user.clear(iduInput!)
-    expect(saveChangesButton).toBeDisabled()
-
-    // Blocks when IDU is too short
-    await user.type(iduInput!, 'short')
-    expect(saveChangesButton).toBeDisabled()
-
-    // Blocks when IDU is too long
-    act(() => {
-      // user.type takes too long for an input this large, so use fireEvent.input
-      fireEvent.input(iduInput!, {
-        target: {
-          value: 'this is far too long for a valid idu statement '.repeat(51),
-        },
-      })
-    })
-    await waitFor(() => expect(saveChangesButton).toBeDisabled())
-
-    // Unblocks when IDU is valid
-    await user.clear(iduInput!)
-    await user.type(iduInput!, validIduStatement)
-  })
-
-  it('Does not block save without IDU when IDU is not required', async () => {
-    const {
-      user,
-      projectLeadInput,
-      institutionInput,
-      iduInput,
-      saveChangesButton,
-    } = await setUp({
-      ...defaultProps,
-      managedACTAccessRequirement: {
-        ...mockManagedACTAccessRequirement,
-        isIDURequired: false,
-        isIDUPublic: false,
-      },
-    })
-
-    await waitFor(() => {
-      expect(projectLeadInput).not.toBeDisabled()
-      expect(institutionInput).not.toBeDisabled()
+    it('Prompts for a project lead and institution', async () => {
+      const { user, projectLeadInput, institutionInput, iduInput } =
+        await setUp({
+          ...defaultProps,
+          managedACTAccessRequirement: {
+            ...mockManagedACTAccessRequirement,
+            isIDURequired: false,
+          },
+        })
+      expect(projectLeadInput).toBeInTheDocument()
+      expect(institutionInput).toBeInTheDocument()
       expect(iduInput).not.toBeInTheDocument()
-    })
 
-    // Fill everything out
-    const projectLead = 'My name'
-    const institution = 'My institution'
-    await user.type(projectLeadInput, projectLead)
-    await user.type(institutionInput, institution)
+      // Ensure the server data has finished loading by checking that the inputs are not disabled
+      await waitFor(() => {
+        expect(projectLeadInput).not.toBeDisabled()
+        expect(institutionInput).not.toBeDisabled()
+      })
 
-    expect(saveChangesButton).not.toBeDisabled()
-  })
+      const projectLead = 'My name'
+      const institution = 'My institution'
+      await user.type(projectLeadInput, projectLead)
+      await user.type(institutionInput, institution)
 
-  it('Shows an error if saving fails', async () => {
-    const consoleErrorSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {})
-    const errorReason = 'Something went wrong'
-    mockSaveResearchProject.mockImplementation(() => {
-      throw new SynapseClientError(
-        500,
-        errorReason,
-        expect.getState().currentTestName!,
-      )
-    })
+      await clickSaveAndContinue(user)
 
-    const { user, projectLeadInput, institutionInput, iduInput } = await setUp({
-      ...defaultProps,
-      managedACTAccessRequirement: {
-        ...mockManagedACTAccessRequirement,
-        isIDURequired: true,
-        isIDUPublic: false,
-      },
-    })
-
-    await waitFor(() => {
-      expect(projectLeadInput).not.toBeDisabled()
-      expect(institutionInput).not.toBeDisabled()
-      expect(iduInput).not.toBeDisabled()
-    })
-
-    const projectLead = 'My name'
-    const institution = 'My institution'
-    const idu = validIduStatement
-    await user.type(projectLeadInput, projectLead)
-    await user.type(institutionInput, institution)
-    await user.type(iduInput!, idu)
-
-    await clickSaveAndContinue(user)
-
-    await waitFor(() => {
-      expect(mockSaveResearchProject).toHaveBeenCalledWith(
-        {
+      await waitFor(() => {
+        expect(mockSaveResearchProject).toHaveBeenCalledWith(
+          {
+            ...MOCK_EMPTY_RESEARCH_PROJECT,
+            projectLead,
+            institution,
+          },
+          MOCK_ACCESS_TOKEN,
+        )
+        expect(mockOnSave).toHaveBeenCalledWith({
           ...MOCK_EMPTY_RESEARCH_PROJECT,
+          id: CREATED_RESEARCH_PROJECT_ID,
+          projectLead,
+          institution,
+        })
+      })
+    })
+    it('Prompts for an IDU statement if required', async () => {
+      const { user, projectLeadInput, institutionInput, iduInput } =
+        await setUp({
+          ...defaultProps,
+          managedACTAccessRequirement: {
+            ...mockManagedACTAccessRequirement,
+            isIDURequired: true,
+            isIDUPublic: false,
+          },
+        })
+      expect(projectLeadInput).toBeInTheDocument()
+      expect(institutionInput).toBeInTheDocument()
+      expect(iduInput).toBeInTheDocument()
+
+      // Ensure the server data has finished loading by checking that the inputs are not disabled
+      await waitFor(() => {
+        expect(projectLeadInput).not.toBeDisabled()
+        expect(institutionInput).not.toBeDisabled()
+        expect(iduInput).not.toBeDisabled()
+      })
+
+      const projectLead = 'My name'
+      const institution = 'My institution'
+      const idu = validIduStatement
+      await user.type(projectLeadInput, projectLead)
+      await user.type(institutionInput, institution)
+      await user.type(iduInput!, idu)
+
+      await clickSaveAndContinue(user)
+
+      await waitFor(() => {
+        expect(mockSaveResearchProject).toHaveBeenCalledWith(
+          {
+            ...MOCK_EMPTY_RESEARCH_PROJECT,
+            projectLead,
+            institution,
+            intendedDataUseStatement: idu,
+          },
+          MOCK_ACCESS_TOKEN,
+        )
+        expect(mockOnSave).toHaveBeenCalledWith({
+          ...MOCK_EMPTY_RESEARCH_PROJECT,
+          id: CREATED_RESEARCH_PROJECT_ID,
           projectLead,
           institution,
           intendedDataUseStatement: idu,
+        })
+      })
+    })
+
+    it('informs the user if the IDU will be public', async () => {
+      const { iduInput } = await setUp({
+        ...defaultProps,
+        managedACTAccessRequirement: {
+          ...mockManagedACTAccessRequirement,
+          isIDURequired: true,
+          isIDUPublic: true,
         },
-        MOCK_ACCESS_TOKEN,
+      })
+
+      expect(iduInput).toBeInTheDocument()
+      expect(iduInput).toHaveAccessibleDescription(
+        'This will be visible to the public',
       )
-      expect(mockOnSave).not.toHaveBeenCalled()
-      expect(mockOnHide).not.toHaveBeenCalled()
     })
 
-    const alert = await screen.findByRole('alert')
-    within(alert).getByText(errorReason)
+    it('Hides on the Cancel action', async () => {
+      const { user, cancelButton } = await setUp({
+        ...defaultProps,
+        managedACTAccessRequirement: {
+          ...mockManagedACTAccessRequirement,
+          isIDURequired: true,
+          isIDUPublic: false,
+        },
+      })
 
-    consoleErrorSpy.mockRestore()
-  })
+      await user.click(cancelButton)
 
-  it('Shows the AR wiki', async () => {
-    await setUp({
-      ...defaultProps,
+      await waitFor(() => {
+        expect(mockOnHide).toHaveBeenCalled()
+        expect(mockSaveResearchProject).not.toHaveBeenCalled()
+      })
     })
 
-    await screen.findByTestId(MARKDOWN_SYNAPSE_TEST_ID)
+    it('Blocks the save button if the form is invalid', async () => {
+      const {
+        user,
+        projectLeadInput,
+        institutionInput,
+        iduInput,
+        saveChangesButton,
+      } = await setUp({
+        ...defaultProps,
+        managedACTAccessRequirement: {
+          ...mockManagedACTAccessRequirement,
+          isIDURequired: true,
+          isIDUPublic: false,
+        },
+      })
 
-    expect(mockMarkdownSynapse).toHaveBeenCalledWith(
-      expect.objectContaining({
-        wikiId: mockManagedACTAccessRequirementWikiPageKey.wikiPageId,
-        ownerId: mockManagedACTAccessRequirementWikiPageKey.ownerObjectId,
-        objectType: mockManagedACTAccessRequirementWikiPageKey.ownerObjectType,
-      }),
-      expect.anything(),
-    )
-  })
-})
+      await waitFor(() => {
+        expect(projectLeadInput).not.toBeDisabled()
+        expect(institutionInput).not.toBeDisabled()
+        expect(iduInput).not.toBeDisabled()
+      })
+
+      // Nothing is filled out
+      expect(saveChangesButton).toBeDisabled()
+
+      // Fill everything out
+      const projectLead = 'My name'
+      const institution = 'My institution'
+      await user.type(projectLeadInput, projectLead)
+      await user.type(institutionInput, institution)
+      await user.type(iduInput!, validIduStatement)
+
+      expect(saveChangesButton).not.toBeDisabled()
+
+      // Blocks when project lead is empty
+      await user.clear(projectLeadInput)
+      expect(saveChangesButton).toBeDisabled()
+      await user.type(projectLeadInput, projectLead)
+
+      // Blocks when institution is empty
+      await user.clear(institutionInput)
+      expect(saveChangesButton).toBeDisabled()
+      await user.type(institutionInput, institution)
+
+      // Blocks when IDU is empty
+      await user.clear(iduInput!)
+      expect(saveChangesButton).toBeDisabled()
+
+      // Blocks when IDU is too short
+      await user.type(iduInput!, 'short')
+      expect(saveChangesButton).toBeDisabled()
+
+      // Blocks when IDU is too long
+      act(() => {
+        // user.type takes too long for an input this large, so use fireEvent.input
+        fireEvent.input(iduInput!, {
+          target: {
+            value: 'this is far too long for a valid idu statement '.repeat(51),
+          },
+        })
+      })
+      await waitFor(() => expect(saveChangesButton).toBeDisabled())
+
+      // Unblocks when IDU is valid
+      await user.clear(iduInput!)
+      await user.type(iduInput!, validIduStatement)
+    })
+
+    it('Does not block save without IDU when IDU is not required', async () => {
+      const {
+        user,
+        projectLeadInput,
+        institutionInput,
+        iduInput,
+        saveChangesButton,
+      } = await setUp({
+        ...defaultProps,
+        managedACTAccessRequirement: {
+          ...mockManagedACTAccessRequirement,
+          isIDURequired: false,
+          isIDUPublic: false,
+        },
+      })
+
+      await waitFor(() => {
+        expect(projectLeadInput).not.toBeDisabled()
+        expect(institutionInput).not.toBeDisabled()
+        expect(iduInput).not.toBeInTheDocument()
+      })
+
+      // Fill everything out
+      const projectLead = 'My name'
+      const institution = 'My institution'
+      await user.type(projectLeadInput, projectLead)
+      await user.type(institutionInput, institution)
+
+      expect(saveChangesButton).not.toBeDisabled()
+    })
+
+    it('Shows an error if saving fails', async () => {
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
+      const errorReason = 'Something went wrong'
+      mockSaveResearchProject.mockImplementation(() => {
+        throw new SynapseClientError(
+          500,
+          errorReason,
+          expect.getState().currentTestName!,
+        )
+      })
+
+      const { user, projectLeadInput, institutionInput, iduInput } =
+        await setUp({
+          ...defaultProps,
+          managedACTAccessRequirement: {
+            ...mockManagedACTAccessRequirement,
+            isIDURequired: true,
+            isIDUPublic: false,
+          },
+        })
+
+      await waitFor(() => {
+        expect(projectLeadInput).not.toBeDisabled()
+        expect(institutionInput).not.toBeDisabled()
+        expect(iduInput).not.toBeDisabled()
+      })
+
+      const projectLead = 'My name'
+      const institution = 'My institution'
+      const idu = validIduStatement
+      await user.type(projectLeadInput, projectLead)
+      await user.type(institutionInput, institution)
+      await user.type(iduInput!, idu)
+
+      await clickSaveAndContinue(user)
+
+      await waitFor(() => {
+        expect(mockSaveResearchProject).toHaveBeenCalledWith(
+          {
+            ...MOCK_EMPTY_RESEARCH_PROJECT,
+            projectLead,
+            institution,
+            intendedDataUseStatement: idu,
+          },
+          MOCK_ACCESS_TOKEN,
+        )
+        expect(mockOnSave).not.toHaveBeenCalled()
+        expect(mockOnHide).not.toHaveBeenCalled()
+      })
+
+      const alert = await screen.findByRole('alert')
+      within(alert).getByText(errorReason)
+
+      consoleErrorSpy.mockRestore()
+    })
+
+    it('Shows the AR wiki', async () => {
+      await setUp({
+        ...defaultProps,
+      })
+
+      await screen.findByTestId(MARKDOWN_SYNAPSE_TEST_ID)
+
+      expect(mockMarkdownSynapse).toHaveBeenCalledWith(
+        expect.objectContaining({
+          wikiId: mockManagedACTAccessRequirementWikiPageKey.wikiPageId,
+          ownerId: mockManagedACTAccessRequirementWikiPageKey.ownerObjectId,
+          objectType:
+            mockManagedACTAccessRequirementWikiPageKey.ownerObjectType,
+        }),
+        expect.anything(),
+      )
+    })
+  },
+  { timeout: 30_000 },
+)

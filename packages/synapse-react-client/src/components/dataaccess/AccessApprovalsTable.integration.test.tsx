@@ -57,7 +57,7 @@ describe('AccessApprovalsTable tests', () => {
   })
   afterEach(() => {
     server.restoreHandlers()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   afterAll(() => server.close())
 

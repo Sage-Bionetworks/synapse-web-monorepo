@@ -3,7 +3,7 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { cleanup, renderHook, waitFor } from '@testing-library/react'
 import usePreFetchResource from './usePreFetchResource'
 
-const onReceivedRequest = jest.fn()
+const onReceivedRequest = vi.fn()
 
 const PRESIGNED_URL = 'https://test-url.notarealurl/presigned.pdf'
 
@@ -13,7 +13,7 @@ describe('usePreFetchResource tests', () => {
   afterAll(() => server.close())
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('Returns undefined when passed URL is undefined', () => {

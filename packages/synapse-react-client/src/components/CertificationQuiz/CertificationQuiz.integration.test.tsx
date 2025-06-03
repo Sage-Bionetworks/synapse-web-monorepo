@@ -26,27 +26,27 @@ import { noop } from 'lodash-es'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
 import CertificationQuiz from './CertificationQuiz'
 
-window.open = jest.fn()
-jest.mock('../../synapse-queries/user/useCertificationQuiz', () => {
+window.open = vi.fn()
+vi.mock('../../synapse-queries/user/useCertificationQuiz', () => {
   return {
-    usePostCertifiedUserTestResponse: jest.fn(),
-    useGetPassingRecord: jest.fn(),
+    usePostCertifiedUserTestResponse: vi.fn(),
+    useGetPassingRecord: vi.fn(),
   }
 })
 
-const mockUsePostCertifiedUserTestResponse = jest.mocked(
+const mockUsePostCertifiedUserTestResponse = vi.mocked(
   usePostCertifiedUserTestResponse,
 )
-const mockUseGetPassingRecord = jest.mocked(useGetPassingRecord)
+const mockUseGetPassingRecord = vi.mocked(useGetPassingRecord)
 
-jest.mock('../../synapse-queries/user/useUserBundle', () => {
+vi.mock('../../synapse-queries/user/useUserBundle', () => {
   return {
-    useGetCurrentUserBundle: jest.fn(),
+    useGetCurrentUserBundle: vi.fn(),
   }
 })
-const mockUseGetCurrentUserBundle = jest.mocked(useGetCurrentUserBundle)
+const mockUseGetCurrentUserBundle = vi.mocked(useGetCurrentUserBundle)
 
-const mockToastFn = jest
+const mockToastFn = vi
   .spyOn(ToastMessage, 'displayToast')
   .mockImplementation(() => noop)
 const gettingStartedUrl =
@@ -87,7 +87,7 @@ describe('CertificationQuiz tests', () => {
 
   afterEach(() => {
     server.resetHandlers()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   afterAll(() => server.close())
 

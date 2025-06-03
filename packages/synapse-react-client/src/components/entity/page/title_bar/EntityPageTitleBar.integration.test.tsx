@@ -26,27 +26,24 @@ const TITLE_BAR_VERSION_INFO_TEST_ID = 'title-bar-version-info'
 const ENTITY_ACTION_MENU_TEST_ID = 'entity-action-menu'
 const FAVORITE_BUTTON_TEST_ID = 'favorite-button'
 
-jest
-  .spyOn(TitleBarPropertiesModule, 'default')
-  .mockImplementation(() => (
-    <div data-testid={TITLE_BAR_PROPERTIES_TEST_ID}></div>
-  ))
+vi.spyOn(TitleBarPropertiesModule, 'default').mockImplementation(() => (
+  <div data-testid={TITLE_BAR_PROPERTIES_TEST_ID}></div>
+))
 
-jest
-  .spyOn(TitleBarVersionInfoModule, 'EntityTitleBarVersionInfo')
-  .mockImplementation(() => (
-    <div data-testid={TITLE_BAR_VERSION_INFO_TEST_ID}></div>
-  ))
+vi.spyOn(
+  TitleBarVersionInfoModule,
+  'EntityTitleBarVersionInfo',
+).mockImplementation(() => (
+  <div data-testid={TITLE_BAR_VERSION_INFO_TEST_ID}></div>
+))
 
-jest
-  .spyOn(EntityActionMenuModule, 'default')
-  .mockImplementation(() => (
-    <div data-testid={ENTITY_ACTION_MENU_TEST_ID}></div>
-  ))
+vi.spyOn(EntityActionMenuModule, 'default').mockImplementation(() => (
+  <div data-testid={ENTITY_ACTION_MENU_TEST_ID}></div>
+))
 
-jest
-  .spyOn(FavoriteButtonModule, 'default')
-  .mockImplementation(() => <span data-testid={FAVORITE_BUTTON_TEST_ID}></span>)
+vi.spyOn(FavoriteButtonModule, 'default').mockImplementation(() => (
+  <span data-testid={FAVORITE_BUTTON_TEST_ID}></span>
+))
 
 function renderComponent(props: EntityPageTitleBarProps) {
   return render(<EntityPageTitleBar {...props} />, {
@@ -63,8 +60,8 @@ function useEntityBundleOverride(bundle: EntityBundle) {
   )
 }
 
-const onActMemberClickAddConditionsForUse = jest.fn()
-const toggleShowVersionHistory = jest.fn()
+const onActMemberClickAddConditionsForUse = vi.fn()
+const toggleShowVersionHistory = vi.fn()
 
 const actionMenuProps: EntityActionMenuProps = {
   actionConfiguration: {

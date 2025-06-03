@@ -16,7 +16,7 @@ import UserFileGrid, {
 const pathpart = 'someTool'
 const formGroupId = '5'
 const itemNoun = 'submission'
-const mockListFormData = jest.spyOn(SynapseClient, 'listFormData')
+const mockListFormData = vi.spyOn(SynapseClient, 'listFormData')
 
 const renderComponent = async (props: SynapseFormSubmissionGridProps) => {
   // We must await asynchronous events for our assertions to pass
@@ -83,7 +83,7 @@ describe('SynapseFormSubmissionsGrid', () => {
   })
 
   test('should modify the modal state when clicking "delete"', async () => {
-    const spy = jest
+    const spy = vi
       .spyOn(SynapseClient, 'deleteFormData')
       .mockReturnValue(Promise.resolve())
     await renderComponent(props)

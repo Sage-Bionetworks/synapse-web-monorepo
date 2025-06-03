@@ -21,7 +21,7 @@ describe('UserBadge tests', () => {
   afterAll(() => server.close())
 
   beforeEach(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   it('renders the badge', async () => {
@@ -43,8 +43,8 @@ describe('UserBadge tests', () => {
   })
 
   it('shows a medium user card when mouse enters', async () => {
-    jest.useFakeTimers()
-    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
+    vi.useFakeTimers()
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
 
     renderComponent(props)
 
@@ -64,7 +64,7 @@ describe('UserBadge tests', () => {
     // Hover over the username
     await user.hover(smallUserCard)
     act(() => {
-      jest.advanceTimersByTime(1000)
+      vi.advanceTimersByTime(1000)
     })
 
     // The card should appear, which would let us see first/last name
@@ -75,7 +75,7 @@ describe('UserBadge tests', () => {
     // Unhover and confirm that the card disappears (we will no longer see a full name anywhere)
     await user.unhover(smallUserCard)
     act(() => {
-      jest.advanceTimersByTime(1000)
+      vi.advanceTimersByTime(1000)
     })
 
     await waitFor(() =>

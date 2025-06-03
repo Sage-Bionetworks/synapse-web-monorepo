@@ -57,7 +57,7 @@ const page2: EntityChildrenResponse = {
   nextPageToken: undefined,
 }
 
-const mockGetEntityChildren = jest.spyOn(SynapseClient, 'getEntityChildren')
+const mockGetEntityChildren = vi.spyOn(SynapseClient, 'getEntityChildren')
 
 describe('basic functionality', () => {
   it('correctly calls SynapseClient', async () => {

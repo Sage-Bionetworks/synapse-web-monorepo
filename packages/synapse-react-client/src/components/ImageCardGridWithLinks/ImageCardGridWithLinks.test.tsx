@@ -13,8 +13,8 @@ import ImageCardGridWithLinks, {
   ImageCardGridWithLinksProps,
 } from './ImageCardGridWithLinks'
 
-jest.mock('../../synapse-queries/entity/useGetQueryResultBundle')
-const mockUseGetQueryResultBundle = jest.mocked(useGetQueryResultBundle)
+vi.mock('../../synapse-queries/entity/useGetQueryResultBundle')
+const mockUseGetQueryResultBundle = vi.mocked(useGetQueryResultBundle)
 
 describe('ImageCardGridWithLinks Tests', () => {
   const mockProps: ImageCardGridWithLinksProps = {
@@ -103,8 +103,8 @@ describe('ImageCardGridWithLinks Tests', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
+    vi.clearAllMocks()
+    vi.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
     mockUseGetQueryResultBundle.mockReturnValue(
       getUseQuerySuccessMock(mockQueryResult),
     )

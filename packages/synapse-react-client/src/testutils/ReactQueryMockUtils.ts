@@ -6,6 +6,7 @@ import {
   UseQueryResult,
 } from '@tanstack/react-query'
 import noop from 'lodash-es/noop'
+import { Dispatch, SetStateAction, useState } from 'react'
 
 export function getUseQuerySuccessMock<TData>(
   data: TData,
@@ -90,7 +91,7 @@ export function getUseQueryErrorMock<TError>(
     isRefetching: false,
     isStale: false,
     isSuccess: false,
-    refetch: jest.fn(),
+    refetch: vi.fn(),
     status: 'error',
     failureReason: null,
     fetchStatus: 'idle',
@@ -145,9 +146,9 @@ export function getUseMutationMock<TData = any, TError = any, TVariables = any>(
     isIdle: true,
     isPaused: false,
     isSuccess: false,
-    mutate: jest.fn(),
-    mutateAsync: jest.fn().mockResolvedValue(data),
-    reset: jest.fn(),
+    mutate: vi.fn(),
+    mutateAsync: vi.fn().mockResolvedValue(data),
+    reset: vi.fn(),
     status: 'idle',
     variables: undefined,
     failureReason: null,
@@ -170,9 +171,9 @@ export function getUseMutationPendingMock<
     isIdle: false,
     isPaused: false,
     isSuccess: false,
-    mutate: jest.fn(),
-    mutateAsync: jest.fn().mockResolvedValue(data),
-    reset: jest.fn(),
+    mutate: vi.fn(),
+    mutateAsync: vi.fn().mockResolvedValue(data),
+    reset: vi.fn(),
     status: 'pending',
     variables: variables!,
     failureReason: null,
@@ -197,8 +198,8 @@ export function getUseInfiniteQuerySuccessMock<TData>(
     isRefetchError: false,
     isSuccess: true,
     status: 'success',
-    fetchNextPage: jest.fn(),
-    fetchPreviousPage: jest.fn(),
+    fetchNextPage: vi.fn(),
+    fetchPreviousPage: vi.fn(),
     hasNextPage: hasNextPage,
     hasPreviousPage: false,
     isFetchingNextPage: false,
@@ -216,7 +217,128 @@ export function getUseInfiniteQuerySuccessMock<TData>(
     isPlaceholderData: false,
     isRefetching: false,
     isStale: false,
-    refetch: jest.fn(),
+    refetch: vi.fn(),
     fetchStatus: 'idle',
   } satisfies UseInfiniteQueryResult<{ pages: TData[] }, never>
 }
+
+/**
+ * Returns a mock instance for useInfiniteQuery, as well as functions to manipulate the mock hook's state, and
+ * mock functions for fetchNextPage, fetchPreviousPage, and refetch.
+ *
+ * Example usage:
+ * ```tsx
+ * const { mock, setSuccess } = getUseInfiniteQueryMock<MyDataType, MyErrorType>();
+ *
+ * // Set the mock implementation
+ * myMockedHook.mockImplementation(mock);
+ * // Update the hook's state to success with data
+ * act(() => { myMockedHook.setSuccess(myDataArray, true); });
+ * ```
+ */
+export function getUseInfiniteQueryMock<TData = unknown, TError = unknown>() {
+  // Stable mock functions
+  const mockFetchNextPage = vi.fn()
+  const mockFetchPreviousPage = vi.fn()
+  const mockRefetch = vi.fn()
+
+  let currentSetValue: Dispatch<
+    SetStateAction<UseInfiniteQueryResult<{ pages: TData[] }, TError>>
+  > | null = null
+
+  const setSuccess = (data: TData[], hasNextPage = false) => {
+    if (currentSetValue) {
+      const successState: UseInfiniteQueryResult<{ pages: TData[] }, TError> = {
+        data: { pages: data },
+        hasNextPage: hasNextPage,
+        status: 'success',
+        isSuccess: true,
+        isPending: false,
+        isLoading: false,
+        isError: false,
+        error: null,
+        isFetched: true,
+        isFetchedAfterMount: true,
+        isFetching: false,
+        isInitialLoading: false,
+        isLoadingError: false,
+        isRefetchError: false,
+        isRefetching: false,
+        fetchStatus: 'idle',
+        isPaused: false,
+        dataUpdatedAt: Date.now(),
+        errorUpdatedAt: 0,
+        errorUpdateCount: 0,
+        failureCount: 0,
+        failureReason: null,
+        fetchNextPage: mockFetchNextPage,
+        fetchPreviousPage: mockFetchPreviousPage,
+        refetch: mockRefetch,
+        hasPreviousPage: false, // Or make this controllable
+        isFetchingNextPage: false,
+        isFetchingPreviousPage: false,
+        isPlaceholderData: false,
+        isStale: false,
+      }
+      currentSetValue(successState)
+    } else {
+      console.warn(
+        'setSuccess called before mock query was rendered or setValue was captured.',
+      )
+    }
+  }
+  // let setError: (error: TError) => void = () => {}
+  // let setLoading: () => void = () => {}
+  const mock = function useMockInfiniteQuery() {
+    const [value, setValue] = useState<
+      UseInfiniteQueryResult<{ pages: TData[] }, TError>
+    >({
+      data: undefined,
+      fetchStatus: 'idle',
+      dataUpdatedAt: 0,
+      error: null,
+      errorUpdateCount: 0,
+      errorUpdatedAt: 0,
+      failureCount: 0,
+      failureReason: null,
+      fetchNextPage: mockFetchNextPage,
+      fetchPreviousPage: mockFetchPreviousPage,
+      hasNextPage: false,
+      hasPreviousPage: false,
+      isError: false,
+      isFetched: false,
+      isFetchedAfterMount: false,
+      isFetching: false,
+      isFetchingNextPage: false,
+      isFetchingPreviousPage: false,
+      isInitialLoading: false,
+      isLoading: true,
+      isLoadingError: false,
+      isPaused: false,
+      isPending: true,
+      isPlaceholderData: false,
+      isRefetchError: false,
+      isRefetching: false,
+      isStale: false,
+      isSuccess: false,
+      refetch: mockRefetch,
+      status: 'pending',
+    })
+
+    currentSetValue = setValue
+
+    return value
+  }
+  return {
+    mock: mock,
+    mockFetchNextPage: mockFetchNextPage,
+    setSuccess,
+    // setError,
+    // setLoading,
+  }
+}
+
+// What methods do I want to manipulate the mock?
+// - setSuccess(data)
+// - setError(error)
+// - setLoading()

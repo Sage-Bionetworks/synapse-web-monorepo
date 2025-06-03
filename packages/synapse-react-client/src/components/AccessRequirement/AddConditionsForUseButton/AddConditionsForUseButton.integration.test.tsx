@@ -22,7 +22,7 @@ function renderComponent(props: AddConditionsForUseButtonProps) {
   })
 }
 
-const mockCallback = jest.fn()
+const mockCallback = vi.fn()
 
 // Adding this mock service worker handler will make the component recognize the caller as an ACT member
 function setIsCurrentUserMemberOfACT(isActMember: boolean) {

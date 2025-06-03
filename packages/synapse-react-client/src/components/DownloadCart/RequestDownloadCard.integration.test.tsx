@@ -22,7 +22,7 @@ import {
 } from './RequestDownloadCard'
 
 const ENTITY_ID = 'syn29218'
-const onViewSharingSettingsClicked = jest.fn()
+const onViewSharingSettingsClicked = vi.fn()
 const defaultProps: RequestDownloadCardProps = {
   entityId: ENTITY_ID,
   count: 10,

@@ -44,10 +44,10 @@ async function renderComponent(props: ChallengeRequirementsModalProps) {
   }
 }
 
-const mockOnRegisterComplete = jest.fn()
-const mockOnCancel = jest.fn()
+const mockOnRegisterComplete = vi.fn()
+const mockOnCancel = vi.fn()
 
-const addTeamMemberSpy = jest.spyOn(
+const addTeamMemberSpy = vi.spyOn(
   SynapseClient,
   'addTeamMemberAsAuthenticatedUserOrAdmin',
 )
@@ -71,7 +71,7 @@ describe('ChallengeRequirementsModal', () => {
   })
   afterEach(() => {
     server.restoreHandlers()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   afterAll(() => server.close())
 

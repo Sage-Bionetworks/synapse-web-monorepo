@@ -24,11 +24,11 @@ function renderTable(props: EntityHeaderTableProps) {
   })
 }
 
-jest.spyOn(EntityFinderModule, 'EntityFinderModal').mockImplementation(() => {
+vi.spyOn(EntityFinderModule, 'EntityFinderModal').mockImplementation(() => {
   return <div data-testid="EntityFinderModal"></div>
 })
 
-const mockEntityFinderModal = jest.mocked(EntityFinderModal)
+const mockEntityFinderModal = vi.mocked(EntityFinderModal)
 
 describe('EntityHeaderTable tests', () => {
   beforeAll(() => {
@@ -57,7 +57,7 @@ describe('EntityHeaderTable tests', () => {
   })
 
   it('renders editable table, with ability to add items', async () => {
-    const mockOnUpdate = jest.fn()
+    const mockOnUpdate = vi.fn()
     const refs: ReferenceList = [
       { targetId: mockFileEntityData.id },
       { targetId: mockDatasetData.id },
@@ -82,7 +82,7 @@ describe('EntityHeaderTable tests', () => {
   })
 
   it('handles adding items without CSV input', async () => {
-    const mockOnUpdate = jest.fn()
+    const mockOnUpdate = vi.fn()
     const refs: ReferenceList = [
       { targetId: mockFileEntityData.id },
       { targetId: mockDatasetData.id },
@@ -134,7 +134,7 @@ describe('EntityHeaderTable tests', () => {
   })
 
   it('renders editable table, with ability to remove items', async () => {
-    const mockOnUpdate = jest.fn()
+    const mockOnUpdate = vi.fn()
     const refs: ReferenceList = [
       { targetId: mockFileEntityData.id },
       { targetId: mockDatasetData.id },
@@ -159,7 +159,7 @@ describe('EntityHeaderTable tests', () => {
   })
 
   it('removes filters when filters are hidden', async () => {
-    const mockOnUpdate = jest.fn()
+    const mockOnUpdate = vi.fn()
     // 10 FileEntities, and 1 Dataset
     const refs: ReferenceList = [
       ...mockFileEntities.slice(0, 10).map(entity => ({ targetId: entity.id })),

@@ -22,23 +22,23 @@ import {
 } from './RejectProfileValidationRequestModal'
 
 // Mock the CannedRejectionDialog component
-jest.mock('../CannedRejectionDialog/CannedRejectionDialog', () => ({
-  CannedRejectionDialog: jest
+vi.mock('../CannedRejectionDialog/CannedRejectionDialog', () => ({
+  CannedRejectionDialog: vi
     .fn()
     .mockImplementation(({ children }) => <div>{children}</div>),
 }))
 
-const mockCannedRejectionDialog = jest.mocked(CannedRejectionDialog)
+const mockCannedRejectionDialog = vi.mocked(CannedRejectionDialog)
 
 const props: RejectProfileValidationRequestModalProps = {
   verificationSubmissionId: '123',
   currentState: VerificationStateEnum.SUBMITTED,
   tableId: REJECT_VALIDATION_CANNED_RESPONSES_TABLE,
   open: true,
-  onClose: jest.fn(),
+  onClose: vi.fn(),
 }
 
-const updateVerificationSubmissionStateSpy = jest.spyOn(
+const updateVerificationSubmissionStateSpy = vi.spyOn(
   SynapseClient,
   'updateVerificationSubmissionState',
 )

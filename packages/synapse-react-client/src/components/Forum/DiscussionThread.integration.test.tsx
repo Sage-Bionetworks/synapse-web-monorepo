@@ -30,12 +30,12 @@ import { DiscussionThread, DiscussionThreadProps } from './DiscussionThread'
 const MOCK_THREAD_ID = '123'
 const MOCK_SUBSCRIPTION_ID = '999'
 
-jest.mock('../../synapse-client', () => ({
-  postSubscription: jest.fn(),
-  deleteSubscription: jest.fn(),
+vi.mock('../../synapse-client/SynapseClient', () => ({
+  postSubscription: vi.fn(),
+  deleteSubscription: vi.fn(),
 }))
 
-const mockDeleteSubscription = jest.mocked(SynapseClient.deleteSubscription)
+const mockDeleteSubscription = vi.mocked(SynapseClient.deleteSubscription)
 
 mockDeleteSubscription.mockImplementation(() => {
   // When the subscription is deleted, update the server to return nothing.
@@ -163,7 +163,7 @@ describe.skip('Discussion Thread test', () => {
   })
   afterEach(() => {
     server.resetHandlers()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   afterAll(() => server.close())
 

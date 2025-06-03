@@ -1,4 +1,10 @@
 import '@testing-library/jest-dom'
+import {
+  MOCK_ACCESS_TOKEN,
+  SynapseTestContext,
+} from '@/mocks/MockSynapseContext'
+import SynapseClient from '@/synapse-client'
+import * as useEntityBundleModule from '@/synapse-queries/entity/useEntityBundle'
 import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
 import {
   EntityHeader,
@@ -9,41 +15,32 @@ import {
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Map } from 'immutable'
-import { when } from 'jest-when'
-import * as DetailsListModule from '../../../src/components/EntityFinder/details/EntityDetailsList'
+import { when } from 'vitest-when'
+import * as DetailsListModule from './details/EntityDetailsList'
 import {
   EntityDetailsListDataConfiguration,
   EntityDetailsListDataConfigurationType,
-} from '../../../src/components/EntityFinder/details/EntityDetailsList'
-import EntityFinder, {
-  EntityFinderProps,
-} from '../../../src/components/EntityFinder/EntityFinder'
-import * as EntityTreeModule from '../../../src/components/EntityFinder/tree/EntityTree'
-import { FinderScope } from '../../../src/components/EntityFinder/tree/EntityTree'
-import {
-  MOCK_ACCESS_TOKEN,
-  SynapseTestContext,
-} from '../../../src/mocks/MockSynapseContext'
-import SynapseClient from '../../../src/synapse-client'
-import * as useEntityBundleModule from '../../../src/synapse-queries/entity/useEntityBundle'
+} from './details/EntityDetailsList'
+import EntityFinder, { EntityFinderProps } from './EntityFinder'
+import * as EntityTreeModule from './tree/EntityTree'
+import { FinderScope } from './tree/EntityTree'
 
-jest.mock('react-reflex', () => {
+vi.mock('react-reflex', () => {
   return {
-    ReflexContainer: jest
+    ReflexContainer: vi
       .fn()
       .mockImplementation(({ children }) => <div>{children}</div>),
-    ReflexElement: jest
+    ReflexElement: vi
       .fn()
       .mockImplementation(({ children }) => <div>{children}</div>),
-    ReflexSplitter: jest.fn().mockImplementation(() => <div></div>),
+    ReflexSplitter: vi.fn().mockImplementation(() => <div></div>),
   }
 })
 
-const mockUseGetEntityBundle = jest.spyOn(useEntityBundleModule, 'default')
+const mockUseGetEntityBundle = vi.spyOn(useEntityBundleModule, 'default')
 
-jest
-  .spyOn(EntityTreeModule, 'EntityTree')
-  .mockImplementation(({ toggleSelection, setDetailsViewConfiguration }) => {
+vi.spyOn(EntityTreeModule, 'EntityTree').mockImplementation(
+  ({ toggleSelection, setDetailsViewConfiguration }) => {
     invokeToggleSelectionViaTree = reference => {
       toggleSelection!(reference)
     }
@@ -51,9 +48,10 @@ jest
       setDetailsViewConfiguration!(configuration)
     }
     return <div role="tree"></div>
-  })
+  },
+)
 
-const mockDetailsList = jest
+const mockDetailsList = vi
   .spyOn(DetailsListModule, 'EntityDetailsList')
   .mockImplementation(({ toggleSelection }) => {
     invokeToggleSelectionViaTable = (reference: Reference) => {
@@ -68,11 +66,11 @@ let invokeSetConfigViaTree: (
   configuration: EntityDetailsListDataConfiguration,
 ) => void
 
-jest.spyOn(SynapseClient, 'getEntityPath')
-jest.spyOn(SynapseClient, 'getEntityHeader')
-const mockGetEntityHeaders = jest.spyOn(SynapseClient, 'getEntityHeaders')
+vi.spyOn(SynapseClient, 'getEntityPath')
+vi.spyOn(SynapseClient, 'getEntityHeader')
+const mockGetEntityHeaders = vi.spyOn(SynapseClient, 'getEntityHeaders')
 
-const mockOnSelectionChange = jest.fn()
+const mockOnSelectionChange = vi.fn()
 
 const defaultProps: EntityFinderProps = {
   initialScope: FinderScope.CURRENT_PROJECT,
@@ -101,7 +99,7 @@ function renderComponent(propOverrides?: Partial<EntityFinderProps>) {
 
 describe('EntityFinder tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 
     mockUseGetEntityBundle.mockReturnValue(
       getUseQuerySuccessMock({
@@ -469,14 +467,14 @@ describe('EntityFinder tests', () => {
 
       when(mockGetEntityHeaders)
         .calledWith([{ targetId: entityId }], MOCK_ACCESS_TOKEN)
-        .mockResolvedValue(entityHeaderResult)
+        .thenResolve(entityHeaderResult)
 
       when(mockGetEntityHeaders)
         .calledWith(
           [{ targetId: entityId, targetVersionNumber: version }],
           MOCK_ACCESS_TOKEN,
         )
-        .mockResolvedValue(entityHeaderResultWithVersion)
+        .thenResolve(entityHeaderResultWithVersion)
 
       await user.type(searchInput, entityId)
       await user.type(searchInput, '{enter}')

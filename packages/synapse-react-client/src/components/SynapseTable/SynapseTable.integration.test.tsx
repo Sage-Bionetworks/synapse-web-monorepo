@@ -3,7 +3,10 @@ import { mockDatasetEntity } from '@/mocks/entity/mockDataset'
 import { mockFileViewEntity } from '@/mocks/entity/mockFileView'
 import { mockProjectIds } from '@/mocks/entity/mockProject'
 import { mockProjectViewEntity } from '@/mocks/entity/mockProjectView'
-import { MOCK_TABLE_ENTITY_ID, mockTableEntity } from '@/mocks/entity/mockTableEntity'
+import {
+  MOCK_TABLE_ENTITY_ID,
+  mockTableEntity,
+} from '@/mocks/entity/mockTableEntity'
 import { mockFileHandle } from '@/mocks/mock_file_handle'
 import mockQueryResponseData from '@/mocks/mockQueryResponseData'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
@@ -14,7 +17,10 @@ import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '@/utils'
 import { ENTITY_HEADERS, ENTITY_ID_VERSION } from '@/utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '@/utils/functions/getEndpoint'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import { normalizeNumericId } from '@/utils/functions/StringUtils'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import {
@@ -34,10 +40,18 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { QueryContextConsumer, QueryContextType, QueryWrapper, QueryWrapperProps } from '../../index'
+import {
+  QueryContextConsumer,
+  QueryContextType,
+  QueryWrapper,
+  QueryWrapperProps,
+} from '../../index'
 import * as AddToDownloadListV2Module from '../AddToDownloadListV2'
 import * as HasAccessModule from '../HasAccess/HasAccessV2'
-import { QueryVisualizationWrapper, QueryVisualizationWrapperProps } from '../QueryVisualizationWrapper'
+import {
+  QueryVisualizationWrapper,
+  QueryVisualizationWrapperProps,
+} from '../QueryVisualizationWrapper'
 import * as NoContentPlaceholderModule from '../QueryVisualizationWrapper/NoContentPlaceholder'
 import * as UserCardModule from '../UserCard/UserCard'
 import { SynapseTable, SynapseTableProps } from './SynapseTable'
@@ -129,18 +143,18 @@ function renderTable(
   return { component, initQueryRequest }
 }
 
-jest.spyOn(HasAccessModule, 'HasAccessV2').mockImplementation(() => {
+vi.spyOn(HasAccessModule, 'HasAccessV2').mockImplementation(() => {
   return <div data-testid="HasAccess"></div>
 })
 
-jest.spyOn(UserCardModule, 'default').mockImplementation(() => {
+vi.spyOn(UserCardModule, 'default').mockImplementation(() => {
   return <div data-testid="UserCard"></div>
 })
 
-jest.spyOn(AddToDownloadListV2Module, 'default').mockImplementation(() => {
+vi.spyOn(AddToDownloadListV2Module, 'default').mockImplementation(() => {
   return <div data-testid="AddToDownloadListV2" />
 })
-jest.spyOn(NoContentPlaceholderModule, 'default').mockImplementation(() => {
+vi.spyOn(NoContentPlaceholderModule, 'default').mockImplementation(() => {
   return <div data-testid="NoContentPlaceholder" />
 })
 
@@ -280,7 +294,7 @@ describe('SynapseTable tests', () => {
   // - MaterializedView
   // - VirtualTable
   describe.each(entityTypeCases)(
-    'Properly renders supplemental UI columns for %p',
+    'Properly renders supplemental UI columns for %s',
     (name, entity, queryResultBundle, expected) => {
       it(`Renders the supplemental columns correctly for ${name}`, async () => {
         renderTable(

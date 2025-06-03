@@ -159,7 +159,7 @@ describe('EnumFacetFilter', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
     currentQueryContext = undefined
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     registerTableQueryResult(nextQueryRequest.query, {
       ...mockQueryResponseData,
       columnModels: [columnModel],

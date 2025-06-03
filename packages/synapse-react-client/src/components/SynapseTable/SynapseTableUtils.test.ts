@@ -321,7 +321,7 @@ describe('Synapse Table Utilities tests', () => {
 
   describe('isSortableColumn', () => {
     it('throws a warning and returns false for an unknown type', () => {
-      const consoleWarnSpy = jest
+      const consoleWarnSpy = vi
         .spyOn(console, 'warn')
         .mockImplementation(() => {})
 
@@ -333,7 +333,7 @@ describe('Synapse Table Utilities tests', () => {
     })
 
     it('explicitly handles all known types', () => {
-      const consoleWarnSpy = jest.spyOn(console, 'warn')
+      const consoleWarnSpy = vi.spyOn(console, 'warn')
       Object.keys(ColumnTypeEnum).forEach(key => {
         isSortableColumn(key as ColumnTypeEnum)
       })

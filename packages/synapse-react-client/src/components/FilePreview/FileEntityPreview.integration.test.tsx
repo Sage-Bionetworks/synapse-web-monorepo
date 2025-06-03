@@ -22,11 +22,9 @@ import FileEntityPreview, { FileEntityPreviewProps } from './FileEntityPreview'
 import * as FileHandleContentRendererModule from './FileHandleContentRenderer'
 import { PreviewRendererType } from './PreviewRendererType'
 
-jest
-  .spyOn(FileHandleContentRendererModule, 'default')
-  .mockImplementation(() => {
-    return <div data-testid="FileHandleContentRenderer"></div>
-  })
+vi.spyOn(FileHandleContentRendererModule, 'default').mockImplementation(() => {
+  return <div data-testid="FileHandleContentRenderer"></div>
+})
 
 const defaultWrapperProps: SynapseContextType = {
   ...MOCK_CONTEXT_VALUE,
@@ -159,7 +157,7 @@ describe('FileHandleContentRenderer tests', () => {
   })
 
   it('Throws an error if the entity is not a FileEntity', async () => {
-    jest.spyOn(console, 'error').mockImplementation(() => {})
+    vi.spyOn(console, 'error').mockImplementation(() => {})
 
     renderComponent({
       bundle: mockDatasetData.bundle,
