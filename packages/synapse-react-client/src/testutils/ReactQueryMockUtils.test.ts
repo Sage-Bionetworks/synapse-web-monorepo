@@ -266,7 +266,7 @@ describe('ReactQueryMockUtils tests', () => {
       })
       expect(hook.result.current).toEqual(
         expect.objectContaining({
-          data: { pages: [mockPage1] },
+          data: { pages: [mockPage1], pageParams: [] },
           error: null,
           status: 'success',
           isSuccess: true,
@@ -283,7 +283,7 @@ describe('ReactQueryMockUtils tests', () => {
       })
       expect(hook.result.current).toEqual(
         expect.objectContaining({
-          data: { pages: [mockPage1] },
+          data: { pages: [mockPage1], pageParams: [] },
           status: 'success',
           isSuccess: true,
           hasNextPage: true,
@@ -295,7 +295,10 @@ describe('ReactQueryMockUtils tests', () => {
       act(() => {
         setSuccess([mockPage1], true)
       })
-      expect(hook.result.current.data).toEqual({ pages: [mockPage1] })
+      expect(hook.result.current.data).toEqual({
+        pages: [mockPage1],
+        pageParams: [],
+      })
       expect(hook.result.current.hasNextPage).toBe(true)
 
       act(() => {
@@ -303,7 +306,7 @@ describe('ReactQueryMockUtils tests', () => {
       })
       expect(hook.result.current).toEqual(
         expect.objectContaining({
-          data: { pages: [mockPage1, mockPage2] },
+          data: { pages: [mockPage1, mockPage2], pageParams: [] },
           status: 'success',
           isSuccess: true,
           hasNextPage: false,
@@ -315,7 +318,10 @@ describe('ReactQueryMockUtils tests', () => {
       act(() => {
         setSuccess([mockPage1], true, true)
       })
-      expect(hook.result.current.data).toEqual({ pages: [mockPage1] })
+      expect(hook.result.current.data).toEqual({
+        pages: [mockPage1],
+        pageParams: [],
+      })
       expect(hook.result.current.hasNextPage).toBe(true)
       expect(hook.result.current.isFetchingNextPage).toBe(true)
       expect(hook.result.current.fetchStatus).toBe('fetching')
