@@ -1,0 +1,37 @@
+import{g as s}from"./entityHandlers-BPihsQAc.js";import{y as C,g as L,b8 as d,B as k,M as r}from"./useFiles-DUA-Jj-0.js";import"./VerificationSubmission-DHPhgAH7.js";import"./StringUtils-Bj0SG9ce.js";import{l as O}from"./index-CRfnf7TR.js";import{g as a}from"./userProfileHandlers-DJTz1ues.js";import{P as N}from"./ProjectDataAvailability-C3nhqbrP.js";import"./index-Bw1Cp-8x.js";import"./mock_user_profile-Bg50HGfI.js";import"./mockProject-D66QpCoH.js";import"./mockTeam-BzhVHRvo.js";import"./SynapseConstants-jSYxgpcu.js";import"./OrientationBanner-CccXL3x3.js";import"./jsx-runtime-3OrYGa-A.js";import"./index-E0Zgd8PJ.js";import"./iframe-DGKewhZ-.js";import"./index-DyAapOrS.js";import"./spreadSx-CwcO6WA9.js";import"./react-Bs2L_zF6.js";import"./FullWidthAlert-0pF52_M1.js";import"./Alert-DonyAFK0.js";import"./createTheme-BnTuIRv6.js";import"./resolveComponentProps-CSqydSMD.js";import"./isHostComponent-DVu5iVWx.js";import"./useForkRef-fbjtUiV8.js";import"./createSvgIcon-eKjsHGUK.js";import"./DefaultPropsProvider-B5yGAE64.js";import"./Close-CGILoACs.js";import"./IconButton-B9wVP-A1.js";import"./ButtonBase-BzsSFjIg.js";import"./useTimeout-b192V-41.js";import"./TransitionGroupContext-DyqmDSGM.js";import"./useIsFocusVisible-DHNMeGMf.js";import"./useEventCallback-ByjSGWYF.js";import"./Paper-Bzm_Nx-y.js";import"./Stack-C7Who12C.js";import"./getThemeProps-BeGrbUHB.js";import"./useTheme-CA91lOJv.js";import"./Box-347FjrZL.js";import"./AlertTitle-e1QbrWbH.js";import"./Typography-BqXAY_j_.js";import"./useTheme-YD2d8a2f.js";import"./Grow-BGnhXozI.js";import"./index-DK7lSTXT.js";import"./utils-D9FR9N58.js";import"./ClickAwayListener-vy6Nn4he.js";import"./ownerDocument-DW-IO8s5.js";import"./Tooltip-DJrmkq86.js";import"./index-EEjFQgdf.js";import"./useControlled-DoAv-Xot.js";import"./useId-BmJ6jTVu.js";import"./Popper-OySlr5Dd.js";import"./Button-CIP1MA1L.js";import"./uniqueId-BFwgHMKM.js";import"./toString-Db4Tn8Kw.js";import"./isObjectLike-DBRiHJjl.js";import"./isArray-Dxzbedgu.js";import"./isSymbol-BGDhtyVY.js";import"./times-Do5Yo5av.js";import"./_baseTimes-36S_kd0L.js";import"./identity-DKeuBCMA.js";import"./toInteger-B_5vdWpr.js";import"./mockTableEntity-f7ZqpLvK.js";import"./mockFileEntityACLVariants-Dbir5oD6.js";import"./fakerUtils-Bsi9kZMH.js";import"./mockFileEntity-BErCRvco.js";import"./mock_file_handle-C2NjfX48.js";import"./mockEntity-0a53WAQf.js";import"./mockSchema-Da4zN6yj.js";import"./fetchWithExponentialTimeout-Cpvpsfq8.js";import"./useQuery-BqSCqwMR.js";import"./utils-CYumXUBm.js";import"./Link-HA4mk3tW.js";import"./Collapse-D67OGycD.js";import"./isNil-BmumFaXA.js";import"./_Uint8Array-Bvb5BnvN.js";import"./_baseIsEqual-0jby8jfS.js";import"./_getTag-t_JCQRAi.js";import"./tinycolor-Begke6kS.js";import"./Fade-LqP4BbTu.js";import"./Skeleton-BCoikWZP.js";import"./inputBaseClasses-BSS9qqFG.js";import"./calculateFriendlyFileSize-5_UVqq-F.js";import"./CheckCircleTwoTone-G4C_D7UA.js";import"./InfoTwoTone-CaLHzJw9.js";import"./useMutation-BWqLpdaP.js";import"./isEqual-oelJpyyy.js";import"./dayjs.min-B6dWaLXc.js";import"./chunk-AYJ5UCUI-CBOKgxJt.js";import"./cloneDeep-Dr-I4MgV.js";import"./_initCloneObject-DR5O-GqP.js";import"./merge-3rJ4KN2X.js";import"./util-B0ETe3rJ.js";import"./HelpPopover-BRZi_JfC.js";import"./MarkdownPopover-Cu9g35Mg.js";import"./LightTooltip-kpN2g2ec.js";import"./MarkdownSynapse-eq7DRkDm.js";import"./SkeletonButton-B5tyk9KZ.js";import"./SkeletonInlineBlock-Cbewt1uc.js";import"./SkeletonTable-Ca19cf4g.js";import"./SkeletonParagraph-Dcaau3Gk.js";import"./HelpOutlineTwoTone-Bc_nNkZ1.js";const p="syn54321",n="syn12345",D={projectId:p,locations:[{storageLocationId:C,sumFileBytes:12e8,maxAllowedFileBytes:1073741824,isOverLimit:!0},{storageLocationId:2,sumFileBytes:1e8,maxAllowedFileBytes:1073741824,isOverLimit:!1}]},M={projectId:n,locations:[{storageLocationId:C,sumFileBytes:5420135,maxAllowedFileBytes:5571138,isOverLimit:!1},{storageLocationId:2,sumFileBytes:1e3,maxAllowedFileBytes:1073741824,isOverLimit:!1}]},c=(l=L(k.REPO_ENDPOINT))=>[O.rest.get(`${l}${d(p)}`,async(S,m,t)=>m(t.status(201),t.json(D))),O.rest.get(`${l}${d(n)}`,async(S,m,t)=>m(t.status(201),t.json(M)))],St={title:"Synapse/ProjectStorage",component:N,argTypes:{isAuthenticated:{type:"boolean"}},args:{isAuthenticated:!0}},o={args:{projectId:n,sx:{backgroundColor:"#375574"}},parameters:{stack:"mock",msw:{handlers:[...a(r),...s(r),...c(r)]}}},e={args:{projectId:p,sx:{backgroundColor:"#375574"}},parameters:{stack:"mock",msw:{handlers:[...a(r),...s(r),...c(r)]}}},i={args:{projectId:"syn31415123"},parameters:{stack:"mock",msw:{handlers:[...a(r),...s(r),...c(r)]}}};var g,I,_;o.parameters={...o.parameters,docs:{...(g=o.parameters)==null?void 0:g.docs,source:{originalSource:`{
+  args: {
+    projectId: UNDER_LIMIT_PROJECT_ID,
+    sx: {
+      backgroundColor: '#375574'
+    }
+  },
+  parameters: {
+    stack: 'mock',
+    msw: {
+      handlers: [...getUserProfileHandlers(MOCK_REPO_ORIGIN), ...getEntityHandlers(MOCK_REPO_ORIGIN), ...getProjectStorageHandlers(MOCK_REPO_ORIGIN)]
+    }
+  }
+}`,...(_=(I=o.parameters)==null?void 0:I.docs)==null?void 0:_.source}}};var P,E,R;e.parameters={...e.parameters,docs:{...(P=e.parameters)==null?void 0:P.docs,source:{originalSource:`{
+  args: {
+    projectId: OVER_LIMIT_PROJECT_ID,
+    sx: {
+      backgroundColor: '#375574'
+    }
+  },
+  parameters: {
+    stack: 'mock',
+    msw: {
+      handlers: [...getUserProfileHandlers(MOCK_REPO_ORIGIN), ...getEntityHandlers(MOCK_REPO_ORIGIN), ...getProjectStorageHandlers(MOCK_REPO_ORIGIN)]
+    }
+  }
+}`,...(R=(E=e.parameters)==null?void 0:E.docs)==null?void 0:R.source}}};var u,j,y;i.parameters={...i.parameters,docs:{...(u=i.parameters)==null?void 0:u.docs,source:{originalSource:`{
+  args: {
+    projectId: 'syn31415123'
+  },
+  parameters: {
+    stack: 'mock',
+    msw: {
+      handlers: [...getUserProfileHandlers(MOCK_REPO_ORIGIN), ...getEntityHandlers(MOCK_REPO_ORIGIN), ...getProjectStorageHandlers(MOCK_REPO_ORIGIN)]
+    }
+  }
+}`,...(y=(j=i.parameters)==null?void 0:j.docs)==null?void 0:y.source}}};const Lt=["ProjectDataUnderLimit","ProjectDataOverLimit","ProjectDataStorageNotSet"];export{e as ProjectDataOverLimit,i as ProjectDataStorageNotSet,o as ProjectDataUnderLimit,Lt as __namedExportsOrder,St as default};
