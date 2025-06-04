@@ -2,10 +2,10 @@
 
 .MarkdownEditor {
   .MarkdownEditorControls {
+    width: 100%;
     @media (min-width: 768px) {
       display: flex;
     }
-    width: 100%;
     .MarkdownEditorControlsToolbar {
       display: flex;
       gap: 4px;

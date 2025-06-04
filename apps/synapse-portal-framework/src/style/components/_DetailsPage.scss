@@ -1,5 +1,5 @@
 @use '../variables' as Portal;
-@use 'synapse-react-client/dist/style/abstracts/mixins' as SrcMixins;
+@use 'synapse-react-client/src/style/abstracts/mixins' as SrcMixins;
 // local variable for study page
 
 $marginTop: 40px;
@@ -155,8 +155,8 @@ $svg-icon-height: 30px;
     height: unset;
     margin-bottom: unset;
     box-shadow: 0px 5px 6px -4px rgb(0 0 0 / 15%);
-    @include SrcMixins.underline-tabs($inactive-color: unset);
     justify-content: center;
+    @include SrcMixins.underline-tabs($inactive-color: unset);
     .tab-item {
       font-weight: 700;
       flex-grow: 0.2;
