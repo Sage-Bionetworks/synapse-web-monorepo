@@ -3,19 +3,19 @@
 @use 'sass:map';
 
 $-border-size: 1px;
-$-border: $-border-size solid SRC.$border-color-gray;
-$-finder-height: 500px;
-$-breadcrumb-height: 40px;
-$-selected-background-color: map.get(SRC.$secondary-color-palette, 200);
-$-selected-hover-background-color: color.adjust(
-  $-selected-background-color,
+$border: $-border-size solid SRC.$border-color-gray;
+$finder-height: 500px;
+$breadcrumb-height: 40px;
+$selected-background-color: map.get(SRC.$secondary-color-palette, 200);
+$selected-hover-background-color: color.adjust(
+  $selected-background-color,
   $lightness: -10%
 );
 $-hover-background-color: map.get(SRC.$primary-color-palette, 100);
-$-tree-only-width: 600px;
+$tree-only-width: 600px;
 $-splitter-width: 12px;
 
-@mixin -hover($background-color: '', $text-color: '') {
+@mixin hover($background-color: '', $text-color: '') {
   @if $background-color != '' {
     background-color: $background-color;
   } @else {
@@ -44,7 +44,7 @@ $-splitter-width: 12px;
 }
 
 .EntityFinder {
-  --entity-finder-height: #{$-finder-height};
+  --entity-finder-height: #{$finder-height};
   --entity-tree-header-height: 65px;
   width: 100%;
   margin: auto;
@@ -53,7 +53,7 @@ $-splitter-width: 12px;
     max-width: 100%;
     transition: width 0.25s linear;
     border: $-border-size solid SRC.$border-color-gray;
-    height: $-finder-height + ($-border-size * 2);
+    height: $finder-height + ($-border-size * 2);
   }
   &__MainPanel.MainPanelDualPane,
   &__MainPanel.MainPanelSearch {
@@ -61,11 +61,11 @@ $-splitter-width: 12px;
   }
 
   &__MainPanel.MainPanelSinglePane {
-    width: $-tree-only-width + ($-border-size * 2);
+    width: $tree-only-width + ($-border-size * 2);
   }
 
   .reflex-container.vertical > .reflex-splitter {
-    height: $-finder-height;
+    height: $finder-height;
     border-left: 3px solid transparent;
     border-right: none;
     background: transparent;
@@ -87,6 +87,6 @@ $-splitter-width: 12px;
 }
 
 .EntityFileBrowser {
-  --entity-finder-height: #{$-finder-height};
+  --entity-finder-height: #{$finder-height};
   --entity-tree-header-height: 0px;
 }

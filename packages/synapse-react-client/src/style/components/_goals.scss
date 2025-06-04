@@ -1,22 +1,6 @@
 @use '../abstracts/variables' as SRC;
+@use '../abstracts/mixins' as SrcMixins;
 @use 'sass:map';
-
-// have space between items
-%space-between {
-  display: flex;
-  justify-content: space-between;
-}
-// horizontally and vertically center
-%hv-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-%side-padding {
-  padding-left: 25px;
-  padding-right: 25px;
-}
 
 .Goals {
   &__Card {
@@ -37,14 +21,14 @@
     margin: 10px;
     &__header {
       min-height: 75px;
-      @extend %side-padding;
+      @include SrcMixins.side-padding;
       background: SRC.$primary-action-color;
       background-size: cover !important;
       background-repeat: no-repeat !important;
       display: flex;
       justify-content: center;
       p {
-        @extend %space-between;
+        @include SrcMixins.space-between;
         align-items: center;
         width: 100%;
         color: white;
@@ -56,7 +40,7 @@
       &__count {
         border: 1px solid white;
         border-radius: 50%;
-        @extend %hv-center;
+        @include SrcMixins.hv-center;
         min-height: 50px;
         min-width: 50px;
         padding: 5px;
@@ -64,13 +48,13 @@
     }
     &__summary {
       flex: 1;
-      @extend %side-padding;
+      @include SrcMixins.side-padding;
       padding-top: 20px;
       padding-bottom: 20px;
-      @extend %space-between;
+      @include SrcMixins.space-between;
       flex-direction: column;
       & > &__link {
-        @extend %hv-center;
+        @include SrcMixins.hv-center;
         width: 120px;
         padding: 10px;
         margin-top: 20px;
@@ -82,11 +66,11 @@
     }
   }
   &__Mobile {
-    @extend %hv-center;
+    @include SrcMixins.hv-center;
     &__Header {
-      @extend %hv-center;
+      @include SrcMixins.hv-center;
       &__Count {
-        @extend %hv-center;
+        @include SrcMixins.hv-center;
         border: 1px solid SRC.$primary-action-color;
         color: SRC.$primary-action-color;
         border-radius: 50%;
@@ -104,7 +88,7 @@
 
     &__Content {
       & > &__Link {
-        @extend %hv-center;
+        @include SrcMixins.hv-center;
         width: 120px;
         padding: 10px;
         margin-top: 20px;

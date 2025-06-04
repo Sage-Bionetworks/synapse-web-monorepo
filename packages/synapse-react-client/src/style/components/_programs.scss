@@ -1,11 +1,5 @@
 @use '../abstracts/variables' as SRC;
-
-// horizontally and vertically center
-%hv-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+@use '../abstracts/mixins' as SrcMixins;
 
 .Programs {
   &__Desktop {
@@ -37,7 +31,7 @@
 
     &__header {
       min-height: 75px;
-      @extend %side-padding;
+      @include SrcMixins.side-padding();
       background: SRC.$primary-action-color;
       display: flex;
       align-items: center;
@@ -47,7 +41,7 @@
       }
 
       p {
-        @extend %space-between;
+        @include SrcMixins.space-between();
         align-items: center;
         width: 100%;
         color: white;
@@ -74,19 +68,19 @@
 
     &__summary {
       flex: 1;
-      @extend %side-padding;
+      @include SrcMixins.side-padding;
       padding-top: 20px;
       padding-bottom: 20px;
-      @extend %space-between;
+      @include SrcMixins.space-between;
       flex-direction: column;
     }
   }
 
   &__Mobile {
-    @extend %hv-center;
+    @include SrcMixins.hv-center;
 
     &__Header {
-      @extend %hv-center;
+      @include SrcMixins.hv-center;
 
       .iconImg {
         width: 40px;

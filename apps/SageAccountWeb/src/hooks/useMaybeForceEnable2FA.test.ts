@@ -5,6 +5,7 @@ import {
 } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
 import { vi } from 'vitest'
 import { useLocation, useNavigate, Location } from 'react-router'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/featureflags/useGetFeatureFlag'
 import useMaybeForceEnable2FA from './useMaybeForceEnable2FA'
 
 vi.mock(
@@ -12,6 +13,15 @@ vi.mock(
   () => {
     return {
       useApplicationSessionContext: vi.fn(),
+    }
+  },
+)
+
+vi.mock(
+  'synapse-react-client/synapse-queries/featureflags/useGetFeatureFlag',
+  () => {
+    return {
+      useGetFeatureFlag: vi.fn(),
     }
   },
 )
@@ -45,6 +55,8 @@ const mockUseApplicationSessionContext = vi.mocked(useApplicationSessionContext)
 const mockNavigate = vi.fn()
 vi.mocked(useNavigate).mockReturnValue(mockNavigate)
 vi.mocked(useLocation).mockReturnValue(mockLocation)
+const mockFeatureFlagValue = true
+vi.mocked(useGetFeatureFlag).mockReturnValue(mockFeatureFlagValue)
 
 describe('useMaybeForceEnable2FA', () => {
   beforeEach(() => {

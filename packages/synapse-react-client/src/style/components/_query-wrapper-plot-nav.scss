@@ -6,7 +6,7 @@
   position: relative;
   grid-template-columns: 100%;
 
-  @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
+  @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
     grid-template-columns: 23% 75%;
     grid-column-gap: 2%;
 
@@ -137,6 +137,7 @@
 }
 
 .TopLevelControls {
+  background-color: map.get(SRC.$colors, 'gray-200');
   > * {
     display: flex;
     justify-content: space-between;
@@ -146,7 +147,6 @@
       margin-top: 0px;
     }
   }
-  background-color: map.get(SRC.$colors, 'gray-200');
   &__showhidefacetfilters {
     display: none;
   }

@@ -3,7 +3,7 @@
 @use './entity-finder' as EntityFinder;
 
 .Breadcrumbs {
-  height: $-breadcrumb-height;
+  height: EntityFinder.$breadcrumb-height;
   background: SRC.$background-color-gray;
   padding-left: 15px;
   display: flex;
