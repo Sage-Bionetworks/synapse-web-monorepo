@@ -129,7 +129,7 @@ import {
   WatchLater,
 } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
-import { SvgIconProps } from '@mui/material/SvgIcon/SvgIcon'
+import { SvgIconProps } from '@mui/material/SvgIcon'
 import { EntityType } from '@sage-bionetworks/synapse-types'
 import { Fragment } from 'react'
 

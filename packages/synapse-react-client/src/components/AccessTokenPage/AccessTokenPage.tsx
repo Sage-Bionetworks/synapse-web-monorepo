@@ -35,7 +35,11 @@ export function AccessTokenPage({ title, body }: AccessTokenPageProps) {
           flexDirection: { xs: 'column', md: 'row' },
         }}
       >
-        <Box flexGrow={1}>
+        <Box
+          sx={{
+            flexGrow: 1,
+          }}
+        >
           <h1>{title}</h1>
           {body}
         </Box>
@@ -68,11 +72,23 @@ export function AccessTokenPage({ title, body }: AccessTokenPageProps) {
 
         <div>
           {!isLoading && !error && tokenRecords.length === 0 && (
-            <Typography variant={'headline2'} m={5} textAlign={'center'}>
+            <Typography
+              variant={'headline2'}
+              sx={{
+                m: 5,
+                textAlign: 'center',
+              }}
+            >
               You currently have no personal access tokens.
             </Typography>
           )}
-          <Box maxWidth={'800px'} mx={'auto'} my={2.5}>
+          <Box
+            sx={{
+              maxWidth: '800px',
+              mx: 'auto',
+              my: 2.5,
+            }}
+          >
             {tokenRecords.map(accessToken => {
               return (
                 <AccessTokenCard
@@ -83,7 +99,12 @@ export function AccessTokenPage({ title, body }: AccessTokenPageProps) {
             })}
             {isLoading && loadingScreen}
             {!isLoading && hasNextPage && !error && (
-              <Box display={'flex'} justifyContent={'flex-end'}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                }}
+              >
                 <Button
                   variant="contained"
                   color="primary"

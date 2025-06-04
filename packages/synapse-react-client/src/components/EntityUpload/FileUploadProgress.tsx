@@ -77,20 +77,40 @@ export function FileUploadProgress(props: FileUploadProgressProps) {
   }
 
   return (
-    <Box py={2} height={`${FILE_UPLOAD_PROGRESS_COMPONENT_HEIGHT_PX}px`}>
+    <Box
+      sx={{
+        py: 2,
+        height: `${FILE_UPLOAD_PROGRESS_COMPONENT_HEIGHT_PX}px`,
+      }}
+    >
       <Box
-        display={'flex'}
-        flexWrap={'nowrap'}
-        flexDirection={'row'}
-        justifyContent={'space-between'}
-        alignItems={'center'}
-        height={'35px'}
+        sx={{
+          display: 'flex',
+          flexWrap: 'nowrap',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          height: '35px',
+        }}
       >
-        <Typography variant={'body1'} color={'primary.main'} fontWeight={700}>
+        <Typography
+          variant={'body1'}
+          sx={{
+            color: 'primary.main',
+            fontWeight: 700,
+          }}
+        >
           {fileName}
         </Typography>
         {!isComplete && (
-          <Box display={'flex'} alignItems={'center'} gap={1} my={1}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              my: 1,
+            }}
+          >
             {isFailed && (
               <Tooltip title={errorMessage}>
                 <ErrorTwoTone color={'error'} />
@@ -148,7 +168,13 @@ export function FileUploadProgress(props: FileUploadProgressProps) {
         )}
         {isComplete && <CheckCircleTwoTone color={'success'} />}
       </Box>
-      <Box display={'flex'} flexWrap={'nowrap'} alignItems={'center'}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'nowrap',
+          alignItems: 'center',
+        }}
+      >
         <LinearProgress
           color={'secondary'}
           value={progress}
@@ -156,13 +182,25 @@ export function FileUploadProgress(props: FileUploadProgressProps) {
           sx={{ width: '100%', mr: 2.5 }}
         />
         {!isCanceled && (
-          <Typography variant={'body1'} whiteSpace={'nowrap'} flexShrink={0}>
+          <Typography
+            variant={'body1'}
+            sx={{
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}
+          >
             {isPreparingUpload ? (
               'Preparing to upload...'
             ) : (
               <>
                 <span>{calculateFriendlyFileSize(uploadedSizeInBytes, 1)}</span>
-                <Box component={'span'} color={'grey.600'} mx={0.5}>
+                <Box
+                  component={'span'}
+                  sx={{
+                    color: 'grey.600',
+                    mx: 0.5,
+                  }}
+                >
                   |
                 </Box>
                 <span>{calculateFriendlyFileSize(totalSizeInBytes, 1)}</span>
@@ -171,7 +209,13 @@ export function FileUploadProgress(props: FileUploadProgressProps) {
           </Typography>
         )}
         {isCanceled && (
-          <Typography variant={'body1'} whiteSpace={'nowrap'} flexShrink={0}>
+          <Typography
+            variant={'body1'}
+            sx={{
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}
+          >
             {isFailed ? 'Failed' : 'Canceled'}
           </Typography>
         )}

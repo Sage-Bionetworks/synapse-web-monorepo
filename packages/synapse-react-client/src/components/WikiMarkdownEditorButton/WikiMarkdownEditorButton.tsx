@@ -150,7 +150,11 @@ export function WikiMarkdownEditorButton(props: WikiMarkdownEditorButtonProps) {
   return (
     <>
       {displayWikiMarkdown && (
-        <Box mb={1}>
+        <Box
+          sx={{
+            mb: 1,
+          }}
+        >
           {isLoadingWikiPage || isLoadingRootWikiPageKey ? (
             <SynapseSpinner />
           ) : (

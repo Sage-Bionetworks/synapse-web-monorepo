@@ -396,7 +396,13 @@ export default function DataAccessRequestAccessorsFilesForm(
   return (
     <>
       <DialogTitle>
-        <Stack direction="row" alignItems={'center'} gap={'5px'}>
+        <Stack
+          direction="row"
+          sx={{
+            alignItems: 'center',
+            gap: '5px',
+          }}
+        >
           Request Access
           <Box sx={{ flexGrow: 1 }} />
           <IconButton onClick={props.onHide}>

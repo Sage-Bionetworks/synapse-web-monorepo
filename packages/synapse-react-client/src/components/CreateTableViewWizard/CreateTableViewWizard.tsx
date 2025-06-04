@@ -376,7 +376,11 @@ export default function CreateTableViewWizard(
       case 'TABLE_SQL':
         return (
           <>
-            <Box mt={1.25}>
+            <Box
+              sx={{
+                mt: 1.25,
+              }}
+            >
               <SqlDefinedTableEditor
                 value={sql}
                 onChange={e => setSql(e.target.value)}
@@ -435,13 +439,24 @@ export default function CreateTableViewWizard(
       title={getModalTitle(step, entityType)}
       content={stepContent}
       actions={
-        <Box display={'flex'} width={'100%'} gap={2.25} mt={2}>
+        <Box
+          sx={{
+            display: 'flex',
+            width: '100%',
+            gap: 2.25,
+            mt: 2,
+          }}
+        >
           {showBackButton && (
             <Button variant={'outlined'} onClick={onBackButtonClicked}>
               Back
             </Button>
           )}
-          <Box m={'auto'} />
+          <Box
+            sx={{
+              m: 'auto',
+            }}
+          />
           <Button variant={'outlined'} onClick={onCancel}>
             Cancel
           </Button>

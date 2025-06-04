@@ -9,7 +9,11 @@ function UserIdList(props: UserIdListProps) {
   const { userIds } = props
 
   return (
-    <Stack gap={1}>
+    <Stack
+      sx={{
+        gap: 1,
+      }}
+    >
       {userIds.map(userId => (
         <UserOrTeamBadge key={userId} principalId={userId} />
       ))}

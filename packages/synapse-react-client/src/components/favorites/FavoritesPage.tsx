@@ -133,13 +133,6 @@ export default function FavoritesPage() {
   return (
     <div className="FavoritesPage">
       <TextField
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <IconSvg icon="search" wrap={false} />
-            </InputAdornment>
-          ),
-        }}
         type="search"
         placeholder="Favorite Name"
         value={searchText}
@@ -148,10 +141,25 @@ export default function FavoritesPage() {
         }}
         fullWidth
         sx={{ mb: 4, maxWidth: '800px' }}
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <IconSvg icon="search" wrap={false} />
+              </InputAdornment>
+            ),
+          },
+        }}
       />
       <StyledTanStackTable table={favoritesTable} fullWidth={false} />
       {!hasFavoritesMatchingQuery && !isLoading && (
-        <Stack sx={{ textAlign: 'center' }} my={2} gap={1}>
+        <Stack
+          sx={{
+            my: 2,
+            gap: 1,
+            textAlign: 'center',
+          }}
+        >
           <NoSearchResults height={'150px'} />
           {data?.results.length == 0 ? (
             <p>You currently have no favorites</p>

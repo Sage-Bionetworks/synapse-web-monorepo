@@ -103,13 +103,23 @@ function ResetTwoFactorAuth() {
                       }}
                     />
                   )}
-                  <Typography variant={'body1'} my={2}>
+                  <Typography
+                    variant={'body1'}
+                    sx={{
+                      my: 2,
+                    }}
+                  >
                     If you disable two-factor authentication, your account will
                     be less secure. Additionally, you may be unable to download
                     certain data that requires you to have two-factor
                     authentication enabled on your account.
                   </Typography>
-                  <Typography variant={'body1'} my={2}>
+                  <Typography
+                    variant={'body1'}
+                    sx={{
+                      my: 2,
+                    }}
+                  >
                     You can re-activate two-factor authentication at any time in
                     your account settings.
                   </Typography>

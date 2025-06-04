@@ -49,10 +49,12 @@ export default function ColumnHeader<TData = unknown, TValue = unknown>(
 
   return (
     <Box
-      display={'flex'}
-      alignContent={'center'}
-      alignItems={'center'}
-      justifyContent={'space-between'}
+      sx={{
+        display: 'flex',
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}
     >
       <span
         style={{
@@ -63,9 +65,9 @@ export default function ColumnHeader<TData = unknown, TValue = unknown>(
       </span>
       <Box
         role={'menubar'}
-        display={'flex'}
-        alignItems="center"
         sx={{
+          display: 'flex',
+          alignItems: 'center',
           height: '22px',
           ml: 2,
           gap: 0.25,

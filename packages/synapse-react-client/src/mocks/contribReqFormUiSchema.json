@@ -68,13 +68,13 @@
     "total_number_individuals": {},
     "total_number_specimens": {},
     "assays": {
-      "classNames": "show-subfield-title",
+      "ui:classNames": "show-subfield-title",
       "assays_list": {
         "ui:widget": "checkboxes"
       }
     },
     "assesments": {
-      "classNames": "show-subfield-title",
+      "ui:classNames": "show-subfield-title",
       "assesments_list": {
         "ui:widget": "checkboxes"
       }
@@ -89,13 +89,13 @@
   },
   "mouse": {
     "assays": {
-      "classNames": "show-subfield-title",
+      "ui:classNames": "show-subfield-title",
       "assays_list": {
         "ui:widget": "checkboxes"
       }
     },
     "assesments": {
-      "classNames": "show-subfield-title",
+      "ui:classNames": "show-subfield-title",
       "assesments_list": {
         "ui:widget": "checkboxes"
       }
@@ -112,13 +112,13 @@
   },
   "rat": {
     "assays": {
-      "classNames": "show-subfield-title",
+      "ui:classNames": "show-subfield-title",
       "assays_list": {
         "ui:widget": "checkboxes"
       }
     },
     "assesments": {
-      "classNames": "show-subfield-title",
+      "ui:classNames": "show-subfield-title",
       "assesments_list": {
         "ui:widget": "checkboxes"
       }
@@ -135,19 +135,19 @@
   },
   "drosophila": {
     "assays": {
-      "classNames": "show-subfield-title",
+      "ui:classNames": "show-subfield-title",
       "assays_list": {
         "ui:widget": "checkboxes"
       }
     },
     "assesments": {
-      "classNames": "show-subfield-title",
+      "ui:classNames": "show-subfield-title",
       "assesments_list": {
         "ui:widget": "checkboxes"
       }
     },
     "specimen_source": {
-      "classNames": "show-subfield-title",
+      "ui:classNames": "show-subfield-title",
       "ui:widget": "checkboxes"
     },
     "description": {
@@ -161,7 +161,7 @@
     "description": {},
     "treatments_list": {},
     "assays": {
-      "classNames": "show-subfield-title",
+      "ui:classNames": "show-subfield-title",
       "assays_list": {
         "ui:widget": "checkboxes"
       }
@@ -174,7 +174,7 @@
     "assays_list_other": {}
   },
   "assesments": {
-    "classNames": "show-subfield-title",
+    "ui:classNames": "show-subfield-title",
     "assays_list": {
       "ui:widget": "checkboxes"
     },

@@ -94,7 +94,13 @@ function getWebhookTableColumns(
     columnHelper.accessor('verificationStatus', {
       header: 'Verification Status',
       cell: ctx => (
-        <Stack flexDirection={'row'} alignItems={'center'} gap={1}>
+        <Stack
+          sx={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 1,
+          }}
+        >
           {ctx.row.original.verificationStatus === 'PENDING' && (
             // useEffect above will trigger a refetch until this resolves
             <SynapseSpinner size={20} />
@@ -121,10 +127,12 @@ function getWebhookTableColumns(
       },
       cell: ctx => (
         <Stack
-          flexDirection={'row'}
-          justifyContent={'flex-end'}
-          alignItems={'center'}
-          gap={2}
+          sx={{
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            gap: 2,
+          }}
         >
           {ctx.row.original.verificationStatus ===
             WebhookVerificationStatus.CODE_SENT && (
@@ -249,12 +257,14 @@ export default function WebhookDashboard() {
       />
       <Typography variant={'headline3'}>Webhook Dashboard</Typography>
       <Box
-        display={'flex'}
-        flexDirection={'row'}
-        my={2}
-        gap={3}
-        justifyContent={'space-between'}
-        alignItems={'flex-start'}
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          my: 2,
+          gap: 3,
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+        }}
       >
         <div>
           <Typography variant={'body1'} gutterBottom>

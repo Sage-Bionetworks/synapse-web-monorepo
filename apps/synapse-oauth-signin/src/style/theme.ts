@@ -92,11 +92,13 @@ const themeOptions: ThemeOptions = {
             '&:first-child': {
               marginRight: '14px',
             },
-            '&.MuiButton-outlinedPrimary': {
+            '&.MuiButton-outlined.MuiButton-colorPrimary': {
               borderWidth: '1px',
               fontWeight: 700,
               '&:hover': {
-                '&.MuiButton-outlinedPrimary:hover': { borderWidth: '1px' },
+                '&.MuiButton-outlined.MuiButton-colorPrimary:hover': {
+                  borderWidth: '1px',
+                },
               },
             },
           },

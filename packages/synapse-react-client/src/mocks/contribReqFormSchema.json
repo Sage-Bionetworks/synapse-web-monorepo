@@ -196,9 +196,17 @@
           "type": "boolean",
           "title": "Can data be released under the AMP-AD Knowledge Portal terms of use?",
           "default": false,
-          "enum": [true, false],
-          "enumNames": ["Yes", "No"],
-          "uniqueItems": true
+          "uniqueItems": true,
+          "oneOf": [
+            {
+              "const": true,
+              "title": "Yes"
+            },
+            {
+              "const": false,
+              "title": "No"
+            }
+          ]
         },
         "study_type": {
           "type": "string",
@@ -306,14 +314,28 @@
           "uniqueItems": true,
           "items": {
             "type": "string",
-            "enumNames": [
-              "Mouse",
-              "Rat",
-              "Drosophila",
-              "Cell Culture",
-              "Other"
-            ],
-            "enum": ["mouse", "rat", "drosophila", "cell_culture", "other"]
+            "oneOf": [
+              {
+                "const": "mouse",
+                "title": "Mouse"
+              },
+              {
+                "const": "rat",
+                "title": "Rat"
+              },
+              {
+                "const": "drosophila",
+                "title": "Drosophila"
+              },
+              {
+                "const": "cell_culture",
+                "title": "Cell Culture"
+              },
+              {
+                "const": "other",
+                "title": "Other"
+              }
+            ]
           }
         },
         "model_system_type_other": {
@@ -350,7 +372,6 @@
           "title": "Specimen source",
           "items": {
             "type": "string",
-
             "enum": ["Serum", "Brain", "Other"]
           }
         },
@@ -391,7 +412,6 @@
           "title": "Specimen source",
           "items": {
             "type": "string",
-
             "enum": ["Serum", "Brain", "Other"]
           }
         },
@@ -432,7 +452,6 @@
           "title": "Specimen source",
           "items": {
             "type": "string",
-
             "enum": ["Serum", "Brain", "Other"]
           }
         },
@@ -474,9 +493,17 @@
         "is_data_contributed": {
           "type": "boolean",
           "title": "Is the data used in the analysis provided in this contribution?",
-          "enum": [true, false],
-          "enumNames": ["Yes", "No"],
-          "uniqueItems": true
+          "uniqueItems": true,
+          "oneOf": [
+            {
+              "const": true,
+              "title": "Yes"
+            },
+            {
+              "const": false,
+              "title": "No"
+            }
+          ]
         }
       },
       "dependencies": {
@@ -516,17 +543,33 @@
           "title": "Computational (e.g. algorithms, R packages, R shiny app)",
           "type": "boolean",
           "default": false,
-          "enum": [true, false],
-          "enumNames": ["Yes", "No"],
-          "uniqueItems": true
+          "uniqueItems": true,
+          "oneOf": [
+            {
+              "const": true,
+              "title": "Yes"
+            },
+            {
+              "const": false,
+              "title": "No"
+            }
+          ]
         },
         "other_tools": {
           "type": "boolean",
           "title": "Other",
           "default": false,
-          "enum": [true, false],
-          "enumNames": ["Yes", "No"],
-          "uniqueItems": true
+          "uniqueItems": true,
+          "oneOf": [
+            {
+              "const": true,
+              "title": "Yes"
+            },
+            {
+              "const": false,
+              "title": "No"
+            }
+          ]
         }
       },
       "dependencies": {

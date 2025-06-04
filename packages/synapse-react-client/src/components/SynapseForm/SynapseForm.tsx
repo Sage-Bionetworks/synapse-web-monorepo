@@ -124,7 +124,10 @@ export default class SynapseForm extends Component<
     super(props)
 
     //will modify the ui:help to render html vs text
-    this.uiSchema = stringToElementForProp(cloneDeep(props.uiSchema), 'ui:help')
+    this.uiSchema = stringToElementForProp(
+      cloneDeep(props.uiSchema),
+      'ui:help',
+    ) as UiSchema
     //create steps array from the navSchema
     const steps = props.navSchema.steps
       .map((step, i) => {

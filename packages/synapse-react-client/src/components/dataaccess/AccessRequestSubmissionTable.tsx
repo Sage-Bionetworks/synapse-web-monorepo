@@ -56,7 +56,11 @@ const columns = [
     header: props => <ColumnHeader {...props} title={'Requesters'} />,
     enableSorting: false,
     cell: ctx => (
-      <Stack gap={1}>
+      <Stack
+        sx={{
+          gap: 1,
+        }}
+      >
         <UserOrTeamBadge principalId={ctx.row.original.submitterId} />
         {ctx
           .getValue()
@@ -75,7 +79,11 @@ const columns = [
     header: props => <ColumnHeader {...props} title={'Reviewer(s)'} />,
     enableSorting: false,
     cell: ctx => (
-      <Stack gap={1}>
+      <Stack
+        sx={{
+          gap: 1,
+        }}
+      >
         {ctx.getValue().length === 0 ? (
           <UserOrTeamBadge principalId={ACT_TEAM_ID} />
         ) : (

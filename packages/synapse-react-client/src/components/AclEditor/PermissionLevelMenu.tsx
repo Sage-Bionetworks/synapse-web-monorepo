@@ -38,15 +38,17 @@ export function PermissionLevelMenu(props: PermissionLevelMenuProps) {
       }}
       fullWidth
       select
-      SelectProps={{
-        renderValue: selected => {
-          if (selected == CUSTOM_VALUE) {
-            return CUSTOM_TEXT
-          }
-          return permissionLevelToLabel[selected as PermissionLevel]
+      size="small"
+      slotProps={{
+        select: {
+          renderValue: selected => {
+            if (selected == CUSTOM_VALUE) {
+              return CUSTOM_TEXT
+            }
+            return permissionLevelToLabel[selected as PermissionLevel]
+          },
         },
       }}
-      size="small"
     >
       {Object.values(availablePermissionLevels).map(permissionLevel => {
         return (
