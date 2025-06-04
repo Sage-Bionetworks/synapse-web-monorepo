@@ -130,6 +130,7 @@ export const GenericCard = forwardRef(function GenericCard(
         ctaLinkConfig={ctaLinkConfig}
         isAlignToLeftNav={true}
         secondaryLabelLimit={secondaryLabelLimit}
+        cardTopButtons={cardTopButtons}
         cardTopContent={cardTopContent}
       />
     )
@@ -140,6 +141,20 @@ export const GenericCard = forwardRef(function GenericCard(
       <div className={'SRC-portalCardMain'}>
         {icon}
         <div className="SRC-cardContent">
+          {cardTopButtons && (
+            <Box
+              sx={{
+                position: 'absolute',
+                right: '24px',
+                display: 'flex',
+                float: 'right',
+                flexDirection: 'row',
+                gap: '10px',
+              }}
+            >
+              {cardTopButtons}
+            </Box>
+          )}
           <Stack
             sx={{
               flexDirection: 'row',
@@ -191,21 +206,6 @@ export const GenericCard = forwardRef(function GenericCard(
             </Box>
           )}
         </div>
-
-        {cardTopButtons && (
-          <Box
-            sx={{
-              marginLeft: 'auto',
-              paddingTop: '21px',
-              paddingRight: '40px',
-              display: 'flex',
-              flexDirection: 'row',
-              gap: '10px',
-            }}
-          >
-            {cardTopButtons}
-          </Box>
-        )}
       </div>
       {showFooter && (
         <CardFooter

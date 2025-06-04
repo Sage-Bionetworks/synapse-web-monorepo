@@ -58,17 +58,29 @@ function ArrayFieldTemplate<
    */
   useEffect(() => {
     if (
+      // Do not manipulate if the widget is hidden (e.g. 'scopeIds' in an EntityView)
+      // FIXME: We should probably remove this hook and migrate to a design that accommodates empty arrays.
+      uiOptions.widget !== 'hidden' &&
       props.items.length === 0 &&
       !formContext?.allowRemovingLastItemInArray
     ) {
       props.onAddClick()
     }
-  }, [props, formContext?.allowRemovingLastItemInArray])
+  }, [props, formContext?.allowRemovingLastItemInArray, uiOptions.widget])
 
   return (
     <Box id={idSchema.$id} className={props.className}>
       <RJSFInputLabelWrapper
-        fieldLabel={<ArrayFieldTitleTemplate {...props} />}
+        fieldLabel={
+          <ArrayFieldTitleTemplate
+            idSchema={idSchema}
+            title={uiOptions.title || props.title}
+            schema={schema}
+            uiSchema={uiSchema}
+            required={props.required}
+            registry={registry}
+          />
+        }
         description={
           <ArrayFieldDescriptionTemplate
             idSchema={idSchema}

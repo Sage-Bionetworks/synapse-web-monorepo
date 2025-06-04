@@ -26,7 +26,7 @@ import {
 } from 'synapse-react-client'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
-export default function ToolDetailsPageDetailsTab() {
+function ToolDetailsPageDetailsTab() {
   const { value: resourceId } = useDetailsPageContext('resourceId')
 
   if (resourceId == null) {
@@ -187,3 +187,5 @@ export default function ToolDetailsPageDetailsTab() {
     />
   )
 }
+
+export default ToolDetailsPageDetailsTab

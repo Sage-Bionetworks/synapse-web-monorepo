@@ -1,11 +1,18 @@
 import { StyledOuterContainer } from '@/components/styled/LeftRightPanel'
-import { useGetNotificationEmail } from '@/synapse-queries'
-import {
-  useFinishTwoFactorEnrollment,
-  useStartTwoFactorEnrollment,
-} from '@/synapse-queries/auth/useTwoFactorEnrollment'
+import { useFinishTwoFactorEnrollment } from '@/synapse-queries/auth/useTwoFactorEnrollment'
 import { StyledComponent } from '@emotion/styled'
-import { Box, BoxProps, Button, Divider, IconButton, Link, Paper, Stack, styled, Typography } from '@mui/material'
+import {
+  Box,
+  BoxProps,
+  Button,
+  Divider,
+  IconButton,
+  Link,
+  Paper,
+  Stack,
+  styled,
+  Typography,
+} from '@mui/material'
 import { TotpSecret } from '@sage-bionetworks/synapse-types'
 import { toCanvas } from 'qrcode'
 import { useEffect, useRef, useState } from 'react'
@@ -16,12 +23,12 @@ import TextField from '../TextField/TextField'
 import TwoFactorSecretDialog from './TwoFactorSecretDialog'
 
 /**
- * Returns a URL that can be used to generate a QR code that 2FA authenticator apps can interpret
+ * Returns a URL that can be used to generate a QR code that 2FA authenticator apps can interpret.
+ * This uses the username fro TotpSecret to create the friendly name for the account in the authenticator app.
  * @param secret
- * @param subject
  */
-function toOtpAuthUrl(secret: TotpSecret, subject: string) {
-  return `otpauth://totp/Synapse:${subject}?secret=${secret.secret}&issuer=Sage%20Bionetworks&algorithm=${secret.alg}&digits=${secret.digits}&period=${secret.period}`
+function toOtpAuthUrl(secret: TotpSecret) {
+  return `otpauth://totp/Synapse:${secret.username}?secret=${secret.secret}&issuer=Sage%20Bionetworks&algorithm=${secret.alg}&digits=${secret.digits}&period=${secret.period}`
 }
 
 const Section: StyledComponent<BoxProps> = styled(
@@ -55,6 +62,7 @@ export const TWO_FACTOR_DOCS_LINK =
   'https://help.synapse.org/docs/Managing-Your-Account.2055405596.html#Adding-Two-Factor-Authentication-(2FA)-to-your-account'
 
 export type TwoFactorEnrollmentFormProps = {
+  totpSecret: TotpSecret
   onTwoFactorEnrollmentSuccess: () => void
   onBackClicked: () => void
 }
@@ -62,17 +70,12 @@ export type TwoFactorEnrollmentFormProps = {
 export default function TwoFactorEnrollmentForm(
   props: TwoFactorEnrollmentFormProps,
 ) {
-  const { onTwoFactorEnrollmentSuccess, onBackClicked } = props
+  const { onTwoFactorEnrollmentSuccess, onBackClicked, totpSecret } = props
 
   const [totp, setTotp] = useState('')
   const [hasQrCode, setHasQrCode] = useState(false)
   const [showSecretInModal, setShowSecretInModal] = useState(false)
-  const { data: currentUserEmail } = useGetNotificationEmail()
-
   const qrCodeCanvasElement = useRef<HTMLCanvasElement>(null)
-
-  const { mutate: start2FAEnrollment, data: totpSecret } =
-    useStartTwoFactorEnrollment()
 
   const {
     mutate: finishEnrollment,
@@ -82,25 +85,19 @@ export default function TwoFactorEnrollmentForm(
     onSuccess: onTwoFactorEnrollmentSuccess,
   })
 
-  /* When the component mounts, begin enrollment by fetching the data for the QR code. */
-  useEffect(() => {
-    start2FAEnrollment()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   useEffect(() => {
     async function createQrCode() {
-      if (totpSecret && currentUserEmail && qrCodeCanvasElement.current) {
-        await toCanvas(
-          qrCodeCanvasElement.current,
-          toOtpAuthUrl(totpSecret, currentUserEmail.email),
-          { version: 10, margin: 0, scale: 3.5 },
-        )
+      if (totpSecret && qrCodeCanvasElement.current) {
+        await toCanvas(qrCodeCanvasElement.current, toOtpAuthUrl(totpSecret), {
+          version: 10,
+          margin: 0,
+          scale: 3.5,
+        })
         setHasQrCode(true)
       }
     }
-    createQrCode()
-  }, [totpSecret, currentUserEmail])
+    void createQrCode()
+  }, [totpSecret])
 
   return (
     <StyledOuterContainer>
@@ -245,7 +242,7 @@ export default function TwoFactorEnrollmentForm(
               onSubmit={e => {
                 e.preventDefault()
                 finishEnrollment({
-                  secretId: totpSecret!.secretId,
+                  secretId: totpSecret.secretId,
                   totp,
                 })
               }}

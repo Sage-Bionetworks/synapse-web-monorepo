@@ -1,14 +1,10 @@
 import { filesPlotNavProps } from '@/config/synapseConfigs/files'
-import {
-  DetailsPageContent,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import {
-  useDetailsPageContext,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { QueryWrapperPlotNav } from 'synapse-react-client'
 
-export default function StudyFilesTab() {
+function StudyFilesTab() {
   const { value: studyId } = useDetailsPageContext('studyId')
   if (studyId == null) {
     return null
@@ -35,3 +31,5 @@ export default function StudyFilesTab() {
     ></DetailsPageContent>
   )
 }
+
+export default StudyFilesTab

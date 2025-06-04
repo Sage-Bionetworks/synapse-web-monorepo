@@ -8,7 +8,6 @@ import {
 import { TargetEnum } from '@/utils/html/TargetEnum'
 import {
   ColumnModel,
-  ColumnType,
   Entity,
   FileHandleAssociateType,
   FileHandleAssociation,
@@ -55,7 +54,7 @@ export const getValueOrMultiValue = ({
     return {
       str: '',
       strList: undefined,
-      columnModelType: undefined,
+      selectColumn: undefined,
     }
   }
   const selectedColumnOrUndefined =
@@ -72,7 +71,7 @@ export const getValueOrMultiValue = ({
       return {
         strList,
         str: val,
-        columnModelType: selectedColumnOrUndefined?.columnType,
+        selectColumn: selectedColumnOrUndefined,
       }
     } catch (e) {
       console.error(
@@ -83,12 +82,15 @@ export const getValueOrMultiValue = ({
       )
     }
   }
-  return { str: value, columnModelType: selectedColumnOrUndefined?.columnType }
+  return {
+    str: value,
+    selectColumn: selectedColumnOrUndefined,
+  }
 }
 type ValueOrMultiValue = {
   str: string
   strList?: string[]
-  columnModelType?: ColumnType
+  selectColumn?: SelectColumn
 }
 
 export function getCardLinkHref(

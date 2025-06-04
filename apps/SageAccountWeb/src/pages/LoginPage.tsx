@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material'
-import { useNavigate } from 'react-router'
+import { useNavigate, useRevalidator } from 'react-router'
 import { backButtonSx } from '../components/BackButton.js'
 import { SourceAppDescription, SourceAppLogo } from '../components/SourceApp.js'
 import {
@@ -44,6 +44,7 @@ function LoginPage(props: LoginPageProps) {
   const { returnToUrl } = props
   const { refreshSession, twoFactorAuthSSOErrorResponse } =
     useApplicationSessionContext()
+  const { revalidate } = useRevalidator()
   const navigate = useNavigate()
   const sourceApp = useSourceApp()
   const {
@@ -92,7 +93,10 @@ function LoginPage(props: LoginPageProps) {
                   }
                   restoreLastPlace(navigate, returnToUrl)
                   // If we didn't redirect, refresh the session
-                  refreshSession()
+                  refreshSession().then(() => {
+                    // Revalidate/refetch loader data once the session is set
+                    void revalidate()
+                  })
                 }}
                 registerAccountUrl={'/register1'}
                 resetPasswordUrl={'/resetPassword'}

@@ -198,19 +198,29 @@ export const getColumnIndex = (
   selectColumns?: SelectColumn[],
   columnModels?: ColumnModel[],
 ): number | undefined => {
+  if (!columnName) {
+    return undefined
+  }
+
+  const lowerCaseColumnName = columnName.toLowerCase()
+
   if (selectColumns) {
     const findIndexResult = selectColumns.findIndex(
-      el => el.name === columnName,
+      el => el.name?.toLowerCase() === lowerCaseColumnName,
     )
     if (findIndexResult != -1) {
       return findIndexResult
     }
   }
+
   if (columnModels) {
-    const findIndexResult = columnModels.findIndex(el => el.name === columnName)
-    if (findIndexResult != -1) {
+    const findIndexResult = columnModels.findIndex(
+      el => el.name?.toLowerCase() === lowerCaseColumnName,
+    )
+    if (findIndexResult !== -1) {
       return findIndexResult
     }
   }
+
   return undefined
 }

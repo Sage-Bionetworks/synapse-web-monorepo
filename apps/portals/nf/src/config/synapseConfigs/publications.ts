@@ -2,7 +2,7 @@ import type {
   CardConfiguration,
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
-import { SynapseConstants } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { columnAliases } from './commonProps'
 
 import { Direction } from '@sage-bionetworks/synapse-types'

@@ -4,6 +4,7 @@ import {
   getLinkParams,
   getValueOrMultiValue,
 } from '@/components/GenericCard/CardUtils'
+import CroissantButton from '@/components/GenericCard/CroissantButton/CroissantButton'
 import { GenericCardIcon } from '@/components/GenericCard/GenericCardIcon'
 import PortalDOI from '@/components/GenericCard/PortalDOI/PortalDOI'
 import {
@@ -83,7 +84,10 @@ export type TableToGenericCardMapping = {
   link?: string
   /** Column name of the STRING_LIST column that includes icon names that represent icons that should be displayed on the card */
   dataTypeIconNames?: string
-  /** The column name whose data contains a synId that can be used to show a button to add the corresponding entity to the download cart. */
+  /** If true, uses the rowId and row versionNumber to display a button to add the card item to the download cart */
+  useRowIdAndVersionForDownloadCart?: boolean
+  /** The column name whose data contains a synId that can be used to show a button to add the corresponding entity to the download cart. Does nothing if
+   * useRowIdAndVersionForDownloadCart is true */
   downloadCartSynId?: string
   /** Configuration to display a DOI, as well as the ability to create one for users with such permission */
   portalDoiConfiguration?: {
@@ -121,6 +125,8 @@ export type TableRowGenericCardProps = {
   data: string[]
   /** The ID of the table row */
   rowId?: number
+  /** The versionNumber of the table row */
+  versionNumber?: number
 } & CommonCardProps
 
 // SWC-6115: special rendering of the version column (for Views)
@@ -159,6 +165,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     schema,
     data,
     rowId,
+    versionNumber: rowVersionNumber,
     genericCardSchema,
     secondaryLabelLimit,
     selectColumns,
@@ -182,6 +189,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     citationBoilerplateText,
     downloadCartSynId,
     portalDoiConfiguration,
+    useRowIdAndVersionForDownloadCart,
   } = genericCardSchema
   const title = data[schema[genericCardSchema.title]]
   let subTitle =
@@ -213,18 +221,25 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     schema,
     rowId,
   )
-  let downloadCartSynIdColumnIndex: number | undefined
+
   let downloadCartSynIdValue: string | undefined
-  if (downloadCartSynId) {
-    downloadCartSynIdColumnIndex = schema[downloadCartSynId]
-    downloadCartSynIdValue =
-      downloadCartSynIdColumnIndex !== undefined
-        ? data[downloadCartSynIdColumnIndex]
-        : undefined
+  let downloadCartVersionNumber: number | undefined
+  if (useRowIdAndVersionForDownloadCart) {
+    downloadCartSynIdValue = `syn${rowId}`
+    downloadCartVersionNumber = rowVersionNumber
+  } else {
+    let downloadCartSynIdColumnIndex: number | undefined
+    if (downloadCartSynId) {
+      downloadCartSynIdColumnIndex = schema[downloadCartSynId]
+      downloadCartSynIdValue =
+        downloadCartSynIdColumnIndex !== undefined
+          ? data[downloadCartSynIdColumnIndex]
+          : undefined
+    }
+    downloadCartSynIdValue = downloadCartSynIdValue?.match(
+      /syn\d+/i, // regex to extract the synapse ID from the URL
+    )?.[0]
   }
-  downloadCartSynIdValue = downloadCartSynIdValue?.match(
-    /syn\d+/i, // regex to extract the synapse ID from the URL
-  )?.[0]
 
   const candidateDoiId = getCandidateDoiId({
     data,
@@ -356,6 +371,16 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     ctaTarget = newCtaTarget
   }
 
+  let croissantButton = <></>
+  if (rowId && rowVersionNumber) {
+    croissantButton = (
+      <CroissantButton
+        datasetId={rowId}
+        datasetVersionNumber={rowVersionNumber}
+      />
+    )
+  }
+
   return (
     <GenericCard
       ref={ref}
@@ -409,6 +434,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
           <Collapse in={showDownloadConfirmation}>
             <EntityDownloadConfirmation
               entityId={downloadCartSynIdValue}
+              versionNumber={downloadCartVersionNumber}
               handleClose={() => setShowDownloadConfirmation(false)}
               onIsLoadingChange={isLoading => {
                 setDownloadButtonDisabled(isLoading)
@@ -437,6 +463,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       }
       cardTopButtons={
         <>
+          {croissantButton}
           {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
           {downloadCartSynIdValue && (
             <>

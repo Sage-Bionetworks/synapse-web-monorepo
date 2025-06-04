@@ -402,8 +402,19 @@ export class KeyFactory {
       wikiPageKey.wikiPageId,
     )
   }
+
   public getWikiPageKey(ownerId: string, wikiPageId: string) {
     return this.getKey('ownerId', ownerId, 'wikiPageId', wikiPageId)
+  }
+
+  public getWikiAttachmentsQueryKey(wikiPageKey: WikiPageKey) {
+    return this.getKey(
+      WIKI_PAGE_QUERY_KEY,
+      wikiPageKey.ownerObjectType,
+      wikiPageKey.ownerObjectId,
+      wikiPageKey.wikiPageId,
+      'attachments',
+    )
   }
 
   public getFullTableQueryResultQueryKey(
@@ -955,6 +966,10 @@ export class KeyFactory {
   }
   public getEvaluationsQueryKey(request: GetEvaluationParameters) {
     return this.getKey('evaluation', 'paginated', request)
+  }
+
+  public getEvaluationRoundsQueryKey(evaluationId: string) {
+    return this.getKey('evaluation', evaluationId, 'rounds')
   }
 
   public chatAgentSessionHistoryQueryKey(params?: SessionHistoryRequest) {

@@ -17,7 +17,7 @@ import {
   SynapseErrorType,
 } from 'synapse-react-client'
 
-export default function DatasetDetailsPage() {
+function DatasetDetailsPage() {
   const { id } = useGetPortalComponentSearchParams()
 
   if (!id) {
@@ -97,3 +97,5 @@ export default function DatasetDetailsPage() {
     </>
   )
 }
+
+export default DatasetDetailsPage

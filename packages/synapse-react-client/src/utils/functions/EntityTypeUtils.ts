@@ -364,6 +364,7 @@ export const entityJsonKeys: Record<ENTITY_CONCRETE_TYPE, string[]> = {
     ...entityRefCollectionViewKeys,
     'size',
     'checksum',
+    'count',
   ],
   [DATASET_COLLECTION_CONCRETE_TYPE_VALUE]: [...entityRefCollectionViewKeys],
   [ENTITY_VIEW_CONCRETE_TYPE_VALUE]: [

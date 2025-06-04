@@ -19,14 +19,7 @@ import { JSONSchema7 } from 'json-schema'
 import { omitBy } from 'lodash-es'
 import isEmpty from 'lodash-es/isEmpty'
 import noop from 'lodash-es/noop'
-import {
-  RefObject,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ConfirmationButtons,
   ConfirmationDialog,
@@ -36,13 +29,14 @@ import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import {
   dropNullishArrayValues,
   dropNullValues,
-  getAllPropertiesInFlatObjectSchema,
+  getPossibleTopLevelPropertiesInObjectSchema,
   getFriendlyPropertyName,
   getJsonSchemaForForm,
   getSchemaIdForConcreteType,
-  getTransformErrors,
+  transformErrors,
   getUiSchemaForForm,
   shouldLiveValidate,
+  customTranslateString,
 } from './AnnotationEditorUtils'
 import SynapseAnnotationsRJSFObjectField from './field/SynapseAnnotationsRJSFObjectField'
 import { ObjectFieldTemplate } from './template/ObjectFieldTemplate'
@@ -143,17 +137,19 @@ export function SchemaDrivenAnnotationEditor(
     undefined,
   )
 
-  const transformErrors = useCallback(
-    getTransformErrors(entityJson?.concreteType),
-    [entityJson?.concreteType],
-  )
-
+  // Set initial form data when the entity or its annotations change
   useEffect(() => {
     if (data?.entity) {
-      // Put the annotations into a state variable so it can be modified by the form.
-      setFormData(data?.entity)
+      const formData = data.entity
+      const hasAnnotations = annotations && Object.keys(annotations).length > 0
+
+      const newFormData = !hasAnnotations
+        ? { ...formData, newKey: [''] }
+        : formData
+
+      setFormData(newFormData)
     }
-  }, [data?.entity])
+  }, [data?.entity, annotations])
 
   const { data: schema, isLoading: isLoadingBinding } = useGetSchemaBinding(
     entityId!,
@@ -183,13 +179,14 @@ export function SchemaDrivenAnnotationEditor(
     })
 
   const entitySchemaBaseProperties: JSONSchema7['properties'] = useMemo(
-    () => getAllPropertiesInFlatObjectSchema(schemaForEntityType ?? {}),
+    () =>
+      getPossibleTopLevelPropertiesInObjectSchema(schemaForEntityType ?? {}),
     [schemaForEntityType],
   )
 
   const formSchema = useMemo(
-    () => getJsonSchemaForForm(validationSchema, entitySchemaBaseProperties),
-    [entitySchemaBaseProperties, validationSchema],
+    () => getJsonSchemaForForm(validationSchema, schemaForEntityType),
+    [validationSchema, schemaForEntityType],
   )
 
   const uiSchema = useMemo(
@@ -227,6 +224,7 @@ export function SchemaDrivenAnnotationEditor(
         Object.keys(entityJson).find(k => k === key),
       ),
     )
+
   const showHasNoAnnotationsAlert = schema === null && formDataHasNoAnnotations
 
   return (
@@ -276,6 +274,7 @@ export function SchemaDrivenAnnotationEditor(
             noHtml5Validate={true}
             formRef={ref}
             disabled={updateIsPending}
+            translateString={customTranslateString}
             formContext={{
               showDerivedAnnotationPlaceholder: true,
               descriptionVariant: 'expand',

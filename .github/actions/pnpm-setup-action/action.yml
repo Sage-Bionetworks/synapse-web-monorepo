@@ -8,10 +8,10 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Use Node.js ${{ matrix.node-version || 20 }}
+    - name: Use Node.js 22
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version || 20 }}
+        node-version: 22
         registry-url: https://registry.npmjs.org/
     - uses: pnpm/action-setup@v4
       name: Install pnpm

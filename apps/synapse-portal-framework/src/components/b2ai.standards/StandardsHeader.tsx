@@ -1,22 +1,22 @@
 import { Box, Typography, Button } from '@mui/material'
 import HeaderSearchBox from '../HeaderSearchBox'
-import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
+import { Query } from '@sage-bionetworks/synapse-types'
+import { getTextMatchesQueryFilter } from 'synapse-react-client/components/FullTextSearch/FullTextSearchUtils'
+import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2'
 
 export type StandardsHeaderProps = {
   dataSql: string
+  ftsConfig: FTSConfig
 }
 
 const StandardsHeader = (props: StandardsHeaderProps) => {
   const searchPlaceholder = 'Search for a biomedical data standard'
   const searchExampleTerms = [
-    'MRI data processing',
-    'Waveform interoperability',
     'Ophthalmic imaging',
     'Integration',
     'Acquisition',
     'File formats',
     'Ontologies',
-    'Lab automation',
   ]
 
   const content = (
@@ -57,6 +57,9 @@ const StandardsHeader = (props: StandardsHeaderProps) => {
         >
           Explore research Standards
         </Button>
+        {/* not working yet, but was part of branch that I needed to
+            get https://github.com/Sage-Bionetworks/synapse-web-monorepo/pull/1871
+            working
         <Button
           variant="outlined"
           size="large"
@@ -66,6 +69,7 @@ const StandardsHeader = (props: StandardsHeaderProps) => {
         >
           Explore data sets
         </Button>
+        */}
       </Box>
     </>
   )
@@ -93,11 +97,10 @@ const StandardsHeader = (props: StandardsHeaderProps) => {
           searchExampleTerms={searchExampleTerms}
           searchPlaceholder={searchPlaceholder}
           callback={searchString => {
-            const filter: TextMatchesQueryFilter = {
-              concreteType:
-                'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
-              searchExpression: searchString,
-            }
+            const filter = getTextMatchesQueryFilter(
+              searchString,
+              props.ftsConfig,
+            )
             const query: Query = {
               sql: props.dataSql,
               additionalFilters: [filter],

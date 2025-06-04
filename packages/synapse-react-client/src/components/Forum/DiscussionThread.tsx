@@ -8,14 +8,21 @@ import {
 import { useSubscription } from '@/synapse-queries/subscription/useSubscription'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
-import { Box, Button, TextField, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from '@mui/material'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
   ObjectType,
   SubscriptionObjectType,
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import IconSvg from '../IconSvg/IconSvg'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
@@ -26,6 +33,8 @@ import { DiscussionReply } from './DiscussionReply'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import { SubscribersModal } from './SubscribersModal'
 import { useGetModerators } from '@/synapse-queries/forum/useForum'
+import { useNativeSearchParams } from '@/utils/hooks/useNativeSearchParams'
+import { REPLY_ID_PARAM_KEY } from './DiscussionConstants'
 
 export type DiscussionThreadProps = {
   threadId: string
@@ -98,7 +107,6 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     hasNextPage,
     fetchNextPage,
   } = useGetRepliesInfinite(threadId, orderByDatePosted, limit)
-  const replies = replyData?.pages.flatMap(page => page.results) ?? []
 
   const { data: moderatorList } = useGetModerators(threadData?.forumId ?? '')
 
@@ -106,34 +114,47 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     threadData?.createdBy ?? '',
   )
 
+  const [replyId, setReplyIdParam] = useNativeSearchParams(REPLY_ID_PARAM_KEY)
+
+  const replies = useMemo(() => {
+    const allReplies = replyData?.pages.flatMap(page => page.results) ?? []
+    if (replyId) {
+      return allReplies.filter(reply => reply.id === replyId)
+    } else {
+      return allReplies
+    }
+  }, [replyData, replyId])
+
+  const handleShowAllRepliesButton = () => {
+    setReplyIdParam(null)
+  }
+
   return (
-    <div className="DiscussionThread">
+    <div className="DiscussionThread" role={'article'}>
       {threadData && threadBody ? (
         <>
-          <Box
-            sx={theme => ({
-              textAlign: 'center',
-              [theme.breakpoints.down('sm')]: {
-                display: 'flex',
-                marginBottom: defaultMargin,
-                button: {
-                  whiteSpace: 'nowrap',
-                },
-              },
-            })}
-          >
-            <Button
-              variant={orderByDatePosted ? 'contained' : 'outlined'}
-              onClick={() => setOrderByDatePosted(true)}
+          <Box sx={{ mb: 2, textAlign: 'right' }}>
+            <Typography component={'span'} sx={{ mr: 1 }}>
+              Sort:
+            </Typography>
+            <ToggleButtonGroup
+              color={'primary'}
+              exclusive
+              value={orderByDatePosted ? 'datePosted' : 'mostRecent'}
             >
-              Date Posted
-            </Button>
-            <Button
-              variant={orderByDatePosted ? 'outlined' : 'contained'}
-              onClick={() => setOrderByDatePosted(false)}
-            >
-              Most Recent
-            </Button>
+              <ToggleButton
+                value={'datePosted'}
+                onClick={() => setOrderByDatePosted(true)}
+              >
+                Date Posted
+              </ToggleButton>
+              <ToggleButton
+                value={'mostRecent'}
+                onClick={() => setOrderByDatePosted(false)}
+              >
+                Most Recent
+              </ToggleButton>
+            </ToggleButtonGroup>
           </Box>
           <UserBadge
             userId={threadData.createdBy}
@@ -174,6 +195,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           </div>
           <span>
             posted {formatDate(dayjs(threadData.createdOn), 'M/D/YYYY')}
+            {threadData.isEdited ? <i>{' (Edited)'}</i> : null}
           </span>
           <ForumThreadEditor
             isReply={false}
@@ -263,6 +285,22 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           />
         )}
       </Box>
+      {replyId && (
+        <Button
+          variant="outlined"
+          onClick={handleShowAllRepliesButton}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '2px 8px',
+            marginBottom: '12px',
+            gap: '4px',
+          }}
+        >
+          <IconSvg icon="arrowBack" sx={{ width: '16px' }} />
+          <Typography variant="smallText2">Show all replies</Typography>
+        </Button>
+      )}
       <div>
         {replies.map(reply => {
           const isReplyAuthorModerator = moderatorList?.results.includes(

@@ -1,3 +1,4 @@
+import IsMatureIconMap from '@/components/IsMatureIconMap'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import {
   LabelLinkConfig,
@@ -6,7 +7,8 @@ import {
 } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import {
-  dataSetExploreSql,
+  dataFtsConfig,
+  // dataSetExploreSql,
   dataSql,
   DST_TABLE_COLUMN_NAMES,
 } from '../resources'
@@ -19,6 +21,11 @@ export const dataColumnLinks: LabelLinkConfig = [
     matchColumnName: 'acronym',
     // If set, also show a tooltip
     // tooltipText?: string
+  },
+  {
+    matchColumnName: 'isMature',
+    isMapValueToReactNodeConfig: true,
+    Component: IsMatureIconMap,
   },
 ]
 
@@ -33,13 +40,15 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     showDownloadColumn: false,
     columnLinks: dataColumnLinks,
   },
-
   facetsToPlot: [
     'topic',
     // 'Organizations',
     DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
   ],
   initialPlotType: 'BAR',
+  searchConfiguration: {
+    ftsConfig: dataFtsConfig,
+  },
 }
 
 export const dataDetailPageProps: StandaloneQueryWrapperProps = {
@@ -50,6 +59,7 @@ export const dataDetailPageProps: StandaloneQueryWrapperProps = {
   sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
 }
 
+/* part of PR #1865, not ready yet
 const dataSetColumnLinks: LabelLinkConfig = [
   {
     isMarkdown: true,
@@ -68,5 +78,6 @@ export const dataSetsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     columnLinks: dataSetColumnLinks,
   },
 }
+*/
 
 export default dataQueryWrapperPlotNavProps

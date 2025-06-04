@@ -1,3 +1,4 @@
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen } from '@testing-library/react'
 import SynapseChatInteraction, {
   SynapseChatInteractionProps,
@@ -8,7 +9,9 @@ const defaultProps: SynapseChatInteractionProps = {
 }
 
 function renderComponent(props?: Partial<SynapseChatInteractionProps>) {
-  render(<SynapseChatInteraction {...defaultProps} {...props} />)
+  render(<SynapseChatInteraction {...defaultProps} {...props} />, {
+    wrapper: createWrapper(),
+  })
 }
 describe('SynapseChatInteraction tests', () => {
   it('Chat response is rendered', async () => {

@@ -299,7 +299,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
             <Typography variant="dataFieldKey" gutterBottom>
               Assigned Reviewer
             </Typography>
-            <Typography variant="smallText1" gutterBottom>
+            <Stack>
               {isLoadingACL && <Skeleton width={100} />}
               {!isLoadingACL &&
                 !isEmpty(reviewerIds) &&
@@ -309,7 +309,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               {!isLoadingACL && isEmpty(reviewerIds) && (
                 <UserOrTeamBadge principalId={ACT_TEAM_ID} />
               )}
-            </Typography>
+            </Stack>
             <br />
           </>
         )}

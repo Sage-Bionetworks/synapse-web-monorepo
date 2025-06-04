@@ -1,5 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { SynapseClientError, useSynapseContext } from '@/utils'
+import { EvaluationRoundListResponse } from '@sage-bionetworks/synapse-client'
 import {
   Evaluation,
   GetEvaluationParameters,
@@ -74,5 +75,45 @@ export function useGetEvaluationsInfinite<
     },
     initialPageParam: undefined,
     getNextPageParam: getNextPageParamForPaginatedResults,
+  })
+}
+
+export function useGetEvaluationRoundsInfinite<
+  TData = InfiniteData<EvaluationRoundListResponse>,
+>(
+  evaluationId: string,
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      EvaluationRoundListResponse,
+      SynapseClientError,
+      TData,
+      EvaluationRoundListResponse,
+      QueryKey,
+      EvaluationRoundListResponse['nextPageToken']
+    >
+  >,
+) {
+  const { synapseClient, keyFactory } = useSynapseContext()
+
+  return useInfiniteQuery<
+    EvaluationRoundListResponse,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    EvaluationRoundListResponse['nextPageToken']
+  >({
+    ...options,
+    queryKey: keyFactory.getEvaluationRoundsQueryKey(evaluationId),
+    queryFn: context =>
+      synapseClient.evaluationServicesClient.postRepoV1EvaluationEvalIdRoundList(
+        {
+          evalId: evaluationId,
+          evaluationRoundListRequest: {
+            nextPageToken: context.pageParam,
+          },
+        },
+      ),
+    initialPageParam: undefined,
+    getNextPageParam: page => page.nextPageToken,
   })
 }

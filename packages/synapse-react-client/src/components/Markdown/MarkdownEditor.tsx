@@ -1,3 +1,11 @@
+import {
+  Box,
+  IconButton,
+  Tab,
+  Tabs,
+  TextField,
+  Typography,
+} from '@mui/material'
 import { useRef, useState, useEffect } from 'react'
 import {
   commandList,
@@ -22,8 +30,7 @@ export function MarkdownEditor({
   text,
   setText,
 }: MarkdownEditorProps) {
-  const [currentTab, setCurrentTab] =
-    useState<(typeof MarkdownEditorTabs)[number]>('WRITE')
+  const [currentTab, setCurrentTab] = useState<number>(0)
   const [selectionStart, setSelectionStart] = useState<number>(0)
   const [isShowingTagModal, setIsShowingTagModal] = useState<boolean>(false)
   const [tagModalWithKeyboard, setTagModalWithKeyboard] =
@@ -120,57 +127,78 @@ export function MarkdownEditor({
   return (
     <div className="MarkdownEditor">
       <div className="MarkdownEditorControls">
-        <div className="Tabs">
+        <Tabs
+          textColor="secondary"
+          indicatorColor="secondary"
+          value={currentTab}
+          onChange={(_e, newValue) => setCurrentTab(newValue)}
+        >
           {MarkdownEditorTabs.map(tabName => {
-            return (
-              <button
-                className="Tab"
-                role="tab"
-                aria-selected={tabName === currentTab}
-                key={tabName}
-                onClick={e => {
-                  e.stopPropagation()
-                  setCurrentTab(tabName)
-                }}
-              >
-                {tabName}
-              </button>
-            )
+            return <Tab label={tabName} key={tabName} />
           })}
-        </div>
-        {currentTab === 'WRITE' && (
+        </Tabs>
+        {MarkdownEditorTabs[currentTab] === 'WRITE' && (
           <div className="MarkdownEditorControlsToolbar">
             {commandList.map(type => {
               return (
-                <button key={type} onClick={() => handleCommands(type)}>
-                  <IconSvg icon={type} label={startCase(type)} />
-                </button>
+                <IconButton
+                  size={'small'}
+                  key={type}
+                  onClick={() => handleCommands(type)}
+                  sx={{ width: '32px', height: '32px' }}
+                >
+                  <IconSvg
+                    sx={{ fontSize: 'inherit' }}
+                    icon={type}
+                    label={startCase(type)}
+                  />
+                </IconButton>
               )
             })}
-            <button onClick={() => setIsShowingTagModal(true)}>
-              <IconSvg icon="tag" label="Mention" />
-            </button>
+            <IconButton
+              size={'small'}
+              onClick={() => setIsShowingTagModal(true)}
+              sx={{ width: '32px', height: '32px' }}
+            >
+              <IconSvg
+                sx={{ fontSize: 'inherit' }}
+                icon="tag"
+                label="Mention"
+              />
+            </IconButton>
           </div>
         )}
       </div>
       <div>
-        {currentTab === 'WRITE' ? (
-          <textarea
-            aria-label="markdown"
+        {MarkdownEditorTabs[currentTab] === 'WRITE' ? (
+          <TextField
+            inputProps={{
+              ['aria-label']: 'markdown',
+            }}
             onChange={e => {
               setText(e.target.value)
               handleTagModal(e.target.value)
             }}
             style={{ width: '100%' }}
-            rows={6}
+            multiline
+            minRows={6}
             value={text}
-            ref={textAreaRef}
+            inputRef={textAreaRef}
             placeholder={placeholder}
+            sx={{
+              textarea: {
+                resize: 'vertical',
+              },
+            }}
           />
-        ) : text ? (
-          <MarkdownSynapse markdown={text} />
         ) : (
-          'Nothing to preview'
+          <Box sx={{ mx: 1, my: 2 }}>
+            {text ? (
+              <MarkdownSynapse markdown={text} />
+            ) : (
+              <Typography>Nothing to preview</Typography>
+            )}
+          </Box>
         )}
       </div>
 

@@ -1,5 +1,6 @@
 @use '../abstracts/variables' as SRC;
 @use 'sass:color';
+@use 'sass:map';
 
 //Variables
 $baseline-grid: 21px;
@@ -52,10 +53,10 @@ $text-color-lighter: #898989;
     margin-top: 0px;
     margin-bottom: 0px;
     background: SRC.$primary-action-color;
-    @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
+    @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
       padding-top: 40px;
     }
-    @media (max-width: map-get(SRC.$breakpoints, 'medium')) {
+    @media (max-width: map.get(SRC.$breakpoints, 'medium')) {
       padding-top: 89px;
     }
     .SRC-type {
@@ -76,6 +77,18 @@ $text-color-lighter: #898989;
       color: white !important;
       text-decoration-color: white !important;
     }
+    .MuiButton-root {
+      border-color: white !important;
+      color: white !important;
+      height: 24px;
+
+      &:hover {
+        background-color: map.get(SRC.$primary-color-palette, 700);
+      }
+      &:active {
+        background-color: map.get(SRC.$primary-color-palette, 800);
+      }
+    }
     .SRC-cardMetadata .SRC-row-label {
       text-transform: uppercase;
       color: white;
@@ -89,7 +102,7 @@ $text-color-lighter: #898989;
     .SRC-cardMetadata {
       background-color: inherit;
     }
-    @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
+    @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
       &.isAlignToLeftNav {
         .SRC-cardThumbnail {
           svg,
@@ -106,6 +119,7 @@ $text-color-lighter: #898989;
   .SRC-portalCardMain {
     display: flex;
     margin-left: 15px;
+    position: relative;
   }
 
   .SRC-downloadData {

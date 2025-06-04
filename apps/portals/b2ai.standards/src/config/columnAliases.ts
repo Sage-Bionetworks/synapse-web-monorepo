@@ -5,4 +5,5 @@ export default {
   standardName: 'Name of Standard',
   isOpen: 'Is Open?',
   registration: 'Requires Registration?',
+  topic: 'Topics',
 }

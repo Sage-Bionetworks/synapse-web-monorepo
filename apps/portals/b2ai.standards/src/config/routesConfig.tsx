@@ -9,13 +9,32 @@ import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSy
 import HomePage from '../pages/HomePage'
 import {
   dataQueryWrapperPlotNavProps,
-  dataSetsQueryWrapperPlotNavProps,
+  /* part of PR #1865, not ready yet
+  dataSetsQueryWrapperPlotNavProps, */
 } from './synapseConfigs/data'
+import { FullWidthAlert } from 'synapse-react-client'
 
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: <App />,
+    element: (
+      <App>
+        <FullWidthAlert
+          sx={{ m: 0 }}
+          isGlobal={false}
+          variant={'info'}
+          show={true}
+          title={"You're Using an Alpha Version!"}
+          description={
+            'This is an early version of the portal. Things might break, and your feedback helps us build a better experience. Try it out and let us know what you think!'
+          }
+          secondaryButtonConfig={{
+            text: 'Give Feedback',
+            href: 'https://github.com/bridge2ai/b2ai-standards-registry/issues/new?template=feedback.yml',
+          }}
+        />
+      </App>
+    ),
     children: [
       ...sharedRoutes,
       {
@@ -43,23 +62,25 @@ const routes: RouteObject[] = [
         path: 'Explore/Standard/DetailsPage',
         element: <StandardsDetailsPage />,
       },
-      {
-        path: 'DataSetExplore',
-        element: (
-          <Box
-            sx={{
-              '.QueryWrapperPlotNav > *': {
-                p: '0px 20px',
-              },
-              '.QueryWrapperPlotNav > .TopLevelControls': {
-                mt: '0',
-              },
-            }}
-          >
-            <QueryWrapperPlotNav {...dataSetsQueryWrapperPlotNavProps} />
-          </Box>
-        ),
-      },
+      /* part of PR #1865, not ready yet
+    {
+      path: 'DataSetExplore',
+      element: (
+        <Box
+          sx={{
+            '.QueryWrapperPlotNav > *': {
+              p: '0px 20px',
+            },
+            '.QueryWrapperPlotNav > .TopLevelControls': {
+              mt: '0',
+            },
+          }}
+        >
+          <QueryWrapperPlotNav {...dataSetsQueryWrapperPlotNavProps} />
+        </Box>
+      ),
+    },
+    */
       {
         path: 'About',
         element: (

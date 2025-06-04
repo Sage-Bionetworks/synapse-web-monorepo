@@ -3,19 +3,18 @@ import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-fra
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import {
-  CardContainerLogic,
-  ErrorPage,
-  SynapseErrorType,
-} from 'synapse-react-client'
 import columnAliases from '../config/columnAliases'
 import { educationSql, grantsSql } from '../config/resources'
 import { educationDetailsCardConfiguration } from '../config/synapseConfigs/education'
 import { grantsCardConfiguration } from '../config/synapseConfigs/grants'
-import { SharePageLinkButton } from 'synapse-react-client'
 import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
+import SharePageLinkButton from 'synapse-react-client/components/SharePageLinkButton'
+import ErrorPage, {
+  SynapseErrorType,
+} from 'synapse-react-client/components/error/ErrorPage'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
 
-export default function EducationalResourcesDetailsPage() {
+function EducationalResourcesDetailsPage() {
   const { title } = useGetPortalComponentSearchParams()
 
   if (!title) {
@@ -69,3 +68,5 @@ export default function EducationalResourcesDetailsPage() {
     </>
   )
 }
+
+export default EducationalResourcesDetailsPage

@@ -1,7 +1,9 @@
+import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2'
+
 export const TABLE_IDS = {
   Challenges: { name: 'Challenges', id: 'syn65913973' },
   CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
-  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531' },
+  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.55' },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
   DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
@@ -25,8 +27,12 @@ export const CHALLENGES_TABLE_COLUMN_NAMES = {
 // for the Explore page table:
 export const dataSql = `
     SELECT
+        isMature,
         concat('[', acronym, '](/Explore/Standard/DetailsPage?id=', id, ')') as acronym,
-            name, category, topic as topics, collections, ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration FROM ${TABLE_IDS.DST_denormalized.id}
+            name, category, collections, topic, dataTypes,
+            ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration, "usedInBridge2AI"
+            , hasAIApplication
+            FROM ${TABLE_IDS.DST_denormalized.id}
 `
 // removed topic column above to address @jay-hodgson's comment
 //  https://github.com/Sage-Bionetworks/synapse-web-monorepo/pull/1612#discussion_r2029425831
@@ -44,7 +50,8 @@ export const standardsDetailsPageSQL = `
             URL as url,
             category,
             collections,
-            topic as topics,
+            topic,
+            dataTypes,
             ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES},
             responsibleOrgName as SDO,
             isOpen,
@@ -54,6 +61,11 @@ export const standardsDetailsPageSQL = `
     FROM ${TABLE_IDS.DST_denormalized.id}
 `
 // COALESCE(responsibleOrgName, 'No responsible org listed') as SDO,
+
+export const dataFtsConfig: FTSConfig = {
+  textMatchesMode: 'BOOLEAN',
+  distance: 50,
+}
 
 // for DataSetExplore
 export const dataSetExploreSql = `SELECT * FROM ${TABLE_IDS.GCDataSet.id}`

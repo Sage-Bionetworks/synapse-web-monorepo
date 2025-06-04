@@ -3,11 +3,10 @@ import {
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { Outlet, RouteObject } from 'react-router'
+import { Outlet } from 'react-router'
 import {
   CardContainerLogic,
   ErrorPage,
@@ -20,42 +19,44 @@ import {
   studyCardConfiguration,
   studyHeaderIconOptions,
 } from '../../config/synapseConfigs/studies'
-import StudyAdditionalFilesTab from './StudyAdditionalFilesTab'
-import StudyDatasetsTab from './StudyDatasetsTab'
-import { StudyDetailsTab } from './StudyDetailsTab'
-import StudyFilesTab from './StudyFilesTab'
+import {
+  STUDY_DETAILS_PAGE_ADDITIONAL_FILES_TAB_PATH,
+  STUDY_DETAILS_PAGE_DATASETS_TAB_PATH,
+  STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
+  STUDY_DETAILS_PAGE_FILES_TAB_PATH,
+} from '@/config/routeConstants'
 
 const tabConfig: DetailsPageTabConfig[] = [
   {
     title: 'Study Details',
-    path: 'Details',
+    path: STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
     iconName: 'study',
     tooltip: 'Description, methods, acknowledgements and related studies',
   },
   {
     title: 'Study Datasets',
-    path: 'Datasets',
+    path: STUDY_DETAILS_PAGE_DATASETS_TAB_PATH,
     iconName: 'dataset',
     tooltip: 'All of the Datasets generated within this study',
     iconClassName: 'tab-dataset',
   },
   {
     title: 'Study Files',
-    path: 'Files',
+    path: STUDY_DETAILS_PAGE_FILES_TAB_PATH,
     iconName: 'database',
     tooltip: 'File data generated within this study',
     iconClassName: 'tab-database',
   },
   {
     title: 'Additional Files',
-    path: 'AdditionalFiles',
+    path: STUDY_DETAILS_PAGE_ADDITIONAL_FILES_TAB_PATH,
     iconName: 'database',
     tooltip: 'Additional file data generated within this study',
     iconClassName: 'tab-database',
   },
 ]
 
-export default function StudyDetailsPage() {
+function StudyDetailsPage() {
   const { studyId } = useGetPortalComponentSearchParams()
 
   if (!studyId) {
@@ -85,29 +86,4 @@ export default function StudyDetailsPage() {
   )
 }
 
-export const studyDetailsPageRoute: RouteObject = {
-  path: 'Explore/Studies/DetailsPage',
-  element: <StudyDetailsPage />,
-  children: [
-    {
-      index: true,
-      element: <RedirectWithQuery to={tabConfig[0].path} />,
-    },
-    {
-      path: tabConfig[0].path,
-      element: <StudyDetailsTab />,
-    },
-    {
-      path: tabConfig[1].path,
-      element: <StudyDatasetsTab />,
-    },
-    {
-      path: tabConfig[2].path,
-      element: <StudyFilesTab />,
-    },
-    {
-      path: tabConfig[3].path,
-      element: <StudyAdditionalFilesTab />,
-    },
-  ],
-}
+export default StudyDetailsPage

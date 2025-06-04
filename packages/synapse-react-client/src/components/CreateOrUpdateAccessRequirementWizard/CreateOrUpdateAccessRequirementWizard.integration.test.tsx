@@ -16,8 +16,7 @@ import { MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
 import SynapseClient from '@/synapse-client'
 import {
   confirmMarkdownSynapseTextContent,
-  expectMarkdownSynapseNotToGetWiki,
-  waitForMarkdownSynapseToGetWiki,
+  confirmMarkdownSynapseIsShown,
 } from '@/testutils/MarkdownSynapseUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
@@ -75,7 +74,6 @@ function setUp(props: CreateOrUpdateAccessRequirementWizardProps) {
 
 async function expectNoContentWiki() {
   await screen.findByRole('button', { name: 'Edit Instructions' })
-  expectMarkdownSynapseNotToGetWiki()
   await confirmMarkdownSynapseTextContent(NO_WIKI_CONTENT)
 }
 
@@ -197,7 +195,7 @@ describe('CreateOrUpdateAccessRequirementWizard', () => {
     })
 
     // step 2: fields specific to managed ARs
-    await waitForMarkdownSynapseToGetWiki()
+    await confirmMarkdownSynapseIsShown()
     const ducField = await screen.findByRole('checkbox', {
       name: 'DUC is required.',
     })

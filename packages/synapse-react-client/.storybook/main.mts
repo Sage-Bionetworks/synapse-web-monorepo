@@ -8,6 +8,7 @@ const config: StorybookConfig = {
     '@storybook/addon-links',
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
+    '@storybook/addon-a11y',
     {
       name: '@storybook/addon-themes',
       options: {},
@@ -48,7 +49,7 @@ const config: StorybookConfig = {
 
   staticDirs: ['../public'],
 
-  async viteFinal(config, { configType }) {
+  viteFinal(config, { configType }) {
     let base,
       plugins = undefined
     // Fix deployment to github pages

@@ -1,19 +1,59 @@
-@import './cards', './download-list', './synapse_form_wrapper/steps-side-nav',
-  './synapse_form_wrapper/synapse-form-wrapper', './query-filter', './markdown',
-  './themes-plot', './total-query-results', './facet_nav/all',
-  './query-wrapper-plot-nav', './query-wrapper-text-input',
-  './element-with-tooltip', './_column-selection.scss',
-  './query_filter/enum-facet-filter', './query_filter/facet-filter-header',
-  './query_filter/facet-chip', './query_filter/query-wrapper-synapse-plot',
-  './goals', './feed-cards', './upset-plot', './resources', 'cards-rotate',
-  './expandable_content', './bar-loader', './featured-data-tabs', './programs',
-  './user-card-list-groups', './evaluation_queue/all', './terms-and-conditions',
-  './project-view-card', './carousel', './login', './entity_finder/all',
-  './entity-badge', './download-list-v2', './user-search-box',
-  './entity-metadata', './download-cart-page', './global-alert', './annotations',
-  './synapse-nav-drawer', './skeletons', './toasts', './user-profile-links',
-  './transition', './featured-tool-card', './row_renderers/observation-card',
-  './subsection-row-renderer', './dataset-editor', './markdown-collapse',
-  './discussion-search', './submission-page', './governance-dashboard',
-  './provenance', './certification-quiz', './discussion-forum',
-  './expandable_table_data', './markdown-editor', './spinner', './card-deck';
+@use 'cards';
+@use 'download-list';
+@use 'synapse_form_wrapper/steps-side-nav';
+@use 'synapse_form_wrapper/synapse-form-wrapper';
+@use 'query-filter';
+@use 'markdown';
+@use 'themes-plot';
+@use 'total-query-results';
+@use 'facet_nav/all';
+@use 'query-wrapper-plot-nav';
+@use 'query-wrapper-text-input';
+@use 'element-with-tooltip';
+@use '_column-selection.scss';
+@use 'query_filter/enum-facet-filter';
+@use 'query_filter/facet-filter-header';
+@use 'query_filter/facet-chip';
+@use 'query_filter/query-wrapper-synapse-plot';
+@use 'goals';
+@use 'feed-cards';
+@use 'upset-plot';
+@use 'resources';
+@use 'cards-rotate';
+@use 'expandable_content';
+@use 'bar-loader';
+@use 'featured-data-tabs';
+@use 'programs';
+@use 'user-card-list-groups';
+@use 'evaluation_queue/all' as all2;
+@use 'terms-and-conditions';
+@use 'project-view-card';
+@use 'login';
+@use 'entity_finder/all' as all3;
+@use 'entity-badge';
+@use 'download-list-v2';
+@use 'user-search-box';
+@use 'entity-metadata';
+@use 'download-cart-page';
+@use 'global-alert';
+@use 'annotations';
+@use 'synapse-nav-drawer';
+@use 'skeletons';
+@use 'toasts';
+@use 'user-profile-links';
+@use 'transition';
+@use 'featured-tool-card';
+@use 'row_renderers/observation-card';
+@use 'subsection-row-renderer';
+@use 'dataset-editor';
+@use 'markdown-collapse';
+@use 'discussion-search';
+@use 'submission-page';
+@use 'governance-dashboard';
+@use 'provenance';
+@use 'certification-quiz';
+@use 'discussion-forum';
+@use 'expandable_table_data';
+@use 'markdown-editor';
+@use 'spinner';
+@use 'card-deck';

@@ -1,2 +1,5 @@
-@import './evaluation-round-editor', './evaluation-round-editor-list',
-  './evaluation-editor', './evaluation-card', './created-on';
+@use 'evaluation-round-editor';
+@use 'evaluation-round-editor-list';
+@use 'evaluation-editor';
+@use 'evaluation-card';
+@use 'created-on';

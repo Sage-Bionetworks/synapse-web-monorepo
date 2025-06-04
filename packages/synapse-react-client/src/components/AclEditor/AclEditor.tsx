@@ -33,6 +33,8 @@ export type AclEditorProps = {
   availablePermissionLevels: PermissionLevel[]
   /** If true, the user can edit the ACL. If a function, it will be called with the ResourceAccess to determine if the user can edit it. */
   canEdit: boolean | ((resourceAccess: ResourceAccess) => boolean)
+  /** If true, object ACL is inherited from another object */
+  isInherited: boolean
   /**
    * If true, the user can remove any entry from the ACL. a function, it will be called with the ResourceAccess to determine if the user can remove it.
    * If undefined, then the behavior will fall back to the value of `canEdit`
@@ -70,6 +72,7 @@ export function AclEditor(props: AclEditorProps) {
     resourceAccessList,
     availablePermissionLevels,
     canEdit,
+    isInherited,
     canRemoveEntry = canEdit,
     isLoading = false,
     emptyText,
@@ -235,7 +238,7 @@ export function AclEditor(props: AclEditorProps) {
           </Box>
         </Box>
       )}
-      {!canEdit && (
+      {!canEdit && !isInherited && (
         <Typography variant={'body1'}>
           You do not have sufficient privileges to modify the sharing settings.
         </Typography>

@@ -2,30 +2,15 @@
 
 .MarkdownEditor {
   .MarkdownEditorControls {
+    width: 100%;
     @media (min-width: 768px) {
       display: flex;
     }
-    width: 100%;
-    .Tabs {
-      @include SrcMixins.underline-tabs();
-      justify-content: flex-start;
-      box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
-      display: inline-flex;
-      .Tab {
-        flex-grow: 0;
-        height: 45px;
-        padding-left: 30px;
-        padding-right: 30px;
-        border-radius: 0px;
-        display: flex;
-        align-items: center;
-        text-decoration: none !important;
-      }
-    }
     .MarkdownEditorControlsToolbar {
-      margin: auto;
-      margin-left: auto;
-      margin-right: 0;
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin: auto 0 auto auto;
       @media (max-width: 768px) {
         margin: 16px 0;
       }

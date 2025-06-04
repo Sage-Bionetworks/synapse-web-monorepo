@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 import { PortalSearchTabConfig, PortalSearchTabs } from './PortalSearchTabs'
 import PortalFullTextSearchField from './PortalFullTextSearchField'
-import SearchParamAwareStandaloneQueryWrapper from './SearchParamAwareStandaloneQueryWrapper'
+import SearchParamAwareQueryWrapperPlotNav from './SearchParamAwareQueryWrapperPlotNav'
 import {
   QueryWrapperPlotNavProps,
   StandaloneQueryWrapperProps,
@@ -104,7 +104,7 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
       )}
       {searchParamAwareQueryWrapperProps.map(
         (searchParamAwareQueryWrapperProps, index) => (
-          <SearchParamAwareStandaloneQueryWrapper
+          <SearchParamAwareQueryWrapperPlotNav
             key={`searchResultTab-${selectedTabIndex}-${index}`}
             isVisible={selectedTabIndex == index}
             standaloneQueryWrapperProps={searchParamAwareQueryWrapperProps}

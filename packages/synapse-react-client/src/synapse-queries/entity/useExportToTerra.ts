@@ -21,7 +21,8 @@ export function useExportToTerra(queryBundleRequest: QueryBundleRequest) {
         sql: queryBundleRequest.query.sql,
         selectedFacets: queryBundleRequest.query.selectedFacets,
         additionalFilters: queryBundleRequest.query.additionalFilters,
-        pfbEntityName: `synapse-export-${tableEntityId}`,
+        // Note - backend will respond with a 500 if illegal characters found in pfbEntityName (such as '-')
+        pfbEntityName: `SynapseExport${tableEntityId}`,
       }
       const result = await createPfb(downloadPfbRequest)
       // Send the user to Terra with the DRS URI that can be used to download the PFB result

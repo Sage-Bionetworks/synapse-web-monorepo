@@ -1,11 +1,12 @@
 import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
-import { useEffect, useState } from 'react'
+import { ComponentProps, useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 
 type ImageFileHandleProps = {
   fileHandleAssociation: FileHandleAssociation
+  imgProps?: ComponentProps<'img'>
 }
 
 export const ImageFileHandle = (props: ImageFileHandleProps) => {
@@ -15,6 +16,7 @@ export const ImageFileHandle = (props: ImageFileHandleProps) => {
       associateObjectId,
       associateObjectType,
     },
+    imgProps,
   } = props
   const { accessToken } = useSynapseContext()
   const [url, setUrl] = useState<string>()
@@ -54,7 +56,13 @@ export const ImageFileHandle = (props: ImageFileHandleProps) => {
   return (
     <span ref={ref}>
       {url && (
-        <img src={url} alt="" className="ImageFileHandle" loading="lazy"></img>
+        <img
+          className="ImageFileHandle"
+          src={url}
+          alt=""
+          loading="lazy"
+          {...imgProps}
+        ></img>
       )}
     </span>
   )

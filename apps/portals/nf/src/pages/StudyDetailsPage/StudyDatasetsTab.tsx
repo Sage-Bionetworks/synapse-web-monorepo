@@ -5,7 +5,7 @@ import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framewor
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { CardContainerLogic } from 'synapse-react-client'
 
-export default function StudyDatasetsTab() {
+function StudyDatasetsTab() {
   const { value: studyId } = useDetailsPageContext('studyId')
   if (studyId == null) {
     return null
@@ -29,3 +29,5 @@ export default function StudyDatasetsTab() {
     ></DetailsPageContent>
   )
 }
+
+export default StudyDatasetsTab

@@ -181,6 +181,7 @@ export const AccessRequirementAclEditor = forwardRef(
           removeResourceAccessItem={removeResourceAccessItem}
           showAddRemovePublicButton={false}
           showNotifyCheckbox={false}
+          isInherited={false}
         />
         {error && <Alert severity="error">{error}</Alert>}
       </Stack>
