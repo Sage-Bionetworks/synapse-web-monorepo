@@ -1,5 +1,3 @@
-import { TABLE_IDS } from '@/config/resources'
-
 import {
   DetailsPageContent,
   DetailsPageContentType,
