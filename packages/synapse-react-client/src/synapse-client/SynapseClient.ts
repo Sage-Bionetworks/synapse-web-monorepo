@@ -158,6 +158,8 @@ import {
   CreateChallengeTeamRequest,
   CreateDiscussionReply,
   CreateDiscussionThread,
+  CreateGridRequest,
+  CreateGridResponse,
   CreateMembershipInvitationRequest,
   CreateMembershipRequestRequest,
   CreateSubmissionRequest,
@@ -220,6 +222,7 @@ import {
   Forum,
   GetEvaluationParameters,
   GetProjectsParameters,
+  GridSession,
   HasAccessResponse,
   InviteeVerificationSignedToken,
   JoinTeamSignedToken,
@@ -5624,4 +5627,33 @@ export const getProjectStorageUsage = (
     BackendDestinationEnum.REPO_ENDPOINT,
     { signal },
   )
+}
+
+// https://rest-docs.synapse.org/rest/POST/grid/session/async/start.html
+export const GridSessionAsyncStart = async (
+  request?: CreateGridRequest,
+  accessToken?: string,
+): Promise<CreateGridResponse> => {
+  try {
+    // Step 1: Start the async job
+    const asyncJobId = await doPost<AsyncJobId>(
+      '/repo/v1/grid/session/async/start',
+      request || {},
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+
+    // Step 2: Poll for job completion and get the result
+    const result = await getAsyncResultBodyFromJobId<CreateGridResponse>(
+      asyncJobId.token,
+      `/repo/v1/grid/session/async/get/${asyncJobId.token}`,
+      accessToken,
+      //BackendDestinationEnum.REPO_ENDPOINT
+    )
+
+    return result
+  } catch (error) {
+    console.error('Error in GridSessionAsyncStart:', error)
+    throw error
+  }
 }
