@@ -113,9 +113,7 @@ export function SynapseHomepageNavBar({
     >
       {/* Logo */}
       <a onClick={() => gotoPlace(HOMEPAGE_LINK)}>
-        <SynapseFullLogo
-          textColor={(theme.palette.primary as ColorPartial)[900]!}
-        />
+        <SynapseFullLogo color={(theme.palette.primary as ColorPartial)[900]} />
       </a>
       {/* Menu Items */}
       {/* Desktop nav bar, and a mobile hamburger dropdown menu nav bar that contain the same options */}
