@@ -284,33 +284,35 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
       {inView && (
         <Box>
           <Box>
-            <Typography
-              variant="headline1"
-              sx={{
-                ...defaultHomepageText,
-                textAlign: 'center',
-                mt: '100px',
-                fontSize: { xs: '32px', md: '40px' },
-                lineHeight: '42px',
-                mb: '30px',
-              }}
-            >
-              We partner with scientific leaders
-            </Typography>
-            <Box sx={{ m: 'auto', maxWidth: '750px' }}>
+            <Box sx={{ padding: { xs: '45px 40px', md: '80px 25px' } }}>
               <Typography
                 variant="headline1"
                 sx={{
-                  ...homepageBodyText,
+                  ...defaultHomepageText,
                   textAlign: 'center',
-                  mb: '60px',
+                  mt: '100px',
+                  fontSize: { xs: '32px', md: '40px' },
+                  lineHeight: '42px',
+                  mb: '30px',
                 }}
               >
-                Synapse is your ecosystem for responsible data sharing,
-                innovative data reuse, and collaboration.
+                We partner with scientific leaders
               </Typography>
+              <Box sx={{ m: 'auto', maxWidth: '750px' }}>
+                <Typography
+                  variant="headline1"
+                  sx={{
+                    ...homepageBodyText,
+                    textAlign: 'center',
+                    mb: '60px',
+                  }}
+                >
+                  Synapse is your ecosystem for responsible data sharing,
+                  innovative data reuse, and collaboration.
+                </Typography>
+              </Box>
+              <SynapsePartners />
             </Box>
-            <SynapsePartners />
             <Box
               sx={{
                 pb: {
@@ -453,8 +455,7 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
               sx={{
                 ...h2Sx,
                 textAlign: 'center',
-                pt: '75px',
-                pb: '75px',
+                padding: { xs: '45px 0', md: '75px 0' },
               }}
             >
               Featured datasets

@@ -29,7 +29,7 @@ export const standardsCardSchema: TableToGenericCardMapping = {
   subTitle: 'standardName',
   description: 'description',
   link: 'url',
-  secondaryLabels: ['SDO', 'collections', 'topics', 'dataTypes'],
+  secondaryLabels: ['SDO', 'collections', 'topic', 'dataTypes'],
 }
 
 export const linkedStandardCardConfiguration: CardConfiguration = {
@@ -137,6 +137,7 @@ export default function StandardsDetailsPage() {
             },
           ],
         }}
+        columnAliases={columnAliases}
         cardConfiguration={{
           type: SynapseConstants.GENERIC_CARD,
           genericCardSchema: standardsCardSchema,
