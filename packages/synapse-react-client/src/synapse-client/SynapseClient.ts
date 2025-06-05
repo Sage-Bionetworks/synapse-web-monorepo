@@ -162,7 +162,6 @@ import {
   CreateGridResponse,
   CreateMembershipInvitationRequest,
   CreateMembershipRequestRequest,
-  CreateReplicaRequest,
   CreateReplicaResponse,
   CreateSubmissionRequest,
   CreateTeamRequest,
@@ -224,7 +223,6 @@ import {
   Forum,
   GetEvaluationParameters,
   GetProjectsParameters,
-  GridReplica,
   HasAccessResponse,
   InviteeVerificationSignedToken,
   JoinTeamSignedToken,
@@ -257,6 +255,7 @@ import {
   PaginatedIds,
   PaginatedResults,
   PassingRecord,
+  PresignedUrlResponse,
   PrincipalAliasRequest,
   PrincipalAliasResponse,
   ProjectFilesStatisticsRequest,
@@ -5673,6 +5672,25 @@ export const GridSessionReplica = async (
     )
   } catch (error) {
     console.error('Error in GridSessionReplica:', error)
+    throw error
+  }
+}
+
+// https://rest-docs.synapse.org/rest/POST/grid/sessionId/presigned/url.html
+export const GridSessionPresignedUrl = async (
+  sessionId: string,
+  replicaId: string,
+  accessToken?: string,
+): Promise<{ url: string; expiresOn: string }> => {
+  try {
+    return await doPost(
+      `/repo/v1/grid/${sessionId}/presigned/url`,
+      { sessionId, replicaId },
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  } catch (error) {
+    console.error('Error getting presigned URL:', error)
     throw error
   }
 }
