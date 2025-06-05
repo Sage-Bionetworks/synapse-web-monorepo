@@ -1,7 +1,6 @@
 import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2'
 
 export const TABLE_IDS = {
-  Challenges: { name: 'Challenges', id: 'syn65913973' },
   CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
   DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.55' },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
@@ -9,6 +8,7 @@ export const TABLE_IDS = {
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
   DataTopic: { name: 'DataTopic', id: 'syn63096835' },
   GCDataSet: { name: 'GCDataSet', id: 'syn66527597' },
+  Challenges: { name: 'Challenges', id: 'syn65913973' }, // the only reason for this table is to get the GC images
   Organization: { name: 'Organization', id: 'syn63096836' },
   UseCase: { name: 'UseCase', id: 'syn63096837' },
 }
@@ -23,6 +23,28 @@ export const CHALLENGES_TABLE_COLUMN_NAMES = {
   ORG_ID: 'organizationId',
   IMG_HANDLE_ID: 'headerImage',
 }
+
+export const GCDATASET_TABLE_COLUMN_NAMES = {
+  ID: 'id',
+  NAME: 'name',
+  DESCRIPTION: 'description',
+  CATEGORY: 'category',
+  DATASHEET_URL: 'DatasheetURL',
+  DOCUMENTATION_URL: 'DocumentationURL',
+  IS_PUBLIC: 'isPublic',
+  PRODUCED_BY: 'producedBy',
+  ORG_JSON: 'org_json',
+  TOPICS: 'topics',
+  SUBSTRATES: 'substrates',
+  SUBSTRATES_JSON: 'substrates_json',
+}
+export const GCDATASET_JSON_COLUMNS = [
+  'org_json',
+  'producedBy',
+  'substrates',
+  'substrates_json',
+  'topics',
+]
 
 // for the Explore page table:
 export const dataSql = `
