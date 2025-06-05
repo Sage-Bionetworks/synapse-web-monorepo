@@ -1,0 +1,1 @@
+import{d as m}from"./DefaultPropsProvider--W6_3ozQ.js";import{T as o}from"./createTheme-BDZE4uMs.js";import{u as s}from"./Stack-B8rIbmjf.js";function a({props:e,name:r}){return s({props:e,name:r,defaultTheme:m,themeId:o})}export{a as u};
