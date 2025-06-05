@@ -1,0 +1,1 @@
+import{d as m}from"./DefaultPropsProvider-hOkQc_mp.js";import{T as o}from"./createTheme-BstmEjP7.js";import{u as s}from"./Stack-_cgazAZA.js";function a({props:e,name:r}){return s({props:e,name:r,defaultTheme:m,themeId:o})}export{a as u};
