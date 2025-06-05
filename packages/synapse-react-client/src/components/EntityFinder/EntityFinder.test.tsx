@@ -340,7 +340,7 @@ describe('EntityFinder tests', () => {
   it('only renders the tree when treeOnly is true', async () => {
     renderComponent({ treeOnly: true })
 
-    expect(screen.getByRole('tree')) // Tree has rendered
+    screen.getByRole('tree') // Tree has rendered
     expect(() => screen.getByRole('table')).toThrowError() // Table/list has not rendered
 
     const reference: Reference = {

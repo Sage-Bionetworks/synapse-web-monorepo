@@ -1,4 +1,4 @@
-/* eslint jest/no-conditional-expect: 0 */
+/* eslint vitest/no-conditional-expect: 0 */
 import { mockDatasetEntity } from '@/mocks/entity/mockDataset'
 import { mockFileViewEntity } from '@/mocks/entity/mockFileView'
 import { mockProjectIds } from '@/mocks/entity/mockProject'
