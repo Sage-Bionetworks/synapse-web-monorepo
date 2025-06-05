@@ -18,3 +18,18 @@ export type GridSession = {
   lastReplicaIdClient: number // 	The last replica ID issued to a client. Client replica IDs are incremented.
   lastReplicaIdService: number // The last replica ID issued to a service. Service replica IDs are decremented.
 }
+
+export type CreateReplicaReuest = {
+  gridSessionId: string // The ID of the grid session to create a replica for.
+}
+
+export type GridReplica = {
+  gridSessionId: string // The ID of the grid seesion.
+  replicaId: number // The unique identifier for the new replica.
+  createdBy: string // The user that created this replica.
+  isAgentReplica: boolean // When true, this replica belongs to the createdBy user's agent.
+  createdOn: string // The date-time when the user created this replica.
+}
+export type CreateReplicaResponse = {
+  replica: GridReplica // Information about a replica.
+}

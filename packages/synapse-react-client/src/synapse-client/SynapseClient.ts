@@ -162,6 +162,8 @@ import {
   CreateGridResponse,
   CreateMembershipInvitationRequest,
   CreateMembershipRequestRequest,
+  CreateReplicaRequest,
+  CreateReplicaResponse,
   CreateSubmissionRequest,
   CreateTeamRequest,
   Direction,
@@ -222,7 +224,7 @@ import {
   Forum,
   GetEvaluationParameters,
   GetProjectsParameters,
-  GridSession,
+  GridReplica,
   HasAccessResponse,
   InviteeVerificationSignedToken,
   JoinTeamSignedToken,
@@ -5648,12 +5650,29 @@ export const GridSessionAsyncStart = async (
       asyncJobId.token,
       `/repo/v1/grid/session/async/get/${asyncJobId.token}`,
       accessToken,
-      //BackendDestinationEnum.REPO_ENDPOINT
     )
 
     return result
   } catch (error) {
     console.error('Error in GridSessionAsyncStart:', error)
+    throw error
+  }
+}
+
+// https://rest-docs.synapse.org/rest/POST/grid/sessionId/replica.html
+export const GridSessionReplica = async (
+  sessionId: string,
+  accessToken?: string,
+): Promise<CreateReplicaResponse> => {
+  try {
+    return await doPost<CreateReplicaResponse>(
+      `/repo/v1/grid/session/${sessionId}/replica`,
+      {},
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  } catch (error) {
+    console.error('Error in GridSessionReplica:', error)
     throw error
   }
 }
