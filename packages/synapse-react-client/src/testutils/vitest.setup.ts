@@ -11,14 +11,6 @@ import { TextEncoder, TextDecoder } from 'node:util'
 // so for those cases, we can stub `jest` to use `vi`.
 vi.stubGlobal('jest', vi)
 
-// Simulate Jest for waitFor()
-// see https://github.com/testing-library/dom-testing-library/blob/0ce0c7054dfa64d1cd65053790246aed151bda9d/src/helpers.ts#L5
-// and https://github.com/testing-library/dom-testing-library/blob/0ce0c7054dfa64d1cd65053790246aed151bda9d/src/wait-for.js#L53
-// from: https://github.com/vitest-dev/vitest/issues/3117#issuecomment-1493203072
-// global.jest = {
-//   advanceTimersByTime: (ms: number) => vi.advanceTimersByTime(ms),
-// } as any
-
 // JSDOM doesn't support createObjectURL and revokeObjectURL, so we shim them
 // https://github.com/jsdom/jsdom/issues/1721
 window.URL.createObjectURL = vi

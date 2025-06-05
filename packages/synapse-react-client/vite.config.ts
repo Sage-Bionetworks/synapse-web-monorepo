@@ -26,6 +26,7 @@ const config = new ConfigBuilder()
       // require vitest tests to be .vitest.ts(x) while we migrate from Jest
       include: ['**/*.?(vi)test.?(c|m)[jt]s?(x)'],
       setupFiles: ['./src/testutils/vitest.setup.ts'],
+      silent: process.env.CI === 'true' ? 'passed-only' : false,
     },
   })
   .build()
