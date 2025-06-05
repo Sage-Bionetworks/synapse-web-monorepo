@@ -33,3 +33,12 @@ export type GridReplica = {
 export type CreateReplicaResponse = {
   replica: GridReplica // Information about a replica.
 }
+
+export type CreateGridPresignedUrlRequest = {
+  gridSessionId: string // The ID of the grid session to create a presigned URL for.
+  replicaId: number // The ID of the replica to create a presigned URL for.
+}
+
+export type CreateGridPresignedUrlResponse = {
+  presignedUrl: string // A presigned URL used to establish a websocket connection to the grid session.
+}
