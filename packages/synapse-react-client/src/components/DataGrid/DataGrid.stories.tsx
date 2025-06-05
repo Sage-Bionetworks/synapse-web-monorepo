@@ -1,21 +1,31 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { DataGrid, DataGridProps } from './DataGrid'
 import { keyColumn, textColumn } from 'react-datasheet-grid'
+import { SynapseGrid } from './SynapseGrid'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
+import { getGridHandlers } from '@/mocks/msw/handlers/gridHandlers'
+
+const dataRows = [{ id: 1, col2: 'cell', col3: 'data' }]
+const dataCols = [
+  { ...keyColumn('id', textColumn), title: 'id' },
+  { ...keyColumn('col2', textColumn), title: 'col2' },
+  { ...keyColumn('col3', textColumn), title: 'col3' },
+]
 
 const meta = {
-  title: 'Curator/DataGrid',
-  component: DataGrid,
-} satisfies Meta<DataGridProps>
+  title: 'Curator/SynapseGrid',
+  component: SynapseGrid,
+} satisfies Meta<typeof SynapseGrid>
+type Story2 = StoryObj<typeof meta>
 export default meta
-type Story = StoryObj<typeof meta>
-
-export const DemoGrid: Story = {
+export const SynapseGridDemo: Story2 = {
   args: {
-    rows: [{ col1: 'test', col2: 'cell', col3: 'data' }],
-    columns: [
-      { ...keyColumn('col1', textColumn), title: 'col1' },
-      { ...keyColumn('col2', textColumn), title: 'col2' },
-      { ...keyColumn('col3', textColumn), title: 'col3' },
-    ],
+    initialRows: dataRows,
+    initialColumns: dataCols,
+  },
+  parameters: {
+    stack: 'mock',
+    msw: {
+      handlers: [...getGridHandlers(MOCK_REPO_ORIGIN)],
+    },
   },
 }
