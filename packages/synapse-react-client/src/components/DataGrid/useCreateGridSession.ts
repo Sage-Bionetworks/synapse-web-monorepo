@@ -30,9 +30,15 @@ export const useCreateGridSession = (
       },
       onError: error => {
         console.error('Grid session creation failed:', error)
+        if (options?.onError) {
+          options.onError(error)
+        }
       },
       onSuccess: data => {
         console.log('Grid session created successfully:', data)
+        if (options?.onSuccess) {
+          options.onSuccess(data)
+        }
       },
     },
   )
