@@ -5666,7 +5666,7 @@ export const GridSessionReplica = async (
 ): Promise<CreateReplicaResponse> => {
   try {
     return await doPost<CreateReplicaResponse>(
-      `/repo/v1/grid/session/${sessionId}/replica`,
+      `/repo/v1/grid/${sessionId}/replica`,
       {},
       accessToken,
       BackendDestinationEnum.REPO_ENDPOINT,
