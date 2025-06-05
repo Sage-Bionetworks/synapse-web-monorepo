@@ -113,7 +113,6 @@ describe('fetchWithExponentialTimeout', () => {
   )
 
   it('should throw on network errors', async () => {
-    // vi.spyOn(global, 'fetch').mockRejectedValue(new Error())
     mockFetch.mockRejectedValueOnce(new Error('Network Error'))
 
     await expect(() =>
