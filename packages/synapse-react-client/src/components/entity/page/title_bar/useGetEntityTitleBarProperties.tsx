@@ -180,11 +180,12 @@ export function useGetEntityTitleBarProperties(
       title: 'Storage Location',
       value: storageLocation,
     },
-    uploadDestinationString && {
-      key: 'uploadDestination',
-      title: 'Storage Location',
-      value: uploadDestinationString,
-    },
+    !storageLocation &&
+      uploadDestinationString && {
+        key: 'uploadDestination',
+        title: 'Storage Location',
+        value: uploadDestinationString,
+      },
     endpoint && {
       key: 'externalFileEndpoint',
       title: 'Endpoint',
