@@ -6,7 +6,7 @@ import {
   useUpdateEntity,
 } from '@/synapse-queries/entity/useEntity'
 import { useCreateExternalFileHandle } from '@/synapse-queries/file/useFileHandle'
-import { getUseMutationMock } from '@/testutils/ReactQueryMockUtils'
+import { getUseMutationIdleMock } from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ExternalFileHandle } from '@sage-bionetworks/synapse-client'
 import { renderHook as _renderHook } from '@testing-library/react'
@@ -39,13 +39,14 @@ const mockFileHandle: ExternalFileHandle = {
   externalURL: url,
 }
 
-const mockUseCreateEntityReturnValue = getUseMutationMock()
+const mockUseCreateEntityReturnValue = getUseMutationIdleMock()
 vi.mocked(useCreateEntity).mockReturnValue(mockUseCreateEntityReturnValue)
 
-const mockUseUpdateEntityReturnValue = getUseMutationMock()
+const mockUseUpdateEntityReturnValue = getUseMutationIdleMock()
 vi.mocked(useUpdateEntity).mockReturnValue(mockUseUpdateEntityReturnValue)
 
-const mockUseExternalFileHandleReturnValue = getUseMutationMock(mockFileHandle)
+const mockUseExternalFileHandleReturnValue =
+  getUseMutationIdleMock(mockFileHandle)
 vi.mocked(useCreateExternalFileHandle).mockReturnValue(
   mockUseExternalFileHandleReturnValue,
 )

@@ -7,7 +7,7 @@ import {
   useGetEntityLookupQueryOptions,
   useGetEntityQueryOptions,
 } from '@/synapse-queries/index'
-import { getUseMutationMock } from '@/testutils/ReactQueryMockUtils'
+import { getUseMutationIdleMock } from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { renderHook as _renderHook } from '@testing-library/react'
@@ -31,7 +31,7 @@ vi.mocked(useGetEntityLookupQueryOptions).mockReturnValue(args => ({
   queryKey: ['mockLookupEntityQueryKey', args],
 }))
 
-const useCreateEntityMockReturnValue = getUseMutationMock()
+const useCreateEntityMockReturnValue = getUseMutationIdleMock()
 vi.mocked(useCreateEntity).mockReturnValue(useCreateEntityMockReturnValue)
 
 describe('useCreateFolderPath', () => {

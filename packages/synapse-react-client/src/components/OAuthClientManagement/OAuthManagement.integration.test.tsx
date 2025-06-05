@@ -8,7 +8,7 @@ import {
 } from '@/synapse-queries'
 import {
   getUseInfiniteQueryMock,
-  getUseMutationMock,
+  getUseMutationIdleMock,
 } from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { formatDate } from '@/utils/functions/DateFormatter'
@@ -61,9 +61,9 @@ describe('oAuthManagement tests', () => {
     setGetOAuthClientInfiniteSuccess = setSuccess
     mockFetchNextPage = _mockFetchNextPage
 
-    mockUseCreateOAuthClient.mockReturnValue(getUseMutationMock())
-    mockUseUpdateOAuthClient.mockReturnValue(getUseMutationMock())
-    mockUseDeleteOAuthClient.mockReturnValue(getUseMutationMock())
+    mockUseCreateOAuthClient.mockReturnValue(getUseMutationIdleMock())
+    mockUseUpdateOAuthClient.mockReturnValue(getUseMutationIdleMock())
+    mockUseDeleteOAuthClient.mockReturnValue(getUseMutationIdleMock())
   })
   afterEach(() => {
     server.restoreHandlers()

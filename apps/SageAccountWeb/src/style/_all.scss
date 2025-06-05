@@ -1,3 +1,12 @@
-@import 'core', 'Navbar', 'Register', 'SourceApp', 'AccountSetting',
-  'ValidationProgress', 'ProfileValidationSteps', 'UnbindORCiD', 'TermsOfUse',
-  'AccountCreatedPage', 'ProfileAvatar', 'SageResourcesPage';
+@use 'core';
+@use 'Navbar';
+@use 'Register';
+@use 'SourceApp';
+@use 'AccountSetting';
+@use 'ValidationProgress';
+@use 'ProfileValidationSteps';
+@use 'UnbindORCiD';
+@use 'TermsOfUse';
+@use 'AccountCreatedPage';
+@use 'ProfileAvatar';
+@use 'SageResourcesPage';

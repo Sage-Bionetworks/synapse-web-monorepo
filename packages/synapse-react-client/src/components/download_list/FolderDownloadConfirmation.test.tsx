@@ -3,7 +3,7 @@ import {
   useGetEntityChildren,
 } from '@/synapse-queries/index'
 import {
-  getUseMutationMock,
+  getUseMutationIdleMock,
   getUseQuerySuccessMock,
 } from '@/testutils/ReactQueryMockUtils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
@@ -57,7 +57,7 @@ async function setUp() {
 
 describe('FolderDownloadConfirmation', () => {
   let mutationMockReturnValue: ReturnType<
-    typeof getUseMutationMock<
+    typeof getUseMutationIdleMock<
       AddToDownloadListResponse,
       SynapseClientError,
       AddToDownloadListRequest
@@ -75,7 +75,7 @@ describe('FolderDownloadConfirmation', () => {
       }),
     )
 
-    mutationMockReturnValue = getUseMutationMock<
+    mutationMockReturnValue = getUseMutationIdleMock<
       AddToDownloadListResponse,
       SynapseClientError,
       AddToDownloadListRequest

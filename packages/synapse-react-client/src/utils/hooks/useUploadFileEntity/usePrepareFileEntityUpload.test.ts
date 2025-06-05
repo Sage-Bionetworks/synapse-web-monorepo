@@ -1,5 +1,5 @@
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
-import { getUseMutationMock } from '@/testutils/ReactQueryMockUtils'
+import { getUseMutationIdleMock } from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { renderHook as _renderHook } from '@testing-library/react'
 import * as GetFileEntityIdWithSameNameModule from './getFileEntityIdWithSameName'
@@ -39,7 +39,7 @@ describe('usePrepareFileEntityUpload', () => {
   ]
 
   test('prepares a new file entity for upload and an existing file entity for update', async () => {
-    const useCreatePathsAndGetParentIdMockResult = getUseMutationMock(null)
+    const useCreatePathsAndGetParentIdMockResult = getUseMutationIdleMock(null)
     useCreatePathsAndGetParentIdMockResult.mutateAsync.mockImplementation(
       ({ file }) => ({ file, parentId: rootContainerId }),
     )
@@ -100,7 +100,7 @@ describe('usePrepareFileEntityUpload', () => {
   })
 
   test('directly update FileEntity', async () => {
-    const useCreatePathsAndGetParentIdMockResult = getUseMutationMock(null)
+    const useCreatePathsAndGetParentIdMockResult = getUseMutationIdleMock(null)
     mockUseCreatePathsAndGetParentId.mockReturnValue(
       useCreatePathsAndGetParentIdMockResult,
     )
@@ -125,7 +125,7 @@ describe('usePrepareFileEntityUpload', () => {
   })
 
   test('creating directory fails', async () => {
-    const useCreatePathsAndGetParentIdMockResult = getUseMutationMock(null)
+    const useCreatePathsAndGetParentIdMockResult = getUseMutationIdleMock(null)
     useCreatePathsAndGetParentIdMockResult.mutateAsync.mockRejectedValue(
       new Error('Failed to create directory'),
     )
@@ -149,7 +149,7 @@ describe('usePrepareFileEntityUpload', () => {
   })
 
   test('file lookup fails', async () => {
-    const useCreatePathsAndGetParentIdMockResult = getUseMutationMock(null)
+    const useCreatePathsAndGetParentIdMockResult = getUseMutationIdleMock(null)
     useCreatePathsAndGetParentIdMockResult.mutateAsync.mockImplementation(
       ({ file }) => ({ file, parentId: rootContainerId }),
     )

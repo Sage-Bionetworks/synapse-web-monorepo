@@ -53,10 +53,10 @@ $text-color-lighter: #898989;
     margin-top: 0px;
     margin-bottom: 0px;
     background: SRC.$primary-action-color;
-    @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
+    @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
       padding-top: 40px;
     }
-    @media (max-width: map-get(SRC.$breakpoints, 'medium')) {
+    @media (max-width: map.get(SRC.$breakpoints, 'medium')) {
       padding-top: 89px;
     }
     .SRC-type {
@@ -102,7 +102,7 @@ $text-color-lighter: #898989;
     .SRC-cardMetadata {
       background-color: inherit;
     }
-    @media (min-width: map-get(SRC.$breakpoints, 'medium')) {
+    @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
       &.isAlignToLeftNav {
         .SRC-cardThumbnail {
           svg,

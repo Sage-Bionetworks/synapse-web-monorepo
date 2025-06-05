@@ -18,4 +18,7 @@ export enum FeatureFlagEnum {
 
   // If enabled, account settings will link to a page to manage webhooks
   WEBHOOKS_UI = 'WEBHOOKS_UI',
+
+  // If enabled, MFA is required
+  MFA_REQUIRED = 'MFA_REQUIRED',
 }
