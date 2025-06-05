@@ -12,14 +12,18 @@ import {
 } from '@/synapse-queries/user/useCertificationQuiz'
 import {
   getUseMutationMock,
-  getUseQuerySuccessMock,
+  getUseQueryMock,
 } from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { PassingRecord, QuizResponse } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor } from '@testing-library/react'
+import {
+  PassingRecord,
+  QuizResponse,
+  UserBundle,
+} from '@sage-bionetworks/synapse-types'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import dayjs from 'dayjs'
 import { noop } from 'lodash-es'
@@ -66,22 +70,34 @@ function renderComponent() {
     wrapper: createWrapper(),
   })
 }
-const mutationMockReturnValue = getUseMutationMock<
+
+const {
+  mock: useGetPassingRecordMockImpl,
+  setSuccess: setMockUseGetPassingRecordSuccess,
+} = getUseQueryMock<PassingRecord | null, SynapseClientError>()
+
+const {
+  mock: useGetCurrentUserBundleMockImpl,
+  setSuccess: setMockUseGetCurrentUserBundleSuccess,
+} = getUseQueryMock<UserBundle, SynapseClientError>()
+
+const { mock: mutationMockImpl, mockMutate } = getUseMutationMock<
   PassingRecord,
   SynapseClientError,
   QuizResponse
->(mockPassingRecordPassed)
+>()
+
+const emptyPassingRecordResult = null
+const userBundleResult = { ...mockUserBundle, isCertified: false }
 
 describe('CertificationQuiz tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(getQuizHandler)
-    mockUsePostCertifiedUserTestResponse.mockReturnValue(
-      mutationMockReturnValue,
-    )
-    mockUseGetPassingRecord.mockReturnValue(getUseQuerySuccessMock(null))
-    mockUseGetCurrentUserBundle.mockReturnValue(
-      getUseQuerySuccessMock({ ...mockUserBundle, isCertified: false }),
+    mockUsePostCertifiedUserTestResponse.mockImplementation(mutationMockImpl)
+    mockUseGetPassingRecord.mockImplementation(useGetPassingRecordMockImpl)
+    mockUseGetCurrentUserBundle.mockImplementation(
+      useGetCurrentUserBundleMockImpl,
     )
   })
 
@@ -93,6 +109,12 @@ describe('CertificationQuiz tests', () => {
 
   it('Shows loads the certification quiz', async () => {
     renderComponent()
+
+    act(() => {
+      setMockUseGetPassingRecordSuccess(emptyPassingRecordResult)
+      setMockUseGetCurrentUserBundleSuccess(userBundleResult)
+    })
+
     // PORTALS-3131: Quiz header not shown - it's now hard-coded
     await screen.findByText('Certified User Quiz')
     expect(await screen.findAllByRole('radiogroup')).toHaveLength(2)
@@ -100,6 +122,12 @@ describe('CertificationQuiz tests', () => {
 
   it('Open new tab when clicking help button', async () => {
     renderComponent()
+
+    act(() => {
+      setMockUseGetPassingRecordSuccess(emptyPassingRecordResult)
+      setMockUseGetCurrentUserBundleSuccess(userBundleResult)
+    })
+
     const helpButton = await screen.findByRole('button', { name: 'Help' })
     await userEvent.click(helpButton)
     expect(window.open).toHaveBeenCalledWith(gettingStartedUrl, '_blank')
@@ -107,6 +135,12 @@ describe('CertificationQuiz tests', () => {
 
   it('Submit quiz when not all questions are answered', async () => {
     renderComponent()
+
+    act(() => {
+      setMockUseGetPassingRecordSuccess(emptyPassingRecordResult)
+      setMockUseGetCurrentUserBundleSuccess(userBundleResult)
+    })
+
     const submitButton = await screen.findByRole('button', { name: 'Submit' })
     await userEvent.click(submitButton)
 
@@ -119,12 +153,13 @@ describe('CertificationQuiz tests', () => {
   })
 
   it('Submit quiz that did not pass', async () => {
-    // set up and verify quiz failed UI. click retry
-    mockUseGetPassingRecord.mockReturnValue(
-      getUseQuerySuccessMock(mockPassingRecordFailed),
-    )
-
     renderComponent()
+
+    // set up and verify quiz failed UI. click retry
+    act(() => {
+      setMockUseGetPassingRecordSuccess(mockPassingRecordFailed)
+      setMockUseGetCurrentUserBundleSuccess(userBundleResult)
+    })
 
     await screen.findByText('Quiz Failed')
 
@@ -153,6 +188,11 @@ describe('CertificationQuiz tests', () => {
   it('Submit quiz that did pass', async () => {
     renderComponent()
 
+    act(() => {
+      setMockUseGetPassingRecordSuccess(emptyPassingRecordResult)
+      setMockUseGetCurrentUserBundleSuccess(userBundleResult)
+    })
+
     const radio1 = await screen.findByLabelText(
       mockQuiz.questions[0].answers[0].prompt,
     )
@@ -169,18 +209,19 @@ describe('CertificationQuiz tests', () => {
     expect(radio2).toBeChecked()
 
     await userEvent.click(submitButton)
-    expect(mutationMockReturnValue.mutate).toHaveBeenCalledTimes(1)
+    expect(mockMutate).toHaveBeenCalledTimes(1)
   })
 
   it('Verify passing UI', async () => {
-    mockUseGetCurrentUserBundle.mockReturnValue(
-      getUseQuerySuccessMock({ ...mockUserBundle, isCertified: true }),
-    )
-    mockUseGetPassingRecord.mockReturnValue(
-      getUseQuerySuccessMock(mockPassingRecordPassed),
-    )
-
     renderComponent()
+
+    act(() => {
+      setMockUseGetPassingRecordSuccess(mockPassingRecordPassed)
+      setMockUseGetCurrentUserBundleSuccess({
+        ...mockUserBundle,
+        isCertified: true,
+      })
+    })
 
     const passedOnFormatted = formatDate(
       dayjs(mockPassingRecordPassed.passedOn),
@@ -191,20 +232,18 @@ describe('CertificationQuiz tests', () => {
   })
 
   it('Test ACT revoked case - Passed quiz but not certified', async () => {
-    mockUseGetCurrentUserBundle.mockReturnValue(
-      getUseQuerySuccessMock({
-        ...mockUserBundle,
-        isCertified: false,
-      }),
-    )
-    mockUseGetPassingRecord.mockReturnValue(
-      getUseQuerySuccessMock({
+    renderComponent()
+
+    act(() => {
+      setMockUseGetPassingRecordSuccess({
         ...mockPassingRecordPassed,
         revokedOn: new Date().toISOString(),
-      }),
-    )
-
-    renderComponent()
+      })
+      setMockUseGetCurrentUserBundleSuccess({
+        ...mockUserBundle,
+        isCertified: false,
+      })
+    })
 
     await screen.findByText('Your certification was revoked', { exact: false })
     await screen.findByText('retake the quiz')

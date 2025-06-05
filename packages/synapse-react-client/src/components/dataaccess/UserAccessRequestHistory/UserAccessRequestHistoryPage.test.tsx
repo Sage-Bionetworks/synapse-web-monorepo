@@ -6,11 +6,15 @@ import {
   MOCK_USER_ID_3,
 } from '@/mocks/user/mock_user_profile'
 import { useSearchAccessSubmissionUserRequestsInfinite } from '@/synapse-queries/dataaccess/useDataAccessSubmission'
-import { getUseInfiniteQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
+import { getUseInfiniteQueryMock } from '@/testutils/ReactQueryMockUtils'
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { UserSubmissionSearchResult } from '@sage-bionetworks/synapse-client'
+import {
+  SynapseClientError,
+  UserSubmissionSearchResponse,
+  UserSubmissionSearchResult,
+} from '@sage-bionetworks/synapse-client'
 import { SubmissionState } from '@sage-bionetworks/synapse-types'
-import { render, screen, within } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 
@@ -72,13 +76,18 @@ const data: UserSubmissionSearchResult[] = [
 ]
 
 describe('UserAccessRequestHistoryTable', () => {
+  const {
+    mock: useSearchAccessSubmissionUserRequestsInfiniteMockImpl,
+    setSuccess: setMockUseSearchAccessSubmissionUserRequestsInfiniteSuccess,
+    mockFetchNextPage,
+  } = getUseInfiniteQueryMock<
+    UserSubmissionSearchResponse,
+    SynapseClientError
+  >()
+
   it('Displays table of data', async () => {
-    mockUseSearchAccessSubmissionUserRequestsInfinite.mockReturnValue(
-      getUseInfiniteQuerySuccessMock([
-        {
-          results: data,
-        },
-      ]),
+    mockUseSearchAccessSubmissionUserRequestsInfinite.mockImplementation(
+      useSearchAccessSubmissionUserRequestsInfiniteMockImpl,
     )
 
     const router = createMemoryRouter([
@@ -88,6 +97,12 @@ describe('UserAccessRequestHistoryTable', () => {
       },
     ])
     render(<RouterProvider router={router} />)
+
+    act(() => {
+      setMockUseSearchAccessSubmissionUserRequestsInfiniteSuccess([
+        { results: data },
+      ])
+    })
 
     screen.getByText('History of your access requests')
 
@@ -126,17 +141,6 @@ describe('UserAccessRequestHistoryTable', () => {
 
   it('Handles pagination', async () => {
     const hasNextPage = true
-    mockUseSearchAccessSubmissionUserRequestsInfinite.mockReturnValue(
-      getUseInfiniteQuerySuccessMock(
-        [
-          {
-            results: data,
-            nextPageToken: 'nextPageToken',
-          },
-        ],
-        hasNextPage,
-      ),
-    )
     const router = createMemoryRouter([
       {
         path: '/',
@@ -145,16 +149,15 @@ describe('UserAccessRequestHistoryTable', () => {
     ])
     render(<RouterProvider router={router} />)
 
+    act(() => {
+      setMockUseSearchAccessSubmissionUserRequestsInfiniteSuccess(
+        [{ results: data, nextPageToken: 'nextPageToken' }],
+        hasNextPage,
+      )
+    })
+
     screen.getByText('History of your access requests')
     const button = await screen.findByRole('button', { name: 'Load More' })
-
-    const mockDataHookResults =
-      mockUseSearchAccessSubmissionUserRequestsInfinite.mock.results
-    const lastDataHookResult =
-      mockDataHookResults[mockDataHookResults.length - 1]
-    const mockFetchNextPage = jest.mocked(
-      lastDataHookResult.value.fetchNextPage,
-    )
 
     await userEvent.click(button)
     expect(mockFetchNextPage).toHaveBeenCalled()
