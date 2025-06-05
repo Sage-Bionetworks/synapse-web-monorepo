@@ -19,7 +19,7 @@ export type GridSession = {
   lastReplicaIdService: number // The last replica ID issued to a service. Service replica IDs are decremented.
 }
 
-export type CreateReplicaReuest = {
+export type CreateReplicaRequest = {
   gridSessionId: string // The ID of the grid session to create a replica for.
 }
 
