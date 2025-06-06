@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useCreateGridSession } from './useCreateGridSession'
+import { useGridWebSocket } from './useGridWebSocket'
 import SynapseClient from '@/synapse-client/index'
 import {
   SynapseContextProvider,
@@ -31,14 +32,10 @@ export function SynapseGrid({
     onSuccess: async response => {
       console.log('Session created:', response)
 
-      // Automatically create replica after session is created
       try {
         setIsCreatingReplica(true)
         setReplicaError(null)
-        console.log(
-          'Creating replica for session:',
-          response.gridSession.sessionId,
-        )
+
         const replica = await SynapseClient.GridSessionReplica(
           response.gridSession.sessionId,
           accessToken,
@@ -59,6 +56,29 @@ export function SynapseGrid({
     },
   })
 
+  // Memoize the session and replica IDs to prevent unnecessary re-renders
+  const sessionId = useMemo(
+    () => createGridSession.data?.gridSession?.sessionId,
+    [createGridSession.data],
+  )
+  const replicaId = useMemo(
+    () => replicaData?.replica?.replicaId,
+    [replicaData],
+  )
+
+  // WebSocket connection with stable dependencies
+  const {
+    isConnected: wsConnected,
+    isConnecting: wsConnecting,
+    error: wsError,
+    messages: wsMessages,
+    sendMessage,
+  } = useGridWebSocket({
+    sessionId,
+    replicaId,
+    enabled: !!(sessionId && replicaId),
+  })
+
   useEffect(() => {
     if (!hasInitialized && !createGridSession.isPending) {
       createGridSession.mutate({})
@@ -66,46 +86,103 @@ export function SynapseGrid({
     }
   }, [hasInitialized, createGridSession.isPending, createGridSession.mutate])
 
-  const isLoading = createGridSession.isPending || isCreatingReplica
-  const hasError = createGridSession.error || replicaError
-  const isReady = createGridSession.data && replicaData && !hasError
-  console.log('createGridSession:', createGridSession)
-  console.log('replicaData:', replicaData)
+  const isLoading =
+    createGridSession.isPending || isCreatingReplica || wsConnecting
+  const hasError = createGridSession.error || replicaError || wsError
+  const isReady =
+    createGridSession.data && replicaData && wsConnected && !hasError
+
+  // Handle data changes and send to WebSocket
+  const handleDataChange = (newRows: DataGridRow[]) => {
+    if (wsConnected) {
+      sendMessage({
+        type: 'DATA_UPDATE',
+        data: newRows,
+        timestamp: new Date().toISOString(),
+      })
+    }
+  }
 
   return (
     <SynapseContextProvider synapseContext={currentContext}>
       <div>
         <h2>Synapse Grid</h2>
 
-        {/* Show loading state during initialization */}
+        {/* Show loading state */}
         {isLoading && (
           <div>
             <p>
-              {createGridSession.isPending
-                ? 'Initializing grid session...'
-                : 'Creating replica...'}
+              {createGridSession.isPending && 'Initializing grid session...'}
+              {isCreatingReplica && 'Creating replica...'}
+              {wsConnecting && 'Connecting to grid...'}
             </p>
           </div>
         )}
 
-        {/* Show error if initialization failed */}
+        {/* Show error state */}
         {hasError && (
           <div style={{ color: 'red' }}>
-            Error: {createGridSession.error?.message || replicaError}
+            Error: {createGridSession.error?.message || replicaError || wsError}
           </div>
         )}
 
-        {/* Show success state once session and replica are created */}
-        {isReady && (
-          <div>
-            <p>Grid Ready!</p>
+        {/* Show connection status */}
+        {createGridSession.data && replicaData && (
+          <div style={{ marginBottom: '1rem' }}>
             <p>Session ID: {createGridSession.data.gridSession.sessionId}</p>
             <p>Replica ID: {replicaData.replica.replicaId}</p>
-            <DataGrid rows={initialRows} columns={initialColumns} />
+            <p>
+              WebSocket Status:
+              <span
+                style={{
+                  color: wsConnected
+                    ? 'green'
+                    : wsConnecting
+                    ? 'orange'
+                    : 'red',
+                  marginLeft: '0.5rem',
+                }}
+              >
+                {wsConnected
+                  ? 'Connected'
+                  : wsConnecting
+                  ? 'Connecting...'
+                  : 'Disconnected'}
+              </span>
+            </p>
           </div>
         )}
 
-        {/* Retry button for errors */}
+        {/* Show DataGrid when ready */}
+        {isReady && (
+          <div>
+            <p style={{ color: 'green' }}>Grid Ready!</p>
+            <DataGrid
+              rows={initialRows}
+              columns={initialColumns}
+              onDataChange={handleDataChange}
+            />
+          </div>
+        )}
+
+        {/* Show recent messages (for debugging) */}
+        {wsMessages.length > 0 && (
+          <div style={{ marginTop: '1rem' }}>
+            <h3>Recent Messages:</h3>
+            <div style={{ maxHeight: '200px', overflow: 'auto' }}>
+              {wsMessages.slice(-5).map((msg, index) => (
+                <div
+                  key={index}
+                  style={{ fontSize: '0.8rem', margin: '0.25rem 0' }}
+                >
+                  <strong>{msg.type}:</strong> {JSON.stringify(msg.data)}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Retry button */}
         {hasError && (
           <button
             onClick={() => {
