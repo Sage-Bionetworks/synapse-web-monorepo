@@ -24,16 +24,40 @@ export const useGridWebSocket = ({
   const [isConnecting, setIsConnecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [messages, setMessages] = useState<GridMessage[]>([])
+
+  // Use refs for values that don't need to trigger re-renders
   const wsRef = useRef<WebSocket | null>(null)
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>()
-
-  // Throttling state
+  const reconnectAttemptsRef = useRef<number>(0)
   const messageQueueRef = useRef<any[]>([])
   const throttleTimeoutRef = useRef<NodeJS.Timeout>()
   const lastSentTimeRef = useRef<number>(0)
 
+  // Store the latest values in refs to avoid stale closures
+  const sessionIdRef = useRef(sessionId)
+  const replicaIdRef = useRef(replicaId)
+  const accessTokenRef = useRef(accessToken)
+  const enabledRef = useRef(enabled)
+
+  // Update refs when props change
+  sessionIdRef.current = sessionId
+  replicaIdRef.current = replicaId
+  accessTokenRef.current = accessToken
+  enabledRef.current = enabled
+
+  const maxReconnectAttempts = 5
+
   const connect = useCallback(async () => {
-    if (!sessionId || !replicaId || !accessToken || isConnecting) {
+    const currentSessionId = sessionIdRef.current
+    const currentReplicaId = replicaIdRef.current
+    const currentAccessToken = accessTokenRef.current
+
+    if (
+      !currentSessionId ||
+      !currentReplicaId ||
+      !currentAccessToken ||
+      isConnecting
+    ) {
       return
     }
 
@@ -43,14 +67,14 @@ export const useGridWebSocket = ({
 
       // Get presigned WebSocket URL
       const presignedUrlResponse = await SynapseClient.GridSessionPresignedUrl(
-        sessionId,
-        replicaId,
-        accessToken,
+        currentSessionId,
+        currentReplicaId,
+        currentAccessToken,
       )
 
       // Create WebSocket connection
-      console.log('Connecting to WebSocket:', presignedUrlResponse.url)
-      const ws = new WebSocket(presignedUrlResponse.url)
+      console.log('Connecting to WebSocket:', presignedUrlResponse)
+      const ws = new WebSocket(presignedUrlResponse.presignedUrl)
       wsRef.current = ws
 
       ws.onopen = () => {
@@ -58,6 +82,7 @@ export const useGridWebSocket = ({
         setIsConnected(true)
         setIsConnecting(false)
         setError(null)
+        reconnectAttemptsRef.current = 0
       }
 
       ws.onmessage = event => {
@@ -76,12 +101,28 @@ export const useGridWebSocket = ({
         setIsConnecting(false)
         wsRef.current = null
 
-        // Auto-reconnect if connection was not closed intentionally
-        if (event.code !== 1000 && enabled) {
+        // Auto-reconnect if connection was not closed intentionally and we haven't exceeded max attempts
+        if (
+          event.code !== 1000 &&
+          enabledRef.current &&
+          reconnectAttemptsRef.current < maxReconnectAttempts
+        ) {
+          reconnectAttemptsRef.current += 1
+          const reconnectDelay = Math.min(
+            3000 * reconnectAttemptsRef.current,
+            30000,
+          )
+
+          console.log(
+            `Attempting to reconnect (${reconnectAttemptsRef.current}/${maxReconnectAttempts}) in ${reconnectDelay}ms...`,
+          )
+
           reconnectTimeoutRef.current = setTimeout(() => {
-            console.log('Attempting to reconnect...')
             connect()
-          }, 3000)
+          }, reconnectDelay)
+        } else if (reconnectAttemptsRef.current >= maxReconnectAttempts) {
+          console.log('Max reconnection attempts reached. Giving up.')
+          setError(`Connection failed after ${maxReconnectAttempts} attempts`)
         }
       }
 
@@ -97,7 +138,7 @@ export const useGridWebSocket = ({
       setIsConnecting(false)
       console.error('Failed to establish WebSocket connection:', error)
     }
-  }, [sessionId, replicaId, accessToken, isConnecting, enabled])
+  }, [isConnecting]) // Only depend on isConnecting state
 
   const disconnect = useCallback(() => {
     if (reconnectTimeoutRef.current) {
@@ -113,15 +154,22 @@ export const useGridWebSocket = ({
       wsRef.current = null
     }
 
-    // Clear message queue
     messageQueueRef.current = []
     lastSentTimeRef.current = 0
+    reconnectAttemptsRef.current = 0
 
     setIsConnected(false)
     setIsConnecting(false)
   }, [])
 
-  // Process queued messages and send them
+  const retryConnection = useCallback(() => {
+    reconnectAttemptsRef.current = 0
+    setError(null)
+    if (enabledRef.current && sessionIdRef.current && replicaIdRef.current) {
+      connect()
+    }
+  }, [connect])
+
   const processMessageQueue = useCallback(() => {
     if (
       !wsRef.current ||
@@ -131,7 +179,6 @@ export const useGridWebSocket = ({
       return
     }
 
-    // Get the most recent message from the queue (ignore older ones)
     const latestMessage =
       messageQueueRef.current[messageQueueRef.current.length - 1]
 
@@ -143,7 +190,6 @@ export const useGridWebSocket = ({
       console.error('Failed to send queued message:', error)
     }
 
-    // Clear the queue after sending
     messageQueueRef.current = []
   }, [isConnected])
 
@@ -156,19 +202,15 @@ export const useGridWebSocket = ({
 
       const now = Date.now()
       const timeSinceLastSent = now - lastSentTimeRef.current
-      const throttleDelay = 1000 // 1 second
+      const throttleDelay = 1000
 
-      // Add message to queue
       messageQueueRef.current.push(message)
 
-      // If enough time has passed since last send, send immediately
       if (timeSinceLastSent >= throttleDelay) {
         processMessageQueue()
       } else {
-        // Schedule sending after the remaining throttle time
         const remainingDelay = throttleDelay - timeSinceLastSent
 
-        // Clear existing timeout to reset the timer
         if (throttleTimeoutRef.current) {
           clearTimeout(throttleTimeoutRef.current)
         }
@@ -183,25 +225,40 @@ export const useGridWebSocket = ({
     [isConnected, processMessageQueue],
   )
 
-  // Auto-connect when enabled and we have required data
+  // FIXED: Simplified useEffect with stable dependencies
   useEffect(() => {
-    if (enabled && sessionId && replicaId && !isConnected && !isConnecting) {
+    const shouldConnect =
+      enabled && sessionId && replicaId && !isConnected && !isConnecting
+    const shouldDisconnect = !enabled
+
+    if (shouldConnect) {
+      console.log('Starting WebSocket connection...')
       connect()
-    } else if (!enabled) {
+    } else if (shouldDisconnect && (isConnected || isConnecting)) {
+      console.log('Stopping WebSocket connection...')
       disconnect()
     }
 
     return () => {
-      disconnect()
+      // Cleanup on unmount
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current)
+      }
+      if (throttleTimeoutRef.current) {
+        clearTimeout(throttleTimeoutRef.current)
+      }
+      if (wsRef.current) {
+        wsRef.current.close(1000, 'Component unmount')
+      }
     }
   }, [
     enabled,
     sessionId,
     replicaId,
-    connect,
-    disconnect,
     isConnected,
     isConnecting,
+    connect,
+    disconnect,
   ])
 
   return {
@@ -212,5 +269,8 @@ export const useGridWebSocket = ({
     connect,
     disconnect,
     sendMessage,
+    retryConnection,
+    reconnectAttempts: reconnectAttemptsRef.current,
+    maxReconnectAttempts,
   }
 }
