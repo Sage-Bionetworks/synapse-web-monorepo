@@ -4,7 +4,8 @@ import {
   useGetIsUserMemberOfTeam,
   useGetUserSubmissionTeams,
 } from '@/synapse-queries'
-import { SynapseClientError, useSynapseContext } from '@/utils'
+import { useSynapseContext } from '@/utils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { Box } from '@mui/material'
 import { useEffect } from 'react'

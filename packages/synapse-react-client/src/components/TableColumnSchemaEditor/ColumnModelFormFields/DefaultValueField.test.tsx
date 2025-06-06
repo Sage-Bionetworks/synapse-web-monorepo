@@ -10,12 +10,12 @@ import DefaultValueField, { DefaultValueFieldProps } from './DefaultValueField'
 const MOCK_DATETIME_PICKER_TEST_ID = 'MockDateTimePicker'
 
 // Mock the DateTimePicker because how the date renders can vary based on time zone and localization, making it hard to test
-jest.mock('../../DateTimePicker/DateTimePicker', () => ({
+vi.mock('../../DateTimePicker/DateTimePicker', () => ({
   __esModule: true,
-  default: jest.fn(() => <div data-testid={MOCK_DATETIME_PICKER_TEST_ID} />),
+  default: vi.fn(() => <div data-testid={MOCK_DATETIME_PICKER_TEST_ID} />),
 }))
 
-const mockDateTimePicker = jest.mocked(DateTimePicker)
+const mockDateTimePicker = vi.mocked(DateTimePicker)
 
 function renderComponent<T>(props: DefaultValueFieldProps<T>) {
   return render(<DefaultValueField<T> {...props} />, {
@@ -25,11 +25,11 @@ function renderComponent<T>(props: DefaultValueFieldProps<T>) {
 
 describe('DefaultValueField', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   describe('STRING columnType', () => {
     it('shows an initial value', () => {
-      const onChange = jest.fn()
+      const onChange = vi.fn()
       renderComponent<string>({
         columnModel: {
           name: 'foo',
@@ -46,7 +46,7 @@ describe('DefaultValueField', () => {
       expect(textField.getAttribute('type')).toBe('text')
     })
     it('calls onChange', async () => {
-      const onChange = jest.fn()
+      const onChange = vi.fn()
       renderComponent<string>({
         columnModel: {
           name: 'foo',
@@ -67,7 +67,7 @@ describe('DefaultValueField', () => {
   })
 
   it('shows a dropdown select for BOOLEAN columnType', async () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     renderComponent<boolean | undefined>({
       columnModel: {
         name: 'foo',
@@ -95,7 +95,7 @@ describe('DefaultValueField', () => {
   })
 
   it('shows a date picker for DATE column type', async () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     renderComponent<string | undefined>({
       columnModel: {
         name: 'foo',
@@ -125,7 +125,7 @@ describe('DefaultValueField', () => {
   })
 
   it('handles a STRING_LIST column type', async () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     renderComponent<Array<string> | undefined>({
       columnModel: {
         name: 'foo',
@@ -158,7 +158,7 @@ describe('DefaultValueField', () => {
   })
 
   it('handles a DATE_LIST column type', async () => {
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     // datetime in 2023
     const DATE_ONE = 1678852800000
     // datetime in 2024

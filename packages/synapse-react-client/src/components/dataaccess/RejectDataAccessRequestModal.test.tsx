@@ -21,20 +21,20 @@ import RejectDataAccessRequestModal, {
 } from './RejectDataAccessRequestModal'
 
 // Mock the CannedRejectionDialog component
-jest.mock('../CannedRejectionDialog/CannedRejectionDialog', () => ({
-  CannedRejectionDialog: jest.fn().mockImplementation(() => <div />),
+vi.mock('../CannedRejectionDialog/CannedRejectionDialog', () => ({
+  CannedRejectionDialog: vi.fn().mockImplementation(() => <div />),
 }))
 
-const mockCannedRejectionDialog = jest.mocked(CannedRejectionDialog)
+const mockCannedRejectionDialog = vi.mocked(CannedRejectionDialog)
 
 const props: RejectDataAccessRequestModalProps = {
   submissionId: mockSubmittedSubmission.id,
   tableId: REJECT_SUBMISSION_CANNED_RESPONSES_TABLE,
   open: true,
-  onClose: jest.fn(),
+  onClose: vi.fn(),
 }
 
-const updateSubmissionStatusSpy = jest.spyOn(
+const updateSubmissionStatusSpy = vi.spyOn(
   SynapseClient,
   'updateSubmissionStatus',
 )

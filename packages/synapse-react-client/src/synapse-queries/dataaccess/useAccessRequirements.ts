@@ -6,7 +6,8 @@ import SynapseClient, {
   updateAccessRequirement,
   updateAccessRequirementAcl,
 } from '@/synapse-client'
-import { SynapseClientError, useSynapseContext } from '@/utils'
+import { useSynapseContext } from '@/utils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   AccessApproval,
   AccessControlList,

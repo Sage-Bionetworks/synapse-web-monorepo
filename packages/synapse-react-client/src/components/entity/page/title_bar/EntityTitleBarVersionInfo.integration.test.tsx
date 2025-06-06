@@ -34,7 +34,7 @@ describe('EntityTitleBarVersionInfo', () => {
 
   describe('Component tests', () => {
     it('Clicking the version number invokes the showVersionHistory callback', async () => {
-      const mockCallback = jest.fn()
+      const mockCallback = vi.fn()
       renderComponent({
         entityId: mockFileEntity.id,
         versionNumber: mockFileEntity.entity.versionNumber,
@@ -70,7 +70,7 @@ describe('EntityTitleBarVersionInfo', () => {
           bundle,
         ),
       )
-      const mockCallback = jest.fn()
+      const mockCallback = vi.fn()
       renderComponent({
         entityId: mockFileEntity.id,
         versionNumber: mockFileEntity.entity.versionNumber,
@@ -93,7 +93,7 @@ describe('EntityTitleBarVersionInfo', () => {
     })
 
     it('Renders nothing for non-versionable entities', () => {
-      const mockCallback = jest.fn()
+      const mockCallback = vi.fn()
       const { container } = renderComponent({
         entityId: mockFolderEntity.id!,
         toggleShowVersionHistory: mockCallback,

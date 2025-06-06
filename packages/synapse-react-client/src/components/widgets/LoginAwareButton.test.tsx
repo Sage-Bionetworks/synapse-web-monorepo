@@ -32,13 +32,10 @@ function renderComponent(props: LoginAwareButtonProps = defaultProps) {
 
 describe('LoginAwareButton tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
-  const mockGetAccessToken = jest.spyOn(
-    SynapseClient,
-    'getAccessTokenFromCookie',
-  )
+  const mockGetAccessToken = vi.spyOn(SynapseClient, 'getAccessTokenFromCookie')
 
   /* User is logged out */
   it('Renders as a button when user is logged out', () => {

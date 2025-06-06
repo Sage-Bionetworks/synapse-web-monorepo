@@ -27,23 +27,20 @@ const {
 
 const defaultProps: EntityModalProps = {
   show: true,
-  onClose: jest.fn(),
+  onClose: vi.fn(),
   entityId: MOCK_FILE_ENTITY_ID,
 }
 
-jest.mock(
+vi.mock(
   '../../../../src/components/SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor',
   () => ({
-    SchemaDrivenAnnotationEditor: jest.fn(() => <p>Mock Annotation Editor</p>),
+    SchemaDrivenAnnotationEditor: vi.fn(() => <p>Mock Annotation Editor</p>),
   }),
 )
 
-jest.mock(
-  '../../../../src/components/entity/metadata/AnnotationsTable',
-  () => ({
-    AnnotationsTable: jest.fn(() => <p>Mock Annotations Table</p>),
-  }),
-)
+vi.mock('../../../../src/components/entity/metadata/AnnotationsTable', () => ({
+  AnnotationsTable: vi.fn(() => <p>Mock Annotations Table</p>),
+}))
 
 function renderComponent(
   propOverrides?: Partial<EntityModalProps>,
@@ -162,7 +159,7 @@ describe('EntityModal tests', () => {
   })
 
   it('Opens the annotation editor when edit is clicked', async () => {
-    const onEditModeChanged = jest.fn()
+    const onEditModeChanged = vi.fn()
     const bundle = cloneDeep(mockFileEntityBundle)
     ;(bundle.entity as FileEntity).isLatestVersion = true
     bundle.permissions = PERMISSIONS_CAN_EDIT
@@ -189,8 +186,8 @@ describe('EntityModal tests', () => {
   })
 
   it('Cancelling out of edit mode using the cancel button triggers a warning before disabling edit mode', async () => {
-    const onEditModeChanged = jest.fn()
-    const onClose = jest.fn()
+    const onEditModeChanged = vi.fn()
+    const onClose = vi.fn()
 
     const bundle = cloneDeep(mockFileEntityBundle)
     ;(bundle.entity as FileEntity).isLatestVersion = true
@@ -234,8 +231,8 @@ describe('EntityModal tests', () => {
   })
 
   it('Cancelling out of edit mode using the modal "x" triggers a warning before calling onClose', async () => {
-    const onEditModeChanged = jest.fn()
-    const onClose = jest.fn()
+    const onEditModeChanged = vi.fn()
+    const onClose = vi.fn()
 
     const bundle = cloneDeep(mockFileEntityBundle)
     ;(bundle.entity as FileEntity).isLatestVersion = true

@@ -10,7 +10,7 @@ import UniversalCookies from 'universal-cookie'
 import CookiesNotification, { alertConfig } from './CookiesNotification'
 
 const cookies = new UniversalCookies()
-const mockOnCloseFn = jest.fn()
+const mockOnCloseFn = vi.fn()
 function renderComponent(wrapperProps?: SynapseContextType) {
   const component = render(<CookiesNotification onClose={mockOnCloseFn} />, {
     wrapper: createWrapper(wrapperProps),
@@ -21,7 +21,7 @@ function renderComponent(wrapperProps?: SynapseContextType) {
 
 describe('CookiesNotification', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   afterEach(() => {
     cookies.remove(COOKIES_AGREEMENT_COOKIE_KEY)

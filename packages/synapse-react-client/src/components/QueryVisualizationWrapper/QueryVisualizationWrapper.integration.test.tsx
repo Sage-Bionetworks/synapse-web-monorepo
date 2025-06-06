@@ -24,10 +24,11 @@ import {
   QueryVisualizationWrapperProps,
 } from './QueryVisualizationWrapper'
 
-const onQueryContextReceived = jest.fn<void, [QueryContextType]>()
-const onContextReceived = jest.fn<void, [QueryVisualizationContextType]>()
+const onQueryContextReceived = vi.fn<(value: QueryContextType) => void>()
+const onContextReceived =
+  vi.fn<(value: QueryVisualizationContextType) => void>()
 
-function QueryVizWrapperConsumer(props: { mockFn?: jest.Mock }) {
+function QueryVizWrapperConsumer(props: { mockFn?: typeof onContextReceived }) {
   const queryContext = useQueryContext()
   onQueryContextReceived(queryContext)
   const context = useQueryVisualizationContext()
@@ -37,7 +38,7 @@ function QueryVizWrapperConsumer(props: { mockFn?: jest.Mock }) {
 }
 
 function TestComponent(props: {
-  mockFn?: jest.Mock
+  mockFn?: typeof onContextReceived
   queryWrapperProps?: Partial<QueryWrapperProps>
   queryWrapperVisualizationProps?: Partial<QueryVisualizationWrapperProps>
 }) {
@@ -75,7 +76,7 @@ describe('QueryVisualizationWrapper', () => {
   })
   afterEach(() => {
     server.restoreHandlers()
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
   afterAll(() => server.close())
 

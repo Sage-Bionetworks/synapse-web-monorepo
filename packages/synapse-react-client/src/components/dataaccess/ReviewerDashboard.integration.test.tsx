@@ -18,26 +18,26 @@ const AR_DASHBOARD_TEST_ID = 'AccessRequirementDashboardTestId'
 const SUBMISSION_DASHBOARD_TEST_ID = 'SubmissionDashboardTestId'
 const HISTORY_DASHBOARD_TEST_ID = 'HistoryDashboardTestId'
 
-jest
-  .spyOn(AccessRequirementDashboardModule, 'AccessRequirementDashboard')
-  .mockImplementation(() => {
-    return <div data-testid={AR_DASHBOARD_TEST_ID}></div>
-  })
+vi.spyOn(
+  AccessRequirementDashboardModule,
+  'AccessRequirementDashboard',
+).mockImplementation(() => {
+  return <div data-testid={AR_DASHBOARD_TEST_ID}></div>
+})
 
-jest
-  .spyOn(
-    AccessRequestSubmissionDashboardModule,
-    'DataAccessSubmissionDashboard',
-  )
-  .mockImplementation(() => {
-    return <div data-testid={SUBMISSION_DASHBOARD_TEST_ID}></div>
-  })
+vi.spyOn(
+  AccessRequestSubmissionDashboardModule,
+  'DataAccessSubmissionDashboard',
+).mockImplementation(() => {
+  return <div data-testid={SUBMISSION_DASHBOARD_TEST_ID}></div>
+})
 
-jest
-  .spyOn(UserAccessHistoryDashboardModule, 'UserHistoryDashboard')
-  .mockImplementation(() => {
-    return <div data-testid={HISTORY_DASHBOARD_TEST_ID}></div>
-  })
+vi.spyOn(
+  UserAccessHistoryDashboardModule,
+  'UserHistoryDashboard',
+).mockImplementation(() => {
+  return <div data-testid={HISTORY_DASHBOARD_TEST_ID}></div>
+})
 
 // By default, ensure the user has permission to see all tabs before trying to render them
 function renderComponent(

@@ -20,8 +20,8 @@ function renderComponent(wrapperProps?: SynapseContextType) {
   })
 }
 
-const onAddFavoriteCalled = jest.fn()
-const onDeleteFavoriteCalled = jest.fn()
+const onAddFavoriteCalled = vi.fn()
+const onDeleteFavoriteCalled = vi.fn()
 
 function useIsInFavorites() {
   server.use(

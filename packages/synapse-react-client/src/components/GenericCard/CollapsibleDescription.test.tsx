@@ -15,7 +15,7 @@ describe('It renders markdown for the description', () => {
         hasClickedShowMore={false}
         descriptionSubTitle={''}
         descriptionConfig={descriptionLinkConfig}
-        toggleShowMore={jest.fn()}
+        toggleShowMore={vi.fn()}
       />,
       { wrapper: createWrapper() },
     )
@@ -28,7 +28,7 @@ describe('It renders markdown for the description', () => {
         hasClickedShowMore={false}
         descriptionSubTitle={''}
         descriptionConfig={undefined}
-        toggleShowMore={jest.fn()}
+        toggleShowMore={vi.fn()}
       />,
       { wrapper: createWrapper() },
     )

@@ -1,4 +1,5 @@
-import { SynapseComponents, FeaturedToolsList } from 'synapse-react-client'
+import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList'
+import { WideButton } from 'synapse-react-client/components/styled/WideButton'
 import Layout from '../Layout'
 import { Box, Link, Typography } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
@@ -131,13 +132,13 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
           })}
         </Box>
         <div className="center-content">
-          <SynapseComponents.WideButton
+          <WideButton
             sx={wideButtonSx}
             variant="contained"
             onClick={() => gotoExploreTools()}
           >
             View All Tools
-          </SynapseComponents.WideButton>
+          </WideButton>
         </div>
       </Layout>
       <div className="home-container-description  home-bg-dark home-spacer">
@@ -202,13 +203,13 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
           />
         </div>
         <div className="center-content">
-          <SynapseComponents.WideButton
+          <WideButton
             sx={wideButtonSx}
             variant="contained"
             onClick={() => gotoExploreTools()}
           >
             View All Tools
-          </SynapseComponents.WideButton>
+          </WideButton>
         </div>
       </Layout>
       <Layout outsideContainerClassName="home-container-description  home-bg-dark home-spacer">
@@ -252,14 +253,14 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
             </div>
           </div>
           <div className="center-content">
-            <SynapseComponents.WideButton
+            <WideButton
               sx={wideButtonSx}
               href="https://sagebionetworks.jira.com/servicedesk/customer/portal/12"
               className="highlightSubmitToolButton"
               variant="contained"
             >
               Submit A Tool
-            </SynapseComponents.WideButton>
+            </WideButton>
           </div>
         </Layout>
       </Box>

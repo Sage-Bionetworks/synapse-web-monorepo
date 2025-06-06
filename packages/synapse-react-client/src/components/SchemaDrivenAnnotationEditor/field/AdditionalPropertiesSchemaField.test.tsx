@@ -110,7 +110,7 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
       ['Datetime', { type: 'string', format: 'datetime' }],
       ['String', { type: 'string' }],
       ['Boolean', { type: 'boolean' }],
-    ])('returns the correct schema for %p', (propertyType, expectedSchema) => {
+    ])('returns the correct schema for %s', (propertyType, expectedSchema) => {
       expect(getSchemaForPropertyType(propertyType)).toEqual(expectedSchema)
     })
   })
@@ -125,13 +125,13 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
           idSchema={{ $id: 'root' } as IdSchema}
           formData={initialData}
           registry={registry}
-          onChange={jest.fn()}
-          onBlur={jest.fn()}
-          onFocus={jest.fn()}
+          onChange={vi.fn()}
+          onBlur={vi.fn()}
+          onFocus={vi.fn()}
           disabled={false}
           readonly={false}
           name={''}
-          onDropPropertyClick={jest.fn()}
+          onDropPropertyClick={vi.fn()}
         />,
       )
 
@@ -168,13 +168,13 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
           idSchema={{ $id: 'root' } as IdSchema}
           formData={initialData}
           registry={registry}
-          onChange={jest.fn()}
-          onBlur={jest.fn()}
-          onFocus={jest.fn()}
+          onChange={vi.fn()}
+          onBlur={vi.fn()}
+          onFocus={vi.fn()}
           disabled={false}
           readonly={false}
           name={''}
-          onDropPropertyClick={jest.fn()}
+          onDropPropertyClick={vi.fn()}
         />,
       )
 
@@ -224,13 +224,13 @@ describe('AdditionalPropertiesSchemaField unit tests', () => {
           idSchema={{ $id: 'root' } as IdSchema}
           formData={initialData}
           registry={registry}
-          onChange={jest.fn()}
-          onBlur={jest.fn()}
-          onFocus={jest.fn()}
+          onChange={vi.fn()}
+          onBlur={vi.fn()}
+          onFocus={vi.fn()}
           disabled={false}
           readonly={false}
           name={''}
-          onDropPropertyClick={jest.fn()}
+          onDropPropertyClick={vi.fn()}
         />,
       )
 

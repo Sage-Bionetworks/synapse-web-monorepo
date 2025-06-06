@@ -9,25 +9,24 @@ import { useQueryContext } from './QueryContext/QueryContext'
 import QuerySortSelector, { QuerySortSelectorProps } from './QuerySortSelector'
 import { useQueryVisualizationContext } from './QueryVisualizationWrapper/index'
 
-jest.mock('./QueryContext/QueryContext', () => ({
-  useQueryContext: jest.fn(),
+vi.mock('./QueryContext/QueryContext', () => ({
+  useQueryContext: vi.fn(),
 }))
 
-jest.mock('./QueryVisualizationWrapper/QueryVisualizationContext', () => ({
-  useQueryVisualizationContext: jest.fn(),
+vi.mock('./QueryVisualizationWrapper/QueryVisualizationContext', () => ({
+  useQueryVisualizationContext: vi.fn(),
 }))
 
-const mockExecuteQueryRequest = jest.fn()
-jest
-  .mocked(useQueryContext)
+const mockExecuteQueryRequest = vi.fn()
+vi.mocked(useQueryContext)
   // @ts-expect-error - only mocking the function we need
   .mockReturnValue({
     executeQueryRequest: mockExecuteQueryRequest,
   })
 
 // @ts-expect-error - only mocking the function we need
-jest.mocked(useQueryVisualizationContext).mockReturnValue({
-  getColumnDisplayName: jest
+vi.mocked(useQueryVisualizationContext).mockReturnValue({
+  getColumnDisplayName: vi
     .fn()
     .mockImplementation(() => 'Open Access Journals'),
 })

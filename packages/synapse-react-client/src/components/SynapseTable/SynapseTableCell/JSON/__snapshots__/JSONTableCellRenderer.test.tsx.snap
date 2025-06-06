@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
+exports[`JSONTableCellRenderer > handles Array of primitives case 1`] = `
 <div>
   <span
     class="MuiTypography-root MuiTypography-smallText1 css-1tqx9ty-MuiTypography-root"
@@ -105,7 +105,7 @@ exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
 </div>
 `;
 
-exports[`JSONTableCellRenderer handles "Empty array" case 1`] = `
+exports[`JSONTableCellRenderer > handles Empty array case 1`] = `
 <div>
   <span
     class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
@@ -115,7 +115,7 @@ exports[`JSONTableCellRenderer handles "Empty array" case 1`] = `
 </div>
 `;
 
-exports[`JSONTableCellRenderer handles "Empty object" case 1`] = `
+exports[`JSONTableCellRenderer > handles Empty object case 1`] = `
 <div>
   <span
     class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
@@ -125,7 +125,7 @@ exports[`JSONTableCellRenderer handles "Empty object" case 1`] = `
 </div>
 `;
 
-exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
+exports[`JSONTableCellRenderer > handles Object of primitives case 1`] = `
 <div>
   <div
     class="MuiBox-root css-34ji4n"
@@ -260,7 +260,7 @@ exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
 </div>
 `;
 
-exports[`JSONTableCellRenderer handles "complex array" case 1`] = `
+exports[`JSONTableCellRenderer > handles complex array case 1`] = `
 <div>
   <span
     class="MuiTypography-root MuiTypography-smallText1 css-1i0dbvc-MuiTypography-root"
@@ -345,7 +345,7 @@ exports[`JSONTableCellRenderer handles "complex array" case 1`] = `
 </div>
 `;
 
-exports[`JSONTableCellRenderer handles "complex object" case 1`] = `
+exports[`JSONTableCellRenderer > handles complex object case 1`] = `
 <div>
   <span
     class="MuiTypography-root MuiTypography-smallText1 css-1i0dbvc-MuiTypography-root"
@@ -468,7 +468,7 @@ exports[`JSONTableCellRenderer handles "complex object" case 1`] = `
 </div>
 `;
 
-exports[`JSONTableCellRenderer handles "null" case 1`] = `
+exports[`JSONTableCellRenderer > handles null case 1`] = `
 <div>
   <span
     class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
@@ -482,7 +482,7 @@ exports[`JSONTableCellRenderer handles "null" case 1`] = `
 </div>
 `;
 
-exports[`JSONTableCellRenderer handles "one item" case 1`] = `
+exports[`JSONTableCellRenderer > handles one item case 1`] = `
 <div>
   <span
     class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
@@ -492,7 +492,7 @@ exports[`JSONTableCellRenderer handles "one item" case 1`] = `
 </div>
 `;
 
-exports[`JSONTableCellRenderer handles "one null item" case 1`] = `
+exports[`JSONTableCellRenderer > handles one null item case 1`] = `
 <div>
   <span
     class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"

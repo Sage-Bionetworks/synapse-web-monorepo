@@ -9,9 +9,9 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import EntityIdList, { EntityIdListProps } from './EntityIdList'
 
-jest
-  .spyOn(SynapseClient, 'getEntityHeaders')
-  .mockResolvedValue({ results: [mockFileEntity.entityHeader] })
+vi.spyOn(SynapseClient, 'getEntityHeaders').mockResolvedValue({
+  results: [mockFileEntity.entityHeader],
+})
 
 describe('EntityIdList: basic functionality', () => {
   const props: EntityIdListProps = {

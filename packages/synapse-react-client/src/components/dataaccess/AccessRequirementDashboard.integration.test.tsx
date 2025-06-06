@@ -20,7 +20,7 @@ import {
 const NAME_CONTAINS_PREFIX = 'abc'
 const RELATED_PROJECT_ID = 'syn123'
 
-const searchAccessRequirementsSpy = jest.spyOn(
+const searchAccessRequirementsSpy = vi.spyOn(
   SynapseClient,
   'searchAccessRequirements',
 )
@@ -60,7 +60,7 @@ describe('AccessRequirementDashboard tests', () => {
   afterAll(() => server.close())
 
   it('Renders input fields and the table component', async () => {
-    const mockOnCreateNewAR = jest.fn()
+    const mockOnCreateNewAR = vi.fn()
     renderComponent({ onCreateNewAccessRequirementClicked: mockOnCreateNewAR })
 
     expect(await screen.findAllByRole('combobox')).toHaveLength(1)

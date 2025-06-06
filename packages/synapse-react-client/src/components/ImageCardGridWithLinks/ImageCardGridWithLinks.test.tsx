@@ -14,13 +14,13 @@ import ImageCardGridWithLinks, {
 } from './ImageCardGridWithLinks'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 
-jest.mock('@/synapse-queries/entity/useGetQueryResultBundle')
+vi.mock('@/synapse-queries/entity/useGetQueryResultBundle')
 
 const {
   mock: mockUseGetQueryResultBundleImpl,
   setSuccess: setGetQueryResultBundleSuccess,
 } = getUseQueryMock<QueryResultBundle, SynapseClientError>()
-const mockUseGetQueryResultBundle = jest.mocked(useGetQueryResultBundle)
+const mockUseGetQueryResultBundle = vi.mocked(useGetQueryResultBundle)
 
 describe('ImageCardGridWithLinks Tests', () => {
   const mockProps: ImageCardGridWithLinksProps = {
@@ -109,8 +109,8 @@ describe('ImageCardGridWithLinks Tests', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
+    vi.clearAllMocks()
+    vi.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
     mockUseGetQueryResultBundle.mockImplementation(
       mockUseGetQueryResultBundleImpl,
     )

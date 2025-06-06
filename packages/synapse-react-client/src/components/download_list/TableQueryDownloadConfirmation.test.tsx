@@ -23,7 +23,7 @@ import { TableQueryDownloadConfirmation } from './TableQueryDownloadConfirmation
 const ID_COLUMN_ID = 11112
 const CURRENT_VERSION_COLUMN_ID = 11113
 const DOWNLOAD_CONFIRMATION_UI_TEST_ID = 'DownloadConfirmationUI'
-const mockDownloadConfirmationUi = jest
+const mockDownloadConfirmationUi = vi
   .spyOn(DownloadConfirmationUIModule, 'DownloadConfirmationUI')
   .mockImplementation(() => (
     <div data-testid={DOWNLOAD_CONFIRMATION_UI_TEST_ID}></div>
@@ -38,14 +38,11 @@ const mockQueryWithSelectFileAndVersionColumn: Query = {
   selectFileColumn: ID_COLUMN_ID,
   selectFileVersionColumn: CURRENT_VERSION_COLUMN_ID,
 }
-const mockToastFn = jest
+const mockToastFn = vi
   .spyOn(ToastMessage, 'displayToast')
   .mockImplementation(() => noop)
 
-const addToDownloadListSpy = jest.spyOn(
-  SynapseClient,
-  'addFilesToDownloadListV2',
-)
+const addToDownloadListSpy = vi.spyOn(SynapseClient, 'addFilesToDownloadListV2')
 
 const addFilesToDownloadListResponse: AddToDownloadListResponse = {
   concreteType:
@@ -77,7 +74,7 @@ async function setUp(
   fileIdColumnName?: string,
   fileVersionColumnName?: string,
 ) {
-  const mockOnClose = jest.fn()
+  const mockOnClose = vi.fn()
   const user = userEvent.setup()
   const component = render(
     <QueryWrapper
@@ -132,7 +129,7 @@ const queryResultBundle: QueryResultBundle = {
 describe('TableQueryDownloadConfirmation', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 
     registerTableQueryResult(mockQueryBundleRequest.query, queryResultBundle)
     registerTableQueryResult(mockQueryWithSelectFileColumn, {

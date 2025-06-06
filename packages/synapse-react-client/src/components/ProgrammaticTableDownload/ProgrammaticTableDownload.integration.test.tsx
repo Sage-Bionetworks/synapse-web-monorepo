@@ -17,7 +17,7 @@ import ProgrammaticTableDownload, {
   ProgrammaticTableDownloadProps,
 } from './ProgrammaticTableDownload'
 
-const onHide = jest.fn()
+const onHide = vi.fn()
 
 const queryBundleRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -69,7 +69,7 @@ describe('ProgrammaticOptions tests', () => {
   afterAll(() => server.close())
 
   it('Successfully transform sql', async () => {
-    jest.spyOn(console, 'error').mockImplementation(() => {})
+    vi.spyOn(console, 'error').mockImplementation(() => {})
     registerTableQueryResult(queryBundleRequest.query, {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
       combinedSql: COMBINED_SQL_RESULT,
@@ -85,7 +85,7 @@ describe('ProgrammaticOptions tests', () => {
   })
 
   it('Query errors are thrown to error boundary', async () => {
-    jest.spyOn(console, 'error').mockImplementation(() => {})
+    vi.spyOn(console, 'error').mockImplementation(() => {})
     server.use(...getErrorMSWHandler())
     renderComponent({
       onHide,

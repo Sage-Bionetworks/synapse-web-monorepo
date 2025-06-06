@@ -10,13 +10,13 @@ import StandaloneQueryWrapper, {
   StandaloneQueryWrapperProps,
 } from './StandaloneQueryWrapper'
 
-jest.mock('../../synapse-client/SynapseClient', () => ({
-  getEntity: jest.fn(),
-  getQueryTableAsyncJobResults: jest.fn(),
+vi.mock('../../synapse-client/SynapseClient', () => ({
+  getEntity: vi.fn(),
+  getQueryTableAsyncJobResults: vi.fn(),
 }))
 
-const mockGetEntity = jest.mocked(SynapseClient.getEntity)
-const mockGetQueryTableAsyncJobResults = jest.mocked(
+const mockGetEntity = vi.mocked(SynapseClient.getEntity)
+const mockGetQueryTableAsyncJobResults = vi.mocked(
   SynapseClient.getQueryTableAsyncJobResults,
 )
 

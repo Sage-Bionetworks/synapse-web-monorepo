@@ -28,32 +28,28 @@ import {
 } from './ExternalAnalysisPlatformsConstants'
 import ExternalPlatformActionsRequiredPrecheck from './ExternalPlatformActionsRequiredPrecheck'
 
-jest.mock(
-  '../../../synapse-queries/entity/useExportTableQueryToAnalysisPlatform',
-)
-jest.mock('../../DownloadCart/TableQueryActionsRequired')
-jest.mock('../../QueryContext')
-jest.mock('../../QueryWrapper/useGetQueryMetadata')
-jest.mock('../../QueryVisualizationWrapper/index')
-jest.mock('../../QueryWrapper/TableRowSelectionState')
+vi.mock('../../../synapse-queries/entity/useExportTableQueryToAnalysisPlatform')
+vi.mock('../../DownloadCart/TableQueryActionsRequired')
+vi.mock('../../QueryContext')
+vi.mock('../../QueryWrapper/useGetQueryMetadata')
+vi.mock('../../QueryVisualizationWrapper/index')
+vi.mock('../../QueryWrapper/TableRowSelectionState')
 
-const mockUseExportTableQueryToAnalysisPlatform = jest.mocked(
+const mockUseExportTableQueryToAnalysisPlatform = vi.mocked(
   useExportTableQueryToAnalysisPlatform,
 )
-const mockUseQueryContext = jest.mocked(useQueryContext)
-const mockUseQueryVisualizationContext = jest.mocked(
-  useQueryVisualizationContext,
-)
-const mockUseGetQueryMetadata = jest.mocked(useGetQueryMetadata)
-const MockTableQueryActionsRequired = jest.mocked(TableQueryActionsRequired)
-const mockOnConfirmButtonPropsChange = jest.fn()
-const mockOnSuccessfulExport = jest.fn()
+const mockUseQueryContext = vi.mocked(useQueryContext)
+const mockUseQueryVisualizationContext = vi.mocked(useQueryVisualizationContext)
+const mockUseGetQueryMetadata = vi.mocked(useGetQueryMetadata)
+const MockTableQueryActionsRequired = vi.mocked(TableQueryActionsRequired)
+const mockOnConfirmButtonPropsChange = vi.fn()
+const mockOnSuccessfulExport = vi.fn()
 
-const mockUseHasSelectedRowsAtomValue = jest.mocked(useHasSelectedRowsAtomValue)
-const mockUseRowSelectionPrimaryKeyAtomValue = jest.mocked(
+const mockUseHasSelectedRowsAtomValue = vi.mocked(useHasSelectedRowsAtomValue)
+const mockUseRowSelectionPrimaryKeyAtomValue = vi.mocked(
   useRowSelectionPrimaryKeyAtomValue,
 )
-const mockUseSelectedRowsAtomValue = jest.mocked(useSelectedRowsAtomValue)
+const mockUseSelectedRowsAtomValue = vi.mocked(useSelectedRowsAtomValue)
 
 const mockFileIdColumnName = 'file_id'
 const mockFileVersionColumnName = 'file_version'
@@ -74,8 +70,8 @@ const columnModels: ColumnModel[] = [
 const selectColumns: SelectColumn[] = columnModels
 
 const mockQueryContext: QueryContextType = {
-  getCurrentQueryRequest: jest.fn().mockReturnValue(queryRequest),
-  onViewSharingSettingsClicked: jest.fn(),
+  getCurrentQueryRequest: vi.fn().mockReturnValue(queryRequest),
+  onViewSharingSettingsClicked: vi.fn(),
   hasResettableFilters: false,
   fileIdColumnName: mockFileIdColumnName,
   fileVersionColumnName: mockFileVersionColumnName,
@@ -86,34 +82,34 @@ const mockQueryContext: QueryContextType = {
   isInfinite: false,
   versionNumber: undefined,
   nextQueryRequest: queryRequest,
-  getInitQueryRequest: jest.fn(),
-  executeQueryRequest: jest.fn(),
-  resetQuery: jest.fn(),
-  resetDebounceTimer: jest.fn(),
-  addValueToSelectedFacet: jest.fn(),
-  setRangeFacetValue: jest.fn(),
-  removeSelectedFacet: jest.fn(),
-  removeValueFromSelectedFacet: jest.fn(),
-  removeQueryFilter: jest.fn(),
-  removeValueFromQueryFilter: jest.fn(),
+  getInitQueryRequest: vi.fn(),
+  executeQueryRequest: vi.fn(),
+  resetQuery: vi.fn(),
+  resetDebounceTimer: vi.fn(),
+  addValueToSelectedFacet: vi.fn(),
+  setRangeFacetValue: vi.fn(),
+  removeSelectedFacet: vi.fn(),
+  removeValueFromSelectedFacet: vi.fn(),
+  removeQueryFilter: vi.fn(),
+  removeValueFromQueryFilter: vi.fn(),
   hasFacetedSelectColumn: false,
   rowDataQueryOptions: {
     queryKey: ['rowDataQueryOptions'],
-    queryFn: jest.fn(),
+    queryFn: vi.fn(),
   },
   rowDataInfiniteQueryOptions: {
     queryKey: ['rowDataInfiniteQueryOptions'],
-    queryFn: jest.fn(),
+    queryFn: vi.fn(),
     initialPageParam: undefined,
-    getNextPageParam: jest.fn(),
+    getNextPageParam: vi.fn(),
   },
   queryMetadataQueryOptions: {
     queryKey: ['queryMetadataQueryOptions'],
-    queryFn: jest.fn(),
+    queryFn: vi.fn(),
   },
-  goToPage: jest.fn(),
+  goToPage: vi.fn(),
   currentPage: 0,
-  setPageSize: jest.fn(),
+  setPageSize: vi.fn(),
   pageSize: 0,
   lockedColumn: undefined,
 }
@@ -121,21 +117,21 @@ const mockQueryContext: QueryContextType = {
 const mockQueryVisualizationContext: QueryVisualizationContextType = {
   unitDescription: 'file',
   // remaining fields are unused
-  NoContentPlaceholder: jest.fn(),
+  NoContentPlaceholder: vi.fn(),
   columnsToShowInTable: [],
   enabledExternalAnalysisPlatforms: [],
-  getColumnDisplayName: jest.fn(),
-  getDisplayValue: jest.fn(),
-  getHelpText: jest.fn(),
+  getColumnDisplayName: vi.fn(),
+  getDisplayValue: vi.fn(),
+  getHelpText: vi.fn(),
   isShowingExportToAnalysisPlatformModal: false,
-  setColumnsToShowInTable: jest.fn(),
-  setIsShowingExportToAnalysisPlatformModal: jest.fn(),
-  setShowCopyToClipboard: jest.fn(),
-  setShowDownloadConfirmation: jest.fn(),
-  setShowFacetFilter: jest.fn(),
-  setShowPlots: jest.fn(),
-  setShowSearchBar: jest.fn(),
-  setShowSqlEditor: jest.fn(),
+  setColumnsToShowInTable: vi.fn(),
+  setIsShowingExportToAnalysisPlatformModal: vi.fn(),
+  setShowCopyToClipboard: vi.fn(),
+  setShowDownloadConfirmation: vi.fn(),
+  setShowFacetFilter: vi.fn(),
+  setShowPlots: vi.fn(),
+  setShowSearchBar: vi.fn(),
+  setShowSqlEditor: vi.fn(),
   showCopyToClipboard: false,
   showDownloadConfirmation: false,
   showFacetFilter: false,
@@ -144,12 +140,12 @@ const mockQueryVisualizationContext: QueryVisualizationContextType = {
   showSqlEditor: false,
   hideSearchBarControl: false,
 }
-const mockExportToCavatica = jest.fn()
-const mockExportToTerra = jest.fn()
+const mockExportToCavatica = vi.fn()
+const mockExportToTerra = vi.fn()
 
 describe('ExternalPlatformActionsRequiredPrecheck', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 
     mockUseQueryContext.mockReturnValue(mockQueryContext)
     mockUseQueryVisualizationContext.mockReturnValue(
@@ -225,7 +221,7 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
 
       // Simulate clicking the confirm button
       act(() => {
-        mockOnConfirmButtonPropsChange.mock.lastCall[0].onClick()
+        mockOnConfirmButtonPropsChange.mock.lastCall![0].onClick()
       })
 
       await waitFor(() => {
@@ -304,7 +300,7 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
 
     // Simulate clicking the confirm button
     act(() => {
-      mockOnConfirmButtonPropsChange.mock.lastCall[0].onClick()
+      mockOnConfirmButtonPropsChange.mock.lastCall![0].onClick()
     })
 
     await waitFor(() => {
@@ -363,7 +359,7 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
 
     // Simulate clicking the confirm button
     act(() => {
-      mockOnConfirmButtonPropsChange.mock.lastCall[0].onClick()
+      mockOnConfirmButtonPropsChange.mock.lastCall![0].onClick()
     })
 
     await waitFor(() => {

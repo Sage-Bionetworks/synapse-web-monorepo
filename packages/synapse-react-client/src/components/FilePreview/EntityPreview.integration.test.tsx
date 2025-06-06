@@ -8,7 +8,7 @@ import { render, screen, within } from '@testing-library/react'
 import EntityPreview, { EntityPreviewProps } from './EntityPreview'
 import * as FileEntityPreviewModule from './FileEntityPreview'
 
-jest.spyOn(FileEntityPreviewModule, 'default').mockImplementation(() => {
+vi.spyOn(FileEntityPreviewModule, 'default').mockImplementation(() => {
   return <div data-testid="FileEntityPreview"></div>
 })
 
@@ -48,7 +48,7 @@ describe('EntityPreview tests', () => {
   })
 
   it('Throws an error if the entity is not a FileEntity', async () => {
-    jest.spyOn(console, 'error').mockImplementation(() => {})
+    vi.spyOn(console, 'error').mockImplementation(() => {})
     renderComponent({
       entityId: mockDatasetData.id,
     })

@@ -17,7 +17,7 @@ describe('JSONRendererUtils', () => {
       ['Infinity', Infinity, false],
       ['NaN', NaN, false],
       ['Symbol', Symbol('someSymbol'), false],
-    ])('%p case', (_case, value, expected) => {
+    ])('%s case', (_case, value, expected) => {
       expect(isJSONPrimitive(value)).toBe(expected)
     })
   })

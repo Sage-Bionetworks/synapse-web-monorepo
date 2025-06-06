@@ -20,33 +20,33 @@ import {
   warningHeader,
 } from './CreateOAuthClient'
 
-const mockToastFn = jest
+const mockToastFn = vi
   .spyOn(ToastMessage, 'displayToast')
   .mockImplementation(() => noop)
-jest.mock('../../../src/components/SynapseForm/WarningDialog', () => ({
-  WarningDialog: jest.fn().mockImplementation(() => {
+vi.mock('../../../src/components/SynapseForm/WarningDialog', () => ({
+  WarningDialog: vi.fn().mockImplementation(() => {
     return <div></div>
   }),
 }))
 
 const mockWarningDialog = WarningDialog
 
-const updatedClient = jest.fn()
+const updatedClient = vi.fn()
 const mockClient = mockClientList1.results[0]
 const defaultProps: CreateOAuthModalProps = {
   isShowingModal: true,
-  onClose: jest.fn(),
+  onClose: vi.fn(),
   isEdit: false,
-  setIsShowingModal: jest.fn(),
+  setIsShowingModal: vi.fn(),
   isShowingConfirmModal: false,
-  setIsShowingConfirmModal: jest.fn(),
+  setIsShowingConfirmModal: vi.fn(),
 }
 
-const createOAuthClientSpy = jest.spyOn(
+const createOAuthClientSpy = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.openIDConnectServicesClient,
   'postAuthV1Oauth2Client',
 )
-const updateOAuthClientSpy = jest.spyOn(
+const updateOAuthClientSpy = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.openIDConnectServicesClient,
   'putAuthV1Oauth2ClientId',
 )
@@ -62,7 +62,7 @@ function setUp(props: CreateOAuthModalProps = defaultProps) {
 
   // useFakeTimers to ensure that isOAuthClientReverificationRequired is called
   // at least once per test, since the call is wrapped in useDebouncedEffect
-  jest.useFakeTimers()
+  vi.useFakeTimers()
 
   const component = renderComponent(props)
   const inputs = {
@@ -76,10 +76,10 @@ function setUp(props: CreateOAuthModalProps = defaultProps) {
   }
   const saveButton = screen.getByRole('button', { name: 'Save' })
 
-  act(() => jest.runOnlyPendingTimers())
+  act(() => vi.runOnlyPendingTimers())
 
   // User real timers for the rest of the test
-  jest.useRealTimers()
+  vi.useRealTimers()
 
   return { component, user, inputs, saveButton }
 }
@@ -122,7 +122,7 @@ describe('Create OAuth Client', () => {
     )
   })
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     server.restoreHandlers()
     updatedClient.mockClear()
   })
@@ -200,7 +200,7 @@ describe('Create OAuth Client', () => {
   })
 
   it('Updates a client', async () => {
-    const showModal = jest.fn().mockReturnValue(true)
+    const showModal = vi.fn().mockReturnValue(true)
 
     const { user, inputs, saveButton } = setUp({
       ...defaultProps,

@@ -15,9 +15,9 @@ import { cloneDeep } from 'lodash-es'
 import { QueryContextType, useQueryContext } from '../QueryContext'
 import { QueryWrapper, QueryWrapperProps } from './QueryWrapper'
 import { selectedRowsAtom } from './TableRowSelectionState'
-import Mock = jest.Mock
+import { Mock } from 'vitest'
 
-const getQueryTableAsyncJobResultsSpy = jest.spyOn(
+const getQueryTableAsyncJobResultsSpy = vi.spyOn(
   SynapseClient,
   'getQueryTableAsyncJobResults',
 )
@@ -38,10 +38,12 @@ const QueryContextReceiver = () => {
 
 // utility function
 function renderComponent(props: QueryWrapperProps) {
-  const mockOnQueryChange: Mock<QueryWrapperProps['onQueryChange']> = jest.fn()
+  const mockOnQueryChange: Mock<
+    NonNullable<QueryWrapperProps['onQueryChange']>
+  > = vi.fn()
   const mockOnQueryResultBundleChange: Mock<
-    QueryWrapperProps['onQueryChange']
-  > = jest.fn()
+    NonNullable<QueryWrapperProps['onQueryResultBundleChange']>
+  > = vi.fn()
 
   const component = render(
     <QueryWrapper
@@ -72,7 +74,7 @@ describe('QueryWrapper', () => {
   beforeEach(() => {
     selectedRows = undefined
     setSelectedRows = undefined
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     window.history.pushState({}, 'Page Title', '/')
 
     providedContext = undefined
@@ -314,7 +316,7 @@ describe('QueryWrapper', () => {
 
   describe('query change when rows are selected', () => {
     it('requires confirmation to change the query when rows are selected', async () => {
-      const mockOnQueryChange = jest.fn()
+      const mockOnQueryChange = vi.fn()
 
       const newQuery = 'SELECT * FROM syn98765'
 
@@ -383,7 +385,7 @@ describe('QueryWrapper', () => {
     })
 
     it('handles canceling the change request when rows are selected', async () => {
-      const mockOnQueryChange = jest.fn()
+      const mockOnQueryChange = vi.fn()
 
       const newQuery = 'SELECT * FROM syn98765'
 

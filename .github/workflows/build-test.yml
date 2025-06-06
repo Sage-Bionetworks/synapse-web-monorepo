@@ -31,7 +31,7 @@ jobs:
     needs: build
     runs-on:
       labels: ubuntu-latest
-    # Job should not last longer than 60 minutes--and the larger runner is billed per-minute ;)
+    # Job should not last longer than 60 minutes
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -41,7 +41,8 @@ jobs:
         with:
           STORE_NX_CACHE: 'true'
       - id: test
-        run: pnpm nx affected --target test --base=remotes/origin/main
+        # Test runners run in parallel, so we use `--parallel=1` to avoid running them all at once
+        run: pnpm nx affected --target test --base=remotes/origin/main --parallel=1
         env:
           NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
       - name: Upload test report

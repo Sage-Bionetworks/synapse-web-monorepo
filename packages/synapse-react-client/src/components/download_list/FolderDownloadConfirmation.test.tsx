@@ -19,22 +19,22 @@ import * as ToastMessage from '../ToastMessage/ToastMessage'
 import * as DownloadConfirmationUIModule from './DownloadConfirmationUI'
 import { FolderDownloadConfirmation } from './index'
 
-jest.mock('../../synapse-queries/index', () => ({
-  useGetEntityChildren: jest.fn(),
-  useAddQueryToDownloadList: jest.fn(),
+vi.mock('../../synapse-queries/index', () => ({
+  useGetEntityChildren: vi.fn(),
+  useAddQueryToDownloadList: vi.fn(),
 }))
 
-const mockUseGetEntityChildren = jest.mocked(useGetEntityChildren)
-const mockUseAddQueryToDownloadList = jest.mocked(useAddQueryToDownloadList)
+const mockUseGetEntityChildren = vi.mocked(useGetEntityChildren)
+const mockUseAddQueryToDownloadList = vi.mocked(useAddQueryToDownloadList)
 
 const DOWNLOAD_CONFIRMATION_UI_TEST_ID = 'DownloadConfirmationUI'
-const mockDownloadConfirmationUi = jest
+const mockDownloadConfirmationUi = vi
   .spyOn(DownloadConfirmationUIModule, 'DownloadConfirmationUI')
   .mockImplementation(() => (
     <div data-testid={DOWNLOAD_CONFIRMATION_UI_TEST_ID}></div>
   ))
 
-const mockToastFn = jest.spyOn(ToastMessage, 'displayToast')
+const mockToastFn = vi.spyOn(ToastMessage, 'displayToast')
 
 const addFilesToDownloadListResponse: AddToDownloadListResponse = {
   concreteType:
@@ -43,7 +43,7 @@ const addFilesToDownloadListResponse: AddToDownloadListResponse = {
 }
 
 const FOLDER_ID = 'syn123'
-const mockOnClose = jest.fn()
+const mockOnClose = vi.fn()
 
 async function setUp() {
   const user = userEvent.setup()
@@ -64,7 +64,7 @@ describe('FolderDownloadConfirmation', () => {
     >
   >
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 
     mockUseGetEntityChildren.mockReturnValue(
       getUseQuerySuccessMock<EntityChildrenResponse>({

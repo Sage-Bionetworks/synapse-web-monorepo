@@ -3,18 +3,18 @@ import userEvent from '@testing-library/user-event'
 import RangeSlider, { RangeSliderProps } from './RangeSlider'
 import { Slider } from '@mui/material'
 
-const mockOnChange = jest.fn()
-const mockOnApplyClicked = jest.fn()
+const mockOnChange = vi.fn()
+const mockOnApplyClicked = vi.fn()
 const MUI_SLIDER_TEST_ID = 'Mock MUI Slider'
-jest.mock('@mui/material', () => {
-  const muiActual = jest.requireActual('@mui/material')
+vi.mock(import('@mui/material'), async importOriginal => {
+  const original = await importOriginal()
   return {
-    ...muiActual,
-    Slider: jest.fn(() => <span data-testid={MUI_SLIDER_TEST_ID}></span>),
+    ...original,
+    Slider: vi.fn(() => <span data-testid={MUI_SLIDER_TEST_ID}></span>),
   }
 })
 
-const mockSlider = jest.mocked(Slider)
+const mockSlider = vi.mocked(Slider)
 
 function createTestProps(
   overrides?: Partial<RangeSliderProps>,
@@ -36,7 +36,7 @@ function init(overrides?: Partial<RangeSliderProps>) {
 
 describe('RangeSlider', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('should render with correct properties', () => {

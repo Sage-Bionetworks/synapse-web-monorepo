@@ -6,18 +6,18 @@ import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { getFileEntityIdWithSameName } from './getFileEntityIdWithSameName'
 
-const lookupEntitySpy = jest.spyOn(
+const lookupEntitySpy = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.entityServicesClient,
   'postRepoV1EntityChild',
 )
-const getEntitySpy = jest.spyOn(
+const getEntitySpy = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.entityServicesClient,
   'getRepoV1EntityId',
 )
 
 describe('getFileEntityIdWithSameName', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   test('Entity does not exist', async () => {

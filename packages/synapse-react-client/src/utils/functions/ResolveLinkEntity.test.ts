@@ -57,7 +57,7 @@ describe('ResolveLinkEntity tests', () => {
   }
 
   beforeAll(() => {
-    jest.spyOn(SynapseClient, 'getEntity').mockImplementation((_token, id) => {
+    vi.spyOn(SynapseClient, 'getEntity').mockImplementation((_token, id) => {
       const entities = [
         fileEntity,
         linksToFileEntity,
