@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import 'vitest'
 import { QueryKey } from '@tanstack/react-query'
 
@@ -6,5 +7,6 @@ interface CustomMatchers<R = unknown> {
 }
 
 declare module 'vitest' {
-  type Matchers<T = any> = CustomMatchers<T>
+  type Assertion<T = any> = CustomMatchers<T>
+  interface AsymmetricMatchersContaining extends CustomMatchers {}
 }
