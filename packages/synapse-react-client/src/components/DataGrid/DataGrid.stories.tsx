@@ -12,18 +12,18 @@ const dataCols = [
 ]
 
 const meta = {
-  title: 'Curator/SynapseGrid',
+  title: 'Curator/CrdtGrid',
   component: SynapseGrid,
 } satisfies Meta<typeof SynapseGrid>
 type Story2 = StoryObj<typeof meta>
 export default meta
-export const SynapseGridDemo: Story2 = {
+export const CrdtGrid: Story2 = {
   args: {
     initialRows: dataRows,
     initialColumns: dataCols,
   },
   parameters: {
-    stack: 'mock',
+    stack: 'development',
     msw: {
       handlers: [...getGridHandlers(MOCK_REPO_ORIGIN)],
     },
