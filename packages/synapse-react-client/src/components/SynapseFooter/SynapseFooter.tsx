@@ -51,7 +51,7 @@ export function SynapseFooter({
           }}
         >
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <SynapseFullLogo textColor="white" />
+            <SynapseFullLogo color="white" />
             <Typography
               variant="body1Italic"
               sx={{ color: 'primary.200', fontSize: '13px', mb: '25px' }}
