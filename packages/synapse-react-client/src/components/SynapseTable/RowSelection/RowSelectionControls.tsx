@@ -4,7 +4,7 @@ import { GetAppTwoTone } from '@mui/icons-material'
 import { Button } from '@mui/material'
 import { Table } from '@sage-bionetworks/synapse-types'
 import { useAtom } from 'jotai'
-import { useQueryContext } from '../../QueryContext'
+import { useQueryContext, QueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { selectedRowsAtom } from '../../QueryWrapper/TableRowSelectionState'
 import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
@@ -12,6 +12,10 @@ import { getFileColumnModelId } from '../SynapseTableUtils'
 import CustomControlButton from '../TopLevelControls/CustomControlButton'
 import { CustomControl } from '../TopLevelControls/TopLevelControls'
 import { RowSelectionUI } from './RowSelectionUI'
+import { Query } from '@tanstack/query-core'
+import { TableQueryDownloadConfirmation } from '@/components/download_list'
+import { displayToast } from '../../ToastMessage/index'
+import { toast } from 'react-hot-toast'
 
 const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
   'SendToAnalysisPlatformRowSelectionControlButton'
@@ -33,6 +37,7 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
   const { data: queryMetadata } = useGetQueryMetadata()
   const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom)
+  const queryContext = useQueryContext()
 
   const {
     setIsShowingExportToAnalysisPlatformModal,
@@ -96,7 +101,16 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
             <Button
               variant="contained"
               onClick={() => {
-                setShowDownloadConfirmation(true)
+                let closeToast = () => {}
+                closeToast = displayToast(
+                  <QueryContext.Provider value={queryContext}>
+                    <TableQueryDownloadConfirmation
+                      onClose={() => {
+                        closeToast()
+                      }}
+                    />
+                  </QueryContext.Provider>,
+                )
               }}
               startIcon={<GetAppTwoTone />}
             >
