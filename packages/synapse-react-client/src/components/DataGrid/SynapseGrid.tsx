@@ -32,6 +32,11 @@ export function SynapseGrid({
   const [replicaError, setReplicaError] = useState<string | null>(null)
   const [isCreatingReplica, setIsCreatingReplica] = useState(false)
 
+  // ADD: State variables for loading and error states
+  const [isLoading, setIsLoading] = useState(false)
+  const [hasError, setHasError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
   const createGridSession = useCreateGridSession({
     onSuccess: async response => {
       console.log('=== SESSION CREATION SUCCESS ===')
@@ -63,6 +68,9 @@ export function SynapseGrid({
     },
     onError: error => {
       console.error('Failed to create session:', error)
+      // Set error state immediately when mutation fails
+      setHasError(true)
+      setErrorMessage(error.message || 'Unknown error occurred')
     },
   })
 
@@ -91,6 +99,40 @@ export function SynapseGrid({
     enabled: wsEnabled,
   })
 
+  // UPDATE: useEffect to manage loading and error states
+  useEffect(() => {
+    const loading =
+      createGridSession.isPending || isCreatingReplica || wsConnecting
+    const error = createGridSession.error || replicaError || wsError
+
+    setIsLoading(loading)
+    setHasError(!!error)
+
+    if (error) {
+      setErrorMessage(
+        createGridSession.error?.message ||
+          replicaError ||
+          wsError ||
+          'Unknown error occurred',
+      )
+    } else {
+      setErrorMessage(null)
+    }
+
+    console.log('State update:', {
+      loading,
+      error: !!error,
+      errorMessage: error,
+    })
+  }, [
+    createGridSession.isPending,
+    createGridSession.error,
+    isCreatingReplica,
+    replicaError,
+    wsConnecting,
+    wsError,
+  ])
+
   // Initialize session
   useEffect(() => {
     if (
@@ -100,13 +142,12 @@ export function SynapseGrid({
     ) {
       console.log('Initializing grid session...')
       hasInitializedRef.current = true
+      setHasError(false) // Clear any previous errors
+      setErrorMessage(null)
       createGridSession.mutate({})
     }
   }, [createGridSession.isPending, sessionId])
 
-  const isLoading =
-    createGridSession.isPending || isCreatingReplica || wsConnecting
-  const hasError = createGridSession.error || replicaError || wsError
   const isReady = sessionId && replicaData && wsConnected && !hasError
 
   const handleDataChange = useCallback(
@@ -122,7 +163,6 @@ export function SynapseGrid({
     [wsConnected, sendMessage],
   )
 
-  // NEW: Function to send ping message
   const handleSendPing = useCallback(() => {
     if (wsConnected) {
       const pingMessage = [8, 'ping']
@@ -139,6 +179,9 @@ export function SynapseGrid({
     setReplicaData(null)
     setReplicaError(null)
     setIsCreatingReplica(false)
+    // CLEAR ERROR STATE
+    setHasError(false)
+    setErrorMessage(null)
   }, [])
 
   return (
@@ -148,19 +191,34 @@ export function SynapseGrid({
 
         {/* Show loading state */}
         {isLoading && (
-          <div>
+          <div
+            style={{
+              padding: '1rem',
+              backgroundColor: '#f0f0f0',
+              marginBottom: '1rem',
+            }}
+          >
             <p>
-              {createGridSession.isPending && 'Initializing grid session...'}
-              {isCreatingReplica && 'Creating replica...'}
-              {wsConnecting && 'Connecting to grid...'}
+              {createGridSession.isPending && '🔄 Initializing grid session...'}
+              {isCreatingReplica && '🔄 Creating replica...'}
+              {wsConnecting && '🔄 Connecting to grid...'}
             </p>
           </div>
         )}
 
         {/* Show error state */}
         {hasError && (
-          <div style={{ color: 'red' }}>
-            Error: {createGridSession.error?.message || replicaError || wsError}
+          <div
+            style={{
+              color: 'red',
+              backgroundColor: '#ffe6e6',
+              border: '1px solid #ff0000',
+              padding: '1rem',
+              marginBottom: '1rem',
+              borderRadius: '4px',
+            }}
+          >
+            <strong>Error:</strong> {errorMessage}
           </div>
         )}
 
@@ -203,14 +261,9 @@ export function SynapseGrid({
           </div>
         )}
 
-        {/* WebSocket Message */}
+        {/* WebSocket Controls */}
         {wsConnected && (
-          <div
-            style={{
-              marginBottom: '1rem',
-              padding: '0.75rem',
-            }}
-          >
+          <div style={{ marginBottom: '1rem', padding: '0.75rem' }}>
             <button
               onClick={handleSendPing}
               style={{
@@ -283,9 +336,6 @@ export function SynapseGrid({
             </div>
           </div>
         )}
-
-        {/* Retry button */}
-        {hasError && <button onClick={handleRetry}>Retry</button>}
       </div>
     </SynapseContextProvider>
   )
