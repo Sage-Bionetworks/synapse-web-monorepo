@@ -1,5 +1,5 @@
 import SynapseClient from '@/synapse-client'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { TYPE_FILTER, UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import {

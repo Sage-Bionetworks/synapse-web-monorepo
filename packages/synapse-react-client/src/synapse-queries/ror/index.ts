@@ -3,12 +3,12 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
-import { SynapseClientError } from '../../utils'
 import {
   ROROrganization,
   RORSearchResult,
 } from '../../ror-client/types/ROROrganization'
 import { getOrganization, searchRegistry } from '../../ror-client'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 
 export function useGetOrganization(
   rorId: string,
