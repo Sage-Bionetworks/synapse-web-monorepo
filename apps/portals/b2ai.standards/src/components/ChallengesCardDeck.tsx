@@ -1,6 +1,8 @@
 import {
   TABLE_IDS,
   CHALLENGES_TABLE_COLUMN_NAMES,
+  GCDATASET_TABLE_COLUMN_NAMES,
+  GCDATASET_JSON_COLUMNS,
   dataSql,
   DST_TABLE_COLUMN_NAMES,
   ORG_TABLE_COLUMN_NAMES,
@@ -87,35 +89,46 @@ export function ChallengesCardDeck() {
       CHALLENGES_TABLE_COLUMN_NAMES.IMG_HANDLE_ID,
     ],
   })
-
   const {
     data: challengesEntity,
+    // this is needed later in order to extract the image from the challenges table
     error: challengesEntityError,
     isLoading: isLoadingChallengesEntity,
   } = useGetEntity(TABLE_IDS.Challenges.id)
 
-  const gcOrgIds = challengesData
-    .map(c => c[CHALLENGES_TABLE_COLUMN_NAMES.ORG_ID])
-    .map(id => `'${id}'`)
-    .join(', ')
-
-  const orgCols = [
-    ORG_TABLE_COLUMN_NAMES.ID,
-    ORG_TABLE_COLUMN_NAMES.NAME,
-    ORG_TABLE_COLUMN_NAMES.DESCRIPTION,
-  ]
   const {
-    data: gcOrgData,
-    error: gcOrgError,
-    isLoading: isLoadingOrgsTableQuery,
+    data: gcDataSet = [],
+    error: gcDataSetError,
+    isLoading: isLoadingGCDataSetTableQuery,
   } = useTableFetch({
-    entityId: TABLE_IDS.Organization.id,
-    columns: orgCols,
-    sql: `SELECT ${orgCols.join(', ')} FROM ${
-      TABLE_IDS.Organization.id
-    } WHERE id IN (${gcOrgIds})`,
-    shouldRun: !!challengesData?.length,
+    entityId: TABLE_IDS.GCDataSet.id,
+    columns: Object.values(GCDATASET_TABLE_COLUMN_NAMES),
   })
+
+  const orgs = {}
+  for (const gcData of gcDataSet) {
+    for (const key of GCDATASET_JSON_COLUMNS) {
+      try {
+        if (gcData[key]) {
+          gcData[key] = JSON.parse(gcData[key])
+        }
+      } catch (error) {
+        console.log(`Failed to parse ${key}:`, error)
+      }
+    }
+    if (gcData.org_json.length !== 1) {
+      return (
+        <ErrorBanner
+          error={`Expected exactly one org for each Grand Challenge DataSet.
+         Got ${gcData[GCDATASET_TABLE_COLUMN_NAMES.ORG_JSON].length} for
+         ${gcData[GCDATASET_TABLE_COLUMN_NAMES.ID]}
+         ${gcData[GCDATASET_TABLE_COLUMN_NAMES.NAME]}`}
+        />
+      )
+    }
+    const org = gcData[GCDATASET_TABLE_COLUMN_NAMES.ORG_JSON][0]
+    orgs[org[ORG_TABLE_COLUMN_NAMES.ID]] = org
+  }
 
   if (challengesEntityError) {
     return <ErrorBanner error={challengesEntityError} />
@@ -123,21 +136,16 @@ export function ChallengesCardDeck() {
   if (challengesError) {
     return <ErrorBanner error={challengesError} />
   }
-  if (gcOrgError) {
-    return <ErrorBanner error={gcOrgError} />
+  if (gcDataSetError) {
+    return <ErrorBanner error={gcDataSetError} />
   }
   const isLoading =
     isLoadingChallengesTableQuery ||
     isLoadingChallengesEntity ||
-    isLoadingOrgsTableQuery
+    isLoadingGCDataSetTableQuery
   if (isLoading) {
     return <div>Loading...</div>
   }
-
-  const orgs = {}
-  gcOrgData!.forEach(org => {
-    orgs[org[ORG_TABLE_COLUMN_NAMES.ID]] = org
-  })
 
   const challengeCards: CardDeckCardProps[] = challengesData.map(challenge => {
     const org = orgs[challenge[CHALLENGES_TABLE_COLUMN_NAMES.ORG_ID]]
