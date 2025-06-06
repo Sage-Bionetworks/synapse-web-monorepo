@@ -3,13 +3,19 @@ import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-conf
 import { RouteObject } from 'react-router'
 //import header images for Resources pages
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
+import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
 
 //TO DO: help page button url(s), remove first child h2 padding-top or find some other fix, add input for header images
 
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: <App />,
+    element: (
+      <App>
+        {/* PORTALS-3627 */}
+        <RepositoryUnderReviewAlert portalSpecificDisclaimer="This repository is developed by Sage Bionetworks to host and share resources related to ALS research, and remains fully operational. We continue to maintain and accept ALS-related data and resources throughout this review process." />
+      </App>
+    ),
     children: [
       ...sharedRoutes,
       {
