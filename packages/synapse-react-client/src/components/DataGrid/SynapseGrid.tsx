@@ -133,26 +133,7 @@ export function SynapseGrid({
   return (
     <SynapseContextProvider synapseContext={currentContext}>
       <div>
-        <h2>Synapse Grid</h2>
-
-        {/* Debug section */}
-        <div
-          style={{
-            fontSize: '0.8rem',
-            color: 'gray',
-            marginBottom: '1rem',
-            border: '1px solid #ccc',
-            padding: '1rem',
-          }}
-        >
-          <h4>Debug Info:</h4>
-          <p>Mutation Status: {createGridSession.status}</p>
-          <p>Stored Session ID: {sessionId || 'undefined'}</p>
-          <p>Computed Replica ID: {replicaId || 'undefined'}</p>
-          <p>WS Enabled: {wsEnabled ? 'Yes' : 'No'}</p>
-          <p>WS Connected: {wsConnected ? 'Yes' : 'No'}</p>
-          <p>WS Connecting: {wsConnecting ? 'Yes' : 'No'}</p>
-        </div>
+        <h2>Curator Grid PoC</h2>
 
         {/* Show loading state */}
         {isLoading && (
