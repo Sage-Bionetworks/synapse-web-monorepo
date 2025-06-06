@@ -7,10 +7,6 @@ import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import SynapseClient from '@/synapse-client/index'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 
-/**
- * useMutation wrapper for POST/grid/session/async/start and GET/grid/session/async/get/asyncToken
- * @param options
- */
 export const useCreateGridSession = (
   options?: Partial<
     UseMutationOptions<
@@ -24,22 +20,43 @@ export const useCreateGridSession = (
 
   return useMutation<CreateGridResponse, SynapseClientError, CreateGridRequest>(
     {
-      ...options,
       mutationFn: async (request: CreateGridRequest) => {
-        return await SynapseClient.GridSessionAsyncStart(request, accessToken)
-      },
-      onError: error => {
-        console.error('Grid session creation failed:', error)
-        if (options?.onError) {
-          options.onError(error)
+        console.log('=== MUTATION FUNCTION START ===')
+        console.log('Request:', request)
+        console.log('Access Token exists:', !!accessToken)
+
+        if (!accessToken) {
+          throw new Error('No access token available')
+        }
+
+        try {
+          console.log('Calling GridSessionAsyncStart...')
+          const result = await SynapseClient.GridSessionAsyncStart(
+            request,
+            accessToken,
+          )
+          console.log('GridSessionAsyncStart completed:', result)
+
+          // IMPORTANT: Make sure we return the result so React Query can store it
+          return result
+        } catch (error) {
+          console.error('GridSessionAsyncStart failed:', error)
+          throw error
         }
       },
-      onSuccess: data => {
-        console.log('Grid session created successfully:', data)
-        if (options?.onSuccess) {
-          options.onSuccess(data)
-        }
+      // Don't spread options first - let our callbacks take precedence
+      onError: (error, variables, context) => {
+        console.error('Mutation error:', error)
+        options?.onError?.(error, variables, context)
       },
+      onSuccess: (data, variables, context) => {
+        options?.onSuccess?.(data, variables, context)
+      },
+      onSettled: (data, error, variables, context) => {
+        options?.onSettled?.(data, error, variables, context)
+      },
+      // Spread user options after our callbacks so they can override if needed
+      ...options,
     },
   )
 }
