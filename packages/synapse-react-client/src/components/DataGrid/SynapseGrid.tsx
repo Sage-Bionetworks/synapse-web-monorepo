@@ -31,6 +31,7 @@ export function SynapseGrid({
   )
   const [replicaError, setReplicaError] = useState<string | null>(null)
   const [isCreatingReplica, setIsCreatingReplica] = useState(false)
+  const [mutationCompleted, setMutationCompleted] = useState(false)
 
   // ADD: State variables for loading and error states
   const [isLoading, setIsLoading] = useState(false)
@@ -38,9 +39,14 @@ export function SynapseGrid({
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const createGridSession = useCreateGridSession({
+    onMutate: () => {
+      setMutationCompleted(false)
+    },
     onSuccess: async response => {
       console.log('=== SESSION CREATION SUCCESS ===')
       console.log('Full response:', response)
+
+      setMutationCompleted(true)
 
       // Store the session ID immediately
       const sessionIdFromResponse = response.gridSession?.sessionId
@@ -102,7 +108,9 @@ export function SynapseGrid({
   // UPDATE: useEffect to manage loading and error states
   useEffect(() => {
     const loading =
-      createGridSession.isPending || isCreatingReplica || wsConnecting
+      (createGridSession.isPending && !mutationCompleted) ||
+      isCreatingReplica ||
+      wsConnecting
     const error = createGridSession.error || replicaError || wsError
 
     setIsLoading(loading)
@@ -128,6 +136,7 @@ export function SynapseGrid({
     createGridSession.isPending,
     createGridSession.error,
     isCreatingReplica,
+    mutationCompleted,
     replicaError,
     wsConnecting,
     wsError,
