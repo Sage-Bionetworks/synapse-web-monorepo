@@ -18,15 +18,15 @@ import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 
-jest.mock('@/utils/functions/DateFormatter')
-jest.mock('@/synapse-queries/dataaccess/useDataAccessSubmission')
-jest.mock('@/components/UserOrTeamBadge/UserOrTeamBadge')
+vi.mock('@/utils/functions/DateFormatter')
+vi.mock('@/synapse-queries/dataaccess/useDataAccessSubmission')
+vi.mock('@/components/UserOrTeamBadge/UserOrTeamBadge')
 
-jest.mocked(formatDate).mockReturnValue('mock formatted date')
-jest
-  .mocked(UserOrTeamBadge)
-  .mockImplementation(() => <span data-testid={'UserOrTeamBadge'} />)
-const mockUseSearchAccessSubmissionUserRequestsInfinite = jest.mocked(
+vi.mocked(formatDate).mockReturnValue('mock formatted date')
+vi.mocked(UserOrTeamBadge).mockImplementation(() => (
+  <span data-testid={'UserOrTeamBadge'} />
+))
+const mockUseSearchAccessSubmissionUserRequestsInfinite = vi.mocked(
   useSearchAccessSubmissionUserRequestsInfinite,
 )
 

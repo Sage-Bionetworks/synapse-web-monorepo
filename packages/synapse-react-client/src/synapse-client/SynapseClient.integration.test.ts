@@ -17,7 +17,7 @@ describe('SynapseClient integration tests', () => {
     const responseBodyServerEndpoint = `/repo/v1/entity/123/table/query/async/get/:jobId`
     const responseBodyRequestEndpoint = `/repo/v1/entity/123/table/query/async/get/${asyncJobId}`
     const accessToken = `synapseAccessToken`
-    const setCurrentAsyncStatus = jest.fn()
+    const setCurrentAsyncStatus = vi.fn()
 
     const resultObject = { arbitrary: 'data' }
 
@@ -33,10 +33,10 @@ describe('SynapseClient integration tests', () => {
       jobState: 'FAILED',
     }
 
-    const requestCaptor = jest.fn()
+    const requestCaptor = vi.fn()
 
     beforeEach(() => {
-      jest.clearAllMocks()
+      vi.clearAllMocks()
     })
 
     it('Returns a complete response', async () => {

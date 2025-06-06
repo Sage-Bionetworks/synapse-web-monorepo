@@ -5,31 +5,29 @@ import { useQueryContext } from '../QueryContext/QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/index'
 import SqlEditor from './SqlEditor'
 
-jest.mock('../QueryContext/QueryContext', () => ({
-  useQueryContext: jest.fn(),
+vi.mock('../QueryContext/QueryContext', () => ({
+  useQueryContext: vi.fn(),
 }))
 
-jest.mock('../QueryVisualizationWrapper/QueryVisualizationContext', () => ({
-  useQueryVisualizationContext: jest.fn(),
+vi.mock('../QueryVisualizationWrapper/QueryVisualizationContext', () => ({
+  useQueryVisualizationContext: vi.fn(),
 }))
 
-const mockResetErrorBoundary = jest.fn()
+const mockResetErrorBoundary = vi.fn()
 const renderComponent = () => {
   return render(<SqlEditor resetErrorBoundary={mockResetErrorBoundary} />, {
     wrapper: createWrapper(),
   })
 }
 
-const mockExecuteQueryRequest = jest.fn()
-const mockGetLastQueryRequest = jest.fn()
-const mockUseQueryContext = jest.mocked(useQueryContext)
-const mockUseQueryVisualizationContext = jest.mocked(
-  useQueryVisualizationContext,
-)
+const mockExecuteQueryRequest = vi.fn()
+const mockGetLastQueryRequest = vi.fn()
+const mockUseQueryContext = vi.mocked(useQueryContext)
+const mockUseQueryVisualizationContext = vi.mocked(useQueryVisualizationContext)
 
 describe('SqlEditor tests', () => {
   beforeEach(() => {
-    jest.resetAllMocks()
+    vi.resetAllMocks()
     mockGetLastQueryRequest.mockReturnValue({
       query: {},
     })
@@ -62,7 +60,7 @@ describe('SqlEditor tests', () => {
     await userEvent.type(box, newSql + '{enter}')
 
     expect(mockExecuteQueryRequest).toHaveBeenCalled()
-    const queryTransformFn = mockExecuteQueryRequest.mock.lastCall[0]
+    const queryTransformFn = mockExecuteQueryRequest.mock.lastCall![0]
     expect(typeof queryTransformFn).toBe('function')
     expect(mockResetErrorBoundary).toHaveBeenCalled()
     expect(

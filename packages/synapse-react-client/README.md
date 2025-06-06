@@ -119,7 +119,7 @@ Launches the test runner in the interactive watch mode.
 
 Links to Resources on Testing:
 
-- Jest: https://jestjs.io/
+- Vitest: https://vitest.dev/
 - React Testing Library: https://testing-library.com/docs/react-testing-library/intro
 
 ### `pnpm build`

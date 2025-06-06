@@ -10,14 +10,14 @@ const token: string = '123444'
 
 describe('SynapseFormUtils', () => {
   test('getFileEntityData', async () => {
-    jest.spyOn(SynapseClient, 'getEntity').mockResolvedValue(mockFileEntity)
-    jest.spyOn(SynapseClient, 'getFileResult').mockResolvedValue({
+    vi.spyOn(SynapseClient, 'getEntity').mockResolvedValue(mockFileEntity)
+    vi.spyOn(SynapseClient, 'getFileResult').mockResolvedValue({
       fileHandleId: mockFileHandle.id,
       fileHandle: mockFileHandle,
     })
-    jest
-      .spyOn(SynapseClient, 'getFileHandleContent')
-      .mockResolvedValue(JSON.stringify(mockFormSchema))
+    vi.spyOn(SynapseClient, 'getFileHandleContent').mockResolvedValue(
+      JSON.stringify(mockFormSchema),
+    )
 
     const result = await getFileEntityData(token, '123444')
     expect(result).toEqual({ content: mockFormSchema, version: 3 })

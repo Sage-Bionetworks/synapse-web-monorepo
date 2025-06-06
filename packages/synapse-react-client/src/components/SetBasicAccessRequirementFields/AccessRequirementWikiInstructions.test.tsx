@@ -18,8 +18,8 @@ import {
   AccessRequirementWikiInstructionsProps,
 } from './AccessRequirementWikiInstructions'
 
-const createWikiPageSpy = jest.spyOn(SynapseClient, 'createWikiPage')
-const updateWikiPageSpy = jest.spyOn(SynapseClient, 'updateWikiPage')
+const createWikiPageSpy = vi.spyOn(SynapseClient, 'createWikiPage')
+const updateWikiPageSpy = vi.spyOn(SynapseClient, 'updateWikiPage')
 
 function renderComponent(props: AccessRequirementWikiInstructionsProps) {
   return render(<AccessRequirementWikiInstructions {...props} />, {
@@ -37,7 +37,7 @@ function setUp(props: AccessRequirementWikiInstructionsProps) {
 }
 
 describe('AccessRequirementWikiInstructions', () => {
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => vi.clearAllMocks())
   beforeAll(() => server.listen())
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())

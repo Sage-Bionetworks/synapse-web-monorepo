@@ -9,11 +9,11 @@ import ExportToAnalysisPlatformDialog, {
 } from './ExportToAnalysisPlatformDialog'
 import ExternalPlatformActionsRequiredPrecheck from './ExternalPlatformActionsRequiredPrecheck'
 
-jest.mock('../../QueryVisualizationWrapper/QueryVisualizationContext')
-jest.mock('./ExternalPlatformActionsRequiredPrecheck')
+vi.mock('../../QueryVisualizationWrapper/QueryVisualizationContext')
+vi.mock('./ExternalPlatformActionsRequiredPrecheck')
 
-const mockSetIsShowingExportToAnalysisPlatformModal = jest.fn()
-const mockExternalPlatformActionsRequiredPrecheck = jest
+const mockSetIsShowingExportToAnalysisPlatformModal = vi.fn()
+const mockExternalPlatformActionsRequiredPrecheck = vi
   .mocked(ExternalPlatformActionsRequiredPrecheck)
   .mockReturnValue(
     <div data-testid={'ExternalPlatformActionsRequiredPrecheck'} />,
@@ -25,18 +25,18 @@ const mockQueryVisualizationContext: QueryVisualizationContextType = {
     mockSetIsShowingExportToAnalysisPlatformModal,
   enabledExternalAnalysisPlatforms: ['cavatica', 'terra', 'adworkbench'],
   // rest are unused
-  NoContentPlaceholder: jest.fn(),
+  NoContentPlaceholder: vi.fn(),
   columnsToShowInTable: [],
-  getColumnDisplayName: jest.fn(),
-  getDisplayValue: jest.fn(),
-  getHelpText: jest.fn(),
-  setColumnsToShowInTable: jest.fn(),
-  setShowCopyToClipboard: jest.fn(),
-  setShowDownloadConfirmation: jest.fn(),
-  setShowFacetFilter: jest.fn(),
-  setShowPlots: jest.fn(),
-  setShowSearchBar: jest.fn(),
-  setShowSqlEditor: jest.fn(),
+  getColumnDisplayName: vi.fn(),
+  getDisplayValue: vi.fn(),
+  getHelpText: vi.fn(),
+  setColumnsToShowInTable: vi.fn(),
+  setShowCopyToClipboard: vi.fn(),
+  setShowDownloadConfirmation: vi.fn(),
+  setShowFacetFilter: vi.fn(),
+  setShowPlots: vi.fn(),
+  setShowSearchBar: vi.fn(),
+  setShowSqlEditor: vi.fn(),
   showCopyToClipboard: false,
   showDownloadConfirmation: false,
   showFacetFilter: false,
@@ -47,7 +47,7 @@ const mockQueryVisualizationContext: QueryVisualizationContextType = {
   hideSearchBarControl: false,
 }
 
-const mockUseQueryVisualizationContext = jest
+const mockUseQueryVisualizationContext = vi
   .mocked(useQueryVisualizationContext)
   .mockReturnValue(mockQueryVisualizationContext)
 
@@ -60,7 +60,7 @@ let user = userEvent.setup()
 
 describe('ExportToAnalysisPlatformDialog tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     user = userEvent.setup()
   })
 
@@ -114,7 +114,7 @@ describe('ExportToAnalysisPlatformDialog tests', () => {
       )
 
       const finalConfirmButtonText = 'mock confirm button text'
-      const finalConfirmButtonClickHandler = jest.fn()
+      const finalConfirmButtonClickHandler = vi.fn()
 
       act(() => {
         mockExternalPlatformActionsRequiredPrecheck.mock.lastCall![0].onConfirmButtonPropsChange(

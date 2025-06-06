@@ -5,12 +5,13 @@ import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { act, fireEvent, render } from '@testing-library/react'
 import TableFeedCards from './TableFeedCards'
 
-jest.mock('../../synapse-client', () => ({
-  getQueryTableResults: jest.fn(),
+vi.mock('../../synapse-client/SynapseClient', async importOriginal => ({
+  ...(await importOriginal()),
+  getQueryTableResults: vi.fn(),
 }))
 
 const data = syn23519444Json as QueryResultBundle
-const mockGetQueryTableResults = jest.mocked(SynapseClient.getQueryTableResults)
+const mockGetQueryTableResults = vi.mocked(SynapseClient.getQueryTableResults)
 
 let container: HTMLElement
 

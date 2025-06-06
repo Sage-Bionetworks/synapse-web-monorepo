@@ -50,10 +50,10 @@ async function setUp(props: JSONArrayEditorModalProps) {
 }
 
 describe('JSONArrayEditorModal', () => {
-  const onConfirm = jest.fn()
-  const onCancel = jest.fn()
+  const onConfirm = vi.fn()
+  const onCancel = vi.fn()
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   it('Can enter values', async () => {
     const { user, addFirstItemButton, confirmModalButton } = await setUp({

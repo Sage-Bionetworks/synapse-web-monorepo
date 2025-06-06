@@ -17,8 +17,8 @@ import { SynapseNavDrawer, SynapseNavDrawerProps } from './SynapseNavDrawer'
 
 const defaultProps: SynapseNavDrawerProps = {
   initIsOpen: false,
-  signoutCallback: jest.fn(),
-  gotoPlace: jest.fn(),
+  signoutCallback: vi.fn(),
+  gotoPlace: vi.fn(),
 }
 
 function renderComponent(wrapperProps?: Partial<SynapseContextType>) {
@@ -29,7 +29,7 @@ function renderComponent(wrapperProps?: Partial<SynapseContextType>) {
 
 const numFilesInDownloadList = 10
 
-jest.spyOn(SynapseClient, 'getDownloadListStatistics').mockResolvedValue({
+vi.spyOn(SynapseClient, 'getDownloadListStatistics').mockResolvedValue({
   concreteType:
     'org.sagebionetworks.repo.model.download.FilesStatisticsResponse',
   totalNumberOfFiles: numFilesInDownloadList,
@@ -54,11 +54,11 @@ const openSubmissions: SubmissionSearchResult[] = [
   },
 ]
 
-jest.spyOn(SynapseClient, 'searchAccessSubmission').mockResolvedValue({
+vi.spyOn(SynapseClient, 'searchAccessSubmission').mockResolvedValue({
   results: openSubmissions,
 })
 
-const mockGetUserBundle = jest.spyOn(SynapseClient, 'getMyUserBundle')
+const mockGetUserBundle = vi.spyOn(SynapseClient, 'getMyUserBundle')
 
 describe('SynapseNavDrawer tests', () => {
   it('Shows logged-out user items', async () => {

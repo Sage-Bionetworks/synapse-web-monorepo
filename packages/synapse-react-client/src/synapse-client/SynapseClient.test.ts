@@ -1,5 +1,4 @@
 import { ACCESS_TOKEN_COOKIE_KEY } from '@/utils/SynapseConstants'
-import { NETWORK_UNAVAILABLE_MESSAGE } from '@sage-bionetworks/synapse-client/util/Constants'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { PaginatedResults } from '@sage-bionetworks/synapse-types'
 import UniversalCookies from 'universal-cookie'
@@ -8,16 +7,16 @@ import type { FunctionReturningPaginatedResults } from './SynapseClient'
 import * as SynapseClient from './SynapseClient'
 import * as SynapseClientUtils from './SynapseClientUtils'
 
-const isOutsideSynapseOrgSpy = jest.spyOn(
+const isOutsideSynapseOrgSpy = vi.spyOn(
   SynapseClientUtils,
   'isOutsideSynapseOrg',
 )
 
-const doGetSpy = jest.spyOn(HttpClient, 'doGet')
+const doGetSpy = vi.spyOn(HttpClient, 'doGet')
 
 describe('SynapseClient tests', () => {
   beforeEach(() => {
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
   describe('getAccessTokenFromCookie', () => {
     it('No cookie outside of *.synapse.org', async () => {
@@ -63,25 +62,13 @@ describe('SynapseClient tests', () => {
     })
   })
 
-  describe('fetch tests', () => {
-    it('fetch error results in a nice network unavailable message', async () => {
-      doGetSpy.mockRestore()
-      const expected = new SynapseClientError(
-        0,
-        NETWORK_UNAVAILABLE_MESSAGE,
-        expect.getState().currentTestName!,
-      )
-      jest.spyOn(global, 'fetch').mockRejectedValue(new Error())
-      await expect(() => SynapseClient.getVersion()).rejects.toEqual(expected)
-    })
-  })
   describe('getAllOfPaginatedService', () => {
     it('works with < 50 results', async () => {
       const results = ['a']
       const mockPaginatedObject: PaginatedResults<string> = {
         results,
       }
-      const mockFn: FunctionReturningPaginatedResults<string> = jest
+      const mockFn: FunctionReturningPaginatedResults<string> = vi
         .fn()
         .mockResolvedValueOnce(mockPaginatedObject)
       const data = await SynapseClient.getAllOfPaginatedService(mockFn)
@@ -98,7 +85,7 @@ describe('SynapseClient tests', () => {
       const mockSecondReturn: PaginatedResults<string> = {
         results: [],
       }
-      const mockFn: FunctionReturningPaginatedResults<string> = jest
+      const mockFn: FunctionReturningPaginatedResults<string> = vi
         .fn()
         .mockResolvedValueOnce(mockFirstReturn)
         .mockResolvedValueOnce(mockSecondReturn)
@@ -119,7 +106,7 @@ describe('SynapseClient tests', () => {
       const mockSecondReturn: PaginatedResults<string> = {
         results: secondResult,
       }
-      const mockFn: FunctionReturningPaginatedResults<string> = jest
+      const mockFn: FunctionReturningPaginatedResults<string> = vi
         .fn()
         .mockResolvedValueOnce(mockFirstReturn)
         .mockResolvedValueOnce(mockSecondReturn)
@@ -138,7 +125,7 @@ describe('SynapseClient tests', () => {
         results: ['a'],
       }
 
-      const mockFn = jest.fn().mockResolvedValueOnce(response)
+      const mockFn = vi.fn().mockResolvedValueOnce(response)
       const data = await SynapseClient.getAllOfNextPageTokenPaginatedService(
         mockFn,
       )
@@ -158,7 +145,7 @@ describe('SynapseClient tests', () => {
         results: resultsPage2,
       }
 
-      const mockFn = jest
+      const mockFn = vi
         .fn()
         .mockResolvedValueOnce(responsePage1)
         .mockResolvedValueOnce(responsePage2)

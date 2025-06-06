@@ -28,7 +28,7 @@ function renderComponent(
   return renderReturn
 }
 
-const mockOnHide = jest.fn()
+const mockOnHide = vi.fn()
 
 const defaultProps: UnmanagedACTAccessRequirementItemProps = {
   accessRequirement: mockACTAccessRequirement,
@@ -37,7 +37,7 @@ const defaultProps: UnmanagedACTAccessRequirementItemProps = {
   onHide: mockOnHide,
 }
 
-const mockGetAccessRequirementStatus = jest.spyOn(
+const mockGetAccessRequirementStatus = vi.spyOn(
   SynapseClient,
   'getAccessRequirementStatus',
 )

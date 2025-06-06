@@ -1,7 +1,7 @@
 import AccessRequirementList from '@/components/AccessRequirementList/AccessRequirementList'
 import { CancelDataAccessRequestConfirmationModal } from '@/components/dataaccess/SubmissionPage/CancelDataAccessRequestConfirmationModal'
 import { ApproveSubmissionConfirmationModal } from '@/components/dataaccess/SubmissionPage/ApproveSubmissionConfirmationModal'
-import { displayToast } from '@/components/index'
+import { displayToast } from '@/components/ToastMessage'
 import {
   useGetAccessRequirementACL,
   useGetAccessRequirements,

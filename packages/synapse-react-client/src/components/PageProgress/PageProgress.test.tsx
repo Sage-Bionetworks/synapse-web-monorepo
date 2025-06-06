@@ -19,8 +19,8 @@ function setUp(props: PageProgressProps) {
 }
 
 describe('Page Progress: basic functionality', () => {
-  const onBackButtonClicked = jest.fn()
-  const onNextButtonClicked = jest.fn()
+  const onBackButtonClicked = vi.fn()
+  const onNextButtonClicked = vi.fn()
   const props: PageProgressProps = {
     barColor: '',
     barPercent: 30,

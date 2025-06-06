@@ -1,5 +1,5 @@
 import { DialogBase } from '@/components/DialogBase'
-import { displayToast } from '@/components/index'
+import { displayToast } from '@/components/ToastMessage'
 import { useUpdateDataAccessSubmissionState } from '@/synapse-queries/index'
 import { Alert, Button, Typography } from '@mui/material'
 import { SubmissionState } from '@sage-bionetworks/synapse-types'

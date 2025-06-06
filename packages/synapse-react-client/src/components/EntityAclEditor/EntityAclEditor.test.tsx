@@ -52,12 +52,12 @@ import EntityAclEditor, {
   EntityAclEditorProps,
 } from './EntityAclEditor'
 
-const onUpdateSuccess = jest.fn()
-const onCanSaveChange = jest.fn()
-const createAclSpy = jest.spyOn(SynapseClient, 'createEntityACL')
-const updateAclSpy = jest.spyOn(SynapseClient, 'updateEntityACL')
-const deleteAclSpy = jest.spyOn(SynapseClient, 'deleteEntityACL')
-const sendMessageSpy = jest.spyOn(SynapseClient, 'sendMessage')
+const onUpdateSuccess = vi.fn()
+const onCanSaveChange = vi.fn()
+const createAclSpy = vi.spyOn(SynapseClient, 'createEntityACL')
+const updateAclSpy = vi.spyOn(SynapseClient, 'updateEntityACL')
+const deleteAclSpy = vi.spyOn(SynapseClient, 'deleteEntityACL')
+const sendMessageSpy = vi.spyOn(SynapseClient, 'sendMessage')
 
 function renderComponent(props: EntityAclEditorProps) {
   const ref = createRef<EntityAclEditorHandle>()
@@ -119,7 +119,7 @@ function verifyInheritsSharingSettingsPostUploadMessage() {
 }
 
 describe('EntityAclEditor', () => {
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => vi.clearAllMocks())
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())

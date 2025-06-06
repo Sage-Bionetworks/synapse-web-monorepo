@@ -11,7 +11,7 @@ describe('test EvaluationRoundEditorList', () => {
   const nextPageToken = 'firstPage'
 
   let evaluationRoundsList: EvaluationRound[]
-  let mockGetEvaulationsList: jest.Mock
+  let mockGetEvaulationsList = vi.fn()
 
   beforeEach(() => {
     evaluationRoundsList = [
@@ -48,8 +48,8 @@ describe('test EvaluationRoundEditorList', () => {
       },
     ]
 
-    mockGetEvaulationsList = jest.fn()
-    const spyFetchEvaluationList = jest.spyOn(
+    mockGetEvaulationsList = vi.fn()
+    const spyFetchEvaluationList = vi.spyOn(
       SynapseClient,
       'getEvaluationRoundsList',
     )
@@ -64,7 +64,7 @@ describe('test EvaluationRoundEditorList', () => {
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('error fetching page', async () => {

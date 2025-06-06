@@ -220,12 +220,6 @@ describe('facet support', () => {
     })
   })
 
-  // it('facets are unavailable, but would be relevant to the resultset schema', () => {
-  //   expect(isFacetCountInSyncWithRowData('select * from syn123')).toEqual(true)
-  //   expect(isFacetCountInSyncWithRowData('select * from syn123 where a=\'b\'')).toEqual(true)
-  //   expect(isFacetCountInSyncWithRowData('select count(id) from syn123 group by study')).toEqual(false)
-  // })
-
   describe('canTableQueryBeAddedToDownloadList', () => {
     test('undefined entity', () => {
       expect(canTableQueryBeAddedToDownloadList(undefined)).toEqual(false)

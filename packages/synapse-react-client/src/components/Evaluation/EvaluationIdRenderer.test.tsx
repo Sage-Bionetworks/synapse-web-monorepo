@@ -10,9 +10,7 @@ import EvaluationIdRenderer, {
   EvaluationIdRendererProps,
 } from '../SynapseTable/SynapseTableCell/EvaluationIdRenderer'
 
-jest
-  .spyOn(SynapseClient, 'getEvaluation')
-  .mockResolvedValue(mockEvaluationQueue)
+vi.spyOn(SynapseClient, 'getEvaluation').mockResolvedValue(mockEvaluationQueue)
 
 describe('EvaluationIdRenderer: basic functionality', () => {
   const props: EvaluationIdRendererProps = {

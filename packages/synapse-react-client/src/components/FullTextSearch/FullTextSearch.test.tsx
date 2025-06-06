@@ -45,14 +45,14 @@ const renderComponent = (
   )
 }
 
-const mockExecuteQueryRequest = jest.fn()
-const mockGetLastQueryRequest = jest.fn()
+const mockExecuteQueryRequest = vi.fn()
+const mockGetLastQueryRequest = vi.fn()
 
 const queryContext: Partial<QueryContextType> = {
   executeQueryRequest: mockExecuteQueryRequest,
   queryMetadataQueryOptions: {
     queryKey: ['queryMetadataQueryOptions'],
-    queryFn: jest.fn().mockResolvedValue(mockQueryResultBundle),
+    queryFn: vi.fn().mockResolvedValue(mockQueryResultBundle),
   },
 }
 
@@ -67,7 +67,7 @@ describe('FullTextSearch tests', () => {
     registerTableQueryResult(initialQueryRequest.query, mockQueryResultBundle)
   })
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockGetLastQueryRequest.mockReturnValue({
       query: {},
     })
@@ -114,7 +114,7 @@ describe('FullTextSearch tests', () => {
     it('adds the appropriate filter when searching', () => {
       const columnModels = mockQueryResultBundle.columnModels
       const searchQuery = 'NF1'
-      const setSearchText = jest.fn()
+      const setSearchText = vi.fn()
       const initialRequest: QueryBundleRequest = {
         entityId: 'syn123',
         query: {
@@ -151,7 +151,7 @@ describe('FullTextSearch tests', () => {
     it('adds the appropriate filter when searching in BOOLEAN mode', () => {
       const columnModels = mockQueryResultBundle.columnModels
       const searchQuery = 'nf "drug resistence"'
-      const setSearchText = jest.fn()
+      const setSearchText = vi.fn()
       const booleanModeDistance = 10
       const ftsConfig: FTSConfig = {
         textMatchesMode: 'BOOLEAN',
@@ -195,7 +195,7 @@ describe('FullTextSearch tests', () => {
       const columnModels = mockQueryResultBundle.columnModels
       const searchQuery =
         '    a long search-term sentence  that exceeds the     distance set (by the config)       '
-      const setSearchText = jest.fn()
+      const setSearchText = vi.fn()
       const booleanModeDistance = 3
       const ftsConfig: FTSConfig = {
         textMatchesMode: 'BOOLEAN',
@@ -238,7 +238,7 @@ describe('FullTextSearch tests', () => {
     it('adds the appropriate QueryFilter when searching for Synapse ID', () => {
       const columnModels = mockQueryResultBundle.columnModels
       const searchQuery = 'syn123'
-      const setSearchText = jest.fn()
+      const setSearchText = vi.fn()
       const initialRequest: QueryBundleRequest = {
         entityId: 'syn123',
         query: {

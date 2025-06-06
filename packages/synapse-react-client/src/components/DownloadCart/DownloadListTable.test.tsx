@@ -6,20 +6,30 @@ import {
   AvailableFilesResponse,
   DownloadListItemResult,
 } from '@sage-bionetworks/synapse-types'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import DownloadListTableV2 from './DownloadListTable'
+import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
-jest.spyOn(SynapseClient, 'removeItemsFromDownloadListV2').mockResolvedValue({
+vi.mock('@/utils/functions/StringUtils', async importOriginal => {
+  return {
+    ...(await importOriginal()),
+    copyStringToClipboard: vi.fn().mockResolvedValue('copied'),
+  }
+})
+
+const mockCopyStringToClipboard = vi.mocked(copyStringToClipboard)
+
+vi.spyOn(SynapseClient, 'removeItemsFromDownloadListV2').mockResolvedValue({
   numberOfFilesRemoved: 2,
 })
 
-jest
-  .spyOn(SynapseClient, 'getUserProfileById')
-  .mockResolvedValue(mockUserProfileData)
-jest
-  .spyOn(SynapseClient, 'getProfilePicPreviewPresignedUrl')
-  .mockResolvedValue(null)
+vi.spyOn(SynapseClient, 'getUserProfileById').mockResolvedValue(
+  mockUserProfileData,
+)
+vi.spyOn(SynapseClient, 'getProfilePicPreviewPresignedUrl').mockResolvedValue(
+  null,
+)
 
 const page1: DownloadListItemResult[] = [
   {
@@ -50,9 +60,8 @@ const page2: DownloadListItemResult[] = [
     isEligibleForPackaging: true,
   },
 ]
-jest
-  .spyOn(SynapseClient, 'getAvailableFilesToDownload')
-  .mockImplementation(request => {
+vi.spyOn(SynapseClient, 'getAvailableFilesToDownload').mockImplementation(
+  request => {
     let response: AvailableFilesResponse = {
       page: page1,
       nextPageToken: '50a0',
@@ -68,7 +77,8 @@ jest
       }
     }
     return Promise.resolve(response)
-  })
+  },
+)
 
 function renderComponent() {
   return render(
@@ -80,7 +90,7 @@ function renderComponent() {
 
 describe('DownloadListTable tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   it('loads more available download files when "show more" is clicked', async () => {
     renderComponent()
@@ -95,30 +105,16 @@ describe('DownloadListTable tests', () => {
     expect(fileEntity2).toHaveLength(1)
   })
   describe('Copy all Synapse IDs', () => {
-    const originalClipboard = { ...global.navigator.clipboard }
-    afterEach(() => {
-      Object.assign(navigator, {
-        clipboard: originalClipboard,
-      })
-    })
-
     it('should call clipboard.writeText with the expected Synapse IDs', async () => {
-      const mockWriteText = jest.fn()
-      mockWriteText.mockResolvedValue('copied')
-      const mockClipboard = {
-        writeText: mockWriteText,
-      }
-      Object.assign(navigator, {
-        clipboard: mockClipboard,
-      })
-
       renderComponent()
 
       const copySynIDsButton = await screen.findByTestId('copySynIdsButton')
       await userEvent.click(copySynIDsButton)
-
-      expect(mockWriteText).toHaveBeenCalled()
-      expect(mockWriteText).toHaveBeenCalledWith('syn1.1\nsyn2.3')
+      await waitFor(() =>
+        expect(mockCopyStringToClipboard).toHaveBeenCalledWith(
+          'syn1.1\nsyn2.3',
+        ),
+      )
     })
   })
 })

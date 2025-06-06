@@ -40,7 +40,7 @@ const page2: ProjectHeaderList = {
   nextPageToken: null,
 }
 
-const mockGetMyProjects = jest.spyOn(SynapseClient, 'getMyProjects')
+const mockGetMyProjects = vi.spyOn(SynapseClient, 'getMyProjects')
 
 describe('basic functionality', () => {
   it('correctly calls SynapseClient', async () => {

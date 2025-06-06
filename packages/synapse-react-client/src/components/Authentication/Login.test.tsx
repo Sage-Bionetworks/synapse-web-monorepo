@@ -45,15 +45,13 @@ function renderComponent(props: StandaloneLoginFormProps) {
 
 describe('StandaloneLoginForm', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     localStorage.removeItem(AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY)
   })
-  const callback = jest.fn()
+  const callback = vi.fn()
 
   it('Log in with username and password', async () => {
-    jest
-      .spyOn(SynapseClient, 'login')
-      .mockResolvedValue(successfulLoginResponse)
+    vi.spyOn(SynapseClient, 'login').mockResolvedValue(successfulLoginResponse)
 
     renderComponent({ sessionCallback: callback })
 
@@ -83,13 +81,13 @@ describe('StandaloneLoginForm', () => {
   })
 
   it('Log in with email + 2FA TOTP code', async () => {
-    jest
-      .spyOn(SynapseClient, 'login')
-      .mockResolvedValue(twoFactorAuthErrorResponse)
+    vi.spyOn(SynapseClient, 'login').mockResolvedValue(
+      twoFactorAuthErrorResponse,
+    )
 
-    jest
-      .spyOn(SynapseClient, 'loginWith2fa')
-      .mockResolvedValue(successfulLoginResponse)
+    vi.spyOn(SynapseClient, 'loginWith2fa').mockResolvedValue(
+      successfulLoginResponse,
+    )
 
     renderComponent({ sessionCallback: callback })
 
@@ -140,13 +138,13 @@ describe('StandaloneLoginForm', () => {
   })
 
   it('Log in with email + 2FA recovery code', async () => {
-    jest
-      .spyOn(SynapseClient, 'login')
-      .mockResolvedValue(twoFactorAuthErrorResponse)
+    vi.spyOn(SynapseClient, 'login').mockResolvedValue(
+      twoFactorAuthErrorResponse,
+    )
 
-    jest
-      .spyOn(SynapseClient, 'loginWith2fa')
-      .mockResolvedValue(successfulLoginResponse)
+    vi.spyOn(SynapseClient, 'loginWith2fa').mockResolvedValue(
+      successfulLoginResponse,
+    )
 
     renderComponent({ sessionCallback: callback })
 
@@ -193,9 +191,9 @@ describe('StandaloneLoginForm', () => {
   })
 
   it('Log in with 2FA code supplied via props', async () => {
-    jest
-      .spyOn(SynapseClient, 'loginWith2fa')
-      .mockResolvedValue(successfulLoginResponse)
+    vi.spyOn(SynapseClient, 'loginWith2fa').mockResolvedValue(
+      successfulLoginResponse,
+    )
 
     renderComponent({
       sessionCallback: callback,
@@ -224,7 +222,7 @@ describe('StandaloneLoginForm', () => {
   })
 
   it('Log in with weak password', async () => {
-    jest.spyOn(SynapseClient, 'login').mockRejectedValue({
+    vi.spyOn(SynapseClient, 'login').mockRejectedValue({
       reason: 'weak pw',
       errorResponse: weakPasswordErrorResponse,
     })

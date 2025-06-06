@@ -12,8 +12,8 @@ import OrientationBanner, {
   OrientationBannerProps,
 } from './OrientationBanner'
 
-const onPrimaryButtonClicked = jest.fn()
-window.open = jest.fn()
+const onPrimaryButtonClicked = vi.fn()
+window.open = vi.fn()
 
 const defaultProps = {
   name: 'Projects',
@@ -67,7 +67,7 @@ function setUp(
 
 describe('OrientationBanner tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   afterEach(() => {
     if (localStorage.getItem(defaultStorageId)) {

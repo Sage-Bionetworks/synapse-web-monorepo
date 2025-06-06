@@ -10,18 +10,18 @@ import {
   usePrepareFileEntityUpload,
 } from './usePrepareFileEntityUpload'
 
-const mockUseCreatePathsAndGetParentId = jest.spyOn(
+const mockUseCreatePathsAndGetParentId = vi.spyOn(
   UseCreatePathsAndGetParentIdModule,
   'useCreatePathsAndGetParentId',
 )
-const mockGetFileEntityIdWithSameName = jest.spyOn(
+const mockGetFileEntityIdWithSameName = vi.spyOn(
   GetFileEntityIdWithSameNameModule,
   'getFileEntityIdWithSameName',
 )
 
 describe('usePrepareFileEntityUpload', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   function renderHook() {

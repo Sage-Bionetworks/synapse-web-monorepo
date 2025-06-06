@@ -7,28 +7,28 @@ import { act, renderHook as _renderHook } from '@testing-library/react'
 import * as UploadToS3Module from './UploadToS3'
 import { useDirectUploadToS3 } from './useDirectUploadToS3'
 
-jest.mock('@aws-sdk/lib-storage', () => {
+vi.mock('@aws-sdk/lib-storage', () => {
   return {
-    Upload: jest.fn().mockImplementation(() => {
+    Upload: vi.fn().mockImplementation(() => {
       return {
-        on: jest.fn(),
-        done: jest.fn(),
+        on: vi.fn(),
+        done: vi.fn(),
       }
     }),
   }
 })
 
-const mockUpload = jest.mocked(Upload)
+const mockUpload = vi.mocked(Upload)
 
-const uploadToS3Spy = jest.spyOn(UploadToS3Module, 'uploadToS3')
-const createExternalFileHandleSpy = jest.spyOn(
+const uploadToS3Spy = vi.spyOn(UploadToS3Module, 'uploadToS3')
+const createExternalFileHandleSpy = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.fileServicesClient,
   'postFileV1ExternalFileHandle',
 )
 
 function renderHook() {
-  const mockOnSuccess = jest.fn()
-  const mockOnError = jest.fn()
+  const mockOnSuccess = vi.fn()
+  const mockOnError = vi.fn()
   const renderHookResult = _renderHook(
     () =>
       useDirectUploadToS3({
@@ -49,7 +49,7 @@ describe('useDirectUploadToS3', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('uploads a file to s3 and creates a file handle', async () => {
@@ -102,8 +102,8 @@ describe('useDirectUploadToS3', () => {
     // @ts-expect-error - Only implement required properties
     mockUpload.mockImplementation(() => {
       return {
-        on: jest.fn(),
-        done: jest.fn().mockRejectedValue(new Error('Access Denied')),
+        on: vi.fn(),
+        done: vi.fn().mockRejectedValue(new Error('Access Denied')),
       }
     })
 
