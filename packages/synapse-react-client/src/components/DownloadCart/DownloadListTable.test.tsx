@@ -6,7 +6,7 @@ import {
   AvailableFilesResponse,
   DownloadListItemResult,
 } from '@sage-bionetworks/synapse-types'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import DownloadListTableV2 from './DownloadListTable'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
@@ -110,8 +110,11 @@ describe('DownloadListTable tests', () => {
 
       const copySynIDsButton = await screen.findByTestId('copySynIdsButton')
       await userEvent.click(copySynIDsButton)
-
-      expect(mockCopyStringToClipboard).toHaveBeenCalledWith('syn1.1\nsyn2.3')
+      await waitFor(() =>
+        expect(mockCopyStringToClipboard).toHaveBeenCalledWith(
+          'syn1.1\nsyn2.3',
+        ),
+      )
     })
   })
 })
