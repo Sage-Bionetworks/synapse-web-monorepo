@@ -9,4 +9,5 @@ interface CustomMatchers<R = unknown> {
 declare module 'vitest' {
   type Assertion<T = any> = CustomMatchers<T>
   interface AsymmetricMatchersContaining extends CustomMatchers {}
+  type Matchers<T = any> = CustomMatchers<T>
 }
