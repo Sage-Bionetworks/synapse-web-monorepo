@@ -122,6 +122,17 @@ export function SynapseGrid({
     [wsConnected, sendMessage],
   )
 
+  // NEW: Function to send ping message
+  const handleSendPing = useCallback(() => {
+    if (wsConnected) {
+      const pingMessage = [8, 'ping']
+      console.log('Sending ping message:', pingMessage)
+      sendMessage(pingMessage)
+    } else {
+      console.warn('Cannot send ping: WebSocket not connected')
+    }
+  }, [wsConnected, sendMessage])
+
   const handleRetry = useCallback(() => {
     hasInitializedRef.current = false
     setSessionId(null)
@@ -192,19 +203,83 @@ export function SynapseGrid({
           </div>
         )}
 
-        {/* Show recent messages (for debugging) */}
+        {/* WebSocket Message */}
+        {wsConnected && (
+          <div
+            style={{
+              marginBottom: '1rem',
+              padding: '0.75rem',
+            }}
+          >
+            <button
+              onClick={handleSendPing}
+              style={{
+                padding: '0.375rem 0.75rem',
+                backgroundColor: '#4caf50',
+                color: 'white',
+                border: 'none',
+                borderRadius: '3px',
+                cursor: 'pointer',
+                fontSize: '0.8rem',
+              }}
+            >
+              📤 Send Ping [8, 'ping']
+            </button>
+          </div>
+        )}
+
+        {/* Server Messages */}
         {wsMessages.length > 0 && (
-          <div style={{ marginTop: '1rem' }}>
-            <h3>Recent Messages:</h3>
-            <div style={{ maxHeight: '200px', overflow: 'auto' }}>
-              {wsMessages.slice(-5).map((msg, index) => (
-                <div
-                  key={index}
-                  style={{ fontSize: '0.8rem', margin: '0.25rem 0' }}
-                >
-                  <strong>{msg.type}:</strong> {JSON.stringify(msg.data)}
-                </div>
-              ))}
+          <div
+            style={{
+              marginTop: '1rem',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              backgroundColor: '#fafafa',
+              maxHeight: '200px',
+              overflow: 'hidden',
+            }}
+          >
+            <h4
+              style={{
+                margin: '0',
+                padding: '0.5rem',
+                backgroundColor: '#f0f0f0',
+                borderBottom: '1px solid #ddd',
+                fontSize: '0.85rem',
+              }}
+            >
+              📨 Messages ({wsMessages.length})
+            </h4>
+            <div
+              style={{
+                maxHeight: '150px',
+                overflow: 'auto',
+                padding: '0.25rem',
+              }}
+            >
+              {wsMessages
+                .slice()
+                .reverse()
+                .map((msg, index) => (
+                  <div
+                    key={wsMessages.length - index - 1}
+                    style={{
+                      fontSize: '0.7rem',
+                      margin: '0.25rem 0',
+                      padding: '0.375rem',
+                      backgroundColor: 'white',
+                      border: '1px solid #eee',
+                      borderRadius: '2px',
+                      fontFamily: 'monospace',
+                      wordBreak: 'break-all',
+                    }}
+                  >
+                    <div style={{ color: '#555' }}>
+                      {JSON.stringify(msg, null, 2)}
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         )}
