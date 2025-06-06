@@ -5631,6 +5631,7 @@ export const getProjectStorageUsage = (
 }
 
 // https://rest-docs.synapse.org/rest/POST/grid/session/async/start.html
+// https://rest-docs.synapse.org/rest/GET/grid/session/async/get/asyncToken.html
 export const GridSessionAsyncStart = async (
   request?: CreateGridRequest,
   accessToken?: string,
