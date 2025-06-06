@@ -19,7 +19,7 @@ jobs:
       - name: Create .nojekyll file for GitHub Actions
         run: touch packages/synapse-react-client/storybook-static/.nojekyll
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4.4.1
+        uses: JamesIves/github-pages-deploy-action@v4.7.3
         with:
           branch: gh-pages
           folder: packages/synapse-react-client/storybook-static
