@@ -8,6 +8,22 @@ import {
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
 
+export function addDrsUriToSql(
+  originalSql: string,
+  selectColumns?: SelectColumn[],
+  fileIdColumnName?: string,
+  fileNameColumnName?: string,
+  fileVersionColumnName?: string,
+): string {
+  const selectColumnsList = selectColumns
+    ?.filter(col => col.name != 'name')
+    .map(col => `"${col.name}"`)
+    .join(',')
+  return `SELECT CONCAT('drs://repo-prod.prod.sagebase.org/syn', ${fileIdColumnName}, '.', ${fileVersionColumnName}) AS drs_uri, ${fileNameColumnName} as name, ${selectColumnsList} FROM ${originalSql.slice(
+    originalSql.toLowerCase().indexOf('from') + 'from'.length + 1,
+  )}`
+}
+
 export function useExportToCavatica(
   queryBundleRequest: QueryBundleRequest,
   selectColumns?: SelectColumn[],
@@ -22,14 +38,13 @@ export function useExportToCavatica(
   const originalSql = queryBundleRequest.query.sql
   return async () => {
     try {
-      // add drs_uri to select
-      const selectColumnsList = selectColumns
-        ?.filter(col => col.name != 'name')
-        .map(col => `"${col.name}"`)
-        .join(',')
-      const sql = `SELECT CONCAT('drs://repo-prod.prod.sagebase.org/syn', ${fileIdColumnName}, '.', ${fileVersionColumnName}) AS drs_uri, ${fileNameColumnName} as name, ${selectColumnsList} FROM ${originalSql.slice(
-        originalSql.toLowerCase().indexOf('from') + 'from'.length + 1,
-      )}`
+      const sql = addDrsUriToSql(
+        originalSql,
+        selectColumns,
+        fileIdColumnName,
+        fileNameColumnName,
+        fileVersionColumnName,
+      )
       const downloadFromTableRequest: DownloadFromTableRequest = {
         sql,
         entityId: parseEntityIdFromSqlStatement(sql),
