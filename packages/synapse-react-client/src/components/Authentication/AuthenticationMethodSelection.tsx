@@ -1,5 +1,5 @@
 import SynapseClient from '@/synapse-client'
-import { OAuth2State, SynapseClientError } from '@/utils'
+import { OAuth2State } from '@/utils'
 import {
   LOGIN_METHOD_EMAIL,
   LOGIN_METHOD_OAUTH2_GOOGLE,
@@ -9,6 +9,7 @@ import {
 import { Box } from '@mui/material'
 import { MouseEvent } from 'react'
 import LoginMethodButton from './LoginMethodButton'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 
 type AuthenticationMethodSelectionProps = {
   ssoRedirectUrl?: string

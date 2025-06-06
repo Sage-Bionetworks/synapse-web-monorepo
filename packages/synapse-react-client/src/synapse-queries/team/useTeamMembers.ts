@@ -1,5 +1,5 @@
 import SynapseClient, { deleteMemberFromTeam } from '@/synapse-client'
-import { SynapseClientError, useSynapseContext } from '@/utils'
+import { useSynapseContext } from '@/utils'
 import { Count } from '@sage-bionetworks/synapse-client'
 import {
   CreateMembershipInvitationRequest,
@@ -17,6 +17,7 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 
 export function useGetTeamMembers(
   teamId: string | number,

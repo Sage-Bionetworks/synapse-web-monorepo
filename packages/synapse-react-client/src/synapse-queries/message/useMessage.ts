@@ -1,7 +1,8 @@
 import SynapseClient from '@/synapse-client'
-import { SynapseClientError, useSynapseContext } from '@/utils'
+import { useSynapseContext } from '@/utils'
 import { MessageToUser } from '@sage-bionetworks/synapse-types'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 
 type SendMessageRequest = {
   recipients: string[]

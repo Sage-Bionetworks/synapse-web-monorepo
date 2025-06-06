@@ -9,7 +9,8 @@ import {
   useAddMemberToTeam,
   useGetMembershipStatus,
 } from '@/synapse-queries/team/useTeamMembers'
-import { SynapseClientError, useSynapseContext } from '@/utils'
+import { useSynapseContext } from '@/utils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { Alert, Button, Typography } from '@mui/material'
 import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
 import { isEmpty } from 'lodash-es'

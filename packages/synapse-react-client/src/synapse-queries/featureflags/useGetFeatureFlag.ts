@@ -1,5 +1,6 @@
 import SynapseClient from '@/synapse-client'
-import { SynapseClientError, useSynapseContext } from '@/utils'
+import { useSynapseContext } from '@/utils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { FeatureFlagEnum, FeatureFlags } from '@sage-bionetworks/synapse-types'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 

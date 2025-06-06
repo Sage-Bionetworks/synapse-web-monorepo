@@ -1,6 +1,7 @@
 import SynapseClient from '@/synapse-client'
-import { SynapseClientError, useSynapseContext } from '@/utils'
+import { useSynapseContext } from '@/utils'
 import { USER_BUNDLE_MASK_IS_CERTIFIED } from '@/utils/SynapseConstants'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { PassingRecord } from '@sage-bionetworks/synapse-types'
 import {
   useMutation,

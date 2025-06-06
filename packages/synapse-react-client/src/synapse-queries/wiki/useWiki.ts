@@ -5,11 +5,8 @@ import {
   getWikiPage,
   updateWikiPage,
 } from '@/synapse-client'
-import {
-  SynapseClientError,
-  SynapseContextType,
-  useSynapseContext,
-} from '@/utils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { SynapseContextType, useSynapseContext } from '@/utils'
 import {
   FileHandleResults,
   ObjectType,

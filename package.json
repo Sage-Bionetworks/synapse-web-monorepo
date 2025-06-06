@@ -58,7 +58,8 @@
       "react-hot-toast": "2.2.0",
       "postcss": "^8.4.31",
       "elliptic": "^6.6.1",
-      "cross-spawn": "^7.0.5"
+      "cross-spawn": "^7.0.5",
+      "vite": "npm:rolldown-vite@latest"
     }
   }
 }
