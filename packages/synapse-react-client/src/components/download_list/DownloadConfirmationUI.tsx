@@ -4,6 +4,8 @@ import { Alert, AlertProps, Box, Button, Typography } from '@mui/material'
 import { useMemo } from 'react'
 import SignInButton from '../SignInButton'
 import DownloadDetails from './DownloadDetails'
+import { displayToast } from '../ToastMessage'
+import { toast, ToastBar, Toaster } from 'react-hot-toast'
 
 enum StatusEnum {
   LOADING_INFO,
@@ -148,51 +150,61 @@ export function DownloadConfirmationUI(props: DownloadConfirmationUIProps) {
     downloadListStatistics,
   ])
 
-  return (
-    <>
-      <Alert
-        sx={{
-          pr: 4,
-          py: 1,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-        icon={StatusConstruct[status].severity === 'error' ? undefined : false}
-        severity={StatusConstruct[status].severity}
-        className={`download-confirmation`}
-        action={
-          <>
-            {status !== StatusEnum.PROCESSING && (
-              <Button variant="text" color="primary" onClick={onCancel}>
-                {StatusConstruct[status].closeText}
-              </Button>
-            )}
-
-            {(status === StatusEnum.INFO ||
-              status === StatusEnum.INFO_ITEMS_IN_LIST) && (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  onAddToDownloadCart()
-                }}
-                sx={{ ml: '5px' }}
-              >
-                Add
-              </Button>
-            )}
-          </>
-        }
-      >
-        <Box display="flex" alignItems={'center'} gap={1}>
-          <DownloadConfirmationContent
-            status={status}
-            fileCount={fileCount}
-            fileSize={fileSize}
-          />
-        </Box>
-      </Alert>
-    </>
+  toast(
+    <Box display="flex" alignItems={'center'} gap={1}>
+      <DownloadConfirmationContent
+        status={status}
+        fileCount={fileCount}
+        fileSize={fileSize}
+      />
+    </Box>,
   )
+
+  // return (
+  //   <>
+  //     <Alert
+  //       sx={{
+  //         pr: 4,
+  //         py: 1,
+  //         display: 'flex',
+  //         justifyContent: 'space-between',
+  //         alignItems: 'center',
+  //       }}
+  //       icon={StatusConstruct[status].severity === 'error' ? undefined : false}
+  //       severity={StatusConstruct[status].severity}
+  //       className={`download-confirmation`}
+  //       action={
+  //         <>
+  //           {status !== StatusEnum.PROCESSING && (
+  //             <Button variant="text" color="primary" onClick={onCancel}>
+  //               {StatusConstruct[status].closeText}
+  //             </Button>
+  //           )}
+
+  //           {(status === StatusEnum.INFO ||
+  //             status === StatusEnum.INFO_ITEMS_IN_LIST) && (
+  //             <Button
+  //               variant="contained"
+  //               color="primary"
+  //               onClick={() => {
+  //                 onAddToDownloadCart()
+  //               }}
+  //               sx={{ ml: '5px' }}
+  //             >
+  //               Add
+  //             </Button>
+  //           )}
+  //         </>
+  //       }
+  //     >
+  //       <Box display="flex" alignItems={'center'} gap={1}>
+  //         <DownloadConfirmationContent
+  //           status={status}
+  //           fileCount={fileCount}
+  //           fileSize={fileSize}
+  //         />
+  //       </Box>
+  //     </Alert>
+  //   </>
+  // )
 }
