@@ -4,6 +4,7 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import FullWidthAlert, {
   AlertButtonConfig,
 } from '../FullWidthAlert/FullWidthAlert'
+import { ReactNode } from 'react'
 
 export type ToastMessageProps = {
   text: string
@@ -79,7 +80,7 @@ type ToastMessageOptions = {
  * The rest of the options params are undefined by default.
  */
 export const displayToast = (
-  message: string,
+  message: ReactNode,
   variant?: 'info' | 'success' | 'warning' | 'danger',
   toastMessageOptions: ToastMessageOptions = {},
 ): (() => void) => {
