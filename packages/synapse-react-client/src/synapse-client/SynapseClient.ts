@@ -158,8 +158,11 @@ import {
   CreateChallengeTeamRequest,
   CreateDiscussionReply,
   CreateDiscussionThread,
+  CreateGridRequest,
+  CreateGridResponse,
   CreateMembershipInvitationRequest,
   CreateMembershipRequestRequest,
+  CreateReplicaResponse,
   CreateSubmissionRequest,
   CreateTeamRequest,
   Direction,
@@ -252,6 +255,7 @@ import {
   PaginatedIds,
   PaginatedResults,
   PassingRecord,
+  PresignedUrlResponse,
   PrincipalAliasRequest,
   PrincipalAliasResponse,
   ProjectFilesStatisticsRequest,
@@ -5624,4 +5628,70 @@ export const getProjectStorageUsage = (
     BackendDestinationEnum.REPO_ENDPOINT,
     { signal },
   )
+}
+
+// https://rest-docs.synapse.org/rest/POST/grid/session/async/start.html
+// https://rest-docs.synapse.org/rest/GET/grid/session/async/get/asyncToken.html
+export const GridSessionAsyncStart = async (
+  request?: CreateGridRequest,
+  accessToken?: string,
+): Promise<CreateGridResponse> => {
+  try {
+    // Step 1: Start the async job
+    const asyncJobId = await doPost<AsyncJobId>(
+      '/repo/v1/grid/session/async/start',
+      request || {},
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+
+    // Step 2: Poll for job completion and get the result
+    const result = await getAsyncResultBodyFromJobId<CreateGridResponse>(
+      asyncJobId.token,
+      `/repo/v1/grid/session/async/get/${asyncJobId.token}`,
+      accessToken,
+    )
+
+    return result
+  } catch (error) {
+    console.error('Error in GridSessionAsyncStart:', error)
+    throw error
+  }
+}
+
+// https://rest-docs.synapse.org/rest/POST/grid/sessionId/replica.html
+export const GridSessionReplica = async (
+  sessionId: string,
+  accessToken?: string,
+): Promise<CreateReplicaResponse> => {
+  try {
+    return await doPost<CreateReplicaResponse>(
+      `/repo/v1/grid/${sessionId}/replica`,
+      {},
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  } catch (error) {
+    console.error('Error in GridSessionReplica:', error)
+    throw error
+  }
+}
+
+// https://rest-docs.synapse.org/rest/POST/grid/sessionId/presigned/url.html
+export const GridSessionPresignedUrl = async (
+  sessionId: string,
+  replicaId: string,
+  accessToken?: string,
+): Promise<{ url: string; expiresOn: string }> => {
+  try {
+    return await doPost(
+      `/repo/v1/grid/${sessionId}/presigned/url`,
+      { sessionId, replicaId },
+      accessToken,
+      BackendDestinationEnum.REPO_ENDPOINT,
+    )
+  } catch (error) {
+    console.error('Error getting presigned URL:', error)
+    throw error
+  }
 }
