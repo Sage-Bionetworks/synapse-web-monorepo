@@ -150,7 +150,7 @@ export function DownloadConfirmationUI(props: DownloadConfirmationUIProps) {
     downloadListStatistics,
   ])
 
-  toast(
+  displayToast(
     <Box display="flex" alignItems={'center'} gap={1}>
       <DownloadConfirmationContent
         status={status}
@@ -158,6 +158,7 @@ export function DownloadConfirmationUI(props: DownloadConfirmationUIProps) {
         fileSize={fileSize}
       />
     </Box>,
+    'info',
   )
 
   // return (
