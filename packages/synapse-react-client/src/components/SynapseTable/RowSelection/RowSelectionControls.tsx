@@ -12,9 +12,7 @@ import { getFileColumnModelId } from '../SynapseTableUtils'
 import CustomControlButton from '../TopLevelControls/CustomControlButton'
 import { CustomControl } from '../TopLevelControls/TopLevelControls'
 import { RowSelectionUI } from './RowSelectionUI'
-import { Query } from '@tanstack/query-core'
 import { TableQueryDownloadConfirmation } from '@/components/download_list'
-import { displayToast } from '../../ToastMessage/index'
 import { toast } from 'react-hot-toast'
 
 const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
@@ -101,12 +99,11 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
             <Button
               variant="contained"
               onClick={() => {
-                let closeToast = () => {}
-                closeToast = displayToast(
+                const toastId = toast(
                   <QueryContext.Provider value={queryContext}>
                     <TableQueryDownloadConfirmation
                       onClose={() => {
-                        closeToast()
+                        toast.dismiss(toastId)
                       }}
                     />
                   </QueryContext.Provider>,
