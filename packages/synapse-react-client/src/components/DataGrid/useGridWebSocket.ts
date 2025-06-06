@@ -33,37 +33,45 @@ export const useGridWebSocket = ({
   const throttleTimeoutRef = useRef<NodeJS.Timeout>()
   const lastSentTimeRef = useRef<number>(0)
 
-  // Store the latest values in refs to avoid stale closures
-  const sessionIdRef = useRef(sessionId)
-  const replicaIdRef = useRef(replicaId)
-  const accessTokenRef = useRef(accessToken)
-  const enabledRef = useRef(enabled)
+  // Store the latest values in refs to avoid stale closures and unnecessary reconnections
+  const latestPropsRef = useRef({ sessionId, replicaId, accessToken, enabled })
+  const connectionEstablishedRef = useRef(false)
 
-  // Update refs when props change
-  sessionIdRef.current = sessionId
-  replicaIdRef.current = replicaId
-  accessTokenRef.current = accessToken
-  enabledRef.current = enabled
+  // Update refs when props change but don't trigger reconnection
+  latestPropsRef.current = { sessionId, replicaId, accessToken, enabled }
 
   const maxReconnectAttempts = 5
 
   const connect = useCallback(async () => {
-    const currentSessionId = sessionIdRef.current
-    const currentReplicaId = replicaIdRef.current
-    const currentAccessToken = accessTokenRef.current
+    const {
+      sessionId: currentSessionId,
+      replicaId: currentReplicaId,
+      accessToken: currentAccessToken,
+    } = latestPropsRef.current
 
-    if (
-      !currentSessionId ||
-      !currentReplicaId ||
-      !currentAccessToken ||
-      isConnecting
-    ) {
+    if (!currentSessionId || !currentReplicaId || !currentAccessToken) {
+      console.log('Cannot connect: missing required props', {
+        sessionId: !!currentSessionId,
+        replicaId: !!currentReplicaId,
+        accessToken: !!currentAccessToken,
+      })
+      return
+    }
+
+    if (isConnecting || wsRef.current?.readyState === WebSocket.CONNECTING) {
+      console.log('Already connecting, skipping...')
+      return
+    }
+
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      console.log('Already connected, skipping...')
       return
     }
 
     try {
       setIsConnecting(true)
       setError(null)
+      console.log('Starting WebSocket connection...')
 
       // Get presigned WebSocket URL
       const presignedUrlResponse = await SynapseClient.GridSessionPresignedUrl(
@@ -72,17 +80,17 @@ export const useGridWebSocket = ({
         currentAccessToken,
       )
 
-      // Create WebSocket connection
-      console.log('Connecting to WebSocket:', presignedUrlResponse)
+      console.log('Got presigned URL, creating WebSocket...')
       const ws = new WebSocket(presignedUrlResponse.presignedUrl)
       wsRef.current = ws
 
       ws.onopen = () => {
-        console.log('WebSocket connected')
+        console.log('WebSocket connected successfully')
         setIsConnected(true)
         setIsConnecting(false)
         setError(null)
         reconnectAttemptsRef.current = 0
+        connectionEstablishedRef.current = true
       }
 
       ws.onmessage = event => {
@@ -99,14 +107,15 @@ export const useGridWebSocket = ({
         console.log('WebSocket closed:', event.code, event.reason)
         setIsConnected(false)
         setIsConnecting(false)
-        wsRef.current = null
 
-        // Auto-reconnect if connection was not closed intentionally and we haven't exceeded max attempts
-        if (
-          event.code !== 1000 &&
-          enabledRef.current &&
-          reconnectAttemptsRef.current < maxReconnectAttempts
-        ) {
+        const wasIntentionalClose = event.code === 1000
+        const shouldReconnect =
+          latestPropsRef.current.enabled &&
+          !wasIntentionalClose &&
+          reconnectAttemptsRef.current < maxReconnectAttempts &&
+          connectionEstablishedRef.current
+
+        if (shouldReconnect) {
           reconnectAttemptsRef.current += 1
           const reconnectDelay = Math.min(
             3000 * reconnectAttemptsRef.current,
@@ -121,8 +130,14 @@ export const useGridWebSocket = ({
             connect()
           }, reconnectDelay)
         } else if (reconnectAttemptsRef.current >= maxReconnectAttempts) {
-          console.log('Max reconnection attempts reached. Giving up.')
+          console.log('Max reconnection attempts reached')
           setError(`Connection failed after ${maxReconnectAttempts} attempts`)
+        }
+
+        // Clear the ref if this is an intentional close
+        if (wasIntentionalClose) {
+          wsRef.current = null
+          connectionEstablishedRef.current = false
         }
       }
 
@@ -138,37 +153,45 @@ export const useGridWebSocket = ({
       setIsConnecting(false)
       console.error('Failed to establish WebSocket connection:', error)
     }
-  }, [isConnecting]) // Only depend on isConnecting state
+  }, [isConnecting]) // Only depend on isConnecting to prevent loops
 
   const disconnect = useCallback(() => {
+    console.log('Disconnecting WebSocket...')
+
+    // Clear timeouts
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current)
     }
-
     if (throttleTimeoutRef.current) {
       clearTimeout(throttleTimeoutRef.current)
     }
 
+    // Close WebSocket
     if (wsRef.current) {
       wsRef.current.close(1000, 'Client disconnect')
       wsRef.current = null
     }
 
+    // Reset state
     messageQueueRef.current = []
     lastSentTimeRef.current = 0
     reconnectAttemptsRef.current = 0
-
+    connectionEstablishedRef.current = false
     setIsConnected(false)
     setIsConnecting(false)
   }, [])
 
   const retryConnection = useCallback(() => {
+    console.log('Manual retry connection')
     reconnectAttemptsRef.current = 0
     setError(null)
-    if (enabledRef.current && sessionIdRef.current && replicaIdRef.current) {
-      connect()
-    }
-  }, [connect])
+    disconnect()
+    setTimeout(() => {
+      if (latestPropsRef.current.enabled) {
+        connect()
+      }
+    }, 100)
+  }, [connect, disconnect])
 
   const processMessageQueue = useCallback(() => {
     if (
@@ -225,41 +248,52 @@ export const useGridWebSocket = ({
     [isConnected, processMessageQueue],
   )
 
-  // FIXED: Simplified useEffect with stable dependencies
+  // FIXED: Use a more stable effect that only connects when necessary
   useEffect(() => {
     const shouldConnect =
-      enabled && sessionId && replicaId && !isConnected && !isConnecting
-    const shouldDisconnect = !enabled
+      enabled &&
+      sessionId &&
+      replicaId &&
+      !connectionEstablishedRef.current &&
+      !isConnecting
+    const shouldDisconnect = !enabled && (isConnected || isConnecting)
+
+    console.log('WebSocket useEffect:', {
+      enabled,
+      sessionId: !!sessionId,
+      replicaId: !!replicaId,
+      shouldConnect,
+      shouldDisconnect,
+      isConnected,
+      isConnecting,
+      connectionEstablished: connectionEstablishedRef.current,
+    })
 
     if (shouldConnect) {
-      console.log('Starting WebSocket connection...')
+      console.log('Initiating WebSocket connection...')
       connect()
-    } else if (shouldDisconnect && (isConnected || isConnecting)) {
-      console.log('Stopping WebSocket connection...')
+    } else if (shouldDisconnect) {
+      console.log('Disconnecting WebSocket due to disabled state...')
       disconnect()
     }
 
+    // Cleanup on unmount only
     return () => {
-      // Cleanup on unmount
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current)
       }
       if (throttleTimeoutRef.current) {
         clearTimeout(throttleTimeoutRef.current)
       }
-      if (wsRef.current) {
-        wsRef.current.close(1000, 'Component unmount')
-      }
     }
-  }, [
-    enabled,
-    sessionId,
-    replicaId,
-    isConnected,
-    isConnecting,
-    connect,
-    disconnect,
-  ])
+  }, [enabled, sessionId, replicaId, isConnecting, connect, disconnect])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      disconnect()
+    }
+  }, [disconnect])
 
   return {
     isConnected,
