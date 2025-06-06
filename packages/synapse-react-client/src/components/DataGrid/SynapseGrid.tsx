@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef, useCallback } from 'react'
 import { useCreateGridSession } from './useCreateGridSession'
 import { useGridWebSocket } from './useGridWebSocket'
 import SynapseClient from '@/synapse-client/index'
@@ -21,7 +21,11 @@ export function SynapseGrid({
 }: SynapseGridProps = {}) {
   const currentContext = useSynapseContext()
   const { accessToken } = useSynapseContext()
-  const [hasInitialized, setHasInitialized] = useState(false)
+
+  const hasInitializedRef = useRef(false)
+
+  // Store session ID separately since createGridSession.data isn't persisting
+  const [sessionId, setSessionId] = useState<string | null>(null)
   const [replicaData, setReplicaData] = useState<CreateReplicaResponse | null>(
     null,
   )
@@ -30,14 +34,20 @@ export function SynapseGrid({
 
   const createGridSession = useCreateGridSession({
     onSuccess: async response => {
-      console.log('Session created:', response)
+      console.log('=== SESSION CREATION SUCCESS ===')
+      console.log('Full response:', response)
+
+      // Store the session ID immediately
+      const sessionIdFromResponse = response.gridSession?.sessionId
+      setSessionId(sessionIdFromResponse)
+      console.log('Stored session ID:', sessionIdFromResponse)
 
       try {
         setIsCreatingReplica(true)
         setReplicaError(null)
 
         const replica = await SynapseClient.GridSessionReplica(
-          response.gridSession.sessionId,
+          sessionIdFromResponse,
           accessToken,
         )
         setReplicaData(replica)
@@ -56,17 +66,19 @@ export function SynapseGrid({
     },
   })
 
-  // Memoize the session and replica IDs to prevent unnecessary re-renders
-  const sessionId = useMemo(
-    () => createGridSession.data?.gridSession?.sessionId,
-    [createGridSession.data],
-  )
+  // Extract replica ID
   const replicaId = useMemo(
     () => replicaData?.replica?.replicaId,
-    [replicaData],
+    [replicaData?.replica?.replicaId],
   )
 
-  // WebSocket connection with stable dependencies
+  // Memoize the enabled flag
+  const wsEnabled = useMemo(
+    () => !!(sessionId && replicaId),
+    [sessionId, replicaId],
+  )
+
+  // WebSocket connection
   const {
     isConnected: wsConnected,
     isConnecting: wsConnecting,
@@ -76,37 +88,71 @@ export function SynapseGrid({
   } = useGridWebSocket({
     sessionId,
     replicaId,
-    enabled: !!(sessionId && replicaId),
+    enabled: wsEnabled,
   })
 
+  // Initialize session
   useEffect(() => {
-    if (!hasInitialized && !createGridSession.isPending) {
+    if (
+      !hasInitializedRef.current &&
+      !createGridSession.isPending &&
+      !sessionId
+    ) {
+      console.log('Initializing grid session...')
+      hasInitializedRef.current = true
       createGridSession.mutate({})
-      setHasInitialized(true)
     }
-  }, [hasInitialized, createGridSession.isPending, createGridSession.mutate])
+  }, [createGridSession.isPending, sessionId])
 
   const isLoading =
     createGridSession.isPending || isCreatingReplica || wsConnecting
   const hasError = createGridSession.error || replicaError || wsError
-  const isReady =
-    createGridSession.data && replicaData && wsConnected && !hasError
+  const isReady = sessionId && replicaData && wsConnected && !hasError
 
-  // Handle data changes and send to WebSocket
-  const handleDataChange = (newRows: DataGridRow[]) => {
-    if (wsConnected) {
-      sendMessage({
-        type: 'DATA_UPDATE',
-        data: newRows,
-        timestamp: new Date().toISOString(),
-      })
-    }
-  }
+  const handleDataChange = useCallback(
+    (newRows: DataGridRow[]) => {
+      if (wsConnected) {
+        sendMessage({
+          type: 'DATA_UPDATE',
+          data: newRows,
+          timestamp: new Date().toISOString(),
+        })
+      }
+    },
+    [wsConnected, sendMessage],
+  )
+
+  const handleRetry = useCallback(() => {
+    hasInitializedRef.current = false
+    setSessionId(null)
+    setReplicaData(null)
+    setReplicaError(null)
+    setIsCreatingReplica(false)
+  }, [])
 
   return (
     <SynapseContextProvider synapseContext={currentContext}>
       <div>
         <h2>Synapse Grid</h2>
+
+        {/* Debug section */}
+        <div
+          style={{
+            fontSize: '0.8rem',
+            color: 'gray',
+            marginBottom: '1rem',
+            border: '1px solid #ccc',
+            padding: '1rem',
+          }}
+        >
+          <h4>Debug Info:</h4>
+          <p>Mutation Status: {createGridSession.status}</p>
+          <p>Stored Session ID: {sessionId || 'undefined'}</p>
+          <p>Computed Replica ID: {replicaId || 'undefined'}</p>
+          <p>WS Enabled: {wsEnabled ? 'Yes' : 'No'}</p>
+          <p>WS Connected: {wsConnected ? 'Yes' : 'No'}</p>
+          <p>WS Connecting: {wsConnecting ? 'Yes' : 'No'}</p>
+        </div>
 
         {/* Show loading state */}
         {isLoading && (
@@ -127,10 +173,10 @@ export function SynapseGrid({
         )}
 
         {/* Show connection status */}
-        {createGridSession.data && replicaData && (
+        {sessionId && replicaData && (
           <div style={{ marginBottom: '1rem' }}>
-            <p>Session ID: {createGridSession.data.gridSession.sessionId}</p>
-            <p>Replica ID: {replicaData.replica.replicaId}</p>
+            <p>Session ID: {sessionId}</p>
+            <p>Replica ID: {replicaId}</p>
             <p>
               WebSocket Status:
               <span
@@ -183,17 +229,7 @@ export function SynapseGrid({
         )}
 
         {/* Retry button */}
-        {hasError && (
-          <button
-            onClick={() => {
-              setHasInitialized(false)
-              setReplicaData(null)
-              setReplicaError(null)
-            }}
-          >
-            Retry
-          </button>
-        )}
+        {hasError && <button onClick={handleRetry}>Retry</button>}
       </div>
     </SynapseContextProvider>
   )
