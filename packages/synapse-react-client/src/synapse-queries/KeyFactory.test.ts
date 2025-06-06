@@ -6,6 +6,10 @@ import {
 import { EntityType } from '@sage-bionetworks/synapse-types'
 import { QueryKey } from '@tanstack/react-query'
 import { KeyFactory } from './KeyFactory'
+import {
+  expectQueryKeyNotToMatch,
+  expectQueryKeyToMatch,
+} from './QueryMatchingTestUtils'
 
 describe('KeyFactory tests', () => {
   let keyFactory = new KeyFactory(MOCK_ACCESS_TOKEN)
@@ -20,10 +24,11 @@ describe('KeyFactory tests', () => {
       const queryKey: QueryKey = keyFactory.getEntityQueryKey(ENTITY_ID)
 
       // Invalidating all entity queries should match
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
 
       // Invalidating a particular version of this entity's queries should not match
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -32,11 +37,12 @@ describe('KeyFactory tests', () => {
       const queryKey: QueryKey = keyFactory.getEntityActivityQueryKey(ENTITY_ID)
 
       // Invalidating all entity queries should match this query
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
       // Invalidating this entity's queries should match
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
       // Invalidating a particular version of this entity's queries should not match
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -48,11 +54,12 @@ describe('KeyFactory tests', () => {
       )
 
       // Invalidating all entity queries should match this query
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
       // Invalidating this entity's queries should match
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
       // Invalidating a particular version of this entity's queries should match
-      expect(queryKey).toMatchQueryKey(
+      expectQueryKeyToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -61,9 +68,10 @@ describe('KeyFactory tests', () => {
       const queryKey: QueryKey =
         keyFactory.getEntityActionsRequiredQueryKey(ENTITY_ID)
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyToMatch(
+        queryKey,
         keyFactory.getAllEntityActionsRequiredQueryKey(),
       )
     })
@@ -72,9 +80,10 @@ describe('KeyFactory tests', () => {
       const queryKey: QueryKey =
         keyFactory.getEntityChallengeQueryKey(ENTITY_ID)
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -82,9 +91,10 @@ describe('KeyFactory tests', () => {
     test('getForumQueryKey', () => {
       const queryKey: QueryKey = keyFactory.getForumQueryKey(ENTITY_ID)
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -92,9 +102,10 @@ describe('KeyFactory tests', () => {
     test('getEntityVersionQueryKey, no version', () => {
       const queryKey: QueryKey = keyFactory.getEntityVersionQueryKey(ENTITY_ID)
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -105,9 +116,10 @@ describe('KeyFactory tests', () => {
         ENTITY_VERSION,
       )
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -119,9 +131,10 @@ describe('KeyFactory tests', () => {
         0,
       )
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -129,9 +142,10 @@ describe('KeyFactory tests', () => {
     test('getEntityVersionsQueryKey', () => {
       const queryKey: QueryKey = keyFactory.getEntityVersionsQueryKey(ENTITY_ID)
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -145,9 +159,10 @@ describe('KeyFactory tests', () => {
         false,
       )
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityChildrenQueryKey(
           {
             parentId: ENTITY_ID,
@@ -156,7 +171,8 @@ describe('KeyFactory tests', () => {
           false,
         ),
       )
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -170,9 +186,10 @@ describe('KeyFactory tests', () => {
         true,
       )
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityChildrenQueryKey(
           {
             parentId: ENTITY_ID,
@@ -181,7 +198,8 @@ describe('KeyFactory tests', () => {
           true,
         ),
       )
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -193,12 +211,14 @@ describe('KeyFactory tests', () => {
         false,
       )
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityJsonQueryKey(ENTITY_ID, undefined, true),
       )
     })
@@ -210,12 +230,14 @@ describe('KeyFactory tests', () => {
         false,
       )
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityJsonQueryKey(ENTITY_ID, undefined, true),
       )
     })
@@ -230,17 +252,20 @@ describe('KeyFactory tests', () => {
         },
       )
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
-      expect(queryKey).toMatchQueryKey(
+      expectQueryKeyToMatch(
+        queryKey,
         keyFactory.getEntityBundleQueryKey(ENTITY_ID, undefined, {
           includeEntity: true,
         }),
       )
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityBundleQueryKey(ENTITY_ID, undefined, {
           includeEntity: true,
           includePermissions: true,
@@ -258,22 +283,26 @@ describe('KeyFactory tests', () => {
         },
       )
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
-      expect(queryKey).toMatchQueryKey(
+      expectQueryKeyToMatch(
+        queryKey,
         keyFactory.getEntityBundleQueryKey(ENTITY_ID, ENTITY_VERSION, {
           includeEntity: true,
         }),
       )
-      expect(queryKey).toMatchQueryKey(
+      expectQueryKeyToMatch(
+        queryKey,
         keyFactory.getEntityBundleQueryKey(ENTITY_ID, undefined, {
           includeEntity: true,
         }),
       )
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityBundleQueryKey(ENTITY_ID, ENTITY_VERSION, {
           includeEntity: true,
           includePermissions: true,
@@ -283,29 +312,33 @@ describe('KeyFactory tests', () => {
     test('getEntityPathQueryKey', () => {
       const queryKey: QueryKey = keyFactory.getEntityPathQueryKey(ENTITY_ID)
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
     test('getEntityACLQueryKey', () => {
       const queryKey: QueryKey = keyFactory.getEntityACLQueryKey(ENTITY_ID)
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
     test('getEntityAliasQueryKey', () => {
       const queryKey: QueryKey = keyFactory.getEntityAliasQueryKey('some alias')
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityQueryKey(ENTITY_ID),
       )
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -313,9 +346,10 @@ describe('KeyFactory tests', () => {
       const queryKey: QueryKey =
         keyFactory.getEntityEvaluationsQueryKey(ENTITY_ID)
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -323,9 +357,10 @@ describe('KeyFactory tests', () => {
       const queryKey: QueryKey =
         keyFactory.getEntityPermissionsQueryKey(ENTITY_ID)
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -334,9 +369,10 @@ describe('KeyFactory tests', () => {
       const queryKey: QueryKey =
         keyFactory.getEntityBoundJsonSchemaQueryKey(ENTITY_ID)
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -345,9 +381,10 @@ describe('KeyFactory tests', () => {
       const queryKey: QueryKey =
         keyFactory.getEntitySchemaValidationResultsQueryKey(ENTITY_ID)
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -358,9 +395,10 @@ describe('KeyFactory tests', () => {
         undefined,
       )
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -371,9 +409,10 @@ describe('KeyFactory tests', () => {
         ENTITY_VERSION,
       )
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -382,9 +421,10 @@ describe('KeyFactory tests', () => {
       const queryKey: QueryKey =
         keyFactory.getEntityAccessRequirementsQueryKey(ENTITY_ID)
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
     })
@@ -403,13 +443,15 @@ describe('KeyFactory tests', () => {
         true,
       )
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllTableQueryResultsKey())
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllTableQueryResultsKey())
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityTableQueryResultQueryKey(
           {
             concreteType:
@@ -424,7 +466,8 @@ describe('KeyFactory tests', () => {
           true,
         ),
       )
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityTableQueryResultQueryKey(
           {
             concreteType:
@@ -455,13 +498,15 @@ describe('KeyFactory tests', () => {
           true,
         )
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllTableQueryResultsKey())
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllTableQueryResultsKey())
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityTableQueryResultWithAsyncStatusQueryKey(
           {
             concreteType:
@@ -476,7 +521,8 @@ describe('KeyFactory tests', () => {
           true,
         ),
       )
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityTableQueryResultWithAsyncStatusQueryKey(
           {
             concreteType:
@@ -506,13 +552,15 @@ describe('KeyFactory tests', () => {
         false,
       )
 
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllEntityDataQueryKey())
-      expect(queryKey).toMatchQueryKey(keyFactory.getEntityQueryKey(ENTITY_ID))
-      expect(queryKey).toMatchQueryKey(keyFactory.getAllTableQueryResultsKey())
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllEntityDataQueryKey())
+      expectQueryKeyToMatch(queryKey, keyFactory.getEntityQueryKey(ENTITY_ID))
+      expectQueryKeyToMatch(queryKey, keyFactory.getAllTableQueryResultsKey())
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getEntityVersionQueryKey(ENTITY_ID, ENTITY_VERSION),
       )
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getFullTableQueryResultQueryKey(
           {
             concreteType:
@@ -527,7 +575,8 @@ describe('KeyFactory tests', () => {
           false,
         ),
       )
-      expect(queryKey).not.toMatchQueryKey(
+      expectQueryKeyNotToMatch(
+        queryKey,
         keyFactory.getFullTableQueryResultQueryKey(
           {
             concreteType:

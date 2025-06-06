@@ -5,7 +5,6 @@ import './muiDatePickerMock'
 import { setupIntersectionMocking } from 'react-intersection-observer/test-utils'
 import 'whatwg-fetch'
 import { TextEncoder, TextDecoder } from 'node:util'
-import './CustomMatchers'
 
 // Some test utility libraries (@testing-library/dom-testing-library, @googlemaps/jest-mocks) expect `jest` to be defined
 // globally, and may not directly support Vitest. Luckily, most of these utilities can work with Vitest's `vi` object,
