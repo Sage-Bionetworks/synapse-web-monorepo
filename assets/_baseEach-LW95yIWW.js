@@ -1,0 +1,1 @@
+import{c as u}from"./merge-D2stCHL9.js";import{k as i}from"./_getTag-CKpP1EoQ.js";import{a as m}from"./_Uint8Array--_t6qXLg.js";function b(a,s){return a&&u(a,s,i)}function h(a,s){return function(r,f){if(r==null)return r;if(!m(r))return a(r,f);for(var t=r.length,e=-1,n=Object(r);++e<t&&f(n[e],e,n)!==!1;);return r}}var v=h(b);export{b as a,v as b};
