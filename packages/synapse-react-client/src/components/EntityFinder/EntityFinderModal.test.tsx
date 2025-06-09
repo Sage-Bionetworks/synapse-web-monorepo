@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
 import {

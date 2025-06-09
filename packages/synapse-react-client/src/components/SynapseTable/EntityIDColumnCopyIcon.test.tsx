@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom'
 import idsQueryResponse from '@/mocks/mockIDListQueryResponseData.json'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {

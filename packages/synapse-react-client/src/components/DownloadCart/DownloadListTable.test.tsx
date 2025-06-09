@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom'
 import { mockUserProfileData } from '@/mocks/user/mock_user_profile'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
