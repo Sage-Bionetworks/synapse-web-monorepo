@@ -88,7 +88,7 @@ export function getGridHandlers(backendOrigin: string) {
         }
 
         // Create a replica for the session
-        const replicaId = Math.floor(Math.random() * 1000)
+        const replicaId = crypto.getRandomValues(new Uint32Array(1))[0] % 1000
         const replicaResponse = {
           concreteType: 'org.sagebionetworks.repo.model.grid.GridReplica',
           replica: {
