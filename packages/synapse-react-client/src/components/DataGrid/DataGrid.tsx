@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { DataSheetGrid, Column } from 'react-datasheet-grid'
 import 'react-datasheet-grid/dist/style.css'
-import './DataGridExtra.css'
 
 export type DataGridRow = { [key: string]: string | number }
 
