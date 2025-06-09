@@ -45,7 +45,6 @@
     "@mui/x-date-pickers": "^6.20.2",
     "@popperjs/core": "^2.11.8",
     "@react-google-maps/api": "^2.20.6",
-    "@react-hook/resize-observer": "^1.2.6",
     "@react-hookz/web": "^23.1.0",
     "@rjsf/core": "5.24.10",
     "@rjsf/mui": "5.24.10",

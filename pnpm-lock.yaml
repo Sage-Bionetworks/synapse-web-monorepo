@@ -1485,9 +1485,6 @@ importers:
       '@react-google-maps/api':
         specifier: ^2.20.6
         version: 2.20.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@react-hook/resize-observer':
-        specifier: ^1.2.6
-        version: 1.2.6(react@18.3.1)
       '@react-hookz/web':
         specifier: ^23.1.0
         version: 23.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -4216,21 +4213,6 @@ packages:
 
   '@react-google-maps/marker-clusterer@2.20.0':
     resolution: {integrity: sha512-tieX9Va5w1yP88vMgfH1pHTacDQ9TgDTjox3tLlisKDXRQWdjw+QeVVghhf5XqqIxXHgPdcGwBvKY6UP+SIvLw==}
-
-  '@react-hook/latest@1.0.3':
-    resolution: {integrity: sha512-dy6duzl+JnAZcDbNTfmaP3xHiKtbXYOaz3G51MGVljh548Y8MWzTr+PHLOfvpypEVW9zwvl+VyKjbWKEVbV1Rg==}
-    peerDependencies:
-      react: '>=16.8'
-
-  '@react-hook/passive-layout-effect@1.2.1':
-    resolution: {integrity: sha512-IwEphTD75liO8g+6taS+4oqz+nnroocNfWVHWz7j+N+ZO2vYrc6PV1q7GQhuahL0IOR7JccFTsFKQ/mb6iZWAg==}
-    peerDependencies:
-      react: '>=16.8'
-
-  '@react-hook/resize-observer@1.2.6':
-    resolution: {integrity: sha512-DlBXtLSW0DqYYTW3Ft1/GQFZlTdKY5VAFIC4+km6IK5NiPPDFchGbEJm1j6pSgMqPRHbUQgHJX7RaR76ic1LWA==}
-    peerDependencies:
-      react: '>=16.8'
 
   '@react-hookz/deep-equal@1.0.4':
     resolution: {integrity: sha512-N56fTrAPUDz/R423pag+n6TXWbvlBZDtTehaGFjK0InmN+V2OFWLE/WmORhmn6Ce7dlwH5+tQN1LJFw3ngTJVg==}
@@ -7263,6 +7245,7 @@ packages:
     resolution: {integrity: sha512-X41YRfKkVCooILai2N0aN0Q5O0imu+MbNt894QWU683A82xJJXIR01dEqxwYJ91M6IdExtyFB3GCOJb4eBMBMQ==}
     peerDependencies:
       eslint: '>= 5'
+    bundledDependencies: []
 
   eslint-plugin-jest-dom@5.5.0:
     resolution: {integrity: sha512-CRlXfchTr7EgC3tDI7MGHY6QjdJU5Vv2RPaeeGtkXUHnKZf04kgzMPIJUXt4qKCvYWVVIEo9ut9Oq1vgXAykEA==}
@@ -8574,6 +8557,7 @@ packages:
     resolution: {integrity: sha512-Quz3MvAwHxVYNXsOByL7xI5EB2WYOeFswqaHIA3qOK3isRWTxiplBEocmmru6XmxDB2L7jDNYtYA4FyimoAFEw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
+    bundledDependencies: []
 
   jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
@@ -14160,21 +14144,6 @@ snapshots:
   '@react-google-maps/infobox@2.20.0': {}
 
   '@react-google-maps/marker-clusterer@2.20.0': {}
-
-  '@react-hook/latest@1.0.3(react@18.3.1)':
-    dependencies:
-      react: 18.3.1
-
-  '@react-hook/passive-layout-effect@1.2.1(react@18.3.1)':
-    dependencies:
-      react: 18.3.1
-
-  '@react-hook/resize-observer@1.2.6(react@18.3.1)':
-    dependencies:
-      '@juggle/resize-observer': 3.4.0
-      '@react-hook/latest': 1.0.3(react@18.3.1)
-      '@react-hook/passive-layout-effect': 1.2.1(react@18.3.1)
-      react: 18.3.1
 
   '@react-hookz/deep-equal@1.0.4': {}
 
