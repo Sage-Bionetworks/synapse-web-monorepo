@@ -41,7 +41,7 @@ export const datasetSchema: TableToGenericCardMapping = {
   title: 'name',
   subTitle: 'program',
   description: 'description',
-  secondaryLabels: ['project', 'assay', 'datasetType', 'id'],
+  secondaryLabels: ['project', 'programPhase', 'assay', 'datasetType', 'id'],
   icon: 'datasetType',
 }
 export const datasetColumnAliases: Record<string, string> = {

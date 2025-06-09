@@ -5,7 +5,11 @@ import {
   COOKIES_AGREEMENT_COOKIE_KEY,
   useCookiePreferences,
 } from '@/utils/hooks/useCookiePreferences'
-import { PRIVACY_POLICY_LINK } from '@/utils/SynapseConstants'
+import {
+  PRIVACY_POLICY_LINK,
+  URL_TERMS_CONDITIONS_AGREEMENT,
+  CHILD_MINOR_ADDENDUM_LINK,
+} from '@/utils/SynapseConstants'
 import { Link, Typography } from '@mui/material'
 import { useState } from 'react'
 import UniversalCookies from 'universal-cookie'
@@ -17,14 +21,23 @@ const cookies = new UniversalCookies()
 export const alertConfig = {
   title: 'Our site uses cookies.',
   description: (
-    <Typography variant="body1">
-      We use necessary cookies and store your data to ensure our websites
-      function properly. With your consent, we would also like to use cookies to
-      remember your preferences and enhance our websites. Please review our{' '}
-      <Link href={PRIVACY_POLICY_LINK}>Privacy Policy</Link>. By clicking
-      “Accept All,” you consent to our use of cookies. You can adjust your
-      cookie preferences anytime on the Settings page.
-    </Typography>
+    <>
+      <Typography variant="body1">
+        We use necessary cookies and store your data to ensure our websites
+        function properly. With your consent, we would also like to use optional
+        cookies to remember your preferences and improve our websites. Please
+        read our <Link href={PRIVACY_POLICY_LINK}>Privacy Policy</Link> for
+        details. By clicking “Allow All,” you agree to our use of cookies. You
+        can adjust your cookie preferences anytime on the Settings page.
+      </Typography>
+      <Typography variant="smallText1" sx={{ mt: '20px' }}>
+        Please read our{' '}
+        <Link href={URL_TERMS_CONDITIONS_AGREEMENT}>Terms of Service</Link>{' '}
+        before using our website. If you are between 13 and 18, you must submit
+        a <Link href={CHILD_MINOR_ADDENDUM_LINK}>Child Minor Addendum</Link> for
+        access.
+      </Typography>
+    </>
   ),
   primaryButtonText: 'ALLOW ALL',
   secondaryButtonText: 'Disable All',

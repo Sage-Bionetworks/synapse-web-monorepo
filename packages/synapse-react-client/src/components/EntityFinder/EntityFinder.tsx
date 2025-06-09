@@ -23,7 +23,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
 import 'react-reflex/styles.css'
-import { SizeMe } from 'react-sizeme'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import { BreadcrumbItem, Breadcrumbs, BreadcrumbsProps } from './Breadcrumbs'
 import {
@@ -351,40 +350,32 @@ export function EntityFinder({
                 </div>
               ) : (
                 <div className="EntityFinderReflexContainer">
-                  <SizeMe>
-                    {({ size }) => (
-                      <ReflexContainer
-                        key={(!!size.width).toString()}
-                        orientation="vertical"
-                        windowResizeAware
-                      >
-                        <ReflexElement
-                          className="TreeViewReflexElement"
-                          flex={0.24}
-                        >
-                          <EntityTree
-                            selectedEntities={selectedEntities}
-                            setDetailsViewConfiguration={setConfigFromTreeView}
-                            showDropdown={true}
-                            visibleTypes={visibleTypesInTree}
-                            initialScope={initialScope}
-                            projectId={projectId}
-                            initialContainer={initialContainer}
-                            currentContainer={currentContainer}
-                            setCurrentContainer={setCurrentContainer}
-                            treeNodeType={EntityTreeNodeType.DUAL_PANE}
-                            setBreadcrumbItems={setBreadcrumbs}
-                            selectableTypes={visibleTypesInTree}
-                          />
-                        </ReflexElement>
-                        <ReflexSplitter></ReflexSplitter>
-                        <ReflexElement className="DetailsViewReflexElement">
-                          <EntityDetailsList {...entityDetailsListProps} />
-                          <Breadcrumbs {...breadcrumbsProps} />
-                        </ReflexElement>
-                      </ReflexContainer>
-                    )}
-                  </SizeMe>
+                  <ReflexContainer orientation="vertical" windowResizeAware>
+                    <ReflexElement
+                      className="TreeViewReflexElement"
+                      flex={0.24}
+                    >
+                      <EntityTree
+                        selectedEntities={selectedEntities}
+                        setDetailsViewConfiguration={setConfigFromTreeView}
+                        showDropdown={true}
+                        visibleTypes={visibleTypesInTree}
+                        initialScope={initialScope}
+                        projectId={projectId}
+                        initialContainer={initialContainer}
+                        currentContainer={currentContainer}
+                        setCurrentContainer={setCurrentContainer}
+                        treeNodeType={EntityTreeNodeType.DUAL_PANE}
+                        setBreadcrumbItems={setBreadcrumbs}
+                        selectableTypes={visibleTypesInTree}
+                      />
+                    </ReflexElement>
+                    <ReflexSplitter></ReflexSplitter>
+                    <ReflexElement className="DetailsViewReflexElement">
+                      <EntityDetailsList {...entityDetailsListProps} />
+                      <Breadcrumbs {...breadcrumbsProps} />
+                    </ReflexElement>
+                  </ReflexContainer>
                 </div>
               )}
             </div>

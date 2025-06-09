@@ -5,13 +5,13 @@
 .TreeViewReflexElement {
   .TreeView {
     border: none;
-    border-right: $-border;
+    border-right: EntityFinder.$border;
   }
 }
 
 .TreeView {
   background-color: SRC.$background-color-gray;
-  height: $-finder-height;
+  height: EntityFinder.$finder-height;
   overflow: hidden;
   .Tree {
     height: calc(

@@ -9,7 +9,7 @@ import { useDirectUploadToS3 } from '@/synapse-queries/file/useDirectUploadToS3'
 import { useSynapseMultipartUpload } from '@/synapse-queries/file/useSynapseMultipartUpload'
 import { useGetDefaultUploadDestination } from '@/synapse-queries/file/useUploadDestination'
 import {
-  getUseMutationMock,
+  getUseMutationIdleMock,
   getUseQuerySuccessMock,
 } from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
@@ -95,7 +95,9 @@ function setupPrepareDirsForUploadMock(
   prepareDirsForUploadReturn?: PrepareDirsForUploadReturn,
 ) {
   const usePrepareFileEntityUploadMockReturn =
-    getUseMutationMock<PrepareDirsForUploadReturn>(prepareDirsForUploadReturn)
+    getUseMutationIdleMock<PrepareDirsForUploadReturn>(
+      prepareDirsForUploadReturn,
+    )
   mockUsePrepareFileEntityUpload.mockReturnValue(
     usePrepareFileEntityUploadMockReturn,
   )
@@ -164,7 +166,7 @@ describe('useUploadFileEntities', () => {
       prepareDirsForUploadReturn,
     )
 
-    const useSynapseMultipartUploadMockReturn = getUseMutationMock({
+    const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock({
       fileHandleId: createdFileHandleId1,
       fileName: file1.name,
     })
@@ -172,12 +174,13 @@ describe('useUploadFileEntities', () => {
       useSynapseMultipartUploadMockReturn,
     )
 
-    mockUseDirectS3Upload.mockReturnValue(getUseMutationMock())
+    mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
 
-    const useCreateEntityReturn = getUseMutationMock<FileEntity>(createdEntity1)
+    const useCreateEntityReturn =
+      getUseMutationIdleMock<FileEntity>(createdEntity1)
     mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
-    const useUpdateEntityReturn = getUseMutationMock<FileEntity>()
+    const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
     mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
     const { result: hook } = renderHook()
@@ -254,7 +257,7 @@ describe('useUploadFileEntities', () => {
       prepareDirsForUploadReturn,
     )
 
-    const useSynapseMultipartUploadMockReturn = getUseMutationMock()
+    const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock()
     useSynapseMultipartUploadMockReturn.mutateAsync.mockResolvedValueOnce({
       fileHandleId: createdFileHandleId1,
       fileName: file1.name,
@@ -266,16 +269,16 @@ describe('useUploadFileEntities', () => {
     mockUseSynapseMultipartUpload.mockReturnValue(
       useSynapseMultipartUploadMockReturn,
     )
-    mockUseDirectS3Upload.mockReturnValue(getUseMutationMock())
+    mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
 
-    const useCreateEntityReturn = getUseMutationMock<FileEntity>()
+    const useCreateEntityReturn = getUseMutationIdleMock<FileEntity>()
 
     useCreateEntityReturn.mutateAsync
       .mockResolvedValueOnce(createdEntity1)
       .mockResolvedValueOnce(createdEntity2)
     mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
-    const useUpdateEntityReturn = getUseMutationMock<FileEntity>()
+    const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
     mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
     const { result: hook } = renderHook()
@@ -370,7 +373,7 @@ describe('useUploadFileEntities', () => {
       prepareDirsForUploadReturn,
     )
 
-    const useSynapseMultipartUploadMockReturn = getUseMutationMock({
+    const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock({
       fileHandleId: createdFileHandleId1,
       fileName: file1.name,
     })
@@ -378,14 +381,15 @@ describe('useUploadFileEntities', () => {
       useSynapseMultipartUploadMockReturn,
     )
 
-    mockUseDirectS3Upload.mockReturnValue(getUseMutationMock())
+    mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
 
     mockGetEntityById.mockResolvedValueOnce(createdEntity1)
 
-    const useCreateEntityReturn = getUseMutationMock<FileEntity>()
+    const useCreateEntityReturn = getUseMutationIdleMock<FileEntity>()
     mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
-    const useUpdateEntityReturn = getUseMutationMock<FileEntity>(createdEntity1)
+    const useUpdateEntityReturn =
+      getUseMutationIdleMock<FileEntity>(createdEntity1)
     mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
     const { result: hook } = renderHook()
@@ -464,14 +468,14 @@ describe('useUploadFileEntities', () => {
         ],
       }
       const usePrepareFileEntityUploadMockReturn =
-        getUseMutationMock<PrepareDirsForUploadReturn>(
+        getUseMutationIdleMock<PrepareDirsForUploadReturn>(
           prepareDirsForUploadReturn,
         )
       mockUsePrepareFileEntityUpload.mockReturnValue(
         usePrepareFileEntityUploadMockReturn,
       )
 
-      const useSynapseMultipartUploadMockReturn = getUseMutationMock()
+      const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock()
       useSynapseMultipartUploadMockReturn.mutateAsync.mockResolvedValueOnce({
         fileHandleId: createdFileHandleId1,
         fileName: file1.name,
@@ -483,16 +487,16 @@ describe('useUploadFileEntities', () => {
       mockUseSynapseMultipartUpload.mockReturnValue(
         useSynapseMultipartUploadMockReturn,
       )
-      mockUseDirectS3Upload.mockReturnValue(getUseMutationMock())
+      mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
 
-      const useCreateEntityReturn = getUseMutationMock<FileEntity>()
+      const useCreateEntityReturn = getUseMutationIdleMock<FileEntity>()
       mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
       mockGetEntityById
         .mockResolvedValueOnce(createdEntity1)
         .mockResolvedValueOnce(createdEntity2)
 
-      const useUpdateEntityReturn = getUseMutationMock<FileEntity>()
+      const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
       useUpdateEntityReturn.mutateAsync.mockResolvedValueOnce(createdEntity1)
       useUpdateEntityReturn.mutateAsync.mockResolvedValueOnce(createdEntity2)
       mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
@@ -637,14 +641,14 @@ describe('useUploadFileEntities', () => {
         ],
       }
       const usePrepareFileEntityUploadMockReturn =
-        getUseMutationMock<PrepareDirsForUploadReturn>(
+        getUseMutationIdleMock<PrepareDirsForUploadReturn>(
           prepareDirsForUploadReturn,
         )
       mockUsePrepareFileEntityUpload.mockReturnValue(
         usePrepareFileEntityUploadMockReturn,
       )
 
-      const useSynapseMultipartUploadMockReturn = getUseMutationMock()
+      const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock()
       useSynapseMultipartUploadMockReturn.mutateAsync.mockResolvedValueOnce({
         fileHandleId: createdFileHandleId1,
         fileName: file1.name,
@@ -656,16 +660,16 @@ describe('useUploadFileEntities', () => {
       mockUseSynapseMultipartUpload.mockReturnValue(
         useSynapseMultipartUploadMockReturn,
       )
-      mockUseDirectS3Upload.mockReturnValue(getUseMutationMock())
+      mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
 
-      const useCreateEntityReturn = getUseMutationMock<FileEntity>()
+      const useCreateEntityReturn = getUseMutationIdleMock<FileEntity>()
       mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
       mockGetEntityById
         .mockResolvedValueOnce(createdEntity1)
         .mockResolvedValueOnce(createdEntity2)
 
-      const useUpdateEntityReturn = getUseMutationMock<FileEntity>()
+      const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
       useUpdateEntityReturn.mutateAsync.mockResolvedValueOnce(createdEntity1)
       useUpdateEntityReturn.mutateAsync.mockResolvedValueOnce(createdEntity2)
       mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
@@ -785,14 +789,14 @@ describe('useUploadFileEntities', () => {
         ],
       }
       const usePrepareFileEntityUploadMockReturn =
-        getUseMutationMock<PrepareDirsForUploadReturn>(
+        getUseMutationIdleMock<PrepareDirsForUploadReturn>(
           prepareDirsForUploadReturn,
         )
       mockUsePrepareFileEntityUpload.mockReturnValue(
         usePrepareFileEntityUploadMockReturn,
       )
 
-      const useSynapseMultipartUploadMockReturn = getUseMutationMock()
+      const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock()
       useSynapseMultipartUploadMockReturn.mutateAsync.mockResolvedValueOnce({
         fileHandleId: createdFileHandleId2,
         fileName: file2.name,
@@ -800,14 +804,14 @@ describe('useUploadFileEntities', () => {
       mockUseSynapseMultipartUpload.mockReturnValue(
         useSynapseMultipartUploadMockReturn,
       )
-      mockUseDirectS3Upload.mockReturnValue(getUseMutationMock())
+      mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
 
-      const useCreateEntityReturn = getUseMutationMock<FileEntity>()
+      const useCreateEntityReturn = getUseMutationIdleMock<FileEntity>()
       mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
       mockGetEntityById.mockResolvedValueOnce(createdEntity2)
 
-      const useUpdateEntityReturn = getUseMutationMock<FileEntity>()
+      const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
       useUpdateEntityReturn.mutateAsync.mockResolvedValueOnce(createdEntity2)
       mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
@@ -937,14 +941,14 @@ describe('useUploadFileEntities', () => {
         ],
       }
       const usePrepareFileEntityUploadMockReturn =
-        getUseMutationMock<PrepareDirsForUploadReturn>(
+        getUseMutationIdleMock<PrepareDirsForUploadReturn>(
           prepareDirsForUploadReturn,
         )
       mockUsePrepareFileEntityUpload.mockReturnValue(
         usePrepareFileEntityUploadMockReturn,
       )
 
-      const useSynapseMultipartUploadMockReturn = getUseMutationMock()
+      const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock()
       useSynapseMultipartUploadMockReturn.mutateAsync.mockResolvedValueOnce({
         fileHandleId: createdFileHandleId1,
         fileName: file1.name,
@@ -956,16 +960,16 @@ describe('useUploadFileEntities', () => {
       mockUseSynapseMultipartUpload.mockReturnValue(
         useSynapseMultipartUploadMockReturn,
       )
-      mockUseDirectS3Upload.mockReturnValue(getUseMutationMock())
+      mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
 
-      const useCreateEntityReturn = getUseMutationMock<FileEntity>()
+      const useCreateEntityReturn = getUseMutationIdleMock<FileEntity>()
       mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
       mockGetEntityById
         .mockResolvedValueOnce(createdEntity1)
         .mockResolvedValueOnce(createdEntity2)
 
-      const useUpdateEntityReturn = getUseMutationMock<FileEntity>()
+      const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
       useUpdateEntityReturn.mutateAsync.mockResolvedValueOnce(createdEntity1)
       useUpdateEntityReturn.mutateAsync.mockResolvedValueOnce(createdEntity2)
       mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
@@ -1055,7 +1059,7 @@ describe('useUploadFileEntities', () => {
       prepareDirsForUploadReturn,
     )
 
-    const useSynapseMultipartUploadMockReturn = getUseMutationMock({
+    const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock({
       fileHandleId: createdFileHandleId1,
       fileName: file1.name,
     })
@@ -1065,12 +1069,13 @@ describe('useUploadFileEntities', () => {
     useSynapseMultipartUploadMockReturn.mutateAsync.mockRejectedValueOnce(
       new Error('the request was aborted.'),
     )
-    mockUseDirectS3Upload.mockReturnValue(getUseMutationMock())
+    mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
 
-    const useCreateEntityReturn = getUseMutationMock<FileEntity>(createdEntity1)
+    const useCreateEntityReturn =
+      getUseMutationIdleMock<FileEntity>(createdEntity1)
     mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
-    const useUpdateEntityReturn = getUseMutationMock<FileEntity>()
+    const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
     mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
     const { result: hook } = renderHook()
@@ -1172,7 +1177,7 @@ describe('useUploadFileEntities', () => {
       prepareDirsForUploadReturn,
     )
 
-    const useSynapseMultipartUploadMockReturn = getUseMutationMock({
+    const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock({
       fileHandleId: createdFileHandleId1,
       fileName: file1.name,
     })
@@ -1182,12 +1187,13 @@ describe('useUploadFileEntities', () => {
     useSynapseMultipartUploadMockReturn.mutateAsync.mockRejectedValueOnce(
       new Error('the request was aborted.'),
     )
-    mockUseDirectS3Upload.mockReturnValue(getUseMutationMock())
+    mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
 
-    const useCreateEntityReturn = getUseMutationMock<FileEntity>(createdEntity1)
+    const useCreateEntityReturn =
+      getUseMutationIdleMock<FileEntity>(createdEntity1)
     mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
-    const useUpdateEntityReturn = getUseMutationMock<FileEntity>()
+    const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
     mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
     const { result: hook } = renderHook()
@@ -1271,7 +1277,7 @@ describe('useUploadFileEntities', () => {
       prepareDirsForUploadReturn,
     )
 
-    const useSynapseMultipartUploadMockReturn = getUseMutationMock({
+    const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock({
       fileHandleId: createdFileHandleId1,
       fileName: file1.name,
     })
@@ -1281,11 +1287,11 @@ describe('useUploadFileEntities', () => {
     useSynapseMultipartUploadMockReturn.mutateAsync.mockRejectedValue(
       new Error('The upload failed'),
     )
-    mockUseDirectS3Upload.mockReturnValue(getUseMutationMock())
+    mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
 
-    const useCreateEntityReturn = getUseMutationMock<FileEntity>()
+    const useCreateEntityReturn = getUseMutationIdleMock<FileEntity>()
     mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
-    const useUpdateEntityReturn = getUseMutationMock<FileEntity>()
+    const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
     mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
     const { result: hook } = renderHook()
@@ -1357,17 +1363,18 @@ describe('useUploadFileEntities', () => {
       prepareDirsForUploadReturn,
     )
 
-    mockUseSynapseMultipartUpload.mockReturnValue(getUseMutationMock())
+    mockUseSynapseMultipartUpload.mockReturnValue(getUseMutationIdleMock())
 
-    const useDirectS3UploadReturn = getUseMutationMock({
+    const useDirectS3UploadReturn = getUseMutationIdleMock({
       id: createdFileHandleId1,
     })
     mockUseDirectS3Upload.mockReturnValue(useDirectS3UploadReturn)
 
-    const useCreateEntityReturn = getUseMutationMock<FileEntity>(createdEntity1)
+    const useCreateEntityReturn =
+      getUseMutationIdleMock<FileEntity>(createdEntity1)
     mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
-    const useUpdateEntityReturn = getUseMutationMock<FileEntity>()
+    const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
     mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
     const { result: hook } = renderHook()
@@ -1448,17 +1455,18 @@ describe('useUploadFileEntities', () => {
 
     const usePrepareFileEntityUploadMockReturn = setupPrepareDirsForUploadMock()
 
-    const useSynapseMultipartUploadMockReturn = getUseMutationMock()
+    const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock()
     mockUseSynapseMultipartUpload.mockReturnValue(
       useSynapseMultipartUploadMockReturn,
     )
 
-    mockUseDirectS3Upload.mockReturnValue(getUseMutationMock())
+    mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
 
-    const useCreateEntityReturn = getUseMutationMock<FileEntity>(createdEntity1)
+    const useCreateEntityReturn =
+      getUseMutationIdleMock<FileEntity>(createdEntity1)
     mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
-    const useUpdateEntityReturn = getUseMutationMock<FileEntity>()
+    const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
     mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
     const { result: hook } = renderHook()
@@ -1508,7 +1516,7 @@ describe('useUploadFileEntities', () => {
       prepareDirsForUploadReturn,
     )
 
-    const useSynapseMultipartUploadMockReturn = getUseMutationMock({
+    const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock({
       fileHandleId: createdFileHandleId1,
       fileName: file1.name,
     })
@@ -1516,12 +1524,13 @@ describe('useUploadFileEntities', () => {
       useSynapseMultipartUploadMockReturn,
     )
 
-    mockUseDirectS3Upload.mockReturnValue(getUseMutationMock())
+    mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
 
-    const useCreateEntityReturn = getUseMutationMock<FileEntity>(createdEntity1)
+    const useCreateEntityReturn =
+      getUseMutationIdleMock<FileEntity>(createdEntity1)
     mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
-    const useUpdateEntityReturn = getUseMutationMock<FileEntity>()
+    const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
     mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
     const { result: hook } = renderHook()

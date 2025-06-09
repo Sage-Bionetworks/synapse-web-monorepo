@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '../abstracts/variables' as SrcVars;
 @use '../abstracts/mixins' as SrcMixins;
 
@@ -98,7 +99,7 @@ $login-wrapper-height: 560px;
     align-self: center;
   }
   .panel-right {
-    background-color: adjust-color(
+    background-color: color.adjust(
       SrcVars.$primary-action-color,
       $alpha: -0.95
     );

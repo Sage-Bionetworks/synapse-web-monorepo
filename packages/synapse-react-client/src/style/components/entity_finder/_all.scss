@@ -1,2 +1,7 @@
-@import './entity-finder', './details-view', './tree-view', './tree-node-browse',
-  './tree-node-select', './breadcrumbs', './selection-pane';
+@use 'entity-finder';
+@use 'details-view';
+@use 'tree-view';
+@use 'tree-node-browse';
+@use 'tree-node-select';
+@use 'breadcrumbs';
+@use 'selection-pane';

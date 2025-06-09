@@ -20,6 +20,7 @@ export const Demo: Story = {
       alg: '',
       digits: 6,
       period: 30,
+      username: 'fake-username',
     },
     onTwoFactorEnrollmentSuccess: () => {
       displayToast('Successfully enrolled in 2FA!', 'success')

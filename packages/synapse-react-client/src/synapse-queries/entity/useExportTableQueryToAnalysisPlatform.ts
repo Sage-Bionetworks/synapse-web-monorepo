@@ -31,7 +31,13 @@ export function useExportTableQueryToAnalysisPlatform(options: {
     fileVersionColumnName,
   )
 
-  const exportToTerra = useExportToTerra(queryBundleRequest)
+  const exportToTerra = useExportToTerra(
+    queryBundleRequest,
+    selectColumns,
+    fileIdColumnName,
+    fileNameColumnName,
+    fileVersionColumnName,
+  )
 
   return {
     exportToCavatica,
