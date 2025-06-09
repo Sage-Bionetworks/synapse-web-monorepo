@@ -72,46 +72,46 @@ $themes: (
   ),
 );
 
-$primary-action-color-active: adjust-color(
+$primary-action-color-active: color.adjust(
   $primary-action-color,
   $saturation: 50%,
   $lightness: 0%
 ) !default;
 
 $primary-color-palette: (
-  100: adjust-color($primary-action-color, $saturation: -25%, $lightness: 50%),
-  200: adjust-color($primary-action-color, $saturation: -13%, $lightness: 20%),
-  300: adjust-color($primary-action-color, $saturation: -3%, $lightness: 10%),
-  400: adjust-color($primary-action-color, $saturation: -1%, $lightness: 5%),
+  100: color.adjust($primary-action-color, $saturation: -25%, $lightness: 50%),
+  200: color.adjust($primary-action-color, $saturation: -13%, $lightness: 20%),
+  300: color.adjust($primary-action-color, $saturation: -3%, $lightness: 10%),
+  400: color.adjust($primary-action-color, $saturation: -1%, $lightness: 5%),
   500: $primary-action-color,
-  600: adjust-color($primary-action-color, $saturation: 5%, $lightness: -4%),
-  700: adjust-color($primary-action-color, $saturation: 11%, $lightness: -8%),
-  800: adjust-color($primary-action-color, $saturation: 18%, $lightness: -10%),
-  900: adjust-color($primary-action-color, $saturation: 24%, $lightness: -18%),
+  600: color.adjust($primary-action-color, $saturation: 5%, $lightness: -4%),
+  700: color.adjust($primary-action-color, $saturation: 11%, $lightness: -8%),
+  800: color.adjust($primary-action-color, $saturation: 18%, $lightness: -10%),
+  900: color.adjust($primary-action-color, $saturation: 24%, $lightness: -18%),
 ) !default;
 
 $secondary-color-palette: (
-  100: adjust-color($secondary-action-color, $saturation: -25%, $lightness: 50%),
-  200: adjust-color($secondary-action-color, $saturation: -13%, $lightness: 20%),
-  300: adjust-color($secondary-action-color, $saturation: -3%, $lightness: 10%),
-  400: adjust-color($secondary-action-color, $saturation: -1%, $lightness: 5%),
+  100: color.adjust($secondary-action-color, $saturation: -25%, $lightness: 50%),
+  200: color.adjust($secondary-action-color, $saturation: -13%, $lightness: 20%),
+  300: color.adjust($secondary-action-color, $saturation: -3%, $lightness: 10%),
+  400: color.adjust($secondary-action-color, $saturation: -1%, $lightness: 5%),
   500: $secondary-action-color,
-  600: adjust-color($secondary-action-color, $saturation: 5%, $lightness: -4%),
-  700: adjust-color($secondary-action-color, $saturation: 11%, $lightness: -8%),
-  800: adjust-color($secondary-action-color, $saturation: 18%, $lightness: -10%),
-  900: adjust-color($secondary-action-color, $saturation: 24%, $lightness: -18%),
+  600: color.adjust($secondary-action-color, $saturation: 5%, $lightness: -4%),
+  700: color.adjust($secondary-action-color, $saturation: 11%, $lightness: -8%),
+  800: color.adjust($secondary-action-color, $saturation: 18%, $lightness: -10%),
+  900: color.adjust($secondary-action-color, $saturation: 24%, $lightness: -18%),
 ) !default;
 
 $tertiary-color-palette: (
-  100: adjust-color($tertiary-action-color, $saturation: -25%, $lightness: 50%),
-  200: adjust-color($tertiary-action-color, $saturation: -13%, $lightness: 20%),
-  300: adjust-color($tertiary-action-color, $saturation: -3%, $lightness: 10%),
-  400: adjust-color($tertiary-action-color, $saturation: -1%, $lightness: 5%),
+  100: color.adjust($tertiary-action-color, $saturation: -25%, $lightness: 50%),
+  200: color.adjust($tertiary-action-color, $saturation: -13%, $lightness: 20%),
+  300: color.adjust($tertiary-action-color, $saturation: -3%, $lightness: 10%),
+  400: color.adjust($tertiary-action-color, $saturation: -1%, $lightness: 5%),
   500: $tertiary-action-color,
-  600: adjust-color($tertiary-action-color, $saturation: 5%, $lightness: -4%),
-  700: adjust-color($tertiary-action-color, $saturation: 11%, $lightness: -8%),
-  800: adjust-color($tertiary-action-color, $saturation: 18%, $lightness: -10%),
-  900: adjust-color($tertiary-action-color, $saturation: 24%, $lightness: -18%),
+  600: color.adjust($tertiary-action-color, $saturation: 5%, $lightness: -4%),
+  700: color.adjust($tertiary-action-color, $saturation: 11%, $lightness: -8%),
+  800: color.adjust($tertiary-action-color, $saturation: 18%, $lightness: -10%),
+  900: color.adjust($tertiary-action-color, $saturation: 24%, $lightness: -18%),
 ) !default;
 
 /// Breakpoints map

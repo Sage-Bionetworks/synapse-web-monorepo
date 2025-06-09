@@ -31,18 +31,15 @@ const twoFactorAuthErrorResponse: TwoFactorAuthErrorResponse = {
   errorCode: ErrorResponseCode.TWO_FA_REQUIRED,
 }
 
-const onSignInComplete = jest.fn()
+const onSignInComplete = vi.fn()
 
-const mockOAuthSessionRequest = jest.spyOn(SynapseClient, 'oAuthSessionRequest')
-const mockSetAccessTokenCookie = jest.spyOn(
-  SynapseClient,
-  'setAccessTokenCookie',
-)
-const mockOAuthRegisterAccountStep2 = jest.spyOn(
+const mockOAuthSessionRequest = vi.spyOn(SynapseClient, 'oAuthSessionRequest')
+const mockSetAccessTokenCookie = vi.spyOn(SynapseClient, 'setAccessTokenCookie')
+const mockOAuthRegisterAccountStep2 = vi.spyOn(
   SynapseClient,
   'oAuthRegisterAccountStep2',
 )
-const mockBindOAuthProviderToAccount = jest.spyOn(
+const mockBindOAuthProviderToAccount = vi.spyOn(
   SynapseClient,
   'bindOAuthProviderToAccount',
 )
@@ -55,7 +52,7 @@ describe('useDetectSSOCode tests', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     history.replaceState({}, '', `/`)
   })
 
@@ -93,7 +90,7 @@ describe('useDetectSSOCode tests', () => {
         state.registrationUsername,
         OAUTH2_PROVIDERS.GOOGLE,
         authorizationCode,
-        `http://localhost/?provider=${OAUTH2_PROVIDERS.GOOGLE}`,
+        `http://localhost:3000/?provider=${OAUTH2_PROVIDERS.GOOGLE}`,
         BackendDestinationEnum.REPO_ENDPOINT,
       )
 
@@ -127,7 +124,7 @@ describe('useDetectSSOCode tests', () => {
       expect(mockBindOAuthProviderToAccount).toHaveBeenCalledWith(
         OAUTH2_PROVIDERS.ORCID,
         authorizationCode,
-        `http://localhost/?provider=${OAUTH2_PROVIDERS.ORCID}`,
+        `http://localhost:3000/?provider=${OAUTH2_PROVIDERS.ORCID}`,
         BackendDestinationEnum.REPO_ENDPOINT,
       )
 
@@ -137,14 +134,14 @@ describe('useDetectSSOCode tests', () => {
     })
   })
   it('Handles ORCID binding failure', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     history.replaceState(
       {},
       '',
       `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.ORCID}`,
     )
 
-    const mockOnError = jest.fn()
+    const mockOnError = vi.fn()
     const error = new SynapseClientError(
       400,
       'some reason',
@@ -166,7 +163,7 @@ describe('useDetectSSOCode tests', () => {
       expect(mockBindOAuthProviderToAccount).toHaveBeenCalledWith(
         OAUTH2_PROVIDERS.ORCID,
         authorizationCode,
-        `http://localhost/?provider=${OAUTH2_PROVIDERS.ORCID}`,
+        `http://localhost:3000/?provider=${OAUTH2_PROVIDERS.ORCID}`,
         BackendDestinationEnum.REPO_ENDPOINT,
       )
 
@@ -180,7 +177,7 @@ describe('useDetectSSOCode tests', () => {
   })
 
   test.each(Object.values(OAUTH2_PROVIDERS))(
-    'Handles successful login with %p',
+    'Handles successful login with %s',
     async provider => {
       history.replaceState(
         {},
@@ -202,7 +199,7 @@ describe('useDetectSSOCode tests', () => {
         expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
           provider,
           authorizationCode,
-          `http://localhost/?provider=${provider}`,
+          `http://localhost:3000/?provider=${provider}`,
           BackendDestinationEnum.REPO_ENDPOINT,
         )
 
@@ -216,14 +213,14 @@ describe('useDetectSSOCode tests', () => {
   )
 
   test.each(Object.values(OAUTH2_PROVIDERS))(
-    'Handles 2fa scenario on login with %p',
+    'Handles 2fa scenario on login with %s',
     async provider => {
       history.replaceState(
         {},
         '',
         `/?code=${authorizationCode}&provider=${provider}`,
       )
-      const mockOn2fa = jest.fn()
+      const mockOn2fa = vi.fn()
       mockOAuthSessionRequest.mockResolvedValue(twoFactorAuthErrorResponse)
 
       const hookReturn = renderHook({
@@ -238,7 +235,7 @@ describe('useDetectSSOCode tests', () => {
         expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
           provider,
           authorizationCode,
-          `http://localhost/?provider=${provider}`,
+          `http://localhost:3000/?provider=${provider}`,
           BackendDestinationEnum.REPO_ENDPOINT,
         )
         expect(mockOn2fa).toHaveBeenCalledWith(twoFactorAuthErrorResponse)
@@ -250,7 +247,7 @@ describe('useDetectSSOCode tests', () => {
   )
 
   test.each(Object.values(OAUTH2_PROVIDERS))(
-    'Handles 2fa scenario on login with %p where a twoFaResetToken is passed in state',
+    'Handles 2fa scenario on login with %s where a twoFaResetToken is passed in state',
     async provider => {
       const state: OAuth2State = {
         twoFaResetToken: 'asdf',
@@ -261,7 +258,7 @@ describe('useDetectSSOCode tests', () => {
         '',
         `/?code=${authorizationCode}&provider=${provider}&state=${encodedState}`,
       )
-      const mockOn2faReset = jest.fn()
+      const mockOn2faReset = vi.fn()
       mockOAuthSessionRequest.mockResolvedValue(twoFactorAuthErrorResponse)
 
       const hookReturn = renderHook({
@@ -276,7 +273,7 @@ describe('useDetectSSOCode tests', () => {
         expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
           provider,
           authorizationCode,
-          `http://localhost/?provider=${provider}`,
+          `http://localhost:3000/?provider=${provider}`,
           BackendDestinationEnum.REPO_ENDPOINT,
         )
         expect(mockOn2faReset).toHaveBeenCalledWith(
@@ -291,11 +288,9 @@ describe('useDetectSSOCode tests', () => {
   )
 
   test.each(Object.values(OAUTH2_PROVIDERS))(
-    'Redirects to account registration on failed login with %p where the status is 404',
+    'Redirects to account registration on failed login with %s where the status is 404',
     async provider => {
-      const consoleSpy = jest
-        .spyOn(console, 'error')
-        .mockImplementation(() => {})
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       history.replaceState(
         {},
         '',
@@ -320,7 +315,7 @@ describe('useDetectSSOCode tests', () => {
         expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
           provider,
           authorizationCode,
-          `http://localhost/?provider=${provider}`,
+          `http://localhost:3000/?provider=${provider}`,
           BackendDestinationEnum.REPO_ENDPOINT,
         )
         expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
@@ -335,11 +330,9 @@ describe('useDetectSSOCode tests', () => {
   )
 
   test.each(Object.values(OAUTH2_PROVIDERS))(
-    'Handles other error on login with %p',
+    'Handles other error on login with %s',
     async provider => {
-      const consoleSpy = jest
-        .spyOn(console, 'error')
-        .mockImplementation(() => {})
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
       history.replaceState(
         {},
         '',
@@ -352,7 +345,7 @@ describe('useDetectSSOCode tests', () => {
       )
 
       mockOAuthSessionRequest.mockRejectedValue(unhandledError)
-      const mockOnError = jest.fn()
+      const mockOnError = vi.fn()
 
       const hookReturn = renderHook({
         onSignInComplete,
@@ -365,7 +358,7 @@ describe('useDetectSSOCode tests', () => {
         expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
           provider,
           authorizationCode,
-          `http://localhost/?provider=${provider}`,
+          `http://localhost:3000/?provider=${provider}`,
           BackendDestinationEnum.REPO_ENDPOINT,
         )
         expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
@@ -399,7 +392,7 @@ describe('useDetectSSOCode tests', () => {
     urlParams.set('code', authorizationCode)
 
     history.replaceState({}, '', `/?${urlParams.toString()}`)
-    const mockOn2faReset = jest.fn()
+    const mockOn2faReset = vi.fn()
     mockOAuthSessionRequest.mockResolvedValue(twoFactorAuthErrorResponse)
 
     const hookReturn = renderHook({
@@ -412,7 +405,7 @@ describe('useDetectSSOCode tests', () => {
       expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
         provider,
         authorizationCode,
-        `http://localhost/?provider=${provider}`,
+        `http://localhost:3000/?provider=${provider}`,
         BackendDestinationEnum.REPO_ENDPOINT,
       )
       // mockOn2faReset would only be called if noParseStateParam was false

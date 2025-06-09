@@ -6,7 +6,7 @@ import {
   useUpdateEntity,
 } from '@/synapse-queries/entity/useEntity'
 import { useCreateExternalFileHandle } from '@/synapse-queries/file/useFileHandle'
-import { getUseMutationMock } from '@/testutils/ReactQueryMockUtils'
+import { getUseMutationIdleMock } from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ExternalFileHandle } from '@sage-bionetworks/synapse-client'
 import { renderHook as _renderHook } from '@testing-library/react'
@@ -15,16 +15,16 @@ import {
   useLinkFileEntityToURL,
 } from './useLinkFileEntityToURL'
 
-jest.mock('../../../synapse-queries/entity/useEntity', () => ({
-  useCreateEntity: jest.fn(),
-  useUpdateEntity: jest.fn(),
+vi.mock('../../../synapse-queries/entity/useEntity', () => ({
+  useCreateEntity: vi.fn(),
+  useUpdateEntity: vi.fn(),
 }))
 
-jest.mock('../../../synapse-queries/file/useFileHandle', () => ({
-  useCreateExternalFileHandle: jest.fn(),
+vi.mock('../../../synapse-queries/file/useFileHandle', () => ({
+  useCreateExternalFileHandle: vi.fn(),
 }))
 
-const mockGetEntity = jest.spyOn(
+const mockGetEntity = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.entityServicesClient,
   'getRepoV1EntityId',
 )
@@ -39,16 +39,17 @@ const mockFileHandle: ExternalFileHandle = {
   externalURL: url,
 }
 
-const mockUseCreateEntityReturnValue = getUseMutationMock()
-jest.mocked(useCreateEntity).mockReturnValue(mockUseCreateEntityReturnValue)
+const mockUseCreateEntityReturnValue = getUseMutationIdleMock()
+vi.mocked(useCreateEntity).mockReturnValue(mockUseCreateEntityReturnValue)
 
-const mockUseUpdateEntityReturnValue = getUseMutationMock()
-jest.mocked(useUpdateEntity).mockReturnValue(mockUseUpdateEntityReturnValue)
+const mockUseUpdateEntityReturnValue = getUseMutationIdleMock()
+vi.mocked(useUpdateEntity).mockReturnValue(mockUseUpdateEntityReturnValue)
 
-const mockUseExternalFileHandleReturnValue = getUseMutationMock(mockFileHandle)
-jest
-  .mocked(useCreateExternalFileHandle)
-  .mockReturnValue(mockUseExternalFileHandleReturnValue)
+const mockUseExternalFileHandleReturnValue =
+  getUseMutationIdleMock(mockFileHandle)
+vi.mocked(useCreateExternalFileHandle).mockReturnValue(
+  mockUseExternalFileHandleReturnValue,
+)
 
 describe('useLinkFileEntityToURL', () => {
   function renderHook() {
@@ -58,7 +59,7 @@ describe('useLinkFileEntityToURL', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   test('create a FileEntity', async () => {

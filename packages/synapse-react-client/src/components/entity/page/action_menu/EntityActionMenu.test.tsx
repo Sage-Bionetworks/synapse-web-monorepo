@@ -17,7 +17,7 @@ function renderComponent(props: EntityActionMenuProps) {
   })
 }
 
-const onClickFn = jest.fn()
+const onClickFn = vi.fn()
 const ACTION_1 = 'action1'
 const ACTION_2 = 'action2'
 const ACTION_3 = 'action3'
@@ -64,7 +64,7 @@ const PRIMARY_MENU_TEXT = 'Primary Menu'
 const DOWNLOAD_OPTIONS = 'Download Options'
 
 describe('EntityActionMenu tests', () => {
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => vi.clearAllMocks())
 
   it('Renders icon buttons', async () => {
     const layout: EntityActionMenuLayout = {
@@ -295,7 +295,7 @@ describe('EntityActionMenu tests', () => {
     expect(await screen.findAllByRole('separator')).toHaveLength(1)
   })
   it('Inserts configured actions into the primary menu if the actions are not specified in the layout', async () => {
-    const consoleWarnSpy = jest
+    const consoleWarnSpy = vi
       .spyOn(console, 'warn')
       .mockImplementation(() => {})
 
@@ -424,7 +424,7 @@ describe('EntityActionMenu tests', () => {
       textSx: { color: 'blue' },
       iconSx: { color: 'green' },
     }
-    const onClickFn = jest.fn()
+    const onClickFn = vi.fn()
     const actionConfiguration: ActionConfiguration = {
       text: 'action 1 text',
       visible: true,
@@ -494,7 +494,7 @@ describe('EntityActionMenu tests', () => {
       textSx: { color: 'red' },
       iconSx: { color: 'purple' },
     }
-    const onClickFn = jest.fn()
+    const onClickFn = vi.fn()
     const actionConfiguration1: ActionConfiguration = {
       text: 'action 1 text',
       visible: true,

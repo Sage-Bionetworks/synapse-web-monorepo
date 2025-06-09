@@ -20,7 +20,7 @@ const renderComponent = async (props: SummaryTableProps) => {
 
 describe('SummaryTable', () => {
   const mock = {
-    callbackFn: jest.fn(() => 'ok'),
+    callbackFn: vi.fn(() => 'ok'),
   }
 
   const { efficacy, basic, naming } = submissionData

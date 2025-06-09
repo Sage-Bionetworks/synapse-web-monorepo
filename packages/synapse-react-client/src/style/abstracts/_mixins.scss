@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use './variables' as SRC;
 @use 'sass:map';
 // -----------------------------------------------------------------------------
@@ -91,7 +92,7 @@
   margin: 15px;
 }
 
-$link-underline-color-default: adjust-color(
+$link-underline-color-default: color.adjust(
   SRC.$primary-action-color,
   $saturation: -50%,
   $lightness: 40%
@@ -184,4 +185,20 @@ $link-underline-color-default: adjust-color(
   .MuiTypography-dataFieldKey {
     margin-top: 16px;
   }
+}
+
+@mixin hv-center() {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin side-padding($padding: 25px) {
+  padding-left: $padding;
+  padding-right: $padding;
+}
+
+@mixin space-between() {
+  display: flex;
+  justify-content: space-between;
 }

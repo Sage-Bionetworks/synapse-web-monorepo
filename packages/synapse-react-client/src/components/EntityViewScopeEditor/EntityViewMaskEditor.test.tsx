@@ -21,7 +21,7 @@ describe('EntityViewMaskEditor tests', () => {
 
   it('renders mask settings with checked fields matching the passed value', () => {
     const value = ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_FOLDER
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     renderComponent({ value, onChange })
 
     const checkboxes = screen.getAllByRole('checkbox')
@@ -34,7 +34,7 @@ describe('EntityViewMaskEditor tests', () => {
   })
   it('onChange works', async () => {
     const value = ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_FOLDER
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     renderComponent({ value, onChange })
 
     // Try untoggling 'Files'
@@ -53,7 +53,7 @@ describe('EntityViewMaskEditor tests', () => {
 
   it('Disables input if an unsupported mask value is passed', () => {
     const value = ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_DOCKER
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     renderComponent({ value, onChange })
 
     screen

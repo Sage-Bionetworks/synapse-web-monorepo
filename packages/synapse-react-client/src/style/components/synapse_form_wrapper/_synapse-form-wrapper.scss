@@ -1,3 +1,4 @@
+@use 'sass:map';
 @use '../../abstracts/variables' as SrcVariables;
 @use '../../abstracts/mixins' as SrcMixins;
 
@@ -52,8 +53,8 @@
   .btn-action:hover,
   .btn-action:focus {
     background-color: SrcVariables.$primary-action-color;
-    @include SrcMixins.box-shadow(3px, 3px, 5px, rgba(0, 0, 0, 0.5));
     color: #fff;
+    @include SrcMixins.box-shadow(3px, 3px, 5px, rgba(0, 0, 0, 0.5));
   }
 
   .btn-action + .btn-action {
@@ -140,29 +141,27 @@
     overflow: hidden;
     width: 100%;
     clear: both;
-    @media (min-width: map-get(SrcVariables.$breakpoints, 'small')) {
+    background-color: SrcVariables.$gray-light;
+    @media (min-width: map.get(SrcVariables.$breakpoints, 'small')) {
       padding: SrcVariables.$space-unit SrcVariables.$space-unit 1rem
         SrcVariables.$space-unit;
     }
-    @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+    @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
       padding: SrcVariables.$space-unit 0 1rem SrcVariables.$space-unit;
     }
-
-    background-color: SrcVariables.$gray-light;
-
     h4 {
       margin-top: 0;
     }
   }
 
   .right-top-actions {
-    @media (max-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+    @media (max-width: map.get(SrcVariables.$breakpoints, 'medium')) {
       display: flex;
       flex-direction: row-reverse;
       justify-content: center;
       margin-bottom: 30px;
     }
-    @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+    @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
       position: absolute;
       right: 0;
       top: 0;
@@ -187,12 +186,12 @@
       font-size: 1.8rem;
       margin-bottom: 1rem;
       text-align: center;
-      @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+      @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
         text-align: left;
       }
     }
     .json-forms-menu {
-      @media (min-width: map-get(SrcVariables.$breakpoints, 'large')) {
+      @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
         padding-right: 3rem;
       }
     }
@@ -203,7 +202,7 @@
     flex-wrap: wrap;
     flex-basis: 100%;
     margin-top: 1rem;
-    @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+    @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
       flex: 3;
     }
   }
@@ -267,12 +266,12 @@
   /*--- form ---*/
 
   .static-screen {
-    @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+    @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
       margin-right: 10rem;
     }
   }
   .submissionInputForm {
-    @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+    @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
       margin-right: 10rem;
     }
     .help-block {
@@ -304,7 +303,7 @@
         label {
           font-size: 16px;
           font-weight: normal;
-          @media (min-width: map-get(SrcVariables.$breakpoints, 'large')) {
+          @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
             font-size: 1.3rem;
           }
         }
@@ -350,17 +349,17 @@
   }
 
   .rjsf-array-item {
-    @media (max-width: map-get(SrcVariables.$breakpoints, 'large')) {
+    border: 1px solid SrcVariables.$gray-dark;
+    padding: 2rem 1rem;
+    overflow: auto;
+    margin: 0 1.6rem 2rem 1.6rem;
+    @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
       display: flex;
       flex-direction: column-reverse;
       .col-xs-9 {
         width: unset;
       }
     }
-    border: 1px solid SrcVariables.$gray-dark;
-    padding: 2rem 1rem;
-    overflow: auto;
-    margin: 0 1.6rem 2rem 1.6rem;
   }
 
   .rjsf-array-item-move-down,
@@ -392,7 +391,7 @@
   }
 
   .array-item-toolbox {
-    @media (max-width: map-get(SrcVariables.$breakpoints, 'large')) {
+    @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
       margin-bottom: 10px;
     }
     button,
@@ -455,11 +454,11 @@
     border: 1px solid SrcVariables.$gray-light;
     font-size: 0.85em;
 
-    @media (min-width: map-get(SrcVariables.$breakpoints, 'small')) {
+    @media (min-width: map.get(SrcVariables.$breakpoints, 'small')) {
       margin: 0 2em 0 0;
     }
 
-    @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+    @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
       padding: 0 1em;
       margin: 0 1em;
     }
@@ -510,7 +509,7 @@
   .experiments-list legend ~ .field-description {
     font-style: italic;
     font-size: 1rem;
-    @media (min-width: map-get(SrcVariables.$breakpoints, 'medium')) {
+    @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
       font-size: 1.4rem;
     }
   }

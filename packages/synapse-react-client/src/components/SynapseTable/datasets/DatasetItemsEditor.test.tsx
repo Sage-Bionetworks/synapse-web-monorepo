@@ -37,11 +37,11 @@ const mockFileEntity = mockFileEntityData.entity
 const datasetCopy = getCopy(mockDatasetEntity)
 const datasetCollectionCopy = getCopy(mockDatasetCollectionEntity)
 
-const mockEntityBadgeIcons = jest
+const mockEntityBadgeIcons = vi
   .spyOn(EntityBadgeModule, 'EntityBadgeIcons')
   .mockImplementation(() => <></>)
 
-jest.spyOn(ToastMessageModule, 'displayToast').mockImplementation(() => {
+vi.spyOn(ToastMessageModule, 'displayToast').mockImplementation(() => {
   return noop
 })
 
@@ -67,7 +67,7 @@ function referenceToDatasetItem(reference: Reference): EntityRef {
   }
 }
 // The Entity Finder is complicated to use and would require setting up a lot of API mocks, so we'll just mock the component.
-const mockEntityFinder = jest
+const mockEntityFinder = vi
   .spyOn(EntityFinderModal, 'EntityFinderModal')
   .mockImplementation(() => <></>)
 
@@ -137,14 +137,14 @@ async function clickRemove(user: ReturnType<typeof userEvent.setup>) {
 const mockToastFn = displayToast
 
 // Captures the JSON passed to the server via msw.
-const updatedEntityCaptor = jest.fn()
+const updatedEntityCaptor = vi.fn()
 
 async function renderComponent(wrapperProps?: SynapseContextType) {
   const user = userEvent.setup()
 
-  const mockOnUnsavedChangesFn = jest.fn()
-  const mockOnSaveFn = jest.fn()
-  const mockOnCloseFn = jest.fn()
+  const mockOnUnsavedChangesFn = vi.fn()
+  const mockOnSaveFn = vi.fn()
+  const mockOnCloseFn = vi.fn()
 
   const defaultProps: DatasetItemsEditorProps = {
     entityId: mockDatasetEntityData.id,
@@ -287,7 +287,7 @@ describe('Dataset Items Editor tests', () => {
   })
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     server.resetHandlers()
   })
   afterAll(() => server.close())

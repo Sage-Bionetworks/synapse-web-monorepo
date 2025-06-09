@@ -7,6 +7,7 @@ import {
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
 import { act, renderHook, waitFor } from '@testing-library/react'
+import noop from 'lodash-es/noop'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../SynapseConstants'
 import useLogin from './useLogin'
 
@@ -28,12 +29,12 @@ const twoFactorAuthErrorResponse: TwoFactorAuthErrorResponse = {
 const username = 'qwertyuiop'
 const password = 'p4ssw0rd'
 
-const onSuccessfulLoginFn = jest.fn()
+const onSuccessfulLoginFn = vi.fn()
 
-const mockLogIn = jest.spyOn(SynapseClient, 'login')
-const mockLogInWith2FA = jest.spyOn(SynapseClient, 'loginWith2fa')
-const mockReset2FA = jest.spyOn(SynapseClient, 'resetTwoFactorAuth')
-const mockSetAccessTokenCookie = jest
+const mockLogIn = vi.spyOn(SynapseClient, 'login')
+const mockLogInWith2FA = vi.spyOn(SynapseClient, 'loginWith2fa')
+const mockReset2FA = vi.spyOn(SynapseClient, 'resetTwoFactorAuth')
+const mockSetAccessTokenCookie = vi
   .spyOn(SynapseClient, 'setAccessTokenCookie')
   .mockResolvedValue(undefined)
 
@@ -64,7 +65,7 @@ async function verify2FAResetStarted(
 
 describe('useLogin tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     localStorage.clear()
     history.replaceState({}, '', `/`)
   })
@@ -131,7 +132,7 @@ describe('useLogin tests', () => {
   })
 
   it('Handles error on login', async () => {
-    const consoleErrorSpy = jest
+    const consoleErrorSpy = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
 
@@ -286,7 +287,7 @@ describe('useLogin tests', () => {
   })
 
   it('Error on 2fa submission', async () => {
-    const consoleErrorSpy = jest
+    const consoleErrorSpy = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
 
@@ -352,11 +353,11 @@ describe('useLogin tests', () => {
   })
 
   it('Handles 2fa error where the token is invalid/expired', async () => {
-    const consoleErrorSpy = jest
+    const consoleErrorSpy = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
 
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(noop)
     const timedOneTimePassword = '123456'
     const error = new SynapseClientError(
       400,
@@ -394,10 +395,10 @@ describe('useLogin tests', () => {
   })
 
   it('Handles 2fa error where the token is invalid/expired, and clears search params', async () => {
-    const consoleErrorSpy = jest
+    const consoleErrorSpy = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
-    const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(noop)
 
     history.replaceState(
       {},
@@ -437,7 +438,9 @@ describe('useLogin tests', () => {
       expect(
         localStorage.getItem(AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY),
       ).toBe(null)
-      expect(window.location.href).toBe('http://localhost/LoginPlace:0?foo=bar')
+      expect(window.location.href).toBe(
+        'http://localhost:3000/LoginPlace:0?foo=bar',
+      )
     })
     consoleWarnSpy.mockRestore()
     consoleErrorSpy.mockRestore()

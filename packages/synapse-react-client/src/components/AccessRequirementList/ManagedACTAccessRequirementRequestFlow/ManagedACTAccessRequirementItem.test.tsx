@@ -32,16 +32,16 @@ async function renderComponent(
   return renderReturn
 }
 
-const mockGetAccessRequirementStatus = jest.spyOn(
+const mockGetAccessRequirementStatus = vi.spyOn(
   SynapseClient,
   'getAccessRequirementStatus',
 )
 
-jest
-  .spyOn(SynapseClient, 'getWikiPageKeyForAccessRequirement')
-  .mockResolvedValue(mockManagedACTAccessRequirementWikiPageKey)
+vi.spyOn(SynapseClient, 'getWikiPageKeyForAccessRequirement').mockResolvedValue(
+  mockManagedACTAccessRequirementWikiPageKey,
+)
 
-const mockCancelSubmission = jest
+const mockCancelSubmission = vi
   .spyOn(SynapseClient, 'cancelDataAccessRequest')
   .mockImplementation(submissionId =>
     Promise.resolve({
@@ -52,23 +52,23 @@ const mockCancelSubmission = jest
     }),
   )
 
-jest.mock('../../Markdown/MarkdownSynapse', () => ({
+vi.mock('../../Markdown/MarkdownSynapse', () => ({
   __esModule: true,
-  default: jest.fn(),
+  default: vi.fn(),
 }))
 
 const mockRenderedMarkdown =
   'These are the AR instructions presented to the user.'
 
-const mockMarkdownSynapse = jest.mocked(MarkdownSynapse)
+const mockMarkdownSynapse = vi.mocked(MarkdownSynapse)
 mockMarkdownSynapse.mockImplementation(
   () =>
     (
       <div data-testid={'MarkdownSynapseContent'}>{mockRenderedMarkdown}</div>
     ) as any,
 )
-const mockOnRequestAccess = jest.fn()
-const mockOnHide = jest.fn()
+const mockOnRequestAccess = vi.fn()
+const mockOnHide = vi.fn()
 
 const rejectedReason = 'You incorrectly filled out your IDU Statement.'
 
@@ -182,7 +182,7 @@ async function testWikiShownWithoutToggle() {
 
 describe('ManagedACTAccessRequirementItem', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   describe('Submission has not been created', () => {
     beforeEach(async () => {

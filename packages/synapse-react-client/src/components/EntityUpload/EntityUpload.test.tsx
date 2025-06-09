@@ -26,37 +26,34 @@ import {
 import { FileUploadProgress } from './FileUploadProgress'
 import { ProjectStorageLimitAlert } from './ProjectStorageLimitAlert'
 
-jest.mock(
-  '../../utils/hooks/useUploadFileEntity/useUploadFileEntities',
-  () => ({
-    useUploadFileEntities: jest.fn(),
-  }),
-)
-
-jest.mock('../../synapse-queries/entity/useEntity', () => ({
-  useGetEntity: jest.fn(),
+vi.mock('../../utils/hooks/useUploadFileEntity/useUploadFileEntities', () => ({
+  useUploadFileEntities: vi.fn(),
 }))
 
-jest.mock('../../synapse-queries/file/useUploadDestination.ts', () => ({
-  useGetDefaultUploadDestination: jest.fn(),
+vi.mock('../../synapse-queries/entity/useEntity', () => ({
+  useGetEntity: vi.fn(),
 }))
 
-jest.mock('./FileUploadProgress', () => ({
+vi.mock('../../synapse-queries/file/useUploadDestination.ts', () => ({
+  useGetDefaultUploadDestination: vi.fn(),
+}))
+
+vi.mock('./FileUploadProgress', () => ({
   FILE_UPLOAD_PROGRESS_COMPONENT_HEIGHT_PX: 100,
-  FileUploadProgress: jest.fn(() => <div data-testid={'FileUploadProgress'} />),
+  FileUploadProgress: vi.fn(() => <div data-testid={'FileUploadProgress'} />),
 }))
 
-jest.mock('./ProjectStorageLimitAlert', () => ({
-  ProjectStorageLimitAlert: jest.fn(() => (
+vi.mock('./ProjectStorageLimitAlert', () => ({
+  ProjectStorageLimitAlert: vi.fn(() => (
     <div data-testid={'ProjectStorageLimitAlert'} />
   )),
 }))
 
-const mockFileUploadProgress = jest.mocked(FileUploadProgress)
-const mockProjectStorageLimitAlert = jest.mocked(ProjectStorageLimitAlert)
-const mockUseUploadFileEntities = jest.mocked(useUploadFileEntities)
-const mockUseGetEntity = jest.mocked(useGetEntity)
-const mockUseGetDefaultUploadDestination = jest.mocked(
+const mockFileUploadProgress = vi.mocked(FileUploadProgress)
+const mockProjectStorageLimitAlert = vi.mocked(ProjectStorageLimitAlert)
+const mockUseUploadFileEntities = vi.mocked(useUploadFileEntities)
+const mockUseGetEntity = vi.mocked(useGetEntity)
+const mockUseGetDefaultUploadDestination = vi.mocked(
   useGetDefaultUploadDestination,
 )
 
@@ -66,7 +63,7 @@ const mockUseUploadFileEntitiesReturn = {
   activePrompts: [],
   activeUploadCount: 0,
   uploadProgress: [],
-  initiateUpload: jest.fn(),
+  initiateUpload: vi.fn(),
   isUploadReady: true,
 } satisfies UseUploadFileEntitiesReturn
 
@@ -74,7 +71,7 @@ describe('EntityUpload', () => {
   function renderComponent(propOverrides: Partial<EntityUploadProps> = {}) {
     const user = userEvent.setup()
     const ref = createRef<EntityUploadHandle>()
-    const mockOnUploadReady = jest.fn()
+    const mockOnUploadReady = vi.fn()
     const result = render(
       <EntityUpload
         ref={ref}
@@ -91,7 +88,7 @@ describe('EntityUpload', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 
     mockUseUploadFileEntities.mockReturnValue(mockUseUploadFileEntitiesReturn)
     mockUseGetEntity.mockReturnValue(getUseQuerySuccessMock(mockProject.entity))
@@ -183,10 +180,10 @@ describe('EntityUpload', () => {
           file: new File(['contents'], 'file1.txt'),
           progress: { value: 1024 * 1024 * 50, total: 1024 * 1024 * 100 },
           status: 'UPLOADING',
-          cancel: jest.fn(),
-          pause: jest.fn(),
-          resume: jest.fn(),
-          remove: jest.fn(),
+          cancel: vi.fn(),
+          pause: vi.fn(),
+          resume: vi.fn(),
+          remove: vi.fn(),
           failureReason: undefined,
         },
       ],
@@ -227,10 +224,10 @@ describe('EntityUpload', () => {
             fileName: 'file1.txt',
             existingEntityId: 'syn123',
           },
-          onConfirmAll: jest.fn(),
-          onConfirm: jest.fn(),
-          onSkip: jest.fn(),
-          onCancelAll: jest.fn(),
+          onConfirmAll: vi.fn(),
+          onConfirm: vi.fn(),
+          onSkip: vi.fn(),
+          onCancelAll: vi.fn(),
         },
         {
           info: {
@@ -238,10 +235,10 @@ describe('EntityUpload', () => {
             fileName: 'file2.txt',
             existingEntityId: 'syn456',
           },
-          onConfirmAll: jest.fn(),
-          onConfirm: jest.fn(),
-          onSkip: jest.fn(),
-          onCancelAll: jest.fn(),
+          onConfirmAll: vi.fn(),
+          onConfirm: vi.fn(),
+          onSkip: vi.fn(),
+          onCancelAll: vi.fn(),
         },
       ],
     } satisfies UseUploadFileEntitiesReturn

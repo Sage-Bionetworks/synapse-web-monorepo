@@ -6,6 +6,7 @@
     "allowJs": true,
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
+    "types": ["vitest/globals"],
     "paths": {
       "@/*": ["./src/*"],
       // HMR will work if we uncomment these, but doing so causes various build/typecheck errors

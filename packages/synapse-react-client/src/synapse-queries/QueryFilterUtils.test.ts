@@ -20,8 +20,8 @@ describe('QueryFilterUtils', () => {
       const keyFactory = new KeyFactory(undefined)
       const entityId = 'syn123'
 
-      const resetQueriesSpy = jest.spyOn(queryClient, 'resetQueries')
-      const invalidateQueriesSpy = jest.spyOn(queryClient, 'invalidateQueries')
+      const resetQueriesSpy = vi.spyOn(queryClient, 'resetQueries')
+      const invalidateQueriesSpy = vi.spyOn(queryClient, 'invalidateQueries')
 
       await invalidateAllQueriesForEntity(queryClient, keyFactory, entityId)
 
@@ -102,8 +102,8 @@ describe('QueryFilterUtils', () => {
       const keyFactory = new KeyFactory(undefined)
       const entityId = 'syn123'
 
-      const resetQueriesSpy = jest.spyOn(queryClient, 'resetQueries')
-      const invalidateQueriesSpy = jest.spyOn(queryClient, 'invalidateQueries')
+      const resetQueriesSpy = vi.spyOn(queryClient, 'resetQueries')
+      const invalidateQueriesSpy = vi.spyOn(queryClient, 'invalidateQueries')
 
       const keyToExcludeFromInvalidation =
         keyFactory.getEntityQueryKey(entityId)

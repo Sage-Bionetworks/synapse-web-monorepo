@@ -1,24 +1,38 @@
 import {
   DownloadPFBRequest,
   QueryBundleRequest,
+  SelectColumn,
 } from '@sage-bionetworks/synapse-types'
 import { displayToast } from '../../components/ToastMessage/ToastMessage'
 import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 import { useDownloadTableQueryResultAsPFB } from '../table/useDownloadTable'
+import { addDrsUriToSql } from './useExportToCavatica'
 
-export function useExportToTerra(queryBundleRequest: QueryBundleRequest) {
+export function useExportToTerra(
+  queryBundleRequest: QueryBundleRequest,
+  selectColumns?: SelectColumn[],
+  fileIdColumnName: string = 'id',
+  fileNameColumnName: string = 'name',
+  fileVersionColumnName: string = 'currentVersion',
+) {
   const { mutateAsync: createPfb } = useDownloadTableQueryResultAsPFB()
-  // TODO?: SQL may need to be modified (see CAVATICA example) to include fields such as ga4gh_drs_uri
-  // Terra docs: https://support.terra.bio/hc/en-us/articles/360051722371-Data-table-column-names-imported-data#h_01ENT95G1B9JX40JJQPQFJ88Q7
   return async () => {
+    const originalSql = queryBundleRequest.query.sql
     try {
       const tableEntityId = parseEntityIdFromSqlStatement(
         queryBundleRequest.query.sql,
       )
+      const sql = addDrsUriToSql(
+        originalSql,
+        selectColumns,
+        fileIdColumnName,
+        fileNameColumnName,
+        fileVersionColumnName,
+      )
       const downloadPfbRequest: DownloadPFBRequest = {
+        sql,
         concreteType: 'org.sagebionetworks.repo.model.table.DownloadPFBRequest',
         entityId: tableEntityId,
-        sql: queryBundleRequest.query.sql,
         selectedFacets: queryBundleRequest.query.selectedFacets,
         additionalFilters: queryBundleRequest.query.additionalFilters,
         // Note - backend will respond with a 500 if illegal characters found in pfbEntityName (such as '-')

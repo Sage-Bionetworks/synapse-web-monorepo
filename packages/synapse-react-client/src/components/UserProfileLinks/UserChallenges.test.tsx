@@ -1,22 +1,25 @@
 import '@testing-library/jest-dom'
 import { SynapseTestContext } from '@/mocks/MockSynapseContext'
 import { useGetUserChallengesInfinite } from '@/synapse-queries/user/useGetUserChallenges'
-import { ChallengeWithProjectHeader } from '@sage-bionetworks/synapse-types'
-import { render, screen } from '@testing-library/react'
+import { getUseInfiniteQueryMock } from '@/testutils/ReactQueryMockUtils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import {
+  ChallengeWithProjectHeader,
+  ChallengeWithProjectHeaderPagedResults,
+} from '@sage-bionetworks/synapse-types'
+import { act, render, screen } from '@testing-library/react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import UserChallenges from './UserChallenges'
 
-jest.mock('../../../src/synapse-queries/user/useGetUserChallenges', () => {
+vi.mock('@/synapse-queries/user/useGetUserChallenges', () => {
   return {
-    useGetUserChallengesInfinite: jest.fn(),
+    useGetUserChallengesInfinite: vi.fn(),
   }
 })
 
-const mockFetchNextPage = jest.fn()
-const mockUseGetUserChallengesInfinite =
-  useGetUserChallengesInfinite as jest.Mock
+const mockUseGetUserChallengesInfinite = vi.mocked(useGetUserChallengesInfinite)
 const userId = '10000'
-const page1: Partial<ChallengeWithProjectHeader>[] = [
+const page1: ChallengeWithProjectHeader[] = [
   {
     challenge: {
       id: '100',
@@ -35,10 +38,10 @@ const page1: Partial<ChallengeWithProjectHeader>[] = [
       type: 'org.sagebionetworks.repo.model.Project',
       isLatestVersion: true,
     },
-  },
+  } as ChallengeWithProjectHeader,
 ]
 
-const page2: Partial<ChallengeWithProjectHeader>[] = [
+const page2: ChallengeWithProjectHeader[] = [
   {
     challenge: {
       id: '101',
@@ -57,7 +60,7 @@ const page2: Partial<ChallengeWithProjectHeader>[] = [
       type: 'org.sagebionetworks.repo.model.Project',
       isLatestVersion: true,
     },
-  },
+  } as ChallengeWithProjectHeader,
 ]
 
 function renderComponent() {
@@ -70,13 +73,40 @@ function renderComponent() {
 
 describe('UserChallenges tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   it('loads more challenges when inView', async () => {
-    mockAllIsIntersecting(true)
-    mockUseGetUserChallengesInfinite.mockReturnValue({
-      data: {
-        pages: [
+    const { mock, mockFetchNextPage, setSuccess } = getUseInfiniteQueryMock<
+      ChallengeWithProjectHeaderPagedResults,
+      SynapseClientError
+    >()
+    mockUseGetUserChallengesInfinite.mockImplementation(mock)
+
+    renderComponent()
+
+    act(() => {
+      setSuccess(
+        [
+          {
+            results: page1,
+            totalNumberOfResults: 2,
+          },
+        ],
+        true,
+      )
+    })
+
+    await screen.findByText('The first')
+    expect(screen.queryByText('The second')).not.toBeInTheDocument()
+
+    act(() => {
+      mockAllIsIntersecting(true)
+    })
+    expect(mockFetchNextPage).toHaveBeenCalled()
+
+    act(() => {
+      setSuccess(
+        [
           {
             results: page1,
             totalNumberOfResults: 2,
@@ -86,18 +116,10 @@ describe('UserChallenges tests', () => {
             totalNumberOfResults: 2,
           },
         ],
-        pageParams: [],
-      },
-      fetchNextPage: mockFetchNextPage,
-      hasNextPage: true,
-      isLoading: false,
-      isSuccess: true,
+        false,
+      )
     })
 
-    renderComponent()
-    const item1 = await screen.findAllByText('The first')
-    expect(item1).toHaveLength(1)
-    const item2 = await screen.findAllByText('The second')
-    expect(item2).toHaveLength(1)
+    await screen.findByText('The second')
   })
 })

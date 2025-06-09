@@ -1,5 +1,5 @@
 // Mock the DatePicker component from MUI
-jest.mock('@mui/x-date-pickers', () => ({
+vi.mock('@mui/x-date-pickers', () => ({
   DatePicker: ({ value, onChange, slotProps }: any) => {
     let textFieldProps = slotProps?.textField
     if (typeof slotProps?.textField === 'function') {

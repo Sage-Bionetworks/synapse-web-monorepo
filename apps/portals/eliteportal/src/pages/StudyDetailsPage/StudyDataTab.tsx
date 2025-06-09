@@ -73,6 +73,8 @@ const StudyDataTabContent = [
             }}
             searchParams={{ [DATA_TABLE_COLUMN_NAMES.STUDY]: value! }}
             fileIdColumnName={DATA_TABLE_COLUMN_NAMES.ID}
+            fileNameColumnName={DATA_TABLE_COLUMN_NAMES.FILE_NAME}
+            fileVersionColumnName={DATA_TABLE_COLUMN_NAMES.FILE_VERSION}
             hideQueryCount
           />
         )}
@@ -115,6 +117,8 @@ const StudyDataTabContent = [
             }}
             fileIdColumnName={DATA_TABLE_COLUMN_NAMES.ID}
             searchParams={{ [DATA_TABLE_COLUMN_NAMES.STUDY]: value! }}
+            fileNameColumnName={DATA_TABLE_COLUMN_NAMES.FILE_NAME}
+            fileVersionColumnName={DATA_TABLE_COLUMN_NAMES.FILE_VERSION}
             hideQueryCount
           />
         )}

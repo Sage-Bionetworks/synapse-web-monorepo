@@ -1,32 +1,32 @@
-import '@testing-library/jest-dom'
 import { SynapseTestContext } from '@/mocks/MockSynapseContext'
 import { useGetUserTeamsInfinite } from '@/synapse-queries/user/useGetUserTeams'
-import { Team } from '@sage-bionetworks/synapse-types'
-import { render, screen } from '@testing-library/react'
+import { getUseInfiniteQueryMock } from '@/testutils/ReactQueryMockUtils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { PaginatedResults, Team } from '@sage-bionetworks/synapse-types'
+import { act, render, screen } from '@testing-library/react'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import UserTeams from './UserTeams'
 
-jest.mock('../../../src/synapse-queries/user/useGetUserTeams', () => {
+vi.mock('@/synapse-queries/user/useGetUserTeams', () => {
   return {
-    useGetUserTeamsInfinite: jest.fn(),
+    useGetUserTeamsInfinite: vi.fn(),
   }
 })
 
-const mockFetchNextPage = jest.fn()
-const mockUseGetUserTeamsInfinite = useGetUserTeamsInfinite as jest.Mock
+const mockUseGetUserTeamsInfinite = vi.mocked(useGetUserTeamsInfinite)
 const userId = '10000'
-const page1: Partial<Team>[] = [
+const page1: Team[] = [
   {
     id: '100',
     name: 'The first',
-  },
+  } as Team,
 ]
 
-const page2: Partial<Team>[] = [
+const page2: Team[] = [
   {
     id: '101',
     name: 'The second',
-  },
+  } as Team,
 ]
 
 function renderComponent() {
@@ -39,34 +39,45 @@ function renderComponent() {
 
 describe('UserTeams tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   it('loads more teams when inView', async () => {
-    mockAllIsIntersecting(true)
-    mockUseGetUserTeamsInfinite.mockReturnValue({
-      data: {
-        pages: [
-          {
-            results: page1,
-            nextPageToken: '50a0',
-          },
-          {
-            results: page2,
-            nextPageToken: null,
-          },
-        ],
-        pageParams: [],
-      },
-      fetchNextPage: mockFetchNextPage,
-      hasNextPage: true,
-      isLoading: false,
-      isSuccess: true,
-    })
+    const {
+      mock: mockUseGetUserTeamsInfiniteImplementation,
+      mockFetchNextPage,
+      setSuccess,
+    } = getUseInfiniteQueryMock<PaginatedResults<Team>, SynapseClientError>()
+
+    mockUseGetUserTeamsInfinite.mockImplementation(
+      mockUseGetUserTeamsInfiniteImplementation,
+    )
 
     renderComponent()
-    const item1 = await screen.findAllByText('The first')
-    expect(item1).toHaveLength(1)
-    const item2 = await screen.findAllByText('The second')
-    expect(item2).toHaveLength(1)
+
+    act(() => {
+      setSuccess(
+        [
+          {
+            results: page1,
+          },
+        ],
+        true,
+      )
+    })
+
+    await screen.findByText('The first')
+
+    expect(screen.queryByText('The second')).toBeNull()
+
+    act(() => {
+      mockAllIsIntersecting(true)
+    })
+    expect(mockFetchNextPage).toHaveBeenCalled()
+
+    act(() => {
+      setSuccess([{ results: page1 }, { results: page2 }], false)
+    })
+
+    await screen.findByText('The second')
   })
 })

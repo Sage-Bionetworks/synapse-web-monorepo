@@ -9,6 +9,7 @@ import {
   shouldLiveValidate,
 } from './AnnotationEditorUtils'
 import { JSONSchema7 } from 'json-schema'
+import { test } from 'vitest'
 
 describe('AnnotationEditorUtils tests', () => {
   describe('dropNullValues', () => {
@@ -388,7 +389,7 @@ describe('AnnotationEditorUtils tests', () => {
       })
     })
 
-    test.failing(
+    test.fails(
       'ignores properties in definitions that are not top-level',
       () => {
         const schema: JSONSchema7 = {
