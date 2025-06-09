@@ -14,7 +14,7 @@ import {
   getUseMutationPendingMock,
   getUseQueryIdleMock,
   getUseQuerySuccessMock,
-} from '@/testutils/ReactQueryVitestMockUtils'
+} from '@/testutils/ReactQueryMockUtils'
 import { DoiObjectType, DoiRequest } from '@sage-bionetworks/synapse-client'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
