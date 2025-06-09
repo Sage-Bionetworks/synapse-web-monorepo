@@ -1,8 +1,7 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import { SynapseClient } from '../../index'
+import * as SynapseClient from '@/synapse-client/SynapseClient'
 import GoalsV3 from './GoalsV3'
 
 vi.mock('@/utils/hooks/useShowDesktop', () => ({

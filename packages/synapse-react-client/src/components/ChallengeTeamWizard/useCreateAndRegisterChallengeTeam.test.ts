@@ -205,18 +205,20 @@ describe('useCreateAndRegisterChallengeTeam', () => {
       ).rejects.toThrow(apiError)
     })
 
-    // Check team creation
-    expect(mockCreateTeam).toHaveBeenCalledWith(
-      { name: teamName },
-      MOCK_ACCESS_TOKEN,
-    )
+    await waitFor(() => {
+      // Check team creation
+      expect(mockCreateTeam).toHaveBeenCalledWith(
+        { name: teamName },
+        MOCK_ACCESS_TOKEN,
+      )
 
-    expect(result.current.errors).toHaveLength(1)
-    expect(result.current.errors![0].status).toBe(apiError.status)
-    expect(result.current.errors![0].message).toBe(apiError.message)
+      expect(result.current.errors).toHaveLength(1)
+      expect(result.current.errors![0].status).toBe(apiError.status)
+      expect(result.current.errors![0].message).toBe(apiError.message)
 
-    expect(mockRegisterForChallenge).not.toHaveBeenCalled()
-    expect(mockInviteUser).not.toHaveBeenCalled()
+      expect(mockRegisterForChallenge).not.toHaveBeenCalled()
+      expect(mockInviteUser).not.toHaveBeenCalled()
+    })
   })
 
   it('returns an error if the challenge registration fails, invitations are still sent', async () => {
