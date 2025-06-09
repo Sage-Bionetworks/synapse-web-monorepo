@@ -27,6 +27,7 @@ import TextFieldWithWordLimit, {
 } from '../../../TextField/TextFieldWithWordLimit'
 import { AlertProps } from '../DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
+import isEmpty from 'lodash-es/isEmpty'
 
 const INTENDED_DATA_USE_MIN_WORD_COUNT = 50
 const INTENDED_DATA_USE_MAX_WORD_COUNT = 500
@@ -43,11 +44,10 @@ export type ResearchProjectFormProps = {
  */
 export default function ResearchProjectForm(props: ResearchProjectFormProps) {
   const { onSave, managedACTAccessRequirement, onHide } = props
-  const [projectLead, setProjectLead] = useState<string | undefined>(undefined)
-  const [institution, setInstitution] = useState<string | undefined>(undefined)
-  const [intendedDataUseStatement, setIntendedDataUseStatement] = useState<
-    string | undefined
-  >(undefined)
+  const [projectLead, setProjectLead] = useState<string>('')
+  const [institution, setInstitution] = useState<string>('')
+  const [intendedDataUseStatement, setIntendedDataUseStatement] =
+    useState<string>('')
   const [alert, setAlert] = useState<AlertProps | undefined>()
 
   const [showConfirmationScreen, setShowConfirmationScreen] = useState(false)
@@ -60,14 +60,14 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
 
   // Populate the form with existing data if it exists
   useEffect(() => {
-    if (projectLead == undefined && existingResearchProject?.projectLead) {
+    if (isEmpty(projectLead) && existingResearchProject?.projectLead) {
       setProjectLead(existingResearchProject?.projectLead)
     }
-    if (institution == undefined && existingResearchProject?.institution) {
+    if (isEmpty(institution) && existingResearchProject?.institution) {
       setInstitution(existingResearchProject?.institution)
     }
     if (
-      intendedDataUseStatement == undefined &&
+      isEmpty(intendedDataUseStatement) &&
       existingResearchProject?.intendedDataUseStatement
     ) {
       setIntendedDataUseStatement(
@@ -123,7 +123,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
         accessRequirementId: String(managedACTAccessRequirement.id),
         institution: institution,
         projectLead: projectLead,
-        intendedDataUseStatement: intendedDataUseStatement,
+        intendedDataUseStatement: intendedDataUseStatement || undefined,
       })
       setShowConfirmationScreen(false)
     }

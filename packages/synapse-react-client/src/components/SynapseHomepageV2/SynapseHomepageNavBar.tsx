@@ -114,7 +114,7 @@ export function SynapseHomepageNavBar({
       {/* Logo */}
       <a onClick={() => gotoPlace(HOMEPAGE_LINK)}>
         <SynapseFullLogo
-          textColor={(theme.palette.primary as unknown as Color)[900]}
+          color={(theme.palette.primary as unknown as Color)[900]}
         />
       </a>
       {/* Menu Items */}

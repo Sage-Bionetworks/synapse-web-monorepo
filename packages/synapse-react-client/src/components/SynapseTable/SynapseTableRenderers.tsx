@@ -37,7 +37,7 @@ const columnIdPrefix =
 
 const columnHelper = createColumnHelper<Row>()
 
-function RowSelectionCell(props: CellContext<Row, unknown>) {
+function RowSelectionCell<TValue = unknown>(props: CellContext<Row, TValue>) {
   const { row, table } = props
   const rowSet = table.options.meta?.rowSet
 
@@ -79,7 +79,9 @@ export const rowSelectionColumn = columnHelper.display({
   },
 })
 
-function AddToDownloadListCell(props: CellContext<Row, unknown>) {
+function AddToDownloadListCell<TValue = unknown>(
+  props: CellContext<Row, TValue>,
+) {
   const entityId = getEntityOrRowId(props)!
   const versionNumberString = getEntityOrRowVersion(props)
   const versionNumber = versionNumberString
@@ -108,7 +110,7 @@ export const addToDownloadListColumn = columnHelper.display({
   },
 })
 
-function DirectDownloadCell(props: CellContext<Row, unknown>) {
+function DirectDownloadCell<TValue = unknown>(props: CellContext<Row, TValue>) {
   const entityId = getEntityOrRowId(props)!
   const versionNumber = getEntityOrRowVersion(props)
 
@@ -181,7 +183,7 @@ function getEntityOrRowVersion<TValue = unknown>(
   return versionNumber
 }
 
-function AccessCell(props: CellContext<Row, unknown>) {
+function AccessCell<TValue = unknown>(props: CellContext<Row, TValue>) {
   const { showExternalAccessIcon } = useSynapseTableContext()
   const { ref, inView } = useInView({ triggerOnce: true })
   const entityId = getEntityOrRowId(props)!

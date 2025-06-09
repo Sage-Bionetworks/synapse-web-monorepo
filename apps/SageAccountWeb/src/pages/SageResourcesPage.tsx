@@ -17,10 +17,27 @@ import {
 } from '@/components/useSourceApp'
 import ShowMore from 'synapse-react-client/components/ShowMore/ShowMore'
 import { useSourceAppConfigs } from 'synapse-react-client/utils/hooks/useSourceAppConfigs'
+import {
+  ColumnSingleValueFilterOperator,
+  ColumnSingleValueQueryFilter,
+} from '@sage-bionetworks/synapse-types'
 
 function SageResourcesPageInternal() {
   const theme = useTheme()
-  const sourceAppConfigs = useSourceAppConfigs(sourceAppConfigTableID)
+  const additionalFilters: ColumnSingleValueQueryFilter[] = [
+    {
+      isDefiningCondition: false,
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      columnName: 'portalType',
+      operator: ColumnSingleValueFilterOperator.EQUAL,
+      values: ['SynapsePortal'],
+    },
+  ]
+  const sourceAppConfigs = useSourceAppConfigs(
+    sourceAppConfigTableID,
+    additionalFilters,
+  )
   const sageSourceAppConfig = useSourceApp()
   return (
     <StyledOuterContainer>

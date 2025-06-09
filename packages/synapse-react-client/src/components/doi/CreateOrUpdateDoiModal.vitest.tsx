@@ -10,7 +10,7 @@ import {
 import { useGetPortal } from '@/synapse-queries/portal/usePortal'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user/useUserBundle'
 import {
-  getUseMutationMock,
+  getUseMutationIdleMock,
   getUseMutationPendingMock,
   getUseQueryIdleMock,
   getUseQuerySuccessMock,
@@ -30,7 +30,7 @@ vi.mock('@/synapse-queries/portal/usePortal')
 
 const mockUseCreateOrUpdateDOI = vi
   .mocked(useCreateOrUpdateDOI)
-  .mockReturnValue(getUseMutationMock())
+  .mockReturnValue(getUseMutationIdleMock())
 const mockUseGetEntity = vi.mocked(useGetEntity).mockReturnValue(
   getUseQuerySuccessMock({
     name: 'Test Entity',
@@ -129,7 +129,7 @@ describe('CreateOrUpdateDoiModal', () => {
   it('blocks submission when data violates the form schema', async () => {
     const mockMutate = vi.fn()
     mockUseCreateOrUpdateDOI.mockReturnValue({
-      ...getUseMutationMock(),
+      ...getUseMutationIdleMock(),
       mutate: mockMutate,
     })
 
@@ -150,7 +150,7 @@ describe('CreateOrUpdateDoiModal', () => {
   it('calls mutate when the form is submitted', async () => {
     const mockMutate = vi.fn()
     mockUseCreateOrUpdateDOI.mockReturnValue({
-      ...getUseMutationMock(),
+      ...getUseMutationIdleMock(),
       mutate: mockMutate,
     })
     mockUseGetEntity.mockReturnValue(
@@ -225,7 +225,7 @@ describe('CreateOrUpdateDoiModal', () => {
   it('renders versions in the list, allows selecting a version, and includes it in the request', async () => {
     const mockMutate = vi.fn()
     mockUseCreateOrUpdateDOI.mockReturnValue({
-      ...getUseMutationMock(),
+      ...getUseMutationIdleMock(),
       mutate: mockMutate,
     })
     mockUseGetEntity.mockReturnValue(
