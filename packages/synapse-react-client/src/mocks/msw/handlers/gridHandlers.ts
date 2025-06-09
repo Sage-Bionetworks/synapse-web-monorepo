@@ -76,7 +76,7 @@ export function getGridHandlers(backendOrigin: string) {
     rest.post(
       `${backendOrigin}/repo/v1/grid/:sessionId/replica`,
       async (req, res, ctx) => {
-        const { gridSessionId } = await req.json()
+        const { gridSessionId }: { gridSessionId: string } = await req.json()
 
         // Check if the session ID exists in pending jobs
         const jobData = Array.from(pendingJobs.values()).find(
