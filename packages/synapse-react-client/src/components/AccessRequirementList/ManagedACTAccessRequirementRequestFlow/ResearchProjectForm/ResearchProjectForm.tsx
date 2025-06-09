@@ -28,7 +28,6 @@ import TextFieldWithWordLimit, {
 } from '../../../TextField/TextFieldWithWordLimit'
 import { AlertProps } from '../DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
-import isEmpty from 'lodash-es/isEmpty'
 
 const INTENDED_DATA_USE_MIN_WORD_COUNT = 50
 const INTENDED_DATA_USE_MAX_WORD_COUNT = 500
