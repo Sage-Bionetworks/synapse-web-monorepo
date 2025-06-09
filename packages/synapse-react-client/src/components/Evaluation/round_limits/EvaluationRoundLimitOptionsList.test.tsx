@@ -4,44 +4,39 @@ import { EvaluationRoundLimitInput } from '../input_models/models'
 import { EvaluationRoundLimitOptionsProps } from './EvaluationRoundLimitOptions'
 import { EvaluationRoundLimitOptionsList } from './EvaluationRoundLimitOptionsList'
 
-jest.mock(
-  '../../../../src/components/Evaluation/round_limits/EvaluationRoundLimitOptions',
-  () => ({
-    EvaluationRoundLimitOptions: jest.fn(
-      (props: EvaluationRoundLimitOptionsProps) => {
-        return (
-          <div data-testid="MockEvaluationRoundLimitOptions">
-            <input
-              onChange={e => {
-                // For this mock, we'll just parse a passed object.
-                props.onChange(JSON.parse(e.target.value))
-              }}
-            ></input>
-          </div>
-        )
-      },
-    ),
-    LIMIT_TYPE_DISPLAY_NAME: jest.requireActual(
-      '../../../../src/components/Evaluation/round_limits/EvaluationRoundLimitOptions',
-    ).LIMIT_TYPE_DISPLAY_NAME,
-  }),
-)
+vi.mock(import('./EvaluationRoundLimitOptions'), async importOriginal => ({
+  ...(await importOriginal()),
+  EvaluationRoundLimitOptions: vi.fn(
+    (props: EvaluationRoundLimitOptionsProps) => {
+      return (
+        <div data-testid="MockEvaluationRoundLimitOptions">
+          <input
+            onChange={e => {
+              // For this mock, we'll just parse a passed object.
+              props.onChange(JSON.parse(e.target.value))
+            }}
+          ></input>
+        </div>
+      )
+    },
+  ),
+}))
 
 describe('test EvaluationRoundLimitOptionsList', () => {
-  let mockHandleChange: jest.Mock<any, any>
-  let mockHandleDeleteLimit: jest.Mock<any, any>
-  let mockOnAddNewLimit: jest.Mock<any, any>
+  let mockHandleChange = vi.fn()
+  let mockHandleDeleteLimit = vi.fn()
+  let mockOnAddNewLimit = vi.fn()
 
   // any of the mockHandle__ functions will "generate" this function
-  let mockGeneratedFunction: jest.Mock<any, any>
+  let mockGeneratedFunction = vi.fn()
 
   let limitInputs: EvaluationRoundLimitInput[]
 
   beforeEach(() => {
-    mockGeneratedFunction = jest.fn()
-    mockHandleChange = jest.fn(() => mockGeneratedFunction)
-    mockHandleDeleteLimit = jest.fn(() => mockGeneratedFunction)
-    mockOnAddNewLimit = jest.fn()
+    mockGeneratedFunction = vi.fn()
+    mockHandleChange = vi.fn(() => mockGeneratedFunction)
+    mockHandleDeleteLimit = vi.fn(() => mockGeneratedFunction)
+    mockOnAddNewLimit = vi.fn()
 
     limitInputs = [
       { type: 'MONTHLY', maxSubmissionString: '42' },

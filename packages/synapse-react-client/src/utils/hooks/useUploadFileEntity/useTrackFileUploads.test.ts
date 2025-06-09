@@ -214,7 +214,7 @@ describe('useTrackFileUploads', () => {
     ).toBe(true)
   })
   test('removeUpload', () => {
-    const consoleWarnSpy = jest
+    const consoleWarnSpy = vi
       .spyOn(console, 'warn')
       .mockImplementation(() => {})
 

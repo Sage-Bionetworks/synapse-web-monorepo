@@ -33,14 +33,14 @@ describe('Terms and Conditions Item: basic functionality', () => {
     requestedFiles: [mockFileResult],
   }
 
-  const onChange = jest.fn()
+  const onChange = vi.fn()
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
-    jest
-      .spyOn(SynapseClient, 'getFileHandleContent')
-      .mockResolvedValue(mockIconSvg)
+    vi.clearAllMocks()
+    vi.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
+    vi.spyOn(SynapseClient, 'getFileHandleContent').mockResolvedValue(
+      mockIconSvg,
+    )
   })
   it('render component without crashing', () => {
     const container = renderComponent({

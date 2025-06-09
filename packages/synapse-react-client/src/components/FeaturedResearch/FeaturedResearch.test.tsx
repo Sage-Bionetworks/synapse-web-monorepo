@@ -10,8 +10,8 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { SynapseClient } from '../../index'
 import FeaturedResearch, { FeaturedResearchProps } from './FeaturedResearch'
 
-jest.mock('../../synapse-queries/entity/useGetQueryResultBundle')
-const mockUseGetQueryResultBundle = jest.mocked(useGetQueryResultBundle)
+vi.mock('../../synapse-queries/entity/useGetQueryResultBundle')
+const mockUseGetQueryResultBundle = vi.mocked(useGetQueryResultBundle)
 
 describe('FeaturedResearch Tests', () => {
   const mockProps: FeaturedResearchProps = {
@@ -118,8 +118,8 @@ describe('FeaturedResearch Tests', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
+    vi.clearAllMocks()
+    vi.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
     mockUseGetQueryResultBundle.mockReturnValue(
       getUseQuerySuccessMock(mockQueryResult),
     )

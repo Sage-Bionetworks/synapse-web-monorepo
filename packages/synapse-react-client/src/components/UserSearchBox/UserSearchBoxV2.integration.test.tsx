@@ -15,7 +15,7 @@ describe('UserSearchBoxV2 tests', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
-  const onChange = jest.fn()
+  const onChange = vi.fn()
 
   function renderComponent() {
     return render(<UserSearchBox onChange={onChange} />, {

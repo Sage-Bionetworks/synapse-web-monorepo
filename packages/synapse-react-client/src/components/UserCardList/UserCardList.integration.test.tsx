@@ -7,11 +7,11 @@ import { UserProfile } from '@sage-bionetworks/synapse-types'
 import { render } from '@testing-library/react'
 import UserCardList, { UserCardListProps } from './UserCardList'
 
-jest.mock('../../utils/functions/getUserData', () => ({
-  getUserProfileWithProfilePicAttached: jest.fn(),
+vi.mock('../../utils/functions/getUserData', () => ({
+  getUserProfileWithProfilePicAttached: vi.fn(),
 }))
 
-const mockGetUserProfileWithProfilePicAttached = jest.mocked(
+const mockGetUserProfileWithProfilePicAttached = vi.mocked(
   getUserProfileWithProfilePicAttached,
 )
 
@@ -75,7 +75,7 @@ describe('UserCardList tests', () => {
   })
 
   it('updates state correctly', () => {
-    const spyOnUpdate = jest.spyOn(UserCardList.prototype, 'update')
+    const spyOnUpdate = vi.spyOn(UserCardList.prototype, 'update')
     const { rerender } = renderComponent(propsInitial)
     expect(spyOnUpdate).toHaveBeenLastCalledWith(propsInitial.list)
 

@@ -17,12 +17,12 @@ describe('test EvaluationEditor', () => {
   let evaluation: Evaluation
   let props: EvaluationEditorProps
 
-  const mockOnSaveSuccess = jest.fn()
-  const mockOnDeleteSuccess = jest.fn()
+  const mockOnSaveSuccess = vi.fn()
+  const mockOnDeleteSuccess = vi.fn()
 
-  const onCreateEvaluation = jest.fn()
-  const onUpdateEvaluation = jest.fn()
-  const onDeleteEvaluation = jest.fn()
+  const onCreateEvaluation = vi.fn()
+  const onUpdateEvaluation = vi.fn()
+  const onDeleteEvaluation = vi.fn()
   let user: ReturnType<(typeof userEvent)['setup']>
   beforeAll(() => {
     server.listen()
@@ -93,7 +93,7 @@ describe('test EvaluationEditor', () => {
   })
   afterEach(() => {
     server.restoreHandlers()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   afterAll(() => {
     server.close()
@@ -145,7 +145,7 @@ describe('test EvaluationEditor', () => {
   test('error thrown when using both evaluationId and entityId', () => {
     props = { ...props, entityId, evaluationId }
 
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
     expect(() =>
       render(<EvaluationEditor {...props} />, {

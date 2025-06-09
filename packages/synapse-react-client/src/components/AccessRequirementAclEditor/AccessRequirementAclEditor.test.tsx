@@ -33,16 +33,16 @@ import {
   EMPTY_RESOURCE_ACCESS_LIST_TEXT,
 } from './AccessRequirementAclEditor'
 
-const onSaveComplete = jest.fn()
-const deleteAccessRequirementAclSpy = jest.spyOn(
+const onSaveComplete = vi.fn()
+const deleteAccessRequirementAclSpy = vi.spyOn(
   SynapseClient,
   'deleteAccessRequirementAcl',
 )
-const createAccessRequirementAclSpy = jest.spyOn(
+const createAccessRequirementAclSpy = vi.spyOn(
   SynapseClient,
   'createAccessRequirementAcl',
 )
-const updateAccessRequirementAclSpy = jest.spyOn(
+const updateAccessRequirementAclSpy = vi.spyOn(
   SynapseClient,
   'updateAccessRequirementAcl',
 )
@@ -90,7 +90,7 @@ async function setUp(
 }
 
 describe('AccessRequirementAclEditor', () => {
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => vi.clearAllMocks())
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
@@ -214,7 +214,7 @@ describe('AccessRequirementAclEditor', () => {
             return res(ctx.status(200), ctx.json(aclWithOneResourceAccessItem))
           },
         ),
-    )
+      )
 
       const props: AccessRequirementAclEditorProps = {
         accessRequirementId,

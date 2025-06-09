@@ -34,23 +34,21 @@ import CreateTableViewWizard, {
   CreateTableViewWizardProps,
 } from './CreateTableViewWizard'
 
-jest.mock('../EntityFinder/EntityFinderModal', () => ({
-  EntityFinderModal: jest.fn(() => (
-    <div data-testid="EntityFinderModalMocked" />
-  )),
+vi.mock('../EntityFinder/EntityFinderModal', () => ({
+  EntityFinderModal: vi.fn(() => <div data-testid="EntityFinderModalMocked" />),
 }))
 
-const mockEntityFinderModal = jest.mocked(EntityFinderModal)
+const mockEntityFinderModal = vi.mocked(EntityFinderModal)
 
-jest.spyOn(SynapseClient, 'createEntity')
-jest.spyOn(SynapseClient, 'createColumnModels')
-jest.spyOn(SynapseClient, 'getAnnotationColumnModels')
-const mockValidateDefiningSql = jest.spyOn(SynapseClient, 'validateDefiningSql')
+vi.spyOn(SynapseClient, 'createEntity')
+vi.spyOn(SynapseClient, 'createColumnModels')
+vi.spyOn(SynapseClient, 'getAnnotationColumnModels')
+const mockValidateDefiningSql = vi.spyOn(SynapseClient, 'validateDefiningSql')
 
-const createColumnModelsSpy = jest.mocked(SynapseClient.createColumnModels)
-const createEntitySpy = jest.mocked(SynapseClient.createEntity)
-const validateDefiningSqlSpy = jest.mocked(SynapseClient.validateDefiningSql)
-const getAnnotationColumnsSpy = jest.mocked(
+const createColumnModelsSpy = vi.mocked(SynapseClient.createColumnModels)
+const createEntitySpy = vi.mocked(SynapseClient.createEntity)
+const validateDefiningSqlSpy = vi.mocked(SynapseClient.validateDefiningSql)
+const getAnnotationColumnsSpy = vi.mocked(
   SynapseClient.getAnnotationColumnModels,
 )
 
@@ -93,13 +91,13 @@ describe('CreateTableWizard integration tests', () => {
 
   afterEach(() => {
     server.resetHandlers()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   afterAll(() => server.close())
 
   test('Create a table', async () => {
-    const onComplete = jest.fn()
-    const onCancel = jest.fn()
+    const onComplete = vi.fn()
+    const onCancel = vi.fn()
     const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
@@ -154,8 +152,8 @@ describe('CreateTableWizard integration tests', () => {
     })
   })
   test('Create an entity view and change the mask', async () => {
-    const onComplete = jest.fn()
-    const onCancel = jest.fn()
+    const onComplete = vi.fn()
+    const onCancel = vi.fn()
     const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
@@ -277,8 +275,8 @@ describe('CreateTableWizard integration tests', () => {
     })
   })
   test('Create a project view', async () => {
-    const onComplete = jest.fn()
-    const onCancel = jest.fn()
+    const onComplete = vi.fn()
+    const onCancel = vi.fn()
     const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
@@ -395,8 +393,8 @@ describe('CreateTableWizard integration tests', () => {
     })
   })
   test('Create a submission view', async () => {
-    const onComplete = jest.fn()
-    const onCancel = jest.fn()
+    const onComplete = vi.fn()
+    const onCancel = vi.fn()
     const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
@@ -498,8 +496,8 @@ describe('CreateTableWizard integration tests', () => {
     })
   })
   test('Create a materialized view', async () => {
-    const onComplete = jest.fn()
-    const onCancel = jest.fn()
+    const onComplete = vi.fn()
+    const onCancel = vi.fn()
     const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
@@ -564,8 +562,8 @@ describe('CreateTableWizard integration tests', () => {
     })
   })
   test('Create a virtual table', async () => {
-    const onComplete = jest.fn()
-    const onCancel = jest.fn()
+    const onComplete = vi.fn()
+    const onCancel = vi.fn()
     const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
@@ -630,8 +628,8 @@ describe('CreateTableWizard integration tests', () => {
     })
   })
   test('DefiningSql must be valid before advancing', async () => {
-    const onComplete = jest.fn()
-    const onCancel = jest.fn()
+    const onComplete = vi.fn()
+    const onCancel = vi.fn()
     const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
@@ -677,8 +675,8 @@ describe('CreateTableWizard integration tests', () => {
     within(alert).getByText(mockValidateDefiningSqlResponse.invalidReason)
   })
   test('Column models must be valid before advancing', async () => {
-    const onComplete = jest.fn()
-    const onCancel = jest.fn()
+    const onComplete = vi.fn()
+    const onCancel = vi.fn()
     const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
@@ -700,8 +698,8 @@ describe('CreateTableWizard integration tests', () => {
     await screen.findByText('Name is required')
   })
   test('EntityView scope and mask must be valid before advancing', async () => {
-    const onComplete = jest.fn()
-    const onCancel = jest.fn()
+    const onComplete = vi.fn()
+    const onCancel = vi.fn()
     const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
@@ -770,8 +768,8 @@ describe('CreateTableWizard integration tests', () => {
       ),
     )
 
-    const onComplete = jest.fn()
-    const onCancel = jest.fn()
+    const onComplete = vi.fn()
+    const onCancel = vi.fn()
     const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,
@@ -840,8 +838,8 @@ describe('CreateTableWizard integration tests', () => {
       ),
     )
 
-    const onComplete = jest.fn()
-    const onCancel = jest.fn()
+    const onComplete = vi.fn()
+    const onCancel = vi.fn()
     const { user } = renderComponent({
       open: true,
       parentId: mockProjectEntityData.id,

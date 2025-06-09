@@ -1,29 +1,27 @@
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import ColumnFilter from './ColumnFilter'
-import syn20337467Json from '../../../src/mocks/query/syn20337467.json'
+import syn20337467Json from '@/mocks/query/syn20337467.json'
 import { UseQueryResult, useQuery } from '@tanstack/react-query'
 import { QueryContextType, useQueryContext } from '../QueryContext/QueryContext'
 
-jest.mock('@tanstack/react-query', () => ({
-  useQuery: jest.fn(),
+vi.mock('@tanstack/react-query', () => ({
+  useQuery: vi.fn(),
 }))
 
-jest.mock('../QueryContext/QueryContext', () => ({
-  useQueryContext: jest.fn(),
+vi.mock('../QueryContext/QueryContext', () => ({
+  useQueryContext: vi.fn(),
 }))
 
-const mockUseQueryContext = useQueryContext as jest.MockedFunction<
-  () => Partial<QueryContextType>
->
-const mockUseQuery = jest.mocked(useQuery)
+const mockUseQueryContext = vi.mocked(useQueryContext)
+const mockUseQuery = vi.mocked(useQuery)
 
 const data = syn20337467Json as QueryResultBundle
 
 describe('ColumnFilter tests', () => {
-  const executeQueryRequest = jest.fn()
-  const addValueToSelectedFacet = jest.fn()
-  const removeSelectedFacet = jest.fn()
+  const executeQueryRequest = vi.fn()
+  const addValueToSelectedFacet = vi.fn()
+  const removeSelectedFacet = vi.fn()
 
   beforeEach(() => {
     mockUseQueryContext.mockReturnValue({
@@ -32,14 +30,14 @@ describe('ColumnFilter tests', () => {
       removeSelectedFacet,
       queryMetadataQueryOptions: {
         queryKey: ['queryMetadataQueryOptions'],
-        queryFn: jest.fn().mockResolvedValue(data),
+        queryFn: vi.fn().mockResolvedValue(data),
       },
-      getCurrentQueryRequest: jest.fn().mockReturnValue({
+      getCurrentQueryRequest: vi.fn().mockReturnValue({
         query: {
           selectedFacets: [{ columnName: 'program', facetValues: ['AMP-AD'] }],
         },
       }),
-    })
+    } as unknown as QueryContextType)
 
     mockUseQuery.mockReturnValue({
       data: data,

@@ -47,7 +47,7 @@ describe('EvaluationUtils', () => {
       roundEnd: twoYearsInFuture.toISOString(),
     }
 
-    it('returns the current round ', () => {
+    it('returns the current round', () => {
       const rounds = [
         distantPastRound,
         recentPastRound,
@@ -58,7 +58,7 @@ describe('EvaluationUtils', () => {
       expect(getCurrentOrNextOrLatestRound(rounds)).toBe(currentRound)
     })
 
-    it('returns the nearest future round when no current round ', () => {
+    it('returns the nearest future round when no current round', () => {
       const rounds = [
         distantPastRound,
         recentPastRound,

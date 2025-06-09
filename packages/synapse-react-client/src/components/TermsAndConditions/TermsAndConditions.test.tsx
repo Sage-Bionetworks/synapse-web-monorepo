@@ -10,7 +10,7 @@ import TermsAndConditions, {
 const defaultProps: TermsAndConditionsProps = {
   termsAndConditionsTableID: 'syn51718002',
   termsAndConditionsTableVersion: '5',
-  onFormChange: jest.fn(),
+  onFormChange: vi.fn(),
 }
 
 async function renderComponent(wrapperProps?: SynapseContextType) {
@@ -25,10 +25,10 @@ async function renderComponent(wrapperProps?: SynapseContextType) {
 }
 describe('Terms And Conditions: basic functionality', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest
-      .spyOn(SynapseClient, 'getFullQueryTableResults')
-      .mockResolvedValue(mockSyn51718002 as QueryResultBundle)
+    vi.clearAllMocks()
+    vi.spyOn(SynapseClient, 'getFullQueryTableResults').mockResolvedValue(
+      mockSyn51718002 as QueryResultBundle,
+    )
   })
 
   it('renders terms and condition without crashing', async () => {

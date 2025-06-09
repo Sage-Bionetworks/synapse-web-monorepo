@@ -16,7 +16,7 @@ const MOCK_PROJECT_NAME = mockProjectEntityData.name
 
 const defaultProps: CreateProjectModalProps = {
   isShowingModal: true,
-  onClose: jest.fn(),
+  onClose: vi.fn(),
 }
 
 function renderComponent(wrapperProps?: SynapseContextType) {

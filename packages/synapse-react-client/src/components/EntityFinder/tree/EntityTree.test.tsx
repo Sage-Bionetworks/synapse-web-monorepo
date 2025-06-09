@@ -48,7 +48,7 @@ const VIRTUALIZED_TREE_TEST_ID = 'VirtualizedTreeComponent'
 
 let invokeSetSelectedId: (containerId: string) => void
 
-const mockVirtualizedTree = jest
+const mockVirtualizedTree = vi
   .spyOn(VirtualizedTreeModule, 'VirtualizedTree')
   .mockImplementation(({ rootNodeConfiguration, setSelectedId }) => {
     invokeSetSelectedId = (containerId: string) => {
@@ -57,15 +57,15 @@ const mockVirtualizedTree = jest
     return <div data-testid={VIRTUALIZED_TREE_TEST_ID}></div>
   })
 
-const mockDisplayToast = jest.spyOn(ToastMessageModule, 'displayToast')
+const mockDisplayToast = vi.spyOn(ToastMessageModule, 'displayToast')
 
-const mockSetDetailsViewConfiguration = jest.fn()
-const mockSetBreadcrumbItems = jest.fn()
-const mockToggleSelection = jest.fn()
+const mockSetDetailsViewConfiguration = vi.fn()
+const mockSetBreadcrumbItems = vi.fn()
+const mockToggleSelection = vi.fn()
 
 const defaultProps = {
   currentContainer: mockProject.id,
-  setCurrentContainer: jest.fn(),
+  setCurrentContainer: vi.fn(),
   selectedEntities: Map<string, Reference>(),
   initialScope: FinderScope.CURRENT_PROJECT,
   projectId: mockProject.id,
@@ -153,7 +153,7 @@ const entityPath: EntityPath = {
 
 const projectIdWithNoReadAccess = mockProjects[4].id
 
-const setCurrentContainerSpy = jest.fn()
+const setCurrentContainerSpy = vi.fn()
 
 function renderComponent(propOverrides?: Partial<EntityTreeProps>) {
   function EntityTreeWithCurrentContainer() {
@@ -220,7 +220,7 @@ describe('EntityTree tests', () => {
       rest.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${PROJECTS}`,
         async (req, res, ctx) => {
-          let response: ProjectHeaderList = {
+          const response: ProjectHeaderList = {
             results: projectsPage1,
             nextPageToken: '50a0',
           }
@@ -234,7 +234,7 @@ describe('EntityTree tests', () => {
       ),
     )
   })
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => vi.clearAllMocks())
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
@@ -256,7 +256,7 @@ describe('EntityTree tests', () => {
 
     // Invoke the function
     act(() => {
-      props!.rootNodeConfiguration.fetchNextPage!()
+      props!.rootNodeConfiguration.fetchNextPage()
     })
 
     // Check that the second page of projects is now in the tree
@@ -348,9 +348,7 @@ describe('EntityTree tests', () => {
 
     it('handles the case where the caller does not have READ access on the project', async () => {
       // The request to get the project will result in a 403 response, which will log an expected error
-      const consoleSpy = jest
-        .spyOn(console, 'error')
-        .mockImplementation(() => {})
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
       renderComponent({
         initialScope: FinderScope.CURRENT_PROJECT,

@@ -14,11 +14,11 @@ import {
   EXPIRED_PAT_WARNING,
 } from './AccessTokenCard'
 
-const mockOnDelete = jest.fn(() => null)
+const mockOnDelete = vi.fn(() => null)
 
-jest
-  .spyOn(SynapseClient, 'deletePersonalAccessToken')
-  .mockImplementation(() => Promise.resolve())
+vi.spyOn(SynapseClient, 'deletePersonalAccessToken').mockImplementation(() =>
+  Promise.resolve(),
+)
 
 const activeTokenProps: AccessTokenCardProps = {
   accessToken: {
@@ -56,10 +56,10 @@ function renderComponent(props: AccessTokenCardProps) {
 
 describe('AccessTokenCard', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest
-      .spyOn(SynapseContext, 'useSynapseContext')
-      .mockImplementation(() => MOCK_CONTEXT_VALUE)
+    vi.clearAllMocks()
+    vi.spyOn(SynapseContext, 'useSynapseContext').mockImplementation(
+      () => MOCK_CONTEXT_VALUE,
+    )
   })
 
   test('does not show a warning when active', () => {

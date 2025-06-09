@@ -70,13 +70,13 @@ function renderComponent(
 }
 
 describe('basic functionality', () => {
-  jest.spyOn(SynapseClient, 'createPersonalAccessToken').mockResolvedValue({
+  vi.spyOn(SynapseClient, 'createPersonalAccessToken').mockResolvedValue({
     token: PERSONAL_ACCESS_TOKEN,
   })
 
-  jest
-    .spyOn(SynapseClient, 'deletePersonalAccessToken')
-    .mockImplementation(() => Promise.resolve())
+  vi.spyOn(SynapseClient, 'deletePersonalAccessToken').mockImplementation(() =>
+    Promise.resolve(),
+  )
 
   const props: AccessTokenPageProps = {
     title: 'A title',
@@ -84,7 +84,7 @@ describe('basic functionality', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('shows the create token modal when the button is clicked and hides when cancelled', async () => {
@@ -106,9 +106,9 @@ describe('basic functionality', () => {
   })
 
   it('automatically loads the first page of results', async () => {
-    jest
-      .spyOn(SynapseClient, 'getPersonalAccessTokenRecords')
-      .mockResolvedValue(mockResultsFirstPage)
+    vi.spyOn(SynapseClient, 'getPersonalAccessTokenRecords').mockResolvedValue(
+      mockResultsFirstPage,
+    )
 
     renderComponent(props)
 
@@ -118,8 +118,7 @@ describe('basic functionality', () => {
 
   it('re-fetches the list when a token is created', async () => {
     // We can verify the rerender by checking if the API is called twice
-    jest
-      .spyOn(SynapseClient, 'getPersonalAccessTokenRecords')
+    vi.spyOn(SynapseClient, 'getPersonalAccessTokenRecords')
       .mockResolvedValueOnce(mockResultsFirstPage)
       .mockResolvedValueOnce(mockResultsSecondPage)
 
@@ -147,8 +146,7 @@ describe('basic functionality', () => {
 
   it('rerenders the list when a token is deleted', async () => {
     // We can verify the rerender by checking if the API is called twice
-    jest
-      .spyOn(SynapseClient, 'getPersonalAccessTokenRecords')
+    vi.spyOn(SynapseClient, 'getPersonalAccessTokenRecords')
       .mockResolvedValueOnce(mockResultsFirstPage)
       .mockResolvedValueOnce(mockResultsSecondPage)
 
@@ -173,8 +171,7 @@ describe('basic functionality', () => {
   })
 
   it('loads a second page and shows the load more button only when there is a next page token', async () => {
-    jest
-      .spyOn(SynapseClient, 'getPersonalAccessTokenRecords')
+    vi.spyOn(SynapseClient, 'getPersonalAccessTokenRecords')
       .mockResolvedValueOnce(mockResultsFirstPage)
       .mockResolvedValueOnce(mockResultsSecondPage)
 

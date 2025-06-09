@@ -1,6 +1,5 @@
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import { mockEntityWikiPage } from '@/mocks/mockWiki'
-import SynapseClient from '@/synapse-client/index'
 import {
   useGetWikiAttachments,
   useGetWikiPage,
@@ -12,7 +11,6 @@ import {
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
 import { render, screen, waitFor, within } from '@testing-library/react'
-import { describe, it, vi } from 'vitest'
 import MarkdownSynapse, {
   MarkdownSynapseProps,
   NO_WIKI_CONTENT,
@@ -23,32 +21,21 @@ import MarkdownSynapsePlot from './widget/MarkdownSynapsePlot'
 import { MemoryRouter } from 'react-router'
 import * as MarkdownUtils from './MarkdownUtils'
 
-vi.mock('./widget/MarkdownSynapseImage', () => ({
-  default: vi
-    .fn()
-    .mockReturnValue(<img data-testid={'MarkdownSynapseImage'}></img>),
-}))
-vi.mock('./widget/MarkdownSynapsePlot', () => ({
-  default: vi
-    .fn()
-    .mockReturnValue(<figure data-testid={'MarkdownSynapsePlot'}></figure>),
-}))
-vi.mock('./widget/MarkdownProvenanceGraph', () => ({
-  default: vi
-    .fn()
-    .mockReturnValue(<figure data-testid={'MarkdownProvenanceGraph'}></figure>),
-}))
-vi.mock('@/synapse-client', () => ({
-  default: {
-    getWikiAttachmentsFromEntity: vi.fn(),
-  },
-}))
+vi.mock('./widget/MarkdownSynapseImage')
+vi.mock('./widget/MarkdownSynapsePlot')
+vi.mock('./widget/MarkdownProvenanceGraph')
 vi.mock('@/synapse-queries/wiki/useWiki')
 
-const mockSynapseClient = vi.mocked(SynapseClient, true)
-const mockMarkdownSynapseImage = vi.mocked(MarkdownSynapseImage)
-const mockMarkdownSynapsePlot = vi.mocked(MarkdownSynapsePlot)
-const mockMarkdownProvenanceGraph = vi.mocked(MarkdownProvenanceGraph)
+const mockMarkdownSynapseImage = vi
+  .mocked(MarkdownSynapseImage)
+  .mockReturnValue(<img data-testid={'MarkdownSynapseImage'}></img>)
+const mockMarkdownSynapsePlot = vi
+  .mocked(MarkdownSynapsePlot)
+  .mockReturnValue(<figure data-testid={'MarkdownSynapsePlot'}></figure>)
+
+const mockMarkdownProvenanceGraph = vi
+  .mocked(MarkdownProvenanceGraph)
+  .mockReturnValue(<figure data-testid={'MarkdownProvenanceGraph'}></figure>)
 const mockUseGetWikiPage = vi.mocked(useGetWikiPage)
 const mockUseGetWikiAttachments = vi.mocked(useGetWikiAttachments)
 function getComponent(props: MarkdownSynapseProps) {
@@ -63,8 +50,6 @@ const renderComponent = (
 }
 
 const processMathSpy = vi.spyOn(MarkdownUtils, 'processMath')
-
-mockSynapseClient.getWikiAttachmentsFromEntity.mockResolvedValue({ list: [] })
 
 describe('MarkdownSynapse tests', () => {
   beforeEach(() => {

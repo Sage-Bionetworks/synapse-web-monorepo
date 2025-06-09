@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { useDebouncedEffect } from './useDebouncedEffect'
 
-const onEffect = jest.fn()
+const onEffect = vi.fn()
 const DEBOUNCE_TIME = 1000
 
 function TestComponent() {
@@ -30,8 +30,8 @@ const user = userEvent.setup({ delay: null })
 
 describe('useDebouncedEffect tests', () => {
   beforeEach(() => {
-    jest.useFakeTimers()
-    jest.resetAllMocks()
+    vi.useFakeTimers()
+    vi.resetAllMocks()
   })
 
   it('Groups multiple clicks', async () => {
@@ -39,7 +39,7 @@ describe('useDebouncedEffect tests', () => {
     const button = screen.getByRole('button')
     await user.click(button)
 
-    jest.advanceTimersByTime(DEBOUNCE_TIME)
+    vi.advanceTimersByTime(DEBOUNCE_TIME)
     expect(onEffect).toHaveBeenCalledTimes(1)
     expect(onEffect).toHaveBeenLastCalledWith(1)
 
@@ -48,7 +48,7 @@ describe('useDebouncedEffect tests', () => {
       await user.click(button)
     }
 
-    jest.advanceTimersByTime(DEBOUNCE_TIME)
+    vi.advanceTimersByTime(DEBOUNCE_TIME)
 
     // Should only be called one more time, with 6
     expect(onEffect).toHaveBeenCalledTimes(2)
@@ -60,15 +60,15 @@ describe('useDebouncedEffect tests', () => {
     const button = screen.getByRole('button')
 
     await user.click(button)
-    jest.advanceTimersByTime(DEBOUNCE_TIME / 2)
+    vi.advanceTimersByTime(DEBOUNCE_TIME / 2)
 
     // Clicking again should restart the timer
     await user.click(button)
-    jest.advanceTimersByTime(DEBOUNCE_TIME / 2)
+    vi.advanceTimersByTime(DEBOUNCE_TIME / 2)
 
     expect(onEffect).toHaveBeenCalledTimes(0)
 
-    jest.advanceTimersByTime(DEBOUNCE_TIME / 2)
+    vi.advanceTimersByTime(DEBOUNCE_TIME / 2)
 
     expect(onEffect).toHaveBeenCalledTimes(1)
     expect(onEffect).toHaveBeenLastCalledWith(2)

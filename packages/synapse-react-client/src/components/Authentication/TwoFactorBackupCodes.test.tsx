@@ -22,7 +22,7 @@ const newCodes: TwoFactorAuthRecoveryCodes = {
   ],
 }
 
-const mockCreateRecoveryCodes = jest
+const mockCreateRecoveryCodes = vi
   .spyOn(SynapseClient, 'createRecoveryCodes')
   .mockResolvedValue(newCodes)
 
@@ -32,15 +32,15 @@ function renderComponent(props: TwoFactorBackupCodesProps) {
   })
 }
 
-const onClose = jest.fn()
+const onClose = vi.fn()
 
 describe('TwoFactorBackupCodes', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     // Replace clipboard.writeText with a mock
     Object.assign(navigator, {
       clipboard: {
-        writeText: jest.fn().mockImplementation(() => Promise.resolve()),
+        writeText: vi.fn().mockImplementation(() => Promise.resolve()),
       },
     })
   })

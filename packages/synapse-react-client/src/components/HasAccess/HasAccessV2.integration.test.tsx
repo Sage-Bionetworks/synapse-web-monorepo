@@ -55,7 +55,7 @@ const expectArButton = async (linkText: string) => {
   expect(button).not.toHaveClass(SRC_SIGN_IN_CLASS)
 }
 
-const getRestrictionInformationSpy = jest.spyOn(
+const getRestrictionInformationSpy = vi.spyOn(
   SynapseClient,
   'getRestrictionInformation',
 )
@@ -81,7 +81,7 @@ describe('HasAccess tests', () => {
   afterAll(() => server.close())
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('User has all permissions on a standard FileEntity and any Access Requirements have been met', async () => {

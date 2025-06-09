@@ -1,4 +1,5 @@
-import { SynapseClientError, useSynapseContext } from '@/utils'
+import { useSynapseContext } from '@/utils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 
 const GITHUB_API_URL = 'https://api.github.com/repos'

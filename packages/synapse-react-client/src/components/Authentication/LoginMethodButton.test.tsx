@@ -14,7 +14,7 @@ import userEvent from '@testing-library/user-event'
 import { clearLastLoginInfo } from './LastLoginInfo'
 import LoginMethodButton, { LoginMethodButtonProps } from './LoginMethodButton'
 
-const onClick = jest.fn()
+const onClick = vi.fn()
 
 const defaultProps: LoginMethodButtonProps = {
   loginMethod: LOGIN_METHOD_OAUTH2_GOOGLE,
@@ -77,7 +77,7 @@ function setUp(
 
 describe('LoginMethodButton tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   afterEach(() => {

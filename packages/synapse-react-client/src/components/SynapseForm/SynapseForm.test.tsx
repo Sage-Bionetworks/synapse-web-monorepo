@@ -38,12 +38,12 @@ const renderComponent = async (props: SynapseFormProps) => {
 }
 
 const mock = {
-  submitFn: jest.fn(() => 'ok'),
-  saveFn: jest.fn(() => 'ok'),
+  submitFn: vi.fn(() => 'ok'),
+  saveFn: vi.fn(() => 'ok'),
   formRef: {
     current: {
-      submit: jest.fn(() => ''),
-      setState: jest.fn(() => ''),
+      submit: vi.fn(() => ''),
+      setState: vi.fn(() => ''),
     },
   },
 }
@@ -62,7 +62,7 @@ const props: SynapseFormProps = {
 }
 
 // TODO: may be needed to run "todo" tests
-// Engine.run = jest.fn(() => Promise.resolve('restrictions'))
+// Engine.run = vi.fn(() => Promise.resolve('restrictions'))
 
 /**
  * Tests in "todo" state were not migrated after removing Enzyme.
@@ -151,7 +151,7 @@ describe('SynapseForm', () => {
       'show warning when excluding a screen',
       //  async () => {
       //     instance.nextStep = instance.state.steps[4]
-      //     const excludeSpy = jest.spyOn(instance, 'showExcludeStateWarningDialog')
+      //     const excludeSpy = vi.spyOn(instance, 'showExcludeStateWarningDialog')
       //     await instance.performAction(NavActionEnum.GO_TO_STEP, false)
       //     expect(instance.state.currentStep.id).toEqual(instance.state.steps[4].id)
       //     wrapper.find('.step-exclude-directions button').simulate('click')
@@ -176,8 +176,8 @@ describe('SynapseForm', () => {
     test.todo(
       'check custom validation before submitting the form',
       //  async () => {
-      //     const submitSpy = jest.spyOn(instance.formRef.current, 'submit')
-      //     const customValidation = jest.spyOn(instance, 'runCustomValidation')
+      //     const submitSpy = vi.spyOn(instance.formRef.current, 'submit')
+      //     const customValidation = vi.spyOn(instance, 'runCustomValidation')
       //     instance.nextStep = instance.state.steps[3]
       //     await instance.triggerAction(NavActionEnum.GO_TO_STEP)
       //     await instance.performAction(NavActionEnum.GO_TO_STEP, false)

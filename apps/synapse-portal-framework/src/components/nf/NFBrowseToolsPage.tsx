@@ -7,7 +7,8 @@ import { Box, Link, Typography } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import { ReactElement } from 'react'
-import { FeaturedToolsList, SynapseComponents } from 'synapse-react-client'
+import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList'
+import { WideButton } from 'synapse-react-client/components/styled/WideButton'
 import Ecosystem from '../csbc-home-page/Ecosystem'
 import Layout from '../Layout'
 import PopularSearches from '../PopularSearches'
@@ -171,13 +172,13 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
           })}
         </div>
         <div className="center-content">
-          <SynapseComponents.WideButton
+          <WideButton
             sx={wideButtonSx}
             variant="contained"
             onClick={() => gotoExploreTools()}
           >
             View All Tools
-          </SynapseComponents.WideButton>
+          </WideButton>
         </div>
       </Layout>
       <div className="home-container-description  home-bg-dark home-spacer">
@@ -243,13 +244,13 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
           />
         </div>
         <div className="center-content">
-          <SynapseComponents.WideButton
+          <WideButton
             sx={wideButtonSx}
             variant="contained"
             onClick={() => gotoExploreTools()}
           >
             View All Tools
-          </SynapseComponents.WideButton>
+          </WideButton>
         </div>
       </Layout>
       <Layout outsideContainerClassName="home-container-description  home-bg-dark home-spacer">
@@ -297,7 +298,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
             }}
           >
             {submitToolButtons.map(button => (
-              <SynapseComponents.WideButton
+              <WideButton
                 key={button.label}
                 sx={{
                   ...wideButtonSx,
@@ -310,7 +311,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
                 target="_blank"
               >
                 {button.label}
-              </SynapseComponents.WideButton>
+              </WideButton>
             ))}
           </Box>
         </div>

@@ -27,7 +27,7 @@ const expected: PaginatedResults<EntityHeader> = {
   ],
 }
 
-const mockGetEntityHeaders = jest
+const mockGetEntityHeaders = vi
   .spyOn(SynapseClient, 'getEntityHeaders')
   .mockResolvedValue(expected)
 

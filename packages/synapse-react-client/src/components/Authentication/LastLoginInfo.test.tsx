@@ -38,7 +38,7 @@ function setUp(
 
 describe('LastLoginInfo tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('displays sentence and tooltip', async () => {

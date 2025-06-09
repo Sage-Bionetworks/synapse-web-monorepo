@@ -27,9 +27,9 @@ let capturedOnApplyClicked:
   | ((range: { min: string | number; max: string | number }) => void)
   | undefined
 
-jest.mock('../RangeSlider/RangeSlider', () => ({
+vi.mock('../RangeSlider/RangeSlider', () => ({
   __esModule: true,
-  default: jest.fn((props: RangeSliderProps) => {
+  default: vi.fn((props: RangeSliderProps) => {
     capturedOnApplyClicked = props.onApplyClicked
     return <div data-testid="RangeSlider"></div>
   }),
@@ -73,11 +73,11 @@ const mockQueryResponseData: QueryResultBundle = {
   ],
 }
 
-jest.mock('@mui/material', () => {
-  const actual = jest.requireActual('@mui/material')
+vi.mock(import('@mui/material'), async importOriginal => {
+  const original = await importOriginal()
   return {
-    ...actual,
-    Collapse: jest.fn(props => (
+    ...original,
+    Collapse: vi.fn(props => (
       <div data-testid="Collapse">{props.children}</div>
     )),
   }
@@ -182,7 +182,7 @@ describe('CombinedRangeFacetFilter tests', () => {
   beforeEach(() => {
     currentQueryContext = undefined
     capturedOnApplyClicked = undefined
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     registerTableQueryResult(
       { sql: queryRequest.query.sql },
       mockQueryResponseData,
