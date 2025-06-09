@@ -2561,7 +2561,7 @@ exports[`SynapseHomepageV2 Snapshot test > Basic home page 1`] = `
         class="MuiBox-root css-gngfd0"
       >
         <h1
-          class="MuiTypography-root MuiTypography-headline1 css-iqh8wl-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-headline1 css-1e47jco-MuiTypography-root"
         >
           Featured datasets
         </h1>
