@@ -1,5 +1,0 @@
-import{j as i}from"./jsx-runtime-BhAJ9Y3L.js";import{T as o}from"./Typography-Ct5R0hvY.js";import"./index-DOU8PYus.js";import"./iframe-B6_QaExc.js";import"./createTheme-D3vVDGxc.js";import"./DefaultPropsProvider-DhGy6nlm.js";const y={title:"UI/Typography",component:o,argTypes:{children:{control:"text"},variant:{control:"select",options:["headline1","headline2","headline3","body1","body1Italic","body2","breadcrumb1","breadcrumb2","smallText1","smallText2","smallLink","label","buttonLink","hintText","sectionTitle","subsectionHeader","dataFieldKey"]}},render:r=>i.jsx(o,{...r,children:r.children??"Modify this sample text using the 'children' control below"})},e={args:{variant:"body1"}};var t,a,n;e.parameters={...e.parameters,docs:{...(t=e.parameters)==null?void 0:t.docs,source:{originalSource:`{
-  args: {
-    variant: 'body1'
-  }
-}`,...(n=(a=e.parameters)==null?void 0:a.docs)==null?void 0:n.source}}};const h=["TypographyDemo"];export{e as TypographyDemo,h as __namedExportsOrder,y as default};
