@@ -1,4 +1,5 @@
 import mockSyn26438037Counts from '@/mocks/query/syn26438037Counts.json'
+import * as SynapseClient from '@/synapse-client/SynapseClient'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import {
@@ -8,7 +9,6 @@ import {
   RenderResult,
   screen,
 } from '@testing-library/react'
-import { SynapseClient } from '../../index'
 import SynapsePlot, { SynapsePlotProps } from './SynapsePlot'
 
 const customPlotClickCallback = vi.fn()
