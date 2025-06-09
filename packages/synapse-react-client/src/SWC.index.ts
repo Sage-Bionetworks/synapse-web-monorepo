@@ -16,6 +16,7 @@ import DirectProgrammaticDownload from './components/DownloadCart/DirectProgramm
 import { DownloadCartPage } from './components/DownloadCart/DownloadCartPage'
 import ShowDownloadV2 from './components/DownloadCart/ShowDownloadV2'
 import { SchemaDrivenAnnotationEditor } from './components/SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor'
+import { EntityCitation } from './components/EntityCitation'
 import { EntityModal } from './components/entity/metadata/EntityModal'
 import { EntityBadgeIcons } from './components/EntityBadgeIcons/EntityBadgeIcons'
 import EntityForm from './components/EntityForm/EntityForm'
@@ -150,6 +151,7 @@ const SynapseComponents = {
   SchemaDrivenAnnotationEditor,
   SynapseNavDrawer,
   FavoritesPage,
+  EntityCitation,
   EntityModal,
   SynapseToastContainer,
   displayToast,
