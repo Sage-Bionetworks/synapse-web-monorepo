@@ -1,1 +1,0 @@
-import"./index-C_gnWP_t.js";import{d as m}from"./DefaultPropsProvider-BseDZ5eB.js";import{T as o}from"./createTheme-OkraJ5eJ.js";import{u as r}from"./useTheme-D5uDEtFj.js";function f(){const e=r(m);return e[o]||e}export{f as u};
