@@ -9,8 +9,8 @@ import SubsectionRowRenderer, {
   SubsectionRowRendererProps,
 } from './SubsectionRowRenderer'
 
-jest.mock('../../synapse-client', () => ({
-  getQueryTableResults: jest.fn(),
+vi.mock('../../synapse-client/SynapseClient', () => ({
+  getQueryTableResults: vi.fn(),
 }))
 
 const defaultProps: SubsectionRowRendererProps = {
@@ -28,7 +28,7 @@ function renderComponent(
     },
   )
 }
-const mockGetQueryTableResults = jest.mocked(SynapseClient.getQueryTableResults)
+const mockGetQueryTableResults = vi.mocked(SynapseClient.getQueryTableResults)
 
 describe('SubsectionRowRenderer rendering tests', () => {
   it('renders multi-row response, using a link column and a friendly values map', async () => {

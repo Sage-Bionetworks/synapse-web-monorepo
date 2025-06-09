@@ -11,7 +11,7 @@ describe('CopyToClipboardString', () => {
   it('copies to clipboard when icon is clicked', async () => {
     Object.assign(navigator, {
       clipboard: {
-        writeText: jest.fn().mockImplementation(() => Promise.resolve()),
+        writeText: vi.fn().mockImplementation(() => Promise.resolve()),
       },
     })
     render(<CopyToClipboardString {...props} />)

@@ -25,7 +25,7 @@ describe('PortalFeatureHighlights component', () => {
 
   it('renders the title', () => {
     renderComponent(props)
-    expect(screen.getByText('Test Title'))
+    screen.getByText('Test Title')
   })
 
   it('renders image with correct src', () => {

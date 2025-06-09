@@ -22,9 +22,10 @@ import omit from 'lodash-es/omit'
 const tableId = 'syn16787123'
 const sql = `SELECT * FROM ${tableId}`
 
-jest
-  .spyOn(SynapseClient, 'getEntity')
-  .mockResolvedValue({ ...mockTableEntity, id: tableId })
+vi.spyOn(SynapseClient, 'getEntity').mockResolvedValue({
+  ...mockTableEntity,
+  id: tableId,
+})
 
 const lastQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -55,7 +56,7 @@ const renderComponent = (props: CardContainerProps) => {
 describe('CardContainer tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     registerTableQueryResult(lastQueryRequest.query, syn16787123Json)
   })
   afterEach(() => server.restoreHandlers())

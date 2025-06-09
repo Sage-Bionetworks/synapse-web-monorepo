@@ -7,8 +7,8 @@ import useUpdateAcl from './useUpdateAcl'
 
 describe('useUpdateAcl', () => {
   function renderHook() {
-    const mockOnChange = jest.fn()
-    const mockOnError = jest.fn()
+    const mockOnChange = vi.fn()
+    const mockOnError = vi.fn()
     const renderHookResult = _renderHook(
       () =>
         useUpdateAcl({

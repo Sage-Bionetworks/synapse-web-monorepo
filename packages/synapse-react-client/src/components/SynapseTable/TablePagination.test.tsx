@@ -10,13 +10,13 @@ import {
 import { TablePagination } from './TablePagination'
 import { usePrefetchTableRows } from './usePrefetchTableData'
 
-jest.mock('./usePrefetchTableData', () => {
+vi.mock('./usePrefetchTableData', () => {
   return {
-    usePrefetchTableRows: jest.fn().mockReturnValue(jest.fn()),
+    usePrefetchTableRows: vi.fn().mockReturnValue(vi.fn()),
   }
 })
 
-const mockUsePrefetchTableRows = jest.mocked(usePrefetchTableRows)
+const mockUsePrefetchTableRows = vi.mocked(usePrefetchTableRows)
 
 function renderComponent(options: {
   pageSize: number
@@ -36,12 +36,12 @@ function renderComponent(options: {
   const queryMetadataQueryOptions: QueryContextType['queryMetadataQueryOptions'] =
     {
       queryKey: ['query-metadata'],
-      queryFn: jest.fn().mockResolvedValue(queryStatsResult),
+      queryFn: vi.fn().mockResolvedValue(queryStatsResult),
     }
-  const mockGoToPage = jest.fn()
-  const mockSetPageSize = jest.fn()
+  const mockGoToPage = vi.fn()
+  const mockSetPageSize = vi.fn()
 
-  const mockPrefetchPage = jest.fn()
+  const mockPrefetchPage = vi.fn()
   mockUsePrefetchTableRows.mockReturnValue(mockPrefetchPage)
 
   const passedQueryContext: Partial<QueryContextType> = {

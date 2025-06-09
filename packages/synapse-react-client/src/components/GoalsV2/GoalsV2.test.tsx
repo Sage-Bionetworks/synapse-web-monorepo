@@ -103,11 +103,11 @@ const mockBatchFileResult: BatchFileResult = {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks()
-  jest.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
-  jest
-    .spyOn(SynapseClient, 'getQueryTableResults')
-    .mockResolvedValue(tableQueryResult)
+  vi.clearAllMocks()
+  vi.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
+  vi.spyOn(SynapseClient, 'getQueryTableResults').mockResolvedValue(
+    tableQueryResult,
+  )
 })
 beforeAll(() => server.listen())
 afterEach(() => server.resetHandlers())

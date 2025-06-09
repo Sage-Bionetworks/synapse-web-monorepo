@@ -19,10 +19,10 @@ import {
 } from './CreateChallengeTeam'
 import useCreateAndRegisterChallengeTeam from './useCreateAndRegisterChallengeTeam'
 
-jest.mock('./useCreateAndRegisterChallengeTeam')
+vi.mock('./useCreateAndRegisterChallengeTeam')
 
-const mockCreateAndRegisterTeam = jest.fn()
-const mockUseCreateAndRegisterTeam = jest
+const mockCreateAndRegisterTeam = vi.fn()
+const mockUseCreateAndRegisterTeam = vi
   .mocked(useCreateAndRegisterChallengeTeam)
   .mockReturnValue({
     createAndRegisterTeam: mockCreateAndRegisterTeam,
@@ -33,8 +33,8 @@ const mockUseCreateAndRegisterTeam = jest
 function renderComponent() {
   const user = userEvent.setup()
   const ref = createRef<CreateChallengeTeamHandle>()
-  const mockOnCanSubmitChange = jest.fn()
-  const mockOnFinished = jest.fn()
+  const mockOnCanSubmitChange = vi.fn()
+  const mockOnFinished = vi.fn()
 
   const component = render(
     <CreateChallengeTeam
@@ -82,7 +82,7 @@ const MUTATION_SUCCESS_RESULT: [Team, ChallengeTeam, MembershipInvitation[]] = [
 
 describe('CreateChallengeTeam', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('Successfully creates a team', async () => {

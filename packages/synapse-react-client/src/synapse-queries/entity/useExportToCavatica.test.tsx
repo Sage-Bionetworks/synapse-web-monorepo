@@ -13,9 +13,9 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { noop } from 'lodash-es'
 import { useExportToCavatica } from './useExportToCavatica'
 
-window.open = jest.fn()
+window.open = vi.fn()
 
-const mockToastFn = jest
+const mockToastFn = vi
   .spyOn(ToastMessage, 'displayToast')
   .mockImplementation(() => noop)
 
@@ -58,14 +58,14 @@ const testQueryRequest: QueryBundleRequest = {
   },
 }
 
-const mockGetDownloadFromTableRequest = jest.spyOn(
+const mockGetDownloadFromTableRequest = vi.spyOn(
   SynapseClient,
   'createTableCsvForDownload',
 )
 
 describe('useExportToCavatica', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('Does nothing until function is called', () => {

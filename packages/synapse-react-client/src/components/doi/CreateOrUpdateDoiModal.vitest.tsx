@@ -31,6 +31,7 @@ vi.mock('@/synapse-queries/portal/usePortal')
 const mockUseCreateOrUpdateDOI = vi
   .mocked(useCreateOrUpdateDOI)
   .mockReturnValue(getUseMutationIdleMock())
+
 const mockUseGetEntity = vi.mocked(useGetEntity).mockReturnValue(
   getUseQuerySuccessMock({
     name: 'Test Entity',
