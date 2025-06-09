@@ -111,6 +111,9 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
                       />
                     </QueryContext.Provider>
                   </Provider>,
+                  {
+                    duration: Infinity,
+                  },
                 )
               }}
               startIcon={<GetAppTwoTone />}
