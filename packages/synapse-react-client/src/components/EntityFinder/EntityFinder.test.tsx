@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom'
 import {
   MOCK_ACCESS_TOKEN,
   SynapseTestContext,

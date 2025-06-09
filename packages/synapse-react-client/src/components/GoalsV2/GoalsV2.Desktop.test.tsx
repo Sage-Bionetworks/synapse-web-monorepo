@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import GoalsV2Desktop from './GoalsV2.Desktop'
 import userEvent from '@testing-library/user-event'

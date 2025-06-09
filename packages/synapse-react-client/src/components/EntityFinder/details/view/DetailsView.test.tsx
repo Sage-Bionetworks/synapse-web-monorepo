@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom'
 import * as EntityBadgeModule from '@/components/EntityBadgeIcons/EntityBadgeIcons'
 import { mockProjectHeader } from '@/mocks/entity/mockEntity'
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'

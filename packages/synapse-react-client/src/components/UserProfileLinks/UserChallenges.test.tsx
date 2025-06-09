@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom'
 import { SynapseTestContext } from '@/mocks/MockSynapseContext'
 import { useGetUserChallengesInfinite } from '@/synapse-queries/user/useGetUserChallenges'
 import { getUseInfiniteQueryMock } from '@/testutils/ReactQueryMockUtils'
