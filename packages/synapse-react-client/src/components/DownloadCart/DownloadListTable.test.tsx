@@ -1,7 +1,8 @@
 import '@testing-library/jest-dom'
-import { SynapseTestContext } from '@/mocks/MockSynapseContext'
 import { mockUserProfileData } from '@/mocks/user/mock_user_profile'
 import SynapseClient from '@/synapse-client'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 import {
   AvailableFilesResponse,
   DownloadListItemResult,
@@ -9,7 +10,6 @@ import {
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import DownloadListTableV2 from './DownloadListTable'
-import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 vi.mock('@/utils/functions/StringUtils', async importOriginal => {
   return {
@@ -81,11 +81,7 @@ vi.spyOn(SynapseClient, 'getAvailableFilesToDownload').mockImplementation(
 )
 
 function renderComponent() {
-  return render(
-    <SynapseTestContext>
-      <DownloadListTableV2 />
-    </SynapseTestContext>,
-  )
+  return render(<DownloadListTableV2 />, { wrapper: createWrapper() })
 }
 
 describe('DownloadListTable tests', () => {
