@@ -59,8 +59,8 @@ export const EntityFinderModal = (props: EntityFinderModalProps) => {
           <Box>
             <Typography
               variant="body1"
-              mb="10px"
               sx={{
+                mb: '10px',
                 // Do not allow the help text to expand the dialog width
                 minWidth: '100%',
                 width: 0,

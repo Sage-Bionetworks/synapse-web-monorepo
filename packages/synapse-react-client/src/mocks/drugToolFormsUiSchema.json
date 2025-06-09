@@ -254,7 +254,7 @@
     }
   },
   "in_vivo_data": {
-    "classNames": "experiments-list",
+    "ui:classNames": "experiments-list",
     "ui:title": "In Vivo Data",
     "ui:description": "Start entering data by selecting “Add Data”. If you have data from multiple experiments, you can select “Add Data” again to add additional data.",
     "experiments": {
@@ -291,7 +291,7 @@
         },
         "age_range": {
           "ui:help": "Please provide the age of the test subject at the time of testing.",
-          "classNames": "data-range",
+          "ui:classNames": "data-range",
           "age_range_min": {
             "ui:title": "Minimum Subject Age",
             "ui:widget": "updown",
@@ -314,7 +314,7 @@
         },
         "dose_range": {
           "ui:help": "",
-          "classNames": "data-range",
+          "ui:classNames": "data-range",
           "dose_range_min": {
             "ui:title": "Minimum Dose Range",
             "ui:widget": "updown",
@@ -391,7 +391,7 @@
     }
   },
   "pk_in_vivo": {
-    "classNames": "experiments-list",
+    "ui:classNames": "experiments-list",
     "ui:title": "PK In Vivo",
     "ui:description": "Start entering data by selecting “Add Data”. If you have data from multiple experiments, you can select “Add Data” again to add additional data.",
     "experiments": {
@@ -418,7 +418,7 @@
         },
         "age_range": {
           "ui:help": "Please provide the age of the test subjects at the time of testing.",
-          "classNames": "data-range",
+          "ui:classNames": "data-range",
           "age_range_min": {
             "ui:title": "Minimum Subject Age",
             "ui:widget": "updown",
@@ -472,7 +472,7 @@
     }
   },
   "ld50": {
-    "classNames": "experiments-list",
+    "ui:classNames": "experiments-list",
     "ui:title": "LD50",
     "ui:description": "Start entering data by selecting “Add Data”. If you have data from multiple experiments, you can select “Add Data” again to add additional data.",
     "experiments": {
@@ -505,7 +505,7 @@
 
         "age_range": {
           "ui:help": "What was the age of the test subjects.",
-          "classNames": "data-range",
+          "ui:classNames": "data-range",
           "age_range_min": {
             "ui:title": "Minimum Subject Age",
             "ui:widget": "updown",
@@ -530,7 +530,7 @@
         },
         "dose_range": {
           "ui:help": "Please indicate the dose range over which you tested the compound",
-          "classNames": "data-range",
+          "ui:classNames": "data-range",
           "dose_range_min": {
             "ui:title": "Minimum Dose Range",
             "ui:widget": "updown",
@@ -564,7 +564,7 @@
     }
   },
   "acute_dosing": {
-    "classNames": "experiments-list",
+    "ui:classNames": "experiments-list",
     "ui:title": "Acute Dosing",
     "ui:description": "Start entering data by selecting “Add Data”. If you have data from multiple experiments, you can select “Add Data” again to add additional data.",
     "experiments": {
@@ -596,7 +596,7 @@
 
         "age_range": {
           "ui:help": "What was the age of the test subjects.",
-          "classNames": "data-range",
+          "ui:classNames": "data-range",
           "age_range_min": {
             "ui:title": "Minimum Subject Age",
             "ui:widget": "updown",
@@ -620,7 +620,7 @@
         },
         "dose_range": {
           "ui:help": "Please indicate the dose range over which you tested the compound",
-          "classNames": "data-range",
+          "ui:classNames": "data-range",
           "dose_range_min": {
             "ui:title": "Minimum Dose Range",
             "ui:widget": "updown",
@@ -655,7 +655,7 @@
     }
   },
   "chronic_dosing": {
-    "classNames": "experiments-list",
+    "ui:classNames": "experiments-list",
     "ui:title": "Chronic Dosing",
     "ui:description": "Start entering data by selecting “Add Data”. If you have data from multiple experiments, you can select “Add Data” again to add additional data.",
     "experiments": {
@@ -687,7 +687,7 @@
 
         "age_range": {
           "ui:help": "What was the age of the test subjects.",
-          "classNames": "data-range",
+          "ui:classNames": "data-range",
           "age_range_min": {
             "ui:title": "Minimum Subject Age",
             "ui:widget": "updown",
@@ -711,7 +711,7 @@
         },
         "dose_range": {
           "ui:help": "Please indicate the dose range over which you tested the compound",
-          "classNames": "data-range",
+          "ui:classNames": "data-range",
           "dose_range_min": {
             "ui:title": "Minimum Dose Range",
             "ui:widget": "updown",
@@ -746,7 +746,7 @@
     }
   },
   "teratogenicity": {
-    "classNames": "experiments-list",
+    "ui:classNames": "experiments-list",
     "ui:description": "Start entering data by selecting “Add Data”. If you have data from multiple experiments, you can select “Add Data” again to add additional data.",
 
     "experiments": {
@@ -778,7 +778,7 @@
 
         "age_range": {
           "ui:help": "What was the age of the test subjects.",
-          "classNames": "data-range",
+          "ui:classNames": "data-range",
           "age_range_min": {
             "ui:title": "Minimum Subject Age",
             "ui:widget": "updown",
@@ -802,7 +802,7 @@
         },
         "dose_range": {
           "ui:help": "Please indicate the dose range over which you tested the compound",
-          "classNames": "data-range",
+          "ui:classNames": "data-range",
           "dose_range_min": {
             "ui:title": "Minimum Dose Range",
             "ui:widget": "updown",
@@ -885,7 +885,7 @@
       "ui:placeholder": "If other, state the clinical indication"
     },
     "age_range": {
-      "classNames": "data-range",
+      "ui:classNames": "data-range",
       "age_range_min": {
         "ui:title": "Minimum Subject Age",
         "ui:widget": "updown",

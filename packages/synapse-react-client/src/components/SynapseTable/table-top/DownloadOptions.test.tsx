@@ -40,7 +40,7 @@ function renderComponent(
   )
 }
 const props: DownloadOptionsProps = {
-  onDownloadFiles: jest.fn(),
+  onDownloadFiles: vi.fn(),
 }
 
 const tableEntityQueryRequest: QueryBundleRequest = {

@@ -27,11 +27,22 @@ export default function EntityViewScopeEditor(
 
   return (
     <>
-      <Typography variant={'body1'} mb={1.25} sx={{ fontWeight: 700 }}>
+      <Typography
+        variant={'body1'}
+        sx={{
+          mb: 1.25,
+          fontWeight: 700,
+        }}
+      >
         Scope
       </Typography>
       {scopeIds.length === 0 && (
-        <Typography variant={'smallText1'} color={'grey.600'}>
+        <Typography
+          variant={'smallText1'}
+          sx={{
+            color: 'grey.600',
+          }}
+        >
           Empty! Add items to populate your view
         </Typography>
       )}

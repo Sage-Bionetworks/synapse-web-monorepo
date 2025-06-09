@@ -26,7 +26,7 @@ import markdownitSynapsePlugin from 'markdown-it-synapse'
 import markdownitSynapseHeading from 'markdown-it-synapse-heading'
 import markdownitMath from 'markdown-it-synapse-math'
 import markdownitSynapseTable from 'markdown-it-synapse-table'
-import { useEffect, useMemo, useRef } from 'react'
+import { JSX, useEffect, useMemo, useRef } from 'react'
 import { ErrorBanner } from '../error/ErrorBanner'
 import { SkeletonTable } from '../Skeleton'
 import MarkdownWidget from './MarkdownWidget'
@@ -193,7 +193,7 @@ function RenderMarkdown(props: {
 
   if (!isLoading && showPlaceholderIfNoWikiContent && markup === '') {
     return (
-      <Typography variant="body1Italic" mb={1}>
+      <Typography variant="body1Italic" sx={{ mb: 1 }}>
         {NO_WIKI_CONTENT}
       </Typography>
     )

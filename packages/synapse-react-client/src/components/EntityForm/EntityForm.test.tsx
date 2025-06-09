@@ -6,21 +6,19 @@ import EntityForm, { EntityFormProps } from './EntityForm'
 
 const targetFolderId = 'syn9988882982'
 
-jest
-  .spyOn(SynapseClient, 'getUserProfile')
-  .mockResolvedValue(mockUserProfileData)
-jest
-  .spyOn(SynapseClient, 'lookupChildEntity')
-  .mockResolvedValue({ id: targetFolderId })
+vi.spyOn(SynapseClient, 'getUserProfile').mockResolvedValue(mockUserProfileData)
+vi.spyOn(SynapseClient, 'lookupChildEntity').mockResolvedValue({
+  id: targetFolderId,
+})
 
-jest.spyOn(SynapseClient, 'getFileHandleContent').mockResolvedValue('{}')
+vi.spyOn(SynapseClient, 'getFileHandleContent').mockResolvedValue('{}')
 
 describe('EntityForm', () => {
   const parentContainerId: string = 'syn20355732'
   const formSchemaEntityId: string = 'syn20184776'
   const formUiSchemaEntityId: string = 'syn20184771'
   const initFormData: boolean = false
-  const synIdCallback = jest.fn()
+  const synIdCallback = vi.fn()
   const props: EntityFormProps = {
     parentContainerId,
     formSchemaEntityId,

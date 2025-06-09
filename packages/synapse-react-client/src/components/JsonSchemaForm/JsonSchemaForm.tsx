@@ -1,4 +1,5 @@
 import ArrayFieldDescriptionTemplate from '@/components/JsonSchemaForm/templates/ArrayFieldDescriptionTemplate'
+import ArrayFieldItemButtonsTemplate from '@/components/JsonSchemaForm/templates/ArrayFieldItemButtonTemplate'
 import ArrayFieldItemTemplate from '@/components/JsonSchemaForm/templates/ArrayFieldItemTemplate'
 import ArrayFieldTemplate from '@/components/JsonSchemaForm/templates/ArrayFieldTemplate'
 import ArrayFieldTitleTemplate from '@/components/JsonSchemaForm/templates/ArrayFieldTitleTemplate'
@@ -36,6 +37,7 @@ export function JsonSchemaForm<T = any>(
       templates={{
         ArrayFieldDescriptionTemplate: ArrayFieldDescriptionTemplate,
         ArrayFieldItemTemplate: ArrayFieldItemTemplate,
+        ArrayFieldItemButtonsTemplate: ArrayFieldItemButtonsTemplate,
         ArrayFieldTemplate: ArrayFieldTemplate,
         ArrayFieldTitleTemplate: ArrayFieldTitleTemplate,
         BaseInputTemplate: BaseInputTemplate,

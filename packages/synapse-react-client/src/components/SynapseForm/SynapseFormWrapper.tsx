@@ -172,7 +172,7 @@ class _SynapseFormWrapper extends Component<
       this.setState({
         formData: formData,
         formSchema: configData[0].content,
-        formUiSchema: configData[1].content,
+        formUiSchema: configData[1].content as unknown as UiSchema,
         formNavSchema: configData[2].content,
         isLoading: false,
       })
@@ -328,7 +328,7 @@ class _SynapseFormWrapper extends Component<
   renderLoader = (
     state: SynapseFormWrapperState,
     props: SynapseFormWrapperProps,
-  ): JSX.Element => {
+  ) => {
     if (
       includes([StatusEnum.ERROR, StatusEnum.ERROR_CRITICAL], state.status) &&
       props.token &&
@@ -344,7 +344,7 @@ class _SynapseFormWrapper extends Component<
     }
   }
 
-  renderNotification = (notification?: Notification): JSX.Element => {
+  renderNotification = (notification?: Notification) => {
     if (!notification) {
       return <></>
     }

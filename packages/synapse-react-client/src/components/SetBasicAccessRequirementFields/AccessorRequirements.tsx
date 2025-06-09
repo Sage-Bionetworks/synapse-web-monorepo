@@ -17,8 +17,17 @@ export function AccessorRequirements(props: AccessorRequirementsProps) {
     <>
       {hasAccessorRequirement(accessRequirement) && (
         <>
-          <Box mb={2}>
-            <Typography variant="body1" fontWeight={700}>
+          <Box
+            sx={{
+              mb: 2,
+            }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                fontWeight: 700,
+              }}
+            >
               Accessor requirements
             </Typography>
             <FormControlLabel

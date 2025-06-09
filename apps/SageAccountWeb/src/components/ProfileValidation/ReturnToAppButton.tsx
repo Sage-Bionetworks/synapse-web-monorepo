@@ -11,24 +11,26 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import { cloneElement, PropsWithChildren, ReactElement, useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { NavLink } from 'react-router'
 
-export function ReturnToAppButton({ children }: PropsWithChildren) {
+type ReturnToAppButtonProps = {
+  children?: (onClick?: () => void) => ReactNode
+}
+
+export function ReturnToAppButton({ children }: ReturnToAppButtonProps) {
   const theme = useTheme()
   const [open, setOpen] = useState(false)
   const onClose = () => setOpen(false)
   const redirectFn = () => {
     window.location.assign('/authenticated/myaccount')
   }
-  const element = !children ? (
+  const element = children ? (
+    children(() => setOpen(true))
+  ) : (
     <Button variant="text" onClick={() => setOpen(true)} fullWidth>
       Cancel Validation
     </Button>
-  ) : (
-    cloneElement(children as ReactElement, {
-      onClick: () => setOpen(true),
-    })
   )
 
   return (
@@ -36,7 +38,13 @@ export function ReturnToAppButton({ children }: PropsWithChildren) {
       {element}
       <Dialog open={open} fullWidth maxWidth="sm">
         <DialogTitle>
-          <Stack direction="row" alignItems={'center'} gap={'5px'}>
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: 'center',
+              gap: '5px',
+            }}
+          >
             Cancel verification?
             <Box sx={{ flexGrow: 1 }} />
             <IconButton aria-label={'Close'} onClick={onClose}>
@@ -45,7 +53,12 @@ export function ReturnToAppButton({ children }: PropsWithChildren) {
           </Stack>
         </DialogTitle>
         <DialogContent dividers>
-          <Typography variant="body1" paragraph>
+          <Typography
+            variant="body1"
+            sx={{
+              marginBottom: '16px',
+            }}
+          >
             If you cancel verification, you'll still be able to use portions of
             the application which are available to registered users, but your
             access will be restricted.

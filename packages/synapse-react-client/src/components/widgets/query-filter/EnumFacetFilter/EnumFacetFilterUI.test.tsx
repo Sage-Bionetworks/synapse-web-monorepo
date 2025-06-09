@@ -30,10 +30,10 @@ function generateManyFacetValues(): RenderedFacetValue[] {
   return result
 }
 
-const mockOnAddValueToSelection = jest.fn()
-const mockOnRemoveAllFacetSelections = jest.fn()
-const mockOnRemoveValueFromSelection = jest.fn()
-const mockOnHoverOverValue = jest.fn()
+const mockOnAddValueToSelection = vi.fn()
+const mockOnRemoveAllFacetSelections = vi.fn()
+const mockOnRemoveValueFromSelection = vi.fn()
+const mockOnHoverOverValue = vi.fn()
 
 const defaultProps = {
   onAddValueToSelection: mockOnAddValueToSelection,
@@ -55,7 +55,7 @@ function renderComponent(overrides?: Partial<EnumFacetFilterUIProps>) {
 
 describe('EnumFacetFilterUI (unit tests)', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('Renders the correct UI component', () => {

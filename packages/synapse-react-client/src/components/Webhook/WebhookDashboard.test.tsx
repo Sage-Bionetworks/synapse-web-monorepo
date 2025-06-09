@@ -17,7 +17,7 @@ import { rest } from 'msw'
 import * as ToastMessageModule from '../ToastMessage/ToastMessage'
 import WebhookDashboard from './WebhookDashboard'
 
-const displayToastSpy = jest.spyOn(ToastMessageModule, 'displayToast')
+const displayToastSpy = vi.spyOn(ToastMessageModule, 'displayToast')
 
 async function renderComponent() {
   const user = userEvent.setup()
@@ -150,7 +150,7 @@ describe('WebhookDashboard', () => {
       }),
     )
 
-    const sendVerificationCodeSpy = jest.spyOn(
+    const sendVerificationCodeSpy = vi.spyOn(
       MOCK_CONTEXT_VALUE.synapseClient.webhookServicesClient,
       'putRepoV1WebhookWebhookIdVerificationCode',
     )

@@ -1,21 +1,23 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import { SynapseClient } from '../../index'
+import * as SynapseClient from '@/synapse-client/SynapseClient'
 import GoalsV3 from './GoalsV3'
 
-jest.mock('@/utils/hooks/useShowDesktop', () => ({
+vi.mock('@/utils/hooks/useShowDesktop', () => ({
   __esModule: true,
-  default: jest.fn(() => true),
+  default: vi.fn(() => true),
 }))
 
-jest.mock('../QueryCount/QueryCount', () => ({
-  __esModule: true,
-  default: ({ query }: { query: { sql: string } }) => {
+vi.mock('../QueryCount/QueryCount', () => {
+  const mockImplementation = ({ query }: { query: { sql: string } }) => {
     return <span>{query.sql}</span>
-  },
-}))
+  }
+  return {
+    QueryCount: mockImplementation,
+    default: mockImplementation,
+  }
+})
 
 const DummySvgIcon = () => <svg data-testid="dummy-icon" />
 
@@ -93,10 +95,10 @@ const tableQueryResult: QueryResultBundle = {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks()
-  jest
-    .spyOn(SynapseClient, 'getQueryTableResults')
-    .mockResolvedValue(tableQueryResult)
+  vi.clearAllMocks()
+  vi.spyOn(SynapseClient, 'getQueryTableResults').mockResolvedValue(
+    tableQueryResult,
+  )
 })
 
 describe('GoalsV2 Desktop', () => {

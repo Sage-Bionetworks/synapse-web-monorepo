@@ -43,7 +43,7 @@ function renderComponent(props: AccessRequestSubmissionTableProps) {
   })
 }
 
-const searchAccessSubmissionSpy = jest.spyOn(
+const searchAccessSubmissionSpy = vi.spyOn(
   SynapseClient,
   'searchAccessSubmission',
 )
@@ -101,7 +101,7 @@ describe('Access Request Submission Table tests', () => {
 
   afterEach(() => {
     server.restoreHandlers()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   afterAll(() => server.close())

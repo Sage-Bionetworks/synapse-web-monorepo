@@ -5,8 +5,7 @@ import {
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import { SynapseClient } from '../../index'
+import * as SynapseClient from '@/synapse-client/SynapseClient'
 import GoalsV2 from './GoalsV2'
 
 const tableQueryResult: QueryResultBundle = {
@@ -103,11 +102,11 @@ const mockBatchFileResult: BatchFileResult = {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks()
-  jest.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
-  jest
-    .spyOn(SynapseClient, 'getQueryTableResults')
-    .mockResolvedValue(tableQueryResult)
+  vi.clearAllMocks()
+  vi.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
+  vi.spyOn(SynapseClient, 'getQueryTableResults').mockResolvedValue(
+    tableQueryResult,
+  )
 })
 beforeAll(() => server.listen())
 afterEach(() => server.resetHandlers())

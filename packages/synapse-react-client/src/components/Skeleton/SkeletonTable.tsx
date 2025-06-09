@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, ReactNode, useEffect, useState } from 'react'
 import Skeleton from '@mui/material/Skeleton'
 import { times } from 'lodash-es'
 import { Box, BoxProps } from '@mui/material'
@@ -27,10 +27,10 @@ export function SkeletonTable(props: SkeletonTableProps) {
     fullWidthCells = false,
     ...boxProps
   } = props
-  const [skeletons, setSkeletons] = useState<JSX.Element[]>([])
+  const [skeletons, setSkeletons] = useState<ReactNode[]>([])
 
   useEffect(() => {
-    const elements: JSX.Element[] = []
+    const elements: ReactNode[] = []
     times(numRows * numCols, i => {
       elements.push(
         <Fragment key={i}>

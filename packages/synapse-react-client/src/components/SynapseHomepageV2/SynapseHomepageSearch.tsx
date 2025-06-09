@@ -4,6 +4,7 @@ import { SynapseConstants } from '@/utils'
 import {
   Autocomplete,
   Box,
+  Color,
   FormControl,
   InputAdornment,
   Popper,
@@ -12,7 +13,6 @@ import {
   TextField,
   useTheme,
 } from '@mui/material'
-import { ColorPartial } from '@mui/material/styles/createPalette'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 
@@ -88,39 +88,44 @@ export function SynapseHomepageSearch({
             gotoPlace(`/Search:${encodeURIComponent(newValue)}`)
           }
         }}
+        slots={{
+          popper: PopperAlwaysPlacedBelow,
+        }}
         onOpen={() => setIsPopperOpen(true)}
         onClose={() => setIsPopperOpen(false)}
-        PopperComponent={PopperAlwaysPlacedBelow}
         groupBy={() => 'Most popular searches'}
         renderInput={params => (
           <TextField
             {...params}
             variant="outlined"
             placeholder="Search Synapse"
-            InputProps={{
-              ...params.InputProps,
-              sx: {
-                fontSize: '24px',
-                borderRadius: isPopperOpen ? '40px 40px 0px 0px' : '40px',
-                backgroundColor: 'white',
-                boxShadow,
+            slotProps={{
+              input: {
+                sx: {
+                  fontSize: '24px',
+                  borderRadius: isPopperOpen ? '40px 40px 0px 0px' : '40px',
+                  backgroundColor: 'white',
+                  boxShadow,
+                },
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Box
+                      sx={{
+                        ml: '15px',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Search
+                        size={32}
+                        fill={
+                          (theme.palette.secondary as unknown as Color)[600]
+                        }
+                      />
+                    </Box>
+                  </InputAdornment>
+                ),
               },
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Box
-                    sx={{
-                      ml: '15px',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <Search
-                      size={32}
-                      fill={(theme.palette.secondary as ColorPartial)[600]}
-                    />
-                  </Box>
-                </InputAdornment>
-              ),
             }}
           />
         )}

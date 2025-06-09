@@ -8,7 +8,7 @@ import {
   Box,
   Card,
   CardMedia,
-  Grid,
+  GridLegacy as Grid,
   Link,
   Skeleton,
   Typography,
@@ -111,9 +111,11 @@ const ImageCard = ({
               }}
             >
               <Typography
-                color="grey.1000"
                 variant="headline2"
-                sx={{ fontSize: '16px' }}
+                sx={{
+                  color: 'grey.1000',
+                  fontSize: '16px',
+                }}
               >
                 {card.values[linkTextColumnIndex]}
               </Typography>

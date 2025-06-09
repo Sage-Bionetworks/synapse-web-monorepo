@@ -1,9 +1,10 @@
 import { ButtonProps } from '@mui/material'
+import { ReactNode } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 
 export type WarningDialogProps<T = any> = {
   title: string
-  content: string | JSX.Element
+  content: string | ReactNode
   confirmButtonText?: string
   className?: string
   open: boolean

@@ -46,7 +46,12 @@ export const UnbindORCiDDialog = (props: UnbindORCiDDialogProps) => {
     <Dialog open={props.show} maxWidth="sm">
       <DialogTitle>Unlink ORCID?</DialogTitle>
       <DialogContent>
-        <Typography variant="body1" paragraph>
+        <Typography
+          variant="body1"
+          sx={{
+            marginBottom: '16px',
+          }}
+        >
           Are you sure you want to unlink this ORCID from your profile?
         </Typography>
       </DialogContent>

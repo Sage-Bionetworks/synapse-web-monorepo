@@ -128,6 +128,7 @@ const getColumns = (args: {
         </div>
       ),
       enableResizing: false,
+      enableColumnFilter: false,
       size: 50,
     }),
     columnHelper.accessor('fileName', {
@@ -141,6 +142,7 @@ const getColumns = (args: {
           {ctx.getValue()}
         </a>
       ),
+      enableColumnFilter: false,
       size: 160,
     }),
     columnHelper.accessor('fileSizeBytes', {
@@ -151,6 +153,7 @@ const getColumns = (args: {
         ) : (
           <></>
         ),
+      enableColumnFilter: false,
       size: 100,
     }),
     columnHelper.accessor('fileEntityId', {
@@ -164,22 +167,27 @@ const getColumns = (args: {
         />
       ),
       cell: ctx => `${ctx.getValue()}.${ctx.row.original.versionNumber}`,
+      enableColumnFilter: false,
       size: 100,
     }),
     columnHelper.accessor('projectName', {
       header: props => <ColumnHeader {...props} title={'Project'} />,
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('addedOn', {
       header: props => <ColumnHeader {...props} title={'Added On'} />,
       cell: ctx => formatDate(dayjs(ctx.getValue())),
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('createdBy', {
       header: props => <ColumnHeader {...props} title={'Created By'} />,
       cell: ctx => <UserBadge userId={ctx.getValue()} />,
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('createdOn', {
       header: props => <ColumnHeader {...props} title={'Created On'} />,
       cell: ctx => formatDate(dayjs(ctx.getValue())),
+      enableColumnFilter: false,
     }),
     columnHelper.display({
       id: 'actions',
@@ -216,6 +224,7 @@ const getColumns = (args: {
         </div>
       ),
       enableResizing: false,
+      enableColumnFilter: false,
       size: 140,
       meta: {
         textAlign: 'center',

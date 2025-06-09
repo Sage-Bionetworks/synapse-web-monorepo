@@ -5,9 +5,9 @@ import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import UpsetPlot, { UpsetPlotProps } from './UpsetPlot'
 
-jest.mock('@upsetjs/react', () => ({
+vi.mock(import('@upsetjs/react'), async importOriginal => ({
   __esModule: true,
-  ...jest.requireActual<typeof import('@upsetjs/react')>('@upsetjs/react'),
+  ...(await importOriginal()),
   // Getting an OOM error when rendering the plot component, so mock it.
   default: () => <div role="figure" />,
 }))
@@ -27,9 +27,7 @@ describe('UpsetPlot', () => {
   }
 
   beforeEach(() => {
-    jest
-      .spyOn(SynapseClient, 'getFullQueryTableResults')
-      .mockResolvedValue(data)
+    vi.spyOn(SynapseClient, 'getFullQueryTableResults').mockResolvedValue(data)
   })
 
   it('displays plot', async () => {

@@ -3,7 +3,12 @@ import { SkeletonParagraph, SkeletonTable } from '../Skeleton'
 
 export function AclEditorSkeleton() {
   return (
-    <Stack gap={2} role={'progressbar'}>
+    <Stack
+      role={'progressbar'}
+      sx={{
+        gap: 2,
+      }}
+    >
       <Skeleton height={50} width={200} />
       <SkeletonParagraph numRows={2} />
 

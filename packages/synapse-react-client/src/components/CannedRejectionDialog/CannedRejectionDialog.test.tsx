@@ -20,8 +20,8 @@ const props: CannedRejectionDialogProps = {
   error: null,
   defaultMessagePrefix: MESSAGE_PREFIX,
   defaultMessageAppend: MESSAGE_APPEND,
-  onConfirm: jest.fn(),
-  onClose: jest.fn(),
+  onConfirm: vi.fn(),
+  onClose: vi.fn(),
 }
 
 function renderComponent(

@@ -183,7 +183,7 @@ export default function ChallengeTeamTable(props: ChallengeTeamTableProps) {
         rowCount={5}
         hideFooter
         density="compact"
-        rowBuffer={5} // Buffer ensures all rows required in test are loaded.
+        rowBufferPx={500} // Buffer ensures all rows required in test are loaded.
         sx={{
           border: 'none',
           height: '100%',

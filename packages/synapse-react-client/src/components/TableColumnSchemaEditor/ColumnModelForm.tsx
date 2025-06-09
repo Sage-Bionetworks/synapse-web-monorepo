@@ -148,9 +148,11 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
   return (
     <>
       <Box
-        display={'grid'}
-        gridColumn={'1 / span 10'}
-        gridTemplateColumns={'subgrid'}
+        sx={{
+          display: 'grid',
+          gridColumn: '1 / span 10',
+          gridTemplateColumns: 'subgrid',
+        }}
       >
         {isJsonSubColumn && (
           <Box sx={{ gridColumn: '1 / span 1' }}>
@@ -159,9 +161,9 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
         )}
         <Box
           data-testid={`ColumnModelForm`}
-          display={'flex'}
-          alignItems={'start'}
           sx={{
+            display: 'flex',
+            alignItems: 'start',
             gridColumn: isJsonSubColumn ? '2 / span 1' : ' 1 / span 1',
             // Checkbox is offset from top; vertical centering causes issues when validation errors are displayed
             mt: isJsonSubColumn ? '0px' : '5px',
@@ -181,8 +183,8 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
           />
         </Box>
         <Box
-          my={isDefaultColumn ? 'auto' : undefined}
           sx={{
+            my: isDefaultColumn ? 'auto' : undefined,
             gridColumn: isJsonSubColumn
               ? /* If this is a JSON Subcolumn, we reduce the width of this grid column to create space to render the visual hierarchical line */
                 '3 / span 1'
@@ -207,24 +209,30 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                   },
                 })
               }}
-              InputProps={{
-                disableInjectingGlobalStyles:
-                  DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
-                sx: fieldSx,
-                slotProps: {
-                  input: {
-                    'aria-label': 'Name',
-                  },
-                },
-              }}
               disabled={disabled}
               fullWidth
               error={!!errorsByField['name']}
               helperText={errorsByField['name']}
+              slotProps={{
+                input: {
+                  disableInjectingGlobalStyles:
+                    DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
+                  sx: fieldSx,
+                  slotProps: {
+                    input: {
+                      'aria-label': 'Name',
+                    },
+                  },
+                },
+              }}
             />
           )}
         </Box>
-        <Box my={isDefaultColumn ? 'auto' : undefined}>
+        <Box
+          sx={{
+            my: isDefaultColumn ? 'auto' : undefined,
+          }}
+        >
           {isDefaultColumn ? (
             getColumnTypeFriendlyName(columnModel.columnType)
           ) : (
@@ -265,7 +273,11 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
             </FormControl>
           )}
         </Box>
-        <Box my={isDefaultColumn ? 'auto' : undefined}>
+        <Box
+          sx={{
+            my: isDefaultColumn ? 'auto' : undefined,
+          }}
+        >
           {isDefaultColumn ? (
             (columnModel as ColumnModelFormData).maximumSize ?? ''
           ) : (
@@ -307,7 +319,11 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
             />
           )}
         </Box>
-        <Box my={isDefaultColumn ? 'auto' : undefined}>
+        <Box
+          sx={{
+            my: isDefaultColumn ? 'auto' : undefined,
+          }}
+        >
           {isDefaultColumn ? (
             (columnModel as ColumnModelFormData).maximumListLength ?? ''
           ) : (
@@ -348,7 +364,11 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
             />
           )}
         </Box>
-        <Box my={isDefaultColumn ? 'auto' : undefined}>
+        <Box
+          sx={{
+            my: isDefaultColumn ? 'auto' : undefined,
+          }}
+        >
           {isDefaultColumn ? (
             renderDefaultValue(
               (columnModel as ColumnModelFormData)?.defaultValue,
@@ -488,9 +508,11 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
       </Box>
       {isJsonSubColumn && (
         <Box
-          display={'grid'}
-          gridColumn={'1 / span 10'}
-          gridTemplateColumns={'subgrid'}
+          sx={{
+            display: 'grid',
+            gridColumn: '1 / span 10',
+            gridTemplateColumns: 'subgrid',
+          }}
         >
           <Box
             sx={{
@@ -521,43 +543,45 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
               }}
               disabled={disabled}
               fullWidth
-              InputProps={{
-                disableInjectingGlobalStyles:
-                  DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
-                sx: fieldSx,
-                endAdornment: (
-                  <Tooltip
-                    title={
-                      <>
-                        <p>
-                          <Link
-                            href={
-                              'https://dev.mysql.com/doc/refman/8.0/en/json.html#json-path-syntax'
-                            }
-                          >
-                            Please use a valid JSON Path selector, following
-                            this format.
-                          </Link>
-                        </p>
-                        <p>
-                          This field is for linking the sub-column facet to the
-                          corresponding location in the JSON data, so that it
-                          can be used as facet filter. The correct selector will
-                          point to the key referenced in the sub-column JSON
-                          Path.
-                        </p>
-                      </>
-                    }
-                  >
-                    <InfoTwoTone sx={{ color: 'grey.700' }} />
-                  </Tooltip>
-                ),
-                slotProps: {
-                  input: { 'aria-label': 'JSON Path' },
-                },
-              }}
               error={!!errorsByField['jsonPath']}
               helperText={errorsByField['jsonPath']}
+              slotProps={{
+                input: {
+                  disableInjectingGlobalStyles:
+                    DISABLE_INJECTING_GLOBAL_STYLES_VALUE,
+                  sx: fieldSx,
+                  endAdornment: (
+                    <Tooltip
+                      title={
+                        <>
+                          <p>
+                            <Link
+                              href={
+                                'https://dev.mysql.com/doc/refman/8.0/en/json.html#json-path-syntax'
+                              }
+                            >
+                              Please use a valid JSON Path selector, following
+                              this format.
+                            </Link>
+                          </p>
+                          <p>
+                            This field is for linking the sub-column facet to
+                            the corresponding location in the JSON data, so that
+                            it can be used as facet filter. The correct selector
+                            will point to the key referenced in the sub-column
+                            JSON Path.
+                          </p>
+                        </>
+                      }
+                    >
+                      <InfoTwoTone sx={{ color: 'grey.700' }} />
+                    </Tooltip>
+                  ),
+                  slotProps: {
+                    input: { 'aria-label': 'JSON Path' },
+                  },
+                },
+              }}
             />
           </Box>
         </Box>

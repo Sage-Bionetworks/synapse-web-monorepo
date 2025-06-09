@@ -27,7 +27,7 @@ import {
   RestrictableObjectType,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import {
   useGetCurrentUserProfile,
   useGetDataAccessRequestForUpdate,
@@ -110,7 +110,7 @@ export type DataAccessRequestAccessorsFilesFormProps = {
 
 export type AlertProps = {
   key: MuiAlertProps['severity']
-  message: string | JSX.Element
+  message: string | ReactNode
 }
 
 /**
@@ -396,7 +396,13 @@ export default function DataAccessRequestAccessorsFilesForm(
   return (
     <>
       <DialogTitle>
-        <Stack direction="row" alignItems={'center'} gap={'5px'}>
+        <Stack
+          direction="row"
+          sx={{
+            alignItems: 'center',
+            gap: '5px',
+          }}
+        >
           Request Access
           <Box sx={{ flexGrow: 1 }} />
           <IconButton onClick={props.onHide}>

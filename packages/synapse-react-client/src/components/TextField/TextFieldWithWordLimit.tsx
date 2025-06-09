@@ -55,7 +55,7 @@ function DisplayedWordCount(props: {
   }
 
   return (
-    <Typography component={'div'} variant={'smallText1'} color={color}>
+    <Typography component={'div'} variant={'smallText1'} sx={{ color: color }}>
       {wordCountText}
     </Typography>
   )
@@ -91,10 +91,12 @@ export default function TextFieldWithWordLimit(
 
   const inputLabelWithWordCount = (
     <Box
-      display={'flex'}
-      justifyContent={'space-between'}
-      alignItems={'baseline'}
-      width={'100%'}
+      sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'baseline',
+        width: '100%',
+      }}
     >
       <InputLabel sx={{ position: 'static' }} htmlFor={id}>
         {label}

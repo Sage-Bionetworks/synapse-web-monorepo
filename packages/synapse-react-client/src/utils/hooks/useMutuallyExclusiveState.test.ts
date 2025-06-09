@@ -3,7 +3,7 @@ import useMutuallyExclusiveState from './useMutuallyExclusiveState'
 
 describe('useMutuallyExclusiveState', () => {
   it('throws error if both initial state values are true', () => {
-    const consoleErrorSpy = jest
+    const consoleErrorSpy = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
 

@@ -222,7 +222,7 @@ const AccountSettings = () => {
     { label: 'Sign Out', ref: signOutSectionRef },
   ].filter(item => item.label !== 'Webhooks' || showWebhooks)
 
-  const handleScroll = (ref: RefObject<HTMLDivElement>) => {
+  const handleScroll = (ref: RefObject<HTMLDivElement | null>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' })
   }
   const isRequestValidationButtonDisabled =
@@ -601,7 +601,12 @@ const AccountSettings = () => {
                     VerificationStateEnum.REJECTED && (
                     <Alert severity="error">
                       <AlertTitle>Application has been rejected</AlertTitle>
-                      <Typography variant="body1" whiteSpace={'pre-line'}>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          whiteSpace: 'pre-line',
+                        }}
+                      >
                         {verificationState?.reason}
                       </Typography>
                     </Alert>
@@ -610,7 +615,12 @@ const AccountSettings = () => {
                     VerificationStateEnum.SUSPENDED && (
                     <Alert severity="warning">
                       <AlertTitle>Validated profile suspension</AlertTitle>
-                      <Typography variant="body1" whiteSpace={'pre-line'}>
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          whiteSpace: 'pre-line',
+                        }}
+                      >
                         {verificationState?.reason}
                       </Typography>
                     </Alert>

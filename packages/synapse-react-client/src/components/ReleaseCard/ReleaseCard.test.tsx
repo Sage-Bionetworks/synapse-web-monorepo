@@ -133,11 +133,11 @@ function setUp(props: ReleaseCardProps) {
 }
 
 describe('Release Card', () => {
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => vi.clearAllMocks())
 
   describe('ReleaseCardLarge', () => {
     it('does not show primary explore button when path data is missing', () => {
-      const consoleWarnSpy = jest
+      const consoleWarnSpy = vi
         .spyOn(console, 'warn')
         .mockImplementation(() => {})
       const missingLinkData = [...defaultData]

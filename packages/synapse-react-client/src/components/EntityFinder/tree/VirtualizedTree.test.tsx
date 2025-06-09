@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
@@ -21,17 +20,17 @@ import {
 
 describe('VirtualizedTree tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   describe('getNodeData tests', () => {
     const nestingLevel = 5
-    const getNextPageOfChildren = jest.fn()
-    const setSelectedId = jest.fn()
+    const getNextPageOfChildren = vi.fn()
+    const setSelectedId = vi.fn()
     const treeNodeType = EntityTreeNodeType.SINGLE_PANE
     const selected = Map<string, Reference>()
     const selectableTypes = [EntityType.FOLDER]
-    const autoExpand = jest.fn().mockReturnValue(true)
+    const autoExpand = vi.fn().mockReturnValue(true)
     const defaultHeight = 50
     const currentContainer = null
 
@@ -119,8 +118,8 @@ describe('VirtualizedTree tests', () => {
       expect(actual).toEqual(expected)
     })
     it('isOpenByDefault matches the value of autoExpand', () => {
-      const autoExpandTrue = jest.fn().mockReturnValue(true)
-      const autoExpandFalse = jest.fn().mockReturnValue(false)
+      const autoExpandTrue = vi.fn().mockReturnValue(true)
+      const autoExpandFalse = vi.fn().mockReturnValue(false)
       const node: EntityHeaderNode = {
         id: 'syn123',
         name: 'A Custom Folder Name',
@@ -161,7 +160,7 @@ describe('VirtualizedTree tests', () => {
     })
 
     it('automatically fetches children if autoExpanded with undefined children', () => {
-      const autoExpand = jest.fn().mockReturnValue(true)
+      const autoExpand = vi.fn().mockReturnValue(true)
       const children = undefined
       const childrenNextPageToken = undefined
       const node: EntityHeaderNode = {
@@ -337,10 +336,10 @@ describe('VirtualizedTree tests', () => {
 
   describe('treeWalker tests', () => {
     it('Yields node data in the correct order', () => {
-      const mockSetSelectedId = jest.fn()
-      const mockAutoExpand = jest.fn().mockReturnValue(false)
-      const mockItemSize = jest.fn().mockReturnValue(50)
-      const mockFetchNextPage = jest.fn()
+      const mockSetSelectedId = vi.fn()
+      const mockAutoExpand = vi.fn().mockReturnValue(false)
+      const mockItemSize = vi.fn().mockReturnValue(50)
+      const mockFetchNextPage = vi.fn()
       const selectableTypes = [EntityType.FOLDER]
       const selected = Map<string, Reference>()
       const rootNodeConfiguration: RootNodeConfiguration = {
@@ -532,7 +531,7 @@ describe('VirtualizedTree tests', () => {
       ).not.toBeInTheDocument()
     })
     it('Fetches next page for a pagination node when inView', async () => {
-      const mockFetchNextPage = jest.fn()
+      const mockFetchNextPage = vi.fn()
       const nodeProps: NodeComponentProps<
         TreeData,
         VariableSizeNodePublicState<TreeData>
@@ -571,7 +570,7 @@ describe('VirtualizedTree tests', () => {
     })
 
     it('Fetches children on expand if children have not been fetched', async () => {
-      const mockFetchNextPage = jest.fn()
+      const mockFetchNextPage = vi.fn()
       const nodeProps: NodeComponentProps<
         TreeData,
         VariableSizeNodePublicState<TreeData>
@@ -611,7 +610,7 @@ describe('VirtualizedTree tests', () => {
       await waitFor(() => expect(mockFetchNextPage).toHaveBeenCalled())
     })
     it('Displays the entity name for an EntityHeader', async () => {
-      const mockFetchNextPage = jest.fn()
+      const mockFetchNextPage = vi.fn()
       const nodeProps = {
         style: { height: 50 },
         data: {
@@ -646,7 +645,7 @@ describe('VirtualizedTree tests', () => {
       await screen.findByText(nodeProps.data.node.name)
     })
     it('Displays the node text for the root node', async () => {
-      const mockFetchNextPage = jest.fn()
+      const mockFetchNextPage = vi.fn()
       const nodeProps = {
         style: { height: 50 },
         data: {
@@ -683,8 +682,8 @@ describe('VirtualizedTree tests', () => {
     })
 
     it('Expands the node when selected in Dual Pane mode', async () => {
-      const mockFetchNextPage = jest.fn()
-      const mockSetOpen = jest.fn()
+      const mockFetchNextPage = vi.fn()
+      const mockSetOpen = vi.fn()
       const nodeProps = {
         style: { height: 50 },
         data: {
@@ -733,10 +732,10 @@ describe('VirtualizedTree tests', () => {
     })
 
     test('Shows a tooltip for an EntityHeader node', async () => {
-      jest.useFakeTimers()
-      const user = userEvent.setup({ advanceTimers: jest.runAllTimers })
+      vi.useFakeTimers()
+      const user = userEvent.setup({ advanceTimers: vi.runAllTimers })
 
-      const mockFetchNextPage = jest.fn()
+      const mockFetchNextPage = vi.fn()
       const nodeProps: NodeComponentProps<
         TreeData,
         VariableSizeNodePublicState<TreeData>

@@ -1,7 +1,7 @@
 import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 import testingLibrary from 'eslint-plugin-testing-library'
-import jest from 'eslint-plugin-jest'
+import vitest from '@vitest/eslint-plugin'
 import jestDom from 'eslint-plugin-jest-dom'
 import barrel from 'eslint-plugin-barrel-files'
 import eslint from '@eslint/js'
@@ -34,9 +34,9 @@ export default tseslint.config(
     plugins: {
       react,
       'react-hooks': reactHooks,
-      jest,
-      jestDom,
+      vitest,
       testingLibrary,
+      jestDom,
       barrel,
     },
     settings: {
@@ -68,6 +68,7 @@ export default tseslint.config(
       },
     },
     rules: {
+      ...vitest.configs.recommended.rules,
       'react/prop-types': [0],
       'react/no-unstable-nested-components': 'error',
       'react-hooks/rules-of-hooks': 'error',
@@ -80,7 +81,7 @@ export default tseslint.config(
       'react/no-object-type-as-default-prop': 'error',
       'no-extra-semi': 'off',
       'prefer-const': 'warn',
-      'jest/expect-expect': 'off',
+      'vitest/expect-expect': 'off',
       'no-unused-vars': 'off',
       '@typescript-eslint/restrict-template-expressions': [
         'warn',

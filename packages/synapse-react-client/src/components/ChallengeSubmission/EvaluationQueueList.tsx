@@ -111,8 +111,13 @@ function EvaluationQueueList({
         getRowClassName={params =>
           params.indexRelativeToCurrentPage % 2 === 0 ? 'Mui-even' : 'Mui-odd'
         }
+        showToolbar
       />
-      <Box mt={3}>
+      <Box
+        sx={{
+          mt: 3,
+        }}
+      >
         <Typography variant="body1">Submission Name (optional)</Typography>
         <TextField
           id="submissionName"
@@ -122,7 +127,11 @@ function EvaluationQueueList({
           value={submissonName}
         />
         {submissionError && (
-          <Box mt={1}>
+          <Box
+            sx={{
+              mt: 1,
+            }}
+          >
             <Alert severity="error">{submissionError}</Alert>
           </Box>
         )}

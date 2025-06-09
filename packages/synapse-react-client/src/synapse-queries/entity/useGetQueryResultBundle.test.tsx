@@ -61,15 +61,15 @@ function createAsynchronousJobStatus<TReq, TRes>(
   }
 }
 
-const mockUpdateStatus = jest.fn()
-const mockGetAsyncJobResults = jest.spyOn(
+const mockUpdateStatus = vi.fn()
+const mockGetAsyncJobResults = vi.spyOn(
   SynapseClient,
   'getQueryTableAsyncJobResults',
 )
 
 describe('Hooks for fetching table query bundles using react-query', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     request = {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       entityId: 'syn123',
@@ -118,9 +118,7 @@ describe('Hooks for fetching table query bundles using react-query', () => {
     })
   })
   it('correctly calls SynapseClient', async () => {
-    jest
-      .spyOn(SynapseClient, 'getQueryTableResults')
-      .mockResolvedValue(expected)
+    vi.spyOn(SynapseClient, 'getQueryTableResults').mockResolvedValue(expected)
 
     const { result } = renderHook(() => useGetQueryResultBundle(request), {
       wrapper: createWrapper(),
@@ -347,7 +345,7 @@ describe('Hooks for fetching table query bundles using react-query', () => {
       expect(result.current.data).toBeDefined()
     })
     it('Fails if one query fails', async () => {
-      jest.spyOn(console, 'error').mockImplementation(() => {})
+      vi.spyOn(console, 'error').mockImplementation(() => {})
 
       mockGetAsyncJobResults.mockImplementation(request => {
         if (request.partMask === BUNDLE_MASK_QUERY_COUNT) {

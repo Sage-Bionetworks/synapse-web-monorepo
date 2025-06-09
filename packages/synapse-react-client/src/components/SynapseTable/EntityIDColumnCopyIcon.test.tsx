@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom'
 import idsQueryResponse from '@/mocks/mockIDListQueryResponseData.json'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
@@ -13,8 +12,8 @@ import { SynapseClient, SynapseConstants } from '../../index'
 import { useQueryContext } from '../QueryContext/QueryContext'
 import EntityIDColumnCopyIcon from './EntityIDColumnCopyIcon'
 
-jest.mock('../QueryContext/QueryContext', () => ({
-  useQueryContext: jest.fn(),
+vi.mock('../QueryContext/QueryContext', () => ({
+  useQueryContext: vi.fn(),
 }))
 
 const synID = 'syn55555'
@@ -40,11 +39,11 @@ const mockQueryRequest: QueryBundleRequest = {
   },
 }
 
-const mockUseQueryContext = jest.mocked(useQueryContext)
+const mockUseQueryContext = vi.mocked(useQueryContext)
 
 // @ts-expect-error -- only mocking the function we need
 mockUseQueryContext.mockReturnValue({
-  getCurrentQueryRequest: jest.fn().mockReturnValue(mockQueryRequest),
+  getCurrentQueryRequest: vi.fn().mockReturnValue(mockQueryRequest),
 })
 
 function renderComponent() {
@@ -55,17 +54,17 @@ function renderComponent() {
 
 describe('EntityIDColumnCopyIcon tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
 
-    jest
-      .spyOn(SynapseClient, 'getFullQueryTableResults')
-      .mockResolvedValue(idsQueryResponse as QueryResultBundle)
+    vi.spyOn(SynapseClient, 'getFullQueryTableResults').mockResolvedValue(
+      idsQueryResponse as QueryResultBundle,
+    )
     mockAllIsIntersecting(false)
   })
 
   describe('Do copy', () => {
     it('Copies IDs to the clipboard', async () => {
-      const mockWriteText = jest.fn()
+      const mockWriteText = vi.fn()
       mockWriteText.mockResolvedValue('copied')
       const mockClipboard = {
         writeText: mockWriteText,
@@ -80,7 +79,7 @@ describe('EntityIDColumnCopyIcon tests', () => {
 
       await waitFor(() =>
         expect(
-          jest.mocked(SynapseClient.getFullQueryTableResults),
+          vi.mocked(SynapseClient.getFullQueryTableResults),
         ).toHaveBeenCalledWith(
           expect.objectContaining({
             query: expect.objectContaining({

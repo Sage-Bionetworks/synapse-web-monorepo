@@ -94,25 +94,25 @@ function renderTableCell(props: SynapseTableCellProps) {
   )
 }
 
-jest.spyOn(HasAccessModule, 'HasAccessV2').mockImplementation(() => {
+vi.spyOn(HasAccessModule, 'HasAccessV2').mockImplementation(() => {
   return <div data-testid="HasAccess"></div>
 })
 
-const mockEntityLink = jest
+const mockEntityLink = vi
   .spyOn(EntityLinkModule, 'EntityLink')
   .mockImplementation(() => {
     return <span data-testid="EntityLink"></span>
   })
 
-jest.spyOn(UserBadgeModule, 'UserBadge').mockImplementation(() => {
+vi.spyOn(UserBadgeModule, 'UserBadge').mockImplementation(() => {
   return <div data-testid="UserBadge"></div>
 })
 
-jest.spyOn(AddToDownloadListV2Module, 'default').mockImplementation(() => {
+vi.spyOn(AddToDownloadListV2Module, 'default').mockImplementation(() => {
   return <div data-testid="AddToDownloadListV2" />
 })
 
-const mockEntityIdListComponent = jest
+const mockEntityIdListComponent = vi
   .spyOn(EntityIdListModule, 'default')
   .mockImplementation(() => {
     return <div data-testid="EntityIdList" />
@@ -229,7 +229,7 @@ describe('SynapseTableCell tests', () => {
           displayTextField: 'name',
           showIcon: false,
         }),
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -250,7 +250,7 @@ describe('SynapseTableCell tests', () => {
           displayTextField: 'id',
           showIcon: false,
         }),
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -271,7 +271,7 @@ describe('SynapseTableCell tests', () => {
           displayTextField: 'name',
           showIcon: false,
         }),
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -292,7 +292,7 @@ describe('SynapseTableCell tests', () => {
           displayTextField: 'id',
           showIcon: false,
         }),
-        expect.anything(),
+        undefined,
       )
     })
 
@@ -313,7 +313,7 @@ describe('SynapseTableCell tests', () => {
           displayTextField: 'name',
           showIcon: false,
         }),
-        expect.anything(),
+        undefined,
       )
     })
   })

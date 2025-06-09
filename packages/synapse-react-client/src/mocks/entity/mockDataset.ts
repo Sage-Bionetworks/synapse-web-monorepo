@@ -63,7 +63,7 @@ const path: EntityPath = {
     {
       name: MOCK_DATASET_NAME,
       id: MOCK_DATASET_ENTITY_ID,
-      type: 'org.sagebionetworks.repo.model.FileEntity',
+      type: 'org.sagebionetworks.repo.model.table.Dataset',
     },
   ],
 }

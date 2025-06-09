@@ -1,6 +1,7 @@
 import 'whatwg-fetch'
 import { afterEach, vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
+import '@testing-library/jest-dom/vitest'
 
 // Line below is used because plotly has a dependency on mapbox-gl
 // which requires a browser env and doesn't provide support for headless
