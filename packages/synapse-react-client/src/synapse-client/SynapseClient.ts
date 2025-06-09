@@ -158,6 +158,7 @@ import {
   CreateChallengeTeamRequest,
   CreateDiscussionReply,
   CreateDiscussionThread,
+  CreateGridPresignedUrlResponse,
   CreateGridRequest,
   CreateGridResponse,
   CreateMembershipInvitationRequest,
@@ -255,7 +256,6 @@ import {
   PaginatedIds,
   PaginatedResults,
   PassingRecord,
-  PresignedUrlResponse,
   PrincipalAliasRequest,
   PrincipalAliasResponse,
   ProjectFilesStatisticsRequest,
@@ -5682,9 +5682,9 @@ export const GridSessionPresignedUrl = async (
   sessionId: string,
   replicaId: string,
   accessToken?: string,
-): Promise<{ url: string; expiresOn: string }> => {
+): Promise<CreateGridPresignedUrlResponse> => {
   try {
-    return await doPost(
+    return await doPost<CreateGridPresignedUrlResponse>(
       `/repo/v1/grid/${sessionId}/presigned/url`,
       { sessionId, replicaId },
       accessToken,
