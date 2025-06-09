@@ -5632,7 +5632,7 @@ export const getProjectStorageUsage = (
 
 // https://rest-docs.synapse.org/rest/POST/grid/session/async/start.html
 // https://rest-docs.synapse.org/rest/GET/grid/session/async/get/asyncToken.html
-export const GridSessionAsyncStart = async (
+export const startGridSession = async (
   request?: CreateGridRequest,
   accessToken?: string,
 ): Promise<CreateGridResponse> => {
@@ -5654,13 +5654,13 @@ export const GridSessionAsyncStart = async (
 
     return result
   } catch (error) {
-    console.error('Error in GridSessionAsyncStart:', error)
+    console.error('Error in startGridSession:', error)
     throw error
   }
 }
 
 // https://rest-docs.synapse.org/rest/POST/grid/sessionId/replica.html
-export const GridSessionReplica = async (
+export const createGridSessionReplica = async (
   sessionId: string,
   accessToken?: string,
 ): Promise<CreateReplicaResponse> => {
@@ -5672,13 +5672,13 @@ export const GridSessionReplica = async (
       BackendDestinationEnum.REPO_ENDPOINT,
     )
   } catch (error) {
-    console.error('Error in GridSessionReplica:', error)
+    console.error('Error in createGridSessionReplica:', error)
     throw error
   }
 }
 
 // https://rest-docs.synapse.org/rest/POST/grid/sessionId/presigned/url.html
-export const GridSessionPresignedUrl = async (
+export const getUrlForGridSessionWsConnection = async (
   sessionId: string,
   replicaId: string,
   accessToken?: string,
