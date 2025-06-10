@@ -14,7 +14,6 @@ import { CustomControl } from '../TopLevelControls/TopLevelControls'
 import { RowSelectionUI } from './RowSelectionUI'
 import { TableQueryDownloadConfirmation } from '@/components/download_list'
 import { toast } from 'react-hot-toast'
-import { duration } from 'dayjs'
 
 const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
   'SendToAnalysisPlatformRowSelectionControlButton'
@@ -41,7 +40,6 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
 
   const {
     setIsShowingExportToAnalysisPlatformModal,
-    setShowDownloadConfirmation,
     enabledExternalAnalysisPlatforms,
   } = useQueryVisualizationContext()
 
