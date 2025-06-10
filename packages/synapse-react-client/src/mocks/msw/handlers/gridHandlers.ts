@@ -2,8 +2,10 @@ import { rest } from 'msw'
 import { CreateGridRequest } from '@sage-bionetworks/synapse-types'
 
 // Generate unique session IDs for grid sessions
-const generateSessionId = () =>
-  `grid-session-${Math.floor(Math.random() * 100000)}`
+const generateSessionId = () => {
+  const randomId: number = crypto.getRandomValues(new Uint32Array(1))[0]
+  return `grid-session-${randomId * 100000}`
+}
 
 interface GridJob {
   status: string
@@ -88,7 +90,8 @@ export function getGridHandlers(backendOrigin: string) {
         }
 
         // Create a replica for the session
-        const replicaId = crypto.getRandomValues(new Uint32Array(1))[0] % 1000
+        const randomInt = crypto.getRandomValues(new Uint32Array(1))[0]
+        const replicaId = randomInt % 1000
         const replicaResponse = {
           concreteType: 'org.sagebionetworks.repo.model.grid.GridReplica',
           replica: {
