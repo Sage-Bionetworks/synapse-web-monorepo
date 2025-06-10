@@ -1,7 +1,7 @@
 import { BlockingLoader, BlockingLoaderProps } from './LoadingScreen'
 import { render, screen } from '@testing-library/react'
 
-const mockCallback = jest.fn()
+const mockCallback = vi.fn()
 
 const defaultProps: BlockingLoaderProps = {
   show: true,

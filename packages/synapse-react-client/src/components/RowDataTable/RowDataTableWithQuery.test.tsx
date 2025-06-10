@@ -12,8 +12,8 @@ import RowDataTableWithQuery, {
   RowDataTableWithQueryProps,
 } from './RowDataTableWithQuery'
 
-jest.mock('../../synapse-queries/entity/useGetQueryResultBundle')
-const mockUseGetQueryResultBundle = jest.mocked(useGetQueryResultBundle)
+vi.mock('../../synapse-queries/entity/useGetQueryResultBundle')
+const mockUseGetQueryResultBundle = vi.mocked(useGetQueryResultBundle)
 
 describe('RowDataTableWithQuery tests', () => {
   const dataColumnAliases = {
@@ -87,7 +87,7 @@ describe('RowDataTableWithQuery tests', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockUseGetQueryResultBundle.mockReturnValue(
       getUseQuerySuccessMock(mockQueryResult),
     )

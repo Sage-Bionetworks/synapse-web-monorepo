@@ -5,7 +5,7 @@ import TwoFactorAuthSettingsPanel, {
   TwoFactorAuthSettingsPanelProps,
 } from './TwoFactorAuthSettingsPanel'
 
-const mockOnRegenerateBackupCodes = jest.fn()
+const mockOnRegenerateBackupCodes = vi.fn()
 
 function renderComponent(props: TwoFactorAuthSettingsPanelProps) {
   return render(<TwoFactorAuthSettingsPanel {...props} />, {
@@ -14,7 +14,7 @@ function renderComponent(props: TwoFactorAuthSettingsPanelProps) {
 }
 
 describe('TwoFactorAuthSettingsPanel', () => {
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => vi.clearAllMocks())
 
   it('Shows a title if hideTitle is not provided', async () => {
     renderComponent({
