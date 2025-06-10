@@ -1,7 +1,7 @@
 import { useGetEntity } from '@/synapse-queries'
 import { canTableQueryBeAddedToDownloadList } from '@/utils/functions/queryUtils'
 import { GetAppTwoTone } from '@mui/icons-material'
-import { Button } from '@mui/material'
+import { Button, Box } from '@mui/material'
 import { Table } from '@sage-bionetworks/synapse-types'
 import { Provider, useAtom, useStore } from 'jotai'
 import { useQueryContext, QueryContext } from '../../QueryContext'
@@ -101,14 +101,20 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
             <Button
               variant="contained"
               onClick={() => {
-                const toastId = toast(
+                const toastId = toast.custom(
                   <Provider store={jotaiStore}>
                     <QueryContext.Provider value={queryContext}>
-                      <TableQueryDownloadConfirmation
-                        onClose={() => {
-                          toast.dismiss(toastId)
+                      <Box
+                        sx={{
+                          width: '100%',
                         }}
-                      />
+                      >
+                        <TableQueryDownloadConfirmation
+                          onClose={() => {
+                            toast.dismiss(toastId)
+                          }}
+                        />
+                      </Box>
                     </QueryContext.Provider>
                   </Provider>,
                   {
