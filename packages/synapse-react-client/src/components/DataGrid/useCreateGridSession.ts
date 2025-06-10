@@ -4,8 +4,10 @@ import {
   CreateGridRequest,
 } from '@sage-bionetworks/synapse-types'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
-import SynapseClient from '@/synapse-client/index'
+//import SynapseClient from '@/synapse-client/index'
+//import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
+import startGridSession from '../../utils/functions/GridApiUtils'
 
 export const useCreateGridSession = (
   options?: Partial<
@@ -17,6 +19,7 @@ export const useCreateGridSession = (
   >,
 ) => {
   const { accessToken } = useSynapseContext()
+  const SynapseClient = useSynapseContext().synapseClient
 
   return useMutation<CreateGridResponse, SynapseClientError, CreateGridRequest>(
     {
@@ -26,15 +29,25 @@ export const useCreateGridSession = (
         console.log('Access Token exists:', !!accessToken)
 
         try {
-          console.log('Calling GridSessionAsyncStart...')
-          const result = await SynapseClient.GridSessionAsyncStart(
-            request,
-            accessToken,
-          )
+          console.log('Calling GridSessionAsyncStart...', request)
+          const result = await startGridSession(SynapseClient, {
+            ...request,
+            concreteType:
+              'org.sagebionetworks.repo.model.grid.CreateGridRequest',
+          })
           console.log('GridSessionAsyncStart completed:', result)
 
-          // IMPORTANT: Make sure we return the result so React Query can store it
-          return result
+          // Adapt the result to match the expected CreateGridResponse type
+          if (
+            !result.gridSession ||
+            typeof result.gridSession.sessionId !== 'string'
+          ) {
+            throw new Error('Invalid gridSession: expected a string')
+          }
+          return {
+            ...result,
+            gridSession: result.gridSession,
+          }
         } catch (error) {
           console.error('GridSessionAsyncStart failed:', error)
           throw error

@@ -19,7 +19,7 @@ export const useGridWebSocket = ({
   replicaId,
   enabled = false,
 }: UseGridWebSocketProps) => {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, synapseClient } = useSynapseContext()
   const [isConnected, setIsConnected] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -72,15 +72,26 @@ export const useGridWebSocket = ({
       setIsConnecting(true)
       setError(null)
       console.log('Starting WebSocket connection...')
+      console.log('currentSessionId:', currentSessionId)
+      console.log('currentReplicaId:', currentReplicaId)
 
       // Get presigned WebSocket URL
-      const presignedUrlResponse = await SynapseClient.GridSessionPresignedUrl(
-        currentSessionId,
-        currentReplicaId,
-        currentAccessToken,
-      )
+      //const presignedUrlResponse = await SynapseClient.GridSessionPresignedUrl(
+      const presignedUrlResponse =
+        await synapseClient.gridServicesClient.postRepoV1GridSessionIdPresignedUrl(
+          {
+            sessionId: currentSessionId,
+            createGridPresignedUrlRequest: {
+              gridSessionId: currentSessionId,
+              replicaId: currentReplicaId,
+            },
+          },
+        )
 
-      console.log('Got presigned URL, creating WebSocket...')
+      console.log(
+        'Got presigned URL, creating WebSocket...',
+        presignedUrlResponse,
+      )
       const ws = new WebSocket(presignedUrlResponse.presignedUrl)
       wsRef.current = ws
 

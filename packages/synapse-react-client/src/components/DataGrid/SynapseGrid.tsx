@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, useRef, useCallback } from 'react'
 import { useCreateGridSession } from './useCreateGridSession'
 import { useGridWebSocket } from './useGridWebSocket'
-import SynapseClient from '@/synapse-client/index'
+import { PostRepoV1GridSessionIdReplicaRequest } from '@sage-bionetworks/synapse-client'
 import {
   SynapseContextProvider,
   useSynapseContext,
@@ -20,7 +20,7 @@ export function SynapseGrid({
   initialColumns = [],
 }: SynapseGridProps = {}) {
   const currentContext = useSynapseContext()
-  const { accessToken } = useSynapseContext()
+  const { synapseClient } = currentContext
 
   const hasInitializedRef = useRef(false)
 
@@ -57,10 +57,31 @@ export function SynapseGrid({
         setIsCreatingReplica(true)
         setReplicaError(null)
 
-        const replica = await SynapseClient.GridSessionReplica(
-          sessionIdFromResponse,
-          accessToken,
-        )
+        //const gridApi = new GridServicesApi()
+        //const replica = await gridApi.postRepoV1GridSessionIdReplica(
+        if (!sessionIdFromResponse) {
+          throw new Error('Failed to create session: No session ID received')
+        }
+        const replica =
+          await synapseClient.gridServicesClient.postRepoV1GridSessionIdReplica(
+            response.gridSession
+              ? ({
+                  sessionId: response.gridSession.sessionId,
+                  createReplicaRequest: {
+                    concreteType:
+                      'org.sagebionetworks.repo.model.grid.CreateReplicaRequest',
+                    sessionId: response.gridSession.sessionId,
+                  },
+                } as PostRepoV1GridSessionIdReplicaRequest)
+              : ({
+                  sessionId: sessionIdFromResponse,
+                  createReplicaRequest: {
+                    concreteType:
+                      'org.sagebionetworks.repo.model.grid.CreateReplicaRequest',
+                    sessionId: sessionIdFromResponse,
+                  },
+                } as PostRepoV1GridSessionIdReplicaRequest),
+          )
         setReplicaData(replica)
         console.log('Replica created:', replica)
       } catch (error) {
