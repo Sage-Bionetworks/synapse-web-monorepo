@@ -10,11 +10,11 @@ type DirectProgrammaticDownloadProps = {
 }
 export const PYTHON_CLIENT_IMPORT_AND_LOGIN = `import synapseclient
 syn = synapseclient.Synapse()
-syn.login(authToken="")
+syn.login(authToken="YOUR_TOKEN_HERE")
 `
 
 export const R_CLIENT_IMPORT_AND_LOGIN = `library(synapser)
-synLogin(authToken="")
+synLogin(authToken="YOUR_TOKEN_HERE")
 `
 
 function DirectProgrammaticDownload({
