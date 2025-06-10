@@ -9,8 +9,9 @@ const renderComponent = (props: WarningDialogProps) => {
 }
 
 describe('WarningDialog', () => {
+  const mockConfirmFn = vi.fn().mockResolvedValue({ value: 'ok' })
   const mock = {
-    confirmFn: jest.fn(() => Promise.resolve({ value: 'ok' })),
+    confirmFn: mockConfirmFn,
   }
 
   const props: WarningDialogProps = {
@@ -34,10 +35,9 @@ describe('WarningDialog', () => {
   })
 
   test('should call callback fn with correct arguments', async () => {
-    const spy = jest.spyOn(mock, 'confirmFn')
     renderComponent(props)
     const btn = screen.getByRole('button', { name: props.confirmButtonText })
     await userEvent.click(btn)
-    expect(spy).toHaveBeenCalledWith('one', 'two')
+    expect(mockConfirmFn).toHaveBeenCalledWith('one', 'two')
   })
 })

@@ -12,14 +12,14 @@ import {
 } from './CreateAccessTokenModal'
 
 const EXAMPLE_PAT = 'abcdefghiklmnop'
-jest.mock('../../synapse-client', () => ({
-  createPersonalAccessToken: jest.fn(),
+vi.mock('../../synapse-client/SynapseClient', () => ({
+  createPersonalAccessToken: vi.fn(),
 }))
 
-const mockOnClose = jest.fn(() => null)
-const mockOnCreate = jest.fn(() => null)
+const mockOnClose = vi.fn(() => null)
+const mockOnCreate = vi.fn(() => null)
 
-const mockCreatePersonalAccessToken = jest.mocked(
+const mockCreatePersonalAccessToken = vi.mocked(
   SynapseClient.createPersonalAccessToken,
 )
 
@@ -59,10 +59,10 @@ describe('CreateAccessTokenModal tests', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest
-      .spyOn(SynapseContext, 'useSynapseContext')
-      .mockImplementation(() => MOCK_CONTEXT_VALUE)
+    vi.clearAllMocks()
+    vi.spyOn(SynapseContext, 'useSynapseContext').mockImplementation(
+      () => MOCK_CONTEXT_VALUE,
+    )
   })
 
   it('displays the token after successful creation', async () => {

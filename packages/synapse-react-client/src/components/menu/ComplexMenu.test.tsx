@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { ComplexMenu, ComplexMenuProps } from './ComplexMenu'
 
 const DROPDOWN_BUTTON_TEXT = 'Open Dropdown Menu'
-const onClickFn = jest.fn()
+const onClickFn = vi.fn()
 function createDropdownItemConfig(
   text: string,
   tooltipText: string | undefined = undefined,
@@ -51,7 +51,7 @@ function renderComponent(props: ComplexMenuProps) {
 }
 
 describe('ComplexMenu Tests', function () {
-  afterEach(() => jest.clearAllMocks())
+  afterEach(() => vi.clearAllMocks())
   it('Renders an icon button', async () => {
     renderComponent(defaultProps)
     const buttonWrapperForTooltipAndButton = await screen.findAllByLabelText(

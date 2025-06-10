@@ -11,13 +11,13 @@ function setUp(
   initialLimitIsApplied: boolean,
 ) {
   const user = userEvent.setup()
-  const mockFetchNextPage = jest.fn()
-  const mockOnRemoveInitialLimit = jest.fn()
+  const mockFetchNextPage = vi.fn()
+  const mockOnRemoveInitialLimit = vi.fn()
 
   const queryContext: Pick<QueryContextType, 'queryMetadataQueryOptions'> = {
     queryMetadataQueryOptions: {
       queryKey: ['query-metadata'],
-      queryFn: jest.fn().mockResolvedValue({
+      queryFn: vi.fn().mockResolvedValue({
         queryCount: queryCount,
         concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
       }),
