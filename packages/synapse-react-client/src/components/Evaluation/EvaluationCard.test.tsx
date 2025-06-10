@@ -15,13 +15,13 @@ describe('test Evaluation Card', () => {
   let evaluation: ExistingEvaluation
   let props: EvaluationCardProps
 
-  let mockGetEvaluationPermissions: jest.Mock
-  let mockDeleteEvaluation: jest.Mock
+  let mockGetEvaluationPermissions = vi.fn()
+  let mockDeleteEvaluation = vi.fn()
 
-  let mockOnEdit: jest.Mock
-  let mockOnModifyAccess: jest.Mock
-  let mockOnSubmit: jest.Mock
-  let mockOnDeleteSuccess: jest.Mock
+  let mockOnEdit = vi.fn()
+  let mockOnModifyAccess = vi.fn()
+  let mockOnSubmit = vi.fn()
+  let mockOnDeleteSuccess = vi.fn()
 
   let user: ReturnType<(typeof userEvent)['setup']>
 
@@ -58,10 +58,10 @@ describe('test Evaluation Card', () => {
       canDelete: true,
     }
 
-    mockOnEdit = jest.fn()
-    mockOnModifyAccess = jest.fn()
-    mockOnSubmit = jest.fn()
-    mockOnDeleteSuccess = jest.fn()
+    mockOnEdit = vi.fn()
+    mockOnModifyAccess = vi.fn()
+    mockOnSubmit = vi.fn()
+    mockOnDeleteSuccess = vi.fn()
 
     props = {
       evaluation: evaluation,
@@ -71,20 +71,20 @@ describe('test Evaluation Card', () => {
       onDeleteSuccess: mockOnDeleteSuccess,
     }
 
-    mockGetEvaluationPermissions = jest.fn().mockResolvedValue(permissions)
-    jest
-      .spyOn(SynapseClient, 'getEvaluationPermissions')
-      .mockImplementation(mockGetEvaluationPermissions)
+    mockGetEvaluationPermissions = vi.fn().mockResolvedValue(permissions)
+    vi.spyOn(SynapseClient, 'getEvaluationPermissions').mockImplementation(
+      mockGetEvaluationPermissions,
+    )
 
-    mockDeleteEvaluation = jest.fn().mockResolvedValue(null)
-    jest
-      .spyOn(SynapseClient, 'deleteEvaluation')
-      .mockImplementation(mockDeleteEvaluation)
+    mockDeleteEvaluation = vi.fn().mockResolvedValue(null)
+    vi.spyOn(SynapseClient, 'deleteEvaluation').mockImplementation(
+      mockDeleteEvaluation,
+    )
   })
 
   afterEach(() => {
     server.restoreHandlers()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   afterAll(() => server.close())
 

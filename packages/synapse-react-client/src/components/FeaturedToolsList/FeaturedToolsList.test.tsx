@@ -2,16 +2,15 @@ import syn26344826Json from '@/mocks/query/syn26344826.json'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import { render, waitFor } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
+import { act, render, waitFor } from '@testing-library/react'
 import FeaturedToolsList from './FeaturedToolsList'
 
-jest.mock('../../synapse-client', () => ({
-  getQueryTableResults: jest.fn(),
-  getUseUtcTimeFromCookie: jest.fn(() => false),
+vi.mock('../../synapse-client/SynapseClient', () => ({
+  getQueryTableResults: vi.fn(),
+  getUseUtcTimeFromCookie: vi.fn(() => false),
 }))
 
-const mockGetQueryTableResults = jest.mocked(SynapseClient.getQueryTableResults)
+const mockGetQueryTableResults = vi.mocked(SynapseClient.getQueryTableResults)
 
 const data = syn26344826Json as QueryResultBundle
 

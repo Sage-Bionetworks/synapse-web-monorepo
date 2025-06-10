@@ -4,8 +4,8 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import FullWidthAlert, { FullWidthAlertProps } from './FullWidthAlert'
 
-const onPrimaryButtonClicked = jest.fn()
-window.open = jest.fn()
+const onPrimaryButtonClicked = vi.fn()
+window.open = vi.fn()
 
 const defaultProps: FullWidthAlertProps = {
   show: true,
@@ -70,7 +70,7 @@ function setUp(
 
 describe('FullWidthAlert tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   afterEach(() => {})
 

@@ -4,7 +4,7 @@ import { renderHook as _renderHook } from '@testing-library/react'
 import * as UseCreateFolderPathModule from './useCreateFolderPath'
 import { useCreatePathsAndGetParentId } from './useCreatePathsAndGetParentId'
 
-const mockUseCreateFolderPath = jest.spyOn(
+const mockUseCreateFolderPath = vi.spyOn(
   UseCreateFolderPathModule,
   'useCreateFolderPath',
 )
@@ -17,7 +17,7 @@ describe('useCreatePathsAndGetParentId', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   test('no webkitRelativePath', async () => {

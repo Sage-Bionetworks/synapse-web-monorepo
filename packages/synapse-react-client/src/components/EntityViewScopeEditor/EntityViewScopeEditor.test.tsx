@@ -8,12 +8,12 @@ import EntityViewScopeEditor, {
   EntityViewScopeEditorProps,
 } from './EntityViewScopeEditor'
 
-jest.mock('../EntityHeaderTable', () => ({
+vi.mock('../EntityHeaderTable', () => ({
   __esModule: true,
-  default: jest.fn(() => <div data-testid={'EntityHeaderTableMocked'} />),
+  default: vi.fn(() => <div data-testid={'EntityHeaderTableMocked'} />),
 }))
 
-const mockedEntityHeaderTable = jest.mocked(EntityHeaderTable)
+const mockedEntityHeaderTable = vi.mocked(EntityHeaderTable)
 
 function renderComponent(props: EntityViewScopeEditorProps) {
   return render(<EntityViewScopeEditor {...props} />, {
@@ -24,7 +24,7 @@ function renderComponent(props: EntityViewScopeEditorProps) {
 describe('EntityViewScopeEditor tests', () => {
   it('Renders an EntityHeaderTable which can be used to update scope', async () => {
     const scopeIds = ['syn123']
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     const isProjectView = false
     renderComponent({
       scopeIds,
@@ -70,7 +70,7 @@ describe('EntityViewScopeEditor tests', () => {
 
   it('Shows text when scope is empty', async () => {
     const scopeIds: string[] = []
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     const isProjectView = false
     renderComponent({
       scopeIds,
@@ -106,7 +106,7 @@ describe('EntityViewScopeEditor tests', () => {
 
   it('Restricts the selectable types based on isProjectView', async () => {
     const scopeIds = ['syn123']
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     const isProjectView = true // Test different UI for project views
     renderComponent({
       scopeIds,

@@ -11,7 +11,7 @@ describe('CopyToClipboardInput', () => {
   it('copies to clipboard when icon is clicked', async () => {
     Object.assign(navigator, {
       clipboard: {
-        writeText: jest.fn().mockImplementation(() => Promise.resolve()),
+        writeText: vi.fn().mockImplementation(() => Promise.resolve()),
       },
     })
     render(<CopyToClipboardInput {...props} />)
@@ -25,7 +25,7 @@ describe('CopyToClipboardInput', () => {
   it('copies to clipboard when input field is clicked', async () => {
     Object.assign(navigator, {
       clipboard: {
-        writeText: jest.fn().mockImplementation(() => Promise.resolve()),
+        writeText: vi.fn().mockImplementation(() => Promise.resolve()),
       },
     })
     render(<CopyToClipboardInput {...props} />)

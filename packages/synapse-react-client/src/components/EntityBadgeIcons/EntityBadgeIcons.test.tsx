@@ -41,8 +41,8 @@ const mockFileEntityBundle = mockFileEntityData.bundle
 
 const defaultProps: EntityBadgeIconsProps = {
   entityId: MOCK_FILE_ENTITY_ID,
-  onUnlink: jest.fn(),
-  onUnlinkError: jest.fn(),
+  onUnlink: vi.fn(),
+  onUnlinkError: vi.fn(),
   canOpenModal: true,
 }
 
@@ -441,7 +441,7 @@ describe('EntityBadgeIcons tests', () => {
     })
 
     it('Does not fetch validation results if there is no bound schema', () => {
-      const onSchemaValidationFetched = jest.fn()
+      const onSchemaValidationFetched = vi.fn()
 
       server.use(
         rest.get(

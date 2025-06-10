@@ -12,8 +12,8 @@ import PortalFeaturedPartners, {
   PortalFeaturedPartnersProps,
 } from './PortalFeaturedPartners'
 
-jest.mock('../../synapse-queries/entity/useGetQueryResultBundle')
-const mockUseGetQueryResultBundle = jest.mocked(useGetQueryResultBundle)
+vi.mock('../../synapse-queries/entity/useGetQueryResultBundle')
+const mockUseGetQueryResultBundle = vi.mocked(useGetQueryResultBundle)
 
 describe('ImageCardGridWithLinks Tests', () => {
   const mockProps: PortalFeaturedPartnersProps = {
@@ -96,8 +96,8 @@ describe('ImageCardGridWithLinks Tests', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
+    vi.clearAllMocks()
+    vi.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
     mockUseGetQueryResultBundle.mockReturnValue(
       getUseQuerySuccessMock(mockQueryResult),
     )
