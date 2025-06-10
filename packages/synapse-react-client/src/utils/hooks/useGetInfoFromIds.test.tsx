@@ -11,9 +11,9 @@ const mockGroupHeaders: UserGroupHeaderResponsePage = {
   children: [{ ownerId: 'aaa', userName: 'aaa', isIndividual: true }],
 }
 
-jest
-  .spyOn(SynapseClient, 'getGroupHeadersBatch')
-  .mockResolvedValueOnce(mockGroupHeaders)
+vi.spyOn(SynapseClient, 'getGroupHeadersBatch').mockResolvedValueOnce(
+  mockGroupHeaders,
+)
 
 describe('useGetInfoFromIds hook works', () => {
   it('gets initial data', async () => {

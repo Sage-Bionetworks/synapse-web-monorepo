@@ -8,9 +8,9 @@ import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-jest.mock('@/synapse-queries/ror')
+vi.mock('@/synapse-queries/ror')
 
-const mockUseSearchRegistry = jest.mocked(useSearchRegistry).mockReturnValue(
+const mockUseSearchRegistry = vi.mocked(useSearchRegistry).mockReturnValue(
   getUseQuerySuccessMock({
     items: [
       {
@@ -65,12 +65,12 @@ const mockUseSearchRegistry = jest.mocked(useSearchRegistry).mockReturnValue(
 )
 
 describe('RORInstitutionField', () => {
-  const user = userEvent.setup({ advanceTimers: jest.runAllTimers })
+  const user = userEvent.setup({ advanceTimers: vi.runAllTimers })
   beforeAll(() => {
-    jest.useFakeTimers()
+    vi.useFakeTimers()
   })
   afterAll(() => {
-    jest.useRealTimers()
+    vi.useRealTimers()
   })
 
   it('displays the value prop', () => {
@@ -85,7 +85,7 @@ describe('RORInstitutionField', () => {
   })
 
   it('allows typing free text', async () => {
-    const mockOnChange = jest.fn()
+    const mockOnChange = vi.fn()
 
     render(<RORInstitutionField onChange={mockOnChange} />)
 
@@ -97,7 +97,7 @@ describe('RORInstitutionField', () => {
   })
 
   it('shows search results which can be selected', async () => {
-    const mockOnChange = jest.fn()
+    const mockOnChange = vi.fn()
 
     render(<RORInstitutionField onChange={mockOnChange} />)
 
@@ -105,7 +105,7 @@ describe('RORInstitutionField', () => {
     await user.type(input, 'sage bionetworks')
 
     act(() => {
-      jest.advanceTimersByTime(500)
+      vi.advanceTimersByTime(500)
     })
 
     const option = await screen.findByRole('option', {
@@ -116,7 +116,7 @@ describe('RORInstitutionField', () => {
   })
 
   it('handles ROR API outage', async () => {
-    const mockOnChange = jest.fn()
+    const mockOnChange = vi.fn()
     mockUseSearchRegistry.mockReturnValue(
       getUseQueryErrorMock(
         new SynapseClientError(
@@ -134,7 +134,7 @@ describe('RORInstitutionField', () => {
 
     // Simulate the debounce so the API call is attempted
     act(() => {
-      jest.advanceTimersByTime(500)
+      vi.advanceTimersByTime(500)
     })
 
     await waitFor(() => {

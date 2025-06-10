@@ -4,7 +4,7 @@ import { EntityHeader, EntityType } from '@sage-bionetworks/synapse-types'
 import { getEntityTypeFromHeader } from '../functions/EntityTypeUtils'
 
 const ALL_TYPES = Object.values(EntityType)
-const mockFetchNextPage = jest.fn()
+const mockFetchNextPage = vi.fn()
 
 function isSelectedInMap(map: Map<string, number>) {
   return (e: EntityHeader) => {
@@ -21,7 +21,7 @@ function isSelectableByEntityType(types: EntityType[]) {
 
 describe('getIsAllSelectedInifiniteList tests', () => {
   beforeEach(() => {
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
   it('Is false when no entities are selected', () => {
     const fetchedEntities: EntityHeader[] = [

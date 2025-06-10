@@ -16,15 +16,15 @@ import { AccountLevelBadges } from './AccountLevelBadges'
 
 const USER_ID = '345424'
 
-jest.mock('../../synapse-client', () => ({
-  getMyUserBundle: jest.fn(),
-  getUserBundle: jest.fn(),
-  revokeCertification: jest.fn(),
+vi.mock('../../synapse-client/SynapseClient', () => ({
+  getMyUserBundle: vi.fn(),
+  getUserBundle: vi.fn(),
+  revokeCertification: vi.fn(),
 }))
 
-const mockGetMyUserBundle = jest.mocked(SynapseClient.getMyUserBundle)
-const mockGetUserBundle = jest.mocked(SynapseClient.getUserBundle)
-const mockRevokeCertification = jest
+const mockGetMyUserBundle = vi.mocked(SynapseClient.getMyUserBundle)
+const mockGetUserBundle = vi.mocked(SynapseClient.getUserBundle)
+const mockRevokeCertification = vi
   .mocked(SynapseClient.revokeCertification)
   .mockResolvedValue({
     userId: USER_ID,
@@ -75,7 +75,7 @@ function renderComponent() {
 
 describe('AccountLevelBadges', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockGetMyUserBundle.mockResolvedValue(mockUserBundle)
   })
 

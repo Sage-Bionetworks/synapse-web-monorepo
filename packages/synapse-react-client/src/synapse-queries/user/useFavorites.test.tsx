@@ -23,7 +23,7 @@ const expected: PaginatedResults<EntityHeader> = {
   ],
 }
 
-const mockGetUserFavorites = jest
+const mockGetUserFavorites = vi
   .spyOn(SynapseClient, 'getUserFavorites')
   .mockResolvedValue(expected)
 

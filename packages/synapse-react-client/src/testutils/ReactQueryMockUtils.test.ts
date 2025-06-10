@@ -20,7 +20,7 @@ describe('ReactQueryMockUtils tests', () => {
     let hook = renderHook(() => mockHook())
     beforeEach(() => {
       // Clear mocks and re-render hook before each test
-      jest.clearAllMocks()
+      vi.clearAllMocks()
       hook = renderHook(() => mockHook())
     })
     it('initially starts in loading state', () => {
@@ -122,7 +122,7 @@ describe('ReactQueryMockUtils tests', () => {
 
     beforeEach(() => {
       // Clear mocks and re-render hook before each test
-      jest.clearAllMocks()
+      vi.clearAllMocks()
       hook = renderHook(() => mockHook())
     })
 
