@@ -1,4 +1,8 @@
 import { ThemeProvider } from '@/theme/ThemeProvider'
+import {
+  GlobalIsEditingContextProvider,
+  IsEditingStore,
+} from '@/utils/context/GlobalIsEditingContext'
 import { ThemeOptions } from '@mui/material'
 import {
   QueryClient,
@@ -22,6 +26,7 @@ export const defaultQueryClientConfig = {
 const defaultQueryClient = new QueryClient(defaultQueryClientConfig)
 
 export type FullContextProviderProps = PropsWithChildren<{
+  isEditingStore?: IsEditingStore
   synapseContext: Partial<SynapseContextType>
   queryClient?: QueryClient
   theme?: ThemeOptions
@@ -33,15 +38,33 @@ export type FullContextProviderProps = PropsWithChildren<{
  * - SynapseContext
  * - QueryClientContext (react-query)
  * - ThemeContext (@mui)
+ * - isEditingStore - used to sync editing state across the application
  */
 export function FullContextProvider(props: FullContextProviderProps) {
-  const { children, synapseContext, queryClient, theme } = props
+  const {
+    children,
+    synapseContext,
+    queryClient,
+    theme,
+    isEditingStore: isEditingStoreFromProps,
+  } = props
+  const isEditingStore = isEditingStoreFromProps || {
+    subscribe: () => () => {},
+    getSnapshot: () => false,
+    setIsEditing: () => {},
+  }
 
   return (
     <QueryClientProvider client={queryClient ?? defaultQueryClient}>
       <ThemeProvider theme={theme}>
         <SynapseContextProvider synapseContext={synapseContext}>
-          <Suspense fallback={null}>{children}</Suspense>
+          <GlobalIsEditingContextProvider
+            subscribe={isEditingStore.subscribe}
+            getSnapshot={isEditingStore.getSnapshot}
+            setIsEditing={isEditingStore.setIsEditing}
+          >
+            <Suspense fallback={null}>{children}</Suspense>
+          </GlobalIsEditingContextProvider>
         </SynapseContextProvider>
       </ThemeProvider>
     </QueryClientProvider>
