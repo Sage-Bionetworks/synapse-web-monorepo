@@ -28,7 +28,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react'
  */
 export function getUseQueryMock<TData = unknown, TError = unknown>() {
   // Stable mock functions
-  const mockRefetch = jest.fn()
+  const mockRefetch = vi.fn()
 
   let currentSetValue: Dispatch<
     SetStateAction<UseQueryResult<TData, TError>>
@@ -181,7 +181,7 @@ export function getUseQueryMock<TData = unknown, TError = unknown>() {
     }
   }
 
-  const mock = jest.fn(function useQueryMocked() {
+  const mock = vi.fn(function useQueryMocked() {
     const [value, setValue] = useState<UseQueryResult<TData, TError>>({
       data: undefined,
       fetchStatus: 'fetching',
@@ -315,7 +315,7 @@ export function getUseQueryErrorMock<TError>(
     isRefetching: false,
     isStale: false,
     isSuccess: false,
-    refetch: jest.fn(),
+    refetch: vi.fn(),
     status: 'error',
     failureReason: null,
     fetchStatus: 'idle',
@@ -406,9 +406,9 @@ export function getUseMutationMock<
   }
 
   // Stable mock functions
-  const mockMutate = jest.fn()
-  const mockMutateAsync = jest.fn()
-  const mockReset = jest.fn()
+  const mockMutate = vi.fn()
+  const mockMutateAsync = vi.fn()
+  const mockReset = vi.fn()
   const variables =
     mockMutate.mock.lastCall?.[0] || mockMutateAsync.mock.lastCall?.[0]
 
@@ -558,7 +558,7 @@ export function getUseMutationMock<
     }
   }
 
-  const mock = jest.fn(function useMutationMocked() {
+  const mock = vi.fn(function useMutationMocked() {
     const [value, setValue] = useState<
       UseMutationResult<TData, TError, TVariables>
     >({
@@ -617,9 +617,9 @@ export function getUseMutationIdleMock<
     isIdle: true,
     isPaused: false,
     isSuccess: false,
-    mutate: jest.fn(),
-    mutateAsync: jest.fn().mockResolvedValue(data),
-    reset: jest.fn(),
+    mutate: vi.fn(),
+    mutateAsync: vi.fn().mockResolvedValue(data),
+    reset: vi.fn(),
     status: 'idle',
     variables: undefined,
     failureReason: null,
@@ -645,9 +645,9 @@ export function getUseMutationPendingMock<
     isIdle: false,
     isPaused: false,
     isSuccess: false,
-    mutate: jest.fn(),
-    mutateAsync: jest.fn().mockResolvedValue(data),
-    reset: jest.fn(),
+    mutate: vi.fn(),
+    mutateAsync: vi.fn().mockResolvedValue(data),
+    reset: vi.fn(),
     status: 'pending',
     variables: variables!,
     failureReason: null,
@@ -675,8 +675,8 @@ export function getUseInfiniteQuerySuccessMock<TData>(
     isRefetchError: false,
     isSuccess: true,
     status: 'success',
-    fetchNextPage: jest.fn(),
-    fetchPreviousPage: jest.fn(),
+    fetchNextPage: vi.fn(),
+    fetchPreviousPage: vi.fn(),
     hasNextPage: hasNextPage,
     hasPreviousPage: false,
     isFetchingNextPage: false,
@@ -694,7 +694,7 @@ export function getUseInfiniteQuerySuccessMock<TData>(
     isPlaceholderData: false,
     isRefetching: false,
     isStale: false,
-    refetch: jest.fn(),
+    refetch: vi.fn(),
     fetchStatus: 'idle',
   } satisfies UseInfiniteQueryResult<{ pages: TData[] }, never>
 }
@@ -715,9 +715,9 @@ export function getUseInfiniteQuerySuccessMock<TData>(
  */
 export function getUseInfiniteQueryMock<TData = unknown, TError = unknown>() {
   // Stable mock functions
-  const mockFetchNextPage = jest.fn()
-  const mockFetchPreviousPage = jest.fn()
-  const mockRefetch = jest.fn()
+  const mockFetchNextPage = vi.fn()
+  const mockFetchPreviousPage = vi.fn()
+  const mockRefetch = vi.fn()
 
   let currentSetValue: Dispatch<
     SetStateAction<UseInfiniteQueryResult<InfiniteData<TData>, TError>>
@@ -859,7 +859,7 @@ export function getUseInfiniteQueryMock<TData = unknown, TError = unknown>() {
     }
   }
 
-  const mock = jest.fn(function useMockInfiniteQuery() {
+  const mock = vi.fn(function useMockInfiniteQuery() {
     const [value, setValue] = useState<
       UseInfiniteQueryResult<InfiniteData<TData>, TError>
     >({

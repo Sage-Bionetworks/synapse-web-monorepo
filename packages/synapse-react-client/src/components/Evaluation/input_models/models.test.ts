@@ -7,7 +7,7 @@ describe('test conversion from EvaluaitonRound to EvaluationRoundInput', () => {
   let expectedInput!: EvaluationRoundInput
 
   const fakeShortId = 'Q8DBYmVW1'
-  let spyOnShortIdGenerate!: jest.SpyInstance
+  const spyOnShortIdGenerate = vi.spyOn(shortid, 'generate')
 
   beforeEach(() => {
     evaluationRound = {
@@ -37,12 +37,11 @@ describe('test conversion from EvaluaitonRound to EvaluationRoundInput', () => {
       totalSubmissionLimit: '67',
     }
 
-    spyOnShortIdGenerate = jest.spyOn(shortid, 'generate')
     spyOnShortIdGenerate.mockReturnValue(fakeShortId)
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   test('general case', () => {

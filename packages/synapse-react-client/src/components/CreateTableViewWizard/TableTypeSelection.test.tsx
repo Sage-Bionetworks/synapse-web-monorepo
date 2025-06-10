@@ -13,8 +13,8 @@ describe('TableTypeSelection', () => {
   }
 
   test('Table type selection menu is shown and callbacks work', async () => {
-    const onTableSelected = jest.fn()
-    const onViewSelected = jest.fn()
+    const onTableSelected = vi.fn()
+    const onViewSelected = vi.fn()
     renderComponent({
       onTableSelected,
       onViewSelected,

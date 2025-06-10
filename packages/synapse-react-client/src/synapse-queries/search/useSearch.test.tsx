@@ -63,11 +63,11 @@ const page2: SearchResults = {
   facets: [],
 }
 
-const mockSearchEntities = jest.spyOn(SynapseClient, 'searchEntities')
+const mockSearchEntities = vi.spyOn(SynapseClient, 'searchEntities')
 
 describe('basic functionality', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('correctly calls SynapseClient', async () => {

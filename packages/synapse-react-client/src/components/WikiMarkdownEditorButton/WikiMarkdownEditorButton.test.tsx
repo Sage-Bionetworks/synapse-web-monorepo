@@ -29,9 +29,9 @@ import {
   WikiMarkdownEditorButtonProps,
 } from './WikiMarkdownEditorButton'
 
-const getRootWikiPageKeySpy = jest.spyOn(SynapseClient, 'getRootWikiPageKey')
-const getWikiPageSpy = jest.spyOn(SynapseClient, 'getWikiPage')
-const createWikiPageSpy = jest.spyOn(SynapseClient, 'createWikiPage')
+const getRootWikiPageKeySpy = vi.spyOn(SynapseClient, 'getRootWikiPageKey')
+const getWikiPageSpy = vi.spyOn(SynapseClient, 'getWikiPage')
+const createWikiPageSpy = vi.spyOn(SynapseClient, 'createWikiPage')
 
 const noRootProps: WikiMarkdownEditorButtonProps = {
   ownerObjectId: '10000',
@@ -89,7 +89,7 @@ function getMarkdownField(dialog: HTMLElement) {
 }
 
 describe('WikiMarkdownEditorButton', () => {
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => vi.clearAllMocks())
   beforeAll(() => server.listen())
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())

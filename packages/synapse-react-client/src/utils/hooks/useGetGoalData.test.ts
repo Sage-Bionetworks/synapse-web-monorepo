@@ -108,8 +108,8 @@ describe('useGetGoalData', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
+    vi.clearAllMocks()
+    vi.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
   })
   it('should return goal data', async () => {
     const entityId = 'syn22315959'

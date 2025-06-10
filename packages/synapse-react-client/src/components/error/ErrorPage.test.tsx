@@ -20,7 +20,7 @@ import ErrorPage, {
   SynapseErrorType,
 } from './ErrorPage'
 
-const mockGotoPlace = jest.fn()
+const mockGotoPlace = vi.fn()
 
 function renderComponent(props: ErrorPageProps, isLoggedIn: boolean) {
   const component = render(<ErrorPage {...props} />, {
@@ -45,7 +45,7 @@ async function setUp(props: ErrorPageProps, isLoggedIn: boolean) {
 }
 
 describe('ErrorPage: basic functionality', () => {
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => vi.clearAllMocks())
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())

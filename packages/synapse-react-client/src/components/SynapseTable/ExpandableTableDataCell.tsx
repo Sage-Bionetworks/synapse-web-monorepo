@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import useResizeObserver from '@react-hook/resize-observer'
+import { useResizeObserver } from '@react-hookz/web'
 import ExpandCollapseButton from './ExpandCollapseButton'
 
 export default function ExpandableTableDataCell(
@@ -8,7 +8,7 @@ export default function ExpandableTableDataCell(
   const [isExpanded, setIsExpanded] = useState(false)
   const [isOverflowingWhenNotExpanded, setIsOverflowingWhenNotExpanded] =
     useState(false)
-  const tdRef = useRef<HTMLTableDataCellElement | null>(null)
+  const tdRef = useRef<HTMLTableCellElement | null>(null)
 
   /**
    * When the cell is resized, check if it is overflowing.
