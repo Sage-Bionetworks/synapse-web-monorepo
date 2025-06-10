@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
 import {
@@ -19,7 +18,7 @@ import { FinderScope } from './tree/EntityTree'
 
 let capturedOnSelectionChange: ((selected: Reference[]) => void) | undefined
 
-jest.spyOn(EntityFinderModule, 'default').mockImplementation(props => {
+vi.spyOn(EntityFinderModule, 'default').mockImplementation(props => {
   capturedOnSelectionChange = props.onSelectedChange
   return <div data-testid="MockEntityFinder"></div>
 })
@@ -37,9 +36,9 @@ const defaultProps: EntityFinderModalProps = {
   },
   show: true,
   title: 'Entity Finder Modal Title',
-  onConfirm: jest.fn(),
+  onConfirm: vi.fn(),
   confirmButtonCopy: 'Confirm Selection',
-  onCancel: jest.fn(),
+  onCancel: vi.fn(),
 }
 
 function renderComponent(propOverrides?: Partial<EntityFinderModalProps>) {
@@ -50,7 +49,7 @@ function renderComponent(propOverrides?: Partial<EntityFinderModalProps>) {
 
 describe('EntityFinderModal', () => {
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   it('Closes the dialog onCancel if no selection has been made', async () => {
     renderComponent()

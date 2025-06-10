@@ -12,12 +12,10 @@ function renderComponent(props: StepsSideNavProps) {
 }
 
 describe('StepsSideNav', () => {
-  const mock = {
-    onStepChangeFn: jest.fn(() => 'ok'),
-  }
+  const mockOnStepChange = vi.fn(() => 'ok')
   const props: StepsSideNavProps = {
     stepList: stepsArray,
-    onStepChange: mock.onStepChangeFn,
+    onStepChange: mockOnStepChange,
   }
 
   test('should display correct class for the inProgress step', () => {
@@ -47,13 +45,12 @@ describe('StepsSideNav', () => {
   })
 
   test('should call callback function with appropriate params', async () => {
-    const spy = jest.spyOn(mock, 'onStepChangeFn')
     renderComponent(props)
     //steps in progress will not have links so link#2 corresponds to step#3
     const button = screen.getAllByRole('button')[2]
     within(button).getByText(stepsArray[3].title)
     await userEvent.click(button)
-    expect(spy).toHaveBeenCalledWith(stepsArray[3])
+    expect(mockOnStepChange).toHaveBeenCalledWith(stepsArray[3])
   })
 
   test('should have unclickable steps if in a wizard mode', () => {

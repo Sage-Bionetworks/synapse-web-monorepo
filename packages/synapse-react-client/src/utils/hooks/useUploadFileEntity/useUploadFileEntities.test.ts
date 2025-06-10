@@ -28,50 +28,50 @@ import {
   useUploadFileEntities,
 } from './useUploadFileEntities'
 
-jest.mock('../../../synapse-queries/file/useUploadDestination', () => {
+vi.mock('../../../synapse-queries/file/useUploadDestination', () => {
   return {
-    useGetDefaultUploadDestination: jest.fn(),
+    useGetDefaultUploadDestination: vi.fn(),
   }
 })
 
-jest.mock('../../../synapse-queries/file/useSynapseMultipartUpload', () => {
+vi.mock('../../../synapse-queries/file/useSynapseMultipartUpload', () => {
   return {
-    useSynapseMultipartUpload: jest.fn(),
+    useSynapseMultipartUpload: vi.fn(),
   }
 })
 
-jest.mock('../../../synapse-queries/file/useDirectUploadToS3', () => {
+vi.mock('../../../synapse-queries/file/useDirectUploadToS3', () => {
   return {
-    useDirectUploadToS3: jest.fn(),
+    useDirectUploadToS3: vi.fn(),
   }
 })
 
-jest.mock('./usePrepareFileEntityUpload', () => {
+vi.mock('./usePrepareFileEntityUpload', () => {
   return {
-    usePrepareFileEntityUpload: jest.fn(),
+    usePrepareFileEntityUpload: vi.fn(),
   }
 })
 
-jest.mock('../../../synapse-queries/entity/useEntity', () => {
+vi.mock('../../../synapse-queries/entity/useEntity', () => {
   return {
-    useCreateEntity: jest.fn(),
-    useUpdateEntity: jest.fn(),
+    useCreateEntity: vi.fn(),
+    useUpdateEntity: vi.fn(),
   }
 })
 
-const mockGetEntityById = jest.spyOn(
+const mockGetEntityById = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.entityServicesClient,
   'getRepoV1EntityId',
 )
 
-const mockUseGetDefaultUploadDestination = jest.mocked(
+const mockUseGetDefaultUploadDestination = vi.mocked(
   useGetDefaultUploadDestination,
 )
-const mockUsePrepareFileEntityUpload = jest.mocked(usePrepareFileEntityUpload)
-const mockUseSynapseMultipartUpload = jest.mocked(useSynapseMultipartUpload)
-const mockUseDirectS3Upload = jest.mocked(useDirectUploadToS3)
-const mockUseCreateEntity = jest.mocked(useCreateEntity)
-const mockUseUpdateEntity = jest.mocked(useUpdateEntity)
+const mockUsePrepareFileEntityUpload = vi.mocked(usePrepareFileEntityUpload)
+const mockUseSynapseMultipartUpload = vi.mocked(useSynapseMultipartUpload)
+const mockUseDirectS3Upload = vi.mocked(useDirectUploadToS3)
+const mockUseCreateEntity = vi.mocked(useCreateEntity)
+const mockUseUpdateEntity = vi.mocked(useUpdateEntity)
 
 const mockSynapseUploadDestination: UploadDestination = {
   concreteType: 'org.sagebionetworks.repo.model.file.S3UploadDestination',
@@ -130,7 +130,7 @@ describe('useUploadFileEntities', () => {
     dataFileHandleId: createdFileHandleId2,
   }
 
-  const mockOnStorageLimitSucceeded = jest.fn()
+  const mockOnStorageLimitSucceeded = vi.fn()
 
   function renderHook() {
     return _renderHook(
@@ -148,7 +148,7 @@ describe('useUploadFileEntities', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   test('upload one file into Synapse Storage via Synapse multipart upload', async () => {

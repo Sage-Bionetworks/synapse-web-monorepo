@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import dayjs from 'dayjs'
 import { Range, RangeProps } from './Range'
 
-const mockCallback = jest.fn()
+const mockCallback = vi.fn()
 
 const defaultProps: RangeProps = {
   type: 'number',

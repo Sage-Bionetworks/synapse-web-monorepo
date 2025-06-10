@@ -85,7 +85,7 @@ class _Search extends Component<InternalSearchProps, SearchState> {
   }
 
   componentDidMount() {
-    // @ts-ignore
+    // @ts-expect-error
     document.addEventListener('click', this.handleClickOutsideForm)
   }
 
@@ -103,15 +103,15 @@ class _Search extends Component<InternalSearchProps, SearchState> {
   }
 
   componentWillUnmount() {
-    // @ts-ignore
+    // @ts-expect-error
     document.removeEventListener('click', this.handleClickOutsideForm)
   }
 
   handleClickOutsideForm = (event: SyntheticEvent) => {
     if (
-      // @ts-ignore
+      // @ts-expect-error
       !this.searchFormRef.current?.contains(event?.target) &&
-      // @ts-ignore
+      // @ts-expect-error
       !this.radioFormRef.current?.contains(event?.target)
     ) {
       if (this.state.didUpdateRanLast) {
@@ -311,6 +311,7 @@ class _Search extends Component<InternalSearchProps, SearchState> {
         </Collapse>
         <div className="QueryWrapperSearchInput__dropdown_pos">
           <CSSTransition
+            nodeRef={this.radioFormRef}
             in={show}
             classNames="QueryWrapperSearchInput__animate_dropdown"
             timeout={{ enter: 0, exit: 300 }}

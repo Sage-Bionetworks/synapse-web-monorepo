@@ -1,22 +1,31 @@
-import { useGetStablePresignedUrl } from '@/synapse-queries'
+import { StablePresignedUrl, useGetStablePresignedUrl } from '@/synapse-queries'
+import {
+  getUseQueryIdleMock,
+  getUseQuerySuccessMock,
+} from '@/testutils/ReactQueryMockUtils'
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { useImageUrl } from './useImageUrlUtils'
 
-jest.mock('../../synapse-queries', () => ({
-  useGetStablePresignedUrl: jest.fn(),
+vi.mock('../../synapse-queries', () => ({
+  useGetStablePresignedUrl: vi.fn(),
 }))
 
-const mockUseGetStablePresignedUrl = useGetStablePresignedUrl as jest.Mock
+const mockUseGetStablePresignedUrl = vi.mocked(useGetStablePresignedUrl)
 
 describe('useImageUrl tests', () => {
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('returns dataUrl when fileId and entityId are provided and dataUrl is available', () => {
     const fileId = 'file123'
     const entityId = 'entity123'
-    const response = { dataUrl: 'https://somewebsite.com/imageofacat' }
+    const response: StablePresignedUrl = {
+      dataUrl: 'https://somewebsite.com/imageofacat',
+      queryResult: getUseQuerySuccessMock(
+        new Blob(['image data'], { type: 'image/jpeg' }),
+      ),
+    }
 
     mockUseGetStablePresignedUrl.mockReturnValue(response)
 
@@ -38,7 +47,10 @@ describe('useImageUrl tests', () => {
     const fileId = 'file123'
     const entityId = 'entity123'
 
-    mockUseGetStablePresignedUrl.mockReturnValue({})
+    mockUseGetStablePresignedUrl.mockReturnValue({
+      dataUrl: undefined,
+      queryResult: getUseQueryIdleMock(),
+    })
 
     const result = useImageUrl(fileId, entityId)
     expect(result).toBeUndefined()
