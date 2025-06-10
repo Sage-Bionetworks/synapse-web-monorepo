@@ -30,7 +30,12 @@ function TextWithHelpIcon(props: TextWithHelpIconProps) {
       {tooltipMarkdownText && (
         <LightTooltip
           title={
-            <Typography variant="body1" mb={0}>
+            <Typography
+              variant="body1"
+              sx={{
+                mb: 0,
+              }}
+            >
               <MarkdownSynapse markdown={tooltipMarkdownText} />
             </Typography>
           }
@@ -87,7 +92,11 @@ function AvailableEvaluationQueueCollapsableList(
   const shouldCollapse = evaluations.length >= nEvaluationsCollapseLimit
 
   return (
-    <Box mt={2}>
+    <Box
+      sx={{
+        mt: 2,
+      }}
+    >
       {shouldCollapse ? (
         <>
           <Button
@@ -180,7 +189,12 @@ function AvailableEvaluationQueueList(
   if (nEvaluations === 1) {
     const evaluation = evaluations[0]
     return (
-      <Box display="flex" alignItems="center">
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
         <TextWithHelpIcon
           text={evaluation.name!}
           tooltipMarkdownText={evaluation.submissionInstructionsMessage}

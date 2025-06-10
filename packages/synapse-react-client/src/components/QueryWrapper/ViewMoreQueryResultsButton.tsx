@@ -48,7 +48,12 @@ export function ViewMoreQueryResultsButton(
   }
 
   return (
-    <Box display="flex" justifyContent="flex-start">
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'flex-start',
+      }}
+    >
       <WideButton
         variant="contained"
         color="secondary"

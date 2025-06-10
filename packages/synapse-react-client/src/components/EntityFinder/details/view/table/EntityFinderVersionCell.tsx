@@ -121,7 +121,10 @@ export function EntityFinderVersionCell(props: EntityFinderVersionCellProps) {
           sx={{ height: '30px' }}
           onChange={event => {
             event.stopPropagation()
-            const version = parseInt((event.target as HTMLInputElement).value)
+            let version = event.target.value
+            if (typeof version === 'string') {
+              version = parseInt(version)
+            }
             toggleSelection({
               targetId: id,
               targetVersionNumber:

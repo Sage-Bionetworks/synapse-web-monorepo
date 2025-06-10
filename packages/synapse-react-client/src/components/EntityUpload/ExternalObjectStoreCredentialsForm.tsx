@@ -33,7 +33,12 @@ export function ExternalObjectStoreCredentialsForm(
   }
 
   return (
-    <Stack gap={1.5} mb={3}>
+    <Stack
+      sx={{
+        gap: 1.5,
+        mb: 3,
+      }}
+    >
       <Typography>
         Authorization is required to access{' '}
         <strong>{uploadDestination.endpointUrl}</strong>
@@ -55,7 +60,12 @@ export function ExternalObjectStoreCredentialsForm(
           setSecretKey(e.target.value)
         }}
       />
-      <Typography variant={'smallText1'} fontStyle={'italic'}>
+      <Typography
+        variant={'smallText1'}
+        sx={{
+          fontStyle: 'italic',
+        }}
+      >
         Keys are used to locally sign a web request. They are not transmitted or
         stored by Synapse.
       </Typography>

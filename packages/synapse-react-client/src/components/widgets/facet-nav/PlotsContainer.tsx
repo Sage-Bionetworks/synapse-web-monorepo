@@ -302,9 +302,9 @@ function PlotsContainer(props: PlotsContainerProps) {
           </div>
           {showMoreButtonState !== 'NONE' && (
             <Box
-              display="flex"
-              justifyContent="center"
               sx={{
+                display: 'flex',
+                justifyContent: 'center',
                 backgroundColor: 'grey.100',
                 p: 2,
                 mt: 2,

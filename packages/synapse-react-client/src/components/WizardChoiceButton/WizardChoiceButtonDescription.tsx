@@ -1,3 +1,4 @@
+import { spreadSx } from '@/theme/spreadSx'
 import { Typography, TypographyProps } from '@mui/material'
 
 export default function WizardChoiceButtonDescription(
@@ -6,12 +7,14 @@ export default function WizardChoiceButtonDescription(
   return (
     <Typography
       variant={'body1'}
-      color={'grey.700'}
       {...props}
-      sx={{
-        my: 1.25,
-        ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
-      }}
+      sx={spreadSx(
+        {
+          color: 'grey.700',
+          my: 1.25,
+        },
+        props.sx,
+      )}
     />
   )
 }

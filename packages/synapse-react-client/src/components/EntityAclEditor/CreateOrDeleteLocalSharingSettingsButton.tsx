@@ -17,7 +17,13 @@ export function CreateOrDeleteLocalSharingSettingsButton(
   if (!isInherited) {
     return (
       <div>
-        <Typography variant={'body1'} mt={2} mb={1}>
+        <Typography
+          variant={'body1'}
+          sx={{
+            mt: 2,
+            mb: 1,
+          }}
+        >
           The sharing settings will be inherited from the parent folder or
           project if local sharing settings are deleted.
         </Typography>
@@ -34,7 +40,13 @@ export function CreateOrDeleteLocalSharingSettingsButton(
   }
   return (
     <div>
-      <Typography variant={'body1'} mt={2} mb={1}>
+      <Typography
+        variant={'body1'}
+        sx={{
+          mt: 2,
+          mb: 1,
+        }}
+      >
         Sharing settings are initially inherited from the parent folder or
         project by default. To customize settings for a specific file, folder,
         or table, you must create and adjust local sharing settings.

@@ -99,7 +99,13 @@ export function UserBadge(props: UserBadgeProps) {
   )
 
   const accountLevelIcon = (
-    <Box display={'flex'} gap={1} sx={{ mx: 1 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        gap: 1,
+        mx: 1,
+      }}
+    >
       {!userBundle?.isCertified && !userBundle?.isVerified && (
         <IconSvg
           icon="accountRegistered"

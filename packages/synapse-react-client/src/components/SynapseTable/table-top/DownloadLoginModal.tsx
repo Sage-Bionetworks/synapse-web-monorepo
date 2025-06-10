@@ -11,7 +11,12 @@ export const CONFIRM_BUTTON_TEXT = 'Sign in'
 
 const content = (
   <>
-    <Typography variant="smallText1" marginBottom="10px">
+    <Typography
+      variant="smallText1"
+      sx={{
+        marginBottom: '10px',
+      }}
+    >
       Anyone can browse public content on the Synapse website, but in order to
       download and create content you will need to register for an account using
       an email address.

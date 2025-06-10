@@ -93,7 +93,12 @@ function JoinTeamPage() {
         </Box>
         {membershipInvitation && (
           <>
-            <Typography variant="headline2" paragraph>
+            <Typography
+              variant="headline2"
+              sx={{
+                marginBottom: '16px',
+              }}
+            >
               Join a Team
             </Typography>
             <Typography
@@ -141,7 +146,12 @@ function JoinTeamPage() {
         )}
         {joinedTeamResponseMessage && (
           <>
-            <Typography variant="headline2" paragraph>
+            <Typography
+              variant="headline2"
+              sx={{
+                marginBottom: '16px',
+              }}
+            >
               Joined a Team!
             </Typography>
             <Typography

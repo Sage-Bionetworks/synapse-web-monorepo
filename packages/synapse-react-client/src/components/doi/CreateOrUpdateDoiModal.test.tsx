@@ -7,6 +7,7 @@ import {
   useGetEntity,
   useGetVersions,
 } from '@/synapse-queries/entity/useEntity'
+import { useGetPortal } from '@/synapse-queries/portal/usePortal'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user/useUserBundle'
 import {
   getUseMutationIdleMock,
@@ -17,9 +18,8 @@ import {
 import { DoiObjectType, DoiRequest } from '@sage-bionetworks/synapse-client'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { CreateOrUpdateDoiModal } from './CreateOrUpdateDoiModal'
 import { displayToast } from '../ToastMessage'
-import { useGetPortal } from '@/synapse-queries/portal/usePortal'
+import { CreateOrUpdateDoiModal } from './CreateOrUpdateDoiModal'
 
 vi.mock('@/synapse-queries/doi/useDOI')
 vi.mock('@/synapse-queries/entity/useEntity')

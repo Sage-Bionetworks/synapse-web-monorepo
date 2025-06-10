@@ -30,7 +30,12 @@ export function VersionColumnHeader(props: {
     // this column is not shown in these cases.
   }
   return (
-    <Stack direction={'row'} alignItems={'center'}>
+    <Stack
+      direction={'row'}
+      sx={{
+        alignItems: 'center',
+      }}
+    >
       <span>Version</span>
       <HelpPopover
         className="SRC-margin-left-5"

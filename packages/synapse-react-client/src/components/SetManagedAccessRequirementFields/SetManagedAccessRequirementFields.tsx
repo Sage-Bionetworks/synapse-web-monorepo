@@ -176,23 +176,39 @@ export const SetManagedAccessRequirementFields = forwardRef(
         <AccessRequirementWikiInstructions accessRequirement={updatedAr} />
         <Box>
           <Typography
-            bgcolor="#f5f5f5"
-            borderBottom="1px solid #ddd"
-            color="#333"
-            px={2}
-            py={1}
+            sx={{
+              bgcolor: '#f5f5f5',
+              borderBottom: '1px solid #ddd',
+              color: '#333',
+              px: 2,
+              py: 1,
+            }}
           >
             Data Access Request Parameters
           </Typography>
-          <Box mt={2} mb={4}>
+          <Box
+            sx={{
+              mt: 2,
+              mb: 4,
+            }}
+          >
             <AccessorRequirements
               accessRequirement={updatedAr}
               onChange={updatedAr =>
                 setUpdatedAr(updatedAr as ManagedACTAccessRequirement)
               }
             />
-            <Box mb={2}>
-              <Typography variant="body1" fontWeight={700}>
+            <Box
+              sx={{
+                mb: 2,
+              }}
+            >
+              <Typography
+                variant="body1"
+                sx={{
+                  fontWeight: 700,
+                }}
+              >
                 DUC
               </Typography>
               <FormControlLabel
@@ -270,7 +286,11 @@ export const SetManagedAccessRequirementFields = forwardRef(
                   }
                 }}
               />
-              <Box mt={1}>
+              <Box
+                sx={{
+                  mt: 1,
+                }}
+              >
                 <FormControlLabel
                   control={<Checkbox />}
                   label="Intended Data Use statement is required."

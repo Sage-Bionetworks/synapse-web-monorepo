@@ -94,7 +94,13 @@ export default function DetailsPage(props: DetailsPageProps) {
     const currentLocation = location.pathname.split('/')
     const name = decodeURI(currentLocation[currentLocation.length - 2])
     return (
-      <Stack alignItems={'center'} gap={2} mt={5}>
+      <Stack
+        sx={{
+          alignItems: 'center',
+          gap: 2,
+          mt: 5,
+        }}
+      >
         <Typography variant="headline1" gutterBottom>
           Coming Soon!
         </Typography>
@@ -127,7 +133,13 @@ export default function DetailsPage(props: DetailsPageProps) {
         {...ContainerProps}
       >
         {isLoading && (
-          <Box display={'flex'} justifyContent={'center'} my={10}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              my: 10,
+            }}
+          >
             <BarLoader
               color={palette.primary.main}
               loading={true}
