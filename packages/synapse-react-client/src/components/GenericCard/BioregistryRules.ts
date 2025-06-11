@@ -1,4 +1,6 @@
 /* eslint-disable no-useless-escape */
+// This file is from https://github.com/Sage-Bionetworks/bioregistry-collection/blob/main/bioregistry.ts,
+// with a few necessary updates to fix issues with the integration, described here: https://sagebionetworks.jira.com/browse/PORTALS-3624?focusedCommentId=255547
 const onMatch = (value: string) => `https://bioregistry.io/${value}`
 
 export const bioregistryRules = [
