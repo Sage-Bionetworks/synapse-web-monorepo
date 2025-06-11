@@ -1,3 +1,4 @@
+import ConfirmCloseWithoutSavingDialog from '@/components/Dialog/ConfirmCloseWithoutSavingDialog'
 import { DialogBase } from '@/components/DialogBase'
 import { doiFormSchema, doiFormUiSchema } from '@/components/doi/DoiFormSchemas'
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
@@ -11,6 +12,7 @@ import {
 } from '@/synapse-queries/entity/useEntity'
 import { useGetPortal } from '@/synapse-queries/portal/usePortal'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user/useUserBundle'
+import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
 import {
   convertToEntityType,
   entityTypeToFriendlyName,
@@ -116,6 +118,25 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
     defaultVersionNumber,
     portalId,
   } = props
+
+  const [showConfirmCloseModal, setShowConfirmCloseDialog] = useState(false)
+  const { isEditing, setIsEditing } = useGlobalIsEditingContext()
+  useEffect(() => {
+    setIsEditing(open)
+
+    return () => {
+      setIsEditing(false)
+    }
+  }, [open, setIsEditing])
+
+  function handleClose() {
+    if (isEditing) {
+      setShowConfirmCloseDialog(true)
+    } else {
+      onClose()
+    }
+  }
+
   const [selectedVersionNumber, setSelectedVersionNumber] =
     useState(defaultVersionNumber)
 
@@ -367,12 +388,24 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
   )
 
   return (
-    <DialogBase
-      open={open}
-      onCancel={onClose}
-      title={'Create or Update a DOI'}
-      content={dialogContent}
-      actions={dialogActions}
-    />
+    <>
+      <ConfirmCloseWithoutSavingDialog
+        open={showConfirmCloseModal}
+        onCancel={() => {
+          setShowConfirmCloseDialog(false)
+        }}
+        onConfirm={() => {
+          setShowConfirmCloseDialog(false)
+          onClose()
+        }}
+      />
+      <DialogBase
+        open={open}
+        onCancel={handleClose}
+        title={'Create or Update a DOI'}
+        content={dialogContent}
+        actions={dialogActions}
+      />
+    </>
   )
 }
