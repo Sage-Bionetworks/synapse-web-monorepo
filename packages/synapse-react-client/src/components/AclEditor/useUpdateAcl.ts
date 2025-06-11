@@ -1,3 +1,4 @@
+import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
 import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
 import {
   Dispatch,
@@ -50,6 +51,16 @@ export default function useUpdateAcl(
     onError = noop,
   } = options
   const [isDirty, setIsDirty] = useState(false)
+  const { setIsEditing } = useGlobalIsEditingContext()
+
+  // When the form is dirty, set the global editing state to true
+  useEffect(() => {
+    setIsEditing(isDirty)
+    return () => {
+      setIsEditing(false)
+    }
+  }, [isDirty, setIsEditing])
+
   const [resourceAccessList, setResourceAccessList] = useState<
     ResourceAccess[]
   >(initialResourceAccessList)

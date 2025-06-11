@@ -1,12 +1,17 @@
 import mockSyn26438037Counts from '@/mocks/query/syn26438037Counts.json'
+import * as SynapseClient from '@/synapse-client/SynapseClient'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import { Queries, render, RenderResult, screen } from '@testing-library/react'
-import { act } from 'react-dom/test-utils'
-import { SynapseClient } from '../../index'
+import {
+  act,
+  Queries,
+  render,
+  RenderResult,
+  screen,
+} from '@testing-library/react'
 import SynapsePlot, { SynapsePlotProps } from './SynapsePlot'
 
-const customPlotClickCallback = jest.fn()
+const customPlotClickCallback = vi.fn()
 
 const defaultProps: SynapsePlotProps = {
   synapsePlotWidgetParams: {
@@ -38,10 +43,10 @@ async function renderComponent(props: SynapsePlotProps) {
 
 describe('SynapsePlot', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest
-      .spyOn(SynapseClient, 'getFullQueryTableResults')
-      .mockResolvedValue(mockSyn26438037Counts as QueryResultBundle)
+    vi.clearAllMocks()
+    vi.spyOn(SynapseClient, 'getFullQueryTableResults').mockResolvedValue(
+      mockSyn26438037Counts as QueryResultBundle,
+    )
   })
 
   it('renders without crashing', async () => {

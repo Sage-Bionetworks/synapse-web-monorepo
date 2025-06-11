@@ -2,7 +2,10 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnSingleValueFilterOperator,
+  ColumnMultiValueFunction,
+} from '@sage-bionetworks/synapse-types'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic'
 import columnAliases from '../config/columnAliases'
 import { datasetsSql, projectsSql } from '../config/resources'
@@ -36,7 +39,10 @@ function ProjectDetailsPage() {
         sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
         searchParams={searchParams}
       />
-      <DetailsPage sql={projectsSql}>
+      <DetailsPage
+        sql={projectsSql}
+        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+      >
         <DetailsPageContent
           content={[
             {
@@ -50,6 +56,7 @@ function ProjectDetailsPage() {
                         ...datasetCardConfiguration,
                         secondaryLabelLimit: 4,
                       }}
+                      sqlOperator={ColumnMultiValueFunction.HAS}
                       sql={datasetsSql}
                       searchParams={{ project: value! }}
                       columnAliases={datasetColumnAliases}

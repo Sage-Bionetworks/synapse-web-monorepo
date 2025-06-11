@@ -9,7 +9,7 @@ import {
   EvaluationRoundLimitOptionsProps,
 } from './EvaluationRoundLimitOptions'
 
-const onChangeSpy = jest.fn()
+const onChangeSpy = vi.fn()
 
 function renderComponent(
   props: Omit<EvaluationRoundLimitOptionsProps, 'onChange'>,

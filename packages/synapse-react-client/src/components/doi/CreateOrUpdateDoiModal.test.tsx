@@ -9,7 +9,7 @@ import {
 } from '@/synapse-queries/entity/useEntity'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user/useUserBundle'
 import {
-  getUseMutationMock,
+  getUseMutationIdleMock,
   getUseMutationPendingMock,
   getUseQueryIdleMock,
   getUseQuerySuccessMock,
@@ -20,42 +20,50 @@ import userEvent from '@testing-library/user-event'
 import { CreateOrUpdateDoiModal } from './CreateOrUpdateDoiModal'
 import { displayToast } from '../ToastMessage'
 import { useGetPortal } from '@/synapse-queries/portal/usePortal'
+import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
 
-jest.mock('@/synapse-queries/doi/useDOI')
-jest.mock('@/synapse-queries/entity/useEntity')
-jest.mock('@/synapse-queries/user/useUserBundle')
-jest.mock('@/components/ToastMessage/ToastMessage')
-jest.mock('@/synapse-queries/portal/usePortal')
+vi.mock('@/synapse-queries/doi/useDOI')
+vi.mock('@/synapse-queries/entity/useEntity')
+vi.mock('@/synapse-queries/user/useUserBundle')
+vi.mock('@/components/ToastMessage/ToastMessage')
+vi.mock('@/synapse-queries/portal/usePortal')
+vi.mock('@/utils/context/GlobalIsEditingContext')
 
-const mockUseCreateOrUpdateDOI = jest
+const mockUseCreateOrUpdateDOI = vi
   .mocked(useCreateOrUpdateDOI)
-  .mockReturnValue(getUseMutationMock())
-const mockUseGetEntity = jest.mocked(useGetEntity).mockReturnValue(
+  .mockReturnValue(getUseMutationIdleMock())
+
+const mockUseGetEntity = vi.mocked(useGetEntity).mockReturnValue(
   getUseQuerySuccessMock({
     name: 'Test Entity',
     concreteType: 'org.sagebionetworks.repo.model.FileEntity',
   }),
 )
 
-const mockUseGetDOI = jest
+const mockUseGetDOI = vi
   .mocked(useGetDOI)
   .mockReturnValue(getUseQuerySuccessMock(null))
-const mockUseGetVersions = jest
+const mockUseGetVersions = vi
   .mocked(useGetVersions)
   .mockReturnValue(getUseQuerySuccessMock({ results: [] }))
-const mockUseGetCurrentUserProfile = jest
+const mockUseGetCurrentUserProfile = vi
   .mocked(useGetCurrentUserProfile)
   .mockReturnValue(getUseQuerySuccessMock(mockUserProfileData))
-const mockUseGetPortal = jest
+const mockUseGetPortal = vi
   .mocked(useGetPortal)
   .mockReturnValue(getUseQueryIdleMock())
 
-const mockDisplayToast = jest.mocked(displayToast)
+const mockDisplayToast = vi.mocked(displayToast)
+const mockSetIsEditing = vi.fn()
+vi.mocked(useGlobalIsEditingContext).mockReturnValue({
+  isEditing: false,
+  setIsEditing: mockSetIsEditing,
+})
 
 describe('CreateOrUpdateDoiModal', () => {
   const defaultProps = {
     open: true,
-    onClose: jest.fn(),
+    onClose: vi.fn(),
     objectType: DoiObjectType.ENTITY,
     objectId: 'syn123',
     defaultVersionNumber: undefined,
@@ -126,9 +134,9 @@ describe('CreateOrUpdateDoiModal', () => {
   })
 
   it('blocks submission when data violates the form schema', async () => {
-    const mockMutate = jest.fn()
+    const mockMutate = vi.fn()
     mockUseCreateOrUpdateDOI.mockReturnValue({
-      ...getUseMutationMock(),
+      ...getUseMutationIdleMock(),
       mutate: mockMutate,
     })
 
@@ -147,9 +155,9 @@ describe('CreateOrUpdateDoiModal', () => {
   })
 
   it('calls mutate when the form is submitted', async () => {
-    const mockMutate = jest.fn()
+    const mockMutate = vi.fn()
     mockUseCreateOrUpdateDOI.mockReturnValue({
-      ...getUseMutationMock(),
+      ...getUseMutationIdleMock(),
       mutate: mockMutate,
     })
     mockUseGetEntity.mockReturnValue(
@@ -222,9 +230,9 @@ describe('CreateOrUpdateDoiModal', () => {
   })
 
   it('renders versions in the list, allows selecting a version, and includes it in the request', async () => {
-    const mockMutate = jest.fn()
+    const mockMutate = vi.fn()
     mockUseCreateOrUpdateDOI.mockReturnValue({
-      ...getUseMutationMock(),
+      ...getUseMutationIdleMock(),
       mutate: mockMutate,
     })
     mockUseGetEntity.mockReturnValue(
@@ -330,5 +338,17 @@ describe('CreateOrUpdateDoiModal', () => {
     const publisherField = await screen.findByLabelText('Publisher')
     expect(publisherField).toHaveValue(mockPortalName)
     expect(publisherField).toBeDisabled()
+  })
+
+  it('Sets global editing state when open', () => {
+    const { rerender } = render(
+      <CreateOrUpdateDoiModal {...defaultProps} open={true} />,
+    )
+
+    expect(mockSetIsEditing).toHaveBeenLastCalledWith(true)
+
+    rerender(<CreateOrUpdateDoiModal {...defaultProps} open={false} />)
+
+    expect(mockSetIsEditing).toHaveBeenLastCalledWith(false)
   })
 })

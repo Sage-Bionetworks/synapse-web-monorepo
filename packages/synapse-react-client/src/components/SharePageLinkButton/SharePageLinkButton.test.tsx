@@ -17,13 +17,13 @@ describe('SharePageLinkButton', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('Copies short.io response to clipboard', async () => {
     Object.assign(navigator, {
       clipboard: {
-        writeText: jest.fn().mockImplementation(() => Promise.resolve()),
+        writeText: vi.fn().mockImplementation(() => Promise.resolve()),
       },
     })
     renderComponent({ shortIoPublicApiKey: 'abc' })

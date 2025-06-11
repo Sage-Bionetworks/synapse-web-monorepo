@@ -37,7 +37,7 @@ const columnIdPrefix =
 
 const columnHelper = createColumnHelper<Row>()
 
-function RowSelectionCell(props: CellContext<Row, unknown>) {
+function RowSelectionCell<TValue = unknown>(props: CellContext<Row, TValue>) {
   const { row, table } = props
   const rowSet = table.options.meta?.rowSet
 
@@ -79,7 +79,9 @@ export const rowSelectionColumn = columnHelper.display({
   },
 })
 
-function AddToDownloadListCell(props: CellContext<Row, unknown>) {
+function AddToDownloadListCell<TValue = unknown>(
+  props: CellContext<Row, TValue>,
+) {
   const entityId = getEntityOrRowId(props)!
   const versionNumberString = getEntityOrRowVersion(props)
   const versionNumber = versionNumberString
@@ -108,7 +110,7 @@ export const addToDownloadListColumn = columnHelper.display({
   },
 })
 
-function DirectDownloadCell(props: CellContext<Row, unknown>) {
+function DirectDownloadCell<TValue = unknown>(props: CellContext<Row, TValue>) {
   const entityId = getEntityOrRowId(props)!
   const versionNumber = getEntityOrRowVersion(props)
 
@@ -138,9 +140,9 @@ export const directDownloadColumn = columnHelper.display({
  * If a rowEntityIDColumnName was provided in the table config, then instead return the entityID found in
  * that cell of the current Row.
  */
-const getEntityOrRowId = (
-  props: CellContext<Row, unknown>,
-): string | undefined => {
+function getEntityOrRowId<TValue = unknown>(
+  props: CellContext<Row, TValue>,
+): string | undefined {
   const { row, table } = props
   const rowEntityIDColumnIndex = table.options.meta?.rowEntityIDColumnIndex
   const entityId =
@@ -156,7 +158,9 @@ const getEntityOrRowId = (
  * @param props
  * @returns
  */
-const isRowEntityColumn = (props: CellContext<Row, unknown>): boolean => {
+function isRowEntityColumn<TValue = unknown>(
+  props: CellContext<Row, TValue>,
+): boolean {
   const { table } = props
   return table.options.meta?.rowEntityVersionColumnIndex !== undefined
 }
@@ -166,9 +170,9 @@ const isRowEntityColumn = (props: CellContext<Row, unknown>): boolean => {
  * If a rowEntityVersionColumnName was provided in the table config, then instead return the version found in
  * that cell of the current Row.
  */
-const getEntityOrRowVersion = (
-  props: CellContext<Row, unknown>,
-): string | undefined => {
+function getEntityOrRowVersion<TValue = unknown>(
+  props: CellContext<Row, TValue>,
+): string | undefined {
   const { row, table } = props
   const rowEntityVersionColumnIndex =
     table.options.meta?.rowEntityVersionColumnIndex
@@ -179,7 +183,7 @@ const getEntityOrRowVersion = (
   return versionNumber
 }
 
-function AccessCell(props: CellContext<Row, unknown>) {
+function AccessCell<TValue = unknown>(props: CellContext<Row, TValue>) {
   const { showExternalAccessIcon } = useSynapseTableContext()
   const { ref, inView } = useInView({ triggerOnce: true })
   const entityId = getEntityOrRowId(props)!

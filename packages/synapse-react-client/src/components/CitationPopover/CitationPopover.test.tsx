@@ -9,16 +9,16 @@ import CitationPopover from './CitationPopover'
 import { createLinkAndDownload } from './CitationPopoverUtils'
 import { useCitation } from './useCitation'
 
-jest.mock('./useCitation', () => ({
-  useCitation: jest.fn(),
+vi.mock('./useCitation', () => ({
+  useCitation: vi.fn(),
 }))
 
-jest.mock('./CitationPopoverUtils', () => ({
-  createLinkAndDownload: jest.fn(),
+vi.mock('./CitationPopoverUtils', () => ({
+  createLinkAndDownload: vi.fn(),
 }))
 
-const mockUseCitation = jest.mocked(useCitation)
-const mockCreateLinkAndDownload = jest.mocked(createLinkAndDownload)
+const mockUseCitation = vi.mocked(useCitation)
+const mockCreateLinkAndDownload = vi.mocked(createLinkAndDownload)
 
 const openPopover = async () => {
   const button = screen.getByRole('button', { name: /Cite As/i })
@@ -36,7 +36,7 @@ const mockProps = {
 
 describe('CitationPopover tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockUseCitation.mockReturnValue(getUseQuerySuccessMock(data))
   })
 
@@ -96,7 +96,7 @@ describe('CitationPopover tests', () => {
 
   it('copies citation to clipboard', async () => {
     render(<CitationPopover {...mockProps} />)
-    const mockWriteText = jest.fn().mockResolvedValue('copied')
+    const mockWriteText = vi.fn().mockResolvedValue('copied')
     Object.assign(navigator, {
       clipboard: { writeText: mockWriteText },
     })

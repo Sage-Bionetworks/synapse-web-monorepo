@@ -42,8 +42,8 @@ export const fetchResponseWithExponentialTimeout = async (
   let numOfTry = 1
   while (response.status && RETRY_STATUS_CODES.includes(response.status)) {
     await delay(delayMs)
-    // Exponential backoff if we re-fetch
-    delayMs = delayMs * 2
+    // Exponential backoff if we re-fetch, cap at 10 seconds
+    delayMs = Math.min(delayMs * 2, 10_000)
     response = await fetch(requestInfo, options)
     if (MAX_RETRY_STATUS_CODES.includes(response.status)) {
       numOfTry++

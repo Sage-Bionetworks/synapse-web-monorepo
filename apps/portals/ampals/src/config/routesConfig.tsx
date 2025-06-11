@@ -50,22 +50,15 @@ const routes: RouteObject[] = [
           import('@/pages/DatasetDetailsPage').then(convertModuleToRouteObject),
       },
       {
+        path: 'Data Access',
+        lazy: () =>
+          import('@/pages/resources/ForResearchers').then(
+            convertModuleToRouteObject,
+          ),
+      },
+      {
         path: 'Resources',
         children: [
-          {
-            path: 'For Researchers',
-            lazy: () =>
-              import('@/pages/resources/ForResearchers').then(
-                convertModuleToRouteObject,
-              ),
-          },
-          {
-            path: 'For Contributors',
-            lazy: () =>
-              import('@/pages/resources/ForContributors').then(
-                convertModuleToRouteObject,
-              ),
-          },
           {
             path: 'For Persons With Lived Experience',
             lazy: () =>
@@ -99,7 +92,9 @@ const routes: RouteObject[] = [
       {
         path: 'Contribute Data',
         lazy: () =>
-          import('@/pages/ContributeData').then(convertModuleToRouteObject),
+          import('@/pages/resources/ForContributors').then(
+            convertModuleToRouteObject,
+          ),
       },
       {
         path: 'About',

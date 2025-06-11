@@ -8,7 +8,7 @@ import {
   DownloadLoginModalProps,
 } from './DownloadLoginModal'
 
-const mockCallback = jest.fn()
+const mockCallback = vi.fn()
 
 function createTestProps(
   overrides?: DownloadLoginModalProps,
@@ -29,7 +29,7 @@ function renderComponent(overrides?: DownloadLoginModalProps) {
 
 describe('DownloadLoginModal tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('Has cancel button', async () => {

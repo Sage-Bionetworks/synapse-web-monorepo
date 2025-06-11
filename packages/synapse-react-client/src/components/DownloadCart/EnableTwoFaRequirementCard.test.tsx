@@ -12,15 +12,13 @@ import {
 
 const MOCK_ACCESS_REQUIREMENT_LIST_COMPONENT =
   'mock-access-requirement-list-component'
-jest
-  .spyOn(AccessRequirementListModule, 'default')
-  .mockImplementation(() => (
-    <div data-testid={MOCK_ACCESS_REQUIREMENT_LIST_COMPONENT}></div>
-  ))
-jest
-  .spyOn(SynapseClient, 'getAccessRequirementById')
-  .mockResolvedValue(mockManagedACTAccessRequirement)
-const mockGetCurrent2FAStatus = jest.spyOn(
+vi.spyOn(AccessRequirementListModule, 'default').mockImplementation(() => (
+  <div data-testid={MOCK_ACCESS_REQUIREMENT_LIST_COMPONENT}></div>
+))
+vi.spyOn(SynapseClient, 'getAccessRequirementById').mockResolvedValue(
+  mockManagedACTAccessRequirement,
+)
+const mockGetCurrent2FAStatus = vi.spyOn(
   SynapseClient,
   'getCurrentUserTwoFactorEnrollmentStatus',
 )
