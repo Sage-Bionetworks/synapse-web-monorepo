@@ -1,1 +1,0 @@
-import{g as e}from"./iframe-DCGyuO0M.js";import{r as p}from"./index-Chjiymov.js";import{d as s}from"./DefaultPropsProvider-CHINDxai.js";import{T as m}from"./createTheme-DTUolO0P.js";import{u as t}from"./Stack-CceUr8if.js";var a=p();const h=e(a);function n({props:r,name:o}){return t({props:r,name:o,defaultTheme:s,themeId:m})}export{h as P,n as u};
