@@ -128,6 +128,13 @@ describe('Linkify tests', () => {
     'biorxiv:000091v1',
     'brenda:1.1.1.1',
     'cellxgene.collection:436154da-bcf1-4130-9c8b-120ff9a888f2',
+    'ec:1.1.1.1',
+    'ec:2.-.-.-',
+    'geo:GDS1234',
+    'go:0032571',
+    'inchi:InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3',
+    'inchikey:RYYVLZVUVIJVGH-UHFFFAOYSA-N',
+    'orcid:0000-0003-4423-4370',
   ]
 
   bioregistryIds.forEach(id => {
