@@ -1,3 +1,4 @@
+import ConfirmCloseWithoutSavingDialog from '@/components/Dialog/ConfirmCloseWithoutSavingDialog'
 import { useGetEntityBundle } from '@/synapse-queries'
 import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
 import { noop } from 'lodash-es'
@@ -26,6 +27,7 @@ export default function EntityAclEditorModal(props: EntityAclEditorModalProps) {
     onClose,
     isAfterUpload = false,
   } = props
+  const [showConfirmCloseDialog, setShowConfirmCloseDialog] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
   const entityAclEditorRef = useRef<EntityAclEditorHandle>(null)
 
@@ -36,39 +38,59 @@ export default function EntityAclEditorModal(props: EntityAclEditorModalProps) {
     : ''
   const canEdit = entityBundle?.permissions?.canChangePermissions
 
+  function handleClose() {
+    if (isDirty) {
+      setShowConfirmCloseDialog(true)
+    } else {
+      onClose()
+    }
+  }
+
   return (
-    <ConfirmationDialog
-      title={`${entityTypeDisplay} Sharing Settings`.trim()}
-      onCancel={onClose}
-      open={open}
-      maxWidth={'md'}
-      titleHelpPopoverProps={{
-        markdownText: ENTITY_SHARING_SETTINGS_HELP_MARKDOWN,
-        helpUrl: ENTITY_SHARING_SETTINGS_HELP_URL,
-      }}
-      content={
-        <EntityAclEditor
-          ref={entityAclEditorRef}
-          entityId={entityId}
-          onCanSaveChange={isDirty => setIsDirty(isDirty)}
-          onUpdateSuccess={() => {
-            displayToast(
-              'Permissions were successfully saved to Synapse',
-              'info',
-            )
-            onUpdateSuccess()
-            onClose()
-          }}
-          isAfterUpload={isAfterUpload}
-        />
-      }
-      onConfirm={() => {
-        entityAclEditorRef.current!.save()
-      }}
-      confirmButtonProps={{
-        children: canEdit ? 'Save' : 'OK',
-        disabled: !isDirty,
-      }}
-    />
+    <>
+      <ConfirmCloseWithoutSavingDialog
+        open={showConfirmCloseDialog}
+        onCancel={() => {
+          setShowConfirmCloseDialog(false)
+        }}
+        onConfirm={() => {
+          setShowConfirmCloseDialog(false)
+          onClose()
+        }}
+      />
+      <ConfirmationDialog
+        title={`${entityTypeDisplay} Sharing Settings`.trim()}
+        onCancel={handleClose}
+        open={open}
+        maxWidth={'md'}
+        titleHelpPopoverProps={{
+          markdownText: ENTITY_SHARING_SETTINGS_HELP_MARKDOWN,
+          helpUrl: ENTITY_SHARING_SETTINGS_HELP_URL,
+        }}
+        content={
+          <EntityAclEditor
+            ref={entityAclEditorRef}
+            entityId={entityId}
+            onCanSaveChange={isDirty => setIsDirty(isDirty)}
+            onUpdateSuccess={() => {
+              displayToast(
+                'Permissions were successfully saved to Synapse',
+                'info',
+              )
+              onUpdateSuccess()
+              onClose()
+            }}
+            isAfterUpload={isAfterUpload}
+          />
+        }
+        onConfirm={() => {
+          entityAclEditorRef.current!.save()
+        }}
+        confirmButtonProps={{
+          children: canEdit ? 'Save' : 'OK',
+          disabled: !isDirty,
+        }}
+      />
+    </>
   )
 }
