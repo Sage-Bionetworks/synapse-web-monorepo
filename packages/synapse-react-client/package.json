@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.4.26",
+  "version": "3.4.27",
   "private": false,
   "type": "module",
   "main": "./dist/index.cjs",
