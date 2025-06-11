@@ -1,5 +1,4 @@
 import { rest } from 'msw'
-import { CreateGridRequest } from '@sage-bionetworks/synapse-types'
 
 function getRandomInt() {
   return crypto.getRandomValues(new Uint32Array(1))[0]
@@ -30,7 +29,7 @@ export function getGridHandlers(backendOrigin: string) {
         const jobToken = `job-${Date.now()}-${Math.random()
           .toString(36)
           .substring(2, 9)}`
-        const request: CreateGridRequest = await req.json()
+        const request = await req.json()
 
         // Store job details for later reference
         pendingJobs.set(jobToken, {
