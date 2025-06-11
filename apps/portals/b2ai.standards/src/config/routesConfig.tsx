@@ -1,4 +1,5 @@
 import StandardsDetailsPage from '@/pages/StandardsDetailsPage'
+import GrandChallengeLandingPage from '@/pages/GrandChallengeLandingPage'
 import { Box } from '@mui/material'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
@@ -62,25 +63,10 @@ const routes: RouteObject[] = [
         path: 'Explore/Standard/DetailsPage',
         element: <StandardsDetailsPage />,
       },
-      /* part of PR #1865, not ready yet
-    {
-      path: 'DataSetExplore',
-      element: (
-        <Box
-          sx={{
-            '.QueryWrapperPlotNav > *': {
-              p: '0px 20px',
-            },
-            '.QueryWrapperPlotNav > .TopLevelControls': {
-              mt: '0',
-            },
-          }}
-        >
-          <QueryWrapperPlotNav {...dataSetsQueryWrapperPlotNavProps} />
-        </Box>
-      ),
-    },
-    */
+      {
+        path: 'GrandChallengeLandingPage',
+        element: <GrandChallengeLandingPage />,
+      },
       {
         path: 'About',
         element: (

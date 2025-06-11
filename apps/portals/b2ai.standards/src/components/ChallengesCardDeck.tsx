@@ -3,11 +3,11 @@ import {
   CHALLENGES_TABLE_COLUMN_NAMES,
   GCDATASET_TABLE_COLUMN_NAMES,
   GCDATASET_JSON_COLUMNS,
-  dataSql,
-  DST_TABLE_COLUMN_NAMES,
+  // dataSql,
+  // DST_TABLE_COLUMN_NAMES,
   ORG_TABLE_COLUMN_NAMES,
 } from '@/config/resources'
-import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { CardDeck } from 'synapse-react-client/components/CardDeck/CardDeck'
 import { CardDeckCardProps } from 'synapse-react-client/components/CardDeck/CardDeckCardProps'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
@@ -23,10 +23,6 @@ import { ImageFileHandle } from 'synapse-react-client/components/widgets/ImageFi
 /**
  * Card view of challenges for the home page
  */
-
-function createExplorePageLink(query: Query): string {
-  return `/Explore?QueryWrapper0=${encodeURIComponent(JSON.stringify(query))}`
-}
 
 type useTableFetchProps = {
   entityId: string
@@ -127,6 +123,7 @@ export function ChallengesCardDeck() {
       )
     }
     const org = gcData[GCDATASET_TABLE_COLUMN_NAMES.ORG_JSON][0]
+    // org.gcId = gcData[GCDATASET_TABLE_COLUMN_NAMES.ID]
     orgs[org[ORG_TABLE_COLUMN_NAMES.ID]] = org
   }
 
@@ -149,18 +146,6 @@ export function ChallengesCardDeck() {
 
   const challengeCards: CardDeckCardProps[] = challengesData.map(challenge => {
     const org = orgs[challenge[CHALLENGES_TABLE_COLUMN_NAMES.ORG_ID]]
-    const query: Query = {
-      sql: dataSql,
-      limit: 25,
-      selectedFacets: [
-        {
-          concreteType:
-            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-          columnName: DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
-          facetValues: [org[ORG_TABLE_COLUMN_NAMES.NAME]],
-        },
-      ],
-    }
     const imgHandleId = challenge[CHALLENGES_TABLE_COLUMN_NAMES.IMG_HANDLE_ID]
     const imgAssoc = getFileHandleAssociation(challengesEntity, imgHandleId)
     const img = (
@@ -171,7 +156,11 @@ export function ChallengesCardDeck() {
       title: org[ORG_TABLE_COLUMN_NAMES.NAME],
       description: org[ORG_TABLE_COLUMN_NAMES.DESCRIPTION],
       ctaButtonText: 'Explore Standards',
-      ctaButtonURL: createExplorePageLink(query),
+      // ctaButtonURL: createExplorePageLink(query),
+      // ctaButtonURL: `/GrandChallengeLandingPage?id=${GCDATASET_TABLE_COLUMN_NAMES.ID}`,
+      ctaButtonURL: `/GrandChallengeLandingPage?${ORG_TABLE_COLUMN_NAMES.ID}=${
+        org[ORG_TABLE_COLUMN_NAMES.ID]
+      }`,
       headerImage: img,
     }
     return card

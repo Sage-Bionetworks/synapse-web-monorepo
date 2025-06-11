@@ -118,8 +118,32 @@ export const standardDetailsPageContent: DetailsPageContentType = [
   },
 ]
 
-export default function StandardsDetailsPage() {
+export default function GrandChallengeLandingPage() {
   const { id } = useGetPortalComponentSearchParams()
+
+  /*
+  This is the code previously used on home page to generate the Explore Standards
+  links. Need to get it working here now.
+
+  function createExplorePageLink(query: Query): string {
+    return `/Explore?QueryWrapper0=${encodeURIComponent(JSON.stringify(query))}`
+  }
+
+  const query: Query = {
+    sql: dataSql,
+    limit: 25,
+    selectedFacets: [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+        columnName: DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
+        facetValues: [org[ORG_TABLE_COLUMN_NAMES.NAME]],
+      },
+    ],
+  }
+  ctaButtonText: 'Explore Standards',
+  ctaButtonURL: createExplorePageLink(query),
+  */
 
   if (!id) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
