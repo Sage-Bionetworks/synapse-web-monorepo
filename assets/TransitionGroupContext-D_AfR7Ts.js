@@ -1,1 +1,0 @@
-import{R as p}from"./index-CTtGSwtz.js";function e(t,o){return e=Object.setPrototypeOf?Object.setPrototypeOf.bind():function(r,n){return r.__proto__=n,r},e(t,o)}function s(t,o){t.prototype=Object.create(o.prototype),t.prototype.constructor=t,e(t,o)}const a=p.createContext(null);export{a as T,s as _,e as a};
