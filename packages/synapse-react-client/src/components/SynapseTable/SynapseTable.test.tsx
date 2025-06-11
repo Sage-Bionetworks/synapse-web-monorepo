@@ -10,7 +10,7 @@ import {
 import { mockFileHandle } from '@/mocks/mock_file_handle'
 import mockQueryResponseData from '@/mocks/mockQueryResponseData'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { mockQueryResult } from '@/mocks/query/mockProjectViewQueryResults'
 import queryResultBundle from '@/mocks/query/syn16787123'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
@@ -30,7 +30,6 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
   Reference,
-  ReferenceList,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
   RestrictionLevel,
@@ -39,6 +38,7 @@ import {
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
+import { http, HttpResponse } from 'msw'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import {
   QueryContextConsumer,
@@ -164,11 +164,10 @@ describe('SynapseTable tests', () => {
   })
   beforeEach(() => {
     server.use(
-      rest.post(
+      http.post<never, { references: Reference[] }>(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
-        async (req, res, ctx) => {
-          const requestBody: ReferenceList = (await req.json())
-            .references as ReferenceList
+        async ({ request }) => {
+          const requestBody = (await request.json()).references
           const responseBody: PaginatedResults<EntityHeader> = {
             results: requestBody.map((reference: Reference, index) => {
               return {
@@ -184,19 +183,19 @@ describe('SynapseTable tests', () => {
               }
             }),
           }
-          return res(ctx.status(200), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ENTITY_ID_VERSION(':id', ':version')}`,
-        async (req, res, ctx) => {
+        ({ params }) => {
           const responseBody: FileEntity = {
-            id: `${req.params.id}`,
-            name: `Mock Entity with Id ${req.params.id}`,
-            versionNumber: parseInt(req.params.version as string),
-            versionLabel: `v${req.params.version}`,
+            id: `${params.id}`,
+            name: `Mock Entity with Id ${params.id}`,
+            versionNumber: parseInt(params.version as string),
+            versionLabel: `v${params.version}`,
             versionComment: 'test',
             modifiedOn: '2021-03-31T18:30:00.000Z',
             modifiedBy: MOCK_USER_ID.toString(),
@@ -204,22 +203,22 @@ describe('SynapseTable tests', () => {
             etag: 'etag',
             concreteType: 'org.sagebionetworks.repo.model.FileEntity',
           }
-          return res(ctx.status(200), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
-      rest.post(
+      http.post<never, RestrictionInformationRequest>(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/restrictionInformation`,
-        async (req, res, ctx) => {
-          const requestBody = await req.json<RestrictionInformationRequest>()
+        async ({ request }) => {
+          const requestBody = await request.json()
           const responseBody: RestrictionInformationResponse = {
             objectId: normalizeNumericId(requestBody.objectId),
             restrictionDetails: [],
             restrictionLevel: RestrictionLevel.OPEN,
             hasUnmetAccessRequirement: false,
           }
-          return res(ctx.status(200), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
     )
@@ -516,12 +515,12 @@ describe('SynapseTable tests', () => {
 
     // Return a file view entity, so the download column would be shown if not for the missing row IDs
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/entity/${synapseTableEntityId}`,
-        (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockFileViewEntity))
+        () => {
+          return HttpResponse.json(mockFileViewEntity, { status: 200 })
         },
       ),
     )
@@ -560,12 +559,12 @@ describe('SynapseTable tests', () => {
     }
 
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/entity/${synapseTableEntityId}`,
-        (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockFileViewEntity))
+        () => {
+          return HttpResponse.json(mockFileViewEntity, { status: 200 })
         },
       ),
     )

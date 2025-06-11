@@ -9,7 +9,7 @@ import {
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import TimelinePlot from './TimelinePlot'
 
 const meta = {
@@ -64,15 +64,12 @@ export const Demo: Story = {
     stack: 'mock',
     msw: {
       handlers: [
-        rest.get(
-          MOCK_REPO_ORIGIN + '/repo/v1/entity/syn51735464',
-          (req, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({ ...mockTableEntity, id: 'syn51735464' }),
-            )
-          },
-        ),
+        http.get(MOCK_REPO_ORIGIN + '/repo/v1/entity/syn51735464', () => {
+          return HttpResponse.json(
+            { ...mockTableEntity, id: 'syn51735464' },
+            { status: 200 },
+          )
+        }),
         ...getHandlersForTableQuery(MOCK_REPO_ORIGIN),
         ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
       ],

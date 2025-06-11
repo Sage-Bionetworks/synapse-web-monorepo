@@ -1,5 +1,11 @@
-import { TABLE_QUERY_ASYNC_GET, TABLE_QUERY_ASYNC_START } from '@/utils/APIConstants'
-import { BackendDestinationEnum, getEndpoint } from '@/utils/functions/getEndpoint'
+import {
+  TABLE_QUERY_ASYNC_GET,
+  TABLE_QUERY_ASYNC_START,
+} from '@/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import { SynapseError } from '@/utils/SynapseError'
 import {
   ColumnModel,
@@ -11,7 +17,7 @@ import {
   ViewColumnModelResponse,
 } from '@sage-bionetworks/synapse-types'
 import { uniqueId } from 'lodash-es'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import defaultFileViewColumnModels from '../../query/defaultFileViewColumnModels'
 import { generateAsyncJobHandlers } from './asyncJobHandlers'
 import { getTableQueryResult } from './tableQueryService'
@@ -55,39 +61,36 @@ export function getDefaultColumnHandlers(
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
 ) {
   return [
-    rest.get(
-      `${backendOrigin}/repo/v1/column/tableview/defaults`,
-      async (req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json({
-            concreteType: 'org.sagebionetworks.repo.model.table.ColumnModel',
-            list: defaultFileViewColumnModels,
-          }),
-        )
-      },
-    ),
+    http.get(`${backendOrigin}/repo/v1/column/tableview/defaults`, () => {
+      return HttpResponse.json(
+        {
+          concreteType: 'org.sagebionetworks.repo.model.table.ColumnModel',
+          list: defaultFileViewColumnModels,
+        },
+        { status: 200 },
+      )
+    }),
   ]
 }
 
 export function getCreateColumnModelBatchHandler(
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
 ) {
-  return rest.post(
+  return http.post<never, { list: ColumnModel[] }>(
     `${backendOrigin}/repo/v1/column/batch`,
-    async (req, res, ctx) => {
-      const { list: columnModels } = await req.json<{ list: ColumnModel[] }>()
+    async ({ request }) => {
+      const { list: columnModels } = await request.json()
       columnModels.forEach(cm => {
         if (!cm.id) {
           cm.id = uniqueId()
         }
       })
-      return res(
-        ctx.status(201),
-        ctx.json({
+      return HttpResponse.json(
+        {
           concreteType: 'org.sagebionetworks.repo.model.table.ColumnModel',
           list: columnModels,
-        }),
+        },
+        { status: 201 },
       )
     },
   )

@@ -8,7 +8,7 @@ import {
   MOCK_ACCESS_TOKEN,
   MOCK_CONTEXT_VALUE,
 } from '@/mocks/MockSynapseContext'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
@@ -23,6 +23,7 @@ import {
   RestrictionInformationResponse,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import { HasAccessProps, HasAccessV2 } from './HasAccessV2'
 
 const entityId = mockFileEntityData.id
@@ -64,12 +65,12 @@ function useMswRestrictionInformation(
   restrictionInformation: RestrictionInformationResponse,
 ) {
   server.use(
-    rest.post(
+    http.post(
       `${getEndpoint(
         BackendDestinationEnum.REPO_ENDPOINT,
       )}/repo/v1/restrictionInformation`,
-      async (req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(restrictionInformation))
+      () => {
+        return HttpResponse.json(restrictionInformation, { status: 200 })
       },
     ),
   )
