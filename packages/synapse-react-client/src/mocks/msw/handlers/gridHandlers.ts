@@ -1,9 +1,13 @@
 import { rest } from 'msw'
 import { CreateGridRequest } from '@sage-bionetworks/synapse-types'
 
+function getRandomInt() {
+  return crypto.getRandomValues(new Uint32Array(1))[0]
+}
+
 // Generate unique session IDs for grid sessions
 const generateSessionId = () => {
-  const randomId: number = crypto.getRandomValues(new Uint32Array(1))[0]
+  const randomId: number = getRandomInt()
   return `grid-session-${randomId * 100000}`
 }
 
