@@ -3,7 +3,7 @@ import {
   CHALLENGES_TABLE_COLUMN_NAMES,
   GCDATASET_TABLE_COLUMN_NAMES,
   GCDATASET_JSON_COLUMNS,
-  // dataSql,
+  // standardsSql,
   // DST_TABLE_COLUMN_NAMES,
   ORG_TABLE_COLUMN_NAMES,
 } from '@/config/resources'
@@ -158,9 +158,9 @@ export function ChallengesCardDeck() {
       ctaButtonText: 'Explore Standards',
       // ctaButtonURL: createExplorePageLink(query),
       // ctaButtonURL: `/GrandChallengeLandingPage?id=${GCDATASET_TABLE_COLUMN_NAMES.ID}`,
-      ctaButtonURL: `/GrandChallengeLandingPage?${ORG_TABLE_COLUMN_NAMES.ID}=${
-        org[ORG_TABLE_COLUMN_NAMES.ID]
-      }`,
+      ctaButtonURL: `/Explore/Standard/GCLandingPage?${
+        ORG_TABLE_COLUMN_NAMES.ID
+      }=${org[ORG_TABLE_COLUMN_NAMES.ID]}`,
       headerImage: img,
     }
     return card

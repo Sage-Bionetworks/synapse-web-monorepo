@@ -1,5 +1,3 @@
-// import { TABLE_IDS } from '@/config/resources'
-
 import {
   DetailsPageContent,
   DetailsPageContentType,
@@ -31,7 +29,7 @@ export const standardsCardSchema: TableToGenericCardMapping = {
   subTitle: 'standardName',
   description: 'description',
   link: 'url',
-  secondaryLabels: ['SDO', 'collections', 'topics'],
+  secondaryLabels: ['SDO', 'collections', 'topic', 'dataTypes'],
 }
 
 export const linkedStandardCardConfiguration: CardConfiguration = {
@@ -118,32 +116,8 @@ export const standardDetailsPageContent: DetailsPageContentType = [
   },
 ]
 
-export default function GrandChallengeLandingPage() {
+export default function StandardsDetailsPage() {
   const { id } = useGetPortalComponentSearchParams()
-
-  /*
-  This is the code previously used on home page to generate the Explore Standards
-  links. Need to get it working here now.
-
-  function createExplorePageLink(query: Query): string {
-    return `/Explore?QueryWrapper0=${encodeURIComponent(JSON.stringify(query))}`
-  }
-
-  const query: Query = {
-    sql: dataSql,
-    limit: 25,
-    selectedFacets: [
-      {
-        concreteType:
-          'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-        columnName: DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
-        facetValues: [org[ORG_TABLE_COLUMN_NAMES.NAME]],
-      },
-    ],
-  }
-  ctaButtonText: 'Explore Standards',
-  ctaButtonURL: createExplorePageLink(query),
-  */
 
   if (!id) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
@@ -163,6 +137,7 @@ export default function GrandChallengeLandingPage() {
             },
           ],
         }}
+        columnAliases={columnAliases}
         cardConfiguration={{
           type: SynapseConstants.GENERIC_CARD,
           genericCardSchema: standardsCardSchema,

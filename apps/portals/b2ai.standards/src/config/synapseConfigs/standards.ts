@@ -7,14 +7,14 @@ import {
 } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import {
-  dataFtsConfig,
+  standardsFtsConfig,
   // dataSetExploreSql,
-  dataSql,
+  standardsSql,
   DST_TABLE_COLUMN_NAMES,
 } from '../resources'
 
-const dataRgbIndex = 0
-export const dataColumnLinks: LabelLinkConfig = [
+const standardsRgbIndex = 0
+export const standardsColumnLinks: LabelLinkConfig = [
   {
     isMarkdown: true,
     // the column whose value will be used for the markdown
@@ -29,16 +29,16 @@ export const dataColumnLinks: LabelLinkConfig = [
   },
 ]
 
-export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
-  rgbIndex: dataRgbIndex,
+export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
+  rgbIndex: standardsRgbIndex,
   shouldDeepLink: true,
   hideDownload: false,
-  sql: dataSql, // TODO: now that we're having more pages, this should be renamed standardsSql
+  sql: standardsSql, // TODO: now that we're having more pages, this should be renamed standardsSql
   name: 'Standards',
   columnAliases,
   tableConfiguration: {
     showDownloadColumn: false,
-    columnLinks: dataColumnLinks,
+    columnLinks: standardsColumnLinks,
   },
   facetsToPlot: [
     'topic',
@@ -47,37 +47,14 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   ],
   initialPlotType: 'BAR',
   searchConfiguration: {
-    ftsConfig: dataFtsConfig,
+    ftsConfig: standardsFtsConfig,
   },
 }
 
-export const dataDetailPageProps: StandaloneQueryWrapperProps = {
-  sql: dataSql,
-  rgbIndex: dataRgbIndex,
-  columnLinks: dataColumnLinks,
+export const standardsDetailPageProps: StandaloneQueryWrapperProps = {
+  sql: standardsSql,
+  rgbIndex: standardsRgbIndex,
+  columnLinks: standardsColumnLinks,
   hideDownload: true,
   sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
 }
-
-/* part of PR #1865, not ready yet
-const dataSetColumnLinks: LabelLinkConfig = [
-  {
-    isMarkdown: true,
-    matchColumnName: 'name',
-  },
-]
-export const dataSetsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
-  rgbIndex: dataRgbIndex,
-  shouldDeepLink: true,
-  hideDownload: false,
-  sql: dataSetExploreSql,
-  name: 'DataSets',
-  columnAliases,
-  tableConfiguration: {
-    showDownloadColumn: false,
-    columnLinks: dataSetColumnLinks,
-  },
-}
-*/
-
-export default dataQueryWrapperPlotNavProps

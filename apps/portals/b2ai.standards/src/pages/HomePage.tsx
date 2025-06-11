@@ -3,8 +3,8 @@ import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/compon
 import StandardsHeader from '@sage-bionetworks/synapse-portal-framework/components/b2ai.standards/StandardsHeader'
 import StandardsContributeToTheRegistry from '@sage-bionetworks/synapse-portal-framework/components/b2ai.standards/StandardsContributeToTheRegistry'
 import {
-  dataFtsConfig,
-  dataSql,
+  standardsFtsConfig,
+  standardsSql,
   DST_TABLE_COLUMN_NAMES,
 } from '../config/resources'
 import { FeaturedDataTabs } from 'synapse-react-client'
@@ -14,7 +14,7 @@ import columnAliases from '../config/columnAliases'
 export default function HomePage() {
   return (
     <>
-      <StandardsHeader dataSql={dataSql} ftsConfig={dataFtsConfig} />
+      <StandardsHeader sql={standardsSql} ftsConfig={standardsFtsConfig} />
       <div>
         <h2 className="title center-title">
           Standards Related to Bridge2AI Challenges
@@ -41,7 +41,7 @@ export default function HomePage() {
           ContainerProps={{ className: 'home-spacer' }}
         >
           <FeaturedDataTabs
-            sql={dataSql}
+            sql={standardsSql}
             rgbIndex={3}
             configs={[
               {
@@ -50,7 +50,7 @@ export default function HomePage() {
                 explorePagePath: '/Explore',
                 exploreObjectType: 'Standards',
                 plotsConfig: {
-                  sql: `${dataSql} where ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES} is not null`,
+                  sql: `${standardsSql} where ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES} is not null`,
                   configs: [
                     {
                       facetsToPlot: [

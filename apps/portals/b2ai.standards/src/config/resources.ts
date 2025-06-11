@@ -47,7 +47,7 @@ export const GCDATASET_JSON_COLUMNS = [
 ]
 
 // for the Explore page table:
-export const dataSql = `
+export const standardsSql = `
     SELECT
         isMature,
         concat('[', acronym, '](/Explore/Standard/DetailsPage?id=', id, ')') as acronym,
@@ -84,10 +84,7 @@ export const standardsDetailsPageSQL = `
 `
 // COALESCE(responsibleOrgName, 'No responsible org listed') as SDO,
 
-export const dataFtsConfig: FTSConfig = {
+export const standardsFtsConfig: FTSConfig = {
   textMatchesMode: 'BOOLEAN',
   distance: 50,
 }
-
-// for DataSetExplore
-export const dataSetExploreSql = `SELECT * FROM ${TABLE_IDS.GCDataSet.id}`

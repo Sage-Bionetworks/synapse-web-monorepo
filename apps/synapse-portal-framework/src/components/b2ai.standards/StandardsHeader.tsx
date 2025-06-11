@@ -5,7 +5,7 @@ import { getTextMatchesQueryFilter } from 'synapse-react-client/components/FullT
 import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2'
 
 export type StandardsHeaderProps = {
-  dataSql: string
+  sql: string
   ftsConfig: FTSConfig
 }
 
@@ -102,7 +102,7 @@ const StandardsHeader = (props: StandardsHeaderProps) => {
               props.ftsConfig,
             )
             const query: Query = {
-              sql: props.dataSql,
+              sql: props.sql,
               additionalFilters: [filter],
             }
             window.location.assign(

@@ -9,10 +9,10 @@ import { QueryWrapperPlotNav } from 'synapse-react-client'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import HomePage from '../pages/HomePage'
 import {
-  dataQueryWrapperPlotNavProps,
+  standardsQueryWrapperPlotNavProps,
   /* part of PR #1865, not ready yet
   dataSetsQueryWrapperPlotNavProps, */
-} from './synapseConfigs/data'
+} from './synapseConfigs/standards'
 import { FullWidthAlert } from 'synapse-react-client'
 
 const routes: RouteObject[] = [
@@ -55,7 +55,7 @@ const routes: RouteObject[] = [
               },
             }}
           >
-            <QueryWrapperPlotNav {...dataQueryWrapperPlotNavProps} />
+            <QueryWrapperPlotNav {...standardsQueryWrapperPlotNavProps} />
           </Box>
         ),
       },
@@ -64,8 +64,10 @@ const routes: RouteObject[] = [
         element: <StandardsDetailsPage />,
       },
       {
-        path: 'GrandChallengeLandingPage',
-        element: <GrandChallengeLandingPage />,
+        path: 'Explore/Standard/GCLandingPage',
+        // path: 'GCLandingPage',
+        element: <StandardsDetailsPage />,
+        // element: <GrandChallengeLandingPage />,
       },
       {
         path: 'About',
