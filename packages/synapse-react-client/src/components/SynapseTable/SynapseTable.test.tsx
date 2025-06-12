@@ -30,11 +30,15 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
   Reference,
-  RestrictionInformationRequest,
-  RestrictionInformationResponse,
   RestrictionLevel,
   Table,
 } from '@sage-bionetworks/synapse-types'
+import type {
+  RestrictionInformationRequest,
+  RestrictionInformationResponse,
+  RestrictionInformationBatchRequest,
+  RestrictionInformationBatchResponse,
+} from '@sage-bionetworks/synapse-client'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
@@ -206,18 +210,52 @@ describe('SynapseTable tests', () => {
           return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
-      http.post<never, RestrictionInformationRequest>(
+      http.post<
+        never,
+        RestrictionInformationRequest,
+        RestrictionInformationResponse
+      >(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/restrictionInformation`,
         async ({ request }) => {
           const requestBody = await request.json()
           const responseBody: RestrictionInformationResponse = {
-            objectId: normalizeNumericId(requestBody.objectId),
+            objectId: normalizeNumericId(requestBody.objectId!),
             restrictionDetails: [],
             restrictionLevel: RestrictionLevel.OPEN,
             hasUnmetAccessRequirement: false,
+            userEntityPermissions: {
+              canDownload: true,
+            },
           }
+          return HttpResponse.json(responseBody, { status: 200 })
+        },
+      ),
+      http.post<
+        never,
+        RestrictionInformationBatchRequest,
+        RestrictionInformationBatchResponse
+      >(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}/repo/v1/restrictionInformation/batch`,
+        async ({ request }) => {
+          const requestBody = await request.json()
+          const responseBody: RestrictionInformationBatchResponse = {
+            restrictionInformation: requestBody.objectIds!.map(
+              (objectId: string) => ({
+                objectId: normalizeNumericId(objectId),
+                restrictionDetails: [],
+                restrictionLevel: RestrictionLevel.OPEN,
+                hasUnmetAccessRequirement: false,
+                userEntityPermissions: {
+                  canDownload: true,
+                },
+              }),
+            ),
+          }
+
           return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
