@@ -3,7 +3,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { SynapseError } from '@/utils/SynapseError'
+import { ErrorResponse } from '@sage-bionetworks/synapse-client'
 import {
   AsynchJobState,
   AsynchronousJobStatus,
@@ -39,9 +39,9 @@ const mockAsynchronousJobService = new BasicMockedCrudService<
  */
 export function generateAsyncJobHandlers<
   TRequestBody = unknown,
-  TResponseBody extends DefaultBodyType | SynapseError =
+  TResponseBody extends DefaultBodyType | ErrorResponse =
     | DefaultBodyType
-    | SynapseError,
+    | ErrorResponse,
 >(
   requestPath: string,
   responsePath: (tokenParam: string) => string,

@@ -3,7 +3,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { SynapseError } from '@/utils/SynapseError'
+import { BaseError, ErrorResponse } from '@sage-bionetworks/synapse-client'
 import { http, HttpResponse } from 'msw'
 import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../mockAnnotationColumns'
 import { getAllAccessRequirementAclHandlers } from './handlers/accessRequirementAclHandlers'
@@ -38,7 +38,7 @@ import { getWebhookHandlers } from './handlers/webhookHandlers'
 import { getAllWikiHandlers } from './handlers/wikiHandlers'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
-export type SynapseApiResponse<T> = T | SynapseError
+export type SynapseApiResponse<TData, TError = BaseError> = TData | TError
 
 const getHandlers = (backendOrigin: string, portalOrigin?: string) => [
   http.options('*', () => {

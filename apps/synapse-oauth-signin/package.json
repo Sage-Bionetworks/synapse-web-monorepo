@@ -9,6 +9,7 @@
     "@mui/icons-material": "^5.17.1",
     "@mui/material": "^5.17.1",
     "@react-hookz/web": "^23.1.0",
+    "@sage-bionetworks/synapse-client": "workspace:*",
     "@tanstack/react-query": "5.22.2",
     "katex": "^0.16.22",
     "lodash-es": "^4.17.21",

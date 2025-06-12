@@ -955,6 +955,9 @@ importers:
       '@react-hookz/web':
         specifier: ^23.1.0
         version: 23.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@sage-bionetworks/synapse-client':
+        specifier: workspace:*
+        version: link:../../packages/synapse-client
       '@tanstack/react-query':
         specifier: 5.22.2
         version: 5.22.2(react@18.3.1)

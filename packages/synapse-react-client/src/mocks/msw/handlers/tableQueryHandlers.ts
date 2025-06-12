@@ -1,3 +1,4 @@
+import { SynapseApiResponse } from '@/mocks/msw/handlers'
 import {
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
@@ -6,7 +7,6 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { SynapseError } from '@/utils/SynapseError'
 import {
   ColumnModel,
   QueryBundleRequest,
@@ -97,13 +97,13 @@ export function getCreateColumnModelBatchHandler(
 }
 
 export function getTableTransactionHandlers(
-  response: TableUpdateTransactionResponse | SynapseError,
+  response: SynapseApiResponse<TableUpdateTransactionResponse>,
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
   statusCode?: number,
 ) {
   return generateAsyncJobHandlers<
     TableUpdateTransactionRequest,
-    TableUpdateTransactionResponse | SynapseError
+    SynapseApiResponse<TableUpdateTransactionResponse>
   >(
     `/repo/v1/entity/:entityId/table/transaction/async/start`,
     tokenParam =>
