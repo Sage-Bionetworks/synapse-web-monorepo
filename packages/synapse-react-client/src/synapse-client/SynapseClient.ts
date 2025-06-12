@@ -3587,8 +3587,8 @@ export type FunctionReturningPaginatedResults<T> = (
  */
 export const getAllOfPaginatedService = async <T>(
   fn: FunctionReturningPaginatedResults<T>,
+  limit = 50,
 ) => {
-  const limit = 50
   let offset = 0
   let existsMoreData = true
   const results: T[] = []
@@ -4792,6 +4792,26 @@ export const getModerators = (
     `${FORUM}/${forumId}/moderators?${params.toString()}`,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
+  )
+}
+
+/**
+ * Returns all moderators for a given forum ID.
+ * Target users: anyone who has READ permission to the project.
+ * https://rest-docs.synapse.org/rest/GET/forum/forumId/moderators.html
+ * @param accessToken
+ * @param forumId
+ * @returns
+ */
+export function getAllModerators(
+  accessToken: string | undefined,
+  forumId: string,
+) {
+  // Returns error if attempting to retrieve >20 at a time
+  const limit = 20
+  return getAllOfPaginatedService(
+    (limit, offset) => getModerators(accessToken, forumId, limit, offset),
+    limit,
   )
 }
 
