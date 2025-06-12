@@ -39,6 +39,7 @@ describe('ProvenanceGraph', () => {
         )}${ACTIVITY_FOR_ENTITY(MOCK_TABLE_ENTITY_ID)}`,
         () => {
           const response: SynapseApiResponse<Activity> = {
+            concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
             reason: `Mock Service worker was not configured to return an Activity for ${MOCK_TABLE_ENTITY_ID}`,
           }
           return HttpResponse.json(response, { status: 404 })
@@ -50,6 +51,7 @@ describe('ProvenanceGraph', () => {
         )}${ACTIVITY_FOR_ENTITY(MOCK_TABLE_ENTITY_ID, ':version')}`,
         ({ params }) => {
           const response: SynapseApiResponse<Activity> = {
+            concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
             reason: `Mock Service worker was not configured to return an Activity for ${MOCK_TABLE_ENTITY_ID}.${params.version}`,
           }
           return HttpResponse.json(response, { status: 404 })

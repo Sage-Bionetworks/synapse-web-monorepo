@@ -49,6 +49,7 @@ export function getDiscussionHandlers(backendOrigin: string) {
     http.get(`${backendOrigin}${FORUM}/:id`, ({ params }) => {
       let status = 404
       let resp: SynapseApiResponse<Forum> = {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason: `MSW could not find a mock forum object with ID ${params.id}`,
       }
 
@@ -64,11 +65,13 @@ export function getDiscussionHandlers(backendOrigin: string) {
     http.get(`${backendOrigin}${THREAD}/:id`, ({ params }) => {
       let status = 404
       let resp: SynapseApiResponse<Forum> = {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason: `MSW could not find a mock discussion thread bundle object with ID ${params.id}`,
       }
       if (params.id === 'messageUrl') {
         // This is a different endpoint
         resp = {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
           reason: 'GET /thread/messageUrl is not yet implemented',
         }
       }

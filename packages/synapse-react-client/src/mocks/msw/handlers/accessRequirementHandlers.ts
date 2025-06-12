@@ -42,6 +42,7 @@ export const getAccessRequirementHandlers = (backendOrigin: string) => [
     ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<AccessRequirement> = {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason: `Mock Service worker could not find an access requirement with ID ${params.id}`,
       }
       const ar = mockAccessRequirements.find(
@@ -61,6 +62,7 @@ export const getAccessRequirementHandlers = (backendOrigin: string) => [
     ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<WikiPageKey> = {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason: `Mock Service worker could not find an access requirement wiki page key with AR ID ${params.id}`,
       }
       const wikiPageKey = mockAccessRequirementWikiPageKeys.find(

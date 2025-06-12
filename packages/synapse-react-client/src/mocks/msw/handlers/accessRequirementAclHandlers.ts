@@ -11,6 +11,7 @@ export function getAccessRequirementAclHandler(backendOrigin: string) {
     ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<AccessControlList> = {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason: `Mock Service worker could not find an ACL for access requirement with ID ${params.id}`,
       }
       const acl = mockAccessRequirementAcls.find(acl => acl.id === params.id)

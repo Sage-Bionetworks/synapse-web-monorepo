@@ -3,7 +3,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { BaseError, ErrorResponse } from '@sage-bionetworks/synapse-client'
+import { BaseError } from '@sage-bionetworks/synapse-client'
 import { http, HttpResponse } from 'msw'
 import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../mockAnnotationColumns'
 import { getAllAccessRequirementAclHandlers } from './handlers/accessRequirementAclHandlers'

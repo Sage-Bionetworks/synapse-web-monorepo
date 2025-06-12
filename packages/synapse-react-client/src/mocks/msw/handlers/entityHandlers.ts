@@ -9,6 +9,7 @@ import {
   ENTITY_SCHEMA_BINDING,
 } from '@/utils/APIConstants'
 import { normalizeSynPrefix } from '@/utils/functions/EntityTypeUtils'
+import { ErrorResponse } from '@sage-bionetworks/synapse-client'
 import {
   AccessControlList,
   Entity,
@@ -58,6 +59,7 @@ export function getEntityBundleHandler(
     ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<EntityBundle> = {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason: `Mock Service worker could not find a mock entity bundle with ID ${params.entityId}`,
       }
       if (bundle) {
@@ -100,6 +102,7 @@ export function getVersionedEntityBundleHandler(
       const versionNumber = parseInt(params.versionNumber as string)
       let status = 404
       let response: SynapseApiResponse<EntityBundle> = {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason: `Mock Service worker could not find a mock entity bundle with ID ${entityId}`,
       }
       if (bundle) {
@@ -132,17 +135,21 @@ export const getEntityHandlers = (backendOrigin: string) => [
   http.post<never, Entity>(`${backendOrigin}${ENTITY}`, async ({ request }) => {
     let status = 200
     const requestBody = await request.json()
-    let response: SynapseApiResponse<Entity> = { reason: '...' }
+    let response: SynapseApiResponse<Entity> = {
+      concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+      reason: '...',
+    }
     if (!requestBody) {
       status = 400
       response = {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason: `Mock service worker received the following malformed body for PUT ${ENTITY} : ${JSON.stringify(
           requestBody,
         )}`,
       }
     } else {
       if (requestBody.name === MOCK_INVALID_PROJECT_NAME) {
-        response.reason = 'Invalid project name'
+        ;(response as ErrorResponse).reason = 'Invalid project name'
         status = 403
       } else {
         response = { id: uniqueId('syn'), ...requestBody }
@@ -158,6 +165,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
   http.get(`${backendOrigin}${ENTITY_ID(':entityId')}`, ({ params }) => {
     let status = 404
     let response: SynapseApiResponse<Entity> = {
+      concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
       reason: `Mock Service worker could not find a mock entity with ID ${params.entityId}`,
     }
 
@@ -174,6 +182,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
     ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<PaginatedResults<VersionInfo>> = {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason: `Mock Service worker could not find mock entity versions for ID ${params.entityId}`,
       }
 
@@ -195,6 +204,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
       const requestedVersionNumber = parseInt(versionNumber)
 
       let response: SynapseApiResponse<VersionableEntity> = {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason: `Mock Service worker could not find a mock versioned entity with ID ${entityId}.${versionNumber}`,
       }
 
@@ -225,6 +235,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
     ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<EntityJson> = {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason: `Mock Service worker could not find a mock entity bundle with ID ${params.entityId}`,
       }
       const entityData = getMatchingMockEntity(params.entityId as string)
@@ -243,6 +254,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
     async ({ params, request }) => {
       let status = 404
       let response: SynapseApiResponse<PaginatedResults<EntityHeader>> = {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason: `Mock Service worker could not find a mock entity bundle with ID ${params.entityId}`,
       }
 
@@ -276,6 +288,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
     ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<EntityPath> = {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason: `Mock Service worker could not find a mock entity path using ID ${params.entityId}`,
       }
       const entityData = getMatchingMockEntity(params.entityId as string)
@@ -299,6 +312,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
     ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<UploadDestination> = {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason: `Mock Service worker could not find an uploadDestination using storageLocationId ${params.storageLocationId}`,
       }
       const uploadDestination = mockUploadDestinations.find(
@@ -336,11 +350,13 @@ export const getEntityHandlers = (backendOrigin: string) => [
       if (!entityData) {
         status = 404
         response = {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
           reason: `Mock Service worker could not find a mock entity bundle with ID ${params.entityId}`,
         }
       } else if (entityData.bundle?.accessControlList) {
         status = 403
         response = {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
           reason: 'Resource already has an ACL.',
         }
       } else {
@@ -363,10 +379,12 @@ export const getEntityHandlers = (backendOrigin: string) => [
       if (!entityData) {
         status = 404
         response = {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
           reason: `Mock Service worker could not find a mock entity bundle with ID ${params.entityId}`,
         }
       } else if (!entityData?.bundle?.accessControlList) {
         response = {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
           reason:
             'Cannot update ACL for a resource which inherits its permissions.',
         }
@@ -389,10 +407,12 @@ export const getEntityHandlers = (backendOrigin: string) => [
     if (!entityData) {
       status = 404
       response = {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason: `Mock Service worker could not find a mock entity bundle with ID ${params.entityId}`,
       }
     } else if (!entityData?.bundle?.accessControlList) {
       response = {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
         reason:
           'Cannot delete ACL for a resource which inherits its permissions.',
       }

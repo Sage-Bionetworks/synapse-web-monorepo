@@ -39,6 +39,7 @@ export function getWikiPage(backendOrigin: string) {
       ({ params }) => {
         let status = 404
         let response: SynapseApiResponse<WikiPage> = {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
           reason: `Mock Service worker could not find a wiki page with ID ${params.wikiPageId}`,
         }
 
@@ -79,6 +80,7 @@ export function getRootWikiPageKeyHandler(backendOrigin: string) {
       ({ params }) => {
         let status = 404
         let response: SynapseApiResponse<WikiPageKey> = {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
           reason: `Mock Service worker could not find a WikiPageKey for ${ownerObjectType} ${params.ownerObjectId}`,
         }
         const wikiPageKey = mockWikiPageKeyService.getOneByPredicate(

@@ -35,6 +35,7 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
   http.get(`${backendOrigin}${USER_PROFILE_ID(':id')}`, ({ params }) => {
     let status = 404
     let response: SynapseApiResponse<UserProfile> = {
+      concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
       reason: `Mock Service worker could not find a user profile with ID ${params.id}`,
     }
     const match = mockUserData.find(
@@ -71,6 +72,7 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
   http.get(`${backendOrigin}${USER_ID_BUNDLE(':id')}`, ({ params }) => {
     let status = 404
     let response: SynapseApiResponse<UserBundle> = {
+      concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
       reason: `Mock Service worker could not find a user bundle with ID ${params.id}`,
     }
     const match = mockUserData.find(

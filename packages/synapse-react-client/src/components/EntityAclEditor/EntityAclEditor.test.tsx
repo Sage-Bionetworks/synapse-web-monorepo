@@ -642,6 +642,7 @@ describe('EntityAclEditor', () => {
         () => {
           const status = 400
           const response: SynapseApiResponse<AccessControlList> = {
+            concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
             reason: errorReason,
           }
 

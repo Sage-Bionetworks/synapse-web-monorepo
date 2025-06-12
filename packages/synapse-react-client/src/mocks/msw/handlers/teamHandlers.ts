@@ -56,6 +56,7 @@ export function getTeamHandler(backendOrigin: string) {
     }
 
     const errorResponse: SynapseApiResponse<ListWrapper<Team>> = {
+      concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
       reason: `Team id: '${params.teamId}' does not exist`,
     }
     return HttpResponse.json(errorResponse, { status: 404 })
@@ -72,6 +73,7 @@ export function getTeamListHandler(backendOrigin: string) {
         const team = mockedTeamService.getOneById(teamId.toString())
         if (!team) {
           const errorResponse: SynapseApiResponse<ListWrapper<Team>> = {
+            concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
             reason: `Team with id ${teamId} not found`,
           }
           return HttpResponse.json(errorResponse, { status: 404 })
@@ -136,6 +138,7 @@ export function getTeamMembershipStatusHandler(backendOrigin: string) {
       const team = mockedTeamService.getOneById(teamId)
       if (!team) {
         response = {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
           reason: `getTeamMembershipStatusHandler could not locate a team with ID ${teamId}`,
         }
         status = 404
@@ -173,6 +176,7 @@ export function getUpdateTeamMembershipStatusHandler(backendOrigin: string) {
       const team = mockedTeamService.getOneById(teamId)
       if (!team) {
         response = {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
           reason: `getTeamMembershipStatusHandler could not locate a team with ID ${teamId}`,
         }
         status = 404

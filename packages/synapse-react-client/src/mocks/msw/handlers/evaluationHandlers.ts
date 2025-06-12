@@ -14,6 +14,7 @@ export function getEvaluationHandlers(backendOrigin: string) {
       ({ params }) => {
         let status = 404
         let response: SynapseApiResponse<Evaluation> = {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
           reason: `Mock Service worker could not find a mock evaluation queue with ID ${params.evaluationId}`,
         }
 
