@@ -7,18 +7,13 @@ import {
   // DST_TABLE_COLUMN_NAMES,
   ORG_TABLE_COLUMN_NAMES,
 } from '@/config/resources'
+import { imageUrls } from '@/config/images'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { CardDeck } from 'synapse-react-client/components/CardDeck/CardDeck'
 import { CardDeckCardProps } from 'synapse-react-client/components/CardDeck/CardDeckCardProps'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
-import {
-  ErrorBanner,
-  getFileHandleAssociation,
-  SynapseConstants,
-} from 'synapse-react-client'
+import { ErrorBanner, SynapseConstants } from 'synapse-react-client'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
-import { useGetEntity } from 'synapse-react-client/synapse-queries/entity/useEntity'
-import { ImageFileHandle } from 'synapse-react-client/components/widgets/ImageFileHandle'
 
 /**
  * Card view of challenges for the home page
@@ -75,24 +70,6 @@ export function useTableFetch({
 
 export function ChallengesCardDeck() {
   const {
-    data: challengesData = [],
-    error: challengesError,
-    isLoading: isLoadingChallengesTableQuery,
-  } = useTableFetch({
-    entityId: TABLE_IDS.Challenges.id,
-    columns: [
-      CHALLENGES_TABLE_COLUMN_NAMES.ORG_ID,
-      CHALLENGES_TABLE_COLUMN_NAMES.IMG_HANDLE_ID,
-    ],
-  })
-  const {
-    data: challengesEntity,
-    // this is needed later in order to extract the image from the challenges table
-    error: challengesEntityError,
-    isLoading: isLoadingChallengesEntity,
-  } = useGetEntity(TABLE_IDS.Challenges.id)
-
-  const {
     data: gcDataSet = [],
     error: gcDataSetError,
     isLoading: isLoadingGCDataSetTableQuery,
@@ -123,22 +100,16 @@ export function ChallengesCardDeck() {
       )
     }
     const org = gcData[GCDATASET_TABLE_COLUMN_NAMES.ORG_JSON][0]
-    // org.gcId = gcData[GCDATASET_TABLE_COLUMN_NAMES.ID]
     orgs[org[ORG_TABLE_COLUMN_NAMES.ID]] = org
+    // org.gcId = gcData[GCDATASET_TABLE_COLUMN_NAMES.ID]
   }
 
-  if (challengesEntityError) {
-    return <ErrorBanner error={challengesEntityError} />
-  }
-  if (challengesError) {
-    return <ErrorBanner error={challengesError} />
-  }
   if (gcDataSetError) {
     return <ErrorBanner error={gcDataSetError} />
   }
   const isLoading =
-    isLoadingChallengesTableQuery ||
-    isLoadingChallengesEntity ||
+    // isLoadingChallengesTableQuery ||
+    // isLoadingChallengesEntity ||
     isLoadingGCDataSetTableQuery
   if (isLoading) {
     return <div>Loading...</div>
@@ -146,18 +117,15 @@ export function ChallengesCardDeck() {
 
   const challengeCards: CardDeckCardProps[] = challengesData.map(challenge => {
     const org = orgs[challenge[CHALLENGES_TABLE_COLUMN_NAMES.ORG_ID]]
-    const imgHandleId = challenge[CHALLENGES_TABLE_COLUMN_NAMES.IMG_HANDLE_ID]
-    const imgAssoc = getFileHandleAssociation(challengesEntity, imgHandleId)
-    const img = (
-      <ImageFileHandle key={imgHandleId} fileHandleAssociation={imgAssoc!} />
-    )
+    const orgId = org[ORG_TABLE_COLUMN_NAMES.ID]
+    const img = <img src={imageUrls[orgId]} />
 
     const card: CardDeckCardProps = {
       title: org[ORG_TABLE_COLUMN_NAMES.NAME],
       description: org[ORG_TABLE_COLUMN_NAMES.DESCRIPTION],
       ctaButtonText: 'Explore Standards',
       // ctaButtonURL: createExplorePageLink(query),
-      // ctaButtonURL: `/GrandChallengeLandingPage?id=${GCDATASET_TABLE_COLUMN_NAMES.ID}`,
+      // ctaButtonURL: `/OrganizationsDetailsPage?id=${GCDATASET_TABLE_COLUMN_NAMES.ID}`,
       ctaButtonURL: `/Explore/Standard/GCLandingPage?${
         ORG_TABLE_COLUMN_NAMES.ID
       }=${org[ORG_TABLE_COLUMN_NAMES.ID]}`,

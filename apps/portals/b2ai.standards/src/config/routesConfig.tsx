@@ -1,5 +1,5 @@
 import StandardsDetailsPage from '@/pages/StandardsDetailsPage'
-import GrandChallengeLandingPage from '@/pages/GrandChallengeLandingPage'
+import OrganizationsDetailsPage from '@/pages/OrganizationsDetailsPage'
 import { Box } from '@mui/material'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
@@ -67,7 +67,7 @@ const routes: RouteObject[] = [
         path: 'Explore/Standard/GCLandingPage',
         // path: 'GCLandingPage',
         element: <StandardsDetailsPage />,
-        // element: <GrandChallengeLandingPage />,
+        // element: <OrganizationsDetailsPage />,
       },
       {
         path: 'About',
