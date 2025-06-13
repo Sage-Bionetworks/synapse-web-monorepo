@@ -1,35 +1,28 @@
 import {
   TABLE_IDS,
-  CHALLENGES_TABLE_COLUMN_NAMES,
-  dataSql,
-  DST_TABLE_COLUMN_NAMES,
-  ORG_TABLE_COLUMN_NAMES,
+  ORG_DENORMALIZED_COLUMN_NAMES,
+  ORG_DENORMALIZED_JSON_COLUMNS,
+  // standardsSql,
+  // DST_TABLE_COLUMN_NAMES,
+  GC_ORG_IDS,
 } from '@/config/resources'
-import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { imageUrls } from '@/config/images'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { CardDeck } from 'synapse-react-client/components/CardDeck/CardDeck'
 import { CardDeckCardProps } from 'synapse-react-client/components/CardDeck/CardDeckCardProps'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
-import {
-  ErrorBanner,
-  getFileHandleAssociation,
-  SynapseConstants,
-} from 'synapse-react-client'
+import { ErrorBanner, SynapseConstants } from 'synapse-react-client'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
-import { useGetEntity } from 'synapse-react-client/synapse-queries/entity/useEntity'
-import { ImageFileHandle } from 'synapse-react-client/components/widgets/ImageFileHandle'
 
 /**
  * Card view of challenges for the home page
  */
 
-function createExplorePageLink(query: Query): string {
-  return `/Explore?QueryWrapper0=${encodeURIComponent(JSON.stringify(query))}`
-}
-
 type useTableFetchProps = {
   entityId: string
   columns: string[]
   sql?: string
+  whereClause?: string
   shouldRun?: boolean
 }
 
@@ -37,10 +30,14 @@ export function useTableFetch({
   entityId,
   columns, // required
   sql, // if filters or aliases or anything are needed, pass in whole sql query
+  whereClause, // or pass in where clause and will still use columns
   shouldRun = true, // if calling before ready, send false
 }: useTableFetchProps) {
   if (!sql) {
     sql = `SELECT ${columns.join(', ')} FROM ${entityId}`
+  }
+  if (whereClause) {
+    sql += ` WHERE ${whereClause}`
   }
 
   const queryBundleRequest: QueryBundleRequest = {
@@ -77,93 +74,56 @@ export function useTableFetch({
 
 export function ChallengesCardDeck() {
   const {
-    data: challengesData = [],
-    error: challengesError,
-    isLoading: isLoadingChallengesTableQuery,
+    data: gcOrgs = [],
+    error: gcOrgsError,
+    isLoading: isLoadingGcOrgsTableQuery,
   } = useTableFetch({
-    entityId: TABLE_IDS.Challenges.id,
-    columns: [
-      CHALLENGES_TABLE_COLUMN_NAMES.ORG_ID,
-      CHALLENGES_TABLE_COLUMN_NAMES.IMG_HANDLE_ID,
-    ],
+    entityId: TABLE_IDS.Org_denormalized.id,
+    columns: Object.values(ORG_DENORMALIZED_COLUMN_NAMES),
+    whereClause: `${ORG_DENORMALIZED_COLUMN_NAMES.ID} in (${GC_ORG_IDS.join(
+      ',',
+    )})`,
   })
 
-  const {
-    data: challengesEntity,
-    error: challengesEntityError,
-    isLoading: isLoadingChallengesEntity,
-  } = useGetEntity(TABLE_IDS.Challenges.id)
-
-  const gcOrgIds = challengesData
-    .map(c => c[CHALLENGES_TABLE_COLUMN_NAMES.ORG_ID])
-    .map(id => `'${id}'`)
-    .join(', ')
-
-  const orgCols = [
-    ORG_TABLE_COLUMN_NAMES.ID,
-    ORG_TABLE_COLUMN_NAMES.NAME,
-    ORG_TABLE_COLUMN_NAMES.DESCRIPTION,
-  ]
-  const {
-    data: gcOrgData,
-    error: gcOrgError,
-    isLoading: isLoadingOrgsTableQuery,
-  } = useTableFetch({
-    entityId: TABLE_IDS.Organization.id,
-    columns: orgCols,
-    sql: `SELECT ${orgCols.join(', ')} FROM ${
-      TABLE_IDS.Organization.id
-    } WHERE id IN (${gcOrgIds})`,
-    shouldRun: !!challengesData?.length,
-  })
-
-  if (challengesEntityError) {
-    return <ErrorBanner error={challengesEntityError} />
+  const orgs = {}
+  for (const gcOrg of gcOrgs) {
+    for (const key of ORG_DENORMALIZED_JSON_COLUMNS) {
+      try {
+        if (gcOrg[key]) {
+          gcOrg[key] = JSON.parse(gcOrg[key])
+        }
+      } catch (error) {
+        console.log(`Failed to parse ${key}:`, error)
+      }
+    }
+    orgs[gcOrg[ORG_DENORMALIZED_COLUMN_NAMES.ID]] = gcOrg
   }
-  if (challengesError) {
-    return <ErrorBanner error={challengesError} />
-  }
-  if (gcOrgError) {
-    return <ErrorBanner error={gcOrgError} />
+
+  if (gcOrgsError) {
+    return <ErrorBanner error={gcOrgsError} />
   }
   const isLoading =
-    isLoadingChallengesTableQuery ||
-    isLoadingChallengesEntity ||
-    isLoadingOrgsTableQuery
+    // isLoadingChallengesTableQuery ||
+    // isLoadingChallengesEntity ||
+    isLoadingGcOrgsTableQuery
   if (isLoading) {
     return <div>Loading...</div>
   }
 
-  const orgs = {}
-  gcOrgData!.forEach(org => {
-    orgs[org[ORG_TABLE_COLUMN_NAMES.ID]] = org
-  })
-
-  const challengeCards: CardDeckCardProps[] = challengesData.map(challenge => {
-    const org = orgs[challenge[CHALLENGES_TABLE_COLUMN_NAMES.ORG_ID]]
-    const query: Query = {
-      sql: dataSql,
-      limit: 25,
-      selectedFacets: [
-        {
-          concreteType:
-            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-          columnName: DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
-          facetValues: [org[ORG_TABLE_COLUMN_NAMES.NAME]],
-        },
-      ],
-    }
-    const imgHandleId = challenge[CHALLENGES_TABLE_COLUMN_NAMES.IMG_HANDLE_ID]
-    const imgAssoc = getFileHandleAssociation(challengesEntity, imgHandleId)
-    const img = (
-      <ImageFileHandle key={imgHandleId} fileHandleAssociation={imgAssoc!} />
-    )
+  const challengeCards: CardDeckCardProps[] = gcOrgs.map(gcOrg => {
+    const orgId = gcOrg[ORG_DENORMALIZED_COLUMN_NAMES.ID]
+    const img = <img src={imageUrls[orgId]} />
 
     const card: CardDeckCardProps = {
-      title: org[ORG_TABLE_COLUMN_NAMES.NAME],
-      description: org[ORG_TABLE_COLUMN_NAMES.DESCRIPTION],
-      ctaButtonText: 'Explore Standards',
-      ctaButtonURL: createExplorePageLink(query),
+      title: gcOrg[ORG_DENORMALIZED_COLUMN_NAMES.NAME],
+      description: gcOrg[ORG_DENORMALIZED_COLUMN_NAMES.DESCRIPTION],
+      cardDeckType: 'b2ai',
+      ctaButtonText: 'NOT USED IN cardDeckType = b2ai',
+      // ctaButtonURL: createExplorePageLink(query),
+      // ctaButtonURL: `/OrganizationDetailsPage?id=${DATASET_DENORMALIZED_COLUMN_NAMES.ID}`,
+      ctaButtonURL: `/Explore/Organization/OrganizationDetailsPage?${
+        ORG_DENORMALIZED_COLUMN_NAMES.ID
+      }=${gcOrg[ORG_DENORMALIZED_COLUMN_NAMES.ID]}`,
       headerImage: img,
     }
     return card
