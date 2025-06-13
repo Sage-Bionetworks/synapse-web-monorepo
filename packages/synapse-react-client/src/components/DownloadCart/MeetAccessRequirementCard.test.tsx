@@ -4,7 +4,7 @@ import {
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
 } from '@/mocks/accessRequirement/mockAccessRequirements'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '@/utils'
 import {
@@ -17,6 +17,7 @@ import {
   AccessRequirementStatus,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import {
   ACT_TITLE,
   LOCK_TITLE,
@@ -34,13 +35,13 @@ const defaultProps: MeetAccessRequirementCardProps = {
 
 function setupAccessRequirementResponse(accessRequirement: AccessRequirement) {
   server.use(
-    rest.get(
+    http.get(
       `${getEndpoint(
         BackendDestinationEnum.REPO_ENDPOINT,
       )}${ACCESS_REQUIREMENT_BY_ID(ACCESS_REQUIREMENT_ID)}`,
 
-      async (req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(accessRequirement))
+      () => {
+        return HttpResponse.json(accessRequirement, { status: 200 })
       },
     ),
   )
@@ -48,18 +49,18 @@ function setupAccessRequirementResponse(accessRequirement: AccessRequirement) {
 
 function setUpAccessRequirementStatus(isApproved: boolean) {
   server.use(
-    rest.get(
+    http.get(
       `${getEndpoint(
         BackendDestinationEnum.REPO_ENDPOINT,
       )}${ACCESS_REQUIREMENT_STATUS(':id')}`,
-      async (req, res, ctx) => {
+      ({ params }) => {
         const response: AccessRequirementStatus = {
-          accessRequirementId: req.params.id as string,
+          accessRequirementId: params.id as string,
           concreteType:
             'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
           isApproved: isApproved,
         }
-        return res(ctx.status(200), ctx.json(response))
+        return HttpResponse.json(response, { status: 200 })
       },
     ),
   )

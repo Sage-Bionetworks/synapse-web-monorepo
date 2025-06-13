@@ -1,11 +1,13 @@
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { ASYNCHRONOUS_JOB_TOKEN } from '@/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
 import { AsynchronousJobStatus } from '@sage-bionetworks/synapse-types'
+import { http, HttpResponse } from 'msw'
 import SynapseClient from './index'
+import * as HttpClient from './HttpClient'
 
 describe('SynapseClient integration tests', () => {
   beforeAll(() => server.listen())
@@ -33,8 +35,6 @@ describe('SynapseClient integration tests', () => {
       jobState: 'FAILED',
     }
 
-    const requestCaptor = vi.fn()
-
     beforeEach(() => {
       vi.clearAllMocks()
     })
@@ -42,19 +42,19 @@ describe('SynapseClient integration tests', () => {
     it('Returns a complete response', async () => {
       // The first call returns a successful response.
       server.use(
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ASYNCHRONOUS_JOB_TOKEN(':jobId')}`,
-
-          (req, res, ctx) => {
-            requestCaptor(req)
+          () => {
             const status = 200
             const response = completeJob
-            return res(ctx.status(status), ctx.json(response))
+            return HttpResponse.json(response, { status })
           },
         ),
       )
+
+      const doGetSpy = vi.spyOn(HttpClient, 'doGet')
 
       // Call under test
       const response = await SynapseClient.getAsyncResultFromJobId(
@@ -64,13 +64,11 @@ describe('SynapseClient integration tests', () => {
         setCurrentAsyncStatus,
       )
 
-      expect(requestCaptor).toHaveBeenCalledTimes(1)
-      expect(requestCaptor).toHaveBeenCalledWith(
-        expect.objectContaining({
-          params: {
-            jobId: asyncJobId,
-          },
-        }),
+      expect(doGetSpy).toHaveBeenCalledTimes(1)
+      expect(doGetSpy).toHaveBeenCalledWith(
+        `/repo/v1/asynchronous/job/${asyncJobId}`,
+        expect.anything(),
+        BackendDestinationEnum.REPO_ENDPOINT,
       )
 
       expect(setCurrentAsyncStatus).toHaveBeenCalledTimes(1)
@@ -80,24 +78,24 @@ describe('SynapseClient integration tests', () => {
     it('Re-fetches a processing response until complete', async () => {
       // The first two calls return "PROCESSING" response, and the third call will return a "COMPLETE" response.
       server.use(
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ASYNCHRONOUS_JOB_TOKEN(':jobId')}`,
           // Use a generator to simulate returning a processing result twice followed by a complete result
-          function* (req, res, ctx) {
+          function* () {
             const status = 200
             let count = 0
             while (count < 2) {
               count++
-              requestCaptor(req)
-              yield res(ctx.status(status), ctx.json(processingJob))
+              yield HttpResponse.json(processingJob, { status: status })
             }
-            requestCaptor(req)
-            yield res(ctx.status(status), ctx.json(completeJob))
+            yield HttpResponse.json(completeJob, { status: status })
           },
         ),
       )
+
+      const doGetSpy = vi.spyOn(HttpClient, 'doGet')
 
       // Call under test
       const response = await SynapseClient.getAsyncResultFromJobId(
@@ -109,13 +107,11 @@ describe('SynapseClient integration tests', () => {
 
       expect(response).toEqual(completeJob)
 
-      expect(requestCaptor).toHaveBeenCalledTimes(3)
-      expect(requestCaptor).toHaveBeenCalledWith(
-        expect.objectContaining({
-          params: {
-            jobId: asyncJobId,
-          },
-        }),
+      expect(doGetSpy).toHaveBeenCalledTimes(3)
+      expect(doGetSpy).toHaveBeenCalledWith(
+        `/repo/v1/asynchronous/job/${asyncJobId}`,
+        expect.anything(),
+        BackendDestinationEnum.REPO_ENDPOINT,
       )
 
       expect(setCurrentAsyncStatus).toHaveBeenCalledTimes(3)
@@ -128,22 +124,22 @@ describe('SynapseClient integration tests', () => {
       const errorObject = { reason: 'bad request' }
 
       server.use(
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ASYNCHRONOUS_JOB_TOKEN(':jobId')}`,
-          function (req, res, ctx) {
+          function () {
             const status = 200
-            return res(ctx.status(status), ctx.json(failedJob))
+            return HttpResponse.json(failedJob, { status: status })
           },
         ),
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${responseBodyServerEndpoint}`,
-          function (req, res, ctx) {
+          function () {
             const status = errorStatus
-            return res(ctx.status(status), ctx.json(errorObject))
+            return HttpResponse.json(errorObject, { status: status })
           },
         ),
       )

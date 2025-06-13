@@ -9,11 +9,11 @@ import {
   mockACTAccessRequirementWikiPage,
   mockSelfSignAccessRequirementWikiPage,
 } from '@/mocks/mockWiki'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import {
-  confirmMarkdownSynapseTextContent,
   confirmMarkdownSynapseIsShown,
+  confirmMarkdownSynapseTextContent,
 } from '@/testutils/MarkdownSynapseUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ACCESS_REQUIREMENT_BY_ID } from '@/utils/APIConstants'
@@ -24,6 +24,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import { createRef } from 'react'
 import {
   SetBasicAccessRequirementFields,
@@ -49,12 +50,12 @@ function overrideUpdateAccessRequirementHandlerWithError() {
     reason: NON_ACT_ERROR_REASON,
   }
   server.use(
-    rest.put(
+    http.put(
       `${getEndpoint(
         BackendDestinationEnum.REPO_ENDPOINT,
       )}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
-      async (req, res, ctx) => {
-        return res(ctx.status(403), ctx.json(errorResponse))
+      () => {
+        return HttpResponse.json(errorResponse, { status: 403 })
       },
     ),
   )
@@ -205,14 +206,14 @@ describe('SetBasicAccessRequirementFields', () => {
         actContactInfo: 'some contact info',
       }
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json(mockACTAccessRequirementWithWikiAndTextInstructions),
+        () => {
+          return HttpResponse.json(
+            mockACTAccessRequirementWithWikiAndTextInstructions,
+            { status: 200 },
           )
         },
       ),

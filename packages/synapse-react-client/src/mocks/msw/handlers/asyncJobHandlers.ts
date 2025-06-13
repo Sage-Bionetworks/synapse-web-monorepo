@@ -3,13 +3,13 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { SynapseError } from '@/utils/SynapseError'
+import { ErrorResponse } from '@sage-bionetworks/synapse-client'
 import {
   AsynchJobState,
   AsynchronousJobStatus,
   AsyncJobId,
 } from '@sage-bionetworks/synapse-types'
-import { DefaultBodyType, rest } from 'msw'
+import { DefaultBodyType, http, HttpResponse } from 'msw'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
 type AsyncJobDetails<TRequestBody, TResponseBody> = {
@@ -39,9 +39,9 @@ const mockAsynchronousJobService = new BasicMockedCrudService<
  */
 export function generateAsyncJobHandlers<
   TRequestBody = unknown,
-  TResponseBody extends DefaultBodyType | SynapseError =
+  TResponseBody extends DefaultBodyType | ErrorResponse =
     | DefaultBodyType
-    | SynapseError,
+    | ErrorResponse,
 >(
   requestPath: string,
   responsePath: (tokenParam: string) => string,
@@ -51,30 +51,29 @@ export function generateAsyncJobHandlers<
 ) {
   return [
     // Handler for the asynchronous job request endpoint.
-    rest.post(`${backendOrigin}${requestPath}`, async (req, res, ctx) => {
+    http.post(`${backendOrigin}${requestPath}`, async ({ request }) => {
       const createdJob = mockAsynchronousJobService.create({
-        request: await req.json(),
+        request: await request.json(),
         response: responseBody,
       })
 
-      return res(
-        ctx.status(201),
-        ctx.json<AsyncJobId>({
-          token: createdJob.id,
-        }),
-      )
+      const asyncJobResponse: AsyncJobId = {
+        token: createdJob.id,
+      }
+
+      return HttpResponse.json(asyncJobResponse, { status: 201 })
     }),
 
     // Generic async job response handler. Since this implementation is the same for all services and references the global map, it's fine if this is overridden.
-    rest.get(
+    http.get(
       `${backendOrigin}${ASYNCHRONOUS_JOB_TOKEN(':id')}`,
-      async (req, res, ctx) => {
-        const id = req.params.id as string
+      ({ params }) => {
+        const id = params.id as string
         const asyncJobDetails = mockAsynchronousJobService.getOneById(id)
         if (!id || !asyncJobDetails) {
-          return res(
-            ctx.status(404),
-            ctx.json({ message: 'The mocked asynchronous job was not found' }),
+          return HttpResponse.json(
+            { message: 'The mocked asynchronous job was not found' },
+            { status: 404 },
           )
         }
         const { request, response } = asyncJobDetails as {
@@ -87,10 +86,10 @@ export function generateAsyncJobHandlers<
         const jobState: AsynchJobState =
           serviceSpecificEndpointResponseStatus < 400 ? 'COMPLETE' : 'FAILED'
 
-        return res(
-          // This endpoint returns a successful status code regardless of the job status
-          ctx.status(200),
-          ctx.json<AsynchronousJobStatus<TRequestBody, TResponseBody>>({
+        return HttpResponse.json<
+          AsynchronousJobStatus<TRequestBody, TResponseBody>
+        >(
+          {
             jobState,
             jobCanceling: false,
             requestBody: request,
@@ -107,22 +106,26 @@ export function generateAsyncJobHandlers<
             errorMessage: '',
             errorDetails: '',
             runtimeMS: 100,
-          }),
+          },
+          {
+            // This endpoint returns a successful status code regardless of the job status
+            status: 200,
+          },
         )
       },
     ),
 
     // Service-specific response endpoint
-    rest.get<TResponseBody>(
+    http.get<{ asyncJobToken: string }, TResponseBody>(
       `${backendOrigin}${responsePath(':asyncJobToken')}`,
-      async (req, res, ctx) => {
-        const asyncJobToken = req.params.asyncJobToken as string
+      ({ params }) => {
+        const asyncJobToken = params.asyncJobToken
         const asyncJobDetails =
           mockAsynchronousJobService.getOneById(asyncJobToken)
         if (!asyncJobToken || !asyncJobDetails) {
-          return res(
-            ctx.status(404),
-            ctx.json({ message: 'The mocked asynchronous job was not found' }),
+          return HttpResponse.json(
+            { message: 'The mocked asynchronous job was not found' },
+            { status: 404 },
           )
         }
 
@@ -133,10 +136,9 @@ export function generateAsyncJobHandlers<
         const responseObject: TResponseBody =
           typeof response === 'function' ? response(request) : response
 
-        return res(
-          ctx.status(serviceSpecificEndpointResponseStatus),
-          ctx.json(responseObject),
-        )
+        return HttpResponse.json(responseObject, {
+          status: serviceSpecificEndpointResponseStatus,
+        })
       },
     ),
   ]

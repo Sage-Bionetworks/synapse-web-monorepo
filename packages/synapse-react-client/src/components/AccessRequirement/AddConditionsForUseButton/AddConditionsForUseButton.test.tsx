@@ -1,7 +1,7 @@
 import mockFileEntity from '@/mocks/entity/mockFileEntity'
 import { mockUnmetControlledDataRestrictionInformationACT } from '@/mocks/mock_has_access_data'
 import { getEntityBundleHandler } from '@/mocks/msw/handlers/entityHandlers'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { mockUserBundle } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { USER_BUNDLE } from '@/utils/APIConstants'
@@ -12,6 +12,7 @@ import {
 import { EntityBundle, UserBundle } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import AddConditionsForUseButton, {
   AddConditionsForUseButtonProps,
 } from './AddConditionsForUseButton'
@@ -27,14 +28,14 @@ const mockCallback = vi.fn()
 // Adding this mock service worker handler will make the component recognize the caller as an ACT member
 function setIsCurrentUserMemberOfACT(isActMember: boolean) {
   server.use(
-    rest.get(
+    http.get(
       `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
-      async (req, res, ctx) => {
+      () => {
         const result: UserBundle = {
           ...mockUserBundle,
           isACTMember: isActMember,
         }
-        return res(ctx.status(200), ctx.json(result))
+        return HttpResponse.json(result, { status: 200 })
       },
     ),
   )

@@ -12,36 +12,34 @@ import userEvent from '@testing-library/user-event'
 import { Map } from 'immutable'
 import failOnConsole from 'jest-fail-on-console'
 import { useState } from 'react'
-import { EntityDetailsListDataConfigurationType } from '../../../../src/components/EntityFinder/details/EntityDetailsList'
+import { EntityDetailsListDataConfigurationType } from '../details/EntityDetailsList'
 import {
   EntityTree,
   EntityTreeContainer,
   EntityTreeProps,
   FinderScope,
-} from '../../../../src/components/EntityFinder/tree/EntityTree'
-import * as VirtualizedTreeModule from '../../../../src/components/EntityFinder/tree/VirtualizedTree'
-import {
-  EntityTreeNodeType,
-  VirtualizedTreeProps,
-} from '../../../../src/components/EntityFinder/tree/VirtualizedTree'
-import * as ToastMessageModule from '../../../../src/components/ToastMessage/ToastMessage'
-import { mockProjects } from '../../../../src/mocks/entity'
-import { mockFolderEntity } from '../../../../src/mocks/entity/mockEntity'
-import mockFileEntityData from '../../../../src/mocks/entity/mockFileEntity'
-import mockFileEntity from '../../../../src/mocks/entity/mockFileEntity'
-import mockProject from '../../../../src/mocks/entity/mockProject'
-import { rest, server } from '../../../../src/mocks/msw/server'
-import { createWrapper } from '../../../../src/testutils/TestingLibraryUtils'
+} from './EntityTree'
+import * as VirtualizedTreeModule from './VirtualizedTree'
+import { EntityTreeNodeType, VirtualizedTreeProps } from './VirtualizedTree'
+import * as ToastMessageModule from '@/components/ToastMessage/ToastMessage'
+import { mockProjects } from '@/mocks/entity'
+import { mockFolderEntity } from '@/mocks/entity/mockEntity'
+import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import mockFileEntity from '@/mocks/entity/mockFileEntity'
+import mockProject from '@/mocks/entity/mockProject'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { http, HttpResponse } from 'msw'
 import {
   ENTITY_HEADERS,
   ENTITY_PATH,
   FAVORITES,
   PROJECTS,
-} from '../../../../src/utils/APIConstants'
+} from '@/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
-} from '../../../../src/utils/functions/getEndpoint'
+} from '@/utils/functions/getEndpoint'
 
 const VIRTUALIZED_TREE_TEST_ID = 'VirtualizedTreeComponent'
 
@@ -179,56 +177,53 @@ describe('EntityTree tests', () => {
   beforeAll(() => {
     server.listen()
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(favorites))
+        () => {
+          return HttpResponse.json(favorites, { status: 200 })
         },
       ),
-      rest.get(
+      http.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_PATH(
           ':id',
         )}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(entityPath))
+        () => {
+          return HttpResponse.json(entityPath, { status: 200 })
         },
       ),
 
-      rest.post(
+      http.post<never, { references: Reference[] }>(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
-        async (req, res, ctx) => {
-          const { references } = await req.json()
+        async ({ request }) => {
+          const { references } = await request.json()
           if (references[0].targetId === projectIdWithNoReadAccess) {
-            return res(
-              ctx.status(200),
-              ctx.json({
-                results: [],
-                totalNumberOfResults: 0,
-              }),
+            return HttpResponse.json(
+              { results: [], totalNumberOfResults: 0 },
+              { status: 200 },
             )
           }
-          return res(
-            ctx.status(200),
-            ctx.json({
+          return HttpResponse.json(
+            {
               results: [entityPath.path[1]],
               totalNumberOfResults: 1,
-            }),
+            },
+            { status: 200 },
           )
         },
       ),
-      rest.get(
+      http.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${PROJECTS}`,
-        async (req, res, ctx) => {
+        ({ params }) => {
           const response: ProjectHeaderList = {
             results: projectsPage1,
             nextPageToken: '50a0',
           }
 
-          if (req.params.nextPageToken === '50a0') {
+          if (params.nextPageToken === '50a0') {
             response.results = projectsPage2
             response.nextPageToken = null
           }
-          return res(ctx.status(200), ctx.json(response))
+          return HttpResponse.json(response, { status: 200 })
         },
       ),
     )
