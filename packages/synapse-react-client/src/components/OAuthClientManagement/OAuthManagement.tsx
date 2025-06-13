@@ -163,7 +163,14 @@ export function OAuthManagement() {
 
   return (
     <div>
-      <Box display={'flex'} width={'100%'} justifyContent={'flex-end'} mb={2}>
+      <Box
+        sx={{
+          display: 'flex',
+          width: '100%',
+          justifyContent: 'flex-end',
+          mb: 2,
+        }}
+      >
         <Button
           variant="contained"
           color="primary"

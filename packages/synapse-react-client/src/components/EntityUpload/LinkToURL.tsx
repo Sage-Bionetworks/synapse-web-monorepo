@@ -59,14 +59,23 @@ export const LinkToURL = forwardRef(function LinkToURL(
 
   if (!entity) {
     return (
-      <Box display={'flex'} justifyContent={'center'}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
         <SynapseSpinner size={40} />
       </Box>
     )
   }
 
   return (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       <Typography variant={'body1'}>
         Provide a URL to create a link to a file that is located in external
         storage or hosted on the web. Metadata, provenance, and annotations

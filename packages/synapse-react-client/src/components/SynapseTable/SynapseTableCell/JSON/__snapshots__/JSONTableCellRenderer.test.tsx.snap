@@ -1,9 +1,9 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
+exports[`JSONTableCellRenderer > handles Array of primitives case 1`] = `
 <div>
   <span
-    class="MuiTypography-root MuiTypography-smallText1 css-1tqx9ty-MuiTypography-root"
+    class="MuiTypography-root MuiTypography-smallText1 css-mizb62-MuiTypography-root"
   >
     6 items
     <button
@@ -19,7 +19,7 @@ exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-15r5pc7-MuiSvgIcon-root"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-18y5paw-MuiSvgIcon-root"
           data-testid="AddBoxOutlinedIcon"
           focusable="false"
           viewBox="0 0 24 24"
@@ -32,20 +32,20 @@ exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
     </button>
   </span>
   <div
-    class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-hidden css-bz4dnt-MuiCollapse-root"
+    class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-hidden css-cwrbtg-MuiCollapse-root"
     style="min-height: 0px;"
   >
     <div
-      class="MuiCollapse-wrapper MuiCollapse-vertical css-smkl36-MuiCollapse-wrapper"
+      class="MuiCollapse-wrapper MuiCollapse-vertical css-1x6hinx-MuiCollapse-wrapper"
     >
       <div
-        class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
+        class="MuiCollapse-wrapperInner MuiCollapse-vertical css-1i4ywhz-MuiCollapse-wrapperInner"
       >
         <div
           class="MuiBox-root css-70fdo6"
         >
           <span
-            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-smallText1 css-z2uw0f-MuiTypography-root"
           >
             foo
           </span>
@@ -54,7 +54,7 @@ exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
           class="MuiBox-root css-70fdo6"
         >
           <span
-            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-smallText1 css-z2uw0f-MuiTypography-root"
           >
             1,000
           </span>
@@ -63,7 +63,7 @@ exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
           class="MuiBox-root css-70fdo6"
         >
           <span
-            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-smallText1 css-z2uw0f-MuiTypography-root"
           >
             -25.67
           </span>
@@ -72,10 +72,10 @@ exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
           class="MuiBox-root css-70fdo6"
         >
           <span
-            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-smallText1 css-z2uw0f-MuiTypography-root"
           >
             <span
-              class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-z2uw0f-MuiTypography-root"
             >
               &lt;null value&gt;
             </span>
@@ -85,7 +85,7 @@ exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
           class="MuiBox-root css-70fdo6"
         >
           <span
-            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-smallText1 css-z2uw0f-MuiTypography-root"
           >
             true
           </span>
@@ -94,7 +94,7 @@ exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
           class="MuiBox-root css-70fdo6"
         >
           <span
-            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-smallText1 css-z2uw0f-MuiTypography-root"
           >
             false
           </span>
@@ -105,38 +105,38 @@ exports[`JSONTableCellRenderer handles "Array of primitives" case 1`] = `
 </div>
 `;
 
-exports[`JSONTableCellRenderer handles "Empty array" case 1`] = `
+exports[`JSONTableCellRenderer > handles Empty array case 1`] = `
 <div>
   <span
-    class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+    class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-z2uw0f-MuiTypography-root"
   >
     Empty array
   </span>
 </div>
 `;
 
-exports[`JSONTableCellRenderer handles "Empty object" case 1`] = `
+exports[`JSONTableCellRenderer > handles Empty object case 1`] = `
 <div>
   <span
-    class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+    class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-z2uw0f-MuiTypography-root"
   >
     Empty object
   </span>
 </div>
 `;
 
-exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
+exports[`JSONTableCellRenderer > handles Object of primitives case 1`] = `
 <div>
   <div
     class="MuiBox-root css-34ji4n"
   >
     <span
-      class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-smallText1 css-z2uw0f-MuiTypography-root"
     >
       string
     </span>
     <span
-      class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-smallText1 css-ekwlr8-MuiTypography-root"
     >
       foo
     </span>
@@ -145,12 +145,12 @@ exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
     class="MuiBox-root css-34ji4n"
   >
     <span
-      class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-smallText1 css-z2uw0f-MuiTypography-root"
     >
       numberInt
     </span>
     <span
-      class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-smallText1 css-ekwlr8-MuiTypography-root"
     >
       1,000
     </span>
@@ -159,39 +159,39 @@ exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
     class="MuiBox-root css-34ji4n"
   >
     <span
-      class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-smallText1 css-z2uw0f-MuiTypography-root"
     >
       numberFloat
     </span>
     <span
-      class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-smallText1 css-ekwlr8-MuiTypography-root"
     >
       -25.67
     </span>
   </div>
   <div
-    class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-hidden css-bz4dnt-MuiCollapse-root"
+    class="MuiCollapse-root MuiCollapse-vertical MuiCollapse-hidden css-cwrbtg-MuiCollapse-root"
     style="min-height: 0px;"
   >
     <div
-      class="MuiCollapse-wrapper MuiCollapse-vertical css-smkl36-MuiCollapse-wrapper"
+      class="MuiCollapse-wrapper MuiCollapse-vertical css-1x6hinx-MuiCollapse-wrapper"
     >
       <div
-        class="MuiCollapse-wrapperInner MuiCollapse-vertical css-9l5vo-MuiCollapse-wrapperInner"
+        class="MuiCollapse-wrapperInner MuiCollapse-vertical css-1i4ywhz-MuiCollapse-wrapperInner"
       >
         <div
           class="MuiBox-root css-34ji4n"
         >
           <span
-            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-smallText1 css-z2uw0f-MuiTypography-root"
           >
             null
           </span>
           <span
-            class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-smallText1 css-ekwlr8-MuiTypography-root"
           >
             <span
-              class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-z2uw0f-MuiTypography-root"
             >
               &lt;null value&gt;
             </span>
@@ -201,12 +201,12 @@ exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
           class="MuiBox-root css-34ji4n"
         >
           <span
-            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-smallText1 css-z2uw0f-MuiTypography-root"
           >
             true
           </span>
           <span
-            class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-smallText1 css-ekwlr8-MuiTypography-root"
           >
             true
           </span>
@@ -215,12 +215,12 @@ exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
           class="MuiBox-root css-34ji4n"
         >
           <span
-            class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-smallText1 css-z2uw0f-MuiTypography-root"
           >
             false
           </span>
           <span
-            class="MuiTypography-root MuiTypography-smallText1 css-mdf1j6-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-smallText1 css-ekwlr8-MuiTypography-root"
           >
             false
           </span>
@@ -229,7 +229,7 @@ exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
     </div>
   </div>
   <span
-    class="MuiTypography-root MuiTypography-smallText1 css-e8wjbd-MuiTypography-root"
+    class="MuiTypography-root MuiTypography-smallText1 css-a8zhlg-MuiTypography-root"
   >
     3 more
     <button
@@ -245,7 +245,7 @@ exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-15r5pc7-MuiSvgIcon-root"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-18y5paw-MuiSvgIcon-root"
           data-testid="AddBoxOutlinedIcon"
           focusable="false"
           viewBox="0 0 24 24"
@@ -260,10 +260,10 @@ exports[`JSONTableCellRenderer handles "Object of primitives" case 1`] = `
 </div>
 `;
 
-exports[`JSONTableCellRenderer handles "complex array" case 1`] = `
+exports[`JSONTableCellRenderer > handles complex array case 1`] = `
 <div>
   <span
-    class="MuiTypography-root MuiTypography-smallText1 css-1i0dbvc-MuiTypography-root"
+    class="MuiTypography-root MuiTypography-smallText1 css-1iri0n7-MuiTypography-root"
   >
     Expand
      all
@@ -280,7 +280,7 @@ exports[`JSONTableCellRenderer handles "complex array" case 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-15r5pc7-MuiSvgIcon-root"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-18y5paw-MuiSvgIcon-root"
           data-testid="AddBoxOutlinedIcon"
           focusable="false"
           viewBox="0 0 24 24"
@@ -345,10 +345,10 @@ exports[`JSONTableCellRenderer handles "complex array" case 1`] = `
 </div>
 `;
 
-exports[`JSONTableCellRenderer handles "complex object" case 1`] = `
+exports[`JSONTableCellRenderer > handles complex object case 1`] = `
 <div>
   <span
-    class="MuiTypography-root MuiTypography-smallText1 css-1i0dbvc-MuiTypography-root"
+    class="MuiTypography-root MuiTypography-smallText1 css-1iri0n7-MuiTypography-root"
   >
     Expand
      all
@@ -365,7 +365,7 @@ exports[`JSONTableCellRenderer handles "complex object" case 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-15r5pc7-MuiSvgIcon-root"
+          class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-18y5paw-MuiSvgIcon-root"
           data-testid="AddBoxOutlinedIcon"
           focusable="false"
           viewBox="0 0 24 24"
@@ -468,13 +468,13 @@ exports[`JSONTableCellRenderer handles "complex object" case 1`] = `
 </div>
 `;
 
-exports[`JSONTableCellRenderer handles "null" case 1`] = `
+exports[`JSONTableCellRenderer > handles null case 1`] = `
 <div>
   <span
-    class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+    class="MuiTypography-root MuiTypography-smallText1 css-z2uw0f-MuiTypography-root"
   >
     <span
-      class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-z2uw0f-MuiTypography-root"
     >
       &lt;null value&gt;
     </span>
@@ -482,23 +482,23 @@ exports[`JSONTableCellRenderer handles "null" case 1`] = `
 </div>
 `;
 
-exports[`JSONTableCellRenderer handles "one item" case 1`] = `
+exports[`JSONTableCellRenderer > handles one item case 1`] = `
 <div>
   <span
-    class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+    class="MuiTypography-root MuiTypography-smallText1 css-z2uw0f-MuiTypography-root"
   >
     foo
   </span>
 </div>
 `;
 
-exports[`JSONTableCellRenderer handles "one null item" case 1`] = `
+exports[`JSONTableCellRenderer > handles one null item case 1`] = `
 <div>
   <span
-    class="MuiTypography-root MuiTypography-smallText1 css-37jdci-MuiTypography-root"
+    class="MuiTypography-root MuiTypography-smallText1 css-z2uw0f-MuiTypography-root"
   >
     <span
-      class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-37jdci-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-smallText1 SRC-inactive css-z2uw0f-MuiTypography-root"
     >
       &lt;null value&gt;
     </span>

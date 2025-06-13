@@ -16,7 +16,7 @@ function renderComponent(showSpinner: boolean = false) {
 
 describe('SpinnerButton tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('Renders as a button with correct properties', () => {

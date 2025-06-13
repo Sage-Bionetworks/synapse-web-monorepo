@@ -10,7 +10,6 @@ import {
   DiscussionThreadBundle,
   DiscussionThreadOrder,
   Forum,
-  PaginatedIds,
   PaginatedResults,
 } from '@sage-bionetworks/synapse-types'
 import {
@@ -25,13 +24,13 @@ import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 
 export function useGetModerators(
   forumId: string,
-  options?: Partial<UseQueryOptions<PaginatedIds, SynapseClientError>>,
+  options?: Partial<UseQueryOptions<string[], SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
   return useQuery({
     ...options,
     queryKey: keyFactory.getForumModeratorsQueryKey(forumId),
-    queryFn: () => SynapseClient.getModerators(accessToken, forumId),
+    queryFn: () => SynapseClient.getAllModerators(accessToken, forumId),
   })
 }
 

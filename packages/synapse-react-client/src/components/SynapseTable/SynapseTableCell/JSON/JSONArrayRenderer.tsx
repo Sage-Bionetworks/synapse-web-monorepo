@@ -47,7 +47,14 @@ export function JSONArrayRenderer(props: JSONArrayRendererProps) {
       )}
       <Collapse in={expanded}>
         {value.map((val: JSONPrimitiveType, index: number) => (
-          <Box display={'flex'} gap={0.5} mb={1} key={index}>
+          <Box
+            key={index}
+            sx={{
+              display: 'flex',
+              gap: 0.5,
+              mb: 1,
+            }}
+          >
             <Typography variant={'smallText1'}>
               <JSONPrimitiveRenderer value={val} />
             </Typography>

@@ -33,10 +33,10 @@ const CURRENT_USER_RESOURCE_ACCESS: ResourceAccess = {
   accessType: getAccessTypeFromPermissionLevel('CAN_ADMINISTER'),
 }
 
-const sendMessageSpy = jest.spyOn(SynapseClient, 'sendMessage')
+const sendMessageSpy = vi.spyOn(SynapseClient, 'sendMessage')
 
 describe('useNotifyNewACLUsers', () => {
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => vi.clearAllMocks())
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())

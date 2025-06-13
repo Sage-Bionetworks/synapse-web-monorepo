@@ -1,7 +1,7 @@
 import {
   Box,
   Button,
-  Grid,
+  GridLegacy as Grid,
   Link,
   Paper,
   Typography,
@@ -17,10 +17,27 @@ import {
 } from '@/components/useSourceApp'
 import ShowMore from 'synapse-react-client/components/ShowMore/ShowMore'
 import { useSourceAppConfigs } from 'synapse-react-client/utils/hooks/useSourceAppConfigs'
+import {
+  ColumnSingleValueFilterOperator,
+  ColumnSingleValueQueryFilter,
+} from '@sage-bionetworks/synapse-types'
 
 function SageResourcesPageInternal() {
   const theme = useTheme()
-  const sourceAppConfigs = useSourceAppConfigs(sourceAppConfigTableID)
+  const additionalFilters: ColumnSingleValueQueryFilter[] = [
+    {
+      isDefiningCondition: false,
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      columnName: 'portalType',
+      operator: ColumnSingleValueFilterOperator.EQUAL,
+      values: ['SynapsePortal'],
+    },
+  ]
+  const sourceAppConfigs = useSourceAppConfigs(
+    sourceAppConfigTableID,
+    additionalFilters,
+  )
   const sageSourceAppConfig = useSourceApp()
   return (
     <StyledOuterContainer>
@@ -104,7 +121,13 @@ function SageResourcesPageInternal() {
             py: theme.spacing(0),
           }}
         >
-          <Grid container spacing={5} mx={{ paddingTop: '20px' }}>
+          <Grid
+            container
+            spacing={5}
+            sx={{
+              paddingTop: '20px',
+            }}
+          >
             {sourceAppConfigs?.map(config => {
               if (
                 config.isPublicized &&

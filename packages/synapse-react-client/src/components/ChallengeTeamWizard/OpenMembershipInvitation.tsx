@@ -90,7 +90,11 @@ export function OpenMembershipInvitation(props: AcceptInvitationProps) {
   }
 
   return (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       <Typography variant={'body1'}>
         <UserBadge userId={matchingInvitation.createdBy} /> has invited you to
         join{' '}

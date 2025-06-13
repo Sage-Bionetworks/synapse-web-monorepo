@@ -348,7 +348,7 @@
     margin-bottom: 8px;
   }
 
-  .array-item {
+  .rjsf-array-item {
     border: 1px solid SrcVariables.$gray-dark;
     padding: 2rem 1rem;
     overflow: auto;
@@ -362,8 +362,8 @@
     }
   }
 
-  .array-item-move-down,
-  .array-item-move-down {
+  .rjsf-array-item-move-down,
+  .rjsf-array-item-move-down {
     display: none;
   }
   legend {
@@ -412,15 +412,15 @@
       margin-right: 1rem;
       padding: 2px;
     }
-    .array-item-remove::after {
+    .rjsf-array-item-remove::after {
       content: 'Remove';
     }
-    button.array-item-move-up,
-    button.array-item-move-down {
+    button.rjsf-array-item-move-up,
+    button.rjsf-array-item-move-down {
       display: none;
     }
   }
-  .array-item-add {
+  .rjsf-array-item-add {
     margin: 0 1.6rem 2rem 1.6rem;
     padding: 0 3.2rem 0 0;
     width: 100%;

@@ -1,5 +1,12 @@
 import { useSourceAppConfigs } from '@/utils/hooks'
-import { Box, Button, Grid, Popover, Typography, useTheme } from '@mui/material'
+import {
+  Box,
+  Button,
+  GridLegacy as Grid,
+  Popover,
+  Typography,
+  useTheme,
+} from '@mui/material'
 import {
   ColumnSingleValueQueryFilter,
   ColumnSingleValueFilterOperator,
@@ -12,6 +19,7 @@ export type SageResourcesPopoverProps = {
   resourceName?: string
   description?: string
   filterByType?: 'SynapsePortal' | 'SageSolution'
+  allResourcesUrl?: string
 }
 
 export function SageResourcesPopover({
@@ -21,6 +29,7 @@ export function SageResourcesPopover({
   resourceName = 'Portals',
   description = 'Community data portals in Sage Bionetworks serve as specialized platforms designed to facilitate open data sharing and collaboration among researchers.',
   filterByType,
+  allResourcesUrl,
 }: SageResourcesPopoverProps) {
   const theme = useTheme()
   const open = Boolean(anchorEl)
@@ -77,20 +86,22 @@ export function SageResourcesPopover({
               <Typography variant="body1" sx={{ pb: '10px', fontWeight: 500 }}>
                 {description}
               </Typography>
-              <Button
-                type="button"
-                color="primary"
-                variant="contained"
-                sx={{
-                  p: '10px 50px',
-                  mt: '30px',
-                  height: '100%',
-                  '&:hover': { color: 'white' },
-                }}
-                href="https://accounts.synapse.org/sageresources"
-              >
-                See All {resourceName}
-              </Button>
+              {allResourcesUrl && (
+                <Button
+                  type="button"
+                  color="primary"
+                  variant="contained"
+                  sx={{
+                    p: '10px 50px',
+                    mt: '30px',
+                    height: '100%',
+                    '&:hover': { color: 'white' },
+                  }}
+                  href={allResourcesUrl}
+                >
+                  See all {resourceName}
+                </Button>
+              )}
             </Box>
           </Grid>
           <Grid item xs={12} lg={9}>

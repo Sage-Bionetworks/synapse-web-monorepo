@@ -126,11 +126,20 @@ export const CreateChallengeTeam = forwardRef(function CreateChallengeTeam(
         onChange={event => handleTeamUpdate({ name: event.target.value })}
         disabled={mutationIsPending}
       />
-      <Box display="flex">
+      <Box
+        sx={{
+          display: 'flex',
+        }}
+      >
         <TextField
           id="description"
           label={
-            <Box display="flex" gap={2}>
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 2,
+              }}
+            >
               <Box>Team Description</Box>
             </Box>
           }
@@ -144,11 +153,20 @@ export const CreateChallengeTeam = forwardRef(function CreateChallengeTeam(
           disabled={mutationIsPending}
         />
       </Box>
-      <Box display="flex">
+      <Box
+        sx={{
+          display: 'flex',
+        }}
+      >
         <TextField
           id="message"
           label={
-            <Box display="flex" gap={2}>
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 2,
+              }}
+            >
               <Box>Recruitment Message</Box>
             </Box>
           }

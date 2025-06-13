@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react'
 import CTASectionWrapper, { CTASectionWrapperProps } from './CTASectionWrapper'
-import '@testing-library/jest-dom'
 import { Button, Typography, Link } from '@mui/material'
 import { AddAlertTwoTone } from '@mui/icons-material'
 

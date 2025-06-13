@@ -19,8 +19,10 @@ const renderNextStepLinkComponent = (props: NextStepLinkProps) => {
   return render(<NextStepLink {...props} />)
 }
 
+const mockOnNavActionFn = vi.fn(() => 'ok')
+
 const mock = {
-  onNavActionFn: jest.fn(() => 'ok'),
+  onNavActionFn: mockOnNavActionFn,
 }
 
 describe('NavButtons tests', () => {
@@ -70,14 +72,13 @@ describe('NavButtons tests', () => {
     })
 
     it('should callback with correct params', async () => {
-      const spy = jest.spyOn(mock, 'onNavActionFn')
       renderNavButtonsComponent(props)
       const buttons = screen.getAllByRole('button')
       const prevButton = buttons.find(button =>
         button.classList.contains('prev'),
       )
       await userEvent.click(prevButton!)
-      expect(spy).toHaveBeenCalledWith(NavActionEnum.PREVIOUS)
+      expect(mockOnNavActionFn).toHaveBeenCalledWith(NavActionEnum.PREVIOUS)
     })
   })
 
@@ -103,17 +104,16 @@ describe('NavButtons tests', () => {
     })
 
     test('should callback with correct params', async () => {
-      const spy = jest.spyOn(mock, 'onNavActionFn')
       renderNavButtonsComponent(props)
       const buttons = screen.getAllByRole('button')
       const nextButton = buttons.find(button =>
         button.classList.contains('next'),
       )
       await userEvent.click(nextButton!)
-      expect(spy).toHaveBeenCalledWith(NavActionEnum.NEXT)
+      expect(mockOnNavActionFn).toHaveBeenCalledWith(NavActionEnum.NEXT)
       const saveButton = screen.getByRole('button', { name: 'SAVE' })
       await userEvent.click(saveButton)
-      expect(spy).toHaveBeenCalledWith(NavActionEnum.SAVE)
+      expect(mockOnNavActionFn).toHaveBeenCalledWith(NavActionEnum.SAVE)
     })
   })
 })
@@ -132,11 +132,10 @@ describe('NextLink tests', () => {
   })
 
   test('should call calback function with appropriate params', async () => {
-    const spy = jest.spyOn(mock, 'onNavActionFn')
     const { container } = renderNextStepLinkComponent(props)
     const link = container.querySelector('span.nav-link a')!
 
     await userEvent.click(link)
-    expect(spy).toHaveBeenCalledWith(stepsArray[2])
+    expect(mockOnNavActionFn).toHaveBeenCalledWith(stepsArray[2])
   })
 })

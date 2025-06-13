@@ -12,13 +12,13 @@ import {
   Checkbox,
   FormControlLabel,
   FormGroup,
+  Grid,
   IconButton,
   InputLabel,
   Link,
   Switch,
   TextField,
   Typography,
-  Unstable_Grid2 as Grid,
 } from '@mui/material'
 import {
   ErrorResponseCode,
@@ -53,10 +53,12 @@ const NEW_ENDPOINT_CONTACT_FORM_URL = `https://sagebionetworks.jira.com/serviced
 function UpdateWarningWrapper(props: PropsWithChildren) {
   return (
     <Box
-      sx={{ backgroundColor: 'rgb(178, 36, 42, 0.03)' }}
-      mt="10px"
-      py={2}
-      px={4}
+      sx={{
+        mt: '10px',
+        py: 2,
+        px: 4,
+        backgroundColor: 'rgb(178, 36, 42, 0.03)',
+      }}
     >
       <Typography sx={{ my: 1 }} color="error" variant="headline3" gutterBottom>
         DANGER ZONE
@@ -192,7 +194,7 @@ export default function CreateWebhookModal(props: CreateWebhookModalProps) {
       content={
         <>
           <Grid container spacing={2}>
-            <Grid xs={12}>
+            <Grid size={12}>
               <Typography variant={'body1'} gutterBottom>
                 Specify the ID of the entity and the types of events you would
                 like to receive. Once you complete this step, Synapse will send
@@ -201,7 +203,12 @@ export default function CreateWebhookModal(props: CreateWebhookModalProps) {
                 verified endpoint.
               </Typography>
             </Grid>
-            <Grid xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+              }}
+            >
               <EntityFinderModal
                 configuration={{
                   initialScope: FinderScope.ALL_PROJECTS,
@@ -247,16 +254,18 @@ export default function CreateWebhookModal(props: CreateWebhookModalProps) {
                 onChange={e => {
                   setObjectId(e.target.value)
                 }}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton onClick={() => setShowEntityFinder(true)}>
-                      <SearchOutlined />
-                    </IconButton>
-                  ),
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <IconButton onClick={() => setShowEntityFinder(true)}>
+                        <SearchOutlined />
+                      </IconButton>
+                    ),
+                  },
                 }}
               />
             </Grid>
-            <Grid xs={6}>
+            <Grid size={6}>
               <FormControlLabel
                 control={<Switch />}
                 labelPlacement={'top'}
@@ -267,7 +276,12 @@ export default function CreateWebhookModal(props: CreateWebhookModalProps) {
                 }}
               />
             </Grid>
-            <Grid xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+              }}
+            >
               <FormGroup>
                 <InputLabel required>Events</InputLabel>
                 {Object.values(SynapseEventType).map(eventType => (
@@ -292,7 +306,7 @@ export default function CreateWebhookModal(props: CreateWebhookModalProps) {
                 ))}
               </FormGroup>
             </Grid>
-            <Grid xs={12}>
+            <Grid size={12}>
               <RevalidationFieldsWrapper>
                 <TextField
                   label={'Endpoint'}

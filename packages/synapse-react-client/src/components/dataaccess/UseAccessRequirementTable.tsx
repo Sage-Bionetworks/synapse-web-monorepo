@@ -116,7 +116,9 @@ const columns = [
             <Typography
               component={'span'}
               variant={'smallText1'}
-              color={'grey.700'}
+              sx={{
+                color: 'grey.700',
+              }}
             >
               ({projectId})
             </Typography>

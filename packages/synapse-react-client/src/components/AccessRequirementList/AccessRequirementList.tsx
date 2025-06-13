@@ -111,10 +111,6 @@ const DialogSubsectionHeader: StyledComponent<TypographyProps> = styled(
   borderBottom: '1px solid',
   borderColor: theme.palette.grey['200'],
 }))
-DialogSubsectionHeader.defaultProps = {
-  ...DialogSubsectionHeader.defaultProps,
-  variant: 'h4',
-}
 
 export const checkHasUnsupportedRequirement = (
   accessRequirements: Array<AccessRequirement>,
@@ -416,13 +412,13 @@ export default function AccessRequirementList(
         <>
           <DialogBaseTitle title={dialogTitle} onCancel={onHide} />
           <DialogContent>
-            <DialogSubsectionHeader sx={{ mt: 0 }}>
+            <DialogSubsectionHeader variant={'h4'} sx={{ mt: 0 }}>
               What is this request for?
             </DialogSubsectionHeader>
             <Typography variant={'body1'} component={'span'}>
               {requestDetails}
             </Typography>
-            <DialogSubsectionHeader>
+            <DialogSubsectionHeader variant={'h4'}>
               What do I need to do?
             </DialogSubsectionHeader>
             <AuthenticatedRequirement />
