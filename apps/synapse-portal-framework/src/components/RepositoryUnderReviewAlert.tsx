@@ -4,7 +4,9 @@ export type RepositoryUnderReviewAlertProps = {
   portalSpecificDisclaimer?: string
 }
 
-function RepositoryUnderReviewAlert({ portalSpecificDisclaimer }) {
+function RepositoryUnderReviewAlert({
+  portalSpecificDisclaimer,
+}: RepositoryUnderReviewAlertProps) {
   return (
     <>
       <FullWidthAlert
