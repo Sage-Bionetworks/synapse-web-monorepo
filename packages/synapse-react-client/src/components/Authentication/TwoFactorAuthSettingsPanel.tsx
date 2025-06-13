@@ -27,7 +27,7 @@ export default function TwoFactorAuthSettingsPanel(
         Certain data may require 2FA to be turned on for your account in order
         to request access.
       </Typography>
-      <Stack direction={'row'} gap={1}>
+      <Stack direction={'row'} sx={{ gap: 1 }}>
         <Button
           variant={'text'}
           onClick={() => {

@@ -163,10 +163,12 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
         content={
           <>
             <Box
-              width={cropperSizePx}
-              height={cropperSizePx}
-              margin="20px auto"
-              position="relative"
+              sx={{
+                width: cropperSizePx,
+                height: cropperSizePx,
+                margin: '20px auto',
+                position: 'relative',
+              }}
             >
               <Cropper
                 image={image}
@@ -179,7 +181,12 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
                 onCropComplete={onCropComplete}
               />
             </Box>
-            <Box justifyContent="center" display="flex">
+            <Box
+              sx={{
+                justifyContent: 'center',
+                display: 'flex',
+              }}
+            >
               <Slider
                 min={1}
                 max={3}

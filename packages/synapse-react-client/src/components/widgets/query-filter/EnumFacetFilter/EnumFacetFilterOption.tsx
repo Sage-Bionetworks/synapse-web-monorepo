@@ -27,9 +27,6 @@ export function EnumFacetFilterOption(props: EnumFacetFilterOptionProps) {
 
   return (
     <Box
-      display="flex"
-      justifyContent="space-between"
-      alignItems="center"
       className="EnumFacetFilter__checkboxContainer"
       onClick={() => {
         // If this is a dropdown option, clicking anywhere in the field should toggle selection
@@ -38,6 +35,11 @@ export function EnumFacetFilterOption(props: EnumFacetFilterOptionProps) {
         }
       }}
       onMouseEnter={onHover}
+      sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}
     >
       <FormControlLabel
         control={control}

@@ -51,8 +51,19 @@ export function RowSelectionUI(props: RowSelectionUIProps) {
       >
         Clear Selection
       </Button>
-      <Box display={'flex'} gap={2.5} alignItems={'center'}>
-        <Box display={'flex'} gap={1.5}>
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 2.5,
+          alignItems: 'center',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 1.5,
+          }}
+        >
           <InlineBadge
             badgeContent={selectedRowCount.toLocaleString()}
             color="primary"

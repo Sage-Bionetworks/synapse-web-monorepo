@@ -166,6 +166,10 @@ export const EntityUpload = forwardRef(function EntityUpload(
       />
       <Stack
         sx={{
+          py: 3,
+          gap: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
           width: '100%',
           border: '1px dashed #D9D9D9',
           backgroundColor: 'grey.100',
@@ -174,17 +178,18 @@ export const EntityUpload = forwardRef(function EntityUpload(
             ? disabledUploadPaneSx
             : {}),
         }}
-        py={3}
-        gap={1}
-        justifyContent={'center'}
-        alignItems={'center'}
       >
         {(isPrecheckingUpload || isLoading) && (
           <>
             <div>
               <SynapseSpinner size={40} />
             </div>
-            <Typography variant={'smallText1'} my={2}>
+            <Typography
+              variant={'smallText1'}
+              sx={{
+                my: 2,
+              }}
+            >
               {isLoading ? 'Loading...' : 'Preparing files for upload...'}
             </Typography>
           </>
@@ -228,7 +233,12 @@ export const EntityUpload = forwardRef(function EntityUpload(
               webkitdirectory="true"
             />
 
-            <Typography variant={'body1'} my={2}>
+            <Typography
+              variant={'body1'}
+              sx={{
+                my: 2,
+              }}
+            >
               <Link onClick={handleClick}>Click to upload</Link> or drag and
               drop
             </Typography>
@@ -238,7 +248,9 @@ export const EntityUpload = forwardRef(function EntityUpload(
               onClose={handleClose}
               anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
               transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-              TransitionComponent={Fade}
+              slots={{
+                transition: Fade,
+              }}
             >
               <MenuItem
                 onClick={() => {
@@ -313,13 +325,14 @@ export const EntityUpload = forwardRef(function EntityUpload(
           </Typography>
           <Box
             sx={{
+              // Add negative margin equivalent to the container's padding
+              // This will put the scrollbar on the right edge of the container
+              mx: `${UPLOAD_CONTAINER_PADDING_X_PX * -1}px`,
+
               '& > div > div > :not(:last-child)': {
                 borderBottom: 'solid 1px #EAECEE',
               },
             }}
-            // Add negative margin equivalent to the container's padding
-            // This will put the scrollbar on the right edge of the container
-            mx={`${UPLOAD_CONTAINER_PADDING_X_PX * -1}px`}
           >
             <FixedSizeList
               itemSize={FILE_UPLOAD_PROGRESS_COMPONENT_HEIGHT_PX}

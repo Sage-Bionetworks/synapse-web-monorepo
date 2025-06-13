@@ -25,11 +25,26 @@ export function AccessRequirementTextInstructions(
   return (
     <>
       {Boolean(oldInstructions) && (
-        <Box mb={2}>
-          <Typography variant="body1" fontWeight={700} mb={1}>
+        <Box
+          sx={{
+            mb: 2,
+          }}
+        >
+          <Typography
+            variant="body1"
+            sx={{
+              fontWeight: 700,
+              mb: 1,
+            }}
+          >
             Legacy text-only instructions
           </Typography>
-          <Typography variant="body1" mb={1}>
+          <Typography
+            variant="body1"
+            sx={{
+              mb: 1,
+            }}
+          >
             {oldInstructions}
           </Typography>
           {allowDelete && (

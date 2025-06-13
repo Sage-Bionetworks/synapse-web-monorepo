@@ -1,12 +1,12 @@
 import { useSynapseContext } from '@/utils'
-import { Box, TextField, TextFieldProps } from '@mui/material'
+import { Box, InputBaseProps, TextField, TextFieldProps } from '@mui/material'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import {
   DateTimePicker as MuiDateTimePicker,
   DateTimePickerProps as MuiDateTimePickerProps,
 } from '@mui/x-date-pickers/DateTimePicker'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import dayjs, { Dayjs } from 'dayjs'
+import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
@@ -16,8 +16,6 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(advancedFormat)
 
-export type DateTimePickerProps = MuiDateTimePickerProps<Dayjs>
-
 function TextFieldWithTzShown(props: TextFieldProps) {
   const { utcTime } = useSynapseContext()
   const tzDisplay = utcTime ? 'UTC' : dayjs().tz(dayjs.tz.guess()).format('z')
@@ -25,20 +23,31 @@ function TextFieldWithTzShown(props: TextFieldProps) {
   return (
     <TextField
       {...props}
-      InputProps={{
-        ...props.InputProps,
-        endAdornment: (
-          <>
-            <Box ml={0.5}>{tzDisplay}</Box>
-            {props.InputProps?.endAdornment}
-          </>
-        ),
+      slotProps={{
+        input: {
+          ...props.slotProps?.input,
+          endAdornment: (
+            <>
+              <Box
+                sx={{
+                  ml: 0.5,
+                }}
+              >
+                {tzDisplay}
+              </Box>
+              {
+                (props.slotProps?.input as InputBaseProps | undefined)
+                  ?.endAdornment
+              }
+            </>
+          ),
+        },
       }}
     />
   )
 }
 
-export default function DateTimePicker(props: DateTimePickerProps) {
+export default function DateTimePicker(props: MuiDateTimePickerProps) {
   const { value, slots, ...rest } = props
   const { utcTime } = useSynapseContext()
 
@@ -55,7 +64,8 @@ export default function DateTimePicker(props: DateTimePickerProps) {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <MuiDateTimePicker<Dayjs>
+      <MuiDateTimePicker
+        enableAccessibleFieldDOMStructure={false}
         value={valueAsDayjs}
         slots={{
           ...slots,

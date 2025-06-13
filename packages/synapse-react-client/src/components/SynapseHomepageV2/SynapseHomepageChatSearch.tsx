@@ -1,11 +1,14 @@
+import {
+  Box,
+  FormControl,
+  InputAdornment,
+  MenuItem,
+  OutlinedInput,
+  Select,
+  useTheme,
+} from '@mui/material'
+import { Color } from '@mui/material/styles'
 import { FormEventHandler, KeyboardEventHandler, useState } from 'react'
-import { MenuItem, OutlinedInput } from '@mui/material'
-import { FormControl } from '@mui/material'
-import { InputAdornment } from '@mui/material'
-import { Box } from '@mui/material'
-import { Select } from '@mui/material'
-import { useTheme } from '@mui/material'
-import { ColorPartial } from '@mui/material/styles/createPalette'
 import { getSearchToken } from '../SynapseNavDrawer/SynapseNavDrawer'
 
 export type SynapseHomepageChatSearchProps = {
@@ -63,7 +66,7 @@ export function SynapseHomepageChatSearch({
                   fontSize: '24px',
                   fontWeight: 400,
                   minWidth: '125px',
-                  color: (theme.palette.secondary as ColorPartial)[600],
+                  color: (theme.palette.secondary as unknown as Color)[600],
                   '& div[role="combobox"]': {
                     p: '14px 12px',
                   },
