@@ -47,12 +47,14 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
   return (
     <Box
       id={id}
-      display={'flex'}
-      flexDirection={isMultiFileUpload ? 'column' : 'row'}
-      alignItems={isMultiFileUpload ? 'flex-start' : 'center'}
-      justifyContent={'flex-start'}
-      gap={2}
-      sx={{ my: 2 }}
+      sx={{
+        display: 'flex',
+        flexDirection: isMultiFileUpload ? 'column' : 'row',
+        alignItems: isMultiFileUpload ? 'flex-start' : 'center',
+        justifyContent: 'flex-start',
+        gap: 2,
+        my: 2,
+      }}
     >
       <FileUpload
         id={`${id}-upload`}

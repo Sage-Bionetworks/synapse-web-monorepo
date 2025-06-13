@@ -65,11 +65,21 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
               }
               key={evaluation.id}
               label={
-                <Box display={'flex'} alignItems={'center'} gap={1}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                  }}
+                >
                   {evaluation.name}
                   {evaluation.submissionInstructionsMessage &&
                     evaluation.submissionInstructionsMessage.length > 0 && (
-                      <Box fontSize={'10px'}>
+                      <Box
+                        sx={{
+                          fontSize: '10px',
+                        }}
+                      >
                         <HelpPopover
                           markdownText={
                             evaluation.submissionInstructionsMessage
@@ -92,7 +102,13 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
           ))}
         </FormGroup>
       </FormControl>
-      <Box display={'flex'} my={2} gap={1}>
+      <Box
+        sx={{
+          display: 'flex',
+          my: 2,
+          gap: 1,
+        }}
+      >
         {currentPage > 0 && (
           <Button
             variant={'outlined'}

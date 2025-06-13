@@ -19,7 +19,11 @@ import { displayToast } from '../ToastMessage/ToastMessage'
 
 const NoSearchResultComponent = () => {
   return (
-    <Box textAlign={'center'}>
+    <Box
+      sx={{
+        textAlign: 'center',
+      }}
+    >
       <NoSearchResults height="181px" sx={{ pt: '40px', pb: '10px' }} />
       <Typography variant="body1">No results with this query</Typography>
       <Typography variant="body1Italic">
@@ -95,25 +99,6 @@ export const ForumSearch = (props: ForumSearchProps) => {
               width: '100%',
             },
           })}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-            endAdornment: searchInput && (
-              <InputAdornment position="end">
-                <IconButton
-                  size={'small'}
-                  onClick={() => {
-                    onResetSearch()
-                  }}
-                >
-                  <IconSvg icon="clear" wrap={false} />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
           type="search"
           placeholder="Search discussions"
           value={searchInput}
@@ -124,6 +109,27 @@ export const ForumSearch = (props: ForumSearchProps) => {
             if (event.key === 'Enter') {
               onSearch()
             }
+          }}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+              endAdornment: searchInput && (
+                <InputAdornment position="end">
+                  <IconButton
+                    size={'small'}
+                    onClick={() => {
+                      onResetSearch()
+                    }}
+                  >
+                    <IconSvg icon="clear" wrap={false} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
           }}
         />
       </div>
@@ -145,8 +151,10 @@ export const ForumSearch = (props: ForumSearchProps) => {
                 <Typography
                   variant="body1Italic"
                   className="ResultsText"
-                  my={2}
-                  mx={1}
+                  sx={{
+                    my: 2,
+                    mx: 1,
+                  }}
                 >
                   Results for &quot;{lastSearchTerm}&quot; in {entity?.name}:
                 </Typography>

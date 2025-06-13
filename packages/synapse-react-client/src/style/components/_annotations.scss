@@ -4,7 +4,7 @@
   .react-select-container > .form-control {
     height: 53.33px;
   }
-  .form-group.field-array {
+  .form-group.rjsf-field-array {
     margin-bottom: 0px;
   }
   .form-control {
@@ -19,7 +19,7 @@
     margin: 60px auto;
   }
 
-  .array-item .LabelContainer {
+  .rjsf-array-item .LabelContainer {
     display: none !important;
   }
 
@@ -42,12 +42,12 @@
       padding: 0px 10px;
     }
 
-    .field-array > .field-description {
+    .rjsf-field-array > .field-description {
       margin-top: 0px;
       margin-bottom: 8px;
     }
 
-    .array-item {
+    .rjsf-array-item {
       .field-description {
         display: none;
       }
@@ -80,7 +80,7 @@
       background-color: SRC.$gray-light;
     }
 
-    .field-array > .array-item > label.form-label {
+    .rjsf-field-array > .rjsf-array-item > label.form-label {
       display: none;
     }
 

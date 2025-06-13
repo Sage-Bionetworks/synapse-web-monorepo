@@ -16,7 +16,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import { ColorPartial } from '@mui/material/styles/createPalette'
+import { Color } from '@mui/material/styles'
 import {
   AgentAccessLevel,
   AgentChatRequest,
@@ -224,7 +224,9 @@ export function SynapseChat({
     }
   }
 
-  const sendMessageButtonColor = (theme.palette.secondary as ColorPartial)[300]
+  const sendMessageButtonColor = (
+    theme.palette.secondary as unknown as Color
+  )[300]
   if (createAgentSessionError) {
     return (
       <Alert severity={'error'} sx={{ my: 2 }}>
@@ -236,11 +238,13 @@ export function SynapseChat({
     latestTraceEvent?.friendlyMessage ?? 'Processing...'
   return (
     <Box
-      display="flex"
-      flexDirection="column"
-      justifyContent="space-between"
-      maxWidth="1100px"
-      mx="auto"
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        maxWidth: '1100px',
+        mx: 'auto',
+      }}
     >
       {!hideTitle && (
         <Typography
@@ -360,24 +364,26 @@ export function SynapseChat({
             onChange={e => setUserChatTextfieldValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={`Message ${chatbotName}`}
-            InputProps={{
-              sx: { borderRadius: 96.6 },
-              endAdornment: (
-                <IconButton
-                  disabled={isDisabled}
-                  onClick={handleSendMessage}
-                  sx={{
-                    ml: '7px',
-                    mr: '-8px',
-                    color: sendMessageButtonColor,
-                    borderStyle: 'solid',
-                    borderWidth: isDisabled ? '1px' : '2px',
-                    borderColor: isDisabled ? 'gray' : sendMessageButtonColor,
-                  }}
-                >
-                  <ArrowUpward />
-                </IconButton>
-              ),
+            slotProps={{
+              input: {
+                sx: { borderRadius: 96.6 },
+                endAdornment: (
+                  <IconButton
+                    disabled={isDisabled}
+                    onClick={handleSendMessage}
+                    sx={{
+                      ml: '7px',
+                      mr: '-8px',
+                      color: sendMessageButtonColor,
+                      borderStyle: 'solid',
+                      borderWidth: isDisabled ? '1px' : '2px',
+                      borderColor: isDisabled ? 'gray' : sendMessageButtonColor,
+                    }}
+                  >
+                    <ArrowUpward />
+                  </IconButton>
+                ),
+              },
             }}
           />
           <Typography

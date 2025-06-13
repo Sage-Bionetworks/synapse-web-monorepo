@@ -2,11 +2,52 @@
   "definitions": {
     "binding_item": {
       "type": "object",
-      "required": [],
+      "required": [
+        "name",
+        "species",
+        "cell_line",
+        "binding_affinity",
+        "binding_affinity_constant"
+      ],
       "properties": {
         "name": {
           "type": "string",
           "title": "Experiment Name"
+        },
+        "species": {
+          "type": "string",
+          "title": "Species",
+          "oneOf": [
+            {
+              "const": "mouse",
+              "title": "Mouse"
+            },
+            {
+              "const": "rat",
+              "title": "Rat"
+            },
+            {
+              "const": "non_human_primate",
+              "title": "Non Human Primate"
+            },
+            {
+              "const": "dog",
+              "title": "Dog"
+            },
+            {
+              "const": "ferret",
+              "title": "Ferret"
+            },
+            {
+              "const": "rabbit",
+              "title": "Rabbit"
+            },
+            {
+              "const": "other",
+              "title": "Other"
+            }
+          ],
+          "uniqueItems": true
         },
         "cell_line": {
           "type": "string",
@@ -30,15 +71,89 @@
           "enum": ["Ki", "Kd", "Km"],
           "uniqueItems": true
         }
+      },
+      "dependencies": {
+        "species": {
+          "oneOf": [
+            {
+              "properties": {
+                "species": {
+                  "enum": [
+                    "mouse",
+                    "rat",
+                    "non_human_primate",
+                    "dog",
+                    "ferret",
+                    "rabbit"
+                  ]
+                }
+              },
+              "required": []
+            },
+            {
+              "properties": {
+                "species": {
+                  "enum": ["other"]
+                },
+                "species_other": {
+                  "title": "Other Species",
+                  "type": "string"
+                }
+              },
+              "required": ["species_other"]
+            }
+          ]
+        }
       }
     },
     "efficacy_item": {
       "type": "object",
-      "required": [],
+      "required": [
+        "name",
+        "species",
+        "cell_line",
+        "efficacy_measure",
+        "efficacy_measure_type"
+      ],
       "properties": {
         "name": {
           "type": "string",
           "title": "Experiment Name"
+        },
+        "species": {
+          "type": "string",
+          "title": "Species",
+          "oneOf": [
+            {
+              "const": "mouse",
+              "title": "Mouse"
+            },
+            {
+              "const": "rat",
+              "title": "Rat"
+            },
+            {
+              "const": "non_human_primate",
+              "title": "Non Human Primate"
+            },
+            {
+              "const": "dog",
+              "title": "Dog"
+            },
+            {
+              "const": "ferret",
+              "title": "Ferret"
+            },
+            {
+              "const": "rabbit",
+              "title": "Rabbit"
+            },
+            {
+              "const": "other",
+              "title": "Other"
+            }
+          ],
+          "uniqueItems": true
         },
         "cell_line": {
           "type": "string",
@@ -63,15 +178,64 @@
         "efficacy_measure_type": {
           "type": "string",
           "title": "Efficacy Measure",
-          "enum": ["EC50", "IC50"],
-          "enumNames": ["EC50 (mg/kg)", "IC50 (nmol/L)"],
+          "oneOf": [
+            {
+              "const": "EC50",
+              "title": "EC50 (mg/kg)"
+            },
+            {
+              "const": "IC50",
+              "title": "IC50 (nmol/L)"
+            }
+          ],
           "uniqueItems": true
+        }
+      },
+      "dependencies": {
+        "species": {
+          "oneOf": [
+            {
+              "properties": {
+                "species": {
+                  "enum": [
+                    "mouse",
+                    "rat",
+                    "non_human_primate",
+                    "dog",
+                    "ferret",
+                    "rabbit"
+                  ]
+                }
+              },
+              "required": []
+            },
+            {
+              "properties": {
+                "species": {
+                  "enum": ["other"]
+                },
+                "species_other": {
+                  "title": "Other Species",
+                  "type": "string"
+                }
+              },
+              "required": ["species_other"]
+            }
+          ]
         }
       }
     },
     "ld50_item": {
       "type": "object",
-      "required": ["species", "strain", "sex", "route"],
+      "required": [
+        "name",
+        "species",
+        "strain",
+        "sex",
+        "route",
+        "duration",
+        "ld50"
+      ],
       "properties": {
         "name": {
           "type": "string",
@@ -84,23 +248,35 @@
         "species": {
           "type": "string",
           "title": "Species",
-          "enum": [
-            "mouse",
-            "rat",
-            "non_human_primate",
-            "dog",
-            "ferret",
-            "rabbit",
-            "other"
-          ],
-          "enumNames": [
-            "Mouse",
-            "Rat",
-            "Non Human Primate",
-            "Dog",
-            "Ferret",
-            "Rabbit",
-            "Other"
+          "oneOf": [
+            {
+              "const": "mouse",
+              "title": "Mouse"
+            },
+            {
+              "const": "rat",
+              "title": "Rat"
+            },
+            {
+              "const": "non_human_primate",
+              "title": "Non Human Primate"
+            },
+            {
+              "const": "dog",
+              "title": "Dog"
+            },
+            {
+              "const": "ferret",
+              "title": "Ferret"
+            },
+            {
+              "const": "rabbit",
+              "title": "Rabbit"
+            },
+            {
+              "const": "other",
+              "title": "Other"
+            }
           ],
           "uniqueItems": true
         },
@@ -131,8 +307,20 @@
         "sex": {
           "type": "string",
           "title": "Subject sex",
-          "enum": ["male", "female", "both"],
-          "enumNames": ["Male", "Female", "Both"]
+          "oneOf": [
+            {
+              "const": "male",
+              "title": "Male"
+            },
+            {
+              "const": "female",
+              "title": "Female"
+            },
+            {
+              "const": "both",
+              "title": "Both"
+            }
+          ]
         },
         "duration": {
           "type": "string",
@@ -160,27 +348,42 @@
           "type": "array",
           "title": "What was the route of administration?",
           "uniqueItems": true,
+          "minItems": 1,
           "items": {
             "type": "string",
-            "enum": [
-              "oral",
-              "sublingual",
-              "nasal",
-              "injection",
-              "transdermal",
-              "intrathecal",
-              "formulated_in_food",
-              "formulated_in_drinking_water"
-            ],
-            "enumNames": [
-              "Oral",
-              "Sublingual",
-              "Nasal",
-              "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
-              "Transdermal",
-              "Intrathecal",
-              "Formulated in Food",
-              "Formulated in Drinking Water"
+            "oneOf": [
+              {
+                "const": "oral",
+                "title": "Oral"
+              },
+              {
+                "const": "sublingual",
+                "title": "Sublingual"
+              },
+              {
+                "const": "nasal",
+                "title": "Nasal"
+              },
+              {
+                "const": "injection",
+                "title": "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)"
+              },
+              {
+                "const": "transdermal",
+                "title": "Transdermal"
+              },
+              {
+                "const": "intrathecal",
+                "title": "Intrathecal"
+              },
+              {
+                "const": "formulated_in_food",
+                "title": "Formulated in Food"
+              },
+              {
+                "const": "formulated_in_drinking_water",
+                "title": "Formulated in Drinking Water"
+              }
             ]
           }
         },
@@ -225,7 +428,7 @@
     },
     "acute_dosing_item": {
       "type": "object",
-      "required": ["species", "strain", "sex", "route"],
+      "required": ["name", "species", "strain", "sex", "route", "duration"],
       "properties": {
         "name": {
           "type": "string",
@@ -238,23 +441,35 @@
         "species": {
           "type": "string",
           "title": "Species",
-          "enum": [
-            "mouse",
-            "rat",
-            "non_human_primate",
-            "dog",
-            "ferret",
-            "rabbit",
-            "other"
-          ],
-          "enumNames": [
-            "Mouse",
-            "Rat",
-            "Non Human Primate",
-            "Dog",
-            "Ferret",
-            "Rabbit",
-            "Other"
+          "oneOf": [
+            {
+              "const": "mouse",
+              "title": "Mouse"
+            },
+            {
+              "const": "rat",
+              "title": "Rat"
+            },
+            {
+              "const": "non_human_primate",
+              "title": "Non Human Primate"
+            },
+            {
+              "const": "dog",
+              "title": "Dog"
+            },
+            {
+              "const": "ferret",
+              "title": "Ferret"
+            },
+            {
+              "const": "rabbit",
+              "title": "Rabbit"
+            },
+            {
+              "const": "other",
+              "title": "Other"
+            }
           ],
           "uniqueItems": true
         },
@@ -285,8 +500,20 @@
         "sex": {
           "type": "string",
           "title": "Subject sex",
-          "enum": ["male", "female", "both"],
-          "enumNames": ["Male", "Female", "Both"]
+          "oneOf": [
+            {
+              "const": "male",
+              "title": "Male"
+            },
+            {
+              "const": "female",
+              "title": "Female"
+            },
+            {
+              "const": "both",
+              "title": "Both"
+            }
+          ]
         },
         "duration": {
           "type": "string",
@@ -310,27 +537,42 @@
           "type": "array",
           "title": "What was the route of administration?",
           "uniqueItems": true,
+          "minItems": 1,
           "items": {
             "type": "string",
-            "enum": [
-              "oral",
-              "sublingual",
-              "nasal",
-              "injection",
-              "transdermal",
-              "intrathecal",
-              "formulated_in_food",
-              "formulated_in_drinking_water"
-            ],
-            "enumNames": [
-              "Oral",
-              "Sublingual",
-              "Nasal",
-              "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
-              "Transdermal",
-              "Intrathecal",
-              "Formulated in Food",
-              "Formulated in Drinking Water"
+            "oneOf": [
+              {
+                "const": "oral",
+                "title": "Oral"
+              },
+              {
+                "const": "sublingual",
+                "title": "Sublingual"
+              },
+              {
+                "const": "nasal",
+                "title": "Nasal"
+              },
+              {
+                "const": "injection",
+                "title": "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)"
+              },
+              {
+                "const": "transdermal",
+                "title": "Transdermal"
+              },
+              {
+                "const": "intrathecal",
+                "title": "Intrathecal"
+              },
+              {
+                "const": "formulated_in_food",
+                "title": "Formulated in Food"
+              },
+              {
+                "const": "formulated_in_drinking_water",
+                "title": "Formulated in Drinking Water"
+              }
             ]
           }
         },
@@ -379,7 +621,7 @@
     },
     "chronic_dosing_item": {
       "type": "object",
-      "required": ["species", "strain", "sex", "route"],
+      "required": ["name", "species", "strain", "sex", "route", "duration"],
       "properties": {
         "name": {
           "type": "string",
@@ -392,23 +634,35 @@
         "species": {
           "type": "string",
           "title": "Species",
-          "enum": [
-            "mouse",
-            "rat",
-            "non_human_primate",
-            "dog",
-            "ferret",
-            "rabbit",
-            "other"
-          ],
-          "enumNames": [
-            "Mouse",
-            "Rat",
-            "Non Human Primate",
-            "Dog",
-            "Ferret",
-            "Rabbit",
-            "Other"
+          "oneOf": [
+            {
+              "const": "mouse",
+              "title": "Mouse"
+            },
+            {
+              "const": "rat",
+              "title": "Rat"
+            },
+            {
+              "const": "non_human_primate",
+              "title": "Non Human Primate"
+            },
+            {
+              "const": "dog",
+              "title": "Dog"
+            },
+            {
+              "const": "ferret",
+              "title": "Ferret"
+            },
+            {
+              "const": "rabbit",
+              "title": "Rabbit"
+            },
+            {
+              "const": "other",
+              "title": "Other"
+            }
           ],
           "uniqueItems": true
         },
@@ -439,8 +693,20 @@
         "sex": {
           "type": "string",
           "title": "Subject sex",
-          "enum": ["male", "female", "both"],
-          "enumNames": ["Male", "Female", "Both"]
+          "oneOf": [
+            {
+              "const": "male",
+              "title": "Male"
+            },
+            {
+              "const": "female",
+              "title": "Female"
+            },
+            {
+              "const": "both",
+              "title": "Both"
+            }
+          ]
         },
         "duration": {
           "type": "string",
@@ -464,27 +730,42 @@
           "type": "array",
           "title": "What was the route of administration?",
           "uniqueItems": true,
+          "minItems": 1,
           "items": {
             "type": "string",
-            "enum": [
-              "oral",
-              "sublingual",
-              "nasal",
-              "injection",
-              "transdermal",
-              "intrathecal",
-              "formulated_in_food",
-              "formulated_in_drinking_water"
-            ],
-            "enumNames": [
-              "Oral",
-              "Sublingual",
-              "Nasal",
-              "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
-              "Transdermal",
-              "Intrathecal",
-              "Formulated in Food",
-              "Formulated in Drinking Water"
+            "oneOf": [
+              {
+                "const": "oral",
+                "title": "Oral"
+              },
+              {
+                "const": "sublingual",
+                "title": "Sublingual"
+              },
+              {
+                "const": "nasal",
+                "title": "Nasal"
+              },
+              {
+                "const": "injection",
+                "title": "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)"
+              },
+              {
+                "const": "transdermal",
+                "title": "Transdermal"
+              },
+              {
+                "const": "intrathecal",
+                "title": "Intrathecal"
+              },
+              {
+                "const": "formulated_in_food",
+                "title": "Formulated in Food"
+              },
+              {
+                "const": "formulated_in_drinking_water",
+                "title": "Formulated in Drinking Water"
+              }
             ]
           }
         },
@@ -533,7 +814,7 @@
     },
     "teratogenicity_item": {
       "type": "object",
-      "required": ["species", "strain", "sex", "route"],
+      "required": ["name", "species", "strain", "sex", "route", "duration"],
       "properties": {
         "name": {
           "type": "string",
@@ -546,23 +827,35 @@
         "species": {
           "type": "string",
           "title": "Species",
-          "enum": [
-            "mouse",
-            "rat",
-            "non_human_primate",
-            "dog",
-            "ferret",
-            "rabbit",
-            "other"
-          ],
-          "enumNames": [
-            "Mouse",
-            "Rat",
-            "Non Human Primate",
-            "Dog",
-            "Ferret",
-            "Rabbit",
-            "Other"
+          "oneOf": [
+            {
+              "const": "mouse",
+              "title": "Mouse"
+            },
+            {
+              "const": "rat",
+              "title": "Rat"
+            },
+            {
+              "const": "non_human_primate",
+              "title": "Non Human Primate"
+            },
+            {
+              "const": "dog",
+              "title": "Dog"
+            },
+            {
+              "const": "ferret",
+              "title": "Ferret"
+            },
+            {
+              "const": "rabbit",
+              "title": "Rabbit"
+            },
+            {
+              "const": "other",
+              "title": "Other"
+            }
           ],
           "uniqueItems": true
         },
@@ -593,8 +886,20 @@
         "sex": {
           "type": "string",
           "title": "Subject Sex",
-          "enum": ["male", "female", "both"],
-          "enumNames": ["Male", "Female", "Both"]
+          "oneOf": [
+            {
+              "const": "male",
+              "title": "Male"
+            },
+            {
+              "const": "female",
+              "title": "Female"
+            },
+            {
+              "const": "both",
+              "title": "Both"
+            }
+          ]
         },
         "duration": {
           "type": "string",
@@ -618,27 +923,42 @@
           "type": "array",
           "title": "Route of Administration",
           "uniqueItems": true,
+          "minItems": 1,
           "items": {
             "type": "string",
-            "enum": [
-              "oral",
-              "sublingual",
-              "nasal",
-              "injection",
-              "transdermal",
-              "intrathecal",
-              "formulated_in_food",
-              "formulated_in_drinking_water"
-            ],
-            "enumNames": [
-              "Oral",
-              "Sublingual",
-              "Nasal",
-              "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
-              "Transdermal",
-              "Intrathecal",
-              "Formulated in Food",
-              "Formulated in Drinking Water"
+            "oneOf": [
+              {
+                "const": "oral",
+                "title": "Oral"
+              },
+              {
+                "const": "sublingual",
+                "title": "Sublingual"
+              },
+              {
+                "const": "nasal",
+                "title": "Nasal"
+              },
+              {
+                "const": "injection",
+                "title": "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)"
+              },
+              {
+                "const": "transdermal",
+                "title": "Transdermal"
+              },
+              {
+                "const": "intrathecal",
+                "title": "Intrathecal"
+              },
+              {
+                "const": "formulated_in_food",
+                "title": "Formulated in Food"
+              },
+              {
+                "const": "formulated_in_drinking_water",
+                "title": "Formulated in Drinking Water"
+              }
             ]
           }
         },
@@ -688,6 +1008,7 @@
     "in_vivo_data_item": {
       "type": "object",
       "required": [
+        "name",
         "species",
         "strain",
         "outcome_measures",
@@ -697,7 +1018,8 @@
         "dose_range",
         "dose_regimen",
         "route",
-        "drug_formulation"
+        "drug_formulation",
+        "ed50"
       ],
       "properties": {
         "name": {
@@ -711,23 +1033,35 @@
         "species": {
           "type": "string",
           "title": "Species",
-          "enum": [
-            "mouse",
-            "rat",
-            "non_human_primate",
-            "dog",
-            "ferret",
-            "rabbit",
-            "other"
-          ],
-          "enumNames": [
-            "Mouse",
-            "Rat",
-            "Non Human Primate",
-            "Dog",
-            "Ferret",
-            "Rabbit",
-            "Other"
+          "oneOf": [
+            {
+              "const": "mouse",
+              "title": "Mouse"
+            },
+            {
+              "const": "rat",
+              "title": "Rat"
+            },
+            {
+              "const": "non_human_primate",
+              "title": "Non Human Primate"
+            },
+            {
+              "const": "dog",
+              "title": "Dog"
+            },
+            {
+              "const": "ferret",
+              "title": "Ferret"
+            },
+            {
+              "const": "rabbit",
+              "title": "Rabbit"
+            },
+            {
+              "const": "other",
+              "title": "Other"
+            }
           ],
           "uniqueItems": true
         },
@@ -764,12 +1098,20 @@
         "sex": {
           "type": "string",
           "title": "Subject Sex",
-          "enum": ["male", "female", "both"],
-          "enumNames": ["Male", "Female", "Both"]
-        },
-        "ed50": {
-          "type": "string",
-          "title": "ED50 (mg/kg)"
+          "oneOf": [
+            {
+              "const": "male",
+              "title": "Male"
+            },
+            {
+              "const": "female",
+              "title": "Female"
+            },
+            {
+              "const": "both",
+              "title": "Both"
+            }
+          ]
         },
         "dose_range": {
           "type": "object",
@@ -785,41 +1127,76 @@
             }
           }
         },
+        "ed50": {
+          "type": "string",
+          "title": "ED50 (mg/kg)"
+        },
+        "med": {
+          "type": "string",
+          "title": "Minimal Effective Dose (mg/kg)"
+        },
         "dose_regimen": {
           "type": "string",
           "title": "Dosing Regimen",
-          "enum": ["acute", "chronic", "sub_chronic"],
-          "enumNames": ["Acute", "Chronic", "Sub Chronic"]
+          "oneOf": [
+            {
+              "const": "acute",
+              "title": "Acute"
+            },
+            {
+              "const": "chronic",
+              "title": "Chronic"
+            },
+            {
+              "const": "sub_chronic",
+              "title": "Sub Chronic"
+            }
+          ]
         },
         "pretreatment_time": {
           "type": "string",
-          "title": "Pre-treatment Time "
+          "title": "Pretreatment Time "
         },
         "route": {
           "type": "array",
           "title": "Route of Administration",
           "uniqueItems": true,
+          "minItems": 1,
           "items": {
             "type": "string",
-            "enum": [
-              "oral",
-              "sublingual",
-              "nasal",
-              "injection",
-              "transdermal",
-              "intrathecal",
-              "formulated_in_food",
-              "formulated_in_drinking_water"
-            ],
-            "enumNames": [
-              "Oral",
-              "Sublingual",
-              "Nasal",
-              "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
-              "Transdermal",
-              "Intrathecal",
-              "Formulated in Food",
-              "Formulated in Drinking Water"
+            "oneOf": [
+              {
+                "const": "oral",
+                "title": "Oral"
+              },
+              {
+                "const": "sublingual",
+                "title": "Sublingual"
+              },
+              {
+                "const": "nasal",
+                "title": "Nasal"
+              },
+              {
+                "const": "injection",
+                "title": "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)"
+              },
+              {
+                "const": "transdermal",
+                "title": "Transdermal"
+              },
+              {
+                "const": "intrathecal",
+                "title": "Intrathecal"
+              },
+              {
+                "const": "formulated_in_food",
+                "title": "Formulated in Food"
+              },
+              {
+                "const": "formulated_in_drinking_water",
+                "title": "Formulated in Drinking Water"
+              }
             ]
           }
         },
@@ -868,7 +1245,7 @@
     },
     "pk_in_vivo_data_item": {
       "type": "object",
-      "required": [],
+      "required": ["name", "species", "strain", "sex"],
       "properties": {
         "name": {
           "type": "string",
@@ -881,23 +1258,35 @@
         "species": {
           "type": "string",
           "title": "Species",
-          "enum": [
-            "mouse",
-            "rat",
-            "non_human_primate",
-            "dog",
-            "ferret",
-            "rabbit",
-            "other"
-          ],
-          "enumNames": [
-            "Mouse",
-            "Rat",
-            "Non Human Primate",
-            "Dog",
-            "Ferret",
-            "Rabbit",
-            "Other"
+          "oneOf": [
+            {
+              "const": "mouse",
+              "title": "Mouse"
+            },
+            {
+              "const": "rat",
+              "title": "Rat"
+            },
+            {
+              "const": "non_human_primate",
+              "title": "Non Human Primate"
+            },
+            {
+              "const": "dog",
+              "title": "Dog"
+            },
+            {
+              "const": "ferret",
+              "title": "Ferret"
+            },
+            {
+              "const": "rabbit",
+              "title": "Rabbit"
+            },
+            {
+              "const": "other",
+              "title": "Other"
+            }
           ],
           "uniqueItems": true
         },
@@ -926,8 +1315,20 @@
         "sex": {
           "type": "string",
           "title": "Subject Sex",
-          "enum": ["male", "female", "both"],
-          "enumNames": ["Male", "Female", "Both"]
+          "oneOf": [
+            {
+              "const": "male",
+              "title": "Male"
+            },
+            {
+              "const": "female",
+              "title": "Female"
+            },
+            {
+              "const": "both",
+              "title": "Both"
+            }
+          ]
         },
         "clearance_rate": {
           "type": "number",
@@ -990,7 +1391,7 @@
                   "type": "string"
                 }
               },
-              "required": []
+              "required": ["species_other"]
             }
           ]
         }
@@ -1001,9 +1402,13 @@
       "required": [
         "first_name",
         "last_name",
+        "email",
         "institution",
         "compound_name",
-        "is_off_label"
+        "data_sharing",
+        "is_off_label",
+        "chemical_name",
+        "drug_class"
       ],
       "properties": {
         "compound_name": {
@@ -1037,17 +1442,31 @@
         },
         "data_sharing": {
           "type": "boolean",
-          "default": false,
-          "enum": [true, false],
-          "enumNames": ["I agree to data sharing", "I want to discuss further"],
+          "oneOf": [
+            {
+              "const": true,
+              "title": "I agree to the Terms and Conditions"
+            },
+            {
+              "const": false,
+              "title": "I want to discuss these further"
+            }
+          ],
           "uniqueItems": true,
-          "title": "Data Sharing"
+          "title": "Terms and Conditions"
         },
         "is_off_label": {
           "type": "boolean",
-          "default": false,
-          "enum": [true, false],
-          "enumNames": ["Yes", "No"],
+          "oneOf": [
+            {
+              "const": true,
+              "title": "Yes"
+            },
+            {
+              "const": false,
+              "title": "No"
+            }
+          ],
           "uniqueItems": true,
           "title": "Is this compound available for off label use?"
         },
@@ -1089,8 +1508,16 @@
         "is_solution": {
           "title": "Is the compound a solution?",
           "type": "boolean",
-          "enum": [true, false],
-          "enumNames": ["Yes", "No"],
+          "oneOf": [
+            {
+              "const": true,
+              "title": "Yes"
+            },
+            {
+              "const": false,
+              "title": "No"
+            }
+          ],
           "default": false
         }
       },
@@ -1146,8 +1573,24 @@
         },
         "therapeutic_approach": {
           "type": "string",
-          "enum": ["prophylactic", "symptomatic", "both", "unknown"],
-          "enumNames": ["Prophylactic", "Symptomatic", "Both", "Unknown"],
+          "oneOf": [
+            {
+              "const": "prophylactic",
+              "title": "Prophylactic"
+            },
+            {
+              "const": "symptomatic",
+              "title": "Symptomatic"
+            },
+            {
+              "const": "both",
+              "title": "Both"
+            },
+            {
+              "const": "unknown",
+              "title": "Unknown"
+            }
+          ],
           "uniqueItems": true,
           "title": "What is the therapeutic approach?"
         },
@@ -1169,43 +1612,82 @@
         },
         "water_soluble": {
           "type": "string",
-          "enum": ["yes", "no", "unknown"],
-          "enumNames": ["Yes", "No", "Unknown"],
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            },
+            {
+              "const": "unknown",
+              "title": "Unknown"
+            }
+          ],
           "uniqueItems": true,
           "title": "Is the compound water soluble?"
         },
         "route": {
           "type": "array",
           "title": "What is the intended route of administration?",
+          "uniqueItems": true,
+          "minItems": 1,
           "items": {
             "type": "string",
-            "enum": [
-              "oral",
-              "sublingual",
-              "nasal",
-              "injection",
-              "transdermal",
-              "intrathecal",
-              "formulated_in_food",
-              "formulated_in_drinking_water"
-            ],
-            "enumNames": [
-              "Oral",
-              "Sublingual",
-              "Nasal",
-              "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)",
-              "Transdermal",
-              "Intrathecal",
-              "Formulated in Food",
-              "Formulated in Drinking Water"
+            "oneOf": [
+              {
+                "const": "oral",
+                "title": "Oral"
+              },
+              {
+                "const": "sublingual",
+                "title": "Sublingual"
+              },
+              {
+                "const": "nasal",
+                "title": "Nasal"
+              },
+              {
+                "const": "injection",
+                "title": "Injection (Intravenous, Intramuscular, Intraperitoneal, Subcutaneous, Intraocular)"
+              },
+              {
+                "const": "transdermal",
+                "title": "Transdermal"
+              },
+              {
+                "const": "intrathecal",
+                "title": "Intrathecal"
+              },
+              {
+                "const": "formulated_in_food",
+                "title": "Formulated in Food"
+              },
+              {
+                "const": "formulated_in_drinking_water",
+                "title": "Formulated in Drinking Water"
+              }
             ]
-          },
-          "uniqueItems": true
+          }
         },
         "orally_active": {
           "type": "string",
-          "enum": ["yes", "no", "unknown"],
-          "enumNames": ["Yes", "No", "Unknown"],
+          "oneOf": [
+            {
+              "const": "yes",
+              "title": "Yes"
+            },
+            {
+              "const": "no",
+              "title": "No"
+            },
+            {
+              "const": "unknown",
+              "title": "Unknown"
+            }
+          ],
           "uniqueItems": true,
           "title": "Is the drug orally active?"
         }
@@ -1296,7 +1778,7 @@
       "properties": {
         "assay_description": {
           "type": "string",
-          "title": "Cell Permeablity Assay"
+          "title": "Cell Permeability Assay"
         },
         "permeability": {
           "type": "string",
@@ -1378,8 +1860,16 @@
           "title": "Were you involved in this clinical study?",
           "type": "boolean",
           "default": false,
-          "enum": [true, false],
-          "enumNames": ["Yes", "No"],
+          "oneOf": [
+            {
+              "const": true,
+              "title": "Yes"
+            },
+            {
+              "const": false,
+              "title": "No"
+            }
+          ],
           "uniqueItems": true
         },
         "clinical_publication_status": {
@@ -1508,7 +1998,7 @@
       "$ref": "#/definitions/pk_in_vitro"
     },
     "pk_in_vivo": {
-      "title": "PK In Vitro",
+      "title": "PK In Vivo",
       "$ref": "#/definitions/pk_in_vivo"
     },
     "ld50": {

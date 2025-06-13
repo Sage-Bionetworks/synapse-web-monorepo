@@ -23,7 +23,6 @@ export function PortalSearchTabs(props: PortalSearchTabUIProps) {
         variant="scrollable"
         orientation={isMobileView ? 'vertical' : 'horizontal'}
         scrollButtons="auto"
-        ScrollButtonComponent={CustomScrollButton}
         aria-label="Search Object Types"
         sx={{
           '.MuiTabs-flexContainer': {
@@ -31,11 +30,16 @@ export function PortalSearchTabs(props: PortalSearchTabUIProps) {
             alignItems: 'center',
           },
         }}
-        TabIndicatorProps={{
-          style: {
-            background: 'transparent',
-            marginTop: '4px',
-            position: 'relative',
+        slots={{
+          scrollButtons: CustomScrollButton,
+        }}
+        slotProps={{
+          indicator: {
+            style: {
+              background: 'transparent',
+              marginTop: '4px',
+              position: 'relative',
+            },
           },
         }}
       >

@@ -146,16 +146,24 @@ export function AccessRequirementDashboard(
             onChange={e => {
               setNameOrID(e.target.value)
             }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <SearchOutlined />
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <SearchOutlined />
+                  </InputAdornment>
+                ),
+              },
             }}
           />
         </div>
-        <Box display="flex" gap="5px" alignItems="stretch">
+        <Box
+          sx={{
+            display: 'flex',
+            gap: '5px',
+            alignItems: 'stretch',
+          }}
+        >
           <TextField
             label="Filter by Project"
             id="project-id-filter"
