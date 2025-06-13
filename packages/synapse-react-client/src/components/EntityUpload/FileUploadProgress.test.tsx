@@ -11,10 +11,10 @@ describe('FileUploadProgress', () => {
     fileName: 'file.txt',
     uploadedSizeInBytes: 0,
     totalSizeInBytes: 1024 * 1024 * 100,
-    onCancel: jest.fn(),
-    onPause: jest.fn(),
-    onResume: jest.fn(),
-    onRemove: jest.fn(),
+    onCancel: vi.fn(),
+    onPause: vi.fn(),
+    onResume: vi.fn(),
+    onRemove: vi.fn(),
   } satisfies FileUploadProgressProps
 
   function renderComponent(
@@ -33,7 +33,7 @@ describe('FileUploadProgress', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   test('preparing upload', async () => {

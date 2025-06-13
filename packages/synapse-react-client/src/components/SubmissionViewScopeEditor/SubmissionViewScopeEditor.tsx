@@ -43,11 +43,13 @@ function SubmissionViewScopeItem(props: SubmissionViewScopeItemProps) {
   }
   return (
     <Box
-      display={'flex'}
-      flexDirection={'row'}
-      gap={1}
-      alignItems={'center'}
-      justifyContent={'space-between'}
+      sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 1,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}
     >
       <Typography key={evaluation!.id} variant={'smallText1'}>
         {evaluation!.name}
@@ -87,7 +89,13 @@ export default function SubmissionViewScopeEditor(
 
   return (
     <>
-      <Typography variant={'smallText1'} sx={{ fontWeight: 700 }} mb={1}>
+      <Typography
+        variant={'smallText1'}
+        sx={{
+          mb: 1,
+          fontWeight: 700,
+        }}
+      >
         Evaluations
       </Typography>
       <EvaluationFinder
@@ -97,14 +105,29 @@ export default function SubmissionViewScopeEditor(
         onChange={onChange}
       />
       <Box
-        sx={{ border: '1px solid', borderColor: 'grey.300' }}
-        p={2.5}
-        mb={2.5}
+        sx={{
+          p: 2.5,
+          mb: 2.5,
+          border: '1px solid',
+          borderColor: 'grey.300',
+        }}
       >
-        <Typography variant={'smallText1'} sx={{ fontWeight: 700 }} mb={1}>
+        <Typography
+          variant={'smallText1'}
+          sx={{
+            mb: 1,
+            fontWeight: 700,
+          }}
+        >
           Selected
         </Typography>
-        <Box display={'flex'} flexDirection={'column'} gap={1}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+          }}
+        >
           {evaluationIds.map(evaluationId => (
             <SubmissionViewScopeItem
               key={evaluationId}

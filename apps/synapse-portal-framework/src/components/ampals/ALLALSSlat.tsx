@@ -50,10 +50,10 @@ const AllALSSlat = () => {
         </Box>
         <Stack sx={{ gap: '10px', color: '#FFF', display: 'flex', flex: 1 }}>
           <Typography variant="headline1" sx={{ lineHeight: '144%' }}>
-            The All-ALS Consortium
+            The ALL ALS Consortium
           </Typography>
           <Typography sx={{ fontSize: '18px', lineHeight: '144%' }}>
-            All-ALS provides access to a broad range of data from multiple ALS
+            ALL ALS provides access to a broad range of data from multiple ALS
             research initiatives, enabling deeper cross-study analysis and
             discovery. If you're exploring ALS-related data, you may find
             valuable complementary resources there. Click the button below to
@@ -80,7 +80,7 @@ const AllALSSlat = () => {
           <Typography
             sx={{ fontSize: '18px', fontWeight: '600', lineHeight: '144%' }}
           >
-            Open All-ALS in a new tab
+            Open ALL ALS in a new tab
           </Typography>
           <IconSvg
             icon="openInNewWindow"

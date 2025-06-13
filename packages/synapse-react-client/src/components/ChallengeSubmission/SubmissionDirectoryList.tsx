@@ -421,7 +421,12 @@ function SubmissionDirectoryList({
         />
       </Box>
       {errorMessage && <ErrorBanner error={errorMessage}></ErrorBanner>}
-      <Box display="flex" justifyContent="space-between">
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}
+      >
         {entityType === EntityType.FILE && (
           <FileUpload
             label="Upload File"
@@ -445,7 +450,12 @@ function SubmissionDirectoryList({
         </Button>
       </Box>
       {entityType === EntityType.DOCKER_REPO && (
-        <Box mt={4} display={'flex'}>
+        <Box
+          sx={{
+            mt: 4,
+            display: 'flex',
+          }}
+        >
           <InfoTwoTone
             sx={{
               width: '16px',
@@ -454,7 +464,11 @@ function SubmissionDirectoryList({
             }}
           />
 
-          <Box ml={2}>
+          <Box
+            sx={{
+              ml: 2,
+            }}
+          >
             To learn more about how to create and submit the Docker containers
             using command line, see our{' '}
             <Link

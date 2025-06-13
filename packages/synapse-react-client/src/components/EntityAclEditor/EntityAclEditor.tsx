@@ -332,7 +332,11 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
   )
 
   return (
-    <Stack gap={2}>
+    <Stack
+      sx={{
+        gap: 2,
+      }}
+    >
       <OpenData
         isOpenData={isOpenData}
         isPublic={isPublic}

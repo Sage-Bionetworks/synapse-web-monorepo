@@ -51,7 +51,6 @@ export function ExploreWrapperTabs(props: ExploreWrapperProps) {
       variant="scrollable"
       orientation={isMobileView ? 'vertical' : 'horizontal'}
       scrollButtons="auto"
-      ScrollButtonComponent={CustomScrollButton}
       aria-label="Explore Sections"
       sx={{
         '.MuiTabs-flexContainer': {
@@ -59,8 +58,13 @@ export function ExploreWrapperTabs(props: ExploreWrapperProps) {
           alignItems: 'center',
         },
       }}
-      TabIndicatorProps={{
-        style: { background: 'transparent' },
+      slots={{
+        scrollButtons: CustomScrollButton,
+      }}
+      slotProps={{
+        indicator: {
+          style: { background: 'transparent' },
+        },
       }}
     >
       {explorePaths.map(({ path, displayName = path }) => {

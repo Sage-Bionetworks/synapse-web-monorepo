@@ -14,7 +14,14 @@ export function TeamBadgeOrError(props: TeamBadgeOrErrorProps) {
 
   if (error) {
     return (
-      <Stack gap="5px" direction="row" alignItems="center" role="alert">
+      <Stack
+        direction="row"
+        role="alert"
+        sx={{
+          gap: '5px',
+          alignItems: 'center',
+        }}
+      >
         <ErrorTwoTone color="error" />
         <Typography variant="smallText1" color="error">
           {error?.reason || `Error: ${teamId}`}

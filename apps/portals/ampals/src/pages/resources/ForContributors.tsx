@@ -14,7 +14,7 @@ function ResourcesForContributors() {
         <>
           <Typography>
             For questions or inquiries about contributing data, contact &nbsp;
-            <Link href="mailto:name@example.com">name@example.com</Link>
+            <Link href="mailto:ampals@sagebase.org">ampals@sagebase.org</Link>
           </Typography>
         </>
       }

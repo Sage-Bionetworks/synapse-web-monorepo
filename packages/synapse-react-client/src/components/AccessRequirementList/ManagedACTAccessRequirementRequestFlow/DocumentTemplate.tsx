@@ -44,11 +44,11 @@ export default function DocumentTemplate(props: DownloadDocumentTemplateProps) {
         <strong>{fileName}</strong>
       </Typography>
       <Box
-        display={'flex'}
-        alignItems={'center'}
-        justifyContent={'flex-start'}
-        gap={2}
         sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          gap: 2,
           backgroundColor: 'tertiary.100',
           p: 2.5,
           my: 2,

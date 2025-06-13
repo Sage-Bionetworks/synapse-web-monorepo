@@ -56,7 +56,7 @@ describe('JSONTableCellRenderer', () => {
         },
       },
     ],
-  ])('handles %p case', (_case, jsonObject) => {
+  ])('handles %s case', (_case, jsonObject) => {
     const { container } = render(<JSONTableCellRenderer value={jsonObject} />)
     expect(container).toMatchSnapshot()
   })

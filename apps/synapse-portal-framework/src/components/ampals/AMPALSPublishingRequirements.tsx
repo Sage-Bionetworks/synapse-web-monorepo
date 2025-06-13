@@ -9,7 +9,7 @@ function AMPALSPublishingRequirements() {
       title="Publishing Requirements"
       summaryText={
         <>
-          If you use AMP-ALS Knowledge Portal data in your manuscript, you must
+          If you use ALS Knowledge Portal data in your manuscript, you must
           first submit it to us for review. Use our{' '}
           <Link
             href="https://docs.google.com/forms/d/e/1FAIpQLSfjsLpVDzxRSs83qL_i4G8cq_DUYMGK8J10PKj3p9vve-0ftw/viewform"

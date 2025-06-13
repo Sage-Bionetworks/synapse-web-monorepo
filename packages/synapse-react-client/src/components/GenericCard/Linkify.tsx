@@ -1,6 +1,7 @@
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { Link } from '@mui/material'
 import { TargetEnum } from '@/utils/html/TargetEnum'
+import { bioregistryRules } from './BioregistryRules'
 
 export type LinkifyProps = {
   text?: string
@@ -32,14 +33,6 @@ const httpsRule: LinkifyRule = {
 const ftpRule: LinkifyRule = {
   regex: /(ftp:\/\/[^ ",]+)/,
   onMatch: value => value,
-}
-
-const doiRule: LinkifyRule = {
-  regex: /(doi:10.\d+\/[-._;()/:a-zA-Z0-9]+)/,
-  onMatch: value => {
-    const id = value.slice('doi:'.length)
-    return `https://doi.org/${id}`
-  },
 }
 
 const pubMedRule: LinkifyRule = {
@@ -81,12 +74,6 @@ const arXivRule: LinkifyRule = {
   },
 }
 
-const cbioPortalRule: LinkifyRule = {
-  regex: /(cbioportal:[a-zA-Z0-9._]+)/,
-  onMatch: value => {
-    return `https://identifiers.org/${value}`
-  },
-}
 const rridRule: LinkifyRule = {
   regex: /(rrid:[a-zA-Z]+.+)/,
   onMatch: value => {
@@ -105,9 +92,8 @@ const rules: LinkifyRule[] = [
   mutationIdRule,
   clinVarVCVRule,
   clinVarRCVRule,
-  doiRule,
   arXivRule,
-  cbioPortalRule,
+  ...bioregistryRules,
 ]
 const allRegexes = rules.map(r => r.regex.source).join('|')
 const splitter = new RegExp(allRegexes, 'g')

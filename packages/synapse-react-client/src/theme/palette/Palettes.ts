@@ -1,4 +1,4 @@
-import { PaletteColorOptions, PaletteOptions } from '@mui/material'
+import { PaletteColorOptions, PaletteOptions } from '@mui/material/styles'
 import tinycolor from 'tinycolor2'
 
 export const generatePalette = (

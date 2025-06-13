@@ -44,9 +44,7 @@ describe('FeaturedDataTabs tests', () => {
   }
 
   beforeEach(() => {
-    jest
-      .spyOn(SynapseClient, 'getFullQueryTableResults')
-      .mockResolvedValue(data)
+    vi.spyOn(SynapseClient, 'getFullQueryTableResults').mockResolvedValue(data)
   })
 
   it('Renders without crashing', () => {

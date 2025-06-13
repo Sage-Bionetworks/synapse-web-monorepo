@@ -25,12 +25,12 @@ dayjs.extend(duration)
 
 describe('test EvaluationRoundEditor', () => {
   let props: EvaluationRoundEditorProps
-  let mockOnDelete: jest.Mock
-  let mockOnSave: jest.Mock
+  let mockOnDelete = vi.fn()
+  let mockOnSave = vi.fn()
 
-  let mockCreateEvaluationRound: jest.Mock
-  let mockUpdateEvaluationRound: jest.Mock
-  let mockDeleteEvaluationRound: jest.Mock
+  let mockCreateEvaluationRound = vi.fn()
+  let mockUpdateEvaluationRound = vi.fn()
+  let mockDeleteEvaluationRound = vi.fn()
 
   const fakeEvaluationRoundInput: EvaluationRoundInput = {
     otherLimits: [],
@@ -42,27 +42,27 @@ describe('test EvaluationRoundEditor', () => {
   }
 
   beforeEach(() => {
-    mockOnDelete = jest.fn()
-    mockOnSave = jest.fn()
+    mockOnDelete = vi.fn()
+    mockOnSave = vi.fn()
 
-    mockCreateEvaluationRound = jest
+    mockCreateEvaluationRound = vi
       .fn()
       .mockResolvedValue(fakeEvaluationRoundInput)
-    mockUpdateEvaluationRound = jest
+    mockUpdateEvaluationRound = vi
       .fn()
       .mockResolvedValue(fakeEvaluationRoundInput)
-    mockDeleteEvaluationRound = jest.fn().mockResolvedValue(null)
+    mockDeleteEvaluationRound = vi.fn().mockResolvedValue(null)
 
-    jest
-      .spyOn(SynapseClient, 'createEvaluationRound')
-      .mockImplementation(mockCreateEvaluationRound)
-    jest
-      .spyOn(SynapseClient, 'updateEvaluationRound')
-      .mockImplementation(mockUpdateEvaluationRound)
+    vi.spyOn(SynapseClient, 'createEvaluationRound').mockImplementation(
+      mockCreateEvaluationRound,
+    )
+    vi.spyOn(SynapseClient, 'updateEvaluationRound').mockImplementation(
+      mockUpdateEvaluationRound,
+    )
 
-    jest
-      .spyOn(SynapseClient, 'deleteEvaluationRound')
-      .mockImplementation(mockDeleteEvaluationRound)
+    vi.spyOn(SynapseClient, 'deleteEvaluationRound').mockImplementation(
+      mockDeleteEvaluationRound,
+    )
 
     props = {
       evaluationRoundInput: {
@@ -79,7 +79,7 @@ describe('test EvaluationRoundEditor', () => {
   })
 
   afterEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   it('test clicking advanced limits link', async () => {

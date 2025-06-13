@@ -33,13 +33,20 @@ export function ResourceAccessItem(props: ResourceAccessItemProps) {
     <>
       <Stack
         direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        gap="10px"
-        py="6px"
         role="row"
+        sx={{
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '10px',
+          py: '6px',
+        }}
       >
-        <Typography fontSize="16px" lineHeight="20px">
+        <Typography
+          sx={{
+            fontSize: '16px',
+            lineHeight: '20px',
+          }}
+        >
           <UserOrTeamBadge
             principalId={resourceAccess.principalId}
             openLinkInNewTab={true}
@@ -47,10 +54,12 @@ export function ResourceAccessItem(props: ResourceAccessItemProps) {
         </Typography>
         <Stack
           direction="row"
-          gap="10px"
-          alignItems="center"
-          width="200px"
-          flexShrink={0}
+          sx={{
+            gap: '10px',
+            alignItems: 'center',
+            width: '200px',
+            flexShrink: 0,
+          }}
         >
           {canChangePermission ? (
             <PermissionLevelMenu
@@ -59,7 +68,12 @@ export function ResourceAccessItem(props: ResourceAccessItemProps) {
               onChange={onChange}
             />
           ) : (
-            <Typography variant={'smallText1'} flexGrow={1}>
+            <Typography
+              variant={'smallText1'}
+              sx={{
+                flexGrow: 1,
+              }}
+            >
               {displayedPermissionLevelOverride ?? (
                 <ReadOnlyPermissionLevel
                   accessType={resourceAccess.accessType}

@@ -26,9 +26,11 @@ export function CopyToClipboardString(props: CopyToClipboardStringProps) {
   return (
     <Stack
       direction={'row'}
-      alignItems="center"
       spacing={0.5}
-      sx={{ display: 'inline-flex' }}
+      sx={{
+        alignItems: 'center',
+        display: 'inline-flex',
+      }}
     >
       <Typography component={'span'} variant={typographyVariant}>
         {value}

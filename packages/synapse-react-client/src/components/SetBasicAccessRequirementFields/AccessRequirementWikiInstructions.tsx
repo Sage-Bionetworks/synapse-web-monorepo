@@ -12,8 +12,17 @@ export function AccessRequirementWikiInstructions(
   const { accessRequirement } = props
 
   return (
-    <Box mb={2}>
-      <Typography variant="body1" fontWeight={700}>
+    <Box
+      sx={{
+        mb: 2,
+      }}
+    >
+      <Typography
+        variant="body1"
+        sx={{
+          fontWeight: 700,
+        }}
+      >
         {'Instructions (wiki)'}
       </Typography>
       <WikiMarkdownEditorButton

@@ -58,7 +58,13 @@ function RangeSlider(props: RangeSliderProps) {
       <Typography variant="smallText1">
         {values[0]} - {values[1]}
       </Typography>
-      <Box display="flex" gap={3} sx={{ ml: 1 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 3,
+          ml: 1,
+        }}
+      >
         <Slider
           marks={[
             { value: numDomain[0], label: props.domain[0] },
@@ -67,7 +73,7 @@ function RangeSlider(props: RangeSliderProps) {
           min={numDomain[0]}
           max={numDomain[1]}
           value={values}
-          onChange={(_, newValues) => handleSliderChange(newValues as number[])}
+          onChange={(_, newValues) => handleSliderChange(newValues)}
           step={step}
           valueLabelDisplay="auto"
           slots={{
