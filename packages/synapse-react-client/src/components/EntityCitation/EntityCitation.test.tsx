@@ -138,8 +138,8 @@ describe('EntityCitation tests', () => {
 
     act(() => {
       setMockUseGetEntityBundleSuccess(fileWithAnnotations)
-      setEntityDOISuccess(doiEntitySuccess) // Entity DOI exists
-      setProjectDOISuccess(null) // Project DOI does not exist
+      setEntityDOISuccess(doiEntitySuccess)
+      setProjectDOISuccess(null)
     })
 
     openPopover('Cite page')
@@ -147,8 +147,6 @@ describe('EntityCitation tests', () => {
     await screen.findByRole('dialog', {
       name: /Citation options/i,
     })
-
-    // screen.debug()
   })
 
   it('renders "Cite project" when only project DOI exists', async () => {
@@ -176,8 +174,8 @@ describe('EntityCitation tests', () => {
     // Set mock responses after hooks have initialized
     act(() => {
       setMockUseGetEntityBundleSuccess(fileWithAnnotations)
-      setEntityDOISuccess(null) // Entity DOI exists
-      setProjectDOISuccess(doiProjectSuccess) // Project DOI does not exist
+      setEntityDOISuccess(null)
+      setProjectDOISuccess(doiProjectSuccess)
     })
 
     openPopover('Cite project')
@@ -185,8 +183,6 @@ describe('EntityCitation tests', () => {
     await screen.findByRole('dialog', {
       name: /Citation options/i,
     })
-
-    // screen.debug()
   })
 
   it('Both project and entity have DOIs', async () => {
@@ -221,8 +217,6 @@ describe('EntityCitation tests', () => {
     await screen.findByRole('dialog', {
       name: /Citation options/i,
     })
-
-    // screen.debug()
   })
 
   it('Versioned Entity DOI', async () => {
@@ -249,8 +243,8 @@ describe('EntityCitation tests', () => {
 
     act(() => {
       setMockUseGetEntityBundleSuccess(fileWithAnnotations)
-      setEntityDOISuccess(versionedDoiEntitySuccess) // Entity DOI exists
-      setProjectDOISuccess(null) // Project DOI does not exist
+      setEntityDOISuccess(versionedDoiEntitySuccess)
+      setProjectDOISuccess(null)
     })
 
     openPopover('Cite page')
@@ -263,8 +257,6 @@ describe('EntityCitation tests', () => {
         screen.getByText(content => content.includes('version=1')),
       ).toBeInTheDocument()
     })
-
-    // screen.debug()
   })
 
   it('Versionless Entity DOI', async () => {
@@ -279,8 +271,8 @@ describe('EntityCitation tests', () => {
 
     act(() => {
       setMockUseGetEntityBundleSuccess(fileWithAnnotations)
-      setEntityDOISuccess(doiEntitySuccess) // Entity DOI exists
-      setProjectDOISuccess(null) // Project DOI does not exist
+      setEntityDOISuccess(doiEntitySuccess)
+      setProjectDOISuccess(null)
     })
 
     openPopover('Cite page')
