@@ -40,11 +40,7 @@ export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     showDownloadColumn: false,
     columnLinks: standardsColumnLinks,
   },
-  facetsToPlot: [
-    'topic',
-    // 'Organizations',
-    DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
-  ],
+  facetsToPlot: ['topic', DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES],
   initialPlotType: 'BAR',
   searchConfiguration: {
     ftsConfig: standardsFtsConfig,

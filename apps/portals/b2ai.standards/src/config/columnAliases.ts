@@ -1,4 +1,7 @@
-import { DST_TABLE_COLUMN_NAMES } from '@/config/resources'
+import {
+  DST_TABLE_COLUMN_NAMES,
+  ORG_DENORMALIZED_COLUMN_NAMES,
+} from '@/config/resources'
 
 export default {
   [DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES]: 'Relevant Organizations',
@@ -6,4 +9,6 @@ export default {
   isOpen: 'Is Open?',
   registration: 'Requires Registration?',
   topic: 'Topics',
+
+  [ORG_DENORMALIZED_COLUMN_NAMES.NAME]: 'Name',
 }

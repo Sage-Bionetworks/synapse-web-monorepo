@@ -1,11 +1,10 @@
 import {
   TABLE_IDS,
-  CHALLENGES_TABLE_COLUMN_NAMES,
-  GCDATASET_TABLE_COLUMN_NAMES,
-  GCDATASET_JSON_COLUMNS,
+  ORG_DENORMALIZED_COLUMN_NAMES,
+  ORG_DENORMALIZED_JSON_COLUMNS,
   // standardsSql,
   // DST_TABLE_COLUMN_NAMES,
-  ORG_TABLE_COLUMN_NAMES,
+  GC_ORG_IDS,
 } from '@/config/resources'
 import { imageUrls } from '@/config/images'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
@@ -23,6 +22,7 @@ type useTableFetchProps = {
   entityId: string
   columns: string[]
   sql?: string
+  whereClause?: string
   shouldRun?: boolean
 }
 
@@ -30,10 +30,14 @@ export function useTableFetch({
   entityId,
   columns, // required
   sql, // if filters or aliases or anything are needed, pass in whole sql query
+  whereClause, // or pass in where clause and will still use columns
   shouldRun = true, // if calling before ready, send false
 }: useTableFetchProps) {
   if (!sql) {
     sql = `SELECT ${columns.join(', ')} FROM ${entityId}`
+  }
+  if (whereClause) {
+    sql += ` WHERE ${whereClause}`
   }
 
   const queryBundleRequest: QueryBundleRequest = {
@@ -70,65 +74,56 @@ export function useTableFetch({
 
 export function ChallengesCardDeck() {
   const {
-    data: gcDataSet = [],
-    error: gcDataSetError,
-    isLoading: isLoadingGCDataSetTableQuery,
+    data: gcOrgs = [],
+    error: gcOrgsError,
+    isLoading: isLoadingGcOrgsTableQuery,
   } = useTableFetch({
-    entityId: TABLE_IDS.GCDataSet.id,
-    columns: Object.values(GCDATASET_TABLE_COLUMN_NAMES),
+    entityId: TABLE_IDS.Org_denormalized.id,
+    columns: Object.values(ORG_DENORMALIZED_COLUMN_NAMES),
+    whereClause: `${ORG_DENORMALIZED_COLUMN_NAMES.ID} in (${GC_ORG_IDS.join(
+      ',',
+    )})`,
   })
 
   const orgs = {}
-  for (const gcData of gcDataSet) {
-    for (const key of GCDATASET_JSON_COLUMNS) {
+  for (const gcOrg of gcOrgs) {
+    for (const key of ORG_DENORMALIZED_JSON_COLUMNS) {
       try {
-        if (gcData[key]) {
-          gcData[key] = JSON.parse(gcData[key])
+        if (gcOrg[key]) {
+          gcOrg[key] = JSON.parse(gcOrg[key])
         }
       } catch (error) {
         console.log(`Failed to parse ${key}:`, error)
       }
     }
-    if (gcData.org_json.length !== 1) {
-      return (
-        <ErrorBanner
-          error={`Expected exactly one org for each Grand Challenge DataSet.
-         Got ${gcData[GCDATASET_TABLE_COLUMN_NAMES.ORG_JSON].length} for
-         ${gcData[GCDATASET_TABLE_COLUMN_NAMES.ID]}
-         ${gcData[GCDATASET_TABLE_COLUMN_NAMES.NAME]}`}
-        />
-      )
-    }
-    const org = gcData[GCDATASET_TABLE_COLUMN_NAMES.ORG_JSON][0]
-    orgs[org[ORG_TABLE_COLUMN_NAMES.ID]] = org
-    // org.gcId = gcData[GCDATASET_TABLE_COLUMN_NAMES.ID]
+    orgs[gcOrg[ORG_DENORMALIZED_COLUMN_NAMES.ID]] = gcOrg
   }
 
-  if (gcDataSetError) {
-    return <ErrorBanner error={gcDataSetError} />
+  if (gcOrgsError) {
+    return <ErrorBanner error={gcOrgsError} />
   }
   const isLoading =
     // isLoadingChallengesTableQuery ||
     // isLoadingChallengesEntity ||
-    isLoadingGCDataSetTableQuery
+    isLoadingGcOrgsTableQuery
   if (isLoading) {
     return <div>Loading...</div>
   }
 
-  const challengeCards: CardDeckCardProps[] = challengesData.map(challenge => {
-    const org = orgs[challenge[CHALLENGES_TABLE_COLUMN_NAMES.ORG_ID]]
-    const orgId = org[ORG_TABLE_COLUMN_NAMES.ID]
+  const challengeCards: CardDeckCardProps[] = gcOrgs.map(gcOrg => {
+    const orgId = gcOrg[ORG_DENORMALIZED_COLUMN_NAMES.ID]
     const img = <img src={imageUrls[orgId]} />
 
     const card: CardDeckCardProps = {
-      title: org[ORG_TABLE_COLUMN_NAMES.NAME],
-      description: org[ORG_TABLE_COLUMN_NAMES.DESCRIPTION],
-      ctaButtonText: 'Explore Standards',
+      title: gcOrg[ORG_DENORMALIZED_COLUMN_NAMES.NAME],
+      description: gcOrg[ORG_DENORMALIZED_COLUMN_NAMES.DESCRIPTION],
+      cardDeckType: 'b2ai',
+      ctaButtonText: 'NOT USED IN cardDeckType = b2ai',
       // ctaButtonURL: createExplorePageLink(query),
-      // ctaButtonURL: `/OrganizationsDetailsPage?id=${GCDATASET_TABLE_COLUMN_NAMES.ID}`,
-      ctaButtonURL: `/Explore/Standard/GCLandingPage?${
-        ORG_TABLE_COLUMN_NAMES.ID
-      }=${org[ORG_TABLE_COLUMN_NAMES.ID]}`,
+      // ctaButtonURL: `/OrganizationDetailsPage?id=${DATASET_DENORMALIZED_COLUMN_NAMES.ID}`,
+      ctaButtonURL: `/Explore/Organization/OrganizationDetailsPage?${
+        ORG_DENORMALIZED_COLUMN_NAMES.ID
+      }=${gcOrg[ORG_DENORMALIZED_COLUMN_NAMES.ID]}`,
       headerImage: img,
     }
     return card

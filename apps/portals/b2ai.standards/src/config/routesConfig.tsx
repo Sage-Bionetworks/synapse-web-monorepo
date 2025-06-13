@@ -1,5 +1,5 @@
 import StandardsDetailsPage from '@/pages/StandardsDetailsPage'
-import OrganizationsDetailsPage from '@/pages/OrganizationsDetailsPage'
+import OrganizationDetailsPage from '@/pages/OrganizationDetailsPage'
 import { Box } from '@mui/material'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
@@ -64,10 +64,8 @@ const routes: RouteObject[] = [
         element: <StandardsDetailsPage />,
       },
       {
-        path: 'Explore/Standard/GCLandingPage',
-        // path: 'GCLandingPage',
-        element: <StandardsDetailsPage />,
-        // element: <OrganizationsDetailsPage />,
+        path: 'Explore/Organization/OrganizationDetailsPage',
+        element: <OrganizationDetailsPage />,
       },
       {
         path: 'About',
