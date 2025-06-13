@@ -1,7 +1,7 @@
 import { FullWidthAlert } from 'synapse-react-client/components/FullWidthAlert'
 
 export type RepositoryUnderReviewAlertProps = {
-  portalSpecificDisclaimer: string
+  portalSpecificDisclaimer?: string
 }
 
 function RepositoryUnderReviewAlert({ portalSpecificDisclaimer }) {
@@ -17,14 +17,16 @@ function RepositoryUnderReviewAlert({ portalSpecificDisclaimer }) {
           'This repository is under review for potential modification in compliance with Administration directives.'
         }
       />
-      <FullWidthAlert
-        sx={{ m: 0 }}
-        isGlobal={false}
-        variant={'info'}
-        show={true}
-        title={''}
-        description={portalSpecificDisclaimer}
-      />
+      {portalSpecificDisclaimer && (
+        <FullWidthAlert
+          sx={{ m: 0 }}
+          isGlobal={false}
+          variant={'info'}
+          show={true}
+          title={''}
+          description={portalSpecificDisclaimer}
+        />
+      )}
     </>
   )
 }
