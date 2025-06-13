@@ -4,7 +4,6 @@ import { useGetEntityBundle } from '@/synapse-queries/entity/useEntityBundle'
 import { useGetDOIAssociation } from '@/synapse-queries/doi/useDOI'
 import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
 import {
-  AnnotationsValueType,
   DoiAssociation,
   EntityBundle,
   EntityType,
@@ -12,36 +11,37 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import {
   DoiObjectType,
-  GetRepoV1DoiAssociationRequest,
   SynapseClientError,
 } from '@sage-bionetworks/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { UseQueryResult } from '@tanstack/react-query'
+import { vi } from 'vitest'
+import userEvent from '@testing-library/user-event'
 
-jest.mock('@/synapse-queries/entity/useEntityBundle', () => {
+vi.mock('@/synapse-queries/entity/useEntityBundle', () => {
   return {
-    useGetEntityBundle: jest.fn(),
+    useGetEntityBundle: vi.fn(),
   }
 })
 
-jest.mock('@/synapse-queries/doi/useDOI', () => {
+vi.mock('@/synapse-queries/doi/useDOI', () => {
   return {
-    useGetDOIAssociation: jest.fn(),
+    useGetDOIAssociation: vi.fn(),
   }
 })
 
-const mockUseGetEntityBundle = jest.mocked(useGetEntityBundle)
-const mockUseGetDOIAssociation = jest.mocked(useGetDOIAssociation)
+const mockUseGetEntityBundle = vi.mocked(useGetEntityBundle)
+const mockUseGetDOIAssociation = vi.mocked(useGetDOIAssociation)
 
 const {
   mock: useGetEntityBundleMockImpl,
   setSuccess: setMockUseGetEntityBundleSuccess,
 } = getUseQueryMock<Partial<EntityBundle>, SynapseClientError>()
 
-const {
-  mock: useGetDOIAssociationMockImpl,
-  setSuccess: setMockUseGetDOIAssociationSuccess,
-} = getUseQueryMock<Partial<DoiAssociation>, SynapseClientError>()
+const { mock: useGetEntityDOIMockImpl, setSuccess: setEntityDOISuccess } =
+  getUseQueryMock<DoiAssociation | null, SynapseClientError>()
+
+const { mock: useGetProjectDOIMockImpl, setSuccess: setProjectDOISuccess } =
+  getUseQueryMock<DoiAssociation | null, SynapseClientError>()
 
 const fileWithAnnotations: Partial<EntityBundle> = {
   entity: {
@@ -77,105 +77,93 @@ const doiEntitySuccess: DoiAssociation = {
   updatedOn: '',
 }
 
-const mockAssociation = {
-  data: doiEntitySuccess,
-  isLoading: false,
-  error: null,
-  isError: false,
-  isSuccess: true,
-  refetch: jest.fn(),
-  failureCount: 0,
-  isFetched: true,
-  isFetchedAfterMount: true,
-  isFetching: false,
-  isLoadingError: false,
-  isPaused: false,
-  isPending: false,
-  isPlaceholderData: false,
-  isRefetchError: false,
-  isStale: false,
-  status: 'success',
-  fetchStatus: 'idle',
-  dataUpdatedAt: 0,
-  errorUpdatedAt: 0,
-  failureReason: null,
-  errorUpdateCount: 0,
-  isInitialLoading: false,
-  isRefetching: false,
+const versionedDoiEntitySuccess: DoiAssociation = {
+  objectId: 'syn66268092',
+  objectType: DoiObjectType.ENTITY as ObjectType,
+  doiUri: '10.7303/syn66268092.1',
+  associationId: '',
+  etag: '',
+  doiUrl: '',
+  associatedBy: '',
+  associatedOn: '',
+  updatedBy: '',
+  updatedOn: '',
+}
+
+const doiProjectSuccess: DoiAssociation = {
+  objectId: 'syn64042437',
+  objectType: DoiObjectType.ENTITY as ObjectType,
+  doiUri: '10.7303/syn64042437',
+  associationId: '',
+  etag: '',
+  doiUrl: '',
+  associatedBy: '',
+  associatedOn: '',
+  updatedBy: '',
+  updatedOn: '',
+}
+
+const openPopover = async (buttonName: string) => {
+  const button = screen.getByRole('button', { name: `${buttonName}` })
+  await userEvent.click(button)
 }
 
 describe('EntityCitation tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-    // mockUseGetEntityBundle.mockImplementation(useGetEntityBundleMockImpl)
-    // mockUseGetDOIAssociation.mockImplementation(useGetDOIAssociationMockImpl)
+    vi.clearAllMocks()
+    mockUseGetEntityBundle.mockImplementation(useGetEntityBundleMockImpl)
   })
 
   it('renders "Cite page" button when only entity DOI exists', async () => {
-    mockUseGetEntityBundle.mockImplementation(useGetEntityBundleMockImpl)
-    mockUseGetDOIAssociation.mockImplementation(useGetDOIAssociationMockImpl)
+    mockUseGetDOIAssociation.mockImplementation((request, options) => {
+      if (request.id === 'syn61841662' && request.version === 1) {
+        return useGetEntityDOIMockImpl()
+      } else if (
+        request.id === 'syn60582629' &&
+        request.version === undefined
+      ) {
+        return useGetProjectDOIMockImpl()
+      }
+      return useGetEntityDOIMockImpl()
+    })
 
-    mockUseGetDOIAssociation.mockImplementation(
-      (
-        request: GetRepoV1DoiAssociationRequest,
-        _options?: any,
-      ): UseQueryResult<DoiAssociation | null, SynapseClientError> => {
-        if (request.id === 'syn61841662' && request.version === 1) {
-          return {
-            data: doiEntitySuccess,
-            isLoading: false,
-            error: null,
-            isError: false,
-            isSuccess: true,
-            refetch: jest.fn(),
-            failureCount: 0,
-            isFetched: true,
-            isFetchedAfterMount: true,
-            isFetching: false,
-            isLoadingError: false,
-            isPaused: false,
-            isPending: false,
-            isPlaceholderData: false,
-            isRefetchError: false,
-            isStale: false,
-            status: 'success',
-            fetchStatus: 'idle',
-            dataUpdatedAt: 0,
-            errorUpdatedAt: 0,
-            failureReason: null,
-            errorUpdateCount: 0,
-            isInitialLoading: false,
-            isRefetching: false,
-          }
-        }
-        return {
-          data: null,
-          isLoading: false,
-          error: null,
-          isError: false,
-          isSuccess: true,
-          refetch: jest.fn(),
-          failureCount: 0,
-          isFetched: true,
-          isFetchedAfterMount: true,
-          isFetching: false,
-          isLoadingError: false,
-          isPaused: false,
-          isPending: false,
-          isPlaceholderData: false,
-          isRefetchError: false,
-          isStale: false,
-          status: 'success',
-          fetchStatus: 'idle',
-          dataUpdatedAt: 0,
-          errorUpdatedAt: 0,
-          failureReason: null,
-          errorUpdateCount: 0,
-          isInitialLoading: false,
-          isRefetching: false,
-        }
-      },
+    render(
+      <EntityCitation
+        projectId="syn60582629"
+        entityId="syn61841662"
+        versionNumber={1}
+      />,
+      { wrapper: createWrapper() },
     )
+
+    act(() => {
+      setMockUseGetEntityBundleSuccess(fileWithAnnotations)
+      setEntityDOISuccess(doiEntitySuccess) // Entity DOI exists
+      setProjectDOISuccess(null) // Project DOI does not exist
+    })
+
+    openPopover('Cite page')
+
+    await screen.findByRole('dialog', {
+      name: /Citation options/i,
+    })
+
+    // screen.debug()
+  })
+
+  it('renders "Cite project" when only project DOI exists', async () => {
+    mockUseGetDOIAssociation.mockImplementation((request, options) => {
+      if (request.id === 'syn61841662' && request.version === 1) {
+        return useGetEntityDOIMockImpl()
+      } else if (
+        request.id === 'syn60582629' &&
+        request.version === undefined
+      ) {
+        return useGetProjectDOIMockImpl()
+      }
+      return useGetEntityDOIMockImpl()
+    })
+
     render(
       <EntityCitation
         projectId="syn60582629"
@@ -188,70 +176,123 @@ describe('EntityCitation tests', () => {
     // Set mock responses after hooks have initialized
     act(() => {
       setMockUseGetEntityBundleSuccess(fileWithAnnotations)
-      setMockUseGetDOIAssociationSuccess(doiEntitySuccess)
+      setEntityDOISuccess(null) // Entity DOI exists
+      setProjectDOISuccess(doiProjectSuccess) // Project DOI does not exist
     })
 
+    openPopover('Cite project')
+
+    await screen.findByRole('dialog', {
+      name: /Citation options/i,
+    })
+
+    // screen.debug()
+  })
+
+  it('Both project and entity have DOIs', async () => {
+    render(
+      <EntityCitation
+        projectId="syn60582629"
+        entityId="syn61841662"
+        versionNumber={1}
+      />,
+      { wrapper: createWrapper() },
+    )
+
+    act(() => {
+      setMockUseGetEntityBundleSuccess(fileWithAnnotations)
+      setEntityDOISuccess(doiEntitySuccess)
+      setProjectDOISuccess(doiProjectSuccess)
+    })
+
+    openPopover('Cite as...')
+
     await waitFor(() => {
+      const citePageButton = screen.getByRole('menuitem', {
+        name: /cite only this page/i,
+      })
       expect(
-        screen.getByRole('button', { name: 'Cite page' }),
+        screen.getByRole('menuitem', { name: /cite this project/i }),
+      ).toBeInTheDocument()
+      expect(citePageButton).toBeInTheDocument()
+      userEvent.click(citePageButton)
+    })
+
+    await screen.findByRole('dialog', {
+      name: /Citation options/i,
+    })
+
+    // screen.debug()
+  })
+
+  it('Versioned Entity DOI', async () => {
+    mockUseGetDOIAssociation.mockImplementation((request, options) => {
+      if (request.id === 'syn66268092' && request.version === 1) {
+        return useGetEntityDOIMockImpl()
+      } else if (
+        request.id === 'syn60582629' &&
+        request.version === undefined
+      ) {
+        return useGetProjectDOIMockImpl()
+      }
+      return useGetEntityDOIMockImpl()
+    })
+
+    render(
+      <EntityCitation
+        projectId="syn60582629"
+        entityId="syn66268092"
+        versionNumber={1}
+      />,
+      { wrapper: createWrapper() },
+    )
+
+    act(() => {
+      setMockUseGetEntityBundleSuccess(fileWithAnnotations)
+      setEntityDOISuccess(versionedDoiEntitySuccess) // Entity DOI exists
+      setProjectDOISuccess(null) // Project DOI does not exist
+    })
+
+    openPopover('Cite page')
+
+    await waitFor(() => {
+      screen.findByRole('dialog', {
+        name: /Citation options/i,
+      })
+      expect(
+        screen.getByText(content => content.includes('version=1')),
       ).toBeInTheDocument()
     })
 
-    screen.debug()
+    // screen.debug()
   })
 
-  // it('Only project DOI exists', () => {
-  //   render(
-  //     <EntityCitation
-  //       projectId="syn64042437"
-  //       entityId={undefined}
-  //       versionNumber={undefined}
-  //     />,
-  //   )
-  //   expect(
-  //     screen.getByRole('button', { name: 'Cite project' }),
-  //   ).toBeInTheDocument()
-  // })
+  it('Versionless Entity DOI', async () => {
+    render(
+      <EntityCitation
+        projectId="syn60582629"
+        entityId="syn68236894"
+        versionNumber={undefined}
+      />,
+      { wrapper: createWrapper() },
+    )
 
-  // it('Both project and entity have DOIs', () => {
-  //   render(
-  //     <EntityCitation
-  //       entityId="syn66268092"
-  //       projectId="syn64042437"
-  //       versionNumber={1}
-  //     />,
-  //   )
-  //   expect(screen.queryByText('Cite as...')).not.toBeInTheDocument()
-  // })
+    act(() => {
+      setMockUseGetEntityBundleSuccess(fileWithAnnotations)
+      setEntityDOISuccess(doiEntitySuccess) // Entity DOI exists
+      setProjectDOISuccess(null) // Project DOI does not exist
+    })
 
-  // it('Fallback to versionless DOI when versioned DOI is missing but entity is latest version', () => {
-  //   render(
-  //     <EntityCitation
-  //       entityId="syn61841662"
-  //       projectId="syn60582629"
-  //       versionNumber={undefined}
-  //     />,
-  //   )
-  //   expect(
-  //     screen.getByRole('button', { name: 'Cite page' }),
-  //   ).toBeInTheDocument()
-  // })
+    openPopover('Cite page')
 
-  // it('Does not use fallback if entity is not the latest version', () => {
-  //   render(
-  //     <EntityCitation
-  //       entityId="syn61841662"
-  //       projectId="syn60582629"
-  //       versionNumber={1}
-  //     />,
-  //   )
-  //   expect(
-  //     screen.getByRole('button', { name: 'Cite page' }),
-  //   ).not.toBeInTheDocument()
-  // })
+    await waitFor(() => {
+      screen.findByRole('dialog', {
+        name: /Citation options/i,
+      })
 
-  // it('No citation button when no DOI is available for either project or entity', () => {
-  //   render(<EntityCitation projectId="syn123" />)
-  //   expect(screen.queryByText('Cite as')).not.toBeInTheDocument()
-  // })
+      expect(
+        screen.queryByText(content => content.includes('version=1')),
+      ).not.toBeInTheDocument()
+    })
+  })
 })

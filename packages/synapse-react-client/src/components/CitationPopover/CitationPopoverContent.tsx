@@ -18,6 +18,7 @@ import { KeyboardArrowDown } from '@mui/icons-material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useState } from 'react'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
+import { CitationProps, CitationFormat } from './CitationPopover'
 
 const selectSx: SxProps = {
   width: '100%',
@@ -41,17 +42,6 @@ const selectSx: SxProps = {
   '.MuiInputBase-input': {
     padding: '7px 10px',
   },
-}
-
-type CitationFormat = 'bibtex' | 'apa' | 'ieee' | 'nature' | 'science'
-
-type CitationProps = {
-  doi: string | undefined
-  title?: string
-  boilerplateText?: string
-  defaultCitationFormat?: CitationFormat
-  // handleClose?: () => void
-  selectSx?: SxProps
 }
 
 export type CitationPopoverProps = CitationProps &

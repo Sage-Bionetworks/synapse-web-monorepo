@@ -17,6 +17,7 @@ import { DownloadCartPage } from './components/DownloadCart/DownloadCartPage'
 import ShowDownloadV2 from './components/DownloadCart/ShowDownloadV2'
 import { SchemaDrivenAnnotationEditor } from './components/SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor'
 import { EntityCitation } from './components/EntityCitation'
+import LinkWithIcon from './components/LinkWithIcon/LinkWithIcon'
 import { EntityModal } from './components/entity/metadata/EntityModal'
 import { EntityBadgeIcons } from './components/EntityBadgeIcons/EntityBadgeIcons'
 import EntityForm from './components/EntityForm/EntityForm'
@@ -127,6 +128,7 @@ const SynapseContext = {
 }
 
 const SynapseComponents = {
+  LinkWithIcon,
   Login: StandaloneLoginForm,
   EntityForm,
   UserCard,

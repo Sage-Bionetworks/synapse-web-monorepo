@@ -1,8 +1,8 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryFn, StoryObj } from '@storybook/react'
 import EntityCitation from './EntityCitation'
 import { useTheme, Box } from '@mui/material'
 
-const RenderComponent = (StoryComponent: any) => {
+const RenderComponent = (StoryComponent: StoryFn) => {
   const theme = useTheme()
   return (
     <Box sx={{ backgroundColor: theme.palette.primary.main, padding: '20px' }}>
@@ -33,16 +33,8 @@ export const ProjectAndEntity: Story = {
   },
 }
 
-export const ProjectOnly: Story = {
-  args: {
-    projectId: 'syn64042437',
-    entityId: undefined,
-    versionNumber: undefined,
-  },
-}
-
 export const Project: Story = {
-  // Entity without DOI but project has one
+  // Only project has DOI, entity does not
   args: {
     entityId: 'syn66268085',
     projectId: 'syn64042437',
@@ -51,18 +43,18 @@ export const Project: Story = {
 }
 
 export const VersionedEntity: Story = {
-  // Entity with versioned DOI, but project without DOI
+  // entity is versioned, project does not have DOI
   args: {
-    entityId: 'syn61841662',
+    entityId: 'syn66268092',
     projectId: 'syn60582629',
     versionNumber: 1,
   },
 }
 
 export const VersionlessEntity: Story = {
-  // Entity with versionless DOI, but project without DOI
+  // entity is versionless, project does not have DOI
   args: {
-    entityId: 'syn61841662',
+    entityId: 'syn68236894',
     projectId: 'syn60582629',
     versionNumber: undefined,
   },
