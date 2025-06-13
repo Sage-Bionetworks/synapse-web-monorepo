@@ -9,7 +9,6 @@ import HowToAccessData from '@sage-bionetworks/synapse-portal-framework/componen
 // import columnAliases from '../config/columnAliases'
 import headerSvg from '../config/style/header.svg?url'
 import { CardGridWithLinks, GoalsV3 } from 'synapse-react-client'
-import { OrientationBanner } from 'synapse-react-client'
 import { goalsTableEntityId } from '@/config/resources'
 import { ReactComponent as DatasetsIcon } from '../../src/config/style/datasets.svg'
 import { ReactComponent as FilesIcon } from '../../src/config/style/files.svg'
@@ -45,14 +44,6 @@ export default function HomePage() {
   ]
   return (
     <>
-      <OrientationBanner
-        name="UnderConstruction"
-        title="Welcome to a design preview of our portal!"
-        text="The ALS Knowledge Portal is actively under construction, but we wanted to give you a preview. As we build out the portal, this page will be updated with more to see and explore. Stay tuned!"
-        sx={{
-          width: 'auto',
-        }}
-      />
       <AMPALSHeader headerSvgURL={headerSvg} />
       <SectionLayout
         title={'Our ALS Resources'}
