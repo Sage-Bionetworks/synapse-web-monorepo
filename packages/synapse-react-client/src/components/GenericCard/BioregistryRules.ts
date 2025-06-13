@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-escape */
 // From https://github.com/Sage-Bionetworks/bioregistry-collection/blob/main/bioregistry.ts.
-// Added disable lint rule above, and updated the icd9 regex.
+// Added disable lint rule above.
 // This file is auto-generated. Do not edit manually.
 // Generated from bioregistry.io API based on collection.yaml
 
