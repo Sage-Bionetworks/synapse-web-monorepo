@@ -162,6 +162,7 @@ const EntityCitation = ({
                 backgroundColor: '#304b66',
               },
               ...(isProjectAndEntityDoi && { paddingRight: '0px' }),
+              width: { xs: '100%', sm: 'initial' },
             }}
             variant="outlined"
             startIcon={<DoubleQuotes width={18} height={18} />}

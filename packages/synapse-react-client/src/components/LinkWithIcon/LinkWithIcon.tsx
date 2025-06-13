@@ -20,6 +20,8 @@ const LinkWithIcon = (props: LinkWithIconProps) => {
         alignItems: 'center',
         padding: '6px 16px',
         color: '#FFF !important',
+        width: { xs: '100%', sm: 'initial' },
+        justifyContent: { xs: 'center', sm: 'flex-start' },
         '&:hover': {
           textDecorationColor: '#FFF !important',
         },
