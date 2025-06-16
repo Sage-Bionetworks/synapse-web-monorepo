@@ -59,7 +59,8 @@
       "postcss": "^8.4.31",
       "elliptic": "^6.6.1",
       "cross-spawn": "^7.0.5",
-      "vite": "npm:rolldown-vite@latest"
+      "vite": "npm:rolldown-vite@latest",
+      "@vitejs/plugin-react": "npm:@vitejs/plugin-react-oxc@latest"
     }
   }
 }
