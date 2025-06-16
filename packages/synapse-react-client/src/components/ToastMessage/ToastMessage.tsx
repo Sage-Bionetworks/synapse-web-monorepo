@@ -4,7 +4,7 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import FullWidthAlert, {
   AlertButtonConfig,
 } from '../FullWidthAlert/FullWidthAlert'
-import { ReactNode, useRef} from 'react'
+import { ReactNode, useRef } from 'react'
 
 export type ToastMessageProps = {
   text: string

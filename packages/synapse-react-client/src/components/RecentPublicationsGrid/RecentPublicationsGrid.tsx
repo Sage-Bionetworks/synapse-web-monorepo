@@ -8,7 +8,7 @@ import {
   BUNDLE_MASK_QUERY_SELECT_COLUMNS,
 } from '@/utils/SynapseConstants'
 import { Box, Chip, Link as MuiLink, Skeleton, Typography } from '@mui/material'
-import Grid from '@mui/material/Unstable_Grid2'
+import Grid from '@mui/material/Grid'
 import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import PortalSectionHeader from '../PortalSectionHeader'
@@ -41,9 +41,11 @@ const PublicationCard = ({
 }: PublicationCardProps) => (
   <Grid
     key={pub.rowId}
-    height={{ xs: 'auto', sm: 'initial' }}
-    minWidth={{ xs: '280px', lg: 'initial' }}
-    maxWidth={{ xs: '450px', lg: 'initial' }}
+    sx={{
+      height: { xs: 'auto', sm: 'initial' },
+      minWidth: { xs: '280px', lg: 'initial' },
+      maxWidth: { xs: '450px', lg: 'initial' },
+    }}
   >
     <Box sx={{ height: '100%' }}>
       {isLoading ? (
@@ -74,9 +76,9 @@ const PublicationCard = ({
           )}
           <Typography
             variant="headline2"
-            color="grey.1000"
-            fontSize={'21px'}
             sx={{
+              color: 'grey.1000',
+              fontSize: '21px',
               padding: '20px 0px',
             }}
           >
@@ -95,13 +97,21 @@ const PublicationCard = ({
               {pub.values[titleColIndex]}
             </MuiLink>
           </Typography>
-          <Box display={'flex'} gap={'8px'} flexDirection={'column'}>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: '8px',
+              flexDirection: 'column',
+            }}
+          >
             <Typography
               variant="body1"
-              color="grey.700"
-              fontSize={'14px'}
-              lineHeight={1.35}
-              paddingBottom={{ xs: 0, md: '35px' }}
+              sx={{
+                color: 'grey.700',
+                fontSize: '14px',
+                lineHeight: 1.35,
+                paddingBottom: { xs: 0, md: '35px' },
+              }}
             >
               {pub.values[publicationDateColIndex] &&
                 formatDate(

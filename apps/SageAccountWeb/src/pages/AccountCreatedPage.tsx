@@ -1,4 +1,4 @@
-import { Button, Grid, Link, Typography } from '@mui/material'
+import { Button, GridLegacy as Grid, Link, Typography } from '@mui/material'
 import { Link as RouterLink } from 'react-router'
 import { AppContextConsumer } from '../AppContext'
 import useMembershipInvitationTokenHandler from '../hooks/useMembershipInvitationTokenHandler'
@@ -108,7 +108,13 @@ function AccountCreatedPage() {
                   </Link>
                 </Typography>
 
-                <Grid container spacing={4} mx={{ paddingTop: '20px' }}>
+                <Grid
+                  container
+                  spacing={4}
+                  sx={{
+                    paddingTop: '20px',
+                  }}
+                >
                   {sourceAppConfigs?.map(config => {
                     if (
                       config.appId != sourceApp?.appId &&

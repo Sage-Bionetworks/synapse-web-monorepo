@@ -87,7 +87,11 @@ export function ChallengeDataDownload({
           {...sharedProps}
         />
       </Box>
-      <Box mt={4}>
+      <Box
+        sx={{
+          mt: 4,
+        }}
+      >
         <Button
           endIcon={<AddCircleTwoToneIcon />}
           variant={'outlined'}

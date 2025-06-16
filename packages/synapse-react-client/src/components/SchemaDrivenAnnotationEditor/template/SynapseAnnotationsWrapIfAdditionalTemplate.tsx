@@ -7,7 +7,7 @@ import {
   WrapIfAdditionalTemplateProps,
 } from '@rjsf/utils'
 import { FocusEventHandler } from 'react'
-import { Grid, TextField } from '@mui/material'
+import { GridLegacy as Grid, TextField } from '@mui/material'
 
 /** The `WrapIfAdditional` component is used by the `FieldTemplate` to rename, or remove properties that are
  * part of an `additionalProperties` part of a schema.
@@ -47,7 +47,14 @@ export default function SynapseAnnotationsWrapIfAdditionalTemplate<
 
   return (
     <div className={classNames}>
-      <Grid container my={1} columnSpacing={2} rowSpacing={0}>
+      <Grid
+        container
+        columnSpacing={2}
+        rowSpacing={0}
+        sx={{
+          my: 1,
+        }}
+      >
         <Grid item xs={3}>
           <TextField
             fullWidth={true}

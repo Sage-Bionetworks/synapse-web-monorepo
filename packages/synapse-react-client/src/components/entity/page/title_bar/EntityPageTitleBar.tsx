@@ -54,8 +54,8 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
         >
           <Stack
             direction={'row'}
-            alignItems={'center'}
             sx={{
+              alignItems: 'center',
               flexGrow: 1,
             }}
           >
@@ -81,7 +81,13 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
               </Avatar>
             </ConditionalWrapper>
             <Box sx={{ marginLeft: '10px', flexGrow: 1 }}>
-              <Stack direction={'row'} alignItems={'center'} gap={'3px'}>
+              <Stack
+                direction={'row'}
+                sx={{
+                  alignItems: 'center',
+                  gap: '3px',
+                }}
+              >
                 <ConditionalWrapper condition={isLoading} wrapper={Skeleton}>
                   <Typography variant={'headline2'}>
                     {name ?? 'Name not set'}

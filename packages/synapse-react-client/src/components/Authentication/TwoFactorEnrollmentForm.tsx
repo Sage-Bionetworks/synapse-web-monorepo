@@ -213,10 +213,12 @@ export default function TwoFactorEnrollmentForm(
               />
             </Box>
             <Box
-              display={'flex'}
-              justifyContent={'center'}
-              alignItems={'middle'}
-              height={'auto'}
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'middle',
+                height: 'auto',
+              }}
             >
               {!hasQrCode && <SynapseSpinner size={50} />}
               <canvas
@@ -247,7 +249,13 @@ export default function TwoFactorEnrollmentForm(
                 })
               }}
             >
-              <Stack direction={'row'} gap={2} height={'48px'}>
+              <Stack
+                direction={'row'}
+                sx={{
+                  gap: 2,
+                  height: '48px',
+                }}
+              >
                 <TextField
                   noWrapInFormControl
                   inputProps={{ maxLength: totpSecret?.digits }}

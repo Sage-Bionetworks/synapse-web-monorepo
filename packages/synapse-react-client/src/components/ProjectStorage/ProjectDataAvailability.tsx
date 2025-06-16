@@ -1,5 +1,6 @@
 import { SYNAPSE_STORAGE_LOCATION_ID } from '@/synapse-client'
 import { useProjectStorageUsage } from '@/synapse-queries'
+import { spreadSx } from '@/theme/spreadSx'
 import { useSynapseContext } from '@/utils'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { SAGE_OFFERINGS_HELP_URL } from '@/utils/SynapseConstants'
@@ -44,15 +45,25 @@ export function ProjectDataAvailability({
   ).replace(/\.0\s/, ' ') // SWC-7183: remove '.0 ' from the string if it exists
   return (
     <Box
-      display="flex"
-      flexDirection="column"
-      width="210px"
-      fontFamily="DM Sans"
-      color="white"
-      px="10px"
-      sx={sx}
+      sx={spreadSx(
+        {
+          display: 'flex',
+          flexDirection: 'column',
+          width: '210px',
+          fontFamily: 'DM Sans',
+          color: 'white',
+          px: '10px',
+        },
+        sx,
+      )}
     >
-      <Box display="flex" flexDirection="row" gap="5px">
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '5px',
+        }}
+      >
         <Typography
           sx={{
             // match current styles in Project metadata
@@ -77,26 +88,46 @@ export function ProjectDataAvailability({
         <Tooltip
           title={`Using ${friendlySumFileBytes} out of ${friendlyMaxAllowedFileBytes}`}
         >
-          <Box display="flex" flexDirection="row" gap="5px" alignItems="center">
-            <Typography variant="body1" fontSize="12px">
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: '5px',
+              alignItems: 'center',
+            }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                fontSize: '12px',
+              }}
+            >
               0
             </Typography>
             {/* Progress Bar */}
             <Box
-              width={`${usageBarWidth}px`}
-              height="4px"
-              sx={{ backgroundColor: 'white', borderRadius: '50px' }}
+              sx={{
+                width: `${usageBarWidth}px`,
+                height: '4px',
+                backgroundColor: 'white',
+                borderRadius: '50px',
+              }}
             >
               <Box
-                width={`${usageBarFilledPx}px`}
-                height="4px"
-                sx={{ backgroundColor: '#EDC766', borderRadius: '50px' }}
+                sx={{
+                  width: `${usageBarFilledPx}px`,
+                  height: '4px',
+                  backgroundColor: '#EDC766',
+                  borderRadius: '50px',
+                }}
               ></Box>
             </Box>
             <Typography
               variant="body1"
-              fontSize="12px"
-              sx={{ whiteSpace: 'nowrap' }}
+              sx={{
+                fontSize: '12px',
+                whiteSpace: 'nowrap',
+              }}
             >
               {friendlyMaxAllowedFileBytes}
             </Typography>

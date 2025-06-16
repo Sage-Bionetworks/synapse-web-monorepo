@@ -61,13 +61,6 @@ export function PortalFullTextSearchField({
           }
         }
       }}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <SearchIcon sx={{ color: theme.palette.primary.main }} />
-          </InputAdornment>
-        ),
-      }}
       fullWidth
       sx={{
         boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
@@ -78,6 +71,15 @@ export function PortalFullTextSearchField({
         },
         mb: '20px',
         ...props.sx,
+      }}
+      slotProps={{
+        input: {
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon sx={{ color: theme.palette.primary.main }} />
+            </InputAdornment>
+          ),
+        },
       }}
     />
   )

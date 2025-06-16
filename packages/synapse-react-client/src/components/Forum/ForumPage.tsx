@@ -42,7 +42,7 @@ export function ForumPage({ forumId, limit, onClickLink }: ForumPageProps) {
   const { data: moderatorList } = useGetModerators(forumId)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
 
-  const isCurrentUserModerator = moderatorList?.results.includes(
+  const isCurrentUserModerator = moderatorList?.includes(
     currentUserProfile?.ownerId ?? '',
   )
 

@@ -18,7 +18,10 @@ import {
 } from '@tanstack/react-table'
 import dayjs from 'dayjs'
 import { useMemo, useState } from 'react'
-import { CheckBoxCell, CheckBoxHeader } from '../EntityHeaderTable/EntityHeaderTableCellRenderers'
+import {
+  CheckBoxCell,
+  CheckBoxHeader,
+} from '../EntityHeaderTable/EntityHeaderTableCellRenderers'
 import { EntityLink } from '../EntityLink'
 import { BlockingLoader, SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import WarningDialog from '../SynapseForm/WarningDialog'
@@ -210,7 +213,13 @@ export function TrashCanList() {
               </ul>
             </Alert>
           )}
-          <Box display="flex" justifyContent="flex-end" gap={2}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: 2,
+            }}
+          >
             {hasNextPage && (
               <Button
                 variant="contained"

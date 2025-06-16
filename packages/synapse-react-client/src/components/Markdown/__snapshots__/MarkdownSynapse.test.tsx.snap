@@ -7,7 +7,7 @@ exports[`MarkdownSynapse tests > Snapshot tests > supports bootstrap rows and co
     data-testid="markdown"
   >
     <span
-      class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
     >
       <div
         class="container-fluid"
@@ -19,7 +19,7 @@ exports[`MarkdownSynapse tests > Snapshot tests > supports bootstrap rows and co
             class="col-sm-4"
           >
             <p
-              class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
             >
               Left
             </p>
@@ -32,7 +32,7 @@ exports[`MarkdownSynapse tests > Snapshot tests > supports bootstrap rows and co
             class="col-sm-4"
           >
             <p
-              class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
             >
               Center
             </p>
@@ -45,7 +45,7 @@ exports[`MarkdownSynapse tests > Snapshot tests > supports bootstrap rows and co
             class="col-sm-4"
           >
             <p
-              class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
             >
               Right
             </p>
@@ -70,17 +70,17 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with a br statement and 
     data-testid="markdown"
   >
     <span
-      class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
     >
       <p
-        class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
       >
         some more free
       </p>
       
 
       <h1
-        class="MuiTypography-root MuiTypography-headline1 css-1ix3kim-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-headline1 css-40zh3-MuiTypography-root"
         id="SRC-header-1"
         toc="true"
       >
@@ -89,7 +89,7 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with a br statement and 
       
 
       <p
-        class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
       >
         loose text
       </p>
@@ -107,16 +107,16 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with header and a link 1
     data-testid="markdown"
   >
     <span
-      class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
     >
       <h1
-        class="MuiTypography-root MuiTypography-headline1 css-1ix3kim-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-headline1 css-40zh3-MuiTypography-root"
         id="SRC-header-1"
         toc="true"
       >
         header 
         <a
-          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-axgts0-MuiTypography-root-MuiLink-root"
+          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-mj2bo0-MuiTypography-root-MuiLink-root"
           href="https://synapse.org"
           rel="noopener noreferrer"
           target="_blank"
@@ -138,14 +138,14 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 
     data-testid="markdown"
   >
     <span
-      class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
     >
       <p
-        class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
       >
         <span>
           <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-3e7xbu-MuiButtonBase-root-MuiButton-root-WideButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-i9dpmq-MuiButtonBase-root-MuiButton-root-WideButton"
             href="#/Help/How It Works"
             tabindex="0"
           >
@@ -154,7 +154,7 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 
         </span>
         <span>
           <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-3e7xbu-MuiButtonBase-root-MuiButton-root-WideButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-i9dpmq-MuiButtonBase-root-MuiButton-root-WideButton"
             href="#/Apply"
             tabindex="0"
           >
@@ -176,14 +176,14 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 
     data-testid="markdown"
   >
     <span
-      class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+      class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
     >
       <p
-        class="MuiTypography-root MuiTypography-body1 css-4ozm06-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
       >
         <span>
           <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-3e7xbu-MuiButtonBase-root-MuiButton-root-WideButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-i9dpmq-MuiButtonBase-root-MuiButton-root-WideButton"
             data-discover="true"
             href="/#/Help/How It Works"
             tabindex="0"
@@ -193,7 +193,7 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 
         </span>
         <span>
           <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-3e7xbu-MuiButtonBase-root-MuiButton-root-WideButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-i9dpmq-MuiButtonBase-root-MuiButton-root-WideButton"
             data-discover="true"
             href="/#/Apply"
             tabindex="0"

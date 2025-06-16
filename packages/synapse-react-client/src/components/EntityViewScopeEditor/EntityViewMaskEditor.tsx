@@ -43,7 +43,14 @@ export default function EntityViewMaskEditor(props: EntityViewMaskEditorProps) {
 
   return (
     <>
-      <Typography variant={'body1'} mt={2.5} mb={1.25} sx={{ fontWeight: 700 }}>
+      <Typography
+        variant={'body1'}
+        sx={{
+          mt: 2.5,
+          mb: 1.25,
+          fontWeight: 700,
+        }}
+      >
         Include in View
       </Typography>
       <FormGroup sx={{ gap: 1 }}>

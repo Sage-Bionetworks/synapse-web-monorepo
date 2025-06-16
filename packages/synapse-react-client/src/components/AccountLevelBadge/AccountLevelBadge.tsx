@@ -72,9 +72,20 @@ export function AccountLevelBadge({
         padding: '30px 20px',
       }}
     >
-      <Box display="flex" width="100%" alignItems="center">
+      <Box
+        sx={{
+          display: 'flex',
+          width: '100%',
+          alignItems: 'center',
+        }}
+      >
         <Tooltip title={badgeConfig.tooltipText}>
-          <Box alignSelf="start" mr="10px">
+          <Box
+            sx={{
+              alignSelf: 'start',
+              mr: '10px',
+            }}
+          >
             {badgeConfig.icon}
           </Box>
         </Tooltip>

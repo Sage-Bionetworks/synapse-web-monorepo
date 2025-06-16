@@ -467,7 +467,11 @@ class _SynapseFormSubmissionGrid extends Component<
                   this.props.formGroupId,
                 )}
 
-                <Box textAlign={'center'}>
+                <Box
+                  sx={{
+                    textAlign: 'center',
+                  }}
+                >
                   <WideButton
                     variant="contained"
                     color="primary"

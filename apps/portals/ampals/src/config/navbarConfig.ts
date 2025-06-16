@@ -55,14 +55,15 @@ export const navbarConfig: NavbarConfig = {
       name: 'Contribute Data',
       path: '/Contribute Data',
     },
-    {
-      name: 'News',
-      path: 'https://news.ampals.org/',
-    },
-    {
-      name: 'Help',
-      path: 'https://help.ampals.org/help/',
-    },
+    // PORTALS-3644: removing News and Help from the navbar until external sites are ready
+    // {
+    //   name: 'News',
+    //   path: 'https://news.ampals.org/',
+    // },
+    // {
+    //   name: 'Help',
+    //   path: 'https://help.ampals.org/help/',
+    // },
   ],
   isPortalsDropdownEnabled: false,
 }

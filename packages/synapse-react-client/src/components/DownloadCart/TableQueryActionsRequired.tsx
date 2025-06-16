@@ -54,7 +54,13 @@ export function TableQueryActionsRequired(
   }, [currentActionsRequired, onNumberOfRequiredActionsChanged])
 
   return (
-    <Box display="flex" flexDirection="column" gap={3}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 3,
+      }}
+    >
       {/* If no actions were ever required, show a message */}
       {!isLoading && allCompleteAndIncompleteActions.length === 0 && (
         <Typography
