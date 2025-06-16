@@ -14,6 +14,7 @@ import {
   MenuItem,
   MenuList,
   Paper,
+  PaperProps,
   Popper,
   SxProps,
   Typography,
@@ -30,8 +31,7 @@ export type DropdownSelectProps = ButtonGroupProps & {
   buttonGroupAriaLabel?: string
   sx?: SxProps
   anchorRef?: RefObject<HTMLElement>
-  square?: boolean
-  elevation?: number
+  paperProps?: PaperProps
 }
 // Derived from https://mui.com/material-ui/react-button-group/#split-button
 
@@ -50,8 +50,7 @@ export default function DropdownSelect(props: DropdownSelectProps) {
     onButtonClick,
     buttonText,
     anchorRef: externalAnchorRef,
-    square = false,
-    elevation,
+    paperProps,
     sx,
     ...rest
   } = props
@@ -150,7 +149,7 @@ export default function DropdownSelect(props: DropdownSelectProps) {
                 placement === 'bottom' ? 'center top' : 'center bottom',
             }}
           >
-            <Paper square={square} elevation={elevation}>
+            <Paper {...paperProps}>
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList id="split-button-menu" autoFocusItem>
                   {options.map((option, index) => (

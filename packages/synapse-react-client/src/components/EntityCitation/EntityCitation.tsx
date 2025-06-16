@@ -105,8 +105,7 @@ const EntityCitation = ({
             <DropdownSelect
               options={options}
               anchorRef={citationButtonRef}
-              square={true}
-              elevation={2}
+              paperProps={{ square: true, elevation: 2 }}
               sx={{
                 fontSize: '16px',
                 lineHeight: '20px',
