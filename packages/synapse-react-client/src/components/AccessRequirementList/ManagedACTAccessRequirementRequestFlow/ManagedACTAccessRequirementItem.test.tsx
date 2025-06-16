@@ -147,13 +147,12 @@ async function testWikiToggle() {
   await userEvent.click(toggle)
 
   await screen.findByText(mockRenderedMarkdown)
-  expect(mockMarkdownSynapse).toHaveBeenCalledWith(
+  expect(mockMarkdownSynapse).toHaveBeenRenderedWithProps(
     expect.objectContaining({
       wikiId: mockManagedACTAccessRequirementWikiPageKey.wikiPageId,
       ownerId: mockManagedACTAccessRequirementWikiPageKey.ownerObjectId,
       objectType: mockManagedACTAccessRequirementWikiPageKey.ownerObjectType,
     }),
-    undefined,
   )
 
   toggle = await screen.findByRole('button', { name: 'Hide Terms' })
@@ -166,13 +165,12 @@ async function testWikiToggle() {
 
 async function testWikiShownWithoutToggle() {
   await screen.findByText(mockRenderedMarkdown)
-  expect(mockMarkdownSynapse).toHaveBeenCalledWith(
+  expect(mockMarkdownSynapse).toHaveBeenRenderedWithProps(
     expect.objectContaining({
       wikiId: mockManagedACTAccessRequirementWikiPageKey.wikiPageId,
       ownerId: mockManagedACTAccessRequirementWikiPageKey.ownerObjectId,
       objectType: mockManagedACTAccessRequirementWikiPageKey.ownerObjectType,
     }),
-    undefined,
   )
 
   expect(
