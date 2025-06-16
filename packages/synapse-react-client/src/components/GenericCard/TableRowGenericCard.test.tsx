@@ -259,7 +259,7 @@ describe('TableRowGenericCard tests', () => {
       'TableEntity',
     )
     screen.getByTestId('IconSvg')
-    expect(mockIconSvg).toHaveBeenCalledWith({ icon: 'folder' }, undefined)
+    expect(mockIconSvg).toHaveBeenRenderedWithProps({ icon: 'folder' })
   })
 
   describe('Renders a FileHandleLink when the title is a file handle', () => {
@@ -281,18 +281,15 @@ describe('TableRowGenericCard tests', () => {
         'EntityView',
       )
       await screen.findByTestId('FileHandleLink')
-      expect(mockFileHandleLink).toHaveBeenCalledWith(
-        {
-          showDownloadIcon: true,
-          fileHandleAssociation: {
-            fileHandleId: MOCKED_LINK,
-            associateObjectId: MOCKED_ID,
-            associateObjectType: FileHandleAssociateType.FileEntity,
-          },
-          displayValue: MOCKED_TITLE,
+      expect(mockFileHandleLink).toHaveBeenRenderedWithProps({
+        showDownloadIcon: true,
+        fileHandleAssociation: {
+          fileHandleId: MOCKED_LINK,
+          associateObjectId: MOCKED_ID,
+          associateObjectType: FileHandleAssociateType.FileEntity,
         },
-        undefined,
-      )
+        displayValue: MOCKED_TITLE,
+      })
     })
 
     test('Renders a FileHandleLink with a table associate type', async () => {
@@ -305,18 +302,15 @@ describe('TableRowGenericCard tests', () => {
         'TableEntity',
       )
       await screen.findByTestId('FileHandleLink')
-      expect(mockFileHandleLink).toHaveBeenCalledWith(
-        {
-          showDownloadIcon: true,
-          fileHandleAssociation: {
-            fileHandleId: MOCKED_LINK,
-            associateObjectId: mockTableEntityData.id,
-            associateObjectType: FileHandleAssociateType.TableEntity,
-          },
-          displayValue: MOCKED_TITLE,
+      expect(mockFileHandleLink).toHaveBeenRenderedWithProps({
+        showDownloadIcon: true,
+        fileHandleAssociation: {
+          fileHandleId: MOCKED_LINK,
+          associateObjectId: mockTableEntityData.id,
+          associateObjectType: FileHandleAssociateType.TableEntity,
         },
-        undefined,
-      )
+        displayValue: MOCKED_TITLE,
+      })
     })
   })
 
@@ -343,16 +337,13 @@ describe('TableRowGenericCard tests', () => {
         'EntityView',
       )
       await screen.findByTestId('ImageFileHandle')
-      expect(mockImageFileHandle).toHaveBeenCalledWith(
-        {
-          fileHandleAssociation: {
-            fileHandleId: MOCKED_IMAGE_FILE_HANDLE_ID,
-            associateObjectId: MOCKED_ID,
-            associateObjectType: FileHandleAssociateType.FileEntity,
-          },
+      expect(mockImageFileHandle).toHaveBeenRenderedWithProps({
+        fileHandleAssociation: {
+          fileHandleId: MOCKED_IMAGE_FILE_HANDLE_ID,
+          associateObjectId: MOCKED_ID,
+          associateObjectType: FileHandleAssociateType.FileEntity,
         },
-        undefined,
-      )
+      })
     })
     test('Renders a ImageFileHandle with a table associate type', async () => {
       renderComponent(
@@ -368,16 +359,13 @@ describe('TableRowGenericCard tests', () => {
         'TableEntity',
       )
       await screen.findByTestId('ImageFileHandle')
-      expect(mockImageFileHandle).toHaveBeenCalledWith(
-        {
-          fileHandleAssociation: {
-            fileHandleId: MOCKED_IMAGE_FILE_HANDLE_ID,
-            associateObjectId: mockTableEntityData.id,
-            associateObjectType: FileHandleAssociateType.TableEntity,
-          },
+      expect(mockImageFileHandle).toHaveBeenRenderedWithProps({
+        fileHandleAssociation: {
+          fileHandleId: MOCKED_IMAGE_FILE_HANDLE_ID,
+          associateObjectId: mockTableEntityData.id,
+          associateObjectType: FileHandleAssociateType.TableEntity,
         },
-        undefined,
-      )
+      })
     })
   })
 
@@ -511,13 +499,10 @@ describe('TableRowGenericCard tests', () => {
     await screen.findByText('DOI')
     await screen.findByTestId('PortalDOI')
 
-    expect(PortalDOI).toHaveBeenCalledWith(
-      {
-        portalId: '12345',
-        resourceId: 'someDoiString',
-      },
-      undefined,
-    )
+    expect(PortalDOI).toHaveBeenRenderedWithProps({
+      portalId: '12345',
+      resourceId: 'someDoiString',
+    })
   })
 
   test('PortalDOI is not shown when showDoiCardLabel is false', () => {

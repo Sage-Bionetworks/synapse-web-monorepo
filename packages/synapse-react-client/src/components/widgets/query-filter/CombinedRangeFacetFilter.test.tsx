@@ -243,21 +243,19 @@ describe('CombinedRangeFacetFilter tests', () => {
   it('should collapse content when toggled', async () => {
     await init({ ...props })
 
-    expect(MockCollapse).toHaveBeenLastCalledWith(
+    expect(MockCollapse).toHaveBeenLastRenderedWithProps(
       expect.objectContaining({
         in: true,
       }),
-      undefined,
     )
 
     // toggle collapse via button
     await userEvent.click(screen.getByRole('button', { name: 'Collapse Menu' }))
 
-    expect(MockCollapse).toHaveBeenLastCalledWith(
+    expect(MockCollapse).toHaveBeenLastRenderedWithProps(
       expect.objectContaining({
         in: false,
       }),
-      undefined,
     )
   })
 

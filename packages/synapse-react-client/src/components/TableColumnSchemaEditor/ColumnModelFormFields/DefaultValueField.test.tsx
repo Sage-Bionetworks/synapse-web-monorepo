@@ -191,17 +191,15 @@ describe('DefaultValueField', () => {
     )
     expect(datePickerFields).toHaveLength(2)
 
-    expect(mockDateTimePicker).toHaveBeenCalledWith(
+    expect(mockDateTimePicker).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         value: dayjs(DATE_ONE),
       }),
-      undefined,
     )
-    expect(mockDateTimePicker).toHaveBeenCalledWith(
+    expect(mockDateTimePicker).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         value: dayjs(DATE_TWO),
       }),
-      undefined,
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'OK' }))

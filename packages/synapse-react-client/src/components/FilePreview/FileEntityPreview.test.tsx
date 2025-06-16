@@ -147,12 +147,11 @@ describe('FileHandleContentRenderer tests', () => {
 
     await screen.findByTestId('FileHandleContentRenderer')
 
-    expect(FileHandleContentRendererModule.default).toHaveBeenCalledWith(
+    expect(FileHandleContentRendererModule.default).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         fileHandleAssociation,
         previewType: PreviewRendererType.HTML,
       }),
-      undefined,
     )
   })
 

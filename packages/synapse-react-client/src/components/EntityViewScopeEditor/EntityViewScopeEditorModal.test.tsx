@@ -206,15 +206,12 @@ describe('EntityViewScopeEditorModal tests', () => {
     await user.click(foldersCheckbox)
 
     await waitFor(() => {
-      expect(mockEntityViewScopeEditor).toHaveBeenLastCalledWith(
-        {
-          scopeIds: ['syn123'],
-          disabled: false,
-          isProjectView: false,
-          onChange: expect.any(Function),
-        },
-        undefined,
-      )
+      expect(mockEntityViewScopeEditor).toHaveBeenLastRenderedWithProps({
+        scopeIds: ['syn123'],
+        disabled: false,
+        isProjectView: false,
+        onChange: expect.any(Function),
+      })
     })
 
     const onChangePassedToEntityViewScopeEditor =

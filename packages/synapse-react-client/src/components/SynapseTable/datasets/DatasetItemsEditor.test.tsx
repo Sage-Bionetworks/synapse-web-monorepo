@@ -533,12 +533,11 @@ describe('Dataset Items Editor tests', () => {
     expect(mockFileReference.targetVersionNumber).not.toEqual(1)
     // The data rows, including the entity badge icons, should be showing the current selected version's data
     await waitFor(() =>
-      expect(mockEntityBadgeIcons).toHaveBeenLastCalledWith(
+      expect(mockEntityBadgeIcons).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({
           entityId: mockFileReference.targetId,
           versionNumber: mockFileReference.targetVersionNumber,
         }),
-        undefined,
       ),
     )
 
@@ -547,12 +546,11 @@ describe('Dataset Items Editor tests', () => {
 
     // The version passed to the icons should now be v1
     await waitFor(() =>
-      expect(mockEntityBadgeIcons).toHaveBeenLastCalledWith(
+      expect(mockEntityBadgeIcons).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({
           entityId: mockFileReference.targetId,
           versionNumber: 1,
         }),
-        undefined,
       ),
     )
 
@@ -793,13 +791,12 @@ describe('Dataset Items Editor tests', () => {
       expect(mockOnUnsavedChangesFn).toHaveBeenCalledWith(true)
 
       // Verify that the Entity Finder is configured to select Datasets
-      expect(mockEntityFinder).toHaveBeenLastCalledWith(
+      expect(mockEntityFinder).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({
           configuration: expect.objectContaining({
             selectableTypes: [EntityType.DATASET],
           }),
         }),
-        undefined,
       )
 
       await clickSave(user)

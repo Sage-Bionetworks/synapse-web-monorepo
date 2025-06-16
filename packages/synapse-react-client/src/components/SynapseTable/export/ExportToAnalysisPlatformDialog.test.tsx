@@ -104,14 +104,13 @@ describe('ExportToAnalysisPlatformDialog tests', () => {
       await screen.findByTestId('ExternalPlatformActionsRequiredPrecheck')
 
       // Verify the mock component received the correct props and updates the confirm button
-      expect(mockExternalPlatformActionsRequiredPrecheck).toHaveBeenCalledWith(
-        {
-          selectedPlatform: platformCase.platform,
-          onConfirmButtonPropsChange: expect.any(Function),
-          onSuccessfulExport: expect.any(Function),
-        },
-        undefined,
-      )
+      expect(
+        mockExternalPlatformActionsRequiredPrecheck,
+      ).toHaveBeenRenderedWithProps({
+        selectedPlatform: platformCase.platform,
+        onConfirmButtonPropsChange: expect.any(Function),
+        onSuccessfulExport: expect.any(Function),
+      })
 
       const finalConfirmButtonText = 'mock confirm button text'
       const finalConfirmButtonClickHandler = vi.fn()

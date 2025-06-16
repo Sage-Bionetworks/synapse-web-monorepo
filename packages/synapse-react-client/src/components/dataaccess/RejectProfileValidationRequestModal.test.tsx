@@ -79,20 +79,17 @@ describe('RejectProfileValidationRequestModal', () => {
     const { user } = renderComponent()
 
     await waitFor(() => {
-      expect(mockCannedRejectionDialog).toHaveBeenCalledWith(
-        {
-          open: true,
-          defaultMessageAppend: DEFAULT_MESSAGE_APPEND,
-          defaultMessagePrefix: DEFAULT_MESSAGE_PREPEND,
-          error: null,
-          onClose: expect.any(Function),
-          onConfirm: expect.any(Function),
-          rejectionFormPromptCopy: REJECTION_FORM_PROMPT_COPY,
-          tableId: REJECT_VALIDATION_CANNED_RESPONSES_TABLE,
-          children: expect.anything(),
-        },
-        undefined,
-      )
+      expect(mockCannedRejectionDialog).toHaveBeenRenderedWithProps({
+        open: true,
+        defaultMessageAppend: DEFAULT_MESSAGE_APPEND,
+        defaultMessagePrefix: DEFAULT_MESSAGE_PREPEND,
+        error: null,
+        onClose: expect.any(Function),
+        onConfirm: expect.any(Function),
+        rejectionFormPromptCopy: REJECTION_FORM_PROMPT_COPY,
+        tableId: REJECT_VALIDATION_CANNED_RESPONSES_TABLE,
+        children: expect.anything(),
+      })
     })
 
     // Verify internal notes field is rendered (by the mock)
@@ -134,20 +131,17 @@ describe('RejectProfileValidationRequestModal', () => {
     })
 
     await waitFor(() => {
-      expect(mockCannedRejectionDialog).toHaveBeenCalledWith(
-        {
-          open: true,
-          defaultMessageAppend: DEFAULT_MESSAGE_APPEND,
-          defaultMessagePrefix: DEFAULT_MESSAGE_PREPEND,
-          error: null,
-          onClose: expect.any(Function),
-          onConfirm: expect.any(Function),
-          rejectionFormPromptCopy: REJECTION_FORM_PROMPT_COPY,
-          tableId: REJECT_VALIDATION_CANNED_RESPONSES_TABLE,
-          children: expect.anything(),
-        },
-        undefined,
-      )
+      expect(mockCannedRejectionDialog).toHaveBeenRenderedWithProps({
+        open: true,
+        defaultMessageAppend: DEFAULT_MESSAGE_APPEND,
+        defaultMessagePrefix: DEFAULT_MESSAGE_PREPEND,
+        error: null,
+        onClose: expect.any(Function),
+        onConfirm: expect.any(Function),
+        rejectionFormPromptCopy: REJECTION_FORM_PROMPT_COPY,
+        tableId: REJECT_VALIDATION_CANNED_RESPONSES_TABLE,
+        children: expect.anything(),
+      })
     })
 
     // Generate the email using the mocked modal

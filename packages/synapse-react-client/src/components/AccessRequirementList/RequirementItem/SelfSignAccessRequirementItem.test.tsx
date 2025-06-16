@@ -123,9 +123,8 @@ async function testWikiToggle(expectedProps: MarkdownSynapseProps) {
   await userEvent.click(toggle)
 
   await screen.findByText(mockRenderedMarkdown)
-  expect(mockMarkdownSynapse).toHaveBeenCalledWith(
+  expect(mockMarkdownSynapse).toHaveBeenRenderedWithProps(
     expect.objectContaining(expectedProps),
-    undefined,
   )
 
   toggle = await screen.findByRole('button', { name: 'Hide Terms' })
@@ -138,9 +137,8 @@ async function testWikiToggle(expectedProps: MarkdownSynapseProps) {
 
 async function testWikiShownWithoutToggle(expectedProps: MarkdownSynapseProps) {
   await screen.findByText(mockRenderedMarkdown)
-  expect(mockMarkdownSynapse).toHaveBeenCalledWith(
+  expect(mockMarkdownSynapse).toHaveBeenRenderedWithProps(
     expect.objectContaining(expectedProps),
-    undefined,
   )
 
   expect(

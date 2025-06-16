@@ -90,11 +90,10 @@ describe('ImportTableColumnsButton', () => {
     })
 
     // The entity finder should not be visible at first
-    expect(mockEntityFinderModal).toHaveBeenLastCalledWith(
+    expect(mockEntityFinderModal).toHaveBeenLastRenderedWithProps(
       expect.objectContaining({
         show: false,
       }),
-      undefined,
     )
 
     // Click the button
@@ -102,11 +101,10 @@ describe('ImportTableColumnsButton', () => {
 
     // The (mocked) entity finder should appear
     await waitFor(() => {
-      expect(mockEntityFinderModal).toHaveBeenLastCalledWith(
+      expect(mockEntityFinderModal).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({
           show: true,
         }),
-        undefined,
       )
     })
 
@@ -134,11 +132,10 @@ describe('ImportTableColumnsButton', () => {
     )
 
     // The entity finder should be hidden
-    expect(mockEntityFinderModal).toHaveBeenLastCalledWith(
+    expect(mockEntityFinderModal).toHaveBeenLastRenderedWithProps(
       expect.objectContaining({
         show: false,
       }),
-      undefined,
     )
   })
 
@@ -148,11 +145,10 @@ describe('ImportTableColumnsButton', () => {
     })
 
     // The entity finder should not be visible at first
-    expect(mockEntityFinderModal).toHaveBeenLastCalledWith(
+    expect(mockEntityFinderModal).toHaveBeenLastRenderedWithProps(
       expect.objectContaining({
         show: false,
       }),
-      undefined,
     )
 
     // Click the button
@@ -160,11 +156,10 @@ describe('ImportTableColumnsButton', () => {
 
     // The (mocked) entity finder should appear
     await waitFor(() => {
-      expect(mockEntityFinderModal).toHaveBeenLastCalledWith(
+      expect(mockEntityFinderModal).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({
           show: true,
         }),
-        undefined,
       )
     })
 
@@ -181,11 +176,10 @@ describe('ImportTableColumnsButton', () => {
     expect(mockOnAddColumns).not.toHaveBeenCalled()
 
     // The entity finder should be hidden
-    expect(mockEntityFinderModal).toHaveBeenLastCalledWith(
+    expect(mockEntityFinderModal).toHaveBeenLastRenderedWithProps(
       expect.objectContaining({
         show: false,
       }),
-      undefined,
     )
   })
 })

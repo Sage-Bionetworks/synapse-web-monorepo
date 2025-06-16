@@ -101,13 +101,12 @@ describe('AccessSubmissionDashboard tests', () => {
 
     expect(await screen.findAllByRole('combobox')).toHaveLength(3)
     await screen.findByTestId(SUBMISSION_TABLE_TEST_ID)
-    expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
+    expect(mockAccessRequestSubmissionTable).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         accessRequirementId: undefined,
         accessorId: undefined,
         reviewerId: undefined,
       }),
-      undefined,
     )
   })
 
@@ -132,13 +131,12 @@ describe('AccessSubmissionDashboard tests', () => {
         new URLSearchParams(getLocation().search).get('accessRequirementId'),
       ).toEqual(mockAccessRequirement.id.toString())
 
-      expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
+      expect(mockAccessRequestSubmissionTable).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({
           accessRequirementId: mockAccessRequirement.id.toString(),
           accessorId: undefined,
           reviewerId: undefined,
         }),
-        undefined,
       )
     })
   })
@@ -157,13 +155,12 @@ describe('AccessSubmissionDashboard tests', () => {
         new URLSearchParams(getLocation().search).get('accessorId'),
       ).toEqual(MOCK_USER_ID.toString())
 
-      expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
+      expect(mockAccessRequestSubmissionTable).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({
           accessRequirementId: undefined,
           accessorId: MOCK_USER_ID.toString(),
           reviewerId: undefined,
         }),
-        undefined,
       )
     })
   })
@@ -182,13 +179,12 @@ describe('AccessSubmissionDashboard tests', () => {
         new URLSearchParams(getLocation().search).get('reviewerId'),
       ).toEqual(MOCK_USER_ID.toString())
 
-      expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
+      expect(mockAccessRequestSubmissionTable).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({
           accessRequirementId: undefined,
           accessorId: undefined,
           reviewerId: MOCK_USER_ID.toString(),
         }),
-        undefined,
       )
     })
   })
@@ -202,13 +198,12 @@ describe('AccessSubmissionDashboard tests', () => {
     renderComponent(initialEntries)
 
     await waitFor(() =>
-      expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
+      expect(mockAccessRequestSubmissionTable).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({
           accessRequirementId: MOCK_AR_ID.toString(),
           accessorId: MOCK_USER_ID.toString(),
           reviewerId: MOCK_USER_ID.toString(),
         }),
-        undefined,
       ),
     )
   })

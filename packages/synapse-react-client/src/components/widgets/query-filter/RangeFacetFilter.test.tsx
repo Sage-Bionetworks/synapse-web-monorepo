@@ -176,11 +176,10 @@ describe('RangeFacetFilter tests', () => {
     init({ ...props })
 
     await waitFor(() => {
-      expect(MockCollapse).toHaveBeenLastCalledWith(
+      expect(MockCollapse).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({
           in: true,
         }),
-        undefined,
       )
     })
 
@@ -189,11 +188,10 @@ describe('RangeFacetFilter tests', () => {
       await screen.findByRole('button', { name: 'Collapse Menu' }),
     )
 
-    expect(MockCollapse).toHaveBeenLastCalledWith(
+    expect(MockCollapse).toHaveBeenLastRenderedWithProps(
       expect.objectContaining({
         in: false,
       }),
-      undefined,
     )
   })
 

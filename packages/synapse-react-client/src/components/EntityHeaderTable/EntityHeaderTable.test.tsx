@@ -154,9 +154,8 @@ describe('EntityHeaderTable tests', () => {
     await user.click(openEntityFinderButton)
 
     await waitFor(() =>
-      expect(mockEntityFinderModal).toHaveBeenLastCalledWith(
+      expect(mockEntityFinderModal).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({ show: true }),
-        undefined,
       ),
     )
 
@@ -171,9 +170,8 @@ describe('EntityHeaderTable tests', () => {
 
     await waitFor(() => {
       // The entity finder should have been hidden
-      expect(mockEntityFinderModal).toHaveBeenLastCalledWith(
+      expect(mockEntityFinderModal).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({ show: false }),
-        undefined,
       )
       // And the items should have been added automatically
       expect(mockOnUpdate).toHaveBeenCalledWith([

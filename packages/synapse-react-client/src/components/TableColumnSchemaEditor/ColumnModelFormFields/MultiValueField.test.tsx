@@ -58,13 +58,12 @@ describe('MultiValueField', () => {
       ColumnTypeEnum.STRING,
     )
     await waitFor(() =>
-      expect(mockJsonArrayEditorModal).toHaveBeenCalledWith(
+      expect(mockJsonArrayEditorModal).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           arrayItemDefinition: stringDefinition,
           value: ['foo', 'bar'],
           isShowingModal: false,
         }),
-        undefined,
       ),
     )
 
@@ -72,11 +71,10 @@ describe('MultiValueField', () => {
     await userEvent.click(textField)
 
     await waitFor(() =>
-      expect(mockJsonArrayEditorModal).toHaveBeenCalledWith(
+      expect(mockJsonArrayEditorModal).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           isShowingModal: true,
         }),
-        undefined,
       ),
     )
 
@@ -85,11 +83,10 @@ describe('MultiValueField', () => {
       mockJsonArrayEditorModal.mock.lastCall![0].onCancel()
     })
     await waitFor(() =>
-      expect(mockJsonArrayEditorModal).toHaveBeenCalledWith(
+      expect(mockJsonArrayEditorModal).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           isShowingModal: false,
         }),
-        undefined,
       ),
     )
 
@@ -97,11 +94,10 @@ describe('MultiValueField', () => {
     await userEvent.click(textField)
 
     await waitFor(() =>
-      expect(mockJsonArrayEditorModal).toHaveBeenCalledWith(
+      expect(mockJsonArrayEditorModal).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           isShowingModal: true,
         }),
-        undefined,
       ),
     )
 
@@ -110,11 +106,10 @@ describe('MultiValueField', () => {
       mockJsonArrayEditorModal.mock.lastCall![0].onConfirm(['baz', 'qux'])
     })
     await waitFor(() => {
-      expect(mockJsonArrayEditorModal).toHaveBeenCalledWith(
+      expect(mockJsonArrayEditorModal).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           isShowingModal: false,
         }),
-        undefined,
       )
 
       expect(onChange).toHaveBeenCalledWith(['baz', 'qux'])

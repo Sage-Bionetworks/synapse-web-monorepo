@@ -36,27 +36,24 @@ describe('EntityViewScopeEditor tests', () => {
     await screen.findByTestId('EntityHeaderTableMocked')
 
     await waitFor(() =>
-      expect(mockedEntityHeaderTable).toHaveBeenLastCalledWith(
-        {
-          references: [{ targetId: 'syn123' }],
-          isEditable: true,
-          onUpdate: expect.anything(),
-          removeSelectedRowsButtonText: 'Remove Selected Items from View Scope',
-          objectNameCopy: 'container',
-          hideTextFieldToPasteValue: true,
-          entityFinderConfiguration: {
-            selectMultiple: true,
-            versionSelection: VersionSelectionType.DISALLOWED,
-            initialScope: FinderScope.ALL_PROJECTS,
-            initialContainer: 'root',
-            selectableTypes: expect.arrayContaining([
-              EntityType.PROJECT,
-              EntityType.FOLDER,
-            ]),
-          },
+      expect(mockedEntityHeaderTable).toHaveBeenLastRenderedWithProps({
+        references: [{ targetId: 'syn123' }],
+        isEditable: true,
+        onUpdate: expect.anything(),
+        removeSelectedRowsButtonText: 'Remove Selected Items from View Scope',
+        objectNameCopy: 'container',
+        hideTextFieldToPasteValue: true,
+        entityFinderConfiguration: {
+          selectMultiple: true,
+          versionSelection: VersionSelectionType.DISALLOWED,
+          initialScope: FinderScope.ALL_PROJECTS,
+          initialContainer: 'root',
+          selectableTypes: expect.arrayContaining([
+            EntityType.PROJECT,
+            EntityType.FOLDER,
+          ]),
         },
-        undefined,
-      ),
+      }),
     )
 
     const capturedOnUpdate = mockedEntityHeaderTable.mock.lastCall![0].onUpdate!
@@ -80,27 +77,24 @@ describe('EntityViewScopeEditor tests', () => {
     await screen.findByText('Empty! Add items to populate your view')
 
     await waitFor(() =>
-      expect(mockedEntityHeaderTable).toHaveBeenLastCalledWith(
-        {
-          references: [],
-          isEditable: true,
-          onUpdate: expect.anything(),
-          removeSelectedRowsButtonText: 'Remove Selected Items from View Scope',
-          objectNameCopy: 'container',
-          hideTextFieldToPasteValue: true,
-          entityFinderConfiguration: {
-            selectMultiple: true,
-            versionSelection: VersionSelectionType.DISALLOWED,
-            initialScope: FinderScope.ALL_PROJECTS,
-            initialContainer: 'root',
-            selectableTypes: expect.arrayContaining([
-              EntityType.PROJECT,
-              EntityType.FOLDER,
-            ]),
-          },
+      expect(mockedEntityHeaderTable).toHaveBeenLastRenderedWithProps({
+        references: [],
+        isEditable: true,
+        onUpdate: expect.anything(),
+        removeSelectedRowsButtonText: 'Remove Selected Items from View Scope',
+        objectNameCopy: 'container',
+        hideTextFieldToPasteValue: true,
+        entityFinderConfiguration: {
+          selectMultiple: true,
+          versionSelection: VersionSelectionType.DISALLOWED,
+          initialScope: FinderScope.ALL_PROJECTS,
+          initialContainer: 'root',
+          selectableTypes: expect.arrayContaining([
+            EntityType.PROJECT,
+            EntityType.FOLDER,
+          ]),
         },
-        undefined,
-      ),
+      }),
     )
   })
 
@@ -118,28 +112,25 @@ describe('EntityViewScopeEditor tests', () => {
     await screen.findByTestId('EntityHeaderTableMocked')
 
     await waitFor(() =>
-      expect(mockedEntityHeaderTable).toHaveBeenLastCalledWith(
-        {
-          references: [{ targetId: 'syn123' }],
-          isEditable: true,
-          onUpdate: expect.anything(),
-          removeSelectedRowsButtonText: 'Remove Selected Items from View Scope',
-          objectNameCopy: 'project',
-          hideTextFieldToPasteValue: true,
-          entityFinderConfiguration: {
-            selectMultiple: true,
-            versionSelection: VersionSelectionType.DISALLOWED,
-            initialScope: FinderScope.ALL_PROJECTS,
-            initialContainer: 'root',
-            selectableTypes: expect.arrayContaining([
-              EntityType.PROJECT,
-              // Folders cannot be added to a Project View!
-              // EntityType.FOLDER,
-            ]),
-          },
+      expect(mockedEntityHeaderTable).toHaveBeenLastRenderedWithProps({
+        references: [{ targetId: 'syn123' }],
+        isEditable: true,
+        onUpdate: expect.anything(),
+        removeSelectedRowsButtonText: 'Remove Selected Items from View Scope',
+        objectNameCopy: 'project',
+        hideTextFieldToPasteValue: true,
+        entityFinderConfiguration: {
+          selectMultiple: true,
+          versionSelection: VersionSelectionType.DISALLOWED,
+          initialScope: FinderScope.ALL_PROJECTS,
+          initialContainer: 'root',
+          selectableTypes: expect.arrayContaining([
+            EntityType.PROJECT,
+            // Folders cannot be added to a Project View!
+            // EntityType.FOLDER,
+          ]),
         },
-        undefined,
-      ),
+      }),
     )
   })
 })

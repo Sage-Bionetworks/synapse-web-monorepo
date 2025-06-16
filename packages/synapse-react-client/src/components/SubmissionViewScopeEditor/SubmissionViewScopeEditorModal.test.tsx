@@ -64,9 +64,6 @@ describe('SubmissionViewScopeEditorModal tests', () => {
         name: `Evaluation ${id}`,
       })
     })
-  })
-
-  it('displays the correct scope editor which can modify selection', async () => {
     const { saveButton, cancelButton } = await setUp({
       entityId: mockTableEntity.id,
       open: true,
@@ -76,15 +73,12 @@ describe('SubmissionViewScopeEditorModal tests', () => {
     await screen.findByTestId('EvaluationFinderMocked')
 
     await waitFor(() => {
-      expect(mockEvaluationFinder).toHaveBeenLastCalledWith(
-        {
-          activeOnly: false,
-          accessType: ACCESS_TYPE.READ_PRIVATE_SUBMISSION,
-          selectedIds: ['123', '456'],
-          onChange: expect.anything(),
-        },
-        undefined,
-      )
+      expect(mockEvaluationFinder).toHaveBeenLastRenderedWithProps({
+        activeOnly: false,
+        accessType: ACCESS_TYPE.READ_PRIVATE_SUBMISSION,
+        selectedIds: ['123', '456'],
+        onChange: expect.anything(),
+      })
     })
 
     expect(await screen.findByRole('dialog')).toBeVisible()
@@ -162,15 +156,12 @@ describe('SubmissionViewScopeEditorModal tests', () => {
     const newScopeIds = ['123', '456', '789']
 
     await waitFor(() => {
-      expect(mockEvaluationFinder).toHaveBeenLastCalledWith(
-        {
-          activeOnly: false,
-          accessType: ACCESS_TYPE.READ_PRIVATE_SUBMISSION,
-          selectedIds: ['123', '456'],
-          onChange: expect.anything(),
-        },
-        undefined,
-      )
+      expect(mockEvaluationFinder).toHaveBeenLastRenderedWithProps({
+        activeOnly: false,
+        accessType: ACCESS_TYPE.READ_PRIVATE_SUBMISSION,
+        selectedIds: ['123', '456'],
+        onChange: expect.anything(),
+      })
     })
     const mockSubmissionView = {
       ...mockTableEntityInstance,

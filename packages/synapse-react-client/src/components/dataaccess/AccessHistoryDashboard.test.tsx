@@ -144,23 +144,21 @@ describe('AccessHistoryDashboard tests', () => {
     await screen.findByLabelText('Filter by Access Requirement Name')
 
     await screen.findByTestId(SUBMISSION_TABLE_TEST_ID)
-    expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
+    expect(mockAccessRequestSubmissionTable).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         accessRequirementId: undefined,
         accessorId: '',
         showStatus: true,
         showSubmitter: true,
       }),
-      undefined,
     )
 
     await screen.findByTestId(APPROVAL_TABLE_TEST_ID)
-    expect(mockAccessApprovalsTable).toHaveBeenCalledWith(
+    expect(mockAccessApprovalsTable).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         accessRequirementId: undefined,
         accessorId: '',
       }),
-      undefined,
     )
   })
 
@@ -183,14 +181,13 @@ describe('AccessHistoryDashboard tests', () => {
     await screen.findByLabelText('Filter by Access Requirement Name')
 
     await screen.findByTestId(SUBMISSION_TABLE_TEST_ID)
-    expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
+    expect(mockAccessRequestSubmissionTable).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         accessRequirementId: undefined,
         accessorId: '',
         showStatus: true,
         showSubmitter: true,
       }),
-      undefined,
     )
 
     expect(screen.queryByTestId(APPROVAL_TABLE_TEST_ID)).not.toBeInTheDocument()
@@ -212,22 +209,20 @@ describe('AccessHistoryDashboard tests', () => {
         new URLSearchParams(getLocation().search).get('accessorId'),
       ).toEqual(MOCK_USER_ID.toString())
 
-      expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
+      expect(mockAccessRequestSubmissionTable).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           accessRequirementId: undefined,
           accessorId: MOCK_USER_ID.toString(),
           showStatus: true,
           showSubmitter: true,
         }),
-        undefined,
       )
 
-      expect(mockAccessApprovalsTable).toHaveBeenCalledWith(
+      expect(mockAccessApprovalsTable).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           accessRequirementId: undefined,
           accessorId: MOCK_USER_ID.toString(),
         }),
-        undefined,
       )
     })
   })
@@ -267,22 +262,20 @@ describe('AccessHistoryDashboard tests', () => {
         new URLSearchParams(getLocation().search).get('accessRequirementId'),
       ).toEqual(mockAccessRequirement.id.toString())
 
-      expect(mockAccessRequestSubmissionTable).toHaveBeenLastCalledWith(
+      expect(mockAccessRequestSubmissionTable).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({
           accessRequirementId: mockAccessRequirement.id.toString(),
           accessorId: MOCK_USER_ID.toString(),
           showStatus: true,
           showSubmitter: true,
         }),
-        undefined,
       )
 
-      expect(mockAccessApprovalsTable).toHaveBeenCalledWith(
+      expect(mockAccessApprovalsTable).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           accessRequirementId: mockAccessRequirement.id.toString(),
           accessorId: MOCK_USER_ID.toString(),
         }),
-        undefined,
       )
     })
   })
@@ -295,22 +288,20 @@ describe('AccessHistoryDashboard tests', () => {
     renderComponent(initialEntries)
 
     await waitFor(() => {
-      expect(mockAccessRequestSubmissionTable).toHaveBeenCalledWith(
+      expect(mockAccessRequestSubmissionTable).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           accessRequirementId: mockAccessRequirement.id.toString(),
           accessorId: MOCK_USER_ID.toString(),
           showStatus: true,
           showSubmitter: true,
         }),
-        undefined,
       )
 
-      expect(mockAccessApprovalsTable).toHaveBeenCalledWith(
+      expect(mockAccessApprovalsTable).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           accessRequirementId: mockAccessRequirement.id.toString(),
           accessorId: MOCK_USER_ID.toString(),
         }),
-        undefined,
       )
     })
   })
