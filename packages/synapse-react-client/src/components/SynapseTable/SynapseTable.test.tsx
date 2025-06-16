@@ -261,7 +261,6 @@ describe('SynapseTable tests', () => {
       ),
     )
   })
-  afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
   const entityTypeCases: [
