@@ -247,15 +247,12 @@ describe('MarkdownSynapse tests', () => {
       }
       renderComponent(props)
       await screen.findByRole('img')
-      expect(mockMarkdownSynapseImage).toHaveBeenCalledWith(
-        {
-          align: 'None',
-          responsive: 'true',
-          synapseId: 'syn7809125',
-          version: '2',
-        },
-        expect.anything(),
-      )
+      expect(mockMarkdownSynapseImage).toHaveBeenRenderedWithProps({
+        align: 'None',
+        responsive: 'true',
+        synapseId: 'syn7809125',
+        version: '2',
+      })
     })
 
     it('renders an image from a file handleId', async () => {
@@ -273,16 +270,13 @@ describe('MarkdownSynapse tests', () => {
       }
       renderComponent(props)
       await screen.findByRole('img')
-      expect(mockMarkdownSynapseImage).toHaveBeenCalledWith(
-        {
-          align: 'None',
-          altText: '',
-          fileName: 'joy.svg',
-          responsive: 'true',
-          scale: '100',
-        },
-        expect.anything(),
-      )
+      expect(mockMarkdownSynapseImage).toHaveBeenRenderedWithProps({
+        align: 'None',
+        altText: '',
+        fileName: 'joy.svg',
+        responsive: 'true',
+        scale: '100',
+      })
     })
   })
 
