@@ -135,6 +135,12 @@ describe('Linkify tests', () => {
     'inchi:InChI=1S/C2H6O/c1-2-3/h3H,2H2,1H3',
     'inchikey:RYYVLZVUVIJVGH-UHFFFAOYSA-N',
     'orcid:0000-0003-4423-4370',
+    'icd9:401',
+    'icd9:401-405',
+    'icd9:995.81',
+    'icd9:E950',
+    'ncbitaxon:2170610',
+    'ncbitaxon:subclass',
   ]
 
   bioregistryIds.forEach(id => {
