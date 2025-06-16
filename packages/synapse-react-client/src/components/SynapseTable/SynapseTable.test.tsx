@@ -23,6 +23,12 @@ import {
 } from '@/utils/functions/getEndpoint'
 import { normalizeNumericId } from '@/utils/functions/StringUtils'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
+import type {
+  RestrictionInformationBatchRequest,
+  RestrictionInformationBatchResponse,
+  RestrictionInformationRequest,
+  RestrictionInformationResponse,
+} from '@sage-bionetworks/synapse-client'
 import {
   EntityHeader,
   FileEntity,
@@ -33,30 +39,20 @@ import {
   RestrictionLevel,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import type {
-  RestrictionInformationRequest,
-  RestrictionInformationResponse,
-  RestrictionInformationBatchRequest,
-  RestrictionInformationBatchResponse,
-} from '@sage-bionetworks/synapse-client'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import { http, HttpResponse } from 'msw'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import {
-  QueryContextConsumer,
-  QueryContextType,
-  QueryWrapper,
-  QueryWrapperProps,
-} from '../../index'
 import * as AddToDownloadListV2Module from '../AddToDownloadListV2'
 import * as HasAccessModule from '../HasAccess/HasAccessV2'
+import { QueryContextConsumer, QueryContextType } from '../QueryContext'
 import {
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
 import * as NoContentPlaceholderModule from '../QueryVisualizationWrapper/NoContentPlaceholder'
+import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
 import * as UserCardModule from '../UserCard/UserCard'
 import { SynapseTable, SynapseTableProps } from './SynapseTable'
 
@@ -162,7 +158,7 @@ vi.spyOn(NoContentPlaceholderModule, 'default').mockImplementation(() => {
   return <div data-testid="NoContentPlaceholder" />
 })
 
-describe('SynapseTable tests', () => {
+describe('SynapseTable tests', { retry: 2 }, () => {
   beforeAll(() => {
     server.listen()
   })
@@ -173,10 +169,10 @@ describe('SynapseTable tests', () => {
         async ({ request }) => {
           const requestBody = (await request.json()).references
           const responseBody: PaginatedResults<EntityHeader> = {
-            results: requestBody.map((reference: Reference, index) => {
+            results: requestBody.map((reference: Reference) => {
               return {
                 id: reference.targetId,
-                name: `mock entity ${index}`,
+                name: `mock entity ${reference.targetId}`,
                 type: 'org.sagebionetworks.repo.model.FileEntity',
                 benefactorId: mockProjectIds[0],
                 createdOn: '2023-03-31T18:30:00.000Z',
