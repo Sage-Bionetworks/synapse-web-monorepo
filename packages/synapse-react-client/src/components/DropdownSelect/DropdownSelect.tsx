@@ -1,4 +1,9 @@
-import { useRef, useState, MouseEvent as ReactMouseEvent } from 'react'
+import {
+  useRef,
+  useState,
+  MouseEvent as ReactMouseEvent,
+  RefObject,
+} from 'react'
 import {
   Button,
   ButtonGroup,
@@ -10,6 +15,8 @@ import {
   MenuList,
   Paper,
   Popper,
+  SxProps,
+  Typography,
 } from '@mui/material'
 import IconSvg from '../IconSvg'
 
@@ -18,8 +25,13 @@ export type DropdownSelectProps = ButtonGroupProps & {
   selectedIndex?: number
   setSelectedIndex?: (selectedIndex: number) => void
   onButtonClick?: (selectedIndex: number) => void
+  buttonText?: string
   variant?: ButtonProps['variant']
   buttonGroupAriaLabel?: string
+  sx?: SxProps
+  anchorRef?: RefObject<HTMLElement>
+  square?: boolean
+  elevation?: number
 }
 // Derived from https://mui.com/material-ui/react-button-group/#split-button
 
@@ -36,10 +48,17 @@ export default function DropdownSelect(props: DropdownSelectProps) {
     variant = 'contained',
     buttonGroupAriaLabel,
     onButtonClick,
+    buttonText,
+    anchorRef: externalAnchorRef,
+    square = false,
+    elevation,
+    sx,
     ...rest
   } = props
   const [open, setOpen] = useState(false)
-  const anchorRef = useRef<HTMLDivElement>(null)
+  const internalAnchorRef = useRef<HTMLDivElement>(null)
+  const anchorRef = externalAnchorRef ?? internalAnchorRef
+
   const [selectedIndexLocal, setSelectedIndexLocal] = useState(
     selectedIndex ?? 0,
   )
@@ -75,8 +94,9 @@ export default function DropdownSelect(props: DropdownSelectProps) {
     <>
       <ButtonGroup
         variant={variant}
-        ref={anchorRef}
+        ref={anchorRef as RefObject<HTMLDivElement>}
         aria-label="split button"
+        sx={sx}
         {...rest}
       >
         <Button
@@ -88,7 +108,16 @@ export default function DropdownSelect(props: DropdownSelectProps) {
             }
           }}
         >
-          {options[selectedIndex ?? selectedIndexLocal]}
+          {buttonText ? (
+            <Typography
+              variant="label"
+              sx={{ lineHeight: '20px', fontSize: '16px' }}
+            >
+              {buttonText}
+            </Typography>
+          ) : (
+            options[selectedIndex ?? selectedIndexLocal]
+          )}
         </Button>
         <Button
           size="small"
@@ -121,7 +150,7 @@ export default function DropdownSelect(props: DropdownSelectProps) {
                 placement === 'bottom' ? 'center top' : 'center bottom',
             }}
           >
-            <Paper>
+            <Paper square={square} elevation={elevation}>
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList id="split-button-menu" autoFocusItem>
                   {options.map((option, index) => (

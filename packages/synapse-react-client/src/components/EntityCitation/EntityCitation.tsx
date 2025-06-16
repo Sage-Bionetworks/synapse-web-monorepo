@@ -1,12 +1,12 @@
 import { ReactComponent as DoubleQuotes } from '@/assets/icons/DoubleQuotes.svg'
-import { Box, Button, MenuItem, Popover, Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import { useGetDOIAssociation } from '@/synapse-queries/doi/useDOI'
 import { useGetEntityBundle } from '@/synapse-queries/entity'
 import { DoiObjectType } from '@sage-bionetworks/synapse-client'
 import CitationPopoverContent from '../CitationPopover/CitationPopoverContent'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { useEffect, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useGetEntityDoiAssociation } from './EntityCitationUtils'
+import DropdownSelect from '../DropdownSelect'
 
 export type EntityCitationProps = {
   projectId: string
@@ -19,22 +19,19 @@ const EntityCitation = ({
   entityId,
   versionNumber,
 }: EntityCitationProps) => {
-  const { data: bundle } = useGetEntityBundle(entityId!)
+  const { data: bundle } = useGetEntityBundle(entityId!, versionNumber)
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [selectedDoi, setSelectedDoi] = useState<string | undefined>(undefined)
   const [citationAnchorEl, setCitationAnchorEl] = useState<HTMLElement | null>(
     null,
   )
+  const [selectedIndex, setSelectedIndex] = useState<number | undefined>(
+    undefined,
+  )
+  const citationButtonRef = useRef<HTMLDivElement>(null)
 
   const open = Boolean(anchorEl)
   const id = open ? 'cite-as-popover' : undefined
-
-  useEffect(() => {
-    // Clear selection when switching entities or tabs
-    setSelectedDoi(undefined)
-    setCitationAnchorEl(null)
-    setAnchorEl(null)
-  }, [projectId, entityId, versionNumber])
 
   const entityDoiAssociation = useGetEntityDoiAssociation(
     entityId,
@@ -85,16 +82,6 @@ const EntityCitation = ({
     }
   }
 
-  const handleSelectCitation = (doi: string) => {
-    setSelectedDoi(doi)
-    setAnchorEl(null)
-    setCitationAnchorEl(anchorEl)
-  }
-
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
-
   const popover = (
     <CitationPopoverContent
       doi={selectedDoi}
@@ -108,93 +95,61 @@ const EntityCitation = ({
     />
   )
 
-  const dropdown = (
-    <Popover
-      open={open}
-      anchorEl={anchorEl}
-      onClose={handleClose}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'left',
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'left',
-      }}
-      PaperProps={{
-        sx: {
-          padding: '10px 0',
-          borderRadius: '0px',
-          boxShadow: '0px 8px 24px 0px rgba(53, 58, 63, 0.15)',
-        },
-      }}
-    >
-      <MenuItem
-        value={projectDoiAssociation?.doiUri}
-        onClick={() => handleSelectCitation(projectDoiAssociation?.doiUri!)}
-      >
-        Cite this Project
-      </MenuItem>
-      <MenuItem
-        value={entityDoiAssociation?.doiUri}
-        onClick={() => handleSelectCitation(entityDoiAssociation?.doiUri!)}
-      >
-        Cite only this page
-      </MenuItem>
-    </Popover>
-  )
+  const options: string[] = ['Cite this Project', 'Cite only this page']
 
   return (
     <>
       {(projectDoiAssociation || entityDoiAssociation) && (
         <>
-          <Button
-            onClick={handleButtonClick}
-            sx={{
-              '& .MuiButton-endIcon': {
-                margin: 0,
-              },
-              borderColor: '#FFF !important',
-              color: '#FFF !important',
-              borderRadius: '3px',
-              padding: '6px 16px',
-              '&:hover': {
-                backgroundColor: '#304b66',
-              },
-              ...(isProjectAndEntityDoi && { paddingRight: '0px' }),
-              width: { xs: '100%', sm: 'initial' },
-            }}
-            variant="outlined"
-            startIcon={<DoubleQuotes width={18} height={18} />}
-            endIcon={
-              isProjectAndEntityDoi && (
-                <Box
-                  sx={{
-                    borderLeft: '1px solid white',
-                    marginTop: '-8px',
-                    marginBottom: '-8px',
-                    display: 'flex',
-                    marginLeft: '16px',
-                    padding: '5px',
-                  }}
-                >
-                  <ExpandMoreIcon
-                    className="user-expand"
-                    width={18}
-                    height={18}
-                  />
-                </Box>
-              )
-            }
-          >
-            <Typography
-              variant="label"
-              sx={{ lineHeight: '20px', fontSize: '16px' }}
+          {isProjectAndEntityDoi ? (
+            <DropdownSelect
+              options={options}
+              anchorRef={citationButtonRef}
+              square={true}
+              elevation={2}
+              sx={{
+                fontSize: '16px',
+                lineHeight: '20px',
+                '.MuiButtonBase-root': {
+                  padding: '4px 16px',
+                },
+                width: { xs: '100%', sm: 'initial' },
+              }}
+              buttonText="Cite as..."
+              variant="outlined"
+              buttonGroupAriaLabel="Citation options"
+              selectedIndex={selectedIndex}
+              setSelectedIndex={(index: number) => {
+                setSelectedIndex(index)
+                const selected =
+                  index === 0
+                    ? projectDoiAssociation?.doiUri
+                    : entityDoiAssociation?.doiUri
+                if (selected) {
+                  setSelectedDoi(selected)
+                  setCitationAnchorEl(citationButtonRef.current)
+                }
+              }}
+            />
+          ) : (
+            <Button
+              onClick={handleButtonClick}
+              sx={{
+                borderRadius: '3px',
+                padding: '6px 16px',
+                width: { xs: '100%', sm: 'initial' },
+              }}
+              variant="outlined"
+              startIcon={<DoubleQuotes width={18} height={18} />}
             >
-              {buttonText}
-            </Typography>
-          </Button>
-          {dropdown}
+              <Typography
+                variant="label"
+                sx={{ lineHeight: '20px', fontSize: '16px' }}
+              >
+                {buttonText}
+              </Typography>
+            </Button>
+          )}
           {popover}
         </>
       )}

@@ -1,15 +1,5 @@
-import { Meta, StoryFn, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 import EntityCitation from './EntityCitation'
-import { useTheme, Box } from '@mui/material'
-
-const RenderComponent = (StoryComponent: StoryFn) => {
-  const theme = useTheme()
-  return (
-    <Box sx={{ backgroundColor: theme.palette.primary.main, padding: '20px' }}>
-      <StoryComponent />
-    </Box>
-  )
-}
 
 const meta = {
   title: 'Synapse/EntityPage/EntityCitation',
@@ -17,7 +7,6 @@ const meta = {
   parameters: {
     chromatic: { viewports: [600, 1200] },
   },
-  decorators: [RenderComponent],
 } satisfies Meta
 
 export default meta

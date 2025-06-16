@@ -43,27 +43,6 @@ const { mock: useGetEntityDOIMockImpl, setSuccess: setEntityDOISuccess } =
 const { mock: useGetProjectDOIMockImpl, setSuccess: setProjectDOISuccess } =
   getUseQueryMock<DoiAssociation | null, SynapseClientError>()
 
-const fileWithAnnotations: Partial<EntityBundle> = {
-  entity: {
-    id: 'syn61841662',
-    name: 'blackcat.jpg',
-    concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-  },
-  doiAssociation: {
-    objectId: 'syn61841662',
-    objectType: DoiObjectType.ENTITY as ObjectType,
-    doiUri: '10.7303/syn61841662',
-    associationId: '',
-    etag: '',
-    doiUrl: '',
-    associatedBy: '',
-    associatedOn: '',
-    updatedBy: '',
-    updatedOn: '',
-  },
-  entityType: EntityType.FILE,
-}
-
 const doiEntitySuccess: DoiAssociation = {
   objectId: 'syn61841662',
   objectType: DoiObjectType.ENTITY as ObjectType,
@@ -75,6 +54,16 @@ const doiEntitySuccess: DoiAssociation = {
   associatedOn: '',
   updatedBy: '',
   updatedOn: '',
+}
+
+const fileWithDoiAssociation: Partial<EntityBundle> = {
+  entity: {
+    id: 'syn61841662',
+    name: 'blackcat.jpg',
+    concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+  },
+  doiAssociation: doiEntitySuccess,
+  entityType: EntityType.FILE,
 }
 
 const versionedDoiEntitySuccess: DoiAssociation = {
@@ -137,12 +126,12 @@ describe('EntityCitation tests', () => {
     )
 
     act(() => {
-      setMockUseGetEntityBundleSuccess(fileWithAnnotations)
+      setMockUseGetEntityBundleSuccess(fileWithDoiAssociation)
       setEntityDOISuccess(doiEntitySuccess)
       setProjectDOISuccess(null)
     })
 
-    openPopover('Cite page')
+    await openPopover('Cite page')
 
     await screen.findByRole('dialog', {
       name: /Citation options/i,
@@ -173,12 +162,12 @@ describe('EntityCitation tests', () => {
 
     // Set mock responses after hooks have initialized
     act(() => {
-      setMockUseGetEntityBundleSuccess(fileWithAnnotations)
+      setMockUseGetEntityBundleSuccess(fileWithDoiAssociation)
       setEntityDOISuccess(null)
       setProjectDOISuccess(doiProjectSuccess)
     })
 
-    openPopover('Cite project')
+    await openPopover('Cite project')
 
     await screen.findByRole('dialog', {
       name: /Citation options/i,
@@ -196,12 +185,12 @@ describe('EntityCitation tests', () => {
     )
 
     act(() => {
-      setMockUseGetEntityBundleSuccess(fileWithAnnotations)
+      setMockUseGetEntityBundleSuccess(fileWithDoiAssociation)
       setEntityDOISuccess(doiEntitySuccess)
       setProjectDOISuccess(doiProjectSuccess)
     })
 
-    openPopover('Cite as...')
+    await openPopover('Cite as...')
 
     await waitFor(() => {
       const citePageButton = screen.getByRole('menuitem', {
@@ -242,12 +231,12 @@ describe('EntityCitation tests', () => {
     )
 
     act(() => {
-      setMockUseGetEntityBundleSuccess(fileWithAnnotations)
+      setMockUseGetEntityBundleSuccess(fileWithDoiAssociation)
       setEntityDOISuccess(versionedDoiEntitySuccess)
       setProjectDOISuccess(null)
     })
 
-    openPopover('Cite page')
+    await openPopover('Cite page')
 
     await waitFor(() => {
       screen.findByRole('dialog', {
@@ -270,12 +259,12 @@ describe('EntityCitation tests', () => {
     )
 
     act(() => {
-      setMockUseGetEntityBundleSuccess(fileWithAnnotations)
+      setMockUseGetEntityBundleSuccess(fileWithDoiAssociation)
       setEntityDOISuccess(doiEntitySuccess)
       setProjectDOISuccess(null)
     })
 
-    openPopover('Cite page')
+    await openPopover('Cite page')
 
     await waitFor(() => {
       screen.findByRole('dialog', {

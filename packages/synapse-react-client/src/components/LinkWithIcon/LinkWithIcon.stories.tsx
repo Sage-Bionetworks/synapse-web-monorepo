@@ -1,20 +1,9 @@
-import { Meta, StoryFn, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react'
 import LinkWithIcon from './LinkWithIcon'
-import { Box, useTheme } from '@mui/material'
-
-const RenderComponent = (StoryComponent: StoryFn) => {
-  const theme = useTheme()
-  return (
-    <Box sx={{ backgroundColor: theme.palette.primary.main, padding: '20px' }}>
-      <StoryComponent />
-    </Box>
-  )
-}
 
 const meta = {
   title: 'Components/LinkWithIcon',
   component: LinkWithIcon,
-  decorators: [RenderComponent],
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
