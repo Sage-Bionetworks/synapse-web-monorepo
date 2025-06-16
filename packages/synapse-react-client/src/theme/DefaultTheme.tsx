@@ -438,7 +438,6 @@ export const defaultMuiThemeOptions: ThemeOptions = {
     MuiTooltip: {
       defaultProps: {
         arrow: true,
-
         slots: {
           transition: TRANSITION_COMPONENT_OVERRIDE,
         },

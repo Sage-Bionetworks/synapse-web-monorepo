@@ -124,13 +124,6 @@ export default function EnumFacetFilterUI<TValue = string>(
           }}
           size={'small'}
           fullWidth={true}
-          type="text"
-          placeholder="Find values"
-          value={searchTerm}
-          ref={textInput}
-          onChange={e => {
-            setSearchText(e.target.value)
-          }}
           slotProps={{
             input: {
               startAdornment: (
@@ -168,6 +161,13 @@ export default function EnumFacetFilterUI<TValue = string>(
                 </Tooltip>
               ),
             },
+          }}
+          type="text"
+          placeholder="Find values"
+          value={searchTerm}
+          ref={textInput}
+          onChange={e => {
+            setSearchText(e.target.value)
           }}
         />
         {!showSearch && (

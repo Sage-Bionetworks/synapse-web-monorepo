@@ -68,7 +68,7 @@ export function SynapseHomepageNavBar({
   const registrationLink = useOneSageURL('/register1')
   const theme = useTheme()
   const isSmallView = useMediaQuery(theme.breakpoints.down('md'))
-
+  const sageResourcesURL = useOneSageURL('/sageresources')
   // mobile view nav bar menu
   const [mobileMenuAnchorEl, setMobileMenuAnchorEl] =
     useState<null | HTMLElement>(null)
@@ -191,6 +191,7 @@ export function SynapseHomepageNavBar({
         anchorEl={portalResourcesAnchorEl}
         onClose={handleClosePortalResources}
         filterByType="SynapsePortal"
+        allResourcesUrl={sageResourcesURL.toString()}
       />
       <SageResourcesPopover
         anchorEl={sageSolutionsAnchorEl}
@@ -274,7 +275,7 @@ export function SynapseHomepageNavBar({
             <StyledMenuItem
               onClick={event => {
                 setSageSolutionsAnchorEl(event.currentTarget)
-                handleCloseSageSolutions()
+                handleCloseMobileMenu()
               }}
             >
               Solutions

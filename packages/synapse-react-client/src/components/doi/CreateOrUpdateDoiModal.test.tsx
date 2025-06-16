@@ -15,10 +15,10 @@ import {
   getUseQueryIdleMock,
   getUseQuerySuccessMock,
 } from '@/testutils/ReactQueryMockUtils'
+import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
 import { DoiObjectType, DoiRequest } from '@sage-bionetworks/synapse-client'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, it, vi } from 'vitest'
 import { displayToast } from '../ToastMessage'
 import { CreateOrUpdateDoiModal } from './CreateOrUpdateDoiModal'
 
@@ -27,6 +27,7 @@ vi.mock('@/synapse-queries/entity/useEntity')
 vi.mock('@/synapse-queries/user/useUserBundle')
 vi.mock('@/components/ToastMessage/ToastMessage')
 vi.mock('@/synapse-queries/portal/usePortal')
+vi.mock('@/utils/context/GlobalIsEditingContext')
 
 const mockUseCreateOrUpdateDOI = vi
   .mocked(useCreateOrUpdateDOI)
@@ -53,6 +54,11 @@ const mockUseGetPortal = vi
   .mockReturnValue(getUseQueryIdleMock())
 
 const mockDisplayToast = vi.mocked(displayToast)
+const mockSetIsEditing = vi.fn()
+vi.mocked(useGlobalIsEditingContext).mockReturnValue({
+  isEditing: false,
+  setIsEditing: mockSetIsEditing,
+})
 
 describe('CreateOrUpdateDoiModal', () => {
   const defaultProps = {
@@ -332,5 +338,17 @@ describe('CreateOrUpdateDoiModal', () => {
     const publisherField = await screen.findByLabelText('Publisher')
     expect(publisherField).toHaveValue(mockPortalName)
     expect(publisherField).toBeDisabled()
+  })
+
+  it('Sets global editing state when open', () => {
+    const { rerender } = render(
+      <CreateOrUpdateDoiModal {...defaultProps} open={true} />,
+    )
+
+    expect(mockSetIsEditing).toHaveBeenLastCalledWith(true)
+
+    rerender(<CreateOrUpdateDoiModal {...defaultProps} open={false} />)
+
+    expect(mockSetIsEditing).toHaveBeenLastCalledWith(false)
   })
 })

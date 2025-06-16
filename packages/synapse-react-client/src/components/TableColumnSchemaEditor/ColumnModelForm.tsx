@@ -543,8 +543,6 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
               }}
               disabled={disabled}
               fullWidth
-              error={!!errorsByField['jsonPath']}
-              helperText={errorsByField['jsonPath']}
               slotProps={{
                 input: {
                   disableInjectingGlobalStyles:
@@ -582,6 +580,8 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                   },
                 },
               }}
+              error={!!errorsByField['jsonPath']}
+              helperText={errorsByField['jsonPath']}
             />
           </Box>
         </Box>
