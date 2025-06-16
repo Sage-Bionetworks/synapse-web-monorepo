@@ -1,5 +1,9 @@
 import { Mock } from 'vitest'
 
+/**
+ * Custom matchers for testing whether mock/spy React components have been rendered with specific props.
+ */
+
 expect.extend({
   toHaveBeenRendered(mockComponent: Mock) {
     try {
