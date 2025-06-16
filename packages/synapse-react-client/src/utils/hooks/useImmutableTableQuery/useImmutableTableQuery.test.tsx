@@ -4,7 +4,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { act, renderHook } from '@testing-library/react'
 import { cloneDeep } from 'lodash-es'
-import { beforeEach, describe, it, test, vi } from 'vitest'
 import * as DeepLinkingUtils from '../../functions/deepLinkingUtils'
 import useImmutableTableQuery, {
   DEBOUNCE_DELAY_MS,

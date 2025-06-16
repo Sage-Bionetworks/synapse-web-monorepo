@@ -9,7 +9,6 @@ import $RefParser from '@apidevtools/json-schema-ref-parser'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
-import { describe, test, vi } from 'vitest'
 import SynapseForm, { SynapseFormProps } from './SynapseForm'
 
 // import { Engine } from 'json-rules-engine'
