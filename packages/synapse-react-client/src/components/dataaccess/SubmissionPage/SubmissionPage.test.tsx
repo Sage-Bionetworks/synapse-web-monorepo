@@ -313,14 +313,11 @@ describe('Submission Page tests', () => {
     await userEvent.click(rejectButton)
 
     // The modal should be shown
-    expect(mockRejectDataAccessRequestModal).toHaveBeenLastCalledWith(
-      {
-        open: true, // !
-        submissionId: SUBMITTED_SUBMISSION_ID,
-        onClose: expect.anything(),
-      },
-      expect.anything(),
-    )
+    expect(mockRejectDataAccessRequestModal).toHaveBeenLastRenderedWithProps({
+      open: true, // !
+      submissionId: SUBMITTED_SUBMISSION_ID,
+      onClose: expect.anything(),
+    })
   })
 
   it('Does not render action buttons for an APPROVED submission', () => {
@@ -422,15 +419,12 @@ describe('Submission Page tests', () => {
 
       await userEvent.click(cancelRequestButton)
 
-      expect(mockCancelSubmissionModal).toHaveBeenLastCalledWith(
-        {
-          open: true,
-          submissionId: String(SUBMITTED_SUBMISSION_ID),
-          accessRequirementId: String(mockManagedACTAccessRequirement.id),
-          onClose: expect.any(Function),
-        },
-        expect.anything(),
-      )
+      expect(mockCancelSubmissionModal).toHaveBeenLastRenderedWithProps({
+        open: true,
+        submissionId: String(SUBMITTED_SUBMISSION_ID),
+        accessRequirementId: String(mockManagedACTAccessRequirement.id),
+        onClose: expect.any(Function),
+      })
       expect(mockAccessRequirementList).not.toHaveBeenCalled()
     })
 
@@ -458,18 +452,14 @@ describe('Submission Page tests', () => {
 
       await userEvent.click(updateRequestButton)
 
-      expect(mockAccessRequirementList).toHaveBeenLastCalledWith(
-        {
-          renderAsModal: true,
-          accessRequirementFromProps: [mockManagedACTAccessRequirement],
-          onHide: expect.any(Function),
-          onSubmissionCreated: expect.any(Function),
-        },
-        expect.anything(),
-      )
-      expect(mockCancelSubmissionModal).not.toHaveBeenCalledWith(
+      expect(mockAccessRequirementList).toHaveBeenLastRenderedWithProps({
+        renderAsModal: true,
+        accessRequirementFromProps: [mockManagedACTAccessRequirement],
+        onHide: expect.any(Function),
+        onSubmissionCreated: expect.any(Function),
+      })
+      expect(mockCancelSubmissionModal).not.toHaveBeenRenderedWithProps(
         expect.objectContaining({ open: true }),
-        expect.anything(),
       )
     })
 
@@ -497,18 +487,14 @@ describe('Submission Page tests', () => {
 
       await userEvent.click(updateRequestButton)
 
-      expect(mockAccessRequirementList).toHaveBeenLastCalledWith(
-        {
-          renderAsModal: true,
-          accessRequirementFromProps: [mockManagedACTAccessRequirement],
-          onHide: expect.any(Function),
-          onSubmissionCreated: expect.any(Function),
-        },
-        expect.anything(),
-      )
-      expect(mockCancelSubmissionModal).not.toHaveBeenCalledWith(
+      expect(mockAccessRequirementList).toHaveBeenLastRenderedWithProps({
+        renderAsModal: true,
+        accessRequirementFromProps: [mockManagedACTAccessRequirement],
+        onHide: expect.any(Function),
+        onSubmissionCreated: expect.any(Function),
+      })
+      expect(mockCancelSubmissionModal).not.toHaveBeenRenderedWithProps(
         expect.objectContaining({ open: true }),
-        expect.anything(),
       )
     })
 
@@ -537,18 +523,14 @@ describe('Submission Page tests', () => {
 
       await userEvent.click(modifyRequestButton)
 
-      expect(mockAccessRequirementList).toHaveBeenLastCalledWith(
-        {
-          renderAsModal: true,
-          accessRequirementFromProps: [mockManagedACTAccessRequirement],
-          onHide: expect.any(Function),
-          onSubmissionCreated: expect.any(Function),
-        },
-        expect.anything(),
-      )
-      expect(mockCancelSubmissionModal).not.toHaveBeenCalledWith(
+      expect(mockAccessRequirementList).toHaveBeenLastRenderedWithProps({
+        renderAsModal: true,
+        accessRequirementFromProps: [mockManagedACTAccessRequirement],
+        onHide: expect.any(Function),
+        onSubmissionCreated: expect.any(Function),
+      })
+      expect(mockCancelSubmissionModal).not.toHaveBeenRenderedWithProps(
         expect.objectContaining({ open: true }),
-        expect.anything(),
       )
     })
 
@@ -579,18 +561,14 @@ describe('Submission Page tests', () => {
 
       await userEvent.click(modifyRequestButton)
 
-      expect(mockAccessRequirementList).toHaveBeenLastCalledWith(
-        {
-          renderAsModal: true,
-          accessRequirementFromProps: [mockManagedACTAccessRequirement],
-          onHide: expect.any(Function),
-          onSubmissionCreated: expect.any(Function),
-        },
-        expect.anything(),
-      )
-      expect(mockCancelSubmissionModal).not.toHaveBeenCalledWith(
+      expect(mockAccessRequirementList).toHaveBeenLastRenderedWithProps({
+        renderAsModal: true,
+        accessRequirementFromProps: [mockManagedACTAccessRequirement],
+        onHide: expect.any(Function),
+        onSubmissionCreated: expect.any(Function),
+      })
+      expect(mockCancelSubmissionModal).not.toHaveBeenRenderedWithProps(
         expect.objectContaining({ open: true }),
-        expect.anything(),
       )
     })
 

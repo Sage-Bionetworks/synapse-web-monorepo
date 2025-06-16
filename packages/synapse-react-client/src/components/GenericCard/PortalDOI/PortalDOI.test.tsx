@@ -85,14 +85,13 @@ describe('PortalDOI', () => {
     await userEvent.click(editButton)
 
     // Check if modal was called with open: true and correct props
-    expect(mockCreateOrUpdateDoiModal).toHaveBeenCalledWith(
+    expect(mockCreateOrUpdateDoiModal).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         open: true,
         objectType: 'PORTAL_RESOURCE',
         objectId: defaultProps.resourceId,
         portalId: defaultProps.portalId,
       }),
-      expect.anything(),
     )
     // Check if the mocked modal content is rendered
     expect(screen.getByTestId('CreateOrUpdateDoiModal')).toBeInTheDocument()
@@ -105,11 +104,10 @@ describe('PortalDOI', () => {
 
     // Check if modal was called again with open: false
     // The last call determines the final state rendered
-    expect(mockCreateOrUpdateDoiModal).toHaveBeenLastCalledWith(
+    expect(mockCreateOrUpdateDoiModal).toHaveBeenLastRenderedWithProps(
       expect.objectContaining({
         open: false,
       }),
-      expect.anything(),
     )
     // Check if the mocked modal content is removed
     expect(
@@ -160,14 +158,13 @@ describe('PortalDOI', () => {
     await userEvent.click(createLink)
 
     // Check if modal was called with open: true and correct props
-    expect(mockCreateOrUpdateDoiModal).toHaveBeenCalledWith(
+    expect(mockCreateOrUpdateDoiModal).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         open: true,
         objectType: 'PORTAL_RESOURCE',
         objectId: defaultProps.resourceId,
         portalId: defaultProps.portalId,
       }),
-      expect.anything(),
     )
     expect(screen.getByTestId('CreateOrUpdateDoiModal')).toBeInTheDocument()
   })
