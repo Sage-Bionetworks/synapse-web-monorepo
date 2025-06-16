@@ -36,7 +36,7 @@ jobs:
         # we technically only need to build the dependencies of SRC, but Nx doesn't expose an easy way to do that
         run: pnpm nx run synapse-react-client:build
       - name: Publish to Chromatic
-        uses: chromaui/action@v11
+        uses: chromaui/action@v13
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: packages/synapse-react-client
