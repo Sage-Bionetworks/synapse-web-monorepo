@@ -79,7 +79,7 @@ export const studyCardConfiguration: CardConfiguration = {
       'institutions',
       'studyId',
       'grantDOI',
-      'ClinicalTrials.govID',
+      'clinicalTrialID',
     ],
     dataTypeIconNames: 'dataType',
   },
