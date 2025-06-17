@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { IsExternalLink } from './IsExternalLink'
+import { isExternalLink } from './IsExternalLink'
 
 describe('IsExternalLink tests', () => {
   const originalLocation = new URL('https://internal-link.com/page')
@@ -25,26 +25,26 @@ describe('IsExternalLink tests', () => {
   })
 
   it('returns false for internal relative link', () => {
-    expect(IsExternalLink('/about')).toBe(false)
+    expect(isExternalLink('/about')).toBe(false)
   })
 
   it('returns false for internal absolute link', () => {
-    expect(IsExternalLink('https://internal-link.com/contact')).toBe(false)
+    expect(isExternalLink('https://internal-link.com/contact')).toBe(false)
   })
 
   it('returns true for external http link', () => {
-    expect(IsExternalLink('http://external-link.com')).toBe(true)
+    expect(isExternalLink('http://external-link.com')).toBe(true)
   })
 
   it('returns true for external https link', () => {
-    expect(IsExternalLink('https://external-link.com')).toBe(true)
+    expect(isExternalLink('https://external-link.com')).toBe(true)
   })
 
   it('returns false for anchor link', () => {
-    expect(IsExternalLink('#section')).toBe(false)
+    expect(isExternalLink('#section')).toBe(false)
   })
 
   it('returns false for empty string', () => {
-    expect(IsExternalLink('')).toBe(false)
+    expect(isExternalLink('')).toBe(false)
   })
 })

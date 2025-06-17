@@ -1,5 +1,5 @@
 import { spreadSx } from '@/theme/spreadSx'
-import { IsExternalLink } from '@/utils/functions/IsExternalLink'
+import { isExternalLink } from '@/utils/functions/IsExternalLink'
 import {
   Box,
   Button,
@@ -30,7 +30,7 @@ const PortalSectionHeader = ({
   centered = false,
   reverseButtonAndText = false,
 }: PortalSectionHeaderProps) => {
-  const isExternal = IsExternalLink(link ?? '')
+  const isExternal = isExternalLink(link ?? '')
 
   return (
     <Box

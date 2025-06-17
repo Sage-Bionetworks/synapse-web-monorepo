@@ -1,5 +1,5 @@
-import { IsExternalLink } from '@/utils/functions/IsExternalLink'
-import { Box, Button, SxProps, Typography, useTheme } from '@mui/material'
+import { isExternalLink } from '@/utils/functions/IsExternalLink'
+import { Button, SxProps, Typography } from '@mui/material'
 import IconSvg, { IconName } from '../IconSvg'
 
 export type LinkWithIconProps = {
@@ -11,7 +11,7 @@ export type LinkWithIconProps = {
 
 const LinkWithIcon = (props: LinkWithIconProps) => {
   const { text, icon, href, sx } = props
-  const isExternal = IsExternalLink(href)
+  const isExternal = isExternalLink(href)
   return (
     <Button
       role="link"
