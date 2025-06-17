@@ -1,18 +1,9 @@
 import { ReactComponent as DoubleQuotes } from '@/assets/icons/DoubleQuotes.svg'
-import { SxProps, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import { useState } from 'react'
 import GenericCardActionButton from '../GenericCard/GenericCardActionButton'
 import CitationPopoverContent from './CitationPopoverContent'
-
-export type CitationFormat = 'bibtex' | 'apa' | 'ieee' | 'nature' | 'science'
-
-export type CitationProps = {
-  doi: string | undefined
-  title?: string
-  boilerplateText?: string
-  defaultCitationFormat?: CitationFormat
-  selectSx?: SxProps
-}
+import { CitationProps } from './CitationTypes'
 
 function CitationPopover(props: CitationProps) {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)

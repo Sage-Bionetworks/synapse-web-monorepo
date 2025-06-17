@@ -18,7 +18,7 @@ import { KeyboardArrowDown } from '@mui/icons-material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useState } from 'react'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
-import { CitationProps, CitationFormat } from './CitationPopover'
+import { CitationProps, CitationFormat } from './CitationTypes'
 
 const selectSx: SxProps = {
   width: '100%',
