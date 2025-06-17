@@ -110,10 +110,10 @@ export const CitationPopoverContent = (props: CitationPopoverProps) => {
       }}
       slotProps={{
         paper: {
+          square: true,
           sx: theme => ({
             width: '500px',
             position: 'relative',
-            borderRadius: 0,
             [theme.breakpoints.down('sm')]: {
               maxWidth: '100%',
               maxHeight: '100%',
