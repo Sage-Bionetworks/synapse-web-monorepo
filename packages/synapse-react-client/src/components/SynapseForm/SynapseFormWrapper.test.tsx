@@ -235,12 +235,11 @@ describe('SynapseFormWrapper', () => {
 
       await screen.findByTestId('SynapseForm')
 
-      expect(mockSynapseForm).toBeCalledWith(
+      expect(mockSynapseForm).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           formTitle: props.formTitle,
           isWizardMode: true,
         }),
-        expect.anything(),
       )
     })
 
@@ -250,7 +249,7 @@ describe('SynapseFormWrapper', () => {
 
       await screen.findByTestId('SynapseForm')
 
-      expect(mockSynapseForm).toBeCalledWith(
+      expect(mockSynapseForm).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           formTitle: 'Another Title',
           formData: expect.objectContaining({
@@ -258,7 +257,6 @@ describe('SynapseFormWrapper', () => {
           }),
           isWizardMode: undefined,
         }),
-        expect.anything(),
       )
     })
   })

@@ -187,16 +187,13 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
       )
 
       // Actions required component reports 0 actions required
-      expect(MockTableQueryActionsRequired).toHaveBeenLastCalledWith(
-        {
-          queryBundleRequest: queryRequest,
-          columnModels: columnModels,
-          onNumberOfRequiredActionsChanged: expect.any(Function),
-          onViewSharingSettingsClicked:
-            mockQueryContext.onViewSharingSettingsClicked,
-        },
-        expect.anything(),
-      )
+      expect(MockTableQueryActionsRequired).toHaveBeenLastRenderedWithProps({
+        queryBundleRequest: queryRequest,
+        columnModels: columnModels,
+        onNumberOfRequiredActionsChanged: expect.any(Function),
+        onViewSharingSettingsClicked:
+          mockQueryContext.onViewSharingSettingsClicked,
+      })
       act(() => {
         MockTableQueryActionsRequired.mock.lastCall![0]
           .onNumberOfRequiredActionsChanged!(0)
@@ -253,16 +250,13 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
     await screen.findByText(`Before sending the selected data to CAVATICA:`)
 
     // Actions required component reports 0 actions required
-    expect(MockTableQueryActionsRequired).toHaveBeenLastCalledWith(
-      {
-        queryBundleRequest: queryRequest,
-        columnModels: columnModels,
-        onNumberOfRequiredActionsChanged: expect.any(Function),
-        onViewSharingSettingsClicked:
-          mockQueryContext.onViewSharingSettingsClicked,
-      },
-      expect.anything(),
-    )
+    expect(MockTableQueryActionsRequired).toHaveBeenLastRenderedWithProps({
+      queryBundleRequest: queryRequest,
+      columnModels: columnModels,
+      onNumberOfRequiredActionsChanged: expect.any(Function),
+      onViewSharingSettingsClicked:
+        mockQueryContext.onViewSharingSettingsClicked,
+    })
     act(() => {
       MockTableQueryActionsRequired.mock.lastCall![0]
         .onNumberOfRequiredActionsChanged!(0)
@@ -322,16 +316,13 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
     await screen.findByText(`Before sending the selected data to CAVATICA:`)
 
     // Actions required component reports one action required
-    expect(MockTableQueryActionsRequired).toHaveBeenLastCalledWith(
-      {
-        queryBundleRequest: queryRequest,
-        columnModels: columnModels,
-        onNumberOfRequiredActionsChanged: expect.any(Function),
-        onViewSharingSettingsClicked:
-          mockQueryContext.onViewSharingSettingsClicked,
-      },
-      expect.anything(),
-    )
+    expect(MockTableQueryActionsRequired).toHaveBeenLastRenderedWithProps({
+      queryBundleRequest: queryRequest,
+      columnModels: columnModels,
+      onNumberOfRequiredActionsChanged: expect.any(Function),
+      onViewSharingSettingsClicked:
+        mockQueryContext.onViewSharingSettingsClicked,
+    })
     act(() => {
       MockTableQueryActionsRequired.mock.lastCall![0]
         .onNumberOfRequiredActionsChanged!(1)

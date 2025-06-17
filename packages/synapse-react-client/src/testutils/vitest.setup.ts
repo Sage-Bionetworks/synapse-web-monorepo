@@ -1,5 +1,6 @@
 // import jest-dom for Testing Library matchers (compatible with Vitest)
 import '@testing-library/jest-dom/vitest'
+import './ComponentToBePassedPropsCustomMatcher'
 import { ResizeObserver } from '@juggle/resize-observer'
 import './muiDatePickerMock'
 import { setupIntersectionMocking } from 'react-intersection-observer/test-utils'

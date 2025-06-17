@@ -121,12 +121,9 @@ describe('Entity Page Title Bar', () => {
     // Component is mocked and interactions are tested separately
     renderComponent(defaultProps)
     await screen.findByTestId(FAVORITE_BUTTON_TEST_ID)
-    expect(FavoriteButtonModule.default).toHaveBeenCalledWith(
-      {
-        entityId: defaultProps.entityId,
-      },
-      expect.anything(),
-    )
+    expect(FavoriteButtonModule.default).toHaveBeenRenderedWithProps({
+      entityId: defaultProps.entityId,
+    })
   })
   it('Shows version info component', async () => {
     // Component is mocked and interactions are tested separately
@@ -134,36 +131,33 @@ describe('Entity Page Title Bar', () => {
     await screen.findByTestId(TITLE_BAR_VERSION_INFO_TEST_ID)
     expect(
       TitleBarVersionInfoModule.EntityTitleBarVersionInfo,
-    ).toHaveBeenCalledWith(
+    ).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         entityId: defaultProps.entityId,
         versionNumber: defaultProps.versionNumber,
         toggleShowVersionHistory: toggleShowVersionHistory,
       }),
-      expect.anything(),
     )
   })
   it('Shows the action menu', async () => {
     // Component is mocked and interactions are tested separately
     renderComponent(defaultProps)
     await screen.findByTestId(ENTITY_ACTION_MENU_TEST_ID)
-    expect(EntityActionMenuModule.default).toHaveBeenCalledWith(
+    expect(EntityActionMenuModule.default).toHaveBeenRenderedWithProps(
       defaultProps.entityActionMenuProps,
-      expect.anything(),
     )
   })
   it('Shows the properties', async () => {
     // Component is mocked and interactions are tested separately
     renderComponent(defaultProps)
     await screen.findByTestId(TITLE_BAR_PROPERTIES_TEST_ID)
-    expect(TitleBarPropertiesModule.default).toHaveBeenCalledWith(
+    expect(TitleBarPropertiesModule.default).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         entityId: defaultProps.entityId,
         versionNumber: defaultProps.versionNumber,
         onActMemberClickAddConditionsForUse:
           defaultProps.onActMemberClickAddConditionsForUse,
       }),
-      expect.anything(),
     )
   })
 })

@@ -464,7 +464,7 @@ describe('EntityTree tests', () => {
     await waitFor(() => {
       expect(mockSetDetailsViewConfiguration).toBeCalled()
 
-      expect(mockVirtualizedTree).toHaveBeenLastCalledWith(
+      expect(mockVirtualizedTree).toHaveBeenLastRenderedWithProps(
         expect.objectContaining<VirtualizedTreeProps>({
           rootNodeConfiguration: {
             nodeText: 'Projects',
@@ -480,7 +480,6 @@ describe('EntityTree tests', () => {
           treeNodeType: defaultProps.treeNodeType,
           selectableTypes: defaultProps.selectableTypes,
         }),
-        {},
       )
     })
     // Select an entity using callback prop in child component
@@ -503,7 +502,7 @@ describe('EntityTree tests', () => {
     await waitFor(() => {
       expect(mockSetDetailsViewConfiguration).toBeCalled()
 
-      expect(mockVirtualizedTree).toHaveBeenLastCalledWith(
+      expect(mockVirtualizedTree).toHaveBeenLastRenderedWithProps(
         expect.objectContaining<VirtualizedTreeProps>({
           rootNodeConfiguration: {
             nodeText: 'Projects',
@@ -519,7 +518,6 @@ describe('EntityTree tests', () => {
           visibleTypes: defaultProps.visibleTypes,
           treeNodeType: defaultProps.treeNodeType,
         }),
-        {},
       )
     })
   })

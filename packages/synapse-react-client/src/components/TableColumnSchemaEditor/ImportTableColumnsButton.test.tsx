@@ -90,11 +90,10 @@ describe('ImportTableColumnsButton', () => {
     })
 
     // The entity finder should not be visible at first
-    expect(mockEntityFinderModal).toHaveBeenLastCalledWith(
+    expect(mockEntityFinderModal).toHaveBeenLastRenderedWithProps(
       expect.objectContaining({
         show: false,
       }),
-      expect.anything(),
     )
 
     // Click the button
@@ -102,11 +101,10 @@ describe('ImportTableColumnsButton', () => {
 
     // The (mocked) entity finder should appear
     await waitFor(() => {
-      expect(mockEntityFinderModal).toHaveBeenLastCalledWith(
+      expect(mockEntityFinderModal).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({
           show: true,
         }),
-        expect.anything(),
       )
     })
 
@@ -134,11 +132,10 @@ describe('ImportTableColumnsButton', () => {
     )
 
     // The entity finder should be hidden
-    expect(mockEntityFinderModal).toHaveBeenLastCalledWith(
+    expect(mockEntityFinderModal).toHaveBeenLastRenderedWithProps(
       expect.objectContaining({
         show: false,
       }),
-      expect.anything(),
     )
   })
 
@@ -148,11 +145,10 @@ describe('ImportTableColumnsButton', () => {
     })
 
     // The entity finder should not be visible at first
-    expect(mockEntityFinderModal).toHaveBeenLastCalledWith(
+    expect(mockEntityFinderModal).toHaveBeenLastRenderedWithProps(
       expect.objectContaining({
         show: false,
       }),
-      expect.anything(),
     )
 
     // Click the button
@@ -160,11 +156,10 @@ describe('ImportTableColumnsButton', () => {
 
     // The (mocked) entity finder should appear
     await waitFor(() => {
-      expect(mockEntityFinderModal).toHaveBeenLastCalledWith(
+      expect(mockEntityFinderModal).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({
           show: true,
         }),
-        expect.anything(),
       )
     })
 
@@ -181,11 +176,10 @@ describe('ImportTableColumnsButton', () => {
     expect(mockOnAddColumns).not.toHaveBeenCalled()
 
     // The entity finder should be hidden
-    expect(mockEntityFinderModal).toHaveBeenLastCalledWith(
+    expect(mockEntityFinderModal).toHaveBeenLastRenderedWithProps(
       expect.objectContaining({
         show: false,
       }),
-      expect.anything(),
     )
   })
 })

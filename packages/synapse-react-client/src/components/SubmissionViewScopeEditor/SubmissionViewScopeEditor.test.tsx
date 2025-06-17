@@ -30,15 +30,12 @@ describe('SubmissionViewScopeEditor tests', () => {
     await screen.findByTestId('EvaluationFinderMocked')
 
     await waitFor(() => {
-      expect(mockEvaluationFinder).toHaveBeenLastCalledWith(
-        {
-          activeOnly: false,
-          accessType: ACCESS_TYPE.READ_PRIVATE_SUBMISSION,
-          selectedIds: evaluationIds,
-          onChange: onChange,
-        },
-        expect.anything(),
-      )
+      expect(mockEvaluationFinder).toHaveBeenLastRenderedWithProps({
+        activeOnly: false,
+        accessType: ACCESS_TYPE.READ_PRIVATE_SUBMISSION,
+        selectedIds: evaluationIds,
+        onChange: onChange,
+      })
     })
 
     const onChangePassedToEvaluationFinder =

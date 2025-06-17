@@ -28,4 +28,7 @@ export const popularSearchesSql =
 export const topProjectsSql =
   'SELECT * FROM syn53698263 order by "f.n_unique_users" desc limit 10'
 
-export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = ['cavatica']
+export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = [
+  'cavatica',
+  'terra',
+]
