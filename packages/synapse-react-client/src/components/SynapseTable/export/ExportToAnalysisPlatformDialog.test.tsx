@@ -23,7 +23,13 @@ const mockQueryVisualizationContext: QueryVisualizationContextType = {
   isShowingExportToAnalysisPlatformModal: true,
   setIsShowingExportToAnalysisPlatformModal:
     mockSetIsShowingExportToAnalysisPlatformModal,
-  enabledExternalAnalysisPlatforms: ['cavatica', 'terra', 'adworkbench'],
+  enabledExternalAnalysisPlatforms: [
+    'cavatica',
+    'terra',
+    'adworkbench',
+    'plutodev',
+    'pluto',
+  ],
   // rest are unused
   NoContentPlaceholder: vi.fn(),
   columnsToShowInTable: [],

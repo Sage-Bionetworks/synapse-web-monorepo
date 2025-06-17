@@ -84,6 +84,7 @@ export const Demo: Story = {
               'cavatica',
               'terra',
               'adworkbench',
+              'pluto',
             ]}
           >
             <ShowModalTrigger />
