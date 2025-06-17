@@ -1,4 +1,4 @@
-import { removeTrailingUndefinedElements } from './ArrayUtils'
+import { removeTrailingUndefinedElements, hasDifference } from './ArrayUtils'
 
 describe('ArrayUtils', () => {
   test.each([
@@ -25,5 +25,16 @@ describe('ArrayUtils', () => {
     ],
   ])('removeTrailingUndefinedElements - %s', (caseName, arg, expected) => {
     expect(removeTrailingUndefinedElements(arg)).toEqual(expected)
+  })
+
+  test.each([
+    [[], [], false],
+    [[1, 2, 3], [1, 2, 3], false],
+    [[1, 2, 3], [1, 2, 4], true],
+    [[1, 2, 3], [1, 2], true],
+  ])('hasDifference, %j and %j', (first, second, expected) => {
+    expect(hasDifference(first, second)).toBe(expected)
+    // verify it is commutative
+    expect(hasDifference(second, first)).toBe(expected)
   })
 })

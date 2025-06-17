@@ -36,6 +36,7 @@ import { EntityTree, EntityTreeContainer, FinderScope } from './tree/EntityTree'
 import { EntityTreeNodeType } from './tree/VirtualizedTree'
 import { useEntitySelection } from './useEntitySelection'
 import { VersionSelectionType } from './VersionSelectionType'
+import { Map } from 'immutable'
 
 const DEFAULT_SELECTABLE_TYPES = Object.values(EntityType)
 const TABLE_DEFAULT_VISIBLE_TYPES = Object.values(EntityType)
@@ -76,6 +77,8 @@ export type EntityFinderProps = {
   visibleTypesInTree?: EntityType[]
   /** Whether to show only the tree. If `true`, the tree will be used to make selections */
   treeOnly?: boolean
+  /** If provided, the initial selection will be set to this list of references */
+  initialSelected?: Reference[]
 }
 
 enum EntityFinderTab {
@@ -94,6 +97,7 @@ export function EntityFinder({
   visibleTypesInList = TABLE_DEFAULT_VISIBLE_TYPES,
   visibleTypesInTree = TREE_DEFAULT_VISIBLE_TYPES,
   treeOnly = false,
+  initialSelected,
 }: EntityFinderProps) {
   const { accessToken } = useSynapseContext()
   const [currentTab, setCurrentTab] = React.useState(EntityFinderTab.BROWSE)
@@ -139,7 +143,22 @@ export function EntityFinder({
     [setBreadcrumbsProps],
   )
 
-  const [selectedEntities, toggleSelection] = useEntitySelection(selectMultiple)
+  const { selectedEntities, toggleSelection, setSelection } =
+    useEntitySelection(selectMultiple)
+
+  useEffect(() => {
+    if (initialSelected) {
+      let map = Map<string, Reference>()
+      map = map.withMutations(mutableMap => {
+        initialSelected.forEach(reference => {
+          mutableMap.set(reference.targetId, reference)
+        })
+      })
+
+      setSelection(map)
+    }
+  }, [initialSelected, setSelection])
+
   // A snapshot of the selectedEntities used to populate the selection list, allowing deselection of entities without removing them from the list.
   const [selectedEntitiesSnapshot, setSelectedEntitiesSnapshot] =
     useState(selectedEntities)
