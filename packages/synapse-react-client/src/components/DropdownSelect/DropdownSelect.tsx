@@ -29,7 +29,6 @@ export type DropdownSelectProps = ButtonGroupProps & {
   buttonText?: string
   variant?: ButtonProps['variant']
   buttonGroupAriaLabel?: string
-  sx?: SxProps
   anchorRef?: RefObject<HTMLElement>
   paperProps?: PaperProps
 }
@@ -51,7 +50,6 @@ export default function DropdownSelect(props: DropdownSelectProps) {
     buttonText,
     anchorRef: externalAnchorRef,
     paperProps,
-    sx,
     ...rest
   } = props
   const [open, setOpen] = useState(false)
@@ -95,7 +93,6 @@ export default function DropdownSelect(props: DropdownSelectProps) {
         variant={variant}
         ref={anchorRef as RefObject<HTMLDivElement>}
         aria-label="split button"
-        sx={sx}
         {...rest}
       >
         <Button

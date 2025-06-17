@@ -138,11 +138,14 @@ export const CitationPopoverContent = (props: CitationPopoverProps) => {
             Cite As:
           </Typography>
           <CloseIcon
-            onClick={() => onClose}
             sx={{
+              cursor: 'pointer',
               display: { xs: 'block', sm: 'none' },
               marginLeft: 'auto',
               color: '#878E95',
+            }}
+            onClick={() => {
+              onClose?.({}, 'escapeKeyDown')
             }}
           />
         </Box>
