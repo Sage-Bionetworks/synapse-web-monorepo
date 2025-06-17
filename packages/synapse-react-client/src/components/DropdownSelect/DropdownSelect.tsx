@@ -103,16 +103,9 @@ export default function DropdownSelect(props: DropdownSelectProps) {
             }
           }}
         >
-          {buttonText ? (
-            <Typography
-              variant="label"
-              sx={{ lineHeight: '20px', fontSize: '16px' }}
-            >
-              {buttonText}
-            </Typography>
-          ) : (
-            options[selectedIndex ?? selectedIndexLocal]
-          )}
+          {buttonText
+            ? buttonText
+            : options[selectedIndex ?? selectedIndexLocal]}
         </Button>
         <Button
           size="small"

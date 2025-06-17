@@ -107,10 +107,10 @@ const EntityCitation = ({
               anchorRef={citationButtonRef}
               paperProps={{ square: true, elevation: 2 }}
               sx={{
-                fontSize: '16px',
-                lineHeight: '20px',
                 width: { xs: '100%', sm: 'initial' },
                 '.MuiButtonBase-root': {
+                  fontSize: '16px',
+                  lineHeight: '20px',
                   padding: '4px 16px',
                   '&:first-child': {
                     width: { xs: '100%', sm: 'initial' },
