@@ -16,7 +16,6 @@ import {
   Paper,
   PaperProps,
   Popper,
-  SxProps,
   Typography,
 } from '@mui/material'
 import IconSvg from '../IconSvg'
@@ -29,7 +28,7 @@ export type DropdownSelectProps = ButtonGroupProps & {
   buttonText?: string
   variant?: ButtonProps['variant']
   buttonGroupAriaLabel?: string
-  anchorRef?: RefObject<HTMLElement>
+  anchorRef?: RefObject<HTMLDivElement>
   paperProps?: PaperProps
 }
 // Derived from https://mui.com/material-ui/react-button-group/#split-button
@@ -91,7 +90,7 @@ export default function DropdownSelect(props: DropdownSelectProps) {
     <>
       <ButtonGroup
         variant={variant}
-        ref={anchorRef as RefObject<HTMLDivElement>}
+        ref={anchorRef}
         aria-label="split button"
         {...rest}
       >
