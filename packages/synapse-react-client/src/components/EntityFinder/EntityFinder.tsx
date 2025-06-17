@@ -104,7 +104,7 @@ export function EntityFinder({
 
   const [searchActive, setSearchActive] = useState(false)
   // The raw value of the search input box:
-  const [searchInput, setSearchInput] = useState<string>()
+  const [searchInput, setSearchInput] = useState<string>('')
   // The "parsed" search terms, which are only calculated when Enter is pressed:
   const [searchTerms, setSearchTerms] = useState<string[]>()
   const [breadcrumbsProps, setBreadcrumbsProps] = useState<BreadcrumbsProps>({
