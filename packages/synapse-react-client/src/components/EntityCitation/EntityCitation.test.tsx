@@ -106,13 +106,25 @@ const openPopover = async (buttonName: string) => {
 describe('EntityCitation tests', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseGetEntityBundle.mockImplementation(useGetEntityBundleMockImpl)
-  })
 
-  it('renders "Cite page" button when only entity DOI exists', async () => {
+    mockUseGetEntityBundle.mockImplementation(useGetEntityBundleMockImpl)
+
     mockUseGetDOIAssociation.mockImplementation((request, options) => {
-      if (request.id === mockEntityWithNoDoiId && request.version === 1) {
+      if (
+        request.id === mockEntityWithVersionedDoiId &&
+        request.version === 1
+      ) {
         return useGetEntityDOIMockImpl()
+      } else if (
+        request.id === mockEntityWithUnversionedDoiId &&
+        request.version === undefined
+      ) {
+        return useGetEntityDOIMockImpl()
+      } else if (
+        request.id === mockProjectWithDoiId &&
+        request.version === undefined
+      ) {
+        return useGetProjectDOIMockImpl()
       } else if (
         request.id === mockProjectWithNoDoiId &&
         request.version === undefined
@@ -121,7 +133,9 @@ describe('EntityCitation tests', () => {
       }
       return useGetEntityDOIMockImpl()
     })
+  })
 
+  it('renders "Cite page" button when only entity DOI exists', async () => {
     render(
       <EntityCitation
         projectId={mockProjectWithNoDoiId}
@@ -143,25 +157,10 @@ describe('EntityCitation tests', () => {
   })
 
   it('renders "Cite project" when only project DOI exists', async () => {
-    mockUseGetDOIAssociation.mockImplementation((request, options) => {
-      if (
-        request.id === mockEntityWithUnversionedDoiId &&
-        request.version === 1
-      ) {
-        return useGetEntityDOIMockImpl()
-      } else if (
-        request.id === mockProjectWithDoiId &&
-        request.version === undefined
-      ) {
-        return useGetProjectDOIMockImpl()
-      }
-      return useGetEntityDOIMockImpl()
-    })
-
     render(
       <EntityCitation
         projectId={mockProjectWithDoiId}
-        entityId={mockEntityWithUnversionedDoiId}
+        entityId={mockEntityWithNoDoiId}
         versionNumber={1}
       />,
       { wrapper: createWrapper() },
@@ -208,25 +207,10 @@ describe('EntityCitation tests', () => {
       await userEvent.click(citePageMenuItem)
     }
 
-    screen.getByRole('button', { name: /Citation options/i })
+    screen.getByRole('dialog', { name: /Citation options/i })
   })
 
   it('Versioned Entity DOI', async () => {
-    mockUseGetDOIAssociation.mockImplementation((request, options) => {
-      if (
-        request.id === mockEntityWithVersionedDoiId &&
-        request.version === 1
-      ) {
-        return useGetEntityDOIMockImpl()
-      } else if (
-        request.id === mockProjectWithNoDoiId &&
-        request.version === undefined
-      ) {
-        return useGetProjectDOIMockImpl()
-      }
-      return useGetEntityDOIMockImpl()
-    })
-
     render(
       <EntityCitation
         projectId={mockProjectWithNoDoiId}

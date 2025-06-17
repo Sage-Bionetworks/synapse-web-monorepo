@@ -125,14 +125,6 @@ const EntityCitation = ({
           anchorRef={citationButtonRef}
           sx={{
             width: { xs: '100%', sm: 'initial' },
-            '.MuiButtonBase-root': {
-              fontSize: '16px',
-              lineHeight: '20px',
-              padding: '4px 16px',
-              '&:first-of-type': {
-                width: { xs: '100%', sm: 'initial' },
-              },
-            },
           }}
           buttonText="Cite as..."
           variant="outlined"
