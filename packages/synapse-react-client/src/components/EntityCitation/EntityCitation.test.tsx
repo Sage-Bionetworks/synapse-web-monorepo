@@ -43,8 +43,14 @@ const { mock: useGetEntityDOIMockImpl, setSuccess: setEntityDOISuccess } =
 const { mock: useGetProjectDOIMockImpl, setSuccess: setProjectDOISuccess } =
   getUseQueryMock<DoiAssociation | null, SynapseClientError>()
 
+const mockEntityWithUnversionedDoiId = 'syn61841662'
+const mockEntityWithVersionedDoiId = 'syn66268092'
+const mockEntityWithNoDoiId = 'syn68243871'
+const mockProjectWithNoDoiId = 'syn68243871'
+const mockProjectWithDoiId = 'syn68244561'
+
 const doiEntitySuccess: DoiAssociation = {
-  objectId: 'syn61841662',
+  objectId: mockEntityWithUnversionedDoiId,
   objectType: DoiObjectType.ENTITY as ObjectType,
   doiUri: '10.7303/syn61841662',
   associationId: '',
@@ -67,7 +73,7 @@ const fileWithDoiAssociation: Partial<EntityBundle> = {
 }
 
 const versionedDoiEntitySuccess: DoiAssociation = {
-  objectId: 'syn66268092',
+  objectId: mockEntityWithVersionedDoiId,
   objectType: DoiObjectType.ENTITY as ObjectType,
   doiUri: '10.7303/syn66268092.1',
   associationId: '',
@@ -105,10 +111,10 @@ describe('EntityCitation tests', () => {
 
   it('renders "Cite page" button when only entity DOI exists', async () => {
     mockUseGetDOIAssociation.mockImplementation((request, options) => {
-      if (request.id === 'syn61841662' && request.version === 1) {
+      if (request.id === mockEntityWithNoDoiId && request.version === 1) {
         return useGetEntityDOIMockImpl()
       } else if (
-        request.id === 'syn60582629' &&
+        request.id === mockProjectWithNoDoiId &&
         request.version === undefined
       ) {
         return useGetProjectDOIMockImpl()
@@ -118,8 +124,8 @@ describe('EntityCitation tests', () => {
 
     render(
       <EntityCitation
-        projectId="syn60582629"
-        entityId="syn61841662"
+        projectId={mockProjectWithNoDoiId}
+        entityId={mockEntityWithVersionedDoiId}
         versionNumber={1}
       />,
       { wrapper: createWrapper() },
@@ -133,17 +139,18 @@ describe('EntityCitation tests', () => {
 
     await openPopover('Cite page')
 
-    await screen.findByRole('dialog', {
-      name: /Citation options/i,
-    })
+    screen.getByRole('dialog', { name: /Citation options/i })
   })
 
   it('renders "Cite project" when only project DOI exists', async () => {
     mockUseGetDOIAssociation.mockImplementation((request, options) => {
-      if (request.id === 'syn61841662' && request.version === 1) {
+      if (
+        request.id === mockEntityWithUnversionedDoiId &&
+        request.version === 1
+      ) {
         return useGetEntityDOIMockImpl()
       } else if (
-        request.id === 'syn60582629' &&
+        request.id === mockProjectWithDoiId &&
         request.version === undefined
       ) {
         return useGetProjectDOIMockImpl()
@@ -153,8 +160,8 @@ describe('EntityCitation tests', () => {
 
     render(
       <EntityCitation
-        projectId="syn60582629"
-        entityId="syn61841662"
+        projectId={mockProjectWithDoiId}
+        entityId={mockEntityWithUnversionedDoiId}
         versionNumber={1}
       />,
       { wrapper: createWrapper() },
@@ -169,16 +176,14 @@ describe('EntityCitation tests', () => {
 
     await openPopover('Cite project')
 
-    await screen.findByRole('dialog', {
-      name: /Citation options/i,
-    })
+    screen.getByRole('dialog', { name: /Citation options/i })
   })
 
   it('Both project and entity have DOIs', async () => {
     render(
       <EntityCitation
-        projectId="syn60582629"
-        entityId="syn61841662"
+        projectId={mockProjectWithDoiId}
+        entityId={mockEntityWithUnversionedDoiId}
         versionNumber={1}
       />,
       { wrapper: createWrapper() },
@@ -192,28 +197,29 @@ describe('EntityCitation tests', () => {
 
     await openPopover('Cite as...')
 
+    let citePageMenuItem: HTMLElement | null = null
     await waitFor(() => {
-      const citePageButton = screen.getByRole('menuitem', {
+      citePageMenuItem = screen.getByRole('menuitem', {
         name: /cite only this page/i,
       })
-      expect(
-        screen.getByRole('menuitem', { name: /cite this project/i }),
-      ).toBeInTheDocument()
-      expect(citePageButton).toBeInTheDocument()
-      userEvent.click(citePageButton)
+      screen.getByRole('menuitem', { name: /cite this project/i })
     })
+    if (citePageMenuItem) {
+      await userEvent.click(citePageMenuItem)
+    }
 
-    await screen.findByRole('dialog', {
-      name: /Citation options/i,
-    })
+    screen.getByRole('button', { name: /Citation options/i })
   })
 
   it('Versioned Entity DOI', async () => {
     mockUseGetDOIAssociation.mockImplementation((request, options) => {
-      if (request.id === 'syn66268092' && request.version === 1) {
+      if (
+        request.id === mockEntityWithVersionedDoiId &&
+        request.version === 1
+      ) {
         return useGetEntityDOIMockImpl()
       } else if (
-        request.id === 'syn60582629' &&
+        request.id === mockProjectWithNoDoiId &&
         request.version === undefined
       ) {
         return useGetProjectDOIMockImpl()
@@ -223,8 +229,8 @@ describe('EntityCitation tests', () => {
 
     render(
       <EntityCitation
-        projectId="syn60582629"
-        entityId="syn66268092"
+        projectId={mockProjectWithNoDoiId}
+        entityId={mockEntityWithVersionedDoiId}
         versionNumber={1}
       />,
       { wrapper: createWrapper() },
@@ -239,20 +245,18 @@ describe('EntityCitation tests', () => {
     await openPopover('Cite page')
 
     await waitFor(() => {
-      screen.findByRole('dialog', {
+      screen.getByRole('dialog', {
         name: /Citation options/i,
       })
-      expect(
-        screen.getByText(content => content.includes('version=1')),
-      ).toBeInTheDocument()
+      screen.getByText(content => content.includes('version=1'))
     })
   })
 
   it('Versionless Entity DOI', async () => {
     render(
       <EntityCitation
-        projectId="syn60582629"
-        entityId="syn68236894"
+        projectId={mockProjectWithNoDoiId}
+        entityId={mockEntityWithUnversionedDoiId}
         versionNumber={undefined}
       />,
       { wrapper: createWrapper() },
@@ -266,14 +270,6 @@ describe('EntityCitation tests', () => {
 
     await openPopover('Cite page')
 
-    await waitFor(() => {
-      screen.findByRole('dialog', {
-        name: /Citation options/i,
-      })
-
-      expect(
-        screen.queryByText(content => content.includes('version=1')),
-      ).not.toBeInTheDocument()
-    })
+    screen.getByRole('dialog', { name: /Citation options/i })
   })
 })

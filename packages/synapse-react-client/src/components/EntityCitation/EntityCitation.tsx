@@ -1,5 +1,5 @@
 import { ReactComponent as DoubleQuotes } from '@/assets/icons/DoubleQuotes.svg'
-import { Button, Typography } from '@mui/material'
+import { Button, Skeleton, Typography } from '@mui/material'
 import { useGetDOIAssociation } from '@/synapse-queries/doi/useDOI'
 import { useGetEntityBundle } from '@/synapse-queries/entity'
 import { DoiObjectType } from '@sage-bionetworks/synapse-client'
@@ -101,64 +101,76 @@ const EntityCitation = ({
 
   const options: string[] = ['Cite this Project', 'Cite only this page']
 
+  if (!projectDoiAssociation && !entityDoiAssociation) {
+    return null
+  }
+
+  if (isEntityLoading || isProjectLoading) {
+    return (
+      <Skeleton
+        sx={{
+          width: { xs: '100%', sm: '140px' },
+          height: '45px',
+        }}
+      />
+    )
+  }
+
   return (
     <>
-      {(projectDoiAssociation || entityDoiAssociation) && (
-        <>
-          {isProjectAndEntityDoi ? (
-            <DropdownSelect
-              disabled={isEntityLoading || isProjectLoading}
-              options={options}
-              anchorRef={citationButtonRef}
-              sx={{
+      {isProjectAndEntityDoi ? (
+        <DropdownSelect
+          disabled={isEntityLoading && isProjectLoading}
+          options={options}
+          anchorRef={citationButtonRef}
+          sx={{
+            width: { xs: '100%', sm: 'initial' },
+            '.MuiButtonBase-root': {
+              fontSize: '16px',
+              lineHeight: '20px',
+              padding: '4px 16px',
+              '&:first-of-type': {
                 width: { xs: '100%', sm: 'initial' },
-                '.MuiButtonBase-root': {
-                  fontSize: '16px',
-                  lineHeight: '20px',
-                  padding: '4px 16px',
-                  '&:first-child': {
-                    width: { xs: '100%', sm: 'initial' },
-                  },
-                },
-              }}
-              buttonText="Cite as..."
-              variant="outlined"
-              buttonGroupAriaLabel="Citation options"
-              selectedIndex={selectedIndex}
-              setSelectedIndex={(index: number) => {
-                setSelectedIndex(index)
-                const selected =
-                  index === 0
-                    ? projectDoiAssociation?.doiUri
-                    : entityDoiAssociation?.doiUri
-                if (selected) {
-                  setSelectedDoi(selected)
-                  setCitationAnchorEl(citationButtonRef.current)
-                }
-              }}
-            />
-          ) : (
-            <Button
-              onClick={handleButtonClick}
-              sx={{
-                borderRadius: '3px',
-                padding: '6px 16px',
-                width: { xs: '100%', sm: 'initial' },
-              }}
-              variant="outlined"
-              startIcon={<DoubleQuotes width={18} height={18} />}
-            >
-              <Typography
-                variant="label"
-                sx={{ lineHeight: '20px', fontSize: '16px' }}
-              >
-                {buttonText}
-              </Typography>
-            </Button>
-          )}
-          {popover}
-        </>
+              },
+            },
+          }}
+          buttonText="Cite as..."
+          variant="outlined"
+          buttonGroupAriaLabel="Citation options"
+          selectedIndex={selectedIndex}
+          setSelectedIndex={(index: number) => {
+            setSelectedIndex(index)
+            const selected =
+              index === 0
+                ? projectDoiAssociation?.doiUri
+                : entityDoiAssociation?.doiUri
+            if (selected) {
+              setSelectedDoi(selected)
+              setCitationAnchorEl(citationButtonRef.current)
+            }
+          }}
+        />
+      ) : (
+        <Button
+          onClick={handleButtonClick}
+          disabled={isEntityLoading && isProjectLoading}
+          sx={{
+            borderRadius: '3px',
+            padding: '6px 16px',
+            width: { xs: '100%', sm: 'initial' },
+          }}
+          variant="outlined"
+          startIcon={<DoubleQuotes width={18} height={18} />}
+        >
+          <Typography
+            variant="label"
+            sx={{ lineHeight: '20px', fontSize: '16px' }}
+          >
+            {buttonText}
+          </Typography>
+        </Button>
       )}
+      {popover}
     </>
   )
 }
