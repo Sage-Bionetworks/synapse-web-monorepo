@@ -34,7 +34,6 @@ export function useGetProjectsInfinite<TData = InfiniteData<ProjectHeaderList>>(
       ProjectHeaderList,
       SynapseClientError,
       TData,
-      ProjectHeaderList,
       QueryKey,
       ProjectHeaderList['nextPageToken']
     >

@@ -36,7 +36,6 @@ export function useGetRepliesInfinite<
       PaginatedResults<DiscussionReplyBundle>,
       SynapseClientError,
       TData,
-      PaginatedResults<DiscussionReplyBundle>,
       QueryKey,
       number | undefined
     >

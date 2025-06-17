@@ -111,7 +111,6 @@ export function useGetFavoritesInfinite<
       PaginatedResults<EntityHeader>,
       SynapseClientError,
       TData,
-      PaginatedResults<EntityHeader>,
       QueryKey,
       number | undefined
     >

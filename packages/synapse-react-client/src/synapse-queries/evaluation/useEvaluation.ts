@@ -38,7 +38,6 @@ export function useGetEvaluationsInfinite<
       PaginatedResults<Evaluation>,
       SynapseClientError,
       TData,
-      PaginatedResults<Evaluation>,
       QueryKey,
       number | undefined
     >
@@ -87,7 +86,6 @@ export function useGetEvaluationRoundsInfinite<
       EvaluationRoundListResponse,
       SynapseClientError,
       TData,
-      EvaluationRoundListResponse,
       QueryKey,
       EvaluationRoundListResponse['nextPageToken']
     >

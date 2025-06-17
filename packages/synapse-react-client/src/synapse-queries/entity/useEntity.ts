@@ -224,7 +224,6 @@ export function useGetVersionsInfinite<
       PaginatedResults<VersionInfo>,
       SynapseClientError,
       TData,
-      PaginatedResults<VersionInfo>,
       QueryKey,
       number | undefined
     >
