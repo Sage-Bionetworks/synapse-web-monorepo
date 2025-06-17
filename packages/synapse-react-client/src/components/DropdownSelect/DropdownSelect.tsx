@@ -14,7 +14,6 @@ import {
   MenuItem,
   MenuList,
   Paper,
-  PaperProps,
   Popper,
 } from '@mui/material'
 import IconSvg from '../IconSvg'
@@ -28,7 +27,6 @@ export type DropdownSelectProps = ButtonGroupProps & {
   variant?: ButtonProps['variant']
   buttonGroupAriaLabel?: string
   anchorRef?: RefObject<HTMLDivElement>
-  paperProps?: PaperProps
 }
 // Derived from https://mui.com/material-ui/react-button-group/#split-button
 
