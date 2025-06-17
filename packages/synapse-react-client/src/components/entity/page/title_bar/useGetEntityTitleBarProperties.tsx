@@ -175,17 +175,18 @@ export function useGetEntityTitleBarProperties(
       title: 'MD5',
       value: <CopyToClipboardString value={md5} />,
     },
-    !isContainer && storageLocation
-      ? {
-          key: 'fileStorageLocation',
-          title: 'Storage Location',
-          value: storageLocation,
-        }
-      : uploadDestinationString && {
-          key: 'uploadDestination',
-          title: 'Upload Destination',
-          value: uploadDestinationString,
-        },
+    !isContainer &&
+      storageLocation && {
+        key: 'fileStorageLocation',
+        title: 'Storage Location',
+        value: storageLocation,
+      },
+    isContainer &&
+      uploadDestinationString && {
+        key: 'uploadDestination',
+        title: 'Upload Destination',
+        value: uploadDestinationString,
+      },
     endpoint && {
       key: 'externalFileEndpoint',
       title: 'Endpoint',
