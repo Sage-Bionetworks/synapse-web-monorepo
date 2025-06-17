@@ -682,7 +682,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         promptCopy={ENTITY_FINDER_PROMPT}
         show={showEntityFinder}
         title={ADD_ITEMS_TO}
-        confirmButtonCopy={ADD_ITEMS}
+        confirmButtonCopy={'Apply changes'}
         onConfirm={items => {
           addItemsToDataset(items)
           setShowEntityFinder(false)
