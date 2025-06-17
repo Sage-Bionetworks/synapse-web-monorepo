@@ -10,7 +10,7 @@ import DropdownSelect from '../DropdownSelect'
 
 export type EntityCitationProps = {
   projectId: string
-  entityId?: string
+  entityId: string
   versionNumber?: number
 }
 
@@ -19,7 +19,10 @@ const EntityCitation = ({
   entityId,
   versionNumber,
 }: EntityCitationProps) => {
-  const { data: bundle } = useGetEntityBundle(entityId!, versionNumber)
+  const { data: bundle, isLoading: isEntityLoading } = useGetEntityBundle(
+    entityId,
+    versionNumber,
+  )
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [selectedDoi, setSelectedDoi] = useState<string | undefined>(undefined)
   const [citationAnchorEl, setCitationAnchorEl] = useState<HTMLElement | null>(
@@ -42,16 +45,17 @@ const EntityCitation = ({
 
   // Get DOI association for the project
   // Projects are not versioned
-  const { data: projectDoiAssociation } = useGetDOIAssociation(
-    {
-      id: projectId,
-      version: undefined,
-      type: DoiObjectType.ENTITY,
-    },
-    {
-      enabled: !!projectId,
-    },
-  )
+  const { data: projectDoiAssociation, isLoading: isProjectLoading } =
+    useGetDOIAssociation(
+      {
+        id: projectId,
+        version: undefined,
+        type: DoiObjectType.ENTITY,
+      },
+      {
+        enabled: !!projectId,
+      },
+    )
 
   // If both project and entity have DOIs, we show the dropdown variant
   const isProjectAndEntityDoi = projectDoiAssociation && entityDoiAssociation
@@ -103,9 +107,9 @@ const EntityCitation = ({
         <>
           {isProjectAndEntityDoi ? (
             <DropdownSelect
+              disabled={isEntityLoading || isProjectLoading}
               options={options}
               anchorRef={citationButtonRef}
-              paperProps={{ square: true, elevation: 2 }}
               sx={{
                 width: { xs: '100%', sm: 'initial' },
                 '.MuiButtonBase-root': {

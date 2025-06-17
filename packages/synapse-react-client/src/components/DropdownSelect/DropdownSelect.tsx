@@ -16,7 +16,6 @@ import {
   Paper,
   PaperProps,
   Popper,
-  Typography,
 } from '@mui/material'
 import IconSvg from '../IconSvg'
 
@@ -48,7 +47,6 @@ export default function DropdownSelect(props: DropdownSelectProps) {
     onButtonClick,
     buttonText,
     anchorRef: externalAnchorRef,
-    paperProps,
     ...rest
   } = props
   const [open, setOpen] = useState(false)
@@ -138,7 +136,7 @@ export default function DropdownSelect(props: DropdownSelectProps) {
                 placement === 'bottom' ? 'center top' : 'center bottom',
             }}
           >
-            <Paper {...paperProps}>
+            <Paper>
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList id="split-button-menu" autoFocusItem>
                   {options.map((option, index) => (
