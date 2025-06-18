@@ -147,8 +147,6 @@ const EntityCitation = ({
           onClick={handleButtonClick}
           disabled={isEntityLoading && isProjectLoading}
           sx={{
-            borderRadius: '3px',
-            padding: '6px 16px',
             width: { xs: '100%', sm: 'initial' },
           }}
           variant="outlined"
