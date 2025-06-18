@@ -23,6 +23,9 @@ export function removeTrailingUndefinedElements(params: unknown[]): unknown[] {
   return result
 }
 
+/**
+ *  Returns true if an item exists in one array that does not exist in another, using deep comparison by default.
+ */
 export function hasDifference(
   x: Array<unknown>,
   y: Array<unknown>,
