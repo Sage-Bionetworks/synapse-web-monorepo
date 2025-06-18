@@ -23,15 +23,16 @@ export type ExternalAnalysisPlatform =
   | 'pluto'
   | 'plutodev'
 
-const plutoAnalysisPlatformDescription: ExternalAnalysisPlatformDescription = {
-  name: 'Pluto',
-  description:
-    'Intuitively store, search, analyze, and visualize complex biological data (including large, raw data files) and run bioinformatics pipelines in a few clicks without needing to write code or manage any of your own cloud infrastructure.',
-  Logo: PlutoLogo,
-  PlatformInstructions: () => (
+const getExternalAnalysisPlatformInstructions = (
+  platformName: string,
+  platformLoginURL: string,
+  platformConnectAccountURL?: string,
+  platformSupportEmail?: string,
+): JSX.Element => {
+  return (
     <>
       <Typography variant="body1" sx={{ fontWeight: 700 }} gutterBottom>
-        You must meet these requirements from Pluto to send data:
+        You must meet these requirements from {platformName} to send data:
       </Typography>
       <Typography
         variant="body1"
@@ -41,34 +42,53 @@ const plutoAnalysisPlatformDescription: ExternalAnalysisPlatformDescription = {
       >
         <li>You must complete all required Access Actions in the next step.</li>
         <li>
-          You must be logged in to a Pluto account.{' '}
+          You must be logged in to a {platformName} account.{' '}
           <Link
-            href={'https://app.pluto.bio/login'}
+            href={platformLoginURL}
             rel={'noopener noreferrer'}
             target={'_blank'}
           >
-            Click here to login or register for Pluto
+            Click here to login or register for {platformName}
           </Link>
           .
         </li>
         <li>
-          You must connect your Pluto account to Synapse.{' '}
-          <Link
-            href={'https://help.pluto.bio/en/articles/synapse-pluto'}
-            target="_blank"
-          >
-            Click here for instructions.
-          </Link>
+          You must connect your {platformName} account to Synapse.{' '}
+          {platformConnectAccountURL && (
+            <Link href={platformConnectAccountURL} target="_blank">
+              Click here for instructions.
+            </Link>
+          )}
         </li>
       </Typography>
 
       <Typography variant="body1" gutterBottom>
-        Note that we cannot provide support for Pluto. Please contact Pluto's{' '}
-        <Link href="mailto:support@pluto.bio">technical support</Link> for
-        issues related to the above.
+        Note that we cannot provide support for {platformName}.&nbsp;&nbsp;
+        {platformSupportEmail && (
+          <>
+            Please contact {platformName}'s{' '}
+            <Link href={platformSupportEmail}>technical support</Link> for
+            issues related to the above.
+          </>
+        )}
       </Typography>
     </>
-  ),
+  )
+}
+
+const plutoAnalysisPlatformDescription: ExternalAnalysisPlatformDescription = {
+  name: 'Pluto',
+  description:
+    'Intuitively store, search, analyze, and visualize complex biological data (including large, raw data files) and run bioinformatics pipelines in a few clicks without needing to write code or manage any of your own cloud infrastructure.',
+  Logo: PlutoLogo,
+  PlatformInstructions: () => {
+    return getExternalAnalysisPlatformInstructions(
+      'Pluto',
+      'https://app.pluto.bio/login',
+      'https://help.pluto.bio/en/articles/synapse-pluto',
+      'mailto:support@pluto.bio',
+    )
+  },
 }
 const plutoDevAnalysisPlatformDescription: ExternalAnalysisPlatformDescription =
   {
@@ -85,98 +105,28 @@ export const EXTERNAL_ANALYSIS_PLATFORMS: Record<
     description:
       'CAVATICA is a storage, sharing, and analysis platform designed to handle large volumes of pediatric tumor genomics data. It is produced in collaboration with Seven Bridges and based on the Seven Bridges Platform for cloud storage and bioinformatics analysis.',
     Logo: CavaticaLogo,
-    PlatformInstructions: (props: PlatformInstructionProps) => (
-      <>
-        <Typography variant="body1" sx={{ fontWeight: 700 }} gutterBottom>
-          You must meet these requirements from CAVATICA to send data:
-        </Typography>
-        <Typography
-          variant="body1"
-          component={'ol'}
-          gutterBottom
-          sx={{ marginLeft: '10px', li: { mb: 1 } }}
-        >
-          <li>
-            You must complete all required Access Actions in the next step.
-          </li>
-          <li>
-            You must be logged in to a CAVATICA account.{' '}
-            <Link
-              href={'https://cavatica.sbgenomics.com/'}
-              rel={'noopener noreferrer'}
-              target={'_blank'}
-            >
-              Click here to login or register for Cavatica
-            </Link>
-            .
-          </li>
-          <li>
-            You must connect your CAVATICA account to Synapse.{' '}
-            {props.cavaticaConnectAccountURL && (
-              <Link href={props.cavaticaConnectAccountURL} target="_blank">
-                Click here for instructions.
-              </Link>
-            )}
-          </li>
-        </Typography>
-
-        <Typography variant="body1" gutterBottom>
-          Note that we cannot provide support for CAVATICA. Please contact
-          CAVATICA’s{' '}
-          <Link href="mailto:support@velsera.com">technical support</Link> for
-          issues related to the above.
-        </Typography>
-      </>
-    ),
+    PlatformInstructions: (props: PlatformInstructionProps) => {
+      return getExternalAnalysisPlatformInstructions(
+        'CAVATICA',
+        'https://cavatica.sbgenomics.com/',
+        props.cavaticaConnectAccountURL,
+        'mailto:support@velsera.com',
+      )
+    },
   },
   terra: {
     name: 'Terra',
     description:
       'Terra is an analysis platform that allows users to access data, run analysis tools, and collaborate. Terra is powered by Google Cloud Platform, enabling the user to scale and manage billing of their own projects.',
     Logo: TerraLogo,
-    PlatformInstructions: () => (
-      <>
-        <Typography variant="body1" sx={{ fontWeight: 700 }} gutterBottom>
-          You must meet these requirements from TERRA to send data:
-        </Typography>
-        <Typography
-          variant="body1"
-          component={'ol'}
-          gutterBottom
-          sx={{ marginLeft: '10px', li: { mb: 1 } }}
-        >
-          <li>
-            You must complete all required Access Actions in the next step.
-          </li>
-          <li>
-            You must be logged in to a TERRA account.{' '}
-            <Link
-              href={'https://app.terra.bio/'}
-              rel={'noopener noreferrer'}
-              target={'_blank'}
-            >
-              Click here to login or register for TERRA
-            </Link>
-            .
-          </li>
-          <li>
-            You must connect your TERRA account to Synapse.{' '}
-            <Link
-              href={'https://app.terra.bio/#profile?tab=externalIdentities'}
-              target="_blank"
-            >
-              Click here for instructions.
-            </Link>
-          </li>
-        </Typography>
-
-        <Typography variant="body1" gutterBottom>
-          Note that we cannot provide support for TERRA. Please contact TERRA’s{' '}
-          <Link href="mailto:support@terra.bio">technical support</Link> for
-          issues related to the above.
-        </Typography>
-      </>
-    ),
+    PlatformInstructions: () => {
+      return getExternalAnalysisPlatformInstructions(
+        'TERRA',
+        'https://app.terra.bio/',
+        'https://app.terra.bio/#profile?tab=externalIdentities',
+        'mailto:support@terra.bio',
+      )
+    },
   },
   pluto: plutoAnalysisPlatformDescription,
   plutodev: plutoDevAnalysisPlatformDescription,

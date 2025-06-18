@@ -142,6 +142,8 @@ const mockQueryVisualizationContext: QueryVisualizationContextType = {
 }
 const mockExportToCavatica = vi.fn()
 const mockExportToTerra = vi.fn()
+const mockExportToPluto = vi.fn()
+const mockExportToPlutoDev = vi.fn()
 
 describe('ExternalPlatformActionsRequiredPrecheck', () => {
   beforeEach(() => {
@@ -166,6 +168,8 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
     mockUseExportTableQueryToAnalysisPlatform.mockReturnValue({
       exportToCavatica: mockExportToCavatica,
       exportToTerra: mockExportToTerra,
+      exportToPluto: mockExportToPluto,
+      exportToPlutoDev: mockExportToPlutoDev,
     })
 
     MockTableQueryActionsRequired.mockReturnValue(<></>)
