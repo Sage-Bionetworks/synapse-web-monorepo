@@ -111,23 +111,13 @@ describe('EntityCitation tests', () => {
 
     mockUseGetDOIAssociation.mockImplementation((request, options) => {
       if (
-        request.id === mockEntityWithVersionedDoiId &&
-        request.version === 1
+        request.id === mockEntityWithVersionedDoiId ||
+        request.id === mockEntityWithUnversionedDoiId
       ) {
         return useGetEntityDOIMockImpl()
       } else if (
-        request.id === mockEntityWithUnversionedDoiId &&
-        request.version === undefined
-      ) {
-        return useGetEntityDOIMockImpl()
-      } else if (
-        request.id === mockProjectWithDoiId &&
-        request.version === undefined
-      ) {
-        return useGetProjectDOIMockImpl()
-      } else if (
-        request.id === mockProjectWithNoDoiId &&
-        request.version === undefined
+        request.id === mockProjectWithDoiId ||
+        request.id === mockProjectWithNoDoiId
       ) {
         return useGetProjectDOIMockImpl()
       }

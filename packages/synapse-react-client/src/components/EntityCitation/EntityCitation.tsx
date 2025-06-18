@@ -154,12 +154,7 @@ const EntityCitation = ({
           variant="outlined"
           startIcon={<DoubleQuotes width={18} height={18} />}
         >
-          <Typography
-            variant="label"
-            sx={{ lineHeight: '20px', fontSize: '16px' }}
-          >
-            {buttonText}
-          </Typography>
+          {buttonText}
         </Button>
       )}
       {popover}
