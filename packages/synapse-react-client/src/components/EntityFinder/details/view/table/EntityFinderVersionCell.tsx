@@ -1,6 +1,6 @@
 import { useGetVersionsInfinite } from '@/synapse-queries/index'
 import { isTableType } from '@/utils/functions/EntityTypeUtils'
-import { Select } from '@mui/material'
+import Select from '@mui/material/Select'
 import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
 import { CellContext } from '@tanstack/react-table'
 import { useEffect } from 'react'

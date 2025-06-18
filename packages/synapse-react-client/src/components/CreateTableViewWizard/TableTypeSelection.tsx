@@ -1,7 +1,7 @@
 import WizardChoiceButtonGroup from '../WizardChoiceButton/WizardChoiceButtonGroup'
 import WizardChoiceButton from '../WizardChoiceButton/WizardChoiceButton'
 import WizardChoiceButtonDescription from '../WizardChoiceButton/WizardChoiceButtonDescription'
-import { Link } from '@mui/material'
+import Link from '@mui/material/Link'
 
 const TABLE_DESCRIPTION = (
   <>

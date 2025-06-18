@@ -7,7 +7,7 @@ import { ReactComponent as R } from '@/assets/homepage/r.svg'
 import { ReactComponent as ResearchCredit } from '@/assets/homepage/research-credit-feature.svg'
 import { ReactComponent as SeamlessIntegration } from '@/assets/homepage/seamless-integration-feature.svg'
 import { useOneSageURL } from '@/utils/hooks'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { SynapseFeatureItem } from './SynapseFeatureItem'
 
 export function SynapseFeatures() {

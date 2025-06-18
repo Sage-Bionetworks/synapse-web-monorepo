@@ -1,4 +1,4 @@
-import { PaletteOptions } from '@mui/material'
+import { PaletteOptions } from '@mui/material/styles'
 
 export type SourceAppConfig = {
   appId: string // app ID used in the query params

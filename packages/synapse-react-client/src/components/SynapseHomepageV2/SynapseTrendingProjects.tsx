@@ -1,7 +1,10 @@
 import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
 import { getColumnIndex } from '@/utils/functions/index'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
-import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
 import {
   SynapseTrendingProjectItem,
   trendingProjectsGridTemplateColumns,

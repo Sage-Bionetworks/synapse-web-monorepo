@@ -5,7 +5,9 @@ import {
   useRemoveFavorite,
 } from '@/synapse-queries'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { IconButton, Skeleton, Tooltip } from '@mui/material'
+import IconButton from '@mui/material/IconButton'
+import Skeleton from '@mui/material/Skeleton'
+import Tooltip from '@mui/material/Tooltip'
 import IconSvg from '../IconSvg/IconSvg'
 
 export type FavoriteButtonProps = {

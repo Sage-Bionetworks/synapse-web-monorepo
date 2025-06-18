@@ -1,4 +1,5 @@
-import { Button, ButtonProps } from '@mui/material'
+import Button from '@mui/material/Button'
+import { ButtonProps } from '@mui/material/Button'
 import { MouseEventHandler } from 'react'
 import { DialogBase, DialogBaseProps } from '../DialogBase'
 import { defaults } from 'lodash-es'

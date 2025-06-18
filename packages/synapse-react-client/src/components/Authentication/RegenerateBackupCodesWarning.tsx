@@ -1,5 +1,10 @@
 import FrontHand from '@/assets/icons/FrontHand'
-import { Avatar, Box, Button, Paper, Typography, useTheme } from '@mui/material'
+import Avatar from '@mui/material/Avatar'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
+import { useTheme } from '@mui/material/styles'
 
 type RegenerateBackupCodesWarningProps = {
   onConfirm: () => void

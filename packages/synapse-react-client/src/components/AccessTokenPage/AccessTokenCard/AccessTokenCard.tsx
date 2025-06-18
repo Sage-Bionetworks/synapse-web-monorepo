@@ -1,13 +1,11 @@
 import { useDeletePersonalAccessToken } from '@/synapse-queries/user/usePersonalAccessToken'
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
-import {
-  Box,
-  Card,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import IconButton from '@mui/material/IconButton'
+import Stack from '@mui/material/Stack'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import {
   AccessTokenRecord,
   scopeDescriptions,

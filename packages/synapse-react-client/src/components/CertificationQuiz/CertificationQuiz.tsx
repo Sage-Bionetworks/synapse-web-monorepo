@@ -8,16 +8,14 @@ import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { USER_BUNDLE_MASK_IS_CERTIFIED } from '@/utils/SynapseConstants'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
-import {
-  Alert,
-  AlertTitle,
-  Box,
-  Button,
-  ButtonProps,
-  Link,
-  Skeleton,
-  Typography,
-} from '@mui/material'
+import Alert from '@mui/material/Alert'
+import AlertTitle from '@mui/material/AlertTitle'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import { ButtonProps } from '@mui/material/Button'
+import Link from '@mui/material/Link'
+import Skeleton from '@mui/material/Skeleton'
+import Typography from '@mui/material/Typography'
 import {
   MULTICHOICE_RESPONSE_CONCRETE_TYPE_VALUE,
   MultichoiceQuestion,

@@ -1,5 +1,6 @@
 import { UseLoginReturn } from '@/utils/hooks'
-import { Box, Button } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import { MuiOtpInput } from 'mui-one-time-password-input'
 import { useState } from 'react'
 

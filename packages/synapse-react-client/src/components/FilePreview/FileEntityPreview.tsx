@@ -3,7 +3,7 @@ import {
   implementsCloudProviderFileHandleInterface,
   isFileEntity,
 } from '@/utils/types/IsType'
-import { Alert } from '@mui/material'
+import Alert from '@mui/material/Alert'
 import {
   EntityBundle,
   FileHandleAssociateType,

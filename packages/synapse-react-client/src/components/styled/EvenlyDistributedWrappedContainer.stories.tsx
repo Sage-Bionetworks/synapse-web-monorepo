@@ -1,10 +1,8 @@
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Typography,
-} from '@mui/material'
+import Button from '@mui/material/Button'
+import Card from '@mui/material/Card'
+import CardActions from '@mui/material/CardActions'
+import CardContent from '@mui/material/CardContent'
+import Typography from '@mui/material/Typography'
 import { Meta, StoryObj } from '@storybook/react'
 import { EvenlyDistributedWrappedContainer } from './EvenlyDistributedWrappedContainer'
 import times from 'lodash-es/times'

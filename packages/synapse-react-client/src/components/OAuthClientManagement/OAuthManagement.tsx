@@ -3,7 +3,9 @@ import { useGetOAuthClientInfinite } from '@/synapse-queries'
 import { useSynapseContext } from '@/utils'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { AddCircleTwoTone } from '@mui/icons-material'
-import { Box, Button, Link } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Link from '@mui/material/Link'
 import { OAuthClient } from '@sage-bionetworks/synapse-client/generated/models/OAuthClient'
 import {
   createColumnHelper,

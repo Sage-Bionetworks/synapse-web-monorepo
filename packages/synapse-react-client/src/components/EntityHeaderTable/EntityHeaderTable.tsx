@@ -8,17 +8,15 @@ import {
 } from '@/utils/functions/EntityTypeUtils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '@/utils/functions/RegularExpressions'
 import { AddCircleTwoTone } from '@mui/icons-material'
-import {
-  Alert,
-  AlertTitle,
-  Box,
-  Button,
-  IconButton,
-  InputLabel,
-  TextField,
-  Tooltip,
-  Typography,
-} from '@mui/material'
+import Alert from '@mui/material/Alert'
+import AlertTitle from '@mui/material/AlertTitle'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import InputLabel from '@mui/material/InputLabel'
+import TextField from '@mui/material/TextField'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { EntityHeader, ReferenceList } from '@sage-bionetworks/synapse-types'
 import {
   ColumnDef,

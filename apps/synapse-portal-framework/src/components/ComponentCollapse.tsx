@@ -2,7 +2,10 @@ import {
   KeyboardArrowDownTwoTone,
   KeyboardArrowUpTwoTone,
 } from '@mui/icons-material'
-import { Box, Collapse, SxProps, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Collapse from '@mui/material/Collapse'
+import { SxProps } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
 import { PropsWithChildren, useState } from 'react'
 
 export type ComponentCollapseProps = PropsWithChildren<{

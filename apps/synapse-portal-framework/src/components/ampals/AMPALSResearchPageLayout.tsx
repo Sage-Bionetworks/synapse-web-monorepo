@@ -1,4 +1,7 @@
-import { Box, Container, ContainerProps, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Container from '@mui/material/Container'
+import { ContainerProps } from '@mui/material/Container'
+import Typography from '@mui/material/Typography'
 import { PropsWithChildren, ReactNode } from 'react'
 
 type AMPALSResearchPageLayoutProps = PropsWithChildren<{

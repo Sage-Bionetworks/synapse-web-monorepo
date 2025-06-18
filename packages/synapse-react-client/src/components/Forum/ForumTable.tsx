@@ -1,6 +1,7 @@
 import { useGetForumThreadsInfinite } from '@/synapse-queries/forum/useForum'
 import { AVATAR } from '@/utils/SynapseConstants'
-import { Button, Link } from '@mui/material'
+import Button from '@mui/material/Button'
+import Link from '@mui/material/Link'
 import {
   DiscussionFilter,
   DiscussionThreadBundle,

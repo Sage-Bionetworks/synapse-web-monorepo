@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { useCallback, useMemo, useState } from 'react'

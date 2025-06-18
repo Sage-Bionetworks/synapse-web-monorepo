@@ -1,5 +1,5 @@
 import { useGetEntityHeader } from '@/synapse-queries'
-import { Checkbox } from '@mui/material'
+import Checkbox from '@mui/material/Checkbox'
 import {
   ColumnTypeEnum,
   FacetColumnResult,

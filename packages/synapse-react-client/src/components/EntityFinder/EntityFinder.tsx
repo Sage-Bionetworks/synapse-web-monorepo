@@ -4,16 +4,14 @@ import { getEntityTypeFromHeader } from '@/utils/functions/EntityTypeUtils'
 import { parseSynId } from '@/utils/functions/RegularExpressions'
 import ClearIcon from '@mui/icons-material/Clear'
 import SearchIcon from '@mui/icons-material/Search'
-import {
-  Box,
-  Chip,
-  IconButton,
-  InputAdornment,
-  Stack,
-  Tab,
-  Tabs,
-  TextField,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Chip from '@mui/material/Chip'
+import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
+import Stack from '@mui/material/Stack'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
+import TextField from '@mui/material/TextField'
 import {
   EntityType,
   KeyValue,

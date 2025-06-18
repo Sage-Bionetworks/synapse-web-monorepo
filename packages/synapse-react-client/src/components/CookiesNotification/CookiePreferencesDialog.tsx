@@ -3,16 +3,14 @@ import {
   useCookiePreferences,
 } from '@/utils/hooks/useCookiePreferences'
 import { PRIVACY_POLICY_LINK } from '@/utils/SynapseConstants'
-import {
-  Box,
-  Button,
-  Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  Link,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Checkbox from '@mui/material/Checkbox'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import { DialogBaseTitle } from '../DialogBase'
 

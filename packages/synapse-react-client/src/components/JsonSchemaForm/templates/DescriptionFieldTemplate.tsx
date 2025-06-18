@@ -1,6 +1,6 @@
 import { CustomFormContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import { DescriptionFieldProps } from '@rjsf/utils'
-import { Typography } from '@mui/material'
+import Typography from '@mui/material/Typography'
 import FieldDescriptionTable from './FieldDescriptionTable'
 
 export default function DescriptionFieldTemplate(props: DescriptionFieldProps) {

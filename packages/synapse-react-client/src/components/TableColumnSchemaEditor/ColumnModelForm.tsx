@@ -1,16 +1,14 @@
 import { convertToConcreteEntityType } from '@/utils/functions/EntityTypeUtils'
 import { InfoTwoTone } from '@mui/icons-material'
-import {
-  Box,
-  Checkbox,
-  FormControl,
-  Link,
-  MenuItem,
-  Select,
-  SxProps,
-  TextField,
-  Tooltip,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Checkbox from '@mui/material/Checkbox'
+import FormControl from '@mui/material/FormControl'
+import Link from '@mui/material/Link'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import { SxProps } from '@mui/material/styles'
+import TextField from '@mui/material/TextField'
+import Tooltip from '@mui/material/Tooltip'
 import FormHelperText from '@mui/material/FormHelperText'
 import {
   ColumnModel,

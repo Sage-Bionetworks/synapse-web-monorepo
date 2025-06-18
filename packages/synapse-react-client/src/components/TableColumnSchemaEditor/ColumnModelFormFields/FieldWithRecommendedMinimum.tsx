@@ -1,11 +1,9 @@
-import {
-  alpha,
-  SxProps,
-  TextField,
-  TextFieldProps,
-  Theme,
-  Tooltip,
-} from '@mui/material'
+import { alpha } from '@mui/material/styles'
+import { SxProps } from '@mui/material/styles'
+import TextField from '@mui/material/TextField'
+import { TextFieldProps } from '@mui/material/TextField'
+import { Theme } from '@mui/material/styles'
+import Tooltip from '@mui/material/Tooltip'
 import { ColumnType, ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import {
   getFormDataValueAsNumber,

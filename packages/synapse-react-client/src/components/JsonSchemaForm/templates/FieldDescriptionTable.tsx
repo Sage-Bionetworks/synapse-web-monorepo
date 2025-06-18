@@ -1,4 +1,5 @@
-import { Box, Collapse } from '@mui/material'
+import Box from '@mui/material/Box'
+import Collapse from '@mui/material/Collapse'
 import { JSONSchema7, JSONSchema7Definition } from 'json-schema'
 import { ReactNode } from 'react'
 

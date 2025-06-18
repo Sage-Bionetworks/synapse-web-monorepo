@@ -1,4 +1,7 @@
-import { Box, Link, TextField, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Link from '@mui/material/Link'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { TextFieldProps } from '@mui/material/TextField'
 import { EntityType } from '@sage-bionetworks/synapse-types'
 

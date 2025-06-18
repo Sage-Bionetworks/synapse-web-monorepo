@@ -1,6 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils'
-import { Typography } from '@mui/material'
+import Typography from '@mui/material/Typography'
 import {
   DockerCommit,
   EntityType,

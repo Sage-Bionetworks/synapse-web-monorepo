@@ -1,4 +1,6 @@
-import { Box, Typography, Button } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
 import HeaderSearchBox from '../HeaderSearchBox'
 import { Query } from '@sage-bionetworks/synapse-types'
 import { getTextMatchesQueryFilter } from 'synapse-react-client/components/FullTextSearch/FullTextSearchUtils'

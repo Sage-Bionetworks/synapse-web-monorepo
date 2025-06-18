@@ -1,7 +1,8 @@
 import IconSvg from '../IconSvg/IconSvg'
 import { ShowMore } from './utils'
 import { UnitType } from 'dayjs'
-import { Link, Skeleton } from '@mui/material'
+import Link from '@mui/material/Link'
+import Skeleton from '@mui/material/Skeleton'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
 import { UserBadge } from '../UserCard/UserBadge'
 

@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { TextField, Button, InputAdornment } from '@mui/material'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
+import InputAdornment from '@mui/material/InputAdornment'
 
 type SearchProps = {
   onSearch: (searchText: string) => void

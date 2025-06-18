@@ -1,8 +1,5 @@
-import {
-  AlertTitle,
-  Alert as MuiAlert,
-  AlertProps as MuiAlertProps,
-} from '@mui/material'
+import MuiAlert, { AlertProps as MuiAlertProps } from '@mui/material/Alert'
+import AlertTitle from '@mui/material/AlertTitle'
 
 export interface AlertProps extends MuiAlertProps {
   message: string

@@ -4,7 +4,10 @@ import { spreadSx } from '@/theme/spreadSx'
 import { useSynapseContext } from '@/utils'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { SAGE_OFFERINGS_HELP_URL } from '@/utils/SynapseConstants'
-import { Box, SxProps, Tooltip, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import { SxProps } from '@mui/material/styles'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import HelpPopover from '../HelpPopover'
 
 export type ProjectDataAvailabilityProps = {

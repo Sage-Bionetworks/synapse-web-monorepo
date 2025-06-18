@@ -1,5 +1,9 @@
 import { useGetAllSubscriptions } from '@/synapse-queries/subscription/useSubscription'
-import { Box, Button, Stack, Tab, Tabs } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Stack from '@mui/material/Stack'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
 import {
   SortByType as SubscriptionSortField,
   SortDirection,

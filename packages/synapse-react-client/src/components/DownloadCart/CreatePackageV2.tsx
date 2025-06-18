@@ -3,7 +3,10 @@ import {
   getFileHandleByIdURL,
 } from '@/synapse-client/SynapseClient'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { Box, Button, InputAdornment, TextField } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import InputAdornment from '@mui/material/InputAdornment'
+import TextField from '@mui/material/TextField'
 import { DownloadListPackageResponse } from '@sage-bionetworks/synapse-types'
 import { ChangeEvent, SyntheticEvent, useState } from 'react'
 import FullWidthAlert, {

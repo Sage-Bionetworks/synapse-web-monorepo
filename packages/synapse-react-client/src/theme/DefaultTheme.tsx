@@ -7,16 +7,14 @@ import {
   HighlightOffTwoTone,
   InfoTwoTone,
 } from '@mui/icons-material'
-import {
-  alpha,
-  Fade,
-  inputBaseClasses,
-  lighten,
-  ThemeOptions,
-} from '@mui/material'
+import { alpha } from '@mui/material/styles'
+import Fade from '@mui/material/Fade'
+import { lighten } from '@mui/material/styles'
+import { ThemeOptions } from '@mui/material/styles'
 import { palette } from './palette/Palettes'
 import linkTheme from './typography/Link'
 import { typographyOptions } from './typography/Typography'
+import { inputBaseClasses } from '@mui/material/InputBase'
 
 const DIALOG_INNER_PADDING = '2px'
 

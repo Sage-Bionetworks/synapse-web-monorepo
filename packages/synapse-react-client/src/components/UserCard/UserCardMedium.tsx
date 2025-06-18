@@ -3,7 +3,10 @@ import ValidatedProfileIcon from '@/assets/icons/ValidatedProfile'
 import { useGetUserBundle } from '@/synapse-queries/user/useUserBundle'
 import { SynapseConstants } from '@/utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { Card, IconButton, Skeleton, Tooltip } from '@mui/material'
+import Card from '@mui/material/Card'
+import IconButton from '@mui/material/IconButton'
+import Skeleton from '@mui/material/Skeleton'
+import Tooltip from '@mui/material/Tooltip'
 import { UserProfile } from '@sage-bionetworks/synapse-types'
 import {
   MouseEvent,

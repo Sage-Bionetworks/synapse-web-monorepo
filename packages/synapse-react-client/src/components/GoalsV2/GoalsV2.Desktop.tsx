@@ -2,8 +2,11 @@ import { GoalsV2DataProps } from './GoalsV2'
 import QueryCount from '../QueryCount/QueryCount'
 import IconButton from '@mui/material/IconButton'
 import NavigateNextIcon from '@mui/icons-material/NavigateNext'
-import { Typography } from '@mui/material'
-import { Card, CardActionArea, CardContent, CardMedia } from '@mui/material'
+import Typography from '@mui/material/Typography'
+import Card from '@mui/material/Card'
+import CardActionArea from '@mui/material/CardActionArea'
+import CardContent from '@mui/material/CardContent'
+import CardMedia from '@mui/material/CardMedia'
 
 export default function GoalsV2Desktop({
   asset,

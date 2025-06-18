@@ -1,6 +1,7 @@
 import OrcId from '@/assets/ORCID.svg?url'
 import EditIcon from '@/assets/RedEditPencil.svg?url'
-import { Button, SxProps } from '@mui/material'
+import Button from '@mui/material/Button'
+import { SxProps } from '@mui/material/styles'
 import { SyntheticEvent, useState } from 'react'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { ValidationWizardStep } from './ProfileValidation'

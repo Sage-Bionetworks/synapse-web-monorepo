@@ -1,4 +1,4 @@
-import { Link } from '@mui/material'
+import Link from '@mui/material/Link'
 import Typography from '@mui/material/Typography'
 import { ReactComponent as AdWorkbenchLogo } from '../../../assets/logos/other/ad-workbench-logo.svg'
 import { ReactComponent as CavaticaLogo } from '../../../assets/logos/other/cavatica-logo.svg'

@@ -1,24 +1,21 @@
 import { ReactComponent as DoubleQuotes } from '@/assets/icons/DoubleQuotes.svg'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import CloseIcon from '@mui/icons-material/Close'
-import {
-  Alert,
-  Box,
-  Button,
-  FormControl,
-  MenuItem,
-  Popover,
-  Select,
-  SelectChangeEvent,
-  Stack,
-  SxProps,
-  Typography,
-} from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import FormControl from '@mui/material/FormControl'
+import MenuItem from '@mui/material/MenuItem'
+import Popover from '@mui/material/Popover'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
+import Stack from '@mui/material/Stack'
+import { SxProps } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
+import GenericCardActionButton from '../GenericCard/GenericCardActionButton'
 import { createLinkAndDownload } from './CitationPopoverUtils'
 import { useCitation } from './useCitation'
-import GenericCardActionButton from '../GenericCard/GenericCardActionButton'
 
 type CitationFormat = 'bibtex' | 'apa' | 'ieee' | 'nature' | 'science'
 

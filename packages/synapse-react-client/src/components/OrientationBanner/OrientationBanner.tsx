@@ -1,7 +1,7 @@
 import Illustrations from '@/assets/illustrations'
 import { spreadSx } from '@/theme/spreadSx'
 import { useCookiePreferences } from '@/utils/hooks/useCookiePreferences'
-import { Theme } from '@mui/material'
+import { Theme } from '@mui/material/styles'
 import { SxProps } from '@mui/system'
 import { ReactNode, useState } from 'react'
 import FullWidthAlert, {

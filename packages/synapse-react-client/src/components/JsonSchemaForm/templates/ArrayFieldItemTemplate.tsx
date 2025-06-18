@@ -1,4 +1,5 @@
-import { Box, GridLegacy as Grid } from '@mui/material'
+import Box from '@mui/material/Box'
+import Grid from '@mui/material/GridLegacy'
 import {
   ArrayFieldItemTemplateType,
   FormContextType,

@@ -1,13 +1,9 @@
 import LightTooltip from '@/components/styled/LightTooltip'
 import { spreadSx } from '@/theme/spreadSx'
-import {
-  Box,
-  Button,
-  ButtonProps,
-  SxProps,
-  tooltipClasses,
-  TooltipProps,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button, { ButtonProps } from '@mui/material/Button'
+import { SxProps } from '@mui/material/styles'
+import { tooltipClasses, TooltipProps } from '@mui/material/Tooltip'
 import { atom, useAtom } from 'jotai'
 import { PropsWithChildren, ReactNode, useId } from 'react'
 

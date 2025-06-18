@@ -1,4 +1,7 @@
-import { Box, alpha, Typography, useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import { alpha } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
+import { useTheme } from '@mui/material/styles'
 import React from 'react'
 import NIHLogo from './assets/nia_logo.png'
 import { PortalSectionHeader } from 'synapse-react-client'

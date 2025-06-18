@@ -5,7 +5,10 @@ import { useGetEntityHeader } from '@/synapse-queries'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { NavigateNext } from '@mui/icons-material'
-import { Box, SxProps, Typography, useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import { SxProps } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
+import { useTheme } from '@mui/material/styles'
 import { Color } from '@mui/material/styles'
 
 export type SynapseTrendingProjectItemProps = {

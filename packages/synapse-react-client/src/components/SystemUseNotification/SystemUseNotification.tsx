@@ -1,4 +1,5 @@
-import { Box, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 
 /**
  * FISMA SAR V1-AC-8 System Use Notification, see https://sagebionetworks.jira.com/browse/SWC-6430

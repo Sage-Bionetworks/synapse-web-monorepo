@@ -1,4 +1,7 @@
-import { Button, GridLegacy as Grid, Link, Typography } from '@mui/material'
+import Button from '@mui/material/Button'
+import Grid from '@mui/material/GridLegacy'
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
 import { Link as RouterLink } from 'react-router'
 import { AppContextConsumer } from '../AppContext'
 import useMembershipInvitationTokenHandler from '../hooks/useMembershipInvitationTokenHandler'

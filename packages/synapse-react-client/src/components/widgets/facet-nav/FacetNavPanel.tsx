@@ -4,14 +4,12 @@ import { SynapseConstants } from '@/utils'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { getCorrespondingColumnForFacet } from '@/utils/functions/queryUtils'
 import { InfoOutlined } from '@mui/icons-material'
-import {
-  Box,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-  Tooltip,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import Stack from '@mui/material/Stack'
+import Tooltip from '@mui/material/Tooltip'
 import {
   ColumnTypeEnum,
   FacetColumnRequest,

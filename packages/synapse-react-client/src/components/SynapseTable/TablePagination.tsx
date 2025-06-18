@@ -1,12 +1,10 @@
-import {
-  MenuItem,
-  Pagination,
-  PaginationItem,
+import MenuItem from '@mui/material/MenuItem'
+import Pagination, {
   PaginationRenderItemParams,
-  Select,
-  SelectChangeEvent,
-  Typography,
-} from '@mui/material'
+} from '@mui/material/Pagination'
+import PaginationItem from '@mui/material/PaginationItem'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
+import Typography from '@mui/material/Typography'
 import {
   ChangeEvent,
   ComponentProps,

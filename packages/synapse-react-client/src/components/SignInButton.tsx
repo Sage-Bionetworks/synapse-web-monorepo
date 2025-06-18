@@ -1,5 +1,5 @@
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
-import { Link } from '@mui/material'
+import Link from '@mui/material/Link'
 import { CSSProperties } from 'react'
 
 export type SignInProps = {

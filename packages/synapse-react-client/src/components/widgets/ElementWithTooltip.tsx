@@ -1,4 +1,5 @@
-import { Menu, Tooltip } from '@mui/material'
+import Menu from '@mui/material/Menu'
+import Tooltip from '@mui/material/Tooltip'
 import {
   ComponentElement,
   CSSProperties,

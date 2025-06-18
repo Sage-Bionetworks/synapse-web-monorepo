@@ -3,14 +3,12 @@ import {
   useUpdateAccessRequirement,
 } from '@/synapse-queries'
 import { DAY_IN_MS } from '@/utils/SynapseConstants'
-import {
-  Alert,
-  Box,
-  Checkbox,
-  FormControlLabel,
-  TextField,
-  Typography,
-} from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   FileHandleAssociateType,

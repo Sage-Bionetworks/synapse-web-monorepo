@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { useState } from 'react'
 import { ContinueButton } from './ContinueButton'
 import { VerificationSubmission } from '@sage-bionetworks/synapse-types'

@@ -2,7 +2,8 @@ import { useGetCurrentUserProfile } from '@/synapse-queries'
 import { useGetModerators } from '@/synapse-queries/forum/useForum'
 import { useSubscription } from '@/synapse-queries/subscription/useSubscription'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
-import { Button, Typography } from '@mui/material'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import {
   DiscussionFilter,
   SubscriptionObjectType,

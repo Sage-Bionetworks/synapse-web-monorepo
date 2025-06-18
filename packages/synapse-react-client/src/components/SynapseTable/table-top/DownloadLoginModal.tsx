@@ -1,5 +1,6 @@
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
-import { Link, Typography } from '@mui/material'
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 
 export type DownloadLoginModalProps = {

@@ -6,7 +6,9 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { Alert, Box, Typography } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import TextField from '../TextField'
 import { CreateTeamRequest, Team } from '@sage-bionetworks/synapse-types'
 import useCreateAndRegisterChallengeTeam from './useCreateAndRegisterChallengeTeam'

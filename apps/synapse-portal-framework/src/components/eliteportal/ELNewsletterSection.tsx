@@ -1,5 +1,7 @@
 import { AddAlertTwoTone } from '@mui/icons-material'
-import { Button, Typography, Link } from '@mui/material'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import Link from '@mui/material/Link'
 import { CTASectionWrapper } from 'synapse-react-client'
 
 const ElNewsletterSection = () => {

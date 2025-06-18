@@ -3,7 +3,7 @@ import {
   isColumnSingleValueQueryFilter,
   LockedColumn,
 } from '@/utils'
-import { Collapse } from '@mui/material'
+import Collapse from '@mui/material/Collapse'
 import {
   ColumnModel,
   ColumnMultiValueFunction,

@@ -1,6 +1,6 @@
-import { ThemeOptions } from '@mui/material'
+import type { ThemeOptions } from '@mui/material/styles'
 import type { PartialDeep } from 'type-fest'
-import { deepmerge } from '@mui/utils'
+import deepmerge from '@mui/utils/deepmerge'
 import defaultMuiThemeOptions from './DefaultTheme'
 
 export function mergeTheme(

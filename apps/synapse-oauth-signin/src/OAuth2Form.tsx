@@ -1,11 +1,9 @@
-import {
-  Backdrop,
-  Button,
-  CircularProgress,
-  Link,
-  Paper,
-  Typography,
-} from '@mui/material'
+import Backdrop from '@mui/material/Backdrop'
+import Button from '@mui/material/Button'
+import CircularProgress from '@mui/material/CircularProgress'
+import Link from '@mui/material/Link'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
 import {
   FileHandleAssociateType,
   OIDCAuthorizationRequest,

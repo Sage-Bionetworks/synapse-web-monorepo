@@ -1,5 +1,8 @@
 import IconSvg from '../IconSvg'
-import { Box, BoxProps, styled, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import { BoxProps } from '@mui/material/Box'
+import { styled } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
 import { StyledComponent } from '@emotion/styled'
 
 const OpenDataContainer: StyledComponent<BoxProps> = styled(Box, {

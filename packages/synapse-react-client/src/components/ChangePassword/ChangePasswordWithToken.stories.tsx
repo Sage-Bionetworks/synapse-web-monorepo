@@ -4,7 +4,7 @@ import {
 } from '@/mocks/msw/handlers/changePasswordHandlers'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
-import { Paper } from '@mui/material'
+import Paper from '@mui/material/Paper'
 import { Meta, StoryObj } from '@storybook/react'
 import ChangePasswordWithToken from './ChangePasswordWithToken'
 

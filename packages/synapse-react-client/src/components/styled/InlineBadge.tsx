@@ -1,4 +1,6 @@
-import { Badge, BadgeProps, styled } from '@mui/material'
+import Badge from '@mui/material/Badge'
+import { BadgeProps } from '@mui/material/Badge'
+import { styled } from '@mui/material/styles'
 import { StyledComponent } from '@emotion/styled'
 
 /**

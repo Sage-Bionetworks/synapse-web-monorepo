@@ -2,7 +2,7 @@ import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
 import { SynapseConstants } from '@/utils'
 import { isEntityRefCollectionView } from '@/utils/functions/EntityTypeUtils'
 import { WarningSharp } from '@mui/icons-material'
-import { Typography } from '@mui/material'
+import Typography from '@mui/material/Typography'
 import { QueryBundleRequest, Table } from '@sage-bionetworks/synapse-types'
 import { HelpPopover } from '../HelpPopover/HelpPopover'
 

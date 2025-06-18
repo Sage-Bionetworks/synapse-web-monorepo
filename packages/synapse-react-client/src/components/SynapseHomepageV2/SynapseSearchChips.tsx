@@ -1,4 +1,5 @@
-import { Chip, Typography } from '@mui/material'
+import Chip from '@mui/material/Chip'
+import Typography from '@mui/material/Typography'
 import {
   SearchQuery,
   KeyValue,

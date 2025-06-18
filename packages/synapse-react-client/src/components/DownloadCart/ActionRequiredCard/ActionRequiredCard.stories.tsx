@@ -1,6 +1,7 @@
 import { WideButton } from '@/components/styled/WideButton'
 import { EASY_DIFFICULTY } from '@/utils/SynapseConstants'
-import { Button, Typography } from '@mui/material'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import { Meta, StoryObj } from '@storybook/react'
 import { ActionRequiredCard } from './ActionRequiredCard'
 

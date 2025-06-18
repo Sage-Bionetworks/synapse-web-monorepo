@@ -1,17 +1,15 @@
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
 import DeleteIcon from '@mui/icons-material/DeleteTwoTone'
-import {
-  Box,
-  Button,
-  Checkbox,
-  Chip,
-  Divider,
-  FormControlLabel,
-  IconButton,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Checkbox from '@mui/material/Checkbox'
+import Chip from '@mui/material/Chip'
+import Divider from '@mui/material/Divider'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import IconButton from '@mui/material/IconButton'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { SyntheticEvent, useEffect, useState } from 'react'
 import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'

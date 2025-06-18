@@ -1,4 +1,6 @@
-import { Box, Container, Paper } from '@mui/material'
+import Box from '@mui/material/Box'
+import Container from '@mui/material/Container'
+import Paper from '@mui/material/Paper'
 import { BackButton } from '@/components/BackButton'
 import { SourceAppLogo } from '@/components/SourceApp'
 import { StyledOuterContainer } from '@/components/StyledComponents'

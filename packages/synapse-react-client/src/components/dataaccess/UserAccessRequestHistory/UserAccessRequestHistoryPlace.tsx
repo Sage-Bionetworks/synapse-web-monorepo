@@ -2,7 +2,7 @@ import {
   BreadcrumbItem,
   Breadcrumbs,
 } from '@/components/Breadcrumbs/Breadcrumbs'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { useMemo } from 'react'
 import {
   createBrowserRouter,

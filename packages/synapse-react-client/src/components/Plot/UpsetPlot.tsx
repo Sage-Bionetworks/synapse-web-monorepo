@@ -23,7 +23,9 @@ import { useEffect, useState } from 'react'
 import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { ErrorBanner } from '../error/ErrorBanner'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
-import { Box, SxProps, useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import { SxProps } from '@mui/material/styles'
+import { useTheme } from '@mui/material/styles'
 import { useMeasure } from '@react-hookz/web'
 
 export type UpsetPlotProps = {

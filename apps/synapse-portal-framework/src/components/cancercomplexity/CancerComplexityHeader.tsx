@@ -1,4 +1,6 @@
-import { Box, Typography, Link } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import Link from '@mui/material/Link'
 import HeaderSearchBox from '../HeaderSearchBox'
 import { AddAlertTwoTone } from '@mui/icons-material'
 import { TypeAnimation } from 'react-type-animation'

@@ -1,5 +1,5 @@
 import { FacetFilterSkeleton } from '../FacetFilterSkeleton'
-import { Skeleton } from '@mui/material'
+import Skeleton from '@mui/material/Skeleton'
 import { EnumFacetFilterUIProps } from './EnumFacetFilterUI'
 
 export function EnumFacetFilterSkeleton(

@@ -1,11 +1,9 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Stack,
-  Typography,
-} from '@mui/material'
+import Accordion from '@mui/material/Accordion'
+import AccordionDetails from '@mui/material/AccordionDetails'
+import AccordionSummary from '@mui/material/AccordionSummary'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import { UserAccessRequestHistoryTable } from './UserAccessRequestHistoryTable'
 
 type FaqItem = {

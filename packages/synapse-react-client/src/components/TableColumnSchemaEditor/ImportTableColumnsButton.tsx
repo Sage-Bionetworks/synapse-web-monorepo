@@ -2,7 +2,8 @@ import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils'
 import { EntityTypeGroup } from '@/utils/functions/EntityTypeUtils'
 import { DownloadTwoTone } from '@mui/icons-material'
-import { Button, ButtonProps } from '@mui/material'
+import Button from '@mui/material/Button'
+import { ButtonProps } from '@mui/material/Button'
 import {
   ColumnModel,
   EntityType,

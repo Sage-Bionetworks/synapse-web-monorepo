@@ -1,4 +1,4 @@
-import { Container } from '@mui/material'
+import Container from '@mui/material/Container'
 import { PropsWithChildren } from 'react'
 
 type LayoutProps = PropsWithChildren<{

@@ -6,7 +6,7 @@ import {
   LayersTwoTone,
   WatchLaterTwoTone,
 } from '@mui/icons-material'
-import { Tooltip } from '@mui/material'
+import Tooltip from '@mui/material/Tooltip'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import relativeTime from 'dayjs/plugin/relativeTime'

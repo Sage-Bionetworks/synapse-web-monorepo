@@ -5,7 +5,10 @@ import {
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { Box, Button, Select, Tooltip } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Select from '@mui/material/Select'
+import Tooltip from '@mui/material/Tooltip'
 import {
   AvailableFilter,
   DownloadListItem,

@@ -1,17 +1,13 @@
 import { spreadSx } from '@/theme/spreadSx'
 import CloseIcon from '@mui/icons-material/Close'
-import {
-  Box,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentProps,
-  DialogProps,
-  DialogTitle,
-  IconButton,
-  Stack,
-  SxProps,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Dialog, { DialogProps } from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent, { DialogContentProps } from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import IconButton from '@mui/material/IconButton'
+import Stack from '@mui/material/Stack'
+import { SxProps } from '@mui/material/styles'
 import { ReactNode } from 'react'
 import { HelpPopover, HelpPopoverProps } from './HelpPopover/HelpPopover'
 

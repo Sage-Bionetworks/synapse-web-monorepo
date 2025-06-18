@@ -1,5 +1,5 @@
 import { Breadcrumbs } from '@/components/Breadcrumbs/Breadcrumbs'
-import { SxProps } from '@mui/material'
+import { SxProps } from '@mui/material/styles'
 import { MouseEventHandler } from 'react'
 
 type BreadcrumbItem = {

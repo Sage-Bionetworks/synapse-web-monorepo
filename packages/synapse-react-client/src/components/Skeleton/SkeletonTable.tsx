@@ -1,7 +1,8 @@
 import { Fragment, useEffect, useState } from 'react'
 import Skeleton from '@mui/material/Skeleton'
 import { times } from 'lodash-es'
-import { Box, BoxProps } from '@mui/material'
+import Box from '@mui/material/Box'
+import { BoxProps } from '@mui/material/Box'
 
 function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min) + min)

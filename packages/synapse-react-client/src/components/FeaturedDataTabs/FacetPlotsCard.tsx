@@ -1,12 +1,10 @@
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import {
-  Box,
-  Button,
-  Divider,
-  Paper,
-  Skeleton,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Divider from '@mui/material/Divider'
+import Paper from '@mui/material/Paper'
+import Skeleton from '@mui/material/Skeleton'
+import Typography from '@mui/material/Typography'
 import {
   ColumnTypeEnum,
   FacetColumnResult,

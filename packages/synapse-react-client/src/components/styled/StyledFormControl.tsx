@@ -1,11 +1,8 @@
-import {
-  FormControl,
-  FormControlProps,
-  formHelperTextClasses,
-  inputBaseClasses,
-  styled,
-} from '@mui/material'
 import { StyledComponent } from '@emotion/styled'
+import FormControl, { FormControlProps } from '@mui/material/FormControl'
+import { formHelperTextClasses } from '@mui/material/FormHelperText'
+import { inputBaseClasses } from '@mui/material/InputBase'
+import { styled } from '@mui/material/styles'
 
 /* bootstrap-like label/text inputs
  usage:

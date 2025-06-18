@@ -25,16 +25,14 @@ import {
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
 import { HelpTwoTone } from '@mui/icons-material'
-import {
-  Alert,
-  Button,
-  InputLabel,
-  Link,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Button from '@mui/material/Button'
+import InputLabel from '@mui/material/InputLabel'
+import Link from '@mui/material/Link'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import RJSF from '@rjsf/core'
 import {
   DoiObjectType,

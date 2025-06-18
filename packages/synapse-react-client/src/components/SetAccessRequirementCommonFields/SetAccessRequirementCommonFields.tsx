@@ -5,19 +5,16 @@ import {
 } from '@/synapse-queries'
 import { spreadSx } from '@/theme/spreadSx'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
-import {
-  Alert,
-  Checkbox,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  Skeleton,
-  Stack,
-  TextField,
-  Tooltip,
-  Typography,
-  TypographyProps,
-} from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import Skeleton from '@mui/material/Skeleton'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
+import Tooltip from '@mui/material/Tooltip'
+import Typography, { TypographyProps } from '@mui/material/Typography'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   ACCESS_REQUIREMENT_CONCRETE_TYPE,

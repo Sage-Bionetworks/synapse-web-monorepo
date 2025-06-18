@@ -7,7 +7,9 @@ import {
 } from '@/utils/functions/EntityTypeUtils'
 import { Writable } from '@/utils/types/Writable'
 import { ChevronRight, ExpandMore } from '@mui/icons-material'
-import { Skeleton, Tooltip, Typography } from '@mui/material'
+import Skeleton from '@mui/material/Skeleton'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import {
   EntityChildrenRequest,
   EntityType,

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { Link } from '@mui/material'
+import Link from '@mui/material/Link'
 import { InfoTwoTone } from '@mui/icons-material'
 import { Tooltip } from './MuiTooltip'
 import { userEvent, within } from '@storybook/test'

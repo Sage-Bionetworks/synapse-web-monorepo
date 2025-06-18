@@ -1,5 +1,6 @@
 import { OBSERVATION_CARD } from '@/utils/SynapseConstants'
-import { Dialog, DialogContent } from '@mui/material'
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
 import {
   ColumnSingleValueFilterOperator,
   Row,

@@ -1,5 +1,8 @@
 import ConditionalWrapper from '@/components/utils/ConditionalWrapper'
-import { Button, Link, Skeleton, Stack } from '@mui/material'
+import Button from '@mui/material/Button'
+import Link from '@mui/material/Link'
+import Skeleton from '@mui/material/Skeleton'
+import Stack from '@mui/material/Stack'
 import IconSvg, { IconName } from '../IconSvg'
 
 export type TopicProps = {

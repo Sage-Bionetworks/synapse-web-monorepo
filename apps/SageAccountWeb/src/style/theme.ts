@@ -1,4 +1,4 @@
-import { ThemeOptions } from '@mui/material'
+import type { ThemeOptions } from '@mui/material/styles'
 import { PartialDeep } from 'type-fest'
 export const fontDefinition = ['DM Sans', 'Roboto', 'Helvetica', 'Arial'].join(
   ',',

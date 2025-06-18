@@ -1,4 +1,7 @@
-import { Box, IconButton, InputAdornment, TextField } from '@mui/material'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
+import TextField from '@mui/material/TextField'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { createRef, RefObject, SyntheticEvent, useState } from 'react'
 import { ToastMessage } from '../ToastMessage/ToastMessage'

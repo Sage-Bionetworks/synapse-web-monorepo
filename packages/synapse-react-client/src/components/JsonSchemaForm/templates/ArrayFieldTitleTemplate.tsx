@@ -4,7 +4,7 @@ import {
   RJSFSchema,
   StrictRJSFSchema,
 } from '@rjsf/utils'
-import { InputLabel } from '@mui/material'
+import InputLabel from '@mui/material/InputLabel'
 
 /**
  * Custom title template for array fields.

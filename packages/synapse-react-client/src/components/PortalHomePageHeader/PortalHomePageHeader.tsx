@@ -1,4 +1,7 @@
-import { Box, Stack, Typography, Button } from '@mui/material'
+import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
 
 export type PortalHomePageHeaderProps = {
   backgroundCss: string // background of entire header

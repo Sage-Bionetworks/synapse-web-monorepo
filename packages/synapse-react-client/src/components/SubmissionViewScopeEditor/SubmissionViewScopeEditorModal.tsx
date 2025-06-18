@@ -1,5 +1,5 @@
 import { useGetEntity, useUpdateEntity } from '@/synapse-queries'
-import { Alert } from '@mui/material'
+import Alert from '@mui/material/Alert'
 import { SubmissionView } from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'
 import ConfirmationDialog from '../ConfirmationDialog'

@@ -1,4 +1,4 @@
-import { Tooltip } from '@mui/material'
+import Tooltip from '@mui/material/Tooltip'
 import { NavLink, useLocation } from 'react-router'
 import Icon from 'synapse-react-client/components/Icon/Icon'
 import { useDetailsPageContext } from './DetailsPageContext'

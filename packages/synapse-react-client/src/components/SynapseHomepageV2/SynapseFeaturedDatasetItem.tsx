@@ -1,5 +1,10 @@
 import { EastTwoTone } from '@mui/icons-material'
-import { Box, Card, Chip, Link, SxProps, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Card from '@mui/material/Card'
+import Chip from '@mui/material/Chip'
+import Link from '@mui/material/Link'
+import { SxProps } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
 import ImageFromSynapseTable from '../ImageFromSynapseTable'
 
 export type SynapseFeaturedDatasetItemProps = {

@@ -1,6 +1,9 @@
-import { ThemeOptions, ThemeProvider, darken, useTheme } from '@mui/material'
+import { ThemeOptions } from '@mui/material/styles'
+import { ThemeProvider } from '@mui/material/styles'
+import { darken } from '@mui/material/styles'
+import { useTheme } from '@mui/material/styles'
 import { DeepPartial } from 'synapse-react-client'
-import { deepmerge } from '@mui/utils'
+import deepmerge from '@mui/utils/deepmerge'
 import React from 'react'
 
 export function HomePageThemeProvider({ children }: React.PropsWithChildren) {

@@ -15,7 +15,7 @@ import {
   LockTwoTone,
   PublicTwoTone,
 } from '@mui/icons-material'
-import { Tooltip } from '@mui/material'
+import Tooltip from '@mui/material/Tooltip'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
   EntityBundle,

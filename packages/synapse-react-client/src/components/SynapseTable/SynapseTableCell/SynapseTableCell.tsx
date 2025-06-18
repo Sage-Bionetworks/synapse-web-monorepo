@@ -6,7 +6,8 @@ import {
   isDatasetCollection,
   isEntityView,
 } from '@/utils/functions/EntityTypeUtils'
-import { Link, Typography } from '@mui/material'
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
 import {
   ColumnModel,
   ColumnType,

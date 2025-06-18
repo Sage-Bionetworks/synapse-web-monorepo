@@ -1,5 +1,5 @@
 import WideButton from '@/components/styled/WideButton'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { useState } from 'react'
 import ConfirmationDialog from '../ConfirmationDialog'
 import DynamicForm, { DynamicFormProps } from './DynamicForm'

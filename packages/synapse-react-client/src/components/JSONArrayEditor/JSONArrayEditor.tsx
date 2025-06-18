@@ -1,14 +1,12 @@
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
 import TextWidget from '@/components/SchemaDrivenAnnotationEditor/widget/TextWidget'
-import {
-  Alert,
-  AlertTitle,
-  Box,
-  Button,
-  Collapse,
-  TextField,
-  Typography,
-} from '@mui/material'
+import Alert from '@mui/material/Alert'
+import AlertTitle from '@mui/material/AlertTitle'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Collapse from '@mui/material/Collapse'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import RJSFForm from '@rjsf/core'
 import { GenericObjectType, RJSFSchema } from '@rjsf/utils'
 import { JSONSchema7, JSONSchema7Definition } from 'json-schema'

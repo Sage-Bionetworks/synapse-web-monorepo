@@ -3,7 +3,10 @@ import {
   useGetTeam,
   useRequestToJoinTeam,
 } from '@/synapse-queries'
-import { Alert, Box, TextField, Typography } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { noop } from 'lodash-es'
 import {
   ChangeEvent,

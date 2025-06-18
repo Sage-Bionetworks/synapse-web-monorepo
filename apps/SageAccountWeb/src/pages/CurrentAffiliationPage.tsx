@@ -1,4 +1,5 @@
-import { TextField, Typography } from '@mui/material'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router'
 import { LeftRightPanel } from '../components/LeftRightPanel'

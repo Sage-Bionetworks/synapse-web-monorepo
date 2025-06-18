@@ -1,11 +1,9 @@
-import {
-  Tab,
-  Tabs,
-  TabScrollButton,
-  TabScrollButtonProps,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
+import TabScrollButton from '@mui/material/TabScrollButton'
+import { TabScrollButtonProps } from '@mui/material/TabScrollButton'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
 import { useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { ExploreWrapperProps } from './ExploreWrapperProps'

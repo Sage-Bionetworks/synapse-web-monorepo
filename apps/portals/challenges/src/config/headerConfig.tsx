@@ -1,7 +1,7 @@
 import { HomePageHeaderConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 import { ReactComponent as SageLogo } from './style/SageLogo.svg'
 import { ReactComponent as DreamLogo } from './style/DreamLogo.svg'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 
 const homePageHeader: HomePageHeaderConfig = {
   title: 'Welcome to the Sage Challenge Portal!',

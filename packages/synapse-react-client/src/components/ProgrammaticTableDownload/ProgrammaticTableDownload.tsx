@@ -1,6 +1,6 @@
 import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
 import { SynapseConstants } from '@/utils'
-import { Link } from '@mui/material'
+import Link from '@mui/material/Link'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo, useState } from 'react'
 import {

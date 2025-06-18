@@ -3,7 +3,8 @@ import {
   facetObjectMatchesDefinition,
   getCorrespondingSelectedFacet,
 } from '@/utils/functions/queryUtils'
-import { Autocomplete, TextField } from '@mui/material'
+import Autocomplete from '@mui/material/Autocomplete'
+import TextField from '@mui/material/TextField'
 import {
   FacetColumnResultValues,
   FacetColumnValuesRequest,

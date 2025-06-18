@@ -1,6 +1,6 @@
 import { GoalsDataProps } from './Goals'
 import QueryCount from '../QueryCount/QueryCount'
-import { Button } from '@mui/material'
+import Button from '@mui/material/Button'
 
 export default function GoalsDesktop({
   asset,

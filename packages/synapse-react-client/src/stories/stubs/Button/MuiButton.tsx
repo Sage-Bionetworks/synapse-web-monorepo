@@ -1,7 +1,4 @@
-import {
-  Button as MuiButton,
-  ButtonProps as MuiButtonProps,
-} from '@mui/material'
+import MuiButton, { ButtonProps as MuiButtonProps } from '@mui/material/Button'
 
 export interface ButtonProps extends MuiButtonProps {
   label: string

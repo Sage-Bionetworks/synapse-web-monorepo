@@ -1,11 +1,8 @@
-import {
-  BoxProps,
-  Paper,
-  PaperProps,
-  styled,
-  FormControlProps,
-} from '@mui/material'
 import { StyledComponent } from '@emotion/styled'
+import { BoxProps } from '@mui/material/Box'
+import { FormControlProps } from '@mui/material/FormControl'
+import Paper, { PaperProps } from '@mui/material/Paper'
+import { styled } from '@mui/material/styles'
 import { StyledOuterContainer as _StyledOuterContainer } from 'synapse-react-client/components/styled/LeftRightPanel'
 import { StyledFormControl as _StyledFormControl } from 'synapse-react-client/components/styled/StyledFormControl'
 

@@ -1,7 +1,8 @@
 import { useSearchUserGroupHeaders } from '@/synapse-queries'
 import { useDebouncedEffect } from '@/utils/hooks/useDebouncedEffect'
 import useGetInfoFromIds from '@/utils/hooks/useGetInfoFromIds'
-import { Skeleton, useTheme } from '@mui/material'
+import Skeleton from '@mui/material/Skeleton'
+import { useTheme } from '@mui/material/styles'
 import { TYPE_FILTER, UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Select, {

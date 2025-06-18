@@ -2,7 +2,8 @@ import { CardLink } from '@/components/CardContainer/CardLink'
 import { getValueOrMultiValue } from '@/components/GenericCard/CardUtils'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { getColumnIndex } from '@/utils/functions/index'
-import { Link, Tooltip } from '@mui/material'
+import Link from '@mui/material/Link'
+import Tooltip from '@mui/material/Tooltip'
 import {
   ColumnModel,
   ColumnTypeEnum,

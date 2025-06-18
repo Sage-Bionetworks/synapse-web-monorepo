@@ -1,11 +1,9 @@
 import { useEffect } from 'react'
-import {
-  Backdrop,
-  Box,
-  Button,
-  LinearProgress,
-  Typography,
-} from '@mui/material'
+import Backdrop from '@mui/material/Backdrop'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import LinearProgress from '@mui/material/LinearProgress'
+import Typography from '@mui/material/Typography'
 import '../../style/components/_spinner.scss'
 
 const loadingScreen = (

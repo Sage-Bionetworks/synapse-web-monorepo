@@ -1,5 +1,6 @@
-import { Paper, PaperProps, styled } from '@mui/material'
 import { StyledComponent } from '@emotion/styled'
+import Paper, { PaperProps } from '@mui/material/Paper'
+import { styled } from '@mui/material/styles'
 
 export const StyledInnerContainer: StyledComponent<PaperProps> = styled(Paper, {
   label: 'StyledInnerContainer',

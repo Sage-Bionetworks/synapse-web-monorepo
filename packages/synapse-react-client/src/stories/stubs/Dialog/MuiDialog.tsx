@@ -1,16 +1,13 @@
 import { HelpPopover } from '@/components/HelpPopover/HelpPopover'
 import IconSvg from '@/components/IconSvg/IconSvg'
-import {
-  Box,
-  Button,
-  Dialog as MuiDialog,
-  DialogActions,
-  DialogContent,
-  DialogProps as MuiDialogProps,
-  DialogTitle,
-  IconButton,
-  Stack,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import MuiDialog, { DialogProps as MuiDialogProps } from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import IconButton from '@mui/material/IconButton'
+import Stack from '@mui/material/Stack'
 import { ReactNode } from 'react'
 
 export interface DialogProps extends Omit<MuiDialogProps, 'content'> {

@@ -2,14 +2,12 @@ import NoSearchResults from '@/assets/icons/NoSearchResults'
 import { useGetEntity } from '@/synapse-queries/entity/useEntity'
 import { useSearchForumInfinite } from '@/synapse-queries/forum/useForum'
 import SearchIcon from '@mui/icons-material/Search'
-import {
-  Box,
-  Button,
-  IconButton,
-  InputAdornment,
-  TextField,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { Match } from '@sage-bionetworks/synapse-client'
 import { Project } from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'

@@ -1,5 +1,5 @@
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { Skeleton } from '@mui/material'
+import Skeleton from '@mui/material/Skeleton'
 import { SubmissionInfo } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'

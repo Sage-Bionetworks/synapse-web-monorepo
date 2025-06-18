@@ -1,18 +1,16 @@
-import {
-  Alert,
-  AlertTitle,
-  Box,
-  Button,
-  Container,
-  Link,
-  ListItemButton,
-  MenuItem,
-  Paper,
-  TextField,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import Alert from '@mui/material/Alert'
+import AlertTitle from '@mui/material/AlertTitle'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Container from '@mui/material/Container'
+import Link from '@mui/material/Link'
+import ListItemButton from '@mui/material/ListItemButton'
+import MenuItem from '@mui/material/MenuItem'
+import Paper from '@mui/material/Paper'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
 import {
   FeatureFlagEnum,
   UserBundle,

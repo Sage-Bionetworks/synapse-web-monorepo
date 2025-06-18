@@ -1,6 +1,6 @@
 import { CardDeckCardProps } from '@/components/CardDeck/CardDeckCardProps'
 import LargeButton from '@/components/styled/LargeButton'
-import { Link } from '@mui/material'
+import Link from '@mui/material/Link'
 import classNames from 'classnames'
 
 export default function CardDeckDesktop({

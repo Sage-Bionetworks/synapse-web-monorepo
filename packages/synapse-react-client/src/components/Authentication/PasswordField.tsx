@@ -1,5 +1,5 @@
 import TextField from '../TextField'
-import { TextFieldProps } from '@mui/material'
+import { TextFieldProps } from '@mui/material/TextField'
 
 export default function PasswordField(props: TextFieldProps) {
   return (

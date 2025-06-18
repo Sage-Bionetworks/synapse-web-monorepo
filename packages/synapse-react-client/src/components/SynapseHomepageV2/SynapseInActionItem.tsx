@@ -1,18 +1,16 @@
-import {
-  Box,
-  Chip,
-  Link,
-  Typography,
-  useTheme,
-  useMediaQuery,
-  SxProps,
-  Fade,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Chip from '@mui/material/Chip'
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
+import { useTheme } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { SxProps } from '@mui/material/styles'
+import Fade from '@mui/material/Fade'
 import ImageFromSynapseTable from '../ImageFromSynapseTable'
 import { EastTwoTone } from '@mui/icons-material'
 import { darkTextColor, homepageBodyText } from './SynapseHomepageV2'
 import { useInView } from 'react-intersection-observer'
-import { Slide } from '@mui/material'
+import Slide from '@mui/material/Slide'
 
 const transitionTimeoutMs = 320
 

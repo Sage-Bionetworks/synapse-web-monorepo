@@ -3,7 +3,10 @@ import { useQuery, useMutation } from '@tanstack/react-query'
 import Form from '@rjsf/mui'
 import validator from '@rjsf/validator-ajv8'
 import { displayToast } from '../ToastMessage'
-import { Alert, Box, Button, Typography } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import { SkeletonParagraph } from '../Skeleton'
 
 export type DynamicFormProps = {

@@ -1,4 +1,4 @@
-import { Button } from '@mui/material'
+import Button from '@mui/material/Button'
 import { styled } from '@mui/system'
 
 const GenericCardActionButton = styled(Button)({

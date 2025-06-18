@@ -1,19 +1,15 @@
+import { GenericCardProps } from '@/components/GenericCard/GenericCard'
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
-import React, { useState, useEffect, forwardRef, ForwardedRef } from 'react'
-import {
-  Box,
-  Card,
-  Typography,
-  Link,
-  // Stack,
-  Button,
-  // ButtonProps,
-  useTheme,
-  useMediaQuery,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Card from '@mui/material/Card'
+import Link from '@mui/material/Link'
+import { useTheme } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import React, { ForwardedRef, forwardRef, useEffect, useState } from 'react'
 import { DescriptionConfig } from '../CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
-import { GenericCardProps } from '@/components/GenericCard/GenericCard'
 
 export type HeaderCardV2Props = {
   /** Type label displayed at the top of the card */

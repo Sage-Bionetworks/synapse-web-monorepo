@@ -2,13 +2,11 @@ import {
   PromptInfo,
   UseUploadFileEntitiesReturn,
 } from '@/utils/hooks/useUploadFileEntity/useUploadFileEntities'
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Typography from '@mui/material/Typography'
 import { noop } from 'lodash-es'
 import pluralize from 'pluralize'
 import { useState } from 'react'

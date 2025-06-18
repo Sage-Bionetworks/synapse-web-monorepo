@@ -1,12 +1,10 @@
 import { useGetCurrentUserProfile } from '@/synapse-queries'
-import {
-  Button,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  Stack,
-  Typography,
-} from '@mui/material'
+import Button from '@mui/material/Button'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import {
   AccessorChange,
   AccessType,

@@ -2,19 +2,15 @@ import SynapseFullLogo from '@/assets/icons/SynapseFullLogo'
 import { useSynapseContext } from '@/utils'
 import { useOneSageURL } from '@/utils/hooks'
 import { Close, MenuOutlined } from '@mui/icons-material'
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Menu,
-  MenuItem,
-  styled,
-  SxProps,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
 import type { Color } from '@mui/material/styles'
+import { styled, SxProps, useTheme } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import { MouseEvent, useState } from 'react'
 import SageResourcesPopover from '../SageResourcesPopover'
 

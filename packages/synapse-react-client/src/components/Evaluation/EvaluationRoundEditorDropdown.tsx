@@ -1,4 +1,7 @@
-import { Divider, IconButton, Menu, MenuItem } from '@mui/material'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
 import { MouseEvent, useState } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 import WarningDialog from '../SynapseForm/WarningDialog'

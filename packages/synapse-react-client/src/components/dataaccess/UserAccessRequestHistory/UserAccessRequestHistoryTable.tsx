@@ -3,7 +3,8 @@ import { SkeletonTable } from '@/components/Skeleton'
 import UserOrTeamBadge from '@/components/UserOrTeamBadge/UserOrTeamBadge'
 import { useSearchAccessSubmissionUserRequestsInfinite } from '@/synapse-queries/dataaccess/useDataAccessSubmission'
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { Button, Typography } from '@mui/material'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import { UserSubmissionSearchResult } from '@sage-bionetworks/synapse-client'
 import {
   createColumnHelper,

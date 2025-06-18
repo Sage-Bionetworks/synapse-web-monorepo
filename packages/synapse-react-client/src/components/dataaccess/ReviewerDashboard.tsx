@@ -1,5 +1,5 @@
 import { useGetCurrentUserBundle } from '@/synapse-queries/user/useUserBundle'
-import { Typography } from '@mui/material'
+import Typography from '@mui/material/Typography'
 import { ReactNode, useMemo } from 'react'
 import {
   createBrowserRouter,

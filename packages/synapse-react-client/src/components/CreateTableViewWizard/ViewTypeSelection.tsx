@@ -1,5 +1,5 @@
 import { useGetFeatureFlag } from '@/synapse-queries'
-import { Link } from '@mui/material'
+import Link from '@mui/material/Link'
 import {
   ENTITY_VIEW_TYPE_MASK_PROJECT,
   EntityType,

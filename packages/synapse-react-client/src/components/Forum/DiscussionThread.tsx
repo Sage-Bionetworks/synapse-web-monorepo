@@ -8,14 +8,12 @@ import {
 import { useSubscription } from '@/synapse-queries/subscription/useSubscription'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
-import {
-  Box,
-  Button,
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
+import ToggleButton from '@mui/material/ToggleButton'
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
+import Typography from '@mui/material/Typography'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
   ObjectType,

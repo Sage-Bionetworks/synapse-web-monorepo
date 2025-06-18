@@ -1,6 +1,9 @@
 import { useGetEntity } from '@/synapse-queries'
 import { SQL_EDITOR } from '@/utils/SynapseConstants'
-import { Button, Divider, Tooltip, Typography } from '@mui/material'
+import Button from '@mui/material/Button'
+import Divider from '@mui/material/Divider'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import {
   Query,
   QueryBundleRequest,

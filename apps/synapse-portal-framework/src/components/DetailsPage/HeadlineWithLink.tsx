@@ -1,4 +1,7 @@
-import { Box, Skeleton, Tooltip, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Skeleton from '@mui/material/Skeleton'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import HelpPopover from 'synapse-react-client/components/HelpPopover/index'
 import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'

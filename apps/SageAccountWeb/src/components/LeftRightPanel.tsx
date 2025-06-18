@@ -1,5 +1,6 @@
 import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
-import { Box, useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import { useTheme } from '@mui/material/styles'
 
 export function LeftRightPanel({
   leftContent,

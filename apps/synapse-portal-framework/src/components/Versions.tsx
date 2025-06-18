@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Tooltip } from '@mui/material'
+import Tooltip from '@mui/material/Tooltip'
 import dayjs from 'dayjs'
 
 // To test this component, create a deploy_date.txt in the public folder (just like the deploy jobs do):

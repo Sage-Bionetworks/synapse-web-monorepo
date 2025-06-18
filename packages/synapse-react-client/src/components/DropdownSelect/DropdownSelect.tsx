@@ -1,16 +1,12 @@
 import { useRef, useState, MouseEvent as ReactMouseEvent } from 'react'
-import {
-  Button,
-  ButtonGroup,
-  ButtonGroupProps,
-  ButtonProps,
-  ClickAwayListener,
-  Grow,
-  MenuItem,
-  MenuList,
-  Paper,
-  Popper,
-} from '@mui/material'
+import Button, { ButtonProps } from '@mui/material/Button'
+import ButtonGroup, { ButtonGroupProps } from '@mui/material/ButtonGroup'
+import ClickAwayListener from '@mui/material/ClickAwayListener'
+import Grow from '@mui/material/Grow'
+import MenuItem from '@mui/material/MenuItem'
+import MenuList from '@mui/material/MenuList'
+import Paper from '@mui/material/Paper'
+import Popper from '@mui/material/Popper'
 import IconSvg from '../IconSvg'
 
 export type DropdownSelectProps = ButtonGroupProps & {

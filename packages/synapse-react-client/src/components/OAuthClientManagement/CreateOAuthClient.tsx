@@ -6,17 +6,15 @@ import {
 import { SynapseClientError, useSynapseContext } from '@/utils'
 import { useDebouncedEffect } from '@/utils/hooks'
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
-import {
-  Alert,
-  Box,
-  Button,
-  GridLegacy as Grid,
-  IconButton,
-  InputAdornment,
-  MenuItem,
-  TextField,
-  Typography,
-} from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Grid from '@mui/material/GridLegacy'
+import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
+import MenuItem from '@mui/material/MenuItem'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { OAuthClient } from '@sage-bionetworks/synapse-client/generated/models/OAuthClient'
 import { OIDCSigningAlgorithm } from '@sage-bionetworks/synapse-client/generated/models/OIDCSigningAlgorithm'
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'

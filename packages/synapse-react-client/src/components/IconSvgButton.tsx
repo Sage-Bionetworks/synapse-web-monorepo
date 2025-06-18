@@ -1,9 +1,5 @@
-import {
-  IconButton,
-  IconButtonProps,
-  Tooltip,
-  TooltipProps,
-} from '@mui/material'
+import IconButton, { IconButtonProps } from '@mui/material/IconButton'
+import Tooltip, { TooltipProps } from '@mui/material/Tooltip'
 import IconSvg, { IconName } from './IconSvg/IconSvg'
 
 export type IconSvgButtonProps = Pick<

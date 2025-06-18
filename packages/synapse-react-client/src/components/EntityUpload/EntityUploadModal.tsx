@@ -1,5 +1,8 @@
 import { UploaderState } from '@/utils/hooks/useUploadFileEntity/useUploadFileEntities'
-import { Box, Button, Tab, Tabs } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
 import {
   ForwardedRef,
   forwardRef,

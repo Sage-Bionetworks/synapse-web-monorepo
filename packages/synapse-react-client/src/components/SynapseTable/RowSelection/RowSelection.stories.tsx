@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react'
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import { GetApp } from '@mui/icons-material'
 import { RowSelectionUI, RowSelectionUIProps } from './RowSelectionUI'
-import { Button } from '@mui/material'
+import Button from '@mui/material/Button'
 import { times } from 'lodash-es'
 
 const meta = {

@@ -11,7 +11,10 @@ import {
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
 import { InfoTwoTone } from '@mui/icons-material'
-import { Box, Button, Radio, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Radio from '@mui/material/Radio'
+import Typography from '@mui/material/Typography'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {

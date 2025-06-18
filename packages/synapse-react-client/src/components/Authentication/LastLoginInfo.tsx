@@ -7,7 +7,10 @@ import {
   LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY,
 } from '@/utils/SynapseConstants'
 import { InfoTwoTone } from '@mui/icons-material'
-import { Box, Link, Tooltip, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Link from '@mui/material/Link'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { useLocalStorageValue } from '@react-hookz/web'
 import dayjs from 'dayjs'
 import { getLoginMethodFriendlyName, LoginMethod } from './LoginMethod'

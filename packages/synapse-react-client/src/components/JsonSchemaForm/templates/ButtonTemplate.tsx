@@ -1,5 +1,7 @@
 import { Add, ArrowDownward, ArrowUpward, Close } from '@mui/icons-material'
-import { Button, IconButton, SxProps } from '@mui/material'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import { SxProps } from '@mui/material/styles'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import {
   FormContextType,

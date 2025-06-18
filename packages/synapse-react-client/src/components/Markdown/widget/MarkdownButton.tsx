@@ -1,5 +1,5 @@
 import WideButton from '@/components/styled/WideButton'
-import { ButtonProps } from '@mui/material'
+import { ButtonProps } from '@mui/material/Button'
 import { Link as RouterLink, useInRouterContext } from 'react-router'
 
 export type ButtonLinkWidgetParams = {

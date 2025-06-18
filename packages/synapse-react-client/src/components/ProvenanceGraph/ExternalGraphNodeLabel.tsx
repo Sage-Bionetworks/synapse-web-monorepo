@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { UsedURL } from '@sage-bionetworks/synapse-types'
-import { Tooltip } from '@mui/material'
+import Tooltip from '@mui/material/Tooltip'
 import { ProvenanceExternalIcon } from './ProvenanceExternalIcon'
 
 export const ExternalGraphNodeLabel = (data: UsedURL) => {

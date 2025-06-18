@@ -1,4 +1,6 @@
-import { createTheme, StyledEngineProvider, ThemeOptions } from '@mui/material'
+import { createTheme } from '@mui/material/styles'
+import { StyledEngineProvider } from '@mui/material/styles'
+import { ThemeOptions } from '@mui/material/styles'
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 import { PropsWithChildren, useMemo } from 'react'
 import defaultMuiThemeOptions from './DefaultTheme'

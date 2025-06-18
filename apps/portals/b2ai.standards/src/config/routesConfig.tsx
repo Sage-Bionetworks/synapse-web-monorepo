@@ -1,5 +1,5 @@
 import StandardsDetailsPage from '@/pages/StandardsDetailsPage'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'

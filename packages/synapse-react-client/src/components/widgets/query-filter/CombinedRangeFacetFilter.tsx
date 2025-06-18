@@ -1,7 +1,7 @@
 import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
 import { SynapseConstants } from '@/utils'
 import { VALUE_NOT_SET } from '@/utils/SynapseConstants'
-import { Skeleton } from '@mui/material'
+import Skeleton from '@mui/material/Skeleton'
 import {
   ColumnType,
   FacetColumnResultRange,

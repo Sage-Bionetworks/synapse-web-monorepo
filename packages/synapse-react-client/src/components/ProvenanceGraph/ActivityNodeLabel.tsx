@@ -1,5 +1,6 @@
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { Tooltip, Typography } from '@mui/material'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { Activity } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { useMemo } from 'react'

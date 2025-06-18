@@ -1,14 +1,12 @@
 import { useGetFullTableQueryResults } from '@/synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
-import {
-  Checkbox,
-  Collapse,
-  FormControl,
-  FormControlLabel,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material'
+import Checkbox from '@mui/material/Checkbox'
+import Collapse from '@mui/material/Collapse'
+import FormControl from '@mui/material/FormControl'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 import { UseQueryResult } from '@tanstack/react-query'

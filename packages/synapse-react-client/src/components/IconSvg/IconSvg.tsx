@@ -128,7 +128,7 @@ import {
   WarningTwoTone,
   WatchLater,
 } from '@mui/icons-material'
-import { Tooltip } from '@mui/material'
+import Tooltip from '@mui/material/Tooltip'
 import { SvgIconProps } from '@mui/material/SvgIcon'
 import { EntityType } from '@sage-bionetworks/synapse-types'
 import { Fragment } from 'react'

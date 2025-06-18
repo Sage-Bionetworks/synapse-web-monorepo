@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Reference } from '@sage-bionetworks/synapse-types'
-import { Box, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import { HelpPopoverProps } from '../HelpPopover/HelpPopover'
 import WarningDialog from '../SynapseForm/WarningDialog'

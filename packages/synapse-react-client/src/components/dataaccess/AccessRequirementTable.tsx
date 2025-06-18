@@ -1,5 +1,6 @@
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
-import { Button, Typography } from '@mui/material'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import { StarTwoTone } from '@mui/icons-material'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { useAccessRequirementTable } from './UseAccessRequirementTable'

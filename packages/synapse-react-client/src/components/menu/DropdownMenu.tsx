@@ -1,19 +1,16 @@
-import {
-  Button,
-  ButtonProps,
-  ClickAwayListener,
-  Divider,
-  Fade,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  MenuList,
-  Paper,
-  Popper,
-  SxProps,
-  Tooltip,
-  Typography,
-} from '@mui/material'
+import Button, { ButtonProps } from '@mui/material/Button'
+import ClickAwayListener from '@mui/material/ClickAwayListener'
+import Divider from '@mui/material/Divider'
+import Fade from '@mui/material/Fade'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import MenuItem from '@mui/material/MenuItem'
+import MenuList from '@mui/material/MenuList'
+import Paper from '@mui/material/Paper'
+import Popper from '@mui/material/Popper'
+import { SxProps } from '@mui/material/styles'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import {
   KeyboardEvent,
   MouseEvent,

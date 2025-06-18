@@ -3,7 +3,7 @@ import {
   GlobalIsEditingContextProvider,
   IsEditingStore,
 } from '@/utils/context/GlobalIsEditingContext'
-import { ThemeOptions } from '@mui/material'
+import type { ThemeOptions } from '@mui/material/styles'
 import {
   QueryClient,
   QueryClientConfig,

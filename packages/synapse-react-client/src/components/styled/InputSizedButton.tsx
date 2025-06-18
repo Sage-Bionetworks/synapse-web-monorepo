@@ -1,4 +1,6 @@
-import { Button, ButtonProps, styled } from '@mui/material'
+import Button from '@mui/material/Button'
+import { ButtonProps } from '@mui/material/Button'
+import { styled } from '@mui/material/styles'
 import { StyledComponent } from '@emotion/styled'
 
 export const InputSizedButton: StyledComponent<ButtonProps> = styled(Button, {

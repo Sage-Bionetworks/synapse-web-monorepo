@@ -1,4 +1,6 @@
-import { Box, Link, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
 import {
   FacetPlotLegendProps,
   MAX_LEGEND_LENGTH,

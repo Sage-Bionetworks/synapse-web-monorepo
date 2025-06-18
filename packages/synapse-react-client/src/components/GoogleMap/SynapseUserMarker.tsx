@@ -1,5 +1,6 @@
 import { GeoData } from '@/synapse-client'
-import { Divider, Typography } from '@mui/material'
+import Divider from '@mui/material/Divider'
+import Typography from '@mui/material/Typography'
 import { InfoWindow, Marker } from '@react-google-maps/api'
 import { Fragment, useMemo } from 'react'
 import { UserBadge } from '../UserCard/UserBadge'

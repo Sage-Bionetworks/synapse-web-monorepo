@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Dialog, DialogContent, Button, Link, Typography } from '@mui/material'
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import Button from '@mui/material/Button'
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
 
 export type RedirectDialogProps = {
   onCancelRedirect: () => void

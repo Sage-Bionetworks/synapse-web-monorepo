@@ -1,5 +1,5 @@
 import { EntityTypeGroup } from '@/utils/functions/EntityTypeUtils'
-import { Typography } from '@mui/material'
+import Typography from '@mui/material/Typography'
 import { EntityType, ReferenceList } from '@sage-bionetworks/synapse-types'
 import { useMemo } from 'react'
 import { FinderScope } from '../EntityFinder/tree/EntityTree'

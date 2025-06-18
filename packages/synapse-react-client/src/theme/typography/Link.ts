@@ -1,4 +1,4 @@
-import { Components, Theme } from '@mui/material'
+import { Components, Theme } from '@mui/material/styles'
 
 const linkTheme: Components<Theme>['MuiLink'] = {
   defaultProps: {

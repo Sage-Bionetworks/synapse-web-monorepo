@@ -1,12 +1,10 @@
-import {
-  Box,
-  Fade,
-  IconButton,
-  Menu,
-  MenuItem,
-  Select,
-  Tooltip,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Fade from '@mui/material/Fade'
+import IconButton from '@mui/material/IconButton'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import Tooltip from '@mui/material/Tooltip'
 import { MouseEvent, PropsWithChildren, useState } from 'react'
 import IconSvg from '../../../IconSvg'
 

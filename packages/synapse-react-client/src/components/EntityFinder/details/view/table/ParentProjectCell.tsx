@@ -1,6 +1,6 @@
 import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import { useGetEntity } from '@/synapse-queries/index'
-import { Skeleton } from '@mui/material'
+import Skeleton from '@mui/material/Skeleton'
 import { CellContext } from '@tanstack/react-table'
 import { EntityLink } from '../../../../EntityLink'
 import { EntityIdAndVersionNumber } from './TableCellTypes'

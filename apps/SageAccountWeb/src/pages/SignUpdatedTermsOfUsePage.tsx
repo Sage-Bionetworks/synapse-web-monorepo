@@ -1,11 +1,9 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  Container,
-  FormControlLabel,
-  Paper,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Checkbox from '@mui/material/Checkbox'
+import Container from '@mui/material/Container'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Paper from '@mui/material/Paper'
 import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
 import { SyntheticEvent, useState } from 'react'
 import { useNavigate } from 'react-router'

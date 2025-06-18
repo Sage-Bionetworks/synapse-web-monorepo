@@ -5,7 +5,7 @@ import {
   getEndpoint,
 } from '@/utils/functions/index'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { SynapseFeaturedDatasetItem } from './SynapseFeaturedDatasetItem'
 
 export type SynapseFeaturedDatasetsProps = {

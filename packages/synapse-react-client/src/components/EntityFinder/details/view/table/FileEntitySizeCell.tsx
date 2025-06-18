@@ -1,6 +1,6 @@
 import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
-import { Skeleton } from '@mui/material'
+import Skeleton from '@mui/material/Skeleton'
 import { CellContext } from '@tanstack/react-table'
 import { EntityFinderTableViewRowData } from '../DetailsView'
 import { FileHandleWithPreview } from './TableCellTypes'

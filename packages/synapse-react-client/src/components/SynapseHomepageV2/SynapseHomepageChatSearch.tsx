@@ -1,12 +1,10 @@
-import {
-  Box,
-  FormControl,
-  InputAdornment,
-  MenuItem,
-  OutlinedInput,
-  Select,
-  useTheme,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import FormControl from '@mui/material/FormControl'
+import InputAdornment from '@mui/material/InputAdornment'
+import MenuItem from '@mui/material/MenuItem'
+import OutlinedInput from '@mui/material/OutlinedInput'
+import Select from '@mui/material/Select'
+import { useTheme } from '@mui/material/styles'
 import { Color } from '@mui/material/styles'
 import { FormEventHandler, KeyboardEventHandler, useState } from 'react'
 import { getSearchToken } from '../SynapseNavDrawer/SynapseNavDrawer'

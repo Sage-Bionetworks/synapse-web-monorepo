@@ -1,15 +1,13 @@
 import { spreadSx } from '@/theme/spreadSx'
-import {
-  Alert,
-  AlertProps,
-  AlertTitle,
-  Box,
-  Button,
-  ButtonProps,
-  Snackbar,
-  Stack,
-  Tooltip,
-} from '@mui/material'
+import Alert from '@mui/material/Alert'
+import { AlertProps } from '@mui/material/Alert'
+import AlertTitle from '@mui/material/AlertTitle'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import { ButtonProps } from '@mui/material/Button'
+import Snackbar from '@mui/material/Snackbar'
+import Stack from '@mui/material/Stack'
+import Tooltip from '@mui/material/Tooltip'
 import { MouseEventHandler, ReactNode, useEffect } from 'react'
 
 export type AlertButtonConfig = {

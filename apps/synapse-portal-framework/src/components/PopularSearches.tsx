@@ -1,6 +1,6 @@
 import { SynapseConstants, SynapseUtilityFunctions } from 'synapse-react-client'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { Link } from '@mui/material'
+import Link from '@mui/material/Link'
 import { SynapseQueries } from 'synapse-react-client'
 
 export type PopularSearchesProps = {

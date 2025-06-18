@@ -1,7 +1,7 @@
 import SearchImage from '@/assets/icons/SearchImage'
 import { useGetCurrentUserBundle } from '@/synapse-queries'
 import { useDebouncedEffect } from '@/utils/hooks/useDebouncedEffect'
-import { Typography } from '@mui/material'
+import Typography from '@mui/material/Typography'
 import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { omitBy } from 'lodash-es'
 import { useCallback, useEffect, useState } from 'react'

@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material'
+import Typography from '@mui/material/Typography'
 import { SortDirection } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import Select from 'react-select'

@@ -2,7 +2,8 @@ import { useSearchAccessRequirementsInfinite } from '@/synapse-queries'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
-import { Link, Typography } from '@mui/material'
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
 import {
   ACCESS_REQUIREMENT_CONCRETE_TYPE,
   ACCESS_TYPE,

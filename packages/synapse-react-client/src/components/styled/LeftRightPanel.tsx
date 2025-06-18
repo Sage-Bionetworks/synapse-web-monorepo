@@ -1,4 +1,8 @@
-import { Box, BoxProps, Paper, PaperProps, styled } from '@mui/material'
+import Box from '@mui/material/Box'
+import { BoxProps } from '@mui/material/Box'
+import Paper from '@mui/material/Paper'
+import { PaperProps } from '@mui/material/Paper'
+import { styled } from '@mui/material/styles'
 import { StyledComponent } from '@emotion/styled'
 
 export const StyledOuterContainer: StyledComponent<BoxProps> = styled(Box, {

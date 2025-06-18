@@ -3,7 +3,7 @@ import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { DEFAULT_PAGE_SIZE, VALUE_NOT_SET } from '@/utils/SynapseConstants'
-import { Collapse as MockCollapse } from '@mui/material'
+import MockCollapse from '@mui/material/Collapse'
 import {
   ColumnModel,
   ColumnTypeEnum,

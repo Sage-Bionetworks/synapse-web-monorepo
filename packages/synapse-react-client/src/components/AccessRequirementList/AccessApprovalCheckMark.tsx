@@ -5,7 +5,10 @@ import {
   CheckTwoTone,
   LockTwoTone,
 } from '@mui/icons-material'
-import { Avatar, styled, SxProps, useTheme } from '@mui/material'
+import Avatar from '@mui/material/Avatar'
+import { styled } from '@mui/material/styles'
+import { SxProps } from '@mui/material/styles'
+import { useTheme } from '@mui/material/styles'
 import Skeleton from '@mui/material/Skeleton'
 import { ReactNode } from 'react'
 
