@@ -1,5 +1,5 @@
 import { ReactComponent as DoubleQuotes } from '@/assets/icons/DoubleQuotes.svg'
-import { Button, Skeleton, Typography } from '@mui/material'
+import { Button, Skeleton } from '@mui/material'
 import { useGetDOIAssociation } from '@/synapse-queries/doi/useDOI'
 import { useGetEntityBundle } from '@/synapse-queries/entity'
 import { DoiObjectType } from '@sage-bionetworks/synapse-client'
