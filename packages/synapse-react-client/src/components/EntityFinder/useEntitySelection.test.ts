@@ -133,7 +133,6 @@ describe('useEntitySelection', () => {
       result.current.setSelection(newMap)
     })
 
-    // Now select new item
     expect(result.current.selectedEntities.size).toBe(2)
     expect(result.current.selectedEntities.get(ref1.targetId)).toEqual(ref1)
     expect(result.current.selectedEntities.get(ref2.targetId)).toEqual(ref2)
