@@ -32,6 +32,7 @@ describe('ArrayUtils', () => {
     [[1, 2, 3], [1, 2, 3], false],
     [[1, 2, 3], [1, 2, 4], true],
     [[1, 2, 3], [1, 2], true],
+    [[1, 2], [2, 1], false],
   ])('hasDifference, %j and %j', (first, second, expected) => {
     expect(hasDifference(first, second)).toBe(expected)
     // verify it is commutative

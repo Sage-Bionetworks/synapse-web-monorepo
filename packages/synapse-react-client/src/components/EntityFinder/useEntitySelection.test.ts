@@ -69,7 +69,7 @@ describe('useEntitySelection', () => {
       result.current.toggleSelection(ref)
     })
 
-    // Now select new item
+    // Now verify new item is selected
     expect(result.current.selectedEntities.size).toBe(1)
     expect(result.current.selectedEntities.get(ref.targetId)).toEqual(ref)
 
