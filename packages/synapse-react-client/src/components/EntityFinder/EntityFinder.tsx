@@ -77,7 +77,7 @@ export type EntityFinderProps = {
   visibleTypesInTree?: EntityType[]
   /** Whether to show only the tree. If `true`, the tree will be used to make selections */
   treeOnly?: boolean
-  /** If provided, the initial selection will be set to this list of references */
+  /** If provided, the initial selection will be set to this list of references. The selection will be reset to this value if this object changes, so it should be memoized. */
   initialSelected?: Reference[]
 }
 
