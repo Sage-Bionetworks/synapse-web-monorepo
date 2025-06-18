@@ -1,0 +1,51 @@
+import{j as m}from"./jsx-runtime-B_BASs2o.js";import{E as l}from"./ExitToApp-bWORodph.js";import{L as s}from"./LoginAwareButton-DI_-zzG4.js";import"./index-DwZZLiLd.js";import"./iframe-Zkz26kob.js";import"./createSvgIcon-oz7RTgz8.js";import"./createTheme-CyGr1kaY.js";import"./DefaultPropsProvider-DTt0l4rk.js";import"./useFiles-DKiwZnFy.js";import"./VerificationSubmission-DKyendrM.js";import"./SynapseConstants-Di2qHJ4V.js";import"./OrientationBanner-CrZbUJlx.js";import"./index-CtUJEc90.js";import"./spreadSx-CwcO6WA9.js";import"./react-Cl87gb8P.js";import"./FullWidthAlert-CBvSjRDH.js";import"./Alert-BR0FfL-7.js";import"./useSlot-CIMJh2x7.js";import"./useForkRef-CmEb2Hjb.js";import"./createSimplePaletteValueFilter-CwcnoVpf.js";import"./Close-CkuqRxFY.js";import"./IconButton-ZxELSsuB.js";import"./useTimeout-gAYlsF9h.js";import"./ButtonBase-B4fAWw7x.js";import"./isFocusVisible-B8k4qzLc.js";import"./CircularProgress-DrTM6r8w.js";import"./Paper-B4UH_OKi.js";import"./useTheme-DyVMMMH4.js";import"./useTheme-XTxZFMsc.js";import"./Stack-C2ETm3ew.js";import"./extendSxProp-cYd3bjsj.js";import"./getThemeProps-DRCVkZxN.js";import"./Box-CTyNgpBu.js";import"./AlertTitle-1DlITsoz.js";import"./Typography-DxLTsn7U.js";import"./index-msKwl0RH.js";import"./ClickAwayListener-DeMMBI1U.js";import"./getReactElementRef-BgJZi7s_.js";import"./index-B5aouh9C.js";import"./index-C-naQSBy.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-whg3Wx9g.js";import"./Tooltip-B9gDCvk0.js";import"./index-BwAixF8z.js";import"./useControlled-CbdmQ0MQ.js";import"./Popper-Ddcr4dsU.js";import"./Button-7E9-g8VM.js";import"./fetchWithExponentialTimeout-CXmnpl-T.js";import"./StringUtils-BcSmk1fX.js";import"./useQuery-CnZ9w03v.js";import"./utils-z9MgxIce.js";import"./Link-DGtC6YCJ.js";import"./Collapse-CDal-Uzp.js";import"./isNil-Brgex79b.js";import"./_Uint8Array-5R2Phy2D.js";import"./_baseTimes-36S_kd0L.js";import"./isObjectLike-CWBmoQcX.js";import"./isArray-Dxzbedgu.js";import"./isEqual-DJzDoLjX.js";import"./_getTag-D6u2Q-tT.js";import"./tinycolor-Begke6kS.js";import"./Fade-DOQSzISd.js";import"./inputBaseClasses-Bzj-FifI.js";import"./calculateFriendlyFileSize-D9ScsfwE.js";import"./CheckCircleTwoTone-Tw6QUA9Q.js";import"./InfoTwoTone-DJ4aKC-h.js";import"./useMutation-kvK-hPqm.js";import"./dayjs.min-DMEtZJm2.js";import"./chunk-AYJ5UCUI-CYY7MATY.js";import"./cloneDeep-C-AeX0sj.js";import"./_initCloneObject-DnIwAtZU.js";import"./Skeleton-BZYpf_eO.js";import"./merge-K4R-57V-.js";import"./identity-DKeuBCMA.js";const Wo={title:"UI/LoginAwareButton",component:s,parameters:{backgrounds:{default:"Challenge Header",values:[{name:"Challenge Header",value:"#3E68AA"}]}},argTypes:{isAuthenticated:{control:{type:"boolean"}}},args:{isAuthenticated:!0}},o={args:{isAuthenticated:!1,children:"Register for this Challenge",to:"/pathName?key=value#fragment",href:"",disableElevation:!0,variant:"contained",color:"secondary",sx:{color:"white",fontSize:"1.12em",textTransform:"none",padding:"4px 18px",fontWeight:400,":hover":{color:"white"},":active":{color:"white"},":visited":{color:"white"}},replace:!1}},r={args:{isAuthenticated:!0,children:"Leave Challenge",onClick:()=>{alert("Leave Challenge Clicked")},endIcon:m.jsx(l,{}),variant:"outlined",sx:{borderColor:"white",color:"white",fontSize:"1.12em",textTransform:"none",padding:"4px 18px",fontWeight:400,":hover":{color:"#172430",borderColor:"#172430"}},replace:!1}};var t,e,i;o.parameters={...o.parameters,docs:{...(t=o.parameters)==null?void 0:t.docs,source:{originalSource:`{
+  args: {
+    isAuthenticated: false,
+    children: 'Register for this Challenge',
+    to: '/pathName?key=value#fragment',
+    href: '',
+    disableElevation: true,
+    variant: 'contained',
+    color: 'secondary',
+    sx: {
+      color: 'white',
+      fontSize: '1.12em',
+      textTransform: 'none',
+      padding: '4px 18px',
+      fontWeight: 400,
+      ':hover': {
+        color: 'white'
+      },
+      ':active': {
+        color: 'white'
+      },
+      ':visited': {
+        color: 'white'
+      }
+    },
+    replace: false
+  }
+}`,...(i=(e=o.parameters)==null?void 0:e.docs)==null?void 0:i.source}}};var n,p,a;r.parameters={...r.parameters,docs:{...(n=r.parameters)==null?void 0:n.docs,source:{originalSource:`{
+  args: {
+    isAuthenticated: true,
+    children: 'Leave Challenge',
+    onClick: () => {
+      alert('Leave Challenge Clicked');
+    },
+    endIcon: <ExitToAppIcon />,
+    variant: 'outlined',
+    sx: {
+      borderColor: 'white',
+      color: 'white',
+      fontSize: '1.12em',
+      textTransform: 'none',
+      padding: '4px 18px',
+      fontWeight: 400,
+      ':hover': {
+        color: '#172430',
+        borderColor: '#172430'
+      }
+    },
+    replace: false
+  }
+}`,...(a=(p=r.parameters)==null?void 0:p.docs)==null?void 0:a.source}}};const jo=["Register","Leave"];export{r as Leave,o as Register,jo as __namedExportsOrder,Wo as default};
