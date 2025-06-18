@@ -1,0 +1,31 @@
+import{v as o}from"./useFiles-oSmayrgb.js";import"./VerificationSubmission-DKyendrM.js";import"./StringUtils-BcSmk1fX.js";import{P as L}from"./ProjectStorageLimitAlert-e5ePJtcI.js";import"./SynapseConstants-CmDV7LJl.js";import"./OrientationBanner-CWhi3zg5.js";import"./jsx-runtime-Dsxiie4O.js";import"./index-ozCXQmXK.js";import"./iframe-DBa0zw63.js";import"./index-BpXNIs1b.js";import"./spreadSx-CwcO6WA9.js";import"./react-PYrrZijh.js";import"./FullWidthAlert-Btm-U5IG.js";import"./Alert-DP1_O_Op.js";import"./createTheme-UtkSgkJ5.js";import"./DefaultPropsProvider-C6msV3y5.js";import"./useSlot-DyxcO-8h.js";import"./useForkRef-CM_8X8JG.js";import"./createSimplePaletteValueFilter-oVw5J_Tg.js";import"./createSvgIcon-iHhGnJmX.js";import"./Close-BgcWAJXU.js";import"./IconButton-CoOLAPia.js";import"./useTimeout-CSLyroTm.js";import"./ButtonBase-Bi7HMFSp.js";import"./isFocusVisible-B8k4qzLc.js";import"./CircularProgress-DtpXaq6s.js";import"./Paper-l-MCLhHw.js";import"./useTheme-DDadPh-C.js";import"./useTheme-D-q36Oyl.js";import"./Stack-676sv6cj.js";import"./extendSxProp-DGJ7aC89.js";import"./getThemeProps-C3MpcSFV.js";import"./Box-Bd1fGSNz.js";import"./AlertTitle-D1nRI2mq.js";import"./Typography-DSBe8cx6.js";import"./index-CxoHuccO.js";import"./ClickAwayListener-B_vokaBZ.js";import"./getReactElementRef-OnZXrax0.js";import"./index-B_ofmTQg.js";import"./index-395S_cOO.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-BdozJXIw.js";import"./Tooltip-C4-mgBsw.js";import"./index-Xy4tmEMf.js";import"./useControlled-C_aa8L--.js";import"./Popper-CbLcG8Xr.js";import"./Button-DVSuhCm2.js";import"./fetchWithExponentialTimeout-CXmnpl-T.js";import"./useQuery-BS7IYLBJ.js";import"./utils-CV6o2mhJ.js";import"./Link-Dx31m3OI.js";import"./Collapse-B1doriDK.js";import"./isNil-B5lyzHs4.js";import"./_Uint8Array-UOAAI0_f.js";import"./_baseTimes-36S_kd0L.js";import"./isObjectLike-CoyN0E90.js";import"./isArray-Dxzbedgu.js";import"./isEqual-Bgi5hVtE.js";import"./_getTag-CqA7yl5M.js";import"./tinycolor-Begke6kS.js";import"./Fade-CtrqRvNM.js";import"./inputBaseClasses-ChXFSYt8.js";import"./calculateFriendlyFileSize-ue3PtNra.js";import"./CheckCircleTwoTone-Ch9oq8xX.js";import"./InfoTwoTone-BkALBS8a.js";import"./useMutation-yogh6qC8.js";import"./dayjs.min-DsaPcPSf.js";import"./chunk-AYJ5UCUI-GviuCA7M.js";import"./cloneDeep-C71O9hUJ.js";import"./_initCloneObject-CHLE_018.js";import"./Skeleton-BGL6qrPJ.js";import"./merge-BN2Rtmpw.js";import"./identity-DKeuBCMA.js";const Ct={title:"Synapse/Upload/ProjectStorageLimitAlert",component:L,tags:["autodocs"]},t={args:{didUploadsExceedLimit:!1,usage:{storageLocationId:o,maxAllowedFileBytes:1024*1024*100,sumFileBytes:1024*1024*90,isOverLimit:!1}}},i={args:{didUploadsExceedLimit:!0,usage:{storageLocationId:o,maxAllowedFileBytes:1024*1024*100,sumFileBytes:1024*1024*90,isOverLimit:!1}}},r={args:{didUploadsExceedLimit:!1,usage:{storageLocationId:o,maxAllowedFileBytes:1024*1024*100,sumFileBytes:1024*1024*110,isOverLimit:!0}}};var e,m,p;t.parameters={...t.parameters,docs:{...(e=t.parameters)==null?void 0:e.docs,source:{originalSource:`{
+  args: {
+    didUploadsExceedLimit: false,
+    usage: {
+      storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
+      maxAllowedFileBytes: 1024 * 1024 * 100,
+      sumFileBytes: 1024 * 1024 * 90,
+      isOverLimit: false
+    }
+  }
+}`,...(p=(m=t.parameters)==null?void 0:m.docs)==null?void 0:p.source}}};var s,a,d;i.parameters={...i.parameters,docs:{...(s=i.parameters)==null?void 0:s.docs,source:{originalSource:`{
+  args: {
+    didUploadsExceedLimit: true,
+    usage: {
+      storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
+      maxAllowedFileBytes: 1024 * 1024 * 100,
+      sumFileBytes: 1024 * 1024 * 90,
+      isOverLimit: false
+    }
+  }
+}`,...(d=(a=i.parameters)==null?void 0:a.docs)==null?void 0:d.source}}};var n,l,c;r.parameters={...r.parameters,docs:{...(n=r.parameters)==null?void 0:n.docs,source:{originalSource:`{
+  args: {
+    didUploadsExceedLimit: false,
+    usage: {
+      storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
+      maxAllowedFileBytes: 1024 * 1024 * 100,
+      sumFileBytes: 1024 * 1024 * 110,
+      isOverLimit: true
+    }
+  }
+}`,...(c=(l=r.parameters)==null?void 0:l.docs)==null?void 0:c.source}}};const Dt=["Warning","UploadsExceededLimit","OverLimit"];export{r as OverLimit,i as UploadsExceededLimit,t as Warning,Dt as __namedExportsOrder,Ct as default};
