@@ -1,4 +1,5 @@
 import { spreadSx } from '@/theme/spreadSx'
+import { isExternalLink } from '@/utils/functions/IsExternalLink'
 import {
   Box,
   Button,
@@ -29,8 +30,8 @@ const PortalSectionHeader = ({
   centered = false,
   reverseButtonAndText = false,
 }: PortalSectionHeaderProps) => {
-  const isExternalLink =
-    link?.startsWith('http://') || link?.startsWith('https://')
+  const isExternal = isExternalLink(link ?? '')
+
   return (
     <Box
       sx={spreadSx(sx, {
@@ -80,8 +81,8 @@ const PortalSectionHeader = ({
             {buttonText && (
               <Button
                 variant="contained"
-                component={isExternalLink ? MuiLink : RouterLink}
-                {...(isExternalLink
+                component={isExternal ? MuiLink : RouterLink}
+                {...(isExternal
                   ? {
                       href: link,
                       target: '_blank',
