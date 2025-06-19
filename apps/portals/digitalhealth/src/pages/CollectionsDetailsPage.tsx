@@ -97,7 +97,7 @@ export const studyDetailsPageContent: DetailsPageContentType = [
   },
 ]
 
-export default function CollectionsDetailsPage() {
+function CollectionsDetailsPage() {
   const { study } = useGetPortalComponentSearchParams()
 
   if (!study) {
@@ -127,3 +127,5 @@ export default function CollectionsDetailsPage() {
     </>
   )
 }
+
+export default CollectionsDetailsPage
