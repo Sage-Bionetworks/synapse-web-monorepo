@@ -39,6 +39,9 @@ export function hashCode(str?: string | null) {
 }
 
 export function normalizeNumericId(id: string | number): number {
+  if (id == null) {
+    return NaN
+  }
   if (typeof id === 'number') {
     return id
   }

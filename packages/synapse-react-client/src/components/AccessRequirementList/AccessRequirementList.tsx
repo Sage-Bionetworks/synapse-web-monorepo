@@ -235,7 +235,7 @@ export default function AccessRequirementList(
       },
     )
 
-  const sortedGroupedAcessRequirementsByType = useMemo(() => {
+  const sortedGroupedAccessRequirementsByType = useMemo(() => {
     if (accessRequirements && sortedAccessRequirementIds) {
       // SWC-7218: Group by access requirement type
       const groupedAccessRequirementsByType = groupBy(
@@ -257,7 +257,7 @@ export default function AccessRequirementList(
       return sortedByTypeAndStatus
     }
     return undefined
-  }, [sortedAccessRequirementIds])
+  }, [accessRequirements, sortedAccessRequirementIds])
 
   const requestDataStepCallback = (props: RequestDataStepCallbackArgs) => {
     const {
@@ -425,7 +425,7 @@ export default function AccessRequirementList(
             {anyARsRequireCertification && <CertificationRequirement />}
             {anyARsRequireProfileValidation && <ValidationRequirement />}
             {anyARsRequireTwoFactorAuth && <TwoFactorAuthEnabledRequirement />}
-            {sortedGroupedAcessRequirementsByType?.map(accessRequirement => {
+            {sortedGroupedAccessRequirementsByType?.map(accessRequirement => {
               return (
                 <AccessRequirementListItem
                   key={accessRequirement.id}

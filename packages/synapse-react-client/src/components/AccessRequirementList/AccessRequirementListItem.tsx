@@ -49,7 +49,9 @@ export function AccessRequirementListItem(
       return (
         <ManagedACTAccessRequirementItem
           accessRequirement={accessRequirement}
-          onHide={onHide}
+          subjectId={subjectId}
+          subjectType={subjectType}
+          onRejectTerms={onHide}
           onRequestAccess={() => {
             onRequestAccess(accessRequirement)
           }}
