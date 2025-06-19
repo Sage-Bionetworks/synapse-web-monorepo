@@ -6,7 +6,10 @@ import { useCallback, useReducer } from 'react'
 // Represents the selection type. The key is the entity ID. Only one version of an entity can be chosen at a time.
 export type EntitySelectionMapType = Map<string, Reference>
 
-export function useEntitySelection(selectMultiple: boolean) {
+export function useEntitySelection(
+  selectMultiple: boolean,
+  initialSelection: EntitySelectionMapType = Map<string, Reference>(),
+) {
   /**
    *
    * @param entity The entity to check selected status
@@ -24,40 +27,72 @@ export function useEntitySelection(selectMultiple: boolean) {
     [],
   )
 
+  type ReducerAction =
+    | {
+        type: 'toggleSelection'
+        toggledReferences: Reference | Reference[]
+      }
+    | {
+        type: 'setSelection'
+        selection: EntitySelectionMapType
+      }
+
   /**
    * Given the existing selections and a list of toggled references, return the new list of selections
-   * @param selected
-   * @param toggledReference
+   * @param currentState
+   * @param action
    * @returns
    */
   const entitySelectionReducer = useCallback(
     (
-      selected: EntitySelectionMapType,
-      toggledReferences: Reference | Reference[],
+      currentState: EntitySelectionMapType,
+      action: ReducerAction,
     ): EntitySelectionMapType => {
-      const newSelected = selected.withMutations(map => {
-        // Note: we currently don't allow selecting two versions of the same entity, so we replace previous selected version with new selected version
-        if (!Array.isArray(toggledReferences)) {
-          toggledReferences = [toggledReferences]
-        }
-        toggledReferences.forEach(toggledReference => {
-          if (isSelected(toggledReference, selected)) {
-            // remove from selection
-            map.delete(toggledReference.targetId)
-          } else {
-            // add to selection
-            if (!selectMultiple) {
-              map.clear()
-            }
-            map.set(toggledReference.targetId, toggledReference)
+      if (action.type === 'setSelection') {
+        return action.selection
+      }
+      if (action.type === 'toggleSelection') {
+        let toggledReferences = action.toggledReferences
+        return currentState.withMutations(map => {
+          // Note: we currently don't allow selecting two versions of the same entity, so we replace previous selected version with new selected version
+          if (!Array.isArray(toggledReferences)) {
+            toggledReferences = [toggledReferences]
           }
+          toggledReferences.forEach(toggledReference => {
+            if (isSelected(toggledReference, currentState)) {
+              // remove from selection
+              map.delete(toggledReference.targetId)
+            } else {
+              // add to selection
+              if (!selectMultiple) {
+                map.clear()
+              }
+              map.set(toggledReference.targetId, toggledReference)
+            }
+          })
         })
-      })
-
-      return newSelected
+      }
+      return currentState
     },
     [isSelected, selectMultiple],
   )
 
-  return useReducer(entitySelectionReducer, Map<string, Reference>())
+  const [selectedEntities, dispatch] = useReducer(
+    entitySelectionReducer,
+    initialSelection,
+  )
+
+  const toggleSelection = useCallback(
+    (toggledReferences: Reference | Reference[]) =>
+      dispatch({ type: 'toggleSelection', toggledReferences }),
+    [],
+  )
+
+  const setSelection = useCallback(
+    (selection: EntitySelectionMapType) =>
+      dispatch({ type: 'setSelection', selection }),
+    [],
+  )
+
+  return { selectedEntities, toggleSelection, setSelection }
 }

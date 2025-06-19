@@ -93,7 +93,7 @@ export default function ExternalPlatformActionsRequiredPrecheck(
     selectedRows,
   ])
 
-  const { exportToCavatica, exportToTerra } =
+  const { exportToCavatica, exportToTerra, exportToPluto, exportToPlutoDev } =
     useExportTableQueryToAnalysisPlatform({
       queryBundleRequest: queryFilteredBySelection,
       selectColumns: queryMetadata?.selectColumns,
@@ -118,12 +118,25 @@ export default function ExternalPlatformActionsRequiredPrecheck(
       case 'terra':
         await exportToTerra()
         break
+      case 'pluto':
+        await exportToPluto()
+        break
+      case 'plutodev':
+        await exportToPlutoDev()
+        break
       case 'adworkbench':
         console.warn('AD Workbench export not yet implemented')
         break
     }
     onSuccessfulExport()
-  }, [exportToCavatica, exportToTerra, onSuccessfulExport, selectedPlatform])
+  }, [
+    exportToCavatica,
+    exportToTerra,
+    exportToPluto,
+    exportToPlutoDev,
+    onSuccessfulExport,
+    selectedPlatform,
+  ])
 
   useEffect(() => {
     onConfirmButtonPropsChange({

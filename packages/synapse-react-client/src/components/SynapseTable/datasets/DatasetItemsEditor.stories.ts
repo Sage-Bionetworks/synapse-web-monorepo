@@ -1,10 +1,16 @@
 import { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 import { DatasetItemsEditor } from './DatasetItemsEditor'
 
-const meta = {
+const meta: Meta<typeof DatasetItemsEditor> = {
   title: 'Synapse/DatasetItemsEditor',
   component: DatasetItemsEditor,
-} satisfies Meta
+  args: {
+    onSave: fn(),
+    onClose: fn(),
+    onUnsavedChangesChange: fn(),
+  },
+}
 export default meta
 type Story = StoryObj<typeof meta>
 
