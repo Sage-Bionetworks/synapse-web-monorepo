@@ -1,1 +1,0 @@
-import{b as r}from"./_baseIndexOf-rBnIfvEs.js";function s(n,e){var t=n==null?0:n.length;return!!t&&r(n,e,0)>-1}function f(n,e,t){for(var l=-1,u=n==null?0:n.length;++l<u;)if(t(e,n[l]))return!0;return!1}export{s as a,f as b};
