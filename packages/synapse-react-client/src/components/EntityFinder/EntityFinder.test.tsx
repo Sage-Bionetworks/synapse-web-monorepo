@@ -504,4 +504,21 @@ describe('EntityFinder tests', () => {
       expect(mockGetEntityHeaders).toHaveBeenCalledTimes(2)
     })
   })
+
+  it('handles initialSelected', async () => {
+    const initialSelected: Reference[] = [
+      {
+        targetId: 'syn123',
+      },
+    ]
+
+    renderComponent({
+      selectMultiple: false,
+      initialSelected,
+    })
+
+    await waitFor(() =>
+      expect(mockOnSelectionChange).toHaveBeenCalledWith(initialSelected),
+    )
+  })
 })

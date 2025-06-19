@@ -1,4 +1,6 @@
-import { isEmpty } from 'lodash-es'
+import isEmpty from 'lodash-es/isEmpty'
+import isEqual from 'lodash-es/isEqual'
+import xorWith from 'lodash-es/xorWith'
 import { removeUndefined } from './ObjectUtils'
 
 /**
@@ -19,4 +21,15 @@ export function removeTrailingUndefinedElements(params: unknown[]): unknown[] {
     lastElement = result[result.length - 1]
   }
   return result
+}
+
+/**
+ *  Returns true if an item exists in one array that does not exist in another, using deep comparison by default.
+ */
+export function hasDifference(
+  x: Array<unknown>,
+  y: Array<unknown>,
+  comparator = isEqual,
+): boolean {
+  return xorWith(x, y, comparator).length > 0
 }
