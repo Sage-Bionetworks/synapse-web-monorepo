@@ -1,4 +1,4 @@
-import { CalendarTodayTwoTone } from '@mui/icons-material'
+import CalendarTodayTwoTone from '@mui/icons-material/CalendarTodayTwoTone'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'

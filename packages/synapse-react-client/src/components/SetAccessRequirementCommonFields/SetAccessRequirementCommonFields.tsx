@@ -4,7 +4,7 @@ import {
   useUpdateAccessRequirement,
 } from '@/synapse-queries'
 import { spreadSx } from '@/theme/spreadSx'
-import { HelpOutlineTwoTone } from '@mui/icons-material'
+import HelpOutlineTwoTone from '@mui/icons-material/HelpOutlineTwoTone'
 import Alert from '@mui/material/Alert'
 import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'

@@ -1,5 +1,5 @@
 import { useGetEntity } from '@/synapse-queries'
-import { Box } from '@mui/system'
+import Box from '@mui/material/Box'
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import { ImageFileHandle } from './ImageFileHandle'

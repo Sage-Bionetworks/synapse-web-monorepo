@@ -1,7 +1,7 @@
 import { useGetUserProfile } from '@/synapse-queries'
 import Skeleton from '@mui/material/Skeleton'
 import Typography from '@mui/material/Typography'
-import { Box } from '@mui/system'
+import Box from '@mui/material/Box'
 import { ReactNode, useMemo, useState } from 'react'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'

@@ -10,12 +10,13 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { InfoTwoTone } from '@mui/icons-material'
+import InfoTwoTone from '@mui/icons-material/InfoTwoTone'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Radio from '@mui/material/Radio'
 import Typography from '@mui/material/Typography'
-import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
+import { DataGrid } from '@mui/x-data-grid/DataGrid'
+import { GridColDef, GridCellParams } from '@mui/x-data-grid/models'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   Direction,

@@ -1,4 +1,5 @@
-import { AddCircleTwoTone, HelpOutlineTwoTone } from '@mui/icons-material'
+import AddCircleTwoTone from '@mui/icons-material/AddCircleTwoTone'
+import HelpOutlineTwoTone from '@mui/icons-material/HelpOutlineTwoTone'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'

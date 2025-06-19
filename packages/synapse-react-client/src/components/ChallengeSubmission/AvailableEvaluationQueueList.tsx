@@ -1,5 +1,5 @@
 import LightTooltip from '@/components/styled/LightTooltip'
-import { HelpOutlineTwoTone } from '@mui/icons-material'
+import HelpOutlineTwoTone from '@mui/icons-material/HelpOutlineTwoTone'
 import Autocomplete from '@mui/material/Autocomplete'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'

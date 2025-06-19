@@ -1,4 +1,7 @@
-import { Add, ArrowDownward, ArrowUpward, Close } from '@mui/icons-material'
+import Add from '@mui/icons-material/Add'
+import ArrowDownward from '@mui/icons-material/ArrowDownward'
+import ArrowUpward from '@mui/icons-material/ArrowUpward'
+import Close from '@mui/icons-material/Close'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import { SxProps } from '@mui/material/styles'

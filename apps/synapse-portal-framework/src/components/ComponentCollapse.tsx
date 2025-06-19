@@ -1,7 +1,5 @@
-import {
-  KeyboardArrowDownTwoTone,
-  KeyboardArrowUpTwoTone,
-} from '@mui/icons-material'
+import KeyboardArrowDownTwoTone from '@mui/icons-material/KeyboardArrowDownTwoTone'
+import KeyboardArrowUpTwoTone from '@mui/icons-material/KeyboardArrowUpTwoTone'
 import Box from '@mui/material/Box'
 import Collapse from '@mui/material/Collapse'
 import { SxProps } from '@mui/material/styles'

@@ -1,4 +1,5 @@
-import { CelebrationOutlined, Groups2Outlined } from '@mui/icons-material'
+import CelebrationOutlined from '@mui/icons-material/CelebrationOutlined'
+import Groups2Outlined from '@mui/icons-material/Groups2Outlined'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'

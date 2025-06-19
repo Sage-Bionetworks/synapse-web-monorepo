@@ -1,6 +1,6 @@
 import { InputSizedButton } from '@/components/styled/InputSizedButton'
 import { SYNAPSE_ENTITY_ID_REGEX } from '@/utils/functions/RegularExpressions'
-import { SearchOutlined } from '@mui/icons-material'
+import SearchOutlined from '@mui/icons-material/SearchOutlined'
 import Box from '@mui/material/Box'
 import InputAdornment from '@mui/material/InputAdornment'
 import TextField from '@mui/material/TextField'

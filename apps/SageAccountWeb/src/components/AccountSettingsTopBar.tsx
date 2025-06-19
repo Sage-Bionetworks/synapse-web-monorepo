@@ -1,5 +1,5 @@
 import React, { RefObject, useRef } from 'react'
-import { BadgeOutlined } from '@mui/icons-material'
+import BadgeOutlined from '@mui/icons-material/BadgeOutlined'
 import Box from '@mui/material/Box'
 import { SxProps } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'

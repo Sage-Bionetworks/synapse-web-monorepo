@@ -1,4 +1,4 @@
-import { SmartToyTwoTone } from '@mui/icons-material'
+import SmartToyTwoTone from '@mui/icons-material/SmartToyTwoTone'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import ListItem from '@mui/material/ListItem'

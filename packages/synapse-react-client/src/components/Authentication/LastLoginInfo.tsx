@@ -6,7 +6,7 @@ import {
   LAST_LOGIN_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
   LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY,
 } from '@/utils/SynapseConstants'
-import { InfoTwoTone } from '@mui/icons-material'
+import InfoTwoTone from '@mui/icons-material/InfoTwoTone'
 import Box from '@mui/material/Box'
 import Link from '@mui/material/Link'
 import Tooltip from '@mui/material/Tooltip'

@@ -1,7 +1,7 @@
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import { StarTwoTone } from '@mui/icons-material'
+import StarTwoTone from '@mui/icons-material/StarTwoTone'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { useAccessRequirementTable } from './UseAccessRequirementTable'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'

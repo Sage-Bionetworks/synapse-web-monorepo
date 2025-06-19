@@ -1,4 +1,4 @@
-import { EastTwoTone } from '@mui/icons-material'
+import EastTwoTone from '@mui/icons-material/EastTwoTone'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Chip from '@mui/material/Chip'

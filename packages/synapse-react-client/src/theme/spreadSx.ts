@@ -1,5 +1,5 @@
 import { Theme } from '@mui/material/styles'
-import { SxProps } from '@mui/system'
+import { SxProps } from '@mui/material/styles'
 
 /**
  * Utility to combine multiple SxProps into a single SxProps object that can be passed to a component.

@@ -24,7 +24,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { HelpTwoTone } from '@mui/icons-material'
+import HelpTwoTone from '@mui/icons-material/HelpTwoTone'
 import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
 import InputLabel from '@mui/material/InputLabel'

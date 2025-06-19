@@ -1,4 +1,4 @@
-import { Box } from '@mui/system'
+import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 type TimelineLegendItemProps = {

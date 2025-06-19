@@ -1,4 +1,4 @@
-import { AddAlertTwoTone } from '@mui/icons-material'
+import AddAlertTwoTone from '@mui/icons-material/AddAlertTwoTone'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Link from '@mui/material/Link'

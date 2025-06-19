@@ -5,7 +5,7 @@ import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
-import { Box } from '@mui/system'
+import Box from '@mui/material/Box'
 import { QueryFilter } from '@sage-bionetworks/synapse-types'
 import { Dispatch, SetStateAction } from 'react'
 

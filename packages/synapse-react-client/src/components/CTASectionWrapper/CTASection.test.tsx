@@ -3,7 +3,7 @@ import CTASectionWrapper, { CTASectionWrapperProps } from './CTASectionWrapper'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Link from '@mui/material/Link'
-import { AddAlertTwoTone } from '@mui/icons-material'
+import AddAlertTwoTone from '@mui/icons-material/AddAlertTwoTone'
 
 const title = 'Test Title'
 const subtitle = 'Test Subtitle'

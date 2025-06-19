@@ -1,11 +1,9 @@
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { testDownloadSpeed } from '@/utils/functions/testDownloadSpeed'
-import {
-  InsertDriveFileTwoTone,
-  LayersTwoTone,
-  WatchLaterTwoTone,
-} from '@mui/icons-material'
+import InsertDriveFileTwoTone from '@mui/icons-material/InsertDriveFileTwoTone'
+import LayersTwoTone from '@mui/icons-material/LayersTwoTone'
+import WatchLaterTwoTone from '@mui/icons-material/WatchLaterTwoTone'
 import Tooltip from '@mui/material/Tooltip'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'

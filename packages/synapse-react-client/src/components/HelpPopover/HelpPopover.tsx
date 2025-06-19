@@ -2,7 +2,7 @@ import { MarkdownPopover } from '../Markdown/MarkdownPopover'
 import { ButtonProps } from '@mui/material/Button'
 import { SxProps } from '@mui/material/styles'
 import { TooltipProps } from '@mui/material/Tooltip'
-import { HelpOutlineTwoTone } from '@mui/icons-material'
+import HelpOutlineTwoTone from '@mui/icons-material/HelpOutlineTwoTone'
 
 export type HelpPopoverProps = {
   markdownText: string

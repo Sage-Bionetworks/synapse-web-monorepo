@@ -3,7 +3,8 @@ import {
   RESPONSIVE_SIDE_PADDING,
 } from '@/utils'
 import { useSetCanonicalUrl } from '@/utils/useSetCanonicalUrl'
-import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
+import ArrowDropDown from '@mui/icons-material/ArrowDropDown'
+import ArrowDropUp from '@mui/icons-material/ArrowDropUp'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'

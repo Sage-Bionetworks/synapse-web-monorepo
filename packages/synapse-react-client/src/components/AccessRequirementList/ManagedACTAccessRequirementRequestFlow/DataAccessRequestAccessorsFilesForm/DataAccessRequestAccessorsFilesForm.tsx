@@ -1,4 +1,4 @@
-import { NewReleasesOutlined } from '@mui/icons-material'
+import NewReleasesOutlined from '@mui/icons-material/NewReleasesOutlined'
 import Alert, { AlertProps as MuiAlertProps } from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'

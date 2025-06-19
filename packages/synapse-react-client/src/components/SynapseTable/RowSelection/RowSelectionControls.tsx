@@ -1,6 +1,6 @@
 import { useGetEntity } from '@/synapse-queries'
 import { canTableQueryBeAddedToDownloadList } from '@/utils/functions/queryUtils'
-import { GetAppTwoTone } from '@mui/icons-material'
+import GetAppTwoTone from '@mui/icons-material/GetAppTwoTone'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import { Table } from '@sage-bionetworks/synapse-types'

@@ -3,7 +3,8 @@ import { formatDate } from '@/utils/functions/DateFormatter'
 import Box from '@mui/material/Box'
 import Radio from '@mui/material/Radio'
 import Typography from '@mui/material/Typography'
-import { DataGrid, GridColDef } from '@mui/x-data-grid'
+import { DataGrid } from '@mui/x-data-grid/DataGrid'
+import { GridColDef } from '@mui/x-data-grid/models'
 import {
   Direction,
   DockerCommit,

@@ -2,7 +2,7 @@ import {
   useGetResearchProject,
   useUpdateResearchProject,
 } from '@/synapse-queries'
-import { InfoTwoTone } from '@mui/icons-material'
+import InfoTwoTone from '@mui/icons-material/InfoTwoTone'
 import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'

@@ -11,7 +11,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import PortalFullTextSearchField from './PortalSearch/PortalFullTextSearchField'
 import { spreadSx } from 'synapse-react-client/theme/spreadSx'
 import { useNavigate } from 'react-router'
-import { KeyboardArrowDown } from '@mui/icons-material'
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown'
 import { useState } from 'react'
 import {
   FTS_SEARCH_TERM,

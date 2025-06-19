@@ -1,12 +1,10 @@
 import Checked from '@/assets/icons/Checkbox/Checked'
 import Indeterminate from '@/assets/icons/Checkbox/Indeterminate'
 import Unchecked from '@/assets/icons/Checkbox/Unchecked'
-import {
-  CheckCircleTwoTone,
-  ErrorTwoTone,
-  HighlightOffTwoTone,
-  InfoTwoTone,
-} from '@mui/icons-material'
+import CheckCircleTwoTone from '@mui/icons-material/CheckCircleTwoTone'
+import ErrorTwoTone from '@mui/icons-material/ErrorTwoTone'
+import HighlightOffTwoTone from '@mui/icons-material/HighlightOffTwoTone'
+import InfoTwoTone from '@mui/icons-material/InfoTwoTone'
 import { alpha } from '@mui/material/styles'
 import Fade from '@mui/material/Fade'
 import { lighten } from '@mui/material/styles'

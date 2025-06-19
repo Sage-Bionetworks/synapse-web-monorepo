@@ -1,5 +1,6 @@
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { ErrorOutlined, LockOutlined } from '@mui/icons-material'
+import ErrorOutlined from '@mui/icons-material/ErrorOutlined'
+import LockOutlined from '@mui/icons-material/LockOutlined'
 import Avatar from '@mui/material/Avatar'
 import Chip from '@mui/material/Chip'
 import Tooltip from '@mui/material/Tooltip'

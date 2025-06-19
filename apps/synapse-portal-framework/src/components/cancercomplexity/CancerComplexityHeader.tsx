@@ -2,7 +2,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Link from '@mui/material/Link'
 import HeaderSearchBox from '../HeaderSearchBox'
-import { AddAlertTwoTone } from '@mui/icons-material'
+import AddAlertTwoTone from '@mui/icons-material/AddAlertTwoTone'
 import { TypeAnimation } from 'react-type-animation'
 import headerBackground from '../assets/cckp-header-background.jpeg'
 

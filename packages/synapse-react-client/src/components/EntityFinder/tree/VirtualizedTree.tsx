@@ -6,7 +6,8 @@ import {
   isContainerType,
 } from '@/utils/functions/EntityTypeUtils'
 import { Writable } from '@/utils/types/Writable'
-import { ChevronRight, ExpandMore } from '@mui/icons-material'
+import ChevronRight from '@mui/icons-material/ChevronRight'
+import ExpandMore from '@mui/icons-material/ExpandMore'
 import Skeleton from '@mui/material/Skeleton'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'

@@ -20,7 +20,7 @@ import {
 } from '@/utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { getColumnIndex } from '@/utils/functions/SqlFunctions'
-import { GetAppTwoTone } from '@mui/icons-material'
+import GetAppTwoTone from '@mui/icons-material/GetAppTwoTone'
 import Collapse from '@mui/material/Collapse'
 import Link from '@mui/material/Link'
 import {

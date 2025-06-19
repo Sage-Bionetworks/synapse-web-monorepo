@@ -1,4 +1,5 @@
-import { FolderTwoTone, InsertDriveFileTwoTone } from '@mui/icons-material'
+import FolderTwoTone from '@mui/icons-material/FolderTwoTone'
+import InsertDriveFileTwoTone from '@mui/icons-material/InsertDriveFileTwoTone'
 import { Meta, StoryObj } from '@storybook/react'
 import WizardChoiceButton from './WizardChoiceButton'
 import WizardChoiceButtonGroup from './WizardChoiceButtonGroup'

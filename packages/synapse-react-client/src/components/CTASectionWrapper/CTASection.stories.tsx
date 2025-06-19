@@ -3,7 +3,7 @@ import CTASectionWrapper from './CTASectionWrapper'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
 import Link from '@mui/material/Link'
-import { AddAlertTwoTone } from '@mui/icons-material'
+import AddAlertTwoTone from '@mui/icons-material/AddAlertTwoTone'
 
 const meta = {
   title: 'Home Page/CTASectionWrapper',

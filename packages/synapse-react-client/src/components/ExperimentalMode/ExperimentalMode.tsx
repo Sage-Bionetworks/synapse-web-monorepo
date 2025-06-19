@@ -1,6 +1,6 @@
 import { isInSynapseExperimentalMode } from '@/synapse-client/SynapseClient'
 import { EXPERIMENTAL_MODE_COOKIE } from '@/utils/SynapseConstants'
-import { InfoOutlined } from '@mui/icons-material'
+import InfoOutlined from '@mui/icons-material/InfoOutlined'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'

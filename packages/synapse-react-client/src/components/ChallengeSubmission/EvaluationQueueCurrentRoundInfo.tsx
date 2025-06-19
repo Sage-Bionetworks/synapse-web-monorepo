@@ -4,7 +4,7 @@ import {
 } from '@/synapse-queries/evaluation/useEvaluation'
 import { getCurrentOrNextOrLatestRound } from '@/utils/challenge/evaluation/EvaluationUtils'
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { InfoTwoTone } from '@mui/icons-material'
+import InfoTwoTone from '@mui/icons-material/InfoTwoTone'
 import Tooltip from '@mui/material/Tooltip'
 import dayjs from 'dayjs'
 import { useEffect, useMemo } from 'react'

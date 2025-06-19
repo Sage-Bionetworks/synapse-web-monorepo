@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { MarkdownPopover, MarkdownPopoverProps } from './MarkdownPopover'
 import { userEvent, within } from '@storybook/test'
-import { InfoTwoTone } from '@mui/icons-material'
+import InfoTwoTone from '@mui/icons-material/InfoTwoTone'
 
 const meta: Meta<MarkdownPopoverProps> = {
   title: 'Markdown/MarkdownPopover',

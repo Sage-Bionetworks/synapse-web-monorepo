@@ -29,105 +29,103 @@ import PackagableFile from '@/assets/mui_components/PackagableFile'
 import Proteomics from '@/assets/mui_components/Proteomics'
 import Rat from '@/assets/mui_components/Rat'
 import SpatialProfiling from '@/assets/mui_components/SpatialProfiling'
-import {
-  AccessTimeTwoTone,
-  AddBoxOutlined,
-  AddCircleOutline,
-  AddCircleTwoTone,
-  AddShoppingCart,
-  AddTwoTone,
-  AlternateEmail,
-  ArrowBack,
-  ArrowDropDownTwoTone,
-  ArrowDropUpTwoTone,
-  ArrowForward,
-  ArticleTwoTone,
-  AssessmentTwoTone,
-  AssignmentOutlined,
-  AssignmentTurnedInTwoTone,
-  Block,
-  Cached,
-  ChatTwoTone,
-  Check,
-  CheckCircleTwoTone,
-  ChevronLeft,
-  ChevronRight,
-  Clear,
-  CloseTwoTone,
-  Code,
-  ContentCopyTwoTone,
-  CreateNewFolderTwoTone,
-  DashboardTwoTone,
-  DeleteSweepTwoTone,
-  DeleteTwoTone,
-  EditTwoTone,
-  ErrorOutlined,
-  ExpandLess,
-  ExpandMore,
-  FactCheckTwoTone,
-  FilterAltTwoTone,
-  FlagTwoTone,
-  FolderTwoTone,
-  FormatBold,
-  FormatItalic,
-  GetAppTwoTone,
-  GitHub,
-  Group,
-  HelpOutlined,
-  HelpOutlineTwoTone,
-  HistoryTwoTone,
-  Image,
-  IndeterminateCheckBoxOutlined,
-  InfoOutlined,
-  InsertDriveFileOutlined,
-  InsertDriveFileTwoTone,
-  LabelTwoTone,
-  LanguageTwoTone,
-  LayersTwoTone,
-  LinkOffTwoTone,
-  LinkTwoTone,
-  ListTwoTone,
-  LockOpenTwoTone,
-  Login,
-  MailOutlineTwoTone,
-  MoreVertTwoTone,
-  OpenInFull,
-  OpenInNewTwoTone,
-  PeopleTwoTone,
-  PhoneTwoTone,
-  PhotoCameraOutlined,
-  PublicTwoTone,
-  PushPinTwoTone,
-  QuestionAnswerTwoTone,
-  RadioButtonUncheckedTwoTone,
-  RemoveCircleTwoTone,
-  ReplyTwoTone,
-  ReportProblemOutlined,
-  RestoreFromTrashTwoTone,
-  SearchOutlined,
-  SearchTwoTone,
-  ShoppingCartOutlined,
-  Sort,
-  Star,
-  StarOutline,
-  StarTwoTone,
-  StorageTwoTone,
-  StrikethroughS,
-  Subscript,
-  Superscript,
-  SyncTwoTone,
-  TableChartTwoTone,
-  TableViewTwoTone,
-  Title,
-  UploadTwoTone,
-  ViewAgendaTwoTone,
-  ViewColumnTwoTone,
-  VisibilityOffTwoTone,
-  VisibilityTwoTone,
-  VpnKeyTwoTone,
-  WarningTwoTone,
-  WatchLater,
-} from '@mui/icons-material'
+import AccessTimeTwoTone from '@mui/icons-material/AccessTimeTwoTone'
+import AddBoxOutlined from '@mui/icons-material/AddBoxOutlined'
+import AddCircleOutline from '@mui/icons-material/AddCircleOutline'
+import AddCircleTwoTone from '@mui/icons-material/AddCircleTwoTone'
+import AddShoppingCart from '@mui/icons-material/AddShoppingCart'
+import AddTwoTone from '@mui/icons-material/AddTwoTone'
+import AlternateEmail from '@mui/icons-material/AlternateEmail'
+import ArrowBack from '@mui/icons-material/ArrowBack'
+import ArrowDropDownTwoTone from '@mui/icons-material/ArrowDropDownTwoTone'
+import ArrowDropUpTwoTone from '@mui/icons-material/ArrowDropUpTwoTone'
+import ArrowForward from '@mui/icons-material/ArrowForward'
+import ArticleTwoTone from '@mui/icons-material/ArticleTwoTone'
+import AssessmentTwoTone from '@mui/icons-material/AssessmentTwoTone'
+import AssignmentOutlined from '@mui/icons-material/AssignmentOutlined'
+import AssignmentTurnedInTwoTone from '@mui/icons-material/AssignmentTurnedInTwoTone'
+import Block from '@mui/icons-material/Block'
+import Cached from '@mui/icons-material/Cached'
+import ChatTwoTone from '@mui/icons-material/ChatTwoTone'
+import Check from '@mui/icons-material/Check'
+import CheckCircleTwoTone from '@mui/icons-material/CheckCircleTwoTone'
+import ChevronLeft from '@mui/icons-material/ChevronLeft'
+import ChevronRight from '@mui/icons-material/ChevronRight'
+import Clear from '@mui/icons-material/Clear'
+import CloseTwoTone from '@mui/icons-material/CloseTwoTone'
+import Code from '@mui/icons-material/Code'
+import ContentCopyTwoTone from '@mui/icons-material/ContentCopyTwoTone'
+import CreateNewFolderTwoTone from '@mui/icons-material/CreateNewFolderTwoTone'
+import DashboardTwoTone from '@mui/icons-material/DashboardTwoTone'
+import DeleteSweepTwoTone from '@mui/icons-material/DeleteSweepTwoTone'
+import DeleteTwoTone from '@mui/icons-material/DeleteTwoTone'
+import EditTwoTone from '@mui/icons-material/EditTwoTone'
+import ErrorOutlined from '@mui/icons-material/ErrorOutlined'
+import ExpandLess from '@mui/icons-material/ExpandLess'
+import ExpandMore from '@mui/icons-material/ExpandMore'
+import FactCheckTwoTone from '@mui/icons-material/FactCheckTwoTone'
+import FilterAltTwoTone from '@mui/icons-material/FilterAltTwoTone'
+import FlagTwoTone from '@mui/icons-material/FlagTwoTone'
+import FolderTwoTone from '@mui/icons-material/FolderTwoTone'
+import FormatBold from '@mui/icons-material/FormatBold'
+import FormatItalic from '@mui/icons-material/FormatItalic'
+import GetAppTwoTone from '@mui/icons-material/GetAppTwoTone'
+import GitHub from '@mui/icons-material/GitHub'
+import Group from '@mui/icons-material/Group'
+import HelpOutlined from '@mui/icons-material/HelpOutlined'
+import HelpOutlineTwoTone from '@mui/icons-material/HelpOutlineTwoTone'
+import HistoryTwoTone from '@mui/icons-material/HistoryTwoTone'
+import Image from '@mui/icons-material/Image'
+import IndeterminateCheckBoxOutlined from '@mui/icons-material/IndeterminateCheckBoxOutlined'
+import InfoOutlined from '@mui/icons-material/InfoOutlined'
+import InsertDriveFileOutlined from '@mui/icons-material/InsertDriveFileOutlined'
+import InsertDriveFileTwoTone from '@mui/icons-material/InsertDriveFileTwoTone'
+import LabelTwoTone from '@mui/icons-material/LabelTwoTone'
+import LanguageTwoTone from '@mui/icons-material/LanguageTwoTone'
+import LayersTwoTone from '@mui/icons-material/LayersTwoTone'
+import LinkOffTwoTone from '@mui/icons-material/LinkOffTwoTone'
+import LinkTwoTone from '@mui/icons-material/LinkTwoTone'
+import ListTwoTone from '@mui/icons-material/ListTwoTone'
+import LockOpenTwoTone from '@mui/icons-material/LockOpenTwoTone'
+import Login from '@mui/icons-material/Login'
+import MailOutlineTwoTone from '@mui/icons-material/MailOutlineTwoTone'
+import MoreVertTwoTone from '@mui/icons-material/MoreVertTwoTone'
+import OpenInFull from '@mui/icons-material/OpenInFull'
+import OpenInNewTwoTone from '@mui/icons-material/OpenInNewTwoTone'
+import PeopleTwoTone from '@mui/icons-material/PeopleTwoTone'
+import PhoneTwoTone from '@mui/icons-material/PhoneTwoTone'
+import PhotoCameraOutlined from '@mui/icons-material/PhotoCameraOutlined'
+import PublicTwoTone from '@mui/icons-material/PublicTwoTone'
+import PushPinTwoTone from '@mui/icons-material/PushPinTwoTone'
+import QuestionAnswerTwoTone from '@mui/icons-material/QuestionAnswerTwoTone'
+import RadioButtonUncheckedTwoTone from '@mui/icons-material/RadioButtonUncheckedTwoTone'
+import RemoveCircleTwoTone from '@mui/icons-material/RemoveCircleTwoTone'
+import ReplyTwoTone from '@mui/icons-material/ReplyTwoTone'
+import ReportProblemOutlined from '@mui/icons-material/ReportProblemOutlined'
+import RestoreFromTrashTwoTone from '@mui/icons-material/RestoreFromTrashTwoTone'
+import SearchOutlined from '@mui/icons-material/SearchOutlined'
+import SearchTwoTone from '@mui/icons-material/SearchTwoTone'
+import ShoppingCartOutlined from '@mui/icons-material/ShoppingCartOutlined'
+import Sort from '@mui/icons-material/Sort'
+import Star from '@mui/icons-material/Star'
+import StarOutline from '@mui/icons-material/StarOutline'
+import StarTwoTone from '@mui/icons-material/StarTwoTone'
+import StorageTwoTone from '@mui/icons-material/StorageTwoTone'
+import StrikethroughS from '@mui/icons-material/StrikethroughS'
+import Subscript from '@mui/icons-material/Subscript'
+import Superscript from '@mui/icons-material/Superscript'
+import SyncTwoTone from '@mui/icons-material/SyncTwoTone'
+import TableChartTwoTone from '@mui/icons-material/TableChartTwoTone'
+import TableViewTwoTone from '@mui/icons-material/TableViewTwoTone'
+import Title from '@mui/icons-material/Title'
+import UploadTwoTone from '@mui/icons-material/UploadTwoTone'
+import ViewAgendaTwoTone from '@mui/icons-material/ViewAgendaTwoTone'
+import ViewColumnTwoTone from '@mui/icons-material/ViewColumnTwoTone'
+import VisibilityOffTwoTone from '@mui/icons-material/VisibilityOffTwoTone'
+import VisibilityTwoTone from '@mui/icons-material/VisibilityTwoTone'
+import VpnKeyTwoTone from '@mui/icons-material/VpnKeyTwoTone'
+import WarningTwoTone from '@mui/icons-material/WarningTwoTone'
+import WatchLater from '@mui/icons-material/WatchLater'
 import Tooltip from '@mui/material/Tooltip'
 import { SvgIconProps } from '@mui/material/SvgIcon'
 import { EntityType } from '@sage-bionetworks/synapse-types'

@@ -1,4 +1,5 @@
-import { AddBox, CloseTwoTone } from '@mui/icons-material'
+import AddBox from '@mui/icons-material/AddBox'
+import CloseTwoTone from '@mui/icons-material/CloseTwoTone'
 import IconButton from '@mui/material/IconButton'
 import { EvaluationRoundLimitType } from '@sage-bionetworks/synapse-types'
 import { Fragment, useCallback, useEffect } from 'react'

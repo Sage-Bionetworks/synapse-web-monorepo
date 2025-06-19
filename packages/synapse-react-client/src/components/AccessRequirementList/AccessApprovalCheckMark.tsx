@@ -1,10 +1,8 @@
 import ConditionalWrapper from '@/components/utils/ConditionalWrapper'
 import { spreadSx } from '@/theme/spreadSx'
-import {
-  AccessTimeFilled,
-  CheckTwoTone,
-  LockTwoTone,
-} from '@mui/icons-material'
+import AccessTimeFilled from '@mui/icons-material/AccessTimeFilled'
+import CheckTwoTone from '@mui/icons-material/CheckTwoTone'
+import LockTwoTone from '@mui/icons-material/LockTwoTone'
 import Avatar from '@mui/material/Avatar'
 import { styled } from '@mui/material/styles'
 import { SxProps } from '@mui/material/styles'

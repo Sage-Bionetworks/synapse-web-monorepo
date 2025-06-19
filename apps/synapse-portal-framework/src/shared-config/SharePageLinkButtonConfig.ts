@@ -1,4 +1,4 @@
-import { SharePageLinkButtonProps } from 'synapse-react-client'
+import { SharePageLinkButtonProps } from 'synapse-react-client/components/SharePageLinkButton'
 
 const shortIoPublicApiKey = 'pk_y4sPMLrxonM7kNQV'
 

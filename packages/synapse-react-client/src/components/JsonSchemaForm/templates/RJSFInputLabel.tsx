@@ -1,5 +1,6 @@
 import { StyledPopover } from '@/components/styled/StyledPopover'
-import { HelpOutline, HelpTwoTone } from '@mui/icons-material'
+import HelpOutline from '@mui/icons-material/HelpOutline'
+import HelpTwoTone from '@mui/icons-material/HelpTwoTone'
 import Collapse from '@mui/material/Collapse'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
