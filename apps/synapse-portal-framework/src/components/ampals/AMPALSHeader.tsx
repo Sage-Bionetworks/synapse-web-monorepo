@@ -7,18 +7,7 @@ type AMPALSHeaderProps = {
 const AMPALSHeader = (props: AMPALSHeaderProps) => {
   const { headerSvgURL } = props
   const searchPlaceholder = 'Search for ALS related data and resources'
-  const searchExampleTerms = [
-    'Clinical Data',
-    'Brain Tissue',
-    'WGS Data',
-    'RNA-Seq Data',
-    'ALS-TDI',
-    // 'Males 40-60', // not sure how this would work, unless it explicitly had this string in the object metadata!
-    'Curae',
-    'Suspendisse',
-    'Viverra condimentum',
-    'Maximus',
-  ]
+  const searchExampleTerms = ['ALS', 'TDI', 'FTD', 'Sporadic ALS']
   const content = (
     <>
       <Box
