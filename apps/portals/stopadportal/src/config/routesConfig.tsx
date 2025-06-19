@@ -1,12 +1,6 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
-import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
-import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
+import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import { RouteObject } from 'react-router'
-import {
-  SynapseFormSubmissionGrid,
-  SynapseFormWrapper,
-} from 'synapse-react-client'
-import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
 const routes: RouteObject[] = [
   {
@@ -15,75 +9,38 @@ const routes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: (
-          <>
-            <Header />
-            <SectionLayout ContainerProps={{ className: 'stop-ad-home-page' }}>
-              <Markdown ownerId="syn20717442" wikiId="595390" />
-            </SectionLayout>
-          </>
-        ),
+        lazy: () => import('@/pages/HomePage').then(convertModuleToRouteObject),
       },
       {
         path: 'Apply',
-        element: (
-          <SectionLayout>
-            <Markdown ownerId="syn20717442" wikiId="595813" />
-            <SynapseFormSubmissionGrid
-              pathpart="/Apply/FormSubmission"
-              formGroupId="9"
-              itemNoun="Compound"
-              formClass="drug-upload-tool"
-            />
-          </SectionLayout>
-        ),
+        lazy: () =>
+          import('@/pages/ApplyAndViewSubmissionsPage').then(
+            convertModuleToRouteObject,
+          ),
       },
       {
         path: 'Apply/FormSubmission',
-        element: (
-          <SectionLayout ContainerProps={{ maxWidth: false }}>
-            <SynapseFormWrapper
-              formSchemaEntityId="syn20680102"
-              fileNamePath="naming.compound_name"
-              formUiSchemaEntityId="syn20693568"
-              formNavSchemaEntityId="syn20680027"
-              formTitle="Your Submission"
-              formClass="drug-upload-tool"
-            />
-          </SectionLayout>
-        ),
+        lazy: () =>
+          import('@/pages/FormSubmissionPage').then(convertModuleToRouteObject),
       },
       {
         path: 'Help/How It Works',
-        element: (
-          <SectionLayout title="How It Works">
-            <Markdown ownerId="syn20717442" wikiId="595391" />
-          </SectionLayout>
-        ),
+        lazy: () =>
+          import('@/pages/HowItWorks').then(convertModuleToRouteObject),
       },
       {
         path: 'Help/Data Requirements',
-        element: (
-          <SectionLayout title="Data Requirements">
-            <Markdown ownerId="syn20717442" wikiId="595544" />
-          </SectionLayout>
-        ),
+        lazy: () =>
+          import('@/pages/DataRequirements').then(convertModuleToRouteObject),
       },
       {
         path: 'Terms',
-        element: (
-          <SectionLayout>
-            <Markdown ownerId="syn20717442" wikiId="596040" />
-          </SectionLayout>
-        ),
+        lazy: () => import('@/pages/Terms').then(convertModuleToRouteObject),
       },
       {
         path: 'Contact Us',
-        element: (
-          <SectionLayout>
-            <Markdown ownerId="syn20717442" wikiId="596047" />
-          </SectionLayout>
-        ),
+        lazy: () =>
+          import('@/pages/ContactUs').then(convertModuleToRouteObject),
       },
     ],
   },
