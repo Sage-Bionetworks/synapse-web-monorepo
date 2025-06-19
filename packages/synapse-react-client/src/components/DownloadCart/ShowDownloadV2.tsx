@@ -1,6 +1,7 @@
 import { useGetDownloadListStatistics } from '@/synapse-queries/download/useDownloadList'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { Link as MuiLink, Tooltip } from '@mui/material'
+import MuiLink from '@mui/material/Link'
+import Tooltip from '@mui/material/Tooltip'
 import { Suspense, useEffect } from 'react'
 import { ErrorBoundary, useErrorHandler } from 'react-error-boundary'
 import { Link } from 'react-router'

@@ -1,4 +1,4 @@
-import { Skeleton } from '@mui/material'
+import Skeleton from '@mui/material/Skeleton'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import { ReactNode } from 'react'
 import { useGetEntityHeader } from 'synapse-react-client/synapse-queries/entity/useGetEntityHeaders'

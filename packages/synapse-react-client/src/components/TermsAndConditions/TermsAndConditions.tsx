@@ -3,7 +3,11 @@ import {
   BUNDLE_MASK_QUERY_RESULTS,
   URL_TERMS_CONDITIONS_AGREEMENT,
 } from '@/utils/SynapseConstants'
-import { Alert, AlertTitle, Button, Link, Typography } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import AlertTitle from '@mui/material/AlertTitle'
+import Button from '@mui/material/Button'
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
 import { useEffect, useState } from 'react'
 import TermsAndConditionsItem, {
   LoadingItem,

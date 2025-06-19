@@ -1,6 +1,6 @@
 import { useGetAllDownloadListActionsRequired } from '@/synapse-queries'
 import useTrackTransientListItems from '@/utils/hooks/useTrackTransientListItems'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { times } from 'lodash-es'
 import { LoadingActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 import { ActionRequiredListItem } from './ActionRequiredListItem'

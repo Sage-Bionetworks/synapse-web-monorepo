@@ -4,7 +4,10 @@ import {
   useGetRootWikiPageKey,
   useGetWikiPage,
 } from '@/synapse-queries'
-import { Alert, Box, Button, ButtonProps } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import { ButtonProps } from '@mui/material/Button'
 import { ObjectType, WikiPageKey } from '@sage-bionetworks/synapse-types'
 import { defaults } from 'lodash-es'
 import { useMemo, useState } from 'react'

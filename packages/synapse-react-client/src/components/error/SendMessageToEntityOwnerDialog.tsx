@@ -2,7 +2,8 @@ import {
   useGetCurrentUserProfile,
   useSendMessageToEntityOwner,
 } from '@/synapse-queries'
-import { TextField, Typography } from '@mui/material'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { useCallback, useState } from 'react'
 import ConfirmationDialog from '../ConfirmationDialog'
 import { displayToast } from '../ToastMessage'

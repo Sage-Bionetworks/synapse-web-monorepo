@@ -1,6 +1,8 @@
 import SageFullLogo from '@/assets/icons/SageFullLogo'
 import SynapseClient from '@/synapse-client'
-import { Button, Paper, Typography } from '@mui/material'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
 import { ReactNode } from 'react'
 import { displayToast } from '../ToastMessage'
 

@@ -3,16 +3,14 @@ import {
   useResendVerificationCode,
 } from '@/synapse-queries/webhook/useWebhook'
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { AddCircleTwoTone } from '@mui/icons-material'
-import {
-  Box,
-  Button,
-  Link,
-  Stack,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import AddCircleTwoTone from '@mui/icons-material/AddCircleTwoTone'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Link from '@mui/material/Link'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
 import {
   SynapseObjectType,
   Webhook,

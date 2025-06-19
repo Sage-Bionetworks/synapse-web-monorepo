@@ -1,15 +1,13 @@
 import { ReactComponent as Certified } from '@/assets/icons/account-certified.svg'
 import { ReactComponent as EnabledMFA } from '@/assets/icons/account-enabled-mfa.svg'
 import { ReactComponent as Validated } from '@/assets/icons/account-validated.svg'
-import {
-  Box,
-  Button,
-  ButtonProps,
-  Card,
-  Link,
-  Tooltip,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import { ButtonProps } from '@mui/material/Button'
+import Card from '@mui/material/Card'
+import Link from '@mui/material/Link'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { ReactNode } from 'react'
 
 export type AccountLevelBadgeType = 'certified' | 'validated' | 'enabledMFA'

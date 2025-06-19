@@ -1,6 +1,8 @@
-import { Box, Button, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import ChallengeTeamTable from './ChallengeTeamTable'
-import { Stack } from '@mui/system'
+import Stack from '@mui/material/Stack'
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
 
 const PARTICIPATION_CRITERIA =

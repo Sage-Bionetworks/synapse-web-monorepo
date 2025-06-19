@@ -1,11 +1,9 @@
-import {
-  Box,
-  FormControl,
-  Input,
-  InputLabel,
-  InputProps,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import FormControl from '@mui/material/FormControl'
+import Input from '@mui/material/Input'
+import InputLabel from '@mui/material/InputLabel'
+import { InputProps } from '@mui/material/Input'
+import Typography from '@mui/material/Typography'
 import FormHelperText from '@mui/material/FormHelperText'
 import { ChangeEvent, ReactNode, useId, useState } from 'react'
 

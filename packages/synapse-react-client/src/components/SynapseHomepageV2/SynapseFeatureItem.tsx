@@ -1,5 +1,8 @@
-import { useMediaQuery, useTheme } from '@mui/material'
-import { Box, Button, Typography } from '@mui/material'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import { ReactElement } from 'react'
 
 export type SynapseFeatureItemProps = {

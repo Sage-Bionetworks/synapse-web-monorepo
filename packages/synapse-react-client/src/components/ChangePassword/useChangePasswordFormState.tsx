@@ -1,7 +1,8 @@
 import { useChangePassword, useResetTwoFactorAuth } from '@/synapse-queries'
 import appendFinalQueryParamKey from '@/utils/appendFinalQueryParamKey'
 import { useOneSageURL } from '@/utils/hooks'
-import { Alert, Typography } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Typography from '@mui/material/Typography'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import {
   ChangePasswordWithCurrentPassword,

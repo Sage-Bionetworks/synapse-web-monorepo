@@ -6,7 +6,7 @@ import {
   LOGIN_METHOD_OAUTH2_ORCID,
   OAUTH2_PROVIDERS,
 } from '@/utils/SynapseConstants'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { MouseEvent } from 'react'
 import LoginMethodButton from './LoginMethodButton'
 

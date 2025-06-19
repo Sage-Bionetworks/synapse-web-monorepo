@@ -1,4 +1,7 @@
-import { Box, Checkbox, FormControlLabel, Radio } from '@mui/material'
+import Box from '@mui/material/Box'
+import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Radio from '@mui/material/Radio'
 
 type EnumFacetFilterOptionProps = {
   readonly id: string

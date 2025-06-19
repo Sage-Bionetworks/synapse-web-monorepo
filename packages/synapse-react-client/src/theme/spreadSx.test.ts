@@ -1,4 +1,5 @@
-import { SxProps, Theme } from '@mui/material'
+import { SxProps } from '@mui/material/styles'
+import { Theme } from '@mui/material/styles'
 import { spreadSx } from './spreadSx'
 
 describe('spreadSx', () => {

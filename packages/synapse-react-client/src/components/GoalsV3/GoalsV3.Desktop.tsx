@@ -1,7 +1,11 @@
 import { GoalsV3CardProps } from './GoalsV3'
 import QueryCount from '../QueryCount/QueryCount'
-import { Box, Stack, Typography, useTheme } from '@mui/material'
-import { Card, CardActionArea } from '@mui/material'
+import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import { useTheme } from '@mui/material/styles'
+import Card from '@mui/material/Card'
+import CardActionArea from '@mui/material/CardActionArea'
 
 export default function GoalsV3Desktop({
   link,

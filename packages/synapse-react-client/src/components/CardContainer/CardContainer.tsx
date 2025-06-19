@@ -9,7 +9,7 @@ import {
   OBSERVATION_CARD,
   RELEASE_CARD,
 } from '@/utils/SynapseConstants'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import {
   ColumnTypeEnum,
   EntityHeader,

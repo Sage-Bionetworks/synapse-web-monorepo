@@ -4,16 +4,14 @@ import {
   PUBLIC_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_IDS,
 } from '@/utils/SynapseConstants'
-import {
-  Box,
-  Button,
-  ButtonProps,
-  Checkbox,
-  Collapse,
-  FormControlLabel,
-  Tooltip,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import { ButtonProps } from '@mui/material/Button'
+import Checkbox from '@mui/material/Checkbox'
+import Collapse from '@mui/material/Collapse'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { ResourceAccess } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
 import { ReactNode } from 'react'

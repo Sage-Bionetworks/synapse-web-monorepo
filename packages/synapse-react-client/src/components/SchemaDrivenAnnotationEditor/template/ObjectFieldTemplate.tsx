@@ -1,5 +1,6 @@
 import AddToList from '@/assets/icons/AddToList'
-import { Button, Tooltip } from '@mui/material'
+import Button from '@mui/material/Button'
+import Tooltip from '@mui/material/Tooltip'
 import {
   ADDITIONAL_PROPERTY_FLAG,
   canExpand,

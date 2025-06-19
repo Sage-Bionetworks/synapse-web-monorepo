@@ -1,5 +1,7 @@
 import { useGetTeam } from '@/synapse-queries'
-import { Alert, Box, Typography } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 
 type RegistrationSuccessfulProps = {

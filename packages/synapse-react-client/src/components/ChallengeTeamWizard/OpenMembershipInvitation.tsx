@@ -4,7 +4,11 @@ import {
   useGetCurrentUserProfile,
   useGetTeam,
 } from '@/synapse-queries'
-import { Alert, Button, ButtonProps, Stack, Typography } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Button from '@mui/material/Button'
+import { ButtonProps } from '@mui/material/Button'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import { noop } from 'lodash-es'
 import { useCallback } from 'react'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'

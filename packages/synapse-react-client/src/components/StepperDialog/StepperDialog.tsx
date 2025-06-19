@@ -1,9 +1,11 @@
-import { Alert, Button, Box } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
 import { ReactNode } from 'react'
 import { DialogBase } from '../DialogBase'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import SpinnerButton from '../SpinnerButton/SpinnerButton'
-import { DialogContentProps } from '@mui/material'
+import { DialogContentProps } from '@mui/material/DialogContent'
 
 export type Step<TStepId = string> = {
   id: TStepId

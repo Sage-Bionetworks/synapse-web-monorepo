@@ -1,20 +1,17 @@
-import {
-  Box,
-  Stack,
-  SxProps,
-  Typography,
-  Button,
-  lighten,
-  useTheme,
-  FormControl,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
+import { SxProps } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
+import { lighten } from '@mui/material/styles'
+import { useTheme } from '@mui/material/styles'
+import FormControl from '@mui/material/FormControl'
+import MenuItem from '@mui/material/MenuItem'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 import PortalFullTextSearchField from './PortalSearch/PortalFullTextSearchField'
 import { spreadSx } from 'synapse-react-client/theme/spreadSx'
 import { useNavigate } from 'react-router'
-import { KeyboardArrowDown } from '@mui/icons-material'
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown'
 import { useState } from 'react'
 import {
   FTS_SEARCH_TERM,

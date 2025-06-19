@@ -1,5 +1,5 @@
 import { memo } from 'react'
-import { Typography } from '@mui/material'
+import Typography from '@mui/material/Typography'
 import { usePortalContext } from './PortalContext'
 
 function Header() {

@@ -1,5 +1,6 @@
 import ReturnArrow from '@/assets/ReturnArrow.svg?url'
-import { Link, Paper } from '@mui/material'
+import Link from '@mui/material/Link'
+import Paper from '@mui/material/Paper'
 import { Link as RouterLink } from 'react-router'
 import CertificationQuiz from 'synapse-react-client/components/CertificationQuiz/CertificationQuiz'
 import { MuiContainer } from 'synapse-react-client/components/MuiContainer'

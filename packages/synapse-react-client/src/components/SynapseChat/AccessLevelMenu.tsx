@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Box, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
 import DropdownSelect from '../DropdownSelect'
 

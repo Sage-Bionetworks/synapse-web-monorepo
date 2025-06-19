@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { DescriptionConfig } from '../CardContainerLogic'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
-import { Link } from '@mui/material'
+import Link from '@mui/material/Link'
 
 export const CHAR_COUNT_CUTOFF = 400
 

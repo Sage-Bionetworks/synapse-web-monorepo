@@ -1,5 +1,6 @@
 import { useGetAccessRequirementWikiPageKey } from '@/synapse-queries'
-import { GridLegacy as Grid, Typography } from '@mui/material'
+import Grid from '@mui/material/GridLegacy'
+import Typography from '@mui/material/Typography'
 import { PropsWithChildren } from 'react'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import { useCanShowManagedACTWikiInWizard } from '../AccessRequirementListUtils'

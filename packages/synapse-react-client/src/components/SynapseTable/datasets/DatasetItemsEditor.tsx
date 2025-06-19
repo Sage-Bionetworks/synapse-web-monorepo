@@ -14,14 +14,12 @@ import {
 } from '@/utils/functions/EntityTypeUtils'
 import { useSet } from '@/utils/hooks'
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
-import {
-  Alert,
-  Button,
-  Checkbox,
-  Skeleton,
-  Tooltip,
-  Typography,
-} from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Button from '@mui/material/Button'
+import Checkbox from '@mui/material/Checkbox'
+import Skeleton from '@mui/material/Skeleton'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import {
   EntityRef,
   EntityRefCollectionView,

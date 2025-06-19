@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { EvaluationEditor } from './EvaluationEditor'
 import { EvaluationRoundEditorList } from './EvaluationRoundEditorList'
-import { Alert, Button } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Button from '@mui/material/Button'
 
 export type EvaluationEditorPageProps = {
   /** Use if UPDATING an existing Evaluation. Id of the evaluation to edit */

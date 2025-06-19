@@ -20,7 +20,9 @@ import {
   AUTHENTICATED_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_ID,
 } from '@/utils/SynapseConstants'
-import { Alert, Link, Stack } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Link from '@mui/material/Link'
+import Stack from '@mui/material/Stack'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
   EntityType,

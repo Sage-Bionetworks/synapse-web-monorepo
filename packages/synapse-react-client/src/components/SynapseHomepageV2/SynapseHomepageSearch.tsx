@@ -1,18 +1,13 @@
 import { Search } from '@/assets/themed_icons'
 import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
 import { SynapseConstants } from '@/utils'
-import {
-  Autocomplete,
-  Box,
-  Color,
-  FormControl,
-  InputAdornment,
-  Popper,
-  PopperProps,
-  styled,
-  TextField,
-  useTheme,
-} from '@mui/material'
+import Autocomplete from '@mui/material/Autocomplete'
+import Box from '@mui/material/Box'
+import FormControl from '@mui/material/FormControl'
+import InputAdornment from '@mui/material/InputAdornment'
+import Popper, { PopperProps } from '@mui/material/Popper'
+import { Color, styled, useTheme } from '@mui/material/styles'
+import TextField from '@mui/material/TextField'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 

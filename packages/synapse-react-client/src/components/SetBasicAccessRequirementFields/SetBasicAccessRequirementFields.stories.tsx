@@ -3,7 +3,8 @@ import {
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
 } from '@/mocks/accessRequirement/mockAccessRequirements'
-import { Button, Paper } from '@mui/material'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
 import { Meta, StoryObj } from '@storybook/react'
 import { useRef, useState } from 'react'
 import {

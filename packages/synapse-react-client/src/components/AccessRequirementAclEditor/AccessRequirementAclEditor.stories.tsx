@@ -3,7 +3,8 @@ import { MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID } from '@/mocks/accessRequiremen
 import { getAllAccessRequirementAclHandlers } from '@/mocks/msw/handlers/accessRequirementAclHandlers'
 import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
-import { Button, Paper } from '@mui/material'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
 import { Meta, StoryObj } from '@storybook/react'
 import { useRef, useState } from 'react'
 import {

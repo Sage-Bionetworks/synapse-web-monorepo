@@ -1,4 +1,7 @@
-import { Box, Checkbox, FormControlLabel, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Typography from '@mui/material/Typography'
 import { useLocalStorageValue } from '@react-hookz/web'
 import { EXTERNAL_COMPUTE_ENV_DISCLAIMER } from '../../../utils/SynapseConstants'
 import ConfirmationDialog from '../../ConfirmationDialog/index'

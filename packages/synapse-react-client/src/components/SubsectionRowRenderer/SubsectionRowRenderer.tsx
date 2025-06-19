@@ -6,7 +6,7 @@ import {
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '@/utils/functions/SqlFunctions'
-import { Typography } from '@mui/material'
+import Typography from '@mui/material/Typography'
 import {
   ColumnType,
   ColumnTypeEnum,

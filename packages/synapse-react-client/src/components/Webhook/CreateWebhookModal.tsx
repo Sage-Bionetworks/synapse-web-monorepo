@@ -5,21 +5,19 @@ import {
 } from '@/synapse-queries/webhook/useWebhook'
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
 import SearchOutlined from '@mui/icons-material/SearchOutlined'
-import {
-  Alert,
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  Grid,
-  IconButton,
-  InputLabel,
-  Link,
-  Switch,
-  TextField,
-  Typography,
-} from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormGroup from '@mui/material/FormGroup'
+import Grid from '@mui/material/Grid'
+import IconButton from '@mui/material/IconButton'
+import InputLabel from '@mui/material/InputLabel'
+import Link from '@mui/material/Link'
+import Switch from '@mui/material/Switch'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import {
   ErrorResponseCode,
   SynapseEventType,

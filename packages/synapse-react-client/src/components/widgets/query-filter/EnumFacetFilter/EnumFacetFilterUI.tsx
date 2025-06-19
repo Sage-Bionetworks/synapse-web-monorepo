@@ -1,11 +1,9 @@
-import {
-  Checkbox,
-  Collapse,
-  FormControlLabel,
-  IconButton,
-  TextField,
-  Tooltip,
-} from '@mui/material'
+import Checkbox from '@mui/material/Checkbox'
+import Collapse from '@mui/material/Collapse'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import IconButton from '@mui/material/IconButton'
+import TextField from '@mui/material/TextField'
+import Tooltip from '@mui/material/Tooltip'
 import { createRef, RefObject, useMemo, useState } from 'react'
 import { FacetColumnResultValueCount } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../../IconSvg/IconSvg'

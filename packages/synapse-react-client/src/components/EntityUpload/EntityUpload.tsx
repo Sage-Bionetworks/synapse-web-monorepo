@@ -5,17 +5,15 @@ import {
   UploaderState,
   useUploadFileEntities,
 } from '@/utils/hooks/useUploadFileEntity/useUploadFileEntities'
-import {
-  Box,
-  Fade,
-  Link,
-  Menu,
-  MenuItem,
-  Paper,
-  Stack,
-  SxProps,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Fade from '@mui/material/Fade'
+import Link from '@mui/material/Link'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import Paper from '@mui/material/Paper'
+import Stack from '@mui/material/Stack'
+import { SxProps } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
 import { noop } from 'lodash-es'
 import pluralize from 'pluralize'
 import {

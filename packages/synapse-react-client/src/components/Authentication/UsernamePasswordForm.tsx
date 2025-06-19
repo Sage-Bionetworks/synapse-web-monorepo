@@ -1,6 +1,7 @@
 import { UseLoginReturn } from '@/utils/hooks'
 import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
-import { Button, Link } from '@mui/material'
+import Button from '@mui/material/Button'
+import Link from '@mui/material/Link'
 import { SyntheticEvent, useState } from 'react'
 import TextField from '../TextField/TextField'
 import PasswordField from './PasswordField'

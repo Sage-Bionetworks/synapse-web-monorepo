@@ -11,7 +11,8 @@ import {
   useGetWikiAttachments,
 } from '@/synapse-queries/wiki/useWiki'
 import { sanitize } from '@/utils/functions/SanitizeHtmlUtils'
-import { Link, Typography } from '@mui/material'
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
 import markdownitContainer from '@sage-bionetworks/markdown-it-container'
 import { ObjectType } from '@sage-bionetworks/synapse-types'
 import MarkdownIt from 'markdown-it'

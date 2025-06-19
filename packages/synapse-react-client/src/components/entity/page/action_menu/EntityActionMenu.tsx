@@ -1,4 +1,4 @@
-import { SxProps } from '@mui/material'
+import { SxProps } from '@mui/material/styles'
 import { ComplexMenu } from '../../../menu/ComplexMenu'
 import IconSvg, { IconName } from '../../../IconSvg/IconSvg'
 import { DropdownMenuItem, DropdownMenuProps } from '../../../menu/DropdownMenu'

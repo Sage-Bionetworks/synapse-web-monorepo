@@ -2,7 +2,7 @@ import {
   COLOR_PALETTE_EVEN,
   COLOR_PALETTE_ODD,
 } from '@/utils/functions/colorPalette'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import tinycolor from 'tinycolor2'
 
 type DivColorTextProps = {

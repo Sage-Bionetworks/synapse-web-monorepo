@@ -1,4 +1,5 @@
-import { Box, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import { useNavigate, useRevalidator } from 'react-router'
 import { backButtonSx } from '../components/BackButton.js'
 import { SourceAppDescription, SourceAppLogo } from '../components/SourceApp.js'

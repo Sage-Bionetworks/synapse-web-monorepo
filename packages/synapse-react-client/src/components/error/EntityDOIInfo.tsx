@@ -1,5 +1,6 @@
 import { useGetDOI } from '@/synapse-queries/doi/useDOI'
-import { Box, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import { DoiObjectType } from '@sage-bionetworks/synapse-client'
 
 export type EntityDOIInfoProps = {

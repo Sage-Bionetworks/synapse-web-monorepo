@@ -1,5 +1,5 @@
 import { useGetSubscribers } from '@/synapse-queries/subscription/useSubscription'
-import { Link } from '@mui/material'
+import Link from '@mui/material/Link'
 import { SubscriptionObjectType } from '@sage-bionetworks/synapse-types'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import { UserBadge } from '../UserCard/UserBadge'

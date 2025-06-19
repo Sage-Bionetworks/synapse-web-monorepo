@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { ThemeProvider } from '@mui/material'
+import { ThemeProvider } from '@mui/material/styles'
 import { createTheme } from '@mui/material/styles'
 import { withThemeFromJSXProvider } from '@storybook/addon-themes'
 import { Preview } from '@storybook/react'

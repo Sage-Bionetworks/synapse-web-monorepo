@@ -1,4 +1,6 @@
-import { Button, TextField, Typography } from '@mui/material'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { StyledFormControl } from '../components/StyledComponents'
 import { SyntheticEvent, useEffect, useState } from 'react'
 import {

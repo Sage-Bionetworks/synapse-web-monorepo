@@ -1,16 +1,14 @@
 import LightTooltip from '@/components/styled/LightTooltip'
-import { HelpOutlineTwoTone } from '@mui/icons-material'
-import {
-  Autocomplete,
-  Box,
-  Button,
-  Collapse,
-  List,
-  ListItem,
-  MenuItem,
-  TextField,
-  Typography,
-} from '@mui/material'
+import HelpOutlineTwoTone from '@mui/icons-material/HelpOutlineTwoTone'
+import Autocomplete from '@mui/material/Autocomplete'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Collapse from '@mui/material/Collapse'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import MenuItem from '@mui/material/MenuItem'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { Evaluation } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
 import { useEffect, useState } from 'react'

@@ -1,6 +1,6 @@
 import { useGetEntityBundle, useUpdateTableColumns } from '@/synapse-queries'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
-import { Alert } from '@mui/material'
+import Alert from '@mui/material/Alert'
 import { ColumnModel, ViewScope } from '@sage-bionetworks/synapse-types'
 import { isUndefined, noop, omitBy } from 'lodash-es'
 import { useCallback, useMemo, useRef } from 'react'

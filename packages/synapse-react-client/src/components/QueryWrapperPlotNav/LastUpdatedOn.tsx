@@ -1,5 +1,6 @@
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { Skeleton, Typography } from '@mui/material'
+import Skeleton from '@mui/material/Skeleton'
+import Typography from '@mui/material/Typography'
 import dayjs from 'dayjs'
 import { Suspense } from 'react'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'

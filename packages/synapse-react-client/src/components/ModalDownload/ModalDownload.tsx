@@ -1,7 +1,7 @@
 import SynapseClient from '@/synapse-client'
 import { SynapseContext } from '@/utils/context/SynapseContext'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
-import { Button } from '@mui/material'
+import Button from '@mui/material/Button'
 import Form, { IChangeEvent } from '@rjsf/core'
 import validator from '@rjsf/validator-ajv8'
 import {

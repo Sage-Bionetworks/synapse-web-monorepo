@@ -6,7 +6,10 @@ import {
 import { SynapseClientError, useSynapseContext } from '@/utils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
-import { Box, Button, Theme, useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import { Theme } from '@mui/material/styles'
+import { useTheme } from '@mui/material/styles'
 import {
   AccessRequirement,
   EntityBundle,

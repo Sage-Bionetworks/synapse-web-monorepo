@@ -3,7 +3,11 @@ import {
   useDisableTwoFactorAuth,
   useGetTwoFactorEnrollmentStatus,
 } from '@/synapse-queries/auth/useTwoFactorEnrollment'
-import { Box, Button, Skeleton, Stack, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Skeleton from '@mui/material/Skeleton'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import IconSvg from '../IconSvg/IconSvg'

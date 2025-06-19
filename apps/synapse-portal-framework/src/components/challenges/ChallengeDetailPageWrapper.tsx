@@ -1,4 +1,6 @@
-import { Link, Box, Skeleton } from '@mui/material'
+import Link from '@mui/material/Link'
+import Box from '@mui/material/Box'
+import Skeleton from '@mui/material/Skeleton'
 import {
   AppUtils,
   ChallengeDetailPage,

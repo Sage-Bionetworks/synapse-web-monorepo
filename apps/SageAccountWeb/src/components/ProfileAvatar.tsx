@@ -1,6 +1,8 @@
 import Slider from '@mui/material/Slider'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { Box, IconButton, SxProps } from '@mui/material'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import { SxProps } from '@mui/material/styles'
 import Cropper, { Area } from 'react-easy-crop'
 import Person from '@mui/icons-material/Person'
 import {

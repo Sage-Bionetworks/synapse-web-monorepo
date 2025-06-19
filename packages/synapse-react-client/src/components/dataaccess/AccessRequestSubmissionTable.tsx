@@ -1,7 +1,9 @@
 import { useSearchAccessSubmissionsInfinite } from '@/synapse-queries/dataaccess/useDataAccessSubmission'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
-import { Button, Stack, Typography } from '@mui/material'
+import Button from '@mui/material/Button'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import {
   SubmissionReviewerFilterType,
   SubmissionSearchRequest,

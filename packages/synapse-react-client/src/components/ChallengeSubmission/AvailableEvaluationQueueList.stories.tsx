@@ -3,7 +3,7 @@ import {
   mockEvaluationQueue,
   sevenGeneratedEvaulations,
 } from '@/mocks/entity/mockEvaluationQueue'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import AvailableEvaluationQueueList from './AvailableEvaluationQueueList'

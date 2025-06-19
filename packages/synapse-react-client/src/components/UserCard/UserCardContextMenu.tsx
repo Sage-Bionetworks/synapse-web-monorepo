@@ -1,5 +1,7 @@
 import { SEPERATOR } from '@/utils/SynapseConstants'
-import { Divider, Menu, MenuItem } from '@mui/material'
+import Divider from '@mui/material/Divider'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
 import { UserProfile } from '@sage-bionetworks/synapse-types'
 
 export type MenuAction = {

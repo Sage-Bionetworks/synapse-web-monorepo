@@ -1,5 +1,5 @@
 import UserOrTeamBadge from '../../UserOrTeamBadge'
-import { Stack } from '@mui/material'
+import Stack from '@mui/material/Stack'
 
 export type UserIdListProps = {
   userIds: string[]

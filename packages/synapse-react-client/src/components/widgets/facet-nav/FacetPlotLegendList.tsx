@@ -1,4 +1,6 @@
-import { Box, Tooltip, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { FacetPlotLegendProps } from './FacetPlotLegendUtils'
 
 export function FacetPlotLegendList(props: FacetPlotLegendProps) {

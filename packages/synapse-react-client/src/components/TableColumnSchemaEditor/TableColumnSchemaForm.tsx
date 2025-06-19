@@ -7,8 +7,10 @@ import {
   convertToConcreteEntityType,
   entityTypeToFriendlyName,
 } from '@/utils/functions/EntityTypeUtils'
-import { AddCircleTwoTone } from '@mui/icons-material'
-import { Box, Button, styled } from '@mui/material'
+import AddCircleTwoTone from '@mui/icons-material/AddCircleTwoTone'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import { styled } from '@mui/material/styles'
 import {
   ColumnModel,
   ColumnTypeEnum,

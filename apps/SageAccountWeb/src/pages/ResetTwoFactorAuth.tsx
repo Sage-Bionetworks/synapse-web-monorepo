@@ -1,4 +1,7 @@
-import { Alert, Box, Button, Typography } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import { TwoFactorAuthResetToken } from '@sage-bionetworks/synapse-types'
 import { useMemo, useState } from 'react'

@@ -68,18 +68,24 @@ declare module '@mui/material/styles' {
   }
 }
 
+type CustomButtonPropsColorOverrides = {
+  neutral: true
+  darkPrimary: true
+  lightPrimary: true
+  light: true
+}
+
+declare module '@mui/material/Button' {
+  interface ButtonPropsColorOverrides extends CustomButtonPropsColorOverrides {}
+}
+
 declare module '@mui/material' {
   interface Color {
     // MUI doesn't go up to 1000 but our palette does
     [1000]: string
   }
 
-  interface ButtonPropsColorOverrides {
-    neutral: true
-    darkPrimary: true
-    lightPrimary: true
-    light: true
-  }
+  interface ButtonPropsColorOverrides extends CustomButtonPropsColorOverrides {}
 }
 
 // Update the Typography's variant prop options

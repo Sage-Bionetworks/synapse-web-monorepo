@@ -1,5 +1,6 @@
 import { RJSFInputLabelWrapper } from '@/components/JsonSchemaForm/templates/RJSFInputLabel'
-import { Box, Button } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import {
   ADDITIONAL_PROPERTY_FLAG,
   ArrayFieldItemTemplateType,

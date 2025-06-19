@@ -1,13 +1,11 @@
 import { ReactNode, useMemo } from 'react'
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
-import {
-  FormControl,
-  MenuItem,
-  Select,
-  SelectProps,
-  TextField,
-  TextFieldProps,
-} from '@mui/material'
+import FormControl from '@mui/material/FormControl'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import { SelectProps } from '@mui/material/Select'
+import TextField from '@mui/material/TextField'
+import { TextFieldProps } from '@mui/material/TextField'
 import DateTimePicker from '../../DateTimePicker/DateTimePicker'
 import dayjs from 'dayjs'
 import FormHelperText from '@mui/material/FormHelperText'

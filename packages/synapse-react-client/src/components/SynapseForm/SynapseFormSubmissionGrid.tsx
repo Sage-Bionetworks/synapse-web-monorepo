@@ -6,7 +6,11 @@ import { useSynapseContext } from '@/utils'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
 import PhoneTwoToneIcon from '@mui/icons-material/PhoneTwoTone'
-import { Box, Button, IconButton, Link, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
 import {
   FormData,
   ListRequest,

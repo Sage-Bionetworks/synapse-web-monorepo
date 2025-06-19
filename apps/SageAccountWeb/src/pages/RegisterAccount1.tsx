@@ -3,14 +3,12 @@ import {
   VALID_USERNAME_DESCRIPTION,
   validateAlias,
 } from '@/utils/validateAlias'
-import {
-  Box,
-  Button,
-  Link,
-  TextField,
-  Typography,
-  useTheme,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Link from '@mui/material/Link'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import { useTheme } from '@mui/material/styles'
 import {
   AliasType,
   isMembershipInvtnSignedToken,

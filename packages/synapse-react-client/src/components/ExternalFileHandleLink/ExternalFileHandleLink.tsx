@@ -1,7 +1,7 @@
 import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { isExternalFileHandle, isFileEntity } from '@/utils/types/IsType'
-import { OpenInNewTwoTone } from '@mui/icons-material'
+import OpenInNewTwoTone from '@mui/icons-material/OpenInNewTwoTone'
 import {
   BatchFileRequest,
   ExternalFileHandle,

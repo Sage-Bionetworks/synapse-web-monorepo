@@ -3,7 +3,10 @@ import {
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
 import { hasAccessorRequirement } from './GovernanceUtils'
-import { Box, Checkbox, FormControlLabel, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Typography from '@mui/material/Typography'
 
 type AccessorRequirementsProps = {
   accessRequirement: AccessRequirement

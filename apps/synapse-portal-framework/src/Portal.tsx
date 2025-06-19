@@ -1,4 +1,5 @@
-import { createTheme, ThemeProvider } from '@mui/material'
+import { createTheme } from '@mui/material/styles'
+import { ThemeProvider } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { CookiesProvider } from 'react-cookie'

@@ -1,5 +1,5 @@
 import { mockManagedACTAccessRequirementWikiPage } from '@/mocks/mockWiki'
-import { Paper } from '@mui/material'
+import Paper from '@mui/material/Paper'
 import { Meta, StoryObj } from '@storybook/react'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import { displayToast } from '../../ToastMessage/ToastMessage'

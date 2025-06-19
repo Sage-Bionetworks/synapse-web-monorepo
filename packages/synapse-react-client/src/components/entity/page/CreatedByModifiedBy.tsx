@@ -11,17 +11,15 @@ import {
   isTable,
 } from '@/utils/functions/EntityTypeUtils'
 import { BUNDLE_MASK_LAST_UPDATED_ON } from '@/utils/SynapseConstants'
-import { InfoTwoTone } from '@mui/icons-material'
-import {
-  Box,
-  Breadcrumbs,
-  Skeleton,
-  SxProps,
-  Tooltip,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import InfoTwoTone from '@mui/icons-material/InfoTwoTone'
+import Box from '@mui/material/Box'
+import Breadcrumbs from '@mui/material/Breadcrumbs'
+import Skeleton from '@mui/material/Skeleton'
+import { SxProps } from '@mui/material/styles'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
 import dayjs from 'dayjs'
 import { UserBadge } from '../../UserCard/UserBadge'
 

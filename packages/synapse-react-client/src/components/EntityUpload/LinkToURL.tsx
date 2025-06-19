@@ -1,6 +1,10 @@
 import { useGetEntity } from '@/synapse-queries/index'
 import { useLinkFileEntityToURL } from '@/utils/hooks/useUploadFileEntity/useLinkFileEntityToURL'
-import { Alert, Box, Stack, TextField, Typography } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { FileEntity } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
 import {

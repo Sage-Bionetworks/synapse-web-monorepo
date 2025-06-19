@@ -1,6 +1,7 @@
 import { CustomFormContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import { Widget, WidgetProps, EnumOptionsType } from '@rjsf/utils'
-import { Autocomplete, TextField } from '@mui/material'
+import Autocomplete from '@mui/material/Autocomplete'
+import TextField from '@mui/material/TextField'
 import { createFilterOptions } from '@mui/material/Autocomplete'
 import { isObject } from 'lodash-es'
 

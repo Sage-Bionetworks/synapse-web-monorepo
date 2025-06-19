@@ -1,5 +1,6 @@
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { TextField, TextFieldProps } from '@mui/material'
+import TextField from '@mui/material/TextField'
+import { TextFieldProps } from '@mui/material/TextField'
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { useMemo, useState } from 'react'

@@ -1,11 +1,8 @@
 import { useState } from 'react'
 import SearchIcon from '@mui/icons-material/Search'
-import {
-  InputAdornment,
-  TextField,
-  TextFieldProps,
-  useTheme,
-} from '@mui/material'
+import InputAdornment from '@mui/material/InputAdornment'
+import TextField, { TextFieldProps } from '@mui/material/TextField'
+import { useTheme } from '@mui/material/styles'
 import { useSearchParams, useNavigate } from 'react-router'
 import {
   FTS_SEARCH_TERM,

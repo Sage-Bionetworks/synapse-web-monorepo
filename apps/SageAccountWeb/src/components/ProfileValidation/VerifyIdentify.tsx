@@ -4,7 +4,9 @@ import { VerificationSubmission } from '@sage-bionetworks/synapse-types'
 import CheckIcon from '@mui/icons-material/Check'
 //agendelTODO: mobe to sage account page
 //import { UnbindORCiDDialog } from 'components/ProfileValidation/UnbindORCiD'
-import { Box, Typography, useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import { useTheme } from '@mui/material/styles'
 import { ContinueButton } from './ContinueButton'
 
 import { ReturnToAppButton } from './ReturnToAppButton'

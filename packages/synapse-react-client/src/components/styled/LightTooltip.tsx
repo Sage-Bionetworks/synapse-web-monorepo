@@ -1,10 +1,8 @@
-import {
-  Tooltip,
-  TooltipProps,
-  tooltipClasses,
-  styled,
-  linkClasses,
-} from '@mui/material'
+import Tooltip from '@mui/material/Tooltip'
+import { TooltipProps } from '@mui/material/Tooltip'
+import { tooltipClasses } from '@mui/material/Tooltip'
+import { styled } from '@mui/material/styles'
+import { linkClasses } from '@mui/material/Link'
 import { StyledComponent } from '@emotion/styled'
 
 export const LightTooltip: StyledComponent<TooltipProps> = styled(

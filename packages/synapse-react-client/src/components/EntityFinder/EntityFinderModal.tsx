@@ -1,5 +1,6 @@
 import { hasDifference } from '@/utils/functions/ArrayUtils'
-import { Box, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import { Reference } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo, useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog'

@@ -7,7 +7,11 @@ import {
 } from '@/synapse-queries'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { isTermsOfUseAccessRequirement } from '@/utils/types/IsType'
-import { Alert, Box, ButtonProps, Link, Typography } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import { ButtonProps } from '@mui/material/Button'
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
 import {
   ApprovalState,
   CreateAccessApprovalRequest,

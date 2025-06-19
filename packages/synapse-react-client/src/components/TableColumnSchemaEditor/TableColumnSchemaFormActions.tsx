@@ -1,14 +1,14 @@
 import { useGetAnnotationColumnModels } from '@/synapse-queries/table/useColumnModel'
-import { Healing, North, South } from '@mui/icons-material'
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  Checkbox,
-  Link,
-  Tooltip,
-  Typography,
-} from '@mui/material'
+import Healing from '@mui/icons-material/Healing'
+import North from '@mui/icons-material/North'
+import South from '@mui/icons-material/South'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import ButtonGroup from '@mui/material/ButtonGroup'
+import Checkbox from '@mui/material/Checkbox'
+import Link from '@mui/material/Link'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { useAtomValue, useSetAtom } from 'jotai/index'
 import pluralize from 'pluralize'
 import { useState } from 'react'

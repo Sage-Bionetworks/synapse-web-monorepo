@@ -1,5 +1,7 @@
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt'
-import { Button, ButtonProps, useTheme } from '@mui/material'
+import Button from '@mui/material/Button'
+import { ButtonProps } from '@mui/material/Button'
+import { useTheme } from '@mui/material/styles'
 
 export function ContinueButton(props: ButtonProps) {
   const theme = useTheme()

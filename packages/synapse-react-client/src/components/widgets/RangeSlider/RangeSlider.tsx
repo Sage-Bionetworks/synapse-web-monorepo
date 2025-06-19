@@ -1,13 +1,10 @@
-import { RangeValues } from '../Range'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Slider, { SliderValueLabelProps } from '@mui/material/Slider'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { PropsWithChildren, useState } from 'react'
-import {
-  Box,
-  Button,
-  Slider,
-  SliderValueLabelProps,
-  Tooltip,
-  Typography,
-} from '@mui/material'
+import { RangeValues } from '../Range'
 
 export type RangeSliderProps = PropsWithChildren<{
   domain: string[]

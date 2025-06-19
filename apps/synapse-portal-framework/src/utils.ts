@@ -1,5 +1,5 @@
 import { useMediaQuery } from '@react-hookz/web'
-import { SxProps } from '@mui/material'
+import { SxProps } from '@mui/material/styles'
 
 // This code scrolls an element into view, and accounts for the fixed top nav bar height.
 export const scrollToWithOffset = (el: HTMLElement) => {

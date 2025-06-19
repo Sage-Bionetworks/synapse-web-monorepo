@@ -1,12 +1,10 @@
 import { useGetEvaluation } from '@/synapse-queries/evaluation/useEvaluation'
-import {
-  Alert,
-  Box,
-  IconButton,
-  Link,
-  Skeleton,
-  Typography,
-} from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import Link from '@mui/material/Link'
+import Skeleton from '@mui/material/Skeleton'
+import Typography from '@mui/material/Typography'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import EvaluationFinder from '../EvaluationFinder/EvaluationFinder'
 import IconSvg from '../IconSvg'

@@ -11,15 +11,13 @@ import {
   useSynapseContext,
 } from '@/utils'
 import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
-import {
-  Badge,
-  Drawer,
-  InputAdornment,
-  List,
-  ListItemButton,
-  TextField,
-  Tooltip,
-} from '@mui/material'
+import Badge from '@mui/material/Badge'
+import Drawer from '@mui/material/Drawer'
+import InputAdornment from '@mui/material/InputAdornment'
+import List from '@mui/material/List'
+import ListItemButton from '@mui/material/ListItemButton'
+import TextField from '@mui/material/TextField'
+import Tooltip from '@mui/material/Tooltip'
 import {
   Direction,
   SubmissionSortField,

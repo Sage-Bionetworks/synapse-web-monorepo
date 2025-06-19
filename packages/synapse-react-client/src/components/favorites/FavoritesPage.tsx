@@ -6,7 +6,9 @@ import {
   entityTypeToFriendlyName,
 } from '@/utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { InputAdornment, Stack, TextField } from '@mui/material'
+import InputAdornment from '@mui/material/InputAdornment'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import {
   createColumnHelper,

@@ -1,7 +1,8 @@
 import { useGetCurrentUserProfile } from '@/synapse-queries'
 import { SynapseConstants, useSynapseContext } from '@/utils'
 import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
-import { Link, Typography } from '@mui/material'
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 import RequirementItem from './RequirementItem'
 

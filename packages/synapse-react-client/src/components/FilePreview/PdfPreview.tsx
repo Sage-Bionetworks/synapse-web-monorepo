@@ -1,7 +1,7 @@
 import SynapseClient from '@/synapse-client'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
-import { Alert } from '@mui/material'
+import Alert from '@mui/material/Alert'
 import {
   FileHandle,
   FileHandleAssociation,

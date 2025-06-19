@@ -1,7 +1,8 @@
 import SynapseClient from '@/synapse-client'
 import { useGetAccessRequirements } from '@/synapse-queries/dataaccess/useAccessRequirements'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { Skeleton, useTheme } from '@mui/material'
+import Skeleton from '@mui/material/Skeleton'
+import { useTheme } from '@mui/material/styles'
 import AsyncSelect from 'react-select/async'
 
 export type AccessRequirementSearchBoxProps = {

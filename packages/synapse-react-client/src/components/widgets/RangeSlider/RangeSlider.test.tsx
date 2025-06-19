@@ -1,7 +1,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import RangeSlider, { RangeSliderProps } from './RangeSlider'
-import { Slider } from '@mui/material'
+import Slider from '@mui/material/Slider'
 
 const mockOnChange = vi.fn()
 const mockOnApplyClicked = vi.fn()

@@ -1,5 +1,5 @@
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { Link } from '@mui/material'
+import Link from '@mui/material/Link'
 import { TargetEnum } from '@/utils/html/TargetEnum'
 import { bioregistryRules } from './BioregistryRules'
 

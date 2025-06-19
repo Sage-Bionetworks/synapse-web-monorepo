@@ -1,6 +1,6 @@
 import { mockFolderEntity } from '@/mocks/entity/mockEntity'
 import mockProject from '@/mocks/entity/mockProject'
-import { Paper } from '@mui/material'
+import Paper from '@mui/material/Paper'
 import { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 import EntityViewScopeEditor from './EntityViewScopeEditor'

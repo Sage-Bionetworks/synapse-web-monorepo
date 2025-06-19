@@ -1,4 +1,5 @@
-import { Button, SxProps } from '@mui/material'
+import Button from '@mui/material/Button'
+import { SxProps } from '@mui/material/styles'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 export type TermsAndConditionsLinkProps = {

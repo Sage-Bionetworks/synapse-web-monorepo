@@ -1,6 +1,9 @@
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { Optional } from '@/utils/types/Optional'
-import { Box, Button, Collapse, Stack } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Collapse from '@mui/material/Collapse'
+import Stack from '@mui/material/Stack'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { PropsWithChildren, useState } from 'react'
 import {

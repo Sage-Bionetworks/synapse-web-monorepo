@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Button, ButtonProps } from '@mui/material'
+import Button from '@mui/material/Button'
+import { ButtonProps } from '@mui/material/Button'
 import { CustomControl, CustomControlCallbackData } from './TopLevelControls'
 import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 

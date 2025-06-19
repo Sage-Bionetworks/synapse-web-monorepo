@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import SubmissionViewScopeEditor from './SubmissionViewScopeEditor'
-import { Paper } from '@mui/material'
+import Paper from '@mui/material/Paper'
 import { useState } from 'react'
 
 const meta: Meta = {

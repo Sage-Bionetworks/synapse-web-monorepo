@@ -1,12 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react'
-import {
-  Checkbox,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  Stack,
-} from '@mui/material'
-
+import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import Stack from '@mui/material/Stack'
 const meta: Meta = {
   title: 'UI/Checkbox & Radio',
   parameters: {

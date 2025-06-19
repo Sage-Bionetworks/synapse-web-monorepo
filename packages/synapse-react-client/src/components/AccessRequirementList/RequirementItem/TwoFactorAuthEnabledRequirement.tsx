@@ -4,7 +4,8 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { ButtonProps, Typography } from '@mui/material'
+import { ButtonProps } from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
 import { TWO_FACTOR_DOCS_LINK } from '../../Authentication/TwoFactorEnrollmentForm'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'

@@ -10,7 +10,7 @@ import { ReactComponent as NihHeart } from '@/assets/homepage/nih-heart.svg'
 import { ReactComponent as NihMental } from '@/assets/homepage/nih-mental.svg'
 import { ReactComponent as Ntap } from '@/assets/homepage/ntap.svg'
 import { ReactComponent as Sloan } from '@/assets/homepage/sloan.svg'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 
 export function SynapsePartners() {
   return (

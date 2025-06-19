@@ -1,5 +1,7 @@
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
-import { IconButton, IconButtonProps, Tooltip } from '@mui/material'
+import IconButton from '@mui/material/IconButton'
+import { IconButtonProps } from '@mui/material/IconButton'
+import Tooltip from '@mui/material/Tooltip'
 import { createRef, RefObject, SyntheticEvent, useState } from 'react'
 import IconSvg from './IconSvg'
 import { ToastMessage } from './ToastMessage/ToastMessage'

@@ -1,12 +1,10 @@
 import IconSvg from '@/components/IconSvg/IconSvg'
 import { truncateString } from '@/utils/functions/StringUtils'
-import {
-  Breadcrumbs as MuiBreadcrumbs,
-  Link,
-  SxProps,
-  Tooltip,
-  Typography,
-} from '@mui/material'
+import MuiBreadcrumbs from '@mui/material/Breadcrumbs'
+import Link from '@mui/material/Link'
+import { SxProps } from '@mui/material/styles'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { MouseEventHandler } from 'react'
 import { Link as RouterLink } from 'react-router'
 

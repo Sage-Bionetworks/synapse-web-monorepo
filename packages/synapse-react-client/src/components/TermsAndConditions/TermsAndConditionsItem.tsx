@@ -1,6 +1,7 @@
 import { CheckIcon } from '@/assets/icons/terms/CheckIcon'
 import { useGetPresignedUrlContentFromFHA } from '@/synapse-queries/file/useFiles'
-import { Link, Skeleton } from '@mui/material'
+import Link from '@mui/material/Link'
+import Skeleton from '@mui/material/Skeleton'
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { times } from 'lodash-es'
 import { MouseEvent, useEffect, useState } from 'react'

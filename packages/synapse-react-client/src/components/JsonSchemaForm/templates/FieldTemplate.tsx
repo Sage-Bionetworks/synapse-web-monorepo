@@ -1,5 +1,6 @@
 import { RJSFInputLabelWrapper } from '@/components/JsonSchemaForm/templates/RJSFInputLabel'
-import { GridLegacy as Grid, InputLabel } from '@mui/material'
+import Grid from '@mui/material/GridLegacy'
+import InputLabel from '@mui/material/InputLabel'
 import {
   FieldTemplateProps,
   FormContextType,

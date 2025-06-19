@@ -1,13 +1,11 @@
 import { DetailsPageProps } from '@/types/portal-util-types'
 import { useGetPortalComponentSearchParams } from '@/utils/UseGetPortalComponentSearchParams'
-import {
-  Box,
-  Button,
-  Container,
-  Stack,
-  Typography,
-  useTheme,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Container from '@mui/material/Container'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import { useTheme } from '@mui/material/styles'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import { useMemo } from 'react'

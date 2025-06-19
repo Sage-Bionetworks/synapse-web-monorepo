@@ -1,6 +1,6 @@
 import { useOneSageURL } from '@/utils/hooks'
 import { SAGE_OFFERINGS_HELP_URL } from '@/utils/SynapseConstants'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { SynapsePlan } from './SynapsePlan'
 import { SynapsePlanContent } from './SynapsePlanContent'
 

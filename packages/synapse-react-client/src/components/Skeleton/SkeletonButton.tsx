@@ -1,4 +1,5 @@
-import { Button, Skeleton } from '@mui/material'
+import Button from '@mui/material/Button'
+import Skeleton from '@mui/material/Skeleton'
 
 type SkeletonButtonProps = { placeholderText?: string }
 

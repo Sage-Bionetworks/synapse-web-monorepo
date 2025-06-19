@@ -1,4 +1,4 @@
-import { MenuItem } from '@mui/material'
+import MenuItem from '@mui/material/MenuItem'
 import { SelectColumn } from '@sage-bionetworks/synapse-types'
 import { CSSProperties } from 'react'
 import IconSvg from '../../IconSvg/IconSvg'

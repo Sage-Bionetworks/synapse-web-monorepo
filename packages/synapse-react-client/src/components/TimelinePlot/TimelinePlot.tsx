@@ -7,8 +7,9 @@ import {
 import { getHeaderIndex } from '@/utils/functions/queryUtils'
 import useRefDimensions from '@/utils/hooks/useRefDimensions'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
-import { Skeleton, Typography } from '@mui/material'
-import { Box } from '@mui/system'
+import Skeleton from '@mui/material/Skeleton'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
 import {
   ColumnMultiValueFunction,
   ColumnMultiValueFunctionQueryFilter,

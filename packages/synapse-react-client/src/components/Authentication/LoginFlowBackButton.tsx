@@ -1,6 +1,7 @@
 import { UseLoginReturn } from '@/utils/hooks'
 import { LOGIN_BACK_BUTTON_CLASS_NAME } from '@/utils/SynapseConstants'
-import { IconButton, SxProps } from '@mui/material'
+import IconButton from '@mui/material/IconButton'
+import { SxProps } from '@mui/material/styles'
 import IconSvg from '../IconSvg/IconSvg'
 
 type LoginFormBackButtonProps = {

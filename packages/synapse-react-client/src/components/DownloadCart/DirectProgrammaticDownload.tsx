@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Tooltip } from '@mui/material'
+import Tooltip from '@mui/material/Tooltip'
 import IconSvg from '../IconSvg/IconSvg'
 import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'

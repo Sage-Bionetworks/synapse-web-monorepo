@@ -1,4 +1,7 @@
-import { Box, CardMedia, Fade, Slide } from '@mui/material'
+import Box from '@mui/material/Box'
+import CardMedia from '@mui/material/CardMedia'
+import Fade from '@mui/material/Fade'
+import Slide from '@mui/material/Slide'
 import React from 'react'
 import { useInView } from 'react-intersection-observer'
 import PortalSectionHeader from '../PortalSectionHeader'

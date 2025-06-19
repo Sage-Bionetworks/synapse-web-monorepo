@@ -1,5 +1,5 @@
 import { useGetEntity, useUpdateEntity } from '@/synapse-queries'
-import { Alert } from '@mui/material'
+import Alert from '@mui/material/Alert'
 import {
   ENTITY_VIEW_TYPE_MASK_PROJECT,
   EntityView,

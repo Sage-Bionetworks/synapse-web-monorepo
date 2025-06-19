@@ -1,20 +1,15 @@
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
-import {
-  CheckCircleTwoTone,
-  DeleteTwoTone,
-  ErrorTwoTone,
-  Pause,
-  PlayArrow,
-} from '@mui/icons-material'
+import CheckCircleTwoTone from '@mui/icons-material/CheckCircleTwoTone'
+import DeleteTwoTone from '@mui/icons-material/DeleteTwoTone'
+import ErrorTwoTone from '@mui/icons-material/ErrorTwoTone'
+import Pause from '@mui/icons-material/Pause'
+import PlayArrow from '@mui/icons-material/PlayArrow'
 import CloseIcon from '@mui/icons-material/Close'
-import {
-  Box,
-  IconButton,
-  LinearProgress,
-  Tooltip,
-  Typography,
-} from '@mui/material'
-
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import LinearProgress from '@mui/material/LinearProgress'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 export type FileUploadProgressProps = {
   /** The status of the upload. */
   status:

@@ -1,6 +1,7 @@
 import { OAuth2State } from '@/utils'
 import useLogin from '@/utils/hooks/useLogin'
-import { Box, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import {
   RECOVERY_CODE_GUIDANCE_TEXT_SHORT,

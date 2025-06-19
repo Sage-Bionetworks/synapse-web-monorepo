@@ -1,4 +1,5 @@
-import { ButtonProps, Typography } from '@mui/material'
+import { ButtonProps } from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import { upperFirst } from 'lodash-es'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useExportTableQueryToAnalysisPlatform } from '../../../synapse-queries/entity/useExportTableQueryToAnalysisPlatform'

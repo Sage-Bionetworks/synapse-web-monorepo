@@ -1,4 +1,4 @@
-import { ThemeOptions } from '@mui/material'
+import type { ThemeOptions } from '@mui/material/styles'
 import defaultMuiThemeOptions from './DefaultTheme'
 import { PartialDeep } from 'type-fest'
 import { mergeTheme } from './mergeTheme'

@@ -1,7 +1,12 @@
 import EvaluationQueueCurrentRoundInfo from '@/components/ChallengeSubmission/EvaluationQueueCurrentRoundInfo'
 import { useGetEntityEvaluations } from '@/synapse-queries'
-import { Alert, Box, Radio, TextField, Typography } from '@mui/material'
-import { DataGrid, GridColDef } from '@mui/x-data-grid'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Radio from '@mui/material/Radio'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import { DataGrid } from '@mui/x-data-grid/DataGrid'
+import { GridColDef } from '@mui/x-data-grid/models'
 import { ACCESS_TYPE, Evaluation } from '@sage-bionetworks/synapse-types'
 
 type EvaluationQueueListProps = {

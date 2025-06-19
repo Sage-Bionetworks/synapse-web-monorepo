@@ -1,6 +1,7 @@
 import { PropsWithChildren } from 'react'
-import { Button, Typography } from '@mui/material'
-import { Box } from '@mui/material'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
 import { darkTextColor, homepageBodyText } from './SynapseHomepageV2'
 
 export type SynapsePlanProps = {

@@ -1,6 +1,7 @@
 import { StyledComponent } from '@emotion/styled'
-import { Box, BoxProps, styled } from '@mui/material'
-
+import Box from '@mui/material/Box'
+import { BoxProps } from '@mui/material/Box'
+import { styled } from '@mui/material/styles'
 /**
  * Drop in MUI substitute class for Bootstrap Container component
  */

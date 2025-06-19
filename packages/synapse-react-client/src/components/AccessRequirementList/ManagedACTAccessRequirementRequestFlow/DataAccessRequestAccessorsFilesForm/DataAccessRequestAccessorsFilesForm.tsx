@@ -1,18 +1,15 @@
-import { NewReleasesOutlined } from '@mui/icons-material'
-import {
-  Alert,
-  AlertProps as MuiAlertProps,
-  Box,
-  Button,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  IconButton,
-  Link,
-  Stack,
-  Typography,
-} from '@mui/material'
+import NewReleasesOutlined from '@mui/icons-material/NewReleasesOutlined'
+import Alert, { AlertProps as MuiAlertProps } from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import Link from '@mui/material/Link'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import { deepEquals } from '@rjsf/utils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {

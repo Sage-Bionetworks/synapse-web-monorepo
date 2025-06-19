@@ -5,7 +5,10 @@ import {
   isVersionableEntity,
 } from '@/utils/functions/EntityTypeUtils'
 import { truncateString } from '@/utils/functions/StringUtils'
-import { Box, Link, Tooltip, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Link from '@mui/material/Link'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 import { Entity } from '@sage-bionetworks/synapse-types'
 import { ActionConfiguration } from '../action_menu/EntityActionMenu'
 

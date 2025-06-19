@@ -8,7 +8,7 @@ import {
 } from '@/utils/functions'
 import { isTable } from '@/utils/functions/EntityTypeUtils'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'

@@ -1,6 +1,8 @@
 import { SyntheticEvent, useState } from 'react'
 import { SourceAppLogo } from '../components/SourceApp'
-import { Box, Button, useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import { useTheme } from '@mui/material/styles'
 import {
   StyledInnerContainer,
   StyledOuterContainer,

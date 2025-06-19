@@ -1,5 +1,6 @@
 import { PermissionLevel } from '@/utils/PermissionLevelToAccessType'
-import { Stack, Typography } from '@mui/material'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
 import { IconSvgButton } from '../IconSvgButton'
 import UserOrTeamBadge from '../UserOrTeamBadge'

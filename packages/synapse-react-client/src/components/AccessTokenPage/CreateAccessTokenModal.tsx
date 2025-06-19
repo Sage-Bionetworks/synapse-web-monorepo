@@ -1,5 +1,8 @@
 import { useCreatePersonalAccessToken } from '@/synapse-queries/user/usePersonalAccessToken'
-import { Checkbox, FormControlLabel, Stack, Typography } from '@mui/material'
+import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import {
   AccessTokenGenerationRequest,
   scopeDescriptions,

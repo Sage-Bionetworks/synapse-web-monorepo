@@ -4,15 +4,13 @@ import { getFieldIndex } from '@/utils/functions/queryUtils'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import { useImageUrl } from '@/utils/hooks/useImageUrlUtils'
 import * as SynapseConstants from '@/utils/SynapseConstants'
-import {
-  Box,
-  CardMedia,
-  Fade,
-  Link,
-  Skeleton,
-  Stack,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import CardMedia from '@mui/material/CardMedia'
+import Fade from '@mui/material/Fade'
+import Link from '@mui/material/Link'
+import Skeleton from '@mui/material/Skeleton'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { useInView } from 'react-intersection-observer'

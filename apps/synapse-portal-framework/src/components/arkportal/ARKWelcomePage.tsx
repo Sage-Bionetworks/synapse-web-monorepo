@@ -1,5 +1,5 @@
 import Layout from '@/components/Layout'
-import { Typography } from '@mui/material'
+import Typography from '@mui/material/Typography'
 import logoPath from './assets/arklogomark.png'
 
 const ARKWelcomePage = () => {

@@ -1,5 +1,5 @@
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
-import { styled } from '@mui/material'
+import { styled } from '@mui/material/styles'
 import { Color } from '@mui/material/styles'
 
 export const LiveIcon = (props: SvgIconProps) => {

@@ -1,6 +1,6 @@
 import IconMinus from '@/assets/icons/IconMinus'
 import IconPlus from '@/assets/icons/IconPlus'
-import { IconButton } from '@mui/material'
+import IconButton from '@mui/material/IconButton'
 
 export type FacetFilterHeaderProps = {
   label: string

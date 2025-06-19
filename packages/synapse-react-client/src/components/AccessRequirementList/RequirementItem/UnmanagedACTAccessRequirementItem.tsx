@@ -4,7 +4,10 @@ import {
 } from '@/synapse-queries'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { Box, ButtonProps, Link, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import { ButtonProps } from '@mui/material/Button'
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
 import {
   ACTAccessRequirement,
   RestrictableObjectType,

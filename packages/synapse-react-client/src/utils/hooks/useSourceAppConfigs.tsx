@@ -1,7 +1,7 @@
 import SourceAppImage from '@/components/SourceAppImage'
 import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
 import Palettes from '@/theme/palette/Palettes'
-import { PaletteOptions } from '@mui/material'
+import { PaletteOptions } from '@mui/material/styles'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../SynapseConstants'
 import { QueryFilter } from '@sage-bionetworks/synapse-types'
 

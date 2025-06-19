@@ -1,5 +1,5 @@
 import WideButton from '@/components/styled/WideButton'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { useEffect } from 'react'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { useSuspenseGetQueryMetadata } from './useGetQueryMetadata'

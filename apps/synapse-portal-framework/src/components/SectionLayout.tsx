@@ -1,5 +1,7 @@
 import { scrollToWithOffset } from '@/utils'
-import { Box, Container, ContainerProps } from '@mui/material'
+import Box from '@mui/material/Box'
+import Container from '@mui/material/Container'
+import { ContainerProps } from '@mui/material/Container'
 import { PropsWithChildren, useEffect, useRef } from 'react'
 import { useLocation } from 'react-router'
 import { HelpPopover } from 'synapse-react-client/components/HelpPopover/HelpPopover'

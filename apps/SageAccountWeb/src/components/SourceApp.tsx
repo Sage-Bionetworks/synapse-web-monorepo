@@ -1,4 +1,6 @@
-import { Box, BoxProps, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import { BoxProps } from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import Skeleton from '@mui/material/Skeleton'
 import { useSourceApp } from './useSourceApp'
 import { SkeletonTable } from 'synapse-react-client/components/Skeleton/SkeletonTable'

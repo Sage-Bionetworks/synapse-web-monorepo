@@ -1,4 +1,5 @@
-import { Collapse, TextField } from '@mui/material'
+import Collapse from '@mui/material/Collapse'
+import TextField from '@mui/material/TextField'
 import {
   ChangeEvent,
   SyntheticEvent,

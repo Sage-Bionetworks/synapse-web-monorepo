@@ -4,7 +4,8 @@ import {
   SetAccessRequirementCommonFields,
   SetAccessRequirementCommonFieldsHandle,
 } from './SetAccessRequirementCommonFields'
-import { Button, Paper } from '@mui/material'
+import Button from '@mui/material/Button'
+import Paper from '@mui/material/Paper'
 import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
 
 const meta: Meta<typeof SetAccessRequirementCommonFields> = {

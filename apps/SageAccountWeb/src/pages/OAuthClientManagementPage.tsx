@@ -1,6 +1,8 @@
 import { SourceAppLogo } from '@/components/SourceApp'
 import { StyledOuterContainer } from '@/components/StyledComponents'
-import { Box, Paper, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Paper from '@mui/material/Paper'
+import Typography from '@mui/material/Typography'
 import { BackButton } from '@/components/BackButton'
 import {
   SourceAppProvider,

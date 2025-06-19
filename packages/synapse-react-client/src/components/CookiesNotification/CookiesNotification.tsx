@@ -10,7 +10,8 @@ import {
   URL_TERMS_CONDITIONS_AGREEMENT,
   CHILD_MINOR_ADDENDUM_LINK,
 } from '@/utils/SynapseConstants'
-import { Link, Typography } from '@mui/material'
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import UniversalCookies from 'universal-cookie'
 import FullWidthAlert from '../FullWidthAlert'

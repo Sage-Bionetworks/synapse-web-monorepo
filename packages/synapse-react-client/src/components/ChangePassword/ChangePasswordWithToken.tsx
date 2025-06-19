@@ -1,5 +1,7 @@
 import { validatePassword } from '@/utils/functions/StringUtils'
-import { Alert, Button, TextField } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Button from '@mui/material/Button'
+import TextField from '@mui/material/TextField'
 import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
 import { FormEvent, useState } from 'react'
 import { displayToast } from '../ToastMessage'

@@ -1,4 +1,8 @@
-import { Box, Stack, Typography, Link, Card } from '@mui/material'
+import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
+import Link from '@mui/material/Link'
+import Card from '@mui/material/Card'
 import { Link as RouterLink } from 'react-router'
 
 type CardGridWithLinksConfig = {

@@ -10,7 +10,9 @@ import {
   useGetMembershipStatus,
 } from '@/synapse-queries/team/useTeamMembers'
 import { SynapseClientError, useSynapseContext } from '@/utils'
-import { Alert, Button, Typography } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
 import { isEmpty } from 'lodash-es'
 import { useCallback } from 'react'

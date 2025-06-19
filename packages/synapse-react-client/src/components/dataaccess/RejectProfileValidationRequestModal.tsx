@@ -1,6 +1,6 @@
 import { useUpdateVerificationSubmission } from '@/synapse-queries/verificationSubmission/useVerificationSubmission'
 import { REJECT_VALIDATION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstants'
-import { TextField } from '@mui/material'
+import TextField from '@mui/material/TextField'
 import { VerificationStateEnum } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
 import { useState } from 'react'

@@ -1,5 +1,5 @@
-import { AddAlertTwoTone } from '@mui/icons-material'
-import { Link } from '@mui/material'
+import AddAlertTwoTone from '@mui/icons-material/AddAlertTwoTone'
+import Link from '@mui/material/Link'
 import { HomePageHeaderConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 
 const homePageHeader: HomePageHeaderConfig = {

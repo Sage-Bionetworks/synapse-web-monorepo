@@ -3,7 +3,7 @@ import { displayToast } from '../ToastMessage'
 import TwoFactorAuthSettingsPanel, {
   TwoFactorAuthSettingsPanelProps,
 } from './TwoFactorAuthSettingsPanel'
-import { Paper } from '@mui/material'
+import Paper from '@mui/material/Paper'
 
 const meta: Meta<TwoFactorAuthSettingsPanelProps> = {
   title: 'Authentication/TwoFactorSettingsPanel',

@@ -3,7 +3,8 @@ import {
   AUTHENTICATED_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_ID,
 } from '@/utils/SynapseConstants'
-import { Box, Link } from '@mui/material'
+import Box from '@mui/material/Box'
+import Link from '@mui/material/Link'
 import IconSvg, { IconName } from './IconSvg/IconSvg'
 
 export const AUTHENTICATED_GROUP_DISPLAY_TEXT = 'All registered Synapse users'

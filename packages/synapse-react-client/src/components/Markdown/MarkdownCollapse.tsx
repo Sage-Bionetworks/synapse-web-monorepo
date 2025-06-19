@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
 import { displayToast } from '../ToastMessage/ToastMessage'
-import { Box, Collapse, SxProps, Typography } from '@mui/material'
-import {
-  ContentCopyTwoTone,
-  KeyboardArrowDownTwoTone,
-  KeyboardArrowUpTwoTone,
-} from '@mui/icons-material'
+import Box from '@mui/material/Box'
+import Collapse from '@mui/material/Collapse'
+import { SxProps } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
+import ContentCopyTwoTone from '@mui/icons-material/ContentCopyTwoTone'
+import KeyboardArrowDownTwoTone from '@mui/icons-material/KeyboardArrowDownTwoTone'
+import KeyboardArrowUpTwoTone from '@mui/icons-material/KeyboardArrowUpTwoTone'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 export type MarkdownCollapseProps = {

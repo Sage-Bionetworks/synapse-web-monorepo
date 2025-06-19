@@ -1,6 +1,7 @@
 import { getFiles } from '@/synapse-client/SynapseClient'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { Button, ButtonProps } from '@mui/material'
+import Button from '@mui/material/Button'
+import { ButtonProps } from '@mui/material/Button'
 import {
   BatchFileRequest,
   FileHandleAssociation,

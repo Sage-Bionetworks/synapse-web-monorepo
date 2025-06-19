@@ -1,4 +1,4 @@
-import { Link as MuiLink } from '@mui/material'
+import MuiLink from '@mui/material/Link'
 import { CSSProperties, ReactNode } from 'react'
 import { NavLink as ReactRouterNavLink } from 'react-router'
 

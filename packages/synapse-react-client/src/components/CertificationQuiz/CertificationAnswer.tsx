@@ -2,8 +2,8 @@ import {
   MultichoiceAnswer,
   MultichoiceQuestion,
 } from '@sage-bionetworks/synapse-types'
-import { Typography } from '@mui/material'
-import { Box } from '@mui/material'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
 import { MouseEventHandler } from 'react'
 
 export type CertificationAnswerProps = {

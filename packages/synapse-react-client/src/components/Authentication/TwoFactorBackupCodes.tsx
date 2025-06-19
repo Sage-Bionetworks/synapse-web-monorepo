@@ -5,14 +5,12 @@ import {
 import { createRecoveryCodes } from '@/synapse-client/SynapseClient'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { useMediaPrintOnly } from '@/utils/hooks/useMediaPrintOnly'
-import {
-  Alert,
-  Box,
-  Button,
-  IconButton,
-  Typography,
-  useTheme,
-} from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+import { useTheme } from '@mui/material/styles'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { TwoFactorAuthRecoveryCodes } from '@sage-bionetworks/synapse-types'
 import { useMutation } from '@tanstack/react-query'

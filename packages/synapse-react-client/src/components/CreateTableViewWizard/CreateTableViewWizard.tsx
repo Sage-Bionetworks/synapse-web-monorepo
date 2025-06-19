@@ -5,7 +5,9 @@ import {
 } from '@/synapse-queries/table/useColumnModel'
 import { useValidateDefiningSql } from '@/synapse-queries/table/useDefiningSql'
 import { convertToConcreteEntityType } from '@/utils/functions/EntityTypeUtils'
-import { Alert, Box, Button } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import {
   ColumnModel,
   Entity,

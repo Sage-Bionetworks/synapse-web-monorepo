@@ -9,7 +9,11 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { Alert, Box, Divider, Link, Typography } from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Divider from '@mui/material/Divider'
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
 import RJSF from '@rjsf/core'
 import { RJSFValidationError } from '@rjsf/utils'
 import validator from '@rjsf/validator-ajv8'

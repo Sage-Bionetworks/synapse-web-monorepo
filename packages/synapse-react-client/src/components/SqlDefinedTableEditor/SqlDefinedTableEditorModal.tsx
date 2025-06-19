@@ -1,6 +1,6 @@
 import { useGetEntity, useUpdateEntity } from '@/synapse-queries'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
-import { Alert } from '@mui/material'
+import Alert from '@mui/material/Alert'
 import { MaterializedView, VirtualTable } from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'
 import ConfirmationDialog from '../ConfirmationDialog'

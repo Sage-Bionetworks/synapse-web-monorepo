@@ -1,5 +1,6 @@
 import { spreadSx } from '@/theme/spreadSx'
-import { Typography, TypographyProps } from '@mui/material'
+import Typography from '@mui/material/Typography'
+import { TypographyProps } from '@mui/material/Typography'
 
 export default function WizardChoiceButtonDescription(
   props: Omit<TypographyProps, 'variant'>,

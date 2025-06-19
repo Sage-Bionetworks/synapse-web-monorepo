@@ -1,7 +1,8 @@
 import { useSearchAccessApprovalsInfinite } from '@/synapse-queries/dataaccess/useAccessApprovals'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { Button, Typography } from '@mui/material'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import {
   AccessApprovalSearchRequest,
   AccessApprovalSearchResult,

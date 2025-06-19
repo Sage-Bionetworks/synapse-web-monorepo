@@ -1,12 +1,10 @@
 import { ROROrganization } from '@/ror-client/types/ROROrganization'
 import { useSearchRegistry } from '@/synapse-queries/ror'
-import {
-  Autocomplete,
-  Box,
-  TextField,
-  TextFieldProps,
-  Typography,
-} from '@mui/material'
+import Autocomplete from '@mui/material/Autocomplete'
+import Box from '@mui/material/Box'
+import TextField from '@mui/material/TextField'
+import { TextFieldProps } from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { useDebouncedEffect } from '@react-hookz/web'
 import noop from 'lodash-es/noop'
 import { useState } from 'react'

@@ -1,5 +1,7 @@
 import { StyledFormControl } from '@/components/StyledComponents'
-import { Box, TextField, useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import TextField from '@mui/material/TextField'
+import { useTheme } from '@mui/material/styles'
 import { VerificationSubmission } from '@sage-bionetworks/synapse-types'
 import { ChangeEvent, useState } from 'react'
 import RORInstitutionField from 'synapse-react-client/components/RORInstitutionField/RORInstitutionField'

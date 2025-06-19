@@ -6,7 +6,7 @@ import { JSONPrimitiveRenderer } from './JSONPrimitiveRenderer'
 import { JSONArrayRenderer } from './JSONArrayRenderer'
 import { JSONObjectRenderer } from './JSONObjectRenderer'
 import { ComplexJSONRenderer } from './ComplexJSONRenderer'
-import { Typography } from '@mui/material'
+import Typography from '@mui/material/Typography'
 
 export type JSONTableCellRendererProps = {
   value: string | null

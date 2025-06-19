@@ -2,7 +2,7 @@ import {
   useGetAccessRequirements,
   useUpdateAccessRequirement,
 } from '@/synapse-queries'
-import { Alert } from '@mui/material'
+import Alert from '@mui/material/Alert'
 import {
   AccessRequirement,
   ManagedACTAccessRequirement,

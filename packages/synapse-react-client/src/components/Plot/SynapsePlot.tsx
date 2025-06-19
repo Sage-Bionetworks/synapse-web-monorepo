@@ -1,7 +1,7 @@
 import { useGetFullTableQueryResults } from '@/synapse-queries'
 import { SynapseConstants } from '@/utils'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
-import { Skeleton } from '@mui/material'
+import Skeleton from '@mui/material/Skeleton'
 import {
   FacetColumnRequest,
   QueryBundleRequest,

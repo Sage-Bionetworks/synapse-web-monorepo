@@ -1,5 +1,7 @@
 import { useEffect, useState, MouseEvent } from 'react'
-import { Box, Button, LinearProgress } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import LinearProgress from '@mui/material/LinearProgress'
 
 export type PageProgressProps = {
   barColor: string

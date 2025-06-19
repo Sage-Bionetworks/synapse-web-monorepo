@@ -6,7 +6,7 @@ import {
 } from '@/synapse-queries'
 import { SynapseClientError, useSynapseContext } from '@/utils'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { useEffect } from 'react'
 import SpinnerButton from '../SpinnerButton/SpinnerButton'
 

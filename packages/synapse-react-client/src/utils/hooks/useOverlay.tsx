@@ -1,5 +1,9 @@
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
-import { Fade, Paper, PaperProps, Popover, PopoverProps } from '@mui/material'
+import Fade from '@mui/material/Fade'
+import Paper from '@mui/material/Paper'
+import { PaperProps } from '@mui/material/Paper'
+import Popover from '@mui/material/Popover'
+import { PopoverProps } from '@mui/material/Popover'
 
 function resetTimer(timer: NodeJS.Timeout | null) {
   if (timer) {

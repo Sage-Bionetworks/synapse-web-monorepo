@@ -1,4 +1,6 @@
-import { Stack, TextField, Typography } from '@mui/material'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import {
   instanceOfExternalObjectStoreUploadDestination,
   UploadDestination,

@@ -1,18 +1,15 @@
 import { StyledOuterContainer } from '@/components/styled/LeftRightPanel'
 import { useFinishTwoFactorEnrollment } from '@/synapse-queries/auth/useTwoFactorEnrollment'
 import { StyledComponent } from '@emotion/styled'
-import {
-  Box,
-  BoxProps,
-  Button,
-  Divider,
-  IconButton,
-  Link,
-  Paper,
-  Stack,
-  styled,
-  Typography,
-} from '@mui/material'
+import Box, { BoxProps } from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import Link from '@mui/material/Link'
+import Paper from '@mui/material/Paper'
+import Stack from '@mui/material/Stack'
+import { styled } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
 import { TotpSecret } from '@sage-bionetworks/synapse-types'
 import { toCanvas } from 'qrcode'
 import { useEffect, useRef, useState } from 'react'

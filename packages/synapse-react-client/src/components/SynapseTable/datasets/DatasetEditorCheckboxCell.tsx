@@ -1,4 +1,4 @@
-import { Checkbox } from '@mui/material'
+import Checkbox from '@mui/material/Checkbox'
 import { CellContext } from '@tanstack/react-table'
 import { EntityIdAndVersionNumber } from '../../EntityFinder/details/view/table/TableCellTypes'
 

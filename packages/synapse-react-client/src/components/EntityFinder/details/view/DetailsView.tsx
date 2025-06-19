@@ -1,8 +1,18 @@
 import { getEntityVersions } from '@/synapse-client/SynapseClient'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { getEntityTypeFromHeader, isContainerType, isVersionableEntityType } from '@/utils/functions/EntityTypeUtils'
-import { Checkbox, Tooltip } from '@mui/material'
-import { EntityChildrenRequest, EntityHeader, EntityType, Reference } from '@sage-bionetworks/synapse-types'
+import {
+  getEntityTypeFromHeader,
+  isContainerType,
+  isVersionableEntityType,
+} from '@/utils/functions/EntityTypeUtils'
+import Checkbox from '@mui/material/Checkbox'
+import Tooltip from '@mui/material/Tooltip'
+import {
+  EntityChildrenRequest,
+  EntityHeader,
+  EntityType,
+  Reference,
+} from '@sage-bionetworks/synapse-types'
 import { useQueryClient } from '@tanstack/react-query'
 import {
   CellContext,
@@ -14,8 +24,18 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { BlockingLoader, SynapseSpinner } from '../../../LoadingScreen/LoadingScreen'
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+import {
+  BlockingLoader,
+  SynapseSpinner,
+} from '../../../LoadingScreen/LoadingScreen'
 import ColumnHeader from '../../../TanStackTable/ColumnHeader'
 import StyledVirtualTanStackTable from '../../../TanStackTable/StyledVirtualTanStackTable'
 import { EntityFinderHeader } from '../../EntityFinderHeader'

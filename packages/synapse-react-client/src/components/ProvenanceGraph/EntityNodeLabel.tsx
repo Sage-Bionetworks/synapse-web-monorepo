@@ -3,7 +3,8 @@ import {
   isVersionableEntityType,
 } from '@/utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { Link, Tooltip } from '@mui/material'
+import Link from '@mui/material/Link'
+import Tooltip from '@mui/material/Tooltip'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import { useMemo } from 'react'
 import { ProvenanceEntityIcon } from './ProvenanceEntityIcon'

@@ -1,4 +1,9 @@
-import { Box, Tab, Tabs, useMediaQuery, useTheme, Chip } from '@mui/material'
+import Box from '@mui/material/Box'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
+import Chip from '@mui/material/Chip'
 import { useNavigate, useLocation } from 'react-router'
 import { CustomScrollButton } from '../Explore/ExploreWrapperTabs'
 export type PortalSearchTabConfig = {

@@ -1,7 +1,10 @@
 import { useGetDockerTags } from '@/synapse-queries/docker'
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { Box, Radio, Typography } from '@mui/material'
-import { DataGrid, GridColDef } from '@mui/x-data-grid'
+import Box from '@mui/material/Box'
+import Radio from '@mui/material/Radio'
+import Typography from '@mui/material/Typography'
+import { DataGrid } from '@mui/x-data-grid/DataGrid'
+import { GridColDef } from '@mui/x-data-grid/models'
 import {
   Direction,
   DockerCommit,

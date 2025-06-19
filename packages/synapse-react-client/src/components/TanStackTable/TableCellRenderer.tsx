@@ -1,4 +1,4 @@
-import { Skeleton } from '@mui/material'
+import Skeleton from '@mui/material/Skeleton'
 import { Cell, flexRender } from '@tanstack/react-table'
 import ExpandableTableDataCell from '../SynapseTable/ExpandableTableDataCell'
 import {

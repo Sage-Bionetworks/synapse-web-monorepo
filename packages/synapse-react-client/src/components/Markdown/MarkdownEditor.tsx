@@ -1,11 +1,9 @@
-import {
-  Box,
-  IconButton,
-  Tab,
-  Tabs,
-  TextField,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
 import { useRef, useState, useEffect } from 'react'
 import {
   commandList,

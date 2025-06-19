@@ -3,7 +3,7 @@ import {
   LoginAwareButton,
   LoginAwareButtonProps,
 } from '../widgets/LoginAwareButton'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 
 export type SpinnerButtonProps = LoginAwareButtonProps & {
   showSpinner?: boolean

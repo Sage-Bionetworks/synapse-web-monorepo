@@ -1,11 +1,9 @@
-import {
-  Box,
-  Paper,
-  PaperProps,
-  Skeleton,
-  styled,
-  Typography,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Paper from '@mui/material/Paper'
+import { PaperProps } from '@mui/material/Paper'
+import Skeleton from '@mui/material/Skeleton'
+import { styled } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
 import { ReactNode } from 'react'
 import Icon from '../../Icon'
 import { StyledComponent } from '@emotion/styled'

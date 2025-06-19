@@ -1,5 +1,5 @@
 import { useGetFeatureFlag } from '@/synapse-queries'
-import { TextField } from '@mui/material'
+import TextField from '@mui/material/TextField'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { Dispatch, SetStateAction } from 'react'
 

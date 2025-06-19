@@ -1,5 +1,8 @@
 import { useSynapseContext } from '@/utils'
-import { Box, InputBaseProps, TextField, TextFieldProps } from '@mui/material'
+import Box from '@mui/material/Box'
+import { InputBaseProps } from '@mui/material/InputBase'
+import TextField from '@mui/material/TextField'
+import { TextFieldProps } from '@mui/material/TextField'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import {
   DateTimePicker as MuiDateTimePicker,

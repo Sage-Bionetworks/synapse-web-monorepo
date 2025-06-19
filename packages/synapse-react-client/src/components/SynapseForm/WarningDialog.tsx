@@ -1,4 +1,4 @@
-import { ButtonProps } from '@mui/material'
+import { ButtonProps } from '@mui/material/Button'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 
 export type WarningDialogProps<T = any> = {

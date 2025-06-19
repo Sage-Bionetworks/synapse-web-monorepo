@@ -1,5 +1,8 @@
 import { FRIENDLY_VALUE_NOT_SET, VALUE_NOT_SET } from '@/utils/SynapseConstants'
-import { Collapse, FormControlLabel, Radio, RadioGroup } from '@mui/material'
+import Collapse from '@mui/material/Collapse'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
 import {
   ColumnType,
   FacetColumnResultRange,

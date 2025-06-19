@@ -1,4 +1,5 @@
-import { Box, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import { Row } from '@sage-bionetworks/synapse-types'
 import Plotly, { Datum } from 'plotly.js-basic-dist'
 import Plot from '../Plot/Plot'

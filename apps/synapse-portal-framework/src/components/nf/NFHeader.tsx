@@ -1,9 +1,11 @@
-import { Box, Typography, Link } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import Link from '@mui/material/Link'
 import HeaderSearchBox from '../HeaderSearchBox'
 import Header from '../Header'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries'
-import { AddAlertTwoTone } from '@mui/icons-material'
+import AddAlertTwoTone from '@mui/icons-material/AddAlertTwoTone'
 
 const NFHeader = () => {
   const searchPlaceholder =

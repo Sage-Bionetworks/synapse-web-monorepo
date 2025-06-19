@@ -1,5 +1,5 @@
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { useState, useEffect, forwardRef, ForwardedRef } from 'react'
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'

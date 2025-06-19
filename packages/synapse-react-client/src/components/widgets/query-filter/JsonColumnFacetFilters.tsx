@@ -1,5 +1,6 @@
 import { getCorrespondingColumnForFacet } from '@/utils/functions/queryUtils'
-import { Box, Collapse } from '@mui/material'
+import Box from '@mui/material/Box'
+import Collapse from '@mui/material/Collapse'
 import { ColumnModel, FacetColumnResult } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'

@@ -5,17 +5,15 @@ import {
   useUpdateAgentSession,
 } from '@/synapse-queries/chat/useChat'
 import { useSynapseContext } from '@/utils'
-import { ArrowUpward } from '@mui/icons-material'
-import {
-  Alert,
-  Box,
-  Fade,
-  IconButton,
-  List,
-  TextField,
-  Typography,
-  useTheme,
-} from '@mui/material'
+import ArrowUpward from '@mui/icons-material/ArrowUpward'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Fade from '@mui/material/Fade'
+import IconButton from '@mui/material/IconButton'
+import List from '@mui/material/List'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import { useTheme } from '@mui/material/styles'
 import { Color } from '@mui/material/styles'
 import {
   AgentAccessLevel,

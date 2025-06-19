@@ -1,5 +1,5 @@
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined'
-import { Typography } from '@mui/material'
+import Typography from '@mui/material/Typography'
 import { useEffect, useState } from 'react'
 import {
   VerificationSubmission,

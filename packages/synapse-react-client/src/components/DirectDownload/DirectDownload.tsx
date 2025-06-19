@@ -2,7 +2,7 @@ import { getFiles } from '@/synapse-client/SynapseClient'
 import { useGetFileBatch } from '@/synapse-queries/file/useFiles'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { implementsExternalFileHandleInterface } from '@/utils/types/IsType'
-import { Tooltip } from '@mui/material'
+import Tooltip from '@mui/material/Tooltip'
 import {
   BatchFileRequest,
   ExternalFileHandle,

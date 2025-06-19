@@ -1,5 +1,5 @@
+import { ThemeOptions } from '@mui/material/styles'
 import 'synapse-react-client'
-import { ThemeOptions } from '@mui/material'
 import { Palettes } from 'synapse-react-client'
 
 export const fontDefinition = ['DM Sans', 'Roboto', 'Helvetica', 'Arial'].join(

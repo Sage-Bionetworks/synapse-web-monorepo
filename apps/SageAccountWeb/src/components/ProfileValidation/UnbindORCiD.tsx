@@ -1,12 +1,10 @@
 import { SyntheticEvent } from 'react'
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Typography,
-} from '@mui/material'
+import Button from '@mui/material/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import Typography from '@mui/material/Typography'
 import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClient'

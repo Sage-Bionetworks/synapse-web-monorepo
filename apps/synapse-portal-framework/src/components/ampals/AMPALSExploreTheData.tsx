@@ -1,4 +1,5 @@
-import { Box, useTheme } from '@mui/material'
+import Box from '@mui/material/Box'
+import { useTheme } from '@mui/material/styles'
 import { PortalSectionHeader, UpsetPlot } from 'synapse-react-client'
 import { handleUpsetPlotClick } from '@/utils/handleUpsetPlotClick'
 import { useNavigate } from 'react-router'

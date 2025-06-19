@@ -3,15 +3,13 @@ import { backgroundInlineJpeg } from '@/assets/homepage/header-splash'
 import { ReactComponent as Image1 } from '@/assets/homepage/image1.svg'
 import SageFullLogo from '@/assets/icons/SageFullLogo'
 import { SAGE_OFFERINGS_HELP_URL } from '@/utils/SynapseConstants'
-import {
-  Box,
-  Button,
-  Link,
-  SxProps,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Link from '@mui/material/Link'
+import { SxProps } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
 import { useInView } from 'react-intersection-observer'
 import { TypeAnimation } from 'react-type-animation'
 import { SynapseByTheNumbers } from './SynapseByTheNumbers'

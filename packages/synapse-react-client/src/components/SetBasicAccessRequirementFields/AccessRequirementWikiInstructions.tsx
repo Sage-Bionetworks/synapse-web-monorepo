@@ -1,4 +1,5 @@
-import { Box, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 import { AccessRequirement, ObjectType } from '@sage-bionetworks/synapse-types'
 import WikiMarkdownEditorButton from '../WikiMarkdownEditorButton'
 

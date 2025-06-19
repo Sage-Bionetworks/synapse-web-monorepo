@@ -7,7 +7,7 @@ import {
   SEPERATOR,
   SMALL_USER_CARD,
 } from '@/utils/SynapseConstants'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { Meta, StoryObj } from '@storybook/react'
 import UserCard, { UserCardProps } from './UserCard'
 

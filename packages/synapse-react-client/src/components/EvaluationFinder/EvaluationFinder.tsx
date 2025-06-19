@@ -1,14 +1,12 @@
 import { useGetEvaluationsInfinite } from '@/synapse-queries/evaluation/useEvaluation'
-import {
-  Alert,
-  Box,
-  Button,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  LinearProgress,
-} from '@mui/material'
+import Alert from '@mui/material/Alert'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Checkbox from '@mui/material/Checkbox'
+import FormControl from '@mui/material/FormControl'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormGroup from '@mui/material/FormGroup'
+import LinearProgress from '@mui/material/LinearProgress'
 import { GetEvaluationParameters } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import { HelpPopover } from '../HelpPopover'

@@ -1,5 +1,7 @@
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
-import { Button, Link, Container } from '@mui/material'
+import Button from '@mui/material/Button'
+import Link from '@mui/material/Link'
+import Container from '@mui/material/Container'
 import Avatar from '@mui/material/Avatar'
 
 export type EmailConfirmationPageProps = {

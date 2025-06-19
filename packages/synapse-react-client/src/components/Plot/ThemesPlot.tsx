@@ -2,7 +2,7 @@ import { getFullQueryTableResults } from '@/synapse-client'
 import { SynapseConstants, useSynapseContext } from '@/utils'
 import { resultToJson } from '@/utils/functions'
 import { unCamelCase } from '@/utils/functions/unCamelCase'
-import { Tooltip } from '@mui/material'
+import Tooltip from '@mui/material/Tooltip'
 import {
   QueryBundleRequest,
   QueryResultBundle,

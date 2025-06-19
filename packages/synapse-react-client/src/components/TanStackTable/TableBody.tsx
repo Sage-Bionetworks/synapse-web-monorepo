@@ -1,5 +1,5 @@
 import { getSlotProps } from '@/utils/slots/SlotUtils'
-import { styled } from '@mui/material'
+import { styled } from '@mui/material/styles'
 import { Row, Table } from '@tanstack/react-table'
 import { identity } from 'lodash-es'
 import { memo } from 'react'

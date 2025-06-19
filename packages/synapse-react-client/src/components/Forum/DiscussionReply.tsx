@@ -14,7 +14,7 @@ import WarningDialog from '../SynapseForm/WarningDialog'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import { UserBadge } from '../UserCard/UserBadge'
 import { ForumThreadEditor } from './ForumThreadEditor'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 import { REPLY_ID_PARAM_KEY } from './DiscussionConstants'
 

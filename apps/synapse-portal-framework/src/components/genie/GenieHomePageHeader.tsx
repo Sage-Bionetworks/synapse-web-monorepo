@@ -1,4 +1,7 @@
-import { Box, SxProps, Typography, useMediaQuery } from '@mui/material'
+import Box from '@mui/material/Box'
+import { SxProps } from '@mui/material/styles'
+import Typography from '@mui/material/Typography'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import Background from './assets/genie-homepage-background.jpg?url'
 
 const GenieHomePageHeader = () => {

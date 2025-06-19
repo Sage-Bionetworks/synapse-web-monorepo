@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import RangeSlider, { RangeSliderProps } from './RangeSlider'
-import { Paper } from '@mui/material'
+import Paper from '@mui/material/Paper'
 
 const meta: Meta<RangeSliderProps> = {
   title: 'UI/RangeSlider',

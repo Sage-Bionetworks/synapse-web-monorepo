@@ -69,6 +69,12 @@ export default tseslint.config(
     },
     rules: {
       ...vitest.configs.recommended.rules,
+      "no-restricted-imports": [
+        "error",
+        {
+          "patterns": [{ "regex": "^@mui/[^/]+$" }]
+        }
+      ],
       'react/prop-types': [0],
       'react/no-unstable-nested-components': 'error',
       'react-hooks/rules-of-hooks': 'error',
