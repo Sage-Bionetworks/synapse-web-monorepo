@@ -3,7 +3,8 @@ import {
   useGetEntityBundle,
   useGetRestrictionInformation,
 } from '@/synapse-queries'
-import { SynapseClientError, useSynapseContext } from '@/utils'
+import { useSynapseContext } from '@/utils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { Box, Button, Theme, useTheme } from '@mui/material'

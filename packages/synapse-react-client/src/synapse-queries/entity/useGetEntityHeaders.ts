@@ -1,5 +1,6 @@
 import SynapseClient from '@/synapse-client'
-import { SynapseClientError, useSynapseContext } from '@/utils'
+import { useSynapseContext } from '@/utils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { normalizeSynPrefix } from '@/utils/functions/EntityTypeUtils'
 import {
   EntityHeader,

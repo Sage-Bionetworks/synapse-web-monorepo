@@ -3,7 +3,7 @@ import {
   getCandidateDoiId,
   useShowDoiCardLabel,
 } from '@/components/GenericCard/PortalDOI/PortalDOIUtils'
-import IconSvg, * as IconSvgModule from '@/components/IconSvg/IconSvg'
+import * as IconSvgModule from '@/components/IconSvg/IconSvg'
 import { mockFileViewEntity } from '@/mocks/entity/mockFileView'
 import mockTableEntityData, {
   mockTableEntity,
@@ -23,7 +23,6 @@ import {
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { cloneDeep } from 'lodash-es'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import { beforeEach, describe, it, test, vi } from 'vitest'
 import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
@@ -35,28 +34,30 @@ import TableRowGenericCard, {
   TableToGenericCardMapping,
 } from './TableRowGenericCard'
 
-vi.mock('@/components/GenericCard/PortalDOI/PortalDOI', () => ({
-  __esModule: true,
-  default: vi.fn().mockReturnValue(<div data-testid="PortalDOI" />),
-}))
+vi.mock('@/components/GenericCard/PortalDOI/PortalDOI')
 vi.mock('@/components/GenericCard/PortalDOI/PortalDOIUtils')
-vi.mock('../widgets/FileHandleLink', () => ({
-  FileHandleLink: vi.fn().mockReturnValue(<div data-testid="FileHandleLink" />),
-}))
-vi.mock('../widgets/ImageFileHandle', () => ({
-  ImageFileHandle: vi
-    .fn()
-    .mockReturnValue(<img data-testid="ImageFileHandle" />),
-}))
-vi.mock('../EntityDownloadConfirmation', () => ({
-  EntityDownloadConfirmation: vi
-    .fn()
-    .mockReturnValue(<div data-testid="EntityDownloadConfirmation" />),
-}))
-vi.mock('@/components/IconSvg/IconSvg', async importOriginal => ({
-  ...(await importOriginal<typeof IconSvgModule>()),
-  default: vi.fn().mockReturnValue(<img data-testid="IconSvg" />),
-}))
+vi.mock('../widgets/FileHandleLink')
+vi.mock('../widgets/ImageFileHandle')
+vi.mock('../EntityDownloadConfirmation')
+
+const mockFileHandleLink = vi
+  .mocked(FileHandleLink)
+  .mockReturnValue(<div data-testid="FileHandleLink" />)
+const mockImageFileHandle = vi
+  .mocked(ImageFileHandle)
+  .mockReturnValue(<img data-testid="ImageFileHandle" />)
+
+const mockGetCandidateDoiId = vi.mocked(getCandidateDoiId)
+const mockUseShowPortalDoi = vi.mocked(useShowDoiCardLabel)
+const mockEntityDownloadConfirmation = vi
+  .mocked(EntityDownloadConfirmation)
+  .mockReturnValue(<div data-testid="EntityDownloadConfirmation" />)
+
+const mockIconSvg = vi
+  .spyOn(IconSvgModule, 'default')
+  .mockReturnValue(<img data-testid="IconSvg" />)
+
+vi.mocked(PortalDOI).mockReturnValue(<div data-testid="PortalDOI" />)
 
 const renderComponent = (
   props: TableRowGenericCardProps,
@@ -82,14 +83,6 @@ const renderComponent = (
     },
   )
 }
-
-// mockAllIsIntersecting(true)
-const mockFileHandleLink = vi.mocked(FileHandleLink)
-const mockImageFileHandle = vi.mocked(ImageFileHandle)
-const mockGetCandidateDoiId = vi.mocked(getCandidateDoiId)
-const mockUseShowPortalDoi = vi.mocked(useShowDoiCardLabel)
-const mockEntityDownloadConfirmation = vi.mocked(EntityDownloadConfirmation)
-const mockIconSvg = vi.mocked(IconSvg)
 
 const iconOptions = {
   'AMP-AD': 'MOCKED_IMG_SVG_STRING',

@@ -3,7 +3,8 @@ import {
   useDeleteOAuthClient,
   useUpdateOAuthClient,
 } from '@/synapse-queries'
-import { SynapseClientError, useSynapseContext } from '@/utils'
+import { useSynapseContext } from '@/utils'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { useDebouncedEffect } from '@/utils/hooks'
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone'
 import {
