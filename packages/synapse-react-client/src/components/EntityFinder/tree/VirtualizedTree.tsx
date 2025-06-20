@@ -624,7 +624,6 @@ export const VirtualizedTree = (props: VirtualizedTreeProps) => {
   return (
     <AutoSizer disableWidth>
       {({ height }: { height: number }) => (
-        // @ts-expect-error - some issue with react-vtree types after upgrading to React 19
         <VariableSizeTree
           ref={treeInstance}
           treeWalker={memoizedTreeWalker}
