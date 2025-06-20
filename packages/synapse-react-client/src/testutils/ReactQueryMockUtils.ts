@@ -99,7 +99,7 @@ export function getUseQueryMock<TData = unknown, TError = unknown>() {
         isPaused: false,
         isLoading: false,
         isPending: false,
-        promise: Promise.reject(error as Error),
+        promise: new Promise(() => {}),
       }
 
       currentSetValue(errorState)
@@ -822,7 +822,7 @@ export function getUseInfiniteQueryMock<TData = unknown, TError = unknown>() {
         isStale: false,
         isFetchNextPageError: false,
         isFetchPreviousPageError: false,
-        promise: Promise.reject(error as Error),
+        promise: new Promise(() => {}),
       }
       currentSetValue(errorState)
     } else {
