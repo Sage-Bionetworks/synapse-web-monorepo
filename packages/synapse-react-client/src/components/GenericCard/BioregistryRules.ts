@@ -202,7 +202,7 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex: /(dbgap:phs[0-9]{6}(.v\d+.p\d+)?)/,
+    regex: /(dbgap:phs[0-9]{6}(?:.v\d+.p\d+)?)/,
     onMatch,
   },
   {
@@ -344,7 +344,7 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex: /(geo:G(PL|SM|SE|DS)\d+)/,
+    regex: /(geo:G(?:PL|SM|SE|DS)\d+)/,
     onMatch,
   },
   {

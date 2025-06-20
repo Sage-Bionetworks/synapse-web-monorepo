@@ -79,10 +79,12 @@ export const studyCardConfiguration: CardConfiguration = {
       'institutions',
       'studyId',
       'grantDOI',
-      'ClinicalTrials.govID',
+      'clinicalTrialID',
+      'alternateDataRepository',
     ],
     dataTypeIconNames: 'dataType',
   },
+  secondaryLabelLimit: 20,
   labelLinkConfig: [
     {
       isMarkdown: true,
