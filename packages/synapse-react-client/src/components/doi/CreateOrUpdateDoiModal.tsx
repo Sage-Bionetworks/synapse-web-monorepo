@@ -247,6 +247,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
       requestDoi.objectId = objectId
       requestDoi.objectVersion = selectedVersionNumber
       requestDoi.etag = doi?.etag
+      requestDoi.portalId = portalId
       createOrUpdateDoi({
         doi: requestDoi,
         concreteType: 'org.sagebionetworks.repo.model.doi.v2.DoiRequest',
@@ -310,7 +311,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
               if (e.target.value === -1) {
                 setSelectedVersionNumber(undefined)
               } else {
-                setSelectedVersionNumber(e.target.value as number)
+                setSelectedVersionNumber(e.target.value)
               }
             }}
           >

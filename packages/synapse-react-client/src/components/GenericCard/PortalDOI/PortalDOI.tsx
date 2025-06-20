@@ -36,6 +36,8 @@ function PortalDOI(props: PortalDOIProps) {
     return <Skeleton role="progressbar" width={150} />
   }
 
+  const doiOrgUrl = doi ? `https://doi.org/${doi.doiUri}` : undefined
+
   return (
     <>
       <CreateOrUpdateDoiModal
@@ -56,8 +58,8 @@ function PortalDOI(props: PortalDOIProps) {
       >
         {doi && (
           <>
-            <Link href={doi.doiUrl} target={'_blank'}>
-              {doi.doiUrl}
+            <Link href={doiOrgUrl} target={'_blank'}>
+              {doiOrgUrl}
             </Link>
             <CopyToClipboardIcon
               size="small"
