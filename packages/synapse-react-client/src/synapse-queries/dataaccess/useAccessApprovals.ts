@@ -42,7 +42,6 @@ export function useSearchAccessApprovalsInfinite<
     AccessApprovalSearchResponse,
     SynapseClientError,
     TData,
-    AccessApprovalSearchResponse,
     QueryKey,
     AccessApprovalSearchResponse['nextPageToken']
   >,

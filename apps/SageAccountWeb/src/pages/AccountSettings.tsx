@@ -222,7 +222,7 @@ const AccountSettings = () => {
     { label: 'Sign Out', ref: signOutSectionRef },
   ].filter(item => item.label !== 'Webhooks' || showWebhooks)
 
-  const handleScroll = (ref: RefObject<HTMLDivElement>) => {
+  const handleScroll = (ref: RefObject<HTMLDivElement | null>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' })
   }
   const isRequestValidationButtonDisabled =

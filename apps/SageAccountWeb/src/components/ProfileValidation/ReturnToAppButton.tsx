@@ -11,24 +11,26 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import { cloneElement, PropsWithChildren, ReactElement, useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { NavLink } from 'react-router'
 
-export function ReturnToAppButton({ children }: PropsWithChildren) {
+type ReturnToAppButtonProps = {
+  children?: (onClick?: () => void) => ReactNode
+}
+
+export function ReturnToAppButton({ children }: ReturnToAppButtonProps) {
   const theme = useTheme()
   const [open, setOpen] = useState(false)
   const onClose = () => setOpen(false)
   const redirectFn = () => {
     window.location.assign('/authenticated/myaccount')
   }
-  const element = !children ? (
+  const element = children ? (
+    children(() => setOpen(true))
+  ) : (
     <Button variant="text" onClick={() => setOpen(true)} fullWidth>
       Cancel Validation
     </Button>
-  ) : (
-    cloneElement(children as ReactElement, {
-      onClick: () => setOpen(true),
-    })
   )
 
   return (

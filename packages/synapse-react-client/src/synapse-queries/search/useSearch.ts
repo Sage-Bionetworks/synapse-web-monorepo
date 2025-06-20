@@ -32,7 +32,6 @@ export function useSearchInfinite<TData = InfiniteData<SearchResults>>(
       SearchResults,
       SynapseClientError,
       TData,
-      SearchResults,
       QueryKey,
       number | undefined
     >

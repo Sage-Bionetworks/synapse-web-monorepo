@@ -127,7 +127,7 @@ export function getFlatData(
   return result
 }
 
-export default function SummaryTable(props: SummaryTableProps): JSX.Element {
+export default function SummaryTable(props: SummaryTableProps) {
   let flatFormData: SummaryFormat[] = []
 
   flatFormData = getFlatData(

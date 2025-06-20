@@ -41,7 +41,6 @@ export function useGetEntityChildrenInfinite<
       EntityChildrenResponse,
       SynapseClientError,
       TData,
-      EntityChildrenResponse,
       QueryKey,
       EntityChildrenResponse['nextPageToken']
     >

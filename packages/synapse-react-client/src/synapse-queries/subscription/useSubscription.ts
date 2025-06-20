@@ -81,7 +81,6 @@ export function useGetAllSubscriptions<
       SubscriptionPagedResults,
       SynapseClientError,
       TData,
-      SubscriptionPagedResults,
       QueryKey,
       number | undefined
     >

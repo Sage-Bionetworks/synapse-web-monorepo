@@ -24,7 +24,8 @@ export function CopyToClipboardInput({
   const ref = createRef<HTMLDivElement>()
 
   const copyToClipboard =
-    (ref: RefObject<HTMLElement>, value: string) => (event: SyntheticEvent) => {
+    (ref: RefObject<HTMLElement | null>, value: string) =>
+    (event: SyntheticEvent) => {
       event.preventDefault()
 
       copyStringToClipboard(value).then(() => {

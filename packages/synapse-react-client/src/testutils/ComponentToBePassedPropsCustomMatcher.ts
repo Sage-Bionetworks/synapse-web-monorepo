@@ -21,10 +21,7 @@ expect.extend({
   },
   toHaveBeenRenderedWithProps(mockComponent: Mock, expectedProps: unknown) {
     try {
-      expect(mockComponent).toHaveBeenCalledWith(
-        expectedProps,
-        expect.anything(),
-      )
+      expect(mockComponent).toHaveBeenCalledWith(expectedProps, undefined)
     } catch (error) {
       return {
         pass: false,
@@ -40,10 +37,7 @@ expect.extend({
   },
   toHaveBeenLastRenderedWithProps(mockComponent: Mock, expectedProps: unknown) {
     try {
-      expect(mockComponent).toHaveBeenLastCalledWith(
-        expectedProps,
-        expect.anything(),
-      )
+      expect(mockComponent).toHaveBeenLastCalledWith(expectedProps, undefined)
     } catch (error) {
       return {
         pass: false,

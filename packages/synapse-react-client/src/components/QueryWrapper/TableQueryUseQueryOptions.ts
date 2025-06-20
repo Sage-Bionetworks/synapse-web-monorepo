@@ -21,13 +21,13 @@ import {
   InfiniteData,
   QueryKey,
   UseInfiniteQueryOptions,
-  UseQueryOptions,
+  UseSuspenseQueryOptions,
 } from '@tanstack/react-query'
 import { omit } from 'lodash-es'
 import { useMemo } from 'react'
 
 export type TableQueryUseQueryOptions = {
-  rowDataQueryOptions: UseQueryOptions<
+  rowDataQueryOptions: UseSuspenseQueryOptions<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     SynapseClientError,
     RowSet | undefined
@@ -37,12 +37,11 @@ export type TableQueryUseQueryOptions = {
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     SynapseClientError,
     InfiniteData<AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>>,
-    AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     QueryKey,
     string | number | undefined
   >
 
-  queryMetadataQueryOptions: UseQueryOptions<
+  queryMetadataQueryOptions: UseSuspenseQueryOptions<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     SynapseClientError,
     Omit<QueryResultBundle, 'queryResult'>

@@ -58,7 +58,6 @@ export function useSearchAccessSubmissionUserRequestsInfinite<
       UserSubmissionSearchResponse,
       SynapseClientError,
       TData,
-      UserSubmissionSearchResponse,
       QueryKey,
       UserSubmissionSearchResponse['nextPageToken']
     >
@@ -98,7 +97,6 @@ export function useSearchAccessSubmissionsInfinite<
       SubmissionSearchResponse,
       SynapseClientError,
       TData,
-      SubmissionSearchResponse,
       QueryKey,
       SubmissionSearchResponse['nextPageToken']
     >
