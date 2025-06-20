@@ -191,12 +191,11 @@ describe('Create OAuth Client', () => {
     await user.click(deleteButton)
 
     expect(updateOAuthClientSpy).not.toHaveBeenCalled()
-    expect(mockWarningDialog).toHaveBeenLastCalledWith(
+    expect(mockWarningDialog).toHaveBeenLastRenderedWithProps(
       expect.objectContaining({
         title: warningHeader,
         content: warningBody,
       }),
-      expect.anything(),
     )
   })
 
@@ -313,12 +312,11 @@ describe('Create OAuth Client', () => {
     await user.click(saveButton)
 
     expect(updateOAuthClientSpy).not.toHaveBeenCalled()
-    expect(mockWarningDialog).toHaveBeenLastCalledWith(
+    expect(mockWarningDialog).toHaveBeenLastRenderedWithProps(
       expect.objectContaining({
         title: warningHeader,
         content: warningBody,
       }),
-      expect.anything(),
     )
   })
 })

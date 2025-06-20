@@ -243,7 +243,7 @@ export const FileViewWithLockedColumn: Story = {
   },
 }
 
-export const SendToCavatica: Story = {
+export const SendToAnalysisPlatform: Story = {
   args: {
     sql: 'SELECT * FROM syn11346063.69',
     isRowSelectionVisible: true,
@@ -252,10 +252,10 @@ export const SendToCavatica: Story = {
       showDirectDownloadColumn: true,
     },
     unitDescription: 'file',
-    name: 'CAVATICA Integration Demo',
+    name: 'CAVATICA/Terra/Pluto Integration Demo',
     hideSqlEditorControl: false,
     shouldDeepLink: false,
-    enabledExternalAnalysisPlatforms: ['cavatica', 'terra'],
+    enabledExternalAnalysisPlatforms: ['cavatica', 'terra', 'plutodev'],
   },
 }
 

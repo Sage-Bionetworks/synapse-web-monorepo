@@ -304,7 +304,7 @@ describe('EntityFinder tests', () => {
       invokeSetConfigViaTree(configuration)
     })
 
-    expect(mockDetailsList).toHaveBeenCalledWith(
+    expect(mockDetailsList).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         configuration: configuration, // !
         selectableTypes: defaultProps.selectableTypes,
@@ -313,7 +313,6 @@ describe('EntityFinder tests', () => {
           ...defaultProps.selectableTypes!,
         ],
       }),
-      {},
     )
 
     const reference: Reference = {
@@ -325,13 +324,12 @@ describe('EntityFinder tests', () => {
       invokeToggleSelectionViaTable(reference)
     })
     await waitFor(() =>
-      expect(mockDetailsList).toHaveBeenLastCalledWith(
+      expect(mockDetailsList).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({
           selected: Map([
             [reference.targetId, { targetId: reference.targetId }],
           ]),
         }),
-        {},
       ),
     )
   })
@@ -376,7 +374,7 @@ describe('EntityFinder tests', () => {
       expect(() => screen.getByRole('table')).not.toThrow()
 
       await waitFor(() =>
-        expect(mockDetailsList).toBeCalledWith(
+        expect(mockDetailsList).toHaveBeenRenderedWithProps(
           expect.objectContaining({
             configuration: {
               type: EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
@@ -393,11 +391,10 @@ describe('EntityFinder tests', () => {
               },
             },
           }),
-          {},
         ),
       )
       await waitFor(() =>
-        expect(mockDetailsList).toBeCalledWith(
+        expect(mockDetailsList).toHaveBeenRenderedWithProps(
           expect.objectContaining({
             configuration: {
               type: EntityDetailsListDataConfigurationType.ENTITY_SEARCH,
@@ -414,7 +411,6 @@ describe('EntityFinder tests', () => {
               },
             },
           }),
-          {},
         ),
       )
 
@@ -479,14 +475,13 @@ describe('EntityFinder tests', () => {
       await user.type(searchInput, '{enter}')
 
       await waitFor(() =>
-        expect(mockDetailsList).toBeCalledWith(
+        expect(mockDetailsList).toHaveBeenRenderedWithProps(
           expect.objectContaining({
             configuration: {
               type: EntityDetailsListDataConfigurationType.HEADER_LIST,
               headerList: entityHeaderResult.results,
             },
           }),
-          {},
         ),
       )
       expect(mockGetEntityHeaders).toBeCalledTimes(1)
@@ -496,18 +491,34 @@ describe('EntityFinder tests', () => {
       await user.type(searchInput, `${entityId}.${version}`)
       await user.type(searchInput, '{enter}')
       await waitFor(() =>
-        expect(mockDetailsList).toBeCalledWith(
+        expect(mockDetailsList).toHaveBeenRenderedWithProps(
           expect.objectContaining({
             configuration: {
               type: EntityDetailsListDataConfigurationType.HEADER_LIST,
               headerList: entityHeaderResultWithVersion.results,
             },
           }),
-          {},
         ),
       )
 
       expect(mockGetEntityHeaders).toHaveBeenCalledTimes(2)
     })
+  })
+
+  it('handles initialSelected', async () => {
+    const initialSelected: Reference[] = [
+      {
+        targetId: 'syn123',
+      },
+    ]
+
+    renderComponent({
+      selectMultiple: false,
+      initialSelected,
+    })
+
+    await waitFor(() =>
+      expect(mockOnSelectionChange).toHaveBeenCalledWith(initialSelected),
+    )
   })
 })

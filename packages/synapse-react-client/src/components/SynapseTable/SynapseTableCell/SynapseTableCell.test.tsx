@@ -222,13 +222,12 @@ describe('SynapseTableCell tests', () => {
       })
 
       await screen.findByTestId('EntityLink')
-      expect(mockEntityLink).toHaveBeenCalledWith(
+      expect(mockEntityLink).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           entity: String(mockRowId),
           displayTextField: 'name',
           showIcon: false,
         }),
-        expect.anything(),
       )
     })
 
@@ -243,13 +242,12 @@ describe('SynapseTableCell tests', () => {
 
       await screen.findByTestId('EntityLink')
       // Verify that the ID is passed
-      expect(mockEntityLink).toHaveBeenCalledWith(
+      expect(mockEntityLink).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           entity: mockEntityIdValue,
           displayTextField: 'id',
           showIcon: false,
         }),
-        expect.anything(),
       )
     })
 
@@ -264,13 +262,12 @@ describe('SynapseTableCell tests', () => {
 
       await screen.findByTestId('EntityLink')
       // Verify that the ID is passed
-      expect(mockEntityLink).toHaveBeenCalledWith(
+      expect(mockEntityLink).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           entity: mockEntityIdValue,
           displayTextField: 'name',
           showIcon: false,
         }),
-        expect.anything(),
       )
     })
 
@@ -285,13 +282,12 @@ describe('SynapseTableCell tests', () => {
 
       await screen.findByTestId('EntityIdList')
       // Verify that the ID is passed
-      expect(mockEntityIdListComponent).toHaveBeenCalledWith(
+      expect(mockEntityIdListComponent).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           entityIdList: EXPECTED_PARSED_ENTITYID_LIST,
           displayTextField: 'id',
           showIcon: false,
         }),
-        expect.anything(),
       )
     })
 
@@ -306,13 +302,12 @@ describe('SynapseTableCell tests', () => {
 
       await screen.findByTestId('EntityIdList')
       // Verify that the ID is passed
-      expect(mockEntityIdListComponent).toHaveBeenCalledWith(
+      expect(mockEntityIdListComponent).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           entityIdList: EXPECTED_PARSED_ENTITYID_LIST,
           displayTextField: 'name',
           showIcon: false,
         }),
-        expect.anything(),
       )
     })
   })

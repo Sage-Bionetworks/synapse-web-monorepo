@@ -397,7 +397,34 @@ describe('TitleBarProperties', () => {
       await screen.findByText(`Items`)
       await screen.findByText((55).toLocaleString())
 
+      await screen.findByText('Upload Destination')
+      await screen.findByText('Synapse Storage')
+    })
+    it('Displays "Storage Location" when entity is not a container and storageLocation exists', async () => {
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        entity: {
+          ...mockFileEntity.entity,
+        },
+      })
+
+      renderComponent()
+      await expandPropertiesIfPossible()
+
       await screen.findByText('Storage Location')
+      await screen.findByText('Synapse Storage')
+    })
+    it('Displays "Upload Destination" when entity is a container and uploadDestinationString exists', async () => {
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        entity: mockFolderEntity,
+        entityType: EntityType.FOLDER,
+      })
+
+      renderComponent()
+      await expandPropertiesIfPossible()
+
+      await screen.findByText('Upload Destination')
       await screen.findByText('Synapse Storage')
     })
     it('Dataset items', async () => {

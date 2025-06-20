@@ -783,12 +783,11 @@ describe('DetailsView tests', () => {
 
         // The version number passed to renderers (such as the EntityBadgeIcons) should be undefined
         await waitFor(() =>
-          expect(mockEntityBadgeIcons).toHaveBeenLastCalledWith(
+          expect(mockEntityBadgeIcons).toHaveBeenLastRenderedWithProps(
             expect.objectContaining({
               entityId: entityHeaders[0].id,
               versionNumber: undefined,
             }),
-            expect.anything(),
           ),
         )
       })
@@ -823,12 +822,11 @@ describe('DetailsView tests', () => {
 
         // The version number passed to renderers (such as the EntityBadgeIcons) should be the selected version
         await waitFor(() =>
-          expect(mockEntityBadgeIcons).toHaveBeenLastCalledWith(
+          expect(mockEntityBadgeIcons).toHaveBeenLastRenderedWithProps(
             expect.objectContaining({
               entityId: entityHeaders[0].id,
               versionNumber: versionResult.results[1].versionNumber,
             }),
-            expect.anything(),
           ),
         )
       })
@@ -863,12 +861,11 @@ describe('DetailsView tests', () => {
 
         // The version number passed to renderers (such as the EntityBadgeIcons) should be the automatically selected version
         await waitFor(() =>
-          expect(mockEntityBadgeIcons).toHaveBeenLastCalledWith(
+          expect(mockEntityBadgeIcons).toHaveBeenLastRenderedWithProps(
             expect.objectContaining({
               entityId: entityHeaders[0].id,
               versionNumber: versionResult.results[0].versionNumber,
             }),
-            expect.anything(),
           ),
         )
       })

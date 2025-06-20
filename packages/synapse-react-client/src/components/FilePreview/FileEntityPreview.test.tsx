@@ -151,12 +151,11 @@ describe('FileHandleContentRenderer tests', () => {
 
     await screen.findByTestId('FileHandleContentRenderer')
 
-    expect(FileHandleContentRendererModule.default).toHaveBeenCalledWith(
+    expect(FileHandleContentRendererModule.default).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         fileHandleAssociation,
         previewType: PreviewRendererType.HTML,
       }),
-      expect.anything(),
     )
   })
 
@@ -202,12 +201,11 @@ describe('FileHandleContentRenderer tests', () => {
 
     await screen.findByTestId('FileHandleContentRenderer')
 
-    expect(FileHandleContentRendererModule.default).toHaveBeenCalledWith(
+    expect(FileHandleContentRendererModule.default).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         fileHandleAssociation,
         previewType: PreviewRendererType.ZIP,
       }),
-      expect.anything(),
     )
   })
 

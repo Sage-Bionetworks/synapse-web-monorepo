@@ -15,6 +15,10 @@ describe('StringUtils', () => {
   })
 
   describe('normalizeNumericId', () => {
+    it('returns NaN when the input is null', () => {
+      // @ts-expect-error - `null` input is not allowed by the type, but may have gotten passed in with an erroneous assertion
+      expect(normalizeNumericId(null)).toBeNaN()
+    })
     it("should return the number if it's a number", () => {
       expect(normalizeNumericId(123)).toEqual(123)
     })

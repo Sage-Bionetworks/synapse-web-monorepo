@@ -39,11 +39,10 @@ describe('EntityPreview tests', () => {
 
     await screen.findByTestId('FileEntityPreview')
 
-    expect(FileEntityPreviewModule.default).toHaveBeenCalledWith(
+    expect(FileEntityPreviewModule.default).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         bundle: expect.anything(),
       }),
-      expect.anything(),
     )
   })
 
