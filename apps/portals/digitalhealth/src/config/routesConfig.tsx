@@ -1,12 +1,7 @@
-import CollectionsDetailsPage from '@/pages/CollectionsDetailsPage'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
-import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
-import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
+import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import { RouteObject } from 'react-router'
-import { MarkdownSynapse } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
-import HomePage from '../pages/HomePage'
-import explorePageRoutes from './explorePageRoutes'
 
 const routes: RouteObject[] = [
   {
@@ -16,30 +11,51 @@ const routes: RouteObject[] = [
       ...sharedRoutes,
       {
         index: true,
-        element: <HomePage />,
+        lazy: () => import('@/pages/HomePage').then(convertModuleToRouteObject),
       },
       {
         path: 'Explore',
-        element: <ExploreWrapper explorePaths={explorePageRoutes} />,
-        children: explorePageRoutes,
+        lazy: () =>
+          import('@/pages/explore/layout').then(convertModuleToRouteObject),
+        children: [
+          {
+            path: 'Collections',
+            lazy: () =>
+              import('@/pages/explore/Collections').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'Data',
+            lazy: () =>
+              import('@/pages/explore/Data').then(convertModuleToRouteObject),
+          },
+          {
+            path: 'Tools',
+            lazy: () =>
+              import('@/pages/explore/Tools').then(convertModuleToRouteObject),
+          },
+          {
+            path: 'Publications',
+            lazy: () =>
+              import('@/pages/explore/Publications').then(
+                convertModuleToRouteObject,
+              ),
+          },
+        ],
       },
+
       {
         path: 'Explore/Collections/DetailsPage',
-        element: <CollectionsDetailsPage />,
+        lazy: () =>
+          import('@/pages/CollectionsDetailsPage').then(
+            convertModuleToRouteObject,
+          ),
       },
       {
         path: 'About',
-        element: (
-          <SectionLayout
-            title={'About'}
-            ContainerProps={{ className: 'AboutPage' }}
-          >
-            <MarkdownSynapse
-              ownerId={'syn22130826'}
-              loadingSkeletonRowCount={20}
-            />
-          </SectionLayout>
-        ),
+        lazy: () =>
+          import('@/pages/AboutPage').then(convertModuleToRouteObject),
       },
     ],
   },
