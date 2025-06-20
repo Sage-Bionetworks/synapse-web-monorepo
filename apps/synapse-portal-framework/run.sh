@@ -72,8 +72,8 @@ EOL
   aws cloudfront create-invalidation --distribution-id "$CF_PRODUCTION_DIST_ID" --paths "/*"
 
 elif [ "$1" = "push-staging" ]; then
-  # sync current with staging
-  pnpm i && pnpm nx run "$2":build
+  # build is done by build step (like deploy.sh used to)
+
   # generate robots.txt
 cat > ./build/robots.txt <<EOL
 User-agent: * 
