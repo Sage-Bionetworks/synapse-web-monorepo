@@ -1,6 +1,6 @@
 import mockDatasetData from '@/mocks/entity/mockDataset'
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
@@ -16,6 +16,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import { TrashCanList } from './TrashCanList'
 
 function renderComponent() {
@@ -58,30 +59,30 @@ describe('TrashCanList', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${TRASHCAN_VIEW}`,
-        async (req, res, ctx) => {
-          const offset = req.url.searchParams.get('offset') ?? '0'
+        ({ request }) => {
+          const offset = new URL(request.url).searchParams.get('offset') ?? '0'
           const result = trashCanPages[parseInt(offset)]
-          return res(ctx.status(200), ctx.json(result))
+          return HttpResponse.json(result, { status: 200 })
         },
       ),
-      rest.put(
+      http.put(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${TRASHCAN_RESTORE(
           ':entityId',
         )}`,
-        async (req, res, ctx) => {
-          onServerReceivedRestore(req.params.entityId)
-          return res(ctx.status(200))
+        ({ params }) => {
+          onServerReceivedRestore(params.entityId)
+          return new Response('', { status: 200 })
         },
       ),
-      rest.put(
+      http.put(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${TRASHCAN_PURGE(
           ':entityId',
         )}`,
-        async (req, res, ctx) => {
-          onServerReceivedPurge(req.params.entityId)
-          return res(ctx.status(200))
+        ({ params }) => {
+          onServerReceivedPurge(params.entityId)
+          return new Response('', { status: 200 })
         },
       ),
     )
@@ -232,19 +233,19 @@ describe('TrashCanList', () => {
   test('Bulk restore with an error', async () => {
     // For only one of the items, the restore should fail
     server.use(
-      rest.put(
+      http.put(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${TRASHCAN_RESTORE(
           ':entityId',
         )}`,
-        async (req, res, ctx) => {
-          onServerReceivedRestore(req.params.entityId)
-          if (req.params.entityId === mockFileEntityData.id) {
-            return res(
-              ctx.status(400),
-              ctx.json({ reason: 'Some error returned by the server' }),
+        ({ params }) => {
+          onServerReceivedRestore(params.entityId)
+          if (params.entityId === mockFileEntityData.id) {
+            return HttpResponse.json(
+              { reason: 'Some error returned by the server' },
+              { status: 400 },
             )
           } else {
-            return res(ctx.status(200))
+            return new Response('', { status: 200 })
           }
         },
       ),

@@ -1,4 +1,4 @@
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
@@ -13,6 +13,7 @@ import {
 import { TRUSTED_HTML_USERS_TEAM_ID } from '@/utils/SynapseConstants'
 import { TeamMember } from '@sage-bionetworks/synapse-types'
 import { render, renderHook, screen, waitFor } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import HtmlPreview, {
   EXPORTED_FOR_UNIT_TESTING,
   HtmlPreviewProps,
@@ -39,18 +40,18 @@ describe('HTML Preview tests', () => {
     }
 
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${TEAM_ID_MEMBER_ID(TRUSTED_HTML_USERS_TEAM_ID, ':userId')}`,
-        (req, res, ctx) => {
+        ({ params }) => {
           let status = 404
           let result: TeamMember | null = null
-          if (req.params.userId === MOCK_USER_ID.toString()) {
+          if (params.userId === MOCK_USER_ID.toString()) {
             status = 200
             result = htmlTeamMembership
           }
-          return res(ctx.status(status), ctx.json(result))
+          return HttpResponse.json(result, { status: status })
         },
       ),
     )

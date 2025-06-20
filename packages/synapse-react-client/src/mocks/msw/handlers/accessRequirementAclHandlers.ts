@@ -1,57 +1,53 @@
 import { ACCESS_REQUIREMENT_ACL } from '@/utils/APIConstants'
 import { AccessControlList } from '@sage-bionetworks/synapse-types'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { mockAccessRequirementAcls } from '../../accessRequirement/mockAccessRequirementAcls'
 import { SynapseApiResponse } from '../handlers'
 
 export function getAccessRequirementAclHandler(backendOrigin: string) {
-  return rest.get(
+  return http.get(
     `${backendOrigin}${ACCESS_REQUIREMENT_ACL(':id')}`,
 
-    async (req, res, ctx) => {
+    ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<AccessControlList> = {
-        reason: `Mock Service worker could not find an ACL for access requirement with ID ${req.params.id}`,
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+        reason: `Mock Service worker could not find an ACL for access requirement with ID ${params.id}`,
       }
-      const acl = mockAccessRequirementAcls.find(
-        acl => acl.id === req.params.id,
-      )
+      const acl = mockAccessRequirementAcls.find(acl => acl.id === params.id)
 
       if (acl) {
         response = acl
         status = 200
       }
 
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   )
 }
 
 export function deleteAccessRequirementAcl(backendOrigin: string) {
-  return rest.delete(
-    `${backendOrigin}${ACCESS_REQUIREMENT_ACL(':id')}`,
-    async (req, res, ctx) => {
-      return res(ctx.status(200))
-    },
-  )
+  return http.delete(`${backendOrigin}${ACCESS_REQUIREMENT_ACL(':id')}`, () => {
+    return new Response('', { status: 200 })
+  })
 }
 
 export function createAccessRequirementAcl(backendOrigin: string) {
-  return rest.post(
+  return http.post<{ id: string }, AccessControlList>(
     `${backendOrigin}${ACCESS_REQUIREMENT_ACL(':id')}`,
-    async (req, res, ctx) => {
-      const requestBody: AccessControlList = await req.json()
-      return res(ctx.status(201), ctx.json(requestBody))
+    async ({ request }) => {
+      const requestBody = await request.json()
+      return HttpResponse.json(requestBody, { status: 201 })
     },
   )
 }
 
 export function updateAccessRequirementAcl(backendOrigin: string) {
-  return rest.put(
+  return http.put<{ id: string }, AccessControlList>(
     `${backendOrigin}${ACCESS_REQUIREMENT_ACL(':id')}`,
-    async (req, res, ctx) => {
-      const requestBody: AccessControlList = await req.json()
-      return res(ctx.status(200), ctx.json(requestBody))
+    async ({ request }) => {
+      const requestBody: AccessControlList = await request.json()
+      return HttpResponse.json(requestBody, { status: 200 })
     },
   )
 }

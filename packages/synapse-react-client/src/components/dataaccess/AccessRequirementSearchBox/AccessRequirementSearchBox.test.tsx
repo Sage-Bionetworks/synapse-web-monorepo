@@ -2,7 +2,8 @@ import {
   mockManagedACTAccessRequirement as mockAccessRequirement,
   mockSearchResultsPageOne as mockSearchResults,
 } from '@/mocks/accessRequirement/mockAccessRequirements'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
+import SynapseClient from '@/synapse-client/index'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ACCESS_REQUIREMENT_BY_ID,
@@ -14,13 +15,17 @@ import {
 } from '@/utils/functions/getEndpoint'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import selectEvent from 'react-select-event'
 import AccessRequirementSearchBox, {
   getOptionLabel,
 } from './AccessRequirementSearchBox'
 
 const mockOnChange = vi.fn()
-const onServiceRecievedRequest = vi.fn()
+const searchAccessRequirementsSpy = vi.spyOn(
+  SynapseClient,
+  'searchAccessRequirements',
+)
 
 function renderComponent(initialId?: string | number) {
   render(
@@ -37,29 +42,29 @@ function renderComponent(initialId?: string | number) {
 describe('Access Requirement Search Box tests', () => {
   beforeAll(() => {
     server.listen()
+  })
 
+  beforeEach(() => {
     // Configure MSW
     server.use(
       // Return mocked access requirement search results
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_SEARCH}`,
 
-        async (req, res, ctx) => {
-          onServiceRecievedRequest(req.body)
-          return res(ctx.status(200), ctx.json(mockSearchResults))
+        () => {
+          return HttpResponse.json(mockSearchResults, { status: 200 })
         },
       ),
       // Return an access requirement specified by ID
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
 
-        async (req, res, ctx) => {
-          onServiceRecievedRequest(req.body)
-          return res(ctx.status(200), ctx.json(mockAccessRequirement))
+        () => {
+          return HttpResponse.json(mockAccessRequirement, { status: 200 })
         },
       ),
     )
@@ -89,7 +94,8 @@ describe('Access Requirement Search Box tests', () => {
 
     // Should have sent a request with a blank input to populate the options
     await waitFor(() =>
-      expect(onServiceRecievedRequest).toHaveBeenCalledWith(
+      expect(searchAccessRequirementsSpy).toHaveBeenCalledWith(
+        expect.anything(),
         expect.objectContaining({
           nameContains: '',
         }),
@@ -106,7 +112,8 @@ describe('Access Requirement Search Box tests', () => {
 
     // Should have sent a new request with the input string
     await waitFor(() =>
-      expect(onServiceRecievedRequest).toHaveBeenCalledWith(
+      expect(searchAccessRequirementsSpy).toHaveBeenCalledWith(
+        expect.anything(),
         expect.objectContaining({
           nameContains: inputQuery,
         }),

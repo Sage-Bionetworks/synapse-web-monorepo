@@ -10,7 +10,7 @@ import {
 import { mockFileHandle } from '@/mocks/mock_file_handle'
 import mockQueryResponseData from '@/mocks/mockQueryResponseData'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { mockQueryResult } from '@/mocks/query/mockProjectViewQueryResults'
 import queryResultBundle from '@/mocks/query/syn16787123'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
@@ -23,6 +23,12 @@ import {
 } from '@/utils/functions/getEndpoint'
 import { normalizeNumericId } from '@/utils/functions/StringUtils'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
+import type {
+  RestrictionInformationBatchRequest,
+  RestrictionInformationBatchResponse,
+  RestrictionInformationRequest,
+  RestrictionInformationResponse,
+} from '@sage-bionetworks/synapse-client'
 import {
   EntityHeader,
   FileEntity,
@@ -30,29 +36,23 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
   Reference,
-  ReferenceList,
-  RestrictionInformationRequest,
-  RestrictionInformationResponse,
   RestrictionLevel,
   Table,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
+import { http, HttpResponse } from 'msw'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
-import {
-  QueryContextConsumer,
-  QueryContextType,
-  QueryWrapper,
-  QueryWrapperProps,
-} from '../../index'
 import * as AddToDownloadListV2Module from '../AddToDownloadListV2'
 import * as HasAccessModule from '../HasAccess/HasAccessV2'
+import { QueryContextConsumer, QueryContextType } from '../QueryContext'
 import {
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
 import * as NoContentPlaceholderModule from '../QueryVisualizationWrapper/NoContentPlaceholder'
+import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
 import * as UserCardModule from '../UserCard/UserCard'
 import { SynapseTable, SynapseTableProps } from './SynapseTable'
 
@@ -165,16 +165,15 @@ describe.skip('SynapseTable tests', () => {
   })
   beforeEach(() => {
     server.use(
-      rest.post(
+      http.post<never, { references: Reference[] }>(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
-        async (req, res, ctx) => {
-          const requestBody: ReferenceList = (await req.json())
-            .references as ReferenceList
+        async ({ request }) => {
+          const requestBody = (await request.json()).references
           const responseBody: PaginatedResults<EntityHeader> = {
-            results: requestBody.map((reference: Reference, index) => {
+            results: requestBody.map((reference: Reference) => {
               return {
                 id: reference.targetId,
-                name: `mock entity ${index}`,
+                name: `mock entity ${reference.targetId}`,
                 type: 'org.sagebionetworks.repo.model.FileEntity',
                 benefactorId: mockProjectIds[0],
                 createdOn: '2023-03-31T18:30:00.000Z',
@@ -185,19 +184,19 @@ describe.skip('SynapseTable tests', () => {
               }
             }),
           }
-          return res(ctx.status(200), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ENTITY_ID_VERSION(':id', ':version')}`,
-        async (req, res, ctx) => {
+        ({ params }) => {
           const responseBody: FileEntity = {
-            id: `${req.params.id}`,
-            name: `Mock Entity with Id ${req.params.id}`,
-            versionNumber: parseInt(req.params.version as string),
-            versionLabel: `v${req.params.version}`,
+            id: `${params.id}`,
+            name: `Mock Entity with Id ${params.id}`,
+            versionNumber: parseInt(params.version as string),
+            versionLabel: `v${params.version}`,
             versionComment: 'test',
             modifiedOn: '2021-03-31T18:30:00.000Z',
             modifiedBy: MOCK_USER_ID.toString(),
@@ -205,27 +204,60 @@ describe.skip('SynapseTable tests', () => {
             etag: 'etag',
             concreteType: 'org.sagebionetworks.repo.model.FileEntity',
           }
-          return res(ctx.status(200), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
-      rest.post(
+      http.post<
+        never,
+        RestrictionInformationRequest,
+        RestrictionInformationResponse
+      >(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/restrictionInformation`,
-        async (req, res, ctx) => {
-          const requestBody = await req.json<RestrictionInformationRequest>()
+        async ({ request }) => {
+          const requestBody = await request.json()
           const responseBody: RestrictionInformationResponse = {
-            objectId: normalizeNumericId(requestBody.objectId),
+            objectId: normalizeNumericId(requestBody.objectId!),
             restrictionDetails: [],
             restrictionLevel: RestrictionLevel.OPEN,
             hasUnmetAccessRequirement: false,
+            userEntityPermissions: {
+              canDownload: true,
+            },
           }
-          return res(ctx.status(200), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 200 })
+        },
+      ),
+      http.post<
+        never,
+        RestrictionInformationBatchRequest,
+        RestrictionInformationBatchResponse
+      >(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}/repo/v1/restrictionInformation/batch`,
+        async ({ request }) => {
+          const requestBody = await request.json()
+          const responseBody: RestrictionInformationBatchResponse = {
+            restrictionInformation: requestBody.objectIds!.map(
+              (objectId: string) => ({
+                objectId: normalizeNumericId(objectId),
+                restrictionDetails: [],
+                restrictionLevel: RestrictionLevel.OPEN,
+                hasUnmetAccessRequirement: false,
+                userEntityPermissions: {
+                  canDownload: true,
+                },
+              }),
+            ),
+          }
+
+          return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
     )
   })
-  afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
   const entityTypeCases: [
@@ -517,12 +549,12 @@ describe.skip('SynapseTable tests', () => {
 
     // Return a file view entity, so the download column would be shown if not for the missing row IDs
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/entity/${synapseTableEntityId}`,
-        (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockFileViewEntity))
+        () => {
+          return HttpResponse.json(mockFileViewEntity, { status: 200 })
         },
       ),
     )
@@ -561,12 +593,12 @@ describe.skip('SynapseTable tests', () => {
     }
 
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/entity/${synapseTableEntityId}`,
-        (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockFileViewEntity))
+        () => {
+          return HttpResponse.json(mockFileViewEntity, { status: 200 })
         },
       ),
     )
@@ -653,7 +685,9 @@ describe.skip('SynapseTable tests', () => {
     })
 
     // Verify that the ID column contains the icon button with the help text
-    const columnHeader = await screen.findByRole('columnheader', { name: 'Id' })
+    const columnHeader = await screen.findByRole('columnheader', {
+      name: 'Id',
+    })
     within(columnHeader).getByRole('button', { name: helpText })
   })
 

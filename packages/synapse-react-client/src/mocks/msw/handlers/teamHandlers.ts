@@ -1,4 +1,5 @@
 import { delay } from '@/synapse-client/HttpClient'
+import { IdList } from '@sage-bionetworks/synapse-client'
 import {
   CreateMembershipInvitationRequest,
   CreateMembershipRequestRequest,
@@ -11,7 +12,7 @@ import {
   TeamMembershipStatus,
 } from '@sage-bionetworks/synapse-types'
 import { uniqueId } from 'lodash-es'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import {
   mockTeamMembershipInvitations,
   mockTeamMembershipStatuses,
@@ -47,36 +48,35 @@ const teamMembershipInvitations: MembershipInvitation[] = [
 ]
 
 export function getTeamHandler(backendOrigin: string) {
-  return rest.get(
-    `${backendOrigin}/repo/v1/team/:teamId`,
-    async (req, res, ctx) => {
-      const team = mockedTeamService.getOneById(req.params.teamId as string)
+  return http.get(`${backendOrigin}/repo/v1/team/:teamId`, ({ params }) => {
+    const team = mockedTeamService.getOneById(params.teamId as string)
 
-      if (team) {
-        return res(ctx.status(200), ctx.json(team))
-      }
+    if (team) {
+      return HttpResponse.json(team, { status: 200 })
+    }
 
-      const errorResponse: SynapseApiResponse<ListWrapper<Team>> = {
-        reason: `Team id: '${req.params.teamId}' does not exist`,
-      }
-      return res(ctx.status(404), ctx.json(errorResponse))
-    },
-  )
+    const errorResponse: SynapseApiResponse<ListWrapper<Team>> = {
+      concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+      reason: `Team id: '${params.teamId}' does not exist`,
+    }
+    return HttpResponse.json(errorResponse, { status: 404 })
+  })
 }
 
 export function getTeamListHandler(backendOrigin: string) {
-  return rest.post(
+  return http.post<never, IdList>(
     `${backendOrigin}/repo/v1/teamList`,
-    async (req, res, ctx) => {
-      const requestBody: { list: number[] } = await req.json()
+    async ({ request }) => {
+      const requestBody = await request.json()
       const teams: Team[] = []
-      for (const teamId of requestBody.list) {
+      for (const teamId of requestBody.list!) {
         const team = mockedTeamService.getOneById(teamId.toString())
         if (!team) {
           const errorResponse: SynapseApiResponse<ListWrapper<Team>> = {
+            concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
             reason: `Team with id ${teamId} not found`,
           }
-          return res(ctx.status(404), ctx.json(errorResponse))
+          return HttpResponse.json(errorResponse, { status: 404 })
         }
         teams.push(team)
       }
@@ -86,55 +86,59 @@ export function getTeamListHandler(backendOrigin: string) {
         list: teams,
       }
 
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 }
 
 export function getCreateTeamHandler(backendOrigin: string) {
-  return rest.post(`${backendOrigin}/repo/v1/team`, async (req, res, ctx) => {
-    const requestBody: CreateTeamRequest = await req.json()
+  return http.post<never, CreateTeamRequest>(
+    `${backendOrigin}/repo/v1/team`,
+    async ({ request }) => {
+      const requestBody: CreateTeamRequest = await request.json()
 
-    const createdTeam = mockedTeamService.create({
-      ...requestBody,
-      createdBy: String(MOCK_USER_ID),
-      createdOn: new Date().toISOString(),
-      etag: 'etag',
-      modifiedBy: String(MOCK_USER_ID),
-      modifiedOn: new Date().toISOString(),
-    })
+      const createdTeam = mockedTeamService.create({
+        ...requestBody,
+        createdBy: String(MOCK_USER_ID),
+        createdOn: new Date().toISOString(),
+        etag: 'etag',
+        modifiedBy: String(MOCK_USER_ID),
+        modifiedOn: new Date().toISOString(),
+      })
 
-    mockedTeamMembershipService.create({
-      teamId: createdTeam.id,
-      userId: String(MOCK_USER_ID),
-      isMember: true,
-      hasOpenInvitation: false,
-      hasOpenRequest: false,
-      canJoin: false,
-      membershipApprovalRequired: false,
-      hasUnmetAccessRequirement: false,
-      canSendEmail: true,
-    })
+      mockedTeamMembershipService.create({
+        teamId: createdTeam.id,
+        userId: String(MOCK_USER_ID),
+        isMember: true,
+        hasOpenInvitation: false,
+        hasOpenRequest: false,
+        canJoin: false,
+        membershipApprovalRequired: false,
+        hasUnmetAccessRequirement: false,
+        canSendEmail: true,
+      })
 
-    // Avoid a race condition where the data in the arrays may not have updated before subsequent calls are made by the client
-    await delay(250)
+      // Avoid a race condition where the data in the arrays may not have updated before subsequent calls are made by the client
+      await delay(250)
 
-    return res(ctx.status(201), ctx.json(createdTeam))
-  })
+      return HttpResponse.json(createdTeam, { status: 201 })
+    },
+  )
 }
 
 export function getTeamMembershipStatusHandler(backendOrigin: string) {
-  return rest.get(
+  return http.get(
     `${backendOrigin}/repo/v1/team/:teamId/member/:memberId/membershipStatus`,
-    async (req, res, ctx) => {
-      const teamId = req.params.teamId as string
-      const memberId = req.params.memberId as string
+    ({ params }) => {
+      const teamId = params.teamId as string
+      const memberId = params.memberId as string
       let response: SynapseApiResponse<TeamMembershipStatus>
       let status: number
 
       const team = mockedTeamService.getOneById(teamId)
       if (!team) {
         response = {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
           reason: `getTeamMembershipStatusHandler could not locate a team with ID ${teamId}`,
         }
         status = 404
@@ -155,23 +159,24 @@ export function getTeamMembershipStatusHandler(backendOrigin: string) {
         response = membershipStatus
         status = 200
       }
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   )
 }
 
 export function getUpdateTeamMembershipStatusHandler(backendOrigin: string) {
-  return rest.put(
+  return http.put(
     `${backendOrigin}/repo/v1/team/:teamId/member/:memberId`,
-    async (req, res, ctx) => {
-      const teamId = req.params.teamId as string
-      const memberId = req.params.memberId as string
+    ({ params }) => {
+      const teamId = params.teamId as string
+      const memberId = params.memberId as string
       let response: SynapseApiResponse<void> | ''
       let status: number
 
       const team = mockedTeamService.getOneById(teamId)
       if (!team) {
         response = {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
           reason: `getTeamMembershipStatusHandler could not locate a team with ID ${teamId}`,
         }
         status = 404
@@ -191,16 +196,16 @@ export function getUpdateTeamMembershipStatusHandler(backendOrigin: string) {
         response = ''
         status = 201
       }
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   )
 }
 
 export function getCreateTeamMembershipRequestHandler(backendOrigin: string) {
-  return rest.post(
+  return http.post<never, CreateMembershipRequestRequest>(
     `${backendOrigin}/repo/v1/membershipRequest`,
-    async (req, res, ctx) => {
-      const requestBody: CreateMembershipRequestRequest = await req.json()
+    async ({ request }) => {
+      const requestBody: CreateMembershipRequestRequest = await request.json()
 
       const response: SynapseApiResponse<MembershipRequest> = {
         ...requestBody,
@@ -208,7 +213,7 @@ export function getCreateTeamMembershipRequestHandler(backendOrigin: string) {
         createdOn: new Date().toISOString(),
         createdBy: String(MOCK_USER_ID),
       }
-      return res(ctx.status(201), ctx.json(response))
+      return HttpResponse.json(response, { status: 201 })
     },
   )
 }
@@ -216,10 +221,11 @@ export function getCreateTeamMembershipRequestHandler(backendOrigin: string) {
 export function getCreateTeamMembershipInvitationHandler(
   backendOrigin: string,
 ) {
-  return rest.post(
+  return http.post<never, CreateMembershipInvitationRequest>(
     `${backendOrigin}/repo/v1/membershipInvitation`,
-    async (req, res, ctx) => {
-      const requestBody: CreateMembershipInvitationRequest = await req.json()
+    async ({ request }) => {
+      const requestBody: CreateMembershipInvitationRequest =
+        await request.json()
 
       const response: SynapseApiResponse<MembershipInvitation> = {
         ...requestBody,
@@ -229,17 +235,17 @@ export function getCreateTeamMembershipInvitationHandler(
       }
 
       teamMembershipInvitations.push(response)
-      return res(ctx.status(201), ctx.json(response))
+      return HttpResponse.json(response, { status: 201 })
     },
   )
 }
 
 export function getOpenInvitationsRequestHandler(backendOrigin: string) {
-  return rest.get(
+  return http.get(
     `${backendOrigin}/repo/v1/user/:userId/openInvitation`,
-    async (req, res, ctx) => {
+    ({ params }) => {
       const userInvitations = teamMembershipInvitations.filter(inv => {
-        return String(inv.inviteeId) === String(req.params.userId)
+        return String(inv.inviteeId) === String(params.userId)
       })
       const response: SynapseApiResponse<
         PaginatedResults<MembershipInvitation>
@@ -247,7 +253,7 @@ export function getOpenInvitationsRequestHandler(backendOrigin: string) {
         results: userInvitations,
         totalNumberOfResults: userInvitations.length,
       }
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 }

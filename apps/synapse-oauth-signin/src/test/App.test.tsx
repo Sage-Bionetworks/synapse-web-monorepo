@@ -17,7 +17,7 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import {
   defaultQueryClientConfig,
@@ -111,16 +111,16 @@ describe('App integration tests', () => {
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=expired`
     // Backend should return with an invalid_token response
     server.use(
-      rest.get(
+      http.get(
         'https://repo-prod.prod.sagebase.org/repo/v1/userProfile',
-        (req, res, ctx) => {
-          return res(
-            ctx.status(401),
-            ctx.json({
+        () => {
+          return HttpResponse.json(
+            {
               reason: 'invalid_token. The token has expired.',
               error: 'invalid_token',
               error_description: 'The token has expired.',
-            }),
+            },
+            { status: 401 },
           )
         },
       ),
@@ -365,14 +365,14 @@ describe('App integration tests', () => {
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=someToken`
 
     server.use(
-      rest.post(
+      http.post(
         'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/consent',
-        (req, res, ctx) => {
-          return res(
-            ctx.status(500),
-            ctx.json({
+        () => {
+          return HttpResponse.json(
+            {
               reason: errorMsg,
-            }),
+            },
+            { status: 500 },
           )
         },
       ),
@@ -432,36 +432,36 @@ describe('App integration tests', () => {
     const authenticationReciept = 'imv890vm0ewvmim3'
 
     server.use(
-      rest.post(
+      http.post(
         'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/session2',
-        async (req, res, ctx) => {
-          const requestBody = await req.json()
+        async ({ request }) => {
+          const requestBody = await request.json()
           onOAuthSignIn(requestBody)
 
-          return res(
-            ctx.status(401),
-            ctx.json({
+          return HttpResponse.json(
+            {
               concreteType:
                 'org.sagebionetworks.repo.model.auth.TwoFactorAuthErrorResponse',
               reason: 'Two factor authentication required.',
               errorCode: 'TWO_FA_REQUIRED',
               userId: userId,
               twoFaToken: twoFaToken,
-            }),
+            },
+            { status: 401 },
           )
         },
       ),
-      rest.post(
+      http.post(
         'https://repo-prod.prod.sagebase.org/auth/v1/2fa/token',
-        async (req, res, ctx) => {
-          const requestBody = await req.json()
+        async ({ request }) => {
+          const requestBody = await request.json()
           on2FASignIn(requestBody)
           const responseBody: LoginResponse = {
             accessToken: accessToken,
             authenticationReceipt: authenticationReciept,
             acceptsTermsOfUse: true,
           }
-          return res(ctx.status(201), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 201 })
         },
       ),
     )

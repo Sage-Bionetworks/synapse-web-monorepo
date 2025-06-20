@@ -7,7 +7,7 @@ import { SynapseContextConsumer } from '@/utils'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { ListRequest, StatusEnum } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import SynapseFormSubmissionGrid, {
   SynapseFormSubmissionGridProps,
 } from './SynapseFormSubmissionGrid'
@@ -43,17 +43,18 @@ type Story = StoryObj<typeof meta>
 
 function listFormDataHandlers() {
   return [
-    rest.post(
+    http.post(
       `${MOCK_REPO_ORIGIN}/repo/v1/form/data/list`,
-      async (req, res, ctx) => {
-        const listRequest = req.body as ListRequest
-        const status = ctx.status(200)
+      async ({ request }) => {
+        const listRequest = (await request.json()) as ListRequest
+
+        const status = 200
         if (
           listRequest.filterByState?.includes(StatusEnum.WAITING_FOR_SUBMISSION)
         ) {
-          return res(status, ctx.json(formListDataInProgress))
+          return HttpResponse.json(formListDataInProgress, { status })
         }
-        return res(status, ctx.json(formListDataSubmitted))
+        return HttpResponse.json(formListDataSubmitted, { status })
       },
     ),
   ]
@@ -64,12 +65,9 @@ export const NoSubmissions: Story = {
     msw: {
       handlers: [
         getHandlers(MOCK_REPO_ORIGIN),
-        rest.post(
-          `${MOCK_REPO_ORIGIN}/repo/v1/form/data/list`,
-          async (req, res, ctx) => {
-            return res(ctx.status(200), ctx.json({ page: [] }))
-          },
-        ),
+        http.post(`${MOCK_REPO_ORIGIN}/repo/v1/form/data/list`, () => {
+          return HttpResponse.json({ page: [] }, { status: 200 })
+        }),
       ],
     },
   },

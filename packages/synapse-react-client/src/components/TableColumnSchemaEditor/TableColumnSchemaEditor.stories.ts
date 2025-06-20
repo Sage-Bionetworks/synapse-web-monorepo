@@ -10,7 +10,7 @@ import { ENTITY_BUNDLE_V2 } from '@/utils/APIConstants'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { TableBundle } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import TableColumnSchemaEditor from './TableColumnSchemaEditor'
 
 const meta = {
@@ -45,18 +45,15 @@ export const Demo: Story = {
           MOCK_ANNOTATION_COLUMN_RESPONSE,
           MOCK_REPO_ORIGIN,
         ),
-        rest.post(
+        http.post(
           `${MOCK_REPO_ORIGIN}${ENTITY_BUNDLE_V2(':entityId')}`,
-          async (req, res, ctx) => {
+          ({ params }) => {
             const entity =
-              mockEntities.find(entity => entity.id === req.params.entityId) ||
+              mockEntities.find(entity => entity.id === params.entityId) ||
               mockTableEntityData
-            return res(
-              ctx.status(200),
-              ctx.json({
-                entity: entity.entity,
-                tableBundle: mockTableBundle,
-              }),
+            return HttpResponse.json(
+              { entity: entity.entity, tableBundle: mockTableBundle },
+              { status: 200 },
             )
           },
         ),

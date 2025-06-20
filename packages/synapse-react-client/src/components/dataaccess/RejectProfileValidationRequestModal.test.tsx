@@ -1,5 +1,5 @@
 import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { VERIFICATION_SUBMISSION_STATE } from '@/utils/APIConstants'
@@ -12,6 +12,7 @@ import { VerificationStateEnum } from '@sage-bionetworks/synapse-types'
 import { userEvent } from '@storybook/test'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import failOnConsoleError from 'jest-fail-on-console'
+import { http } from 'msw'
 import { CannedRejectionDialog } from '../CannedRejectionDialog/CannedRejectionDialog'
 import {
   DEFAULT_MESSAGE_APPEND,
@@ -62,12 +63,12 @@ describe('RejectProfileValidationRequestModal', () => {
   beforeAll(() => {
     server.listen()
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${VERIFICATION_SUBMISSION_STATE(':id')}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200))
+        () => {
+          return new Response('', { status: 200 })
         },
       ),
     )
