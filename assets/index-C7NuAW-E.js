@@ -1,0 +1,1 @@
+import{r as e}from"./index-CVh1Ipa7.js";import{j as s}from"./jsx-runtime-C2zdKJwt.js";const r=e.createContext();function a({value:t,...o}){return s.jsx(r.Provider,{value:t??!0,...o})}const x=()=>e.useContext(r)??!1;export{a as R,x as u};
