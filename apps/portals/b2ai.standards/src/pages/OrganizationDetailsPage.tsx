@@ -21,7 +21,7 @@ import {
   ColumnSingleValueFilterOperator,
   ColumnTypeEnum,
 } from '@sage-bionetworks/synapse-types'
-import { organizationDetailsPageSQL } from '../config/resources'
+import { organizationDetailsPageSQL, dataSetSQL } from '../config/resources'
 import { GenericCardIcon } from 'synapse-react-client/components/GenericCard/GenericCardIcon'
 import GenericCard from 'synapse-react-client/components/GenericCard/GenericCard'
 import { Collapse } from '@mui/material'
@@ -89,8 +89,8 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
       <DetailsPageContextConsumer columnName={'dataset_json'}>
         {({ value }) => (
           <CardContainerLogic
-            cardConfiguration={linkedOrganizationCardConfiguration}
-            sql={dataSql}
+            cardConfiguration={linkedDataSetCardConfiguration}
+            sql={dataSetSQL}
             // need a dummy value for search to properly exclude null values and an empty string doesn't work
             searchParams={{ id: value || 'notreal' }}
             sqlOperator={ColumnSingleValueFilterOperator.IN}
@@ -164,118 +164,5 @@ export default function OrganizationDetailsPage() {
         <DetailsPageContent content={organizationDetailsPageContent} />
       </DetailsPage>
     </>
-  )
-}
-
-function DataSetCard(props) {
-  return (
-    <GenericCard
-    /*
-      ref={ref}
-      icon={
-        <GenericCardIcon
-          type={
-            useTypeColumnForIcon ? data[schema['type']] : genericCardSchema.type
-          }
-          useTypeForIcon={useTypeColumnForIcon}
-          thumbnailRequiresPadding={genericCardSchema.thumbnailRequiresPadding}
-          imageFileHandleId={imageFileHandleIdValue}
-          fileHandleAssociation={fileHandleAssociation}
-          iconOptions={iconOptions}
-          iconValue={iconValue}
-        />
-      }
-      isHeader={isHeader}
-      headerCardVariant={headerCardVariant}
-      type={type}
-      title={title}
-      subtitle={subTitle}
-      titleLinkConfiguration={{ target, href }}
-      titleAsFileHandleLinkConfiguration={
-        !titleLinkConfig &&
-        titleColumnType === ColumnTypeEnum.FILEHANDLEID &&
-        fileHandleAssociation
-          ? {
-            fileHandleAssociation: fileHandleAssociation,
-            showDownloadIcon: type !== SynapseConstants.EXPERIMENTAL,
-          }
-          : undefined
-      }
-      ctaLinkConfig={
-        ctaLinkConfig
-          ? {
-            text: ctaLinkConfig?.text,
-            href: ctaHref,
-            target: ctaTarget,
-          }
-          : undefined
-      }
-      description={description}
-      descriptionSubTitle={descriptionSubTitle}
-      descriptionConfig={descriptionConfig}
-      labels={values}
-      secondaryLabelLimit={secondaryLabelLimit}
-      columnIconOptions={columnIconOptions}
-      useStylesForDisplayedImage={Boolean(imageFileHandleIdValue)}
-      cardTopContent={
-        downloadCartSynIdValue && (
-          <Collapse in={showDownloadConfirmation}>
-            <EntityDownloadConfirmation
-              entityId={downloadCartSynIdValue}
-              versionNumber={downloadCartVersionNumber}
-              handleClose={() => setShowDownloadConfirmation(false)}
-              onIsLoadingChange={isLoading => {
-                setDownloadButtonDisabled(isLoading)
-              }}
-            />
-          </Collapse>
-        )
-      }
-      renderedIconList={
-        // If the portal configs has columnIconOptions.columns.dataType option
-        // and the column value is not null, display the card data type icons
-        columnIconOptions?.columns?.dataType &&
-        dataTypeIconNames?.length && (
-          <div style={{ marginTop: '20px' }}>
-            <IconList
-              iconConfigs={columnIconOptions.columns.dataType}
-              iconNames={JSON.parse(dataTypeIconNames)}
-              commonIconProps={{
-                sx: { fontSize: '40px' },
-              }}
-              useBackground={true}
-              useTheme={true}
-            />
-          </div>
-        )
-      }
-      cardTopButtons={
-        <>
-          {croissantButton}
-          {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart * /}
-          {downloadCartSynIdValue && (
-            <>
-              <GenericCardActionButton
-                onClick={() => setShowDownloadConfirmation(val => !val)}
-                variant="outlined"
-                startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
-                disabled={downloadButtonDisabled}
-              >
-                Download
-              </GenericCardActionButton>
-            </>
-          )}
-          {includeCitation && (
-            <CitationPopover
-              title={title}
-              doi={doiValue}
-              boilerplateText={citationBoilerplateText}
-              defaultCitationFormat={defaultCitationFormat}
-            />
-          )}
-        </>
-      }
-      */
-    />
   )
 }

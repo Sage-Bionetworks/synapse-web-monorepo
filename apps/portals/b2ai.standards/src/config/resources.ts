@@ -20,7 +20,20 @@ export const ORG_TABLE_COLUMN_NAMES = {
   ID: 'id',
   NAME: 'name',
   DESCRIPTION: 'description',
+  ROR_ID: 'ror_id',
+  WIKIDATA_ID: 'wikidata_id',
+  URL: 'url',
+  SUBCLASS_OF: 'subclass_of',
 }
+export const ORG_TABLE_JSON_COLUMNS = []
+
+export const organizationDetailsPageSQL = `SELECT  ${Object.values(
+  ORG_TABLE_COLUMN_NAMES,
+).join(', ')} FROM ${TABLE_IDS.Organization.id}`
+
+// export const GC_PARENT_ORG_ID = 'B2AI_ORG:106' // not just GCs
+export const GC_ORG_IDS = [114, 115, 116, 117].map(id => `'B2AI_ORG:${id}'`)
+
 export const CHALLENGES_TABLE_COLUMN_NAMES = {
   ORG_ID: 'organizationId',
   IMG_HANDLE_ID: 'headerImage',
@@ -47,27 +60,27 @@ export const DATASET_DENORMALIZED_JSON_COLUMNS = [
   'substrates_json',
   'topics',
 ]
+export const dataSetSQL = `SELECT  ${Object.values(ORG_TABLE_COLUMN_NAMES).join(
+  ', ',
+)} FROM ${TABLE_IDS.DataSet.id}`
 
-// export const GC_PARENT_ORG_ID = 'B2AI_ORG:106' // not just GCs
-export const GC_ORG_IDS = [114, 115, 116, 117].map(id => `'B2AI_ORG:${id}'`)
-
-export const ORG_DENORMALIZED_COLUMN_NAMES = {
-  ID: 'id',
-  NAME: 'name',
-  DESCRIPTION: 'description',
-  ROR_ID: 'rorId',
-  WIKIDATA_ID: 'wikidataId',
-  URL: 'URL',
-  SUBCLASS_OF: 'subclassOf',
-  DATASET_JSON: 'dataset_json',
-}
-export const ORG_DENORMALIZED_JSON_COLUMNS = [
-  ORG_DENORMALIZED_COLUMN_NAMES.DATASET_JSON,
-]
+// export const ORG_DENORMALIZED_COLUMN_NAMES = {
+//   ID: 'id',
+//   NAME: 'name',
+//   DESCRIPTION: 'description',
+//   ROR_ID: 'rorId',
+//   WIKIDATA_ID: 'wikidataId',
+//   URL: 'URL',
+//   SUBCLASS_OF: 'subclassOf',
+//   DATASET_JSON: 'dataset_json',
+// }
+// export const ORG_DENORMALIZED_JSON_COLUMNS = [
+//   ORG_DENORMALIZED_COLUMN_NAMES.DATASET_JSON,
+// ]
 // for organization details page:
-export const organizationDetailsPageSQL = `SELECT  ${Object.values(
-  ORG_DENORMALIZED_COLUMN_NAMES,
-).join(', ')} FROM ${TABLE_IDS.Org_denormalized.id}`
+// export const organizationDetailsPageSQL = `SELECT  ${Object.values(
+//   ORG_DENORMALIZED_COLUMN_NAMES,
+// ).join(', ')} FROM ${TABLE_IDS.Org_denormalized.id}`
 
 // for the Explore page table:
 export const standardsSql = `

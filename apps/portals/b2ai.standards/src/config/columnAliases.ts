@@ -1,6 +1,6 @@
 import {
   DST_TABLE_COLUMN_NAMES,
-  ORG_DENORMALIZED_COLUMN_NAMES,
+  ORG_TABLE_COLUMN_NAMES,
 } from '@/config/resources'
 
 export default {
@@ -10,5 +10,5 @@ export default {
   registration: 'Requires Registration?',
   topic: 'Topics',
 
-  [ORG_DENORMALIZED_COLUMN_NAMES.NAME]: 'Name',
+  [ORG_TABLE_COLUMN_NAMES.NAME]: 'Name',
 }
