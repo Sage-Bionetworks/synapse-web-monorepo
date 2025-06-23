@@ -13,8 +13,8 @@ import { QueryWrapperProps } from '../QueryWrapper/QueryWrapper'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import CardContainerLogic, { CardContainerLogicProps } from './index'
 
-const queryWrapperSpy = jest.spyOn(QueryWrapperModule, 'QueryWrapper')
-const queryVisualizationWrapperSpy = jest.spyOn(
+const queryWrapperSpy = vi.spyOn(QueryWrapperModule, 'QueryWrapper')
+const queryVisualizationWrapperSpy = vi.spyOn(
   QueryVisualizationWrapperModule,
   'QueryVisualizationWrapper',
 )
@@ -23,7 +23,7 @@ const renderComponent = (props: CardContainerLogicProps) => {
   return render(<CardContainerLogic {...props} />, { wrapper: createWrapper() })
 }
 
-const mockCardContainer = jest
+const mockCardContainer = vi
   .spyOn(CardContainerModule, 'CardContainer')
   .mockImplementation(() => {
     return <div data-testid="CardContainer"></div>
@@ -59,7 +59,7 @@ describe('it performs basic functionality', () => {
     renderComponent(props)
 
     await waitFor(() =>
-      expect(queryWrapperSpy).toHaveBeenCalledWith(
+      expect(queryWrapperSpy).toHaveBeenRenderedWithProps(
         expect.objectContaining<QueryWrapperProps>({
           isInfinite: true,
           initQueryRequest: expect.objectContaining<QueryBundleRequest>({
@@ -81,19 +81,17 @@ describe('it performs basic functionality', () => {
             },
           }),
         }),
-        expect.anything(),
       ),
     )
 
     await waitFor(() =>
-      expect(queryVisualizationWrapperSpy).toHaveBeenCalledWith(
+      expect(queryVisualizationWrapperSpy).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           rgbIndex: props.rgbIndex,
           unitDescription: props.unitDescription,
           columnAliases: props.columnAliases,
           noContentPlaceholderType: NoContentPlaceholderType.STATIC,
         }),
-        expect.anything(),
       ),
     )
 
@@ -106,10 +104,10 @@ describe('it performs basic functionality', () => {
     )
 
     await waitFor(() =>
-      expect(mockCardContainer).toHaveBeenCalledWith(
-        { ...props.cardConfiguration, rowSet: truncatedQueryResults },
-        expect.anything(),
-      ),
+      expect(mockCardContainer).toHaveBeenRenderedWithProps({
+        ...props.cardConfiguration,
+        rowSet: truncatedQueryResults,
+      }),
     )
   })
 })

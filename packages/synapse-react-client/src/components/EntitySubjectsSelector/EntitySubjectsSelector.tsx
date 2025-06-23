@@ -50,9 +50,18 @@ function EntitySubjectsSelector(props: EntitySubjectsSelectorProps) {
   }
 
   return (
-    <Box mb={2}>
+    <Box
+      sx={{
+        mb: 2,
+      }}
+    >
       {references.length === 0 && (
-        <Typography variant="body1Italic" mb={-4}>
+        <Typography
+          variant="body1Italic"
+          sx={{
+            mb: -4,
+          }}
+        >
           {NO_ENTITIES_SELECTED}
         </Typography>
       )}

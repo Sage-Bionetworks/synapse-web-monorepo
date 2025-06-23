@@ -20,6 +20,7 @@ import { EntityServicesApi } from './generated/apis/EntityServicesApi'
 import { EvaluationServicesApi } from './generated/apis/EvaluationServicesApi'
 import { FileServicesApi } from './generated/apis/FileServicesApi'
 import { FormServicesApi } from './generated/apis/FormServicesApi'
+import { GridServicesApi } from './generated/apis/GridServicesApi'
 import { JSONSchemaServicesApi } from './generated/apis/JSONSchemaServicesApi'
 import { LogServiceApi } from './generated/apis/LogServiceApi'
 import { MembershipInvitationServicesApi } from './generated/apis/MembershipInvitationServicesApi'
@@ -121,6 +122,7 @@ export class SynapseClient {
   public evaluationServicesClient: EvaluationServicesApi
   public fileServicesClient: FileServicesApi
   public formServicesClient: FormServicesApi
+  public gridServicesClient: GridServicesApi
   public jsonSchemaServicesClient: JSONSchemaServicesApi
   public logServiceClient: LogServiceApi
   public membershipInvitationServicesClient: MembershipInvitationServicesApi
@@ -191,6 +193,7 @@ export class SynapseClient {
     this.evaluationServicesClient = new EvaluationServicesApi(configuration)
     this.fileServicesClient = new FileServicesApi(configuration)
     this.formServicesClient = new FormServicesApi(configuration)
+    this.gridServicesClient = new GridServicesApi(configuration)
     this.jsonSchemaServicesClient = new JSONSchemaServicesApi(configuration)
     this.logServiceClient = new LogServiceApi(configuration)
     this.membershipInvitationServicesClient =

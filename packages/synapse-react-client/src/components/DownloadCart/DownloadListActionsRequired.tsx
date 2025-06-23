@@ -29,7 +29,14 @@ export function DownloadListActionsRequired(
 
   return (
     <>
-      <Box sx={{ pt: 5 }} display="flex" flexDirection="column" gap={3}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 3,
+          pt: 5,
+        }}
+      >
         {allCompleteAndIncompleteActions.map((item, index) => {
           if (item) {
             return (

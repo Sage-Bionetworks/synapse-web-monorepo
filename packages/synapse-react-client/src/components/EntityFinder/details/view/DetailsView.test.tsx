@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom'
 import * as EntityBadgeModule from '@/components/EntityBadgeIcons/EntityBadgeIcons'
 import { mockProjectHeader } from '@/mocks/entity/mockEntity'
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
@@ -29,15 +28,15 @@ import { VersionSelectionType } from '../../VersionSelectionType'
 import { toEntityHeader } from '../configurations/ProjectListDetails'
 import { DetailsView, DetailsViewColumn, DetailsViewProps } from './DetailsView'
 
-const mockEntityBadgeIcons = jest
+const mockEntityBadgeIcons = vi
   .spyOn(EntityBadgeModule, 'EntityBadgeIcons')
   .mockImplementation(() => <></>)
 
 const mockFileEntityHeader = mockFileEntityData.entityHeader
 
-const mockToggleSelection = jest.fn()
-const mockFetchNextPage = jest.fn()
-const mockSetSort = jest.fn()
+const mockToggleSelection = vi.fn()
+const mockFetchNextPage = vi.fn()
+const mockSetSort = vi.fn()
 
 function generateFileHeader(id: number): EntityHeader {
   return {
@@ -94,7 +93,7 @@ const versionResult: PaginatedResults<VersionInfo> = {
 const FILE_INDEX = 0
 const PROJECT_INDEX = 1
 
-const mockSetCurrentContainer = jest.fn()
+const mockSetCurrentContainer = vi.fn()
 
 const defaultProps: DetailsViewProps = {
   versionSelection: VersionSelectionType.TRACKED,
@@ -115,8 +114,8 @@ const defaultProps: DetailsViewProps = {
   noResultsPlaceholder: <></>,
   enableSelectAll: true,
   setCurrentContainer: mockSetCurrentContainer,
-  isIdSelected: jest.fn(),
-  isSelectable: jest.fn(),
+  isIdSelected: vi.fn(),
+  isSelectable: vi.fn(),
 }
 
 function renderComponent(
@@ -143,7 +142,7 @@ describe('DetailsView tests', () => {
   afterAll(() => server.close())
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     server.use(
       rest.get(
         `${getEndpoint(
@@ -783,12 +782,11 @@ describe('DetailsView tests', () => {
 
         // The version number passed to renderers (such as the EntityBadgeIcons) should be undefined
         await waitFor(() =>
-          expect(mockEntityBadgeIcons).toHaveBeenLastCalledWith(
+          expect(mockEntityBadgeIcons).toHaveBeenLastRenderedWithProps(
             expect.objectContaining({
               entityId: entityHeaders[0].id,
               versionNumber: undefined,
             }),
-            expect.anything(),
           ),
         )
       })
@@ -823,12 +821,11 @@ describe('DetailsView tests', () => {
 
         // The version number passed to renderers (such as the EntityBadgeIcons) should be the selected version
         await waitFor(() =>
-          expect(mockEntityBadgeIcons).toHaveBeenLastCalledWith(
+          expect(mockEntityBadgeIcons).toHaveBeenLastRenderedWithProps(
             expect.objectContaining({
               entityId: entityHeaders[0].id,
               versionNumber: versionResult.results[1].versionNumber,
             }),
-            expect.anything(),
           ),
         )
       })
@@ -863,12 +860,11 @@ describe('DetailsView tests', () => {
 
         // The version number passed to renderers (such as the EntityBadgeIcons) should be the automatically selected version
         await waitFor(() =>
-          expect(mockEntityBadgeIcons).toHaveBeenLastCalledWith(
+          expect(mockEntityBadgeIcons).toHaveBeenLastRenderedWithProps(
             expect.objectContaining({
               entityId: entityHeaders[0].id,
               versionNumber: versionResult.results[0].versionNumber,
             }),
-            expect.anything(),
           ),
         )
       })

@@ -1,18 +1,18 @@
 import { Upload } from '@aws-sdk/lib-storage'
 import { uploadToS3 } from './UploadToS3'
 
-jest.mock('@aws-sdk/lib-storage', () => {
+vi.mock('@aws-sdk/lib-storage', () => {
   return {
-    Upload: jest.fn().mockImplementation(() => {
+    Upload: vi.fn().mockImplementation(() => {
       return {
-        on: jest.fn(),
-        done: jest.fn(),
+        on: vi.fn(),
+        done: vi.fn(),
       }
     }),
   }
 })
 
-const mockUpload = jest.mocked(Upload)
+const mockUpload = vi.mocked(Upload)
 
 describe('UploadToS3', () => {
   const storageEndpoint = 'https://my-fake.endpoint.synapse/storage/v1'
@@ -25,7 +25,7 @@ describe('UploadToS3', () => {
   const abortController = new AbortController()
 
   test('successful upload', async () => {
-    const progressCallback = jest.fn()
+    const progressCallback = vi.fn()
 
     await uploadToS3(
       blob,
@@ -54,12 +54,12 @@ describe('UploadToS3', () => {
     // @ts-expect-error - Only implement required properties
     mockUpload.mockImplementation(() => {
       return {
-        on: jest.fn(),
-        done: jest.fn().mockRejectedValue(new Error('Access Denied')),
+        on: vi.fn(),
+        done: vi.fn().mockRejectedValue(new Error('Access Denied')),
       }
     })
 
-    const progressCallback = jest.fn()
+    const progressCallback = vi.fn()
 
     await expect(() =>
       uploadToS3(

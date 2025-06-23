@@ -111,13 +111,21 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
       <Collapse sx={{ mt: 2 }} in={showPasteNewValuesForm}>
         <TextField
           multiline
-          InputProps={{ inputProps: { 'aria-label': 'CSV or TSV to Append' } }}
           rows={5}
           placeholder={'Place comma or tab delimited values here'}
           value={pastedValues}
           onChange={e => setPastedValues(e.target.value)}
+          slotProps={{
+            input: { inputProps: { 'aria-label': 'CSV or TSV to Append' } },
+          }}
         />
-        <Box my={1} display={'flex'} justifyContent={'flex-end'}>
+        <Box
+          sx={{
+            my: 1,
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}
+        >
           <Button onClick={() => setShowPasteNewValuesForm(false)}>
             Cancel
           </Button>
@@ -137,9 +145,11 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
                 return (
                   <Typography
                     component={'li'}
-                    lineHeight={1.5}
                     key={index}
                     variant={'smallText1'}
+                    sx={{
+                      lineHeight: 1.5,
+                    }}
                   >
                     {error.row ? `At ${error.row}: ` : ''}
                     {error.message}

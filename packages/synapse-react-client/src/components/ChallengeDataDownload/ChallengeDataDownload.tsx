@@ -21,7 +21,8 @@ export function ChallengeDataDownload({
 }: ChallengeDataDownloadProps) {
   const { downloadCartPageUrl } = useSynapseContext()
   const selectMultiple = true
-  const [selectedEntities, toggleSelection] = useEntitySelection(selectMultiple)
+  const { selectedEntities, toggleSelection } =
+    useEntitySelection(selectMultiple)
 
   const { mutate: addBatchToDownloadList } = useAddFileBatchToDownloadList({
     onSuccess: () => {
@@ -87,7 +88,11 @@ export function ChallengeDataDownload({
           {...sharedProps}
         />
       </Box>
-      <Box mt={4}>
+      <Box
+        sx={{
+          mt: 4,
+        }}
+      >
         <Button
           endIcon={<AddCircleTwoToneIcon />}
           variant={'outlined'}

@@ -111,10 +111,6 @@ const DialogSubsectionHeader: StyledComponent<TypographyProps> = styled(
   borderBottom: '1px solid',
   borderColor: theme.palette.grey['200'],
 }))
-DialogSubsectionHeader.defaultProps = {
-  ...DialogSubsectionHeader.defaultProps,
-  variant: 'h4',
-}
 
 export const checkHasUnsupportedRequirement = (
   accessRequirements: Array<AccessRequirement>,
@@ -239,7 +235,7 @@ export default function AccessRequirementList(
       },
     )
 
-  const sortedGroupedAcessRequirementsByType = useMemo(() => {
+  const sortedGroupedAccessRequirementsByType = useMemo(() => {
     if (accessRequirements && sortedAccessRequirementIds) {
       // SWC-7218: Group by access requirement type
       const groupedAccessRequirementsByType = groupBy(
@@ -261,7 +257,7 @@ export default function AccessRequirementList(
       return sortedByTypeAndStatus
     }
     return undefined
-  }, [sortedAccessRequirementIds])
+  }, [accessRequirements, sortedAccessRequirementIds])
 
   const requestDataStepCallback = (props: RequestDataStepCallbackArgs) => {
     const {
@@ -416,20 +412,20 @@ export default function AccessRequirementList(
         <>
           <DialogBaseTitle title={dialogTitle} onCancel={onHide} />
           <DialogContent>
-            <DialogSubsectionHeader sx={{ mt: 0 }}>
+            <DialogSubsectionHeader variant={'h4'} sx={{ mt: 0 }}>
               What is this request for?
             </DialogSubsectionHeader>
             <Typography variant={'body1'} component={'span'}>
               {requestDetails}
             </Typography>
-            <DialogSubsectionHeader>
+            <DialogSubsectionHeader variant={'h4'}>
               What do I need to do?
             </DialogSubsectionHeader>
             <AuthenticatedRequirement />
             {anyARsRequireCertification && <CertificationRequirement />}
             {anyARsRequireProfileValidation && <ValidationRequirement />}
             {anyARsRequireTwoFactorAuth && <TwoFactorAuthEnabledRequirement />}
-            {sortedGroupedAcessRequirementsByType?.map(accessRequirement => {
+            {sortedGroupedAccessRequirementsByType?.map(accessRequirement => {
               return (
                 <AccessRequirementListItem
                   key={accessRequirement.id}

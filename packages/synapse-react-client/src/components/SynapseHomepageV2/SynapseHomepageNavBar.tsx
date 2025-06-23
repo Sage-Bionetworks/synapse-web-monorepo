@@ -14,7 +14,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import { ColorPartial } from '@mui/material/styles/createPalette'
+import type { Color } from '@mui/material/styles'
 import { MouseEvent, useState } from 'react'
 import SageResourcesPopover from '../SageResourcesPopover'
 
@@ -68,7 +68,7 @@ export function SynapseHomepageNavBar({
   const registrationLink = useOneSageURL('/register1')
   const theme = useTheme()
   const isSmallView = useMediaQuery(theme.breakpoints.down('md'))
-
+  const sageResourcesURL = useOneSageURL('/sageresources')
   // mobile view nav bar menu
   const [mobileMenuAnchorEl, setMobileMenuAnchorEl] =
     useState<null | HTMLElement>(null)
@@ -114,7 +114,7 @@ export function SynapseHomepageNavBar({
       {/* Logo */}
       <a onClick={() => gotoPlace(HOMEPAGE_LINK)}>
         <SynapseFullLogo
-          textColor={(theme.palette.primary as ColorPartial)[900]!}
+          color={(theme.palette.primary as unknown as Color)[900]}
         />
       </a>
       {/* Menu Items */}
@@ -191,6 +191,7 @@ export function SynapseHomepageNavBar({
         anchorEl={portalResourcesAnchorEl}
         onClose={handleClosePortalResources}
         filterByType="SynapsePortal"
+        allResourcesUrl={sageResourcesURL.toString()}
       />
       <SageResourcesPopover
         anchorEl={sageSolutionsAnchorEl}
@@ -274,7 +275,7 @@ export function SynapseHomepageNavBar({
             <StyledMenuItem
               onClick={event => {
                 setSageSolutionsAnchorEl(event.currentTarget)
-                handleCloseSageSolutions()
+                handleCloseMobileMenu()
               }}
             >
               Solutions

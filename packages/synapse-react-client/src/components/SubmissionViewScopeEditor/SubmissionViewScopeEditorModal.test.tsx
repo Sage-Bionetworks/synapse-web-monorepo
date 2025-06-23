@@ -17,13 +17,13 @@ import SubmissionViewScopeEditorModal, {
   SubmissionViewScopeEditorModalProps,
 } from './SubmissionViewScopeEditorModal'
 
-jest.mock('../EvaluationFinder/EvaluationFinder', () => ({
+vi.mock('../EvaluationFinder/EvaluationFinder', () => ({
   __esModule: true,
-  default: jest.fn(() => <div data-testid={'EvaluationFinderMocked'} />),
+  default: vi.fn(() => <div data-testid={'EvaluationFinderMocked'} />),
 }))
 
-const mockEvaluationFinder = jest.mocked(EvaluationFinder)
-const mockUpdateEntity = jest.spyOn(SynapseClient, 'updateEntity')
+const mockEvaluationFinder = vi.mocked(EvaluationFinder)
+const mockUpdateEntity = vi.spyOn(SynapseClient, 'updateEntity')
 const mockTableEntityInstance = mockTableEntityData.entity
 
 function renderComponent(props: SubmissionViewScopeEditorModalProps) {
@@ -46,11 +46,11 @@ async function setUp(props: SubmissionViewScopeEditorModalProps) {
 }
 
 describe('SubmissionViewScopeEditorModal tests', () => {
-  const mockOnCancel = jest.fn()
-  const mockOnUpdate = jest.fn()
+  const mockOnCancel = vi.fn()
+  const mockOnUpdate = vi.fn()
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.spyOn(SynapseClient, 'getEntity').mockResolvedValue({
+    vi.clearAllMocks()
+    vi.spyOn(SynapseClient, 'getEntity').mockResolvedValue({
       ...mockTableEntity,
       scopeIds: ['123', '456'],
       concreteType: SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
@@ -58,13 +58,12 @@ describe('SubmissionViewScopeEditorModal tests', () => {
   })
 
   it('displays the correct scope editor which can modify selection', async () => {
-    jest.spyOn(SynapseClient, 'getEvaluation').mockImplementation(id => {
+    vi.spyOn(SynapseClient, 'getEvaluation').mockImplementation(id => {
       return Promise.resolve({
         id: id,
         name: `Evaluation ${id}`,
       })
     })
-
     const { saveButton, cancelButton } = await setUp({
       entityId: mockTableEntity.id,
       open: true,
@@ -74,15 +73,12 @@ describe('SubmissionViewScopeEditorModal tests', () => {
     await screen.findByTestId('EvaluationFinderMocked')
 
     await waitFor(() => {
-      expect(mockEvaluationFinder).toHaveBeenLastCalledWith(
-        {
-          activeOnly: false,
-          accessType: ACCESS_TYPE.READ_PRIVATE_SUBMISSION,
-          selectedIds: ['123', '456'],
-          onChange: expect.anything(),
-        },
-        expect.anything(),
-      )
+      expect(mockEvaluationFinder).toHaveBeenLastRenderedWithProps({
+        activeOnly: false,
+        accessType: ACCESS_TYPE.READ_PRIVATE_SUBMISSION,
+        selectedIds: ['123', '456'],
+        onChange: expect.anything(),
+      })
     })
 
     expect(await screen.findByRole('dialog')).toBeVisible()
@@ -160,19 +156,16 @@ describe('SubmissionViewScopeEditorModal tests', () => {
     const newScopeIds = ['123', '456', '789']
 
     await waitFor(() => {
-      expect(mockEvaluationFinder).toHaveBeenLastCalledWith(
-        {
-          activeOnly: false,
-          accessType: ACCESS_TYPE.READ_PRIVATE_SUBMISSION,
-          selectedIds: ['123', '456'],
-          onChange: expect.anything(),
-        },
-        expect.anything(),
-      )
+      expect(mockEvaluationFinder).toHaveBeenLastRenderedWithProps({
+        activeOnly: false,
+        accessType: ACCESS_TYPE.READ_PRIVATE_SUBMISSION,
+        selectedIds: ['123', '456'],
+        onChange: expect.anything(),
+      })
     })
     const mockSubmissionView = {
       ...mockTableEntityInstance,
-      sceopIds: newScopeIds,
+      scopeIds: newScopeIds,
     }
 
     mockUpdateEntity.mockResolvedValue(mockSubmissionView)

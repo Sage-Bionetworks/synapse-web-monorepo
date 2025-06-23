@@ -2,24 +2,25 @@ import { getUseUtcTimeFromCookie } from '@/synapse-client'
 import dayjs, { Dayjs } from 'dayjs'
 import { formatDate } from './DateFormatter'
 
-jest.mock('../../synapse-client', () => {
+vi.mock(import('../../synapse-client/SynapseClient'), async importOriginal => {
   return {
-    getUseUtcTimeFromCookie: jest.fn(),
+    ...(await importOriginal()),
+    getUseUtcTimeFromCookie: vi.fn(),
   }
 })
 
-jest.mock('dayjs', () => {
+vi.mock('dayjs', () => {
   const mockDayjsObject = {
-    tz: jest.fn(),
-    format: jest.fn().mockReturnValue('mockResultDate'),
+    tz: vi.fn(),
+    format: vi.fn().mockReturnValue('mockResultDate'),
   }
   mockDayjsObject.tz.mockReturnValue(mockDayjsObject)
-  const mockDayjsInstance = jest
-    .fn()
-    .mockReturnValue(mockDayjsObject) as unknown as jest.Mocked<typeof dayjs>
-  mockDayjsInstance.extend = jest.fn()
-  // @ts-expect-error tz is readonly but we need to mock it
-  mockDayjsInstance.tz = { guess: jest.fn().mockReturnValue('mockLocalTz') }
+
+  const mockDayjsInstance = vi.fn().mockReturnValue(mockDayjsObject)
+  // @ts-expect-error - dayjs is a function, but we need to add properties to it
+  mockDayjsInstance['extend'] = vi.fn()
+  // @ts-expect-error - dayjs is a function, but we need to add properties to it
+  mockDayjsInstance['tz'] = { guess: vi.fn().mockReturnValue('mockLocalTz') }
 
   return {
     __esModule: true,
@@ -27,14 +28,14 @@ jest.mock('dayjs', () => {
   }
 })
 
-const mockGetUseUtcTimeFromCookie = jest.mocked(getUseUtcTimeFromCookie)
+const mockGetUseUtcTimeFromCookie = vi.mocked(getUseUtcTimeFromCookie)
 
 const mockDate = Symbol('mockDate') as unknown as Dayjs
-const mockDayjs = jest.mocked(dayjs)
+const mockDayjs = vi.mocked(dayjs)
 
 describe('DateFormatter', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   it('Shows local time', () => {
     mockGetUseUtcTimeFromCookie.mockReturnValue(false)
@@ -54,7 +55,7 @@ describe('DateFormatter', () => {
 
     expect(mockDayjs).toHaveBeenCalledWith(mockDate)
     const mockDayjsObject = mockDayjs()
-    expect(mockDayjsObject.tz).toHaveBeenCalledWith('utc')
+    expect(mockDayjsObject.tz).toHaveBeenLastCalledWith('utc')
     expect(mockDayjs.tz.guess).not.toHaveBeenCalled()
     expect(mockDayjsObject.format).toHaveBeenCalledWith('M/D/YYYY h:mm A z')
 

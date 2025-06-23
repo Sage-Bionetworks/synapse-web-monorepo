@@ -4,6 +4,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useExportToCavatica } from './useExportToCavatica'
 import { useExportToTerra } from './useExportToTerra'
+import { useExportToPluto } from './useExportToPluto'
 
 /**
  * Provides functions to export data from a Synapse table query to an external analysis platform.
@@ -31,10 +32,33 @@ export function useExportTableQueryToAnalysisPlatform(options: {
     fileVersionColumnName,
   )
 
-  const exportToTerra = useExportToTerra(queryBundleRequest)
+  const exportToTerra = useExportToTerra(
+    queryBundleRequest,
+    selectColumns,
+    fileIdColumnName,
+    fileNameColumnName,
+    fileVersionColumnName,
+  )
+  const exportToPluto = useExportToPluto(
+    queryBundleRequest,
+    selectColumns,
+    fileIdColumnName,
+    fileNameColumnName,
+    fileVersionColumnName,
+  )
+  const exportToPlutoDev = useExportToPluto(
+    queryBundleRequest,
+    selectColumns,
+    fileIdColumnName,
+    fileNameColumnName,
+    fileVersionColumnName,
+    true,
+  )
 
   return {
     exportToCavatica,
     exportToTerra,
+    exportToPluto,
+    exportToPlutoDev,
   }
 }

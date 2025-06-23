@@ -13,10 +13,10 @@ function DivWithColorText({ color }: DivColorTextProps) {
   return (
     <div>
       <Box
-        display={'flex'}
-        justifyContent={'center'}
-        alignItems={'center'}
         sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
           background: color,
           width: '100px',
           height: '20px',

@@ -22,11 +22,11 @@ import EntityViewScopeEditorModal, {
 
 const mockTableEntityInstance = mockTableEntityData.entity
 
-jest.mock('../EntityViewScopeEditor/EntityViewScopeEditor', () => ({
+vi.mock('../EntityViewScopeEditor/EntityViewScopeEditor', () => ({
   __esModule: true,
-  default: jest.fn(() => <div data-testid={'EntityViewScopeEditorMocked'} />),
+  default: vi.fn(() => <div data-testid={'EntityViewScopeEditorMocked'} />),
 }))
-const mockEntityViewScopeEditor = jest.mocked(EntityViewScopeEditor)
+const mockEntityViewScopeEditor = vi.mocked(EntityViewScopeEditor)
 
 function renderComponent(props: EntityViewScopeEditorModalProps) {
   return render(<EntityViewScopeEditorModal {...props} />, {
@@ -60,15 +60,15 @@ async function setUp(props: EntityViewScopeEditorModalProps) {
   }
 }
 
-const mockUpdateEntity = jest.spyOn(SynapseClient, 'updateEntity')
+const mockUpdateEntity = vi.spyOn(SynapseClient, 'updateEntity')
 
 describe('EntityViewScopeEditorModal tests', () => {
-  const mockOnCancel = jest.fn()
-  const mockOnUpdate = jest.fn()
+  const mockOnCancel = vi.fn()
+  const mockOnUpdate = vi.fn()
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.spyOn(SynapseClient, 'getEntity').mockResolvedValue({
+    vi.clearAllMocks()
+    vi.spyOn(SynapseClient, 'getEntity').mockResolvedValue({
       ...mockTableEntity,
       scopeIds: ['syn123'],
       viewTypeMask: ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_FOLDER,
@@ -140,7 +140,7 @@ describe('EntityViewScopeEditorModal tests', () => {
   })
 
   it('verify no mask options are shown when projectView is passed', async () => {
-    jest.spyOn(SynapseClient, 'getEntity').mockResolvedValue({
+    vi.spyOn(SynapseClient, 'getEntity').mockResolvedValue({
       ...mockProjectViewEntity,
       scopeIds: ['syn123'],
       viewTypeMask: ENTITY_VIEW_TYPE_MASK_PROJECT,
@@ -206,15 +206,12 @@ describe('EntityViewScopeEditorModal tests', () => {
     await user.click(foldersCheckbox)
 
     await waitFor(() => {
-      expect(mockEntityViewScopeEditor).toHaveBeenLastCalledWith(
-        {
-          scopeIds: ['syn123'],
-          disabled: false,
-          isProjectView: false,
-          onChange: expect.any(Function),
-        },
-        expect.anything(),
-      )
+      expect(mockEntityViewScopeEditor).toHaveBeenLastRenderedWithProps({
+        scopeIds: ['syn123'],
+        disabled: false,
+        isProjectView: false,
+        onChange: expect.any(Function),
+      })
     })
 
     const onChangePassedToEntityViewScopeEditor =

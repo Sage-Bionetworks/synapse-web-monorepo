@@ -73,7 +73,11 @@ export default function SubscriptionPage() {
         <Tab value={SubscriptionObjectType.FORUM} label={'Project Forums'} />
         <Tab value={SubscriptionObjectType.THREAD} label={'Threads'} />
       </Tabs>
-      <Stack gap={0.5}>
+      <Stack
+        sx={{
+          gap: 0.5,
+        }}
+      >
         {data?.pages.map(subscription => (
           <SubscriptionItem
             key={subscription.subscriptionId}

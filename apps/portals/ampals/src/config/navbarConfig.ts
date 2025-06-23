@@ -2,19 +2,20 @@ import { NavbarConfig } from '@sage-bionetworks/synapse-portal-framework/compone
 
 export const navbarConfig: NavbarConfig = {
   routes: [
-    {
-      name: 'Home',
-      path: '/',
-      children: [
-        { name: 'Resources', path: '/#Resources' },
-        { name: 'How To Access Data', path: '/#How To Access Data' },
-        { name: 'Publishing Requirements', path: '/#Publishing Requirements' },
-        { name: "What's New", path: "/#What's New" },
-        { name: 'All ALS', path: '/#All ALS' },
-        { name: 'Featured Datasets', path: '/#Featured Datasets' },
-        { name: 'More Resources', path: '/#More Resources' },
-      ],
-    },
+    // Navbar is getting crowded, so removing Home and its children for now
+    // {
+    //   name: 'Home',
+    //   path: '/',
+    //   children: [
+    //     { name: 'Resources', path: '/#Resources' },
+    //     { name: 'How To Access Data', path: '/#How To Access Data' },
+    //     { name: 'Publishing Requirements', path: '/#Publishing Requirements' },
+    //     { name: "What's New", path: "/#What's New" },
+    //     { name: 'All ALS', path: '/#All ALS' },
+    //     { name: 'Featured Datasets', path: '/#Featured Datasets' },
+    //     { name: 'More Resources', path: '/#More Resources' },
+    //   ],
+    // },
     {
       name: 'Explore',
       path: '/Explore',
@@ -29,14 +30,6 @@ export const navbarConfig: NavbarConfig = {
       path: '/Resources',
       children: [
         {
-          name: 'For Researchers',
-          path: '/Resources/For Researchers',
-        },
-        {
-          name: 'For Contributors',
-          path: '/Resources/For Contributors',
-        },
-        {
           name: 'For Persons With Lived Experience',
           path: '/Resources/For Persons With Lived Experience',
         },
@@ -48,20 +41,29 @@ export const navbarConfig: NavbarConfig = {
           name: 'Frequently Asked Questions',
           path: '/Resources/Frequently Asked Questions',
         },
+        // {
+        //   name: 'Publishing Requirements',
+        //   path: '/Resources/Publishing Requirements',
+        // },
       ],
+    },
+    {
+      name: 'Data Access',
+      path: '/Data Access',
     },
     {
       name: 'Contribute Data',
       path: '/Contribute Data',
     },
-    {
-      name: 'News',
-      path: 'https://news.ampals.org/',
-    },
-    {
-      name: 'Help',
-      path: 'https://help.ampals.org/help/',
-    },
+    // PORTALS-3644: removing News and Help from the navbar until external sites are ready
+    // {
+    //   name: 'News',
+    //   path: 'https://news.ampals.org/',
+    // },
+    // {
+    //   name: 'Help',
+    //   path: 'https://help.ampals.org/help/',
+    // },
   ],
   isPortalsDropdownEnabled: false,
 }

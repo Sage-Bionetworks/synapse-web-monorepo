@@ -10,23 +10,23 @@ import MultiValueField, { MultiValueFieldProps } from './MultiValueField'
 const stringDefinition: JSONSchema7Definition = {
   type: 'string',
 }
-jest.mock('../TableColumnSchemaEditorUtils', () => {
+vi.mock('../TableColumnSchemaEditorUtils', () => {
   return {
-    getJsonSchemaItemDefinitionForColumnType: jest.fn(),
+    getJsonSchemaItemDefinitionForColumnType: vi.fn(),
   }
 })
 
-jest.mock('../../JSONArrayEditor/JSONArrayEditorModal', () => {
+vi.mock('../../JSONArrayEditor/JSONArrayEditorModal', () => {
   return {
     __esModule: true,
-    default: jest.fn(),
+    default: vi.fn(),
   }
 })
 
-const mockGetJsonSchemaDefinition = jest.mocked(
+const mockGetJsonSchemaDefinition = vi.mocked(
   getJsonSchemaItemDefinitionForColumnType,
 )
-const mockJsonArrayEditorModal = jest.mocked(JSONArrayEditorModal)
+const mockJsonArrayEditorModal = vi.mocked(JSONArrayEditorModal)
 mockJsonArrayEditorModal.mockImplementation(() => (
   <div data-testid={'JSONArrayEditorModal'} />
 ))
@@ -39,11 +39,11 @@ function renderComponent(props: MultiValueFieldProps) {
 
 describe('MultiValueField', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   test('interactions and calls to dependencies', async () => {
     mockGetJsonSchemaDefinition.mockReturnValue(stringDefinition)
-    const onChange = jest.fn()
+    const onChange = vi.fn()
     renderComponent({
       columnType: ColumnTypeEnum.STRING,
       onChange,
@@ -58,13 +58,12 @@ describe('MultiValueField', () => {
       ColumnTypeEnum.STRING,
     )
     await waitFor(() =>
-      expect(mockJsonArrayEditorModal).toHaveBeenCalledWith(
+      expect(mockJsonArrayEditorModal).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           arrayItemDefinition: stringDefinition,
           value: ['foo', 'bar'],
           isShowingModal: false,
         }),
-        expect.anything(),
       ),
     )
 
@@ -72,11 +71,10 @@ describe('MultiValueField', () => {
     await userEvent.click(textField)
 
     await waitFor(() =>
-      expect(mockJsonArrayEditorModal).toHaveBeenCalledWith(
+      expect(mockJsonArrayEditorModal).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           isShowingModal: true,
         }),
-        expect.anything(),
       ),
     )
 
@@ -85,11 +83,10 @@ describe('MultiValueField', () => {
       mockJsonArrayEditorModal.mock.lastCall![0].onCancel()
     })
     await waitFor(() =>
-      expect(mockJsonArrayEditorModal).toHaveBeenCalledWith(
+      expect(mockJsonArrayEditorModal).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           isShowingModal: false,
         }),
-        expect.anything(),
       ),
     )
 
@@ -97,11 +94,10 @@ describe('MultiValueField', () => {
     await userEvent.click(textField)
 
     await waitFor(() =>
-      expect(mockJsonArrayEditorModal).toHaveBeenCalledWith(
+      expect(mockJsonArrayEditorModal).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           isShowingModal: true,
         }),
-        expect.anything(),
       ),
     )
 
@@ -110,11 +106,10 @@ describe('MultiValueField', () => {
       mockJsonArrayEditorModal.mock.lastCall![0].onConfirm(['baz', 'qux'])
     })
     await waitFor(() => {
-      expect(mockJsonArrayEditorModal).toHaveBeenCalledWith(
+      expect(mockJsonArrayEditorModal).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           isShowingModal: false,
         }),
-        expect.anything(),
       )
 
       expect(onChange).toHaveBeenCalledWith(['baz', 'qux'])

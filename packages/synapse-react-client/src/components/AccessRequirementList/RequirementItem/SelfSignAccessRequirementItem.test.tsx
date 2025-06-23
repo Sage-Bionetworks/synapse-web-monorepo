@@ -25,15 +25,15 @@ import SelfSignAccessRequirementItem, {
   SelfSignAccessRequirementItemProps,
 } from './SelfSignAccessRequirementItem'
 
-jest.mock('../../Markdown/MarkdownSynapse', () => ({
+vi.mock('../../Markdown/MarkdownSynapse', () => ({
   __esModule: true,
-  default: jest.fn(),
+  default: vi.fn(),
 }))
 
 const mockRenderedMarkdown =
   'These are the AR instructions presented to the user.'
 
-const mockMarkdownSynapse = jest.mocked(MarkdownSynapse)
+const mockMarkdownSynapse = vi.mocked(MarkdownSynapse)
 mockMarkdownSynapse.mockImplementation(
   () =>
     (
@@ -54,7 +54,7 @@ function renderComponent(
   return renderReturn
 }
 
-const mockOnHide = jest.fn()
+const mockOnHide = vi.fn()
 
 function getDefaultProps(
   accessRequirement: SelfSignAccessRequirementItemProps['accessRequirement'],
@@ -65,31 +65,27 @@ function getDefaultProps(
   }
 }
 
-jest
-  .spyOn(SynapseClient, 'getWikiPageKeyForAccessRequirement')
-  .mockImplementation((_token, arId) => {
-    return Promise.resolve(
-      mockAccessRequirementWikiPageKeys.find(
-        wpk => wpk.ownerObjectId === String(arId),
-      )!,
-    )
-  })
-
-const mockCreateAccessApproval = jest.spyOn(
+vi.spyOn(
   SynapseClient,
-  'createAccessApproval',
-)
+  'getWikiPageKeyForAccessRequirement',
+).mockImplementation((_token, arId) => {
+  return Promise.resolve(
+    mockAccessRequirementWikiPageKeys.find(
+      wpk => wpk.ownerObjectId === String(arId),
+    )!,
+  )
+})
 
-const mockGetAccessRequirementStatus = jest.spyOn(
+const mockCreateAccessApproval = vi.spyOn(SynapseClient, 'createAccessApproval')
+
+const mockGetAccessRequirementStatus = vi.spyOn(
   SynapseClient,
   'getAccessRequirementStatus',
 )
 
-jest
-  .spyOn(SynapseClient, 'getUserProfile')
-  .mockResolvedValue(mockUserProfileData)
+vi.spyOn(SynapseClient, 'getUserProfile').mockResolvedValue(mockUserProfileData)
 
-const mockGetUserBundle = jest
+const mockGetUserBundle = vi
   .spyOn(SynapseClient, 'getMyUserBundle')
   .mockResolvedValue(mockUserBundle)
 
@@ -127,9 +123,8 @@ async function testWikiToggle(expectedProps: MarkdownSynapseProps) {
   await userEvent.click(toggle)
 
   await screen.findByText(mockRenderedMarkdown)
-  expect(mockMarkdownSynapse).toHaveBeenCalledWith(
+  expect(mockMarkdownSynapse).toHaveBeenRenderedWithProps(
     expect.objectContaining(expectedProps),
-    expect.anything(),
   )
 
   toggle = await screen.findByRole('button', { name: 'Hide Terms' })
@@ -142,9 +137,8 @@ async function testWikiToggle(expectedProps: MarkdownSynapseProps) {
 
 async function testWikiShownWithoutToggle(expectedProps: MarkdownSynapseProps) {
   await screen.findByText(mockRenderedMarkdown)
-  expect(mockMarkdownSynapse).toHaveBeenCalledWith(
+  expect(mockMarkdownSynapse).toHaveBeenRenderedWithProps(
     expect.objectContaining(expectedProps),
-    expect.anything(),
   )
 
   expect(
@@ -156,7 +150,7 @@ const ACCEPT_BUTTON_TEXT = 'I Accept Terms of Use'
 const REJECT_TERMS_BUTTON_TEXT = 'I do not accept'
 describe('SelfSignAccessRequirementItem tests', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   describe('SelfSignAccessRequirement', () => {
     it('Creates an access approval on accept', async () => {

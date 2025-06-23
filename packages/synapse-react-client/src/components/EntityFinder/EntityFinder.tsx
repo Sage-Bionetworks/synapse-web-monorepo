@@ -36,6 +36,7 @@ import { EntityTree, EntityTreeContainer, FinderScope } from './tree/EntityTree'
 import { EntityTreeNodeType } from './tree/VirtualizedTree'
 import { useEntitySelection } from './useEntitySelection'
 import { VersionSelectionType } from './VersionSelectionType'
+import { Map } from 'immutable'
 
 const DEFAULT_SELECTABLE_TYPES = Object.values(EntityType)
 const TABLE_DEFAULT_VISIBLE_TYPES = Object.values(EntityType)
@@ -76,6 +77,8 @@ export type EntityFinderProps = {
   visibleTypesInTree?: EntityType[]
   /** Whether to show only the tree. If `true`, the tree will be used to make selections */
   treeOnly?: boolean
+  /** If provided, the initial selection will be set to this list of references. The selection will be reset to this value if this object changes, so it should be memoized. */
+  initialSelected?: Reference[]
 }
 
 enum EntityFinderTab {
@@ -94,13 +97,14 @@ export function EntityFinder({
   visibleTypesInList = TABLE_DEFAULT_VISIBLE_TYPES,
   visibleTypesInTree = TREE_DEFAULT_VISIBLE_TYPES,
   treeOnly = false,
+  initialSelected,
 }: EntityFinderProps) {
   const { accessToken } = useSynapseContext()
   const [currentTab, setCurrentTab] = React.useState(EntityFinderTab.BROWSE)
 
   const [searchActive, setSearchActive] = useState(false)
   // The raw value of the search input box:
-  const [searchInput, setSearchInput] = useState<string>()
+  const [searchInput, setSearchInput] = useState<string>('')
   // The "parsed" search terms, which are only calculated when Enter is pressed:
   const [searchTerms, setSearchTerms] = useState<string[]>()
   const [breadcrumbsProps, setBreadcrumbsProps] = useState<BreadcrumbsProps>({
@@ -139,7 +143,22 @@ export function EntityFinder({
     [setBreadcrumbsProps],
   )
 
-  const [selectedEntities, toggleSelection] = useEntitySelection(selectMultiple)
+  const { selectedEntities, toggleSelection, setSelection } =
+    useEntitySelection(selectMultiple)
+
+  useEffect(() => {
+    if (initialSelected) {
+      let map = Map<string, Reference>()
+      map = map.withMutations(mutableMap => {
+        initialSelected.forEach(reference => {
+          mutableMap.set(reference.targetId, reference)
+        })
+      })
+
+      setSelection(map)
+    }
+  }, [initialSelected, setSelection])
+
   // A snapshot of the selectedEntities used to populate the selection list, allowing deselection of entities without removing them from the list.
   const [selectedEntitiesSnapshot, setSelectedEntitiesSnapshot] =
     useState(selectedEntities)
@@ -211,13 +230,12 @@ export function EntityFinder({
     <SynapseErrorBoundary>
       <div className="EntityFinder">
         <Box
-          display="flex"
-          justifyContent="space-between"
-          mb={2.5}
-          flexWrap={'wrap'}
-          rowGap={2}
-          columnGap={4}
           sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            mb: 2.5,
+            rowGap: 2,
+            columnGap: 4,
             flexWrap: { xs: 'wrap', md: 'nowrap' },
           }}
         >
@@ -230,7 +248,13 @@ export function EntityFinder({
             <Tab
               value={EntityFinderTab.SELECTED}
               label={
-                <Stack direction={'row'} gap={0.5} alignItems={'center'}>
+                <Stack
+                  direction={'row'}
+                  sx={{
+                    gap: 0.5,
+                    alignItems: 'center',
+                  }}
+                >
                   <span>Selected</span>
                   <Chip
                     size={'small'}
@@ -262,32 +286,34 @@ export function EntityFinder({
                 }
               }
             }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-              endAdornment: searchTerms ? (
-                <InputAdornment position="end">
-                  <IconButton
-                    size={'small'}
-                    onClick={() => {
-                      setSearchInput('')
-                      setSearchTerms(undefined)
-                      setSearchActive(false)
-                    }}
-                    aria-label="Clear Search"
-                    disabled={!searchInput && !searchActive}
-                  >
-                    <ClearIcon />
-                  </IconButton>
-                </InputAdornment>
-              ) : undefined,
-            }}
             sx={{
               maxWidth: { xs: '100%', md: '350px' },
               flex: '1 1 350px',
+            }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+                endAdornment: searchTerms ? (
+                  <InputAdornment position="end">
+                    <IconButton
+                      size={'small'}
+                      onClick={() => {
+                        setSearchInput('')
+                        setSearchTerms(undefined)
+                        setSearchActive(false)
+                      }}
+                      aria-label="Clear Search"
+                      disabled={!searchInput && !searchActive}
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ) : undefined,
+              },
             }}
           />
         </Box>

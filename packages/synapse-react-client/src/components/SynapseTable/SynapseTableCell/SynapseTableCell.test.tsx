@@ -94,25 +94,25 @@ function renderTableCell(props: SynapseTableCellProps) {
   )
 }
 
-jest.spyOn(HasAccessModule, 'HasAccessV2').mockImplementation(() => {
+vi.spyOn(HasAccessModule, 'HasAccessV2').mockImplementation(() => {
   return <div data-testid="HasAccess"></div>
 })
 
-const mockEntityLink = jest
+const mockEntityLink = vi
   .spyOn(EntityLinkModule, 'EntityLink')
   .mockImplementation(() => {
     return <span data-testid="EntityLink"></span>
   })
 
-jest.spyOn(UserBadgeModule, 'UserBadge').mockImplementation(() => {
+vi.spyOn(UserBadgeModule, 'UserBadge').mockImplementation(() => {
   return <div data-testid="UserBadge"></div>
 })
 
-jest.spyOn(AddToDownloadListV2Module, 'default').mockImplementation(() => {
+vi.spyOn(AddToDownloadListV2Module, 'default').mockImplementation(() => {
   return <div data-testid="AddToDownloadListV2" />
 })
 
-const mockEntityIdListComponent = jest
+const mockEntityIdListComponent = vi
   .spyOn(EntityIdListModule, 'default')
   .mockImplementation(() => {
     return <div data-testid="EntityIdList" />
@@ -223,13 +223,12 @@ describe('SynapseTableCell tests', () => {
       })
 
       await screen.findByTestId('EntityLink')
-      expect(mockEntityLink).toHaveBeenCalledWith(
+      expect(mockEntityLink).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           entity: String(mockRowId),
           displayTextField: 'name',
           showIcon: false,
         }),
-        expect.anything(),
       )
     })
 
@@ -244,13 +243,12 @@ describe('SynapseTableCell tests', () => {
 
       await screen.findByTestId('EntityLink')
       // Verify that the ID is passed
-      expect(mockEntityLink).toHaveBeenCalledWith(
+      expect(mockEntityLink).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           entity: mockEntityIdValue,
           displayTextField: 'id',
           showIcon: false,
         }),
-        expect.anything(),
       )
     })
 
@@ -265,13 +263,12 @@ describe('SynapseTableCell tests', () => {
 
       await screen.findByTestId('EntityLink')
       // Verify that the ID is passed
-      expect(mockEntityLink).toHaveBeenCalledWith(
+      expect(mockEntityLink).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           entity: mockEntityIdValue,
           displayTextField: 'name',
           showIcon: false,
         }),
-        expect.anything(),
       )
     })
 
@@ -286,13 +283,12 @@ describe('SynapseTableCell tests', () => {
 
       await screen.findByTestId('EntityIdList')
       // Verify that the ID is passed
-      expect(mockEntityIdListComponent).toHaveBeenCalledWith(
+      expect(mockEntityIdListComponent).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           entityIdList: EXPECTED_PARSED_ENTITYID_LIST,
           displayTextField: 'id',
           showIcon: false,
         }),
-        expect.anything(),
       )
     })
 
@@ -307,13 +303,12 @@ describe('SynapseTableCell tests', () => {
 
       await screen.findByTestId('EntityIdList')
       // Verify that the ID is passed
-      expect(mockEntityIdListComponent).toHaveBeenCalledWith(
+      expect(mockEntityIdListComponent).toHaveBeenRenderedWithProps(
         expect.objectContaining({
           entityIdList: EXPECTED_PARSED_ENTITYID_LIST,
           displayTextField: 'name',
           showIcon: false,
         }),
-        expect.anything(),
       )
     })
   })

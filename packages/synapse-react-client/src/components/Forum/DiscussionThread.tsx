@@ -108,11 +108,11 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     fetchNextPage,
   } = useGetRepliesInfinite(threadId, orderByDatePosted, limit)
 
-  const { data: moderatorList } = useGetModerators(threadData?.forumId ?? '')
+  const { data: moderatorList } = useGetModerators(threadData?.forumId ?? '', {
+    enabled: Boolean(threadData?.forumId),
+  })
 
-  const isAuthorModerator = moderatorList?.results.includes(
-    threadData?.createdBy ?? '',
-  )
+  const isAuthorModerator = moderatorList?.includes(threadData?.createdBy ?? '')
 
   const [replyId, setReplyIdParam] = useNativeSearchParams(REPLY_ID_PARAM_KEY)
 
@@ -303,7 +303,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
       )}
       <div>
         {replies.map(reply => {
-          const isReplyAuthorModerator = moderatorList?.results.includes(
+          const isReplyAuthorModerator = moderatorList?.includes(
             reply.createdBy,
           )
           return (

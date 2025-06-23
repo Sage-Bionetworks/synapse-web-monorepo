@@ -21,20 +21,20 @@ import RejectDataAccessRequestModal, {
 } from './RejectDataAccessRequestModal'
 
 // Mock the CannedRejectionDialog component
-jest.mock('../CannedRejectionDialog/CannedRejectionDialog', () => ({
-  CannedRejectionDialog: jest.fn().mockImplementation(() => <div />),
+vi.mock('../CannedRejectionDialog/CannedRejectionDialog', () => ({
+  CannedRejectionDialog: vi.fn().mockImplementation(() => <div />),
 }))
 
-const mockCannedRejectionDialog = jest.mocked(CannedRejectionDialog)
+const mockCannedRejectionDialog = vi.mocked(CannedRejectionDialog)
 
 const props: RejectDataAccessRequestModalProps = {
   submissionId: mockSubmittedSubmission.id,
   tableId: REJECT_SUBMISSION_CANNED_RESPONSES_TABLE,
   open: true,
-  onClose: jest.fn(),
+  onClose: vi.fn(),
 }
 
-const updateSubmissionStatusSpy = jest.spyOn(
+const updateSubmissionStatusSpy = vi.spyOn(
   SynapseClient,
   'updateSubmissionStatus',
 )
@@ -67,19 +67,16 @@ describe('RejectDataAccessRequestModal', () => {
     renderComponent()
 
     await waitFor(() => {
-      expect(mockCannedRejectionDialog).toHaveBeenCalledWith(
-        {
-          open: true,
-          defaultMessageAppend: DEFAULT_MESSAGE_APPEND,
-          defaultMessagePrefix: DEFAULT_MESSAGE_PREPEND,
-          error: null,
-          onClose: expect.any(Function),
-          onConfirm: expect.any(Function),
-          rejectionFormPromptCopy: REJECTION_FORM_PROMPT_COPY,
-          tableId: REJECT_SUBMISSION_CANNED_RESPONSES_TABLE,
-        },
-        expect.anything(),
-      )
+      expect(mockCannedRejectionDialog).toHaveBeenRenderedWithProps({
+        open: true,
+        defaultMessageAppend: DEFAULT_MESSAGE_APPEND,
+        defaultMessagePrefix: DEFAULT_MESSAGE_PREPEND,
+        error: null,
+        onClose: expect.any(Function),
+        onConfirm: expect.any(Function),
+        rejectionFormPromptCopy: REJECTION_FORM_PROMPT_COPY,
+        tableId: REJECT_SUBMISSION_CANNED_RESPONSES_TABLE,
+      })
     })
 
     const onConfirmCallback =

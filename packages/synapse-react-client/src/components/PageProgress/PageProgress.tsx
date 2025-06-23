@@ -64,7 +64,12 @@ export function PageProgress(props: PageProgressProps) {
         variant="determinate"
         sx={progressSx}
       />
-      <Box padding="30px 0" textAlign="center">
+      <Box
+        sx={{
+          padding: '30px 0',
+          textAlign: 'center',
+        }}
+      >
         <Button
           onClick={handleBackButtonClick}
           sx={buttonSx}

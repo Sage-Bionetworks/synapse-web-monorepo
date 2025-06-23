@@ -17,6 +17,9 @@ const StandardsHeader = (props: StandardsHeaderProps) => {
     'Acquisition',
     'File formats',
     'Ontologies',
+    'Retinal fundus images',
+    'Machine learning platform',
+    'Datasheets',
   ]
 
   const content = (

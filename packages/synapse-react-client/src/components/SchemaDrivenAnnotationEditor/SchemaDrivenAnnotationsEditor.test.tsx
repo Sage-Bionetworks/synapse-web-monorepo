@@ -35,15 +35,15 @@ async function chooseAutocompleteOption(el: HTMLElement, option: string) {
   await userEvent.click(screen.getByText(option))
 }
 
-const mockToastFn = jest
+const mockToastFn = vi
   .spyOn(ToastMessage, 'displayToast')
   .mockImplementation(() => noop)
 
-const mockOnSuccessFn = jest.fn()
-const mockOnChange = jest.fn()
+const mockOnSuccessFn = vi.fn()
+const mockOnChange = vi.fn()
 
 // Captures the JSON passed to the server via msw.
-const updatedJsonCaptor = jest.fn()
+const updatedJsonCaptor = vi.fn()
 
 const defaultProps: SchemaDrivenAnnotationEditorProps = {
   entityId: mockFileEntity.id,
@@ -115,7 +115,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
   })
   afterEach(() => {
     server.restoreHandlers()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   afterAll(() => server.close())
 
@@ -399,7 +399,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     // Remove the last element
     const removeButton = await within(
       container.querySelector('#root_country')!,
-    ).findByLabelText<HTMLButtonElement>('Remove')
+    ).findByRole<HTMLButtonElement>('button', { name: 'Remove' })
     await userEvent.click(removeButton)
 
     expect(

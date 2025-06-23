@@ -1,10 +1,10 @@
-import { getUseMutationMock } from '@/testutils/ReactQueryMockUtils'
+import { getUseMutationIdleMock } from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { renderHook as _renderHook } from '@testing-library/react'
 import * as UseCreateFolderPathModule from './useCreateFolderPath'
 import { useCreatePathsAndGetParentId } from './useCreatePathsAndGetParentId'
 
-const mockUseCreateFolderPath = jest.spyOn(
+const mockUseCreateFolderPath = vi.spyOn(
   UseCreateFolderPathModule,
   'useCreateFolderPath',
 )
@@ -17,7 +17,7 @@ describe('useCreatePathsAndGetParentId', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
 
   test('no webkitRelativePath', async () => {
@@ -27,7 +27,7 @@ describe('useCreatePathsAndGetParentId', () => {
     }
 
     const parentId = 'syn123'
-    const mockUseCreateFolderPathResult = getUseMutationMock<
+    const mockUseCreateFolderPathResult = getUseMutationIdleMock<
       string,
       Error,
       { parentId: string; path: string[] }
@@ -53,7 +53,7 @@ describe('useCreatePathsAndGetParentId', () => {
 
     const rootContainerId = 'syn123'
     const folderId = 'syn456'
-    const mockUseCreateFolderPathResult = getUseMutationMock<
+    const mockUseCreateFolderPathResult = getUseMutationIdleMock<
       string,
       Error,
       { parentId: string; path: string[] }
@@ -82,7 +82,7 @@ describe('useCreatePathsAndGetParentId', () => {
 
     const rootContainerId = 'syn123'
     const finalFolderId = 'syn456'
-    const mockUseCreateFolderPathResult = getUseMutationMock<
+    const mockUseCreateFolderPathResult = getUseMutationIdleMock<
       string,
       Error,
       { parentId: string; path: string[] }

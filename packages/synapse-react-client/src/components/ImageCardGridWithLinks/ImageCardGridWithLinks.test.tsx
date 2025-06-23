@@ -1,20 +1,26 @@
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
-import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
+import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   BatchFileResult,
   ColumnTypeEnum,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from 'react-router'
-import { SynapseClient } from '../../index'
+import * as SynapseClient from '@/synapse-client/SynapseClient'
 import ImageCardGridWithLinks, {
   ImageCardGridWithLinksProps,
 } from './ImageCardGridWithLinks'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 
-jest.mock('../../synapse-queries/entity/useGetQueryResultBundle')
-const mockUseGetQueryResultBundle = jest.mocked(useGetQueryResultBundle)
+vi.mock('@/synapse-queries/entity/useGetQueryResultBundle')
+
+const {
+  mock: mockUseGetQueryResultBundleImpl,
+  setSuccess: setGetQueryResultBundleSuccess,
+} = getUseQueryMock<QueryResultBundle, SynapseClientError>()
+const mockUseGetQueryResultBundle = vi.mocked(useGetQueryResultBundle)
 
 describe('ImageCardGridWithLinks Tests', () => {
   const mockProps: ImageCardGridWithLinksProps = {
@@ -103,10 +109,10 @@ describe('ImageCardGridWithLinks Tests', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks()
-    jest.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
-    mockUseGetQueryResultBundle.mockReturnValue(
-      getUseQuerySuccessMock(mockQueryResult),
+    vi.clearAllMocks()
+    vi.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
+    mockUseGetQueryResultBundle.mockImplementation(
+      mockUseGetQueryResultBundleImpl,
     )
   })
 
@@ -125,11 +131,11 @@ describe('ImageCardGridWithLinks Tests', () => {
   it('fetches and displays cards', async () => {
     renderWithRouter(mockProps)
 
-    await waitFor(() =>
-      expect(mockUseGetQueryResultBundle).toHaveBeenCalledTimes(1),
-    )
+    act(() => {
+      setGetQueryResultBundleSuccess(mockQueryResult)
+    })
 
-    expect(screen.getByText('Test title')).toBeInTheDocument()
+    expect(await screen.findByText('Test title')).toBeInTheDocument()
     expect(screen.getByText('This is a summary.')).toBeInTheDocument()
     expect(screen.getByText('Comparative Biology')).toBeInTheDocument()
     expect(screen.getByText('Reference Genomes')).toBeInTheDocument()
