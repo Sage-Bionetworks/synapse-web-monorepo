@@ -1,5 +1,3 @@
-// import { TABLE_IDS } from '@/config/resources'
-
 import {
   DetailsPageContent,
   DetailsPageContentType,
@@ -14,30 +12,40 @@ import {
   RowDataTable,
   SkeletonTable,
   CardConfiguration,
+  EntityDownloadConfirmation,
 } from 'synapse-react-client'
 import { CardContainerLogic } from 'synapse-react-client'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../config/columnAliases'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import {
-  DST_TABLE_COLUMN_NAMES,
-  standardsDetailsPageSQL,
-} from '../config/resources'
-const dataSql = standardsDetailsPageSQL
+  ColumnSingleValueFilterOperator,
+  ColumnTypeEnum,
+} from '@sage-bionetworks/synapse-types'
+import { organizationDetailsPageSQL, dataSetSQL } from '../config/resources'
+import { GenericCardIcon } from 'synapse-react-client/components/GenericCard/GenericCardIcon'
+import GenericCard from 'synapse-react-client/components/GenericCard/GenericCard'
+import { Collapse } from '@mui/material'
+import IconList from 'synapse-react-client/components/IconList'
+import GenericCardActionButton from 'synapse-react-client/components/GenericCard/GenericCardActionButton'
+import { GetAppTwoTone } from '@mui/icons-material'
+import CitationPopover from 'synapse-react-client/components/CitationPopover'
+import React from 'react'
+const dataSql = organizationDetailsPageSQL
+console.log({ dataSql })
 
-export const standardsCardSchema: TableToGenericCardMapping = {
-  type: SynapseConstants.STANDARD_DATA_MODEL,
-  title: 'acronym',
-  subTitle: 'standardName',
-  description: 'description',
-  link: 'url',
-  secondaryLabels: ['SDO', 'collections', 'topics'],
+export const organizationCardSchema: TableToGenericCardMapping = {
+  type: SynapseConstants.ORGANIZATION,
+  title: 'name',
+  subTitle: 'description',
+  // description: 'description',
+  link: 'URL',
+  secondaryLabels: ['rorId', 'wikidataId', 'topics', 'dataTypes'],
 }
 
-export const linkedStandardCardConfiguration: CardConfiguration = {
+export const linkedDataSetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: {
-    type: SynapseConstants.STANDARD_DATA_MODEL,
+    type: SynapseConstants.DATASET,
     title: 'acronym',
     subTitle: 'standardName',
     description: 'description',
@@ -51,10 +59,10 @@ export const linkedStandardCardConfiguration: CardConfiguration = {
   },
 }
 
-export const standardDetailsPageContent: DetailsPageContentType = [
+export const organizationDetailsPageContent: DetailsPageContentType = [
   {
-    id: 'About The Standard',
-    title: 'About The Standard',
+    id: 'About the Organization',
+    title: 'About the Organization',
     element: (
       <DetailsPageContextConsumer columnName={'id'}>
         {({ context }) => {
@@ -63,13 +71,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
               <RowDataTable
                 rowData={context.rowData.values ?? []}
                 headers={context.rowSet?.headers ?? []}
-                displayedColumns={[
-                  'standardName',
-                  'SDO',
-                  DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
-                  'isOpen',
-                  'registration',
-                ]}
+                displayedColumns={['name', 'rorId']}
                 columnAliases={columnAliases}
               />
             )
@@ -81,14 +83,14 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     ),
   },
   {
-    id: 'Linked Training Resources',
-    title: 'Linked Training Resources',
+    id: 'DataSets',
+    title: 'DataSets',
     element: (
-      <DetailsPageContextConsumer columnName={'trainingResources'}>
+      <DetailsPageContextConsumer columnName={'dataset_json'}>
         {({ value }) => (
           <CardContainerLogic
-            cardConfiguration={linkedStandardCardConfiguration}
-            sql={dataSql}
+            cardConfiguration={linkedDataSetCardConfiguration}
+            sql={dataSetSQL}
             // need a dummy value for search to properly exclude null values and an empty string doesn't work
             searchParams={{ id: value || 'notreal' }}
             sqlOperator={ColumnSingleValueFilterOperator.IN}
@@ -97,29 +99,34 @@ export const standardDetailsPageContent: DetailsPageContentType = [
       </DetailsPageContextConsumer>
     ),
   },
-  {
-    id: 'Related Standards',
-    title: 'Related Standards',
-    element: (
-      <DetailsPageContextConsumer columnName={'relatedTo'}>
-        {({ value, context }) => {
-          return (
-            <CardContainerLogic
-              cardConfiguration={linkedStandardCardConfiguration}
-              sql={dataSql}
-              // need a dummy value for search to properly exclude null values and an empty string doesn't work
-              searchParams={{ id: value || 'notreal' }}
-              sqlOperator={ColumnSingleValueFilterOperator.IN}
-            />
-          )
-        }}
-      </DetailsPageContextConsumer>
-    ),
-  },
 ]
 
-export default function StandardsDetailsPage() {
+export default function OrganizationDetailsPage() {
   const { id } = useGetPortalComponentSearchParams()
+
+  /*
+  This is the code previously used on home page to generate the Explore Standards
+  links. Need to get it working here now.
+
+  function createExplorePageLink(query: Query): string {
+    return `/Explore?QueryWrapper0=${encodeURIComponent(JSON.stringify(query))}`
+  }
+
+  const query: Query = {
+    sql: dataSql,
+    limit: 25,
+    selectedFacets: [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+        columnName: DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
+        facetValues: [org[ORG_DENORMALIZED_COLUMN_NAMES.NAME]],
+      },
+    ],
+  }
+  ctaButtonText: 'Explore Standards',
+  ctaButtonURL: createExplorePageLink(query),
+  */
 
   if (!id) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
@@ -139,21 +146,22 @@ export default function StandardsDetailsPage() {
             },
           ],
         }}
+        columnAliases={columnAliases}
         cardConfiguration={{
           type: SynapseConstants.GENERIC_CARD,
-          genericCardSchema: standardsCardSchema,
+          genericCardSchema: organizationCardSchema,
           secondaryLabelLimit: 6,
           isHeader: true,
           headerCardVariant: 'HeaderCardV2',
           ctaLinkConfig: {
-            text: 'View Standard on External Website',
-            link: 'url',
+            text: 'View Organization on External Website',
+            link: 'URL',
           },
         }}
       />
 
       <DetailsPage sql={dataSql}>
-        <DetailsPageContent content={standardDetailsPageContent} />
+        <DetailsPageContent content={organizationDetailsPageContent} />
       </DetailsPage>
     </>
   )
