@@ -23,14 +23,6 @@ const baseConfig: UserConfig = defineConfig({
     __TEST__: JSON.stringify(false),
     __DEV__: JSON.stringify(false),
   },
-  optimizeDeps: {
-    esbuildOptions: {
-      // Node.js global to browser globalThis
-      define: {
-        global: 'globalThis',
-      },
-    },
-  },
   resolve: {
     alias: {
       src: resolve(__dirname, '/src'),

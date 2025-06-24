@@ -4,9 +4,9 @@ import SynapseClient, {
   getUserProfile,
   signOut,
 } from '@/synapse-client'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   defaultQueryClientConfig,
-  SynapseClientError,
   SynapseContextProvider,
   SynapseContextType,
 } from '@/utils'
