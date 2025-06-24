@@ -4,7 +4,6 @@ import {
   decodeXml,
   handleLinkClicks,
   processMath,
-  stripHTML,
 } from '@/components/Markdown/MarkdownUtils'
 import {
   useGetWikiPage,
