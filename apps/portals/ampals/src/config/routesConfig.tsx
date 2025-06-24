@@ -74,13 +74,13 @@ const routes: RouteObject[] = [
       {
         path: 'Resources',
         children: [
-          {
-            path: 'For Persons With Lived Experience',
-            lazy: () =>
-              import('@/pages/resources/ForPWLEs').then(
-                convertModuleToRouteObject,
-              ),
-          },
+          // {
+          //   path: 'For Persons With Lived Experience',
+          //   lazy: () =>
+          //     import('@/pages/resources/ForPWLEs').then(
+          //       convertModuleToRouteObject,
+          //     ),
+          // },
           {
             path: 'Requirements for Publication',
             lazy: () =>

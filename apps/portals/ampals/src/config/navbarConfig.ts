@@ -29,10 +29,10 @@ export const navbarConfig: NavbarConfig = {
       name: 'Resources',
       path: '/Resources',
       children: [
-        {
-          name: 'For Persons With Lived Experience',
-          path: '/Resources/For Persons With Lived Experience',
-        },
+        // {
+        //   name: 'For Persons With Lived Experience',
+        //   path: '/Resources/For Persons With Lived Experience',
+        // },
         {
           name: 'Requirements for Publication',
           path: '/Resources/Requirements for Publication',
