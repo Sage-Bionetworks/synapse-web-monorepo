@@ -373,13 +373,15 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
 
   const dialogActions = (
     <>
-      <Button variant="outlined" disabled={isLoading} onClick={onClose}>
+      <Button variant="outlined" disabled={isLoading} onClick={handleClose}>
         Cancel
       </Button>
       <Button
         variant="contained"
         disabled={isLoading}
-        onClick={() => {
+        onClick={e => {
+          // SWC-7055 - The default action may trigger `beforeunload` and erroneously warn the user about leaving the page.
+          e.preventDefault()
           onSave()
         }}
       >
