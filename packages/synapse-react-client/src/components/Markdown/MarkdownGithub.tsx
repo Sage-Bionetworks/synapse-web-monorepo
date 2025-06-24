@@ -20,9 +20,7 @@ export function GovernanceMarkdownGithub(props: MarkdownGithubProps) {
   //Get latest ToS tag (from Synapse backend)
   const { data } = useTermsOfServiceInfo()
   const tosTag = data?.latestTermsOfServiceVersion
-  return (
-    <MarkdownGithub {...props} tagName={tosTag} showDownloadButton={true} />
-  )
+  return <MarkdownGithub {...props} tagName={tosTag} />
 }
 
 /**
@@ -46,7 +44,7 @@ const handleDownload = (htmlContent: string, outputFileHtmlName: string) => {
           <meta charset="UTF-8">
           <title>${outputFileHtmlName}</title>
         </head>
-        <body style="margin: 20px;">
+        <body style="margin: 0; padding: 20px; font-family: Arial, sans-serif;">
           ${htmlContent}
         </body>
       </html>
@@ -111,7 +109,14 @@ function MarkdownGithub({
       }}
     >
       {showDownloadButton && htmlContent && (
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            mb: '-50px',
+            mt: '30px',
+          }}
+        >
           <Button
             variant={'outlined'}
             color="primary"
