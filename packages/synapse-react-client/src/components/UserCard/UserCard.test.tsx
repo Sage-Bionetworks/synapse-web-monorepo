@@ -296,4 +296,15 @@ describe('UserCard tests', () => {
       ).toHaveLength(2)
     })
   })
+  describe('it creates the correct UI for a user with no username', () => {
+    const props = {
+      userProfile: { ...mockUserProfileData, userName: undefined },
+      size: SynapseConstants.MEDIUM_USER_CARD,
+    }
+
+    it('shows an avatar', async () => {
+      renderMediumUserCard({ ...props })
+      await screen.findByRole('img')
+    })
+  })
 })
