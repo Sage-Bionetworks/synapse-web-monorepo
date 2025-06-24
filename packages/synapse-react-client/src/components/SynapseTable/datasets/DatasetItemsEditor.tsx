@@ -811,3 +811,5 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     </div>
   )
 }
+
+export default DatasetItemsEditor

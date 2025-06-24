@@ -187,3 +187,5 @@ export function CreatedByModifiedBy(props: CreatedByModifiedByProps) {
     </Box>
   )
 }
+
+export default CreatedByModifiedBy

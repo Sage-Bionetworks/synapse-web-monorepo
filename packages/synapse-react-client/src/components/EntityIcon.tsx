@@ -55,3 +55,5 @@ export function EntityTypeIcon(
     </span>
   )
 }
+
+export default EntityTypeIcon

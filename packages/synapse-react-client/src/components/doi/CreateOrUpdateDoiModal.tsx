@@ -410,3 +410,5 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
     </>
   )
 }
+
+export default CreateOrUpdateDoiModal

@@ -13,7 +13,7 @@ export type SqlDefinedTableEditorModalProps = {
   onUpdate: () => void
   onCancel: () => void
 }
-export default function SqlDefinedTableEditorModal(
+export function SqlDefinedTableEditorModal(
   props: SqlDefinedTableEditorModalProps,
 ) {
   const { open, entityId, onCancel, onUpdate } = props
@@ -80,3 +80,5 @@ export default function SqlDefinedTableEditorModal(
     />
   )
 }
+
+export default SqlDefinedTableEditorModal

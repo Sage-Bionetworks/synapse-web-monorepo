@@ -257,3 +257,5 @@ export function TrashCanList() {
     </div>
   )
 }
+
+export default TrashCanList
