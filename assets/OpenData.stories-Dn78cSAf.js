@@ -1,0 +1,22 @@
+import{O as l}from"./OpenData-BfZ1RR8X.js";import"./jsx-runtime-TM5gBVMz.js";import"./index-DcrLmmvh.js";import"./iframe-BfmWAJ1G.js";import"./IconSvg-BQu9rZPV.js";import"./createSvgIcon-BbcBufaS.js";import"./createTheme-BKvghQEf.js";import"./DefaultPropsProvider-BNasm-Ou.js";import"./spreadSx-CwcO6WA9.js";import"./useTheme-DtdHK4vR.js";import"./useTheme-BhuPaSeU.js";import"./Tooltip-DWnEW01p.js";import"./index-DyZIyS5M.js";import"./useSlot-XdCIW-h3.js";import"./useForkRef-XqLeOv9F.js";import"./useTimeout-BftIpzR-.js";import"./useControlled-Bw9-6emG.js";import"./getReactElementRef-Cyw8ECuQ.js";import"./index-CpnHSm9k.js";import"./index-BfBfPSox.js";import"./Grow-Hoso1Ov1.js";import"./Popper-DLhvBE31.js";import"./ownerDocument-DW-IO8s5.js";import"./isFocusVisible-B8k4qzLc.js";import"./LayersTwoTone-CkgSVNu-.js";import"./ContentCopyTwoTone-CMzi9-Hk.js";import"./HelpOutlineTwoTone-DRlQGii-.js";import"./ErrorOutlined-CKbMwWn8.js";import"./GetAppTwoTone-B_dMSJt7.js";import"./InfoOutlined-Cdc0ab0M.js";import"./PhoneTwoTone-_t1hAxOI.js";import"./DeleteTwoTone-aSBi7_pK.js";import"./CheckCircleTwoTone-C33LPoZ-.js";import"./Typography-CgSuXiyf.js";import"./index-CFEbK4PF.js";import"./extendSxProp-oKPMvBLW.js";import"./createSimplePaletteValueFilter-DHCUxeJ8.js";import"./Box-CMo5M51H.js";const Y={title:"Synapse/OpenData",component:l},r={name:"Public & Open Data",args:{isOpenData:!0,isPublic:!0,currentUserCanUpdateSharingSettings:!1}},t={name:"Non-Public & Open Data",args:{isOpenData:!0,isPublic:!1,currentUserCanUpdateSharingSettings:!0}},e={name:"Public & Non-Open Data",args:{isOpenData:!1,isPublic:!0,currentUserCanUpdateSharingSettings:!0}};var a,i,n;r.parameters={...r.parameters,docs:{...(a=r.parameters)==null?void 0:a.docs,source:{originalSource:`{
+  name: 'Public & Open Data',
+  args: {
+    isOpenData: true,
+    isPublic: true,
+    currentUserCanUpdateSharingSettings: false
+  }
+}`,...(n=(i=r.parameters)==null?void 0:i.docs)==null?void 0:n.source}}};var s,o,p;t.parameters={...t.parameters,docs:{...(s=t.parameters)==null?void 0:s.docs,source:{originalSource:`{
+  name: 'Non-Public & Open Data',
+  args: {
+    isOpenData: true,
+    isPublic: false,
+    currentUserCanUpdateSharingSettings: true
+  }
+}`,...(p=(o=t.parameters)==null?void 0:o.docs)==null?void 0:p.source}}};var m,c,u;e.parameters={...e.parameters,docs:{...(m=e.parameters)==null?void 0:m.docs,source:{originalSource:`{
+  name: 'Public & Non-Open Data',
+  args: {
+    isOpenData: false,
+    isPublic: true,
+    currentUserCanUpdateSharingSettings: true
+  }
+}`,...(u=(c=e.parameters)==null?void 0:c.docs)==null?void 0:u.source}}};const Z=["PublicOpenData","NonPublicOpenDataWithChangePermissions","NonOpenPublicDataWithChangePermissions"];export{e as NonOpenPublicDataWithChangePermissions,t as NonPublicOpenDataWithChangePermissions,r as PublicOpenData,Z as __namedExportsOrder,Y as default};
