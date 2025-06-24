@@ -8,6 +8,7 @@ import {
   KeyboardArrowUpTwoTone,
 } from '@mui/icons-material'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
+import { stripHTML } from './MarkdownUtils'
 
 export type MarkdownCollapseProps = {
   // The text that should be shown.  If not given, will default to "full text"
@@ -27,8 +28,9 @@ export const MarkdownCollapse = (props: MarkdownCollapseProps) => {
   const [wordCount, setWordCount] = useState<number>()
   const [plainText, setPlainText] = useState<string>()
 
-  const onMarkdownProcessingDone = (textContent: string | null | undefined) => {
-    if (textContent) {
+  const onMarkdownProcessingDone = (htmlContent: string | null | undefined) => {
+    if (htmlContent) {
+      const textContent = stripHTML(htmlContent)
       setPlainText(textContent.trim())
       setWordCount(textContent.trim().split(/\s+/).length)
     }

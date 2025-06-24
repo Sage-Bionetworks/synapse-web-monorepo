@@ -42,7 +42,7 @@ export type MarkdownSynapseProps = {
   renderInline?: boolean
   objectType?: ObjectType
   loadingSkeletonRowCount?: number
-  onMarkdownProcessingDone?: (textContent: string | null | undefined) => void
+  onMarkdownProcessingDone?: (htmlContent: string | null | undefined) => void
   showPlaceholderIfNoWikiContent?: boolean
 }
 
@@ -405,8 +405,7 @@ function MarkdownSynapse(props: MarkdownSynapseProps) {
   /* When the markdown changes, call the `onMarkdownProcessingDone` callback */
   useEffect(() => {
     if (markdown && onMarkdownProcessingDone) {
-      const plainText = stripHTML(createHTML(renderInline, markdown).__html)
-      onMarkdownProcessingDone(plainText)
+      onMarkdownProcessingDone(createHTML(renderInline, markdown).__html)
     }
   }, [wikiPage, onMarkdownProcessingDone, renderInline])
 

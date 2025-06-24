@@ -1,14 +1,16 @@
 import { useFileContent } from '@/synapse-queries/file/useFiles'
 import { useLatestTag } from '@/synapse-queries/github/useGithub'
 import { useTermsOfServiceInfo } from '@/synapse-queries/termsOfService/useTermsOfService'
-import { Box, Container } from '@mui/material'
+import { Box, Button, Container } from '@mui/material'
 import { SkeletonParagraph } from '../Skeleton'
 import MarkdownSynapse from './MarkdownSynapse'
+import { useCallback, useMemo, useState } from 'react'
 
 export type MarkdownGithubProps = {
   repoOwner: string
   repoName: string
   filePath: string
+  showDownloadButton?: boolean
 }
 /**
  * Loads the version of the Governance Github Markdown file that the Synapse backend determines is the current version
@@ -18,7 +20,9 @@ export function GovernanceMarkdownGithub(props: MarkdownGithubProps) {
   //Get latest ToS tag (from Synapse backend)
   const { data } = useTermsOfServiceInfo()
   const tosTag = data?.latestTermsOfServiceVersion
-  return <MarkdownGithub {...props} tagName={tosTag} />
+  return (
+    <MarkdownGithub {...props} tagName={tosTag} showDownloadButton={true} />
+  )
 }
 
 /**
@@ -31,6 +35,35 @@ export function MarkdownGithubLatestTag(props: MarkdownGithubProps) {
   return <MarkdownGithub {...props} tagName={latestTag} />
 }
 
+const handleDownload = (htmlContent: string, outputFileHtmlName: string) => {
+  if (!htmlContent) return
+
+  // Wrap in full HTML document structure
+  const fullHtml = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <title>${outputFileHtmlName}</title>
+        </head>
+        <body style="margin: 20px;">
+          ${htmlContent}
+        </body>
+      </html>
+    `
+
+  // Create a Blob and a download link
+  const blob = new Blob([fullHtml], { type: 'text/html' })
+  const url = URL.createObjectURL(blob)
+
+  const a = document.createElement('a')
+  a.href = url
+  a.download = outputFileHtmlName
+  a.click()
+
+  URL.revokeObjectURL(url)
+}
+
 /**
  * Load MD file content from GitHub (using the given tag)
  * @returns
@@ -40,9 +73,24 @@ function MarkdownGithub({
   repoName,
   filePath,
   tagName,
+  showDownloadButton = false,
 }: MarkdownGithubProps & {
   tagName?: string
 }) {
+  const [htmlContent, setHtmlContent] = useState<string | null | undefined>(
+    null,
+  )
+  const getHtmlFilename = useCallback((filePath: string) => {
+    const pathParts = filePath.split(/[\\/]/) // split on both '/' and '\'
+    const filename = pathParts[pathParts.length - 1] // last part of path
+    const baseName = filename.replace(/\.[^/.]+$/, '') // remove extension
+    return `${baseName}.html`
+  }, [])
+  const outputFileHtmlName = useMemo(
+    () => getHtmlFilename(filePath),
+    [filePath],
+  )
+
   const { data: fileContent } = useFileContent(
     `https://cdn.jsdelivr.net/gh/${repoOwner}/${repoName}@${tagName}/${filePath}`,
     {
@@ -62,7 +110,26 @@ function MarkdownGithub({
         },
       }}
     >
-      {fileContent ? <MarkdownSynapse markdown={fileContent} /> : loadingUI}
+      {showDownloadButton && htmlContent && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
+            variant={'outlined'}
+            color="primary"
+            sx={{ mb: 1 }}
+            onClick={() => handleDownload(htmlContent, outputFileHtmlName)}
+          >
+            Download
+          </Button>
+        </Box>
+      )}
+      {fileContent ? (
+        <MarkdownSynapse
+          markdown={fileContent}
+          onMarkdownProcessingDone={setHtmlContent}
+        />
+      ) : (
+        loadingUI
+      )}
     </Container>
   )
 }
