@@ -26,7 +26,7 @@ import {
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { omit } from 'lodash-es'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import { addColumnModelToForm } from '../TableColumnSchemaEditor/TableColumnSchemaEditorTestUtils'
 import { ADD_ALL_ANNOTATIONS_BUTTON_TEXT } from '../TableColumnSchemaEditor/TableColumnSchemaForm'
@@ -753,17 +753,12 @@ describe('CreateTableWizard integration tests', () => {
   it('Shows an error when column model creation fails', async () => {
     const errorMessage = 'Mocked error in POST /column/batch'
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/column/batch`,
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(400),
-            ctx.json({
-              reason: errorMessage,
-            }),
-          )
+        () => {
+          return HttpResponse.json({ reason: errorMessage }, { status: 400 })
         },
       ),
     )
@@ -825,14 +820,14 @@ describe('CreateTableWizard integration tests', () => {
   it('Shows an error when entity creation fails', async () => {
     const errorMessage = 'Mocked error in POST /entity'
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}/repo/v1/entity`,
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(400),
-            ctx.json({
+        () => {
+          return HttpResponse.json(
+            {
               reason: errorMessage,
-            }),
+            },
+            { status: 400 },
           )
         },
       ),

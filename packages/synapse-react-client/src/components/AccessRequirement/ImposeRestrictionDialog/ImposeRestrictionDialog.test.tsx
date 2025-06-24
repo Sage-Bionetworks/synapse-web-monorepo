@@ -1,6 +1,6 @@
 import { mockLockAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
@@ -8,6 +8,7 @@ import {
 } from '@/utils/functions/getEndpoint'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import ImposeRestrictionDialog from './ImposeRestrictionDialog'
 
 const mockOnClose = vi.fn()
@@ -27,13 +28,13 @@ function renderComponent() {
 
 const onApplyLock = vi.fn()
 server.use(
-  rest.post(
+  http.post(
     `${getEndpoint(
       BackendDestinationEnum.REPO_ENDPOINT,
     )}/repo/v1/entity/:id/lockAccessRequirement`,
-    async (req, res, ctx) => {
+    () => {
       onApplyLock()
-      return res(ctx.status(201), ctx.json(mockLockAccessRequirement))
+      return HttpResponse.json(mockLockAccessRequirement, { status: 201 })
     },
   ),
 )

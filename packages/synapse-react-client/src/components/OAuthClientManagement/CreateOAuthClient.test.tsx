@@ -1,5 +1,5 @@
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { mockClientList1 } from '@/mocks/oauth/MockClient'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
@@ -10,6 +10,7 @@ import { OIDCSigningAlgorithm } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { noop } from 'lodash-es'
+import { http, HttpResponse } from 'msw'
 import { WarningDialog } from '../SynapseForm/WarningDialog'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
 import {
@@ -85,14 +86,14 @@ function setUp(props: CreateOAuthModalProps = defaultProps) {
 }
 
 function mockVerificationPrecheckService(reverificationRequired: boolean) {
-  return rest.put(
+  return http.put(
     `${getEndpoint(
       BackendDestinationEnum.REPO_ENDPOINT,
     )}/auth/v1/oauth2/client/${mockClient.client_id!}/verificationPrecheck`,
-    async (req, res, ctx) => {
-      return res(
-        ctx.status(200),
-        ctx.json({ reverificationRequired: reverificationRequired }),
+    () => {
+      return HttpResponse.json(
+        { reverificationRequired: reverificationRequired },
+        { status: 200 },
       )
     },
   )
@@ -102,20 +103,20 @@ describe('Create OAuth Client', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/auth/v1/oauth2/client`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(req.body))
+        async ({ request }) => {
+          return HttpResponse.json(await request.json(), { status: 200 })
         },
       ),
-      rest.put(
+      http.put(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/auth/v1/oauth2/client/${mockClient.client_id!}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(req.body))
+        async ({ request }) => {
+          return HttpResponse.json(await request.json(), { status: 200 })
         },
       ),
       mockVerificationPrecheckService(false),

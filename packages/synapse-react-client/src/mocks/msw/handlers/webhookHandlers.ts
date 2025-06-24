@@ -1,7 +1,7 @@
 import { ListUserWebhooksResponse } from '@sage-bionetworks/synapse-client/generated/models/ListUserWebhooksResponse'
 import { Webhook } from '@sage-bionetworks/synapse-client/generated/models/Webhook'
 import { WebhookVerificationStatus } from '@sage-bionetworks/synapse-client/generated/models/WebhookVerificationStatus'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { SynapseApiResponse } from '../handlers'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
@@ -13,50 +13,47 @@ export const webhookService = new BasicMockedCrudService<Webhook, 'id'>({
 
 export function getWebhookHandlers(backendOrigin: string) {
   return [
-    rest.get(
-      `${backendOrigin}/repo/v1/webhook/:webhookId`,
-      async (req, res, ctx) => {
-        const webhookId = req.params.webhookId as string
-        const webhook = webhookService.getOneById(webhookId)
-        if (!webhook) {
-          return res(
-            ctx.status(404),
-            ctx.json({ reason: `Webhook with ID ${webhookId} not found` }),
-          )
-        }
-        return res(ctx.status(200), ctx.json(webhook))
-      },
-    ),
-    rest.post(
-      `${backendOrigin}/repo/v1/webhook/list`,
-      async (req, res, ctx) => {
-        const resp: SynapseApiResponse<ListUserWebhooksResponse> = {
-          page: webhookService.getAll(),
-        }
-
-        return res(ctx.status(200), ctx.json(resp))
-      },
-    ),
-    rest.post(`${backendOrigin}/repo/v1/webhook`, async (req, res, ctx) => {
-      const requestBody: Webhook = await req.json()
-      const newWebhook = webhookService.create({
-        ...requestBody,
-        verificationStatus: WebhookVerificationStatus.CODE_SENT,
-      })
-      return res(ctx.status(201), ctx.json(newWebhook))
+    http.get(`${backendOrigin}/repo/v1/webhook/:webhookId`, ({ params }) => {
+      const webhookId = params.webhookId as string
+      const webhook = webhookService.getOneById(webhookId)
+      if (!webhook) {
+        return HttpResponse.json(
+          { reason: `Webhook with ID ${webhookId} not found` },
+          { status: 404 },
+        )
+      }
+      return HttpResponse.json(webhook, { status: 200 })
     }),
-    rest.put(
+    http.post(`${backendOrigin}/repo/v1/webhook/list`, () => {
+      const resp: SynapseApiResponse<ListUserWebhooksResponse> = {
+        page: webhookService.getAll(),
+      }
+
+      return HttpResponse.json(resp, { status: 200 })
+    }),
+    http.post<never, Webhook>(
+      `${backendOrigin}/repo/v1/webhook`,
+      async ({ request }) => {
+        const requestBody: Webhook = await request.json()
+        const newWebhook = webhookService.create({
+          ...requestBody,
+          verificationStatus: WebhookVerificationStatus.CODE_SENT,
+        })
+        return HttpResponse.json(newWebhook, { status: 201 })
+      },
+    ),
+    http.put<{ webhookId: string }, Webhook>(
       `${backendOrigin}/repo/v1/webhook/:webhookId`,
-      async (req, res, ctx) => {
-        const webhookId = req.params.webhookId as string
-        const requestBody: Webhook = await req.json()
+      async ({ params, request }) => {
+        const webhookId = params.webhookId
+        const requestBody: Webhook = await request.json()
 
         const current = webhookService.getOneById(webhookId)
 
         if (!current) {
-          return res(
-            ctx.status(404),
-            ctx.json({ reason: `Webhook with ID ${webhookId} not found` }),
+          return HttpResponse.json(
+            { reason: `Webhook with ID ${webhookId} not found` },
+            { status: 404 },
           )
         }
 
@@ -70,19 +67,19 @@ export function getWebhookHandlers(backendOrigin: string) {
           verificationStatus: verificationStatus,
         })
 
-        return res(ctx.status(201), ctx.json(updatedWebhook))
+        return HttpResponse.json(updatedWebhook, { status: 201 })
       },
     ),
-    rest.post(
+    http.post<{ webhookId: string }>(
       `${backendOrigin}/repo/v1/webhook/:webhookId/verify`,
-      async (req, res, ctx) => {
-        const webhookId = req.params.webhookId as string
+      ({ params }) => {
+        const webhookId = params.webhookId
 
         const webhook = webhookService.getOneById(webhookId)
         if (!webhook) {
-          return res(
-            ctx.status(404),
-            ctx.json({ reason: `Webhook with ID ${webhookId} not found` }),
+          return HttpResponse.json(
+            { reason: `Webhook with ID ${webhookId} not found` },
+            { status: 404 },
           )
         }
 
@@ -90,32 +87,29 @@ export function getWebhookHandlers(backendOrigin: string) {
           ...webhook,
           verificationStatus: WebhookVerificationStatus.VERIFIED,
         })
-        return res(ctx.status(201), ctx.json(newWebhook))
+        return HttpResponse.json(newWebhook, { status: 201 })
       },
     ),
-    rest.put(
+    http.put(
       `${backendOrigin}/repo/v1/webhook/:webhookId/verificationCode`,
-      async (req, res, ctx) => {
-        const webhookId = req.params.webhookId as string
+      ({ params }) => {
+        const webhookId = params.webhookId as string
 
         const webhook = webhookService.getOneById(webhookId)
         if (!webhook) {
-          return res(
-            ctx.status(404),
-            ctx.json({ reason: `Webhook with ID ${webhookId} not found` }),
+          return HttpResponse.json(
+            { reason: `Webhook with ID ${webhookId} not found` },
+            { status: 404 },
           )
         }
 
-        return res(ctx.status(201), ctx.json(webhook))
+        return HttpResponse.json(webhook, { status: 201 })
       },
     ),
-    rest.delete(
-      `${backendOrigin}/repo/v1/webhook/:webhookId`,
-      async (req, res, ctx) => {
-        const webhookId = req.params.webhookId as string
-        webhookService.delete(webhookId)
-        return res(ctx.status(200), ctx.body(''))
-      },
-    ),
+    http.delete(`${backendOrigin}/repo/v1/webhook/:webhookId`, ({ params }) => {
+      const webhookId = params.webhookId as string
+      webhookService.delete(webhookId)
+      return new Response('', { status: 200 })
+    }),
   ]
 }

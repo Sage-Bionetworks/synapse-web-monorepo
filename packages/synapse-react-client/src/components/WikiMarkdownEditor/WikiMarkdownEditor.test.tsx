@@ -4,7 +4,7 @@ import {
   mockEntityRootWikiPageKey,
   mockEntityWikiPageKey,
 } from '@/mocks/mockWikiPageKey'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { WIKI_PAGE_ID } from '@/utils/APIConstants'
@@ -12,6 +12,7 @@ import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { ErrorResponse } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import {
   ERROR_SAVING_WIKI,
   NAVIGATE_AWAY_CONFIRMATION_MESSAGE,
@@ -221,14 +222,14 @@ describe('WikiMarkdownEditor', () => {
       reason: `USER is not authorized to 'UPDATE' a WikiPage with an ownerId ${defaultSubWikiPageProps.ownerObjectId} of type: '${defaultSubWikiPageProps.ownerObjectType}'`,
     }
     server.use(
-      rest.put(
+      http.put(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${WIKI_PAGE_ID(
           defaultSubWikiPageProps.ownerObjectType,
           ':ownerObjectId',
           ':wikiPageId',
         )}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(403), ctx.json(errorResponse))
+        () => {
+          return HttpResponse.json(errorResponse, { status: 403 })
         },
       ),
     )

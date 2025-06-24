@@ -1,5 +1,5 @@
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
@@ -12,6 +12,7 @@ import {
   S3FileHandle,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import DirectDownload, { DirectFileDownloadProps } from './DirectDownload'
 
@@ -56,13 +57,13 @@ describe('DirectDownload: basic functionality', () => {
   }
   it('render direct download component without crashing', async () => {
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/file/v1/fileHandle/batch`,
 
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(batchFileResponse))
+        () => {
+          return HttpResponse.json(batchFileResponse, { status: 200 })
         },
       ),
     )
@@ -76,22 +77,22 @@ describe('DirectDownload: basic functionality', () => {
 
   it('file handle fetch failure should display nothing', () => {
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/file/v1/fileHandle/batch`,
 
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
+        () => {
+          return HttpResponse.json(
+            {
               requestedFiles: [
                 {
                   fileHandleId: '29241673',
                   failureCode: 'UNAUTHORIZED',
                 },
               ],
-            }),
+            },
+            { status: 200 },
           )
         },
       ),
