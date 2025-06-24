@@ -1,0 +1,35 @@
+import{M as E,f as _}from"./useFiles-vBmvy1ft.js";import{l as h}from"./index-Dh7Q2D9y.js";import{j as r}from"./jsx-runtime-CZ-P0Vjv.js";import"./VerificationSubmission-CMrrYimb.js";import"./StringUtils-Bdqa-HwM.js";import"./OrientationBanner-cB4es885.js";import"./index-C4Fi1pAs.js";import{n as x}from"./useAccessRequirements-lqFOSYg9.js";import{p as T}from"./pluralize-GAqul97S.js";import{E as O}from"./EntityLink-B6l2s3iB.js";import{T as M}from"./Typography-DGvGyeZV.js";import{L as S}from"./List-ReiDSnUx.js";import{L as k}from"./ListItem-CFrQ4lna.js";import{A as C}from"./Alert-DT0y7Huo.js";import"./SynapseConstants-dSGc59R9.js";import"./fetchWithExponentialTimeout-CXmnpl-T.js";import"./useTimeout-C9iOfSED.js";import"./FullWidthAlert-B28dz7bv.js";import"./spreadSx-CwcO6WA9.js";import"./Stack-CyzEoByu.js";import"./DefaultPropsProvider-OcgzDlh7.js";import"./createTheme-Pfm42aaM.js";import"./extendSxProp-D9LHU2Zk.js";import"./getThemeProps-VTW_6ELV.js";import"./useTheme-n--CwuBn.js";import"./Box-n44yzzBn.js";import"./AlertTitle-aQu6mHLO.js";import"./useForkRef-C-1ViZON.js";import"./useSlot-CpoW8DzU.js";import"./useTheme-Dz2vRP3-.js";import"./ClickAwayListener-BJe4E2J3.js";import"./getReactElementRef-CuHV4Mzs.js";import"./index-_lJiG1XM.js";import"./iframe-Koc7BFGs.js";import"./index-BdlcXU9Q.js";import"./ownerDocument-DW-IO8s5.js";import"./Paper-BWbRaQ_u.js";import"./Grow-Dgm9McM3.js";import"./Tooltip-BMVGmNhW.js";import"./index-CCKAUiEv.js";import"./useControlled-CCoPgmrJ.js";import"./Popper-pvLZE-n8.js";import"./isFocusVisible-B8k4qzLc.js";import"./Button-CDdf0vOZ.js";import"./createSimplePaletteValueFilter-DGPSZqjl.js";import"./ButtonBase-xVyG4oXo.js";import"./CircularProgress-pnY37-5c.js";import"./useQuery-ijGxTtYu.js";import"./utils-C0Oop7FQ.js";import"./Link-B3vwTO54.js";import"./Collapse-B3Qrznse.js";import"./_baseUniq-CuOqpNrs.js";import"./_Uint8Array-BIpPbEf-.js";import"./_baseTimes-36S_kd0L.js";import"./isObjectLike-BC62RGFU.js";import"./isArray-Dxzbedgu.js";import"./_getTag-Bi5T7cOI.js";import"./isEqual-cSw6jV_8.js";import"./merge-CWKsu3Bx.js";import"./_initCloneObject-BOHxA6hK.js";import"./identity-DKeuBCMA.js";import"./createSvgIcon-DNx6f_Fe.js";import"./tinycolor-Begke6kS.js";import"./Fade-DCmrao4r.js";import"./inputBaseClasses-Rtxrzi46.js";import"./calculateFriendlyFileSize-CWxmrkXY.js";import"./CheckCircleTwoTone-Clqxfo1a.js";import"./InfoTwoTone-rEsoljy-.js";import"./index-DoTrjxQ-.js";import"./useMutation-bKFnuzpB.js";import"./dayjs.min-CC1L6vxl.js";import"./chunk-AYJ5UCUI-ueBj9L5G.js";import"./cloneDeep-Bk1WlZC-.js";import"./Skeleton-DvLxauL3.js";import"./util-DscvpTYu.js";import"./index-Ckb68Z0P.js";import"./react-Dsci1Yfs.js";import"./index-BEh7uV_1.js";import"./_baseOrderBy-B2H3wETD.js";import"./toString-DzBHT5wX.js";import"./isSymbol-VLvA0JPn.js";import"./_baseGet-ClRHsnvA.js";import"./_baseIteratee-D0ES5PEd.js";import"./hasIn-CKV-VnC0.js";import"./_baseMap-CiO2nSDt.js";import"./_baseEach-CvW1Y1Y-.js";import"./useQueries-RNglkEeA.js";import"./useInfiniteQuery-By3Fa-r_.js";import"./_commonjs-dynamic-modules-TDtrdbi3.js";import"./useEntity-BZDbufjU.js";import"./pickBy-D93PA5Ju.js";import"./isString-BbGPl7r4.js";import"./toInteger-BLIYsTXd.js";import"./pick-D1wjY3p0.js";import"./_baseSet-CMADWFxJ.js";import"./omit-CPCz786p.js";import"./_baseSlice-F8doVSIJ.js";import"./InfiniteQueryUtils-CKlRW-xB.js";import"./useEntityBundle-CN91wPns.js";import"./useGetEntityHeaders-PRsBLd6A.js";import"./EntityIcon-lOH5FUQ1.js";import"./IconSvg-D0Fagg5F.js";import"./LayersTwoTone-C3hygwXq.js";import"./ContentCopyTwoTone-Bdl3NuOT.js";import"./HelpOutlineTwoTone-BajmgBk1.js";import"./ErrorOutlined-EGTj6AwC.js";import"./GetAppTwoTone-eQpRYxvo.js";import"./InfoOutlined-CsgT0yqj.js";import"./PhoneTwoTone-DNaH9FGU.js";import"./DeleteTwoTone-DMb4Yqm_.js";import"./ErrorChip-czaBqKxO.js";import"./Chip-DAFnvLyC.js";import"./Avatar-njNBo-Bx.js";import"./isHostComponent-DVu5iVWx.js";import"./isMuiElement-D33LTyqp.js";import"./listItemButtonClasses-oVyryCVU.js";import"./Close-BdQ8c5bL.js";import"./IconButton-DXhED_gi.js";const c=p=>{const n={ids:[p.accessRequirementId]},{data:e,isError:a,error:f}=x(n),t=(e==null?void 0:e.pages.flatMap(o=>o.results)[0])??void 0,d=(t==null?void 0:t.relatedProjectIds.length)||0,A=`${T("project",d,!0)}${d>0?":":""}`;return r.jsxs(r.Fragment,{children:[t&&r.jsxs(r.Fragment,{children:[r.jsx(M,{variant:"body1",children:A}),r.jsx(S,{sx:{listStyleType:"disc",pl:4},children:t.relatedProjectIds.map(o=>r.jsx(k,{sx:{display:"list-item",py:"4px",".no-margin-y":{my:0}},children:r.jsx(O,{entity:o,link:!1,showIcon:!1,className:"no-margin-y"})},o))})]}),a&&r.jsx(C,{severity:"error",children:f.message})]})};try{c.displayName="AccessRequirementRelatedProjectsList",c.__docgenInfo={description:"",displayName:"AccessRequirementRelatedProjectsList",props:{accessRequirementId:{defaultValue:null,description:"",name:"accessRequirementId",required:!0,type:{name:"number"}}}}}catch{}const He={title:"Governance/AccessRequirementRelatedProjectsList",component:c},i={args:{accessRequirementId:9603055}},s={args:{accessRequirementId:9605913}},m={args:{accessRequirementId:1234567},parameters:{stack:"mock",msw:{handlers:[h.rest.post(`${E}${_}`,async(p,n,e)=>{const a={results:[{id:"1234567",type:"org.sagebionetworks.repo.model.ManagedACTAccessRequirement",createdOn:"2017-08-23T18:48:20.892Z",modifiedOn:"2023-12-14T00:43:41.315Z",name:"Team AR without Related Projects",version:"1",relatedProjectIds:[],reviewerIds:[]}]};return n(e.status(200),e.json(a))})]}}};var l,u,R;i.parameters={...i.parameters,docs:{...(l=i.parameters)==null?void 0:l.docs,source:{originalSource:`{
+  args: {
+    accessRequirementId: 9603055
+  }
+}`,...(R=(u=i.parameters)==null?void 0:u.docs)==null?void 0:R.source}}};var j,g,y;s.parameters={...s.parameters,docs:{...(j=s.parameters)==null?void 0:j.docs,source:{originalSource:`{
+  args: {
+    accessRequirementId: 9605913
+  }
+}`,...(y=(g=s.parameters)==null?void 0:g.docs)==null?void 0:y.source}}};var I,P,q;m.parameters={...m.parameters,docs:{...(I=m.parameters)==null?void 0:I.docs,source:{originalSource:`{
+  args: {
+    accessRequirementId: 1234567
+  },
+  parameters: {
+    stack: 'mock',
+    msw: {
+      handlers: [
+      // searchAccessRequirements
+      rest.post(\`\${MOCK_REPO_ORIGIN}\${ACCESS_REQUIREMENT_SEARCH}\`, async (req, res, ctx) => {
+        const zeroRelatedProjects = {
+          results: [{
+            id: '1234567',
+            type: 'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
+            createdOn: '2017-08-23T18:48:20.892Z',
+            modifiedOn: '2023-12-14T00:43:41.315Z',
+            name: 'Team AR without Related Projects',
+            version: '1',
+            relatedProjectIds: [],
+            reviewerIds: []
+          }]
+        };
+        return res(ctx.status(200), ctx.json(zeroRelatedProjects));
+      })]
+    }
+  }
+}`,...(q=(P=m.parameters)==null?void 0:P.docs)==null?void 0:q.source}}};const Ke=["ManyProjects","OneProject","ZeroProjectsMock"];export{i as ManyProjects,s as OneProject,m as ZeroProjectsMock,Ke as __namedExportsOrder,He as default};
