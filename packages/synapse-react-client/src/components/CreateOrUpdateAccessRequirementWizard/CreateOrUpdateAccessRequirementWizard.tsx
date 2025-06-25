@@ -1,5 +1,5 @@
 import { MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
-import { useMemo, useRef, useState } from 'react'
+import { MouseEventHandler, useMemo, useRef, useState } from 'react'
 import {
   AccessRequirementAclEditor,
   AccessRequirementAclEditorHandle,
@@ -123,7 +123,9 @@ export function CreateOrUpdateAccessRequirementWizard(
     onComplete,
   ])
 
-  const onClickPrimary = () => {
+  const onClickPrimary: MouseEventHandler<HTMLButtonElement> = e => {
+    // SWC-7055 - The default action may trigger `beforeunload` and erroneously warn the user about leaving the page.
+    e.preventDefault()
     setIsLoading(true)
     switch (step) {
       case 'SET_AR_COMMON_FIELDS':

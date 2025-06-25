@@ -13,7 +13,7 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import * as ToastMessageModule from '../ToastMessage/ToastMessage'
 import WebhookDashboard from './WebhookDashboard'
 
@@ -185,18 +185,18 @@ describe('WebhookDashboard', () => {
     }
     // Update the handler to report that the verification code expired
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/webhook/:webhookId/verify`,
-        async (req, res, ctx) => {
-          const webhookId = req.params.webhookId as string
+        ({ params }) => {
+          const webhookId = params.webhookId as string
 
           const webhook = webhookService.getOneById(webhookId)
           if (!webhook) {
-            return res(
-              ctx.status(404),
-              ctx.json({ reason: `Webhook with ID ${webhookId} not found` }),
+            return HttpResponse.json(
+              { reason: `Webhook with ID ${webhookId} not found` },
+              { status: 404 },
             )
           }
 
@@ -205,7 +205,7 @@ describe('WebhookDashboard', () => {
             verificationStatus: WebhookVerificationStatus.FAILED,
           })
 
-          return res(ctx.status(200), ctx.json(failureResponse))
+          return HttpResponse.json(failureResponse, { status: 200 })
         },
       ),
     )
@@ -231,17 +231,17 @@ describe('WebhookDashboard', () => {
   it('Shows a link to the help desk when attempting to enter an invalid endpoint URL', async () => {
     // Update the create handler to return the specific error code that indicates use of an invalid URL
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}/repo/v1/webhook`,
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(400),
-            ctx.json({
+        () => {
+          return HttpResponse.json(
+            {
               concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
               reason:
                 'Unsupported invoke endpoint, please contact support for more information.',
               errorCode: ErrorResponseCode.UNSUPPORTED_WEBHOOK_DOMAIN,
-            }),
+            },
+            { status: 400 },
           )
         },
       ),

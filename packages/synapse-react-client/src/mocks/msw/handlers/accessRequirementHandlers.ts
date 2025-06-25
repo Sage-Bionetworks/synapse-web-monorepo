@@ -18,7 +18,7 @@ import {
   SubmissionState,
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import {
   MOCK_AR_ETAG,
   MOCK_NEWLY_CREATED_AR_ID,
@@ -36,16 +36,17 @@ const accessRequirementStatuses: Map<string, AccessRequirementStatus> =
   new Map()
 
 export const getAccessRequirementHandlers = (backendOrigin: string) => [
-  rest.get(
+  http.get(
     `${backendOrigin}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
 
-    async (req, res, ctx) => {
+    ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<AccessRequirement> = {
-        reason: `Mock Service worker could not find an access requirement with ID ${req.params.id}`,
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+        reason: `Mock Service worker could not find an access requirement with ID ${params.id}`,
       }
       const ar = mockAccessRequirements.find(
-        ar => ar.id.toString() === req.params.id,
+        ar => ar.id.toString() === params.id,
       )
 
       if (ar) {
@@ -53,20 +54,21 @@ export const getAccessRequirementHandlers = (backendOrigin: string) => [
         status = 200
       }
 
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   ),
-  rest.get(
+  http.get(
     `${backendOrigin}${ACCESS_REQUIREMENT_WIKI_PAGE_KEY(':id')}`,
-    async (req, res, ctx) => {
+    ({ params }) => {
       let status = 404
       let response: SynapseApiResponse<WikiPageKey> = {
-        reason: `Mock Service worker could not find an access requirement wiki page key with AR ID ${req.params.id}`,
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+        reason: `Mock Service worker could not find an access requirement wiki page key with AR ID ${params.id}`,
       }
       const wikiPageKey = mockAccessRequirementWikiPageKeys.find(
         wpk =>
           wpk.ownerObjectType === ObjectType.ACCESS_REQUIREMENT &&
-          String(wpk.ownerObjectId) === req.params.id,
+          String(wpk.ownerObjectId) === params.id,
       )
 
       if (wikiPageKey) {
@@ -74,34 +76,35 @@ export const getAccessRequirementHandlers = (backendOrigin: string) => [
         status = 200
       }
 
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   ),
 ]
 
 export function createAccessRequirement(backendOrigin: string) {
-  return rest.post(
-    `${backendOrigin}${ACCESS_REQUIREMENT}`,
-    async (req, res, ctx) => {
-      const requestBody: AccessRequirement = await req.json()
-      return res(
-        ctx.status(201),
-        ctx.json({
-          ...requestBody,
-          id: MOCK_NEWLY_CREATED_AR_ID,
-          etag: MOCK_AR_ETAG,
-        }),
-      )
-    },
-  )
+  return http.post<
+    never,
+    AccessRequirement,
+    SynapseApiResponse<AccessRequirement>
+  >(`${backendOrigin}${ACCESS_REQUIREMENT}`, async ({ request }) => {
+    const requestBody: AccessRequirement = await request.json()
+    return HttpResponse.json(
+      {
+        ...requestBody,
+        id: MOCK_NEWLY_CREATED_AR_ID,
+        etag: MOCK_AR_ETAG,
+      },
+      { status: 201 },
+    )
+  })
 }
 
 export function updateAccessRequirement(backendOrigin: string) {
-  return rest.put(
+  return http.put<{ id: string }, AccessRequirement>(
     `${backendOrigin}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
-    async (req, res, ctx) => {
-      const requestBody: AccessRequirement = await req.json()
-      return res(ctx.status(200), ctx.json(requestBody))
+    async ({ request }) => {
+      const requestBody = await request.json()
+      return HttpResponse.json(requestBody, { status: 200 })
     },
   )
 }
@@ -111,16 +114,16 @@ export const getAccessRequirementEntityBindingHandlers = (
   entityId = ':entityId',
   accessRequirements: AccessRequirement[] = mockAccessRequirements,
 ) => [
-  rest.get(
+  http.get(
     `${backendOrigin}${ENTITY_ACCESS_REQUIREMENTS(entityId)}`,
 
-    async (req, res, ctx) => {
+    () => {
       const status = 200
       const response: PaginatedResults<AccessRequirement> = {
         results: accessRequirements,
         totalNumberOfResults: accessRequirements.length,
       }
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   ),
 ]
@@ -129,16 +132,16 @@ export const getAccessRequirementsBoundToTeamHandler = (
   backendOrigin: string,
   accessRequirements: AccessRequirement[] = [mockSelfSignAccessRequirement],
 ) =>
-  rest.get(
+  http.get(
     `${backendOrigin}/repo/v1/team/:teamId/accessRequirement`,
 
-    async (req, res, ctx) => {
+    () => {
       const status = 200
       const response: PaginatedResults<AccessRequirement> = {
         results: accessRequirements,
         totalNumberOfResults: accessRequirements.length,
       }
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   )
 
@@ -152,16 +155,15 @@ export const getAccessRequirementStatusHandlers = (
     })
   }
   return [
-    rest.get(
+    http.get(
       `${backendOrigin}${ACCESS_REQUIREMENT_STATUS(':id')}`,
 
-      async (req, res, ctx) => {
+      ({ params }) => {
         let response: AccessRequirementStatus | undefined
         const accessRequirement = mockAccessRequirements.find(
-          accessRequirement =>
-            req.params.id === accessRequirement.id.toString(),
+          accessRequirement => params.id === accessRequirement.id.toString(),
         )
-        const override = accessRequirementStatuses.get(req.params.id as string)
+        const override = accessRequirementStatuses.get(params.id as string)
         if (override) {
           response = override
         }
@@ -170,7 +172,7 @@ export const getAccessRequirementStatusHandlers = (
             accessRequirement.concreteType ===
             MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
           response = {
-            accessRequirementId: req.params.id as string,
+            accessRequirementId: params.id as string,
             concreteType: isManagedACTAR
               ? 'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus'
               : 'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
@@ -186,18 +188,17 @@ export const getAccessRequirementStatusHandlers = (
           }
         }
         const status = response ? 200 : 404
-        return res(ctx.status(status), ctx.json(response))
+        return HttpResponse.json(response, { status })
       },
     ),
   ]
 }
 
 export function getCreateAccessApprovalHandler(backendOrigin: string) {
-  return rest.post(
+  return http.post<never, CreateAccessApprovalRequest>(
     `${backendOrigin}/repo/v1/accessApproval`,
-
-    async (req, res, ctx) => {
-      const requestBody: CreateAccessApprovalRequest = await req.json()
+    async ({ request }) => {
+      const requestBody = await request.json()
       const status = 200
       const response: AccessApproval = {
         ...requestBody,
@@ -218,19 +219,18 @@ export function getCreateAccessApprovalHandler(backendOrigin: string) {
         isApproved: true,
       })
 
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   )
 }
 
 export function getAccessRequirementSearchHandler(backendOrigin: string) {
-  return rest.post(
+  return http.post<never, AccessRequirementSearchRequest>(
     `${backendOrigin}${ACCESS_REQUIREMENT_SEARCH}`,
-
-    async (req, res, ctx) => {
+    async ({ request }) => {
       let response
       if (
-        (await req.json<AccessRequirementSearchRequest>()).nextPageToken ===
+        (await request.json()).nextPageToken ===
         mockSearchResultsPageOne.nextPageToken
       ) {
         response = mockSearchResultsPageTwo
@@ -238,7 +238,7 @@ export function getAccessRequirementSearchHandler(backendOrigin: string) {
         response = mockSearchResultsPageOne
       }
 
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 }

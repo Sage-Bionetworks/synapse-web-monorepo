@@ -1,7 +1,6 @@
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { TABLE_QUERY_ASYNC_START } from '@/utils/APIConstants'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
@@ -12,6 +11,8 @@ import {
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
+
+import { http } from 'msw'
 import { SynapseConstants } from '../../index'
 import ProgrammaticTableDownload, {
   ProgrammaticTableDownloadProps,
@@ -43,12 +44,15 @@ const COMBINED_SQL_RESULT = 'SELECT * FROM syn12345'
 
 function getErrorMSWHandler() {
   return [
-    rest.post(
+    http.post(
       `${getEndpoint(
         BackendDestinationEnum.REPO_ENDPOINT,
       )}${TABLE_QUERY_ASYNC_START(':id')}`,
-      async (req, res, ctx) => {
-        return res(ctx.status(401), ctx.text('Unable to start query'))
+      () => {
+        return new Response('Unable to start query', {
+          status: 401,
+          headers: { 'Content-Type': 'text/plain' },
+        })
       },
     ),
   ]

@@ -1,7 +1,7 @@
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
 import { MOCK_TABLE_ENTITY_ID } from '@/mocks/entity/mockTableEntity'
 import { SynapseApiResponse } from '@/mocks/msw/handlers'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { mockActivity } from '@/mocks/provenance/mockActivity'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ACTIVITY_FOR_ENTITY } from '@/utils/APIConstants'
@@ -11,6 +11,7 @@ import {
 } from '@/utils/functions/getEndpoint'
 import { Activity } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import ProvenanceGraph, { ProvenanceProps } from './ProvenanceGraph'
 
 function renderComponent(props: ProvenanceProps) {
@@ -21,37 +22,39 @@ describe('ProvenanceGraph', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACTIVITY_FOR_ENTITY(
           mockFileEntityData.id,
           `${mockFileEntityData.entity.versionNumber}`,
         )}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockActivity))
+        () => {
+          return HttpResponse.json(mockActivity, { status: 200 })
         },
       ),
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACTIVITY_FOR_ENTITY(MOCK_TABLE_ENTITY_ID)}`,
-        async (req, res, ctx) => {
+        () => {
           const response: SynapseApiResponse<Activity> = {
+            concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
             reason: `Mock Service worker was not configured to return an Activity for ${MOCK_TABLE_ENTITY_ID}`,
           }
-          return res(ctx.status(404), ctx.json(response))
+          return HttpResponse.json(response, { status: 404 })
         },
       ),
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACTIVITY_FOR_ENTITY(MOCK_TABLE_ENTITY_ID, ':version')}`,
-        async (req, res, ctx) => {
+        ({ params }) => {
           const response: SynapseApiResponse<Activity> = {
-            reason: `Mock Service worker was not configured to return an Activity for ${MOCK_TABLE_ENTITY_ID}.${req.params.version}`,
+            concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+            reason: `Mock Service worker was not configured to return an Activity for ${MOCK_TABLE_ENTITY_ID}.${params.version}`,
           }
-          return res(ctx.status(404), ctx.json(response))
+          return HttpResponse.json(response, { status: 404 })
         },
       ),
     )
