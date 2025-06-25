@@ -27,6 +27,7 @@ export const datasetQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   columnAliases,
   tableConfiguration: {
     columnLinks: datasetColumnLinks,
+    showAccessColumn: true,
   },
   defaultShowSearchBox: true,
   facetsToPlot: ['program', 'project', 'datasetType', 'assay'],
