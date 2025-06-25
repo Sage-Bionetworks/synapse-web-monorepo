@@ -650,3 +650,5 @@ export function SynapseNavDrawer({
     </>
   )
 }
+
+export default SynapseNavDrawer

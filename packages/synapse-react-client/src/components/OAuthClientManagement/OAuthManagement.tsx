@@ -275,3 +275,5 @@ export function OAuthManagement() {
     </div>
   )
 }
+
+export default OAuthManagement

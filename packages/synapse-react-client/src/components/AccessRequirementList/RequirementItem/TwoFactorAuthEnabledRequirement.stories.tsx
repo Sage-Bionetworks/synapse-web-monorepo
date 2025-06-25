@@ -1,7 +1,7 @@
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import TwoFactorAuthEnabledRequirement from './TwoFactorAuthEnabledRequirement'
 
 const meta: Meta = {
@@ -24,15 +24,15 @@ export default meta
 type Story = StoryObj<typeof meta>
 function getTwoFactorAuthStatusHandler(enabled: boolean) {
   return [
-    rest.get(
+    http.get(
       `${MOCK_REPO_ORIGIN}/auth/v1/2fa`,
 
-      async (req, res, ctx) => {
+      () => {
         const status = 200
         const response: TwoFactorAuthStatus = {
           status: enabled ? 'ENABLED' : 'DISABLED',
         }
-        return res(ctx.status(status), ctx.json(response))
+        return HttpResponse.json(response, { status })
       },
     ),
   ]

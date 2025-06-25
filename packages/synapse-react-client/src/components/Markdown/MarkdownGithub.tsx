@@ -138,3 +138,5 @@ function MarkdownGithub({
     </Container>
   )
 }
+
+export default MarkdownGithub

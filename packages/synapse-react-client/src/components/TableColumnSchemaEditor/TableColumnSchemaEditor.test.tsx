@@ -964,6 +964,7 @@ describe('TableColumnSchemaEditor', () => {
       ),
       ...getTableTransactionHandlers(
         {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
           reason: errorMessage,
         },
         undefined,

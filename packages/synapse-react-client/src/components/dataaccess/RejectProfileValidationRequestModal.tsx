@@ -115,3 +115,5 @@ export function RejectProfileValidationRequestModal(
     </CannedRejectionDialog>
   )
 }
+
+export default RejectProfileValidationRequestModal

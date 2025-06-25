@@ -6,9 +6,6 @@
 .account-setting-panel {
   margin-bottom: 20px;
   &.nav-panel {
-    @media (max-width: 768px) {
-      display: none;
-    }
     margin-right: 60px;
     white-space: nowrap;
     box-shadow: 0px 8px 4px rgba(0, 0, 0, 0.025),
@@ -24,6 +21,9 @@
       padding-left: 30px;
       padding-right: 30px;
       border-bottom: 1px solid #eaecee;
+    }
+    @media (max-width: 768px) {
+      display: none;
     }
   }
   &.main-panel {

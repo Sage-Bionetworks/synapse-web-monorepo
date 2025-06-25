@@ -78,11 +78,13 @@ export function Avatar({
 
   const hasProfileImage = !!imageURL
 
+  const { ownerId } = userProfile
+  const { userName = ownerId, firstName } = userProfile
   const conditionalStyles: CSSProperties = hasProfileImage
     ? {
         backgroundImage: `url(${imageURL})`,
       }
-    : { background: getColor(userProfile.userName) }
+    : { background: getColor(userName) }
 
   if (isLoadingAvatar) {
     return <Skeleton sx={sizeStyles} variant="circular" />
@@ -91,9 +93,7 @@ export function Avatar({
   let content: JSX.Element | string = <></>
 
   if (!hasProfileImage) {
-    content = userProfile.firstName
-      ? userProfile.firstName[0]
-      : userProfile.userName[0]
+    content = firstName ? firstName[0] : userName[0]
   }
 
   return (

@@ -1,6 +1,6 @@
 import { mockSubmissionSearchResponse } from '@/mocks/dataaccess/mockAccessRequest'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { mockActTeam } from '@/mocks/team/mockTeam'
 import {
   MOCK_USER_NAME,
@@ -17,6 +17,7 @@ import {
 import {
   AccessType,
   SubmissionReviewerFilterType,
+  SubmissionSearchRequest,
   SubmissionSearchResponse,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
@@ -24,6 +25,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import dayjs from 'dayjs'
 import { upperFirst } from 'lodash-es'
+import { http, HttpResponse } from 'msw'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import {
   AccessRequestSubmissionTable,
@@ -78,14 +80,13 @@ describe('Access Request Submission Table tests', () => {
 
     // Configure MSW
     server.use(
-      rest.post(
+      http.post<never, SubmissionSearchRequest>(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUEST_SUBMISSION_SEARCH}`,
-
-        async (req, res, ctx) => {
+        async ({ request }) => {
           let response
-          if ((await req.json()).nextPageToken === nextPageToken) {
+          if ((await request.json()).nextPageToken === nextPageToken) {
             response = mockSubmissionSearchResponsePage2
           } else {
             response = {
@@ -93,7 +94,7 @@ describe('Access Request Submission Table tests', () => {
               nextPageToken: nextPageToken,
             }
           }
-          return res(ctx.status(200), ctx.json(response))
+          return HttpResponse.json(response, { status: 200 })
         },
       ),
     )
