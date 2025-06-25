@@ -1,12 +1,12 @@
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 
 export function getResetTwoFactorAuthHandlers(backendOrigin: string) {
   return [
-    rest.post(`${backendOrigin}/auth/v1/2fa/reset`, async (req, res, ctx) => {
-      return res(ctx.status(201), ctx.json(''))
+    http.post(`${backendOrigin}/auth/v1/2fa/reset`, () => {
+      return HttpResponse.json('', { status: 201 })
     }),
-    rest.post(`${backendOrigin}/auth/v1/2fa/disable`, async (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(''))
+    http.post(`${backendOrigin}/auth/v1/2fa/disable`, () => {
+      return HttpResponse.json('', { status: 200 })
     }),
   ]
 }

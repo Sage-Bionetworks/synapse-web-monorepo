@@ -1,7 +1,7 @@
 import { UserProfile } from '@sage-bionetworks/synapse-types'
 
-function getUserName(userName: string, inParens: boolean): string {
-  if (userName != null) {
+function getUserName(userName?: string, inParens?: boolean): string {
+  if (userName) {
     if (inParens) {
       // if the name is filled in, then put the username in parens
       return ` (${userName})`
@@ -15,7 +15,7 @@ function getUserName(userName: string, inParens: boolean): string {
 export function getDisplayName(
   firstName: string | null,
   lastName: string | null,
-  userName: string,
+  userName?: string,
 ): string {
   let displayName = ''
   let hasDisplayName = false

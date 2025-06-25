@@ -86,3 +86,5 @@ export function AccountLevelBadges({ userId }: AccountLevelBadgesProps) {
     </>
   )
 }
+
+export default AccountLevelBadges

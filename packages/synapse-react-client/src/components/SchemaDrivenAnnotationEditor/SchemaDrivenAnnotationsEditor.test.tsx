@@ -2,7 +2,8 @@ import mockFileEntity from '@/mocks/entity/mockFileEntity'
 import mockProject from '@/mocks/entity/mockProject'
 import { mockSchemaBinding } from '@/mocks/mockSchema'
 import { getValidationSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
+import SynapseClient from '@/synapse-client/index'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ENTITY_JSON, ENTITY_SCHEMA_BINDING } from '@/utils/APIConstants'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
@@ -23,11 +24,14 @@ import {
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep, noop } from 'lodash-es'
+import { http, HttpResponse } from 'msw'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
 import {
   SchemaDrivenAnnotationEditor,
   SchemaDrivenAnnotationEditorProps,
 } from './SchemaDrivenAnnotationEditor'
+
+const updateEntityJsonSpy = vi.spyOn(SynapseClient, 'updateEntityJson')
 
 async function chooseAutocompleteOption(el: HTMLElement, option: string) {
   await userEvent.clear(el)
@@ -41,9 +45,6 @@ const mockToastFn = vi
 
 const mockOnSuccessFn = vi.fn()
 const mockOnChange = vi.fn()
-
-// Captures the JSON passed to the server via msw.
-const updatedJsonCaptor = vi.fn()
 
 const defaultProps: SchemaDrivenAnnotationEditorProps = {
   entityId: mockFileEntity.id,
@@ -97,12 +98,12 @@ async function clickSaveAndConfirm() {
 }
 
 function configureSchemaBindingHandler(schemaBinding: JsonSchemaObjectBinding) {
-  return rest.get(
+  return http.get(
     `${getEndpoint(
       BackendDestinationEnum.REPO_ENDPOINT,
     )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
-    async (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(schemaBinding))
+    () => {
+      return HttpResponse.json(schemaBinding, { status: 200 })
     },
   )
 }
@@ -119,28 +120,28 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
   })
   afterAll(() => server.close())
 
-  const noAnnotationsHandler = rest.get(
+  const noAnnotationsHandler = http.get(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
       ':entityId',
     )}`,
 
-    async (req, res, ctx) => {
+    () => {
       const response = cloneDeep(mockFileEntity).json
       // Delete the annotation keys in the mock--we aren't using them in this suite
       delete response.myStringKey
       delete response.myIntegerKey
       delete response.myFloatKey
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 
   // Returns an entity with annotations that match the schema
-  const annotationsWithSchemaHandler = rest.get(
+  const annotationsWithSchemaHandler = http.get(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
       ':entityId',
     )}`,
 
-    async (req, res, ctx) => {
+    () => {
       const response = cloneDeep(mockFileEntity).json
       // Delete the other annotation keys
       delete response.myStringKey
@@ -151,18 +152,18 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
       response.country = 'USA'
       response.state = 'Washington'
 
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 
   // Returns an entity with annotations equivalent to the `annotationsWithSchemaHandler`, but with the annotations
   // returned as if there is no bound schema
-  const annotationsWithoutSchemaHandler = rest.get(
+  const annotationsWithoutSchemaHandler = http.get(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
       ':entityId',
     )}`,
 
-    async (req, res, ctx) => {
+    () => {
       const response = cloneDeep(mockFileEntity).json
       // Delete the other annotation keys
       delete response.myStringKey
@@ -173,16 +174,16 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
       response.country = ['USA']
       response.state = ['Washington']
 
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 
-  const stringArrayAnnotationsHandler = rest.get(
+  const stringArrayAnnotationsHandler = http.get(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
       ':entityId',
     )}`,
 
-    async (req, res, ctx) => {
+    () => {
       const response = cloneDeep(mockFileEntity).json
       // Delete the other annotation keys
       delete response.myStringKey
@@ -193,16 +194,16 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
       response.showStringArray = true
       response.stringArray = ['one', 'two', 'three']
 
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 
-  const emptyArrayAnnotationsHandler = rest.get(
+  const emptyArrayAnnotationsHandler = http.get(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
       ':entityId',
     )}`,
 
-    async (req, res, ctx) => {
+    () => {
       const response = cloneDeep(mockFileEntity).json
       // Delete the other annotation keys
       delete response.myStringKey
@@ -212,41 +213,38 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
       // Fill in annotations that match the schema in this test suite
       response.showStringArray = true
       delete response.stringArray
-      return res(ctx.status(200), ctx.json(response))
+      return HttpResponse.json(response, { status: 200 })
     },
   )
 
-  const noSchemaHandler = rest.get(
+  const noSchemaHandler = http.get(
     `${getEndpoint(
       BackendDestinationEnum.REPO_ENDPOINT,
     )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
-    async (req, res, ctx) => {
-      return res(ctx.status(404), ctx.json({}))
+    () => {
+      return HttpResponse.json({}, { status: 404 })
     },
   )
 
   const schemaHandlers = [configureSchemaBindingHandler(mockSchemaBinding)]
 
-  const successfulUpdateHandler = rest.put(
+  const successfulUpdateHandler = http.put(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
       ':entityId',
     )}`,
-    async (req, res, ctx) => {
-      updatedJsonCaptor(req.body)
-      return res(ctx.status(200), ctx.json(req.body))
+    async ({ request }) => {
+      return HttpResponse.json(await request.json(), { status: 200 })
     },
   )
 
-  const unsuccessfulUpdateHandler = rest.put(
+  const unsuccessfulUpdateHandler = http.put(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
       ':entityId',
     )}`,
-    async (req, res, ctx) => {
-      return res(
-        ctx.status(412),
-        ctx.json({
-          reason: 'Object was updated since last fetched',
-        }),
+    () => {
+      return HttpResponse.json(
+        { reason: 'Object was updated since last fetched' },
+        { status: 412 },
       )
     },
   )
@@ -332,8 +330,10 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     // Saving the form should maintain the existing annotations
     await clickSave()
     await waitFor(() =>
-      expect(updatedJsonCaptor).toHaveBeenCalledWith(
+      expect(updateEntityJsonSpy).toHaveBeenCalledWith(
+        defaultProps.entityId,
         expect.objectContaining({ country: 'USA', state: 'Washington' }),
+        expect.anything(),
       ),
     )
   })
@@ -381,8 +381,10 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     // Saving the form should maintain the existing annotations
     await clickSave()
     await waitFor(() =>
-      expect(updatedJsonCaptor).toHaveBeenCalledWith(
+      expect(updateEntityJsonSpy).toHaveBeenCalledWith(
+        defaultProps.entityId,
         expect.objectContaining({ country: 'USA', state: 'Washington' }),
+        expect.anything(),
       ),
     )
   })
@@ -420,7 +422,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
 
     await clickSave()
 
-    expect(updatedJsonCaptor).toHaveBeenCalledWith(
+    expect(updateEntityJsonSpy).toHaveBeenCalledWith(
       expect.objectContaining({ country: ['USA'], state: ['Washington'] }),
     )
   })
@@ -447,8 +449,10 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
 
     await clickSave()
 
-    expect(updatedJsonCaptor).toHaveBeenCalledWith(
+    expect(updateEntityJsonSpy).toHaveBeenCalledWith(
+      defaultProps.entityId,
       expect.objectContaining({ country: 'USA', state: 'Ohio' }),
+      expect.anything(),
     )
   })
 
@@ -500,11 +504,13 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
 
     await clickSaveAndConfirm()
 
-    await waitFor(() => expect(updatedJsonCaptor).toHaveBeenCalled())
+    await waitFor(() => expect(updateEntityJsonSpy).toHaveBeenCalled())
 
     // Since it's an additional property, we expect it to be an array
-    expect(updatedJsonCaptor).toHaveBeenCalledWith(
+    expect(updateEntityJsonSpy).toHaveBeenCalledWith(
+      defaultProps.entityId,
       expect.objectContaining({ state: ['Washington'] }),
+      expect.anything(),
     )
   })
 
@@ -535,8 +541,10 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     await clickSave()
     // Since it's back in the schema, it should be a string
     await waitFor(() =>
-      expect(updatedJsonCaptor).toHaveBeenCalledWith(
+      expect(updateEntityJsonSpy).toHaveBeenCalledWith(
+        defaultProps.entityId,
         expect.objectContaining({ country: 'USA', state: 'Washington' }),
+        expect.anything(),
       ),
     )
   })
@@ -573,10 +581,12 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
       }),
     )
 
-    await waitFor(() => expect(updatedJsonCaptor).toHaveBeenCalled())
+    await waitFor(() => expect(updateEntityJsonSpy).toHaveBeenCalled())
     // Since it's back in the schema, it should be a string
-    expect(updatedJsonCaptor).toHaveBeenCalledWith(
+    expect(updateEntityJsonSpy).toHaveBeenCalledWith(
+      defaultProps.entityId,
       expect.objectContaining({ stringArray: ['one', 'two', 'three'] }),
+      expect.anything(),
     )
   })
 
@@ -606,10 +616,12 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
 
     await clickSaveAndConfirm()
 
-    await waitFor(() => expect(updatedJsonCaptor).toHaveBeenCalled())
+    await waitFor(() => expect(updateEntityJsonSpy).toHaveBeenCalled())
     // Since it's back in the schema, it should be a string
-    expect(updatedJsonCaptor).toHaveBeenCalledWith(
+    expect(updateEntityJsonSpy).toHaveBeenCalledWith(
+      defaultProps.entityId,
       expect.objectContaining({ stringArray: ['one', 'two', 'three'] }),
+      expect.anything(),
     )
   })
 
@@ -660,11 +672,11 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     // Save the form
     await clickSaveAndConfirm()
 
-    await waitFor(() => expect(updatedJsonCaptor).toHaveBeenCalled())
+    await waitFor(() => expect(updateEntityJsonSpy).toHaveBeenCalled())
     // Because we cleared the field, country should not exist in the payload
-    expect(Object.hasOwn(updatedJsonCaptor.mock.calls[0][0], 'country')).toBe(
-      false,
-    )
+    expect(
+      Object.hasOwn(updateEntityJsonSpy.mock.lastCall![1], 'country'),
+    ).toBe(false)
   })
 
   it('Initializes an empty array but does not submit null data', async () => {
@@ -690,22 +702,22 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     // Save the form
     await clickSaveAndConfirm()
 
-    await waitFor(() => expect(updatedJsonCaptor).toHaveBeenCalled())
+    await waitFor(() => expect(updateEntityJsonSpy).toHaveBeenCalled())
     // Because we never entered any data, the string array should not exist in the payload
     expect(
-      Object.hasOwn(updatedJsonCaptor.mock.calls[0][0], 'stringArray'),
+      Object.hasOwn(updateEntityJsonSpy.mock.lastCall![1], 'stringArray'),
     ).toBe(false)
   })
 
   it('Does not convert string annotations with commas to arrays (SWC-7313)', async () => {
     const stringAnnotationWithCommas = 'my string annotation, with commas'
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
           ':entityId',
         )}`,
 
-        async (req, res, ctx) => {
+        () => {
           const response = cloneDeep(mockFileEntity).json
           // Delete the other annotation keys
           delete response.myStringKey
@@ -715,7 +727,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
           // Add string with commas
           response.myStringAnnotationWithCommas = stringAnnotationWithCommas
           delete response.stringArray
-          return res(ctx.status(200), ctx.json(response))
+          return HttpResponse.json(response, { status: 200 })
         },
       ), // showStringArray will be true but stringArray will have no data
       noSchemaHandler,
@@ -757,14 +769,14 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
           },
         }),
         // Set up handler to return a Project
-        rest.get(
+        http.get(
           `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
             ':entityId',
           )}`,
 
-          async (req, res, ctx) => {
+          () => {
             const response = cloneDeep(mockProject).json
-            return res(ctx.status(200), ctx.json(response))
+            return HttpResponse.json(response, { status: 200 })
           },
         ),
       )

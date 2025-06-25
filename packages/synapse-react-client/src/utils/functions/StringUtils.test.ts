@@ -1,4 +1,8 @@
-import { hex2ascii, normalizeNumericId } from './StringUtils'
+import {
+  hex2ascii,
+  normalizeNumericId,
+  replaceFileExtension,
+} from './StringUtils'
 import { JoinTeamSignedToken } from '@sage-bionetworks/synapse-types'
 
 describe('StringUtils', () => {
@@ -33,6 +37,21 @@ describe('StringUtils', () => {
     })
     it('returns NaN for anything else', () => {
       expect(normalizeNumericId('foo')).toBeNaN()
+    })
+  })
+
+  describe('replaceFileExtension', () => {
+    it('should replace the file extension with the new extension', () => {
+      const filePath = 'example.txt'
+      const newExtension = 'md'
+      const result = replaceFileExtension(filePath, newExtension)
+      expect(result).toEqual('example.md')
+    })
+    it('should replace the file extension with the new extension using a path with slashes', () => {
+      const filePath = 'path/to/example.md'
+      const newExtension = 'html'
+      const result = replaceFileExtension(filePath, newExtension)
+      expect(result).toEqual('example.html')
     })
   })
 })

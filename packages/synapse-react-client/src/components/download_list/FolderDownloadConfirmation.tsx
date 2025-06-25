@@ -59,3 +59,5 @@ export function FolderDownloadConfirmation(
     />
   )
 }
+
+export default FolderDownloadConfirmation

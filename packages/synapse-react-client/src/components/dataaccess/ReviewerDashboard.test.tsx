@@ -1,4 +1,4 @@
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { USER_BUNDLE } from '@/utils/APIConstants'
@@ -9,6 +9,7 @@ import {
 import { UserBundle } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import * as UserAccessHistoryDashboardModule from './AccessHistoryDashboard'
 import * as AccessRequirementDashboardModule from './AccessRequirementDashboard'
 import * as AccessRequestSubmissionDashboardModule from './AccessSubmissionDashboard'
@@ -45,15 +46,15 @@ function renderComponent(
   isARReviewer: boolean = true,
 ) {
   server.use(
-    rest.get(
+    http.get(
       `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
-      async (req, res, ctx) => {
+      () => {
         const response: UserBundle = {
           userId: MOCK_USER_ID.toString(),
           isACTMember: isACTMember,
           isARReviewer: isARReviewer,
         }
-        return res(ctx.status(200), ctx.json(response))
+        return HttpResponse.json(response, { status: 200 })
       },
     ),
   )

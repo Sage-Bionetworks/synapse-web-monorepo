@@ -1,13 +1,19 @@
 import BlinkingLiveIcon from '@/assets/homepage/BlinkingLiveIcon'
 import { backgroundInlineJpeg } from '@/assets/homepage/header-splash'
-import { ReactComponent as Image1 } from '@/assets/homepage/image1.svg'
+import image1 from '@/assets/homepage/image1.svg?url'
 import SageFullLogo from '@/assets/icons/SageFullLogo'
+import {
+  defaultHomepageText,
+  h2Sx,
+  homepageBodyText,
+  sidePadding,
+  titleSx,
+} from '@/components/SynapseHomepageV2/HomepageStyles'
 import { SAGE_OFFERINGS_HELP_URL } from '@/utils/SynapseConstants'
 import {
   Box,
   Button,
   Link,
-  SxProps,
   Typography,
   useMediaQuery,
   useTheme,
@@ -30,52 +36,6 @@ export const past30DaysDownloadMetricsTable = 'syn61597084'
 export const generalStatsMetricsTable = 'syn61588123'
 export const featuredDatasetsTable = 'syn61609402'
 export const searchAutocompleteTable = 'syn61670515'
-
-export const darkTextColor = '#22252A'
-export const homepageBodyText: SxProps = {
-  fontSize: '24px',
-  fontWeight: 400,
-  lineHeight: '34px',
-  color: darkTextColor,
-}
-
-export const h2Sx: SxProps = {
-  fontSize: {
-    xs: '36px',
-    md: '52px',
-  },
-  fontWeight: 600,
-  lineHeight: '52px',
-  color: darkTextColor,
-}
-
-const defaultHomepageText: SxProps = {
-  color: darkTextColor,
-  fontWeight: 600,
-}
-const titleSx: SxProps = {
-  ...defaultHomepageText,
-  fontWeight: 300,
-  fontSize: {
-    xs: '48px',
-    md: '72px',
-  },
-  lineHeight: {
-    xs: '120%',
-    md: '82px',
-  },
-  color: 'white',
-}
-const sidePadding: SxProps = {
-  pl: {
-    xs: '15px',
-    sm: '50px',
-  },
-  pr: {
-    xs: '15px',
-    sm: '50px',
-  },
-}
 
 export type SynapseHomepageV2Props = {
   gotoPlace: (href: string) => void
@@ -274,7 +234,7 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
           </Box>
           {isDesktopView && (
             <Box sx={{ height: '100%', justifySelf: 'end' }}>
-              <Image1 />
+              <img src={image1} alt={''} />
             </Box>
           )}
         </Box>

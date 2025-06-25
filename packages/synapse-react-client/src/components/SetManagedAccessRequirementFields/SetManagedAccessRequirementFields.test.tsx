@@ -5,11 +5,11 @@ import {
 } from '@/mocks/mock_file_handle'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
 import { mockManagedACTAccessRequirementWikiPage } from '@/mocks/mockWiki'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import {
-  confirmMarkdownSynapseTextContent,
   confirmMarkdownSynapseIsShown,
+  confirmMarkdownSynapseTextContent,
 } from '@/testutils/MarkdownSynapseUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ACCESS_REQUIREMENT_BY_ID, WIKI_PAGE_ID } from '@/utils/APIConstants'
@@ -25,6 +25,7 @@ import {
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { noop } from 'lodash-es'
+import { http, HttpResponse } from 'msw'
 import { createRef } from 'react'
 import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
 import {
@@ -60,12 +61,12 @@ const overrideGetAccessRequirementHandler = (
   ar: ManagedACTAccessRequirement,
 ) => {
   return server.use(
-    rest.get(
+    http.get(
       `${getEndpoint(
         BackendDestinationEnum.REPO_ENDPOINT,
       )}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
-      async (req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(ar))
+      () => {
+        return HttpResponse.json(ar, { status: 200 })
       },
     ),
   )
@@ -73,14 +74,14 @@ const overrideGetAccessRequirementHandler = (
 
 const overrideGetWikiPageHandler = (wikiPage: WikiPage) => {
   return server.use(
-    rest.get(
+    http.get(
       `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${WIKI_PAGE_ID(
         ObjectType.ACCESS_REQUIREMENT,
         ':ownerObjectId',
         ':wikiPageId',
       )}`,
-      async (req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(wikiPage))
+      () => {
+        return HttpResponse.json(wikiPage, { status: 200 })
       },
     ),
   )
