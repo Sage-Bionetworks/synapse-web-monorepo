@@ -4,7 +4,8 @@ import { useTermsOfServiceInfo } from '@/synapse-queries/termsOfService/useTerms
 import { Box, Button, Container } from '@mui/material'
 import { SkeletonParagraph } from '../Skeleton'
 import MarkdownSynapse from './MarkdownSynapse'
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
+import { replaceFileExtension } from '@/utils/functions/StringUtils'
 
 export type MarkdownGithubProps = {
   repoOwner: string
@@ -78,14 +79,9 @@ function MarkdownGithub({
   const [htmlContent, setHtmlContent] = useState<string | null | undefined>(
     null,
   )
-  const getHtmlFilename = useCallback((filePath: string) => {
-    const pathParts = filePath.split(/[\\/]/) // split on both '/' and '\'
-    const filename = pathParts[pathParts.length - 1] // last part of path
-    const baseName = filename.replace(/\.[^/.]+$/, '') // remove extension
-    return `${baseName}.html`
-  }, [])
+
   const outputFileHtmlName = useMemo(
-    () => getHtmlFilename(filePath),
+    () => replaceFileExtension(filePath, 'html'),
     [filePath],
   )
 

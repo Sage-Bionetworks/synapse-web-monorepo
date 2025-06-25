@@ -89,3 +89,13 @@ export function copyStringToClipboard(value: string): Promise<void> {
     }, 0)
   })
 }
+
+export function replaceFileExtension(
+  filePath: string,
+  extension: string,
+): string {
+  const pathParts = filePath.split(/[\\/]/) // split on both '/' and '\'
+  const filename = pathParts[pathParts.length - 1] // last part of path
+  const baseName = filename.replace(/\.[^/.]+$/, '') // remove extension
+  return `${baseName}.${extension}`
+}
