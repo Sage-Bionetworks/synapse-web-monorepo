@@ -87,9 +87,11 @@ describe('SustainabilityScorecard Tests', () => {
     ).toBeInTheDocument()
   })
 
-  it('displays card', () => {
+  it('displays card', async () => {
     render(<SustainabilityScorecardSummary {...mockProps} />)
     setGetQueryResultBundleSuccess(mockBundleSuccess)
+
+    await screen.findByText('Dependency Files')
 
     expect(screen.getByText('Dependency Files')).toBeInTheDocument()
     expect(screen.getByText('Test Files')).toBeInTheDocument()
