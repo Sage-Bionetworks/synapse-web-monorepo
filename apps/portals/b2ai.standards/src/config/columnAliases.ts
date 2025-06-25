@@ -11,4 +11,7 @@ export default {
   topic: 'Topics',
 
   [ORG_TABLE_COLUMN_NAMES.NAME]: 'Name',
+  [ORG_TABLE_COLUMN_NAMES.ROR_ID]: 'ROR ID',
+  [ORG_TABLE_COLUMN_NAMES.WIKIDATA_ID]: 'Wikidata ID',
+  [ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF]: 'Subclass Of',
 }

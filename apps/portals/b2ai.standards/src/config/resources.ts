@@ -11,7 +11,7 @@ export const TABLE_IDS = {
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
   DataTopic: { name: 'DataTopic', id: 'syn63096835' },
   // Challenges: { name: 'Challenges', id: 'syn65913973' }, // the only reason for this table is to get the GC images
-  Organization: { name: 'Organization', id: 'syn63096836' },
+  Organization: { name: 'Organization', id: 'syn63096836.30' },
   UseCase: { name: 'UseCase', id: 'syn63096837' },
 }
 
@@ -48,6 +48,7 @@ export const DATASET_DENORMALIZED_COLUMN_NAMES = {
   DOCUMENTATION_URL: 'DocumentationURL',
   IS_PUBLIC: 'isPublic',
   PRODUCED_BY: 'producedBy',
+  PRODUCED_BY_ORG_ID: 'producedByOrgId',
   ORG_JSON: 'org_json',
   TOPICS: 'topics',
   SUBSTRATES: 'substrates',
@@ -60,9 +61,9 @@ export const DATASET_DENORMALIZED_JSON_COLUMNS = [
   'substrates_json',
   'topics',
 ]
-export const dataSetSQL = `SELECT  ${Object.values(ORG_TABLE_COLUMN_NAMES).join(
-  ', ',
-)} FROM ${TABLE_IDS.DataSet.id}`
+export const dataSetSQL = `SELECT  ${Object.values(
+  DATASET_DENORMALIZED_COLUMN_NAMES,
+).join(', ')} FROM ${TABLE_IDS.DataSet_denormalized.id}`
 
 // export const ORG_DENORMALIZED_COLUMN_NAMES = {
 //   ID: 'id',
