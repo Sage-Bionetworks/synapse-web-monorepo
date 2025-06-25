@@ -139,11 +139,9 @@ const HeaderCard = forwardRef(function HeaderCard(
                     descriptionSubTitle=""
                     descriptionConfig={descriptionConfiguration}
                   />
-                  {/* sustainability score, pass in actual entity id */}
                   {sustainabilityScorecard && (
                     <SustainabilityScorecard
-                      entityId={'syn68349264'}
-                      // entityId={sustainabilityScorecard.entityId}
+                      entityId={sustainabilityScorecard.entityId}
                       metricsConfig={sustainabilityScorecard.metricsConfig}
                       sustainabilityReportLink={
                         sustainabilityScorecard.sustainabilityReportLink
