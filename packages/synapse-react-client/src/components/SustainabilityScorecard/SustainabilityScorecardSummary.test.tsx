@@ -16,6 +16,10 @@ const {
 
 const mockUseGetQueryResultBundle = vi.mocked(useGetQueryResultBundle)
 
+async function waitForDataLoad() {
+  await screen.findByText('Dependency Files')
+}
+
 const mockBundleSuccess: QueryResultBundle = {
   queryResult: {
     queryResults: {
@@ -77,9 +81,11 @@ describe('SustainabilityScorecard Tests', () => {
     ],
   }
 
-  it('displays header', () => {
+  it('displays header', async () => {
     render(<SustainabilityScorecardSummary {...mockProps} />)
     setGetQueryResultBundleSuccess(mockBundleSuccess)
+
+    await waitForDataLoad()
 
     expect(screen.getByText('Sustainability Index')).toBeInTheDocument()
     expect(
@@ -91,7 +97,7 @@ describe('SustainabilityScorecard Tests', () => {
     render(<SustainabilityScorecardSummary {...mockProps} />)
     setGetQueryResultBundleSuccess(mockBundleSuccess)
 
-    await screen.findByText('Dependency Files')
+    await waitForDataLoad()
 
     expect(screen.getByText('Dependency Files')).toBeInTheDocument()
     expect(screen.getByText('Test Files')).toBeInTheDocument()
@@ -107,7 +113,7 @@ describe('SustainabilityScorecard Tests', () => {
     render(<SustainabilityScorecardSummary {...mockProps} />)
     setGetQueryResultBundleSuccess(mockBundleSuccess)
 
-    await screen.findByText('Dependency Files')
+    await waitForDataLoad()
 
     const checkIcons = screen.getAllByTestId('CheckCircleIcon')
     const cancelIcons = screen.getAllByTestId('CancelIcon')
