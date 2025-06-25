@@ -2,7 +2,7 @@ import {
   mockManagedACTAccessRequirement as mockAccessRequirement,
   mockSearchResultsPageOne,
 } from '@/mocks/accessRequirement/mockAccessRequirements'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { MOCK_USER_ID, MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
 import { getLocationTracker } from '@/testutils/LocationTracker'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
@@ -17,6 +17,7 @@ import {
 import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import selectEvent from 'react-select-event'
 import * as AccessRequestSubmissionTableModule from './AccessRequestSubmissionTable'
@@ -67,25 +68,25 @@ describe('AccessSubmissionDashboard tests', () => {
     server.listen()
 
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_SEARCH}`,
 
-        async (req, res, ctx) => {
-          onServiceReceivedRequest(req.body)
-          return res(ctx.status(200), ctx.json(mockSearchResultsPageOne))
+        async ({ request }) => {
+          onServiceReceivedRequest(await request.json())
+          return HttpResponse.json(mockSearchResultsPageOne, { status: 200 })
         },
       ),
       // Return an access requirement specified by ID
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
 
-        async (req, res, ctx) => {
-          onServiceReceivedRequest(req.body)
-          return res(ctx.status(200), ctx.json(mockAccessRequirement))
+        async ({ request }) => {
+          onServiceReceivedRequest(await request.json())
+          return HttpResponse.json(mockAccessRequirement, { status: 200 })
         },
       ),
     )

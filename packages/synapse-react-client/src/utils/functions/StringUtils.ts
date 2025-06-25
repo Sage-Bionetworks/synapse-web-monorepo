@@ -39,6 +39,9 @@ export function hashCode(str?: string | null) {
 }
 
 export function normalizeNumericId(id: string | number): number {
+  if (id == null) {
+    return NaN
+  }
   if (typeof id === 'number') {
     return id
   }
@@ -85,4 +88,14 @@ export function copyStringToClipboard(value: string): Promise<void> {
       navigator.clipboard.writeText(value).then(resolve).catch(reject)
     }, 0)
   })
+}
+
+export function replaceFileExtension(
+  filePath: string,
+  extension: string,
+): string {
+  const pathParts = filePath.split(/[\\/]/) // split on both '/' and '\'
+  const filename = pathParts[pathParts.length - 1] // last part of path
+  const baseName = filename.replace(/\.[^/.]+$/, '') // remove extension
+  return `${baseName}.${extension}`
 }

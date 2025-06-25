@@ -10,6 +10,7 @@ import {
   USER_PROFILE,
   USER_PROFILE_ID,
 } from '@/utils/APIConstants'
+import { IdList } from '@sage-bionetworks/synapse-client'
 import {
   TwoFactorAuthStatus,
   TYPE_FILTER,
@@ -17,7 +18,7 @@ import {
   UserGroupHeaderResponsePage,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { mockPaginatedEntityHeaders } from '../../entity/mockEntity'
 import {
   mockUserBundle,
@@ -31,108 +32,108 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
   /**
    * Get User Profile by ID
    */
-  rest.get(
-    `${backendOrigin}${USER_PROFILE_ID(':id')}`,
-    async (req, res, ctx) => {
-      let status = 404
-      let response: SynapseApiResponse<UserProfile> = {
-        reason: `Mock Service worker could not find a user profile with ID ${req.params.id}`,
-      }
-      const match = mockUserData.find(
-        userData => userData.id.toString() === req.params.id,
-      )
-      if (match && match.userProfile) {
-        response = match.userProfile
-        status = 200
-      }
-      return res(ctx.status(status), ctx.json(response))
-    },
-  ),
+  http.get(`${backendOrigin}${USER_PROFILE_ID(':id')}`, ({ params }) => {
+    let status = 404
+    let response: SynapseApiResponse<UserProfile> = {
+      concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+      reason: `Mock Service worker could not find a user profile with ID ${params.id}`,
+    }
+    const match = mockUserData.find(
+      userData => userData.id.toString() === params.id,
+    )
+    if (match && match.userProfile) {
+      response = match.userProfile
+      status = 200
+    }
+    return HttpResponse.json(response, { status })
+  }),
 
   /**
    * Get the caller's user profile
    */
-  rest.get(`${backendOrigin}${USER_PROFILE}`, async (req, res, ctx) => {
+  http.get(`${backendOrigin}${USER_PROFILE}`, () => {
     // default return a mock UserProfile.
     const response: UserProfile = mockUserProfileData
     const status = 200
-    return res(ctx.status(status), ctx.json(response))
+    return HttpResponse.json(response, { status })
   }),
 
   /**
    * Get the caller's user bundle
    */
-  rest.get(`${backendOrigin}${USER_BUNDLE}`, async (req, res, ctx) => {
+  http.get(`${backendOrigin}${USER_BUNDLE}`, () => {
     const result: UserBundle = mockUserBundle
-    return res(ctx.status(200), ctx.json(result))
+    return HttpResponse.json(result, { status: 200 })
   }),
 
   /**
    * Get a user bundle by ID
    */
-  rest.get(
-    `${backendOrigin}${USER_ID_BUNDLE(':id')}`,
-    async (req, res, ctx) => {
-      let status = 404
-      let response: SynapseApiResponse<UserBundle> = {
-        reason: `Mock Service worker could not find a user bundle with ID ${req.params.id}`,
-      }
-      const match = mockUserData.find(
-        userData => userData.id.toString() === req.params.id,
-      )
-      if (match && match.userBundle) {
-        response = match.userBundle
-        status = 200
-      }
-      return res(ctx.status(status), ctx.json(response))
-    },
-  ),
+  http.get(`${backendOrigin}${USER_ID_BUNDLE(':id')}`, ({ params }) => {
+    let status = 404
+    let response: SynapseApiResponse<UserBundle> = {
+      concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+      reason: `Mock Service worker could not find a user bundle with ID ${params.id}`,
+    }
+    const match = mockUserData.find(
+      userData => userData.id.toString() === params.id,
+    )
+    if (match && match.userBundle) {
+      response = match.userBundle
+      status = 200
+    }
+    return HttpResponse.json(response, { status })
+  }),
 
   /**
    * Get the caller's favorites
    */
-  rest.get(`${backendOrigin}${FAVORITES}`, async (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockPaginatedEntityHeaders))
+  http.get(`${backendOrigin}${FAVORITES}`, () => {
+    return HttpResponse.json(mockPaginatedEntityHeaders, { status: 200 })
   }),
 
   /**
    * Get a batch of user group headers
    */
-  rest.get(
-    `${backendOrigin}${USER_GROUP_HEADERS_BATCH}`,
-    async (req, res, ctx) => {
-      const ids = req.url.searchParams.get('ids')!.split(',')
-      const responsePage: UserGroupHeaderResponsePage = {
-        children: mockUserGroupData
-          .filter(userData => ids.includes(userData.id.toString()))
-          .map(userData => userData.userGroupHeader),
-      }
-      return res(ctx.status(200), ctx.json(responsePage))
-    },
-  ),
+  http.get(`${backendOrigin}${USER_GROUP_HEADERS_BATCH}`, ({ request }) => {
+    const ids = new URL(request.url).searchParams.get('ids')!.split(',')
+    const responsePage: UserGroupHeaderResponsePage = {
+      children: mockUserGroupData
+        .filter(userData => ids.includes(userData.id.toString()))
+        .map(userData => userData.userGroupHeader),
+    }
+    return HttpResponse.json(responsePage, { status: 200 })
+  }),
 
   /**
    * Get a batch of user profiles
    */
-  rest.post(`${backendOrigin}${USER_PROFILE}`, async (req, res, ctx) => {
-    const requestedList = (await req.json()).list as string[]
-    const responsePage: UserProfileList = {
-      list: mockUserData
-        .filter(userData => requestedList.includes(userData.id.toString()))
-        .map(userData => userData.userProfile)
-        .filter(
-          (userProfile): userProfile is UserProfile => userProfile != null,
-        ),
-    }
-    return res(ctx.status(200), ctx.json(responsePage))
-  }),
+  http.post<never, IdList>(
+    `${backendOrigin}${USER_PROFILE}`,
+    async ({ request }) => {
+      const requestedList = ((await request.json()).list ?? []).map(String)
+      const responsePage: UserProfileList = {
+        list: mockUserData
+          .filter(userData => requestedList.includes(userData.id.toString()))
+          .map(userData => userData.userProfile)
+          .filter(
+            (userProfile): userProfile is UserProfile => userProfile != null,
+          ),
+      }
+      return HttpResponse.json(responsePage, { status: 200 })
+    },
+  ),
 
   /**
    * Get userGroupHeaders by prefix
    */
-  rest.get(`${backendOrigin}${USER_GROUP_HEADERS}`, async (req, res, ctx) => {
-    const prefix = (req.url.searchParams.get('prefix') ?? '').toLowerCase()
-    const typeFilter = req.url.searchParams.get('typeFilter') as TYPE_FILTER
+  http.get(`${backendOrigin}${USER_GROUP_HEADERS}`, ({ request }) => {
+    const prefix = (
+      new URL(request.url).searchParams.get('prefix') ?? ''
+    ).toLowerCase()
+    const typeFilter = new URL(request.url).searchParams.get(
+      'typeFilter',
+    ) as TYPE_FILTER
     const responsePage: UserGroupHeaderResponsePage = {
       children: mockUserGroupData
         .filter(userData => {
@@ -161,34 +162,31 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
         )
         .map(userData => userData.userGroupHeader),
     }
-    return res(ctx.status(200), ctx.json(responsePage))
+    return HttpResponse.json(responsePage, { status: 200 })
   }),
 
   /**
    * Return a 404 when fetching the profile image
    */
-  rest.get(
-    `${backendOrigin}${PROFILE_IMAGE_PREVIEW(':userId')}`,
-    async (req, res, ctx) => {
-      return res(
-        ctx.status(404),
-        ctx.json({ reason: 'user has no profile image' }),
-      )
-    },
-  ),
-
-  rest.get(`${backendOrigin}${NOTIFICATION_EMAIL}`, async (req, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json({ email: mockUserBundle.userProfile?.email }),
+  http.get(`${backendOrigin}${PROFILE_IMAGE_PREVIEW(':userId')}`, () => {
+    return HttpResponse.json(
+      { reason: 'user has no profile image' },
+      { status: 404 },
     )
   }),
 
-  rest.get(`${backendOrigin}/auth/v1/2fa`, async (req, res, ctx) => {
+  http.get(`${backendOrigin}${NOTIFICATION_EMAIL}`, () => {
+    return HttpResponse.json(
+      { email: mockUserBundle.userProfile?.email },
+      { status: 200 },
+    )
+  }),
+
+  http.get(`${backendOrigin}/auth/v1/2fa`, () => {
     const response: TwoFactorAuthStatus = {
       status: 'ENABLED',
     }
-    return res(ctx.status(200), ctx.json(response))
+    return HttpResponse.json(response, { status: 200 })
   }),
 ]
 
@@ -197,13 +195,14 @@ export function getCurrentUserCertifiedValidatedHandler(
   isCertified: boolean,
   isValidated: boolean,
 ) {
-  return rest.get(`${backendOrigin}${USER_BUNDLE}`, async (req, res, ctx) => {
+  return http.get(`${backendOrigin}${USER_BUNDLE}`, () => {
     const status = 200
     const response: UserBundle = {
       ...mockUserBundle,
       isCertified: isCertified,
       isVerified: isValidated,
     }
-    return res(ctx.status(status), ctx.json(response))
+
+    return HttpResponse.json(response, { status })
   })
 }

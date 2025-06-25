@@ -47,7 +47,8 @@ const mockDoiAssociation: DoiAssociation = {
   portalId: defaultProps.portalId,
   objectType: DoiObjectType.PORTAL_RESOURCE,
   objectId: defaultProps.resourceId,
-  doiUrl: `https://doi.org/10.test/${defaultProps.resourceId}`,
+  doiUri: `10.test/${defaultProps.resourceId}`,
+  doiUrl: `https://repo-mock.sagebase.org/doi/locate?some=params`,
   updatedOn: '2023-01-01T00:00:00.000Z',
   updatedBy: String(MOCK_USER_ID),
 }
@@ -75,8 +76,9 @@ describe('PortalDOI', () => {
     render(<PortalDOI {...defaultProps} />)
 
     // Check for DOI link, copy icon, and edit button
-    const link = screen.getByRole('link', { name: mockDoiAssociation.doiUrl })
-    expect(link).toHaveAttribute('href', mockDoiAssociation.doiUrl)
+    const expectedLink = `https://doi.org/${mockDoiAssociation.doiUri}`
+    const link = screen.getByRole('link', { name: expectedLink })
+    expect(link).toHaveAttribute('href', expectedLink)
     expect(screen.getByTestId('CopyToClipboardIcon')).toBeInTheDocument()
     const editButton = screen.getByRole('button', { name: 'Edit DOI' })
     expect(editButton).toBeInTheDocument()
@@ -124,8 +126,9 @@ describe('PortalDOI', () => {
     render(<PortalDOI {...defaultProps} />)
 
     // Check for DOI link and copy icon
-    const link = screen.getByRole('link', { name: mockDoiAssociation.doiUrl })
-    expect(link).toHaveAttribute('href', mockDoiAssociation.doiUrl)
+    const expectedLink = `https://doi.org/${mockDoiAssociation.doiUri}`
+    const link = screen.getByRole('link', { name: expectedLink })
+    expect(link).toHaveAttribute('href', expectedLink)
     expect(screen.getByTestId('CopyToClipboardIcon')).toBeInTheDocument()
 
     // Check that edit button and create link are NOT present

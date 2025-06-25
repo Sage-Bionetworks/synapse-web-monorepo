@@ -72,11 +72,14 @@ export function useCreateOrUpdateDOI(
           doiRequest: request,
         })
 
-      return waitForAsyncResult(() =>
-        synapseClient.doiServicesClient.getRepoV1DoiAsyncGetAsyncToken({
-          asyncToken: asyncJobId.token!,
-        }),
+      const asyncJobResponse = await waitForAsyncResult(() =>
+        synapseClient.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId(
+          {
+            jobId: asyncJobId.token!,
+          },
+        ),
       )
+      return asyncJobResponse.responseBody as DoiResponse
     },
     onSuccess(...args) {
       if (options?.onSuccess) {

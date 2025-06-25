@@ -229,3 +229,5 @@ function EvaluationCardDropdown({
     </>
   )
 }
+
+export default EvaluationCard

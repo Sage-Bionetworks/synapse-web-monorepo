@@ -83,7 +83,9 @@ export default function EntityAclEditorModal(props: EntityAclEditorModalProps) {
             isAfterUpload={isAfterUpload}
           />
         }
-        onConfirm={() => {
+        onConfirm={e => {
+          // SWC-7055 - The default action may trigger `beforeunload` and erroneously warn the user about leaving the page.
+          e.preventDefault()
           entityAclEditorRef.current!.save()
         }}
         confirmButtonProps={{

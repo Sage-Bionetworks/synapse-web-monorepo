@@ -1,4 +1,5 @@
 import WideButton from '@/components/styled/WideButton'
+import { datasetItemToReference } from '@/components/SynapseTable/datasets/DatasetEditorUtils'
 import {
   useGetEntity,
   useGetEntityPath,
@@ -656,9 +657,15 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     overscan: 5,
   })
 
+  const datasetItemsAsEntityFinderRef = useMemo(
+    () => datasetToUpdate?.items.map(datasetItemToReference),
+    [datasetToUpdate],
+  )
+
   return (
     <div className="DatasetEditor">
       <EntityFinderModal
+        initialSelected={datasetItemsAsEntityFinderRef}
         configuration={{
           projectId: projectId,
           selectMultiple: true,
@@ -675,7 +682,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
         promptCopy={ENTITY_FINDER_PROMPT}
         show={showEntityFinder}
         title={ADD_ITEMS_TO}
-        confirmButtonCopy={ADD_ITEMS}
+        confirmButtonCopy={'Apply changes'}
         onConfirm={items => {
           addItemsToDataset(items)
           setShowEntityFinder(false)
@@ -804,3 +811,5 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     </div>
   )
 }
+
+export default DatasetItemsEditor

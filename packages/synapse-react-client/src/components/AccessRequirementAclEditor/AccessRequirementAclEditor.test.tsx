@@ -1,7 +1,7 @@
 import { MOCK_MANAGED_ACCESS_REQUIREMENT_ACL } from '@/mocks/accessRequirement/mockAccessRequirementAcls'
 import { MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID } from '@/mocks/accessRequirement/mockAccessRequirements'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { mockTeamData, mockTeamData2 } from '@/mocks/team/mockTeam'
 import {
   MOCK_USER_ID_2,
@@ -18,6 +18,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import { createRef } from 'react'
 import {
   addUserToAcl,
@@ -206,12 +207,14 @@ describe('AccessRequirementAclEditor', () => {
         resourceAccess: defaultResourceAccessList.slice(0, 1),
       }
       server.use(
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}/repo/v1/accessRequirement/${accessRequirementId}/acl`,
-          async (req, res, ctx) => {
-            return res(ctx.status(200), ctx.json(aclWithOneResourceAccessItem))
+          () => {
+            return HttpResponse.json(aclWithOneResourceAccessItem, {
+              status: 200,
+            })
           },
         ),
       )

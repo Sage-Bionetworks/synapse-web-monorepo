@@ -21,7 +21,8 @@ export function ChallengeDataDownload({
 }: ChallengeDataDownloadProps) {
   const { downloadCartPageUrl } = useSynapseContext()
   const selectMultiple = true
-  const [selectedEntities, toggleSelection] = useEntitySelection(selectMultiple)
+  const { selectedEntities, toggleSelection } =
+    useEntitySelection(selectMultiple)
 
   const { mutate: addBatchToDownloadList } = useAddFileBatchToDownloadList({
     onSuccess: () => {
