@@ -347,3 +347,5 @@ export function HasAccessV2(props: HasAccessProps) {
     </span>
   )
 }
+
+export default HasAccessV2

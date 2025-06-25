@@ -46,3 +46,5 @@ export function HelpPopover({
     </>
   )
 }
+
+export default HelpPopover

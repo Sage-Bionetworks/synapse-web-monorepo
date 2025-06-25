@@ -395,3 +395,5 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     </div>
   )
 }
+
+export default DiscussionThread
