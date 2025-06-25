@@ -57,7 +57,9 @@ export type TableToGenericCardMapping = {
   description?: string
   /** If true, a 'Cite As' button will be displayed for those cards with a DOI in the 'doi' column  */
   includeCitation?: boolean
-  /** explain **/
+  /**
+   * Configuration for displaying the SustainabilityScorecard component
+   */
   sustainabilityScorecard?: SustainabilityScorecardProps
   /** The initial citation format to use in the 'Cite As' UI */
   defaultCitationFormat?: 'bibtex' | 'apa' | 'ieee' | 'nature' | 'science'
