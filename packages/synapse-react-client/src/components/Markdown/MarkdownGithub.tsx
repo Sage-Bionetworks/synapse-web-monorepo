@@ -108,9 +108,7 @@ function MarkdownGithub({
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'flex-end',
-            mb: '-50px',
-            mt: '30px',
+            float: 'right',
           }}
         >
           <Button
