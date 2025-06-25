@@ -6,6 +6,9 @@ import { DescriptionConfig } from './CardContainerLogic'
 import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
 import { GenericCardProps } from '@/components/GenericCard/GenericCard'
 import HeaderCardV2 from './HeaderCard/HeaderCardV2'
+import SustainabilityScorecard, {
+  SustainabilityScorecardProps,
+} from './SustainabilityScorecard/SustainabilityScorecard'
 
 export type HeaderCardVariant = 'HeaderCard' | 'HeaderCardV2'
 
@@ -25,6 +28,7 @@ export type HeaderCardProps = {
   cardTopContent?: React.ReactNode
   ctaLinkConfig?: GenericCardProps['ctaLinkConfig']
   cardTopButtons?: React.ReactNode
+  sustainabilityScorecard?: SustainabilityScorecardProps
 }
 
 const HeaderCard = forwardRef(function HeaderCard(
@@ -46,6 +50,7 @@ const HeaderCard = forwardRef(function HeaderCard(
     headerCardVariant = 'HeaderCard',
     cardTopContent,
     cardTopButtons,
+    sustainabilityScorecard,
   } = props
 
   // store old document title and description so that we can restore when this component is removed
@@ -104,8 +109,13 @@ const HeaderCard = forwardRef(function HeaderCard(
         <div className="row">
           <div className="col-md-offset-1 col-md-10">
             <div className="SRC-portalCardMain">
-              {icon}
-              <div style={{ width: '100%' }}>
+              {!sustainabilityScorecard && icon}
+              <div
+                style={{
+                  width: '100%',
+                  ...(sustainabilityScorecard && { display: 'flex' }),
+                }}
+              >
                 <div className="SRC-cardContent" style={{ marginLeft: '15px' }}>
                   <div className="SRC-type">{type}</div>
                   <div>
@@ -129,6 +139,21 @@ const HeaderCard = forwardRef(function HeaderCard(
                     descriptionSubTitle=""
                     descriptionConfig={descriptionConfiguration}
                   />
+                  {/* sustainability score, pass in actual entity id */}
+                  {sustainabilityScorecard && (
+                    <SustainabilityScorecard
+                      entityId={'syn68349264'}
+                      // entityId={sustainabilityScorecard.entityId}
+                      metricsConfig={sustainabilityScorecard.metricsConfig}
+                      sustainabilityReportLink={
+                        sustainabilityScorecard.sustainabilityReportLink
+                      }
+                      sx={{
+                        background: 'rgba(0, 0, 0, 0.10)',
+                        marginTop: '30px',
+                      }}
+                    />
+                  )}
                 </div>
                 <div
                   style={{

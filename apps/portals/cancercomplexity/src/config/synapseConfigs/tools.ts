@@ -7,14 +7,41 @@ import { TableToGenericCardMapping } from 'synapse-react-client/components/Gener
 import columnAliases from '../columnAliases'
 import { toolsSql } from '../resources'
 import { citationBoilerplateText } from './commonProps'
+import { parseEntityIdFromSqlStatement } from 'synapse-react-client/utils/functions'
+import { MetricsConfig } from 'synapse-react-client/components/SustainabilityScorecard/SustainabilityScorecard'
 
 const rgbIndex = 6
+
+export const metricsConfig: MetricsConfig[] = [
+  {
+    key: 'dependencyFiles',
+    label: 'Dependency Files',
+    text: 'Checks if dependencies are declared (e.g., package.json)',
+  },
+  {
+    key: 'testFiles',
+    label: 'Test Files',
+    text: 'Indicates presence of automated tests',
+  },
+  {
+    key: 'readmeFiles',
+    label: 'README Files',
+    text: 'Presence of documentation for setup/use',
+  },
+]
+
+const entityId = parseEntityIdFromSqlStatement(toolsSql)
 
 export const toolsSchema: TableToGenericCardMapping = {
   type: SynapseConstants.TOOL,
   title: 'toolName',
   description: 'description',
   includeCitation: true,
+  sustainabilityScorecard: {
+    entityId: entityId,
+    sustainabilityReportLink: '',
+    metricsConfig: metricsConfig,
+  },
   defaultCitationFormat: 'nature',
   citationBoilerplateText: citationBoilerplateText,
   secondaryLabels: [

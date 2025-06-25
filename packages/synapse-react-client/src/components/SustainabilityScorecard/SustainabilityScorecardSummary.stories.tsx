@@ -1,11 +1,16 @@
 import { Meta, StoryObj } from '@storybook/react'
-import SustainabilityScorecard, {
-  SustainabilityScorecardProps,
-} from './SustainabilityScorecard'
+import SustainabilityScorecardSummary, {
+  SustainabilityScorecardSummaryProps,
+} from './SustainabilityScorecardSummary'
 
-const mockProps: SustainabilityScorecardProps = {
+const mockProps: SustainabilityScorecardSummaryProps = {
   entityId: 'syn68349264',
-  sustainabilityReportLink: 'https://example.com/sustainability-report',
+  text: (
+    <p>
+      This section provides an overview of the sustainability metrics and
+      scores.
+    </p>
+  ),
   metricsConfig: [
     {
       key: 'dependencyFiles',
@@ -26,8 +31,8 @@ const mockProps: SustainabilityScorecardProps = {
 }
 
 const meta = {
-  title: 'Components/SustainabilityScorecard/Scorecard',
-  component: SustainabilityScorecard,
+  title: 'Components/SustainabilityScorecard/Storecard Summary',
+  component: SustainabilityScorecardSummary,
   parameters: {
     chromatic: { viewports: [600, 1200] },
   },
