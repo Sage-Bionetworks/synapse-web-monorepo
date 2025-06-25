@@ -44,7 +44,7 @@ const handleDownload = (htmlContent: string, outputFileHtmlName: string) => {
           <meta charset="UTF-8">
           <title>${outputFileHtmlName}</title>
         </head>
-        <body style="margin: 0; padding: 20px; font-family: Arial, sans-serif;">
+        <body style="margin: 0; padding: 20px; font-family: Arial, sans-serif; line-height: 24px;">
           ${htmlContent}
         </body>
       </html>
