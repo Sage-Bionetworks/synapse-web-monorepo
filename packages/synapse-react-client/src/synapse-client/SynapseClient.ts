@@ -5313,7 +5313,7 @@ export function getPortalFileHandleServletUrl(
  */
 export const getFeatureFlags = () => {
   return doGet<FeatureFlags>(
-    `Portal/featureflags`,
+    `/Portal/featureflags`,
     undefined,
     BackendDestinationEnum.PORTAL_ENDPOINT,
   )
