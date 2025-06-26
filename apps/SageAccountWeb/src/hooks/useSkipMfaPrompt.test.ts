@@ -23,7 +23,6 @@ const mockUseLocalStorageValue = vi.mocked(useLocalStorageValue)
 const mockDayjs = vi.mocked(dayjs)
 
 describe('useSkipMfaPrompt', () => {
-  const mockAccountId = '123'
   const mockSetTimestamp = vi.fn()
   const mockUseLocalStorageValueReturn = {
     value: null,
@@ -57,7 +56,7 @@ describe('useSkipMfaPrompt', () => {
         value: null,
       })
 
-      const { result } = renderHook(() => useSkipMfaPrompt(mockAccountId))
+      const { result } = renderHook(() => useSkipMfaPrompt())
 
       expect(result.current.hasSkippedRecently).toBe(false)
     })
@@ -68,12 +67,12 @@ describe('useSkipMfaPrompt', () => {
         value: '',
       })
 
-      const { result } = renderHook(() => useSkipMfaPrompt(mockAccountId))
+      const { result } = renderHook(() => useSkipMfaPrompt())
 
       expect(result.current.hasSkippedRecently).toBe(false)
     })
 
-    it('should return true when timestamp is less than 12 hours old', () => {
+    it('should return true when timestamp is less than 24 hours old', () => {
       const mockTimestamp = '2023-12-01T10:00:00.000Z'
       mockUseLocalStorageValue.mockReturnValue({
         ...mockUseLocalStorageValueReturn,
@@ -88,19 +87,19 @@ describe('useSkipMfaPrompt', () => {
         .calledWith(mockTimestamp)
         .thenReturn(mockDayjsInstanceForStoredTimestamp as unknown as Dayjs)
 
-      const { result } = renderHook(() => useSkipMfaPrompt(mockAccountId))
+      const { result } = renderHook(() => useSkipMfaPrompt())
 
       expect(result.current.hasSkippedRecently).toBe(true)
     })
 
-    it('should return false when timestamp is more than 12 hours old', () => {
+    it('should return false when timestamp is more than 24 hours old', () => {
       const mockTimestamp = '2023-12-01T01:00:00.000Z'
       mockUseLocalStorageValue.mockReturnValue({
         ...mockUseLocalStorageValueReturn,
         value: mockTimestamp,
       })
 
-      // Mock dayjs to return that the timestamp is before 12 hours ago
+      // Mock dayjs to return that the timestamp is before 24 hours ago
       const mockDayjsInstanceForStoredTimestamp = {
         isAfter: vi.fn().mockReturnValue(false),
       }
@@ -151,7 +150,7 @@ describe('useSkipMfaPrompt', () => {
         value: null,
       })
 
-      const { result } = renderHook(() => useSkipMfaPrompt(mockAccountId))
+      const { result } = renderHook(() => useSkipMfaPrompt())
 
       act(() => {
         result.current.skip()
@@ -233,7 +232,7 @@ describe('useSkipMfaPrompt', () => {
         value: null,
       })
 
-      const { result } = renderHook(() => useSkipMfaPrompt(mockAccountId))
+      const { result } = renderHook(() => useSkipMfaPrompt())
 
       expect(result.current.hasSkippedRecently).toBe(false)
     })
@@ -244,7 +243,7 @@ describe('useSkipMfaPrompt', () => {
         value: undefined,
       })
 
-      const { result } = renderHook(() => useSkipMfaPrompt(mockAccountId))
+      const { result } = renderHook(() => useSkipMfaPrompt())
 
       expect(result.current.hasSkippedRecently).toBe(false)
     })

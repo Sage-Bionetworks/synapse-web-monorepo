@@ -3,9 +3,9 @@ import { useLocalStorageValue } from '@react-hookz/web'
 import dayjs from 'dayjs'
 import { useCallback, useMemo } from 'react'
 
-function isTimestampLessThan12HoursOld(timestamp: string | null): boolean {
+function isTimestampLessThan24HoursOld(timestamp: string | null): boolean {
   try {
-    const twelveHoursAgo = dayjs().subtract(12, 'hours')
+    const twelveHoursAgo = dayjs().subtract(24, 'hours')
     return timestamp !== null && dayjs(timestamp).isAfter(twelveHoursAgo)
   } catch (error) {
     console.error('Error thrown computing timestamp', timestamp, error)
@@ -25,9 +25,9 @@ export function useSkipMfaPrompt() {
     useLocalStorageValue<string>(
       SKIPPED_2FA_REQUIREMENT_TIMESTAMP_LOCALSTORAGE_KEY,
     )
-  const hasSkipped2faPromptInLast12Hours =
+  const hasSkipped2faPromptInLast24Hours =
     !!lastSkippedTimestamp &&
-    isTimestampLessThan12HoursOld(lastSkippedTimestamp)
+    isTimestampLessThan24HoursOld(lastSkippedTimestamp)
 
   const skip = useCallback(() => {
     const currentTimestamp = new Date().toISOString()
@@ -36,9 +36,9 @@ export function useSkipMfaPrompt() {
 
   return useMemo(
     () => ({
-      hasSkippedRecently: hasSkipped2faPromptInLast12Hours,
+      hasSkippedRecently: hasSkipped2faPromptInLast24Hours,
       skip,
     }),
-    [hasSkipped2faPromptInLast12Hours, skip],
+    [hasSkipped2faPromptInLast24Hours, skip],
   )
 }
