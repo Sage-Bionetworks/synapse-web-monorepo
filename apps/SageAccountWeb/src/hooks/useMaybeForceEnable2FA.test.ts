@@ -1,7 +1,6 @@
 import usePathBefore2FARedirect from '@/hooks/usePathBefore2FARedirect'
 import { useSkipMfaPrompt } from '@/hooks/useSkipMfaPrompt'
 import { renderHook, waitFor } from '@testing-library/react'
-import { useGetCurrentUserProfile } from 'synapse-react-client/synapse-queries/index'
 import {
   ApplicationSessionContextType,
   useApplicationSessionContext,
