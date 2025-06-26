@@ -35,7 +35,7 @@ importers:
         version: 9.26.0
       '@vitest/eslint-plugin':
         specifier: ^1.2.1
-        version: 1.2.1(eslint@9.26.0)(typescript@5.8.3)(vitest@3.2.2)
+        version: 1.2.1(eslint@9.26.0)(typescript@5.8.3)(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.19.0)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@2.7.6(@types/node@20.19.0)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
       dotenv-cli:
         specifier: ^7.4.4
         version: 7.4.4
@@ -189,7 +189,7 @@ importers:
         version: 4.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@vitest/coverage-v8':
         specifier: ^3.2.2
-        version: 3.2.2(vitest@3.2.2)
+        version: 3.2.2(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@21.1.2)(msw@2.7.6(@types/node@20.17.41)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
       '@vitest/ui':
         specifier: ^3.2.2
         version: 3.2.2(vitest@3.2.2)
@@ -1024,7 +1024,7 @@ importers:
         version: 4.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@vitest/coverage-v8':
         specifier: ^3.2.2
-        version: 3.2.2(vitest@3.2.2)
+        version: 3.2.2(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@21.1.2)(msw@1.3.5(encoding@0.1.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
       '@vitest/ui':
         specifier: ^3.2.2
         version: 3.2.2(vitest@3.2.2)
@@ -1211,7 +1211,7 @@ importers:
         version: 2.6.3
       '@vitest/coverage-v8':
         specifier: ^3.2.2
-        version: 3.2.2(vitest@3.2.2)
+        version: 3.2.2(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@21.1.2)(msw@2.7.6(@types/node@20.17.41)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
       '@vitest/ui':
         specifier: ^3.2.2
         version: 3.2.2(vitest@3.2.2)
@@ -1331,7 +1331,7 @@ importers:
         version: 20.17.41
       '@vitest/coverage-v8':
         specifier: ^3.2.2
-        version: 3.2.2(vitest@3.2.2)
+        version: 3.2.2(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@2.7.6(@types/node@20.17.41)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
       '@vitest/ui':
         specifier: ^3.2.2
         version: 3.2.2(vitest@3.2.2)
@@ -1367,7 +1367,7 @@ importers:
         version: 20.17.41
       '@vitest/coverage-v8':
         specifier: ^3.2.2
-        version: 3.2.2(vitest@3.2.2)
+        version: 3.2.2(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@2.7.6(@types/node@20.17.41)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
       '@vitest/ui':
         specifier: ^3.2.2
         version: 3.2.2(vitest@3.2.2)
@@ -1614,6 +1614,9 @@ importers:
       react-datetime:
         specifier: ^3.3.1
         version: 3.3.1(moment@2.30.1)(react@18.3.1)
+      react-draggable:
+        specifier: ^4.5.0
+        version: 4.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-error-boundary:
         specifier: ^3.1.4
         version: 3.1.4(react@18.3.1)
@@ -1758,7 +1761,7 @@ importers:
         version: 10.4.0
       '@testing-library/jest-dom':
         specifier: 6.4.7
-        version: 6.4.7(@jest/globals@29.7.0)(@types/jest@29.5.14)(jest@29.7.0(@types/node@20.17.41)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@20.17.41)(typescript@5.8.3)))(vitest@3.2.2)
+        version: 6.4.7(@jest/globals@29.7.0)(@types/jest@29.5.14)(jest@29.7.0(@types/node@20.17.41)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@20.17.41)(typescript@5.8.3)))(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@1.3.5(encoding@0.1.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
       '@testing-library/react':
         specifier: ^16.3.0
         version: 16.3.0(@testing-library/dom@10.4.0)(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1854,7 +1857,7 @@ importers:
         version: 4.4.1(vite@6.3.5(@types/node@20.17.41)(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
       '@vitest/coverage-v8':
         specifier: ^3.2.2
-        version: 3.2.2(vitest@3.2.2)
+        version: 3.2.2(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@1.3.5(encoding@0.1.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
       '@vitest/ui':
         specifier: ^3.2.2
         version: 3.2.2(vitest@3.2.2)
@@ -1965,7 +1968,7 @@ importers:
         version: 3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@1.3.5(encoding@0.1.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
       vitest-when:
         specifier: ^0.6.0
-        version: 0.6.0(@vitest/expect@3.2.2)(vitest@3.2.2)
+        version: 0.6.0(@vitest/expect@3.2.2)(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@1.3.5(encoding@0.1.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
       weak-napi:
         specifier: ^2.0.2
         version: 2.0.2
@@ -1989,7 +1992,7 @@ importers:
     dependencies:
       '@vitest/coverage-v8':
         specifier: ^1.6.0
-        version: 1.6.1(vitest@3.2.2)
+        version: 1.6.1(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.19.0)(@vitest/ui@1.6.1)(jsdom@26.1.0)(msw@2.7.6(@types/node@20.19.0)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
       '@vitest/ui':
         specifier: ^1.6.0
         version: 1.6.1(vitest@3.2.2)
@@ -2501,7 +2504,7 @@ packages:
     resolution: {integrity: sha512-O000MLDBDdk/EohJPFUqvnp4qnHeYkVP5B0xEG0D/L7cOKP9kefu2DXn8dj74cQfsEzUqh+sr1RzFqiL1o+PpA==}
     peerDependencies:
       '@types/react': '*'
-      react: '>=16.8.0'
+      react: 18.2.0
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -3097,8 +3100,8 @@ packages:
       '@emotion/styled': ^11.3.0
       '@mui/material-pigment-css': ^7.1.1
       '@types/react': 18.3.12
-      react: ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
+      react: 18.2.0
+      react-dom: 18.2.0
     peerDependenciesMeta:
       '@emotion/react':
         optional: true
@@ -3667,8 +3670,8 @@ packages:
   '@react-google-maps/api@2.20.6':
     resolution: {integrity: sha512-frxkSHWbd36ayyxrEVopSCDSgJUT1tVKXvQld2IyzU3UnDuqqNA3AZE4/fCdqQb2/zBQx3nrWnZB1wBXDcrjcw==}
     peerDependencies:
-      react: ^16.8 || ^17 || ^18 || ^19
-      react-dom: ^16.8 || ^17 || ^18 || ^19
+      react: 18.2.0
+      react-dom: 18.2.0
 
   '@react-google-maps/infobox@2.20.0':
     resolution: {integrity: sha512-03PJHjohhaVLkX6+NHhlr8CIlvUxWaXhryqDjyaZ8iIqqix/nV8GFdz9O3m5OsjtxtNho09F/15j14yV0nuyLQ==}
@@ -3684,8 +3687,8 @@ packages:
     resolution: {integrity: sha512-fvbURdsa1ukttbLR1ASE/XmqXP09vZ1PiCYppYeR1sNMzCrdkG0iBnjxniFSVjJ8gIw2fRs6nqMTbeBz2uAkuA==}
     peerDependencies:
       js-cookie: ^3.0.5
-      react: ^16.8 || ^17 || ^18
-      react-dom: ^16.8 || ^17 || ^18
+      react: 18.2.0
+      react-dom: 18.2.0
     peerDependenciesMeta:
       js-cookie:
         optional: true
@@ -3736,7 +3739,7 @@ packages:
     engines: {node: '>=20'}
     peerDependencies:
       '@rjsf/utils': ^6.0.0-beta
-      react: '>=18'
+      react: 18.2.0
 
   '@rjsf/mui@6.0.0-beta.10':
     resolution: {integrity: sha512-tafDbqKfoKV/5wNQYfqS4Hs95t9cmZCGCmNbU0Sxh7nM9+XwXuw7z0pjcc6njf0RUUdvPJIDo2hL6FXrj/sLKg==}
@@ -5087,7 +5090,7 @@ packages:
   '@upsetjs/react@1.11.0':
     resolution: {integrity: sha512-APDFkXowPk1U94Iz5dtzpjcSiR5GcJkhLdMdeTnyLDYxIBf1mA+ElbBrEdAzaSGCiZo76ZKfgmuCMSMEfLtN8g==}
     peerDependencies:
-      react: '>=17'
+      react: 18.2.0
 
   '@vitejs/plugin-react@4.4.1':
     resolution: {integrity: sha512-IpEm5ZmeXAP/osiBXVVP5KjFMzbWOonMs0NaQQl+xYnUAcq4oHUBsF2+p4MgKWG4YMmFYJU8A6sxRPuowllm6w==}
@@ -6771,7 +6774,6 @@ packages:
     resolution: {integrity: sha512-X41YRfKkVCooILai2N0aN0Q5O0imu+MbNt894QWU683A82xJJXIR01dEqxwYJ91M6IdExtyFB3GCOJb4eBMBMQ==}
     peerDependencies:
       eslint: '>= 5'
-    bundledDependencies: []
 
   eslint-plugin-jest-dom@5.5.0:
     resolution: {integrity: sha512-CRlXfchTr7EgC3tDI7MGHY6QjdJU5Vv2RPaeeGtkXUHnKZf04kgzMPIJUXt4qKCvYWVVIEo9ut9Oq1vgXAykEA==}
@@ -8055,7 +8057,6 @@ packages:
     resolution: {integrity: sha512-Quz3MvAwHxVYNXsOByL7xI5EB2WYOeFswqaHIA3qOK3isRWTxiplBEocmmru6XmxDB2L7jDNYtYA4FyimoAFEw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
-    bundledDependencies: []
 
   jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
@@ -9175,6 +9176,12 @@ packages:
     resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
     peerDependencies:
       react: ^18.3.1
+
+  react-draggable@4.5.0:
+    resolution: {integrity: sha512-VC+HBLEZ0XJxnOxVAZsdRi8rD04Iz3SiiKOoYzamjylUcju/hP9np/aZdLHf/7WOD268WMoNJMvYfB5yAK45cw==}
+    peerDependencies:
+      react: '>= 16.3.0'
+      react-dom: '>= 16.3.0'
 
   react-easy-crop@5.4.1:
     resolution: {integrity: sha512-Djtsi7bWO75vkKYkVxNRrJWY69pXLahIAkUN0mmt9cXNnaq2tpG59ctSY6P7ipJgBc7COJDRMRuwb2lYwtACNQ==}
@@ -14200,7 +14207,7 @@ snapshots:
       lz-string: 1.5.0
       pretty-format: 27.5.1
 
-  '@testing-library/jest-dom@6.4.7(@jest/globals@29.7.0)(@types/jest@29.5.14)(jest@29.7.0(@types/node@20.17.41)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@20.17.41)(typescript@5.8.3)))(vitest@3.2.2)':
+  '@testing-library/jest-dom@6.4.7(@jest/globals@29.7.0)(@types/jest@29.5.14)(jest@29.7.0(@types/node@20.17.41)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@20.17.41)(typescript@5.8.3)))(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@1.3.5(encoding@0.1.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))':
     dependencies:
       '@adobe/css-tools': 4.4.2
       '@babel/runtime': 7.27.1
@@ -14790,7 +14797,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@1.6.1(vitest@3.2.2)':
+  '@vitest/coverage-v8@1.6.1(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.19.0)(@vitest/ui@1.6.1)(jsdom@26.1.0)(msw@2.7.6(@types/node@20.19.0)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -14809,7 +14816,26 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@3.2.2(vitest@3.2.2)':
+  '@vitest/coverage-v8@3.2.2(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@21.1.2)(msw@1.3.5(encoding@0.1.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))':
+    dependencies:
+      '@ampproject/remapping': 2.3.0
+      '@bcoe/v8-coverage': 1.0.2
+      ast-v8-to-istanbul: 0.3.3
+      debug: 4.4.1
+      istanbul-lib-coverage: 3.2.2
+      istanbul-lib-report: 3.0.1
+      istanbul-lib-source-maps: 5.0.6
+      istanbul-reports: 3.1.7
+      magic-string: 0.30.17
+      magicast: 0.3.5
+      std-env: 3.9.0
+      test-exclude: 7.0.1
+      tinyrainbow: 2.0.0
+      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@21.1.2)(msw@1.3.5(encoding@0.1.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@vitest/coverage-v8@3.2.2(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@21.1.2)(msw@2.7.6(@types/node@20.17.41)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 1.0.2
@@ -14828,7 +14854,45 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/eslint-plugin@1.2.1(eslint@9.26.0)(typescript@5.8.3)(vitest@3.2.2)':
+  '@vitest/coverage-v8@3.2.2(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@1.3.5(encoding@0.1.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))':
+    dependencies:
+      '@ampproject/remapping': 2.3.0
+      '@bcoe/v8-coverage': 1.0.2
+      ast-v8-to-istanbul: 0.3.3
+      debug: 4.4.1
+      istanbul-lib-coverage: 3.2.2
+      istanbul-lib-report: 3.0.1
+      istanbul-lib-source-maps: 5.0.6
+      istanbul-reports: 3.1.7
+      magic-string: 0.30.17
+      magicast: 0.3.5
+      std-env: 3.9.0
+      test-exclude: 7.0.1
+      tinyrainbow: 2.0.0
+      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@1.3.5(encoding@0.1.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@vitest/coverage-v8@3.2.2(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@2.7.6(@types/node@20.17.41)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))':
+    dependencies:
+      '@ampproject/remapping': 2.3.0
+      '@bcoe/v8-coverage': 1.0.2
+      ast-v8-to-istanbul: 0.3.3
+      debug: 4.4.1
+      istanbul-lib-coverage: 3.2.2
+      istanbul-lib-report: 3.0.1
+      istanbul-lib-source-maps: 5.0.6
+      istanbul-reports: 3.1.7
+      magic-string: 0.30.17
+      magicast: 0.3.5
+      std-env: 3.9.0
+      test-exclude: 7.0.1
+      tinyrainbow: 2.0.0
+      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@2.7.6(@types/node@20.17.41)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@vitest/eslint-plugin@1.2.1(eslint@9.26.0)(typescript@5.8.3)(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.19.0)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@2.7.6(@types/node@20.19.0)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))':
     dependencies:
       '@typescript-eslint/utils': 8.32.0(eslint@9.26.0)(typescript@5.8.3)
       eslint: 9.26.0
@@ -14931,7 +14995,7 @@ snapshots:
       sirv: 3.0.1
       tinyglobby: 0.2.14
       tinyrainbow: 2.0.0
-      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@20.19.0)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@2.7.6(@types/node@20.19.0)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@1.3.5(encoding@0.1.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   '@vitest/utils@1.6.1':
     dependencies:
@@ -19869,6 +19933,13 @@ snapshots:
       react: 18.3.1
       scheduler: 0.23.2
 
+  react-draggable@4.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      clsx: 2.1.1
+      prop-types: 15.8.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   react-easy-crop@5.4.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       normalize-wheel: 1.0.1
@@ -21571,7 +21642,7 @@ snapshots:
       tsx: 4.19.4
       yaml: 2.7.1
 
-  vitest-when@0.6.0(@vitest/expect@3.2.2)(vitest@3.2.2):
+  vitest-when@0.6.0(@vitest/expect@3.2.2)(vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@1.3.5(encoding@0.1.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)):
     dependencies:
       pretty-format: 29.7.0
       vitest: 3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@1.3.5(encoding@0.1.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
