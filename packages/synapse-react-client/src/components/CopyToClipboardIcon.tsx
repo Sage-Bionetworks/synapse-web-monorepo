@@ -1,8 +1,8 @@
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 import { IconButton, IconButtonProps, Tooltip } from '@mui/material'
-import { createRef, RefObject, SyntheticEvent, useState } from 'react'
+import { createRef, RefObject, SyntheticEvent } from 'react'
 import IconSvg from './IconSvg'
-import { ToastMessage } from './ToastMessage/ToastMessage'
+import { displayToast } from './ToastMessage/ToastMessage'
 
 export type CopyToClipboardIconProps = IconButtonProps & {
   value: string
@@ -14,7 +14,6 @@ export function CopyToClipboardIcon({
   sizePx = 16,
   ...props
 }: CopyToClipboardIconProps) {
-  const [showModal, setShowModal] = useState(false)
   const ref = createRef<HTMLButtonElement>()
 
   const copyToClipboard =
@@ -22,12 +21,7 @@ export function CopyToClipboardIcon({
       event.preventDefault()
 
       copyStringToClipboard(value).then(() => {
-        // show modal and hide after 4 seconds, the timing is per Material Design
-        setShowModal(true)
-        // hide after 4 seconds
-        setTimeout(() => {
-          setShowModal(false)
-        }, 4000)
+        displayToast('Successfully copied to clipboard', 'success')
       })
     }
 
@@ -39,11 +33,6 @@ export function CopyToClipboardIcon({
         onClick={copyToClipboard(ref, value)}
         aria-label="Copy to clipboard"
       >
-        <ToastMessage
-          text="Successfully copied to clipboard"
-          show={showModal}
-          autohide={true}
-        />
         <IconSvg
           icon="contentCopy"
           wrap={false}
