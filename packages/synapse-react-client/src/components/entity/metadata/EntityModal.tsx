@@ -265,3 +265,5 @@ export function EntityModal(props: EntityModalProps) {
     />
   )
 }
+
+export default EntityModal

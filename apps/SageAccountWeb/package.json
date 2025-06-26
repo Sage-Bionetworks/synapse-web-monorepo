@@ -16,6 +16,7 @@
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "@tanstack/react-query": "5.80.10",
+    "dayjs": "^1.11.13",
     "katex": "^0.16.22",
     "lodash-es": "^4.17.21",
     "plotly.js-basic-dist": "^2.35.3",
@@ -66,6 +67,7 @@
     "vite": "^6.3.5",
     "vite-config": "workspace:*",
     "vitest": "^3.2.2",
+    "vitest-when": "^0.6.1",
     "whatwg-fetch": "^3.6.20"
   },
   "scripts": {

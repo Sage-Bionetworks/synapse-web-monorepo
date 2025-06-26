@@ -306,3 +306,5 @@ export function SynapseFooter({
     </Box>
   )
 }
+
+export default SynapseFooter

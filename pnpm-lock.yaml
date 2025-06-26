@@ -120,6 +120,9 @@ importers:
       '@tanstack/react-query':
         specifier: 5.80.10
         version: 5.80.10(react@19.1.0)
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.13
       katex:
         specifier: ^0.16.22
         version: 0.16.22
@@ -265,6 +268,9 @@ importers:
       vitest:
         specifier: ^3.2.2
         version: 3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@21.1.2)(msw@2.10.2(@types/node@20.17.41)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+      vitest-when:
+        specifier: ^0.6.1
+        version: 0.6.1(@vitest/expect@3.2.2)(vitest@3.2.2)
       whatwg-fetch:
         specifier: ^3.6.20
         version: 3.6.20
@@ -10461,6 +10467,15 @@ packages:
 
   vitest-when@0.6.0:
     resolution: {integrity: sha512-t6RbY1ZYj7ndrlvVPUSbt+SCQkBTET8nyvCqXsaTzGFuRHjoA0qFMmu5qGcJjn/8s9RCjB7od5TOKHezpHE2ow==}
+    peerDependencies:
+      '@vitest/expect': '>=0.31.0 <4'
+      vitest: '>=0.31.0 <4'
+    peerDependenciesMeta:
+      '@vitest/expect':
+        optional: true
+
+  vitest-when@0.6.1:
+    resolution: {integrity: sha512-KLMQaRuMBBpc6xQeDsYi69ypBBU4p9hUq388xq/b/d0xL6+6f9PmOxMs1K1iofqV3Kl8JWV9ym8S/V1oIN6wzg==}
     peerDependencies:
       '@vitest/expect': '>=0.31.0 <4'
       vitest: '>=0.31.0 <4'
@@ -21211,6 +21226,13 @@ snapshots:
     dependencies:
       pretty-format: 29.7.0
       vitest: 3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@2.10.2(@types/node@20.17.41)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+    optionalDependencies:
+      '@vitest/expect': 3.2.2
+
+  vitest-when@0.6.1(@vitest/expect@3.2.2)(vitest@3.2.2):
+    dependencies:
+      pretty-format: 29.7.0
+      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@20.17.41)(@vitest/ui@3.2.2)(jsdom@21.1.2)(msw@2.10.2(@types/node@20.17.41)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
     optionalDependencies:
       '@vitest/expect': 3.2.2
 
