@@ -31,7 +31,7 @@ import {
   TableDataColumnHeader,
 } from './SynapseTableRenderers'
 import {
-  isEntityViewOrDataset,
+  isEntityViewOrDatasetOrCollection,
   isFileViewOrDataset,
   isSortableColumn,
 } from './SynapseTableUtils'
@@ -130,10 +130,9 @@ export function SynapseTable(props: SynapseTableProps) {
   const isShowingAccessColumn: boolean = Boolean(
     showAccessColumn &&
       entity &&
-      ((isEntityViewOrDataset(entity) && allRowsHaveId(rowSet)) ||
+      ((isEntityViewOrDatasetOrCollection(entity) && allRowsHaveId(rowSet)) ||
         fileIdColumnName),
   )
-
   const rowsAreDownloadable =
     entity &&
     isLoggedIn &&
