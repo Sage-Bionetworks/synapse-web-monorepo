@@ -59,6 +59,7 @@ export type CardContainerProps = {
   isLoading?: boolean
   unitDescription?: string
   multiCardList?: boolean
+  searchParams?: Record<string, string>
 } & CardConfiguration
 
 function Card(props: { propsToPass: any; type: string }) {

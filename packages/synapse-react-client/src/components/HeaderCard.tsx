@@ -29,6 +29,7 @@ export type HeaderCardProps = {
   ctaLinkConfig?: GenericCardProps['ctaLinkConfig']
   cardTopButtons?: React.ReactNode
   sustainabilityScorecard?: SustainabilityScorecardProps
+  searchParams?: Record<string, string>
 }
 
 const HeaderCard = forwardRef(function HeaderCard(
@@ -51,6 +52,7 @@ const HeaderCard = forwardRef(function HeaderCard(
     cardTopContent,
     cardTopButtons,
     sustainabilityScorecard,
+    searchParams,
   } = props
 
   // store old document title and description so that we can restore when this component is removed
@@ -142,6 +144,7 @@ const HeaderCard = forwardRef(function HeaderCard(
                   {sustainabilityScorecard && (
                     <SustainabilityScorecard
                       entityId={sustainabilityScorecard.entityId}
+                      toolName={searchParams?.toolName}
                       metricsConfig={sustainabilityScorecard.metricsConfig}
                       sustainabilityReportLink={
                         sustainabilityScorecard.sustainabilityReportLink

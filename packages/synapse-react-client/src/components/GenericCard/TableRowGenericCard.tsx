@@ -132,6 +132,7 @@ export type TableRowGenericCardProps = {
   rowId?: number
   /** The versionNumber of the table row */
   versionNumber?: number
+  searchParams?: Record<string, string>
 } & CommonCardProps
 
 // SWC-6115: special rendering of the version column (for Views)
@@ -184,7 +185,10 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     labelLinkConfig,
     descriptionConfig,
     columnIconOptions,
+    searchParams,
   } = props
+
+  console.log('t searchParams', searchParams)
 
   const {
     link = '',
@@ -405,6 +409,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       }
       isHeader={isHeader}
       sustainabilityScorecard={sustainabilityScorecard}
+      searchParams={searchParams}
       headerCardVariant={headerCardVariant}
       type={type}
       title={title}

@@ -11,6 +11,7 @@ import { Box } from '@mui/material'
 import { TablePagination } from '../SynapseTable/TablePagination'
 import { ViewMoreQueryResultsButton } from '../QueryWrapper/ViewMoreQueryResultsButton'
 import { useRowSet } from './UseRowSet'
+import { Query } from '@sage-bionetworks/synapse-types'
 
 export type RowSetViewProps = {
   tableConfiguration?: SynapseTableConfiguration
@@ -18,6 +19,7 @@ export type RowSetViewProps = {
   initialLimit?: number
   hideDownload?: boolean
   multiCardList?: boolean
+  searchParams?: Record<string, string>
 }
 
 /**
@@ -27,7 +29,15 @@ export type RowSetViewProps = {
  * @constructor
  */
 export function RowSetView(props: RowSetViewProps) {
-  const { cardConfiguration, hideDownload, initialLimit, multiCardList } = props
+  const {
+    cardConfiguration,
+    hideDownload,
+    initialLimit,
+    multiCardList,
+    searchParams,
+  } = props
+
+  console.log('q searchParams', searchParams)
 
   const [initialLimitIsApplied, setInitialLimitIsApplied] = useState(
     initialLimit != null,
@@ -77,6 +87,7 @@ export function RowSetView(props: RowSetViewProps) {
                 {...cardConfiguration}
                 rowSet={rowSet}
                 multiCardList={multiCardList}
+                searchParams={searchParams}
               />
             )}
           </Suspense>

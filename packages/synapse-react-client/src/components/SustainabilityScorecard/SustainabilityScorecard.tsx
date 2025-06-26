@@ -24,6 +24,7 @@ export type SustainabilityScorecardProps = {
   entityId: string
   sustainabilityReportLink: string
   metricsConfig: MetricsConfig[]
+  toolName?: string
   sx?: SxProps<Theme>
 }
 
@@ -104,13 +105,20 @@ const SustainabilityScorecard = ({
   entityId,
   sustainabilityReportLink,
   metricsConfig,
+  toolName,
   sx,
 }: SustainabilityScorecardProps) => {
   const selectedColumns = metricsConfig
     .map(metric => metric.key)
     .concat(ExpectedColumns.SCORE_DESCRIPTOR)
 
+  console.log('toolname in sustainability scorecard', toolName)
+
   const sql = `SELECT ${selectedColumns.join(', ')} FROM ${entityId}`
+
+  console.log('og sql', sql)
+
+  const sustainabilitySql = `SELECT * FROM '${entityId} WHERE "tool.toolName" = '${toolName}'`
 
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
@@ -119,13 +127,17 @@ const SustainabilityScorecard = ({
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
     query: {
-      sql,
+      sql: sustainabilitySql,
     },
   }
+
   const { data: queryResultBundle, isLoading } =
     useGetQueryResultBundle(queryBundleRequest)
 
   const data = queryResultBundle?.queryResult!.queryResults
+
+  console.log('queryResultBundle', queryResultBundle)
+  console.log('data', data)
 
   const scoreDescriptorColIndex = getFieldIndex(
     ExpectedColumns.SCORE_DESCRIPTOR,
@@ -149,7 +161,6 @@ const SustainabilityScorecard = ({
     <Box
       sx={{
         display: 'flex',
-        flex: 1,
         padding: '20px',
         gap: '20px',
         ...sx,

@@ -28,6 +28,7 @@ function ToolsDetailsPage() {
   if (!toolName) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
   }
+  console.log('toolName', toolName)
 
   return (
     <>
