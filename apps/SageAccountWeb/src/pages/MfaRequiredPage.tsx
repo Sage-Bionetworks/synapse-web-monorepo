@@ -22,7 +22,7 @@ function MfaRequiredPage() {
   const isMfaRequired = useGetFeatureFlag(FeatureFlagEnum.MFA_REQUIRED)
   const navigate = useNavigate()
 
-  // START TEMPORARY CODE: This code can be removed once MFA is required for all users.
+  // START TEMPORARY CODE - SWC-7385: This code can be removed once MFA is required for all users.
   const { skip: skipMfaPrompt } = useSkipMfaPrompt()
   const { value: pathBefore2faRedirect, remove: clearPathBefore2faRedirect } =
     usePathBefore2FARedirect()
