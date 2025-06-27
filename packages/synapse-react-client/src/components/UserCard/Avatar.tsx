@@ -2,7 +2,7 @@ import { getColor } from '@/utils/functions/getUserData'
 import { useOverlay } from '@/utils/hooks'
 import { Avatar as MUIAvatar, Skeleton, SxProps, useTheme } from '@mui/material'
 import { UserProfile } from '@sage-bionetworks/synapse-types'
-import { CSSProperties, useRef } from 'react'
+import { CSSProperties, ReactNode, useRef } from 'react'
 import UserCardMedium from './UserCardMedium'
 
 const TIMER_DELAY_SHOW = 250 // milliseconds
@@ -90,7 +90,7 @@ export function Avatar({
     return <Skeleton sx={sizeStyles} variant="circular" />
   }
 
-  let content: JSX.Element | string = <></>
+  let content: ReactNode | string = <></>
 
   if (!hasProfileImage) {
     content = firstName ? firstName[0] : userName[0]

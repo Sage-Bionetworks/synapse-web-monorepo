@@ -6,7 +6,7 @@ import { RefObject } from 'react'
  * (e.g. <dom element id="mathjax-10"> text </dom element>)
  * and transform them to their math markdown equivalents
  */
-export function processMath(markupRef: RefObject<HTMLElement>) {
+export function processMath(markupRef: RefObject<HTMLElement | null>) {
   if (!markupRef.current) {
     return
   }

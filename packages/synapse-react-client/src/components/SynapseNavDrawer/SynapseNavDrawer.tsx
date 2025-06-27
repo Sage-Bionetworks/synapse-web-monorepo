@@ -25,7 +25,7 @@ import {
   SubmissionSortField,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
-import { KeyboardEvent, useState } from 'react'
+import { KeyboardEvent, ReactNode, useState } from 'react'
 import { CreateProjectModal } from '../CreateProjectModal/CreateProjectModal'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
@@ -42,7 +42,7 @@ type MenuItemParams = {
   iconName?: IconName
   onClickOpenNavMenu?: NavItem
   onClickGoToPlace?: () => void
-  additionalChildren?: JSX.Element
+  additionalChildren?: ReactNode
   badgeContent?: string | number
   isCurrentlySelectedItem?: boolean
   handleDrawerClose: () => void

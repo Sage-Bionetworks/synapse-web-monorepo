@@ -26,7 +26,7 @@ export const grantsSchema: TableToGenericCardMapping = {
   ],
 }
 
-// TODO: Change iconOptions type to map () => string | JSX.Element and remove cast
+// TODO: Change iconOptions type to map () => string | ReactNode and remove cast
 const iconOptions: IconOptions = {
   Grant: ProjectIcon as unknown as string,
 }

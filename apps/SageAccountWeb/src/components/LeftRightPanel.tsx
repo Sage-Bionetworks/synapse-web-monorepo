@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import { StyledInnerContainer, StyledOuterContainer } from './StyledComponents'
 import { Box, useTheme } from '@mui/material'
 
@@ -6,8 +7,8 @@ export function LeftRightPanel({
   rightContent,
   className,
 }: {
-  leftContent: JSX.Element
-  rightContent: JSX.Element
+  leftContent: ReactNode
+  rightContent: ReactNode
   className?: string
 }) {
   const theme = useTheme()

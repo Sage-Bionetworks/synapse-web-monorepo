@@ -22,7 +22,6 @@ export function useGetUserProjectsInfinite<
       ProjectHeaderList,
       SynapseClientError,
       TData,
-      ProjectHeaderList,
       QueryKey,
       ProjectHeaderList['nextPageToken']
     >

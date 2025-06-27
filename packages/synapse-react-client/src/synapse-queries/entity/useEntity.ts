@@ -38,6 +38,7 @@ import {
   useQueryClient,
   UseQueryOptions,
   useSuspenseQuery,
+  UseSuspenseQueryOptions,
 } from '@tanstack/react-query'
 import { omit, pick } from 'lodash-es'
 import { useMemo } from 'react'
@@ -223,7 +224,6 @@ export function useGetVersionsInfinite<
       PaginatedResults<VersionInfo>,
       SynapseClientError,
       TData,
-      PaginatedResults<VersionInfo>,
       QueryKey,
       number | undefined
     >
@@ -505,7 +505,7 @@ export function useDeleteEntityACL(
 
 function useGetEntityBenefactorACLQueryOptions(
   entityId: string,
-): UseQueryOptions<
+): UseSuspenseQueryOptions<
   EntityBundle<{ includeBenefactorACL: true }>,
   SynapseClientError,
   AccessControlList
@@ -533,7 +533,7 @@ function useGetEntityBenefactorACLQueryOptions(
 export function useSuspenseGetEntityBenefactorACL(
   entityId: string,
   options?: Partial<
-    UseQueryOptions<
+    UseSuspenseQueryOptions<
       EntityBundle<{ includeBenefactorACL: true }>,
       SynapseClientError,
       AccessControlList

@@ -3,6 +3,7 @@ import {
   createContext,
   Dispatch,
   PropsWithChildren,
+  ReactNode,
   SetStateAction,
   useContext,
 } from 'react'
@@ -22,7 +23,7 @@ export type QueryVisualizationContextType = {
   /** Given a cell value and a column type, returns the displayed value for the data */
   getDisplayValue: (value: string, columnType: ColumnType) => string
   /** React node to display in place of cards/table when there are no results. */
-  NoContentPlaceholder: () => JSX.Element
+  NoContentPlaceholder: () => ReactNode
   /** The set of external analysis platforms where this component allows users to export data. If this list is empty, then
    * controls will not be shown. */
   enabledExternalAnalysisPlatforms: ExternalAnalysisPlatform[]

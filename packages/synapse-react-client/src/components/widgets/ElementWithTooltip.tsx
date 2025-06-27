@@ -55,7 +55,7 @@ function getTooltipTriggerContents(
   image: IconSvgProps | CustomImageProps,
   imageColor: string | undefined,
   size: CSSProperties['width'] | undefined,
-): JSX.Element {
+) {
   if ('svgImg' in image) {
     return image.svgImg
   } else {
