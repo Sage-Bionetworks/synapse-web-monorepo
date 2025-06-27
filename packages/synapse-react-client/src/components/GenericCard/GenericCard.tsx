@@ -8,6 +8,7 @@ import HeaderCard, { HeaderCardVariant } from '../HeaderCard'
 import { CardFooter } from '../row_renderers/utils'
 import { FileHandleLink } from '../widgets/FileHandleLink'
 import { CollapsibleDescription } from './CollapsibleDescription'
+import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
 
 export type GenericCardProps = {
   /** String representing the 'type' of object. This is displayed as a label on the card. */
@@ -70,6 +71,10 @@ export type GenericCardProps = {
    * The rendered icon list on the card
    */
   renderedIconList?: React.ReactNode
+  /**
+   * Optional sustainability scorecard to be displayed on the header card
+   */
+  sustainabilityScorecard?: SustainabilityScorecardProps
 }
 
 const EMPTY_CARD_LABEL_ARRAY: CardLabel[] = []
@@ -101,6 +106,7 @@ export const GenericCard = forwardRef(function GenericCard(
     columnIconOptions,
     ctaLinkConfig,
     renderedIconList,
+    sustainabilityScorecard,
   } = props
 
   const showFooter = labels.length > 0
@@ -132,6 +138,7 @@ export const GenericCard = forwardRef(function GenericCard(
         secondaryLabelLimit={secondaryLabelLimit}
         cardTopButtons={cardTopButtons}
         cardTopContent={cardTopContent}
+        sustainabilityScorecard={sustainabilityScorecard}
       />
     )
   }

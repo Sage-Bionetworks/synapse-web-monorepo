@@ -252,6 +252,7 @@ export function CardContainerLogic(props: CardContainerLogicProps) {
             cardConfiguration={props.cardConfiguration}
             initialLimit={props.initialLimit}
             multiCardList={props.multiCardList}
+            searchParams={props.searchParams}
           />
         </QueryWrapperErrorBoundary>
       </QueryVisualizationWrapper>
