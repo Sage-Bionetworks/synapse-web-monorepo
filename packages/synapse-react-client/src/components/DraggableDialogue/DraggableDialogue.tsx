@@ -8,20 +8,35 @@ export default function DraggableDialogue() {
 
   return (
     <div>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setOpen(old => !old)}
-      >
-        Toggle Popper
-      </Button>
-      {open && (
-        <Draggable defaultPosition={position}>
-          <Paper elevation={5}>
-            <Typography variant={'h3'}>Try to drag me</Typography>
-          </Paper>
-        </Draggable>
-      )}
+      <Draggable defaultPosition={position}>
+        <Paper
+          elevation={5}
+          sx={{
+            height: '350px',
+            width: '350px',
+          }}
+        >
+          <Typography
+            variant={'h3'}
+            sx={{
+              backgroundColor: 'primary.main',
+              fontSize: '14px',
+              color: 'white',
+              padding: '20px',
+            }}
+          >
+            Draggable component header
+          </Typography>
+          <Typography
+            variant={'body1'}
+            sx={{
+              padding: '20px',
+            }}
+          >
+            This is a draggable dialogue component body.
+          </Typography>
+        </Paper>
+      </Draggable>
     </div>
   )
 }
