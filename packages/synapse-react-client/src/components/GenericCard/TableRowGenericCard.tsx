@@ -185,10 +185,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     labelLinkConfig,
     descriptionConfig,
     columnIconOptions,
-    searchParams,
   } = props
-
-  console.log('t searchParams', searchParams)
 
   const {
     link = '',
@@ -409,7 +406,6 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       }
       isHeader={isHeader}
       sustainabilityScorecard={sustainabilityScorecard}
-      searchParams={searchParams}
       headerCardVariant={headerCardVariant}
       type={type}
       title={title}

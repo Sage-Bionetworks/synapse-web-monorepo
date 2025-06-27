@@ -5,30 +5,11 @@ import type {
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
-import { toolsSql } from '../resources'
+import { toolkitId, toolsSql } from '../resources'
 import { citationBoilerplateText } from './commonProps'
-import { parseEntityIdFromSqlStatement } from 'synapse-react-client/utils/functions'
 import { MetricsConfig } from 'synapse-react-client/components/SustainabilityScorecard/SustainabilityScorecard'
 
 const rgbIndex = 6
-
-// export const metricsConfig: MetricsConfig[] = [
-//   {
-//     key: 'toolName',
-//     label: 'Dependency Files',
-//     text: 'Checks if dependencies are declared (e.g., package.json)',
-//   },
-//   {
-//     key: 'testFiles',
-//     label: 'Test Files',
-//     text: 'Indicates presence of automated tests',
-//   },
-//   {
-//     key: 'readmeFiles',
-//     label: 'README Files',
-//     text: 'Presence of documentation for setup/use',
-//   },
-// ]
 
 export const metricsConfig: MetricsConfig[] = [
   {
@@ -53,15 +34,15 @@ export const metricsConfig: MetricsConfig[] = [
   },
 ]
 
-const toolkitSql = 'syn68522560'
-
 export const toolsSchema: TableToGenericCardMapping = {
   type: SynapseConstants.TOOL,
   title: 'toolName',
   description: 'description',
   includeCitation: true,
   sustainabilityScorecard: {
-    entityId: toolkitSql,
+    entityId: toolkitId,
+    searchParamKey: 'toolName',
+    filterColumn: 'Tool',
     sustainabilityReportLink: '', // need a column for this
     metricsConfig: metricsConfig,
   },

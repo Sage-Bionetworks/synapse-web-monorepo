@@ -37,8 +37,6 @@ export function RowSetView(props: RowSetViewProps) {
     searchParams,
   } = props
 
-  console.log('q searchParams', searchParams)
-
   const [initialLimitIsApplied, setInitialLimitIsApplied] = useState(
     initialLimit != null,
   )

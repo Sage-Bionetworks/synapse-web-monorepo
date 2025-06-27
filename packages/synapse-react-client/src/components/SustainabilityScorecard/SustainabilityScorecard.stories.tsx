@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react'
 import SustainabilityScorecard, {
   SustainabilityScorecardProps,
 } from './SustainabilityScorecard'
+import { MemoryRouter } from 'react-router'
 
 const mockProps: SustainabilityScorecardProps = {
   entityId: 'syn68349264',
@@ -36,5 +37,10 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
+  render: args => (
+    <MemoryRouter>
+      <SustainabilityScorecard {...args} />
+    </MemoryRouter>
+  ),
   args: { ...mockProps },
 }

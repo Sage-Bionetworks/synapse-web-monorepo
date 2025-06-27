@@ -75,7 +75,6 @@ export type GenericCardProps = {
    * Optional sustainability scorecard to be displayed on the header card
    */
   sustainabilityScorecard?: SustainabilityScorecardProps
-  searchParams?: Record<string, string>
 }
 
 const EMPTY_CARD_LABEL_ARRAY: CardLabel[] = []
@@ -108,7 +107,6 @@ export const GenericCard = forwardRef(function GenericCard(
     ctaLinkConfig,
     renderedIconList,
     sustainabilityScorecard,
-    searchParams,
   } = props
 
   const showFooter = labels.length > 0
@@ -140,7 +138,6 @@ export const GenericCard = forwardRef(function GenericCard(
         secondaryLabelLimit={secondaryLabelLimit}
         cardTopButtons={cardTopButtons}
         cardTopContent={cardTopContent}
-        searchParams={searchParams}
         sustainabilityScorecard={sustainabilityScorecard}
       />
     )

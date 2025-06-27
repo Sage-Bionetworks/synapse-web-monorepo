@@ -13,10 +13,14 @@ import {
 } from './SustainabilityScorecardUtils'
 import { InfoTwoTone } from '@mui/icons-material'
 import { CheckIcon } from '@/assets/icons/terms/CheckIcon'
+import { useSearchParams } from 'react-router'
 
 export type MetricsConfig = {
+  /** Name of the metric column in the table */
   key: string
+  /** Display label for the metric */
   label: string
+  /** Shown as a tooltip in SustainabilityScorecard and as summary text in SustainabilityScorecardSummary */
   text?: string
 }
 
@@ -24,7 +28,11 @@ export type SustainabilityScorecardProps = {
   entityId: string
   sustainabilityReportLink: string
   metricsConfig: MetricsConfig[]
-  toolName?: string
+  /** Name of the URL search parameter used to filter the data. */
+  searchParamKey: string
+  /** The name of the column in the table to apply the filter to. */
+  filterColumn: string
+  // should we have prop for score?
   sx?: SxProps<Theme>
 }
 
@@ -95,30 +103,37 @@ const MetricRow = ({ metrics, metricsConfig }: MetricRowProps) => {
 }
 
 enum ExpectedColumns {
-  DEPENDENCY_FILES = 'dependencyFiles',
-  TEST_FILES = 'testFiles',
-  README_FILES = 'readmeFiles',
-  SCORE_DESCRIPTOR = 'scoreDescriptor',
+  ALMANACK_SCORE = 'AlmanackScore',
 }
 
+/* SustainabilityScorecard component displays sustainability metrics and a dial based on the sustainability score of the entity. */
 const SustainabilityScorecard = ({
   entityId,
   sustainabilityReportLink,
   metricsConfig,
-  toolName,
+  searchParamKey,
+  filterColumn,
   sx,
 }: SustainabilityScorecardProps) => {
   const selectedColumns = metricsConfig
     .map(metric => metric.key)
-    .concat(ExpectedColumns.SCORE_DESCRIPTOR)
+    // .concat(ExpectedColumns.SCORE_DESCRIPTOR)
+    .concat(ExpectedColumns.ALMANACK_SCORE)
 
-  console.log('toolname in sustainability scorecard', toolName)
+  const [searchParams] = useSearchParams()
+  const searchValue = searchParams.get(searchParamKey ?? '')
 
   const sql = `SELECT ${selectedColumns.join(', ')} FROM ${entityId}`
 
-  console.log('og sql', sql)
+  // const sustainabilitySql = `SELECT * FROM ${entityId} WHERE "${filterColumn}" = '${searchValue}'`
+  const sustainabilitySql = `SELECT ${selectedColumns.join(
+    ', ',
+  )} FROM ${entityId} WHERE "${filterColumn}" = '${searchValue}'` // ideally use this and update storybook
 
-  const sustainabilitySql = `SELECT * FROM '${entityId} WHERE "tool.toolName" = '${toolName}'`
+  console.log('filterColumn', filterColumn)
+
+  console.log('sus', sustainabilitySql)
+  // console.log('sus 2', sustainabilitySql2)
 
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
@@ -140,7 +155,8 @@ const SustainabilityScorecard = ({
   console.log('data', data)
 
   const scoreDescriptorColIndex = getFieldIndex(
-    ExpectedColumns.SCORE_DESCRIPTOR,
+    // ExpectedColumns.SCORE_DESCRIPTOR,
+    ExpectedColumns.ALMANACK_SCORE,
     queryResultBundle,
   )
 

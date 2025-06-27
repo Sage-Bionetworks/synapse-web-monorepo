@@ -31,7 +31,7 @@ const mockProps: SustainabilityScorecardSummaryProps = {
 }
 
 const meta = {
-  title: 'Components/SustainabilityScorecard/Storecard Summary',
+  title: 'Components/SustainabilityScorecard/Scorecard Summary',
   component: SustainabilityScorecardSummary,
   parameters: {
     chromatic: { viewports: [600, 1200] },
