@@ -35,7 +35,7 @@ export default function SynapsePortalBanners({
   const { data: dataCatalogData } = useGetQueryResultBundleWithAsyncStatus({
     entityId: dataCatalogEntityId,
     query: {
-      sql: `SELECT distinct appId FROM ${dataCatalogEntityId}`,
+      sql: `SELECT appId, link FROM ${dataCatalogEntityId}`,
       additionalFilters: dataCatalogAdditionalFilters,
     },
     partMask: BUNDLE_MASK_QUERY_RESULTS,
@@ -45,7 +45,8 @@ export default function SynapsePortalBanners({
   const rowSet = dataCatalogData?.responseBody?.queryResult?.queryResults
   const hasPortalBanners = !!rowSet && rowSet?.rows.length > 0
 
-  const appIds = rowSet?.rows[0].values as string[]
+  const appIds = rowSet?.rows.map(row => row.values[0]) as string[]
+
   const sourceAppConfigFilters: ColumnSingleValueQueryFilter[] = [
     {
       concreteType:
@@ -76,68 +77,74 @@ export default function SynapsePortalBanners({
         alignItems: 'center',
       }}
     >
-      {sourceAppConfigs.map((appConfig, index) => (
-        <Box
-          key={index}
-          component="a"
-          href={appConfig.appURL}
-          target="_blank"
-          rel="noopener noreferrer"
-          flex={1}
-          sx={{
-            display: 'flex',
-            flexWrap: 'nowrap',
-            padding: '16px',
-            justifyContent: 'space-between',
-            border: '1px solid #ccc',
-            borderRadius: '8px',
-            backgroundColor: '#f9f9f9',
-            textDecoration: 'none',
-            pointer: 'cursor',
-            '&:hover': {
-              textDecoration: 'none !important',
-            },
-            width: '100%',
-            alignItems: 'center',
-          }}
-        >
+      {sourceAppConfigs.map((appConfig, index) => {
+        const dataCatalogRow = rowSet.rows.find(row => {
+          return row.values[0] === appConfig.appId
+        })
+        const link = dataCatalogRow?.values[1] || appConfig.appURL
+        return (
           <Box
+            key={index}
+            component="a"
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
             flex={1}
             sx={{
               display: 'flex',
-              flexWrap: 'wrap',
+              flexWrap: 'nowrap',
+              padding: '16px',
               justifyContent: 'space-between',
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              backgroundColor: '#f9f9f9',
+              textDecoration: 'none',
+              pointer: 'cursor',
+              '&:hover': {
+                textDecoration: 'none !important',
+              },
+              width: '100%',
+              alignItems: 'center',
             }}
           >
             <Box
-              sx={{
-                '> *': {
-                  height: '60px',
-                },
-              }}
-            >
-              {appConfig?.logo}
-            </Box>
-            <Box
+              flex={1}
               sx={{
                 display: 'flex',
-                flexDirection: 'column',
-                mt: '10px',
-                mr: '10px',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
               }}
             >
-              <Typography variant="body1" sx={{ fontWeight: 700 }}>
-                This resource is part of a Portal
-              </Typography>
-              <Typography variant="body1">
-                {' '}
-                Access the {appConfig.friendlyName}
-              </Typography>
+              <Box
+                sx={{
+                  '> *': {
+                    height: '60px',
+                  },
+                }}
+              >
+                {appConfig?.logo}
+              </Box>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  mt: '10px',
+                  mr: '10px',
+                }}
+              >
+                <Typography variant="body1" sx={{ fontWeight: 700 }}>
+                  This resource is part of a Portal
+                </Typography>
+                <Typography variant="body1">
+                  {' '}
+                  Access it on the {appConfig.friendlyName}
+                </Typography>
+              </Box>
             </Box>
+            <ChevronRightTwoTone />
           </Box>
-          <ChevronRightTwoTone />
-        </Box>
-      ))}
+        )
+      })}
     </Box>
   )
 }
