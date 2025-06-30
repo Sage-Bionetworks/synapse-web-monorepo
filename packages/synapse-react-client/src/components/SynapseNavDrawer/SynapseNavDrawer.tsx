@@ -620,7 +620,15 @@ export function SynapseNavDrawer({
                     rel="noopener noreferrer"
                     target="_blank"
                   >
-                    Synapse Documentation
+                    Synapse Web Documentation
+                  </a>
+                  <a
+                    className="SRC-whiteText"
+                    href="https://python-docs.synapse.org/en/stable/"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    Python Client Documentation
                   </a>
                   <a
                     className="SRC-whiteText"
