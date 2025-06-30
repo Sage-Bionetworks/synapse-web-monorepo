@@ -29,7 +29,7 @@ export const standardsCardSchema: TableToGenericCardMapping = {
   subTitle: 'standardName',
   description: 'description',
   link: 'url',
-  secondaryLabels: ['SDO', 'collections', 'topic', 'dataTypes'],
+  secondaryLabels: ['SDO', 'category', 'collections', 'topic', 'dataTypes'],
 }
 
 export const linkedStandardCardConfiguration: CardConfiguration = {

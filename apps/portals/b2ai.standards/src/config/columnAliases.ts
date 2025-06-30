@@ -6,4 +6,5 @@ export default {
   isOpen: 'Is Open?',
   registration: 'Requires Registration?',
   topic: 'Topics',
+  isMature: 'Maturity',
 }
