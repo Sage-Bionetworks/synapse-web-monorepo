@@ -1,9 +1,9 @@
-import { useRef, useState } from 'react'
+import { HTMLAttributes, useRef, useState } from 'react'
 import { useResizeObserver } from '@react-hookz/web'
 import ExpandCollapseButton from './ExpandCollapseButton'
 
 export default function ExpandableTableDataCell(
-  props: JSX.IntrinsicElements['td'],
+  props: HTMLAttributes<HTMLTableCellElement>,
 ) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isOverflowingWhenNotExpanded, setIsOverflowingWhenNotExpanded] =

@@ -26,7 +26,7 @@ export type DropdownSelectProps = ButtonGroupProps & {
   buttonText?: string
   variant?: ButtonProps['variant']
   buttonGroupAriaLabel?: string
-  anchorRef?: RefObject<HTMLDivElement>
+  anchorRef?: RefObject<HTMLDivElement | null>
 }
 // Derived from https://mui.com/material-ui/react-button-group/#split-button
 

@@ -11,7 +11,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { isEmpty } from 'lodash-es'
-import { CSSProperties, Fragment } from 'react'
+import { CSSProperties, Fragment, ReactNode } from 'react'
 import { ColumnSpecifiedLink, MarkdownLink } from '../CardContainerLogic'
 import { TargetEnum } from '@/utils/html/TargetEnum'
 import {
@@ -110,7 +110,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
     return <EntityLink entity={str} link={href} showIcon={false} />
   }
 
-  let labelContent: JSX.Element
+  let labelContent: ReactNode
 
   if (
     'isMapValueToReactNodeConfig' in labelLink &&

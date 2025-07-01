@@ -20,7 +20,7 @@ export function getFeatureFlagsOverride(
   },
 ) {
   const { portalOrigin, overrides } = options
-  return http.get(`${portalOrigin}Portal/featureflags`, () => {
+  return http.get(`${portalOrigin}/Portal/featureflags`, () => {
     return HttpResponse.json(
       { ...MOCK_FEATURE_FLAGS_VALUE, ...overrides },
       { status: 200 },

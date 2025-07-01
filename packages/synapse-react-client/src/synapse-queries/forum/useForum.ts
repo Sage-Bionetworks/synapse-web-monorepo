@@ -59,7 +59,6 @@ export function useGetForumThreadsInfinite<
       PaginatedResults<DiscussionThreadBundle>,
       SynapseClientError,
       TData,
-      PaginatedResults<DiscussionThreadBundle>,
       QueryKey,
       number | undefined
     >
@@ -107,7 +106,6 @@ export function useSearchForumInfinite<
       DiscussionSearchResponse,
       SynapseClientError,
       TData,
-      DiscussionSearchResponse,
       QueryKey,
       DiscussionSearchRequest['nextPageToken']
     >

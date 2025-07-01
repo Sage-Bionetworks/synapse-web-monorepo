@@ -8,7 +8,7 @@ import './AnalyticsTypes'
  */
 export function sendAnalyticsEvent(
   eventName: string,
-  eventData?: Record<string, string | number>,
+  eventData?: Record<string, string | number | boolean>,
 ) {
   if (window.dataLayer) {
     window.dataLayer.push({

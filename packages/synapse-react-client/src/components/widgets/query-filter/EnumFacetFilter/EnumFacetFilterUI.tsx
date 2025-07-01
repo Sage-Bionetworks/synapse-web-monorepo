@@ -6,7 +6,7 @@ import {
   TextField,
   Tooltip,
 } from '@mui/material'
-import { createRef, RefObject, useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { FacetColumnResultValueCount } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../../IconSvg/IconSvg'
 import { FacetFilterHeader } from '../FacetFilterHeader'
@@ -104,7 +104,7 @@ export default function EnumFacetFilterUI<TValue = string>(
     return facetValues.slice(0, MAX_ENUMERATION_VALUES_TO_SHOW)
   }, [facetValues, searchTerm, showSearch, showAll])
 
-  const textInput: RefObject<HTMLInputElement> = createRef()
+  const textInput = useRef<HTMLInputElement>(null)
 
   const isDropdown = containerAs === 'Dropdown'
   const showMoreButtonIsVisible =

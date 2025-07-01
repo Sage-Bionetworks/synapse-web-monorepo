@@ -13,14 +13,21 @@ import {
   ErrorResponse,
   FeatureFlagEnum,
 } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
+import EntityAclEditorModal from '../EntityAclEditor/EntityAclEditorModal'
 import {
   REQUEST_DOWNLOAD_TITLE,
   RequestDownloadCard,
   RequestDownloadCardProps,
 } from './RequestDownloadCard'
+
+vi.mock('../EntityAclEditor/EntityAclEditorModal', () => ({
+  default: vi.fn(() => null),
+}))
+
+const mockEntityAclEditorModal = vi.mocked(EntityAclEditorModal)
 
 const ENTITY_ID = 'syn29218'
 const onViewSharingSettingsClicked = vi.fn()
@@ -116,21 +123,33 @@ describe('RequestDownloadCard tests', () => {
     renderComponent()
     await screen.findByText(REQUEST_DOWNLOAD_TITLE)
 
+    expect(mockEntityAclEditorModal).toHaveBeenLastRenderedWithProps(
+      expect.objectContaining({
+        open: false,
+      }),
+    )
+
     const viewSharingSettingsButton = await screen.findByRole('button', {
       name: 'View Sharing Settings',
     })
     await userEvent.click(viewSharingSettingsButton)
 
-    const dialog = await screen.findByRole('dialog')
-    within(dialog).getByText('Sharing Settings', { exact: false })
+    expect(mockEntityAclEditorModal).toHaveBeenLastRenderedWithProps(
+      expect.objectContaining({
+        open: true,
+      }),
+    )
 
-    const closeSharingSettingsButton = within(dialog).getByRole('button', {
-      name: 'close',
+    const onCloseDialog = mockEntityAclEditorModal.mock.lastCall![0].onClose
+    expect(onCloseDialog).toBeDefined()
+    act(() => {
+      onCloseDialog()
     })
-    await userEvent.click(closeSharingSettingsButton)
 
-    await waitFor(() =>
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    expect(mockEntityAclEditorModal).toHaveBeenLastRenderedWithProps(
+      expect.objectContaining({
+        open: false,
+      }),
     )
   })
 

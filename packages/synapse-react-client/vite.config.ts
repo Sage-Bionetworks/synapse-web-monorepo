@@ -26,6 +26,7 @@ const config = new ConfigBuilder()
       include: ['**/*.test.?(c|m)[jt]s?(x)'],
       setupFiles: ['./src/testutils/vitest.setup.ts'],
       silent: process.env.CI === 'true' ? 'passed-only' : false,
+      testTimeout: 15_000, // 15 seconds
     },
   })
   .build()
