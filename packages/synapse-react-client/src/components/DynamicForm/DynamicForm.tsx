@@ -8,7 +8,7 @@ import { SkeletonParagraph } from '../Skeleton'
 
 export type DynamicFormProps = {
   schemaUrl: string
-  uiSchemaUrl: string
+  uiSchemaUrl?: string
   postUrl: string
   mutateFormDataBeforePost?: (formData: any) => any // allow caller to embed formdata into custom request body object
   onCancel?: () => void
@@ -26,15 +26,19 @@ function DynamicForm(props: DynamicFormProps) {
   } = props
   const [formData, setFormData] = useState({})
 
-  const queryOptions = (endpoint: string) => {
+  const queryOptions = (endpoint?: string) => {
     return {
       queryFn: async () => {
+        if (!endpoint) {
+          return null
+        }
         const response = await fetch(endpoint)
         if (!response.ok) {
           throw new Error('Error fetching schema')
         }
         return response.json()
       },
+      enabled: !!endpoint, // Only run the query if the endpoint is provided
     }
   }
   // Fetch the form schema
