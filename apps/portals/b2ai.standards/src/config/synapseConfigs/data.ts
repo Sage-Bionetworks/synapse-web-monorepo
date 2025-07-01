@@ -43,7 +43,7 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   facetsToPlot: [
     'topic',
     // 'Organizations',
-    DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION,
+    DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
   ],
   initialPlotType: 'BAR',
   searchConfiguration: {

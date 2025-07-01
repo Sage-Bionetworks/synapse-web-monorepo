@@ -25,6 +25,7 @@ export const DST_TABLE_COLUMN_NAMES = {
   CONCERNS_DATA_TOPIC: 'concerns_data_topic',
   HAS_RELEVANT_DATA_SUBSTRATE: 'has_relevant_data_substrate',
   HAS_RELEVANT_ORGANIZATION: 'has_relevant_organization',
+  RELEVANT_ORG_NAMES: 'relevantOrgNames',
   RESPONSIBLE_ORGANIZATION: 'responsible_organization',
   IS_OPEN: 'isOpen',
   REGISTRATION: 'registration',
@@ -54,7 +55,7 @@ export const dataSql = `
         mature,
         concat('[', acronym, '](/Explore/Standard/DetailsPage?id=', id, ')') as acronym,
             name, category, collections, topic, dataTypes,
-            ${DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION}, isOpen, registration, "usedInBridge2AI"
+            ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration, "usedInBridge2AI"
             , hasAIApplication
             FROM ${TABLE_IDS.DST_denormalized.id}
 `
@@ -76,7 +77,7 @@ export const standardsDetailsPageSQL = `
             collections,
             topic,
             dataTypes,
-            ${DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION},
+            ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES},
             responsibleOrgName as SDO,
             isOpen,
             relatedTo,
