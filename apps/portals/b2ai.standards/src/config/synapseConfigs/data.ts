@@ -23,7 +23,7 @@ export const dataColumnLinks: LabelLinkConfig = [
     // tooltipText?: string
   },
   {
-    matchColumnName: 'isMature',
+    matchColumnName: 'mature',
     isMapValueToReactNodeConfig: true,
     Component: IsMatureIconMap,
   },
@@ -43,7 +43,7 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   facetsToPlot: [
     'topic',
     // 'Organizations',
-    DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
+    DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION,
   ],
   initialPlotType: 'BAR',
   searchConfiguration: {

@@ -148,7 +148,7 @@ export function ChallengesCardDeck() {
         {
           concreteType:
             'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-          columnName: DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
+          columnName: DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION,
           facetValues: [org[ORG_TABLE_COLUMN_NAMES.NAME]],
         },
       ],
