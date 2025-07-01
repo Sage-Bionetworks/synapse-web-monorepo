@@ -143,18 +143,8 @@ const DataGrid = () => {
   // Function to apply grid changes to a model
   function gridToModel(gridRows: DataGridRow[], model: Model): Model {
     if (!model) return model
-    const rows = gridRows.map(row => {
-      const { ...rest } = row
-      //console.log('rest:', row, 'row');
-      return { ...rest }
-    })
-
-    const { columnNames: mcn, columnOrder: mco } = model.api.getSnapshot()
-    const columnNames = mcn[mco] || {}
-
     const rowsArr = model.api.arr(['rows'])
-
-    const { columnNames: mcnUpdate } = model.api.getSnapshot()
+    const { columnNames: mcnUpdate } = model.api.getSnapshot() as ModelSnapshot
 
     // Apply row changes
     // Update existing rows and add new ones
@@ -271,7 +261,6 @@ const DataGrid = () => {
           setModel(Model.fromPatches([patch]).fork(replicaId!))
           modelSnapshotRef.current =
             modelRef.current!.api.getSnapshot() as ModelSnapshot
-          const { columnNames } = modelSnapshotRef.current
           setRowValues(modelRowsToGrid(modelSnapshotRef.current))
           setColValues(modelColsToGrid(modelSnapshotRef.current))
         } else {
@@ -279,24 +268,23 @@ const DataGrid = () => {
           modelRef.current?.applyPatch(patch)
           modelSnapshotRef.current =
             modelRef.current.api.getSnapshot() as ModelSnapshot
-          const { columnNames } = modelSnapshotRef.current
           modelSnapshotRef.current =
             modelRef.current.api.getSnapshot() as ModelSnapshot
           setRowValues(modelRowsToGrid(modelSnapshotRef.current))
           setColValues(modelColsToGrid(modelSnapshotRef.current))
         }
         // Calculate the new clock
-        const modelClock = modelRef.current.api.flush()
+        const modelClock = modelRef.current?.api.flush()
         let encodedModelClock
-        if (modelClock.ops.length !== 0) {
-          encodedModelClock = encode(modelClock)
+        if (modelClock?.ops.length !== 0) {
+          encodedModelClock = encode(modelClock!)
         }
         if (encodedModelClock) {
           const msg = [1, sequenceNumberRef.current, 'patch', encodedModelClock]
           console.log('Responding with patch:', msg)
           sendWebSocketMessage(msg)
         } else {
-          const verbModel = verboseEncoder.encode(modelRef.current)
+          const verbModel = verboseEncoder.encode(modelRef.current!)
           const msg = [
             1,
             sequenceNumberRef.current,
