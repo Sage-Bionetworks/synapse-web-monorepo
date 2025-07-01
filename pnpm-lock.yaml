@@ -1527,6 +1527,12 @@ importers:
       '@tanstack/react-virtual':
         specifier: ^3.13.8
         version: 3.13.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@types/lodash':
+        specifier: ^4.17.16
+        version: 4.17.16
+      '@types/lodash.throttle':
+        specifier: ^4.1.9
+        version: 4.1.9
       '@upsetjs/react':
         specifier: ^1.11.0
         version: 1.11.0(react@19.1.0)
@@ -1551,6 +1557,9 @@ importers:
       jotai:
         specifier: ^2.12.4
         version: 2.12.4(@types/react@19.1.8)(react@19.1.0)
+      json-joy:
+        specifier: 17.40.0
+        version: 17.40.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tslib@2.8.1)
       json-rules-engine:
         specifier: ^4.1.0
         version: 4.1.0
@@ -1563,6 +1572,9 @@ importers:
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
+      lodash.throttle:
+        specifier: ^4.1.1
+        version: 4.1.1
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
@@ -1900,12 +1912,6 @@ importers:
       jsdom:
         specifier: ^26.1.0
         version: 26.1.0
-      json-joy:
-        specifier: ^17.45.0
-        version: 17.45.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tslib@2.8.1)
-      lodash.throttle:
-        specifier: ^4.1.1
-        version: 4.1.1
       memfs:
         specifier: ^3.5.3
         version: 3.5.3
@@ -4846,6 +4852,9 @@ packages:
 
   '@types/lodash-es@4.17.12':
     resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
+
+  '@types/lodash.throttle@4.1.9':
+    resolution: {integrity: sha512-PCPVfpfueguWZQB7pJQK890F2scYKoDUL3iM522AptHWn7d5NQmeS/LTEHIcLr5PaTzl3dK2Z0xSUHHTHwaL5g==}
 
   '@types/lodash@4.17.16':
     resolution: {integrity: sha512-HX7Em5NYQAXKW+1T+FiuG27NGwzJfCX3s1GjOa7ujxZa52kjJLOr4FUxT+giF6Tgxv1e+/czV/iTtBw27WTU9g==}
@@ -7975,8 +7984,8 @@ packages:
   json-buffer@3.0.1:
     resolution: {integrity: sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==}
 
-  json-joy@17.45.0:
-    resolution: {integrity: sha512-0mmPwIhy1bjg8nah/YyFmikbQNCCv7ObPmof2nY2rhch5iZ0kqjLfol8pZG9d30HHS8eogWPSbmMxPjMhWd1nA==}
+  json-joy@17.40.0:
+    resolution: {integrity: sha512-wO6sz5+Rzp9aIcz/WqGpSgEsWQ1/eH/nsheP2Asl2G/532wLb+VvLEb8+05GoQPlx3YKGoNYENjyJgslVB6mQg==}
     engines: {node: '>=10.0'}
     hasBin: true
     peerDependencies:
@@ -14029,33 +14038,65 @@ snapshots:
     dependencies:
       '@babel/core': 7.27.1
 
+  '@svgr/babel-plugin-add-jsx-attribute@8.0.0(@babel/core@7.27.4)':
+    dependencies:
+      '@babel/core': 7.27.4
+
   '@svgr/babel-plugin-remove-jsx-attribute@8.0.0(@babel/core@7.27.1)':
     dependencies:
       '@babel/core': 7.27.1
+
+  '@svgr/babel-plugin-remove-jsx-attribute@8.0.0(@babel/core@7.27.4)':
+    dependencies:
+      '@babel/core': 7.27.4
 
   '@svgr/babel-plugin-remove-jsx-empty-expression@8.0.0(@babel/core@7.27.1)':
     dependencies:
       '@babel/core': 7.27.1
 
+  '@svgr/babel-plugin-remove-jsx-empty-expression@8.0.0(@babel/core@7.27.4)':
+    dependencies:
+      '@babel/core': 7.27.4
+
   '@svgr/babel-plugin-replace-jsx-attribute-value@8.0.0(@babel/core@7.27.1)':
     dependencies:
       '@babel/core': 7.27.1
+
+  '@svgr/babel-plugin-replace-jsx-attribute-value@8.0.0(@babel/core@7.27.4)':
+    dependencies:
+      '@babel/core': 7.27.4
 
   '@svgr/babel-plugin-svg-dynamic-title@8.0.0(@babel/core@7.27.1)':
     dependencies:
       '@babel/core': 7.27.1
 
+  '@svgr/babel-plugin-svg-dynamic-title@8.0.0(@babel/core@7.27.4)':
+    dependencies:
+      '@babel/core': 7.27.4
+
   '@svgr/babel-plugin-svg-em-dimensions@8.0.0(@babel/core@7.27.1)':
     dependencies:
       '@babel/core': 7.27.1
+
+  '@svgr/babel-plugin-svg-em-dimensions@8.0.0(@babel/core@7.27.4)':
+    dependencies:
+      '@babel/core': 7.27.4
 
   '@svgr/babel-plugin-transform-react-native-svg@8.1.0(@babel/core@7.27.1)':
     dependencies:
       '@babel/core': 7.27.1
 
+  '@svgr/babel-plugin-transform-react-native-svg@8.1.0(@babel/core@7.27.4)':
+    dependencies:
+      '@babel/core': 7.27.4
+
   '@svgr/babel-plugin-transform-svg-component@8.0.0(@babel/core@7.27.1)':
     dependencies:
       '@babel/core': 7.27.1
+
+  '@svgr/babel-plugin-transform-svg-component@8.0.0(@babel/core@7.27.4)':
+    dependencies:
+      '@babel/core': 7.27.4
 
   '@svgr/babel-preset@8.1.0(@babel/core@7.27.1)':
     dependencies:
@@ -14069,10 +14110,22 @@ snapshots:
       '@svgr/babel-plugin-transform-react-native-svg': 8.1.0(@babel/core@7.27.1)
       '@svgr/babel-plugin-transform-svg-component': 8.0.0(@babel/core@7.27.1)
 
+  '@svgr/babel-preset@8.1.0(@babel/core@7.27.4)':
+    dependencies:
+      '@babel/core': 7.27.4
+      '@svgr/babel-plugin-add-jsx-attribute': 8.0.0(@babel/core@7.27.4)
+      '@svgr/babel-plugin-remove-jsx-attribute': 8.0.0(@babel/core@7.27.4)
+      '@svgr/babel-plugin-remove-jsx-empty-expression': 8.0.0(@babel/core@7.27.4)
+      '@svgr/babel-plugin-replace-jsx-attribute-value': 8.0.0(@babel/core@7.27.4)
+      '@svgr/babel-plugin-svg-dynamic-title': 8.0.0(@babel/core@7.27.4)
+      '@svgr/babel-plugin-svg-em-dimensions': 8.0.0(@babel/core@7.27.4)
+      '@svgr/babel-plugin-transform-react-native-svg': 8.1.0(@babel/core@7.27.4)
+      '@svgr/babel-plugin-transform-svg-component': 8.0.0(@babel/core@7.27.4)
+
   '@svgr/core@8.1.0(typescript@5.8.3)':
     dependencies:
-      '@babel/core': 7.27.1
-      '@svgr/babel-preset': 8.1.0(@babel/core@7.27.1)
+      '@babel/core': 7.27.4
+      '@svgr/babel-preset': 8.1.0(@babel/core@7.27.4)
       camelcase: 6.3.0
       cosmiconfig: 8.3.6(typescript@5.8.3)
       snake-case: 3.0.4
@@ -14461,6 +14514,10 @@ snapshots:
   '@types/linkify-it@3.0.5': {}
 
   '@types/lodash-es@4.17.12':
+    dependencies:
+      '@types/lodash': 4.17.16
+
+  '@types/lodash.throttle@4.1.9':
     dependencies:
       '@types/lodash': 4.17.16
 
@@ -16083,7 +16140,7 @@ snapshots:
 
   date-fns@2.30.0:
     dependencies:
-      '@babel/runtime': 7.27.1
+      '@babel/runtime': 7.27.6
 
   dateformat@3.0.2: {}
 
@@ -18338,7 +18395,7 @@ snapshots:
 
   json-buffer@3.0.1: {}
 
-  json-joy@17.45.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tslib@2.8.1):
+  json-joy@17.40.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tslib@2.8.1):
     dependencies:
       '@jsonjoy.com/base64': 1.1.2(tslib@2.8.1)
       '@jsonjoy.com/json-expression': 1.1.0(tslib@2.8.1)
