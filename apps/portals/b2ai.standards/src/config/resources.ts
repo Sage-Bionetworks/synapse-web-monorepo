@@ -3,7 +3,7 @@ import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2
 export const TABLE_IDS = {
   Challenges: { name: 'Challenges', id: 'syn65913973' },
   CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
-  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531' },
+  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.63' },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
   DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
@@ -13,12 +13,36 @@ export const TABLE_IDS = {
   UseCase: { name: 'UseCase', id: 'syn63096837' },
 }
 
-export const DST_TABLE_COLUMN_NAMES = { RELEVANT_ORG_NAMES: 'relevantOrgNames' }
+export const DST_TABLE_COLUMN_NAMES = {
+  ID: 'id',
+  ACRONYM: 'acronym',
+  NAME: 'name',
+  CATEGORY: 'category',
+  DESCRIPTION: 'description',
+  COLLECTIONS: 'collections',
+  HAS_AI_APPLICATION: 'hasAIApplication',
+  MATURE: 'mature',
+  CONCERNS_DATA_TOPIC: 'concerns_data_topic',
+  HAS_RELEVANT_DATA_SUBSTRATE: 'has_relevant_data_substrate',
+  HAS_RELEVANT_ORGANIZATION: 'has_relevant_organization',
+  RESPONSIBLE_ORGANIZATION: 'responsible_organization',
+  IS_OPEN: 'isOpen',
+  REGISTRATION: 'registration',
+  URL: 'URL',
+  FORMAL_SPEC: 'formalSpec',
+  PUBLICATION: 'publication',
+  TRAINING_RESOURCES: 'trainingResources',
+  SUBCLASS_OF: 'subclassOf',
+  CONTRIBUTION_dATE: 'contributionDate',
+  RELATED_TO: 'relatedTo',
+  USED_IN_BRIDGE2AI: 'usedInBridge2AI',
+}
 export const ORG_TABLE_COLUMN_NAMES = {
   ID: 'id',
   NAME: 'name',
   DESCRIPTION: 'description',
 }
+
 export const CHALLENGES_TABLE_COLUMN_NAMES = {
   ORG_ID: 'organizationId',
   IMG_HANDLE_ID: 'headerImage',
@@ -27,10 +51,10 @@ export const CHALLENGES_TABLE_COLUMN_NAMES = {
 // for the Explore page table:
 export const dataSql = `
     SELECT
-        isMature,
+        mature,
         concat('[', acronym, '](/Explore/Standard/DetailsPage?id=', id, ')') as acronym,
             name, category, collections, topic, dataTypes,
-            ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration, "usedInBridge2AI"
+            ${DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION}, isOpen, registration, "usedInBridge2AI"
             , hasAIApplication
             FROM ${TABLE_IDS.DST_denormalized.id}
 `
@@ -41,7 +65,7 @@ export const dataSql = `
 
 // concat('/Explore/Standard/DetailsPage?id=', id) as link, acronym,
 
-// for standards details page:
+// for standards details page:  -- TODO: use COLUMN_NAMES
 export const standardsDetailsPageSQL = `
     SELECT  id,
             acronym,
@@ -52,7 +76,7 @@ export const standardsDetailsPageSQL = `
             collections,
             topic,
             dataTypes,
-            ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES},
+            ${DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION},
             responsibleOrgName as SDO,
             isOpen,
             relatedTo,
