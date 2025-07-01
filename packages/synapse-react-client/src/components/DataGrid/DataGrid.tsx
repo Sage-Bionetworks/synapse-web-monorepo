@@ -55,15 +55,6 @@ const DataGrid = () => {
     columnOrder: [],
     rows: [],
   })
-  const [modelCols, setModelCols] = useState<ModelColumnNames[]>(
-    modelSnapshotRef?.current.columnNames || [],
-  )
-  const [modelColOrder, setModelColOrder] = useState<ModelColumnOrder[]>(
-    modelSnapshotRef?.current.columnOrder || [],
-  )
-  const [modelRows, setModelRows] = useState<ModelRow[]>(
-    modelSnapshotRef?.current.rows || [],
-  )
   const getModel = () => modelRef.current
   const setModel = (newModel: Model) => {
     if (newModel.view() !== modelRef.current?.view()) {
@@ -158,29 +149,16 @@ const DataGrid = () => {
       return { ...rest }
     })
 
-    const {
-      columnNames: mcn,
-      columnOrder: mco,
-      rows: currentRows,
-    } = model.api.getSnapshot()
+    const { columnNames: mcn, columnOrder: mco } = model.api.getSnapshot()
     const columnNames = mcn[mco] || {}
 
-    const cn = model.api.vec(['columnNames'])
-    const co = model.api.arr(['columnOrder'])
     const rowsArr = model.api.arr(['rows'])
 
-    const { columnNames: mcnUpdate, columnOrder: mcoUpdate } =
-      model.api.getSnapshot()
-
-    // Delete rows that are no longer in gridRows
-    const currentRowCount = rowsArr.length()
+    const { columnNames: mcnUpdate } = model.api.getSnapshot()
 
     // Apply row changes
     // Update existing rows and add new ones
     for (let i = 0; i < gridRows.length; i++) {
-      // Check if row exists at index i before trying to get it
-      const rowExists = i < rowsArr.length()
-
       const editedRow = gridRows[i]
       const rowVec = rowsArr.get(i) as VecApi<any>
 
@@ -290,11 +268,10 @@ const DataGrid = () => {
           // Initialize the model if it doesn't exist
           console.log('Initializing new model from patch:', patch)
           // use the replica ID the server gives us - don't use an empty one
-          modelRef.current = Model.fromPatches([patch]).fork(replicaId!)
+          setModel(Model.fromPatches([patch]).fork(replicaId!))
           modelSnapshotRef.current =
-            modelRef.current.api.getSnapshot() as ModelSnapshot
+            modelRef.current!.api.getSnapshot() as ModelSnapshot
           const { columnNames } = modelSnapshotRef.current
-          setModelCols(columnNames)
           setRowValues(modelRowsToGrid(modelSnapshotRef.current))
           setColValues(modelColsToGrid(modelSnapshotRef.current))
         } else {
@@ -305,7 +282,6 @@ const DataGrid = () => {
           const { columnNames } = modelSnapshotRef.current
           modelSnapshotRef.current =
             modelRef.current.api.getSnapshot() as ModelSnapshot
-          setModelCols(columnNames)
           setRowValues(modelRowsToGrid(modelSnapshotRef.current))
           setColValues(modelColsToGrid(modelSnapshotRef.current))
         }
@@ -345,8 +321,6 @@ const DataGrid = () => {
       sequenceNumberRef.current += 1
       modelSnapshotRef.current =
         modelRef.current?.api.getSnapshot() as ModelSnapshot
-      setModelRows(modelSnapshotRef.current.rows)
-      setModelCols(modelSnapshotRef.current.columnNames)
       setGridReady(true)
       console.log(
         'Clocks synchronized with server. Incrementing sequence number.',
@@ -504,9 +478,6 @@ const DataGrid = () => {
     gridToModel(filteredData, getModel()!)
     const patch = modelRef.current?.api.flush()
     modelSnapshotRef.current = modelRef.current?.api.getSnapshot()
-    setModelCols(modelSnapshotRef.current.columnNames)
-    setModelColOrder(modelSnapshotRef.current.columnOrder)
-    setModelRows(modelSnapshotRef.current.rows)
     if (patch) {
       console.log('Sending patch to server:', patch)
       const binaryData = encode(patch)
@@ -529,8 +500,8 @@ const DataGrid = () => {
     return Math.floor(Math.random() * 1000000)
   }
 
-  const autoCommitRef = useRef(
-    throttle(newValue => {
+  const autoCommitRef = useRef<any>(
+    throttle((newValue: any) => {
       console.log('Auto-committing changes')
       performCommit(newValue)
     }, 500),
@@ -607,7 +578,7 @@ const DataGrid = () => {
             value={rowValues}
             columns={colValues}
             rowKey="_rowId"
-            rowClassName={({ rowData }) => {
+            rowClassName={({ rowData }: any) => {
               if (deletedRowIds.has(rowData._rowId)) {
                 return 'row-deleted'
               }
@@ -616,11 +587,14 @@ const DataGrid = () => {
               }
               if (updatedRowIds.has(rowData._rowId)) {
                 return 'row-updated'
-              }
+              } else return ''
             }}
             createRow={addRowToModel}
-            duplicateRow={({ rowData }) => ({ ...rowData, _rowId: genId() })}
-            onChange={(newValue, operations) => {
+            duplicateRow={({ rowData }: any) => ({
+              ...rowData,
+              _rowId: genId(),
+            })}
+            onChange={(newValue: any, operations: any) => {
               for (const operation of operations) {
                 const rowsArr = modelRef.current?.api.arr(['rows'])
                 if (operation.type === 'CREATE') {
@@ -636,13 +610,13 @@ const DataGrid = () => {
 
                   newValue
                     .slice(operation.fromRowIndex, operation.toRowIndex)
-                    .forEach(({ _rowId }) => createdRowIds.add(_rowId))
+                    .forEach(({ _rowId }: any) => createdRowIds.add(_rowId))
                 }
 
                 if (operation.type === 'UPDATE') {
                   newValue
                     .slice(operation.fromRowIndex, operation.toRowIndex)
-                    .forEach(({ _rowId }) => {
+                    .forEach(({ _rowId }: any) => {
                       if (
                         !createdRowIds.has(_rowId) &&
                         !deletedRowIds.has(_rowId)
