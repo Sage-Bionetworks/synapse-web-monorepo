@@ -370,6 +370,8 @@ const DataGrid = () => {
         // Start a new session and clear replicaId and presignedUrl
         const gridRequest = {
           concreteType: 'org.sagebionetworks.repo.model.grid.CreateGridRequest',
+          initialQuery: undefined as TableQuery | undefined,
+          schema$id: undefined as string | undefined,
         } as CreateGridRequest
 
         if (parsedInput.type === 'sql') {
