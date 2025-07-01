@@ -8,7 +8,7 @@ import {
 import 'react-datasheet-grid/dist/style.css'
 import '../../style/components/_data-grid-extra.scss'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { SynapseClient } from '@sage-bionetworks/synapse-client'
+import { SynapseClient, TableQuery } from '@sage-bionetworks/synapse-client'
 import { useCreateGridSession } from './useCreateGridSession'
 import {
   CreateGridRequest,
@@ -373,7 +373,7 @@ const DataGrid = () => {
         } as CreateGridRequest
 
         if (parsedInput.type === 'sql') {
-          gridRequest.initialQuery = { sql: parsedInput.input }
+          gridRequest.initialQuery = { sql: parsedInput.input } as TableQuery
           setGridSql(parsedInput.input)
           console.log('Starting grid session with table query: ', gridSql)
         } else {
