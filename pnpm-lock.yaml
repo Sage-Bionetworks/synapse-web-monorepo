@@ -1901,8 +1901,8 @@ importers:
         specifier: ^26.1.0
         version: 26.1.0
       json-joy:
-        specifier: ^17.47.0
-        version: 17.47.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tslib@2.8.1)
+        specifier: ^17.45.0
+        version: 17.45.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tslib@2.8.1)
       lodash.throttle:
         specifier: ^4.1.1
         version: 4.1.1
@@ -7975,8 +7975,8 @@ packages:
   json-buffer@3.0.1:
     resolution: {integrity: sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==}
 
-  json-joy@17.47.0:
-    resolution: {integrity: sha512-SliY7waJqE9/iKMUxqD3qgVE98Ig+iMBuU1aOoJtMp1Fwex9wejCUfOXUI95jkr+57RqTzPW9l28WMMB9nCrZA==}
+  json-joy@17.45.0:
+    resolution: {integrity: sha512-0mmPwIhy1bjg8nah/YyFmikbQNCCv7ObPmof2nY2rhch5iZ0kqjLfol8pZG9d30HHS8eogWPSbmMxPjMhWd1nA==}
     engines: {node: '>=10.0'}
     hasBin: true
     peerDependencies:
@@ -18338,7 +18338,7 @@ snapshots:
 
   json-buffer@3.0.1: {}
 
-  json-joy@17.47.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tslib@2.8.1):
+  json-joy@17.45.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tslib@2.8.1):
     dependencies:
       '@jsonjoy.com/base64': 1.1.2(tslib@2.8.1)
       '@jsonjoy.com/json-expression': 1.1.0(tslib@2.8.1)
