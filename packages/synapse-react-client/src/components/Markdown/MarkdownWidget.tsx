@@ -9,6 +9,7 @@ import type { MarkdownSynapsePlotProps } from './widget/MarkdownSynapsePlot'
 import type { MarkdownSynapseTableProps } from './widget/MarkdownSynapseTable'
 import type { MarkdownUserOrTeamBadgeProps } from './widget/MarkdownUserOrTeamBadge'
 import type { MarkdownVideoProps } from './widget/MarkdownVideo'
+import type { MarkdownJSONSchemaFormProps } from './widget/MarkdownJSONSchemaForm'
 
 // Lazy load all widgets -- some can be large & cyclical component trees that will prevent bundle-splitting if we do not dynamically import them
 const MarkdownVideo = lazy(() => import('./widget/MarkdownVideo'))
@@ -16,6 +17,9 @@ const MarkdownEntityPreview = lazy(
   () => import('./widget/MarkdownEntityPreview'),
 )
 const MarkdownIDUReport = lazy(() => import('./widget/MarkdownIDUReport'))
+const MarkdownJSONSchemaForm = lazy(
+  () => import('./widget/MarkdownJSONSchemaForm'),
+)
 const MarkdownProvenanceGraph = lazy(
   () => import('./widget/MarkdownProvenanceGraph'),
 )
@@ -80,6 +84,11 @@ type Preview = {
   widgetParamsMapped: MarkdownEntityPreviewProps
 }
 
+type JSONSchemaForm = {
+  widgetType: 'jsonSchemaForm'
+  widgetParamsMapped: MarkdownJSONSchemaFormProps
+}
+
 type MarkdownWidgetDefinition =
   | ButtonLink
   | Image
@@ -91,6 +100,7 @@ type MarkdownWidgetDefinition =
   | SynapseTableMarkdown
   | ProvenanceGraph
   | Preview
+  | JSONSchemaForm
 
 export type MarkdownWidgetProps = MarkdownWidgetDefinition & {
   originalMarkup: string
@@ -121,6 +131,8 @@ function MarkdownWidget(props: MarkdownWidgetProps) {
       return <MarkdownProvenanceGraph {...widgetParamsMapped} />
     case 'preview':
       return <MarkdownEntityPreview {...widgetParamsMapped} />
+    case 'jsonSchemaForm':
+      return <MarkdownJSONSchemaForm {...widgetParamsMapped} />
     default:
       console.warn(`Unsupported widget: ${widgetType}.`)
       return <></>
