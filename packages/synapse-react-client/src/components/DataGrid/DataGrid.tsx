@@ -19,6 +19,8 @@ import { encode, decode } from 'json-joy/lib/json-crdt-patch/codec/compact'
 import { konst } from 'json-joy/lib/json-crdt-patch'
 import throttle from 'lodash.throttle'
 import { Encoder as VerboseEncoder } from 'json-joy/lib/json-crdt/codec/structural/verbose/Encoder'
+import { parseQueryInput } from './DataGridUtils'
+import { JsonJoyMessage, ModelSnapshot } from './DataGridTypes'
 
 const verboseEncoder = new VerboseEncoder()
 
@@ -42,16 +44,6 @@ const DataGrid = () => {
   // CRDT state
   const sequenceNumberRef = useRef<number>(1)
   const modelRef = useRef<Model | null>(null)
-  interface ModelSnapshot {
-    columnNames: string[]
-    columnOrder: number[]
-    rows: string[]
-  }
-  interface jsonJoyMessage {
-    sequenceNumber: number
-    methodName: string
-    payload?: string
-  }
   const modelSnapshotRef = useRef<ModelSnapshot>({
     columnNames: [],
     columnOrder: [],
@@ -98,19 +90,6 @@ const DataGrid = () => {
     modelColsToGrid(modelSnapshotRef.current),
   )
   const [prevRows, setPrevRows] = useState(rowValues)
-
-  // Query Input can either be an empty string, a SQL query, or a session ID
-  const parseQueryInput = (input: string) => {
-    const trimmedInput = input.trim()
-    if (!trimmedInput) {
-      return { type: 'empty', input: '' }
-    } else if (trimmedInput.toUpperCase().startsWith('SELECT')) {
-      return { type: 'sql', input: trimmedInput }
-    } else if (/^N\w*=$/.test(trimmedInput)) {
-      return { type: 'sessionId', input: trimmedInput }
-    }
-    return { type: 'unknown', input: trimmedInput }
-  }
 
   const createReplicaId = async (
     synapseClient: SynapseClient,
@@ -263,7 +242,7 @@ const DataGrid = () => {
     }
   }
 
-  const handleWebSocketMessage = (latestMsg: jsonJoyMessage) => {
+  const handleWebSocketMessage = (latestMsg: JsonJoyMessage) => {
     // [4, <sequence_number>, <payload>]
     if (
       Array.isArray(latestMsg) &&
