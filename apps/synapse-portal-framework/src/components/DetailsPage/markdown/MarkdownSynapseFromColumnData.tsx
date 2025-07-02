@@ -72,8 +72,6 @@ export function MarkdownSynapseFromColumnData(
         <MarkdownCollapse {...splitComponentProps} {...MarkdownCollapseProps} />
       )
 
-    console.log('markdownContent', markdownContent)
-
     return (
       <Fragment key={JSON.stringify(splitComponentProps)}>
         {showEntityTitle ? (
