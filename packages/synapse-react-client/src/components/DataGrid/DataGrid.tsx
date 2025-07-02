@@ -42,13 +42,10 @@ const DataGrid = () => {
   // CRDT state
   const sequenceNumberRef = useRef<number>(1)
   const modelRef = useRef<Model | null>(null)
-  type ModelColumnNames = string
-  type ModelColumnOrder = number
-  type ModelRow = string
-  type ModelSnapshot = {
-    columnNames: ModelColumnNames[]
-    columnOrder: ModelColumnOrder[]
-    rows: ModelRow[]
+  interface ModelSnapshot {
+    columnNames: string[]
+    columnOrder: number[]
+    rows: string[]
   }
   const modelSnapshotRef = useRef<ModelSnapshot>({
     columnNames: [],
@@ -63,6 +60,29 @@ const DataGrid = () => {
     }
   }
 
+  // If grid sessionId or replicaId changes, reset the model
+  useEffect(() => {
+    if (sessionId || replicaId) {
+      modelRef.current = null
+      modelSnapshotRef.current = {
+        columnNames: [],
+        columnOrder: [],
+        rows: [],
+      }
+      setRowValues([])
+      setColValues([])
+      setGridReady(false)
+      sequenceNumberRef.current = 1
+      setMessages([]) // Clear message log
+      setIsConnected(false)
+      setConnectionStatus('Disconnected')
+      if (webSocketRef.current) {
+        webSocketRef.current.close()
+        webSocketRef.current = null
+      }
+    }
+  }, [sessionId, replicaId])
+
   // Grid rows and columns
   type DataGridRow = { [key: string]: string | number }
   const [gridReady, setGridReady] = useState<boolean>(false)
@@ -76,14 +96,15 @@ const DataGrid = () => {
 
   // Query Input can either be an empty string, a SQL query, or a session ID
   const parseQueryInput = (input: string) => {
-    if (!input) {
+    const trimmedInput = input.trim()
+    if (!trimmedInput) {
       return { type: 'empty', input: '' }
-    } else if (input.toUpperCase().startsWith('SELECT')) {
-      return { type: 'sql', input }
-    } else if (/^N\w*=$/.test(input)) {
-      return { type: 'sessionId', input }
+    } else if (trimmedInput.toUpperCase().startsWith('SELECT')) {
+      return { type: 'sql', input: trimmedInput }
+    } else if (/^N\w*=$/.test(trimmedInput)) {
+      return { type: 'sessionId', input: trimmedInput }
     }
-    return { type: 'unknown', input }
+    return { type: 'unknown', input: trimmedInput }
   }
 
   const createReplicaId = async (
