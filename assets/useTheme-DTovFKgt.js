@@ -1,1 +1,0 @@
-import"./index-CNOD_coP.js";import{d as m}from"./DefaultPropsProvider-0BNkwUkh.js";import{T as o}from"./createTheme-Dr8QaAop.js";import{u as r}from"./useTheme-DZEQxr-3.js";function f(){const e=r(m);return e[o]||e}export{f as u};
