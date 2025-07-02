@@ -1,7 +1,7 @@
 import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2'
 
 export const TABLE_IDS = {
-  Challenges: { name: 'Challenges', id: 'syn65913973' },
+  Challenges: { name: 'Challenges', id: 'syn65913973.1' },
   CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
   DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.63' },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
@@ -9,7 +9,7 @@ export const TABLE_IDS = {
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
   DataTopic: { name: 'DataTopic', id: 'syn63096835' },
   GCDataSet: { name: 'GCDataSet', id: 'syn66527597' },
-  Organization: { name: 'Organization', id: 'syn63096836' },
+  Organization: { name: 'Organization', id: 'syn63096836.31' },
   UseCase: { name: 'UseCase', id: 'syn63096837' },
 }
 
