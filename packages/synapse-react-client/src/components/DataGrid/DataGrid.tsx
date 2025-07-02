@@ -47,6 +47,11 @@ const DataGrid = () => {
     columnOrder: number[]
     rows: string[]
   }
+  interface jsonJoyMessage {
+    sequenceNumber: number
+    methodName: string
+    payload?: string
+  }
   const modelSnapshotRef = useRef<ModelSnapshot>({
     columnNames: [],
     columnOrder: [],
@@ -256,12 +261,6 @@ const DataGrid = () => {
       console.error('WebSocket is not connected')
       setMessages(prev => ['Failed to send: WebSocket not connected', ...prev])
     }
-  }
-
-  interface jsonJoyMessage {
-    sequenceNumber: number
-    sequtypeenceNumber: string
-    payload?: string
   }
 
   const handleWebSocketMessage = (latestMsg: jsonJoyMessage) => {
