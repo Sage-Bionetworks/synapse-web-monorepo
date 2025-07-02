@@ -17,6 +17,13 @@ const routes: RouteObject[] = [
     lazy: () =>
       import('@/pages/DownloadCartPage').then(convertModuleToRouteObject),
   },
+  {
+    path: 'FileEntity',
+    lazy: () =>
+      import('@/pages/FileEntityPage/FileEntityPage').then(
+        convertModuleToRouteObject,
+      ),
+  },
 ]
 
 export default routes

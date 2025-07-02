@@ -3,9 +3,9 @@ import MarkdownCollapse, {
   MarkdownCollapseProps,
 } from 'synapse-react-client/components/Markdown/MarkdownCollapse'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
-import { HeadlineWithLinkDerivedFromEntityId } from '../HeadlineWithLink'
 import { useColumnDataMarkdownProps } from './useColumnDataMarkdownProps'
 import NoContentAvailable from 'synapse-react-client/components/SynapseTable/NoContentAvailable'
+import CollapsibleSection from '@/components/CollapsibleSection'
 
 type MarkdownSynapseFromColumnDataProps = {
   /**
@@ -55,32 +55,40 @@ export function MarkdownSynapseFromColumnData(
     showNoContentAvailable = false,
     isRawMarkdown = false,
     MarkdownCollapseProps,
+    entityTitlePrepend = '',
   } = props
 
   const propsArray = useColumnDataMarkdownProps(columnName, isRawMarkdown)
+
+  console.log('propsArray', propsArray)
 
   if (!propsArray) {
     return showNoContentAvailable ? <NoContentAvailable /> : null
   }
 
   return propsArray.map(splitComponentProps => {
+    const markdownContent =
+      MarkdownCollapseProps == null ? (
+        <MarkdownSynapse {...splitComponentProps} />
+      ) : (
+        <MarkdownCollapse {...splitComponentProps} {...MarkdownCollapseProps} />
+      )
+
+    console.log('markdownContent', markdownContent)
+
     return (
       <Fragment key={JSON.stringify(splitComponentProps)}>
-        {showEntityTitle && (
-          <>
-            <HeadlineWithLinkDerivedFromEntityId
-              id={splitComponentProps.ownerId!}
-            />
-            <hr />
-          </>
-        )}
-        {MarkdownCollapseProps == null ? (
-          <MarkdownSynapse {...splitComponentProps} />
+        {showEntityTitle ? (
+          <CollapsibleSection
+            id={splitComponentProps.ownerId!}
+            title=""
+            linkDerivedFromEntityId={true}
+            entityTitlePrepend={entityTitlePrepend}
+          >
+            {markdownContent}
+          </CollapsibleSection>
         ) : (
-          <MarkdownCollapse
-            {...splitComponentProps}
-            {...MarkdownCollapseProps}
-          />
+          markdownContent
         )}
       </Fragment>
     )
