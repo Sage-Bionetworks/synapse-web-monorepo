@@ -60,8 +60,6 @@ export function MarkdownSynapseFromColumnData(
 
   const propsArray = useColumnDataMarkdownProps(columnName, isRawMarkdown)
 
-  console.log('propsArray', propsArray)
-
   if (!propsArray) {
     return showNoContentAvailable ? <NoContentAvailable /> : null
   }
