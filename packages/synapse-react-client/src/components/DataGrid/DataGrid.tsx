@@ -509,6 +509,12 @@ const DataGrid = () => {
           type="text"
           placeholder="(Optional) Enter a SQL query or session ID"
           style={{ width: '300px' }}
+          onKeyDown={e => {
+            if (e.key === 'Enter') {
+              const inputValue = inputRef.current?.value || ''
+              handleStartSession(inputValue)
+            }
+          }}
         />
         <button
           onClick={() => {
