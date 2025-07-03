@@ -50,12 +50,12 @@ export default function HomePage() {
                 explorePagePath: '/Explore',
                 exploreObjectType: 'Standards',
                 plotsConfig: {
-                  sql: `${dataSql} where ${DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION} is not null`,
+                  sql: `${dataSql} where ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES} is not null`,
                   configs: [
                     {
                       facetsToPlot: [
                         'topic',
-                        DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION,
+                        DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
                       ],
                       unitDescription: 'standard',
                       plotType: 'BAR',

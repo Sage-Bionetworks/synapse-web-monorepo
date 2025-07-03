@@ -1,7 +1,7 @@
 import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2'
 
 export const TABLE_IDS = {
-  Challenges: { name: 'Challenges', id: 'syn65913973' },
+  Challenges: { name: 'Challenges', id: 'syn65913973.1' },
   CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
   DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.63' },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
@@ -9,7 +9,7 @@ export const TABLE_IDS = {
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
   DataTopic: { name: 'DataTopic', id: 'syn63096835' },
   GCDataSet: { name: 'GCDataSet', id: 'syn66527597' },
-  Organization: { name: 'Organization', id: 'syn63096836' },
+  Organization: { name: 'Organization', id: 'syn63096836.31' },
   UseCase: { name: 'UseCase', id: 'syn63096837' },
 }
 
@@ -25,6 +25,7 @@ export const DST_TABLE_COLUMN_NAMES = {
   CONCERNS_DATA_TOPIC: 'concerns_data_topic',
   HAS_RELEVANT_DATA_SUBSTRATE: 'has_relevant_data_substrate',
   HAS_RELEVANT_ORGANIZATION: 'has_relevant_organization',
+  RELEVANT_ORG_NAMES: 'relevantOrgNames',
   RESPONSIBLE_ORGANIZATION: 'responsible_organization',
   IS_OPEN: 'isOpen',
   REGISTRATION: 'registration',
@@ -54,7 +55,7 @@ export const dataSql = `
         mature,
         concat('[', acronym, '](/Explore/Standard/DetailsPage?id=', id, ')') as acronym,
             name, category, collections, topic, dataTypes,
-            ${DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION}, isOpen, registration, "usedInBridge2AI"
+            ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration, "usedInBridge2AI"
             , hasAIApplication
             FROM ${TABLE_IDS.DST_denormalized.id}
 `
@@ -76,7 +77,7 @@ export const standardsDetailsPageSQL = `
             collections,
             topic,
             dataTypes,
-            ${DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION},
+            ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES},
             responsibleOrgName as SDO,
             isOpen,
             relatedTo,
