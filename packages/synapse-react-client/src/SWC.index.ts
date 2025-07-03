@@ -207,6 +207,7 @@ const SynapseComponents = {
         './components/dataaccess/UserAccessRequestHistory/UserAccessRequestHistoryPlace'
       ),
   ),
+  DynamicForm: lazy(() => import('./components/DynamicForm/DynamicForm')),
 }
 
 const Analytics = {

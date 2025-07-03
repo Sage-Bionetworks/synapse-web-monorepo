@@ -1,11 +1,32 @@
-import { useGetJson, useGetSchemaBinding, useGetValidationResults } from '@/synapse-queries'
+import {
+  useGetJson,
+  useGetSchema,
+  useGetSchemaBinding,
+  useGetValidationResults,
+} from '@/synapse-queries'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { isISOTimestamp } from '@/utils/functions/DateTimeUtils'
-import { convertToEntityType, entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
-import { BackendDestinationEnum, getEndpoint } from '@/utils/functions/getEndpoint'
+import {
+  convertToEntityType,
+  entityTypeToFriendlyName,
+} from '@/utils/functions/EntityTypeUtils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import { hasSchema, SchemaObject } from '@hyperjump/json-schema'
+import * as AnnotatedInstance from '@hyperjump/json-schema/annotated-instance/experimental'
+import {
+  annotate,
+  Annotator,
+} from '@hyperjump/json-schema/annotations/experimental'
+import { registerSchema } from '@hyperjump/json-schema/draft-07'
+import { Box, Tooltip, Typography } from '@mui/material'
+import { Json } from '@sage-bionetworks/synapse-client'
+import { useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { isEmpty } from 'lodash-es'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import FullWidthAlert from '../../FullWidthAlert'
 import { SkeletonTable } from '../../Skeleton'
 
@@ -25,6 +46,98 @@ export function getDisplayedAnnotation(
   return value
 }
 
+function getSchemaAnnotationForProperty(
+  key: string,
+  instance: Annotator,
+  annotationKey: string,
+): string | undefined {
+  if (instance) {
+    // Get the title of each of the properties in the object
+    for (const [
+      propertyNameNode,
+      propertyInstance,
+    ] of AnnotatedInstance.entries(
+      instance as unknown as AnnotatedInstance.JsonNode,
+    )) {
+      const propertyName = AnnotatedInstance.value(propertyNameNode)
+      if (propertyName === key) {
+        const annotationValue = AnnotatedInstance.annotation(
+          propertyInstance,
+          annotationKey,
+        )[0] as string | undefined
+        return annotationValue
+      }
+    }
+  }
+
+  return undefined
+}
+
+function getDisplayedAnnotationTitle(
+  key: string,
+  instance?: Annotator,
+): string {
+  if (instance) {
+    const titleFromSchema = getSchemaAnnotationForProperty(
+      key,
+      instance,
+      'title',
+    )
+    if (titleFromSchema) {
+      return titleFromSchema
+    }
+  }
+
+  return key
+}
+
+function getDisplayedAnnotationDescription(
+  key: string,
+  instance?: Annotator,
+): string | undefined {
+  if (instance) {
+    return getSchemaAnnotationForProperty(key, instance, 'description')
+  }
+
+  return undefined
+}
+
+function getDisplayedAnnotationKey(key: string, instance?: Annotator) {
+  const title = getDisplayedAnnotationTitle(key, instance)
+  const description = getDisplayedAnnotationDescription(key, instance)
+
+  if (title == key && !description) {
+    return key
+  }
+
+  return (
+    <Tooltip
+      placement={'left'}
+      title={
+        <>
+          {title != key && (
+            <p>
+              Annotation Key: <i>{key}</i>
+            </p>
+          )}
+          <p>{description}</p>
+        </>
+      }
+    >
+      <Box
+        component="span"
+        sx={{
+          textDecoration: '1px underline dashed',
+          textUnderlineOffset: '4px',
+          cursor: 'help',
+        }}
+      >
+        {title}
+      </Box>
+    </Tooltip>
+  )
+}
+
 export function AnnotationsTable(props: AnnotationsTableProps) {
   const { entityId, versionNumber } = props
   const [isManuallyRefetching, setIsManuallyRefetching] = useState(false)
@@ -38,6 +151,33 @@ export function AnnotationsTable(props: AnnotationsTableProps) {
   const annotations = entityData?.annotations
 
   const { data: boundSchema } = useGetSchemaBinding(entityId)
+  const { data: validationSchema } = useGetSchema(
+    boundSchema?.jsonSchemaVersionInfo.$id!,
+    {
+      enabled: Boolean(boundSchema),
+    },
+  )
+
+  useMemo(() => {
+    if (
+      validationSchema &&
+      validationSchema.$id &&
+      !hasSchema(validationSchema.$id)
+    ) {
+      registerSchema(validationSchema as SchemaObject)
+    }
+  }, [validationSchema])
+
+  const { data: annotatedInstance } = useQuery({
+    queryKey: ['AnnotationsTable_annotatedInstance', entityId, versionNumber],
+    queryFn: () => {
+      if (entityData?.entity && validationSchema) {
+        return annotate(validationSchema.$id!, entityData.entity as Json)
+      }
+      return null
+    },
+    enabled: Boolean(entityData?.entity && validationSchema),
+  })
 
   const { data: validationResults, refetch: refetchValidationInformation } =
     useGetValidationResults(entityId, {
@@ -85,7 +225,9 @@ export function AnnotationsTable(props: AnnotationsTableProps) {
             Object.keys(annotations).map((key: string) => {
               return (
                 <tr key={key} className="AnnotationsTable__Row">
-                  <td className="AnnotationsTable__Row__Key">{key}</td>
+                  <td className="AnnotationsTable__Row__Key">
+                    {getDisplayedAnnotationKey(key, annotatedInstance)}
+                  </td>
                   <td className="AnnotationsTable__Row__Value">
                     {Array.isArray(annotations[key])
                       ? annotations[key].map(getDisplayedAnnotation).join(', ')
