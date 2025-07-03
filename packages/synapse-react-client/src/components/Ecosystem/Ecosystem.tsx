@@ -1,11 +1,8 @@
 import { useState } from 'react'
-import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
 type Config = {
-  ownerId: string
-  wikiId?: string
   title: string
-  icon?: string
+  content: React.ReactNode
 }
 
 export type EcosystemProps = {
@@ -36,7 +33,7 @@ const Ecosystem = (props: EcosystemProps) => {
           {config.map((el, curIndex) => {
             return (
               <span key={el.title} className={index === curIndex ? '' : 'hide'}>
-                <Markdown ownerId={el.ownerId} wikiId={el.wikiId} />
+                {el.content}
               </span>
             )
           })}
