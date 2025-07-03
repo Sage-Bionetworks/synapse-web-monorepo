@@ -1,6 +1,5 @@
 import { useFileContent } from '@/synapse-queries/file/useFiles'
 import { useLatestTag } from '@/synapse-queries/github/useGithub'
-import { useTermsOfServiceInfo } from '@/synapse-queries/termsOfService/useTermsOfService'
 import { Box, Button, Container } from '@mui/material'
 import { SkeletonParagraph } from '../Skeleton'
 import MarkdownSynapse from './MarkdownSynapse'
@@ -12,16 +11,6 @@ export type MarkdownGithubProps = {
   repoName: string
   filePath: string
   showDownloadButton?: boolean
-}
-/**
- * Loads the version of the Governance Github Markdown file that the Synapse backend determines is the current version
- * @returns
- */
-export function GovernanceMarkdownGithub(props: MarkdownGithubProps) {
-  //Get latest ToS tag (from Synapse backend)
-  const { data } = useTermsOfServiceInfo()
-  const tosTag = data?.latestTermsOfServiceVersion
-  return <MarkdownGithub {...props} tagName={tosTag} />
 }
 
 /**
@@ -91,6 +80,7 @@ function MarkdownGithub({
       enabled: !!tagName,
     },
   )
+
   const loadingUI = (
     <Box sx={{ width: '100%' }}>
       <SkeletonParagraph rowHeight="30px" numRows={70} />
@@ -109,6 +99,7 @@ function MarkdownGithub({
           sx={{
             display: 'flex',
             float: 'right',
+            mt: '15px',
           }}
         >
           <Button

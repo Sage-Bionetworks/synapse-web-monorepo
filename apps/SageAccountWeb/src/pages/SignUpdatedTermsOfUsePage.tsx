@@ -22,7 +22,7 @@ import {
   restoreLastPlace,
 } from 'synapse-react-client/utils/AppUtils/AppUtils'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
-import { GovernanceMarkdownGithub } from 'synapse-react-client/components/Markdown/MarkdownGithub'
+import { GovernanceMarkdownGithub } from 'synapse-react-client/components/Markdown/GovernanceMarkdownGithub'
 
 function SignUpdatedTermsOfUsePage() {
   const [isLoading, setIsLoading] = useState(false)
