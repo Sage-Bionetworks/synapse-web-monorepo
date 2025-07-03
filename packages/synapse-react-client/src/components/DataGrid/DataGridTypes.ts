@@ -15,3 +15,9 @@ export interface ModelSnapshot {
   columnOrder: number[]
   rows: string[]
 }
+
+export interface Operation {
+  type: 'UPDATE' | 'DELETE' | 'CREATE'
+  fromRowIndex: number
+  toRowIndex: number
+}

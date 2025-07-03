@@ -17,10 +17,10 @@ import {
 import { Model, VecApi } from 'json-joy/lib/json-crdt'
 import { encode, decode } from 'json-joy/lib/json-crdt-patch/codec/compact'
 import { konst } from 'json-joy/lib/json-crdt-patch'
-import throttle from 'lodash.throttle'
+import throttle from 'lodash-es/throttle'
 import { Encoder as VerboseEncoder } from 'json-joy/lib/json-crdt/codec/structural/verbose/Encoder'
 import { parseQueryInput } from './DataGridUtils'
-import { JsonJoyMessage, ModelSnapshot } from './DataGridTypes'
+import { JsonJoyMessage, ModelSnapshot, Operation } from './DataGridTypes'
 
 const verboseEncoder = new VerboseEncoder()
 
@@ -500,6 +500,59 @@ const DataGrid = () => {
     return { _rowId: genId() }
   }
 
+  const handleChange = (newValue: any, operations: Operation) => {
+    for (const operation of operations) {
+      const rowsArr = modelRef.current?.api.arr(['rows'])
+      if (operation.type === 'CREATE') {
+        // Add new rows to the model iterating fromRowIndex to toRowIndex
+        // and adding rows to the model via the api
+        for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
+          rowsArr?.ins(i, [modelRef.current?.api.builder.vec()])
+        }
+
+        newValue
+          .slice(operation.fromRowIndex, operation.toRowIndex)
+          .forEach(({ _rowId }: any) => createdRowIds.add(_rowId))
+      }
+
+      if (operation.type === 'UPDATE') {
+        newValue
+          .slice(operation.fromRowIndex, operation.toRowIndex)
+          .forEach(({ _rowId }: any) => {
+            if (!createdRowIds.has(_rowId) && !deletedRowIds.has(_rowId)) {
+              updatedRowIds.add(_rowId)
+            }
+          })
+      }
+
+      if (operation.type === 'DELETE') {
+        let keptRows = 0
+        rowsArr?.del(
+          operation.fromRowIndex,
+          operation.toRowIndex - operation.fromRowIndex,
+        )
+
+        rowValues
+          .slice(operation.fromRowIndex, operation.toRowIndex)
+          .forEach(({ _rowId }, i) => {
+            updatedRowIds.delete(_rowId)
+
+            if (createdRowIds.has(_rowId)) {
+              createdRowIds.delete(_rowId)
+            } else {
+              deletedRowIds.add(_rowId)
+              newValue.splice(
+                operation.fromRowIndex + keptRows++,
+                0,
+                rowValues[operation.fromRowIndex + i],
+              )
+            }
+          })
+      }
+    }
+    autoCommitRef.current(newValue)
+  }
+
   return (
     <div>
       <div>
@@ -589,65 +642,7 @@ const DataGrid = () => {
               ...rowData,
               _rowId: genId(),
             })}
-            onChange={(newValue: any, operations: any) => {
-              for (const operation of operations) {
-                const rowsArr = modelRef.current?.api.arr(['rows'])
-                if (operation.type === 'CREATE') {
-                  // Add new rows to the model iterating fromRowIndex to toRowIndex
-                  // and adding rows to the model via the api
-                  for (
-                    let i = operation.fromRowIndex;
-                    i < operation.toRowIndex;
-                    i++
-                  ) {
-                    rowsArr?.ins(i, [modelRef.current?.api.builder.vec()])
-                  }
-
-                  newValue
-                    .slice(operation.fromRowIndex, operation.toRowIndex)
-                    .forEach(({ _rowId }: any) => createdRowIds.add(_rowId))
-                }
-
-                if (operation.type === 'UPDATE') {
-                  newValue
-                    .slice(operation.fromRowIndex, operation.toRowIndex)
-                    .forEach(({ _rowId }: any) => {
-                      if (
-                        !createdRowIds.has(_rowId) &&
-                        !deletedRowIds.has(_rowId)
-                      ) {
-                        updatedRowIds.add(_rowId)
-                      }
-                    })
-                }
-
-                if (operation.type === 'DELETE') {
-                  let keptRows = 0
-                  rowsArr?.del(
-                    operation.fromRowIndex,
-                    operation.toRowIndex - operation.fromRowIndex,
-                  )
-
-                  rowValues
-                    .slice(operation.fromRowIndex, operation.toRowIndex)
-                    .forEach(({ _rowId }, i) => {
-                      updatedRowIds.delete(_rowId)
-
-                      if (createdRowIds.has(_rowId)) {
-                        createdRowIds.delete(_rowId)
-                      } else {
-                        deletedRowIds.add(_rowId)
-                        newValue.splice(
-                          operation.fromRowIndex + keptRows++,
-                          0,
-                          rowValues[operation.fromRowIndex + i],
-                        )
-                      }
-                    })
-                }
-              }
-              autoCommitRef.current(newValue)
-            }}
+            onChange={handleChange}
           />
         </div>
       )}
