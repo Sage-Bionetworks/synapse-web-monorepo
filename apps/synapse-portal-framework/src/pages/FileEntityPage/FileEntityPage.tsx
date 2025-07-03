@@ -1,5 +1,5 @@
 import { useGetPortalComponentSearchParams } from '@/utils/UseGetPortalComponentSearchParams'
-import { Box, Container, Stack } from '@mui/material'
+import { Container, Stack } from '@mui/material'
 import { ProvenanceGraph } from 'synapse-react-client'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { useGetEntityBundle } from 'synapse-react-client/synapse-queries'
