@@ -8,8 +8,9 @@ import CancerComplexityIntro from '@sage-bionetworks/synapse-portal-framework/co
 import AboutPortal from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/AboutPortal'
 import ConsortiaGoals from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/ConsortiaGoals'
 import DevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/DevelopedBySage'
-import Ecosystem from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/Ecosystem'
+import Ecosystem from 'synapse-react-client/components/Ecosystem/Ecosystem'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
+import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { ThemesPlot } from 'synapse-react-client/components/Plot/ThemesPlot'
 import Programs from 'synapse-react-client/components/Programs'
 import RssFeedCards from 'synapse-react-client/components/RssFeedCards'
@@ -148,28 +149,23 @@ function Home() {
             config={[
               {
                 title: 'Public Repositories',
-                ownerId: 'syn21498902',
-                wikiId: '601489',
+                content: <Markdown ownerId={'syn21498902'} wikiId={'601489'} />,
               },
               {
                 title: 'Data Commons',
-                ownerId: 'syn21498902',
-                wikiId: '601490',
+                content: <Markdown ownerId={'syn21498902'} wikiId={'601490'} />,
               },
               {
                 title: 'Data Coordination',
-                ownerId: 'syn21498902',
-                wikiId: '601574',
+                content: <Markdown ownerId={'syn21498902'} wikiId={'601574'} />,
               },
               {
                 title: 'Data Exploration',
-                ownerId: 'syn21498902',
-                wikiId: '601575',
+                content: <Markdown ownerId={'syn21498902'} wikiId={'601575'} />,
               },
               {
                 title: 'Cloud Platform',
-                ownerId: 'syn21498902',
-                wikiId: '601576',
+                content: <Markdown ownerId={'syn21498902'} wikiId={'601576'} />,
               },
             ]}
           />

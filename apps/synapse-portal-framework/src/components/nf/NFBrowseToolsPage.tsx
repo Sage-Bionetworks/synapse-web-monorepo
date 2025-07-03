@@ -8,8 +8,9 @@ import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import { ReactElement } from 'react'
 import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList'
+import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { WideButton } from 'synapse-react-client/components/styled/WideButton'
-import Ecosystem from '../csbc-home-page/Ecosystem'
+import Ecosystem from 'synapse-react-client/components/Ecosystem/Ecosystem'
 import Layout from '../Layout'
 import PopularSearches from '../PopularSearches'
 import Search from '../Search'
@@ -261,13 +262,11 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
           config={[
             {
               title: 'Free Cell Lines',
-              ownerId: 'syn26451327',
-              wikiId: '614272',
+              content: <Markdown ownerId={'syn26451327'} wikiId={'614272'} />,
             },
             {
               title: 'Acquire Tissue',
-              ownerId: 'syn26451327',
-              wikiId: '625915',
+              content: <Markdown ownerId={'syn26451327'} wikiId={'625915'} />,
             },
           ]}
         />
