@@ -5,13 +5,13 @@ import {
   QueryWrapperPlotNavProps,
   StandaloneQueryWrapperProps,
 } from 'synapse-react-client'
-import columnAliases from '../columnAliases'
+import columnAliases from '@/config/columnAliases'
 import {
   standardsFtsConfig,
   // dataSetExploreSql,
   standardsSql,
   DST_TABLE_COLUMN_NAMES,
-} from '../resources'
+} from '@/config/resources'
 
 const standardsRgbIndex = 0
 export const standardsColumnLinks: LabelLinkConfig = [
