@@ -1,0 +1,1 @@
+import"./index-Bdq4dmxh.js";import{d as m}from"./DefaultPropsProvider-BBZIFPvR.js";import{T as o}from"./createTheme-iPWGREpV.js";import{u as r}from"./useTheme-CIm1AslH.js";function f(){const e=r(m);return e[o]||e}export{f as u};
