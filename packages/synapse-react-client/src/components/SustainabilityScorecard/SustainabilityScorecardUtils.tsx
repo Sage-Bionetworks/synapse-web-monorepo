@@ -11,11 +11,29 @@ import { ReactElement } from 'react'
 import { InfoTwoTone } from '@mui/icons-material'
 import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 import { getFieldIndex } from '@/utils/functions/queryUtils'
-import { MetricsConfig } from './SustainabilityScorecard'
 
 export const SUSTAINABILITY_ICON_COLORS = {
   check: '#52A31C',
   close: '#C13415',
+}
+
+export type MetricsConfig = {
+  /** Name of the metric column in the table */
+  key: string
+  /** Display label for the metric */
+  label: string
+  /** Shown as a tooltip in SustainabilityScorecard and as summary text in SustainabilityScorecardSummary */
+  text?: string
+}
+
+export type SustainabilityScorecardBaseProps = {
+  entityId: string
+  metricsConfig: MetricsConfig[]
+  /** Name of the URL search parameter used to filter the data. */
+  searchParamKey: string
+  /** The name of the column in the table to apply the filter to. */
+  filterColumn: string
+  scoreDescriptorColumnName: string
 }
 
 /**
@@ -32,6 +50,23 @@ export const getMetricValues = (
     const index = getFieldIndex(metric.key, queryResultBundle)
     return row.values[index] ?? ''
   })
+}
+
+export const getSelectedColumns = (
+  metricsConfig: MetricsConfig[],
+  scoreDescriptorColumnName: string,
+): string[] =>
+  metricsConfig.map(metric => metric.key).concat(scoreDescriptorColumnName)
+
+export const buildSustainabilitySql = (
+  entityId: string,
+  filterColumn: string,
+  searchValue: string | null,
+  selectedColumns: string[],
+): string => {
+  return `SELECT ${selectedColumns.join(
+    ', ',
+  )} FROM ${entityId} WHERE "${filterColumn}" = '${searchValue}'`
 }
 
 // Returns a SVG dial image corresponding to the score descriptor (e.g. "foundational", "intermediate", etc.)

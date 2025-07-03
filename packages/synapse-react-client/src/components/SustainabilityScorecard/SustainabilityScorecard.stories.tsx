@@ -5,23 +5,30 @@ import SustainabilityScorecard, {
 import { MemoryRouter } from 'react-router'
 
 const mockProps: SustainabilityScorecardProps = {
-  entityId: 'syn68349264',
-  sustainabilityReportLink: 'https://example.com/sustainability-report',
+  entityId: 'syn68561794',
+  filterColumn: 'toolName',
+  searchParamKey: 'toolName',
+  scoreDescriptorColumnName: 'AlmanackScoreDescriptor',
   metricsConfig: [
     {
-      key: 'dependencyFiles',
-      label: 'Dependency Files',
-      text: 'Some tooltip text for dependency files',
+      key: 'CloneRepository',
+      label: 'Repository',
+      text: 'Indicates presence of automated tests',
     },
     {
-      key: 'testFiles',
-      label: 'Test Files',
-      text: 'Some tooltip text for test files',
+      key: 'CheckReadme',
+      label: 'README',
+      text: 'Indicates presence of automated tests',
     },
     {
-      key: 'readmeFiles',
-      label: 'README Files',
-      text: 'Some tooltip text for README files',
+      key: 'CheckDependencies',
+      label: 'Dependencies',
+      text: 'Presence of documentation for setup/use',
+    },
+    {
+      key: 'CheckTests',
+      label: 'Tests',
+      text: 'Presence of documentation for setup/use',
     },
   ],
 }
@@ -38,7 +45,7 @@ type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
   render: args => (
-    <MemoryRouter>
+    <MemoryRouter initialEntries={['/Tools/DetailsPage?toolName=DrugCell']}>
       <SustainabilityScorecard {...args} />
     </MemoryRouter>
   ),

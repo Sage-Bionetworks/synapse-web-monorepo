@@ -2,9 +2,13 @@ import { Meta, StoryObj } from '@storybook/react'
 import SustainabilityScorecardSummary, {
   SustainabilityScorecardSummaryProps,
 } from './SustainabilityScorecardSummary'
+import { MemoryRouter } from 'react-router'
 
 const mockProps: SustainabilityScorecardSummaryProps = {
-  entityId: 'syn68349264',
+  entityId: 'syn68561794',
+  filterColumn: 'toolName',
+  searchParamKey: 'toolName',
+  scoreDescriptorColumnName: 'AlmanackScoreDescriptor',
   text: (
     <p>
       This section provides an overview of the sustainability metrics and
@@ -13,19 +17,24 @@ const mockProps: SustainabilityScorecardSummaryProps = {
   ),
   metricsConfig: [
     {
-      key: 'dependencyFiles',
-      label: 'Dependency Files',
-      text: 'Some tooltip text for dependency files',
+      key: 'CloneRepository',
+      label: 'Repository',
+      text: 'Indicates presence of automated tests',
     },
     {
-      key: 'testFiles',
-      label: 'Test Files',
-      text: 'Some tooltip text for test files',
+      key: 'CheckReadme',
+      label: 'README',
+      text: 'Indicates presence of automated tests',
     },
     {
-      key: 'readmeFiles',
-      label: 'README Files',
-      text: 'Some tooltip text for README files',
+      key: 'CheckDependencies',
+      label: 'Dependencies',
+      text: 'Presence of documentation for setup/use',
+    },
+    {
+      key: 'CheckTests',
+      label: 'Tests',
+      text: 'Presence of documentation for setup/use',
     },
   ],
 }
@@ -41,5 +50,10 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
+  render: args => (
+    <MemoryRouter initialEntries={['/Tools/DetailsPage?toolName=DrugCell']}>
+      <SustainabilityScorecardSummary {...args} />
+    </MemoryRouter>
+  ),
   args: { ...mockProps },
 }

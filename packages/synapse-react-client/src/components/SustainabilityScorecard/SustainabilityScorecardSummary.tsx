@@ -3,40 +3,35 @@ import { SynapseConstants } from '@/utils'
 import { getFieldIndex } from '@/utils/functions/queryUtils'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import {
+  buildSustainabilitySql,
   getDial,
   getMetricValues,
+  getSelectedColumns,
   SUSTAINABILITY_ICON_COLORS,
+  SustainabilityScorecardBaseProps,
 } from './SustainabilityScorecardUtils'
 import { Box, Card, Skeleton, Stack, Typography, useTheme } from '@mui/material'
 import { ReactNode } from 'react'
-import { MetricsConfig } from './SustainabilityScorecard'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
+import { useSearchParams } from 'react-router'
 
-export type SustainabilityScorecardSummaryProps = {
-  entityId: string
-  text: ReactNode
-  metricsConfig: MetricsConfig[]
-}
+export type SustainabilityScorecardSummaryProps =
+  SustainabilityScorecardBaseProps & {
+    text: React.ReactNode
+  }
 
 type MetricSummaryRowProps = {
   label: string
   text: ReactNode
   index: number
-  metrics: string[]
+  metricValues: string[]
 }
 
-enum ExpectedColumns {
-  DEPENDENCY_FILES = 'dependencyFiles',
-  TEST_FILES = 'testFiles',
-  README_FILES = 'readmeFiles',
-  SCORE_DESCRIPTOR = 'scoreDescriptor',
-}
-
-const MetricSummaryRowProps = ({
+const MetricSummaryRow = ({
   label,
   text,
-  metrics,
+  metricValues,
   index,
 }: MetricSummaryRowProps) => {
   return (
@@ -55,7 +50,7 @@ const MetricSummaryRowProps = ({
           {text}
         </Typography>
       </div>
-      {metrics[index] === 'true' ? (
+      {metricValues[index] === 'true' ? (
         <CheckCircleIcon
           sx={{
             marginLeft: 'auto',
@@ -82,9 +77,25 @@ const SustainabilityScorecardSummary = ({
   entityId,
   text,
   metricsConfig,
+  scoreDescriptorColumnName,
+  searchParamKey,
+  filterColumn,
 }: SustainabilityScorecardSummaryProps) => {
   const theme = useTheme()
-  const sql = `SELECT ${ExpectedColumns.DEPENDENCY_FILES}, ${ExpectedColumns.TEST_FILES}, ${ExpectedColumns.README_FILES}, ${ExpectedColumns.SCORE_DESCRIPTOR} FROM ${entityId}`
+  const [searchParams] = useSearchParams()
+  const searchValue = searchParams.get(searchParamKey)
+
+  const selectedColumns = getSelectedColumns(
+    metricsConfig,
+    scoreDescriptorColumnName,
+  )
+
+  const sql = buildSustainabilitySql(
+    entityId,
+    filterColumn,
+    searchValue,
+    selectedColumns,
+  )
 
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
@@ -99,10 +110,14 @@ const SustainabilityScorecardSummary = ({
   const { data: queryResultBundle, isLoading } =
     useGetQueryResultBundle(queryBundleRequest)
 
+  if (isLoading) {
+    return <Skeleton width={'100%'} height={'90px'} />
+  }
+
   const data = queryResultBundle?.queryResult!.queryResults
 
   const scoreDescriptorColIndex = getFieldIndex(
-    ExpectedColumns.SCORE_DESCRIPTOR,
+    scoreDescriptorColumnName,
     queryResultBundle,
   )
 
@@ -110,15 +125,11 @@ const SustainabilityScorecardSummary = ({
 
   const dial = getDial(scoreDescriptor ?? '', true)
 
-  const metrics = getMetricValues(
+  const metricValues = getMetricValues(
     data?.rows[0],
     queryResultBundle,
     metricsConfig,
   )
-
-  if (isLoading) {
-    return <Skeleton width={'100%'} height={'90px'} />
-  }
 
   return (
     <Stack>
@@ -149,11 +160,11 @@ const SustainabilityScorecardSummary = ({
                   : undefined,
             }}
           >
-            <MetricSummaryRowProps
+            <MetricSummaryRow
               label={metric.label}
               text={metric.text}
               index={index}
-              metrics={metrics}
+              metricValues={metricValues}
             />
           </Box>
         ))}

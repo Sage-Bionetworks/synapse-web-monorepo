@@ -46,7 +46,6 @@ const mockBundleSuccess: QueryResultBundle = {
 }
 const mockProps: SustainabilityScorecardProps = {
   entityId: 'syn68349264',
-  sustainabilityReportLink: 'https://example.com/sustainability-report',
   metricsConfig: [
     {
       key: 'dependencyFiles',
@@ -106,17 +105,6 @@ describe('SustainabilityScorecard tests', () => {
     ).toBeInTheDocument()
   })
 
-  it('renders the sustainability report link', async () => {
-    await renderWithSuccessMock()
-
-    const reportLink = screen.getByRole('link', {
-      name: 'View this tool’s sustainability and reusability report',
-    })
-    expect(reportLink).toHaveAttribute(
-      'href',
-      mockProps.sustainabilityReportLink,
-    )
-  })
   it('renders the score descriptor', async () => {
     await renderWithSuccessMock()
     const descriptor = await screen.findByText('foundational')

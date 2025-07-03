@@ -1,4 +1,4 @@
-import { Box, Link, Skeleton, Stack, Tooltip, Typography } from '@mui/material'
+import { Box, Skeleton, Stack, Tooltip, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { SynapseConstants } from '@/utils'
@@ -7,9 +7,12 @@ import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 
 import { SxProps, Theme } from '@mui/material'
 import {
+  buildSustainabilitySql,
   getDial,
   getMetricValues,
+  getSelectedColumns,
   SUSTAINABILITY_ICON_COLORS,
+  SustainabilityScorecardBaseProps,
 } from './SustainabilityScorecardUtils'
 import { InfoTwoTone } from '@mui/icons-material'
 import { CheckIcon } from '@/assets/icons/terms/CheckIcon'
@@ -24,24 +27,16 @@ export type MetricsConfig = {
   text?: string
 }
 
-export type SustainabilityScorecardProps = {
-  entityId: string
-  sustainabilityReportLink: string
-  metricsConfig: MetricsConfig[]
-  /** Name of the URL search parameter used to filter the data. */
-  searchParamKey: string
-  /** The name of the column in the table to apply the filter to. */
-  filterColumn: string
-  // should we have prop for score?
+export type SustainabilityScorecardProps = SustainabilityScorecardBaseProps & {
   sx?: SxProps<Theme>
 }
 
 type MetricRowProps = {
-  metrics: string[]
+  metricValues: string[]
   metricsConfig: MetricsConfig[]
 }
 
-const MetricRow = ({ metrics, metricsConfig }: MetricRowProps) => {
+const MetricRow = ({ metricValues, metricsConfig }: MetricRowProps) => {
   return (
     <>
       {metricsConfig.map((metric, index) => (
@@ -61,7 +56,7 @@ const MetricRow = ({ metrics, metricsConfig }: MetricRowProps) => {
               />
             </Tooltip>
           </Typography>
-          {metrics[index] === 'true' ? (
+          {metricValues[index] === 'true' ? (
             <Box
               sx={{
                 backgroundColor: SUSTAINABILITY_ICON_COLORS.check,
@@ -102,38 +97,29 @@ const MetricRow = ({ metrics, metricsConfig }: MetricRowProps) => {
   )
 }
 
-enum ExpectedColumns {
-  ALMANACK_SCORE = 'AlmanackScore',
-}
-
 /* SustainabilityScorecard component displays sustainability metrics and a dial based on the sustainability score of the entity. */
 const SustainabilityScorecard = ({
   entityId,
-  sustainabilityReportLink,
   metricsConfig,
   searchParamKey,
   filterColumn,
+  scoreDescriptorColumnName,
   sx,
 }: SustainabilityScorecardProps) => {
-  const selectedColumns = metricsConfig
-    .map(metric => metric.key)
-    // .concat(ExpectedColumns.SCORE_DESCRIPTOR)
-    .concat(ExpectedColumns.ALMANACK_SCORE)
-
   const [searchParams] = useSearchParams()
-  const searchValue = searchParams.get(searchParamKey ?? '')
+  const searchValue = searchParams.get(searchParamKey)
 
-  const sql = `SELECT ${selectedColumns.join(', ')} FROM ${entityId}`
+  const selectedColumns = getSelectedColumns(
+    metricsConfig,
+    scoreDescriptorColumnName,
+  )
 
-  // const sustainabilitySql = `SELECT * FROM ${entityId} WHERE "${filterColumn}" = '${searchValue}'`
-  const sustainabilitySql = `SELECT ${selectedColumns.join(
-    ', ',
-  )} FROM ${entityId} WHERE "${filterColumn}" = '${searchValue}'` // ideally use this and update storybook
-
-  console.log('filterColumn', filterColumn)
-
-  console.log('sus', sustainabilitySql)
-  // console.log('sus 2', sustainabilitySql2)
+  const sql = buildSustainabilitySql(
+    entityId,
+    filterColumn,
+    searchValue,
+    selectedColumns,
+  )
 
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
@@ -142,7 +128,7 @@ const SustainabilityScorecard = ({
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
     query: {
-      sql: sustainabilitySql,
+      sql,
     },
   }
 
@@ -151,18 +137,14 @@ const SustainabilityScorecard = ({
 
   const data = queryResultBundle?.queryResult!.queryResults
 
-  console.log('queryResultBundle', queryResultBundle)
-  console.log('data', data)
-
   const scoreDescriptorColIndex = getFieldIndex(
-    // ExpectedColumns.SCORE_DESCRIPTOR,
-    ExpectedColumns.ALMANACK_SCORE,
+    scoreDescriptorColumnName,
     queryResultBundle,
   )
 
   const scoreDescriptor = data?.rows[0].values[scoreDescriptorColIndex]
 
-  const metrics = getMetricValues(
+  const metricValues = getMetricValues(
     data?.rows[0],
     queryResultBundle,
     metricsConfig,
@@ -187,10 +169,13 @@ const SustainabilityScorecard = ({
         {dial}
       </Stack>
       <Stack sx={{ flex: 1, gap: '2px' }}>
-        <MetricRow metrics={metrics} metricsConfig={metricsConfig} />
-        <Link href={sustainabilityReportLink} sx={{ padding: '4px 20px' }}>
-          View this tool’s sustainability and reusability report
-        </Link>
+        <MetricRow metricValues={metricValues} metricsConfig={metricsConfig} />
+        {/* TODO: Add sustainability report link when available */}
+        {/* {sustainabilityReportLink && (
+          <Link href={sustainabilityReportLink} sx={{ padding: '4px 20px' }}>
+            View this tool’s sustainability and reusability report
+          </Link>
+        )} */}
       </Stack>
     </Box>
   )

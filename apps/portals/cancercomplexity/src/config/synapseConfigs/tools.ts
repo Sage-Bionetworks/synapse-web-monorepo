@@ -42,9 +42,9 @@ export const toolsSchema: TableToGenericCardMapping = {
   sustainabilityScorecard: {
     entityId: toolkitId,
     searchParamKey: 'toolName',
-    filterColumn: 'Tool',
-    sustainabilityReportLink: '', // need a column for this
+    filterColumn: 'toolName',
     metricsConfig: metricsConfig,
+    scoreDescriptorColumnName: 'AlmanackScoreDescriptor',
   },
   defaultCitationFormat: 'nature',
   citationBoilerplateText: citationBoilerplateText,

@@ -145,8 +145,8 @@ const HeaderCard = forwardRef(function HeaderCard(
                       metricsConfig={sustainabilityScorecard.metricsConfig}
                       searchParamKey={sustainabilityScorecard.searchParamKey}
                       filterColumn={sustainabilityScorecard.filterColumn}
-                      sustainabilityReportLink={
-                        sustainabilityScorecard.sustainabilityReportLink
+                      scoreDescriptorColumnName={
+                        sustainabilityScorecard.scoreDescriptorColumnName
                       }
                       sx={{
                         background: 'rgba(0, 0, 0, 0.10)',
