@@ -1,4 +1,4 @@
-import { Box, Skeleton, Tooltip, Typography } from '@mui/material'
+import { Box, Collapse, Skeleton, Tooltip, Typography } from '@mui/material'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { ReactNode, useState } from 'react'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
@@ -6,14 +6,47 @@ import { HelpPopover, IconSvg } from 'synapse-react-client'
 import { copyStringToClipboard } from 'synapse-react-client/utils/functions/StringUtils'
 import { useGetEntityHeader } from 'synapse-react-client/synapse-queries'
 
-type CollapsibleSectionProps = {
-  title: string
-  children: ReactNode
+type BaseCollapsibleSectionProps = {
   id: string
+  children: ReactNode
   helpText?: string
   hideTitle?: boolean
-  linkDerivedFromEntityId?: boolean
-  entityTitlePrepend?: string
+}
+
+type CollapsibleSectionProps = BaseCollapsibleSectionProps & {
+  title: string
+}
+
+type CollapsibleSectionDerivedFromEntityIdProps =
+  BaseCollapsibleSectionProps & {
+    entityTitlePrepend?: string
+  }
+
+export const CollapsibleSectionDerivedFromEntityId = ({
+  id,
+  children,
+  helpText,
+  hideTitle = false,
+  entityTitlePrepend = '',
+}: CollapsibleSectionDerivedFromEntityIdProps) => {
+  const { data: entityHeader, isLoading } = useGetEntityHeader(id)
+
+  if (isLoading) {
+    return <Skeleton width={300} />
+  }
+
+  const title = `${entityTitlePrepend}${entityHeader?.name ?? ''}`
+
+  return (
+    <CollapsibleSection
+      id={id}
+      title={title}
+      helpText={helpText}
+      hideTitle={hideTitle}
+    >
+      {children}
+    </CollapsibleSection>
+  )
 }
 
 const CollapsibleSection = ({
@@ -22,20 +55,10 @@ const CollapsibleSection = ({
   id,
   helpText,
   hideTitle = false,
-  linkDerivedFromEntityId = false,
-  entityTitlePrepend = '',
 }: CollapsibleSectionProps) => {
   const [open, setOpen] = useState(true)
   const [showLink, setShowLink] = useState(false)
   const [copied, setCopied] = useState(false)
-
-  const { data: entityHeader, isLoading } = useGetEntityHeader(
-    linkDerivedFromEntityId ? id : undefined,
-  )
-
-  if (linkDerivedFromEntityId && isLoading) {
-    return <Skeleton width={300} />
-  }
 
   return (
     <Box
@@ -65,9 +88,7 @@ const CollapsibleSection = ({
                 marginBottom: '14px',
               }}
             >
-              {linkDerivedFromEntityId
-                ? `${entityTitlePrepend}${entityHeader?.name ?? ''}`
-                : title}
+              {title}
               {helpText && (
                 <Box
                   sx={{
@@ -127,7 +148,9 @@ const CollapsibleSection = ({
             )}
           </Box>
         )}
-        <Box sx={{ paddingBottom: open ? '50px' : 0 }}>{open && children}</Box>
+        <Collapse in={open} unmountOnExit timeout="auto">
+          <Box sx={{ paddingBottom: '50px' }}>{children}</Box>
+        </Collapse>
       </Box>
     </Box>
   )

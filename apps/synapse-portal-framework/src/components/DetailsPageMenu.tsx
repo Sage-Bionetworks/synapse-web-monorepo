@@ -1,22 +1,17 @@
 import { DetailsPageSectionLayoutType } from '@/components/DetailsPage/DetailsPageSectionLayout'
 import { scrollToWithOffset } from '@/utils'
 import { Button, Stack, Typography } from '@mui/material'
-import { NavigateFunction, Location } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 
-const EntityPageMenu = ({
+const DetailsPageMenu = ({
   menuSections,
-  navigate,
-  location,
 }: {
   menuSections: DetailsPageSectionLayoutType[]
-  navigate: NavigateFunction
-  location: Location
 }) => {
-  function handleMenuClick(
-    id: string,
-    navigate: NavigateFunction,
-    location: Location,
-  ) {
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  function handleMenuClick(id: string) {
     navigate(`${location.search}#${id}`)
     // An ID may have spaces, so use [id="..."] style selector
     // Using a hash will treat spaces as a query for descendants
@@ -66,7 +61,7 @@ const EntityPageMenu = ({
             justifyContent: 'flex-start',
           }}
           key={option.id}
-          onClick={() => handleMenuClick(option.id, navigate, location)}
+          onClick={() => handleMenuClick(option.id)}
         >
           {option.title}
         </Button>
@@ -75,4 +70,4 @@ const EntityPageMenu = ({
   )
 }
 
-export default EntityPageMenu
+export default DetailsPageMenu

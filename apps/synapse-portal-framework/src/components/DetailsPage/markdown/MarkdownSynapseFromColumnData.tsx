@@ -5,7 +5,9 @@ import MarkdownCollapse, {
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { useColumnDataMarkdownProps } from './useColumnDataMarkdownProps'
 import NoContentAvailable from 'synapse-react-client/components/SynapseTable/NoContentAvailable'
-import CollapsibleSection from '@/components/CollapsibleSection'
+import CollapsibleSection, {
+  CollapsibleSectionDerivedFromEntityId,
+} from '@/components/CollapsibleSection'
 
 type MarkdownSynapseFromColumnDataProps = {
   /**
@@ -75,14 +77,19 @@ export function MarkdownSynapseFromColumnData(
     return (
       <Fragment key={JSON.stringify(splitComponentProps)}>
         {showEntityTitle ? (
-          <CollapsibleSection
+          // <CollapsibleSection
+          //   id={splitComponentProps.ownerId!}
+          //   title=""
+          //   linkDerivedFromEntityId={true}
+          //   entityTitlePrepend={entityTitlePrepend}
+          // >
+          //   {markdownContent}
+          // </CollapsibleSection>
+          <CollapsibleSectionDerivedFromEntityId
             id={splitComponentProps.ownerId!}
-            title=""
-            linkDerivedFromEntityId={true}
-            entityTitlePrepend={entityTitlePrepend}
           >
             {markdownContent}
-          </CollapsibleSection>
+          </CollapsibleSectionDerivedFromEntityId>
         ) : (
           markdownContent
         )}

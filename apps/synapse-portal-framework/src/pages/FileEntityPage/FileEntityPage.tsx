@@ -5,9 +5,9 @@ import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSy
 import { useGetEntityBundle } from 'synapse-react-client/synapse-queries'
 import CollapsibleSection from '@/components/CollapsibleSection'
 import { DetailsPageSectionLayoutType } from '@/components/DetailsPage/DetailsPageSectionLayout'
-import { useLocation, useNavigate } from 'react-router'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
-import EntityPageMenu from '../../components/EntityPageMenu'
+import DetailsPageMenu from '../../components/DetailsPageMenu'
+import DetailsPageLayout from '@/components/DetailsPageLayout'
 
 function FileEntityPage() {
   const searchParams = useGetPortalComponentSearchParams()
@@ -15,8 +15,6 @@ function FileEntityPage() {
   const version = searchParams?.version
     ? Number(searchParams.version)
     : undefined
-  const location = useLocation()
-  const navigate = useNavigate()
 
   const { data: entityBundle, isLoading } = useGetEntityBundle(
     entityId,
@@ -41,18 +39,8 @@ function FileEntityPage() {
   }
   return (
     <Container>
-      <Box
-        sx={{
-          display: 'flex',
-          gap: '50px',
-          padding: '50px 0px 80px 0px',
-        }}
-      >
-        <EntityPageMenu
-          menuSections={fileEntityPageSections}
-          navigate={navigate}
-          location={location}
-        />
+      <DetailsPageLayout>
+        <DetailsPageMenu menuSections={fileEntityPageSections} />
         <Stack
           sx={{
             flex: 1,
@@ -60,14 +48,12 @@ function FileEntityPage() {
           }}
         >
           {entityBundle?.rootWikiId && (
-            <Box>
-              <CollapsibleSection title="Wiki" id="wiki">
-                <MarkdownSynapse
-                  ownerId={entityId}
-                  wikiId={entityBundle?.rootWikiId}
-                />
-              </CollapsibleSection>
-            </Box>
+            <CollapsibleSection title="Wiki" id="wiki">
+              <MarkdownSynapse
+                ownerId={entityId}
+                wikiId={entityBundle?.rootWikiId}
+              />
+            </CollapsibleSection>
           )}
           <CollapsibleSection title="Provenance" id="provenance">
             <ProvenanceGraph
@@ -78,7 +64,7 @@ function FileEntityPage() {
             />
           </CollapsibleSection>
         </Stack>
-      </Box>
+      </DetailsPageLayout>
     </Container>
   )
 }
