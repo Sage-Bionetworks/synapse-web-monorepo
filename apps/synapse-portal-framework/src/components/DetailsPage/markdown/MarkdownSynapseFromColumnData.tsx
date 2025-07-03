@@ -5,7 +5,7 @@ import MarkdownCollapse, {
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { useColumnDataMarkdownProps } from './useColumnDataMarkdownProps'
 import NoContentAvailable from 'synapse-react-client/components/SynapseTable/NoContentAvailable'
-import { CollapsibleSectionDerivedFromEntityId } from '@/components/CollapsibleSection'
+import CollapsibleSectionDerivedFromEntityId from '@/components/CollapsibleSectionDerivedFromEntityId'
 
 type MarkdownSynapseFromColumnDataProps = {
   /**

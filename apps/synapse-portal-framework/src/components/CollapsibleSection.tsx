@@ -1,12 +1,11 @@
-import { Box, Collapse, Skeleton, Tooltip, Typography } from '@mui/material'
+import { Box, Collapse, Tooltip, Typography } from '@mui/material'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { ReactNode, useState } from 'react'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { HelpPopover, IconSvg } from 'synapse-react-client'
 import { copyStringToClipboard } from 'synapse-react-client/utils/functions/StringUtils'
-import { useGetEntityHeader } from 'synapse-react-client/synapse-queries'
 
-type BaseCollapsibleSectionProps = {
+export type BaseCollapsibleSectionProps = {
   id: string
   children: ReactNode
   helpText?: string
@@ -15,38 +14,6 @@ type BaseCollapsibleSectionProps = {
 
 type CollapsibleSectionProps = BaseCollapsibleSectionProps & {
   title: string
-}
-
-type CollapsibleSectionDerivedFromEntityIdProps =
-  BaseCollapsibleSectionProps & {
-    entityTitlePrepend?: string
-  }
-
-export const CollapsibleSectionDerivedFromEntityId = ({
-  id,
-  children,
-  helpText,
-  hideTitle = false,
-  entityTitlePrepend = '',
-}: CollapsibleSectionDerivedFromEntityIdProps) => {
-  const { data: entityHeader, isLoading } = useGetEntityHeader(id)
-
-  if (isLoading) {
-    return <Skeleton width={300} />
-  }
-
-  const title = `${entityTitlePrepend}${entityHeader?.name ?? ''}`
-
-  return (
-    <CollapsibleSection
-      id={id}
-      title={title}
-      helpText={helpText}
-      hideTitle={hideTitle}
-    >
-      {children}
-    </CollapsibleSection>
-  )
 }
 
 const CollapsibleSection = ({
@@ -59,6 +26,18 @@ const CollapsibleSection = ({
   const [open, setOpen] = useState(true)
   const [showLink, setShowLink] = useState(false)
   const [copied, setCopied] = useState(false)
+
+  const handleCopyLink = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const urlWithoutHash = window.location.href.replace(
+      window.location.hash,
+      '',
+    )
+    const url = `${urlWithoutHash}#${id}`
+    copyStringToClipboard(url).then(() => {
+      setCopied(true)
+    })
+  }
 
   return (
     <Box
@@ -113,15 +92,7 @@ const CollapsibleSection = ({
                   <div
                     style={{ cursor: 'pointer' }}
                     onClick={e => {
-                      e.stopPropagation()
-                      const urlWithoutHash = window.location.href.replace(
-                        window.location.hash,
-                        '',
-                      )
-                      const url = `${urlWithoutHash}#${id}`
-                      copyStringToClipboard(url).then(() => {
-                        setCopied(true)
-                      })
+                      handleCopyLink(e)
                     }}
                   >
                     <IconSvg icon="link" wrap={false} sx={{ pl: 1 }} />
