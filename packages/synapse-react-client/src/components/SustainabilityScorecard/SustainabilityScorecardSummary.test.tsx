@@ -6,6 +6,7 @@ import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { MemoryRouter } from 'react-router'
 
 vi.mock('@/synapse-queries/entity/useGetQueryResultBundle')
 
@@ -17,22 +18,23 @@ const {
 const mockUseGetQueryResultBundle = vi.mocked(useGetQueryResultBundle)
 
 async function waitForDataLoad() {
-  await screen.findByText('Dependency Files')
+  await screen.findByText('Dependencies')
 }
 
 const mockBundleSuccess: QueryResultBundle = {
   queryResult: {
     queryResults: {
       headers: [
-        { name: 'dependencyFiles', columnType: 'BOOLEAN' },
-        { name: 'testFiles', columnType: 'BOOLEAN' },
-        { name: 'readmeFiles', columnType: 'BOOLEAN' },
-        { name: 'scoreDescriptor', columnType: 'STRING' },
+        { name: 'CloneRepository', columnType: 'BOOLEAN' },
+        { name: 'CheckReadme', columnType: 'BOOLEAN' },
+        { name: 'CheckDependencies', columnType: 'BOOLEAN' },
+        { name: 'CheckTests', columnType: 'BOOLEAN' },
+        { name: 'AlmanackScoreDescriptor', columnType: 'STRING' },
       ],
 
       rows: [
         {
-          values: ['true', 'true', 'false', 'foundational'],
+          values: ['true', 'true', 'false', 'false', 'foundational'],
         },
       ],
       tableId: '',
@@ -42,10 +44,11 @@ const mockBundleSuccess: QueryResultBundle = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
   },
   selectColumns: [
-    { name: 'dependencyFiles', columnType: 'BOOLEAN' },
-    { name: 'testFiles', columnType: 'BOOLEAN' },
-    { name: 'readmeFiles', columnType: 'BOOLEAN' },
-    { name: 'scoreDescriptor', columnType: 'STRING' },
+    { name: 'CloneRepository', columnType: 'BOOLEAN' },
+    { name: 'CheckReadme', columnType: 'BOOLEAN' },
+    { name: 'CheckDependencies', columnType: 'BOOLEAN' },
+    { name: 'CheckTests', columnType: 'BOOLEAN' },
+    { name: 'AlmanackScoreDescriptor', columnType: 'STRING' },
   ],
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
 }
@@ -62,27 +65,43 @@ describe('SustainabilityScorecard Tests', () => {
   const mockProps: SustainabilityScorecardSummaryProps = {
     entityId: 'syn68349264',
     text: 'Some text for the sustainability scorecard summary.',
+    filterColumn: 'toolName',
+    searchParamKey: 'toolName',
+    scoreDescriptorColumnName: 'AlmanackScoreDescriptor',
     metricsConfig: [
       {
-        key: 'dependencyFiles',
-        label: 'Dependency Files',
-        text: 'Some text for dependency files',
+        key: 'CloneRepository',
+        label: 'Repository',
+        text: 'Some text for presence of a repository',
       },
       {
-        key: 'testFiles',
-        label: 'Test Files',
-        text: 'Some text for test files',
+        key: 'CheckReadme',
+        label: 'README',
+        text: 'Some text for presence of a readme file',
       },
       {
-        key: 'readmeFiles',
-        label: 'README Files',
-        text: 'Some text for README files',
+        key: 'CheckDependencies',
+        label: 'Dependencies',
+        text: 'Some text for presence of dependencies',
+      },
+      {
+        key: 'CheckTests',
+        label: 'Tests',
+        text: 'Some text for presence of tests',
       },
     ],
   }
 
+  function renderComponent() {
+    render(
+      <MemoryRouter>
+        <SustainabilityScorecardSummary {...mockProps} />
+      </MemoryRouter>,
+    )
+  }
+
   it('displays header', async () => {
-    render(<SustainabilityScorecardSummary {...mockProps} />)
+    renderComponent()
     setGetQueryResultBundleSuccess(mockBundleSuccess)
 
     await waitForDataLoad()
@@ -94,23 +113,30 @@ describe('SustainabilityScorecard Tests', () => {
   })
 
   it('displays card', async () => {
-    render(<SustainabilityScorecardSummary {...mockProps} />)
+    renderComponent()
     setGetQueryResultBundleSuccess(mockBundleSuccess)
 
     await waitForDataLoad()
 
-    expect(screen.getByText('Dependency Files')).toBeInTheDocument()
-    expect(screen.getByText('Test Files')).toBeInTheDocument()
-    expect(screen.getByText('README Files')).toBeInTheDocument()
+    expect(screen.getByText('Dependencies')).toBeInTheDocument()
+    expect(screen.getByText('Tests')).toBeInTheDocument()
+    expect(screen.getByText('README')).toBeInTheDocument()
     expect(
-      screen.getByText('Some text for dependency files'),
+      screen.getByText('Some text for presence of a repository'),
     ).toBeInTheDocument()
-    expect(screen.getByText('Some text for test files')).toBeInTheDocument()
-    expect(screen.getByText('Some text for README files')).toBeInTheDocument()
+    expect(
+      screen.getByText('Some text for presence of a readme file'),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText('Some text for presence of dependencies'),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText('Some text for presence of tests'),
+    ).toBeInTheDocument()
   })
 
   it('renders the correct icons based on metric values', async () => {
-    render(<SustainabilityScorecardSummary {...mockProps} />)
+    renderComponent()
     setGetQueryResultBundleSuccess(mockBundleSuccess)
 
     await waitForDataLoad()
@@ -119,6 +145,6 @@ describe('SustainabilityScorecard Tests', () => {
     const cancelIcons = screen.getAllByTestId('CancelIcon')
 
     expect(checkIcons).toHaveLength(2)
-    expect(cancelIcons).toHaveLength(1)
+    expect(cancelIcons).toHaveLength(2)
   })
 })

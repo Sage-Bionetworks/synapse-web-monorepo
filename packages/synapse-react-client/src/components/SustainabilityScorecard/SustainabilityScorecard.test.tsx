@@ -5,6 +5,7 @@ import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { MemoryRouter } from 'react-router'
 
 vi.mock('@/synapse-queries/entity/useGetQueryResultBundle')
 
@@ -19,15 +20,16 @@ const mockBundleSuccess: QueryResultBundle = {
   queryResult: {
     queryResults: {
       headers: [
-        { name: 'dependencyFiles', columnType: 'BOOLEAN' },
-        { name: 'testFiles', columnType: 'BOOLEAN' },
-        { name: 'readmeFiles', columnType: 'BOOLEAN' },
-        { name: 'scoreDescriptor', columnType: 'STRING' },
+        { name: 'CloneRepository', columnType: 'BOOLEAN' },
+        { name: 'CheckReadme', columnType: 'BOOLEAN' },
+        { name: 'CheckDependencies', columnType: 'BOOLEAN' },
+        { name: 'CheckTests', columnType: 'BOOLEAN' },
+        { name: 'AlmanackScoreDescriptor', columnType: 'STRING' },
       ],
 
       rows: [
         {
-          values: ['true', 'true', 'false', 'foundational'],
+          values: ['true', 'true', 'false', 'false', 'foundational'],
         },
       ],
       tableId: '',
@@ -37,40 +39,54 @@ const mockBundleSuccess: QueryResultBundle = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
   },
   selectColumns: [
-    { name: 'dependencyFiles', columnType: 'BOOLEAN' },
-    { name: 'testFiles', columnType: 'BOOLEAN' },
-    { name: 'readmeFiles', columnType: 'BOOLEAN' },
-    { name: 'scoreDescriptor', columnType: 'STRING' },
+    { name: 'CloneRepository', columnType: 'BOOLEAN' },
+    { name: 'CheckReadme', columnType: 'BOOLEAN' },
+    { name: 'CheckDependencies', columnType: 'BOOLEAN' },
+    { name: 'CheckTests', columnType: 'BOOLEAN' },
+    { name: 'AlmanackScoreDescriptor', columnType: 'STRING' },
   ],
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
 }
 const mockProps: SustainabilityScorecardProps = {
-  entityId: 'syn68349264',
+  entityId: 'syn68561794',
+  filterColumn: 'toolName',
+  searchParamKey: 'toolName',
+  scoreDescriptorColumnName: 'AlmanackScoreDescriptor',
   metricsConfig: [
     {
-      key: 'dependencyFiles',
-      label: 'Dependency Files',
-      text: 'Some tooltip text for dependency files',
+      key: 'CloneRepository',
+      label: 'Repository',
+      text: 'Some text for presence of a repository',
     },
     {
-      key: 'testFiles',
-      label: 'Test Files',
-      text: 'Some tooltip text for test files',
+      key: 'CheckReadme',
+      label: 'README',
+      text: 'Some text for presence of a readme file',
     },
     {
-      key: 'readmeFiles',
-      label: 'README Files',
-      text: 'Some tooltip text for README files',
+      key: 'CheckDependencies',
+      label: 'Dependencies',
+      text: 'Some text for presence of dependencies',
+    },
+    {
+      key: 'CheckTests',
+      label: 'Tests',
+      text: 'Some text for presence of tests',
     },
   ],
 }
 
 async function waitForDataLoad() {
-  await screen.findByText('Dependency Files')
+  await screen.findByText('Dependencies')
 }
 
 async function renderWithSuccessMock() {
-  render(<SustainabilityScorecard {...mockProps} />)
+  render(
+    <MemoryRouter>
+      <SustainabilityScorecard {...mockProps} />
+    </MemoryRouter>,
+  )
+
   setGetQueryResultBundleSuccess(mockBundleSuccess)
   await waitForDataLoad()
 }
@@ -86,22 +102,26 @@ describe('SustainabilityScorecard tests', () => {
   it('displays metrics', async () => {
     await renderWithSuccessMock()
 
-    expect(screen.getByText('Dependency Files')).toBeInTheDocument()
-    expect(screen.getByText('Test Files')).toBeInTheDocument()
-    expect(screen.getByText('README Files')).toBeInTheDocument()
+    expect(screen.getByText('Repository')).toBeInTheDocument()
+    expect(screen.getByText('Dependencies')).toBeInTheDocument()
+    expect(screen.getByText('Tests')).toBeInTheDocument()
+    expect(screen.getByText('README')).toBeInTheDocument()
   })
 
   it('displays the tooltip text for each metric', async () => {
     await renderWithSuccessMock()
 
     expect(
-      screen.getByLabelText('Some tooltip text for dependency files'),
+      screen.getByLabelText('Some text for presence of a repository'),
     ).toBeInTheDocument()
     expect(
-      screen.getByLabelText('Some tooltip text for test files'),
+      screen.getByLabelText('Some text for presence of a readme file'),
     ).toBeInTheDocument()
     expect(
-      screen.getByLabelText('Some tooltip text for README files'),
+      screen.getByLabelText('Some text for presence of dependencies'),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByLabelText('Some text for presence of tests'),
     ).toBeInTheDocument()
   })
 

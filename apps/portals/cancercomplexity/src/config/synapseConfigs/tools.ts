@@ -15,22 +15,22 @@ export const metricsConfig: MetricsConfig[] = [
   {
     key: 'CloneRepository',
     label: 'Repository',
-    text: 'Indicates presence of automated tests',
+    text: 'Some text for presence of a repository',
   },
   {
     key: 'CheckReadme',
     label: 'README',
-    text: 'Indicates presence of automated tests',
+    text: 'Some text for presence of a readme file',
   },
   {
     key: 'CheckDependencies',
     label: 'Dependencies',
-    text: 'Presence of documentation for setup/use',
+    text: 'Some text for presence of dependencies',
   },
   {
     key: 'CheckTests',
     label: 'Tests',
-    text: 'Presence of documentation for setup/use',
+    text: 'Some text for presence of tests',
   },
 ]
 

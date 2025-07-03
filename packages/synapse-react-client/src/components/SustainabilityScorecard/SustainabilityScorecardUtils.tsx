@@ -74,14 +74,14 @@ export const getDial = (
   scoreDescriptor: string,
   isScorecardSummary?: boolean,
 ) => {
-  type ScoreDescriptor = 'foundational' | 'developing' | 'maturing' | 'stable'
+  type ScoreDescriptor = 'Foundational' | 'Developing' | 'Maturing' | 'Stable'
 
   const toolTipText = {
-    foundational:
+    Foundational:
       'Early-stage sustainability with opportunities for contributions',
-    developing: 'Strong in key sustainability areas',
-    maturing: 'Demonstrates strong sustainable practices',
-    stable: 'Maintained with long-term resilience in mind',
+    Developing: 'Strong in key sustainability areas',
+    Maturing: 'Demonstrates strong sustainable practices',
+    Stable: 'Maintained with long-term resilience in mind',
   }
 
   // Render dark dial
@@ -114,17 +114,17 @@ export const getDial = (
   )
 
   const lightDials: Record<string, ReactElement> = {
-    foundational: renderLightDial(<LightDialPosition1 />, 'foundational'),
-    developing: renderLightDial(<LightDialPosition2 />, 'developing'),
-    maturing: renderLightDial(<LightDialPosition3 />, 'maturing'),
-    stable: renderLightDial(<LightDialPosition4 />, 'stable'),
+    foundational: renderLightDial(<LightDialPosition1 />, 'Foundational'),
+    developing: renderLightDial(<LightDialPosition2 />, 'Developing'),
+    maturing: renderLightDial(<LightDialPosition3 />, 'Maturing'),
+    stable: renderLightDial(<LightDialPosition4 />, 'Stable'),
   }
 
   const darkDials: Record<string, ReactElement> = {
-    foundational: renderDarkDial(<DarkDialPosition1 />, 'foundational'),
-    developing: renderDarkDial(<DarkDialPosition2 />, 'developing'),
-    maturing: renderDarkDial(<DarkDialPosition3 />, 'maturing'),
-    stable: renderDarkDial(<DarkDialPosition4 />, 'stable'),
+    foundational: renderDarkDial(<DarkDialPosition1 />, 'Foundational'),
+    developing: renderDarkDial(<DarkDialPosition2 />, 'Developing'),
+    maturing: renderDarkDial(<DarkDialPosition3 />, 'Maturing'),
+    stable: renderDarkDial(<DarkDialPosition4 />, 'Stable'),
   }
 
   const key = scoreDescriptor.toLowerCase()
