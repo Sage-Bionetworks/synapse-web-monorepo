@@ -17,6 +17,7 @@ import {
 import { InfoTwoTone } from '@mui/icons-material'
 import { CheckIcon } from '@/assets/icons/terms/CheckIcon'
 import { useSearchParams } from 'react-router'
+import NoContentAvailable from '../SynapseTable/NoContentAvailable'
 
 export type MetricsConfig = {
   /** Name of the metric column in the table */
@@ -135,7 +136,22 @@ const SustainabilityScorecard = ({
   const { data: queryResultBundle, isLoading } =
     useGetQueryResultBundle(queryBundleRequest)
 
+  if (isLoading) {
+    return <Skeleton width={'100%'} height={'100%'} />
+  }
+
   const data = queryResultBundle?.queryResult!.queryResults
+
+  if (!data?.rows?.length) {
+    return (
+      <Stack sx={{ display: 'flex', padding: '20px', ...sx }}>
+        <Typography sx={{ paddingBottom: '20px' }} variant="subsectionHeader">
+          Sustainability Index
+        </Typography>
+        <NoContentAvailable />
+      </Stack>
+    )
+  }
 
   const scoreDescriptorColIndex = getFieldIndex(
     scoreDescriptorColumnName,
@@ -150,10 +166,6 @@ const SustainabilityScorecard = ({
     metricsConfig,
   )
   const dial = getDial(scoreDescriptor ?? '')
-
-  if (isLoading) {
-    return <Skeleton width={'100%'} height={'100%'} />
-  }
 
   return (
     <Box

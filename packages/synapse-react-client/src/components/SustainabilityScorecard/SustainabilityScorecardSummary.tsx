@@ -15,6 +15,7 @@ import { ReactNode } from 'react'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
 import { useSearchParams } from 'react-router'
+import NoContentAvailable from '../SynapseTable/NoContentAvailable'
 
 export type SustainabilityScorecardSummaryProps =
   SustainabilityScorecardBaseProps & {
@@ -85,6 +86,12 @@ const SustainabilityScorecardSummary = ({
   const [searchParams] = useSearchParams()
   const searchValue = searchParams.get(searchParamKey)
 
+  console.log('entityId', entityId)
+  console.log('searchValue', searchValue)
+  console.log('filterColumn', filterColumn)
+  console.log('scoreDescriptorColumnName', scoreDescriptorColumnName)
+  console.log('metricsConfig', metricsConfig)
+
   const selectedColumns = getSelectedColumns(
     metricsConfig,
     scoreDescriptorColumnName,
@@ -116,6 +123,14 @@ const SustainabilityScorecardSummary = ({
 
   const data = queryResultBundle?.queryResult!.queryResults
 
+  if (!data?.rows?.length) {
+    return (
+      <Box sx={{ paddingTop: '60px' }}>
+        <NoContentAvailable />
+      </Box>
+    )
+  }
+
   const scoreDescriptorColIndex = getFieldIndex(
     scoreDescriptorColumnName,
     queryResultBundle,
@@ -138,7 +153,7 @@ const SustainabilityScorecardSummary = ({
           display: 'flex',
           gap: '40px',
           marginBottom: '30px',
-          padding: '4px 12px 4px 0px',
+          padding: '60px 12px 4px 0px',
         }}
       >
         <Box sx={{ flex: 1 }}>
