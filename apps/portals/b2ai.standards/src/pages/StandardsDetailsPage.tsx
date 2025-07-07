@@ -15,12 +15,12 @@ import {
 } from 'synapse-react-client'
 import { CardContainerLogic } from 'synapse-react-client'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
-import columnAliases from '../config/columnAliases'
+import columnAliases from '@/config/columnAliases'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import {
   DST_TABLE_COLUMN_NAMES,
   standardsDetailsPageSQL,
-} from '../config/resources'
+} from '@/config/resources'
 const dataSql = standardsDetailsPageSQL
 
 export const standardsCardSchema: TableToGenericCardMapping = {
@@ -29,7 +29,7 @@ export const standardsCardSchema: TableToGenericCardMapping = {
   subTitle: 'standardName',
   description: 'description',
   link: 'url',
-  secondaryLabels: ['SDO', 'collections', 'topic', 'dataTypes'],
+  secondaryLabels: ['SDO', 'category', 'collections', 'topic', 'dataTypes'],
 }
 
 export const linkedStandardCardConfiguration: CardConfiguration = {

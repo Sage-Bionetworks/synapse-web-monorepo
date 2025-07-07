@@ -23,7 +23,7 @@ export const dataColumnLinks: LabelLinkConfig = [
     // tooltipText?: string
   },
   {
-    matchColumnName: 'isMature',
+    matchColumnName: 'mature',
     isMapValueToReactNodeConfig: true,
     Component: IsMatureIconMap,
   },
