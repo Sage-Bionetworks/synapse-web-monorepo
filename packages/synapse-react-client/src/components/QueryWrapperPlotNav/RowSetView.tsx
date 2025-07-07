@@ -11,7 +11,6 @@ import { Box } from '@mui/material'
 import { TablePagination } from '../SynapseTable/TablePagination'
 import { ViewMoreQueryResultsButton } from '../QueryWrapper/ViewMoreQueryResultsButton'
 import { useRowSet } from './UseRowSet'
-import { Query } from '@sage-bionetworks/synapse-types'
 
 export type RowSetViewProps = {
   tableConfiguration?: SynapseTableConfiguration

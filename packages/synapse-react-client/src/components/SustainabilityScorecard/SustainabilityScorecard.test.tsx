@@ -127,7 +127,7 @@ describe('SustainabilityScorecard tests', () => {
 
   it('renders the score descriptor', async () => {
     await renderWithSuccessMock()
-    const descriptor = await screen.findByText('foundational')
+    const descriptor = await screen.findByText('Foundational')
     expect(descriptor).toBeInTheDocument()
   })
 })
