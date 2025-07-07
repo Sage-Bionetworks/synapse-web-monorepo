@@ -15,9 +15,9 @@ function RequirementsForPublication() {
         loadingSkeletonRowCount={50}
       />
       <iframe
-        src="https://docs.google.com/forms/d/e/1FAIpQLSdZCSXj3DHZxshCNk2bgSHkCGFHL5qsfoaid51plQb5QV4nBg/viewform?embedded=true"
+        src="https://docs.google.com/forms/d/e/1FAIpQLSfjsLpVDzxRSs83qL_i4G8cq_DUYMGK8J10PKj3p9vve-0ftw/viewform?embedded=true"
         width="640"
-        height="414"
+        height="600"
       >
         Loading…
       </iframe>
