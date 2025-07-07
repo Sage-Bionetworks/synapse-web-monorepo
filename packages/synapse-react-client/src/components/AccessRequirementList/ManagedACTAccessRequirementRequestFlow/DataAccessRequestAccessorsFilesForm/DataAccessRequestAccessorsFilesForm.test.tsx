@@ -565,13 +565,12 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
     mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
     renderComponent(defaultProps)
     await screen.findByTestId(MARKDOWN_SYNAPSE_TEST_ID)
-    expect(mockMarkdownSynapse).toHaveBeenCalledWith(
+    expect(mockMarkdownSynapse).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         wikiId: mockManagedACTAccessRequirementWikiPageKey.wikiPageId,
         ownerId: mockManagedACTAccessRequirementWikiPageKey.ownerObjectId,
         objectType: mockManagedACTAccessRequirementWikiPageKey.ownerObjectType,
       }),
-      expect.anything(),
     )
   })
 

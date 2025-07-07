@@ -27,7 +27,6 @@ export function useGetWebhooksInfinite<
       ListUserWebhooksResponse,
       SynapseClientError,
       TData,
-      ListUserWebhooksResponse,
       QueryKey,
       ListUserWebhooksResponse['nextPageToken']
     >

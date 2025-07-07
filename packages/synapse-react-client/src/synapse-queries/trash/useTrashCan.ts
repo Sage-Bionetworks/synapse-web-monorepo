@@ -23,7 +23,6 @@ export function useGetItemsInTrashCanInfinite<
       PaginatedResults<TrashedEntity>,
       SynapseClientError,
       TData,
-      PaginatedResults<TrashedEntity>,
       QueryKey,
       number | undefined
     >

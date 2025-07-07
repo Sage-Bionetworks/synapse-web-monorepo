@@ -51,7 +51,7 @@ export default function StepsSideNav(props: StepsSideNavProps) {
     step: Step,
     isWizard: boolean,
     isRenderChild = false,
-  ): JSX.Element => {
+  ) => {
     if (!step || (step.child && !isRenderChild)) {
       return <></>
     }
@@ -59,7 +59,7 @@ export default function StepsSideNav(props: StepsSideNavProps) {
       step: Step,
       isWizard: boolean,
       callback: (step: Step) => void,
-    ): JSX.Element => {
+    ) => {
       if (!step.inProgress && (!isWizard || !!step.final)) {
         return (
           <button className="btn btn-link" onClick={() => callback(step)}>

@@ -66,7 +66,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
                 displayedColumns={[
                   'standardName',
                   'SDO',
-                  DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
+                  DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION,
                   'isOpen',
                   'registration',
                 ]}

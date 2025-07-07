@@ -1,13 +1,13 @@
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import type { IconName } from 'synapse-react-client'
 import Switch from 'react-switch'
 import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
 
 export type ToggleSynapseObjectsProps = {
   icon1?: IconName
-  synapseObject1?: JSX.Element
+  synapseObject1?: ReactNode
   icon2?: IconName
-  synapseObject2?: JSX.Element
+  synapseObject2?: ReactNode
 }
 
 export default function ToggleSynapseObjects(props: ToggleSynapseObjectsProps) {

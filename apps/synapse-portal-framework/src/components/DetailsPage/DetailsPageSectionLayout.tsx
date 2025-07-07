@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
-import { HeadlineWithLink } from './HeadlineWithLink'
 import { SynapseErrorBoundary } from 'synapse-react-client/components/error/ErrorBanner'
+import CollapsibleSection from '@/components/CollapsibleSection'
 
 /**
  * Describes a section of a portals DetailsPage. Using this interface allows us to render
@@ -22,13 +22,14 @@ export function DetailsPageSectionLayout(props: DetailsPageSectionLayoutType) {
   const { id, title, hideTitle = false, element, helpText } = props
   return (
     <section id={id}>
-      {title && !hideTitle && (
-        <>
-          <HeadlineWithLink title={title} id={id} helpText={helpText} />
-          <hr />
-        </>
-      )}
-      <SynapseErrorBoundary>{element}</SynapseErrorBoundary>
+      <CollapsibleSection
+        title={title ?? ''}
+        hideTitle={hideTitle}
+        id={id}
+        helpText={helpText}
+      >
+        <SynapseErrorBoundary>{element}</SynapseErrorBoundary>
+      </CollapsibleSection>
     </section>
   )
 }

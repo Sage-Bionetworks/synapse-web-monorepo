@@ -3,9 +3,9 @@ import MarkdownCollapse, {
   MarkdownCollapseProps,
 } from 'synapse-react-client/components/Markdown/MarkdownCollapse'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
-import { HeadlineWithLinkDerivedFromEntityId } from '../HeadlineWithLink'
 import { useColumnDataMarkdownProps } from './useColumnDataMarkdownProps'
 import NoContentAvailable from 'synapse-react-client/components/SynapseTable/NoContentAvailable'
+import CollapsibleSectionDerivedFromEntityId from '@/components/CollapsibleSectionDerivedFromEntityId'
 
 type MarkdownSynapseFromColumnDataProps = {
   /**
@@ -64,23 +64,23 @@ export function MarkdownSynapseFromColumnData(
   }
 
   return propsArray.map(splitComponentProps => {
+    const markdownContent =
+      MarkdownCollapseProps == null ? (
+        <MarkdownSynapse {...splitComponentProps} />
+      ) : (
+        <MarkdownCollapse {...splitComponentProps} {...MarkdownCollapseProps} />
+      )
+
     return (
       <Fragment key={JSON.stringify(splitComponentProps)}>
-        {showEntityTitle && (
-          <>
-            <HeadlineWithLinkDerivedFromEntityId
-              id={splitComponentProps.ownerId!}
-            />
-            <hr />
-          </>
-        )}
-        {MarkdownCollapseProps == null ? (
-          <MarkdownSynapse {...splitComponentProps} />
+        {showEntityTitle ? (
+          <CollapsibleSectionDerivedFromEntityId
+            id={splitComponentProps.ownerId!}
+          >
+            {markdownContent}
+          </CollapsibleSectionDerivedFromEntityId>
         ) : (
-          <MarkdownCollapse
-            {...splitComponentProps}
-            {...MarkdownCollapseProps}
-          />
+          markdownContent
         )}
       </Fragment>
     )

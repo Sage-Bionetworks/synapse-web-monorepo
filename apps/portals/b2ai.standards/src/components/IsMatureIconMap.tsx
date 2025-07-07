@@ -5,7 +5,7 @@ import { MapValueToReactComponentConfig } from 'synapse-react-client/components/
 import MatureStandardIcon from '@mui/icons-material/WorkspacePremiumTwoTone'
 
 const mapping: Record<string, ReactNode> = {
-  ['Yes']: (
+  ['Is Mature']: (
     <Tooltip
       title={
         'This standard has one or more implementations appropriate for production use, or has undergone a review process and has been determined to be in a mature state.'

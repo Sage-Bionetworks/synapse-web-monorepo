@@ -21,7 +21,6 @@ export function useGetOAuthClientInfinite<
       OAuthClientList,
       SynapseClientError,
       TData,
-      OAuthClientList,
       QueryKey,
       OAuthClientList['nextPageToken']
     >

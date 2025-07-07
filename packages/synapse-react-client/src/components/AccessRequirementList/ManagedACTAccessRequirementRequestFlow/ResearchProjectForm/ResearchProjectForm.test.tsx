@@ -421,13 +421,12 @@ describe('ResearchProjectForm', { timeout: 30_000 }, () => {
 
     await screen.findByTestId(MARKDOWN_SYNAPSE_TEST_ID)
 
-    expect(mockMarkdownSynapse).toHaveBeenCalledWith(
+    expect(mockMarkdownSynapse).toHaveBeenRenderedWithProps(
       expect.objectContaining({
         wikiId: mockManagedACTAccessRequirementWikiPageKey.wikiPageId,
         ownerId: mockManagedACTAccessRequirementWikiPageKey.ownerObjectId,
         objectType: mockManagedACTAccessRequirementWikiPageKey.ownerObjectType,
       }),
-      expect.anything(),
     )
   })
 })

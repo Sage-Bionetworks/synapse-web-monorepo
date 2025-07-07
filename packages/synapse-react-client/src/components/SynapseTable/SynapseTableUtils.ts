@@ -1,6 +1,7 @@
 import {
   hasFilesInView,
   isDataset,
+  isDatasetCollection,
   isEntityView,
 } from '@/utils/functions/EntityTypeUtils'
 import {
@@ -132,6 +133,11 @@ export function getDefaultPrimaryKey(
   return undefined
 }
 
-export function isEntityViewOrDataset(entity: Entity): boolean {
-  return Boolean(entity && (isEntityView(entity) || isDataset(entity)))
+export function isEntityViewOrDatasetOrCollection(entity: Entity): boolean {
+  return Boolean(
+    entity &&
+      (isEntityView(entity) ||
+        isDataset(entity) ||
+        isDatasetCollection(entity)),
+  )
 }

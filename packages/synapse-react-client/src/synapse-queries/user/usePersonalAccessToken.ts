@@ -25,7 +25,6 @@ export function useGetPersonalAccessTokensInfinite<
       AccessTokenRecordList,
       SynapseClientError,
       TData,
-      AccessTokenRecordList,
       QueryKey,
       AccessTokenRecordList['nextPageToken']
     >
