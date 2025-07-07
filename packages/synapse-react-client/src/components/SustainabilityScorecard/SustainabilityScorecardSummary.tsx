@@ -86,12 +86,6 @@ const SustainabilityScorecardSummary = ({
   const [searchParams] = useSearchParams()
   const searchValue = searchParams.get(searchParamKey)
 
-  console.log('entityId', entityId)
-  console.log('searchValue', searchValue)
-  console.log('filterColumn', filterColumn)
-  console.log('scoreDescriptorColumnName', scoreDescriptorColumnName)
-  console.log('metricsConfig', metricsConfig)
-
   const selectedColumns = getSelectedColumns(
     metricsConfig,
     scoreDescriptorColumnName,
