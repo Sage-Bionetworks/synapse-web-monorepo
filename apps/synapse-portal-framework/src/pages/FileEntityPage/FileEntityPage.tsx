@@ -8,6 +8,7 @@ import { DetailsPageSectionLayoutType } from '@/components/DetailsPage/DetailsPa
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 import DetailsPageMenu from '../../components/DetailsPageMenu'
 import DetailsPageLayout from '@/components/DetailsPageLayout'
+import FileEntityPageHeader from './FileEntityPageHeader'
 
 function FileEntityPage() {
   const searchParams = useGetPortalComponentSearchParams()
@@ -22,8 +23,11 @@ function FileEntityPage() {
     {
       includeEntity: true,
       includeRootWikiId: true,
+      includeDOIAssociation: true,
     },
   )
+
+  console.log('entityBundle', entityBundle)
 
   const fileEntityPageSections = [
     entityBundle?.rootWikiId && { id: 'wiki', title: 'Wiki' },
@@ -38,34 +42,37 @@ function FileEntityPage() {
     )
   }
   return (
-    <Container>
-      <DetailsPageLayout>
-        <DetailsPageMenu menuSections={fileEntityPageSections} />
-        <Stack
-          sx={{
-            flex: 1,
-            gap: '40px',
-          }}
-        >
-          {entityBundle?.rootWikiId && (
-            <CollapsibleSection title="Wiki" id="wiki">
-              <MarkdownSynapse
-                ownerId={entityId}
-                wikiId={entityBundle?.rootWikiId}
+    <>
+      {entityBundle && <FileEntityPageHeader data={entityBundle} />}
+      <Container>
+        <DetailsPageLayout>
+          <DetailsPageMenu menuSections={fileEntityPageSections} />
+          <Stack
+            sx={{
+              flex: 1,
+              gap: '40px',
+            }}
+          >
+            {entityBundle?.rootWikiId && (
+              <CollapsibleSection title="Wiki" id="wiki">
+                <MarkdownSynapse
+                  ownerId={entityId}
+                  wikiId={entityBundle?.rootWikiId}
+                />
+              </CollapsibleSection>
+            )}
+            <CollapsibleSection title="Provenance" id="provenance">
+              <ProvenanceGraph
+                entityRefs={[
+                  { targetId: entityId, targetVersionNumber: version },
+                ]}
+                containerHeight="400px"
               />
             </CollapsibleSection>
-          )}
-          <CollapsibleSection title="Provenance" id="provenance">
-            <ProvenanceGraph
-              entityRefs={[
-                { targetId: entityId, targetVersionNumber: version },
-              ]}
-              containerHeight="400px"
-            />
-          </CollapsibleSection>
-        </Stack>
-      </DetailsPageLayout>
-    </Container>
+          </Stack>
+        </DetailsPageLayout>
+      </Container>
+    </>
   )
 }
 

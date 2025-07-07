@@ -25,6 +25,8 @@ function CroissantButton(props: CroissantButtonProps) {
     datasetVersionNumber,
   )
 
+  console.log('props', props)
+
   if (!croissantUrl && !isLoading) {
     return null
   }
