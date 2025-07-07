@@ -142,7 +142,7 @@ const SustainabilityScorecard = ({
 
   const data = queryResultBundle?.queryResult!.queryResults
 
-  if (!data?.rows?.length) {
+  if (data?.rows?.length === 0) {
     return (
       <Stack sx={{ display: 'flex', padding: '20px', ...sx }}>
         <Typography sx={{ paddingBottom: '20px' }} variant="subsectionHeader">
