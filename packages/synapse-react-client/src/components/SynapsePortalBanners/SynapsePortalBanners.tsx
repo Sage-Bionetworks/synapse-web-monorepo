@@ -105,6 +105,8 @@ export default function SynapsePortalBanners({
               },
               width: '100%',
               alignItems: 'center',
+              mt: '10px',
+              mb: '10px',
             }}
           >
             <Box
