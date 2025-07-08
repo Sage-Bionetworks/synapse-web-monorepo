@@ -27,8 +27,6 @@ function FileEntityPage() {
     },
   )
 
-  console.log('entityBundle', entityBundle)
-
   const fileEntityPageSections = [
     entityBundle?.rootWikiId && { id: 'wiki', title: 'Wiki' },
     { id: 'provenance', title: 'Provenance' },
