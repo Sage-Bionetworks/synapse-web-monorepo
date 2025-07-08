@@ -45,16 +45,11 @@ const Dial = ({ scoreDescriptor, isScorecardSummary }: DialProps) => {
   }
 
   const key = scoreDescriptor.toLowerCase()
-  //   const selectedDials = isScorecardSummary ? darkDials : lightDials
-
-  //   if (key in selectedDials) {
-  //     return selectedDials[key]
-  //   }
-  //   return <LightDialPosition1 />
 
   const selectedMap = isScorecardSummary
     ? darkDialComponents
     : lightDialComponents
+
   const selected = selectedMap[key]
 
   if (!selected) return <LightDialPosition1 />

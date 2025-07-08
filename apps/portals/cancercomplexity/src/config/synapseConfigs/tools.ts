@@ -5,34 +5,10 @@ import type {
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
-import { toolkitSql, toolsSql } from '../resources'
+import { toolsSql } from '../resources'
 import { citationBoilerplateText } from './commonProps'
-import { MetricsConfig } from 'synapse-react-client/components/SustainabilityScorecard/SustainabilityScorecard'
 
 const rgbIndex = 6
-
-export const metricsConfig: MetricsConfig[] = [
-  {
-    key: 'CloneRepository',
-    label: 'Repository',
-    text: 'Some text for presence of a repository',
-  },
-  {
-    key: 'CheckReadme',
-    label: 'README',
-    text: 'Some text for presence of a readme file',
-  },
-  {
-    key: 'CheckDependencies',
-    label: 'Dependencies',
-    text: 'Some text for presence of dependencies',
-  },
-  {
-    key: 'CheckTests',
-    label: 'Tests',
-    text: 'Some text for presence of tests',
-  },
-]
 
 export const toolsSchema: TableToGenericCardMapping = {
   type: SynapseConstants.TOOL,
