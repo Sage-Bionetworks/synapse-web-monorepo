@@ -115,6 +115,7 @@ export default function SynapsePortalBanners({
                 display: 'flex',
                 flexWrap: 'wrap',
                 justifyContent: 'space-between',
+                gap: '10px',
               }}
             >
               <Box
