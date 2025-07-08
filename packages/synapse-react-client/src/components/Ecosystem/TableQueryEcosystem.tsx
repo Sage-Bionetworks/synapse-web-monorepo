@@ -16,6 +16,7 @@ import {
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
 import uniq from 'lodash-es/uniq'
+import { ReactNode } from 'react'
 import EcosystemLayout from './EcosystemLayout'
 
 /* The column names expected to be found in the table */
@@ -60,7 +61,7 @@ function TableQueryEcosystemCard(props: TableQueryEcosystemCardProps) {
   const resourceDescriptionMarkdown =
     row.values[resourceDescriptionColumnIndex]!
 
-  let iconElement = <span />
+  let iconElement: ReactNode = null
 
   const resourceIconImageColumnIndex = getColumnIndex(
     COLUMN_NAMES.RESOURCE_ICON_IMAGE,
