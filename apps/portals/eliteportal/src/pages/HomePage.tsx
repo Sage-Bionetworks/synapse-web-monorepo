@@ -306,9 +306,10 @@ function HomePageInternal() {
                       plotType: 'STACKED_HORIZONTAL_BAR',
                     },
                     {
-                      title: 'Gorbunova CP Transcriptomics',
+                      title:
+                        'Comparative transcriptomics reveals circadian and pluripotency networks as two pillars of longevity regulation',
                       description:
-                        'Comparative transcriptomics reveals circadian and pluripotency networks as two pillars.',
+                        'This study conducted comparative transcriptomics on 26 species with diverse lifespans, identifying thousands of genes correlated with maximum lifespan. This work provides targets for anti-aging interventions by defining pathways correlated with longevity across mammals and uncovers circadian and pluripotency networks as central regulators of longevity.',
                       facetsToPlot: ['dataTypes'],
                       selectFacetColumnName: 'Study',
                       selectFacetColumnValue: 'Gorbunova_CP_Transcriptomics',
