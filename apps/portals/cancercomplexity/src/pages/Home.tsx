@@ -139,7 +139,6 @@ function Home() {
       <div className={'home-bg-dark'}>
         <SectionLayout
           title="The Cancer Resource Information Ecosystem"
-          subtitle="The Cancer Resource Information ecosystem contains a growing list of tools and resources. Explore some of them below."
           centerTitle
           ContainerProps={{
             className: 'home-spacer',
