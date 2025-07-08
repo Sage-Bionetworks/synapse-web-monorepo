@@ -1,7 +1,5 @@
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
-import { SynapseConstants } from '@/utils'
 import { getFieldIndex } from '@/utils/functions/queryUtils'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import {
   getMetricValues,
   SUSTAINABILITY_ICON_COLORS,
@@ -11,13 +9,8 @@ import { Box, Card, Skeleton, Stack, Typography, useTheme } from '@mui/material'
 import { ReactNode } from 'react'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
-import { useSearchParams } from 'react-router'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
 import Dial from './Dial'
-import {
-  getAdditionalFilters,
-  parseEntityIdFromSqlStatement,
-} from '@/utils/functions'
 
 export type SustainabilityScorecardSummaryProps =
   SustainabilityScorecardBaseProps & {
