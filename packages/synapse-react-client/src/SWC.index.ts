@@ -68,6 +68,8 @@ import SynapsePlansPage from './components/SynapseHomepageV2/SynapsePlansPage'
 import SynapseNavDrawer from './components/SynapseNavDrawer/SynapseNavDrawer'
 import DatasetItemsEditor from './components/SynapseTable/datasets/DatasetItemsEditor'
 import TableColumnSchemaEditor from './components/TableColumnSchemaEditor/TableColumnSchemaEditor'
+import SynapsePortalBanners from './components/SynapsePortalBanners/SynapsePortalBanners'
+
 import {
   displayToast,
   SynapseToastContainer,
@@ -171,6 +173,7 @@ const SynapseComponents = {
   SynapseHomepageV2,
   SynapseNavDrawer,
   SynapsePlansPage,
+  SynapsePortalBanners,
   SynapseToastContainer,
   TableColumnSchemaEditor,
   TrashCanList,
