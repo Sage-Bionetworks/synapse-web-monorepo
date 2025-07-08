@@ -132,7 +132,6 @@ export type TableRowGenericCardProps = {
   rowId?: number
   /** The versionNumber of the table row */
   versionNumber?: number
-  searchParams?: Record<string, string>
 } & CommonCardProps
 
 // SWC-6115: special rendering of the version column (for Views)
