@@ -130,7 +130,7 @@ export default function SynapsePortalBanners({
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
-                  mt: '10px',
+                  justifyContent: 'center',
                   mr: '10px',
                 }}
               >
