@@ -1,17 +1,11 @@
-import { Box, Container, Stack, Typography } from '@mui/material'
+import { Box, Container, Typography } from '@mui/material'
 import { EntityBundle } from '@sage-bionetworks/synapse-types'
-// import CroissantButton from 'synapse-react-client/components/GenericCard/CroissantButton/CroissantButton'
 import { IconSvg } from 'synapse-react-client'
 import { FileEntity } from '@sage-bionetworks/synapse-types'
 import CitationPopover from 'synapse-react-client/components/CitationPopover'
-import CroissantButton from 'synapse-react-client/components/GenericCard/CroissantButton/CroissantButton'
 
 const FileEntityPageHeader = ({ data }: { data: EntityBundle }) => {
-  console.log('data in header', data)
-
   const entity = data.entity as FileEntity
-
-  console.log('entity id', entity.id)
 
   return (
     <Box
