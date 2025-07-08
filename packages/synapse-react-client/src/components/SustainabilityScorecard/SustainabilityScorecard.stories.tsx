@@ -1,11 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react'
-import SustainabilityScorecard, {
-  SustainabilityScorecardProps,
-} from './SustainabilityScorecard'
+import SustainabilityScorecard from './SustainabilityScorecard'
 import { MemoryRouter } from 'react-router'
 
-const mockProps: SustainabilityScorecardProps = {
-  entityId: 'syn68561794',
+const mockProps = {
+  sql: 'SELECT * FROM syn68561794',
   filterColumn: 'toolName',
   searchParamKey: 'toolName',
   scoreDescriptorColumnName: 'AlmanackScoreDescriptor',
@@ -33,15 +31,17 @@ const mockProps: SustainabilityScorecardProps = {
   ],
 }
 
-const meta = {
+const meta: Meta<typeof SustainabilityScorecard> = {
   title: 'Components/SustainabilityScorecard/Scorecard',
   component: SustainabilityScorecard,
+  args: mockProps,
   parameters: {
     chromatic: { viewports: [600, 1200] },
   },
-} satisfies Meta
+}
 export default meta
-type Story = StoryObj<typeof meta>
+
+type Story = StoryObj<typeof SustainabilityScorecard>
 
 export const Demo: Story = {
   render: args => (

@@ -18,7 +18,6 @@ export type RowSetViewProps = {
   initialLimit?: number
   hideDownload?: boolean
   multiCardList?: boolean
-  searchParams?: Record<string, string>
 }
 
 /**
@@ -28,13 +27,7 @@ export type RowSetViewProps = {
  * @constructor
  */
 export function RowSetView(props: RowSetViewProps) {
-  const {
-    cardConfiguration,
-    hideDownload,
-    initialLimit,
-    multiCardList,
-    searchParams,
-  } = props
+  const { cardConfiguration, hideDownload, initialLimit, multiCardList } = props
 
   const [initialLimitIsApplied, setInitialLimitIsApplied] = useState(
     initialLimit != null,
@@ -84,7 +77,6 @@ export function RowSetView(props: RowSetViewProps) {
                 {...cardConfiguration}
                 rowSet={rowSet}
                 multiCardList={multiCardList}
-                searchParams={searchParams}
               />
             )}
           </Suspense>

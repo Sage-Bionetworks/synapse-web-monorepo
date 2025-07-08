@@ -5,7 +5,7 @@ import type {
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
-import { toolkitId, toolsSql } from '../resources'
+import { toolkitSql, toolsSql } from '../resources'
 import { citationBoilerplateText } from './commonProps'
 import { MetricsConfig } from 'synapse-react-client/components/SustainabilityScorecard/SustainabilityScorecard'
 
@@ -40,7 +40,7 @@ export const toolsSchema: TableToGenericCardMapping = {
   description: 'description',
   includeCitation: true,
   sustainabilityScorecard: {
-    entityId: toolkitId,
+    sql: toolkitSql,
     searchParamKey: 'toolName',
     filterColumn: 'toolName',
     metricsConfig: metricsConfig,

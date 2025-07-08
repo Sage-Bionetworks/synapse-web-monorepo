@@ -48,7 +48,7 @@ const mockBundleSuccess: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
 }
 const mockProps: SustainabilityScorecardProps = {
-  entityId: 'syn68561794',
+  sql: 'SELECT * FROM syn68561794',
   filterColumn: 'toolName',
   searchParamKey: 'toolName',
   scoreDescriptorColumnName: 'AlmanackScoreDescriptor',

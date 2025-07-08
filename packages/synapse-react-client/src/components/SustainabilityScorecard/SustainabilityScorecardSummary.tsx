@@ -3,10 +3,7 @@ import { SynapseConstants } from '@/utils'
 import { getFieldIndex } from '@/utils/functions/queryUtils'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import {
-  buildSustainabilitySql,
-  getDial,
   getMetricValues,
-  getSelectedColumns,
   SUSTAINABILITY_ICON_COLORS,
   SustainabilityScorecardBaseProps,
 } from './SustainabilityScorecardUtils'
@@ -16,6 +13,11 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
 import { useSearchParams } from 'react-router'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
+import Dial from './Dial'
+import {
+  getAdditionalFilters,
+  parseEntityIdFromSqlStatement,
+} from '@/utils/functions'
 
 export type SustainabilityScorecardSummaryProps =
   SustainabilityScorecardBaseProps & {
@@ -75,28 +77,20 @@ const MetricSummaryRow = ({
 }
 
 const SustainabilityScorecardSummary = ({
-  entityId,
+  sql,
   text,
   metricsConfig,
   scoreDescriptorColumnName,
-  searchParamKey,
-  filterColumn,
 }: SustainabilityScorecardSummaryProps) => {
   const theme = useTheme()
   const [searchParams] = useSearchParams()
-  const searchValue = searchParams.get(searchParamKey)
+  const entityId = parseEntityIdFromSqlStatement(sql)
 
-  const selectedColumns = getSelectedColumns(
-    metricsConfig,
-    scoreDescriptorColumnName,
-  )
+  const searchParamsObject = Object.fromEntries(
+    searchParams.entries(),
+  ) as Record<string, string>
 
-  const sql = buildSustainabilitySql(
-    entityId,
-    filterColumn,
-    searchValue,
-    selectedColumns,
-  )
+  const additionalFilters = getAdditionalFilters(searchParamsObject)
 
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
@@ -106,8 +100,10 @@ const SustainabilityScorecardSummary = ({
     entityId,
     query: {
       sql,
+      additionalFilters,
     },
   }
+
   const { data: queryResultBundle, isLoading } =
     useGetQueryResultBundle(queryBundleRequest)
 
@@ -132,8 +128,6 @@ const SustainabilityScorecardSummary = ({
 
   const scoreDescriptor = data?.rows[0].values[scoreDescriptorColIndex]
 
-  const dial = getDial(scoreDescriptor ?? '', true)
-
   const metricValues = getMetricValues(
     data?.rows[0],
     queryResultBundle,
@@ -156,7 +150,10 @@ const SustainabilityScorecardSummary = ({
           </Typography>
           {text}
         </Box>
-        {dial}
+        <Dial
+          scoreDescriptor={scoreDescriptor ?? ''}
+          isScorecardSummary={true}
+        />
       </Box>
       <Card>
         {metricsConfig.map((metric, index) => (

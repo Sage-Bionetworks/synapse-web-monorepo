@@ -63,7 +63,7 @@ describe('SustainabilityScorecard Tests', () => {
   })
 
   const mockProps: SustainabilityScorecardSummaryProps = {
-    entityId: 'syn68349264',
+    sql: 'SELECT * FROM syn68561794',
     text: 'Some text for the sustainability scorecard summary.',
     filterColumn: 'toolName',
     searchParamKey: 'toolName',

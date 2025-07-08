@@ -7,10 +7,7 @@ import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 
 import { SxProps, Theme } from '@mui/material'
 import {
-  buildSustainabilitySql,
-  getDial,
   getMetricValues,
-  getSelectedColumns,
   SUSTAINABILITY_ICON_COLORS,
   SustainabilityScorecardBaseProps,
 } from './SustainabilityScorecardUtils'
@@ -18,6 +15,11 @@ import { InfoTwoTone } from '@mui/icons-material'
 import { CheckIcon } from '@/assets/icons/terms/CheckIcon'
 import { useSearchParams } from 'react-router'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
+import Dial from './Dial'
+import {
+  getAdditionalFilters,
+  parseEntityIdFromSqlStatement,
+} from '@/utils/functions'
 
 export type MetricsConfig = {
   /** Name of the metric column in the table */
@@ -100,27 +102,19 @@ const MetricRow = ({ metricValues, metricsConfig }: MetricRowProps) => {
 
 /* SustainabilityScorecard component displays sustainability metrics and a dial based on the sustainability score of the entity. */
 const SustainabilityScorecard = ({
-  entityId,
   metricsConfig,
-  searchParamKey,
-  filterColumn,
   scoreDescriptorColumnName,
+  sql,
   sx,
 }: SustainabilityScorecardProps) => {
   const [searchParams] = useSearchParams()
-  const searchValue = searchParams.get(searchParamKey)
+  const entityId = parseEntityIdFromSqlStatement(sql)
 
-  const selectedColumns = getSelectedColumns(
-    metricsConfig,
-    scoreDescriptorColumnName,
-  )
+  const searchParamsObject = Object.fromEntries(
+    searchParams.entries(),
+  ) as Record<string, string>
 
-  const sql = buildSustainabilitySql(
-    entityId,
-    filterColumn,
-    searchValue,
-    selectedColumns,
-  )
+  const additionalFilters = getAdditionalFilters(searchParamsObject)
 
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
@@ -130,6 +124,7 @@ const SustainabilityScorecard = ({
     entityId,
     query: {
       sql,
+      additionalFilters,
     },
   }
 
@@ -165,8 +160,6 @@ const SustainabilityScorecard = ({
     queryResultBundle,
     metricsConfig,
   )
-  const dial = getDial(scoreDescriptor ?? '')
-
   return (
     <Box
       sx={{
@@ -178,7 +171,7 @@ const SustainabilityScorecard = ({
     >
       <Stack sx={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
         <Typography variant="subsectionHeader">Sustainability Index</Typography>
-        {dial}
+        <Dial scoreDescriptor={scoreDescriptor ?? ''} />
       </Stack>
       <Stack sx={{ flex: 1, gap: '2px' }}>
         <MetricRow metricValues={metricValues} metricsConfig={metricsConfig} />

@@ -141,13 +141,13 @@ const HeaderCard = forwardRef(function HeaderCard(
                   />
                   {sustainabilityScorecard && (
                     <SustainabilityScorecard
-                      entityId={sustainabilityScorecard.entityId}
                       metricsConfig={sustainabilityScorecard.metricsConfig}
                       searchParamKey={sustainabilityScorecard.searchParamKey}
                       filterColumn={sustainabilityScorecard.filterColumn}
                       scoreDescriptorColumnName={
                         sustainabilityScorecard.scoreDescriptorColumnName
                       }
+                      sql={sustainabilityScorecard.sql}
                       sx={{
                         background: 'rgba(0, 0, 0, 0.10)',
                         marginTop: '30px',

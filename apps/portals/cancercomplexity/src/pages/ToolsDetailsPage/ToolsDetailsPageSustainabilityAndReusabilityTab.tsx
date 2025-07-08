@@ -1,11 +1,11 @@
-import { toolkitId } from '@/config/resources'
+import { toolkitSql } from '@/config/resources'
 import SustainabilityScorecardSummary, {
   SustainabilityScorecardSummaryProps,
 } from 'synapse-react-client/components/SustainabilityScorecard/SustainabilityScorecardSummary'
 
 function ToolsDetailsPageSustainabilityAndReusabilityTab() {
   const props: SustainabilityScorecardSummaryProps = {
-    entityId: toolkitId,
+    sql: toolkitSql,
     filterColumn: 'toolName',
     searchParamKey: 'toolName',
     scoreDescriptorColumnName: 'AlmanackScoreDescriptor',

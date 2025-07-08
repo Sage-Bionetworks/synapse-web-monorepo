@@ -5,7 +5,7 @@ import SustainabilityScorecardSummary, {
 import { MemoryRouter } from 'react-router'
 
 const mockProps: SustainabilityScorecardSummaryProps = {
-  entityId: 'syn68561794',
+  sql: 'SELECT * FROM syn68561794',
   filterColumn: 'toolName',
   searchParamKey: 'toolName',
   scoreDescriptorColumnName: 'AlmanackScoreDescriptor',
