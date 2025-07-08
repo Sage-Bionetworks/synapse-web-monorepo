@@ -21,7 +21,6 @@ import {
   DST_TABLE_COLUMN_NAMES,
   standardsDetailsPageSQL,
 } from '@/config/resources'
-const standardsSql = standardsDetailsPageSQL
 
 export const standardsCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.STANDARD_DATA_MODEL,
@@ -86,7 +85,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
         {({ value }) => (
           <CardContainerLogic
             cardConfiguration={linkedStandardCardConfiguration}
-            sql={standardsSql}
+            sql={standardsDetailsPageSQL}
             // need a dummy value for search to properly exclude null values and an empty string doesn't work
             searchParams={{ id: value || 'notreal' }}
             sqlOperator={ColumnSingleValueFilterOperator.IN}
@@ -104,7 +103,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
           return (
             <CardContainerLogic
               cardConfiguration={linkedStandardCardConfiguration}
-              sql={standardsSql}
+              sql={standardsDetailsPageSQL}
               // need a dummy value for search to properly exclude null values and an empty string doesn't work
               searchParams={{ id: value || 'notreal' }}
               sqlOperator={ColumnSingleValueFilterOperator.IN}
@@ -126,7 +125,7 @@ export default function StandardsDetailsPage() {
     <>
       <CardContainerLogic
         query={{
-          sql: standardsSql,
+          sql: standardsDetailsPageSQL,
           additionalFilters: [
             {
               concreteType:
@@ -151,7 +150,7 @@ export default function StandardsDetailsPage() {
         }}
       />
 
-      <DetailsPage sql={standardsSql}>
+      <DetailsPage sql={standardsDetailsPageSQL}>
         <DetailsPageContent content={standardDetailsPageContent} />
       </DetailsPage>
     </>

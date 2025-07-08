@@ -6,7 +6,7 @@ import {
   // DST_TABLE_COLUMN_NAMES,
   GC_ORG_IDS,
 } from '@/config/resources'
-import { imageUrls } from '@/config/images'
+import { GCInfo } from '@/config/GrandChallengeResources'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { CardDeck } from 'synapse-react-client/components/CardDeck/CardDeck'
 import { CardDeckCardProps } from 'synapse-react-client/components/CardDeck/CardDeckCardProps'
@@ -110,7 +110,7 @@ export function ChallengesCardDeck() {
 
   const challengeCards: CardDeckCardProps[] = gcOrgs.map(gcOrg => {
     const orgId = gcOrg[ORG_TABLE_COLUMN_NAMES.ID]
-    const img = <img src={imageUrls[orgId]} />
+    const img = <img src={GCInfo[orgId].svg} />
 
     const card: CardDeckCardProps = {
       title: gcOrg[ORG_TABLE_COLUMN_NAMES.NAME],

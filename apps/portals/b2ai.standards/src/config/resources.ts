@@ -3,7 +3,7 @@ import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2
 export const TABLE_IDS = {
   Challenges: { name: 'Challenges', id: 'syn65913973.1' }, // the only reason for this table is to get the GC images
   // CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
-  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.63' },
+  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.64' },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
   DataSet_denormalized: { name: 'DataSet_denormalized', id: 'syn68258237' },
   DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
@@ -26,6 +26,7 @@ export const DST_TABLE_COLUMN_NAMES = {
   CONCERNS_DATA_TOPIC: 'concerns_data_topic',
   HAS_RELEVANT_DATA_SUBSTRATE: 'has_relevant_data_substrate',
   HAS_RELEVANT_ORGANIZATION: 'has_relevant_organization',
+  RELEVANT_ORG_LINKS: 'relevantOrgLinks',
   RELEVANT_ORG_NAMES: 'relevantOrgNames',
   RESPONSIBLE_ORGANIZATION: 'responsible_organization',
   IS_OPEN: 'isOpen',
@@ -107,15 +108,25 @@ export const dataSetSQL = `SELECT  ${Object.values(
 // ).join(', ')} FROM ${TABLE_IDS.Org_denormalized.id}`
 
 // for the Explore page table:
+//  had to generate RELEVANT_ORG_LINKS during DST_denormalized creation
+//    could do the same for acronym
 export const standardsSql = `
     SELECT
-        mature,
-        concat('[', acronym, '](/Explore/Standard/DetailsPage?id=', id, ')') as acronym,
-            name, category, collections, topic, dataTypes,
-            ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES}, isOpen, registration, "usedInBridge2AI"
-            , hasAIApplication
-            FROM ${TABLE_IDS.DST_denormalized.id}
+          mature
+        , concat('[', acronym, '](/Explore/Standard/DetailsPage?id=', id, ')') as acronym
+        , name
+        , category
+        , collections
+        , topic
+        , dataTypes
+        , ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_LINKS}
+        , isOpen
+        , registration
+        , "usedInBridge2AI"
+        , hasAIApplication
+    FROM ${TABLE_IDS.DST_denormalized.id}
 `
+
 // removed topic column above to address @jay-hodgson's comment
 //  https://github.com/Sage-Bionetworks/synapse-web-monorepo/pull/1612#discussion_r2029425831
 //  Topic still shows up as a facet on the explore page but not as a column,

@@ -17,13 +17,16 @@ const standardsRgbIndex = 0
 export const standardsColumnLinks: LabelLinkConfig = [
   {
     isMarkdown: true,
-    // the column whose value will be used for the markdown
-    matchColumnName: 'acronym',
-    // If set, also show a tooltip
-    // tooltipText?: string
+    matchColumnName: DST_TABLE_COLUMN_NAMES.ACRONYM, // the column whose value will be used for the markdown
+    // tooltipText?: string // If set, also show a tooltip
   },
   {
-    matchColumnName: 'isMature',
+    isMarkdown: true,
+    matchColumnName: DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_LINKS, // the column whose value will be used for the markdown
+    // tooltipText?: string // If set, also show a tooltip
+  },
+  {
+    matchColumnName: 'mature',
     isMapValueToReactNodeConfig: true,
     Component: IsMatureIconMap,
   },
@@ -33,7 +36,7 @@ export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   rgbIndex: standardsRgbIndex,
   shouldDeepLink: true,
   hideDownload: false,
-  sql: standardsSql, // TODO: now that we're having more pages, this should be renamed standardsSql
+  sql: standardsSql,
   name: 'Standards',
   columnAliases,
   tableConfiguration: {

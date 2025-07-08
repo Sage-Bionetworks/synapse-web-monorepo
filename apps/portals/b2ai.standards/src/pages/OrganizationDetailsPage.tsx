@@ -1,3 +1,4 @@
+import { D4D } from '@/components/D4D'
 import {
   DetailsPageContent,
   DetailsPageContentType,
@@ -113,6 +114,17 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
               sqlOperator={ColumnMultiValueFunction.HAS}
             />
           )
+        }}
+      </DetailsPageContextConsumer>
+    ),
+  },
+  {
+    id: 'd4d',
+    title: 'DataSheet for DataSet',
+    element: (
+      <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
+        {({ value }) => {
+          return <D4D org_id={value ?? ''} />
         }}
       </DetailsPageContextConsumer>
     ),
