@@ -10,7 +10,7 @@ import { ReactElement } from 'react'
 import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList'
 import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { WideButton } from 'synapse-react-client/components/styled/WideButton'
-import Ecosystem from 'synapse-react-client/components/Ecosystem/Ecosystem'
+import EcosystemLayout from 'synapse-react-client/components/Ecosystem/EcosystemLayout'
 import Layout from '../Layout'
 import PopularSearches from '../PopularSearches'
 import Search from '../Search'
@@ -258,7 +258,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
         <Typography variant="sectionTitle" className="sectionTitle">
           Announcements
         </Typography>
-        <Ecosystem
+        <EcosystemLayout
           config={[
             {
               title: 'Free Cell Lines',

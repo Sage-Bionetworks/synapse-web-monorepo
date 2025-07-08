@@ -1,6 +1,6 @@
 import { dataSql, peopleSql } from '@/config/resources'
 import programsHomePageConfig from '@/config/synapseConfigs/programsHomePage'
-import Ecosystem from 'synapse-react-client/components/Ecosystem/Ecosystem'
+import EcosystemLayout from 'synapse-react-client/components/Ecosystem/EcosystemLayout'
 import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { FeaturedDataTabs } from 'synapse-react-client/components/FeaturedDataTabs'
@@ -142,7 +142,7 @@ function Home() {
           className: 'home-spacer',
         }}
       >
-        <Ecosystem
+        <EcosystemLayout
           config={[
             {
               title: 'Results Explorers',

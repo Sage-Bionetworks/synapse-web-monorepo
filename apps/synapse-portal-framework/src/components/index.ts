@@ -10,7 +10,6 @@ import SurveysCompletedPlots from './crc-researcher/SurveysCompletedPlots'
 import AboutPortal from './csbc-home-page/AboutPortal'
 import ConsortiaGoals from './csbc-home-page/ConsortiaGoals'
 import DevelopedBySage from './csbc-home-page/DevelopedBySage'
-import Ecosystem from 'synapse-react-client/components/Ecosystem/Ecosystem'
 import HomePageCardContainer from './csbc-home-page/HomePageCardContainer'
 import DetailsPage from './DetailsPage'
 import ELBrowseToolsPage from './eliteportal/ELBrowseToolsPage'
@@ -41,7 +40,6 @@ const PortalComponents = {
   DetailsPage,
   ConsortiaGoals,
   HomePageCardContainer,
-  Ecosystem,
   AboutPortal,
   DevelopedBySage,
   ParticipantsBarPlot,

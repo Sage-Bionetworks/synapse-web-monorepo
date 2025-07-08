@@ -9,3 +9,5 @@ export const peopleSql = 'SELECT * FROM syn28073190 where portalDisplay = true'
 export const educationSql = 'SELECT * FROM syn51497305'
 
 export const mc2SupplementSql = 'SELECT * FROM syn52743383' // see PORTALS-2984
+
+export const ecosystemResourcesSql = `SELECT * FROM syn68572934`

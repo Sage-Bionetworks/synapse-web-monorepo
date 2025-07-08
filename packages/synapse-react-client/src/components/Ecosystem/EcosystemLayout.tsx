@@ -1,15 +1,21 @@
-import { useState } from 'react'
+import Fade from '@mui/material/Fade'
+import { ReactNode, useState } from 'react'
 
 type Config = {
-  title: string
-  content: React.ReactNode
+  title: ReactNode
+  content: ReactNode
 }
 
 export type EcosystemProps = {
   config: Config[]
 }
 
-const Ecosystem = (props: EcosystemProps) => {
+/**
+ * Layout for the Ecosystem component, which renders tab buttons on the left side and content on the right side.
+ * @param props
+ * @constructor
+ */
+const EcosystemLayout = (props: EcosystemProps) => {
   const [index, setIndex] = useState(0)
   const { config } = props
   return (
@@ -17,13 +23,14 @@ const Ecosystem = (props: EcosystemProps) => {
       <div className="control-container">
         <div className="button-container">
           {config.map((el, curIndex) => {
+            const { title } = el
             return (
               <button
                 className={index === curIndex ? 'isSelected' : ''}
                 onClick={() => setIndex(curIndex)}
-                key={el.title}
+                key={curIndex}
               >
-                {el.title}
+                {title}
               </button>
             )
           })}
@@ -32,9 +39,14 @@ const Ecosystem = (props: EcosystemProps) => {
         <div className="content-container">
           {config.map((el, curIndex) => {
             return (
-              <span key={el.title} className={index === curIndex ? '' : 'hide'}>
-                {el.content}
-              </span>
+              <Fade key={curIndex} in={index === curIndex}>
+                <span
+                  key={curIndex}
+                  className={index === curIndex ? '' : 'SRC-hidden'}
+                >
+                  {el.content}
+                </span>
+              </Fade>
             )
           })}
         </div>
@@ -43,4 +55,4 @@ const Ecosystem = (props: EcosystemProps) => {
   )
 }
 
-export default Ecosystem
+export default EcosystemLayout

@@ -6,7 +6,7 @@ import { Box, Link, Typography } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 // import PopularSearches from '../PopularSearches'
 import pluralize from 'pluralize'
-import Ecosystem from 'synapse-react-client/components/Ecosystem/Ecosystem'
+import EcosystemLayout from 'synapse-react-client/components/Ecosystem/EcosystemLayout'
 import Search from '../Search'
 
 type Category = {
@@ -217,7 +217,7 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
         <Typography variant="sectionTitle" className="sectionTitle">
           Announcements
         </Typography>
-        <Ecosystem
+        <EcosystemLayout
           config={[
             {
               title: 'EL-specific iPSC Library',
