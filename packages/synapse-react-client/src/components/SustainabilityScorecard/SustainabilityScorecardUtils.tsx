@@ -1,4 +1,8 @@
-import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
+import {
+  QueryBundleRequest,
+  QueryResultBundle,
+  Row,
+} from '@sage-bionetworks/synapse-types'
 import { getFieldIndex } from '@/utils/functions/queryUtils'
 
 export const SUSTAINABILITY_ICON_COLORS = {
@@ -16,7 +20,7 @@ export type MetricsConfig = {
 }
 
 export type SustainabilityScorecardBaseProps = {
-  sql: string
+  queryRequest: QueryBundleRequest
   metricsConfig: MetricsConfig[]
   /** Name of the URL search parameter used to filter the data. */
   searchParamKey: string

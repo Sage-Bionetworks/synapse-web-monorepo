@@ -2,11 +2,16 @@ import { render, screen } from '@testing-library/react'
 import SustainabilityScorecardSummary, {
   SustainabilityScorecardSummaryProps,
 } from './SustainabilityScorecardSummary'
-import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnSingleValueFilterOperator,
+  QueryBundleRequest,
+  QueryResultBundle,
+} from '@sage-bionetworks/synapse-types'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { MemoryRouter } from 'react-router'
+import { SynapseConstants } from '@/utils'
 
 vi.mock('@/synapse-queries/entity/useGetQueryResultBundle')
 
@@ -62,8 +67,28 @@ describe('SustainabilityScorecard Tests', () => {
     )
   })
 
+  const mockQuery: QueryBundleRequest = {
+    entityId: 'syn68561794',
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    partMask:
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    query: {
+      sql: 'SELECT * FROM syn68561794',
+      additionalFilters: [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+          columnName: 'toolName',
+          operator: ColumnSingleValueFilterOperator.LIKE,
+          values: ['%DrugCell%'],
+        },
+      ],
+    },
+  }
+
   const mockProps: SustainabilityScorecardSummaryProps = {
-    sql: 'SELECT * FROM syn68561794',
+    queryRequest: mockQuery,
     text: 'Some text for the sustainability scorecard summary.',
     filterColumn: 'toolName',
     searchParamKey: 'toolName',

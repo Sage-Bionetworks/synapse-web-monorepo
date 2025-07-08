@@ -39,13 +39,6 @@ export const toolsSchema: TableToGenericCardMapping = {
   title: 'toolName',
   description: 'description',
   includeCitation: true,
-  sustainabilityScorecard: {
-    sql: toolkitSql,
-    searchParamKey: 'toolName',
-    filterColumn: 'toolName',
-    metricsConfig: metricsConfig,
-    scoreDescriptorColumnName: 'AlmanackScoreDescriptor',
-  },
   defaultCitationFormat: 'nature',
   citationBoilerplateText: citationBoilerplateText,
   secondaryLabels: [

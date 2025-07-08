@@ -3,9 +3,34 @@ import SustainabilityScorecardSummary, {
   SustainabilityScorecardSummaryProps,
 } from './SustainabilityScorecardSummary'
 import { MemoryRouter } from 'react-router'
+import {
+  ColumnSingleValueFilterOperator,
+  QueryBundleRequest,
+} from '@sage-bionetworks/synapse-types'
+import { SynapseConstants } from '@/utils'
+
+const mockQuery: QueryBundleRequest = {
+  entityId: 'syn68561794',
+  concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+  partMask:
+    SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+    SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+  query: {
+    sql: 'SELECT * FROM syn68561794',
+    additionalFilters: [
+      {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        columnName: 'toolName',
+        operator: ColumnSingleValueFilterOperator.LIKE,
+        values: ['%DrugCell%'],
+      },
+    ],
+  },
+}
 
 const mockProps: SustainabilityScorecardSummaryProps = {
-  sql: 'SELECT * FROM syn68561794',
+  queryRequest: mockQuery,
   filterColumn: 'toolName',
   searchParamKey: 'toolName',
   scoreDescriptorColumnName: 'AlmanackScoreDescriptor',

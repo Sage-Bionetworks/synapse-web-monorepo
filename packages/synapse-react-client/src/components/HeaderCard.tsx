@@ -147,7 +147,7 @@ const HeaderCard = forwardRef(function HeaderCard(
                       scoreDescriptorColumnName={
                         sustainabilityScorecard.scoreDescriptorColumnName
                       }
-                      sql={sustainabilityScorecard.sql}
+                      queryRequest={sustainabilityScorecard.queryRequest}
                       sx={{
                         background: 'rgba(0, 0, 0, 0.10)',
                         marginTop: '30px',

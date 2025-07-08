@@ -1,9 +1,7 @@
 import { Box, Skeleton, Stack, Tooltip, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
-import { SynapseConstants } from '@/utils'
 import { getFieldIndex } from '@/utils/functions/queryUtils'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 
 import { SxProps, Theme } from '@mui/material'
 import {
@@ -13,13 +11,8 @@ import {
 } from './SustainabilityScorecardUtils'
 import { InfoTwoTone } from '@mui/icons-material'
 import { CheckIcon } from '@/assets/icons/terms/CheckIcon'
-import { useSearchParams } from 'react-router'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
 import Dial from './Dial'
-import {
-  getAdditionalFilters,
-  parseEntityIdFromSqlStatement,
-} from '@/utils/functions'
 
 export type MetricsConfig = {
   /** Name of the metric column in the table */
@@ -104,32 +97,11 @@ const MetricRow = ({ metricValues, metricsConfig }: MetricRowProps) => {
 const SustainabilityScorecard = ({
   metricsConfig,
   scoreDescriptorColumnName,
-  sql,
+  queryRequest,
   sx,
 }: SustainabilityScorecardProps) => {
-  const [searchParams] = useSearchParams()
-  const entityId = parseEntityIdFromSqlStatement(sql)
-
-  const searchParamsObject = Object.fromEntries(
-    searchParams.entries(),
-  ) as Record<string, string>
-
-  const additionalFilters = getAdditionalFilters(searchParamsObject)
-
-  const queryBundleRequest: QueryBundleRequest = {
-    partMask:
-      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    entityId,
-    query: {
-      sql,
-      additionalFilters,
-    },
-  }
-
   const { data: queryResultBundle, isLoading } =
-    useGetQueryResultBundle(queryBundleRequest)
+    useGetQueryResultBundle(queryRequest)
 
   if (isLoading) {
     return <Skeleton width={'100%'} height={'100%'} />

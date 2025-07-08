@@ -20,6 +20,10 @@ import {
   TOOLS_DETAILS_PAGE_SUSTAINABILITY_AND_REUSABILITY_TAB_PATH,
 } from '@/config/routeConstants'
 import { Outlet } from 'react-router'
+import {
+  getToolkitQueryBundleRequest,
+  metricsConfig,
+} from './ToolsDetailsPageUtils'
 
 export const toolDetailsPageTabConfig: DetailsPageTabConfig[] = [
   {
@@ -34,6 +38,7 @@ export const toolDetailsPageTabConfig: DetailsPageTabConfig[] = [
 
 function ToolsDetailsPage() {
   const { toolName } = useGetPortalComponentSearchParams()
+  const query = getToolkitQueryBundleRequest(toolName)
 
   if (!toolName) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
@@ -50,6 +55,13 @@ function ToolsDetailsPage() {
           },
           secondaryLabelLimit: Infinity,
           isHeader: true,
+          sustainabilityScorecard: {
+            queryRequest: query,
+            searchParamKey: 'toolName',
+            filterColumn: 'toolName',
+            metricsConfig: metricsConfig,
+            scoreDescriptorColumnName: 'AlmanackScoreDescriptor',
+          },
         }}
         sql={toolsSql}
         columnAliases={columnAliases}

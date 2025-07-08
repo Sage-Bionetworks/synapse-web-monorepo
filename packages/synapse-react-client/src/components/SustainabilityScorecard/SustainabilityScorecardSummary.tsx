@@ -77,35 +77,15 @@ const MetricSummaryRow = ({
 }
 
 const SustainabilityScorecardSummary = ({
-  sql,
+  queryRequest,
   text,
   metricsConfig,
   scoreDescriptorColumnName,
 }: SustainabilityScorecardSummaryProps) => {
   const theme = useTheme()
-  const [searchParams] = useSearchParams()
-  const entityId = parseEntityIdFromSqlStatement(sql)
-
-  const searchParamsObject = Object.fromEntries(
-    searchParams.entries(),
-  ) as Record<string, string>
-
-  const additionalFilters = getAdditionalFilters(searchParamsObject)
-
-  const queryBundleRequest: QueryBundleRequest = {
-    partMask:
-      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    entityId,
-    query: {
-      sql,
-      additionalFilters,
-    },
-  }
 
   const { data: queryResultBundle, isLoading } =
-    useGetQueryResultBundle(queryBundleRequest)
+    useGetQueryResultBundle(queryRequest)
 
   if (isLoading) {
     return <Skeleton width={'100%'} height={'90px'} />
