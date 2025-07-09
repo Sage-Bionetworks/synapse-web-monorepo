@@ -10,6 +10,9 @@ export type EcosystemCardProps = {
 
 const IMAGE_SIZE = '72px'
 
+/**
+ * Card layout designed to be used in the EcosystemLayout component.
+ */
 function EcosystemCard(props: EcosystemCardProps) {
   const { title, titleUrl, description, image } = props
 
