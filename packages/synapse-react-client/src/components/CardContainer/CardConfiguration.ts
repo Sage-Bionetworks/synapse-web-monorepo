@@ -18,6 +18,7 @@ import {
   RELEASE_CARD,
 } from '@/utils/SynapseConstants'
 import { IconOptions } from '../Icon/Icon'
+import { SustainabilityScorecardProps } from '../SustainabilityScorecard'
 
 // Card types with no additional props
 type StandardCardTypeConfiguration = {
@@ -64,6 +65,10 @@ export type CommonCardProps = {
   iconOptions?: IconOptions
   /** Configuration if the card is of GENERIC_CARD (required) or DATASET (optional) type */
   genericCardSchema?: TableToGenericCardMapping
+  /**
+   * Optional sustainability scorecard to be displayed on the header card
+   */
+  sustainabilityScorecard?: SustainabilityScorecardProps
   /**
    * If true, the card(s) will be rendered using the 'HeaderCard' component. Only works for GENERIC_CARD
    * @default false

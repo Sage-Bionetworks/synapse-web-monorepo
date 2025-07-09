@@ -41,6 +41,7 @@ import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import GenericCard from './GenericCard'
 import GenericCardActionButton from './GenericCardActionButton'
 import { SynapseCardLabel } from './SynapseCardLabel'
+import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
 
 /**
  * Maps a table query result to a GenericCard.
@@ -56,6 +57,10 @@ export type TableToGenericCardMapping = {
   description?: string
   /** If true, a 'Cite As' button will be displayed for those cards with a DOI in the 'doi' column  */
   includeCitation?: boolean
+  /**
+   * Configuration for displaying the SustainabilityScorecard component
+   */
+  sustainabilityScorecard?: SustainabilityScorecardProps
   /** The initial citation format to use in the 'Cite As' UI */
   defaultCitationFormat?: 'bibtex' | 'apa' | 'ieee' | 'nature' | 'science'
   /** Static text displayed in the 'Cite As' UI */
@@ -173,6 +178,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     iconOptions,
     useTypeColumnForIcon = false,
     isHeader = false,
+    sustainabilityScorecard,
     headerCardVariant,
     titleLinkConfig,
     ctaLinkConfig,
@@ -398,6 +404,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         />
       }
       isHeader={isHeader}
+      sustainabilityScorecard={sustainabilityScorecard}
       headerCardVariant={headerCardVariant}
       type={type}
       title={title}

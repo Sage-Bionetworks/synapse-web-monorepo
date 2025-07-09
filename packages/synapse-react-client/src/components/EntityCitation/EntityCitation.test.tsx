@@ -218,12 +218,11 @@ describe('EntityCitation tests', () => {
 
     await openPopover('Cite page')
 
-    await waitFor(() => {
-      screen.getByRole('dialog', {
-        name: /Citation options/i,
-      })
-      screen.getByText(content => content.includes('version=1'))
+    await screen.findByRole('dialog', {
+      name: /Citation options/i,
     })
+
+    await screen.findByText(content => content.includes('version=1'))
   })
 
   it('Versionless Entity DOI', async () => {
