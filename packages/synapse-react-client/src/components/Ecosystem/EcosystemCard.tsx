@@ -1,4 +1,4 @@
-import { Box, Link, Typography } from '@mui/material'
+import { Box, Link, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { ReactNode } from 'react'
 
 export type EcosystemCardProps = {
@@ -12,21 +12,41 @@ const IMAGE_SIZE = '72px'
 
 function EcosystemCard(props: EcosystemCardProps) {
   const { title, titleUrl, description, image } = props
+
+  const { breakpoints } = useTheme()
+  const isMobile = useMediaQuery(breakpoints.down('sm'))
+
   return (
     <Box
       component={'section'}
-      sx={{
+      sx={theme => ({
         display: 'grid',
-        gridTemplateColumns: `${IMAGE_SIZE} auto`,
         alignItems: 'top',
-        py: 2,
         gap: 2,
-        img: { width: IMAGE_SIZE, maxHeight: IMAGE_SIZE },
-      }}
+        py: 2,
+        [theme.breakpoints.down('sm')]: {
+          gridTemplateColumns: '1fr',
+          '.EcosystemCardImageContainer': {
+            textAlign: 'center',
+            img: { maxWidth: '100%', height: IMAGE_SIZE },
+          },
+        },
+        [theme.breakpoints.up('sm')]: {
+          gridTemplateColumns: `${IMAGE_SIZE} auto`,
+          '.EcosystemCardImageContainer': {
+            justifySelf: 'center',
+            img: { width: IMAGE_SIZE, maxHeight: IMAGE_SIZE },
+          },
+        },
+      })}
     >
-      <div style={{ justifySelf: 'center' }}>{image}</div>
+      <div className={'EcosystemCardImageContainer'}>{image}</div>
       <div>
-        <Typography component={'h3'} variant={'body1'} sx={{ mb: '5px' }}>
+        <Typography
+          component={'h3'}
+          variant={isMobile ? 'headline3' : 'body1'}
+          sx={{ mb: '5px' }}
+        >
           <Link href={titleUrl} target="_blank" rel={'noopener noreferrer'}>
             {title}
           </Link>

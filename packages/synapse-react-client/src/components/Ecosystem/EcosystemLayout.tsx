@@ -1,3 +1,4 @@
+import { Box, Tab, Tabs, useMediaQuery, useTheme } from '@mui/material'
 import Fade from '@mui/material/Fade'
 import { ReactNode, useState } from 'react'
 
@@ -18,24 +19,50 @@ export type EcosystemProps = {
 const EcosystemLayout = (props: EcosystemProps) => {
   const [index, setIndex] = useState(0)
   const { config } = props
+
+  const { breakpoints } = useTheme()
+  const isMobile = useMediaQuery(breakpoints.down('sm'))
+
+  const tabOrientation = isMobile ? 'horizontal' : 'vertical'
+
   return (
     <div className="Ecosystem">
-      <div className="control-container">
-        <div className="button-container">
+      <Box
+        className="control-container"
+        sx={{
+          display: 'flex',
+          [breakpoints.up('sm')]: { height: '450px' },
+          [breakpoints.down('sm')]: { flexDirection: 'column' },
+        }}
+      >
+        <Tabs
+          className="button-container"
+          value={index}
+          onChange={(_, newIndex) => setIndex(newIndex)}
+          orientation={tabOrientation}
+          variant="scrollable"
+          scrollButtons={'auto'}
+          allowScrollButtonsMobile
+          sx={{
+            borderRight: '2px solid #dcdcdc',
+            borderRightStyle: 'inset',
+            ['> *']: {
+              borderRight: 'none',
+            },
+          }}
+        >
           {config.map((el, curIndex) => {
             const { title } = el
             return (
-              <button
-                className={index === curIndex ? 'isSelected' : ''}
+              <Tab
+                label={title}
                 onClick={() => setIndex(curIndex)}
                 key={curIndex}
-              >
-                {title}
-              </button>
+              />
             )
           })}
-          <div className={'flex-spacer'} />
-        </div>
+          {!isMobile && <div className="flex-spacer" />}
+        </Tabs>
         <div className="content-container">
           {config.map((el, curIndex) => {
             return (
@@ -50,7 +77,7 @@ const EcosystemLayout = (props: EcosystemProps) => {
             )
           })}
         </div>
-      </div>
+      </Box>
     </div>
   )
 }
