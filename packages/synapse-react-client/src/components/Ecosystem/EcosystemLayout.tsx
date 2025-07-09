@@ -43,13 +43,11 @@ const EcosystemLayout = (props: EcosystemProps) => {
           variant="scrollable"
           scrollButtons={'auto'}
           allowScrollButtonsMobile
-          sx={{
-            borderRight: '2px solid #dcdcdc',
-            borderRightStyle: 'inset',
-            ['> *']: {
-              borderRight: 'none',
+          sx={theme => ({
+            [theme.breakpoints.up('sm')]: {
+              borderRight: '2px solid #dcdcdc',
             },
-          }}
+          })}
         >
           {config.map((el, curIndex) => {
             const { title } = el
