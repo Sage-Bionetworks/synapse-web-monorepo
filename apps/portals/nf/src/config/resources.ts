@@ -30,6 +30,7 @@ export const topProjectsSql =
 
 export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = [
   'cavatica',
-  'pluto',
+  'plutodev',
+  // 'pluto',
   // 'terra',
 ]
