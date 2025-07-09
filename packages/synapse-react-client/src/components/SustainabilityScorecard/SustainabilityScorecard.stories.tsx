@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
 import SustainabilityScorecard from './SustainabilityScorecard'
-import { MemoryRouter } from 'react-router'
 import { SynapseConstants } from '@/utils'
 import {
   QueryBundleRequest,
@@ -62,6 +61,7 @@ const meta: Meta<typeof SustainabilityScorecard> = {
   args: mockProps,
   parameters: {
     chromatic: { viewports: [600, 1200] },
+    withRouter: true,
   },
 }
 export default meta
@@ -69,10 +69,6 @@ export default meta
 type Story = StoryObj<typeof SustainabilityScorecard>
 
 export const Demo: Story = {
-  render: args => (
-    <MemoryRouter initialEntries={['/Tools/DetailsPage?toolName=DrugCell']}>
-      <SustainabilityScorecard {...args} />
-    </MemoryRouter>
-  ),
+  render: args => <SustainabilityScorecard {...args} />,
   args: { ...mockProps },
 }

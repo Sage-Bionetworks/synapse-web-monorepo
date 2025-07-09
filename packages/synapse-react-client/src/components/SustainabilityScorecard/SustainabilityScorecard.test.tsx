@@ -9,7 +9,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
-import { MemoryRouter } from 'react-router'
 import { SynapseConstants } from '@/utils'
 
 vi.mock('@/synapse-queries/entity/useGetQueryResultBundle')
@@ -107,11 +106,7 @@ async function waitForDataLoad() {
 }
 
 async function renderWithSuccessMock() {
-  render(
-    <MemoryRouter>
-      <SustainabilityScorecard {...mockProps} />
-    </MemoryRouter>,
-  )
+  render(<SustainabilityScorecard {...mockProps} />)
 
   setGetQueryResultBundleSuccess(mockBundleSuccess)
   await waitForDataLoad()

@@ -3,14 +3,14 @@ import { InfoTwoTone } from '@mui/icons-material'
 import { ReactElement } from 'react'
 import { ScoreDescriptor } from './Dial'
 
-export type LightDialProps = {
+export type DialLayoutProps = {
   dial: ReactElement
   label: ScoreDescriptor
   toolTipText?: string
 }
 
 // Displayed on entity header of details page
-const LightDial = ({ dial, label, toolTipText }: LightDialProps) => {
+const DialLayout = ({ dial, label, toolTipText }: DialLayoutProps) => {
   return (
     <Stack sx={{ alignItems: 'center', gap: '10px' }}>
       {dial}
@@ -18,12 +18,14 @@ const LightDial = ({ dial, label, toolTipText }: LightDialProps) => {
         <Typography variant="body2" sx={{ margin: '0 !important' }}>
           {label}
         </Typography>
-        <Tooltip title={toolTipText}>
-          <InfoTwoTone sx={{ width: '18px', height: '18px' }} />
-        </Tooltip>
+        {toolTipText && (
+          <Tooltip title={toolTipText}>
+            <InfoTwoTone sx={{ width: '18px', height: '18px' }} />
+          </Tooltip>
+        )}
       </Box>
     </Stack>
   )
 }
 
-export default LightDial
+export default DialLayout

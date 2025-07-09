@@ -6,8 +6,7 @@ import { ReactComponent as DarkDialPosition1 } from '../../assets/sustainability
 import { ReactComponent as DarkDialPosition2 } from '../../assets/sustainability/darkDialPosition2.svg'
 import { ReactComponent as DarkDialPosition3 } from '../../assets/sustainability/darkDialPosition3.svg'
 import { ReactComponent as DarkDialPosition4 } from '../../assets/sustainability/darkDialPosition4.svg'
-import LightDial, { LightDialProps } from './LightDial'
-import DarkDial, { DarkDialProps } from './DarkDial'
+import DialLayout, { DialLayoutProps } from './DialLayout'
 
 // Returns a SVG dial image corresponding to the score descriptor (e.g. "foundational", "intermediate", etc.)
 type DialProps = {
@@ -30,14 +29,14 @@ const Dial = ({ scoreDescriptor, isScorecardSummary }: DialProps) => {
     Stable: 'Maintained with long-term resilience in mind',
   }
 
-  const lightDialComponents: Record<string, LightDialProps> = {
+  const lightDialComponents: Record<string, DialLayoutProps> = {
     foundational: { dial: <LightDialPosition1 />, label: 'Foundational' },
     developing: { dial: <LightDialPosition2 />, label: 'Developing' },
     maturing: { dial: <LightDialPosition3 />, label: 'Maturing' },
     stable: { dial: <LightDialPosition4 />, label: 'Stable' },
   }
 
-  const darkDialComponents: Record<string, DarkDialProps> = {
+  const darkDialComponents: Record<string, DialLayoutProps> = {
     foundational: { dial: <DarkDialPosition1 />, label: 'Foundational' },
     developing: { dial: <DarkDialPosition2 />, label: 'Developing' },
     maturing: { dial: <DarkDialPosition3 />, label: 'Maturing' },
@@ -54,13 +53,11 @@ const Dial = ({ scoreDescriptor, isScorecardSummary }: DialProps) => {
 
   if (!selected) return <LightDialPosition1 />
 
-  return isScorecardSummary ? (
-    <DarkDial dial={selected.dial} label={selected.label} />
-  ) : (
-    <LightDial
+  return (
+    <DialLayout
       dial={selected.dial}
       label={selected.label}
-      toolTipText={toolTipText[selected.label]}
+      toolTipText={isScorecardSummary ? undefined : toolTipText[selected.label]}
     />
   )
 }

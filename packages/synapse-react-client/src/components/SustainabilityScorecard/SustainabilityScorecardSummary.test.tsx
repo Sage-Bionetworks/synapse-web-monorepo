@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import SustainabilityScorecardSummary, {
   SustainabilityScorecardSummaryProps,
 } from './SustainabilityScorecardSummary'
@@ -10,7 +10,6 @@ import {
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
-import { MemoryRouter } from 'react-router'
 import { SynapseConstants } from '@/utils'
 
 vi.mock('@/synapse-queries/entity/useGetQueryResultBundle')
@@ -118,51 +117,43 @@ describe('SustainabilityScorecard Tests', () => {
   }
 
   function renderComponent() {
-    render(
-      <MemoryRouter>
-        <SustainabilityScorecardSummary {...mockProps} />
-      </MemoryRouter>,
-    )
+    render(<SustainabilityScorecardSummary {...mockProps} />)
   }
 
   it('displays header', async () => {
     renderComponent()
-    setGetQueryResultBundleSuccess(mockBundleSuccess)
+    act(() => {
+      setGetQueryResultBundleSuccess(mockBundleSuccess)
+    })
 
     await waitForDataLoad()
 
-    expect(screen.getByText('Sustainability Index')).toBeInTheDocument()
-    expect(
-      screen.getByText('Some text for the sustainability scorecard summary.'),
-    ).toBeInTheDocument()
+    screen.getByText('Sustainability Index')
+    screen.getByText('Some text for the sustainability scorecard summary.')
   })
 
   it('displays card', async () => {
     renderComponent()
-    setGetQueryResultBundleSuccess(mockBundleSuccess)
+    act(() => {
+      setGetQueryResultBundleSuccess(mockBundleSuccess)
+    })
 
     await waitForDataLoad()
 
-    expect(screen.getByText('Dependencies')).toBeInTheDocument()
-    expect(screen.getByText('Tests')).toBeInTheDocument()
-    expect(screen.getByText('README')).toBeInTheDocument()
-    expect(
-      screen.getByText('Some text for presence of a repository'),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText('Some text for presence of a readme file'),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText('Some text for presence of dependencies'),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText('Some text for presence of tests'),
-    ).toBeInTheDocument()
+    screen.getByText('Dependencies')
+    screen.getByText('Tests')
+    screen.getByText('README')
+    screen.getByText('Some text for presence of a repository')
+    screen.getByText('Some text for presence of a readme file')
+    screen.getByText('Some text for presence of dependencies')
+    screen.getByText('Some text for presence of tests')
   })
 
   it('renders the correct icons based on metric values', async () => {
     renderComponent()
-    setGetQueryResultBundleSuccess(mockBundleSuccess)
+    act(() => {
+      setGetQueryResultBundleSuccess(mockBundleSuccess)
+    })
 
     await waitForDataLoad()
 

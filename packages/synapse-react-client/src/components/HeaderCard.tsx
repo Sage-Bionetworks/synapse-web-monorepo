@@ -53,6 +53,8 @@ const HeaderCard = forwardRef(function HeaderCard(
     sustainabilityScorecard,
   } = props
 
+  const hideIcon = Boolean(sustainabilityScorecard)
+
   // store old document title and description so that we can restore when this component is removed
   const descriptionElement: Element | null = document.querySelector(
     'meta[name="description"]',
@@ -66,6 +68,7 @@ const HeaderCard = forwardRef(function HeaderCard(
   const [docDescription] = useState<string>(
     descriptionElement ? descriptionElement.getAttribute('content')! : '',
   )
+
   useEffect(() => {
     // update page title and description based on header card values
     if (title && document.title !== title) {
@@ -109,11 +112,11 @@ const HeaderCard = forwardRef(function HeaderCard(
         <div className="row">
           <div className="col-md-offset-1 col-md-10">
             <div className="SRC-portalCardMain">
-              {!sustainabilityScorecard && icon}
+              {!hideIcon && icon}
               <div
                 style={{
                   width: '100%',
-                  ...(sustainabilityScorecard && { display: 'flex' }),
+                  ...(hideIcon && { display: 'flex' }),
                 }}
               >
                 <div className="SRC-cardContent" style={{ marginLeft: '15px' }}>
