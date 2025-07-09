@@ -51,13 +51,7 @@ const EcosystemLayout = (props: EcosystemProps) => {
         >
           {config.map((el, curIndex) => {
             const { title } = el
-            return (
-              <Tab
-                label={title}
-                onClick={() => setIndex(curIndex)}
-                key={curIndex}
-              />
-            )
+            return <Tab label={title} key={curIndex} />
           })}
           {!isMobile && <div className="flex-spacer" />}
         </Tabs>
@@ -65,10 +59,7 @@ const EcosystemLayout = (props: EcosystemProps) => {
           {config.map((el, curIndex) => {
             return (
               <Fade key={curIndex} in={index === curIndex}>
-                <span
-                  key={curIndex}
-                  className={index === curIndex ? '' : 'SRC-hidden'}
-                >
+                <span className={index === curIndex ? '' : 'SRC-hidden'}>
                   {el.content}
                 </span>
               </Fade>
