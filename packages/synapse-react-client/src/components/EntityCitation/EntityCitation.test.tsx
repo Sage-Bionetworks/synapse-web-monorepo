@@ -222,9 +222,7 @@ describe('EntityCitation tests', () => {
       name: /Citation options/i,
     })
 
-    await waitFor(() => {
-      screen.getByText(content => content.includes('version=1'))
-    })
+    await screen.findByText(content => content.includes('version=1'))
   })
 
   it('Versionless Entity DOI', async () => {
