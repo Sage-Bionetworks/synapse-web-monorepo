@@ -100,6 +100,14 @@ const plutoDevAnalysisPlatformDescription: ExternalAnalysisPlatformDescription =
   {
     ...plutoAnalysisPlatformDescription,
     name: 'Pluto (Development)',
+    PlatformInstructions: () => (
+      <ExternalAnalysisPlatformInstructions
+        platformName="Pluto"
+        platformLoginURL="https://dev.pluto.bio/login"
+        platformConnectAccountURL="https://help.pluto.bio/en/articles/synapse-pluto"
+        platformSupportEmail="mailto:support@pluto.bio"
+      />
+    ),
   }
 
 export const EXTERNAL_ANALYSIS_PLATFORMS: Record<
