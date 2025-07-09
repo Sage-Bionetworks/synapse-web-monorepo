@@ -1,6 +1,9 @@
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnSingleValueFilterOperator,
+  FeatureFlagEnum,
+} from '@sage-bionetworks/synapse-types'
 import columnAliases from '@/config/columnAliases'
 import { toolsSql } from '@/config/resources'
 import DatasetSvg from '@/config/style/Dataset.svg?url'
@@ -24,19 +27,28 @@ import {
   getToolkitQueryBundleRequest,
   metricsConfig,
 } from './ToolsDetailsPageUtils'
-
-export const toolDetailsPageTabConfig: DetailsPageTabConfig[] = [
-  {
-    title: 'Details',
-    path: TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH,
-  },
-  {
-    title: 'Sustainability and Reusability Report',
-    path: TOOLS_DETAILS_PAGE_SUSTAINABILITY_AND_REUSABILITY_TAB_PATH,
-  },
-] satisfies DetailsPageTabConfig[]
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries'
 
 function ToolsDetailsPage() {
+  const isFeatureFlagEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.PORTAL_SUSTAINABILITY_SCORECARD,
+  )
+
+  const toolDetailsPageTabConfig: DetailsPageTabConfig[] = [
+    {
+      title: 'Details',
+      path: TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH,
+    },
+    ...(isFeatureFlagEnabled
+      ? [
+          {
+            title: 'Sustainability and Reusability Report',
+            path: TOOLS_DETAILS_PAGE_SUSTAINABILITY_AND_REUSABILITY_TAB_PATH,
+          },
+        ]
+      : []),
+  ] satisfies DetailsPageTabConfig[]
+
   const { toolName } = useGetPortalComponentSearchParams()
   const query = getToolkitQueryBundleRequest(toolName)
 

@@ -9,6 +9,8 @@ import HeaderCardV2 from './HeaderCard/HeaderCardV2'
 import SustainabilityScorecard, {
   SustainabilityScorecardProps,
 } from './SustainabilityScorecard/SustainabilityScorecard'
+import { useGetFeatureFlag } from '@/synapse-queries'
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 
 export type HeaderCardVariant = 'HeaderCard' | 'HeaderCardV2'
 
@@ -53,7 +55,11 @@ const HeaderCard = forwardRef(function HeaderCard(
     sustainabilityScorecard,
   } = props
 
-  const hideIcon = Boolean(sustainabilityScorecard)
+  const isFeatureFlagEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.PORTAL_SUSTAINABILITY_SCORECARD,
+  )
+
+  const hideIcon = Boolean(sustainabilityScorecard && isFeatureFlagEnabled)
 
   // store old document title and description so that we can restore when this component is removed
   const descriptionElement: Element | null = document.querySelector(
@@ -142,7 +148,7 @@ const HeaderCard = forwardRef(function HeaderCard(
                     descriptionSubTitle=""
                     descriptionConfig={descriptionConfiguration}
                   />
-                  {sustainabilityScorecard && (
+                  {sustainabilityScorecard && isFeatureFlagEnabled && (
                     <SustainabilityScorecard
                       metricsConfig={sustainabilityScorecard.metricsConfig}
                       searchParamKey={sustainabilityScorecard.searchParamKey}
