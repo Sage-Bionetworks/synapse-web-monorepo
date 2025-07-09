@@ -1,11 +1,12 @@
 import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList'
+import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { WideButton } from 'synapse-react-client/components/styled/WideButton'
 import Layout from '../Layout'
 import { Box, Link, Typography } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 // import PopularSearches from '../PopularSearches'
 import pluralize from 'pluralize'
-import Ecosystem from '../csbc-home-page/Ecosystem'
+import EcosystemLayout from 'synapse-react-client/components/Ecosystem/EcosystemLayout'
 import Search from '../Search'
 
 type Category = {
@@ -216,17 +217,15 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
         <Typography variant="sectionTitle" className="sectionTitle">
           Announcements
         </Typography>
-        <Ecosystem
+        <EcosystemLayout
           config={[
             {
               title: 'EL-specific iPSC Library',
-              ownerId: 'syn27229419',
-              wikiId: '629574',
+              content: <Markdown ownerId={'syn27229419'} wikiId={'629574'} />,
             },
             {
               title: 'NCATS Biomedical Data Translator',
-              ownerId: 'syn27229419',
-              wikiId: '629762',
+              content: <Markdown ownerId={'syn27229419'} wikiId={'629762'} />,
             },
           ]}
         />
