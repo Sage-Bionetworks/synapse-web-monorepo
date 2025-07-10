@@ -8,18 +8,18 @@ export function D4D(props: D4DProps) {
   const rawHtml = GCInfo[org_id]?.d4dHtml ?? ''
   if (!rawHtml) {
     return (
-      <div className="ai-readi-datasheet">
+      <div className="d4d-html-style">
         No datasheet available for organization: {org_id}
       </div>
     )
   }
 
-  const reactReadyHtml = rawHtml.replace(/\bclass=/g, 'className=')
+  // const reactReadyHtml = rawHtml.replace(/\bclass=/g, 'className=')
 
   return (
     <div
       className="d4d-html-style"
-      dangerouslySetInnerHTML={{ __html: reactReadyHtml }}
+      dangerouslySetInnerHTML={{ __html: rawHtml }}
     />
   )
 }
