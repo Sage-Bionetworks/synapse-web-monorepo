@@ -17,7 +17,7 @@ import { JSONSchema7 } from 'json-schema'
 import { useEffect } from 'react'
 
 /**
- * Get the "description" for a specific key described in the JsonNode
+ * Get the value of a specified annotation for a specified key described in the JsonNode
  * @param key - the property key for which the description should be retrieved.
  * @param instance - a JsonNode resolved by the `annotate` API provided by @hyperjump/json-schema/annotations/experimental
  * @param annotationKey - the value that corresponds to the annotation to retrieve, e.g. "title", "description"
