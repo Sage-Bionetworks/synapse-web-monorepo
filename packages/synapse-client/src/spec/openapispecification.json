@@ -8534,10 +8534,10 @@
         }
       }
     },
-    "/repo/v1/grid/{sessionId}": {
+    "/repo/v1/grid/session/{sessionId}": {
       "get": {
         "tags": ["Grid Services"],
-        "operationId": "get-/repo/v1/grid/{sessionId}",
+        "operationId": "get-/repo/v1/grid/session/{sessionId}",
         "parameters": [
           {
             "name": "sessionId",
@@ -8559,12 +8559,26 @@
             }
           }
         }
+      },
+      "delete": {
+        "tags": ["Grid Services"],
+        "operationId": "delete-/repo/v1/grid/session/{sessionId}",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Void" } }
       }
     },
-    "/repo/v1/grid/{sessionId}/replica": {
+    "/repo/v1/grid/session/{sessionId}/replica": {
       "post": {
         "tags": ["Grid Services"],
-        "operationId": "post-/repo/v1/grid/{sessionId}/replica",
+        "operationId": "post-/repo/v1/grid/session/{sessionId}/replica",
         "parameters": [
           {
             "name": "sessionId",
@@ -8599,10 +8613,10 @@
         }
       }
     },
-    "/repo/v1/grid/{sessionId}/replica/{replicaId}": {
+    "/repo/v1/grid/session/{sessionId}/replica/{replicaId}": {
       "get": {
         "tags": ["Grid Services"],
-        "operationId": "get-/repo/v1/grid/{sessionId}/replica/{replicaId}",
+        "operationId": "get-/repo/v1/grid/session/{sessionId}/replica/{replicaId}",
         "parameters": [
           {
             "name": "sessionId",
@@ -8634,10 +8648,10 @@
         }
       }
     },
-    "/repo/v1/grid/{sessionId}/presigned/url": {
+    "/repo/v1/grid/session/{sessionId}/presigned/url": {
       "post": {
         "tags": ["Grid Services"],
-        "operationId": "post-/repo/v1/grid/{sessionId}/presigned/url",
+        "operationId": "post-/repo/v1/grid/session/{sessionId}/presigned/url",
         "parameters": [
           {
             "name": "sessionId",
@@ -8664,6 +8678,36 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/org.sagebionetworks.repo.model.grid.CreateGridPresignedUrlResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repo/v1/grid/session/list": {
+      "post": {
+        "tags": ["Grid Services"],
+        "operationId": "post-/repo/v1/grid/session/list",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.grid.ListGridSessionsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Auto-generated description",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.grid.ListGridSessionsResponse"
                 }
               }
             }
@@ -17145,6 +17189,20 @@
         "type": "string",
         "enum": ["PROCESSING", "FAILED", "COMPLETE"]
       },
+      "org.sagebionetworks.repo.model.oauth.GA4GHVisa": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "asserted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "value": { "type": "string" },
+          "source": { "type": "string" },
+          "by": { "type": "string" }
+        },
+        "description": "GA4GH Visa"
+      },
       "org.sagebionetworks.repo.model.principal.EmailValidationSignedToken": {
         "type": "object",
         "properties": {
@@ -19831,6 +19889,10 @@
         "required": ["concreteType"],
         "discriminator": { "propertyName": "concreteType" }
       },
+      "org.sagebionetworks.repo.model.oauth.GA4GHByType": {
+        "type": "string",
+        "enum": ["self", "peer", "system", "so", "dac"]
+      },
       "org.sagebionetworks.evaluation.model.SubmissionEligibility": {
         "type": "object",
         "properties": {
@@ -20245,6 +20307,14 @@
         },
         "description": "JSON schema for out of band 'Access Control Team' controlled Access Requirement, a 'tier 3' Access Requirement. This access requirement directs user to contact an ACT member to gain access to the data.",
         "required": ["concreteType"]
+      },
+      "org.sagebionetworks.repo.model.grid.ListGridSessionsRequest": {
+        "type": "object",
+        "properties": {
+          "sourceId": { "type": "string" },
+          "nextPageToken": { "type": "string" }
+        },
+        "description": "Request to list a user's active grid sessions."
       },
       "org.sagebionetworks.repo.model.grid.slq.OrderByDirection": {
         "type": "string",
@@ -20747,6 +20817,21 @@
           "direction": { "type": "string" }
         },
         "description": "Identifies both the field and direction for a single sort operation"
+      },
+      "org.sagebionetworks.repo.model.grid.ListGridSessionsResponse": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.grid.GridSession",
+              "description": "Basic information about a grid session."
+            },
+            "description": "A single page of results that match the request parameters."
+          },
+          "nextPageToken": { "type": "string" }
+        },
+        "description": "Response to a request to list a user's active grid session."
       },
       "org.sagebionetworks.repo.model.dataaccess.SubmissionSearchResponse": {
         "type": "object",
@@ -21480,6 +21565,23 @@
           "nextPageToken": { "type": "string" }
         },
         "description": "Metadata for a paginated list of personal access token records."
+      },
+      "org.sagebionetworks.repo.model.migration.BackfillLastSeenOnResponse": {
+        "type": "object",
+        "properties": {
+          "concreteType": {
+            "type": "string",
+            "enum": [
+              "org.sagebionetworks.repo.model.migration.BackfillLastSeenOnResponse"
+            ]
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "Results for a lastSeenOn backfill request.",
+        "required": ["concreteType"]
       },
       "org.sagebionetworks.repo.model.grid.sql.InExpression": {
         "type": "object",
@@ -24374,7 +24476,8 @@
           "validated_orcid",
           "validated_at",
           "refresh_token_id",
-          "token_type"
+          "token_type",
+          "ga4gh_passport_v1"
         ]
       },
       "org.sagebionetworks.repo.model.project.ProjectSetting": {
@@ -25499,6 +25602,16 @@
         },
         "description": "The response body from validateDefiningSql"
       },
+      "org.sagebionetworks.repo.model.oauth.GA4GHVisaType": {
+        "type": "string",
+        "enum": [
+          "AffiliationAndRole",
+          "AcceptedTermsAndPolicies",
+          "ResearcherStatus",
+          "ControlledAccessGrants",
+          "LinkedIdentities"
+        ]
+      },
       "org.sagebionetworks.repo.model.dataaccess.AccessApprovalSearchResponse": {
         "type": "object",
         "properties": {
@@ -25539,6 +25652,9 @@
           },
           {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.MigrationTypeCount"
+          },
+          {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.BackfillLastSeenOnResponse"
           },
           {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.BatchChecksumResponse"
@@ -26094,6 +26210,26 @@
           }
         },
         "description": "An array of Reference objects"
+      },
+      "org.sagebionetworks.repo.model.oauth.GA4GHVisaPayload": {
+        "type": "object",
+        "properties": {
+          "iss": { "type": "string" },
+          "sub": { "type": "string" },
+          "iat": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "exp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ga4gh_visa_v1": {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.oauth.GA4GHVisa",
+            "description": "GA4GH Visa"
+          }
+        },
+        "description": "GA4GH Visa Payload"
       },
       "org.sagebionetworks.repo.model.agent.TraceEventsResponse": {
         "type": "object",
@@ -28191,6 +28327,9 @@
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.AsyncMigrationTypeCountsRequest"
           },
           {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.BackfillLastSeenOnRequest"
+          },
+          {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.AsyncMigrationRangeChecksumRequest"
           },
           {
@@ -28533,6 +28672,23 @@
       "org.sagebionetworks.repo.model.entity.SortBy": {
         "type": "string",
         "enum": ["NAME", "CREATED_ON", "MODIFIED_ON"]
+      },
+      "org.sagebionetworks.repo.model.migration.BackfillLastSeenOnRequest": {
+        "type": "object",
+        "properties": {
+          "concreteType": {
+            "type": "string",
+            "enum": [
+              "org.sagebionetworks.repo.model.migration.BackfillLastSeenOnRequest"
+            ]
+          },
+          "maxUsersCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "Request to backfill the lastSeenOn status for existing users.",
+        "required": ["concreteType"]
       },
       "org.sagebionetworks.repo.model.table.TableSearchChangeResponse": {
         "type": "object",
