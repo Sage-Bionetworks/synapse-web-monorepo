@@ -15,9 +15,16 @@ import {
   CardConfiguration,
   // EntityDownloadConfirmation,
 } from 'synapse-react-client'
-import { CardContainerLogic } from 'synapse-react-client'
+import {
+  CardContainerLogic,
+  StandaloneQueryWrapper,
+} from 'synapse-react-client'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '@/config/columnAliases'
+import {
+  standardsRgbIndex,
+  standardsColumnLinks,
+} from '@/config/synapseConfigs/standards'
 import {
   ColumnSingleValueFilterOperator,
   ColumnMultiValueFunction,
@@ -26,8 +33,11 @@ import {
 import {
   organizationDetailsPageSQL,
   dataSetSQL,
+  standardsSql,
+  standardsFtsConfig,
   ORG_TABLE_COLUMN_NAMES,
   DATASET_DENORMALIZED_COLUMN_NAMES,
+  DST_TABLE_COLUMN_NAMES,
 } from '@/config/resources'
 // import { GenericCardIcon } from 'synapse-react-client/components/GenericCard/GenericCardIcon'
 // import GenericCard from 'synapse-react-client/components/GenericCard/GenericCard'
@@ -119,6 +129,52 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
     ),
   },
   {
+    id: 'relatedStandards',
+    title: 'Related Standards',
+    element: (
+      <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
+        {({ value }) => (
+          <StandaloneQueryWrapper
+            rgbIndex={standardsRgbIndex}
+            sql={standardsSql}
+            searchParams={{
+              [DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION]: value,
+            }}
+            sqlOperator={ColumnMultiValueFunction.HAS}
+            columnAliases={columnAliases}
+            tableConfiguration={{
+              showDownloadColumn: false,
+              columnLinks: standardsColumnLinks,
+            }}
+            // facetsToPlot={['topic', DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES]}
+            // initialPlotType={'BAR'}
+            searchConfiguration={{
+              ftsConfig: standardsFtsConfig,
+            }}
+            shouldDeepLink={false}
+            defaultShowPlots={false}
+            hideQueryCount={true}
+            hideDownload={true}
+            availableFacets={[]}
+            /*
+                showColumnSelection={true}
+                // visibleColumnCount={10}
+                isRowSelectionVisible={true}
+                tableConfiguration={{
+                  showAccessColumn: true,
+                  showDownloadColumn: true,
+                }}
+                lockedColumn={{
+                  columnName: DATA_TABLE_COLUMN_NAMES.STUDY,
+                  value: entityHeader.name,
+                }}
+                */
+          />
+        )}
+      </DetailsPageContextConsumer>
+    ),
+  },
+  {
     id: 'd4d',
     title: 'DataSheet for DataSet',
     element: (
@@ -133,30 +189,6 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
 
 export default function OrganizationDetailsPage() {
   const { id } = useGetPortalComponentSearchParams()
-
-  /*
-  This is the code previously used on home page to generate the Explore Standards
-  links. Need to get it working here now.
-
-  function createExplorePageLink(query: Query): string {
-    return `/Explore?QueryWrapper0=${encodeURIComponent(JSON.stringify(query))}`
-  }
-
-  const query: Query = {
-    sql: dataSql,
-    limit: 25,
-    selectedFacets: [
-      {
-        concreteType:
-          'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-        columnName: DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
-        facetValues: [org[ORG_DENORMALIZED_COLUMN_NAMES.NAME]],
-      },
-    ],
-  }
-  ctaButtonText: 'Explore Standards',
-  ctaButtonURL: createExplorePageLink(query),
-  */
 
   if (!id) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />

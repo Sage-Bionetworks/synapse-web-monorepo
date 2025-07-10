@@ -13,7 +13,7 @@ import {
   DST_TABLE_COLUMN_NAMES,
 } from '@/config/resources'
 
-const standardsRgbIndex = 0
+export const standardsRgbIndex = 0
 export const standardsColumnLinks: LabelLinkConfig = [
   {
     isMarkdown: true,
@@ -24,6 +24,10 @@ export const standardsColumnLinks: LabelLinkConfig = [
     isMarkdown: true,
     matchColumnName: DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_LINKS, // the column whose value will be used for the markdown
     // tooltipText?: string // If set, also show a tooltip
+  },
+  {
+    isMarkdown: true,
+    matchColumnName: DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS,
   },
   {
     matchColumnName: 'mature',

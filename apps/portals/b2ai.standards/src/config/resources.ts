@@ -3,7 +3,7 @@ import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2
 export const TABLE_IDS = {
   Challenges: { name: 'Challenges', id: 'syn65913973.1' }, // the only reason for this table is to get the GC images
   // CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
-  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.64' },
+  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.65' },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
   DataSet_denormalized: { name: 'DataSet_denormalized', id: 'syn68258237' },
   DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
@@ -27,6 +27,7 @@ export const DST_TABLE_COLUMN_NAMES = {
   HAS_RELEVANT_DATA_SUBSTRATE: 'has_relevant_data_substrate',
   HAS_RELEVANT_ORGANIZATION: 'has_relevant_organization',
   RELEVANT_ORG_LINKS: 'relevantOrgLinks',
+  RESPONSIBLE_ORG_LINKS: 'responsibleOrgLinks',
   RELEVANT_ORG_NAMES: 'relevantOrgNames',
   RESPONSIBLE_ORGANIZATION: 'responsible_organization',
   IS_OPEN: 'isOpen',
@@ -146,7 +147,7 @@ export const standardsDetailsPageSQL = `
             topic,
             dataTypes,
             ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES},
-            responsibleOrgName as SDO,
+            ${DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS} as SDO,
             isOpen,
             relatedTo,
             trainingResources,
