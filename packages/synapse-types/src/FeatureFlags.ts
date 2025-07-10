@@ -21,4 +21,7 @@ export enum FeatureFlagEnum {
 
   // If enabled, MFA is required
   MFA_REQUIRED = 'MFA_REQUIRED',
+
+  // If enabled, display the SustainabilityScorecard component in HeaderCards and show the "Sustainability and Reusability Report" tab on details pages (when configured)
+  PORTAL_SUSTAINABILITY_SCORECARD = 'PORTAL_SUSTAINABILITY_SCORECARD',
 }

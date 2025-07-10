@@ -1,10 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react'
 import MarkdownSynapse from './MarkdownSynapse'
 import { ObjectType } from '@sage-bionetworks/synapse-types'
+import { fn } from '@storybook/test'
 
-const meta = {
+const meta: Meta<typeof MarkdownSynapse> = {
   title: 'Markdown/MarkdownSynapse',
   component: MarkdownSynapse,
+  args: {
+    onMarkdownProcessingDone: fn(),
+  },
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>

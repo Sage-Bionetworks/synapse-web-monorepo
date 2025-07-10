@@ -67,6 +67,10 @@
   .text-align-center {
     text-align: center;
   }
+
+  p:last-child {
+    padding-bottom: 0;
+  }
 }
 
 // PORTALS-679

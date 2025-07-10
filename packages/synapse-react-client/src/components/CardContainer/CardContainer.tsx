@@ -29,6 +29,7 @@ import {
 } from '../row_renderers/ObservationCard'
 import TotalQueryResults from '../TotalQueryResults'
 import UserCardList from '../UserCardList/UserCardList'
+import { SustainabilityScorecardProps } from '../SustainabilityScorecard'
 
 const defaultListSx = { display: 'block' }
 const releaseCardMediumListSx = {
@@ -54,6 +55,7 @@ const multiCardListSx = {
 export type CardContainerProps = {
   rowSet: RowSet
   isHeader?: boolean
+  sustainabilityScorecard?: SustainabilityScorecardProps
   isAlignToLeftNav?: boolean
   title?: string
   isLoading?: boolean
