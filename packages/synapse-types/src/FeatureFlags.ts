@@ -19,9 +19,6 @@ export enum FeatureFlagEnum {
   // If enabled, account settings will link to a page to manage webhooks
   WEBHOOKS_UI = 'WEBHOOKS_UI',
 
-  // If enabled, MFA is required
-  MFA_REQUIRED = 'MFA_REQUIRED',
-
   // If enabled, display the SustainabilityScorecard component in HeaderCards and show the "Sustainability and Reusability Report" tab on details pages (when configured)
   PORTAL_SUSTAINABILITY_SCORECARD = 'PORTAL_SUSTAINABILITY_SCORECARD',
 }
