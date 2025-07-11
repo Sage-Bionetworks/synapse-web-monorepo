@@ -18,7 +18,7 @@ import {
 import {
   getDisplayedAnnotationDescription,
   getDisplayedAnnotationTitle,
-  useGetAnnotatedInstance,
+  useGetAnnotatedJsonInstance,
 } from '@/utils/jsonschema/SchemaAnnotationUtils'
 import { Json } from '@sage-bionetworks/synapse-client'
 import dayjs from 'dayjs'
@@ -63,7 +63,7 @@ export function AnnotationsTable(props: AnnotationsTableProps) {
     })
 
   const { data: annotatedInstance, isLoading: isLoadingSchemaAnnotations } =
-    useGetAnnotatedInstance(entityData?.entity as Json, validationSchema)
+    useGetAnnotatedJsonInstance(entityData?.entity as Json, validationSchema)
 
   const { data: validationResults, refetch: refetchValidationInformation } =
     useGetValidationResults(entityId, {

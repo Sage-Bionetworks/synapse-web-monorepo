@@ -93,7 +93,7 @@ export function getDisplayedAnnotationDescription(
  * @param json - a JSON document
  * @param schema - a JSON Schema that describes the JSON document
  */
-export function useGetAnnotatedInstance(json?: Json, schema?: JSONSchema7) {
+export function useGetAnnotatedJsonInstance(json?: Json, schema?: JSONSchema7) {
   useEffect(() => {
     if (schema && schema.$id && !hasSchema(schema.$id)) {
       registerSchema(schema as SchemaObject)
