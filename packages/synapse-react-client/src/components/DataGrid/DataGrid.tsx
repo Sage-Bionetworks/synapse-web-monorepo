@@ -12,7 +12,7 @@ import { SynapseClient, TableQuery } from '@sage-bionetworks/synapse-client'
 import { useCreateGridSession } from './useCreateGridSession'
 import {
   CreateGridRequest,
-  PostRepoV1GridSessionIdReplicaRequest,
+  PostRepoV1GridSessionSessionIdReplicaRequest,
 } from '@sage-bionetworks/synapse-client'
 import { Model, VecApi } from 'json-joy/lib/json-crdt'
 import { encode, decode } from 'json-joy/lib/json-crdt-patch/codec/compact'
@@ -98,12 +98,14 @@ const DataGrid = () => {
     try {
       console.log('Creating replica for session ID:', sessionId)
       const replica =
-        await synapseClient.gridServicesClient.postRepoV1GridSessionIdReplica({
-          sessionId,
-          createReplicaRequest: {
-            gridSessionId: sessionId,
-          },
-        } as PostRepoV1GridSessionIdReplicaRequest)
+        await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdReplica(
+          {
+            sessionId,
+            createReplicaRequest: {
+              gridSessionId: sessionId,
+            },
+          } as PostRepoV1GridSessionSessionIdReplicaRequest,
+        )
       return replica
     } catch (error) {
       console.error('Failed to create replica:', error)
@@ -395,7 +397,7 @@ const DataGrid = () => {
         setReplicaId(newReplicaId)
 
         const getPresignedUrl =
-          await synapseClient.gridServicesClient.postRepoV1GridSessionIdPresignedUrl(
+          await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdPresignedUrl(
             {
               sessionId: newSessionId,
               createGridPresignedUrlRequest: {
@@ -415,7 +417,7 @@ const DataGrid = () => {
         setReplicaId(newReplicaId)
 
         const getPresignedUrl =
-          await synapseClient.gridServicesClient.postRepoV1GridSessionIdPresignedUrl(
+          await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdPresignedUrl(
             {
               sessionId: parsedInput.input,
               createGridPresignedUrlRequest: {
