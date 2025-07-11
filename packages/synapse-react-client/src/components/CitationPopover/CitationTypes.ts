@@ -8,4 +8,5 @@ export type CitationProps = {
   boilerplateText?: string
   defaultCitationFormat?: CitationFormat
   selectSx?: SxProps
+  buttonSx?: SxProps
 }
