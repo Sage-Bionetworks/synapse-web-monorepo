@@ -49,13 +49,35 @@ export const navbarConfig: NavbarConfig = {
       ],
     },
     {
+      name: 'About',
+      path: '/About',
+      children: [
+        {
+          name: 'MC2 Center',
+          path: 'https://help.cancercomplexity.synapse.org/doc/about-the-mc2-center',
+        },
+        {
+          name: 'CCKP',
+          path: 'https://help.cancercomplexity.synapse.org/doc/about-the-cckp-new',
+        },
+        {
+          name: 'Data Standards',
+          path: 'https://mc2-center.github.io/data-models/',
+        },
+      ],
+    },
+    {
       name: 'News',
       path: 'https://news.cancercomplexity.synapse.org/',
+    },
+    {
+      name: 'Contribute Data',
+      path: 'https://help.cancercomplexity.synapse.org/doc/contribute-to-the-cckp',
     },
     {
       name: 'Help',
       path: 'https://help.cancercomplexity.synapse.org/',
     },
   ],
-  isPortalsDropdownEnabled: false,
+  isPortalsDropdownEnabled: true,
 }
