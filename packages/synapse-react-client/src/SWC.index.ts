@@ -21,6 +21,7 @@ import UserAccessRequestHistoryPlace from './components/dataaccess/UserAccessReq
 import CreateOrUpdateDoiModal from './components/doi/CreateOrUpdateDoiModal'
 import DownloadConfirmation from './components/download_list/FolderDownloadConfirmation'
 import DownloadCartPage from './components/DownloadCart/DownloadCartPage'
+import DynamicForm from './components/DynamicForm/DynamicForm'
 import EntityModal from './components/entity/metadata/EntityModal'
 import EntityActionMenu from './components/entity/page/action_menu/EntityActionMenu'
 import EntityPageBreadcrumbs from './components/entity/page/breadcrumbs/EntityPageBreadcrumbs'
@@ -66,10 +67,9 @@ import SynapseFooter from './components/SynapseFooter/SynapseFooter'
 import SynapseHomepageV2 from './components/SynapseHomepageV2/SynapseHomepageV2'
 import SynapsePlansPage from './components/SynapseHomepageV2/SynapsePlansPage'
 import SynapseNavDrawer from './components/SynapseNavDrawer/SynapseNavDrawer'
+import SynapsePortalBanners from './components/SynapsePortalBanners/SynapsePortalBanners'
 import DatasetItemsEditor from './components/SynapseTable/datasets/DatasetItemsEditor'
 import TableColumnSchemaEditor from './components/TableColumnSchemaEditor/TableColumnSchemaEditor'
-import SynapsePortalBanners from './components/SynapsePortalBanners/SynapsePortalBanners'
-
 import {
   displayToast,
   SynapseToastContainer,
@@ -128,6 +128,7 @@ const SynapseComponents = {
   DiscussionThread,
   DownloadCartPage,
   DownloadConfirmation,
+  DynamicForm,
   EntityAclEditorModal,
   EntityActionMenu,
   EntityBadgeIcons,
