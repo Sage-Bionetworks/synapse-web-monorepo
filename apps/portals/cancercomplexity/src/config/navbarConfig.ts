@@ -21,10 +21,6 @@ export const navbarConfig: NavbarConfig = {
           name: 'The Cancer Resource Information Ecosystem',
           path: '/#The Cancer Resource Information Ecosystem',
         },
-        {
-          name: 'About the Cancer Complexity Knowledge Portal',
-          path: '/#About the Cancer Complexity Knowledge Portal',
-        },
       ],
     },
     {
