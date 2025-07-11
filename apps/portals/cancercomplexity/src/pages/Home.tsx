@@ -6,7 +6,6 @@ import {
 } from '@/config/synapseConfigs/onPointClick'
 import CancerComplexityHeader from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityHeader'
 import CancerComplexityIntro from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityIntro'
-import AboutPortal from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/AboutPortal'
 import ConsortiaGoals from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/ConsortiaGoals'
 import DevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/DevelopedBySage'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
@@ -151,21 +150,6 @@ function Home() {
           />
         </SectionLayout>
       </div>
-      <SectionLayout
-        title={'About the Cancer Complexity Knowledge Portal'}
-        subtitle={
-          'The portal is built to disseminate resources to accelerate discovery and collaboration in the cancer research community. We aim to provide rich context about and access to activities and contributors that have produced the resources hosted within this and other repositories.'
-        }
-        centerTitle
-        ContainerProps={{ className: 'home-spacer' }}
-      >
-        <AboutPortal
-          cardProps={[
-            { ownerId: 'syn21498902', wikiId: '601369' },
-            { ownerId: 'syn21498902', wikiId: '601370' },
-          ]}
-        />
-      </SectionLayout>
       <SectionLayout>
         <DevelopedBySage />
       </SectionLayout>
