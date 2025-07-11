@@ -37,6 +37,7 @@
     "@aws-sdk/lib-storage": "^3.803.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@hyperjump/json-schema": "^1.16.1",
     "@mui/icons-material": "^7.1.1",
     "@mui/material": "^7.1.1",
     "@mui/system": "^7.1.1",
