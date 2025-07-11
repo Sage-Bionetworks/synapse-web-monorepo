@@ -1,4 +1,5 @@
 import StandardsDetailsPage from '@/pages/StandardsDetailsPage'
+import OrganizationDetailsPage from '@/pages/OrganizationDetailsPage'
 import { Box } from '@mui/material'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
@@ -8,10 +9,10 @@ import { QueryWrapperPlotNav } from 'synapse-react-client'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import HomePage from '../pages/HomePage'
 import {
-  dataQueryWrapperPlotNavProps,
+  standardsQueryWrapperPlotNavProps,
   /* part of PR #1865, not ready yet
   dataSetsQueryWrapperPlotNavProps, */
-} from './synapseConfigs/data'
+} from './synapseConfigs/standards'
 import { FullWidthAlert } from 'synapse-react-client'
 
 const routes: RouteObject[] = [
@@ -54,7 +55,7 @@ const routes: RouteObject[] = [
               },
             }}
           >
-            <QueryWrapperPlotNav {...dataQueryWrapperPlotNavProps} />
+            <QueryWrapperPlotNav {...standardsQueryWrapperPlotNavProps} />
           </Box>
         ),
       },
@@ -62,25 +63,10 @@ const routes: RouteObject[] = [
         path: 'Explore/Standard/DetailsPage',
         element: <StandardsDetailsPage />,
       },
-      /* part of PR #1865, not ready yet
-    {
-      path: 'DataSetExplore',
-      element: (
-        <Box
-          sx={{
-            '.QueryWrapperPlotNav > *': {
-              p: '0px 20px',
-            },
-            '.QueryWrapperPlotNav > .TopLevelControls': {
-              mt: '0',
-            },
-          }}
-        >
-          <QueryWrapperPlotNav {...dataSetsQueryWrapperPlotNavProps} />
-        </Box>
-      ),
-    },
-    */
+      {
+        path: 'Explore/Organization/OrganizationDetailsPage',
+        element: <OrganizationDetailsPage />,
+      },
       {
         path: 'About',
         element: (
