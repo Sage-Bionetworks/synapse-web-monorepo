@@ -1,19 +1,13 @@
 import usePathBefore2FARedirect from '@/hooks/usePathBefore2FARedirect'
-import { useSkipMfaPrompt } from '@/hooks/useSkipMfaPrompt'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
-import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/featureflags/useGetFeatureFlag'
 import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
 
 export default function useMaybeForceEnable2FA() {
   // Detect if two factor authentication is enabled
   const { twoFactorStatus } = useApplicationSessionContext()
-  const isFeatureFlagEnabled = useGetFeatureFlag(FeatureFlagEnum.MFA_REQUIRED)
   const navigate = useNavigate()
   const location = useLocation()
-  const { hasSkippedRecently } = useSkipMfaPrompt()
-
   const { set: setPathBefore2faRedirect } = usePathBefore2FARedirect()
 
   // true until we confirm we will not force enable 2FA
@@ -31,10 +25,7 @@ export default function useMaybeForceEnable2FA() {
         return
       }
       // redirect to 2FA enrollment if not enabled
-      if (
-        !isTwoFactorEnabled &&
-        (isFeatureFlagEnabled || !hasSkippedRecently)
-      ) {
+      if (!isTwoFactorEnabled) {
         // Store the current path before redirecting to 2FA required page, we will redirect back to this path after 2FA
         // enrollment is complete.
         const currentPath = location.pathname + location.search + location.hash
@@ -49,8 +40,6 @@ export default function useMaybeForceEnable2FA() {
     twoFactorStatus,
     location.pathname,
     navigate,
-    isFeatureFlagEnabled,
-    hasSkippedRecently,
     location.search,
     location.hash,
     setPathBefore2faRedirect,
