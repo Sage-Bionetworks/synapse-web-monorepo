@@ -151,21 +151,6 @@ function Home() {
           />
         </SectionLayout>
       </div>
-      <SectionLayout
-        title={'About the Cancer Complexity Knowledge Portal'}
-        subtitle={
-          'The portal is built to disseminate resources to accelerate discovery and collaboration in the cancer research community. We aim to provide rich context about and access to activities and contributors that have produced the resources hosted within this and other repositories.'
-        }
-        centerTitle
-        ContainerProps={{ className: 'home-spacer' }}
-      >
-        <AboutPortal
-          cardProps={[
-            { ownerId: 'syn21498902', wikiId: '601369' },
-            { ownerId: 'syn21498902', wikiId: '601370' },
-          ]}
-        />
-      </SectionLayout>
       <SectionLayout>
         <DevelopedBySage />
       </SectionLayout>
