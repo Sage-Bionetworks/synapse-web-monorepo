@@ -25,7 +25,7 @@ import markdownitSynapsePlugin from 'markdown-it-synapse'
 import markdownitSynapseHeading from 'markdown-it-synapse-heading'
 import markdownitMath from 'markdown-it-synapse-math'
 import markdownitSynapseTable from 'markdown-it-synapse-table'
-import { JSX, useEffect, useMemo, useRef } from 'react'
+import { Fragment, JSX, useEffect, useMemo, useRef } from 'react'
 import { ErrorBanner } from '../error/ErrorBanner'
 import { SkeletonTable } from '../Skeleton'
 import MarkdownWidget from './MarkdownWidget'
@@ -226,9 +226,9 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
     element.nodeType === Node.ELEMENT_NODE &&
     element instanceof HTMLElement
   ) {
-    const Tag: keyof JSX.IntrinsicElements =
+    const Tag: keyof JSX.IntrinsicElements | typeof Fragment =
       element.tagName.toLowerCase() === 'body'
-        ? 'span'
+        ? Fragment // The component ultimately wraps this content, so if the tag is 'body', we use Fragment to avoid an extra nested element
         : (element.tagName.toLowerCase() as keyof JSX.IntrinsicElements)
     const widgetParams = element.getAttribute('data-widgetparams')
     if (widgetParams) {

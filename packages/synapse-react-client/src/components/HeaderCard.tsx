@@ -6,6 +6,11 @@ import { DescriptionConfig } from './CardContainerLogic'
 import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
 import { GenericCardProps } from '@/components/GenericCard/GenericCard'
 import HeaderCardV2 from './HeaderCard/HeaderCardV2'
+import SustainabilityScorecard, {
+  SustainabilityScorecardProps,
+} from './SustainabilityScorecard/SustainabilityScorecard'
+import { useGetFeatureFlag } from '@/synapse-queries'
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import CitationPopover from './CitationPopover'
 
 export type HeaderCardVariant = 'HeaderCard' | 'HeaderCardV2'
@@ -26,6 +31,7 @@ export type HeaderCardProps = {
   cardTopContent?: React.ReactNode
   ctaLinkConfig?: GenericCardProps['ctaLinkConfig']
   cardTopButtons?: React.ReactNode
+  sustainabilityScorecard?: SustainabilityScorecardProps
   doiUri?: string
 }
 
@@ -48,8 +54,15 @@ const HeaderCard = forwardRef(function HeaderCard(
     headerCardVariant = 'HeaderCard',
     cardTopContent,
     cardTopButtons,
+    sustainabilityScorecard,
     doiUri,
   } = props
+
+  const isFeatureFlagEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.PORTAL_SUSTAINABILITY_SCORECARD,
+  )
+
+  const hideIcon = Boolean(sustainabilityScorecard && isFeatureFlagEnabled)
 
   // store old document title and description so that we can restore when this component is removed
   const descriptionElement: Element | null = document.querySelector(
@@ -64,6 +77,7 @@ const HeaderCard = forwardRef(function HeaderCard(
   const [docDescription] = useState<string>(
     descriptionElement ? descriptionElement.getAttribute('content')! : '',
   )
+
   useEffect(() => {
     // update page title and description based on header card values
     if (title && document.title !== title) {
@@ -112,12 +126,12 @@ const HeaderCard = forwardRef(function HeaderCard(
                   ...(doiUri && { alignSelf: 'center', marginRight: '5px' }),
                 }}
               >
-                {icon}
+                {!hideIcon && icon}
               </Box>
               <Box
                 sx={{
                   width: '100%',
-                  ...(doiUri && {
+                  ...((doiUri || hideIcon) && {
                     display: 'flex',
                     justifyContent: 'space-between',
                   }),
@@ -155,6 +169,21 @@ const HeaderCard = forwardRef(function HeaderCard(
                     descriptionSubTitle=""
                     descriptionConfig={descriptionConfiguration}
                   />
+                  {sustainabilityScorecard && isFeatureFlagEnabled && (
+                    <SustainabilityScorecard
+                      metricsConfig={sustainabilityScorecard.metricsConfig}
+                      searchParamKey={sustainabilityScorecard.searchParamKey}
+                      filterColumn={sustainabilityScorecard.filterColumn}
+                      scoreDescriptorColumnName={
+                        sustainabilityScorecard.scoreDescriptorColumnName
+                      }
+                      queryRequest={sustainabilityScorecard.queryRequest}
+                      sx={{
+                        background: 'rgba(0, 0, 0, 0.10)',
+                        marginTop: '30px',
+                      }}
+                    />
+                  )}
                 </div>
                 <CitationPopover doi={doiUri} />
                 {(values || cardTopContent) && (
