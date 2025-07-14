@@ -1,6 +1,6 @@
 import { useGetPortalComponentSearchParams } from '@/utils/UseGetPortalComponentSearchParams'
-import { Container, Stack } from '@mui/material'
-import { ProvenanceGraph } from 'synapse-react-client'
+import { Box, Container, Stack } from '@mui/material'
+import { IconSvg, ProvenanceGraph } from 'synapse-react-client'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { useGetEntityBundle } from 'synapse-react-client/synapse-queries'
 import CollapsibleSection from '@/components/CollapsibleSection'
@@ -8,7 +8,7 @@ import { DetailsPageSectionLayoutType } from '@/components/DetailsPage/DetailsPa
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 import DetailsPageMenu from '../../components/DetailsPageMenu'
 import DetailsPageLayout from '@/components/DetailsPageLayout'
-import FileEntityPageHeader from './FileEntityPageHeader'
+import HeaderCard from 'synapse-react-client/components/HeaderCard'
 
 function FileEntityPage() {
   const searchParams = useGetPortalComponentSearchParams()
@@ -32,6 +32,10 @@ function FileEntityPage() {
     { id: 'provenance', title: 'Provenance' },
   ].filter(Boolean) as DetailsPageSectionLayoutType[]
 
+  const title = entityBundle?.entity.name ?? ''
+  const type = entityBundle?.entityType ?? 'Entity'
+  const doiUri = entityBundle?.doiAssociation?.doiUri
+
   if (isLoading) {
     return (
       <Stack sx={{ my: 3 }}>
@@ -39,9 +43,36 @@ function FileEntityPage() {
       </Stack>
     )
   }
+
+  const icon = (
+    <Box
+      sx={{
+        backgroundColor: 'rgba(0, 0, 0, 0.08)',
+        borderRadius: '50%',
+        width: '72px',
+        height: '72px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <IconSvg
+        icon={'file'}
+        wrap={false}
+        sx={{ width: '32px', height: '32px' }}
+      />
+    </Box>
+  )
+
   return (
-    <>
-      {entityBundle && <FileEntityPageHeader data={entityBundle} />}
+    <article>
+      <HeaderCard
+        type={type}
+        title={title}
+        description={''}
+        icon={icon}
+        doiUri={doiUri}
+      />
       <Container>
         <DetailsPageLayout>
           <DetailsPageMenu menuSections={fileEntityPageSections} />
@@ -70,7 +101,7 @@ function FileEntityPage() {
           </Stack>
         </DetailsPageLayout>
       </Container>
-    </>
+    </article>
   )
 }
 

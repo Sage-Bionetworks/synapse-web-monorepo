@@ -6,6 +6,7 @@ import { DescriptionConfig } from './CardContainerLogic'
 import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
 import { GenericCardProps } from '@/components/GenericCard/GenericCard'
 import HeaderCardV2 from './HeaderCard/HeaderCardV2'
+import CitationPopover from './CitationPopover'
 
 export type HeaderCardVariant = 'HeaderCard' | 'HeaderCardV2'
 
@@ -25,6 +26,7 @@ export type HeaderCardProps = {
   cardTopContent?: React.ReactNode
   ctaLinkConfig?: GenericCardProps['ctaLinkConfig']
   cardTopButtons?: React.ReactNode
+  doiUri?: string
 }
 
 const HeaderCard = forwardRef(function HeaderCard(
@@ -46,6 +48,7 @@ const HeaderCard = forwardRef(function HeaderCard(
     headerCardVariant = 'HeaderCard',
     cardTopContent,
     cardTopButtons,
+    doiUri,
   } = props
 
   // store old document title and description so that we can restore when this component is removed
@@ -85,7 +88,7 @@ const HeaderCard = forwardRef(function HeaderCard(
   }
 
   return (
-    <div
+    <Box
       ref={ref}
       className={`SRC-portalCard SRC-portalCardHeader ${
         isAlignToLeftNav ? 'isAlignToLeftNav' : ''
@@ -104,8 +107,22 @@ const HeaderCard = forwardRef(function HeaderCard(
         <div className="row">
           <div className="col-md-offset-1 col-md-10">
             <div className="SRC-portalCardMain">
-              {icon}
-              <div style={{ width: '100%' }}>
+              <Box
+                sx={{
+                  ...(doiUri && { alignSelf: 'center', marginRight: '5px' }),
+                }}
+              >
+                {icon}
+              </Box>
+              <Box
+                sx={{
+                  width: '100%',
+                  ...(doiUri && {
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }),
+                }}
+              >
                 <div className="SRC-cardContent" style={{ marginLeft: '15px' }}>
                   <div className="SRC-type">{type}</div>
                   <div>
@@ -119,7 +136,16 @@ const HeaderCard = forwardRef(function HeaderCard(
                           {title}
                         </a>
                       ) : (
-                        <span> {title} </span>
+                        <span
+                          style={{
+                            ...(doiUri && {
+                              fontSize: '36px',
+                              marginTop: '20px',
+                            }),
+                          }}
+                        >
+                          {title}
+                        </span>
                       )}
                     </h3>
                   </div>
@@ -130,29 +156,34 @@ const HeaderCard = forwardRef(function HeaderCard(
                     descriptionConfig={descriptionConfiguration}
                   />
                 </div>
-                <div
-                  style={{
-                    borderTop: '1px solid rgba(26, 28, 41, 0.2)',
-                    marginTop: '15px',
-                    paddingTop: '5px',
-                  }}
-                />
-                <div className="SRC-cardContent">
-                  {cardTopContent}
-                  {values && (
-                    <CardFooter
-                      isHeader={true}
-                      secondaryLabelLimit={secondaryLabelLimit}
-                      values={values}
+                <CitationPopover doi={doiUri} />
+                {(values || cardTopContent) && (
+                  <>
+                    <div
+                      style={{
+                        borderTop: '1px solid rgba(26, 28, 41, 0.2)',
+                        marginTop: '15px',
+                        paddingTop: '5px',
+                      }}
                     />
-                  )}
-                </div>
-              </div>
+                    <div className="SRC-cardContent">
+                      {cardTopContent}
+                      {values && (
+                        <CardFooter
+                          isHeader={true}
+                          secondaryLabelLimit={secondaryLabelLimit}
+                          values={values}
+                        />
+                      )}
+                    </div>
+                  </>
+                )}
+              </Box>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </Box>
   )
 })
 
