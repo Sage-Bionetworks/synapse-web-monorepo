@@ -42,7 +42,7 @@
     "@types/react-plotly.js": "^2.6.3",
     "@types/react-tooltip": "^4.2.4",
     "@vitest/coverage-v8": "^3.2.2",
-    "@vitest/ui": "^3.2.2",
+    "@vitest/ui": "^3.2.4",
     "@vitest/utils": "^3.2.2",
     "assert": "^2.1.0",
     "buffer": "^6.0.3",
