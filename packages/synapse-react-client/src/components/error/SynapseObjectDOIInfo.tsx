@@ -2,17 +2,19 @@ import { useGetDOI } from '@/synapse-queries/doi/useDOI'
 import { Box, Typography } from '@mui/material'
 import { DoiObjectType } from '@sage-bionetworks/synapse-client'
 
-export type EntityDOIInfoProps = {
-  entityId: string
+export type SynapseObjectDOIInfoProps = {
+  id: string
+  type: DoiObjectType
   version?: number
+  portalId?: string
 }
 
-export default function EntityDOIInfo(props: EntityDOIInfoProps) {
-  const { entityId, version } = props
+export default function SynapseObjectDOIInfo(props: SynapseObjectDOIInfoProps) {
+  const { id, version, type, portalId } = props
   const { data: doi } = useGetDOI(
-    { id: entityId, version, type: DoiObjectType.ENTITY },
+    { id, version, type, portalId },
     {
-      enabled: !!entityId,
+      enabled: !!id,
     },
   )
   if (!doi) {

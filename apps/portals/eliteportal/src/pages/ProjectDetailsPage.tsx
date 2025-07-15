@@ -23,91 +23,93 @@ function ProjectDetailsPage() {
   const { shortName } = useGetPortalComponentSearchParams()
 
   return (
-    <>
-      <CardContainerLogic
-        sql={projectsSql}
-        cardConfiguration={{
-          ...projectCardConfiguration,
-          titleLinkConfig: {
-            isMarkdown: false,
-            overrideLinkURLColumnName: 'externalWebsite',
-            baseURL: 'Explore/Projects',
-            URLColumnName: '',
-            matchColumnName: '',
-          },
-          isHeader: true,
-        }}
-        searchParams={{ shortName }}
-      />
-      <DetailsPage sql={projectsSql}>
-        <DetailsPageContent
-          content={[
-            {
-              id: 'Studies',
-              title: 'Studies',
-              element: (
-                <CardContainerLogic
-                  cardConfiguration={studyCardConfiguration}
-                  sql={studiesSql}
-                  searchParams={{ project: shortName }}
-                />
-              ),
+    <DetailsPage
+      header={
+        <CardContainerLogic
+          sql={projectsSql}
+          cardConfiguration={{
+            ...projectCardConfiguration,
+            titleLinkConfig: {
+              isMarkdown: false,
+              overrideLinkURLColumnName: 'externalWebsite',
+              baseURL: 'Explore/Projects',
+              URLColumnName: '',
+              matchColumnName: '',
             },
-            {
-              id: 'Publications',
-              title: 'Publications',
-              element: (
-                <DetailsPageContextConsumer columnName={'grant'}>
-                  {({ value }) => (
-                    <CardContainerLogic
-                      cardConfiguration={publicationCardProps}
-                      sql={publicationsSql}
-                      searchParams={{ grant: value! }}
-                      sqlOperator={ColumnMultiValueFunction.HAS}
-                    />
-                  )}
-                </DetailsPageContextConsumer>
-              ),
-            },
-            {
-              id: 'People',
-              title: 'People',
-              element: (
-                <DetailsPageContextConsumer columnName={'grant'}>
-                  {({ value }) => (
-                    <CardContainerLogic
-                      sql={peopleSql}
-                      limit={6}
-                      cardConfiguration={{
-                        type: SynapseConstants.MEDIUM_USER_CARD,
-                      }}
-                      searchParams={{ grant: value! }}
-                      sqlOperator={ColumnMultiValueFunction.HAS}
-                    />
-                  )}
-                </DetailsPageContextConsumer>
-              ),
-            },
-            {
-              id: 'Computational Tools',
-              title: 'Computational Tools',
-              element: (
-                <DetailsPageContextConsumer columnName={'shortName'}>
-                  {({ value }) => (
-                    <CardContainerLogic
-                      cardConfiguration={computationalCardConfiguration}
-                      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-                      sql={computationalSql}
-                      searchParams={{ project: value! }}
-                    />
-                  )}
-                </DetailsPageContextConsumer>
-              ),
-            },
-          ]}
+            isHeader: true,
+          }}
+          searchParams={{ shortName }}
         />
-      </DetailsPage>
-    </>
+      }
+      sql={projectsSql}
+    >
+      <DetailsPageContent
+        content={[
+          {
+            id: 'Studies',
+            title: 'Studies',
+            element: (
+              <CardContainerLogic
+                cardConfiguration={studyCardConfiguration}
+                sql={studiesSql}
+                searchParams={{ project: shortName }}
+              />
+            ),
+          },
+          {
+            id: 'Publications',
+            title: 'Publications',
+            element: (
+              <DetailsPageContextConsumer columnName={'grant'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={publicationCardProps}
+                    sql={publicationsSql}
+                    searchParams={{ grant: value! }}
+                    sqlOperator={ColumnMultiValueFunction.HAS}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            id: 'People',
+            title: 'People',
+            element: (
+              <DetailsPageContextConsumer columnName={'grant'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    sql={peopleSql}
+                    limit={6}
+                    cardConfiguration={{
+                      type: SynapseConstants.MEDIUM_USER_CARD,
+                    }}
+                    searchParams={{ grant: value! }}
+                    sqlOperator={ColumnMultiValueFunction.HAS}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            id: 'Computational Tools',
+            title: 'Computational Tools',
+            element: (
+              <DetailsPageContextConsumer columnName={'shortName'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={computationalCardConfiguration}
+                    sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                    sql={computationalSql}
+                    searchParams={{ project: value! }}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+        ]}
+      />
+    </DetailsPage>
   )
 }
 

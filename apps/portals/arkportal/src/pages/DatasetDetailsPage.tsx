@@ -16,83 +16,81 @@ import { QueryWrapperPlotNav } from 'synapse-react-client/components/QueryWrappe
 function DatasetDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
   return (
-    <>
-      <CardContainerLogic
-        cardConfiguration={{
-          ...datasetCardConfiguration,
-          secondaryLabelLimit: 4,
-          isHeader: true,
-        }}
-        sql={datasetsSql}
-        searchParams={searchParams}
-        columnAliases={datasetColumnAliases}
-      />
-      <DetailsPage
-        sql={datasetsSql}
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        ContainerProps={{
-          maxWidth: 'xl',
-        }}
-      >
-        <DetailsPageContent
-          content={[
-            {
-              title: 'Description',
-              id: 'Description',
-              element: (
-                <MarkdownSynapseFromColumnData
-                  columnName={'datasetDescription'}
-                />
-              ),
-            },
-            {
-              title: 'Acknowledgment',
-              id: 'Acknowledgment',
-              element: (
-                <MarkdownSynapseFromColumnData
-                  columnName={'acknowledgmentStatement'}
-                />
-              ),
-            },
-            {
-              title: 'Files',
-              id: 'Files',
-              element: (
-                <DetailsPageContextConsumer>
-                  {({ context }) => {
-                    if (!context.rowData) {
-                      return null
-                    }
-                    const hasVersionNumber = Boolean(
-                      context.rowData?.versionNumber,
-                    )
-                    const sql = `SELECT * FROM syn${context.rowData?.rowId}${
-                      hasVersionNumber
-                        ? `.${context.rowData?.versionNumber}`
-                        : ''
-                    }`
-                    return (
-                      <QueryWrapperPlotNav
-                        rgbIndex={0}
-                        sql={sql}
-                        visibleColumnCount={7}
-                        tableConfiguration={{
-                          showAccessColumn: true,
-                          showDownloadColumn: true,
-                        }}
-                        shouldDeepLink={false}
-                        columnAliases={columnAliases}
-                        defaultShowPlots={false}
-                      />
-                    )
-                  }}
-                </DetailsPageContextConsumer>
-              ),
-            },
-          ]}
+    <DetailsPage
+      header={
+        <CardContainerLogic
+          cardConfiguration={{
+            ...datasetCardConfiguration,
+            secondaryLabelLimit: 4,
+            isHeader: true,
+          }}
+          sql={datasetsSql}
+          searchParams={searchParams}
+          columnAliases={datasetColumnAliases}
         />
-      </DetailsPage>
-    </>
+      }
+      sql={datasetsSql}
+      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+      ContainerProps={{
+        maxWidth: 'xl',
+      }}
+    >
+      <DetailsPageContent
+        content={[
+          {
+            title: 'Description',
+            id: 'Description',
+            element: (
+              <MarkdownSynapseFromColumnData
+                columnName={'datasetDescription'}
+              />
+            ),
+          },
+          {
+            title: 'Acknowledgment',
+            id: 'Acknowledgment',
+            element: (
+              <MarkdownSynapseFromColumnData
+                columnName={'acknowledgmentStatement'}
+              />
+            ),
+          },
+          {
+            title: 'Files',
+            id: 'Files',
+            element: (
+              <DetailsPageContextConsumer>
+                {({ context }) => {
+                  if (!context.rowData) {
+                    return null
+                  }
+                  const hasVersionNumber = Boolean(
+                    context.rowData?.versionNumber,
+                  )
+                  const sql = `SELECT * FROM syn${context.rowData?.rowId}${
+                    hasVersionNumber ? `.${context.rowData?.versionNumber}` : ''
+                  }`
+                  return (
+                    <QueryWrapperPlotNav
+                      rgbIndex={0}
+                      sql={sql}
+                      visibleColumnCount={7}
+                      tableConfiguration={{
+                        showAccessColumn: true,
+                        showDownloadColumn: true,
+                      }}
+                      shouldDeepLink={false}
+                      columnAliases={columnAliases}
+                      defaultShowPlots={false}
+                    />
+                  )
+                }}
+              </DetailsPageContextConsumer>
+            ),
+          },
+        ]}
+      />
+    </DetailsPage>
   )
 }
 

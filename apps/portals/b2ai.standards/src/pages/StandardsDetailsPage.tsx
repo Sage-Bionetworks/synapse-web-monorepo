@@ -123,37 +123,38 @@ export default function StandardsDetailsPage() {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
   }
   return (
-    <>
-      <CardContainerLogic
-        query={{
-          sql: dataSql,
-          additionalFilters: [
-            {
-              concreteType:
-                'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-              columnName: 'id',
-              operator: ColumnSingleValueFilterOperator.EQUAL,
-              values: [id],
+    <DetailsPage
+      header={
+        <CardContainerLogic
+          query={{
+            sql: dataSql,
+            additionalFilters: [
+              {
+                concreteType:
+                  'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                columnName: 'id',
+                operator: ColumnSingleValueFilterOperator.EQUAL,
+                values: [id],
+              },
+            ],
+          }}
+          columnAliases={columnAliases}
+          cardConfiguration={{
+            type: SynapseConstants.GENERIC_CARD,
+            genericCardSchema: standardsCardSchema,
+            secondaryLabelLimit: 6,
+            isHeader: true,
+            headerCardVariant: 'HeaderCardV2',
+            ctaLinkConfig: {
+              text: 'View Standard on External Website',
+              link: 'url',
             },
-          ],
-        }}
-        columnAliases={columnAliases}
-        cardConfiguration={{
-          type: SynapseConstants.GENERIC_CARD,
-          genericCardSchema: standardsCardSchema,
-          secondaryLabelLimit: 6,
-          isHeader: true,
-          headerCardVariant: 'HeaderCardV2',
-          ctaLinkConfig: {
-            text: 'View Standard on External Website',
-            link: 'url',
-          },
-        }}
-      />
-
-      <DetailsPage sql={dataSql}>
-        <DetailsPageContent content={standardDetailsPageContent} />
-      </DetailsPage>
-    </>
+          }}
+        />
+      }
+      sql={dataSql}
+    >
+      <DetailsPageContent content={standardDetailsPageContent} />
+    </DetailsPage>
   )
 }

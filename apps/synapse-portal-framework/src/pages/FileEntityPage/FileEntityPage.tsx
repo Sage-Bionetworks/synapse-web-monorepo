@@ -8,6 +8,7 @@ import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/Lo
 import HeaderCard from 'synapse-react-client/components/HeaderCard'
 import CitationPopover from 'synapse-react-client/components/CitationPopover'
 import { DetailsPageContent } from '../../components/DetailsPage/DetailsPageContentLayout'
+import SynapseFileEntityLinkCard from './SynapseFileEntityLinkCard'
 
 function FileEntityPage() {
   const searchParams = useGetPortalComponentSearchParams()
@@ -27,6 +28,9 @@ function FileEntityPage() {
   )
 
   const fileEntityPageSections = [
+    {
+      element: <SynapseFileEntityLinkCard synId={entityId} version={version} />,
+    },
     entityBundle?.rootWikiId && {
       id: 'wiki',
       title: 'Wiki',
