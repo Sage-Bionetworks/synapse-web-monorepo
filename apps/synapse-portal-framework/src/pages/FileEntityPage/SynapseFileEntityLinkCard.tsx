@@ -1,10 +1,16 @@
 import { Card, Link, Stack, Typography } from '@mui/material'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { ReactComponent as SynapseIconLogo } from './assets/SynapseIconLogo.svg'
-import { PRODUCTION_ENDPOINT_CONFIG } from 'synapse-react-client/utils/functions/getEndpoint'
+import { getSynapseEntityUrl } from 'synapse-react-client/utils/functions/getSynapseEntityUrl'
 
-const SynapseFileEntityLinkCard = ({ synId }: { synId: string }) => {
-  const synapseUrl = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${synId}`
+const SynapseFileEntityLinkCard = ({
+  synId,
+  version,
+}: {
+  synId: string
+  version?: number
+}) => {
+  const synapseUrl = getSynapseEntityUrl(synId, version)
 
   return (
     <Card

@@ -39,7 +39,6 @@ function FileEntityPage() {
     )
   }
 
-  console.log('FileEntityPage', { entityId, version, entityBundle })
   return (
     <Container>
       <DetailsPageLayout>
@@ -50,7 +49,7 @@ function FileEntityPage() {
             gap: '40px',
           }}
         >
-          <SynapseFileEntityLinkCard synId={entityId} />
+          <SynapseFileEntityLinkCard synId={entityId} version={version} />
           {entityBundle?.rootWikiId && (
             <CollapsibleSection title="Wiki" id="wiki">
               <MarkdownSynapse
