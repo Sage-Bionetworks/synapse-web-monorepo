@@ -15,16 +15,11 @@ import {
   PostRepoV1GridSessionSessionIdReplicaRequest,
 } from '@sage-bionetworks/synapse-client'
 import { Model, VecApi } from 'json-joy/lib/json-crdt'
-import { encode, decode } from 'json-joy/lib/json-crdt-patch/codec/compact'
 import { konst } from 'json-joy/lib/json-crdt-patch'
 import throttle from 'lodash-es/throttle'
-import { Encoder as VerboseEncoder } from 'json-joy/lib/json-crdt/codec/structural/verbose/Encoder'
 import { parseQueryInput } from './DataGridUtils'
-import { JsonJoyMessage, ModelSnapshot, Operation } from './DataGridTypes'
+import { ModelSnapshot, Operation } from './DataGridTypes'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
-import { useCRDTState } from './useCRDTState'
-
-const verboseEncoder = new VerboseEncoder()
 
 const DataGrid = () => {
   const synapseClient = useSynapseContext().synapseClient
@@ -45,7 +40,6 @@ const DataGrid = () => {
     modelRef,
     modelSnapshot,
     getModel,
-    setModel,
   } = useDataGridWebSocket()
   useEffect(() => {
     if (presignedUrl) {
@@ -111,7 +105,6 @@ const DataGrid = () => {
 
   // Convert model rows to a format suitable for DataSheetGrid
   function modelRowsToGrid(modelSnapshot: ModelSnapshot): DataGridRow[] {
-    console.log('Converting model snapshot to grid rows:', modelSnapshot)
     if (!modelSnapshot) return []
     const { columnNames, columnOrder, rows } = modelSnapshot
     const gridRows = rows.map(row => {

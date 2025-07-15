@@ -1,6 +1,6 @@
-import { JsonJoyMessage, ModelSnapshot } from './DataGridTypes'
+import { JsonJoyMessage } from './DataGridTypes'
 import { encode, decode } from 'json-joy/lib/json-crdt-patch/codec/compact'
-import { JsonNode, Model } from 'json-joy/lib/json-crdt'
+import { Model } from 'json-joy/lib/json-crdt'
 import { Encoder as VerboseEncoder } from 'json-joy/lib/json-crdt/codec/structural/verbose/Encoder'
 import noop from 'lodash-es/noop'
 import { JsonCrdtVerboseLogicalTimestamp } from 'json-joy/lib/json-crdt/codec/structural/verbose/types'

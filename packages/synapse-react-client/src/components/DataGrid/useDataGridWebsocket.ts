@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { WebSocketHandler } from './DataGridWebSocket'
 import { useCRDTState } from './useCRDTState'
 
@@ -7,15 +7,6 @@ export function useDataGridWebSocket() {
     useState<WebSocketHandler | null>(null)
   const [isConnected, setIsConnected] = useState(false)
   const [isGridReady, setIsGridReady] = useState(false)
-  //   useEffect(() => {
-  //      return () => {
-  //         if (websocketInstance) {
-  //             websocketInstance.disconnect()
-  //             setWebSocketInstance(null)
-  //             // TODO: Maybe tell the component that we are disconnected
-  //         }
-  //     }
-  //  }, [url, websocketInstance])
 
   const { modelRef, modelSnapshot, getModel, setModel } = useCRDTState()
 
