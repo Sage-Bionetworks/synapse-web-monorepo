@@ -86,7 +86,11 @@ function FileEntityPage() {
         description={''}
         icon={icon}
         doiUri={doiUri}
-        cardTopButtons={doiUri ? <CitationPopover doi={doiUri} /> : undefined}
+        cardTopButtons={
+          doiUri ? (
+            <CitationPopover doi={doiUri} buttonSx={{ marginRight: '30px' }} />
+          ) : undefined
+        }
       />
       <Container sx={{ '& .component-container': { flex: 1 } }}>
         <DetailsPageContent content={fileEntityPageSections} />

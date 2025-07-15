@@ -145,14 +145,7 @@ const HeaderCard = forwardRef(function HeaderCard(
                           {title}
                         </a>
                       ) : (
-                        <span
-                          style={{
-                            fontSize: '36px',
-                            marginTop: '20px',
-                          }}
-                        >
-                          {title}
-                        </span>
+                        <span>{title}</span>
                       )}
                     </h3>
                   </div>
