@@ -80,7 +80,7 @@ const AllALSSlat = () => {
           <Typography
             sx={{ fontSize: '18px', fontWeight: '600', lineHeight: '144%' }}
           >
-            Open ALL ALS in a new tab
+            Open ALL ALS
           </Typography>
           <IconSvg
             icon="openInNewWindow"
