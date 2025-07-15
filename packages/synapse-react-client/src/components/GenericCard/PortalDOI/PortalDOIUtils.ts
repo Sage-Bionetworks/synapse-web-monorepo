@@ -33,12 +33,10 @@ export function useShowDoiCardLabel(opts: {
 export function getCandidateDoiId(args: {
   /** Configuration to display a DOI, as well as the ability to create one for users with such permission */
   portalDoiConfiguration?: TableToGenericCardMapping['portalDoiConfiguration']
-  /** Mapping of column name to row data index */
-  schema: Record<string, number>
-  /** The row data */
-  data: string[]
+  /** A record that represents a table row or DOI lookup, mapping from column name to value */
+  data: Record<string, string | null>
 }): string | undefined {
-  const { portalDoiConfiguration, schema, data } = args
+  const { portalDoiConfiguration, data } = args
 
   if (!portalDoiConfiguration) {
     return undefined
@@ -49,9 +47,9 @@ export function getCandidateDoiId(args: {
 
   const doiAttributes: Record<string, string> | undefined =
     resourceIdKeyColumns?.reduce((acc, columnName) => {
-      const columnIndex = schema[columnName]
-      if (columnIndex !== undefined) {
-        acc[columnName] = data[columnIndex]
+      const value = data[columnName]
+      if (value != null) {
+        acc[columnName] = value
       }
       return acc
     }, {} as Record<string, string>)

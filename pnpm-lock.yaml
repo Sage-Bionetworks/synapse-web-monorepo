@@ -1136,6 +1136,9 @@ importers:
       '@react-hookz/web':
         specifier: ^25.1.1
         version: 25.1.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@sage-bionetworks/synapse-client':
+        specifier: workspace:*
+        version: link:../../packages/synapse-client
       '@sage-bionetworks/synapse-types':
         specifier: workspace:*
         version: link:../../packages/synapse-types
@@ -6709,6 +6712,7 @@ packages:
     resolution: {integrity: sha512-X41YRfKkVCooILai2N0aN0Q5O0imu+MbNt894QWU683A82xJJXIR01dEqxwYJ91M6IdExtyFB3GCOJb4eBMBMQ==}
     peerDependencies:
       eslint: '>= 5'
+    bundledDependencies: []
 
   eslint-plugin-jest-dom@5.5.0:
     resolution: {integrity: sha512-CRlXfchTr7EgC3tDI7MGHY6QjdJU5Vv2RPaeeGtkXUHnKZf04kgzMPIJUXt4qKCvYWVVIEo9ut9Oq1vgXAykEA==}
@@ -8003,6 +8007,7 @@ packages:
     resolution: {integrity: sha512-Quz3MvAwHxVYNXsOByL7xI5EB2WYOeFswqaHIA3qOK3isRWTxiplBEocmmru6XmxDB2L7jDNYtYA4FyimoAFEw==}
     engines: {node: '>=8.17.0'}
     hasBin: true
+    bundledDependencies: []
 
   jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
