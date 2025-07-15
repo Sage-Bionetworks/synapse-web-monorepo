@@ -64,25 +64,30 @@ function StudyDetailsPage() {
   }
 
   return (
-    <>
-      <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
-      <CardContainerLogic
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        cardConfiguration={{
-          ...studyCardConfiguration,
-          secondaryLabelLimit: Infinity,
-          iconOptions: studyHeaderIconOptions,
-          isHeader: true,
-        }}
-        columnAliases={columnAliases}
-        sql={studiesSql}
-        searchParams={{ studyId }}
-      />
-      <DetailsPage sql={studiesSql} ContainerProps={{ maxWidth: 'xl' }}>
-        <DetailsPageTabs tabConfig={tabConfig} />
-        <Outlet />
-      </DetailsPage>
-    </>
+    <DetailsPage
+      header={
+        <>
+          <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
+          <CardContainerLogic
+            sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+            cardConfiguration={{
+              ...studyCardConfiguration,
+              secondaryLabelLimit: Infinity,
+              iconOptions: studyHeaderIconOptions,
+              isHeader: true,
+            }}
+            columnAliases={columnAliases}
+            sql={studiesSql}
+            searchParams={{ studyId }}
+          />
+        </>
+      }
+      sql={studiesSql}
+      ContainerProps={{ maxWidth: 'xl' }}
+    >
+      <DetailsPageTabs tabConfig={tabConfig} />
+      <Outlet />
+    </DetailsPage>
   )
 }
 

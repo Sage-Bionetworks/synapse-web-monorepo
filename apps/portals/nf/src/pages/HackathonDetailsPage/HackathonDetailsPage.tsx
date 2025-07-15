@@ -32,23 +32,26 @@ const tabConfig: DetailsPageTabConfig[] = [
 function HackathonDetailsPage() {
   const { id } = useGetPortalComponentSearchParams()
   return (
-    <>
-      <CardContainerLogic
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        cardConfiguration={{
-          ...hackathonCardConfiguration,
-          secondaryLabelLimit: Infinity,
-          isHeader: true,
-        }}
-        columnAliases={{ ...columnAliases, studyStatus: 'Status' }}
-        sql={hackathonsSql}
-        searchParams={{ id }}
-      />
-      <DetailsPage sql={hackathonsSql} ContainerProps={{ maxWidth: 'xl' }}>
-        <DetailsPageTabs tabConfig={tabConfig} />
-        <Outlet />
-      </DetailsPage>
-    </>
+    <DetailsPage
+      header={
+        <CardContainerLogic
+          sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+          cardConfiguration={{
+            ...hackathonCardConfiguration,
+            secondaryLabelLimit: Infinity,
+            isHeader: true,
+          }}
+          columnAliases={{ ...columnAliases, studyStatus: 'Status' }}
+          sql={hackathonsSql}
+          searchParams={{ id }}
+        />
+      }
+      sql={hackathonsSql}
+      ContainerProps={{ maxWidth: 'xl' }}
+    >
+      <DetailsPageTabs tabConfig={tabConfig} />
+      <Outlet />
+    </DetailsPage>
   )
 }
 

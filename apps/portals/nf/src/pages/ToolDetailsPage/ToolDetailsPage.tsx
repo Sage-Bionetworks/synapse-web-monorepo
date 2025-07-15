@@ -45,27 +45,29 @@ function ToolDetailsPage() {
   }
 
   return (
-    <>
-      <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
-      <CardContainerLogic
-        sql={toolsSql}
-        cardConfiguration={{
-          type: SynapseConstants.GENERIC_CARD,
-          genericCardSchema: toolsSchema,
-          secondaryLabelLimit: 6,
-          isHeader: true,
-        }}
-        searchParams={{ resourceId }}
-      />
-      <DetailsPage
-        sql={toolsSql}
-        ContainerProps={{ maxWidth: 'xl' }}
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-      >
-        <DetailsPageTabs tabConfig={toolDetailsPageTabConfig} />
-        <Outlet />
-      </DetailsPage>
-    </>
+    <DetailsPage
+      header={
+        <>
+          <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
+          <CardContainerLogic
+            sql={toolsSql}
+            cardConfiguration={{
+              type: SynapseConstants.GENERIC_CARD,
+              genericCardSchema: toolsSchema,
+              secondaryLabelLimit: 6,
+              isHeader: true,
+            }}
+            searchParams={{ resourceId }}
+          />
+        </>
+      }
+      sql={toolsSql}
+      ContainerProps={{ maxWidth: 'xl' }}
+      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+    >
+      <DetailsPageTabs tabConfig={toolDetailsPageTabConfig} />
+      <Outlet />
+    </DetailsPage>
   )
 }
 

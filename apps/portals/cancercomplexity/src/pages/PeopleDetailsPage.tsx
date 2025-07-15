@@ -30,115 +30,115 @@ function PeopleDetailsPage() {
   }
 
   return (
-    <>
-      <CardContainerLogic
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        cardConfiguration={{
-          ...peopleCardConfiguration,
-          iconOptions: {
-            Person: personGraySvg,
-          },
-          secondaryLabelLimit: Infinity,
-          isHeader: true,
-        }}
-        sql={peopleSql}
-        columnAliases={columnAliases}
-        searchParams={{ name: name }}
-      />
-      <DetailsPage
-        sql={peopleSql}
-        sqlOperator={ColumnSingleValueFilterOperator.LIKE}
-      >
-        <DetailsPageContent
-          content={[
-            {
-              title: 'Related Grants',
-              id: 'Related Grants',
-              helpText:
-                'MC2 Center member grant(s) that supported research performed by this person',
-              element: (
-                <DetailsPageContextConsumer columnName={'grantNumber'}>
-                  {/* TODO: How do we know if sqlOperator should be IN or EQUAL ? Can this be determined automatically? */}
-                  {({ value }) => (
-                    <CardContainerLogic
-                      cardConfiguration={grantsCardConfiguration}
-                      sql={grantsSql}
-                      columnAliases={columnAliases}
-                      sqlOperator={ColumnSingleValueFilterOperator.IN}
-                      searchParams={{
-                        grantNumber: value!,
-                      }}
-                    />
-                  )}
-                </DetailsPageContextConsumer>
-              ),
+    <DetailsPage
+      header={
+        <CardContainerLogic
+          sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+          cardConfiguration={{
+            ...peopleCardConfiguration,
+            iconOptions: {
+              Person: personGraySvg,
             },
-            {
-              title: 'Related Publications',
-              id: 'Related Publications',
-              helpText: 'Publication(s) to which this person contributed',
-              element: (
-                <DetailsPageContextConsumer columnName={'publicationId'}>
-                  {({ value }) => (
-                    <CardContainerLogic
-                      cardConfiguration={publicationsCardConfiguration}
-                      sql={publicationSql}
-                      columnAliases={columnAliases}
-                      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-                      searchParams={{
-                        pubMedId: value!,
-                      }}
-                    />
-                  )}
-                </DetailsPageContextConsumer>
-              ),
-            },
-            {
-              id: 'Related Datasets',
-              title: 'Related Datasets',
-              helpText:
-                'Dataset(s) developed and shared with contribution from this person',
-              element: (
-                <DetailsPageContextConsumer columnName={'datasetId'}>
-                  {({ value }) => (
-                    <CardContainerLogic
-                      cardConfiguration={datasetCardConfiguration}
-                      sql={datasetsSql}
-                      columnAliases={columnAliases}
-                      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-                      searchParams={{
-                        datasetAlias: value!,
-                      }}
-                    />
-                  )}
-                </DetailsPageContextConsumer>
-              ),
-            },
-            {
-              id: 'Related Tools',
-              title: 'Related Tools',
-              helpText:
-                'Tool(s) developed and shared with contribution from this person',
-              element: (
-                <DetailsPageContextConsumer columnName={'toolId'}>
-                  {({ value }) => (
-                    <CardContainerLogic
-                      cardConfiguration={toolsConfiguration}
-                      sql={toolsSql}
-                      columnAliases={columnAliases}
-                      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-                      searchParams={{
-                        toolName: value!,
-                      }}
-                    />
-                  )}
-                </DetailsPageContextConsumer>
-              ),
-            },
-          ]}
+            secondaryLabelLimit: Infinity,
+            isHeader: true,
+          }}
+          sql={peopleSql}
+          columnAliases={columnAliases}
+          searchParams={{ name: name }}
         />
-      </DetailsPage>
-    </>
+      }
+      sql={peopleSql}
+      sqlOperator={ColumnSingleValueFilterOperator.LIKE}
+    >
+      <DetailsPageContent
+        content={[
+          {
+            title: 'Related Grants',
+            id: 'Related Grants',
+            helpText:
+              'MC2 Center member grant(s) that supported research performed by this person',
+            element: (
+              <DetailsPageContextConsumer columnName={'grantNumber'}>
+                {/* TODO: How do we know if sqlOperator should be IN or EQUAL ? Can this be determined automatically? */}
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={grantsCardConfiguration}
+                    sql={grantsSql}
+                    columnAliases={columnAliases}
+                    sqlOperator={ColumnSingleValueFilterOperator.IN}
+                    searchParams={{
+                      grantNumber: value!,
+                    }}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            title: 'Related Publications',
+            id: 'Related Publications',
+            helpText: 'Publication(s) to which this person contributed',
+            element: (
+              <DetailsPageContextConsumer columnName={'publicationId'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={publicationsCardConfiguration}
+                    sql={publicationSql}
+                    columnAliases={columnAliases}
+                    sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                    searchParams={{
+                      pubMedId: value!,
+                    }}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            id: 'Related Datasets',
+            title: 'Related Datasets',
+            helpText:
+              'Dataset(s) developed and shared with contribution from this person',
+            element: (
+              <DetailsPageContextConsumer columnName={'datasetId'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={datasetCardConfiguration}
+                    sql={datasetsSql}
+                    columnAliases={columnAliases}
+                    sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                    searchParams={{
+                      datasetAlias: value!,
+                    }}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            id: 'Related Tools',
+            title: 'Related Tools',
+            helpText:
+              'Tool(s) developed and shared with contribution from this person',
+            element: (
+              <DetailsPageContextConsumer columnName={'toolId'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={toolsConfiguration}
+                    sql={toolsSql}
+                    columnAliases={columnAliases}
+                    sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                    searchParams={{
+                      toolName: value!,
+                    }}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+        ]}
+      />
+    </DetailsPage>
   )
 }
 
