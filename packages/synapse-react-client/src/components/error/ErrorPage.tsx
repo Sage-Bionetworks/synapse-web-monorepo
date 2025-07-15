@@ -4,14 +4,27 @@ import { ReactComponent as UnavailableSvg } from '@/assets/icons/error_page/unav
 import { useSynapseContext } from '@/utils'
 import { Box, Link, Typography } from '@mui/material'
 import { useCallback, useMemo, useState } from 'react'
-import EntityDOIInfo from './EntityDOIInfo'
+import SynapseObjectDOIInfo from './SynapseObjectDOIInfo'
 import SendMessageToEntityOwnerDialog from './SendMessageToEntityOwnerDialog'
+import { DoiObjectType } from '@sage-bionetworks/synapse-client/generated/models/DoiObjectType'
 
 export type ErrorPageProps = {
   type: SynapseErrorType
   message?: string // custom message to report
+  /** @deprecated use `id` and objectType: DoiObjectType.ENTITY */
   entityId?: string
+  /** @deprecated use `version` and objectType: DoiObjectType.ENTITY */
   entityVersion?: number
+
+  /** The ID of the object that was attempted to be retrieved, which may be used to show a 'tombstone' */
+  id?: string
+  /** The version of the object that was attempted to be retrieved, which may be used to show a 'tombstone' */
+  version?: number
+  /** The type of the object that was attempted to be retrieved, which may be used to show a 'tombstone' */
+  objectType?: DoiObjectType
+  /** If on a portal that may mint DOIs, this portal ID may be used to find a DOI to show a 'tombstone' */
+  portalId?: string
+
   gotoPlace: (href: string) => void
 }
 
@@ -90,7 +103,17 @@ type ErrorPageAction = {
 }
 
 function ErrorPage(props: ErrorPageProps) {
-  const { type, entityId = '', entityVersion, message, gotoPlace } = props
+  const {
+    type,
+    entityId = '',
+    entityVersion,
+    message,
+    gotoPlace,
+    id,
+    version,
+    objectType,
+    portalId,
+  } = props
   const [isSendMessageToAdminDialogOpen, setSendMessageToAdminDialogOpen] =
     useState<boolean>(false)
   const { accessToken } = useSynapseContext()
@@ -207,7 +230,19 @@ function ErrorPage(props: ErrorPageProps) {
             )
           })}
           {entityId && (
-            <EntityDOIInfo entityId={entityId} version={entityVersion} />
+            <SynapseObjectDOIInfo
+              id={entityId}
+              version={entityVersion}
+              type={DoiObjectType.ENTITY}
+            />
+          )}
+          {id && objectType && (
+            <SynapseObjectDOIInfo
+              id={id}
+              version={version}
+              type={objectType}
+              portalId={portalId}
+            />
           )}
         </Box>
       </Box>

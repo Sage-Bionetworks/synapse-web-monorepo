@@ -57,37 +57,39 @@ function ToolsDetailsPage() {
   }
 
   return (
-    <>
-      <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
-      <CardContainerLogic
-        cardConfiguration={{
-          ...toolsConfiguration,
-          iconOptions: {
-            dataset: DatasetSvg,
-          },
-          secondaryLabelLimit: Infinity,
-          isHeader: true,
-          sustainabilityScorecard: {
-            queryRequest: query,
-            searchParamKey: 'toolName',
-            filterColumn: 'toolName',
-            metricsConfig: metricsConfig,
-            scoreDescriptorColumnName: 'AlmanackScoreDescriptor',
-          },
-        }}
-        sql={toolsSql}
-        columnAliases={columnAliases}
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        searchParams={{ toolName }}
-      />
-      <DetailsPage
-        sql={toolsSql}
-        sqlOperator={ColumnSingleValueFilterOperator.LIKE}
-      >
-        <DetailsPageTabs tabConfig={toolDetailsPageTabConfig} />
-        <Outlet />
-      </DetailsPage>
-    </>
+    <DetailsPage
+      header={
+        <>
+          <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
+          <CardContainerLogic
+            cardConfiguration={{
+              ...toolsConfiguration,
+              iconOptions: {
+                dataset: DatasetSvg,
+              },
+              secondaryLabelLimit: Infinity,
+              isHeader: true,
+              sustainabilityScorecard: {
+                queryRequest: query,
+                searchParamKey: 'toolName',
+                filterColumn: 'toolName',
+                metricsConfig: metricsConfig,
+                scoreDescriptorColumnName: 'AlmanackScoreDescriptor',
+              },
+            }}
+            sql={toolsSql}
+            columnAliases={columnAliases}
+            sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+            searchParams={{ toolName }}
+          />
+        </>
+      }
+      sql={toolsSql}
+      sqlOperator={ColumnSingleValueFilterOperator.LIKE}
+    >
+      <DetailsPageTabs tabConfig={toolDetailsPageTabConfig} />
+      <Outlet />
+    </DetailsPage>
   )
 }
 

@@ -19,64 +19,66 @@ import { projectsCardConfiguration } from '../config/synapseConfigs/projects'
 function ProgramsDetailPage() {
   const searchParams = useGetPortalComponentSearchParams()
   return (
-    <>
-      <CardContainerLogic
-        isAlignToLeftNav={true}
-        cardConfiguration={{
-          ...programsCardConfiguration,
-          genericCardSchema: {
-            ...programSchema,
-            title: 'Program',
-            link: 'Program',
-          },
-          isHeader: true,
-        }}
-        rgbIndex={programsRgbIndex}
-        columnAliases={columnAliases}
-        sql={programSql}
-        searchParams={searchParams}
-      />
-      <DetailsPage sql={programSql}>
-        <DetailsPageContent
-          content={[
-            {
-              title: 'Projects',
-              id: 'Projects',
-              element: (
-                <DetailsPageContextConsumer columnName={'Program'}>
-                  {({ value }) => (
-                    <CardContainerLogic
-                      cardConfiguration={projectsCardConfiguration}
-                      sql={projectsSql}
-                      searchParams={{ Program: value! }}
-                    />
-                  )}
-                </DetailsPageContextConsumer>
-              ),
+    <DetailsPage
+      header={
+        <CardContainerLogic
+          isAlignToLeftNav={true}
+          cardConfiguration={{
+            ...programsCardConfiguration,
+            genericCardSchema: {
+              ...programSchema,
+              title: 'Program',
+              link: 'Program',
             },
-            {
-              title: 'Datasets',
-              id: 'Datasets',
-              element: (
-                <DetailsPageContextConsumer columnName={'Program'}>
-                  {({ value }) => (
-                    <CardContainerLogic
-                      cardConfiguration={{
-                        ...datasetCardConfiguration,
-                        secondaryLabelLimit: 4,
-                      }}
-                      sql={datasetsSql}
-                      searchParams={{ program: value! }}
-                      columnAliases={datasetColumnAliases}
-                    />
-                  )}
-                </DetailsPageContextConsumer>
-              ),
-            },
-          ]}
+            isHeader: true,
+          }}
+          rgbIndex={programsRgbIndex}
+          columnAliases={columnAliases}
+          sql={programSql}
+          searchParams={searchParams}
         />
-      </DetailsPage>
-    </>
+      }
+      sql={programSql}
+    >
+      <DetailsPageContent
+        content={[
+          {
+            title: 'Projects',
+            id: 'Projects',
+            element: (
+              <DetailsPageContextConsumer columnName={'Program'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={projectsCardConfiguration}
+                    sql={projectsSql}
+                    searchParams={{ Program: value! }}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            title: 'Datasets',
+            id: 'Datasets',
+            element: (
+              <DetailsPageContextConsumer columnName={'Program'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={{
+                      ...datasetCardConfiguration,
+                      secondaryLabelLimit: 4,
+                    }}
+                    sql={datasetsSql}
+                    searchParams={{ program: value! }}
+                    columnAliases={datasetColumnAliases}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+        ]}
+      />
+    </DetailsPage>
   )
 }
 
