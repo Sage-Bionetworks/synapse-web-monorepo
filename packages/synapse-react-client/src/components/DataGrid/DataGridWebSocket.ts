@@ -1,4 +1,3 @@
-import { JsonJoyMessage } from './DataGridTypes'
 import { encode, decode } from 'json-joy/lib/json-crdt-patch/codec/compact'
 import { Model } from 'json-joy/lib/json-crdt'
 import { Encoder as VerboseEncoder } from 'json-joy/lib/json-crdt/codec/structural/verbose/Encoder'
