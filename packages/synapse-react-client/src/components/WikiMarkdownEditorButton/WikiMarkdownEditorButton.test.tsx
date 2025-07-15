@@ -337,7 +337,7 @@ describe('WikiMarkdownEditorButton', () => {
     })
 
     await waitForNotDisabled(button)
-    await confirmMarkdownSynapseTextContent(NO_WIKI_CONTENT)
+    await screen.findByText(NO_WIKI_CONTENT)
   })
 
   test('does not display wiki markdown by default', async () => {
