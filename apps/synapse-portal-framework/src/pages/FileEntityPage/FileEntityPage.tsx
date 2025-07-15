@@ -1,20 +1,13 @@
 import { useGetPortalComponentSearchParams } from '@/utils/UseGetPortalComponentSearchParams'
 import { Box, Container, Stack } from '@mui/material'
-import {
-  CardConfiguration,
-  IconSvg,
-  ProvenanceGraph,
-  SynapseConstants,
-} from 'synapse-react-client'
+import { IconSvg, ProvenanceGraph } from 'synapse-react-client'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { useGetEntityBundle } from 'synapse-react-client/synapse-queries'
-import CollapsibleSection from '@/components/CollapsibleSection'
 import { DetailsPageSectionLayoutType } from '@/components/DetailsPage/DetailsPageSectionLayout'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
-import DetailsPageMenu from '../../components/DetailsPageMenu'
-import DetailsPageLayout from '@/components/DetailsPageLayout'
 import HeaderCard from 'synapse-react-client/components/HeaderCard'
 import CitationPopover from 'synapse-react-client/components/CitationPopover'
+import { DetailsPageContent } from '../../components/DetailsPage/DetailsPageContentLayout'
 
 function FileEntityPage() {
   const searchParams = useGetPortalComponentSearchParams()
@@ -34,8 +27,23 @@ function FileEntityPage() {
   )
 
   const fileEntityPageSections = [
-    entityBundle?.rootWikiId && { id: 'wiki', title: 'Wiki' },
-    { id: 'provenance', title: 'Provenance' },
+    entityBundle?.rootWikiId && {
+      id: 'wiki',
+      title: 'Wiki',
+      element: (
+        <MarkdownSynapse ownerId={entityId} wikiId={entityBundle?.rootWikiId} />
+      ),
+    },
+    {
+      id: 'provenance',
+      title: 'Provenance',
+      element: (
+        <ProvenanceGraph
+          entityRefs={[{ targetId: entityId, targetVersionNumber: version }]}
+          containerHeight="400px"
+        />
+      ),
+    },
   ].filter(Boolean) as DetailsPageSectionLayoutType[]
 
   const title = entityBundle?.entity.name ?? ''
@@ -80,33 +88,8 @@ function FileEntityPage() {
         doiUri={doiUri}
         cardTopButtons={doiUri ? <CitationPopover doi={doiUri} /> : undefined}
       />
-      <Container>
-        <DetailsPageLayout>
-          <DetailsPageMenu menuSections={fileEntityPageSections} />
-          <Stack
-            sx={{
-              flex: 1,
-              gap: '40px',
-            }}
-          >
-            {entityBundle?.rootWikiId && (
-              <CollapsibleSection title="Wiki" id="wiki">
-                <MarkdownSynapse
-                  ownerId={entityId}
-                  wikiId={entityBundle?.rootWikiId}
-                />
-              </CollapsibleSection>
-            )}
-            <CollapsibleSection title="Provenance" id="provenance">
-              <ProvenanceGraph
-                entityRefs={[
-                  { targetId: entityId, targetVersionNumber: version },
-                ]}
-                containerHeight="400px"
-              />
-            </CollapsibleSection>
-          </Stack>
-        </DetailsPageLayout>
+      <Container sx={{ '& .component-container': { flex: 1 } }}>
+        <DetailsPageContent content={fileEntityPageSections} />
       </Container>
     </article>
   )

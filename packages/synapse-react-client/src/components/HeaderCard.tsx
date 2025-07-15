@@ -147,10 +147,8 @@ const HeaderCard = forwardRef(function HeaderCard(
                       ) : (
                         <span
                           style={{
-                            ...(doiUri && {
-                              fontSize: '36px',
-                              marginTop: '20px',
-                            }),
+                            fontSize: '36px',
+                            marginTop: '20px',
                           }}
                         >
                           {title}
