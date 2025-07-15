@@ -88,7 +88,7 @@ function FileEntityPage() {
         doiUri={doiUri}
         cardTopButtons={
           doiUri ? (
-            <CitationPopover doi={doiUri} buttonSx={{ marginRight: '30px' }} />
+            <CitationPopover doi={doiUri} buttonSx={{ mr: 5 }} />
           ) : undefined
         }
       />
