@@ -22,50 +22,52 @@ function EducationalResourcesDetailsPage() {
   }
 
   return (
-    <>
-      <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
-      <CardContainerLogic
-        cardConfiguration={{
-          ...educationDetailsCardConfiguration,
-          secondaryLabelLimit: Infinity,
-          isHeader: true,
-        }}
-        sql={educationSql}
-        columnAliases={columnAliases}
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        searchParams={{ title }}
+    <DetailsPage
+      header={
+        <>
+          <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
+          <CardContainerLogic
+            cardConfiguration={{
+              ...educationDetailsCardConfiguration,
+              secondaryLabelLimit: Infinity,
+              isHeader: true,
+            }}
+            sql={educationSql}
+            columnAliases={columnAliases}
+            sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+            searchParams={{ title }}
+          />
+        </>
+      }
+      sql={educationSql}
+      sqlOperator={ColumnSingleValueFilterOperator.LIKE}
+    >
+      <DetailsPageContent
+        content={[
+          {
+            id: 'Related Grants',
+            title: 'Related Grants',
+            helpText:
+              'MC2 Center member grant(s) that supported development of the resource',
+            element: (
+              <DetailsPageContextConsumer columnName={'grantNumber'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={grantsCardConfiguration}
+                    sql={grantsSql}
+                    columnAliases={columnAliases}
+                    sqlOperator={ColumnSingleValueFilterOperator.IN}
+                    searchParams={{
+                      grantNumber: value!,
+                    }}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+        ]}
       />
-      <DetailsPage
-        sql={educationSql}
-        sqlOperator={ColumnSingleValueFilterOperator.LIKE}
-      >
-        <DetailsPageContent
-          content={[
-            {
-              id: 'Related Grants',
-              title: 'Related Grants',
-              helpText:
-                'MC2 Center member grant(s) that supported development of the resource',
-              element: (
-                <DetailsPageContextConsumer columnName={'grantNumber'}>
-                  {({ value }) => (
-                    <CardContainerLogic
-                      cardConfiguration={grantsCardConfiguration}
-                      sql={grantsSql}
-                      columnAliases={columnAliases}
-                      sqlOperator={ColumnSingleValueFilterOperator.IN}
-                      searchParams={{
-                        grantNumber: value!,
-                      }}
-                    />
-                  )}
-                </DetailsPageContextConsumer>
-              ),
-            },
-          ]}
-        />
-      </DetailsPage>
-    </>
+    </DetailsPage>
   )
 }
 

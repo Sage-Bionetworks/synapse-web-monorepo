@@ -28,20 +28,24 @@ function ProgramDetailsPage() {
         toURL="https://eliteportal.synapse.org/"
         search="Program=ELITE"
       />
-      <CardContainerLogic
+      <DetailsPage
+        header={
+          <CardContainerLogic
+            sql={programsSql}
+            sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+            cardConfiguration={{
+              ...programCardConfiguration,
+              genericCardSchema: {
+                ...programCardConfiguration.genericCardSchema!,
+                description: 'Long Description',
+              },
+              isHeader: true,
+            }}
+            searchParams={searchParams}
+          />
+        }
         sql={programsSql}
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        cardConfiguration={{
-          ...programCardConfiguration,
-          genericCardSchema: {
-            ...programCardConfiguration.genericCardSchema!,
-            description: 'Long Description',
-          },
-          isHeader: true,
-        }}
-        searchParams={searchParams}
-      />
-      <DetailsPage sql={programsSql}>
+      >
         <DetailsPageContextConsumer
           columnName={PROGRAM_TABLE_COLUMN_NAMES.PROGRAM}
         >

@@ -9,6 +9,7 @@
     "@mui/icons-material": "^7.1.1",
     "@mui/material": "^7.1.1",
     "@react-hookz/web": "^25.1.1",
+    "@sage-bionetworks/synapse-client": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "@tanstack/react-query": "5.80.10",
     "@upsetjs/react": "^1.11.0",
