@@ -135,7 +135,7 @@ export class WebSocketHandler {
       if (latestMsg[1] === 'connected') {
         // Handle connected response
         console.log('Server ready to receive patches')
-        //sendTestMessage()
+        this.sendSyncMessage()
       }
       if (latestMsg[1] === 'error') {
         // Handle error response

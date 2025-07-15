@@ -17,9 +17,8 @@ export function useDataGridWebSocket() {
         onGridReady: () => {
           setIsGridReady(true)
         },
-        onStatusChange: (isOpen, instance) => {
+        onStatusChange: (isOpen: boolean, instance: WebSocketHandler) => {
           setIsConnected(isOpen)
-          instance.sendSyncMessage()
         },
         onModelChange: model => {
           setModel(model)
