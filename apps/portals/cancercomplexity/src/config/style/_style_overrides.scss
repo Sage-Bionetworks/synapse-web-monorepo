@@ -31,3 +31,17 @@
     margin-left: 5px;
   }
 }
+
+.Goals {
+  &__Card {
+    &__header {
+      &__title,
+      p {
+        color: #38568e;
+      }
+      &__count {
+        border: 1px solid #38568e;
+      }
+    }
+  }
+}

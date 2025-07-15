@@ -6,9 +6,9 @@ import {
 } from '@/config/synapseConfigs/onPointClick'
 import CancerComplexityHeader from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityHeader'
 import CancerComplexityIntro from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityIntro'
-import ConsortiaGoals from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/ConsortiaGoals'
 import DevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/DevelopedBySage'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
+import { Goals } from 'synapse-react-client'
 import TableQueryEcosystem from 'synapse-react-client/components/Ecosystem/TableQueryEcosystem'
 import { ThemesPlot } from 'synapse-react-client/components/Plot/ThemesPlot'
 import Programs from 'synapse-react-client/components/Programs'
@@ -23,24 +23,16 @@ function Home() {
       </SectionLayout>
       <div className={'home-bg-dark'}>
         <SectionLayout
-          title={'Portal Goals'}
+          title={'What Resources are Available?'}
           centerTitle
           ContainerProps={{
             className: 'home-spacer',
           }}
         >
-          <ConsortiaGoals />
+          {/* change to syn66276142 when it has the right column schema */}
+          <Goals entityId={'syn68701255'} />
         </SectionLayout>
       </div>
-      {/* <SectionLayout
-              title="What Resources are Available?"
-              centerTitle
-              ContainerProps={{
-                className: 'home-spacer',
-              }}
-            >
-              <CardDeck {...availableResearchCardDeckConfig} />
-            </SectionLayout> */}
 
       <SectionLayout
         title={'What Research Themes are Scientists Currently Focusing On?'}

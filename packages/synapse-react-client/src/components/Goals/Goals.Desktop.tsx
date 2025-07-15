@@ -1,6 +1,6 @@
 import { GoalsDataProps } from './Goals'
 import QueryCount from '../QueryCount/QueryCount'
-import { Button } from '@mui/material'
+import { Box, Button } from '@mui/material'
 
 export default function GoalsDesktop({
   asset,
@@ -10,9 +10,9 @@ export default function GoalsDesktop({
   title,
 }: GoalsDataProps) {
   return (
-    <div
+    <Box
       className="Goals__Card"
-      style={{ cursor: 'pointer' }}
+      sx={{ cursor: 'pointer', maxWidth: '335px', width: '335px' }}
       onClick={() => window.open(link)}
     >
       <div
@@ -32,13 +32,13 @@ export default function GoalsDesktop({
         <p> {summary} </p>
         <Button
           className="Goals__Card__summary__link"
-          variant="contained"
+          variant="outlined"
           color="secondary"
           href={link}
         >
           Explore
         </Button>
       </div>
-    </div>
+    </Box>
   )
 }

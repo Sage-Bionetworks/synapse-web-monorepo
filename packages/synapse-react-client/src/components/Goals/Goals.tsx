@@ -9,6 +9,7 @@ import { useMemo } from 'react'
 import { ErrorBanner } from '../error/ErrorBanner'
 import GoalsDesktop from './Goals.Desktop'
 import GoalsMobile from './Goals.Mobile'
+import { Box } from '@mui/material'
 
 export type GoalsProps = {
   entityId: string
@@ -127,13 +128,20 @@ export function Goals(props: GoalsProps) {
 
   if (showDesktop) {
     return (
-      <div className={`Goals`}>
-        <EvenlyDistributedWrappedContainer>
-          {goalsDataProps.map((props, index) => (
-            <GoalsDesktop key={index} {...props} />
-          ))}
-        </EvenlyDistributedWrappedContainer>
-      </div>
+      <Box
+        className={`Goals`}
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '30px',
+          alignItems: 'stretch',
+          justifyContent: 'center',
+        }}
+      >
+        {goalsDataProps.map((props, index) => (
+          <GoalsDesktop key={index} {...props} />
+        ))}
+      </Box>
     )
   } else {
     return (
