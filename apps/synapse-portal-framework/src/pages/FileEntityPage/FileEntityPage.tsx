@@ -8,6 +8,7 @@ import { DetailsPageSectionLayoutType } from '@/components/DetailsPage/DetailsPa
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 import DetailsPageMenu from '../../components/DetailsPageMenu'
 import DetailsPageLayout from '@/components/DetailsPageLayout'
+import SynapseFileEntityLinkCard from './SynapseFileEntityLinkCard'
 
 function FileEntityPage() {
   const searchParams = useGetPortalComponentSearchParams()
@@ -37,6 +38,7 @@ function FileEntityPage() {
       </Stack>
     )
   }
+
   return (
     <Container>
       <DetailsPageLayout>
@@ -47,6 +49,7 @@ function FileEntityPage() {
             gap: '40px',
           }}
         >
+          <SynapseFileEntityLinkCard synId={entityId} version={version} />
           {entityBundle?.rootWikiId && (
             <CollapsibleSection title="Wiki" id="wiki">
               <MarkdownSynapse
