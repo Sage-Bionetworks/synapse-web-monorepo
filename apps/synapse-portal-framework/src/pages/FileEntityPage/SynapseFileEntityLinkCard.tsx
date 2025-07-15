@@ -1,4 +1,4 @@
-import { Box, Card, Link, Stack, Typography } from '@mui/material'
+import { Card, Link, Stack, Typography } from '@mui/material'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { ReactComponent as SynapseIconLogo } from './assets/SynapseIconLogo.svg'
 import { PRODUCTION_ENDPOINT_CONFIG } from 'synapse-react-client/utils/functions/getEndpoint'
