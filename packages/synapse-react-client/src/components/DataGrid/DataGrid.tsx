@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react'
+import { useCallback, useRef, useEffect, useMemo, useState } from 'react'
 import {
   DataSheetGrid,
   keyColumn,
@@ -21,6 +21,8 @@ import throttle from 'lodash-es/throttle'
 import { Encoder as VerboseEncoder } from 'json-joy/lib/json-crdt/codec/structural/verbose/Encoder'
 import { parseQueryInput } from './DataGridUtils'
 import { JsonJoyMessage, ModelSnapshot, Operation } from './DataGridTypes'
+import { useDataGridWebSocket } from './useDataGridWebsocket'
+import { useCRDTState } from './useCRDTState'
 
 const verboseEncoder = new VerboseEncoder()
 
@@ -33,63 +35,57 @@ const DataGrid = () => {
   const [presignedUrl, setPresignedUrl] = useState<string>('')
   const [gridSql, setGridSql] = useState<string>('')
   const inputRef = useRef<HTMLInputElement>(null)
-  const webSocketRef = useRef<WebSocket | null>(null)
 
   // WebSocket state
-  const [isConnected, setIsConnected] = useState<boolean>(false)
-  const [connectionStatus, setConnectionStatus] =
-    useState<string>('Disconnected')
-  const [messages, setMessages] = useState<string[]>([])
-
-  // CRDT state
-  const sequenceNumberRef = useRef<number>(1)
-  const modelRef = useRef<Model | null>(null)
-  const modelSnapshotRef = useRef<ModelSnapshot>({
-    columnNames: [],
-    columnOrder: [],
-    rows: [],
-  })
-  const getModel = () => modelRef.current
-  const setModel = (newModel: Model) => {
-    if (newModel.view() !== modelRef.current?.view()) {
-      modelRef.current = newModel
-      modelSnapshotRef.current = modelRef.current.api.getSnapshot()
+  const {
+    isConnected,
+    websocketInstance,
+    createWebsocket,
+    isGridReady,
+    modelRef,
+    modelSnapshot,
+    getModel,
+    setModel,
+  } = useDataGridWebSocket()
+  useEffect(() => {
+    if (presignedUrl) {
+      createWebsocket(presignedUrl)
     }
-  }
+  }, [presignedUrl, createWebsocket])
+
+  const connectionStatus = isConnected ? 'Connected' : 'Disconnected'
+
+  const [messages, setMessages] = useState<string[]>([])
 
   // If grid sessionId or replicaId changes, reset the model
   useEffect(() => {
     if (sessionId || replicaId) {
       modelRef.current = null
-      modelSnapshotRef.current = {
-        columnNames: [],
-        columnOrder: [],
-        rows: [],
-      }
+      // modelSnapshotRef.current = {
+      //   columnNames: [],
+      //   columnOrder: [],
+      //   rows: [],
+      // }
       setRowValues([])
       setColValues([])
-      setGridReady(false)
-      sequenceNumberRef.current = 1
       setMessages([]) // Clear message log
-      setIsConnected(false)
-      setConnectionStatus('Disconnected')
-      if (webSocketRef.current) {
-        webSocketRef.current.close()
-        webSocketRef.current = null
-      }
     }
-  }, [sessionId, replicaId])
+  }, [sessionId, replicaId, websocketInstance])
 
   // Grid rows and columns
   type DataGridRow = { [key: string]: string | number }
-  const [gridReady, setGridReady] = useState<boolean>(false)
   const [rowValues, setRowValues] = useState<DataGridRow[]>(
-    modelRowsToGrid(modelSnapshotRef.current),
+    modelRowsToGrid(modelSnapshot),
   )
   const [colValues, setColValues] = useState<Column[]>(
-    modelColsToGrid(modelSnapshotRef.current),
+    modelColsToGrid(modelSnapshot),
   )
   const [prevRows, setPrevRows] = useState(rowValues)
+
+  useEffect(() => {
+    setRowValues(modelRowsToGrid(modelSnapshot))
+    setColValues(modelColsToGrid(modelSnapshot))
+  }, [modelSnapshot])
 
   const createReplicaId = async (
     synapseClient: SynapseClient,
@@ -115,6 +111,7 @@ const DataGrid = () => {
 
   // Convert model rows to a format suitable for DataSheetGrid
   function modelRowsToGrid(modelSnapshot: ModelSnapshot): DataGridRow[] {
+    console.log('Converting model snapshot to grid rows:', modelSnapshot)
     if (!modelSnapshot) return []
     const { columnNames, columnOrder, rows } = modelSnapshot
     const gridRows = rows.map(row => {
@@ -169,196 +166,6 @@ const DataGrid = () => {
     }
     return model
   }
-
-  // WebSocket connection management
-  const connectWebSocket = (url: string) => {
-    if (webSocketRef.current) {
-      webSocketRef.current.close()
-    }
-
-    try {
-      const ws = new WebSocket(url)
-      webSocketRef.current = ws
-
-      ws.onopen = () => {
-        console.log('WebSocket connected')
-        setIsConnected(true)
-        setConnectionStatus('Connected')
-        setMessages(prev => ['Connected to WebSocket', ...prev])
-      }
-
-      ws.onmessage = event => {
-        console.log('WebSocket message received:', event.data)
-        setMessages(prev => [`Received: ${event.data}`, ...prev])
-
-        // Handle different message types if needed
-        try {
-          const data = JSON.parse(event.data)
-          handleWebSocketMessage(data)
-        } catch {
-          console.log('Plain text message:', event.data)
-        }
-      }
-
-      ws.onclose = event => {
-        console.log('WebSocket closed:', event.code, event.reason)
-        setIsConnected(false)
-        setConnectionStatus(`Disconnected (${event.code})`)
-        setMessages(prev => [
-          `Disconnected: ${event.reason || 'Connection closed'}`,
-          ...prev,
-        ])
-      }
-
-      ws.onerror = error => {
-        console.error('WebSocket error:', error)
-        setConnectionStatus('Error')
-        setMessages(prev => ['WebSocket error occurred', ...prev])
-      }
-    } catch (error) {
-      console.error('Failed to create WebSocket connection:', error)
-      setConnectionStatus('Failed to connect')
-    }
-  }
-
-  const disconnectWebSocket = () => {
-    if (webSocketRef.current) {
-      webSocketRef.current.close()
-      webSocketRef.current = null
-    }
-  }
-
-  const sendWebSocketMessage = (message: string | object) => {
-    if (
-      webSocketRef.current &&
-      webSocketRef.current.readyState === WebSocket.OPEN
-    ) {
-      const messageToSend =
-        typeof message === 'string' ? message : JSON.stringify(message)
-      webSocketRef.current.send(messageToSend)
-      console.log('WebSocket message sent:', messageToSend)
-      setMessages(prev => [`Sent: ${messageToSend}`, ...prev])
-    } else {
-      console.error('WebSocket is not connected')
-      setMessages(prev => ['Failed to send: WebSocket not connected', ...prev])
-    }
-  }
-
-  const handleWebSocketMessage = (latestMsg: JsonJoyMessage) => {
-    // [4, <sequence_number>, <payload>]
-    if (
-      Array.isArray(latestMsg) &&
-      latestMsg.length === 3 &&
-      latestMsg[0] === 4
-    ) {
-      const [, , payload] = latestMsg
-      try {
-        // Apply patch to model
-        const patch = decode(payload)
-        if (!modelRef.current) {
-          // Initialize the model if it doesn't exist
-          console.log('Initializing new model from patch:', patch)
-          // use the replica ID the server gives us - don't use an empty one
-          setModel(Model.fromPatches([patch]).fork(replicaId!))
-          modelSnapshotRef.current =
-            modelRef.current!.api.getSnapshot() as ModelSnapshot
-          setRowValues(modelRowsToGrid(modelSnapshotRef.current))
-          setColValues(modelColsToGrid(modelSnapshotRef.current))
-        } else {
-          console.log('Applying patch from server:', patch)
-          modelRef.current?.applyPatch(patch)
-          modelSnapshotRef.current =
-            modelRef.current.api.getSnapshot() as ModelSnapshot
-          modelSnapshotRef.current =
-            modelRef.current.api.getSnapshot() as ModelSnapshot
-          setRowValues(modelRowsToGrid(modelSnapshotRef.current))
-          setColValues(modelColsToGrid(modelSnapshotRef.current))
-        }
-        // Calculate the new clock
-        const modelClock = modelRef.current?.api.flush()
-        let encodedModelClock
-        if (modelClock?.ops.length !== 0) {
-          encodedModelClock = encode(modelClock!)
-        }
-        if (encodedModelClock) {
-          const msg = [1, sequenceNumberRef.current, 'patch', encodedModelClock]
-          console.log('Responding with patch:', msg)
-          sendWebSocketMessage(msg)
-        } else {
-          const verbModel = verboseEncoder.encode(modelRef.current!)
-          const msg = [
-            1,
-            sequenceNumberRef.current,
-            'synchronize-clock',
-            verbModel.time,
-          ]
-          console.log('Responding with synchronize-clock:', msg)
-          sendWebSocketMessage(msg)
-        }
-      } catch (err) {
-        console.error('Failed to apply patch or send clock:', err)
-      }
-    }
-
-    // [5, <sequence_number>]
-    else if (
-      Array.isArray(latestMsg) &&
-      latestMsg.length === 2 &&
-      latestMsg[0] === 5
-    ) {
-      // Clocks are in sync, no further action needed
-      sequenceNumberRef.current += 1
-      modelSnapshotRef.current =
-        modelRef.current?.api.getSnapshot() as ModelSnapshot
-      setGridReady(true)
-      console.log(
-        'Clocks synchronized with server. Incrementing sequence number.',
-      )
-    }
-    // [8, <message>]
-    else if (Array.isArray(latestMsg) && latestMsg[0] === 8) {
-      // Clocks are in sync, no further action needed
-      console.log('Message received from server:', latestMsg[1])
-      if (latestMsg[1] === 'ping') {
-        // Handle ping response
-        console.log('Received ping response from server')
-      }
-      if (latestMsg[1] === 'connected') {
-        // Handle connected response
-        console.log('Server ready to receive patches')
-        sendTestMessage()
-      }
-      if (latestMsg[1] === 'error') {
-        // Handle error response
-        console.warn('Error from server:', latestMsg[2])
-      }
-      if (latestMsg[1] === 'new-patch') {
-        const verbModel = verboseEncoder.encode(modelRef.current!)
-        console.log('New patch received, syncing data:', verbModel.time)
-        const msg = [
-          1,
-          sequenceNumberRef.current,
-          'synchronize-clock',
-          verbModel.time,
-        ]
-        sendWebSocketMessage(msg)
-      }
-    } else {
-      console.warn('Unexpected WebSocket message format:', latestMsg)
-    }
-  }
-
-  // Connect to WebSocket when presignedUrl is available
-  useEffect(() => {
-    if (presignedUrl) {
-      connectWebSocket(presignedUrl)
-    }
-
-    // Cleanup on unmount
-    return () => {
-      disconnectWebSocket()
-    }
-  }, [presignedUrl])
 
   // Based on user input, start a new session with or without a SQL query
   // or join an existing session by ID
@@ -437,12 +244,6 @@ const DataGrid = () => {
     }
   }
 
-  // Test function to send a message
-  const sendTestMessage = () => {
-    const testMessage = [1, sequenceNumberRef.current, 'synchronize-clock', []]
-    sendWebSocketMessage(testMessage)
-  }
-
   // Grid editing functions
   const createdRowIds = useMemo(() => new Set(), [])
   const deletedRowIds = useMemo(() => new Set(), [])
@@ -455,34 +256,19 @@ const DataGrid = () => {
     updatedRowIds.clear()
   }
 
-  const performCommit = (dataToCommit: any) => {
-    // Filter out deleted rows
-    const filteredData = dataToCommit.filter(
-      ({ _rowId }: { _rowId: number | string }) => !deletedRowIds.has(_rowId),
-    )
-
-    // Update UI state
-    setRowValues(filteredData)
-    setPrevRows(filteredData)
-
+  const performCommit = (dataToCommit: DataGridRow[]) => {
     // Update model and send changes to server
-    gridToModel(filteredData, getModel()!)
-    const patch = modelRef.current?.api.flush()
-    modelSnapshotRef.current = modelRef.current?.api.getSnapshot()
-    if (patch) {
-      console.log('Sending patch to server:', patch)
-      const binaryData = encode(patch)
-      const msg = [1, sequenceNumberRef.current, 'patch', binaryData]
-      sendWebSocketMessage(msg)
-    }
-    setRowValues(modelRowsToGrid(modelSnapshotRef.current))
+    // This mutates the model -- maybe we should move this?
+    gridToModel(dataToCommit, getModel()!)
+    websocketInstance.sendPatch()
+    // setRowValues(modelRowsToGrid(modelSnapshotRef.current))
 
     // Reset tracking
     createdRowIds.clear()
     deletedRowIds.clear()
     updatedRowIds.clear()
 
-    return filteredData
+    return dataToCommit
   }
 
   const commit = () => performCommit(rowValues)
@@ -491,18 +277,19 @@ const DataGrid = () => {
     return Math.floor(Math.random() * 1000000)
   }
 
-  const autoCommitRef = useRef<any>(
-    throttle((newValue: any) => {
+  const autoCommit = useCallback(
+    throttle((newValue: DataGridRow[]) => {
       console.log('Auto-committing changes')
       performCommit(newValue)
     }, 500),
+    [performCommit],
   )
 
   function addRowToModel() {
     return { _rowId: genId() }
   }
 
-  const handleChange = (newValue: any, operations: Operation) => {
+  const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
     for (const operation of operations) {
       const rowsArr = modelRef.current?.api.arr(['rows'])
       if (operation.type === 'CREATE') {
@@ -552,7 +339,16 @@ const DataGrid = () => {
           })
       }
     }
-    autoCommitRef.current(newValue)
+
+    // Filter out deleted rows
+    const filteredData = newValue.filter(
+      ({ _rowId }: { _rowId: number | string }) => !deletedRowIds.has(_rowId),
+    )
+    // Update UI state
+    setRowValues(filteredData)
+    setPrevRows(filteredData)
+
+    autoCommit(filteredData)
   }
 
   return (
@@ -619,8 +415,8 @@ const DataGrid = () => {
           </div>
         ))}
       </div>
-      {!gridReady && <h3>Loading grid...</h3>}
-      {gridReady && (
+      {!isGridReady && <h3>Loading grid...</h3>}
+      {isGridReady && (
         <div>
           <button onClick={commit}>Commit</button>
           <button onClick={cancel}>Cancel</button>
@@ -659,9 +455,7 @@ const DataGrid = () => {
       >
         <h3>Model snapshot</h3>
         <p>
-          {modelSnapshotRef.current
-            ? JSON.stringify(modelSnapshotRef.current)
-            : 'No model available'}
+          {modelSnapshot ? JSON.stringify(modelSnapshot) : 'No model available'}
         </p>
       </div>
     </div>
