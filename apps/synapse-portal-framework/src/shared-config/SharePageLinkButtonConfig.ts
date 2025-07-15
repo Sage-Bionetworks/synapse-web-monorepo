@@ -12,6 +12,9 @@ export const sharePageLinkButtonDetailPageProps: SharePageLinkButtonProps = {
       mt: '10px',
       right: '20px',
       zIndex: 100,
+      '& + *': {
+        '.SRC-portalCardHeader': { pt: 8 },
+      },
     },
   },
 }
