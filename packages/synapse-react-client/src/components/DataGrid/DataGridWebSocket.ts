@@ -8,7 +8,7 @@ import { JsonCrdtVerboseLogicalTimestamp } from 'json-joy/lib/json-crdt/codec/st
 type WebSocketHandlerConstructorArgs = {
   url: string
   onGridReady?: () => void
-  onStatusChange?: (isOpen: boolean) => void
+  onStatusChange?: (isOpen: boolean, instance: WebSocketHandler) => void
   onModelChange?: (model: Model) => void
 }
 
@@ -165,7 +165,7 @@ export class WebSocketHandler {
     }
   }
 
-  private handleMessage(message: JsonJoyMessage) {
+  private handleMessage(message: string) {
     this.messageHandler(message)
   }
 

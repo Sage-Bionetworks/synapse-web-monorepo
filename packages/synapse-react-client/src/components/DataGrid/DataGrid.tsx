@@ -253,8 +253,7 @@ const DataGrid = () => {
     // Update model and send changes to server
     // This mutates the model -- maybe we should move this?
     gridToModel(dataToCommit, getModel()!)
-    websocketInstance.sendPatch()
-    // setRowValues(modelRowsToGrid(modelSnapshotRef.current))
+    websocketInstance?.sendPatch()
 
     // Reset tracking
     createdRowIds.clear()
@@ -335,7 +334,7 @@ const DataGrid = () => {
 
     // Filter out deleted rows
     const filteredData = newValue.filter(
-      ({ _rowId }: { _rowId: number | string }) => !deletedRowIds.has(_rowId),
+      ({ _rowId }: DataGridRow) => !deletedRowIds.has(_rowId),
     )
     // Update UI state
     setRowValues(filteredData)
