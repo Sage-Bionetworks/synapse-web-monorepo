@@ -11,7 +11,6 @@ import SustainabilityScorecard, {
 } from './SustainabilityScorecard/SustainabilityScorecard'
 import { useGetFeatureFlag } from '@/synapse-queries'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
-import CitationPopover from './CitationPopover'
 
 export type HeaderCardVariant = 'HeaderCard' | 'HeaderCardV2'
 
@@ -131,10 +130,6 @@ const HeaderCard = forwardRef(function HeaderCard(
               <Box
                 sx={{
                   width: '100%',
-                  ...((doiUri || hideIcon) && {
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                  }),
                 }}
               >
                 <div className="SRC-cardContent" style={{ marginLeft: '15px' }}>
@@ -185,7 +180,6 @@ const HeaderCard = forwardRef(function HeaderCard(
                     />
                   )}
                 </div>
-                <CitationPopover doi={doiUri} />
                 {(values || cardTopContent) && (
                   <>
                     <div

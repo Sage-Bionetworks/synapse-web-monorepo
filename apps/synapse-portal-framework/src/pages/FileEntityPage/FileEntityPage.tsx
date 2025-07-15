@@ -1,6 +1,11 @@
 import { useGetPortalComponentSearchParams } from '@/utils/UseGetPortalComponentSearchParams'
 import { Box, Container, Stack } from '@mui/material'
-import { IconSvg, ProvenanceGraph } from 'synapse-react-client'
+import {
+  CardConfiguration,
+  IconSvg,
+  ProvenanceGraph,
+  SynapseConstants,
+} from 'synapse-react-client'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { useGetEntityBundle } from 'synapse-react-client/synapse-queries'
 import CollapsibleSection from '@/components/CollapsibleSection'
@@ -9,6 +14,7 @@ import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/Lo
 import DetailsPageMenu from '../../components/DetailsPageMenu'
 import DetailsPageLayout from '@/components/DetailsPageLayout'
 import HeaderCard from 'synapse-react-client/components/HeaderCard'
+import CitationPopover from 'synapse-react-client/components/CitationPopover'
 
 function FileEntityPage() {
   const searchParams = useGetPortalComponentSearchParams()
@@ -72,6 +78,7 @@ function FileEntityPage() {
         description={''}
         icon={icon}
         doiUri={doiUri}
+        cardTopButtons={doiUri ? <CitationPopover doi={doiUri} /> : undefined}
       />
       <Container>
         <DetailsPageLayout>
