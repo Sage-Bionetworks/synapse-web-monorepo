@@ -8,6 +8,7 @@ export default function GoalsDesktop({
   summary,
   countSql,
   title,
+  isAssetIcon,
 }: GoalsDataProps) {
   return (
     <Box
@@ -17,10 +18,20 @@ export default function GoalsDesktop({
     >
       <div
         className="Goals__Card__header"
-        style={{ background: `url('${asset}')` }}
+        style={{ background: isAssetIcon ? undefined : `url('${asset}')` }}
       >
         <p>
-          <span className="Goals__Card__header__title"> {title} </span>
+          <span className="Goals__Card__header__title">
+            {isAssetIcon && asset && (
+              <img
+                style={{ marginRight: '10px' }}
+                className="Goals__Card__header__icon"
+                src={asset}
+                alt={`${title} icon`}
+              />
+            )}
+            {title}
+          </span>
           {countSql && (
             <span className="Goals__Card__header__count">
               <QueryCount parens={false} query={{ sql: countSql }} />

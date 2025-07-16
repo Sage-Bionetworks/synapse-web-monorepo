@@ -35,12 +35,14 @@
 .Goals {
   &__Card {
     &__header {
-      &__title,
-      p {
-        color: #38568e;
+      background: unset;
+      min-height: unset;
+      padding-top: 20px;
+      &__title {
+        color: #5bb0b5;
       }
       &__count {
-        border: 1px solid #38568e;
+        border: 1px solid #5bb0b5;
       }
     }
   }

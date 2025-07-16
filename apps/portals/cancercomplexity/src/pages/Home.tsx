@@ -29,8 +29,7 @@ function Home() {
             className: 'home-spacer',
           }}
         >
-          {/* change to syn66276142 when it has the right column schema */}
-          <Goals entityId={'syn68701255'} />
+          <Goals entityId={'syn66276142'} isAssetIcon={true} />
         </SectionLayout>
       </div>
 

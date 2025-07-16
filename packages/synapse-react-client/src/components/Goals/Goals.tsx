@@ -1,4 +1,3 @@
-import { EvenlyDistributedWrappedContainer } from '@/components/styled/EvenlyDistributedWrappedContainer'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { SynapseConstants } from '@/utils'
 import { getFieldIndex } from '@/utils/functions/queryUtils'
@@ -13,6 +12,7 @@ import { Box } from '@mui/material'
 
 export type GoalsProps = {
   entityId: string
+  isAssetIcon?: boolean // If true, the asset will be used as an icon instead of a background image.
 }
 
 export type GoalsDataProps = {
@@ -21,6 +21,7 @@ export type GoalsDataProps = {
   summary: string
   link: string
   asset: string
+  isAssetIcon: boolean
 }
 
 enum ExpectedColumns {
@@ -36,7 +37,7 @@ enum ExpectedColumns {
 const GOALS_DESKTOP_MIN_BREAKPOINT = 1200
 
 export function Goals(props: GoalsProps) {
-  const { entityId } = props
+  const { entityId, isAssetIcon = false } = props
   const showDesktop = useShowDesktop(GOALS_DESKTOP_MIN_BREAKPOINT)
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -105,6 +106,7 @@ export function Goals(props: GoalsProps) {
           summary,
           link,
           asset,
+          isAssetIcon,
         }
       },
     )
@@ -133,7 +135,7 @@ export function Goals(props: GoalsProps) {
         sx={{
           display: 'flex',
           flexWrap: 'wrap',
-          gap: '30px',
+          gap: '7px',
           alignItems: 'stretch',
           justifyContent: 'center',
         }}
