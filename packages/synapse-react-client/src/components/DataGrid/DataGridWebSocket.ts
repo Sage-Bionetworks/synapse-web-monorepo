@@ -197,7 +197,7 @@ export class WebSocketHandler {
     }
   }
 
-  public sendSyncMessage(
+  private sendSyncMessage(
     clock: number | JsonCrdtVerboseLogicalTimestamp[] = [],
   ) {
     const message = [1, this.sequenceNumber, 'synchronize-clock', clock]
