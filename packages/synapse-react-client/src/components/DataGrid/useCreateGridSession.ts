@@ -16,13 +16,13 @@ export const useCreateGridSession = (
     >
   >,
 ) => {
-  const SynapseClient = useSynapseContext().synapseClient
+  const { synapseClient } = useSynapseContext()
 
   return useMutation<CreateGridResponse, SynapseClientError, CreateGridRequest>(
     {
       ...options,
       mutationFn: async (request: CreateGridRequest) =>
-        await startGridSession(SynapseClient, request),
+        await startGridSession(synapseClient, request),
     },
   )
 }
