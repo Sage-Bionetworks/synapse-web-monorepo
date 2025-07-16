@@ -6,11 +6,11 @@ import {
   SustainabilityScorecardBaseProps,
 } from './SustainabilityScorecardUtils'
 import { Box, Card, Skeleton, Stack, Typography, useTheme } from '@mui/material'
-import { ReactNode } from 'react'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
 import Dial from './Dial'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 
 export type SustainabilityScorecardSummaryProps =
   SustainabilityScorecardBaseProps & {
@@ -19,7 +19,7 @@ export type SustainabilityScorecardSummaryProps =
 
 type MetricSummaryRowProps = {
   label: string
-  text: ReactNode
+  text: string
   index: number
   metricValues: string[]
 }
@@ -30,6 +30,7 @@ const MetricSummaryRow = ({
   metricValues,
   index,
 }: MetricSummaryRowProps) => {
+  console.log('text', text)
   return (
     <Box
       sx={{
@@ -42,9 +43,7 @@ const MetricSummaryRow = ({
         <Typography variant="headline3" sx={{ marginBottom: '12px' }}>
           {label}
         </Typography>
-        <Typography variant="body2" sx={{ color: 'grey.700' }}>
-          {text}
-        </Typography>
+        <MarkdownSynapse markdown={text} />
       </div>
       {metricValues[index] === 'true' ? (
         <CheckCircleIcon
@@ -141,7 +140,7 @@ const SustainabilityScorecardSummary = ({
           >
             <MetricSummaryRow
               label={metric.label}
-              text={metric.text}
+              text={metric.text ?? ''}
               index={index}
               metricValues={metricValues}
             />
