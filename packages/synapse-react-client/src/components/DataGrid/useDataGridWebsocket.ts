@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react'
-import { WebSocketHandler } from './DataGridWebSocket'
+import { DataGridWebSocket } from './DataGridWebSocket'
 import { useCRDTState } from './useCRDTState'
 
 export function useDataGridWebSocket() {
   const [websocketInstance, setWebSocketInstance] =
-    useState<WebSocketHandler | null>(null)
+    useState<DataGridWebSocket | null>(null)
   const [isConnected, setIsConnected] = useState(false)
   const [isGridReady, setIsGridReady] = useState(false)
 
@@ -12,12 +12,12 @@ export function useDataGridWebSocket() {
 
   const createWebsocket = useCallback((url: string) => {
     if (url && !websocketInstance) {
-      const webSocketHandler = new WebSocketHandler({
+      const webSocketHandler = new DataGridWebSocket({
         url,
         onGridReady: () => {
           setIsGridReady(true)
         },
-        onStatusChange: (isOpen: boolean, instance: WebSocketHandler) => {
+        onStatusChange: (isOpen: boolean, instance: DataGridWebSocket) => {
           setIsConnected(isOpen)
         },
         onModelChange: model => {

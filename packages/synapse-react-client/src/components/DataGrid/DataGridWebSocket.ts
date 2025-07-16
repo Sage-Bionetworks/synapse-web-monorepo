@@ -4,14 +4,14 @@ import { Encoder as VerboseEncoder } from 'json-joy/lib/json-crdt/codec/structur
 import noop from 'lodash-es/noop'
 import { JsonCrdtVerboseLogicalTimestamp } from 'json-joy/lib/json-crdt/codec/structural/verbose/types'
 
-type WebSocketHandlerConstructorArgs = {
+type DataGridWebSocketConstructorArgs = {
   url: string
   onGridReady?: () => void
-  onStatusChange?: (isOpen: boolean, instance: WebSocketHandler) => void
+  onStatusChange?: (isOpen: boolean, instance: DataGridWebSocket) => void
   onModelChange?: (model: Model) => void
 }
 
-export class WebSocketHandler {
+export class DataGridWebSocket {
   private socket: WebSocket
 
   private model: Model | null = null
@@ -21,10 +21,10 @@ export class WebSocketHandler {
 
   private onModelChange: (model: Model) => void = noop
   private onGridReady: () => void = noop
-  private onStatusChange: (isOpen: boolean, _this: WebSocketHandler) => void =
+  private onStatusChange: (isOpen: boolean, _this: DataGridWebSocket) => void =
     noop
 
-  constructor(args: WebSocketHandlerConstructorArgs) {
+  constructor(args: DataGridWebSocketConstructorArgs) {
     const { url, onGridReady, onStatusChange, onModelChange } = args
     this.socket = new WebSocket(url)
 
