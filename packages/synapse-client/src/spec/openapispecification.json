@@ -100,7 +100,7 @@
     },
     {
       "name": "JSON Schema Services",
-      "description": "This set of services provide project designers with tools to define their own\n schemas to control and validate metadata applied to Projects, Folders, and\n Files. All schemas are defined using JSON schemas following\n <a href=\"https://json-schema.org/\">json-schema.org</a> specification.\n <p>\n To get started, you will need to either create a new <a href=\"${org.sagebionetworks.repo.model.schema.Organization}\">Organization</a> or\n join an existing Organization. Each Organization has an AccessControlList\n (ACL) that controls which users/teams are authorized to contribute schemas\n under that Organization's name-space. The Organization's name-space is\n referenced using the Organization's name, which is also the root of all\n schema $ids within the Organization."
+      "description": "This set of services provide project designers with tools to define their own\n schemas to control and validate metadata applied to Projects, Folders, and\n Files. All schemas are defined using JSON schemas following\n <a href=\"https://json-schema.org/\">json-schema.org</a> specification.\n <p>\n To get started, you will need to either create a new <a href=\"${org.sagebionetworks.repo.model.schema.Organization}\">Organization</a> or\n join an existing Organization. Each Organization has an AccessControlList\n (ACL) that controls which users/teams are authorized to contribute schemas\n under that Organization's name-space. The Organization's name-space is\n referenced using the Organization's name, which is also the root of all\n schema $ids within the Organization.\n </p>\n \n \n <p>\n <b>Binding JSON schemas to Entities:</b>\n <ul>\n <li><a href=\"${PUT.entity.id.schema.binding}\">PUT /entity/{id}/schema/binding</a></li>\n <li><a href=\"${GET.entity.id.schema.binding}\">GET /entity/{id}/schema/binding</a></li>\n <li><a href=\"${DELETE.entity.id.schema.binding}\">DELETE /entity/{id}/schema/binding</a></li>\n </ul>\n </p>\n <p>\n <b>Entity schema validation results:</b>\n <ul>\n <li><a href=\"${GET.entity.id.schema.validation}\">GET /entity/{id}/schema/validation</a></li>\n <li><a href=\"${GET.entity.id.schema.validation.statistics}\">GET /entity/{id}/schema/validation/statistics</a></li>\n <li><a href=\"${POST.entity.id.schema.validation.invalid}\">POST /entity/{id}/schema/validation/invalid</a></li>\n <li><a href=\"${GET.entity.id.derivedKeys}\">GET /entity/{id}/derivedKeys</a></li>\n </ul>\n </p>  \n \n <b>Service Limits</b>\n <table border=\"1\">\n <tr>\n <th>resource</th>\n <th>limit</th>\n </tr>\n <tr>\n <td>Maximum number of characters in a JSON schema</td>\n <td>2^24 characters</td>\n </tr>\n </table>"
     },
     {
       "name": "Log Service",
@@ -7277,6 +7277,41 @@
         }
       }
     },
+    "/repo/v1/entity/{id}/version/{versionNumber}/type": {
+      "get": {
+        "tags": ["Entity Services"],
+        "operationId": "get-/repo/v1/entity/{id}/version/{versionNumber}/type",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the Entity to get the EntityHeader for.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "versionNumber",
+            "in": "path",
+            "required": true,
+            "description": "The version number of the Entity to get the EntityHeader for.",
+            "schema": { "type": "number" }
+          }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Auto-generated description",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.EntityHeader"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/repo/v1/entity/type": {
       "get": {
         "tags": ["Entity Services"],
@@ -8499,10 +8534,10 @@
         }
       }
     },
-    "/repo/v1/grid/{sessionId}": {
+    "/repo/v1/grid/session/{sessionId}": {
       "get": {
         "tags": ["Grid Services"],
-        "operationId": "get-/repo/v1/grid/{sessionId}",
+        "operationId": "get-/repo/v1/grid/session/{sessionId}",
         "parameters": [
           {
             "name": "sessionId",
@@ -8524,12 +8559,26 @@
             }
           }
         }
+      },
+      "delete": {
+        "tags": ["Grid Services"],
+        "operationId": "delete-/repo/v1/grid/session/{sessionId}",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Void" } }
       }
     },
-    "/repo/v1/grid/{sessionId}/replica": {
+    "/repo/v1/grid/session/{sessionId}/replica": {
       "post": {
         "tags": ["Grid Services"],
-        "operationId": "post-/repo/v1/grid/{sessionId}/replica",
+        "operationId": "post-/repo/v1/grid/session/{sessionId}/replica",
         "parameters": [
           {
             "name": "sessionId",
@@ -8564,10 +8613,10 @@
         }
       }
     },
-    "/repo/v1/grid/{sessionId}/replica/{replicaId}": {
+    "/repo/v1/grid/session/{sessionId}/replica/{replicaId}": {
       "get": {
         "tags": ["Grid Services"],
-        "operationId": "get-/repo/v1/grid/{sessionId}/replica/{replicaId}",
+        "operationId": "get-/repo/v1/grid/session/{sessionId}/replica/{replicaId}",
         "parameters": [
           {
             "name": "sessionId",
@@ -8599,10 +8648,10 @@
         }
       }
     },
-    "/repo/v1/grid/{sessionId}/presigned/url": {
+    "/repo/v1/grid/session/{sessionId}/presigned/url": {
       "post": {
         "tags": ["Grid Services"],
-        "operationId": "post-/repo/v1/grid/{sessionId}/presigned/url",
+        "operationId": "post-/repo/v1/grid/session/{sessionId}/presigned/url",
         "parameters": [
           {
             "name": "sessionId",
@@ -8629,6 +8678,36 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/org.sagebionetworks.repo.model.grid.CreateGridPresignedUrlResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repo/v1/grid/session/list": {
+      "post": {
+        "tags": ["Grid Services"],
+        "operationId": "post-/repo/v1/grid/session/list",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.grid.ListGridSessionsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Auto-generated description",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.grid.ListGridSessionsResponse"
                 }
               }
             }
@@ -13183,7 +13262,7 @@
         "operationId": "get-/repo/v1/doi/locate",
         "parameters": [
           {
-            "name": "portaId",
+            "name": "portalId",
             "in": "query",
             "required": false,
             "schema": { "type": "string" }
@@ -17110,6 +17189,20 @@
         "type": "string",
         "enum": ["PROCESSING", "FAILED", "COMPLETE"]
       },
+      "org.sagebionetworks.repo.model.oauth.GA4GHVisa": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "asserted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "value": { "type": "string" },
+          "source": { "type": "string" },
+          "by": { "type": "string" }
+        },
+        "description": "GA4GH Visa"
+      },
       "org.sagebionetworks.repo.model.principal.EmailValidationSignedToken": {
         "type": "object",
         "properties": {
@@ -19018,9 +19111,8 @@
             "type": "string",
             "enum": ["org.sagebionetworks.repo.model.grid.CreateGridRequest"]
           },
-          "csvFileHandleId": {
-            "type": "integer",
-            "format": "int32"
+          "initialQuery": {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.Query"
           },
           "schema$id": { "type": "string" }
         },
@@ -19317,6 +19409,8 @@
           "PROJECT_STORAGE_LIMIT",
           "GRID_SESSION",
           "GRID_REPLICA",
+          "GRID_PATCH",
+          "USER_STATUS",
           "CHANGE"
         ]
       },
@@ -19795,6 +19889,10 @@
         "required": ["concreteType"],
         "discriminator": { "propertyName": "concreteType" }
       },
+      "org.sagebionetworks.repo.model.oauth.GA4GHByType": {
+        "type": "string",
+        "enum": ["self", "peer", "system", "so", "dac"]
+      },
       "org.sagebionetworks.evaluation.model.SubmissionEligibility": {
         "type": "object",
         "properties": {
@@ -20209,6 +20307,14 @@
         },
         "description": "JSON schema for out of band 'Access Control Team' controlled Access Requirement, a 'tier 3' Access Requirement. This access requirement directs user to contact an ACT member to gain access to the data.",
         "required": ["concreteType"]
+      },
+      "org.sagebionetworks.repo.model.grid.ListGridSessionsRequest": {
+        "type": "object",
+        "properties": {
+          "sourceId": { "type": "string" },
+          "nextPageToken": { "type": "string" }
+        },
+        "description": "Request to list a user's active grid sessions."
       },
       "org.sagebionetworks.repo.model.grid.slq.OrderByDirection": {
         "type": "string",
@@ -20711,6 +20817,21 @@
           "direction": { "type": "string" }
         },
         "description": "Identifies both the field and direction for a single sort operation"
+      },
+      "org.sagebionetworks.repo.model.grid.ListGridSessionsResponse": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.grid.GridSession",
+              "description": "Basic information about a grid session."
+            },
+            "description": "A single page of results that match the request parameters."
+          },
+          "nextPageToken": { "type": "string" }
+        },
+        "description": "Response to a request to list a user's active grid session."
       },
       "org.sagebionetworks.repo.model.dataaccess.SubmissionSearchResponse": {
         "type": "object",
@@ -21444,6 +21565,23 @@
           "nextPageToken": { "type": "string" }
         },
         "description": "Metadata for a paginated list of personal access token records."
+      },
+      "org.sagebionetworks.repo.model.migration.BackfillLastSeenOnResponse": {
+        "type": "object",
+        "properties": {
+          "concreteType": {
+            "type": "string",
+            "enum": [
+              "org.sagebionetworks.repo.model.migration.BackfillLastSeenOnResponse"
+            ]
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "Results for a lastSeenOn backfill request.",
+        "required": ["concreteType"]
       },
       "org.sagebionetworks.repo.model.grid.sql.InExpression": {
         "type": "object",
@@ -24338,7 +24476,8 @@
           "validated_orcid",
           "validated_at",
           "refresh_token_id",
-          "token_type"
+          "token_type",
+          "ga4gh_passport_v1"
         ]
       },
       "org.sagebionetworks.repo.model.project.ProjectSetting": {
@@ -25463,6 +25602,16 @@
         },
         "description": "The response body from validateDefiningSql"
       },
+      "org.sagebionetworks.repo.model.oauth.GA4GHVisaType": {
+        "type": "string",
+        "enum": [
+          "AffiliationAndRole",
+          "AcceptedTermsAndPolicies",
+          "ResearcherStatus",
+          "ControlledAccessGrants",
+          "LinkedIdentities"
+        ]
+      },
       "org.sagebionetworks.repo.model.dataaccess.AccessApprovalSearchResponse": {
         "type": "object",
         "properties": {
@@ -25503,6 +25652,9 @@
           },
           {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.MigrationTypeCount"
+          },
+          {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.BackfillLastSeenOnResponse"
           },
           {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.BatchChecksumResponse"
@@ -26058,6 +26210,26 @@
           }
         },
         "description": "An array of Reference objects"
+      },
+      "org.sagebionetworks.repo.model.oauth.GA4GHVisaPayload": {
+        "type": "object",
+        "properties": {
+          "iss": { "type": "string" },
+          "sub": { "type": "string" },
+          "iat": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "exp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ga4gh_visa_v1": {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.oauth.GA4GHVisa",
+            "description": "GA4GH Visa"
+          }
+        },
+        "description": "GA4GH Visa Payload"
       },
       "org.sagebionetworks.repo.model.agent.TraceEventsResponse": {
         "type": "object",
@@ -27704,6 +27876,24 @@
         },
         "description": "A request to retrieve a page of Submission Information"
       },
+      "org.sagebionetworks.repo.model.grid.internal.Connection": {
+        "type": "object",
+        "properties": {
+          "gridSessionId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "replicaId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "Connection information from a presigned URL."
+      },
       "org.sagebionetworks.repo.model.auth.TwoFactorAuthLoginRequest": {
         "type": "object",
         "properties": {
@@ -28137,6 +28327,9 @@
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.AsyncMigrationTypeCountsRequest"
           },
           {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.BackfillLastSeenOnRequest"
+          },
+          {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.AsyncMigrationRangeChecksumRequest"
           },
           {
@@ -28479,6 +28672,23 @@
       "org.sagebionetworks.repo.model.entity.SortBy": {
         "type": "string",
         "enum": ["NAME", "CREATED_ON", "MODIFIED_ON"]
+      },
+      "org.sagebionetworks.repo.model.migration.BackfillLastSeenOnRequest": {
+        "type": "object",
+        "properties": {
+          "concreteType": {
+            "type": "string",
+            "enum": [
+              "org.sagebionetworks.repo.model.migration.BackfillLastSeenOnRequest"
+            ]
+          },
+          "maxUsersCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "Request to backfill the lastSeenOn status for existing users.",
+        "required": ["concreteType"]
       },
       "org.sagebionetworks.repo.model.table.TableSearchChangeResponse": {
         "type": "object",
@@ -29999,7 +30209,9 @@
           "lastReplicaIdService": {
             "type": "integer",
             "format": "int32"
-          }
+          },
+          "gridJsonSchema$Id": { "type": "string" },
+          "sourceEntityId": { "type": "string" }
         },
         "description": "Basic information about a grid session."
       },
