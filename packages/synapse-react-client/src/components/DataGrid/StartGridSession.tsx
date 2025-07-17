@@ -15,6 +15,8 @@ export interface StartGridSessionProps {
   onPresignedUrlChange?: (url: string) => void
 }
 
+// Based on user input, start a new session with or without a SQL query
+// or join an existing session by ID
 export const StartGridSession = ({
   onSessionChange,
   onReplicaChange,
