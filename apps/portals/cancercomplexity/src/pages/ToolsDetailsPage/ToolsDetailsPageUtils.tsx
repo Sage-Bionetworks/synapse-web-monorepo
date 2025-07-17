@@ -68,7 +68,14 @@ export function getToolkitQueryBundleRequest(
   }
 }
 
-export function useSustainabilityScorecardProps(
+/**
+ * Builds the query config and metric text content needed for the sustainabilityScorecard component or sustainabilityScorecardSummary component.
+ *
+ * @param toolName - The name of the tool to filter by.
+ * @param tooltipType - Controls which text to show depending on component ('summaryText' or 'tooltipText').
+ * @returns Props used by SustainabilityScorecard or SustainabilityScorecardSummary and loading state.
+ */
+export function useSustainabilityScorecardData(
   toolName: string,
   tooltipType: 'tooltipText' | 'summaryText',
 ) {

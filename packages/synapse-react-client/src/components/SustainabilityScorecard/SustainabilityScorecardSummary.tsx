@@ -30,7 +30,6 @@ const MetricSummaryRow = ({
   metricValues,
   index,
 }: MetricSummaryRowProps) => {
-  console.log('text', text)
   return (
     <Box
       sx={{

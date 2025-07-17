@@ -23,7 +23,7 @@ import {
   TOOLS_DETAILS_PAGE_SUSTAINABILITY_AND_REUSABILITY_TAB_PATH,
 } from '@/config/routeConstants'
 import { Outlet } from 'react-router'
-import { useSustainabilityScorecardProps } from './ToolsDetailsPageUtils'
+import { useSustainabilityScorecardData } from './ToolsDetailsPageUtils'
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries'
 import { useSustainabilityScorecardIfAvailable } from 'synapse-react-client/components/SustainabilityScorecard/SustainabilityScorecardUtils'
 
@@ -33,21 +33,21 @@ function ToolsDetailsPage() {
     FeatureFlagEnum.PORTAL_SUSTAINABILITY_SCORECARD,
   )
 
-  const { props: summaryProps } = useSustainabilityScorecardProps(
+  const { props: summaryData } = useSustainabilityScorecardData(
     toolName,
     'summaryText',
   )
 
-  const { props: scorecardProps } = useSustainabilityScorecardProps(
+  const { props: scorecardData } = useSustainabilityScorecardData(
     toolName,
     'tooltipText',
   )
 
   const showSustainabilityTab =
-    useSustainabilityScorecardIfAvailable(summaryProps)
+    useSustainabilityScorecardIfAvailable(summaryData)
 
   const sustainabilityScorecard =
-    useSustainabilityScorecardIfAvailable(scorecardProps)
+    useSustainabilityScorecardIfAvailable(scorecardData)
 
   const toolDetailsPageTabConfig: DetailsPageTabConfig[] = [
     {
