@@ -252,7 +252,7 @@ const DataGrid = () => {
   const performCommit = (dataToCommit: DataGridRow[]) => {
     // Update model and send changes to server
     // This mutates the model -- maybe we should move this?
-    gridToModel(dataToCommit, getModel())
+    gridToModel(dataToCommit, getModel()!)
     websocketInstance?.sendPatch()
 
     // Reset tracking
