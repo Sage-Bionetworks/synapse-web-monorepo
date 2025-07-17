@@ -82,7 +82,7 @@ export function getMetricConfig(
  * Helps conditionally render `SustainabilityScorecard` component
  * @param props - The props containing the queryRequest, metricsConfig, searchParamKey, filterColumn, and scoreDescriptorColumnName.
  */
-export function useSustainabilityScorecardIfAvailable(
+export function useSustainabilityScorecardWhenAvailable(
   props: SustainabilityScorecardProps,
 ): SustainabilityScorecardProps | undefined {
   const { data: queryResultBundle, isLoading } = useGetQueryResultBundle(

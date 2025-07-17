@@ -25,7 +25,7 @@ import {
 import { Outlet } from 'react-router'
 import { useSustainabilityScorecardData } from './ToolsDetailsPageUtils'
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries'
-import { useSustainabilityScorecardIfAvailable } from 'synapse-react-client/components/SustainabilityScorecard/SustainabilityScorecardUtils'
+import { useSustainabilityScorecardWhenAvailable } from 'synapse-react-client/components/SustainabilityScorecard/SustainabilityScorecardUtils'
 
 function ToolsDetailsPage() {
   const { toolName } = useGetPortalComponentSearchParams()
@@ -44,10 +44,10 @@ function ToolsDetailsPage() {
   )
 
   const showSustainabilityTab =
-    useSustainabilityScorecardIfAvailable(summaryData)
+    useSustainabilityScorecardWhenAvailable(summaryData)
 
   const sustainabilityScorecard =
-    useSustainabilityScorecardIfAvailable(scorecardData)
+    useSustainabilityScorecardWhenAvailable(scorecardData)
 
   const toolDetailsPageTabConfig: DetailsPageTabConfig[] = [
     {

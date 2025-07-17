@@ -11,6 +11,7 @@ import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultB
 import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { SynapseConstants } from '@/utils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 
 vi.mock('@/synapse-queries/entity/useGetQueryResultBundle')
 
@@ -117,7 +118,9 @@ describe('SustainabilityScorecard Tests', () => {
   }
 
   function renderComponent() {
-    render(<SustainabilityScorecardSummary {...mockProps} />)
+    render(<SustainabilityScorecardSummary {...mockProps} />, {
+      wrapper: createWrapper(),
+    })
   }
 
   it('displays header', async () => {
