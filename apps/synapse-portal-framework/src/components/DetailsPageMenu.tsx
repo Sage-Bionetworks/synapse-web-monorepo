@@ -24,10 +24,6 @@ const DetailsPageMenu = ({
     }
   }
 
-  const filteredMenuSections = menuSections.filter(
-    section => Boolean(section.id) && Boolean(section.title),
-  )
-
   return (
     <Stack
       sx={{
@@ -56,7 +52,7 @@ const DetailsPageMenu = ({
       >
         Contents
       </Typography>
-      {filteredMenuSections.map(option => (
+      {menuSections.map(option => (
         <Button
           sx={{
             padding: '8px 30px',

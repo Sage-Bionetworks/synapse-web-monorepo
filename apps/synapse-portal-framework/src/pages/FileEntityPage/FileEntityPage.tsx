@@ -95,6 +95,17 @@ function FileEntityPage() {
             <CitationPopover doi={doiUri} buttonSx={{ mr: 5 }} />
           ) : undefined
         }
+        sx={{
+          '& .SRC-boldText': {
+            fontSize: '36px !important',
+          },
+          '& .SRC-portalCardMain': {
+            alignItems: 'center',
+          },
+          '& .SRC-cardContent': {
+            marginBottom: '0 ',
+          },
+        }}
       />
       <Container sx={{ '& .component-container': { flex: 1 } }}>
         <DetailsPageContent content={fileEntityPageSections} />

@@ -1,5 +1,5 @@
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
-import { Box } from '@mui/material'
+import { Box, SxProps } from '@mui/material'
 import { useState, useEffect, forwardRef, ForwardedRef } from 'react'
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
@@ -32,6 +32,7 @@ export type HeaderCardProps = {
   cardTopButtons?: React.ReactNode
   sustainabilityScorecard?: SustainabilityScorecardProps
   doiUri?: string
+  sx?: SxProps
 }
 
 const HeaderCard = forwardRef(function HeaderCard(
@@ -55,6 +56,7 @@ const HeaderCard = forwardRef(function HeaderCard(
     cardTopButtons,
     sustainabilityScorecard,
     doiUri,
+    sx,
   } = props
 
   const isFeatureFlagEnabled = useGetFeatureFlag(
@@ -106,6 +108,7 @@ const HeaderCard = forwardRef(function HeaderCard(
       className={`SRC-portalCard SRC-portalCardHeader ${
         isAlignToLeftNav ? 'isAlignToLeftNav' : ''
       }`}
+      sx={sx}
     >
       <div className="container-fluid container-full-width">
         <Box
