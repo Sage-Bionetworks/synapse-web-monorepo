@@ -136,6 +136,7 @@ const SustainabilityScorecard = ({
     <Box
       sx={{
         display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' },
         padding: '20px',
         gap: '20px',
         ...sx,
