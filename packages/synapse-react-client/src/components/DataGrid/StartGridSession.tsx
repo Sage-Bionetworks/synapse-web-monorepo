@@ -9,7 +9,17 @@ import {
 import { SynapseClient, TableQuery } from '@sage-bionetworks/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 
-export const StartGridSession = () => {
+export interface StartGridSessionProps {
+  onSessionChange?: (sessionId: string) => void
+  onReplicaChange?: (replicaId: number | null) => void
+  onPresignedUrlChange?: (url: string) => void
+}
+
+export const StartGridSession = ({
+  onSessionChange,
+  onReplicaChange,
+  onPresignedUrlChange,
+}: StartGridSessionProps) => {
   const [gridSql, setGridSql] = useState('')
   const [sessionId, setSessionId] = useState('')
   const [replicaId, setReplicaId] = useState<number | null>(null)
@@ -28,8 +38,11 @@ export const StartGridSession = () => {
       })
       console.log(`Session ${sessionId} deleted successfully.`)
       setSessionId('')
+      onSessionChange?.('')
       setReplicaId(null)
+      onReplicaChange?.(null)
       setPresignedUrl('')
+      onPresignedUrlChange?.('')
     } catch (error) {
       console.error(`Failed to delete session ${sessionId}:`, error)
     }
@@ -127,11 +140,13 @@ export const StartGridSession = () => {
         console.log('Grid session started:', gridSessionResponse)
         const newSessionId = gridSessionResponse.gridSession?.sessionId || ''
         setSessionId(newSessionId)
+        onSessionChange?.(newSessionId)
 
         const replica = await createReplicaId(synapseClient, newSessionId)
         console.log('Replica created:', replica)
         const newReplicaId = replica?.replica?.replicaId || null
         setReplicaId(newReplicaId)
+        onReplicaChange?.(newReplicaId)
 
         const getPresignedUrl =
           await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdPresignedUrl(
@@ -144,14 +159,17 @@ export const StartGridSession = () => {
             },
           )
         setPresignedUrl(getPresignedUrl.presignedUrl || '')
+        onPresignedUrlChange?.(getPresignedUrl.presignedUrl || '')
       } else if (parsedInput.type === 'sessionId') {
         console.log(`Joining existing session ID: ${parsedInput.input}`)
         setSessionId(parsedInput.input)
+        onSessionChange?.(parsedInput.input)
 
         const replica = await createReplicaId(synapseClient, parsedInput.input)
         console.log('Replica created:', replica)
         const newReplicaId = replica?.replica?.replicaId || null
         setReplicaId(newReplicaId)
+        onReplicaChange?.(newReplicaId)
 
         const getPresignedUrl =
           await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdPresignedUrl(
@@ -164,6 +182,7 @@ export const StartGridSession = () => {
             },
           )
         setPresignedUrl(getPresignedUrl.presignedUrl || '')
+        onPresignedUrlChange?.(getPresignedUrl.presignedUrl || '')
       } else {
         console.error(
           'Unknown input type, please provide a valid SQL query or session ID.',
