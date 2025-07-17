@@ -4,6 +4,7 @@ import { parseQueryInput } from './DataGridUtils'
 import {
   CreateGridRequest,
   PostRepoV1GridSessionSessionIdReplicaRequest,
+  GridSession,
 } from '@sage-bionetworks/synapse-client'
 import { SynapseClient, TableQuery } from '@sage-bionetworks/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
@@ -13,8 +14,68 @@ export const StartGridSession = () => {
   const [sessionId, setSessionId] = useState('')
   const [replicaId, setReplicaId] = useState<number | null>(null)
   const [presignedUrl, setPresignedUrl] = useState('')
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [availableSessions, setAvailableSessions] = useState<GridSession[]>([])
+
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const synapseClient = useSynapseContext().synapseClient
+
+  const deleteSession = async (sessionId: string) => {
+    try {
+      await synapseClient.gridServicesClient.deleteRepoV1GridSessionSessionId({
+        sessionId,
+      })
+      console.log(`Session ${sessionId} deleted successfully.`)
+      setSessionId('')
+      setReplicaId(null)
+      setPresignedUrl('')
+    } catch (error) {
+      console.error(`Failed to delete session ${sessionId}:`, error)
+    }
+  }
+
+  const getSessionList = async (
+    nextPageToken?: string,
+    accumulated: GridSession[] = [],
+  ) => {
+    // Fetch all available sessions, handling pagination recursively
+    const response =
+      await synapseClient.gridServicesClient.postRepoV1GridSessionList({
+        ...(nextPageToken
+          ? { listGridSessionsRequest: { nextPageToken: nextPageToken } }
+          : { listGridSessionsRequest: {} }),
+      })
+    const sessionIds =
+      response.page?.map(session => ({
+        sessionId: session.sessionId,
+        sourceEntityId: session.sourceEntityId,
+      })) || []
+    const allSessions = [...accumulated, ...sessionIds]
+    if (response.nextPageToken) {
+      return getSessionList(response.nextPageToken, allSessions)
+    }
+    return allSessions
+    // try {
+    //   const sessions = await synapseClient.gridServicesClient.postRepoV1GridSessionList()
+    //   return sessions.gridSessions.map(session => session.sessionId)
+    // } catch (error) {
+    //   console.error('Failed to fetch session list:', error)
+    //   return []
+    // }
+  }
+
+  useEffect(() => {
+    // Fetch available sessions on component mount
+    const fetchSessions = async () => {
+      const sessions = await getSessionList()
+      setAvailableSessions(sessions)
+      console.log('Available sessions:', sessions)
+    }
+    fetchSessions()
+    // Simulate fetching available sessions
+    //setAvailableSessions(['session-123', 'session-456', 'session-789'])
+  }, [])
 
   const startGridSession = useCreateGridSession()
 
@@ -113,25 +174,89 @@ export const StartGridSession = () => {
     }
   }
 
-  const inputRef = useRef(null)
-
-  useEffect(() => {
-    inputRef.current?.focus()
-  }, [])
   return (
     <>
-      <input
-        ref={inputRef}
-        type="text"
-        placeholder="(Optional) Enter a SQL query or session ID"
-        style={{ width: '300px' }}
-        onKeyDown={e => {
-          if (e.key === 'Enter') {
-            const inputValue = inputRef.current?.value || ''
-            handleStartSession(inputValue)
-          }
-        }}
-      />
+      <div style={{ position: 'relative', width: '300px' }}>
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="(Optional) Enter a SQL query or session ID"
+          style={{ width: '100%' }}
+          onFocus={() => setShowDropdown(true)}
+          onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+          onKeyDown={e => {
+            if (e.key === 'Enter') {
+              const inputValue = inputRef.current?.value || ''
+              handleStartSession(inputValue)
+            }
+          }}
+        />
+        {showDropdown && availableSessions.length > 0 && (
+          <ul
+            style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              width: '100%',
+              background: 'white',
+              border: '1px solid #ccc',
+              zIndex: 10,
+              margin: 0,
+              padding: 0,
+              listStyle: 'none',
+              maxHeight: '150px',
+              overflowY: 'auto',
+            }}
+          >
+            {availableSessions.map(session => (
+              <li
+                key={session.sessionId}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '8px',
+                  cursor: 'pointer',
+                  borderBottom: '1px solid #eee',
+                }}
+                onMouseDown={e => {
+                  // Only fill input if not clicking the delete icon
+                  if ((e.target as HTMLElement).dataset.icon !== 'delete') {
+                    if (inputRef.current) {
+                      inputRef.current.value = session.sessionId!
+                    }
+                    setShowDropdown(false)
+                  }
+                }}
+              >
+                <span>{session.sessionId}</span>
+                <span>{session.sourceEntityId}</span>
+                <span
+                  data-icon="delete"
+                  title="Delete session"
+                  style={{
+                    marginLeft: '8px',
+                    color: '#d32f2f',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                    userSelect: 'none',
+                  }}
+                  onMouseDown={e => {
+                    e.stopPropagation()
+                    deleteSession(session.sessionId!)
+                    // Optionally remove from dropdown immediately:
+                    setAvailableSessions(sessions =>
+                      sessions.filter(s => s !== session),
+                    )
+                  }}
+                >
+                  🗑️
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
       <button
         onClick={() => {
           const inputValue = inputRef.current?.value || ''
