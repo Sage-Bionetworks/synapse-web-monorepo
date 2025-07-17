@@ -20,6 +20,7 @@ import throttle from 'lodash-es/throttle'
 import { parseQueryInput } from './DataGridUtils'
 import { ModelSnapshot, Operation } from './DataGridTypes'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
+import { StartGridSession } from './StartGridSession'
 
 const DataGrid = () => {
   const synapseClient = useSynapseContext().synapseClient
@@ -346,27 +347,11 @@ const DataGrid = () => {
   return (
     <div>
       <div>
-        <input
-          ref={inputRef}
-          type="text"
-          placeholder="(Optional) Enter a SQL query or session ID"
-          style={{ width: '300px' }}
-          onKeyDown={e => {
-            if (e.key === 'Enter') {
-              const inputValue = inputRef.current?.value || ''
-              handleStartSession(inputValue)
-            }
-          }}
+        <StartGridSession
+          onSessionChange={setSessionId}
+          onReplicaChange={setReplicaId}
+          onPresignedUrlChange={setPresignedUrl}
         />
-        <button
-          onClick={() => {
-            const inputValue = inputRef.current?.value || ''
-            handleStartSession(inputValue)
-          }}
-          style={{ backgroundColor: '#4CAF50', color: 'white' }}
-        >
-          Start Grid Session
-        </button>
       </div>
 
       <div>
