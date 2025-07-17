@@ -8,7 +8,6 @@ import ParticipantsBarPlot from './crc-researcher/ParticipantsBarPlot'
 import StatusLineChart from './crc-researcher/StatusLineChart'
 import SurveysCompletedPlots from './crc-researcher/SurveysCompletedPlots'
 import AboutPortal from './csbc-home-page/AboutPortal'
-import ConsortiaGoals from './csbc-home-page/ConsortiaGoals'
 import DevelopedBySage from './csbc-home-page/DevelopedBySage'
 import HomePageCardContainer from './csbc-home-page/HomePageCardContainer'
 import DetailsPage from './DetailsPage'
@@ -38,7 +37,6 @@ import RepositoryUnderReviewAlert from './RepositoryUnderReviewAlert'
 const PortalComponents = {
   RouteControlWrapper: ExploreWrapper,
   DetailsPage,
-  ConsortiaGoals,
   HomePageCardContainer,
   AboutPortal,
   DevelopedBySage,

@@ -17,7 +17,7 @@ export function DetailsPageContent(props: {
 
   return (
     <DetailsPageLayout>
-      {!hideMenu && <DetailsPageMenu menuSections={content} />}
+      {!hideMenu && <DetailsPageMenu menuSections={menuOptions} />}
       <div className={'component-container'}>
         {content.map(option => (
           <DetailsPageSectionLayout key={option.id} {...option} />

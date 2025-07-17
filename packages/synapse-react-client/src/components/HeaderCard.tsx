@@ -1,5 +1,5 @@
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
-import { Box } from '@mui/material'
+import { Box, SxProps } from '@mui/material'
 import { useState, useEffect, forwardRef, ForwardedRef } from 'react'
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
@@ -31,6 +31,8 @@ export type HeaderCardProps = {
   ctaLinkConfig?: GenericCardProps['ctaLinkConfig']
   cardTopButtons?: React.ReactNode
   sustainabilityScorecard?: SustainabilityScorecardProps
+  doiUri?: string
+  sx?: SxProps
 }
 
 const HeaderCard = forwardRef(function HeaderCard(
@@ -53,6 +55,8 @@ const HeaderCard = forwardRef(function HeaderCard(
     cardTopContent,
     cardTopButtons,
     sustainabilityScorecard,
+    doiUri,
+    sx,
   } = props
 
   const isFeatureFlagEnabled = useGetFeatureFlag(
@@ -99,11 +103,12 @@ const HeaderCard = forwardRef(function HeaderCard(
   }
 
   return (
-    <div
+    <Box
       ref={ref}
       className={`SRC-portalCard SRC-portalCardHeader ${
         isAlignToLeftNav ? 'isAlignToLeftNav' : ''
       }`}
+      sx={sx}
     >
       <div className="container-fluid container-full-width">
         <Box
@@ -118,7 +123,13 @@ const HeaderCard = forwardRef(function HeaderCard(
         <div className="row">
           <div className="col-md-offset-1 col-md-10">
             <div className="SRC-portalCardMain">
-              {!hideIcon && icon}
+              <Box
+                sx={{
+                  ...(doiUri && { alignSelf: 'center', marginRight: '5px' }),
+                }}
+              >
+                {!hideIcon && icon}
+              </Box>
               <Box
                 sx={{
                   width: '100%',
@@ -141,7 +152,7 @@ const HeaderCard = forwardRef(function HeaderCard(
                           {title}
                         </a>
                       ) : (
-                        <span> {title} </span>
+                        <span>{title}</span>
                       )}
                     </h3>
                   </div>
@@ -167,29 +178,33 @@ const HeaderCard = forwardRef(function HeaderCard(
                     />
                   )}
                 </div>
-                <div
-                  style={{
-                    borderTop: '1px solid rgba(26, 28, 41, 0.2)',
-                    marginTop: '15px',
-                    paddingTop: '5px',
-                  }}
-                />
-                <div className="SRC-cardContent">
-                  {cardTopContent}
-                  {values && (
-                    <CardFooter
-                      isHeader={true}
-                      secondaryLabelLimit={secondaryLabelLimit}
-                      values={values}
+                {(values || cardTopContent) && (
+                  <>
+                    <div
+                      style={{
+                        borderTop: '1px solid rgba(26, 28, 41, 0.2)',
+                        marginTop: '15px',
+                        paddingTop: '5px',
+                      }}
                     />
-                  )}
-                </div>
+                    <div className="SRC-cardContent">
+                      {cardTopContent}
+                      {values && (
+                        <CardFooter
+                          isHeader={true}
+                          secondaryLabelLimit={secondaryLabelLimit}
+                          values={values}
+                        />
+                      )}
+                    </div>
+                  </>
+                )}
               </Box>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </Box>
   )
 })
 

@@ -1,7 +1,10 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import SynapseFormWrapper from 'synapse-react-client/components/SynapseForm/SynapseFormWrapper'
+import { useGetFormPropsFromSearchParams } from 'synapse-react-client/components/SynapseForm/useGetFormPropsFromSearchParams'
 
 function FormSubmissionPage() {
+  const propsFromParams = useGetFormPropsFromSearchParams()
+
   return (
     <SectionLayout ContainerProps={{ maxWidth: false }}>
       <SynapseFormWrapper
@@ -11,6 +14,7 @@ function FormSubmissionPage() {
         formNavSchemaEntityId="syn20680027"
         formTitle="Your Submission"
         formClass="drug-upload-tool"
+        {...propsFromParams}
       />
     </SectionLayout>
   )

@@ -26,6 +26,7 @@ function CitationPopover(props: CitationProps) {
           onClick={handleClick}
           variant="outlined"
           startIcon={<DoubleQuotes />}
+          sx={props.buttonSx}
         >
           <Typography variant="label" sx={{ lineHeight: '20px' }}>
             Cite As
