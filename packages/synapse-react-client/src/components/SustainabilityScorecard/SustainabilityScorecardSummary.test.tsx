@@ -88,7 +88,7 @@ describe('SustainabilityScorecard Tests', () => {
 
   const mockProps: SustainabilityScorecardSummaryProps = {
     queryRequest: mockQuery,
-    text: 'Some text for the sustainability scorecard summary.',
+    description: 'Some text for the sustainability scorecard summary.',
     filterColumn: 'toolName',
     searchParamKey: 'toolName',
     scoreDescriptorColumnName: 'AlmanackScoreDescriptor',

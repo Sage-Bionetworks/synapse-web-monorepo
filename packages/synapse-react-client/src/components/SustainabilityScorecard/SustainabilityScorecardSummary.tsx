@@ -14,7 +14,7 @@ import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 
 export type SustainabilityScorecardSummaryProps =
   SustainabilityScorecardBaseProps & {
-    text: React.ReactNode
+    description: React.ReactNode
   }
 
 type MetricSummaryRowProps = {
@@ -69,7 +69,7 @@ const MetricSummaryRow = ({
 
 const SustainabilityScorecardSummary = ({
   queryRequest,
-  text,
+  description,
   metricsConfig,
   scoreDescriptorColumnName,
 }: SustainabilityScorecardSummaryProps) => {
@@ -119,7 +119,7 @@ const SustainabilityScorecardSummary = ({
           <Typography variant="headline1" sx={{ marginBottom: '10px' }}>
             Sustainability Index
           </Typography>
-          {text}
+          {description}
         </Box>
         <Dial
           scoreDescriptor={scoreDescriptor ?? ''}

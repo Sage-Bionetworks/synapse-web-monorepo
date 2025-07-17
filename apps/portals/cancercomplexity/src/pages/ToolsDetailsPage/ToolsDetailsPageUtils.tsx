@@ -91,7 +91,7 @@ export function useSustainabilityScorecardData(
     filterColumn: 'toolName',
     searchParamKey: 'toolName',
     scoreDescriptorColumnName: 'AlmanackScoreDescriptor',
-    text: (
+    description: (
       <p>
         The following metrics were used to evaluate this tool, by way of the
         Cancer Complexity toolkit.
