@@ -7,30 +7,18 @@ import {
 } from 'react-datasheet-grid'
 import 'react-datasheet-grid/dist/style.css'
 import '../../style/components/_data-grid-extra.scss'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { SynapseClient, TableQuery } from '@sage-bionetworks/synapse-client'
-import { useCreateGridSession } from './useCreateGridSession'
-import {
-  CreateGridRequest,
-  PostRepoV1GridSessionSessionIdReplicaRequest,
-} from '@sage-bionetworks/synapse-client'
 import { Model, VecApi } from 'json-joy/lib/json-crdt'
 import { konst } from 'json-joy/lib/json-crdt-patch'
 import throttle from 'lodash-es/throttle'
-import { parseQueryInput } from './DataGridUtils'
 import { ModelSnapshot, Operation } from './DataGridTypes'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { StartGridSession } from './StartGridSession'
 
 const DataGrid = () => {
-  const synapseClient = useSynapseContext().synapseClient
-
   // Grid session state
   const [sessionId, setSessionId] = useState<string>('')
   const [replicaId, setReplicaId] = useState<number | null>(null)
   const [presignedUrl, setPresignedUrl] = useState<string>('')
-  const [gridSql, setGridSql] = useState<string>('')
-  const inputRef = useRef<HTMLInputElement>(null)
 
   // WebSocket state
   const {
@@ -81,28 +69,6 @@ const DataGrid = () => {
     setRowValues(modelRowsToGrid(modelSnapshot))
     setColValues(modelColsToGrid(modelSnapshot))
   }, [modelSnapshot])
-
-  const createReplicaId = async (
-    synapseClient: SynapseClient,
-    sessionId: string,
-  ) => {
-    try {
-      console.log('Creating replica for session ID:', sessionId)
-      const replica =
-        await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdReplica(
-          {
-            sessionId,
-            createReplicaRequest: {
-              gridSessionId: sessionId,
-            },
-          } as PostRepoV1GridSessionSessionIdReplicaRequest,
-        )
-      return replica
-    } catch (error) {
-      console.error('Failed to create replica:', error)
-      return
-    }
-  }
 
   // Convert model rows to a format suitable for DataSheetGrid
   function modelRowsToGrid(modelSnapshot: ModelSnapshot): DataGridRow[] {
@@ -159,83 +125,6 @@ const DataGrid = () => {
       })
     }
     return model
-  }
-
-  // Based on user input, start a new session with or without a SQL query
-  // or join an existing session by ID
-  const startGridSession = useCreateGridSession()
-  const handleStartSession = async (input: string) => {
-    const parsedInput = parseQueryInput(input)
-
-    try {
-      if (parsedInput.type === 'empty' || parsedInput.type === 'sql') {
-        // Start a new session and clear replicaId and presignedUrl
-        const gridRequest = {
-          concreteType: 'org.sagebionetworks.repo.model.grid.CreateGridRequest',
-          initialQuery: undefined as TableQuery | undefined,
-          schema$id: undefined as string | undefined,
-        } as CreateGridRequest
-
-        if (parsedInput.type === 'sql') {
-          gridRequest.initialQuery = { sql: parsedInput.input } as TableQuery
-          setGridSql(parsedInput.input)
-          console.log('Starting grid session with table query: ', gridSql)
-        } else {
-          setGridSql('')
-          console.log('Starting a new empty grid session.')
-        }
-
-        const gridSessionResponse = await startGridSession.mutateAsync(
-          gridRequest,
-        )
-        console.log('Grid session started:', gridSessionResponse)
-        const newSessionId = gridSessionResponse.gridSession?.sessionId || ''
-        setSessionId(newSessionId)
-
-        const replica = await createReplicaId(synapseClient, newSessionId)
-        console.log('Replica created:', replica)
-        const newReplicaId = replica?.replica?.replicaId || null
-        setReplicaId(newReplicaId)
-
-        const getPresignedUrl =
-          await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdPresignedUrl(
-            {
-              sessionId: newSessionId,
-              createGridPresignedUrlRequest: {
-                gridSessionId: newSessionId,
-                replicaId: newReplicaId || undefined,
-              },
-            },
-          )
-        setPresignedUrl(getPresignedUrl.presignedUrl || '')
-      } else if (parsedInput.type === 'sessionId') {
-        console.log(`Joining existing session ID: ${parsedInput.input}`)
-        setSessionId(parsedInput.input)
-
-        const replica = await createReplicaId(synapseClient, parsedInput.input)
-        console.log('Replica created:', replica)
-        const newReplicaId = replica?.replica?.replicaId || null
-        setReplicaId(newReplicaId)
-
-        const getPresignedUrl =
-          await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdPresignedUrl(
-            {
-              sessionId: parsedInput.input,
-              createGridPresignedUrlRequest: {
-                gridSessionId: parsedInput.input,
-                replicaId: newReplicaId || undefined,
-              },
-            },
-          )
-        setPresignedUrl(getPresignedUrl.presignedUrl || '')
-      } else {
-        console.error(
-          'Unknown input type, please provide a valid SQL query or session ID.',
-        )
-      }
-    } catch (error) {
-      console.error('Error starting session:', error)
-    }
   }
 
   // Grid editing functions
