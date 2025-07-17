@@ -119,10 +119,13 @@ const HeaderCard = forwardRef(function HeaderCard(
           <div className="col-md-offset-1 col-md-10">
             <div className="SRC-portalCardMain">
               {!hideIcon && icon}
-              <div
-                style={{
+              <Box
+                sx={{
                   width: '100%',
-                  ...(hideIcon && { display: 'flex' }),
+                  ...(hideIcon && {
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                  }),
                 }}
               >
                 <div className="SRC-cardContent" style={{ marginLeft: '15px' }}>
@@ -181,7 +184,7 @@ const HeaderCard = forwardRef(function HeaderCard(
                     />
                   )}
                 </div>
-              </div>
+              </Box>
             </div>
           </div>
         </div>
