@@ -258,7 +258,7 @@ export default function useImmutableTableQuery(
 
   const { entityId, versionNumber } = useMemo(
     () =>
-      parseEntityIdAndVersionFromSqlStatement(currentQueryRequest.query.sql)!,
+      parseEntityIdAndVersionFromSqlStatement(currentQueryRequest.query.sql),
     [currentQueryRequest.query.sql],
   )
 
