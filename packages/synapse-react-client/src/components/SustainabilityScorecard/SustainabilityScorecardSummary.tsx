@@ -38,12 +38,20 @@ const MetricSummaryRow = ({
         alignItems: 'center',
       }}
     >
-      <div>
+      <Box sx={{ maxWidth: '800px' }}>
         <Typography variant="headline3" sx={{ marginBottom: '12px' }}>
           {label}
         </Typography>
-        <MarkdownSynapse markdown={text} />
-      </div>
+        <Box
+          sx={{
+            '.markdown p': {
+              color: 'grey.700',
+            },
+          }}
+        >
+          <MarkdownSynapse markdown={text} />
+        </Box>
+      </Box>
       {metricValues[index] === 'true' ? (
         <CheckCircleIcon
           sx={{

@@ -165,7 +165,7 @@ const SustainabilityScorecard = ({
           <MuiLink
             component={RouterLink}
             to={{ pathname: sustainabilityReportLink, search }}
-            sx={{ padding: '4px 20px' }}
+            sx={{ padding: '4px 20px', fontSize: '14px' }}
           >
             View this tool’s sustainability and reusability report
           </MuiLink>
