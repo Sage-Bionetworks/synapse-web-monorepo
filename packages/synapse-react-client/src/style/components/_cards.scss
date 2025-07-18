@@ -153,11 +153,17 @@ $text-color-lighter: #898989;
   }
 
   .SRC-cardThumbnail {
-    display: inline-block;
+    @media (max-width: map.get(SRC.$breakpoints, 'medium')) {
+      display: none;
+    }
+    @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
+      max-width: 215px;
+      display: inline-block;
+    }
     vertical-align: top;
     margin-top: auto;
     margin-bottom: auto;
-    max-width: 215px;
+
     img {
       margin: auto;
       display: block;
@@ -174,8 +180,15 @@ $text-color-lighter: #898989;
     }
   }
   .SRC-imageThumbnail {
-    display: inline-block;
-    width: 25%;
+    @media (max-width: map.get(SRC.$breakpoints, 'medium')) {
+      width: 0%;
+      display: none;
+    }
+    @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
+      width: 25%;
+      display: inline-block;
+    }
+
     vertical-align: top;
     padding-right: 15px;
     max-width: 215px;
@@ -238,9 +251,12 @@ $text-color-lighter: #898989;
     > * {
       margin-left: 15px;
     }
+
     &.hasIcon {
-      padding-left: 15%;
-      padding-right: 15%;
+      @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
+        padding-left: 15%;
+        padding-right: 15%;
+      }
     }
     .row {
       margin: 5px !important;
