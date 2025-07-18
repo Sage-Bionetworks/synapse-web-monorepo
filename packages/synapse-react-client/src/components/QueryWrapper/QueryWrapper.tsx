@@ -85,7 +85,7 @@ function QueryWrapperInternal(props: QueryWrapperProps) {
     requireConfirmationOnChange: hasSelectedRows,
   })
   const {
-    entityId,
+    entityId = '',
     versionNumber,
     getInitQueryRequest,
     getCurrentQueryRequest,
