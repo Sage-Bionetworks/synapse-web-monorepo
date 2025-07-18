@@ -1,14 +1,11 @@
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import SustainabilityScorecardSummary from 'synapse-react-client/components/SustainabilityScorecard/SustainabilityScorecardSummary'
-import { useSustainabilityScorecardData } from './ToolsDetailsPageUtils'
+import { useSustainabilityScorecardProps } from './ToolsDetailsPageUtils'
 
 function ToolsDetailsPageSustainabilityAndReusabilityTab() {
   const { toolName } = useGetPortalComponentSearchParams()
 
-  const { props: summaryProps } = useSustainabilityScorecardData(
-    toolName,
-    'summaryText',
-  )
+  const { summaryProps } = useSustainabilityScorecardProps(toolName)
 
   return <SustainabilityScorecardSummary {...summaryProps} />
 }

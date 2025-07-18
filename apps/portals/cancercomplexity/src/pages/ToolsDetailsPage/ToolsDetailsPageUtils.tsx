@@ -6,8 +6,12 @@ import { getAdditionalFilters } from 'synapse-react-client/utils/functions'
 import {
   getMetricConfig,
   MetricsConfig,
+  SustainabilityScorecardBaseProps,
 } from 'synapse-react-client/components/SustainabilityScorecard/SustainabilityScorecardUtils'
-import { SustainabilityScorecardSummaryProps } from 'synapse-react-client/components/SustainabilityScorecard'
+import {
+  SustainabilityScorecardProps,
+  SustainabilityScorecardSummaryProps,
+} from 'synapse-react-client/components/SustainabilityScorecard'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 
 export const metricsConfig: MetricsConfig[] = [
@@ -72,33 +76,44 @@ export function getToolkitQueryBundleRequest(
  * Builds the query config and metric text content needed for the sustainabilityScorecard component or sustainabilityScorecardSummary component.
  *
  * @param toolName - The name of the tool to filter by.
- * @param tooltipType - Controls which text to show depending on component ('summaryText' or 'tooltipText').
  * @returns Props used by SustainabilityScorecard or SustainabilityScorecardSummary and loading state.
  */
-export function useSustainabilityScorecardData(
-  toolName: string,
-  tooltipType: 'tooltipText' | 'summaryText',
-) {
+export function useSustainabilityScorecardProps(toolName: string) {
   const query = getToolkitQueryBundleRequest(toolName)
   const metricTextsQuery = getMetricQueryBundleRequest(metricsConfigSql)
   const { data: metricBundle, isLoading } =
     useGetQueryResultBundle(metricTextsQuery)
 
-  const metricsConfig = getMetricConfig(metricBundle, tooltipType)
+  const summaryConfig = getMetricConfig(metricBundle, 'summaryText')
+  const scorecardConfig = getMetricConfig(metricBundle, 'tooltipText')
 
-  const props: SustainabilityScorecardSummaryProps = {
+  const baseProps: SustainabilityScorecardBaseProps = {
     queryRequest: query,
     filterColumn: 'toolName',
     searchParamKey: 'toolName',
     scoreDescriptorColumnName: 'AlmanackScoreDescriptor',
+    metricsConfig: [],
+  }
+
+  const summaryProps: SustainabilityScorecardSummaryProps = {
+    ...baseProps,
+    metricsConfig: summaryConfig,
     description: (
       <p>
         The following metrics were used to evaluate this tool, by way of the
         Cancer Complexity toolkit.
       </p>
     ),
-    metricsConfig,
   }
 
-  return { props, isLoading }
+  const scorecardProps: SustainabilityScorecardProps = {
+    ...baseProps,
+    metricsConfig: scorecardConfig,
+  }
+
+  return {
+    summaryProps,
+    scorecardProps,
+    isLoading,
+  }
 }
