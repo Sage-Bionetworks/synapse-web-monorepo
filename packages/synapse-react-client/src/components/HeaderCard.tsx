@@ -171,6 +171,9 @@ const HeaderCard = forwardRef(function HeaderCard(
                         sustainabilityScorecard.scoreDescriptorColumnName
                       }
                       queryRequest={sustainabilityScorecard.queryRequest}
+                      sustainabilityReportLink={
+                        sustainabilityScorecard.sustainabilityReportLink
+                      }
                       sx={{
                         background: 'rgba(0, 0, 0, 0.10)',
                         marginTop: '30px',

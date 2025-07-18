@@ -13,6 +13,7 @@ import {
   SustainabilityScorecardSummaryProps,
 } from 'synapse-react-client/components/SustainabilityScorecard'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
+import { TOOLS_DETAILS_PAGE_SUSTAINABILITY_AND_REUSABILITY_TAB_PATH } from '@/config/routeConstants'
 
 export const metricsConfig: MetricsConfig[] = [
   {
@@ -109,6 +110,8 @@ export function useSustainabilityScorecardProps(toolName: string) {
   const scorecardProps: SustainabilityScorecardProps = {
     ...baseProps,
     metricsConfig: scorecardConfig,
+    sustainabilityReportLink:
+      TOOLS_DETAILS_PAGE_SUSTAINABILITY_AND_REUSABILITY_TAB_PATH,
   }
 
   return {
