@@ -6,20 +6,20 @@ import {
   SustainabilityScorecardBaseProps,
 } from './SustainabilityScorecardUtils'
 import { Box, Card, Skeleton, Stack, Typography, useTheme } from '@mui/material'
-import { ReactNode } from 'react'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
 import Dial from './Dial'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 
 export type SustainabilityScorecardSummaryProps =
   SustainabilityScorecardBaseProps & {
-    text: React.ReactNode
+    description: React.ReactNode
   }
 
 type MetricSummaryRowProps = {
   label: string
-  text: ReactNode
+  text: string
   index: number
   metricValues: string[]
 }
@@ -38,14 +38,20 @@ const MetricSummaryRow = ({
         alignItems: 'center',
       }}
     >
-      <div>
+      <Box sx={{ maxWidth: '800px' }}>
         <Typography variant="headline3" sx={{ marginBottom: '12px' }}>
           {label}
         </Typography>
-        <Typography variant="body2" sx={{ color: 'grey.700' }}>
-          {text}
-        </Typography>
-      </div>
+        <Box
+          sx={{
+            '.markdown p': {
+              color: 'grey.700',
+            },
+          }}
+        >
+          <MarkdownSynapse markdown={text} />
+        </Box>
+      </Box>
       {metricValues[index] === 'true' ? (
         <CheckCircleIcon
           sx={{
@@ -71,7 +77,7 @@ const MetricSummaryRow = ({
 
 const SustainabilityScorecardSummary = ({
   queryRequest,
-  text,
+  description,
   metricsConfig,
   scoreDescriptorColumnName,
 }: SustainabilityScorecardSummaryProps) => {
@@ -121,7 +127,7 @@ const SustainabilityScorecardSummary = ({
           <Typography variant="headline1" sx={{ marginBottom: '10px' }}>
             Sustainability Index
           </Typography>
-          {text}
+          {description}
         </Box>
         <Dial
           scoreDescriptor={scoreDescriptor ?? ''}
@@ -141,7 +147,7 @@ const SustainabilityScorecardSummary = ({
           >
             <MetricSummaryRow
               label={metric.label}
-              text={metric.text}
+              text={metric.text ?? ''}
               index={index}
               metricValues={metricValues}
             />

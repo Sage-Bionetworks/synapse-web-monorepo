@@ -10,6 +10,7 @@ import {
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { SynapseConstants } from '@/utils'
+import { MemoryRouter } from 'react-router'
 
 vi.mock('@/synapse-queries/entity/useGetQueryResultBundle')
 
@@ -99,6 +100,7 @@ const mockProps: SustainabilityScorecardProps = {
       text: 'Some text for presence of tests',
     },
   ],
+  sustainabilityReportLink: 'some-path',
 }
 
 async function waitForDataLoad() {
@@ -106,7 +108,11 @@ async function waitForDataLoad() {
 }
 
 async function renderWithSuccessMock() {
-  render(<SustainabilityScorecard {...mockProps} />)
+  render(
+    <MemoryRouter>
+      <SustainabilityScorecard {...mockProps} />
+    </MemoryRouter>,
+  )
 
   setGetQueryResultBundleSuccess(mockBundleSuccess)
   await waitForDataLoad()
@@ -150,5 +156,12 @@ describe('SustainabilityScorecard tests', () => {
     await renderWithSuccessMock()
     const descriptor = await screen.findByText('Foundational')
     expect(descriptor).toBeInTheDocument()
+  })
+
+  it('renders link', async () => {
+    await renderWithSuccessMock()
+    screen.getByRole('link', {
+      name: /View this tool’s sustainability and reusability report/i,
+    })
   })
 })

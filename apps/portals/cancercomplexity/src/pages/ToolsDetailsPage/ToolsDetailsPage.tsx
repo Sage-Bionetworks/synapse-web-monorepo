@@ -23,23 +23,31 @@ import {
   TOOLS_DETAILS_PAGE_SUSTAINABILITY_AND_REUSABILITY_TAB_PATH,
 } from '@/config/routeConstants'
 import { Outlet } from 'react-router'
-import {
-  getToolkitQueryBundleRequest,
-  metricsConfig,
-} from './ToolsDetailsPageUtils'
+import { useSustainabilityScorecardProps } from './ToolsDetailsPageUtils'
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries'
+import { useSustainabilityScorecardIfHasData } from 'synapse-react-client/components/SustainabilityScorecard/SustainabilityScorecardUtils'
 
 function ToolsDetailsPage() {
+  const { toolName } = useGetPortalComponentSearchParams()
   const isFeatureFlagEnabled = useGetFeatureFlag(
     FeatureFlagEnum.PORTAL_SUSTAINABILITY_SCORECARD,
   )
+
+  const { summaryProps, scorecardProps } =
+    useSustainabilityScorecardProps(toolName)
+
+  const showSustainabilityTab =
+    useSustainabilityScorecardIfHasData(summaryProps)
+
+  const sustainabilityScorecard =
+    useSustainabilityScorecardIfHasData(scorecardProps)
 
   const toolDetailsPageTabConfig: DetailsPageTabConfig[] = [
     {
       title: 'Details',
       path: TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH,
     },
-    ...(isFeatureFlagEnabled
+    ...(showSustainabilityTab && isFeatureFlagEnabled
       ? [
           {
             title: 'Sustainability and Reusability Report',
@@ -48,9 +56,6 @@ function ToolsDetailsPage() {
         ]
       : []),
   ] satisfies DetailsPageTabConfig[]
-
-  const { toolName } = useGetPortalComponentSearchParams()
-  const query = getToolkitQueryBundleRequest(toolName)
 
   if (!toolName) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
@@ -69,13 +74,7 @@ function ToolsDetailsPage() {
               },
               secondaryLabelLimit: Infinity,
               isHeader: true,
-              sustainabilityScorecard: {
-                queryRequest: query,
-                searchParamKey: 'toolName',
-                filterColumn: 'toolName',
-                metricsConfig: metricsConfig,
-                scoreDescriptorColumnName: 'AlmanackScoreDescriptor',
-              },
+              sustainabilityScorecard,
             }}
             sql={toolsSql}
             columnAliases={columnAliases}

@@ -133,6 +133,10 @@ const HeaderCard = forwardRef(function HeaderCard(
               <Box
                 sx={{
                   width: '100%',
+                  ...(hideIcon && {
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                  }),
                 }}
               >
                 <div className="SRC-cardContent" style={{ marginLeft: '15px' }}>
@@ -167,6 +171,9 @@ const HeaderCard = forwardRef(function HeaderCard(
                         sustainabilityScorecard.scoreDescriptorColumnName
                       }
                       queryRequest={sustainabilityScorecard.queryRequest}
+                      sustainabilityReportLink={
+                        sustainabilityScorecard.sustainabilityReportLink
+                      }
                       sx={{
                         background: 'rgba(0, 0, 0, 0.10)',
                         marginTop: '30px',
