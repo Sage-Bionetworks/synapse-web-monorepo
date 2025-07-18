@@ -29,6 +29,7 @@ import {
   QueryClient,
   QueryKey,
   queryOptions,
+  skipToken,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useMutation,
@@ -53,22 +54,24 @@ import { createTableUpdateTransactionRequest } from '@/utils/functions/TableColu
 export function useGetEntityQueryOptions<T extends Entity>() {
   const { keyFactory, accessToken } = useSynapseContext()
   return (
-    entityId: string,
+    entityId?: string,
     versionNumber?: string | number,
   ): UseQueryOptions<T, SynapseClientError> =>
     queryOptions<T, SynapseClientError>({
       queryKey: keyFactory.getEntityVersionQueryKey(entityId, versionNumber),
-      queryFn: () =>
-        SynapseClient.getEntity<T>(
-          accessToken,
-          entityId,
-          versionNumber?.toString(),
-        ),
+      queryFn: entityId
+        ? () =>
+            SynapseClient.getEntity<T>(
+              accessToken,
+              entityId,
+              versionNumber?.toString(),
+            )
+        : skipToken,
     })
 }
 
 export function useGetEntity<T extends Entity>(
-  entityId: string,
+  entityId?: string,
   versionNumber?: string | number,
   options?: Partial<UseQueryOptions<T, SynapseClientError>>,
 ) {
