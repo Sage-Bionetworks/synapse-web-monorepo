@@ -1,12 +1,11 @@
-// import healthSvg from '@/assets/health.svg?url'
 import B2AI_ORG_114_svg from '@/assets/B2AI_ORG_114.svg?url'
 import B2AI_ORG_115_svg from '@/assets/B2AI_ORG_115.svg?url'
 import B2AI_ORG_116_svg from '@/assets/B2AI_ORG_116.svg?url'
 import B2AI_ORG_117_svg from '@/assets/B2AI_ORG_117.svg?url'
 
-import B2AI_ORG_114_html from '@/assets/B2AI_ORG_114_d4d.html?raw'
-import B2AI_ORG_116_html from '@/assets/B2AI_ORG_116_d4d.html?raw'
-import B2AI_ORG_117_html from '@/assets/B2AI_ORG_117_d4d.html?raw'
+import B2AI_ORG_114_html from '@/assets/d4d/B2AI_ORG_114_d4d.html?raw'
+import B2AI_ORG_116_html from '@/assets/d4d/B2AI_ORG_116_d4d.html?raw'
+import B2AI_ORG_117_html from '@/assets/d4d/B2AI_ORG_117_d4d.html?raw'
 
 export const imageUrls = {
   'B2AI_ORG:114': B2AI_ORG_114_svg,
