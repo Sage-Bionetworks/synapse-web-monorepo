@@ -8,7 +8,8 @@ import ParticipantsBarPlot from './crc-researcher/ParticipantsBarPlot'
 import StatusLineChart from './crc-researcher/StatusLineChart'
 import SurveysCompletedPlots from './crc-researcher/SurveysCompletedPlots'
 import AboutPortal from './csbc-home-page/AboutPortal'
-import DevelopedBySage from './csbc-home-page/DevelopedBySage'
+import CCKPDevelopedBySage from './csbc-home-page/CCKPDevelopedBySage'
+import AMPALSDevelopedBySage from './ampals/AMPALSDevelopedBySage'
 import HomePageCardContainer from './csbc-home-page/HomePageCardContainer'
 import DetailsPage from './DetailsPage'
 import ELBrowseToolsPage from './eliteportal/ELBrowseToolsPage'
@@ -39,7 +40,7 @@ const PortalComponents = {
   DetailsPage,
   HomePageCardContainer,
   AboutPortal,
-  DevelopedBySage,
+  CCKPDevelopedBySage,
   ParticipantsBarPlot,
   StatusLineChart,
   SurveysCompletedPlots,

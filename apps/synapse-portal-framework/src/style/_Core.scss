@@ -565,26 +565,6 @@ button.dropdown-toggle.nav-button:hover {
   }
 }
 
-.developed-by-sage {
-  margin-top: 25px;
-  font-size: 15px;
-  color: #515359;
-  p {
-    margin-bottom: 0px;
-  }
-  #sage-logo {
-    width: 250px;
-  }
-  .logos {
-    margin-top: 15px;
-    a {
-      svg {
-        margin-right: 20px;
-      }
-    }
-  }
-}
-
 // select all src components in the details page.  More specifically, sub-elements that have the role="heading"
 [id^='details-page-src-component'] *[role='heading'] {
   padding-top: 30px;

@@ -13,6 +13,7 @@ import { goalsTableEntityId } from '@/config/resources'
 import { ReactComponent as DatasetsIcon } from '../../src/config/style/datasets.svg'
 import { ReactComponent as FilesIcon } from '../../src/config/style/files.svg'
 import { ReactComponent as ProjectsIcon } from '../../src/config/style/projects.svg'
+import AMPALSDevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSDevelopedBySage'
 
 //TODO
 export default function HomePage() {
@@ -87,6 +88,9 @@ export default function HomePage() {
           />
         </SectionLayout>
       </div>
+      <SectionLayout>
+        <AMPALSDevelopedBySage />
+      </SectionLayout>
     </>
   )
 }
