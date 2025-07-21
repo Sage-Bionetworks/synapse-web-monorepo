@@ -14,6 +14,7 @@ import {
 } from 'synapse-react-client/components/SustainabilityScorecard'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 import { TOOLS_DETAILS_PAGE_SUSTAINABILITY_AND_REUSABILITY_TAB_PATH } from '@/config/routeConstants'
+import { Link } from '@mui/material'
 
 export const metricsConfig: MetricsConfig[] = [
   {
@@ -102,7 +103,14 @@ export function useSustainabilityScorecardProps(toolName: string) {
     description: (
       <p>
         The following metrics were used to evaluate this tool, by way of the
-        Cancer Complexity toolkit.
+        <Link
+          href="https://github.com/mc2-center/cckp-toolkit-workflow"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {' '}
+          Cancer Complexity toolkit.
+        </Link>
       </p>
     ),
   }
