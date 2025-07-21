@@ -1,4 +1,11 @@
-import { Box, Skeleton, Stack, Tooltip, Typography } from '@mui/material'
+import {
+  Box,
+  Link as MuiLink,
+  Skeleton,
+  Stack,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { getFieldIndex } from '@/utils/functions/queryUtils'
@@ -13,6 +20,7 @@ import { InfoTwoTone } from '@mui/icons-material'
 import { CheckIcon } from '@/assets/icons/terms/CheckIcon'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
 import Dial from './Dial'
+import { Link as RouterLink, useLocation } from 'react-router'
 
 export type MetricsConfig = {
   /** Name of the metric column in the table */
@@ -25,6 +33,7 @@ export type MetricsConfig = {
 
 export type SustainabilityScorecardProps = SustainabilityScorecardBaseProps & {
   sx?: SxProps<Theme>
+  sustainabilityReportLink?: string
 }
 
 type MetricRowProps = {
@@ -99,9 +108,12 @@ const SustainabilityScorecard = ({
   scoreDescriptorColumnName,
   queryRequest,
   sx,
+  sustainabilityReportLink,
 }: SustainabilityScorecardProps) => {
   const { data: queryResultBundle, isLoading } =
     useGetQueryResultBundle(queryRequest)
+  const location = useLocation()
+  const search = location.search
 
   if (isLoading) {
     return <Skeleton width={'100%'} height={'100%'} />
@@ -132,10 +144,12 @@ const SustainabilityScorecard = ({
     queryResultBundle,
     metricsConfig,
   )
+
   return (
     <Box
       sx={{
         display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' },
         padding: '20px',
         gap: '20px',
         ...sx,
@@ -147,12 +161,15 @@ const SustainabilityScorecard = ({
       </Stack>
       <Stack sx={{ flex: 1, gap: '2px' }}>
         <MetricRow metricValues={metricValues} metricsConfig={metricsConfig} />
-        {/* TODO: Add sustainability report link when available */}
-        {/* {sustainabilityReportLink && (
-          <Link href={sustainabilityReportLink} sx={{ padding: '4px 20px' }}>
+        {sustainabilityReportLink && (
+          <MuiLink
+            component={RouterLink}
+            to={{ pathname: sustainabilityReportLink, search }}
+            sx={{ padding: '4px 20px', fontSize: '14px' }}
+          >
             View this tool’s sustainability and reusability report
-          </Link>
-        )} */}
+          </MuiLink>
+        )}
       </Stack>
     </Box>
   )
