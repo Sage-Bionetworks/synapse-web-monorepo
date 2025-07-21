@@ -10,7 +10,6 @@ import CitationPopover from 'synapse-react-client/components/CitationPopover'
 import { DetailsPageContent } from '../../components/DetailsPage/DetailsPageContentLayout'
 import SynapseFileEntityLinkCard from './SynapseFileEntityLinkCard'
 import SynapseFileEntityPageProperties from './SynapseFileEntityPageProperties'
-import { FileEntity } from '@sage-bionetworks/synapse-types'
 
 function FileEntityPage() {
   const searchParams = useGetPortalComponentSearchParams()
