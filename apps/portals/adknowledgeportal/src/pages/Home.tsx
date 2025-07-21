@@ -1,9 +1,10 @@
 import { dataSql, peopleSql } from '@/config/resources'
 import programsHomePageConfig from '@/config/synapseConfigs/programsHomePage'
-import Ecosystem from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/Ecosystem'
+import EcosystemLayout from 'synapse-react-client/components/Ecosystem/EcosystemLayout'
 import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { FeaturedDataTabs } from 'synapse-react-client/components/FeaturedDataTabs'
+import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { Programs } from 'synapse-react-client/components/Programs'
 import RssFeedCards from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
 import { UserCardListRotate } from 'synapse-react-client/components/UserCardList/UserCardListRotate'
@@ -141,22 +142,19 @@ function Home() {
           className: 'home-spacer',
         }}
       >
-        <Ecosystem
+        <EcosystemLayout
           config={[
             {
               title: 'Results Explorers',
-              ownerId: 'syn12666371',
-              wikiId: '607139',
+              content: <Markdown ownerId={'syn12666371'} wikiId={'607139'} />,
             },
             {
               title: 'Data Portals',
-              ownerId: 'syn12666371',
-              wikiId: '607138',
+              content: <Markdown ownerId={'syn12666371'} wikiId={'607138'} />,
             },
             {
               title: 'Program Websites',
-              ownerId: 'syn12666371',
-              wikiId: '607140',
+              content: <Markdown ownerId={'syn12666371'} wikiId={'607140'} />,
             },
           ]}
         />

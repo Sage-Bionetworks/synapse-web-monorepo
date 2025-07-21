@@ -91,10 +91,9 @@ describe('PortalDOIUtils', () => {
     it('calls the serialize function with the correct data', () => {
       const mockPortalId = 'mockedPortalId'
       const mockIdReturnedFromSerialize = 'mockId'
-      const data = ['foo', 'bar']
-      const schema = {
-        fooCol: 0,
-        barCol: 1,
+      const data = {
+        fooCol: 'foo',
+        barCol: 'bar',
       }
       const mockSerialize = vi.fn().mockReturnValue(mockIdReturnedFromSerialize)
 
@@ -105,7 +104,7 @@ describe('PortalDOIUtils', () => {
         serializeDoiString: mockSerialize,
       }
 
-      const result = getCandidateDoiId({ portalDoiConfiguration, schema, data })
+      const result = getCandidateDoiId({ portalDoiConfiguration, data })
 
       expect(result).toBe(mockIdReturnedFromSerialize)
       expect(mockSerialize).toHaveBeenCalledWith('mockedResourceType', {
@@ -115,15 +114,13 @@ describe('PortalDOIUtils', () => {
     })
 
     it('returns undefined if portalDoiConfiguration is not provided', () => {
-      const data = ['foo', 'bar']
-      const schema = {
-        fooCol: 0,
-        barCol: 1,
+      const data = {
+        fooCol: 'foo',
+        barCol: 'bar',
       }
 
       const result = getCandidateDoiId({
         portalDoiConfiguration: undefined,
-        schema,
         data,
       })
 

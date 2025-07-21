@@ -20,38 +20,38 @@ function InitiativeDetailsPage() {
   }
 
   return (
-    <>
-      <CardContainerLogic
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        cardConfiguration={{ ...initiativeCardConfiguration, isHeader: true }}
-        columnAliases={columnAliases}
-        sql={initiativesSql}
-        searchParams={{ initiative }}
-      />
-      <DetailsPage
-        sql={initiativesSql}
-        ContainerProps={{
-          maxWidth: 'xl',
-        }}
-        resourcePrimaryKey={['initiative']}
-      >
-        <DetailsPageContent
-          content={[
-            {
-              id: 'Studies',
-              title: 'Studies',
-              element: (
-                <CardContainerLogic
-                  sql={studiesSql}
-                  cardConfiguration={studyCardConfiguration}
-                  searchParams={{ initiative }}
-                />
-              ),
-            },
-          ]}
+    <DetailsPage
+      header={
+        <CardContainerLogic
+          sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+          cardConfiguration={{ ...initiativeCardConfiguration, isHeader: true }}
+          columnAliases={columnAliases}
+          sql={initiativesSql}
+          searchParams={{ initiative }}
         />
-      </DetailsPage>
-    </>
+      }
+      sql={initiativesSql}
+      ContainerProps={{
+        maxWidth: 'xl',
+      }}
+      resourcePrimaryKey={['initiative']}
+    >
+      <DetailsPageContent
+        content={[
+          {
+            id: 'Studies',
+            title: 'Studies',
+            element: (
+              <CardContainerLogic
+                sql={studiesSql}
+                cardConfiguration={studyCardConfiguration}
+                searchParams={{ initiative }}
+              />
+            ),
+          },
+        ]}
+      />
+    </DetailsPage>
   )
 }
 

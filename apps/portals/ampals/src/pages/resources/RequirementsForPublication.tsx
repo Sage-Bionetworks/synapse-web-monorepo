@@ -14,13 +14,6 @@ function RequirementsForPublication() {
         wikiId="632170"
         loadingSkeletonRowCount={50}
       />
-      <iframe
-        src="https://docs.google.com/forms/d/e/1FAIpQLSdZCSXj3DHZxshCNk2bgSHkCGFHL5qsfoaid51plQb5QV4nBg/viewform?embedded=true"
-        width="640"
-        height="414"
-      >
-        Loading…
-      </iframe>
     </AMPALSResearchPageLayout>
   )
 }

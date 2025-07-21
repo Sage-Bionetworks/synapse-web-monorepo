@@ -20,7 +20,7 @@ import SubmissionPage from './SubmissionPage'
 const meta = {
   title: 'Governance/SubmissionPage',
   component: SubmissionPage,
-  parameters: { stack: 'mock' },
+  parameters: { stack: 'mock', withRouter: true },
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>

@@ -17,14 +17,9 @@
     margin-bottom: 20px;
   }
   .control-container {
-    display: flex;
-    height: 450px;
     .button-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      margin-top: 15px;
-      button {
+      .MuiTab-root {
+        display: block;
         text-align: left;
         color: #515359;
         font-size: 16px;
@@ -35,16 +30,10 @@
             $alpha: 0.08
           );
         }
-        &.isSelected {
-          border-right: 2px solid Portal.$primary-action-color;
-        }
-        border-right: 2px solid #dcdcdc;
-        font-weight: bold;
       }
     }
     .flex-spacer {
       flex-grow: 1;
-      border-right: 2px solid #dcdcdc;
     }
     .content-container {
       overflow-y: auto;

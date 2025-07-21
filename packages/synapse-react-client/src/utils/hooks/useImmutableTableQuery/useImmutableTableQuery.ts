@@ -19,7 +19,7 @@ import {
 
 export type ImmutableTableQueryResult = {
   /** The ID of the table parsed from the SQL query */
-  entityId: string
+  entityId?: string
   /** The version number of the table parsed from the SQL query */
   versionNumber?: number
   /** The current query request, which is passed on to the server for results */
@@ -258,7 +258,7 @@ export default function useImmutableTableQuery(
 
   const { entityId, versionNumber } = useMemo(
     () =>
-      parseEntityIdAndVersionFromSqlStatement(currentQueryRequest.query.sql)!,
+      parseEntityIdAndVersionFromSqlStatement(currentQueryRequest.query.sql),
     [currentQueryRequest.query.sql],
   )
 

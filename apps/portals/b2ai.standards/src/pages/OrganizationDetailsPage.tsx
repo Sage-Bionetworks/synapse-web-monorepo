@@ -13,7 +13,6 @@ import {
   RowDataTable,
   SkeletonTable,
   CardConfiguration,
-  // EntityDownloadConfirmation,
 } from 'synapse-react-client'
 import {
   CardContainerLogic,

@@ -291,9 +291,9 @@ function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
   } = props
 
   const sql = props.query?.sql ?? deprecatedSql ?? ''
-  const entityIdAndVersion = parseEntityIdAndVersionFromSqlStatement(sql)
+  const { entityId, versionNumber } =
+    parseEntityIdAndVersionFromSqlStatement(sql)
 
-  const { entityId, versionNumber } = entityIdAndVersion ?? { entityId: '' }
   const query: Query = useMemo(() => {
     if (props.query) {
       // use query if set
@@ -332,7 +332,7 @@ function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
 
   const { data: entity } = useGetEntity(entityId, versionNumber)
   const initQueryRequest: QueryBundleRequest = {
-    entityId,
+    entityId: entityId ?? '',
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |

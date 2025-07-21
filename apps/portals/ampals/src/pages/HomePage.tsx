@@ -30,12 +30,6 @@ export default function HomePage() {
       link: '/Resources/For Contributors',
     },
     {
-      title: 'For Persons with Lived Experience',
-      description:
-        'Visit this page for links to external resources with information about clinical trials, ongoing research, and community.',
-      link: '/Resources/For Persons with Lived Experience',
-    },
-    {
       title: 'Publishing Requirements',
       description:
         'Learn about the requirements for publishing data in this portal.',

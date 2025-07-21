@@ -32,116 +32,118 @@ function PublicationsDetailsPage() {
   }
 
   return (
-    <>
-      <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
-      <CardContainerLogic
-        cardConfiguration={{
-          ...publicationsCardConfiguration,
-          iconOptions: {
-            Person: personGraySvg,
+    <DetailsPage
+      header={
+        <>
+          <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
+          <CardContainerLogic
+            cardConfiguration={{
+              ...publicationsCardConfiguration,
+              iconOptions: {
+                Person: personGraySvg,
+              },
+              secondaryLabelLimit: Infinity,
+              isHeader: true,
+            }}
+            sql={publicationSql}
+            columnAliases={columnAliases}
+            sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+            searchParams={{ pubMedId }}
+          />
+        </>
+      }
+      sql={publicationSql}
+      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+    >
+      <DetailsPageContent
+        content={[
+          {
+            id: 'Related Grants',
+            title: 'Related Grants',
+            helpText:
+              'MC2 Center member grant(s) that supported development of the resource',
+            element: (
+              <DetailsPageContextConsumer columnName={'grantNumber'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={grantsCardConfiguration}
+                    sql={grantsSql}
+                    columnAliases={columnAliases}
+                    sqlOperator={ColumnSingleValueFilterOperator.IN}
+                    searchParams={{
+                      grantNumber: value!,
+                    }}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
           },
-          secondaryLabelLimit: Infinity,
-          isHeader: true,
-        }}
-        sql={publicationSql}
-        columnAliases={columnAliases}
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        searchParams={{ pubMedId }}
+          {
+            title: 'Related People',
+            id: 'Related People',
+            helpText:
+              'Individual(s) that contributed to the development of the resource',
+            element: (
+              <DetailsPageContextConsumer columnName={'pubMedId'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={peopleCardConfiguration}
+                    sql={peopleSql}
+                    columnAliases={columnAliases}
+                    sqlOperator={ColumnSingleValueFilterOperator.LIKE}
+                    searchParams={{
+                      publicationId: value!,
+                    }}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            title: 'Related Datasets',
+            id: 'Related Datasets',
+            helpText:
+              'Novel dataset(s) collected and shared as part of this study',
+            element: (
+              <DetailsPageContextConsumer columnName={'pubMedId'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={datasetCardConfiguration}
+                    sql={datasetsSql}
+                    columnAliases={columnAliases}
+                    sqlOperator={ColumnSingleValueFilterOperator.LIKE}
+                    searchParams={{
+                      pubMedId: value!,
+                    }}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            id: 'Related Tools',
+            title: 'Related Tools',
+            helpText:
+              'Novel computational tool(s) developed and shared as part of this study',
+            element: (
+              <DetailsPageContextConsumer columnName={'pubMedId'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={toolsConfiguration}
+                    sql={toolsSql}
+                    columnAliases={columnAliases}
+                    sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                    searchParams={{
+                      pubMedId: value!,
+                    }}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+        ]}
       />
-      <DetailsPage
-        sql={publicationSql}
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-      >
-        <DetailsPageContent
-          content={[
-            {
-              id: 'Related Grants',
-              title: 'Related Grants',
-              helpText:
-                'MC2 Center member grant(s) that supported development of the resource',
-              element: (
-                <DetailsPageContextConsumer columnName={'grantNumber'}>
-                  {({ value }) => (
-                    <CardContainerLogic
-                      cardConfiguration={grantsCardConfiguration}
-                      sql={grantsSql}
-                      columnAliases={columnAliases}
-                      sqlOperator={ColumnSingleValueFilterOperator.IN}
-                      searchParams={{
-                        grantNumber: value!,
-                      }}
-                    />
-                  )}
-                </DetailsPageContextConsumer>
-              ),
-            },
-            {
-              title: 'Related People',
-              id: 'Related People',
-              helpText:
-                'Individual(s) that contributed to the development of the resource',
-              element: (
-                <DetailsPageContextConsumer columnName={'pubMedId'}>
-                  {({ value }) => (
-                    <CardContainerLogic
-                      cardConfiguration={peopleCardConfiguration}
-                      sql={peopleSql}
-                      columnAliases={columnAliases}
-                      sqlOperator={ColumnSingleValueFilterOperator.LIKE}
-                      searchParams={{
-                        publicationId: value!,
-                      }}
-                    />
-                  )}
-                </DetailsPageContextConsumer>
-              ),
-            },
-            {
-              title: 'Related Datasets',
-              id: 'Related Datasets',
-              helpText:
-                'Novel dataset(s) collected and shared as part of this study',
-              element: (
-                <DetailsPageContextConsumer columnName={'pubMedId'}>
-                  {({ value }) => (
-                    <CardContainerLogic
-                      cardConfiguration={datasetCardConfiguration}
-                      sql={datasetsSql}
-                      columnAliases={columnAliases}
-                      sqlOperator={ColumnSingleValueFilterOperator.LIKE}
-                      searchParams={{
-                        pubMedId: value!,
-                      }}
-                    />
-                  )}
-                </DetailsPageContextConsumer>
-              ),
-            },
-            {
-              id: 'Related Tools',
-              title: 'Related Tools',
-              helpText:
-                'Novel computational tool(s) developed and shared as part of this study',
-              element: (
-                <DetailsPageContextConsumer columnName={'pubMedId'}>
-                  {({ value }) => (
-                    <CardContainerLogic
-                      cardConfiguration={toolsConfiguration}
-                      sql={toolsSql}
-                      columnAliases={columnAliases}
-                      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-                      searchParams={{
-                        pubMedId: value!,
-                      }}
-                    />
-                  )}
-                </DetailsPageContextConsumer>
-              ),
-            },
-          ]}
-        />
-      </DetailsPage>
-    </>
+    </DetailsPage>
   )
 }
 

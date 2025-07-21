@@ -38,30 +38,30 @@ function StudyDetailsPage() {
   const { studyKey } = useGetPortalComponentSearchParams()
 
   return (
-    <>
-      <CardContainerLogic
-        sql={studiesSql}
-        cardConfiguration={{
-          ...studyCardConfiguration,
-          secondaryLabelLimit: Infinity,
-          iconOptions: { study: studyHeaderSvg },
-          isHeader: true,
-        }}
-        columnAliases={studyColumnAliases}
-        isAlignToLeftNav
-        searchParams={{ studyKey }}
-      />
-      <DetailsPage
-        sql={studiesSql}
-        sqlOperator={ColumnSingleValueFilterOperator.LIKE}
-        ContainerProps={{
-          maxWidth: 'xl',
-        }}
-      >
-        <DetailsPageTabs tabConfig={studyDetailsPageTabConfig} />
-        <Outlet />
-      </DetailsPage>
-    </>
+    <DetailsPage
+      header={
+        <CardContainerLogic
+          sql={studiesSql}
+          cardConfiguration={{
+            ...studyCardConfiguration,
+            secondaryLabelLimit: Infinity,
+            iconOptions: { study: studyHeaderSvg },
+            isHeader: true,
+          }}
+          columnAliases={studyColumnAliases}
+          isAlignToLeftNav
+          searchParams={{ studyKey }}
+        />
+      }
+      sql={studiesSql}
+      sqlOperator={ColumnSingleValueFilterOperator.LIKE}
+      ContainerProps={{
+        maxWidth: 'xl',
+      }}
+    >
+      <DetailsPageTabs tabConfig={studyDetailsPageTabConfig} />
+      <Outlet />
+    </DetailsPage>
   )
 }
 
