@@ -19,14 +19,14 @@ export type SustainabilityScorecardSummaryProps =
 
 type MetricSummaryRowProps = {
   label: string
-  text: string
+  markdownText: string
   index: number
   metricValues: string[]
 }
 
 const MetricSummaryRow = ({
   label,
-  text,
+  markdownText,
   metricValues,
   index,
 }: MetricSummaryRowProps) => {
@@ -49,7 +49,7 @@ const MetricSummaryRow = ({
             },
           }}
         >
-          <MarkdownSynapse markdown={text} />
+          <MarkdownSynapse markdown={markdownText} />
         </Box>
       </Box>
       {metricValues[index] === 'true' ? (
@@ -147,7 +147,7 @@ const SustainabilityScorecardSummary = ({
           >
             <MetricSummaryRow
               label={metric.label}
-              text={metric.text ?? ''}
+              markdownText={metric.text ?? ''}
               index={index}
               metricValues={metricValues}
             />
