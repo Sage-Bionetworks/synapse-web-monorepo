@@ -26,6 +26,7 @@ function FileEntityPage() {
       includeEntity: true,
       includeRootWikiId: true,
       includeDOIAssociation: true,
+      includeFileHandles: true,
     },
   )
 
@@ -90,6 +91,8 @@ function FileEntityPage() {
       />
     </Box>
   )
+
+  console.log('entityBundle:', entityBundle)
 
   return (
     <article>
