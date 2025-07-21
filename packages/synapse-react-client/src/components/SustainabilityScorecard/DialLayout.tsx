@@ -15,7 +15,7 @@ const DialLayout = ({ dial, label, toolTipText }: DialLayoutProps) => {
     <Stack sx={{ alignItems: 'center', gap: '10px' }}>
       {dial}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-        <Typography variant="body2" sx={{ margin: '0 !important' }}>
+        <Typography variant="smallText1" sx={{ margin: '0 !important' }}>
           {label}
         </Typography>
         {toolTipText && (
