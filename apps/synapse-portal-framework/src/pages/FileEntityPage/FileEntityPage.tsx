@@ -34,9 +34,7 @@ function FileEntityPage() {
     {
       id: 'properties',
       title: 'Properties',
-      element: (
-        <SynapseFileEntityPageProperties entity={entityBundle?.entity} />
-      ),
+      element: <SynapseFileEntityPageProperties entityBundle={entityBundle} />,
     },
     {
       element: <SynapseFileEntityLinkCard synId={entityId} version={version} />,
@@ -91,8 +89,6 @@ function FileEntityPage() {
       />
     </Box>
   )
-
-  console.log('entityBundle:', entityBundle)
 
   return (
     <article>
