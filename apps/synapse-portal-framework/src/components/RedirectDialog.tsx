@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Dialog, DialogContent, Button, Link, Typography } from '@mui/material'
+import { useGetEntity } from 'synapse-react-client/synapse-queries'
+import { isFileEntity } from 'synapse-react-client'
 
 export type RedirectDialogProps = {
   onCancelRedirect: () => void
@@ -54,10 +56,38 @@ const getInitialCountdownSeconds = (redirectURL: string) => {
   return isSynapseURL(redirectURL) ? 10 : 30
 }
 
+const parseRedirectUrl = (redirectUrl: string | undefined) => {
+  if (!redirectUrl) return
+  const regex = /Synapse:(syn\d+)(?:\.(\d+))?/i
+  const matches = regex.exec(redirectUrl)
+  if (!matches) {
+    return { entityId: undefined, versionNumber: undefined }
+  }
+
+  return {
+    entityId: matches[1],
+    versionNumber: matches[2] ? parseInt(matches[2]) : undefined,
+  }
+}
+
 const RedirectDialog = (props: RedirectDialogProps) => {
   const [countdownSeconds, setCountdownSeconds] = useState<number | undefined>()
   const { redirectUrl, onCancelRedirect } = props
   const [redirectInstructions, setRedirectInstructions] = useState()
+
+  const { entityId, versionNumber } = parseRedirectUrl(redirectUrl) ?? {}
+  const { data: entity } = useGetEntity(entityId)
+
+  const isRedirectTargetFileEntity = entity ? isFileEntity(entity) : false
+
+  useEffect(() => {
+    if (redirectUrl && isRedirectTargetFileEntity) {
+      const internalUrl = `/FileEntity?entityId=${entityId}${
+        versionNumber ? `&version=${versionNumber}` : ''
+      }`
+      window.location.assign(internalUrl)
+    }
+  }, [redirectUrl, entityId, versionNumber, isRedirectTargetFileEntity])
 
   useEffect(() => {
     if (redirectUrl && countdownSeconds) {
@@ -101,7 +131,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
 
   return (
     <>
-      {redirectUrl && (
+      {redirectUrl && entity !== undefined && !isFileEntity && (
         <Dialog
           open={true}
           onClose={onClose}
