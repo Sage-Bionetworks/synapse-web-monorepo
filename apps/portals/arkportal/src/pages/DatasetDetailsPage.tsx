@@ -70,7 +70,10 @@ function DatasetDetailsPage() {
                   // PORTALS-3698: Show files for the latest released version rather than the draft (unless this is the first version)
                   // This is because the Datasets are from an EntityView rather than a Dataset Collection or Table.
                   let versionNumberToUse = 1
-                  if (hasVersionNumber) {
+                  if (
+                    hasVersionNumber &&
+                    context.rowData?.versionNumber !== undefined
+                  ) {
                     if (context.rowData?.versionNumber > 1) {
                       // If this is the first version, we want to show the files for the latest version
                       versionNumberToUse = context.rowData?.versionNumber - 1
