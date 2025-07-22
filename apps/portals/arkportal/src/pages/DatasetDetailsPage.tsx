@@ -67,8 +67,17 @@ function DatasetDetailsPage() {
                   const hasVersionNumber = Boolean(
                     context.rowData?.versionNumber,
                   )
+                  // PORTALS-3698: Show files for the latest released version rather than the draft (unless this is the first version)
+                  // This is because the Datasets are from an EntityView rather than a Dataset Collection or Table.
+                  let versionNumberToUse = 1
+                  if (hasVersionNumber) {
+                    if (context.rowData?.versionNumber > 1) {
+                      // If this is the first version, we want to show the files for the latest version
+                      versionNumberToUse = context.rowData?.versionNumber - 1
+                    }
+                  }
                   const sql = `SELECT * FROM syn${context.rowData?.rowId}${
-                    hasVersionNumber ? `.${context.rowData?.versionNumber}` : ''
+                    hasVersionNumber ? `.${versionNumberToUse}` : ''
                   }`
                   return (
                     <QueryWrapperPlotNav
