@@ -56,8 +56,39 @@ export const organizationCardSchema: TableToGenericCardMapping = {
   secondaryLabels: [
     ORG_TABLE_COLUMN_NAMES.ROR_ID,
     ORG_TABLE_COLUMN_NAMES.WIKIDATA_ID,
-    ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF,
+    // ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF,
   ],
+}
+
+function OrgHeaderCard({ id }) {
+  return (
+    <CardContainerLogic
+      query={{
+        sql: organizationDetailsPageSQL,
+        additionalFilters: [
+          {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+            columnName: 'id',
+            operator: ColumnSingleValueFilterOperator.EQUAL,
+            values: [id],
+          },
+        ],
+      }}
+      columnAliases={columnAliases}
+      cardConfiguration={{
+        type: SynapseConstants.GENERIC_CARD,
+        genericCardSchema: organizationCardSchema,
+        secondaryLabelLimit: 6,
+        isHeader: true,
+        headerCardVariant: 'HeaderCardV2',
+        ctaLinkConfig: {
+          text: 'View Organization on External Website',
+          link: 'url',
+        },
+      }}
+    />
+  )
 }
 
 export const linkedDataSetCardConfiguration: CardConfiguration = {
@@ -79,28 +110,24 @@ export const linkedDataSetCardConfiguration: CardConfiguration = {
 
 export const organizationDetailsPageContent: DetailsPageContentType = [
   {
-    id: 'About the Organization',
-    title: 'About the Organization',
+    id: 'subclassOf',
+    title: 'Subclass Of',
     element: (
-      <DetailsPageContextConsumer columnName={'id'}>
-        {({ context }) => {
-          if (context.rowData && context.rowSet) {
+      <DetailsPageContextConsumer
+        columnName={ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF}
+      >
+        {({ value }) => {
+          if (Array.isArray(value) && value.length) {
             return (
-              <RowDataTable
-                rowData={context.rowData.values ?? []}
-                headers={context.rowSet?.headers ?? []}
-                // displayedColumns={['name', 'rorId']}
-                displayedColumns={[
-                  ORG_TABLE_COLUMN_NAMES.NAME,
-                  ORG_TABLE_COLUMN_NAMES.ROR_ID,
-                  ORG_TABLE_COLUMN_NAMES.WIKIDATA_ID,
-                  ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF,
-                ]}
-                columnAliases={columnAliases}
-              />
+              <>
+                {
+                  value.join(', ')
+                  // value.map(subclassOfId => <OrgHeaderCard key={subclassOfId} id={subclassOfId}/>)
+                }
+              </>
             )
           } else {
-            return <SkeletonTable numRows={6} numCols={1} />
+            return typeof value // it's a string, but should be a StringList
           }
         }}
       </DetailsPageContextConsumer>
@@ -194,32 +221,7 @@ export default function OrganizationDetailsPage() {
   }
   return (
     <>
-      <CardContainerLogic
-        query={{
-          sql: organizationDetailsPageSQL,
-          additionalFilters: [
-            {
-              concreteType:
-                'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-              columnName: 'id',
-              operator: ColumnSingleValueFilterOperator.EQUAL,
-              values: [id],
-            },
-          ],
-        }}
-        columnAliases={columnAliases}
-        cardConfiguration={{
-          type: SynapseConstants.GENERIC_CARD,
-          genericCardSchema: organizationCardSchema,
-          secondaryLabelLimit: 6,
-          isHeader: true,
-          headerCardVariant: 'HeaderCardV2',
-          ctaLinkConfig: {
-            text: 'View Organization on External Website',
-            link: 'url',
-          },
-        }}
-      />
+      <OrgHeaderCard id={id} />
 
       <DetailsPage sql={organizationDetailsPageSQL}>
         <DetailsPageContent content={organizationDetailsPageContent} />
