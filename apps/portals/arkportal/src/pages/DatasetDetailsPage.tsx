@@ -4,14 +4,13 @@ import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/D
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import columnAliases from '../config/columnAliases'
 import { datasetsSql } from '../config/resources'
 import {
   datasetCardConfiguration,
   datasetColumnAliases,
 } from '../config/synapseConfigs/datasets'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic'
-import { QueryWrapperPlotNav } from 'synapse-react-client/components/QueryWrapperPlotNav'
+import DatasetDetailsFilesTable from './DatasetDetailsFilesTable'
 
 function DatasetDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
@@ -61,41 +60,7 @@ function DatasetDetailsPage() {
             element: (
               <DetailsPageContextConsumer>
                 {({ context }) => {
-                  if (!context.rowData) {
-                    return null
-                  }
-                  const hasVersionNumber = Boolean(
-                    context.rowData?.versionNumber,
-                  )
-                  // PORTALS-3698: Show files for the latest released version rather than the draft (unless this is the first version)
-                  // This is because the Datasets are from an EntityView rather than a Dataset Collection or Table.
-                  let versionNumberToUse = 1
-                  if (
-                    hasVersionNumber &&
-                    context.rowData?.versionNumber !== undefined
-                  ) {
-                    if (context.rowData?.versionNumber > 1) {
-                      // If this is the first version, we want to show the files for the latest version
-                      versionNumberToUse = context.rowData?.versionNumber - 1
-                    }
-                  }
-                  const sql = `SELECT * FROM syn${context.rowData?.rowId}${
-                    hasVersionNumber ? `.${versionNumberToUse}` : ''
-                  }`
-                  return (
-                    <QueryWrapperPlotNav
-                      rgbIndex={0}
-                      sql={sql}
-                      visibleColumnCount={7}
-                      tableConfiguration={{
-                        showAccessColumn: true,
-                        showDownloadColumn: true,
-                      }}
-                      shouldDeepLink={false}
-                      columnAliases={columnAliases}
-                      defaultShowPlots={false}
-                    />
-                  )
+                  return <DatasetDetailsFilesTable rowData={context.rowData} />
                 }}
               </DetailsPageContextConsumer>
             ),
