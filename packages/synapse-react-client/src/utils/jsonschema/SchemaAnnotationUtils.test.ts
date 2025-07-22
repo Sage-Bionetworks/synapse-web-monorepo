@@ -1,4 +1,5 @@
-import { hasSchema, registerSchema } from '@hyperjump/json-schema'
+import { hasSchema } from '@hyperjump/json-schema'
+import { registerSchema } from '@hyperjump/json-schema/draft-07'
 import { renderHook, waitFor } from '@testing-library/react'
 import { JSONSchema7 } from 'json-schema'
 import { useRegisterSchema } from './SchemaAnnotationUtils'
@@ -8,6 +9,13 @@ vi.mock('@hyperjump/json-schema', async () => {
   return {
     ...actual,
     hasSchema: vi.fn(),
+  }
+})
+
+vi.mock('@hyperjump/json-schema/draft-07', async () => {
+  const actual = await vi.importActual('@hyperjump/json-schema/draft-07')
+  return {
+    ...actual,
     registerSchema: vi.fn(),
   }
 })

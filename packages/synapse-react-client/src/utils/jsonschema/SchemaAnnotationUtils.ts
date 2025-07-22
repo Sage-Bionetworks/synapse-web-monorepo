@@ -2,7 +2,8 @@
  * Utilities for retrieving annotation fields (e.g. "title", "description") from JSON Schemas
  */
 
-import { hasSchema, registerSchema, SchemaObject } from '@hyperjump/json-schema'
+import { hasSchema, SchemaObject } from '@hyperjump/json-schema'
+import { registerSchema } from '@hyperjump/json-schema/draft-07'
 import * as AnnotatedInstance from '@hyperjump/json-schema/annotated-instance/experimental'
 import { annotate } from '@hyperjump/json-schema/annotations/experimental'
 import { JsonNode } from '@hyperjump/json-schema/instance/experimental'
@@ -126,7 +127,7 @@ export function useGetAnnotatedJsonInstance(json?: Json, schema?: JSONSchema7) {
   const schemaIsRegistered = useRegisterSchema(schema)
 
   return useQuery<JsonNode | null>({
-    queryKey: ['getAnnotatedInstance', json, schema],
+    queryKey: ['getAnnotatedInstance', { json, schema, schemaIsRegistered }],
     queryFn: () => {
       if (json && schema && schemaIsRegistered) {
         try {
