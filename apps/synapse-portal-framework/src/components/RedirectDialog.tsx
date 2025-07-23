@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Dialog, DialogContent, Button, Link, Typography } from '@mui/material'
-import { useGetEntity } from 'synapse-react-client/synapse-queries'
+import {
+  useGetEntity,
+  useGetFeatureFlag,
+} from 'synapse-react-client/synapse-queries'
 import { isFileEntity } from 'synapse-react-client'
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 
 export type RedirectDialogProps = {
   onCancelRedirect: () => void
@@ -80,14 +84,24 @@ const RedirectDialog = (props: RedirectDialogProps) => {
 
   const isRedirectTargetFileEntity = entity ? isFileEntity(entity) : false
 
+  const isFeatureFlagEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.FILE_ENTITY_PAGE,
+  )
+
   useEffect(() => {
-    if (redirectUrl && isRedirectTargetFileEntity) {
+    if (redirectUrl && isRedirectTargetFileEntity && isFeatureFlagEnabled) {
       const internalUrl = `/FileEntity?entityId=${entityId}${
         versionNumber ? `&version=${versionNumber}` : ''
       }`
       window.location.assign(internalUrl)
     }
-  }, [redirectUrl, entityId, versionNumber, isRedirectTargetFileEntity])
+  }, [
+    redirectUrl,
+    entityId,
+    versionNumber,
+    isRedirectTargetFileEntity,
+    isFeatureFlagEnabled,
+  ])
 
   useEffect(() => {
     if (redirectUrl && countdownSeconds) {
@@ -131,7 +145,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
 
   return (
     <>
-      {redirectUrl && entity !== undefined && !isFileEntity && (
+      {redirectUrl && entity !== undefined && !isFeatureFlagEnabled && (
         <Dialog
           open={true}
           onClose={onClose}
