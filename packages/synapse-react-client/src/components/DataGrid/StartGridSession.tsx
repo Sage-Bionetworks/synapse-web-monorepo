@@ -8,6 +8,8 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { SynapseClient, TableQuery } from '@sage-bionetworks/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useDeleteGridSession } from '../../synapse-queries/useGridSession'
+import { displayToast } from '../ToastMessage/ToastMessage'
 
 export interface StartGridSessionProps {
   onSessionChange?: (sessionId: string) => void
@@ -33,22 +35,20 @@ export const StartGridSession = ({
 
   const synapseClient = useSynapseContext().synapseClient
 
-  const deleteSession = async (sessionId: string) => {
-    try {
-      await synapseClient.gridServicesClient.deleteRepoV1GridSessionSessionId({
-        sessionId,
-      })
-      console.log(`Session ${sessionId} deleted successfully.`)
+  const { mutate: deleteSession } = useDeleteGridSession({
+    onSuccess: () => {
+      displayToast('Successfully deleted grid session', 'success')
       setSessionId('')
       onSessionChange?.('')
       setReplicaId(null)
       onReplicaChange?.(null)
       setPresignedUrl('')
       onPresignedUrlChange?.('')
-    } catch (error) {
-      console.error(`Failed to delete session ${sessionId}:`, error)
-    }
-  }
+    },
+    onError: error => {
+      displayToast(error.reason, 'danger')
+    },
+  })
 
   const getSessionList = async (
     nextPageToken?: string,
@@ -265,7 +265,6 @@ export const StartGridSession = ({
                   onMouseDown={e => {
                     e.stopPropagation()
                     deleteSession(session.sessionId!)
-                    // Optionally remove from dropdown immediately:
                     setAvailableSessions(sessions =>
                       sessions.filter(s => s !== session),
                     )
