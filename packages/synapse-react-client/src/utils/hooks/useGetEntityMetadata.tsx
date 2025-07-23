@@ -11,7 +11,8 @@ import {
 } from '../functions/FileHandleUtils'
 
 const useGetEntityMetadata = (entityId: string, versionNumber?: number) => {
-  const { data: entityBundle } = useGetEntityBundle(entityId, versionNumber)
+  const { data: entityBundle, isLoading: isEntityBundleLoading } =
+    useGetEntityBundle(entityId, versionNumber)
 
   const isContainer = !!(
     entityBundle?.entityType && isContainerType(entityBundle.entityType)
@@ -28,16 +29,23 @@ const useGetEntityMetadata = (entityId: string, versionNumber?: number) => {
   // is where the file handle was actually uploaded. We must use a service that
   // takes the storage location id in the input to get the storage location for a
   // file entity.
-  const { data: storageLocationUploadDestination } =
-    useGetUploadDestinationForStorageLocation(parentId!, storageLocationId!, {
-      enabled:
-        !isContainer && parentId !== undefined && storageLocationId != null,
-    })
+  const {
+    data: storageLocationUploadDestination,
+    isLoading: isStorageLocationUploadDestinationLoading,
+  } = useGetUploadDestinationForStorageLocation(parentId!, storageLocationId!, {
+    enabled:
+      !isContainer && parentId !== undefined && storageLocationId != null,
+  })
 
-  const { data: defaultUploadDestination } = useGetDefaultUploadDestination(
-    entityId,
-    { enabled: isContainer },
-  )
+  const {
+    data: defaultUploadDestination,
+    isLoading: isDefaultUploadDestinationLoading,
+  } = useGetDefaultUploadDestination(entityId, { enabled: isContainer })
+
+  const isLoading =
+    isEntityBundleLoading ||
+    isStorageLocationUploadDestinationLoading ||
+    isDefaultUploadDestinationLoading
 
   const uploadDestinationString =
     defaultUploadDestination &&
@@ -60,6 +68,7 @@ const useGetEntityMetadata = (entityId: string, versionNumber?: number) => {
     fileHandleStorageInfo,
     storageLocationUploadDestination,
     uploadDestinationString,
+    isLoading,
   }
 }
 

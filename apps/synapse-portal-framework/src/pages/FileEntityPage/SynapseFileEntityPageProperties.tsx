@@ -2,6 +2,7 @@ import { Box } from '@mui/material'
 import { EntityBundle, FileEntity } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import React from 'react'
+import { SkeletonTable } from 'synapse-react-client'
 import CopyToClipboardIcon from 'synapse-react-client/components/CopyToClipboardIcon'
 import { StyledTableContainer } from 'synapse-react-client/components/styled/StyledTableContainer'
 import { UserBadge } from 'synapse-react-client/components/UserCard/UserBadge'
@@ -11,7 +12,8 @@ import { getStorageLocationName } from 'synapse-react-client/utils/functions/Fil
 import useGetEntityMetadata from 'synapse-react-client/utils/hooks/useGetEntityMetadata'
 
 type SynapseFileEntityPagePropertiesProps = {
-  entityBundle: EntityBundle | undefined
+  entityId: string
+  versionNumber: number | undefined
 }
 
 type FilePropertyValueProps = {
@@ -73,18 +75,25 @@ const FilePropertyValue: React.FC<FilePropertyValueProps> = ({
 }
 
 const SynapseFileEntityPageProperties = ({
-  entityBundle,
+  entityId,
+  versionNumber,
 }: SynapseFileEntityPagePropertiesProps) => {
-  const fileEntity = entityBundle?.entity as FileEntity | undefined
+  const {
+    fileHandle,
+    storageLocationUploadDestination,
+    entityBundle,
+    isLoading,
+  } = useGetEntityMetadata(entityId, versionNumber)
 
-  const { fileHandle, storageLocationUploadDestination } = useGetEntityMetadata(
-    fileEntity?.id ?? '',
-    fileEntity?.versionNumber,
-  )
+  const fileEntity = entityBundle?.entity as FileEntity | undefined
 
   const fileLocationName = fileHandle
     ? getStorageLocationName(fileHandle, storageLocationUploadDestination)
     : ''
+
+  if (isLoading) {
+    return <SkeletonTable numRows={9} />
+  }
 
   if (!entityBundle || !fileEntity) {
     return null

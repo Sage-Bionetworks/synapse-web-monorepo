@@ -33,7 +33,12 @@ function FileEntityPage() {
     {
       id: 'properties',
       title: 'Properties',
-      element: <SynapseFileEntityPageProperties entityBundle={entityBundle} />,
+      element: (
+        <SynapseFileEntityPageProperties
+          entityId={entityId}
+          versionNumber={version}
+        />
+      ),
     },
     {
       element: <SynapseFileEntityLinkCard synId={entityId} version={version} />,
