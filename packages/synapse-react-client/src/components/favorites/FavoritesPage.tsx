@@ -1,23 +1,27 @@
 import NoSearchResults from '@/assets/icons/NoSearchResults'
-import { useGetFavorites } from '@/synapse-queries/user/useFavorites'
+import { useGetFavoritesInfinite } from '@/synapse-queries/user/useFavorites'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
   convertToEntityType,
   entityTypeToFriendlyName,
 } from '@/utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { InputAdornment, Stack, TextField } from '@mui/material'
-import { EntityHeader } from '@sage-bionetworks/synapse-types'
+import { Button, InputAdornment, Stack, TextField } from '@mui/material'
+import {
+  EntityHeader,
+  FavoriteSortBy,
+  FavoriteSortDirection,
+} from '@sage-bionetworks/synapse-types'
 import {
   createColumnHelper,
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
-  getSortedRowModel,
+  SortingState,
   useReactTable,
 } from '@tanstack/react-table'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { EntityTypeIcon } from '../EntityIcon'
 import { ErrorBanner } from '../error/ErrorBanner'
 import IconSvg from '../IconSvg/IconSvg'
@@ -25,14 +29,6 @@ import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import FavoriteButton from './FavoriteButton'
-
-// Local types used for client-side sorting
-export type SortField = 'name' | 'type'
-export type SortDirection = 'ASC' | 'DESC'
-export type Sort = {
-  field: SortField
-  direction: SortDirection
-}
 
 const columnHelper = createColumnHelper<EntityHeader>()
 
@@ -57,9 +53,8 @@ const columns = [
     ),
     enableGlobalFilter: true,
     header: props => <ColumnHeader {...props} title={'Name'} />,
-    size: 400,
+    size: 575,
     enableColumnFilter: false,
-    sortingFn: 'alphanumeric',
     enableSorting: true,
   }),
   columnHelper.accessor('type', {
@@ -75,39 +70,67 @@ const columns = [
     header: props => <ColumnHeader {...props} title={'Type'} />,
     size: 160,
     enableGlobalFilter: false,
-    sortingFn: 'alphanumeric',
-    filterFn: 'arrIncludes',
-    meta: {
-      enableMultipleSelect: true,
-      filterVariant: 'enumeration',
-      getDisplayText: value =>
-        entityTypeToFriendlyName(convertToEntityType(value)),
-    },
-    enableSorting: true,
+    enableSorting: false,
   }),
 ]
+
+function getSortApiRequestFromTableSortState(
+  sortingState: SortingState,
+): FavoriteSortBy | undefined {
+  if (sortingState.length === 0) {
+    return undefined
+  }
+  const sort = sortingState[0]
+  let field: FavoriteSortBy = 'FAVORITED_ON'
+  if (sort.id === 'name') {
+    field = 'NAME'
+  }
+  return field
+}
+
+function getSortDirectionApiRequestFromTableSortState(
+  sortingState: SortingState,
+): FavoriteSortDirection | undefined {
+  if (sortingState.length === 0) {
+    return undefined
+  }
+  const sort = sortingState[0]
+  return sort.desc ? 'DESC' : 'ASC'
+}
 
 export default function FavoritesPage() {
   const { accessToken } = useSynapseContext()
   const [searchText, setSearchText] = useState<string>('')
   const [error, setError] = useState<Error>()
-  const { data, isLoading, isError, error: newError } = useGetFavorites()
-
-  const favorites = useMemo(() => data?.results ?? [], [data?.results])
+  const [sorting, setSorting] = useState<SortingState>([])
+  const {
+    data,
+    isLoading,
+    isError,
+    error: newError,
+    hasNextPage,
+    fetchNextPage,
+  } = useGetFavoritesInfinite(
+    getSortApiRequestFromTableSortState(sorting),
+    getSortDirectionApiRequestFromTableSortState(sorting),
+  )
+  const favorites = data?.pages.flatMap(page => page.results) ?? []
 
   const favoritesTable = useReactTable<EntityHeader>({
     data: favorites,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     globalFilterFn: 'includesString',
     state: {
       globalFilter: searchText,
+      sorting,
     },
     columnResizeMode: 'onChange',
+    manualSorting: true, // We are using server-side sorting
+    onSortingChange: setSorting,
   })
 
   useEffect(() => {
@@ -161,14 +184,31 @@ export default function FavoritesPage() {
           }}
         >
           <NoSearchResults height={'150px'} />
-          {data?.results.length == 0 ? (
+          {favorites.length == 0 ? (
             <p>You currently have no favorites</p>
           ) : (
             <p>No matching favorites found</p>
           )}
         </Stack>
       )}
-
+      {hasNextPage && (
+        <Stack
+          sx={{
+            my: 2,
+            alignItems: 'center',
+          }}
+        >
+          <Button
+            variant="outlined"
+            onClick={() => {
+              fetchNextPage()
+            }}
+            disabled={!hasNextPage || isLoading}
+          >
+            Show More
+          </Button>
+        </Stack>
+      )}
       {isLoading && (
         <div className="placeholder">
           <SynapseSpinner size={30} />

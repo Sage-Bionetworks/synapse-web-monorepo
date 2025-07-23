@@ -19,15 +19,25 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
+import { useEffect } from 'react'
 
 export function useIsFavorite(entityId: string) {
-  // TODO: Handle pagination - the default limit is 200
-  // It would probably make more sense to add a backend service to check if an entity ID is favorited
-  const { data: allFavorites, isLoading } = useGetFavorites()
-  const isFavorite = allFavorites?.results?.some(
-    favorite => favorite.id === entityId,
-  )
-  return { isFavorite, isLoading }
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useGetFavoritesInfinite()
+
+  const allFavorites = data?.pages.flatMap(page => page.results) ?? []
+  const isFavorite = allFavorites.some(fav => fav.id === entityId)
+
+  useEffect(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+
+  return {
+    isFavorite,
+    isLoading: isLoading || isFetchingNextPage,
+  }
 }
 
 export function useAddFavorite(
@@ -116,7 +126,7 @@ export function useGetFavoritesInfinite<
     >
   >,
 ) {
-  const LIMIT = 10
+  const LIMIT = 100
 
   const { accessToken, keyFactory } = useSynapseContext()
 
