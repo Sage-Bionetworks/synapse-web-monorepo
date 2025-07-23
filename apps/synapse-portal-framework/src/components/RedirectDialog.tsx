@@ -1,11 +1,20 @@
 import { useState, useEffect } from 'react'
-import { Dialog, DialogContent, Button, Link, Typography } from '@mui/material'
+import {
+  Dialog,
+  DialogContent,
+  Button,
+  Link,
+  Typography,
+  Stack,
+} from '@mui/material'
 import {
   useGetEntity,
   useGetFeatureFlag,
 } from 'synapse-react-client/synapse-queries'
 import { isFileEntity } from 'synapse-react-client'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import { useNavigate } from 'react-router'
+import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 
 export type RedirectDialogProps = {
   onCancelRedirect: () => void
@@ -60,12 +69,12 @@ const getInitialCountdownSeconds = (redirectURL: string) => {
   return isSynapseURL(redirectURL) ? 10 : 30
 }
 
-const parseRedirectUrl = (redirectUrl: string | undefined) => {
-  if (!redirectUrl) return
+const parseSynIdFromRedirectUrl = (redirectUrl: string | undefined) => {
+  if (!redirectUrl) return null
   const regex = /Synapse:(syn\d+)(?:\.(\d+))?/i
   const matches = regex.exec(redirectUrl)
   if (!matches) {
-    return { entityId: undefined, versionNumber: undefined }
+    return null
   }
 
   return {
@@ -78,9 +87,11 @@ const RedirectDialog = (props: RedirectDialogProps) => {
   const [countdownSeconds, setCountdownSeconds] = useState<number | undefined>()
   const { redirectUrl, onCancelRedirect } = props
   const [redirectInstructions, setRedirectInstructions] = useState()
+  const navigate = useNavigate()
 
-  const { entityId, versionNumber } = parseRedirectUrl(redirectUrl) ?? {}
-  const { data: entity } = useGetEntity(entityId)
+  const { entityId, versionNumber } =
+    parseSynIdFromRedirectUrl(redirectUrl) ?? {}
+  const { data: entity, isLoading } = useGetEntity(entityId)
 
   const isRedirectTargetFileEntity = entity ? isFileEntity(entity) : false
 
@@ -89,11 +100,17 @@ const RedirectDialog = (props: RedirectDialogProps) => {
   )
 
   useEffect(() => {
-    if (redirectUrl && isRedirectTargetFileEntity && isFeatureFlagEnabled) {
+    if (
+      redirectUrl &&
+      isRedirectTargetFileEntity &&
+      !isLoading &&
+      isFeatureFlagEnabled
+    ) {
       const internalUrl = `/FileEntity?entityId=${entityId}${
         versionNumber ? `&version=${versionNumber}` : ''
       }`
-      window.location.assign(internalUrl)
+      navigate(internalUrl)
+      onCancelRedirect()
     }
   }, [
     redirectUrl,
@@ -101,6 +118,8 @@ const RedirectDialog = (props: RedirectDialogProps) => {
     versionNumber,
     isRedirectTargetFileEntity,
     isFeatureFlagEnabled,
+    navigate,
+    onCancelRedirect,
   ])
 
   useEffect(() => {
@@ -143,9 +162,41 @@ const RedirectDialog = (props: RedirectDialogProps) => {
     setCountdownSeconds(undefined)
   }
 
+  // Show loading state while fetching entity for FileEntity redirect
+  if (redirectUrl && entityId && isLoading && isFeatureFlagEnabled) {
+    return (
+      <Dialog
+        open={true}
+        onClose={onClose}
+        className="RedirectDialog"
+        PaperProps={{ sx: { padding: 0 } }}
+      >
+        <DialogContent
+          sx={{
+            p: 0,
+            ml: 0,
+            mr: 0,
+          }}
+        >
+          <Stack className="redirect-dialog-body">
+            <Typography
+              variant="headline1"
+              sx={{
+                padding: '50px 0px 20px 0px',
+              }}
+            >
+              Loading...
+            </Typography>
+            <SynapseSpinner size={40} />
+          </Stack>
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
   return (
     <>
-      {redirectUrl && entity !== undefined && !isFeatureFlagEnabled && (
+      {redirectUrl && (
         <Dialog
           open={true}
           onClose={onClose}
