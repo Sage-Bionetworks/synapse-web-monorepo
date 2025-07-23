@@ -120,6 +120,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
     isFeatureFlagEnabled,
     navigate,
     onCancelRedirect,
+    isLoading,
   ])
 
   useEffect(() => {
