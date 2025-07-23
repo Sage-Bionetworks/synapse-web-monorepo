@@ -1,14 +1,14 @@
-import { Table, TableRow, TableCell, TableBody, Box } from '@mui/material'
+import { Box } from '@mui/material'
 import { EntityBundle, FileEntity } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import React from 'react'
 import CopyToClipboardIcon from 'synapse-react-client/components/CopyToClipboardIcon'
 import { StyledTableContainer } from 'synapse-react-client/components/styled/StyledTableContainer'
 import { UserBadge } from 'synapse-react-client/components/UserCard/UserBadge'
-import { useGetUploadDestinationForStorageLocation } from 'synapse-react-client/synapse-queries'
 import { calculateFriendlyFileSize } from 'synapse-react-client/utils/functions/calculateFriendlyFileSize'
 import { formatDate } from 'synapse-react-client/utils/functions/DateFormatter'
 import { getStorageLocationName } from 'synapse-react-client/utils/functions/FileHandleUtils'
+import useGetEntityMetadata from 'synapse-react-client/utils/hooks/useGetEntityMetadata'
 
 type SynapseFileEntityPagePropertiesProps = {
   entityBundle: EntityBundle | undefined
@@ -76,31 +76,18 @@ const SynapseFileEntityPageProperties = ({
   entityBundle,
 }: SynapseFileEntityPagePropertiesProps) => {
   const fileEntity = entityBundle?.entity as FileEntity | undefined
-  const fileHandle = entityBundle?.fileHandles?.find(
-    fileHandle => fileEntity && fileHandle.id === fileEntity.dataFileHandleId,
-  )
-  const parentId = fileEntity?.parentId
-  const storageLocationId = fileHandle?.storageLocationId
 
-  const { data: storageLocationUploadDestination } =
-    useGetUploadDestinationForStorageLocation(
-      parentId ?? '',
-      storageLocationId ?? -1,
-      {
-        enabled: parentId !== undefined && storageLocationId != null,
-      },
-    )
+  const { fileHandle, storageLocationUploadDestination } = useGetEntityMetadata(
+    fileEntity?.id ?? '',
+    fileEntity?.versionNumber,
+  )
+
+  const fileLocationName = fileHandle
+    ? getStorageLocationName(fileHandle, storageLocationUploadDestination)
+    : ''
 
   if (!entityBundle || !fileEntity) {
     return null
-  }
-
-  let fileLocationName: string | undefined = undefined
-  if (fileHandle) {
-    fileLocationName = getStorageLocationName(
-      fileHandle,
-      storageLocationUploadDestination,
-    )
   }
 
   const selectedKeys = [
