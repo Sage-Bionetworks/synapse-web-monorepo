@@ -225,7 +225,7 @@ const TopLevelControls = (props: TopLevelControlsProps) => {
                     disabled={!numberOfResultsToInvokeAction}
                     control={customControl}
                     callbackData={{
-                      tableId: entityId,
+                      tableId: entityId!,
                       queryMetadata: queryMetadata,
                       selectedRows,
                       refresh,

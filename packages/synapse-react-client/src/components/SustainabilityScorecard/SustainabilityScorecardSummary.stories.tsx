@@ -34,7 +34,7 @@ const mockProps: SustainabilityScorecardSummaryProps = {
   filterColumn: 'toolName',
   searchParamKey: 'toolName',
   scoreDescriptorColumnName: 'AlmanackScoreDescriptor',
-  text: (
+  description: (
     <p>
       This section provides an overview of the sustainability metrics and
       scores.
