@@ -7,6 +7,7 @@ import { isContainerType } from '../functions/EntityTypeUtils'
 import {
   getDataFileHandle,
   getFileHandleStorageInfo,
+  getUploadDestinationString,
 } from '../functions/FileHandleUtils'
 
 const useGetEntityMetadata = (entityId: string, versionNumber?: number) => {
@@ -38,6 +39,10 @@ const useGetEntityMetadata = (entityId: string, versionNumber?: number) => {
     { enabled: isContainer },
   )
 
+  const uploadDestinationString =
+    defaultUploadDestination &&
+    getUploadDestinationString(defaultUploadDestination)
+
   const fileHandleStorageInfo =
     fileHandle &&
     getFileHandleStorageInfo(fileHandle, storageLocationUploadDestination)
@@ -53,8 +58,8 @@ const useGetEntityMetadata = (entityId: string, versionNumber?: number) => {
     isContainer,
     downloadAlias,
     fileHandleStorageInfo,
-    defaultUploadDestination,
     storageLocationUploadDestination,
+    uploadDestinationString,
   }
 }
 

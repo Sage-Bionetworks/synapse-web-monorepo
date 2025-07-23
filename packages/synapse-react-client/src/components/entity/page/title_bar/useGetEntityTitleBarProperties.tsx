@@ -2,14 +2,9 @@ import { useGetEntityChildren } from '@/synapse-queries'
 import { useGetDOIAssociation } from '@/synapse-queries/doi/useDOI'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import {
-  isContainerType,
   isEntityRefCollectionView,
   isVersionableEntity,
 } from '@/utils/functions/EntityTypeUtils'
-import {
-  getFileHandleStorageInfo,
-  getUploadDestinationString,
-} from '@/utils/functions/FileHandleUtils'
 import { Box, Link } from '@mui/material'
 import {
   EntityRefCollectionView,
@@ -40,13 +35,11 @@ export function useGetEntityTitleBarProperties(
   const {
     entityBundle: bundle,
     fileHandle: dataFileHandle,
-    storageLocationUploadDestination,
-    defaultUploadDestination,
+    downloadAlias,
+    isContainer,
+    fileHandleStorageInfo,
+    uploadDestinationString,
   } = useGetEntityMetadata(entityId, versionNumber)
-
-  const isContainer = !!(
-    bundle?.entityType && isContainerType(bundle.entityType)
-  )
 
   const { data: entityChildrenResponse } = useGetEntityChildren(
     {
@@ -73,9 +66,6 @@ export function useGetEntityTitleBarProperties(
   const size =
     dataFileHandle?.contentSize &&
     calculateFriendlyFileSize(dataFileHandle.contentSize)
-  const fileHandleStorageInfo =
-    dataFileHandle &&
-    getFileHandleStorageInfo(dataFileHandle, storageLocationUploadDestination)
   const storageLocation =
     fileHandleStorageInfo &&
     'location' in fileHandleStorageInfo &&
@@ -98,12 +88,6 @@ export function useGetEntityTitleBarProperties(
     fileHandleStorageInfo.url
 
   const md5 = dataFileHandle?.contentMd5
-  const downloadAlias =
-    bundle?.entity.name != bundle?.fileName && bundle?.fileName
-
-  const uploadDestinationString =
-    defaultUploadDestination &&
-    getUploadDestinationString(defaultUploadDestination)
 
   // If there is no version-specific DOI, fall back to the versionless DOI
   const doiAssociation = useFallbackVersionlessDOI
