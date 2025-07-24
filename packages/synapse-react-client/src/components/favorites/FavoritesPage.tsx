@@ -93,7 +93,7 @@ export default function FavoritesPage() {
   const [error, setError] = useState<Error>()
   const { data, isLoading, isError, error: newError } = useGetFavorites()
 
-  const favorites = useMemo(() => data?.results ?? [], [data?.results])
+  const favorites = useMemo(() => data ?? [], [data])
 
   const favoritesTable = useReactTable<EntityHeader>({
     data: favorites,
@@ -161,7 +161,7 @@ export default function FavoritesPage() {
           }}
         >
           <NoSearchResults height={'150px'} />
-          {data?.results.length == 0 ? (
+          {data?.length == 0 ? (
             <p>You currently have no favorites</p>
           ) : (
             <p>No matching favorites found</p>

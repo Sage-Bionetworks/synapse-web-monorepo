@@ -14,18 +14,16 @@ import {
   UseInfiniteQueryOptions,
   useMutation,
   UseMutationOptions,
+  useQuery,
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
-import { useEffect, useMemo } from 'react'
 
 export function useIsFavorite(entityId: string) {
   // Gets all pages of favorities to check if the entity is a favorite
   const { data: allFavorites, isLoading } = useGetFavorites()
-  const isFavorite = allFavorites?.results?.some(
-    favorite => favorite.id === entityId,
-  )
+  const isFavorite = allFavorites?.some(favorite => favorite.id === entityId)
   return { isFavorite, isLoading }
 }
 
@@ -80,49 +78,16 @@ export function useRemoveFavorite(
 export function useGetFavorites(
   sort: FavoriteSortBy = 'FAVORITED_ON',
   sortDirection: FavoriteSortDirection = 'DESC',
-  options?: Partial<
-    UseQueryOptions<PaginatedResults<EntityHeader>, SynapseClientError>
-  >,
+  options?: Partial<UseQueryOptions<EntityHeader[], SynapseClientError>>,
 ) {
-  const infiniteQuery = useGetFavoritesInfinite(sort, sortDirection, {
-    enabled: options?.enabled !== false,
+  const { accessToken, keyFactory } = useSynapseContext()
+
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getUserFavoritesQueryKey(sort, sortDirection),
+    queryFn: () =>
+      SynapseClient.getAllUserFavorites(accessToken, sort, sortDirection),
   })
-
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isLoading,
-    isError,
-    error,
-    isSuccess,
-  } = infiniteQuery
-
-  // Flatten all pages into a single result
-  const allData: PaginatedResults<EntityHeader> | undefined = useMemo(() => {
-    if (!data?.pages) return undefined
-
-    const allResults = data.pages.flatMap(page => page.results)
-    return {
-      results: allResults,
-      totalNumberOfResults: allResults.length,
-    }
-  }, [data])
-
-  // Fetch all pages
-  useEffect(() => {
-    if (!hasNextPage || !isSuccess) return
-
-    fetchNextPage()
-  }, [hasNextPage, fetchNextPage, isSuccess])
-
-  return {
-    data: allData,
-    isLoading,
-    isError,
-    error,
-    isSuccess: !isError,
-  }
 }
 
 export function useGetFavoritesInfinite<
