@@ -27,9 +27,6 @@ export const StartGridSession = ({
   onPresignedUrlChange,
 }: StartGridSessionProps) => {
   const [gridSql, setGridSql] = useState('')
-  const [sessionId, setSessionId] = useState('')
-  const [replicaId, setReplicaId] = useState<number | null>(null)
-  const [presignedUrl, setPresignedUrl] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
 
   const inputRef = useRef<HTMLInputElement>(null)
@@ -39,11 +36,8 @@ export const StartGridSession = ({
   const { mutate: deleteSession } = useDeleteGridSession({
     onSuccess: () => {
       displayToast('Successfully deleted grid session', 'success')
-      setSessionId('')
       onSessionChange?.('')
-      setReplicaId(null)
       onReplicaChange?.(null)
-      setPresignedUrl('')
       onPresignedUrlChange?.('')
     },
     onError: error => {
@@ -106,13 +100,11 @@ export const StartGridSession = ({
         )
         console.log('Grid session started:', gridSessionResponse)
         const newSessionId = gridSessionResponse.gridSession?.sessionId || ''
-        setSessionId(newSessionId)
         onSessionChange?.(newSessionId)
 
         const replica = await createReplicaId(synapseClient, newSessionId)
         console.log('Replica created:', replica)
         const newReplicaId = replica?.replica?.replicaId || null
-        setReplicaId(newReplicaId)
         onReplicaChange?.(newReplicaId)
 
         const getPresignedUrl =
@@ -125,17 +117,14 @@ export const StartGridSession = ({
               },
             },
           )
-        setPresignedUrl(getPresignedUrl.presignedUrl || '')
         onPresignedUrlChange?.(getPresignedUrl.presignedUrl || '')
       } else if (parsedInput.type === 'sessionId') {
         console.log(`Joining existing session ID: ${parsedInput.input}`)
-        setSessionId(parsedInput.input)
         onSessionChange?.(parsedInput.input)
 
         const replica = await createReplicaId(synapseClient, parsedInput.input)
         console.log('Replica created:', replica)
         const newReplicaId = replica?.replica?.replicaId || null
-        setReplicaId(newReplicaId)
         onReplicaChange?.(newReplicaId)
 
         const getPresignedUrl =
@@ -148,7 +137,6 @@ export const StartGridSession = ({
               },
             },
           )
-        setPresignedUrl(getPresignedUrl.presignedUrl || '')
         onPresignedUrlChange?.(getPresignedUrl.presignedUrl || '')
       } else {
         console.error(
