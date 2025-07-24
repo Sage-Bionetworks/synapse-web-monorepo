@@ -73,6 +73,7 @@ describe('AnnotationsTable tests', () => {
   })
 
   it('Displays title/description annotations from the JSON Schema', async () => {
+    const schema$id = 'schema-for-jsonschema-annotation-test'
     const annotationKey = 'describedAnnotation'
     const annotationTitle = 'Annotation described by schema'
     const annotationDescription = 'describedAnnotation'
@@ -86,7 +87,7 @@ describe('AnnotationsTable tests', () => {
         'org.sagebionetworks.repo.model.schema.GetValidationSchemaResponse',
       validationSchema: {
         $schema: 'http://json-schema.org/draft-07/schema#',
-        $id: `https://repo-prod.prod.sagebase.org/repo/v1/schema/type/registered/${mockSchemaBinding.jsonSchemaVersionInfo.$id}`,
+        $id: `https://repo-prod.prod.sagebase.org/repo/v1/schema/type/registered/${schema$id}`,
         type: 'object',
         properties: {
           [annotationKey]: {
