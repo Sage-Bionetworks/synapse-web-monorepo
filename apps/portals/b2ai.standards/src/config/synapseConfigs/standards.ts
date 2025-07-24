@@ -30,6 +30,10 @@ export const standardsColumnLinks: LabelLinkConfig = [
     matchColumnName: DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS,
   },
   {
+    isMarkdown: true,
+    matchColumnName: 'SDO',
+  },
+  {
     matchColumnName: 'mature',
     isMapValueToReactNodeConfig: true,
     Component: IsMatureIconMap,

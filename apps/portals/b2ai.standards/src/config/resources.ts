@@ -3,7 +3,7 @@ import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2
 export const TABLE_IDS = {
   Challenges: { name: 'Challenges', id: 'syn65913973.1' }, // the only reason for this table is to get the GC images
   // CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
-  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.65' },
+  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.66' },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
   DataSet_denormalized: { name: 'DataSet_denormalized', id: 'syn68258237' },
   DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
@@ -52,9 +52,13 @@ export const ORG_TABLE_COLUMN_NAMES = {
 }
 export const ORG_TABLE_JSON_COLUMNS = []
 
-export const organizationDetailsPageSQL = `SELECT  ${Object.values(
-  ORG_TABLE_COLUMN_NAMES,
-).join(', ')} FROM ${TABLE_IDS.Organization.id}`
+export const organizationDetailsPageSQL = `
+  SELECT  
+    ${Object.values(ORG_TABLE_COLUMN_NAMES).join(', ')},
+    concat('/Explore/Organization/OrganizationDetailsPage?id=', ${
+      ORG_TABLE_COLUMN_NAMES.ID
+    }) AS orgPageLink
+  FROM ${TABLE_IDS.Organization.id}`
 
 // export const GC_PARENT_ORG_ID = 'B2AI_ORG:106' // not just GCs
 export const GC_ORG_IDS = [114, 115, 116, 117].map(id => `'B2AI_ORG:${id}'`)
@@ -121,6 +125,7 @@ export const standardsSql = `
         , topic
         , dataTypes
         , ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_LINKS}
+        , ${DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS}
         , isOpen
         , registration
         , "usedInBridge2AI"
@@ -148,6 +153,8 @@ export const standardsDetailsPageSQL = `
             dataTypes,
             ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES},
             ${DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS} as SDO,
+            ${DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS},
+            ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_LINKS},
             isOpen,
             relatedTo,
             trainingResources,

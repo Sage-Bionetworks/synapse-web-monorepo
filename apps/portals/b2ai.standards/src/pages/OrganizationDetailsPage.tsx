@@ -91,12 +91,27 @@ function OrgHeaderCard({ id }) {
   )
 }
 
+export const linkedOrgCardConfiguration: CardConfiguration = {
+  type: SynapseConstants.GENERIC_CARD,
+  genericCardSchema: {
+    type: SynapseConstants.ORGANIZATION,
+    title: ORG_TABLE_COLUMN_NAMES.NAME,
+    // subTitle: 'standardName',
+    description: ORG_TABLE_COLUMN_NAMES.DESCRIPTION,
+    link: 'orgPageLink',
+    secondaryLabels: [
+      DATASET_DENORMALIZED_COLUMN_NAMES.DOCUMENTATION_URL,
+      DATASET_DENORMALIZED_COLUMN_NAMES.TOPICS,
+      DATASET_DENORMALIZED_COLUMN_NAMES.SUBSTRATES,
+    ],
+    // labelLinkConfig: {}
+  },
+}
 export const linkedDataSetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: {
     type: SynapseConstants.DATASET,
     title: DATASET_DENORMALIZED_COLUMN_NAMES.NAME,
-    // subTitle: 'standardName',
     description: DATASET_DENORMALIZED_COLUMN_NAMES.DESCRIPTION,
     link: DATASET_DENORMALIZED_COLUMN_NAMES.DATASHEET_URL,
     secondaryLabels: [
@@ -111,24 +126,41 @@ export const linkedDataSetCardConfiguration: CardConfiguration = {
 export const organizationDetailsPageContent: DetailsPageContentType = [
   {
     id: 'subclassOf',
-    title: 'Subclass Of',
+    title: 'Parent Organization',
     element: (
       <DetailsPageContextConsumer
         columnName={ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF}
       >
         {({ value }) => {
-          if (Array.isArray(value) && value.length) {
-            return (
-              <>
-                {
-                  value.join(', ')
-                  // value.map(subclassOfId => <OrgHeaderCard key={subclassOfId} id={subclassOfId}/>)
-                }
-              </>
-            )
-          } else {
-            return typeof value // it's a string, but should be a StringList
-          }
+          return (
+            <CardContainerLogic
+              cardConfiguration={linkedOrgCardConfiguration}
+              sql={organizationDetailsPageSQL}
+              // need a dummy value for search to properly exclude null values and an empty string doesn't work
+              searchParams={{ [ORG_TABLE_COLUMN_NAMES.ID]: value ?? 'notreal' }}
+            />
+          )
+        }}
+      </DetailsPageContextConsumer>
+    ),
+  },
+  {
+    id: 'hasSubclass',
+    title: 'Child Organization',
+    element: (
+      <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
+        {({ value }) => {
+          return (
+            <CardContainerLogic
+              cardConfiguration={linkedOrgCardConfiguration}
+              sql={organizationDetailsPageSQL}
+              // need a dummy value for search to properly exclude null values and an empty string doesn't work
+              searchParams={{
+                [ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF]: value ?? 'notreal',
+              }}
+              sqlOperator={ColumnMultiValueFunction.HAS}
+            />
+          )
         }}
       </DetailsPageContextConsumer>
     ),
@@ -156,7 +188,7 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
   },
   {
     id: 'relatedStandards',
-    title: 'Related Standards',
+    title: 'Standards relevant to this organization',
     element: (
       <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
         {({ value }) => (
@@ -201,6 +233,52 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
     ),
   },
   {
+    id: 'responsibleForStandards',
+    title: 'Standards this organization is responsible for',
+    element: (
+      <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
+        {({ value }) => (
+          <StandaloneQueryWrapper
+            rgbIndex={standardsRgbIndex}
+            sql={standardsSql}
+            searchParams={{
+              [DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION]: value,
+            }}
+            sqlOperator={ColumnMultiValueFunction.HAS}
+            columnAliases={columnAliases}
+            tableConfiguration={{
+              showDownloadColumn: false,
+              columnLinks: standardsColumnLinks,
+            }}
+            // facetsToPlot={['topic', DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES]}
+            // initialPlotType={'BAR'}
+            searchConfiguration={{
+              ftsConfig: standardsFtsConfig,
+            }}
+            shouldDeepLink={false}
+            defaultShowPlots={false}
+            hideQueryCount={true}
+            hideDownload={true}
+            availableFacets={[]}
+            /*
+                      showColumnSelection={true}
+                      // visibleColumnCount={10}
+                      isRowSelectionVisible={true}
+                      tableConfiguration={{
+                        showAccessColumn: true,
+                        showDownloadColumn: true,
+                      }}
+                      lockedColumn={{
+                        columnName: DATA_TABLE_COLUMN_NAMES.STUDY,
+                        value: entityHeader.name,
+                      }}
+                      */
+          />
+        )}
+      </DetailsPageContextConsumer>
+    ),
+  },
+  {
     id: 'd4d',
     title: 'DataSheet for DataSet',
     element: (
@@ -216,6 +294,7 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
 export default function OrganizationDetailsPage() {
   const { id } = useGetPortalComponentSearchParams()
 
+  console.log(organizationDetailsPageSQL)
   if (!id) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
   }

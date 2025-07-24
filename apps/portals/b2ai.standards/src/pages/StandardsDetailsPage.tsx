@@ -21,6 +21,8 @@ import {
   DST_TABLE_COLUMN_NAMES,
   standardsDetailsPageSQL,
 } from '@/config/resources'
+import { standardsColumnLinks } from '@/config/synapseConfigs/standards'
+import { linkedOrgCardConfiguration } from '@/pages/OrganizationDetailsPage'
 
 export const standardsCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.STANDARD_DATA_MODEL,
@@ -28,7 +30,15 @@ export const standardsCardSchema: TableToGenericCardMapping = {
   subTitle: 'standardName',
   description: 'description',
   link: 'url',
-  secondaryLabels: ['SDO', 'category', 'collections', 'topic', 'dataTypes'],
+  secondaryLabels: [
+    'category',
+    'collections',
+    'topic',
+    'dataTypes',
+    // DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION,
+    // DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS,
+    // DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
+  ],
 }
 
 export const linkedStandardCardConfiguration: CardConfiguration = {
@@ -62,16 +72,17 @@ export const standardDetailsPageContent: DetailsPageContentType = [
                 headers={context.rowSet?.headers ?? []}
                 displayedColumns={[
                   'standardName',
-                  'SDO',
-                  DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
+                  DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS,
+                  DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_LINKS,
                   'isOpen',
                   'registration',
                 ]}
                 columnAliases={columnAliases}
+                columnLinks={standardsColumnLinks}
               />
             )
           } else {
-            return <SkeletonTable numRows={6} numCols={1} />
+            return <SkeletonTable numRows={8} numCols={1} />
           }
         }}
       </DetailsPageContextConsumer>
@@ -148,6 +159,7 @@ export default function StandardsDetailsPage() {
               text: 'View Standard on External Website',
               link: 'url',
             },
+            labelLinkConfig: standardsColumnLinks,
           }}
         />
       }
