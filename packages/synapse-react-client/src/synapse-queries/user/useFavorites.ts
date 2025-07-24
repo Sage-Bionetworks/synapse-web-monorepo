@@ -111,7 +111,7 @@ export function useGetFavorites(
 
   // Fetch all pages
   useEffect(() => {
-    if (!hasNextPage || !isSuccess) return
+    if (!hasNextPage || isFetchingNextPage || !isSuccess) return
 
     fetchNextPage()
   }, [hasNextPage, fetchNextPage, isSuccess])
