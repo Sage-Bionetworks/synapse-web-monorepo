@@ -14,7 +14,6 @@ import {
   UseInfiniteQueryOptions,
   useMutation,
   UseMutationOptions,
-  useQuery,
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
@@ -22,23 +21,12 @@ import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 import { useEffect, useMemo } from 'react'
 
 export function useIsFavorite(entityId: string) {
-  // Get all pages of favorities to check if the entity is a favorite
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useGetFavoritesInfinite()
-
-  const allFavorites = data?.pages.flatMap(page => page.results) ?? []
-  const isFavorite = allFavorites.some(fav => fav.id === entityId)
-
-  useEffect(() => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
-    }
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
-
-  return {
-    isFavorite,
-    isLoading: isLoading || isFetchingNextPage,
-  }
+  // Gets all pages of favorities to check if the entity is a favorite
+  const { data: allFavorites, isLoading } = useGetFavorites()
+  const isFavorite = allFavorites?.results?.some(
+    favorite => favorite.id === entityId,
+  )
+  return { isFavorite, isLoading }
 }
 
 export function useAddFavorite(
