@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { useCreateGridSession } from './useCreateGridSession'
 import { parseQueryInput } from './DataGridUtils'
 import {
@@ -8,7 +8,10 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { SynapseClient, TableQuery } from '@sage-bionetworks/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { useDeleteGridSession } from '../../synapse-queries/useGridSession'
+import {
+  useDeleteGridSession,
+  useGetGridSessionsInfinite,
+} from '../../synapse-queries/useGridSession'
 import { displayToast } from '../ToastMessage/ToastMessage'
 
 export interface StartGridSessionProps {
@@ -29,7 +32,7 @@ export const StartGridSession = ({
   const [replicaId, setReplicaId] = useState<number | null>(null)
   const [presignedUrl, setPresignedUrl] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
-  const [availableSessions, setAvailableSessions] = useState<GridSession[]>([])
+  //const [availableSessions, setAvailableSessions] = useState<GridSession[]>([])
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -50,47 +53,53 @@ export const StartGridSession = ({
     },
   })
 
-  const getSessionList = async (
-    nextPageToken?: string,
-    accumulated: GridSession[] = [],
-  ) => {
-    // Fetch all available sessions, handling pagination recursively
-    const response =
-      await synapseClient.gridServicesClient.postRepoV1GridSessionList({
-        ...(nextPageToken
-          ? { listGridSessionsRequest: { nextPageToken: nextPageToken } }
-          : { listGridSessionsRequest: {} }),
-      })
-    const sessionIds =
-      response.page?.map(session => ({
-        sessionId: session.sessionId,
-        sourceEntityId: session.sourceEntityId,
-      })) || []
-    const allSessions = [...accumulated, ...sessionIds]
-    if (response.nextPageToken) {
-      return getSessionList(response.nextPageToken, allSessions)
-    }
-    return allSessions
-    // try {
-    //   const sessions = await synapseClient.gridServicesClient.postRepoV1GridSessionList()
-    //   return sessions.gridSessions.map(session => session.sessionId)
-    // } catch (error) {
-    //   console.error('Failed to fetch session list:', error)
-    //   return []
-    // }
-  }
+  const { data, hasNextPage, fetchNextPage } = useGetGridSessionsInfinite()
+  const availableSessions = useMemo(
+    () => data?.pages.flatMap(page => page.page || []) || [],
+    [data],
+  )
 
-  useEffect(() => {
-    // Fetch available sessions on component mount
-    const fetchSessions = async () => {
-      const sessions = await getSessionList()
-      setAvailableSessions(sessions)
-      console.log('Available sessions:', sessions)
-    }
-    fetchSessions()
-    // Simulate fetching available sessions
-    //setAvailableSessions(['session-123', 'session-456', 'session-789'])
-  }, [])
+  // const getSessionList = async (
+  //   nextPageToken?: string,
+  //   accumulated: GridSession[] = [],
+  // ) => {
+  //   // Fetch all available sessions, handling pagination recursively
+  //   const response =
+  //     await synapseClient.gridServicesClient.postRepoV1GridSessionList({
+  //       ...(nextPageToken
+  //         ? { listGridSessionsRequest: { nextPageToken: nextPageToken } }
+  //         : { listGridSessionsRequest: {} }),
+  //     })
+  //   const sessionIds =
+  //     response.page?.map(session => ({
+  //       sessionId: session.sessionId,
+  //       sourceEntityId: session.sourceEntityId,
+  //     })) || []
+  //   const allSessions = [...accumulated, ...sessionIds]
+  //   if (response.nextPageToken) {
+  //     return getSessionList(response.nextPageToken, allSessions)
+  //   }
+  //   return allSessions
+  //   // try {
+  //   //   const sessions = await synapseClient.gridServicesClient.postRepoV1GridSessionList()
+  //   //   return sessions.gridSessions.map(session => session.sessionId)
+  //   // } catch (error) {
+  //   //   console.error('Failed to fetch session list:', error)
+  //   //   return []
+  //   // }
+  // }
+
+  // useEffect(() => {
+  //   // Fetch available sessions on component mount
+  //   const fetchSessions = async () => {
+  //     const sessions = await getSessionList()
+  //     setAvailableSessions(sessions)
+  //     console.log('Available sessions:', sessions)
+  //   }
+  //   fetchSessions()
+  //   // Simulate fetching available sessions
+  //   //setAvailableSessions(['session-123', 'session-456', 'session-789'])
+  // }, [])
 
   const startGridSession = useCreateGridSession()
 
@@ -265,9 +274,9 @@ export const StartGridSession = ({
                   onMouseDown={e => {
                     e.stopPropagation()
                     deleteSession(session.sessionId!)
-                    setAvailableSessions(sessions =>
-                      sessions.filter(s => s !== session),
-                    )
+                    //setAvailableSessions(sessions =>
+                    //</li>  sessions.filter(s => s !== session),
+                    //)
                   }}
                 >
                   🗑️
