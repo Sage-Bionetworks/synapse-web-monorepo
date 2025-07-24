@@ -16,13 +16,6 @@ type SynapseFileEntityPagePropertiesProps = {
   versionNumber: number | undefined
 }
 
-type FilePropertyValueProps = {
-  fileEntity: FileEntity
-  fileHandle: EntityBundle['fileHandles'][number] | undefined
-  keyName: string
-  storageLocationName?: string
-}
-
 type FilePropertyRowProps = {
   keyName: string
   label: string
