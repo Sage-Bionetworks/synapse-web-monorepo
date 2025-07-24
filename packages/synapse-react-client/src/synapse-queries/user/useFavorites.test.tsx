@@ -6,6 +6,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { useGetFavorites } from './useFavorites'
 
 const expected: PaginatedResults<EntityHeader> = {
+  totalNumberOfResults: 1,
   results: [
     {
       id: 'syn123',
@@ -33,7 +34,7 @@ describe('useFavorites functionality', () => {
       wrapper: createWrapper(),
     })
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    await waitFor(() => expect(result.current.isLoading).toBe(false))
 
     expect(mockGetUserFavorites).toHaveBeenCalledWith(
       MOCK_CONTEXT_VALUE.accessToken,

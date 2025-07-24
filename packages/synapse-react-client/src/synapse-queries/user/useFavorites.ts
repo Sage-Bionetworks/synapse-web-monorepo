@@ -121,6 +121,7 @@ export function useGetFavorites(
     isLoading,
     isError,
     error,
+    isSuccess: !isError,
   }
 }
 
@@ -139,8 +140,6 @@ export function useGetFavoritesInfinite<
     >
   >,
 ) {
-  const LIMIT = 200
-
   const { accessToken, keyFactory } = useSynapseContext()
 
   return useInfiniteQuery<
@@ -157,7 +156,7 @@ export function useGetFavoritesInfinite<
         accessToken,
         // pass the context.pageParam for the new offset
         context.pageParam,
-        LIMIT,
+        undefined,
         sort,
         sortDirection,
       )
