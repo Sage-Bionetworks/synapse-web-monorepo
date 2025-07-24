@@ -20,12 +20,6 @@ function NavUserLink({ userProfile }: NavUserLinkProps) {
         link="javascript:void(0)"
       />
       <ExpandMoreIcon className="user-expand" />
-      <div className="mb-user-extra">
-        <div className="user-fullname">
-          {userProfile?.firstName} {userProfile?.lastName}
-        </div>
-        <div className="user-account">View Account</div>
-      </div>
     </>
   )
 }

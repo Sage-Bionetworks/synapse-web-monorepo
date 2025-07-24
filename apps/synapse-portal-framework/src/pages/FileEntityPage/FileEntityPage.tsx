@@ -9,6 +9,7 @@ import HeaderCard from 'synapse-react-client/components/HeaderCard'
 import CitationPopover from 'synapse-react-client/components/CitationPopover'
 import { DetailsPageContent } from '../../components/DetailsPage/DetailsPageContentLayout'
 import SynapseFileEntityLinkCard from './SynapseFileEntityLinkCard'
+import SynapseFileEntityPageProperties from './SynapseFileEntityPageProperties'
 
 function FileEntityPage() {
   const searchParams = useGetPortalComponentSearchParams()
@@ -24,10 +25,21 @@ function FileEntityPage() {
       includeEntity: true,
       includeRootWikiId: true,
       includeDOIAssociation: true,
+      includeFileHandles: true,
     },
   )
 
   const fileEntityPageSections = [
+    {
+      id: 'properties',
+      title: 'Properties',
+      element: (
+        <SynapseFileEntityPageProperties
+          entityId={entityId}
+          versionNumber={version}
+        />
+      ),
+    },
     {
       element: <SynapseFileEntityLinkCard synId={entityId} version={version} />,
     },
