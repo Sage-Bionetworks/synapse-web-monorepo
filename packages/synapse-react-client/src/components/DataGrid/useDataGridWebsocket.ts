@@ -10,9 +10,10 @@ export function useDataGridWebSocket() {
 
   const { modelRef, modelSnapshot, getModel, setModel } = useCRDTState()
 
-  const createWebsocket = useCallback((url: string) => {
+  const createWebsocket = useCallback((replicaId: number, url: string) => {
     if (url && !websocketInstance) {
       const webSocketHandler = new DataGridWebSocket({
+        replicaId: replicaId,
         url,
         onGridReady: () => {
           setIsGridReady(true)

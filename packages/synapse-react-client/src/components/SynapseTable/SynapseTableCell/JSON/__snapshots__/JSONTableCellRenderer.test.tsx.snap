@@ -263,7 +263,7 @@ exports[`JSONTableCellRenderer > handles Object of primitives case 1`] = `
 exports[`JSONTableCellRenderer > handles complex array case 1`] = `
 <div>
   <span
-    class="MuiTypography-root MuiTypography-smallText1 css-1iri0n7-MuiTypography-root"
+    class="MuiTypography-root MuiTypography-smallText1 css-rrx1sp-MuiTypography-root"
   >
     Expand
      all
@@ -348,7 +348,7 @@ exports[`JSONTableCellRenderer > handles complex array case 1`] = `
 exports[`JSONTableCellRenderer > handles complex object case 1`] = `
 <div>
   <span
-    class="MuiTypography-root MuiTypography-smallText1 css-1iri0n7-MuiTypography-root"
+    class="MuiTypography-root MuiTypography-smallText1 css-rrx1sp-MuiTypography-root"
   >
     Expand
      all
