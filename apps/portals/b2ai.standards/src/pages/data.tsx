@@ -1,4 +1,8 @@
-import dataQueryWrapperPlotNavProps from '@/config/synapseConfigs/data'
+import {
+  dataQueryWrapperPlotNavProps,
+  /* part of PR #1865, not ready yet
+  dataSetsQueryWrapperPlotNavProps, */
+} from '@/config/synapseConfigs/data'
 import { Box } from '@mui/material'
 import { QueryWrapperPlotNav } from 'synapse-react-client'
 

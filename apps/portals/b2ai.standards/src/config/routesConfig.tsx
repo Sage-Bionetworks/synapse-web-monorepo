@@ -1,11 +1,6 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
-import {
-  dataQueryWrapperPlotNavProps,
-  /* part of PR #1865, not ready yet
-  dataSetsQueryWrapperPlotNavProps, */
-} from './synapseConfigs/data'
 import { FullWidthAlert } from 'synapse-react-client'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 
