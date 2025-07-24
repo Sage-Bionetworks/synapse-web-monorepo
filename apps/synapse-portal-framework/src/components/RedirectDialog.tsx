@@ -173,13 +173,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
   }
 
   // Show loading state while fetching entity for FileEntity redirect
-  if (
-    redirectUrl &&
-    entityId &&
-    isLoading &&
-    isFeatureFlagEnabled &&
-    location.pathname !== '/FileEntity'
-  ) {
+  if (redirectUrl && entityId && isLoading && isFeatureFlagEnabled) {
     return (
       <Dialog
         open={true}
