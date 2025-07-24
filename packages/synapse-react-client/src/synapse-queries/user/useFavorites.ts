@@ -19,15 +19,26 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
+import { useEffect, useMemo } from 'react'
 
 export function useIsFavorite(entityId: string) {
-  // TODO: Handle pagination - the default limit is 200
-  // It would probably make more sense to add a backend service to check if an entity ID is favorited
-  const { data: allFavorites, isLoading } = useGetFavorites()
-  const isFavorite = allFavorites?.results?.some(
-    favorite => favorite.id === entityId,
-  )
-  return { isFavorite, isLoading }
+  // Get all pages of favorities to check if the entity is a favorite
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useGetFavoritesInfinite()
+
+  const allFavorites = data?.pages.flatMap(page => page.results) ?? []
+  const isFavorite = allFavorites.some(fav => fav.id === entityId)
+
+  useEffect(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+
+  return {
+    isFavorite,
+    isLoading: isLoading || isFetchingNextPage,
+  }
 }
 
 export function useAddFavorite(
@@ -85,20 +96,44 @@ export function useGetFavorites(
     UseQueryOptions<PaginatedResults<EntityHeader>, SynapseClientError>
   >,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
-
-  return useQuery({
-    ...options,
-    queryKey: keyFactory.getUserFavoritesQueryKey(sort, sortDirection),
-    queryFn: () =>
-      SynapseClient.getUserFavorites(
-        accessToken,
-        undefined,
-        undefined,
-        sort,
-        sortDirection,
-      ),
+  const infiniteQuery = useGetFavoritesInfinite(sort, sortDirection, {
+    enabled: options?.enabled !== false,
   })
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+    isError,
+    error,
+    isSuccess,
+  } = infiniteQuery
+
+  // Flatten all pages into a single result
+  const allData: PaginatedResults<EntityHeader> | undefined = useMemo(() => {
+    if (!data?.pages) return undefined
+
+    const allResults = data.pages.flatMap(page => page.results)
+    return {
+      results: allResults,
+      totalNumberOfResults: allResults.length,
+    }
+  }, [data])
+
+  // Fetch all pages
+  useEffect(() => {
+    if (!hasNextPage || !isSuccess) return
+
+    fetchNextPage()
+  }, [hasNextPage, fetchNextPage, isSuccess])
+
+  return {
+    data: allData,
+    isLoading,
+    isError,
+    error,
+  }
 }
 
 export function useGetFavoritesInfinite<
@@ -116,7 +151,7 @@ export function useGetFavoritesInfinite<
     >
   >,
 ) {
-  const LIMIT = 10
+  const LIMIT = 200
 
   const { accessToken, keyFactory } = useSynapseContext()
 
