@@ -3,10 +3,13 @@ import {
   useGetAccessRequirementsForTeam,
   useSortAccessRequirementIdsByCompletion,
 } from '@/synapse-queries'
-import { useSynapseContext } from '@/utils'
+import {
+  storeRedirectURLForOneSageLoginAndGotoURL,
+  useSynapseContext,
+} from '@/utils'
 import { StyledComponent } from '@emotion/styled'
 import {
-  Box,
+  Container,
   Button,
   Dialog,
   DialogActions,
@@ -29,7 +32,6 @@ import {
 import noop from 'lodash-es/noop'
 import groupBy from 'lodash-es/groupBy'
 import { ReactNode, useMemo, useState } from 'react'
-import StandaloneLoginForm from '../Authentication/StandaloneLoginForm'
 import { DialogBaseTitle } from '../DialogBase'
 import { EntityLink } from '../EntityLink'
 import IconSvg from '../IconSvg/IconSvg'
@@ -44,6 +46,7 @@ import AuthenticatedRequirement from './RequirementItem/AuthenticatedRequirement
 import CertificationRequirement from './RequirementItem/CertificationRequirement'
 import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnabledRequirement'
 import ValidationRequirement from './RequirementItem/ValidationRequirement'
+import { useOneSageURL } from '@/utils/hooks'
 
 export type AccessRequirementListProps = {
   /* if provided, will show this instead of the entity information */
@@ -188,6 +191,7 @@ export default function AccessRequirementList(
   const [requestDataStep, setRequestDataStep] = useState<RequestDataStep>(
     RequestDataStep.SHOW_ALL_ARS,
   )
+  const oneSageURL = useOneSageURL()
   const [managedACTAccessRequirement, setManagedACTAccessRequirement] =
     useState<ManagedACTAccessRequirement>()
   const [researchProjectId, setResearchProjectId] = useState<string>('')
@@ -389,19 +393,10 @@ export default function AccessRequirementList(
       )
       break
     case RequestDataStep.PROMPT_LOGIN:
+      // Send to OneSage login page
+      storeRedirectURLForOneSageLoginAndGotoURL(oneSageURL.toString())
       dialogTitle = 'Please Log In'
-      renderContent = (
-        <>
-          <DialogBaseTitle title={dialogTitle} onCancel={onHide} />
-          <DialogContent className={'AccessRequirementList login-modal '}>
-            <StandaloneLoginForm
-              sessionCallback={() => {
-                window.location.reload()
-              }}
-            />
-          </DialogContent>
-        </>
-      )
+      renderContent = <></>
       break
     case RequestDataStep.COMPLETE:
       renderContent = <RequestDataAccessSuccess onHide={onHide} />
@@ -410,7 +405,6 @@ export default function AccessRequirementList(
     default:
       renderContent = (
         <>
-          <DialogBaseTitle title={dialogTitle} onCancel={onHide} />
           <DialogContent>
             <DialogSubsectionHeader variant={'h4'} sx={{ mt: 0 }}>
               What is this request for?
@@ -450,9 +444,13 @@ export default function AccessRequirementList(
             {customDialogActions ? (
               customDialogActions
             ) : (
-              <Button variant="contained" onClick={onHide}>
-                Close
-              </Button>
+              <>
+                {renderAsModal && (
+                  <Button variant="contained" onClick={onHide}>
+                    Close
+                  </Button>
+                )}
+              </>
             )}
           </DialogActions>
         </>
@@ -462,10 +460,18 @@ export default function AccessRequirementList(
   if (renderAsModal) {
     return (
       <Dialog maxWidth={dialogWidth} fullWidth open={true} onClose={onHide}>
+        <DialogBaseTitle title={dialogTitle} onCancel={onHide} />
         {renderContent}
       </Dialog>
     )
   }
 
-  return <Box>{renderContent}</Box>
+  return (
+    <Container maxWidth="md">
+      <Typography variant="h5" sx={{ mb: 2 }}>
+        {dialogTitle}
+      </Typography>
+      {renderContent}
+    </Container>
+  )
 }
