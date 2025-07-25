@@ -405,6 +405,13 @@ export default function AccessRequirementList(
     default:
       renderContent = (
         <>
+          {renderAsModal ? (
+            <DialogBaseTitle title={dialogTitle} onCancel={onHide} />
+          ) : (
+            <Typography variant="h5" sx={{ mb: 2 }}>
+              {dialogTitle}
+            </Typography>
+          )}
           <DialogContent>
             <DialogSubsectionHeader variant={'h4'} sx={{ mt: 0 }}>
               What is this request for?
@@ -460,18 +467,10 @@ export default function AccessRequirementList(
   if (renderAsModal) {
     return (
       <Dialog maxWidth={dialogWidth} fullWidth open={true} onClose={onHide}>
-        <DialogBaseTitle title={dialogTitle} onCancel={onHide} />
         {renderContent}
       </Dialog>
     )
   }
 
-  return (
-    <Container maxWidth="md">
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        {dialogTitle}
-      </Typography>
-      {renderContent}
-    </Container>
-  )
+  return <Container maxWidth="md">{renderContent}</Container>
 }
