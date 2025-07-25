@@ -440,19 +440,6 @@ export default function AccessRequirementList(
               )
             })}
           </DialogContent>
-          <DialogActions>
-            {customDialogActions ? (
-              customDialogActions
-            ) : (
-              <>
-                {renderAsModal && (
-                  <Button variant="contained" onClick={onHide}>
-                    Close
-                  </Button>
-                )}
-              </>
-            )}
-          </DialogActions>
         </>
       )
   }
@@ -462,6 +449,15 @@ export default function AccessRequirementList(
       <Dialog maxWidth={dialogWidth} fullWidth open={true} onClose={onHide}>
         <DialogBaseTitle title={dialogTitle} onCancel={onHide} />
         {renderContent}
+        <DialogActions>
+          {customDialogActions ? (
+            customDialogActions
+          ) : (
+            <Button variant="contained" onClick={onHide}>
+              Close
+            </Button>
+          )}
+        </DialogActions>
       </Dialog>
     )
   }
