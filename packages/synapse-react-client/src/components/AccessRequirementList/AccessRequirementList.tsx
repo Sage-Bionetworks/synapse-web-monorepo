@@ -9,7 +9,6 @@ import {
 } from '@/utils'
 import { StyledComponent } from '@emotion/styled'
 import {
-  Container,
   Button,
   Dialog,
   DialogActions,
@@ -472,5 +471,5 @@ export default function AccessRequirementList(
     )
   }
 
-  return <Container maxWidth="md">{renderContent}</Container>
+  return <>{renderContent}</>
 }
