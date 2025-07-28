@@ -123,14 +123,7 @@ const HeaderCard = forwardRef(function HeaderCard(
         <div className="row">
           <div className="col-md-offset-1 col-md-10">
             <div className="SRC-portalCardMain">
-              {/* Commenting out to fix targeted styles for icon - see PORTALS-3707
-              <Box
-                sx={{
-                  ...(doiUri && { alignSelf: 'center', marginRight: '5px' }),
-                }}
-              > */}
               {!hideIcon && icon}
-              {/* </Box> */}
               <Box
                 sx={{
                   width: '100%',
