@@ -1,0 +1,19 @@
+import{E as h}from"./ErrorChip-B8ZspEa6.js";import{S as i}from"./fetchWithExponentialTimeout-CXmnpl-T.js";import"./jsx-runtime-D_zvdyIk.js";import"./useFiles-CtgEiROS.js";import"./VerificationSubmission-OWkqLMYZ.js";import"./SynapseConstants-bBupfCM8.js";import"./OrientationBanner-C02Ezp0s.js";import"./index-dHbq5h8e.js";import"./index-KaSV3nxb.js";import"./iframe-D455rrf1.js";import"./spreadSx-CwcO6WA9.js";import"./react-KO81pmn7.js";import"./FullWidthAlert-C14WkgZk.js";import"./Alert-BDuCqUUc.js";import"./createTheme-evDlL3tt.js";import"./DefaultPropsProvider-DrNBcXXQ.js";import"./useSlot-yBXRP7_D.js";import"./useForkRef-B8skBpaV.js";import"./createSimplePaletteValueFilter-B1culQvw.js";import"./createSvgIcon-6DVaclPw.js";import"./Close-By82YC8m.js";import"./IconButton-CWqZDo4J.js";import"./useTimeout-lz-uLYOA.js";import"./ButtonBase-DRv0hiiu.js";import"./isFocusVisible-B8k4qzLc.js";import"./CircularProgress-48ZpGVKP.js";import"./Paper-dEu7GI1r.js";import"./useTheme-B4rv5YxA.js";import"./useTheme-BCMwdMbd.js";import"./Stack-PMu1NGUe.js";import"./extendSxProp-DwLfw96r.js";import"./getThemeProps-C-O7WJp_.js";import"./Box-CRbhVnlV.js";import"./AlertTitle-CZoD2w5Z.js";import"./Typography-Bk-AszFU.js";import"./index-BvVG-plJ.js";import"./ClickAwayListener-CTEu3fxQ.js";import"./getReactElementRef-wDPDJbBg.js";import"./index-9Qpkx4-D.js";import"./index-BtQspmhu.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-DOHJ0UfU.js";import"./Tooltip-lzdGbRE6.js";import"./index-OfrLzeXC.js";import"./useControlled-DmzsjcsV.js";import"./Popper-C3MzpXRp.js";import"./Button-B6yRBS2t.js";import"./StringUtils-BYEtqtR3.js";import"./useQuery-BMLJoLVv.js";import"./QueryClientProvider-Cm7OSrr4.js";import"./Link-BVHVpgxs.js";import"./Collapse-DvtbyHkB.js";import"./_baseUniq-DUdi9Ryb.js";import"./_Uint8Array-CH9yNi5j.js";import"./isArray-BFWzysCy.js";import"./_getTag-Lw4aRybk.js";import"./isEqual-BXcpFp8L.js";import"./merge-DRr0c7e9.js";import"./_initCloneObject-CBz3WljI.js";import"./identity-DKeuBCMA.js";import"./tinycolor-Begke6kS.js";import"./Fade-SH6uo9Lr.js";import"./inputBaseClasses-8PUzMCEX.js";import"./calculateFriendlyFileSize-CoKK4VEv.js";import"./CheckCircleTwoTone-DYr3bfPY.js";import"./InfoTwoTone-CwOnlRqp.js";import"./useMutation-C2Mhl8Cc.js";import"./dayjs.min-j-8skdhP.js";import"./chunk-AYJ5UCUI-CkzzKRIT.js";import"./cloneDeep-CkMf9K4t.js";import"./Skeleton-DO7qEF74.js";import"./Chip-CYFDB8se.js";import"./Avatar-nQccZaSV.js";import"./ErrorOutlined-B35EW04h.js";const qr={title:"Components/ErrorChip",component:h,argTypes:{isAuthenticated:{control:{type:"boolean"}}},args:{isAuthenticated:!0}},g=new i(401,"You must be signed in to access this resource.",""),r={args:{chipText:"syn1234567",error:g,isAuthenticated:!1}},A=new i(403,"You do not have READ access on this entity.",""),t={args:{chipText:"syn1234567",error:A,isAuthenticated:!0}},E=new i(404,"The entity does not exist.",""),o={args:{chipText:"syn1234567",error:E,isAuthenticated:!0}};var e,p,m;r.parameters={...r.parameters,docs:{...(e=r.parameters)==null?void 0:e.docs,source:{originalSource:`{
+  args: {
+    chipText: 'syn1234567',
+    error: NotSignedInError,
+    isAuthenticated: false
+  }
+}`,...(m=(p=r.parameters)==null?void 0:p.docs)==null?void 0:m.source}}};var s,n,a;t.parameters={...t.parameters,docs:{...(s=t.parameters)==null?void 0:s.docs,source:{originalSource:`{
+  args: {
+    chipText: 'syn1234567',
+    error: NoAccessError,
+    isAuthenticated: true
+  }
+}`,...(a=(n=t.parameters)==null?void 0:n.docs)==null?void 0:a.source}}};var c,d,u;o.parameters={...o.parameters,docs:{...(c=o.parameters)==null?void 0:c.docs,source:{originalSource:`{
+  args: {
+    chipText: 'syn1234567',
+    error: NotFoundError,
+    isAuthenticated: true
+  }
+}`,...(u=(d=o.parameters)==null?void 0:d.docs)==null?void 0:u.source}}};const zr=["NotSignedIn","NoAccess","NotFound"];export{t as NoAccess,o as NotFound,r as NotSignedIn,zr as __namedExportsOrder,qr as default};
