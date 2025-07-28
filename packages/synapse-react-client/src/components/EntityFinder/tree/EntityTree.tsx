@@ -185,13 +185,8 @@ export function EntityTree(props: EntityTreeProps) {
     'NAME',
     'ASC',
     {
-      select: data => ({
-        // TODO: https://sagebionetworks.jira.com/browse/PLFM-6652
-        ...data,
-        results: data.results.filter(eh =>
-          visibleTypes.includes(convertToEntityType(eh.type)),
-        ),
-      }),
+      select: data =>
+        data.filter(eh => visibleTypes.includes(convertToEntityType(eh.type))),
       // Don't refetch the projects. Updating the entity headers will drop all the children that VirtualizedTree has fetched
       refetchInterval: Infinity,
       throwOnError: true,
@@ -253,7 +248,7 @@ export function EntityTree(props: EntityTreeProps) {
         isLoading = isLoadingProjects
         break
       case FinderScope.FAVORITES: {
-        topLevelEntities = favorites?.results ?? []
+        topLevelEntities = favorites ?? []
         isLoading = isLoadingFavorites
         break
       }
@@ -269,7 +264,7 @@ export function EntityTree(props: EntityTreeProps) {
     }
     return { topLevelEntities, isLoading }
   }, [
-    favorites?.results,
+    favorites,
     isLoadingFavorites,
     isLoadingProjectHeader,
     isLoadingProjects,

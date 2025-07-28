@@ -1347,6 +1347,19 @@ export function getUserFavorites(
   )
 }
 
+export function getAllUserFavorites(
+  accessToken: string | undefined,
+  sort: FavoriteSortBy = 'NAME',
+  sortDirection: FavoriteSortDirection = 'ASC',
+) {
+  const limit = 200
+  return getAllOfPaginatedService(
+    (limit, offset) =>
+      getUserFavorites(accessToken, offset, limit, sort, sortDirection),
+    limit,
+  )
+}
+
 /**
  * Add an Entity as a Favorite of the caller.
  * http://rest-docs.synapse.org/rest/POST/favorite/id.html
