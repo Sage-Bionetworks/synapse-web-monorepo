@@ -13,7 +13,7 @@ import {
 } from 'synapse-react-client/synapse-queries'
 import { isFileEntity } from 'synapse-react-client'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 
 export type RedirectDialogProps = {
@@ -92,6 +92,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
   const { entityId, versionNumber } =
     parseSynIdFromRedirectUrl(redirectUrl) ?? {}
   const { data: entity, isLoading } = useGetEntity(entityId)
+  const location = useLocation()
 
   const isRedirectTargetFileEntity = entity ? isFileEntity(entity) : false
 
@@ -106,9 +107,15 @@ const RedirectDialog = (props: RedirectDialogProps) => {
       !isLoading &&
       isFeatureFlagEnabled
     ) {
+      const currentUrl = `${location.pathname}${location.search}`
       const internalUrl = `/FileEntity?entityId=${entityId}${
         versionNumber ? `&version=${versionNumber}` : ''
       }`
+
+      if (currentUrl === internalUrl) {
+        return
+      }
+
       navigate(internalUrl)
       onCancelRedirect()
     }
@@ -121,6 +128,8 @@ const RedirectDialog = (props: RedirectDialogProps) => {
     navigate,
     onCancelRedirect,
     isLoading,
+    location.pathname,
+    location.search,
   ])
 
   useEffect(() => {

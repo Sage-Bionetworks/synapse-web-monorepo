@@ -21,12 +21,9 @@ import {
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 
 export function useIsFavorite(entityId: string) {
-  // TODO: Handle pagination - the default limit is 200
-  // It would probably make more sense to add a backend service to check if an entity ID is favorited
+  // Gets all pages of favorities to check if the entity is a favorite
   const { data: allFavorites, isLoading } = useGetFavorites()
-  const isFavorite = allFavorites?.results?.some(
-    favorite => favorite.id === entityId,
-  )
+  const isFavorite = allFavorites?.some(favorite => favorite.id === entityId)
   return { isFavorite, isLoading }
 }
 
@@ -81,9 +78,7 @@ export function useRemoveFavorite(
 export function useGetFavorites(
   sort: FavoriteSortBy = 'FAVORITED_ON',
   sortDirection: FavoriteSortDirection = 'DESC',
-  options?: Partial<
-    UseQueryOptions<PaginatedResults<EntityHeader>, SynapseClientError>
-  >,
+  options?: Partial<UseQueryOptions<EntityHeader[], SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
 
@@ -91,13 +86,7 @@ export function useGetFavorites(
     ...options,
     queryKey: keyFactory.getUserFavoritesQueryKey(sort, sortDirection),
     queryFn: () =>
-      SynapseClient.getUserFavorites(
-        accessToken,
-        undefined,
-        undefined,
-        sort,
-        sortDirection,
-      ),
+      SynapseClient.getAllUserFavorites(accessToken, sort, sortDirection),
   })
 }
 
@@ -116,8 +105,6 @@ export function useGetFavoritesInfinite<
     >
   >,
 ) {
-  const LIMIT = 10
-
   const { accessToken, keyFactory } = useSynapseContext()
 
   return useInfiniteQuery<
@@ -134,7 +121,7 @@ export function useGetFavoritesInfinite<
         accessToken,
         // pass the context.pageParam for the new offset
         context.pageParam,
-        LIMIT,
+        undefined,
         sort,
         sortDirection,
       )
