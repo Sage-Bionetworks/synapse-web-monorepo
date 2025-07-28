@@ -49,8 +49,7 @@ export const StartGridSession = ({
     [data],
   )
 
-  const startGridSession = useCreateGridSession()
-
+  const { mutateAsync: startGridSession } = useCreateGridSession()
   const { mutateAsync: createReplicaId } = useCreateGridReplica()
 
   const handleStartSession = async (input: string) => {
@@ -74,9 +73,7 @@ export const StartGridSession = ({
           console.log('Starting a new empty grid session.')
         }
 
-        const gridSessionResponse = await startGridSession.mutateAsync(
-          gridRequest,
-        )
+        const gridSessionResponse = await startGridSession(gridRequest)
         console.log('Grid session started:', gridSessionResponse)
         const newSessionId = gridSessionResponse.gridSession?.sessionId || ''
         onSessionChange?.(newSessionId)
