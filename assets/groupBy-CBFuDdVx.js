@@ -1,1 +1,0 @@
-import{b as t}from"./_initCloneObject-WZTc4sqW.js";import{c as p}from"./_createAggregator-M43tNZnn.js";var e=Object.prototype,s=e.hasOwnProperty,i=p(function(r,a,o){s.call(r,o)?r[o].push(a):t(r,o,[a])});export{i as g};
