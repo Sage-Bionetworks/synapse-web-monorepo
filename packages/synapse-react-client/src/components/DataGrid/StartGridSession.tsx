@@ -34,9 +34,9 @@ export const StartGridSession = ({
   const { mutate: deleteSession } = useDeleteGridSession({
     onSuccess: () => {
       displayToast('Successfully deleted grid session', 'success')
-      onSessionChange?.('')
-      onReplicaChange?.(null)
-      onPresignedUrlChange?.('')
+      onSessionChange('')
+      onReplicaChange(null)
+      onPresignedUrlChange('')
     },
     onError: error => {
       displayToast(error.reason, 'danger')
