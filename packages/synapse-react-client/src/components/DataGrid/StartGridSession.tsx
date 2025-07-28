@@ -10,6 +10,7 @@ import {
   useCreateGridReplica,
 } from '../../synapse-queries/useGridSession'
 import { displayToast } from '../ToastMessage/ToastMessage'
+import noop from 'lodash-es/noop'
 
 export interface StartGridSessionProps {
   onSessionChange?: (sessionId: string) => void
