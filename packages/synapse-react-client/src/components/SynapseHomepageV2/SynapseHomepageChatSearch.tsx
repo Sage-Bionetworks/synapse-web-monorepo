@@ -10,6 +10,7 @@ import {
 import { Color } from '@mui/material/styles'
 import { FormEventHandler, KeyboardEventHandler, useState } from 'react'
 import { getSearchToken } from '../SynapseNavDrawer/SynapseNavDrawer'
+import { parseSynId } from '@/utils/functions/RegularExpressions'
 
 export type SynapseHomepageChatSearchProps = {
   gotoPlace: (href: string) => void
@@ -33,7 +34,17 @@ export function SynapseHomepageChatSearch({
   const [mode, setMode] = useState(SearchMode.SEARCH)
   const executeSearch = () => {
     if (mode == SearchMode.SEARCH) {
-      gotoPlace(`/Search:${getSearchToken(searchValue.split(/[ ,]+/))}`)
+      const searchValueCleaned = searchValue.toLowerCase().trim()
+
+      // Check if the input is a valid Synapse ID with version
+      const parsedSynId = parseSynId(searchValueCleaned)
+      if (parsedSynId && parsedSynId.targetVersionNumber) {
+        const synIdWithVersion = `${parsedSynId.targetId}.${parsedSynId.targetVersionNumber}`
+        gotoPlace(`/Synapse:${synIdWithVersion}`)
+        return
+      }
+
+      gotoPlace(`/Search:${getSearchToken(searchValueCleaned.split(/[ ,]+/))}`)
     } else {
       gotoPlace(`/Chat:initialMessage=${encodeURIComponent(chatValue)}`)
     }
@@ -50,6 +61,7 @@ export function SynapseHomepageChatSearch({
       executeSearch()
     }
   }
+
   return (
     <Box component="form" onSubmit={handleSubmit}>
       <FormControl fullWidth sx={{ m: 1 }}>
