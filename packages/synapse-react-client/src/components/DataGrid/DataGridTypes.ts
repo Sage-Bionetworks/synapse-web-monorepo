@@ -13,7 +13,7 @@ const gridRowSchema = s.obj({
 })
 
 const gridSchema = s.obj({
-  doc_version: s.con('0.0.3'),
+  doc_version: s.con('0.1.0'),
   columnNames: s.vec(s.con('')),
   columnOrder: s.arr([s.con(0)]),
   rows: s.arr([gridRowSchema]),
