@@ -1,15 +1,13 @@
 import { useState, useRef, useMemo } from 'react'
 import { useCreateGridSession } from './useCreateGridSession'
 import { parseQueryInput } from './DataGridUtils'
-import {
-  CreateGridRequest,
-  PostRepoV1GridSessionSessionIdReplicaRequest,
-} from '@sage-bionetworks/synapse-client'
-import { SynapseClient, TableQuery } from '@sage-bionetworks/synapse-client'
+import { CreateGridRequest } from '@sage-bionetworks/synapse-client'
+import { TableQuery } from '@sage-bionetworks/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
   useDeleteGridSession,
   useGetGridSessionsInfinite,
+  useCreateGridReplica,
 } from '../../synapse-queries/useGridSession'
 import { displayToast } from '../ToastMessage/ToastMessage'
 
@@ -53,27 +51,8 @@ export const StartGridSession = ({
 
   const startGridSession = useCreateGridSession()
 
-  const createReplicaId = async (
-    synapseClient: SynapseClient,
-    sessionId: string,
-  ) => {
-    try {
-      console.log('Creating replica for session ID:', sessionId)
-      const replica =
-        await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdReplica(
-          {
-            sessionId,
-            createReplicaRequest: {
-              gridSessionId: sessionId,
-            },
-          } as PostRepoV1GridSessionSessionIdReplicaRequest,
-        )
-      return replica
-    } catch (error) {
-      console.error('Failed to create replica:', error)
-      return
-    }
-  }
+  const { mutateAsync: createReplicaId } = useCreateGridReplica()
+
   const handleStartSession = async (input: string) => {
     const parsedInput = parseQueryInput(input)
 
@@ -102,7 +81,7 @@ export const StartGridSession = ({
         const newSessionId = gridSessionResponse.gridSession?.sessionId || ''
         onSessionChange?.(newSessionId)
 
-        const replica = await createReplicaId(synapseClient, newSessionId)
+        const replica = await createReplicaId(newSessionId)
         console.log('Replica created:', replica)
         const newReplicaId = replica?.replica?.replicaId || null
         onReplicaChange?.(newReplicaId)
@@ -122,7 +101,7 @@ export const StartGridSession = ({
         console.log(`Joining existing session ID: ${parsedInput.input}`)
         onSessionChange?.(parsedInput.input)
 
-        const replica = await createReplicaId(synapseClient, parsedInput.input)
+        const replica = await createReplicaId(parsedInput.input)
         console.log('Replica created:', replica)
         const newReplicaId = replica?.replica?.replicaId || null
         onReplicaChange?.(newReplicaId)
