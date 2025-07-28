@@ -9,7 +9,39 @@ import {
   UseInfiniteQueryOptions,
   QueryKey,
 } from '@tanstack/react-query'
-import { ListGridSessionsResponse } from '@sage-bionetworks/synapse-client/generated/models/ListGridSessionsResponse'
+import {
+  ListGridSessionsResponse,
+  PostRepoV1GridSessionSessionIdReplicaRequest,
+  CreateReplicaResponse,
+} from '@sage-bionetworks/synapse-client'
+
+export function useCreateGridReplica(
+  options?: Partial<
+    UseMutationOptions<CreateReplicaResponse, SynapseClientError, string>
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { keyFactory, synapseClient } = useSynapseContext()
+
+  return useMutation<CreateReplicaResponse, SynapseClientError, string>({
+    ...options,
+    mutationFn: (sessionId: string) =>
+      synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdReplica({
+        sessionId,
+        createReplicaRequest: {
+          gridSessionId: sessionId,
+        },
+      } as PostRepoV1GridSessionSessionIdReplicaRequest),
+    onSuccess: async (replicaId, sessionId, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getGridSessionListKey(),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(replicaId, sessionId, ctx)
+      }
+    },
+  })
+}
 
 export function useDeleteGridSession(
   options?: Partial<UseMutationOptions<void, SynapseClientError, string>>,
