@@ -29,7 +29,7 @@ export const StartGridSession = ({
 
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const synapseClient = useSynapseContext().synapseClient
+  const { synapseClient } = useSynapseContext()
 
   const { mutate: deleteSession } = useDeleteGridSession({
     onSuccess: () => {
