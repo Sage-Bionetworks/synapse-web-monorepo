@@ -1,3 +1,4 @@
+import { ComplexJSONRenderer } from '@/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer'
 import { useCallback, useRef, useEffect, useMemo, useState } from 'react'
 import {
   DataSheetGrid,
@@ -42,10 +43,10 @@ const DataGrid = () => {
     getModel,
   } = useDataGridWebSocket()
   useEffect(() => {
-    if (presignedUrl) {
-      createWebsocket(presignedUrl)
+    if (replicaId && presignedUrl) {
+      createWebsocket(replicaId, presignedUrl)
     }
-  }, [presignedUrl, createWebsocket])
+  }, [replicaId, presignedUrl, createWebsocket])
 
   const connectionStatus = isConnected ? 'Connected' : 'Disconnected'
 
@@ -441,14 +442,17 @@ const DataGrid = () => {
           margin: '10px 0',
           padding: '10px',
           border: '1px solid #ccc',
-          maxHeight: '200px',
+          maxHeight: '400px',
           overflowY: 'auto',
         }}
       >
         <h3>Model snapshot</h3>
-        <p>
-          {modelSnapshot ? JSON.stringify(modelSnapshot) : 'No model available'}
-        </p>
+
+        {modelSnapshot ? (
+          <ComplexJSONRenderer value={modelSnapshot} />
+        ) : (
+          'No model available'
+        )}
       </div>
     </div>
   )

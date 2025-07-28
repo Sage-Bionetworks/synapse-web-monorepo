@@ -110,6 +110,7 @@ function FileEntityPage() {
         sx={{
           '& .SRC-boldText': {
             fontSize: '36px !important',
+            marginTop: '0',
           },
           '& .SRC-portalCardMain': {
             alignItems: 'center',

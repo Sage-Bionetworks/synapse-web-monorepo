@@ -16,23 +16,28 @@ type SynapseFileEntityPagePropertiesProps = {
   versionNumber: number | undefined
 }
 
-type FilePropertyValueProps = {
+type FilePropertyRowProps = {
+  keyName: string
+  label: string
   fileEntity: FileEntity
   fileHandle: EntityBundle['fileHandles'][number] | undefined
-  keyName: string
   storageLocationName?: string
 }
 
-const FilePropertyValue: React.FC<FilePropertyValueProps> = ({
+const FilePropertyRow: React.FC<FilePropertyRowProps> = ({
+  keyName,
+  label,
   fileEntity,
   fileHandle,
-  keyName,
   storageLocationName,
 }) => {
+  let content: React.ReactNode = null
+
   switch (keyName) {
     case 'id':
     case 'parentId':
-      return (
+      if (!fileEntity[keyName]) return null
+      content = (
         <>
           {fileEntity[keyName]}{' '}
           <CopyToClipboardIcon
@@ -41,37 +46,60 @@ const FilePropertyValue: React.FC<FilePropertyValueProps> = ({
           />
         </>
       )
+      break
     case 'createdBy':
-      return (
+      if (!fileEntity.createdBy) return null
+      content = (
         <>
           <UserBadge userId={fileEntity.createdBy} /> on{' '}
           {formatDate(dayjs(fileEntity.createdOn))}
         </>
       )
+      break
     case 'modifiedBy':
-      return (
+      if (!fileEntity.modifiedBy) return null
+      content = (
         <>
           <UserBadge userId={fileEntity.modifiedBy} /> on{' '}
           {formatDate(dayjs(fileEntity.modifiedOn))}
         </>
       )
+      break
     case 'contentMd5':
-      return (
+      if (!fileHandle?.contentMd5) return null
+      content = (
         <>
-          {fileHandle?.contentMd5}{' '}
+          {fileHandle.contentMd5}{' '}
           <CopyToClipboardIcon
-            value={fileHandle?.contentMd5 ?? ''}
+            value={fileHandle.contentMd5}
             sx={{ marginTop: '-4px' }}
           />
         </>
       )
+      break
     case 'storageLocationId':
-      return <>{storageLocationName}</>
+      if (!storageLocationName) return null
+      content = storageLocationName
+      break
     case 'contentSize':
-      return <>{calculateFriendlyFileSize(fileHandle?.contentSize)}</>
+      if (!fileHandle?.contentSize) return null
+      content = calculateFriendlyFileSize(fileHandle.contentSize)
+      break
     default:
-      return <>{fileEntity[keyName] as React.ReactNode}</>
+      if (!fileEntity[keyName]) return null
+      content = fileEntity[keyName] as React.ReactNode
   }
+
+  return (
+    <tr key={keyName}>
+      <td style={{ width: '256px' }}>
+        <Box sx={{ fontSize: '14px', lineHeight: '20px', color: '#333' }}>
+          {label}
+        </Box>
+      </td>
+      <td>{content}</td>
+    </tr>
+  )
 }
 
 const SynapseFileEntityPageProperties = ({
@@ -115,28 +143,15 @@ const SynapseFileEntityPageProperties = ({
     <StyledTableContainer sx={{ width: '100%' }}>
       <table style={{ width: '100%' }}>
         <tbody>
-          {selectedKeys?.map(({ key, label }) => (
-            <tr key={key}>
-              <td style={{ width: '256px' }}>
-                <Box
-                  style={{
-                    fontSize: '14px',
-                    lineHeight: '20px',
-                    color: '#333',
-                  }}
-                >
-                  {label}
-                </Box>
-              </td>
-              <td>
-                <FilePropertyValue
-                  keyName={key}
-                  fileEntity={fileEntity}
-                  fileHandle={fileHandle}
-                  storageLocationName={fileLocationName}
-                />
-              </td>
-            </tr>
+          {selectedKeys.map(({ key, label }) => (
+            <FilePropertyRow
+              key={key}
+              keyName={key}
+              label={label}
+              fileEntity={fileEntity}
+              fileHandle={fileHandle}
+              storageLocationName={fileLocationName}
+            />
           ))}
         </tbody>
       </table>

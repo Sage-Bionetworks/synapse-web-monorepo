@@ -5,6 +5,7 @@ import noop from 'lodash-es/noop'
 import { JsonCrdtVerboseLogicalTimestamp } from 'json-joy/lib/json-crdt/codec/structural/verbose/types'
 
 type DataGridWebSocketConstructorArgs = {
+  replicaId: number
   url: string
   onGridReady?: () => void
   onStatusChange?: (isOpen: boolean, instance: DataGridWebSocket) => void
@@ -25,7 +26,8 @@ export class DataGridWebSocket {
     noop
 
   constructor(args: DataGridWebSocketConstructorArgs) {
-    const { url, onGridReady, onStatusChange, onModelChange } = args
+    const { replicaId, url, onGridReady, onStatusChange, onModelChange } = args
+    this.replicaId = replicaId
     this.socket = new WebSocket(url)
 
     this.socket.onopen = () => {
