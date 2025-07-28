@@ -20,9 +20,9 @@ export interface StartGridSessionProps {
 // Based on user input, start a new session with or without a SQL query
 // or join an existing session by ID
 export const StartGridSession = ({
-  onSessionChange,
-  onReplicaChange,
-  onPresignedUrlChange,
+  onSessionChange = noop,
+  onReplicaChange = noop,
+  onPresignedUrlChange = noop,
 }: StartGridSessionProps) => {
   const [gridSql, setGridSql] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
