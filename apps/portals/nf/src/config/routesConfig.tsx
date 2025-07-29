@@ -163,6 +163,15 @@ const routes: RouteObject[] = [
             ),
           },
           {
+            // PORTALS-3708 - Add fallback for nonmatching routes to handle route changes.
+            path: '*',
+            element: (
+              <RedirectWithQuery
+                to={`../${STUDY_DETAILS_PAGE_DETAILS_TAB_PATH}`}
+              />
+            ),
+          },
+          {
             path: STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
             lazy: () =>
               import('@/pages/StudyDetailsPage/StudyDetailsTab').then(
@@ -206,6 +215,15 @@ const routes: RouteObject[] = [
             ),
           },
           {
+            // PORTALS-3708 - Add fallback for nonmatching routes to handle route changes.
+            path: '*',
+            element: (
+              <RedirectWithQuery
+                to={`../${TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH}`}
+              />
+            ),
+          },
+          {
             path: TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH,
             lazy: () =>
               import('@/pages/ToolDetailsPage/ToolDetailsPageDetailsTab').then(
@@ -244,6 +262,15 @@ const routes: RouteObject[] = [
             ),
           },
           {
+            // PORTALS-3708 - Add fallback for nonmatching routes to handle route changes.
+            path: '*',
+            element: (
+              <RedirectWithQuery
+                to={`../${HACKATHONS_DETAILS_PAGE_BACKGROUND_AND_RESULTS_TAB_PATH}`}
+              />
+            ),
+          },
+          {
             path: HACKATHONS_DETAILS_PAGE_BACKGROUND_AND_RESULTS_TAB_PATH,
             lazy: () =>
               import(
@@ -273,6 +300,15 @@ const routes: RouteObject[] = [
                 index: true,
                 element: (
                   <RedirectWithQuery to={ORGANIZATION_DETAILS_TAB_PATH} />
+                ),
+              },
+              {
+                // PORTALS-3708 - Add fallback for nonmatching routes to handle route changes.
+                path: '*',
+                element: (
+                  <RedirectWithQuery
+                    to={`../${ORGANIZATION_DETAILS_TAB_PATH}`}
+                  />
                 ),
               },
               {
