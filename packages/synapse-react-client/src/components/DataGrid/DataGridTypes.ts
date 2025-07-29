@@ -5,9 +5,9 @@ const gridRowSchema = s.obj({
   data: s.vec(s.con('')),
   metadata: s.obj({
     synapseRow: s.obj({
-      rowId: s.val(s.con(0)),
-      versionNumber: s.val(s.con(0)),
-      etag: s.val(s.con('')),
+      rowId: s.con(0),
+      versionNumber: s.con(0),
+      etag: s.con(''),
     }),
   }),
 })
