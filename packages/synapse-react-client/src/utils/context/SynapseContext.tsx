@@ -50,7 +50,8 @@ export type SynapseContextProviderProps = PropsWithChildren<{
  * @returns
  */
 export function SynapseContextProvider(props: SynapseContextProviderProps) {
-  const { children, synapseContext: providedContext } = props
+  // get children and context from props, falling back to defaultContext if not yet set
+  const { children, synapseContext: providedContext = defaultContext } = props
   const queryKeyFactory = useMemo(
     () => new KeyFactory(providedContext.accessToken),
     [providedContext.accessToken],
