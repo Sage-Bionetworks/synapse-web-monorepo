@@ -1,0 +1,23 @@
+import{j as o}from"./jsx-runtime-D_zvdyIk.js";import{C as e}from"./ConfirmationDialog-Dh2uMBjb.js";import{f as r}from"./index-CYYXEMem.js";import{B as n}from"./Button-BRf54AUE.js";import"./DialogBase-NpKFOfuQ.js";import"./spreadSx-CwcO6WA9.js";import"./Close-CwP-0N8H.js";import"./createSvgIcon-D5Da5Jdz.js";import"./index-BgqEGoYw.js";import"./iframe-BNzW0Vu_.js";import"./createTheme-C65121Eq.js";import"./DefaultPropsProvider-B93j11NS.js";import"./HelpPopover-BtZMV-aA.js";import"./MarkdownPopover-Yb5Im3rN.js";import"./LightTooltip-C527uZPf.js";import"./Tooltip-D8xgGHq0.js";import"./index-BBzJ2h35.js";import"./useTheme-FoBl1a68.js";import"./useTheme-DjP_NvVt.js";import"./useSlot-Bqot826z.js";import"./useForkRef-BUCdoQJu.js";import"./useTimeout-zV8pl8s0.js";import"./useControlled-Bbz1rn0m.js";import"./getReactElementRef-bsTI1QOV.js";import"./index-BEdcGBiA.js";import"./index-pN3ZbJTp.js";import"./Grow-C7dIUIOW.js";import"./Popper-C0J_iJHD.js";import"./ownerDocument-DW-IO8s5.js";import"./isFocusVisible-B8k4qzLc.js";import"./Link-BJVbZnYH.js";import"./createSimplePaletteValueFilter-BLmDH_bu.js";import"./Typography-DZFu15BE.js";import"./index-DCwkHJnW.js";import"./extendSxProp-Dw4EYBpz.js";import"./Box-BHzAAdtE.js";import"./react-CQvrs41i.js";import"./MarkdownSynapse-B6UJfcQd.js";import"./useFiles-KiTy3Z3P.js";import"./VerificationSubmission-OWkqLMYZ.js";import"./SynapseConstants-DbzIcXKJ.js";import"./OrientationBanner-Br9QB-0q.js";import"./index-Cf2wQO0T.js";import"./FullWidthAlert-BWGXaJFy.js";import"./Alert-BwsUmVK7.js";import"./Close-OUoS5tCg.js";import"./IconButton-D5s8LN4k.js";import"./ButtonBase-bfqPe5-W.js";import"./CircularProgress-BHzjVEsQ.js";import"./Paper-BOGp1cIL.js";import"./Stack-07kMQ-8X.js";import"./getThemeProps-BK3Hwaop.js";import"./AlertTitle-Q37-n-JO.js";import"./ClickAwayListener-CniG53Ou.js";import"./fetchWithExponentialTimeout-CXmnpl-T.js";import"./StringUtils-BYEtqtR3.js";import"./useQuery-DaHLg1Na.js";import"./QueryClientProvider-DKA2tRKY.js";import"./Collapse-BUTezwaP.js";import"./_baseUniq-DvbkWL9Y.js";import"./_Uint8Array-BEjKHBXJ.js";import"./isArray-C7fdCft4.js";import"./_getTag-Dia_4dL4.js";import"./isEqual-EeoQ59Qx.js";import"./merge-jmjASqbE.js";import"./_initCloneObject-DN-dmQ1i.js";import"./identity-DKeuBCMA.js";import"./tinycolor-Begke6kS.js";import"./Fade-CXHEFCpj.js";import"./inputBaseClasses-CSVpQyp-.js";import"./calculateFriendlyFileSize-B2w9M3PF.js";import"./CheckCircleTwoTone-91C58tG7.js";import"./InfoTwoTone-t3Ru72u9.js";import"./useMutation-C8RNElRf.js";import"./dayjs.min-Di4sf_5l.js";import"./chunk-AYJ5UCUI-BiGX4WeM.js";import"./cloneDeep-QNxhR9y6.js";import"./Skeleton-CaA-fJni.js";import"./SkeletonButton-tZMeoYp5.js";import"./SkeletonInlineBlock-Ba478tiR.js";import"./SkeletonTable-Dx0zqlxl.js";import"./times-fq0VS-6p.js";import"./toInteger-TRcQ2pW6.js";import"./toNumber-APtuUM49.js";import"./isSymbol-Pxbh8ryx.js";import"./SkeletonParagraph-BW5z1B30.js";import"./HelpOutlineTwoTone-4o8GeoXE.js";import"./DialogTitle-Dgio1ids.js";import"./DialogContent-DokybBLM.js";import"./Dialog-21BQXBq4.js";import"./Modal-DQLyaJ2x.js";import"./getScrollbarSize-CaCM53D3.js";import"./ownerWindow-HkKU3E4x.js";import"./createChainedFunction-BO_9K8Jh.js";import"./Backdrop-xOU0DkPC.js";const Xo={title:"UI/ConfirmationDialog",component:e},t={args:{open:!0,title:"My Dialog Title",confirmButtonProps:{children:"Confirm",color:"error"},maxWidth:"lg",content:o.jsxs(o.Fragment,{children:[o.jsx("p",{children:"Some content within the dialog, which can contain other components:"}),o.jsx(n,{variant:"contained",children:"Button"})]}),titleHelpPopoverProps:{helpUrl:"https://help.synapse.org",markdownText:"Option to show a _HelpPopover_ in the title bar with a link to the docs site"},onCancel:r(),onConfirm:r()}};var i,p,m;t.parameters={...t.parameters,docs:{...(i=t.parameters)==null?void 0:i.docs,source:{originalSource:`{
+  args: {
+    open: true,
+    title: 'My Dialog Title',
+    confirmButtonProps: {
+      children: 'Confirm',
+      color: 'error'
+    },
+    maxWidth: 'lg',
+    content: <>
+        <p>
+          Some content within the dialog, which can contain other components:
+        </p>
+        <Button variant="contained">Button</Button>
+      </>,
+    titleHelpPopoverProps: {
+      helpUrl: 'https://help.synapse.org',
+      markdownText: 'Option to show a _HelpPopover_ in the title bar with a link to the docs site'
+    },
+    onCancel: fn(),
+    onConfirm: fn()
+  }
+}`,...(m=(p=t.parameters)==null?void 0:p.docs)==null?void 0:m.source}}};const Yo=["Demo"];export{t as Demo,Yo as __namedExportsOrder,Xo as default};
