@@ -5,7 +5,7 @@ export const TABLE_IDS = {
   // CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
   DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.66' },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
-  DataSet_denormalized: { name: 'DataSet_denormalized', id: 'syn68258237' },
+  DataSet_denormalized: { name: 'DataSet_denormalized', id: 'syn68258237.4' },
   DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
   DataTopic: { name: 'DataTopic', id: 'syn63096835' },
@@ -78,17 +78,17 @@ export const DATASET_DENORMALIZED_COLUMN_NAMES = {
   IS_PUBLIC: 'isPublic',
   PRODUCED_BY: 'producedBy',
   PRODUCED_BY_ORG_ID: 'producedByOrgId',
-  ORG_JSON: 'org_json',
+  // ORG_JSON: 'org_json',
   TOPICS: 'topics',
   SUBSTRATES: 'substrates',
   SUBSTRATES_JSON: 'substrates_json',
 }
 export const DATASET_DENORMALIZED_JSON_COLUMNS = [
-  'org_json',
-  'producedBy',
-  'substrates',
+  // 'org_json',
+  // 'producedBy',
+  // 'substrates',
   'substrates_json',
-  'topics',
+  // 'topics',
 ]
 export const dataSetSQL = `SELECT  ${Object.values(
   DATASET_DENORMALIZED_COLUMN_NAMES,
