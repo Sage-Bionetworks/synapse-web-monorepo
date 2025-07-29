@@ -55,7 +55,6 @@ const HeaderCard = forwardRef(function HeaderCard(
     cardTopContent,
     cardTopButtons,
     sustainabilityScorecard,
-    doiUri,
     sx,
   } = props
 
