@@ -6,7 +6,7 @@ export const parseQueryInput = (input: string): QueryInput => {
     return { type: 'empty', input: '' }
   } else if (trimmedInput.toUpperCase().startsWith('SELECT')) {
     return { type: 'sql', input: trimmedInput }
-  } else if (/^N\w*=$/.test(trimmedInput)) {
+  } else if (/^[A-Za-z]\w*=+$/.test(trimmedInput)) {
     return { type: 'sessionId', input: trimmedInput }
   }
   return { type: 'unknown', input: trimmedInput }

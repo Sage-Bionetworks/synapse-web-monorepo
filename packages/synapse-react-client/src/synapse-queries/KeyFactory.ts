@@ -998,4 +998,8 @@ export class KeyFactory {
   public getPortalPermissionsKey(portalId: string) {
     return this.getKey('portal', portalId, 'permissions')
   }
+
+  public getGridSessionListKey() {
+    return this.getKey('gridSession', 'list')
+  }
 }

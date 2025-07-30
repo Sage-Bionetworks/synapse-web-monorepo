@@ -660,6 +660,9 @@ const AccountSettings = () => {
                   onRegenerateBackupCodes={() => {
                     navigate('/authenticated/2fa/generatecodes')
                   }}
+                  onReset2FA={() => {
+                    navigate('/authenticated/2fa/resetconfirmation')
+                  }}
                 />
               </Paper>
               <Paper

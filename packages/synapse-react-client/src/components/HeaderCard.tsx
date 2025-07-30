@@ -55,7 +55,6 @@ const HeaderCard = forwardRef(function HeaderCard(
     cardTopContent,
     cardTopButtons,
     sustainabilityScorecard,
-    doiUri,
     sx,
   } = props
 
@@ -123,13 +122,7 @@ const HeaderCard = forwardRef(function HeaderCard(
         <div className="row">
           <div className="col-md-offset-1 col-md-10">
             <div className="SRC-portalCardMain">
-              <Box
-                sx={{
-                  ...(doiUri && { alignSelf: 'center', marginRight: '5px' }),
-                }}
-              >
-                {!hideIcon && icon}
-              </Box>
+              {!hideIcon && icon}
               <Box
                 sx={{
                   width: '100%',
