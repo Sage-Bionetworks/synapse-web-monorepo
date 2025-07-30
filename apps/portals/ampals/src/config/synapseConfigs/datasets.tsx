@@ -36,6 +36,7 @@ export const datasetQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   searchConfiguration: {
     searchable: ['name', 'program', 'project', 'datasetType', 'assay'],
   },
+  isInfinite: true,
 }
 
 export const datasetSchema: TableToGenericCardMapping = {
