@@ -40,7 +40,7 @@ const defaultContext = {
 export const SynapseContext = createContext<SynapseContextType>(defaultContext)
 
 export type SynapseContextProviderProps = PropsWithChildren<{
-  synapseContext: Partial<SynapseContextType>
+  synapseContext?: Partial<SynapseContextType>
 }>
 
 /**
@@ -50,46 +50,45 @@ export type SynapseContextProviderProps = PropsWithChildren<{
  * @returns
  */
 export function SynapseContextProvider(props: SynapseContextProviderProps) {
-  // get children and context from props, falling back to defaultContext if not yet set
-  const { children, synapseContext: providedContext = defaultContext } = props
+  const { children, synapseContext: providedContext } = props
   const queryKeyFactory = useMemo(
-    () => new KeyFactory(providedContext.accessToken),
-    [providedContext.accessToken],
+    () => new KeyFactory(providedContext?.accessToken),
+    [providedContext?.accessToken],
   )
 
   const basePath = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
   const synapseApiClient = useMemo(() => {
-    if (providedContext.synapseClient) {
-      return providedContext.synapseClient
+    if (providedContext?.synapseClient) {
+      return providedContext?.synapseClient
     }
     const configurationParameters = {
-      accessToken: providedContext.accessToken,
+      accessToken: providedContext?.accessToken,
       basePath: basePath,
     }
     return new SynapseClient(configurationParameters)
-  }, [providedContext.synapseClient, providedContext.accessToken, basePath])
+  }, [providedContext?.synapseClient, providedContext?.accessToken, basePath])
 
   const synapseContext: SynapseContextType = useMemo(
     () => ({
-      accessToken: providedContext.accessToken,
-      isInExperimentalMode: providedContext.isInExperimentalMode ?? false,
-      utcTime: providedContext.utcTime ?? false,
-      withErrorBoundary: providedContext.withErrorBoundary ?? false,
+      accessToken: providedContext?.accessToken,
+      isInExperimentalMode: providedContext?.isInExperimentalMode ?? false,
+      utcTime: providedContext?.utcTime ?? false,
+      withErrorBoundary: providedContext?.withErrorBoundary ?? false,
       downloadCartPageUrl:
-        providedContext.downloadCartPageUrl ?? '/DownloadCart',
-      keyFactory: providedContext.keyFactory ?? queryKeyFactory,
-      appId: providedContext.appId,
+        providedContext?.downloadCartPageUrl ?? '/DownloadCart',
+      keyFactory: providedContext?.keyFactory ?? queryKeyFactory,
+      appId: providedContext?.appId,
       synapseClient: synapseApiClient,
     }),
     [
-      providedContext.accessToken,
-      providedContext.downloadCartPageUrl,
-      providedContext.isInExperimentalMode,
-      providedContext.keyFactory,
-      providedContext.utcTime,
-      providedContext.withErrorBoundary,
-      providedContext.appId,
+      providedContext?.accessToken,
+      providedContext?.downloadCartPageUrl,
+      providedContext?.isInExperimentalMode,
+      providedContext?.keyFactory,
+      providedContext?.utcTime,
+      providedContext?.withErrorBoundary,
+      providedContext?.appId,
       queryKeyFactory,
       synapseApiClient,
     ],
