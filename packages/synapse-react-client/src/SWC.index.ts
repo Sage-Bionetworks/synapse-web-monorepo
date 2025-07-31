@@ -69,6 +69,7 @@ import SynapseNavDrawer from './components/SynapseNavDrawer/SynapseNavDrawer'
 import DatasetItemsEditor from './components/SynapseTable/datasets/DatasetItemsEditor'
 import TableColumnSchemaEditor from './components/TableColumnSchemaEditor/TableColumnSchemaEditor'
 import SynapsePortalBanners from './components/SynapsePortalBanners/SynapsePortalBanners'
+import SynapseGrid from './components/DataGrid/SynapseGrid'
 
 import {
   displayToast,
@@ -179,6 +180,7 @@ const SynapseComponents = {
   TrashCanList,
   UserAccessRequestHistoryPlace,
   UserCard,
+  SynapseGrid,
   UserProfileLinks,
   displayToast,
   getCurrentCookiePreferences,

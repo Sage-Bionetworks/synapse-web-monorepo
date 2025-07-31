@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from 'react'
+import { useState, useRef, useMemo, useEffect } from 'react'
 import { useCreateGridSession } from './useCreateGridSession'
 import { parseQueryInput } from './DataGridUtils'
 import { CreateGridRequest } from '@sage-bionetworks/synapse-client'
@@ -16,6 +16,7 @@ export interface StartGridSessionProps {
   onSessionChange?: (sessionId: string) => void
   onReplicaChange?: (replicaId: number | null) => void
   onPresignedUrlChange?: (url: string) => void
+  query?: string
 }
 
 // Based on user input, start a new session with or without a SQL query
@@ -24,6 +25,7 @@ export const StartGridSession = ({
   onSessionChange = noop,
   onReplicaChange = noop,
   onPresignedUrlChange = noop,
+  query,
 }: StartGridSessionProps) => {
   const [gridSql, setGridSql] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
@@ -55,7 +57,7 @@ export const StartGridSession = ({
 
   const handleStartSession = async (input: string) => {
     const parsedInput = parseQueryInput(input)
-
+    console.log('start session input:', parsedInput)
     try {
       if (parsedInput.type === 'empty' || parsedInput.type === 'sql') {
         // Start a new session and clear replicaId and presignedUrl
@@ -124,6 +126,16 @@ export const StartGridSession = ({
       console.error('Error starting session:', error)
     }
   }
+
+  useEffect(() => {
+    if (query) {
+      handleStartSession(query)
+    }
+  }, [query])
+
+  if (query) return null
+
+  console.log('query', query)
 
   return (
     <>
