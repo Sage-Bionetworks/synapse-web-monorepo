@@ -7,10 +7,6 @@ import B2AI_ORG_114_html from '@/assets/d4d/B2AI_ORG_114_d4d.html?raw'
 import B2AI_ORG_116_html from '@/assets/d4d/B2AI_ORG_116_d4d.html?raw'
 import B2AI_ORG_117_html from '@/assets/d4d/B2AI_ORG_117_d4d.html?raw'
 
-import B2AI_ORG_114_css from '@/assets/d4d/B2AI_ORG_114_d4d.css?raw'
-import B2AI_ORG_116_css from '@/assets/d4d/B2AI_ORG_116_d4d.css?raw'
-import B2AI_ORG_117_css from '@/assets/d4d/B2AI_ORG_117_d4d.css?raw'
-
 export const imageUrls = {
   'B2AI_ORG:114': B2AI_ORG_114_svg,
   'B2AI_ORG:115': B2AI_ORG_115_svg,
@@ -25,7 +21,6 @@ export const GCInfo = {
     other:
       'Artificial Intelligence Ready and Equitable Atlas for Diabetes Insights',
     d4dHtml: B2AI_ORG_114_html,
-    d4dCss: B2AI_ORG_114_css,
     svg: B2AI_ORG_114_svg,
   },
   'B2AI_ORG:115': {
@@ -40,7 +35,6 @@ export const GCInfo = {
     aka: 'CM4AI',
     other: 'Cell Maps for AI',
     d4dHtml: B2AI_ORG_116_html,
-    d4dCss: B2AI_ORG_116_css,
     svg: B2AI_ORG_116_svg,
   },
   'B2AI_ORG:117': {
@@ -48,7 +42,6 @@ export const GCInfo = {
     aka: 'Voice',
     other: 'Voice as a Biomarker of Health',
     d4dHtml: B2AI_ORG_117_html,
-    d4dCss: B2AI_ORG_117_css,
     svg: B2AI_ORG_117_svg,
   },
 }

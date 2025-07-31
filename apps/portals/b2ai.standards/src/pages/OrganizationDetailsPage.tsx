@@ -25,7 +25,6 @@ import {
 import {
   ColumnSingleValueFilterOperator,
   ColumnMultiValueFunction,
-  // ColumnTypeEnum,
 } from '@sage-bionetworks/synapse-types'
 import {
   organizationDetailsPageSQL,
@@ -36,25 +35,14 @@ import {
   DATASET_DENORMALIZED_COLUMN_NAMES,
   DST_TABLE_COLUMN_NAMES,
 } from '@/config/resources'
-// import { GenericCardIcon } from 'synapse-react-client/components/GenericCard/GenericCardIcon'
-// import GenericCard from 'synapse-react-client/components/GenericCard/GenericCard'
-// import { Collapse } from '@mui/material'
-// import IconList from 'synapse-react-client/components/IconList'
-// import GenericCardActionButton from 'synapse-react-client/components/GenericCard/GenericCardActionButton'
-// import { GetAppTwoTone } from '@mui/icons-material'
-// import CitationPopover from 'synapse-react-client/components/CitationPopover'
-// import React from 'react'
 
 export const organizationCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.ORGANIZATION,
   title: ORG_TABLE_COLUMN_NAMES.NAME,
-  subTitle: 'description',
-  // subTitle: ORG_TABLE_COLUMN_NAMES.DESCRIPTION,
-  // link: 'url',
+  subTitle: ORG_TABLE_COLUMN_NAMES.DESCRIPTION,
   secondaryLabels: [
     ORG_TABLE_COLUMN_NAMES.ROR_ID,
     ORG_TABLE_COLUMN_NAMES.WIKIDATA_ID,
-    // ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF,
   ],
 }
 
@@ -94,7 +82,6 @@ export const linkedOrgCardConfiguration: CardConfiguration = {
   genericCardSchema: {
     type: SynapseConstants.ORGANIZATION,
     title: ORG_TABLE_COLUMN_NAMES.NAME,
-    // subTitle: 'standardName',
     description: ORG_TABLE_COLUMN_NAMES.DESCRIPTION,
     link: 'orgPageLink',
     secondaryLabels: [
@@ -102,7 +89,6 @@ export const linkedOrgCardConfiguration: CardConfiguration = {
       DATASET_DENORMALIZED_COLUMN_NAMES.TOPICS,
       DATASET_DENORMALIZED_COLUMN_NAMES.SUBSTRATES,
     ],
-    // labelLinkConfig: {}
   },
 }
 export const linkedDataSetCardConfiguration: CardConfiguration = {
@@ -117,7 +103,6 @@ export const linkedDataSetCardConfiguration: CardConfiguration = {
       DATASET_DENORMALIZED_COLUMN_NAMES.TOPICS,
       DATASET_DENORMALIZED_COLUMN_NAMES.SUBSTRATES,
     ],
-    // labelLinkConfig: {}
   },
 }
 
@@ -204,27 +189,12 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
               showDownloadColumn: false,
               columnLinks: standardsColumnLinks,
             }}
-            // facetsToPlot={['topic', DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES]}
-            // initialPlotType={'BAR'}
             searchConfiguration={{
               ftsConfig: standardsFtsConfig,
             }}
             shouldDeepLink={false}
             hideQueryCount={true}
             hideDownload={true}
-            /*
-                showColumnSelection={true}
-                // visibleColumnCount={10}
-                isRowSelectionVisible={true}
-                tableConfiguration={{
-                  showAccessColumn: true,
-                  showDownloadColumn: true,
-                }}
-                lockedColumn={{
-                  columnName: DATA_TABLE_COLUMN_NAMES.STUDY,
-                  value: entityHeader.name,
-                }}
-                */
           />
         )}
       </DetailsPageContextConsumer>
@@ -249,27 +219,12 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
               showDownloadColumn: false,
               columnLinks: standardsColumnLinks,
             }}
-            // facetsToPlot={['topic', DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES]}
-            // initialPlotType={'BAR'}
             searchConfiguration={{
               ftsConfig: standardsFtsConfig,
             }}
             shouldDeepLink={false}
             hideQueryCount={true}
             hideDownload={true}
-            /*
-                      showColumnSelection={true}
-                      // visibleColumnCount={10}
-                      isRowSelectionVisible={true}
-                      tableConfiguration={{
-                        showAccessColumn: true,
-                        showDownloadColumn: true,
-                      }}
-                      lockedColumn={{
-                        columnName: DATA_TABLE_COLUMN_NAMES.STUDY,
-                        value: entityHeader.name,
-                      }}
-                      */
           />
         )}
       </DetailsPageContextConsumer>
@@ -291,7 +246,6 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
 export default function OrganizationDetailsPage() {
   const { id } = useGetPortalComponentSearchParams()
 
-  console.log(organizationDetailsPageSQL)
   if (!id) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
   }

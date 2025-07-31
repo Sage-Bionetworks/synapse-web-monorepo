@@ -60,13 +60,7 @@ export const organizationDetailsPageSQL = `
     }) AS orgPageLink
   FROM ${TABLE_IDS.Organization.id}`
 
-// export const GC_PARENT_ORG_ID = 'B2AI_ORG:106' // not just GCs
 export const GC_ORG_IDS = [114, 115, 116, 117].map(id => `'B2AI_ORG:${id}'`)
-
-export const CHALLENGES_TABLE_COLUMN_NAMES = {
-  ORG_ID: 'organizationId',
-  IMG_HANDLE_ID: 'headerImage',
-}
 
 export const DATASET_DENORMALIZED_COLUMN_NAMES = {
   ID: 'id',
@@ -78,39 +72,14 @@ export const DATASET_DENORMALIZED_COLUMN_NAMES = {
   IS_PUBLIC: 'isPublic',
   PRODUCED_BY: 'producedBy',
   PRODUCED_BY_ORG_ID: 'producedByOrgId',
-  // ORG_JSON: 'org_json',
   TOPICS: 'topics',
   SUBSTRATES: 'substrates',
   SUBSTRATES_JSON: 'substrates_json',
 }
-export const DATASET_DENORMALIZED_JSON_COLUMNS = [
-  // 'org_json',
-  // 'producedBy',
-  // 'substrates',
-  'substrates_json',
-  // 'topics',
-]
+
 export const dataSetSQL = `SELECT  ${Object.values(
   DATASET_DENORMALIZED_COLUMN_NAMES,
 ).join(', ')} FROM ${TABLE_IDS.DataSet_denormalized.id}`
-
-// export const ORG_DENORMALIZED_COLUMN_NAMES = {
-//   ID: 'id',
-//   NAME: 'name',
-//   DESCRIPTION: 'description',
-//   ROR_ID: 'rorId',
-//   WIKIDATA_ID: 'wikidataId',
-//   URL: 'URL',
-//   SUBCLASS_OF: 'subclassOf',
-//   DATASET_JSON: 'dataset_json',
-// }
-// export const ORG_DENORMALIZED_JSON_COLUMNS = [
-//   ORG_DENORMALIZED_COLUMN_NAMES.DATASET_JSON,
-// ]
-// for organization details page:
-// export const organizationDetailsPageSQL = `SELECT  ${Object.values(
-//   ORG_DENORMALIZED_COLUMN_NAMES,
-// ).join(', ')} FROM ${TABLE_IDS.Org_denormalized.id}`
 
 // for the Explore page table:
 //  had to generate RELEVANT_ORG_LINKS during DST_denormalized creation
@@ -138,8 +107,6 @@ export const standardsSql = `
 //  Topic still shows up as a facet on the explore page but not as a column,
 //  which seems fine. It's not limiting the number of rows displayed now.
 
-// concat('/Explore/Standard/DetailsPage?id=', id) as link, acronym,
-
 // for standards details page:  -- TODO: use COLUMN_NAMES
 export const standardsDetailsPageSQL = `
     SELECT  id,
@@ -161,8 +128,6 @@ export const standardsDetailsPageSQL = `
             registration
     FROM ${TABLE_IDS.DST_denormalized.id}
 `
-// COALESCE(responsibleOrgName, 'No responsible org listed') as SDO,
-
 export const standardsFtsConfig: FTSConfig = {
   textMatchesMode: 'BOOLEAN',
   distance: 50,
