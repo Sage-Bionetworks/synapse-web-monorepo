@@ -22,7 +22,6 @@ import {
   standardsDetailsPageSQL,
 } from '@/config/resources'
 import { standardsColumnLinks } from '@/config/synapseConfigs/standards'
-import { linkedOrgCardConfiguration } from '@/pages/OrganizationDetailsPage'
 
 export const standardsCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.STANDARD_DATA_MODEL,

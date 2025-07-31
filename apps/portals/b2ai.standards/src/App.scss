@@ -5,3 +5,16 @@
 
 // style_overrides should be last to ensure its styles have highest priority
 @use './config/style/style_overrides';
+
+// Add the scoped D4D styles
+.B2AI_ORG_114_d4d {
+  @import 'assets/d4d/B2AI_ORG_114_d4d';
+}
+
+.B2AI_ORG_116_d4d {
+  @import 'assets/d4d/B2AI_ORG_116_d4d';
+}
+
+.B2AI_ORG_117_d4d {
+  @import 'assets/d4d/B2AI_ORG_117_d4d';
+}

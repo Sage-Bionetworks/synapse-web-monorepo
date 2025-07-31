@@ -10,8 +10,6 @@ import {
   ErrorPage,
   SynapseConstants,
   SynapseErrorType,
-  RowDataTable,
-  SkeletonTable,
   CardConfiguration,
 } from 'synapse-react-client'
 import {
@@ -71,7 +69,7 @@ function OrgHeaderCard({ id }) {
               'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
             columnName: 'id',
             operator: ColumnSingleValueFilterOperator.EQUAL,
-            values: [id],
+            values: [id as string],
           },
         ],
       }}
@@ -177,7 +175,8 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
               sql={dataSetSQL}
               // need a dummy value for search to properly exclude null values and an empty string doesn't work
               searchParams={{
-                [DATASET_DENORMALIZED_COLUMN_NAMES.PRODUCED_BY_ORG_ID]: value,
+                [DATASET_DENORMALIZED_COLUMN_NAMES.PRODUCED_BY_ORG_ID]:
+                  value ?? 'no value',
               }}
               sqlOperator={ColumnMultiValueFunction.HAS}
             />
@@ -196,7 +195,8 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
             rgbIndex={standardsRgbIndex}
             sql={standardsSql}
             searchParams={{
-              [DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION]: value,
+              [DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION]:
+                value ?? 'no value',
             }}
             sqlOperator={ColumnMultiValueFunction.HAS}
             columnAliases={columnAliases}
@@ -210,10 +210,8 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
               ftsConfig: standardsFtsConfig,
             }}
             shouldDeepLink={false}
-            defaultShowPlots={false}
             hideQueryCount={true}
             hideDownload={true}
-            availableFacets={[]}
             /*
                 showColumnSelection={true}
                 // visibleColumnCount={10}
@@ -242,7 +240,8 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
             rgbIndex={standardsRgbIndex}
             sql={standardsSql}
             searchParams={{
-              [DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION]: value,
+              [DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION]:
+                value ?? 'no value',
             }}
             sqlOperator={ColumnMultiValueFunction.HAS}
             columnAliases={columnAliases}
@@ -256,10 +255,8 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
               ftsConfig: standardsFtsConfig,
             }}
             shouldDeepLink={false}
-            defaultShowPlots={false}
             hideQueryCount={true}
             hideDownload={true}
-            availableFacets={[]}
             /*
                       showColumnSelection={true}
                       // visibleColumnCount={10}
@@ -299,12 +296,11 @@ export default function OrganizationDetailsPage() {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
   }
   return (
-    <>
-      <OrgHeaderCard id={id} />
-
-      <DetailsPage sql={organizationDetailsPageSQL}>
-        <DetailsPageContent content={organizationDetailsPageContent} />
-      </DetailsPage>
-    </>
+    <DetailsPage
+      header={<OrgHeaderCard id={id} />}
+      sql={organizationDetailsPageSQL}
+    >
+      <DetailsPageContent content={organizationDetailsPageContent} />
+    </DetailsPage>
   )
 }

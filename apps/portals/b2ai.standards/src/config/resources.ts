@@ -5,7 +5,7 @@ export const TABLE_IDS = {
   // CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
   DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.66' },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
-  DataSet_denormalized: { name: 'DataSet_denormalized', id: 'syn68258237.4' },
+  DataSet_denormalized: { name: 'DataSet_denormalized', id: 'syn68258237.3' },
   DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
   DataTopic: { name: 'DataTopic', id: 'syn63096835' },
