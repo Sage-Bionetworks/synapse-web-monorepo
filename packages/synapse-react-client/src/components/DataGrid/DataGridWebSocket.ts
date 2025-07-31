@@ -1,26 +1,27 @@
-import { encode, decode } from 'json-joy/lib/json-crdt-patch/codec/compact'
+import { GridModel } from '@/components/DataGrid/DataGridTypes'
 import { Model } from 'json-joy/lib/json-crdt'
+import { decode, encode } from 'json-joy/lib/json-crdt-patch/codec/compact'
 import { Encoder as VerboseEncoder } from 'json-joy/lib/json-crdt/codec/structural/verbose/Encoder'
-import noop from 'lodash-es/noop'
 import { JsonCrdtVerboseLogicalTimestamp } from 'json-joy/lib/json-crdt/codec/structural/verbose/types'
+import noop from 'lodash-es/noop'
 
 type DataGridWebSocketConstructorArgs = {
   replicaId: number
   url: string
   onGridReady?: () => void
   onStatusChange?: (isOpen: boolean, instance: DataGridWebSocket) => void
-  onModelChange?: (model: Model) => void
+  onModelChange?: (model: GridModel) => void
 }
 
 export class DataGridWebSocket {
   private socket: WebSocket
 
-  private model: Model | null = null
+  private model: GridModel | null = null
   private sequenceNumber: number = 0
   private replicaId?: number
   private verboseEncoder = new VerboseEncoder()
 
-  private onModelChange: (model: Model) => void = noop
+  private onModelChange: (model: GridModel) => void = noop
   private onGridReady: () => void = noop
   private onStatusChange: (isOpen: boolean, _this: DataGridWebSocket) => void =
     noop
@@ -84,9 +85,12 @@ export class DataGridWebSocket {
         const patch = decode(payload)
         if (!this.model) {
           // Initialize the model if it doesn't exist
-          console.log('Initializing new model from patch:', patch)
+          console.log('Initializing new model from patch:')
+          console.log(patch.toString())
           // use the replica ID the server gives us - don't use an empty one
-          this.model = Model.fromPatches([patch]).fork(this.replicaId)
+          this.model = (
+            Model.fromPatches([patch]) as unknown as GridModel
+          ).fork(this.replicaId)
           this.onModelChange(this.model)
         } else {
           console.log('Applying patch from server:', patch)
