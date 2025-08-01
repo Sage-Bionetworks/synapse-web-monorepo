@@ -65,15 +65,7 @@ const portalsSharedViteConfig = new ConfigBuilder()
       })(window,document,'script','dataLayer','GTM-KPW4KS62');
     </script>
     <!-- End Google Tag Manager -->
-    <script type="module">
-        /* Fix polyfill issues with vite and @apidevtools/json-schema-ref-parser */
-        import { Buffer } from 'buffer'
-        import process from 'process'
-        window.Buffer = Buffer
-        window.process = process
-
-        globalThis.global = globalThis
-    </script>`,
+    `,
             gtmNoscript: `    <!-- Google Tag Manager (noscript) -->
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KPW4KS62"
       height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
