@@ -20,6 +20,16 @@ const config = new ConfigBuilder()
     build: {
       // Do not clean the output directory before building, since we build ESM/CJS and UMD separately.
       emptyOutDir: false,
+      commonjsOptions: {
+        // react-datasheet-grid is common-js only and imports tanstack/react-virtual which is an ESM package
+        // for some reason this transitive import is treated as common-js but we can fix it with the config below:
+        esmExternals: id => {
+          if (id == '@tanstack/react-virtual') {
+            return true
+          }
+          return false
+        },
+      },
     },
     test: {
       globals: true,

@@ -11,11 +11,13 @@ import {
 } from '../../synapse-queries/useGridSession'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import noop from 'lodash-es/noop'
+import { Button } from '@mui/material'
 
 export interface StartGridSessionProps {
   onSessionChange?: (sessionId: string) => void
   onReplicaChange?: (replicaId: number | null) => void
   onPresignedUrlChange?: (url: string) => void
+  query?: string
 }
 
 // Based on user input, start a new session with or without a SQL query
@@ -24,11 +26,14 @@ export const StartGridSession = ({
   onSessionChange = noop,
   onReplicaChange = noop,
   onPresignedUrlChange = noop,
+  query,
 }: StartGridSessionProps) => {
   const [gridSql, setGridSql] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
 
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const allowInput = !query
 
   const { synapseClient } = useSynapseContext()
 
@@ -55,7 +60,6 @@ export const StartGridSession = ({
 
   const handleStartSession = async (input: string) => {
     const parsedInput = parseQueryInput(input)
-
     try {
       if (parsedInput.type === 'empty' || parsedInput.type === 'sql') {
         // Start a new session and clear replicaId and presignedUrl
@@ -128,20 +132,22 @@ export const StartGridSession = ({
   return (
     <>
       <div style={{ position: 'relative', width: '300px' }}>
-        <input
-          ref={inputRef}
-          type="text"
-          placeholder="(Optional) Enter a SQL query or session ID"
-          style={{ width: '100%' }}
-          onFocus={() => setShowDropdown(true)}
-          onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
-          onKeyDown={e => {
-            if (e.key === 'Enter') {
-              const inputValue = inputRef.current?.value || ''
-              handleStartSession(inputValue)
-            }
-          }}
-        />
+        {allowInput && (
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="(Optional) Enter a SQL query or session ID"
+            style={{ width: '100%' }}
+            onFocus={() => setShowDropdown(true)}
+            onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                const inputValue = inputRef.current?.value || ''
+                handleStartSession(inputValue)
+              }
+            }}
+          />
+        )}
         {showDropdown && availableSessions.length > 0 && (
           <ul
             style={{
@@ -204,15 +210,16 @@ export const StartGridSession = ({
           </ul>
         )}
       </div>
-      <button
+      <Button
+        variant="outlined"
         onClick={() => {
           const inputValue = inputRef.current?.value || ''
-          handleStartSession(inputValue)
+          handleStartSession(query || inputValue)
         }}
-        style={{ backgroundColor: '#4CAF50', color: 'white' }}
+        sx={{ color: 'inherit', margin: '10px 0' }}
       >
         Start Grid Session
-      </button>
+      </Button>
     </>
   )
 }
