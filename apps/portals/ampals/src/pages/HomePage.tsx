@@ -1,6 +1,5 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSHeader'
-import ALLALSSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/ALLALSSlat'
 import AMPALSPublishingRequirements from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSPublishingRequirements'
 import HowToAccessData from '@sage-bionetworks/synapse-portal-framework/components/ampals/HowToAccessData'
 // import AMPALSExploreTheData from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSExploreTheData'
@@ -66,7 +65,6 @@ export default function HomePage() {
       {/* <AMPALSExploreTheData sql={upsetPlotSql} /> */}
       <HowToAccessData />
       <AMPALSPublishingRequirements />
-      <ALLALSSlat />
       <div className={'home-bg-dark'}>
         <SectionLayout
           title={'More Resources'}
