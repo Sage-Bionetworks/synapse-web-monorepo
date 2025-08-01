@@ -22,7 +22,6 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     query: 'SELECT * FROM syn35295069',
-    showDebugInfo: false,
   },
   parameters: {
     msw: {

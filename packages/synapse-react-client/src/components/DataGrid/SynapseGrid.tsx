@@ -1,29 +1,24 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ComplexJSONRenderer } from '@/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer'
+import { konst } from 'json-joy/lib/json-crdt-patch'
+import throttle from 'lodash-es/throttle'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
-  DataSheetGrid,
-  keyColumn,
   Column,
   createTextColumn,
+  DataSheetGrid,
+  keyColumn,
 } from 'react-datasheet-grid'
 import 'react-datasheet-grid/dist/style.css'
 import '../../style/components/_data-grid-extra.scss'
-import { Model, VecApi } from 'json-joy/lib/json-crdt'
-import { konst } from 'json-joy/lib/json-crdt-patch'
-import throttle from 'lodash-es/throttle'
-import { ModelSnapshot, Operation } from './DataGridTypes'
-import { useDataGridWebSocket } from './useDataGridWebsocket'
+import { GridModel, GridModelSnapshot, Operation } from './DataGridTypes'
 import { StartGridSession } from './StartGridSession'
+import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { SkeletonTable } from '../Skeleton'
 
 export type SynapseGridProps = {
   query: string
   showDebugInfo?: boolean
 }
-
-// tests
-// SELECT * FROM syn35295069
-// SELECT * FROM syn51671826
 
 const SynapseGrid = ({ query, showDebugInfo = false }: SynapseGridProps) => {
   // Grid session state
@@ -68,21 +63,19 @@ const SynapseGrid = ({ query, showDebugInfo = false }: SynapseGridProps) => {
 
   // Grid rows and columns
   type DataGridRow = { [key: string]: string | number }
-  const [rowValues, setRowValues] = useState<DataGridRow[]>(
-    modelRowsToGrid(modelSnapshot),
-  )
-  const [colValues, setColValues] = useState<Column[]>(
-    modelColsToGrid(modelSnapshot),
-  )
+  const [rowValues, setRowValues] = useState<DataGridRow[]>([])
+  const [colValues, setColValues] = useState<Column[]>([])
   const [prevRows, setPrevRows] = useState(rowValues)
 
   useEffect(() => {
-    setRowValues(modelRowsToGrid(modelSnapshot))
-    setColValues(modelColsToGrid(modelSnapshot))
+    if (modelSnapshot) {
+      setRowValues(modelRowsToGrid(modelSnapshot))
+      setColValues(modelColsToGrid(modelSnapshot))
+    }
   }, [modelSnapshot])
 
   // Convert model rows to a format suitable for DataSheetGrid
-  function modelRowsToGrid(modelSnapshot: ModelSnapshot): DataGridRow[] {
+  function modelRowsToGrid(modelSnapshot: GridModelSnapshot): DataGridRow[] {
     if (!modelSnapshot) return []
     const { columnNames, columnOrder, rows } = modelSnapshot
     const gridRows = rows.map(row => {
@@ -91,7 +84,7 @@ const SynapseGrid = ({ query, showDebugInfo = false }: SynapseGridProps) => {
       columnOrder.forEach((index: number) => {
         const columnName = columnNames[index]
         if (columnName) {
-          rowObj[columnName] = row[index]
+          rowObj[columnName] = row.data[index]
         }
       })
       return rowObj
@@ -100,7 +93,7 @@ const SynapseGrid = ({ query, showDebugInfo = false }: SynapseGridProps) => {
   }
 
   // Convert model columns to a format suitable for DataSheetGrid
-  function modelColsToGrid(modelSnapshot: ModelSnapshot): Column[] {
+  function modelColsToGrid(modelSnapshot: GridModelSnapshot): Column[] {
     if (!modelSnapshot) return []
     const { columnNames, columnOrder } = modelSnapshot
     const gridCols: Column[] = columnOrder.map((index: number) => {
@@ -116,16 +109,17 @@ const SynapseGrid = ({ query, showDebugInfo = false }: SynapseGridProps) => {
   }
 
   // Function to apply grid changes to a model
-  function gridToModel(gridRows: DataGridRow[], model: Model): Model {
+  function gridToModel(gridRows: DataGridRow[], model: GridModel): GridModel {
     if (!model) return model
-    const rowsArr = model.api.arr(['rows'])
-    const { columnNames: mcnUpdate } = model.api.getSnapshot() as ModelSnapshot
+    const rowsArr = model.api.node.get('rows')
+    const { columnNames: mcnUpdate } = model.api.getSnapshot()
 
     // Apply row changes
     // Update existing rows and add new ones
     for (let i = 0; i < gridRows.length; i++) {
       const editedRow = gridRows[i]
-      const rowVec = rowsArr.get(i) as VecApi<any>
+      const rowObj = rowsArr.get(i)
+      const rowVec = rowObj.get('data')
 
       // Update each cell in the row
       Object.entries(editedRow).forEach(([key, value]) => {
@@ -246,7 +240,6 @@ const SynapseGrid = ({ query, showDebugInfo = false }: SynapseGridProps) => {
 
   return (
     <div>
-      {/* Session Controls */}
       <div>
         <StartGridSession
           onSessionChange={setSessionId}
@@ -280,6 +273,8 @@ const SynapseGrid = ({ query, showDebugInfo = false }: SynapseGridProps) => {
               </span>
             </p>
           </div>
+
+          {/* Message Log */}
           <div
             style={{
               margin: '10px 0',
