@@ -150,6 +150,10 @@ class CardFooter extends Component<CardFooterProps, State> {
             wordBreak: 'break-word',
           }}
         >
+          <colgroup>
+            <col className="SRC-cardMetadata-column1" />
+            <col className="SRC-cardMetadata-column2" />
+          </colgroup>
           <tbody>
             {this.renderRows(valuesFiltered, limit, isDesktop)}
             {hasMoreValuesThanLimit && (
