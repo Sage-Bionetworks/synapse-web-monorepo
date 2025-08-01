@@ -32,7 +32,7 @@
     "url": "https://github.com/Sage-Bionetworks/synapse-web-monorepo/packages/synapse-react-client"
   },
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "^9.1.2",
+    "@apidevtools/json-schema-ref-parser": "^14.1.1",
     "@aws-sdk/client-s3": "^3.803.0",
     "@aws-sdk/lib-storage": "^3.803.0",
     "@emotion/react": "^11.14.0",
