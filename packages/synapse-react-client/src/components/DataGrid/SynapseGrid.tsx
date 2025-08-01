@@ -248,122 +248,125 @@ const SynapseGrid = ({ query, showDebugInfo = false }: SynapseGridProps) => {
           query={query}
         />
       </div>
-
-      {/* Debug Information */}
-      {showDebugInfo && (
+      {sessionId && (
         <>
-          <div>
-            <p>Session ID: {sessionId || 'No session created'}</p>
-            <p>Replica ID: {replicaId || 'No replica created'}</p>
-            <p>
-              Presigned URL:{' '}
-              {presignedUrl.substring(0, 30) +
-                (presignedUrl.length > 30
-                  ? ' ... ' +
-                    presignedUrl.substring(
-                      presignedUrl.length - 10,
-                      presignedUrl.length,
-                    )
-                  : '') || 'No URL generated'}
-            </p>
-            <p>
-              WebSocket Status:{' '}
-              <span style={{ color: isConnected ? 'green' : 'red' }}>
-                {connectionStatus}
-              </span>
-            </p>
-          </div>
-
-          {/* Message Log */}
-          <div
-            style={{
-              margin: '10px 0',
-              padding: '10px',
-              border: '1px solid #ccc',
-              maxHeight: '200px',
-              overflowY: 'auto',
-            }}
-          >
-            <h4>Server Message Log</h4>
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                style={{ fontSize: '12px', marginBottom: '5px' }}
-              >
-                {message}
+          {/* Debug Information */}
+          {showDebugInfo && (
+            <>
+              <div>
+                <p>Session ID: {sessionId || 'No session created'}</p>
+                <p>Replica ID: {replicaId || 'No replica created'}</p>
+                <p>
+                  Presigned URL:{' '}
+                  {presignedUrl.substring(0, 30) +
+                    (presignedUrl.length > 30
+                      ? ' ... ' +
+                        presignedUrl.substring(
+                          presignedUrl.length - 10,
+                          presignedUrl.length,
+                        )
+                      : '') || 'No URL generated'}
+                </p>
+                <p>
+                  WebSocket Status:{' '}
+                  <span style={{ color: isConnected ? 'green' : 'red' }}>
+                    {connectionStatus}
+                  </span>
+                </p>
               </div>
-            ))}
-          </div>
-        </>
-      )}
 
-      {/* Grid Loading State */}
-      {!isGridReady && (
-        <>
-          <h3>Setting up grid...</h3>
-          <div style={{ marginBottom: '10px' }}>
-            {!sessionId && <p>Creating grid session...</p>}
-            {sessionId && !replicaId && <p>Setting up real-time sync...</p>}
-            {sessionId && replicaId && !presignedUrl && (
-              <p>Establishing secure connection...</p>
-            )}
-            {sessionId && replicaId && presignedUrl && !isConnected && (
-              <p>Connecting to server...</p>
-            )}
-            {isConnected && !isGridReady && <p>Loading table data...</p>}
-            <SkeletonTable numRows={4} numCols={1} />
-          </div>
-        </>
-      )}
-
-      {/* Grid */}
-      {isGridReady && (
-        <div>
-          <button onClick={commit}>Commit</button>
-          <button onClick={cancel}>Cancel</button>
-          <DataSheetGrid
-            value={rowValues}
-            columns={colValues}
-            rowKey="_rowId"
-            rowClassName={({ rowData }: any) => {
-              if (deletedRowIds.has(rowData._rowId)) {
-                return 'row-deleted'
-              }
-              if (createdRowIds.has(rowData._rowId)) {
-                return 'row-created'
-              }
-              if (updatedRowIds.has(rowData._rowId)) {
-                return 'row-updated'
-              } else return ''
-            }}
-            createRow={addRowToModel}
-            duplicateRow={({ rowData }: any) => ({
-              ...rowData,
-              _rowId: genId(),
-            })}
-            onChange={handleChange}
-          />
-        </div>
-      )}
-
-      {/* Debug Model Snapshot */}
-      {showDebugInfo && (
-        <div
-          style={{
-            margin: '10px 0',
-            padding: '10px',
-            border: '1px solid #ccc',
-            maxHeight: '400px',
-            overflowY: 'auto',
-          }}
-        >
-          <h3>Model snapshot</h3>
-          {modelSnapshot ? (
-            <ComplexJSONRenderer value={modelSnapshot} />
-          ) : (
-            'No model available'
+              {/* Message Log */}
+              <div
+                style={{
+                  margin: '10px 0',
+                  padding: '10px',
+                  border: '1px solid #ccc',
+                  maxHeight: '200px',
+                  overflowY: 'auto',
+                }}
+              >
+                <h4>Server Message Log</h4>
+                {messages.map((message, index) => (
+                  <div
+                    key={index}
+                    style={{ fontSize: '12px', marginBottom: '5px' }}
+                  >
+                    {message}
+                  </div>
+                ))}
+              </div>
+            </>
           )}
-        </div>
+
+          {/* Grid Loading State */}
+          {!isGridReady && (
+            <>
+              <h3>Setting up grid...</h3>
+              <div style={{ marginBottom: '10px' }}>
+                {!sessionId && <p>Creating grid session...</p>}
+                {sessionId && !replicaId && <p>Setting up real-time sync...</p>}
+                {sessionId && replicaId && !presignedUrl && (
+                  <p>Establishing secure connection...</p>
+                )}
+                {sessionId && replicaId && presignedUrl && !isConnected && (
+                  <p>Connecting to server...</p>
+                )}
+                {isConnected && !isGridReady && <p>Loading table data...</p>}
+                <SkeletonTable numRows={4} numCols={1} />
+              </div>
+            </>
+          )}
+
+          {/* Grid */}
+          {isGridReady && (
+            <div>
+              <button onClick={commit}>Commit</button>
+              <button onClick={cancel}>Cancel</button>
+              <DataSheetGrid
+                value={rowValues}
+                columns={colValues}
+                rowKey="_rowId"
+                rowClassName={({ rowData }: any) => {
+                  if (deletedRowIds.has(rowData._rowId)) {
+                    return 'row-deleted'
+                  }
+                  if (createdRowIds.has(rowData._rowId)) {
+                    return 'row-created'
+                  }
+                  if (updatedRowIds.has(rowData._rowId)) {
+                    return 'row-updated'
+                  } else return ''
+                }}
+                createRow={addRowToModel}
+                duplicateRow={({ rowData }: any) => ({
+                  ...rowData,
+                  _rowId: genId(),
+                })}
+                onChange={handleChange}
+              />
+            </div>
+          )}
+
+          {/* Debug Model Snapshot */}
+          {showDebugInfo && (
+            <div
+              style={{
+                margin: '10px 0',
+                padding: '10px',
+                border: '1px solid #ccc',
+                maxHeight: '400px',
+                overflowY: 'auto',
+              }}
+            >
+              <h3>Model snapshot</h3>
+              {modelSnapshot ? (
+                <ComplexJSONRenderer value={modelSnapshot} />
+              ) : (
+                'No model available'
+              )}
+            </div>
+          )}
+        </>
       )}
     </div>
   )
