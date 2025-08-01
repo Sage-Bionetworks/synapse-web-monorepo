@@ -2,12 +2,14 @@ import {
   TABLE_IDS,
   ORG_TABLE_COLUMN_NAMES,
   ORG_TABLE_JSON_COLUMNS,
-  // standardsSql,
-  // DST_TABLE_COLUMN_NAMES,
   GC_ORG_IDS,
 } from '@/config/resources'
 import { GCInfo } from '@/config/GrandChallengeResources'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import {
+  QueryBundleRequest,
+  ColumnSingleValueQueryFilter,
+  ColumnSingleValueFilterOperator,
+} from '@sage-bionetworks/synapse-types'
 import { CardDeck } from 'synapse-react-client/components/CardDeck/CardDeck'
 import { CardDeckCardProps } from 'synapse-react-client/components/CardDeck/CardDeckCardProps'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
@@ -18,39 +20,38 @@ import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
  * Card view of challenges for the home page
  */
 
-type useTableFetchProps = {
-  entityId: string
-  columns: string[]
-  sql?: string
-  whereClause?: string
-  shouldRun?: boolean
-}
-
-export function useTableFetch({
-  entityId,
-  columns, // required
-  sql, // if filters or aliases or anything are needed, pass in whole sql query
-  whereClause, // or pass in where clause and will still use columns
-  shouldRun = true, // if calling before ready, send false
-}: useTableFetchProps) {
-  if (!sql) {
-    sql = `SELECT ${columns.join(', ')} FROM ${entityId}`
-  }
-  if (whereClause) {
-    sql += ` WHERE ${whereClause}`
-  }
+export function ChallengesCardDeck() {
+  const additionalFilters: ColumnSingleValueQueryFilter[] = [
+    {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      columnName: ORG_TABLE_COLUMN_NAMES.ID,
+      operator: ColumnSingleValueFilterOperator.IN,
+      values: GC_ORG_IDS.map(id => id.replace(/'/g, '')),
+    },
+  ]
 
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    entityId,
+    entityId: TABLE_IDS.Organization.id,
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-    query: { sql },
+    query: {
+      sql: `SELECT ${Object.values(ORG_TABLE_COLUMN_NAMES).join(', ')} FROM ${
+        TABLE_IDS.Organization.id
+      }`,
+      additionalFilters,
+    },
   }
-  return useGetQueryResultBundle(queryBundleRequest, {
-    enabled: shouldRun,
+
+  const {
+    data: queryResult,
+    error: gcOrgsError,
+    isLoading: isLoadingGcOrgsTableQuery,
+  } = useGetQueryResultBundle(queryBundleRequest, {
     select: data => {
+      const columns = Object.values(ORG_TABLE_COLUMN_NAMES)
       const colIndexes = columns.map(column => ({
         column,
         index: getFieldIndex(column, data),
@@ -70,18 +71,8 @@ export function useTableFetch({
       return results
     },
   })
-}
 
-export function ChallengesCardDeck() {
-  const {
-    data: gcOrgs = [],
-    error: gcOrgsError,
-    isLoading: isLoadingGcOrgsTableQuery,
-  } = useTableFetch({
-    entityId: TABLE_IDS.Organization.id,
-    columns: Object.values(ORG_TABLE_COLUMN_NAMES),
-    whereClause: `${ORG_TABLE_COLUMN_NAMES.ID} in (${GC_ORG_IDS.join(',')})`,
-  })
+  const gcOrgs = queryResult ?? []
 
   const orgs = {}
   for (const gcOrg of gcOrgs) {
@@ -100,10 +91,7 @@ export function ChallengesCardDeck() {
   if (gcOrgsError) {
     return <ErrorBanner error={gcOrgsError} />
   }
-  const isLoading =
-    // isLoadingChallengesTableQuery ||
-    // isLoadingChallengesEntity ||
-    isLoadingGcOrgsTableQuery
+  const isLoading = isLoadingGcOrgsTableQuery
   if (isLoading) {
     return <div>Loading...</div>
   }
@@ -117,8 +105,6 @@ export function ChallengesCardDeck() {
       description: 'foo ' + gcOrg[ORG_TABLE_COLUMN_NAMES.DESCRIPTION],
       cardDeckType: 'b2ai',
       ctaButtonText: 'NOT USED IN cardDeckType = b2ai',
-      // ctaButtonURL: createExplorePageLink(query),
-      // ctaButtonURL: `/OrganizationDetailsPage?id=${DATASET_TABLE_COLUMN_NAMES.ID}`,
       ctaButtonURL: `/Explore/Organization/OrganizationDetailsPage?${
         ORG_TABLE_COLUMN_NAMES.ID
       }=${gcOrg[ORG_TABLE_COLUMN_NAMES.ID]}`,
