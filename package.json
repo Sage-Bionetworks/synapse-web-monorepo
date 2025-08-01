@@ -47,15 +47,8 @@
   },
   "pnpm": {
     "overrides": {
-      "word-wrap": "^1.2.4",
-      "semver": "^7.5.4",
       "@types/react": "19.1.8",
-      "@types/react-dom": "19.1.6",
-      "goober": "2.1.9",
-      "react-hot-toast": "2.2.0",
-      "postcss": "^8.4.31",
-      "elliptic": "^6.6.1",
-      "cross-spawn": "^7.0.5"
+      "@types/react-dom": "19.1.6"
     }
   },
   "packageManager": "pnpm@10.13.1+sha512.37ebf1a5c7a30d5fabe0c5df44ee8da4c965ca0c5af3dbab28c3a1681b70a256218d05c81c9c0dcf767ef6b8551eb5b960042b9ed4300c59242336377e01cfad"
