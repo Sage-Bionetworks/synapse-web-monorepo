@@ -57,7 +57,6 @@ export const StartGridSession = ({
 
   const handleStartSession = async (input: string) => {
     const parsedInput = parseQueryInput(input)
-    console.log('start session input:', parsedInput)
     try {
       if (parsedInput.type === 'empty' || parsedInput.type === 'sql') {
         // Start a new session and clear replicaId and presignedUrl
@@ -134,8 +133,6 @@ export const StartGridSession = ({
   }, [query])
 
   if (query) return null
-
-  console.log('query', query)
 
   return (
     <>
