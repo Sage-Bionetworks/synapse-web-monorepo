@@ -1,1 +1,0 @@
-import{t as i}from"./toNumber-BnIFcVg8.js";var o=1/0,f=17976931348623157e292;function I(r){if(!r)return r===0?r:0;if(r=i(r),r===o||r===-1/0){var t=r<0?-1:1;return t*f}return r===r?r:0}function N(r){var t=I(r),n=t%1;return t===t?n?t-n:t:0}export{N as t};
