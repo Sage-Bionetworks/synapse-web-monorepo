@@ -210,7 +210,7 @@
     "type-fest": "^4.41.0",
     "typescript": "5.8.3",
     "util": "^0.12.5",
-    "vite": "^6.3.5",
+    "vite": "^7.1.1",
     "vite-config": "workspace:*",
     "vitest": "^3.2.2",
     "vitest-when": "^0.6.0",
