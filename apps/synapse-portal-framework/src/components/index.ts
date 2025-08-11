@@ -13,7 +13,6 @@ import DetailsPage from './DetailsPage'
 import ELBrowseToolsPage from './eliteportal/ELBrowseToolsPage'
 import ELContributeYourData from './eliteportal/ELContributeYourData'
 import ELGettingStarted from './eliteportal/ELGettingStarted'
-import AllALSSlat from './ampals/ALLALSSlat'
 import AMPALSExploreTheData from './ampals/AMPALSExploreTheData'
 import ELSupportedByNIH from './eliteportal/ELSupportedByNIH'
 import ARKWelcomePage from './arkportal/ARKWelcomePage'
@@ -49,7 +48,6 @@ const PortalComponents = {
   ELBrowseToolsPage,
   ELContributeYourData,
   ELGettingStarted,
-  AllALSSlat,
   AMPALSExploreTheData,
   ELSupportedByNIH,
   ARKWelcomePage,

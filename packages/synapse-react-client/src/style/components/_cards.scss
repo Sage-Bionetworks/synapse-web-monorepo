@@ -284,6 +284,13 @@ $text-color-lighter: #898989;
         font-size: 14px !important;
       }
     }
+    .SRC-cardMetadata-column1 {
+      min-width: 140px;
+      width: 1px; /* Shrink-wrap to content */
+    }
+    .SRC-cardMetadata-column2 {
+      width: auto; /* Take remaining space */
+    }
   }
 
   &.SRC-typeDataset {

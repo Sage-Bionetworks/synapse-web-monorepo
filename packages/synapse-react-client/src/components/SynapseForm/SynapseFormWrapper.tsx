@@ -96,7 +96,7 @@ class _SynapseFormWrapper extends Component<
       versionNumber,
       this.onError,
     )
-    const derefContent = (await $RefParser.dereference(content)) as JSON
+    const derefContent = await $RefParser.dereference<JSON>(content)
     return {
       version: version,
       content: derefContent,
