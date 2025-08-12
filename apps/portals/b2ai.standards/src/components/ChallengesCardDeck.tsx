@@ -20,6 +20,9 @@ import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
  * Card view of challenges for the home page
  */
 
+const COLS_NEEDED = ['ID', 'NAME', 'DESCRIPTION'].map(
+  k => ORG_TABLE_COLUMN_NAMES[k],
+)
 export function ChallengesCardDeck() {
   const additionalFilters: ColumnSingleValueQueryFilter[] = [
     {
@@ -38,9 +41,7 @@ export function ChallengesCardDeck() {
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     query: {
-      sql: `SELECT ${Object.values(ORG_TABLE_COLUMN_NAMES).join(', ')} FROM ${
-        TABLE_IDS.Organization.id
-      }`,
+      sql: `SELECT ${COLS_NEEDED.join(', ')} FROM ${TABLE_IDS.Organization.id}`,
       additionalFilters,
     },
   }
@@ -51,7 +52,7 @@ export function ChallengesCardDeck() {
     isLoading: isLoadingGcOrgsTableQuery,
   } = useGetQueryResultBundle(queryBundleRequest, {
     select: data => {
-      const columns = Object.values(ORG_TABLE_COLUMN_NAMES)
+      const columns = COLS_NEEDED
       const colIndexes = columns.map(column => ({
         column,
         index: getFieldIndex(column, data),

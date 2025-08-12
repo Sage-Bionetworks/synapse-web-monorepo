@@ -27,10 +27,11 @@ function FeaturedDataPlots(props: FeaturedDataPlotsProps) {
   if (!isQueryPerCard) {
     return (
       <>
-        {(configs as SingleQueryFacetPlotsCardsProps[]).map(config => {
+        {(configs as SingleQueryFacetPlotsCardsProps[]).map((config, idx) => {
           return (
             !isQueryPerCard && (
               <SingleQueryFacetPlotsCards
+                key={idx}
                 {...config}
                 rgbIndex={rgbIndex}
                 sql={sql}
