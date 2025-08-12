@@ -136,10 +136,7 @@ function CardContainerInternal(props: CardContainerProps) {
     // render the cards
     cards = dataRows.length ? (
       dataRows.map((rowData: Row, index) => {
-        // const key = JSON.stringify(rowData.values)
         const propsForCard = {
-          // key,   // this is causing `A props object containing a "key" prop is being spread into JSX` warning
-          // was this needed for something else?
           type,
           schema,
           secondaryLabelLimit,
