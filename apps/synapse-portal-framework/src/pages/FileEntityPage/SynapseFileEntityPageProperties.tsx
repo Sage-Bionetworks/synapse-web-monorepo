@@ -160,7 +160,7 @@ const SynapseFileEntityPageProperties = ({
           ))}
           <tr>
             <td style={{ width: labelWidth }}>
-              <Box sx={labelSxProps}>Synapse Project</Box>
+              <Box sx={labelSxProps}>In Synapse Project</Box>
             </td>
             <td>
               <EntityLink entity={projectEntity!} />
