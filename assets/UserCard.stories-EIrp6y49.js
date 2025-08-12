@@ -1,0 +1,47 @@
+import{j as r}from"./jsx-runtime-D_zvdyIk.js";import{m as k}from"./useFiles-Ckm6sNnc.js";import"./VerificationSubmission-OWkqLMYZ.js";import"./StringUtils-C5rFena9.js";import{o as z,p as D,M as L,q as b,r as h,n as j}from"./SynapseConstants-DcSmyvTx.js";import"./index-kfz2ZdB-.js";import"./OrientationBanner-C5rGFwZK.js";import{a as c}from"./UserBadge-C6OqqU1P.js";import{B as v}from"./Box-DI3EuLbF.js";import"./fetchWithExponentialTimeout-CXmnpl-T.js";import"./useTimeout-DWIQCcxM.js";import"./FullWidthAlert-NU_s7J3j.js";import"./spreadSx-CwcO6WA9.js";import"./Alert-D-7LpQTg.js";import"./createTheme-Dn7uIOtN.js";import"./DefaultPropsProvider-DBzytOXy.js";import"./useSlot-CZqR668N.js";import"./useForkRef-DKQuVDpI.js";import"./createSimplePaletteValueFilter-Dz0wBtTa.js";import"./createSvgIcon-Cad1TFr7.js";import"./Close-B0xVWneC.js";import"./IconButton-DpCqJSaO.js";import"./ButtonBase-B5ksOXiP.js";import"./isFocusVisible-B8k4qzLc.js";import"./CircularProgress-C5QfbvCa.js";import"./Paper-CwNdsz7S.js";import"./useTheme-BLq1sqBY.js";import"./useTheme-B1mLmG-C.js";import"./Stack-D9tmhJmC.js";import"./extendSxProp-YO1I1ALA.js";import"./getThemeProps-DkYfMlon.js";import"./AlertTitle-CZW1Gbb2.js";import"./Typography-4j7jpxFq.js";import"./index-CEaHt5Lb.js";import"./ClickAwayListener-BM0nmyRh.js";import"./getReactElementRef-CBGuY3hl.js";import"./index-DupY7Nwi.js";import"./iframe-S-VLdJeA.js";import"./index-CQ-HXsIi.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-B162psUf.js";import"./Tooltip-nDeXFXq_.js";import"./index-DPt9EKPJ.js";import"./useControlled-RLynzQVM.js";import"./Popper-BNNuxoRs.js";import"./Button-DRDa_84V.js";import"./useQuery-G1j4ElAQ.js";import"./QueryClientProvider-BwQZVYI7.js";import"./Link-Cxhz8g-e.js";import"./Collapse--jh0di_0.js";import"./_baseUniq-DuGBs6Ey.js";import"./_Uint8Array-BK9HdWap.js";import"./isArray-C1U8f8cy.js";import"./_getTag-B2mdoK9R.js";import"./isEqual-F-Abf1XJ.js";import"./merge-C84YKXYk.js";import"./_initCloneObject-FVaMXRa6.js";import"./identity-DKeuBCMA.js";import"./tinycolor-Begke6kS.js";import"./Fade-gfnE55pz.js";import"./inputBaseClasses-CHKy8BeX.js";import"./calculateFriendlyFileSize-DPj0qpOI.js";import"./CheckCircleTwoTone-D-fO6mzc.js";import"./InfoTwoTone-F5_b2YUU.js";import"./useMutation-BJ7GlPUz.js";import"./dayjs.min-CeT-pF_j.js";import"./chunk-AYJ5UCUI-CENv81Bk.js";import"./cloneDeep-D0PQrEBb.js";import"./Skeleton-CLA7uXGO.js";import"./index-aiBum8h8.js";import"./react--ASatkGJ.js";import"./Popover-BzZyWUh9.js";import"./isHostComponent-DVu5iVWx.js";import"./ownerWindow-HkKU3E4x.js";import"./debounce-Be36O1Ab.js";import"./mergeSlotProps-DWVED0wG.js";import"./Modal-BsC5kkqI.js";import"./getScrollbarSize-CaCM53D3.js";import"./createChainedFunction-BO_9K8Jh.js";import"./Backdrop-D8tLj9tE.js";import"./IconSvg-BZxSihbD.js";import"./LayersTwoTone-Dk82p-9D.js";import"./ContentCopyTwoTone-dLTVgYPJ.js";import"./HelpOutlineTwoTone-MHznms1K.js";import"./ErrorOutlined-dUbaWQpo.js";import"./GetAppTwoTone-lGMJ6Oxk.js";import"./InfoOutlined-CNcGpvOv.js";import"./PhoneTwoTone-DkQAaYLu.js";import"./DeleteTwoTone-CxdK3Hfq.js";import"./SkeletonTable-QFBQhs_N.js";import"./times-CTwshqSU.js";import"./toInteger-DmSDPf36.js";import"./toNumber-DdiqWtGs.js";import"./isSymbol-B3lpFxsL.js";import"./ToastMessage-rIRywdh8.js";import"./uniqueId-CwzZ0Pa2.js";import"./toString-CJ4n245T.js";import"./CSSTransition-B-uSz1s4.js";import"./Menu-GbSzHSJP.js";import"./MenuList-DUQV89Tw.js";import"./List-CY8IrZ2U.js";import"./Divider-BNWmkD3c.js";import"./dividerClasses-C5RDBX-E.js";import"./MenuItem-DjC_QeF0.js";import"./Card-Cws2fHD-.js";import"./Avatar-4ePVi86q.js";import"./Chip-2og58oTm.js";const wo={title:"UI/UserCard",component:c,render:function(n){const{data:p}=k();let a=p==null?void 0:p.ownerId;return a===j.toString()&&(a=void 0),r.jsxs(r.Fragment,{children:[r.jsx("p",{children:"If you are logged in, your avatar or card will appear. If you are not logged in, enter an ownerId (e.g. 273960) or alias (e.g. brucehoff) below."}),r.jsx(c,{ownerId:n.ownerId??a,...n})]})}},o={args:{size:z,avatarSize:"SMALL"}},t={args:{size:D}},i={args:{size:L}},m={decorators:[s=>r.jsx(v,{sx:{maxWidth:"450px"},children:r.jsx(s,{})})],args:{size:L,menuActions:[{field:"Action 1",callback:()=>{console.log("Action 1 clicked")}},{field:b},{field:"Action 2",callback:()=>{console.log("Action 2 clicked")}},{field:"Action 3",callback:()=>{console.log("Action 3 clicked")}}]}},e={args:{size:h}};var d,l,A;o.parameters={...o.parameters,docs:{...(d=o.parameters)==null?void 0:d.docs,source:{originalSource:`{
+  args: {
+    size: AVATAR,
+    avatarSize: 'SMALL'
+  }
+}`,...(A=(l=o.parameters)==null?void 0:l.docs)==null?void 0:A.source}}};var u,g,S;t.parameters={...t.parameters,docs:{...(u=t.parameters)==null?void 0:u.docs,source:{originalSource:`{
+  args: {
+    size: SMALL_USER_CARD
+  }
+}`,...(S=(g=t.parameters)==null?void 0:g.docs)==null?void 0:S.source}}};var R,U,f;i.parameters={...i.parameters,docs:{...(R=i.parameters)==null?void 0:R.docs,source:{originalSource:`{
+  args: {
+    size: MEDIUM_USER_CARD
+  }
+}`,...(f=(U=i.parameters)==null?void 0:U.docs)==null?void 0:f.source}}};var C,x,E;m.parameters={...m.parameters,docs:{...(C=m.parameters)==null?void 0:C.docs,source:{originalSource:`{
+  decorators: [Story => {
+    return <Box sx={{
+      maxWidth: '450px'
+    }}>
+          <Story />
+        </Box>;
+  }],
+  args: {
+    size: MEDIUM_USER_CARD,
+    menuActions: [{
+      field: 'Action 1',
+      callback: () => {
+        console.log('Action 1 clicked');
+      }
+    }, {
+      field: SEPERATOR
+    }, {
+      field: 'Action 2',
+      callback: () => {
+        console.log('Action 2 clicked');
+      }
+    }, {
+      field: 'Action 3',
+      callback: () => {
+        console.log('Action 3 clicked');
+      }
+    }]
+  }
+}`,...(E=(x=m.parameters)==null?void 0:x.docs)==null?void 0:E.source}}};var _,M,I;e.parameters={...e.parameters,docs:{...(_=e.parameters)==null?void 0:_.docs,source:{originalSource:`{
+  args: {
+    size: LARGE_USER_CARD
+  }
+}`,...(I=(M=e.parameters)==null?void 0:M.docs)==null?void 0:I.source}}};const yo=["Avatar","SmallUserCard","MediumUserCard","MediumUserCardWithActions","LargeUserCard"];export{o as Avatar,e as LargeUserCard,i as MediumUserCard,m as MediumUserCardWithActions,t as SmallUserCard,yo as __namedExportsOrder,wo as default};
