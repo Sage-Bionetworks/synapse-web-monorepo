@@ -198,7 +198,7 @@ export function SynapseHomepageNavBar({
         onClose={handleCloseSageSolutions}
         filterByType="SageSolution"
         resourceName="Solutions"
-        description="Innovative tools of the Synapse ecosystem to accelerate data curation and crowd-sourced data science competitions"
+        description="Innovative tools in the Synapse ecosystem promoting crowd-sourced data science competitions, translational research, and more"
       />
       {isSmallView && (
         <Box
