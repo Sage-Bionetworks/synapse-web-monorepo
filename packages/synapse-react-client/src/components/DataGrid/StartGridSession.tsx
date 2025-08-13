@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from 'react'
+import { useState, useRef, useMemo, useEffect } from 'react'
 import { useCreateGridSession } from './useCreateGridSession'
 import { parseQueryInput } from './DataGridUtils'
 import { CreateGridRequest } from '@sage-bionetworks/synapse-client'
@@ -129,6 +129,12 @@ export const StartGridSession = ({
     }
   }
 
+  useEffect(() => {
+    if (!allowInput && query) {
+      handleStartSession(query)
+    }
+  }, [query])
+
   return (
     <>
       <div style={{ position: 'relative', width: '300px' }}>
@@ -210,16 +216,18 @@ export const StartGridSession = ({
           </ul>
         )}
       </div>
-      <Button
-        variant="outlined"
-        onClick={() => {
-          const inputValue = inputRef.current?.value || ''
-          handleStartSession(query || inputValue)
-        }}
-        sx={{ color: 'inherit', margin: '10px 0' }}
-      >
-        Start Grid Session
-      </Button>
+      {allowInput && (
+        <Button
+          variant="outlined"
+          onClick={() => {
+            const inputValue = inputRef.current?.value || ''
+            handleStartSession(inputValue)
+          }}
+          sx={{ color: 'inherit', margin: '10px 0' }}
+        >
+          Start Grid Session
+        </Button>
+      )}
     </>
   )
 }
