@@ -330,6 +330,7 @@ export default function Navbar() {
                 Portals
               </a>
               <SageResourcesPopover
+                filterByType="SynapsePortal"
                 anchorEl={portalResourcesAnchorEl}
                 onClose={handleClosePortalResources}
               />
