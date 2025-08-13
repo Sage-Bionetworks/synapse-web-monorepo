@@ -38,7 +38,7 @@ export function PortalFullTextSearchField({
       {...props}
       size={'small'}
       placeholder={placeholder}
-      value={searchInput}
+      value={searchInput || ''}
       onChange={event => {
         setSearchInput(event.target.value)
       }}
