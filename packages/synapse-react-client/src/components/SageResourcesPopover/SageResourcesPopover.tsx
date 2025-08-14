@@ -105,7 +105,7 @@ export function SageResourcesPopover({
               .map(config => (
                 <Grid
                   key={config.appId}
-                  size={{ xs: 12, sm: 6, lg: 4 }} // ⬅️ here too
+                  size={{ xs: 12, sm: 6, lg: 4 }}
                   className="sourceAppItem"
                   sx={{
                     p: '30px',
