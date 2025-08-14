@@ -141,7 +141,7 @@ export function SynapseHomepageNavBar({
             sx={navTextButtonSx}
             onClick={event => setSageSolutionsAnchorEl(event.currentTarget)}
           >
-            Solutions
+            Applications
           </Button>
           <Button
             sx={{ ...navTextButtonSx, mr: '15px' }}
@@ -197,7 +197,7 @@ export function SynapseHomepageNavBar({
         anchorEl={sageSolutionsAnchorEl}
         onClose={handleCloseSageSolutions}
         filterByType="SageSolution"
-        resourceName="Solutions"
+        resourceName="Applications"
         description="Innovative tools in the Synapse ecosystem promoting crowd-sourced data science competitions, translational research, and more"
       />
       {isSmallView && (
@@ -278,7 +278,7 @@ export function SynapseHomepageNavBar({
                 handleCloseMobileMenu()
               }}
             >
-              Solutions
+              Applications
             </StyledMenuItem>
             <StyledMenuItem
               onClick={() => {
