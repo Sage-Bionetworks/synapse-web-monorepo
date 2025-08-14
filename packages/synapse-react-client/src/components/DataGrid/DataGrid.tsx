@@ -196,13 +196,20 @@ const DataGrid = () => {
           operation.toRowIndex,
         )
 
-        if (objectsAreIdentical(oldVal[0], newVal[0])) return
+        // Compare all elements of oldVal and newVal
+        const comparisonResults = oldVal.map((oldItem, idx) =>
+          objectsAreIdentical(oldItem, newVal[idx]),
+        )
 
-        newVal.forEach(({ _rowId }: DataGridRow) => {
-          if (!createdRowIds.has(_rowId) && !deletedRowIds.has(_rowId)) {
-            updatedRowIds.add(_rowId)
-          }
-        })
+        if (comparisonResults.every(Boolean)) return
+        // Only process newVal items where comparisonResults is false (i.e., changed rows)
+        newVal
+          .filter((_, idx) => !comparisonResults[idx])
+          .forEach(({ _rowId }: DataGridRow) => {
+            if (!createdRowIds.has(_rowId) && !deletedRowIds.has(_rowId)) {
+              updatedRowIds.add(_rowId)
+            }
+          })
       }
 
       if (operation.type === 'DELETE') {
