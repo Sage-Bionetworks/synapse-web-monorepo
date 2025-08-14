@@ -22,7 +22,7 @@ export function objectsAreIdentical<
     const aVal = a[key]
     const bVal = b[key]
     // Treat null, undefined, and empty string as equivalent
-    const isNullish = (v: string | number | boolean) =>
+    const isNullish = (v: string | number | boolean | null | undefined) =>
       v === null || v === undefined || v === ''
     if (isNullish(aVal) && isNullish(bVal)) continue
     if (String(aVal) !== String(bVal)) return false
