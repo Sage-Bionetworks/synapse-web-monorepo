@@ -13,6 +13,49 @@ import '../../style/components/_data-grid-extra.scss'
 import { GridModel, GridModelSnapshot, Operation } from './DataGridTypes'
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
+import {
+  Autocomplete,
+  AutocompleteRenderInputParams,
+  TextField,
+} from '@mui/material'
+
+type AutocompleteOption = string
+
+type AutocompleteColumnProps = {
+  choices: AutocompleteOption[]
+  title: string
+}
+
+function autocompleteColumn({ choices, title }: AutocompleteColumnProps) {
+  return {
+    component: ({ rowData, setRowData, focus }: any) => (
+      <Autocomplete
+        freeSolo
+        disablePortal
+        options={choices}
+        value={rowData[title] || ''}
+        onChange={(event, newValue) => {
+          setRowData({ ...rowData, [title]: newValue || '' })
+        }}
+        renderInput={params => (
+          <TextField
+            {...params}
+            label="Search"
+            autoFocus={focus}
+            slotProps={{
+              input: {
+                ...params.InputProps,
+                type: 'search',
+              },
+            }}
+          />
+        )}
+      />
+    ),
+    disableKeys: true,
+    keepFocus: true,
+  }
+}
 
 const DataGrid = () => {
   // Grid session state
@@ -74,11 +117,12 @@ const DataGrid = () => {
     const { columnNames, columnOrder, rows } = modelSnapshot
     const gridRows = rows.map(row => {
       const rowObj: { [key: string]: any } = {}
+      const rowData = Array.isArray(row.data) ? row.data : []
       // Use columnOrder to determine which columnNames to use and in what order
       columnOrder.forEach((index: number) => {
         const columnName = columnNames[index]
         if (columnName) {
-          rowObj[columnName] = row.data[index]
+          rowObj[columnName] = rowData[index] ?? ''
         }
       })
       return rowObj
@@ -91,13 +135,28 @@ const DataGrid = () => {
     if (!modelSnapshot) return []
     const { columnNames, columnOrder } = modelSnapshot
     const gridCols: Column[] = columnOrder.map((index: number) => {
+      const columnName = columnNames[index]
+
+      const autocompleteChoices = ['Option 1', 'Option 2', 'Option 3']
+
       return {
         ...keyColumn(
-          columnNames[index],
+          columnName,
           createTextColumn({ continuousUpdates: false }),
         ),
-        title: columnNames[index],
+        title: columnName,
       }
+
+      // return {
+      //   ...keyColumn(
+      //     columnName,
+      //     autocompleteColumn({
+      //       choices: autocompleteChoices,
+      //       title: columnName,
+      //     }),
+      //   ),
+      //   title: columnNames,
+      // }
     })
     return gridCols
   }
