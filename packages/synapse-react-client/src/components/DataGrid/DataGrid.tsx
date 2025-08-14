@@ -201,6 +201,8 @@ const DataGrid = () => {
           objectsAreIdentical(oldItem, newVal[idx]),
         )
 
+        // If all compared rows are identical, no state updates are necessary.
+        // It is safe to return early here to avoid unnecessary updates.
         if (comparisonResults.every(Boolean)) return
         // Only process newVal items where comparisonResults is false (i.e., changed rows)
         newVal
