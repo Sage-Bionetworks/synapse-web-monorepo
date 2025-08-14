@@ -13,6 +13,7 @@ import '../../style/components/_data-grid-extra.scss'
 import { GridModel, GridModelSnapshot, Operation } from './DataGridTypes'
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
+import { objectsAreIdentical } from './DataGridUtils'
 
 const DataGrid = () => {
   // Grid session state
@@ -186,13 +187,22 @@ const DataGrid = () => {
       }
 
       if (operation.type === 'UPDATE') {
-        newValue
-          .slice(operation.fromRowIndex, operation.toRowIndex)
-          .forEach(({ _rowId }: any) => {
-            if (!createdRowIds.has(_rowId) && !deletedRowIds.has(_rowId)) {
-              updatedRowIds.add(_rowId)
-            }
-          })
+        const oldVal = rowValues.slice(
+          operation.fromRowIndex,
+          operation.toRowIndex,
+        )
+        const newVal = newValue.slice(
+          operation.fromRowIndex,
+          operation.toRowIndex,
+        )
+
+        if (objectsAreIdentical(oldVal[0], newVal[0])) return
+
+        newVal.forEach(({ _rowId }: DataGridRow) => {
+          if (!createdRowIds.has(_rowId) && !deletedRowIds.has(_rowId)) {
+            updatedRowIds.add(_rowId)
+          }
+        })
       }
 
       if (operation.type === 'DELETE') {
