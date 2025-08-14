@@ -12,7 +12,9 @@ export const parseQueryInput = (input: string): QueryInput => {
   return { type: 'unknown', input: trimmedInput }
 }
 
-export function objectsAreIdentical<T extends object>(a: T, b: T): boolean {
+export function objectsAreIdentical<
+  T extends { [key: string]: string | number | boolean },
+>(a: T, b: T): boolean {
   const aKeys = Object.keys(a)
   const bKeys = Object.keys(b)
   if (aKeys.length !== bKeys.length) return false
@@ -20,7 +22,8 @@ export function objectsAreIdentical<T extends object>(a: T, b: T): boolean {
     const aVal = a[key]
     const bVal = b[key]
     // Treat null, undefined, and empty string as equivalent
-    const isNullish = (v: any) => v === null || v === undefined || v === ''
+    const isNullish = (v: string | number | boolean) =>
+      v === null || v === undefined || v === ''
     if (isNullish(aVal) && isNullish(bVal)) continue
     if (String(aVal) !== String(bVal)) return false
   }
