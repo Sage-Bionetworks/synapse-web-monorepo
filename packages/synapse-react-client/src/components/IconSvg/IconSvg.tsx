@@ -117,6 +117,7 @@ import {
   Superscript,
   SyncTwoTone,
   TableChartTwoTone,
+  TableRows,
   TableViewTwoTone,
   Title,
   UploadTwoTone,
@@ -205,6 +206,7 @@ export const IconStrings = [
   'link',
   'linkOff',
   'table',
+  'tableRows',
   'public',
   'people',
   'entityview',
@@ -359,6 +361,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <MoreVertTwoTone {...otherProps} />
     case 'sync':
       return <SyncTwoTone {...otherProps} />
+    case 'tableRows':
+      return <TableRows {...otherProps} />
     case 'public':
       return <PublicTwoTone {...otherProps} />
     case 'clipboard':
