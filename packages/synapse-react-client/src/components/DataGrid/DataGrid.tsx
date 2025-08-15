@@ -10,10 +10,15 @@ import {
 } from 'react-datasheet-grid'
 import 'react-datasheet-grid/dist/style.css'
 import '../../style/components/_data-grid-extra.scss'
-import { GridModel, GridModelSnapshot, Operation } from './DataGridTypes'
+import {
+  GridModel,
+  GridModelSnapshot,
+  Operation,
+  DataGridRow,
+} from './DataGridTypes'
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
-import { objectsAreIdentical } from './DataGridUtils'
+import { rowsAreIdentical } from './DataGridUtils'
 
 const DataGrid = () => {
   // Grid session state
@@ -57,7 +62,6 @@ const DataGrid = () => {
   }, [sessionId, replicaId, websocketInstance])
 
   // Grid rows and columns
-  type DataGridRow = { [key: string]: string | number }
   const [rowValues, setRowValues] = useState<DataGridRow[]>([])
   const [colValues, setColValues] = useState<Column[]>([])
   const [prevRows, setPrevRows] = useState(rowValues)
@@ -198,7 +202,7 @@ const DataGrid = () => {
 
         // Compare all elements of oldVal and newVal
         const comparisonResults = oldVal.map((oldItem, idx) =>
-          objectsAreIdentical(oldItem, newVal[idx]),
+          rowsAreIdentical(oldItem, newVal[idx]),
         )
 
         // If all compared rows are identical, no state updates are necessary.
