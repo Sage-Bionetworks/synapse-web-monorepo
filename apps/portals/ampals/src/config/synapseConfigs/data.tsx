@@ -1,15 +1,15 @@
-import { QueryWrapperPlotNavProps, LabelLinkConfig } from 'synapse-react-client'
+import { QueryWrapperPlotNavProps } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
 import { filesSql } from '../resources'
 
 const rgbIndex = 0
-export const dataColumnLinks: LabelLinkConfig = [
-  {
-    matchColumnName: 'name',
-    isMarkdown: false,
-    linkColumnName: 'dataFileKey',
-  },
-]
+// export const dataColumnLinks: LabelLinkConfig = [
+//   {
+//     matchColumnName: 'name',
+//     isMarkdown: false,
+//     linkColumnName: 'dataFileKey',
+//   },
+// ]
 
 export const filesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   rgbIndex,
@@ -19,7 +19,7 @@ export const filesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   columnAliases,
   defaultShowSearchBox: true,
   tableConfiguration: {
-    columnLinks: dataColumnLinks,
+    // columnLinks: dataColumnLinks,
     showAccessColumn: true,
     showExternalAccessIcon: true,
   },
