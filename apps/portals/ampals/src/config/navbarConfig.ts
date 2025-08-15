@@ -45,6 +45,10 @@ export const navbarConfig: NavbarConfig = {
           name: 'Frequently Asked Questions',
           path: '/Resources/Frequently Asked Questions',
         },
+        {
+          name: 'Contact Us',
+          path: '/ContactUs',
+        },
         // {
         //   name: 'Publishing Requirements',
         //   path: '/Resources/Publishing Requirements',
