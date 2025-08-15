@@ -44,6 +44,11 @@ const routes: RouteObject[] = [
               ),
           },
           {
+            path: 'Files',
+            lazy: () =>
+              import('@/pages/Explore/files').then(convertModuleToRouteObject),
+          },
+          {
             path: 'Collections',
             lazy: () =>
               import('@/pages/Explore/collections').then(
