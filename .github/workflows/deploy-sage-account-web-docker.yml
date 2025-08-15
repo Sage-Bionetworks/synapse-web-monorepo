@@ -26,7 +26,7 @@ jobs:
     steps:
       # checkout and build
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - uses: ./.github/actions/pnpm-setup-action
       - name: build
         run: pnpm nx run SageAccountWeb:build --mode=${{ matrix.mode }}
