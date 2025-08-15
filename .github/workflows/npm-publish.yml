@@ -1,0 +1,67 @@
+name: 'NPM Publish and GitHub tag'
+on:
+  workflow_dispatch:
+    inputs:
+      packageName:
+        description: 'The name of the package to publish.'
+        required: true
+        type: choice
+        options:
+          - synapse-react-client
+          - markdown-it-synapse
+          - markdown-it-synapse-table
+          - '@sage-bionetworks/markdown-it-container'
+          - '@sage-bionetworks/synapse-client'
+          - '@sage-bionetworks/synapse-types'
+      version:
+        description: 'The semantic version number to publish (e.g., 1.2.3).'
+        required: true
+        type: string
+      ref:
+        description: 'The git ref to tag (e.g., main, a commit SHA).'
+        required: true
+        type: string
+        default: main
+      dryRun:
+        description: 'Dry run (log the publish command that would be run, without actually publishing).'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  tag-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref }}
+      - uses: ./.github/actions/pnpm-setup-action
+      - name: Get package path
+        id: package-path
+        run: |
+          packagePath=$(pnpm nx show project ${{ github.event.inputs.packageName }} --json | jq -r '.sourceRoot')
+          echo "packagePath=${packagePath}" >> "$GITHUB_OUTPUT"
+      - name: Set package version
+        run: pnpm version ${{ github.event.inputs.version }} --no-git-tag-version
+        working-directory: './${{ steps.package-path.outputs.packagePath }}'
+      # Build the package to publish
+      - name: Build package
+        run: pnpm nx run ${{ github.event.inputs.packageName }}:build
+      # If the package version changed, and the build succeeded, create the tag using the output of the previous step.
+      - name: Create tag
+        if: github.event.inputs.dryRun == 'false'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/${{ github.event.inputs.packageName }}/v${{ github.event.inputs.version }}",
+              sha: context.sha
+            })
+      - name: Publish to NPM
+        run: pnpm publish --access public --no-git-checks ${{ github.event.inputs.dryRun == 'true' && '--dry-run' || '' }}
+        working-directory: './${{ steps.package-path.outputs.packagePath }}'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

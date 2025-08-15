@@ -1,6 +1,6 @@
 {
   "name": "markdown-it-synapse",
-  "version": "1.1.17",
+  "version": "0.0.0",
   "description": "tag for markdown-it markdown parser.",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
