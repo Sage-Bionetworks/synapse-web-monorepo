@@ -1,4 +1,4 @@
-import { QueryInput } from './DataGridTypes'
+import { QueryInput, DataGridRow } from './DataGridTypes'
 // Query Input can either be an empty string, a SQL query, or a session ID
 export const parseQueryInput = (input: string): QueryInput => {
   const trimmedInput = input.trim()
@@ -12,9 +12,7 @@ export const parseQueryInput = (input: string): QueryInput => {
   return { type: 'unknown', input: trimmedInput }
 }
 
-export function objectsAreIdentical<
-  T extends { [key: string]: string | number | boolean },
->(a: T, b: T): boolean {
+export function rowsAreIdentical(a: DataGridRow, b: DataGridRow): boolean {
   const aKeys = Object.keys(a)
   const bKeys = Object.keys(b)
   if (aKeys.length !== bKeys.length) return false
