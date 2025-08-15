@@ -49,7 +49,7 @@ jobs:
         run: pnpm nx run ${{ github.event.inputs.packageName }}:build
       # If the package version changed, and the build succeeded, create the tag using the output of the previous step.
       - name: Create tag
-        if: github.event.inputs.dryRun == false
+        if: github.event.inputs.dryRun == 'false'
         uses: actions/github-script@v7
         with:
           github-token: ${{ github.token }}
@@ -61,7 +61,7 @@ jobs:
               sha: context.sha
             })
       - name: Publish to NPM
-        run: pnpm publish --access public --no-git-checks ${{ github.event.inputs.dryRun && '--dry-run' || '' }}
+        run: pnpm publish --access public --no-git-checks ${{ github.event.inputs.dryRun == 'true' && '--dry-run' || '' }}
         working-directory: './${{ steps.package-path.outputs.packagePath }}'
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
