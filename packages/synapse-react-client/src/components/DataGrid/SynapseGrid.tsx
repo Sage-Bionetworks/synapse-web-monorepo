@@ -18,9 +18,15 @@ import {
 } from 'react-datasheet-grid'
 import 'react-datasheet-grid/dist/style.css'
 import '../../style/components/_data-grid-extra.scss'
-import { GridModel, GridModelSnapshot, Operation } from './DataGridTypes'
+import {
+  GridModel,
+  GridModelSnapshot,
+  Operation,
+  DataGridRow,
+} from './DataGridTypes'
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
+import { rowsAreIdentical } from './DataGridUtils'
 import { SkeletonTable } from '../Skeleton'
 
 export type SynapseGridProps = {
@@ -89,7 +95,6 @@ const SynapseGrid = forwardRef<
   }, [sessionId, replicaId, websocketInstance])
 
   // Grid rows and columns
-  type DataGridRow = { [key: string]: string | number }
   const [rowValues, setRowValues] = useState<DataGridRow[]>([])
   const [colValues, setColValues] = useState<Column[]>([])
 
@@ -209,9 +214,27 @@ const SynapseGrid = forwardRef<
       }
 
       if (operation.type === 'UPDATE') {
-        newValue
-          .slice(operation.fromRowIndex, operation.toRowIndex)
-          .forEach(({ _rowId }: any) => {
+        const oldVal = rowValues.slice(
+          operation.fromRowIndex,
+          operation.toRowIndex,
+        )
+        const newVal = newValue.slice(
+          operation.fromRowIndex,
+          operation.toRowIndex,
+        )
+
+        // Compare all elements of oldVal and newVal
+        const comparisonResults = oldVal.map((oldItem, idx) =>
+          rowsAreIdentical(oldItem, newVal[idx]),
+        )
+
+        // If all compared rows are identical, no state updates are necessary.
+        // It is safe to return early here to avoid unnecessary updates.
+        if (comparisonResults.every(Boolean)) return
+        // Only process newVal items where comparisonResults is false (i.e., changed rows)
+        newVal
+          .filter((_, idx) => !comparisonResults[idx])
+          .forEach(({ _rowId }: DataGridRow) => {
             if (!createdRowIds.has(_rowId) && !deletedRowIds.has(_rowId)) {
               updatedRowIds.add(_rowId)
             }

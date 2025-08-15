@@ -39,3 +39,7 @@ export interface Operation {
   fromRowIndex: number
   toRowIndex: number
 }
+
+export type DataGridRow = {
+  [key: string]: string | number | boolean | null | undefined
+}
