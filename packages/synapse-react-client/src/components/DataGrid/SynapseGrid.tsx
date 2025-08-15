@@ -1,7 +1,15 @@
 import { ComplexJSONRenderer } from '@/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer'
-import { konst } from 'json-joy/lib/json-crdt-patch'
+import { konst, s } from 'json-joy/lib/json-crdt-patch'
 import throttle from 'lodash-es/throttle'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import {
   Column,
   createTextColumn,
@@ -20,11 +28,30 @@ export type SynapseGridProps = {
   showDebugInfo?: boolean
 }
 
-const SynapseGrid = ({ query, showDebugInfo = false }: SynapseGridProps) => {
+const SynapseGrid = forwardRef<
+  { initializeGrid: () => void },
+  SynapseGridProps
+>(({ query, showDebugInfo = false }, ref) => {
   // Grid session state
   const [sessionId, setSessionId] = useState<string>('')
   const [replicaId, setReplicaId] = useState<number | null>(null)
   const [presignedUrl, setPresignedUrl] = useState<string>('')
+
+  const startGridSessionRef = useRef<{
+    handleStartSession: (input: string) => void
+  } | null>(null)
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      initializeGrid: () => {
+        if (startGridSessionRef.current) {
+          startGridSessionRef.current.handleStartSession(query)
+        }
+      },
+    }),
+    [query],
+  )
 
   // WebSocket state
   const {
@@ -137,13 +164,6 @@ const SynapseGrid = ({ query, showDebugInfo = false }: SynapseGridProps) => {
   const deletedRowIds = useMemo(() => new Set(), [])
   const updatedRowIds = useMemo(() => new Set(), [])
 
-  const cancel = () => {
-    setRowValues(prevRows)
-    createdRowIds.clear()
-    deletedRowIds.clear()
-    updatedRowIds.clear()
-  }
-
   const performCommit = (dataToCommit: DataGridRow[]) => {
     // Update model and send changes to server
     // This mutates the model -- maybe we should move this?
@@ -157,8 +177,6 @@ const SynapseGrid = ({ query, showDebugInfo = false }: SynapseGridProps) => {
 
     return dataToCommit
   }
-
-  const commit = () => performCommit(rowValues)
 
   function genId() {
     return Math.floor(Math.random() * 1000000)
@@ -242,6 +260,7 @@ const SynapseGrid = ({ query, showDebugInfo = false }: SynapseGridProps) => {
     <div>
       <div>
         <StartGridSession
+          ref={startGridSessionRef}
           onSessionChange={setSessionId}
           onReplicaChange={setReplicaId}
           onPresignedUrlChange={setPresignedUrl}
@@ -320,8 +339,6 @@ const SynapseGrid = ({ query, showDebugInfo = false }: SynapseGridProps) => {
           {/* Grid */}
           {isGridReady && (
             <div>
-              <button onClick={commit}>Commit</button>
-              <button onClick={cancel}>Cancel</button>
               <DataSheetGrid
                 value={rowValues}
                 columns={colValues}
@@ -370,6 +387,6 @@ const SynapseGrid = ({ query, showDebugInfo = false }: SynapseGridProps) => {
       )}
     </div>
   )
-}
+})
 
 export default SynapseGrid
