@@ -1,9 +1,10 @@
-import { Box } from '@mui/material'
+import { Box, SxProps } from '@mui/material'
 import { EntityBundle, FileEntity } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import React from 'react'
 import { SkeletonTable } from 'synapse-react-client'
 import CopyToClipboardIcon from 'synapse-react-client/components/CopyToClipboardIcon'
+import { EntityLink } from 'synapse-react-client/components/EntityLink'
 import { StyledTableContainer } from 'synapse-react-client/components/styled/StyledTableContainer'
 import { UserBadge } from 'synapse-react-client/components/UserCard/UserBadge'
 import { calculateFriendlyFileSize } from 'synapse-react-client/utils/functions/calculateFriendlyFileSize'
@@ -24,6 +25,12 @@ type FilePropertyRowProps = {
   storageLocationName?: string
 }
 
+const labelWidth = '256px'
+const labelSxProps: SxProps = {
+  fontSize: '14px',
+  lineHeight: '20px',
+  color: '#333',
+}
 const FilePropertyRow: React.FC<FilePropertyRowProps> = ({
   keyName,
   label,
@@ -92,10 +99,8 @@ const FilePropertyRow: React.FC<FilePropertyRowProps> = ({
 
   return (
     <tr key={keyName}>
-      <td style={{ width: '256px' }}>
-        <Box sx={{ fontSize: '14px', lineHeight: '20px', color: '#333' }}>
-          {label}
-        </Box>
+      <td style={{ width: labelWidth }}>
+        <Box sx={labelSxProps}>{label}</Box>
       </td>
       <td>{content}</td>
     </tr>
@@ -110,6 +115,7 @@ const SynapseFileEntityPageProperties = ({
     fileHandle,
     storageLocationUploadDestination,
     entityBundle,
+    projectEntity,
     isLoading,
   } = useGetEntityMetadata(entityId, versionNumber)
 
@@ -134,7 +140,6 @@ const SynapseFileEntityPageProperties = ({
     { key: 'versionLabel', label: 'Version' },
     { key: 'contentMd5', label: 'MD5' },
     { key: 'storageLocationId', label: 'Storage Location' },
-    { key: 'parentId', label: 'Contained in Project' },
     { key: 'createdBy', label: 'Created by' },
     { key: 'modifiedBy', label: 'Last Modified by' },
   ]
@@ -153,6 +158,16 @@ const SynapseFileEntityPageProperties = ({
               storageLocationName={fileLocationName}
             />
           ))}
+          {projectEntity && (
+            <tr>
+              <td style={{ width: labelWidth }}>
+                <Box sx={labelSxProps}>In Synapse Project</Box>
+              </td>
+              <td>
+                <EntityLink entity={projectEntity} />
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </StyledTableContainer>

@@ -61,6 +61,7 @@ const CollapsibleSection = ({
             onClick={() => setOpen(!open)}
           >
             <Typography
+              component="div"
               variant="sectionTitle"
               sx={{
                 display: 'flex',
