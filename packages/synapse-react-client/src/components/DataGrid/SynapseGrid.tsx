@@ -1,5 +1,5 @@
 import { ComplexJSONRenderer } from '@/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer'
-import { konst, s } from 'json-joy/lib/json-crdt-patch'
+import { konst } from 'json-joy/lib/json-crdt-patch'
 import throttle from 'lodash-es/throttle'
 import {
   forwardRef,
@@ -92,7 +92,6 @@ const SynapseGrid = forwardRef<
   type DataGridRow = { [key: string]: string | number }
   const [rowValues, setRowValues] = useState<DataGridRow[]>([])
   const [colValues, setColValues] = useState<Column[]>([])
-  const [prevRows, setPrevRows] = useState(rowValues)
 
   useEffect(() => {
     if (modelSnapshot) {
@@ -251,8 +250,6 @@ const SynapseGrid = forwardRef<
     )
     // Update UI state
     setRowValues(filteredData)
-    setPrevRows(filteredData)
-
     autoCommit(filteredData)
   }
 
