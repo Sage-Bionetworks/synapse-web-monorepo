@@ -158,14 +158,16 @@ const SynapseFileEntityPageProperties = ({
               storageLocationName={fileLocationName}
             />
           ))}
-          <tr>
-            <td style={{ width: labelWidth }}>
-              <Box sx={labelSxProps}>In Synapse Project</Box>
-            </td>
-            <td>
-              <EntityLink entity={projectEntity!} />
-            </td>
-          </tr>
+          {projectEntity && (
+            <tr>
+              <td style={{ width: labelWidth }}>
+                <Box sx={labelSxProps}>In Synapse Project</Box>
+              </td>
+              <td>
+                <EntityLink entity={projectEntity} />
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </StyledTableContainer>

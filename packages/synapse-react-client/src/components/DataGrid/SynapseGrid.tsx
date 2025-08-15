@@ -1,7 +1,15 @@
 import { ComplexJSONRenderer } from '@/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer'
 import { konst } from 'json-joy/lib/json-crdt-patch'
 import throttle from 'lodash-es/throttle'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import {
   Column,
   createTextColumn,
@@ -19,12 +27,37 @@ import {
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { rowsAreIdentical } from './DataGridUtils'
+import { SkeletonTable } from '../Skeleton'
 
-const DataGrid = () => {
+export type SynapseGridProps = {
+  query: string
+  showDebugInfo?: boolean
+}
+
+const SynapseGrid = forwardRef<
+  { initializeGrid: () => void },
+  SynapseGridProps
+>(({ query, showDebugInfo = false }, ref) => {
   // Grid session state
   const [sessionId, setSessionId] = useState<string>('')
   const [replicaId, setReplicaId] = useState<number | null>(null)
   const [presignedUrl, setPresignedUrl] = useState<string>('')
+
+  const startGridSessionRef = useRef<{
+    handleStartSession: (input: string) => void
+  } | null>(null)
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      initializeGrid: () => {
+        if (startGridSessionRef.current) {
+          startGridSessionRef.current.handleStartSession(query)
+        }
+      },
+    }),
+    [query],
+  )
 
   // WebSocket state
   const {
@@ -64,7 +97,6 @@ const DataGrid = () => {
   // Grid rows and columns
   const [rowValues, setRowValues] = useState<DataGridRow[]>([])
   const [colValues, setColValues] = useState<Column[]>([])
-  const [prevRows, setPrevRows] = useState(rowValues)
 
   useEffect(() => {
     if (modelSnapshot) {
@@ -136,13 +168,6 @@ const DataGrid = () => {
   const deletedRowIds = useMemo(() => new Set(), [])
   const updatedRowIds = useMemo(() => new Set(), [])
 
-  const cancel = () => {
-    setRowValues(prevRows)
-    createdRowIds.clear()
-    deletedRowIds.clear()
-    updatedRowIds.clear()
-  }
-
   const performCommit = (dataToCommit: DataGridRow[]) => {
     // Update model and send changes to server
     // This mutates the model -- maybe we should move this?
@@ -156,8 +181,6 @@ const DataGrid = () => {
 
     return dataToCommit
   }
-
-  const commit = () => performCommit(rowValues)
 
   function genId() {
     return Math.floor(Math.random() * 1000000)
@@ -250,8 +273,6 @@ const DataGrid = () => {
     )
     // Update UI state
     setRowValues(filteredData)
-    setPrevRows(filteredData)
-
     autoCommit(filteredData)
   }
 
@@ -259,98 +280,133 @@ const DataGrid = () => {
     <div>
       <div>
         <StartGridSession
+          ref={startGridSessionRef}
           onSessionChange={setSessionId}
           onReplicaChange={setReplicaId}
           onPresignedUrlChange={setPresignedUrl}
+          query={query}
         />
       </div>
+      {sessionId && (
+        <>
+          {/* Debug Information */}
+          {showDebugInfo && (
+            <>
+              <div>
+                <p>Session ID: {sessionId || 'No session created'}</p>
+                <p>Replica ID: {replicaId || 'No replica created'}</p>
+                <p>
+                  Presigned URL:{' '}
+                  {presignedUrl.substring(0, 30) +
+                    (presignedUrl.length > 30
+                      ? ' ... ' +
+                        presignedUrl.substring(
+                          presignedUrl.length - 10,
+                          presignedUrl.length,
+                        )
+                      : '') || 'No URL generated'}
+                </p>
+                <p>
+                  WebSocket Status:{' '}
+                  <span style={{ color: isConnected ? 'green' : 'red' }}>
+                    {connectionStatus}
+                  </span>
+                </p>
+              </div>
 
-      <div>
-        <p>Session ID: {sessionId || 'No session created'}</p>
-        <p>Replica ID: {replicaId || 'No replica created'}</p>
-        <p>
-          Presigned URL:{' '}
-          {presignedUrl.substring(0, 30) +
-            (presignedUrl.length > 30
-              ? ' ... ' +
-                presignedUrl.substring(
-                  presignedUrl.length - 10,
-                  presignedUrl.length,
-                )
-              : '') || 'No URL generated'}
-        </p>
-        <p>
-          WebSocket Status:{' '}
-          <span style={{ color: isConnected ? 'green' : 'red' }}>
-            {connectionStatus}
-          </span>
-        </p>
-      </div>
-      {/* Message Log */}
-      <div
-        style={{
-          margin: '10px 0',
-          padding: '10px',
-          border: '1px solid #ccc',
-          maxHeight: '200px',
-          overflowY: 'auto',
-        }}
-      >
-        <h4>Server Message Log</h4>
-        {messages.map((message, index) => (
-          <div key={index} style={{ fontSize: '12px', marginBottom: '5px' }}>
-            {message}
-          </div>
-        ))}
-      </div>
-      {!isGridReady && <h3>Loading grid...</h3>}
-      {isGridReady && (
-        <div>
-          <button onClick={commit}>Commit</button>
-          <button onClick={cancel}>Cancel</button>
-          <DataSheetGrid
-            value={rowValues}
-            columns={colValues}
-            rowKey="_rowId"
-            rowClassName={({ rowData }: any) => {
-              if (deletedRowIds.has(rowData._rowId)) {
-                return 'row-deleted'
-              }
-              if (createdRowIds.has(rowData._rowId)) {
-                return 'row-created'
-              }
-              if (updatedRowIds.has(rowData._rowId)) {
-                return 'row-updated'
-              } else return ''
-            }}
-            createRow={addRowToModel}
-            duplicateRow={({ rowData }: any) => ({
-              ...rowData,
-              _rowId: genId(),
-            })}
-            onChange={handleChange}
-          />
-        </div>
+              {/* Message Log */}
+              <div
+                style={{
+                  margin: '10px 0',
+                  padding: '10px',
+                  border: '1px solid #ccc',
+                  maxHeight: '200px',
+                  overflowY: 'auto',
+                }}
+              >
+                <h4>Server Message Log</h4>
+                {messages.map((message, index) => (
+                  <div
+                    key={index}
+                    style={{ fontSize: '12px', marginBottom: '5px' }}
+                  >
+                    {message}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Grid Loading State */}
+          {!isGridReady && (
+            <>
+              <h3>Setting up grid...</h3>
+              <div style={{ marginBottom: '10px' }}>
+                {!sessionId && <p>Creating grid session...</p>}
+                {sessionId && !replicaId && <p>Setting up real-time sync...</p>}
+                {sessionId && replicaId && !presignedUrl && (
+                  <p>Establishing secure connection...</p>
+                )}
+                {sessionId && replicaId && presignedUrl && !isConnected && (
+                  <p>Connecting to server...</p>
+                )}
+                {isConnected && !isGridReady && <p>Loading table data...</p>}
+                <SkeletonTable numRows={4} numCols={1} />
+              </div>
+            </>
+          )}
+
+          {/* Grid */}
+          {isGridReady && (
+            <div>
+              <DataSheetGrid
+                value={rowValues}
+                columns={colValues}
+                rowKey="_rowId"
+                rowClassName={({ rowData }: any) => {
+                  if (deletedRowIds.has(rowData._rowId)) {
+                    return 'row-deleted'
+                  }
+                  if (createdRowIds.has(rowData._rowId)) {
+                    return 'row-created'
+                  }
+                  if (updatedRowIds.has(rowData._rowId)) {
+                    return 'row-updated'
+                  } else return ''
+                }}
+                createRow={addRowToModel}
+                duplicateRow={({ rowData }: any) => ({
+                  ...rowData,
+                  _rowId: genId(),
+                })}
+                onChange={handleChange}
+              />
+            </div>
+          )}
+
+          {/* Debug Model Snapshot */}
+          {showDebugInfo && (
+            <div
+              style={{
+                margin: '10px 0',
+                padding: '10px',
+                border: '1px solid #ccc',
+                maxHeight: '400px',
+                overflowY: 'auto',
+              }}
+            >
+              <h3>Model snapshot</h3>
+              {modelSnapshot ? (
+                <ComplexJSONRenderer value={modelSnapshot} />
+              ) : (
+                'No model available'
+              )}
+            </div>
+          )}
+        </>
       )}
-      <div
-        style={{
-          margin: '10px 0',
-          padding: '10px',
-          border: '1px solid #ccc',
-          maxHeight: '400px',
-          overflowY: 'auto',
-        }}
-      >
-        <h3>Model snapshot</h3>
-
-        {modelSnapshot ? (
-          <ComplexJSONRenderer value={modelSnapshot} />
-        ) : (
-          'No model available'
-        )}
-      </div>
     </div>
   )
-}
+})
 
-export default DataGrid
+export default SynapseGrid
