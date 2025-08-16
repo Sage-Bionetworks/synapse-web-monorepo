@@ -21,46 +21,59 @@ import '../../style/components/_data-grid-extra.scss'
 import { GridModel, GridModelSnapshot, Operation } from './DataGridTypes'
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
-import {
-  Autocomplete,
-  AutocompleteRenderInputParams,
-  TextField,
-} from '@mui/material'
+import { Autocomplete, TextField } from '@mui/material'
 import { SkeletonTable } from '../Skeleton'
 
 type AutocompleteOption = string
 
-type AutocompleteColumnProps = {
-  choices: AutocompleteOption[]
-  title: string
-}
-
-function autocompleteColumn({ choices, title }: AutocompleteColumnProps) {
+function autocompleteColumn({ choices }: { choices: AutocompleteOption[] }) {
   return {
-    component: ({ rowData, setRowData, focus }: any) => (
-      <Autocomplete
-        freeSolo
-        disablePortal
-        options={choices}
-        value={rowData[title] || ''}
-        onChange={(event, newValue) => {
-          setRowData({ ...rowData, [title]: newValue || '' })
-        }}
-        renderInput={params => (
-          <TextField
-            {...params}
-            label="Search"
-            autoFocus={focus}
-            slotProps={{
-              input: {
-                ...params.InputProps,
-                type: 'search',
-              },
-            }}
-          />
-        )}
-      />
-    ),
+    component: ({
+      rowData,
+      setRowData,
+    }: {
+      rowData: string
+      setRowData: (value: string) => void
+    }) => {
+      const currentValue = rowData || ''
+      return (
+        <Autocomplete
+          freeSolo
+          disablePortal={false}
+          options={choices}
+          value={currentValue}
+          onInputChange={(_, newInputValue) => {
+            setRowData(newInputValue || '')
+          }}
+          renderInput={params => (
+            <TextField
+              {...params}
+              slotProps={{
+                input: {
+                  ...params.InputProps,
+                  disableUnderline: true,
+                  sx: {
+                    height: '100%',
+                    padding: '0 10px',
+                    backgroundColor: 'inherit',
+                    borderRadius: 0,
+                  },
+                },
+              }}
+            />
+          )}
+          sx={{
+            width: '100%',
+            height: '100%',
+            '& .MuiAutocomplete-inputRoot': {
+              padding: '0 10px',
+              backgroundColor: 'inherit',
+            },
+            '& .MuiFormControl-root': { height: '100%' },
+          }}
+        />
+      )
+    },
     disableKeys: true,
     keepFocus: true,
   }
@@ -162,33 +175,50 @@ const SynapseGrid = forwardRef<
     return gridRows
   }
 
+  function getEnumeratedValuesForColumn(columnName: string): string[] | null {
+    // Options based on column name
+    // Replace with actual data source later
+    const columnEnumerations: { [key: string]: string[] } = {
+      breed: [
+        'domestic short hair',
+        'domestic long hair',
+        'persian',
+        'ragdoll',
+      ],
+      color: ['white', 'black', 'blue bicolor', 'seal bicolor'],
+    }
+
+    return columnEnumerations[columnName.toLowerCase()] || null
+  }
+
   // Convert model columns to a format suitable for DataSheetGrid
   function modelColsToGrid(modelSnapshot: GridModelSnapshot): Column[] {
     if (!modelSnapshot) return []
     const { columnNames, columnOrder } = modelSnapshot
     const gridCols: Column[] = columnOrder.map((index: number) => {
       const columnName = columnNames[index]
+      const enumeratedValues = getEnumeratedValuesForColumn(columnName)
 
-      const autocompleteChoices = ['Option 1', 'Option 2', 'Option 3']
-
+      if (enumeratedValues) {
+        // Use autocomplete column for columns with enumerated values
+        return {
+          ...keyColumn(
+            columnName,
+            autocompleteColumn({
+              choices: enumeratedValues,
+            }),
+          ),
+          title: columnName,
+        }
+      }
       return {
+        // Default to text column for columns without enumerated values
         ...keyColumn(
           columnName,
           createTextColumn({ continuousUpdates: false }),
         ),
         title: columnName,
       }
-
-      // return {
-      //   ...keyColumn(
-      //     columnName,
-      //     autocompleteColumn({
-      //       choices: autocompleteChoices,
-      //       title: columnName,
-      //     }),
-      //   ),
-      //   title: columnNames,
-      // }
     })
     return gridCols
   }
