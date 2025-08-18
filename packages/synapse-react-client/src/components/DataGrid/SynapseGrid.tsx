@@ -28,7 +28,7 @@ import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { rowsAreIdentical } from './DataGridUtils'
 import { SkeletonTable } from '../Skeleton'
-import { autocompleteColumn } from './AutocompleteColumn'
+import { autocompleteColumn } from './columns/AutocompleteColumn'
 
 export type SynapseGridProps = {
   query: string
