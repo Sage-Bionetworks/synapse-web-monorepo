@@ -20,7 +20,6 @@ export const grantsSchema: TableToGenericCardMapping = {
     'grantNumber',
     'consortium',
     'grantType',
-    'nihReporterLink',
     'grantStartDate',
     'theme',
   ],
@@ -39,12 +38,6 @@ export const grantsCardConfiguration: CardConfiguration = {
     matchColumnName: 'grantId',
     baseURL: 'Explore/Grants/DetailsPage',
   },
-  labelLinkConfig: [
-    {
-      isMarkdown: true,
-      matchColumnName: 'nihReporterLink',
-    },
-  ],
   type: SynapseConstants.GENERIC_CARD,
   secondaryLabelLimit: 4,
   iconOptions,
