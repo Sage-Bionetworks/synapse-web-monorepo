@@ -2,7 +2,7 @@ import * as ToastMessage from '@/components/ToastMessage/ToastMessage'
 import SynapseClient from '@/synapse-client'
 import * as SynapseConstants from '@/utils/SynapseConstants'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
-import { SynapseError } from '@/utils/SynapseError'
+import { ErrorResponse } from '@sage-bionetworks/synapse-client'
 import {
   ColumnTypeEnum,
   DownloadFromTableResult,
@@ -129,7 +129,8 @@ describe('useExportToCavatica', () => {
 
   it('Error in service call', async () => {
     const errorMessage = 'there was an error'
-    const error: SynapseError = {
+    const error: ErrorResponse = {
+      concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
       reason: errorMessage,
     }
     mockGetDownloadFromTableRequest.mockRejectedValue(error)

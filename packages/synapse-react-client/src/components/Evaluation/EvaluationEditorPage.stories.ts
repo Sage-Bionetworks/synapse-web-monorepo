@@ -4,7 +4,7 @@ import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import dayjs from 'dayjs'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import {
   EvaluationEditorPage,
   EvaluationEditorPageProps,
@@ -32,31 +32,27 @@ export const Evaluation: Story = {
     msw: {
       handlers: [
         ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
-        rest.get(
-          `${MOCK_REPO_ORIGIN}/repo/v1/evaluation/:id`,
-          async (req, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
-                id: '9614712',
-                etag: 'a2b871cb-faa4-471a-8c23-b917c77fecb2',
-                name: 'a',
-                description: 'b',
-                ownerId: MOCK_USER_ID.toString(),
-                createdOn: '2021-03-02T22:16:14.552Z',
-                contentSource: 'syn5585645',
-                submissionInstructionsMessage: 'c',
-                submissionReceiptMessage: 'c',
-              }),
-            )
-          },
-        ),
-        rest.post(
+        http.get(`${MOCK_REPO_ORIGIN}/repo/v1/evaluation/:id`, () => {
+          return HttpResponse.json(
+            {
+              id: '9614712',
+              etag: 'a2b871cb-faa4-471a-8c23-b917c77fecb2',
+              name: 'a',
+              description: 'b',
+              ownerId: MOCK_USER_ID.toString(),
+              createdOn: '2021-03-02T22:16:14.552Z',
+              contentSource: 'syn5585645',
+              submissionInstructionsMessage: 'c',
+              submissionReceiptMessage: 'c',
+            },
+            { status: 200 },
+          )
+        }),
+        http.post(
           `${MOCK_REPO_ORIGIN}/repo/v1/evaluation/:id/round/list`,
-          async (req, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
+          () => {
+            return HttpResponse.json(
+              {
                 page: [
                   // Ended
                   {
@@ -83,7 +79,8 @@ export const Evaluation: Story = {
                     roundEnd: dayjs().add(2, 'week').toISOString(),
                   },
                 ],
-              }),
+              },
+              { status: 200 },
             )
           },
         ),

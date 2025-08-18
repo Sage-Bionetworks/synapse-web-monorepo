@@ -1,6 +1,7 @@
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { cleanup, renderHook, waitFor } from '@testing-library/react'
+import { http } from 'msw'
 import usePreFetchResource from './usePreFetchResource'
 
 const onReceivedRequest = vi.fn()
@@ -25,16 +26,15 @@ describe('usePreFetchResource tests', () => {
 
   it('Returns a local URL when passed a presigned URL', async () => {
     server.use(
-      rest.get(
+      http.get(
         PRESIGNED_URL,
 
-        async (req, res, ctx) => {
+        () => {
           onReceivedRequest()
-          return res(
-            ctx.status(200),
-            ctx.set('Content-Type', 'image/jpeg'),
-            ctx.body('abcdef'),
-          )
+          return new Response('abcdef', {
+            status: 200,
+            headers: { 'Content-Type': 'image/jpeg' },
+          })
         },
       ),
     )

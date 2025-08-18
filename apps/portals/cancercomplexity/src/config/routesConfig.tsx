@@ -1,8 +1,13 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
+import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import { RouteObject } from 'react-router'
+import {
+  TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH,
+  TOOLS_DETAILS_PAGE_SUSTAINABILITY_AND_REUSABILITY_TAB_PATH,
+} from './routeConstants'
 
 const routes: RouteObject[] = [
   {
@@ -93,7 +98,31 @@ const routes: RouteObject[] = [
       {
         path: 'Explore/Tools/DetailsPage',
         lazy: () =>
-          import('@/pages/ToolsDetailsPage').then(convertModuleToRouteObject),
+          import('@/pages/ToolsDetailsPage/ToolsDetailsPage').then(
+            convertModuleToRouteObject,
+          ),
+        children: [
+          {
+            index: true,
+            element: (
+              <RedirectWithQuery to={TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH} />
+            ),
+          },
+          {
+            path: TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH,
+            lazy: () =>
+              import(
+                '@/pages/ToolsDetailsPage/ToolsDetailsPageDetailsTab'
+              ).then(convertModuleToRouteObject),
+          },
+          {
+            path: TOOLS_DETAILS_PAGE_SUSTAINABILITY_AND_REUSABILITY_TAB_PATH,
+            lazy: () =>
+              import(
+                '@/pages/ToolsDetailsPage/ToolsDetailsPageSustainabilityAndReusabilityTab'
+              ).then(convertModuleToRouteObject),
+          },
+        ],
       },
       {
         path: 'Explore/Educational Resources/DetailsPage',

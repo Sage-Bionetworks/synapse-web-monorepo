@@ -110,10 +110,10 @@ describe('CreateTableWizardUtils tests', () => {
       'Add Columns to View',
     )
     expect(getModalTitle('TABLE_NAME', EntityType.TABLE)).toBe(
-      'Describe the Table',
+      'Create the Table',
     )
     expect(getModalTitle('TABLE_NAME', EntityType.ENTITY_VIEW)).toBe(
-      'Describe the View',
+      'Create the View',
     )
   })
 

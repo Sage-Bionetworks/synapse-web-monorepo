@@ -1,6 +1,6 @@
 import { mockSubmittedSubmission } from '@/mocks/dataaccess/MockSubmission'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { DATA_ACCESS_SUBMISSION_BY_ID } from '@/utils/APIConstants'
@@ -12,6 +12,7 @@ import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstan
 import { SubmissionState } from '@sage-bionetworks/synapse-types'
 import { act, render, waitFor } from '@testing-library/react'
 import failOnConsoleError from 'jest-fail-on-console'
+import { http } from 'msw'
 import { CannedRejectionDialog } from '../CannedRejectionDialog/CannedRejectionDialog'
 import RejectDataAccessRequestModal, {
   DEFAULT_MESSAGE_APPEND,
@@ -50,12 +51,12 @@ describe('RejectDataAccessRequestModal', () => {
   beforeAll(() => {
     server.listen()
     server.use(
-      rest.put(
+      http.put(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200))
+        () => {
+          return new Response('', { status: 200 })
         },
       ),
     )

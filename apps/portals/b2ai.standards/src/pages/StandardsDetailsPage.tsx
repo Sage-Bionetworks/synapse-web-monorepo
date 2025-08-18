@@ -15,13 +15,13 @@ import {
 } from 'synapse-react-client'
 import { CardContainerLogic } from 'synapse-react-client'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
-import columnAliases from '../config/columnAliases'
+import columnAliases from '@/config/columnAliases'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import {
   DST_TABLE_COLUMN_NAMES,
   standardsDetailsPageSQL,
-} from '../config/resources'
-const dataSql = standardsDetailsPageSQL
+} from '@/config/resources'
+import { standardsColumnLinks } from '@/config/synapseConfigs/standards'
 
 export const standardsCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.STANDARD_DATA_MODEL,
@@ -29,7 +29,15 @@ export const standardsCardSchema: TableToGenericCardMapping = {
   subTitle: 'standardName',
   description: 'description',
   link: 'url',
-  secondaryLabels: ['SDO', 'collections', 'topic', 'dataTypes'],
+  secondaryLabels: [
+    'category',
+    'collections',
+    'topic',
+    'dataTypes',
+    // DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION,
+    // DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS,
+    // DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
+  ],
 }
 
 export const linkedStandardCardConfiguration: CardConfiguration = {
@@ -63,16 +71,17 @@ export const standardDetailsPageContent: DetailsPageContentType = [
                 headers={context.rowSet?.headers ?? []}
                 displayedColumns={[
                   'standardName',
-                  'SDO',
-                  DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
+                  DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS,
+                  DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_LINKS,
                   'isOpen',
                   'registration',
                 ]}
                 columnAliases={columnAliases}
+                columnLinks={standardsColumnLinks}
               />
             )
           } else {
-            return <SkeletonTable numRows={6} numCols={1} />
+            return <SkeletonTable numRows={8} numCols={1} />
           }
         }}
       </DetailsPageContextConsumer>
@@ -86,7 +95,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
         {({ value }) => (
           <CardContainerLogic
             cardConfiguration={linkedStandardCardConfiguration}
-            sql={dataSql}
+            sql={standardsDetailsPageSQL}
             // need a dummy value for search to properly exclude null values and an empty string doesn't work
             searchParams={{ id: value || 'notreal' }}
             sqlOperator={ColumnSingleValueFilterOperator.IN}
@@ -104,7 +113,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
           return (
             <CardContainerLogic
               cardConfiguration={linkedStandardCardConfiguration}
-              sql={dataSql}
+              sql={standardsDetailsPageSQL}
               // need a dummy value for search to properly exclude null values and an empty string doesn't work
               searchParams={{ id: value || 'notreal' }}
               sqlOperator={ColumnSingleValueFilterOperator.IN}
@@ -123,37 +132,39 @@ export default function StandardsDetailsPage() {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
   }
   return (
-    <>
-      <CardContainerLogic
-        query={{
-          sql: dataSql,
-          additionalFilters: [
-            {
-              concreteType:
-                'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-              columnName: 'id',
-              operator: ColumnSingleValueFilterOperator.EQUAL,
-              values: [id],
+    <DetailsPage
+      header={
+        <CardContainerLogic
+          query={{
+            sql: standardsDetailsPageSQL,
+            additionalFilters: [
+              {
+                concreteType:
+                  'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                columnName: 'id',
+                operator: ColumnSingleValueFilterOperator.EQUAL,
+                values: [id],
+              },
+            ],
+          }}
+          columnAliases={columnAliases}
+          cardConfiguration={{
+            type: SynapseConstants.GENERIC_CARD,
+            genericCardSchema: standardsCardSchema,
+            secondaryLabelLimit: 6,
+            isHeader: true,
+            headerCardVariant: 'HeaderCardV2',
+            ctaLinkConfig: {
+              text: 'View Standard on External Website',
+              link: 'url',
             },
-          ],
-        }}
-        columnAliases={columnAliases}
-        cardConfiguration={{
-          type: SynapseConstants.GENERIC_CARD,
-          genericCardSchema: standardsCardSchema,
-          secondaryLabelLimit: 6,
-          isHeader: true,
-          headerCardVariant: 'HeaderCardV2',
-          ctaLinkConfig: {
-            text: 'View Standard on External Website',
-            link: 'url',
-          },
-        }}
-      />
-
-      <DetailsPage sql={dataSql}>
-        <DetailsPageContent content={standardDetailsPageContent} />
-      </DetailsPage>
-    </>
+            labelLinkConfig: standardsColumnLinks,
+          }}
+        />
+      }
+      sql={standardsDetailsPageSQL}
+    >
+      <DetailsPageContent content={standardDetailsPageContent} />
+    </DetailsPage>
   )
 }

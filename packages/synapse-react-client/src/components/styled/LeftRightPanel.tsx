@@ -1,5 +1,6 @@
 import { Box, BoxProps, Paper, PaperProps, styled } from '@mui/material'
 import { StyledComponent } from '@emotion/styled'
+import { ReactNode } from 'react'
 
 export const StyledOuterContainer: StyledComponent<BoxProps> = styled(Box, {
   label: 'StyledOuterContainer',
@@ -34,8 +35,8 @@ export const StyledInnerContainer: StyledComponent<PaperProps> = styled(Paper, {
 }))
 
 type LeftRightPanelProps = {
-  leftContent: JSX.Element
-  rightContent: JSX.Element
+  leftContent: ReactNode
+  rightContent: ReactNode
   className?: string
 }
 

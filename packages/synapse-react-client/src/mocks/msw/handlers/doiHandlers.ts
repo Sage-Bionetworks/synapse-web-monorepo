@@ -1,6 +1,6 @@
 import { REPO } from '@/utils/APIConstants'
 import { Doi } from '@sage-bionetworks/synapse-types'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { MOCK_DOI } from '../../doi/MockDoi'
 
 export function getDoiHandler(
@@ -8,8 +8,8 @@ export function getDoiHandler(
   doiResponse: Doi = MOCK_DOI,
 ) {
   return [
-    rest.get(`${backendOrigin}${REPO}/doi`, async (_req, res, ctx) => {
-      return res(ctx.status(201), ctx.json(doiResponse))
+    http.get(`${backendOrigin}${REPO}/doi`, () => {
+      return HttpResponse.json(doiResponse, { status: 201 })
     }),
   ]
 }

@@ -6,21 +6,25 @@ import {
 } from '@/mocks/projectStorage/mockProjectStorageLimits'
 import { PROJECT_STORAGE_USAGE } from '@/utils/APIConstants'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 
 export const getProjectStorageHandlers = (
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
 ) => [
-  rest.get(
+  http.get(
     `${backendOrigin}${PROJECT_STORAGE_USAGE(OVER_LIMIT_PROJECT_ID)}`,
-    async (req, res, ctx) => {
-      return res(ctx.status(201), ctx.json(mockProjectStorageUsageOverLimit))
+    () => {
+      return HttpResponse.json(mockProjectStorageUsageOverLimit, {
+        status: 201,
+      })
     },
   ),
-  rest.get(
+  http.get(
     `${backendOrigin}${PROJECT_STORAGE_USAGE(UNDER_LIMIT_PROJECT_ID)}`,
-    async (req, res, ctx) => {
-      return res(ctx.status(201), ctx.json(mockProjectStorageUsageUnderLimit))
+    () => {
+      return HttpResponse.json(mockProjectStorageUsageUnderLimit, {
+        status: 201,
+      })
     },
   ),
 ]

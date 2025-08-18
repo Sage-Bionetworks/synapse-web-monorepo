@@ -1,6 +1,6 @@
 import mockFileEntity from '@/mocks/entity/mockFileEntity'
 import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { MOCK_USER_ID_2 } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '@/utils'
@@ -13,13 +13,21 @@ import {
   ErrorResponse,
   FeatureFlagEnum,
 } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
+import EntityAclEditorModal from '../EntityAclEditor/EntityAclEditorModal'
 import {
   REQUEST_DOWNLOAD_TITLE,
   RequestDownloadCard,
   RequestDownloadCardProps,
 } from './RequestDownloadCard'
+
+vi.mock('../EntityAclEditor/EntityAclEditorModal', () => ({
+  default: vi.fn(() => null),
+}))
+
+const mockEntityAclEditorModal = vi.mocked(EntityAclEditorModal)
 
 const ENTITY_ID = 'syn29218'
 const onViewSharingSettingsClicked = vi.fn()
@@ -71,12 +79,12 @@ const setupEntityBundleResponse = (canDownload: boolean) => {
     },
   }
   server.use(
-    rest.post(
+    http.post(
       `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
         ENTITY_ID,
       )}`,
-      async (req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(mockEntityBundleResult))
+      () => {
+        return HttpResponse.json(mockEntityBundleResult, { status: 200 })
       },
     ),
   )
@@ -115,21 +123,33 @@ describe('RequestDownloadCard tests', () => {
     renderComponent()
     await screen.findByText(REQUEST_DOWNLOAD_TITLE)
 
+    expect(mockEntityAclEditorModal).toHaveBeenLastRenderedWithProps(
+      expect.objectContaining({
+        open: false,
+      }),
+    )
+
     const viewSharingSettingsButton = await screen.findByRole('button', {
       name: 'View Sharing Settings',
     })
     await userEvent.click(viewSharingSettingsButton)
 
-    const dialog = await screen.findByRole('dialog')
-    within(dialog).getByText('Sharing Settings', { exact: false })
+    expect(mockEntityAclEditorModal).toHaveBeenLastRenderedWithProps(
+      expect.objectContaining({
+        open: true,
+      }),
+    )
 
-    const closeSharingSettingsButton = within(dialog).getByRole('button', {
-      name: 'close',
+    const onCloseDialog = mockEntityAclEditorModal.mock.lastCall![0].onClose
+    expect(onCloseDialog).toBeDefined()
+    act(() => {
+      onCloseDialog()
     })
-    await userEvent.click(closeSharingSettingsButton)
 
-    await waitFor(() =>
-      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    expect(mockEntityAclEditorModal).toHaveBeenLastRenderedWithProps(
+      expect.objectContaining({
+        open: false,
+      }),
     )
   })
 
@@ -150,12 +170,12 @@ describe('RequestDownloadCard tests', () => {
       reason: reason,
     }
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_BUNDLE_V2(
           ENTITY_ID,
         )}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(404), ctx.json(errorResponse))
+        () => {
+          return HttpResponse.json(errorResponse, { status: 404 })
         },
       ),
     )

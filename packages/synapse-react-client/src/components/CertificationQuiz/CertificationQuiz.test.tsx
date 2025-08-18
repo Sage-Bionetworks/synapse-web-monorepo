@@ -3,7 +3,7 @@ import {
   mockPassingRecordPassed,
   mockQuiz,
 } from '@/mocks/mockCertificationQuiz'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { mockUserBundle } from '@/mocks/user/mock_user_profile'
 import { useGetCurrentUserBundle } from '@/synapse-queries'
 import {
@@ -27,6 +27,7 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import dayjs from 'dayjs'
 import { noop } from 'lodash-es'
+import { http, HttpResponse } from 'msw'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
 import CertificationQuiz from './CertificationQuiz'
 
@@ -56,12 +57,12 @@ const mockToastFn = vi
 const gettingStartedUrl =
   'https://help.synapse.org/docs/Getting-Started.2055471150.html'
 
-const getQuizHandler = rest.get(
+const getQuizHandler = http.get(
   `${getEndpoint(
     BackendDestinationEnum.REPO_ENDPOINT,
   )}/repo/v1/certifiedUserTest`,
-  async (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockQuiz))
+  () => {
+    return HttpResponse.json(mockQuiz, { status: 200 })
   },
 )
 

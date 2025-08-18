@@ -88,3 +88,5 @@ function FakeEvaluationRoundEditorList() {
 export const HelpersToTest = {
   FakeEvaluationRoundEditorList,
 }
+
+export default EvaluationEditorPage

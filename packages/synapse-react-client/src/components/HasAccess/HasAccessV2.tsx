@@ -6,7 +6,7 @@ import {
 import { SynapseClientError, useSynapseContext } from '@/utils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
-import { Box, Button, Theme, useTheme } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import {
   AccessRequirement,
   EntityBundle,
@@ -18,12 +18,12 @@ import { useCallback, useMemo, useState } from 'react'
 import AccessRequirementList, {
   checkHasUnsupportedRequirement,
 } from '../AccessRequirementList/AccessRequirementList'
-import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import {
   implementsExternalFileHandleInterface,
   isFileEntity,
 } from '@/utils/types/IsType'
 import { UseQueryOptions } from '@tanstack/react-query'
+import AccessIcon, { RestrictionUiType } from './AccessIcon'
 
 export type HasAccessProps = {
   onHide?: () => void
@@ -42,72 +42,6 @@ export type HasAccessProps = {
 }
 
 const buttonSx = { p: '0px', minWidth: 'unset' }
-
-export enum RestrictionUiType {
-  Accessible = 'Accessible',
-  AccessibleWithTerms = 'AccessibleWithTerms',
-  AccessBlockedByRestriction = 'AccessBlockedByRestriction',
-  AccessBlockedByACL = 'AccessBlockedByACL',
-  AccessBlockedToAnonymous = 'AccessBlockedToAnonymous',
-  AccessibleExternalFileHandle = 'AccessibleExternalFileHandle',
-}
-
-const iconConfiguration: Record<
-  RestrictionUiType,
-  { icon: IconName; color: (theme: Theme) => string; tooltipText: string }
-> = {
-  [RestrictionUiType.AccessBlockedToAnonymous]: {
-    icon: 'accessClosed',
-    color: theme => theme.palette.warning.main,
-    tooltipText: 'You must sign in to access this item.',
-  },
-  [RestrictionUiType.AccessBlockedByRestriction]: {
-    icon: 'accessClosed',
-    color: theme => theme.palette.warning.main,
-    tooltipText: 'You must request access to this restricted item.',
-  },
-  [RestrictionUiType.AccessBlockedByACL]: {
-    icon: 'accessClosed',
-    color: theme => theme.palette.warning.main,
-    tooltipText: 'You do not have download access for this item.',
-  },
-  [RestrictionUiType.AccessibleWithTerms]: {
-    icon: 'accessOpen',
-    color: theme => theme.palette.success.main,
-    tooltipText: 'View Terms',
-  },
-  [RestrictionUiType.Accessible]: {
-    icon: 'accessOpen',
-    color: theme => theme.palette.success.main,
-    tooltipText: '',
-  },
-  [RestrictionUiType.AccessibleExternalFileHandle]: {
-    icon: 'linkOff',
-    color: theme => theme.palette.grey[700],
-    tooltipText: 'Access may be controlled by an external system.',
-  },
-}
-
-function AccessIcon(props: { restrictionUiType: RestrictionUiType }) {
-  const { restrictionUiType } = props
-  const theme = useTheme()
-  if (restrictionUiType) {
-    const configuration = iconConfiguration[restrictionUiType]
-    return (
-      <IconSvg
-        icon={configuration.icon}
-        label={configuration.tooltipText}
-        sx={{
-          color: configuration.color(theme),
-          height: '16px',
-          verticalAlign: 'text-top',
-        }}
-      />
-    )
-  }
-  // nothing is rendered until downloadType is determined
-  return <></>
-}
 
 /**
  * Determines whether an Entity is accessible for download, or if it is blocked by the ACL or unmet Access Requirements.
@@ -347,3 +281,5 @@ export function HasAccessV2(props: HasAccessProps) {
     </span>
   )
 }
+
+export default HasAccessV2

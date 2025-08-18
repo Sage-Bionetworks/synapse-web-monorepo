@@ -245,10 +245,7 @@ class _SynapseFormSubmissionGrid extends Component<
   }
   /* ------------------------------------------   rendering fns  ------------------------------------------------*/
 
-  renderLoading = (
-    token: string | undefined,
-    isLoading: boolean,
-  ): JSX.Element => {
+  renderLoading = (token: string | undefined, isLoading: boolean) => {
     if (token && isLoading) {
       return (
         <div className="text-center">
@@ -292,7 +289,7 @@ class _SynapseFormSubmissionGrid extends Component<
     formGroupId: string,
     fileListType: FileListType,
     nextPageToken?: string,
-  ): JSX.Element => {
+  ) => {
     if (!formGroupId) {
       this.onError('Form Group ID is undefined')
       return <></>
@@ -420,7 +417,7 @@ class _SynapseFormSubmissionGrid extends Component<
     submitted: { fileList: FormData[]; nextPageToken?: string },
     pathpart: string,
     formGroupId: string,
-  ): JSX.Element[] | JSX.Element => {
+  ) => {
     if (inProgress.fileList.length === 0 && submitted.fileList.length === 0) {
       return (
         <div className="text-center">

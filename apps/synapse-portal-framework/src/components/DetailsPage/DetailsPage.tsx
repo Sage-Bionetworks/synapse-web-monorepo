@@ -1,37 +1,23 @@
 import { DetailsPageProps } from '@/types/portal-util-types'
 import { useGetPortalComponentSearchParams } from '@/utils/UseGetPortalComponentSearchParams'
-import {
-  Box,
-  Button,
-  Container,
-  Stack,
-  Typography,
-  useTheme,
-} from '@mui/material'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import pluralize from 'pluralize'
+import { Box, Container, LinearProgress } from '@mui/material'
+import { DoiObjectType } from '@sage-bionetworks/synapse-client'
+import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import { useMemo } from 'react'
-import { Outlet, useLocation } from 'react-router'
-import { BarLoader } from 'react-spinners'
+import { Outlet } from 'react-router'
+import ErrorPage, {
+  SynapseErrorType,
+} from 'synapse-react-client/components/error/ErrorPage'
+import { getCandidateDoiId } from 'synapse-react-client/components/GenericCard/PortalDOI/PortalDOIUtils'
+import { useGetQueryResultBundleWithAsyncStatus } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
+import {
+  getAdditionalFilters,
+  parseEntityIdFromSqlStatement,
+} from 'synapse-react-client/utils/functions/SqlFunctions'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { DetailsPageContextProvider } from './DetailsPageContext'
 import { DetailsPageDocumentMetadata } from './DetailsPageDocumentMetadata'
 import { useScrollOnMount } from './utils'
-import {
-  parseEntityIdFromSqlStatement,
-  getAdditionalFilters,
-} from 'synapse-react-client/utils/functions/SqlFunctions'
-import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { useGetQueryResultBundleWithAsyncStatus } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
-
-const goToExplorePage = () => {
-  /*
-    Below assumes that going from the details page url up one level will work,
-    for the current set of portals this assumption will hold true.
-  */
-  const lastLocation = window.location.href.split('/')
-  const lastPlace = lastLocation.slice(0, lastLocation.length - 1).join('/')
-  window.location.assign(lastPlace)
-}
 
 /**
  * The details pages give a deeper dive into a particular portal section.
@@ -52,13 +38,13 @@ export default function DetailsPage(props: DetailsPageProps) {
     sqlOperator,
     additionalFiltersSessionStorageKey,
     ContainerProps,
+    header,
     children = <Outlet />,
     resourcePrimaryKey,
+    portalDOIConfiguration,
   } = props
 
   const searchParams = useGetPortalComponentSearchParams()
-  const location = useLocation()
-  const { palette } = useTheme()
 
   useScrollOnMount()
 
@@ -85,40 +71,34 @@ export default function DetailsPage(props: DetailsPageProps) {
     data: asyncJobStatus,
     isLoading,
     isSuccess,
-    error: hasError,
+    error: queryError,
   } = useGetQueryResultBundleWithAsyncStatus(queryBundleRequest)
 
   const queryResultBundle = asyncJobStatus?.responseBody
-
-  if (hasError) {
-    const currentLocation = location.pathname.split('/')
-    const name = decodeURI(currentLocation[currentLocation.length - 2])
-    return (
-      <Stack
-        sx={{
-          alignItems: 'center',
-          gap: 2,
-          mt: 5,
-        }}
-      >
-        <Typography variant="headline1" gutterBottom>
-          Coming Soon!
-        </Typography>
-        <Typography variant={'smallText1'} gutterBottom>
-          This {pluralize.singular(name).toLowerCase()} is not yet available,
-          please check back soon.
-        </Typography>
-        <Button variant={'contained'} onClick={goToExplorePage}>
-          Continue Exploring
-        </Button>
-      </Stack>
-    )
-  }
-
-  let row
+  let row: Row | undefined
   if (queryResultBundle?.queryResult?.queryResults?.rows) {
     row = queryResultBundle?.queryResult.queryResults.rows[0]
   }
+  const rowNotFound = !isLoading && !row
+
+  const candidateDoiId = getCandidateDoiId({
+    portalDoiConfiguration: portalDOIConfiguration,
+    data: searchParams,
+  })
+
+  if (rowNotFound || queryError) {
+    // If the row does not exist, or the link is broken, show the generic error page.
+    return (
+      <ErrorPage
+        type={SynapseErrorType.NOT_FOUND}
+        gotoPlace={() => {}}
+        portalId={portalDOIConfiguration?.portalId}
+        id={candidateDoiId}
+        objectType={DoiObjectType.PORTAL_RESOURCE}
+      />
+    )
+  }
+
   return (
     <DetailsPageContextProvider
       value={{
@@ -127,6 +107,7 @@ export default function DetailsPage(props: DetailsPageProps) {
       }}
     >
       <DetailsPageDocumentMetadata resourcePrimaryKey={resourcePrimaryKey} />
+      {header}
       <Container
         maxWidth={'lg'}
         className="DetailsPage tab-layout"
@@ -140,12 +121,7 @@ export default function DetailsPage(props: DetailsPageProps) {
               my: 10,
             }}
           >
-            <BarLoader
-              color={palette.primary.main}
-              loading={true}
-              height={5}
-              width={400}
-            />
+            <LinearProgress />
           </Box>
         )}
         {isSuccess && children}

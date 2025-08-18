@@ -41,7 +41,6 @@ import ChangePassword from 'synapse-react-client/components/ChangePassword/Chang
 import TwoFactorAuthSettingsPanel from 'synapse-react-client/components/Authentication/TwoFactorAuthSettingsPanel'
 import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import CookiePreferencesDialog from 'synapse-react-client/components/CookiesNotification/CookiePreferencesDialog'
-import TwoFactorAuthSettingsPanelOld from 'synapse-react-client/components/Authentication/TwoFactorAuthSettingsPanelOld'
 
 function CompletionStatus({ isComplete }: { isComplete: boolean | undefined }) {
   return (
@@ -98,9 +97,6 @@ const AccountSettings = () => {
     useState(false)
 
   const { clearSession } = useApplicationSessionContext()
-  const isMFARequiredFeatureFlagEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.MFA_REQUIRED,
-  )
   const showWebhooks = useGetFeatureFlag(FeatureFlagEnum.WEBHOOKS_UI)
 
   const cookies = new UniversalCookies()
@@ -222,7 +218,7 @@ const AccountSettings = () => {
     { label: 'Sign Out', ref: signOutSectionRef },
   ].filter(item => item.label !== 'Webhooks' || showWebhooks)
 
-  const handleScroll = (ref: RefObject<HTMLDivElement>) => {
+  const handleScroll = (ref: RefObject<HTMLDivElement | null>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' })
   }
   const isRequestValidationButtonDisabled =
@@ -660,22 +656,14 @@ const AccountSettings = () => {
                 ref={twoFactorAuthRef}
                 className="account-setting-panel main-panel"
               >
-                {isMFARequiredFeatureFlagEnabled ? (
-                  <TwoFactorAuthSettingsPanel
-                    onRegenerateBackupCodes={() => {
-                      navigate('/authenticated/2fa/generatecodes')
-                    }}
-                  />
-                ) : (
-                  <TwoFactorAuthSettingsPanelOld
-                    onRegenerateBackupCodes={() => {
-                      navigate('/authenticated/2fa/generatecodes')
-                    }}
-                    onBeginTwoFactorEnrollment={() => {
-                      navigate('/authenticated/2fa/enroll')
-                    }}
-                  />
-                )}
+                <TwoFactorAuthSettingsPanel
+                  onRegenerateBackupCodes={() => {
+                    navigate('/authenticated/2fa/generatecodes')
+                  }}
+                  onReset2FA={() => {
+                    navigate('/authenticated/2fa/resetconfirmation')
+                  }}
+                />
               </Paper>
               <Paper
                 ref={personalAccessTokenRef}

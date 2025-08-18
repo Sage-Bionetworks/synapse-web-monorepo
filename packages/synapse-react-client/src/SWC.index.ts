@@ -5,67 +5,83 @@
  * If you wish to export a component or other object to be used by SynapseWebClient, you should add it to this file.
  */
 
-import UserAccessRequestHistoryPlace from '@/components/dataaccess/UserAccessRequestHistory/UserAccessRequestHistoryPlace'
-import { EntityUploadModal } from './components/EntityUpload/EntityUploadModal'
-import { SkeletonButton } from './components/Skeleton/SkeletonButton'
-import { AccountLevelBadges } from './components/AccountLevelBadges/AccountLevelBadges'
-import ChangePassword from './components/ChangePassword/ChangePassword'
-import { ReviewerDashboard } from './components/dataaccess/ReviewerDashboard'
-import { FolderDownloadConfirmation } from './components/download_list/FolderDownloadConfirmation'
-import DirectProgrammaticDownload from './components/DownloadCart/DirectProgrammaticDownload'
-import { DownloadCartPage } from './components/DownloadCart/DownloadCartPage'
-import ShowDownloadV2 from './components/DownloadCart/ShowDownloadV2'
-import { SchemaDrivenAnnotationEditor } from './components/SchemaDrivenAnnotationEditor/SchemaDrivenAnnotationEditor'
-import { EntityModal } from './components/entity/metadata/EntityModal'
-import { EntityBadgeIcons } from './components/EntityBadgeIcons/EntityBadgeIcons'
+import { version } from '../package.json'
+import AccessRequirementAclEditor from './components/AccessRequirementAclEditor'
+import AccessRequirementList from './components/AccessRequirementList/AccessRequirementList'
+import AccessRequirementRelatedProjectsList from './components/AccessRequirementRelatedProjectsList'
+import AccountLevelBadges from './components/AccountLevelBadges/AccountLevelBadges'
+import CertificationQuiz from './components/CertificationQuiz/CertificationQuiz'
+import AvailableEvaluationQueueList from './components/ChallengeSubmission/AvailableEvaluationQueueList'
+import CookiesNotification from './components/CookiesNotification'
+import CreateOrUpdateAccessRequirementWizard from './components/CreateOrUpdateAccessRequirementWizard'
+import CreateTableViewWizard from './components/CreateTableViewWizard/CreateTableViewWizard'
+import RejectProfileValidationRequestModal from './components/dataaccess/RejectProfileValidationRequestModal'
+import ReviewerDashboard from './components/dataaccess/ReviewerDashboard'
+import UserAccessRequestHistoryPlace from './components/dataaccess/UserAccessRequestHistory/UserAccessRequestHistoryPlace'
+import CreateOrUpdateDoiModal from './components/doi/CreateOrUpdateDoiModal'
+import DownloadConfirmation from './components/download_list/FolderDownloadConfirmation'
+import DownloadCartPage from './components/DownloadCart/DownloadCartPage'
+import EntityModal from './components/entity/metadata/EntityModal'
+import EntityActionMenu from './components/entity/page/action_menu/EntityActionMenu'
+import EntityPageBreadcrumbs from './components/entity/page/breadcrumbs/EntityPageBreadcrumbs'
+import CreatedByModifiedBy from './components/entity/page/CreatedByModifiedBy'
+import EntityPageTitleBar from './components/entity/page/title_bar/EntityPageTitleBar'
+import EntityAclEditorModal from './components/EntityAclEditor/EntityAclEditorModal'
+import EntityBadgeIcons from './components/EntityBadgeIcons/EntityBadgeIcons'
+import EntityCitation from './components/EntityCitation'
+import EntityFinder from './components/EntityFinder/EntityFinder'
 import EntityForm from './components/EntityForm/EntityForm'
-import { EntityTypeIcon } from './components/EntityIcon'
-import { EntityFinder } from './components/EntityFinder/EntityFinder'
+import EntityHeaderTable from './components/EntityHeaderTable'
+import EntityTypeIcon from './components/EntityIcon'
+import EntityUploadModal from './components/EntityUpload/EntityUploadModal'
+import EntityViewScopeEditorModal from './components/EntityViewScopeEditor/EntityViewScopeEditorModal'
 import ErrorPage from './components/error/ErrorPage'
-import { EvaluationCard } from './components/Evaluation/EvaluationCard'
-import { EvaluationEditorPage } from './components/Evaluation/EvaluationEditorPage'
+import EvaluationCard from './components/Evaluation/EvaluationCard'
+import EvaluationEditorPage from './components/Evaluation/EvaluationEditorPage'
 import FavoritesPage from './components/favorites/FavoritesPage'
+import HtmlPreview from './components/FilePreview/HtmlPreview/HtmlPreview'
+import DiscussionThread from './components/Forum/DiscussionThread'
 import ForumSearch from './components/ForumSearch/ForumSearch'
-import { DiscussionThread } from './components/Forum/DiscussionThread'
 import FullWidthAlert from './components/FullWidthAlert/FullWidthAlert'
-import { HasAccessV2 as HasAccess } from './components/HasAccess/HasAccessV2'
-import { HelpPopover } from './components/HelpPopover/HelpPopover'
+import GoogleAnalytics from './components/GoogleAnalytics/GoogleAnalytics'
+import HasAccess from './components/HasAccess/HasAccessV2'
+import HelpPopover from './components/HelpPopover/HelpPopover'
 import IconSvg from './components/IconSvg/IconSvg'
-import StandaloneLoginForm from './components/Authentication/StandaloneLoginForm'
+import IDUReport from './components/IDUReport/IDUReport'
+import GovernanceMarkdownGithub from './components/Markdown/GovernanceMarkdownGithub'
+import OAuthManagement from './components/OAuthClientManagement/OAuthManagement'
+import OrientationBanner from './components/OrientationBanner/OrientationBanner'
 import PageProgress from './components/PageProgress/PageProgress'
-import { AccessTokenPage } from './components/AccessTokenPage/AccessTokenPage'
-import { ProgrammaticInstructionsModal } from './components/ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
+import ProjectDataAvailability from './components/ProjectStorage/ProjectDataAvailability'
+import ProvenanceGraph from './components/ProvenanceGraph/ProvenanceGraph'
 import QueryWrapperPlotNav from './components/QueryWrapperPlotNav/QueryWrapperPlotNav'
-import StatisticsPlot from './components/StatisticsPlot'
-import {
-  SynapseHomepageV2,
-  SynapsePlansPage,
-} from './components/SynapseHomepageV2'
-import { SynapseNavDrawer } from './components/SynapseNavDrawer/SynapseNavDrawer'
-import { DatasetItemsEditor } from './components/SynapseTable/datasets/DatasetItemsEditor'
+import SkeletonButton from './components/Skeleton/SkeletonButton'
+import SqlDefinedTableEditorModal from './components/SqlDefinedTableEditor/SqlDefinedTableEditorModal'
 import StandaloneQueryWrapper from './components/StandaloneQueryWrapper/StandaloneQueryWrapper'
-import ProgrammaticTableDownload from './components/ProgrammaticTableDownload/ProgrammaticTableDownload'
-import TermsAndConditions from './components/TermsAndConditions/TermsAndConditions'
+import StatisticsPlot from './components/StatisticsPlot'
+import SubmissionViewScopeEditorModal from './components/SubmissionViewScopeEditor/SubmissionViewScopeEditorModal'
+import SubscriptionPage from './components/SubscriptionPage'
+import SynapseChat from './components/SynapseChat/SynapseChat'
+import SynapseFooter from './components/SynapseFooter/SynapseFooter'
+import SynapseHomepageV2 from './components/SynapseHomepageV2/SynapseHomepageV2'
+import SynapsePlansPage from './components/SynapseHomepageV2/SynapsePlansPage'
+import SynapseNavDrawer from './components/SynapseNavDrawer/SynapseNavDrawer'
+import DatasetItemsEditor from './components/SynapseTable/datasets/DatasetItemsEditor'
+import TableColumnSchemaEditor from './components/TableColumnSchemaEditor/TableColumnSchemaEditor'
+import SynapsePortalBanners from './components/SynapsePortalBanners/SynapsePortalBanners'
+import SynapseGrid from './components/DataGrid/SynapseGrid'
+
 import {
   displayToast,
   SynapseToastContainer,
 } from './components/ToastMessage/ToastMessage'
-import { TrashCanList } from './components/trash/TrashCanList'
-import { OAuthManagement } from './components/OAuthClientManagement/OAuthManagement'
+import TrashCanList from './components/trash/TrashCanList'
 import UserCard from './components/UserCard/UserCard'
 import UserProfileLinks from './components/UserProfileLinks/UserProfileLinks'
-import CertificationQuiz from './components/CertificationQuiz/CertificationQuiz'
-import ProvenanceGraph from './components/ProvenanceGraph/ProvenanceGraph'
-import IDUReport from './components/IDUReport/IDUReport'
-import HtmlPreview from './components/FilePreview/HtmlPreview/HtmlPreview'
-import EntityPageBreadcrumbs from './components/entity/page/breadcrumbs/EntityPageBreadcrumbs'
-import EntityActionMenu from './components/entity/page/action_menu/EntityActionMenu'
-import EntityPageTitleBar from './components/entity/page/title_bar/EntityPageTitleBar'
-import { CreatedByModifiedBy } from './components/entity/page/CreatedByModifiedBy'
 import SynapseClient, { HttpClient } from './synapse-client'
 import * as SynapseQueries from './synapse-queries'
-import { SynapseConstants } from './utils'
 import Palettes from './theme/palette/Palettes'
+import { SynapseConstants } from './utils'
 import { sendAnalyticsEvent } from './utils/analytics/sendAnalyticsEvent'
 import {
   sendSearchQuerySubmittedEvent,
@@ -73,43 +89,15 @@ import {
   sendSearchResultReturnedEvent,
   sendSearchResultsReturnedEvent,
 } from './utils/analytics/sendSearchEvent'
+import { FullContextProvider } from './utils/context/FullContextProvider'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,
   useSynapseContext,
 } from './utils/context/SynapseContext'
-import TwoFactorBackupCodes from './components/Authentication/TwoFactorBackupCodes'
-import TwoFactorEnrollmentForm from './components/Authentication/TwoFactorEnrollmentForm'
-import TwoFactorAuthSettingsPanel from './components/Authentication/TwoFactorAuthSettingsPanel'
-import { FullContextProvider } from './utils/context/FullContextProvider'
-import SubscriptionPage from './components/SubscriptionPage'
-import OrientationBanner from './components/OrientationBanner/OrientationBanner'
-import AccessRequirementList from './components/AccessRequirementList/AccessRequirementList'
 import { BackendDestinationEnum } from './utils/functions'
-import TableColumnSchemaForm from './components/TableColumnSchemaEditor/TableColumnSchemaForm'
-import EntityHeaderTable from './components/EntityHeaderTable'
-import AccessRequirementRelatedProjectsList from './components/AccessRequirementRelatedProjectsList'
-import CreateTableViewWizard from './components/CreateTableViewWizard/CreateTableViewWizard'
-import TableColumnSchemaEditor from './components/TableColumnSchemaEditor/TableColumnSchemaEditor'
-import SqlDefinedTableEditorModal from './components/SqlDefinedTableEditor/SqlDefinedTableEditorModal'
-import EntityViewScopeEditorModal from './components/EntityViewScopeEditor/EntityViewScopeEditorModal'
-import SubmissionViewScopeEditorModal from './components/SubmissionViewScopeEditor/SubmissionViewScopeEditorModal'
-import AvailableEvaluationQueueList from './components/ChallengeSubmission/AvailableEvaluationQueueList'
-import AccessRequirementAclEditor from './components/AccessRequirementAclEditor'
-import CreateOrUpdateAccessRequirementWizard from './components/CreateOrUpdateAccessRequirementWizard'
-import { SynapseFooter } from './components/SynapseFooter/SynapseFooter'
-import { GoogleAnalytics } from './components/GoogleAnalytics/GoogleAnalytics'
-import { CookiesNotification } from './components/CookiesNotification'
-import { getCurrentCookiePreferences } from './utils/hooks'
-import EntityAclEditorModal from './components/EntityAclEditor/EntityAclEditorModal'
-import SynapseChat from './components/SynapseChat/SynapseChat'
-import { version } from '../package.json'
 import { xssOptions } from './utils/functions/SanitizeHtmlUtils'
-import { RejectProfileValidationRequestModal } from './components/dataaccess/RejectProfileValidationRequestModal'
-import { GovernanceMarkdownGithub } from './components/Markdown/MarkdownGithub'
-import { MarkdownGithubLatestTag } from './components/Markdown/MarkdownGithub'
-import { ProjectDataAvailability } from './components/ProjectStorage/ProjectDataAvailability'
-import { CreateOrUpdateDoiModal } from './components/doi/CreateOrUpdateDoiModal'
+import { getCurrentCookiePreferences } from './utils/hooks'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -126,87 +114,76 @@ const SynapseContext = {
 }
 
 const SynapseComponents = {
-  Login: StandaloneLoginForm,
+  AccessRequirementAclEditor,
+  AccessRequirementList,
+  AccessRequirementRelatedProjectsList,
+  AccountLevelBadges,
+  AvailableEvaluationQueueList,
+  CertificationQuiz,
+  CookiesNotification,
+  CreateOrUpdateAccessRequirementWizard,
+  CreateOrUpdateDoiModal,
+  CreateTableViewWizard,
+  CreatedByModifiedBy,
+  DatasetItemsEditor,
+  DiscussionThread,
+  DownloadCartPage,
+  DownloadConfirmation,
+  EntityAclEditorModal,
+  EntityActionMenu,
+  EntityBadgeIcons,
+  EntityCitation,
+  EntityFinder,
   EntityForm,
-  UserCard,
-  StatisticsPlot,
-  HasAccess,
+  EntityHeaderTable,
+  EntityModal,
+  EntityPageBreadcrumbs,
+  EntityPageTitleBar,
+  EntityTypeIcon,
+  EntityUploadModal,
+  EntityViewScopeEditorModal,
+  ErrorPage,
   EvaluationCard,
   EvaluationEditorPage,
-  AccessTokenPage,
-  AccountLevelBadges,
-  TermsAndConditions,
-  PageProgress,
-  SynapseHomepageV2,
-  SynapsePlansPage,
-  SynapseFooter,
-  EntityFinder,
-  ErrorPage,
-  EntityBadgeIcons,
-  DownloadCartPage,
-  ShowDownloadV2,
-  DownloadConfirmation: FolderDownloadConfirmation,
-  FullWidthAlert: FullWidthAlert,
-  SchemaDrivenAnnotationEditor,
-  SynapseNavDrawer,
   FavoritesPage,
-  EntityModal,
-  SynapseToastContainer,
-  displayToast,
-  IconSvg,
-  UserProfileLinks,
-  DatasetItemsEditor,
-  EntityTypeIcon,
-  HelpPopover,
-  ProgrammaticTableDownload,
-  DirectProgrammaticDownload,
-  ProgrammaticInstructionsModal,
-  SkeletonButton,
-  QueryWrapperPlotNav,
-  StandaloneQueryWrapper,
-  ChangePassword,
   ForumSearch,
-  DiscussionThread,
-  ReviewerDashboard,
-  ProvenanceGraph,
-  TrashCanList,
-  OAuthManagement,
-  CertificationQuiz,
+  FullWidthAlert,
+  GoogleAnalytics,
+  GovernanceMarkdownGithub,
+  HasAccess,
+  HelpPopover,
   HtmlPreview,
   IDUReport,
-  EntityPageBreadcrumbs,
-  EntityActionMenu,
-  EntityPageTitleBar,
-  CreatedByModifiedBy,
-  TwoFactorAuthSettingsPanel,
-  TwoFactorBackupCodes,
-  TwoFactorEnrollmentForm,
-  SubscriptionPage,
+  IconSvg,
+  OAuthManagement,
   OrientationBanner,
-  AvailableEvaluationQueueList,
-  AccessRequirementList,
-  TableColumnSchemaForm,
-  EntityHeaderTable,
-  AccessRequirementRelatedProjectsList,
-  CreateTableViewWizard,
-  TableColumnSchemaEditor,
-  SqlDefinedTableEditorModal,
-  EntityViewScopeEditorModal,
-  SubmissionViewScopeEditorModal,
-  AccessRequirementAclEditor,
-  CreateOrUpdateAccessRequirementWizard,
-  GoogleAnalytics,
-  CookiesNotification,
-  getCurrentCookiePreferences,
-  EntityAclEditorModal,
-  SynapseChat,
-  RejectProfileValidationRequestModal,
-  GovernanceMarkdownGithub,
-  MarkdownGithubLatestTag,
+  PageProgress,
   ProjectDataAvailability,
-  EntityUploadModal,
-  CreateOrUpdateDoiModal,
+  ProvenanceGraph,
+  QueryWrapperPlotNav,
+  RejectProfileValidationRequestModal,
+  ReviewerDashboard,
+  SkeletonButton,
+  SqlDefinedTableEditorModal,
+  StandaloneQueryWrapper,
+  StatisticsPlot,
+  SubmissionViewScopeEditorModal,
+  SubscriptionPage,
+  SynapseChat,
+  SynapseFooter,
+  SynapseHomepageV2,
+  SynapseNavDrawer,
+  SynapsePlansPage,
+  SynapsePortalBanners,
+  SynapseToastContainer,
+  TableColumnSchemaEditor,
+  TrashCanList,
   UserAccessRequestHistoryPlace,
+  UserCard,
+  SynapseGrid,
+  UserProfileLinks,
+  displayToast,
+  getCurrentCookiePreferences,
 }
 
 const Analytics = {

@@ -23,12 +23,18 @@ export type ExternalAnalysisPlatform =
   | 'pluto'
   | 'plutodev'
 
-const getExternalAnalysisPlatformInstructions = (
-  platformName: string,
-  platformLoginURL: string,
-  platformConnectAccountURL?: string,
-  platformSupportEmail?: string,
-): JSX.Element => {
+const ExternalAnalysisPlatformInstructions = (props: {
+  platformName: string
+  platformLoginURL: string
+  platformConnectAccountURL?: string
+  platformSupportEmail?: string
+}) => {
+  const {
+    platformName,
+    platformLoginURL,
+    platformConnectAccountURL,
+    platformSupportEmail,
+  } = props
   return (
     <>
       <Typography variant="body1" sx={{ fontWeight: 700 }} gutterBottom>
@@ -81,19 +87,27 @@ const plutoAnalysisPlatformDescription: ExternalAnalysisPlatformDescription = {
   description:
     'Intuitively store, search, analyze, and visualize complex biological data (including large, raw data files) and run bioinformatics pipelines in a few clicks without needing to write code or manage any of your own cloud infrastructure.',
   Logo: PlutoLogo,
-  PlatformInstructions: () => {
-    return getExternalAnalysisPlatformInstructions(
-      'Pluto',
-      'https://app.pluto.bio/login',
-      'https://help.pluto.bio/en/articles/synapse-pluto',
-      'mailto:support@pluto.bio',
-    )
-  },
+  PlatformInstructions: () => (
+    <ExternalAnalysisPlatformInstructions
+      platformName="Pluto"
+      platformLoginURL="https://app.pluto.bio/login"
+      platformConnectAccountURL="https://help.pluto.bio/en/articles/synapse-pluto"
+      platformSupportEmail="mailto:support@pluto.bio"
+    />
+  ),
 }
 const plutoDevAnalysisPlatformDescription: ExternalAnalysisPlatformDescription =
   {
     ...plutoAnalysisPlatformDescription,
     name: 'Pluto (Development)',
+    PlatformInstructions: () => (
+      <ExternalAnalysisPlatformInstructions
+        platformName="Pluto"
+        platformLoginURL="https://dev.pluto.bio/login"
+        platformConnectAccountURL="https://help.pluto.bio/en/articles/synapse-pluto"
+        platformSupportEmail="mailto:support@pluto.bio"
+      />
+    ),
   }
 
 export const EXTERNAL_ANALYSIS_PLATFORMS: Record<
@@ -105,28 +119,28 @@ export const EXTERNAL_ANALYSIS_PLATFORMS: Record<
     description:
       'CAVATICA is a storage, sharing, and analysis platform designed to handle large volumes of pediatric tumor genomics data. It is produced in collaboration with Seven Bridges and based on the Seven Bridges Platform for cloud storage and bioinformatics analysis.',
     Logo: CavaticaLogo,
-    PlatformInstructions: (props: PlatformInstructionProps) => {
-      return getExternalAnalysisPlatformInstructions(
-        'CAVATICA',
-        'https://cavatica.sbgenomics.com/',
-        props.cavaticaConnectAccountURL,
-        'mailto:support@velsera.com',
-      )
-    },
+    PlatformInstructions: (props: PlatformInstructionProps) => (
+      <ExternalAnalysisPlatformInstructions
+        platformName={'CAVATICA'}
+        platformLoginURL={'https://cavatica.sbgenomics.com/'}
+        platformConnectAccountURL={props.cavaticaConnectAccountURL}
+        platformSupportEmail={'mailto:support@velsera.com'}
+      />
+    ),
   },
   terra: {
     name: 'Terra',
     description:
       'Terra is an analysis platform that allows users to access data, run analysis tools, and collaborate. Terra is powered by Google Cloud Platform, enabling the user to scale and manage billing of their own projects.',
     Logo: TerraLogo,
-    PlatformInstructions: () => {
-      return getExternalAnalysisPlatformInstructions(
-        'TERRA',
-        'https://app.terra.bio/',
-        'https://app.terra.bio/#profile?tab=externalIdentities',
-        'mailto:support@terra.bio',
-      )
-    },
+    PlatformInstructions: () => (
+      <ExternalAnalysisPlatformInstructions
+        platformName="TERRA"
+        platformLoginURL="https://app.terra.bio/"
+        platformConnectAccountURL="https://app.terra.bio/#profile?tab=externalIdentities"
+        platformSupportEmail="mailto:support@terra.bio"
+      />
+    ),
   },
   pluto: plutoAnalysisPlatformDescription,
   plutodev: plutoDevAnalysisPlatformDescription,

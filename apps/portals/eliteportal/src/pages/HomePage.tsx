@@ -214,7 +214,7 @@ function HomePageInternal() {
                     {
                       title: 'The Long Life Family Study',
                       description:
-                        'The Long Life Family Study (LLFS) investigates genetic and familial factors in exceptional longevity. Families were recruited based on a Family Longevity Selection Score (FLOSS) of ≥7. Over 4,953 individuals from 539 families were phenotyped through in-home visits in the U.S. and Denmark with centralized assays and standardized protocols.',
+                        'The Long Life Family Study (LLFS) is an international study of genetics and familial components of exceptional survival, longevity, and healthy aging, providing rich longitudinal data including physical, cognitive, and cardiovascular phenotypes and comprehensive genetic and multi-OMIC profiles from families with exceptional longevity.',
                       facetsToPlot: ['dataTypes'],
                       selectFacetColumnName: 'Study',
                       selectFacetColumnValue: 'LLFS',
@@ -226,12 +226,25 @@ function HomePageInternal() {
                     {
                       title: 'ADAMTS7 Study',
                       description:
-                        'The Characterization of gene associations with aging-related traits with a genetically-predicted transcriptome-wide association study (ADAMTS7) provides analyses of candidate genes and the association of Longevity-Associated Variants (LAVs) with aging-related traits and diseases.',
+                        'This study evaluates Longevity-Associated Variants (LAVs) from a GWAS of parental lifespan and assesses their translational potential by applying Mendelian Randomization to evaluate the influence of tissue-specific LAG expression on disease pathways using data from the MrOS, SOF, and Health ABC cohorts.',
                       facetsToPlot: ['dataTypes'],
                       selectFacetColumnName: 'Study',
                       selectFacetColumnValue: 'ADAMTS7',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
+                      unitDescription: 'Files',
+                      plotType: 'STACKED_HORIZONTAL_BAR',
+                    },
+                    {
+                      title:
+                        'Shotgun Metagenomics Analysis of the Gut Microbiome',
+                      description:
+                        'The study provides metagenomics data from 209 samples including 78 centenarian samples (over 100 years of age) and 131 younger samples (59-99). Samples were collected as part of the Integrative longevity Omics (ILO) study with the aim to discover molecular profiles that associate with exceptional longevity and healthy aging phenotypes including delay of or escape from Alzheimer’s disease.',
+                      facetsToPlot: ['dataTypes'],
+                      selectFacetColumnName: 'Study',
+                      selectFacetColumnValue: 'ILOMGS',
+                      detailsPagePath:
+                        '/Explore/Studies/DetailsPage?studyKey=ILOMGS',
                       unitDescription: 'Files',
                       plotType: 'STACKED_HORIZONTAL_BAR',
                     },
@@ -289,6 +302,19 @@ function HomePageInternal() {
                       selectFacetColumnValue: 'G_M-OSLAMS',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage?studyKey=G_M-OSLAMS',
+                      unitDescription: 'Files',
+                      plotType: 'STACKED_HORIZONTAL_BAR',
+                    },
+                    {
+                      title:
+                        'Comparative transcriptomics reveals circadian and pluripotency networks as two pillars of longevity regulation',
+                      description:
+                        'This study conducted comparative transcriptomics on 26 species with diverse lifespans, identifying thousands of genes correlated with maximum lifespan. This work provides targets for anti-aging interventions by defining pathways correlated with longevity across mammals and uncovers circadian and pluripotency networks as central regulators of longevity.',
+                      facetsToPlot: ['dataTypes'],
+                      selectFacetColumnName: 'Study',
+                      selectFacetColumnValue: 'Gorbunova_CP_Transcriptomics',
+                      detailsPagePath:
+                        '/Explore/Studies/DetailsPage?studyKey=Gorbunova_CP_Transcriptomics',
                       unitDescription: 'Files',
                       plotType: 'STACKED_HORIZONTAL_BAR',
                     },

@@ -241,7 +241,6 @@ export function useSearchAccessRequirementsInfinite<
     AccessRequirementSearchResponse,
     SynapseClientError,
     TData,
-    AccessRequirementSearchResponse,
     QueryKey,
     AccessRequirementSearchResponse['nextPageToken']
   >,

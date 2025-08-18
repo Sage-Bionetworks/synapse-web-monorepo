@@ -24,7 +24,10 @@ import { useCallback, useMemo } from 'react'
 import { useQueryContext } from '../QueryContext'
 import { getTableQueryUseQueryOptions } from '../QueryWrapper/TableQueryUseQueryOptions'
 import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
-import { isEntityViewOrDataset, isFileViewOrDataset } from './SynapseTableUtils'
+import {
+  isEntityViewOrDatasetOrCollection,
+  isFileViewOrDataset,
+} from './SynapseTableUtils'
 
 function usePrefetchFileHandleData(rowSet: RowSet) {
   const { entityId, versionNumber } = useQueryContext()
@@ -95,7 +98,7 @@ function useGetEntitiesInTable(rowSet: RowSet) {
   let entitiesInTable: ReferenceList = []
 
   // If this is a file view/dataset, collect all the row IDs; they correspond to entities that we'll end up fetching
-  if (entity && isEntityViewOrDataset(entity)) {
+  if (entity && isEntityViewOrDatasetOrCollection(entity)) {
     entitiesInTable = rowSet.rows.reduce((prev: ReferenceList, curr) => {
       const { rowId, versionNumber } = curr
       if (rowId) {
@@ -113,7 +116,7 @@ function useGetEntitiesInTable(rowSet: RowSet) {
     queryMetadata?.selectColumns,
   )
 
-  if (entity && isEntityViewOrDataset(entity)) {
+  if (entity && isEntityViewOrDatasetOrCollection(entity)) {
     // If this is a view/dataset, we don't need to fetch the entities in the entity ID column
     // Collecting the row IDs in the last step was sufficient
     const idColumnIndex = getFieldIndex('id', queryMetadata)

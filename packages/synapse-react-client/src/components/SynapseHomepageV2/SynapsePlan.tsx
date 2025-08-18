@@ -1,7 +1,10 @@
+import {
+  darkTextColor,
+  homepageBodyText,
+} from '@/components/SynapseHomepageV2/HomepageStyles'
 import { PropsWithChildren } from 'react'
 import { Button, Typography } from '@mui/material'
 import { Box } from '@mui/material'
-import { darkTextColor, homepageBodyText } from './SynapseHomepageV2'
 
 export type SynapsePlanProps = {
   title: string

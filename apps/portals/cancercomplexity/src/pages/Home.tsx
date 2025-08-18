@@ -1,3 +1,4 @@
+import { ecosystemResourcesSql } from '@/config/resources'
 import consortiaHomePageConfig from '@/config/synapseConfigs/consortiaHomePage'
 import {
   onIndividualThemeBarPlotPointClick,
@@ -5,11 +6,10 @@ import {
 } from '@/config/synapseConfigs/onPointClick'
 import CancerComplexityHeader from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityHeader'
 import CancerComplexityIntro from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityIntro'
-import AboutPortal from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/AboutPortal'
-import ConsortiaGoals from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/ConsortiaGoals'
-import DevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/DevelopedBySage'
-import Ecosystem from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/Ecosystem'
+import CCKPDevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/CCKPDevelopedBySage'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
+import { Goals } from 'synapse-react-client'
+import TableQueryEcosystem from 'synapse-react-client/components/Ecosystem/TableQueryEcosystem'
 import { ThemesPlot } from 'synapse-react-client/components/Plot/ThemesPlot'
 import Programs from 'synapse-react-client/components/Programs'
 import RssFeedCards from 'synapse-react-client/components/RssFeedCards'
@@ -23,24 +23,15 @@ function Home() {
       </SectionLayout>
       <div className={'home-bg-dark'}>
         <SectionLayout
-          title={'Portal Goals'}
+          title={'What Resources are Available?'}
           centerTitle
           ContainerProps={{
             className: 'home-spacer',
           }}
         >
-          <ConsortiaGoals />
+          <Goals entityId={'syn66276142'} isAssetIcon={true} />
         </SectionLayout>
       </div>
-      {/* <SectionLayout
-              title="What Resources are Available?"
-              centerTitle
-              ContainerProps={{
-                className: 'home-spacer',
-              }}
-            >
-              <CardDeck {...availableResearchCardDeckConfig} />
-            </SectionLayout> */}
 
       <SectionLayout
         title={'What Research Themes are Scientists Currently Focusing On?'}
@@ -138,60 +129,20 @@ function Home() {
       <div className={'home-bg-dark'}>
         <SectionLayout
           title="The Cancer Resource Information Ecosystem"
-          subtitle="The Cancer Resource Information ecosystem contains a growing list of tools and resources. Explore some of them below."
           centerTitle
           ContainerProps={{
             className: 'home-spacer',
           }}
         >
-          <Ecosystem
-            config={[
-              {
-                title: 'Public Repositories',
-                ownerId: 'syn21498902',
-                wikiId: '601489',
-              },
-              {
-                title: 'Data Commons',
-                ownerId: 'syn21498902',
-                wikiId: '601490',
-              },
-              {
-                title: 'Data Coordination',
-                ownerId: 'syn21498902',
-                wikiId: '601574',
-              },
-              {
-                title: 'Data Exploration',
-                ownerId: 'syn21498902',
-                wikiId: '601575',
-              },
-              {
-                title: 'Cloud Platform',
-                ownerId: 'syn21498902',
-                wikiId: '601576',
-              },
-            ]}
+          <TableQueryEcosystem
+            query={{
+              sql: ecosystemResourcesSql,
+            }}
           />
         </SectionLayout>
       </div>
-      <SectionLayout
-        title={'About the Cancer Complexity Knowledge Portal'}
-        subtitle={
-          'The portal is built to disseminate resources to accelerate discovery and collaboration in the cancer research community. We aim to provide rich context about and access to activities and contributors that have produced the resources hosted within this and other repositories.'
-        }
-        centerTitle
-        ContainerProps={{ className: 'home-spacer' }}
-      >
-        <AboutPortal
-          cardProps={[
-            { ownerId: 'syn21498902', wikiId: '601369' },
-            { ownerId: 'syn21498902', wikiId: '601370' },
-          ]}
-        />
-      </SectionLayout>
       <SectionLayout>
-        <DevelopedBySage />
+        <CCKPDevelopedBySage />
       </SectionLayout>
     </>
   )

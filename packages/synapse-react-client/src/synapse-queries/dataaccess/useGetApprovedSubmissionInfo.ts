@@ -21,7 +21,6 @@ export function useGetApprovedSubmissionInfoInfinite<
       SubmissionInfoPage,
       SynapseClientError,
       TData,
-      SubmissionInfoPage,
       QueryKey,
       SubmissionInfoPage['nextPageToken']
     >

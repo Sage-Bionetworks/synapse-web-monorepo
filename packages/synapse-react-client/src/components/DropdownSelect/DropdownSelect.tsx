@@ -1,4 +1,9 @@
-import { useRef, useState, MouseEvent as ReactMouseEvent } from 'react'
+import {
+  useRef,
+  useState,
+  MouseEvent as ReactMouseEvent,
+  RefObject,
+} from 'react'
 import {
   Button,
   ButtonGroup,
@@ -18,8 +23,10 @@ export type DropdownSelectProps = ButtonGroupProps & {
   selectedIndex?: number
   setSelectedIndex?: (selectedIndex: number) => void
   onButtonClick?: (selectedIndex: number) => void
+  buttonText?: string
   variant?: ButtonProps['variant']
   buttonGroupAriaLabel?: string
+  anchorRef?: RefObject<HTMLDivElement | null>
 }
 // Derived from https://mui.com/material-ui/react-button-group/#split-button
 
@@ -36,10 +43,14 @@ export default function DropdownSelect(props: DropdownSelectProps) {
     variant = 'contained',
     buttonGroupAriaLabel,
     onButtonClick,
+    buttonText,
+    anchorRef: externalAnchorRef,
     ...rest
   } = props
   const [open, setOpen] = useState(false)
-  const anchorRef = useRef<HTMLDivElement>(null)
+  const internalAnchorRef = useRef<HTMLDivElement>(null)
+  const anchorRef = externalAnchorRef ?? internalAnchorRef
+
   const [selectedIndexLocal, setSelectedIndexLocal] = useState(
     selectedIndex ?? 0,
   )
@@ -88,7 +99,9 @@ export default function DropdownSelect(props: DropdownSelectProps) {
             }
           }}
         >
-          {options[selectedIndex ?? selectedIndexLocal]}
+          {buttonText
+            ? buttonText
+            : options[selectedIndex ?? selectedIndexLocal]}
         </Button>
         <Button
           size="small"

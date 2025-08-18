@@ -23,16 +23,20 @@ export const navbarConfig: NavbarConfig = {
         { name: 'Programs', path: '/Explore/Programs' },
         { name: 'Collections', path: '/Explore/Collections' },
         { name: 'Datasets', path: '/Explore/Datasets' },
+        {
+          name: 'Files',
+          path: '/Explore/Files',
+        },
       ],
     },
     {
       name: 'Resources',
       path: '/Resources',
       children: [
-        {
-          name: 'For Persons With Lived Experience',
-          path: '/Resources/For Persons With Lived Experience',
-        },
+        // {
+        //   name: 'For Persons With Lived Experience',
+        //   path: '/Resources/For Persons With Lived Experience',
+        // },
         {
           name: 'Requirements for Publication',
           path: '/Resources/Requirements for Publication',
@@ -40,6 +44,10 @@ export const navbarConfig: NavbarConfig = {
         {
           name: 'Frequently Asked Questions',
           path: '/Resources/Frequently Asked Questions',
+        },
+        {
+          name: 'Contact Us',
+          path: '/ContactUs',
         },
         // {
         //   name: 'Publishing Requirements',

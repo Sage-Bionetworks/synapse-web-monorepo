@@ -61,6 +61,7 @@ export function getUseQueryMock<TData = unknown, TError = unknown>() {
         refetch: mockRefetch,
         isPlaceholderData: false,
         isStale: false,
+        promise: Promise.resolve(data),
       }
 
       currentSetValue(successState)
@@ -98,6 +99,7 @@ export function getUseQueryMock<TData = unknown, TError = unknown>() {
         isPaused: false,
         isLoading: false,
         isPending: false,
+        promise: new Promise(() => {}),
       }
 
       currentSetValue(errorState)
@@ -135,6 +137,7 @@ export function getUseQueryMock<TData = unknown, TError = unknown>() {
         isPending: true,
         isInitialLoading: true,
         isPaused: false,
+        promise: new Promise(() => {}),
       }
 
       currentSetValue(loadingState)
@@ -172,6 +175,7 @@ export function getUseQueryMock<TData = unknown, TError = unknown>() {
         isPaused: true,
         isLoading: false,
         isPending: true,
+        promise: new Promise(() => {}),
       }
       currentSetValue(idleState)
     } else {
@@ -207,6 +211,7 @@ export function getUseQueryMock<TData = unknown, TError = unknown>() {
       isSuccess: false,
       refetch: mockRefetch,
       status: 'pending',
+      promise: new Promise(() => {}),
     })
 
     currentSetValue = setValue
@@ -254,6 +259,7 @@ export function getUseQuerySuccessMock<TData>(
     isInitialLoading: false,
     isPaused: false,
     isPending: false,
+    promise: Promise.resolve(data),
   }
 }
 
@@ -289,6 +295,7 @@ export function getUseQueryLoadingMock(): QueryObserverLoadingResult<
     isPending: true,
     isInitialLoading: true,
     isPaused: false,
+    promise: new Promise(() => {}),
   }
 }
 
@@ -323,6 +330,7 @@ export function getUseQueryErrorMock<TError>(
     isPaused: false,
     isLoading: false,
     isPending: false,
+    promise: undefined as any,
   }
 }
 
@@ -355,6 +363,7 @@ export function getUseQueryIdleMock(): UseQueryResult<never, never> {
     isPaused: true,
     isLoading: false,
     isPending: true,
+    promise: new Promise(() => {}),
   }
 }
 
@@ -696,6 +705,9 @@ export function getUseInfiniteQuerySuccessMock<TData>(
     isStale: false,
     refetch: vi.fn(),
     fetchStatus: 'idle',
+    isFetchNextPageError: false,
+    isFetchPreviousPageError: false,
+    promise: Promise.resolve({ pages }),
   } satisfies UseInfiniteQueryResult<{ pages: TData[] }, never>
 }
 
@@ -763,6 +775,9 @@ export function getUseInfiniteQueryMock<TData = unknown, TError = unknown>() {
         isFetchingPreviousPage: false,
         isPlaceholderData: false,
         isStale: false,
+        isFetchPreviousPageError: false,
+        isFetchNextPageError: false,
+        promise: Promise.resolve({ pages: data, pageParams: [] }),
       }
       currentSetValue(successState)
     } else {
@@ -805,6 +820,9 @@ export function getUseInfiniteQueryMock<TData = unknown, TError = unknown>() {
         isFetchingPreviousPage: false,
         isPlaceholderData: false,
         isStale: false,
+        isFetchNextPageError: false,
+        isFetchPreviousPageError: false,
+        promise: new Promise(() => {}),
       }
       currentSetValue(errorState)
     } else {
@@ -850,6 +868,9 @@ export function getUseInfiniteQueryMock<TData = unknown, TError = unknown>() {
         isFetchingPreviousPage: false,
         isPlaceholderData: false,
         isStale: false,
+        isFetchNextPageError: false,
+        isFetchPreviousPageError: false,
+        promise: new Promise(() => {}),
       }
       currentSetValue(loadingState)
     } else {
@@ -893,6 +914,9 @@ export function getUseInfiniteQueryMock<TData = unknown, TError = unknown>() {
       isSuccess: false,
       refetch: mockRefetch,
       status: 'pending',
+      isFetchNextPageError: false,
+      isFetchPreviousPageError: false,
+      promise: new Promise(() => {}),
     })
 
     currentSetValue = setValue

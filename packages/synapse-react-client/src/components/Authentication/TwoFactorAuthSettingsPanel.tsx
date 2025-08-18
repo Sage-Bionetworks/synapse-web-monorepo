@@ -3,13 +3,14 @@ import { TWO_FACTOR_DOCS_LINK } from './TwoFactorEnrollmentForm'
 
 export type TwoFactorAuthSettingsPanelProps = {
   onRegenerateBackupCodes: () => void
+  onReset2FA: () => void
   hideTitle?: boolean
 }
 
 export default function TwoFactorAuthSettingsPanel(
   props: TwoFactorAuthSettingsPanelProps,
 ) {
-  const { onRegenerateBackupCodes, hideTitle = false } = props
+  const { onRegenerateBackupCodes, onReset2FA, hideTitle = false } = props
 
   return (
     <Box>
@@ -28,6 +29,14 @@ export default function TwoFactorAuthSettingsPanel(
         to request access.
       </Typography>
       <Stack direction={'row'} sx={{ gap: 1 }}>
+        <Button
+          variant={'text'}
+          onClick={() => {
+            onReset2FA()
+          }}
+        >
+          Reset 2FA
+        </Button>
         <Button
           variant={'text'}
           onClick={() => {

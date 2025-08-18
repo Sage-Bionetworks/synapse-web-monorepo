@@ -1,6 +1,6 @@
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { FeatureFlagEnum, FeatureFlags } from '@sage-bionetworks/synapse-types'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 
 const MOCK_FEATURE_FLAGS_VALUE: FeatureFlags = Object.values(
   FeatureFlagEnum,
@@ -20,11 +20,10 @@ export function getFeatureFlagsOverride(
   },
 ) {
   const { portalOrigin, overrides } = options
-  return rest.get(`${portalOrigin}Portal/featureflags`, (req, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json({ ...MOCK_FEATURE_FLAGS_VALUE, ...overrides }),
-      ctx.set('Content-Type', 'application/json'), // Ensure header names are valid
+  return http.get(`${portalOrigin}/Portal/featureflags`, () => {
+    return HttpResponse.json(
+      { ...MOCK_FEATURE_FLAGS_VALUE, ...overrides },
+      { status: 200 },
     )
   })
 }

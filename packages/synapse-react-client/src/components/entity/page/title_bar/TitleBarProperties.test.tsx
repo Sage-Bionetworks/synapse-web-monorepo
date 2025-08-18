@@ -9,7 +9,7 @@ import {
 } from '@/mocks/mock_upload_destination'
 import { getEntityBundleHandler } from '@/mocks/msw/handlers/entityHandlers'
 import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { DOI_ASSOCIATION } from '@/utils/APIConstants'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
@@ -31,6 +31,7 @@ import {
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import failOnConsoleError from 'jest-fail-on-console'
+import { http, HttpResponse } from 'msw'
 import * as HasAccessModule from '../../../HasAccess/HasAccessV2'
 import TitleBarProperties, {
   TitleBarPropertiesProps,
@@ -61,14 +62,14 @@ function useEntityBundleOverride(bundle: EntityBundle) {
 
 function useDoiAssociationOverride(doiAssociation: DoiAssociation | null) {
   server.use(
-    rest.get(
+    http.get(
       `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${DOI_ASSOCIATION}`,
 
-      async (req, res, ctx) => {
+      () => {
         if (doiAssociation == null) {
-          return res(ctx.status(404), ctx.json({}))
+          return HttpResponse.json({}, { status: 404 })
         }
-        return res(ctx.status(200), ctx.json(doiAssociation))
+        return HttpResponse.json(doiAssociation, { status: 200 })
       },
     ),
   )
@@ -375,17 +376,17 @@ describe('TitleBarProperties', () => {
       })
 
       server.use(
-        rest.post(
+        http.post(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}/repo/v1/entity/children`,
-          async (req, res, ctx) => {
+          () => {
             const response: EntityChildrenResponse = {
               page: [],
               totalChildCount: 55,
               nextPageToken: 'npt',
             }
-            return res(ctx.status(200), ctx.json(response))
+            return HttpResponse.json(response, { status: 200 })
           },
         ),
       )

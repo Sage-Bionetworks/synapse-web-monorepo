@@ -13,20 +13,9 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Demo: Story = {
-  args: {
-    formTitle: 'Your Contribution Request',
-    formClass: 'contribution-request',
-    formSchemaEntityId: 'syn20692910',
-    fileNamePath: 'study.submission_name',
-    formUiSchemaEntityId: 'syn20692911',
-    formNavSchemaEntityId: 'syn20968007',
-    isWizardMode: true,
-  },
-}
-
 export const StopADDemo: Story = {
   args: {
+    formGroupId: '9',
     formSchemaEntityId: 'syn20680102',
     fileNamePath: 'naming.compound_name',
     formUiSchemaEntityId: 'syn20693568',

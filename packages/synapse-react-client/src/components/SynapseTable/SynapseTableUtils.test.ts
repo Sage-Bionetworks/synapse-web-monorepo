@@ -12,6 +12,7 @@ import {
   getFileColumnModelId,
   getUniqueEntities,
   isSortableColumn,
+  mapRowToRecord,
 } from './SynapseTableUtils'
 
 describe('Synapse Table Utilities tests', () => {
@@ -364,6 +365,16 @@ describe('Synapse Table Utilities tests', () => {
           { id: '1234', name: 'id', columnType: ColumnTypeEnum.ENTITYID },
         ]),
       ).toEqual(undefined)
+    })
+  })
+
+  test('mapRowToRecord', () => {
+    const data = ['foo', 'bar', null]
+    const schemaIndexMap = { fooCol: 0, barCol: 1, nullCol: 2 }
+    expect(mapRowToRecord(data, schemaIndexMap)).toEqual({
+      fooCol: 'foo',
+      barCol: 'bar',
+      nullCol: null,
     })
   })
 })

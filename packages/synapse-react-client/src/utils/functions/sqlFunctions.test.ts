@@ -48,7 +48,7 @@ describe('parseEntityIdAndVersionFromSqlStatement', () => {
     })
     expect(
       parseEntityIdAndVersionFromSqlStatement('SELECT * from somethingweird'),
-    ).toEqual(null)
+    ).toEqual({ entityId: undefined, versionNumber: undefined })
     expect(
       parseEntityIdAndVersionFromSqlStatement('SELECT * from     syn12345'),
     ).toEqual({

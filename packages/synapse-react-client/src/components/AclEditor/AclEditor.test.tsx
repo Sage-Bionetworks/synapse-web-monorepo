@@ -156,7 +156,7 @@ describe('AclEditor', () => {
   it('Handles adding a user or team', async () => {
     const { user } = await setUp()
 
-    await addUserToAcl(user, mockUserData2.userProfile!.userName)
+    await addUserToAcl(user, mockUserData2.userProfile!.userName!)
 
     expect(mockAddResourceAccessItem).toHaveBeenCalledWith(mockUserData2.id)
   })

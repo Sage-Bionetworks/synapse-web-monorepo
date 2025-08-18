@@ -8,15 +8,11 @@ import ParticipantsBarPlot from './crc-researcher/ParticipantsBarPlot'
 import StatusLineChart from './crc-researcher/StatusLineChart'
 import SurveysCompletedPlots from './crc-researcher/SurveysCompletedPlots'
 import AboutPortal from './csbc-home-page/AboutPortal'
-import ConsortiaGoals from './csbc-home-page/ConsortiaGoals'
-import DevelopedBySage from './csbc-home-page/DevelopedBySage'
-import Ecosystem from './csbc-home-page/Ecosystem'
 import HomePageCardContainer from './csbc-home-page/HomePageCardContainer'
 import DetailsPage from './DetailsPage'
 import ELBrowseToolsPage from './eliteportal/ELBrowseToolsPage'
 import ELContributeYourData from './eliteportal/ELContributeYourData'
 import ELGettingStarted from './eliteportal/ELGettingStarted'
-import AllALSSlat from './ampals/ALLALSSlat'
 import AMPALSExploreTheData from './ampals/AMPALSExploreTheData'
 import ELSupportedByNIH from './eliteportal/ELSupportedByNIH'
 import ARKWelcomePage from './arkportal/ARKWelcomePage'
@@ -39,11 +35,8 @@ import RepositoryUnderReviewAlert from './RepositoryUnderReviewAlert'
 const PortalComponents = {
   RouteControlWrapper: ExploreWrapper,
   DetailsPage,
-  ConsortiaGoals,
   HomePageCardContainer,
-  Ecosystem,
   AboutPortal,
-  DevelopedBySage,
   ParticipantsBarPlot,
   StatusLineChart,
   SurveysCompletedPlots,
@@ -55,7 +48,6 @@ const PortalComponents = {
   ELBrowseToolsPage,
   ELContributeYourData,
   ELGettingStarted,
-  AllALSSlat,
   AMPALSExploreTheData,
   ELSupportedByNIH,
   ARKWelcomePage,

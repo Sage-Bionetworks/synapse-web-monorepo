@@ -6,14 +6,12 @@ import { DetailsPageTabs } from '@sage-bionetworks/synapse-portal-framework/comp
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { Outlet, RouteObject } from 'react-router'
+import { Outlet } from 'react-router'
 import {
   CardContainerLogic,
   ErrorPage,
   SynapseErrorType,
 } from 'synapse-react-client'
-
-export const challengeDetailsPageTabRoutes: RouteObject[] = []
 
 function ChallengeDetailsPage() {
   const { id } = useGetPortalComponentSearchParams()
@@ -22,24 +20,29 @@ function ChallengeDetailsPage() {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
   }
   return (
-    <>
-      <div className={'challengeDetailPageHeaderCard'}>
-        <CardContainerLogic
-          cardConfiguration={{ ...challengeCardConfiguration, isHeader: true }}
-          sql={challengeProjectsSql}
-          searchParams={{ id }}
-        />
-      </div>
-      {/*Register For Challenge component is here, and the wrapper positions it properly in the header card*/}
-      <ChallengeDetailPageWrapper />
-      <DetailsPage
-        sql={challengeProjectsSql}
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-      >
-        <DetailsPageTabs tabConfig={challengeDetailsPageTabConfig} />
-        <Outlet />
-      </DetailsPage>
-    </>
+    <DetailsPage
+      header={
+        <>
+          <div className={'challengeDetailPageHeaderCard'}>
+            <CardContainerLogic
+              cardConfiguration={{
+                ...challengeCardConfiguration,
+                isHeader: true,
+              }}
+              sql={challengeProjectsSql}
+              searchParams={{ id }}
+            />
+          </div>
+          {/*Register For Challenge component is here, and the wrapper positions it properly in the header card*/}
+          <ChallengeDetailPageWrapper />
+        </>
+      }
+      sql={challengeProjectsSql}
+      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+    >
+      <DetailsPageTabs tabConfig={challengeDetailsPageTabConfig} />
+      <Outlet />
+    </DetailsPage>
   )
 }
 

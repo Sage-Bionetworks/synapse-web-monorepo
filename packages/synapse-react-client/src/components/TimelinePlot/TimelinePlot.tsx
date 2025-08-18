@@ -5,15 +5,15 @@ import {
   SQLOperator,
 } from '@/utils/functions'
 import { getHeaderIndex } from '@/utils/functions/queryUtils'
-import useRefDimensions from '@/utils/hooks/useRefDimensions'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 import { Skeleton, Typography } from '@mui/material'
 import { Box } from '@mui/system'
+import { useMeasure } from '@react-hookz/web'
 import {
   ColumnMultiValueFunction,
   ColumnMultiValueFunctionQueryFilter,
 } from '@sage-bionetworks/synapse-types'
-import { createRef, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { ObservationCardSchema } from '../row_renderers/ObservationCard'
 import hardcodedPhasesQueryResponseData, {
@@ -54,8 +54,8 @@ export const TimelinePlot = ({
   const [species, setSpecies] = useState<string | undefined | null>(
     defaultSpecies,
   )
-  const plotContainerRef = createRef<HTMLDivElement>()
-  const dimensions = useRefDimensions(plotContainerRef)
+  const [plotContainerMeasurements, plotContainerRef] =
+    useMeasure<HTMLDivElement>()
   const queryFilters = getAdditionalFilters(searchParams, sqlOperator) ?? []
   const speciesFilter: ColumnMultiValueFunctionQueryFilter | undefined = species
     ? {
@@ -155,7 +155,9 @@ export const TimelinePlot = ({
   }
 
   const widthPx =
-    dimensions.width && phaseData ? dimensions.width / phaseData.length : 0
+    plotContainerMeasurements?.width && phaseData
+      ? plotContainerMeasurements?.width / phaseData.length
+      : 0
   const gridTemplateColumns = phaseData?.map(() => 'auto').join(' ')
 
   return (
@@ -208,8 +210,8 @@ export const TimelinePlot = ({
               sx={{
                 display: 'inline-grid',
                 gridTemplateColumns,
-                minWidth: dimensions.width,
-                maxWidth: dimensions.width,
+                minWidth: plotContainerMeasurements?.width,
+                maxWidth: plotContainerMeasurements?.width,
               }}
               className="forcePlotlyDefaultCursor"
             >

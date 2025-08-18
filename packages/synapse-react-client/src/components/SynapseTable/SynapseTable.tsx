@@ -8,6 +8,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import {
   Cell,
+  ColumnDef,
   createColumnHelper,
   getCoreRowModel,
   useReactTable,
@@ -31,12 +32,14 @@ import {
   TableDataColumnHeader,
 } from './SynapseTableRenderers'
 import {
-  isEntityViewOrDataset,
+  isEntityViewOrDatasetOrCollection,
   isFileViewOrDataset,
   isSortableColumn,
 } from './SynapseTableUtils'
 import { usePrefetchResourcesInTable } from './usePrefetchTableData'
 import { useTableSort } from './useTableSort'
+
+const DEFAULT_CUSTOM_COLUMNS: ColumnDef<Row, any>[] = []
 
 export type SynapseTableConfiguration = Pick<
   SynapseTableProps,
@@ -48,6 +51,7 @@ export type SynapseTableConfiguration = Pick<
   | 'showDirectDownloadColumn'
   | 'hideAddToDownloadListColumn'
   | 'columnLinks'
+  | 'customColumns'
 >
 
 export type SynapseTableProps = {
@@ -55,7 +59,8 @@ export type SynapseTableProps = {
   rowSet: RowSet
   /** Whether a new page of data is being loaded */
   isLoadingNewPage: boolean
-
+  /** Custom columns to render in the table */
+  customColumns?: ColumnDef<Row, any>[]
   /** If true and entity is a view or dataset, renders a column that represents if the caller has permission to download the entity represented by the row */
   showAccessColumn?: boolean
   /**
@@ -87,6 +92,7 @@ export function SynapseTable(props: SynapseTableProps) {
   const {
     rowSet,
     isLoadingNewPage,
+    customColumns = DEFAULT_CUSTOM_COLUMNS,
     showAccessColumn,
     showExternalAccessIcon,
     showAccessColumnHeader,
@@ -130,10 +136,9 @@ export function SynapseTable(props: SynapseTableProps) {
   const isShowingAccessColumn: boolean = Boolean(
     showAccessColumn &&
       entity &&
-      ((isEntityViewOrDataset(entity) && allRowsHaveId(rowSet)) ||
+      ((isEntityViewOrDatasetOrCollection(entity) && allRowsHaveId(rowSet)) ||
         fileIdColumnName),
   )
-
   const rowsAreDownloadable =
     entity &&
     isLoggedIn &&
@@ -157,6 +162,7 @@ export function SynapseTable(props: SynapseTableProps) {
 
   const columns = useMemo(
     () => [
+      ...customColumns,
       rowSelectionColumn,
       addToDownloadListColumn,
       directDownloadColumn,
@@ -175,7 +181,7 @@ export function SynapseTable(props: SynapseTableProps) {
         })
       }) ?? []),
     ],
-    [selectColumns, showAccessColumn],
+    [customColumns, selectColumns, showAccessColumn, showAccessColumnHeader],
   )
 
   const prependColumnVisibility: VisibilityState = useMemo(

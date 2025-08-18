@@ -1,3 +1,4 @@
+import ampAlsAccessColumn from '@/components/AmpAlsAccessColumn'
 import type {
   CardConfiguration,
   LabelLinkConfig,
@@ -27,12 +28,16 @@ export const datasetQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   columnAliases,
   tableConfiguration: {
     columnLinks: datasetColumnLinks,
+    showAccessColumn: false, // use custom access column instead
+    customColumns: [ampAlsAccessColumn],
   },
   defaultShowSearchBox: true,
   facetsToPlot: ['program', 'project', 'datasetType', 'assay'],
   searchConfiguration: {
     searchable: ['name', 'program', 'project', 'datasetType', 'assay'],
   },
+  isInfinite: true,
+  initialLimit: 50,
 }
 
 export const datasetSchema: TableToGenericCardMapping = {

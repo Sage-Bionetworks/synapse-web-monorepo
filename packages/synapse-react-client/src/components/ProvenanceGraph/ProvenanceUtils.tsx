@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import { Node, Position, ConnectionLineType, Edge, MarkerType } from 'reactflow'
 import { ActivityNodeLabel } from './ActivityNodeLabel'
 import { EntityNodeLabel } from './EntityNodeLabel'
@@ -35,14 +36,14 @@ export type ProvenanceNodeProps = {
 }
 
 export type ProvenanceNodeData = {
-  label: JSX.Element
+  label: ReactNode
   props: ProvenanceNodeLabelProps
   type: NodeType
 }
 
 export const getProvenanceNode = (props: ProvenanceNodeProps): Node => {
   const { type, data } = props
-  let nodeLabel: JSX.Element
+  let nodeLabel: ReactNode
   switch (type) {
     case NodeType.ENTITY:
       nodeLabel = <EntityNodeLabel {...(data as EntityHeader)} />

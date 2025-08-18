@@ -7,7 +7,7 @@ import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper'
 import { SynapseTable } from './SynapseTable'
@@ -82,12 +82,9 @@ export const SynapseTableDemo: Story = {
   parameters: {
     msw: {
       handlers: [
-        rest.get(
-          MOCK_REPO_ORIGIN + '/repo/v1/entity/syn16787123',
-          (req, res, ctx) => {
-            return res(ctx.status(200), ctx.json(mockTableEntity))
-          },
-        ),
+        http.get(MOCK_REPO_ORIGIN + '/repo/v1/entity/syn16787123', () => {
+          return HttpResponse.json(mockTableEntity, { status: 200 })
+        }),
         ...getHandlersForTableQuery(MOCK_REPO_ORIGIN),
       ],
     },

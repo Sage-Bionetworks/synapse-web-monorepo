@@ -124,7 +124,6 @@ export function useGetAgentChatSessionHistoryInfinite<
       SessionHistoryResponse,
       SynapseClientError,
       TData,
-      SessionHistoryResponse,
       QueryKey,
       SessionHistoryResponse['nextPageToken']
     >

@@ -1,4 +1,4 @@
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { APPROVED_SUBMISSION_INFO } from '@/utils/APIConstants'
@@ -11,6 +11,7 @@ import {
   SubmissionInfoPageRequest,
 } from '@sage-bionetworks/synapse-types'
 import { act, render, screen } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import IDUReport from './IDUReport'
 
@@ -47,16 +48,16 @@ describe('IDUReport tests', () => {
   beforeAll(() => {
     server.listen()
     server.use(
-      rest.post(
+      http.post<{ arId: string }, SubmissionInfoPageRequest>(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${APPROVED_SUBMISSION_INFO(':arId')}`,
-        async (req, res, ctx) => {
+        async ({ request }) => {
           let page = page1
-          if ((req.body as SubmissionInfoPageRequest).nextPageToken) {
+          if ((await request.json()).nextPageToken) {
             page = page2
           }
-          return res(ctx.status(200), ctx.json(page))
+          return HttpResponse.json(page, { status: 200 })
         },
       ),
     )

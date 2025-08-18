@@ -1,6 +1,8 @@
+import { ReactNode } from 'react'
+
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
-  summary: string | JSX.Element
+  summary: string | ReactNode
   title: string
   showBlur?: boolean
   centerText?: boolean

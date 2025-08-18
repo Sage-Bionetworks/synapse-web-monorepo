@@ -2,7 +2,7 @@ import * as EntityBadgeModule from '@/components/EntityBadgeIcons/EntityBadgeIco
 import { mockProjectHeader } from '@/mocks/entity/mockEntity'
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
 import { mockFileHandle } from '@/mocks/mock_file_handle'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ENTITY_ID_VERSIONS } from '@/utils/APIConstants'
@@ -22,6 +22,7 @@ import {
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Map } from 'immutable'
+import { http, HttpResponse } from 'msw'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { EntityFinderHeader } from '../../EntityFinderHeader'
 import { VersionSelectionType } from '../../VersionSelectionType'
@@ -144,12 +145,12 @@ describe('DetailsView tests', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ENTITY_ID_VERSIONS(entityHeaders[0].id)}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(versionResult))
+        () => {
+          return HttpResponse.json(versionResult, { status: 200 })
         },
       ),
     )

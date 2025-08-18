@@ -281,7 +281,6 @@ export function getInfiniteQueryResultBundleOptions(
   AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
   SynapseClientError,
   InfiniteData<AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>>,
-  AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
   QueryKey,
   string | number | undefined
 > {

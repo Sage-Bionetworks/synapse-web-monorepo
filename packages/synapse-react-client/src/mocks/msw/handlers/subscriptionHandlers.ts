@@ -1,4 +1,3 @@
-import { rest } from 'msw'
 import {
   SortDirection,
   SubscriberPagedResults,
@@ -8,9 +7,10 @@ import {
   SubscriptionRequest,
   Topic,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseApiResponse } from '../handlers'
+import { http, HttpResponse } from 'msw'
 import { forumSubscriptions, threadSubscriptions } from '../../mockSubscription'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
+import { SynapseApiResponse } from '../handlers'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
 const subscriptionService = new BasicMockedCrudService<
@@ -59,52 +59,46 @@ function getSubscriptions(
 
 export function getSubscriptionHandlers(backendOrigin: string) {
   return [
-    rest.get(
-      `${backendOrigin}/repo/v1/subscription/all`,
-      async (req, res, ctx) => {
-        const objectType =
-          (req.url.searchParams.get('objectType') as SubscriptionObjectType) ??
-          undefined
-        const sortDirection =
-          (req.url.searchParams.get('sortDirection') as SortDirection) ??
-          undefined
-        const offsetParam = req.url.searchParams.get('offset')
-        const offset = offsetParam ? parseInt(offsetParam) : undefined
-        const limitParam = req.url.searchParams.get('limit')
-        const limit = limitParam ? parseInt(limitParam) : undefined
+    http.get(`${backendOrigin}/repo/v1/subscription/all`, ({ request }) => {
+      const objectType =
+        (new URL(request.url).searchParams.get(
+          'objectType',
+        ) as SubscriptionObjectType) ?? undefined
+      const sortDirection =
+        (new URL(request.url).searchParams.get(
+          'sortDirection',
+        ) as SortDirection) ?? undefined
+      const offsetParam = new URL(request.url).searchParams.get('offset')
+      const offset = offsetParam ? parseInt(offsetParam) : undefined
+      const limitParam = new URL(request.url).searchParams.get('limit')
+      const limit = limitParam ? parseInt(limitParam) : undefined
 
-        const resp: SynapseApiResponse<SubscriptionPagedResults> =
-          getSubscriptions(
-            objectType ?? undefined,
-            sortDirection,
-            offset,
-            limit,
-          )
+      const resp: SynapseApiResponse<SubscriptionPagedResults> =
+        getSubscriptions(objectType ?? undefined, sortDirection, offset, limit)
 
-        return res(ctx.status(200), ctx.json(resp))
-      },
-    ),
-    rest.post(
+      return HttpResponse.json(resp, { status: 200 })
+    }),
+    http.post<never, SubscriptionRequest>(
       `${backendOrigin}/repo/v1/subscription/list`,
-      async (req, res, ctx) => {
-        const request: SubscriptionRequest = await req.json()
+      async ({ request }) => {
+        const requestBody: SubscriptionRequest = await request.json()
 
         const resp: SynapseApiResponse<SubscriptionPagedResults> =
           getSubscriptions(
-            request.objectType,
-            request.sortDirection,
+            requestBody.objectType,
+            requestBody.sortDirection,
             undefined,
             undefined,
-            request.idList,
+            requestBody.idList,
           )
 
-        return res(ctx.status(200), ctx.json(resp))
+        return HttpResponse.json(resp, { status: 200 })
       },
     ),
-    rest.post(
+    http.post<never, Topic>(
       `${backendOrigin}/repo/v1/subscription`,
-      async (req, res, ctx) => {
-        const requestBody: Topic = await req.json()
+      async ({ request }) => {
+        const requestBody: Topic = await request.json()
 
         const newSubscription = subscriptionService.create({
           subscriberId: String(MOCK_USER_ID),
@@ -112,21 +106,18 @@ export function getSubscriptionHandlers(backendOrigin: string) {
           objectType: requestBody.objectType,
           createdOn: new Date().toISOString(),
         })
-        return res(ctx.status(201), ctx.json(newSubscription))
+        return HttpResponse.json(newSubscription, { status: 201 })
       },
     ),
-    rest.delete(
-      `${backendOrigin}/repo/v1/subscription/:id`,
-      async (req, res, ctx) => {
-        const subscriptionId = req.params.id as string
-        subscriptionService.delete(subscriptionId)
-        return res(ctx.status(200), ctx.body(''))
-      },
-    ),
-    rest.post(
+    http.delete(`${backendOrigin}/repo/v1/subscription/:id`, ({ params }) => {
+      const subscriptionId = params.id as string
+      subscriptionService.delete(subscriptionId)
+      return new Response('', { status: 200 })
+    }),
+    http.post<never, Topic>(
       `${backendOrigin}/repo/v1/subscription/subscribers`,
-      async (req, res, ctx) => {
-        const topic: Topic = await req.json()
+      async ({ request }) => {
+        const topic: Topic = await request.json()
 
         const matchingSubscriptions = subscriptionService.getMany(
           s =>
@@ -136,7 +127,7 @@ export function getSubscriptionHandlers(backendOrigin: string) {
         const resp: SubscriberPagedResults = {
           subscribers: matchingSubscriptions.map(s => s.subscriberId),
         }
-        return res(ctx.status(200), ctx.json(resp))
+        return HttpResponse.json(resp, { status: 200 })
       },
     ),
   ]

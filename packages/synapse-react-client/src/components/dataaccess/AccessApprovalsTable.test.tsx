@@ -2,7 +2,7 @@ import {
   mockAccessApprovalSearchResult2,
   mockApprovalSearchResponse,
 } from '@/mocks/MockAccessApprovals'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
@@ -16,6 +16,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import {
   AccessApprovalsTable,
   AccessApprovalsTableProps,
@@ -33,12 +34,12 @@ describe('AccessApprovalsTable tests', () => {
   beforeAll(() => {
     server.listen()
     server.use(
-      rest.post(
+      http.post<never, AccessApprovalSearchRequest>(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/accessApproval/search`,
-        async (req, res, ctx) => {
-          const requestBody: AccessApprovalSearchRequest = await req.json()
+        async ({ request }) => {
+          const requestBody = await request.json()
           let responseBody: AccessApprovalSearchResponse = {
             results: mockApprovalSearchResponse.results,
             nextPageToken: mockApprovalSearchResponse.nextPageToken,
@@ -50,7 +51,7 @@ describe('AccessApprovalsTable tests', () => {
               nextPageToken: undefined,
             }
           }
-          return res(ctx.status(200), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
     )

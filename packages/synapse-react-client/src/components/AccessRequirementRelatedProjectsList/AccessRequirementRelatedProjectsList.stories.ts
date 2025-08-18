@@ -1,7 +1,7 @@
 import { ACCESS_REQUIREMENT_SEARCH } from '@/utils/APIConstants'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { AccessRequirementRelatedProjectsList } from './AccessRequirementRelatedProjectsList'
 
 const meta = {
@@ -33,10 +33,10 @@ export const ZeroProjectsMock: Story = {
     msw: {
       handlers: [
         // searchAccessRequirements
-        rest.post(
+        http.post(
           `${MOCK_REPO_ORIGIN}${ACCESS_REQUIREMENT_SEARCH}`,
 
-          async (req, res, ctx) => {
+          () => {
             const zeroRelatedProjects = {
               results: [
                 {
@@ -51,7 +51,7 @@ export const ZeroProjectsMock: Story = {
                 },
               ],
             }
-            return res(ctx.status(200), ctx.json(zeroRelatedProjects))
+            return HttpResponse.json(zeroRelatedProjects, { status: 200 })
           },
         ),
       ],

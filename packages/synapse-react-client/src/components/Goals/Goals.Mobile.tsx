@@ -23,7 +23,7 @@ export default function GoalsMobile({
     <div className="Goals__Mobile__Content">
       <p>{summary}</p>
       <Button
-        variant="contained"
+        variant="outlined"
         color="secondary"
         className="Goals__Mobile__Content__Link"
         href={link}

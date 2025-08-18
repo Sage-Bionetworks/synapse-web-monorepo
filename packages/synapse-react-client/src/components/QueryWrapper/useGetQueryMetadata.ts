@@ -8,6 +8,7 @@ import {
   useQuery,
   UseQueryOptions,
   useSuspenseQuery,
+  UseSuspenseQueryOptions,
 } from '@tanstack/react-query'
 import { useQueryContext } from '../QueryContext/index'
 
@@ -48,7 +49,7 @@ export function useSuspenseGetQueryMetadata<
   TSelect = Omit<QueryResultBundle, 'queryResult'>,
 >(
   optionsOverrides?: Partial<
-    UseQueryOptions<
+    UseSuspenseQueryOptions<
       AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
       SynapseClientError,
       TSelect
@@ -60,11 +61,15 @@ export function useSuspenseGetQueryMetadata<
   const mergedOptions = {
     ...queryMetadataQueryOptions,
     ...optionsOverrides,
-  } as UseQueryOptions<
+  } as UseSuspenseQueryOptions<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     SynapseClientError,
     TSelect
   >
 
-  return useSuspenseQuery(mergedOptions)
+  return useSuspenseQuery<
+    AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
+    SynapseClientError,
+    TSelect
+  >(mergedOptions)
 }

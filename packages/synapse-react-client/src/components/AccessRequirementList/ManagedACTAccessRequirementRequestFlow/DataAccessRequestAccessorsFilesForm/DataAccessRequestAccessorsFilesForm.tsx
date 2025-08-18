@@ -27,7 +27,7 @@ import {
   RestrictableObjectType,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import {
   useGetCurrentUserProfile,
   useGetDataAccessRequestForUpdate,
@@ -110,7 +110,7 @@ export type DataAccessRequestAccessorsFilesFormProps = {
 
 export type AlertProps = {
   key: MuiAlertProps['severity']
-  message: string | JSX.Element
+  message: string | ReactNode
 }
 
 /**

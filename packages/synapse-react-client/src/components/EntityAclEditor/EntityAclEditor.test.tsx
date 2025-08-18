@@ -24,7 +24,7 @@ import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { AccessControlList } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { createRef } from 'react'
 import {
   ADD_PUBLIC_PRINCIPALS_BUTTON_TEXT,
@@ -635,17 +635,18 @@ describe('EntityAclEditor', () => {
   it('displays an error on mutate failure', async () => {
     const errorReason = 'Something was invalid'
     server.use(
-      rest.put(
+      http.put(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
           ':entityId',
         )}/acl`,
-        async (req, res, ctx) => {
+        () => {
           const status = 400
           const response: SynapseApiResponse<AccessControlList> = {
+            concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
             reason: errorReason,
           }
 
-          return res(ctx.status(status), ctx.json(response))
+          return HttpResponse.json(response, { status })
         },
       ),
     )

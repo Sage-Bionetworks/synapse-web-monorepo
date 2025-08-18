@@ -1,4 +1,4 @@
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { mockUserProfileData } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '@/utils'
@@ -16,6 +16,7 @@ import {
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
+import { http } from 'msw'
 import UserCard, { UserCardProps } from './UserCard'
 import UserCardContextMenu, {
   MenuAction,
@@ -133,25 +134,27 @@ describe('UserCard tests', () => {
       const IMAGE_URL = 'http://some-image-url.notarealurl/image.jpg'
       server.use(
         // Synapse provides the presigned URL for the profile image
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${PROFILE_IMAGE_PREVIEW(':userId')}`,
-          async (req, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.set('Content-Type', 'text/plain'),
-              ctx.text(IMAGE_URL),
-            )
+          () => {
+            return new Response(IMAGE_URL, {
+              status: 200,
+              headers: {
+                'Content-Type': 'text/plain',
+              },
+            })
           },
         ),
         // Handler for the "presigned" URL itself:
-        rest.get(IMAGE_URL, async (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.set('Content-Type', 'image/jpeg'),
-            ctx.body('abcdef'),
-          )
+        http.get(IMAGE_URL, () => {
+          return new Response('abcdef', {
+            status: 200,
+            headers: {
+              'Content-Type': 'image/jpeg',
+            },
+          })
         }),
       )
       renderAvatar({
@@ -291,6 +294,17 @@ describe('UserCard tests', () => {
       expect(
         container.querySelector('div.SRC-cardMetaData-scroll')!.children,
       ).toHaveLength(2)
+    })
+  })
+  describe('it creates the correct UI for a user with no username', () => {
+    const props = {
+      userProfile: { ...mockUserProfileData, userName: undefined },
+      size: SynapseConstants.MEDIUM_USER_CARD,
+    }
+
+    it('shows an avatar', async () => {
+      renderMediumUserCard({ ...props })
+      await screen.findByRole('img')
     })
   })
 })

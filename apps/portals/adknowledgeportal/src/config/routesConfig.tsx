@@ -122,11 +122,12 @@ const routes: RouteObject[] = [
           ),
       },
       {
-        path: 'Contribute/FormSubmission',
-        lazy: () =>
-          import('@/pages/Contribute/Contribute-FormSubmission').then(
-            convertModuleToRouteObject,
-          ),
+        // The FormSubmission page has been replaced with a link to Service Desk
+        // path: 'Contribute/FormSubmission',
+        // lazy: () =>
+        //   import('@/pages/Contribute/Contribute-FormSubmission').then(
+        //     convertModuleToRouteObject,
+        //   ),
       },
       {
         path: 'About',

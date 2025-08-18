@@ -1,59 +1,58 @@
 import {
   TABLE_IDS,
-  CHALLENGES_TABLE_COLUMN_NAMES,
-  dataSql,
-  DST_TABLE_COLUMN_NAMES,
   ORG_TABLE_COLUMN_NAMES,
+  ORG_TABLE_JSON_COLUMNS,
+  GC_ORG_IDS,
 } from '@/config/resources'
-import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { GCInfo } from '@/config/GrandChallengeResources'
+import {
+  QueryBundleRequest,
+  ColumnSingleValueQueryFilter,
+  ColumnSingleValueFilterOperator,
+} from '@sage-bionetworks/synapse-types'
 import { CardDeck } from 'synapse-react-client/components/CardDeck/CardDeck'
 import { CardDeckCardProps } from 'synapse-react-client/components/CardDeck/CardDeckCardProps'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
-import {
-  ErrorBanner,
-  getFileHandleAssociation,
-  SynapseConstants,
-} from 'synapse-react-client'
+import { ErrorBanner, SynapseConstants } from 'synapse-react-client'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
-import { useGetEntity } from 'synapse-react-client/synapse-queries/entity/useEntity'
-import { ImageFileHandle } from 'synapse-react-client/components/widgets/ImageFileHandle'
 
 /**
  * Card view of challenges for the home page
  */
 
-function createExplorePageLink(query: Query): string {
-  return `/Explore?QueryWrapper0=${encodeURIComponent(JSON.stringify(query))}`
-}
-
-type useTableFetchProps = {
-  entityId: string
-  columns: string[]
-  sql?: string
-  shouldRun?: boolean
-}
-
-export function useTableFetch({
-  entityId,
-  columns, // required
-  sql, // if filters or aliases or anything are needed, pass in whole sql query
-  shouldRun = true, // if calling before ready, send false
-}: useTableFetchProps) {
-  if (!sql) {
-    sql = `SELECT ${columns.join(', ')} FROM ${entityId}`
-  }
+const COLS_NEEDED = ['ID', 'NAME', 'DESCRIPTION'].map(
+  k => ORG_TABLE_COLUMN_NAMES[k],
+)
+export function ChallengesCardDeck() {
+  const additionalFilters: ColumnSingleValueQueryFilter[] = [
+    {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      columnName: ORG_TABLE_COLUMN_NAMES.ID,
+      operator: ColumnSingleValueFilterOperator.IN,
+      values: GC_ORG_IDS.map(id => id.replace(/'/g, '')),
+    },
+  ]
 
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    entityId,
+    entityId: TABLE_IDS.Organization.id,
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-    query: { sql },
+    query: {
+      sql: `SELECT ${COLS_NEEDED.join(', ')} FROM ${TABLE_IDS.Organization.id}`,
+      additionalFilters,
+    },
   }
-  return useGetQueryResultBundle(queryBundleRequest, {
-    enabled: shouldRun,
+
+  const {
+    data: queryResult,
+    error: gcOrgsError,
+    isLoading: isLoadingGcOrgsTableQuery,
+  } = useGetQueryResultBundle(queryBundleRequest, {
     select: data => {
+      const columns = COLS_NEEDED
       const colIndexes = columns.map(column => ({
         column,
         index: getFieldIndex(column, data),
@@ -73,97 +72,43 @@ export function useTableFetch({
       return results
     },
   })
-}
 
-export function ChallengesCardDeck() {
-  const {
-    data: challengesData = [],
-    error: challengesError,
-    isLoading: isLoadingChallengesTableQuery,
-  } = useTableFetch({
-    entityId: TABLE_IDS.Challenges.id,
-    columns: [
-      CHALLENGES_TABLE_COLUMN_NAMES.ORG_ID,
-      CHALLENGES_TABLE_COLUMN_NAMES.IMG_HANDLE_ID,
-    ],
-  })
+  const gcOrgs = queryResult ?? []
 
-  const {
-    data: challengesEntity,
-    error: challengesEntityError,
-    isLoading: isLoadingChallengesEntity,
-  } = useGetEntity(TABLE_IDS.Challenges.id)
-
-  const gcOrgIds = challengesData
-    .map(c => c[CHALLENGES_TABLE_COLUMN_NAMES.ORG_ID])
-    .map(id => `'${id}'`)
-    .join(', ')
-
-  const orgCols = [
-    ORG_TABLE_COLUMN_NAMES.ID,
-    ORG_TABLE_COLUMN_NAMES.NAME,
-    ORG_TABLE_COLUMN_NAMES.DESCRIPTION,
-  ]
-  const {
-    data: gcOrgData,
-    error: gcOrgError,
-    isLoading: isLoadingOrgsTableQuery,
-  } = useTableFetch({
-    entityId: TABLE_IDS.Organization.id,
-    columns: orgCols,
-    sql: `SELECT ${orgCols.join(', ')} FROM ${
-      TABLE_IDS.Organization.id
-    } WHERE id IN (${gcOrgIds})`,
-    shouldRun: !!challengesData?.length,
-  })
-
-  if (challengesEntityError) {
-    return <ErrorBanner error={challengesEntityError} />
+  const orgs = {}
+  for (const gcOrg of gcOrgs) {
+    for (const key of ORG_TABLE_JSON_COLUMNS) {
+      try {
+        if (gcOrg[key]) {
+          gcOrg[key] = JSON.parse(gcOrg[key])
+        }
+      } catch (error) {
+        console.log(`Failed to parse ${key}:`, error)
+      }
+    }
+    orgs[gcOrg[ORG_TABLE_COLUMN_NAMES.ID]] = gcOrg
   }
-  if (challengesError) {
-    return <ErrorBanner error={challengesError} />
+
+  if (gcOrgsError) {
+    return <ErrorBanner error={gcOrgsError} />
   }
-  if (gcOrgError) {
-    return <ErrorBanner error={gcOrgError} />
-  }
-  const isLoading =
-    isLoadingChallengesTableQuery ||
-    isLoadingChallengesEntity ||
-    isLoadingOrgsTableQuery
+  const isLoading = isLoadingGcOrgsTableQuery
   if (isLoading) {
     return <div>Loading...</div>
   }
 
-  const orgs = {}
-  gcOrgData!.forEach(org => {
-    orgs[org[ORG_TABLE_COLUMN_NAMES.ID]] = org
-  })
-
-  const challengeCards: CardDeckCardProps[] = challengesData.map(challenge => {
-    const org = orgs[challenge[CHALLENGES_TABLE_COLUMN_NAMES.ORG_ID]]
-    const query: Query = {
-      sql: dataSql,
-      limit: 25,
-      selectedFacets: [
-        {
-          concreteType:
-            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-          columnName: DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
-          facetValues: [org[ORG_TABLE_COLUMN_NAMES.NAME]],
-        },
-      ],
-    }
-    const imgHandleId = challenge[CHALLENGES_TABLE_COLUMN_NAMES.IMG_HANDLE_ID]
-    const imgAssoc = getFileHandleAssociation(challengesEntity, imgHandleId)
-    const img = (
-      <ImageFileHandle key={imgHandleId} fileHandleAssociation={imgAssoc!} />
-    )
+  const challengeCards: CardDeckCardProps[] = gcOrgs.map(gcOrg => {
+    const orgId = gcOrg[ORG_TABLE_COLUMN_NAMES.ID]
+    const img = <img src={GCInfo[orgId].svg} />
 
     const card: CardDeckCardProps = {
-      title: org[ORG_TABLE_COLUMN_NAMES.NAME],
-      description: org[ORG_TABLE_COLUMN_NAMES.DESCRIPTION],
-      ctaButtonText: 'Explore Standards',
-      ctaButtonURL: createExplorePageLink(query),
+      title: gcOrg[ORG_TABLE_COLUMN_NAMES.NAME],
+      description: 'foo ' + gcOrg[ORG_TABLE_COLUMN_NAMES.DESCRIPTION],
+      cardDeckType: 'b2ai',
+      ctaButtonText: 'NOT USED IN cardDeckType = b2ai',
+      ctaButtonURL: `/Explore/Organization/OrganizationDetailsPage?${
+        ORG_TABLE_COLUMN_NAMES.ID
+      }=${gcOrg[ORG_TABLE_COLUMN_NAMES.ID]}`,
       headerImage: img,
     }
     return card

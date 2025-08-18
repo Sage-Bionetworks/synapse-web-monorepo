@@ -31,3 +31,19 @@
     margin-left: 5px;
   }
 }
+
+.Goals {
+  &__Card {
+    &__header {
+      background: unset;
+      min-height: unset;
+      padding-top: 20px;
+      &__title {
+        color: #5bb0b5;
+      }
+      &__count {
+        border: 1px solid #5bb0b5;
+      }
+    }
+  }
+}

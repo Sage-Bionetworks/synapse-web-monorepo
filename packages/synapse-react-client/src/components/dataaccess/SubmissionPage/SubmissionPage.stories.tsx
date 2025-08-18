@@ -14,13 +14,13 @@ import {
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstants'
 import { Meta, StoryObj } from '@storybook/react'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import SubmissionPage from './SubmissionPage'
 
 const meta = {
   title: 'Governance/SubmissionPage',
   component: SubmissionPage,
-  parameters: { stack: 'mock' },
+  parameters: { stack: 'mock', withRouter: true },
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
@@ -40,48 +40,46 @@ export const Demo: Story = {
         ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
         // Return submission based on ID
-        rest.get(
+        http.get(
           `${MOCK_REPO_ORIGIN}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
 
-          async (req, res, ctx) => {
+          ({ params }) => {
             const submission = mockSubmissions.find(
-              submission => req.params.id === submission.id,
+              submission => params.id === submission.id,
             )
-            return res(ctx.status(200), ctx.json(submission))
+            return HttpResponse.json(submission, { status: 200 })
           },
         ),
 
         // Return a mocked access requirement
-        rest.get(
+        http.get(
           `${MOCK_REPO_ORIGIN}${ACCESS_REQUIREMENT_BY_ID(':id')}`,
 
-          async (req, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json(mockManagedACTAccessRequirement),
-            )
+          () => {
+            return HttpResponse.json(mockManagedACTAccessRequirement, {
+              status: 200,
+            })
           },
         ),
-        rest.get(
+        http.get(
           `${MOCK_REPO_ORIGIN}${ACCESS_REQUIREMENT_WIKI_PAGE_KEY(':id')}`,
-          async (req, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
+          () => {
+            return HttpResponse.json(
+              {
                 wikiPageId: 123,
                 ownerObjectId: mockManagedACTAccessRequirement.id,
                 ownerObjectType: 'ACCESS_REQUIREMENT',
-              }),
+              },
+              { status: 200 },
             )
           },
         ),
-        rest.get(
+        http.get<{ id: string }>(
           `${MOCK_REPO_ORIGIN}/repo/v1/accessRequirement/:id/acl`,
-          async (req, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
-                id: req.id,
+          ({ params }) => {
+            return HttpResponse.json(
+              {
+                id: params.id,
                 creationDate: '2022-05-20T14:32:31.665Z',
                 etag: 'f4fbd4f2-751d-40dd-9421-1d2693231217',
                 resourceAccess: [
@@ -90,16 +88,17 @@ export const Demo: Story = {
                     accessType: ['REVIEW_SUBMISSIONS'],
                   },
                 ],
-              }),
+              },
+              { status: 200 },
             )
           },
         ),
         ...getHandlersForTableQuery(MOCK_REPO_ORIGIN),
-        rest.put(
+        http.put(
           `${MOCK_REPO_ORIGIN}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
 
-          async (req, res, ctx) => {
-            return res(ctx.status(201), ctx.json(await req.json()))
+          async ({ request }) => {
+            return HttpResponse.json(await request.json(), { status: 201 })
           },
         ),
       ],

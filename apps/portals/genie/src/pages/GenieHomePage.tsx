@@ -1,6 +1,7 @@
 import GenieHomePageHeader from '@sage-bionetworks/synapse-portal-framework/components/genie/GenieHomePageHeader'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import { CardContainerLogic, Goals } from 'synapse-react-client'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
+import Goals from 'synapse-react-client/components/Goals'
 import { currentDataReleasesProps } from '../config/synapseConfigs/dataReleases'
 import Markdown from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 

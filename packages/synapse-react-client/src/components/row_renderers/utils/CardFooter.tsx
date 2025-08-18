@@ -144,7 +144,16 @@ class CardFooter extends Component<CardFooterProps, State> {
         className={`SRC-cardMetadata ${this.props.className ?? ''}`}
       >
         {cardTopContent}
-        <table>
+        <table
+          style={{
+            width: '100%',
+            wordBreak: 'break-word',
+          }}
+        >
+          <colgroup>
+            <col className="SRC-cardMetadata-column1" />
+            <col className="SRC-cardMetadata-column2" />
+          </colgroup>
           <tbody>
             {this.renderRows(valuesFiltered, limit, isDesktop)}
             {hasMoreValuesThanLimit && (

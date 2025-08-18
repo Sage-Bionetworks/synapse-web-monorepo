@@ -1,7 +1,7 @@
 import { useGetDownloadListStatistics } from '@/synapse-queries'
 import { useSynapseContext } from '@/utils'
 import { Alert, AlertProps, Box, Button, Typography } from '@mui/material'
-import { useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 import SignInButton from '../SignInButton'
 import DownloadDetails from './DownloadDetails'
 
@@ -25,7 +25,7 @@ export type DownloadConfirmationUIProps = {
 type UiStateDictionary = {
   [key: string]: {
     severity: AlertProps['severity']
-    infoText: string | JSX.Element
+    infoText: string | ReactNode
     closeText: string
   }
 }

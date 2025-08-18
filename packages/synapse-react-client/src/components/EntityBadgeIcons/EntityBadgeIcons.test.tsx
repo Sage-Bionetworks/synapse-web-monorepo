@@ -8,7 +8,7 @@ import {
   getEntityJsonHandler,
 } from '@/mocks/msw/handlers/entityHandlers'
 import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ENTITY_ID,
@@ -33,6 +33,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { EntityBadgeIcons, EntityBadgeIconsProps } from './EntityBadgeIcons'
 
@@ -241,13 +242,13 @@ describe('EntityBadgeIcons tests', () => {
           getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
           bundle,
         ),
-        rest.delete(
+        http.delete(
           `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
             ':entityId',
           )}`,
 
-          async (req, res, ctx) => {
-            return res(ctx.status(200))
+          () => {
+            return new Response('', { status: 200 })
           },
         ),
       )
@@ -280,13 +281,13 @@ describe('EntityBadgeIcons tests', () => {
           getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
           bundle,
         ),
-        rest.delete(
+        http.delete(
           `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(
             ':entityId',
           )}`,
 
-          async (req, res, ctx) => {
-            return res(ctx.status(403))
+          () => {
+            return new Response('', { status: 403 })
           },
         ),
       )
@@ -309,22 +310,24 @@ describe('EntityBadgeIcons tests', () => {
   describe('displays schema validity', () => {
     it('Displays that the annotations are valid w.r.t the schema', async () => {
       server.use(
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
 
-          async (req, res, ctx) => {
-            return res(ctx.status(200), ctx.json(mockSchemaBinding))
+          () => {
+            return HttpResponse.json(mockSchemaBinding, { status: 200 })
           },
         ),
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_VALIDATION(':entityId')}`,
 
-          async (req, res, ctx) => {
-            return res(ctx.status(200), ctx.json(mockSchemaValidationResults))
+          () => {
+            return HttpResponse.json(mockSchemaValidationResults, {
+              status: 200,
+            })
           },
         ),
       )
@@ -342,28 +345,28 @@ describe('EntityBadgeIcons tests', () => {
 
     it('Displays that the annotations are invalid w.r.t the schema', async () => {
       server.use(
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
 
-          async (req, res, ctx) => {
-            return res(ctx.status(200), ctx.json(mockSchemaBinding))
+          () => {
+            return HttpResponse.json(mockSchemaBinding, { status: 200 })
           },
         ),
 
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_VALIDATION(':entityId')}`,
 
-          async (req, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
+          () => {
+            return HttpResponse.json(
+              {
                 ...mockSchemaValidationResults,
                 isValid: false, // !
-              }),
+              },
+              { status: 200 },
             )
           },
         ),
@@ -397,13 +400,13 @@ describe('EntityBadgeIcons tests', () => {
         },
       }
       server.use(
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
 
-          async (req, res, ctx) => {
-            return res(ctx.status(200), ctx.json(mockSchemaBinding))
+          () => {
+            return HttpResponse.json(mockSchemaBinding, { status: 200 })
           },
         ),
 
@@ -412,18 +415,15 @@ describe('EntityBadgeIcons tests', () => {
           bundle,
         ),
         // The entity's annotations are invalid
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_VALIDATION(':entityId')}`,
 
-          async (req, res, ctx) => {
-            return res(
-              ctx.status(200),
-              ctx.json({
-                ...mockSchemaValidationResults,
-                isValid: false,
-              }),
+          () => {
+            return HttpResponse.json(
+              { ...mockSchemaValidationResults, isValid: false },
+              { status: 200 },
             )
           },
         ),
@@ -444,34 +444,31 @@ describe('EntityBadgeIcons tests', () => {
       const onSchemaValidationFetched = vi.fn()
 
       server.use(
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_BINDING(':entityId')}`,
 
-          async (req, res, ctx) => {
-            return res(
-              ctx.status(404),
-              ctx.json({ reason: 'No JSON Schema found' }),
+          () => {
+            return HttpResponse.json(
+              { reason: 'No JSON Schema found' },
+              { status: 404 },
             )
           },
         ),
 
         // This service should never be called.
         // To verify, see if we invoke a mock function that is called in the mocked service
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}${ENTITY_SCHEMA_VALIDATION(':entityId')}`,
 
-          async (req, res, ctx) => {
+          () => {
             onSchemaValidationFetched()
-            return res(
-              ctx.status(200),
-              ctx.json({
-                ...mockSchemaValidationResults,
-                isValid: false,
-              }),
+            return HttpResponse.json(
+              { ...mockSchemaValidationResults, isValid: false },
+              { status: 200 },
             )
           },
         ),

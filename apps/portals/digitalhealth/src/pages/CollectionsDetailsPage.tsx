@@ -97,33 +97,37 @@ export const studyDetailsPageContent: DetailsPageContentType = [
   },
 ]
 
-export default function CollectionsDetailsPage() {
+function CollectionsDetailsPage() {
   const { study } = useGetPortalComponentSearchParams()
 
   if (!study) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
   }
   return (
-    <>
-      <CardContainerLogic
-        isAlignToLeftNav
-        cardConfiguration={{
-          ...studiesCardConfiguration,
-          genericCardSchema: {
-            ...studySchema,
-            title: 'study',
-            link: 'id',
-          },
-          isHeader: true,
-        }}
-        rgbIndex={studiesRgbIndex}
-        columnAliases={columnAliases}
-        sql={studySql}
-        searchParams={{ study }}
-      />
-      <DetailsPage sql={studySql}>
-        <DetailsPageContent content={studyDetailsPageContent} />
-      </DetailsPage>
-    </>
+    <DetailsPage
+      header={
+        <CardContainerLogic
+          isAlignToLeftNav
+          cardConfiguration={{
+            ...studiesCardConfiguration,
+            genericCardSchema: {
+              ...studySchema,
+              title: 'study',
+              link: 'id',
+            },
+            isHeader: true,
+          }}
+          rgbIndex={studiesRgbIndex}
+          columnAliases={columnAliases}
+          sql={studySql}
+          searchParams={{ study }}
+        />
+      }
+      sql={studySql}
+    >
+      <DetailsPageContent content={studyDetailsPageContent} />
+    </DetailsPage>
   )
 }
+
+export default CollectionsDetailsPage

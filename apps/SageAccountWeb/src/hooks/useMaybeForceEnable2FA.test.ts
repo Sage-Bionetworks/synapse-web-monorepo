@@ -1,3 +1,4 @@
+import usePathBefore2FARedirect from '@/hooks/usePathBefore2FARedirect'
 import { renderHook, waitFor } from '@testing-library/react'
 import {
   ApplicationSessionContextType,
@@ -5,7 +6,6 @@ import {
 } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
 import { vi } from 'vitest'
 import { useLocation, useNavigate, Location } from 'react-router'
-import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/featureflags/useGetFeatureFlag'
 import useMaybeForceEnable2FA from './useMaybeForceEnable2FA'
 
 vi.mock(
@@ -33,6 +33,9 @@ vi.mock('react-router', () => {
   }
 })
 
+vi.mock('@/hooks/useSkipMfaPrompt')
+vi.mock('@/hooks/usePathBefore2FARedirect')
+
 const mockApplicationSessionContext: ApplicationSessionContextType = {
   hasInitializedSession: true,
   refreshSession: vi.fn(),
@@ -55,8 +58,13 @@ const mockUseApplicationSessionContext = vi.mocked(useApplicationSessionContext)
 const mockNavigate = vi.fn()
 vi.mocked(useNavigate).mockReturnValue(mockNavigate)
 vi.mocked(useLocation).mockReturnValue(mockLocation)
-const mockFeatureFlagValue = true
-vi.mocked(useGetFeatureFlag).mockReturnValue(mockFeatureFlagValue)
+const mockSetPathBefore2FARedirect = vi.fn()
+vi.mocked(usePathBefore2FARedirect).mockReturnValue({
+  value: undefined,
+  set: mockSetPathBefore2FARedirect,
+  remove: vi.fn(),
+  fetch: vi.fn(),
+})
 
 describe('useMaybeForceEnable2FA', () => {
   beforeEach(() => {
@@ -72,6 +80,7 @@ describe('useMaybeForceEnable2FA', () => {
     await waitFor(() => {
       expect(hook.result.current.mayForceEnable2FA).toBe(false)
       expect(mockNavigate).not.toHaveBeenCalled()
+      expect(mockSetPathBefore2FARedirect).not.toHaveBeenCalled()
     })
   })
   it('does not redirect when user is not logged in', async () => {
@@ -85,6 +94,7 @@ describe('useMaybeForceEnable2FA', () => {
     await waitFor(() => {
       expect(hook.result.current.mayForceEnable2FA).toBe(true)
       expect(mockNavigate).not.toHaveBeenCalled()
+      expect(mockSetPathBefore2FARedirect).not.toHaveBeenCalled()
     })
   })
   it('redirects to 2faRequired when user has not enabled 2FA', async () => {
@@ -99,6 +109,7 @@ describe('useMaybeForceEnable2FA', () => {
     await waitFor(() => {
       expect(hook.result.current.mayForceEnable2FA).toBe(true)
       expect(mockNavigate).toHaveBeenCalledWith('/authenticated/2faRequired')
+      expect(mockSetPathBefore2FARedirect).toHaveBeenLastCalledWith('/')
     })
   })
 
@@ -120,6 +131,7 @@ describe('useMaybeForceEnable2FA', () => {
       expect(mockNavigate).not.toHaveBeenCalledWith(
         '/authenticated/2faRequired',
       )
+      expect(mockSetPathBefore2FARedirect).not.toHaveBeenCalled()
     })
   })
   it('does not redirect to 2faRequired if user is already on 2fa enroll page', async () => {
@@ -140,6 +152,7 @@ describe('useMaybeForceEnable2FA', () => {
       expect(mockNavigate).not.toHaveBeenCalledWith(
         '/authenticated/2faRequired',
       )
+      expect(mockSetPathBefore2FARedirect).not.toHaveBeenCalled()
     })
   })
   it('does not redirect to 2faRequired if user is signing the terms of use', async () => {
@@ -160,6 +173,7 @@ describe('useMaybeForceEnable2FA', () => {
       expect(mockNavigate).not.toHaveBeenCalledWith(
         '/authenticated/2faRequired',
       )
+      expect(mockSetPathBefore2FARedirect).not.toHaveBeenCalled()
     })
   })
   it('does not redirect to 2faRequired if user is signing updated terms of use', async () => {
@@ -179,6 +193,32 @@ describe('useMaybeForceEnable2FA', () => {
       expect(hook.result.current.mayForceEnable2FA).toBe(true)
       expect(mockNavigate).not.toHaveBeenCalledWith(
         '/authenticated/2faRequired',
+      )
+      expect(mockSetPathBefore2FARedirect).not.toHaveBeenCalled()
+    })
+  })
+
+  it('sets the redirect path to the current path before redirecting to 2faRequired', async () => {
+    // Simulate e.g. the account created workflow
+    const accountCreatedPath = '/authenticated/accountCreated'
+    vi.mocked(useLocation).mockReturnValue({
+      ...mockLocation,
+      pathname: accountCreatedPath,
+    })
+    mockUseApplicationSessionContext.mockReturnValue({
+      ...mockApplicationSessionContext,
+      twoFactorStatus: {
+        status: 'DISABLED',
+      },
+    })
+
+    const hook = renderHook(() => useMaybeForceEnable2FA())
+    await waitFor(() => {
+      expect(hook.result.current.mayForceEnable2FA).toBe(true)
+      expect(mockNavigate).toHaveBeenCalledWith('/authenticated/2faRequired')
+      // Verify that the user will be redirected back to the account created path after 2FA enrollment
+      expect(mockSetPathBefore2FARedirect).toHaveBeenLastCalledWith(
+        accountCreatedPath,
       )
     })
   })

@@ -19,7 +19,7 @@ import {
   ApprovalState,
 } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import UnmanagedACTAccessRequirementItem from './UnmanagedACTAccessRequirementItem'
 
 const meta: Meta = {
@@ -51,37 +51,34 @@ export const LegacyACTAccessRequirement: Story = {
         ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
         getCurrentUserCertifiedValidatedHandler(MOCK_REPO_ORIGIN, false, false),
-        rest.get(
+        http.get(
           `${MOCK_REPO_ORIGIN}${ACCESS_REQUIREMENT_STATUS(':id')}`,
 
-          async (req, res, ctx) => {
+          ({ params }) => {
             const response: AccessRequirementStatus = {
-              accessRequirementId: req.params.id as string,
+              accessRequirementId: params.id as string,
               concreteType:
                 'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
               isApproved: false,
             }
-            return res(ctx.status(200), ctx.json(response))
+            return HttpResponse.json(response, { status: 200 })
           },
         ),
-        rest.post(
-          `${MOCK_REPO_ORIGIN}${ACCESS_APPROVAL}`,
-          async (req, res, ctx) => {
-            const response: AccessApproval = {
-              requirementId: mockToUAccessRequirement.id,
-              submitterId: MOCK_USER_ID.toString(),
-              accessorId: MOCK_USER_ID.toString(),
-              state: ApprovalState.APPROVED,
-              id: 123,
-              etag: 'etag',
-              createdOn: new Date().toISOString(),
-              modifiedOn: new Date().toISOString(),
-              createdBy: String(MOCK_USER_ID),
-              modifiedBy: String(MOCK_USER_ID),
-            }
-            return res(ctx.status(201), ctx.json(response))
-          },
-        ),
+        http.post(`${MOCK_REPO_ORIGIN}${ACCESS_APPROVAL}`, () => {
+          const response: AccessApproval = {
+            requirementId: mockToUAccessRequirement.id,
+            submitterId: MOCK_USER_ID.toString(),
+            accessorId: MOCK_USER_ID.toString(),
+            state: ApprovalState.APPROVED,
+            id: 123,
+            etag: 'etag',
+            createdOn: new Date().toISOString(),
+            modifiedOn: new Date().toISOString(),
+            createdBy: String(MOCK_USER_ID),
+            modifiedBy: String(MOCK_USER_ID),
+          }
+          return HttpResponse.json(response, { status: 201 })
+        }),
       ],
     },
   },
@@ -98,37 +95,34 @@ export const LegacyACTAccessRequirementWithWiki: Story = {
         ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
         getCurrentUserCertifiedValidatedHandler(MOCK_REPO_ORIGIN, false, false),
-        rest.get(
+        http.get(
           `${MOCK_REPO_ORIGIN}${ACCESS_REQUIREMENT_STATUS(':id')}`,
 
-          async (req, res, ctx) => {
+          ({ params }) => {
             const response: AccessRequirementStatus = {
-              accessRequirementId: req.params.id as string,
+              accessRequirementId: params.id as string,
               concreteType:
                 'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
               isApproved: false,
             }
-            return res(ctx.status(200), ctx.json(response))
+            return HttpResponse.json(response, { status: 200 })
           },
         ),
-        rest.post(
-          `${MOCK_REPO_ORIGIN}${ACCESS_APPROVAL}`,
-          async (req, res, ctx) => {
-            const response: AccessApproval = {
-              requirementId: mockToUAccessRequirementWithWiki.id,
-              submitterId: MOCK_USER_ID.toString(),
-              accessorId: MOCK_USER_ID.toString(),
-              state: ApprovalState.APPROVED,
-              id: 123,
-              etag: 'etag',
-              createdOn: new Date().toISOString(),
-              modifiedOn: new Date().toISOString(),
-              createdBy: String(MOCK_USER_ID),
-              modifiedBy: String(MOCK_USER_ID),
-            }
-            return res(ctx.status(201), ctx.json(response))
-          },
-        ),
+        http.post(`${MOCK_REPO_ORIGIN}${ACCESS_APPROVAL}`, () => {
+          const response: AccessApproval = {
+            requirementId: mockToUAccessRequirementWithWiki.id,
+            submitterId: MOCK_USER_ID.toString(),
+            accessorId: MOCK_USER_ID.toString(),
+            state: ApprovalState.APPROVED,
+            id: 123,
+            etag: 'etag',
+            createdOn: new Date().toISOString(),
+            modifiedOn: new Date().toISOString(),
+            createdBy: String(MOCK_USER_ID),
+            modifiedBy: String(MOCK_USER_ID),
+          }
+          return HttpResponse.json(response, { status: 201 })
+        }),
       ],
     },
   },

@@ -1,7 +1,10 @@
+import {
+  h2Sx,
+  homepageBodyText,
+} from '@/components/SynapseHomepageV2/HomepageStyles'
 import { Box, Button, Typography } from '@mui/material'
 import { SynapsePlans } from './SynapsePlans'
 import { SynapseHomepageNavBar } from './SynapseHomepageNavBar'
-import { h2Sx, homepageBodyText } from './SynapseHomepageV2'
 
 export type SynapsePlansPageProps = {
   gotoPlace: (href: string) => void

@@ -17,44 +17,44 @@ import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSy
 export default function DatasetDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
   return (
-    <>
-      <CardContainerLogic
-        cardConfiguration={{
-          ...datasetCardConfiguration,
-          secondaryLabelLimit: 4,
-          isHeader: true,
-        }}
-        sql={datasetsSql}
-        searchParams={searchParams}
-        columnAliases={datasetColumnAliases}
-      />
-      <DetailsPage
-        sql={datasetsSql}
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        ContainerProps={{
-          maxWidth: 'xl',
-        }}
-      >
-        <DetailsPageContextConsumer columnName={'id'}>
-          {({ value: synID }) => (
-            <DetailsPageContent
-              hideMenu
-              content={[
-                {
-                  title: 'Description',
-                  id: 'Description',
-                  element: (
-                    <MarkdownSynapse
-                      ownerId={synID!}
-                      objectType={ObjectType.ENTITY}
-                    />
-                  ),
-                },
-              ]}
-            />
-          )}
-        </DetailsPageContextConsumer>
-      </DetailsPage>
-    </>
+    <DetailsPage
+      header={
+        <CardContainerLogic
+          cardConfiguration={{
+            ...datasetCardConfiguration,
+            secondaryLabelLimit: 4,
+            isHeader: true,
+          }}
+          sql={datasetsSql}
+          searchParams={searchParams}
+          columnAliases={datasetColumnAliases}
+        />
+      }
+      sql={datasetsSql}
+      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+      ContainerProps={{
+        maxWidth: 'xl',
+      }}
+    >
+      <DetailsPageContextConsumer columnName={'id'}>
+        {({ value: synID }) => (
+          <DetailsPageContent
+            hideMenu
+            content={[
+              {
+                title: 'Description',
+                id: 'Description',
+                element: (
+                  <MarkdownSynapse
+                    ownerId={synID!}
+                    objectType={ObjectType.ENTITY}
+                  />
+                ),
+              },
+            ]}
+          />
+        )}
+      </DetailsPageContextConsumer>
+    </DetailsPage>
   )
 }

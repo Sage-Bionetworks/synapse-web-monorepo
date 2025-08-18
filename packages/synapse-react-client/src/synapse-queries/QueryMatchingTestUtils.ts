@@ -1,8 +1,8 @@
-import { QueryKey } from '@tanstack/react-query'
 import {
   matchQuery,
   Query,
-  QueryCache,
+  QueryClient,
+  QueryKey,
   QueryFilters,
 } from '@tanstack/query-core'
 
@@ -16,7 +16,7 @@ export function doesQueryFilterMatch(
   filters: QueryFilters,
 ): boolean {
   const query = new Query({
-    cache: new QueryCache(),
+    client: new QueryClient(),
     queryKey: queryKey,
     queryHash: '',
   })

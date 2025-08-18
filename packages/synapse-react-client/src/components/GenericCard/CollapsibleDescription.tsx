@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { DescriptionConfig } from '../CardContainerLogic'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { Link } from '@mui/material'
@@ -34,8 +34,11 @@ export function LongDescription(props: {
     descriptionSubTitle,
     descriptionConfig,
   } = props
-  let content: JSX.Element | string = description
-  if (descriptionConfig?.isMarkdown) {
+  let content: ReactNode = description
+  if (
+    descriptionConfig?.isMarkdown &&
+    (content == null || typeof content === 'string')
+  ) {
     content = <MarkdownSynapse markdown={content} />
   }
   const show =

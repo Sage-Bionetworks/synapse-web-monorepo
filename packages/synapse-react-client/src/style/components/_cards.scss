@@ -153,11 +153,17 @@ $text-color-lighter: #898989;
   }
 
   .SRC-cardThumbnail {
-    display: inline-block;
+    @media (max-width: map.get(SRC.$breakpoints, 'medium')) {
+      display: none;
+    }
+    @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
+      max-width: 215px;
+      display: inline-block;
+    }
     vertical-align: top;
     margin-top: auto;
     margin-bottom: auto;
-    max-width: 215px;
+
     img {
       margin: auto;
       display: block;
@@ -174,8 +180,15 @@ $text-color-lighter: #898989;
     }
   }
   .SRC-imageThumbnail {
-    display: inline-block;
-    width: 25%;
+    @media (max-width: map.get(SRC.$breakpoints, 'medium')) {
+      width: 0%;
+      display: none;
+    }
+    @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
+      width: 25%;
+      display: inline-block;
+    }
+
     vertical-align: top;
     padding-right: 15px;
     max-width: 215px;
@@ -193,7 +206,6 @@ $text-color-lighter: #898989;
   .SRC-cardContent {
     padding-left: 0px;
     padding-right: 4%;
-    flex: 1;
     padding-top: $baseline-grid;
     margin-bottom: $baseline-grid;
     max-width: 850px;
@@ -217,6 +229,9 @@ $text-color-lighter: #898989;
         border-radius: 15px;
       }
     }
+    @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
+      flex: 1;
+    }
   }
 
   .SRC-cardAction {
@@ -238,8 +253,12 @@ $text-color-lighter: #898989;
     > * {
       margin-left: 15px;
     }
+
     &.hasIcon {
-      padding-left: 15%;
+      @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
+        padding-left: 15%;
+        padding-right: 15%;
+      }
     }
     .row {
       margin: 5px !important;
@@ -264,6 +283,13 @@ $text-color-lighter: #898989;
       a {
         font-size: 14px !important;
       }
+    }
+    .SRC-cardMetadata-column1 {
+      min-width: 140px;
+      width: 1px; /* Shrink-wrap to content */
+    }
+    .SRC-cardMetadata-column2 {
+      width: auto; /* Take remaining space */
     }
   }
 

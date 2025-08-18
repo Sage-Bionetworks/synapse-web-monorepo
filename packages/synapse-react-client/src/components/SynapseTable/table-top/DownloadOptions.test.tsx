@@ -4,7 +4,7 @@ import { mockProjectViewEntity } from '@/mocks/entity/mockProjectView'
 import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
 import mockQueryResponseData from '@/mocks/mockQueryResponseData'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   BackendDestinationEnum,
@@ -17,6 +17,7 @@ import {
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
+import { http, HttpResponse } from 'msw'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import QueryWrapper from '../../QueryWrapper'
 import { DownloadOptionsProps } from './DownloadOptions'
@@ -190,17 +191,14 @@ describe('Download Options tests', () => {
 
     const isStableVersion = true
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/entity/${mockDatasetEntity.id!}`,
-        (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
-              ...mockDatasetEntity,
-              isLatestVersion: !isStableVersion,
-            }),
+        () => {
+          return HttpResponse.json(
+            { ...mockDatasetEntity, isLatestVersion: !isStableVersion },
+            { status: 200 },
           )
         },
       ),
@@ -234,17 +232,17 @@ describe('Download Options tests', () => {
 
     const isStableVersion = false
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/entity/${mockDatasetEntity.id!}`,
-        (req, res, ctx) => {
-          return res(
-            ctx.status(200),
-            ctx.json({
+        () => {
+          return HttpResponse.json(
+            {
               ...mockDatasetEntity,
               isLatestVersion: !isStableVersion,
-            }),
+            },
+            { status: 200 },
           )
         },
       ),

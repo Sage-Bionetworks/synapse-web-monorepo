@@ -1,4 +1,4 @@
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { MOCK_TEAM_ID } from '@/mocks/team/mockTeam'
 import {
   MOCK_USER_ID,
@@ -17,6 +17,7 @@ import {
 } from '@react-google-maps/api'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import { ComponentProps, MouseEventHandler } from 'react'
 import GoogleMap, { MapProps } from './GoogleMap'
 
@@ -55,22 +56,22 @@ const mockGeoData: GeoData[] = [
 ]
 
 const geoDataHandlers = [
-  rest.get(
-    'https://s3.amazonaws.com/geoloc.sagebase.org/googlemap.txt',
-    (req, res, ctx) => {
-      return res(ctx.status(200), ctx.text('mockApiKey'))
-    },
-  ),
-  rest.get(
+  http.get('https://s3.amazonaws.com/geoloc.sagebase.org/googlemap.txt', () => {
+    return new Response('mockApiKey', {
+      status: 200,
+      headers: { 'Content-Type': 'text/plain' },
+    })
+  }),
+  http.get(
     'https://s3.amazonaws.com/geoloc.sagebase.org/allPoints.json',
-    (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(mockGeoData))
+    () => {
+      return HttpResponse.json(mockGeoData, { status: 200 })
     },
   ),
-  rest.get(
+  http.get(
     `https://s3.amazonaws.com/geoloc.sagebase.org/${MOCK_TEAM_ID}.json`,
-    (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json([mockGeoData[0]]))
+    () => {
+      return HttpResponse.json([mockGeoData[0]], { status: 200 })
     },
   ),
 ]

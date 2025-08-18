@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 
 export type ExpandableContentProps = {
-  title: JSX.Element
-  content: JSX.Element
+  title: ReactNode
+  content: ReactNode
 }
 
 export default function ExpandableContent({

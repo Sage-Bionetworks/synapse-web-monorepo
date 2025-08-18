@@ -47,7 +47,6 @@ export function useGetUserTeamsInfinite<
       PaginatedResults<Team>,
       SynapseClientError,
       TData,
-      PaginatedResults<Team>,
       QueryKey,
       number | undefined
     >

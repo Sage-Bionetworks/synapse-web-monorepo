@@ -10,9 +10,12 @@
   }
 
   .Tabs {
-    justify-content: flex-start;
-    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
     @include SrcMixins.underline-tabs();
+    & {
+      justify-content: flex-start;
+      box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.05);
+    }
+
     .Tab {
       flex-grow: 0;
       height: 45px;

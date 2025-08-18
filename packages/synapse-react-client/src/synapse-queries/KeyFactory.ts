@@ -57,7 +57,7 @@ const entityQueryKeyObjects = {
   /* Query key for all entities */
   all: { objectType: 'entity' },
   // Data for an entity
-  entity: (id: string, versionNumber?: string | number) => {
+  entity: (id?: string, versionNumber?: string | number) => {
     const key: Record<string, unknown> = {
       ...entityQueryKeyObjects.all,
       id: id,
@@ -263,7 +263,10 @@ export class KeyFactory {
     return this.getKey(...entityQueryKeyObjects.entityForum(id))
   }
 
-  public getEntityVersionQueryKey(id: string, versionNumber?: string | number) {
+  public getEntityVersionQueryKey(
+    id?: string,
+    versionNumber?: string | number,
+  ) {
     return this.getKey(entityQueryKeyObjects.entity(id, versionNumber))
   }
 
@@ -994,5 +997,9 @@ export class KeyFactory {
 
   public getPortalPermissionsKey(portalId: string) {
     return this.getKey('portal', portalId, 'permissions')
+  }
+
+  public getGridSessionListKey() {
+    return this.getKey('gridSession', 'list')
   }
 }

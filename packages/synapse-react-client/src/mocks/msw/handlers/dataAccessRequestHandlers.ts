@@ -4,7 +4,7 @@ import {
   DATA_ACCESS_REQUEST_SUBMISSION,
 } from '@/utils/APIConstants'
 import { Renewal, Request } from '@sage-bionetworks/synapse-types'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import {
   MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID,
   mockManagedACTAccessRequirement,
@@ -42,35 +42,35 @@ const mockMapARToDataAccessRequestService = new BasicMockedCrudService<{
 
 export function getDataAccessRequestHandlers(backendOrigin: string) {
   return [
-    rest.get(
+    http.get(
       `${backendOrigin}${ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE(
         ':id',
       )}`,
-      async (req, res, ctx) => {
+      ({ params }) => {
         const response = mockMapARToDataAccessRequestService.getOneByField(
           'accessRequirementId',
-          req.params.id as string,
+          params.id as string,
         )
         if (response && response.requestId) {
           const dataAccessRequest = mockDataAccessRequestService.getOneById(
             response.requestId,
           )
           if (dataAccessRequest) {
-            return res(ctx.status(200), ctx.json(dataAccessRequest))
+            return HttpResponse.json(dataAccessRequest, { status: 200 })
           }
         }
-        return res(
-          ctx.status(404),
-          ctx.json({
-            message: `MSW: Request or Renewal not found for access requirement ID: ${req.params.id}`,
-          }),
+        return HttpResponse.json(
+          {
+            message: `MSW: Request or Renewal not found for access requirement ID: ${params.id}`,
+          },
+          { status: 404 },
         )
       },
     ),
-    rest.post(
+    http.post<never, Request | Renewal>(
       `${backendOrigin}${DATA_ACCESS_REQUEST}`,
-      async (req, res, ctx) => {
-        const resp = await req.json()
+      async ({ request }) => {
+        const resp = await request.json()
         const existingRequest = resp.id
           ? mockDataAccessRequestService.getOneById(resp.id)
           : null
@@ -82,14 +82,14 @@ export function getDataAccessRequestHandlers(backendOrigin: string) {
           updated = mockDataAccessRequestService.create(resp)
         }
 
-        return res(ctx.status(201), ctx.json(updated))
+        return HttpResponse.json(updated, { status: 201 })
       },
     ),
 
-    rest.post(
+    http.post(
       `${backendOrigin}${DATA_ACCESS_REQUEST_SUBMISSION(':id')}`,
-      async (req, res, ctx) => {
-        return res(ctx.status(201), ctx.json({}))
+      () => {
+        return HttpResponse.json({}, { status: 201 })
       },
     ),
   ]

@@ -1,6 +1,5 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSHeader'
-import ALLALSSlat from '@sage-bionetworks/synapse-portal-framework/components/ampals/ALLALSSlat'
 import AMPALSPublishingRequirements from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSPublishingRequirements'
 import HowToAccessData from '@sage-bionetworks/synapse-portal-framework/components/ampals/HowToAccessData'
 // import AMPALSExploreTheData from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSExploreTheData'
@@ -13,6 +12,7 @@ import { goalsTableEntityId } from '@/config/resources'
 import { ReactComponent as DatasetsIcon } from '../../src/config/style/datasets.svg'
 import { ReactComponent as FilesIcon } from '../../src/config/style/files.svg'
 import { ReactComponent as ProjectsIcon } from '../../src/config/style/projects.svg'
+import AMPALSDevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSDevelopedBySage'
 
 //TODO
 export default function HomePage() {
@@ -28,12 +28,6 @@ export default function HomePage() {
       description:
         'Visit this page for instructions on how to contribute data to this portal.',
       link: '/Resources/For Contributors',
-    },
-    {
-      title: 'For Persons with Lived Experience',
-      description:
-        'Visit this page for links to external resources with information about clinical trials, ongoing research, and community.',
-      link: '/Resources/For Persons with Lived Experience',
     },
     {
       title: 'Publishing Requirements',
@@ -71,7 +65,6 @@ export default function HomePage() {
       {/* <AMPALSExploreTheData sql={upsetPlotSql} /> */}
       <HowToAccessData />
       <AMPALSPublishingRequirements />
-      <ALLALSSlat />
       <div className={'home-bg-dark'}>
         <SectionLayout
           title={'More Resources'}
@@ -93,6 +86,9 @@ export default function HomePage() {
           />
         </SectionLayout>
       </div>
+      <SectionLayout>
+        <AMPALSDevelopedBySage />
+      </SectionLayout>
     </>
   )
 }

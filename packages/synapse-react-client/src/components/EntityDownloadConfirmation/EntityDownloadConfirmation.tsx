@@ -58,7 +58,7 @@ const QueryWrapperTableDownloadConfirmation: React.FC<{
  * @param {EntityDownloadConfirmationProps} props - The properties for the component.
  * @param {string} props.entityId - The ID of the entity to be added to the download cart.
  *
- * @returns {JSX.Element} The rendered EntityDownloadConfirmation component.
+ * @returns {ReactNode} The rendered EntityDownloadConfirmation component.
  */
 export function EntityDownloadConfirmation({
   entityId,

@@ -12,13 +12,6 @@
     box-shadow: SRC.$box-shadow-soft;
     background: #ffffff;
     margin: 10px;
-    &:first-child {
-      margin-left: 0px;
-    }
-    &:last-child {
-      margin-right: 0px;
-    }
-    margin: 10px;
     &__header {
       min-height: 75px;
       @include SrcMixins.side-padding;
@@ -59,9 +52,6 @@
         padding: 10px;
         margin-top: 20px;
         margin-left: 0px;
-        &:hover {
-          color: map.get(SRC.$colors, 'white');
-        }
       }
     }
   }

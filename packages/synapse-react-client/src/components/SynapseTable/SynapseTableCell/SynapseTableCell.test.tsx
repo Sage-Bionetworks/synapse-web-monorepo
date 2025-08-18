@@ -1,7 +1,7 @@
 import { mockFileViewEntity } from '@/mocks/entity/mockFileView'
 import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import queryResultBundleJson from '@/mocks/query/syn16787123'
 import { MOCK_TEAM_ID, mockTeamData } from '@/mocks/team/mockTeam'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
@@ -24,12 +24,12 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
   Reference,
-  ReferenceList,
   VersionableEntity,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import dayjs from 'dayjs'
 import { uniqueId } from 'lodash-es'
+import { http, HttpResponse } from 'msw'
 import { QueryWrapper } from '../../../index'
 import * as AddToDownloadListV2Module from '../../AddToDownloadListV2'
 import * as EntityLinkModule from '../../EntityLink'
@@ -123,20 +123,19 @@ describe('SynapseTableCell tests', () => {
     server.listen()
     registerTableQueryResult(lastQueryRequest.query, queryResultBundle)
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/repo/v1/entity/syn16787123`,
-        (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(mockTableEntity))
+        () => {
+          return HttpResponse.json(mockTableEntity, { status: 200 })
         },
       ),
 
-      rest.post(
+      http.post<never, { references: Reference[] }>(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_HEADERS}`,
-        async (req, res, ctx) => {
-          const requestBody: ReferenceList = (await req.json())
-            .references as ReferenceList
+        async ({ request }) => {
+          const requestBody = (await request.json()).references
           const responseBody: PaginatedResults<EntityHeader> = {
             results: requestBody.map((reference: Reference) => {
               return {
@@ -152,26 +151,26 @@ describe('SynapseTableCell tests', () => {
               }
             }),
           }
-          return res(ctx.status(200), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
-      rest.get(
+      http.get(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}${ENTITY_ID_VERSION(':id', ':version')}`,
-        async (req, res, ctx) => {
+        ({ params }) => {
           const responseBody: VersionableEntity = {
-            id: req.params.id as string,
-            name: `Mock Entity with Id ${req.params.id}`,
-            versionNumber: parseInt(req.params.version as string),
-            versionLabel: `v${req.params.version}`,
+            id: params.id as string,
+            name: `Mock Entity with Id ${params.id}`,
+            versionNumber: parseInt(params.version as string),
+            versionLabel: `v${params.version}`,
             versionComment: 'test',
             modifiedOn: '2021-03-31T18:30:00.000Z',
             modifiedBy: MOCK_USER_ID.toString(),
             etag: 'etag',
             concreteType: 'org.sagebionetworks.repo.model.FileEntity',
           }
-          return res(ctx.status(200), ctx.json(responseBody))
+          return HttpResponse.json(responseBody, { status: 200 })
         },
       ),
     )
@@ -205,12 +204,12 @@ describe('SynapseTableCell tests', () => {
   describe('PORTALS-2095, SWC-7235 - Special cases for ENTITYID columns', () => {
     it('PORTALS-2095: renders an entity link for name column in EntityView', async () => {
       server.use(
-        rest.get(
+        http.get(
           `${getEndpoint(
             BackendDestinationEnum.REPO_ENDPOINT,
           )}/repo/v1/entity/syn16787123`,
-          (req, res, ctx) => {
-            return res(ctx.status(200), ctx.json(mockFileViewEntity))
+          () => {
+            return HttpResponse.json(mockFileViewEntity, { status: 200 })
           },
         ),
       )

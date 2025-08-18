@@ -5,7 +5,7 @@ import {
   WikiPage,
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { MOCK_WIKI_ETAG, mockWikiPages } from '../../mockWiki'
 import { mockWikiPageKeys } from '../../mockWikiPageKey'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
@@ -30,26 +30,27 @@ const mockWikiPageKeyService = new BasicMockedCrudService<WikiPageKey>({
 
 export function getWikiPage(backendOrigin: string) {
   return wikiOwnerObjectTypes.map(ownerObjectType => {
-    return rest.get(
+    return http.get(
       `${backendOrigin}${WIKI_PAGE_ID(
         ownerObjectType,
         ':ownerObjectId',
         ':wikiPageId',
       )}`,
-      async (req, res, ctx) => {
+      ({ params }) => {
         let status = 404
         let response: SynapseApiResponse<WikiPage> = {
-          reason: `Mock Service worker could not find a wiki page with ID ${req.params.wikiPageId}`,
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+          reason: `Mock Service worker could not find a wiki page with ID ${params.wikiPageId}`,
         }
 
         const wikiPage = mockWikiPageService.getOneById(
-          req.params.wikiPageId as string,
+          params.wikiPageId as string,
         )
         if (wikiPage) {
           response = wikiPage
           status = 200
         }
-        return res(ctx.status(status), ctx.json(response))
+        return HttpResponse.json(response, { status })
       },
     )
   })
@@ -57,32 +58,33 @@ export function getWikiPage(backendOrigin: string) {
 
 export const getWikiHandlers = (backendOrigin: string) => [
   ...getWikiPage(backendOrigin),
-  rest.get(
+  http.get(
     `${backendOrigin}/repo/v1/:objectType/:objectId/wiki2/:wikiId/attachmenthandles`,
-    async (req, res, ctx) => {
+    () => {
       const status = 200
       const response: SynapseApiResponse<FileHandleResults> = {
         list: [],
       }
-      return res(ctx.status(status), ctx.json(response))
+      return HttpResponse.json(response, { status })
     },
   ),
 ]
 
 export function getRootWikiPageKeyHandler(backendOrigin: string) {
   return wikiOwnerObjectTypes.map(ownerObjectType => {
-    return rest.get(
+    return http.get(
       `${backendOrigin}${WIKI_OBJECT_TYPE(
         ownerObjectType,
       )}/:ownerObjectId/wikikey`,
 
-      async (req, res, ctx) => {
+      ({ params }) => {
         let status = 404
         let response: SynapseApiResponse<WikiPageKey> = {
-          reason: `Mock Service worker could not find a WikiPageKey for ${ownerObjectType} ${req.params.ownerObjectId}`,
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+          reason: `Mock Service worker could not find a WikiPageKey for ${ownerObjectType} ${params.ownerObjectId}`,
         }
         const wikiPageKey = mockWikiPageKeyService.getOneByPredicate(
-          wikiPageKey => wikiPageKey.ownerObjectId === req.params.ownerObjectId,
+          wikiPageKey => wikiPageKey.ownerObjectId === params.ownerObjectId,
         )
 
         if (wikiPageKey) {
@@ -90,7 +92,7 @@ export function getRootWikiPageKeyHandler(backendOrigin: string) {
           status = 200
         }
 
-        return res(ctx.status(status), ctx.json(response))
+        return HttpResponse.json(response, { status })
       },
     )
   })
@@ -98,10 +100,10 @@ export function getRootWikiPageKeyHandler(backendOrigin: string) {
 
 export function createWikiPage(backendOrigin: string) {
   return wikiOwnerObjectTypes.map(ownerObjectType => {
-    return rest.post(
+    return http.post<{ ownerObjectId: string }, WikiPage>(
       `${backendOrigin}${WIKI_PAGE(ownerObjectType, ':ownerObjectId')}`,
-      async (req, res, ctx) => {
-        const requestBody: WikiPage = await req.json()
+      async ({ request }) => {
+        const requestBody: WikiPage = await request.json()
         const now = new Date().toISOString()
         const created = mockWikiPageService.create({
           ...requestBody,
@@ -112,7 +114,7 @@ export function createWikiPage(backendOrigin: string) {
           modifiedOn: now,
         })
 
-        return res(ctx.status(201), ctx.json(created))
+        return HttpResponse.json(created, { status: 201 })
       },
     )
   })
@@ -120,20 +122,20 @@ export function createWikiPage(backendOrigin: string) {
 
 export function updateWikiPage(backendOrigin: string) {
   return wikiOwnerObjectTypes.map(ownerObjectType => {
-    return rest.put(
+    return http.put<{ ownerObjectId: string; wikiPageId: string }, WikiPage>(
       `${backendOrigin}${WIKI_PAGE_ID(
         ownerObjectType,
         ':ownerObjectId',
         ':wikiPageId',
       )}`,
-      async (req, res, ctx) => {
-        const requestBody: WikiPage = await req.json()
+      async ({ request }) => {
+        const requestBody: WikiPage = await request.json()
         const updated = mockWikiPageService.update(
           requestBody.id,
           requestBody,
           'replace',
         )
-        return res(ctx.status(201), ctx.json(updated))
+        return HttpResponse.json(updated, { status: 201 })
       },
     )
   })

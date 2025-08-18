@@ -1,21 +1,10 @@
+import Typography from '@mui/material/Typography'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
-import ComponentCollapse from '@sage-bionetworks/synapse-portal-framework/components/ComponentCollapse'
-import ExploreWrapper from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapper'
-import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import SurveyToast from '@sage-bionetworks/synapse-portal-framework/components/SurveyToast'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
+import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import { RouteObject } from 'react-router'
-import {
-  CardContainerLogic,
-  StandaloneQueryWrapper,
-} from 'synapse-react-client'
-import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
-import GenieHomePage from '../pages/GenieHomePage'
-import routeControlWrapperProps from './explorePageRoutes'
-import { dataReleasesSql } from './resources'
-import { currentDataReleasesProps } from './synapseConfigs/dataReleases'
 import { FullWidthAlert } from 'synapse-react-client'
-import Typography from '@mui/material/Typography'
 import { HasAccessV2 } from 'synapse-react-client/components/HasAccess/HasAccessV2'
 
 const routes: RouteObject[] = [
@@ -62,65 +51,64 @@ const routes: RouteObject[] = [
       ...sharedRoutes,
       {
         index: true,
-        element: <GenieHomePage />,
+        lazy: () =>
+          import('@/pages/GenieHomePage').then(convertModuleToRouteObject),
       },
       {
         path: 'Explore',
-        element: <ExploreWrapper explorePaths={routeControlWrapperProps} />,
-        children: routeControlWrapperProps,
+        lazy: () =>
+          import('@/pages/explore/layout').then(convertModuleToRouteObject),
+        children: [
+          {
+            path: 'GENIE',
+            lazy: () =>
+              import('@/pages/explore/ExploreGenie').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'GENIE-BPC',
+            lazy: () =>
+              import('@/pages/explore/ExploreGenieBPC').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'Publications',
+            lazy: () =>
+              import('@/pages/explore/ExplorePublications').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'Contributors',
+            lazy: () =>
+              import('@/pages/explore/ExploreContributors').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'External Resources',
+            lazy: () =>
+              import('@/pages/explore/ExploreExternalResources').then(
+                convertModuleToRouteObject,
+              ),
+          },
+        ],
       },
       {
         path: 'Data Releases',
-        element: (
-          <>
-            <SectionLayout title={'Current Data Releases'}>
-              <CardContainerLogic {...currentDataReleasesProps} />
-            </SectionLayout>
-            <SectionLayout title={'Previous Data Release'}>
-              <Markdown
-                markdown={
-                  'The **latest** version of the dataset is readily acccessible for free download, but access to **previous** versions must be requested.'
-                }
-              />
-              <ComponentCollapse text={'View All Data Releases'}>
-                <StandaloneQueryWrapper
-                  sql={dataReleasesSql}
-                  visibleColumnCount={7}
-                />
-              </ComponentCollapse>
-            </SectionLayout>
-          </>
-        ),
+        lazy: () =>
+          import('@/pages/DataReleases').then(convertModuleToRouteObject),
       },
       {
         path: 'Access',
-        element: (
-          <SectionLayout
-            title={'Access'}
-            ContainerProps={{ className: 'DataAccessPage' }}
-          >
-            <Markdown
-              ownerId="syn53013218"
-              wikiId="626697"
-              loadingSkeletonRowCount={8}
-            />
-          </SectionLayout>
-        ),
+        lazy: () =>
+          import('@/pages/DataAccess').then(convertModuleToRouteObject),
       },
       {
         path: 'Help',
-        element: (
-          <SectionLayout
-            title={'Help'}
-            ContainerProps={{ className: 'HelpPage' }}
-          >
-            <Markdown
-              ownerId="syn53013218"
-              wikiId="626556"
-              loadingSkeletonRowCount={8}
-            />
-          </SectionLayout>
-        ),
+        lazy: () => import('@/pages/Help').then(convertModuleToRouteObject),
       },
     ],
   },

@@ -24,7 +24,7 @@ export type UserProfile = {
   email?: string // This is deprecated as users can have more than one email See emails
   emails?: string[] // The list of user email addresses registered to this user
   openIds?: string[] // The list of OpenIds bound to this user's account
-  userName: string // A name chosen by the user that uniquely identifies them
+  userName?: string // A name chosen by the user that uniquely identifies them
   displayName?: string // This field is deprecated and will always be null
   rStudioUrl?: string // URL for RStudio server assigned to the user
   summary?: string // A summary description about this person

@@ -14,3 +14,5 @@ export function SkeletonButton({
     </Skeleton>
   )
 }
+
+export default SkeletonButton

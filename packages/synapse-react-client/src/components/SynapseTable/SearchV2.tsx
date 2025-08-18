@@ -69,8 +69,8 @@ type InternalSearchProps = SearchV2Props & {
 }
 
 class _Search extends Component<InternalSearchProps, SearchState> {
-  public searchFormRef: RefObject<HTMLFormElement>
-  public radioFormRef: RefObject<HTMLFormElement>
+  public searchFormRef: RefObject<HTMLFormElement | null>
+  public radioFormRef: RefObject<HTMLFormElement | null>
 
   constructor(props: InternalSearchProps) {
     super(props)

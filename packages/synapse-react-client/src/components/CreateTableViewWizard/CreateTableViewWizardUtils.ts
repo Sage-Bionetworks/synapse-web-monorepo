@@ -38,7 +38,7 @@ export function getModalTitle(
       return `Add Columns to ${entityTypeToFriendlyName(entityType!)}`
 
     case 'TABLE_NAME':
-      return `Describe the ${entityTypeToFriendlyName(entityType!)}`
+      return `Create the ${entityTypeToFriendlyName(entityType!)}`
   }
 }
 

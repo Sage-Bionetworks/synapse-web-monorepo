@@ -51,7 +51,6 @@ export function useGetAvailableFilesToDownloadInfinite<
       AvailableFilesResponse,
       SynapseClientError,
       TData,
-      AvailableFilesResponse,
       QueryKey,
       AvailableFilesResponse['nextPageToken']
     >
@@ -113,7 +112,6 @@ export function useGetDownloadListActionsRequiredInfinite<
       ActionRequiredResponse,
       SynapseClientError,
       TData,
-      ActionRequiredResponse,
       QueryKey,
       ActionRequiredResponse['nextPageToken']
     >

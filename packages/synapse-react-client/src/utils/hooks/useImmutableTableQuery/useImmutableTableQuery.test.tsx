@@ -1,14 +1,14 @@
-import { act, renderHook } from '@testing-library/react'
-import { cloneDeep } from 'lodash-es'
-import useImmutableTableQuery, {
-  DEBOUNCE_DELAY_MS,
-  UseImmutableTableQueryOptions,
-} from './useImmutableTableQuery'
-import * as DeepLinkingUtils from '../../functions/deepLinkingUtils'
 import {
   ColumnSingleValueFilterOperator,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
+import { act, renderHook } from '@testing-library/react'
+import { cloneDeep } from 'lodash-es'
+import * as DeepLinkingUtils from '../../functions/deepLinkingUtils'
+import useImmutableTableQuery, {
+  DEBOUNCE_DELAY_MS,
+  UseImmutableTableQueryOptions,
+} from './useImmutableTableQuery'
 
 const options: UseImmutableTableQueryOptions = {
   initQueryRequest: {

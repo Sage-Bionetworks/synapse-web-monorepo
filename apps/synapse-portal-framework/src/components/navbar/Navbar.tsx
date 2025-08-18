@@ -1,5 +1,5 @@
 import { RESPONSIVE_SIDE_PADDING } from '@/utils'
-import { Box, Button, Divider, Menu, MenuItem } from '@mui/material'
+import { Box, Button, Divider, Link, Menu, MenuItem } from '@mui/material'
 import { MouseEvent, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import ShowDownloadV2 from 'synapse-react-client/components/DownloadCart/ShowDownloadV2'
@@ -240,7 +240,7 @@ export default function Navbar() {
                           className={`dropdown-item SRC-primary-background-color-hover  ${borderBottomClass}`}
                           href={`${getEndpoint(
                             BackendDestinationEnum.PORTAL_ENDPOINT,
-                          )}/Profile:${userProfile.ownerId}${
+                          )}Profile:${userProfile.ownerId}${
                             el.settingSubPath ? `/${el.settingSubPath}` : ''
                           }`}
                         >
@@ -256,6 +256,15 @@ export default function Navbar() {
                       className="dropdown-item SRC-primary-background-color-hover"
                     >
                       Downloads
+                    </MenuItem>
+                    <MenuItem
+                      component="a"
+                      className={`dropdown-item SRC-primary-background-color-hover`}
+                      href={`${getEndpoint(
+                        BackendDestinationEnum.PORTAL_ENDPOINT,
+                      )}RequestHistory:default`}
+                    >
+                      Access Requests
                     </MenuItem>
                     <Divider sx={{ my: 0 }} />
                     <MenuItem
@@ -276,15 +285,32 @@ export default function Navbar() {
                     </MenuItem>
                   </Menu>
                 </div>
-
-                <a
+                <div
                   className="user-loggedIn-mb" // mobile version, shows the user icon and name, no dropdown
-                  href={`${getEndpoint(
-                    BackendDestinationEnum.PORTAL_ENDPOINT,
-                  )}/Profile:${userProfile.ownerId}/projects/all`}
                 >
-                  <NavUserLink userProfile={userProfile} />
-                </a>
+                  <a
+                    href={`${getEndpoint(
+                      BackendDestinationEnum.PORTAL_ENDPOINT,
+                    )}/Profile:${userProfile.ownerId}/projects/all`}
+                  >
+                    <NavUserLink userProfile={userProfile} />
+                  </a>
+                  <div className="mb-user-extra">
+                    <div className="user-fullname">
+                      {userProfile?.firstName} {userProfile?.lastName}
+                    </div>
+                    <Link
+                      href={accountSettingsUrl.toString()}
+                      sx={{
+                        textDecoration: '#e79776 underline',
+                        color: '#404b63',
+                        fontWeight: 'normal',
+                      }}
+                    >
+                      View Account
+                    </Link>
+                  </div>
+                </div>
               </>
             )}
           {isSignedIn && (
@@ -304,6 +330,7 @@ export default function Navbar() {
                 Portals
               </a>
               <SageResourcesPopover
+                filterByType="SynapsePortal"
                 anchorEl={portalResourcesAnchorEl}
                 onClose={handleClosePortalResources}
               />

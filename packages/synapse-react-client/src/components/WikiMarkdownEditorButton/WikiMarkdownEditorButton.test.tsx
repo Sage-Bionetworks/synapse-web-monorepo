@@ -9,12 +9,12 @@ import {
   mockEntityRootWikiPageKey,
   mockEntityWikiPageKey,
 } from '@/mocks/mockWikiPageKey'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import { CreateWikiPageInput } from '@/synapse-queries'
 import {
-  confirmMarkdownSynapseTextContent,
   confirmMarkdownSynapseIsShown,
+  confirmMarkdownSynapseTextContent,
 } from '@/testutils/MarkdownSynapseUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { WIKI_PAGE } from '@/utils/APIConstants'
@@ -22,6 +22,7 @@ import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { ErrorResponse, ObjectType } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
 import {
   DEFAULT_BUTTON_TEXT,
@@ -184,13 +185,13 @@ describe('WikiMarkdownEditorButton', () => {
       reason: `User is not authorized to 'CREATE' a WikiPage with an ownerId: '${noRootProps.ownerObjectId}' of type: '${noRootProps.ownerObjectType}'`,
     }
     server.use(
-      rest.post(
+      http.post(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${WIKI_PAGE(
           noRootProps.ownerObjectType,
           ':ownerObjectId',
         )}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(403), ctx.json(errorResponse))
+        () => {
+          return HttpResponse.json(errorResponse, { status: 403 })
         },
       ),
     )

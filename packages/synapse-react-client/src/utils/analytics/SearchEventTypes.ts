@@ -18,6 +18,8 @@ export type SearchQueryEventData = {
   start_index: number
   /** The page number of the displayed search results. 1-indexed */
   page_index: number
+  /** True if the search was performed using the AWS OpenSearch backend */
+  opensearch_enabled: boolean
 }
 
 /** Event data for the submission of a search query */

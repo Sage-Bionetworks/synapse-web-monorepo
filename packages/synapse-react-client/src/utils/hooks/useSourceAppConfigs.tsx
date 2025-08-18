@@ -2,6 +2,7 @@ import SourceAppImage from '@/components/SourceAppImage'
 import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
 import Palettes from '@/theme/palette/Palettes'
 import { PaletteOptions } from '@mui/material'
+import { ReactNode } from 'react'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../SynapseConstants'
 import { QueryFilter } from '@sage-bionetworks/synapse-types'
 
@@ -9,7 +10,7 @@ export type SourceAppConfig = {
   appId: string // app ID used in the query params
   appURL: string // URL that points to the production version of this app
   friendlyName: string
-  logo: JSX.Element
+  logo: ReactNode
   palette: PaletteOptions
   description: string
   requestAffiliation: boolean // If set to true, a special screen is shown requesting the user to fill out UserProfile.company

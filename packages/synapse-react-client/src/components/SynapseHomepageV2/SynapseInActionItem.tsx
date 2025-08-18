@@ -1,4 +1,8 @@
 import {
+  darkTextColor,
+  homepageBodyText,
+} from '@/components/SynapseHomepageV2/HomepageStyles'
+import {
   Box,
   Chip,
   Link,
@@ -10,7 +14,6 @@ import {
 } from '@mui/material'
 import ImageFromSynapseTable from '../ImageFromSynapseTable'
 import { EastTwoTone } from '@mui/icons-material'
-import { darkTextColor, homepageBodyText } from './SynapseHomepageV2'
 import { useInView } from 'react-intersection-observer'
 import { Slide } from '@mui/material'
 

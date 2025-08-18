@@ -363,3 +363,5 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
     </div>
   )
 }
+
+export default EntityBadgeIcons

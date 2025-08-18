@@ -3,8 +3,7 @@ import {
   BUNDLE_MASK_ACTIONS_REQUIRED,
   BUNDLE_MASK_QUERY_RESULTS,
 } from '@/utils/SynapseConstants'
-import { Query, QueryCache } from '@tanstack/query-core'
-import { QueryClient } from '@tanstack/react-query'
+import { Query, QueryClient } from '@tanstack/query-core'
 import { KeyFactory } from './KeyFactory'
 import {
   getAllActionsRequiredQueryFilters,
@@ -41,7 +40,7 @@ describe('QueryFilterUtils', () => {
       expect(
         suppliedPredicate(
           new Query({
-            cache: new QueryCache(),
+            client: new QueryClient(),
             queryKey: keyFactory.getEntityQueryKey(entityId),
             queryHash: '',
           }),
@@ -51,7 +50,7 @@ describe('QueryFilterUtils', () => {
       expect(
         suppliedPredicate(
           new Query({
-            cache: new QueryCache(),
+            client: new QueryClient(),
             queryKey: keyFactory.getEntityPathQueryKey(entityId),
             queryHash: '',
           }),
@@ -61,7 +60,7 @@ describe('QueryFilterUtils', () => {
       expect(
         suppliedPredicate(
           new Query({
-            cache: new QueryCache(),
+            client: new QueryClient(),
             queryKey: keyFactory.getEntityJsonQueryKey(entityId, 3, false),
             queryHash: '',
           }),
@@ -72,7 +71,7 @@ describe('QueryFilterUtils', () => {
       expect(
         suppliedPredicate(
           new Query({
-            cache: new QueryCache(),
+            client: new QueryClient(),
             queryKey: keyFactory.getAllTableQueryResultsKey(),
             queryHash: '',
           }),
@@ -81,7 +80,7 @@ describe('QueryFilterUtils', () => {
       expect(
         suppliedPredicate(
           new Query({
-            cache: new QueryCache(),
+            client: new QueryClient(),
             queryKey:
               keyFactory.getEntityTableQueryResultWithAsyncStatusQueryKey(
                 {
@@ -132,7 +131,7 @@ describe('QueryFilterUtils', () => {
       expect(
         suppliedPredicate(
           new Query({
-            cache: new QueryCache(),
+            client: new QueryClient(),
             queryKey: keyToExcludeFromInvalidation,
             queryHash: '',
           }),
@@ -143,7 +142,7 @@ describe('QueryFilterUtils', () => {
       expect(
         suppliedPredicate(
           new Query({
-            cache: new QueryCache(),
+            client: new QueryClient(),
             queryKey: keyFactory.getEntityPathQueryKey(entityId),
             queryHash: '',
           }),
@@ -153,7 +152,7 @@ describe('QueryFilterUtils', () => {
       expect(
         suppliedPredicate(
           new Query({
-            cache: new QueryCache(),
+            client: new QueryClient(),
             queryKey: keyFactory.getEntityJsonQueryKey(entityId, 3, false),
             queryHash: '',
           }),

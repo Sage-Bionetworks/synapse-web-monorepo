@@ -15,7 +15,7 @@ import pick from 'lodash-es/pick'
 import remove from 'lodash-es/remove'
 import set from 'lodash-es/set'
 import trimStart from 'lodash-es/trimStart'
-import { Component, createRef, RefObject } from 'react'
+import { Component, createRef, ReactNode, RefObject } from 'react'
 import Switch from 'react-switch'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import DataDebug from './DataDebug'
@@ -96,8 +96,8 @@ export default class SynapseForm extends Component<
   )
   excludeWarningHeader = 'Skip This Step?'
   unsavedDataWarning = `You might have some unsaved data. Are you sure you want to leave?`
-  formRef: RefObject<Form<IFormData>> //ref to form for submission
-  submitButtonRef: RefObject<HTMLButtonElement>
+  formRef: RefObject<Form<IFormData> | null> //ref to form for submission
+  submitButtonRef: RefObject<HTMLButtonElement | null>
   formDivRef: any // ref to the div containing form (for scrolling on validation failure)
   navAction: NavActionEnum = NavActionEnum.NONE
   uiSchema: UiSchema
@@ -586,7 +586,7 @@ export default class SynapseForm extends Component<
     })
   }
 
-  private renderNotification = (status?: StatusEnum): JSX.Element => {
+  private renderNotification = (status?: StatusEnum) => {
     if (status === StatusEnum.SAVE_SUCCESS) {
       return <div className="notification-area"> Successfully saved </div>
     }
@@ -600,7 +600,7 @@ export default class SynapseForm extends Component<
   }
 
   // displays the text for screens that don't have any form data
-  private renderTextForStaticScreen = (): JSX.Element => {
+  private renderTextForStaticScreen = () => {
     if (!this.state.currentStep.copy) {
       return <></>
     }
@@ -614,7 +614,7 @@ export default class SynapseForm extends Component<
   }
 
   //displays subheader for forms that can be excluded
-  renderOptionalFormSubheader = (isWizard: boolean = false): JSX.Element => {
+  renderOptionalFormSubheader = (isWizard: boolean = false) => {
     if (isWizard) {
       return <></>
     }
@@ -655,7 +655,7 @@ export default class SynapseForm extends Component<
     currentStep: Step,
     showHelp: boolean,
     callbackFn: () => void,
-  ): JSX.Element => {
+  ) => {
     if (currentStep.static || currentStep.final) {
       return <></>
     }
@@ -1044,7 +1044,7 @@ function renderTransformedErrorObject(
   uiSchema: UiSchema,
   i: number,
   schema: any,
-): { order: number; element: JSX.Element } {
+): { order: number; element: ReactNode } {
   const propPath = trimStart(error.property, '.')
   const propArr = propPath.split('.')
 

@@ -145,6 +145,12 @@ export function SynapseFooter({
                     text: 'Documentation',
                     props: { href: 'https://help.synapse.org/docs/' },
                   },
+                  {
+                    text: 'Python Client',
+                    props: {
+                      href: 'https://python-docs.synapse.org/en/stable/',
+                    },
+                  },
                 ]}
               />
               <SynapseLinksColumn
@@ -306,3 +312,5 @@ export function SynapseFooter({
     </Box>
   )
 }
+
+export default SynapseFooter

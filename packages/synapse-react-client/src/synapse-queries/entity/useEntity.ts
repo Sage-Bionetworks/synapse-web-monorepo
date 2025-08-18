@@ -29,6 +29,7 @@ import {
   QueryClient,
   QueryKey,
   queryOptions,
+  skipToken,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useMutation,
@@ -38,6 +39,7 @@ import {
   useQueryClient,
   UseQueryOptions,
   useSuspenseQuery,
+  UseSuspenseQueryOptions,
 } from '@tanstack/react-query'
 import { omit, pick } from 'lodash-es'
 import { useMemo } from 'react'
@@ -52,22 +54,24 @@ import { createTableUpdateTransactionRequest } from '@/utils/functions/TableColu
 export function useGetEntityQueryOptions<T extends Entity>() {
   const { keyFactory, accessToken } = useSynapseContext()
   return (
-    entityId: string,
+    entityId?: string,
     versionNumber?: string | number,
   ): UseQueryOptions<T, SynapseClientError> =>
     queryOptions<T, SynapseClientError>({
       queryKey: keyFactory.getEntityVersionQueryKey(entityId, versionNumber),
-      queryFn: () =>
-        SynapseClient.getEntity<T>(
-          accessToken,
-          entityId,
-          versionNumber?.toString(),
-        ),
+      queryFn: entityId
+        ? () =>
+            SynapseClient.getEntity<T>(
+              accessToken,
+              entityId,
+              versionNumber?.toString(),
+            )
+        : skipToken,
     })
 }
 
 export function useGetEntity<T extends Entity>(
-  entityId: string,
+  entityId?: string,
   versionNumber?: string | number,
   options?: Partial<UseQueryOptions<T, SynapseClientError>>,
 ) {
@@ -223,7 +227,6 @@ export function useGetVersionsInfinite<
       PaginatedResults<VersionInfo>,
       SynapseClientError,
       TData,
-      PaginatedResults<VersionInfo>,
       QueryKey,
       number | undefined
     >
@@ -505,7 +508,7 @@ export function useDeleteEntityACL(
 
 function useGetEntityBenefactorACLQueryOptions(
   entityId: string,
-): UseQueryOptions<
+): UseSuspenseQueryOptions<
   EntityBundle<{ includeBenefactorACL: true }>,
   SynapseClientError,
   AccessControlList
@@ -533,7 +536,7 @@ function useGetEntityBenefactorACLQueryOptions(
 export function useSuspenseGetEntityBenefactorACL(
   entityId: string,
   options?: Partial<
-    UseQueryOptions<
+    UseSuspenseQueryOptions<
       EntityBundle<{ includeBenefactorACL: true }>,
       SynapseClientError,
       AccessControlList

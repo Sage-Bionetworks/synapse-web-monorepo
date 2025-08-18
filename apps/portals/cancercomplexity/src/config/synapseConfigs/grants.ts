@@ -20,13 +20,12 @@ export const grantsSchema: TableToGenericCardMapping = {
     'grantNumber',
     'consortium',
     'grantType',
-    'nihReporterLink',
     'grantStartDate',
     'theme',
   ],
 }
 
-// TODO: Change iconOptions type to map () => string | JSX.Element and remove cast
+// TODO: Change iconOptions type to map () => string | ReactNode and remove cast
 const iconOptions: IconOptions = {
   Grant: ProjectIcon as unknown as string,
 }
@@ -39,12 +38,6 @@ export const grantsCardConfiguration: CardConfiguration = {
     matchColumnName: 'grantId',
     baseURL: 'Explore/Grants/DetailsPage',
   },
-  labelLinkConfig: [
-    {
-      isMarkdown: true,
-      matchColumnName: 'nihReporterLink',
-    },
-  ],
   type: SynapseConstants.GENERIC_CARD,
   secondaryLabelLimit: 4,
   iconOptions,

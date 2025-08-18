@@ -34,7 +34,7 @@ export default function ChangePassword(props: ChangePasswordProps) {
 
   useEffect(() => {
     if (userProfile && userName == '') {
-      setUserName(userProfile.userName)
+      setUserName(userProfile.userName ?? userProfile.emails![0]) // if username is not set, use the first email
     }
   }, [userName, userProfile, userProfile?.userName])
 

@@ -15,6 +15,10 @@ export type PortalResourceRedirector<
   resourceKey: TResourceTypeAttributes,
 ) => string
 
+// The request parameter that contains the Portal DOI ID
+// This is hard-coded by the Synapse backend.
+const OBJECT_ID_QUERY_PARAM = 'objectId'
+
 /**
  * Component to redirect the Portal DOI ID to the resource in the portal.
  * Portal DOI IDs are a JSON string with ordered attributes. A deserializer and redirector are provided to
@@ -30,7 +34,7 @@ function DoiRedirectComponent<TResourceType extends string>(props: {
 }) {
   const { redirector, deserializer } = props
   const [searchParams] = useSearchParams()
-  const doiId = searchParams.get('id')
+  const doiId = searchParams.get(OBJECT_ID_QUERY_PARAM)
 
   let redirectUrl: string = '/'
 

@@ -10,14 +10,13 @@ import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import SynapseClient from '@/synapse-client/index'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { FormData, StatusEnum } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import cloneDeep from 'lodash-es/cloneDeep'
 import set from 'lodash-es/set'
 import SynapseForm, { IFormData } from './SynapseForm'
 import * as SynapseFormUtils from './SynapseFormUtils'
 import SynapseFormWrapper, {
   SynapseFormWrapperProps,
-  UploadToolSearchParams,
 } from './SynapseFormWrapper'
 
 vi.mock('./SynapseForm', () => {
@@ -35,9 +34,6 @@ const formNavSchemaEntityId = 'syn9988882984'
 const formDataId = 'syn9988882985'
 const formGroupId = 'syn9988882986'
 const dataFileHandleId = '43157'
-const searchParams: UploadToolSearchParams = {
-  formGroupId,
-}
 const fileNamePath = 'somescreen.somefield'
 const formTitle = 'my submission'
 const formClass = 'someFormClass'
@@ -66,10 +62,10 @@ const props: SynapseFormWrapperProps = {
   formSchemaEntityId,
   formUiSchemaEntityId,
   formNavSchemaEntityId,
-  searchParams,
   fileNamePath,
   formTitle,
   formClass,
+  formGroupId,
 }
 
 describe('SynapseFormWrapper', () => {
@@ -156,7 +152,9 @@ describe('SynapseFormWrapper', () => {
     test('should make 4 calls to getFileEntityData', async () => {
       const _props = {
         ...props,
-        ...{ searchParams: { formGroupId, formDataId, dataFileHandleId } },
+        formGroupId,
+        formDataId,
+        dataFileHandleId,
       }
 
       const getFileEntityData = vi.spyOn(SynapseFormUtils, 'getFileEntityData')
@@ -191,14 +189,10 @@ describe('SynapseFormWrapper', () => {
     test('if the form is submitted it should pull the schemas with appropriate versions', async () => {
       const _props = {
         ...props,
-        ...{
-          searchParams: {
-            formGroupId,
-            formDataId,
-            dataFileHandleId,
-            submitted: true,
-          },
-        },
+        formGroupId,
+        formDataId,
+        dataFileHandleId,
+        submitted: true,
       }
 
       const getFileEntityData = vi.spyOn(SynapseFormUtils, 'getFileEntityData')
@@ -229,7 +223,9 @@ describe('SynapseFormWrapper', () => {
     test('should pass parameters correctly', async () => {
       const _props = {
         ...props,
-        ...{ searchParams: { formGroupId, formDataId }, isWizardMode: true },
+        formGroupId,
+        formDataId,
+        isWizardMode: true,
       }
       renderComponent(_props)
 
@@ -285,7 +281,9 @@ describe('SynapseFormWrapper', () => {
 
       // Call under test -- call onSave
       const onSaveCaptor = mockSynapseForm.mock.lastCall![0].onSave
-      onSaveCaptor(formData)
+      act(() => {
+        onSaveCaptor(formData)
+      })
 
       await waitFor(() => {
         expect(create).toHaveBeenCalled()
@@ -296,7 +294,8 @@ describe('SynapseFormWrapper', () => {
     test('should UPDATE formData if there is formDataId', async () => {
       const _props = {
         ...props,
-        ...{ searchParams: { formGroupId, formDataId } },
+        formGroupId,
+        formDataId,
       }
       vi.spyOn(SynapseClient, 'uploadFile').mockResolvedValue({
         fileHandleId: '123',
@@ -318,7 +317,9 @@ describe('SynapseFormWrapper', () => {
 
       // Call under test -- call onSave
       const onSaveCaptor = mockSynapseForm.mock.lastCall![0].onSave
-      onSaveCaptor(formData)
+      act(() => {
+        onSaveCaptor(formData)
+      })
 
       await waitFor(() => {
         expect(create).not.toHaveBeenCalled()
@@ -349,7 +350,9 @@ describe('SynapseFormWrapper', () => {
 
       // Call under test -- call onSubmit
       const onSubmitCaptor = mockSynapseForm.mock.lastCall![0].onSubmit
-      onSubmitCaptor(formData)
+      act(() => {
+        onSubmitCaptor(formData)
+      })
 
       await waitFor(() => expect(submit).toHaveBeenCalled())
     })

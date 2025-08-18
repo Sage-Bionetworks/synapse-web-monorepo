@@ -1,13 +1,15 @@
-import { Box, Button, Link, Paper, Typography } from '@mui/material'
-import { StyledOuterContainer } from '../components/StyledComponents.js'
 import mfaRequiredImageURL from '@/assets/2FAHeroImage.svg?url'
+import { Box, Button, Link, Paper, Typography } from '@mui/material'
 import { useNavigate } from 'react-router'
+import { StyledOuterContainer } from '../components/StyledComponents.js'
 
-export type mfaRequiredPageProps = {}
+const MFA_REQUIRED_TITLE = 'Two Factor Authentication (2FA) is now required'
+const MFA_REQUIRED_DESCRIPTION =
+  'To enhance account security, two-factor authentication (2FA) is mandatory for all users. This extra layer ' +
+  'of protection helps keep your data safe by requiring both your password and a verification code sent to your device.'
 
-function MfaRequiredPage(props: mfaRequiredPageProps) {
+function MfaRequiredPage() {
   const navigate = useNavigate()
-
   return (
     <StyledOuterContainer>
       <Paper
@@ -44,13 +46,10 @@ function MfaRequiredPage(props: mfaRequiredPageProps) {
             variant="headline3"
             sx={{ marginTop: '20px', marginBottom: '20px' }}
           >
-            Two Factor Authentication (2FA) is now required
+            {MFA_REQUIRED_TITLE}
           </Typography>
           <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-            To enhance account security, two-factor authentication (2FA) is now
-            mandatory for all users. This extra layer of protection helps keep
-            your data safe by requiring both your password and a verification
-            code sent to your device.
+            {MFA_REQUIRED_DESCRIPTION}
           </Typography>
           <Link
             target={'_blank'}
@@ -64,10 +63,20 @@ function MfaRequiredPage(props: mfaRequiredPageProps) {
           <Box
             sx={{
               display: 'flex',
+              gap: 2,
               justifyContent: {
                 xs: 'center',
                 md: 'flex-end',
               },
+              flexWrap: {
+                xs: 'wrap',
+                md: 'nowrap',
+              },
+              mt: {
+                xs: '30px',
+                md: '0px',
+              },
+
               alignItems: 'center',
             }}
           >
@@ -78,10 +87,6 @@ function MfaRequiredPage(props: mfaRequiredPageProps) {
                 width: {
                   xs: '100%',
                   md: 'unset',
-                },
-                mt: {
-                  xs: '30px',
-                  md: '0px',
                 },
                 display: 'block',
               }}

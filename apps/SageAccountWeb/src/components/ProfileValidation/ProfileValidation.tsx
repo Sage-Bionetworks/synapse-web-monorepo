@@ -205,15 +205,18 @@ function RightPanel({ stepNumber }: { stepNumber: number }) {
     <Box sx={{ position: 'relative' }}>
       {stepNumber === 0 && (
         <ReturnToAppButton>
-          <IconButton
-            sx={theme => ({
-              position: 'absolute',
-              top: theme.spacing(1.5),
-              right: theme.spacing(1.5),
-            })}
-          >
-            <CloseIcon />
-          </IconButton>
+          {onClick => (
+            <IconButton
+              onClick={onClick}
+              sx={theme => ({
+                position: 'absolute',
+                top: theme.spacing(1.5),
+                right: theme.spacing(1.5),
+              })}
+            >
+              <CloseIcon />
+            </IconButton>
+          )}
         </ReturnToAppButton>
       )}
       <Divider

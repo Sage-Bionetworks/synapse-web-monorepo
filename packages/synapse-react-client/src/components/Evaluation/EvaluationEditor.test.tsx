@@ -1,4 +1,4 @@
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { EVALUATION, EVALUATION_BY_ID } from '@/utils/APIConstants'
@@ -9,6 +9,7 @@ import {
 import { Evaluation } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import { EvaluationEditor, EvaluationEditorProps } from './EvaluationEditor'
 
 describe('test EvaluationEditor', () => {
@@ -51,42 +52,42 @@ describe('test EvaluationEditor', () => {
 
     server.use(
       // getEvaluation
-      rest.get(
+      http.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
           ':evalId',
         )}`,
-        async (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(evaluation))
+        () => {
+          return HttpResponse.json(evaluation, { status: 200 })
         },
       ),
       // updateEvaluation
-      rest.put(
+      http.put(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
           ':evalId',
         )}`,
-        async (req, res, ctx) => {
+        () => {
           onUpdateEvaluation()
-          return res(ctx.status(200), ctx.json(evaluation))
+          return HttpResponse.json(evaluation, { status: 200 })
         },
       ),
 
       // createEvaluation
-      rest.post(
+      http.post(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION}`,
-        async (req, res, ctx) => {
+        () => {
           onCreateEvaluation()
-          return res(ctx.status(201), ctx.json(evaluation))
+          return HttpResponse.json(evaluation, { status: 201 })
         },
       ),
 
       // deleteEvaluation
-      rest.delete(
+      http.delete(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
           ':evalId',
         )}`,
-        async (req, res, ctx) => {
+        () => {
           onDeleteEvaluation()
-          return res(ctx.status(202))
+          return new Response('', { status: 202 })
         },
       ),
     )
@@ -122,14 +123,14 @@ describe('test EvaluationEditor', () => {
 
   test('retrieve evaluation from API failed', async () => {
     server.use(
-      rest.get(
+      http.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
           ':evalId',
         )}`,
-        async (req, res, ctx) => {
-          return res(
-            ctx.status(400),
-            ctx.json({ reason: 'GetEvaluation error' }),
+        () => {
+          return HttpResponse.json(
+            { reason: 'GetEvaluation error' },
+            { status: 400 },
           )
         },
       ),
@@ -204,15 +205,15 @@ describe('test EvaluationEditor', () => {
 
   test('save button clicked - save failure', async () => {
     server.use(
-      rest.put(
+      http.put(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
           ':evalId',
         )}`,
-        async (req, res, ctx) => {
+        () => {
           onUpdateEvaluation()
-          return res(
-            ctx.status(404),
-            ctx.json({ reason: 'UpdateEvaluation error' }),
+          return HttpResponse.json(
+            { reason: 'UpdateEvaluation error' },
+            { status: 404 },
           )
         },
       ),
@@ -294,15 +295,15 @@ describe('test EvaluationEditor', () => {
 
   test('dropdown menu evaluation has id - delete failed', async () => {
     server.use(
-      rest.delete(
+      http.delete(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${EVALUATION_BY_ID(
           ':evalId',
         )}`,
-        async (req, res, ctx) => {
+        () => {
           onDeleteEvaluation()
-          return res(
-            ctx.status(400),
-            ctx.json({ reason: 'DeleteEvaluation error' }),
+          return HttpResponse.json(
+            { reason: 'DeleteEvaluation error' },
+            { status: 400 },
           )
         },
       ),

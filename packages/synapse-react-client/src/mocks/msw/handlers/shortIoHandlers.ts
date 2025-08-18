@@ -1,12 +1,15 @@
 import { mockShortIoResponse } from '@/mocks/mockShortIo'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 
 export const getShortIoHandlers = () => [
-  rest.post('https://api.short.io/links/public', async (req, res, ctx) => {
-    const body = await req.json()
-    return res(
-      ctx.status(200),
-      ctx.json(mockShortIoResponse(body.originalURL, body.domain)),
-    )
-  }),
+  http.post<never, { originalURL: string; domain: string }>(
+    'https://api.short.io/links/public',
+    async ({ request }) => {
+      const body = await request.json()
+      return HttpResponse.json(
+        mockShortIoResponse(body.originalURL, body.domain),
+        { status: 200 },
+      )
+    },
+  ),
 ]

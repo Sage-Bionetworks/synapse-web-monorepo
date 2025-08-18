@@ -2,7 +2,7 @@ import mockDatasetData from '@/mocks/entity/mockDataset'
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
 import { MOCK_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
-import { rest, server } from '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
 import {
@@ -18,6 +18,7 @@ import {
   S3FileHandle,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import FileEntityPreview, { FileEntityPreviewProps } from './FileEntityPreview'
 import * as FileHandleContentRendererModule from './FileHandleContentRenderer'
 import { PreviewRendererType } from './PreviewRendererType'
@@ -110,11 +111,11 @@ describe('FileHandleContentRenderer tests', () => {
   beforeEach(() => {
     server.use(
       // Handler to return the presigned URL for the requested file
-      rest.post(
+      http.post(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/file/v1/fileHandle/batch`,
-        (req, res, ctx) => {
+        () => {
           const result: BatchFileResult = {
             requestedFiles: [
               {
@@ -123,12 +124,15 @@ describe('FileHandleContentRenderer tests', () => {
               },
             ],
           }
-          return res(ctx.status(200), ctx.json(result))
+          return HttpResponse.json(result, { status: 200 })
         },
       ),
       // Handler for the presigned URL to return the file contents
-      rest.get(PRESIGNED_URL, (req, res, ctx) => {
-        return res(ctx.status(200), ctx.text('file contents here'))
+      http.get(PRESIGNED_URL, () => {
+        return new Response('file contents here', {
+          status: 200,
+          headers: { 'Content-Type': 'text/plain' },
+        })
       }),
     )
   })

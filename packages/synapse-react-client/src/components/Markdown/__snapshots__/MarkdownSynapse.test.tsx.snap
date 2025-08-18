@@ -6,59 +6,55 @@ exports[`MarkdownSynapse tests > Snapshot tests > supports bootstrap rows and co
     class="markdown"
     data-testid="markdown"
   >
-    <span
-      class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
+    <div
+      class="container-fluid"
     >
       <div
-        class="container-fluid"
+        class="row"
       >
         <div
-          class="row"
+          class="col-sm-4"
         >
-          <div
-            class="col-sm-4"
+          <p
+            class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
           >
-            <p
-              class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
-            >
-              Left
-            </p>
-            
-
-          </div>
-          
-
-          <div
-            class="col-sm-4"
-          >
-            <p
-              class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
-            >
-              Center
-            </p>
-            
-
-          </div>
-          
-
-          <div
-            class="col-sm-4"
-          >
-            <p
-              class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
-            >
-              Right
-            </p>
-            
-
-          </div>
+            Left
+          </p>
           
 
         </div>
-      </div>
-      
+        
 
-    </span>
+        <div
+          class="col-sm-4"
+        >
+          <p
+            class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
+          >
+            Center
+          </p>
+          
+
+        </div>
+        
+
+        <div
+          class="col-sm-4"
+        >
+          <p
+            class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
+          >
+            Right
+          </p>
+          
+
+        </div>
+        
+
+      </div>
+    </div>
+    
+
   </div>
 </div>
 `;
@@ -69,33 +65,29 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with a br statement and 
     class="markdown"
     data-testid="markdown"
   >
-    <span
+    <p
       class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
     >
-      <p
-        class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
-      >
-        some more free
-      </p>
-      
+      some more free
+    </p>
+    
 
-      <h1
-        class="MuiTypography-root MuiTypography-headline1 css-40zh3-MuiTypography-root"
-        id="SRC-header-1"
-        toc="true"
-      >
-        header
-      </h1>
-      
+    <h1
+      class="MuiTypography-root MuiTypography-headline1 css-40zh3-MuiTypography-root"
+      id="SRC-header-1"
+      toc="true"
+    >
+      header
+    </h1>
+    
 
-      <p
-        class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
-      >
-        loose text
-      </p>
-      
+    <p
+      class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
+    >
+      loose text
+    </p>
+    
 
-    </span>
   </div>
 </div>
 `;
@@ -106,27 +98,23 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with header and a link 1
     class="markdown"
     data-testid="markdown"
   >
-    <span
-      class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
+    <h1
+      class="MuiTypography-root MuiTypography-headline1 css-40zh3-MuiTypography-root"
+      id="SRC-header-1"
+      toc="true"
     >
-      <h1
-        class="MuiTypography-root MuiTypography-headline1 css-40zh3-MuiTypography-root"
-        id="SRC-header-1"
-        toc="true"
+      header 
+      <a
+        class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-mj2bo0-MuiTypography-root-MuiLink-root"
+        href="https://synapse.org"
+        rel="noopener noreferrer"
+        target="_blank"
       >
-        header 
-        <a
-          class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-mj2bo0-MuiTypography-root-MuiLink-root"
-          href="https://synapse.org"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          text
-        </a>
-      </h1>
-      
+        text
+      </a>
+    </h1>
+    
 
-    </span>
   </div>
 </div>
 `;
@@ -137,34 +125,30 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 
     class="markdown"
     data-testid="markdown"
   >
-    <span
+    <p
       class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
     >
-      <p
-        class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
-      >
-        <span>
-          <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-i9dpmq-MuiButtonBase-root-MuiButton-root-WideButton"
-            href="#/Help/How It Works"
-            tabindex="0"
-          >
-            sometext
-          </a>
-        </span>
-        <span>
-          <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-i9dpmq-MuiButtonBase-root-MuiButton-root-WideButton"
-            href="#/Apply"
-            tabindex="0"
-          >
-            APPLY
-          </a>
-        </span>
-      </p>
-      
+      <span>
+        <a
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-i9dpmq-MuiButtonBase-root-MuiButton-root-WideButton"
+          href="#/Help/How It Works"
+          tabindex="0"
+        >
+          sometext
+        </a>
+      </span>
+      <span>
+        <a
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-i9dpmq-MuiButtonBase-root-MuiButton-root-WideButton"
+          href="#/Apply"
+          tabindex="0"
+        >
+          APPLY
+        </a>
+      </span>
+    </p>
+    
 
-    </span>
   </div>
 </div>
 `;
@@ -175,36 +159,32 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 
     class="markdown"
     data-testid="markdown"
   >
-    <span
+    <p
       class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
     >
-      <p
-        class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
-      >
-        <span>
-          <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-i9dpmq-MuiButtonBase-root-MuiButton-root-WideButton"
-            data-discover="true"
-            href="/#/Help/How It Works"
-            tabindex="0"
-          >
-            sometext
-          </a>
-        </span>
-        <span>
-          <a
-            class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-i9dpmq-MuiButtonBase-root-MuiButton-root-WideButton"
-            data-discover="true"
-            href="/#/Apply"
-            tabindex="0"
-          >
-            APPLY
-          </a>
-        </span>
-      </p>
-      
+      <span>
+        <a
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-i9dpmq-MuiButtonBase-root-MuiButton-root-WideButton"
+          data-discover="true"
+          href="/#/Help/How It Works"
+          tabindex="0"
+        >
+          sometext
+        </a>
+      </span>
+      <span>
+        <a
+          class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-i9dpmq-MuiButtonBase-root-MuiButton-root-WideButton"
+          data-discover="true"
+          href="/#/Apply"
+          tabindex="0"
+        >
+          APPLY
+        </a>
+      </span>
+    </p>
+    
 
-    </span>
   </div>
 </div>
 `;

@@ -7,7 +7,9 @@ import { TableQueryUseQueryOptions } from '../QueryWrapper/TableQueryUseQueryOpt
 
 export type QueryContextType = {
   isInfinite: boolean
-  entityId: string
+  /** The entity ID parsed from the SQL query */
+  entityId?: string
+  /** The optional version number of the table parsed from the SQL query */
   versionNumber: number | undefined
   currentQueryRequest: ReadonlyDeep<QueryBundleRequest>
   nextQueryRequest: ReadonlyDeep<QueryBundleRequest>

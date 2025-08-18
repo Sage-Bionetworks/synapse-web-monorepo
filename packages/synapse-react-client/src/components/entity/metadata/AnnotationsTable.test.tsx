@@ -1,16 +1,28 @@
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
-import { mockSchemaBinding } from '@/mocks/mockSchema'
-import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
-import { rest, server } from '@/mocks/msw/server'
-import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { ENTITY_JSON } from '@/utils/APIConstants'
-import { SynapseContextType } from '@/utils/context/SynapseContext'
 import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '@/utils/functions/getEndpoint'
-import { render, screen } from '@testing-library/react'
+  mockSchemaBinding,
+  mockSchemaValidationResults,
+  mockValidationSchema,
+} from '@/mocks/mockSchema'
+import {
+  getEntityJson,
+  getSchemaBinding,
+  getSchemaValidationResults,
+  getValidationSchema,
+} from '@/synapse-client/SynapseClient'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { cloneDeep } from 'lodash-es'
+import { expect } from 'vitest'
 import { AnnotationsTable, AnnotationsTableProps } from './AnnotationsTable'
+
+vi.mock('@/synapse-client/SynapseClient')
+
+const mockGetJson = vi.mocked(getEntityJson)
+const mockGetValidationSchema = vi.mocked(getValidationSchema)
+const mockGetSchemaBinding = vi.mocked(getSchemaBinding)
+const mockGetValidationResults = vi.mocked(getSchemaValidationResults)
 
 const { id: MOCK_FILE_ENTITY_ID, json: mockFileEntityJson } = mockFileEntityData
 
@@ -18,20 +30,21 @@ const defaultProps: AnnotationsTableProps = {
   entityId: MOCK_FILE_ENTITY_ID,
 }
 
-function renderComponent(wrapperProps?: SynapseContextType) {
+function renderComponent() {
   render(<AnnotationsTable {...defaultProps} />, {
-    wrapper: createWrapper(wrapperProps),
+    wrapper: createWrapper(),
   })
 }
 
 describe('AnnotationsTable tests', () => {
-  // Handle the msw lifecycle:
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
+  beforeEach(() => {
+    mockGetJson.mockResolvedValue(mockFileEntityData.json)
+    mockGetSchemaBinding.mockResolvedValue(null)
+  })
 
   it('Renders the annotations on an entity', async () => {
     renderComponent()
+
     await screen.findByText('myStringKey')
     screen.getByText(mockFileEntityJson['myStringKey']! as string)
 
@@ -44,33 +57,67 @@ describe('AnnotationsTable tests', () => {
     screen.getByText((mockFileEntityJson['myFloatKey'] as number[]).join(', '))
   })
 
-  it('Displays the validation schema if there is one (in experimental mode)', async () => {
-    renderComponent({
-      ...MOCK_CONTEXT_VALUE,
-      isInExperimentalMode: true,
+  it('Displays the validation schema if there is one', async () => {
+    mockGetSchemaBinding.mockResolvedValue(mockSchemaBinding)
+    mockGetValidationSchema.mockResolvedValue({
+      concreteType:
+        'org.sagebionetworks.repo.model.schema.GetValidationSchemaResponse',
+      validationSchema: mockValidationSchema,
     })
+    mockGetValidationResults.mockResolvedValue(mockSchemaValidationResults)
+
+    renderComponent()
 
     await screen.findByText('Validation Schema')
     await screen.findByText(mockSchemaBinding.jsonSchemaVersionInfo.schemaName)
   })
 
-  it('Displays a placeholder when there are no annotations', async () => {
-    server.use(
-      rest.get(
-        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(
-          ':entityId',
-        )}`,
-
-        async (req, res, ctx) => {
-          const response = mockFileEntityJson
-          // Delete the annotation keys
-          delete response.myStringKey
-          delete response.myIntegerKey
-          delete response.myFloatKey
-          return res(ctx.status(200), ctx.json(response))
+  it('Displays title/description annotations from the JSON Schema', async () => {
+    const schema$id = 'schema-for-jsonschema-annotation-test'
+    const annotationKey = 'describedAnnotation'
+    const annotationTitle = 'Annotation described by schema'
+    const annotationDescription = 'describedAnnotation'
+    mockGetJson.mockResolvedValue({
+      ...mockFileEntityData.json,
+      [annotationKey]: 'foo',
+    })
+    mockGetSchemaBinding.mockResolvedValue(mockSchemaBinding)
+    mockGetValidationSchema.mockResolvedValue({
+      concreteType:
+        'org.sagebionetworks.repo.model.schema.GetValidationSchemaResponse',
+      validationSchema: {
+        $schema: 'http://json-schema.org/draft-07/schema#',
+        $id: `https://repo-prod.prod.sagebase.org/repo/v1/schema/type/registered/${schema$id}`,
+        type: 'object',
+        properties: {
+          [annotationKey]: {
+            type: 'string',
+            title: annotationTitle,
+            description: annotationDescription,
+          },
         },
-      ),
-    )
+      },
+    })
+    mockGetValidationResults.mockResolvedValue(mockSchemaValidationResults)
+
+    renderComponent()
+
+    const annotationTitleElement = await screen.findByText(annotationTitle)
+    expect(screen.queryByText(annotationKey)).not.toBeInTheDocument()
+
+    await userEvent.hover(annotationTitleElement)
+    const tooltip = await screen.findByRole('tooltip')
+    within(tooltip).getByText(`Annotation Key: ${annotationKey}`)
+    within(tooltip).getByText(annotationDescription)
+  })
+
+  it('Displays a placeholder when there are no annotations', async () => {
+    const json = cloneDeep(mockFileEntityData.json)
+    delete json.myStringKey
+    delete json.myIntegerKey
+    delete json.myFloatKey
+    mockGetJson.mockResolvedValue(json)
+
     renderComponent()
     await screen.findByText('This File has no annotations.')
   })

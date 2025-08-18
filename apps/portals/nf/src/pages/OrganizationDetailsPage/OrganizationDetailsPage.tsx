@@ -31,28 +31,28 @@ const tabConfig: DetailsPageTabConfig[] = [
 function OrganizationDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
   return (
-    <>
-      <CardContainerLogic
-        sql={fundersSql}
-        cardConfiguration={{
-          type: SynapseConstants.GENERIC_CARD,
-          genericCardSchema: {
-            ...organizationCardSchema,
-            imageFileHandleColumnName: 'headerLogo',
-          },
-          isHeader: true,
-        }}
-        searchParams={searchParams}
-      />
-      <DetailsPage
-        sql={fundersSql}
-        ContainerProps={{ maxWidth: 'xl' }}
-        resourcePrimaryKey={['abbreviation']}
-      >
-        <DetailsPageTabs tabConfig={tabConfig} />
-        <Outlet />
-      </DetailsPage>
-    </>
+    <DetailsPage
+      header={
+        <CardContainerLogic
+          sql={fundersSql}
+          cardConfiguration={{
+            type: SynapseConstants.GENERIC_CARD,
+            genericCardSchema: {
+              ...organizationCardSchema,
+              imageFileHandleColumnName: 'headerLogo',
+            },
+            isHeader: true,
+          }}
+          searchParams={searchParams}
+        />
+      }
+      sql={fundersSql}
+      ContainerProps={{ maxWidth: 'xl' }}
+      resourcePrimaryKey={['abbreviation']}
+    >
+      <DetailsPageTabs tabConfig={tabConfig} />
+      <Outlet />
+    </DetailsPage>
   )
 }
 

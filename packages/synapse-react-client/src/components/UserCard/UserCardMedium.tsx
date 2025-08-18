@@ -88,11 +88,12 @@ export function UserCardMedium({
     }, 4000)
   }
 
+  const { ownerId } = userProfile
   const { displayName, userName, firstName, lastName, position, company } =
     userProfile
 
   const { data: userBundle } = useGetUserBundle(
-    userProfile.ownerId,
+    ownerId,
     SynapseConstants.USER_BUNDLE_MASK_ORCID,
   )
 
@@ -101,9 +102,9 @@ export function UserCardMedium({
   let name = ''
   const linkLocation = link
     ? link
-    : `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Profile:${userProfile.ownerId}`
+    : `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Profile:${ownerId}`
   // linkLocation is overriden by custom click handler
-  const email = `${userName}@synapse.org`
+  const email = userName ? `${userName}@synapse.org` : undefined
   if (displayName) {
     name = displayName
   } else if (firstName && lastName) {
@@ -171,7 +172,7 @@ export function UserCardMedium({
             {position} {position ? ' / ' : ''} {company}
           </p>
         )}
-        {!hideEmail && (
+        {!hideEmail && !!email && (
           <p
             ref={copyToClipboardRef}
             className={`SRC-hand-cursor SRC-eqHeightRow SRC-inlineFlex SRC-emailText SRC-cardSvg`}

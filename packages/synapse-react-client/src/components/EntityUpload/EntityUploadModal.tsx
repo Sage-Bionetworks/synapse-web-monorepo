@@ -154,3 +154,5 @@ export const EntityUploadModal = forwardRef(function EntityUploadModal(
     />
   )
 })
+
+export default EntityUploadModal

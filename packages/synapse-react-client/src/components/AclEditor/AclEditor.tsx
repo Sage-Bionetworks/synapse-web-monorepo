@@ -195,7 +195,7 @@ export function AclEditor(props: AclEditorProps) {
             Search for a username or team to add. You can search by username,
             first or last names, or team name.
           </Typography>
-          <Box>
+          <Box sx={{ mb: 1 }}>
             <Typography
               component="label"
               variant="smallText2"

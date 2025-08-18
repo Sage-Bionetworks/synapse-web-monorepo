@@ -20,74 +20,76 @@ function ProjectDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()
 
   return (
-    <>
-      <CardContainerLogic
-        cardConfiguration={{
-          ...projectCardConfiguration,
-          secondaryLabelLimit: Infinity,
-          isHeader: true,
-        }}
-        sql={projectsSql}
-        isAlignToLeftNav
-        searchParams={searchParams}
-      />
-      <DetailsPage sql={projectsSql}>
-        <DetailsPageContextConsumer columnName={'id'}>
-          {({ value: id }) => (
-            <DetailsPageContent
-              content={[
-                {
-                  title: 'Data',
-                  id: 'Data',
-                  element: (
-                    <CardContainerLogic
-                      sql={studiesSql}
-                      cardConfiguration={studyCardConfiguration}
-                      searchParams={{ project: id! }}
-                    />
-                  ),
-                },
-                {
-                  title: 'People',
-                  id: 'People',
-                  element: (
-                    <CardContainerLogic
-                      sql={peopleSql}
-                      cardConfiguration={{
-                        type: SynapseConstants.MEDIUM_USER_CARD,
-                      }}
-                      searchParams={{ project: id! }}
-                    />
-                  ),
-                },
-                {
-                  title: 'Tools',
-                  id: 'Tools',
-                  element: (
-                    <CardContainerLogic
-                      sql={toolsSql}
-                      cardConfiguration={toolCardConfiguration}
-                      searchParams={{ project: id! }}
-                    />
-                  ),
-                },
-                {
-                  title: 'Publications',
-                  id: 'Publications',
-                  element: (
-                    <CardContainerLogic
-                      sql={publicationsSql}
-                      cardConfiguration={publicationsCardConfiguration}
-                      searchParams={{ project: id! }}
-                    />
-                  ),
-                },
-              ]}
-            />
-          )}
-        </DetailsPageContextConsumer>
-      </DetailsPage>
-    </>
+    <DetailsPage
+      header={
+        <CardContainerLogic
+          cardConfiguration={{
+            ...projectCardConfiguration,
+            secondaryLabelLimit: Infinity,
+            isHeader: true,
+          }}
+          sql={projectsSql}
+          isAlignToLeftNav
+          searchParams={searchParams}
+        />
+      }
+      sql={projectsSql}
+    >
+      <DetailsPageContextConsumer columnName={'id'}>
+        {({ value: id }) => (
+          <DetailsPageContent
+            content={[
+              {
+                title: 'Data',
+                id: 'Data',
+                element: (
+                  <CardContainerLogic
+                    sql={studiesSql}
+                    cardConfiguration={studyCardConfiguration}
+                    searchParams={{ project: id! }}
+                  />
+                ),
+              },
+              {
+                title: 'People',
+                id: 'People',
+                element: (
+                  <CardContainerLogic
+                    sql={peopleSql}
+                    cardConfiguration={{
+                      type: SynapseConstants.MEDIUM_USER_CARD,
+                    }}
+                    searchParams={{ project: id! }}
+                  />
+                ),
+              },
+              {
+                title: 'Tools',
+                id: 'Tools',
+                element: (
+                  <CardContainerLogic
+                    sql={toolsSql}
+                    cardConfiguration={toolCardConfiguration}
+                    searchParams={{ project: id! }}
+                  />
+                ),
+              },
+              {
+                title: 'Publications',
+                id: 'Publications',
+                element: (
+                  <CardContainerLogic
+                    sql={publicationsSql}
+                    cardConfiguration={publicationsCardConfiguration}
+                    searchParams={{ project: id! }}
+                  />
+                ),
+              },
+            ]}
+          />
+        )}
+      </DetailsPageContextConsumer>
+    </DetailsPage>
   )
 }
 

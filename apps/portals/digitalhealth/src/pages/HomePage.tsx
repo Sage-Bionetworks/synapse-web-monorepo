@@ -7,7 +7,7 @@ import {
   TableFeedCards,
 } from 'synapse-react-client'
 
-export default function HomePage() {
+function HomePage() {
   return (
     <>
       <Header />
@@ -76,3 +76,5 @@ export default function HomePage() {
     </>
   )
 }
+
+export default HomePage

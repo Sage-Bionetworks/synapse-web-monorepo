@@ -1,7 +1,7 @@
 import { getTermsOfServiceHandlers } from '@/mocks/msw/handlers/termsOfServiceHandlers'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react'
-import { GovernanceMarkdownGithub } from './MarkdownGithub'
+import GovernanceMarkdownGithub from './GovernanceMarkdownGithub'
 
 const meta = {
   title: 'Markdown/GovernanceMarkdownGithub',

@@ -7,6 +7,8 @@ import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   AccessRequirementStatus,
+  RestrictableObjectType,
+  RestrictionLevel,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
@@ -16,6 +18,11 @@ import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import ManagedACTAccessRequirementItem, {
   ManagedACTAccessRequirementItemProps,
 } from './ManagedACTAccessRequirementItem'
+import { formatDate } from '@/utils/functions/DateFormatter'
+
+vi.mock('@/utils/functions/DateFormatter', () => ({
+  formatDate: vi.fn(),
+}))
 
 async function renderComponent(
   props: ManagedACTAccessRequirementItemProps,
@@ -37,9 +44,15 @@ const mockGetAccessRequirementStatus = vi.spyOn(
   'getAccessRequirementStatus',
 )
 
+const mockGetRestrictionInformation = vi.spyOn(
+  SynapseClient,
+  'getRestrictionInformation',
+)
+
 vi.spyOn(SynapseClient, 'getWikiPageKeyForAccessRequirement').mockResolvedValue(
   mockManagedACTAccessRequirementWikiPageKey,
 )
+const mockFormatDate = vi.mocked(formatDate)
 
 const mockCancelSubmission = vi
   .spyOn(SynapseClient, 'cancelDataAccessRequest')
@@ -75,7 +88,7 @@ const rejectedReason = 'You incorrectly filled out your IDU Statement.'
 const defaultProps: ManagedACTAccessRequirementItemProps = {
   accessRequirement: mockManagedACTAccessRequirement,
   onRequestAccess: mockOnRequestAccess,
-  onHide: mockOnHide,
+  onRejectTerms: mockOnHide,
 }
 
 const noSubmissionStatus: AccessRequirementStatus = {
@@ -147,13 +160,12 @@ async function testWikiToggle() {
   await userEvent.click(toggle)
 
   await screen.findByText(mockRenderedMarkdown)
-  expect(mockMarkdownSynapse).toHaveBeenCalledWith(
+  expect(mockMarkdownSynapse).toHaveBeenRenderedWithProps(
     expect.objectContaining({
       wikiId: mockManagedACTAccessRequirementWikiPageKey.wikiPageId,
       ownerId: mockManagedACTAccessRequirementWikiPageKey.ownerObjectId,
       objectType: mockManagedACTAccessRequirementWikiPageKey.ownerObjectType,
     }),
-    expect.anything(),
   )
 
   toggle = await screen.findByRole('button', { name: 'Hide Terms' })
@@ -166,13 +178,12 @@ async function testWikiToggle() {
 
 async function testWikiShownWithoutToggle() {
   await screen.findByText(mockRenderedMarkdown)
-  expect(mockMarkdownSynapse).toHaveBeenCalledWith(
+  expect(mockMarkdownSynapse).toHaveBeenRenderedWithProps(
     expect.objectContaining({
       wikiId: mockManagedACTAccessRequirementWikiPageKey.wikiPageId,
       ownerId: mockManagedACTAccessRequirementWikiPageKey.ownerObjectId,
       objectType: mockManagedACTAccessRequirementWikiPageKey.ownerObjectType,
     }),
-    expect.anything(),
   )
 
   expect(
@@ -297,20 +308,58 @@ describe('ManagedACTAccessRequirementItem', () => {
   })
 
   describe('Submission is revoked', () => {
-    beforeEach(async () => {
+    it('Request can be updated', async () => {
       mockGetAccessRequirementStatus.mockResolvedValue(revokedStatus)
       await renderComponent(defaultProps)
-    })
 
-    it('Request can be updated', async () => {
-      await screen.findByText('Your data access request has been revoked.')
+      await screen.findByText('Your data access has been revoked.')
       const button = await screen.findByRole('button', {
         name: 'Update Request',
       })
       await userEvent.click(button)
       expect(mockOnRequestAccess).toHaveBeenCalled()
     })
+
+    it('Informs a user when their submission has expired', async () => {
+      mockFormatDate.mockReturnValue('2023-05-10')
+      mockGetAccessRequirementStatus.mockResolvedValue({
+        ...revokedStatus,
+        expiredOn: '2023-05-10T16:54:53.333Z',
+      })
+      await renderComponent(defaultProps)
+
+      await screen.findByText('Your data access has been revoked.')
+      await screen.findByText('Your access expired on 2023-05-10.')
+    })
   })
-  // See PLFM-7800
-  it.todo('Informs a user when their submission has expired')
+
+  describe('User is exempt from the access requirement', () => {
+    it('Informs the user that they are exempt from the access requirement', async () => {
+      mockGetAccessRequirementStatus.mockResolvedValue(noSubmissionStatus)
+      mockGetRestrictionInformation.mockResolvedValue({
+        restrictionDetails: [
+          {
+            accessRequirementId: mockManagedACTAccessRequirement.id,
+            isApproved: false,
+            isExempt: true,
+            isMet: true,
+          },
+        ],
+        objectId: 123,
+        restrictionLevel: RestrictionLevel.CONTROLLED_BY_ACT,
+        hasUnmetAccessRequirement: false,
+      })
+      await renderComponent({
+        ...defaultProps,
+        subjectId: 'syn123',
+        subjectType: RestrictableObjectType.ENTITY,
+      })
+
+      await screen.findByText(
+        'This data access requirement is fulfilled by your team membership and permissions.',
+      )
+      // User can still request access, if needed
+      await screen.findByRole('button', { name: 'Request access' })
+    })
+  })
 })

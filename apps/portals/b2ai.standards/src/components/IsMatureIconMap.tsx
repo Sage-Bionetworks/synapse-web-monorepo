@@ -5,7 +5,7 @@ import { MapValueToReactComponentConfig } from 'synapse-react-client/components/
 import MatureStandardIcon from '@mui/icons-material/WorkspacePremiumTwoTone'
 
 const mapping: Record<string, ReactNode> = {
-  ['Yes']: (
+  ['Is Mature']: (
     <Tooltip
       title={
         'This standard has one or more implementations appropriate for production use, or has undergone a review process and has been determined to be in a mature state.'
@@ -28,9 +28,12 @@ const IsMatureIconMap: MapValueToReactComponentConfig['Component'] = ({
     values = [value]
   }
 
+  // added the <div key={idx}> below to prevent some warnings: Each child in a list should have a unique "key" prop.
   return (
     <div style={{ textAlign: 'center' }}>
-      {(values as string[]).map(val => mapping[val])}
+      {(values as string[]).map((val, idx) => (
+        <div key={idx}>{mapping[val]}</div>
+      ))}
     </div>
   )
 }

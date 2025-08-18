@@ -3,8 +3,8 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { SynapseError } from '@/utils/SynapseError'
-import { rest } from 'msw'
+import { BaseError } from '@sage-bionetworks/synapse-client'
+import { http, HttpResponse } from 'msw'
 import { MOCK_ANNOTATION_COLUMN_RESPONSE } from '../mockAnnotationColumns'
 import { getAllAccessRequirementAclHandlers } from './handlers/accessRequirementAclHandlers'
 import { getAllAccessRequirementHandlers } from './handlers/accessRequirementHandlers'
@@ -38,21 +38,18 @@ import { getWebhookHandlers } from './handlers/webhookHandlers'
 import { getAllWikiHandlers } from './handlers/wikiHandlers'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
-export type SynapseApiResponse<T> = T | SynapseError
+export type SynapseApiResponse<TData, TError = BaseError> = TData | TError
 
 const getHandlers = (backendOrigin: string, portalOrigin?: string) => [
-  rest.options('*', async (req, res, ctx) => {
-    return res(ctx.status(200))
+  http.options('*', () => {
+    return new Response('', { status: 200 })
   }),
-  rest.get(
-    `${backendOrigin}/auth/v1/authenticatedOn`,
-    async (req, res, ctx) => {
-      return res(
-        ctx.status(200),
-        ctx.json({ authenticatedOn: new Date().toISOString() }),
-      )
-    },
-  ),
+  http.get(`${backendOrigin}/auth/v1/authenticatedOn`, () => {
+    return HttpResponse.json(
+      { authenticatedOn: new Date().toISOString() },
+      { status: 200 },
+    )
+  }),
   ...getEntityHandlers(backendOrigin),
   ...getUserProfileHandlers(backendOrigin),
   getCurrentUserCertifiedValidatedHandler(backendOrigin, true, true),

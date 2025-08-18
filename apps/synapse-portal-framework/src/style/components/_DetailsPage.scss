@@ -151,12 +151,14 @@ $svg-icon-height: 30px;
   }
 
   .tab-groups + .tab-groups {
-    position: static;
-    height: unset;
-    margin-bottom: unset;
-    box-shadow: 0px 5px 6px -4px rgb(0 0 0 / 15%);
-    justify-content: center;
     @include SrcMixins.underline-tabs($inactive-color: unset);
+    & {
+      position: static;
+      height: unset;
+      margin-bottom: unset;
+      box-shadow: 0px 5px 6px -4px rgb(0 0 0 / 15%);
+      justify-content: center;
+    }
     .tab-item {
       font-weight: 700;
       flex-grow: 0.2;
@@ -170,10 +172,6 @@ $svg-icon-height: 30px;
     .TopLevelControls [role='heading'] {
       padding-top: 0px;
     }
-  }
-  .tab-content-group {
-    padding-top: 30px;
-    display: flex;
   }
 
   .metadata-table table {

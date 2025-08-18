@@ -1,8 +1,26 @@
-import { useGetJson, useGetSchemaBinding, useGetValidationResults } from '@/synapse-queries'
+import { EntityAnnotationKey } from '@/components/entity/metadata/EntityAnnotationKey'
+import { useGetJson } from '@/synapse-queries/entity/useEntity'
+import { useGetSchema } from '@/synapse-queries/entity/useSchema'
+import {
+  useGetSchemaBinding,
+  useGetValidationResults,
+} from '@/synapse-queries/entity/useEntityBoundSchema'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { isISOTimestamp } from '@/utils/functions/DateTimeUtils'
-import { convertToEntityType, entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
-import { BackendDestinationEnum, getEndpoint } from '@/utils/functions/getEndpoint'
+import {
+  convertToEntityType,
+  entityTypeToFriendlyName,
+} from '@/utils/functions/EntityTypeUtils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import {
+  getDisplayedAnnotationDescription,
+  getDisplayedAnnotationTitle,
+  useGetAnnotatedJsonInstance,
+} from '@/utils/jsonschema/SchemaAnnotationUtils'
+import { Json } from '@sage-bionetworks/synapse-client'
 import dayjs from 'dayjs'
 import { isEmpty } from 'lodash-es'
 import { useCallback, useState } from 'react'
@@ -31,13 +49,21 @@ export function AnnotationsTable(props: AnnotationsTableProps) {
 
   const {
     data: entityData,
-    isLoading,
+    isLoading: isLoadingEntityData,
     refetch: refetchEntityData,
   } = useGetJson(entityId, versionNumber, true)
   const entityMetadata = entityData?.entityMetadata
   const annotations = entityData?.annotations
 
-  const { data: boundSchema } = useGetSchemaBinding(entityId)
+  const { data: boundSchema, isLoading: isLoadingSchemaBinding } =
+    useGetSchemaBinding(entityId)
+  const { data: validationSchema, isLoading: isLoadingValidationSchema } =
+    useGetSchema(boundSchema?.jsonSchemaVersionInfo.$id!, {
+      enabled: Boolean(boundSchema),
+    })
+
+  const { data: annotatedInstance, isLoading: isLoadingSchemaAnnotations } =
+    useGetAnnotatedJsonInstance(entityData?.entity as Json, validationSchema)
 
   const { data: validationResults, refetch: refetchValidationInformation } =
     useGetValidationResults(entityId, {
@@ -58,13 +84,19 @@ export function AnnotationsTable(props: AnnotationsTableProps) {
     setIsManuallyRefetching(true)
     const promises = [
       // Refetch the annotations, which may have changed if new derived annotations have been calculated
-      refetchEntityData(),
+      void refetchEntityData(),
       // Refetch the validation information, which we use to determine if derived annotations may still be pending
-      refetchValidationInformation(),
+      void refetchValidationInformation(),
     ]
     await Promise.allSettled(promises)
     setIsManuallyRefetching(false)
   }, [refetchEntityData, refetchValidationInformation])
+
+  const isLoading =
+    isLoadingEntityData ||
+    isLoadingSchemaBinding ||
+    isLoadingValidationSchema ||
+    isLoadingSchemaAnnotations
 
   return isLoading || isManuallyRefetching ? (
     <SkeletonTable numRows={3} numCols={2} />
@@ -82,15 +114,32 @@ export function AnnotationsTable(props: AnnotationsTableProps) {
       <table className="AnnotationsTable">
         <tbody>
           {annotations &&
-            Object.keys(annotations).map((key: string) => {
+            Object.keys(annotations).map((annotationKey: string) => {
               return (
-                <tr key={key} className="AnnotationsTable__Row">
-                  <td className="AnnotationsTable__Row__Key">{key}</td>
+                <tr key={annotationKey} className="AnnotationsTable__Row">
+                  <td className="AnnotationsTable__Row__Key">
+                    <EntityAnnotationKey
+                      annotationKey={annotationKey}
+                      title={getDisplayedAnnotationTitle(
+                        annotationKey,
+                        annotatedInstance,
+                      )}
+                      description={getDisplayedAnnotationDescription(
+                        annotationKey,
+                        annotatedInstance,
+                      )}
+                    />
+                  </td>
                   <td className="AnnotationsTable__Row__Value">
-                    {Array.isArray(annotations[key])
-                      ? annotations[key].map(getDisplayedAnnotation).join(', ')
+                    {Array.isArray(annotations[annotationKey])
+                      ? annotations[annotationKey]
+                          .map(getDisplayedAnnotation)
+                          .join(', ')
                       : getDisplayedAnnotation(
-                          annotations[key] as string | number | boolean,
+                          annotations[annotationKey] as
+                            | string
+                            | number
+                            | boolean,
                         )}
                   </td>
                 </tr>

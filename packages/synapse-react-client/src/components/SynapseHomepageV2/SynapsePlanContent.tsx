@@ -1,6 +1,6 @@
 import { ReactComponent as PlanItemIcon } from '@/assets/homepage/plan-item.svg'
+import { darkTextColor } from '@/components/SynapseHomepageV2/HomepageStyles'
 import { Box, Typography } from '@mui/material'
-import { darkTextColor } from './SynapseHomepageV2'
 
 export type SynapsePlanContentProps = {
   category: string

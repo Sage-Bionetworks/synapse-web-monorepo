@@ -8,6 +8,7 @@ import {
   STUDY_TABLE_COLUMN_NAMES,
   studyCardConfiguration,
   studyColumnAliases,
+  studyDoiConfiguration,
 } from '@/config/synapseConfigs/studies'
 import {
   DetailsPageTabConfig,
@@ -42,6 +43,7 @@ const studyDetailsPageTabs: DetailsPageTabConfig[] = [
 const studiesDetailsPageProps: DetailsPageProps = {
   sql: studiesSql,
   sqlOperator: ColumnSingleValueFilterOperator.LIKE,
+  portalDOIConfiguration: studyDoiConfiguration,
 }
 
 function StudyDetailsPage() {
@@ -55,26 +57,28 @@ function StudyDetailsPage() {
   }
 
   return (
-    <>
-      <CardContainerLogic
-        cardConfiguration={{
-          ...studyCardConfiguration,
-          secondaryLabelLimit: Infinity,
-          iconOptions: {
-            study: studyHeaderSvg,
-          },
-          isHeader: true,
-        }}
-        sql={studiesSql}
-        columnAliases={studyColumnAliases}
-        isAlignToLeftNav={true}
-        searchParams={searchParams}
-      />
-      <DetailsPage {...studiesDetailsPageProps}>
-        <DetailsPageTabs tabConfig={studyDetailsPageTabs} />
-        <Outlet />
-      </DetailsPage>
-    </>
+    <DetailsPage
+      {...studiesDetailsPageProps}
+      header={
+        <CardContainerLogic
+          cardConfiguration={{
+            ...studyCardConfiguration,
+            secondaryLabelLimit: Infinity,
+            iconOptions: {
+              study: studyHeaderSvg,
+            },
+            isHeader: true,
+          }}
+          sql={studiesSql}
+          columnAliases={studyColumnAliases}
+          isAlignToLeftNav={true}
+          searchParams={searchParams}
+        />
+      }
+    >
+      <DetailsPageTabs tabConfig={studyDetailsPageTabs} />
+      <Outlet />
+    </DetailsPage>
   )
 }
 

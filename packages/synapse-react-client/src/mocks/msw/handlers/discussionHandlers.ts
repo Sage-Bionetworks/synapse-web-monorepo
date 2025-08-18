@@ -7,7 +7,7 @@ import {
   PaginatedIds,
   PaginatedResults,
 } from '@sage-bionetworks/synapse-types'
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import {
   mockDiscussionThreadBundles,
   mockForums,
@@ -46,79 +46,85 @@ function getAllThreadsMatchingForum(forumId: string, filter: DiscussionFilter) {
 
 export function getDiscussionHandlers(backendOrigin: string) {
   return [
-    rest.get(`${backendOrigin}${FORUM}/:id`, async (req, res, ctx) => {
+    http.get(`${backendOrigin}${FORUM}/:id`, ({ params }) => {
       let status = 404
       let resp: SynapseApiResponse<Forum> = {
-        reason: `MSW could not find a mock forum object with ID ${req.params.id}`,
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+        reason: `MSW could not find a mock forum object with ID ${params.id}`,
       }
 
-      const match = forumService.getOneById(req.params.id as string)
+      const match = forumService.getOneById(params.id as string)
       if (match) {
         status = 200
         resp = match
       }
 
-      return res(ctx.status(status), ctx.json(resp))
+      return HttpResponse.json(resp, { status: status })
     }),
 
-    rest.get(`${backendOrigin}${THREAD}/:id`, async (req, res, ctx) => {
+    http.get(`${backendOrigin}${THREAD}/:id`, ({ params }) => {
       let status = 404
       let resp: SynapseApiResponse<Forum> = {
-        reason: `MSW could not find a mock discussion thread bundle object with ID ${req.params.id}`,
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+        reason: `MSW could not find a mock discussion thread bundle object with ID ${params.id}`,
       }
-      if (req.params.id === 'messageUrl') {
+      if (params.id === 'messageUrl') {
         // This is a different endpoint
         resp = {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
           reason: 'GET /thread/messageUrl is not yet implemented',
         }
       }
 
-      const match = threadService.getOneById(req.params.id as string)
+      const match = threadService.getOneById(params.id as string)
       if (match) {
         status = 200
         resp = match
       }
 
-      return res(ctx.status(status), ctx.json(resp))
+      return HttpResponse.json(resp, { status: status })
     }),
 
-    rest.post(`${backendOrigin}${THREAD}`, async (req, res, ctx) => {
-      const request: CreateDiscussionThread = await req.json()
+    http.post<never, CreateDiscussionThread>(
+      `${backendOrigin}${THREAD}`,
+      async ({ request }) => {
+        const requestBody = await request.json()
 
-      const newDiscussionThreadBundle = threadService.create({
-        forumId: request.forumId,
-        projectId: mockProject.id,
-        title: request.title,
-        createdOn: new Date().toISOString(),
-        createdBy: String(MOCK_USER_ID),
-        modifiedOn: new Date().toISOString(),
-        etag: 'etag',
-        messageKey: 'todo key',
-        numberOfViews: 0,
-        numberOfReplies: 0,
-        lastActivity: new Date().toISOString(),
-        activeAuthors: [String(MOCK_USER_ID)],
-        isEdited: false,
-        isDeleted: false,
-        isPinned: false,
-      })
+        const newDiscussionThreadBundle = threadService.create({
+          forumId: requestBody.forumId,
+          projectId: mockProject.id,
+          title: requestBody.title,
+          createdOn: new Date().toISOString(),
+          createdBy: String(MOCK_USER_ID),
+          modifiedOn: new Date().toISOString(),
+          etag: 'etag',
+          messageKey: 'todo key',
+          numberOfViews: 0,
+          numberOfReplies: 0,
+          lastActivity: new Date().toISOString(),
+          activeAuthors: [String(MOCK_USER_ID)],
+          isEdited: false,
+          isDeleted: false,
+          isPinned: false,
+        })
 
-      return res(ctx.status(201), ctx.json(newDiscussionThreadBundle))
-    }),
+        return HttpResponse.json(newDiscussionThreadBundle, { status: 201 })
+      },
+    ),
 
-    rest.get(
+    http.get(
       `${backendOrigin}${FORUM_THREAD(':forumId')}`,
-      async (req, res, ctx) => {
-        const offsetParam = req.url.searchParams.get('offset')
+      ({ params, request }) => {
+        const offsetParam = new URL(request.url).searchParams.get('offset')
         const offset = offsetParam ? parseInt(offsetParam) : 0
-        const limitParam = req.url.searchParams.get('limit')
+        const limitParam = new URL(request.url).searchParams.get('limit')
         const limit = limitParam ? parseInt(limitParam) : 10
         const filter: DiscussionFilter =
-          (req.params.filter as DiscussionFilter) ??
+          (params.filter as DiscussionFilter) ??
           DiscussionFilter.EXCLUDE_DELETED
 
         const matchingThreads = getAllThreadsMatchingForum(
-          req.params.forumId as string,
+          params.forumId as string,
           filter,
         )
 
@@ -128,18 +134,15 @@ export function getDiscussionHandlers(backendOrigin: string) {
           results: matchingThreads.slice(offset, offset + limit),
           totalNumberOfResults: matchingThreads.length,
         }
-        return res(ctx.status(200), ctx.json(response))
+        return HttpResponse.json(response, { status: 200 })
       },
     ),
-    rest.get(
-      `${backendOrigin}${FORUM}/:id/moderators`,
-      async (req, res, ctx) => {
-        const resp: PaginatedIds = {
-          results: [String(MOCK_USER_ID)],
-          totalNumberOfResults: 1,
-        }
-        return res(ctx.status(200), ctx.json(resp))
-      },
-    ),
+    http.get(`${backendOrigin}${FORUM}/:id/moderators`, () => {
+      const resp: PaginatedIds = {
+        results: [String(MOCK_USER_ID)],
+        totalNumberOfResults: 1,
+      }
+      return HttpResponse.json(resp, { status: 200 })
+    }),
   ]
 }
