@@ -29,6 +29,8 @@ const SynapseFileEntityLinkCard = ({
           gap: '20px',
           alignItems: 'center',
           padding: '30px',
+          backgroundColor: '#FDFAF0',
+          borderColor: '#EBDDB8',
         }}
       >
         <SynapseIconLogo />
@@ -39,14 +41,14 @@ const SynapseFileEntityLinkCard = ({
           >
             View this file on Synapse.org
           </Typography>
-          <Typography variant="smallText1" sx={{ color: 'grey.700' }}>
+          <Typography variant="smallText1" sx={{ color: 'grey.800' }}>
             Synapse empowers biomedical researchers with tools for open science
             and collaboration.
           </Typography>
         </Stack>
         <OpenInNewIcon
           sx={{
-            color: '#878E95',
+            color: '#3C3C42',
             width: '32px',
             height: '32px',
             marginLeft: 'auto',
