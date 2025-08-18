@@ -112,12 +112,11 @@ const SynapseGrid = forwardRef<
     const { columnNames, columnOrder, rows } = modelSnapshot
     const gridRows = rows.map(row => {
       const rowObj: { [key: string]: any } = {}
-      const rowData = Array.isArray(row.data) ? row.data : []
       // Use columnOrder to determine which columnNames to use and in what order
       columnOrder.forEach((index: number) => {
         const columnName = columnNames[index]
         if (columnName) {
-          rowObj[columnName] = rowData[index] ?? ''
+          rowObj[columnName] = row.data[index]
         }
       })
       return rowObj
