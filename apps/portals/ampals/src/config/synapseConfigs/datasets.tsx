@@ -54,7 +54,8 @@ export const datasetSchema: TableToGenericCardMapping = {
 }
 export const datasetColumnAliases: Record<string, string> = {
   id: 'On Synapse',
-  url: 'External Repository',
+  url: 'External Repository URL',
+  source: 'Navigate To Source',
 }
 export const datasetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
