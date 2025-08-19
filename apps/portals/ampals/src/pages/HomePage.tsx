@@ -73,11 +73,12 @@ export default function HomePage() {
           className: 'home-spacer',
           maxWidth: false,
           sx: {
+            backgroundColor: 'white',
             pb: '50px',
           },
         }}
       >
-        <PortalFeaturedPartners sql={partnersSql} backgroundColor={'white'} />
+        <PortalFeaturedPartners sql={partnersSql} />
       </SectionLayout>
       <AMPALSPublishingRequirements />
       <div className={'home-bg-dark'}>
