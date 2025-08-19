@@ -238,7 +238,7 @@ const SynapseGrid = forwardRef<
         // and adding rows to the model via the api
         for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
           const rowArr = model.api.arr(['rows'])
-          rowArr.ins(i, [{ data: s.vec(s.con('')), metadata: {} }])
+          rowArr.ins(i, [{ data: s.vec(s.con('')), metadata: s.obj({}) }])
         }
 
         newValue
