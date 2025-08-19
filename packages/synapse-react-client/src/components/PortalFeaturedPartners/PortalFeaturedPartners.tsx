@@ -9,6 +9,7 @@ import PortalSectionHeader from '../PortalSectionHeader'
 
 export type PortalFeaturedPartnersProps = {
   sql: string
+  backgroundColor?: string
 }
 
 type Icons = {
@@ -105,7 +106,10 @@ const PartnerIcon = ({
   )
 }
 
-const PortalFeaturedPartners = ({ sql }: PortalFeaturedPartnersProps) => {
+const PortalFeaturedPartners = ({
+  sql,
+  backgroundColor = 'grey.100',
+}: PortalFeaturedPartnersProps) => {
   const entityId = parseEntityIdFromSqlStatement(sql)
 
   const queryBundleRequest: QueryBundleRequest = {
@@ -149,7 +153,7 @@ const PortalFeaturedPartners = ({ sql }: PortalFeaturedPartnersProps) => {
       sx={{
         display: 'grid',
         padding: { xs: '40px', lg: '20px 80px' },
-        backgroundColor: 'grey.100',
+        backgroundColor,
         gridTemplateColumns: { xs: '1fr', md: '1fr 3fr' },
         gap: '50px',
       }}

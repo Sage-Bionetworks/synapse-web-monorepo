@@ -72,10 +72,12 @@ export default function HomePage() {
         ContainerProps={{
           className: 'home-spacer',
           maxWidth: false,
-          style: { padding: 0 },
+          sx: {
+            pb: '50px',
+          },
         }}
       >
-        <PortalFeaturedPartners sql={partnersSql} />
+        <PortalFeaturedPartners sql={partnersSql} backgroundColor={'white'} />
       </SectionLayout>
       <AMPALSPublishingRequirements />
       <div className={'home-bg-dark'}>
