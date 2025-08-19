@@ -67,7 +67,7 @@
     "dompurify": "^3.2.5",
     "immutable": "4.1.0",
     "jotai": "^2.12.4",
-    "json-joy": "17.40.0",
+    "json-joy": "^17.49.1",
     "json-rules-engine": "^4.1.0",
     "jsonpath": "^1.1.1",
     "katex": "^0.16.22",

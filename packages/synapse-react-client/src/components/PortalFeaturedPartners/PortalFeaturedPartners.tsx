@@ -149,7 +149,6 @@ const PortalFeaturedPartners = ({ sql }: PortalFeaturedPartnersProps) => {
       sx={{
         display: 'grid',
         padding: { xs: '40px', lg: '20px 80px' },
-        backgroundColor: 'grey.100',
         gridTemplateColumns: { xs: '1fr', md: '1fr 3fr' },
         gap: '50px',
       }}

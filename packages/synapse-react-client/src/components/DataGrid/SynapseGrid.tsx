@@ -1,5 +1,5 @@
 import { ComplexJSONRenderer } from '@/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer'
-import { konst } from 'json-joy/lib/json-crdt-patch'
+import { s } from 'json-joy/lib/json-crdt-patch'
 import throttle from 'lodash-es/throttle'
 import {
   forwardRef,
@@ -175,21 +175,19 @@ const SynapseGrid = forwardRef<
   // Function to apply grid changes to a model
   function gridToModel(gridRows: DataGridRow[], model: GridModel): GridModel {
     if (!model) return model
-    const rowsArr = model.api.node.get('rows')
     const { columnNames: mcnUpdate } = model.api.getSnapshot()
 
     // Apply row changes
     // Update existing rows and add new ones
     for (let i = 0; i < gridRows.length; i++) {
       const editedRow = gridRows[i]
-      const rowObj = rowsArr.get(i)
-      const rowVec = rowObj.get('data')
+      const rowVec = model.api.vec(['rows', String(i), 'data'])
 
       // Update each cell in the row
       Object.entries(editedRow).forEach(([key, value]) => {
         const columnIndex = mcnUpdate.indexOf(key)
         if (!isNaN(columnIndex)) {
-          rowVec.set([[columnIndex, konst(value)]])
+          rowVec?.set([[columnIndex, s.con(value)]])
         }
       })
     }
@@ -233,12 +231,14 @@ const SynapseGrid = forwardRef<
 
   const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
     for (const operation of operations) {
-      const rowsArr = modelRef.current?.api.arr(['rows'])
+      const model = getModel()!
+      const rowsArr = model.api.arr(['rows'])
       if (operation.type === 'CREATE') {
         // Add new rows to the model iterating fromRowIndex to toRowIndex
         // and adding rows to the model via the api
         for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
-          rowsArr?.ins(i, [modelRef.current?.api.builder.vec()])
+          const rowArr = model.api.arr(['rows'])
+          rowArr.ins(i, [{ data: s.vec(s.con('')), metadata: {} }])
         }
 
         newValue

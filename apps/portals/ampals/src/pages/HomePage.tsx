@@ -7,8 +7,12 @@ import HowToAccessData from '@sage-bionetworks/synapse-portal-framework/componen
 // import { FeaturedDataTabs } from 'synapse-react-client'
 // import columnAliases from '../config/columnAliases'
 import headerSvg from '../config/style/header.svg?url'
-import { CardGridWithLinks, GoalsV3 } from 'synapse-react-client'
-import { goalsTableEntityId } from '@/config/resources'
+import {
+  CardGridWithLinks,
+  GoalsV3,
+  PortalFeaturedPartners,
+} from 'synapse-react-client'
+import { goalsTableEntityId, partnersSql } from '@/config/resources'
 import { ReactComponent as DatasetsIcon } from '../../src/config/style/datasets.svg'
 import { ReactComponent as FilesIcon } from '../../src/config/style/files.svg'
 import { ReactComponent as ProjectsIcon } from '../../src/config/style/projects.svg'
@@ -64,6 +68,18 @@ export default function HomePage() {
       </SectionLayout>
       {/* <AMPALSExploreTheData sql={upsetPlotSql} /> */}
       <HowToAccessData />
+      <SectionLayout
+        ContainerProps={{
+          className: 'home-spacer',
+          maxWidth: false,
+          sx: {
+            backgroundColor: 'white',
+            pb: '50px',
+          },
+        }}
+      >
+        <PortalFeaturedPartners sql={partnersSql} />
+      </SectionLayout>
       <AMPALSPublishingRequirements />
       <div className={'home-bg-dark'}>
         <SectionLayout
