@@ -1,9 +1,8 @@
 import Draggable from 'react-draggable'
-import { Button, Typography, Paper } from '@mui/material'
-import { useState, useRef } from 'react'
+import { Typography, Paper } from '@mui/material'
+import { useRef } from 'react'
 
 export default function DraggableDialogue() {
-  const [open, setOpen] = useState(false)
   const draggableRef = useRef<HTMLDivElement>(null)
 
   const position = { x: 100, y: 100 }
