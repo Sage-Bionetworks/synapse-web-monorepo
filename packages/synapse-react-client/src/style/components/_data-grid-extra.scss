@@ -12,3 +12,15 @@
   /* Orange */
   background: #fff7e6;
 }
+
+.row-valid {
+  border-left: 4px solid #4caf50 !important; // green
+}
+
+.row-invalid {
+  border-left: 4px solid #f44336 !important; // red
+}
+
+.row-unknown {
+  border-left: 4px solid #fff700 !important; // yellow
+}
