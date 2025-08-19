@@ -1,6 +1,7 @@
 import Draggable from 'react-draggable'
-import { Typography, Paper } from '@mui/material'
+import { Box, Paper } from '@mui/material'
 import { useRef } from 'react'
+import { SynapseChat } from '@/components/SynapseChat/index'
 
 export default function DraggableDialogue() {
   const draggableRef = useRef<HTMLDivElement>(null)
@@ -14,29 +15,22 @@ export default function DraggableDialogue() {
           ref={draggableRef}
           elevation={5}
           sx={{
-            height: '350px',
-            width: '350px',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '500px',
+            width: '600px',
           }}
         >
-          <Typography
-            variant={'h3'}
+          <Box
             sx={{
-              backgroundColor: 'primary.main',
-              fontSize: '14px',
-              color: 'white',
-              padding: '20px',
+              maxHeight: '100%',
+              maxWidth: '100%',
+              overflow: 'auto',
+              padding: '16px',
             }}
           >
-            Draggable component header
-          </Typography>
-          <Typography
-            variant={'body1'}
-            sx={{
-              padding: '20px',
-            }}
-          >
-            This is a draggable dialogue component body.
-          </Typography>
+            <SynapseChat />
+          </Box>
         </Paper>
       </Draggable>
     </div>
