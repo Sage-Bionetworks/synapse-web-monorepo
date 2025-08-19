@@ -58,7 +58,6 @@ export const datasetColumnAliases: Record<string, string> = {
 }
 export const datasetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
-  isHeader: true,
   genericCardSchema: datasetSchema,
 
   titleLinkConfig: {
