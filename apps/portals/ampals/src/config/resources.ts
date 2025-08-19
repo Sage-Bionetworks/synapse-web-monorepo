@@ -7,6 +7,8 @@ export const programsSql = 'SELECT * FROM syn64941043'
 export const goalsTableEntityId = 'syn66051704'
 export const filesSql = `SELECT * FROM syn66271104`
 
+export const partnersSql = `SELECT * FROM syn68804819`
+
 export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = [
   'cavatica',
   'terra',
