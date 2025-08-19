@@ -9,7 +9,7 @@ const gridRowSchema = s.obj({
       versionNumber: s.con(0),
       etag: s.con(''),
     }),
-    validationResult: s.obj({
+    rowValidation: s.obj({
       isValid: s.con(true),
       validationErrorMessage: s.con(''),
       allValidationMessages: s.vec(s.con('')),
