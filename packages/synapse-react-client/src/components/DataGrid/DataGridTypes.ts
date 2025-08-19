@@ -9,6 +9,18 @@ const gridRowSchema = s.obj({
       versionNumber: s.con(0),
       etag: s.con(''),
     }),
+    validationResult: s.obj({
+      isValid: s.con(true),
+      validationErrorMessage: s.con(''),
+      allValidationMessages: s.vec(s.con('')),
+      validationException: s.obj({
+        keyword: s.con(''),
+        pointerToViolation: s.con(''),
+        message: s.con(''),
+        schemaLocation: s.con(''),
+        causingExceptions: s.vec(s.con('')),
+      }),
+    }),
   }),
 })
 
