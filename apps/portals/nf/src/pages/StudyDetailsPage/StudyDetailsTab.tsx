@@ -1,5 +1,4 @@
 import { publicationsSql, studiesSql, toolStudySql } from '@/config/resources'
-import { columnAliases } from '@/config/synapseConfigs/commonProps'
 import { publicationsCardConfiguration } from '@/config/synapseConfigs/publications'
 import { studyCardConfiguration } from '@/config/synapseConfigs/studies'
 import { toolsCardConfiguration } from '@/config/synapseConfigs/tools'
@@ -12,6 +11,10 @@ import { NoContentPlaceholderType } from 'synapse-react-client/components/Synaps
 
 function StudyDetailsTab() {
   const { value: studyId } = useDetailsPageContext('studyId')
+  const { value: relatedStudies } = useDetailsPageContext('relatedStudies')
+  const relatedStudiesArray: string[] = relatedStudies
+    ? relatedStudies.split(',')
+    : []
   if (studyId == null) {
     return null
   }
@@ -66,14 +69,27 @@ function StudyDetailsTab() {
           id: 'Related Studies',
           title: 'Related Studies',
           element: (
-            <CardContainerLogic
-              sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-              sql={studiesSql}
-              columnAliases={columnAliases}
-              noContentPlaceholderType={NoContentPlaceholderType.HIDDEN}
-              cardConfiguration={studyCardConfiguration}
-              searchParams={{ studyId }}
-            />
+            <>
+              {relatedStudies && relatedStudies.length > 0 && (
+                <CardContainerLogic
+                  query={{
+                    sql: studiesSql,
+                    limit: 50,
+                    additionalFilters: [
+                      {
+                        concreteType:
+                          'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                        columnName: 'studyId',
+                        operator: ColumnSingleValueFilterOperator.IN,
+                        values: relatedStudiesArray,
+                      },
+                    ],
+                  }}
+                  cardConfiguration={studyCardConfiguration}
+                  noContentPlaceholderType={NoContentPlaceholderType.HIDDEN}
+                />
+              )}
+            </>
           ),
         },
       ]}
