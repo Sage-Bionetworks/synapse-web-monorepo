@@ -112,13 +112,18 @@ const SynapseGrid = forwardRef<
     const { columnNames, columnOrder, rows } = modelSnapshot
     const gridRows = rows.map(row => {
       const rowObj: { [key: string]: any } = {}
-      // Use columnOrder to determine which columnNames to use and in what order
       columnOrder.forEach((index: number) => {
         const columnName = columnNames[index]
         if (columnName) {
           rowObj[columnName] = row.data[index]
         }
       })
+      // Add validation status to each row
+      rowObj.validationStatus = row.metadata?.rowValidation
+        ? row.metadata.rowValidation.isValid
+          ? 'valid'
+          : 'invalid'
+        : 'unknown'
       return rowObj
     })
     return gridRows
@@ -405,7 +410,13 @@ const SynapseGrid = forwardRef<
                   }
                   if (updatedRowIds.has(rowData._rowId)) {
                     return 'row-updated'
-                  } else return ''
+                  }
+                  if (rowData.validationStatus === 'valid') return 'row-valid'
+                  if (rowData.validationStatus === 'invalid')
+                    return 'row-invalid'
+                  if (rowData.validationStatus === 'unknown')
+                    return 'row-unknown'
+                  return ''
                 }}
                 createRow={addRowToModel}
                 duplicateRow={({ rowData }: any) => ({
