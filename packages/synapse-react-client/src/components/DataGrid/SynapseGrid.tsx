@@ -118,12 +118,13 @@ const SynapseGrid = forwardRef<
           rowObj[columnName] = row.data[index]
         }
       })
-      // Add validation status to each row
-      rowObj.validationStatus = row.metadata?.rowValidation
-        ? row.metadata.rowValidation.isValid
+      const validation = row.metadata?.rowValidation
+      rowObj.validationStatus = validation
+        ? validation.isValid
           ? 'valid'
           : 'invalid'
         : 'unknown'
+      rowObj.validationMessages = validation?.allValidationMessages ?? []
       return rowObj
     })
     return gridRows
