@@ -23,7 +23,6 @@ export default function DatasetDetailsPage() {
           cardConfiguration={{
             ...datasetCardConfiguration,
             secondaryLabelLimit: 4,
-            isHeader: true,
           }}
           sql={datasetsSql}
           searchParams={searchParams}

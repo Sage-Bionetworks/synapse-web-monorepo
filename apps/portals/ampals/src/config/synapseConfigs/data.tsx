@@ -18,10 +18,12 @@ export const filesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   name: 'Files',
   columnAliases,
   defaultShowSearchBox: true,
+  isRowSelectionVisible: true,
   tableConfiguration: {
     // columnLinks: dataColumnLinks,
     showAccessColumn: true,
     showExternalAccessIcon: true,
+    showDownloadColumn: true,
   },
   visibleColumnCount: 7,
 }
