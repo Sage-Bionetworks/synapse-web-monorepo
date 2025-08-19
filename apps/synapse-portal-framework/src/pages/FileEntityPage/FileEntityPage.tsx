@@ -31,6 +31,9 @@ function FileEntityPage() {
 
   const fileEntityPageSections = [
     {
+      element: <SynapseFileEntityLinkCard synId={entityId} version={version} />,
+    },
+    {
       id: 'properties',
       title: 'Properties',
       element: (
@@ -39,9 +42,6 @@ function FileEntityPage() {
           versionNumber={version}
         />
       ),
-    },
-    {
-      element: <SynapseFileEntityLinkCard synId={entityId} version={version} />,
     },
     entityBundle?.rootWikiId && {
       id: 'wiki',

@@ -18,6 +18,11 @@ export const datasetColumnLinks: LabelLinkConfig = [
     matchColumnName: 'name',
     overrideValueWithRowID: true,
   },
+  {
+    isMarkdown: false,
+    linkColumnName: 'url',
+    matchColumnName: 'source',
+  },
 ]
 
 export const datasetQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
@@ -41,23 +46,25 @@ export const datasetQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
 }
 
 export const datasetSchema: TableToGenericCardMapping = {
-  type: 'Dataset',
+  type: SynapseConstants.DATASET,
   title: 'name',
   subTitle: 'program',
   description: 'description',
-  secondaryLabels: ['project', 'assay', 'datasetType', 'id'],
-  icon: 'datasetType',
+  secondaryLabels: ['keywords', 'id', 'source'],
 }
 export const datasetColumnAliases: Record<string, string> = {
   id: 'On Synapse',
+  url: 'External Repository',
 }
 export const datasetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: datasetSchema,
+
   titleLinkConfig: {
     isMarkdown: false,
-    matchColumnName: 'id',
-    URLColumnName: 'id',
-    baseURL: 'Explore/Datasets/DetailsPage',
+    matchColumnName: 'name',
+    overrideLinkURLColumnName: 'url',
   },
+
+  labelLinkConfig: datasetColumnLinks,
 }

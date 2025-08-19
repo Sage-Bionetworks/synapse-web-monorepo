@@ -28,6 +28,7 @@ import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { rowsAreIdentical } from './DataGridUtils'
 import { SkeletonTable } from '../Skeleton'
+import { autocompleteColumn } from './columns/AutocompleteColumn'
 
 export type SynapseGridProps = {
   query: string
@@ -123,17 +124,49 @@ const SynapseGrid = forwardRef<
     return gridRows
   }
 
+  function getEnumeratedValuesForColumn(columnName: string): string[] | null {
+    // Options based on column name
+    // Replace with actual data source later
+    const columnEnumerations: { [key: string]: string[] } = {
+      breed: [
+        'domestic short hair',
+        'domestic long hair',
+        'persian',
+        'ragdoll',
+      ],
+      color: ['white', 'black', 'blue bicolor', 'seal bicolor'],
+    }
+
+    return columnEnumerations[columnName.toLowerCase()] || null
+  }
+
   // Convert model columns to a format suitable for DataSheetGrid
   function modelColsToGrid(modelSnapshot: GridModelSnapshot): Column[] {
     if (!modelSnapshot) return []
     const { columnNames, columnOrder } = modelSnapshot
     const gridCols: Column[] = columnOrder.map((index: number) => {
+      const columnName = columnNames[index]
+      const enumeratedValues = getEnumeratedValuesForColumn(columnName)
+
+      if (enumeratedValues) {
+        // Use autocomplete column for columns with enumerated values
+        return {
+          ...keyColumn(
+            columnName,
+            autocompleteColumn({
+              choices: enumeratedValues,
+            }),
+          ),
+          title: columnName,
+        }
+      }
       return {
+        // Default to text column for columns without enumerated values
         ...keyColumn(
-          columnNames[index],
+          columnName,
           createTextColumn({ continuousUpdates: false }),
         ),
-        title: columnNames[index],
+        title: columnName,
       }
     })
     return gridCols
