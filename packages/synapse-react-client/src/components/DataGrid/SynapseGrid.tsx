@@ -315,6 +315,9 @@ const SynapseGrid = forwardRef<
     autoCommit(filteredData)
   }
 
+  // Track the currently selected row index
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
+
   return (
     <div>
       <div>
@@ -402,22 +405,27 @@ const SynapseGrid = forwardRef<
                 value={rowValues}
                 columns={colValues}
                 rowKey="_rowId"
-                rowClassName={({ rowData }: any) => {
+                rowClassName={({ rowData, rowIndex }: any) => {
+                  let className = ''
                   if (deletedRowIds.has(rowData._rowId)) {
-                    return 'row-deleted'
+                    className += 'row-deleted'
                   }
                   if (createdRowIds.has(rowData._rowId)) {
-                    return 'row-created'
+                    className += 'row-created'
                   }
                   if (updatedRowIds.has(rowData._rowId)) {
-                    return 'row-updated'
+                    className += 'row-updated'
                   }
-                  if (rowData.validationStatus === 'valid') return 'row-valid'
+                  if (rowData.validationStatus === 'valid')
+                    className += 'row-valid'
                   if (rowData.validationStatus === 'invalid')
-                    return 'row-invalid'
+                    className += 'row-invalid'
                   if (rowData.validationStatus === 'unknown')
-                    return 'row-unknown'
-                  return ''
+                    className += 'row-unknown'
+                  if (selectedRowIndex === rowIndex) {
+                    className += ' row-selected'
+                  }
+                  return className
                 }}
                 createRow={addRowToModel}
                 duplicateRow={({ rowData }: any) => ({
@@ -425,7 +433,36 @@ const SynapseGrid = forwardRef<
                   _rowId: genId(),
                 })}
                 onChange={handleChange}
+                onActiveCellChange={({ cell }) => {
+                  setSelectedRowIndex(cell ? cell.row : null)
+                }}
               />
+              {/* Show validation messages for selected row */}
+              {selectedRowIndex !== null &&
+                rowValues[selectedRowIndex] &&
+                rowValues[selectedRowIndex].validationMessages &&
+                rowValues[selectedRowIndex].validationMessages.length > 0 && (
+                  <div
+                    style={{
+                      marginTop: 12,
+                      background: '#fffbe6',
+                      border: '1px solid #ffe58f',
+                      borderRadius: 4,
+                      padding: 10,
+                      maxWidth: 400,
+                      fontSize: 13,
+                    }}
+                  >
+                    <strong>Validation Messages:</strong>
+                    <ul style={{ margin: 0, paddingLeft: 18 }}>
+                      {rowValues[selectedRowIndex].validationMessages.map(
+                        (msg: string, i: number) => (
+                          <li key={i}>{msg}</li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                )}
             </div>
           )}
 
