@@ -1,27 +1,29 @@
-import {
-  useState,
-  useRef,
-  useMemo,
-  forwardRef,
-  useImperativeHandle,
-  useCallback,
-} from 'react'
-import { useCreateGridSession } from './useCreateGridSession'
-import { parseQueryInput } from './DataGridUtils'
-import { CreateGridRequest } from '@sage-bionetworks/synapse-client'
-import { TableQuery } from '@sage-bionetworks/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { Button, Grid, TextField } from '@mui/material'
 import {
+  CreateGridRequest,
+  GridSession,
+  TableQuery,
+} from '@sage-bionetworks/synapse-client'
+import noop from 'lodash-es/noop'
+import {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from 'react'
+import {
+  useCreateGridReplica,
   useDeleteGridSession,
   useGetGridSessionsInfinite,
-  useCreateGridReplica,
 } from '../../synapse-queries/useGridSession'
 import { displayToast } from '../ToastMessage/ToastMessage'
-import noop from 'lodash-es/noop'
-import { Button } from '@mui/material'
+import { parseQueryInput } from './DataGridUtils'
+import { useCreateGridSession } from './useCreateGridSession'
 
 export interface StartGridSessionProps {
-  onSessionChange?: (sessionId: string) => void
+  onSessionChange?: (session: GridSession) => void
   onReplicaChange?: (replicaId: number | null) => void
   onPresignedUrlChange?: (url: string) => void
   query?: string
@@ -44,8 +46,7 @@ export const StartGridSession = forwardRef<
   ) => {
     const [gridSql, setGridSql] = useState('')
     const [showDropdown, setShowDropdown] = useState(false)
-
-    const inputRef = useRef<HTMLInputElement>(null)
+    const [schemaId, setSchemaId] = useState('')
 
     const allowInput = !query
 
@@ -54,7 +55,7 @@ export const StartGridSession = forwardRef<
     const { mutate: deleteSession } = useDeleteGridSession({
       onSuccess: () => {
         displayToast('Successfully deleted grid session', 'success')
-        onSessionChange('')
+        onSessionChange(null)
         onReplicaChange(null)
         onPresignedUrlChange('')
       },
@@ -72,91 +73,89 @@ export const StartGridSession = forwardRef<
     const { mutateAsync: startGridSession } = useCreateGridSession()
     const { mutateAsync: createReplicaId } = useCreateGridReplica()
 
-    const handleStartSession = useCallback(
-      async (input: string) => {
-        const parsedInput = parseQueryInput(input)
-        try {
-          if (parsedInput.type === 'empty' || parsedInput.type === 'sql') {
-            // Start a new session and clear replicaId and presignedUrl
-            const gridRequest = {
-              concreteType:
-                'org.sagebionetworks.repo.model.grid.CreateGridRequest',
-              initialQuery: undefined as TableQuery | undefined,
-              schema$id: undefined as string | undefined,
-            } as CreateGridRequest
+    const handleStartSession = useCallback(async () => {
+      const input = gridSql
+      const parsedInput = parseQueryInput(input)
+      try {
+        if (parsedInput.type === 'empty' || parsedInput.type === 'sql') {
+          // Start a new session and clear replicaId and presignedUrl
+          const gridRequest = {
+            concreteType:
+              'org.sagebionetworks.repo.model.grid.CreateGridRequest',
+            initialQuery: undefined as TableQuery | undefined,
+            schema$id: schemaId || undefined,
+          } as CreateGridRequest
 
-            if (parsedInput.type === 'sql') {
-              gridRequest.initialQuery = {
-                sql: parsedInput.input,
-              } as TableQuery
-              setGridSql(parsedInput.input)
-              console.log('Starting grid session with table query: ', gridSql)
-            } else {
-              setGridSql('')
-              console.log('Starting a new empty grid session.')
-            }
-
-            const gridSessionResponse = await startGridSession(gridRequest)
-            console.log('Grid session started:', gridSessionResponse)
-            const newSessionId =
-              gridSessionResponse.gridSession?.sessionId || ''
-            onSessionChange?.(newSessionId)
-
-            const replica = await createReplicaId(newSessionId)
-            console.log('Replica created:', replica)
-            const newReplicaId = replica?.replica?.replicaId || null
-            onReplicaChange?.(newReplicaId)
-
-            const getPresignedUrl =
-              await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdPresignedUrl(
-                {
-                  sessionId: newSessionId,
-                  createGridPresignedUrlRequest: {
-                    gridSessionId: newSessionId,
-                    replicaId: newReplicaId || undefined,
-                  },
-                },
-              )
-            onPresignedUrlChange?.(getPresignedUrl.presignedUrl || '')
-          } else if (parsedInput.type === 'sessionId') {
-            console.log(`Joining existing session ID: ${parsedInput.input}`)
-            onSessionChange?.(parsedInput.input)
-
-            const replica = await createReplicaId(parsedInput.input)
-            console.log('Replica created:', replica)
-            const newReplicaId = replica?.replica?.replicaId || null
-            onReplicaChange?.(newReplicaId)
-
-            const getPresignedUrl =
-              await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdPresignedUrl(
-                {
-                  sessionId: parsedInput.input,
-                  createGridPresignedUrlRequest: {
-                    gridSessionId: parsedInput.input,
-                    replicaId: newReplicaId || undefined,
-                  },
-                },
-              )
-            onPresignedUrlChange?.(getPresignedUrl.presignedUrl || '')
+          if (parsedInput.type === 'sql') {
+            gridRequest.initialQuery = {
+              sql: parsedInput.input,
+            } as TableQuery
+            setGridSql(parsedInput.input)
+            console.log('Starting grid session with table query: ', gridSql)
           } else {
-            console.error(
-              'Unknown input type, please provide a valid SQL query or session ID.',
-            )
+            setGridSql('')
+            console.log('Starting a new empty grid session.')
           }
-        } catch (error) {
-          console.error('Error starting session:', error)
+
+          const gridSessionResponse = await startGridSession(gridRequest)
+          console.log('Grid session started:', gridSessionResponse)
+          const newSessionId = gridSessionResponse.gridSession!.sessionId!
+          onSessionChange(gridSessionResponse.gridSession)
+
+          const replica = await createReplicaId(newSessionId)
+          console.log('Replica created:', replica)
+          const newReplicaId = replica?.replica?.replicaId || null
+          onReplicaChange?.(newReplicaId)
+
+          const getPresignedUrl =
+            await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdPresignedUrl(
+              {
+                sessionId: newSessionId,
+                createGridPresignedUrlRequest: {
+                  gridSessionId: newSessionId,
+                  replicaId: newReplicaId || undefined,
+                },
+              },
+            )
+          onPresignedUrlChange?.(getPresignedUrl.presignedUrl || '')
+        } else if (parsedInput.type === 'sessionId') {
+          console.log(`Joining existing session ID: ${parsedInput.input}`)
+          onSessionChange?.(parsedInput.input)
+
+          const replica = await createReplicaId(parsedInput.input)
+          console.log('Replica created:', replica)
+          const newReplicaId = replica?.replica?.replicaId || null
+          onReplicaChange?.(newReplicaId)
+
+          const getPresignedUrl =
+            await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdPresignedUrl(
+              {
+                sessionId: parsedInput.input,
+                createGridPresignedUrlRequest: {
+                  gridSessionId: parsedInput.input,
+                  replicaId: newReplicaId || undefined,
+                },
+              },
+            )
+          onPresignedUrlChange?.(getPresignedUrl.presignedUrl || '')
+        } else {
+          console.error(
+            'Unknown input type, please provide a valid SQL query or session ID.',
+          )
         }
-      },
-      [
-        startGridSession,
-        onSessionChange,
-        createReplicaId,
-        onReplicaChange,
-        synapseClient.gridServicesClient,
-        onPresignedUrlChange,
-        gridSql,
-      ],
-    )
+      } catch (error) {
+        console.error('Error starting session:', error)
+      }
+    }, [
+      gridSql,
+      schemaId,
+      startGridSession,
+      onSessionChange,
+      createReplicaId,
+      onReplicaChange,
+      synapseClient.gridServicesClient,
+      onPresignedUrlChange,
+    ])
 
     useImperativeHandle(
       ref,
@@ -171,10 +170,12 @@ export const StartGridSession = forwardRef<
     }
 
     return (
-      <>
-        <div style={{ position: 'relative', width: '300px' }}>
-          <input
-            ref={inputRef}
+      <Grid container spacing={2} sx={{ mb: 2 }}>
+        <Grid size={{ xs: 12, lg: 6 }} sx={{ position: 'relative' }}>
+          <TextField
+            label={'SQL Query or Session ID'}
+            value={gridSql}
+            onChange={e => setGridSql(e.target.value)}
             type="text"
             placeholder="(Optional) Enter a SQL query or session ID"
             style={{ width: '100%' }}
@@ -182,8 +183,7 @@ export const StartGridSession = forwardRef<
             onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
             onKeyDown={e => {
               if (e.key === 'Enter') {
-                const inputValue = inputRef.current?.value || ''
-                handleStartSession(inputValue)
+                void handleStartSession()
               }
             }}
           />
@@ -215,14 +215,10 @@ export const StartGridSession = forwardRef<
                     cursor: 'pointer',
                     borderBottom: '1px solid #eee',
                   }}
-                  onMouseDown={e => {
-                    // Only fill input if not clicking the delete icon
-                    if ((e.target as HTMLElement).dataset.icon !== 'delete') {
-                      if (inputRef.current) {
-                        inputRef.current.value = session.sessionId!
-                      }
-                      setShowDropdown(false)
-                    }
+                  onClick={() => {
+                    setGridSql(session.sessionId || '')
+                    setSchemaId(session.gridJsonSchema$Id || '')
+                    void handleStartSession()
                   }}
                 >
                   <span>{session.sessionId}</span>
@@ -237,7 +233,7 @@ export const StartGridSession = forwardRef<
                       fontSize: '16px',
                       userSelect: 'none',
                     }}
-                    onMouseDown={e => {
+                    onClick={e => {
                       e.stopPropagation()
                       deleteSession(session.sessionId!)
                     }}
@@ -248,18 +244,29 @@ export const StartGridSession = forwardRef<
               ))}
             </ul>
           )}
-        </div>
-        <Button
-          variant="outlined"
-          onClick={() => {
-            const inputValue = inputRef.current?.value || ''
-            handleStartSession(inputValue)
-          }}
-          sx={{ color: 'inherit', margin: '10px 0' }}
-        >
-          Start Grid Session
-        </Button>
-      </>
+        </Grid>
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <TextField
+            label={'Schema (optional)'}
+            placeholder={'Enter a schema $id e.g. my-org.NameOfMySchema-1.0.0'}
+            value={schemaId}
+            fullWidth
+            onChange={e => setSchemaId(e.target.value)}
+          />
+        </Grid>
+        <Grid size={12}>
+          {' '}
+          <Button
+            color={'primary'}
+            variant="contained"
+            onClick={() => {
+              handleStartSession()
+            }}
+          >
+            Start Grid Session
+          </Button>
+        </Grid>
+      </Grid>
     )
   },
 )
