@@ -78,7 +78,10 @@ export default function HomePage() {
           },
         }}
       >
-        <PortalFeaturedPartners sql={partnersSql} />
+        <PortalFeaturedPartners
+          sql={partnersSql}
+          titleText="Our Contributors"
+        />
       </SectionLayout>
       <AMPALSPublishingRequirements />
       <div className={'home-bg-dark'}>
