@@ -10,9 +10,16 @@ export type AutocompleteOption =
   | Array<unknown>
 
 export type AutocompleteCellProps = {
-  rowData: string
-  setRowData: (value: string) => void
+  rowData: AutocompleteOption
+  setRowData: (value: AutocompleteOption) => void
   choices: AutocompleteOption[]
+}
+
+function castCellValueToString(toCast: any): string {
+  if (typeof toCast === 'object') {
+    return JSON.stringify(toCast)
+  }
+  return String(toCast)
 }
 
 function AutocompleteCell({
@@ -22,21 +29,21 @@ function AutocompleteCell({
 }: AutocompleteCellProps) {
   const currentValue = rowData || ''
 
-  const [localState, setLocalState] = useState(rowData)
+  const [localInputState, setLocalInputState] = useState<string>(
+    castCellValueToString(rowData),
+  )
 
   return (
     <Autocomplete
       freeSolo
       disablePortal={false}
       options={choices}
-      getOptionLabel={option =>
-        typeof option === 'object' ? JSON.stringify(option) : String(option)
-      }
+      getOptionLabel={option => castCellValueToString(option)}
       value={currentValue}
       onInputChange={(_, newInputValue) => {
-        setLocalState(newInputValue || '')
+        setLocalInputState(newInputValue)
       }}
-      onBlur={() => setRowData(localState)}
+      onBlur={() => setRowData(localInputState)}
       renderInput={params => (
         <TextField
           {...params}

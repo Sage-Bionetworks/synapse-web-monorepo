@@ -42,23 +42,24 @@ function isOneOfSchemaDescribingEnum(
  * @returns an array of values that are valid options for the schema
  */
 export default function getEnumeratedValues(
-  jsonSchema: Record<string, any>,
+  jsonSchema: Record<string, unknown>,
 ): { value: EnumeratedValue }[] {
   let rjsfOptionsList: EnumOptionsType[] = []
 
-  if (jsonSchema?.oneOf && !isOneOfSchemaDescribingEnum(jsonSchema.oneOf)) {
+  if (
+    jsonSchema?.oneOf &&
+    isArray(jsonSchema.oneOf) &&
+    !isOneOfSchemaDescribingEnum(jsonSchema.oneOf)
+  ) {
     // PORTALS-3723
     // RJSF assumes that a schema with a `oneOf` passed to `optionsList` is a list of options with `const` properties.
     // That is not the case in some of our schemas, so if there is only one `oneOf` schema that does not describe `null`,
     // we use that schema directly.
     const oneOfSchemasOmitNulltype = jsonSchema.oneOf.filter(
-      (s: any) => !isSchemaDescribingNullType(s),
+      s => !isSchemaDescribingNullType(s),
     )
     if (
       oneOfSchemasOmitNulltype.length == 1 &&
-      isObject(jsonSchema.oneOf[0]) &&
-      Object.hasOwn(jsonSchema.oneOf[0], 'enum')
-    ) {
       isObject(oneOfSchemasOmitNulltype[0]) &&
       Object.hasOwn(oneOfSchemasOmitNulltype[0], 'enum')
     ) {
