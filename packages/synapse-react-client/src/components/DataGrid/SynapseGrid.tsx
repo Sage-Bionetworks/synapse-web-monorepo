@@ -440,7 +440,7 @@ const SynapseGrid = forwardRef<
               {/* Show validation messages for selected row */}
               {selectedRowIndex !== null &&
                 rowValues[selectedRowIndex] &&
-                rowValues[selectedRowIndex].validationMessages &&
+                Array.isArray(rowValues[selectedRowIndex].validationMessages) &&
                 rowValues[selectedRowIndex].validationMessages.length > 0 && (
                   <div
                     style={{
