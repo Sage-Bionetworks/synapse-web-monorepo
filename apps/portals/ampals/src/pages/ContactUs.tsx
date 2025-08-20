@@ -1,18 +1,18 @@
 import { MarkdownSynapse } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
-import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
+import AMPALSResearchPageLayout from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSResearchPageLayout'
 
 function ContactUs() {
   return (
-    <SectionLayout
-      title={'Contact Us'}
-      ContainerProps={{ className: 'ContactUs' }}
+    <AMPALSResearchPageLayout
+      headerTitle="Contact Us"
+      sidebarTitle="Contact Us"
     >
       <MarkdownSynapse
         ownerId="syn64892175"
         wikiId="633933"
         loadingSkeletonRowCount={30}
       />
-    </SectionLayout>
+    </AMPALSResearchPageLayout>
   )
 }
 
