@@ -13,14 +13,14 @@
   background: #fff7e6;
 }
 
-.row-valid {
-  border-left: 4px solid #4caf50 !important; // green
+.row-valid .dsg-cell-gutter {
+  background: rgba(120, 244, 54, 0.1); // green with opacity
 }
 
-.row-invalid {
-  border-left: 4px solid #f44336 !important; // red
+.row-invalid .dsg-cell-gutter {
+  background: rgba(244, 67, 54, 0.1); // red with opacity
 }
 
-.row-unknown {
-  border-left: 4px solid #fff700 !important; // yellow
+.row-unknown .dsg-cell-gutter {
+  background: rgba(235, 244, 54, 0.1); // yellow with opacity
 }
