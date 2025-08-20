@@ -59,7 +59,10 @@ export default function getEnumeratedValues(
       isObject(jsonSchema.oneOf[0]) &&
       Object.hasOwn(jsonSchema.oneOf[0], 'enum')
     ) {
-      rjsfOptionsList = optionsList(jsonSchema.oneOf[0]) || []
+      isObject(oneOfSchemasOmitNulltype[0]) &&
+      Object.hasOwn(oneOfSchemasOmitNulltype[0], 'enum')
+    ) {
+      rjsfOptionsList = optionsList(oneOfSchemasOmitNulltype[0]) || []
     }
   } else {
     rjsfOptionsList = optionsList(jsonSchema) || []
