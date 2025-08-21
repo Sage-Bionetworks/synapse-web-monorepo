@@ -513,7 +513,7 @@ function useGetEntityBenefactorACLQueryOptions(
   SynapseClientError,
   AccessControlList
 > {
-  const selectTransform = (
+  const selectBenefactorACL = (
     data: EntityBundle<{ includeBenefactorACL: true }>,
   ): AccessControlList => data.benefactorAcl
   return useGetEntityBundleSuspenseQueryOptions<
@@ -525,7 +525,7 @@ function useGetEntityBenefactorACLQueryOptions(
     {
       includeBenefactorACL: true,
     },
-    selectTransform,
+    selectBenefactorACL,
   )
 }
 
