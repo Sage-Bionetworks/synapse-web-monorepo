@@ -14,6 +14,7 @@ export type CitingWork = {
   title?: string
   publisher?: string
   publicationYear?: number
+  containerTitle?: string
 }
 
 export const getDataCiteUsageQueryKey = (doi?: string) =>
@@ -34,7 +35,11 @@ async function fetchCitationsViaGraphQL(signal: AbortSignal, doi: string) {
               titles { title }
               publisher { name }
               publicationYear
-              types { resourceTypeGeneral }
+              
+              # publication (container) info
+              container {
+                title
+              }
             }
           }
         }
@@ -60,7 +65,7 @@ async function fetchCitationsViaGraphQL(signal: AbortSignal, doi: string) {
         : undefined
     const publisher = n?.publisher?.name ?? undefined
     const publicationYear = n?.publicationYear ?? undefined
-    const resourceTypeGeneral = n?.types?.resourceTypeGeneral ?? undefined
+    const containerTitle = n?.container?.title ?? undefined
 
     return {
       id: bare,
@@ -68,7 +73,7 @@ async function fetchCitationsViaGraphQL(signal: AbortSignal, doi: string) {
       title,
       publisher,
       publicationYear,
-      resourceTypeGeneral,
+      containerTitle,
     } as CitingWork
   })
 }

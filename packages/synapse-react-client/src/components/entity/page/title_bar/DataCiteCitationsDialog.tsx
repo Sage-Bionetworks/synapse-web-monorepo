@@ -22,7 +22,7 @@ export const DataCiteCitationsDialog: React.FC<Props> = ({
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle>
-        Citations
+        Cited by
         <IconButton
           aria-label="close"
           onClick={onClose}
@@ -48,6 +48,7 @@ export const DataCiteCitationsDialog: React.FC<Props> = ({
                     />
                   </Link>
                   <br />
+                  {w.containerTitle ? `${w.containerTitle} · ` : ''}
                   {w.publisher ? `${w.publisher} · ` : ''}
                   {w.publicationYear ?? ''}
                 </Typography>

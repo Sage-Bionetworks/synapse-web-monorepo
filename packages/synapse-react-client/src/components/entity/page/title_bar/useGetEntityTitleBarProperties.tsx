@@ -138,7 +138,7 @@ export function useGetEntityTitleBarProperties(
       ),
     },
     isDoiUsage && {
-      key: 'dataCiteUsage',
+      key: 'citations',
       title: 'Citations',
       value: (
         <>
