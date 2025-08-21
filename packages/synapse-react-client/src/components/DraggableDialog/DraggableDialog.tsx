@@ -3,7 +3,7 @@ import { Box, Paper } from '@mui/material'
 import { useRef } from 'react'
 import { SynapseChat } from '@/components/SynapseChat/index'
 
-export default function DraggableDialogue() {
+export default function DraggableDialog() {
   const draggableRef = useRef<HTMLDivElement>(null)
 
   const position = { x: 100, y: 100 }
