@@ -21,6 +21,10 @@ export type RedirectDialogProps = {
   redirectUrl?: string
 }
 
+// PORTALS-3675: Set the initial countdown seconds to 10
+// This is the time before the redirect occurs, allowing users to cancel if needed.
+const initialCountdownSeconds = 10
+
 export const redirectInstructionsMap = {
   'https://sites.google.com/sagebase.org/mc2intranet/home?authuser=0': (
     <>
@@ -63,10 +67,6 @@ const isSynapseURL = (url: string) => {
     parsedURL.hostname.toLowerCase() === 'www.synapse.org' &&
     parsedURL.pathname.startsWith('/Synapse')
   )
-}
-
-const getInitialCountdownSeconds = (redirectURL: string) => {
-  return isSynapseURL(redirectURL) ? 10 : 30
 }
 
 const parseSynIdFromRedirectUrl = (redirectUrl: string | undefined) => {
@@ -161,7 +161,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
 
   useEffect(() => {
     if (redirectUrl && !countdownSeconds) {
-      setCountdownSeconds(getInitialCountdownSeconds(redirectUrl))
+      setCountdownSeconds(initialCountdownSeconds)
     }
   }, [countdownSeconds, redirectUrl])
 
