@@ -408,22 +408,22 @@ const SynapseGrid = forwardRef<
                 rowClassName={({ rowData, rowIndex }: any) => {
                   let className = ''
                   if (deletedRowIds.has(rowData._rowId)) {
-                    className += 'row-deleted'
+                    className += ' row-deleted'
                   }
                   if (createdRowIds.has(rowData._rowId)) {
-                    className += 'row-created'
+                    className += ' row-created'
                   }
                   if (updatedRowIds.has(rowData._rowId)) {
-                    className += 'row-updated'
+                    className += ' row-updated'
                   }
                   if (rowData.validationStatus === 'valid')
-                    className += 'row-valid'
+                    className += ' row-valid'
                   if (rowData.validationStatus === 'invalid')
-                    className += 'row-invalid'
+                    className += ' row-invalid'
                   if (rowData.validationStatus === 'unknown')
-                    className += 'row-unknown'
+                    className += ' row-unknown'
                   if (selectedRowIndex === rowIndex) {
-                    className += ' row-selected'
+                    className += '  row-selected'
                   }
                   return className
                 }}
