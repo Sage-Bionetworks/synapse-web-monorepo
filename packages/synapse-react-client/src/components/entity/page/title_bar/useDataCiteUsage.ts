@@ -2,8 +2,6 @@ import { useMemo } from 'react'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 
 type RestUsage = {
-  //   viewCount: number
-  //   downloadCount: number
   citationCount: number
   citations: CitingWork[]
 }
@@ -17,6 +15,8 @@ export type CitingWork = {
   containerTitle?: string
 }
 
+export const maxCitationCount = 500
+
 export const getDataCiteUsageQueryKey = (doi?: string) =>
   ['datacite-usage', doi] as const
 
@@ -29,7 +29,7 @@ async function fetchCitationsViaGraphQL(signal: AbortSignal, doi: string) {
     query: `
       query($id: ID!) {
         work(id: $id) {
-          citations(first: 500) {
+          citations(first: ${maxCitationCount}) {
             nodes {
               id
               titles { title }
@@ -61,8 +61,9 @@ async function fetchCitationsViaGraphQL(signal: AbortSignal, doi: string) {
     const bare = toBareDoi(n?.id ?? '')
     const title =
       Array.isArray(n?.titles) && n.titles.length
-        ? n.titles[0]?.title.replaceAll('?', '')
-        : undefined
+        ? n.titles[0]?.title.replaceAll('?', '') // many extended characters are returned as '?'s from DataCite
+        : // for example, see https://commons.datacite.org/doi.org/10.1101%2F205807
+          undefined
     const publisher = n?.publisher?.name ?? undefined
     const publicationYear = n?.publicationYear ?? undefined
     const containerTitle = n?.container?.title ?? undefined
@@ -82,25 +83,9 @@ async function fetchDataCiteUsage(
   signal: AbortSignal,
   doi: string,
 ): Promise<RestUsage | null> {
-  const encoded = encodeURIComponent(doi)
-  const r = await fetch(`https://api.datacite.org/dois/${encoded}`, {
-    signal,
-    headers: { accept: 'application/vnd.api+json' },
-  })
-  if (!r.ok) throw new Error(`DataCite REST ${r.status}`)
-  const json = await r.json()
-  const attributes = json?.data?.attributes
-  if (!attributes) return null
-  const relationships = json?.data?.relationships
-  const citationIds: string[] = (relationships?.citations?.data ?? [])
-    .map((d: any) => d?.id)
-    .filter(Boolean)
-  const citations: CitingWork[] =
-    citationIds.length > 0 ? await fetchCitationsViaGraphQL(signal, doi) : []
+  const citations: CitingWork[] = await fetchCitationsViaGraphQL(signal, doi)
   return {
-    // viewCount: attributes.viewCount ?? 0,
-    // downloadCount: attributes.downloadCount ?? 0,
-    citationCount: attributes.citationCount ?? 0,
+    citationCount: citations.length ?? 0,
     citations,
   }
 }

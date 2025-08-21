@@ -15,7 +15,7 @@ import CopyToClipboardString from '../../../CopyToClipboardString/CopyToClipboar
 import { HasAccessV2 } from '../../../HasAccess/HasAccessV2'
 import { DoiObjectType } from '@sage-bionetworks/synapse-client'
 import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
-import { useDataCiteUsage } from './useDataCiteUsage'
+import { maxCitationCount, useDataCiteUsage } from './useDataCiteUsage'
 import { DataCiteCitationsDialog } from './DataCiteCitationsDialog'
 
 export type EntityProperty = {
@@ -144,6 +144,7 @@ export function useGetEntityTitleBarProperties(
         <>
           <Link onClick={() => setDataCiteCitationsDialogOpen(true)}>
             {dataCiteUsage.citationCount}
+            {dataCiteUsage.citationCount == maxCitationCount && '+'}
           </Link>
           <DataCiteCitationsDialog
             open={dataCiteCitationsDialogOpen}
