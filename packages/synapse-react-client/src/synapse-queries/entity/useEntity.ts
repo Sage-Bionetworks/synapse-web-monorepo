@@ -4,7 +4,9 @@
 
 import SynapseClient from '@/synapse-client'
 import { allowNotFoundError } from '@/synapse-client/SynapseClientUtils'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { entityJsonKeys } from '@/utils/functions/EntityTypeUtils'
+import { createTableUpdateTransactionRequest } from '@/utils/functions/TableColumnSchemaUtils'
 import {
   EntityLookupRequest,
   SynapseClientError,
@@ -47,9 +49,7 @@ import { SetOptional } from 'type-fest'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 import { KeyFactory } from '../KeyFactory'
 import { invalidateAllQueriesForEntity } from '../QueryFilterUtils'
-import { useGetEntityBundleQueryOptions } from './useEntityBundle'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { createTableUpdateTransactionRequest } from '@/utils/functions/TableColumnSchemaUtils'
+import { useGetEntityBundleSuspenseQueryOptions } from './useEntityBundle'
 
 export function useGetEntityQueryOptions<T extends Entity>() {
   const { keyFactory, accessToken } = useSynapseContext()
@@ -513,18 +513,20 @@ function useGetEntityBenefactorACLQueryOptions(
   SynapseClientError,
   AccessControlList
 > {
-  const opts = useGetEntityBundleQueryOptions<{ includeBenefactorACL: true }>(
+  const selectTransform = (
+    data: EntityBundle<{ includeBenefactorACL: true }>,
+  ): AccessControlList => data.benefactorAcl
+  return useGetEntityBundleSuspenseQueryOptions<
+    { includeBenefactorACL: true },
+    AccessControlList
+  >(
     entityId,
     undefined,
     {
       includeBenefactorACL: true,
     },
+    selectTransform,
   )
-
-  return {
-    ...opts,
-    select: data => data.benefactorAcl,
-  }
 }
 
 /**

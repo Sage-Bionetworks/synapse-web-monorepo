@@ -359,20 +359,22 @@ export function EntityFinder({
             <div style={searchActive ? { display: 'none' } : {}}>
               {treeOnly ? (
                 <div>
-                  <EntityTree
-                    toggleSelection={toggleSelection}
-                    showDropdown={true}
-                    visibleTypes={selectableAndVisibleTypesInTree}
-                    initialScope={initialScope}
-                    selectedEntities={selectedEntities}
-                    projectId={projectId}
-                    initialContainer={initialContainer}
-                    currentContainer={currentContainer}
-                    setCurrentContainer={setCurrentContainer}
-                    showScopeAsRootNode={false}
-                    treeNodeType={EntityTreeNodeType.SINGLE_PANE}
-                    selectableTypes={selectableTypes}
-                  />
+                  <SynapseErrorBoundary>
+                    <EntityTree
+                      toggleSelection={toggleSelection}
+                      showDropdown={true}
+                      visibleTypes={selectableAndVisibleTypesInTree}
+                      initialScope={initialScope}
+                      selectedEntities={selectedEntities}
+                      projectId={projectId}
+                      initialContainer={initialContainer}
+                      currentContainer={currentContainer}
+                      setCurrentContainer={setCurrentContainer}
+                      showScopeAsRootNode={false}
+                      treeNodeType={EntityTreeNodeType.SINGLE_PANE}
+                      selectableTypes={selectableTypes}
+                    />
+                  </SynapseErrorBoundary>
                 </div>
               ) : (
                 <div className="EntityFinderReflexContainer">
@@ -381,25 +383,29 @@ export function EntityFinder({
                       className="TreeViewReflexElement"
                       flex={0.24}
                     >
-                      <EntityTree
-                        selectedEntities={selectedEntities}
-                        setDetailsViewConfiguration={setConfigFromTreeView}
-                        showDropdown={true}
-                        visibleTypes={visibleTypesInTree}
-                        initialScope={initialScope}
-                        projectId={projectId}
-                        initialContainer={initialContainer}
-                        currentContainer={currentContainer}
-                        setCurrentContainer={setCurrentContainer}
-                        treeNodeType={EntityTreeNodeType.DUAL_PANE}
-                        setBreadcrumbItems={setBreadcrumbs}
-                        selectableTypes={visibleTypesInTree}
-                      />
+                      <SynapseErrorBoundary>
+                        <EntityTree
+                          selectedEntities={selectedEntities}
+                          setDetailsViewConfiguration={setConfigFromTreeView}
+                          showDropdown={true}
+                          visibleTypes={visibleTypesInTree}
+                          initialScope={initialScope}
+                          projectId={projectId}
+                          initialContainer={initialContainer}
+                          currentContainer={currentContainer}
+                          setCurrentContainer={setCurrentContainer}
+                          treeNodeType={EntityTreeNodeType.DUAL_PANE}
+                          setBreadcrumbItems={setBreadcrumbs}
+                          selectableTypes={visibleTypesInTree}
+                        />
+                      </SynapseErrorBoundary>
                     </ReflexElement>
                     <ReflexSplitter></ReflexSplitter>
                     <ReflexElement className="DetailsViewReflexElement">
-                      <EntityDetailsList {...entityDetailsListProps} />
-                      <Breadcrumbs {...breadcrumbsProps} />
+                      <SynapseErrorBoundary>
+                        <EntityDetailsList {...entityDetailsListProps} />
+                        <Breadcrumbs {...breadcrumbsProps} />
+                      </SynapseErrorBoundary>
                     </ReflexElement>
                   </ReflexContainer>
                 </div>
