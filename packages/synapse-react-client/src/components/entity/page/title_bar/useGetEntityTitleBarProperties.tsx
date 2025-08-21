@@ -5,7 +5,7 @@ import {
   isEntityRefCollectionView,
   isVersionableEntity,
 } from '@/utils/functions/EntityTypeUtils'
-import { Box, Link } from '@mui/material'
+import { Badge, Box, Link } from '@mui/material'
 import {
   EntityRefCollectionView,
   EntityType,
@@ -15,6 +15,8 @@ import CopyToClipboardString from '../../../CopyToClipboardString/CopyToClipboar
 import { HasAccessV2 } from '../../../HasAccess/HasAccessV2'
 import { DoiObjectType } from '@sage-bionetworks/synapse-client'
 import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
+import { useDataCiteUsage } from './useDataCiteUsage'
+import { FileDownload, FormatQuote, Visibility } from '@mui/icons-material'
 
 export type EntityProperty = {
   key: string
@@ -93,8 +95,13 @@ export function useGetEntityTitleBarProperties(
   const doiAssociation = useFallbackVersionlessDOI
     ? versionlessDOIAssociation
     : bundle?.doiAssociation
+  const { data: dataCiteUsage } = useDataCiteUsage(doiAssociation?.doiUri)
   const doi = doiAssociation && `https://doi.org/${doiAssociation?.doiUri}`
-
+  const isDoiUsage =
+    !!dataCiteUsage &&
+    (dataCiteUsage.viewCount > 0 ||
+      dataCiteUsage.downloadCount > 0 ||
+      dataCiteUsage.citationCount > 0)
   const containerItems = entityChildrenResponse?.totalChildCount
 
   const datasetItems =
@@ -131,6 +138,41 @@ export function useGetEntityTitleBarProperties(
         <Link href={doi} rel={'noopener noreferrer'} target={'_blank'}>
           {doi}
         </Link>
+      ),
+    },
+    isDoiUsage && {
+      key: 'dataCiteUsage',
+      title: 'DOI Usage',
+      value: (
+        <>
+          {dataCiteUsage.citationCount > 0 && (
+            <Badge
+              badgeContent={dataCiteUsage.citationCount}
+              color="primary"
+              title="Citation Count"
+            >
+              <FormatQuote />
+            </Badge>
+          )}
+          {dataCiteUsage.viewCount > 0 && (
+            <Badge
+              badgeContent={dataCiteUsage.viewCount}
+              color="primary"
+              title="View Count"
+            >
+              <Visibility />
+            </Badge>
+          )}
+          {dataCiteUsage.downloadCount > 0 && (
+            <Badge
+              badgeContent={dataCiteUsage.downloadCount}
+              color="primary"
+              title="Download Count"
+            >
+              <FileDownload />
+            </Badge>
+          )}
+        </>
       ),
     },
     md5 && {
