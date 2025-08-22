@@ -7,6 +7,9 @@ import {
 import * as SynapseConstants from '@/utils/SynapseConstants'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import { useExportToTerra } from './useExportToTerra'
+import { displayToast } from '../../components/ToastMessage/ToastMessage'
+import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
+import { addDrsUriToSql } from './useExportToCavatica'
 
 const mockCreatePfb = vi.fn()
 
@@ -14,17 +17,14 @@ vi.mock('../table/useDownloadTable', () => ({
   useDownloadTableQueryResultAsPFB: () => ({ mutateAsync: mockCreatePfb }),
 }))
 
-import { displayToast } from '../../components/ToastMessage/ToastMessage'
 vi.mock('../../components/ToastMessage/ToastMessage', () => ({
   displayToast: vi.fn(),
 }))
 
-import { parseEntityIdFromSqlStatement } from '../../utils/functions/SqlFunctions'
 vi.mock('../../utils/functions/SqlFunctions', () => ({
   parseEntityIdFromSqlStatement: vi.fn(),
 }))
 
-import { addDrsUriToSql } from './useExportToCavatica'
 vi.mock('./useExportToCavatica', () => ({
   addDrsUriToSql: vi.fn(),
 }))
