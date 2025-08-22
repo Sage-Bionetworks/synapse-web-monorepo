@@ -27,32 +27,34 @@ function FeaturedDataTabs(props: FeaturedDataTabsProps) {
   return (
     <Box
       className="FeaturedDataTabs"
-      sx={{ padding: { xs: '40px', lg: '80px' } }}
+      sx={{ padding: { xs: '0px 40px 40px 40px', lg: '0px 80px 80px 80px' } }}
     >
       {/* tabs */}
-      <div className="FeaturedDataTabs__tabs">
-        {configs.map((config, index) => {
-          const isSelectedTabIndex: boolean = index === selectedTabIndex
-          return (
-            <div
-              className={`FeaturedDataTabs__tabs__tab ${
-                isSelectedTabIndex
-                  ? 'FeaturedDataTabs__tabs__tab__selected'
-                  : ''
-              }`}
-              key={config.title}
-            >
-              <button
-                className="SRC-centerAndJustifyContent"
-                onClick={() => setSelectedTabIndex(index)}
+      {configs.length > 1 && (
+        <div className="FeaturedDataTabs__tabs">
+          {configs.map((config, index) => {
+            const isSelectedTabIndex: boolean = index === selectedTabIndex
+            return (
+              <div
+                className={`FeaturedDataTabs__tabs__tab ${
+                  isSelectedTabIndex
+                    ? 'FeaturedDataTabs__tabs__tab__selected'
+                    : ''
+                }`}
+                key={config.title}
               >
-                {config.icon && <Icon type={config.icon}></Icon>}
-                <span>{config.title}</span>
-              </button>
-            </div>
-          )
-        })}
-      </div>
+                <button
+                  className="SRC-centerAndJustifyContent"
+                  onClick={() => setSelectedTabIndex(index)}
+                >
+                  {config.icon && <Icon type={config.icon}></Icon>}
+                  <span>{config.title}</span>
+                </button>
+              </div>
+            )
+          })}
+        </div>
+      )}
       {/* tab content */}
       {selectedTabProps && (
         <>
@@ -72,6 +74,7 @@ function FeaturedDataTabs(props: FeaturedDataTabsProps) {
                     color="secondary"
                     href={selectedTabProps.explorePagePath}
                     sx={theme => ({
+                      mb: '40px',
                       [theme.breakpoints.down('sm')]: {
                         width: '100%',
                       },

@@ -28,6 +28,7 @@ export function useExportToTerra(
         fileIdColumnName,
         fileNameColumnName,
         fileVersionColumnName,
+        true, // remove spaces from select columns
       )
       const downloadPfbRequest: DownloadPFBRequest = {
         sql,
