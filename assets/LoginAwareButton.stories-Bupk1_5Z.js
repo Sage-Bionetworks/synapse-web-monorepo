@@ -1,0 +1,51 @@
+import{j as m}from"./jsx-runtime-D_zvdyIk.js";import{E as l}from"./ExitToApp-C4ldoq3O.js";import{L as s}from"./LoginAwareButton-0QqTVH6J.js";import"./createSvgIcon-Dj2HycGS.js";import"./index-Dj1d4BqT.js";import"./iframe-TlcNnpHp.js";import"./createTheme-pvhOUZyw.js";import"./DefaultPropsProvider-B4wQ821E.js";import"./useFiles-FYuonao8.js";import"./VerificationSubmission-OWkqLMYZ.js";import"./SynapseConstants-Co8dGAeQ.js";import"./OrientationBanner-BKyyQUa8.js";import"./index-DGf3smqW.js";import"./spreadSx-CwcO6WA9.js";import"./react-DdDibM_d.js";import"./FullWidthAlert-C-IC2KrU.js";import"./Alert-DR4rcZNl.js";import"./useSlot-IA_vObsD.js";import"./useForkRef-BHqKRelU.js";import"./createSimplePaletteValueFilter-D9dK7LRT.js";import"./Close-Dfx5VX34.js";import"./IconButton-5dp10n6T.js";import"./useTimeout-Cn8rA_AT.js";import"./ButtonBase-D6StLzVo.js";import"./isFocusVisible-B8k4qzLc.js";import"./CircularProgress-D5IZ-XOY.js";import"./Paper-CRp1MfuN.js";import"./useTheme-DzaEsJZx.js";import"./useTheme-ChFb1gM-.js";import"./Stack-CU3hXGpo.js";import"./extendSxProp-XPQdjpPF.js";import"./getThemeProps-C8ZyFRso.js";import"./Box-BoJfoAK2.js";import"./AlertTitle-C9125y5h.js";import"./Typography-CeYlYS3n.js";import"./index-Gxu560yY.js";import"./ClickAwayListener-DwWoVyJe.js";import"./getReactElementRef-CbVIyvnd.js";import"./index-B81YNvG1.js";import"./index-DtXhXAQj.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-DgiJlUnu.js";import"./Tooltip-BnCZGVg6.js";import"./index-CnaJhkGM.js";import"./useControlled-qa7mk4OM.js";import"./Popper-CqhVe4Td.js";import"./Button-LmC9B_pW.js";import"./fetchWithExponentialTimeout-CXmnpl-T.js";import"./StringUtils-C5rFena9.js";import"./useQuery-Bvww99u4.js";import"./QueryClientProvider-BDoqR9Ee.js";import"./Link-BW1h0oRf.js";import"./Collapse-BRcEHh_Y.js";import"./_baseUniq-XaDoym7p.js";import"./_Uint8Array-DqLRerek.js";import"./isArray-BCPw1xdT.js";import"./_getTag-TRalT4-G.js";import"./isEqual-pR9-SkGa.js";import"./merge-Cr6niOtn.js";import"./_initCloneObject-C35SbE2c.js";import"./identity-DKeuBCMA.js";import"./tinycolor-Begke6kS.js";import"./Fade-BTvapujN.js";import"./inputBaseClasses-B5I_2cVd.js";import"./calculateFriendlyFileSize-CX4zkHbj.js";import"./CheckCircleTwoTone-BiSJyRNH.js";import"./InfoTwoTone-xmh64BVe.js";import"./useMutation-Mah1Ry7w.js";import"./dayjs.min-D6rrA4r6.js";import"./chunk-AYJ5UCUI-ByReiuUj.js";import"./cloneDeep-Bph8_Rcw.js";import"./Skeleton-3reWCr-Q.js";const Ro={title:"UI/LoginAwareButton",component:s,parameters:{backgrounds:{default:"Challenge Header",values:[{name:"Challenge Header",value:"#3E68AA"}]}},argTypes:{isAuthenticated:{control:{type:"boolean"}}},args:{isAuthenticated:!0}},o={args:{isAuthenticated:!1,children:"Register for this Challenge",to:"/pathName?key=value#fragment",href:"",disableElevation:!0,variant:"contained",color:"secondary",sx:{color:"white",fontSize:"1.12em",textTransform:"none",padding:"4px 18px",fontWeight:400,":hover":{color:"white"},":active":{color:"white"},":visited":{color:"white"}},replace:!1}},r={args:{isAuthenticated:!0,children:"Leave Challenge",onClick:()=>{alert("Leave Challenge Clicked")},endIcon:m.jsx(l,{}),variant:"outlined",sx:{borderColor:"white",color:"white",fontSize:"1.12em",textTransform:"none",padding:"4px 18px",fontWeight:400,":hover":{color:"#172430",borderColor:"#172430"}},replace:!1}};var e,t,i;o.parameters={...o.parameters,docs:{...(e=o.parameters)==null?void 0:e.docs,source:{originalSource:`{
+  args: {
+    isAuthenticated: false,
+    children: 'Register for this Challenge',
+    to: '/pathName?key=value#fragment',
+    href: '',
+    disableElevation: true,
+    variant: 'contained',
+    color: 'secondary',
+    sx: {
+      color: 'white',
+      fontSize: '1.12em',
+      textTransform: 'none',
+      padding: '4px 18px',
+      fontWeight: 400,
+      ':hover': {
+        color: 'white'
+      },
+      ':active': {
+        color: 'white'
+      },
+      ':visited': {
+        color: 'white'
+      }
+    },
+    replace: false
+  }
+}`,...(i=(t=o.parameters)==null?void 0:t.docs)==null?void 0:i.source}}};var n,a,p;r.parameters={...r.parameters,docs:{...(n=r.parameters)==null?void 0:n.docs,source:{originalSource:`{
+  args: {
+    isAuthenticated: true,
+    children: 'Leave Challenge',
+    onClick: () => {
+      alert('Leave Challenge Clicked');
+    },
+    endIcon: <ExitToAppIcon />,
+    variant: 'outlined',
+    sx: {
+      borderColor: 'white',
+      color: 'white',
+      fontSize: '1.12em',
+      textTransform: 'none',
+      padding: '4px 18px',
+      fontWeight: 400,
+      ':hover': {
+        color: '#172430',
+        borderColor: '#172430'
+      }
+    },
+    replace: false
+  }
+}`,...(p=(a=r.parameters)==null?void 0:a.docs)==null?void 0:p.source}}};const zo=["Register","Leave"];export{r as Leave,o as Register,zo as __namedExportsOrder,Ro as default};
