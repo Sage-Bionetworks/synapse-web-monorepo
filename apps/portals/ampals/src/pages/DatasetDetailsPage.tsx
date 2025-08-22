@@ -49,6 +49,7 @@ export default function DatasetDetailsPage() {
           const rowId = rowData?.rowId
           const synId = `syn${rowId}`
           const source = headers?.findIndex(h => h.name === 'source')
+          // See PORTALS-3757
           const includeFiles =
             source && rowData?.values[source] != 'Critical Path Institute'
           const detailsPageContent: DetailsPageContentType = [
