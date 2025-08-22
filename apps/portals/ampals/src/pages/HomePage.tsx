@@ -27,13 +27,13 @@ export default function HomePage() {
       title: 'For Researchers',
       description:
         'Tutorials about using this portal, as well as links to external partner resources, and related ALS knowledge portals.',
-      link: '/Resources/For Researchers',
+      link: '/Data Access',
     },
     {
       title: 'For Data Contributors',
       description:
         'Visit this page for instructions on how to contribute data to this portal.',
-      link: '/Resources/For Contributors',
+      link: '/Contribute Data',
     },
     {
       title: 'Publishing Requirements',
