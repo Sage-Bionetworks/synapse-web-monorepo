@@ -15,17 +15,18 @@ function Footer() {
   }
   const { name, icon } = logoFooterConfig
   const logo = name ? (
-    <span>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
       <button onClick={goToTop}>{name}</button>
       <a
         target="_blank"
         rel="noopener noreferrer"
         id="powered-by-anchor"
-        href="https://synapse.org"
+        href="https://www.synapse.org"
+        style={{ height: '14px' }}
       >
         <PoweredBySvg />
       </a>
-    </span>
+    </Box>
   ) : (
     <img alt="footer" className="nav-logo" src={icon} />
   )

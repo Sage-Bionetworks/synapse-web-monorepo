@@ -21,7 +21,7 @@ function ResourcesForContributors() {
     >
       <MarkdownSynapse
         ownerId="syn64892175"
-        wikiId="631451"
+        wikiId="632172"
         loadingSkeletonRowCount={50}
       />
     </AMPALSResearchPageLayout>
