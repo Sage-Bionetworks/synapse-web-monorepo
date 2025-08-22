@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
 import {
   QueryBundleRequest,
@@ -50,8 +50,8 @@ const testQueryRequest: QueryBundleRequest = {
 describe('useExportToTerra ()', () => {
   beforeEach(() => {
     vi.resetAllMocks()
-    mocked(parseEntityIdFromSqlStatement).mockReturnValue(entityId)
-    mocked(addDrsUriToSql).mockReturnValue(transformedSql)
+    vi.mocked(parseEntityIdFromSqlStatement).mockReturnValue(entityId)
+    vi.mocked(addDrsUriToSql).mockReturnValue(transformedSql)
 
     if (!('open' in window)) {
       Object.defineProperty(window, 'open', { value: vi.fn() })
