@@ -309,7 +309,7 @@ const SynapseGrid = forwardRef<
   return (
     <div>
       <Grid container spacing={2}>
-        <Grid size={{ xs: 12, lg: 6 }}>
+        <Grid size={{ xs: 12, xl: 8 }}>
           <StartGridSession
             ref={startGridSessionRef}
             onSessionChange={setSession}
@@ -319,7 +319,7 @@ const SynapseGrid = forwardRef<
           />
         </Grid>
         {/* Debug Information */}
-        <Grid size={{ xs: 12, lg: 6 }}>
+        <Grid size={{ xs: 12, xl: 4 }}>
           {showDebugInfo && (
             <div>
               <p>Session ID: {session?.sessionId || 'No session created'}</p>
