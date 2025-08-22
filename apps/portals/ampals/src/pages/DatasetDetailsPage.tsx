@@ -1,5 +1,6 @@
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import {
@@ -39,7 +40,6 @@ export default function DatasetDetailsPage() {
       <DetailsPageContextConsumer columnName={'id'}>
         {({ value: synID }) => (
           <DetailsPageContent
-            hideMenu
             content={[
               {
                 title: 'Description',
@@ -48,6 +48,15 @@ export default function DatasetDetailsPage() {
                   <MarkdownSynapse
                     ownerId={synID!}
                     objectType={ObjectType.ENTITY}
+                  />
+                ),
+              },
+              {
+                title: 'Acknowledgment',
+                id: 'Acknowledgment',
+                element: (
+                  <MarkdownSynapseFromColumnData
+                    columnName={'acknowledgmentStatement'}
                   />
                 ),
               },
