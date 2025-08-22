@@ -103,7 +103,7 @@ export function ChallengesCardDeck() {
 
     const card: CardDeckCardProps = {
       title: gcOrg[ORG_TABLE_COLUMN_NAMES.NAME],
-      description: 'foo ' + gcOrg[ORG_TABLE_COLUMN_NAMES.DESCRIPTION],
+      description: gcOrg[ORG_TABLE_COLUMN_NAMES.DESCRIPTION],
       cardDeckType: 'b2ai',
       ctaButtonText: 'NOT USED IN cardDeckType = b2ai',
       ctaButtonURL: `/Explore/Organization/OrganizationDetailsPage?${
