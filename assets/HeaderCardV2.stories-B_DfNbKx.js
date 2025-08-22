@@ -1,0 +1,61 @@
+import{j as m}from"./jsx-runtime-D_zvdyIk.js";import{S as l}from"./SortDown-CsGdGIzW.js";import{H as p}from"./HeaderCardV2-F4F9-7jW.js";import"./createSvgIcon-92Jf5xwN.js";import"./index-C2ak8tr3.js";import"./iframe-CW0KqQYK.js";import"./createTheme-_ssnMRbb.js";import"./DefaultPropsProvider-BIDG4pXJ.js";import"./MarkdownSynapse-DWxxeXSu.js";import"./useFiles-TGgtgjjh.js";import"./VerificationSubmission-OWkqLMYZ.js";import"./SynapseConstants-DY-ZWqWj.js";import"./OrientationBanner-BsAJ1VN4.js";import"./index-BetcpSp7.js";import"./spreadSx-CwcO6WA9.js";import"./react-DWzGHFet.js";import"./FullWidthAlert-7WvPAou7.js";import"./Alert-DWShSNdB.js";import"./useSlot-Bq9ivddw.js";import"./useForkRef-Z2Y-bELM.js";import"./createSimplePaletteValueFilter-pNOTYgat.js";import"./Close-DLwY134N.js";import"./IconButton-B9fz6SQx.js";import"./useTimeout-BN7atgB-.js";import"./ButtonBase-M_04j4ij.js";import"./isFocusVisible-B8k4qzLc.js";import"./CircularProgress-DRVjoqMe.js";import"./Paper-Clly3oeS.js";import"./useTheme-BXUR3X8S.js";import"./useTheme-Dvg9yXlH.js";import"./Stack-C33LiS6n.js";import"./extendSxProp-PxJDRmPe.js";import"./getThemeProps-a4OQxquJ.js";import"./Box-DGTuWuks.js";import"./AlertTitle-CaSguqi-.js";import"./Typography-Dr6RcEbm.js";import"./index-k4a5S4FR.js";import"./ClickAwayListener-B1FHi0S5.js";import"./getReactElementRef--S2HWxD2.js";import"./index-CXQgeh8z.js";import"./index-DmlIIaFZ.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-YOgbFIOO.js";import"./Tooltip-BUwtrCCn.js";import"./index-4rl2JyrX.js";import"./useControlled-Dzw8XpFp.js";import"./Popper-CABWN7Vx.js";import"./Button-C39K_1ZT.js";import"./fetchWithExponentialTimeout-CXmnpl-T.js";import"./StringUtils-C5rFena9.js";import"./useQuery-D9KpUuvt.js";import"./QueryClientProvider-KOQjDy8j.js";import"./Link-66_rdqR4.js";import"./Collapse-Bd_gpmMp.js";import"./_baseUniq-CBgq_U0E.js";import"./_Uint8Array-C19SRruE.js";import"./isArray-DSS-_0au.js";import"./_getTag-DP8JEJLB.js";import"./isEqual-C2gIUU53.js";import"./merge-CYEF_ov9.js";import"./_initCloneObject-135bbAWh.js";import"./identity-DKeuBCMA.js";import"./tinycolor-Begke6kS.js";import"./Fade-D8locTG6.js";import"./inputBaseClasses-B7yIT1JM.js";import"./calculateFriendlyFileSize-I824E2ls.js";import"./CheckCircleTwoTone-BkKhg0mn.js";import"./InfoTwoTone-CRTl7KBx.js";import"./useMutation-DtwODZ-2.js";import"./dayjs.min-DNsScdeF.js";import"./chunk-AYJ5UCUI-C_JKew03.js";import"./cloneDeep-B_89qCS8.js";import"./Skeleton-BGjKXeYz.js";import"./SkeletonButton-Bu5_023G.js";import"./SkeletonInlineBlock-m3P9adKx.js";import"./SkeletonTable-DHOND0JR.js";import"./times-Bb_lXLy5.js";import"./toInteger-DSH-SYjU.js";import"./isSymbol-Cmj76aKG.js";import"./SkeletonParagraph-GAUNN-0_.js";import"./index-zpegIWWL.js";import"./Card-CV2r_ByC.js";const Ji={title:"Synapse/HeaderCardV2",component:p,parameters:{layout:"centered"},tags:["autodocs"]},i={args:{type:"defaultType",title:"Default HeaderCard",description:"This is a default header card",values:[{columnDisplayName:"Label 1",value:"Value 1"},{columnDisplayName:"Label 2",value:"Value 2"},{columnDisplayName:"Label 3",value:"Value 3"}],secondaryLabelLimit:3,isAlignToLeftNav:!1,descriptionConfig:{showFullDescriptionByDefault:!0},icon:m.jsx(l,{})}},e={args:{type:"Study",title:"Synodos NF2",subTitle:"Jaishri Blakeley, D. Wade Clapp, James Gusella, Scott Plotkin",description:"Synodos for NF2 is a first-of-its-kind neurofibromatosis research collaboration dedicated to defeating the rare genetic disorder neurofibromatosis type 2 (NF2)...",values:[{columnDisplayName:"Study Status",value:"Completed"},{columnDisplayName:"Data Status",value:"Available"},{columnDisplayName:"Disease Focus",value:"Neurofibromatosis type 2"},{columnDisplayName:"Manifestation",value:"Schwannoma, Meningioma"},{columnDisplayName:"Funding Agency",value:"CTF"},{columnDisplayName:"Institutions",value:"Johns Hopkins Medicine, Indiana University, Massachusetts General Hospital, Harvard Medical School, University of Central Florida, FLI-Leibniz-Germany, University of North Carolina, Ohio State University, Sage Bionetworks, Children's Tumor Foundation"},{columnDisplayName:"On Synapse",value:"syn2343195"},{columnDisplayName:"Grant DOI",value:"https://doi.org/10.48105/pc.gr.88541, https://doi.org/10.48105/pc.gr.88552"}],secondaryLabelLimit:8,isAlignToLeftNav:!1,descriptionConfig:{showFullDescriptionByDefault:!0},icon:m.jsx(l,{})}};var o,a,t;i.parameters={...i.parameters,docs:{...(o=i.parameters)==null?void 0:o.docs,source:{originalSource:`{
+  args: {
+    type: 'defaultType',
+    title: 'Default HeaderCard',
+    description: 'This is a default header card',
+    values: [{
+      columnDisplayName: 'Label 1',
+      value: 'Value 1'
+    }, {
+      columnDisplayName: 'Label 2',
+      value: 'Value 2'
+    }, {
+      columnDisplayName: 'Label 3',
+      value: 'Value 3'
+    }],
+    secondaryLabelLimit: 3,
+    isAlignToLeftNav: false,
+    descriptionConfig: {
+      showFullDescriptionByDefault: true
+    },
+    icon: <Study />
+  }
+}`,...(t=(a=i.parameters)==null?void 0:a.docs)==null?void 0:t.source}}};var r,s,n;e.parameters={...e.parameters,docs:{...(r=e.parameters)==null?void 0:r.docs,source:{originalSource:`{
+  args: {
+    type: 'Study',
+    title: 'Synodos NF2',
+    subTitle: 'Jaishri Blakeley, D. Wade Clapp, James Gusella, Scott Plotkin',
+    description: 'Synodos for NF2 is a first-of-its-kind neurofibromatosis research collaboration dedicated to defeating the rare genetic disorder neurofibromatosis type 2 (NF2)...',
+    values: [{
+      columnDisplayName: 'Study Status',
+      value: 'Completed'
+    }, {
+      columnDisplayName: 'Data Status',
+      value: 'Available'
+    }, {
+      columnDisplayName: 'Disease Focus',
+      value: 'Neurofibromatosis type 2'
+    }, {
+      columnDisplayName: 'Manifestation',
+      value: 'Schwannoma, Meningioma'
+    }, {
+      columnDisplayName: 'Funding Agency',
+      value: 'CTF'
+    }, {
+      columnDisplayName: 'Institutions',
+      value: "Johns Hopkins Medicine, Indiana University, Massachusetts General Hospital, Harvard Medical School, University of Central Florida, FLI-Leibniz-Germany, University of North Carolina, Ohio State University, Sage Bionetworks, Children's Tumor Foundation"
+    }, {
+      columnDisplayName: 'On Synapse',
+      value: 'syn2343195'
+    }, {
+      columnDisplayName: 'Grant DOI',
+      value: 'https://doi.org/10.48105/pc.gr.88541, https://doi.org/10.48105/pc.gr.88552'
+    }],
+    secondaryLabelLimit: 8,
+    isAlignToLeftNav: false,
+    descriptionConfig: {
+      showFullDescriptionByDefault: true
+    },
+    icon: <Study />
+  }
+}`,...(n=(s=e.parameters)==null?void 0:s.docs)==null?void 0:n.source}}};const ji=["Default","StudyHeaderCardV2"];export{i as Default,e as StudyHeaderCardV2,ji as __namedExportsOrder,Ji as default};
