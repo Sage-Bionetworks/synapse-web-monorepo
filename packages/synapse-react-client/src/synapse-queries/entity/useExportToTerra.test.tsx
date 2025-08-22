@@ -50,8 +50,8 @@ const testQueryRequest: QueryBundleRequest = {
 describe('useExportToTerra ()', () => {
   beforeEach(() => {
     vi.resetAllMocks()
-    ;(parseEntityIdFromSqlStatement as Mock).mockReturnValue(entityId)
-    ;(addDrsUriToSql as unknown as Mock).mockReturnValue(transformedSql)
+    mocked(parseEntityIdFromSqlStatement).mockReturnValue(entityId)
+    mocked(addDrsUriToSql).mockReturnValue(transformedSql)
 
     if (!('open' in window)) {
       Object.defineProperty(window, 'open', { value: vi.fn() })
