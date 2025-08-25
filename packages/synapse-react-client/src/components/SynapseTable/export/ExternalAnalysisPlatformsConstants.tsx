@@ -135,7 +135,7 @@ export const EXTERNAL_ANALYSIS_PLATFORMS: Record<
     Logo: TerraLogo,
     PlatformInstructions: () => (
       <ExternalAnalysisPlatformInstructions
-        platformName="TERRA"
+        platformName="Terra"
         platformLoginURL="https://app.terra.bio/"
         platformConnectAccountURL="https://app.terra.bio/#profile?tab=externalIdentities"
         platformSupportEmail="mailto:support@terra.bio"
