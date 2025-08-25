@@ -431,29 +431,24 @@ const SynapseGrid = forwardRef<
               {/* Show validation messages for selected row */}
               {selectedRowIndex !== null &&
                 rowValues[selectedRowIndex] &&
-                Array.isArray(rowValues[selectedRowIndex].validationMessages) &&
-                rowValues[selectedRowIndex].validationMessages.length > 0 && (
-                  <div
-                    style={{
-                      marginTop: 12,
-                      background: '#fffbe6',
-                      border: '1px solid #ffe58f',
-                      borderRadius: 4,
-                      padding: 10,
-                      fontSize: 13,
-                    }}
-                  >
-                    <strong>Validation Messages:</strong>
-                    {rowValues[selectedRowIndex].validationMessages.map(
-                      (msg: string, i: number) => (
-                        <FullWidthAlert
-                          variant={'warning'}
-                          isGlobal={false}
-                          description={msg}
-                        />
-                      ),
+                Array.isArray(rowValues[selectedRowIndex].__validationResults?.allValidationMessages) &&
+                rowValues[selectedRowIndex].__validationResults?.allValidationMessages.length > 0 && (
+                  <FullWidthAlert
+                    variant='warning'
+                    title='Validation Messages:'
+                    description={(
+                      <ul>
+                        {rowValues[selectedRowIndex].validationMessages.map(
+                          (msg: string) => (
+                            <li key={msg}>{msg}</li>
+                          ),
+                        )}
+                      </ul>
                     )}
-                  </div>
+                    sx={{
+                      marginTop: '12px',
+                    }}
+                  />
                 )}
             </div>
           )}
