@@ -29,6 +29,7 @@ import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { rowsAreIdentical } from './DataGridUtils'
 import { SkeletonTable } from '../Skeleton'
 import { autocompleteColumn } from './columns/AutocompleteColumn'
+import classNames from 'classnames'
 
 export type SynapseGridProps = {
   query: string
@@ -244,7 +245,7 @@ const SynapseGrid = forwardRef<
         // and adding rows to the model via the api
         for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
           const rowArr = model.api.arr(['rows'])
-          rowArr.ins(i, [{ data: s.vec(s.con('')), metadata: s.obj({}) }])
+          rowArr.ins(i, [{ data: s.vec(s.con('')) }])
         }
 
         newValue
@@ -405,28 +406,17 @@ const SynapseGrid = forwardRef<
                 value={rowValues}
                 columns={colValues}
                 rowKey="_rowId"
-                rowClassName={({ rowData, rowIndex }: any) => {
-                  let className = ''
-                  if (deletedRowIds.has(rowData._rowId)) {
-                    className += ' row-deleted'
-                  }
-                  if (createdRowIds.has(rowData._rowId)) {
-                    className += ' row-created'
-                  }
-                  if (updatedRowIds.has(rowData._rowId)) {
-                    className += ' row-updated'
-                  }
-                  if (rowData.validationStatus === 'valid')
-                    className += ' row-valid'
-                  if (rowData.validationStatus === 'invalid')
-                    className += ' row-invalid'
-                  if (rowData.validationStatus === 'unknown')
-                    className += ' row-unknown'
-                  if (selectedRowIndex === rowIndex) {
-                    className += '  row-selected'
-                  }
-                  return className
-                }}
+                rowClassName={({ rowData, rowIndex }: any) =>
+                  classNames({
+                    'row-deleted': deletedRowIds.has(rowData._rowId),
+                    'row-created': createdRowIds.has(rowData._rowId),
+                    'row-updated': updatedRowIds.has(rowData._rowId),
+                    'row-valid': rowData.validationStatus === 'valid',
+                    'row-invalid': rowData.validationStatus === 'invalid',
+                    'row-unknown': rowData.validationStatus === 'unknown',
+                    'row-selected': selectedRowIndex === rowIndex,
+                  })
+                }
                 createRow={addRowToModel}
                 duplicateRow={({ rowData }: any) => ({
                   ...rowData,
