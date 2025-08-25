@@ -3,7 +3,7 @@ import { ReactComponent as HowToAccessDataLogo } from '../../../../portals/ampal
 import { ReactComponent as GeneExpressionOmnibusLogo } from '../../../../portals/ampals/src/config/style/geneExpressionOmnibus.svg'
 import { ReactComponent as RDCADAP } from '../../../../portals/ampals/src/config/style/RDCADAP.svg'
 import SynapseFullLogo from 'synapse-react-client/assets/icons/SynapseFullLogo'
-import { Link } from 'react-router'
+
 const HowToAccessData = () => {
   const accessDataSteps = [
     {
