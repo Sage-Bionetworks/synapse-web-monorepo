@@ -42,6 +42,10 @@ export interface Operation {
   toRowIndex: number
 }
 
+/**
+ * Object that represents a single row of data in a Grid session that is compatible with react-datasheet-grid.
+ * This objects acts as a "ViewModel" and can be translated to/from the Synapse data grid CRDT schema.
+ */
 export type DataGridRow = {
   [key: string]: string | number | boolean | null | undefined
 } & {
