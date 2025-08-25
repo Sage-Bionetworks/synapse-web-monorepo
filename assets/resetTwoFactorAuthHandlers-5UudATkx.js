@@ -1,1 +1,0 @@
-import{h as s,H as e}from"./index-Bm_VZH8Z.js";function o(t){return[s.post(`${t}/auth/v1/2fa/reset`,()=>e.json("",{status:201})),s.post(`${t}/auth/v1/2fa/disable`,()=>e.json("",{status:200}))]}export{o as g};
