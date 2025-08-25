@@ -4,7 +4,6 @@ import { RouteObject } from 'react-router'
 //import header images for Resources pages
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
-import { OrientationBanner } from 'synapse-react-client'
 
 //TO DO: help page button url(s), remove first child h2 padding-top or find some other fix, add input for header images
 
@@ -15,14 +14,6 @@ const routes: RouteObject[] = [
       <App>
         {/* PORTALS-3627 */}
         <RepositoryUnderReviewAlert />
-        <OrientationBanner
-          name="UnderConstruction"
-          title="Welcome to a design preview of our portal!"
-          text="The ALS Knowledge Portal is actively under construction, but we wanted to give you a preview. As we build out the portal, this page will be updated with more to see and explore. Stay tuned!"
-          sx={{
-            width: 'auto',
-          }}
-        />
       </App>
     ),
     children: [

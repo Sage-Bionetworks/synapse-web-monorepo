@@ -7,7 +7,7 @@ type AMPALSHeaderProps = {
 const AMPALSHeader = (props: AMPALSHeaderProps) => {
   const { headerSvgURL } = props
   const searchPlaceholder = 'Search for ALS related data and resources'
-  const searchExampleTerms = ['ALS', 'TDI', 'FTD', 'Sporadic ALS']
+  const searchExampleTerms = ['ALS', 'FTD', 'Sporadic ALS']
   const content = (
     <>
       <Box

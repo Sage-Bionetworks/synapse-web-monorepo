@@ -3,6 +3,7 @@ import { ReactComponent as HowToAccessDataLogo } from '../../../../portals/ampal
 import { ReactComponent as GeneExpressionOmnibusLogo } from '../../../../portals/ampals/src/config/style/geneExpressionOmnibus.svg'
 import { ReactComponent as RDCADAP } from '../../../../portals/ampals/src/config/style/RDCADAP.svg'
 import SynapseFullLogo from 'synapse-react-client/assets/icons/SynapseFullLogo'
+
 const HowToAccessData = () => {
   const accessDataSteps = [
     {
@@ -136,9 +137,27 @@ const HowToAccessData = () => {
               alignItems: 'center',
             }}
           >
-            <GeneExpressionOmnibusLogo />
-            <RDCADAP />
-            <SynapseFullLogo color={'#2E4761'} />
+            <a
+              href="https://www.ncbi.nlm.nih.gov/geo/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <GeneExpressionOmnibusLogo />
+            </a>
+            <a
+              href="https://c-path.org/programs/rdca-dap/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <RDCADAP />
+            </a>
+            <a
+              href="https://www.synapse.org/Home:x"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <SynapseFullLogo color={'#2E4761'} />
+            </a>
           </Box>
         </Box>
       </Stack>
