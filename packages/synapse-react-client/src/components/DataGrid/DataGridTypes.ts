@@ -1,5 +1,6 @@
 import { Model } from 'json-joy/lib/json-crdt'
 import { s } from 'json-joy/lib/json-crdt-patch'
+import { ValidationResults } from '@sage-bionetworks/synapse-types'
 
 const gridRowSchema = s.obj({
   data: s.vec(s.con('')),
@@ -9,18 +10,7 @@ const gridRowSchema = s.obj({
       versionNumber: s.con(0),
       etag: s.con(''),
     }),
-    rowValidation: s.obj({
-      isValid: s.con(true),
-      validationErrorMessage: s.con(''),
-      allValidationMessages: s.vec(s.con('')),
-      validationException: s.obj({
-        keyword: s.con(''),
-        pointerToViolation: s.con(''),
-        message: s.con(''),
-        schemaLocation: s.con(''),
-        causingExceptions: s.vec(s.con('')),
-      }),
-    }),
+    rowValidation: s.con<ValidationResults | undefined>(undefined),
   }),
 })
 
@@ -54,4 +44,7 @@ export interface Operation {
 
 export type DataGridRow = {
   [key: string]: string | number | boolean | null | undefined
+} & {
+  __validationResults?: ValidationResults
+  validationMessages?: string[]
 }
