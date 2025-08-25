@@ -30,6 +30,7 @@ import { rowsAreIdentical } from './DataGridUtils'
 import { SkeletonTable } from '../Skeleton'
 import { autocompleteColumn } from './columns/AutocompleteColumn'
 import classNames from 'classnames'
+import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 
 export type SynapseGridProps = {
   query: string
@@ -439,18 +440,19 @@ const SynapseGrid = forwardRef<
                       border: '1px solid #ffe58f',
                       borderRadius: 4,
                       padding: 10,
-                      maxWidth: 400,
                       fontSize: 13,
                     }}
                   >
                     <strong>Validation Messages:</strong>
-                    <ul style={{ margin: 0, paddingLeft: 18 }}>
-                      {rowValues[selectedRowIndex].validationMessages.map(
-                        (msg: string, i: number) => (
-                          <li key={i}>{msg}</li>
-                        ),
-                      )}
-                    </ul>
+                    {rowValues[selectedRowIndex].validationMessages.map(
+                      (msg: string, i: number) => (
+                        <FullWidthAlert
+                          variant={'warning'}
+                          isGlobal={false}
+                          description={msg}
+                        />
+                      ),
+                    )}
                   </div>
                 )}
             </div>
