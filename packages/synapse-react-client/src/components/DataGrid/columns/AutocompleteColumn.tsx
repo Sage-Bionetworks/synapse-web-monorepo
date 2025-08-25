@@ -1,11 +1,25 @@
 import { Autocomplete, TextField } from '@mui/material'
+import { useState } from 'react'
 
-export type AutocompleteOption = string
+export type AutocompleteOption =
+  | string
+  | number
+  | boolean
+  | null
+  | Record<string, unknown>
+  | Array<unknown>
 
 export type AutocompleteCellProps = {
-  rowData: string
-  setRowData: (value: string) => void
+  rowData: AutocompleteOption
+  setRowData: (value: AutocompleteOption) => void
   choices: AutocompleteOption[]
+}
+
+function castCellValueToString(toCast: any): string {
+  if (typeof toCast === 'object') {
+    return JSON.stringify(toCast)
+  }
+  return String(toCast)
 }
 
 function AutocompleteCell({
@@ -14,15 +28,22 @@ function AutocompleteCell({
   choices,
 }: AutocompleteCellProps) {
   const currentValue = rowData || ''
+
+  const [localInputState, setLocalInputState] = useState<string>(
+    castCellValueToString(rowData),
+  )
+
   return (
     <Autocomplete
       freeSolo
       disablePortal={false}
       options={choices}
+      getOptionLabel={option => castCellValueToString(option)}
       value={currentValue}
       onInputChange={(_, newInputValue) => {
-        setRowData(newInputValue || '')
+        setLocalInputState(newInputValue)
       }}
+      onBlur={() => setRowData(localInputState)}
       renderInput={params => (
         <TextField
           {...params}

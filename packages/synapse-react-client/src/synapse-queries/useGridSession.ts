@@ -1,19 +1,22 @@
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
+import startGridSession from '@/utils/functions/GridApiUtils'
 import {
+  CreateGridRequest,
+  CreateGridResponse,
+  CreateReplicaResponse,
+  ListGridSessionsResponse,
+  PostRepoV1GridSessionSessionIdReplicaRequest,
+} from '@sage-bionetworks/synapse-client'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import {
+  InfiniteData,
+  QueryKey,
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
   useMutation,
   UseMutationOptions,
   useQueryClient,
-  InfiniteData,
-  useInfiniteQuery,
-  UseInfiniteQueryOptions,
-  QueryKey,
 } from '@tanstack/react-query'
-import {
-  ListGridSessionsResponse,
-  PostRepoV1GridSessionSessionIdReplicaRequest,
-  CreateReplicaResponse,
-} from '@sage-bionetworks/synapse-client'
 
 export function useCreateGridReplica(
   options?: Partial<
@@ -97,4 +100,24 @@ export function useGetGridSessionsInfinite<
     initialPageParam: undefined,
     getNextPageParam: page => page.nextPageToken,
   })
+}
+
+export const useCreateGridSession = (
+  options?: Partial<
+    UseMutationOptions<
+      CreateGridResponse,
+      SynapseClientError,
+      CreateGridRequest
+    >
+  >,
+) => {
+  const { synapseClient } = useSynapseContext()
+
+  return useMutation<CreateGridResponse, SynapseClientError, CreateGridRequest>(
+    {
+      ...options,
+      mutationFn: async (request: CreateGridRequest) =>
+        await startGridSession(synapseClient, request),
+    },
+  )
 }
