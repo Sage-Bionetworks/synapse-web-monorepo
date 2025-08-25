@@ -112,8 +112,8 @@ const SynapseGrid = forwardRef<
   function modelRowsToGrid(modelSnapshot: GridModelSnapshot): DataGridRow[] {
     if (!modelSnapshot) return []
     const { columnNames, columnOrder, rows } = modelSnapshot
-    const gridRows = rows.map(row => {
-      const rowObj: { [key: string]: any } = {}
+    const gridRows = rows.map((row): DataGridRow => {
+      const rowObj: DataGridRow = {}
       columnOrder.forEach((index: number) => {
         const columnName = columnNames[index]
         if (columnName) {
