@@ -57,7 +57,10 @@ export default function TitleBarProperties(props: TitleBarPropertiesProps) {
   const [showAllProperties, setShowAllProperties] = useState(false)
 
   return (
-    <Box sx={{ padding: '20px 40px' }}>
+    <Box
+      key={`title-bar-properties(${properties.length})`}
+      sx={{ padding: '20px 40px' }}
+    >
       <Stack
         direction={'row'}
         sx={{
