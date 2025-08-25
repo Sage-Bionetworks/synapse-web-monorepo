@@ -112,13 +112,19 @@ const SynapseGrid = forwardRef<
     const { columnNames, columnOrder, rows } = modelSnapshot
     const gridRows = rows.map(row => {
       const rowObj: { [key: string]: any } = {}
-      // Use columnOrder to determine which columnNames to use and in what order
       columnOrder.forEach((index: number) => {
         const columnName = columnNames[index]
         if (columnName) {
           rowObj[columnName] = row.data[index]
         }
       })
+      const validation = row.metadata?.rowValidation
+      rowObj.validationStatus = validation
+        ? validation.isValid
+          ? 'valid'
+          : 'invalid'
+        : 'unknown'
+      rowObj.validationMessages = validation?.allValidationMessages ?? []
       return rowObj
     })
     return gridRows
@@ -238,7 +244,7 @@ const SynapseGrid = forwardRef<
         // and adding rows to the model via the api
         for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
           const rowArr = model.api.arr(['rows'])
-          rowArr.ins(i, [{ data: s.vec(s.con('')), metadata: {} }])
+          rowArr.ins(i, [{ data: s.vec(s.con('')), metadata: s.obj({}) }])
         }
 
         newValue
@@ -308,6 +314,9 @@ const SynapseGrid = forwardRef<
     setRowValues(filteredData)
     autoCommit(filteredData)
   }
+
+  // Track the currently selected row index
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
 
   return (
     <div>
@@ -396,16 +405,27 @@ const SynapseGrid = forwardRef<
                 value={rowValues}
                 columns={colValues}
                 rowKey="_rowId"
-                rowClassName={({ rowData }: any) => {
+                rowClassName={({ rowData, rowIndex }: any) => {
+                  let className = ''
                   if (deletedRowIds.has(rowData._rowId)) {
-                    return 'row-deleted'
+                    className += ' row-deleted'
                   }
                   if (createdRowIds.has(rowData._rowId)) {
-                    return 'row-created'
+                    className += ' row-created'
                   }
                   if (updatedRowIds.has(rowData._rowId)) {
-                    return 'row-updated'
-                  } else return ''
+                    className += ' row-updated'
+                  }
+                  if (rowData.validationStatus === 'valid')
+                    className += ' row-valid'
+                  if (rowData.validationStatus === 'invalid')
+                    className += ' row-invalid'
+                  if (rowData.validationStatus === 'unknown')
+                    className += ' row-unknown'
+                  if (selectedRowIndex === rowIndex) {
+                    className += '  row-selected'
+                  }
+                  return className
                 }}
                 createRow={addRowToModel}
                 duplicateRow={({ rowData }: any) => ({
@@ -413,7 +433,36 @@ const SynapseGrid = forwardRef<
                   _rowId: genId(),
                 })}
                 onChange={handleChange}
+                onActiveCellChange={({ cell }) => {
+                  setSelectedRowIndex(cell ? cell.row : null)
+                }}
               />
+              {/* Show validation messages for selected row */}
+              {selectedRowIndex !== null &&
+                rowValues[selectedRowIndex] &&
+                Array.isArray(rowValues[selectedRowIndex].validationMessages) &&
+                rowValues[selectedRowIndex].validationMessages.length > 0 && (
+                  <div
+                    style={{
+                      marginTop: 12,
+                      background: '#fffbe6',
+                      border: '1px solid #ffe58f',
+                      borderRadius: 4,
+                      padding: 10,
+                      maxWidth: 400,
+                      fontSize: 13,
+                    }}
+                  >
+                    <strong>Validation Messages:</strong>
+                    <ul style={{ margin: 0, paddingLeft: 18 }}>
+                      {rowValues[selectedRowIndex].validationMessages.map(
+                        (msg: string, i: number) => (
+                          <li key={i}>{msg}</li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                )}
             </div>
           )}
 
