@@ -407,8 +407,10 @@ const SynapseGrid = forwardRef<
                     'row-created': createdRowIds.has(rowData._rowId),
                     'row-updated': updatedRowIds.has(rowData._rowId),
                     'row-valid': rowData.__validationResults?.isValid === true,
-                    'row-invalid': rowData.__validationResults?.isValid === false,
-                    'row-unknown': rowData.__validationResults?.isValid == undefined,
+                    'row-invalid':
+                      rowData.__validationResults?.isValid === false,
+                    'row-unknown':
+                      rowData.__validationResults?.isValid == undefined,
                     'row-selected': selectedRowIndex === rowIndex,
                   })
                 }
@@ -425,20 +427,26 @@ const SynapseGrid = forwardRef<
               {/* Show validation messages for selected row */}
               {selectedRowIndex !== null &&
                 rowValues[selectedRowIndex] &&
-                Array.isArray(rowValues[selectedRowIndex].__validationResults?.allValidationMessages) &&
-                rowValues[selectedRowIndex].__validationResults?.allValidationMessages.length > 0 && (
+                Array.isArray(
+                  rowValues[selectedRowIndex].__validationResults
+                    ?.allValidationMessages,
+                ) &&
+                rowValues[selectedRowIndex].__validationResults
+                  ?.allValidationMessages.length > 0 && (
                   <FullWidthAlert
-                    variant='warning'
-                    title='Validation Messages:'
-                    description={(
+                    variant="warning"
+                    title="Validation Messages:"
+                    description={
                       <ul>
-                        {rowValues[selectedRowIndex].validationMessages.map(
+                        {rowValues[
+                          selectedRowIndex
+                        ].__validationResults.allValidationMessages.map(
                           (msg: string) => (
                             <li key={msg}>{msg}</li>
                           ),
                         )}
                       </ul>
-                    )}
+                    }
                     sx={{
                       marginTop: '12px',
                     }}
