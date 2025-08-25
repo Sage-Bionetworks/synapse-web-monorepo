@@ -406,9 +406,9 @@ const SynapseGrid = forwardRef<
                     'row-deleted': deletedRowIds.has(rowData._rowId),
                     'row-created': createdRowIds.has(rowData._rowId),
                     'row-updated': updatedRowIds.has(rowData._rowId),
-                    'row-valid': rowData.validationStatus === 'valid',
-                    'row-invalid': rowData.validationStatus === 'invalid',
-                    'row-unknown': rowData.validationStatus === 'unknown',
+                    'row-valid': rowData.__validationResults?.isValid === true,
+                    'row-invalid': rowData.__validationResults?.isValid === false,
+                    'row-unknown': rowData.__validationResults?.isValid == undefined,
                     'row-selected': selectedRowIndex === rowIndex,
                   })
                 }
