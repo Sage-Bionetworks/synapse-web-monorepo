@@ -1,4 +1,10 @@
 import { ComplexJSONRenderer } from '@/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer'
+import { useGetSchema } from '@/synapse-queries/index'
+import getEnumeratedValues from '@/utils/jsonschema/getEnumeratedValues'
+import getSchemaForProperty from '@/utils/jsonschema/getSchemaForProperty'
+import Grid from '@mui/material/Grid'
+import { GridSession } from '@sage-bionetworks/synapse-client'
+import classNames from 'classnames'
 import { s } from 'json-joy/lib/json-crdt-patch'
 import throttle from 'lodash-es/throttle'
 import {
@@ -18,19 +24,18 @@ import {
 } from 'react-datasheet-grid'
 import 'react-datasheet-grid/dist/style.css'
 import '../../style/components/_data-grid-extra.scss'
+import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
+import { SkeletonTable } from '../Skeleton'
+import { autocompleteColumn } from './columns/AutocompleteColumn'
 import {
+  DataGridRow,
   GridModel,
   GridModelSnapshot,
   Operation,
-  DataGridRow,
 } from './DataGridTypes'
+import { rowsAreIdentical } from './DataGridUtils'
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
-import { rowsAreIdentical } from './DataGridUtils'
-import { SkeletonTable } from '../Skeleton'
-import { autocompleteColumn } from './columns/AutocompleteColumn'
-import classNames from 'classnames'
-import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 
 export type SynapseGridProps = {
   query: string
@@ -41,8 +46,7 @@ const SynapseGrid = forwardRef<
   { initializeGrid: () => void },
   SynapseGridProps
 >(({ query, showDebugInfo = false }, ref) => {
-  // Grid session state
-  const [sessionId, setSessionId] = useState<string>('')
+  const [session, setSession] = useState<GridSession | null>(null)
   const [replicaId, setReplicaId] = useState<number | null>(null)
   const [presignedUrl, setPresignedUrl] = useState<string>('')
 
@@ -78,13 +82,15 @@ const SynapseGrid = forwardRef<
     }
   }, [replicaId, presignedUrl, createWebsocket])
 
-  const connectionStatus = isConnected ? 'Connected' : 'Disconnected'
+  const { data: jsonSchema } = useGetSchema(session?.gridJsonSchema$Id ?? '', {
+    enabled: !!session?.gridJsonSchema$Id,
+  })
 
-  const [messages, setMessages] = useState<string[]>([])
+  const connectionStatus = isConnected ? 'Connected' : 'Disconnected'
 
   // If grid sessionId or replicaId changes, reset the model
   useEffect(() => {
-    if (sessionId || replicaId) {
+    if (session || replicaId) {
       modelRef.current = null
       // modelSnapshotRef.current = {
       //   columnNames: [],
@@ -93,9 +99,8 @@ const SynapseGrid = forwardRef<
       // }
       setRowValues([])
       setColValues([])
-      setMessages([]) // Clear message log
     }
-  }, [sessionId, replicaId, websocketInstance])
+  }, [session, replicaId, websocketInstance])
 
   // Grid rows and columns
   const [rowValues, setRowValues] = useState<DataGridRow[]>([])
@@ -126,31 +131,19 @@ const SynapseGrid = forwardRef<
     return gridRows
   }
 
-  function getEnumeratedValuesForColumn(columnName: string): string[] | null {
-    // Options based on column name
-    // Replace with actual data source later
-    const columnEnumerations: { [key: string]: string[] } = {
-      breed: [
-        'domestic short hair',
-        'domestic long hair',
-        'persian',
-        'ragdoll',
-      ],
-      color: ['white', 'black', 'blue bicolor', 'seal bicolor'],
-    }
-
-    return columnEnumerations[columnName.toLowerCase()] || null
-  }
-
   // Convert model columns to a format suitable for DataSheetGrid
   function modelColsToGrid(modelSnapshot: GridModelSnapshot): Column[] {
     if (!modelSnapshot) return []
     const { columnNames, columnOrder } = modelSnapshot
     const gridCols: Column[] = columnOrder.map((index: number) => {
       const columnName = columnNames[index]
-      const enumeratedValues = getEnumeratedValuesForColumn(columnName)
+      const enumeratedValues = jsonSchema
+        ? getEnumeratedValues(getSchemaForProperty(jsonSchema, columnName)).map(
+            item => item.value,
+          )
+        : null
 
-      if (enumeratedValues) {
+      if (enumeratedValues && enumeratedValues.length > 0) {
         // Use autocomplete column for columns with enumerated values
         return {
           ...keyColumn(
@@ -232,8 +225,12 @@ const SynapseGrid = forwardRef<
   }
 
   const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
+    if (!modelRef.current) {
+      console.error('Model is not initialized')
+      return
+    }
     for (const operation of operations) {
-      const model = getModel()!
+      const model = modelRef.current
       const rowsArr = model.api.arr(['rows'])
       if (operation.type === 'CREATE') {
         // Add new rows to the model iterating fromRowIndex to toRowIndex
@@ -316,76 +313,60 @@ const SynapseGrid = forwardRef<
 
   return (
     <div>
-      <div>
-        <StartGridSession
-          ref={startGridSessionRef}
-          onSessionChange={setSessionId}
-          onReplicaChange={setReplicaId}
-          onPresignedUrlChange={setPresignedUrl}
-          query={query}
-        />
-      </div>
-      {sessionId && (
-        <>
-          {/* Debug Information */}
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, xl: 8 }}>
+          <StartGridSession
+            ref={startGridSessionRef}
+            onSessionChange={setSession}
+            onReplicaChange={setReplicaId}
+            onPresignedUrlChange={setPresignedUrl}
+            query={query}
+          />
+        </Grid>
+        {/* Debug Information */}
+        <Grid size={{ xs: 12, xl: 4 }}>
           {showDebugInfo && (
-            <>
-              <div>
-                <p>Session ID: {sessionId || 'No session created'}</p>
-                <p>Replica ID: {replicaId || 'No replica created'}</p>
-                <p>
-                  Presigned URL:{' '}
-                  {presignedUrl.substring(0, 30) +
-                    (presignedUrl.length > 30
-                      ? ' ... ' +
-                        presignedUrl.substring(
-                          presignedUrl.length - 10,
-                          presignedUrl.length,
-                        )
-                      : '') || 'No URL generated'}
-                </p>
-                <p>
-                  WebSocket Status:{' '}
-                  <span style={{ color: isConnected ? 'green' : 'red' }}>
-                    {connectionStatus}
-                  </span>
-                </p>
-              </div>
-
-              {/* Message Log */}
-              <div
-                style={{
-                  margin: '10px 0',
-                  padding: '10px',
-                  border: '1px solid #ccc',
-                  maxHeight: '200px',
-                  overflowY: 'auto',
-                }}
-              >
-                <h4>Server Message Log</h4>
-                {messages.map((message, index) => (
-                  <div
-                    key={index}
-                    style={{ fontSize: '12px', marginBottom: '5px' }}
-                  >
-                    {message}
-                  </div>
-                ))}
-              </div>
-            </>
+            <div>
+              <p>Session ID: {session?.sessionId || 'No session created'}</p>
+              <p>Replica ID: {replicaId || 'No replica created'}</p>
+              <p>
+                JSON Schema $id:{' '}
+                {session?.gridJsonSchema$Id || 'No schema attached to session'}
+              </p>
+              <p>
+                Presigned URL:{' '}
+                {presignedUrl.substring(0, 30) +
+                  (presignedUrl.length > 30
+                    ? ' ... ' +
+                      presignedUrl.substring(
+                        presignedUrl.length - 10,
+                        presignedUrl.length,
+                      )
+                    : '') || 'No URL generated'}
+              </p>
+              <p>
+                WebSocket Status:{' '}
+                <span style={{ color: isConnected ? 'green' : 'red' }}>
+                  {connectionStatus}
+                </span>
+              </p>
+            </div>
           )}
-
+        </Grid>
+      </Grid>
+      {session && (
+        <>
           {/* Grid Loading State */}
           {!isGridReady && (
             <>
               <h3>Setting up grid...</h3>
               <div style={{ marginBottom: '10px' }}>
-                {!sessionId && <p>Creating grid session...</p>}
-                {sessionId && !replicaId && <p>Setting up real-time sync...</p>}
-                {sessionId && replicaId && !presignedUrl && (
+                {!session && <p>Creating grid session...</p>}
+                {session && !replicaId && <p>Setting up real-time sync...</p>}
+                {session && replicaId && !presignedUrl && (
                   <p>Establishing secure connection...</p>
                 )}
-                {sessionId && replicaId && presignedUrl && !isConnected && (
+                {session && replicaId && presignedUrl && !isConnected && (
                   <p>Connecting to server...</p>
                 )}
                 {isConnected && !isGridReady && <p>Loading table data...</p>}
@@ -436,6 +417,7 @@ const SynapseGrid = forwardRef<
                   <FullWidthAlert
                     variant="warning"
                     title="Validation Messages:"
+                    isGlobal={false}
                     description={
                       <ul>
                         {rowValues[
