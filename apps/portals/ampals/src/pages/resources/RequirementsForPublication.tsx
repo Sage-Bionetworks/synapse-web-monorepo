@@ -14,6 +14,26 @@ function RequirementsForPublication() {
         wikiId="632170"
         loadingSkeletonRowCount={50}
       />
+      <MarkdownSynapse
+        ownerId="syn64892175"
+        wikiId="633965"
+        loadingSkeletonRowCount={10}
+      />
+      <MarkdownSynapse
+        ownerId="syn64892175"
+        wikiId="633970"
+        loadingSkeletonRowCount={10}
+      />
+      <MarkdownSynapse
+        ownerId="syn64892175"
+        wikiId="634029"
+        loadingSkeletonRowCount={10}
+      />
+      <MarkdownSynapse
+        ownerId="syn64892175"
+        wikiId="633969"
+        loadingSkeletonRowCount={10}
+      />
     </AMPALSResearchPageLayout>
   )
 }
