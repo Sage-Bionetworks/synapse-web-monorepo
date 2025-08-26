@@ -58,7 +58,7 @@ function useCreateOrGetExistingGridSession() {
         console.log('Grid session started:', gridSessionResponse)
         session = gridSessionResponse.gridSession!
       } else {
-        // parsedInput.type === 'sessionId'
+        // The input is a sessionId, so retrieve the session object
         console.log(`Joining existing session ID: ${parsedInput.input}`)
         session =
           await synapseClient.gridServicesClient.getRepoV1GridSessionSessionId({
