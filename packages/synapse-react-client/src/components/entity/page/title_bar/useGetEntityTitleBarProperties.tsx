@@ -137,23 +137,6 @@ export function useGetEntityTitleBarProperties(
         </Link>
       ),
     },
-    isDoiUsage && {
-      key: 'citations',
-      title: 'Citations',
-      value: (
-        <>
-          <Link onClick={() => setDataCiteCitationsDialogOpen(true)}>
-            {dataCiteUsage.citationCount}
-            {dataCiteUsage.citationCount == maxCitationCount && '+'}
-          </Link>
-          <DataCiteCitationsDialog
-            open={dataCiteCitationsDialogOpen}
-            onClose={() => setDataCiteCitationsDialogOpen(false)}
-            citations={dataCiteUsage.citations}
-          />
-        </>
-      ),
-    },
     md5 && {
       key: 'fileMd5',
       title: 'MD5',
@@ -192,6 +175,23 @@ export function useGetEntityTitleBarProperties(
           <Box sx={{ display: 'inline', fontFamily: 'monospace' }}>
             {downloadAlias}
           </Box>
+        </>
+      ),
+    },
+    isDoiUsage && {
+      key: 'citations',
+      title: 'Citations',
+      value: (
+        <>
+          <Link onClick={() => setDataCiteCitationsDialogOpen(true)}>
+            {dataCiteUsage.citationCount}
+            {dataCiteUsage.citationCount == maxCitationCount && '+'}
+          </Link>
+          <DataCiteCitationsDialog
+            open={dataCiteCitationsDialogOpen}
+            onClose={() => setDataCiteCitationsDialogOpen(false)}
+            citations={dataCiteUsage.citations}
+          />
         </>
       ),
     },
