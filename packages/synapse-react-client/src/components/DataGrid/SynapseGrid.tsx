@@ -417,6 +417,7 @@ const SynapseGrid = forwardRef<
                   <FullWidthAlert
                     variant="warning"
                     title="Validation Messages:"
+                    isGlobal={false}
                     description={
                       <ul>
                         {rowValues[
