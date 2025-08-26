@@ -22,8 +22,6 @@ export const filesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   tableConfiguration: {
     // columnLinks: dataColumnLinks,
     showAccessColumn: true,
-    showExternalAccessIcon: true,
-    showDownloadColumn: true,
   },
   visibleColumnCount: 7,
   enabledExternalAnalysisPlatforms: enabledAnalysisPlatforms,

@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.4.38",
+  "version": "3.4.39",
   "private": false,
   "type": "module",
   "main": "./dist/index.cjs",
@@ -91,6 +91,7 @@
     "qrcode": "^1.5.4",
     "raf": "^3.4.1",
     "react-datetime": "^3.3.1",
+    "react-draggable": "^4.5.0",
     "react-error-boundary": "^3.1.4",
     "react-hot-toast": "^2.5.2",
     "react-inspector": "^6.0.2",
