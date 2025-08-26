@@ -110,7 +110,7 @@ export function useDataCiteUsage(
       if (!doi) return Promise.resolve(null)
       return fetchDataCiteUsage(signal, doi)
     },
-    enabled: !!doi, // don’t run until we have a DOI
+    enabled: !!doi,
     ...options,
   })
 }
