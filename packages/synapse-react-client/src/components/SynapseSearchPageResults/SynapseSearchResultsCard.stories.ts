@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react'
 import { SynapseSearchResultsCard } from './SynapseSearchResultsCard'
 
 const meta: Meta<typeof SynapseSearchResultsCard> = {
-  title: 'Components/SynapseSearchResultsCard',
+  title: 'Components/SynapseSearch/SynapseSearchResultsCard',
   component: SynapseSearchResultsCard,
 }
 
