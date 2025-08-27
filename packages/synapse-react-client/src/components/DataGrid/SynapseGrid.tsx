@@ -200,7 +200,10 @@ const SynapseGrid = forwardRef<
       if (operation.type === 'CREATE') {
         // Add new rows to the model
         for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
-          rowsArr?.ins(i, [{ data: s.vec(s.con('')) }])
+          // Use actual row data from newValue[i] to initialize the new row
+          const rowData = newValue[i] || {}
+          const dataArray = columnNames.map(columnName => s.con(rowData[columnName] ?? ''))
+          rowsArr?.ins(i, [{ data: s.vec(...dataArray) }])
         }
       }
 
