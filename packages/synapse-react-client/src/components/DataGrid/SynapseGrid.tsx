@@ -211,8 +211,7 @@ const SynapseGrid = forwardRef<
           rowIndex < operation.toRowIndex;
           rowIndex++
         ) {
-          const newRow = newValue[rowIndex]
-          const oldRow = oldValue[rowIndex]
+          const oldRow = oldValue?.[rowIndex]
 
           // Compare each cell and only update changed ones
           Object.entries(newRow).forEach(([columnName, newCellValue]) => {
