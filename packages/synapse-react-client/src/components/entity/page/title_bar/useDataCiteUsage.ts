@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import { skipToken, useQuery, UseQueryOptions } from '@tanstack/react-query'
 
 type RestUsage = {
   citationCount: number
@@ -82,8 +82,11 @@ async function fetchCitationsViaGraphQL(signal: AbortSignal, doi: string) {
 async function fetchDataCiteUsage(
   signal: AbortSignal,
   doi: string,
-): Promise<RestUsage | null> {
+): Promise<RestUsage> {
   const citations: CitingWork[] = await fetchCitationsViaGraphQL(signal, doi)
+  if (!citations) {
+    throw new Error('No citations found')
+  }
   return {
     citationCount: citations.length ?? 0,
     citations,
@@ -92,21 +95,16 @@ async function fetchDataCiteUsage(
 
 export function useDataCiteUsage(
   doi?: string,
-  options?: Omit<
-    UseQueryOptions<
-      RestUsage,
-      Error
-    >,
-    'queryKey' | 'queryFn'
-  >,
+  options?: Omit<UseQueryOptions<RestUsage, Error>, 'queryKey' | 'queryFn'>,
 ) {
   const key = useMemo(() => getDataCiteUsageQueryKey(doi), [doi])
-
   return useQuery({
     ...options,
     queryKey: key,
-    queryFn: doi ? ({ signal }) => {
-      return fetchDataCiteUsage(signal, doi)
-    } : skipToken,
+    queryFn: doi
+      ? ({ signal }) => {
+          return fetchDataCiteUsage(signal, doi)
+        }
+      : skipToken,
   })
 }
