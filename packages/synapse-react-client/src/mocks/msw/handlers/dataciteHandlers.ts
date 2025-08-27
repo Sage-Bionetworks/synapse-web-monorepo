@@ -18,6 +18,13 @@ export function getDataciteHandler() {
                   publicationYear: 2025,
                   container: { title: 'Best Journal' },
                 },
+                {
+                  id: 'https://doi.org/10.2222/xyz',
+                  titles: [{ title: 'D???E??F' }],
+                  publisher: { name: 'Other Publisher' },
+                  publicationYear: 2025,
+                  container: { title: 'Ok Journal' },
+                },
               ],
             },
           },

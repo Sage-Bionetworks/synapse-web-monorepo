@@ -7,10 +7,11 @@ import {
   ListItem,
   Link,
   Typography,
+  Button,
 } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
 import { CitingWork } from './useDataCiteUsage'
 import { sanitize } from '@/utils/functions/SanitizeHtmlUtils'
+import { DialogBase } from '@/components/DialogBase'
 
 type Props = { open: boolean; onClose: () => void; citations: CitingWork[] }
 
@@ -20,18 +21,13 @@ export const DataCiteCitationsDialog: React.FC<Props> = ({
   citations,
 }) => {
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle>
-        Cited by
-        <IconButton
-          aria-label="close"
-          onClick={onClose}
-          sx={{ position: 'absolute', right: 8, top: 8 }}
-        >
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-      <DialogContent dividers>
+    <DialogBase
+      title={'Cited by'}
+      onCancel={() => {
+        onClose()
+      }}
+      open={open}
+      content={
         <List>
           {citations.map(w => {
             const title = w.title ?? w.doi
@@ -56,7 +52,14 @@ export const DataCiteCitationsDialog: React.FC<Props> = ({
             )
           })}
         </List>
-      </DialogContent>
-    </Dialog>
+      }
+      actions={
+        <>
+          <Button variant={'outlined'} onClick={() => onClose()}>
+            Close
+          </Button>
+        </>
+      }
+    />
   )
 }
