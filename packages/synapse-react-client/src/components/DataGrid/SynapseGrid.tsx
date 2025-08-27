@@ -202,7 +202,9 @@ const SynapseGrid = forwardRef<
         for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
           // Use actual row data from newValue[i] to initialize the new row
           const rowData = newValue[i] || {}
-          const dataArray = columnNames.map(columnName => s.con(rowData[columnName] ?? ''))
+          const dataArray = columnNames.map(columnName =>
+            s.con(rowData[columnName] ?? ''),
+          )
           rowsArr?.ins(i, [{ data: s.vec(...dataArray) }])
         }
       }
@@ -214,6 +216,7 @@ const SynapseGrid = forwardRef<
           rowIndex < operation.toRowIndex;
           rowIndex++
         ) {
+          const newRow = newValue?.[rowIndex]
           const oldRow = oldValue?.[rowIndex]
 
           // Compare each cell and only update changed ones
