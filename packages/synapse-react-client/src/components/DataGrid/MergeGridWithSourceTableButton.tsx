@@ -11,13 +11,12 @@ import {
 export type MergeGridWithSourceTableButtonProps = {
   sourceEntityId: string
   gridSessionId: string
-  disabled?: boolean
 }
 
 export default function MergeGridWithSourceTableButton(
   props: MergeGridWithSourceTableButtonProps,
 ) {
-  const { sourceEntityId, gridSessionId, disabled: disabledFromProps } = props
+  const { sourceEntityId, gridSessionId } = props
 
   const { mutate: mergeGridWithSource, isPending } = useMergeGridWithSource({
     onSuccess: result => {
@@ -31,7 +30,6 @@ export default function MergeGridWithSourceTableButton(
   return (
     <Button
       loading={isPending}
-      disabled={disabledFromProps}
       onClick={() => {
         mergeGridWithSource({ gridSessionId, sourceEntityId })
       }}
