@@ -94,23 +94,19 @@ export function useDataCiteUsage(
   doi?: string,
   options?: Omit<
     UseQueryOptions<
-      RestUsage | null,
-      Error,
-      RestUsage | null,
-      ReturnType<typeof getDataCiteUsageQueryKey>
+      RestUsage,
+      Error
     >,
-    'queryKey' | 'queryFn' | 'enabled'
+    'queryKey' | 'queryFn'
   >,
 ) {
   const key = useMemo(() => getDataCiteUsageQueryKey(doi), [doi])
 
   return useQuery({
-    queryKey: key,
-    queryFn: ({ signal }) => {
-      if (!doi) return Promise.resolve(null)
-      return fetchDataCiteUsage(signal, doi)
-    },
-    enabled: !!doi,
     ...options,
+    queryKey: key,
+    queryFn: doi ? ({ signal }) => {
+      return fetchDataCiteUsage(signal, doi)
+    } : skipToken,
   })
 }
