@@ -1,3 +1,4 @@
+import MergeGridWithSourceTableButton from '@/components/DataGrid/MergeGridWithSourceTableButton'
 import { ComplexJSONRenderer } from '@/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer'
 import { useGetSchema } from '@/synapse-queries/index'
 import getEnumeratedValues from '@/utils/jsonschema/getEnumeratedValues'
@@ -372,111 +373,121 @@ const SynapseGrid = forwardRef<
             </div>
           )}
         </Grid>
-      </Grid>
-      {session && (
-        <>
-          {/* Grid Loading State */}
-          {!isGridReady && (
-            <>
-              <h3>Setting up grid...</h3>
-              <div style={{ marginBottom: '10px' }}>
-                {!session && <p>Creating grid session...</p>}
-                {session && !replicaId && <p>Setting up real-time sync...</p>}
-                {session && replicaId && !presignedUrl && (
-                  <p>Establishing secure connection...</p>
-                )}
-                {session && replicaId && presignedUrl && !isConnected && (
-                  <p>Connecting to server...</p>
-                )}
-                {isConnected && !isGridReady && <p>Loading table data...</p>}
-                <SkeletonTable numRows={4} numCols={1} />
-              </div>
-            </>
-          )}
 
-          {/* Grid */}
-          {isGridReady && (
-            <div>
-              <DataSheetGrid
-                value={rowValues}
-                columns={colValues}
-                rowKey="_rowId"
-                rowClassName={({ rowData, rowIndex }: any) =>
-                  classNames({
-                    'row-deleted': deletedRowIds.has(rowData._rowId),
-                    'row-created': createdRowIds.has(rowData._rowId),
-                    'row-updated': updatedRowIds.has(rowData._rowId),
-                    'row-valid': rowData.__validationResults?.isValid === true,
-                    'row-invalid':
-                      rowData.__validationResults?.isValid === false,
-                    'row-unknown':
-                      rowData.__validationResults?.isValid == undefined,
-                    'row-selected': selectedRowIndex === rowIndex,
-                  })
-                }
-                createRow={addRowToModel}
-                duplicateRow={({ rowData }: any) => ({
-                  ...rowData,
-                  _rowId: genId(),
-                })}
-                onChange={handleChange}
-                onActiveCellChange={({ cell }) => {
-                  setSelectedRowIndex(cell ? cell.row : null)
-                }}
-              />
-              {/* Show validation messages for selected row */}
-              {selectedRowIndex !== null &&
-                rowValues[selectedRowIndex] &&
-                Array.isArray(
+        {session && (
+          <>
+            {/* Grid Loading State */}
+            {!isGridReady && (
+              <Grid size={12}>
+                <h3>Setting up grid...</h3>
+                <div style={{ marginBottom: '10px' }}>
+                  {!session && <p>Creating grid session...</p>}
+                  {session && !replicaId && <p>Setting up real-time sync...</p>}
+                  {session && replicaId && !presignedUrl && (
+                    <p>Establishing secure connection...</p>
+                  )}
+                  {session && replicaId && presignedUrl && !isConnected && (
+                    <p>Connecting to server...</p>
+                  )}
+                  {isConnected && !isGridReady && <p>Loading table data...</p>}
+                  <SkeletonTable numRows={4} numCols={1} />
+                </div>
+              </Grid>
+            )}
+
+            {/* Grid */}
+            {isGridReady && (
+              <Grid size={12}>
+                <DataSheetGrid
+                  value={rowValues}
+                  columns={colValues}
+                  rowKey="_rowId"
+                  rowClassName={({ rowData, rowIndex }) =>
+                    classNames({
+                      'row-deleted': deletedRowIds.has(rowData._rowId),
+                      'row-created': createdRowIds.has(rowData._rowId),
+                      'row-updated': updatedRowIds.has(rowData._rowId),
+                      'row-valid':
+                        rowData.__validationResults?.isValid === true,
+                      'row-invalid':
+                        rowData.__validationResults?.isValid === false,
+                      'row-unknown':
+                        rowData.__validationResults?.isValid == undefined,
+                      'row-selected': selectedRowIndex === rowIndex,
+                    })
+                  }
+                  createRow={addRowToModel}
+                  duplicateRow={({ rowData }: any) => ({
+                    ...rowData,
+                    _rowId: genId(),
+                  })}
+                  onChange={handleChange}
+                  onActiveCellChange={({ cell }) => {
+                    setSelectedRowIndex(cell ? cell.row : null)
+                  }}
+                />
+                {/* Show validation messages for selected row */}
+                {selectedRowIndex !== null &&
+                  rowValues[selectedRowIndex] &&
+                  Array.isArray(
+                    rowValues[selectedRowIndex].__validationResults
+                      ?.allValidationMessages,
+                  ) &&
                   rowValues[selectedRowIndex].__validationResults
-                    ?.allValidationMessages,
-                ) &&
-                rowValues[selectedRowIndex].__validationResults
-                  ?.allValidationMessages.length > 0 && (
-                  <FullWidthAlert
-                    variant="warning"
-                    title="Validation Messages:"
-                    isGlobal={false}
-                    description={
-                      <ul>
-                        {rowValues[
-                          selectedRowIndex
-                        ].__validationResults.allValidationMessages.map(
-                          (msg: string) => (
-                            <li key={msg}>{msg}</li>
-                          ),
-                        )}
-                      </ul>
-                    }
-                    sx={{
-                      marginTop: '12px',
-                    }}
-                  />
+                    ?.allValidationMessages.length > 0 && (
+                    <FullWidthAlert
+                      variant="warning"
+                      title="Validation Messages:"
+                      isGlobal={false}
+                      description={
+                        <ul>
+                          {rowValues[
+                            selectedRowIndex
+                          ].__validationResults.allValidationMessages.map(
+                            (msg: string) => (
+                              <li key={msg}>{msg}</li>
+                            ),
+                          )}
+                        </ul>
+                      }
+                      sx={{
+                        marginTop: '12px',
+                      }}
+                    />
+                  )}
+              </Grid>
+            )}
+            {isGridReady && session.sourceEntityId && (
+              <Grid container size={12} sx={{ justifyContent: 'flex-end' }}>
+                <MergeGridWithSourceTableButton
+                  sourceEntityId={session.sourceEntityId}
+                  gridSessionId={session.sessionId!}
+                />
+              </Grid>
+            )}
+            {/* Debug Model Snapshot */}
+            {showDebugInfo && (
+              <Grid
+                size={12}
+                style={{
+                  margin: '10px 0',
+                  padding: '10px',
+                  border: '1px solid #ccc',
+                  maxHeight: '400px',
+                  overflowY: 'auto',
+                }}
+              >
+                <h3>Model snapshot</h3>
+                {modelSnapshot ? (
+                  <ComplexJSONRenderer value={modelSnapshot} />
+                ) : (
+                  'No model available'
                 )}
-            </div>
-          )}
-
-          {/* Debug Model Snapshot */}
-          {showDebugInfo && (
-            <div
-              style={{
-                margin: '10px 0',
-                padding: '10px',
-                border: '1px solid #ccc',
-                maxHeight: '400px',
-                overflowY: 'auto',
-              }}
-            >
-              <h3>Model snapshot</h3>
-              {modelSnapshot ? (
-                <ComplexJSONRenderer value={modelSnapshot} />
-              ) : (
-                'No model available'
-              )}
-            </div>
-          )}
-        </>
-      )}
+              </Grid>
+            )}
+          </>
+        )}
+      </Grid>
     </div>
   )
 })
