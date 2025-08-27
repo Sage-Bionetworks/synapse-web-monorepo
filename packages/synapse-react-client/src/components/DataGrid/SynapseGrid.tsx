@@ -21,6 +21,8 @@ import {
   createTextColumn,
   DataSheetGrid,
   keyColumn,
+  checkboxColumn,
+  floatColumn,
 } from 'react-datasheet-grid'
 import 'react-datasheet-grid/dist/style.css'
 import '../../style/components/_data-grid-extra.scss'
@@ -142,6 +144,23 @@ const SynapseGrid = forwardRef<
             item => item.value,
           )
         : null
+      const colType = jsonSchema
+        ? getSchemaForProperty(jsonSchema, columnName).type
+        : null
+
+      if (colType === 'boolean') {
+        return {
+          ...keyColumn(columnName, checkboxColumn),
+          title: columnName,
+        }
+      }
+
+      if (colType === 'number' || colType === 'integer') {
+        return {
+          ...keyColumn(columnName, floatColumn),
+          title: columnName,
+        }
+      }
 
       if (enumeratedValues && enumeratedValues.length > 0) {
         // Use autocomplete column for columns with enumerated values

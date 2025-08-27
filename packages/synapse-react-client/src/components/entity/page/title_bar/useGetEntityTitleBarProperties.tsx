@@ -10,11 +10,13 @@ import {
   EntityRefCollectionView,
   EntityType,
 } from '@sage-bionetworks/synapse-types'
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import CopyToClipboardString from '../../../CopyToClipboardString/CopyToClipboardString'
 import { HasAccessV2 } from '../../../HasAccess/HasAccessV2'
 import { DoiObjectType } from '@sage-bionetworks/synapse-client'
 import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
+import { maxCitationCount, useDataCiteUsage } from './useDataCiteUsage'
+import { DataCiteCitationsDialog } from './DataCiteCitationsDialog'
 
 export type EntityProperty = {
   key: string
@@ -40,7 +42,8 @@ export function useGetEntityTitleBarProperties(
     fileHandleStorageInfo,
     uploadDestinationString,
   } = useGetEntityMetadata(entityId, versionNumber)
-
+  const [dataCiteCitationsDialogOpen, setDataCiteCitationsDialogOpen] =
+    useState(false)
   const { data: entityChildrenResponse } = useGetEntityChildren(
     {
       parentId: entityId,
@@ -93,8 +96,9 @@ export function useGetEntityTitleBarProperties(
   const doiAssociation = useFallbackVersionlessDOI
     ? versionlessDOIAssociation
     : bundle?.doiAssociation
+  const { data: dataCiteUsage } = useDataCiteUsage(doiAssociation?.doiUri)
   const doi = doiAssociation && `https://doi.org/${doiAssociation?.doiUri}`
-
+  const isDoiUsage = !!dataCiteUsage && dataCiteUsage.citationCount > 0
   const containerItems = entityChildrenResponse?.totalChildCount
 
   const datasetItems =
@@ -171,6 +175,23 @@ export function useGetEntityTitleBarProperties(
           <Box sx={{ display: 'inline', fontFamily: 'monospace' }}>
             {downloadAlias}
           </Box>
+        </>
+      ),
+    },
+    isDoiUsage && {
+      key: 'citations',
+      title: 'Citations',
+      value: (
+        <>
+          <Link onClick={() => setDataCiteCitationsDialogOpen(true)}>
+            {dataCiteUsage.citationCount}
+            {dataCiteUsage.citationCount == maxCitationCount && '+'}
+          </Link>
+          <DataCiteCitationsDialog
+            open={dataCiteCitationsDialogOpen}
+            onClose={() => setDataCiteCitationsDialogOpen(false)}
+            citations={dataCiteUsage.citations}
+          />
         </>
       ),
     },
