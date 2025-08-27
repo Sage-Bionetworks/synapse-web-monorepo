@@ -188,13 +188,22 @@ const SynapseGrid = forwardRef<
   function applyOperationsToModel(
     operations: Operation[],
     newValue: DataGridRow[],
+    oldValue: DataGridRow[],
     model: GridModel,
   ) {
     if (!model) return
 
     const { columnNames } = model.api.getSnapshot()
+    const rowsArr = model.api.arr(['rows'])
 
     for (const operation of operations) {
+      if (operation.type === 'CREATE') {
+        // Add new rows to the model
+        for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
+          rowsArr?.ins(i, [{ data: s.vec(s.con('')) }])
+        }
+      }
+
       if (operation.type === 'UPDATE') {
         // Only update the specific rows and cells that changed
         for (
@@ -203,7 +212,7 @@ const SynapseGrid = forwardRef<
           rowIndex++
         ) {
           const newRow = newValue[rowIndex]
-          const oldRow = rowValues[rowIndex]
+          const oldRow = oldValue[rowIndex]
 
           // Compare each cell and only update changed ones
           Object.entries(newRow).forEach(([columnName, newCellValue]) => {
@@ -220,7 +229,13 @@ const SynapseGrid = forwardRef<
           })
         }
       }
-      // Handle CREATE and DELETE operations as needed
+
+      if (operation.type === 'DELETE') {
+        rowsArr?.del(
+          operation.fromRowIndex,
+          operation.toRowIndex - operation.fromRowIndex,
+        )
+      }
     }
   }
 
@@ -263,24 +278,18 @@ const SynapseGrid = forwardRef<
       return
     }
 
-    for (const operation of operations) {
-      const model = modelRef.current
-      const rowsArr = model.api.arr(['rows'])
+    // Apply all model updates in one place
+    applyOperationsToModel(operations, newValue, rowValues, modelRef.current)
 
+    // Handle row tracking for UI state
+    for (const operation of operations) {
       if (operation.type === 'CREATE') {
-        // Add new rows to the model
-        for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
-          const rowArr = model.api.arr(['rows'])
-          rowArr.ins(i, [{ data: s.vec(s.con('')) }])
-        }
         newValue
           .slice(operation.fromRowIndex, operation.toRowIndex)
           .forEach(({ _rowId }: any) => createdRowIds.add(_rowId))
       }
 
       if (operation.type === 'UPDATE') {
-        applyOperationsToModel([operation], newValue, model)
-
         const oldVal = rowValues.slice(
           operation.fromRowIndex,
           operation.toRowIndex,
@@ -307,10 +316,6 @@ const SynapseGrid = forwardRef<
 
       if (operation.type === 'DELETE') {
         let keptRows = 0
-        rowsArr?.del(
-          operation.fromRowIndex,
-          operation.toRowIndex - operation.fromRowIndex,
-        )
 
         rowValues
           .slice(operation.fromRowIndex, operation.toRowIndex)
@@ -334,6 +339,7 @@ const SynapseGrid = forwardRef<
     const filteredData = newValue.filter(
       ({ _rowId }: DataGridRow) => !deletedRowIds.has(_rowId),
     )
+
     // Update UI state
     setRowValues(filteredData)
     autoCommit(filteredData)
