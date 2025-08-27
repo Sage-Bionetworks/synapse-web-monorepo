@@ -1,6 +1,5 @@
 import useMergeGridWithSource from '@/components/DataGrid/useMergeGridWithSource'
 import { displayToast } from '@/components/index'
-import { useGetEntityBundle } from '@/synapse-queries/index'
 import { Button } from '@mui/material'
 import {
   EntityUpdateResults,
@@ -20,9 +19,6 @@ export default function MergeGridWithSourceTableButton(
 ) {
   const { sourceEntityId, gridSessionId, disabled: disabledFromProps } = props
 
-  const { data: sourceEntityBundle } = useGetEntityBundle(sourceEntityId)
-  const hasPermissionToUpdateSource = sourceEntityBundle?.permissions?.canEdit
-
   const { mutate: mergeGridWithSource, isPending } = useMergeGridWithSource({
     onSuccess: result => {
       onMergeSuccess(result)
@@ -31,10 +27,6 @@ export default function MergeGridWithSourceTableButton(
       displayToast(e.message, 'danger')
     },
   })
-
-  if (!hasPermissionToUpdateSource) {
-    return null
-  }
 
   return (
     <Button
