@@ -76,7 +76,6 @@ const SynapseGrid = forwardRef<
     isGridReady,
     modelRef,
     modelSnapshot,
-    getModel,
   } = useDataGridWebSocket()
   useEffect(() => {
     if (replicaId && presignedUrl) {
@@ -186,26 +185,63 @@ const SynapseGrid = forwardRef<
     return gridCols
   }
 
-  // Function to apply grid changes to a model
-  function gridToModel(gridRows: DataGridRow[], model: GridModel): GridModel {
-    if (!model) return model
-    const { columnNames: mcnUpdate } = model.api.getSnapshot()
+  function applyOperationsToModel(
+    operations: Operation[],
+    newValue: DataGridRow[],
+    oldValue: DataGridRow[],
+    model: GridModel,
+  ) {
+    if (!model) return
 
-    // Apply row changes
-    // Update existing rows and add new ones
-    for (let i = 0; i < gridRows.length; i++) {
-      const editedRow = gridRows[i]
-      const rowVec = model.api.vec(['rows', String(i), 'data'])
+    const { columnNames } = model.api.getSnapshot()
+    const rowsArr = model.api.arr(['rows'])
 
-      // Update each cell in the row
-      Object.entries(editedRow).forEach(([key, value]) => {
-        const columnIndex = mcnUpdate.indexOf(key)
-        if (!isNaN(columnIndex)) {
-          rowVec?.set([[columnIndex, s.con(value)]])
+    for (const operation of operations) {
+      if (operation.type === 'CREATE') {
+        // Add new rows to the model
+        for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
+          // Use actual row data from newValue[i] to initialize the new row
+          const rowData = newValue[i] || {}
+          const dataArray = columnNames.map(columnName =>
+            s.con(rowData[columnName] ?? ''),
+          )
+          rowsArr?.ins(i, [{ data: s.vec(...dataArray) }])
         }
-      })
+      }
+
+      if (operation.type === 'UPDATE') {
+        // Only update the specific rows and cells that changed
+        for (
+          let rowIndex = operation.fromRowIndex;
+          rowIndex < operation.toRowIndex;
+          rowIndex++
+        ) {
+          const newRow = newValue?.[rowIndex]
+          const oldRow = oldValue?.[rowIndex]
+
+          // Compare each cell and only update changed ones
+          Object.entries(newRow).forEach(([columnName, newCellValue]) => {
+            if (columnName.startsWith('_')) return // Skip internal properties like _rowId
+
+            const oldCellValue = oldRow?.[columnName]
+            if (newCellValue !== oldCellValue) {
+              const columnIndex = columnNames.indexOf(columnName)
+              if (columnIndex !== -1) {
+                const rowVec = model.api.vec(['rows', String(rowIndex), 'data'])
+                rowVec?.set([[columnIndex, s.con(newCellValue)]])
+              }
+            }
+          })
+        }
+      }
+
+      if (operation.type === 'DELETE') {
+        rowsArr?.del(
+          operation.fromRowIndex,
+          operation.toRowIndex - operation.fromRowIndex,
+        )
+      }
     }
-    return model
   }
 
   // Grid editing functions
@@ -214,9 +250,7 @@ const SynapseGrid = forwardRef<
   const updatedRowIds = useMemo(() => new Set(), [])
 
   const performCommit = (dataToCommit: DataGridRow[]) => {
-    // Update model and send changes to server
-    // This mutates the model -- maybe we should move this?
-    gridToModel(dataToCommit, getModel()!)
+    // The model has already been updated in handleChange, just send the patch
     websocketInstance?.sendPatch()
 
     // Reset tracking
@@ -248,17 +282,13 @@ const SynapseGrid = forwardRef<
       console.error('Model is not initialized')
       return
     }
-    for (const operation of operations) {
-      const model = modelRef.current
-      const rowsArr = model.api.arr(['rows'])
-      if (operation.type === 'CREATE') {
-        // Add new rows to the model iterating fromRowIndex to toRowIndex
-        // and adding rows to the model via the api
-        for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
-          const rowArr = model.api.arr(['rows'])
-          rowArr.ins(i, [{ data: s.vec(s.con('')) }])
-        }
 
+    // Apply all model updates in one place
+    applyOperationsToModel(operations, newValue, rowValues, modelRef.current)
+
+    // Handle row tracking for UI state
+    for (const operation of operations) {
+      if (operation.type === 'CREATE') {
         newValue
           .slice(operation.fromRowIndex, operation.toRowIndex)
           .forEach(({ _rowId }: any) => createdRowIds.add(_rowId))
@@ -274,15 +304,12 @@ const SynapseGrid = forwardRef<
           operation.toRowIndex,
         )
 
-        // Compare all elements of oldVal and newVal
         const comparisonResults = oldVal.map((oldItem, idx) =>
           rowsAreIdentical(oldItem, newVal[idx]),
         )
 
-        // If all compared rows are identical, no state updates are necessary.
-        // It is safe to return early here to avoid unnecessary updates.
         if (comparisonResults.every(Boolean)) return
-        // Only process newVal items where comparisonResults is false (i.e., changed rows)
+
         newVal
           .filter((_, idx) => !comparisonResults[idx])
           .forEach(({ _rowId }: DataGridRow) => {
@@ -294,16 +321,11 @@ const SynapseGrid = forwardRef<
 
       if (operation.type === 'DELETE') {
         let keptRows = 0
-        rowsArr?.del(
-          operation.fromRowIndex,
-          operation.toRowIndex - operation.fromRowIndex,
-        )
 
         rowValues
           .slice(operation.fromRowIndex, operation.toRowIndex)
           .forEach(({ _rowId }, i) => {
             updatedRowIds.delete(_rowId)
-
             if (createdRowIds.has(_rowId)) {
               createdRowIds.delete(_rowId)
             } else {
@@ -322,6 +344,7 @@ const SynapseGrid = forwardRef<
     const filteredData = newValue.filter(
       ({ _rowId }: DataGridRow) => !deletedRowIds.has(_rowId),
     )
+
     // Update UI state
     setRowValues(filteredData)
     autoCommit(filteredData)
