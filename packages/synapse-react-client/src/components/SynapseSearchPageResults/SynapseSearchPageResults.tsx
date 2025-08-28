@@ -1,14 +1,8 @@
-import {
-  Box,
-  Paper,
-  PaperProps,
-  Button,
-  styled,
-  Typography,
-} from '@mui/material'
+import { Box } from '@mui/material'
 
 import SynapseSearchResultsCard from './SynapseSearchResultsCard'
 
+// Example search API output
 const searchResultsOutput = {
   found: 9,
   start: 0,
