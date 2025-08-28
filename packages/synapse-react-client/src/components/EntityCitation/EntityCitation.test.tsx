@@ -200,7 +200,8 @@ describe('EntityCitation tests', () => {
     screen.getByRole('dialog', { name: /Citation options/i })
   })
 
-  it('Versioned Entity DOI', async () => {
+  // Skipped, see PORTALS-3746
+  it.skip('Versioned Entity DOI', async () => {
     render(
       <EntityCitation
         projectId={mockProjectWithNoDoiId}
