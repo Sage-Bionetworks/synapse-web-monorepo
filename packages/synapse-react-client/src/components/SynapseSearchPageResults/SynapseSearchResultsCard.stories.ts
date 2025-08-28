@@ -12,5 +12,7 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     name: 'The Jax.IU.PittRatTgF344-AD Study',
+    entityType: 'Project',
+    modifiedOn: new Date('2024-03-05'),
   },
 }
