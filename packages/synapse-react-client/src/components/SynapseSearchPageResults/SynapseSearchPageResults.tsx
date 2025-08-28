@@ -75,7 +75,12 @@ export function SynapseSearchPageResults() {
         }}
       >
         {searchResultsOutput.hits.map((hit: any) => (
-          <SynapseSearchResultsCard key={hit.name} name={hit.name} />
+          <SynapseSearchResultsCard
+            key={hit.name}
+            name={hit.name}
+            entityType={hit.node_type}
+            modifiedOn={new Date(hit.modified_on * 1000)}
+          />
         ))}
       </Box>
     </Box>
