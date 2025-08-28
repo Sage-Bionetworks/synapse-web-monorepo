@@ -536,7 +536,7 @@ const SynapseGrid = forwardRef<
 
               undoStackRef.current.push({
                 type: 'UPDATE',
-                rowId: typeof _rowId === 'number' ? _rowId : -1,
+                rowId: typeof _rowId === 'number' ? _rowId : undefined,
                 rowIndex: rowIndex,
                 previousValue: oldRow,
                 newValue: newRow,
