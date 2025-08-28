@@ -6,7 +6,7 @@ import { forwardRef, useImperativeHandle, useMemo, useState } from 'react'
 import {
   useDeleteGridSession,
   useGetGridSessionsInfinite,
-} from '../../synapse-queries/useGridSession'
+} from '../../synapse-queries/grid/useGridSession'
 import { displayToast } from '../ToastMessage/ToastMessage'
 
 export interface StartGridSessionProps {
