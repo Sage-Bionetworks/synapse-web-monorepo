@@ -436,10 +436,8 @@ const SynapseGrid = forwardRef<
     const updatedSnapshot = model.api.getSnapshot()
     setRowValues(modelRowsToGrid(updatedSnapshot))
 
-    // Reset the undo flag after a brief delay to allow the model updates to complete
-    setTimeout(() => {
-      isUndoingRef.current = false
-    }, 100)
+    // Reset the undo flag immediately after model/UI update
+    isUndoingRef.current = false
 
     handleClose()
   }
