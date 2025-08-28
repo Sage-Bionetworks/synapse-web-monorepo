@@ -50,9 +50,7 @@ export function useTableUpdateTransaction(
       return response.responseBody as TableUpdateTransactionResponse
     },
     onSuccess: async (response, variables, ctx) => {
-      // can we make waiting for invalidation optional?
-      // waiting for table queries to be invalidated will make us wait for the table to be rebuilt
-      // or can we 'clear' the table query data but not wait for those queries in particular to finish refetching?
+      // NOTE: awaiting invalidation means that this will wait until the table to is rebuilt, which might take longer than expected
       await invalidateAllQueriesForEntity(
         queryClient,
         keyFactory,
