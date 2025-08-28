@@ -7,7 +7,7 @@ import {
   UseQueryResult,
 } from '@tanstack/react-query'
 import noop from 'lodash-es/noop'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 
 /**
  * Returns a mock instance for useQuery, as well as functions to manipulate the mock hook's state, and
