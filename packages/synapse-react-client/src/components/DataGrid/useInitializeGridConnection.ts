@@ -9,7 +9,7 @@ import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import {
   useCreateGridReplica,
   useCreateGridSession,
-} from '../../synapse-queries/useGridSession'
+} from '../../synapse-queries/grid/useGridSession'
 import { parseQueryInput } from './DataGridUtils'
 
 /**
