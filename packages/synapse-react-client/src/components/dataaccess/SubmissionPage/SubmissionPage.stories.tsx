@@ -16,11 +16,20 @@ import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstan
 import { Meta, StoryObj } from '@storybook/react'
 import { http, HttpResponse } from 'msw'
 import SubmissionPage from './SubmissionPage'
+import { ErrorResponse } from '@sage-bionetworks/synapse-types'
 
 const meta = {
   title: 'Governance/SubmissionPage',
   component: SubmissionPage,
   parameters: { stack: 'mock', withRouter: true },
+  argTypes: {
+    isAuthenticated: {
+      control: { type: 'boolean' },
+    },
+  },
+  args: {
+    isAuthenticated: true,
+  },
 } satisfies Meta
 export default meta
 type Story = StoryObj<typeof meta>
@@ -99,6 +108,31 @@ export const Demo: Story = {
 
           async ({ request }) => {
             return HttpResponse.json(await request.json(), { status: 201 })
+          },
+        ),
+      ],
+    },
+  },
+  args: {
+    isReviewer: true,
+    submissionId: 1,
+  },
+}
+
+export const DemoError: Story = {
+  name: 'Demo Error State',
+  parameters: {
+    msw: {
+      handlers: [
+        http.get(
+          `${MOCK_REPO_ORIGIN}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
+          () => {
+            const errorResponse: ErrorResponse = {
+              reason:
+                'The user must be validated in order to review data access submissions.',
+              concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+            }
+            return HttpResponse.json(errorResponse, { status: 403 })
           },
         ),
       ],

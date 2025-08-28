@@ -25,7 +25,7 @@ import duration from 'dayjs/plugin/duration'
 import { isEmpty, toLower, upperFirst } from 'lodash-es'
 import { Fragment, ReactNode, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { SynapseErrorBoundary } from '../../error/ErrorBanner'
+import { ErrorBanner, SynapseErrorBoundary } from '../../error/ErrorBanner'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import { UserBadge } from '../../UserCard/UserBadge'
 import UserOrTeamBadge from '../../UserOrTeamBadge/UserOrTeamBadge'
@@ -117,8 +117,11 @@ export default function SubmissionPage(props: SubmissionPageProps) {
 
   const { data: currentUserProfile } = useGetCurrentUserProfile()
 
-  const { data: submission, isLoading: isLoadingSubmission } =
-    useGetDataAccessSubmission(submissionId)
+  const {
+    data: submission,
+    isLoading: isLoadingSubmission,
+    error: submissionLoadingError,
+  } = useGetDataAccessSubmission(submissionId)
   const isRequester = Boolean(
     submission &&
       currentUserProfile &&
@@ -175,6 +178,9 @@ export default function SubmissionPage(props: SubmissionPageProps) {
     return <Skeleton width={100} />
   }, [isExpired, isLoadingAccessApproval, submission])
 
+  if (submissionLoadingError) {
+    return <ErrorBanner error={submissionLoadingError} />
+  }
   return (
     <Grid container={true} spacing={4} className="SubmissionPage">
       {showUpdateRequestDialog && accessRequirement && (
