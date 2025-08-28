@@ -36,6 +36,7 @@ import {
 import { rowsAreIdentical } from './DataGridUtils'
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
+import { Button, Menu, MenuItem } from '@mui/material'
 
 export type SynapseGridProps = {
   query: string
@@ -49,6 +50,14 @@ const SynapseGrid = forwardRef<
   const [session, setSession] = useState<GridSession | null>(null)
   const [replicaId, setReplicaId] = useState<number | null>(null)
   const [presignedUrl, setPresignedUrl] = useState<string>('')
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => setAnchorEl(null)
 
   const startGridSessionRef = useRef<{
     handleStartSession: (input: string) => void
@@ -189,6 +198,188 @@ const SynapseGrid = forwardRef<
     return model
   }
 
+  type UndoableAction = {
+    type: 'CREATE' | 'DELETE' | 'UPDATE'
+    rowId: string | number | boolean | null | undefined
+    rowIndex: number
+    previousValue?: DataGridRow
+    newValue?: DataGridRow
+  }
+  const undoStackRef = useRef<UndoableAction[]>([])
+  const isUndoingRef = useRef(false)
+
+  // Generate preview information for the undo menu to show users exactly what will be undone
+  // Returns: lastType (CREATE/UPDATE/DELETE), sameTypeCount (consecutive actions of same type),
+  // totalActions (all actions in stack).
+  const getUndoPreview = () => {
+    if (undoStackRef.current.length === 0) return null
+
+    const lastAction = undoStackRef.current[undoStackRef.current.length - 1]
+    const lastType = lastAction.type
+
+    // Count consecutive actions of same type from the end
+    let sameTypeCount = 0
+    for (let i = undoStackRef.current.length - 1; i >= 0; i--) {
+      if (undoStackRef.current[i].type === lastType) {
+        sameTypeCount++
+      } else {
+        break
+      }
+    }
+
+    return {
+      lastType,
+      sameTypeCount,
+      totalActions: undoStackRef.current.length,
+    }
+  }
+
+  const undoPreview = getUndoPreview()
+
+  const handleUndo = (
+    undoType: 'lastAction' | 'consecutiveActions' | 'allActions',
+  ) => {
+    if (undoStackRef.current.length === 0) return
+
+    isUndoingRef.current = true
+
+    let actionsToUndo: UndoableAction[] = []
+
+    switch (undoType) {
+      case 'lastAction':
+        actionsToUndo = [undoStackRef.current.pop()!]
+        break
+      case 'consecutiveActions': {
+        // Undo all consecutive actions of the same type as the last action
+        const lastType = undoStackRef.current.at(-1)?.type
+        const consecutiveActions: typeof actionsToUndo = []
+
+        while (undoStackRef.current.at(-1)?.type === lastType) {
+          consecutiveActions.push(undoStackRef.current.pop()!)
+        }
+
+        // Reverse so the newest action is undone first
+        actionsToUndo = consecutiveActions.reverse()
+        break
+      }
+      case 'allActions':
+        // Later changes depend on earlier ones so undo from newest to oldest, then clear the stack
+        actionsToUndo = [...undoStackRef.current].reverse()
+        undoStackRef.current = []
+        break
+    }
+
+    // Apply undo operations to the current model
+    const model = getModel()
+    if (!model) return console.error('No model available for undo')
+
+    // Build a map of rows to undo updates for.
+    // This handles the "undo consecutive actions of the same type" use case:
+    //   - Ensure each row is restored once to its oldest state in the group,
+    //     avoiding intermediate overwrites
+    const updateMap = new Map<number, UndoableAction>()
+
+    actionsToUndo.forEach(action => {
+      if (action.type === 'UPDATE') {
+        // Only keep the first (oldest) update for each row
+        if (!updateMap.has(action.rowIndex)) {
+          updateMap.set(action.rowIndex, action)
+        }
+      }
+    })
+
+    // Undo DELETEs from lowest to highest rowIndex to safely restore original positions
+    const deleteActions = actionsToUndo
+      .filter(action => action.type === 'DELETE')
+      .sort((a, b) => a.rowIndex - b.rowIndex)
+
+    // Undo CREATEs from highest to lowest rowIndex to safely remove rows without shifting indices
+    const createActions = actionsToUndo
+      .filter(action => action.type === 'CREATE')
+      .sort((a, b) => b.rowIndex - a.rowIndex)
+
+    // Doesn't change row order, keep the same
+    const updateActions = actionsToUndo.filter(
+      action => action.type === 'UPDATE',
+    )
+
+    // Process actions in the correct order
+    // 1. Restoring deleted rows first ensures all original positions exist before applying updates or deletes.
+    // 2. Applying updates next ensures row values are restored correctly while all rows are at their proper indices.
+    // 3. Removing newly created rows last prevents shifting indices that would break updates or deletions.
+    const orderedActions = [
+      ...deleteActions,
+      ...updateActions,
+      ...createActions,
+    ]
+
+    orderedActions.forEach(action => {
+      const rowsArr = model.api.arr(['rows'])
+
+      if (action.type === 'CREATE') {
+        // Remove the created row
+        rowsArr?.del(action.rowIndex, 1)
+        createdRowIds.delete(action.rowId)
+      }
+
+      if (action.type === 'UPDATE') {
+        // Only process if this is the action we kept in the map (the oldest one)
+        const keptAction = updateMap.get(action.rowIndex)
+        if (keptAction === action) {
+          // Restore the oldest previous value
+          if (action.previousValue) {
+            const { columnNames } = model.api.getSnapshot()
+
+            Object.entries(action.previousValue).forEach(([key, value]) => {
+              if (key.startsWith('_')) return // Skip metadata fields
+              const columnIndex = columnNames.indexOf(key)
+              if (columnIndex !== -1) {
+                const rowVec = model.api.vec([
+                  'rows',
+                  String(action.rowIndex),
+                  'data',
+                ])
+                rowVec?.set([[columnIndex, s.con(value)]])
+              }
+            })
+          }
+          updatedRowIds.delete(action.rowId)
+        }
+      }
+
+      if (action.type === 'DELETE') {
+        // Re-insert the deleted row
+        if (action.previousValue) {
+          const { columnNames } = model.api.getSnapshot()
+
+          // Create the row data for the model
+          const rowData = columnNames.map(
+            colName => action.previousValue![colName] || '',
+          )
+
+          // Insert the row into the model
+          rowsArr?.ins(action.rowIndex, [
+            { data: s.vec(...rowData.map(s.con)) },
+          ])
+        }
+        deletedRowIds.delete(action.rowId)
+      }
+    })
+
+    // Send the undo changes to server
+    websocketInstance?.sendPatch()
+
+    // Update UI to reflect the undo
+    const updatedSnapshot = model.api.getSnapshot()
+    setRowValues(modelRowsToGrid(updatedSnapshot))
+
+    // Reset the undo flag after a brief delay to allow the model updates to complete
+    setTimeout(() => {
+      isUndoingRef.current = false
+    }, 100)
+
+    handleClose()
+  }
   // Grid editing functions
   const createdRowIds = useMemo(() => new Set(), [])
   const deletedRowIds = useMemo(() => new Set(), [])
@@ -199,11 +390,6 @@ const SynapseGrid = forwardRef<
     // This mutates the model -- maybe we should move this?
     gridToModel(dataToCommit, getModel()!)
     websocketInstance?.sendPatch()
-
-    // Reset tracking
-    createdRowIds.clear()
-    deletedRowIds.clear()
-    updatedRowIds.clear()
 
     return dataToCommit
   }
@@ -229,6 +415,17 @@ const SynapseGrid = forwardRef<
       console.error('Model is not initialized')
       return
     }
+
+    // Don't track actions if we're currently undoing
+    if (isUndoingRef.current) {
+      // Still update the UI state but don't track for undo
+      const filteredData = newValue.filter(
+        ({ _rowId }: DataGridRow) => !deletedRowIds.has(_rowId),
+      )
+      setRowValues(filteredData)
+      return
+    }
+
     for (const operation of operations) {
       const model = modelRef.current
       const rowsArr = model.api.arr(['rows'])
@@ -238,6 +435,16 @@ const SynapseGrid = forwardRef<
         for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
           const rowArr = model.api.arr(['rows'])
           rowArr.ins(i, [{ data: s.vec(s.con('')) }])
+
+          const newRow = newValue[i]
+          const rowId = newRow?._rowId || genId()
+
+          undoStackRef.current.push({
+            type: 'CREATE',
+            rowId,
+            rowIndex: i,
+            newValue: newRow,
+          })
         }
 
         newValue
@@ -266,9 +473,22 @@ const SynapseGrid = forwardRef<
         // Only process newVal items where comparisonResults is false (i.e., changed rows)
         newVal
           .filter((_, idx) => !comparisonResults[idx])
-          .forEach(({ _rowId }: DataGridRow) => {
+          .forEach((newRow: DataGridRow, idx: number) => {
+            const { _rowId } = newRow
+            const oldRow = oldVal[idx]
+            const rowIndex = operation.fromRowIndex + idx
+
+            // Skip tracking UPDATE operations for newly created rows or deleted rows
             if (!createdRowIds.has(_rowId) && !deletedRowIds.has(_rowId)) {
               updatedRowIds.add(_rowId)
+
+              undoStackRef.current.push({
+                type: 'UPDATE',
+                rowId: typeof _rowId === 'number' ? _rowId : -1,
+                rowIndex: rowIndex,
+                previousValue: oldRow,
+                newValue: newRow,
+              })
             }
           })
       }
@@ -282,13 +502,32 @@ const SynapseGrid = forwardRef<
 
         rowValues
           .slice(operation.fromRowIndex, operation.toRowIndex)
-          .forEach(({ _rowId }, i) => {
-            updatedRowIds.delete(_rowId)
+          .forEach((row, i) => {
+            const { _rowId } = row
+            const actualRowIndex = operation.fromRowIndex + i
 
-            if (createdRowIds.has(_rowId)) {
-              createdRowIds.delete(_rowId)
+            // Check if this was a created row before clearing tracking
+            const wasCreated = createdRowIds.has(_rowId)
+
+            // Clear all tracking for this row when it's deleted
+            updatedRowIds.delete(_rowId)
+            createdRowIds.delete(_rowId)
+            deletedRowIds.delete(_rowId)
+
+            if (wasCreated) {
+              // Row was created and then deleted - don't track this as a DELETE action
+              console.log('Removing created row from tracking:', _rowId)
             } else {
               deletedRowIds.add(_rowId)
+
+              undoStackRef.current.push({
+                type: 'DELETE',
+                rowId: _rowId,
+                rowIndex: actualRowIndex,
+                previousValue: row,
+                newValue: undefined,
+              })
+
               newValue.splice(
                 operation.fromRowIndex + keptRows++,
                 0,
@@ -378,6 +617,57 @@ const SynapseGrid = forwardRef<
           {/* Grid */}
           {isGridReady && (
             <div>
+              <>
+                <Button
+                  aria-controls={open ? 'undo-menu' : undefined}
+                  aria-haspopup="true"
+                  onClick={handleClick}
+                  disabled={!undoPreview}
+                >
+                  Undo {undoPreview && `(${undoPreview.totalActions})`} ▼
+                </Button>
+                <Menu
+                  id="undo-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                >
+                  {undoPreview ? (
+                    [
+                      <MenuItem
+                        key="lastAction"
+                        onClick={() => handleUndo('lastAction')}
+                      >
+                        Undo last {undoPreview.lastType.toLowerCase()} action
+                      </MenuItem>,
+                      ...(undoPreview.sameTypeCount > 1
+                        ? [
+                            <MenuItem
+                              key="consecutiveActions"
+                              onClick={() => handleUndo('consecutiveActions')}
+                            >
+                              Undo last {undoPreview.sameTypeCount}{' '}
+                              {undoPreview.lastType.toLowerCase()} actions
+                            </MenuItem>,
+                          ]
+                        : []),
+                      ...(undoPreview.totalActions > undoPreview.sameTypeCount
+                        ? [
+                            <MenuItem
+                              key="allActions"
+                              onClick={() => handleUndo('allActions')}
+                            >
+                              Undo all {undoPreview.totalActions} actions (mixed
+                              types)
+                            </MenuItem>,
+                          ]
+                        : []),
+                    ]
+                  ) : (
+                    <MenuItem disabled>No actions to undo</MenuItem>
+                  )}
+                </Menu>
+              </>
               <DataSheetGrid
                 value={rowValues}
                 columns={colValues}
