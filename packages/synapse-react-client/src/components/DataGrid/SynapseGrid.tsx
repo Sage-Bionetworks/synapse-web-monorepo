@@ -562,10 +562,7 @@ const SynapseGrid = forwardRef<
             createdRowIds.delete(_rowId)
             deletedRowIds.delete(_rowId)
 
-            if (wasCreated) {
-              // Row was created and then deleted - don't track this as a DELETE action
-              console.log('Removing created row from tracking:', _rowId)
-            } else {
+            if (!wasCreated) {
               deletedRowIds.add(_rowId)
 
               undoStackRef.current.push({
