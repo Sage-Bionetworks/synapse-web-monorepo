@@ -5,13 +5,19 @@ import {
   Button,
   styled,
   Typography,
+  Chip,
 } from '@mui/material'
-import DownloadIcon from '@mui/icons-material/Download'
 import { StyledComponent } from '@emotion/styled'
 import FavoriteButton from '../favorites/FavoriteButton'
+import {
+  Update as UpdateIcon,
+  Download as DownloadIcon,
+} from '@mui/icons-material'
 
 export type SynapseSearchResultsCardProps = {
   name: string
+  entityType: string
+  modifiedOn: Date
 }
 
 const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
@@ -26,6 +32,7 @@ const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
   width: '1000px',
   borderRadius: '10px',
   padding: '32px',
+  gap: '15px',
 }))
 
 export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
@@ -36,6 +43,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-between',
+          width: '100%',
         }}
       >
         <Typography
@@ -61,6 +69,32 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
             Download
           </Button>
         </Box>
+      </Box>
+      <Box>
+        <Chip
+          label={props.entityType}
+          sx={{
+            backgroundColor: '#DAE9E7',
+            color: '#265149',
+            fontSize: '14px',
+          }}
+        />
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '8px',
+        }}
+      >
+        <UpdateIcon />
+        <Typography
+          sx={{
+            fontSize: '14px',
+          }}
+        >
+          Last updated: {props.modifiedOn.toLocaleDateString()}
+        </Typography>
       </Box>
     </SynapseSearchResultsCardContainer>
   )
