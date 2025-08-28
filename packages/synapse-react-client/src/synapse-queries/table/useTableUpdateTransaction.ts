@@ -50,7 +50,6 @@ export function useTableUpdateTransaction(
       return response.responseBody as TableUpdateTransactionResponse
     },
     onSuccess: async (response, variables, ctx) => {
-      // NOTE: awaiting invalidation means that this will wait until the table to is rebuilt, which might take longer than expected
       await invalidateAllQueriesForEntity(
         queryClient,
         keyFactory,
