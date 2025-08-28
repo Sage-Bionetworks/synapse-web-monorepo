@@ -140,6 +140,6 @@ export const DemoError: Story = {
   },
   args: {
     isReviewer: true,
-    submissionId: 1,
+    submissionId: 9999,
   },
 }
