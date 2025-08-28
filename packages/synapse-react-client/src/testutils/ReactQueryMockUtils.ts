@@ -589,10 +589,6 @@ export function getUseMutationMock<
       submittedAt: 0,
     })
 
-    useEffect(() => {
-      mockMutateAsync.mockResolvedValue(value.data)
-    }, [value.data])
-
     currentSetValue = setValue
 
     return value

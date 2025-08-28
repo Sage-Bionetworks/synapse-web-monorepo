@@ -1,19 +1,35 @@
+import SynapseClient from '@/synapse-client/index'
+import { useExportGridAsCsv } from '@/synapse-queries/grid/useExportGrid'
+import { useTableUpdateTransaction } from '@/synapse-queries/table/useTableUpdateTransaction'
+import { getUseMutationMock } from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { renderHook, act } from '@testing-library/react'
+import { SynapseClientError } from '@/utils/index'
+import {
+  DownloadFromGridRequest,
+  DownloadFromGridResult,
+  FileEntity,
+  TableUpdateTransactionRequest,
+  TableUpdateTransactionResponse,
+} from '@sage-bionetworks/synapse-client'
+import { TableEntity } from '@sage-bionetworks/synapse-types'
+import { act, renderHook } from '@testing-library/react'
 import useMergeGridWithSource, {
   getDownloadFromGridRequestParamsForEntity,
 } from './useMergeGridWithSource'
-import { SynapseClientError } from '@/utils/index'
-import * as SynapseContext from '@/utils/index'
-import * as ExportGrid from '@/synapse-queries/grid/useExportGrid'
-import * as TableUpdate from '@/synapse-queries/table/useTableUpdateTransaction'
+
+vi.mock('@/synapse-queries/grid/useExportGrid', () => ({
+  useExportGridAsCsv: vi.fn(),
+}))
+vi.mock('@/synapse-queries/table/useTableUpdateTransaction', () => ({
+  useTableUpdateTransaction: vi.fn(),
+}))
 
 describe('getDownloadFromGridRequestParamsForEntity', () => {
   it('returns correct request params for TableEntity', () => {
     const entity = {
       concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
-    }
-    const result = getDownloadFromGridRequestParamsForEntity(entity as any)
+    } as TableEntity
+    const result = getDownloadFromGridRequestParamsForEntity(entity)
     expect(result).toEqual({
       includeRowIdAndRowVersion: true,
       includeEtag: false,
@@ -23,8 +39,10 @@ describe('getDownloadFromGridRequestParamsForEntity', () => {
   })
 
   it('returns correct request params for non-TableEntity', () => {
-    const entity = { concreteType: 'org.sagebionetworks.repo.model.FileEntity' }
-    const result = getDownloadFromGridRequestParamsForEntity(entity as any)
+    const entity = {
+      concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+    } as FileEntity
+    const result = getDownloadFromGridRequestParamsForEntity(entity)
     expect(result).toEqual({
       includeRowIdAndRowVersion: true,
       includeEtag: true,
@@ -35,24 +53,31 @@ describe('getDownloadFromGridRequestParamsForEntity', () => {
 })
 
 describe('useMergeGridWithSource', () => {
-  const mockGetRepoV1EntityId = vi.fn()
-  const mockExportGridToCsv = vi.fn()
-  const mockUpdateTable = vi.fn()
+  const gridSessionId = 'session1'
+  const tableEntityId = 'syn890'
+  const fileHandleId = '123456'
+  const mockGetEntity = vi.spyOn(SynapseClient, 'getEntity')
+
+  const { mock: mockUseExportGridAsCsv, mockMutateAsync: mockExportGridToCsv } =
+    getUseMutationMock<
+      DownloadFromGridResult,
+      SynapseClientError,
+      DownloadFromGridRequest
+    >()
+  const {
+    mock: mockUseTableUpdateTransaction,
+    mockMutateAsync: mockUpdateTable,
+  } = getUseMutationMock<
+    TableUpdateTransactionResponse,
+    SynapseClientError,
+    TableUpdateTransactionRequest
+  >()
 
   beforeEach(() => {
-    vi.spyOn(SynapseContext, 'useSynapseContext').mockReturnValue({
-      synapseClient: {
-        entityServicesClient: {
-          getRepoV1EntityId: mockGetRepoV1EntityId,
-        },
-      },
-    } as any)
-    vi.spyOn(ExportGrid, 'useExportGridAsCsv').mockReturnValue({
-      mutateAsync: mockExportGridToCsv,
-    } as any)
-    vi.spyOn(TableUpdate, 'useTableUpdateTransaction').mockReturnValue({
-      mutateAsync: mockUpdateTable,
-    } as any)
+    vi.mocked(useExportGridAsCsv).mockImplementation(mockUseExportGridAsCsv)
+    vi.mocked(useTableUpdateTransaction).mockImplementation(
+      mockUseTableUpdateTransaction,
+    )
   })
 
   afterEach(() => {
@@ -61,10 +86,11 @@ describe('useMergeGridWithSource', () => {
 
   it('calls all steps and returns updateTable result', async () => {
     const entity = {
+      id: tableEntityId,
       concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
-    }
-    mockGetRepoV1EntityId.mockResolvedValue(entity)
-    mockExportGridToCsv.mockResolvedValue({ resultsFileHandleId: 'file123' })
+    } as TableEntity
+    mockGetEntity.mockResolvedValue(entity)
+    mockExportGridToCsv.mockResolvedValue({ resultsFileHandleId: fileHandleId })
     mockUpdateTable.mockResolvedValue({ success: true })
 
     const { result } = renderHook(() => useMergeGridWithSource(), {
@@ -72,25 +98,29 @@ describe('useMergeGridWithSource', () => {
     })
     await act(async () => {
       const response = await result.current.mutateAsync({
-        gridSessionId: 'session1',
-        sourceEntityId: 'syn123',
+        gridSessionId: gridSessionId,
+        sourceEntityId: tableEntityId,
       })
-      expect(mockGetRepoV1EntityId).toHaveBeenCalledWith({ id: 'syn123' })
+      expect(mockGetEntity).toHaveBeenCalledWith(
+        expect.any(String),
+        tableEntityId,
+        undefined,
+      )
       expect(mockExportGridToCsv).toHaveBeenCalledWith({
         includeRowIdAndRowVersion: true,
         includeEtag: false,
         concreteType:
           'org.sagebionetworks.repo.model.grid.DownloadFromGridRequest',
-        sessionId: 'session1',
+        sessionId: gridSessionId,
       })
       expect(mockUpdateTable).toHaveBeenCalledWith({
         concreteType:
           'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
-        entityId: 'syn123',
+        entityId: tableEntityId,
         changes: [
           {
-            uploadFileHandleId: 'file123',
-            tableId: 'syn123',
+            uploadFileHandleId: fileHandleId,
+            tableId: tableEntityId,
             concreteType:
               'org.sagebionetworks.repo.model.table.UploadToTableRequest',
           },
@@ -100,8 +130,8 @@ describe('useMergeGridWithSource', () => {
     })
   })
 
-  it('handles errors from synapseClient', async () => {
-    mockGetRepoV1EntityId.mockRejectedValue(
+  it('handles a thrown error', async () => {
+    mockGetEntity.mockRejectedValue(
       new SynapseClientError(400, 'error', expect.getState().currentTestName!),
     )
     const { result } = renderHook(() => useMergeGridWithSource(), {
@@ -109,8 +139,8 @@ describe('useMergeGridWithSource', () => {
     })
     await expect(
       result.current.mutateAsync({
-        gridSessionId: 'session1',
-        sourceEntityId: 'syn123',
+        gridSessionId: gridSessionId,
+        sourceEntityId: tableEntityId,
       }),
     ).rejects.toThrow('error')
   })

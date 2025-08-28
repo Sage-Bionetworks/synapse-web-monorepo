@@ -1,6 +1,7 @@
 import { useExportGridAsCsv } from '@/synapse-queries/grid/useExportGrid'
+import { useGetEntityQueryOptions } from '@/synapse-queries/entity/useEntity'
 import { useTableUpdateTransaction } from '@/synapse-queries/table/useTableUpdateTransaction'
-import { SynapseClientError, useSynapseContext } from '@/utils/index'
+import { SynapseClientError } from '@/utils/index'
 import {
   DownloadFromGridRequest,
   Entity,
@@ -8,7 +9,11 @@ import {
   TableUpdateTransactionRequest,
   TableUpdateTransactionResponse,
 } from '@sage-bionetworks/synapse-client'
-import { useMutation, UseMutationOptions } from '@tanstack/react-query'
+import {
+  useMutation,
+  UseMutationOptions,
+  useQueryClient,
+} from '@tanstack/react-query'
 
 export default function useMergeGridWithSource(
   options?: Omit<
@@ -20,9 +25,10 @@ export default function useMergeGridWithSource(
     'mutationFn'
   >,
 ) {
-  const { synapseClient } = useSynapseContext()
+  const queryClient = useQueryClient()
   const { mutateAsync: exportGridToCsv } = useExportGridAsCsv()
   const { mutateAsync: updateTable } = useTableUpdateTransaction()
+  const getEntityQueryOptions = useGetEntityQueryOptions()
   return useMutation<
     TableUpdateTransactionResponse,
     SynapseClientError,
@@ -31,11 +37,10 @@ export default function useMergeGridWithSource(
     ...options,
     mutationFn: async ({ gridSessionId, sourceEntityId }) => {
       // First, get the type of the source entity. The request body for the export varies based on the entity type.
-      const entity = await synapseClient.entityServicesClient.getRepoV1EntityId(
-        {
-          id: sourceEntityId,
-        },
+      const entity = await queryClient.fetchQuery(
+        getEntityQueryOptions(sourceEntityId),
       )
+
       const gridExportRequest: DownloadFromGridRequest = {
         ...getDownloadFromGridRequestParamsForEntity(entity),
         sessionId: gridSessionId,
