@@ -1,4 +1,4 @@
-import { Box, Container, Link, Typography } from '@mui/material'
+import { Box, Button, Container, Link, Typography } from '@mui/material'
 import { useCallback, useState } from 'react'
 import { ReactComponent as AcknowledgementStatementsIllustration } from '../../assets/illustrations/acknowledgement_statements_illustration.svg'
 export type AcknowledgementPageProps = {
@@ -67,40 +67,40 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
           1. Select study-specific acknowledgement statements
         </Typography>
         <hr />
-        <Typography variant="body1" sx={{ mb: '1em' }}>
+        <Typography variant="body1" sx={{ mb: '2em' }}>
           To properly acknowledge the studies from which you use data, please be
           sure to copy the full statement provided for each study you used. You
           can expand each section for detailed information or simply click 'Copy
           full statement to clipboard' to easily save the text for your
           references.
         </Typography>
-        TODO: Add study specific statement list component here
+        {/* Study specific statement list component */}
+        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+          2. Generate Data Acknowledgements
+        </Typography>
+        <hr />
+        <Typography variant="body1" sx={{ fontWeight: 'bold', mb: '1em' }}>
+          Click to generate a set of acknowledgements for your article based on
+          your selected studies.
+        </Typography>
+        <Typography variant="body1" sx={{ mb: '1em' }}>
+          The generated text will include all the specific acknowledgement
+          statements for the studies you selected, along with all other required
+          Acknowledgement Statements listed below.
+        </Typography>
+        <Button
+          variant="contained"
+          onClick={() => setAcknowledgementsDialogOpen(true)}
+          sx={{ mb: '3em' }}
+        >
+          Generate Data Acknowledgements
+        </Button>
       </Container>
-      <Box
-        sx={{
-          display: { xs: 'flex', lg: 'grid' },
-          columnGap: '80px',
-          flexDirection: { xs: 'column', lg: undefined },
-          gridTemplateColumns: { lg: '40% 60%' },
-        }}
-      >
-        <Box
-          sx={{
-            justifySelf: 'end',
-            alignSelf: 'center',
-            '& svg': {
-              height: '360px',
-              maxWidth: '300px',
-            },
-            pt: '50px',
-            pb: '50px',
-          }}
-        ></Box>
-        {/* <AcknowledgementsDialog
-          isOpen={isAcknowledgementsDialogOpen}
-          onHide={handleCloseDialog}
-        /> */}
-      </Box>
+
+      {/* <AcknowledgementsDialog
+        isOpen={isAcknowledgementsDialogOpen}
+        onHide={handleCloseDialog}
+      /> */}
     </>
   )
 }
