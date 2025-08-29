@@ -14,12 +14,16 @@ import {
   Download as DownloadIcon,
 } from '@mui/icons-material'
 
+// set up props for SynapseSearchResultsCard
+// accepts fields from a synapse search result hit
+// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/search/Hit.html
 export type SynapseSearchResultsCardProps = {
   name: string
   entityType: string
   modifiedOn: string
 }
 
+// style the card container
 const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
   Paper,
   {
