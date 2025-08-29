@@ -340,8 +340,7 @@ const SynapseGrid = forwardRef<
             const oldRow = oldVal[idx]
             const rowIndex = operation.fromRowIndex + idx
 
-            // Skip tracking UPDATE operations for newly created rows or deleted rows
-            if (!createdRowIds.has(_rowId) && !deletedRowIds.has(_rowId)) {
+            if (!createdRowIds.has(_rowId)) {
               updatedRowIds.add(_rowId)
 
               addToUndoStack({
