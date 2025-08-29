@@ -76,7 +76,7 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
           full statement to clipboard' to easily save the text for your
           references.
         </Typography>
-        TODO - Study specific statement list component
+        TODO - PORTALS-3764 - Study specific statement list component
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
           2. Generate Data Acknowledgements
         </Typography>
@@ -108,8 +108,8 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
           iconSx={{ width: '25px', height: '25px' }}
         >
           <Typography variant="body1" sx={{ mb: '1em' }}>
-            TODO - Portal Acknowledgement Statement and Data Availability
-            Statement
+            TODO - PORTALS-3763 - Portal Acknowledgement Statement and Data
+            Availability Statement
           </Typography>
         </ComponentCollapse>
       </Container>
@@ -119,7 +119,7 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
           isGlobal={true}
           variant={'info'}
           show={true}
-          title={'TODO - Generated Acknowledgements Dialog'}
+          title={'TODO - PORTALS-3778 - Generated Acknowledgements Dialog'}
           onClose={handleCloseDialog}
         />
       )}
