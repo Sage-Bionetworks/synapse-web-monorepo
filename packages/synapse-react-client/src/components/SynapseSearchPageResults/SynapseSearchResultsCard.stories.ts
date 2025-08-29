@@ -11,9 +11,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    entityId: 'syn68883786',
-    name: 'SEA-AD Dream-2025-0811 copy.mp4',
-    entityType: 'file',
-    modifiedOn: 1755101943,
+    name: 'The Jax.IU.PittRatTgF344-AD Study',
+    entityType: 'Project',
+    modifiedOn: new Date('2024-03-05'),
   },
 }

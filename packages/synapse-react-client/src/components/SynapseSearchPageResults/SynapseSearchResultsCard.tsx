@@ -6,7 +6,6 @@ import {
   styled,
   Typography,
   Chip,
-  Link,
 } from '@mui/material'
 import { StyledComponent } from '@emotion/styled'
 import FavoriteButton from '../favorites/FavoriteButton'
@@ -14,24 +13,13 @@ import {
   Update as UpdateIcon,
   Download as DownloadIcon,
 } from '@mui/icons-material'
-import { formatDate } from '@/utils/functions/DateFormatter'
-import dayjs from 'dayjs'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '@/utils/functions/getEndpoint'
 
-// set up props for SynapseSearchResultsCard
-// accepts fields from a synapse search result hit
-// https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/search/Hit.html
 export type SynapseSearchResultsCardProps = {
-  entityId: string
   name: string
   entityType: string
-  modifiedOn: number
+  modifiedOn: Date
 }
 
-// style the card container
 const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
   Paper,
   {
@@ -41,7 +29,7 @@ const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
   display: 'flex',
   flexDirection: 'column',
   minHeight: '250px',
-  width: '100%',
+  width: '1000px',
   borderRadius: '10px',
   padding: '32px',
   gap: '15px',
@@ -58,14 +46,16 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
           width: '100%',
         }}
       >
-        <Typography variant="headline3">
-          <Link
-            href={`${getEndpoint(
-              BackendDestinationEnum.PORTAL_ENDPOINT,
-            )}Synapse:${props.entityId}`}
-          >
-            {props.name}
-          </Link>
+        <Typography
+          sx={{
+            fontSize: '18px',
+            color: '#395979',
+            fontWeight: 700,
+            fontFamily: 'DM Sans',
+            textDecoration: 'underline',
+          }}
+        >
+          {props.name}
         </Typography>
         <Box
           sx={{
@@ -103,7 +93,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
             fontSize: '14px',
           }}
         >
-          Last updated: {formatDate(dayjs.unix(props.modifiedOn))}
+          Last updated: {props.modifiedOn.toLocaleDateString()}
         </Typography>
       </Box>
     </SynapseSearchResultsCardContainer>
