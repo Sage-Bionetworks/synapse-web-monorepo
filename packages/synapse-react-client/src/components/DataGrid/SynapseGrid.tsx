@@ -474,8 +474,6 @@ const SynapseGrid = forwardRef<
     // Apply all model updates in one place
     applyOperationsToModel(operations, newValue, rowValues, modelRef.current)
 
-    // Handle row tracking for UI state
-
     // Don't track actions if we're currently undoing
     if (isUndoingRef.current) {
       // Still update the UI state but don't track for undo
@@ -486,6 +484,7 @@ const SynapseGrid = forwardRef<
       return
     }
 
+    // Track row creation, updates, and deletions to keep UI state and undo history in sync
     for (const operation of operations) {
       if (operation.type === 'CREATE') {
         for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
