@@ -122,24 +122,13 @@ const SynapseGrid = forwardRef<
     return gridRows
   }
 
-  const {
-    undoPreview,
-    handleUndo,
-    addToUndoStack,
-    clearUndoStack,
-    createdRowIds,
-    deletedRowIds,
-    updatedRowIds,
-    isUndoingRef,
-  } = useGridUndo(modelRef, websocketInstance, setRowValues, modelRowsToGrid)
-
   // If grid sessionId or replicaId changes, reset the model
   useEffect(() => {
     if (session || replicaId) {
       modelRef.current = null
       setRowValues([])
       setColValues([])
-      clearUndoStack() // Clear undo stack when resetting
+      clearUndoStack()
     }
   }, [session, replicaId, websocketInstance, modelRef])
 
@@ -285,7 +274,11 @@ const SynapseGrid = forwardRef<
     return { _rowId: genId() }
   }
 
-  const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
+  const handleChange = (
+    newValue: DataGridRow[],
+    operations: Operation[],
+    isUndoing = false,
+  ) => {
     if (!modelRef.current) {
       console.error('Model is not initialized')
       return
@@ -295,7 +288,7 @@ const SynapseGrid = forwardRef<
     applyOperationsToModel(operations, newValue, rowValues, modelRef.current)
 
     // Don't track actions if we're currently undoing
-    if (isUndoingRef.current) {
+    if (isUndoing) {
       // Still update the UI state but don't track for undo
       const filteredData = newValue.filter(
         ({ _rowId }: DataGridRow) => !deletedRowIds.has(_rowId),
@@ -409,6 +402,22 @@ const SynapseGrid = forwardRef<
     setRowValues(filteredData)
     autoCommit(filteredData)
   }
+
+  const {
+    undoPreview,
+    handleUndo,
+    addToUndoStack,
+    clearUndoStack,
+    createdRowIds,
+    deletedRowIds,
+    updatedRowIds,
+  } = useGridUndo(
+    modelRef,
+    websocketInstance,
+    setRowValues,
+    modelRowsToGrid,
+    handleChange,
+  )
 
   // Track the currently selected row index
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)

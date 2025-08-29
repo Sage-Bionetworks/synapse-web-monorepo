@@ -1,5 +1,9 @@
-import { DataGridRow, GridModel } from '@/components/DataGrid/DataGridTypes'
-import { useRef, useMemo } from 'react'
+import {
+  DataGridRow,
+  GridModel,
+  Operation,
+} from '@/components/DataGrid/DataGridTypes'
+import { useMemo, useState } from 'react'
 import { s } from 'json-joy/lib/json-crdt-patch'
 import { DataGridWebSocket } from '@/components/DataGrid/DataGridWebSocket'
 
@@ -16,9 +20,13 @@ export function useGridUndo(
   websocketInstance?: DataGridWebSocket | null,
   setRowValues?: (rows: DataGridRow[]) => void,
   modelRowsToGrid?: (modelSnapshot: any) => DataGridRow[],
+  handleChange?: (
+    rows: DataGridRow[],
+    operations: Operation[],
+    isUndoing?: boolean,
+  ) => void,
 ) {
-  const undoStackRef = useRef<UndoableAction[]>([])
-  const isUndoingRef = useRef(false)
+  const [undoStack, setUndoStack] = useState<UndoableAction[]>([])
 
   // Grid editing state sets
   const createdRowIds = useMemo(() => new Set(), [])
@@ -29,15 +37,15 @@ export function useGridUndo(
   // Returns: lastType (CREATE/UPDATE/DELETE), sameTypeCount (consecutive actions of same type),
   // totalActions (all actions in stack).
   const getUndoPreview = () => {
-    if (undoStackRef.current.length === 0) return null
+    if (undoStack.length === 0) return null
 
-    const lastAction = undoStackRef.current[undoStackRef.current.length - 1]
+    const lastAction = undoStack[undoStack.length - 1]
     const lastType = lastAction.type
 
     // Count consecutive actions of same type from the end
     let sameTypeCount = 0
-    for (let i = undoStackRef.current.length - 1; i >= 0; i--) {
-      if (undoStackRef.current[i].type === lastType) {
+    for (let i = undoStack.length - 1; i >= 0; i--) {
+      if (undoStack[i].type === lastType) {
         sameTypeCount++
       } else {
         break
@@ -47,7 +55,7 @@ export function useGridUndo(
     return {
       lastType,
       sameTypeCount,
-      totalActions: undoStackRef.current.length,
+      totalActions: undoStack.length,
     }
   }
 
@@ -57,33 +65,36 @@ export function useGridUndo(
     undoType: 'lastAction' | 'consecutiveActions' | 'allActions',
     handleClose?: () => void,
   ) => {
-    if (undoStackRef.current.length === 0) return
-
-    isUndoingRef.current = true
+    if (undoStack.length === 0) return
 
     let actionsToUndo: UndoableAction[] = []
 
     switch (undoType) {
-      case 'lastAction':
-        actionsToUndo = [undoStackRef.current.pop()!]
+      case 'lastAction': {
+        const newUndoStack = [...undoStack]
+        actionsToUndo = [newUndoStack.pop()!]
+        setUndoStack(newUndoStack)
         break
+      }
       case 'consecutiveActions': {
         // Undo all consecutive actions of the same type as the last action
-        const lastType = undoStackRef.current.at(-1)?.type
+        const newUndoStack = [...undoStack]
+        const lastType = newUndoStack.at(-1)?.type
         const consecutiveActions: typeof actionsToUndo = []
 
-        while (undoStackRef.current.at(-1)?.type === lastType) {
-          consecutiveActions.push(undoStackRef.current.pop()!)
+        while (newUndoStack.at(-1)?.type === lastType) {
+          consecutiveActions.push(newUndoStack.pop()!)
         }
 
         // Reverse so the newest action is undone first
         actionsToUndo = consecutiveActions.reverse()
+        setUndoStack(newUndoStack)
         break
       }
       case 'allActions':
         // Later changes depend on earlier ones so undo from newest to oldest, then clear the stack
-        actionsToUndo = [...undoStackRef.current].reverse()
-        undoStackRef.current = []
+        actionsToUndo = [...undoStack].reverse()
+        setUndoStack([])
         break
     }
 
@@ -189,22 +200,19 @@ export function useGridUndo(
 
     // Update UI to reflect the undo
     if (setRowValues && modelRowsToGrid) {
-      const updatedSnapshot = model.api.getSnapshot()
-      setRowValues(modelRowsToGrid(updatedSnapshot))
+      const updatedRows = modelRowsToGrid(model.api.getSnapshot())
+      handleChange?.(updatedRows, [], true)
     }
-
-    // Reset the undo flag immediately after model/UI update
-    isUndoingRef.current = false
 
     handleClose?.()
   }
 
   const addToUndoStack = (action: UndoableAction) => {
-    undoStackRef.current.push(action)
+    setUndoStack(prev => [...prev, action])
   }
 
   const clearUndoStack = () => {
-    undoStackRef.current = []
+    setUndoStack([])
   }
 
   return {
@@ -212,10 +220,8 @@ export function useGridUndo(
     handleUndo,
     addToUndoStack,
     clearUndoStack,
-    isUndoing: isUndoingRef.current,
     createdRowIds,
     deletedRowIds,
     updatedRowIds,
-    isUndoingRef,
   }
 }
