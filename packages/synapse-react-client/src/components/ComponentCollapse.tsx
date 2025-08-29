@@ -2,12 +2,23 @@ import {
   KeyboardArrowDownTwoTone,
   KeyboardArrowUpTwoTone,
 } from '@mui/icons-material'
-import { Box, Collapse, SxProps, Typography } from '@mui/material'
+import {
+  Box,
+  Collapse,
+  SxProps,
+  Typography,
+  TypographyOwnProps,
+} from '@mui/material'
 import { PropsWithChildren, useState } from 'react'
 
 export type ComponentCollapseProps = PropsWithChildren<{
   text: string
   defaultVisible?: boolean // default to false (collapsed)
+  textVariant?: TypographyOwnProps['variant']
+  textSx?: SxProps
+  textContainerSx?: SxProps
+  collapseBoxSx?: SxProps
+  iconSx?: SxProps
 }>
 
 /**
@@ -18,13 +29,19 @@ export type ComponentCollapseProps = PropsWithChildren<{
 export default function ComponentCollapse({
   text,
   defaultVisible,
+  textVariant = 'smallLink',
+  textSx,
+  textContainerSx,
+  collapseBoxSx,
+  iconSx,
   children,
 }: ComponentCollapseProps) {
   const [show, setShow] = useState(defaultVisible)
-  const iconSx: SxProps = {
+  const allIconSx: SxProps = {
     color: 'grey.700',
     marginBottom: '-5px !important',
     height: '18px',
+    ...iconSx,
   }
 
   return (
@@ -35,30 +52,36 @@ export default function ComponentCollapse({
           justifyContent: 'space-between',
           backgroundColor: 'grey.200',
           padding: '15px',
+          '&:hover': {
+            cursor: 'pointer',
+          },
+          ...textContainerSx,
         }}
+        onClick={() => setShow(!show)}
       >
         <Typography
-          variant="smallLink"
-          onClick={() => setShow(!show)}
+          variant={textVariant}
           aria-controls="collapse-text"
           aria-expanded={show}
+          sx={textSx}
+        >
+          {text}
+        </Typography>
+
+        {show ? (
+          <KeyboardArrowUpTwoTone sx={allIconSx} />
+        ) : (
+          <KeyboardArrowDownTwoTone sx={allIconSx} />
+        )}
+      </Box>
+      <Collapse in={show}>
+        <Box
           sx={{
-            '&:hover': {
-              cursor: 'pointer',
-            },
+            backgroundColor: 'grey.100',
+            padding: '25px',
+            ...collapseBoxSx,
           }}
         >
-          {text}{' '}
-          {show ? (
-            <KeyboardArrowUpTwoTone sx={iconSx} />
-          ) : (
-            <KeyboardArrowDownTwoTone sx={iconSx} />
-          )}
-        </Typography>
-      </Box>
-
-      <Collapse in={show}>
-        <Box sx={{ backgroundColor: 'grey.100', padding: '25px' }}>
           <div id="collapse-text">{children}</div>
         </Box>
       </Collapse>
