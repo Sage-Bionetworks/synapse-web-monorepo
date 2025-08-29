@@ -7,6 +7,4 @@
 @use './config/style/style_overrides';
 
 // Add the scoped D4D styles
-.d4d-styles {
-  @import 'assets/d4d/d4d';
-}
+@use 'assets/d4d/d4d';
