@@ -17,7 +17,7 @@ import {
 export type SynapseSearchResultsCardProps = {
   name: string
   entityType: string
-  modifiedOn: Date
+  modifiedOn: string
 }
 
 const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
@@ -93,7 +93,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
             fontSize: '14px',
           }}
         >
-          Last updated: {props.modifiedOn.toLocaleDateString()}
+          Last updated: {props.modifiedOn}
         </Typography>
       </Box>
     </SynapseSearchResultsCardContainer>

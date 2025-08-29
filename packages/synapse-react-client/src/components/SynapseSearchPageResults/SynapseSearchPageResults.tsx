@@ -1,5 +1,4 @@
 import { Box } from '@mui/material'
-
 import SynapseSearchResultsCard from './SynapseSearchResultsCard'
 
 // Example search API output
@@ -73,7 +72,7 @@ export function SynapseSearchPageResults() {
             key={hit.name}
             name={hit.name}
             entityType={hit.node_type}
-            modifiedOn={new Date(hit.modified_on * 1000)}
+            modifiedOn={new Date(hit.modified_on * 1000).toLocaleString()}
           />
         ))}
       </Box>
