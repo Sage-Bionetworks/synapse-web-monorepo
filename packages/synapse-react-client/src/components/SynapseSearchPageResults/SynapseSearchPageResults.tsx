@@ -70,10 +70,9 @@ export function SynapseSearchPageResults() {
         {searchResultsOutput.hits.map((hit: any) => (
           <SynapseSearchResultsCard
             key={hit.name}
-            entityId={hit.id}
             name={hit.name}
             entityType={hit.node_type}
-            modifiedOn={hit.modified_on}
+            modifiedOn={new Date(hit.modified_on * 1000).toLocaleString()}
           />
         ))}
       </Box>
