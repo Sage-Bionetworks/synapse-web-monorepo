@@ -13,7 +13,6 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
-  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -39,6 +38,8 @@ import {
 import { rowsAreIdentical } from './DataGridUtils'
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
+import { Button, Menu, MenuItem } from '@mui/material'
+import { useGridUndo } from '@/utils/hooks/useGridUndo'
 
 export type SynapseGridProps = {
   query: string
@@ -52,6 +53,14 @@ const SynapseGrid = forwardRef<
   const [session, setSession] = useState<GridSession | null>(null)
   const [replicaId, setReplicaId] = useState<number | null>(null)
   const [presignedUrl, setPresignedUrl] = useState<string>('')
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => setAnchorEl(null)
 
   const startGridSessionRef = useRef<{
     handleStartSession: (input: string) => void
@@ -78,6 +87,7 @@ const SynapseGrid = forwardRef<
     modelRef,
     modelSnapshot,
   } = useDataGridWebSocket()
+
   useEffect(() => {
     if (replicaId && presignedUrl) {
       createWebsocket(replicaId, presignedUrl)
@@ -90,30 +100,9 @@ const SynapseGrid = forwardRef<
 
   const connectionStatus = isConnected ? 'Connected' : 'Disconnected'
 
-  // If grid sessionId or replicaId changes, reset the model
-  useEffect(() => {
-    if (session || replicaId) {
-      modelRef.current = null
-      // modelSnapshotRef.current = {
-      //   columnNames: [],
-      //   columnOrder: [],
-      //   rows: [],
-      // }
-      setRowValues([])
-      setColValues([])
-    }
-  }, [session, replicaId, websocketInstance])
-
   // Grid rows and columns
   const [rowValues, setRowValues] = useState<DataGridRow[]>([])
   const [colValues, setColValues] = useState<Column[]>([])
-
-  useEffect(() => {
-    if (modelSnapshot) {
-      setRowValues(modelRowsToGrid(modelSnapshot))
-      setColValues(modelColsToGrid(modelSnapshot))
-    }
-  }, [modelSnapshot])
 
   // Convert model rows to a format suitable for DataSheetGrid
   function modelRowsToGrid(modelSnapshot: GridModelSnapshot): DataGridRow[] {
@@ -132,6 +121,23 @@ const SynapseGrid = forwardRef<
     })
     return gridRows
   }
+
+  // If grid sessionId or replicaId changes, reset the model
+  useEffect(() => {
+    if (session || replicaId) {
+      modelRef.current = null
+      setRowValues([])
+      setColValues([])
+      clearUndoStack()
+    }
+  }, [session, replicaId, websocketInstance, modelRef])
+
+  useEffect(() => {
+    if (modelSnapshot) {
+      setRowValues(modelRowsToGrid(modelSnapshot))
+      setColValues(modelColsToGrid(modelSnapshot))
+    }
+  }, [modelSnapshot])
 
   // Convert model columns to a format suitable for DataSheetGrid
   function modelColsToGrid(modelSnapshot: GridModelSnapshot): Column[] {
@@ -245,19 +251,9 @@ const SynapseGrid = forwardRef<
     }
   }
 
-  // Grid editing functions
-  const createdRowIds = useMemo(() => new Set(), [])
-  const deletedRowIds = useMemo(() => new Set(), [])
-  const updatedRowIds = useMemo(() => new Set(), [])
-
   const performCommit = (dataToCommit: DataGridRow[]) => {
     // The model has already been updated in handleChange, just send the patch
     websocketInstance?.sendPatch()
-
-    // Reset tracking
-    createdRowIds.clear()
-    deletedRowIds.clear()
-    updatedRowIds.clear()
 
     return dataToCommit
   }
@@ -278,7 +274,11 @@ const SynapseGrid = forwardRef<
     return { _rowId: genId() }
   }
 
-  const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
+  const handleChange = (
+    newValue: DataGridRow[],
+    operations: Operation[],
+    isUndoing = false,
+  ) => {
     if (!modelRef.current) {
       console.error('Model is not initialized')
       return
@@ -287,9 +287,31 @@ const SynapseGrid = forwardRef<
     // Apply all model updates in one place
     applyOperationsToModel(operations, newValue, rowValues, modelRef.current)
 
-    // Handle row tracking for UI state
+    // Don't track actions if we're currently undoing
+    if (isUndoing) {
+      // Still update the UI state but don't track for undo
+      const filteredData = newValue.filter(
+        ({ _rowId }: DataGridRow) => !deletedRowIds.has(_rowId),
+      )
+      setRowValues(filteredData)
+      return
+    }
+
+    // Track row creation, updates, and deletions to keep UI state and undo history in sync
     for (const operation of operations) {
       if (operation.type === 'CREATE') {
+        for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
+          const newRow = newValue[i]
+          const rowId = newRow?._rowId || genId()
+
+          addToUndoStack({
+            type: 'CREATE',
+            rowId,
+            rowIndex: i,
+            newValue: newRow,
+          })
+        }
+
         newValue
           .slice(operation.fromRowIndex, operation.toRowIndex)
           .forEach(({ _rowId }: any) => createdRowIds.add(_rowId))
@@ -313,9 +335,21 @@ const SynapseGrid = forwardRef<
 
         newVal
           .filter((_, idx) => !comparisonResults[idx])
-          .forEach(({ _rowId }: DataGridRow) => {
-            if (!createdRowIds.has(_rowId) && !deletedRowIds.has(_rowId)) {
+          .forEach((newRow: DataGridRow, idx: number) => {
+            const { _rowId } = newRow
+            const oldRow = oldVal[idx]
+            const rowIndex = operation.fromRowIndex + idx
+
+            if (!createdRowIds.has(_rowId)) {
               updatedRowIds.add(_rowId)
+
+              addToUndoStack({
+                type: 'UPDATE',
+                rowId: typeof _rowId === 'number' ? _rowId : undefined,
+                rowIndex: rowIndex,
+                previousValue: oldRow,
+                newValue: newRow,
+              })
             }
           })
       }
@@ -325,12 +359,29 @@ const SynapseGrid = forwardRef<
 
         rowValues
           .slice(operation.fromRowIndex, operation.toRowIndex)
-          .forEach(({ _rowId }, i) => {
+          .forEach((row, i) => {
+            const { _rowId } = row
+            const actualRowIndex = operation.fromRowIndex + i
+
+            // Check if this was a created row before clearing tracking
+            const wasCreated = createdRowIds.has(_rowId)
+
+            // Clear all tracking for this row when it's deleted
             updatedRowIds.delete(_rowId)
-            if (createdRowIds.has(_rowId)) {
-              createdRowIds.delete(_rowId)
-            } else {
+            createdRowIds.delete(_rowId)
+            deletedRowIds.delete(_rowId)
+
+            if (!wasCreated) {
               deletedRowIds.add(_rowId)
+
+              addToUndoStack({
+                type: 'DELETE',
+                rowId: _rowId,
+                rowIndex: actualRowIndex,
+                previousValue: row,
+                newValue: undefined,
+              })
+
               newValue.splice(
                 operation.fromRowIndex + keptRows++,
                 0,
@@ -350,6 +401,22 @@ const SynapseGrid = forwardRef<
     setRowValues(filteredData)
     autoCommit(filteredData)
   }
+
+  const {
+    undoPreview,
+    handleUndo,
+    addToUndoStack,
+    clearUndoStack,
+    createdRowIds,
+    deletedRowIds,
+    updatedRowIds,
+  } = useGridUndo(
+    modelRef,
+    websocketInstance,
+    setRowValues,
+    modelRowsToGrid,
+    handleChange,
+  )
 
   // Track the currently selected row index
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
@@ -421,6 +488,61 @@ const SynapseGrid = forwardRef<
             {/* Grid */}
             {isGridReady && (
               <Grid size={12}>
+                <>
+                  <Button
+                    aria-controls={open ? 'undo-menu' : undefined}
+                    aria-haspopup="true"
+                    onClick={handleClick}
+                    disabled={!undoPreview}
+                  >
+                    Undo {undoPreview && `(${undoPreview.totalActions})`} ▼
+                  </Button>
+                  <Menu
+                    id="undo-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                  >
+                    {undoPreview ? (
+                      [
+                        <MenuItem
+                          key="lastAction"
+                          onClick={() => handleUndo('lastAction', handleClose)}
+                        >
+                          Undo last {undoPreview.lastType.toLowerCase()} action
+                        </MenuItem>,
+                        ...(undoPreview.sameTypeCount > 1
+                          ? [
+                              <MenuItem
+                                key="consecutiveActions"
+                                onClick={() =>
+                                  handleUndo('consecutiveActions', handleClose)
+                                }
+                              >
+                                Undo last {undoPreview.sameTypeCount}{' '}
+                                {undoPreview.lastType.toLowerCase()} actions
+                              </MenuItem>,
+                            ]
+                          : []),
+                        ...(undoPreview.totalActions > undoPreview.sameTypeCount
+                          ? [
+                              <MenuItem
+                                key="allActions"
+                                onClick={() =>
+                                  handleUndo('allActions', handleClose)
+                                }
+                              >
+                                Undo all {undoPreview.totalActions} actions
+                                (mixed types)
+                              </MenuItem>,
+                            ]
+                          : []),
+                      ]
+                    ) : (
+                      <MenuItem disabled>No actions to undo</MenuItem>
+                    )}
+                  </Menu>
+                </>
                 <DataSheetGrid
                   value={rowValues}
                   columns={colValues}
