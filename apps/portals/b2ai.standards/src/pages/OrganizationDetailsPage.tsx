@@ -110,6 +110,12 @@ export const linkedDataSetCardConfiguration: CardConfiguration = {
 // Component that conditionally renders DetailsPageContent based on data availability
 function ConditionalOrganizationContent({ orgId }: { orgId: string }) {
   // Check if this organization has any standards it's responsible for
+  console.log(
+    'Checking responsible standards for orgId:',
+    orgId,
+    'Column:',
+    DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION,
+  )
   const { data: hasResponsibleStandards, isLoading } = useHasQueryResults({
     sql: standardsSql,
     searchParams: {
@@ -117,6 +123,7 @@ function ConditionalOrganizationContent({ orgId }: { orgId: string }) {
     },
     sqlOperator: ColumnMultiValueFunction.HAS,
   })
+  console.log('Hook result:', { hasResponsibleStandards, isLoading })
 
   // While loading, show all sections (or you could show a loading state)
   if (isLoading) {

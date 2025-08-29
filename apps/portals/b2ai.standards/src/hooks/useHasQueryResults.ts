@@ -1,10 +1,13 @@
-import { useQuery } from '@tanstack/react-query'
-import { SynapseClient, useSynapseContext } from 'synapse-react-client'
 import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
 } from 'synapse-react-client/utils/functions/SqlFunctions'
-import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnMultiValueFunction,
+  QueryBundleRequest,
+} from '@sage-bionetworks/synapse-types'
+import { SynapseConstants } from 'synapse-react-client'
+import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 
 type UseHasQueryResultsProps = {
   sql: string
@@ -21,41 +24,38 @@ export function useHasQueryResults({
   searchParams,
   sqlOperator,
 }: UseHasQueryResultsProps) {
-  const { accessToken } = useSynapseContext()
+  const additionalFilters = getAdditionalFilters(searchParams, sqlOperator)
+  const entityId = parseEntityIdFromSqlStatement(sql)
 
-  return useQuery({
-    queryKey: ['hasQueryResults', sql, searchParams, sqlOperator],
-    queryFn: async () => {
-      if (!accessToken) return false
-
-      try {
-        const query = {
-          sql,
-          additionalFilters: getAdditionalFilters(searchParams, sqlOperator),
-          offset: 0,
-          limit: 1, // Just check if any results exist
-        }
-
-        const entityId = parseEntityIdFromSqlStatement(sql)
-        const queryRequest = {
-          partMask: 65, // BUNDLE_MASK_QUERY_COUNT
-          entityId,
-          concreteType:
-            'org.sagebionetworks.repo.model.table.QueryBundleRequest' as const,
-          query,
-        }
-
-        const result = await SynapseClient.getQueryTableResults(
-          queryRequest,
-          accessToken,
-        )
-        return (result?.queryCount || 0) > 0
-      } catch (error) {
-        console.error('Error checking query results:', error)
-        return false
-      }
+  const queryBundleRequest: QueryBundleRequest = {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId,
+    partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
+    query: {
+      sql,
+      additionalFilters,
+      limit: 1, // Just check if any results exist
+      offset: 0,
     },
-    enabled: !!accessToken && !!sql,
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
-  })
+  }
+
+  console.log('Query bundle request:', queryBundleRequest)
+
+  const { data, error, isLoading } = useGetQueryResultBundle(
+    queryBundleRequest,
+    {
+      select: data => {
+        const hasResults = (data?.queryCount || 0) > 0
+        console.log('Query result:', {
+          queryCount: data?.queryCount,
+          hasResults,
+        })
+        return hasResults
+      },
+    },
+  )
+
+  console.log('Hook returning:', { data, error, isLoading })
+
+  return { data, error, isLoading }
 }
