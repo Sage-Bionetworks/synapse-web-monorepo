@@ -290,6 +290,7 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
                 mb: 1,
                 fontSize: '2.5rem',
                 letterSpacing: '0.1em', // Add letter spacing
+                marginBottom: '0.6em',
               }}
             >
               {href ? (
