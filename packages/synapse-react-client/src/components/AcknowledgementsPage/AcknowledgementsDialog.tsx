@@ -45,15 +45,20 @@ export function AcknowledgementsDialog(props: AcknowledgementsDialogProps) {
       title="Acknowledgement Text"
       open={open}
       onCancel={onClose}
-      maxWidth="lg"
+      maxWidth="md"
       content={
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          <Box sx={{ p: '12px', backgroundColor: '#FBF4E0' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <Box
+            sx={{
+              p: '12px',
+              backgroundColor: '#FBF4E0',
+              height: 'fit-content',
+            }}
+          >
             <Typography variant="body1">
               <strong>Note:</strong> You must customize the text in the Data
               Availability Statement to match the contents used in your
-              publication.
-              <br />
+              publication.{' '}
               <Link
                 href={createDoiHelpUrl}
                 target="_blank"
@@ -69,8 +74,8 @@ export function AcknowledgementsDialog(props: AcknowledgementsDialogProps) {
               backgroundColor: 'grey.200',
               whiteSpace: 'pre-wrap',
               wordBreak: 'break-word',
-              maxHeight: '300px',
-              overflowY: 'auto',
+              height: '250px',
+              overflow: 'auto',
             }}
           >
             <Typography variant="body1">{textContent}</Typography>
