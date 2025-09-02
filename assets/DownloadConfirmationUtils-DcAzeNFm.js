@@ -1,0 +1,1 @@
+import{d as s}from"./ToastMessage-DeS0uHlc.js";function d(o){s("File(s) were successfully added to your Download Cart.","success",{primaryButtonConfig:{text:"View Download Cart",onClick:()=>{window.location.href=o}}})}export{d};
