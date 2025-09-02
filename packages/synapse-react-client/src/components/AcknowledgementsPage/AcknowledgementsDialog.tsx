@@ -87,7 +87,7 @@ export function AcknowledgementsDialog(props: AcknowledgementsDialogProps) {
             })
           }}
         >
-          Copy To Clipboard
+          Copy to Clipboard
         </Button>
       }
     ></DialogBase>
