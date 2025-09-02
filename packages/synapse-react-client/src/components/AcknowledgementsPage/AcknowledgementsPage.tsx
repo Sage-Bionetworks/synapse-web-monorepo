@@ -141,6 +141,7 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
               <MarkdownCollapse
                 {...portalAcknowledgementProps}
                 setPlainTextResult={setPortalAcknowledgement}
+                textDescription="full statement"
               />
             </>
           )}
@@ -156,6 +157,7 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
               <MarkdownCollapse
                 {...dataAvailabilityProps}
                 setPlainTextResult={setDataAvailabilityStatement}
+                textDescription="full statement"
               />
             </>
           )}
