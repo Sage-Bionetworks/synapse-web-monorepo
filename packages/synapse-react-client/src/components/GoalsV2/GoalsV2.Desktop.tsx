@@ -22,7 +22,7 @@ export default function GoalsV2Desktop({
         boxShadow: 'none',
       }}
     >
-      <CardActionArea onClick={() => window.open(link)}>
+      <CardActionArea onClick={() => window.open(link, '_self')}>
         <CardMedia
           component="img"
           sx={{ height: 150, width: '100%', paddingX: 2, overflow: 'visible' }}
