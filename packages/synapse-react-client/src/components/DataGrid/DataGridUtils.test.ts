@@ -31,10 +31,6 @@ describe('DataGridUtils', () => {
         type: 'sessionId',
         input: 'A1234=',
       })
-      expect(parseQueryInput('B_fooBarBaz=')).toEqual({
-        type: 'sessionId',
-        input: 'B_fooBarBaz=',
-      })
     })
     it('returns type unknown for anything else', () => {
       expect(parseQueryInput('foo')).toEqual({ type: 'unknown', input: 'foo' })

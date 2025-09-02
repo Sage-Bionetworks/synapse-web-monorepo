@@ -223,21 +223,17 @@ const SynapseGrid = forwardRef<
     }
   }
 
-  const performCommit = () => {
-    // The model has already been updated in handleChange, just send the patch
-    websocketInstance?.sendPatch()
-  }
-
   function genId() {
     return Math.floor(Math.random() * 1000000)
   }
 
-  const autoCommit = useCallback(
+  const commit = useCallback(
     throttle(() => {
       console.log('Auto-committing changes')
-      performCommit()
+      // The model has already been updated in handleChange, just send the patch
+      websocketInstance?.sendPatch()
     }, 500),
-    [performCommit],
+    [websocketInstance],
   )
 
   function addRowToModel() {
@@ -258,7 +254,7 @@ const SynapseGrid = forwardRef<
       applyOperationsToModel(operations, newValue, rowValues, model)
 
       // Push the changes to the server (throttled)
-      autoCommit()
+      commit()
     }
   }
 

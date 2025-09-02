@@ -28,6 +28,12 @@ export function rowsAreIdentical(a: DataGridRow, b: DataGridRow): boolean {
   return true
 }
 
+/**
+ * Remove no-op operations created by react-datasheet-grid that would result in invalid or undesired changes to the json-joy CRDT model
+ * @param newValue
+ * @param rowValues
+ * @param operations
+ */
 export function removeNoOpOperations(
   newValue: DataGridRow[],
   rowValues: DataGridRow[],
