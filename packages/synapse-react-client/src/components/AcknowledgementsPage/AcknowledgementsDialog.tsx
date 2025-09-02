@@ -29,14 +29,14 @@ export function AcknowledgementsDialog(props: AcknowledgementsDialogProps) {
     if (portalAcknowledgement) {
       content += `PORTAL ACKNOWLEDGEMENT STATEMENT\n\n${portalAcknowledgement}\n\n`
     }
-    if (dataAvailabilityStatement) {
-      content += `DATA ACKNOWLEDGEMENT STATEMENT\n\n${dataAvailabilityStatement}\n\n`
-    }
     if (studyAcknowledgements && studyAcknowledgements.length > 0) {
       content += 'STUDY-SPECIFIC ACKNOWLEDGEMENT STATEMENTS:\n\n'
       studyAcknowledgements.forEach(item => {
         content += `* ${item.title}\n\n${item.statement}\n\n`
       })
+    }
+    if (dataAvailabilityStatement) {
+      content += `DATA AVAILABILITY STATEMENT\n\n${dataAvailabilityStatement}\n\n`
     }
     return content.trim()
   }, [portalAcknowledgement, dataAvailabilityStatement, studyAcknowledgements])
