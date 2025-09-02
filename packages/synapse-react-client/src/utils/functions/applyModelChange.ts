@@ -1,11 +1,20 @@
 import { DataGridRow, GridModel } from '@/components/DataGrid/DataGridTypes'
 import { s } from 'json-joy/lib/json-crdt-patch'
 
+/**
+ * Represents a change operation on the GridModel.
+ */
 type ModelChange =
   | { type: 'CREATE'; rowIndex: number; rowData: DataGridRow }
   | { type: 'DELETE'; rowIndex: number; count?: number }
   | { type: 'UPDATE'; rowIndex: number; updatedData: DataGridRow }
 
+/**
+ * Applies a single change operation (create, delete, or update) to the GridModel.
+ *
+ * @param model - The grid model to modify
+ * @param change - The change to apply
+ */
 export function applyModelChange(model: GridModel, change: ModelChange) {
   const rowsArr = model.api.arr(['rows'])
   const { columnNames } = model.api.getSnapshot()

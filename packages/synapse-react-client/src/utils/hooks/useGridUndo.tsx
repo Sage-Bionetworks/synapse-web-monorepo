@@ -7,6 +7,9 @@ import { useMemo, useState } from 'react'
 import { DataGridWebSocket } from '@/components/DataGrid/DataGridWebSocket'
 import { applyModelChange } from '../functions/applyModelChange'
 
+/**
+ * Represents a single undoable action in the grid
+ */
 export type UndoableAction = {
   type: 'CREATE' | 'DELETE' | 'UPDATE'
   rowId: string | number | boolean | null | undefined
@@ -15,20 +18,30 @@ export type UndoableAction = {
   newValue?: DataGridRow
 }
 
+/**
+ * Hook to manage undo functionality for a grid backed by a CRDT model.
+ *
+ * @param modelRef - Ref to the current GridModel instance
+ * @param websocketInstance - WebSocket to sync changes with server
+ * @param setRowValues - Callback to update row state in UI
+ * @param modelRowsToGrid - Function to convert model snapshot to UI row array
+ * @param handleChange - Optional callback invoked after undoing changes
+ */
 export function useGridUndo(
   modelRef: React.MutableRefObject<GridModel | null>,
-  websocketInstance?: DataGridWebSocket | null,
-  setRowValues?: (rows: DataGridRow[]) => void,
-  modelRowsToGrid?: (modelSnapshot: any) => DataGridRow[],
+  websocketInstance: DataGridWebSocket | null,
+  setRowValues: (rows: DataGridRow[]) => void,
+  modelRowsToGrid: (modelSnapshot: any) => DataGridRow[],
   handleChange?: (
     rows: DataGridRow[],
     operations: Operation[],
     isUndoing?: boolean,
   ) => void,
 ) {
+  // Tracks the stack of undoable actions in LIFO order
   const [undoStack, setUndoStack] = useState<UndoableAction[]>([])
 
-  // Grid editing state sets
+  // Track row IDs by type of operation for quick reference
   const createdRowIds = useMemo(() => new Set(), [])
   const deletedRowIds = useMemo(() => new Set(), [])
   const updatedRowIds = useMemo(() => new Set(), [])
@@ -61,6 +74,12 @@ export function useGridUndo(
 
   const undoPreview = getUndoPreview()
 
+  /**
+   * Undo one or more actions based on the chosen type:
+   * - 'lastAction': undo only the most recent action
+   * - 'consecutiveActions': undo all consecutive actions of the same type as the last one
+   * - 'allActions': undo everything in the undo stack
+   */
   const handleUndo = (
     undoType: 'lastAction' | 'consecutiveActions' | 'allActions',
     handleClose?: () => void,
@@ -86,25 +105,25 @@ export function useGridUndo(
           consecutiveActions.push(newUndoStack.pop()!)
         }
 
-        // Keep in LIFO order (most recent first)
         actionsToUndo = consecutiveActions
         setUndoStack(newUndoStack)
         break
       }
       case 'allActions':
-        // Process from newest to oldest (LIFO order)
+        // Undo all actions from newest to oldest
         actionsToUndo = [...undoStack].reverse()
         setUndoStack([])
         break
     }
 
-    // Apply undo operations to the current model
+    // Access the current model to apply undo operations
     const model = modelRef.current
     if (!model) return console.error('No model available for undo')
 
     // Process each action in LIFO order
     actionsToUndo.forEach(action => {
       if (action.type === 'CREATE') {
+        // Undo CREATE by deleting the row
         applyModelChange(model, {
           type: 'DELETE',
           rowIndex: action.rowIndex,
@@ -113,7 +132,7 @@ export function useGridUndo(
       }
 
       if (action.type === 'UPDATE') {
-        // Restore the previous value
+        // Undo UPDATE by restoring the previous row values
         if (action.previousValue) {
           applyModelChange(model, {
             type: 'UPDATE',
@@ -125,6 +144,7 @@ export function useGridUndo(
       }
 
       if (action.type === 'DELETE') {
+        // Undo DELETE by recreating the row with previous values
         if (action.previousValue) {
           applyModelChange(model, {
             type: 'CREATE',
@@ -140,18 +160,22 @@ export function useGridUndo(
     websocketInstance?.sendPatch()
 
     // Update UI to reflect the undo
-    if (setRowValues && modelRowsToGrid) {
-      const updatedRows = modelRowsToGrid(model.api.getSnapshot())
-      handleChange?.(updatedRows, [], true)
-    }
+    const updatedRows = modelRowsToGrid(model.api.getSnapshot())
+    handleChange?.(updatedRows, [], true)
 
     handleClose?.()
   }
 
+  /**
+   * Push a new action to the undo stack
+   */
   const addToUndoStack = (action: UndoableAction) => {
     setUndoStack(prev => [...prev, action])
   }
 
+  /**
+   * Clear all undoable actions
+   */
   const clearUndoStack = () => {
     setUndoStack([])
   }
