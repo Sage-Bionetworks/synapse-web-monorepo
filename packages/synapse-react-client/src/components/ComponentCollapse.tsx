@@ -1,3 +1,4 @@
+import { spreadSx } from '@/theme/spreadSx'
 import {
   KeyboardArrowDownTwoTone,
   KeyboardArrowUpTwoTone,
@@ -44,19 +45,23 @@ export default function ComponentCollapse({
     ...iconSx,
   }
 
+  const textContainerDefaultSx: SxProps = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    backgroundColor: 'grey.200',
+    padding: '15px',
+    '&:hover': {
+      cursor: 'pointer',
+    },
+  }
+  const collapseBoxDefaultSx: SxProps = {
+    backgroundColor: 'grey.100',
+    padding: '25px',
+  }
   return (
     <div className="MarkdownCollapse">
       <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          backgroundColor: 'grey.200',
-          padding: '15px',
-          '&:hover': {
-            cursor: 'pointer',
-          },
-          ...textContainerSx,
-        }}
+        sx={spreadSx(textContainerDefaultSx, textContainerSx)}
         onClick={() => setShow(!show)}
       >
         <Typography
@@ -75,13 +80,7 @@ export default function ComponentCollapse({
         )}
       </Box>
       <Collapse in={show}>
-        <Box
-          sx={{
-            backgroundColor: 'grey.100',
-            padding: '25px',
-            ...collapseBoxSx,
-          }}
-        >
+        <Box sx={spreadSx(collapseBoxDefaultSx, collapseBoxSx)}>
           <div id="collapse-text">{children}</div>
         </Box>
       </Collapse>

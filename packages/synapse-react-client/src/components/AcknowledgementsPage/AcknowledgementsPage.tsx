@@ -103,8 +103,8 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
           }
           textVariant="h5"
           textSx={{ fontWeight: 'bold' }}
-          textContainerSx={{ backgroundColor: undefined, p: 0 }}
-          collapseBoxSx={{ backgroundColor: undefined, p: '20px 0px' }}
+          textContainerSx={{ backgroundColor: 'unset', p: 0 }}
+          collapseBoxSx={{ backgroundColor: 'unset', p: '20px 0px' }}
           iconSx={{ width: '25px', height: '25px' }}
         >
           <Typography variant="body1" sx={{ mb: '1em' }}>
