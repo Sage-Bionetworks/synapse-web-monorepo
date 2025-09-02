@@ -21,6 +21,7 @@ export function invalidateAllQueriesForEntity(
   void queryClient.resetQueries({
     // We invalidate all table query results because this entity could be shown in a view or used to compose JOINed tables
     // Reset all table query results to avoid showing stale data (SWC-6722)
+    // Additionally, we do not want to wait for all tables to rebuild before we consider the invalidation 'complete'
     queryKey: keyFactory.getAllTableQueryResultsKey(),
   })
 

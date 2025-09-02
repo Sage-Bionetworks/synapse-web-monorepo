@@ -3,7 +3,6 @@ import ChallengeDataDownloadWrapper from './challenges/ChallengeDataDownloadWrap
 import ChallengeDetailPageWrapper from './challenges/ChallengeDetailPageWrapper'
 import ChallengeParticipantGoogleMap from './challenges/ChallengeParticipantGoogleMap'
 import ChallengeSubmissionWrapper from './challenges/ChallengeSubmissionWrapper'
-import ComponentCollapse from './ComponentCollapse'
 import ParticipantsBarPlot from './crc-researcher/ParticipantsBarPlot'
 import StatusLineChart from './crc-researcher/StatusLineChart'
 import SurveysCompletedPlots from './crc-researcher/SurveysCompletedPlots'
@@ -60,7 +59,6 @@ const PortalComponents = {
   ProjectDiscussionForum,
   ChallengeSubmissionWrapper,
   ChallengeDataDownloadWrapper,
-  SynapseComponentCollapse: ComponentCollapse,
   SurveyToast,
   PortalSearchTabs,
   PortalFullTextSearchField,

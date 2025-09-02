@@ -1,8 +1,8 @@
 import { dataReleasesSql } from '@/config/resources'
 import { currentDataReleasesProps } from '@/config/synapseConfigs/dataReleases'
-import ComponentCollapse from '@sage-bionetworks/synapse-portal-framework/components/ComponentCollapse'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
+import ComponentCollapse from 'synapse-react-client/components/ComponentCollapse'
 import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import StandaloneQueryWrapper from 'synapse-react-client/components/StandaloneQueryWrapper'
 

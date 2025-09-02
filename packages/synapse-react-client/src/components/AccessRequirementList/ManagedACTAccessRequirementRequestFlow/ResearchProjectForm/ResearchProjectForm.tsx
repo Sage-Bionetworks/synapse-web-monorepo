@@ -78,9 +78,8 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
     existingResearchProject?.institution,
     existingResearchProject?.intendedDataUseStatement,
     existingResearchProject?.projectLead,
-    institution,
-    intendedDataUseStatement,
-    projectLead,
+    // PORTALS-3774: initialize from existingResearchProject, but do not reset institution,
+    // projectLead, or intendedDataUseStatement if they have been modified
   ])
 
   const { mutate, isPending: updateIsPending } = useUpdateResearchProject({
