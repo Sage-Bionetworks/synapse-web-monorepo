@@ -5,12 +5,13 @@ import ComponentCollapse from '../ComponentCollapse'
 import AcknowledgementsDialog from './AcknowledgementsDialog'
 import { MarkdownSynapseProps } from '../Markdown/MarkdownSynapse'
 import MarkdownCollapse from '../Markdown/MarkdownCollapse'
+import { StudyAcknowledgements } from './StudyAcknowledgements'
 export type AcknowledgementPageProps = {
   portalName: string
   createDoiHelpUrl: string
   portalAcknowledgementProps?: MarkdownSynapseProps
   dataAvailabilityProps?: MarkdownSynapseProps
-  studyAcknowledgementSql?: string
+  studyAcknowledgementSql: string
 }
 
 export type AcknowledgementItem = {
@@ -24,7 +25,7 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
     createDoiHelpUrl,
     portalAcknowledgementProps,
     dataAvailabilityProps,
-    // studyAcknowledgementSql,
+    studyAcknowledgementSql,
   } = props
   const [isAcknowledgementsDialogOpen, setAcknowledgementsDialogOpen] =
     useState<boolean>(false)
@@ -98,7 +99,12 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
           full statement to clipboard' to easily save the text for your
           references.
         </Typography>
-        TODO - PORTALS-3764 - Study specific statement list component
+        <StudyAcknowledgements
+          sql={studyAcknowledgementSql}
+          // setSelectedAcknowledgementItems={
+          //   setAcknowledgementItems
+          // }
+        />
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
           2. Generate Data Acknowledgements
         </Typography>
