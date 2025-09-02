@@ -357,7 +357,6 @@ const SynapseGrid = forwardRef<
     undoPreview,
     handleUndo,
     addToUndoStack,
-    clearUndoStack,
     createdRowIds,
     deletedRowIds,
     updatedRowIds,

@@ -21,7 +21,7 @@ export type UndoableAction = {
 /**
  * Hook to manage undo functionality for a grid backed by a CRDT model.
  *
- * @param modelRef - Ref to the current GridModel instance
+ * @param model - current GridModel instance
  * @param websocketInstance - WebSocket to sync changes with server
  * @param modelRowsToGrid - Function to convert model snapshot to UI row array
  * @param handleChange - Optional callback invoked after undoing changes
