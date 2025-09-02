@@ -71,7 +71,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
             alignItems: 'center',
           }}
         >
-          <FavoriteButton entityId={'syn222'} />
+          <FavoriteButton entityId={props.entityId} />
           <Button variant="outlined" startIcon={<DownloadIcon />}>
             Download
           </Button>
