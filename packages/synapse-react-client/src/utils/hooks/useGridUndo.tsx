@@ -86,13 +86,13 @@ export function useGridUndo(
           consecutiveActions.push(newUndoStack.pop()!)
         }
 
-        // Reverse so the newest action is undone first
-        actionsToUndo = consecutiveActions.reverse()
+        // Keep in LIFO order (most recent first)
+        actionsToUndo = consecutiveActions
         setUndoStack(newUndoStack)
         break
       }
       case 'allActions':
-        // Later changes depend on earlier ones so undo from newest to oldest, then clear the stack
+        // Process from newest to oldest (LIFO order)
         actionsToUndo = [...undoStack].reverse()
         setUndoStack([])
         break
@@ -102,82 +102,38 @@ export function useGridUndo(
     const model = modelRef.current
     if (!model) return console.error('No model available for undo')
 
-    // Build a map of rows to undo updates for.
-    // This handles the "undo consecutive actions of the same type" use case:
-    //   - Ensure each row is restored once to its oldest state in the group,
-    //     avoiding intermediate overwrites
-    const updateMap = new Map<number, UndoableAction>()
-
+    // Process each action in LIFO order
     actionsToUndo.forEach(action => {
-      if (action.type === 'UPDATE') {
-        // Only keep the first (oldest) update for each row
-        if (!updateMap.has(action.rowIndex)) {
-          updateMap.set(action.rowIndex, action)
-        }
-      }
-    })
-
-    // Undo DELETEs from lowest to highest rowIndex to safely restore original positions
-    const deleteActions = actionsToUndo
-      .filter(action => action.type === 'DELETE')
-      .sort((a, b) => a.rowIndex - b.rowIndex)
-
-    // Undo CREATEs from highest to lowest rowIndex to safely remove rows without shifting indices
-    const createActions = actionsToUndo
-      .filter(action => action.type === 'CREATE')
-      .sort((a, b) => b.rowIndex - a.rowIndex)
-
-    // Doesn't change row order, keep the same
-    const updateActions = actionsToUndo.filter(
-      action => action.type === 'UPDATE',
-    )
-
-    // Process actions in the correct order
-    // 1. Restoring deleted rows first ensures all original positions exist before applying updates or deletes.
-    // 2. Applying updates next ensures row values are restored correctly while all rows are at their proper indices.
-    // 3. Removing newly created rows last prevents shifting indices that would break updates or deletions.
-    const orderedActions = [
-      ...deleteActions,
-      ...updateActions,
-      ...createActions,
-    ]
-
-    orderedActions.forEach(action => {
       const rowsArr = model.api.arr(['rows'])
 
       if (action.type === 'CREATE') {
-        // Remove the created row
         rowsArr?.del(action.rowIndex, 1)
         createdRowIds.delete(action.rowId)
       }
 
       if (action.type === 'UPDATE') {
-        // Only process if this is the action we kept in the map (the oldest one)
-        const keptAction = updateMap.get(action.rowIndex)
-        if (keptAction === action) {
-          // Restore the oldest previous value
-          if (action.previousValue) {
-            const { columnNames } = model.api.getSnapshot()
+        // Restore the previous value
+        if (action.previousValue) {
+          const { columnNames } = model.api.getSnapshot()
 
-            Object.entries(action.previousValue).forEach(([key, value]) => {
-              if (key.startsWith('_')) return // Skip metadata fields
-              const columnIndex = columnNames.indexOf(key)
-              if (columnIndex !== -1) {
-                const rowVec = model.api.vec([
-                  'rows',
-                  String(action.rowIndex),
-                  'data',
-                ])
-                rowVec?.set([[columnIndex, s.con(value)]])
-              }
-            })
-          }
-          updatedRowIds.delete(action.rowId)
+          Object.entries(action.previousValue).forEach(([key, value]) => {
+            if (key.startsWith('_')) return // Skip metadata fields
+            const columnIndex = columnNames.indexOf(key)
+            if (columnIndex !== -1) {
+              const rowVec = model.api.vec([
+                'rows',
+                String(action.rowIndex),
+                'data',
+              ])
+              rowVec?.set([[columnIndex, s.con(value)]])
+            }
+          })
         }
+        updatedRowIds.delete(action.rowId)
       }
 
       if (action.type === 'DELETE') {
-        // Re-insert the deleted row
+        // Re-insert the deleted row at its original position
         if (action.previousValue) {
           const { columnNames } = model.api.getSnapshot()
 
@@ -186,7 +142,7 @@ export function useGridUndo(
             colName => action.previousValue![colName] || '',
           )
 
-          // Insert the row into the model
+          // Insert the row into the model at its original position
           rowsArr?.ins(action.rowIndex, [
             { data: s.vec(...rowData.map(s.con)) },
           ])

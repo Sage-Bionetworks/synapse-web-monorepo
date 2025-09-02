@@ -40,6 +40,7 @@ import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { Button, Menu, MenuItem } from '@mui/material'
 import { useGridUndo } from '@/utils/hooks/useGridUndo'
+import { applyModelChange } from '@/utils/functions/applyModelChange'
 
 export type SynapseGridProps = {
   query: string
@@ -116,6 +117,10 @@ const SynapseGrid = forwardRef<
           rowObj[columnName] = row.data[index]
         }
       })
+      // Assign a stable ID if none exists
+      if (!rowObj._rowId) {
+        rowObj._rowId = genId()
+      }
       rowObj.__validationResults = row.metadata?.rowValidation
       return rowObj
     })
