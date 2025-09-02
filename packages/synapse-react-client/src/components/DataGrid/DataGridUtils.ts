@@ -1,4 +1,4 @@
-import { QueryInput, DataGridRow } from './DataGridTypes'
+import { DataGridRow, Operation, QueryInput } from './DataGridTypes'
 // Query Input can either be an empty string, a SQL query, or a session ID
 export const parseQueryInput = (input: string): QueryInput => {
   const trimmedInput = input.trim()
@@ -26,4 +26,37 @@ export function rowsAreIdentical(a: DataGridRow, b: DataGridRow): boolean {
     if (String(aVal) !== String(bVal)) return false
   }
   return true
+}
+
+/**
+ * Remove no-op operations created by react-datasheet-grid that would result in invalid or undesired changes to the json-joy CRDT model
+ * @param newValue
+ * @param rowValues
+ * @param operations
+ */
+export function removeNoOpOperations(
+  newValue: DataGridRow[],
+  rowValues: DataGridRow[],
+  operations: Operation[],
+) {
+  function isNoop(operation: Operation): boolean {
+    if (operation.type === 'UPDATE') {
+      const oldVal = rowValues.slice(
+        operation.fromRowIndex,
+        operation.toRowIndex,
+      )
+      const newVal = newValue.slice(
+        operation.fromRowIndex,
+        operation.toRowIndex,
+      )
+
+      const comparisonResults = oldVal.map((oldItem, idx) =>
+        rowsAreIdentical(oldItem, newVal[idx]),
+      )
+      return comparisonResults.every(Boolean)
+    }
+    return false
+  }
+
+  return operations.filter(op => !isNoop(op))
 }

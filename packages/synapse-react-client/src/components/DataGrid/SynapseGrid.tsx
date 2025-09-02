@@ -1,4 +1,5 @@
 import MergeGridWithSourceTableButton from '@/components/DataGrid/MergeGridWithSourceTableButton'
+import { SkeletonTable } from '@/components/index'
 import { ComplexJSONRenderer } from '@/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer'
 import { useGetSchema } from '@/synapse-queries/index'
 import getEnumeratedValues from '@/utils/jsonschema/getEnumeratedValues'
@@ -13,22 +14,20 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
-  useMemo,
   useRef,
   useState,
 } from 'react'
 import {
+  checkboxColumn,
   Column,
   createTextColumn,
   DataSheetGrid,
-  keyColumn,
-  checkboxColumn,
   floatColumn,
+  keyColumn,
 } from 'react-datasheet-grid'
 import 'react-datasheet-grid/dist/style.css'
 import '../../style/components/_data-grid-extra.scss'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
-import { SkeletonTable } from '../Skeleton'
 import { autocompleteColumn } from './columns/AutocompleteColumn'
 import {
   DataGridRow,
@@ -36,7 +35,7 @@ import {
   GridModelSnapshot,
   Operation,
 } from './DataGridTypes'
-import { rowsAreIdentical } from './DataGridUtils'
+import { removeNoOpOperations } from './DataGridUtils'
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 
@@ -75,7 +74,7 @@ const SynapseGrid = forwardRef<
     websocketInstance,
     createWebsocket,
     isGridReady,
-    modelRef,
+    model,
     modelSnapshot,
   } = useDataGridWebSocket()
   useEffect(() => {
@@ -90,30 +89,9 @@ const SynapseGrid = forwardRef<
 
   const connectionStatus = isConnected ? 'Connected' : 'Disconnected'
 
-  // If grid sessionId or replicaId changes, reset the model
-  useEffect(() => {
-    if (session || replicaId) {
-      modelRef.current = null
-      // modelSnapshotRef.current = {
-      //   columnNames: [],
-      //   columnOrder: [],
-      //   rows: [],
-      // }
-      setRowValues([])
-      setColValues([])
-    }
-  }, [session, replicaId, websocketInstance])
-
-  // Grid rows and columns
-  const [rowValues, setRowValues] = useState<DataGridRow[]>([])
-  const [colValues, setColValues] = useState<Column[]>([])
-
-  useEffect(() => {
-    if (modelSnapshot) {
-      setRowValues(modelRowsToGrid(modelSnapshot))
-      setColValues(modelColsToGrid(modelSnapshot))
-    }
-  }, [modelSnapshot])
+  // Transform the model view rows and columns to DataSheetGrid format
+  const rowValues = modelSnapshot ? modelRowsToGrid(modelSnapshot) : []
+  const colValues = modelSnapshot ? modelColsToGrid(modelSnapshot) : []
 
   // Convert model rows to a format suitable for DataSheetGrid
   function modelRowsToGrid(modelSnapshot: GridModelSnapshot): DataGridRow[] {
@@ -245,33 +223,17 @@ const SynapseGrid = forwardRef<
     }
   }
 
-  // Grid editing functions
-  const createdRowIds = useMemo(() => new Set(), [])
-  const deletedRowIds = useMemo(() => new Set(), [])
-  const updatedRowIds = useMemo(() => new Set(), [])
-
-  const performCommit = (dataToCommit: DataGridRow[]) => {
-    // The model has already been updated in handleChange, just send the patch
-    websocketInstance?.sendPatch()
-
-    // Reset tracking
-    createdRowIds.clear()
-    deletedRowIds.clear()
-    updatedRowIds.clear()
-
-    return dataToCommit
-  }
-
   function genId() {
     return Math.floor(Math.random() * 1000000)
   }
 
-  const autoCommit = useCallback(
-    throttle((newValue: DataGridRow[]) => {
+  const commit = useCallback(
+    throttle(() => {
       console.log('Auto-committing changes')
-      performCommit(newValue)
+      // The model has already been updated in handleChange, just send the patch
+      websocketInstance?.sendPatch()
     }, 500),
-    [performCommit],
+    [websocketInstance],
   )
 
   function addRowToModel() {
@@ -279,76 +241,21 @@ const SynapseGrid = forwardRef<
   }
 
   const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
-    if (!modelRef.current) {
+    if (!model) {
       console.error('Model is not initialized')
       return
     }
 
-    // Apply all model updates in one place
-    applyOperationsToModel(operations, newValue, rowValues, modelRef.current)
+    // Check that something changed before updating the model
+    operations = removeNoOpOperations(newValue, rowValues, operations)
 
-    // Handle row tracking for UI state
-    for (const operation of operations) {
-      if (operation.type === 'CREATE') {
-        newValue
-          .slice(operation.fromRowIndex, operation.toRowIndex)
-          .forEach(({ _rowId }: any) => createdRowIds.add(_rowId))
-      }
+    if (operations.length > 0) {
+      // Apply the changes to the model
+      applyOperationsToModel(operations, newValue, rowValues, model)
 
-      if (operation.type === 'UPDATE') {
-        const oldVal = rowValues.slice(
-          operation.fromRowIndex,
-          operation.toRowIndex,
-        )
-        const newVal = newValue.slice(
-          operation.fromRowIndex,
-          operation.toRowIndex,
-        )
-
-        const comparisonResults = oldVal.map((oldItem, idx) =>
-          rowsAreIdentical(oldItem, newVal[idx]),
-        )
-
-        if (comparisonResults.every(Boolean)) return
-
-        newVal
-          .filter((_, idx) => !comparisonResults[idx])
-          .forEach(({ _rowId }: DataGridRow) => {
-            if (!createdRowIds.has(_rowId) && !deletedRowIds.has(_rowId)) {
-              updatedRowIds.add(_rowId)
-            }
-          })
-      }
-
-      if (operation.type === 'DELETE') {
-        let keptRows = 0
-
-        rowValues
-          .slice(operation.fromRowIndex, operation.toRowIndex)
-          .forEach(({ _rowId }, i) => {
-            updatedRowIds.delete(_rowId)
-            if (createdRowIds.has(_rowId)) {
-              createdRowIds.delete(_rowId)
-            } else {
-              deletedRowIds.add(_rowId)
-              newValue.splice(
-                operation.fromRowIndex + keptRows++,
-                0,
-                rowValues[operation.fromRowIndex + i],
-              )
-            }
-          })
-      }
+      // Push the changes to the server (throttled)
+      commit()
     }
-
-    // Filter out deleted rows
-    const filteredData = newValue.filter(
-      ({ _rowId }: DataGridRow) => !deletedRowIds.has(_rowId),
-    )
-
-    // Update UI state
-    setRowValues(filteredData)
-    autoCommit(filteredData)
   }
 
   // Track the currently selected row index
@@ -427,9 +334,6 @@ const SynapseGrid = forwardRef<
                   rowKey="_rowId"
                   rowClassName={({ rowData, rowIndex }) =>
                     classNames({
-                      'row-deleted': deletedRowIds.has(rowData._rowId),
-                      'row-created': createdRowIds.has(rowData._rowId),
-                      'row-updated': updatedRowIds.has(rowData._rowId),
                       'row-valid':
                         rowData.__validationResults?.isValid === true,
                       'row-invalid':
