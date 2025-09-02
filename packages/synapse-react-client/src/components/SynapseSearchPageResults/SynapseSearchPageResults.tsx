@@ -1,5 +1,7 @@
-import { Box } from '@mui/material'
+import { Box, TextField, InputAdornment, Button } from '@mui/material'
 import SynapseSearchResultsCard from './SynapseSearchResultsCard'
+import SearchIcon from '@mui/icons-material/Search'
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
 
 // Example search API output
 const searchResultsOutput = {
@@ -52,11 +54,50 @@ export function SynapseSearchPageResults() {
     >
       <Box
         sx={{
+          display: 'flex',
+          flexDirection: 'column',
           height: '200px',
-          width: '100%',
           bgcolor: '#223549',
+          py: '40px',
+          px: '80px',
+          gap: '16px',
         }}
-      ></Box>
+      >
+        <TextField
+          placeholder="Search…"
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon
+                    sx={{
+                      color: '#38756A',
+                    }}
+                  />
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+        <Button
+          variant="outlined"
+          endIcon={<FilterAltOutlinedIcon />}
+          sx={{
+            py: '10px',
+            px: '20px',
+            width: '200px',
+            bgcolor: '#71767F',
+            color: 'white',
+            '&:hover': {
+              //remove hover
+              boxShadow: 'none',
+              color: 'white',
+            },
+          }}
+        >
+          Filter By
+        </Button>
+      </Box>
       <Box
         sx={{
           display: 'flex',
