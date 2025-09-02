@@ -24,7 +24,7 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
     createDoiHelpUrl,
     portalAcknowledgementProps,
     dataAvailabilityProps,
-    studyAcknowledgementSql,
+    // studyAcknowledgementSql,
   } = props
   const [isAcknowledgementsDialogOpen, setAcknowledgementsDialogOpen] =
     useState<boolean>(false)
@@ -32,9 +32,9 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
   const [portalAcknowledgement, setPortalAcknowledgement] = useState<string>()
   const [dataAvailabilityStatement, setDataAvailabilityStatement] =
     useState<string>()
-  const [acknowledgementItems, setAcknowledgementItems] = useState<
-    AcknowledgementItem[]
-  >([])
+  const [
+    acknowledgementItems, //setAcknowledgementItems]
+  ] = useState<AcknowledgementItem[]>([])
   const handleCloseDialog = useCallback(
     () => setAcknowledgementsDialogOpen(false),
     [],
