@@ -23,14 +23,12 @@ export type UndoableAction = {
  *
  * @param modelRef - Ref to the current GridModel instance
  * @param websocketInstance - WebSocket to sync changes with server
- * @param setRowValues - Callback to update row state in UI
  * @param modelRowsToGrid - Function to convert model snapshot to UI row array
  * @param handleChange - Optional callback invoked after undoing changes
  */
 export function useGridUndo(
-  modelRef: React.MutableRefObject<GridModel | null>,
+  model: GridModel | null,
   websocketInstance: DataGridWebSocket | null,
-  setRowValues: (rows: DataGridRow[]) => void,
   modelRowsToGrid: (modelSnapshot: any) => DataGridRow[],
   handleChange?: (
     rows: DataGridRow[],
@@ -117,7 +115,6 @@ export function useGridUndo(
     }
 
     // Access the current model to apply undo operations
-    const model = modelRef.current
     if (!model) return console.error('No model available for undo')
 
     // Process each action in LIFO order
