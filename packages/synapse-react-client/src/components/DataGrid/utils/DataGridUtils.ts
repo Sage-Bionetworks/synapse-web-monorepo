@@ -1,4 +1,4 @@
-import { DataGridRow, Operation, QueryInput } from './DataGridTypes'
+import { DataGridRow, Operation, QueryInput } from '../DataGridTypes'
 // Query Input can either be an empty string, a SQL query, or a session ID
 export const parseQueryInput = (input: string): QueryInput => {
   const trimmedInput = input.trim()

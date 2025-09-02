@@ -34,12 +34,12 @@ import {
   GridModelSnapshot,
   Operation,
 } from './DataGridTypes'
-import { removeNoOpOperations, rowsAreIdentical } from './DataGridUtils'
+import { removeNoOpOperations, rowsAreIdentical } from './utils/DataGridUtils'
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { Button, Menu, MenuItem } from '@mui/material'
-import { useGridUndo } from '@/utils/hooks/useGridUndo'
-import { applyModelChange } from '@/utils/functions/applyModelChange'
+import { useGridUndo } from './hooks/useGridUndo'
+import { applyModelChange } from './utils/applyModelChange'
 
 export type SynapseGridProps = {
   query: string

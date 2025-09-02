@@ -1,11 +1,7 @@
-import {
-  DataGridRow,
-  GridModel,
-  Operation,
-} from '@/components/DataGrid/DataGridTypes'
+import { DataGridRow, GridModel, Operation } from '../DataGridTypes'
 import { useMemo, useState } from 'react'
 import { DataGridWebSocket } from '@/components/DataGrid/DataGridWebSocket'
-import { applyModelChange } from '../functions/applyModelChange'
+import { applyModelChange } from '../utils/applyModelChange'
 
 /**
  * Represents a single undoable action in the grid
