@@ -52,7 +52,8 @@ export function AcknowledgementsDialog(props: AcknowledgementsDialogProps) {
             <Typography variant="body1">
               <strong>Note:</strong> You must customize the text in the Data
               Availability Statement to match the contents used in your
-              publication.{' '}
+              publication.
+              <br />
               <Link
                 href={createDoiHelpUrl}
                 target="_blank"
