@@ -1,0 +1,24 @@
+import{j as o}from"./jsx-runtime-D_zvdyIk.js";import{f as i}from"./index-DS9dZfQo.js";import{W as p}from"./WarningDialog-Mow8z6-L.js";import"./iframe-BwvIV_wz.js";import"./ConfirmationDialog-CfWhooFH.js";import"./DialogBase-Bo1zvLAS.js";import"./spreadSx-CwcO6WA9.js";import"./Close-Q1tNOo3h.js";import"./createSvgIcon-DW48BYr9.js";import"./index-Dvc8DXNj.js";import"./createTheme-D21a6jVE.js";import"./DefaultPropsProvider-DUqZ9kBw.js";import"./HelpPopover-D5sznNAi.js";import"./MarkdownPopover-DJcQhkmM.js";import"./LightTooltip-Bt6aqifN.js";import"./Tooltip-snkrOiqJ.js";import"./index-DxUDSVJR.js";import"./useTheme-Dmw3ER-A.js";import"./useTheme-Dc8HS8-T.js";import"./useSlot-DJuYx4Uy.js";import"./useForkRef-Dhz7ykZQ.js";import"./useTimeout-n8UuqgZm.js";import"./useControlled-IlM_E7l9.js";import"./getReactElementRef-IfbnFzgG.js";import"./index-CqCBL84x.js";import"./index--qtQ6bhr.js";import"./Grow-CDAsFndF.js";import"./Popper-C8rE9mDK.js";import"./ownerDocument-DW-IO8s5.js";import"./isFocusVisible-B8k4qzLc.js";import"./Link-CLvRSdAZ.js";import"./createSimplePaletteValueFilter-slgZ3hH6.js";import"./Typography-BhPtSSz2.js";import"./index-BLJFs8HZ.js";import"./extendSxProp-B4WGgZTT.js";import"./Box-CTY3I0FB.js";import"./Button-CuRvemX1.js";import"./ButtonBase-DLjfdFYs.js";import"./CircularProgress-BTmW-fZF.js";import"./react-PzVUkSXC.js";import"./MarkdownSynapse-BZ3bfxga.js";import"./useFiles-CKcUsXxo.js";import"./VerificationSubmission-CDh9xETu.js";import"./SynapseConstants-f1HHzz_j.js";import"./OrientationBanner-m-cOM088.js";import"./index-Dr34NRIV.js";import"./FullWidthAlert-CUjAN9qZ.js";import"./Alert-BpXwWVSg.js";import"./Close-DwkY6Qiq.js";import"./IconButton-BPZiwUaT.js";import"./Paper-ttVskSGJ.js";import"./Stack-DrKhoQrj.js";import"./getThemeProps-B50kq3gk.js";import"./AlertTitle-gzg991Kd.js";import"./ClickAwayListener-BucHVlrs.js";import"./fetchWithExponentialTimeout-CXmnpl-T.js";import"./StringUtils-CsrYFBZo.js";import"./useQuery-Bup0EY49.js";import"./QueryClientProvider-ChpI_0EU.js";import"./Collapse-MKzszx7X.js";import"./_baseUniq-WnlZjegG.js";import"./_Uint8Array-DayFYAX9.js";import"./isArray-9GOQtFcp.js";import"./_getTag-BkCGiN6B.js";import"./isEqual-Dks0Mg8j.js";import"./merge-Dy633DfB.js";import"./_initCloneObject-Dqf9gVZ1.js";import"./identity-DKeuBCMA.js";import"./tinycolor-Begke6kS.js";import"./Fade-Bok-lFku.js";import"./inputBaseClasses-AHLU7mnu.js";import"./calculateFriendlyFileSize-tudez9ms.js";import"./CheckCircleTwoTone-B4GsZuMD.js";import"./InfoTwoTone-cRma8_X6.js";import"./useMutation-CnqeAjOr.js";import"./dayjs.min-DtZNiT87.js";import"./chunk-AYJ5UCUI-C5dJESas.js";import"./cloneDeep-DozhuijG.js";import"./Skeleton-B2H4n811.js";import"./SkeletonButton-DX_35qgn.js";import"./SkeletonInlineBlock-CJElzRNk.js";import"./SkeletonTable-Bi6Qng0B.js";import"./times-CJm66HwN.js";import"./toInteger-DMvinDWJ.js";import"./isSymbol-BxQi0hMS.js";import"./SkeletonParagraph-BuL4Zb7n.js";import"./HelpOutlineTwoTone-PWWeq9Oj.js";import"./DialogTitle-DV4wIclQ.js";import"./DialogContent-BIxxPy2I.js";import"./Dialog-BegfVkrU.js";import"./Modal-C6zDlmuO.js";import"./getScrollbarSize-CaCM53D3.js";import"./ownerWindow-HkKU3E4x.js";import"./createChainedFunction-BO_9K8Jh.js";import"./Backdrop-DGxR8xHs.js";const ot={title:"UI/WarningDialog",component:p,render:l=>o.jsx(p,{...l}),args:{onConfirm:i(),onCancel:i()}},t={args:{open:!0,title:"Approve Request",content:"Are you sure you want to approve this request?",onConfirmCallbackArgs:[]}},r={args:{...t.args,title:"Confirm Deletion",confirmButtonText:"Delete Token",confirmButtonColor:"error",content:o.jsxs(o.Fragment,{children:[o.jsx("p",{children:"If you delete this token, any applications using it will stop working. This action cannot be undone."}),o.jsx("p",{className:"SRC-boldText",children:"Are you sure you want to delete this token?"})]})}};var m,e,n;t.parameters={...t.parameters,docs:{...(m=t.parameters)==null?void 0:m.docs,source:{originalSource:`{
+  args: {
+    open: true,
+    title: 'Approve Request',
+    content: 'Are you sure you want to approve this request?',
+    onConfirmCallbackArgs: []
+  }
+}`,...(n=(e=t.parameters)==null?void 0:e.docs)==null?void 0:n.source}}};var s,a,c;r.parameters={...r.parameters,docs:{...(s=r.parameters)==null?void 0:s.docs,source:{originalSource:`{
+  args: {
+    ...Demo.args,
+    title: 'Confirm Deletion',
+    confirmButtonText: 'Delete Token',
+    confirmButtonColor: 'error',
+    content: <>
+        <p>
+          If you delete this token, any applications using it will stop working.
+          This action cannot be undone.
+        </p>
+        <p className="SRC-boldText">
+          Are you sure you want to delete this token?
+        </p>
+      </>
+  }
+}`,...(c=(a=r.parameters)==null?void 0:a.docs)==null?void 0:c.source}}};const tt=["Demo","AccessTokenCardWarningDialog"];export{r as AccessTokenCardWarningDialog,t as Demo,tt as __namedExportsOrder,ot as default};
