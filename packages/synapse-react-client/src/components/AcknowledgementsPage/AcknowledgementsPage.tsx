@@ -2,10 +2,15 @@ import { Box, Button, Container, Link, Typography } from '@mui/material'
 import { useCallback, useState } from 'react'
 import { ReactComponent as AcknowledgementStatementsIllustration } from '../../assets/illustrations/acknowledgement_statements_illustration.svg'
 import ComponentCollapse from '../ComponentCollapse'
-import FullWidthAlert from '../FullWidthAlert'
+import AcknowledgementsDialog from './AcknowledgementsDialog'
 export type AcknowledgementPageProps = {
   portalName: string
   createDoiHelpUrl: string
+}
+
+export type AcknowledgementItem = {
+  title: string
+  statement: string
 }
 
 function AcknowledgementPage(props: AcknowledgementPageProps) {
@@ -114,20 +119,16 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
         </ComponentCollapse>
       </Container>
 
-      {isAcknowledgementsDialogOpen && (
-        <FullWidthAlert
-          isGlobal={true}
-          variant={'info'}
-          show={true}
-          title={'TODO - PORTALS-3778 - Generated Acknowledgements Dialog'}
-          onClose={handleCloseDialog}
-        />
-      )}
-
-      {/* <AcknowledgementsDialog
-        isOpen={isAcknowledgementsDialogOpen}
-        onHide={handleCloseDialog}
-      /> */}
+      <AcknowledgementsDialog
+        open={isAcknowledgementsDialogOpen}
+        onClose={handleCloseDialog}
+        createDoiHelpUrl={createDoiHelpUrl}
+        portalAcknowledgement="my portal statement"
+        dataAvailabilityStatement="my data availability statement"
+        studyAcknowledgements={[
+          { title: 'my study title', statement: 'my full statement' },
+        ]}
+      />
     </>
   )
 }
