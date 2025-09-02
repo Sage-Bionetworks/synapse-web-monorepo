@@ -84,6 +84,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
             backgroundColor: '#DAE9E7',
             color: '#265149',
             fontSize: '14px',
+            textTransform: 'capitalize',
           }}
         />
       </Box>
@@ -100,7 +101,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
             fontSize: '14px',
           }}
         >
-          Last updated: {formatDate(dayjs.unix(props.modifiedOn))}
+          Last updated: {formatDate(dayjs.unix(props.modifiedOn), 'M/D/YYYY')}
         </Typography>
       </Box>
     </SynapseSearchResultsCardContainer>
