@@ -4,8 +4,8 @@ import {
   Operation,
 } from '@/components/DataGrid/DataGridTypes'
 import { useMemo, useState } from 'react'
-import { s } from 'json-joy/lib/json-crdt-patch'
 import { DataGridWebSocket } from '@/components/DataGrid/DataGridWebSocket'
+import { applyModelChange } from '../functions/applyModelChange'
 
 export type UndoableAction = {
   type: 'CREATE' | 'DELETE' | 'UPDATE'
@@ -104,48 +104,33 @@ export function useGridUndo(
 
     // Process each action in LIFO order
     actionsToUndo.forEach(action => {
-      const rowsArr = model.api.arr(['rows'])
-
       if (action.type === 'CREATE') {
-        rowsArr?.del(action.rowIndex, 1)
+        applyModelChange(model, {
+          type: 'DELETE',
+          rowIndex: action.rowIndex,
+        })
         createdRowIds.delete(action.rowId)
       }
 
       if (action.type === 'UPDATE') {
         // Restore the previous value
         if (action.previousValue) {
-          const { columnNames } = model.api.getSnapshot()
-
-          Object.entries(action.previousValue).forEach(([key, value]) => {
-            if (key.startsWith('_')) return // Skip metadata fields
-            const columnIndex = columnNames.indexOf(key)
-            if (columnIndex !== -1) {
-              const rowVec = model.api.vec([
-                'rows',
-                String(action.rowIndex),
-                'data',
-              ])
-              rowVec?.set([[columnIndex, s.con(value)]])
-            }
+          applyModelChange(model, {
+            type: 'UPDATE',
+            rowIndex: action.rowIndex,
+            updatedData: action.previousValue,
           })
         }
         updatedRowIds.delete(action.rowId)
       }
 
       if (action.type === 'DELETE') {
-        // Re-insert the deleted row at its original position
         if (action.previousValue) {
-          const { columnNames } = model.api.getSnapshot()
-
-          // Create the row data for the model
-          const rowData = columnNames.map(
-            colName => action.previousValue![colName] || '',
-          )
-
-          // Insert the row into the model at its original position
-          rowsArr?.ins(action.rowIndex, [
-            { data: s.vec(...rowData.map(s.con)) },
-          ])
+          applyModelChange(model, {
+            type: 'CREATE',
+            rowIndex: action.rowIndex,
+            rowData: action.previousValue,
+          })
         }
         deletedRowIds.delete(action.rowId)
       }

@@ -6,7 +6,6 @@ import getSchemaForProperty from '@/utils/jsonschema/getSchemaForProperty'
 import Grid from '@mui/material/Grid'
 import { GridSession } from '@sage-bionetworks/synapse-client'
 import classNames from 'classnames'
-import { s } from 'json-joy/lib/json-crdt-patch'
 import throttle from 'lodash-es/throttle'
 import {
   forwardRef,
@@ -205,19 +204,15 @@ const SynapseGrid = forwardRef<
   ) {
     if (!model) return
 
-    const { columnNames } = model.api.getSnapshot()
-    const rowsArr = model.api.arr(['rows'])
-
     for (const operation of operations) {
       if (operation.type === 'CREATE') {
         // Add new rows to the model
         for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
-          // Use actual row data from newValue[i] to initialize the new row
-          const rowData = newValue[i] || {}
-          const dataArray = columnNames.map(columnName =>
-            s.con(rowData[columnName] ?? ''),
-          )
-          rowsArr?.ins(i, [{ data: s.vec(...dataArray) }])
+          applyModelChange(model, {
+            type: 'CREATE',
+            rowIndex: i,
+            rowData: newValue[i],
+          })
         }
       }
 
@@ -228,30 +223,20 @@ const SynapseGrid = forwardRef<
           rowIndex < operation.toRowIndex;
           rowIndex++
         ) {
-          const newRow = newValue?.[rowIndex]
-          const oldRow = oldValue?.[rowIndex]
-
-          // Compare each cell and only update changed ones
-          Object.entries(newRow).forEach(([columnName, newCellValue]) => {
-            if (columnName.startsWith('_')) return // Skip internal properties like _rowId
-
-            const oldCellValue = oldRow?.[columnName]
-            if (newCellValue !== oldCellValue) {
-              const columnIndex = columnNames.indexOf(columnName)
-              if (columnIndex !== -1) {
-                const rowVec = model.api.vec(['rows', String(rowIndex), 'data'])
-                rowVec?.set([[columnIndex, s.con(newCellValue)]])
-              }
-            }
+          applyModelChange(model, {
+            type: 'UPDATE',
+            rowIndex: operation.fromRowIndex,
+            updatedData: newValue[operation.fromRowIndex],
           })
         }
       }
 
       if (operation.type === 'DELETE') {
-        rowsArr?.del(
-          operation.fromRowIndex,
-          operation.toRowIndex - operation.fromRowIndex,
-        )
+        applyModelChange(model, {
+          type: 'DELETE',
+          rowIndex: operation.fromRowIndex,
+          count: operation.toRowIndex - operation.fromRowIndex,
+        })
       }
     }
   }
@@ -304,6 +289,7 @@ const SynapseGrid = forwardRef<
 
     // Track row creation, updates, and deletions to keep UI state and undo history in sync
     for (const operation of operations) {
+      // can keep with some changes, update after merge with Nick's changes
       if (operation.type === 'CREATE') {
         for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
           const newRow = newValue[i]
@@ -316,10 +302,6 @@ const SynapseGrid = forwardRef<
             newValue: newRow,
           })
         }
-
-        newValue
-          .slice(operation.fromRowIndex, operation.toRowIndex)
-          .forEach(({ _rowId }: any) => createdRowIds.add(_rowId))
       }
 
       if (operation.type === 'UPDATE') {
