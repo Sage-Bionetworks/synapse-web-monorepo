@@ -57,7 +57,7 @@ export function SynapseSearchPageResults() {
           display: 'flex',
           flexDirection: 'column',
           height: '200px',
-          bgcolor: '#223549',
+          bgcolor: theme => theme.palette.primary.dark,
           py: '40px',
           px: '80px',
           gap: '16px',
