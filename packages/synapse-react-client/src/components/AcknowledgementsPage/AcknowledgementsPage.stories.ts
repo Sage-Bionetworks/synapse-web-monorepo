@@ -20,6 +20,14 @@ export const Demo: Story = {
     portalName: 'ELITE Portal',
     createDoiHelpUrl:
       'https://help.eliteportal.org/help/how-to-get-a-doi-for-your-publication',
+    portalAcknowledgementProps: {
+      ownerId: 'syn27229419',
+      wikiId: '634761',
+    },
+    dataAvailabilityProps: {
+      ownerId: 'syn27229419',
+      wikiId: '634762',
+    },
   },
   loaders: [
     () => {
