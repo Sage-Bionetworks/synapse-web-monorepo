@@ -2,22 +2,29 @@ import { Box, TextField, InputAdornment, Button } from '@mui/material'
 import SynapseSearchResultsCard from './SynapseSearchResultsCard'
 import SearchIcon from '@mui/icons-material/Search'
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
+import React, { useState } from 'react'
+import { useSearch } from '@/synapse-queries/search/useSearch'
+import { SearchQuery } from '@sage-bionetworks/synapse-types'
 
-export type SynapseSearchPageResultsProps = {
-  synapseSearchResultsJson: {
-    hits: Array<{
-      id: string
-      name: string
-      node_type: string
-      created_on: number
-      modified_on: number
-      created_by: string
-      modified_by: string
-    }>
+export function SynapseSearchPageResults() {
+  const [searchInput, setSearchInput] = useState('')
+  const [searchQuery, setSearchQuery] = useState<SearchQuery | null>(null)
+
+  const { data, isLoading, error } = useSearch(
+    searchQuery ?? ({ queryTerm: [] } as object),
+    { enabled: !!searchQuery },
+  )
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(event.target.value)
   }
-}
 
-export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
+  const handleSearch = () => {
+    setSearchQuery({
+      queryTerm: searchInput ? [searchInput] : [],
+    })
+  }
+
   return (
     <Box
       sx={{
@@ -39,15 +46,16 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
       >
         <TextField
           placeholder="Search…"
+          value={searchInput}
+          onChange={handleInputChange}
+          onKeyDown={e => {
+            if (e.key === 'Enter') handleSearch()
+          }}
           slotProps={{
             input: {
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon
-                    sx={{
-                      color: 'secondary.600',
-                    }}
-                  />
+                  <SearchIcon sx={{ color: 'secondary.600' }} />
                 </InputAdornment>
               ),
             },
@@ -82,15 +90,19 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
           gap: '25px',
         }}
       >
-        {props.synapseSearchResultsJson.hits.map((hit: any) => (
-          <SynapseSearchResultsCard
-            key={hit.name}
-            entityId={hit.id}
-            name={hit.name}
-            entityType={hit.node_type}
-            modifiedOn={hit.modified_on}
-          />
-        ))}
+        {isLoading && <div>Loading...</div>}
+        {error && <div>Error: {error.message}</div>}
+        {data &&
+          data.hits &&
+          data.hits.map((hit: any) => (
+            <SynapseSearchResultsCard
+              key={hit.id}
+              entityId={hit.id}
+              name={hit.name}
+              entityType={hit.node_type}
+              modifiedOn={hit.modified_on}
+            />
+          ))}
       </Box>
     </Box>
   )
