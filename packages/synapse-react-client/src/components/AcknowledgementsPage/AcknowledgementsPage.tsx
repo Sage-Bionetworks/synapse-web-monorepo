@@ -19,7 +19,7 @@ export type AcknowledgementItem = {
   statement: string
 }
 
-function AcknowledgementPage(props: AcknowledgementPageProps) {
+export function AcknowledgementPage(props: AcknowledgementPageProps) {
   const {
     portalName,
     createDoiHelpUrl,
@@ -42,7 +42,7 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
   )
   return (
     <>
-      <Container maxWidth={'lg'}>
+      <Container maxWidth={'lg'} sx={{ mt: '2em', mb: '2em' }}>
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
           How to acknowledge data from this portal
         </Typography>

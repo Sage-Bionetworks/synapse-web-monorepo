@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import MarkdownCollapse from '../Markdown/MarkdownCollapse'
 import { transformStringIntoMarkdownProps } from '../Markdown/MarkdownUtils'
 import { AcknowledgementItem } from './AcknowledgementsPage'
@@ -32,6 +32,9 @@ export function StudyAcknowledgement({
       onSelectChange(acknowledgementItem, isChecked)
     }
   }
+  const markdownCollapseProps = useMemo(() => {
+    return transformStringIntoMarkdownProps(acknowledgementStatementWikiRef)
+  }, [acknowledgementStatementWikiRef])
   return (
     <Box sx={{ mb: '20px' }}>
       <FormControlLabel
@@ -45,7 +48,7 @@ export function StudyAcknowledgement({
         label={<Typography variant="body1">{studyName}</Typography>}
       />
       <MarkdownCollapse
-        {...transformStringIntoMarkdownProps(acknowledgementStatementWikiRef)}
+        {...markdownCollapseProps}
         setPlainTextResult={setPlainTextResult}
         showCopyPlainText={true}
       />
