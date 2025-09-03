@@ -33,9 +33,9 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
   const [portalAcknowledgement, setPortalAcknowledgement] = useState<string>()
   const [dataAvailabilityStatement, setDataAvailabilityStatement] =
     useState<string>()
-  const [
-    acknowledgementItems, //setAcknowledgementItems]
-  ] = useState<AcknowledgementItem[]>([])
+  const [acknowledgementItems, setAcknowledgementItems] = useState<
+    AcknowledgementItem[]
+  >([])
   const handleCloseDialog = useCallback(
     () => setAcknowledgementsDialogOpen(false),
     [],
@@ -101,9 +101,21 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
         </Typography>
         <StudyAcknowledgements
           sql={studyAcknowledgementSql}
-          // setSelectedAcknowledgementItems={
-          //   setAcknowledgementItems
-          // }
+          onSelectChange={(item, checked) => {
+            if (checked) {
+              // add
+              acknowledgementItems.push(item)
+            } else {
+              // remove
+              const index = acknowledgementItems.findIndex(
+                i => i.title === item.title && i.statement === item.statement,
+              )
+              if (index > -1) {
+                acknowledgementItems.splice(index, 1)
+              }
+            }
+            setAcknowledgementItems([...acknowledgementItems])
+          }}
         />
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
           2. Generate Data Acknowledgements
@@ -148,6 +160,7 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
                 {...portalAcknowledgementProps}
                 setPlainTextResult={setPortalAcknowledgement}
                 textDescription="full statement"
+                showCopyPlainText={true}
               />
             </>
           )}
@@ -164,6 +177,7 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
                 {...dataAvailabilityProps}
                 setPlainTextResult={setDataAvailabilityStatement}
                 textDescription="full statement"
+                showCopyPlainText={true}
               />
             </>
           )}

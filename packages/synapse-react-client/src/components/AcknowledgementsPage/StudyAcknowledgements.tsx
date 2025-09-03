@@ -1,15 +1,19 @@
 import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
-import MarkdownCollapse from '../Markdown/MarkdownCollapse'
-import { transformStringIntoMarkdownProps } from '../Markdown/MarkdownUtils'
+import { StudyAcknowledgement } from './StudyAcknowledgement'
+import { AcknowledgementItem } from './AcknowledgementsPage'
 
 export type StudyAcknowledgementsProps = {
   // First column should be the study name, second column should be the acknowledgement statement
   sql: string
+  onSelectChange?: (item: AcknowledgementItem, checked: boolean) => void
 }
 
-export function StudyAcknowledgements({ sql }: StudyAcknowledgementsProps) {
+export function StudyAcknowledgements({
+  sql,
+  onSelectChange,
+}: StudyAcknowledgementsProps) {
   const entityId = parseEntityIdFromSqlStatement(sql)
   const { data } = useGetQueryResultBundleWithAsyncStatus({
     entityId: entityId,
@@ -26,16 +30,17 @@ export function StudyAcknowledgements({ sql }: StudyAcknowledgementsProps) {
     <>
       {rows?.map((row, index) => {
         const studyName = row.values[0]
-        const acknowledgementStatement = row.values[1]
+        const acknowledgementStatementWikiRef = row.values[1]
+        if (!studyName || !acknowledgementStatementWikiRef) {
+          return null
+        }
         return (
-          <div key={index} style={{ marginBottom: '20px' }}>
-            <strong>{studyName}</strong>
-            {acknowledgementStatement && (
-              <MarkdownCollapse
-                {...transformStringIntoMarkdownProps(acknowledgementStatement)}
-              />
-            )}
-          </div>
+          <StudyAcknowledgement
+            key={index}
+            studyName={studyName}
+            acknowledgementStatementWikiRef={acknowledgementStatementWikiRef}
+            onSelectChange={onSelectChange}
+          />
         )
       })}
     </>
