@@ -162,10 +162,6 @@ const SynapseGrid = forwardRef<
     return gridCols
   }
 
-  function genId() {
-    return Math.floor(Math.random() * 1000000)
-  }
-
   const commit = useCallback(
     throttle(() => {
       console.log('Auto-committing changes')
