@@ -1,7 +1,11 @@
 import { DataGridRow, GridModel, Operation } from '../DataGridTypes'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { DataGridWebSocket } from '@/components/DataGrid/DataGridWebSocket'
 import { applyModelChange } from '../utils/applyModelChange'
+import { Button, Menu, MenuItem } from '@mui/material'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import { getInverseOperation } from '../utils/getInverseOperation'
+import { useStack } from './useStack'
 
 /**
  * Represents a single undoable action in the grid
@@ -33,26 +37,31 @@ export function useGridUndo(
   ) => void,
 ) {
   // Tracks the stack of undoable actions in LIFO order
-  const [undoStack, setUndoStack] = useState<UndoableAction[]>([])
+  // const [undoStack, setUndoStack] = useState<UndoableAction[]>([])
+  const undoStack = useStack<UndoableAction>([], 100) // 100 = max undo steps
 
-  // Track row IDs by type of operation for quick reference
-  const createdRowIds = useMemo(() => new Set(), [])
-  const deletedRowIds = useMemo(() => new Set(), [])
-  const updatedRowIds = useMemo(() => new Set(), [])
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => setAnchorEl(null)
 
   // Generate preview information for the undo menu to show users exactly what will be undone
   // Returns: lastType (CREATE/UPDATE/DELETE), sameTypeCount (consecutive actions of same type),
   // totalActions (all actions in stack).
   const getUndoPreview = () => {
-    if (undoStack.length === 0) return null
+    if (undoStack.isEmpty()) return null
 
-    const lastAction = undoStack[undoStack.length - 1]
+    const lastAction = undoStack.peek()
     const lastType = lastAction.type
 
     // Count consecutive actions of same type from the end
     let sameTypeCount = 0
-    for (let i = undoStack.length - 1; i >= 0; i--) {
-      if (undoStack[i].type === lastType) {
+    for (let i = undoStack.stack.length - 1; i >= 0; i--) {
+      if (undoStack.stack[i].type === lastType) {
         sameTypeCount++
       } else {
         break
@@ -62,7 +71,7 @@ export function useGridUndo(
     return {
       lastType,
       sameTypeCount,
-      totalActions: undoStack.length,
+      totalActions: undoStack.size,
     }
   }
 
@@ -71,106 +80,120 @@ export function useGridUndo(
   /**
    * Undo one or more actions based on the chosen type:
    * - 'lastAction': undo only the most recent action
-   * - 'consecutiveActions': undo all consecutive actions of the same type as the last one
-   * - 'allActions': undo everything in the undo stack
    */
-  const handleUndo = (
-    undoType: 'lastAction' | 'consecutiveActions' | 'allActions',
-    handleClose?: () => void,
-  ) => {
-    if (undoStack.length === 0) return
+  const handleUndo = (handleClose?: () => void) => {
+    if (undoStack.isEmpty()) return
 
-    let actionsToUndo: UndoableAction[] = []
+    const actionsToUndo: UndoableAction[] = []
 
-    switch (undoType) {
-      case 'lastAction': {
-        const newUndoStack = [...undoStack]
-        actionsToUndo = [newUndoStack.pop()!]
-        setUndoStack(newUndoStack)
-        break
-      }
-      case 'consecutiveActions': {
-        // Undo all consecutive actions of the same type as the last action
-        const newUndoStack = [...undoStack]
-        const lastType = newUndoStack.at(-1)?.type
-        const consecutiveActions: typeof actionsToUndo = []
+    const last = undoStack.pop()
+    if (last) actionsToUndo.push(last)
 
-        while (newUndoStack.at(-1)?.type === lastType) {
-          consecutiveActions.push(newUndoStack.pop()!)
-        }
-
-        actionsToUndo = consecutiveActions
-        setUndoStack(newUndoStack)
-        break
-      }
-      case 'allActions':
-        // Undo all actions from newest to oldest
-        actionsToUndo = [...undoStack].reverse()
-        setUndoStack([])
-        break
-    }
-
-    // Access the current model to apply undo operations
     if (!model) return console.error('No model available for undo')
 
-    // Process each action in LIFO order
     actionsToUndo.forEach(action => {
-      if (action.type === 'CREATE') {
-        // Undo CREATE by deleting the row
-        applyModelChange(model, {
-          type: 'DELETE',
-          rowIndex: action.rowIndex,
-        })
-        createdRowIds.delete(action.rowId)
-      }
+      const inverseOperation = getInverseOperation(action)
+      if (!inverseOperation) return
 
-      if (action.type === 'UPDATE') {
-        // Undo UPDATE by restoring the previous row values
-        if (action.previousValue) {
-          applyModelChange(model, {
-            type: 'UPDATE',
-            rowIndex: action.rowIndex,
-            updatedData: action.previousValue,
-          })
-        }
-        updatedRowIds.delete(action.rowId)
-      }
-
-      if (action.type === 'DELETE') {
-        // Undo DELETE by recreating the row with previous values
-        if (action.previousValue) {
-          applyModelChange(model, {
-            type: 'CREATE',
-            rowIndex: action.rowIndex,
-            rowData: action.previousValue,
-          })
-        }
-        deletedRowIds.delete(action.rowId)
-      }
+      applyModelChange(model, inverseOperation)
     })
 
-    // Send the undo changes to server
+    // Send changes to server
     websocketInstance?.sendPatch()
 
-    // Update UI to reflect the undo
+    // Update UI
     const updatedRows = modelRowsToGrid(model.api.getSnapshot())
     handleChange?.(updatedRows, [], true)
 
     handleClose?.()
   }
 
-  /**
-   * Push a new action to the undo stack
-   */
-  const addToUndoStack = (action: UndoableAction) => {
-    setUndoStack(prev => [...prev, action])
-  }
+  const addToUndoStack = (action: UndoableAction) => undoStack.push(action)
 
-  /**
-   * Clear all undoable actions
-   */
-  const clearUndoStack = () => {
-    setUndoStack([])
+  const clearUndoStack = () => undoStack.clear()
+
+  const undoUI = (
+    <>
+      <Button
+        aria-controls={open ? 'undo-menu' : undefined}
+        aria-haspopup="true"
+        onClick={handleClick}
+        disabled={!undoPreview}
+        endIcon={<KeyboardArrowDownIcon />}
+      >
+        Undo {undoPreview && `(${undoPreview.totalActions})`}
+      </Button>
+      <Menu
+        id="undo-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+      >
+        {undoPreview ? (
+          [
+            <MenuItem key="lastAction" onClick={() => handleUndo(handleClose)}>
+              Undo last {undoPreview.lastType.toLowerCase()} action
+            </MenuItem>,
+          ]
+        ) : (
+          <MenuItem disabled>No actions to undo</MenuItem>
+        )}
+      </Menu>
+    </>
+  )
+
+  const addOperationsToUndoStack = (
+    operations: Operation[],
+    rowValues: DataGridRow[],
+    newValue: DataGridRow[],
+    genId: () => string | number = () => Math.random().toString(36).slice(2),
+  ) => {
+    for (const operation of operations) {
+      const start = operation.fromRowIndex
+      const end = operation.toRowIndex
+
+      if (operation.type === 'CREATE') {
+        for (let i = start; i < end; i++) {
+          const newRow = newValue[i]
+          const rowId = newRow?._rowId || genId()
+          addToUndoStack({
+            type: 'CREATE',
+            rowId,
+            rowIndex: i,
+            newValue: newRow,
+          })
+        }
+      }
+
+      if (operation.type === 'UPDATE') {
+        const oldVal = rowValues.slice(start, end)
+        const newVal = newValue.slice(start, end)
+
+        newVal.forEach((newRow: DataGridRow, idx: number) => {
+          const oldRow = oldVal[idx]
+          const rowIndex = start + idx
+          addToUndoStack({
+            type: 'UPDATE',
+            rowId: newRow._rowId || undefined,
+            rowIndex,
+            previousValue: oldRow,
+            newValue: newRow,
+          })
+        })
+      }
+
+      if (operation.type === 'DELETE') {
+        const deletedRows = rowValues.slice(start, end)
+        deletedRows.forEach((row, idx) => {
+          addToUndoStack({
+            type: 'DELETE',
+            rowId: row._rowId,
+            rowIndex: start + idx,
+            previousValue: row,
+          })
+        })
+      }
+    }
   }
 
   return {
@@ -178,8 +201,7 @@ export function useGridUndo(
     handleUndo,
     addToUndoStack,
     clearUndoStack,
-    createdRowIds,
-    deletedRowIds,
-    updatedRowIds,
+    addOperationsToUndoStack,
+    undoUI,
   }
 }

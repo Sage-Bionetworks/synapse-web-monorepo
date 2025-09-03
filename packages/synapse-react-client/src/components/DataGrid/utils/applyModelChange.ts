@@ -4,7 +4,7 @@ import { s } from 'json-joy/lib/json-crdt-patch'
 /**
  * Represents a change operation on the GridModel.
  */
-type ModelChange =
+export type ModelChange =
   | { type: 'CREATE'; rowIndex: number; rowData: DataGridRow }
   | { type: 'DELETE'; rowIndex: number; count?: number }
   | { type: 'UPDATE'; rowIndex: number; updatedData: DataGridRow }
@@ -21,7 +21,9 @@ export function applyModelChange(model: GridModel, change: ModelChange) {
 
   switch (change.type) {
     case 'CREATE': {
+      // Convert rowData object into a CRDT vector
       const rowData = columnNames.map(name => s.con(change.rowData[name] ?? ''))
+      // Insert a new row object at the specified index
       rowsArr?.ins(change.rowIndex, [{ data: s.vec(...rowData) }])
       break
     }
@@ -35,11 +37,13 @@ export function applyModelChange(model: GridModel, change: ModelChange) {
         if (key.startsWith('_')) return // Skip internal properties like _rowId
         const colIndex = columnNames.indexOf(key)
         if (colIndex !== -1) {
+          // Get the CRDT array of cell values for this row
           const rowVec = model.api.vec([
             'rows',
             String(change.rowIndex),
             'data',
           ])
+          // Update the specific column with the new value
           rowVec?.set([[colIndex, s.con(value)]])
         }
       })
