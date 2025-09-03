@@ -71,7 +71,7 @@ export function SynapseSearchPageResults() {
                 <InputAdornment position="start">
                   <SearchIcon
                     sx={{
-                      color: '#38756A',
+                      color: 'secondary.600',
                     }}
                   />
                 </InputAdornment>
@@ -86,7 +86,7 @@ export function SynapseSearchPageResults() {
             py: '10px',
             px: '20px',
             width: '200px',
-            bgcolor: '#71767F',
+            bgcolor: 'grey.700',
             color: 'white',
             '&:hover': {
               //remove hover
