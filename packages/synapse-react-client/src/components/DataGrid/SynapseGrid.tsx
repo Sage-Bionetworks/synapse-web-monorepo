@@ -184,7 +184,9 @@ const SynapseGrid = forwardRef<
           const dataArray = columnNames.map(columnName =>
             s.con(rowData[columnName] ?? ''),
           )
-          rowsArr?.ins(i, [{ data: s.vec(...dataArray) }])
+          rowsArr?.ins(i, [
+            s.obj({ data: s.vec(...dataArray), metadata: s.obj({}) }),
+          ])
         }
       }
 
