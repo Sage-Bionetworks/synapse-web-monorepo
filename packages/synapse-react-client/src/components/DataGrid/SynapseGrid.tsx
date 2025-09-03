@@ -34,7 +34,7 @@ import {
   GridModelSnapshot,
   Operation,
 } from './DataGridTypes'
-import { removeNoOpOperations, rowsAreIdentical } from './utils/DataGridUtils'
+import { removeNoOpOperations } from './utils/DataGridUtils'
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { Button, Menu, MenuItem } from '@mui/material'
@@ -280,31 +280,23 @@ const SynapseGrid = forwardRef<
             operation.toRowIndex,
           )
 
-          const comparisonResults = oldVal.map((oldItem, idx) =>
-            rowsAreIdentical(oldItem, newVal[idx]),
-          )
+          newVal.forEach((newRow: DataGridRow, idx: number) => {
+            const { _rowId } = newRow
+            const oldRow = oldVal[idx]
+            const rowIndex = operation.fromRowIndex + idx
 
-          if (comparisonResults.every(Boolean)) return
+            if (!createdRowIds.has(_rowId)) {
+              updatedRowIds.add(_rowId)
 
-          newVal
-            .filter((_, idx) => !comparisonResults[idx])
-            .forEach((newRow: DataGridRow, idx: number) => {
-              const { _rowId } = newRow
-              const oldRow = oldVal[idx]
-              const rowIndex = operation.fromRowIndex + idx
-
-              if (!createdRowIds.has(_rowId)) {
-                updatedRowIds.add(_rowId)
-
-                addToUndoStack({
-                  type: 'UPDATE',
-                  rowId: typeof _rowId === 'number' ? _rowId : undefined,
-                  rowIndex: rowIndex,
-                  previousValue: oldRow,
-                  newValue: newRow,
-                })
-              }
-            })
+              addToUndoStack({
+                type: 'UPDATE',
+                rowId: typeof _rowId === 'number' ? _rowId : undefined,
+                rowIndex: rowIndex,
+                previousValue: oldRow,
+                newValue: newRow,
+              })
+            }
+          })
         }
 
         if (operation.type === 'DELETE') {
