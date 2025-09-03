@@ -103,8 +103,6 @@ const SynapseGrid = forwardRef<
         }
       })
 
-      rowObj._rowId = genId()
-
       rowObj.__validationResults = row.metadata?.rowValidation
       return rowObj
     })
@@ -178,7 +176,7 @@ const SynapseGrid = forwardRef<
   )
 
   function addRowToModel() {
-    return { _rowId: genId() }
+    return {}
   }
 
   const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
@@ -194,7 +192,7 @@ const SynapseGrid = forwardRef<
       // Track row creation, updates, and deletions to keep UI state and undo history in sync
 
       // Add all operations to the undo stack
-      addOperationsToUndoStack(operations, rowValues, newValue, genId)
+      addOperationsToUndoStack(operations, rowValues, newValue)
 
       // Apply the changes to the model
       applyOperationsToModel(operations, newValue, rowValues, model)
@@ -285,7 +283,6 @@ const SynapseGrid = forwardRef<
                 <DataSheetGrid
                   value={rowValues}
                   columns={colValues}
-                  rowKey="_rowId"
                   rowClassName={({ rowData, rowIndex }) =>
                     classNames({
                       'row-valid':
@@ -300,7 +297,6 @@ const SynapseGrid = forwardRef<
                   createRow={addRowToModel}
                   duplicateRow={({ rowData }: any) => ({
                     ...rowData,
-                    _rowId: genId(),
                   })}
                   onChange={handleChange}
                   onActiveCellChange={({ cell }) => {

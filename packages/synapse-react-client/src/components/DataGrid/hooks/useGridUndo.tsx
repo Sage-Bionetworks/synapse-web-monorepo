@@ -12,7 +12,6 @@ import { useStack } from './useStack'
  */
 export type UndoableAction = {
   type: 'CREATE' | 'DELETE' | 'UPDATE'
-  rowId: string | number | boolean | null | undefined
   rowIndex: number
   previousValue?: DataGridRow
   newValue?: DataGridRow
@@ -146,7 +145,6 @@ export function useGridUndo(
     operations: Operation[],
     rowValues: DataGridRow[],
     newValue: DataGridRow[],
-    genId: () => string | number = () => Math.random().toString(36).slice(2),
   ) => {
     for (const operation of operations) {
       const start = operation.fromRowIndex
@@ -155,10 +153,8 @@ export function useGridUndo(
       if (operation.type === 'CREATE') {
         for (let i = start; i < end; i++) {
           const newRow = newValue[i]
-          const rowId = newRow?._rowId || genId()
           addToUndoStack({
             type: 'CREATE',
-            rowId,
             rowIndex: i,
             newValue: newRow,
           })
@@ -174,7 +170,6 @@ export function useGridUndo(
           const rowIndex = start + idx
           addToUndoStack({
             type: 'UPDATE',
-            rowId: newRow._rowId || undefined,
             rowIndex,
             previousValue: oldRow,
             newValue: newRow,
@@ -187,7 +182,6 @@ export function useGridUndo(
         deletedRows.forEach((row, idx) => {
           addToUndoStack({
             type: 'DELETE',
-            rowId: row._rowId,
             rowIndex: start + idx,
             previousValue: row,
           })
