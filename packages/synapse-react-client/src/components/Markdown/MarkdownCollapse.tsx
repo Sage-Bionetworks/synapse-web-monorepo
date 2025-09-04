@@ -15,6 +15,7 @@ export type MarkdownCollapseProps = {
   textDescription?: string
   showCopyPlainText?: boolean
   title?: string
+  setPlainTextResult?: (plainText: string) => void
 } & MarkdownSynapseProps
 
 /**
@@ -33,6 +34,9 @@ export const MarkdownCollapse = (props: MarkdownCollapseProps) => {
       const textContent = stripHTML(htmlContent)
       setPlainText(textContent.trim())
       setWordCount(textContent.trim().split(/\s+/).length)
+      if (props.setPlainTextResult) {
+        props.setPlainTextResult(textContent.trim())
+      }
     }
   }
 
