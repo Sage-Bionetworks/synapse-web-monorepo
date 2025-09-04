@@ -2,14 +2,12 @@ import {
   useGetOAuthClientACL,
   useUpdateOAuthClientACL,
 } from '@/synapse-queries'
-import { spreadSx } from '@/theme/spreadSx'
 import {
   getAccessTypeFromPermissionLevel,
   PermissionLevel,
 } from '@/utils/PermissionLevelToAccessType'
-import { Alert, Box, Stack, Typography } from '@mui/material'
+import { Alert, Stack } from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { isEqual } from 'lodash-es'
 import {
   ForwardedRef,
@@ -21,12 +19,10 @@ import {
 import { AclEditor } from '../AclEditor/AclEditor'
 import useUpdateAcl from '../AclEditor/useUpdateAcl'
 import { AccessControlList } from '@sage-bionetworks/synapse-client'
-
-const textSx = {
-  variant: 'body1',
-  lineHeight: '20px',
-  color: 'grey.800',
-}
+import {
+  convertResourceAccessSetToSRC,
+  updateACLWithSRCResourceAccessList,
+} from '@/utils/functions/AccessControlListUtils'
 
 const availablePermissionLevels: PermissionLevel[] = [
   'CAN_ADMINISTER_OAUTH_CLIENT',
@@ -81,16 +77,9 @@ export const OAuthClientAclEditor = forwardRef(function OAuthClientAclEditor(
   useEffect(() => {
     if (originalAcl) {
       resetDirtyState()
-      // convert synapse-client Set<ResourceAccess> to an array of the expected type for useUpdateAcl
-      const resourceAccessList = Array.from(
-        originalAcl.resourceAccess ?? [],
-      ).map(item => ({
-        principalId: item.principalId ?? -1,
-        accessType: Array.isArray(item.accessType)
-          ? (item.accessType as ACCESS_TYPE[])
-          : (Array.from(item.accessType ?? []) as ACCESS_TYPE[]),
-      }))
-      setResourceAccessList(resourceAccessList)
+      setResourceAccessList(
+        convertResourceAccessSetToSRC(originalAcl.resourceAccess),
+      )
     }
   }, [originalAcl, setResourceAccessList])
 
@@ -104,16 +93,8 @@ export const OAuthClientAclEditor = forwardRef(function OAuthClientAclEditor(
     () => {
       return {
         save() {
-          const updatedAcl: AccessControlList = {
-            ...originalAcl,
-            id: originalAcl?.id || clientId,
-            resourceAccess: new Set(
-              resourceAccessList.map(item => ({
-                principalId: item.principalId,
-                accessType: new Set(item.accessType as string[]),
-              })),
-            ),
-          }
+          const updatedAcl: AccessControlList =
+            updateACLWithSRCResourceAccessList(originalAcl, resourceAccessList)
           const aclIsUnchanged =
             (originalAcl === null && updatedAcl == null) ||
             // ignore properties that will change when the ACL is saved (etag, modifiedOn)

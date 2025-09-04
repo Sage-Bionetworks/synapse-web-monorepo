@@ -9,7 +9,7 @@ import { useRef, useState } from 'react'
 import {
   OAuthClientAclEditor,
   OAuthClientAclEditorHandle,
-} from './OauthClientAclEditor'
+} from './OAuthClientAclEditor'
 
 const meta: Meta<typeof OAuthClientAclEditor> = {
   title: 'Synapse/OAuthManagement/OAuthClientAclEditor',
