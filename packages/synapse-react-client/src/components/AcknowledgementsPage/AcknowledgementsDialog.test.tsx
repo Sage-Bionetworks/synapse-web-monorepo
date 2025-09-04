@@ -87,7 +87,7 @@ describe('AcknowledgementsDialog', () => {
   it('calls onClose when the close button is clicked', () => {
     const onClose = vi.fn()
     render(<AcknowledgementsDialog {...baseProps} onClose={onClose} />)
-    fireEvent.click(screen.getByText('Close'))
+    await userEvent.click(screen.getByText('Close'))
     expect(onClose).toHaveBeenCalled()
   })
 
