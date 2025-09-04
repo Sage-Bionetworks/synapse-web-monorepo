@@ -2,19 +2,10 @@ import { Box, TextField, InputAdornment, Button } from '@mui/material'
 import SynapseSearchResultsCard from './SynapseSearchResultsCard'
 import SearchIcon from '@mui/icons-material/Search'
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
+import { SearchResults } from '@sage-bionetworks/synapse-types'
 
 export type SynapseSearchPageResultsProps = {
-  synapseSearchResultsJson: {
-    hits: Array<{
-      id: string
-      name: string
-      node_type: string
-      created_on: number
-      modified_on: number
-      created_by: string
-      modified_by: string
-    }>
-  }
+  results: SearchResults
 }
 
 export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
@@ -82,7 +73,7 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
           gap: '25px',
         }}
       >
-        {props.synapseSearchResultsJson.hits.map((hit: any) => (
+        {props.results.hits.map((hit: any) => (
           <SynapseSearchResultsCard
             key={hit.name}
             entityId={hit.id}
