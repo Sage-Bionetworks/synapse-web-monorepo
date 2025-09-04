@@ -100,11 +100,9 @@ describe('AcknowledgementsDialog', () => {
     const copyButton = screen.getByRole('button', {
       name: /Copy to Clipboard/i,
     })
-    fireEvent.click(copyButton)
-    // Wait for the promise to resolve
+    await userEvent.click(copyButton)
+    
     expect(copyStringToClipboard).toHaveBeenCalled()
-    // Simulate promise resolution
-    await Promise.resolve()
     expect(displayToast).toHaveBeenCalledWith(
       'Successfully copied to clipboard',
       'success',
