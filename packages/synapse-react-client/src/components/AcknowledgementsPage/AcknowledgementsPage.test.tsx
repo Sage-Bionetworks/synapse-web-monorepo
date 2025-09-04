@@ -64,7 +64,7 @@ describe('AcknowledgementPage', () => {
     const generateButton = screen.getByRole('button', {
       name: /Generate Data Acknowledgements/i,
     })
-    fireEvent.click(generateButton)
+    await userEvent.click(generateButton)
     expect(screen.getByTestId('AcknowledgementsDialog')).toHaveTextContent(
       'Dialog Open',
     )
