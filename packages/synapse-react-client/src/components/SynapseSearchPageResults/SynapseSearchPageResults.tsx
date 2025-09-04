@@ -121,7 +121,7 @@ export function SynapseSearchPageResults() {
             onClick={() => {
               void fetchNextPage()
             }}
-            disabled={isFetchingNextPage}
+            loading={isFetchingNextPage}
             variant="contained"
             sx={{ mt: 2 }}
           >
