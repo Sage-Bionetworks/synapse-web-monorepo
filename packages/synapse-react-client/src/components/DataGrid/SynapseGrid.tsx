@@ -31,7 +31,12 @@ import 'react-datasheet-grid/dist/style.css'
 import '../../style/components/_data-grid-extra.scss'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import { autocompleteColumn } from './columns/AutocompleteColumn'
-import { DataGridRow, GridModelSnapshot, Operation } from './DataGridTypes'
+import {
+  DataGridRow,
+  GridModel,
+  GridModelSnapshot,
+  Operation,
+} from './DataGridTypes'
 import {
   GRID_ROW_REACT_KEY_PROPERTY,
   removeNoOpOperations,
@@ -162,6 +167,19 @@ const SynapseGrid = forwardRef<
     [websocketInstance],
   )
 
+  const applyAndCommitChanges = useCallback(
+    (model: GridModel, modelChanges: ModelChange[]) => {
+      // Apply each change to the model
+      modelChanges.forEach(change => {
+        applyModelChange(model, change)
+      })
+
+      // Push the changes to the server (throttled)
+      commit()
+    },
+    [commit],
+  )
+
   const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
     if (!model) {
       console.error('Model is not initialized')
@@ -184,13 +202,7 @@ const SynapseGrid = forwardRef<
         rowValues,
       )
 
-      // Apply each change to the model
-      modelChanges.forEach(change => {
-        applyModelChange(model, change)
-      })
-
-      // Push the changes to the server (throttled)
-      commit()
+      applyAndCommitChanges(model, modelChanges)
     }
   }
 
@@ -206,10 +218,9 @@ const SynapseGrid = forwardRef<
         gridRef.current.setActiveCell(null)
       }
 
-      applyModelChange(model, change)
-      commit()
+      applyAndCommitChanges(model, [change])
     },
-    [model, commit],
+    [model, applyAndCommitChanges],
   )
 
   const { undoUI, addOperationsToUndoStack } = useGridUndo(
