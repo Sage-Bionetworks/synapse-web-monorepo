@@ -1,4 +1,5 @@
 import MergeGridWithSourceTableButton from '@/components/DataGrid/MergeGridWithSourceTableButton'
+import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { SkeletonTable } from '@/components/index'
 import { ComplexJSONRenderer } from '@/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer'
 import { useGetSchema } from '@/synapse-queries/index'
@@ -13,6 +14,7 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -30,7 +32,10 @@ import '../../style/components/_data-grid-extra.scss'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import { autocompleteColumn } from './columns/AutocompleteColumn'
 import { DataGridRow, GridModelSnapshot, Operation } from './DataGridTypes'
-import { removeNoOpOperations } from './utils/DataGridUtils'
+import {
+  GRID_ROW_REACT_KEY_PROPERTY,
+  removeNoOpOperations,
+} from './utils/DataGridUtils'
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { useGridUndo } from './hooks/useGridUndo'
@@ -89,27 +94,11 @@ const SynapseGrid = forwardRef<
   const connectionStatus = isConnected ? 'Connected' : 'Disconnected'
 
   // Transform the model view rows and columns to DataSheetGrid format
-  const rowValues = modelSnapshot ? modelRowsToGrid(modelSnapshot) : []
+  const rowValues = useMemo(
+    () => (modelSnapshot ? modelRowsToGrid(model, modelSnapshot) : []),
+    [model, modelSnapshot],
+  )
   const colValues = modelSnapshot ? modelColsToGrid(modelSnapshot) : []
-
-  // Convert model rows to a format suitable for DataSheetGrid
-  function modelRowsToGrid(modelSnapshot: GridModelSnapshot): DataGridRow[] {
-    if (!modelSnapshot) return []
-    const { columnNames, columnOrder, rows } = modelSnapshot
-    const gridRows = rows.map((row): DataGridRow => {
-      const rowObj: DataGridRow = {}
-      columnOrder.forEach((index: number) => {
-        const columnName = columnNames[index]
-        if (columnName) {
-          rowObj[columnName] = row.data[index]
-        }
-      })
-
-      rowObj.__validationResults = row.metadata?.rowValidation
-      return rowObj
-    })
-    return gridRows
-  }
 
   // Convert model columns to a format suitable for DataSheetGrid
   function modelColsToGrid(modelSnapshot: GridModelSnapshot): Column[] {
@@ -172,10 +161,6 @@ const SynapseGrid = forwardRef<
     }, 500),
     [websocketInstance],
   )
-
-  function addRowToModel() {
-    return {}
-  }
 
   const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
     if (!model) {
@@ -308,6 +293,7 @@ const SynapseGrid = forwardRef<
                   ref={gridRef}
                   value={rowValues}
                   columns={colValues}
+                  rowKey={GRID_ROW_REACT_KEY_PROPERTY}
                   rowClassName={({ rowData, rowIndex }) =>
                     classNames({
                       'row-valid':
@@ -319,7 +305,6 @@ const SynapseGrid = forwardRef<
                       'row-selected': selectedRowIndex === rowIndex,
                     })
                   }
-                  createRow={addRowToModel}
                   duplicateRow={({ rowData }: any) => ({
                     ...rowData,
                   })}

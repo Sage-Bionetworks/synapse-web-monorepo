@@ -172,7 +172,7 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
   },
   {
     id: 'relatedStandards',
-    title: 'Standards relevant to this organization',
+    title: 'Relevant Standards',
     element: (
       <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
         {({ value }) => (
@@ -202,7 +202,7 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
   },
   {
     id: 'responsibleForStandards',
-    title: 'Standards this organization is responsible for',
+    title: 'Governed Standards',
     element: (
       <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
         {({ value }) => (
