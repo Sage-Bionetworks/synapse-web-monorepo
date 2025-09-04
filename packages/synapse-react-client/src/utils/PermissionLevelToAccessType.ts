@@ -110,5 +110,5 @@ export const permissionLevelToLabel: Record<PermissionLevel, string> = {
     'Can Review & Exempt Eligible',
 
   // OAuth Client
-  CAN_ADMINISTER_OAUTH_CLIENT: 'Can Administer Client',
+  CAN_ADMINISTER_OAUTH_CLIENT: 'Administrator',
 }

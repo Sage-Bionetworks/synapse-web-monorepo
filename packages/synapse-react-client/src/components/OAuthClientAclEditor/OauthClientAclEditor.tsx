@@ -9,7 +9,7 @@ import {
 } from '@/utils/PermissionLevelToAccessType'
 import { Alert, Box, Stack, Typography } from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { AccessControlList } from '@sage-bionetworks/synapse-types'
+import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { isEqual } from 'lodash-es'
 import {
   ForwardedRef,
@@ -20,6 +20,7 @@ import {
 } from 'react'
 import { AclEditor } from '../AclEditor/AclEditor'
 import useUpdateAcl from '../AclEditor/useUpdateAcl'
+import { AccessControlList } from '@sage-bionetworks/synapse-client'
 
 const textSx = {
   variant: 'body1',
@@ -80,7 +81,16 @@ export const OAuthClientAclEditor = forwardRef(function OAuthClientAclEditor(
   useEffect(() => {
     if (originalAcl) {
       resetDirtyState()
-      setResourceAccessList(originalAcl.resourceAccess)
+      // convert synapse-client Set<ResourceAccess> to an array of the expected type for useUpdateAcl
+      const resourceAccessList = Array.from(
+        originalAcl.resourceAccess ?? [],
+      ).map(item => ({
+        principalId: item.principalId ?? -1,
+        accessType: Array.isArray(item.accessType)
+          ? (item.accessType as ACCESS_TYPE[])
+          : (Array.from(item.accessType ?? []) as ACCESS_TYPE[]),
+      }))
+      setResourceAccessList(resourceAccessList)
     }
   }, [originalAcl, setResourceAccessList])
 
@@ -94,14 +104,16 @@ export const OAuthClientAclEditor = forwardRef(function OAuthClientAclEditor(
     () => {
       return {
         save() {
-          const updatedAcl: AccessControlList | null =
-            resourceAccessList.length === 0
-              ? null
-              : {
-                  ...originalAcl,
-                  id: originalAcl?.id || clientId,
-                  resourceAccess: resourceAccessList,
-                }
+          const updatedAcl: AccessControlList = {
+            ...originalAcl,
+            id: originalAcl?.id || clientId,
+            resourceAccess: new Set(
+              resourceAccessList.map(item => ({
+                principalId: item.principalId,
+                accessType: new Set(item.accessType as string[]),
+              })),
+            ),
+          }
           const aclIsUnchanged =
             (originalAcl === null && updatedAcl == null) ||
             // ignore properties that will change when the ACL is saved (etag, modifiedOn)
@@ -127,28 +139,6 @@ export const OAuthClientAclEditor = forwardRef(function OAuthClientAclEditor(
         gap: '20px',
       }}
     >
-      <Box>
-        <Typography
-          variant="headline3"
-          sx={{
-            mb: '10px',
-          }}
-        >
-          Guide to OAuth Client permissions
-        </Typography>
-        <Typography
-          sx={spreadSx(
-            {
-              mb: '10px',
-            },
-            textSx,
-          )}
-        >
-          <span style={{ fontStyle: 'italic' }}>Can Administer</span> means a
-          user or team can edit the OAuth Client, including its redirect URI,
-          name, and permissions.
-        </Typography>
-      </Box>
       <AclEditor
         resourceAccessList={resourceAccessList}
         availablePermissionLevels={availablePermissionLevels}

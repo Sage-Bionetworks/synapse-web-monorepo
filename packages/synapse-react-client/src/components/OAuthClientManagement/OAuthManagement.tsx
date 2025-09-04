@@ -21,6 +21,7 @@ import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import { displayToast } from '../ToastMessage'
 import { CreateOAuthModal } from './CreateOAuthClient'
+import OAuthAclEditorModal from '../OAuthClientAclEditor/OAuthAclEditorModal'
 
 const columnHelper = createColumnHelper<OAuthClient>()
 function getColumns(columnOptions: {
@@ -307,6 +308,11 @@ export function OAuthManagement() {
           </p> */}
           </>
         }
+      />
+      <OAuthAclEditorModal
+        clientId={selectedClient?.client_id!}
+        open={isShowingSharingSettings}
+        onClose={() => setIsShowingSharingSettings(false)}
       />
       <WarningDialog
         open={isShowingSecretWarning}

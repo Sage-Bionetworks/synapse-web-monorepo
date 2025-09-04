@@ -714,6 +714,10 @@ export class KeyFactory {
     return this.getKey('oauthClient', clientId)
   }
 
+  public getOAuthClientAclQueryKey(clientId: string) {
+    return this.getKey('oauthClient', clientId, 'acl')
+  }
+
   public getHasCurrentUserAuthorizedOAuthClientQueryKey(
     request: OIDCAuthorizationRequest,
   ) {
