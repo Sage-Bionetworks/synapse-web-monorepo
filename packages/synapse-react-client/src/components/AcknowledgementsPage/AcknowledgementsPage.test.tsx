@@ -1,15 +1,14 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import AcknowledgementPage from './AcknowledgementsPage'
+import userEvent from '@testing-library/user-event'
 
 // Mock child components
 vi.mock('../ComponentCollapse', () => ({
-  __esModule: true,
   default: ({ children }: any) => (
     <div data-testid="ComponentCollapse">{children}</div>
   ),
 }))
 vi.mock('./AcknowledgementsDialog', () => ({
-  __esModule: true,
   default: (props: any) => (
     <div data-testid="AcknowledgementsDialog">
       {props.open ? 'Dialog Open' : 'Dialog Closed'}
@@ -17,7 +16,6 @@ vi.mock('./AcknowledgementsDialog', () => ({
   ),
 }))
 vi.mock('./StudyAcknowledgements', () => ({
-  __esModule: true,
   StudyAcknowledgements: ({ onSelectChange }: any) => (
     <button
       data-testid="StudyAcknowledgements"
@@ -30,7 +28,6 @@ vi.mock('./StudyAcknowledgements', () => ({
   ),
 }))
 vi.mock('../Markdown/MarkdownCollapse', () => ({
-  __esModule: true,
   default: () => <div data-testid="MarkdownCollapse" />,
 }))
 
@@ -56,7 +53,7 @@ describe('AcknowledgementPage', () => {
     expect(screen.getByTestId('StudyAcknowledgements')).toBeInTheDocument()
   })
 
-  it('adds an acknowledgement item when a study is selected', () => {
+  it('adds an acknowledgement item when a study is selected', async () => {
     render(<AcknowledgementPage {...defaultProps} />)
     const selectButton = screen.getByTestId('StudyAcknowledgements')
     await userEvent.click(selectButton)
@@ -70,7 +67,7 @@ describe('AcknowledgementPage', () => {
     )
   })
 
-  it('opens and closes the acknowledgements dialog', () => {
+  it('opens and closes the acknowledgements dialog', async () => {
     render(<AcknowledgementPage {...defaultProps} />)
     const generateButton = screen.getByRole('button', {
       name: /Generate Data Acknowledgements/i,

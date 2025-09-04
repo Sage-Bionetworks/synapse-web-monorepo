@@ -1,8 +1,9 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
 import AcknowledgementsDialog, {
   AcknowledgementsDialogProps,
 } from './AcknowledgementsDialog'
+import userEvent from '@testing-library/user-event'
 
 // Mock DialogBase and utility functions
 vi.mock('../DialogBase', () => ({
@@ -84,7 +85,7 @@ describe('AcknowledgementsDialog', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('calls onClose when the close button is clicked', () => {
+  it('calls onClose when the close button is clicked', async () => {
     const onClose = vi.fn()
     render(<AcknowledgementsDialog {...baseProps} onClose={onClose} />)
     await userEvent.click(screen.getByText('Close'))
@@ -101,7 +102,7 @@ describe('AcknowledgementsDialog', () => {
       name: /Copy to Clipboard/i,
     })
     await userEvent.click(copyButton)
-    
+
     expect(copyStringToClipboard).toHaveBeenCalled()
     expect(displayToast).toHaveBeenCalledWith(
       'Successfully copied to clipboard',
