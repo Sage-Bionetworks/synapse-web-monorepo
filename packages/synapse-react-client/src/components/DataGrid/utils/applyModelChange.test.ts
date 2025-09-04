@@ -2,28 +2,10 @@ import { act } from '@testing-library/react'
 import { Model } from 'json-joy/lib/json-crdt'
 import { s } from 'json-joy/lib/json-crdt-patch'
 import { applyModelChange } from './applyModelChange'
-
-const gridRowSchema = s.obj({
-  data: s.vec(s.con('')),
-  metadata: s.obj({
-    synapseRow: s.obj({
-      rowId: s.con(0),
-      versionNumber: s.con(0),
-      etag: s.con(''),
-    }),
-    rowValidation: s.con(undefined),
-  }),
-})
-
-const schema = s.obj({
-  doc_version: s.con('0.1.0'),
-  columnNames: s.vec(s.con('')),
-  columnOrder: s.arr([s.con(0)]),
-  rows: s.arr([gridRowSchema]),
-})
+import { gridSchema } from '../DataGridTypes'
 
 function createModel() {
-  const model = Model.create(schema)
+  const model = Model.create(gridSchema)
 
   // Set up columns
   const columnNamesVec = model.api.vec(['columnNames'])

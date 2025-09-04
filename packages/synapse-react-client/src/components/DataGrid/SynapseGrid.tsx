@@ -177,12 +177,6 @@ const SynapseGrid = forwardRef<
     return {}
   }
 
-  const onUndo = () => {
-    if (gridRef.current) {
-      gridRef.current.setActiveCell(null)
-    }
-  }
-
   const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
     if (!model) {
       console.error('Model is not initialized')

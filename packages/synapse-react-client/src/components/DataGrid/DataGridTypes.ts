@@ -14,7 +14,7 @@ const gridRowSchema = s.obj({
   }),
 })
 
-const _gridSchema = s.obj({
+export const gridSchema = s.obj({
   doc_version: s.con('0.1.0'),
   columnNames: s.vec(s.con('')),
   columnOrder: s.arr([s.con(0)]),
@@ -33,7 +33,7 @@ export interface QueryInput {
   input: string
 }
 
-export type GridModel = ReturnType<typeof Model.create<typeof _gridSchema>>
+export type GridModel = ReturnType<typeof Model.create<typeof gridSchema>>
 export type GridModelSnapshot = ReturnType<GridModel['api']['getSnapshot']>
 
 export interface Operation {
