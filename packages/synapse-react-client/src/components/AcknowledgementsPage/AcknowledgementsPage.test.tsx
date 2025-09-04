@@ -59,7 +59,7 @@ describe('AcknowledgementPage', () => {
   it('adds an acknowledgement item when a study is selected', () => {
     render(<AcknowledgementPage {...defaultProps} />)
     const selectButton = screen.getByTestId('StudyAcknowledgements')
-    fireEvent.click(selectButton)
+    await userEvent.click(selectButton)
     // Open the dialog to check if the item is included
     const generateButton = screen.getByRole('button', {
       name: /Generate Data Acknowledgements/i,
