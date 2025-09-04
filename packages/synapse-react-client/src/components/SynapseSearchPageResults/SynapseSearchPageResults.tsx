@@ -5,12 +5,10 @@ import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
 import React, { useState } from 'react'
 import { useSearchInfinite } from '@/synapse-queries/search/useSearch'
 import { SearchQuery } from '@sage-bionetworks/synapse-types'
+import { SearchResults } from '@sage-bionetworks/synapse-types'
 
-type SearchHit = {
-  id: string
-  name: string
-  node_type: string
-  modified_on: number
+export type SynapseSearchPageResultsProps = {
+  results: SearchResults
 }
 
 export function SynapseSearchPageResults() {
@@ -108,7 +106,7 @@ export function SynapseSearchPageResults() {
         {data &&
           data.pages &&
           data.pages.map((page, pageIndex) =>
-            page.hits.map((hit: SearchHit) => (
+            page.hits.map((hit: any) => (
               <SynapseSearchResultsCard
                 key={hit.id + '-' + pageIndex}
                 entityId={hit.id}

@@ -7,10 +7,10 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { DetailsPageSectionLayoutType } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageSectionLayout'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
-import { transformStringIntoMarkdownProps } from '@sage-bionetworks/synapse-portal-framework/components/transformStringIntoMarkdownProps'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/index'
 import MarkdownCollapse from 'synapse-react-client/components/Markdown/MarkdownCollapse'
+import { transformStringIntoMarkdownProps } from 'synapse-react-client/components/Markdown/MarkdownUtils'
 
 const studyDetailsTabContent: DetailsPageSectionLayoutType[] = [
   {
