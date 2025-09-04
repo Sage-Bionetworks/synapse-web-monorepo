@@ -36,11 +36,15 @@ describe('useStack', () => {
 
   it('should pop items off the stack', () => {
     const { result } = renderHook(() => useStack())
+    let popped
     act(() => {
       result.current.push(1)
       result.current.push(2)
-      result.current.pop()
     })
+    act(() => {
+      popped = result.current.pop()
+    })
+    expect(popped).toBe(2)
     expect(result.current.stack).toEqual([1])
   })
 

@@ -67,24 +67,16 @@ export function useGridUndo(onApplyModelChange: (change: ModelChange) => void) {
    * Undo one or more actions based on the chosen type:
    * - 'lastAction': undo only the most recent action
    */
-  const handleUndo = useCallback(
-    (handleClose?: () => void) => {
-      if (undoStack.isEmpty()) return
-
-      const actionToUndo = undoStack.pop()
-
-      if (actionToUndo) {
-        const inverseOperation = getInverseOperation(actionToUndo)
-
-        if (!inverseOperation) return
-
-        onApplyModelChange(inverseOperation)
-      }
-
-      handleClose?.()
-    },
-    [onApplyModelChange, undoStack],
-  )
+  const handleUndo = useCallback(() => {
+    if (undoStack.isEmpty()) return
+    const actionToUndo = undoStack.pop()
+    if (actionToUndo) {
+      const inverseOperation = getInverseOperation(actionToUndo)
+      if (!inverseOperation) return
+      onApplyModelChange(inverseOperation)
+    }
+    handleClose()
+  }, [onApplyModelChange, undoStack, handleClose])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -126,7 +118,7 @@ export function useGridUndo(onApplyModelChange: (change: ModelChange) => void) {
       >
         {undoPreview ? (
           [
-            <MenuItem key="lastAction" onClick={() => handleUndo(handleClose)}>
+            <MenuItem key="lastAction" onClick={handleUndo}>
               Undo last {undoPreview.lastType.toLowerCase()} action
             </MenuItem>,
           ]

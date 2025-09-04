@@ -1,4 +1,3 @@
-import { act } from '@testing-library/react'
 import { Model } from 'json-joy/lib/json-crdt'
 import { s } from 'json-joy/lib/json-crdt-patch'
 import { applyModelChange } from './applyModelChange'
@@ -32,9 +31,7 @@ describe('applyModelChange', () => {
       rowData: { col1: 'value1', col2: 'value2' },
     }
 
-    act(() => {
-      applyModelChange(model, change)
-    })
+    applyModelChange(model, change)
 
     const snapshot = model.api.getSnapshot()
     expect(snapshot.rows).toHaveLength(1)
@@ -44,20 +41,16 @@ describe('applyModelChange', () => {
   it('Updates an existing row in the model', () => {
     const model = createModel()
 
-    act(() => {
-      applyModelChange(model, {
-        type: 'CREATE' as const,
-        rowIndex: 0,
-        rowData: { col1: 'original1', col2: 'original2' },
-      })
+    applyModelChange(model, {
+      type: 'CREATE' as const,
+      rowIndex: 0,
+      rowData: { col1: 'original1', col2: 'original2' },
     })
 
-    act(() => {
-      applyModelChange(model, {
-        type: 'UPDATE' as const,
-        rowIndex: 0,
-        updatedData: { col1: 'updated1' },
-      })
+    applyModelChange(model, {
+      type: 'UPDATE' as const,
+      rowIndex: 0,
+      updatedData: { col1: 'updated1' },
     })
 
     const snapshot = model.api.getSnapshot()
@@ -67,19 +60,15 @@ describe('applyModelChange', () => {
   it('Deletes a row from the model', () => {
     const model = createModel()
 
-    act(() => {
-      applyModelChange(model, {
-        type: 'CREATE' as const,
-        rowIndex: 0,
-        rowData: { col1: 'value1', col2: 'value2' },
-      })
+    applyModelChange(model, {
+      type: 'CREATE' as const,
+      rowIndex: 0,
+      rowData: { col1: 'value1', col2: 'value2' },
     })
 
-    act(() => {
-      applyModelChange(model, {
-        type: 'DELETE' as const,
-        rowIndex: 0,
-      })
+    applyModelChange(model, {
+      type: 'DELETE' as const,
+      rowIndex: 0,
     })
 
     const snapshot = model.api.getSnapshot()

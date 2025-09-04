@@ -25,20 +25,12 @@ import { useCallback, useState } from 'react'
   )
 
   const pop = useCallback(() => {
-    let popped: T | undefined
-    setCurrentStack(prev => {
-      if (prev.length === 0) {
-        return prev
-      }
+    if (currentStack.length === 0) return undefined
 
-      // preserve the popped item
-      popped = prev[prev.length - 1]
-
-      // Return a new array without the last element
-      return prev.slice(0, -1)
-    })
+    const popped = currentStack[currentStack.length - 1]
+    setCurrentStack(prev => prev.slice(0, -1))
     return popped
-  }, [])
+  }, [currentStack])
 
   const peek = useCallback(() => {
     return currentStack[currentStack.length - 1]
