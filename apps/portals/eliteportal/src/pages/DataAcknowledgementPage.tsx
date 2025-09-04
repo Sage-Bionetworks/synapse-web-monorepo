@@ -14,7 +14,7 @@ function DataAcknowledgementPage() {
         wikiId: '634762',
       }}
       studyAcknowledgementSql={
-        "SELECT studyName, acknowledgment FROM syn57394664 where isReleased='true'"
+        "SELECT studyName, acknowledgment FROM syn57394664 where isReleased='true' order by studyName"
       }
     />
   )
