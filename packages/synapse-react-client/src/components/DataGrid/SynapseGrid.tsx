@@ -34,8 +34,8 @@ import { removeNoOpOperations } from './utils/DataGridUtils'
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { useGridUndo } from './hooks/useGridUndo'
-import { applyOperationsToModel } from './utils/applyOperationsToModel'
 import { applyModelChange, ModelChange } from './utils/applyModelChange'
+import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 
 export type SynapseGridProps = {
   query: string
@@ -198,19 +198,33 @@ const SynapseGrid = forwardRef<
       // Add all operations to the undo stack
       addOperationsToUndoStack(operations, rowValues, newValue)
 
-      // Apply the changes to the model
-      applyOperationsToModel(operations, newValue, rowValues, model)
+      // Transform operations to model changes
+      const modelChanges = mapOperationsToModelChanges(
+        operations,
+        newValue,
+        rowValues,
+      )
+
+      // Apply each change to the model
+      modelChanges.forEach(change => {
+        applyModelChange(model, change)
+      })
 
       // Push the changes to the server (throttled)
       commit()
     }
   }
 
-  const onApplyModelChange = useCallback(
+  const applyModelChangeFromUndo = useCallback(
     (change: ModelChange) => {
       if (!model) {
         console.error('Model is not initialized')
         return
+      }
+
+      if (change.type === 'DELETE' && gridRef.current) {
+        // The user may have set a cell as active that we are removing with an 'undo'. In that case, clear the active state
+        gridRef.current.setActiveCell(null)
       }
 
       applyModelChange(model, change)
@@ -220,9 +234,7 @@ const SynapseGrid = forwardRef<
   )
 
   const { undoUI, addOperationsToUndoStack } = useGridUndo(
-    model,
-    onApplyModelChange,
-    onUndo,
+    applyModelChangeFromUndo,
   )
 
   // Track the currently selected row index

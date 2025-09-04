@@ -1,4 +1,4 @@
-import { DataGridRow, GridModel, Operation } from '../DataGridTypes'
+import { DataGridRow, Operation } from '../DataGridTypes'
 import { useCallback, useEffect, useState } from 'react'
 import { ModelChange } from '../utils/applyModelChange'
 import { Button, Menu, MenuItem } from '@mui/material'
@@ -16,20 +16,15 @@ export type UndoableAction = {
   newValue?: DataGridRow
 }
 
+const MAX_UNDO_STEPS = 100
 /**
  * Hook to manage undo functionality for a grid backed by a CRDT model.
  *
- * @param model - current GridModel instance
  * @param onApplyModelChange - Function to apply model changes and commit
- * @param onUndo - Optional callback invoked after undoing changes
  */
-export function useGridUndo(
-  model: GridModel | null,
-  onApplyModelChange: (change: ModelChange) => void,
-  onUndo?: () => void,
-) {
+export function useGridUndo(onApplyModelChange: (change: ModelChange) => void) {
   // Tracks the stack of undoable actions in LIFO order
-  const undoStack = useStack<UndoableAction>([], 100) // 100 = max undo steps
+  const undoStack = useStack<UndoableAction>([], MAX_UNDO_STEPS)
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -76,11 +71,7 @@ export function useGridUndo(
     (handleClose?: () => void) => {
       if (undoStack.isEmpty()) return
 
-      onUndo?.()
-
       const actionToUndo = undoStack.pop()
-
-      if (!model) return console.error('No model available for undo')
 
       if (actionToUndo) {
         const inverseOperation = getInverseOperation(actionToUndo)
@@ -92,7 +83,7 @@ export function useGridUndo(
 
       handleClose?.()
     },
-    [model, onApplyModelChange, undoStack, onUndo],
+    [onApplyModelChange, undoStack],
   )
 
   useEffect(() => {

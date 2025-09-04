@@ -1,26 +1,24 @@
-import { DataGridRow, GridModel, Operation } from '../DataGridTypes'
-import { applyModelChange } from './applyModelChange'
+import { DataGridRow, Operation } from '../DataGridTypes'
+import { ModelChange } from './applyModelChange'
 
-export function applyOperationsToModel(
+export function mapOperationsToModelChanges(
   operations: Operation[],
   newValue: DataGridRow[],
   oldValue: DataGridRow[],
-  model: GridModel,
-) {
-  if (!model) return
+): ModelChange[] {
+  const modelChanges: ModelChange[] = []
 
-  for (const operation of operations) {
+  operations.forEach(operation => {
     if (operation.type === 'CREATE') {
       // Add new rows to the model
       for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
-        applyModelChange(model, {
+        modelChanges.push({
           type: 'CREATE',
           rowIndex: i,
           rowData: newValue[i],
         })
       }
     }
-
     if (operation.type === 'UPDATE') {
       // Only update the specific rows and cells that changed
       for (
@@ -28,20 +26,20 @@ export function applyOperationsToModel(
         rowIndex < operation.toRowIndex;
         rowIndex++
       ) {
-        applyModelChange(model, {
+        modelChanges.push({
           type: 'UPDATE',
-          rowIndex: operation.fromRowIndex,
-          updatedData: newValue[operation.fromRowIndex],
+          rowIndex: rowIndex,
+          updatedData: newValue[rowIndex],
         })
       }
     }
-
     if (operation.type === 'DELETE') {
-      applyModelChange(model, {
+      modelChanges.push({
         type: 'DELETE',
         rowIndex: operation.fromRowIndex,
         count: operation.toRowIndex - operation.fromRowIndex,
       })
     }
-  }
+  })
+  return modelChanges
 }
