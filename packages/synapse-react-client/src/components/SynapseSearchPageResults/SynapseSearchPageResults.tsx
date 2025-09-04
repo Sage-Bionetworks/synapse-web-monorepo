@@ -3,17 +3,30 @@ import SynapseSearchResultsCard from './SynapseSearchResultsCard'
 import SearchIcon from '@mui/icons-material/Search'
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
 import React, { useState } from 'react'
-import { useSearch } from '@/synapse-queries/search/useSearch'
+import { useSearchInfinite } from '@/synapse-queries/search/useSearch'
 import { SearchQuery } from '@sage-bionetworks/synapse-types'
+
+type SearchHit = {
+  id: string
+  name: string
+  node_type: string
+  modified_on: number
+}
 
 export function SynapseSearchPageResults() {
   const [searchInput, setSearchInput] = useState('')
   const [searchQuery, setSearchQuery] = useState<SearchQuery | null>(null)
 
-  const { data, isLoading, error } = useSearch(
-    searchQuery ?? ({ queryTerm: [] } as object),
-    { enabled: !!searchQuery },
-  )
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useSearchInfinite(searchQuery ?? { queryTerm: [] }, {
+    enabled: !!searchQuery,
+  })
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(event.target.value)
@@ -93,16 +106,30 @@ export function SynapseSearchPageResults() {
         {isLoading && <div>Loading...</div>}
         {error && <div>Error: {error.message}</div>}
         {data &&
-          data.hits &&
-          data.hits.map((hit: any) => (
-            <SynapseSearchResultsCard
-              key={hit.id}
-              entityId={hit.id}
-              name={hit.name}
-              entityType={hit.node_type}
-              modifiedOn={hit.modified_on}
-            />
-          ))}
+          data.pages &&
+          data.pages.map((page, pageIndex) =>
+            page.hits.map((hit: SearchHit) => (
+              <SynapseSearchResultsCard
+                key={hit.id + '-' + pageIndex}
+                entityId={hit.id}
+                name={hit.name}
+                entityType={hit.node_type}
+                modifiedOn={hit.modified_on}
+              />
+            )),
+          )}
+        {hasNextPage && (
+          <Button
+            onClick={() => {
+              void fetchNextPage()
+            }}
+            disabled={isFetchingNextPage}
+            variant="contained"
+            sx={{ mt: 2 }}
+          >
+            {isFetchingNextPage ? 'Loading more...' : 'Load More'}
+          </Button>
+        )}
       </Box>
     </Box>
   )
