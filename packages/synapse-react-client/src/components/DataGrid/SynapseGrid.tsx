@@ -21,6 +21,7 @@ import {
   Column,
   createTextColumn,
   DataSheetGrid,
+  DataSheetGridRef,
   floatColumn,
   keyColumn,
 } from 'react-datasheet-grid'
@@ -34,6 +35,7 @@ import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { useGridUndo } from './hooks/useGridUndo'
 import { applyOperationsToModel } from './utils/applyOperationsToModel'
+import { applyModelChange, ModelChange } from './utils/applyModelChange'
 
 export type SynapseGridProps = {
   query: string
@@ -175,6 +177,12 @@ const SynapseGrid = forwardRef<
     return {}
   }
 
+  const onUndo = () => {
+    if (gridRef.current) {
+      gridRef.current.setActiveCell(null)
+    }
+  }
+
   const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
     if (!model) {
       console.error('Model is not initialized')
@@ -198,15 +206,29 @@ const SynapseGrid = forwardRef<
     }
   }
 
+  const onApplyModelChange = useCallback(
+    (change: ModelChange) => {
+      if (!model) {
+        console.error('Model is not initialized')
+        return
+      }
+
+      applyModelChange(model, change)
+      commit()
+    },
+    [model, commit],
+  )
+
   const { undoUI, addOperationsToUndoStack } = useGridUndo(
     model,
-    websocketInstance,
-    modelRowsToGrid,
-    handleChange,
+    onApplyModelChange,
+    onUndo,
   )
 
   // Track the currently selected row index
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
+
+  const gridRef = useRef<DataSheetGridRef | null>(null)
 
   return (
     <div>
@@ -277,6 +299,7 @@ const SynapseGrid = forwardRef<
               <Grid size={12}>
                 {undoUI}
                 <DataSheetGrid
+                  ref={gridRef}
                   value={rowValues}
                   columns={colValues}
                   rowClassName={({ rowData, rowIndex }) =>

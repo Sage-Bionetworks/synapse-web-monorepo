@@ -1,7 +1,6 @@
 import { DataGridRow, GridModel, Operation } from '../DataGridTypes'
-import { useState } from 'react'
-import { DataGridWebSocket } from '@/components/DataGrid/DataGridWebSocket'
-import { applyModelChange } from '../utils/applyModelChange'
+import { useCallback, useEffect, useState } from 'react'
+import { ModelChange } from '../utils/applyModelChange'
 import { Button, Menu, MenuItem } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { getInverseOperation } from '../utils/getInverseOperation'
@@ -21,22 +20,15 @@ export type UndoableAction = {
  * Hook to manage undo functionality for a grid backed by a CRDT model.
  *
  * @param model - current GridModel instance
- * @param websocketInstance - WebSocket to sync changes with server
- * @param modelRowsToGrid - Function to convert model snapshot to UI row array
- * @param handleChange - Optional callback invoked after undoing changes
+ * @param onApplyModelChange - Function to apply model changes and commit
+ * @param onUndo - Optional callback invoked after undoing changes
  */
 export function useGridUndo(
   model: GridModel | null,
-  websocketInstance: DataGridWebSocket | null,
-  modelRowsToGrid: (modelSnapshot: any) => DataGridRow[],
-  handleChange?: (
-    rows: DataGridRow[],
-    operations: Operation[],
-    isUndoing?: boolean,
-  ) => void,
+  onApplyModelChange: (change: ModelChange) => void,
+  onUndo?: () => void,
 ) {
   // Tracks the stack of undoable actions in LIFO order
-  // const [undoStack, setUndoStack] = useState<UndoableAction[]>([])
   const undoStack = useStack<UndoableAction>([], 100) // 100 = max undo steps
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -80,32 +72,45 @@ export function useGridUndo(
    * Undo one or more actions based on the chosen type:
    * - 'lastAction': undo only the most recent action
    */
-  const handleUndo = (handleClose?: () => void) => {
-    if (undoStack.isEmpty()) return
+  const handleUndo = useCallback(
+    (handleClose?: () => void) => {
+      if (undoStack.isEmpty()) return
 
-    const actionsToUndo: UndoableAction[] = []
+      onUndo?.()
 
-    const last = undoStack.pop()
-    if (last) actionsToUndo.push(last)
+      const actionToUndo = undoStack.pop()
 
-    if (!model) return console.error('No model available for undo')
+      if (!model) return console.error('No model available for undo')
 
-    actionsToUndo.forEach(action => {
-      const inverseOperation = getInverseOperation(action)
-      if (!inverseOperation) return
+      if (actionToUndo) {
+        const inverseOperation = getInverseOperation(actionToUndo)
 
-      applyModelChange(model, inverseOperation)
-    })
+        if (!inverseOperation) return
 
-    // Send changes to server
-    websocketInstance?.sendPatch()
+        onApplyModelChange(inverseOperation)
+      }
 
-    // Update UI
-    const updatedRows = modelRowsToGrid(model.api.getSnapshot())
-    handleChange?.(updatedRows, [], true)
+      handleClose?.()
+    },
+    [model, onApplyModelChange, undoStack, onUndo],
+  )
 
-    handleClose?.()
-  }
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        (event.ctrlKey && event.key === 'z') ||
+        (event.metaKey && event.key === 'z')
+      ) {
+        event.preventDefault()
+        handleUndo()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [handleUndo, undoStack])
 
   const addToUndoStack = (action: UndoableAction) => undoStack.push(action)
 
