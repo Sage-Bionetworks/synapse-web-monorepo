@@ -222,10 +222,6 @@ const SynapseGrid = forwardRef<
     [websocketInstance],
   )
 
-  function addRowToModel() {
-    return {}
-  }
-
   const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
     if (!model) {
       console.error('Model is not initialized')
@@ -329,7 +325,6 @@ const SynapseGrid = forwardRef<
                       'row-selected': selectedRowIndex === rowIndex,
                     })
                   }
-                  createRow={addRowToModel}
                   duplicateRow={({ rowData }: any) => ({
                     ...rowData,
                   })}
