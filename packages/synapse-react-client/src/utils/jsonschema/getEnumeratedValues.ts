@@ -1,6 +1,6 @@
+import { getOnlyNonNullOneOfOption } from '@/utils/jsonschema/getOnlyNonNullOneOfOption'
 import { EnumOptionsType, optionsList } from '@rjsf/utils'
 import isArray from 'lodash-es/isArray'
-import isEqual from 'lodash-es/isEqual'
 import isObject from 'lodash-es/isObject'
 
 type EnumeratedValue =
@@ -18,13 +18,6 @@ function rjsfOptionsListToValueList(option: EnumOptionsType): {
   return { value: option.value as EnumeratedValue }
 }
 
-function isSchemaDescribingNullType(s: any) {
-  return (
-    isObject(s) &&
-    'type' in s &&
-    (s.type == 'null' || isEqual(s.type, ['null']))
-  )
-}
 function isOneOfSchemaDescribingEnum(
   oneOfSchemas: any,
 ): oneOfSchemas is Array<Record<string, unknown>> {
@@ -55,15 +48,9 @@ export default function getEnumeratedValues(
     // RJSF assumes that a schema with a `oneOf` passed to `optionsList` is a list of options with `const` properties.
     // That is not the case in some of our schemas, so if there is only one `oneOf` schema that does not describe `null`,
     // we use that schema directly.
-    const oneOfSchemasOmitNulltype = jsonSchema.oneOf.filter(
-      s => !isSchemaDescribingNullType(s),
-    )
-    if (
-      oneOfSchemasOmitNulltype.length == 1 &&
-      isObject(oneOfSchemasOmitNulltype[0]) &&
-      Object.hasOwn(oneOfSchemasOmitNulltype[0], 'enum')
-    ) {
-      rjsfOptionsList = optionsList(oneOfSchemasOmitNulltype[0]) || []
+    const nonNullOneOfOption = getOnlyNonNullOneOfOption(jsonSchema)
+    if (nonNullOneOfOption && Object.hasOwn(nonNullOneOfOption, 'enum')) {
+      rjsfOptionsList = optionsList(nonNullOneOfOption) || []
     }
   } else {
     rjsfOptionsList = optionsList(jsonSchema) || []

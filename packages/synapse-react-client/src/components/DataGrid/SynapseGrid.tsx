@@ -5,6 +5,7 @@ import { ComplexJSONRenderer } from '@/components/SynapseTable/SynapseTableCell/
 import { useGetSchema } from '@/synapse-queries/index'
 import getEnumeratedValues from '@/utils/jsonschema/getEnumeratedValues'
 import getSchemaForProperty from '@/utils/jsonschema/getSchemaForProperty'
+import { getType } from '@/utils/jsonschema/getType'
 import Grid from '@mui/material/Grid'
 import { GridSession } from '@sage-bionetworks/synapse-client'
 import classNames from 'classnames'
@@ -117,7 +118,7 @@ const SynapseGrid = forwardRef<
           )
         : null
       const colType = jsonSchema
-        ? getSchemaForProperty(jsonSchema, columnName).type
+        ? getType(getSchemaForProperty(jsonSchema, columnName))
         : null
 
       if (colType === 'boolean') {
@@ -141,6 +142,7 @@ const SynapseGrid = forwardRef<
             columnName,
             autocompleteColumn({
               choices: enumeratedValues,
+              colType: colType,
             }),
           ),
           title: columnName,
