@@ -110,12 +110,6 @@ export const linkedDataSetCardConfiguration: CardConfiguration = {
 // Component that conditionally renders DetailsPageContent based on data availability
 function ConditionalOrganizationContent({ orgId }: { orgId: string }) {
   // Check if this organization has any standards it's responsible for
-  console.log(
-    'Checking responsible standards for orgId:',
-    orgId,
-    'Column:',
-    DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION,
-  )
   const { data: hasResponsibleStandards, isLoading } = useHasQueryResults({
     sql: standardsSql,
     searchParams: {
@@ -123,7 +117,6 @@ function ConditionalOrganizationContent({ orgId }: { orgId: string }) {
     },
     sqlOperator: ColumnMultiValueFunction.HAS,
   })
-  console.log('Hook result:', { hasResponsibleStandards, isLoading })
 
   // While loading, show all sections (or you could show a loading state)
   if (isLoading) {
@@ -217,7 +210,7 @@ function getOrganizationDetailsPageContent(
     },
     {
       id: 'relatedStandards',
-      title: 'Standards relevant to this organization',
+      title: 'Relevant Standards',
       element: (
         <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
           {({ value }) => (
@@ -245,24 +238,13 @@ function getOrganizationDetailsPageContent(
         </DetailsPageContextConsumer>
       ),
     },
-    {
-      id: 'd4d',
-      title: 'DataSheet for DataSet',
-      element: (
-        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
-          {({ value }) => {
-            return <D4D org_id={value ?? ''} />
-          }}
-        </DetailsPageContextConsumer>
-      ),
-    },
   ]
 
   // Conditionally add the responsible standards section only if it would have data
   if (includeResponsibleStandards) {
     sections.splice(-1, 0, {
       id: 'responsibleForStandards',
-      title: 'Standards this organization is responsible for',
+      title: 'Governed Standards',
       element: (
         <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
           {({ value }) => (
@@ -291,6 +273,18 @@ function getOrganizationDetailsPageContent(
       ),
     })
   }
+
+  sections.splice(-1, 0, {
+    id: 'd4d',
+    title: 'DataSheet for DataSet',
+    element: (
+      <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
+        {({ value }) => {
+          return <D4D org_id={value ?? ''} />
+        }}
+      </DetailsPageContextConsumer>
+    ),
+  })
 
   return sections
 }

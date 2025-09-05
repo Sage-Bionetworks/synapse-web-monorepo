@@ -36,12 +36,14 @@ export function ChallengesCardDeck() {
 
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    entityId: TABLE_IDS.Organization.id,
+    entityId: TABLE_IDS.Organization_denormalized.id,
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     query: {
-      sql: `SELECT ${COLS_NEEDED.join(', ')} FROM ${TABLE_IDS.Organization.id}`,
+      sql: `SELECT ${COLS_NEEDED.join(', ')} FROM ${
+        TABLE_IDS.Organization_denormalized.id
+      }`,
       additionalFilters,
     },
   }

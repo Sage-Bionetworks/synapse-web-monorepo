@@ -1,15 +1,27 @@
 import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2'
 
 export const TABLE_IDS = {
-  Challenges: { name: 'Challenges', id: 'syn65913973.1' }, // the only reason for this table is to get the GC images
   // CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
-  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.67' },
+  DST_denormalized: {
+    name: 'DST_denormalized',
+    version: 'syn65676531.67',
+    id: 'syn69062839' /* DST_denormalized_current */,
+  },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
-  DataSet_denormalized: { name: 'DataSet_denormalized', id: 'syn68258237.3' },
+  DataSet_denormalized: {
+    name: 'DataSet_denormalized',
+    version: 'syn68258237.3',
+    id: 'syn69696299' /* DataSet_denormalized_current */,
+  },
   DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
   DataTopic: { name: 'DataTopic', id: 'syn63096835' },
-  Organization: { name: 'Organization', id: 'syn63096836.31' },
+  // Organization: { name: 'Organization', id: 'syn63096836.31' },
+  Organization_denormalized: {
+    name: 'Organization',
+    version: 'syn69693360.5',
+    id: 'syn69696403' /* Organization_denormalized_current */,
+  },
   // UseCase: { name: 'UseCase', id: 'syn63096837' }, // not using this, maybe will in the future?
 }
 
@@ -57,7 +69,7 @@ export const organizationDetailsPageSQL = `
     concat('/Explore/Organization/OrganizationDetailsPage?id=', ${
       ORG_TABLE_COLUMN_NAMES.ID
     }) AS orgPageLink
-  FROM ${TABLE_IDS.Organization.id}`
+  FROM ${TABLE_IDS.Organization_denormalized.id}`
 
 export const GC_ORG_IDS = [114, 115, 116, 117].map(id => `'B2AI_ORG:${id}'`)
 
