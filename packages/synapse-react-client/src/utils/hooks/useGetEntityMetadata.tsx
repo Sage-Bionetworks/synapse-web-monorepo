@@ -1,5 +1,6 @@
 import {
   useGetDefaultUploadDestination,
+  useGetEntity,
   useGetEntityBundle,
   useGetUploadDestinationForStorageLocation,
 } from '@/synapse-queries'
@@ -20,6 +21,10 @@ const useGetEntityMetadata = (entityId: string, versionNumber?: number) => {
   const fileHandle = entityBundle && getDataFileHandle(entityBundle)
   const parentId = entityBundle?.entity?.parentId
   const storageLocationId = fileHandle?.storageLocationId
+  const { data: projectEntity, isLoading: isLoadingProjectEntity } =
+    useGetEntity(entityBundle?.path.path[1].id ?? '', undefined, {
+      enabled: !!entityBundle,
+    })
 
   // Note: defaultUploadDestination can't be used for non-container entities
   // since the service checks that any entity in the path to the root has some
@@ -45,7 +50,8 @@ const useGetEntityMetadata = (entityId: string, versionNumber?: number) => {
   const isLoading =
     isEntityBundleLoading ||
     isStorageLocationUploadDestinationLoading ||
-    isDefaultUploadDestinationLoading
+    isDefaultUploadDestinationLoading ||
+    isLoadingProjectEntity
 
   const uploadDestinationString =
     defaultUploadDestination &&
@@ -68,6 +74,7 @@ const useGetEntityMetadata = (entityId: string, versionNumber?: number) => {
     fileHandleStorageInfo,
     storageLocationUploadDestination,
     uploadDestinationString,
+    projectEntity,
     isLoading,
   }
 }

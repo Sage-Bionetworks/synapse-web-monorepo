@@ -104,7 +104,7 @@ const entityQueryKeyObjects = {
   path: (id: string) => [entityQueryKeyObjects.entity(id), 'path'],
   // Entity bundle
   bundle: (
-    id: string,
+    id: string | undefined,
     versionNumber: string | number | undefined,
     bundleRequest: EntityBundleRequest,
   ) => [
@@ -309,7 +309,7 @@ export class KeyFactory {
   }
 
   public getEntityBundleQueryKey(
-    id: string,
+    id: string | undefined,
     version: number | undefined,
     bundleRequest: EntityBundleRequest,
   ) {
@@ -997,5 +997,9 @@ export class KeyFactory {
 
   public getPortalPermissionsKey(portalId: string) {
     return this.getKey('portal', portalId, 'permissions')
+  }
+
+  public getGridSessionListKey() {
+    return this.getKey('gridSession', 'list')
   }
 }

@@ -136,9 +136,7 @@ function CardContainerInternal(props: CardContainerProps) {
     // render the cards
     cards = dataRows.length ? (
       dataRows.map((rowData: Row, index) => {
-        const key = JSON.stringify(rowData.values)
         const propsForCard = {
-          key,
           type,
           schema,
           secondaryLabelLimit,

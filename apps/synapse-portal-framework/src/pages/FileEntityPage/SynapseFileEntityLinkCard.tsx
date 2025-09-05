@@ -13,39 +13,49 @@ const SynapseFileEntityLinkCard = ({
   const synapseUrl = getSynapseEntityUrl(synId, version)
 
   return (
-    <Card
+    <Link
+      href={synapseUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="View this file on Synapse.org"
       sx={{
-        display: 'flex',
-        gap: '20px',
-        alignItems: 'center',
-        padding: '30px',
+        display: 'block',
+        textDecoration: 'none !important',
       }}
     >
-      <SynapseIconLogo />
-      <Stack>
-        <Typography
-          variant="headline3"
-          sx={{ color: 'grey.800', fontSize: '16px', marginBottom: '10px' }}
-        >
-          View this file on Synapse.org
-        </Typography>
-        <Typography variant="smallText1" sx={{ color: 'grey.700' }}>
-          Synapse empowers biomedical researchers with tools for open science
-          and collaboration.
-        </Typography>
-      </Stack>
-      <Link
-        href={synapseUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="View on Synapse.org"
-        sx={{ marginLeft: 'auto' }}
+      <Card
+        sx={{
+          display: 'flex',
+          gap: '20px',
+          alignItems: 'center',
+          padding: '30px',
+          backgroundColor: '#FDFAF0',
+          borderColor: '#EBDDB8',
+        }}
       >
+        <SynapseIconLogo />
+        <Stack>
+          <Typography
+            variant="headline3"
+            sx={{ color: 'grey.800', fontSize: '16px', marginBottom: '10px' }}
+          >
+            View this file on Synapse.org
+          </Typography>
+          <Typography variant="smallText1" sx={{ color: 'grey.800' }}>
+            Synapse empowers biomedical researchers with tools for open science
+            and collaboration.
+          </Typography>
+        </Stack>
         <OpenInNewIcon
-          sx={{ color: '#878E95', width: '32px', height: '32px' }}
+          sx={{
+            color: '#3C3C42',
+            width: '32px',
+            height: '32px',
+            marginLeft: 'auto',
+          }}
         />
-      </Link>
-    </Card>
+      </Card>
+    </Link>
   )
 }
 

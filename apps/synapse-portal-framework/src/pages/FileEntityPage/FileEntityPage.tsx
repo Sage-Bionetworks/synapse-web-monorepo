@@ -31,6 +31,9 @@ function FileEntityPage() {
 
   const fileEntityPageSections = [
     {
+      element: <SynapseFileEntityLinkCard synId={entityId} version={version} />,
+    },
+    {
       id: 'properties',
       title: 'Properties',
       element: (
@@ -39,9 +42,6 @@ function FileEntityPage() {
           versionNumber={version}
         />
       ),
-    },
-    {
-      element: <SynapseFileEntityLinkCard synId={entityId} version={version} />,
     },
     entityBundle?.rootWikiId && {
       id: 'wiki',
@@ -110,6 +110,7 @@ function FileEntityPage() {
         sx={{
           '& .SRC-boldText': {
             fontSize: '36px !important',
+            marginTop: '0',
           },
           '& .SRC-portalCardMain': {
             alignItems: 'center',

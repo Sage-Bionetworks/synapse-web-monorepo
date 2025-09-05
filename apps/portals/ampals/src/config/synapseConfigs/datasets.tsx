@@ -1,3 +1,4 @@
+import ampAlsAccessColumn from '@/components/AmpAlsAccessColumn'
 import type {
   CardConfiguration,
   LabelLinkConfig,
@@ -17,6 +18,11 @@ export const datasetColumnLinks: LabelLinkConfig = [
     matchColumnName: 'name',
     overrideValueWithRowID: true,
   },
+  {
+    isMarkdown: false,
+    linkColumnName: 'url',
+    matchColumnName: 'source',
+  },
 ]
 
 export const datasetQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
@@ -27,33 +33,39 @@ export const datasetQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   columnAliases,
   tableConfiguration: {
     columnLinks: datasetColumnLinks,
-    showAccessColumn: true,
+    showAccessColumn: false, // use custom access column instead
+    customColumns: [ampAlsAccessColumn],
   },
   defaultShowSearchBox: true,
   facetsToPlot: ['program', 'project', 'datasetType', 'assay'],
   searchConfiguration: {
     searchable: ['name', 'program', 'project', 'datasetType', 'assay'],
   },
+  isInfinite: true,
+  initialLimit: 50,
 }
 
 export const datasetSchema: TableToGenericCardMapping = {
-  type: 'Dataset',
+  type: SynapseConstants.DATASET,
   title: 'name',
   subTitle: 'program',
   description: 'description',
-  secondaryLabels: ['project', 'assay', 'datasetType', 'id'],
-  icon: 'datasetType',
+  secondaryLabels: ['keywords', 'id', 'source'],
 }
 export const datasetColumnAliases: Record<string, string> = {
   id: 'On Synapse',
+  url: 'External Repository URL',
+  source: 'Navigate To Source',
 }
 export const datasetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: datasetSchema,
+
   titleLinkConfig: {
     isMarkdown: false,
-    matchColumnName: 'id',
-    URLColumnName: 'id',
-    baseURL: 'Explore/Datasets/DetailsPage',
+    matchColumnName: 'name',
+    overrideLinkURLColumnName: 'url',
   },
+
+  labelLinkConfig: datasetColumnLinks,
 }

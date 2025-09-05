@@ -9,8 +9,6 @@ import HeaderCardV2 from './HeaderCard/HeaderCardV2'
 import SustainabilityScorecard, {
   SustainabilityScorecardProps,
 } from './SustainabilityScorecard/SustainabilityScorecard'
-import { useGetFeatureFlag } from '@/synapse-queries'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 
 export type HeaderCardVariant = 'HeaderCard' | 'HeaderCardV2'
 
@@ -55,15 +53,10 @@ const HeaderCard = forwardRef(function HeaderCard(
     cardTopContent,
     cardTopButtons,
     sustainabilityScorecard,
-    doiUri,
     sx,
   } = props
 
-  const isFeatureFlagEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.PORTAL_SUSTAINABILITY_SCORECARD,
-  )
-
-  const hideIcon = Boolean(sustainabilityScorecard && isFeatureFlagEnabled)
+  const hideIcon = Boolean(sustainabilityScorecard)
 
   // store old document title and description so that we can restore when this component is removed
   const descriptionElement: Element | null = document.querySelector(
@@ -123,13 +116,7 @@ const HeaderCard = forwardRef(function HeaderCard(
         <div className="row">
           <div className="col-md-offset-1 col-md-10">
             <div className="SRC-portalCardMain">
-              <Box
-                sx={{
-                  ...(doiUri && { alignSelf: 'center', marginRight: '5px' }),
-                }}
-              >
-                {!hideIcon && icon}
-              </Box>
+              {!hideIcon && icon}
               <Box
                 sx={{
                   width: '100%',
@@ -162,7 +149,7 @@ const HeaderCard = forwardRef(function HeaderCard(
                     descriptionSubTitle=""
                     descriptionConfig={descriptionConfiguration}
                   />
-                  {sustainabilityScorecard && isFeatureFlagEnabled && (
+                  {sustainabilityScorecard && (
                     <SustainabilityScorecard
                       metricsConfig={sustainabilityScorecard.metricsConfig}
                       searchParamKey={sustainabilityScorecard.searchParamKey}

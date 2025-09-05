@@ -23,6 +23,10 @@ export const navbarConfig: NavbarConfig = {
         { name: 'Programs', path: '/Explore/Programs' },
         { name: 'Collections', path: '/Explore/Collections' },
         { name: 'Datasets', path: '/Explore/Datasets' },
+        {
+          name: 'Files',
+          path: '/Explore/Files',
+        },
       ],
     },
     {
@@ -40,6 +44,10 @@ export const navbarConfig: NavbarConfig = {
         {
           name: 'Frequently Asked Questions',
           path: '/Resources/Frequently Asked Questions',
+        },
+        {
+          name: 'Contact Us',
+          path: '/ContactUs',
         },
         // {
         //   name: 'Publishing Requirements',
@@ -60,10 +68,10 @@ export const navbarConfig: NavbarConfig = {
     //   name: 'News',
     //   path: 'https://news.ampals.org/',
     // },
-    // {
-    //   name: 'Help',
-    //   path: 'https://help.ampals.org/help/',
-    // },
+    {
+      name: 'Help',
+      path: 'https://als-knowledge-portal.scrollhelp.site/help/',
+    },
   ],
   isPortalsDropdownEnabled: false,
 }

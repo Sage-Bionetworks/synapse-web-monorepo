@@ -3,7 +3,6 @@ import ChallengeDataDownloadWrapper from './challenges/ChallengeDataDownloadWrap
 import ChallengeDetailPageWrapper from './challenges/ChallengeDetailPageWrapper'
 import ChallengeParticipantGoogleMap from './challenges/ChallengeParticipantGoogleMap'
 import ChallengeSubmissionWrapper from './challenges/ChallengeSubmissionWrapper'
-import ComponentCollapse from './ComponentCollapse'
 import ParticipantsBarPlot from './crc-researcher/ParticipantsBarPlot'
 import StatusLineChart from './crc-researcher/StatusLineChart'
 import SurveysCompletedPlots from './crc-researcher/SurveysCompletedPlots'
@@ -13,7 +12,6 @@ import DetailsPage from './DetailsPage'
 import ELBrowseToolsPage from './eliteportal/ELBrowseToolsPage'
 import ELContributeYourData from './eliteportal/ELContributeYourData'
 import ELGettingStarted from './eliteportal/ELGettingStarted'
-import AllALSSlat from './ampals/ALLALSSlat'
 import AMPALSExploreTheData from './ampals/AMPALSExploreTheData'
 import ELSupportedByNIH from './eliteportal/ELSupportedByNIH'
 import ARKWelcomePage from './arkportal/ARKWelcomePage'
@@ -49,7 +47,6 @@ const PortalComponents = {
   ELBrowseToolsPage,
   ELContributeYourData,
   ELGettingStarted,
-  AllALSSlat,
   AMPALSExploreTheData,
   ELSupportedByNIH,
   ARKWelcomePage,
@@ -62,7 +59,6 @@ const PortalComponents = {
   ProjectDiscussionForum,
   ChallengeSubmissionWrapper,
   ChallengeDataDownloadWrapper,
-  SynapseComponentCollapse: ComponentCollapse,
   SurveyToast,
   PortalSearchTabs,
   PortalFullTextSearchField,

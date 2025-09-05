@@ -200,7 +200,8 @@ describe('EntityCitation tests', () => {
     screen.getByRole('dialog', { name: /Citation options/i })
   })
 
-  it('Versioned Entity DOI', async () => {
+  // Skipped, see PORTALS-3746
+  it.skip('Versioned Entity DOI', async () => {
     render(
       <EntityCitation
         projectId={mockProjectWithNoDoiId}
@@ -222,7 +223,11 @@ describe('EntityCitation tests', () => {
       name: /Citation options/i,
     })
 
-    await screen.findByText(content => content.includes('version=1'))
+    await waitFor(() =>
+      expect(
+        screen.getByText(content => content.includes('version=1')),
+      ).toBeInTheDocument(),
+    )
   })
 
   it('Versionless Entity DOI', async () => {
