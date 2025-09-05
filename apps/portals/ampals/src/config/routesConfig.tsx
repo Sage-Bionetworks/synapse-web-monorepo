@@ -4,6 +4,7 @@ import { RouteObject } from 'react-router'
 //import header images for Resources pages
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
+import SurveyToast from '@sage-bionetworks/synapse-portal-framework/components/SurveyToast'
 
 //TO DO: help page button url(s), remove first child h2 padding-top or find some other fix, add input for header images
 
@@ -14,6 +15,13 @@ const routes: RouteObject[] = [
       <App>
         {/* PORTALS-3627 */}
         <RepositoryUnderReviewAlert />
+        <SurveyToast
+          localStorageKey="org.sagebionetworks.security.cookies.portal.ampals921webinar.dismissed"
+          title="Want to learn how to use the ALS Knowledge Portal?"
+          description="Join our live webinar on Sept. 29!"
+          surveyButtonText="Register Now"
+          surveyURL="https://us02web.zoom.us/webinar/register/WN_alQS7coBQkSvQZC-FIecXg#/registration"
+        />
       </App>
     ),
     children: [
