@@ -2,6 +2,7 @@ import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2
 
 export const TABLE_IDS = {
   // CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
+  // DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
   DST_denormalized: {
     name: 'DST_denormalized',
     version: 'syn65676531.67',
@@ -13,7 +14,6 @@ export const TABLE_IDS = {
     version: 'syn68258237.3',
     id: 'syn69696299' /* DataSet_denormalized_current */,
   },
-  DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
   DataTopic: { name: 'DataTopic', id: 'syn63096835' },
   // Organization: { name: 'Organization', id: 'syn63096836.31' },
@@ -21,6 +21,12 @@ export const TABLE_IDS = {
     name: 'Organization',
     version: 'syn69693360.5',
     id: 'syn69696403' /* Organization_denormalized_current */,
+  },
+  // D4D_content: { name: 'D4D_content', id: 'syn63096836.31' },
+  D4D_content: {
+    name: 'D4D_content',
+    version: 'syn68885644.2',
+    id: 'syn69696497' /* D4D_content_current */,
   },
   // UseCase: { name: 'UseCase', id: 'syn63096837' }, // not using this, maybe will in the future?
 }

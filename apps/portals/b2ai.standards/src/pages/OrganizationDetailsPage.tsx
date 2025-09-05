@@ -145,7 +145,7 @@ function getOrganizationDetailsPageContent(
   const sections = [
     {
       id: 'subclassOf',
-      title: 'Parent Organization',
+      title: 'Main Organization',
       element: (
         <DetailsPageContextConsumer
           columnName={ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF}
@@ -167,7 +167,7 @@ function getOrganizationDetailsPageContent(
     },
     {
       id: 'hasSubclass',
-      title: 'Child Organization',
+      title: 'Associated Organization',
       element: (
         <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
           {({ value }) => {
@@ -242,7 +242,7 @@ function getOrganizationDetailsPageContent(
 
   // Conditionally add the responsible standards section only if it would have data
   if (includeResponsibleStandards) {
-    sections.splice(-1, 0, {
+    sections.push({
       id: 'responsibleForStandards',
       title: 'Governed Standards',
       element: (
@@ -274,7 +274,7 @@ function getOrganizationDetailsPageContent(
     })
   }
 
-  sections.splice(-1, 0, {
+  sections.push({
     id: 'd4d',
     title: 'DataSheet for DataSet',
     element: (
