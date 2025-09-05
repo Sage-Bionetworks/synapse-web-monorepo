@@ -1,4 +1,4 @@
-import { DataGridRow, Operation, QueryInput } from './DataGridTypes'
+import { DataGridRow, Operation, QueryInput } from '../DataGridTypes'
 
 // We embed a value into the in row data passed to react-datasheet-grid for use as a render optimization
 export const GRID_ROW_REACT_KEY_PROPERTY = '__rowKey'

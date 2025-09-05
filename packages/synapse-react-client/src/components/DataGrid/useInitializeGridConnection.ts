@@ -10,7 +10,7 @@ import {
   useCreateGridReplica,
   useCreateGridSession,
 } from '../../synapse-queries/grid/useGridSession'
-import { parseQueryInput } from './DataGridUtils'
+import { parseQueryInput } from './utils/DataGridUtils'
 
 /**
  * Create a new grid session or retrieve an existing one based on the provided SQL query or session ID.

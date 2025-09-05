@@ -8,7 +8,6 @@ import getSchemaForProperty from '@/utils/jsonschema/getSchemaForProperty'
 import Grid from '@mui/material/Grid'
 import { GridSession } from '@sage-bionetworks/synapse-client'
 import classNames from 'classnames'
-import { s } from 'json-joy/lib/json-crdt-patch'
 import throttle from 'lodash-es/throttle'
 import {
   forwardRef,
@@ -24,6 +23,7 @@ import {
   Column,
   createTextColumn,
   DataSheetGrid,
+  DataSheetGridRef,
   floatColumn,
   keyColumn,
 } from 'react-datasheet-grid'
@@ -40,9 +40,12 @@ import {
 import {
   GRID_ROW_REACT_KEY_PROPERTY,
   removeNoOpOperations,
-} from './DataGridUtils'
+} from './utils/DataGridUtils'
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
+import { useGridUndo } from './hooks/useGridUndo'
+import { applyModelChange, ModelChange } from './utils/applyModelChange'
+import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 
 export type SynapseGridProps = {
   query: string
@@ -82,6 +85,7 @@ const SynapseGrid = forwardRef<
     model,
     modelSnapshot,
   } = useDataGridWebSocket()
+
   useEffect(() => {
     if (replicaId && presignedUrl) {
       createWebsocket(replicaId, presignedUrl)
@@ -154,65 +158,6 @@ const SynapseGrid = forwardRef<
     return gridCols
   }
 
-  function applyOperationsToModel(
-    operations: Operation[],
-    newValue: DataGridRow[],
-    oldValue: DataGridRow[],
-    model: GridModel,
-  ) {
-    if (!model) return
-
-    const { columnNames } = model.api.getSnapshot()
-    const rowsArr = model.api.arr(['rows'])
-
-    for (const operation of operations) {
-      if (operation.type === 'CREATE') {
-        // Add new rows to the model
-        for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
-          // Use actual row data from newValue[i] to initialize the new row
-          const rowData = newValue[i] || {}
-          const dataArray = columnNames.map(columnName =>
-            s.con(rowData[columnName] ?? ''),
-          )
-          rowsArr?.ins(i, [{ data: s.vec(...dataArray) }])
-        }
-      }
-
-      if (operation.type === 'UPDATE') {
-        // Only update the specific rows and cells that changed
-        for (
-          let rowIndex = operation.fromRowIndex;
-          rowIndex < operation.toRowIndex;
-          rowIndex++
-        ) {
-          const newRow = newValue?.[rowIndex]
-          const oldRow = oldValue?.[rowIndex]
-
-          // Compare each cell and only update changed ones
-          Object.entries(newRow).forEach(([columnName, newCellValue]) => {
-            if (columnName.startsWith('_')) return // Skip internal properties
-
-            const oldCellValue = oldRow?.[columnName]
-            if (newCellValue !== oldCellValue) {
-              const columnIndex = columnNames.indexOf(columnName)
-              if (columnIndex !== -1) {
-                const rowVec = model.api.vec(['rows', String(rowIndex), 'data'])
-                rowVec?.set([[columnIndex, s.con(newCellValue)]])
-              }
-            }
-          })
-        }
-      }
-
-      if (operation.type === 'DELETE') {
-        rowsArr?.del(
-          operation.fromRowIndex,
-          operation.toRowIndex - operation.fromRowIndex,
-        )
-      }
-    }
-  }
-
   const commit = useCallback(
     throttle(() => {
       console.log('Auto-committing changes')
@@ -220,6 +165,19 @@ const SynapseGrid = forwardRef<
       websocketInstance?.sendPatch()
     }, 500),
     [websocketInstance],
+  )
+
+  const applyAndCommitChanges = useCallback(
+    (model: GridModel, modelChanges: ModelChange[]) => {
+      // Apply each change to the model
+      modelChanges.forEach(change => {
+        applyModelChange(model, change)
+      })
+
+      // Push the changes to the server (throttled)
+      commit()
+    },
+    [commit],
   )
 
   const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
@@ -232,16 +190,47 @@ const SynapseGrid = forwardRef<
     operations = removeNoOpOperations(newValue, rowValues, operations)
 
     if (operations.length > 0) {
-      // Apply the changes to the model
-      applyOperationsToModel(operations, newValue, rowValues, model)
+      // Track row creation, updates, and deletions to keep UI state and undo history in sync
 
-      // Push the changes to the server (throttled)
-      commit()
+      // Add all operations to the undo stack
+      addOperationsToUndoStack(operations, rowValues, newValue)
+
+      // Transform operations to model changes
+      const modelChanges = mapOperationsToModelChanges(
+        operations,
+        newValue,
+        rowValues,
+      )
+
+      applyAndCommitChanges(model, modelChanges)
     }
   }
 
+  const applyModelChangeFromUndo = useCallback(
+    (change: ModelChange) => {
+      if (!model) {
+        console.error('Model is not initialized')
+        return
+      }
+
+      if (change.type === 'DELETE' && gridRef.current) {
+        // The user may have set a cell as active that we are removing with an 'undo'. In that case, clear the active state
+        gridRef.current.setActiveCell(null)
+      }
+
+      applyAndCommitChanges(model, [change])
+    },
+    [model, applyAndCommitChanges],
+  )
+
+  const { undoUI, addOperationsToUndoStack } = useGridUndo(
+    applyModelChangeFromUndo,
+  )
+
   // Track the currently selected row index
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
+
+  const gridRef = useRef<DataSheetGridRef | null>(null)
 
   return (
     <div>
@@ -310,7 +299,9 @@ const SynapseGrid = forwardRef<
             {/* Grid */}
             {isGridReady && (
               <Grid size={12}>
+                {undoUI}
                 <DataSheetGrid
+                  ref={gridRef}
                   value={rowValues}
                   columns={colValues}
                   rowKey={GRID_ROW_REACT_KEY_PROPERTY}
