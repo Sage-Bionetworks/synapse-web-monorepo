@@ -4,7 +4,7 @@ import { displayToast } from '../ToastMessage'
 import {
   OAuthClientAclEditor,
   OAuthClientAclEditorHandle,
-} from './OAuthClientAclEditor'
+} from './OAuthClientAclEditor1'
 import { DialogBase } from '../DialogBase'
 import { Button } from '@mui/material'
 
