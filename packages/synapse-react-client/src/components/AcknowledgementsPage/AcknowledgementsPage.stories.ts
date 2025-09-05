@@ -28,6 +28,8 @@ export const Demo: Story = {
       ownerId: 'syn27229419',
       wikiId: '634762',
     },
+    studyAcknowledgementSql:
+      "SELECT studyName, acknowledgment FROM syn57394664 where isReleased='true'",
   },
   loaders: [
     () => {

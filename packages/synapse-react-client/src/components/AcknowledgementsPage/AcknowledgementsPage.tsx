@@ -5,12 +5,13 @@ import ComponentCollapse from '../ComponentCollapse'
 import AcknowledgementsDialog from './AcknowledgementsDialog'
 import { MarkdownSynapseProps } from '../Markdown/MarkdownSynapse'
 import MarkdownCollapse from '../Markdown/MarkdownCollapse'
+import { StudyAcknowledgements } from './StudyAcknowledgements'
 export type AcknowledgementPageProps = {
   portalName: string
   createDoiHelpUrl: string
   portalAcknowledgementProps?: MarkdownSynapseProps
   dataAvailabilityProps?: MarkdownSynapseProps
-  studyAcknowledgementSql?: string
+  studyAcknowledgementSql: string
 }
 
 export type AcknowledgementItem = {
@@ -18,13 +19,13 @@ export type AcknowledgementItem = {
   statement: string
 }
 
-function AcknowledgementPage(props: AcknowledgementPageProps) {
+export function AcknowledgementPage(props: AcknowledgementPageProps) {
   const {
     portalName,
     createDoiHelpUrl,
     portalAcknowledgementProps,
     dataAvailabilityProps,
-    // studyAcknowledgementSql,
+    studyAcknowledgementSql,
   } = props
   const [isAcknowledgementsDialogOpen, setAcknowledgementsDialogOpen] =
     useState<boolean>(false)
@@ -32,16 +33,16 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
   const [portalAcknowledgement, setPortalAcknowledgement] = useState<string>()
   const [dataAvailabilityStatement, setDataAvailabilityStatement] =
     useState<string>()
-  const [
-    acknowledgementItems, //setAcknowledgementItems]
-  ] = useState<AcknowledgementItem[]>([])
+  const [acknowledgementItems, setAcknowledgementItems] = useState<
+    AcknowledgementItem[]
+  >([])
   const handleCloseDialog = useCallback(
     () => setAcknowledgementsDialogOpen(false),
     [],
   )
   return (
     <>
-      <Container maxWidth={'lg'}>
+      <Container maxWidth={'lg'} sx={{ mt: '2em', mb: '2em' }}>
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
           How to acknowledge data from this portal
         </Typography>
@@ -98,7 +99,24 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
           full statement to clipboard' to easily save the text for your
           references.
         </Typography>
-        TODO - PORTALS-3764 - Study specific statement list component
+        <StudyAcknowledgements
+          sql={studyAcknowledgementSql}
+          onSelectChange={(item, checked) => {
+            if (checked) {
+              // add
+              acknowledgementItems.push(item)
+            } else {
+              // remove
+              const index = acknowledgementItems.findIndex(
+                i => i.title === item.title && i.statement === item.statement,
+              )
+              if (index > -1) {
+                acknowledgementItems.splice(index, 1)
+              }
+            }
+            setAcknowledgementItems([...acknowledgementItems])
+          }}
+        />
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
           2. Generate Data Acknowledgements
         </Typography>
@@ -142,6 +160,7 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
                 {...portalAcknowledgementProps}
                 setPlainTextResult={setPortalAcknowledgement}
                 textDescription="full statement"
+                showCopyPlainText={true}
               />
             </>
           )}
@@ -158,6 +177,7 @@ function AcknowledgementPage(props: AcknowledgementPageProps) {
                 {...dataAvailabilityProps}
                 setPlainTextResult={setDataAvailabilityStatement}
                 textDescription="full statement"
+                showCopyPlainText={true}
               />
             </>
           )}
