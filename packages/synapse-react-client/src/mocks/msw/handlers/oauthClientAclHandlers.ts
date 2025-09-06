@@ -1,8 +1,8 @@
 import { OAUTH_CLIENT_ACL } from '@/utils/APIConstants'
-import { AccessControlList } from '@sage-bionetworks/synapse-types'
 import { http, HttpResponse } from 'msw'
 import { SynapseApiResponse } from '../handlers'
 import { mockOAuthClientAcls } from '@/mocks/mockOAuthClientAcls'
+import { AccessControlList } from '@sage-bionetworks/synapse-client'
 
 export function getOAuthClientAclHandler(backendOrigin: string) {
   return http.get(
