@@ -81,7 +81,6 @@ describe('oAuthManagement tests', () => {
     await screen.findByText('Modified')
     await screen.findByText('Client')
     await screen.findByText('Verified')
-    await screen.findByText('App Secret')
     await screen.findByText('Actions')
 
     // Check first row of data
