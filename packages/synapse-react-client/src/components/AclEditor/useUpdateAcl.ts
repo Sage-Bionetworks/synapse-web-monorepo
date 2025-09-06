@@ -13,7 +13,7 @@ import useSortResourceAccessList from './useSortResourceAccessList'
 export const PRINCIPAL_ALREADY_ADDED_ERROR_MESSAGE =
   'User or team already has permissions.'
 
-type UseUpdateAclOptions = {
+export type UseUpdateAclOptions = {
   initialResourceAccessList?: ResourceAccess[]
   onChange?: (resourceAccessList: ResourceAccess[]) => void
   onError?: (e: string) => void
