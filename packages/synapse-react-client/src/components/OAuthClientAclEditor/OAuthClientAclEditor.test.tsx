@@ -19,6 +19,11 @@ import {
 import { AclEditorProps } from '../AclEditor/AclEditor'
 import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
 import { UseUpdateAclOptions } from '../AclEditor/useUpdateAcl'
+import { UseQueryResult } from '@tanstack/react-query'
+import {
+  AccessControlList,
+  SynapseClientError,
+} from '@sage-bionetworks/synapse-client'
 
 vi.mock('../../synapse-queries/oauth/useOAuthClient', () => {
   return {
@@ -158,7 +163,7 @@ describe('OAuthClientAclEditor', () => {
         ({
           data: undefined,
           isLoading: true,
-        } as any),
+        } as UseQueryResult<AccessControlList | null, SynapseClientError>),
     )
     renderComponent({
       clientId: MOCK_OAUTH_CLIENT_ACL.id!,
