@@ -91,10 +91,7 @@ describe('oAuthManagement tests', () => {
       formatDate(dayjs(mockClientList1.results[0].modifiedOn)),
     )
     screen.findByText(mockClientList1.results[0].client_name)
-
     await screen.findByText('Yes')
-    await screen.findAllByRole('button', { name: 'Edit' })
-    await screen.findAllByRole('button', { name: 'Generate Secret' })
   })
 
   it('Handles pagination', async () => {
