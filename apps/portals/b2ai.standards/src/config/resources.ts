@@ -5,8 +5,9 @@ export const TABLE_IDS = {
   // DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
   DST_denormalized: {
     name: 'DST_denormalized',
-    version: 'syn65676531.67',
-    id: 'syn69062839' /* DST_denormalized_current */,
+    // version: 'syn65676531.67',
+    // id: 'syn69062839' /* DST_denormalized_current */,
+    id: 'syn65676531.67',
   },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
   DataSet_denormalized: {
