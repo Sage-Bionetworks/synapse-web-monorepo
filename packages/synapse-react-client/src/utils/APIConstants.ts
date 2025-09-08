@@ -16,6 +16,9 @@ export const FILE = `/file/v1`
 const ASYNC_START = '/async/start'
 const ASYNC_GET = '/async/get'
 
+export const OAUTH_ID = (id: string | number) => `${AUTH}/oauth2/client/${id}`
+export const OAUTH_CLIENT_ACL = (id: string | number) => `${OAUTH_ID(id)}/acl`
+
 export const ENTITY = `${REPO}/entity`
 export const ENTITY_ALIAS = (alias: string) => `${REPO}/entity/alias/${alias}`
 export const ENTITY_ID = (id: string | number) => `${REPO}/entity/${id}`
