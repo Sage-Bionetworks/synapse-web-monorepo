@@ -9,6 +9,7 @@ import { OAuthClient } from '@sage-bionetworks/synapse-client/generated/models/O
 import {
   createColumnHelper,
   getCoreRowModel,
+  Row,
   Table,
   useReactTable,
 } from '@tanstack/react-table'
@@ -95,7 +96,7 @@ function ActionsMenuCell({
   setIsShowingSecretWarning,
   setIsShowingSharingSettings,
 }: {
-  row: any
+  row: Row<OAuthClient>
   setSelectedClient: (value: OAuthClient) => void
   setIsEdit: (value: boolean) => void
   setIsShowingCreateClientModal: (value: boolean) => void
