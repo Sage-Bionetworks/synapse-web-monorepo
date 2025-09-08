@@ -180,24 +180,11 @@ const SynapseGrid = forwardRef<
         // Add new rows to the model
         for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
           // Use actual row data from newValue[i] to initialize the new row
-          // Avoid adding empty constants for new rows
           const rowData = newValue[i] || {}
-          const isEmptyRow =
-            Object.keys(rowData).length === 1 &&
-            Object.hasOwn(rowData, '_rowId')
-          if (isEmptyRow) {
-            rowsArr?.ins(i, [s.obj({ data: s.vec(), metadata: s.obj({}) })])
-          } else {
-            const dataArray = columnNames.map(columnName =>
-              s.con(rowData[columnName] ?? ''),
-            )
-            rowsArr?.ins(i, [
-              s.obj({
-                data: s.vec(...dataArray),
-                metadata: s.obj({}),
-              }),
-            ])
-          }
+          const dataArray = columnNames.map(columnName =>
+            s.con(rowData[columnName] ?? ''),
+          )
+          rowsArr?.ins(i, [{ data: s.vec(...dataArray) }])
         }
       }
 
