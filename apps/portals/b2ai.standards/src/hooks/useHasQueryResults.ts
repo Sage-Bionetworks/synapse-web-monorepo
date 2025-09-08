@@ -39,23 +39,15 @@ export function useHasQueryResults({
     },
   }
 
-  console.log('Query bundle request:', queryBundleRequest)
-
   const { data, error, isLoading } = useGetQueryResultBundle(
     queryBundleRequest,
     {
       select: data => {
         const hasResults = (data?.queryCount || 0) > 0
-        console.log('Query result:', {
-          queryCount: data?.queryCount,
-          hasResults,
-        })
         return hasResults
       },
     },
   )
-
-  console.log('Hook returning:', { data, error, isLoading })
 
   return { data, error, isLoading }
 }

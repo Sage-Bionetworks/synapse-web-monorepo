@@ -19,8 +19,8 @@ export const TABLE_IDS = {
   // Organization: { name: 'Organization', id: 'syn63096836.31' },
   Organization_denormalized: {
     name: 'Organization',
-    version: 'syn69693360.5',
-    id: 'syn69696403' /* Organization_denormalized_current */,
+    id: 'syn69693360.6',
+    xid: 'syn69696403' /* Organization_denormalized_current */,
   },
   // D4D_content: { name: 'D4D_content', id: 'syn63096836.31' },
   D4D_content: {
@@ -66,6 +66,16 @@ export const ORG_TABLE_COLUMN_NAMES = {
   WIKIDATA_ID: 'wikidata_id',
   URL: 'url',
   SUBCLASS_OF: 'subclass_of',
+  // new (and likely to change):
+  MAIN_ORGANIZATION_JSON: 'main_organization_json',
+  ASSSOCIATED_ORGANIZATION_JSON: 'asssociated_organization_json',
+  RELEVANT_STANDARDS: 'relevant_standards',
+  RELEVANT_STANDARDS_JSON: 'relevant_standards_json',
+  GOVERNED_STANDARDS: 'governed_standards',
+  GOVERNED_STANDARDS_JSON: 'governed_standards_json',
+  DATASETS: 'datasets',
+  DATASET_NAMES: 'dataset_names',
+  DATASET_JSON: 'dataset_json',
 }
 export const ORG_TABLE_JSON_COLUMNS = []
 
@@ -77,7 +87,7 @@ export const organizationDetailsPageSQL = `
     }) AS orgPageLink
   FROM ${TABLE_IDS.Organization_denormalized.id}`
 
-export const GC_ORG_IDS = [114, 115, 116, 117].map(id => `'B2AI_ORG:${id}'`)
+export const GC_ORG_IDS = [114, 115, 116, 117].map(id => `B2AI_ORG:${id}`)
 
 export const DATASET_DENORMALIZED_COLUMN_NAMES = {
   ID: 'id',
