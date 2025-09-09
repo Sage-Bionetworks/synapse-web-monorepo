@@ -22,10 +22,9 @@ export function applyModelChange(model: GridModel, change: ModelChange) {
   switch (change.type) {
     case 'CREATE': {
       // Convert rowData object into a CRDT vector
-      const isNewRow = Object.keys(change.rowData).length === 0
-      const rowData = isNewRow
-        ? [s.con(null)]
-        : columnNames.map(name => s.con(change.rowData[name] ?? null))
+      const rowData = columnNames.map(name =>
+        s.con(change.rowData[name] ?? null),
+      )
       // Insert a new row object at the specified index
       rowsArr?.ins(change.rowIndex, [
         s.obj({ data: s.vec(...rowData), metadata: s.obj({}) }),
