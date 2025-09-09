@@ -48,6 +48,7 @@ import { useGridUndoRedo } from './hooks/useGridUndoRedo'
 import { applyModelChange, ModelChange } from './utils/applyModelChange'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 import { extractValidationFieldNames } from './utils/parseValidationColumns'
+import { getCellClassName } from './utils/getCellClassName'
 
 export type SynapseGridProps = {
   query: string
@@ -322,32 +323,14 @@ const SynapseGrid = forwardRef<
                       'row-selected': selectedRowIndex === rowIndex,
                     })
                   }
-                  cellClassName={({ rowData, rowIndex, columnId }) => {
-                    const validation = (rowData as DataGridRow)
-                      .__validationResults?.allValidationMessages
-                    if (!validation) return undefined
-                    const invalidFields =
-                      extractValidationFieldNames(validation) || []
-                    if (!invalidFields.length) return undefined
-
-                    const invalidSet = new Set(
-                      invalidFields.map(f => f.toLowerCase()),
-                    )
-
-                    if (!columnId) return undefined
-
-                    const isInvalid = invalidSet.has(columnId.toLowerCase())
-                    if (!isInvalid) return undefined
-
-                    const safe = columnId.replace(/[^a-zA-Z0-9_-]/g, '-')
-                    return classNames(
-                      'cell-invalid',
-                      `cell-invalid-field-${safe}`,
-                      {
-                        'cell-row-selected': selectedRowIndex === rowIndex,
-                      },
-                    )
-                  }}
+                  cellClassName={({ rowData, rowIndex, columnId }) =>
+                    getCellClassName({
+                      rowData: rowData as DataGridRow,
+                      rowIndex,
+                      columnId,
+                      selectedRowIndex,
+                    })
+                  }
                   duplicateRow={({ rowData }: any) => ({
                     ...rowData,
                   })}
