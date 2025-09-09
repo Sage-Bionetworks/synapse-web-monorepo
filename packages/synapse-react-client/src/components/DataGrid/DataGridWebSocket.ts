@@ -10,7 +10,7 @@ type DataGridWebSocketConstructorArgs = {
   url: string
   onGridReady?: () => void
   onStatusChange?: (isOpen: boolean, instance: DataGridWebSocket) => void
-  onModelChange?: (model: GridModel) => void
+  onModelCreate?: (model: GridModel) => void
 }
 
 export class DataGridWebSocket {
@@ -21,18 +21,18 @@ export class DataGridWebSocket {
   private replicaId?: number
   private verboseEncoder = new VerboseEncoder()
 
-  private onModelChange: (model: GridModel) => void = noop
+  private onModelCreate: (model: GridModel) => void = noop
   private onGridReady: () => void = noop
   private onStatusChange: (isOpen: boolean, _this: DataGridWebSocket) => void =
     noop
 
   constructor(args: DataGridWebSocketConstructorArgs) {
-    const { replicaId, url, onGridReady, onStatusChange, onModelChange } = args
+    const { replicaId, url, onGridReady, onStatusChange, onModelCreate } = args
     this.replicaId = replicaId
     this.socket = new WebSocket(url)
 
     this.socket.onopen = () => {
-      console.log('Connected to the WebSocket server')
+      console.debug('Connected to the WebSocket server')
       this.onStatusChange(true, this)
     }
 
@@ -41,7 +41,7 @@ export class DataGridWebSocket {
     }
 
     this.socket.onclose = () => {
-      console.log('Disconnected from the WebSocket server')
+      console.debug('Disconnected from the WebSocket server')
       this.onStatusChange(false, this)
     }
 
@@ -49,8 +49,8 @@ export class DataGridWebSocket {
       console.error('WebSocket error:', error)
     }
 
-    if (onModelChange) {
-      this.onModelChange = onModelChange
+    if (onModelCreate) {
+      this.onModelCreate = onModelCreate
     }
 
     if (onGridReady) {
@@ -65,7 +65,7 @@ export class DataGridWebSocket {
   public disconnect() {
     if (this.socket.readyState === WebSocket.OPEN) {
       this.socket.close()
-      console.log('WebSocket connection closed')
+      console.debug('WebSocket connection closed')
     } else {
       console.warn('WebSocket is not open. No action taken.')
     }
@@ -85,17 +85,16 @@ export class DataGridWebSocket {
         const patch = decode(payload)
         if (!this.model) {
           // Initialize the model if it doesn't exist
-          console.log('Initializing new model from patch:')
-          console.log(patch.toString())
+          console.debug('Initializing new model from patch:')
+          console.debug(patch.toString())
           // use the replica ID the server gives us - don't use an empty one
           this.model = (
             Model.fromPatches([patch]) as unknown as GridModel
           ).fork(this.replicaId)
-          this.onModelChange(this.model)
+          this.onModelCreate(this.model)
         } else {
-          console.log('Applying patch from server:', patch)
+          console.debug('Applying patch from server:', patch)
           this.model?.applyPatch(patch)
-          this.onModelChange(this.model)
         }
         // Calculate the new clock
         const modelClock = this.model?.api.flush()
@@ -105,7 +104,7 @@ export class DataGridWebSocket {
         }
         if (encodedModelClock) {
           const msg = [1, this.sequenceNumber, 'patch', encodedModelClock]
-          console.log('Responding with patch:', msg)
+          console.debug('Responding with patch:', msg)
           this.sendMessage(msg)
         } else {
           const verbModel = this.verboseEncoder.encode(this.model)
@@ -125,21 +124,21 @@ export class DataGridWebSocket {
       // Clocks are in sync, no further action needed
       this.sequenceNumber += 1
       this.onGridReady()
-      console.log(
+      console.debug(
         'Clocks synchronized with server. Incrementing sequence number.',
       )
     }
     // [8, <message>]
     else if (Array.isArray(latestMsg) && latestMsg[0] === 8) {
       // Clocks are in sync, no further action needed
-      console.log('Message received from server:', latestMsg[1])
+      console.debug('Message received from server:', latestMsg[1])
       if (latestMsg[1] === 'ping') {
         // Handle ping response
-        console.log('Received ping response from server')
+        console.debug('Received ping response from server')
       }
       if (latestMsg[1] === 'connected') {
         // Handle connected response
-        console.log('Server ready to receive patches')
+        console.debug('Server ready to receive patches')
         this.sendSyncMessage()
       }
       if (latestMsg[1] === 'error') {
@@ -156,7 +155,7 @@ export class DataGridWebSocket {
           return
         }
         const verbModel = this.verboseEncoder.encode(this.model)
-        console.log('New patch received, syncing data:', verbModel.time)
+        console.debug('New patch received, syncing data:', verbModel.time)
         const msg = [
           1,
           this.sequenceNumber,
@@ -176,7 +175,7 @@ export class DataGridWebSocket {
 
   private sendMessage(message: any) {
     if (this.socket.readyState === WebSocket.OPEN) {
-      console.log('Sending message:', message)
+      console.debug('Sending message:', message)
       this.socket.send(JSON.stringify(message))
     } else {
       console.error(
@@ -191,12 +190,11 @@ export class DataGridWebSocket {
       console.warn('Model is not initialized. Cannot send patch.')
       return
     }
-    // Calling `onModelChange` because we mutated immediately before - let's reorganize this later
-    this.onModelChange(this.model)
+
     const patch = this.model.api.flush()
 
     if (patch) {
-      console.log('Sending patch to server:', patch)
+      console.debug('Sending patch to server:', patch)
       const binaryData = encode(patch)
       const msg = [1, this.sequenceNumber, 'patch', binaryData]
       this.sendMessage(msg)

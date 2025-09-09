@@ -1,5 +1,13 @@
+import MergeGridWithSourceTableButton from '@/components/DataGrid/MergeGridWithSourceTableButton'
+import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
+import { SkeletonTable } from '@/components/index'
 import { ComplexJSONRenderer } from '@/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer'
-import { konst } from 'json-joy/lib/json-crdt-patch'
+import { useGetSchema } from '@/synapse-queries/index'
+import getEnumeratedValues from '@/utils/jsonschema/getEnumeratedValues'
+import getSchemaForProperty from '@/utils/jsonschema/getSchemaForProperty'
+import Grid from '@mui/material/Grid'
+import { GridSession } from '@sage-bionetworks/synapse-client'
+import classNames from 'classnames'
 import throttle from 'lodash-es/throttle'
 import {
   forwardRef,
@@ -11,23 +19,33 @@ import {
   useState,
 } from 'react'
 import {
+  checkboxColumn,
   Column,
   createTextColumn,
   DataSheetGrid,
+  DataSheetGridRef,
+  floatColumn,
   keyColumn,
 } from 'react-datasheet-grid'
 import 'react-datasheet-grid/dist/style.css'
 import '../../style/components/_data-grid-extra.scss'
+import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
+import { autocompleteColumn } from './columns/AutocompleteColumn'
 import {
+  DataGridRow,
   GridModel,
   GridModelSnapshot,
   Operation,
-  DataGridRow,
 } from './DataGridTypes'
+import {
+  GRID_ROW_REACT_KEY_PROPERTY,
+  removeNoOpOperations,
+} from './utils/DataGridUtils'
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
-import { rowsAreIdentical } from './DataGridUtils'
-import { SkeletonTable } from '../Skeleton'
+import { useGridUndo } from './hooks/useGridUndo'
+import { applyModelChange, ModelChange } from './utils/applyModelChange'
+import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 
 export type SynapseGridProps = {
   query: string
@@ -38,8 +56,7 @@ const SynapseGrid = forwardRef<
   { initializeGrid: () => void },
   SynapseGridProps
 >(({ query, showDebugInfo = false }, ref) => {
-  // Grid session state
-  const [sessionId, setSessionId] = useState<string>('')
+  const [session, setSession] = useState<GridSession | null>(null)
   const [replicaId, setReplicaId] = useState<number | null>(null)
   const [presignedUrl, setPresignedUrl] = useState<string>('')
 
@@ -65,346 +82,310 @@ const SynapseGrid = forwardRef<
     websocketInstance,
     createWebsocket,
     isGridReady,
-    modelRef,
+    model,
     modelSnapshot,
-    getModel,
   } = useDataGridWebSocket()
+
   useEffect(() => {
     if (replicaId && presignedUrl) {
       createWebsocket(replicaId, presignedUrl)
     }
   }, [replicaId, presignedUrl, createWebsocket])
 
+  const { data: jsonSchema } = useGetSchema(session?.gridJsonSchema$Id ?? '', {
+    enabled: !!session?.gridJsonSchema$Id,
+  })
+
   const connectionStatus = isConnected ? 'Connected' : 'Disconnected'
 
-  const [messages, setMessages] = useState<string[]>([])
-
-  // If grid sessionId or replicaId changes, reset the model
-  useEffect(() => {
-    if (sessionId || replicaId) {
-      modelRef.current = null
-      // modelSnapshotRef.current = {
-      //   columnNames: [],
-      //   columnOrder: [],
-      //   rows: [],
-      // }
-      setRowValues([])
-      setColValues([])
-      setMessages([]) // Clear message log
-    }
-  }, [sessionId, replicaId, websocketInstance])
-
-  // Grid rows and columns
-  const [rowValues, setRowValues] = useState<DataGridRow[]>([])
-  const [colValues, setColValues] = useState<Column[]>([])
-
-  useEffect(() => {
-    if (modelSnapshot) {
-      setRowValues(modelRowsToGrid(modelSnapshot))
-      setColValues(modelColsToGrid(modelSnapshot))
-    }
-  }, [modelSnapshot])
-
-  // Convert model rows to a format suitable for DataSheetGrid
-  function modelRowsToGrid(modelSnapshot: GridModelSnapshot): DataGridRow[] {
-    if (!modelSnapshot) return []
-    const { columnNames, columnOrder, rows } = modelSnapshot
-    const gridRows = rows.map(row => {
-      const rowObj: { [key: string]: any } = {}
-      // Use columnOrder to determine which columnNames to use and in what order
-      columnOrder.forEach((index: number) => {
-        const columnName = columnNames[index]
-        if (columnName) {
-          rowObj[columnName] = row.data[index]
-        }
-      })
-      return rowObj
-    })
-    return gridRows
-  }
+  // Transform the model view rows and columns to DataSheetGrid format
+  const rowValues = useMemo(
+    () => (modelSnapshot ? modelRowsToGrid(model, modelSnapshot) : []),
+    [model, modelSnapshot],
+  )
+  const colValues = modelSnapshot ? modelColsToGrid(modelSnapshot) : []
 
   // Convert model columns to a format suitable for DataSheetGrid
   function modelColsToGrid(modelSnapshot: GridModelSnapshot): Column[] {
     if (!modelSnapshot) return []
     const { columnNames, columnOrder } = modelSnapshot
     const gridCols: Column[] = columnOrder.map((index: number) => {
+      const columnName = columnNames[index]
+      const enumeratedValues = jsonSchema
+        ? getEnumeratedValues(getSchemaForProperty(jsonSchema, columnName)).map(
+            item => item.value,
+          )
+        : null
+      const colType = jsonSchema
+        ? getSchemaForProperty(jsonSchema, columnName).type
+        : null
+
+      if (colType === 'boolean') {
+        return {
+          ...keyColumn(columnName, checkboxColumn),
+          title: columnName,
+        }
+      }
+
+      if (colType === 'number' || colType === 'integer') {
+        return {
+          ...keyColumn(columnName, floatColumn),
+          title: columnName,
+        }
+      }
+
+      if (enumeratedValues && enumeratedValues.length > 0) {
+        // Use autocomplete column for columns with enumerated values
+        return {
+          ...keyColumn(
+            columnName,
+            autocompleteColumn({
+              choices: enumeratedValues,
+            }),
+          ),
+          title: columnName,
+        }
+      }
       return {
+        // Default to text column for columns without enumerated values
         ...keyColumn(
-          columnNames[index],
+          columnName,
           createTextColumn({ continuousUpdates: false }),
         ),
-        title: columnNames[index],
+        title: columnName,
       }
     })
     return gridCols
   }
 
-  // Function to apply grid changes to a model
-  function gridToModel(gridRows: DataGridRow[], model: GridModel): GridModel {
-    if (!model) return model
-    const rowsArr = model.api.node.get('rows')
-    const { columnNames: mcnUpdate } = model.api.getSnapshot()
-
-    // Apply row changes
-    // Update existing rows and add new ones
-    for (let i = 0; i < gridRows.length; i++) {
-      const editedRow = gridRows[i]
-      const rowObj = rowsArr.get(i)
-      const rowVec = rowObj.get('data')
-
-      // Update each cell in the row
-      Object.entries(editedRow).forEach(([key, value]) => {
-        const columnIndex = mcnUpdate.indexOf(key)
-        if (!isNaN(columnIndex)) {
-          rowVec.set([[columnIndex, konst(value)]])
-        }
-      })
-    }
-    return model
-  }
-
-  // Grid editing functions
-  const createdRowIds = useMemo(() => new Set(), [])
-  const deletedRowIds = useMemo(() => new Set(), [])
-  const updatedRowIds = useMemo(() => new Set(), [])
-
-  const performCommit = (dataToCommit: DataGridRow[]) => {
-    // Update model and send changes to server
-    // This mutates the model -- maybe we should move this?
-    gridToModel(dataToCommit, getModel()!)
-    websocketInstance?.sendPatch()
-
-    // Reset tracking
-    createdRowIds.clear()
-    deletedRowIds.clear()
-    updatedRowIds.clear()
-
-    return dataToCommit
-  }
-
-  function genId() {
-    return Math.floor(Math.random() * 1000000)
-  }
-
-  const autoCommit = useCallback(
-    throttle((newValue: DataGridRow[]) => {
+  const commit = useCallback(
+    throttle(() => {
       console.log('Auto-committing changes')
-      performCommit(newValue)
+      // The model has already been updated in handleChange, just send the patch
+      websocketInstance?.sendPatch()
     }, 500),
-    [performCommit],
+    [websocketInstance],
   )
 
-  function addRowToModel() {
-    return { _rowId: genId() }
-  }
+  const applyAndCommitChanges = useCallback(
+    (model: GridModel, modelChanges: ModelChange[]) => {
+      // Apply each change to the model
+      modelChanges.forEach(change => {
+        applyModelChange(model, change)
+      })
+
+      // Push the changes to the server (throttled)
+      commit()
+    },
+    [commit],
+  )
 
   const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
-    for (const operation of operations) {
-      const rowsArr = modelRef.current?.api.arr(['rows'])
-      if (operation.type === 'CREATE') {
-        // Add new rows to the model iterating fromRowIndex to toRowIndex
-        // and adding rows to the model via the api
-        for (let i = operation.fromRowIndex; i < operation.toRowIndex; i++) {
-          rowsArr?.ins(i, [modelRef.current?.api.builder.vec()])
-        }
-
-        newValue
-          .slice(operation.fromRowIndex, operation.toRowIndex)
-          .forEach(({ _rowId }: any) => createdRowIds.add(_rowId))
-      }
-
-      if (operation.type === 'UPDATE') {
-        const oldVal = rowValues.slice(
-          operation.fromRowIndex,
-          operation.toRowIndex,
-        )
-        const newVal = newValue.slice(
-          operation.fromRowIndex,
-          operation.toRowIndex,
-        )
-
-        // Compare all elements of oldVal and newVal
-        const comparisonResults = oldVal.map((oldItem, idx) =>
-          rowsAreIdentical(oldItem, newVal[idx]),
-        )
-
-        // If all compared rows are identical, no state updates are necessary.
-        // It is safe to return early here to avoid unnecessary updates.
-        if (comparisonResults.every(Boolean)) return
-        // Only process newVal items where comparisonResults is false (i.e., changed rows)
-        newVal
-          .filter((_, idx) => !comparisonResults[idx])
-          .forEach(({ _rowId }: DataGridRow) => {
-            if (!createdRowIds.has(_rowId) && !deletedRowIds.has(_rowId)) {
-              updatedRowIds.add(_rowId)
-            }
-          })
-      }
-
-      if (operation.type === 'DELETE') {
-        let keptRows = 0
-        rowsArr?.del(
-          operation.fromRowIndex,
-          operation.toRowIndex - operation.fromRowIndex,
-        )
-
-        rowValues
-          .slice(operation.fromRowIndex, operation.toRowIndex)
-          .forEach(({ _rowId }, i) => {
-            updatedRowIds.delete(_rowId)
-
-            if (createdRowIds.has(_rowId)) {
-              createdRowIds.delete(_rowId)
-            } else {
-              deletedRowIds.add(_rowId)
-              newValue.splice(
-                operation.fromRowIndex + keptRows++,
-                0,
-                rowValues[operation.fromRowIndex + i],
-              )
-            }
-          })
-      }
+    if (!model) {
+      console.error('Model is not initialized')
+      return
     }
 
-    // Filter out deleted rows
-    const filteredData = newValue.filter(
-      ({ _rowId }: DataGridRow) => !deletedRowIds.has(_rowId),
-    )
-    // Update UI state
-    setRowValues(filteredData)
-    autoCommit(filteredData)
+    // Check that something changed before updating the model
+    operations = removeNoOpOperations(newValue, rowValues, operations)
+
+    if (operations.length > 0) {
+      // Track row creation, updates, and deletions to keep UI state and undo history in sync
+
+      // Add all operations to the undo stack
+      addOperationsToUndoStack(operations, rowValues, newValue)
+
+      // Transform operations to model changes
+      const modelChanges = mapOperationsToModelChanges(
+        operations,
+        newValue,
+        rowValues,
+      )
+
+      applyAndCommitChanges(model, modelChanges)
+    }
   }
+
+  const applyModelChangeFromUndo = useCallback(
+    (change: ModelChange) => {
+      if (!model) {
+        console.error('Model is not initialized')
+        return
+      }
+
+      if (change.type === 'DELETE' && gridRef.current) {
+        // The user may have set a cell as active that we are removing with an 'undo'. In that case, clear the active state
+        gridRef.current.setActiveCell(null)
+      }
+
+      applyAndCommitChanges(model, [change])
+    },
+    [model, applyAndCommitChanges],
+  )
+
+  const { undoUI, addOperationsToUndoStack } = useGridUndo(
+    applyModelChangeFromUndo,
+  )
+
+  // Track the currently selected row index
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
+
+  const gridRef = useRef<DataSheetGridRef | null>(null)
 
   return (
     <div>
-      <div>
-        <StartGridSession
-          ref={startGridSessionRef}
-          onSessionChange={setSessionId}
-          onReplicaChange={setReplicaId}
-          onPresignedUrlChange={setPresignedUrl}
-          query={query}
-        />
-      </div>
-      {sessionId && (
-        <>
-          {/* Debug Information */}
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, xl: 8 }}>
+          <StartGridSession
+            ref={startGridSessionRef}
+            onSessionChange={setSession}
+            onReplicaChange={setReplicaId}
+            onPresignedUrlChange={setPresignedUrl}
+            query={query}
+          />
+        </Grid>
+        {/* Debug Information */}
+        <Grid size={{ xs: 12, xl: 4 }}>
           {showDebugInfo && (
-            <>
-              <div>
-                <p>Session ID: {sessionId || 'No session created'}</p>
-                <p>Replica ID: {replicaId || 'No replica created'}</p>
-                <p>
-                  Presigned URL:{' '}
-                  {presignedUrl.substring(0, 30) +
-                    (presignedUrl.length > 30
-                      ? ' ... ' +
-                        presignedUrl.substring(
-                          presignedUrl.length - 10,
-                          presignedUrl.length,
-                        )
-                      : '') || 'No URL generated'}
-                </p>
-                <p>
-                  WebSocket Status:{' '}
-                  <span style={{ color: isConnected ? 'green' : 'red' }}>
-                    {connectionStatus}
-                  </span>
-                </p>
-              </div>
+            <div>
+              <p>Session ID: {session?.sessionId || 'No session created'}</p>
+              <p>Replica ID: {replicaId || 'No replica created'}</p>
+              <p>
+                JSON Schema $id:{' '}
+                {session?.gridJsonSchema$Id || 'No schema attached to session'}
+              </p>
+              <p>
+                Presigned URL:{' '}
+                {presignedUrl.substring(0, 30) +
+                  (presignedUrl.length > 30
+                    ? ' ... ' +
+                      presignedUrl.substring(
+                        presignedUrl.length - 10,
+                        presignedUrl.length,
+                      )
+                    : '') || 'No URL generated'}
+              </p>
+              <p>
+                WebSocket Status:{' '}
+                <span style={{ color: isConnected ? 'green' : 'red' }}>
+                  {connectionStatus}
+                </span>
+              </p>
+            </div>
+          )}
+        </Grid>
 
-              {/* Message Log */}
-              <div
+        {session && (
+          <>
+            {/* Grid Loading State */}
+            {!isGridReady && (
+              <Grid size={12}>
+                <h3>Setting up grid...</h3>
+                <div style={{ marginBottom: '10px' }}>
+                  {!session && <p>Creating grid session...</p>}
+                  {session && !replicaId && <p>Setting up real-time sync...</p>}
+                  {session && replicaId && !presignedUrl && (
+                    <p>Establishing secure connection...</p>
+                  )}
+                  {session && replicaId && presignedUrl && !isConnected && (
+                    <p>Connecting to server...</p>
+                  )}
+                  {isConnected && !isGridReady && <p>Loading table data...</p>}
+                  <SkeletonTable numRows={4} numCols={1} />
+                </div>
+              </Grid>
+            )}
+
+            {/* Grid */}
+            {isGridReady && (
+              <Grid size={12}>
+                {undoUI}
+                <DataSheetGrid
+                  ref={gridRef}
+                  value={rowValues}
+                  columns={colValues}
+                  rowKey={GRID_ROW_REACT_KEY_PROPERTY}
+                  rowClassName={({ rowData, rowIndex }) =>
+                    classNames({
+                      'row-valid':
+                        rowData.__validationResults?.isValid === true,
+                      'row-invalid':
+                        rowData.__validationResults?.isValid === false,
+                      'row-unknown':
+                        rowData.__validationResults?.isValid == undefined,
+                      'row-selected': selectedRowIndex === rowIndex,
+                    })
+                  }
+                  duplicateRow={({ rowData }: any) => ({
+                    ...rowData,
+                  })}
+                  onChange={handleChange}
+                  onActiveCellChange={({ cell }) => {
+                    setSelectedRowIndex(cell ? cell.row : null)
+                  }}
+                />
+                {/* Show validation messages for selected row */}
+                {selectedRowIndex !== null &&
+                  rowValues[selectedRowIndex] &&
+                  Array.isArray(
+                    rowValues[selectedRowIndex].__validationResults
+                      ?.allValidationMessages,
+                  ) &&
+                  rowValues[selectedRowIndex].__validationResults
+                    ?.allValidationMessages.length > 0 && (
+                    <FullWidthAlert
+                      variant="warning"
+                      title="Validation Messages:"
+                      isGlobal={false}
+                      description={
+                        <ul>
+                          {rowValues[
+                            selectedRowIndex
+                          ].__validationResults.allValidationMessages.map(
+                            (msg: string) => (
+                              <li key={msg}>{msg}</li>
+                            ),
+                          )}
+                        </ul>
+                      }
+                      sx={{
+                        marginTop: '12px',
+                      }}
+                    />
+                  )}
+              </Grid>
+            )}
+            {isGridReady && session.sourceEntityId && (
+              <Grid container size={12} sx={{ justifyContent: 'flex-end' }}>
+                <MergeGridWithSourceTableButton
+                  sourceEntityId={session.sourceEntityId}
+                  gridSessionId={session.sessionId!}
+                />
+              </Grid>
+            )}
+            {/* Debug Model Snapshot */}
+            {showDebugInfo && (
+              <Grid
+                size={12}
                 style={{
                   margin: '10px 0',
                   padding: '10px',
                   border: '1px solid #ccc',
-                  maxHeight: '200px',
+                  maxHeight: '400px',
                   overflowY: 'auto',
                 }}
               >
-                <h4>Server Message Log</h4>
-                {messages.map((message, index) => (
-                  <div
-                    key={index}
-                    style={{ fontSize: '12px', marginBottom: '5px' }}
-                  >
-                    {message}
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {/* Grid Loading State */}
-          {!isGridReady && (
-            <>
-              <h3>Setting up grid...</h3>
-              <div style={{ marginBottom: '10px' }}>
-                {!sessionId && <p>Creating grid session...</p>}
-                {sessionId && !replicaId && <p>Setting up real-time sync...</p>}
-                {sessionId && replicaId && !presignedUrl && (
-                  <p>Establishing secure connection...</p>
+                <h3>Model snapshot</h3>
+                {modelSnapshot ? (
+                  <ComplexJSONRenderer value={modelSnapshot} />
+                ) : (
+                  'No model available'
                 )}
-                {sessionId && replicaId && presignedUrl && !isConnected && (
-                  <p>Connecting to server...</p>
-                )}
-                {isConnected && !isGridReady && <p>Loading table data...</p>}
-                <SkeletonTable numRows={4} numCols={1} />
-              </div>
-            </>
-          )}
-
-          {/* Grid */}
-          {isGridReady && (
-            <div>
-              <DataSheetGrid
-                value={rowValues}
-                columns={colValues}
-                rowKey="_rowId"
-                rowClassName={({ rowData }: any) => {
-                  if (deletedRowIds.has(rowData._rowId)) {
-                    return 'row-deleted'
-                  }
-                  if (createdRowIds.has(rowData._rowId)) {
-                    return 'row-created'
-                  }
-                  if (updatedRowIds.has(rowData._rowId)) {
-                    return 'row-updated'
-                  } else return ''
-                }}
-                createRow={addRowToModel}
-                duplicateRow={({ rowData }: any) => ({
-                  ...rowData,
-                  _rowId: genId(),
-                })}
-                onChange={handleChange}
-              />
-            </div>
-          )}
-
-          {/* Debug Model Snapshot */}
-          {showDebugInfo && (
-            <div
-              style={{
-                margin: '10px 0',
-                padding: '10px',
-                border: '1px solid #ccc',
-                maxHeight: '400px',
-                overflowY: 'auto',
-              }}
-            >
-              <h3>Model snapshot</h3>
-              {modelSnapshot ? (
-                <ComplexJSONRenderer value={modelSnapshot} />
-              ) : (
-                'No model available'
-              )}
-            </div>
-          )}
-        </>
-      )}
+              </Grid>
+            )}
+          </>
+        )}
+      </Grid>
     </div>
   )
 })

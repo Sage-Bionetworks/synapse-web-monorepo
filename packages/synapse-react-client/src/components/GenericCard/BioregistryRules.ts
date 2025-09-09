@@ -2,7 +2,7 @@
 // This file is auto-generated. Do not edit manually.
 // Generated from bioregistry.io API based on collection.yaml
 
-const onMatch = (value: string) => `https://bioregistry.io/${value}`
+const onMatch = (value: string) => `https://bioregistry.io/${value}`;
 
 export const bioregistryRules = [
   {
@@ -22,7 +22,7 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex: /(arxiv:(?:\w+(?:\-\w+)?(?:\.\w+)?)?\d{4,7}(?:\.\d+(?:v\d+)?)?)/,
+    regex: /(arxiv:(?:\w+(?:\-\w+)?(?:\.\w+)?\/?)?\d{4,7}(?:\.\d+(?:v\d+)?)?)/,
     onMatch,
   },
   {
@@ -78,8 +78,7 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex:
-      /(brenda:(?:(?:\d+\.-\.-\.-)|(?:\d+\.\d+\.-\.-)|(?:\d+\.\d+\.\d+\.-)|(?:\d+\.\d+\.\d+\.\d+)))/,
+    regex: /(brenda:(?:(?:\d+\.-\.-\.-)|(?:\d+\.\d+\.-\.-)|(?:\d+\.\d+\.\d+\.-)|(?:\d+\.\d+\.\d+\.\d+)))/,
     onMatch,
   },
   {
@@ -111,8 +110,7 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex:
-      /(cellxgene.collection:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/,
+    regex: /(cellxgene.collection:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/,
     onMatch,
   },
   {
@@ -252,8 +250,7 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex:
-      /(ec:\d{1,2}(?:(?:(?:\.\d{1,3}){1,3})|(?:\.\d+){2}\.[nB]\d{1,3}|\.-\.-\.-|\.\d{1,3}\.-\.-|\.\d{1,3}\.\d{1,3}\.-)?)/,
+    regex: /(ec:\d{1,2}(?:(?:(?:\.\d{1,3}){1,3})|(?:\.\d+){2}\.[nB]\d{1,3}|\.-\.-\.-|\.\d{1,3}\.-\.-|\.\d{1,3}\.\d{1,3}\.-)?)/,
     onMatch,
   },
   {
@@ -285,8 +282,7 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex:
-      /(ensembl:(?:(?:ENS[FPTG]\d{11}(?:\.\d+)?)|(?:FB\w{2}\d{7})|(?:Y[A-Z]{2}\d{3}[a-zA-Z](?:\-[A-Z])?)|(?:[A-Z_a-z0-9]+(?:\.)?(?:t)?(?:\d+)?(?:[a-z])?)))/,
+    regex: /(ensembl:(?:(?:ENS[FPTG]\d{11}(?:\.\d+)?)|(?:FB\w{2}\d{7})|(?:Y[A-Z]{2}\d{3}[a-zA-Z](?:\-[A-Z])?)|(?:[A-Z_a-z0-9]+(?:\.)?(?:t)?(?:\d+)?(?:[a-z])?)))/,
     onMatch,
   },
   {
@@ -386,13 +382,11 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex:
-      /(icd10:(?:(?:[XVI]+)|(?:[A-Z][0-9]+(?:(?:-[A-Z][0-9]+)|(?:\.[0-9]))?)))/,
+    regex: /(icd10:(?:(?:[XVI]+)|(?:[A-Z][0-9]+(?:(?:-[A-Z][0-9]+)|(?:\.[0-9]))?)))/,
     onMatch,
   },
   {
-    regex:
-      /(icd9:(?:(?:\d{1,3}-\d{1,3})|(?:(?:\d\d\d|V\d\d|E[8-9]\d\d)(?:\.\d{1,2})?)))/,
+    regex: /(icd9:(?:(?:\d{1,3}-\d{1,3})|(?:(?:\d\d\d|V\d\d|E[8-9]\d\d)(?:\.\d{1,2})?)))/,
     onMatch,
   },
   {
@@ -412,8 +406,7 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex:
-      /(inchi:InChI\=1S?\/[A-Za-z0-9\.]+(?:\+[0-9]+)?(?:\/[cnpqbtmsih][A-Za-z0-9\-\+\(?:\)\,\/\?\;\.]+)*)/,
+    regex: /(inchi:InChI\=1S?\/[A-Za-z0-9\.]+(?:\+[0-9]+)?(?:\/[cnpqbtmsih][A-Za-z0-9\-\+\(?:\)\,\/\?\;\.]+)*)/,
     onMatch,
   },
   {
@@ -421,8 +414,7 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex:
-      /(insdc:(?:[A-Z]\d{5}|[A-Z]{2}\d{6}|[A-Z]{4,6}\d{8,10}|[A-J][A-Z]{2}\d{5})(?:\.\d+)?)/,
+    regex: /(insdc:(?:[A-Z]\d{5}|[A-Z]{2}\d{6}|[A-Z]{4,6}\d{8,10}|[A-J][A-Z]{2}\d{5})(?:\.\d+)?)/,
     onMatch,
   },
   {
@@ -454,8 +446,7 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex:
-      /(kegg:(?:(?:[CHDEGTMKR]\d+)|(?:\w+:[\w\d\.-]*)|(?:\w{2,4}\d{5})|(?:[a-z]{3,5})))/,
+    regex: /(kegg:(?:(?:[CHDEGTMKR]\d+)|(?:\w+:[\w\d\.-]*)|(?:\w{2,4}\d{5})|(?:[a-z]{3,5})))/,
     onMatch,
   },
   {
@@ -548,6 +539,10 @@ export const bioregistryRules = [
   },
   {
     regex: /(nextprot:NX_\w+)/,
+    onMatch,
+  },
+  {
+    regex: /(nihreporter.project:\d+)/,
     onMatch,
   },
   {
@@ -651,7 +646,7 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex: /(pride:\d{7})/,
+    regex: /(pride.project:P(?:X|R|A)D\d{6})/,
     onMatch,
   },
   {
@@ -679,8 +674,7 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex:
-      /(refseq:(?:(?:(?:AC|AP|NC|NG|NM|NP|NR|NT|NW|WP|XM|XP|XR|YP|ZP)_\d+)|(?:NZ_[A-Z]{2,4}\d+))(?:\.\d+)?)/,
+    regex: /(refseq:(?:(?:(?:AC|AP|NC|NG|NM|NP|NR|NT|NW|WP|XM|XP|XR|YP|ZP)_\d+)|(?:NZ_[A-Z]{2,4}\d+))(?:\.\d+)?)/,
     onMatch,
   },
   {
@@ -752,8 +746,7 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex:
-      /(string:(?:(?:[A-N,R-Z][0-9][A-Z][A-Z, 0-9][A-Z, 0-9][0-9])|(?:[O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])|(?:[0-9][A-Za-z0-9]{3})))/,
+    regex: /(string:(?:(?:[A-N,R-Z][0-9][A-Z][A-Z, 0-9][A-Z, 0-9][0-9])|(?:[O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])|(?:[0-9][A-Za-z0-9]{3})))/,
     onMatch,
   },
   {
@@ -777,13 +770,11 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex:
-      /(uniprot:(?:(?:[A-N,R-Z][0-9](?:[A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|(?:[O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(?:\.\d+)?))/,
+    regex: /(uniprot:(?:(?:[A-N,R-Z][0-9](?:[A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|(?:[O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(?:\.\d+)?))/,
     onMatch,
   },
   {
-    regex:
-      /(uniprot.isoform:(?:[A-N,R-Z][0-9][A-Z][A-Z, 0-9][A-Z, 0-9][0-9])|(?:[O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(?:\-\d+))/,
+    regex: /(uniprot.isoform:(?:[A-N,R-Z][0-9][A-Z][A-Z, 0-9][A-Z, 0-9][0-9])|(?:[O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(?:\-\d+))/,
     onMatch,
   },
   {
@@ -791,8 +782,7 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex:
-      /(uniref:UniRef(?:100|90|50)_(?:[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9](?:[A-Z][A-Z0-9]{2}[0-9]){1,2}|UPI[A-F0-9]{10}))/,
+    regex: /(uniref:UniRef(?:100|90|50)_(?:[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9](?:[A-Z][A-Z0-9]{2}[0-9]){1,2}|UPI[A-F0-9]{10}))/,
     onMatch,
   },
   {

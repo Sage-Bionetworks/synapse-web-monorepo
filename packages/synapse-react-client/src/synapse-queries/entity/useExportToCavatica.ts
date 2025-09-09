@@ -14,10 +14,17 @@ export function addDrsUriToSql(
   fileIdColumnName?: string,
   fileNameColumnName?: string,
   fileVersionColumnName?: string,
+  removeSpacesFromSelectColumns: boolean = false,
 ): string {
   const selectColumnsList = selectColumns
     ?.filter(col => col.name != 'name')
-    .map(col => `"${col.name}"`)
+    .map(col => {
+      if (removeSpacesFromSelectColumns) {
+        return `"${col.name}" as "${col.name.replace(/\s/g, '')}"`
+      }
+      // else
+      return `"${col.name}"`
+    })
     .join(',')
   return `SELECT CONCAT('drs://repo-prod.prod.sagebase.org/syn', ${fileIdColumnName}, '.', ${fileVersionColumnName}) AS drs_uri, ${fileNameColumnName} as name, ${selectColumnsList} FROM ${originalSql.slice(
     originalSql.toLowerCase().indexOf('from') + 'from'.length + 1,

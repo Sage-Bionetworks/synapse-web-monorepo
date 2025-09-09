@@ -118,7 +118,9 @@ export default function SubmissionPage(props: SubmissionPageProps) {
   const { data: currentUserProfile } = useGetCurrentUserProfile()
 
   const { data: submission, isLoading: isLoadingSubmission } =
-    useGetDataAccessSubmission(submissionId)
+    useGetDataAccessSubmission(submissionId, {
+      throwOnError: true,
+    })
   const isRequester = Boolean(
     submission &&
       currentUserProfile &&

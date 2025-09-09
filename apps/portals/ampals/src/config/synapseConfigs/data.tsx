@@ -1,6 +1,6 @@
 import { QueryWrapperPlotNavProps } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
-import { filesSql } from '../resources'
+import { enabledAnalysisPlatforms, filesSql } from '../resources'
 
 const rgbIndex = 0
 // export const dataColumnLinks: LabelLinkConfig = [
@@ -18,10 +18,11 @@ export const filesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   name: 'Files',
   columnAliases,
   defaultShowSearchBox: true,
+  isRowSelectionVisible: true,
   tableConfiguration: {
     // columnLinks: dataColumnLinks,
     showAccessColumn: true,
-    showExternalAccessIcon: true,
   },
   visibleColumnCount: 7,
+  enabledExternalAnalysisPlatforms: enabledAnalysisPlatforms,
 }

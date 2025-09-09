@@ -13,7 +13,7 @@ export const programSchema: TableToGenericCardMapping = {
   title: 'Program',
   // subTitle: 'Short Description',
   description: 'Description',
-  icon: 'Program',
+  imageFileHandleColumnName: 'logo',
 }
 
 export const programsCardConfiguration: CardConfiguration = {
@@ -21,8 +21,7 @@ export const programsCardConfiguration: CardConfiguration = {
   genericCardSchema: programSchema,
   titleLinkConfig: {
     isMarkdown: false,
-    baseURL: 'Explore/Programs/DetailsPage',
-    URLColumnName: 'Program',
+    overrideLinkURLColumnName: 'url',
     matchColumnName: 'Program',
   },
   labelLinkConfig: [
