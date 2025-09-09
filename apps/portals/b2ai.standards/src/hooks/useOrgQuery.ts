@@ -9,7 +9,7 @@ import { ORG_TABLE_COLUMN_NAMES, TABLE_IDS } from '@/config/resources'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 
 type UseOrgQueryProps = {
-  columns: string[]
+  columns?: string[]
   ids: string[]
 }
 
@@ -52,20 +52,27 @@ export function useOrgQuery({ columns, ids }: UseOrgQueryProps) {
     isLoading,
   } = useGetQueryResultBundle(queryBundleRequest, {
     select: data => {
-      const colIndexes = columns.map(column => ({
+      const colIndexes = fetch_cols.map(column => ({
         column,
         index: getFieldIndex(column, data),
       }))
       const results: Record<string, string>[] =
         data?.queryResult?.queryResults.rows.map(el => {
           const values = el.values as string[]
-          if (values.some(value => value === null)) {
-            console.warn('Row has null value(s) when no nulls expected')
-          }
+          // if (values.some(value => value === null)) {
+          //   console.warn('Row has null value(s) when no nulls expected')
+          // }
           const result = {}
           colIndexes.forEach(({ column, index }) => {
             result[column] = values[index]
+            if (
+              data?.queryResult?.queryResults.headers[index].columnType ===
+              'JSON'
+            ) {
+              result[column] = JSON.parse(result[column])
+            }
           })
+          console.log({ data, result })
           return result
         }) ?? []
       return results

@@ -1,8 +1,4 @@
-import {
-  ORG_TABLE_COLUMN_NAMES,
-  ORG_TABLE_JSON_COLUMNS,
-  GC_ORG_IDS,
-} from '@/config/resources'
+import { ORG_TABLE_COLUMN_NAMES, GC_ORG_IDS } from '@/config/resources'
 import { GCInfo } from '@/config/GrandChallengeResources'
 import { useOrgQuery } from '@/hooks/useOrgQuery'
 import { CardDeck } from 'synapse-react-client/components/CardDeck/CardDeck'
@@ -23,20 +19,6 @@ export function ChallengesCardDeck() {
   })
   console.log({ data, error, isLoading })
   const gcOrgs = data ?? []
-
-  const orgs = {}
-  for (const gcOrg of gcOrgs ?? []) {
-    for (const key of ORG_TABLE_JSON_COLUMNS) {
-      try {
-        if (gcOrg[key]) {
-          gcOrg[key] = JSON.parse(gcOrg[key])
-        }
-      } catch (error) {
-        console.log(`Failed to parse ${key}:`, error)
-      }
-    }
-    orgs[gcOrg[ORG_TABLE_COLUMN_NAMES.ID]] = gcOrg
-  }
 
   if (error) {
     return <ErrorBanner error={error} />

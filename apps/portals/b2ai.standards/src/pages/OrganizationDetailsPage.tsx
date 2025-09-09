@@ -1,41 +1,26 @@
-import { D4D } from '@/components/D4D'
-import {
-  DetailsPageContent,
-  DetailsPageContentType,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import { useHasQueryResults } from '@/hooks/useHasQueryResults'
-import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
+import isEmpty from 'lodash-es/isEmpty'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import {
+  CardContainerLogic,
+  ErrorBanner,
   ErrorPage,
   SynapseConstants,
   SynapseErrorType,
-  CardConfiguration,
 } from 'synapse-react-client'
+import { CardDeckCardProps } from 'synapse-react-client/components/CardDeck/CardDeckCardProps'
+import { CardDeck } from 'synapse-react-client/components/CardDeck/CardDeck'
 import {
-  CardContainerLogic,
-  StandaloneQueryWrapper,
-} from 'synapse-react-client'
-import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
-import columnAliases from '@/config/columnAliases'
-import {
-  standardsRgbIndex,
-  standardsColumnLinks,
-} from '@/config/synapseConfigs/standards'
-import {
-  ColumnSingleValueFilterOperator,
-  ColumnMultiValueFunction,
-} from '@sage-bionetworks/synapse-types'
-import {
-  organizationDetailsPageSQL,
-  dataSetSQL,
-  standardsSql,
-  standardsFtsConfig,
   ORG_TABLE_COLUMN_NAMES,
-  DATASET_DENORMALIZED_COLUMN_NAMES,
-  DST_TABLE_COLUMN_NAMES,
+  organizationDetailsPageSQL,
 } from '@/config/resources'
+import { useOrgQuery } from '@/hooks/useOrgQuery'
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import columnAliases from '@/config/columnAliases'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import CardDeckDesktop from 'synapse-react-client/components/CardDeck/CardDeck.Desktop'
+import { DetailsPageSectionLayoutType } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageSectionLayout'
 
 export const organizationCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.ORGANIZATION,
@@ -78,229 +63,145 @@ function OrgHeaderCard({ id }) {
   )
 }
 
-export const linkedOrgCardConfiguration: CardConfiguration = {
-  type: SynapseConstants.GENERIC_CARD,
-  genericCardSchema: {
-    type: SynapseConstants.ORGANIZATION,
-    title: ORG_TABLE_COLUMN_NAMES.NAME,
-    description: ORG_TABLE_COLUMN_NAMES.DESCRIPTION,
-    link: 'orgPageLink',
-    secondaryLabels: [
-      DATASET_DENORMALIZED_COLUMN_NAMES.DOCUMENTATION_URL,
-      DATASET_DENORMALIZED_COLUMN_NAMES.TOPICS,
-      DATASET_DENORMALIZED_COLUMN_NAMES.SUBSTRATES,
-    ],
-  },
-}
-export const linkedDataSetCardConfiguration: CardConfiguration = {
-  type: SynapseConstants.GENERIC_CARD,
-  genericCardSchema: {
-    type: SynapseConstants.DATASET,
-    title: DATASET_DENORMALIZED_COLUMN_NAMES.NAME,
-    description: DATASET_DENORMALIZED_COLUMN_NAMES.DESCRIPTION,
-    link: DATASET_DENORMALIZED_COLUMN_NAMES.DATASHEET_URL,
-    secondaryLabels: [
-      DATASET_DENORMALIZED_COLUMN_NAMES.DOCUMENTATION_URL,
-      DATASET_DENORMALIZED_COLUMN_NAMES.TOPICS,
-      DATASET_DENORMALIZED_COLUMN_NAMES.SUBSTRATES,
-    ],
-  },
-}
-
-// Component that conditionally renders DetailsPageContent based on data availability
-function ConditionalOrganizationContent({ orgId }: { orgId: string }) {
-  // Check if this organization has any standards it's responsible for
-  const { data: hasResponsibleStandards, isLoading } = useHasQueryResults({
-    sql: standardsSql,
-    searchParams: {
-      [DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION]: orgId,
-    },
-    sqlOperator: ColumnMultiValueFunction.HAS,
-  })
-
-  // While loading, show all sections (or you could show a loading state)
-  if (isLoading) {
-    return (
-      <DetailsPageContent
-        content={getOrganizationDetailsPageContent(orgId, true)}
-      />
-    )
-  }
-
-  // Pass whether to include the responsible standards section
-  return (
-    <DetailsPageContent
-      content={getOrganizationDetailsPageContent(
-        orgId,
-        hasResponsibleStandards,
-      )}
-    />
-  )
-}
-
-function getOrganizationDetailsPageContent(
-  orgId: string,
-  includeResponsibleStandards?: boolean,
-): DetailsPageContentType {
-  const sections = [
-    {
-      id: 'subclassOf',
-      title: 'Main Organization',
-      element: (
-        <DetailsPageContextConsumer
-          columnName={ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF}
-        >
-          {({ value }) => {
-            return (
-              <CardContainerLogic
-                cardConfiguration={linkedOrgCardConfiguration}
-                sql={organizationDetailsPageSQL}
-                // need a dummy value for search to properly exclude null values and an empty string doesn't work
-                searchParams={{
-                  [ORG_TABLE_COLUMN_NAMES.ID]: value ?? 'notreal',
-                }}
-              />
-            )
-          }}
-        </DetailsPageContextConsumer>
-      ),
-    },
-    {
-      id: 'hasSubclass',
-      title: 'Associated Organization',
-      element: (
-        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
-          {({ value }) => {
-            return (
-              <CardContainerLogic
-                cardConfiguration={linkedOrgCardConfiguration}
-                sql={organizationDetailsPageSQL}
-                // need a dummy value for search to properly exclude null values and an empty string doesn't work
-                searchParams={{
-                  [ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF]: value ?? 'notreal',
-                }}
-                sqlOperator={ColumnMultiValueFunction.HAS}
-              />
-            )
-          }}
-        </DetailsPageContextConsumer>
-      ),
-    },
-    {
-      id: 'DataSets',
-      title: 'DataSets',
-      element: (
-        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
-          {({ value }) => {
-            return (
-              <CardContainerLogic
-                cardConfiguration={linkedDataSetCardConfiguration}
-                sql={dataSetSQL}
-                // need a dummy value for search to properly exclude null values and an empty string doesn't work
-                searchParams={{
-                  [DATASET_DENORMALIZED_COLUMN_NAMES.PRODUCED_BY_ORG_ID]:
-                    value ?? 'no value',
-                }}
-                sqlOperator={ColumnMultiValueFunction.HAS}
-              />
-            )
-          }}
-        </DetailsPageContextConsumer>
-      ),
-    },
-    {
-      id: 'relatedStandards',
-      title: 'Relevant Standards',
-      element: (
-        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
-          {({ value }) => (
-            <StandaloneQueryWrapper
-              rgbIndex={standardsRgbIndex}
-              sql={standardsSql}
-              searchParams={{
-                [DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION]:
-                  value ?? 'no value',
-              }}
-              sqlOperator={ColumnMultiValueFunction.HAS}
-              columnAliases={columnAliases}
-              tableConfiguration={{
-                showDownloadColumn: false,
-                columnLinks: standardsColumnLinks,
-              }}
-              searchConfiguration={{
-                ftsConfig: standardsFtsConfig,
-              }}
-              shouldDeepLink={false}
-              hideQueryCount={true}
-              hideDownload={true}
-            />
-          )}
-        </DetailsPageContextConsumer>
-      ),
-    },
-  ]
-
-  // Conditionally add the responsible standards section only if it would have data
-  if (includeResponsibleStandards) {
-    sections.push({
-      id: 'responsibleForStandards',
-      title: 'Governed Standards',
-      element: (
-        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
-          {({ value }) => (
-            <StandaloneQueryWrapper
-              rgbIndex={standardsRgbIndex}
-              sql={standardsSql}
-              searchParams={{
-                [DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION]:
-                  value ?? 'no value',
-              }}
-              sqlOperator={ColumnMultiValueFunction.HAS}
-              columnAliases={columnAliases}
-              tableConfiguration={{
-                showDownloadColumn: false,
-                columnLinks: standardsColumnLinks,
-              }}
-              searchConfiguration={{
-                ftsConfig: standardsFtsConfig,
-              }}
-              shouldDeepLink={false}
-              hideQueryCount={true}
-              hideDownload={true}
-            />
-          )}
-        </DetailsPageContextConsumer>
-      ),
-    })
-  }
-
-  sections.push({
-    id: 'd4d',
-    title: 'DataSheet for DataSet',
-    element: (
-      <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
-        {({ value }) => {
-          return <D4D org_id={value ?? ''} />
-        }}
-      </DetailsPageContextConsumer>
-    ),
-  })
-
-  return sections
-}
-
 export default function OrganizationDetailsPage() {
   const { id } = useGetPortalComponentSearchParams()
+  const {
+    data = [],
+    error,
+    isLoading,
+  } = useOrgQuery({
+    ids: id ? [String(id)] : [],
+  })
+
+  if (error) {
+    return <ErrorBanner error={error} />
+  }
 
   if (!id) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
   }
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+  if (data.length !== 1) {
+    throw new Error(`Unexpected ${data.length} rows of Org data.`)
+  }
+  const detailOrg = data[0]
+
+  const sections: DetailsPageSectionLayoutType[] = detailSections({ detailOrg })
+  console.log(sections)
+  // const deck = <CardDeck cards={challengeCards} cardDeckType="b2ai" />
+
   return (
     <DetailsPage
       header={<OrgHeaderCard id={id} />}
       sql={organizationDetailsPageSQL}
     >
-      <ConditionalOrganizationContent orgId={id} />
+      <DetailsPageContent content={sections} />
     </DetailsPage>
   )
+}
+
+function orgSectionCard({ detailOrg }) {
+  const card: CardDeckCardProps = {
+    title: detailOrg[ORG_TABLE_COLUMN_NAMES.NAME] || detailOrg.name,
+    description:
+      detailOrg[ORG_TABLE_COLUMN_NAMES.DESCRIPTION] || detailOrg.description,
+    cardDeckType: 'b2ai',
+    ctaButtonText: 'NOT USED IN cardDeckType = b2ai',
+    ctaButtonURL: `/Explore/Organization/OrganizationDetailsPage?${
+      ORG_TABLE_COLUMN_NAMES.ID
+    }=${detailOrg[ORG_TABLE_COLUMN_NAMES.ID] || detailOrg.id}`,
+  }
+  return card
+}
+
+function datasetSectionCard({ dataset }) {
+  const card: CardDeckCardProps = {
+    title: dataset.name,
+    description: dataset.description,
+    cardDeckType: 'b2ai',
+    ctaButtonText: 'NOT USED IN cardDeckType = b2ai',
+    ctaButtonURL: dataset.DatasheetURL || dataset.DocumentationURL || '#',
+  }
+  return card
+}
+
+function standardSectionCard({ standard }) {
+  const card: CardDeckCardProps = {
+    title: `${standard.acronym}: ${standard.name}`,
+    description: standard.description,
+    cardDeckType: 'b2ai',
+    ctaButtonText: 'NOT USED IN cardDeckType = b2ai',
+    ctaButtonURL: `/Explore/Standard/DetailsPage?id=${standard.id}`,
+  }
+  return card
+}
+function detailSections({ detailOrg }) {
+  const sections: DetailsPageSectionLayoutType[] = []
+  /*
+  // Main Organization section
+  const main_organization =
+    detailOrg[ORG_TABLE_COLUMN_NAMES.MAIN_ORGANIZATION_JSON]
+  if (!isEmpty(main_organization)) {
+    main_organization.forEach((org) => {
+      sections.push({
+        title: 'Main Organization',
+        ...orgSectionCard({ detailOrg: org })
+      })
+    })
+  }
+
+  // Associated Organization section
+  const associated_organization =
+    detailOrg[ORG_TABLE_COLUMN_NAMES.ASSSOCIATED_ORGANIZATION_JSON]
+  if (!isEmpty(associated_organization)) {
+    associated_organization.forEach((org) => {
+      sections.push({
+        title: 'Associated Organization', 
+        ...orgSectionCard({ detailOrg: org })
+      })
+    })
+  }
+  */
+
+  // DataSets section
+  const datasets = detailOrg[ORG_TABLE_COLUMN_NAMES.DATASET_JSON]
+  if (!isEmpty(datasets)) {
+    const cards: CardDeckCardProps[] = datasets.map((dataset, i) => {
+      return datasetSectionCard({ dataset })
+    })
+    sections.push({
+      id: 'DataSets',
+      title: 'DataSets',
+      element: <CardDeck cardDeckType="b2ai" cards={cards} />,
+    })
+  }
+
+  /*
+  // Relevant Standards section
+  const relevantStandards = detailOrg[ORG_TABLE_COLUMN_NAMES.RELEVANT_STANDARDS_JSON]
+  if (!isEmpty(relevantStandards)) {
+    relevantStandards.forEach((standard) => {
+      sections.push({
+        id: 'd4d',
+        title: 'Relevant Standards',
+        ...standardSectionCard({ standard })
+      })
+    })
+  }
+
+  // Governed Standards section
+  const governedStandards = detailOrg[ORG_TABLE_COLUMN_NAMES.GOVERNED_STANDARDS_JSON]
+  if (!isEmpty(governedStandards)) {
+    governedStandards.forEach((standard) => {
+      sections.push({
+        title: 'Governed Standards',
+        ...standardSectionCard({ standard })
+      })
+    })
+  }
+  */
+
+  return sections
 }
