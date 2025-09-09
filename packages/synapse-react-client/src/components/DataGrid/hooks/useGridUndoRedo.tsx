@@ -242,11 +242,9 @@ export function useGridUndoRedo(
         onClose={handleUndoClose}
       >
         {undoPreview ? (
-          [
-            <MenuItem key="lastAction" onClick={handleUndo}>
-              Undo last {undoPreview.lastType.toLowerCase()} action
-            </MenuItem>,
-          ]
+          <MenuItem key="lastAction" onClick={handleUndo}>
+            Undo last {undoPreview.lastType.toLowerCase()} action
+          </MenuItem>
         ) : (
           <MenuItem disabled>No actions to undo</MenuItem>
         )}
@@ -272,11 +270,9 @@ export function useGridUndoRedo(
         onClose={handleRedoClose}
       >
         {redoPreview ? (
-          [
-            <MenuItem key="lastAction" onClick={handleRedo}>
-              Redo last {redoPreview.lastType.toLowerCase()} action
-            </MenuItem>,
-          ]
+          <MenuItem key="lastAction" onClick={handleRedo}>
+            Redo last {redoPreview.lastType.toLowerCase()} action
+          </MenuItem>
         ) : (
           <MenuItem disabled>No actions to redo</MenuItem>
         )}
