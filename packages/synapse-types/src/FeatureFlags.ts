@@ -18,7 +18,4 @@ export enum FeatureFlagEnum {
 
   // If enabled, account settings will link to a page to manage webhooks
   WEBHOOKS_UI = 'WEBHOOKS_UI',
-
-  // If enabled, clicking on a link to a file entity in Synapse from a portal will redirect to the portal's FileEntityPage
-  FILE_ENTITY_PAGE = 'FILE_ENTITY_PAGE',
 }
