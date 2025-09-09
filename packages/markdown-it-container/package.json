@@ -40,6 +40,6 @@
     "markdown-it": "^13.0.2",
     "markdown-it-testgen": "^0.1.6",
     "mocha": "^10.8.2",
-    "rollup": "^4.40.2"
+    "rollup": "^4.50.1"
   }
 }
