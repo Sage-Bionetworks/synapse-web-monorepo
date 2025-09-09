@@ -1,0 +1,119 @@
+import{a as O,b as g,f as I}from"./mockAccessRequirements-Cz9F5wAt.js";import{g as p}from"./accessRequirementHandlers-CN3dxCYt.js";import{a as c}from"./userProfileHandlers-DSb0Z0t0.js";import{g as d}from"./wikiHandlers-DmufXTlU.js";import{M as t}from"./mock_user_profile-Bg50HGfI.js";import{M as e,a as R,A as S}from"./useFiles-CGW-jd1f.js";import{A as u}from"./VerificationSubmission-D0sL2gwz.js";import{h as s,H as n}from"./index-DCo3NwXK.js";import{S as M}from"./SelfSignAccessRequirementItem-DU8aAPYU.js";import"./SynapseConstants-BGT0B1ls.js";import"./OrientationBanner-BD5rKond.js";import"./jsx-runtime-D_zvdyIk.js";import"./index-CbaPxVoO.js";import"./index-De1Zq6J_.js";import"./iframe-E8oGcv1j.js";import"./spreadSx-CwcO6WA9.js";import"./react-u_1KPmwS.js";import"./FullWidthAlert-B3XOziTT.js";import"./Alert-aEGKfIxj.js";import"./createTheme-D7EPNL7b.js";import"./DefaultPropsProvider-CcfTARJV.js";import"./useSlot-3tuE-c2M.js";import"./useForkRef-C6KDMbou.js";import"./createSimplePaletteValueFilter-BqHZsxiX.js";import"./createSvgIcon-BFK5bQ8n.js";import"./Close-FdA3HKi-.js";import"./IconButton-BZ-jzTu8.js";import"./useTimeout-Dv9ZmSsd.js";import"./ButtonBase-DX38kEaJ.js";import"./isFocusVisible-B8k4qzLc.js";import"./CircularProgress-B6nvT1pK.js";import"./Paper-DtY-LtaX.js";import"./useTheme-xNbW70z-.js";import"./useTheme-BR8tto29.js";import"./Stack-BDxqZFkj.js";import"./extendSxProp-CRDkfaxY.js";import"./getThemeProps-CTXbjC0Y.js";import"./Box-CR3xkiF7.js";import"./AlertTitle-BUhA3yvl.js";import"./Typography-Dqy4KUKl.js";import"./index-vnh1qUaf.js";import"./ClickAwayListener-BFmT95cs.js";import"./getReactElementRef-z7kCRJG8.js";import"./index-DYa4EW63.js";import"./index-C8LquKll.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-eiV7889k.js";import"./Tooltip-DU9LrmZk.js";import"./index-E7O__Phm.js";import"./useControlled-DMRUVe0w.js";import"./Popper-CcioxHhD.js";import"./Button-D-bx5MZt.js";import"./ACTAccessRequirement-WDpE4gfi.js";import"./LockAccessRequirement-B_A_PCc_.js";import"./SelfSignAccessRequirement-C_01XAIc.js";import"./StringUtils-Bt2r5KGg.js";import"./mockProject-BmA6yhwI.js";import"./mockTeam-CVFmTHFE.js";import"./uniqueId-C5MfKxqV.js";import"./toString-CktccFA4.js";import"./isArray-DKCXyRjL.js";import"./isSymbol-CrdGgY1-.js";import"./times-B1u6bRp2.js";import"./_Uint8Array-Bpe28QCt.js";import"./identity-DKeuBCMA.js";import"./toInteger-TRAVrRY7.js";import"./mock_file_handle-BgkszYEk.js";import"./mockWiki-BjsSPAW9.js";import"./mockEntity-DnfWEHkq.js";import"./mockFileEntity-HJCQpgKu.js";import"./mockWikiPageKey-B2QPfX45.js";import"./BasicMockedCrudService-ZctGsroE.js";import"./cloneDeep-DuWLqYh-.js";import"./_initCloneObject-oQqNGLLJ.js";import"./_getTag-DSOAbaVw.js";import"./isEqual-Dg8dgpub.js";import"./fetchWithExponentialTimeout-CXmnpl-T.js";import"./useQuery-DALRboo3.js";import"./QueryClientProvider-FUbP8408.js";import"./Link-DvLvJsbQ.js";import"./Collapse-CcwUCllw.js";import"./_baseUniq-CXI3CQZE.js";import"./merge-DckDRy64.js";import"./tinycolor-Begke6kS.js";import"./Fade-DY8MnK-W.js";import"./inputBaseClasses-BoUH4D83.js";import"./calculateFriendlyFileSize-DQKz6tFX.js";import"./CheckCircleTwoTone-D_cE2H8y.js";import"./InfoTwoTone-DH56TLJq.js";import"./useMutation-BX9VoBnj.js";import"./dayjs.min-D6shjXWv.js";import"./chunk-AYJ5UCUI-Qk_pfhhj.js";import"./Skeleton-BAzE4-tl.js";import"./useAccessRequirements-DRilbZ8j.js";import"./index-BU6mZttd.js";import"./_baseOrderBy-_Uu1BSAZ.js";import"./_baseGet-DyXQY256.js";import"./_baseIteratee-BfaIyM04.js";import"./hasIn-D92Cs74s.js";import"./_baseMap-FLseIeWw.js";import"./_baseEach-DZNRmVr-.js";import"./useQueries-Dy3X88dL.js";import"./useInfiniteQuery-DoDDDVRa.js";import"./MarkdownSynapse-DWWFUrcd.js";import"./SkeletonButton-CdPlqbtL.js";import"./SkeletonInlineBlock-Gww6vO0T.js";import"./SkeletonTable-HXIXFq7J.js";import"./SkeletonParagraph-SLAYWWnh.js";import"./RequirementItem-D00g0jak.js";import"./ConditionalWrapper-CpBCX7_r.js";import"./LockTwoTone-COUEnqej.js";import"./Avatar-DPft-3LI.js";const kt={title:"Governance/Data Access Request Flow/Requirements/SelfSignAccessRequirementItem",component:M,argTypes:{isAuthenticated:{control:{type:"boolean"}}},args:{isAuthenticated:!0}},o={args:{accessRequirement:{...O,isCertifiedUserRequired:!0,isValidatedProfileRequired:!0}},parameters:{msw:{handlers:[...p(e),...d(e),c(e,!1,!1),s.get(`${e}${R(":id")}`,({params:r})=>{const i={accessRequirementId:r.id,concreteType:"org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus",isApproved:!1};return n.json(i,{status:200})}),s.post(`${e}${S}`,()=>{const r={requirementId:O.id,submitterId:t.toString(),accessorId:t.toString(),state:u.APPROVED,id:123,etag:"etag",createdOn:new Date().toISOString(),modifiedOn:new Date().toISOString(),createdBy:String(t),modifiedBy:String(t)};return n.json(r,{status:201})})]}}},a={args:{accessRequirement:g},parameters:{msw:{handlers:[...p(e),...d(e),c(e,!1,!1),s.get(`${e}${R(":id")}`,({params:r})=>{const i={accessRequirementId:r.id,concreteType:"org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus",isApproved:!1};return n.json(i,{status:200})}),s.post(`${e}${S}`,()=>{const r={requirementId:g.id,submitterId:t.toString(),accessorId:t.toString(),state:u.APPROVED,id:123,etag:"etag",createdOn:new Date().toISOString(),modifiedOn:new Date().toISOString(),createdBy:String(t),modifiedBy:String(t)};return n.json(r,{status:201})})]}}},m={args:{accessRequirement:I},parameters:{msw:{handlers:[...p(e),...d(e),c(e,!1,!1),s.get(`${e}${R(":id")}`,({params:r})=>{const i={accessRequirementId:r.id,concreteType:"org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus",isApproved:!1};return n.json(i,{status:200})}),s.post(`${e}${S}`,()=>{const r={requirementId:I.id,submitterId:t.toString(),accessorId:t.toString(),state:u.APPROVED,id:123,etag:"etag",createdOn:new Date().toISOString(),modifiedOn:new Date().toISOString(),createdBy:String(t),modifiedBy:String(t)};return n.json(r,{status:201})})]}}};var _,l,A;o.parameters={...o.parameters,docs:{...(_=o.parameters)==null?void 0:_.docs,source:{originalSource:`{
+  args: {
+    accessRequirement: {
+      ...mockSelfSignAccessRequirement,
+      isCertifiedUserRequired: true,
+      isValidatedProfileRequired: true
+    }
+  },
+  parameters: {
+    msw: {
+      handlers: [
+      // ...getHandlers(MOCK_REPO_ORIGIN),
+      ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN), ...getWikiHandlers(MOCK_REPO_ORIGIN), getCurrentUserCertifiedValidatedHandler(MOCK_REPO_ORIGIN, false, false), http.get(\`\${MOCK_REPO_ORIGIN}\${ACCESS_REQUIREMENT_STATUS(':id')}\`, ({
+        params
+      }) => {
+        const response: AccessRequirementStatus = {
+          accessRequirementId: params.id as string,
+          concreteType: 'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
+          isApproved: false
+        };
+        return HttpResponse.json(response, {
+          status: 200
+        });
+      }), http.post(\`\${MOCK_REPO_ORIGIN}\${ACCESS_APPROVAL}\`, () => {
+        const response: AccessApproval = {
+          requirementId: mockSelfSignAccessRequirement.id,
+          submitterId: MOCK_USER_ID.toString(),
+          accessorId: MOCK_USER_ID.toString(),
+          state: ApprovalState.APPROVED,
+          id: 123,
+          etag: 'etag',
+          createdOn: new Date().toISOString(),
+          modifiedOn: new Date().toISOString(),
+          createdBy: String(MOCK_USER_ID),
+          modifiedBy: String(MOCK_USER_ID)
+        };
+        return HttpResponse.json(response, {
+          status: 201
+        });
+      })]
+    }
+  }
+}`,...(A=(l=o.parameters)==null?void 0:l.docs)==null?void 0:A.source}}};var f,C,E;a.parameters={...a.parameters,docs:{...(f=a.parameters)==null?void 0:f.docs,source:{originalSource:`{
+  args: {
+    accessRequirement: mockToUAccessRequirement
+  },
+  parameters: {
+    msw: {
+      handlers: [
+      // ...getHandlers(MOCK_REPO_ORIGIN),
+      ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN), ...getWikiHandlers(MOCK_REPO_ORIGIN), getCurrentUserCertifiedValidatedHandler(MOCK_REPO_ORIGIN, false, false), http.get(\`\${MOCK_REPO_ORIGIN}\${ACCESS_REQUIREMENT_STATUS(':id')}\`, ({
+        params
+      }) => {
+        const response: AccessRequirementStatus = {
+          accessRequirementId: params.id as string,
+          concreteType: 'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
+          isApproved: false
+        };
+        return HttpResponse.json(response, {
+          status: 200
+        });
+      }), http.post(\`\${MOCK_REPO_ORIGIN}\${ACCESS_APPROVAL}\`, () => {
+        const response: AccessApproval = {
+          requirementId: mockToUAccessRequirement.id,
+          submitterId: MOCK_USER_ID.toString(),
+          accessorId: MOCK_USER_ID.toString(),
+          state: ApprovalState.APPROVED,
+          id: 123,
+          etag: 'etag',
+          createdOn: new Date().toISOString(),
+          modifiedOn: new Date().toISOString(),
+          createdBy: String(MOCK_USER_ID),
+          modifiedBy: String(MOCK_USER_ID)
+        };
+        return HttpResponse.json(response, {
+          status: 201
+        });
+      })]
+    }
+  }
+}`,...(E=(C=a.parameters)==null?void 0:C.docs)==null?void 0:E.source}}};var q,P,U;m.parameters={...m.parameters,docs:{...(q=m.parameters)==null?void 0:q.docs,source:{originalSource:`{
+  args: {
+    accessRequirement: mockToUAccessRequirementWithWiki
+  },
+  parameters: {
+    msw: {
+      handlers: [
+      // ...getHandlers(MOCK_REPO_ORIGIN),
+      ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN), ...getWikiHandlers(MOCK_REPO_ORIGIN), getCurrentUserCertifiedValidatedHandler(MOCK_REPO_ORIGIN, false, false), http.get(\`\${MOCK_REPO_ORIGIN}\${ACCESS_REQUIREMENT_STATUS(':id')}\`, ({
+        params
+      }) => {
+        const response: AccessRequirementStatus = {
+          accessRequirementId: params.id as string,
+          concreteType: 'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
+          isApproved: false
+        };
+        return HttpResponse.json(response, {
+          status: 200
+        });
+      }), http.post(\`\${MOCK_REPO_ORIGIN}\${ACCESS_APPROVAL}\`, () => {
+        const response: AccessApproval = {
+          requirementId: mockToUAccessRequirementWithWiki.id,
+          submitterId: MOCK_USER_ID.toString(),
+          accessorId: MOCK_USER_ID.toString(),
+          state: ApprovalState.APPROVED,
+          id: 123,
+          etag: 'etag',
+          createdOn: new Date().toISOString(),
+          modifiedOn: new Date().toISOString(),
+          createdBy: String(MOCK_USER_ID),
+          modifiedBy: String(MOCK_USER_ID)
+        };
+        return HttpResponse.json(response, {
+          status: 201
+        });
+      })]
+    }
+  }
+}`,...(U=(P=m.parameters)==null?void 0:P.docs)==null?void 0:U.source}}};const yt=["RequiresUnmetCertificationAndValidation","LegacyTermsOfUse","LegacyTermsOfUseWithWiki"];export{a as LegacyTermsOfUse,m as LegacyTermsOfUseWithWiki,o as RequiresUnmetCertificationAndValidation,yt as __namedExportsOrder,kt as default};
