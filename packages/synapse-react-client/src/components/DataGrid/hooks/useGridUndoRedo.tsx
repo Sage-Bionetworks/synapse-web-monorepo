@@ -25,7 +25,7 @@ const MAX_REDO_STEPS = 100
  * @param onApplyModelChange - Function to apply model changes and commit
  */
 export function useGridUndoRedo(
-  onApplyModelChange: (change: ModelChange, originalAction: GridAction) => void,
+  onApplyModelChange: (change: ModelChange) => void,
 ) {
   // Tracks the stack of undoable actions in LIFO order
   const undoStack = useStack<GridAction>([], MAX_UNDO_STEPS)
@@ -112,7 +112,7 @@ export function useGridUndoRedo(
       // Move to redo stack when undoing
       redoStack.push(actionToUndo)
 
-      onApplyModelChange(inverseOperation, actionToUndo)
+      onApplyModelChange(inverseOperation)
     }
     handleUndoClose()
   }, [onApplyModelChange, undoStack, redoStack])
@@ -132,7 +132,7 @@ export function useGridUndoRedo(
       // Move back to undo stack when redoing
       undoStack.push(actionToRedo)
 
-      onApplyModelChange(originalOperation, actionToRedo)
+      onApplyModelChange(originalOperation)
     }
     handleRedoClose()
   }, [redoStack, undoStack, onApplyModelChange])

@@ -174,6 +174,7 @@ describe('useGridUndoRedo', () => {
         useGridUndoRedo(mockOnApplyModelChange),
       )
       expect(result.current.redoPreview).toBeNull()
+      expect(result.current.redoTotalActions).toBe(0)
     })
 
     it('should move action from redo stack to undo stack when handleRedo is called', () => {
@@ -191,13 +192,14 @@ describe('useGridUndoRedo', () => {
       act(() => result.current.addToUndoStack(action))
       act(() => result.current.handleUndo())
 
-      expect(result.current.redoPreview?.totalActions).toBe(1)
+      expect(result.current.redoTotalActions).toBe(1)
+      expect(result.current.undoTotalActions).toBe(0)
 
       act(() => result.current.handleRedo())
 
       // After redo, the action should be removed from the redo stack and added back to the undo stack
-      expect(result.current.redoPreview).toBeNull()
-      expect(result.current.undoPreview?.totalActions).toBe(1)
+      expect(result.current.redoTotalActions).toBe(0)
+      expect(result.current.undoTotalActions).toBe(1)
 
       expect(mockOnApplyModelChange).toHaveBeenCalledTimes(2)
       expect(convertActionToModelChange).toHaveBeenCalledWith(action, 'redo')
