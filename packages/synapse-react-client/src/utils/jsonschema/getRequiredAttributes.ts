@@ -1,5 +1,6 @@
 import isArray from 'lodash-es/isArray'
 import isObject from 'lodash-es/isObject'
+import { JSONSchema7 } from 'json-schema'
 
 /**
  * Returns a de-duplicated list of required attribute names from a JSON Schema.
@@ -9,14 +10,16 @@ import isObject from 'lodash-es/isObject'
  *  - anyOf / oneOf: union (pragmatic; intersection could be too restrictive for most UI uses)
  */
 export default function getRequiredAttributes(
-  jsonSchema: Record<string, unknown> | undefined | null,
+  jsonSchema: JSONSchema7 | Record<string, unknown> | undefined | null,
 ): string[] {
   if (!jsonSchema || !isObject(jsonSchema)) return []
 
   const collected = new Set<string>()
   const visited = new Set<object>()
 
-  function visit(schema: any) {
+  function visit(
+    schema: JSONSchema7 | Record<string, unknown> | undefined | null,
+  ) {
     if (!isObject(schema) || visited.has(schema)) return
     visited.add(schema)
 
@@ -27,7 +30,7 @@ export default function getRequiredAttributes(
     }
 
     ;['allOf', 'anyOf', 'oneOf'].forEach(key => {
-      const group = schema[key]
+      const group = (schema as any)[key]
       if (isArray(group)) {
         group.forEach(sub => visit(sub))
       }
