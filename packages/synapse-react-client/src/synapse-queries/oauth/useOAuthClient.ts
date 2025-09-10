@@ -1,5 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { AccessControlList } from '@sage-bionetworks/synapse-client'
 import { OAuthClient } from '@sage-bionetworks/synapse-client/generated/models/OAuthClient'
 import { OAuthClientList } from '@sage-bionetworks/synapse-client/generated/models/OAuthClientList'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
@@ -10,7 +11,9 @@ import {
   UseInfiniteQueryOptions,
   useMutation,
   UseMutationOptions,
+  useQuery,
   useQueryClient,
+  UseQueryOptions,
 } from '@tanstack/react-query'
 
 export function useGetOAuthClientInfinite<
@@ -113,6 +116,55 @@ export function useCreateOAuthClient(
       if (options?.onSuccess) {
         await options.onSuccess(updatedClient, client, ctx)
       }
+    },
+  })
+}
+
+export function useGetOAuthClientACL(
+  clientId: string,
+  options?: Partial<
+    UseQueryOptions<AccessControlList | null, SynapseClientError>
+  >,
+) {
+  const { synapseClient, keyFactory } = useSynapseContext()
+
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getOAuthClientAclQueryKey(clientId),
+
+    queryFn: () =>
+      synapseClient.openIDConnectServicesClient.getAuthV1Oauth2ClientIdAcl({
+        id: clientId,
+      }),
+  })
+}
+
+export function useUpdateOAuthClientACL(
+  options?: UseMutationOptions<
+    AccessControlList,
+    SynapseClientError,
+    AccessControlList
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { synapseClient, keyFactory } = useSynapseContext()
+  return useMutation<AccessControlList, SynapseClientError, AccessControlList>({
+    ...options,
+    mutationFn: acl =>
+      synapseClient.openIDConnectServicesClient.putAuthV1Oauth2ClientIdAcl({
+        id: acl.id!,
+        accessControlList: acl,
+      }),
+    onSuccess: async (newAcl, acl, ctx) => {
+      const oauthClientAclQueryKey = keyFactory.getOAuthClientAclQueryKey(
+        newAcl.id!,
+      )
+      queryClient.setQueryData(oauthClientAclQueryKey, newAcl)
+
+      if (options?.onSuccess) {
+        return await options.onSuccess(newAcl, acl, ctx)
+      }
+      return
     },
   })
 }

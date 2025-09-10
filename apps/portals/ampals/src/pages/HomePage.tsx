@@ -3,7 +3,7 @@ import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/
 import AMPALSPublishingRequirements from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSPublishingRequirements'
 import HowToAccessData from '@sage-bionetworks/synapse-portal-framework/components/ampals/HowToAccessData'
 // import AMPALSExploreTheData from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSExploreTheData'
-import { FeaturedDataTabs } from 'synapse-react-client'
+import { FeaturedDataTabs, RssFeedCards } from 'synapse-react-client'
 // import columnAliases from '../config/columnAliases'
 import headerSvg from '../config/style/header.svg?url'
 import {
@@ -86,6 +86,22 @@ export default function HomePage() {
         />
       </SectionLayout>
       <AMPALSPublishingRequirements />
+      <SectionLayout
+        title={"What's New"}
+        centerTitle={true}
+        ContainerProps={{
+          className: 'home-spacer',
+        }}
+      >
+        <RssFeedCards
+          url=" https://salsportalnews.wpenginepowered.com"
+          itemsToShow={3}
+          allowCategories={[]}
+          // filter={{
+          //   value: "what's-new",
+          // }}
+        />
+      </SectionLayout>
       <SectionLayout
         title={'Featured Datasets'}
         centerTitle

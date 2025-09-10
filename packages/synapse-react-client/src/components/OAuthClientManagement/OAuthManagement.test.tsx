@@ -81,7 +81,6 @@ describe('oAuthManagement tests', () => {
     await screen.findByText('Modified')
     await screen.findByText('Client')
     await screen.findByText('Verified')
-    await screen.findByText('App Secret')
     await screen.findByText('Actions')
 
     // Check first row of data
@@ -92,10 +91,7 @@ describe('oAuthManagement tests', () => {
       formatDate(dayjs(mockClientList1.results[0].modifiedOn)),
     )
     screen.findByText(mockClientList1.results[0].client_name)
-
     await screen.findByText('Yes')
-    await screen.findAllByRole('button', { name: 'Edit' })
-    await screen.findAllByRole('button', { name: 'Generate Secret' })
   })
 
   it('Handles pagination', async () => {

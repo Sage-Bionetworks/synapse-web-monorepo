@@ -5,6 +5,7 @@ import { ComplexJSONRenderer } from '@/components/SynapseTable/SynapseTableCell/
 import { useGetSchema } from '@/synapse-queries/index'
 import getEnumeratedValues from '@/utils/jsonschema/getEnumeratedValues'
 import getSchemaForProperty from '@/utils/jsonschema/getSchemaForProperty'
+import { getType } from '@/utils/jsonschema/getType'
 import Grid from '@mui/material/Grid'
 import { GridSession } from '@sage-bionetworks/synapse-client'
 import classNames from 'classnames'
@@ -43,7 +44,7 @@ import {
 } from './utils/DataGridUtils'
 import { StartGridSession } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
-import { useGridUndo } from './hooks/useGridUndo'
+import { useGridUndoRedo } from './hooks/useGridUndoRedo'
 import { applyModelChange, ModelChange } from './utils/applyModelChange'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 
@@ -117,7 +118,7 @@ const SynapseGrid = forwardRef<
           )
         : null
       const colType = jsonSchema
-        ? getSchemaForProperty(jsonSchema, columnName).type
+        ? getType(getSchemaForProperty(jsonSchema, columnName))
         : null
 
       if (colType === 'boolean') {
@@ -141,6 +142,7 @@ const SynapseGrid = forwardRef<
             columnName,
             autocompleteColumn({
               choices: enumeratedValues,
+              colType: colType,
             }),
           ),
           title: columnName,
@@ -190,6 +192,9 @@ const SynapseGrid = forwardRef<
     operations = removeNoOpOperations(newValue, rowValues, operations)
 
     if (operations.length > 0) {
+      // Clear redo stack since new changes invalidate redo history
+      clearRedoStack()
+
       // Track row creation, updates, and deletions to keep UI state and undo history in sync
 
       // Add all operations to the undo stack
@@ -206,7 +211,7 @@ const SynapseGrid = forwardRef<
     }
   }
 
-  const applyModelChangeFromUndo = useCallback(
+  const applyModelChangeFromUndoRedo = useCallback(
     (change: ModelChange) => {
       if (!model) {
         console.error('Model is not initialized')
@@ -223,9 +228,8 @@ const SynapseGrid = forwardRef<
     [model, applyAndCommitChanges],
   )
 
-  const { undoUI, addOperationsToUndoStack } = useGridUndo(
-    applyModelChangeFromUndo,
-  )
+  const { undoUI, redoUI, addOperationsToUndoStack, clearRedoStack } =
+    useGridUndoRedo(applyModelChangeFromUndoRedo)
 
   // Track the currently selected row index
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
@@ -300,6 +304,7 @@ const SynapseGrid = forwardRef<
             {isGridReady && (
               <Grid size={12}>
                 {undoUI}
+                {redoUI}
                 <DataSheetGrid
                   ref={gridRef}
                   value={rowValues}
