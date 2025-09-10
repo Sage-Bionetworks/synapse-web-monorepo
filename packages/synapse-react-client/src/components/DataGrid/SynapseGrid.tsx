@@ -47,7 +47,6 @@ import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { useGridUndoRedo } from './hooks/useGridUndoRedo'
 import { applyModelChange, ModelChange } from './utils/applyModelChange'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
-import { extractValidationFieldNames } from './utils/parseValidationColumns'
 import { getCellClassName } from './utils/getCellClassName'
 
 export type SynapseGridProps = {
