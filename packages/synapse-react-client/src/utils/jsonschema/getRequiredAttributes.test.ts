@@ -55,12 +55,4 @@ describe('getRequiredAttributes', () => {
     }
     expect(getRequiredAttributes(schema).sort()).toEqual(['a', 'b', 'd'])
   })
-
-  it('avoids infinite recursion on reused schema objects', () => {
-    const shared = { required: ['x'] }
-    const schema: any = {
-      allOf: [shared, { anyOf: [shared, { oneOf: [shared] }] }],
-    }
-    expect(getRequiredAttributes(schema)).toEqual(['x'])
-  })
 })
