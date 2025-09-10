@@ -325,7 +325,6 @@ const SynapseGrid = forwardRef<
                     ...rowData,
                   })}
                   onChange={handleChange}
-                  addRowsComponent={false}
                   onActiveCellChange={({ cell }) => {
                     if (cell) {
                       setSelectedRowIndex(cell.row)
