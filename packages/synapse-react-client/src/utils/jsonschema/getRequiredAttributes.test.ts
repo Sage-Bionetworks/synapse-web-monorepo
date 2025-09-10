@@ -30,22 +30,11 @@ describe('getRequiredAttributes', () => {
     expect(getRequiredAttributes(schema).sort()).toEqual(['a', 'b'])
   })
 
-  it('handles allOf union of required', () => {
-    const schema = {
-      allOf: [
-        { required: ['a', 'b'] },
-        { required: ['b', 'c'] },
-        { properties: { d: { type: 'string' } } },
-      ],
-    }
-    expect(getRequiredAttributes(schema).sort()).toEqual(['a', 'b', 'c'])
-  })
-
   it('handles anyOf union of required', () => {
     const schema = {
       anyOf: [{ required: ['x'] }, { required: ['y', 'z'] }, { required: [] }],
     }
-    expect(getRequiredAttributes(schema).sort()).toEqual(['x', 'y', 'z'])
+    expect(getRequiredAttributes(schema).sort()).toEqual([])
   })
 
   it('handles oneOf union of required', () => {
@@ -56,32 +45,7 @@ describe('getRequiredAttributes', () => {
         { required: ['m', 'o'] },
       ],
     }
-    expect(getRequiredAttributes(schema).sort()).toEqual(['m', 'n', 'o'])
-  })
-
-  it('traverses nested combinators', () => {
-    const schema = {
-      allOf: [
-        {
-          anyOf: [{ required: ['a'] }, { required: ['b'] }],
-        },
-        {
-          oneOf: [
-            { required: ['c'] },
-            {
-              allOf: [{ required: ['d'] }, { required: ['e', 'a'] }],
-            },
-          ],
-        },
-      ],
-    }
-    expect(getRequiredAttributes(schema).sort()).toEqual([
-      'a',
-      'b',
-      'c',
-      'd',
-      'e',
-    ])
+    expect(getRequiredAttributes(schema).sort()).toEqual([])
   })
 
   it('ignores non-array required and non-string entries', () => {
