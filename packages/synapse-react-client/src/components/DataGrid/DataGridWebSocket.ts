@@ -12,20 +12,22 @@ type DataGridWebSocketConstructorArgs = {
   onGridReady?: () => void
   onStatusChange?: (isOpen: boolean, instance: DataGridWebSocket) => void
   onModelCreate?: (model: GridModel) => void
+  maxPayloadSizeBytes?: number // <-- allow injection for tests
+  socket?: WebSocket // <-- allow injection for tests
 }
 
 // API Gateway WebSocket payload size limit is 32 KB per message
 // There is some overhead we aren't computing in our utility, namely the size of the patch header and the communication protocol itself
 // So add some buffer
-const MAX_PAYLOAD_SIZE_BYTES = 30 * 1024 // 30 KB
+const DEFAULT_MAX_PAYLOAD_SIZE_BYTES = 30 * 1024 // 30 KB
 
 export class DataGridWebSocket {
   private socket: WebSocket
-
   private model: GridModel | null = null
   private sequenceNumber: number = 0
   private replicaId?: number
   private verboseEncoder = new VerboseEncoder()
+  private maxPayloadSizeBytes: number
 
   private onModelCreate: (model: GridModel) => void = noop
   private onGridReady: () => void = noop
@@ -33,9 +35,19 @@ export class DataGridWebSocket {
     noop
 
   constructor(args: DataGridWebSocketConstructorArgs) {
-    const { replicaId, url, onGridReady, onStatusChange, onModelCreate } = args
+    const {
+      replicaId,
+      url,
+      onGridReady,
+      onStatusChange,
+      onModelCreate,
+      maxPayloadSizeBytes,
+      socket,
+    } = args
     this.replicaId = replicaId
-    this.socket = new WebSocket(url)
+    this.maxPayloadSizeBytes =
+      maxPayloadSizeBytes ?? DEFAULT_MAX_PAYLOAD_SIZE_BYTES
+    this.socket = socket ?? new WebSocket(url)
 
     this.socket.onopen = () => {
       console.debug('Connected to the WebSocket server')
@@ -201,7 +213,7 @@ export class DataGridWebSocket {
 
     if (patch) {
       // Split the patch if it exceeds the maximum size we can send in a single frame
-      const patches = splitPatch(patch, MAX_PAYLOAD_SIZE_BYTES)
+      const patches = splitPatch(patch, this.maxPayloadSizeBytes)
       patches.forEach(compactEncodedPatch => {
         console.debug('Sending patch to server:', compactEncodedPatch)
         const msg = [1, this.sequenceNumber, 'patch', compactEncodedPatch]
