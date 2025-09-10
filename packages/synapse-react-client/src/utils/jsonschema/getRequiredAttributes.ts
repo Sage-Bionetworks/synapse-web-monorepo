@@ -7,7 +7,6 @@ import { JSONSchema7 } from 'json-schema'
  * Traverses nested combinators (allOf, anyOf, oneOf).
  * For:
  *  - allOf: union of required fields
- *  - anyOf / oneOf: union (pragmatic; intersection could be too restrictive for most UI uses)
  */
 export default function getRequiredAttributes(
   jsonSchema: JSONSchema7 | Record<string, unknown> | undefined | null,
@@ -29,7 +28,7 @@ export default function getRequiredAttributes(
       }
     }
 
-    ;['allOf', 'anyOf', 'oneOf'].forEach(key => {
+    ;['allOf'].forEach(key => {
       const group = (schema as any)[key]
       if (isArray(group)) {
         group.forEach(sub => visit(sub))
