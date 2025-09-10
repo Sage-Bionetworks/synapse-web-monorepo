@@ -325,8 +325,11 @@ const SynapseGrid = forwardRef<
                     ...rowData,
                   })}
                   onChange={handleChange}
+                  addRowsComponent={false}
                   onActiveCellChange={({ cell }) => {
-                    setSelectedRowIndex(cell ? cell.row : null)
+                    if (cell) {
+                      setSelectedRowIndex(cell.row)
+                    }
                   }}
                 />
                 {/* Show validation messages for selected row */}
