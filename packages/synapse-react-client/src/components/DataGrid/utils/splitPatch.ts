@@ -50,6 +50,10 @@ export function splitPatch(
   patch: Patch,
   maxPatchSizeBytes: number,
 ): CompactCodecPatch[] {
+  if (!patch.ops || patch.ops.length === 0) {
+    return []
+  }
+
   const binaryEncodedPatch = encode(patch)
   const sizeOfFullPatch = getPatchSizeInBytes(binaryEncodedPatch)
 
