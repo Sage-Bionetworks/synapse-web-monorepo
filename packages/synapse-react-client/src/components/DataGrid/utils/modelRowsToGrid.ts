@@ -3,7 +3,7 @@ import {
   GridModel,
   GridModelSnapshot,
 } from '@/components/DataGrid/DataGridTypes'
-import { GRID_ROW_REACT_KEY_PROPERTY } from '@/components/DataGrid/DataGridUtils'
+import { GRID_ROW_REACT_KEY_PROPERTY } from './DataGridUtils'
 import logicalTimestampToString from '@/components/DataGrid/utils/logicalTimestampToString'
 
 /**

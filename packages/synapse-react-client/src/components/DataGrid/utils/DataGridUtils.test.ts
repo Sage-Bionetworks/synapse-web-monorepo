@@ -4,7 +4,7 @@ import {
   rowsAreIdentical,
   removeNoOpOperations,
 } from './DataGridUtils'
-import { DataGridRow, Operation } from './DataGridTypes'
+import { DataGridRow, Operation } from '../DataGridTypes'
 
 describe('DataGridUtils', () => {
   describe('parseQueryInput', () => {

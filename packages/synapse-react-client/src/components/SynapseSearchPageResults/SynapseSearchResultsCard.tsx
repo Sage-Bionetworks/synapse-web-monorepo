@@ -20,6 +20,8 @@ import {
 } from '@/utils/functions/getEndpoint'
 import dayjs from 'dayjs'
 import { formatDate } from '@/utils/functions/DateFormatter'
+import { EntityTypeIcon } from '../EntityIcon'
+import { EntityType } from '@sage-bionetworks/synapse-types'
 
 export type SynapseSearchResultsCardProps = {
   entityId: string
@@ -37,7 +39,7 @@ const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
   display: 'flex',
   flexDirection: 'column',
   minHeight: '250px',
-  width: '100%',
+  width: '80%',
   borderRadius: '10px',
   padding: '32px',
   gap: '15px',
@@ -71,7 +73,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
             alignItems: 'center',
           }}
         >
-          <FavoriteButton entityId={'syn222'} />
+          <FavoriteButton entityId={props.entityId} />
           <Button variant="outlined" startIcon={<DownloadIcon />}>
             Download
           </Button>
@@ -79,6 +81,14 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
       </Box>
       <Box>
         <Chip
+          icon={
+            <EntityTypeIcon
+              type={props.entityType as EntityType}
+              style={{
+                color: 'inherit',
+              }}
+            />
+          }
           label={props.entityType}
           sx={{
             backgroundColor: '#DAE9E7',
