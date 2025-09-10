@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { extractValidationFieldNames } from './parseValidationColumns'
+import { extractUniqueValidationFieldNames } from './parseValidationColumns'
 import { DataGridRow } from '../DataGridTypes'
 
 export function getCellClassName(params: {
@@ -12,7 +12,8 @@ export function getCellClassName(params: {
   const validationMessages = rowData.__validationResults?.allValidationMessages
   if (!validationMessages) return undefined
 
-  const invalidFields = extractValidationFieldNames(validationMessages) || []
+  const invalidFields =
+    extractUniqueValidationFieldNames(validationMessages) || []
   if (!invalidFields.length) return undefined
   if (!columnId) return undefined
 
