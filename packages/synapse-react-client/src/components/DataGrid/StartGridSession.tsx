@@ -32,7 +32,6 @@ export const StartGridSession = forwardRef<
     ref,
   ) => {
     const [gridSql, setGridSql] = useState('')
-    const [schemaId, setSchemaId] = useState('')
 
     const allowInput = !query
 
@@ -67,7 +66,7 @@ export const StartGridSession = forwardRef<
     )
 
     const onConfirmInput = function () {
-      handleStartSession({ gridSqlOrSessionId: gridSql, schemaId })
+      handleStartSession({ gridSqlOrSessionId: gridSql })
     }
 
     useImperativeHandle(
@@ -86,7 +85,7 @@ export const StartGridSession = forwardRef<
 
     return (
       <Grid container spacing={2} sx={{ mb: 2 }}>
-        <Grid size={{ xs: 12, lg: 6 }} sx={{ position: 'relative' }}>
+        <Grid size={{ xs: 12 }} sx={{ position: 'relative' }}>
           <Autocomplete
             freeSolo
             fullWidth
@@ -108,10 +107,8 @@ export const StartGridSession = forwardRef<
             onChange={(_e, value) => {
               if (value && typeof value === 'object') {
                 setGridSql(value.sessionId || '')
-                setSchemaId(value.gridJsonSchema$Id || '')
                 void handleStartSession({
                   gridSqlOrSessionId: value.sessionId!,
-                  schemaId: value.gridJsonSchema$Id,
                 })
               } else {
                 setGridSql(value || '')
@@ -171,15 +168,6 @@ export const StartGridSession = forwardRef<
                 </Grid>
               </MenuItem>
             )}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <TextField
-            label={'Schema (optional)'}
-            placeholder={'Enter a schema $id e.g. my-org.NameOfMySchema-1.0.0'}
-            value={schemaId}
-            fullWidth
-            onChange={e => setSchemaId(e.target.value)}
           />
         </Grid>
         <Grid container size={12} justifyContent="flex-end">
