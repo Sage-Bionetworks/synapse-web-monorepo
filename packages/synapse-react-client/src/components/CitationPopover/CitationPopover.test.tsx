@@ -8,6 +8,7 @@ import userEvent from '@testing-library/user-event'
 import CitationPopover from './CitationPopover'
 import { createLinkAndDownload } from './CitationPopoverUtils'
 import { useCitation } from './useCitation'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 
 vi.mock('./useCitation', () => ({
   useCitation: vi.fn(),
@@ -17,6 +18,14 @@ vi.mock('./CitationPopoverUtils', () => ({
   createLinkAndDownload: vi.fn(),
 }))
 
+vi.mock('../Markdown/MarkdownSynapse', () => ({
+  default: vi.fn(),
+}))
+const mockMarkdownSynapse = vi.mocked(MarkdownSynapse)
+mockMarkdownSynapse.mockImplementation(
+  props =>
+    (<div data-testid={'MarkdownSynapseContent'}>{props.markdown}</div>) as any,
+)
 const mockUseCitation = vi.mocked(useCitation)
 const mockCreateLinkAndDownload = vi.mocked(createLinkAndDownload)
 
