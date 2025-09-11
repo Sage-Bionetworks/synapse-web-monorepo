@@ -5,6 +5,7 @@ import { ComplexJSONRenderer } from '@/components/SynapseTable/SynapseTableCell/
 import { useGetSchema } from '@/synapse-queries/index'
 import getEnumeratedValues from '@/utils/jsonschema/getEnumeratedValues'
 import getSchemaForProperty from '@/utils/jsonschema/getSchemaForProperty'
+import getRequiredAttributes from '@/utils/jsonschema/getRequiredAttributes'
 import { getType } from '@/utils/jsonschema/getType'
 import Grid from '@mui/material/Grid'
 import { GridSession } from '@sage-bionetworks/synapse-client'
@@ -110,6 +111,7 @@ const SynapseGrid = forwardRef<
   function modelColsToGrid(modelSnapshot: GridModelSnapshot): Column[] {
     if (!modelSnapshot) return []
     const { columnNames, columnOrder } = modelSnapshot
+    const requiredFields = jsonSchema ? getRequiredAttributes(jsonSchema) : []
     const gridCols: Column[] = columnOrder.map((index: number) => {
       const columnName = columnNames[index]
       const enumeratedValues = jsonSchema
@@ -125,6 +127,9 @@ const SynapseGrid = forwardRef<
         return {
           ...keyColumn(columnName, checkboxColumn),
           title: columnName,
+          headerClassName: requiredFields.includes(columnName)
+            ? 'header-cell-required'
+            : 'header-cell',
         }
       }
 
@@ -132,6 +137,9 @@ const SynapseGrid = forwardRef<
         return {
           ...keyColumn(columnName, floatColumn),
           title: columnName,
+          headerClassName: requiredFields.includes(columnName)
+            ? 'header-cell-required'
+            : 'header-cell',
         }
       }
 
@@ -146,6 +154,9 @@ const SynapseGrid = forwardRef<
             }),
           ),
           title: columnName,
+          headerClassName: requiredFields.includes(columnName)
+            ? 'header-cell-required'
+            : 'header-cell',
         }
       }
       return {
@@ -155,6 +166,9 @@ const SynapseGrid = forwardRef<
           createTextColumn({ continuousUpdates: false }),
         ),
         title: columnName,
+        headerClassName: requiredFields.includes(columnName)
+          ? 'header-cell-required'
+          : 'header-cell',
       }
     })
     return gridCols
