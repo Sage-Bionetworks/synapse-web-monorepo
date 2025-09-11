@@ -19,6 +19,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useState } from 'react'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
 import { CitationProps, CitationFormat } from './CitationTypes'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 
 const selectSx: SxProps = {
   width: '100%',
@@ -165,7 +166,7 @@ export const CitationPopoverContent = (props: CitationPopoverProps) => {
         >
           {boilerplateText && (
             <>
-              {boilerplateText}
+              <MarkdownSynapse markdown={boilerplateText} />
               <br />
             </>
           )}

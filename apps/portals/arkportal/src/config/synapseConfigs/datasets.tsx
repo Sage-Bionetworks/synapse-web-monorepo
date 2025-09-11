@@ -9,6 +9,7 @@ import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
 import { datasetsSql } from '../resources'
+import { citationBoilerplateText } from './commonProps'
 
 const rgbIndex = 0
 export const datasetColumnLinks: LabelLinkConfig = [
@@ -43,6 +44,9 @@ export const datasetSchema: TableToGenericCardMapping = {
   description: 'description',
   secondaryLabels: ['project', 'programPhase', 'assay', 'datasetType', 'id'],
   icon: 'datasetType',
+  includeCitation: true,
+  defaultCitationFormat: 'nature',
+  citationBoilerplateText: citationBoilerplateText,
 }
 export const datasetColumnAliases: Record<string, string> = {
   id: 'On Synapse',
