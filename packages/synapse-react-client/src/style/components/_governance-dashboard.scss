@@ -52,15 +52,8 @@
 .AccessRequirementDashboard,
 .AccessSubmissionDashboard,
 .UserHistoryDashboard {
-  @include SrcMixins.MuiTypographyTopMargins();
-
   .InputPanel {
-    display: flex;
-    justify-content: space-between;
-    > * {
-      flex: 0 0 32%;
-    }
-
+    margin-bottom: 16px;
     input {
       margin-bottom: 0;
     }

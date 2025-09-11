@@ -3,12 +3,17 @@ import {
   mockSearchResultsPageOne,
 } from '@/mocks/accessRequirement/mockAccessRequirements'
 import { server } from '@/mocks/msw/server'
-import { MOCK_USER_ID, MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
+import {
+  MOCK_USER_ID,
+  MOCK_USER_NAME,
+  mockUserBundle,
+} from '@/mocks/user/mock_user_profile'
 import { getLocationTracker } from '@/testutils/LocationTracker'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_SEARCH,
+  USER_BUNDLE,
 } from '@/utils/APIConstants'
 import {
   BackendDestinationEnum,
@@ -87,6 +92,16 @@ describe('AccessSubmissionDashboard tests', () => {
         async ({ request }) => {
           onServiceReceivedRequest(await request.json())
           return HttpResponse.json(mockAccessRequirement, { status: 200 })
+        },
+      ),
+      // Current user is ACT member
+      http.get(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
+        () => {
+          return HttpResponse.json(
+            { ...mockUserBundle, isACTMember: true },
+            { status: 200 },
+          )
         },
       ),
     )
@@ -190,11 +205,35 @@ describe('AccessSubmissionDashboard tests', () => {
     })
   })
 
+  it('Updates the passed props and URLSearchParams when updating reviewerFilterType', async () => {
+    renderComponent()
+    const reviewerFilterTypeCheckbox = await screen.findByLabelText(
+      'Reviewed by ACT only',
+    )
+    await userEvent.click(reviewerFilterTypeCheckbox)
+
+    await waitFor(() => {
+      expect(
+        new URLSearchParams(getLocation().search).get('reviewerFilterType'),
+      ).toEqual('ACT_ONLY')
+
+      expect(mockAccessRequestSubmissionTable).toHaveBeenLastRenderedWithProps(
+        expect.objectContaining({
+          accessRequirementId: undefined,
+          accessorId: undefined,
+          reviewerId: undefined,
+          reviewerFilterType: 'ACT_ONLY',
+        }),
+      )
+    })
+  })
+
   it('Auto-fills the inputs with search parameter values', async () => {
     const searchParams = new URLSearchParams('')
     searchParams.set('accessRequirementId', MOCK_AR_ID.toString())
     searchParams.set('accessorId', MOCK_USER_ID.toString())
     searchParams.set('reviewerId', MOCK_USER_ID.toString())
+    searchParams.set('reviewerFilterType', 'ACT_ONLY')
     const initialEntries = ['/', `/?${searchParams.toString()}`]
     renderComponent(initialEntries)
 
@@ -204,10 +243,32 @@ describe('AccessSubmissionDashboard tests', () => {
           accessRequirementId: MOCK_AR_ID.toString(),
           accessorId: MOCK_USER_ID.toString(),
           reviewerId: MOCK_USER_ID.toString(),
+          reviewerFilterType: 'ACT_ONLY',
         }),
       ),
     )
   })
+
+  it('hides the reviewerFilterType checkbox when the current user is not an ACT member', async () => {
+    server.use(
+      http.get(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
+        () => {
+          return HttpResponse.json(
+            { ...mockUserBundle, isACTMember: false },
+            { status: 200 },
+          )
+        },
+      ),
+    )
+
+    renderComponent()
+
+    await expect(
+      screen.findByLabelText('Reviewed by ACT only'),
+    ).rejects.toThrow()
+  })
+
   describe('getReviewerFilterID', () => {
     it('handle non-act reviewer', () => {
       const nonActReviewerID = MOCK_USER_ID.toString()
