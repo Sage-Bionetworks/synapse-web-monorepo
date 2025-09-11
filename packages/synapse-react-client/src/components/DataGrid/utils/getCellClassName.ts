@@ -9,19 +9,25 @@ export function getCellClassName(params: {
   selectedRowIndex: number | null
 }): string | undefined {
   const { rowData, rowIndex, columnId, selectedRowIndex } = params
+
+  const isSelected = selectedRowIndex === rowIndex
   const validationMessages = rowData.__validationResults?.allValidationMessages
-  if (!validationMessages) return undefined
 
-  const invalidFields =
-    extractUniqueValidationFieldNames(validationMessages) || []
-  if (!invalidFields.length) return undefined
-  if (!columnId) return undefined
+  const classList: string[] = []
+  if (isSelected) {
+    classList.push('cell-row-selected')
+  }
 
-  const invalidSet = new Set(invalidFields.map(f => f.toLowerCase()))
-  if (!invalidSet.has(columnId.toLowerCase())) return undefined
+  if (validationMessages && columnId) {
+    const invalidFields =
+      extractUniqueValidationFieldNames(validationMessages) || []
+    if (invalidFields.length) {
+      const invalidSet = new Set(invalidFields.map(f => f.toLowerCase()))
+      if (invalidSet.has(columnId.toLowerCase())) {
+        classList.push('cell-invalid')
+      }
+    }
+  }
 
-  const safe = columnId.replace(/[^a-zA-Z0-9_-]/g, '-')
-  return classNames('cell-invalid', `cell-invalid-field-${safe}`, {
-    'cell-row-selected': selectedRowIndex === rowIndex,
-  })
+  return classList.length ? classNames(classList) : undefined
 }
