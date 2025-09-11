@@ -102,8 +102,8 @@ const RedirectDialog = (props: RedirectDialogProps) => {
       if (currentUrl === internalUrl) {
         return
       }
-
       navigate(internalUrl)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
       onCancelRedirect()
     }
   }, [

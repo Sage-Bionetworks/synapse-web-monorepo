@@ -20,6 +20,8 @@ import {
 } from '@/utils/functions/getEndpoint'
 import dayjs from 'dayjs'
 import { formatDate } from '@/utils/functions/DateFormatter'
+import { EntityTypeIcon } from '../EntityIcon'
+import { EntityType } from '@sage-bionetworks/synapse-types'
 
 export type SynapseSearchResultsCardProps = {
   entityId: string
@@ -79,6 +81,14 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
       </Box>
       <Box>
         <Chip
+          icon={
+            <EntityTypeIcon
+              type={props.entityType as EntityType}
+              style={{
+                color: 'inherit',
+              }}
+            />
+          }
           label={props.entityType}
           sx={{
             backgroundColor: '#DAE9E7',
