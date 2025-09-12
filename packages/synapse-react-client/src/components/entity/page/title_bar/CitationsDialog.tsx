@@ -3,16 +3,22 @@ import { CitingWork } from './useDataCiteUsage'
 import { sanitize } from '@/utils/functions/SanitizeHtmlUtils'
 import { DialogBase } from '@/components/DialogBase'
 
-type Props = { open: boolean; onClose: () => void; citations: CitingWork[] }
+type Props = {
+  open: boolean
+  onClose: () => void
+  citations: CitingWork[]
+  title?: string
+}
 
-export const DataCiteCitationsDialog: React.FC<Props> = ({
+export const CitationsDialog: React.FC<Props> = ({
   open,
   onClose,
   citations,
+  title = 'Cited by',
 }) => {
   return (
     <DialogBase
-      title={'Cited by'}
+      title={title}
       onCancel={() => {
         onClose()
       }}
