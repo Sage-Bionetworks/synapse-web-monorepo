@@ -1,8 +1,0 @@
-import{T as m}from"./TextField-S5v_QDQ5.js";import"./jsx-runtime-D_zvdyIk.js";import"./StyledFormControl-CdMr4ThI.js";import"./DefaultPropsProvider-DbzGYC6R.js";import"./createTheme-DvxOXisY.js";import"./index-d3rqgMCN.js";import"./iframe-ClNwV9PY.js";import"./FormControl-9hcPpV8B.js";import"./useFormControl-CiqPYuvB.js";import"./isMuiElement-DVFTe1PL.js";import"./inputBaseClasses-CUQGo_ih.js";import"./InputLabel-Br0JSNuN.js";import"./formControlState-Dq1zat_P.js";import"./FormLabel-DYjyYoUg.js";import"./createSimplePaletteValueFilter-BGU1NRjf.js";import"./InputBase-BRebnRX2.js";import"./isHostComponent-DVu5iVWx.js";import"./index-g0GcxGYP.js";import"./extendSxProp-FnuzVdsZ.js";import"./useTheme-CIBZr94v.js";import"./useForkRef-D3CdTM63.js";import"./ownerWindow-HkKU3E4x.js";import"./ownerDocument-DW-IO8s5.js";import"./debounce-Be36O1Ab.js";const I={title:"UI/SDS/TextField",component:m},r={args:{label:"Label",placeholder:"my placeholder",fullWidth:!0,required:!0}};var t,o,e;r.parameters={...r.parameters,docs:{...(t=r.parameters)==null?void 0:t.docs,source:{originalSource:`{
-  args: {
-    label: 'Label',
-    placeholder: 'my placeholder',
-    fullWidth: true,
-    required: true
-  }
-}`,...(e=(o=r.parameters)==null?void 0:o.docs)==null?void 0:e.source}}};const O=["Demo"];export{r as Demo,O as __namedExportsOrder,I as default};
