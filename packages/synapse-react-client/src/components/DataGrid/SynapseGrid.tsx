@@ -332,6 +332,7 @@ const SynapseGrid = forwardRef<
                       'row-invalid':
                         rowData.__validationResults?.isValid === false,
                       'row-unknown':
+                        !!jsonSchema &&
                         rowData.__validationResults?.isValid == undefined,
                       'row-selected': selectedRowIndex === rowIndex,
                     })
