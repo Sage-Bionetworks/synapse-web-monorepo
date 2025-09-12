@@ -16,7 +16,8 @@ import { HasAccessV2 } from '../../../HasAccess/HasAccessV2'
 import { DoiObjectType } from '@sage-bionetworks/synapse-client'
 import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
 import { maxCitationCount, useDataCiteUsage } from './useDataCiteUsage'
-import { DataCiteCitationsDialog } from './DataCiteCitationsDialog'
+import { CitationsDialog } from './CitationsDialog'
+import { useGetMentions } from './useGetMentions'
 
 export type EntityProperty = {
   key: string
@@ -42,8 +43,7 @@ export function useGetEntityTitleBarProperties(
     fileHandleStorageInfo,
     uploadDestinationString,
   } = useGetEntityMetadata(entityId, versionNumber)
-  const [dataCiteCitationsDialogOpen, setDataCiteCitationsDialogOpen] =
-    useState(false)
+  const [citationsDialogOpen, setCitationsDialogOpen] = useState(false)
   const { data: entityChildrenResponse } = useGetEntityChildren(
     {
       parentId: entityId,
@@ -106,6 +106,7 @@ export function useGetEntityTitleBarProperties(
       ? ((bundle?.entity as EntityRefCollectionView).items ?? []).length
       : null
 
+  const { data: mentions } = useGetMentions(entityId)
   return [
     {
       key: 'id',
@@ -183,17 +184,35 @@ export function useGetEntityTitleBarProperties(
       title: 'Citations',
       value: (
         <>
-          <Link onClick={() => setDataCiteCitationsDialogOpen(true)}>
+          <Link onClick={() => setCitationsDialogOpen(true)}>
             {dataCiteUsage.citationCount}
             {dataCiteUsage.citationCount == maxCitationCount && '+'}
           </Link>
-          <DataCiteCitationsDialog
-            open={dataCiteCitationsDialogOpen}
-            onClose={() => setDataCiteCitationsDialogOpen(false)}
+          <CitationsDialog
+            open={citationsDialogOpen}
+            onClose={() => setCitationsDialogOpen(false)}
             citations={dataCiteUsage.citations}
           />
         </>
       ),
     },
+    mentions &&
+      mentions.length > 0 && {
+        key: 'mentions',
+        title: 'Mentions',
+        value: (
+          <>
+            <Link onClick={() => setCitationsDialogOpen(true)}>
+              {mentions.length}
+            </Link>
+            <CitationsDialog
+              open={citationsDialogOpen}
+              onClose={() => setCitationsDialogOpen(false)}
+              citations={mentions}
+              title="Mentioned by"
+            />
+          </>
+        ),
+      },
   ].filter(item => !!item) as EntityProperty[]
 }
