@@ -1,120 +1,124 @@
-import {
-  describe,
-  it,
-  expect,
-  vi,
-  beforeEach,
-  type MockedFunction,
-} from 'vitest'
-
-vi.mock('./parseValidationColumns', () => ({
-  extractUniqueValidationFieldNames: vi.fn(),
-}))
-
+import { describe, it, expect } from 'vitest'
 import { getCellClassName } from './getCellClassName'
-import { extractUniqueValidationFieldNames } from './parseValidationColumns'
-
-type Row = any
-
-function makeRow(withValidation: boolean): Row {
-  if (!withValidation) return {}
-  return {
-    __validationResults: {
-      allValidationMessages: [{ message: 'x' }],
-    },
-  }
-}
-
-const mockExtract = extractUniqueValidationFieldNames as MockedFunction<
-  typeof extractUniqueValidationFieldNames
->
+import { DataGridRow } from '../DataGridTypes'
 
 describe('getCellClassName', () => {
-  beforeEach(() => {
-    mockExtract.mockReset()
-  })
+  const createMockRowData = (validationResults?: Set<string>): DataGridRow =>
+    ({
+      __cellValidationResults: validationResults,
+    } as DataGridRow)
 
-  it('returns undefined when not selected and no validationMessages (no columnId)', () => {
-    const res = getCellClassName({
-      rowData: makeRow(false),
+  it('returns undefined when no classes should be applied', () => {
+    const result = getCellClassName({
+      rowData: createMockRowData(),
       rowIndex: 0,
-      columnId: undefined,
+      columnId: 'col1',
       selectedRowIndex: null,
     })
-    expect(res).toBeUndefined()
+
+    expect(result).toBeUndefined()
   })
 
-  it('returns undefined when not selected and no validationMessages (with columnId)', () => {
-    const res = getCellClassName({
-      rowData: makeRow(false),
-      rowIndex: 0,
-      columnId: 'fieldA',
-      selectedRowIndex: null,
-    })
-    expect(res).toBeUndefined()
-  })
-
-  it('returns only selection class when selected and no validationMessages', () => {
-    const res = getCellClassName({
-      rowData: makeRow(false),
-      rowIndex: 2,
-      columnId: 'fieldA',
-      selectedRowIndex: 2,
-    })
-    expect(res).toBe('cell-row-selected')
-  })
-
-  it('returns only selection class when selected, validation present, columnId undefined', () => {
-    const res = getCellClassName({
-      rowData: makeRow(true),
+  it('returns undefined when row is not selected and no validation errors', () => {
+    const result = getCellClassName({
+      rowData: createMockRowData(),
       rowIndex: 1,
+      columnId: 'col1',
+      selectedRowIndex: 0,
+    })
+
+    expect(result).toBeUndefined()
+  })
+
+  it('adds cell-row-selected class when row is selected', () => {
+    const result = getCellClassName({
+      rowData: createMockRowData(),
+      rowIndex: 0,
+      columnId: 'col1',
+      selectedRowIndex: 0,
+    })
+
+    expect(result).toBe('cell-row-selected')
+  })
+
+  it('adds cell-invalid class when cell has validation errors', () => {
+    const validationResults = new Set(['col1'])
+    const result = getCellClassName({
+      rowData: createMockRowData(validationResults),
+      rowIndex: 0,
+      columnId: 'col1',
+      selectedRowIndex: null,
+    })
+
+    expect(result).toBe('cell-invalid')
+  })
+
+  it('adds both classes when row is selected and cell is invalid', () => {
+    const validationResults = new Set(['col1'])
+    const result = getCellClassName({
+      rowData: createMockRowData(validationResults),
+      rowIndex: 0,
+      columnId: 'col1',
+      selectedRowIndex: 0,
+    })
+
+    expect(result).toBe('cell-row-selected cell-invalid')
+  })
+
+  it('does not add cell-invalid class when columnId is not in validation results', () => {
+    const validationResults = new Set(['col2'])
+    const result = getCellClassName({
+      rowData: createMockRowData(validationResults),
+      rowIndex: 0,
+      columnId: 'col1',
+      selectedRowIndex: null,
+    })
+
+    expect(result).toBeUndefined()
+  })
+
+  it('does not add cell-invalid class when columnId is undefined', () => {
+    const validationResults = new Set(['col1'])
+    const result = getCellClassName({
+      rowData: createMockRowData(validationResults),
+      rowIndex: 0,
       columnId: undefined,
-      selectedRowIndex: 1,
-    })
-    expect(res).toBe('cell-row-selected')
-  })
-
-  it('returns only selection class when selected and invalidFields empty', () => {
-    mockExtract.mockReturnValue([])
-    const res = getCellClassName({
-      rowData: makeRow(true),
-      rowIndex: 5,
-      columnId: 'fieldA',
-      selectedRowIndex: 5,
-    })
-    expect(res).toBe('cell-row-selected')
-  })
-
-  it('returns only selection class when selected and columnId not in invalidFields', () => {
-    mockExtract.mockReturnValue(['other'])
-    const res = getCellClassName({
-      rowData: makeRow(true),
-      rowIndex: 3,
-      columnId: 'fieldA',
-      selectedRowIndex: 3,
-    })
-    expect(res).toBe('cell-row-selected')
-  })
-
-  it('returns undefined when not selected, validation present, columnId not in invalidFields', () => {
-    mockExtract.mockReturnValue(['other'])
-    const res = getCellClassName({
-      rowData: makeRow(true),
-      rowIndex: 3,
-      columnId: 'fieldA',
       selectedRowIndex: null,
     })
-    expect(res).toBeUndefined()
+
+    expect(result).toBeUndefined()
   })
 
-  it('returns undefined when invalidFields empty and not selected', () => {
-    mockExtract.mockReturnValue([])
-    const res = getCellClassName({
-      rowData: makeRow(true),
-      rowIndex: 10,
-      columnId: 'x',
+  it('does not add cell-invalid class when validation results is undefined', () => {
+    const result = getCellClassName({
+      rowData: createMockRowData(undefined),
+      rowIndex: 0,
+      columnId: 'col1',
       selectedRowIndex: null,
     })
-    expect(res).toBeUndefined()
+
+    expect(result).toBeUndefined()
+  })
+
+  it('handles selectedRowIndex of 0 correctly', () => {
+    const result = getCellClassName({
+      rowData: createMockRowData(),
+      rowIndex: 0,
+      columnId: 'col1',
+      selectedRowIndex: 0,
+    })
+
+    expect(result).toBe('cell-row-selected')
+  })
+
+  it('handles negative row indices', () => {
+    const result = getCellClassName({
+      rowData: createMockRowData(),
+      rowIndex: -1,
+      columnId: 'col1',
+      selectedRowIndex: -1,
+    })
+
+    expect(result).toBe('cell-row-selected')
   })
 })
