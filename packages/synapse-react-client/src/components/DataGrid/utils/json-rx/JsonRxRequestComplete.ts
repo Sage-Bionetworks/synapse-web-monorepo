@@ -1,18 +1,23 @@
 import JsonRxMessage from './JsonRxMessage'
 
+export const REQUEST_COMPLETE_TYPE_CODE = 1
+
 export default class JsonRxRequestComplete<
   TPayload = unknown,
 > extends JsonRxMessage {
-  public typeCode = 1
-  public requestId: number
-  public methodName: string
-  public payload?: TPayload
+  private requestId: number
+  private methodName: string
+  private payload?: TPayload
 
-  constructor(requestId: number, methodName: string, payload?: TPayload) {
-    super()
-    this.requestId = requestId
+  constructor(methodName: string, payload?: TPayload) {
+    super(REQUEST_COMPLETE_TYPE_CODE)
     this.methodName = methodName
     this.payload = payload
+    this.requestId = -1
+  }
+
+  public setRequestId(requestId: number) {
+    this.requestId = requestId
   }
 
   public getJson(): Array<unknown> {

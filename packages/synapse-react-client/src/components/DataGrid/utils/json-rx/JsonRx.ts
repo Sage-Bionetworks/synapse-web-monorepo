@@ -1,13 +1,27 @@
 import JsonRxMessage from '@/components/DataGrid/utils/json-rx/JsonRxMessage'
-import JsonRxNotification from '@/components/DataGrid/utils/json-rx/JsonRxNotification'
-import JsonRxRequest from '@/components/DataGrid/utils/json-rx/JsonRxRequest'
-import JsonRxResponse from '@/components/DataGrid/utils/json-rx/JsonRxResponse'
-import JsonRxResponseComplete from '@/components/DataGrid/utils/json-rx/JsonRxResponseComplete'
+import JsonRxNotification, {
+  NOTIFICATION_TYPE_CODE,
+} from '@/components/DataGrid/utils/json-rx/JsonRxNotification'
+import JsonRxRequest, {
+  REQUEST_TYPE_CODE,
+} from '@/components/DataGrid/utils/json-rx/JsonRxRequest'
+import JsonRxResponse, {
+  RESPONSE_TYPE_CODE,
+} from '@/components/DataGrid/utils/json-rx/JsonRxResponse'
+import JsonRxResponseComplete, {
+  RESPONSE_COMPLETE_TYPE_CODE,
+} from '@/components/DataGrid/utils/json-rx/JsonRxResponseComplete'
+import JsonRxRequestComplete, {
+  REQUEST_COMPLETE_TYPE_CODE,
+} from './JsonRxRequestComplete'
 
-// https://jsonjoy.com/specs/json-rx
+/**
+ * Static utility methods intended to implement the JSON-Rx communication protocol
+ * Spec: https://jsonjoy.com/specs/json-rx
+ */
 export default class JsonRx {
   /**
-   * Converts a JSON-Rx message (array) into the appropriate JsonRxMessage subclass
+   * Converts a JSON-encoded JSON-Rx message (which is always an array) into the appropriate JsonRxMessage subclass
    *
    * For more information, see the JSON-Rx specification: https://jsonjoy.com/specs/json-rx
    * @param json
@@ -25,22 +39,26 @@ export default class JsonRx {
     }
 
     switch (typeCode) {
-      case 0: {
+      case REQUEST_TYPE_CODE: {
         // Request
         const [_, requestId, methodName, payload] = json
         return new JsonRxRequest(requestId, methodName, payload)
       }
-      case 4: {
+      case REQUEST_COMPLETE_TYPE_CODE: {
+        const [_, methodName, payload] = json
+        return new JsonRxRequestComplete(methodName, payload)
+      }
+      case RESPONSE_TYPE_CODE: {
         // Response
         const [_, subscriptionId, payload] = json
         return new JsonRxResponse(subscriptionId, payload)
       }
-      case 5: {
+      case RESPONSE_COMPLETE_TYPE_CODE: {
         // ResponseComplete
         const [_, subscriptionId, payload] = json
         return new JsonRxResponseComplete(subscriptionId, payload)
       }
-      case 8: {
+      case NOTIFICATION_TYPE_CODE: {
         // Notification
         const [_, methodName, payload] = json
         return new JsonRxNotification(methodName, payload)

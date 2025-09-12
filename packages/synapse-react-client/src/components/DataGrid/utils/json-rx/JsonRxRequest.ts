@@ -1,13 +1,14 @@
 import JsonRxMessage from './JsonRxMessage'
 
+export const REQUEST_TYPE_CODE = 0
+
 export default class JsonRxRequest<TPayload = unknown> extends JsonRxMessage {
-  public typeCode = 0
-  public requestId: number
-  public methodName: string
-  public payload?: TPayload
+  private requestId: number
+  private methodName: string
+  private payload?: TPayload
 
   constructor(requestId: number, methodName: string, payload?: TPayload) {
-    super()
+    super(REQUEST_TYPE_CODE)
     this.requestId = requestId
     this.methodName = methodName
     this.payload = payload

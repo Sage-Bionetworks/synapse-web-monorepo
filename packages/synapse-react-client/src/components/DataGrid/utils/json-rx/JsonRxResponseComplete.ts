@@ -1,14 +1,19 @@
 import JsonRxMessage from './JsonRxMessage'
 
+export const RESPONSE_COMPLETE_TYPE_CODE = 5
+
 export default class JsonRxResponseComplete<
   TPayload = unknown,
 > extends JsonRxMessage {
-  public typeCode = 5
-  public subscriptionId: number
-  public payload?: TPayload
+  private subscriptionId: number
+  private payload?: TPayload
+
+  public getSubscriptionId(): number {
+    return this.subscriptionId
+  }
 
   constructor(subscriptionId: number, payload?: TPayload) {
-    super()
+    super(RESPONSE_COMPLETE_TYPE_CODE)
     this.subscriptionId = subscriptionId
     this.payload = payload
   }

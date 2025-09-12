@@ -1,9 +1,10 @@
 import JsonRxMessage from './JsonRxMessage'
 
+export const NOTIFICATION_TYPE_CODE = 8
+
 export default class JsonRxNotification<
   TPayload = unknown,
 > extends JsonRxMessage {
-  private typeCode = 8
   private methodName: string
   private payload?: TPayload
 
@@ -16,7 +17,7 @@ export default class JsonRxNotification<
   }
 
   constructor(methodName: string, payload?: TPayload) {
-    super()
+    super(NOTIFICATION_TYPE_CODE)
     this.methodName = methodName
     this.payload = payload
   }

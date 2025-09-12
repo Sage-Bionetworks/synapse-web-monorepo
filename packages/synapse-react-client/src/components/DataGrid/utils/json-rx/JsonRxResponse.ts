@@ -1,7 +1,8 @@
 import JsonRxMessage from './JsonRxMessage'
 
+export const RESPONSE_TYPE_CODE = 4
+
 export default class JsonRxResponse<TPayload = unknown> extends JsonRxMessage {
-  private typeCode = 4
   private subscriptionId: number
   private payload: TPayload
 
@@ -10,7 +11,7 @@ export default class JsonRxResponse<TPayload = unknown> extends JsonRxMessage {
   }
 
   constructor(subscriptionId: number, payload: TPayload) {
-    super()
+    super(RESPONSE_TYPE_CODE)
     this.subscriptionId = subscriptionId
     this.payload = payload
   }
