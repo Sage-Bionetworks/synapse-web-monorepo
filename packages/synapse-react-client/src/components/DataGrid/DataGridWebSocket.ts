@@ -5,6 +5,7 @@ import JsonRxNotification from '@/components/DataGrid/utils/json-rx/JsonRxNotifi
 import JsonRxRequestComplete from '@/components/DataGrid/utils/json-rx/JsonRxRequestComplete'
 import JsonRxResponse from '@/components/DataGrid/utils/json-rx/JsonRxResponse'
 import JsonRxResponseComplete from '@/components/DataGrid/utils/json-rx/JsonRxResponseComplete'
+import MessageCounter from '@/components/DataGrid/utils/MessageCounter'
 import { splitPatch } from '@/components/DataGrid/utils/splitPatch'
 import { Model } from 'json-joy/lib/json-crdt'
 import {
@@ -34,7 +35,7 @@ const DEFAULT_MAX_PAYLOAD_SIZE_BYTES = 30 * 1024 // 30 KB
 export class DataGridWebSocket {
   private socket: WebSocket
   private model: GridModel | null = null
-  private sequenceNumber: number = 0
+  private messageCounter: MessageCounter
   private replicaId?: number
   private verboseEncoder = new VerboseEncoder()
   private maxPayloadSizeBytes: number
@@ -54,6 +55,7 @@ export class DataGridWebSocket {
       maxPayloadSizeBytes,
       socket,
     } = args
+    this.messageCounter = new MessageCounter()
     this.replicaId = replicaId
     this.maxPayloadSizeBytes =
       maxPayloadSizeBytes ?? DEFAULT_MAX_PAYLOAD_SIZE_BYTES
@@ -125,11 +127,7 @@ export class DataGridWebSocket {
           encodedModelClock = encode(modelClock)
         }
         if (encodedModelClock) {
-          const msg = new JsonRxRequestComplete(
-            this.sequenceNumber,
-            'patch',
-            encodedModelClock,
-          )
+          const msg = new JsonRxRequestComplete('patch', encodedModelClock)
           console.debug('Responding with patch:', msg)
           this.sendMessage(msg)
         } else {
@@ -141,7 +139,6 @@ export class DataGridWebSocket {
       }
     } else if (message instanceof JsonRxResponseComplete) {
       // Clocks are in sync, no further action needed
-      this.sequenceNumber += 1
       this.onGridReady()
       console.debug(
         'Clocks synchronized with server. Incrementing sequence number.',
@@ -177,7 +174,6 @@ export class DataGridWebSocket {
         const verbModel = this.verboseEncoder.encode(this.model)
         console.debug('New patch received, syncing data:', verbModel.time)
         const msg = new JsonRxRequestComplete(
-          this.sequenceNumber,
           'synchronize-clock',
           verbModel.time,
         )
@@ -194,6 +190,10 @@ export class DataGridWebSocket {
 
   private sendMessage(message: JsonRxMessage) {
     if (this.socket.readyState === WebSocket.OPEN) {
+      if (message instanceof JsonRxRequestComplete) {
+        const subscriptionId = this.messageCounter.getNext()
+        message.setRequestId(subscriptionId)
+      }
       console.debug('Sending message:', message)
       this.socket.send(JSON.stringify(message.getJson()))
     } else {
@@ -217,11 +217,7 @@ export class DataGridWebSocket {
       const patches = splitPatch(patch, this.maxPayloadSizeBytes)
       patches.forEach(compactEncodedPatch => {
         console.debug('Sending patch to server:', compactEncodedPatch)
-        const msg = new JsonRxRequestComplete(
-          this.sequenceNumber,
-          'patch',
-          compactEncodedPatch,
-        )
+        const msg = new JsonRxRequestComplete('patch', compactEncodedPatch)
         this.sendMessage(msg)
       })
     }
@@ -230,11 +226,7 @@ export class DataGridWebSocket {
   private sendSyncMessage(
     clock: number | JsonCrdtVerboseLogicalTimestamp[] = [],
   ) {
-    const message = new JsonRxRequestComplete(
-      this.sequenceNumber,
-      'synchronize-clock',
-      clock,
-    )
+    const message = new JsonRxRequestComplete('synchronize-clock', clock)
     this.sendMessage(message)
   }
 }
