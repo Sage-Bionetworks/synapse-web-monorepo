@@ -141,3 +141,16 @@ export function isEntityViewOrDatasetOrCollection(entity: Entity): boolean {
         isDatasetCollection(entity)),
   )
 }
+
+export function mapRowToRecord(
+  rowData: (string | null)[],
+  schema: Record<string, number>,
+): Record<string, string | null> {
+  return Object.entries(schema).reduce<Record<string, string | null>>(
+    (acc, [columnName, columnIndex]) => {
+      acc[columnName] = rowData[columnIndex]
+      return acc
+    },
+    {},
+  )
+}

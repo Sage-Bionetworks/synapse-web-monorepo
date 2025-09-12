@@ -25,76 +25,74 @@ function DatasetDetailsPage() {
   }
 
   return (
-    <>
-      <CardContainerLogic
-        cardConfiguration={{ ...datasetCardConfiguration, isHeader: true }}
-        sql={datasetsSql}
-        columnAliases={columnAliases}
-        searchParams={{ id }}
-      />
-      <DetailsPage
-        sql={datasetsSql}
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        ContainerProps={{
-          maxWidth: 'xl',
-        }}
-        resourcePrimaryKey={['id']}
-      >
-        <DetailsPageContent
-          content={[
-            // {
-            //   name: 'Markdown',
-            //   columnName: 'datasetDescription',
-            //   title: 'Description',
-            //   props: {},
-            // },
-            // {
-            //   name: 'Markdown',
-            //   columnName: 'acknowledgmentStatement',
-            //   title: 'Acknowledgment',
-            //   props: {},
-            // },
-            {
-              id: 'DatasetJsonLdScript',
-              element: <DatasetJsonLdScript entityId={id} />,
-            },
-            {
-              id: 'Files',
-              element: (
-                <DetailsPageContextConsumer>
-                  {({ context }) => (
-                    <QueryWrapperPlotNav
-                      rgbIndex={datasetsRgbIndex}
-                      sql={`SELECT * FROM ${id}${
-                        context.rowData?.versionNumber
-                          ? `.${context.rowData.versionNumber}`
-                          : ''
-                      }`}
-                      visibleColumnCount={7}
-                      tableConfiguration={{
-                        showAccessColumn: true,
-                        showDownloadColumn: true,
-                      }}
-                      shouldDeepLink={false}
-                      columnAliases={columnAliases}
-                      defaultShowPlots={false}
-                      enabledExternalAnalysisPlatforms={
-                        enabledAnalysisPlatforms
-                      }
-                      isRowSelectionVisible={true}
-                      rowSelectionPrimaryKey={['id']}
-                      fileIdColumnName="id"
-                      fileNameColumnName="name"
-                      fileVersionColumnName="currentVersion"
-                    />
-                  )}
-                </DetailsPageContextConsumer>
-              ),
-            },
-          ]}
+    <DetailsPage
+      header={
+        <CardContainerLogic
+          cardConfiguration={{ ...datasetCardConfiguration, isHeader: true }}
+          sql={datasetsSql}
+          columnAliases={columnAliases}
+          searchParams={{ id }}
         />
-      </DetailsPage>
-    </>
+      }
+      sql={datasetsSql}
+      sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+      ContainerProps={{
+        maxWidth: 'xl',
+      }}
+      resourcePrimaryKey={['id']}
+    >
+      <DetailsPageContent
+        content={[
+          // {
+          //   name: 'Markdown',
+          //   columnName: 'datasetDescription',
+          //   title: 'Description',
+          //   props: {},
+          // },
+          // {
+          //   name: 'Markdown',
+          //   columnName: 'acknowledgmentStatement',
+          //   title: 'Acknowledgment',
+          //   props: {},
+          // },
+          {
+            id: 'DatasetJsonLdScript',
+            element: <DatasetJsonLdScript entityId={id} />,
+          },
+          {
+            id: 'Files',
+            element: (
+              <DetailsPageContextConsumer>
+                {({ context }) => (
+                  <QueryWrapperPlotNav
+                    rgbIndex={datasetsRgbIndex}
+                    sql={`SELECT * FROM ${id}${
+                      context.rowData?.versionNumber
+                        ? `.${context.rowData.versionNumber}`
+                        : ''
+                    }`}
+                    visibleColumnCount={7}
+                    tableConfiguration={{
+                      showAccessColumn: true,
+                      showDownloadColumn: true,
+                    }}
+                    shouldDeepLink={false}
+                    columnAliases={columnAliases}
+                    defaultShowPlots={false}
+                    enabledExternalAnalysisPlatforms={enabledAnalysisPlatforms}
+                    isRowSelectionVisible={true}
+                    rowSelectionPrimaryKey={['id']}
+                    fileIdColumnName="id"
+                    fileNameColumnName="name"
+                    fileVersionColumnName="currentVersion"
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+        ]}
+      />
+    </DetailsPage>
   )
 }
 

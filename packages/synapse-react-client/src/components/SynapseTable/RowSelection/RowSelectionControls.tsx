@@ -72,7 +72,7 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
                 key={customControl.buttonText}
                 variant="contained"
                 callbackData={{
-                  tableId: entityId,
+                  tableId: entityId!,
                   queryMetadata: queryMetadata,
                   selectedRows,
                   refresh,

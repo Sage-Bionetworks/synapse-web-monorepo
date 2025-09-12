@@ -23,24 +23,21 @@ import { StatusEnum } from './types'
  * See here: https://github.com/enzymejs/enzyme/issues/1553
  */
 
-export type UploadToolSearchParams = {
-  formDataId?: string //formDataId for user data form data
-  dataFileHandleId?: string //fileHandle to get userData
-  submitted?: boolean // if the file has been submitted
-  formGroupId: string
-}
-
 export type SynapseFormWrapperProps = {
   // Provide the parent container (folder/project), that should contain a folder (named <user_id>) that this user can write to.
   formSchemaEntityId: string // Synapse file that contains the form schema.
   formUiSchemaEntityId: string // Synapse file that contains the form ui schema.
   formNavSchemaEntityId: string //Synapse file that consists screen nav schema
   token?: string // user's access token
-  searchParams?: UploadToolSearchParams
   isWizardMode?: boolean // if we are displaying the form in wizard mode
   fileNamePath: string // path in data to specify the name of saved file
   formTitle: string //for UI customization
-  formClass?: string // to support potential theaming
+  formClass?: string // to support potential theming
+
+  formDataId?: string //formDataId for user data form data
+  dataFileHandleId?: string //fileHandle to get userData
+  submitted?: boolean // if the file has been submitted
+  formGroupId: string
 }
 
 type SynapseFormWrapperState = {
@@ -72,7 +69,7 @@ class _SynapseFormWrapper extends Component<
     super(props)
     this.state = {
       isLoading: true,
-      formDataId: this.props?.searchParams?.formDataId,
+      formDataId: this.props?.formDataId,
     }
   }
 
@@ -99,7 +96,7 @@ class _SynapseFormWrapper extends Component<
       versionNumber,
       this.onError,
     )
-    const derefContent = (await $RefParser.dereference(content)) as JSON
+    const derefContent = await $RefParser.dereference<JSON>(content)
     return {
       version: version,
       content: derefContent,
@@ -112,15 +109,11 @@ class _SynapseFormWrapper extends Component<
     }
     try {
       let formData: Record<string, any> = {}
-      let dataFileHandleId: string | undefined
-      let submitted: boolean | undefined
+      const dataFileHandleId = this.props.dataFileHandleId
+      const submitted = this.props.submitted
       let formSchemaVersion = undefined
       let uiSchemaVersion = undefined
       let navSchemaVersion = undefined
-      const { searchParams } = this.props
-      if (searchParams) {
-        ;({ dataFileHandleId, submitted } = searchParams)
-      }
 
       //for not new form we need to get the data
       //and if it is submitted form we need to pull appropriate schema versions
@@ -230,8 +223,7 @@ class _SynapseFormWrapper extends Component<
       fileName,
       fileContentsBlob,
     )
-    const { searchParams } = this.props
-    const formGroupId = searchParams && searchParams.formGroupId
+    const formGroupId = this.props.formGroupId
     if (!formGroupId) {
       console.error('formGroupId must be defined')
       throw new Error('formGroupId must be defined')
@@ -418,10 +410,8 @@ class _SynapseFormWrapper extends Component<
                 onSubmit={(data: any) => {
                   this.submitForm(data)
                 }}
-                isSubmitted={
-                  this.props.searchParams && !!this.props.searchParams.submitted
-                }
-              ></SynapseForm>
+                isSubmitted={this.props.submitted}
+              />
             </div>
           )}
         </div>

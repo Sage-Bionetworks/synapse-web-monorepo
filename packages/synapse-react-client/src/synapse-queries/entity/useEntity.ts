@@ -4,7 +4,9 @@
 
 import SynapseClient from '@/synapse-client'
 import { allowNotFoundError } from '@/synapse-client/SynapseClientUtils'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { entityJsonKeys } from '@/utils/functions/EntityTypeUtils'
+import { createTableUpdateTransactionRequest } from '@/utils/functions/TableColumnSchemaUtils'
 import {
   EntityLookupRequest,
   SynapseClientError,
@@ -29,6 +31,7 @@ import {
   QueryClient,
   QueryKey,
   queryOptions,
+  skipToken,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useMutation,
@@ -46,29 +49,29 @@ import { SetOptional } from 'type-fest'
 import { getNextPageParamForPaginatedResults } from '../InfiniteQueryUtils'
 import { KeyFactory } from '../KeyFactory'
 import { invalidateAllQueriesForEntity } from '../QueryFilterUtils'
-import { useGetEntityBundleQueryOptions } from './useEntityBundle'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { createTableUpdateTransactionRequest } from '@/utils/functions/TableColumnSchemaUtils'
+import { useGetEntityBundleSuspenseQueryOptions } from './useEntityBundle'
 
 export function useGetEntityQueryOptions<T extends Entity>() {
   const { keyFactory, accessToken } = useSynapseContext()
   return (
-    entityId: string,
+    entityId?: string,
     versionNumber?: string | number,
   ): UseQueryOptions<T, SynapseClientError> =>
     queryOptions<T, SynapseClientError>({
       queryKey: keyFactory.getEntityVersionQueryKey(entityId, versionNumber),
-      queryFn: () =>
-        SynapseClient.getEntity<T>(
-          accessToken,
-          entityId,
-          versionNumber?.toString(),
-        ),
+      queryFn: entityId
+        ? () =>
+            SynapseClient.getEntity<T>(
+              accessToken,
+              entityId,
+              versionNumber?.toString(),
+            )
+        : skipToken,
     })
 }
 
 export function useGetEntity<T extends Entity>(
-  entityId: string,
+  entityId?: string,
   versionNumber?: string | number,
   options?: Partial<UseQueryOptions<T, SynapseClientError>>,
 ) {
@@ -510,18 +513,20 @@ function useGetEntityBenefactorACLQueryOptions(
   SynapseClientError,
   AccessControlList
 > {
-  const opts = useGetEntityBundleQueryOptions<{ includeBenefactorACL: true }>(
+  const selectBenefactorACL = (
+    data: EntityBundle<{ includeBenefactorACL: true }>,
+  ): AccessControlList => data.benefactorAcl
+  return useGetEntityBundleSuspenseQueryOptions<
+    { includeBenefactorACL: true },
+    AccessControlList
+  >(
     entityId,
     undefined,
     {
       includeBenefactorACL: true,
     },
+    selectBenefactorACL,
   )
-
-  return {
-    ...opts,
-    select: data => data.benefactorAcl,
-  }
 }
 
 /**

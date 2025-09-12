@@ -6,6 +6,7 @@ import TwoFactorAuthSettingsPanel, {
 } from './TwoFactorAuthSettingsPanel'
 
 const mockOnRegenerateBackupCodes = vi.fn()
+const mockOnReset2FA = vi.fn()
 
 function renderComponent(props: TwoFactorAuthSettingsPanelProps) {
   return render(<TwoFactorAuthSettingsPanel {...props} />, {
@@ -19,6 +20,7 @@ describe('TwoFactorAuthSettingsPanel', () => {
   it('Shows a title if hideTitle is not provided', async () => {
     renderComponent({
       onRegenerateBackupCodes: mockOnRegenerateBackupCodes,
+      onReset2FA: mockOnReset2FA,
     })
 
     await screen.findByRole('heading', {
@@ -29,6 +31,7 @@ describe('TwoFactorAuthSettingsPanel', () => {
   it('Does not show a title if hideTitle is true', async () => {
     renderComponent({
       onRegenerateBackupCodes: mockOnRegenerateBackupCodes,
+      onReset2FA: mockOnReset2FA,
       hideTitle: true,
     })
     // Ensure something in the component is rendered before we query for the title
@@ -44,6 +47,7 @@ describe('TwoFactorAuthSettingsPanel', () => {
   it('Shows 2FA is active and provides options to regenerate backup codes', async () => {
     renderComponent({
       onRegenerateBackupCodes: mockOnRegenerateBackupCodes,
+      onReset2FA: mockOnReset2FA,
     })
 
     await screen.findByText('Two-factor Authentication (2FA)')
@@ -55,5 +59,19 @@ describe('TwoFactorAuthSettingsPanel', () => {
     await waitFor(() =>
       expect(mockOnRegenerateBackupCodes).toHaveBeenCalledTimes(1),
     )
+  })
+  it('Shows 2FA is active and provides options to reset 2FA', async () => {
+    renderComponent({
+      onRegenerateBackupCodes: mockOnRegenerateBackupCodes,
+      onReset2FA: mockOnReset2FA,
+    })
+
+    await screen.findByText('Two-factor Authentication (2FA)')
+
+    const button = await screen.findByRole('button', {
+      name: 'Reset 2FA',
+    })
+    await userEvent.click(button)
+    await waitFor(() => expect(mockOnReset2FA).toHaveBeenCalledTimes(1))
   })
 })

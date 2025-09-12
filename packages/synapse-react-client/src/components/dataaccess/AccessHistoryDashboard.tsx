@@ -2,6 +2,7 @@ import SearchImage from '@/assets/icons/SearchImage'
 import { useGetCurrentUserBundle } from '@/synapse-queries'
 import { useDebouncedEffect } from '@/utils/hooks/useDebouncedEffect'
 import { Typography } from '@mui/material'
+import Grid from '@mui/material/Grid'
 import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { omitBy } from 'lodash-es'
 import { useCallback, useEffect, useState } from 'react'
@@ -116,8 +117,8 @@ export const UserHistoryDashboard = () => {
 
   return (
     <div className="UserHistoryDashboard">
-      <div className="InputPanel">
-        <div>
+      <Grid container spacing={2} className="InputPanel">
+        <Grid size={{ xs: 12, md: 6 }}>
           <Typography
             component="label"
             variant="smallText2"
@@ -132,10 +133,10 @@ export const UserHistoryDashboard = () => {
             placeholder="Search for a user name"
             typeFilter={TYPE_FILTER.USERS_ONLY}
           />
-        </div>
+        </Grid>
 
         {accessorId && (
-          <div>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Typography
               component="label"
               variant="smallText2"
@@ -148,9 +149,9 @@ export const UserHistoryDashboard = () => {
               placeholder="Search for an Access Requirement Name "
               onChange={setAccessRequirementId}
             />
-          </div>
+          </Grid>
         )}
-      </div>
+      </Grid>
 
       {accessorId ? (
         <>

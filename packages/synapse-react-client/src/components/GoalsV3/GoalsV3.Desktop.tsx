@@ -24,7 +24,7 @@ export default function GoalsV3Desktop({
       }}
     >
       <CardActionArea
-        onClick={() => window.open(link)}
+        onClick={() => window.open(link, '_self')}
         sx={{
           display: 'flex',
           flexDirection: 'column',

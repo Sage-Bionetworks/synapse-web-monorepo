@@ -11,6 +11,7 @@ import {
   getCandidateDoiId,
   useShowDoiCardLabel,
 } from '@/components/GenericCard/PortalDOI/PortalDOIUtils'
+import { mapRowToRecord } from '@/components/SynapseTable/SynapseTableUtils'
 import { useGetEntity } from '@/synapse-queries'
 import * as SynapseConstants from '@/utils/SynapseConstants'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
@@ -29,7 +30,7 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { TargetEnum } from '@/utils/html/TargetEnum'
 import CitationPopover from '../CitationPopover'
@@ -42,6 +43,7 @@ import GenericCard from './GenericCard'
 import GenericCardActionButton from './GenericCardActionButton'
 import { SynapseCardLabel } from './SynapseCardLabel'
 import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
+import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
 
 /**
  * Maps a table query result to a GenericCard.
@@ -95,19 +97,7 @@ export type TableToGenericCardMapping = {
    * useRowIdAndVersionForDownloadCart is true */
   downloadCartSynId?: string
   /** Configuration to display a DOI, as well as the ability to create one for users with such permission */
-  portalDoiConfiguration?: {
-    /** The ID of the portal created with https://rest-docs.synapse.org/rest/POST/portal.html */
-    portalId: string
-    /** The type of portal resource the card refers to (e.g. STUDY). This is included in the serialized DOI ID. */
-    resourceType: string
-    /** Ordered list of table columns that contain the ID of the resource that is serialized to the DOI object ID. */
-    resourceIdKeyColumns: string[]
-    /** Function to transform the type and key attributes to a deterministic DOI ID */
-    serializeDoiString: (
-      resourceType: string,
-      resourceAttributes: Record<string, string>,
-    ) => string
-  }
+  portalDoiConfiguration?: PortalDOIConfiguration
 }
 
 export type TableRowGenericCardProps = {
@@ -247,9 +237,14 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     )?.[0]
   }
 
+  // Transform the row to a record of (columnName, value) pairs for compatibility with getCandidateDoiId
+  const dataAsRecord: Record<string, string | null> = useMemo(
+    () => mapRowToRecord(data, schema),
+    [data, schema],
+  )
+
   const candidateDoiId = getCandidateDoiId({
-    data,
-    schema,
+    data: dataAsRecord,
     portalDoiConfiguration,
   })
 

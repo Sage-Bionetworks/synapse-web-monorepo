@@ -1,9 +1,6 @@
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import {
-  ColumnSingleValueFilterOperator,
-  FeatureFlagEnum,
-} from '@sage-bionetworks/synapse-types'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import columnAliases from '@/config/columnAliases'
 import { toolsSql } from '@/config/resources'
 import DatasetSvg from '@/config/style/Dataset.svg?url'
@@ -23,23 +20,27 @@ import {
   TOOLS_DETAILS_PAGE_SUSTAINABILITY_AND_REUSABILITY_TAB_PATH,
 } from '@/config/routeConstants'
 import { Outlet } from 'react-router'
-import {
-  getToolkitQueryBundleRequest,
-  metricsConfig,
-} from './ToolsDetailsPageUtils'
-import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries'
+import { useSustainabilityScorecardProps } from './ToolsDetailsPageUtils'
+import { useSustainabilityScorecardIfHasData } from 'synapse-react-client/components/SustainabilityScorecard/SustainabilityScorecardUtils'
 
 function ToolsDetailsPage() {
-  const isFeatureFlagEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.PORTAL_SUSTAINABILITY_SCORECARD,
-  )
+  const { toolName } = useGetPortalComponentSearchParams()
+
+  const { summaryProps, scorecardProps } =
+    useSustainabilityScorecardProps(toolName)
+
+  const showSustainabilityTab =
+    useSustainabilityScorecardIfHasData(summaryProps)
+
+  const sustainabilityScorecard =
+    useSustainabilityScorecardIfHasData(scorecardProps)
 
   const toolDetailsPageTabConfig: DetailsPageTabConfig[] = [
     {
       title: 'Details',
       path: TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH,
     },
-    ...(isFeatureFlagEnabled
+    ...(showSustainabilityTab
       ? [
           {
             title: 'Sustainability and Reusability Report',
@@ -49,45 +50,38 @@ function ToolsDetailsPage() {
       : []),
   ] satisfies DetailsPageTabConfig[]
 
-  const { toolName } = useGetPortalComponentSearchParams()
-  const query = getToolkitQueryBundleRequest(toolName)
-
   if (!toolName) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
   }
 
   return (
-    <>
-      <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
-      <CardContainerLogic
-        cardConfiguration={{
-          ...toolsConfiguration,
-          iconOptions: {
-            dataset: DatasetSvg,
-          },
-          secondaryLabelLimit: Infinity,
-          isHeader: true,
-          sustainabilityScorecard: {
-            queryRequest: query,
-            searchParamKey: 'toolName',
-            filterColumn: 'toolName',
-            metricsConfig: metricsConfig,
-            scoreDescriptorColumnName: 'AlmanackScoreDescriptor',
-          },
-        }}
-        sql={toolsSql}
-        columnAliases={columnAliases}
-        sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-        searchParams={{ toolName }}
-      />
-      <DetailsPage
-        sql={toolsSql}
-        sqlOperator={ColumnSingleValueFilterOperator.LIKE}
-      >
-        <DetailsPageTabs tabConfig={toolDetailsPageTabConfig} />
-        <Outlet />
-      </DetailsPage>
-    </>
+    <DetailsPage
+      header={
+        <>
+          <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
+          <CardContainerLogic
+            cardConfiguration={{
+              ...toolsConfiguration,
+              iconOptions: {
+                dataset: DatasetSvg,
+              },
+              secondaryLabelLimit: Infinity,
+              isHeader: true,
+              sustainabilityScorecard,
+            }}
+            sql={toolsSql}
+            columnAliases={columnAliases}
+            sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+            searchParams={{ toolName }}
+          />
+        </>
+      }
+      sql={toolsSql}
+      sqlOperator={ColumnSingleValueFilterOperator.LIKE}
+    >
+      <DetailsPageTabs tabConfig={toolDetailsPageTabConfig} />
+      <Outlet />
+    </DetailsPage>
   )
 }
 

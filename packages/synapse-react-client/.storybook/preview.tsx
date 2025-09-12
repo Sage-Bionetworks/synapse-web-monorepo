@@ -172,6 +172,7 @@ const preview: Preview = {
           { value: 'staging', title: 'Staging' },
           { value: 'development', title: 'Development' },
           { value: 'mock', title: 'Mocked Data' },
+          { value: 'local', title: 'Local Instance of Synapse' },
         ],
       },
     },

@@ -2,19 +2,15 @@
  * Utilities for retrieving annotation fields (e.g. "title", "description") from JSON Schemas
  */
 
-import {
-  hasSchema,
-  SchemaObject,
-  unregisterSchema,
-} from '@hyperjump/json-schema'
+import { hasSchema, SchemaObject } from '@hyperjump/json-schema'
+import { registerSchema } from '@hyperjump/json-schema/draft-07'
 import * as AnnotatedInstance from '@hyperjump/json-schema/annotated-instance/experimental'
 import { annotate } from '@hyperjump/json-schema/annotations/experimental'
-import { registerSchema } from '@hyperjump/json-schema/draft-07'
 import { JsonNode } from '@hyperjump/json-schema/instance/experimental'
 import { Json } from '@sage-bionetworks/synapse-client'
 import { useQuery } from '@tanstack/react-query'
 import { JSONSchema7 } from 'json-schema'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 /**
  * Get the value of a specified annotation for a specified key described in the JsonNode
@@ -87,6 +83,40 @@ export function getDisplayedAnnotationDescription(
 }
 
 /**
+ * Registers a schema with @hyperjump/json-schema.
+ * @param schema
+ * @return boolean indicating if the schema is registered.
+ */
+export function useRegisterSchema(schema?: JSONSchema7) {
+  const [isRegistered, setIsRegistered] = useState(false)
+
+  useEffect(() => {
+    if (schema && schema.$id) {
+      // The schema can be registered
+      if (!hasSchema(schema.$id)) {
+        try {
+          registerSchema(schema as SchemaObject)
+          setIsRegistered(true)
+        } catch (e) {
+          console.error(
+            'Unable to register JSON Schema in @hyperjump/json-schema:',
+            e,
+          )
+        }
+      } else {
+        // Already registered, update local state.
+        setIsRegistered(true)
+      }
+    }
+    // TODO: Unregister the schema to avoid memory bloat
+    // This would require syncing with the current state of schemas being used to make sure that we don't unregister a
+    // schema being used by multiple hook instances
+  }, [schema])
+
+  return isRegistered
+}
+
+/**
  * Given a JSON document and a schema that describes it, return a query result that
  * resolves a JsonNode that can be used to retrieve schema annotations. Uses the `annotate` API provided
  * by @hyperjump/json-schema/annotations/experimental
@@ -94,22 +124,17 @@ export function getDisplayedAnnotationDescription(
  * @param schema - a JSON Schema that describes the JSON document
  */
 export function useGetAnnotatedJsonInstance(json?: Json, schema?: JSONSchema7) {
-  useEffect(() => {
-    if (schema && schema.$id && !hasSchema(schema.$id)) {
-      registerSchema(schema as SchemaObject)
-    }
-    return () => {
-      if (schema && schema.$id && hasSchema(schema.$id)) {
-        unregisterSchema(schema.$id)
-      }
-    }
-  }, [schema])
+  const schemaIsRegistered = useRegisterSchema(schema)
 
   return useQuery<JsonNode | null>({
-    queryKey: ['getAnnotatedInstance', json, schema],
+    queryKey: ['getAnnotatedInstance', { json, schema, schemaIsRegistered }],
     queryFn: () => {
-      if (json && schema) {
-        return annotate(schema.$id!, json)
+      if (json && schema && schemaIsRegistered) {
+        try {
+          return annotate(schema.$id!, json)
+        } catch (e) {
+          console.error('Could not create annotated schema instance:', e)
+        }
       }
       return null
     },

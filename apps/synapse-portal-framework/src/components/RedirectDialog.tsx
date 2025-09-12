@@ -1,10 +1,25 @@
 import { useState, useEffect } from 'react'
-import { Dialog, DialogContent, Button, Link, Typography } from '@mui/material'
+import {
+  Dialog,
+  DialogContent,
+  Button,
+  Link,
+  Typography,
+  Stack,
+} from '@mui/material'
+import { useGetEntity } from 'synapse-react-client/synapse-queries'
+import { isFileEntity } from 'synapse-react-client'
+import { useLocation, useNavigate } from 'react-router'
+import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 
 export type RedirectDialogProps = {
   onCancelRedirect: () => void
   redirectUrl?: string
 }
+
+// PORTALS-3675: Set the initial countdown seconds to 10
+// This is the time before the redirect occurs, allowing users to cancel if needed.
+const initialCountdownSeconds = 10
 
 export const redirectInstructionsMap = {
   'https://sites.google.com/sagebase.org/mc2intranet/home?authuser=0': (
@@ -50,14 +65,58 @@ const isSynapseURL = (url: string) => {
   )
 }
 
-const getInitialCountdownSeconds = (redirectURL: string) => {
-  return isSynapseURL(redirectURL) ? 10 : 30
+const parseSynIdFromRedirectUrl = (redirectUrl: string | undefined) => {
+  if (!redirectUrl) return null
+  const regex = /Synapse:(syn\d+)(?:\.(\d+))?/i
+  const matches = regex.exec(redirectUrl)
+  if (!matches) {
+    return null
+  }
+
+  return {
+    entityId: matches[1],
+    versionNumber: matches[2] ? parseInt(matches[2]) : undefined,
+  }
 }
 
 const RedirectDialog = (props: RedirectDialogProps) => {
   const [countdownSeconds, setCountdownSeconds] = useState<number | undefined>()
   const { redirectUrl, onCancelRedirect } = props
   const [redirectInstructions, setRedirectInstructions] = useState()
+  const navigate = useNavigate()
+
+  const { entityId, versionNumber } =
+    parseSynIdFromRedirectUrl(redirectUrl) ?? {}
+  const { data: entity, isLoading } = useGetEntity(entityId)
+  const location = useLocation()
+
+  const isRedirectTargetFileEntity = entity ? isFileEntity(entity) : false
+
+  useEffect(() => {
+    if (redirectUrl && isRedirectTargetFileEntity && !isLoading) {
+      const currentUrl = `${location.pathname}${location.search}`
+      const internalUrl = `/FileEntity?entityId=${entityId}${
+        versionNumber ? `&version=${versionNumber}` : ''
+      }`
+
+      if (currentUrl === internalUrl) {
+        return
+      }
+      navigate(internalUrl)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      onCancelRedirect()
+    }
+  }, [
+    redirectUrl,
+    entityId,
+    versionNumber,
+    isRedirectTargetFileEntity,
+    navigate,
+    onCancelRedirect,
+    isLoading,
+    location.pathname,
+    location.search,
+  ])
 
   useEffect(() => {
     if (redirectUrl && countdownSeconds) {
@@ -88,7 +147,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
 
   useEffect(() => {
     if (redirectUrl && !countdownSeconds) {
-      setCountdownSeconds(getInitialCountdownSeconds(redirectUrl))
+      setCountdownSeconds(initialCountdownSeconds)
     }
   }, [countdownSeconds, redirectUrl])
 
@@ -97,6 +156,38 @@ const RedirectDialog = (props: RedirectDialogProps) => {
     onCancelRedirect()
     // and reset countdown seconds
     setCountdownSeconds(undefined)
+  }
+
+  // Show loading state while fetching entity for FileEntity redirect
+  if (redirectUrl && entityId && isLoading) {
+    return (
+      <Dialog
+        open={true}
+        onClose={onClose}
+        className="RedirectDialog"
+        PaperProps={{ sx: { padding: 0 } }}
+      >
+        <DialogContent
+          sx={{
+            p: 0,
+            ml: 0,
+            mr: 0,
+          }}
+        >
+          <Stack className="redirect-dialog-body">
+            <Typography
+              variant="headline1"
+              sx={{
+                padding: '50px 0px 20px 0px',
+              }}
+            >
+              Loading...
+            </Typography>
+            <SynapseSpinner size={40} />
+          </Stack>
+        </DialogContent>
+      </Dialog>
+    )
   }
 
   return (

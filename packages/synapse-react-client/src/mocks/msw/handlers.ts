@@ -36,6 +36,7 @@ import {
 } from './handlers/userProfileHandlers'
 import { getWebhookHandlers } from './handlers/webhookHandlers'
 import { getAllWikiHandlers } from './handlers/wikiHandlers'
+import { getDataciteHandler } from './handlers/dataciteHandlers'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
 export type SynapseApiResponse<TData, TError = BaseError> = TData | TError
@@ -80,6 +81,7 @@ const getHandlers = (backendOrigin: string, portalOrigin?: string) => [
   ...getShortIoHandlers(),
   ...getWebhookHandlers(backendOrigin),
   ...getValidationSchemaHandlers(backendOrigin),
+  ...getDataciteHandler(),
 ]
 
 const handlers = getHandlers(

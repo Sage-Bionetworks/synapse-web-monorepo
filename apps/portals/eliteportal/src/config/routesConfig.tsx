@@ -23,6 +23,13 @@ const routes: RouteObject[] = [
           import('@/pages/BrowseTools').then(convertModuleToRouteObject),
       },
       {
+        path: 'Data Acknowledgement',
+        lazy: () =>
+          import('@/pages/DataAcknowledgementPage').then(
+            convertModuleToRouteObject,
+          ),
+      },
+      {
         path: 'Explore',
         lazy: () =>
           import('@/pages/Explore/layout').then(convertModuleToRouteObject),

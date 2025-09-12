@@ -9,6 +9,7 @@ import type {
 } from 'synapse-react-client'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { studiesSql, SYNAPSE_PORTAL_ID } from '../resources'
+import { PortalDOIConfiguration } from 'synapse-react-client/components/GenericCard/PortalDOI/PortalDOIConfiguration'
 
 export const STUDY_TABLE_COLUMN_NAMES = {
   STUDY: 'Study',
@@ -25,6 +26,15 @@ export const STUDY_TABLE_COLUMN_NAMES = {
 }
 
 export const studyRgbIndex = 0
+
+export const studyDoiConfiguration: PortalDOIConfiguration = {
+  portalId: SYNAPSE_PORTAL_ID,
+  resourceType: 'STUDY',
+  resourceIdKeyColumns: RESOURCE_TYPE_KEY_CONFIGURATION['STUDY'],
+  serializeDoiString: (type, attrs) =>
+    doiSerializer.serialize(type as ADKPResourceType, attrs),
+}
+
 export const studyCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   secondaryLabelLimit: 4,
@@ -59,13 +69,7 @@ export const studyCardConfiguration: CardConfiguration = {
       'Program',
       'Grant Number',
     ],
-    portalDoiConfiguration: {
-      portalId: SYNAPSE_PORTAL_ID,
-      resourceType: 'STUDY',
-      resourceIdKeyColumns: RESOURCE_TYPE_KEY_CONFIGURATION['STUDY'],
-      serializeDoiString: (type, attrs) =>
-        doiSerializer.serialize(type as ADKPResourceType, attrs),
-    },
+    portalDoiConfiguration: studyDoiConfiguration,
   },
 }
 export const studyColumnAliases = {

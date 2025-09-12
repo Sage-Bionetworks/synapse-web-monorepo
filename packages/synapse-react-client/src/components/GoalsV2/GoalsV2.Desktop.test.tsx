@@ -41,6 +41,6 @@ describe('GoalsV2Desktop', () => {
     const card = screen.getByRole('button', { name: /Test Title/i })
     await userEvent.click(card)
 
-    expect(window.open).toHaveBeenCalledWith(mockProps.link)
+    expect(window.open).toHaveBeenCalledWith(mockProps.link, '_self')
   })
 })

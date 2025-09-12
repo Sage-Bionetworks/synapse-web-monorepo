@@ -158,11 +158,11 @@ export const parseEntityIdFromSqlStatement = (sql: string): string => {
 
 export const parseEntityIdAndVersionFromSqlStatement = (
   sql: string,
-): { entityId: string; versionNumber?: number } | null => {
+): { entityId?: string; versionNumber?: number } => {
   const regex = /from\s+(syn\d+)(?:\.(\d+))?/i
   const matches = regex.exec(sql)
   if (!matches) {
-    return null
+    return { entityId: undefined, versionNumber: undefined }
   }
   return {
     entityId: matches[1],

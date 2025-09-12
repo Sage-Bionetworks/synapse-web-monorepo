@@ -57,7 +57,7 @@ const entityQueryKeyObjects = {
   /* Query key for all entities */
   all: { objectType: 'entity' },
   // Data for an entity
-  entity: (id: string, versionNumber?: string | number) => {
+  entity: (id?: string, versionNumber?: string | number) => {
     const key: Record<string, unknown> = {
       ...entityQueryKeyObjects.all,
       id: id,
@@ -104,7 +104,7 @@ const entityQueryKeyObjects = {
   path: (id: string) => [entityQueryKeyObjects.entity(id), 'path'],
   // Entity bundle
   bundle: (
-    id: string,
+    id: string | undefined,
     versionNumber: string | number | undefined,
     bundleRequest: EntityBundleRequest,
   ) => [
@@ -263,7 +263,10 @@ export class KeyFactory {
     return this.getKey(...entityQueryKeyObjects.entityForum(id))
   }
 
-  public getEntityVersionQueryKey(id: string, versionNumber?: string | number) {
+  public getEntityVersionQueryKey(
+    id?: string,
+    versionNumber?: string | number,
+  ) {
     return this.getKey(entityQueryKeyObjects.entity(id, versionNumber))
   }
 
@@ -306,7 +309,7 @@ export class KeyFactory {
   }
 
   public getEntityBundleQueryKey(
-    id: string,
+    id: string | undefined,
     version: number | undefined,
     bundleRequest: EntityBundleRequest,
   ) {
@@ -711,6 +714,10 @@ export class KeyFactory {
     return this.getKey('oauthClient', clientId)
   }
 
+  public getOAuthClientAclQueryKey(clientId: string) {
+    return this.getKey('oauthClient', clientId, 'acl')
+  }
+
   public getHasCurrentUserAuthorizedOAuthClientQueryKey(
     request: OIDCAuthorizationRequest,
   ) {
@@ -994,5 +1001,9 @@ export class KeyFactory {
 
   public getPortalPermissionsKey(portalId: string) {
     return this.getKey('portal', portalId, 'permissions')
+  }
+
+  public getGridSessionListKey() {
+    return this.getKey('gridSession', 'list')
   }
 }

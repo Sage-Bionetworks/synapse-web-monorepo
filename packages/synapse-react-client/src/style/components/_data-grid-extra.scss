@@ -1,0 +1,54 @@
+.row-deleted .dsg-cell {
+  /* Red */
+  background: #fff1f0;
+}
+
+.row-created .dsg-cell {
+  /* Green */
+  background: #f6ffed;
+}
+
+.row-updated .dsg-cell {
+  /* Orange */
+  background: #fff7e6;
+}
+
+.row-valid .dsg-cell-gutter {
+  background: #f1feeb;
+}
+
+.row-invalid .dsg-cell-gutter {
+  background: #feeceb;
+}
+
+.row-unknown .dsg-cell-gutter {
+  background: #fdfeeb;
+
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid #e6c200;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.header-cell-required {
+  background-color: #395979;
+  color: white;
+  font-weight: bold;
+}

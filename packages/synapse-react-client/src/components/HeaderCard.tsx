@@ -1,5 +1,5 @@
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
-import { Box } from '@mui/material'
+import { Box, SxProps } from '@mui/material'
 import { useState, useEffect, forwardRef, ForwardedRef } from 'react'
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
@@ -9,8 +9,6 @@ import HeaderCardV2 from './HeaderCard/HeaderCardV2'
 import SustainabilityScorecard, {
   SustainabilityScorecardProps,
 } from './SustainabilityScorecard/SustainabilityScorecard'
-import { useGetFeatureFlag } from '@/synapse-queries'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 
 export type HeaderCardVariant = 'HeaderCard' | 'HeaderCardV2'
 
@@ -31,6 +29,8 @@ export type HeaderCardProps = {
   ctaLinkConfig?: GenericCardProps['ctaLinkConfig']
   cardTopButtons?: React.ReactNode
   sustainabilityScorecard?: SustainabilityScorecardProps
+  doiUri?: string
+  sx?: SxProps
 }
 
 const HeaderCard = forwardRef(function HeaderCard(
@@ -53,13 +53,10 @@ const HeaderCard = forwardRef(function HeaderCard(
     cardTopContent,
     cardTopButtons,
     sustainabilityScorecard,
+    sx,
   } = props
 
-  const isFeatureFlagEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.PORTAL_SUSTAINABILITY_SCORECARD,
-  )
-
-  const hideIcon = Boolean(sustainabilityScorecard && isFeatureFlagEnabled)
+  const hideIcon = Boolean(sustainabilityScorecard)
 
   // store old document title and description so that we can restore when this component is removed
   const descriptionElement: Element | null = document.querySelector(
@@ -99,11 +96,12 @@ const HeaderCard = forwardRef(function HeaderCard(
   }
 
   return (
-    <div
+    <Box
       ref={ref}
       className={`SRC-portalCard SRC-portalCardHeader ${
         isAlignToLeftNav ? 'isAlignToLeftNav' : ''
       }`}
+      sx={sx}
     >
       <div className="container-fluid container-full-width">
         <Box
@@ -119,10 +117,13 @@ const HeaderCard = forwardRef(function HeaderCard(
           <div className="col-md-offset-1 col-md-10">
             <div className="SRC-portalCardMain">
               {!hideIcon && icon}
-              <div
-                style={{
+              <Box
+                sx={{
                   width: '100%',
-                  ...(hideIcon && { display: 'flex' }),
+                  ...(hideIcon && {
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                  }),
                 }}
               >
                 <div className="SRC-cardContent" style={{ marginLeft: '15px' }}>
@@ -138,7 +139,7 @@ const HeaderCard = forwardRef(function HeaderCard(
                           {title}
                         </a>
                       ) : (
-                        <span> {title} </span>
+                        <span>{title}</span>
                       )}
                     </h3>
                   </div>
@@ -148,7 +149,7 @@ const HeaderCard = forwardRef(function HeaderCard(
                     descriptionSubTitle=""
                     descriptionConfig={descriptionConfiguration}
                   />
-                  {sustainabilityScorecard && isFeatureFlagEnabled && (
+                  {sustainabilityScorecard && (
                     <SustainabilityScorecard
                       metricsConfig={sustainabilityScorecard.metricsConfig}
                       searchParamKey={sustainabilityScorecard.searchParamKey}
@@ -157,6 +158,9 @@ const HeaderCard = forwardRef(function HeaderCard(
                         sustainabilityScorecard.scoreDescriptorColumnName
                       }
                       queryRequest={sustainabilityScorecard.queryRequest}
+                      sustainabilityReportLink={
+                        sustainabilityScorecard.sustainabilityReportLink
+                      }
                       sx={{
                         background: 'rgba(0, 0, 0, 0.10)',
                         marginTop: '30px',
@@ -164,29 +168,33 @@ const HeaderCard = forwardRef(function HeaderCard(
                     />
                   )}
                 </div>
-                <div
-                  style={{
-                    borderTop: '1px solid rgba(26, 28, 41, 0.2)',
-                    marginTop: '15px',
-                    paddingTop: '5px',
-                  }}
-                />
-                <div className="SRC-cardContent">
-                  {cardTopContent}
-                  {values && (
-                    <CardFooter
-                      isHeader={true}
-                      secondaryLabelLimit={secondaryLabelLimit}
-                      values={values}
+                {(values || cardTopContent) && (
+                  <>
+                    <div
+                      style={{
+                        borderTop: '1px solid rgba(26, 28, 41, 0.2)',
+                        marginTop: '15px',
+                        paddingTop: '5px',
+                      }}
                     />
-                  )}
-                </div>
-              </div>
+                    <div className="SRC-cardContent">
+                      {cardTopContent}
+                      {values && (
+                        <CardFooter
+                          isHeader={true}
+                          secondaryLabelLimit={secondaryLabelLimit}
+                          values={values}
+                        />
+                      )}
+                    </div>
+                  </>
+                )}
+              </Box>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </Box>
   )
 })
 

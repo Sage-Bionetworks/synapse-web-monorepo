@@ -29,7 +29,7 @@ Structure of test-configuration
 test-configuration/
 ├── .env                                    # Configure portal-specific environment variables, such as title and description
 ├── exploreHomeConfiguration                # Configure the data for explore and home page
-│   ├── data.ts                             
+│   ├── standards.ts                             
 │   ├── index.ts                            
 │   └── publications.ts                     
 ├── footerConfig.ts                         # Configure the footer data -- terms of use, contact us

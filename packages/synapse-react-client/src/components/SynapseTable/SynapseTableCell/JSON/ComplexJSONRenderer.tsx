@@ -27,13 +27,18 @@ export function ComplexJSONRenderer(props: ComplexJSONRendererProps) {
     <>
       <Typography
         variant={'smallText1'}
-        sx={{ py: 0.5, color: 'grey.600', fontStyle: 'italic' }}
+        sx={{
+          py: 0.5,
+          color: 'grey.600',
+          fontStyle: 'italic',
+          cursor: 'pointer',
+        }}
+        onClick={() => setExpandAll(v => !v)}
       >
         {expandAll ? 'Collapse' : 'Expand'} all
         <ExpandCollapseButton
           className="ExpandableTableData__expandButton"
           isExpanded={expandAll}
-          onClick={() => setExpandAll(v => !v)}
         />
       </Typography>
       <Box sx={{ pl: '2px' }}>

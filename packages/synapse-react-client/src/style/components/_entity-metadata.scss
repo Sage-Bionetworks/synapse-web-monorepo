@@ -3,8 +3,10 @@
 
 .EntityMetadata {
   .Tabs {
-    margin-bottom: 10px;
     @include SRCMixins.underline-tabs;
+    & {
+      margin-bottom: 10px;
+    }
   }
 
   .placeholder {

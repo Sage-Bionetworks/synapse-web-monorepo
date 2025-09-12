@@ -361,7 +361,10 @@ function HomePageInternal() {
         ContainerProps={{
           className: 'home-spacer',
           maxWidth: false,
-          style: { padding: 0 },
+          sx: {
+            backgroundColor: 'grey.100',
+            p: 0,
+          },
         }}
       >
         <PortalFeaturedPartners sql={partnersSql2} />

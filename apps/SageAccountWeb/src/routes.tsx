@@ -138,6 +138,13 @@ export const router = createBrowserRouter([
               ),
           },
           {
+            path: '2fa/resetconfirmation',
+            lazy: () =>
+              import('@/pages/TwoFactorResetConfirmationPage').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
             path: 'personalaccesstokens',
             lazy: () =>
               import('@/pages/PersonalAccessTokensPage').then(
