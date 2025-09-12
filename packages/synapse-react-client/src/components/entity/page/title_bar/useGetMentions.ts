@@ -8,6 +8,9 @@ import {
 import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 import { CitingWork } from './useDataCiteUsage'
+
+const MENTIONS_SYNAPSE_TABLE_ID = 'syn66047339'
+
 export type EuropePMCAuthor = {
   fullName?: string
   firstName?: string
@@ -43,9 +46,7 @@ export async function fetchMetadataForPMCIDs(
   pmcids: string[],
 ): Promise<CitingWork[]> {
   if (pmcids.length === 0) return []
-  const query = pmcids
-    .map(id => `PMCID:${id.toUpperCase().startsWith('PMC') ? id : `PMC${id}`}`)
-    .join(' OR ')
+  const query = pmcids.map(id => `PMCID:${id}`).join(' OR ')
 
   const url = new URL('https://www.ebi.ac.uk/europepmc/webservices/rest/search')
   url.searchParams.set('query', query)
@@ -59,9 +60,7 @@ export async function fetchMetadataForPMCIDs(
   if (!resp.ok)
     throw new Error(`Europe PMC error ${resp.status}: ${await resp.text()}`)
 
-  const json: {
-    resultList: { result: EuropePMCResult[] }
-  } = (await resp.json()) as EuropePMCResponse
+  const json = (await resp.json()) as EuropePMCResponse
   return json.resultList.result.map(
     r =>
       ({
@@ -80,7 +79,7 @@ export function useGetMentions(
   options?: Omit<UseQueryOptions<CitingWork[], Error>, 'queryKey' | 'queryFn'>,
 ) {
   const query: Query = {
-    sql: 'select pmcid from syn66047339',
+    sql: `select pmcid from ${MENTIONS_SYNAPSE_TABLE_ID}`,
     additionalFilters: [
       {
         concreteType: COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,

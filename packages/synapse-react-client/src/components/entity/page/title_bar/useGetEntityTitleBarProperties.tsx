@@ -109,6 +109,7 @@ export function useGetEntityTitleBarProperties(
       : null
 
   const { data: mentions } = useGetMentions(entityId)
+  const isMentions = !!mentions && mentions.length > 0
   return [
     {
       key: 'id',
@@ -138,6 +139,40 @@ export function useGetEntityTitleBarProperties(
         <Link href={doi} rel={'noopener noreferrer'} target={'_blank'}>
           {doi}
         </Link>
+      ),
+    },
+    isDoiUsage && {
+      key: 'citations',
+      title: 'Citations',
+      value: (
+        <>
+          <Link onClick={() => setDataCiteCitationsDialogOpen(true)}>
+            {dataCiteUsage.citationCount}
+            {dataCiteUsage.citationCount == maxCitationCount && '+'}
+          </Link>
+          <CitationsDialog
+            open={dataCiteCitationsDialogOpen}
+            onClose={() => setDataCiteCitationsDialogOpen(false)}
+            citations={dataCiteUsage.citations}
+          />
+        </>
+      ),
+    },
+    isMentions && {
+      key: 'mentions',
+      title: 'Mentions',
+      value: (
+        <>
+          <Link onClick={() => setMentionsDialogOpen(true)}>
+            {mentions.length}
+          </Link>
+          <CitationsDialog
+            open={mentionsDialogOpen}
+            onClose={() => setMentionsDialogOpen(false)}
+            citations={mentions}
+            title="Mentioned in"
+          />
+        </>
       ),
     },
     md5 && {
@@ -181,40 +216,5 @@ export function useGetEntityTitleBarProperties(
         </>
       ),
     },
-    isDoiUsage && {
-      key: 'citations',
-      title: 'Citations',
-      value: (
-        <>
-          <Link onClick={() => setDataCiteCitationsDialogOpen(true)}>
-            {dataCiteUsage.citationCount}
-            {dataCiteUsage.citationCount == maxCitationCount && '+'}
-          </Link>
-          <CitationsDialog
-            open={dataCiteCitationsDialogOpen}
-            onClose={() => setDataCiteCitationsDialogOpen(false)}
-            citations={dataCiteUsage.citations}
-          />
-        </>
-      ),
-    },
-    mentions &&
-      mentions.length > 0 && {
-        key: 'mentions',
-        title: 'Mentions',
-        value: (
-          <>
-            <Link onClick={() => setMentionsDialogOpen(true)}>
-              {mentions.length}
-            </Link>
-            <CitationsDialog
-              open={mentionsDialogOpen}
-              onClose={() => setMentionsDialogOpen(false)}
-              citations={mentions}
-              title="Mentioned by"
-            />
-          </>
-        ),
-      },
   ].filter(item => !!item) as EntityProperty[]
 }

@@ -2,14 +2,15 @@ import React from 'react'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-
 import {
-  useDataCiteUsage,
-  getDataCiteUsageQueryKey,
-  maxCitationCount,
-} from './useDataCiteUsage'
+  useGetMentions,
+  getMentionsQueryKey,
+  EuropePMCResult,
+  EuropePMCResponse,
+} from './useGetMentions'
+import { CitingWork } from './useDataCiteUsage'
 
-/** Helper to get both a Wrapper and the QueryClient */
+// Helper to setup QueryClient and wrapper
 function setupClient() {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -20,143 +21,163 @@ function setupClient() {
   return { Wrapper, queryClient }
 }
 
-const mockJsonResponse = (nodes: any[]) => ({
-  data: {
-    work: {
-      citations: { nodes },
-    },
-  },
+// Mock fetch for Europe PMC
+const mockEuropePMCResponse = (
+  results: EuropePMCResult[],
+): EuropePMCResponse => ({
+  resultList: { result: results },
 })
 
-describe('getDataCiteUsageQueryKey', () => {
+vi.mock('@/synapse-queries', () => ({
+  useGetQueryResultBundleWithAsyncStatus: vi.fn(),
+}))
+
+import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
+
+describe('getMentionsQueryKey', () => {
   it('returns the stable query key tuple', () => {
-    expect(getDataCiteUsageQueryKey('10.1234/abcd')).toEqual([
-      'datacite-usage',
-      '10.1234/abcd',
-    ])
-    expect(getDataCiteUsageQueryKey(undefined)).toEqual([
-      'datacite-usage',
-      undefined,
-    ])
+    expect(getMentionsQueryKey('syn123')).toEqual(['europepmc', 'syn123'])
   })
 })
 
-describe('useDataCiteUsage', () => {
+describe('useGetMentions', () => {
   let fetchSpy: ReturnType<typeof vi.spyOn>
+  const entityId = 'syn123'
+  const pmcidRows = [
+    { values: ['pmc:PMC111'] },
+    { values: ['PMC222'] },
+    { values: [null] }, // Should be filtered out
+  ]
 
   beforeEach(() => {
     fetchSpy = vi.spyOn(global, 'fetch' as any)
+    vi.mocked(useGetQueryResultBundleWithAsyncStatus).mockReturnValue({
+      data: {
+        responseBody: { queryResult: { queryResults: { rows: pmcidRows } } },
+      },
+    } as any)
   })
 
   afterEach(() => {
     vi.restoreAllMocks()
   })
 
-  it('fetches and maps citations correctly for a valid DOI', async () => {
-    const doi = '10.1111/xyz'
-    const apiNodes = [
+  it('fetches and maps mentions correctly for valid pmcids', async () => {
+    // Europe PMC returns two results
+    const europePMCResults: EuropePMCResult[] = [
       {
-        id: `https://doi.org/${doi}`,
-        titles: [{ title: 'A???B??C' }], // '?' stripped by code
-        publisher: { name: 'ACME Publishing' },
-        publicationYear: 2020,
-        container: { title: 'Great Journal' },
+        pmcid: 'PMC111',
+        title: 'First Mention',
+        doi: '10.1234/pmc111',
+        journalTitle: 'Journal A',
+        pubYear: '2021',
       },
       {
-        id: 'https://doi.org/10.9999/empty-fields',
-        titles: [], // -> title undefined
-        publisher: null,
-        publicationYear: null,
-        container: null,
+        pmcid: 'PMC222',
+        title: 'Second Mention',
+        doi: '10.5678/pmc222',
+        journalTitle: 'Journal B',
+        pubYear: '2022',
       },
     ]
-
     fetchSpy.mockResolvedValue({
       ok: true,
       status: 200,
-      json: () => mockJsonResponse(apiNodes),
+      json: () => mockEuropePMCResponse(europePMCResults),
     } as any)
 
     const { Wrapper } = setupClient()
-    const { result } = renderHook(() => useDataCiteUsage(doi), {
+    const { result } = renderHook(() => useGetMentions(entityId), {
       wrapper: Wrapper,
     })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    const data = result.current.data
+    const data = result.current.data as CitingWork[]
 
     expect(data).toBeTruthy()
-    expect(data?.citationCount).toBe(2)
-    expect(Array.isArray(data?.citations)).toBe(true)
+    expect(Array.isArray(data)).toBe(true)
+    expect(data).toHaveLength(2)
 
-    const first = data!.citations[0]
-    expect(first.id).toBe(doi) // bare DOI extracted
-    expect(first.doi).toBe(doi)
-    expect(first.title).toBe('ABC') // '?'s removed
-    expect(first.publisher).toBe('ACME Publishing')
-    expect(first.publicationYear).toBe(2020)
-    expect(first.containerTitle).toBe('Great Journal')
+    const first = data[0]
+    expect(first.id).toBe('PMC111')
+    expect(first.title).toBe('First Mention')
+    expect(first.doi).toBe('10.1234/pmc111')
+    expect(first.publisher).toBe('Journal A')
+    expect(first.publicationYear).toBe(2021)
 
-    const second = data!.citations[1]
-    expect(second.id).toBe('10.9999/empty-fields')
-    expect(second.title).toBeUndefined()
-    expect(second.publisher).toBeUndefined()
-    expect(second.publicationYear).toBeUndefined()
-    expect(second.containerTitle).toBeUndefined()
+    const second = data[1]
+    expect(second.id).toBe('PMC222')
+    expect(second.title).toBe('Second Mention')
+    expect(second.doi).toBe('10.5678/pmc222')
+    expect(second.publisher).toBe('Journal B')
+    expect(second.publicationYear).toBe(2022)
 
-    // Validate GraphQL body used the configured limit + DOI URL var
-    const bodyJson = JSON.parse((fetchSpy.mock.calls[0][1] as any).body)
-    expect(bodyJson.query).toContain(`first: ${maxCitationCount}`)
-    expect(bodyJson.variables.id).toBe(`https://doi.org/${doi}`)
+    // Validate fetch URL and query params
+    const fetchUrl = fetchSpy.mock.calls[0][0] as string
+    expect(fetchUrl).toContain('ebi.ac.uk/europepmc/webservices/rest/search')
+    expect(fetchUrl).toContain('PMCID%3APMC111')
+    expect(fetchUrl).toContain('PMCID%3APMC222')
   })
 
-  it('surfaces an error when the DataCite request fails', async () => {
-    const doi = '10.0000/bad'
+  it('returns an empty array if there are no pmcids', async () => {
+    vi.mocked(useGetQueryResultBundleWithAsyncStatus).mockReturnValue({
+      data: { responseBody: { queryResult: { queryResults: { rows: [] } } } },
+    } as any)
+
+    const { Wrapper } = setupClient()
+    const { result } = renderHook(() => useGetMentions(entityId), {
+      wrapper: Wrapper,
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(result.current.data).toEqual([])
+    expect(fetchSpy).not.toHaveBeenCalled()
+  })
+
+  it('surfaces an error when the Europe PMC request fails', async () => {
     fetchSpy.mockResolvedValue({
       ok: false,
       status: 500,
-      json: () => ({}),
+      text: () => Promise.resolve('Internal Server Error'),
     })
 
     const { Wrapper } = setupClient()
-    const { result } = renderHook(() => useDataCiteUsage(doi), {
+    const { result } = renderHook(() => useGetMentions(entityId), {
       wrapper: Wrapper,
     })
 
     await waitFor(() => expect(result.current.isError).toBe(true))
     expect(result.current.error).toBeInstanceOf(Error)
-    expect(result.current.error?.message).toContain('DataCite GraphQL 500')
+    expect(result.current.error?.message).toContain('Europe PMC error 500')
   })
 
-  it('registers queries under a stable key derived from the DOI (via cache)', async () => {
-    const doi1 = '10.4242/abcd'
-    const doi2 = '10.4242/efgh'
-    const key1 = ['datacite-usage', doi1]
-    const key2 = ['datacite-usage', doi2]
-
+  it('registers queries under a stable key derived from the entityId (via cache)', async () => {
     fetchSpy.mockResolvedValue({
       ok: true,
       status: 200,
-      json: () => mockJsonResponse([]),
+      json: () => mockEuropePMCResponse([]),
     } as any)
 
     const { Wrapper, queryClient } = setupClient()
-
-    const { rerender } = renderHook(({ d }) => useDataCiteUsage(d), {
-      initialProps: { d: doi1 },
+    const { rerender } = renderHook(({ id }) => useGetMentions(id), {
+      initialProps: { id: 'synA' },
       wrapper: Wrapper,
     })
 
     await waitFor(() =>
-      expect(queryClient.getQueryState(key1)?.status).toBeDefined(),
+      expect(
+        queryClient.getQueryState(['europepmc', 'synA'])?.status,
+      ).toBeDefined(),
     )
-    expect(queryClient.getQueryState(key1)).toBeTruthy()
+    expect(queryClient.getQueryState(['europepmc', 'synA'])).toBeTruthy()
 
-    rerender({ d: doi2 })
+    rerender({ id: 'synB' })
 
     await waitFor(() =>
-      expect(queryClient.getQueryState(key2)?.status).toBeDefined(),
+      expect(
+        queryClient.getQueryState(['europepmc', 'synB'])?.status,
+      ).toBeDefined(),
     )
-    expect(queryClient.getQueryState(key2)).toBeTruthy()
+    expect(queryClient.getQueryState(['europepmc', 'synB'])).toBeTruthy()
   })
 })
