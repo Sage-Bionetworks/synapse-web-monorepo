@@ -1,15 +1,34 @@
 import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2'
 
 export const TABLE_IDS = {
-  Challenges: { name: 'Challenges', id: 'syn65913973.1' }, // the only reason for this table is to get the GC images
   // CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
-  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.67' },
+  // DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
+  DST_denormalized: {
+    name: 'DST_denormalized',
+    // version: 'syn65676531.67',
+    // id: 'syn69062839' /* DST_denormalized_current */,
+    id: 'syn65676531.67',
+  },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
-  DataSet_denormalized: { name: 'DataSet_denormalized', id: 'syn68258237.3' },
-  DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
+  DataSet_denormalized: {
+    name: 'DataSet_denormalized',
+    version: 'syn68258237.3',
+    id: 'syn69696299' /* DataSet_denormalized_current */,
+  },
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
   DataTopic: { name: 'DataTopic', id: 'syn63096835' },
-  Organization: { name: 'Organization', id: 'syn63096836.31' },
+  // Organization: { name: 'Organization', id: 'syn63096836.31' },
+  Organization_denormalized: {
+    name: 'Organization',
+    id: 'syn69693360.6',
+    xid: 'syn69696403' /* Organization_denormalized_current */,
+  },
+  // D4D_content: { name: 'D4D_content', id: 'syn63096836.31' },
+  D4D_content: {
+    name: 'D4D_content',
+    version: 'syn68885644.2',
+    id: 'syn69696497' /* D4D_content_current */,
+  },
   // UseCase: { name: 'UseCase', id: 'syn63096837' }, // not using this, maybe will in the future?
 }
 
@@ -48,6 +67,16 @@ export const ORG_TABLE_COLUMN_NAMES = {
   WIKIDATA_ID: 'wikidata_id',
   URL: 'url',
   SUBCLASS_OF: 'subclass_of',
+  // new (and likely to change):
+  MAIN_ORGANIZATION_JSON: 'main_organization_json',
+  ASSSOCIATED_ORGANIZATION_JSON: 'asssociated_organization_json',
+  RELEVANT_STANDARDS: 'relevant_standards',
+  RELEVANT_STANDARDS_JSON: 'relevant_standards_json',
+  GOVERNED_STANDARDS: 'governed_standards',
+  GOVERNED_STANDARDS_JSON: 'governed_standards_json',
+  DATASETS: 'datasets',
+  DATASET_NAMES: 'dataset_names',
+  DATASET_JSON: 'dataset_json',
 }
 export const ORG_TABLE_JSON_COLUMNS = []
 
@@ -57,9 +86,9 @@ export const organizationDetailsPageSQL = `
     concat('/Explore/Organization/OrganizationDetailsPage?id=', ${
       ORG_TABLE_COLUMN_NAMES.ID
     }) AS orgPageLink
-  FROM ${TABLE_IDS.Organization.id}`
+  FROM ${TABLE_IDS.Organization_denormalized.id}`
 
-export const GC_ORG_IDS = [114, 115, 116, 117].map(id => `'B2AI_ORG:${id}'`)
+export const GC_ORG_IDS = [114, 115, 116, 117].map(id => `B2AI_ORG:${id}`)
 
 export const DATASET_DENORMALIZED_COLUMN_NAMES = {
   ID: 'id',

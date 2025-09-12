@@ -3,6 +3,7 @@ import {
   DetailsPageContent,
   DetailsPageContentType,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import { useHasQueryResults } from '@/hooks/useHasQueryResults'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
@@ -106,131 +107,174 @@ export const linkedDataSetCardConfiguration: CardConfiguration = {
   },
 }
 
-export const organizationDetailsPageContent: DetailsPageContentType = [
-  {
-    id: 'subclassOf',
-    title: 'Parent Organization',
-    element: (
-      <DetailsPageContextConsumer
-        columnName={ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF}
-      >
-        {({ value }) => {
-          return (
-            <CardContainerLogic
-              cardConfiguration={linkedOrgCardConfiguration}
-              sql={organizationDetailsPageSQL}
-              // need a dummy value for search to properly exclude null values and an empty string doesn't work
-              searchParams={{ [ORG_TABLE_COLUMN_NAMES.ID]: value ?? 'notreal' }}
-            />
-          )
-        }}
-      </DetailsPageContextConsumer>
-    ),
-  },
-  {
-    id: 'hasSubclass',
-    title: 'Child Organization',
-    element: (
-      <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
-        {({ value }) => {
-          return (
-            <CardContainerLogic
-              cardConfiguration={linkedOrgCardConfiguration}
-              sql={organizationDetailsPageSQL}
-              // need a dummy value for search to properly exclude null values and an empty string doesn't work
+// Component that conditionally renders DetailsPageContent based on data availability
+function ConditionalOrganizationContent({ orgId }: { orgId: string }) {
+  // Check if this organization has any standards it's responsible for
+  const { data: hasResponsibleStandards, isLoading } = useHasQueryResults({
+    sql: standardsSql,
+    searchParams: {
+      [DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION]: orgId,
+    },
+    sqlOperator: ColumnMultiValueFunction.HAS,
+  })
+
+  // While loading, show all sections (or you could show a loading state)
+  if (isLoading) {
+    return (
+      <DetailsPageContent
+        content={getOrganizationDetailsPageContent(orgId, true)}
+      />
+    )
+  }
+
+  // Pass whether to include the responsible standards section
+  return (
+    <DetailsPageContent
+      content={getOrganizationDetailsPageContent(
+        orgId,
+        hasResponsibleStandards,
+      )}
+    />
+  )
+}
+
+function getOrganizationDetailsPageContent(
+  orgId: string,
+  includeResponsibleStandards?: boolean,
+): DetailsPageContentType {
+  const sections = [
+    {
+      id: 'subclassOf',
+      title: 'Main Organization',
+      element: (
+        <DetailsPageContextConsumer
+          columnName={ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF}
+        >
+          {({ value }) => {
+            return (
+              <CardContainerLogic
+                cardConfiguration={linkedOrgCardConfiguration}
+                sql={organizationDetailsPageSQL}
+                // need a dummy value for search to properly exclude null values and an empty string doesn't work
+                searchParams={{
+                  [ORG_TABLE_COLUMN_NAMES.ID]: value ?? 'notreal',
+                }}
+              />
+            )
+          }}
+        </DetailsPageContextConsumer>
+      ),
+    },
+    {
+      id: 'hasSubclass',
+      title: 'Associated Organization',
+      element: (
+        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
+          {({ value }) => {
+            return (
+              <CardContainerLogic
+                cardConfiguration={linkedOrgCardConfiguration}
+                sql={organizationDetailsPageSQL}
+                // need a dummy value for search to properly exclude null values and an empty string doesn't work
+                searchParams={{
+                  [ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF]: value ?? 'notreal',
+                }}
+                sqlOperator={ColumnMultiValueFunction.HAS}
+              />
+            )
+          }}
+        </DetailsPageContextConsumer>
+      ),
+    },
+    {
+      id: 'DataSets',
+      title: 'DataSets',
+      element: (
+        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
+          {({ value }) => {
+            return (
+              <CardContainerLogic
+                cardConfiguration={linkedDataSetCardConfiguration}
+                sql={dataSetSQL}
+                // need a dummy value for search to properly exclude null values and an empty string doesn't work
+                searchParams={{
+                  [DATASET_DENORMALIZED_COLUMN_NAMES.PRODUCED_BY_ORG_ID]:
+                    value ?? 'no value',
+                }}
+                sqlOperator={ColumnMultiValueFunction.HAS}
+              />
+            )
+          }}
+        </DetailsPageContextConsumer>
+      ),
+    },
+    {
+      id: 'relatedStandards',
+      title: 'Relevant Standards',
+      element: (
+        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
+          {({ value }) => (
+            <StandaloneQueryWrapper
+              rgbIndex={standardsRgbIndex}
+              sql={standardsSql}
               searchParams={{
-                [ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF]: value ?? 'notreal',
-              }}
-              sqlOperator={ColumnMultiValueFunction.HAS}
-            />
-          )
-        }}
-      </DetailsPageContextConsumer>
-    ),
-  },
-  {
-    id: 'DataSets',
-    title: 'DataSets',
-    element: (
-      <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
-        {({ value }) => {
-          return (
-            <CardContainerLogic
-              cardConfiguration={linkedDataSetCardConfiguration}
-              sql={dataSetSQL}
-              // need a dummy value for search to properly exclude null values and an empty string doesn't work
-              searchParams={{
-                [DATASET_DENORMALIZED_COLUMN_NAMES.PRODUCED_BY_ORG_ID]:
+                [DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION]:
                   value ?? 'no value',
               }}
               sqlOperator={ColumnMultiValueFunction.HAS}
+              columnAliases={columnAliases}
+              tableConfiguration={{
+                showDownloadColumn: false,
+                columnLinks: standardsColumnLinks,
+              }}
+              searchConfiguration={{
+                ftsConfig: standardsFtsConfig,
+              }}
+              shouldDeepLink={false}
+              hideQueryCount={true}
+              hideDownload={true}
             />
-          )
-        }}
-      </DetailsPageContextConsumer>
-    ),
-  },
-  {
-    id: 'relatedStandards',
-    title: 'Relevant Standards',
-    element: (
-      <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
-        {({ value }) => (
-          <StandaloneQueryWrapper
-            rgbIndex={standardsRgbIndex}
-            sql={standardsSql}
-            searchParams={{
-              [DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION]:
-                value ?? 'no value',
-            }}
-            sqlOperator={ColumnMultiValueFunction.HAS}
-            columnAliases={columnAliases}
-            tableConfiguration={{
-              showDownloadColumn: false,
-              columnLinks: standardsColumnLinks,
-            }}
-            searchConfiguration={{
-              ftsConfig: standardsFtsConfig,
-            }}
-            shouldDeepLink={false}
-            hideQueryCount={true}
-            hideDownload={true}
-          />
-        )}
-      </DetailsPageContextConsumer>
-    ),
-  },
-  {
-    id: 'responsibleForStandards',
-    title: 'Governed Standards',
-    element: (
-      <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
-        {({ value }) => (
-          <StandaloneQueryWrapper
-            rgbIndex={standardsRgbIndex}
-            sql={standardsSql}
-            searchParams={{
-              [DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION]:
-                value ?? 'no value',
-            }}
-            sqlOperator={ColumnMultiValueFunction.HAS}
-            columnAliases={columnAliases}
-            tableConfiguration={{
-              showDownloadColumn: false,
-              columnLinks: standardsColumnLinks,
-            }}
-            searchConfiguration={{
-              ftsConfig: standardsFtsConfig,
-            }}
-            shouldDeepLink={false}
-            hideQueryCount={true}
-            hideDownload={true}
-          />
-        )}
-      </DetailsPageContextConsumer>
-    ),
-  },
-  {
+          )}
+        </DetailsPageContextConsumer>
+      ),
+    },
+  ]
+
+  // Conditionally add the responsible standards section only if it would have data
+  if (includeResponsibleStandards) {
+    sections.push({
+      id: 'responsibleForStandards',
+      title: 'Governed Standards',
+      element: (
+        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
+          {({ value }) => (
+            <StandaloneQueryWrapper
+              rgbIndex={standardsRgbIndex}
+              sql={standardsSql}
+              searchParams={{
+                [DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION]:
+                  value ?? 'no value',
+              }}
+              sqlOperator={ColumnMultiValueFunction.HAS}
+              columnAliases={columnAliases}
+              tableConfiguration={{
+                showDownloadColumn: false,
+                columnLinks: standardsColumnLinks,
+              }}
+              searchConfiguration={{
+                ftsConfig: standardsFtsConfig,
+              }}
+              shouldDeepLink={false}
+              hideQueryCount={true}
+              hideDownload={true}
+            />
+          )}
+        </DetailsPageContextConsumer>
+      ),
+    })
+  }
+
+  sections.push({
     id: 'd4d',
     title: 'DataSheet for DataSet',
     element: (
@@ -240,8 +284,10 @@ export const organizationDetailsPageContent: DetailsPageContentType = [
         }}
       </DetailsPageContextConsumer>
     ),
-  },
-]
+  })
+
+  return sections
+}
 
 export default function OrganizationDetailsPage() {
   const { id } = useGetPortalComponentSearchParams()
@@ -254,7 +300,7 @@ export default function OrganizationDetailsPage() {
       header={<OrgHeaderCard id={id} />}
       sql={organizationDetailsPageSQL}
     >
-      <DetailsPageContent content={organizationDetailsPageContent} />
+      <ConditionalOrganizationContent orgId={id} />
     </DetailsPage>
   )
 }
