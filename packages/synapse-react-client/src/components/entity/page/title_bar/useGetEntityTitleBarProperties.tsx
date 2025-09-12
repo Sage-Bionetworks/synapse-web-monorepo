@@ -43,7 +43,9 @@ export function useGetEntityTitleBarProperties(
     fileHandleStorageInfo,
     uploadDestinationString,
   } = useGetEntityMetadata(entityId, versionNumber)
-  const [citationsDialogOpen, setCitationsDialogOpen] = useState(false)
+  const [dataCiteCitationsDialogOpen, setDataCiteCitationsDialogOpen] =
+    useState(false)
+  const [mentionsDialogOpen, setMentionsDialogOpen] = useState(false)
   const { data: entityChildrenResponse } = useGetEntityChildren(
     {
       parentId: entityId,
@@ -184,13 +186,13 @@ export function useGetEntityTitleBarProperties(
       title: 'Citations',
       value: (
         <>
-          <Link onClick={() => setCitationsDialogOpen(true)}>
+          <Link onClick={() => setDataCiteCitationsDialogOpen(true)}>
             {dataCiteUsage.citationCount}
             {dataCiteUsage.citationCount == maxCitationCount && '+'}
           </Link>
           <CitationsDialog
-            open={citationsDialogOpen}
-            onClose={() => setCitationsDialogOpen(false)}
+            open={dataCiteCitationsDialogOpen}
+            onClose={() => setDataCiteCitationsDialogOpen(false)}
             citations={dataCiteUsage.citations}
           />
         </>
@@ -202,12 +204,12 @@ export function useGetEntityTitleBarProperties(
         title: 'Mentions',
         value: (
           <>
-            <Link onClick={() => setCitationsDialogOpen(true)}>
+            <Link onClick={() => setMentionsDialogOpen(true)}>
               {mentions.length}
             </Link>
             <CitationsDialog
-              open={citationsDialogOpen}
-              onClose={() => setCitationsDialogOpen(false)}
+              open={mentionsDialogOpen}
+              onClose={() => setMentionsDialogOpen(false)}
               citations={mentions}
               title="Mentioned by"
             />
