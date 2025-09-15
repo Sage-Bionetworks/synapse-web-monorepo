@@ -1,6 +1,6 @@
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { SAGE_OFFERINGS_HELP_URL } from '@/utils/SynapseConstants'
-import { ProjectStorageLocationUsage } from '@sage-bionetworks/synapse-types'
+import { ProjectStorageLocationUsage } from '@sage-bionetworks/synapse-client'
 import FullWidthAlert from '../FullWidthAlert'
 
 export type ProjectStorageLimitAlertProps = {
@@ -22,9 +22,9 @@ export function ProjectStorageLimitAlert(props: ProjectStorageLimitAlertProps) {
   const warningThresholdBytes =
     usage.maxAllowedFileBytes * (1 - PERCENT_REMAINING_STORAGE_TO_SHOW_WARNING)
 
-  const remainingStorageBytes = usage.maxAllowedFileBytes - usage.sumFileBytes
+  const remainingStorageBytes = usage.maxAllowedFileBytes - usage.sumFileBytes!
 
-  if (!didUploadsExceedLimit && usage.sumFileBytes < warningThresholdBytes) {
+  if (!didUploadsExceedLimit && usage.sumFileBytes! < warningThresholdBytes) {
     // No need to show a warning
     return null
   }

@@ -9,10 +9,10 @@ import {
 } from '@/utils/functions/EntityTypeUtils'
 import { AddCircleTwoTone } from '@mui/icons-material'
 import { Box, Button, styled } from '@mui/material'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   ColumnModel,
   ColumnTypeEnum,
-  EntityType,
   VIEW_CONCRETE_TYPE_VALUES,
   ViewScope,
 } from '@sage-bionetworks/synapse-types'

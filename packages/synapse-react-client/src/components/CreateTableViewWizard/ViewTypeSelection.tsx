@@ -1,8 +1,8 @@
 import { useGetFeatureFlag } from '@/synapse-queries'
 import { Link } from '@mui/material'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   ENTITY_VIEW_TYPE_MASK_PROJECT,
-  EntityType,
   FeatureFlagEnum,
 } from '@sage-bionetworks/synapse-types'
 import WizardChoiceButton from '../WizardChoiceButton/WizardChoiceButton'
@@ -116,28 +116,28 @@ export default function ViewTypeSelection(props: ViewTypeSelectionProps) {
         title={'Files, Folders, and Other Objects'}
         description={FILE_VIEW_DESCRIPTION}
         onClick={() => {
-          onTypeSelected(EntityType.ENTITY_VIEW)
+          onTypeSelected(EntityType.entityview)
         }}
       />
       <WizardChoiceButton
         title={'Projects'}
         description={PROJECT_VIEW_DESCRIPTION}
         onClick={() => {
-          onTypeSelected(EntityType.ENTITY_VIEW, ENTITY_VIEW_TYPE_MASK_PROJECT)
+          onTypeSelected(EntityType.entityview, ENTITY_VIEW_TYPE_MASK_PROJECT)
         }}
       />
       <WizardChoiceButton
         title={'Challenge Submissions'}
         description={SUBMISSION_VIEW_DESCRIPTION}
         onClick={() => {
-          onTypeSelected(EntityType.SUBMISSION_VIEW)
+          onTypeSelected(EntityType.submissionview)
         }}
       />
       <WizardChoiceButton
         title={'Materialized View'}
         description={MATERIALIZED_VIEW_DESCRIPTION}
         onClick={() => {
-          onTypeSelected(EntityType.MATERIALIZED_VIEW)
+          onTypeSelected(EntityType.materializedview)
         }}
       />
       {isFeatureEnabled && (
@@ -145,7 +145,7 @@ export default function ViewTypeSelection(props: ViewTypeSelectionProps) {
           title={'Virtual Table'}
           description={VIRTUAL_TABLE_DESCRIPTION}
           onClick={() => {
-            onTypeSelected(EntityType.VIRTUAL_TABLE)
+            onTypeSelected(EntityType.virtualtable)
           }}
         />
       )}

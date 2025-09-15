@@ -1,7 +1,8 @@
 import { useGetVersionsInfinite } from '@/synapse-queries/index'
 import { isTableType } from '@/utils/functions/EntityTypeUtils'
 import { Select } from '@mui/material'
-import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import { Reference } from '@sage-bionetworks/synapse-types'
 import { CellContext } from '@tanstack/react-table'
 import { useEffect } from 'react'
 import IconSvg from '../../../../IconSvg/IconSvg'
@@ -15,7 +16,7 @@ function getLatestVersionText(
   let versionDisplay = 'Latest'
   let snapshotDisplay = ''
   if (isTableType(entityType)) {
-    if (entityType === EntityType.DATASET) {
+    if (entityType === EntityType.dataset) {
       versionDisplay = 'Draft'
       snapshotDisplay = 'Stable Version'
     } else {

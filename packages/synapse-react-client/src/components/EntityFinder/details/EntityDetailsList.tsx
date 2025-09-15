@@ -1,6 +1,6 @@
 import { getIsAllSelectedFromInfiniteList } from '@/utils/hooks/useGetIsAllSelectedInfiniteList'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
-  EntityType,
   GetProjectsParameters,
   Reference,
   SearchQuery,

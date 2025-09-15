@@ -1,5 +1,6 @@
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
-import { EntityHeader, EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import { EntityTypeIcon } from '../EntityIcon'
 import IconSvg from '../IconSvg/IconSvg'
 
@@ -65,7 +66,7 @@ export const ProvenanceEntityIcon = (props: ProvenanceEntityIconProps) => {
   const { entityHeader } = props
   if (entityHeader) {
     const entityType: EntityType = convertToEntityType(entityHeader?.type)
-    if (entityType == EntityType.FILE) {
+    if (entityType == EntityType.file) {
       // this is a file, may want to use a special icon in this case
       const lastPeriodIndex = entityHeader.name.lastIndexOf('.')
       if (lastPeriodIndex > -1) {
@@ -80,5 +81,5 @@ export const ProvenanceEntityIcon = (props: ProvenanceEntityIconProps) => {
   }
 
   // return the default (File icon)
-  return <EntityTypeIcon type={EntityType.FILE} includeTooltip={false} />
+  return <EntityTypeIcon type={EntityType.file} includeTooltip={false} />
 }

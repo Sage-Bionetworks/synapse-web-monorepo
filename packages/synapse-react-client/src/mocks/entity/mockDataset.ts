@@ -1,10 +1,10 @@
 import { normalizeNumericId } from '@/utils/functions/StringUtils'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   Dataset,
   EntityBundle,
   EntityHeader,
   EntityPath,
-  EntityType,
   RestrictionLevel,
   VersionInfo,
 } from '@sage-bionetworks/synapse-types'
@@ -126,7 +126,7 @@ const bundle: EntityBundle = {
   },
   threadCount: 0,
   entity: mockDatasetEntity,
-  entityType: EntityType.DATASET,
+  entityType: EntityType.dataset,
   path: path,
   permissions: {
     canView: true,

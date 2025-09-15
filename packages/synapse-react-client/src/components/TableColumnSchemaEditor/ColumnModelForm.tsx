@@ -12,10 +12,10 @@ import {
   Tooltip,
 } from '@mui/material'
 import FormHelperText from '@mui/material/FormHelperText'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   ColumnModel,
   ColumnTypeEnum,
-  EntityType,
   FacetType,
   VIEW_CONCRETE_TYPE_VALUES,
 } from '@sage-bionetworks/synapse-types'

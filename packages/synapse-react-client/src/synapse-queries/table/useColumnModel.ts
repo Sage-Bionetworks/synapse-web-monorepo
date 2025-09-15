@@ -1,9 +1,9 @@
 import SynapseClient from '@/synapse-client'
 import { SynapseClientError, useSynapseContext } from '@/utils'
+import { ViewEntityType } from '@sage-bionetworks/synapse-client'
 import {
   ColumnModel,
   ViewColumnModelRequest,
-  ViewEntityType,
 } from '@sage-bionetworks/synapse-types'
 import {
   useMutation,

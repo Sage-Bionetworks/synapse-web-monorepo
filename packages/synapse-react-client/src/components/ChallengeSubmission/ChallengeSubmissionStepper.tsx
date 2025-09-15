@@ -1,9 +1,9 @@
 import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils'
 import { Typography } from '@mui/material'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   DockerCommit,
-  EntityType,
   EvaluationSubmission,
   TeamSubmissionEligibility,
 } from '@sage-bionetworks/synapse-types'
@@ -63,8 +63,10 @@ const stepsFile: StepList<StepsEnum> = {
   },
 }
 
-const getSteps = (entityType: EntityType.DOCKER_REPO | EntityType.FILE) => {
-  return entityType === EntityType.DOCKER_REPO ? stepsDocker : stepsFile
+const getSteps = (
+  entityType: typeof EntityType.dockerrepo | typeof EntityType.file,
+) => {
+  return entityType === EntityType.dockerrepo ? stepsDocker : stepsFile
 }
 
 type ChallengeSubmissionStepperProps = {
@@ -72,7 +74,7 @@ type ChallengeSubmissionStepperProps = {
   userId: string
   teamId: string
   entity: EntityItem
-  entityType: EntityType.DOCKER_REPO | EntityType.FILE
+  entityType: typeof EntityType.dockerrepo | typeof EntityType.file
   isShowingModal: boolean
   onClose: () => void
 }
@@ -89,7 +91,7 @@ function ChallengeSubmissionStepper({
   const { accessToken } = useSynapseContext()
   const steps = getSteps(entityType)
   const initialStep =
-    entityType === EntityType.DOCKER_REPO
+    entityType === EntityType.dockerrepo
       ? steps.SELECT_COMMIT
       : steps.SELECT_EVALUATION
   const [step, setStep] = useState<Step<StepsEnum>>(initialStep)
@@ -130,10 +132,7 @@ function ChallengeSubmissionStepper({
   }
 
   async function submitForEvaluation(eligibility: TeamSubmissionEligibility) {
-    if (
-      !entity.id ||
-      (entityType === EntityType.DOCKER_REPO && !selectedCommit)
-    )
+    if (!entity.id || (entityType === EntityType.dockerrepo && !selectedCommit))
       return setErrorMessage('Error: Invalid entity or commit.')
 
     const contributors = eligibility.membersEligibility
@@ -156,7 +155,7 @@ function ChallengeSubmissionStepper({
       teamId: teamId,
       contributors,
     }
-    if (entityType === EntityType.DOCKER_REPO) {
+    if (entityType === EntityType.dockerrepo) {
       submission.dockerRepositoryName = entity.repositoryName
       submission.dockerDigest = selectedCommit!.digest
     }

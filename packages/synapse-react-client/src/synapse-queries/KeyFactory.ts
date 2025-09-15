@@ -15,6 +15,7 @@ import {
   GetRepoV1DoiAssociationRequest,
   GetRepoV1DoiRequest,
   type UserSubmissionSearchRequest,
+  ViewEntityType,
 } from '@sage-bionetworks/synapse-client'
 import { OIDCAuthorizationRequest } from '@sage-bionetworks/synapse-client/generated/models/OIDCAuthorizationRequest'
 import { PrincipalAliasRequest } from '@sage-bionetworks/synapse-client/generated/models/PrincipalAliasRequest'
@@ -48,7 +49,6 @@ import {
   TraceEventsRequest,
   TYPE_FILTER,
   ViewColumnModelRequest,
-  ViewEntityType,
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
 import { QueryKey } from '@tanstack/react-query'

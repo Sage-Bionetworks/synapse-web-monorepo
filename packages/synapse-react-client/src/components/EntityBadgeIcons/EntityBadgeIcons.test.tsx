@@ -24,12 +24,12 @@ import {
   ANONYMOUS_PRINCIPAL_ID,
   AUTHENTICATED_PRINCIPAL_ID,
 } from '@/utils/SynapseConstants'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   ACCESS_TYPE,
   Annotations,
   EntityBundle,
   EntityJson,
-  EntityType,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -174,7 +174,7 @@ describe('EntityBadgeIcons tests', () => {
     it('Does not show the icon on non-links', () => {
       const bundle: EntityBundle = {
         ...mockFileEntityBundle,
-        entityType: EntityType.FILE,
+        entityType: EntityType.file,
         permissions: {
           ...mockFileEntityBundle.permissions,
           canDelete: true,
@@ -194,7 +194,7 @@ describe('EntityBadgeIcons tests', () => {
     it('Does not show the icon if no permission to delete', () => {
       const bundle: EntityBundle = {
         ...mockFileEntityBundle,
-        entityType: EntityType.LINK,
+        entityType: EntityType.link,
         permissions: {
           ...mockFileEntityBundle.permissions,
           canDelete: false,
@@ -213,7 +213,7 @@ describe('EntityBadgeIcons tests', () => {
     it('Shows the unlink icon', async () => {
       const bundle: EntityBundle = {
         ...mockFileEntityBundle,
-        entityType: EntityType.LINK,
+        entityType: EntityType.link,
         permissions: {
           ...mockFileEntityBundle.permissions,
           canDelete: true,
@@ -231,7 +231,7 @@ describe('EntityBadgeIcons tests', () => {
     it('Calls the success callback on success', async () => {
       const bundle: EntityBundle = {
         ...mockFileEntityBundle,
-        entityType: EntityType.LINK,
+        entityType: EntityType.link,
         permissions: {
           ...mockFileEntityBundle.permissions,
           canDelete: true,
@@ -270,7 +270,7 @@ describe('EntityBadgeIcons tests', () => {
     it('Calls the error callback on fail', async () => {
       const bundle: EntityBundle = {
         ...mockFileEntityBundle,
-        entityType: EntityType.LINK,
+        entityType: EntityType.link,
         permissions: {
           ...mockFileEntityBundle.permissions,
           canDelete: true,

@@ -1,5 +1,5 @@
 import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { CSSProperties, Fragment } from 'react'
 import IconSvg, {
   IconName,
@@ -9,18 +9,19 @@ import IconSvg, {
 
 const getIconTypeForEntity = (type: EntityType): IconName | '' => {
   switch (type) {
-    case EntityType.PROJECT:
-    case EntityType.FOLDER:
-    case EntityType.FILE:
-    case EntityType.TABLE:
-    case EntityType.LINK:
-    case EntityType.ENTITY_VIEW:
-    case EntityType.DOCKER_REPO:
-    case EntityType.SUBMISSION_VIEW:
-    case EntityType.DATASET:
-    case EntityType.DATASET_COLLECTION:
-    case EntityType.MATERIALIZED_VIEW:
-    case EntityType.VIRTUAL_TABLE:
+    case EntityType.project:
+    case EntityType.folder:
+    case EntityType.file:
+    case EntityType.table:
+    case EntityType.link:
+    case EntityType.entityview:
+    case EntityType.dockerrepo:
+    case EntityType.submissionview:
+    case EntityType.dataset:
+    case EntityType.datasetcollection:
+    case EntityType.materializedview:
+    case EntityType.virtualtable:
+    case EntityType.recordset:
       return type2SvgIconName[type]
     default:
       return ''

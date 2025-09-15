@@ -7,10 +7,10 @@ import {
 import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '@/utils/functions/RegularExpressions'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
   EntityPath,
-  EntityType,
   Reference,
 } from '@sage-bionetworks/synapse-types'
 import {
@@ -121,7 +121,7 @@ export function EntityTree(props: EntityTreeProps) {
     initialContainer = null,
     currentContainer,
     setCurrentContainer,
-    visibleTypes = [EntityType.PROJECT, EntityType.FOLDER],
+    visibleTypes = [EntityType.project, EntityType.folder],
     toggleSelection,
     selectedEntities,
     setDetailsViewConfiguration,

@@ -1,4 +1,17 @@
 import {
+  Entity as Entity_OpenAPI,
+  EntityType,
+} from '@sage-bionetworks/synapse-client'
+import {
+  Dataset,
+  DATASET_CONCRETE_TYPE_VALUE,
+  Entity,
+  FILE_ENTITY_CONCRETE_TYPE_VALUE,
+  FileEntity,
+  TABLE_ENTITY_CONCRETE_TYPE_VALUE,
+  TableEntity,
+} from '@sage-bionetworks/synapse-types'
+import {
   convertToEntityType,
   entityTypeToFriendlyName,
   getVersionDisplay,
@@ -6,77 +19,76 @@ import {
   isVersionableEntityType,
   normalizeSynPrefix,
 } from './EntityTypeUtils'
-import {
-  Dataset,
-  DATASET_CONCRETE_TYPE_VALUE,
-  EntityType,
-  FileEntity,
-  FILE_ENTITY_CONCRETE_TYPE_VALUE,
-  TableEntity,
-  TABLE_ENTITY_CONCRETE_TYPE_VALUE,
-  Entity,
-} from '@sage-bionetworks/synapse-types'
 
-const allEntityTypes = [
+const allEntityTypes: {
+  type: EntityType
+  concreteType: Entity_OpenAPI['concreteType']
+  friendlyName: string
+}[] = [
   {
-    type: EntityType.PROJECT,
+    type: EntityType.project,
     concreteType: 'org.sagebionetworks.repo.model.Project',
     friendlyName: 'Project',
   },
   {
-    type: EntityType.FOLDER,
+    type: EntityType.folder,
     concreteType: 'org.sagebionetworks.repo.model.Folder',
     friendlyName: 'Folder',
   },
   {
-    type: EntityType.LINK,
+    type: EntityType.link,
     concreteType: 'org.sagebionetworks.repo.model.Link',
     friendlyName: 'Link',
   },
   {
-    type: EntityType.DOCKER_REPO,
+    type: EntityType.dockerrepo,
     concreteType: 'org.sagebionetworks.repo.model.docker.DockerRepository',
     friendlyName: 'Docker Repository',
   },
   {
-    type: EntityType.FILE,
+    type: EntityType.file,
     concreteType: 'org.sagebionetworks.repo.model.FileEntity',
     friendlyName: 'File',
   },
   {
-    type: EntityType.TABLE,
+    type: EntityType.table,
     concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
     friendlyName: 'Table',
   },
   {
-    type: EntityType.SUBMISSION_VIEW,
+    type: EntityType.submissionview,
     concreteType: 'org.sagebionetworks.repo.model.table.SubmissionView',
     friendlyName: 'Submission View',
   },
   {
-    type: EntityType.ENTITY_VIEW,
+    type: EntityType.entityview,
     concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
     friendlyName: 'View',
   },
   {
-    type: EntityType.DATASET,
+    type: EntityType.dataset,
     concreteType: 'org.sagebionetworks.repo.model.table.Dataset',
     friendlyName: 'Dataset',
   },
   {
-    type: EntityType.DATASET_COLLECTION,
+    type: EntityType.datasetcollection,
     concreteType: 'org.sagebionetworks.repo.model.table.DatasetCollection',
     friendlyName: 'Dataset Collection',
   },
   {
-    type: EntityType.MATERIALIZED_VIEW,
+    type: EntityType.materializedview,
     concreteType: 'org.sagebionetworks.repo.model.table.MaterializedView',
     friendlyName: 'Materialized View',
   },
   {
-    type: EntityType.VIRTUAL_TABLE,
+    type: EntityType.virtualtable,
     concreteType: 'org.sagebionetworks.repo.model.table.VirtualTable',
     friendlyName: 'Virtual Table',
+  },
+  {
+    type: EntityType.recordset,
+    concreteType: 'org.sagebionetworks.repo.model.RecordSet',
+    friendlyName: 'Record Set',
   },
 ]
 
@@ -117,7 +129,7 @@ describe('EntityTypeUtils tests', () => {
 
   it('isContainerType handles all enumerated types', () => {
     for (const type of Object.values(EntityType)) {
-      const expected = type === EntityType.PROJECT || type === EntityType.FOLDER
+      const expected = type === EntityType.project || type === EntityType.folder
       expect(isContainerType(type as EntityType)).toBe(expected)
     }
   })
