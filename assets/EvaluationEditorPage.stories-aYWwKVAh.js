@@ -1,0 +1,59 @@
+import{g as u}from"./userProfileHandlers-wTT2Qu63.js";import{M as g}from"./mock_user_profile-Bg50HGfI.js";import{M as i}from"./useFiles-B0U4gzY5.js";import{f as b}from"./index-DfTXCxi6.js";import{d as t}from"./dayjs.min-CHEXfb8p.js";import{h as p,H as m}from"./index-D9NI1WBL.js";import{E as I}from"./EvaluationEditorPage-BqXJogTT.js";import"./VerificationSubmission-DHtRxRPZ.js";import"./mockEntity-yz7duRl6.js";import"./mockFileEntity-Dn3VK7xB.js";import"./StringUtils-DP1EOPFU.js";import"./mock_file_handle-BIJh-7D7.js";import"./mockProject-BV_hCYJr.js";import"./mockTeam-Cj452QUC.js";import"./SynapseConstants-Dtw8JT9K.js";import"./OrientationBanner-BFfM4kQK.js";import"./jsx-runtime-D_zvdyIk.js";import"./index-o3mbyDJ_.js";import"./index-C2PZBrLv.js";import"./iframe-CNTF6X_t.js";import"./spreadSx-CwcO6WA9.js";import"./react-C1E0WWj9.js";import"./FullWidthAlert-C_J5Noie.js";import"./Alert-DNb5zPwV.js";import"./createTheme-D-kospWj.js";import"./DefaultPropsProvider-CC2ZtPmq.js";import"./useSlot-BoukHlmH.js";import"./useForkRef-CUmErhp7.js";import"./createSimplePaletteValueFilter-D08C6jui.js";import"./createSvgIcon-CZi17tUa.js";import"./Close-raPQlKpe.js";import"./IconButton-DL9Auw19.js";import"./useTimeout-BUOTtkI_.js";import"./ButtonBase-ClEqCu4q.js";import"./isFocusVisible-B8k4qzLc.js";import"./CircularProgress-Ce_-6k31.js";import"./Paper-DlQITwJL.js";import"./useTheme-CWrjHpSC.js";import"./useTheme-CnkkHqH9.js";import"./Stack-Dy4-WgM_.js";import"./extendSxProp-DCZvLCZ1.js";import"./getThemeProps-BghImWoL.js";import"./Box-YD4QvbDf.js";import"./AlertTitle-CJceuYZo.js";import"./Typography-5nQ2YQd7.js";import"./index-D39n2xwi.js";import"./ClickAwayListener-C_f-0IT0.js";import"./getReactElementRef-QZCM3h1T.js";import"./index-BkdGZOWW.js";import"./index-D7wXRBOq.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-D045avyu.js";import"./Tooltip-BP3wuRWq.js";import"./index-DgnACGHd.js";import"./useControlled-Chb41gWY.js";import"./Popper-DFXRF7a3.js";import"./Button-c0UHW0MR.js";import"./uniqueId-C1XzCJDS.js";import"./toString-CIV4V4cB.js";import"./isArray-42N_5E-2.js";import"./isSymbol-BlIXNtev.js";import"./times-e_ekP7_6.js";import"./_Uint8Array-B4xmgUBf.js";import"./identity-DKeuBCMA.js";import"./toInteger-C3HrJcJD.js";import"./fetchWithExponentialTimeout-CXmnpl-T.js";import"./useQuery-DZqyF7W4.js";import"./QueryClientProvider-CTUgZ56q.js";import"./Link-S3cKxk76.js";import"./Collapse-B3YoQXgf.js";import"./_baseUniq-BRoY8VEw.js";import"./_getTag-LSp1chIl.js";import"./isEqual-CMiPFqsp.js";import"./merge-FniWYtdi.js";import"./_initCloneObject-R9J6iBsV.js";import"./tinycolor-Begke6kS.js";import"./Fade-CUlhCYG9.js";import"./inputBaseClasses-DHiWbVro.js";import"./calculateFriendlyFileSize-B_omjKN-.js";import"./CheckCircleTwoTone-CiIEkiU2.js";import"./InfoTwoTone-60mfq9v0.js";import"./useMutation-CBu7Udma.js";import"./chunk-AYJ5UCUI-Cxe4yrTd.js";import"./cloneDeep-DabqN8bB.js";import"./Skeleton-L-wdtKFv.js";import"./IconSvg-D6Ai2AzB.js";import"./LayersTwoTone-BxgSDaIn.js";import"./ContentCopyTwoTone-BFsFrdGY.js";import"./HelpOutlineTwoTone-DKGLDv2E.js";import"./ErrorOutlined-BOsREY4-.js";import"./GetAppTwoTone-dD7FznD3.js";import"./InfoOutlined-O2d6qfB9.js";import"./PhoneTwoTone-DModTVAw.js";import"./DeleteTwoTone-DxbRcwQy.js";import"./WarningDialog-CyHybykq.js";import"./ConfirmationDialog-DN6pQZHG.js";import"./DialogBase-C-H1h0Qt.js";import"./Close-CIXfN3sK.js";import"./HelpPopover-DygNChNq.js";import"./MarkdownPopover-Bi-HR_4u.js";import"./LightTooltip-DvEOFUYP.js";import"./MarkdownSynapse-C-2zgFaM.js";import"./SkeletonButton-B9pJHKOb.js";import"./SkeletonInlineBlock-BV0-yJxG.js";import"./SkeletonTable-BYzdqBTE.js";import"./SkeletonParagraph-DngpqyaY.js";import"./DialogTitle-C0rXMkf5.js";import"./DialogContent-CqAmG6ha.js";import"./Dialog-DiKkYDs9.js";import"./Modal-CqcJ1osb.js";import"./getScrollbarSize-CaCM53D3.js";import"./ownerWindow-HkKU3E4x.js";import"./createChainedFunction-BO_9K8Jh.js";import"./Backdrop-87_nV6vj.js";import"./CreatedOnByUserDiv-DqoufruB.js";import"./DateFormatter-BBx_ZgJU.js";import"./localizedFormat-DRIxkfZq.js";import"./utc-D1oS6ePE.js";import"./UserBadge-xqPDNjZK.js";import"./Popover-BCJD8H0f.js";import"./isHostComponent-DVu5iVWx.js";import"./debounce-Be36O1Ab.js";import"./mergeSlotProps-BQIT8TFI.js";import"./ToastMessage-BNK30Hyw.js";import"./CSSTransition-DWqbDEh4.js";import"./Menu-BeHJqdBr.js";import"./MenuList-C5azyVTb.js";import"./List-Dpcr5eFi.js";import"./Divider-DskYpPl2.js";import"./dividerClasses-BYu2PiM4.js";import"./MenuItem-C5KWcZOQ.js";import"./Card-DKCBJ6e_.js";import"./Avatar-DjfDz09D.js";import"./Chip-Cczalozt.js";import"./TextField-Czdt-50A.js";import"./Select-D3yWfJuu.js";import"./FormControl-CtLotJyB.js";import"./useFormControl-Cf3sTcll.js";import"./isMuiElement-D9kNKrjS.js";import"./formControlState-Dq1zat_P.js";import"./InputBase-CagJheAw.js";import"./Input-DD4Tm1pG.js";import"./InputLabel-DWG0vAPK.js";import"./FormLabel-C81qwOwD.js";import"./FormHelperText-Ch4gC2Rm.js";import"./DateTimePicker-DXUOYu2k.js";import"./useMobilePicker-CdVaXh96.js";import"./index-BguMejFz.js";import"./index-Chjiymov.js";import"./visuallyHidden-Dan1xhjv.js";import"./InputAdornment-D_3pB_7C.js";import"./index-CCNPT3Gk.js";import"./ListItem-DVlDUzTT.js";import"./listItemButtonClasses-D8KTgvl-.js";import"./Tabs-D6TWFxcH.js";import"./KeyboardArrowRight-DD9cjn8d.js";import"./StyledFormControl-DcVf-o9C.js";import"./CardContent-DibIXHUC.js";import"./Grid-BGXm6hZK.js";import"./upperFirst-CjTzE8_S.js";import"./_stringToArray-N8cAV6t0.js";import"./_baseSlice-F8doVSIJ.js";const lo={title:"Synapse/Challenge/EvaluationEditorPage",component:I,args:{onDeleteSuccess:b()}},r={args:{entityId:"syn5585645"}},o={parameters:{stack:"mock",msw:{handlers:[...u(i),p.get(`${i}/repo/v1/evaluation/:id`,()=>m.json({id:"9614712",etag:"a2b871cb-faa4-471a-8c23-b917c77fecb2",name:"a",description:"b",ownerId:g.toString(),createdOn:"2021-03-02T22:16:14.552Z",contentSource:"syn5585645",submissionInstructionsMessage:"c",submissionReceiptMessage:"c"},{status:200})),p.post(`${i}/repo/v1/evaluation/:id/round/list`,()=>m.json({page:[{id:"259",etag:"6f54c353-6c04-46b1-956d-096db1008bce",evaluationId:"9614712",roundStart:"2022-11-27T08:00:00.000Z",roundEnd:"2022-11-30T08:00:00.000Z"},{id:"260",etag:"6f54c353-6c04-46b1-956d-096db1008bce",evaluationId:"9614712",roundStart:t().subtract(1,"day").toISOString(),roundEnd:t().add(2,"day").toISOString()},{id:"261",etag:"6f54c353-6c04-46b1-956d-096db1008bce",evaluationId:"9614712",roundStart:t().add(1,"week").toISOString(),roundEnd:t().add(2,"week").toISOString()}]},{status:200}))]}},args:{evaluationId:"9614712"}};var n,a,e;r.parameters={...r.parameters,docs:{...(n=r.parameters)==null?void 0:n.docs,source:{originalSource:`{
+  args: {
+    entityId: 'syn5585645'
+  }
+}`,...(e=(a=r.parameters)==null?void 0:a.docs)==null?void 0:e.source}}};var s,d,c;o.parameters={...o.parameters,docs:{...(s=o.parameters)==null?void 0:s.docs,source:{originalSource:`{
+  parameters: {
+    stack: 'mock',
+    msw: {
+      handlers: [...getUserProfileHandlers(MOCK_REPO_ORIGIN), http.get(\`\${MOCK_REPO_ORIGIN}/repo/v1/evaluation/:id\`, () => {
+        return HttpResponse.json({
+          id: '9614712',
+          etag: 'a2b871cb-faa4-471a-8c23-b917c77fecb2',
+          name: 'a',
+          description: 'b',
+          ownerId: MOCK_USER_ID.toString(),
+          createdOn: '2021-03-02T22:16:14.552Z',
+          contentSource: 'syn5585645',
+          submissionInstructionsMessage: 'c',
+          submissionReceiptMessage: 'c'
+        }, {
+          status: 200
+        });
+      }), http.post(\`\${MOCK_REPO_ORIGIN}/repo/v1/evaluation/:id/round/list\`, () => {
+        return HttpResponse.json({
+          page: [
+          // Ended
+          {
+            id: '259',
+            etag: '6f54c353-6c04-46b1-956d-096db1008bce',
+            evaluationId: '9614712',
+            roundStart: '2022-11-27T08:00:00.000Z',
+            roundEnd: '2022-11-30T08:00:00.000Z'
+          },
+          // Ongoing
+          {
+            id: '260',
+            etag: '6f54c353-6c04-46b1-956d-096db1008bce',
+            evaluationId: '9614712',
+            roundStart: dayjs().subtract(1, 'day').toISOString(),
+            roundEnd: dayjs().add(2, 'day').toISOString()
+          },
+          // Future
+          {
+            id: '261',
+            etag: '6f54c353-6c04-46b1-956d-096db1008bce',
+            evaluationId: '9614712',
+            roundStart: dayjs().add(1, 'week').toISOString(),
+            roundEnd: dayjs().add(2, 'week').toISOString()
+          }]
+        }, {
+          status: 200
+        });
+      })]
+    }
+  },
+  args: {
+    evaluationId: '9614712'
+  }
+}`,...(c=(d=o.parameters)==null?void 0:d.docs)==null?void 0:c.source}}};const Oo=["Entity","Evaluation"];export{r as Entity,o as Evaluation,Oo as __namedExportsOrder,lo as default};

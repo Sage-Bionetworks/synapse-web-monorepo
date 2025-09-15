@@ -1,0 +1,79 @@
+import{m as s}from"./mockAccessRequirements-7sHcQsUi.js";import{g as I,a as S}from"./wikiHandlers-DNOtt5d7.js";import{g as O,r as g}from"./tableQueryHandlers-BAULDvZG.js";import{g as C}from"./userProfileHandlers-wTT2Qu63.js";import{m as l}from"./mockRejectionReasonsTableQueryResultBundle-DI70dpzk.js";import{a as b}from"./mock_user_profile-Bg50HGfI.js";import{M as r,O as e,d as T,e as A}from"./useFiles-B0U4gzY5.js";import{R as M}from"./SynapseConstants-Dtw8JT9K.js";import{h as o,H as i}from"./index-D9NI1WBL.js";import{S as N}from"./SubmissionPage-B2Ni-Eku.js";import"./VerificationSubmission-DHtRxRPZ.js";import"./ACTAccessRequirement-WDpE4gfi.js";import"./LockAccessRequirement-B_A_PCc_.js";import"./SelfSignAccessRequirement-C_01XAIc.js";import"./StringUtils-DP1EOPFU.js";import"./mockProject-BV_hCYJr.js";import"./mockTeam-Cj452QUC.js";import"./uniqueId-C1XzCJDS.js";import"./toString-CIV4V4cB.js";import"./isArray-42N_5E-2.js";import"./iframe-CNTF6X_t.js";import"./isSymbol-BlIXNtev.js";import"./times-e_ekP7_6.js";import"./_Uint8Array-B4xmgUBf.js";import"./identity-DKeuBCMA.js";import"./toInteger-C3HrJcJD.js";import"./mock_file_handle-BIJh-7D7.js";import"./mockWiki-D-tOs994.js";import"./mockWikiPageKey-DmMJFopB.js";import"./mockFileEntity-Dn3VK7xB.js";import"./BasicMockedCrudService-DLrnzuCk.js";import"./cloneDeep-DabqN8bB.js";import"./_initCloneObject-R9J6iBsV.js";import"./_getTag-LSp1chIl.js";import"./isEqual-CMiPFqsp.js";import"./asyncJobHandlers-DEwNhnMQ.js";import"./omit-BG3xRyHy.js";import"./_baseGet-BF4eI0Nl.js";import"./_baseUniq-BRoY8VEw.js";import"./useQuery-DZqyF7W4.js";import"./QueryClientProvider-CTUgZ56q.js";import"./index-C2PZBrLv.js";import"./jsx-runtime-D_zvdyIk.js";import"./_baseSlice-F8doVSIJ.js";import"./merge-FniWYtdi.js";import"./mockEntity-yz7duRl6.js";import"./fetchWithExponentialTimeout-CXmnpl-T.js";import"./useTimeout-BUOTtkI_.js";import"./FullWidthAlert-C_J5Noie.js";import"./spreadSx-CwcO6WA9.js";import"./Alert-DNb5zPwV.js";import"./createTheme-D-kospWj.js";import"./DefaultPropsProvider-CC2ZtPmq.js";import"./useSlot-BoukHlmH.js";import"./useForkRef-CUmErhp7.js";import"./createSimplePaletteValueFilter-D08C6jui.js";import"./createSvgIcon-CZi17tUa.js";import"./Close-raPQlKpe.js";import"./IconButton-DL9Auw19.js";import"./ButtonBase-ClEqCu4q.js";import"./isFocusVisible-B8k4qzLc.js";import"./CircularProgress-Ce_-6k31.js";import"./Paper-DlQITwJL.js";import"./useTheme-CWrjHpSC.js";import"./useTheme-CnkkHqH9.js";import"./Stack-Dy4-WgM_.js";import"./extendSxProp-DCZvLCZ1.js";import"./getThemeProps-BghImWoL.js";import"./Box-YD4QvbDf.js";import"./AlertTitle-CJceuYZo.js";import"./Typography-5nQ2YQd7.js";import"./index-D39n2xwi.js";import"./ClickAwayListener-C_f-0IT0.js";import"./getReactElementRef-QZCM3h1T.js";import"./index-BkdGZOWW.js";import"./index-D7wXRBOq.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-D045avyu.js";import"./Tooltip-BP3wuRWq.js";import"./index-DgnACGHd.js";import"./useControlled-Chb41gWY.js";import"./Popper-DFXRF7a3.js";import"./Button-c0UHW0MR.js";import"./Link-S3cKxk76.js";import"./Collapse-B3YoQXgf.js";import"./OrientationBanner-BFfM4kQK.js";import"./index-o3mbyDJ_.js";import"./react-C1E0WWj9.js";import"./tinycolor-Begke6kS.js";import"./Fade-CUlhCYG9.js";import"./inputBaseClasses-DHiWbVro.js";import"./calculateFriendlyFileSize-B_omjKN-.js";import"./CheckCircleTwoTone-CiIEkiU2.js";import"./InfoTwoTone-60mfq9v0.js";import"./useMutation-CBu7Udma.js";import"./dayjs.min-CHEXfb8p.js";import"./chunk-AYJ5UCUI-Cxe4yrTd.js";import"./Skeleton-L-wdtKFv.js";import"./AccessRequirementList-BcfP5_eA.js";import"./useAccessRequirements-BJVp5Kqi.js";import"./index-CCNPT3Gk.js";import"./_baseOrderBy-RcJx1_OA.js";import"./_baseIteratee-DvBojHaW.js";import"./hasIn-BdozyacH.js";import"./_baseMap-PdqI28zW.js";import"./_baseEach-CZ52iKW6.js";import"./useQueries-BbmZ41kr.js";import"./useInfiniteQuery-Bq4R13Qm.js";import"./groupBy-C0Ry0TpP.js";import"./_createAggregator-_8rjR8UV.js";import"./DialogBase-C-H1h0Qt.js";import"./Close-CIXfN3sK.js";import"./HelpPopover-DygNChNq.js";import"./MarkdownPopover-Bi-HR_4u.js";import"./LightTooltip-DvEOFUYP.js";import"./MarkdownSynapse-C-2zgFaM.js";import"./SkeletonButton-B9pJHKOb.js";import"./SkeletonInlineBlock-BV0-yJxG.js";import"./SkeletonTable-BYzdqBTE.js";import"./SkeletonParagraph-DngpqyaY.js";import"./HelpOutlineTwoTone-DKGLDv2E.js";import"./DialogTitle-C0rXMkf5.js";import"./DialogContent-CqAmG6ha.js";import"./Dialog-DiKkYDs9.js";import"./Modal-CqcJ1osb.js";import"./getScrollbarSize-CaCM53D3.js";import"./ownerWindow-HkKU3E4x.js";import"./createChainedFunction-BO_9K8Jh.js";import"./Backdrop-87_nV6vj.js";import"./EntityLink-CPYdk7HR.js";import"./useEntity-n_AMMU7o.js";import"./pickBy-Du5x0lb6.js";import"./isString-NCY80NuH.js";import"./pick-CfhAGwaU.js";import"./_baseSet-CaPf3KA2.js";import"./InfiniteQueryUtils-CKlRW-xB.js";import"./useEntityBundle-Du3eYLXF.js";import"./useGetEntityHeaders-D0f9f4xd.js";import"./EntityIcon-d5C8-skO.js";import"./IconSvg-D6Ai2AzB.js";import"./LayersTwoTone-BxgSDaIn.js";import"./ContentCopyTwoTone-BFsFrdGY.js";import"./ErrorOutlined-BOsREY4-.js";import"./GetAppTwoTone-dD7FznD3.js";import"./InfoOutlined-O2d6qfB9.js";import"./PhoneTwoTone-DModTVAw.js";import"./DeleteTwoTone-DxbRcwQy.js";import"./ErrorChip-d1c6M5-c.js";import"./Chip-Cczalozt.js";import"./Avatar-DjfDz09D.js";import"./UserOrTeamBadge-CrqXqgIS.js";import"./UserBadge-xqPDNjZK.js";import"./Popover-BCJD8H0f.js";import"./isHostComponent-DVu5iVWx.js";import"./debounce-Be36O1Ab.js";import"./mergeSlotProps-BQIT8TFI.js";import"./ToastMessage-BNK30Hyw.js";import"./CSSTransition-DWqbDEh4.js";import"./Menu-BeHJqdBr.js";import"./MenuList-C5azyVTb.js";import"./List-Dpcr5eFi.js";import"./Divider-DskYpPl2.js";import"./dividerClasses-BYu2PiM4.js";import"./MenuItem-C5KWcZOQ.js";import"./Card-DKCBJ6e_.js";import"./TeamBadge-MoX8bNxb.js";import"./UnmanagedACTAccessRequirementItem-DVmqxopz.js";import"./RequirementItem-Ce5gWQtZ.js";import"./ConditionalWrapper-CpBCX7_r.js";import"./LockTwoTone-CFChSlCZ.js";import"./UserSearchBoxV2-Y79gIVp1.js";import"./useDebouncedEffect-BKuBcNCJ.js";import"./use-deep-compare-effect.esm-CdKxnmet.js";import"./uniq-BAC-U8yv.js";import"./without-DSxJCDNn.js";import"./Select-aab027f3.esm-BVsEtsa-.js";import"./defineProperty-CegpTSss.js";import"./ManagedACTAccessRequirementItemView-B9pHmhh7.js";import"./DateFormatter-BBx_ZgJU.js";import"./localizedFormat-DRIxkfZq.js";import"./utc-D1oS6ePE.js";import"./SelfSignAccessRequirementItem-C2BXf0X4.js";import"./DataAccessRequestAccessorsFilesForm-IdmkiFEW.js";import"./enums-CzHgWIn3.js";import"./_arrayReduce-CrxnWFSq.js";import"./forEach-vDS5jvQd.js";import"./useDataAccessSubmission-DTIG0_E-.js";import"./RadioGroup-Cfei3DZu.js";import"./Radio-C-Cw2pZL.js";import"./SwitchBase-C7ZmAHmT.js";import"./useFormControl-Cf3sTcll.js";import"./FormGroup-C25bJDMC.js";import"./formControlState-Dq1zat_P.js";import"./FormControlLabel-C3IQgDgW.js";import"./UploadDocumentField-YLv4m7O8.js";import"./FileUpload-CZKUFkg6.js";import"./ManagedACTAccessRequirementFormWikiWrapper-GkT8jA9A.js";import"./GridLegacy-D6_42f3s.js";import"./ResearchProjectForm-BKEagsJp.js";import"./TextFieldWithWordLimit-C4NBlkI1.js";import"./FormControl-CtLotJyB.js";import"./isMuiElement-D9kNKrjS.js";import"./Input-DD4Tm1pG.js";import"./InputBase-CagJheAw.js";import"./FormHelperText-Ch4gC2Rm.js";import"./InputLabel-DWG0vAPK.js";import"./FormLabel-C81qwOwD.js";import"./TextField-Czdt-50A.js";import"./Select-D3yWfJuu.js";import"./AuthenticatedRequirement-ObTu9t8-.js";import"./CertificationRequirement-Chm7LsXd.js";import"./TwoFactorAuthEnabledRequirement-BIadv5bs.js";import"./TwoFactorEnrollmentForm-D6UsH-lB.js";import"./LeftRightPanel-DaOEO-3A.js";import"./LoadingScreen-ZoufKF0h.js";import"./LinearProgress-BK1ry841.js";import"./TextField-CbQBxM4A.js";import"./StyledFormControl-DcVf-o9C.js";import"./ValidationRequirement-DgNKJPp9.js";import"./duration-52rB8_qa.js";import"./FileHandleLink-DKaTxf4I.js";import"./RejectDataAccessRequestModal-Cx_hweDr.js";import"./CannedRejectionDialog-DN33Bh7X.js";import"./immutable.es-BJjDfH8f.js";import"./ConfirmationDialog-DN6pQZHG.js";import"./Checkbox-CEEKA1m3.js";import"./Grid-BGXm6hZK.js";import"./upperFirst-CjTzE8_S.js";import"./_stringToArray-N8cAV6t0.js";const vi={title:"Governance/SubmissionPage",component:N,parameters:{stack:"mock",withRouter:!0},argTypes:{isAuthenticated:{control:{type:"boolean"}}},args:{isAuthenticated:!0}},m={name:"SubmissionPage",loaders:[()=>g({sql:`SELECT * FROM ${M}`},l)],parameters:{msw:{handlers:[...C(r),...I(r),o.get(`${r}${e(":id")}`,({params:t})=>{const E=S.find(_=>t.id===_.id);return i.json(E,{status:200})}),o.get(`${r}${T(":id")}`,()=>i.json(s,{status:200})),o.get(`${r}${A(":id")}`,()=>i.json({wikiPageId:123,ownerObjectId:s.id,ownerObjectType:"ACCESS_REQUIREMENT"},{status:200})),o.get(`${r}/repo/v1/accessRequirement/:id/acl`,({params:t})=>i.json({id:t.id,creationDate:"2022-05-20T14:32:31.665Z",etag:"f4fbd4f2-751d-40dd-9421-1d2693231217",resourceAccess:[{principalId:b,accessType:["REVIEW_SUBMISSIONS"]}]},{status:200})),...O(r),o.put(`${r}${e(":id")}`,async({request:t})=>i.json(await t.json(),{status:201}))]}},args:{isReviewer:!0,submissionId:1}},p={name:"Demo Error State",parameters:{msw:{handlers:[o.get(`${r}${e(":id")}`,()=>{const t={reason:"The user must be validated in order to review data access submissions.",concreteType:"org.sagebionetworks.repo.model.ErrorResponse"};return i.json(t,{status:403})})]}},args:{isReviewer:!0,submissionId:9999}};var n,a,d;m.parameters={...m.parameters,docs:{...(n=m.parameters)==null?void 0:n.docs,source:{originalSource:`{
+  name: 'SubmissionPage',
+  loaders: [() => registerTableQueryResult({
+    sql: \`SELECT * FROM \${REJECT_SUBMISSION_CANNED_RESPONSES_TABLE}\`
+  }, mockRejectionReasonsTableQueryResultBundle)],
+  parameters: {
+    msw: {
+      handlers: [...getUserProfileHandlers(MOCK_REPO_ORIGIN), ...getWikiHandlers(MOCK_REPO_ORIGIN),
+      // Return submission based on ID
+      http.get(\`\${MOCK_REPO_ORIGIN}\${DATA_ACCESS_SUBMISSION_BY_ID(':id')}\`, ({
+        params
+      }) => {
+        const submission = mockSubmissions.find(submission => params.id === submission.id);
+        return HttpResponse.json(submission, {
+          status: 200
+        });
+      }),
+      // Return a mocked access requirement
+      http.get(\`\${MOCK_REPO_ORIGIN}\${ACCESS_REQUIREMENT_BY_ID(':id')}\`, () => {
+        return HttpResponse.json(mockManagedACTAccessRequirement, {
+          status: 200
+        });
+      }), http.get(\`\${MOCK_REPO_ORIGIN}\${ACCESS_REQUIREMENT_WIKI_PAGE_KEY(':id')}\`, () => {
+        return HttpResponse.json({
+          wikiPageId: 123,
+          ownerObjectId: mockManagedACTAccessRequirement.id,
+          ownerObjectType: 'ACCESS_REQUIREMENT'
+        }, {
+          status: 200
+        });
+      }), http.get<{
+        id: string;
+      }>(\`\${MOCK_REPO_ORIGIN}/repo/v1/accessRequirement/:id/acl\`, ({
+        params
+      }) => {
+        return HttpResponse.json({
+          id: params.id,
+          creationDate: '2022-05-20T14:32:31.665Z',
+          etag: 'f4fbd4f2-751d-40dd-9421-1d2693231217',
+          resourceAccess: [{
+            principalId: MOCK_USER_ID_2,
+            accessType: ['REVIEW_SUBMISSIONS']
+          }]
+        }, {
+          status: 200
+        });
+      }), ...getHandlersForTableQuery(MOCK_REPO_ORIGIN), http.put(\`\${MOCK_REPO_ORIGIN}\${DATA_ACCESS_SUBMISSION_BY_ID(':id')}\`, async ({
+        request
+      }) => {
+        return HttpResponse.json(await request.json(), {
+          status: 201
+        });
+      })]
+    }
+  },
+  args: {
+    isReviewer: true,
+    submissionId: 1
+  }
+}`,...(d=(a=m.parameters)==null?void 0:a.docs)==null?void 0:d.source}}};var u,c,R;p.parameters={...p.parameters,docs:{...(u=p.parameters)==null?void 0:u.docs,source:{originalSource:`{
+  name: 'Demo Error State',
+  parameters: {
+    msw: {
+      handlers: [http.get(\`\${MOCK_REPO_ORIGIN}\${DATA_ACCESS_SUBMISSION_BY_ID(':id')}\`, () => {
+        const errorResponse: ErrorResponse = {
+          reason: 'The user must be validated in order to review data access submissions.',
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse'
+        };
+        return HttpResponse.json(errorResponse, {
+          status: 403
+        });
+      })]
+    }
+  },
+  args: {
+    isReviewer: true,
+    submissionId: 9999
+  }
+}`,...(R=(c=p.parameters)==null?void 0:c.docs)==null?void 0:R.source}}};const Qi=["Demo","DemoError"];export{m as Demo,p as DemoError,Qi as __namedExportsOrder,vi as default};
