@@ -127,7 +127,11 @@ export class DataGridWebSocket {
           encodedModelClock = encode(modelClock)
         }
         if (encodedModelClock) {
-          const msg = new JsonRxRequestComplete('patch', encodedModelClock)
+          const msg = new JsonRxRequestComplete(
+            this.messageCounter.getNext(),
+            'patch',
+            encodedModelClock,
+          )
           console.debug('Responding with patch:', msg)
           this.sendMessage(msg)
         } else {
@@ -174,6 +178,7 @@ export class DataGridWebSocket {
         const verbModel = this.verboseEncoder.encode(this.model)
         console.debug('New patch received, syncing data:', verbModel.time)
         const msg = new JsonRxRequestComplete(
+          this.messageCounter.getNext(),
           'synchronize-clock',
           verbModel.time,
         )
@@ -190,10 +195,6 @@ export class DataGridWebSocket {
 
   private sendMessage(message: JsonRxMessage) {
     if (this.socket.readyState === WebSocket.OPEN) {
-      if (message instanceof JsonRxRequestComplete) {
-        const subscriptionId = this.messageCounter.getNext()
-        message.setRequestId(subscriptionId)
-      }
       console.debug('Sending message:', message)
       this.socket.send(JSON.stringify(message.getJson()))
     } else {
@@ -217,7 +218,11 @@ export class DataGridWebSocket {
       const patches = splitPatch(patch, this.maxPayloadSizeBytes)
       patches.forEach(compactEncodedPatch => {
         console.debug('Sending patch to server:', compactEncodedPatch)
-        const msg = new JsonRxRequestComplete('patch', compactEncodedPatch)
+        const msg = new JsonRxRequestComplete(
+          this.messageCounter.getNext(),
+          'patch',
+          compactEncodedPatch,
+        )
         this.sendMessage(msg)
       })
     }
@@ -226,7 +231,11 @@ export class DataGridWebSocket {
   private sendSyncMessage(
     clock: number | JsonCrdtVerboseLogicalTimestamp[] = [],
   ) {
-    const message = new JsonRxRequestComplete('synchronize-clock', clock)
+    const message = new JsonRxRequestComplete(
+      this.messageCounter.getNext(),
+      'synchronize-clock',
+      clock,
+    )
     this.sendMessage(message)
   }
 }

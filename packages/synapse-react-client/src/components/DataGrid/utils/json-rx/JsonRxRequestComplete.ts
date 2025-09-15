@@ -9,11 +9,15 @@ export default class JsonRxRequestComplete<
   private methodName: string
   private payload?: TPayload
 
-  constructor(methodName: string, payload?: TPayload) {
+  public constructor(
+    requestId: number,
+    methodName: string,
+    payload?: TPayload,
+  ) {
     super(REQUEST_COMPLETE_TYPE_CODE)
+    this.requestId = requestId
     this.methodName = methodName
     this.payload = payload
-    this.requestId = -1
   }
 
   public setRequestId(requestId: number) {

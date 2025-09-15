@@ -23,8 +23,9 @@ describe('JsonRx serialization/deserialization', () => {
   })
 
   it('serializes and deserializes JsonRxRequestComplete', () => {
-    const requestComplete = new JsonRxRequestComplete('getData', { done: true })
-    requestComplete.setRequestId(123)
+    const requestComplete = new JsonRxRequestComplete(123, 'getData', {
+      done: true,
+    })
     const json = requestComplete.getJson()
     expect(json).toEqual([
       REQUEST_COMPLETE_TYPE_CODE,
@@ -32,16 +33,12 @@ describe('JsonRx serialization/deserialization', () => {
       'getData',
       { done: true },
     ])
-    const parsed = JsonRx.fromJson([
-      REQUEST_COMPLETE_TYPE_CODE,
-      'getData',
-      { done: true },
-    ])
+    const parsed = JsonRx.fromJson(json)
     expect(parsed).toBeInstanceOf(JsonRxRequestComplete)
     // The deserialized instance will have requestId = -1
     expect((parsed as JsonRxRequestComplete).getJson()).toEqual([
       REQUEST_COMPLETE_TYPE_CODE,
-      -1,
+      123,
       'getData',
       { done: true },
     ])

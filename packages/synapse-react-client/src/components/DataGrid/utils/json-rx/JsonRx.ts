@@ -45,18 +45,24 @@ export default class JsonRx {
         return new JsonRxRequest(requestId, methodName, payload)
       }
       case REQUEST_COMPLETE_TYPE_CODE: {
-        const [_, methodName, payload] = json
-        return new JsonRxRequestComplete(methodName, payload)
+        const [_, requestId, methodName, payload] = json
+        const message = new JsonRxRequestComplete(
+          requestId,
+          methodName,
+          payload,
+        )
+        message.setRequestId(requestId)
+        return message
       }
       case RESPONSE_TYPE_CODE: {
         // Response
-        const [_, subscriptionId, payload] = json
-        return new JsonRxResponse(subscriptionId, payload)
+        const [_, requestId, payload] = json
+        return new JsonRxResponse(requestId, payload)
       }
       case RESPONSE_COMPLETE_TYPE_CODE: {
         // ResponseComplete
-        const [_, subscriptionId, payload] = json
-        return new JsonRxResponseComplete(subscriptionId, payload)
+        const [_, requestId, payload] = json
+        return new JsonRxResponseComplete(requestId, payload)
       }
       case NOTIFICATION_TYPE_CODE: {
         // Notification
