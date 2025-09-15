@@ -3,7 +3,9 @@ import { getCellClassName } from './getCellClassName'
 import { DataGridRow } from '../DataGridTypes'
 
 describe('getCellClassName', () => {
-  const createMockRowData = (validationResults?: Set<string>): DataGridRow =>
+  const createMockRowData = (
+    validationResults?: Map<string, string[]>,
+  ): DataGridRow =>
     ({
       __cellValidationResults: validationResults,
     } as DataGridRow)
@@ -42,7 +44,7 @@ describe('getCellClassName', () => {
   })
 
   it('adds cell-invalid class when cell has validation errors', () => {
-    const validationResults = new Set(['col1'])
+    const validationResults = new Map([['col1', ['Error message 1']]])
     const result = getCellClassName({
       rowData: createMockRowData(validationResults),
       rowIndex: 0,
@@ -54,7 +56,7 @@ describe('getCellClassName', () => {
   })
 
   it('adds both classes when row is selected and cell is invalid', () => {
-    const validationResults = new Set(['col1'])
+    const validationResults = new Map([['col1', ['Error message']]])
     const result = getCellClassName({
       rowData: createMockRowData(validationResults),
       rowIndex: 0,
@@ -66,7 +68,7 @@ describe('getCellClassName', () => {
   })
 
   it('does not add cell-invalid class when columnId is not in validation results', () => {
-    const validationResults = new Set(['col2'])
+    const validationResults = new Map([['col2', ['Error message']]])
     const result = getCellClassName({
       rowData: createMockRowData(validationResults),
       rowIndex: 0,
@@ -78,7 +80,7 @@ describe('getCellClassName', () => {
   })
 
   it('does not add cell-invalid class when columnId is undefined', () => {
-    const validationResults = new Set(['col1'])
+    const validationResults = new Map([['col1', ['Error message']]])
     const result = getCellClassName({
       rowData: createMockRowData(validationResults),
       rowIndex: 0,
@@ -120,5 +122,31 @@ describe('getCellClassName', () => {
     })
 
     expect(result).toBe('cell-row-selected')
+  })
+
+  it('adds cell-invalid class when column has empty error array', () => {
+    const validationResults = new Map([['col1', []]])
+    const result = getCellClassName({
+      rowData: createMockRowData(validationResults),
+      rowIndex: 0,
+      columnId: 'col1',
+      selectedRowIndex: null,
+    })
+
+    expect(result).toBe('cell-invalid')
+  })
+
+  it('adds cell-invalid class when column has multiple error messages', () => {
+    const validationResults = new Map([
+      ['col1', ['Error 1', 'Error 2', 'Error 3']],
+    ])
+    const result = getCellClassName({
+      rowData: createMockRowData(validationResults),
+      rowIndex: 0,
+      columnId: 'col1',
+      selectedRowIndex: null,
+    })
+
+    expect(result).toBe('cell-invalid')
   })
 })
