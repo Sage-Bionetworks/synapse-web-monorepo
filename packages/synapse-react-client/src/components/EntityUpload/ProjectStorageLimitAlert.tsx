@@ -22,9 +22,11 @@ export function ProjectStorageLimitAlert(props: ProjectStorageLimitAlertProps) {
   const warningThresholdBytes =
     usage.maxAllowedFileBytes * (1 - PERCENT_REMAINING_STORAGE_TO_SHOW_WARNING)
 
-  const remainingStorageBytes = usage.maxAllowedFileBytes - usage.sumFileBytes!
+  const sumFileBytes = usage.sumFileBytes ?? 0
 
-  if (!didUploadsExceedLimit && usage.sumFileBytes! < warningThresholdBytes) {
+  const remainingStorageBytes = usage.maxAllowedFileBytes - sumFileBytes
+
+  if (!didUploadsExceedLimit && sumFileBytes < warningThresholdBytes) {
     // No need to show a warning
     return null
   }

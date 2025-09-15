@@ -22,7 +22,8 @@ export function willUploadsExceedStorageLimit(
     return false
   }
 
-  const estimatedCurrentUsage = usage.sumFileBytes! + pendingUploadsInBytes
+  const estimatedCurrentUsage =
+    (usage.sumFileBytes ?? 0) + pendingUploadsInBytes
   const sumFileSizeBytes = Array.from(files).reduce(
     (acc, file) => acc + file.size,
     0,
