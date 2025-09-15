@@ -1,1 +1,0 @@
-import{C as l}from"./VerificationSubmission-DHtRxRPZ.js";function u(e,t,n){if(!e||e.length!==1)throw new Error("rowSelectionPrimaryKey must be defined and have length 1");const o=n.findIndex(r=>r.name===e[0]);return{concreteType:"org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter",columnName:e[0],operator:l.IN,values:t.map(r=>r.values[o])}}export{u as g};
