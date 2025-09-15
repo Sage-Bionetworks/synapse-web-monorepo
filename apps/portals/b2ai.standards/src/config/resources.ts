@@ -20,7 +20,7 @@ export const TABLE_IDS = {
   // Organization: { name: 'Organization', id: 'syn63096836.31' },
   Organization_denormalized: {
     name: 'Organization',
-    id: 'syn69693360.6',
+    id: 'syn69693360.7',
     xid: 'syn69696403' /* Organization_denormalized_current */,
   },
   // D4D_content: { name: 'D4D_content', id: 'syn63096836.31' },

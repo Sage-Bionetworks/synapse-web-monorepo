@@ -19,7 +19,7 @@ import { TableToGenericCardMapping } from 'synapse-react-client/components/Gener
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import columnAliases from '@/config/columnAliases'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import CardDeckDesktop from 'synapse-react-client/components/CardDeck/CardDeck.Desktop'
+// import CardDeckDesktop from 'synapse-react-client/components/CardDeck/CardDeck.Desktop'
 import { DetailsPageSectionLayoutType } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageSectionLayout'
 
 export const organizationCardSchema: TableToGenericCardMapping = {
@@ -104,14 +104,13 @@ export default function OrganizationDetailsPage() {
 
 function orgSectionCard({ detailOrg }) {
   const card: CardDeckCardProps = {
-    title: detailOrg[ORG_TABLE_COLUMN_NAMES.NAME] || detailOrg.name,
-    description:
-      detailOrg[ORG_TABLE_COLUMN_NAMES.DESCRIPTION] || detailOrg.description,
-    cardDeckType: 'b2ai',
-    ctaButtonText: 'NOT USED IN cardDeckType = b2ai',
+    title: detailOrg[ORG_TABLE_COLUMN_NAMES.NAME],
+    description: detailOrg[ORG_TABLE_COLUMN_NAMES.DESCRIPTION],
+    cardDeckType: 'b2ai-detail-card',
+    ctaButtonText: 'NOT USED IN cardDeckType = b2ai-detail-card',
     ctaButtonURL: `/Explore/Organization/OrganizationDetailsPage?${
       ORG_TABLE_COLUMN_NAMES.ID
-    }=${detailOrg[ORG_TABLE_COLUMN_NAMES.ID] || detailOrg.id}`,
+    }=${detailOrg[ORG_TABLE_COLUMN_NAMES.ID]}`,
   }
   return card
 }
@@ -120,8 +119,8 @@ function datasetSectionCard({ dataset }) {
   const card: CardDeckCardProps = {
     title: dataset.name,
     description: dataset.description,
-    cardDeckType: 'b2ai',
-    ctaButtonText: 'NOT USED IN cardDeckType = b2ai',
+    cardDeckType: 'b2ai-detail-card',
+    ctaButtonText: 'NOT USED IN cardDeckType = b2ai-detail-card',
     ctaButtonURL: dataset.DatasheetURL || dataset.DocumentationURL || '#',
   }
   return card
@@ -131,24 +130,26 @@ function standardSectionCard({ standard }) {
   const card: CardDeckCardProps = {
     title: `${standard.acronym}: ${standard.name}`,
     description: standard.description,
-    cardDeckType: 'b2ai',
-    ctaButtonText: 'NOT USED IN cardDeckType = b2ai',
+    cardDeckType: 'b2ai-detail-card',
+    ctaButtonText: 'NOT USED IN cardDeckType = b2ai-detail-card',
     ctaButtonURL: `/Explore/Standard/DetailsPage?id=${standard.id}`,
   }
   return card
 }
 function detailSections({ detailOrg }) {
   const sections: DetailsPageSectionLayoutType[] = []
-  /*
+
   // Main Organization section
   const main_organization =
     detailOrg[ORG_TABLE_COLUMN_NAMES.MAIN_ORGANIZATION_JSON]
   if (!isEmpty(main_organization)) {
-    main_organization.forEach((org) => {
-      sections.push({
-        title: 'Main Organization',
-        ...orgSectionCard({ detailOrg: org })
-      })
+    const cards: CardDeckCardProps[] = main_organization.map(org => {
+      return orgSectionCard({ detailOrg: org })
+    })
+    sections.push({
+      id: 'MainOrganization',
+      title: 'Main Organization',
+      element: <CardDeck cardDeckType="b2ai-detail-card" cards={cards} />,
     })
   }
 
@@ -156,14 +157,15 @@ function detailSections({ detailOrg }) {
   const associated_organization =
     detailOrg[ORG_TABLE_COLUMN_NAMES.ASSSOCIATED_ORGANIZATION_JSON]
   if (!isEmpty(associated_organization)) {
-    associated_organization.forEach((org) => {
-      sections.push({
-        title: 'Associated Organization', 
-        ...orgSectionCard({ detailOrg: org })
-      })
+    const cards: CardDeckCardProps[] = associated_organization.map(org => {
+      return orgSectionCard({ detailOrg: org })
+    })
+    sections.push({
+      id: 'AssociatedOrganization',
+      title: 'Associated Organization',
+      element: <CardDeck cardDeckType="b2ai-detail-card" cards={cards} />,
     })
   }
-  */
 
   // DataSets section
   const datasets = detailOrg[ORG_TABLE_COLUMN_NAMES.DATASET_JSON]
@@ -174,34 +176,38 @@ function detailSections({ detailOrg }) {
     sections.push({
       id: 'DataSets',
       title: 'DataSets',
-      element: <CardDeck cardDeckType="b2ai" cards={cards} />,
+      helpText: 'Metadata and links to a DataSet',
+      element: <CardDeck cardDeckType="b2ai-detail-card" cards={cards} />,
     })
   }
 
-  /*
   // Relevant Standards section
-  const relevantStandards = detailOrg[ORG_TABLE_COLUMN_NAMES.RELEVANT_STANDARDS_JSON]
+  const relevantStandards =
+    detailOrg[ORG_TABLE_COLUMN_NAMES.RELEVANT_STANDARDS_JSON]
   if (!isEmpty(relevantStandards)) {
-    relevantStandards.forEach((standard) => {
-      sections.push({
-        id: 'd4d',
-        title: 'Relevant Standards',
-        ...standardSectionCard({ standard })
-      })
+    const cards: CardDeckCardProps[] = relevantStandards.map(standard => {
+      return standardSectionCard({ standard })
+    })
+    sections.push({
+      id: 'RelevantStandards',
+      title: 'Relevant Standards',
+      element: <CardDeck cardDeckType="b2ai-detail-card" cards={cards} />,
     })
   }
 
   // Governed Standards section
-  const governedStandards = detailOrg[ORG_TABLE_COLUMN_NAMES.GOVERNED_STANDARDS_JSON]
+  const governedStandards =
+    detailOrg[ORG_TABLE_COLUMN_NAMES.GOVERNED_STANDARDS_JSON]
   if (!isEmpty(governedStandards)) {
-    governedStandards.forEach((standard) => {
-      sections.push({
-        title: 'Governed Standards',
-        ...standardSectionCard({ standard })
-      })
+    const cards: CardDeckCardProps[] = governedStandards.map(standard => {
+      return standardSectionCard({ standard })
+    })
+    sections.push({
+      id: 'GovernedStandards',
+      title: 'Governed Standards',
+      element: <CardDeck cardDeckType="b2ai-detail-card" cards={cards} />,
     })
   }
-  */
 
   return sections
 }
