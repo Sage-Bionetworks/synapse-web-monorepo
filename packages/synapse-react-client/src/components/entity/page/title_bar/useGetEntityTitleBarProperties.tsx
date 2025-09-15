@@ -147,7 +147,7 @@ export function useGetEntityTitleBarProperties(
       value: (
         <>
           <Link onClick={() => setDataCiteCitationsDialogOpen(true)}>
-            {dataCiteUsage.citationCount}
+            {dataCiteUsage.citationCount.toLocaleString()}
             {dataCiteUsage.citationCount == maxCitationCount && '+'}
           </Link>
           <CitationsDialog
@@ -164,7 +164,7 @@ export function useGetEntityTitleBarProperties(
       value: (
         <>
           <Link onClick={() => setMentionsDialogOpen(true)}>
-            {mentions.length}
+            {mentions.length.toLocaleString()}
           </Link>
           <CitationsDialog
             open={mentionsDialogOpen}

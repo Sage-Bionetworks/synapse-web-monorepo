@@ -61,6 +61,12 @@ export async function fetchMetadataForPMCIDs(
     throw new Error(`Europe PMC error ${resp.status}: ${await resp.text()}`)
 
   const json = (await resp.json()) as EuropePMCResponse
+  return mapEuropePMCResponseToCitingWorks(json)
+}
+
+export function mapEuropePMCResponseToCitingWorks(
+  json: EuropePMCResponse,
+): CitingWork[] {
   return json.resultList.result.map(
     r =>
       ({

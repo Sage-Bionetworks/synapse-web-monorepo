@@ -1,25 +1,13 @@
-import React from 'react'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {
   useGetMentions,
   getMentionsQueryKey,
   EuropePMCResult,
   EuropePMCResponse,
+  mapEuropePMCResponseToCitingWorks,
 } from './useGetMentions'
 import { CitingWork } from './useDataCiteUsage'
-
-// Helper to setup QueryClient and wrapper
-function setupClient() {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  })
-  const Wrapper = ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  )
-  return { Wrapper, queryClient }
-}
 
 // Mock fetch for Europe PMC
 const mockEuropePMCResponse = (
@@ -28,9 +16,15 @@ const mockEuropePMCResponse = (
   resultList: { result: results },
 })
 
-vi.mock('@/synapse-queries', () => ({
-  useGetQueryResultBundleWithAsyncStatus: vi.fn(),
-}))
+import { setupQueryClient } from '@/testutils/TestingLibraryUtils'
+
+vi.mock('@/synapse-queries', async () => {
+  const actual = await import('@/synapse-queries')
+  return {
+    ...actual,
+    useGetQueryResultBundleWithAsyncStatus: vi.fn(),
+  }
+})
 
 import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
 
@@ -86,7 +80,7 @@ describe('useGetMentions', () => {
       json: () => mockEuropePMCResponse(europePMCResults),
     } as any)
 
-    const { Wrapper } = setupClient()
+    const { Wrapper } = setupQueryClient()
     const { result } = renderHook(() => useGetMentions(entityId), {
       wrapper: Wrapper,
     })
@@ -124,7 +118,7 @@ describe('useGetMentions', () => {
       data: { responseBody: { queryResult: { queryResults: { rows: [] } } } },
     } as any)
 
-    const { Wrapper } = setupClient()
+    const { Wrapper } = setupQueryClient()
     const { result } = renderHook(() => useGetMentions(entityId), {
       wrapper: Wrapper,
     })
@@ -141,7 +135,7 @@ describe('useGetMentions', () => {
       text: () => Promise.resolve('Internal Server Error'),
     })
 
-    const { Wrapper } = setupClient()
+    const { Wrapper } = setupQueryClient()
     const { result } = renderHook(() => useGetMentions(entityId), {
       wrapper: Wrapper,
     })
@@ -158,7 +152,7 @@ describe('useGetMentions', () => {
       json: () => mockEuropePMCResponse([]),
     } as any)
 
-    const { Wrapper, queryClient } = setupClient()
+    const { Wrapper, queryClient } = setupQueryClient()
     const { rerender } = renderHook(({ id }) => useGetMentions(id), {
       initialProps: { id: 'synA' },
       wrapper: Wrapper,
@@ -179,5 +173,49 @@ describe('useGetMentions', () => {
       ).toBeDefined(),
     )
     expect(queryClient.getQueryState(['europepmc', 'synB'])).toBeTruthy()
+  })
+
+  // test mapEuropePMCResponseToCitingWorks
+  it('maps Europe PMC response to CitingWork correctly', () => {
+    const europePMCResponse: EuropePMCResponse = {
+      resultList: {
+        result: [
+          {
+            pmcid: 'PMC123',
+            title: 'Sample Title',
+            doi: '10.1000/xyz123',
+            journalTitle: 'Sample Journal',
+            pubYear: '2020',
+            authorList: { author: [{ fullName: 'John Doe' }] },
+          },
+          {
+            pmcid: 'PMC456',
+            // Missing title and doi
+            journalTitle: 'Another Journal',
+            pubYear: '2019',
+            authorList: { author: [] }, // No authors
+          },
+        ],
+      },
+    }
+
+    const citingWorks = mapEuropePMCResponseToCitingWorks(europePMCResponse)
+    expect(citingWorks).toHaveLength(2)
+
+    const first = citingWorks[0]
+    expect(first.id).toBe('PMC123')
+    expect(first.doi).toBe('10.1000/xyz123')
+    expect(first.title).toBe('Sample Title')
+    expect(first.publisher).toBe('Sample Journal')
+    expect(first.publicationYear).toBe(2020)
+    // expect(first.authors).toEqual(['John Doe'])
+
+    const second = citingWorks[1]
+    expect(second.id).toBe('PMC456')
+    expect(second.doi).toBeUndefined()
+    expect(second.title).toBe('(Untitled)')
+    expect(second.publisher).toBe('Another Journal')
+    expect(second.publicationYear).toBe(2019)
+    // expect(second.authors).toEqual([])
   })
 })
