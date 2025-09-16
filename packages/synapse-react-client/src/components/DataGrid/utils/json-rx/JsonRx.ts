@@ -51,7 +51,6 @@ export default class JsonRx {
           methodName,
           payload,
         )
-        message.setRequestId(requestId)
         return message
       }
       case RESPONSE_TYPE_CODE: {

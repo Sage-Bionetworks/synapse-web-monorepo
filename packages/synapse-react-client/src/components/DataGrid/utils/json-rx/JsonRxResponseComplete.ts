@@ -12,6 +12,9 @@ export default class JsonRxResponseComplete<
     return this.subscriptionId
   }
 
+  public getPayload(): TPayload | undefined {
+    return this.payload;
+  }
   constructor(subscriptionId: number, payload?: TPayload) {
     super(RESPONSE_COMPLETE_TYPE_CODE)
     this.subscriptionId = subscriptionId

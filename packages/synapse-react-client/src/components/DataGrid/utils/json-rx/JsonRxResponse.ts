@@ -16,7 +16,7 @@ export default class JsonRxResponse<TPayload = unknown> extends JsonRxMessage {
     this.payload = payload
   }
 
-  public getJson() {
+  public getJson(): Array<unknown> {
     return [this.typeCode, this.subscriptionId, this.payload]
   }
 }

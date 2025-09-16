@@ -22,7 +22,7 @@ export default class JsonRxNotification<
     this.payload = payload
   }
 
-  public getJson() {
+  public getJson(): Array<unknown> {
     const json: Array<unknown> = [this.typeCode, this.methodName]
     if (this.payload !== undefined) {
       json.push(this.payload)
