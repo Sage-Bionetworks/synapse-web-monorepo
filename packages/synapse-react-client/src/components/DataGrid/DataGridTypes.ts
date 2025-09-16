@@ -27,7 +27,13 @@ export interface JsonJoyMessage {
   payload?: string
 }
 
-export type QueryInputType = 'empty' | 'sql' | 'sessionId' | 'unknown'
+export type QueryInputType =
+  | 'empty'
+  | 'sql'
+  | 'sessionId'
+  | 'recordSetId'
+  | 'unknown'
+
 export interface QueryInput {
   type: QueryInputType
   input: string
