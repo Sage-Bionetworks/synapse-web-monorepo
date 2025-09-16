@@ -268,6 +268,7 @@ export function SynapseChat({
         justifyContent: 'space-between',
         maxWidth: '1100px',
         mx: 'auto',
+        height: '100%',
       }}
     >
       {!hideTitle && (

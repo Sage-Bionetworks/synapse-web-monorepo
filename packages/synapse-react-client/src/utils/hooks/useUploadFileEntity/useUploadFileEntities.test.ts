@@ -17,7 +17,7 @@ import {
   FileEntity,
   UploadDestination,
   UploadType,
-} from '@sage-bionetworks/synapse-types'
+} from '@sage-bionetworks/synapse-client'
 import { act, renderHook as _renderHook, waitFor } from '@testing-library/react'
 import {
   PrepareDirsForUploadReturn,

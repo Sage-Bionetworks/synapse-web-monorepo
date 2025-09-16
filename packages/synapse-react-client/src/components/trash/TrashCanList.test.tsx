@@ -9,8 +9,8 @@ import {
   TRASHCAN_VIEW,
 } from '@/utils/APIConstants'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
-  EntityType,
   PaginatedResults,
   TrashedEntity,
 } from '@sage-bionetworks/synapse-types'
@@ -30,7 +30,7 @@ const trashCanPages: PaginatedResults<TrashedEntity>[] = [
       {
         entityId: mockFileEntityData.id,
         entityName: mockFileEntityData.name,
-        entityType: EntityType.FILE,
+        entityType: EntityType.file,
         deletedByPrincipalId: MOCK_USER_ID.toString(),
         deletedOn: '2020-01-01T00:00:00.000Z',
         originalParentId: mockFileEntityData.entity.parentId!,
@@ -43,7 +43,7 @@ const trashCanPages: PaginatedResults<TrashedEntity>[] = [
       {
         entityId: mockDatasetData.id,
         entityName: mockDatasetData.name,
-        entityType: EntityType.FILE,
+        entityType: EntityType.file,
         deletedByPrincipalId: MOCK_USER_ID.toString(),
         deletedOn: '2020-01-01T00:00:00.000Z',
         originalParentId: mockDatasetData.entity.parentId!,

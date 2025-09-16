@@ -1,8 +1,17 @@
 import { getEntityVersions } from '@/synapse-client/SynapseClient'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { getEntityTypeFromHeader, isContainerType, isVersionableEntityType } from '@/utils/functions/EntityTypeUtils'
+import {
+  getEntityTypeFromHeader,
+  isContainerType,
+  isVersionableEntityType,
+} from '@/utils/functions/EntityTypeUtils'
 import { Checkbox, Tooltip } from '@mui/material'
-import { EntityChildrenRequest, EntityHeader, EntityType, Reference } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import {
+  EntityChildrenRequest,
+  EntityHeader,
+  Reference,
+} from '@sage-bionetworks/synapse-types'
 import { useQueryClient } from '@tanstack/react-query'
 import {
   CellContext,
@@ -14,8 +23,18 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { BlockingLoader, SynapseSpinner } from '../../../LoadingScreen/LoadingScreen'
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+import {
+  BlockingLoader,
+  SynapseSpinner,
+} from '../../../LoadingScreen/LoadingScreen'
 import ColumnHeader from '../../../TanStackTable/ColumnHeader'
 import StyledVirtualTanStackTable from '../../../TanStackTable/StyledVirtualTanStackTable'
 import { EntityFinderHeader } from '../../EntityFinderHeader'
@@ -593,13 +612,13 @@ export function DetailsView(props: DetailsViewProps) {
           [DetailsViewColumn.SELECTED]: showSelectColumn,
           [DetailsViewColumn.VERSION]:
             versionSelection !== VersionSelectionType.DISALLOWED,
-          [DetailsViewColumn.SIZE]: visibleTypes.includes(EntityType.FILE),
-          [DetailsViewColumn.MD5]: visibleTypes.includes(EntityType.FILE),
+          [DetailsViewColumn.SIZE]: visibleTypes.includes(EntityType.file),
+          [DetailsViewColumn.MD5]: visibleTypes.includes(EntityType.file),
           [DetailsViewColumn.ADD_TO_DOWNLOAD_CART]: visibleTypes.includes(
-            EntityType.FILE,
+            EntityType.file,
           ),
           [DetailsViewColumn.DIRECT_DOWNLOAD]: visibleTypes.includes(
-            EntityType.FILE,
+            EntityType.file,
           ),
           ...hideColumnOverrides,
         },

@@ -13,6 +13,7 @@ import {
 import { InfoTwoTone } from '@mui/icons-material'
 import { Box, Button, Radio, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   Direction,
@@ -20,7 +21,6 @@ import {
   EntityChildrenRequest,
   EntityHeader,
   EntityLookupRequest,
-  EntityType,
   FILE_ENTITY_CONCRETE_TYPE_VALUE,
   FileEntity,
   FileUploadComplete,
@@ -47,7 +47,7 @@ type SubmissionDirectoryRow = {
 type SubmissionDirectoryListProps = {
   pageSize: number
   challengeProjectId: string
-  entityType: EntityType.DOCKER_REPO | EntityType.FILE
+  entityType: typeof EntityType.dockerrepo | typeof EntityType.file
   onItemSelected: (selected: EntityItem) => void
 }
 
@@ -143,7 +143,7 @@ function SubmissionDirectoryList({
     const entity = entities.find(entity => entity?.id === value)
     if (entity) {
       setSelectedItem(entity)
-      if (entityType === EntityType.DOCKER_REPO) {
+      if (entityType === EntityType.dockerrepo) {
         let commits
         try {
           commits = await SynapseClient.getDockerTag(
@@ -190,7 +190,7 @@ function SubmissionDirectoryList({
     {
       field: 'name',
       headerName:
-        entityType === EntityType.DOCKER_REPO
+        entityType === EntityType.dockerrepo
           ? 'Docker Repository'
           : 'File Name',
       flex: 1,
@@ -234,7 +234,7 @@ function SubmissionDirectoryList({
       newRows.push({
         id: entity.id!,
         name:
-          entityType === EntityType.DOCKER_REPO
+          entityType === EntityType.dockerrepo
             ? entity.repositoryName ?? entity.name
             : entity.name,
         modifiedOn: formatDate(dayjs(entity.modifiedOn), 'MM/DD/YY'),
@@ -427,7 +427,7 @@ function SubmissionDirectoryList({
           justifyContent: 'space-between',
         }}
       >
-        {entityType === EntityType.FILE && (
+        {entityType === EntityType.file && (
           <FileUpload
             label="Upload File"
             buttonProps={{
@@ -449,7 +449,7 @@ function SubmissionDirectoryList({
           Submit Selection
         </Button>
       </Box>
-      {entityType === EntityType.DOCKER_REPO && (
+      {entityType === EntityType.dockerrepo && (
         <Box
           sx={{
             mt: 4,

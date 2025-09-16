@@ -1,8 +1,8 @@
 import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   ColumnModel,
   Entity,
-  EntityType,
   EntityView,
   MaterializedView,
   SubmissionView,
@@ -58,27 +58,27 @@ export function getPreviousStep(
       return 'CHOOSE_VIEW_TYPE'
     case 'TABLE_COLUMNS':
       // If this is a table, then go back to the table type selection
-      if (entityType === EntityType.TABLE) {
+      if (entityType === EntityType.table) {
         return 'CHOOSE_TABLE_TYPE'
       }
       // If this is a view, go back to scope selection
-      if (entityType === EntityType.ENTITY_VIEW) {
+      if (entityType === EntityType.entityview) {
         return 'ENTITY_VIEW_SCOPE'
       }
-      if (entityType === EntityType.SUBMISSION_VIEW) {
+      if (entityType === EntityType.submissionview) {
         return 'SUBMISSION_VIEW_SCOPE'
       }
       break
     case 'TABLE_NAME':
       if (
-        entityType === EntityType.TABLE ||
-        entityType === EntityType.ENTITY_VIEW ||
-        entityType === EntityType.SUBMISSION_VIEW
+        entityType === EntityType.table ||
+        entityType === EntityType.entityview ||
+        entityType === EntityType.submissionview
       ) {
         return 'TABLE_COLUMNS'
       } else if (
-        entityType === EntityType.MATERIALIZED_VIEW ||
-        entityType === EntityType.VIRTUAL_TABLE
+        entityType === EntityType.materializedview ||
+        entityType === EntityType.virtualtable
       ) {
         // TODO: Currently, this block is unreachable
         // TABLE_SQL is the last step, but after PLFM-8209 is complete, TABLE_SQL can come before TABLE_NAME, where this will make more sense
@@ -98,18 +98,18 @@ export function isLastStep(step: CreateTableViewWizardStep) {
 export function getStepAfterTypeSelection(
   entityType: EntityType,
 ): CreateTableViewWizardStep {
-  if (entityType === EntityType.TABLE) {
+  if (entityType === EntityType.table) {
     return 'TABLE_COLUMNS'
   }
-  if (entityType === EntityType.ENTITY_VIEW) {
+  if (entityType === EntityType.entityview) {
     return 'ENTITY_VIEW_SCOPE'
   }
-  if (entityType === EntityType.SUBMISSION_VIEW) {
+  if (entityType === EntityType.submissionview) {
     return 'SUBMISSION_VIEW_SCOPE'
   }
   if (
-    entityType === EntityType.MATERIALIZED_VIEW ||
-    entityType === EntityType.VIRTUAL_TABLE
+    entityType === EntityType.materializedview ||
+    entityType === EntityType.virtualtable
   ) {
     return 'TABLE_SQL'
   }
@@ -123,15 +123,14 @@ export function maybeSetColumnIds(
   entityType: EntityType,
   createdColumnModels: ColumnModel[],
 ) {
-  if (
-    [
-      EntityType.TABLE,
-      EntityType.ENTITY_VIEW,
-      EntityType.SUBMISSION_VIEW,
-      EntityType.DATASET,
-      EntityType.DATASET_COLLECTION,
-    ].includes(entityType)
-  ) {
+  const hasColumnIdsTypes: EntityType[] = [
+    EntityType.table,
+    EntityType.entityview,
+    EntityType.submissionview,
+    EntityType.dataset,
+    EntityType.datasetcollection,
+  ]
+  if (hasColumnIdsTypes.includes(entityType)) {
     if (createdColumnModels.length > 0) {
       ;(entityToCreate as Table)['columnIds'] = createdColumnModels.map(
         cm => cm.id,
@@ -145,10 +144,11 @@ export function maybeSetScopeIds(
   entityType: EntityType,
   scopeIds: string[],
 ) {
-  if (
-    [EntityType.ENTITY_VIEW, EntityType.SUBMISSION_VIEW].includes(entityType) &&
-    scopeIds.length > 0
-  ) {
+  const hasScopeIdsTypes: EntityType[] = [
+    EntityType.entityview,
+    EntityType.submissionview,
+  ]
+  if (hasScopeIdsTypes.includes(entityType) && scopeIds.length > 0) {
     ;(entityToCreate as EntityView | SubmissionView)['scopeIds'] = scopeIds
   }
 }
@@ -158,7 +158,7 @@ export function maybeSetViewTypeMask(
   entityType: EntityType,
   viewTypeMask: number,
 ) {
-  if (entityType === EntityType.ENTITY_VIEW) {
+  if (entityType === EntityType.entityview) {
     ;(entityToCreate as EntityView)['viewTypeMask'] = viewTypeMask
   }
 }
@@ -168,11 +168,11 @@ export function maybeSetDefiningSQL(
   entityType: EntityType,
   sql: string,
 ) {
-  if (
-    [EntityType.MATERIALIZED_VIEW, EntityType.VIRTUAL_TABLE].includes(
-      entityType,
-    )
-  ) {
+  const hasDefiningSQLTypes: EntityType[] = [
+    EntityType.materializedview,
+    EntityType.virtualtable,
+  ]
+  if (hasDefiningSQLTypes.includes(entityType)) {
     ;(entityToCreate as MaterializedView | VirtualTable)['definingSQL'] = sql
   }
 }

@@ -5,18 +5,15 @@ import {
   isEntityRefCollectionView,
   isVersionableEntity,
 } from '@/utils/functions/EntityTypeUtils'
+import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
 import { Box, Link } from '@mui/material'
-import {
-  EntityRefCollectionView,
-  EntityType,
-} from '@sage-bionetworks/synapse-types'
+import { DoiObjectType, EntityType } from '@sage-bionetworks/synapse-client'
+import { EntityRefCollectionView } from '@sage-bionetworks/synapse-types'
 import { ReactNode, useState } from 'react'
 import CopyToClipboardString from '../../../CopyToClipboardString/CopyToClipboardString'
 import { HasAccessV2 } from '../../../HasAccess/HasAccessV2'
-import { DoiObjectType } from '@sage-bionetworks/synapse-client'
-import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
-import { maxCitationCount, useDataCiteUsage } from './useDataCiteUsage'
 import { CitationsDialog } from './CitationsDialog'
+import { maxCitationCount, useDataCiteUsage } from './useDataCiteUsage'
 import { useGetMentions } from './useGetMentions'
 
 export type EntityProperty = {

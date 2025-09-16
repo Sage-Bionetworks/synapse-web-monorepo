@@ -1,5 +1,6 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import { Reference } from '@sage-bionetworks/synapse-types'
 import {
   render,
   screen,
@@ -29,8 +30,8 @@ const defaultProps: EntityFinderModalProps = {
     projectId: 'syn456',
     initialContainer: 'syn123',
     selectMultiple: true,
-    visibleTypesInList: [EntityType.FILE],
-    visibleTypesInTree: [EntityType.PROJECT, EntityType.FOLDER],
+    visibleTypesInList: [EntityType.file],
+    visibleTypesInTree: [EntityType.project, EntityType.folder],
     selectableTypes: Object.values(EntityType),
     treeOnly: false,
   },

@@ -1,11 +1,8 @@
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import {
-  EntityType,
-  SearchQuery,
-  SearchResults,
-} from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import { SearchQuery, SearchResults } from '@sage-bionetworks/synapse-types'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { useSearch, useSearchInfinite } from './useSearch'
 
@@ -24,7 +21,7 @@ const page1: SearchResults = {
       alias: 'result other name',
       path: { path: [] },
       description: '',
-      node_type: EntityType.FILE,
+      node_type: EntityType.file,
       created_on: 2142424,
       created_by: 'me',
       diagnosis: 'none',
@@ -49,7 +46,7 @@ const page2: SearchResults = {
       alias: 'result 2 other name',
       path: { path: [] },
       description: '',
-      node_type: EntityType.FILE,
+      node_type: EntityType.file,
       created_on: 2142424,
       created_by: 'me',
       diagnosis: 'none',

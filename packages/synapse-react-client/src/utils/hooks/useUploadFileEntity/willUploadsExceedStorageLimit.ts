@@ -1,4 +1,4 @@
-import { ProjectStorageLocationUsage } from '@sage-bionetworks/synapse-types'
+import { ProjectStorageLocationUsage } from '@sage-bionetworks/synapse-client'
 
 /**
  * Precheck a set of uploads against a storage limit. Returns true if the uploads would cause the limit to be exceeded.
@@ -22,7 +22,8 @@ export function willUploadsExceedStorageLimit(
     return false
   }
 
-  const estimatedCurrentUsage = usage.sumFileBytes + pendingUploadsInBytes
+  const estimatedCurrentUsage =
+    (usage.sumFileBytes ?? 0) + pendingUploadsInBytes
   const sumFileSizeBytes = Array.from(files).reduce(
     (acc, file) => acc + file.size,
     0,
