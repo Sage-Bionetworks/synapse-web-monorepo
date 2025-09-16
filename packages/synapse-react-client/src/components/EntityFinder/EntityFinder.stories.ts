@@ -1,10 +1,10 @@
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 
 import EntityFinder from './EntityFinder'
 import { FinderScope } from './tree/EntityTree'
-import { EntityType } from '@sage-bionetworks/synapse-types'
 import { VersionSelectionType } from './VersionSelectionType'
-import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Synapse/EntityFinder',
@@ -43,12 +43,12 @@ export const SinglePane: Story = {
     initialContainer: 'syn5550376',
     selectMultiple: false,
     visibleTypesInTree: [
-      EntityType.PROJECT,
-      EntityType.FOLDER,
-      EntityType.TABLE,
+      EntityType.project,
+      EntityType.folder,
+      EntityType.table,
     ],
     versionSelection: VersionSelectionType.DISALLOWED,
     onSelectedChange: fn(),
-    selectableTypes: [EntityType.PROJECT, EntityType.FOLDER],
+    selectableTypes: [EntityType.project, EntityType.folder],
   },
 }

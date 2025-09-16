@@ -2,7 +2,7 @@ import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import { useAddFileToDownloadList } from '@/synapse-queries/index'
 import { useSynapseContext } from '@/utils/index'
 import { IconButton, Tooltip } from '@mui/material'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { CellContext } from '@tanstack/react-table'
 import { displayFilesWereAddedToDownloadListSuccess } from '../../../../download_list/DownloadConfirmationUtils'
 import IconSvg from '../../../../IconSvg/IconSvg'
@@ -26,7 +26,7 @@ export function AddFileToDownloadListCell(
       displayToast(error.reason, 'danger')
     },
   })
-  if (bundle?.entityType !== EntityType.FILE) {
+  if (bundle?.entityType !== EntityType.file) {
     return <></>
   }
   return (

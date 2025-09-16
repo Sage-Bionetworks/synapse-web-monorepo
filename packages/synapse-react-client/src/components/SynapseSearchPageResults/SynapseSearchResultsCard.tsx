@@ -1,27 +1,27 @@
+import { formatDate } from '@/utils/functions/DateFormatter'
 import {
-  Box,
-  Paper,
-  PaperProps,
-  Button,
-  styled,
-  Typography,
-  Chip,
-  Link,
-} from '@mui/material'
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import { StyledComponent } from '@emotion/styled'
-import FavoriteButton from '../favorites/FavoriteButton'
 import {
-  Update as UpdateIcon,
   Download as DownloadIcon,
+  Update as UpdateIcon,
 } from '@mui/icons-material'
 import {
-  getEndpoint,
-  BackendDestinationEnum,
-} from '@/utils/functions/getEndpoint'
+  Box,
+  Button,
+  Chip,
+  Link,
+  Paper,
+  PaperProps,
+  styled,
+  Typography,
+} from '@mui/material'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import dayjs from 'dayjs'
-import { formatDate } from '@/utils/functions/DateFormatter'
 import { EntityTypeIcon } from '../EntityIcon'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import FavoriteButton from '../favorites/FavoriteButton'
 
 export type SynapseSearchResultsCardProps = {
   entityId: string

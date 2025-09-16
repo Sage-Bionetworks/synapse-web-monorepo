@@ -1,4 +1,4 @@
-import { EntityType } from './EntityType'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 /**
  * JSON schema for the TrashEntity POJO. A trashed entity is an entity in the trash can.
  *

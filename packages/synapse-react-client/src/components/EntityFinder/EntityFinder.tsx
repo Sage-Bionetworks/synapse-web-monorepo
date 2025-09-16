@@ -14,11 +14,9 @@ import {
   Tabs,
   TextField,
 } from '@mui/material'
-import {
-  EntityType,
-  KeyValue,
-  Reference,
-} from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import { KeyValue, Reference } from '@sage-bionetworks/synapse-types'
+import { Map } from 'immutable'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import { ReflexContainer, ReflexElement, ReflexSplitter } from 'react-reflex'
@@ -36,11 +34,10 @@ import { EntityTree, EntityTreeContainer, FinderScope } from './tree/EntityTree'
 import { EntityTreeNodeType } from './tree/VirtualizedTree'
 import { useEntitySelection } from './useEntitySelection'
 import { VersionSelectionType } from './VersionSelectionType'
-import { Map } from 'immutable'
 
 const DEFAULT_SELECTABLE_TYPES = Object.values(EntityType)
 const TABLE_DEFAULT_VISIBLE_TYPES = Object.values(EntityType)
-const TREE_DEFAULT_VISIBLE_TYPES = [EntityType.PROJECT, EntityType.FOLDER]
+const TREE_DEFAULT_VISIBLE_TYPES = [EntityType.project, EntityType.folder]
 
 const searchForOnlyTypesBooleanQuery = (
   entityTypes: EntityType[],

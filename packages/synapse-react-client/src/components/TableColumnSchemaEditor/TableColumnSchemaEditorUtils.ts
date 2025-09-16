@@ -5,6 +5,7 @@ import {
   isEntityView,
   isSubmissionView,
 } from '@/utils/functions/EntityTypeUtils'
+import { ViewEntityType } from '@sage-bionetworks/synapse-client'
 import {
   ColumnModel,
   ColumnType,
@@ -13,12 +14,14 @@ import {
   ENTITY_VIEW_TYPE_MASK_DATASET,
   ENTITY_VIEW_TYPE_MASK_FILE,
   FacetType,
-  ViewEntityType,
   ViewScope,
 } from '@sage-bionetworks/synapse-types'
 import { JSONSchema7Definition } from 'json-schema'
 import { SetOptional } from 'type-fest'
-import { ColumnModelFormData, JsonSubColumnModelFormData } from './Validators/ColumnModelValidator'
+import {
+  ColumnModelFormData,
+  JsonSubColumnModelFormData,
+} from './Validators/ColumnModelValidator'
 
 /**
  * These column types can only be used in Tables. They can not be used in views.

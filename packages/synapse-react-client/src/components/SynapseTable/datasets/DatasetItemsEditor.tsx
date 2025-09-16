@@ -22,10 +22,10 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   EntityRef,
   EntityRefCollectionView,
-  EntityType,
   Reference,
 } from '@sage-bionetworks/synapse-types'
 import {
@@ -182,9 +182,9 @@ function getColumns(
 
 function getSelectableTypes(entity: EntityRefCollectionView) {
   if (isDataset(entity)) {
-    return [EntityType.FILE]
+    return [EntityType.file]
   } else if (isDatasetCollection(entity)) {
-    return [EntityType.DATASET]
+    return [EntityType.dataset]
   } else {
     console.error(
       'Cannot determine selectable types for entity type: ' +
@@ -201,10 +201,10 @@ export function getCopy(entity?: EntityRefCollectionView) {
   let itemName = 'Item'
   let currentVersionName = 'Current Version'
   if (entity && isDataset(entity)) {
-    itemName = entityTypeToFriendlyName(EntityType.FILE)
+    itemName = entityTypeToFriendlyName(EntityType.file)
     currentVersionName = 'Draft'
   } else if (entity && isDatasetCollection(entity)) {
-    itemName = entityTypeToFriendlyName(EntityType.DATASET)
+    itemName = entityTypeToFriendlyName(EntityType.dataset)
   }
 
   const entityFinderPopover =

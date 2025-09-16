@@ -9,7 +9,10 @@ import {
   ENTITY_SCHEMA_BINDING,
 } from '@/utils/APIConstants'
 import { normalizeSynPrefix } from '@/utils/functions/EntityTypeUtils'
-import { ErrorResponse } from '@sage-bionetworks/synapse-client'
+import {
+  ErrorResponse,
+  UploadDestination,
+} from '@sage-bionetworks/synapse-client'
 import {
   AccessControlList,
   Entity,
@@ -20,7 +23,6 @@ import {
   PaginatedResults,
   ProjectHeaderList,
   Reference,
-  UploadDestination,
   VersionableEntity,
   VersionInfo,
 } from '@sage-bionetworks/synapse-types'

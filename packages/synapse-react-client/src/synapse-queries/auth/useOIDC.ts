@@ -1,12 +1,12 @@
 import SynapseClient from '@/synapse-client'
 import { SynapseClientError, useSynapseContext } from '@/utils'
 import {
-  AccessCodeResponse,
-  OAuthClientPublic,
+  type OAuthAuthorizationResponse,
   OAuthConsentGrantedResponse,
   OIDCAuthorizationRequest,
   OIDCAuthorizationRequestDescription,
-} from '@sage-bionetworks/synapse-types'
+} from '@sage-bionetworks/synapse-client'
+import { OAuthClientPublic } from '@sage-bionetworks/synapse-types'
 import {
   useMutation,
   UseMutationOptions,
@@ -21,10 +21,14 @@ export function useGetOAuth2RequestDescription(
     UseQueryOptions<OIDCAuthorizationRequestDescription, SynapseClientError>
   >,
 ) {
+  const { synapseClient } = useSynapseContext()
   return useQuery({
     ...options,
     queryKey: ['useGetOAuth2RequestDescription', request],
-    queryFn: () => SynapseClient.getOAuth2RequestDescription(request),
+    queryFn: () =>
+      synapseClient.openIDConnectServicesClient.postAuthV1Oauth2Description({
+        oIDCAuthorizationRequest: request,
+      }),
   })
 }
 
@@ -46,35 +50,39 @@ export function useGetHasUserAuthorizedOAuthClient(
     UseQueryOptions<OAuthConsentGrantedResponse, SynapseClientError>
   >,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { synapseClient, keyFactory } = useSynapseContext()
   return useQuery({
     ...options,
     queryKey:
       keyFactory.getHasCurrentUserAuthorizedOAuthClientQueryKey(request),
     queryFn: () =>
-      SynapseClient.hasUserAuthorizedOAuthClient(request, accessToken!),
+      synapseClient.openIDConnectServicesClient.postAuthV1Oauth2Consentcheck({
+        oIDCAuthorizationRequest: request,
+      }),
   })
 }
 
 export function useConsentToOAuth2Request(
   options?: Partial<
     UseMutationOptions<
-      AccessCodeResponse,
+      OAuthAuthorizationResponse,
       SynapseClientError,
       OIDCAuthorizationRequest
     >
   >,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { synapseClient, keyFactory } = useSynapseContext()
   const queryClient = useQueryClient()
   return useMutation<
-    AccessCodeResponse,
+    OAuthAuthorizationResponse,
     SynapseClientError,
     OIDCAuthorizationRequest
   >({
     ...options,
     mutationFn: request =>
-      SynapseClient.consentToOAuth2Request(request, accessToken),
+      synapseClient.openIDConnectServicesClient.postAuthV1Oauth2Consent({
+        oIDCAuthorizationRequest: request,
+      }),
     onSuccess: async (data, request, ctx) => {
       await queryClient.invalidateQueries({
         queryKey:

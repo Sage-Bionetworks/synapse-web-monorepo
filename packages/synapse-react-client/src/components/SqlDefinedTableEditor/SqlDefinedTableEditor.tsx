@@ -1,6 +1,6 @@
 import { Box, Link, TextField, Typography } from '@mui/material'
 import { TextFieldProps } from '@mui/material/TextField'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 
 const MATERIALIZED_VIEW_HELP = (
   <Box
@@ -72,8 +72,8 @@ export default function SqlDefinedTableEditor(
   const { entityType, ...textFieldProps } = props
   return (
     <>
-      {entityType === EntityType.MATERIALIZED_VIEW && MATERIALIZED_VIEW_HELP}
-      {entityType === EntityType.VIRTUAL_TABLE && VIRTUAL_TABLE_HELP}
+      {entityType === EntityType.materializedview && MATERIALIZED_VIEW_HELP}
+      {entityType === EntityType.virtualtable && VIRTUAL_TABLE_HELP}
       <TextField
         label={'Defining SQL'}
         placeholder={'SELECT * FROM syn123'}

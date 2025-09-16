@@ -5,9 +5,9 @@ import {
 import SynapseClient from '@/synapse-client'
 import * as useEntityBundleModule from '@/synapse-queries/entity/useEntityBundle'
 import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   EntityHeader,
-  EntityType,
   PaginatedResults,
   Reference,
 } from '@sage-bionetworks/synapse-types'
@@ -77,8 +77,8 @@ const defaultProps: EntityFinderProps = {
   initialContainer: 'syn123',
   selectMultiple: true,
   onSelectedChange: mockOnSelectionChange,
-  visibleTypesInList: [EntityType.FILE],
-  visibleTypesInTree: [EntityType.PROJECT, EntityType.FOLDER],
+  visibleTypesInList: [EntityType.file],
+  visibleTypesInTree: [EntityType.project, EntityType.folder],
   selectableTypes: Object.values(EntityType),
   treeOnly: false,
 }
@@ -357,7 +357,7 @@ describe('EntityFinder tests', () => {
     it('handles searching for terms', async () => {
       const { user, searchInput } = renderComponent({
         treeOnly: true,
-        selectableTypes: [EntityType.FILE],
+        selectableTypes: [EntityType.file],
       })
 
       // Tree should be visible before we start search. No table should be visible

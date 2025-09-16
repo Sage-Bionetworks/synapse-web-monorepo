@@ -3,7 +3,7 @@ import {
   useGetEntityChildren,
 } from '@/synapse-queries'
 import { useSynapseContext } from '@/utils'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { displayToast } from '../ToastMessage'
 import { DownloadConfirmationUI } from './DownloadConfirmationUI'
 import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
@@ -24,7 +24,7 @@ export function FolderDownloadConfirmation(
       parentId: folderId,
       includeSumFileSizes: true,
       includeTotalChildCount: true,
-      includeTypes: [EntityType.FILE],
+      includeTypes: [EntityType.file],
     })
 
   const fileCount = entityChildrenData?.totalChildCount ?? 0
