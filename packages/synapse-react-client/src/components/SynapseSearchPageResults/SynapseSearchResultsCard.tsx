@@ -2,7 +2,6 @@ import {
   Box,
   Paper,
   PaperProps,
-  Button,
   styled,
   Typography,
   Chip,
@@ -22,6 +21,7 @@ import dayjs from 'dayjs'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { EntityTypeIcon } from '../EntityIcon'
 import { EntityType } from '@sage-bionetworks/synapse-types'
+import { DropdownMenu, DropdownMenuItem } from '../menu/DropdownMenu'
 
 export type SynapseSearchResultsCardProps = {
   entityId: string
@@ -46,6 +46,88 @@ const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
 }))
 
 export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
+  // Create menu items based on entity type
+  const createMenuItemsForEntityType = (
+    entityId: string,
+    entityName: string,
+    entityType: string,
+  ) => {
+    const entityTypeLower = entityType.toLowerCase()
+
+    // Create dynamic menu items with props
+    const dynamicConfigs: Record<string, DropdownMenuItem> = {
+      downloadFile: {
+        text: 'Download File',
+        icon: 'download',
+        onClick: () => {
+          console.log('Download file:', entityId, entityName)
+          // TODO: Implement file download functionality
+        },
+        tooltipText: 'Download this file directly',
+      },
+      addToCart: {
+        text: 'Add to Download Cart',
+        icon: 'addToCart',
+        onClick: () => {
+          console.log('Add file to cart:', entityId)
+          // TODO: Implement add to cart functionality
+        },
+        tooltipText: 'Add this file to your download cart',
+      },
+      addAllToCart: {
+        text: 'Add All Files to Cart',
+        icon: 'addToCart',
+        onClick: () => {
+          console.log('Add all project files to cart:', entityId)
+          // TODO: Implement add all files to cart functionality
+        },
+        tooltipText: 'Add all project files to download cart',
+      },
+      programmaticAccess: {
+        text: 'Programmatic Access',
+        icon: 'code',
+        onClick: () => {
+          console.log('Show programmatic access for:', entityId)
+          // TODO: Implement programmatic access options
+        },
+        tooltipText: 'View programmatic access options',
+      },
+      exportTable: {
+        text: 'Export Table',
+        icon: 'code',
+        onClick: () => {
+          console.log('Export table for:', entityId)
+          // TODO: Implement export table functionality
+        },
+        tooltipText: 'Export table data',
+      },
+    }
+
+    if (entityTypeLower === 'file') {
+      return [
+        [dynamicConfigs.downloadFile],
+        [dynamicConfigs.addToCart, dynamicConfigs.programmaticAccess],
+      ]
+    } else if (entityTypeLower === 'project' || entityTypeLower === 'folder') {
+      return [[dynamicConfigs.addAllToCart, dynamicConfigs.programmaticAccess]]
+    } else {
+      // Other entity types (table, dataset, etc.)
+      return [
+        [
+          dynamicConfigs.addAllToCart,
+          dynamicConfigs.exportTable,
+          dynamicConfigs.programmaticAccess,
+        ],
+      ]
+    }
+  }
+
+  const downloadMenuItems = createMenuItemsForEntityType(
+    props.entityId,
+    props.name,
+    props.entityType,
+  )
+
   return (
     <SynapseSearchResultsCardContainer>
       <Box
@@ -74,9 +156,15 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
           }}
         >
           <FavoriteButton entityId={props.entityId} />
-          <Button variant="outlined" startIcon={<DownloadIcon />}>
-            Download
-          </Button>
+          <DropdownMenu
+            items={downloadMenuItems}
+            dropdownButtonText="Download"
+            buttonTooltip="Download options for this entity"
+            buttonProps={{
+              variant: 'outlined',
+              startIcon: <DownloadIcon />,
+            }}
+          />
         </Box>
       </Box>
       <Box>
