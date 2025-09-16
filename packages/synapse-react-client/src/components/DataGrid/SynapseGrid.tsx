@@ -48,6 +48,7 @@ import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { useGridUndoRedo } from './hooks/useGridUndoRedo'
 import { applyModelChange, ModelChange } from './utils/applyModelChange'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
+import { getCellClassName } from './utils/getCellClassName'
 
 export type SynapseGridProps = {
   query: string
@@ -331,8 +332,17 @@ const SynapseGrid = forwardRef<
                       'row-invalid':
                         rowData.__validationResults?.isValid === false,
                       'row-unknown':
+                        !!jsonSchema &&
                         rowData.__validationResults?.isValid == undefined,
                       'row-selected': selectedRowIndex === rowIndex,
+                    })
+                  }
+                  cellClassName={({ rowData, rowIndex, columnId }) =>
+                    getCellClassName({
+                      rowData: rowData as DataGridRow,
+                      rowIndex,
+                      columnId,
+                      selectedRowIndex,
                     })
                   }
                   duplicateRow={({ rowData }: any) => ({

@@ -3,7 +3,7 @@ import FullContextProvider, {
   defaultQueryClientConfig,
 } from '@/utils/context/FullContextProvider'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactNode } from 'react'
 
 type RtlWrapperProps = {
@@ -44,4 +44,15 @@ export const createWrapperAndQueryClient = (
  */
 export const createWrapper = (props?: Partial<SynapseContextType>) => {
   return createWrapperAndQueryClient(props).wrapperFn
+}
+
+/** Helper to get both a Wrapper and the QueryClient */
+export function setupQueryClient() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  )
+  return { Wrapper, queryClient }
 }
