@@ -15,6 +15,14 @@ export type CreateAgentSessionRequest = {
    * Optional. When provided, the registered agent will be used for this session. When excluded the default 'baseline' agent will be used.
    */
   agentRegistrationId?: string
+  /**
+   * Optional. When provided, the session will be created in the context of the specified GridAgentSession.
+   */
+  sessionContext?: {
+    concreteType: string // 'org.sagebionetworks.repo.model.agent.GridAgentSessionContext'
+    gridSessionId: string
+    usersReplicaId: number
+  }
 }
 export type UpdateAgentSessionRequest = {
   /**

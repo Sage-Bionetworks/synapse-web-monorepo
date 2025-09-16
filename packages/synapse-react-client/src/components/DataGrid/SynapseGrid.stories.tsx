@@ -60,3 +60,15 @@ export const GridWithUserInputAndDebugInfo: Story = {
     },
   },
 }
+
+export const GridWithAgentChat: Story = {
+  args: {
+    query: '',
+    chat: true,
+  },
+  parameters: {
+    msw: {
+      handlers: [],
+    },
+  },
+}

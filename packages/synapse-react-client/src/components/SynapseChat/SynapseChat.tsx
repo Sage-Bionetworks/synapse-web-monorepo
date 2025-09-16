@@ -39,6 +39,12 @@ export type SynapseChatProps = {
   chatbotName?: string // optional name of this chatbot agent
   hideTitle?: boolean
   textboxPositionOffset?: string // when embedded in a form, the textbox (form) stuck to the bottom may need to be offset due to container padding (dialog content for example!)
+  sessionContext?: {
+    // optional session context for the grid agent session
+    concreteType: string
+    gridSessionId: string
+    usersReplicaId: number
+  }
 }
 
 type ChatInteraction = {
@@ -57,6 +63,7 @@ export function SynapseChat({
   chatbotName = 'SynapseChat',
   hideTitle = false,
   textboxPositionOffset = '0px',
+  sessionContext,
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
   const [agentSession, setAgentSession] = useState<AgentSession>()
@@ -75,7 +82,9 @@ export function SynapseChat({
   })
   const theme = useTheme()
   const [agentAccessLevel, setAgentAccessLevel] = useState<AgentAccessLevel>(
-    AgentAccessLevel.PUBLICLY_ACCESSIBLE,
+    sessionContext
+      ? AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA
+      : AgentAccessLevel.PUBLICLY_ACCESSIBLE,
   )
   // When both the current message and current response are available, add a new ChatInteraction to the array
   const [interactions, setInteractions] = useState<ChatInteraction[]>([])
@@ -185,9 +194,17 @@ export function SynapseChat({
       createAgentSession({
         agentAccessLevel,
         agentRegistrationId,
+        sessionContext,
       })
     }
-  }, [createAgentSession, agentSession, accessToken])
+  }, [
+    createAgentSession,
+    agentSession,
+    accessToken,
+    agentAccessLevel,
+    agentRegistrationId,
+    sessionContext,
+  ])
 
   useEffect(() => {
     // on mount, resolve the initial message chat interaction (if set)
@@ -200,7 +217,12 @@ export function SynapseChat({
       })
       setInitialMessageProcessed(true)
     }
-  }, [agentSession, initialMessage, initialMessageProcessed])
+  }, [
+    agentSession,
+    initialMessage,
+    initialMessageProcessed,
+    sendChatMessageToAgent,
+  ])
 
   const handleSendMessage = () => {
     if (userChatTextfieldValue.trim()) {
@@ -234,8 +256,10 @@ export function SynapseChat({
       </Alert>
     )
   }
+
   const latestTraceEventMessage =
     latestTraceEvent?.friendlyMessage ?? 'Processing...'
+
   return (
     <Box
       sx={{
@@ -262,16 +286,18 @@ export function SynapseChat({
           {chatbotName}
         </Typography>
       )}
-      <AccessLevelMenu
-        initAccessLevel={agentAccessLevel}
-        onChange={newAccessLevel => {
-          setAgentAccessLevel(newAccessLevel)
-          updateAgentSession({
-            agentAccessLevel: newAccessLevel,
-            sessionId: agentSession!.sessionId,
-          })
-        }}
-      />
+      {!sessionContext && (
+        <AccessLevelMenu
+          initAccessLevel={agentAccessLevel}
+          onChange={newAccessLevel => {
+            setAgentAccessLevel(newAccessLevel)
+            updateAgentSession({
+              agentAccessLevel: newAccessLevel,
+              sessionId: agentSession!.sessionId,
+            })
+          }}
+        />
+      )}
       {!agentSession && <SkeletonParagraph numRows={10} />}
       {agentSession && (
         <Box sx={{ flexGrow: 1, overflowY: 'auto', mb: 2 }}>
