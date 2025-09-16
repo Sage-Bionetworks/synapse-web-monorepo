@@ -1,26 +1,3 @@
-import {
-  EntityHeader,
-  EntityPath,
-  EntityType,
-  PaginatedResults,
-  ProjectHeader,
-  ProjectHeaderList,
-  Reference,
-} from '@sage-bionetworks/synapse-types'
-import { act, render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { Map } from 'immutable'
-import failOnConsole from 'jest-fail-on-console'
-import { useState } from 'react'
-import { EntityDetailsListDataConfigurationType } from '../details/EntityDetailsList'
-import {
-  EntityTree,
-  EntityTreeContainer,
-  EntityTreeProps,
-  FinderScope,
-} from './EntityTree'
-import * as VirtualizedTreeModule from './VirtualizedTree'
-import { EntityTreeNodeType, VirtualizedTreeProps } from './VirtualizedTree'
 import * as ToastMessageModule from '@/components/ToastMessage/ToastMessage'
 import { mockProjects } from '@/mocks/entity'
 import { mockFolderEntity } from '@/mocks/entity/mockEntity'
@@ -29,7 +6,6 @@ import mockFileEntity from '@/mocks/entity/mockFileEntity'
 import mockProject from '@/mocks/entity/mockProject'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { http, HttpResponse } from 'msw'
 import {
   ENTITY_HEADERS,
   ENTITY_PATH,
@@ -40,6 +16,30 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import {
+  EntityHeader,
+  EntityPath,
+  PaginatedResults,
+  ProjectHeader,
+  ProjectHeaderList,
+  Reference,
+} from '@sage-bionetworks/synapse-types'
+import { act, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { Map } from 'immutable'
+import failOnConsole from 'jest-fail-on-console'
+import { http, HttpResponse } from 'msw'
+import { useState } from 'react'
+import { EntityDetailsListDataConfigurationType } from '../details/EntityDetailsList'
+import {
+  EntityTree,
+  EntityTreeContainer,
+  EntityTreeProps,
+  FinderScope,
+} from './EntityTree'
+import * as VirtualizedTreeModule from './VirtualizedTree'
+import { EntityTreeNodeType, VirtualizedTreeProps } from './VirtualizedTree'
 
 const VIRTUALIZED_TREE_TEST_ID = 'VirtualizedTreeComponent'
 
@@ -68,7 +68,7 @@ const defaultProps = {
   projectId: mockProject.id,
   initialContainer: mockProject.id,
   showDropdown: true,
-  visibleTypes: [EntityType.PROJECT, EntityType.FOLDER],
+  visibleTypes: [EntityType.project, EntityType.folder],
   setDetailsViewConfiguration: mockSetDetailsViewConfiguration,
   setBreadcrumbItems: mockSetBreadcrumbItems,
   toggleSelection: mockToggleSelection,

@@ -1,20 +1,19 @@
-import {
-  getDefaultUploadDestination,
-  getUploadDestinationForStorageLocation,
-} from '@/synapse-client'
 import { SynapseClientError, useSynapseContext } from '@/utils'
-import { UploadDestination } from '@sage-bionetworks/synapse-types'
+import { UploadDestination } from '@sage-bionetworks/synapse-client'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 
 export function useGetDefaultUploadDestination(
   containerEntityId: string,
   options?: Partial<UseQueryOptions<UploadDestination, SynapseClientError>>,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { keyFactory, synapseClient } = useSynapseContext()
   return useQuery({
     ...options,
     queryKey: keyFactory.getDefaultUploadDestinationQueryKey(containerEntityId),
-    queryFn: () => getDefaultUploadDestination(containerEntityId, accessToken),
+    queryFn: () =>
+      synapseClient.fileServicesClient.getFileV1EntityIdUploadDestination({
+        id: containerEntityId,
+      }),
   })
 }
 
@@ -23,7 +22,7 @@ export function useGetUploadDestinationForStorageLocation(
   storageLocationId: number,
   options?: Partial<UseQueryOptions<UploadDestination, SynapseClientError>>,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { synapseClient, keyFactory } = useSynapseContext()
   return useQuery({
     ...options,
     queryKey: keyFactory.getUploadDestinationForStorageLocationQueryKey(
@@ -32,10 +31,8 @@ export function useGetUploadDestinationForStorageLocation(
     ),
 
     queryFn: () =>
-      getUploadDestinationForStorageLocation(
-        parentId,
-        storageLocationId,
-        accessToken,
+      synapseClient.fileServicesClient.getFileV1EntityIdUploadDestinationStorageLocationId(
+        { id: parentId, storageLocationId },
       ),
   })
 }

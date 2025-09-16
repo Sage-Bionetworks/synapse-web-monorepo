@@ -1,5 +1,6 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { EntityType, Reference } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import { Reference } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Map } from 'immutable'
@@ -29,7 +30,7 @@ describe('VirtualizedTree tests', () => {
     const setSelectedId = vi.fn()
     const treeNodeType = EntityTreeNodeType.SINGLE_PANE
     const selected = Map<string, Reference>()
-    const selectableTypes = [EntityType.FOLDER]
+    const selectableTypes = [EntityType.folder]
     const autoExpand = vi.fn().mockReturnValue(true)
     const defaultHeight = 50
     const currentContainer = null
@@ -276,7 +277,7 @@ describe('VirtualizedTree tests', () => {
       expect(isSelected).toBe(true)
     })
     it('isDisabled if is not a selectable type', () => {
-      let selectableTypes = [EntityType.FOLDER]
+      let selectableTypes = [EntityType.folder]
       const node: EntityHeaderNode = {
         id: 'syn123',
         name: 'A Custom Folder Name',
@@ -340,7 +341,7 @@ describe('VirtualizedTree tests', () => {
       const mockAutoExpand = vi.fn().mockReturnValue(false)
       const mockItemSize = vi.fn().mockReturnValue(50)
       const mockFetchNextPage = vi.fn()
-      const selectableTypes = [EntityType.FOLDER]
+      const selectableTypes = [EntityType.folder]
       const selected = Map<string, Reference>()
       const rootNodeConfiguration: RootNodeConfiguration = {
         show: true,

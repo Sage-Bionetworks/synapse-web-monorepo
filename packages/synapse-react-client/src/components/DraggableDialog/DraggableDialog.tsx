@@ -23,9 +23,8 @@ export default function DraggableDialog() {
         >
           <Box
             sx={{
-              maxHeight: '100%',
+              height: '100%',
               maxWidth: '100%',
-              overflow: 'auto',
               padding: '16px',
             }}
           >

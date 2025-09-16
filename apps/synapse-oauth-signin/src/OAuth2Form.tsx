@@ -7,9 +7,10 @@ import {
   Typography,
 } from '@mui/material'
 import {
-  FileHandleAssociateType,
   OIDCAuthorizationRequest,
-} from '@sage-bionetworks/synapse-types'
+  OIDCAuthorizationRequestResponseTypeEnum,
+} from '@sage-bionetworks/synapse-client'
+import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import {
@@ -139,7 +140,9 @@ export function OAuth2Form() {
     if (scope == null) {
       missingParams.push('scope')
     }
-    const responseType = searchParams.get('response_type')
+    const responseType = searchParams.get(
+      'response_type',
+    ) as OIDCAuthorizationRequestResponseTypeEnum
     if (responseType == null) {
       missingParams.push('response_type')
     }
@@ -384,7 +387,7 @@ export function OAuth2Form() {
             </Typography>
             {oidcRequestDescription && (
               <ul>
-                {oidcRequestDescription.scope.map((scope, index) => {
+                {oidcRequestDescription.scope?.map((scope, index) => {
                   return (
                     <li key={index}>
                       <Typography variant="body1">{scope}</Typography>

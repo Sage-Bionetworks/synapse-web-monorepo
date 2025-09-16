@@ -1,7 +1,7 @@
+import { EntityType, UploadDestination } from '@sage-bionetworks/synapse-client'
 import {
   CloudProviderFileHandleInterface,
   EntityBundle,
-  EntityType,
   EXTERNAL_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   ExternalFileHandle,
@@ -16,7 +16,6 @@ import {
   PROXY_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   ProxyFileHandle,
   S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
-  UploadDestination,
   UploadType,
 } from '@sage-bionetworks/synapse-types'
 
@@ -114,7 +113,7 @@ export function getDataFileHandle(
   entityBundle: EntityBundle,
 ): FileHandle | undefined {
   let dataFileHandle: FileHandle | undefined = undefined
-  if (entityBundle.entityType === EntityType.FILE) {
+  if (entityBundle.entityType === EntityType.file) {
     dataFileHandle = entityBundle.fileHandles.filter(
       fh => fh.id === (entityBundle.entity as FileEntity).dataFileHandleId,
     )[0]

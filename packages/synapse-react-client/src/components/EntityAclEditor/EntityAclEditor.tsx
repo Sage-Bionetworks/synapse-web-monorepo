@@ -21,9 +21,9 @@ import {
   PUBLIC_PRINCIPAL_ID,
 } from '@/utils/SynapseConstants'
 import { Alert, Link, Stack } from '@mui/material'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
-  EntityType,
   ResourceAccess,
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
@@ -153,7 +153,7 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
     ALL_ENTITY_BUNDLE_FIELDS,
     { staleTime: Infinity },
   )
-  const isProject = EntityType.PROJECT == entityBundle.entityType
+  const isProject = EntityType.project == entityBundle.entityType
 
   // The parent's benefactor ACL will be shown if the user removes the ACL on the current entity
   const { data: parentAcl } = useSuspenseGetEntityBenefactorACL(

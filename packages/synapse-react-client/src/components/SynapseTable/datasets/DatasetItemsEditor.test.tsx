@@ -7,12 +7,12 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '@/utils'
 import { ENTITY_ID } from '@/utils/APIConstants'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   Dataset,
   DatasetCollection,
   Entity,
   EntityRef,
-  EntityType,
   Reference,
 } from '@sage-bionetworks/synapse-types'
 import {
@@ -778,7 +778,7 @@ describe('Dataset Items Editor tests', () => {
       expect(mockEntityFinder).toHaveBeenLastRenderedWithProps(
         expect.objectContaining({
           configuration: expect.objectContaining({
-            selectableTypes: [EntityType.DATASET],
+            selectableTypes: [EntityType.dataset],
           }),
         }),
       )

@@ -1,4 +1,5 @@
 import { isTypeViaConcreteTypeFactory } from '@/utils/types/IsType'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   Dataset,
   DATASET_COLLECTION_CONCRETE_TYPE_VALUE,
@@ -6,11 +7,11 @@ import {
   DatasetCollection,
   DOCKER_REPOSITORY_CONCRETE_TYPE_VALUE,
   Entity,
+  Entity as Entity_OpenAPI,
   ENTITY_CONCRETE_TYPE,
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,
   ENTITY_VIEW_TYPE_MASK_FILE,
   EntityHeader,
-  EntityType,
   EntityView,
   FILE_ENTITY_CONCRETE_TYPE_VALUE,
   FOLDER_CONCRETE_TYPE_VALUE,
@@ -38,32 +39,33 @@ export function getEntityTypeFromHeader(
     | EntityHeader
     | ProjectHeader
     | Hit,
-) {
+): EntityType {
   // Hit has the `node_type` field which is what we already want.
   if ((header as Hit).node_type) {
     return (header as Hit).node_type
   }
   // ProjectHeader doesn't have the `type` field, so we can just check that to determine if it's a ProjectHeader
   return (header as EntityHeader).type === undefined
-    ? EntityType.PROJECT
+    ? EntityType.project
     : convertToEntityType((header as EntityHeader).type)
 }
 
 export function isContainerType(type: EntityType): boolean {
   switch (type) {
-    case EntityType.PROJECT:
-    case EntityType.FOLDER:
+    case EntityType.project:
+    case EntityType.folder:
       return true
-    case EntityType.LINK:
-    case EntityType.DOCKER_REPO:
-    case EntityType.FILE:
-    case EntityType.TABLE:
-    case EntityType.SUBMISSION_VIEW:
-    case EntityType.ENTITY_VIEW:
-    case EntityType.DATASET:
-    case EntityType.DATASET_COLLECTION:
-    case EntityType.MATERIALIZED_VIEW:
-    case EntityType.VIRTUAL_TABLE:
+    case EntityType.link:
+    case EntityType.dockerrepo:
+    case EntityType.file:
+    case EntityType.recordset:
+    case EntityType.table:
+    case EntityType.submissionview:
+    case EntityType.entityview:
+    case EntityType.dataset:
+    case EntityType.datasetcollection:
+    case EntityType.materializedview:
+    case EntityType.virtualtable:
       return false
     default:
       throw new Error(`Unknown entity type: ${type}`)
@@ -72,19 +74,20 @@ export function isContainerType(type: EntityType): boolean {
 
 export function isTableType(type: EntityType): boolean {
   switch (type) {
-    case EntityType.PROJECT:
-    case EntityType.FOLDER:
-    case EntityType.LINK:
-    case EntityType.DOCKER_REPO:
-    case EntityType.FILE:
+    case EntityType.project:
+    case EntityType.folder:
+    case EntityType.link:
+    case EntityType.dockerrepo:
+    case EntityType.file:
+    case EntityType.recordset:
       return false
-    case EntityType.TABLE:
-    case EntityType.SUBMISSION_VIEW:
-    case EntityType.ENTITY_VIEW:
-    case EntityType.DATASET:
-    case EntityType.DATASET_COLLECTION:
-    case EntityType.MATERIALIZED_VIEW:
-    case EntityType.VIRTUAL_TABLE:
+    case EntityType.table:
+    case EntityType.submissionview:
+    case EntityType.entityview:
+    case EntityType.dataset:
+    case EntityType.datasetcollection:
+    case EntityType.materializedview:
+    case EntityType.virtualtable:
       return true
     default:
       throw new Error(`Unknown entity type: ${type}`)
@@ -93,30 +96,32 @@ export function isTableType(type: EntityType): boolean {
 
 export function entityTypeToFriendlyName(entityType: EntityType): string {
   switch (entityType) {
-    case EntityType.PROJECT:
+    case EntityType.project:
       return 'Project'
-    case EntityType.FOLDER:
+    case EntityType.folder:
       return 'Folder'
-    case EntityType.FILE:
+    case EntityType.file:
       return 'File'
-    case EntityType.TABLE:
+    case EntityType.table:
       return 'Table'
-    case EntityType.LINK:
+    case EntityType.link:
       return 'Link'
-    case EntityType.ENTITY_VIEW:
+    case EntityType.entityview:
       return 'View'
-    case EntityType.DOCKER_REPO:
+    case EntityType.dockerrepo:
       return 'Docker Repository'
-    case EntityType.SUBMISSION_VIEW:
+    case EntityType.submissionview:
       return 'Submission View'
-    case EntityType.DATASET:
+    case EntityType.dataset:
       return 'Dataset'
-    case EntityType.DATASET_COLLECTION:
+    case EntityType.datasetcollection:
       return 'Dataset Collection'
-    case EntityType.MATERIALIZED_VIEW:
+    case EntityType.materializedview:
       return 'Materialized View'
-    case EntityType.VIRTUAL_TABLE:
+    case EntityType.virtualtable:
       return 'Virtual Table'
+    case EntityType.recordset:
+      return 'Record Set'
     default:
       console.warn('Entity type could not be mapped to name:', entityType)
       return ''
@@ -131,29 +136,31 @@ export function convertToEntityType(
   }
   switch (typeString) {
     case 'org.sagebionetworks.repo.model.Project':
-      return EntityType.PROJECT
+      return EntityType.project
     case 'org.sagebionetworks.repo.model.Folder':
-      return EntityType.FOLDER
+      return EntityType.folder
     case FILE_ENTITY_CONCRETE_TYPE_VALUE:
-      return EntityType.FILE
+      return EntityType.file
     case 'org.sagebionetworks.repo.model.Link':
-      return EntityType.LINK
+      return EntityType.link
     case 'org.sagebionetworks.repo.model.docker.DockerRepository':
-      return EntityType.DOCKER_REPO
+      return EntityType.dockerrepo
     case TABLE_ENTITY_CONCRETE_TYPE_VALUE:
-      return EntityType.TABLE
+      return EntityType.table
     case 'org.sagebionetworks.repo.model.table.SubmissionView':
-      return EntityType.SUBMISSION_VIEW
+      return EntityType.submissionview
     case ENTITY_VIEW_CONCRETE_TYPE_VALUE:
-      return EntityType.ENTITY_VIEW
+      return EntityType.entityview
     case DATASET_CONCRETE_TYPE_VALUE:
-      return EntityType.DATASET
+      return EntityType.dataset
     case DATASET_COLLECTION_CONCRETE_TYPE_VALUE:
-      return EntityType.DATASET_COLLECTION
+      return EntityType.datasetcollection
     case MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE:
-      return EntityType.MATERIALIZED_VIEW
+      return EntityType.materializedview
     case VIRTUAL_TABLE_CONCRETE_TYPE_VALUE:
-      return EntityType.VIRTUAL_TABLE
+      return EntityType.virtualtable
+    case 'org.sagebionetworks.repo.model.RecordSet':
+      return EntityType.recordset
     default:
       throw new Error(`Unknown entity type: ${typeString}`)
   }
@@ -161,32 +168,34 @@ export function convertToEntityType(
 
 export function convertToConcreteEntityType(
   type: EntityType,
-): ENTITY_CONCRETE_TYPE {
+): Entity_OpenAPI['concreteType'] {
   switch (type) {
-    case EntityType.PROJECT:
+    case EntityType.project:
       return 'org.sagebionetworks.repo.model.Project'
-    case EntityType.FOLDER:
+    case EntityType.folder:
       return 'org.sagebionetworks.repo.model.Folder'
-    case EntityType.FILE:
+    case EntityType.file:
       return 'org.sagebionetworks.repo.model.FileEntity'
-    case EntityType.LINK:
+    case EntityType.link:
       return 'org.sagebionetworks.repo.model.Link'
-    case EntityType.DOCKER_REPO:
+    case EntityType.dockerrepo:
       return 'org.sagebionetworks.repo.model.docker.DockerRepository'
-    case EntityType.TABLE:
+    case EntityType.table:
       return 'org.sagebionetworks.repo.model.table.TableEntity'
-    case EntityType.SUBMISSION_VIEW:
+    case EntityType.submissionview:
       return 'org.sagebionetworks.repo.model.table.SubmissionView'
-    case EntityType.ENTITY_VIEW:
+    case EntityType.entityview:
       return 'org.sagebionetworks.repo.model.table.EntityView'
-    case EntityType.DATASET:
+    case EntityType.dataset:
       return 'org.sagebionetworks.repo.model.table.Dataset'
-    case EntityType.DATASET_COLLECTION:
+    case EntityType.datasetcollection:
       return 'org.sagebionetworks.repo.model.table.DatasetCollection'
-    case EntityType.MATERIALIZED_VIEW:
+    case EntityType.materializedview:
       return 'org.sagebionetworks.repo.model.table.MaterializedView'
-    case EntityType.VIRTUAL_TABLE:
+    case EntityType.virtualtable:
       return 'org.sagebionetworks.repo.model.table.VirtualTable'
+    case EntityType.recordset:
+      return 'org.sagebionetworks.repo.model.RecordSet'
     default:
       throw new Error(`Unknown entity type: ${type}`)
   }
@@ -199,19 +208,20 @@ export function convertToConcreteEntityType(
  */
 export function isVersionableEntityType(type: EntityType): boolean {
   switch (type) {
-    case EntityType.PROJECT:
-    case EntityType.FOLDER:
-    case EntityType.LINK:
-    case EntityType.DOCKER_REPO:
-    case EntityType.SUBMISSION_VIEW: // SubmissionView implements VersionableEntity, but versions aren't supported
-    case EntityType.MATERIALIZED_VIEW: // MaterializedView implements VersionableEntity, but versions aren't supported.
-    case EntityType.VIRTUAL_TABLE: // VirtualTable implements VersionableEntity, but versions aren't supported.
+    case EntityType.project:
+    case EntityType.folder:
+    case EntityType.link:
+    case EntityType.dockerrepo:
+    case EntityType.submissionview: // SubmissionView implements VersionableEntity, but versions aren't supported
+    case EntityType.materializedview: // MaterializedView implements VersionableEntity, but versions aren't supported.
+    case EntityType.virtualtable: // VirtualTable implements VersionableEntity, but versions aren't supported.
       return false
-    case EntityType.FILE:
-    case EntityType.TABLE:
-    case EntityType.ENTITY_VIEW:
-    case EntityType.DATASET:
-    case EntityType.DATASET_COLLECTION:
+    case EntityType.file:
+    case EntityType.recordset:
+    case EntityType.table:
+    case EntityType.entityview:
+    case EntityType.dataset:
+    case EntityType.datasetcollection:
       return true
     default:
       throw new Error(`Unknown entity type: ${type}`)
@@ -378,19 +388,30 @@ export const entityJsonKeys: Record<ENTITY_CONCRETE_TYPE, string[]> = {
   [VIRTUAL_TABLE_CONCRETE_TYPE_VALUE]: [...tableKeys, 'definingSQL'],
   [FOLDER_CONCRETE_TYPE_VALUE]: allEntityKeys,
   [PROJECT_CONCRETE_TYPE_VALUE]: [...allEntityKeys, 'alias'],
+  ['org.sagebionetworks.repo.model.RecordSet']: [
+    ...versionableKeys,
+    'upsertKey',
+    'csvDescriptor',
+  ],
+  'org.sagebionetworks.repo.model.Preview': [
+    /* unused */
+  ],
+  'org.sagebionetworks.repo.model.ExampleEntity': [
+    /* unused */
+  ],
 }
 
 type EntityTypeGroupKey = 'ALL_TABLES' | 'CONTAINER'
 
 export const EntityTypeGroup: Record<EntityTypeGroupKey, EntityType[]> = {
   ['ALL_TABLES']: [
-    EntityType.TABLE,
-    EntityType.ENTITY_VIEW,
-    EntityType.SUBMISSION_VIEW,
-    EntityType.DATASET,
-    EntityType.DATASET_COLLECTION,
-    EntityType.MATERIALIZED_VIEW,
-    EntityType.VIRTUAL_TABLE,
+    EntityType.table,
+    EntityType.entityview,
+    EntityType.submissionview,
+    EntityType.dataset,
+    EntityType.datasetcollection,
+    EntityType.materializedview,
+    EntityType.virtualtable,
   ],
-  ['CONTAINER']: [EntityType.PROJECT, EntityType.FOLDER],
+  ['CONTAINER']: [EntityType.project, EntityType.folder],
 }
