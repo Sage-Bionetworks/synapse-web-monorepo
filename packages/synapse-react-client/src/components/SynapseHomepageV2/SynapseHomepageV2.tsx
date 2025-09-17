@@ -31,6 +31,7 @@ import { SynapsePlans } from './SynapsePlans'
 import { SynapseSearchChips } from './SynapseSearchChips'
 import { SynapseTrendingProjects } from './SynapseTrendingProjects'
 import SynapseHotdropsBackground from './SynapseHotdropsBackground'
+import { SynapseHotDrops } from './SynapseHotdrops'
 
 export const synapseInActionTable = 'syn61670075'
 export const past30DaysDownloadMetricsTable = 'syn61597084'
@@ -355,12 +356,12 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
             </Box>
             <Box
               sx={{
-                mt: '-5px',
+                mt: '-3px',
                 pb: {
                   xs: '100px',
                   md: '220px',
                 },
-                clipPath: 'polygon(0 0, 100% 4px, 0 100%, 0% 0%)',
+                clipPath: 'polygon(0 0, 100% 2px, 0 100%, 0% 0%)',
                 backgroundColor: '#223549',
                 zIndex: 100,
               }}
@@ -384,15 +385,16 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
                 sx={{
                   ...homepageBodyText,
                   textAlign: 'center',
-                  mb: '60px',
+                  mb: { xs: '30px', md: '60px' },
                 }}
               >
                 A sample of public projects and datasets recently created on
                 Synapse by researchers like you
               </Typography>
             </Box>
-            <Box sx={{ position: 'relative', height: '700px' }}>
+            <Box sx={{ position: 'relative', minHeight: '500px' }}>
               <SynapseHotdropsBackground />
+              <SynapseHotDrops tableId={newAndTrendingTable} />
             </Box>
           </Box>
           <Box
@@ -410,6 +412,7 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
             sx={{
               ...sidePadding,
               backgroundColor: '#172430',
+              mt: '-1px',
               pt: {
                 xs: '50px',
                 md: '20px',

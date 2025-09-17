@@ -100,8 +100,8 @@ const SynapseHotdropsBackground = () => {
             y2="324.125"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#2FB7A8" />
-            <stop offset="1" stop-color="#2969AC" />
+            <stop stopColor="#2FB7A8" />
+            <stop offset="1" stopColor="#2969AC" />
           </linearGradient>
           <linearGradient
             id="paint1_linear_2950_2394"
@@ -111,8 +111,8 @@ const SynapseHotdropsBackground = () => {
             y2="339.097"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#2FB7A8" />
-            <stop offset="1" stop-color="#2969AC" />
+            <stop stopColor="#2FB7A8" />
+            <stop offset="1" stopColor="#2969AC" />
           </linearGradient>
           <linearGradient
             id="paint2_linear_2950_2394"
@@ -122,8 +122,8 @@ const SynapseHotdropsBackground = () => {
             y2="188.719"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#2FB7A8" />
-            <stop offset="1" stop-color="#2969AC" />
+            <stop stopColor="#2FB7A8" />
+            <stop offset="1" stopColor="#2969AC" />
           </linearGradient>
           <linearGradient
             id="paint3_linear_2950_2394"
@@ -133,8 +133,8 @@ const SynapseHotdropsBackground = () => {
             y2="390.219"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#2FB7A8" />
-            <stop offset="1" stop-color="#2969AC" />
+            <stop stopColor="#2FB7A8" />
+            <stop offset="1" stopColor="#2969AC" />
           </linearGradient>
           <linearGradient
             id="paint4_linear_2950_2394"
@@ -144,8 +144,8 @@ const SynapseHotdropsBackground = () => {
             y2="60.7526"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#2FB7A8" />
-            <stop offset="1" stop-color="#2969AC" />
+            <stop stopColor="#2FB7A8" />
+            <stop offset="1" stopColor="#2969AC" />
           </linearGradient>
         </defs>
       </svg>
