@@ -1,11 +1,11 @@
 import { normalizeNumericId } from '@/utils/functions/StringUtils'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   AnnotationsValueType,
   EntityBundle,
   EntityHeader,
   EntityJson,
   EntityPath,
-  EntityType,
   FileEntity,
   RestrictionLevel,
   VersionInfo,
@@ -123,7 +123,7 @@ const filePath: EntityPath = {
 
 const mockFileEntityBundle: EntityBundle = {
   entity: mockFileEntity,
-  entityType: EntityType.FILE,
+  entityType: EntityType.file,
   fileHandles: [mockFileHandle, mockPreviewFileHandle],
   annotations: {
     id: MOCK_FILE_ENTITY_ID,

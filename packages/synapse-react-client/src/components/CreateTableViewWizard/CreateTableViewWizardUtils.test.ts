@@ -1,13 +1,4 @@
-import {
-  getModalTitle,
-  getPreviousStep,
-  getStepAfterTypeSelection,
-  isLastStep,
-  maybeSetColumnIds,
-  maybeSetDefiningSQL,
-  maybeSetScopeIds,
-  maybeSetViewTypeMask,
-} from './CreateTableViewWizardUtils'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   ColumnModel,
   Dataset,
@@ -15,7 +6,6 @@ import {
   DATASET_CONCRETE_TYPE_VALUE,
   DatasetCollection,
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,
-  EntityType,
   EntityView,
   MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE,
   MaterializedView,
@@ -27,17 +17,27 @@ import {
   VIRTUAL_TABLE_CONCRETE_TYPE_VALUE,
   VirtualTable,
 } from '@sage-bionetworks/synapse-types'
+import {
+  getModalTitle,
+  getPreviousStep,
+  getStepAfterTypeSelection,
+  isLastStep,
+  maybeSetColumnIds,
+  maybeSetDefiningSQL,
+  maybeSetScopeIds,
+  maybeSetViewTypeMask,
+} from './CreateTableViewWizardUtils'
 
 function getTableStub(entityType: EntityType): Table {
   switch (entityType) {
-    case EntityType.TABLE:
+    case EntityType.table:
       return {
         columnIds: [],
         isSearchEnabled: false,
         name: 'test',
         concreteType: TABLE_ENTITY_CONCRETE_TYPE_VALUE,
       } as TableEntity
-    case EntityType.ENTITY_VIEW:
+    case EntityType.entityview:
       return {
         columnIds: [],
         scopeIds: [],
@@ -47,7 +47,7 @@ function getTableStub(entityType: EntityType): Table {
         concreteType: ENTITY_VIEW_CONCRETE_TYPE_VALUE,
       } as EntityView
 
-    case EntityType.SUBMISSION_VIEW:
+    case EntityType.submissionview:
       return {
         columnIds: [],
         scopeIds: [],
@@ -55,7 +55,7 @@ function getTableStub(entityType: EntityType): Table {
         name: 'test',
         concreteType: SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
       } as SubmissionView
-    case EntityType.DATASET:
+    case EntityType.dataset:
       return {
         columnIds: [],
         items: [],
@@ -63,7 +63,7 @@ function getTableStub(entityType: EntityType): Table {
         name: 'test',
         concreteType: DATASET_CONCRETE_TYPE_VALUE,
       } as Dataset
-    case EntityType.DATASET_COLLECTION:
+    case EntityType.datasetcollection:
       return {
         columnIds: [],
         items: [],
@@ -71,7 +71,7 @@ function getTableStub(entityType: EntityType): Table {
         name: 'test',
         concreteType: DATASET_COLLECTION_CONCRETE_TYPE_VALUE,
       } as DatasetCollection
-    case EntityType.MATERIALIZED_VIEW:
+    case EntityType.materializedview:
       return {
         columnIds: [],
         isSearchEnabled: false,
@@ -79,7 +79,7 @@ function getTableStub(entityType: EntityType): Table {
         definingSQL: 'SELECT * FROM syn123',
         concreteType: MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE,
       } as MaterializedView
-    case EntityType.VIRTUAL_TABLE:
+    case EntityType.virtualtable:
       return {
         columnIds: [],
         isSearchEnabled: false,
@@ -96,23 +96,23 @@ describe('CreateTableWizardUtils tests', () => {
   test('getModalTitle', () => {
     expect(getModalTitle('CHOOSE_TABLE_TYPE')).toBe('Create Table or View')
     expect(getModalTitle('CHOOSE_VIEW_TYPE')).toBe('Create View')
-    expect(getModalTitle('ENTITY_VIEW_SCOPE', EntityType.ENTITY_VIEW)).toBe(
+    expect(getModalTitle('ENTITY_VIEW_SCOPE', EntityType.entityview)).toBe(
       'Define View Scope',
     )
     expect(
-      getModalTitle('SUBMISSION_VIEW_SCOPE', EntityType.SUBMISSION_VIEW),
+      getModalTitle('SUBMISSION_VIEW_SCOPE', EntityType.submissionview),
     ).toBe('Define Submission View Scope')
     expect(getModalTitle('TABLE_SQL')).toBe('Create a SQL-Defined View')
-    expect(getModalTitle('TABLE_COLUMNS', EntityType.TABLE)).toBe(
+    expect(getModalTitle('TABLE_COLUMNS', EntityType.table)).toBe(
       'Add Columns to Table',
     )
-    expect(getModalTitle('TABLE_COLUMNS', EntityType.ENTITY_VIEW)).toBe(
+    expect(getModalTitle('TABLE_COLUMNS', EntityType.entityview)).toBe(
       'Add Columns to View',
     )
-    expect(getModalTitle('TABLE_NAME', EntityType.TABLE)).toBe(
+    expect(getModalTitle('TABLE_NAME', EntityType.table)).toBe(
       'Create the Table',
     )
-    expect(getModalTitle('TABLE_NAME', EntityType.ENTITY_VIEW)).toBe(
+    expect(getModalTitle('TABLE_NAME', EntityType.entityview)).toBe(
       'Create the View',
     )
   })
@@ -122,29 +122,29 @@ describe('CreateTableWizardUtils tests', () => {
     expect(getPreviousStep('ENTITY_VIEW_SCOPE')).toBe('CHOOSE_VIEW_TYPE')
     expect(getPreviousStep('SUBMISSION_VIEW_SCOPE')).toBe('CHOOSE_VIEW_TYPE')
     expect(getPreviousStep('TABLE_SQL')).toBe('CHOOSE_VIEW_TYPE')
-    expect(getPreviousStep('TABLE_COLUMNS', EntityType.TABLE)).toBe(
+    expect(getPreviousStep('TABLE_COLUMNS', EntityType.table)).toBe(
       'CHOOSE_TABLE_TYPE',
     )
-    expect(getPreviousStep('TABLE_COLUMNS', EntityType.ENTITY_VIEW)).toBe(
+    expect(getPreviousStep('TABLE_COLUMNS', EntityType.entityview)).toBe(
       'ENTITY_VIEW_SCOPE',
     )
-    expect(getPreviousStep('TABLE_COLUMNS', EntityType.SUBMISSION_VIEW)).toBe(
+    expect(getPreviousStep('TABLE_COLUMNS', EntityType.submissionview)).toBe(
       'SUBMISSION_VIEW_SCOPE',
     )
-    expect(getPreviousStep('TABLE_NAME', EntityType.TABLE)).toBe(
+    expect(getPreviousStep('TABLE_NAME', EntityType.table)).toBe(
       'TABLE_COLUMNS',
     )
-    expect(getPreviousStep('TABLE_NAME', EntityType.ENTITY_VIEW)).toBe(
+    expect(getPreviousStep('TABLE_NAME', EntityType.entityview)).toBe(
       'TABLE_COLUMNS',
     )
-    expect(getPreviousStep('TABLE_NAME', EntityType.SUBMISSION_VIEW)).toBe(
+    expect(getPreviousStep('TABLE_NAME', EntityType.submissionview)).toBe(
       'TABLE_COLUMNS',
     )
 
-    expect(getPreviousStep('TABLE_NAME', EntityType.MATERIALIZED_VIEW)).toBe(
+    expect(getPreviousStep('TABLE_NAME', EntityType.materializedview)).toBe(
       'TABLE_SQL',
     )
-    expect(getPreviousStep('TABLE_NAME', EntityType.VIRTUAL_TABLE)).toBe(
+    expect(getPreviousStep('TABLE_NAME', EntityType.virtualtable)).toBe(
       'TABLE_SQL',
     )
   })
@@ -158,28 +158,26 @@ describe('CreateTableWizardUtils tests', () => {
     expect(isLastStep('TABLE_NAME')).toBe(true)
   })
   test('getStepAfterTypeSelection', () => {
-    expect(getStepAfterTypeSelection(EntityType.TABLE)).toBe('TABLE_COLUMNS')
-    expect(getStepAfterTypeSelection(EntityType.ENTITY_VIEW)).toBe(
+    expect(getStepAfterTypeSelection(EntityType.table)).toBe('TABLE_COLUMNS')
+    expect(getStepAfterTypeSelection(EntityType.entityview)).toBe(
       'ENTITY_VIEW_SCOPE',
     )
-    expect(getStepAfterTypeSelection(EntityType.SUBMISSION_VIEW)).toBe(
+    expect(getStepAfterTypeSelection(EntityType.submissionview)).toBe(
       'SUBMISSION_VIEW_SCOPE',
     )
-    expect(getStepAfterTypeSelection(EntityType.MATERIALIZED_VIEW)).toBe(
+    expect(getStepAfterTypeSelection(EntityType.materializedview)).toBe(
       'TABLE_SQL',
     )
-    expect(getStepAfterTypeSelection(EntityType.VIRTUAL_TABLE)).toBe(
-      'TABLE_SQL',
-    )
+    expect(getStepAfterTypeSelection(EntityType.virtualtable)).toBe('TABLE_SQL')
   })
 
   describe('maybeSetColumnIds', () => {
     test.each<EntityType>([
-      EntityType.TABLE,
-      EntityType.ENTITY_VIEW,
-      EntityType.SUBMISSION_VIEW,
-      EntityType.DATASET,
-      EntityType.DATASET_COLLECTION,
+      EntityType.table,
+      EntityType.entityview,
+      EntityType.submissionview,
+      EntityType.dataset,
+      EntityType.datasetcollection,
     ])('adds columnIds for types that support them - %s', entityType => {
       const entityToModify = getTableStub(entityType)
       const createdColumnModels: ColumnModel[] = [
@@ -190,11 +188,11 @@ describe('CreateTableWizardUtils tests', () => {
     })
 
     test.each<EntityType>([
-      EntityType.TABLE,
-      EntityType.ENTITY_VIEW,
-      EntityType.SUBMISSION_VIEW,
-      EntityType.DATASET,
-      EntityType.DATASET_COLLECTION,
+      EntityType.table,
+      EntityType.entityview,
+      EntityType.submissionview,
+      EntityType.dataset,
+      EntityType.datasetcollection,
     ])(
       'does not add columnIds if there are no createdColumnModels - %s',
       entityType => {
@@ -206,8 +204,8 @@ describe('CreateTableWizardUtils tests', () => {
     )
 
     test.each<EntityType>([
-      EntityType.MATERIALIZED_VIEW,
-      EntityType.VIRTUAL_TABLE,
+      EntityType.materializedview,
+      EntityType.virtualtable,
     ])(
       'does not add columnIds for types that do not support manually defining them - %s',
       entityType => {
@@ -221,7 +219,7 @@ describe('CreateTableWizardUtils tests', () => {
     )
   })
   describe('maybeSetScopeIds', () => {
-    test.each<EntityType>([EntityType.ENTITY_VIEW, EntityType.SUBMISSION_VIEW])(
+    test.each<EntityType>([EntityType.entityview, EntityType.submissionview])(
       'adds scopeIds for types that support them - %s',
       entityType => {
         const entityToModify = getTableStub(entityType)
@@ -235,11 +233,11 @@ describe('CreateTableWizardUtils tests', () => {
     )
 
     test.each<EntityType>([
-      EntityType.TABLE,
-      EntityType.DATASET,
-      EntityType.DATASET_COLLECTION,
-      EntityType.MATERIALIZED_VIEW,
-      EntityType.VIRTUAL_TABLE,
+      EntityType.table,
+      EntityType.dataset,
+      EntityType.datasetcollection,
+      EntityType.materializedview,
+      EntityType.virtualtable,
     ])(
       'does not add scopeIds for types that do not support manually defining them - %s',
       entityType => {
@@ -252,7 +250,7 @@ describe('CreateTableWizardUtils tests', () => {
   })
   describe('maybeSetViewTypeMask', () => {
     test('adds viewTypeMask for EntityView', () => {
-      const entityType: EntityType = EntityType.ENTITY_VIEW
+      const entityType: EntityType = EntityType.entityview
       const entityToModify = getTableStub(entityType) as EntityView
 
       const viewTypeMask: number = 5
@@ -261,12 +259,12 @@ describe('CreateTableWizardUtils tests', () => {
     })
 
     test.each<EntityType>([
-      EntityType.TABLE,
-      EntityType.SUBMISSION_VIEW,
-      EntityType.DATASET,
-      EntityType.DATASET_COLLECTION,
-      EntityType.MATERIALIZED_VIEW,
-      EntityType.VIRTUAL_TABLE,
+      EntityType.table,
+      EntityType.submissionview,
+      EntityType.dataset,
+      EntityType.datasetcollection,
+      EntityType.materializedview,
+      EntityType.virtualtable,
     ])(
       'does not add viewTypeMask for types that do not support manually defining them - %s',
       entityType => {
@@ -279,8 +277,8 @@ describe('CreateTableWizardUtils tests', () => {
   })
   describe('maybeSetDefiningSQL', () => {
     test.each<EntityType>([
-      EntityType.MATERIALIZED_VIEW,
-      EntityType.VIRTUAL_TABLE,
+      EntityType.materializedview,
+      EntityType.virtualtable,
     ])('adds definingSQL for types that support them - %s', entityType => {
       const entityToModify = getTableStub(entityType)
       const createdSql: string = "SELECT * FROM syn456 LEFT JOIN syn789 ON 'id'"
@@ -292,11 +290,11 @@ describe('CreateTableWizardUtils tests', () => {
     })
 
     test.each<EntityType>([
-      EntityType.TABLE,
-      EntityType.ENTITY_VIEW,
-      EntityType.SUBMISSION_VIEW,
-      EntityType.DATASET,
-      EntityType.DATASET_COLLECTION,
+      EntityType.table,
+      EntityType.entityview,
+      EntityType.submissionview,
+      EntityType.dataset,
+      EntityType.datasetcollection,
     ])(
       'does not add scopeIds for types that do not support manually defining them - %s',
       entityType => {

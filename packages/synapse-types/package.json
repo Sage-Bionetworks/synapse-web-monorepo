@@ -11,6 +11,9 @@
     "LICENSE",
     "README.md"
   ],
+  "dependencies": {
+    "@sage-bionetworks/synapse-client": "workspace:*"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/Sage-Bionetworks/synapse-web-monorepo.git"

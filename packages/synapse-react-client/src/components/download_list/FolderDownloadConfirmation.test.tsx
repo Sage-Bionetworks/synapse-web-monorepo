@@ -6,12 +6,12 @@ import {
   getUseMutationIdleMock,
   getUseQuerySuccessMock,
 } from '@/testutils/ReactQueryMockUtils'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   AddToDownloadListRequest,
   AddToDownloadListResponse,
   EntityChildrenResponse,
-  EntityType,
 } from '@sage-bionetworks/synapse-types'
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -90,7 +90,7 @@ describe('FolderDownloadConfirmation', () => {
       parentId: FOLDER_ID,
       includeSumFileSizes: true,
       includeTotalChildCount: true,
-      includeTypes: [EntityType.FILE],
+      includeTypes: [EntityType.file],
     })
     expect(mockDownloadConfirmationUi).toHaveBeenCalled()
     const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]

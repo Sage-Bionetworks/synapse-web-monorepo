@@ -6,11 +6,8 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import {
-  DockerRepository,
-  EntityBundle,
-  EntityType,
-} from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import { DockerRepository, EntityBundle } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import * as FavoriteButtonModule from '../../../favorites/FavoriteButton'
 import * as EntityActionMenuModule from '../action_menu/EntityActionMenu'
@@ -105,7 +102,7 @@ describe('Entity Page Title Bar', () => {
     const repoName = 'name for the docker repo'
     useEntityBundleOverride({
       ...mockFileEntity.bundle,
-      entityType: EntityType.DOCKER_REPO,
+      entityType: EntityType.dockerrepo,
       entity: {
         ...mockFileEntity,
         concreteType: 'org.sagebionetworks.repo.model.docker.DockerRepository',

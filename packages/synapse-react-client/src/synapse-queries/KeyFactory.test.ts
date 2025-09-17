@@ -3,7 +3,7 @@ import {
   BUNDLE_MASK_QUERY_COUNT,
   BUNDLE_MASK_QUERY_RESULTS,
 } from '@/utils/SynapseConstants'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { QueryKey } from '@tanstack/react-query'
 import { KeyFactory } from './KeyFactory'
 import {
@@ -154,7 +154,7 @@ describe('KeyFactory tests', () => {
       const queryKey: QueryKey = keyFactory.getEntityChildrenQueryKey(
         {
           parentId: ENTITY_ID,
-          includeTypes: [EntityType.FILE],
+          includeTypes: [EntityType.file],
         },
         false,
       )
@@ -166,7 +166,7 @@ describe('KeyFactory tests', () => {
         keyFactory.getEntityChildrenQueryKey(
           {
             parentId: ENTITY_ID,
-            includeTypes: [EntityType.FOLDER],
+            includeTypes: [EntityType.folder],
           },
           false,
         ),
@@ -181,7 +181,7 @@ describe('KeyFactory tests', () => {
       const queryKey: QueryKey = keyFactory.getEntityChildrenQueryKey(
         {
           parentId: ENTITY_ID,
-          includeTypes: [EntityType.FILE],
+          includeTypes: [EntityType.file],
         },
         true,
       )
@@ -193,7 +193,7 @@ describe('KeyFactory tests', () => {
         keyFactory.getEntityChildrenQueryKey(
           {
             parentId: ENTITY_ID,
-            includeTypes: [EntityType.FOLDER],
+            includeTypes: [EntityType.folder],
           },
           true,
         ),

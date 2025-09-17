@@ -3,7 +3,7 @@ import { SYNAPSE_ENTITY_ID_REGEX } from '@/utils/functions/RegularExpressions'
 import { SearchOutlined } from '@mui/icons-material'
 import { Grid, InputAdornment, TextField, Typography } from '@mui/material'
 import { useDebouncedState } from '@react-hookz/web'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { omitBy } from 'lodash-es'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
@@ -118,7 +118,7 @@ export function AccessRequirementDashboard(
           initialScope: FinderScope.ALL_PROJECTS,
           initialContainer: null,
           selectMultiple: false,
-          selectableTypes: [EntityType.PROJECT],
+          selectableTypes: [EntityType.project],
           treeOnly: true,
         }}
         show={showEntityFinder}

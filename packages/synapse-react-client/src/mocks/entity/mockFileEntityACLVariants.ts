@@ -3,7 +3,8 @@ import {
   AUTHENTICATED_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_ID,
 } from '@/utils/SynapseConstants'
-import { EntityType, FileEntity } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import { FileEntity } from '@sage-bionetworks/synapse-types'
 import { generateBaseEntity } from '../faker/generateFakeEntity'
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import { MockEntityData } from './MockEntityData'
@@ -14,7 +15,7 @@ import { MockEntityData } from './MockEntityData'
 
 export const mockFileOpenDataWithPublicRead: MockEntityData<FileEntity> =
   generateBaseEntity({
-    type: EntityType.FILE,
+    type: EntityType.file,
     acl: {
       resourceAccess: [
         {
@@ -38,7 +39,7 @@ export const mockFileOpenDataWithPublicRead: MockEntityData<FileEntity> =
 
 export const mockFileOpenDataWithNoPublicRead: MockEntityData<FileEntity> =
   generateBaseEntity({
-    type: EntityType.FILE,
+    type: EntityType.file,
     acl: {
       resourceAccess: [
         {
@@ -54,7 +55,7 @@ export const mockFileOpenDataWithNoPublicRead: MockEntityData<FileEntity> =
 
 export const mockFilePublicReadNoOpenData: MockEntityData<FileEntity> =
   generateBaseEntity({
-    type: EntityType.FILE,
+    type: EntityType.file,
     acl: {
       resourceAccess: [
         {
@@ -78,7 +79,7 @@ export const mockFilePublicReadNoOpenData: MockEntityData<FileEntity> =
 
 export const mockFileEntityWithLocalSharingSettingsData: MockEntityData<FileEntity> =
   generateBaseEntity({
-    type: EntityType.FILE,
+    type: EntityType.file,
     entity: {
       name: 'mock file with local sharing settings',
     },
@@ -94,7 +95,7 @@ export const mockFileEntityWithLocalSharingSettingsData: MockEntityData<FileEnti
 
 export const mockFileEntityCurrentUserCannotEdit: MockEntityData<FileEntity> =
   generateBaseEntity({
-    type: EntityType.FILE,
+    type: EntityType.file,
     entity: {
       name: 'mock file with local sharing settings',
     },
