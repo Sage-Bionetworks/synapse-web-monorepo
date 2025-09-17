@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import DraggableDialog from '../DraggableDialog/DraggableDialog'
 import { SynapseChat } from './index'
+import { ChatInteraction } from './SynapseChat'
+import { AgentSession } from '@sage-bionetworks/synapse-types'
 
 export type GridAgentChatProps = {
   gridSessionId: string
@@ -18,6 +21,9 @@ export function GridAgentChat({
   open,
   onClose,
 }: GridAgentChatProps) {
+  const [agentSession, setAgentSession] = useState<AgentSession | undefined>()
+  const [interactions, setInteractions] = useState<ChatInteraction[]>([])
+
   // Create session context for grid sessions
   const sessionContext = {
     concreteType:
@@ -33,6 +39,11 @@ export function GridAgentChat({
         initialMessage={initialMessage}
         sessionContext={sessionContext}
         textboxPositionOffset="16px"
+        // lift state: allow GridAgentChat to control the agent session and interactions
+        externalSession={agentSession}
+        setExternalSession={setAgentSession}
+        externalInteractions={interactions}
+        setExternalInteractions={setInteractions}
       />
     </DraggableDialog>
   )

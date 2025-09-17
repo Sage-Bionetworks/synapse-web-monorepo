@@ -45,9 +45,13 @@ export type SynapseChatProps = {
     gridSessionId: string
     usersReplicaId: number
   }
+  externalSession?: AgentSession
+  setExternalSession?: (s: AgentSession | undefined) => void
+  externalInteractions?: ChatInteraction[]
+  setExternalInteractions?: (i: ChatInteraction[]) => void
 }
 
-type ChatInteraction = {
+export type ChatInteraction = {
   userMessage: string
   chatResponseText?: string
   chatErrorReason?: string
@@ -64,9 +68,16 @@ export function SynapseChat({
   hideTitle = false,
   textboxPositionOffset = '0px',
   sessionContext,
+  externalSession,
+  setExternalSession,
+  externalInteractions,
+  setExternalInteractions,
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
-  const [agentSession, setAgentSession] = useState<AgentSession>()
+  const [localAgentSession, setLocalAgentSession] = useState<AgentSession>()
+  const agentSession = externalSession ?? localAgentSession
+  const setAgentSession = setExternalSession ?? setLocalAgentSession
+
   const { mutate: createAgentSession, error: createAgentSessionError } =
     useCreateAgentSession({
       onSuccess: newAgentSession => setAgentSession(newAgentSession),
@@ -87,7 +98,12 @@ export function SynapseChat({
       : AgentAccessLevel.PUBLICLY_ACCESSIBLE,
   )
   // When both the current message and current response are available, add a new ChatInteraction to the array
-  const [interactions, setInteractions] = useState<ChatInteraction[]>([])
+  const [localInteractions, setLocalInteractions] = useState<ChatInteraction[]>(
+    [],
+  )
+  const interactions = externalInteractions ?? localInteractions
+  const setInteractions = setExternalInteractions ?? setLocalInteractions
+
   const [pendingInteraction, setPendingInteraction] =
     useState<ChatInteraction>()
   const [currentlyProcessingJobId, setCurrentlyProcessingJobId] =
