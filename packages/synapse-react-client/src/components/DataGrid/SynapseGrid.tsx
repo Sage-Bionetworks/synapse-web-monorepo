@@ -2,7 +2,7 @@ import MergeGridWithSourceTableButton from '@/components/DataGrid/MergeGridWithS
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { SkeletonTable } from '@/components/index'
 import { ComplexJSONRenderer } from '@/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer'
-import { useGetFeatureFlag, useGetSchema } from '@/synapse-queries/index'
+import { useGetSchema } from '@/synapse-queries/index'
 import getEnumeratedValues from '@/utils/jsonschema/getEnumeratedValues'
 import getSchemaForProperty from '@/utils/jsonschema/getSchemaForProperty'
 import getRequiredAttributes from '@/utils/jsonschema/getRequiredAttributes'
@@ -51,23 +51,20 @@ import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges
 import { getCellClassName } from './utils/getCellClassName'
 import { Button } from '@mui/material'
 import GridAgentChat from '../SynapseChat/GridAgentChat'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 
 export type SynapseGridProps = {
   query: string
   showDebugInfo?: boolean
-  chat?: boolean
 }
 
 const SynapseGrid = forwardRef<
   { initializeGrid: () => void },
   SynapseGridProps
->(({ query, showDebugInfo = false, chat = false }, ref) => {
+>(({ query, showDebugInfo = false }, ref) => {
   const [session, setSession] = useState<GridSession | null>(null)
   const [replicaId, setReplicaId] = useState<number | null>(null)
   const [presignedUrl, setPresignedUrl] = useState<string>('')
   const [chatOpen, setChatOpen] = useState(false)
-  const isFeatureEnabled = useGetFeatureFlag(FeatureFlagEnum.GRID_CHAT)
 
   const startGridSessionRef = useRef<{
     handleStartSession: (input: string) => void
@@ -326,18 +323,14 @@ const SynapseGrid = forwardRef<
               <Grid size={12}>
                 {undoUI}
                 {redoUI}
-                {chat && isFeatureEnabled && (
-                  <>
-                    <Button onClick={() => setChatOpen(true)}>Open chat</Button>
-                    <GridAgentChat
-                      open={chatOpen}
-                      onClose={() => setChatOpen(false)}
-                      gridSessionId={session.sessionId!}
-                      usersReplicaId={replicaId!}
-                      chatbotName="Grid Assistant"
-                    />
-                  </>
-                )}
+                <Button onClick={() => setChatOpen(true)}>Open chat</Button>
+                <GridAgentChat
+                  open={chatOpen}
+                  onClose={() => setChatOpen(false)}
+                  gridSessionId={session.sessionId!}
+                  usersReplicaId={replicaId!}
+                  chatbotName="Grid Assistant"
+                />
 
                 <DataSheetGrid
                   ref={gridRef}
