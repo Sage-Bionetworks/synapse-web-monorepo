@@ -18,7 +18,4 @@ export enum FeatureFlagEnum {
 
   // If enabled, account settings will link to a page to manage webhooks
   WEBHOOKS_UI = 'WEBHOOKS_UI',
-
-  // If enabled, show the Open chat button in the SynapseGrid component
-  GRID_CHAT = 'GRID_CHAT',
 }
