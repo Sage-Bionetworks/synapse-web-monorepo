@@ -19,7 +19,7 @@ export type CreateAgentSessionRequest = {
    * Optional. When provided, the session will be created in the context of the specified GridAgentSession.
    */
   sessionContext?: {
-    concreteType: string // 'org.sagebionetworks.repo.model.agent.GridAgentSessionContext'
+    concreteType: string
     gridSessionId: string
     usersReplicaId: number
   }
