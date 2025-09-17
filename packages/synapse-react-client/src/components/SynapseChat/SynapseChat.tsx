@@ -253,6 +253,8 @@ export function SynapseChat({
   const latestTraceEventMessage =
     latestTraceEvent?.friendlyMessage ?? 'Processing...'
 
+  const showAccessLevelMenu = !sessionContext
+
   return (
     <Box
       sx={{
@@ -280,7 +282,7 @@ export function SynapseChat({
           {chatbotName}
         </Typography>
       )}
-      {!sessionContext && (
+      {showAccessLevelMenu && (
         <AccessLevelMenu
           initAccessLevel={agentAccessLevel}
           onChange={newAccessLevel => {
