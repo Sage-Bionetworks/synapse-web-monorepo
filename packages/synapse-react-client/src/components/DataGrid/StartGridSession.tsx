@@ -41,7 +41,7 @@ export const StartGridSession = forwardRef<
   } = props
   const [inputValue, setInputValue] = useState('')
 
-  const { mutate: startSession } = useInitializeGridConnection({
+  const { mutate: initializeGridConnection } = useInitializeGridConnection({
     onMutate(args) {
       console.log('Starting grid session with args:', args)
     },
@@ -72,20 +72,20 @@ export const StartGridSession = forwardRef<
   )
 
   const onConfirmInput = function () {
-    startSession(transformTextToCreateOrGetGridRequest(inputValue))
+    initializeGridConnection(transformTextToCreateOrGetGridRequest(inputValue))
   }
 
   useImperativeHandle(
     ref,
     () => ({
       handleStartSession: (request: CreateGridRequest) => {
-        startSession({ createGridRequest: request })
+        initializeGridConnection({ createGridRequest: request })
       },
       handleLoadSession: (sessionId: string) => {
-        startSession({ sessionId })
+        initializeGridConnection({ sessionId })
       },
     }),
-    [startSession],
+    [initializeGridConnection],
   )
 
   if (!show) {
@@ -116,7 +116,7 @@ export const StartGridSession = forwardRef<
           onChange={(_e, value) => {
             if (value && typeof value === 'object') {
               setInputValue(value.sessionId || '')
-              void startSession({
+              void initializeGridConnection({
                 sessionId: value.sessionId!,
               })
             } else {

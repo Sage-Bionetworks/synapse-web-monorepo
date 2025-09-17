@@ -75,14 +75,17 @@ export default function useInitializeGridConnection(
     CreateOrGetGridSessionInput
   >({
     ...options,
-    mutationFn: async ({ createGridRequest, sessionId }) => {
-      if (!(createGridRequest || sessionId)) {
+    mutationFn: async ({ createGridRequest, sessionId: sessionIdArg }) => {
+      if (!(createGridRequest || sessionIdArg)) {
         throw new Error(
           'Must provide either a SQL query, recordSetId, or sessionId to initialize grid connection.',
         )
       }
-      const session = await createOrGetSession({ createGridRequest, sessionId })
-      sessionId = session.sessionId!
+      const session = await createOrGetSession({
+        createGridRequest,
+        sessionId: sessionIdArg,
+      })
+      const sessionId = session.sessionId!
       try {
         const createReplicaResponse = await createReplicaId(sessionId)
         console.log('Replica created:', createReplicaResponse)
