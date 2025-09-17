@@ -58,7 +58,6 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
     const dynamicConfigs: Record<string, DropdownMenuItem> = {
       downloadFile: {
         text: 'Download File',
-        icon: 'download',
         onClick: () => {
           console.log('Download file:', entityId, entityName)
           // TODO: Implement file download functionality
@@ -67,34 +66,30 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
       },
       addToCart: {
         text: 'Add to Download Cart',
-        icon: 'addToCart',
         onClick: () => {
-          console.log('Add file to cart:', entityId)
+          console.log('Add file(s) to cart:', entityId)
           // TODO: Implement add to cart functionality
         },
-        tooltipText: 'Add this file to your download cart',
-      },
-      addAllToCart: {
-        text: 'Add All Files to Cart',
-        icon: 'addToCart',
-        onClick: () => {
-          console.log('Add all project files to cart:', entityId)
-          // TODO: Implement add all files to cart functionality
-        },
-        tooltipText: 'Add all project files to download cart',
+        tooltipText: 'Add file(s) to your download cart',
       },
       programmaticAccess: {
         text: 'Programmatic Access',
-        icon: 'code',
         onClick: () => {
           console.log('Show programmatic access for:', entityId)
           // TODO: Implement programmatic access options
         },
         tooltipText: 'View programmatic access options',
       },
+      programmaticAccessDocker: {
+        text: 'Programmatic Access (Docker)',
+        onClick: () => {
+          console.log('Show programmatic access (Docker) for:', entityId)
+          // TODO: Implement programmatic access (Docker) options
+        },
+        tooltipText: 'View programmatic options to pull Docker image',
+      },
       exportTable: {
         text: 'Export Table',
-        icon: 'code',
         onClick: () => {
           console.log('Export table for:', entityId)
           // TODO: Implement export table functionality
@@ -109,16 +104,18 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
         [dynamicConfigs.addToCart, dynamicConfigs.programmaticAccess],
       ]
     } else if (entityTypeLower === 'project' || entityTypeLower === 'folder') {
-      return [[dynamicConfigs.addAllToCart, dynamicConfigs.programmaticAccess]]
+      return [[dynamicConfigs.addToCart, dynamicConfigs.programmaticAccess]]
+    } else if (
+      entityTypeLower === 'entityview' ||
+      entityTypeLower === 'dataset' ||
+      entityTypeLower === 'table'
+    ) {
+      return [[dynamicConfigs.addToCart, dynamicConfigs.programmaticAccess]]
+    } else if (entityTypeLower === 'dockerrepo') {
+      return [[dynamicConfigs.programmaticAccessDocker]]
     } else {
-      // Other entity types (table, dataset, etc.)
-      return [
-        [
-          dynamicConfigs.addAllToCart,
-          dynamicConfigs.exportTable,
-          dynamicConfigs.programmaticAccess,
-        ],
-      ]
+      // Other entity types (datasetcollection, materializedview, virtualtable, submissionview)
+      return [[dynamicConfigs.exportTable, dynamicConfigs.programmaticAccess]]
     }
   }
 
