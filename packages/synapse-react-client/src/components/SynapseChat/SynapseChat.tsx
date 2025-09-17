@@ -197,14 +197,7 @@ export function SynapseChat({
         sessionContext,
       })
     }
-  }, [
-    createAgentSession,
-    agentSession,
-    accessToken,
-    agentAccessLevel,
-    agentRegistrationId,
-    sessionContext,
-  ])
+  }, [createAgentSession, agentSession, accessToken, sessionContext])
 
   useEffect(() => {
     // on mount, resolve the initial message chat interaction (if set)
