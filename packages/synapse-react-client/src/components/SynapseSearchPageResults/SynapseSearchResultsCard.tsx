@@ -10,7 +10,6 @@ import {
 } from '@mui/icons-material'
 import {
   Box,
-  Button,
   Chip,
   Link,
   Paper,
@@ -18,10 +17,9 @@ import {
   styled,
   Typography,
 } from '@mui/material'
-import { EntityType } from '@sage-bionetworks/synapse-client'
 import dayjs from 'dayjs'
 import { EntityTypeIcon } from '../EntityIcon'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { DropdownMenu, DropdownMenuItem } from '../menu/DropdownMenu'
 import FavoriteButton from '../favorites/FavoriteButton'
 
