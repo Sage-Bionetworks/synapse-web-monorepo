@@ -52,6 +52,7 @@ export function SynapseHotDrops({ tableId }: SynapseHotDropsProps) {
           gridTemplateColumns: isMobileView ? '100%' : '50% 50%',
           m: 'auto',
           pt: isMobileView ? '0px' : '80px',
+          pb: isMobileView ? '40px' : '60px',
         }}
       >
         {entityHeaders.results.map((entityHeader, index) => (
