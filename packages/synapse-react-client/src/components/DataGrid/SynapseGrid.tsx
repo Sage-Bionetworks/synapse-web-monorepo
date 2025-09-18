@@ -1,11 +1,11 @@
 import MergeGridWithSourceTableButton from '@/components/DataGrid/MergeGridWithSourceTableButton'
+import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { SkeletonTable } from '@/components/index'
-import { ComplexJSONRenderer } from '@/components/SynapseTable/SynapseTableCell/JSON/ComplexJSONRenderer'
 import { useGetSchema } from '@/synapse-queries/index'
 import getEnumeratedValues from '@/utils/jsonschema/getEnumeratedValues'
-import getSchemaForProperty from '@/utils/jsonschema/getSchemaForProperty'
 import getRequiredAttributes from '@/utils/jsonschema/getRequiredAttributes'
+import getSchemaForProperty from '@/utils/jsonschema/getSchemaForProperty'
 import { getType } from '@/utils/jsonschema/getType'
 import Grid from '@mui/material/Grid'
 import {
@@ -13,6 +13,7 @@ import {
   GridSession,
 } from '@sage-bionetworks/synapse-client'
 import classNames from 'classnames'
+import { ClickableJsonCrdt } from 'clickable-json'
 import throttle from 'lodash-es/throttle'
 import {
   forwardRef,
@@ -34,6 +35,7 @@ import {
 } from 'react-datasheet-grid'
 import 'react-datasheet-grid/dist/style.css'
 import '../../style/components/_data-grid-extra.scss'
+import { SelectionWithId } from 'react-datasheet-grid/dist/types'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import { autocompleteColumn } from './columns/AutocompleteColumn'
 import {
@@ -42,16 +44,16 @@ import {
   GridModelSnapshot,
   Operation,
 } from './DataGridTypes'
+import { useGridUndoRedo } from './hooks/useGridUndoRedo'
+import { StartGridSession, StartGridSessionHandle } from './StartGridSession'
+import { useDataGridWebSocket } from './useDataGridWebsocket'
+import { applyModelChange, ModelChange } from './utils/applyModelChange'
 import {
   GRID_ROW_REACT_KEY_PROPERTY,
   removeNoOpOperations,
 } from './utils/DataGridUtils'
-import { StartGridSession, StartGridSessionHandle } from './StartGridSession'
-import { useDataGridWebSocket } from './useDataGridWebsocket'
-import { useGridUndoRedo } from './hooks/useGridUndoRedo'
-import { applyModelChange, ModelChange } from './utils/applyModelChange'
-import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 import { getCellClassName } from './utils/getCellClassName'
+import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 
 export type SynapseGridProps = {
   showDebugInfo?: boolean
@@ -237,6 +239,27 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       }
     }
 
+    const handleSelectionChange = useCallback(
+      (opts: { selection: SelectionWithId | null }) => {
+        const { selection } = opts
+        if (selection != null && model != null && replicaId != null) {
+          const replicaSelectionModel = computeReplicaSelectionModel(
+            selection,
+            model,
+          )
+          // insert it into the CRDT Model
+          applyAndCommitChanges(model, [
+            {
+              type: 'SET_SELECTION',
+              replicaId: replicaId.toString(),
+              selection: replicaSelectionModel,
+            },
+          ])
+        }
+      },
+      [applyAndCommitChanges, model, replicaId],
+    )
+
     const applyModelChangeFromUndoRedo = useCallback(
       (change: ModelChange) => {
         if (!model) {
@@ -370,6 +393,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                     onActiveCellChange={({ cell }) => {
                       setSelectedRowIndex(cell ? cell.row : null)
                     }}
+                    onSelectionChange={handleSelectionChange}
                   />
                   {/* Show validation messages for selected row */}
                   {selectedRowIndex !== null &&
@@ -422,9 +446,9 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                     overflowY: 'auto',
                   }}
                 >
-                  <h3>Model snapshot</h3>
-                  {modelSnapshot ? (
-                    <ComplexJSONRenderer value={modelSnapshot} />
+                  <h3>Model</h3>
+                  {model ? (
+                    <ClickableJsonCrdt model={model} />
                   ) : (
                     'No model available'
                   )}

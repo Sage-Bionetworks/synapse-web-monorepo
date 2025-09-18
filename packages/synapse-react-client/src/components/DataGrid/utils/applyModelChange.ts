@@ -1,4 +1,8 @@
-import { DataGridRow, GridModel } from '@/components/DataGrid/DataGridTypes'
+import {
+  DataGridRow,
+  GridModel,
+  ReplicaSelectionModel,
+} from '@/components/DataGrid/DataGridTypes'
 import { s } from 'json-joy/lib/json-crdt-patch'
 
 /**
@@ -8,6 +12,11 @@ export type ModelChange =
   | { type: 'CREATE'; rowIndex: number; rowData: DataGridRow }
   | { type: 'DELETE'; rowIndex: number; count?: number }
   | { type: 'UPDATE'; rowIndex: number; updatedData: DataGridRow }
+  | {
+      type: 'SET_SELECTION'
+      replicaId: string
+      selection: ReplicaSelectionModel
+    }
 
 /**
  * Applies a single change operation (create, delete, or update) to the GridModel.
@@ -51,6 +60,17 @@ export function applyModelChange(model: GridModel, change: ModelChange) {
           rowVec?.set([[colIndex, s.con(value)]])
         }
       })
+      break
+    }
+    case 'SET_SELECTION': {
+      if (!model.api.obj().has('selection')) {
+        // Create if not exists
+        model.api.obj().add(['selection'], s.obj({}))
+      }
+      model.api
+        .obj(['selection'])
+        .set({ [change.replicaId]: s.con(change.selection) })
+
       break
     }
   }
