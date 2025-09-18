@@ -32,6 +32,7 @@ import { SkeletonParagraph } from '../Skeleton'
 import { displayToast } from '../ToastMessage'
 import AccessLevelMenu from './AccessLevelMenu'
 import SynapseChatInteraction from './SynapseChatInteraction'
+import { GridAgentSessionContext } from '@sage-bionetworks/synapse-client'
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
@@ -39,16 +40,20 @@ export type SynapseChatProps = {
   chatbotName?: string // optional name of this chatbot agent
   hideTitle?: boolean
   textboxPositionOffset?: string // when embedded in a form, the textbox (form) stuck to the bottom may need to be offset due to container padding (dialog content for example!)
-  sessionContext?: {
-    // optional session context for the grid agent session
-    concreteType: string
-    gridSessionId: string
-    usersReplicaId: number
-  }
+  /* optional session context for the agent session */
+  sessionContext?: GridAgentSessionContext
+  /* The current session, if state is lifted out of this component */
   externalSession?: AgentSession
+  /* A callback invoked to bootstrap the current session, if state is to be lifted out of this component */
   setExternalSession?: (s: AgentSession | undefined) => void
+  /* The current chat history, if state is lifted out of this component */
   externalInteractions?: ChatInteraction[]
+  /* A callback to update the current chat history, if state is to be lifted out of this component */
   setExternalInteractions?: (i: ChatInteraction[]) => void
+  // default access level for the agent session.
+  defaultAgentAccessLevel?: AgentAccessLevel
+  // Whether to show the access level menu for the agent session.
+  showAccessLevelMenu?: boolean
 }
 
 export type ChatInteraction = {
@@ -72,6 +77,7 @@ export function SynapseChat({
   setExternalSession,
   externalInteractions,
   setExternalInteractions,
+  showAccessLevelMenu = true,
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
   const [localAgentSession, setLocalAgentSession] = useState<AgentSession>()
@@ -268,8 +274,6 @@ export function SynapseChat({
 
   const latestTraceEventMessage =
     latestTraceEvent?.friendlyMessage ?? 'Processing...'
-
-  const showAccessLevelMenu = !sessionContext
 
   return (
     <Box

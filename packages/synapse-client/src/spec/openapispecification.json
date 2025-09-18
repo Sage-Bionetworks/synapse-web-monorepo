@@ -33525,7 +33525,7 @@
           }
         },
         "description": "Additional context provided for grid agent chat sessions.",
-        "required": ["concreteType"]
+        "required": ["concreteType", "gridSessionId", "usersReplicaId"]
       },
       "org.sagebionetworks.repo.model.docker.DockerCommit": {
         "type": "object",

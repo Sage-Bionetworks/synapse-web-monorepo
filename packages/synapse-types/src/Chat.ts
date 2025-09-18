@@ -1,3 +1,5 @@
+import { GridAgentSessionContext } from '@sage-bionetworks/synapse-client'
+
 // Type for AgentAccessLevel
 export enum AgentAccessLevel {
   PUBLICLY_ACCESSIBLE = 'PUBLICLY_ACCESSIBLE',
@@ -18,11 +20,7 @@ export type CreateAgentSessionRequest = {
   /**
    * Optional. When provided, the session will be created in the context of the specified GridAgentSession.
    */
-  sessionContext?: {
-    concreteType: string
-    gridSessionId: string
-    usersReplicaId: number
-  }
+  sessionContext?: GridAgentSessionContext
 }
 export type UpdateAgentSessionRequest = {
   /**
