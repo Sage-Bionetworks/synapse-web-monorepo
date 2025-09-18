@@ -3,7 +3,7 @@ import {
   convertToEntityType,
   entityTypeToFriendlyName,
 } from '@/utils/functions/EntityTypeUtils'
-import { Box, Chip, Typography, useTheme } from '@mui/material'
+import { Box, Chip, Typography } from '@mui/material'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -20,7 +20,6 @@ export function SynapseHotDropItem({
   entityHeader,
   isMobileView,
 }: SynapseHotDropItemProps) {
-  const theme = useTheme()
   const typeName = entityTypeToFriendlyName(
     convertToEntityType(entityHeader.type),
   )
