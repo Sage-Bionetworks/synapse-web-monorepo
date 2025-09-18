@@ -33,12 +33,13 @@ export function GridAgentChat({
   }
 
   return (
-    <DraggableDialog open={open} onClose={onClose}>
+    <DraggableDialog open={open} onClose={onClose} title={chatbotName}>
       <SynapseChat
         chatbotName={chatbotName}
         initialMessage={initialMessage}
         sessionContext={sessionContext}
         textboxPositionOffset="16px"
+        hideTitle={true}
         // lift state: allow GridAgentChat to control the agent session and interactions
         externalSession={agentSession}
         setExternalSession={setAgentSession}

@@ -1,5 +1,12 @@
 import Draggable from 'react-draggable'
-import { Box, IconButton, Paper } from '@mui/material'
+import {
+  Box,
+  IconButton,
+  Paper,
+  Stack,
+  Typography,
+  Divider,
+} from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useRef, ReactNode } from 'react'
 
@@ -7,15 +14,16 @@ type DraggableDialogProps = {
   open?: boolean
   onClose?: () => void
   children: ReactNode
+  title?: ReactNode
 }
 
 export default function DraggableDialog({
   open = false,
   onClose,
+  title,
   children,
 }: DraggableDialogProps) {
   const draggableRef = useRef<HTMLDivElement>(null)
-
   const position = { x: 100, y: 100 }
 
   if (!open) {
@@ -35,23 +43,21 @@ export default function DraggableDialog({
             width: '600px',
           }}
         >
-          <Box
+          <Stack
+            direction="row"
+            alignItems="center"
+            gap="5px"
             sx={{
-              alignSelf: 'flex-end',
               padding: '20px',
             }}
           >
-            <IconButton
-              onClick={onClose}
-              sx={theme => ({
-                position: 'absolute',
-                top: theme.spacing(1.5),
-                right: theme.spacing(1.5),
-              })}
-            >
+            <Typography variant="headline1">{title}</Typography>
+            <Box sx={{ flexGrow: 1 }} />
+            <IconButton onClick={onClose}>
               <CloseIcon />
             </IconButton>
-          </Box>
+          </Stack>
+          <Divider sx={{ mx: 2 }} />
           <Box
             sx={{
               height: '100%',
