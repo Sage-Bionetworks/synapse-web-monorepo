@@ -1,0 +1,37 @@
+import{M as u,b as l}from"./useFiles-Do5IBH1c.js";import{h as j,H as P}from"./index-Bkx214N4.js";import{A as I}from"./AccessRequirementRelatedProjectsList-DgAwIHJb.js";import"./VerificationSubmission-BDh1zA9f.js";import"./SynapseConstants-C_IwDCRv.js";import"./OrientationBanner-D7uInX_M.js";import"./jsx-runtime-D_zvdyIk.js";import"./index-D2v4tOag.js";import"./index-sd0YBnCi.js";import"./iframe-DVYlga3I.js";import"./spreadSx-CwcO6WA9.js";import"./react-BdgbTTL6.js";import"./FullWidthAlert-D-JIEHkV.js";import"./Alert-Lky9k3yL.js";import"./createTheme-DdIeWMhk.js";import"./DefaultPropsProvider-Yj25Mou0.js";import"./useSlot-B15kkZE-.js";import"./useForkRef-CHUct0W1.js";import"./createSimplePaletteValueFilter-zeUINUQY.js";import"./createSvgIcon-BB914k_q.js";import"./Close-B4WTN9qd.js";import"./IconButton-Drb2gRwi.js";import"./useTimeout-B_Tp_-WM.js";import"./ButtonBase-BTjmQqw3.js";import"./isFocusVisible-B8k4qzLc.js";import"./CircularProgress-CVVcdaCj.js";import"./Paper-DTwSBB6m.js";import"./useTheme-DT7PkjGc.js";import"./useTheme-BgNkO1EL.js";import"./Stack-ec17v0Gb.js";import"./extendSxProp-mslzv5DB.js";import"./getThemeProps-9mJ2iQYz.js";import"./Box-_qmyWplA.js";import"./AlertTitle-BiuU5EAB.js";import"./Typography-D5MbW9_J.js";import"./index-BmMoY9aL.js";import"./ClickAwayListener-lzupNfXx.js";import"./getReactElementRef-Cu_0CXbf.js";import"./index-DdccfWLe.js";import"./index-FmDvS8Q8.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-EJ2qm4Dg.js";import"./Tooltip-DVqhwzdl.js";import"./index-Djpzpj5X.js";import"./useControlled-DYvBVNIT.js";import"./Popper-DATX_HyC.js";import"./Button-KNb4UeA6.js";import"./fetchWithExponentialTimeout-UV9FrpR8.js";import"./StringUtils-NPb0VexC.js";import"./useQuery-C6imdaHY.js";import"./QueryClientProvider-nJ0R6vFz.js";import"./Link-DXy5Fg4p.js";import"./Collapse-DWu1Ndrz.js";import"./_baseUniq-BPJPICvm.js";import"./_Uint8Array-CGDsgUvk.js";import"./isArray-BQwmoBWm.js";import"./_getTag-C2Lnsqb5.js";import"./isEqual-BnkqVwwC.js";import"./merge-BnaNBIC1.js";import"./_initCloneObject-DaiBktpY.js";import"./identity-DKeuBCMA.js";import"./tinycolor-Begke6kS.js";import"./Fade-C1-s1xYp.js";import"./inputBaseClasses-BGVgyZbo.js";import"./calculateFriendlyFileSize-CCEZ1tKZ.js";import"./CheckCircleTwoTone-BJMpAPc2.js";import"./InfoTwoTone-D_B42BPL.js";import"./useMutation-DCePfSwN.js";import"./dayjs.min-CvA7XRhY.js";import"./chunk-AYJ5UCUI-BNxn_8R-.js";import"./cloneDeep-gKltjWRB.js";import"./Skeleton-DJOP7Jrw.js";import"./useAccessRequirements-6USFc9br.js";import"./index-B7rAEdmn.js";import"./_baseOrderBy-dKDN3qPX.js";import"./toString-B0yKhShP.js";import"./isSymbol-DWCTm7th.js";import"./_baseGet-CiQ9SF9L.js";import"./_baseIteratee--yDV9Vpx.js";import"./hasIn-CpFSoqMa.js";import"./_baseMap-B-lcAq1U.js";import"./_baseEach-CQtpPOK_.js";import"./useQueries-DmNsu2Hb.js";import"./useInfiniteQuery-Bkftf2DA.js";import"./pluralize-DrTH-kqh.js";import"./_commonjs-dynamic-modules-TDtrdbi3.js";import"./EntityLink-DHncA6kj.js";import"./useEntity-Cy6gDjlf.js";import"./pickBy-BDAiPIlk.js";import"./isString-D96YpDmd.js";import"./toInteger-C3uJvns3.js";import"./pick-caSxcKNE.js";import"./_baseSet-Dg_b7wlo.js";import"./omit-BJbdsIHm.js";import"./_baseSlice-F8doVSIJ.js";import"./InfiniteQueryUtils-CKlRW-xB.js";import"./useEntityBundle-DXZHGMeh.js";import"./useGetEntityHeaders-B6il0B4t.js";import"./EntityIcon-Du3NnW0B.js";import"./IconSvg-tzKn6ivd.js";import"./LayersTwoTone-Ci3TNkJS.js";import"./ContentCopyTwoTone-C8nYp6_y.js";import"./HelpOutlineTwoTone-CQ8-fl2s.js";import"./ErrorOutlined-DJ12JDvg.js";import"./GetAppTwoTone-3i7a9d8b.js";import"./InfoOutlined-DVP0xF26.js";import"./PhoneTwoTone-Uxi-EsW4.js";import"./DeleteTwoTone-DZSBGyBG.js";import"./ErrorChip-DvMEGBo1.js";import"./Chip-Die0LSwK.js";import"./Avatar-hZJ4C6lu.js";import"./List-Kan7G7k6.js";import"./ListItem-D6MtIkmn.js";import"./isHostComponent-DVu5iVWx.js";import"./isMuiElement-hTJvcy35.js";import"./listItemButtonClasses-CNrJ60rB.js";const _t={title:"Governance/AccessRequirementRelatedProjectsList",component:I},r={args:{accessRequirementId:9603055}},t={args:{accessRequirementId:9605913}},o={args:{accessRequirementId:1234567},parameters:{stack:"mock",msw:{handlers:[j.post(`${u}${l}`,()=>{const R={results:[{id:"1234567",type:"org.sagebionetworks.repo.model.ManagedACTAccessRequirement",createdOn:"2017-08-23T18:48:20.892Z",modifiedOn:"2023-12-14T00:43:41.315Z",name:"Team AR without Related Projects",version:"1",relatedProjectIds:[],reviewerIds:[]}]};return P.json(R,{status:200})})]}}};var e,m,i;r.parameters={...r.parameters,docs:{...(e=r.parameters)==null?void 0:e.docs,source:{originalSource:`{
+  args: {
+    accessRequirementId: 9603055
+  }
+}`,...(i=(m=r.parameters)==null?void 0:m.docs)==null?void 0:i.source}}};var p,s,n;t.parameters={...t.parameters,docs:{...(p=t.parameters)==null?void 0:p.docs,source:{originalSource:`{
+  args: {
+    accessRequirementId: 9605913
+  }
+}`,...(n=(s=t.parameters)==null?void 0:s.docs)==null?void 0:n.source}}};var a,c,d;o.parameters={...o.parameters,docs:{...(a=o.parameters)==null?void 0:a.docs,source:{originalSource:`{
+  args: {
+    accessRequirementId: 1234567
+  },
+  parameters: {
+    stack: 'mock',
+    msw: {
+      handlers: [
+      // searchAccessRequirements
+      http.post(\`\${MOCK_REPO_ORIGIN}\${ACCESS_REQUIREMENT_SEARCH}\`, () => {
+        const zeroRelatedProjects = {
+          results: [{
+            id: '1234567',
+            type: 'org.sagebionetworks.repo.model.ManagedACTAccessRequirement',
+            createdOn: '2017-08-23T18:48:20.892Z',
+            modifiedOn: '2023-12-14T00:43:41.315Z',
+            name: 'Team AR without Related Projects',
+            version: '1',
+            relatedProjectIds: [],
+            reviewerIds: []
+          }]
+        };
+        return HttpResponse.json(zeroRelatedProjects, {
+          status: 200
+        });
+      })]
+    }
+  }
+}`,...(d=(c=o.parameters)==null?void 0:c.docs)==null?void 0:d.source}}};const St=["ManyProjects","OneProject","ZeroProjectsMock"];export{r as ManyProjects,t as OneProject,o as ZeroProjectsMock,St as __namedExportsOrder,_t as default};
