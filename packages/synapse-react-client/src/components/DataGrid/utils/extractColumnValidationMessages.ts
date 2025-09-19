@@ -4,12 +4,15 @@
  * Example:
  *  extractColumnValidationMessages(["#/platform: null is not a valid enum value"])
  *  -> Map { "platform" => ["null is not a valid enum value"] }
+ *
+ *  extractColumnValidationMessages(["#/requiredNumberArrayColumn/0: some error"])
+ *  -> Map { "requiredNumberArrayColumn" => ["some error"] }
  */
 export function extractColumnValidationMessages(
   messages: string[],
 ): Map<string, string[]> {
   const columnMap = new Map<string, string[]>()
-  const regex = /^#\/([^:]+):\s*(.*)$/
+  const regex = /^#\/([^/:]+)(?:\/\d+)?:\s*(.*)$/
 
   for (const raw of messages) {
     if (typeof raw !== 'string') continue
