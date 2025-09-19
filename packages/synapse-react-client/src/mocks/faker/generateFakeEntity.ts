@@ -4,11 +4,11 @@ import {
 } from '@/utils/functions/EntityTypeUtils'
 import { normalizeNumericId } from '@/utils/functions/StringUtils'
 import { faker } from '@faker-js/faker'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   AccessControlList,
   Entity,
   EntityHeader,
-  EntityType,
   Project,
   RestrictionLevel,
   UserEntityPermissions,
@@ -28,7 +28,7 @@ export function generateBaseEntity<T extends Entity = Entity>(
 ): MockEntityData<T> {
   const {
     id = faker.number.int({ min: 10000, max: 99999 }),
-    type = EntityType.FILE,
+    type = EntityType.file,
     entity: entityOverrides,
     acl: aclOverride,
     permissions: permissionsOverride,
@@ -150,7 +150,7 @@ export function generateProject(
 ): MockEntityData<Project> {
   return generateBaseEntity({
     id: idOverride,
-    type: EntityType.PROJECT,
+    type: EntityType.project,
     entity: {
       name: faker.lorem.words({ min: 1, max: 4 }),
       ...entityDataOverrides,

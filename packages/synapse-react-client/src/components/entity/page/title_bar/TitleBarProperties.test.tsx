@@ -17,11 +17,10 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
+import { DoiAssociation, EntityType } from '@sage-bionetworks/synapse-client'
 import {
-  DoiAssociation,
   EntityBundle,
   EntityChildrenResponse,
-  EntityType,
   ExternalFileHandle,
   ExternalObjectStoreFileHandle,
   S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
@@ -372,7 +371,7 @@ describe('TitleBarProperties', () => {
       useEntityBundleOverride({
         ...mockFileEntity.bundle,
         entity: mockFolderEntity,
-        entityType: EntityType.FOLDER,
+        entityType: EntityType.folder,
       })
 
       server.use(
@@ -418,7 +417,7 @@ describe('TitleBarProperties', () => {
       useEntityBundleOverride({
         ...mockFileEntity.bundle,
         entity: mockFolderEntity,
-        entityType: EntityType.FOLDER,
+        entityType: EntityType.folder,
       })
 
       renderComponent()

@@ -13,16 +13,19 @@ import {
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import { SYNAPSE_STORAGE_LOCATION_ID } from '@/synapse-client'
 import {
-  EntityBundle,
   EntityType,
-  EXTERNAL_FILE_HANDLE_CONCRETE_TYPE_VALUE,
-  EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE_VALUE,
-  ExternalFileHandle,
   ExternalGoogleCloudUploadDestination,
-  ExternalObjectStoreFileHandle,
   ExternalObjectStoreUploadDestination,
   ExternalS3UploadDestination,
   ExternalUploadDestination,
+  UploadType,
+} from '@sage-bionetworks/synapse-client'
+import {
+  EntityBundle,
+  EXTERNAL_FILE_HANDLE_CONCRETE_TYPE_VALUE,
+  EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE_VALUE,
+  ExternalFileHandle,
+  ExternalObjectStoreFileHandle,
   FileEntity,
   GOOGLE_CLOUD_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   GoogleCloudFileHandle,
@@ -30,7 +33,6 @@ import {
   ProxyFileHandle,
   S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   S3FileHandle,
-  UploadType,
 } from '@sage-bionetworks/synapse-types'
 import {
   getDataFileHandle,
@@ -53,7 +55,7 @@ describe('File Handle Utils', () => {
           dataFileHandleId: dataFileHandleId,
         } as FileEntity,
         fileHandles: [fileHandle],
-        entityType: EntityType.FILE,
+        entityType: EntityType.file,
       }
 
       expect(getDataFileHandle(entityBundle)).toEqual(fileHandle)
@@ -67,7 +69,7 @@ describe('File Handle Utils', () => {
           dataFileHandleId: dataFileHandleId,
         } as FileEntity,
         fileHandles: [],
-        entityType: EntityType.FILE,
+        entityType: EntityType.file,
       }
 
       expect(getDataFileHandle(entityBundle)).toBeUndefined()

@@ -8,10 +8,8 @@ import {
 import { Writable } from '@/utils/types/Writable'
 import { ChevronRight, ExpandMore } from '@mui/icons-material'
 import { Skeleton, Tooltip, Typography } from '@mui/material'
-import {
-  EntityChildrenRequest,
-  EntityType,
-} from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import { EntityChildrenRequest } from '@sage-bionetworks/synapse-types'
 import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash-es'

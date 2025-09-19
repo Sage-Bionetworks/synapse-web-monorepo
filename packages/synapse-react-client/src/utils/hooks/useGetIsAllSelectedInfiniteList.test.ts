@@ -1,7 +1,8 @@
-import { getIsAllSelectedFromInfiniteList } from './useGetIsAllSelectedInfiniteList'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import { Map } from 'immutable'
-import { EntityHeader, EntityType } from '@sage-bionetworks/synapse-types'
 import { getEntityTypeFromHeader } from '../functions/EntityTypeUtils'
+import { getIsAllSelectedFromInfiniteList } from './useGetIsAllSelectedInfiniteList'
 
 const ALL_TYPES = Object.values(EntityType)
 const mockFetchNextPage = vi.fn()
@@ -19,7 +20,7 @@ function isSelectableByEntityType(types: EntityType[]) {
   }
 }
 
-describe('getIsAllSelectedInifiniteList tests', () => {
+describe('getIsAllSelectedInfiniteList tests', () => {
   beforeEach(() => {
     vi.resetAllMocks()
   })
@@ -161,7 +162,7 @@ describe('getIsAllSelectedInifiniteList tests', () => {
         fetchedEntities,
         selectedEntities.size,
         isSelectedInMap(selectedEntities),
-        isSelectableByEntityType([EntityType.PROJECT]), // can only select projects
+        isSelectableByEntityType([EntityType.project]), // can only select projects
         false,
         mockFetchNextPage,
         false,
@@ -240,7 +241,7 @@ describe('getIsAllSelectedInifiniteList tests', () => {
         fetchedEntities,
         selectedEntities.size,
         isSelectedInMap(selectedEntities),
-        isSelectableByEntityType([EntityType.DATASET]), // Can only select Datasets
+        isSelectableByEntityType([EntityType.dataset]), // Can only select Datasets
         true, // There is a next page
         mockFetchNextPage,
         false,
@@ -322,7 +323,7 @@ describe('getIsAllSelectedInifiniteList tests', () => {
         fetchedEntities,
         selectedEntities.size,
         isSelectedInMap(selectedEntities),
-        isSelectableByEntityType([EntityType.FILE]), // Can only select Files
+        isSelectableByEntityType([EntityType.file]), // Can only select Files
         true, // There is a next page
         mockFetchNextPage,
         false,
