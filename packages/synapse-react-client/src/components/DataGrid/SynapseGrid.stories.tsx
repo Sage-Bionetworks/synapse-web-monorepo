@@ -12,6 +12,7 @@ const meta = {
   component: SynapseGrid,
   parameters: {
     stack: 'staging',
+    requireLogin: true,
   },
   argTypes: {
     query: {
