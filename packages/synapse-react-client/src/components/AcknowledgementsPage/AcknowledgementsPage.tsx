@@ -68,23 +68,34 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
         <Typography variant="body1" sx={{ mb: '.5em' }}>
           Select study-specific acknowledgement statements from the list below
         </Typography>
-        <Typography variant="body1" sx={{ mb: '2em' }}>
+        <Typography
+          variant="body1"
+          sx={{
+            mb: '2em',
+            '& li::marker': {
+              fontWeight: 'bold', // bold the number
+            },
+          }}
+        >
           <ol>
             <li>
-              When you’ve selected all your studies, click the Generate Data
-              Acknowledgements button at the bottom of the page.
+              <strong>Select study-specific ack statements:</strong> Select all
+              the studies you used data from. Each study has its own
+              Acknowledgement Statement.
             </li>
             <li>
-              Customize the generated data availability statement with a summary
-              of the contents you used in your manuscript and a digital object
-              identifier (DOI). <br />
-              <Link
-                href={createDoiHelpUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                How do I generate a DOI for my dataset?
-              </Link>
+              <strong>Generate Data Availability Statement:</strong> When you’ve
+              selected all your studies, click the Generate Data
+              Acknowledgements button at the bottom of the page. We will compile
+              all the required Acknowledgement Statements together into a Data
+              Availability Statement. NOTE: You’ll probably need to customize
+              the generated data availability statement with a summary of the
+              contents you used in your manuscript. <br />
+            </li>
+            <li>
+              <strong>Create a DOI for your Dataset:</strong> Your Data
+              Availability Statement must also include a unique DOI that points
+              readers to your dataset. For instructions on how to do that, read
             </li>
           </ol>
         </Typography>
@@ -182,6 +193,23 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
             </>
           )}
         </ComponentCollapse>
+        <hr />
+        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+          3. Create a DOI for your Dataset
+        </Typography>
+        <hr />
+        <Typography variant="body1" sx={{ mb: '1em', fontWeight: 'bold' }}>
+          Generate a DOI for your data using the Synapse platform
+        </Typography>
+        <Typography variant="body1" sx={{ mb: '1em' }}>
+          A DOI provides a persistent identifier that allows readers to find
+          your dataset. Creating a DOI in the Synapse platform is free, and you
+          are required to include the DOI link in your Data Availability
+          Statement.
+        </Typography>
+        <Link href={createDoiHelpUrl} target="_blank" rel="noopener noreferrer">
+          Open Instructions in a New Tab
+        </Link>
       </Container>
 
       <AcknowledgementsDialog
