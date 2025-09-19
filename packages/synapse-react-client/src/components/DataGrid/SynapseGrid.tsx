@@ -3,10 +3,7 @@ import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeRep
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { SkeletonTable } from '@/components/index'
 import { useGetSchema } from '@/synapse-queries/index'
-import getEnumeratedValues from '@/utils/jsonschema/getEnumeratedValues'
-import getRequiredAttributes from '@/utils/jsonschema/getRequiredAttributes'
-import getSchemaForProperty from '@/utils/jsonschema/getSchemaForProperty'
-import { getType } from '@/utils/jsonschema/getType'
+import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import Grid from '@mui/material/Grid'
 import {
   CreateGridRequest,
@@ -38,6 +35,7 @@ import '../../style/components/_data-grid-extra.scss'
 import { SelectionWithId } from 'react-datasheet-grid/dist/types'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import { autocompleteColumn } from './columns/AutocompleteColumn'
+import { autocompleteMultipleEnumColumn } from './columns/AutocompleteMultipleEnumColumn'
 import {
   DataGridRow,
   GridModel,
@@ -112,6 +110,11 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       },
     )
 
+    // Process schema properties once
+    const schemaPropertiesInfo = useMemo(() => {
+      return getSchemaPropertiesInfo(jsonSchema!)
+    }, [jsonSchema])
+
     const connectionStatus = isConnected ? 'Connected' : 'Disconnected'
 
     // Transform the model view rows and columns to DataSheetGrid format
@@ -125,25 +128,45 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     function modelColsToGrid(modelSnapshot: GridModelSnapshot): Column[] {
       if (!modelSnapshot) return []
       const { columnNames, columnOrder } = modelSnapshot
-      const requiredFields = jsonSchema ? getRequiredAttributes(jsonSchema) : []
+
       const gridCols: Column[] = columnOrder.map((index: number) => {
         const columnName = columnNames[index]
-        const enumeratedValues = jsonSchema
-          ? getEnumeratedValues(
-              getSchemaForProperty(jsonSchema, columnName),
-            ).map(item => item.value)
-          : null
-        const colType = jsonSchema
-          ? getType(getSchemaForProperty(jsonSchema, columnName))
-          : null
+        const propertyInfo = schemaPropertiesInfo[columnName]
+
+        // Use default values if schema info is not available
+        const colType = propertyInfo?.type || null
+        const enumeratedValues = propertyInfo?.enumeratedValues || []
+        const isRequired = propertyInfo?.isRequired || false
+
+        // Calculate dynamic width based on column name length, with minimum of 175
+        const dynamicWidth = Math.max(175, columnName.length * 10)
+
+        if (typeof colType === 'string' && colType.endsWith('[]')) {
+          return {
+            ...keyColumn(
+              columnName,
+              autocompleteMultipleEnumColumn({
+                choices: enumeratedValues,
+                colType: colType,
+                limitTags: 3,
+              }),
+            ),
+            title: columnName,
+            headerClassName: isRequired
+              ? 'header-cell-required'
+              : 'header-cell',
+            minWidth: dynamicWidth,
+          }
+        }
 
         if (colType === 'boolean') {
           return {
             ...keyColumn(columnName, checkboxColumn),
             title: columnName,
-            headerClassName: requiredFields.includes(columnName)
+            headerClassName: isRequired
               ? 'header-cell-required'
               : 'header-cell',
+            minWidth: dynamicWidth,
           }
         }
 
@@ -151,9 +174,10 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
           return {
             ...keyColumn(columnName, floatColumn),
             title: columnName,
-            headerClassName: requiredFields.includes(columnName)
+            headerClassName: isRequired
               ? 'header-cell-required'
               : 'header-cell',
+            minWidth: dynamicWidth,
           }
         }
 
@@ -168,9 +192,10 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
               }),
             ),
             title: columnName,
-            headerClassName: requiredFields.includes(columnName)
+            headerClassName: isRequired
               ? 'header-cell-required'
               : 'header-cell',
+            minWidth: dynamicWidth,
           }
         }
         return {
@@ -180,9 +205,8 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
             createTextColumn({ continuousUpdates: false }),
           ),
           title: columnName,
-          headerClassName: requiredFields.includes(columnName)
-            ? 'header-cell-required'
-            : 'header-cell',
+          headerClassName: isRequired ? 'header-cell-required' : 'header-cell',
+          minWidth: dynamicWidth,
         }
       })
       return gridCols
