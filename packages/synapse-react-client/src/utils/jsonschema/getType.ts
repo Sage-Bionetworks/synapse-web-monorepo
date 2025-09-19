@@ -4,9 +4,22 @@ import isArray from 'lodash-es/isArray'
 
 export function getType(
   jsonSchema: Record<string, unknown>,
-): JSONSchema7Type | undefined {
+): JSONSchema7Type | string | undefined {
   if (jsonSchema.type) {
-    return jsonSchema.type as JSONSchema7Type
+    const type = jsonSchema.type as JSONSchema7Type
+
+    // If type is 'array', determine the array element type
+    if (type === 'array' && jsonSchema.items) {
+      const items = jsonSchema.items as Record<string, unknown>
+      const itemType = getType(items)
+
+      if (itemType && typeof itemType === 'string') {
+        return `${itemType}[]`
+      }
+      return 'array'
+    }
+
+    return type
   }
   if (jsonSchema?.oneOf && isArray(jsonSchema.oneOf)) {
     // PORTALS-3723
