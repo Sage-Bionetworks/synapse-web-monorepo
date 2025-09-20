@@ -87,6 +87,7 @@ export default function DraggableDialog({
               height: '100%',
               maxWidth: '100%',
               padding: '16px',
+              overflow: 'hidden',
             }}
           >
             {children}
