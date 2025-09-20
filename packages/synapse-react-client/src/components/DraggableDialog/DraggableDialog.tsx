@@ -1,4 +1,4 @@
-import Draggable from 'react-draggable'
+import Draggable, { DraggableBounds } from 'react-draggable'
 import {
   Box,
   IconButton,
@@ -8,7 +8,7 @@ import {
   Divider,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import { useRef, ReactNode } from 'react'
+import { useRef, ReactNode, useEffect, useState } from 'react'
 
 type DraggableDialogProps = {
   open?: boolean
@@ -24,7 +24,27 @@ export default function DraggableDialog({
   children,
 }: DraggableDialogProps) {
   const draggableRef = useRef<HTMLDivElement>(null)
+  const [bounds, setBounds] = useState<DraggableBounds>()
   const position = { x: 100, y: 100 }
+
+  useEffect(() => {
+    function updateBounds() {
+      if (draggableRef.current) {
+        const { offsetWidth, offsetHeight } = draggableRef.current
+        const margin = 100
+
+        setBounds({
+          left: -(offsetWidth - margin),
+          top: -(offsetHeight - margin),
+          right: window.innerWidth - margin,
+          bottom: window.innerHeight - margin,
+        })
+      }
+    }
+    updateBounds()
+    window.addEventListener('resize', updateBounds)
+    return () => window.removeEventListener('resize', updateBounds)
+  }, [])
 
   if (!open) {
     return null
@@ -32,7 +52,11 @@ export default function DraggableDialog({
 
   return (
     <Box sx={{ position: 'fixed', zIndex: 1000, top: 0 }}>
-      <Draggable defaultPosition={position} nodeRef={draggableRef}>
+      <Draggable
+        defaultPosition={position}
+        nodeRef={draggableRef}
+        bounds={bounds}
+      >
         <Paper
           ref={draggableRef}
           elevation={5}
