@@ -1,7 +1,8 @@
+import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import { useSearchAccessSubmissionsInfinite } from '@/synapse-queries/dataaccess/useDataAccessSubmission'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
-import { Button, Stack, Typography } from '@mui/material'
+import { Stack } from '@mui/material'
 import {
   SubmissionReviewerFilterType,
   SubmissionSearchRequest,
@@ -19,7 +20,6 @@ import dayjs from 'dayjs'
 import { upperFirst } from 'lodash-es'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import { UserBadge } from '../UserCard/UserBadge'
@@ -153,7 +153,7 @@ export function AccessRequestSubmissionTable({
     ],
   )
 
-  const { data, hasNextPage, fetchNextPage, isLoading } =
+  const { data, hasNextPage, fetchNextPage, isLoading, isFetchingNextPage } =
     useSearchAccessSubmissionsInfinite(searchRequest)
 
   const accessSubmissions = useMemo(
@@ -179,30 +179,20 @@ export function AccessRequestSubmissionTable({
     columnResizeMode: 'onChange',
   })
 
+  const isEmpty = !isLoading && table.getRowModel().rows.length === 0
+
   return (
     <div className={'AccessSubmissionTable'}>
-      <StyledTanStackTable table={table} fullWidth={true} />
-      {isLoading && (
-        <div className="SRC-center-text">
-          <SynapseSpinner size={40} />
-        </div>
-      )}
-      {!isLoading && accessSubmissions.length == 0 && (
-        <Typography className="SRC-center-text" variant="body1">
-          No Results
-        </Typography>
-      )}
-      {hasNextPage && (
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => {
-            void fetchNextPage()
-          }}
-        >
-          Show More
-        </Button>
-      )}
+      <InfiniteTableLayout
+        table={<StyledTanStackTable table={table} fullWidth={true} />}
+        isLoading={isLoading}
+        isEmpty={isEmpty}
+        hasNextPage={hasNextPage}
+        onFetchNextPageClicked={() => {
+          void fetchNextPage()
+        }}
+        isFetchingNextPage={isFetchingNextPage}
+      />
     </div>
   )
 }

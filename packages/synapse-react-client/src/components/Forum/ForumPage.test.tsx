@@ -1,3 +1,4 @@
+import { SHOW_MORE_BUTTON_TEXT } from '@/components/layout/InfiniteTableLayout'
 import { MOCK_FORUM_ID } from '@/mocks/discussion/mock_discussion'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
 import { server } from '@/mocks/msw/server'
@@ -91,7 +92,7 @@ describe('Forum Table test', () => {
     renderComponent()
 
     const loadMoreButton = await screen.findByRole('button', {
-      name: 'Show more results',
+      name: SHOW_MORE_BUTTON_TEXT,
     })
     await userEvent.click(loadMoreButton)
 
