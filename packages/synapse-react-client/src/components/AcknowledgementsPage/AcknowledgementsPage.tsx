@@ -90,7 +90,7 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
               After selecting your studies, click the Generate Data
               Acknowledgements button at the bottom of the page. We will compile
               the required acknowledgement statements into a single Data
-              Availability Statement.Note: You may need to customize the
+              Availability Statement. Note: You may need to customize the
               generated statement to include a summary of the specific data you
               used in your manuscript.
             </li>
