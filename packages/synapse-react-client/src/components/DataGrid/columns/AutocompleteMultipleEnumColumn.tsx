@@ -136,7 +136,6 @@ function AutocompleteMultipleEnumCell({
             setLocalInputState(newInputValue)
           }}
           onChange={(_e, newVal, reason) => {
-            console.log('onChange reason:', reason, 'newVal:', newVal)
             let values: AutocompleteMultipleEnumOption[] = []
 
             if (reason === 'createOption') {
