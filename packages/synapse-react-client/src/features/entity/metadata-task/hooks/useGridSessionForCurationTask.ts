@@ -8,6 +8,12 @@ import { getGridSourceIdForTask } from '../utils/getGridSourceIdForTask'
 import useGetOrCreateGridSessionForSource from '@/features/grid/hooks/useGetOrCreateGridSessionForSource'
 import { getCreateGridRequestForMetadataTask } from '../utils/getCreateGridRequestForMetadataTask'
 
+/**
+ * A hook to get or create a GridSession for a given CurationTask. If an appropriate GridSession exists, it will be returned.
+ * If not, a new GridSession will be created based on the CurationTask's properties.
+ *
+ * @returns A mutation object with a function to get or create a GridSession for a CurationTask.
+ */
 export default function useGridSessionForCurationTask() {
   const { mutateAsync: getOrCreateGridSession } =
     useGetOrCreateGridSessionForSource()

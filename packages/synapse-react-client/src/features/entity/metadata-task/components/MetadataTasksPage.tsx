@@ -11,7 +11,7 @@ export type MetadataTaskTableProps = {
  * @param props
  * @constructor
  */
-export function MetadataTasksPage(props: MetadataTaskTableProps) {
+export default function MetadataTasksPage(props: MetadataTaskTableProps) {
   const { projectId } = props
 
   const { table, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =

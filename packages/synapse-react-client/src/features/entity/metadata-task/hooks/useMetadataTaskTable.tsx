@@ -63,6 +63,9 @@ type UseMetadataTaskTableOptions = {
   projectId: string
 }
 
+/**
+ * Provides a table instance and loading states for displaying metadata curation tasks associated with a project.
+ */
 export function useMetadataTaskTable(opts: UseMetadataTaskTableOptions) {
   const { projectId } = opts
 

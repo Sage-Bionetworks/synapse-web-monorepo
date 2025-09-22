@@ -3,6 +3,11 @@ import {
   CreateGridRequest,
 } from '@sage-bionetworks/synapse-client'
 
+/**
+ * Generates a CreateGridRequest for a metadata task based on its properties.
+ * @param taskProperties The properties of the metadata task.
+ * @returns A CreateGridRequest object.
+ */
 export function getCreateGridRequestForMetadataTask(
   taskProperties: CurationTaskProperties,
 ): CreateGridRequest {

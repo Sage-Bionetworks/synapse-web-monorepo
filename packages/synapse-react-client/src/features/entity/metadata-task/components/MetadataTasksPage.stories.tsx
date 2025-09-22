@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { MetadataTasksPage } from './MetadataTasksPage'
+import MetadataTasksPage from './MetadataTasksPage'
 
 const meta = {
   title: 'Synapse/Entity/MetadataTaskTable',
