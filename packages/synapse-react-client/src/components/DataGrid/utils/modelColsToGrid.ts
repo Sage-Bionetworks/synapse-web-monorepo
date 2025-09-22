@@ -13,8 +13,6 @@ export function modelColsToGrid(
   return columnOrder.map((index: number) => {
     const columnName = columnNames[index]
     const propertyInfo = schemaPropertiesInfo[columnName]
-    console.log('propertyInfo', propertyInfo)
-    console.log('proparray', propertyInfo?.type?.isArray)
 
     return createColumn({
       columnName,
