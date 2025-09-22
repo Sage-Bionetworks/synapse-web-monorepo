@@ -46,21 +46,21 @@ function castStringToType(
   }
 
   switch (colType) {
-    case 'boolean[]':
+    case 'boolean':
       if (value.toLowerCase() === 'true') return true
       if (value.toLowerCase() === 'false') return false
       // Fallback to parseFreeTextGivenJsonSchemaType for edge cases
       return parseFreeTextGivenJsonSchemaType(value, colType)
 
-    case 'number[]':
-    case 'integer[]': {
+    case 'number':
+    case 'integer': {
       const numValue = Number(value)
       return isNaN(numValue)
         ? parseFreeTextGivenJsonSchemaType(value, colType)
         : numValue
     }
 
-    case 'string[]':
+    case 'string':
       return value
 
     case 'null[]':
