@@ -1,34 +1,43 @@
 import { getOnlyNonNullOneOfOption } from '@/utils/jsonschema/getOnlyNonNullOneOfOption'
-import { JSONSchema7Type } from 'json-schema'
+import { JSONSchema7 } from 'json-schema'
 import isArray from 'lodash-es/isArray'
 
-export function getType(
-  jsonSchema: Record<string, unknown>,
-): JSONSchema7Type | string | undefined {
+export interface TypeInfo {
+  type: string
+  itemType?: TypeInfo
+  isArray: boolean
+}
+
+export function getType(jsonSchema: JSONSchema7): TypeInfo | undefined {
   if (jsonSchema.type) {
-    const type = jsonSchema.type as JSONSchema7Type
+    if (jsonSchema.type === 'array' && jsonSchema.items) {
+      const items = Array.isArray(jsonSchema.items)
+        ? jsonSchema.items[0] // Take first item if tuple
+        : jsonSchema.items
 
-    // If type is 'array', determine the array element type
-    if (type === 'array' && jsonSchema.items) {
-      const items = jsonSchema.items as Record<string, unknown>
-      const itemType = getType(items)
+      const itemTypeInfo = getType(items as JSONSchema7)
 
-      if (itemType && typeof itemType === 'string') {
-        return `${itemType}[]`
+      return {
+        type: 'array',
+        itemType: itemTypeInfo,
+        isArray: true,
       }
-      return 'array'
     }
 
-    return type
+    return {
+      type: jsonSchema.type as string,
+      isArray: false,
+    }
   }
+
   if (jsonSchema?.oneOf && isArray(jsonSchema.oneOf)) {
-    // PORTALS-3723
-    // Also handle our special 'oneOf' enum case just like in `getEnumeratedValues`
-    const oneOfOption = getOnlyNonNullOneOfOption(jsonSchema)
-
+    const oneOfOption = getOnlyNonNullOneOfOption(
+      jsonSchema as Record<string, unknown>,
+    )
     if (oneOfOption) {
-      return getType(oneOfOption)
+      return getType(oneOfOption as JSONSchema7)
     }
   }
+
   return undefined
 }
