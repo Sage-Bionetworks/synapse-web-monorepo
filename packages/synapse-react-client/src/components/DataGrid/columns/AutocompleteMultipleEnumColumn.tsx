@@ -63,7 +63,7 @@ function castStringToType(
     case 'string':
       return value
 
-    case 'null[]':
+    case 'null':
       return value.toLowerCase() === 'null'
         ? null
         : parseFreeTextGivenJsonSchemaType(value, colType)
