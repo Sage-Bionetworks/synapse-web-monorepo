@@ -88,7 +88,9 @@ describe('AcknowledgementPage', () => {
 
   it('renders the DOI help link', () => {
     render(<AcknowledgementPage {...defaultProps} />)
-    const link = screen.getByRole('link', { name: /How do I generate a DOI/i })
+    const link = screen.getByRole('link', {
+      name: /How to get a DOI for your Publication/i,
+    })
     expect(link).toHaveAttribute('href', defaultProps.createDoiHelpUrl)
     expect(link).toHaveAttribute('target', '_blank')
   })
