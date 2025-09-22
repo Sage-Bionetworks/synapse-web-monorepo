@@ -16,6 +16,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import dayjs from 'dayjs'
+import isEmpty from 'lodash-es/isEmpty'
 import { useMemo, useState } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
@@ -152,7 +153,7 @@ export function ForumTable({
       enableFilters: false,
     })
 
-  const isEmpty = !isLoading && table.getRowModel().rows.length === 0
+  const hasNoResults = !isLoading && table.getRowModel().rows.length === 0
 
   return (
     <div className="ForumTable">
@@ -164,7 +165,7 @@ export function ForumTable({
           />
         }
         isLoading={isLoading}
-        isEmpty={isEmpty}
+        isEmpty={hasNoResults}
         hasNextPage={hasNextPage}
         onFetchNextPageClicked={() => {
           void fetchNextPage()
