@@ -1,11 +1,11 @@
 import getEnumeratedValues, { EnumeratedValue } from './getEnumeratedValues'
 import getSchemaForProperty from './getSchemaForProperty'
 import getRequiredAttributes from './getRequiredAttributes'
-import { getType } from './getType'
-import { JSONSchema7, JSONSchema7Type } from 'json-schema'
+import { getType, TypeInfo } from './getType'
+import { JSONSchema7 } from 'json-schema'
 
 export interface SchemaPropertyInfo {
-  type: JSONSchema7Type | undefined
+  type: TypeInfo | undefined
   isRequired: boolean
   enumeratedValues: EnumeratedValue[] | null
 }
