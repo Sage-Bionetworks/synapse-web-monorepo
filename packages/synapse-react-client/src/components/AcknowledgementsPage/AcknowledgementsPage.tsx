@@ -79,23 +79,34 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
         >
           <ol>
             <li>
-              <strong>Select study-specific ack statements:</strong> Select all
-              the studies you used data from. Each study has its own
-              Acknowledgement Statement.
+              <strong>Select study-specific acknowledgement statements</strong>
+              <br />
+              From the list below, select all the studies whose data you used.
+              Each study provides its own acknowledgement statement.
             </li>
             <li>
-              <strong>Generate Data Availability Statement:</strong> When you’ve
-              selected all your studies, click the Generate Data
+              <strong>Generate a data availability statement</strong>
+              <br />
+              After selecting your studies, click the Generate Data
               Acknowledgements button at the bottom of the page. We will compile
-              all the required Acknowledgement Statements together into a Data
-              Availability Statement. NOTE: You’ll probably need to customize
-              the generated data availability statement with a summary of the
-              contents you used in your manuscript. <br />
+              the required acknowledgement statements into a single Data
+              Availability Statement.Note: You may need to customize the
+              generated statement to include a summary of the specific data you
+              used in your manuscript.
             </li>
             <li>
-              <strong>Create a DOI for your Dataset:</strong> Your Data
-              Availability Statement must also include a unique DOI that points
-              readers to your dataset. For instructions on how to do that, read
+              <strong>Create a DOI for your dataset</strong>
+              <br />
+              Your Data Availability Statement must also include a unique DOI
+              that points readers to your dataset. For instructions on how to
+              create a DOI, read&nbsp;
+              <Link
+                href={createDoiHelpUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                How to get a DOI for your Publication
+              </Link>
             </li>
           </ol>
         </Typography>
