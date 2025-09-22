@@ -8,6 +8,7 @@ import {
   Divider,
   useMediaQuery,
   useTheme,
+  DialogContent,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useRef, ReactNode, useEffect, useState } from 'react'
@@ -79,8 +80,10 @@ export default function DraggableDialog({
         direction="row"
         alignItems="center"
         gap="5px"
+        className="drag-handle"
         sx={{
           padding: '20px',
+          cursor: 'move',
         }}
       >
         <Typography variant="headline1">{title}</Typography>
@@ -90,16 +93,15 @@ export default function DraggableDialog({
         </IconButton>
       </Stack>
       <Divider sx={{ mx: 2 }} />
-      <Box
+      <DialogContent
         sx={{
           height: '100%',
           maxWidth: '100%',
           padding: '16px',
-          overflow: 'hidden',
         }}
       >
         {children}
-      </Box>
+      </DialogContent>
     </Paper>
   )
 
@@ -112,6 +114,7 @@ export default function DraggableDialog({
           defaultPosition={position}
           nodeRef={draggableRef}
           bounds={bounds}
+          handle=".drag-handle"
         >
           {paperContent}
         </Draggable>
