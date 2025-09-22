@@ -31,12 +31,15 @@ export const navbarConfig: NavbarConfig = {
     },
     {
       name: 'Data Access',
-      path: '/Data Access Dropdown',
+      path: '/Data Access',
       children: [
-        { name: 'How to Access Our Data', path: '/Data Access' },
+        {
+          name: 'How to Access Our Data',
+          path: '/Data Access/How to Access Our Data',
+        },
         {
           name: 'Required Data Acknowledgement',
-          path: '/Data Acknowledgement',
+          path: '/Data Access/Data Acknowledgement',
         },
       ],
     },
