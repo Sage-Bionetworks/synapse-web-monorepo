@@ -69,7 +69,7 @@ const ImageCard = ({
   const breakpoints: RegularBreakpoints = {
     xs: 12,
     sm: columnCount === 1 ? 12 : 6,
-    md: columnCount === 3 ? 4 : 12 / columnCount,
+    md: 12 / columnCount,
   }
   const heightPx = columnCount === 3 ? 245 : 500
   return (
