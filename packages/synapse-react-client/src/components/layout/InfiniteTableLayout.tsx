@@ -1,6 +1,8 @@
 import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
 import { Button, Typography } from '@mui/material'
 
+export const SHOW_MORE_BUTTON_TEXT = 'Show More'
+
 export type InfiniteTableLayoutProps = {
   /** The table of data to display */
   table: React.ReactNode
@@ -61,7 +63,7 @@ export default function InfiniteTableLayout(props: InfiniteTableLayoutProps) {
             onFetchNextPageClicked()
           }}
         >
-          Show More
+          {SHOW_MORE_BUTTON_TEXT}
         </Button>
       )}
     </div>

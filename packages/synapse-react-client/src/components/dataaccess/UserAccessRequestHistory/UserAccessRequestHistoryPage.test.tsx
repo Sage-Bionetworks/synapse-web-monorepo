@@ -1,4 +1,5 @@
 import { UserAccessRequestHistoryPage } from '@/components/dataaccess/UserAccessRequestHistory/UserAccessRequestHistoryPage'
+import { SHOW_MORE_BUTTON_TEXT } from '@/components/layout/InfiniteTableLayout'
 import UserOrTeamBadge from '@/components/UserOrTeamBadge/UserOrTeamBadge'
 import {
   MOCK_USER_ID,
@@ -157,7 +158,9 @@ describe('UserAccessRequestHistoryTable', () => {
     })
 
     screen.getByText('History of your access requests')
-    const button = await screen.findByRole('button', { name: 'Load More' })
+    const button = await screen.findByRole('button', {
+      name: SHOW_MORE_BUTTON_TEXT,
+    })
 
     await userEvent.click(button)
     expect(mockFetchNextPage).toHaveBeenCalled()
