@@ -198,8 +198,7 @@ function AutocompleteMultipleEnumCell({
               minHeight: '100%',
               maxHeight: '100%',
               overflowY: active ? 'auto' : 'hidden',
-              overflowX: active ? 'hidden' : 'auto',
-              // Custom scrollbar styling
+              overflowX: 'hidden',
               '&::-webkit-scrollbar': {
                 width: '6px',
                 height: '6px',
