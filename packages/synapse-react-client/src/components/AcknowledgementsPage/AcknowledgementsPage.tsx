@@ -111,7 +111,9 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
           </ol>
         </Typography>
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-          1. Select study-specific acknowledgement statements
+          <ol start={1} style={{ paddingInlineStart: '20px' }}>
+            <li>Select study-specific acknowledgement statements</li>
+          </ol>
         </Typography>
         <hr />
         <Typography variant="body1" sx={{ mb: '2em' }}>
@@ -140,7 +142,9 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
           }}
         />
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-          2. Generate Data Acknowledgements
+          <ol start={2} style={{ paddingInlineStart: '25px' }}>
+            <li>Generate Data Acknowledgements</li>
+          </ol>
         </Typography>
         <hr />
         <Typography variant="body1" sx={{ fontWeight: 'bold', mb: '1em' }}>
@@ -206,7 +210,9 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
         </ComponentCollapse>
         <hr />
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-          3. Create a DOI for your Dataset
+          <ol start={3} style={{ paddingInlineStart: '25px' }}>
+            <li>Create a DOI for your Dataset</li>
+          </ol>
         </Typography>
         <hr />
         <Typography variant="body1" sx={{ mb: '1em', fontWeight: 'bold' }}>
