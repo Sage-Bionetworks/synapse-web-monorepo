@@ -74,6 +74,7 @@ export function useMetadataTaskTable(opts: UseMetadataTaskTableOptions) {
     hasNextPage,
     fetchNextPage,
     isLoading: isLoadingTasks,
+    isFetchingNextPage,
   } = useGetCurationTasksByProjectInfinite(projectId)
 
   const { data: projectBundle, isLoading: isLoadingProjectBundle } =
@@ -103,6 +104,6 @@ export function useMetadataTaskTable(opts: UseMetadataTaskTableOptions) {
     isLoading: isLoadingTasks || isLoadingProjectBundle,
     hasNextPage,
     fetchNextPage,
-    isFetchingNextPage: false,
+    isFetchingNextPage,
   }
 }

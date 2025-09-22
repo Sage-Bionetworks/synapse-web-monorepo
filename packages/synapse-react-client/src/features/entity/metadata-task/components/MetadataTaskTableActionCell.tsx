@@ -28,7 +28,7 @@ export default function MetadataTaskTableActionCell(props: {
 
     // Open the Grid in a new tab
     window.open(gridUrl, '_blank', 'noopener')
-  }, [])
+  }, [curationTask, getGridSessionForTask])
 
   const isFileBasedTask = instanceOfFileBasedMetadataTaskProperties(
     curationTask.taskProperties!,
