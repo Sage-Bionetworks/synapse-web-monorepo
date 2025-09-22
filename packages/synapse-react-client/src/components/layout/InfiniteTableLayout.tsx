@@ -52,9 +52,7 @@ export default function InfiniteTableLayout(props: InfiniteTableLayoutProps) {
       {table}
       {isLoading && loader}
       {!isLoading && isEmpty && noResults}
-      {!hasNextPage ? (
-        <></>
-      ) : (
+      {hasNextPage && (
         <Button
           variant="outlined"
           color="primary"
