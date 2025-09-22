@@ -38,6 +38,8 @@ import {
 import { getCellClassName } from './utils/getCellClassName'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 import { modelColsToGrid } from './utils/modelColsToGrid'
+import { Button } from '@mui/material'
+import GridAgentChat from '../SynapseChat/GridAgentChat'
 
 export type SynapseGridProps = {
   showDebugInfo?: boolean
@@ -53,6 +55,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const [session, setSession] = useState<GridSession | null>(null)
     const [replicaId, setReplicaId] = useState<number | null>(null)
     const [presignedUrl, setPresignedUrl] = useState<string>('')
+    const [chatOpen, setChatOpen] = useState(false)
 
     const startGridSessionRef = useRef<StartGridSessionHandle | null>(null)
 
@@ -289,6 +292,15 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                 <Grid size={12}>
                   {undoUI}
                   {redoUI}
+                  <Button onClick={() => setChatOpen(true)}>Open chat</Button>
+                  <GridAgentChat
+                    open={chatOpen}
+                    onClose={() => setChatOpen(false)}
+                    gridSessionId={session.sessionId!}
+                    usersReplicaId={replicaId!}
+                    chatbotName="Grid Assistant"
+                  />
+
                   <DataSheetGrid
                     ref={gridRef}
                     value={rowValues}

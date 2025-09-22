@@ -1,3 +1,4 @@
+import { SHOW_MORE_BUTTON_TEXT } from '@/components/layout/InfiniteTableLayout'
 import { server } from '@/mocks/msw/server'
 import { mockClientList1, mockClientList2 } from '@/mocks/oauth/MockClient'
 import {
@@ -105,7 +106,7 @@ describe('oAuthManagement tests', () => {
     )
 
     const loadMoreButton = await screen.findByRole('button', {
-      name: 'Load more',
+      name: SHOW_MORE_BUTTON_TEXT,
     })
     await userEvent.click(loadMoreButton)
 
