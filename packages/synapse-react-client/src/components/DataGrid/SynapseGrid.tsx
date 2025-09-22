@@ -1,7 +1,7 @@
 import MergeGridWithSourceTableButton from '@/components/DataGrid/MergeGridWithSourceTableButton'
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
-import { SkeletonTable } from '@/components/index'
+import { displayToast, SkeletonTable } from '@/components/index'
 import { useGetSchema } from '@/synapse-queries/index'
 import getEnumeratedValues from '@/utils/jsonschema/getEnumeratedValues'
 import getRequiredAttributes from '@/utils/jsonschema/getRequiredAttributes'
@@ -101,6 +101,32 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       model,
       modelSnapshot,
     } = useDataGridWebSocket()
+
+    useEffect(() => {
+      console.log(`WebSocket isConnected: ${isConnected}`)
+      if (!isConnected) {
+        displayToast(
+          'You have been disconnected from the session.',
+          'warning',
+          {
+            autoCloseInMs: 0,
+            primaryButtonConfig: {
+              text: 'Reconnect',
+              onClick: () => {
+                if (replicaId && presignedUrl) {
+                  createWebsocket(replicaId, presignedUrl)
+                  console.log(
+                    'Reconnecting to WebSocket...',
+                    replicaId,
+                    presignedUrl,
+                  )
+                }
+              },
+            },
+          },
+        )
+      }
+    }, [createWebsocket, isConnected, presignedUrl, replicaId])
 
     useEffect(() => {
       if (replicaId && presignedUrl) {
