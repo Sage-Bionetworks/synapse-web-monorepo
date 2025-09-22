@@ -21,27 +21,12 @@ import {
   useRef,
   useState,
 } from 'react'
-import {
-  checkboxColumn,
-  Column,
-  createTextColumn,
-  DataSheetGrid,
-  DataSheetGridRef,
-  floatColumn,
-  keyColumn,
-} from 'react-datasheet-grid'
+import { DataSheetGrid, DataSheetGridRef } from 'react-datasheet-grid'
 import 'react-datasheet-grid/dist/style.css'
 import '../../style/components/_data-grid-extra.scss'
 import { SelectionWithId } from 'react-datasheet-grid/dist/types'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
-import { autocompleteColumn } from './columns/AutocompleteColumn'
-import { autocompleteMultipleEnumColumn } from './columns/AutocompleteMultipleEnumColumn'
-import {
-  DataGridRow,
-  GridModel,
-  GridModelSnapshot,
-  Operation,
-} from './DataGridTypes'
+import { DataGridRow, GridModel, Operation } from './DataGridTypes'
 import { useGridUndoRedo } from './hooks/useGridUndoRedo'
 import { StartGridSession, StartGridSessionHandle } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
@@ -52,6 +37,7 @@ import {
 } from './utils/DataGridUtils'
 import { getCellClassName } from './utils/getCellClassName'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
+import { modelColsToGrid } from './utils/modelColsToGrid'
 
 export type SynapseGridProps = {
   showDebugInfo?: boolean
@@ -122,95 +108,13 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       () => (modelSnapshot ? modelRowsToGrid(model, modelSnapshot) : []),
       [model, modelSnapshot],
     )
-    const colValues = modelSnapshot ? modelColsToGrid(modelSnapshot) : []
-
-    // Convert model columns to a format suitable for DataSheetGrid
-    function modelColsToGrid(modelSnapshot: GridModelSnapshot): Column[] {
-      if (!modelSnapshot) return []
-      const { columnNames, columnOrder } = modelSnapshot
-
-      const gridCols: Column[] = columnOrder.map((index: number) => {
-        const columnName = columnNames[index]
-        const propertyInfo = schemaPropertiesInfo[columnName]
-
-        // Use default values if schema info is not available
-        const colType = propertyInfo?.type || null
-        const enumeratedValues = propertyInfo?.enumeratedValues || []
-        const isRequired = propertyInfo?.isRequired || false
-
-        // Calculate dynamic width based on column name length, with minimum of 175
-        const dynamicWidth = Math.max(175, columnName.length * 10)
-
-        if (typeof colType === 'string' && colType.endsWith('[]')) {
-          return {
-            ...keyColumn(
-              columnName,
-              autocompleteMultipleEnumColumn({
-                choices: enumeratedValues,
-                colType: colType,
-                limitTags: 3,
-              }),
-            ),
-            title: columnName,
-            headerClassName: isRequired
-              ? 'header-cell-required'
-              : 'header-cell',
-            minWidth: dynamicWidth,
-          }
-        }
-
-        if (colType === 'boolean') {
-          return {
-            ...keyColumn(columnName, checkboxColumn),
-            title: columnName,
-            headerClassName: isRequired
-              ? 'header-cell-required'
-              : 'header-cell',
-            minWidth: dynamicWidth,
-          }
-        }
-
-        if (colType === 'number' || colType === 'integer') {
-          return {
-            ...keyColumn(columnName, floatColumn),
-            title: columnName,
-            headerClassName: isRequired
-              ? 'header-cell-required'
-              : 'header-cell',
-            minWidth: dynamicWidth,
-          }
-        }
-
-        if (enumeratedValues && enumeratedValues.length > 0) {
-          // Use autocomplete column for columns with enumerated values
-          return {
-            ...keyColumn(
-              columnName,
-              autocompleteColumn({
-                choices: enumeratedValues,
-                colType: colType,
-              }),
-            ),
-            title: columnName,
-            headerClassName: isRequired
-              ? 'header-cell-required'
-              : 'header-cell',
-            minWidth: dynamicWidth,
-          }
-        }
-        return {
-          // Default to text column for columns without enumerated values
-          ...keyColumn(
-            columnName,
-            createTextColumn({ continuousUpdates: false }),
-          ),
-          title: columnName,
-          headerClassName: isRequired ? 'header-cell-required' : 'header-cell',
-          minWidth: dynamicWidth,
-        }
-      })
-      return gridCols
-    }
+    const colValues = useMemo(
+      () =>
+        modelSnapshot
+          ? modelColsToGrid(modelSnapshot, schemaPropertiesInfo)
+          : [],
+      [modelSnapshot, schemaPropertiesInfo],
+    )
 
     const commit = useCallback(
       throttle(() => {
