@@ -2,40 +2,34 @@ import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseF
 import { Autocomplete, TextField, Tooltip } from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
 import { useState } from 'react'
-import { CellComponent, CellProps, Column } from 'react-datasheet-grid'
+import { CellComponent, Column } from 'react-datasheet-grid'
+import {
+  AutocompleteOption,
+  AutocompleteCellProps,
+  castCellValueToString,
+} from './AutocompleteColumn'
 
 export type AutocompleteMultipleEnumOption =
-  | string
-  | number
-  | boolean
-  | null
-  | Record<string, unknown>
-  | Array<unknown>
+  | AutocompleteOption
   | unknown
+  | unknown[]
 
-export type AutocompleteMultipleEnumCellProps = CellProps & {
-  rowData: AutocompleteMultipleEnumOption
-  setRowData: (value: AutocompleteMultipleEnumOption) => void
+export type AutocompleteMultipleEnumCellProps = Omit<
+  AutocompleteCellProps,
+  'choices'
+> & {
   choices: AutocompleteMultipleEnumOption[]
-  colType?: JSONSchema7Type
   limitTags?: number
 }
 
-type AutocompleteOption = {
+type EnumOption = {
   label: string
   value: AutocompleteMultipleEnumOption
 }
 
-function castCellValueToString(toCast: any): string {
-  if (typeof toCast === 'object') {
-    return JSON.stringify(toCast)
-  }
-  return String(toCast)
-}
-
 function createOptionFromValue(
   value: AutocompleteMultipleEnumOption,
-): AutocompleteOption {
+): EnumOption {
   return {
     label: castCellValueToString(value),
     value: value,
@@ -166,7 +160,6 @@ function AutocompleteMultipleEnumCell({
                   : item.value
               })
             }
-
             setRowData(values)
             setLocalInputState('')
           }}
@@ -268,12 +261,10 @@ export function autocompleteMultipleEnumColumn({
         limitTags={limitTags}
       />
     )) as CellComponent,
-    // If we update our enums to support labels, then we can update copy to copy the label and paste to lookup the mapping from label -> value
     copyValue: ({ rowData }) => rowData,
     pasteValue: ({ value }) => value,
     disableKeys: true,
     keepFocus: true,
-    // Dynamic height based on content (if supported by react-datasheet-grid)
     ...(dynamicHeight && {
       cellClassName: ({ rowData }) => {
         const safeRowData = Array.isArray(rowData)
