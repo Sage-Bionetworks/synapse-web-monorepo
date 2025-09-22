@@ -95,7 +95,7 @@ function AutocompleteMultipleEnumCell({
   // Create tooltip content showing all values
   const tooltipContent =
     safeRowData.length > 0
-      ? safeRowData.map(item => castCellValueToString(item)).join(', ')
+      ? safeRowData.map(item => castCellValueToString(item)).join(',')
       : ''
 
   return (
@@ -261,8 +261,30 @@ export function autocompleteMultipleEnumColumn({
         limitTags={limitTags}
       />
     )) as CellComponent,
-    copyValue: ({ rowData }) => rowData,
-    pasteValue: ({ value }) => value,
+    copyValue: ({ rowData }) => {
+      // Convert array to comma-separated string
+      const safeRowData = Array.isArray(rowData)
+        ? rowData
+        : rowData
+        ? [rowData]
+        : []
+      return safeRowData.map(item => castCellValueToString(item)).join(',')
+    },
+    pasteValue: ({ value }) => {
+      if (typeof value !== 'string') {
+        return value
+      }
+
+      // Split by comma or tab and clean up values
+      const delimiters = /[,\t]/
+      const parsedValues = value
+        .split(delimiters)
+        .map(item => item.trim())
+        .filter(item => item.length > 0)
+        .map(item => castStringToType(item, colType))
+
+      return parsedValues.length > 0 ? parsedValues : value
+    },
     disableKeys: true,
     keepFocus: true,
     ...(dynamicHeight && {
