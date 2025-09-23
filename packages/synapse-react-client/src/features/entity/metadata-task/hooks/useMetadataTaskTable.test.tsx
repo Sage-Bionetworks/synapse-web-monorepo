@@ -35,6 +35,7 @@ vi.mock('@/synapse-queries/curation/task/useCurationTask', () => ({
     },
     hasNextPage: false,
     fetchNextPage: vi.fn(),
+    isFetchingNextPage: false,
     isLoading: false,
   }),
 }))
