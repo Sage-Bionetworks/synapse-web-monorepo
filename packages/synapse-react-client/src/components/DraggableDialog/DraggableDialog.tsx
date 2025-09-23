@@ -35,12 +35,12 @@ export default function DraggableDialog({
   useEffect(() => {
     function updateBounds() {
       if (draggableRef.current) {
-        const { offsetWidth, offsetHeight } = draggableRef.current
+        const { offsetWidth } = draggableRef.current
         const margin = 100
 
         setBounds({
           left: -(offsetWidth - margin),
-          top: -(offsetHeight - margin),
+          top: 0,
           right: window.innerWidth - margin,
           bottom: window.innerHeight - margin,
         })
