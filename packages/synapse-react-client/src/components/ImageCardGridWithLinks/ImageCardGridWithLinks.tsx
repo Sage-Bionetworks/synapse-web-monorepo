@@ -30,6 +30,7 @@ export type ImageCardGridWithLinksProps = {
   title: string
   summaryText: string
   columnCount?: 1 | 2 | 3
+  heightPx?: number
 }
 
 type ImageCardProps = {
@@ -40,6 +41,7 @@ type ImageCardProps = {
   entityId: string
   fileId: string | null
   columnCount?: 1 | 2 | 3
+  heightPx?: number
 }
 
 enum ExpectedColumns {
@@ -56,6 +58,7 @@ const ImageCard = ({
   entityId,
   fileId,
   columnCount = 3,
+  heightPx = 245,
 }: ImageCardProps) => {
   const fha: FileHandleAssociation = {
     associateObjectId: entityId,
@@ -71,7 +74,6 @@ const ImageCard = ({
     sm: columnCount === 1 ? 12 : 6,
     md: 12 / columnCount,
   }
-  const heightPx = columnCount === 3 ? 245 : 500
   return (
     <Grid
       item
@@ -84,7 +86,7 @@ const ImageCard = ({
       }}
     >
       {isLoading ? (
-        <Skeleton variant="rectangular" height={221} width="100%" />
+        <Skeleton variant="rectangular" height={heightPx - 20} width="100%" />
       ) : (
         <Card
           raised={false}
@@ -151,7 +153,7 @@ const ImageCard = ({
 }
 
 function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
-  const { sql, title, summaryText, columnCount } = props
+  const { sql, title, summaryText, columnCount, heightPx } = props
   const entityId = parseEntityIdFromSqlStatement(sql)
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
@@ -215,6 +217,7 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
               entityId={entityId}
               isLoading={isLoading}
               columnCount={columnCount}
+              heightPx={heightPx}
             />
           )
         })}

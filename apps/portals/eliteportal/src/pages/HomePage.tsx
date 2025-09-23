@@ -147,6 +147,7 @@ function HomePageInternal() {
         title="What We Do"
         summaryText="The ELITE Portal provides rich multi-omic datasets, computational tools, publications, and resources that empower researchers to discover novel therapeutic targets of health and disease. Learn more about our research domains and tools."
         columnCount={3}
+        heightPx={245}
       />
       <FeaturedResearch sql={featuredResearchSql} />
       <Box sx={{ backgroundColor: 'grey.100' }}>
