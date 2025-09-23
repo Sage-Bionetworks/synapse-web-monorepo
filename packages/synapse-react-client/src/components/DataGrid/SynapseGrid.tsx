@@ -420,7 +420,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       ?.allValidationMessages.length > 0 && (
                       <FullWidthAlert
                         variant="warning"
-                        title="Validation Messages:"
+                        title="Validation Messages For Selected Row:"
                         isGlobal={false}
                         description={
                           <ul>
