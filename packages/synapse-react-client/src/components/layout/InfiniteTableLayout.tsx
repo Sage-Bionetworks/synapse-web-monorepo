@@ -1,5 +1,5 @@
 import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
-import { Button, Typography } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 
 export const SHOW_MORE_BUTTON_TEXT = 'Show More'
 
@@ -28,11 +28,7 @@ const DEFAULT_LOADER = (
   </div>
 )
 
-const DEFAULT_NO_RESULTS = (
-  <Typography className="SRC-center-text" variant="body1">
-    No Results
-  </Typography>
-)
+const DEFAULT_NO_RESULTS = 'No Results'
 
 /**
  * Provides a standardized layout of a table with infinite data.
@@ -53,7 +49,11 @@ export default function InfiniteTableLayout(props: InfiniteTableLayoutProps) {
     <div>
       {table}
       {isLoading && loader}
-      {!isLoading && isEmpty && noResults}
+      {!isLoading && isEmpty && (
+        <Box className="SRC-center-text" sx={{ my: 3 }}>
+          {noResults}
+        </Box>
+      )}
       {hasNextPage && (
         <Button
           variant="outlined"
