@@ -403,7 +403,9 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                     })}
                     onChange={handleChange}
                     onActiveCellChange={({ cell }) => {
-                      setSelectedRowIndex(cell ? cell.row : null)
+                      if (cell) {
+                        setSelectedRowIndex(cell.row)
+                      }
                     }}
                     onSelectionChange={handleSelectionChange}
                   />
