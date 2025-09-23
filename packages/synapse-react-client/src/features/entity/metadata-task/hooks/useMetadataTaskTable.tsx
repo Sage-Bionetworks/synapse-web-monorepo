@@ -32,7 +32,7 @@ function getColumns(canEdit: boolean) {
     columnHelper.accessor('instructions', {
       header: props => <ColumnHeader {...props} title={'Instructions'} />,
       cell: ({ getValue }) => <p>{getValue()}</p>,
-      enableSorting: true,
+      enableSorting: false,
       enableColumnFilter: false,
     }),
     columnHelper.accessor('modifiedBy', {
