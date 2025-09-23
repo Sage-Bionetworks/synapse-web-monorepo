@@ -1,10 +1,7 @@
 import { getLinkToGridSession } from '@/utils/functions/getSynapseWebClientLink'
 import { StickyNote2Outlined } from '@mui/icons-material'
-import { Tooltip, Button } from '@mui/material'
-import {
-  CurationTask,
-  instanceOfFileBasedMetadataTaskProperties,
-} from '@sage-bionetworks/synapse-client'
+import { Button, Tooltip } from '@mui/material'
+import { CurationTask } from '@sage-bionetworks/synapse-client'
 import { useCallback } from 'react'
 import useGridSessionForCurationTask from '../hooks/useGridSessionForCurationTask'
 
@@ -17,7 +14,10 @@ export default function MetadataTaskTableActionCell(props: {
   curationTask: CurationTask
   canEdit: boolean
 }) {
-  const { curationTask, canEdit } = props
+  const {
+    curationTask,
+    // canEdit
+  } = props
 
   const { mutateAsync: getGridSessionForTask, isPending: openGridIsPending } =
     useGridSessionForCurationTask()
@@ -30,12 +30,14 @@ export default function MetadataTaskTableActionCell(props: {
     window.open(gridUrl, '_blank', 'noopener')
   }, [curationTask, getGridSessionForTask])
 
-  const isFileBasedTask = instanceOfFileBasedMetadataTaskProperties(
-    curationTask.taskProperties!,
-  )
-  const editTaskButton = canEdit ? (
-    <>{/* TODO: SWC-7480: Open an editor */}</>
-  ) : null
+  // TODO: SWC-7480
+  // const editTaskButton = canEdit ? <></> : null
+
+  // TODO: SWC-7484
+  // const isFileBasedTask = instanceOfFileBasedMetadataTaskProperties(
+  //   curationTask.taskProperties!,
+  // )
+  // const uploadButton = isFileBasedTask ? <></> : null
 
   const openDataGridButton = (
     <Tooltip title={'Open a Working Copy document to edit metadata'}>
@@ -52,17 +54,11 @@ export default function MetadataTaskTableActionCell(props: {
     </Tooltip>
   )
 
-  const uploadButton = isFileBasedTask ? (
-    <>
-      {/* TODO: Create a Jira for this b/c I think this needs design thought */}
-    </>
-  ) : null
-
   return (
     <>
-      {editTaskButton}
+      {/*{editTaskButton}*/}
       {openDataGridButton}
-      {uploadButton}
+      {/*{uploadButton}*/}
     </>
   )
 }
