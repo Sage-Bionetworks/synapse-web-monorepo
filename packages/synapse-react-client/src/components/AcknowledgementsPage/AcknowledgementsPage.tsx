@@ -68,28 +68,53 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
         <Typography variant="body1" sx={{ mb: '.5em' }}>
           Select study-specific acknowledgement statements from the list below
         </Typography>
-        <Typography variant="body1" sx={{ mb: '2em' }}>
+        <Typography
+          variant="body1"
+          sx={{
+            mb: '2em',
+            '& li::marker': {
+              fontWeight: 'bold', // bold the number
+            },
+          }}
+        >
           <ol>
             <li>
-              When you’ve selected all your studies, click the Generate Data
-              Acknowledgements button at the bottom of the page.
+              <strong>Select study-specific acknowledgement statements</strong>
+              <br />
+              From the list below, select all the studies whose data you used.
+              Each study provides its own acknowledgement statement.
             </li>
             <li>
-              Customize the generated data availability statement with a summary
-              of the contents you used in your manuscript and a digital object
-              identifier (DOI). <br />
+              <strong>Generate a data availability statement</strong>
+              <br />
+              After selecting your studies, click the Generate Data
+              Acknowledgements button at the bottom of the page. We will compile
+              the required acknowledgement statements into a single Data
+              Availability Statement.{' '}
+              <i>
+                Note: You will need to modify the data availability statement to
+                include a brief summary of the data used in your manuscript and
+                a DOI pointing to your dataset.
+              </i>
+            </li>
+            <li>
+              <strong>Create a DOI for your dataset</strong>
+              <br />
+              For instructions on how to create a DOI, read&nbsp;
               <Link
                 href={createDoiHelpUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                How do I generate a DOI for my dataset?
+                How to get a DOI for your Publication
               </Link>
             </li>
           </ol>
         </Typography>
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-          1. Select study-specific acknowledgement statements
+          <ol start={1} style={{ paddingInlineStart: '20px' }}>
+            <li>Select study-specific acknowledgement statements</li>
+          </ol>
         </Typography>
         <hr />
         <Typography variant="body1" sx={{ mb: '2em' }}>
@@ -118,7 +143,9 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
           }}
         />
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-          2. Generate Data Acknowledgements
+          <ol start={2} style={{ paddingInlineStart: '25px' }}>
+            <li>Generate Data Acknowledgements</li>
+          </ol>
         </Typography>
         <hr />
         <Typography variant="body1" sx={{ fontWeight: 'bold', mb: '1em' }}>
@@ -182,6 +209,25 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
             </>
           )}
         </ComponentCollapse>
+        <hr />
+        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+          <ol start={3} style={{ paddingInlineStart: '25px' }}>
+            <li>Create a DOI for your Dataset</li>
+          </ol>
+        </Typography>
+        <hr />
+        <Typography variant="body1" sx={{ mb: '1em', fontWeight: 'bold' }}>
+          Generate a DOI for your data using the Synapse platform
+        </Typography>
+        <Typography variant="body1" sx={{ mb: '1em' }}>
+          A DOI provides a persistent identifier that allows readers to find
+          your dataset. Creating a DOI in the Synapse platform is free, and you
+          are required to include the DOI link in your Data Availability
+          Statement.
+        </Typography>
+        <Link href={createDoiHelpUrl} target="_blank" rel="noopener noreferrer">
+          Open Instructions in a New Tab
+        </Link>
       </Container>
 
       <AcknowledgementsDialog
