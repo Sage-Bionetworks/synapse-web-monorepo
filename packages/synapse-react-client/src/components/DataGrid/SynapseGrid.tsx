@@ -109,7 +109,6 @@ const SynapseGrid = forwardRef<
   // Convert model columns to a format suitable for DataSheetGrid
   function modelColsToGrid(modelSnapshot: GridModelSnapshot): Column[] {
     if (!modelSnapshot) return []
-    const disabledColumnNames = ['etag', 'id']
     const { columnNames, columnOrder } = modelSnapshot
     const gridCols: Column[] = columnOrder.map((index: number) => {
       const columnName = columnNames[index]
@@ -156,7 +155,6 @@ const SynapseGrid = forwardRef<
           createTextColumn({ continuousUpdates: false }),
         ),
         title: columnName,
-        disabled: disabledColumnNames.includes(columnName) ? true : false,
       }
     })
     return gridCols
