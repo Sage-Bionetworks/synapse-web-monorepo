@@ -90,16 +90,17 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
               After selecting your studies, click the Generate Data
               Acknowledgements button at the bottom of the page. We will compile
               the required acknowledgement statements into a single Data
-              Availability Statement. Note: You may need to customize the
-              generated statement to include a summary of the specific data you
-              used in your manuscript.
+              Availability Statement.{' '}
+              <i>
+                Note: You will need to modify the data availability statement to
+                include a brief summary of the data used in your manuscript and
+                a DOI pointing to your dataset.
+              </i>
             </li>
             <li>
               <strong>Create a DOI for your dataset</strong>
               <br />
-              Your Data Availability Statement must also include a unique DOI
-              that points readers to your dataset. For instructions on how to
-              create a DOI, read&nbsp;
+              For instructions on how to create a DOI, read&nbsp;
               <Link
                 href={createDoiHelpUrl}
                 target="_blank"
