@@ -21,6 +21,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { Link as RouterLink } from 'react-router'
 import PortalSectionHeader from '../PortalSectionHeader'
+import { RegularBreakpoints } from '@mui/material/GridLegacy'
 
 const BORDER_RADIUS = '6px'
 
@@ -28,6 +29,8 @@ export type ImageCardGridWithLinksProps = {
   sql: string
   title: string
   summaryText: string
+  columnCount?: 1 | 2 | 3
+  heightPx?: number
 }
 
 type ImageCardProps = {
@@ -37,6 +40,8 @@ type ImageCardProps = {
   linkTextColumnIndex: number
   entityId: string
   fileId: string | null
+  columnCount?: 1 | 2 | 3
+  heightPx?: number
 }
 
 enum ExpectedColumns {
@@ -52,6 +57,8 @@ const ImageCard = ({
   linkTextColumnIndex,
   entityId,
   fileId,
+  columnCount = 3,
+  heightPx = 245,
 }: ImageCardProps) => {
   const fha: FileHandleAssociation = {
     associateObjectId: entityId,
@@ -62,22 +69,24 @@ const ImageCard = ({
     enabled: !!fileId,
   })
   const dataUrl = stablePresignedUrl?.dataUrl
-
+  const breakpoints: RegularBreakpoints = {
+    xs: 12,
+    sm: columnCount === 1 ? 12 : 6,
+    md: 12 / columnCount,
+  }
   return (
     <Grid
       item
-      xs={12}
-      sm={6}
-      md={4}
+      {...breakpoints}
       key={card.rowId}
       sx={{
-        height: '245px',
+        height: `${heightPx}px`,
         paddingTop: '24px',
         paddingLeft: '24px',
       }}
     >
       {isLoading ? (
-        <Skeleton variant="rectangular" height={221} width="100%" />
+        <Skeleton variant="rectangular" height={heightPx - 20} width="100%" />
       ) : (
         <Card
           raised={false}
@@ -144,7 +153,7 @@ const ImageCard = ({
 }
 
 function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
-  const { sql, title, summaryText } = props
+  const { sql, title, summaryText, columnCount, heightPx } = props
   const entityId = parseEntityIdFromSqlStatement(sql)
   const queryBundleRequest: QueryBundleRequest = {
     partMask:
@@ -207,6 +216,8 @@ function ImageCardGridWithLinks(props: ImageCardGridWithLinksProps) {
               fileId={fileId}
               entityId={entityId}
               isLoading={isLoading}
+              columnCount={columnCount}
+              heightPx={heightPx}
             />
           )
         })}
