@@ -331,7 +331,9 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                     })}
                     onChange={handleChange}
                     onActiveCellChange={({ cell }) => {
-                      setSelectedRowIndex(cell ? cell.row : null)
+                      if (cell) {
+                        setSelectedRowIndex(cell.row)
+                      }
                     }}
                     onSelectionChange={handleSelectionChange}
                   />
@@ -346,7 +348,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       ?.allValidationMessages.length > 0 && (
                       <FullWidthAlert
                         variant="warning"
-                        title="Validation Messages:"
+                        title="Validation Messages For Selected Row:"
                         isGlobal={false}
                         description={
                           <ul>
