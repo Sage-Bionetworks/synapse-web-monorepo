@@ -8,6 +8,8 @@ import {
   AutocompleteCellProps,
   castCellValueToString,
 } from './AutocompleteColumn'
+import isNil from 'lodash-es/isEmpty'
+import isEqual from 'lodash-es/isEqual'
 
 export type AutocompleteMultipleEnumOption =
   | AutocompleteOption
@@ -48,9 +50,9 @@ function AutocompleteMultipleEnumCell({
 
   const safeRowData = Array.isArray(rowData)
     ? rowData
-    : rowData
-    ? [rowData]
-    : []
+    : isNil(rowData)
+    ? []
+    : [rowData]
   const optionsWithLabels = choices.map(createOptionFromValue)
   const selectedOptions = safeRowData.map(createOptionFromValue)
   const effectiveLimitTags = active ? -1 : limitTags
@@ -91,7 +93,7 @@ function AutocompleteMultipleEnumCell({
             const optionValue =
               typeof option === 'string' ? option : option.value
             const valueValue = typeof value === 'string' ? value : value.value
-            return JSON.stringify(optionValue) === JSON.stringify(valueValue)
+            return isEqual(optionValue, valueValue)
           }}
           value={selectedOptions}
           inputValue={localInputState}
