@@ -1,76 +1,90 @@
 import { DropdownMenu, DropdownMenuItem } from '../menu/DropdownMenu'
 import { DownloadOutlined as DownloadIcon } from '@mui/icons-material'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 
-// Create menu items based on entity type
-function createMenuItemsForEntityType(
+enum DownloadAction {
+  downloadFile,
+  addToCart,
+  programmaticAccess,
+  programmaticAccessDocker,
+  exportTable,
+}
+
+// Function that creates menu items for download actions
+function getMenuItemForAction(
   entityId: string,
   entityName: string,
-  entityType: string,
-) {
-  const entityTypeLower = entityType.toLowerCase()
-
-  // Create dynamic menu items with props
-  const dynamicConfigs: Record<string, DropdownMenuItem> = {
-    downloadFile: {
-      text: 'Download File',
-      onClick: () => {
-        console.log('Download file:', entityId, entityName)
-        // TODO: Implement file download functionality
-      },
-      tooltipText: 'Download this file directly',
-    },
-    addToCart: {
-      text: 'Add to Download Cart',
-      onClick: () => {
-        console.log('Add file(s) to cart:', entityId)
-        // TODO: Implement add to cart functionality
-      },
-      tooltipText: 'Add file(s) to your download cart',
-    },
-    programmaticAccess: {
-      text: 'Programmatic Access',
-      onClick: () => {
-        console.log('Show programmatic access for:', entityId)
-        // TODO: Implement programmatic access options
-      },
-      tooltipText: 'View programmatic access options',
-    },
-    programmaticAccessDocker: {
-      text: 'Programmatic Access (Docker)',
-      onClick: () => {
-        console.log('Show programmatic access (Docker) for:', entityId)
-        // TODO: Implement programmatic access (Docker) options
-      },
-      tooltipText: 'View programmatic options to pull Docker image',
-    },
-    exportTable: {
-      text: 'Export Table',
-      onClick: () => {
-        console.log('Export table for:', entityId)
-        // TODO: Implement export table functionality
-      },
-      tooltipText: 'Export table data',
-    },
+  entityType: EntityType,
+  downloadAction: DownloadAction,
+): DropdownMenuItem {
+  switch (downloadAction) {
+    case DownloadAction.downloadFile:
+      return {
+        text: 'Download File',
+        onClick: () => {
+          console.log('Download file:', entityId, entityName)
+          // TODO: Implement file download functionality
+        },
+        tooltipText: 'Download this file directly',
+      }
+    case DownloadAction.addToCart:
+      return {
+        text: 'Add to Download Cart',
+        onClick: () => {
+          console.log('Add file(s) to cart:', entityId)
+          // TODO: Implement add to cart functionality
+        },
+        tooltipText: 'Add file(s) to your download cart',
+      }
+    case DownloadAction.programmaticAccess:
+      return {
+        text: 'Programmatic Access',
+        onClick: () => {
+          console.log('Show programmatic access for:', entityId)
+          // TODO: Implement programmatic access options
+        },
+        tooltipText: 'View programmatic access options',
+      }
+    case DownloadAction.programmaticAccessDocker:
+      return {
+        text: 'Programmatic Access (Docker)',
+        onClick: () => {
+          console.log('Show programmatic access (Docker) for:', entityId)
+          // TODO: Implement programmatic access (Docker) options
+        },
+        tooltipText: 'View programmatic options to pull Docker image',
+      }
+    case DownloadAction.exportTable:
+      return {
+        text: 'Export Table',
+        onClick: () => {
+          console.log('Export table for:', entityId)
+          // TODO: Implement export table functionality
+        },
+        tooltipText: 'Export table data',
+      }
   }
+}
 
-  if (entityTypeLower === 'file') {
-    return [
-      [dynamicConfigs.downloadFile],
-      [dynamicConfigs.addToCart, dynamicConfigs.programmaticAccess],
-    ]
-  } else if (entityTypeLower === 'project' || entityTypeLower === 'folder') {
-    return [[dynamicConfigs.addToCart, dynamicConfigs.programmaticAccess]]
-  } else if (
-    entityTypeLower === 'entityview' ||
-    entityTypeLower === 'dataset' ||
-    entityTypeLower === 'table'
-  ) {
-    return [[dynamicConfigs.addToCart, dynamicConfigs.programmaticAccess]]
-  } else if (entityTypeLower === 'dockerrepo') {
-    return [[dynamicConfigs.programmaticAccessDocker]]
-  } else {
-    // Other entity types (datasetcollection, materializedview, virtualtable, submissionview)
-    return [[dynamicConfigs.exportTable, dynamicConfigs.programmaticAccess]]
+// Function that returns DropdownMenuItem
+function getDownloadActionsForEntityType(type: EntityType): DownloadAction[][] {
+  switch (type) {
+    case 'file':
+      return [
+        [DownloadAction.downloadFile],
+        [DownloadAction.addToCart, DownloadAction.programmaticAccess],
+      ]
+    case 'project':
+    case 'folder':
+      return [[DownloadAction.addToCart, DownloadAction.programmaticAccess]]
+    case 'entityview':
+    case 'dataset':
+    case 'table':
+      return [[DownloadAction.addToCart, DownloadAction.programmaticAccess]]
+    case 'dockerrepo':
+      return [[DownloadAction.programmaticAccessDocker]]
+    default:
+      return [[DownloadAction.exportTable, DownloadAction.programmaticAccess]]
   }
 }
 
@@ -79,10 +93,18 @@ export function EntityDownloadButton(props: {
   name: string
   entityType: string
 }) {
-  const downloadMenuItems = createMenuItemsForEntityType(
-    props.entityId,
-    props.name,
-    props.entityType,
+  const downloadActions = getDownloadActionsForEntityType(
+    props.entityType as EntityType,
+  )
+  const downloadMenuItems = downloadActions.map(actionGroup =>
+    actionGroup.map(action =>
+      getMenuItemForAction(
+        props.entityId,
+        props.name,
+        props.entityType as EntityType,
+        action,
+      ),
+    ),
   )
 
   return (
