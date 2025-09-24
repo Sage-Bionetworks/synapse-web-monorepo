@@ -1,11 +1,11 @@
-import { describe, it, expect, vi } from 'vitest'
-import useGetOrCreateGridSessionForSource from './useGetOrCreateGridSessionForSource'
-import { renderHook, act } from '@testing-library/react'
-import * as utils from '@/features/entity/metadata-task/utils/getLatestGridSessionForSource'
 import * as gridSession from '@/synapse-queries/grid/useGridSession'
-import * as context from '@/utils/context/SynapseContext'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import * as context from '@/utils/context/SynapseContext'
 import { CreateGridRequest } from '@sage-bionetworks/synapse-client'
+import { act, renderHook } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
+import * as utils from '../utils/getLatestGridSessionForSource'
+import useGetOrCreateGridSessionForSource from './useGetOrCreateGridSessionForSource'
 
 const mockSession = { sessionId: 'abc' }
 const mockCreateGridSessionResult = { gridSession: { sessionId: 'def' } }

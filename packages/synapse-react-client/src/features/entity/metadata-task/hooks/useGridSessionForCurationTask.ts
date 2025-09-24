@@ -4,9 +4,9 @@ import {
   SynapseClientError,
 } from '@sage-bionetworks/synapse-client'
 import { useMutation } from '@tanstack/react-query'
-import { getGridSourceIdForTask } from '../utils/getGridSourceIdForTask'
-import useGetOrCreateGridSessionForSource from '@/features/grid/hooks/useGetOrCreateGridSessionForSource'
 import { getCreateGridRequestForMetadataTask } from '../utils/getCreateGridRequestForMetadataTask'
+import { getGridSourceIdForTask } from '../utils/getGridSourceIdForTask'
+import useGetOrCreateGridSessionForSource from './useGetOrCreateGridSessionForSource'
 
 /**
  * A hook to get or create a GridSession for a given CurationTask. If an appropriate GridSession exists, it will be returned.
