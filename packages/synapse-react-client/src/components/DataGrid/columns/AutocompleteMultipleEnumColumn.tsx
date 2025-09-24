@@ -101,29 +101,12 @@ function AutocompleteMultipleEnumCell({
             setLocalInputState(newInputValue)
           }}
           onChange={(_e, newVal, reason) => {
-            let values: AutocompleteMultipleEnumOption[] = []
-
-            if (reason === 'createOption') {
-              // Handle free text creation
-              if (newVal && Array.isArray(newVal)) {
-                values = newVal.map(item => {
-                  if (typeof item === 'string') {
-                    // This is a new free text entry - cast it to the proper type
-                    return parseFreeTextGivenJsonSchemaType(item, colType)
-                  } else {
-                    // This is an existing option - use its value
-                    return item.value
-                  }
-                })
-              }
-            } else {
-              // Handle normal selection/deselection (including chip removal)
-              values = (newVal || []).map(item => {
-                return typeof item === 'string'
-                  ? parseFreeTextGivenJsonSchemaType(item, colType)
-                  : item.value
-              })
-            }
+            // Handle both selection/deselection and free text creation the same way
+            const values = (newVal || []).map(item => {
+              return typeof item === 'string'
+                ? parseFreeTextGivenJsonSchemaType(item, colType)
+                : item.value
+            })
             setRowData(values)
             setLocalInputState('')
           }}
