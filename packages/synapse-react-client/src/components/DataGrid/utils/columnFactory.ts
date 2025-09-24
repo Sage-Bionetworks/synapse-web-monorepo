@@ -16,6 +16,10 @@ type ColumnConfig = {
   isRequired: boolean
 }
 
+function getHeaderClassName(isRequired: boolean): string {
+  return isRequired ? 'header-cell-required' : 'header-cell'
+}
+
 const COLUMN_FACTORIES = {
   multipleEnum: (config: ColumnConfig) => ({
     ...keyColumn(
@@ -27,21 +31,21 @@ const COLUMN_FACTORIES = {
       }),
     ),
     title: config.columnName,
-    headerClassName: config.isRequired ? 'header-cell-required' : 'header-cell',
+    headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
   }),
 
   boolean: (config: ColumnConfig) => ({
     ...keyColumn(config.columnName, checkboxColumn),
     title: config.columnName,
-    headerClassName: config.isRequired ? 'header-cell-required' : 'header-cell',
+    headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
   }),
 
   number: (config: ColumnConfig) => ({
     ...keyColumn(config.columnName, floatColumn),
     title: config.columnName,
-    headerClassName: config.isRequired ? 'header-cell-required' : 'header-cell',
+    headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
   }),
 
@@ -54,7 +58,7 @@ const COLUMN_FACTORIES = {
       }),
     ),
     title: config.columnName,
-    headerClassName: config.isRequired ? 'header-cell-required' : 'header-cell',
+    headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
   }),
 
@@ -64,7 +68,7 @@ const COLUMN_FACTORIES = {
       createTextColumn({ continuousUpdates: false }),
     ),
     title: config.columnName,
-    headerClassName: config.isRequired ? 'header-cell-required' : 'header-cell',
+    headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
   }),
 }
@@ -75,7 +79,7 @@ function calculateColumnWidth(columnName: string): number {
 
 function getColumnType(
   typeInfo: TypeInfo | null,
-  enumeratedValues: string[],
+  enumeratedValues?: string[],
 ): keyof typeof COLUMN_FACTORIES {
   if (!typeInfo) {
     return enumeratedValues && enumeratedValues.length > 0
@@ -84,7 +88,7 @@ function getColumnType(
   }
 
   // Handle arrays - check if it's an array of enums
-  if (typeInfo.isArray) {
+  if (typeInfo.type === 'array') {
     return 'multipleEnum'
   }
 
