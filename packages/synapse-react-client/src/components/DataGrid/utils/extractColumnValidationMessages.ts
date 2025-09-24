@@ -12,6 +12,8 @@ export function extractColumnValidationMessages(
   messages: string[],
 ): Map<string, string[]> {
   const columnMap = new Map<string, string[]>()
+  // Validation message format: "#/columnName: message"
+  // or for array items: "#/columnName/0: message"
   const regex = /^#\/([^/:]+)(?:\/\d+)?:\s*(.*)$/
 
   for (const raw of messages) {
