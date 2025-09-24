@@ -1,5 +1,5 @@
 import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button } from '@mui/material'
 
 export const SHOW_MORE_BUTTON_TEXT = 'Show More'
 
