@@ -30,12 +30,15 @@ import { SynapsePartners } from './SynapsePartners'
 import { SynapsePlans } from './SynapsePlans'
 import { SynapseSearchChips } from './SynapseSearchChips'
 import { SynapseTrendingProjects } from './SynapseTrendingProjects'
+import SynapseHotdropsBackground from './SynapseHotdropsBackground'
+import { SynapseHotDrops } from './SynapseHotdrops'
 
 export const synapseInActionTable = 'syn61670075'
 export const past30DaysDownloadMetricsTable = 'syn61597084'
 export const generalStatsMetricsTable = 'syn61588123'
 export const featuredDatasetsTable = 'syn61609402'
 export const searchAutocompleteTable = 'syn61670515'
+export const newAndTrendingTable = 'syn69855119'
 
 export type SynapseHomepageV2Props = {
   gotoPlace: (href: string) => void
@@ -353,34 +356,63 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
             </Box>
             <Box
               sx={{
+                mt: '-3px',
                 pb: {
                   xs: '100px',
                   md: '220px',
                 },
-                clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0% 0%)',
+                clipPath: 'polygon(0 0, 100% 2px, 0 100%, 0% 0%)',
                 backgroundColor: '#223549',
                 zIndex: 100,
               }}
             />
           </Box>
+          <Box sx={{ ml: { xs: '5px', md: '20px' } }}>
+            <Typography
+              variant="headline1"
+              sx={{
+                ...h2Sx,
+                textAlign: 'center',
+                pt: { xs: '45px', md: '75px' },
+                pb: '30px',
+              }}
+            >
+              New &amp; Trending
+            </Typography>
+            <Box sx={{ m: 'auto' }}>
+              <Typography
+                variant="headline1"
+                sx={{
+                  ...homepageBodyText,
+                  textAlign: 'center',
+                  mb: { xs: '30px', md: '60px' },
+                }}
+              >
+                A sample of public projects and datasets recently created on
+                Synapse by researchers like you
+              </Typography>
+            </Box>
+            <Box sx={{ position: 'relative', minHeight: '500px' }}>
+              <SynapseHotdropsBackground />
+              <SynapseHotDrops tableId={newAndTrendingTable} />
+            </Box>
+          </Box>
           <Box
             sx={{
-              pt: {
+              pb: {
                 xs: '100px',
-                md: '300px',
+                md: '220px',
               },
-              mt: {
-                xs: '-100px',
-                md: '-220px',
-              },
+              clipPath: 'polygon(0 100%, 100% 0, 100% 100%, 0 100%)',
               backgroundColor: '#172430',
+              zIndex: 100,
             }}
           />
-
           <Box
             sx={{
               ...sidePadding,
               backgroundColor: '#172430',
+              mt: '-1px',
               pt: {
                 xs: '50px',
                 md: '20px',
