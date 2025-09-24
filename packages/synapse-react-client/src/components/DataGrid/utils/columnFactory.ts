@@ -8,11 +8,12 @@ import {
 import { autocompleteColumn } from '../columns/AutocompleteColumn'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
 import { TypeInfo } from '@/utils/jsonschema/getType'
+import { EnumeratedValue } from '@/utils/jsonschema/getEnumeratedValues'
 
 type ColumnConfig = {
   columnName: string
   typeInfo: TypeInfo | null
-  enumeratedValues: string[]
+  enumeratedValues: EnumeratedValue[] | string[] | null
   isRequired: boolean
 }
 
@@ -25,7 +26,7 @@ const COLUMN_FACTORIES = {
     ...keyColumn(
       config.columnName,
       autocompleteMultipleEnumColumn({
-        choices: config.enumeratedValues,
+        choices: config.enumeratedValues ?? [],
         colType: config.typeInfo?.type || null,
         limitTags: 3,
       }),
@@ -53,7 +54,7 @@ const COLUMN_FACTORIES = {
     ...keyColumn(
       config.columnName,
       autocompleteColumn({
-        choices: config.enumeratedValues,
+        choices: config.enumeratedValues ?? [],
         colType: config.typeInfo?.type || null,
       }),
     ),
@@ -79,7 +80,7 @@ function calculateColumnWidth(columnName: string): number {
 
 function getColumnType(
   typeInfo: TypeInfo | null,
-  enumeratedValues?: string[],
+  enumeratedValues?: EnumeratedValue[] | string[] | null,
 ): keyof typeof COLUMN_FACTORIES {
   if (!typeInfo) {
     return enumeratedValues && enumeratedValues.length > 0

@@ -1,10 +1,11 @@
 import { Column } from 'react-datasheet-grid'
 import { GridModelSnapshot } from '../DataGridTypes'
 import { createColumn } from './columnFactory'
+import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
 
 export function modelColsToGrid(
   modelSnapshot: GridModelSnapshot,
-  schemaPropertiesInfo: Record<string, any>,
+  schemaPropertiesInfo: SchemaPropertiesMap,
 ): Column[] {
   if (!modelSnapshot) return []
 
