@@ -65,4 +65,29 @@ describe('parseFreeTextGivenJsonSchemaType', () => {
       'abc',
     )
   })
+
+  it('parses integer for integer type', () => {
+    expect(parseFreeTextGivenJsonSchemaType('123', 'integer')).toBe(123)
+    expect(parseFreeTextGivenJsonSchemaType('-456', 'integer')).toBe(-456)
+    expect(parseFreeTextGivenJsonSchemaType('12.34', 'integer')).toBe(12)
+  })
+
+  it('returns input if integer parsing fails', () => {
+    expect(parseFreeTextGivenJsonSchemaType('abc', 'integer')).toBe('abc')
+    expect(parseFreeTextGivenJsonSchemaType('', 'integer')).toBe('')
+  })
+
+  it('parses null for null type', () => {
+    expect(parseFreeTextGivenJsonSchemaType('null', 'null')).toBe(null)
+    expect(parseFreeTextGivenJsonSchemaType('NULL', 'null')).toBe(null)
+    expect(parseFreeTextGivenJsonSchemaType('Null', 'null')).toBe(null)
+  })
+
+  it('returns input if null parsing fails', () => {
+    expect(parseFreeTextGivenJsonSchemaType('undefined', 'null')).toBe(
+      'undefined',
+    )
+    expect(parseFreeTextGivenJsonSchemaType('', 'null')).toBe('')
+    expect(parseFreeTextGivenJsonSchemaType('nil', 'null')).toBe('nil')
+  })
 })
