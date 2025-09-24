@@ -6,6 +6,7 @@ import AcknowledgementsDialog from './AcknowledgementsDialog'
 import { MarkdownSynapseProps } from '../Markdown/MarkdownSynapse'
 import MarkdownCollapse from '../Markdown/MarkdownCollapse'
 import { StudyAcknowledgements } from './StudyAcknowledgements'
+import { LaunchTwoTone } from '@mui/icons-material'
 export type AcknowledgementPageProps = {
   portalName: string
   createDoiHelpUrl: string
@@ -82,7 +83,8 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
               <strong>Select study acknowledgement statements</strong>
               <br />
               From the list below, select all the studies whose data you used.
-              Each study provides its own acknowledgement statement.
+              Each study has a pre-written acknowledgement statement that must
+              be included in your publication.
             </li>
             <li>
               <strong>Generate compiled statement</strong>
@@ -94,11 +96,11 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
                 <li>The acknowledgement(s) for the studies you selected</li>
                 <li>A template data availability statement</li>
               </ul>
-              Important: You will need to edit the compiled statement to add:
-              <ul>
-                <li>A brief description of the data used in your manuscript</li>
-                <li>A DOI that points to your dataset</li>
-              </ul>
+              <i>
+                Important: You will need to edit the compiled statement to add a
+                brief description of the data used in your manuscript and a DOI
+                that points to your dataset.
+              </i>
             </li>
             <li>
               <strong>Create a DOI for your dataset</strong>
@@ -157,21 +159,11 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
         </Typography>
         <hr />
         <Typography variant="body1" sx={{ fontWeight: 'bold', mb: '1em' }}>
-          Click the Generate Compiled Statement button at the bottom of the
-          page.
+          Click to generate a compiled statement for your publication.
         </Typography>
         <Typography variant="body1" sx={{ mb: '1em' }}>
-          This will compile:
-          <ul>
-            <li>The Portal Acknowledgement Statement</li>
-            <li>The acknowledgement(s) for the studies you selected</li>
-            <li>A template data availability statement</li>
-          </ul>
-          Important: You will need to edit the compiled statement to add:
-          <ul>
-            <li>A brief description of the data used in your manuscript</li>
-            <li>A DOI that points to your dataset</li>
-          </ul>
+          The generated text will include your selected study acknowledgement
+          statements and all other required statements listed below.
         </Typography>
         <Button
           variant="contained"
@@ -181,9 +173,7 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
           Generate compiled statement
         </Button>
         <ComponentCollapse
-          text={
-            'Click to see other statements included in the Generated Data Acknowledgement'
-          }
+          text={'Click to see other text included in the compiled statement'}
           textVariant="h5"
           textSx={{ fontSize: '16px', fontWeight: 'bold' }}
           textContainerSx={{ backgroundColor: 'unset', p: 0 }}
@@ -238,9 +228,16 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
           Creating a DOI in the Synapse platform is free and required as part of
           the data availability statement.
         </Typography>
-        <Link href={createDoiHelpUrl} target="_blank" rel="noopener noreferrer">
-          How to get a DOI for your publication
-        </Link>
+
+        <Button
+          variant="outlined"
+          href={createDoiHelpUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <LaunchTwoTone sx={{ mr: '0.5em' }} />
+          Learn how to get a DOI for your publication
+        </Button>
       </Container>
 
       <AcknowledgementsDialog
