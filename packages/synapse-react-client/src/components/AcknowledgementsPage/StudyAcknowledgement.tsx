@@ -51,6 +51,7 @@ export function StudyAcknowledgement({
         {...markdownCollapseProps}
         setPlainTextResult={setPlainTextResult}
         showCopyPlainText={true}
+        textDescription="full statement"
       />
     </Box>
   )
