@@ -36,43 +36,6 @@ function createOptionFromValue(
   }
 }
 
-// When using freeSolo options, we need to cast the string input to the correct type based on colType
-function castStringToType(
-  value: string,
-  colType?: JSONSchema7Type,
-): AutocompleteMultipleEnumOption {
-  if (!colType) {
-    return parseFreeTextGivenJsonSchemaType(value, colType)
-  }
-
-  switch (colType) {
-    case 'boolean':
-      if (value.toLowerCase() === 'true') return true
-      if (value.toLowerCase() === 'false') return false
-      // Fallback to parseFreeTextGivenJsonSchemaType for edge cases
-      return parseFreeTextGivenJsonSchemaType(value, colType)
-
-    case 'number':
-    case 'integer': {
-      const numValue = Number(value)
-      return isNaN(numValue)
-        ? parseFreeTextGivenJsonSchemaType(value, colType)
-        : numValue
-    }
-
-    case 'string':
-      return value
-
-    case 'null':
-      return value.toLowerCase() === 'null'
-        ? null
-        : parseFreeTextGivenJsonSchemaType(value, colType)
-
-    default:
-      return parseFreeTextGivenJsonSchemaType(value, colType)
-  }
-}
-
 function AutocompleteMultipleEnumCell({
   rowData,
   setRowData,
@@ -144,7 +107,7 @@ function AutocompleteMultipleEnumCell({
                 values = newVal.map(item => {
                   if (typeof item === 'string') {
                     // This is a new free text entry - cast it to the proper type
-                    return castStringToType(item, colType)
+                    return parseFreeTextGivenJsonSchemaType(item, colType)
                   } else {
                     // This is an existing option - use its value
                     return item.value
@@ -155,7 +118,7 @@ function AutocompleteMultipleEnumCell({
               // Handle normal selection/deselection (including chip removal)
               values = (newVal || []).map(item => {
                 return typeof item === 'string'
-                  ? castStringToType(item, colType)
+                  ? parseFreeTextGivenJsonSchemaType(item, colType)
                   : item.value
               })
             }
@@ -164,7 +127,10 @@ function AutocompleteMultipleEnumCell({
           }}
           onBlur={() => {
             if (localInputState.trim()) {
-              const parsedValue = castStringToType(localInputState, colType)
+              const parsedValue = parseFreeTextGivenJsonSchemaType(
+                localInputState,
+                colType,
+              )
               setRowData([...safeRowData, parsedValue])
               setLocalInputState('')
             }
@@ -279,7 +245,7 @@ export function autocompleteMultipleEnumColumn({
         .split(delimiters)
         .map(item => item.trim())
         .filter(item => item.length > 0)
-        .map(item => castStringToType(item, colType))
+        .map(item => parseFreeTextGivenJsonSchemaType(item, colType))
 
       return parsedValues.length > 0 ? parsedValues : value
     },
