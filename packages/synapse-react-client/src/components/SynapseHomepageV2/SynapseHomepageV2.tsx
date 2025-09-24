@@ -377,7 +377,7 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
                 pb: '30px',
               }}
             >
-              New & Trending
+              New &amp; Trending
             </Typography>
             <Box sx={{ m: 'auto' }}>
               <Typography
