@@ -30,20 +30,35 @@ export default function DraggableDialog({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const draggableRef = useRef<HTMLDivElement>(null)
   const [bounds, setBounds] = useState<DraggableBounds>()
-  const position = { x: 100, y: 100 }
+  const [position, setPosition] = useState({ x: 100, y: 100 })
 
   useEffect(() => {
+    // Calculate draggable bounds to keep dialog within viewport with margin
     function updateBounds() {
       if (draggableRef.current) {
         const { offsetWidth } = draggableRef.current
         const margin = 100
 
-        setBounds({
+        const newBounds = {
           left: -(offsetWidth - margin),
           top: 0,
           right: window.innerWidth - margin,
           bottom: window.innerHeight - margin,
-        })
+        }
+
+        setBounds(newBounds)
+
+        // Clamp dialog position to new bounds to keep it visible after window resize
+        setPosition(prevPosition => ({
+          x: Math.max(
+            newBounds.left,
+            Math.min(prevPosition.x, newBounds.right),
+          ),
+          y: Math.max(
+            newBounds.top,
+            Math.min(prevPosition.y, newBounds.bottom),
+          ),
+        }))
       }
     }
     updateBounds()
@@ -111,7 +126,8 @@ export default function DraggableDialog({
         paperContent
       ) : (
         <Draggable
-          defaultPosition={position}
+          position={position}
+          onDrag={(e, data) => setPosition({ x: data.x, y: data.y })}
           nodeRef={draggableRef}
           bounds={bounds}
           handle=".drag-handle"
