@@ -1,7 +1,7 @@
+import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { Button, Typography } from '@mui/material'
 import { StarTwoTone } from '@mui/icons-material'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { useAccessRequirementTable } from './UseAccessRequirementTable'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import { noop } from 'lodash-es'
@@ -27,7 +27,7 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
     onTypeFilterChange = noop,
   } = props
 
-  const { table, isLoading, hasNextPage, fetchNextPage } =
+  const { table, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useAccessRequirementTable({
       nameOrID,
       relatedProjectId,
@@ -36,6 +36,8 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
       typeFilter,
       onTypeFilterChange,
     })
+
+  const isEmpty = !isLoading && table.getRowModel().rows.length === 0
 
   return (
     <div>
@@ -54,36 +56,21 @@ export function AccessRequirementTable(props: AccessRequirementTableProps) {
           </Button>
         )}
       </div>
-
-      <div>
-        <StyledTanStackTable
-          table={table}
-          styledTableContainerProps={{ sx: { my: 2 } }}
-        />
-        {isLoading && (
-          <div className="SRC-center-text">
-            <SynapseSpinner size={40} />
-          </div>
-        )}
-        {!isLoading && table.getRowModel().rows.length === 0 && (
-          <Typography className="SRC-center-text" variant="body1">
-            No Results
-          </Typography>
-        )}
-        {!hasNextPage ? (
-          <></>
-        ) : (
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => {
-              fetchNextPage()
-            }}
-          >
-            Show More
-          </Button>
-        )}
-      </div>
+      <InfiniteTableLayout
+        table={
+          <StyledTanStackTable
+            table={table}
+            styledTableContainerProps={{ sx: { my: 2 } }}
+          />
+        }
+        isLoading={isLoading}
+        isEmpty={isEmpty}
+        hasNextPage={hasNextPage}
+        onFetchNextPageClicked={() => {
+          fetchNextPage()
+        }}
+        isFetchingNextPage={isFetchingNextPage}
+      />
     </div>
   )
 }

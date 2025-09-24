@@ -1,6 +1,6 @@
+import { ValidationResults } from '@sage-bionetworks/synapse-types'
 import { Model } from 'json-joy/lib/json-crdt'
 import { s } from 'json-joy/lib/json-crdt-patch'
-import { ValidationResults } from '@sage-bionetworks/synapse-types'
 
 const gridRowSchema = s.obj({
   data: s.vec(s.con('')),
@@ -14,12 +14,31 @@ const gridRowSchema = s.obj({
   }),
 })
 
+type SelectionMap = Record<
+  string,
+  ReturnType<typeof s.con<ReplicaSelectionModel>>
+>
+const selectionSchema = s.obj<SelectionMap, SelectionMap>({})
+
 export const gridSchema = s.obj({
   doc_version: s.con('0.1.0'),
   columnNames: s.vec(s.con('')),
-  columnOrder: s.arr([s.con(0)]),
-  rows: s.arr([gridRowSchema]),
+  columnOrder: s.arr([]),
+  selection: selectionSchema,
+  rows: s.arr<typeof gridRowSchema>([]),
 })
+
+export type CrdtId = {
+  rep: number
+  seq: number
+}
+
+export type ReplicaSelectionModel = {
+  columnSelection?: CrdtId[]
+  rowSelection?: CrdtId[]
+  columnSelectAll?: boolean
+  rowSelectAll?: boolean
+}
 
 export interface JsonJoyMessage {
   sequenceNumber: number

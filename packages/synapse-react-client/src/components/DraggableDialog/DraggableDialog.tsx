@@ -1,15 +1,37 @@
 import Draggable from 'react-draggable'
-import { Box, Paper } from '@mui/material'
-import { useRef } from 'react'
-import { SynapseChat } from '@/components/SynapseChat/index'
+import {
+  Box,
+  IconButton,
+  Paper,
+  Stack,
+  Typography,
+  Divider,
+} from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
+import { useRef, ReactNode } from 'react'
 
-export default function DraggableDialog() {
+type DraggableDialogProps = {
+  open?: boolean
+  onClose?: () => void
+  children: ReactNode
+  title?: ReactNode
+}
+
+export default function DraggableDialog({
+  open = false,
+  onClose,
+  title,
+  children,
+}: DraggableDialogProps) {
   const draggableRef = useRef<HTMLDivElement>(null)
-
   const position = { x: 100, y: 100 }
 
+  if (!open) {
+    return null
+  }
+
   return (
-    <div>
+    <Box sx={{ position: 'fixed', zIndex: 1000, top: 0 }}>
       <Draggable defaultPosition={position} nodeRef={draggableRef}>
         <Paper
           ref={draggableRef}
@@ -21,6 +43,21 @@ export default function DraggableDialog() {
             width: '600px',
           }}
         >
+          <Stack
+            direction="row"
+            alignItems="center"
+            gap="5px"
+            sx={{
+              padding: '20px',
+            }}
+          >
+            <Typography variant="headline1">{title}</Typography>
+            <Box sx={{ flexGrow: 1 }} />
+            <IconButton onClick={onClose}>
+              <CloseIcon />
+            </IconButton>
+          </Stack>
+          <Divider sx={{ mx: 2 }} />
           <Box
             sx={{
               height: '100%',
@@ -28,10 +65,10 @@ export default function DraggableDialog() {
               padding: '16px',
             }}
           >
-            <SynapseChat />
+            {children}
           </Box>
         </Paper>
       </Draggable>
-    </div>
+    </Box>
   )
 }

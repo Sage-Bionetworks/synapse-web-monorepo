@@ -279,7 +279,7 @@ export function useAccessRequirementTable(
       typeFilter,
     ])
 
-  const { data, hasNextPage, fetchNextPage, isLoading } =
+  const { data, hasNextPage, fetchNextPage, isLoading, isFetchingNextPage } =
     useSearchAccessRequirementsInfinite(searchRequest)
 
   const accessRequirements = useMemo(
@@ -321,5 +321,5 @@ export function useAccessRequirementTable(
       manualFiltering: true,
     })
 
-  return { table, isLoading, hasNextPage, fetchNextPage }
+  return { table, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage }
 }

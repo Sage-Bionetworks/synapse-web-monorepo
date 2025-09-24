@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.4.43",
+  "version": "3.4.44",
   "private": false,
   "type": "module",
   "main": "./dist/index.cjs",
@@ -62,6 +62,7 @@
     "@upsetjs/react": "^1.11.0",
     "animate.css": "^4.1.1",
     "classnames": "^2.5.1",
+    "clickable-json": "^1.15.1",
     "dagre": "^0.8.5",
     "dayjs": "^1.11.13",
     "dompurify": "^3.2.5",

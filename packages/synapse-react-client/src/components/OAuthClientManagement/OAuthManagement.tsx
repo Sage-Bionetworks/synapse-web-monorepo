@@ -1,3 +1,4 @@
+import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import SynapseClient from '@/synapse-client'
 import { useGetOAuthClientInfinite } from '@/synapse-queries'
 import { MoreVert } from '@mui/icons-material'
@@ -183,7 +184,8 @@ export function OAuthManagement() {
   const [secret, setSecret] = useState<string>()
   const [isShowingVerification, setIsShowingVerification] = useState(false)
 
-  const { data, hasNextPage, fetchNextPage } = useGetOAuthClientInfinite()
+  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useGetOAuthClientInfinite()
   const oAuthClientList = useMemo(
     () => data?.pages.flatMap(page => page.results || []) || [],
     [data],
@@ -231,6 +233,8 @@ export function OAuthManagement() {
     columnResizeMode: 'onChange',
   })
 
+  const isEmpty = !isLoading && table.getRowModel().rows.length === 0
+
   return (
     <div>
       <Box
@@ -254,21 +258,16 @@ export function OAuthManagement() {
           Create New Client
         </Button>
       </Box>
-      <StyledTanStackTable table={table} />
-      {hasNextPage && (
-        <div className="text-center">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              fetchNextPage()
-            }}
-          >
-            Load more
-          </Button>
-        </div>
-      )}
-
+      <InfiniteTableLayout
+        table={<StyledTanStackTable table={table} />}
+        isLoading={isLoading}
+        isEmpty={isEmpty}
+        hasNextPage={hasNextPage}
+        onFetchNextPageClicked={() => {
+          void fetchNextPage()
+        }}
+        isFetchingNextPage={isFetchingNextPage}
+      />
       <CreateOAuthModal
         onClose={() => {
           setIsShowingCreateClientModal(false)
