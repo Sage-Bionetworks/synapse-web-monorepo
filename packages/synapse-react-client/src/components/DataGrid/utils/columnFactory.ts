@@ -8,12 +8,17 @@ import {
 import { autocompleteColumn } from '../columns/AutocompleteColumn'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
 import { TypeInfo } from '@/utils/jsonschema/getType'
+import { EnumeratedValue } from '@/utils/jsonschema/getEnumeratedValues'
 
 type ColumnConfig = {
   columnName: string
   typeInfo: TypeInfo | null
-  enumeratedValues: string[]
+  enumeratedValues: EnumeratedValue[] | string[] | null
   isRequired: boolean
+}
+
+function getHeaderClassName(isRequired: boolean): string {
+  return isRequired ? 'header-cell-required' : 'header-cell'
 }
 
 const COLUMN_FACTORIES = {
@@ -21,27 +26,27 @@ const COLUMN_FACTORIES = {
     ...keyColumn(
       config.columnName,
       autocompleteMultipleEnumColumn({
-        choices: config.enumeratedValues,
+        choices: config.enumeratedValues ?? [],
         colType: config.typeInfo?.type || null,
         limitTags: 3,
       }),
     ),
     title: config.columnName,
-    headerClassName: config.isRequired ? 'header-cell-required' : 'header-cell',
+    headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
   }),
 
   boolean: (config: ColumnConfig) => ({
     ...keyColumn(config.columnName, checkboxColumn),
     title: config.columnName,
-    headerClassName: config.isRequired ? 'header-cell-required' : 'header-cell',
+    headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
   }),
 
   number: (config: ColumnConfig) => ({
     ...keyColumn(config.columnName, floatColumn),
     title: config.columnName,
-    headerClassName: config.isRequired ? 'header-cell-required' : 'header-cell',
+    headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
   }),
 
@@ -49,12 +54,12 @@ const COLUMN_FACTORIES = {
     ...keyColumn(
       config.columnName,
       autocompleteColumn({
-        choices: config.enumeratedValues,
+        choices: config.enumeratedValues ?? [],
         colType: config.typeInfo?.type || null,
       }),
     ),
     title: config.columnName,
-    headerClassName: config.isRequired ? 'header-cell-required' : 'header-cell',
+    headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
   }),
 
@@ -64,7 +69,7 @@ const COLUMN_FACTORIES = {
       createTextColumn({ continuousUpdates: false }),
     ),
     title: config.columnName,
-    headerClassName: config.isRequired ? 'header-cell-required' : 'header-cell',
+    headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
   }),
 }
@@ -75,7 +80,7 @@ function calculateColumnWidth(columnName: string): number {
 
 function getColumnType(
   typeInfo: TypeInfo | null,
-  enumeratedValues: string[],
+  enumeratedValues?: EnumeratedValue[] | string[] | null,
 ): keyof typeof COLUMN_FACTORIES {
   if (!typeInfo) {
     return enumeratedValues && enumeratedValues.length > 0
@@ -84,7 +89,7 @@ function getColumnType(
   }
 
   // Handle arrays - check if it's an array of enums
-  if (typeInfo.isArray) {
+  if (typeInfo.type === 'array') {
     return 'multipleEnum'
   }
 

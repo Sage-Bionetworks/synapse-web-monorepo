@@ -6,12 +6,17 @@ export default function parseFreeTextGivenJsonSchemaType(
 ): unknown {
   if (!colType || colType === 'string') {
     return String(freeText)
-  } else if (colType === 'number') {
+  } else if (colType === 'number' || colType === 'integer') {
     if (freeText.trim() === '') {
       // empty string parse result is 0, so treat it as empty
       return freeText
     }
-    const parsed = Number(freeText)
+    let parsed: number
+    if (colType === 'integer') {
+      parsed = parseInt(freeText, 10)
+    } else {
+      parsed = Number(freeText)
+    }
     if (!isNaN(parsed)) {
       return parsed
     } else {
@@ -31,6 +36,12 @@ export default function parseFreeTextGivenJsonSchemaType(
       return parsed
     } catch (e) {
       // If we can't parse it, just set it to the input value
+      return freeText
+    }
+  } else if (colType === 'null') {
+    if (freeText.toLowerCase() === 'null') {
+      return null
+    } else {
       return freeText
     }
   } else {
