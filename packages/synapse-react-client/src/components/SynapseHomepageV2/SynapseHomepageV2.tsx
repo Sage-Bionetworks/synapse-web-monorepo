@@ -38,7 +38,7 @@ export const past30DaysDownloadMetricsTable = 'syn61597084'
 export const generalStatsMetricsTable = 'syn61588123'
 export const featuredDatasetsTable = 'syn61609402'
 export const searchAutocompleteTable = 'syn61670515'
-export const newAndTrendingTable = 'syn69860278'
+export const newAndTrendingTable = 'syn69855119'
 
 export type SynapseHomepageV2Props = {
   gotoPlace: (href: string) => void
