@@ -1,55 +1,79 @@
 import { GridModel } from '@/components/DataGrid/DataGridTypes'
 import { useCRDTModelView } from '@/components/DataGrid/useCRDTModelView'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { DataGridWebSocket } from './DataGridWebSocket'
 
 export function useDataGridWebSocket() {
   const [model, setModel] = useState<GridModel | null>(null)
-  const [websocketInstance, setWebSocketInstance] =
-    useState<DataGridWebSocket | null>(null)
   const [isGridReady, setIsGridReady] = useState(false)
   // TODO: Connection status could be derived from a `useSyncExternalStore` subscribed to the WebSocket instance
   const [isConnected, setIsConnected] = useState(false)
 
   const modelSnapshot = useCRDTModelView(model)
 
-  const createWebsocket = useCallback((replicaId: number, url: string) => {
-    if (url && !websocketInstance) {
-      const webSocketHandler = new DataGridWebSocket({
-        replicaId: replicaId,
-        url,
-        onGridReady: () => {
-          setIsGridReady(true)
-        },
-        onStatusChange: (isOpen: boolean, _instance: DataGridWebSocket) => {
-          setIsConnected(isOpen)
-        },
-        onModelCreate: model => {
-          setModel(model)
-        },
-      })
+  const wsRef = useRef<DataGridWebSocket | null>(null) // Reference to current WebSocket instance
+  const connectingRef = useRef(false) // Tracks if a connection attempt is in progress
 
-      setWebSocketInstance(webSocketHandler)
+  // Checks if a WebSocket exists and is open, to avoid unnecessary reconnects.
+  const isUsableSocket = (ws: DataGridWebSocket | null | undefined) =>
+    !!ws && ws.socket.readyState === WebSocket.OPEN
+
+  const createWebsocket = useCallback((replicaId: number, url: string) => {
+    if (!url || connectingRef.current) return
+
+    connectingRef.current = true
+
+    // Disconnect previous socket only if it exists
+    if (wsRef.current && wsRef.current.socket.readyState !== WebSocket.CLOSED) {
+      wsRef.current.disconnect()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    const webSocketHandler = new DataGridWebSocket({
+      replicaId: replicaId,
+      url,
+      onGridReady: () => {
+        setIsGridReady(true)
+      },
+      onStatusChange: (open: boolean) => {
+        setIsConnected(open)
+        if (open) connectingRef.current = false
+      },
+      onModelCreate: model => {
+        setModel(model)
+      },
+    })
+
+    wsRef.current = webSocketHandler
   }, [])
+
+  const reconnect = useCallback(
+    (replicaId?: number, url?: string) => {
+      if (!replicaId || !url) return
+
+      if (isUsableSocket(wsRef.current)) return
+
+      connectingRef.current = false
+      setIsConnected(false)
+      setIsGridReady(false)
+
+      createWebsocket(replicaId, url)
+    },
+    [createWebsocket],
+  )
 
   useEffect(() => {
     return () => {
-      if (websocketInstance) {
-        websocketInstance.disconnect()
-      }
-      setModel(null)
-      setIsGridReady(false)
+      wsRef.current?.disconnect()
     }
-  }, [websocketInstance])
+  }, [])
 
   return {
     isConnected,
     createWebsocket,
-    websocketInstance,
+    websocketInstance: wsRef.current,
     isGridReady,
     model,
     modelSnapshot,
+    reconnect,
   }
 }
