@@ -393,7 +393,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                     {connectionStatus}
                   </span>
                 </p>
-                <p>Ready state {websocketInstance?.socket.readyState}</p>
               </div>
             )}
           </Grid>
