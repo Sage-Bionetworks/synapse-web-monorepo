@@ -50,7 +50,7 @@ export function useDataGridWebSocket() {
   }, [])
 
   const reconnect = useCallback(
-    async (replicaId?: number, presignedUrl?: string, sessionId?: string) => {
+    async (replicaId?: number, sessionId?: string) => {
       if (!replicaId) return
       if (isUsableSocket(wsRef.current)) return
 

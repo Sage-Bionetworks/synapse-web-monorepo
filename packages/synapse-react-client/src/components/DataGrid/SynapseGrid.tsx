@@ -112,7 +112,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
     useEffect(() => {
-      if (!replicaId || !presignedUrl || !isVisible) return // only retry if tab is visible
+      if (!replicaId || !isVisible) return // only retry if tab is visible
       if (!reconnect) return
 
       let stopped = false
@@ -128,7 +128,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
             `Reconnecting WebSocket... next retry in ${retryRef.current}ms`,
           )
 
-          reconnect(replicaId, presignedUrl, session?.sessionId || '')
+          reconnect(replicaId, session?.sessionId || '')
 
           // Schedule next attempt with exponential backoff
           retryTimerRef.current = setTimeout(() => {
@@ -147,13 +147,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
         }
       }
 
-      // only start if socket is not open
-      if (
-        !websocketInstance ||
-        websocketInstance.socket.readyState !== WebSocket.OPEN
-      ) {
-        attemptReconnect()
-      }
+      attemptReconnect()
 
       return () => {
         stopped = true
@@ -162,7 +156,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
           retryTimerRef.current = null
         }
       }
-    }, [replicaId, presignedUrl, reconnect, isVisible])
+    }, [replicaId, reconnect, isVisible])
 
     useEffect(() => {
       if (replicaId && presignedUrl) {
