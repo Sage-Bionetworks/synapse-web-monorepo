@@ -9,7 +9,7 @@ import {
   castCellValueToString,
 } from './AutocompleteColumn'
 import { GridAutocompleteChip } from './GridAutocompleteChip'
-import isNil from 'lodash-es/isEmpty'
+import isNil from 'lodash-es/isNil'
 import isEqual from 'lodash-es/isEqual'
 
 export type AutocompleteMultipleEnumOption =
