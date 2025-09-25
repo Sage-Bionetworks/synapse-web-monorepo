@@ -83,8 +83,14 @@ function getDownloadActionsForEntityType(type: EntityType): DownloadAction[][] {
       return [[DownloadAction.addToCart, DownloadAction.programmaticAccess]]
     case 'dockerrepo':
       return [[DownloadAction.programmaticAccessDocker]]
-    default:
+    case 'datasetcollection':
+    case 'materializedview':
+    case 'submissionview':
+    case 'virtualtable':
       return [[DownloadAction.exportTable, DownloadAction.programmaticAccess]]
+    default:
+      // This will fail if a new EntityType is added and not handled
+      throw new Error(`Unhandled EntityType: ${type}`)
   }
 }
 
