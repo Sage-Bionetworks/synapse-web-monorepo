@@ -6,15 +6,12 @@ describe('getType', () => {
   it('returns TypeInfo for simple types', () => {
     expect(getType({ type: 'string' })).toEqual({
       type: 'string',
-      isArray: false,
     })
     expect(getType({ type: 'number' })).toEqual({
       type: 'number',
-      isArray: false,
     })
     expect(getType({ type: 'boolean' })).toEqual({
       type: 'boolean',
-      isArray: false,
     })
   })
 
@@ -28,9 +25,7 @@ describe('getType', () => {
       type: 'array',
       itemType: {
         type: 'string',
-        isArray: false,
       },
-      isArray: true,
     })
   })
 
@@ -44,9 +39,7 @@ describe('getType', () => {
       type: 'array',
       itemType: {
         type: 'string',
-        isArray: false,
       },
-      isArray: true,
     })
   })
 
@@ -60,7 +53,6 @@ describe('getType', () => {
     }
     expect(getType(schema)).toEqual({
       type: 'number',
-      isArray: false,
     })
   })
 
@@ -84,7 +76,6 @@ describe('getType', () => {
     }
     expect(getType(schema)).toEqual({
       type: 'string',
-      isArray: false,
     })
   })
 
@@ -96,9 +87,7 @@ describe('getType', () => {
       type: 'array',
       itemType: {
         type: 'number',
-        isArray: false,
       },
-      isArray: true,
     })
   })
 })
