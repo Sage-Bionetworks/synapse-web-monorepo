@@ -182,12 +182,12 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
         >
           {portalAcknowledgementProps && (
             <>
-              <Typography variant="h5" sx={{ mb: '1em' }}>
+              <Typography variant="h5" sx={{ fontSize: '18px', mb: '1em' }}>
                 Portal Acknowledgement Statement (Required)
               </Typography>
               <Typography variant="body1" sx={{ mb: '1em' }}>
-                This statement is required, but is automatically included in the
-                generated data acknowledgement text.
+                This statement is required and automatically included in the
+                compiled statement
               </Typography>
               <MarkdownCollapse
                 {...portalAcknowledgementProps}
@@ -199,12 +199,12 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
           )}
           {dataAvailabilityProps && (
             <>
-              <Typography variant="h5" sx={{ m: '1em 0' }}>
+              <Typography variant="h5" sx={{ fontSize: '18px', m: '1em 0' }}>
                 Data Availability Statement (Required)
               </Typography>
               <Typography variant="body1" sx={{ mb: '1em' }}>
-                This statement is required, but is automatically included in the
-                generated data acknowledgement text.
+                This statement is required and automatically included in the
+                compiled statement
               </Typography>
               <MarkdownCollapse
                 {...dataAvailabilityProps}
