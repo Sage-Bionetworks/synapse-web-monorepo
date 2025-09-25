@@ -39,6 +39,18 @@ function createOptionFromValue(
   }
 }
 
+function createSafeRowData(
+  rowData: AutocompleteMultipleEnumOption,
+): AutocompleteMultipleEnumOption[] {
+  if (Array.isArray(rowData)) {
+    return rowData
+  } else if (isNil(rowData)) {
+    return []
+  } else {
+    return [rowData]
+  }
+}
+
 function AutocompleteMultipleEnumCell({
   rowData,
   setRowData,
@@ -49,11 +61,7 @@ function AutocompleteMultipleEnumCell({
 }: AutocompleteMultipleEnumCellProps) {
   const [localInputState, setLocalInputState] = useState<string>('')
 
-  const safeRowData = Array.isArray(rowData)
-    ? rowData
-    : isNil(rowData)
-    ? []
-    : [rowData]
+  const safeRowData = createSafeRowData(rowData)
   const optionsWithLabels = choices.map(createOptionFromValue)
   const selectedOptions = safeRowData.map(createOptionFromValue)
   const effectiveLimitTags = active ? -1 : limitTags
@@ -219,11 +227,7 @@ export function autocompleteMultipleEnumColumn({
     )) as CellComponent,
     copyValue: ({ rowData }) => {
       // Convert array to comma-separated string
-      const safeRowData = Array.isArray(rowData)
-        ? rowData
-        : rowData
-        ? [rowData]
-        : []
+      const safeRowData = createSafeRowData(rowData)
       return safeRowData.map(item => castCellValueToString(item)).join(',')
     },
     pasteValue: ({ value }) => {
@@ -245,11 +249,7 @@ export function autocompleteMultipleEnumColumn({
     keepFocus: true,
     ...(dynamicHeight && {
       cellClassName: ({ rowData }) => {
-        const safeRowData = Array.isArray(rowData)
-          ? rowData
-          : rowData
-          ? [rowData]
-          : []
+        const safeRowData = createSafeRowData(rowData)
         return safeRowData.length > 3
           ? 'multi-value-cell-large'
           : 'multi-value-cell'
