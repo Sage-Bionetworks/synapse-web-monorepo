@@ -242,8 +242,9 @@ export function autocompleteMultipleEnumColumn({
         .map(item => item.trim())
         .filter(item => item.length > 0)
         .map(item => parseFreeTextGivenJsonSchemaType(item, colType))
+        .filter(item => item !== null && item !== undefined)
 
-      return parsedValues.length > 0 ? parsedValues : value
+      return parsedValues.length > 0 ? parsedValues : []
     },
     disableKeys: true,
     keepFocus: true,
