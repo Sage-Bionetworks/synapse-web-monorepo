@@ -91,17 +91,15 @@ function getDownloadActionsForEntityType(type: EntityType): DownloadAction[][] {
 export function EntityDownloadButton(props: {
   entityId: string
   name: string
-  entityType: string
+  entityType: EntityType
 }) {
-  const downloadActions = getDownloadActionsForEntityType(
-    props.entityType as EntityType,
-  )
+  const downloadActions = getDownloadActionsForEntityType(props.entityType)
   const downloadMenuItems = downloadActions.map(actionGroup =>
     actionGroup.map(action =>
       getMenuItemForAction(
         props.entityId,
         props.name,
-        props.entityType as EntityType,
+        props.entityType,
         action,
       ),
     ),

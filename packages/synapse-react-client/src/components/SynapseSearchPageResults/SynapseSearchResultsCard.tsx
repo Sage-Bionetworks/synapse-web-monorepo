@@ -23,7 +23,7 @@ import { EntityDownloadButton } from '../EntityDownloadButton/EntityDownloadButt
 export type SynapseSearchResultsCardProps = {
   entityId: string
   name: string
-  entityType: string
+  entityType: EntityType
   modifiedOn: number
 }
 
@@ -82,7 +82,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
         <Chip
           icon={
             <EntityTypeIcon
-              type={props.entityType as EntityType}
+              type={props.entityType}
               style={{
                 color: 'inherit',
               }}
