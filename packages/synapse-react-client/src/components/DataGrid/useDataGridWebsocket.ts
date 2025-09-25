@@ -66,7 +66,7 @@ export function useDataGridWebSocket() {
 
       createWebsocket(replicaId, url)
     },
-    [createWebsocket],
+    [createWebsocket, fetchPresignedUrl],
   )
 
   useEffect(() => {
