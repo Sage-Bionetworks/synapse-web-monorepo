@@ -23,11 +23,27 @@ const routes: RouteObject[] = [
           import('@/pages/BrowseTools').then(convertModuleToRouteObject),
       },
       {
-        path: 'Data Acknowledgement',
-        lazy: () =>
-          import('@/pages/DataAcknowledgementPage').then(
-            convertModuleToRouteObject,
-          ),
+        path: 'Data Access',
+        children: [
+          {
+            index: true,
+            element: (
+              <RedirectWithQuery to={'/Data Access/How to Access Our Data'} />
+            ),
+          },
+          {
+            path: 'Data Acknowledgement',
+            lazy: () =>
+              import('@/pages/DataAcknowledgementPage').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'How to Access Our Data',
+            lazy: () =>
+              import('@/pages/DataAccess').then(convertModuleToRouteObject),
+          },
+        ],
       },
       {
         path: 'Explore',
@@ -119,11 +135,6 @@ const routes: RouteObject[] = [
         path: 'Analysis Platforms',
         lazy: () =>
           import('@/pages/AnalysisPlatforms').then(convertModuleToRouteObject),
-      },
-      {
-        path: 'Data Access',
-        lazy: () =>
-          import('@/pages/DataAccess').then(convertModuleToRouteObject),
       },
       {
         path: 'Contribute Data',

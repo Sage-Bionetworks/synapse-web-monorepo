@@ -1,6 +1,7 @@
+import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import { useGetForumThreadsInfinite } from '@/synapse-queries/forum/useForum'
 import { AVATAR } from '@/utils/SynapseConstants'
-import { Button, Link } from '@mui/material'
+import { Link } from '@mui/material'
 import {
   DiscussionFilter,
   DiscussionThreadBundle,
@@ -15,7 +16,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import dayjs from 'dayjs'
-import { isEmpty } from 'lodash-es'
+import isEmpty from 'lodash-es/isEmpty'
 import { useMemo, useState } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
@@ -120,13 +121,14 @@ export function ForumTable({
     return DiscussionThreadOrder.PINNED_AND_LAST_ACTIVITY
   }, [tableSortState])
 
-  const { data, hasNextPage, fetchNextPage } = useGetForumThreadsInfinite(
-    forumId,
-    limit,
-    discussionThreadOrder,
-    !tableSortState[0]?.desc,
-    filter,
-  )
+  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useGetForumThreadsInfinite(
+      forumId,
+      limit,
+      discussionThreadOrder,
+      !tableSortState[0]?.desc,
+      filter,
+    )
 
   const threads = useMemo(
     () => data?.pages.flatMap(page => page.results) ?? [],
@@ -151,23 +153,25 @@ export function ForumTable({
       enableFilters: false,
     })
 
+  const hasNoResults = !isLoading && table.getRowModel().rows.length === 0
+
   return (
     <div className="ForumTable">
-      <StyledTanStackTable
-        table={table}
-        styledTableContainerProps={{ sx: { my: 2, maxHeight: '250px' } }}
+      <InfiniteTableLayout
+        table={
+          <StyledTanStackTable
+            table={table}
+            styledTableContainerProps={{ sx: { my: 2, maxHeight: '250px' } }}
+          />
+        }
+        isLoading={isLoading}
+        isEmpty={hasNoResults}
+        hasNextPage={hasNextPage}
+        onFetchNextPageClicked={() => {
+          void fetchNextPage()
+        }}
+        isFetchingNextPage={isFetchingNextPage}
       />
-      {hasNextPage && (
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => {
-            fetchNextPage()
-          }}
-        >
-          Show more results
-        </Button>
-      )}
     </div>
   )
 }

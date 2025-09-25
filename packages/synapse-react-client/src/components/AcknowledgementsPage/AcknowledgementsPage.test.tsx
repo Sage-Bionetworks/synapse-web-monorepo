@@ -59,7 +59,7 @@ describe('AcknowledgementPage', () => {
     await userEvent.click(selectButton)
     // Open the dialog to check if the item is included
     const generateButton = screen.getByRole('button', {
-      name: /Generate Data Acknowledgements/i,
+      name: /Generate compiled statement/i,
     })
     await userEvent.click(generateButton)
     expect(screen.getByTestId('AcknowledgementsDialog')).toHaveTextContent(
@@ -70,7 +70,7 @@ describe('AcknowledgementPage', () => {
   it('opens and closes the acknowledgements dialog', async () => {
     render(<AcknowledgementPage {...defaultProps} />)
     const generateButton = screen.getByRole('button', {
-      name: /Generate Data Acknowledgements/i,
+      name: /Generate compiled statement/i,
     })
     await userEvent.click(generateButton)
     expect(screen.getByTestId('AcknowledgementsDialog')).toHaveTextContent(
@@ -86,9 +86,11 @@ describe('AcknowledgementPage', () => {
     expect(screen.getByTestId('ComponentCollapse')).toBeInTheDocument()
   })
 
-  it('renders the DOI help link', () => {
+  it('renders the DOI help button', () => {
     render(<AcknowledgementPage {...defaultProps} />)
-    const link = screen.getByRole('link', { name: /How do I generate a DOI/i })
+    const link = screen.getByRole('link', {
+      name: /Learn how to get a DOI for your publication/i,
+    })
     expect(link).toHaveAttribute('href', defaultProps.createDoiHelpUrl)
     expect(link).toHaveAttribute('target', '_blank')
   })

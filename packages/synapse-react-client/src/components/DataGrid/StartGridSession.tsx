@@ -65,7 +65,7 @@ export const StartGridSession = forwardRef<
     },
   })
 
-  const { data } = useGetGridSessionsInfinite()
+  const { data } = useGetGridSessionsInfinite({})
   const availableSessions = useMemo(
     () => data?.pages.flatMap(page => page.page || []) || [],
     [data],

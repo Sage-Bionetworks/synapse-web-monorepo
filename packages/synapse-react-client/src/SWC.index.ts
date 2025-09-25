@@ -140,6 +140,10 @@ const SynapseComponents = {
   ),
   IDUReport: lazy(() => import('./components/IDUReport/IDUReport')),
   IconSvg: lazy(() => import('./components/IconSvg/IconSvg')),
+  MetadataTasksPage: lazy(
+    () =>
+      import('./features/entity/metadata-task/components/MetadataTasksPage'),
+  ),
   OAuthManagement: lazy(
     () => import('./components/OAuthClientManagement/OAuthManagement'),
   ),
