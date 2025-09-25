@@ -127,7 +127,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
           console.log(
             `Reconnecting WebSocket... next retry in ${retryRef.current}ms`,
           )
-          console.log('using presignedUrl', presignedUrl)
 
           reconnect(replicaId, presignedUrl, session?.sessionId || '')
 
