@@ -7,7 +7,7 @@ describe('columnFactory', () => {
     it('should create a multipleEnum column for array types', () => {
       const config = {
         columnName: 'tags',
-        typeInfo: { type: 'string' } as TypeInfo,
+        typeInfo: { type: 'array', itemType: { type: 'string' } } as TypeInfo,
         enumeratedValues: ['tag1', 'tag2', 'tag3'],
         isRequired: true,
       }
