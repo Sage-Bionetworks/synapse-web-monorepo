@@ -6,6 +6,7 @@ import AcknowledgementsDialog from './AcknowledgementsDialog'
 import { MarkdownSynapseProps } from '../Markdown/MarkdownSynapse'
 import MarkdownCollapse from '../Markdown/MarkdownCollapse'
 import { StudyAcknowledgements } from './StudyAcknowledgements'
+import { LaunchTwoTone } from '@mui/icons-material'
 export type AcknowledgementPageProps = {
   portalName: string
   createDoiHelpUrl: string
@@ -54,9 +55,8 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
           must be acknowledged and referenced appropriately.
         </Typography>
         <Typography variant="body1" sx={{ fontWeight: 'bold', mb: '1em' }}>
-          If you use data from this portal in a manuscript, article, or any
-          other publication, you must include an acknowledgement. All
-          acknowledgements for this portal must include the following:
+          All publications using {portalName} data must include the provided
+          statements:
         </Typography>
         <Box sx={{ mb: '2em', svg: { maxWidth: '100%' } }}>
           <AcknowledgementStatementsIllustration />
@@ -66,7 +66,8 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
         </Typography>
         <hr />
         <Typography variant="body1" sx={{ mb: '.5em' }}>
-          Select study-specific acknowledgement statements from the list below
+          This page will guide you through creating the acknowledgement
+          statements required when publishing with {portalName} data.
         </Typography>
         <Typography
           variant="body1"
@@ -79,28 +80,35 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
         >
           <ol>
             <li>
-              <strong>Select study-specific acknowledgement statements</strong>
+              <strong>Select study acknowledgement statements</strong>
               <br />
               From the list below, select all the studies whose data you used.
-              Each study provides its own acknowledgement statement.
+              Each study has a pre-written acknowledgement statement that must
+              be included in your publication.
             </li>
             <li>
-              <strong>Generate a data availability statement</strong>
+              <strong>Generate compiled statement</strong>
               <br />
-              After selecting your studies, click the Generate Data
-              Acknowledgements button at the bottom of the page. We will compile
-              the required acknowledgement statements into a single Data
-              Availability Statement.{' '}
+              Click the Generate Compiled Statement button at the bottom of the
+              page. This will compile:
+              <ul>
+                <li>The Portal Acknowledgement Statement</li>
+                <li>The acknowledgement(s) for the studies you selected</li>
+                <li>A template data availability statement</li>
+              </ul>
               <i>
-                Note: You will need to modify the data availability statement to
-                include a brief summary of the data used in your manuscript and
-                a DOI pointing to your dataset.
+                Important: You will need to edit the compiled statement to add a
+                brief description of the data used in your manuscript and a DOI
+                that points to your dataset.
               </i>
             </li>
             <li>
               <strong>Create a DOI for your dataset</strong>
               <br />
-              For instructions on how to create a DOI, read&nbsp;
+              As part of the data availability statement, you will need to
+              create a dataset that captures all files used in your publication
+              and mint the dataset with a persistent Digital Object Identifier
+              (DOI). For more instructions read&nbsp;
               <Link
                 href={createDoiHelpUrl}
                 target="_blank"
@@ -113,16 +121,18 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
         </Typography>
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
           <ol start={1} style={{ paddingInlineStart: '20px' }}>
-            <li>Select study-specific acknowledgement statements</li>
+            <li>Select study acknowledgement statements</li>
           </ol>
         </Typography>
         <hr />
+        <Typography variant="body1">
+          From the list below, select all studies whose data you used. Each
+          study has a pre-written acknowledgement statement that must be
+          included in your publication.
+        </Typography>
         <Typography variant="body1" sx={{ mb: '2em' }}>
-          To properly acknowledge the studies from which you use data, please be
-          sure to copy the full statement provided for each study you used. You
-          can expand each section for detailed information or simply click 'Copy
-          full statement to clipboard' to easily save the text for your
-          references.
+          You can also expand each section for detailed information or click
+          "Copy full statement to clipboard" to save the text.
         </Typography>
         <StudyAcknowledgements
           sql={studyAcknowledgementSql}
@@ -144,44 +154,40 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
         />
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
           <ol start={2} style={{ paddingInlineStart: '25px' }}>
-            <li>Generate Data Acknowledgements</li>
+            <li>Generate compiled statement</li>
           </ol>
         </Typography>
         <hr />
         <Typography variant="body1" sx={{ fontWeight: 'bold', mb: '1em' }}>
-          Click to generate a set of acknowledgements for your article based on
-          your selected studies.
+          Click to generate a compiled statement for your publication.
         </Typography>
         <Typography variant="body1" sx={{ mb: '1em' }}>
-          The generated text will include all the specific acknowledgement
-          statements for the studies you selected, along with all other required
-          Acknowledgement Statements listed below.
+          The generated text will include your selected study acknowledgement
+          statements and all other required statements listed below.
         </Typography>
         <Button
           variant="contained"
           onClick={() => setAcknowledgementsDialogOpen(true)}
           sx={{ mb: '3em' }}
         >
-          Generate Data Acknowledgements
+          Generate compiled statement
         </Button>
         <ComponentCollapse
-          text={
-            'Click to see other statements included in the Generated Data Acknowledgement'
-          }
+          text={'Click to see other text included in the compiled statement'}
           textVariant="h5"
-          textSx={{ fontWeight: 'bold' }}
+          textSx={{ fontSize: '16px', fontWeight: 'bold' }}
           textContainerSx={{ backgroundColor: 'unset', p: 0 }}
           collapseBoxSx={{ backgroundColor: 'unset', p: '20px 0px' }}
-          iconSx={{ width: '25px', height: '25px' }}
+          iconSx={{ width: '20px', height: '20px' }}
         >
           {portalAcknowledgementProps && (
             <>
-              <Typography variant="h5" sx={{ mb: '1em' }}>
+              <Typography variant="h5" sx={{ fontSize: '18px', mb: '1em' }}>
                 Portal Acknowledgement Statement (Required)
               </Typography>
               <Typography variant="body1" sx={{ mb: '1em' }}>
-                This statement is required, but is automatically included in the
-                generated data acknowledgement text.
+                This statement is required and automatically included in the
+                compiled statement
               </Typography>
               <MarkdownCollapse
                 {...portalAcknowledgementProps}
@@ -193,12 +199,12 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
           )}
           {dataAvailabilityProps && (
             <>
-              <Typography variant="h5" sx={{ m: '1em 0' }}>
+              <Typography variant="h5" sx={{ fontSize: '18px', m: '1em 0' }}>
                 Data Availability Statement (Required)
               </Typography>
               <Typography variant="body1" sx={{ mb: '1em' }}>
-                This statement is required, but is automatically included in the
-                generated data acknowledgement text.
+                This statement is required and automatically included in the
+                compiled statement
               </Typography>
               <MarkdownCollapse
                 {...dataAvailabilityProps}
@@ -212,22 +218,26 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
         <hr />
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
           <ol start={3} style={{ paddingInlineStart: '25px' }}>
-            <li>Create a DOI for your Dataset</li>
+            <li>Create a DOI for your dataset</li>
           </ol>
         </Typography>
         <hr />
-        <Typography variant="body1" sx={{ mb: '1em', fontWeight: 'bold' }}>
-          Generate a DOI for your data using the Synapse platform
-        </Typography>
         <Typography variant="body1" sx={{ mb: '1em' }}>
-          A DOI provides a persistent identifier that allows readers to find
-          your dataset. Creating a DOI in the Synapse platform is free, and you
-          are required to include the DOI link in your Data Availability
-          Statement.
+          A digital object identifier (DOI) provides a persistent identifier
+          that allows readers to find the data cited in your publication.
+          Creating a DOI in the Synapse platform is free and required as part of
+          the data availability statement.
         </Typography>
-        <Link href={createDoiHelpUrl} target="_blank" rel="noopener noreferrer">
-          Open Instructions in a New Tab
-        </Link>
+
+        <Button
+          variant="outlined"
+          href={createDoiHelpUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <LaunchTwoTone sx={{ mr: '0.5em' }} />
+          Learn how to get a DOI for your publication
+        </Button>
       </Container>
 
       <AcknowledgementsDialog
