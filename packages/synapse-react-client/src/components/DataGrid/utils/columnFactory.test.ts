@@ -7,7 +7,7 @@ describe('columnFactory', () => {
     it('should create a multipleEnum column for array types', () => {
       const config = {
         columnName: 'tags',
-        typeInfo: { type: 'string', isArray: true } as TypeInfo,
+        typeInfo: { type: 'string' } as TypeInfo,
         enumeratedValues: ['tag1', 'tag2', 'tag3'],
         isRequired: true,
       }
@@ -21,7 +21,7 @@ describe('columnFactory', () => {
     it('should create a boolean column for boolean type', () => {
       const config = {
         columnName: 'isActive',
-        typeInfo: { type: 'boolean', isArray: false } as TypeInfo,
+        typeInfo: { type: 'boolean' } as TypeInfo,
         enumeratedValues: [],
         isRequired: false,
       }
@@ -35,7 +35,7 @@ describe('columnFactory', () => {
     it('should create a number column for number type', () => {
       const config = {
         columnName: 'count',
-        typeInfo: { type: 'number', isArray: false } as TypeInfo,
+        typeInfo: { type: 'number' } as TypeInfo,
         enumeratedValues: [],
         isRequired: true,
       }
@@ -49,7 +49,7 @@ describe('columnFactory', () => {
     it('should create a number column for integer type', () => {
       const config = {
         columnName: 'age',
-        typeInfo: { type: 'integer', isArray: false } as TypeInfo,
+        typeInfo: { type: 'integer' } as TypeInfo,
         enumeratedValues: [],
         isRequired: false,
       }
@@ -63,7 +63,7 @@ describe('columnFactory', () => {
     it('should create an enumerated column when enumeratedValues are provided', () => {
       const config = {
         columnName: 'status',
-        typeInfo: { type: 'string', isArray: false } as TypeInfo,
+        typeInfo: { type: 'string' } as TypeInfo,
         enumeratedValues: ['active', 'inactive', 'pending'],
         isRequired: true,
       }
@@ -91,7 +91,7 @@ describe('columnFactory', () => {
     it('should set required header class when isRequired is true', () => {
       const config = {
         columnName: 'name',
-        typeInfo: { type: 'string', isArray: false } as TypeInfo,
+        typeInfo: { type: 'string' } as TypeInfo,
         enumeratedValues: [],
         isRequired: true,
       }
@@ -104,7 +104,7 @@ describe('columnFactory', () => {
     it('should set normal header class when isRequired is false', () => {
       const config = {
         columnName: 'name',
-        typeInfo: { type: 'string', isArray: false } as TypeInfo,
+        typeInfo: { type: 'string' } as TypeInfo,
         enumeratedValues: [],
         isRequired: false,
       }

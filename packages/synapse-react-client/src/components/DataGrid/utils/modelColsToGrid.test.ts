@@ -33,22 +33,22 @@ describe('modelColsToGrid', () => {
 
     const schemaPropertiesInfo = {
       id: {
-        type: { type: 'string', isArray: false },
+        type: { type: 'string' },
         isRequired: true,
         enumeratedValues: null,
       },
       name: {
-        type: { type: 'string', isArray: false },
+        type: { type: 'string' },
         isRequired: true,
         enumeratedValues: null,
       },
       email: {
-        type: { type: 'string', isArray: false },
+        type: { type: 'string' },
         isRequired: false,
         enumeratedValues: null,
       },
       age: {
-        type: { type: 'integer', isArray: false },
+        type: { type: 'integer' },
         isRequired: false,
         enumeratedValues: null,
       },
@@ -73,7 +73,7 @@ describe('modelColsToGrid', () => {
 
     const schemaPropertiesInfo = {
       status: {
-        type: { type: 'string', isArray: false },
+        type: { type: 'string' },
         enumeratedValues: ['active', 'inactive'],
         isRequired: true,
       },
@@ -84,7 +84,7 @@ describe('modelColsToGrid', () => {
     expect(result).toHaveLength(1)
     expect((result[0] as any).mockConfig).toEqual({
       columnName: 'status',
-      typeInfo: { type: 'string', isArray: false },
+      typeInfo: { type: 'string' },
       enumeratedValues: ['active', 'inactive'],
       isRequired: true,
     })
@@ -121,7 +121,7 @@ describe('modelColsToGrid', () => {
 
     const schemaPropertiesInfo = {
       partialColumn: {
-        type: { type: 'number', isArray: false },
+        type: { type: 'number' },
         isRequired: false,
         enumeratedValues: null,
       },
@@ -132,7 +132,7 @@ describe('modelColsToGrid', () => {
     expect(result).toHaveLength(1)
     expect((result[0] as any).mockConfig).toEqual({
       columnName: 'partialColumn',
-      typeInfo: { type: 'number', isArray: false },
+      typeInfo: { type: 'number' },
       enumeratedValues: [],
       isRequired: false,
     })
@@ -150,8 +150,7 @@ describe('modelColsToGrid', () => {
       complexColumn: {
         type: {
           type: 'array',
-          isArray: true,
-          itemType: { type: 'string', isArray: false },
+          itemType: { type: 'string' },
         },
         enumeratedValues: ['value1', 'value2'],
         isRequired: true,
@@ -165,8 +164,7 @@ describe('modelColsToGrid', () => {
       columnName: 'complexColumn',
       typeInfo: {
         type: 'array',
-        isArray: true,
-        itemType: { type: 'string', isArray: false },
+        itemType: { type: 'string' },
       },
       enumeratedValues: ['value1', 'value2'],
       isRequired: true,
@@ -210,7 +208,7 @@ describe('modelColsToGrid', () => {
 
     const schemaPropertiesInfo = {
       nullEnumColumn: {
-        type: { type: 'string', isArray: false },
+        type: { type: 'string' },
         enumeratedValues: null,
         isRequired: true,
       },
@@ -221,7 +219,7 @@ describe('modelColsToGrid', () => {
     expect(result).toHaveLength(1)
     expect((result[0] as any).mockConfig).toEqual({
       columnName: 'nullEnumColumn',
-      typeInfo: { type: 'string', isArray: false },
+      typeInfo: { type: 'string' },
       enumeratedValues: [],
       isRequired: true,
     })
@@ -237,26 +235,25 @@ describe('modelColsToGrid', () => {
 
     const schemaPropertiesInfo = {
       id: {
-        type: { type: 'string', isArray: false },
+        type: { type: 'string' },
         isRequired: true,
         enumeratedValues: null,
       },
       tags: {
         type: {
           type: 'array',
-          isArray: true,
-          itemType: { type: 'string', isArray: false },
+          itemType: { type: 'string' },
         },
         enumeratedValues: ['tag1', 'tag2'],
         isRequired: false,
       },
       active: {
-        type: { type: 'boolean', isArray: false },
+        type: { type: 'boolean' },
         isRequired: true,
         enumeratedValues: null,
       },
       count: {
-        type: { type: 'integer', isArray: false },
+        type: { type: 'integer' },
         isRequired: false,
         enumeratedValues: null,
       },
@@ -268,7 +265,7 @@ describe('modelColsToGrid', () => {
 
     expect((result[0] as any).mockConfig).toEqual({
       columnName: 'id',
-      typeInfo: { type: 'string', isArray: false },
+      typeInfo: { type: 'string' },
       enumeratedValues: [],
       isRequired: true,
     })
@@ -277,8 +274,7 @@ describe('modelColsToGrid', () => {
       columnName: 'tags',
       typeInfo: {
         type: 'array',
-        isArray: true,
-        itemType: { type: 'string', isArray: false },
+        itemType: { type: 'string' },
       },
       enumeratedValues: ['tag1', 'tag2'],
       isRequired: false,
@@ -286,14 +282,14 @@ describe('modelColsToGrid', () => {
 
     expect((result[2] as any).mockConfig).toEqual({
       columnName: 'active',
-      typeInfo: { type: 'boolean', isArray: false },
+      typeInfo: { type: 'boolean' },
       enumeratedValues: [],
       isRequired: true,
     })
 
     expect((result[3] as any).mockConfig).toEqual({
       columnName: 'count',
-      typeInfo: { type: 'integer', isArray: false },
+      typeInfo: { type: 'integer' },
       enumeratedValues: [],
       isRequired: false,
     })
@@ -309,12 +305,12 @@ describe('modelColsToGrid', () => {
 
     const schemaPropertiesInfo = {
       id: {
-        type: { type: 'string', isArray: false },
+        type: { type: 'string' },
         isRequired: true,
         enumeratedValues: null,
       },
       name: {
-        type: { type: 'string', isArray: false },
+        type: { type: 'string' },
         isRequired: false,
         enumeratedValues: null,
       },
@@ -367,12 +363,12 @@ describe('modelColsToGrid', () => {
 
     const schemaPropertiesInfo = {
       '': {
-        type: { type: 'string', isArray: false },
+        type: { type: 'string' },
         isRequired: false,
         enumeratedValues: null,
       },
       validName: {
-        type: { type: 'number', isArray: false },
+        type: { type: 'number' },
         isRequired: true,
         enumeratedValues: null,
       },
@@ -398,7 +394,7 @@ describe('modelColsToGrid', () => {
 
     const schemaPropertiesInfo = {
       testColumn: {
-        type: { type: 'string', isArray: false },
+        type: { type: 'string' },
         enumeratedValues: ['option1', 'option2'],
         isRequired: true,
       },
@@ -408,7 +404,7 @@ describe('modelColsToGrid', () => {
 
     expect(createColumnMock).toHaveBeenCalledWith({
       columnName: 'testColumn',
-      typeInfo: { type: 'string', isArray: false },
+      typeInfo: { type: 'string' },
       enumeratedValues: ['option1', 'option2'],
       isRequired: true,
     })
@@ -427,41 +423,41 @@ describe('modelColsToGrid integration', () => {
 
     const schemaPropertiesInfo = {
       id: {
-        type: { type: 'string', isArray: false },
+        type: { type: 'string' },
         isRequired: true,
         enumeratedValues: null,
       },
       name: {
-        type: { type: 'string', isArray: false },
+        type: { type: 'string' },
         isRequired: true,
         enumeratedValues: null,
       },
       email: {
-        type: { type: 'string', isArray: false },
+        type: { type: 'string' },
         isRequired: false,
         enumeratedValues: null,
       },
       age: {
-        type: { type: 'integer', isArray: false },
+        type: { type: 'integer' },
         isRequired: false,
         enumeratedValues: null,
       },
       isActive: {
-        type: { type: 'boolean', isArray: false },
+        type: { type: 'boolean' },
         isRequired: true,
         enumeratedValues: null,
       },
       tags: {
         type: {
           type: 'array',
-          isArray: true,
-          itemType: { type: 'string', isArray: false },
+
+          itemType: { type: 'string' },
         },
         enumeratedValues: ['frontend', 'backend', 'mobile'],
         isRequired: false,
       },
       status: {
-        type: { type: 'string', isArray: false },
+        type: { type: 'string' },
         enumeratedValues: ['active', 'inactive', 'pending'],
         isRequired: true,
       },
@@ -481,7 +477,7 @@ describe('modelColsToGrid integration', () => {
     // Test individual column creation for specific types
     const idColumn = createColumn({
       columnName: 'id',
-      typeInfo: { type: 'string', isArray: false },
+      typeInfo: { type: 'string' },
       enumeratedValues: [],
       isRequired: true,
     })
@@ -491,8 +487,7 @@ describe('modelColsToGrid integration', () => {
       columnName: 'tags',
       typeInfo: {
         type: 'array',
-        isArray: true,
-        itemType: { type: 'string', isArray: false },
+        itemType: { type: 'string' },
       },
       enumeratedValues: ['frontend', 'backend', 'mobile'],
       isRequired: false,
@@ -501,7 +496,7 @@ describe('modelColsToGrid integration', () => {
 
     const statusColumn = createColumn({
       columnName: 'status',
-      typeInfo: { type: 'string', isArray: false },
+      typeInfo: { type: 'string' },
       enumeratedValues: ['active', 'inactive', 'pending'],
       isRequired: true,
     })
@@ -526,7 +521,7 @@ describe('Edge cases', () => {
     it('should handle null enumeratedValues', () => {
       const config = {
         columnName: 'test',
-        typeInfo: { type: 'string', isArray: false },
+        typeInfo: { type: 'string' },
         enumeratedValues: null as any,
         isRequired: false,
       }
@@ -538,7 +533,7 @@ describe('Edge cases', () => {
     it('should handle empty string column name', () => {
       const config = {
         columnName: '',
-        typeInfo: { type: 'string', isArray: false },
+        typeInfo: { type: 'string' },
         enumeratedValues: [],
         isRequired: false,
       }
