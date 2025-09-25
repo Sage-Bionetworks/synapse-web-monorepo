@@ -8,6 +8,7 @@ import {
   AutocompleteCellProps,
   castCellValueToString,
 } from './AutocompleteColumn'
+import { GridAutocompleteChip } from './GridAutocompleteChip'
 import isNil from 'lodash-es/isEmpty'
 import isEqual from 'lodash-es/isEqual'
 
@@ -120,6 +121,21 @@ function AutocompleteMultipleEnumCell({
               setLocalInputState('')
             }
           }}
+          renderValue={(tagValue, getTagProps) =>
+            tagValue.map((option, index) => {
+              const { key, ...tagProps } = getTagProps({ index })
+              const optionValue =
+                typeof option === 'string' ? option : option.value
+              return (
+                <GridAutocompleteChip
+                  key={key}
+                  option={optionValue}
+                  active={active}
+                  {...tagProps}
+                />
+              )
+            })
+          }
           renderInput={params => (
             <TextField
               {...params}
@@ -167,15 +183,6 @@ function AutocompleteMultipleEnumCell({
             '& .MuiFormControl-root': {
               height: '100%',
             },
-            // Adjust chip sizes for better fit
-            '& .MuiChip-root': {
-              maxWidth: active ? 'none' : '120px',
-              fontSize: '0.75rem',
-              height: '24px',
-              margin: '1px',
-              flexShrink: 0, // Prevent chips from shrinking
-            },
-            // Ensure the tag container is scrollable
             '& .MuiAutocomplete-tag': {
               margin: '1px',
             },
