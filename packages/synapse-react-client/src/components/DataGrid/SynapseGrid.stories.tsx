@@ -1,3 +1,8 @@
+// Enable test-mode forced close
+// if (typeof window !== 'undefined') {
+//   ;(window as any).__GRID_TEST_FORCE_CLOSE_MS = 10000 // 8s
+// }
+
 import { Button } from '@mui/material'
 import { Meta, StoryObj } from '@storybook/react'
 import { useRef } from 'react'
@@ -34,6 +39,7 @@ export const GridWithQuery = {
   },
   render: function GridWithButton({ query, ...args }) {
     const gridRef = useRef<SynapseGridHandle>(null)
+
     return (
       <div>
         <Button

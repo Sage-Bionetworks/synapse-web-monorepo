@@ -9,6 +9,7 @@ import {
   GridSession,
 } from '@sage-bionetworks/synapse-client'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
+import useGridPresignedUrl from './hooks/useGridPresignedUrl'
 
 export type CreateOrGetGridSessionInput = {
   createGridRequest?: CreateGridRequest
@@ -67,7 +68,7 @@ export default function useInitializeGridConnection(
   const { mutateAsync: createOrGetSession } =
     useCreateOrGetExistingGridSession()
   const { mutateAsync: createReplicaId } = useCreateGridReplica()
-  const { synapseClient } = useSynapseContext()
+  const { mutateAsync: getPresignedUrl } = useGridPresignedUrl()
 
   return useMutation<
     { session: GridSession; replica: GridReplica; presignedUrl: string },
@@ -91,21 +92,15 @@ export default function useInitializeGridConnection(
         console.log('Replica created:', createReplicaResponse)
         const replica = createReplicaResponse.replica!
 
-        const { presignedUrl } =
-          await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdPresignedUrl(
-            {
-              sessionId: sessionId,
-              createGridPresignedUrlRequest: {
-                gridSessionId: sessionId,
-                replicaId: replica.replicaId!,
-              },
-            },
-          )
+        const presignedUrl = await getPresignedUrl({
+          sessionId,
+          replicaId: replica.replicaId!,
+        })
 
         return {
           session,
           replica,
-          presignedUrl: presignedUrl!,
+          presignedUrl,
         }
       } catch (error) {
         throw new Error('Error starting session:', { cause: error })

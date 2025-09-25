@@ -1,7 +1,7 @@
 import MergeGridWithSourceTableButton from '@/components/DataGrid/MergeGridWithSourceTableButton'
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
-import { displayToast, SkeletonTable } from '@/components/index'
+import { SkeletonTable } from '@/components/index'
 import { useGetSchema } from '@/synapse-queries/index'
 import getEnumeratedValues from '@/utils/jsonschema/getEnumeratedValues'
 import getRequiredAttributes from '@/utils/jsonschema/getRequiredAttributes'
@@ -127,8 +127,9 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
           console.log(
             `Reconnecting WebSocket... next retry in ${retryRef.current}ms`,
           )
+          console.log('using presignedUrl', presignedUrl)
 
-          reconnect(replicaId, presignedUrl)
+          reconnect(replicaId, presignedUrl, session?.sessionId || '')
 
           // Schedule next attempt with exponential backoff
           retryTimerRef.current = setTimeout(() => {
@@ -392,6 +393,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                     {connectionStatus}
                   </span>
                 </p>
+                <p>Ready state {websocketInstance?.socket.readyState}</p>
               </div>
             )}
           </Grid>

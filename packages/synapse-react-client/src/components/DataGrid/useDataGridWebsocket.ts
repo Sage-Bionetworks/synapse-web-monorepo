@@ -2,6 +2,7 @@ import { GridModel } from '@/components/DataGrid/DataGridTypes'
 import { useCRDTModelView } from '@/components/DataGrid/useCRDTModelView'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { DataGridWebSocket } from './DataGridWebSocket'
+import { useGridPresignedUrl } from './hooks/useGridPresignedUrl'
 
 export function useDataGridWebSocket() {
   const [model, setModel] = useState<GridModel | null>(null)
@@ -13,6 +14,8 @@ export function useDataGridWebSocket() {
 
   const wsRef = useRef<DataGridWebSocket | null>(null) // Reference to current WebSocket instance
   const connectingRef = useRef(false) // Tracks if a connection attempt is in progress
+
+  const { mutateAsync: fetchPresignedUrl } = useGridPresignedUrl()
 
   // Checks if a WebSocket exists and is open, to avoid unnecessary reconnects.
   const isUsableSocket = (ws: DataGridWebSocket | null | undefined) =>
@@ -47,14 +50,19 @@ export function useDataGridWebSocket() {
   }, [])
 
   const reconnect = useCallback(
-    (replicaId?: number, url?: string) => {
-      if (!replicaId || !url) return
-
+    async (replicaId?: number, presignedUrl?: string, sessionId?: string) => {
+      if (!replicaId) return
       if (isUsableSocket(wsRef.current)) return
 
       connectingRef.current = false
       setIsConnected(false)
       setIsGridReady(false)
+
+      // Get a fresh presigned URL since old ones can expire before reconnecting
+      const url = await fetchPresignedUrl({
+        sessionId: sessionId ?? '',
+        replicaId,
+      })
 
       createWebsocket(replicaId, url)
     },
