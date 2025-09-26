@@ -1,6 +1,6 @@
 import { ORG_TABLE_COLUMN_NAMES, GC_ORG_IDS } from '@/config/resources'
 import { GCInfo } from '@/config/GrandChallengeResources'
-import { useFetchTableData } from '@/hooks/useOrgQuery'
+import { useFetchTableData } from '@/hooks/useFetchTableData'
 import { CardDeck } from 'synapse-react-client/components/CardDeck/CardDeck'
 import { CardDeckCardProps } from 'synapse-react-client/components/CardDeck/CardDeckCardProps'
 import { ErrorBanner } from 'synapse-react-client'

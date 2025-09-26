@@ -64,18 +64,9 @@ export const organizationDetailsPageSQL = `
   FROM ${TABLE_IDS.Organization_denormalized.id}`
 
 export const D4D_CONTENT_COLUMN_NAMES = {
-  ID: 'id',
-  NAME: 'name',
-  DESCRIPTION: 'description',
-  CATEGORY: 'category',
-  DATASHEET_URL: 'DatasheetURL',
-  DOCUMENTATION_URL: 'DocumentationURL',
-  IS_PUBLIC: 'isPublic',
-  PRODUCED_BY: 'producedBy',
-  PRODUCED_BY_ORG_ID: 'producedByOrgId',
-  TOPICS: 'topics',
-  SUBSTRATES: 'substrates',
-  SUBSTRATES_JSON: 'substrates_json',
+  CONTENT_TYPE: 'content_type', // html or css
+  CONTENT_ID: 'content_id',
+  CONTENT_TEXT: 'content_text',
 }
 export const tableInfo = {
   Organization_denormalized: {

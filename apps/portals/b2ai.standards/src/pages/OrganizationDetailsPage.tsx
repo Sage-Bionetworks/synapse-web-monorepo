@@ -19,14 +19,12 @@ import {
   standardsFtsConfig,
   standardsSql,
 } from '@/config/resources'
-import { useFetchTableData } from '@/hooks/useOrgQuery'
+import { useFetchTableData } from '@/hooks/useFetchTableData'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
-  QueryResultBundle,
-  Query,
 } from '@sage-bionetworks/synapse-types'
 import columnAliases from '@/config/columnAliases'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
@@ -316,18 +314,7 @@ function detailSections({ detailOrg: jsonColCounts }) {
       element: (
         <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
           {({ value }) => {
-            return (
-              <CardContainerLogic
-                cardConfiguration={linkedDataSetCardConfiguration}
-                sql={dataSetSQL}
-                // need a dummy value for search to properly exclude null values and an empty string doesn't work
-                searchParams={{
-                  [DATASET_DENORMALIZED_COLUMN_NAMES.PRODUCED_BY_ORG_ID]:
-                    value ?? 'no value',
-                }}
-                sqlOperator={ColumnMultiValueFunction.HAS}
-              />
-            )
+            return <D4D org_id={String(value)} />
           }}
         </DetailsPageContextConsumer>
       ),
