@@ -114,17 +114,22 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
   )
   const [showModal, setShowModal] = useState(false)
   const [showUnlinkConfirmModal, setShowUnlinkConfirmModal] = useState(false)
+  // Track whether the annotations tooltip is open so we only fetch schema/validation when needed
+  const [annotationsTooltipOpen, setAnnotationsTooltipOpen] = useState(false)
   const [schemaConformance, setSchemaConformance] = useState(
     SchemaConformanceState.NO_SCHEMA,
   )
 
   const { data: boundSchema } = useGetSchemaBinding(entityId, {
-    enabled: inView,
+    // Only fetch the bound schema when the component is in view AND the user has opened the
+    // annotations tooltip. This reduces unnecessary API calls when the tooltip isn't shown.
+    enabled: inView && annotationsTooltipOpen,
     staleTime: 60 * 1000, // 60 seconds
   })
 
   const { data: schemaValidationResults } = useGetValidationResults(entityId, {
-    enabled: inView && !!boundSchema,
+    // Only validate when the tooltip is open and we have a bound schema
+    enabled: inView && annotationsTooltipOpen && !!boundSchema,
     staleTime: 60 * 1000, // 60 seconds
   })
 
@@ -285,6 +290,10 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
                 title={annotationsHtml}
                 enterNextDelay={100}
                 placement="right"
+                // Control the tooltip open state so we can fetch schema/validation only when it's shown
+                open={annotationsTooltipOpen}
+                onOpen={() => setAnnotationsTooltipOpen(true)}
+                onClose={() => setAnnotationsTooltipOpen(false)}
               >
                 <LocalOfferTwoTone
                   aria-hidden={false}

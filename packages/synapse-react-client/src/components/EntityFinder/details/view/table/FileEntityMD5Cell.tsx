@@ -20,7 +20,7 @@ export function FileEntityMD5Cell<T extends EntityIdAndVersionNumber>(
     onSuccess: () => displayToast('MD5 copied to the clipboard', 'success'),
   })
   if (isLoadingEntityBundle) {
-    return <Skeleton width={200} />
+    return <Skeleton width={100} />
   }
   const file = bundle?.fileHandles.find(
     (file: FileHandleWithPreview) => file.isPreview !== true,

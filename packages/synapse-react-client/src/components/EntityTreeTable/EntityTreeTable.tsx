@@ -9,7 +9,7 @@ import {
 import { useGetEntityChildren } from '@/synapse-queries/entity/useGetEntityChildren'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
-import { Box, Button, CircularProgress } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
 import { useGetEntityHeader } from '@/synapse-queries'
 import { EntityBadgeIconsCell } from '../EntityFinder/details/view/table/EntityBadgeIconsCell'
@@ -22,6 +22,7 @@ import { FileEntitySizeCell } from '../EntityFinder/details/view/table/FileEntit
 import { FileEntityMD5Cell } from '../EntityFinder/details/view/table/FileEntityMD5Cell'
 import { AddFileToDownloadListCell } from '../EntityFinder/details/view/table/AddToDownloadListCell'
 import EntityTreeTableContext from './components/EntityTreeTableContext'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 
 type EntityTreeTableProps = {
   rootId: string
@@ -69,11 +70,13 @@ const ChildLoader: React.FC<{
       includeTypes,
       nextPageToken: pageToken,
     },
-    { enabled: isLoading && !isLoaded },
+    {
+      enabled: isLoading && !isLoaded,
+    },
   )
 
   useEffect(() => {
-    if (children && isLoading && !isLoaded) {
+    if (children && isLoading) {
       const childNodes: TreeNode[] = children.page.map((eh: EntityHeader) => ({
         entityHeader: eh,
         parentId: entityId,
@@ -86,7 +89,7 @@ const ChildLoader: React.FC<{
       const nextToken = children.nextPageToken
       onChildrenLoaded(entityId, childNodes, nextToken)
     }
-  }, [children, entityId, isLoading, isLoaded, onChildrenLoaded])
+  }, [children, entityId, isLoading, onChildrenLoaded])
 
   return null
 }
@@ -118,6 +121,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
   // Initialize root node and its children - only run once per rootId
   useEffect(() => {
     if (rootHeader && rootChildren && !loadedChildren.has(rootId)) {
+      // Build the children nodes from the response
       const children: TreeNode[] = rootChildren.page.map(
         (eh: EntityHeader) => ({
           entityHeader: eh,
@@ -130,17 +134,47 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
         }),
       )
 
-      setTree({
-        [rootId]: {
-          entityHeader: rootHeader,
-          depth: 0,
-          isLeaf: false,
-          children,
-        },
-        ...Object.fromEntries(
-          children.map(child => [child.entityHeader.id, child]),
-        ),
+      // Initialize root and merge children into the tree while preserving any
+      // existing subtree entries for those children.
+      setTree(prev => {
+        const existingRoot = prev[rootId]
+        if (
+          existingRoot &&
+          existingRoot.children &&
+          existingRoot.children.length > 0
+        ) {
+          // Already initialized; keep existing tree
+          return prev
+        }
+
+        const childEntries = Object.fromEntries(
+          children.map(child => {
+            const existing = prev[child.entityHeader.id]
+            const merged = existing
+              ? {
+                  ...existing,
+                  ...child,
+                  depth: child.depth,
+                  parentId: child.parentId,
+                  isLeaf: child.isLeaf,
+                }
+              : child
+            return [child.entityHeader.id, merged]
+          }),
+        )
+
+        return {
+          ...prev,
+          [rootId]: {
+            entityHeader: rootHeader,
+            depth: 0,
+            isLeaf: false,
+            children,
+          },
+          ...childEntries,
+        }
       })
+
       // store nextPageToken for root (if any)
       const rootNext = rootChildren.nextPageToken
       setNextPageTokens(prev => ({ ...prev, [rootId]: rootNext }))
@@ -191,15 +225,32 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
             ? [...node.children, ...childNodesWithDepth]
             : childNodesWithDepth
 
+          // Merge children into the tree mapping while preserving existing
+          // subtree entries for those children (so expanding deeper nodes
+          // isn't lost when siblings are added).
+          const mergedChildEntries = Object.fromEntries(
+            mergedChildren.map(child => {
+              const existing = prev[child.entityHeader.id]
+              const merged = existing
+                ? {
+                    ...existing,
+                    ...child,
+                    depth: child.depth,
+                    parentId: child.parentId,
+                    isLeaf: child.isLeaf,
+                  }
+                : child
+              return [child.entityHeader.id, merged]
+            }),
+          )
+
           return {
             ...prev,
             [entityId]: {
               ...node,
               children: mergedChildren,
             },
-            ...Object.fromEntries(
-              mergedChildren.map(child => [child.entityHeader.id, child]),
-            ),
+            ...mergedChildEntries,
           }
         }
         return prev
@@ -207,6 +258,14 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
 
       // store nextPageToken for this parent (if any)
       setNextPageTokens(prev => ({ ...prev, [entityId]: nextPageToken }))
+      // clear the loading page token entry for this parent since the
+      // requested page has completed (this prevents the ChildLoader
+      // from remaining mounted/considered "loading")
+      setLoadingPageTokens(prev => {
+        const next = { ...prev }
+        delete next[entityId]
+        return next
+      })
 
       setLoadingIds(prev => {
         const next = new Set(prev)
@@ -231,7 +290,6 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
     [],
   )
 
-  // Flatten tree for table rows
   // Flatten tree for table rows. Track visited node ids to avoid cycles and
   // duplicate rows when the same entity appears multiple times in the
   // traversal (links, cycles, or bad/multiple parent relationships).
@@ -251,7 +309,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
           depth: node.depth,
           isLeaf: node.isLeaf,
           parentId: node.parentId,
-          versionNumber: undefined, // Could be enhanced to get version info if needed
+          versionNumber: node.entityHeader.versionNumber,
         },
       ]
       if (expanded[node.entityHeader.id] && node.children) {
@@ -267,7 +325,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
             depth: node.depth + 1,
             isLeaf: true,
             parentId: node.entityHeader.id,
-            versionNumber: undefined,
+            versionNumber: node.entityHeader.versionNumber,
             isLoadMore: true,
           })
         }
@@ -400,7 +458,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
                         <div style={{ paddingLeft: original.depth * 16 + 32 }}>
                           {loadingIds.has(original.parentId!) ? (
                             <>
-                              <CircularProgress size={14} />
+                              <SynapseSpinner size={16} />
                               <span>Loading...</span>
                             </>
                           ) : (

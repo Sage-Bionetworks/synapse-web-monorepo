@@ -15,7 +15,7 @@ export function FileEntitySizeCell<T extends EntityIdAndVersionNumber>(
   )
 
   if (isLoading) {
-    return <Skeleton width={200} />
+    return <Skeleton width={100} />
   }
   const file = bundle?.fileHandles.find(
     (file: FileHandleWithPreview) => file.isPreview !== true,
