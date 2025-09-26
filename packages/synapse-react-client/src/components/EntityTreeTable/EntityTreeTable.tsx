@@ -1,14 +1,20 @@
-import React, { useCallback, useMemo, useState, useEffect } from 'react'
+import React, { useCallback, useMemo, useState, useEffect, useRef } from 'react'
 import './EntityTreeTable.css'
 import {
   ColumnDef,
   useReactTable,
   getCoreRowModel,
   flexRender,
+  SortingState,
+  HeaderContext,
 } from '@tanstack/react-table'
 import { useGetEntityChildren } from '@/synapse-queries/entity/useGetEntityChildren'
 import { EntityType } from '@sage-bionetworks/synapse-client'
-import { EntityHeader } from '@sage-bionetworks/synapse-types'
+import {
+  EntityHeader,
+  SortBy,
+  Direction,
+} from '@sage-bionetworks/synapse-types'
 import { Box } from '@mui/material'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
 import { useGetEntityHeader } from '@/synapse-queries'
@@ -23,9 +29,13 @@ import { FileEntityMD5Cell } from '../EntityFinder/details/view/table/FileEntity
 import { AddFileToDownloadListCell } from '../EntityFinder/details/view/table/AddToDownloadListCell'
 import EntityTreeTableContext from './components/EntityTreeTableContext'
 import { AutoLoadMore } from './components/AutoLoadMore'
+import ColumnHeader from '../TanStackTable/ColumnHeader'
 
 type EntityTreeTableProps = {
   rootId: string
+  expandRootByDefault?: boolean
+  showRootNode?: boolean
+  enableSorting?: boolean
 }
 
 type TreeNode = {
@@ -53,22 +63,45 @@ const includeTypes: EntityType[] = [
   EntityType.recordset,
 ]
 
+// Extracted header components to avoid inline component definitions
+const NameColumnHeader = (props: HeaderContext<EntityBundleRow, unknown>) => (
+  <ColumnHeader {...props} title={'Name'} />
+)
+const CreatedOnColumnHeader = (
+  props: HeaderContext<EntityBundleRow, unknown>,
+) => <ColumnHeader {...props} title={'Created On'} />
+const ModifiedOnColumnHeader = (
+  props: HeaderContext<EntityBundleRow, unknown>,
+) => <ColumnHeader {...props} title={'Modified On'} />
+
 const ChildLoader: React.FC<{
   entityId: string
   isLoading: boolean
   isLoaded: boolean
   pageToken?: string
+  sortBy?: SortBy
+  sortDirection?: Direction
   onChildrenLoaded: (
     entityId: string,
     children: TreeNode[],
     nextPageToken?: string,
   ) => void
-}> = ({ entityId, isLoading, isLoaded, pageToken, onChildrenLoaded }) => {
+}> = ({
+  entityId,
+  isLoading,
+  isLoaded,
+  pageToken,
+  sortBy,
+  sortDirection,
+  onChildrenLoaded,
+}) => {
   const { data: children } = useGetEntityChildren(
     {
       parentId: entityId,
       includeTypes,
       nextPageToken: pageToken,
+      sortBy,
+      sortDirection,
     },
     { enabled: isLoading && !isLoaded },
   )
@@ -92,7 +125,12 @@ const ChildLoader: React.FC<{
   return null
 }
 
-export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
+export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
+  rootId,
+  expandRootByDefault = true,
+  showRootNode = true,
+  enableSorting = true,
+}) => {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
   const [tree, setTree] = useState<Record<string, TreeNode>>({})
   const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set())
@@ -103,6 +141,59 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
   const [loadingPageTokens, setLoadingPageTokens] = useState<
     Record<string, string | undefined>
   >({})
+  const [sorting, setSorting] = useState<SortingState>([])
+
+  // Convert TanStack Table sorting to API sorting parameters
+  const getSortingParams = useCallback(() => {
+    if (!sorting.length) return {}
+
+    const firstSort = sorting[0]
+    let sortBy: SortBy | undefined
+
+    switch (firstSort.id) {
+      case 'name':
+        sortBy = SortBy.NAME
+        break
+      case 'createdOn':
+        sortBy = SortBy.CREATED_ON
+        break
+      case 'modifiedOn':
+        sortBy = SortBy.MODIFIED_ON
+        break
+      default:
+        return {}
+    }
+
+    return {
+      sortBy,
+      sortDirection: firstSort.desc ? Direction.DESC : Direction.ASC,
+    }
+  }, [sorting])
+
+  const { sortBy, sortDirection } = getSortingParams()
+
+  // Track previous sorting to detect changes
+  const prevSortingRef = useRef<SortingState>([])
+  const isInitialMount = useRef(true)
+
+  // Reset tree when sorting changes (but not on initial mount)
+  useEffect(() => {
+    const sortingChanged =
+      JSON.stringify(prevSortingRef.current) !== JSON.stringify(sorting)
+
+    if (sortingChanged && !isInitialMount.current) {
+      // Reset tree state when sorting changes to force re-fetch with new sort order
+      setTree({})
+      setLoadedChildren(new Set())
+      setExpanded({})
+      setNextPageTokens({})
+      setLoadingPageTokens({})
+      setLoadingIds(new Set())
+    }
+
+    prevSortingRef.current = sorting
+    isInitialMount.current = false
+  }, [sorting])
 
   // Get root entity header
   const { data: rootHeader } = useGetEntityHeader(rootId)
@@ -112,11 +203,13 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
     {
       parentId: rootId,
       includeTypes,
+      sortBy,
+      sortDirection,
     },
     { enabled: !!rootHeader },
   )
 
-  // Initialize root node and its children - only run once per rootId
+  // Initialize root node and its children
   useEffect(() => {
     if (rootHeader && rootChildren && !loadedChildren.has(rootId)) {
       // Build the children nodes from the response
@@ -124,7 +217,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
         (eh: EntityHeader) => ({
           entityHeader: eh,
           parentId: rootId,
-          depth: 1,
+          depth: showRootNode ? 1 : 0,
           isLeaf: !(
             convertToEntityType(eh.type) === EntityType.project ||
             convertToEntityType(eh.type) === EntityType.folder
@@ -132,19 +225,8 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
         }),
       )
 
-      // Initialize root and merge children into the tree while preserving any
-      // existing subtree entries for those children.
+      // Initialize root and merge children into the tree
       setTree(prev => {
-        const existingRoot = prev[rootId]
-        if (
-          existingRoot &&
-          existingRoot.children &&
-          existingRoot.children.length > 0
-        ) {
-          // Already initialized; keep existing tree
-          return prev
-        }
-
         const childEntries = Object.fromEntries(
           children.map(child => {
             const existing = prev[child.entityHeader.id]
@@ -165,7 +247,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
           ...prev,
           [rootId]: {
             entityHeader: rootHeader,
-            depth: 0,
+            depth: showRootNode ? 0 : -1,
             isLeaf: false,
             children,
           },
@@ -181,8 +263,20 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
       if (!rootNext) {
         setLoadedChildren(prev => new Set(prev).add(rootId))
       }
+
+      // Expand root node by default if the flag is set
+      if (expandRootByDefault) {
+        setExpanded(prev => ({ ...prev, [rootId]: true }))
+      }
     }
-  }, [rootHeader, rootChildren, rootId])
+  }, [
+    rootHeader,
+    rootChildren,
+    rootId,
+    expandRootByDefault,
+    showRootNode,
+    loadedChildren,
+  ])
 
   // Handler for expanding nodes
   const handleToggleExpanded = useCallback(
@@ -331,71 +425,109 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
       }
       return rows
     },
-    [expanded, tree, nextPageTokens, loadingIds, loadingPageTokens],
+    [expanded, tree, nextPageTokens],
   )
 
   const rows: EntityBundleRow[] = useMemo(() => {
     const rootNode = tree[rootId]
-    return rootNode ? flattenTree(rootId, new Set<string>()) : []
-  }, [tree, rootId, flattenTree])
+    if (!rootNode) return []
+
+    if (showRootNode) {
+      return flattenTree(rootId, new Set<string>())
+    } else {
+      // If root node is not shown, start with its children
+      const rows: EntityBundleRow[] = []
+      if (expanded[rootId] && rootNode.children) {
+        rootNode.children.forEach(child => {
+          rows.push(...flattenTree(child.entityHeader.id, new Set<string>()))
+        })
+        // If there is a next page token for the root, add a synthetic 'Load more' row
+        const nextToken = nextPageTokens[rootId]
+        if (nextToken) {
+          rows.push({
+            entityId: `${rootId}::loadmore::${nextToken}`,
+            entityHeader: rootNode.entityHeader,
+            depth: 0,
+            isLeaf: true,
+            parentId: rootId,
+            versionNumber: rootNode.entityHeader.versionNumber,
+            isLoadMore: true,
+          })
+        }
+      }
+      return rows
+    }
+  }, [tree, rootId, flattenTree, showRootNode, expanded, nextPageTokens])
 
   // Table columns
   const columns = useMemo<ColumnDef<EntityBundleRow>[]>(
     () => [
       {
+        accessorKey: 'entityHeader.name',
         id: 'name',
-        header: 'Name',
+        header: NameColumnHeader,
         cell: NameCell,
+        enableSorting: enableSorting,
       },
       {
         id: 'badges',
         header: 'Badges',
         cell: EntityBadgeIconsCell,
+        enableSorting: false,
       },
       {
         id: 'id',
         header: 'ID',
         cell: IdCell,
+        enableSorting: false,
       },
       {
+        accessorKey: 'entityHeader.createdOn',
         id: 'createdOn',
-        header: 'Created On',
+        header: CreatedOnColumnHeader,
         cell: CreatedOnCell,
+        enableSorting: enableSorting,
       },
       {
+        accessorKey: 'entityHeader.modifiedOn',
         id: 'modifiedOn',
-        header: 'Modified On',
+        header: ModifiedOnColumnHeader,
         cell: ModifiedOnCell,
+        enableSorting: enableSorting,
       },
       {
         id: 'modifiedBy',
         header: 'Modified By',
         cell: ModifiedByCell,
+        enableSorting: false,
       },
       {
         id: 'size',
         header: 'Size',
         cell: FileEntitySizeCell,
+        enableSorting: false,
       },
       {
         id: 'md5',
         header: 'MD5',
         cell: FileEntityMD5Cell,
+        enableSorting: false,
       },
       {
         id: 'download',
         header: 'Download',
         cell: AddFileToDownloadListCell,
+        enableSorting: false,
       },
     ],
-    [expanded, loadingIds, handleToggleExpanded],
+    [enableSorting],
   )
 
   const table = useReactTable({
     data: rows,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    state: { expanded },
+    state: { expanded, sorting },
     // Make row ids robust: include parent/depth for normal rows so that the
     // same entity appearing in different places (or synthetic rows) won't
     // collide. Keep load-more rows as-is since they are already unique.
@@ -404,6 +536,9 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
         ? row.entityId
         : `${row.entityId}::${row.parentId ?? 'root'}::${row.depth}`,
     manualExpanding: true,
+    manualSorting: true,
+    enableSorting,
+    onSortingChange: setSorting,
   })
 
   return (
@@ -425,6 +560,8 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
             isLoading={loadingIds.has(entityId)}
             isLoaded={loadedChildren.has(entityId)}
             pageToken={loadingPageTokens[entityId]}
+            sortBy={sortBy}
+            sortDirection={sortDirection}
             onChildrenLoaded={handleChildrenLoaded}
           />
         ))}
