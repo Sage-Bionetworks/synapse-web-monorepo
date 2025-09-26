@@ -9,7 +9,7 @@ import {
 import { useGetEntityChildren } from '@/synapse-queries/entity/useGetEntityChildren'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
-import { Box, Button } from '@mui/material'
+import { Box } from '@mui/material'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
 import { useGetEntityHeader } from '@/synapse-queries'
 import { EntityBadgeIconsCell } from '../EntityFinder/details/view/table/EntityBadgeIconsCell'
@@ -22,7 +22,7 @@ import { FileEntitySizeCell } from '../EntityFinder/details/view/table/FileEntit
 import { FileEntityMD5Cell } from '../EntityFinder/details/view/table/FileEntityMD5Cell'
 import { AddFileToDownloadListCell } from '../EntityFinder/details/view/table/AddToDownloadListCell'
 import EntityTreeTableContext from './components/EntityTreeTableContext'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { AutoLoadMore } from './components/AutoLoadMore'
 
 type EntityTreeTableProps = {
   rootId: string
@@ -315,16 +315,9 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
           rows.push(...flattenTree(child.entityHeader.id, visited))
         })
         // If there is a next page token for this node, add a synthetic 'Load more' row
-        // But only if we're not currently loading more children for this node
         const nextToken = nextPageTokens[node.entityHeader.id]
-        const isCurrentlyLoading =
-          loadingIds.has(node.entityHeader.id) ||
-          Object.prototype.hasOwnProperty.call(
-            loadingPageTokens,
-            node.entityHeader.id,
-          )
 
-        if (nextToken && !isCurrentlyLoading) {
+        if (nextToken) {
           rows.push({
             entityId: `${node.entityHeader.id}::loadmore::${nextToken}`,
             entityHeader: node.entityHeader,
@@ -462,28 +455,16 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
                   return (
                     <tr key={row.id}>
                       <td colSpan={colCount}>
-                        {/* Render a simple load more action aligned to depth */}
-                        <div style={{ paddingLeft: original.depth * 16 + 32 }}>
-                          {isLoading ? (
-                            <>
-                              <SynapseSpinner size={16} />
-                              <span>Loading...</span>
-                            </>
-                          ) : (
-                            <Button
-                              variant="outlined"
-                              size="small"
-                              onClick={() => {
-                                loadMoreChildren(
-                                  original.parentId!,
-                                  nextPageTokens[original.parentId!],
-                                )
-                              }}
-                            >
-                              Show more...
-                            </Button>
-                          )}
-                        </div>
+                        <AutoLoadMore
+                          depth={original.depth}
+                          isLoading={isLoading}
+                          onLoadMore={() => {
+                            loadMoreChildren(
+                              original.parentId!,
+                              nextPageTokens[original.parentId!],
+                            )
+                          }}
+                        />
                       </td>
                     </tr>
                   )

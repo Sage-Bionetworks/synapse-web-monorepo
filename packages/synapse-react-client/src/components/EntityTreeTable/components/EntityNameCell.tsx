@@ -5,7 +5,6 @@ import { IconButton, Skeleton } from '@mui/material'
 import { ChevronRight, ExpandMore } from '@mui/icons-material'
 import { useEntityTreeTableContext } from './EntityTreeTableContext'
 import { EntityLink } from '@/components/EntityLink'
-import { useGetEntityBundle } from '@/synapse-queries'
 
 export const NameCell: React.FC<CellContext<EntityBundleRow, unknown>> = ({
   row,
@@ -13,10 +12,6 @@ export const NameCell: React.FC<CellContext<EntityBundleRow, unknown>> = ({
   const { expanded, loadingIds, handleToggleExpanded } =
     useEntityTreeTableContext()
   const { entityHeader, depth, isLeaf } = row.original
-  const { data: bundle, isLoading: isEntityBundleLoading } = useGetEntityBundle(
-    row.original.entityId,
-    row.original.versionNumber,
-  )
   const isExpanded = !!expanded[entityHeader.id]
   const hasChildren = !isLeaf
   return (
@@ -52,12 +47,10 @@ export const NameCell: React.FC<CellContext<EntityBundleRow, unknown>> = ({
           },
         }}
       >
-        {bundle && <EntityLink entity={bundle.entity} />}
+        <EntityLink entity={entityHeader} />
       </Box>
 
-      {(loadingIds.has(entityHeader.id) || isEntityBundleLoading) && (
-        <Skeleton width={'100%'} />
-      )}
+      {loadingIds.has(entityHeader.id) && <Skeleton width={'100%'} />}
     </Box>
   )
 }
