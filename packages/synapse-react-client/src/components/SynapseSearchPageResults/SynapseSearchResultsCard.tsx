@@ -4,13 +4,9 @@ import {
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
 import { StyledComponent } from '@emotion/styled'
-import {
-  Download as DownloadIcon,
-  Update as UpdateIcon,
-} from '@mui/icons-material'
+import { Update as UpdateIcon } from '@mui/icons-material'
 import {
   Box,
-  Button,
   Chip,
   Link,
   Paper,
@@ -18,15 +14,16 @@ import {
   styled,
   Typography,
 } from '@mui/material'
-import { EntityType } from '@sage-bionetworks/synapse-client'
 import dayjs from 'dayjs'
 import { EntityTypeIcon } from '../EntityIcon'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import FavoriteButton from '../favorites/FavoriteButton'
+import { EntityDownloadButton } from '../EntityDownloadButton/EntityDownloadButton'
 
 export type SynapseSearchResultsCardProps = {
   entityId: string
   name: string
-  entityType: string
+  entityType: EntityType
   modifiedOn: number
 }
 
@@ -74,16 +71,18 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
           }}
         >
           <FavoriteButton entityId={props.entityId} />
-          <Button variant="outlined" startIcon={<DownloadIcon />}>
-            Download
-          </Button>
+          <EntityDownloadButton
+            entityId={props.entityId}
+            name={props.name}
+            entityType={props.entityType}
+          />
         </Box>
       </Box>
       <Box>
         <Chip
           icon={
             <EntityTypeIcon
-              type={props.entityType as EntityType}
+              type={props.entityType}
               style={{
                 color: 'inherit',
               }}
