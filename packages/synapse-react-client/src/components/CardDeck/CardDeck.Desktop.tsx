@@ -50,7 +50,7 @@ export default function CardDeckDesktop({
             )}
           >
             {' '}
-            {cardDeckType === 'b2ai' ? (
+            {['b2ai', 'b2ai-detail-card'].includes(cardDeckType ?? '') ? (
               <Link href={ctaButtonURL}>{title}</Link>
             ) : (
               title
@@ -65,7 +65,7 @@ export default function CardDeckDesktop({
         )}
       >
         <p> {description} </p>
-        {cardDeckType === 'b2ai' ? null : (
+        {['b2ai', 'b2ai-detail-card'].includes(cardDeckType ?? '') ? null : (
           <LargeButton
             color="primary"
             variant="outlined" // Update variant based on cardDeckType

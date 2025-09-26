@@ -1,19 +1,105 @@
 import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2'
 
 export const TABLE_IDS = {
-  Challenges: { name: 'Challenges', id: 'syn65913973.1' }, // the only reason for this table is to get the GC images
   // CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
-  DST_denormalized: { name: 'DST_denormalized', id: 'syn65676531.67' },
+  // DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
+  DST_denormalized: {
+    name: 'DST_denormalized',
+    // version: 'syn65676531.67', /* DST_denormalized_current */,
+    id: 'syn65676531.67',
+    // id: 'syn69062839' /* DST_denormalized_current */,
+  },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
-  DataSet_denormalized: { name: 'DataSet_denormalized', id: 'syn68258237.3' },
-  DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
+  DataSet_denormalized: {
+    name: 'DataSet_denormalized',
+    version: 'syn68258237.3',
+    id: 'syn69696299' /* DataSet_denormalized_current */,
+  },
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
   DataTopic: { name: 'DataTopic', id: 'syn63096835' },
-  Organization: { name: 'Organization', id: 'syn63096836.31' },
-  // UseCase: { name: 'UseCase', id: 'syn63096837' }, // not using this, maybe will in the future?
+  // Organization: { name: 'Organization', id: 'syn63096836.31' },
+  Organization_denormalized: {
+    name: 'Organization',
+    id: 'syn69693360.20',
+    xid: 'syn69696403' /* Organization_denormalized_current */,
+  },
+  // D4D_content: { name: 'D4D_content', id: 'syn63096836.31' },
+  D4D_content: {
+    name: 'D4D_content',
+    version: 'syn68885644.2',
+    id: 'syn69696497' /* D4D_content_current */,
+  },
+  // UseCase: { name: 'UseCase', id: 'syn63096837' }, // not using this, might in the future?
 }
 
-export const DST_TABLE_COLUMN_NAMES = {
+export type ColumnNames = Record<string, string>
+
+export const ORG_TABLE_COLUMN_NAMES: ColumnNames = {
+  ID: 'id',
+  NAME: 'name',
+  DESCRIPTION: 'description',
+  ROR_ID: 'ror_id',
+  WIKIDATA_ID: 'wikidata_id',
+  URL: 'url',
+  SUBCLASS_OF: 'subclass_of',
+  // new (and likely to change):
+  MAIN_ORGANIZATION_JSON: 'main_organization_json',
+  ASSOCIATED_ORGANIZATION_JSON: 'associated_organization_json',
+  RELEVANT_STANDARDS: 'relevant_standards',
+  RELEVANT_STANDARDS_JSON: 'relevant_standards_json',
+  GOVERNED_STANDARDS: 'governed_standards',
+  GOVERNED_STANDARDS_JSON: 'governed_standards_json',
+  DATASETS: 'datasets',
+  DATASET_NAMES: 'dataset_names',
+  DATASET_JSON: 'dataset_json',
+  D4D: 'd4d',
+} as const
+
+export const organizationDetailsPageSQL = `
+  SELECT  
+    ${Object.values(ORG_TABLE_COLUMN_NAMES).join(', ')},
+    concat('/Explore/Organization/OrganizationDetailsPage?id=', ${
+      ORG_TABLE_COLUMN_NAMES.ID
+    }) AS orgPageLink
+  FROM ${TABLE_IDS.Organization_denormalized.id}`
+
+export const D4D_CONTENT_COLUMN_NAMES = {
+  CONTENT_TYPE: 'content_type', // html or css
+  CONTENT_ID: 'content_id',
+  CONTENT_TEXT: 'content_text',
+}
+export const tableInfo = {
+  Organization_denormalized: {
+    tableColNames: ORG_TABLE_COLUMN_NAMES,
+    sql: organizationDetailsPageSQL,
+  },
+  D4D_content: {
+    tableColNames: D4D_CONTENT_COLUMN_NAMES,
+    sql: `SELECT * FROM ${TABLE_IDS.D4D_content.id}`,
+  },
+}
+export const GC_ORG_IDS = [114, 115, 116, 117].map(id => `B2AI_ORG:${id}`)
+
+export const DATASET_DENORMALIZED_COLUMN_NAMES = {
+  ID: 'id',
+  NAME: 'name',
+  DESCRIPTION: 'description',
+  CATEGORY: 'category',
+  DATASHEET_URL: 'DatasheetURL',
+  DOCUMENTATION_URL: 'DocumentationURL',
+  IS_PUBLIC: 'isPublic',
+  PRODUCED_BY: 'producedBy',
+  PRODUCED_BY_ORG_ID: 'producedByOrgId',
+  TOPICS: 'topics',
+  SUBSTRATES: 'substrates',
+  SUBSTRATES_JSON: 'substrates_json',
+}
+
+export const dataSetSQL = `SELECT  ${Object.values(
+  DATASET_DENORMALIZED_COLUMN_NAMES,
+).join(', ')} FROM ${TABLE_IDS.DataSet_denormalized.id}`
+
+export const DST_TABLE_COLUMN_NAMES: ColumnNames = {
   ID: 'id',
   ACRONYM: 'acronym',
   NAME: 'name',
@@ -39,46 +125,7 @@ export const DST_TABLE_COLUMN_NAMES = {
   CONTRIBUTION_dATE: 'contributionDate',
   RELATED_TO: 'relatedTo',
   USED_IN_BRIDGE2AI: 'usedInBridge2AI',
-}
-export const ORG_TABLE_COLUMN_NAMES = {
-  ID: 'id',
-  NAME: 'name',
-  DESCRIPTION: 'description',
-  ROR_ID: 'ror_id',
-  WIKIDATA_ID: 'wikidata_id',
-  URL: 'url',
-  SUBCLASS_OF: 'subclass_of',
-}
-export const ORG_TABLE_JSON_COLUMNS = []
-
-export const organizationDetailsPageSQL = `
-  SELECT  
-    ${Object.values(ORG_TABLE_COLUMN_NAMES).join(', ')},
-    concat('/Explore/Organization/OrganizationDetailsPage?id=', ${
-      ORG_TABLE_COLUMN_NAMES.ID
-    }) AS orgPageLink
-  FROM ${TABLE_IDS.Organization.id}`
-
-export const GC_ORG_IDS = [114, 115, 116, 117].map(id => `'B2AI_ORG:${id}'`)
-
-export const DATASET_DENORMALIZED_COLUMN_NAMES = {
-  ID: 'id',
-  NAME: 'name',
-  DESCRIPTION: 'description',
-  CATEGORY: 'category',
-  DATASHEET_URL: 'DatasheetURL',
-  DOCUMENTATION_URL: 'DocumentationURL',
-  IS_PUBLIC: 'isPublic',
-  PRODUCED_BY: 'producedBy',
-  PRODUCED_BY_ORG_ID: 'producedByOrgId',
-  TOPICS: 'topics',
-  SUBSTRATES: 'substrates',
-  SUBSTRATES_JSON: 'substrates_json',
-}
-
-export const dataSetSQL = `SELECT  ${Object.values(
-  DATASET_DENORMALIZED_COLUMN_NAMES,
-).join(', ')} FROM ${TABLE_IDS.DataSet_denormalized.id}`
+} as const
 
 // for the Explore page table:
 //  had to generate RELEVANT_ORG_LINKS during DST_denormalized creation

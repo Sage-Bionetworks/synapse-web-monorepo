@@ -36,3 +36,34 @@
 #footer {
   background: linear-gradient(263.11deg, #8bb4ce 2.14%, #3e7293 50.63%);
 }
+
+// Custom styling for detail page cards to make them wider
+.CardDeck {
+  &__Desktop {
+    &--b2ai-detail-card {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      gap: 20px;
+      padding-bottom: 50px;
+      margin-left: 0px;
+      margin-right: 0px;
+    }
+  }
+
+  &__Card {
+    &--b2ai-detail-card {
+      width: 100%;
+      display: flex;
+      min-height: 200px;
+      flex-direction: row;
+      box-shadow: none;
+      background: #ffffff;
+      margin: 0px;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 20px;
+    }
+  }
+}

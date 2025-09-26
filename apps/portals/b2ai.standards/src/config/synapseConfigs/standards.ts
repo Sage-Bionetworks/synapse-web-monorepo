@@ -57,11 +57,3 @@ export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     ftsConfig: standardsFtsConfig,
   },
 }
-
-export const standardsDetailPageProps: StandaloneQueryWrapperProps = {
-  sql: standardsSql,
-  rgbIndex: standardsRgbIndex,
-  columnLinks: standardsColumnLinks,
-  hideDownload: true,
-  sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
-}
