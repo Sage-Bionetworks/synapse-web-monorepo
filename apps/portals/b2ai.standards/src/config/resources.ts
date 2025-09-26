@@ -20,7 +20,7 @@ export const TABLE_IDS = {
   // Organization: { name: 'Organization', id: 'syn63096836.31' },
   Organization_denormalized: {
     name: 'Organization',
-    id: 'syn69693360.7',
+    id: 'syn69693360.20',
     xid: 'syn69696403' /* Organization_denormalized_current */,
   },
   // D4D_content: { name: 'D4D_content', id: 'syn63096836.31' },
@@ -29,10 +29,68 @@ export const TABLE_IDS = {
     version: 'syn68885644.2',
     id: 'syn69696497' /* D4D_content_current */,
   },
-  // UseCase: { name: 'UseCase', id: 'syn63096837' }, // not using this, maybe will in the future?
+  // UseCase: { name: 'UseCase', id: 'syn63096837' }, // not using this, might in the future?
 }
 
-export const DST_TABLE_COLUMN_NAMES = {
+export type ColumnNames = Record<string, string>
+
+export const ORG_TABLE_COLUMN_NAMES: ColumnNames = {
+  ID: 'id',
+  NAME: 'name',
+  DESCRIPTION: 'description',
+  ROR_ID: 'ror_id',
+  WIKIDATA_ID: 'wikidata_id',
+  URL: 'url',
+  SUBCLASS_OF: 'subclass_of',
+  // new (and likely to change):
+  MAIN_ORGANIZATION_JSON: 'main_organization_json',
+  ASSOCIATED_ORGANIZATION_JSON: 'associated_organization_json',
+  RELEVANT_STANDARDS: 'relevant_standards',
+  RELEVANT_STANDARDS_JSON: 'relevant_standards_json',
+  GOVERNED_STANDARDS: 'governed_standards',
+  GOVERNED_STANDARDS_JSON: 'governed_standards_json',
+  DATASETS: 'datasets',
+  DATASET_NAMES: 'dataset_names',
+  DATASET_JSON: 'dataset_json',
+  D4D: 'd4d',
+} as const
+
+export const organizationDetailsPageSQL = `
+  SELECT  
+    ${Object.values(ORG_TABLE_COLUMN_NAMES).join(', ')},
+    concat('/Explore/Organization/OrganizationDetailsPage?id=', ${
+      ORG_TABLE_COLUMN_NAMES.ID
+    }) AS orgPageLink
+  FROM ${TABLE_IDS.Organization_denormalized.id}`
+
+export const tableInfo = {
+  Organization_denormalized: {
+    tableColNames: ORG_TABLE_COLUMN_NAMES,
+    sql: organizationDetailsPageSQL,
+  },
+}
+export const GC_ORG_IDS = [114, 115, 116, 117].map(id => `B2AI_ORG:${id}`)
+
+export const DATASET_DENORMALIZED_COLUMN_NAMES = {
+  ID: 'id',
+  NAME: 'name',
+  DESCRIPTION: 'description',
+  CATEGORY: 'category',
+  DATASHEET_URL: 'DatasheetURL',
+  DOCUMENTATION_URL: 'DocumentationURL',
+  IS_PUBLIC: 'isPublic',
+  PRODUCED_BY: 'producedBy',
+  PRODUCED_BY_ORG_ID: 'producedByOrgId',
+  TOPICS: 'topics',
+  SUBSTRATES: 'substrates',
+  SUBSTRATES_JSON: 'substrates_json',
+}
+
+export const dataSetSQL = `SELECT  ${Object.values(
+  DATASET_DENORMALIZED_COLUMN_NAMES,
+).join(', ')} FROM ${TABLE_IDS.DataSet_denormalized.id}`
+
+export const DST_TABLE_COLUMN_NAMES: ColumnNames = {
   ID: 'id',
   ACRONYM: 'acronym',
   NAME: 'name',
@@ -58,56 +116,7 @@ export const DST_TABLE_COLUMN_NAMES = {
   CONTRIBUTION_dATE: 'contributionDate',
   RELATED_TO: 'relatedTo',
   USED_IN_BRIDGE2AI: 'usedInBridge2AI',
-}
-export const ORG_TABLE_COLUMN_NAMES = {
-  ID: 'id',
-  NAME: 'name',
-  DESCRIPTION: 'description',
-  ROR_ID: 'ror_id',
-  WIKIDATA_ID: 'wikidata_id',
-  URL: 'url',
-  SUBCLASS_OF: 'subclass_of',
-  // new (and likely to change):
-  MAIN_ORGANIZATION_JSON: 'main_organization_json',
-  ASSSOCIATED_ORGANIZATION_JSON: 'asssociated_organization_json',
-  RELEVANT_STANDARDS: 'relevant_standards',
-  RELEVANT_STANDARDS_JSON: 'relevant_standards_json',
-  GOVERNED_STANDARDS: 'governed_standards',
-  GOVERNED_STANDARDS_JSON: 'governed_standards_json',
-  DATASETS: 'datasets',
-  DATASET_NAMES: 'dataset_names',
-  DATASET_JSON: 'dataset_json',
-}
-export const ORG_TABLE_JSON_COLUMNS = []
-
-export const organizationDetailsPageSQL = `
-  SELECT  
-    ${Object.values(ORG_TABLE_COLUMN_NAMES).join(', ')},
-    concat('/Explore/Organization/OrganizationDetailsPage?id=', ${
-      ORG_TABLE_COLUMN_NAMES.ID
-    }) AS orgPageLink
-  FROM ${TABLE_IDS.Organization_denormalized.id}`
-
-export const GC_ORG_IDS = [114, 115, 116, 117].map(id => `B2AI_ORG:${id}`)
-
-export const DATASET_DENORMALIZED_COLUMN_NAMES = {
-  ID: 'id',
-  NAME: 'name',
-  DESCRIPTION: 'description',
-  CATEGORY: 'category',
-  DATASHEET_URL: 'DatasheetURL',
-  DOCUMENTATION_URL: 'DocumentationURL',
-  IS_PUBLIC: 'isPublic',
-  PRODUCED_BY: 'producedBy',
-  PRODUCED_BY_ORG_ID: 'producedByOrgId',
-  TOPICS: 'topics',
-  SUBSTRATES: 'substrates',
-  SUBSTRATES_JSON: 'substrates_json',
-}
-
-export const dataSetSQL = `SELECT  ${Object.values(
-  DATASET_DENORMALIZED_COLUMN_NAMES,
-).join(', ')} FROM ${TABLE_IDS.DataSet_denormalized.id}`
+} as const
 
 // for the Explore page table:
 //  had to generate RELEVANT_ORG_LINKS during DST_denormalized creation
