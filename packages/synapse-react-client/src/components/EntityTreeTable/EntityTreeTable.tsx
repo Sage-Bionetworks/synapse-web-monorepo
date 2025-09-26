@@ -1,4 +1,5 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react'
+import './EntityTreeTable.css'
 import {
   ColumnDef,
   useReactTable,
