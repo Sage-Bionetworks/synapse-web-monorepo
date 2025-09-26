@@ -146,8 +146,8 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
 
   // Responsive design hooks
   const theme = useTheme()
-  const isLargeAndDown = useMediaQuery(theme.breakpoints.down('lg'))
-  const isSmallAndDown = useMediaQuery(theme.breakpoints.down('sm'))
+  const isXtraLarge = useMediaQuery(theme.breakpoints.up('xl'))
+  const isMediumAndUp = useMediaQuery(theme.breakpoints.up('md'))
 
   // Convert TanStack Table sorting to API sorting parameters
   const getSortingParams = useCallback(() => {
@@ -493,7 +493,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
         enableSorting: enableSorting,
       },
     ]
-    if (!isSmallAndDown) {
+    if (isMediumAndUp) {
       baseColumns.push({
         id: 'badges',
         header: 'Badges',
@@ -507,7 +507,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
         enableSorting: false,
       })
     }
-    if (!isLargeAndDown) {
+    if (isXtraLarge) {
       baseColumns.push({
         accessorKey: 'entityHeader.createdOn',
         id: 'createdOn',
@@ -517,7 +517,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
       })
     }
 
-    if (!isSmallAndDown) {
+    if (isMediumAndUp) {
       baseColumns.push({
         accessorKey: 'entityHeader.modifiedOn',
         id: 'modifiedOn',
@@ -527,7 +527,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
       })
     }
 
-    if (!isLargeAndDown) {
+    if (isXtraLarge) {
       baseColumns.push({
         id: 'modifiedBy',
         header: 'Modified By',
@@ -536,7 +536,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
       })
     }
 
-    if (!isSmallAndDown) {
+    if (isMediumAndUp) {
       baseColumns.push({
         id: 'size',
         header: 'Size',
@@ -544,7 +544,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
         enableSorting: false,
       })
     }
-    if (!isLargeAndDown) {
+    if (isXtraLarge) {
       baseColumns.push({
         id: 'md5',
         header: 'MD5',
@@ -561,7 +561,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     })
 
     return baseColumns
-  }, [enableSorting, isLargeAndDown, isSmallAndDown])
+  }, [enableSorting, isXtraLarge, isMediumAndUp])
 
   const table = useReactTable({
     data: rows,
