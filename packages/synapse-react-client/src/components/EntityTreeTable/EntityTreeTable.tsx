@@ -21,6 +21,7 @@ import { useGetEntityHeader } from '@/synapse-queries'
 import { EntityBadgeIconsCell } from '../EntityFinder/details/view/table/EntityBadgeIconsCell'
 import { NameCell } from './components/EntityNameCell'
 import { IdCell } from './components/IdCell'
+import { IdColumnHeader } from './components/IdColumnHeader'
 import { ModifiedOnCell } from '../EntityFinder/details/view/table/ModifiedOnCell'
 import { ModifiedByCell } from '../EntityFinder/details/view/table/ModifiedByCell'
 import { CreatedOnCell } from '../EntityFinder/details/view/table/CreatedOnCell'
@@ -494,7 +495,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
       },
       {
         id: 'id',
-        header: 'ID',
+        header: IdColumnHeader,
         cell: IdCell,
         enableSorting: false,
       },
