@@ -7,6 +7,7 @@ import { AuthenticationServices2FAApi } from './generated/apis/AuthenticationSer
 import { AuthenticationServicesApi } from './generated/apis/AuthenticationServicesApi'
 import { CertifiedUserServicesApi } from './generated/apis/CertifiedUserServicesApi'
 import { ChallengeServicesApi } from './generated/apis/ChallengeServicesApi'
+import { CurationTaskServicesApi } from './generated/apis/CurationTaskServicesApi'
 import { DataAccessServicesApi } from './generated/apis/DataAccessServicesApi'
 import { DiscussionServicesApi } from './generated/apis/DiscussionServicesApi'
 import { DockerAuthorizationServicesApi } from './generated/apis/DockerAuthorizationServicesApi'
@@ -27,6 +28,7 @@ import { MembershipInvitationServicesApi } from './generated/apis/MembershipInvi
 import { MembershipRequestServicesApi } from './generated/apis/MembershipRequestServicesApi'
 import { MessageServicesApi } from './generated/apis/MessageServicesApi'
 import { OpenIDConnectServicesApi } from './generated/apis/OpenIDConnectServicesApi'
+import { PortalsServicesApi } from './generated/apis/PortalsServicesApi'
 import { PrincipalServicesApi } from './generated/apis/PrincipalServicesApi'
 import { ProjectSettingsServicesApi } from './generated/apis/ProjectSettingsServicesApi'
 import { RecycleBinServicesApi } from './generated/apis/RecycleBinServicesApi'
@@ -42,7 +44,6 @@ import { VerificationServicesApi } from './generated/apis/VerificationServicesAp
 import { WebhookServicesApi } from './generated/apis/WebhookServicesApi'
 import { WikiPageServices2Api } from './generated/apis/WikiPageServices2Api'
 import { WikiPageServicesApi } from './generated/apis/WikiPageServicesApi'
-import { PortalsServicesApi } from './generated/apis/PortalsServicesApi'
 import { ErrorResponse } from './generated/models/ErrorResponse'
 import {
   Configuration,
@@ -50,8 +51,8 @@ import {
   ErrorContext,
   ResponseContext,
 } from './generated/runtime'
-import { fetchResponseWithExponentialTimeout } from './util/fetchWithExponentialTimeout'
 import { NETWORK_UNAVAILABLE_MESSAGE } from './util/Constants'
+import { fetchResponseWithExponentialTimeout } from './util/fetchWithExponentialTimeout'
 import { SynapseClientError } from './util/SynapseClientError'
 
 const DEFAULT_CONFIG_PARAMETERS: ConfigurationParameters = {
@@ -109,6 +110,7 @@ export class SynapseClient {
   public authenticationServicesClient: AuthenticationServicesApi
   public certifiedUserServicesClient: CertifiedUserServicesApi
   public challengeServicesClient: ChallengeServicesApi
+  public curationTaskServicesClient: CurationTaskServicesApi
   public dataAccessServicesClient: DataAccessServicesApi
   public discussionServicesClient: DiscussionServicesApi
   public dockerAuthorizationServicesClient: DockerAuthorizationServicesApi
@@ -174,6 +176,7 @@ export class SynapseClient {
       configuration,
     )
     this.challengeServicesClient = new ChallengeServicesApi(configuration)
+    this.curationTaskServicesClient = new CurationTaskServicesApi(configuration)
     this.dataAccessServicesClient = new DataAccessServicesApi(configuration)
     this.discussionServicesClient = new DiscussionServicesApi(configuration)
     this.dockerAuthorizationServicesClient = new DockerAuthorizationServicesApi(

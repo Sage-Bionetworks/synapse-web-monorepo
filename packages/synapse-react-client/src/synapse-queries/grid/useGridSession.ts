@@ -1,16 +1,20 @@
+import { KeyFactory } from '@/synapse-queries/index'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import startGridSession from '@/utils/functions/GridApiUtils'
 import {
   CreateGridRequest,
   CreateGridResponse,
   CreateReplicaResponse,
+  ListGridSessionsRequest,
   ListGridSessionsResponse,
   PostRepoV1GridSessionSessionIdReplicaRequest,
+  SynapseClient,
 } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   InfiniteData,
   QueryKey,
+  queryOptions,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
   useMutation,
@@ -69,9 +73,30 @@ export function useDeleteGridSession(
   })
 }
 
+/**
+ * Get the queryOptions to request list of Grid sessions. For an infinite query, use `useGetGridSessionsInfinite`
+ * @param request
+ * @param context
+ */
+export const getGridSessionsQuery = (
+  request: ListGridSessionsRequest,
+  context: {
+    keyFactory: KeyFactory
+    synapseClient: SynapseClient
+  },
+) =>
+  queryOptions({
+    queryKey: context.keyFactory.getGridSessionListKey(request),
+    queryFn: () =>
+      context.synapseClient.gridServicesClient.postRepoV1GridSessionList({
+        listGridSessionsRequest: request,
+      }),
+  })
+
 export function useGetGridSessionsInfinite<
   TData = InfiniteData<ListGridSessionsResponse>,
 >(
+  request: Omit<ListGridSessionsRequest, 'nextPageToken'>,
   options?: Partial<
     UseInfiniteQueryOptions<
       ListGridSessionsResponse,
@@ -92,10 +117,13 @@ export function useGetGridSessionsInfinite<
     ListGridSessionsResponse['nextPageToken']
   >({
     ...options,
-    queryKey: keyFactory.getGridSessionListKey(),
+    queryKey: keyFactory.getGridSessionListKey(request),
     queryFn: async context =>
       await synapseClient.gridServicesClient.postRepoV1GridSessionList({
-        listGridSessionsRequest: { nextPageToken: context.pageParam },
+        listGridSessionsRequest: {
+          ...request,
+          nextPageToken: context.pageParam,
+        },
       }),
     initialPageParam: undefined,
     getNextPageParam: page => page.nextPageToken,
