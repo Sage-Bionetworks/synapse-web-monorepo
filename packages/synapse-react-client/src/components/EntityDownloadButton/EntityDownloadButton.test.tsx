@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { EntityDownloadButton } from './EntityDownloadButton'
 
-// Test that the function doesn't throw an error for any entity type
+// This test will fail if a new EntityType is added and not handled in getDownloadActionsForEntityType
 describe('EntityDownloadButton', () => {
   test.each(Object.values(EntityType))(
     'getDownloadActionsForEntityType: %s',
