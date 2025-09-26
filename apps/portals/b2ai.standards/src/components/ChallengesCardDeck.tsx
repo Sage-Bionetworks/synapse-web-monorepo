@@ -1,6 +1,6 @@
 import { ORG_TABLE_COLUMN_NAMES, GC_ORG_IDS } from '@/config/resources'
 import { GCInfo } from '@/config/GrandChallengeResources'
-import { useOrgQuery } from '@/hooks/useOrgQuery'
+import { useFetchTableData } from '@/hooks/useOrgQuery'
 import { CardDeck } from 'synapse-react-client/components/CardDeck/CardDeck'
 import { CardDeckCardProps } from 'synapse-react-client/components/CardDeck/CardDeckCardProps'
 import { ErrorBanner } from 'synapse-react-client'
@@ -13,8 +13,9 @@ const COLS_NEEDED = ['ID', 'NAME', 'DESCRIPTION'].map(k =>
   String(ORG_TABLE_COLUMN_NAMES[k]),
 )
 export function ChallengesCardDeck() {
-  const { data, error, isLoading } = useOrgQuery({
-    columns: COLS_NEEDED,
+  const { data, error, isLoading } = useFetchTableData({
+    tableName: 'D4D_content',
+    colNames: COLS_NEEDED,
     ids: GC_ORG_IDS,
   })
   console.log({ data, error, isLoading })

@@ -63,10 +63,28 @@ export const organizationDetailsPageSQL = `
     }) AS orgPageLink
   FROM ${TABLE_IDS.Organization_denormalized.id}`
 
+export const D4D_CONTENT_COLUMN_NAMES = {
+  ID: 'id',
+  NAME: 'name',
+  DESCRIPTION: 'description',
+  CATEGORY: 'category',
+  DATASHEET_URL: 'DatasheetURL',
+  DOCUMENTATION_URL: 'DocumentationURL',
+  IS_PUBLIC: 'isPublic',
+  PRODUCED_BY: 'producedBy',
+  PRODUCED_BY_ORG_ID: 'producedByOrgId',
+  TOPICS: 'topics',
+  SUBSTRATES: 'substrates',
+  SUBSTRATES_JSON: 'substrates_json',
+}
 export const tableInfo = {
   Organization_denormalized: {
     tableColNames: ORG_TABLE_COLUMN_NAMES,
     sql: organizationDetailsPageSQL,
+  },
+  D4D_content: {
+    tableColNames: D4D_CONTENT_COLUMN_NAMES,
+    sql: `SELECT * FROM ${TABLE_IDS.D4D_content.id}`,
   },
 }
 export const GC_ORG_IDS = [114, 115, 116, 117].map(id => `B2AI_ORG:${id}`)

@@ -139,8 +139,6 @@ export type CardContainerLogicProps = QueryOrDeprecatedSearchParams & {
   initialLimit?: number
   multiCardList?: boolean
   cardConfiguration: CardConfiguration
-  // possible new prop:
-  // onQueryResultBundleChange?: QueryWrapperProps['onQueryResultBundleChange']
 } & Pick<
     QueryVisualizationWrapperProps,
     | 'rgbIndex'
