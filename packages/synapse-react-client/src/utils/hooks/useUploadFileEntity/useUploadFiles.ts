@@ -34,9 +34,21 @@ export type UploadItem = {
 }
 
 export type UseUploadFilesReturn = {
+  /**
+   * The current state of the uploader.
+   */
   state: UploaderState
+  /**
+   * An error message to display if the upload session has failed due to an error.
+   */
   errorMessage?: string
+  /**
+   * The number of files actively being uploaded right now (UPLOADING, PAUSED, or PENDING).
+   */
   activeUploadCount: number
+  /**
+   * List of files being uploaded, with their current progress and status, and callbacks to pause/cancel/resume/remove the upload.
+   */
   uploadProgress: UploadItem[]
   /**
    * Arguments used to initialize an upload operation. In addition to providing a file, the caller must also provide one of
@@ -46,7 +58,14 @@ export type UseUploadFilesReturn = {
    *       will trigger a prompt to confirm updating a new version in the `activePrompts` field, which must be resolved before the upload can proceed.
    *   - existingEntityId: The ID of the FileEntity for which a new version should be uploaded. No prompts will be triggered by this option.
    */
-  startUpload: (...preparedFiles: BaseFilePreparedForUpload[]) => void
+  startUpload: <
+    T extends BaseFilePreparedForUpload = BaseFilePreparedForUpload,
+  >(
+    ...preparedFiles: T[]
+  ) => void
+  /**
+   * The number of bytes pending upload (including files that are currently uploading, paused, or pending).
+   */
   bytesPendingUpload: number
 }
 
@@ -57,15 +76,24 @@ export type UseUploadFilesArgs = {
   uploadDestination?: UploadDestination
   /** The ID of the storage location to upload files to */
   storageLocationId?: number
-
   /** Optional accessKey for a direct S3 upload */
   accessKey?: string
   /** Optional secretKey for a direct S3 upload */
   secretKey?: string
-  onUploadComplete?: (
-    preparedFile: BaseFilePreparedForUpload,
+  /**
+   * Callback invoked after a file has been successfully uploaded, with the fileHandleId created for the uploaded file.
+   * @param preparedFile - The prepared file that was passed to `startUpload`
+   * @param fileHandleId - The fileHandleId created for the uploaded file
+   */
+  onUploadComplete?: <
+    T extends BaseFilePreparedForUpload = BaseFilePreparedForUpload,
+  >(
+    preparedFile: T,
     fileHandleId: string,
   ) => Promise<void>
+  /**
+   * Optional utility that is invoked just before `startUpload` begins uploading files.
+   */
   onBeforeUpload?: () => void
 }
 
@@ -94,16 +122,6 @@ export function useUploadFiles(
     uploadDestination?.storageLocationId ??
     args.storageLocationId ??
     SYNAPSE_STORAGE_LOCATION_ID
-
-  /**
-   * General flow for how the functions in this hook are used is
-   *
-   * 1. `initiateUpload(files)` - called by the caller of the hook
-   * 2. `willUploadsExceedLimit(files, usage)` - client-side check if the uploads will exceed the storage limit
-   * 3. `prepareDirsForUpload(files)` - sets up the folder paths, checks for existing entities with the same name
-   * 5. `startUpload(files)` - starts tracking file uploads, for each file, calls `uploadPreparedFile`
-   * 6. `uploadPreparedFile(file)` - uploads the file and creates/updates the entity
-   */
 
   const {
     trackedUploadProgress,
@@ -217,8 +235,6 @@ export function useUploadFiles(
 
       const newTrackedUploadProgress = trackNewFiles(...preparedFiles)
 
-      // TODO: We already got the storage location from the root, but what if one of the sub-folders already existed
-      //   with a different storage location? should we use that storage location?
       preparedFiles.map(preparedFile =>
         limitConcurrentUploads(() =>
           uploadPreparedFile(newTrackedUploadProgress, preparedFile),

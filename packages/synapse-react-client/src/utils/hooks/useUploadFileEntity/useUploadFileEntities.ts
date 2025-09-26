@@ -51,6 +51,9 @@ export type UseUploadFileEntitiesReturn = {
    */
   state: EntityUploaderState
   errorMessage?: string
+  /**
+   * True if the uploader is doing work to prepare the upload (e.g. creating folders, checking for existing files), but the upload has not started.
+   */
   isPrecheckingUpload: boolean
   /**
    * Prompts that require user input before the upload can proceed. Typically, these are prompts to confirm uploading a new version
@@ -68,7 +71,13 @@ export type UseUploadFileEntitiesReturn = {
    *   - existingEntityId: The ID of the FileEntity for which a new version should be uploaded. No prompts will be triggered by this option.
    */
   initiateUpload: (args: InitiateUploadArgs) => void
+  /**
+   * The total number of files that are actively being uploaded (PREPARING, UPLOADING, or PAUSED)
+   */
   activeUploadCount: number
+  /**
+   * A list of each file being uploaded, along with its progress, status, and callbacks that can be used to pause, resume, or cancel the upload.
+   */
   uploadProgress: UploadItem[]
   /** True when files can be uploaded. */
   isUploadReady: boolean
@@ -90,16 +99,19 @@ export function useUploadFileEntities(
   onStorageLimitExceeded: () => void = noop,
 ): UseUploadFileEntitiesReturn {
   /**
-   *
-   * TODO: REVISE THIS COMMENT
-   * General flow for how the functions in this hook are used is
+   * General flow of the internal logic in this hook is
    *
    * 1. `initiateUpload(files)` - called by the caller of the hook
-   * 2. `willUploadsExceedLimit(files, usage)` - client-side check if the uploads will exceed the storage limit
-   * 3. `prepareDirsForUpload(files)` - sets up the folder paths, checks for existing entities with the same name
-   * 4. `postPrepareUpload(files)` - may prompt the user to confirm uploading new versions of files, based on the results of `prepareUpload`
-   * 5. `startUpload(files)` - starts tracking file uploads, for each file, calls `uploadPreparedFile`
-   * 6. `uploadPreparedFile(file)` - uploads the file and creates/updates the entity
+   *    - Verify that the upload can proceed. Specifically:
+   *       1. Validate the upload destination
+   *       2. Check if the uploads will exceed a storage limit
+   *    - If either of these checks fail, do not proceed.
+   * 2. `prepareDirsForUpload(files)` - sets up the folder paths, checks for existing entities with the same name
+   * 3. `startUploadOrPromptForConfirmation(files)`
+   *     - For each file, check if the user should be prompted before the upload starts (e.g. if a new version will be created to update an existing file)
+   *     - If one or more prompts are required, they are added to the `activePrompts` array. Once the user resolves all prompts, the upload may start.
+   *     - If no prompts are required, the upload starts immediately.
+   * 6. `onUploadComplete(file, fileHandleId)` - using the file handle, creates or updates the FileEntity in Synapse
    */
 
   const { synapseClient } = useSynapseContext()
@@ -147,6 +159,14 @@ export function useUploadFileEntities(
     ],
   )
 
+  /*
+    TODO: We retrieve the upload destination from the root upload container, but what if:
+      1. The user is uploading a folder with nested subdirectories
+      2. One or more of the subdirectories already exists
+      3. An existing subdirectory has a different upload destination
+     The current implementation uploads everything into the root upload destination, but the correct behavior might be
+     to fetch the upload destination for each subdirectory.
+   */
   const {
     data: uploadDestination,
     isLoading: isLoadingUploadDestination,
@@ -197,7 +217,7 @@ export function useUploadFileEntities(
    * If all files can be uploaded without user intervention, start the upload. Otherwise, prompt the user to make required
    * decisions to continue the upload.
    */
-  const postPrepareUpload = useCallback(
+  const startUploadOrPromptForConfirmation = useCallback(
     (preparedFiles: PrepareDirsForUploadReturn) => {
       const { filesReadyForUpload, filesToPromptForNewVersion } = preparedFiles
       if (
@@ -244,12 +264,12 @@ export function useUploadFileEntities(
       }
       const filesReadyForUpload = await prepareDirsForUpload(args)
 
-      postPrepareUpload(filesReadyForUpload)
+      startUploadOrPromptForConfirmation(filesReadyForUpload)
     },
     [
       bytesPendingUpload,
       onStorageLimitExceeded,
-      postPrepareUpload,
+      startUploadOrPromptForConfirmation,
       prepareDirsForUpload,
       uploadDestination,
     ],
