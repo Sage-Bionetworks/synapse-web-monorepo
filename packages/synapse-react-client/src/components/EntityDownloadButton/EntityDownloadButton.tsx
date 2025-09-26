@@ -87,6 +87,9 @@ function getDownloadActionsForEntityType(type: EntityType): DownloadAction[][] {
     case 'submissionview':
     case 'virtualtable':
       return [[DownloadAction.exportTable, DownloadAction.programmaticAccess]]
+    case 'link':
+    case 'recordset':
+      return [[DownloadAction.programmaticAccess]]
     default:
       // This will fail if a new EntityType is added and not handled
       throw new Error(`Unhandled EntityType: ${type}`)
