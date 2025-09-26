@@ -15,7 +15,7 @@ import {
   SortBy,
   Direction,
 } from '@sage-bionetworks/synapse-types'
-import { Box } from '@mui/material'
+import { Box, useTheme, useMediaQuery } from '@mui/material'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
 import { useGetEntityHeader } from '@/synapse-queries'
 import { EntityBadgeIconsCell } from '../EntityFinder/details/view/table/EntityBadgeIconsCell'
@@ -143,6 +143,11 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     Record<string, string | undefined>
   >({})
   const [sorting, setSorting] = useState<SortingState>([])
+
+  // Responsive design hooks
+  const theme = useTheme()
+  const isLargeAndDown = useMediaQuery(theme.breakpoints.down('lg'))
+  const isSmallAndDown = useMediaQuery(theme.breakpoints.down('sm'))
 
   // Convert TanStack Table sorting to API sorting parameters
   const getSortingParams = useCallback(() => {
@@ -478,8 +483,8 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
   }, [tree, rootId, flattenTree, showRootNode, expanded, nextPageTokens])
 
   // Table columns
-  const columns = useMemo<ColumnDef<EntityBundleRow>[]>(
-    () => [
+  const columns = useMemo<ColumnDef<EntityBundleRow>[]>(() => {
+    const baseColumns: ColumnDef<EntityBundleRow>[] = [
       {
         accessorKey: 'entityHeader.name',
         id: 'name',
@@ -487,59 +492,76 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
         cell: NameCell,
         enableSorting: enableSorting,
       },
-      {
+    ]
+    if (!isSmallAndDown) {
+      baseColumns.push({
         id: 'badges',
         header: 'Badges',
         cell: EntityBadgeIconsCell,
         enableSorting: false,
-      },
-      {
+      })
+      baseColumns.push({
         id: 'id',
         header: IdColumnHeader,
         cell: IdCell,
         enableSorting: false,
-      },
-      {
+      })
+    }
+    if (!isLargeAndDown) {
+      baseColumns.push({
         accessorKey: 'entityHeader.createdOn',
         id: 'createdOn',
         header: CreatedOnColumnHeader,
         cell: CreatedOnCell,
         enableSorting: enableSorting,
-      },
-      {
+      })
+    }
+
+    if (!isSmallAndDown) {
+      baseColumns.push({
         accessorKey: 'entityHeader.modifiedOn',
         id: 'modifiedOn',
         header: ModifiedOnColumnHeader,
         cell: ModifiedOnCell,
         enableSorting: enableSorting,
-      },
-      {
+      })
+    }
+
+    if (!isLargeAndDown) {
+      baseColumns.push({
         id: 'modifiedBy',
         header: 'Modified By',
         cell: ModifiedByCell,
         enableSorting: false,
-      },
-      {
+      })
+    }
+
+    if (!isSmallAndDown) {
+      baseColumns.push({
         id: 'size',
         header: 'Size',
         cell: FileEntitySizeCell,
         enableSorting: false,
-      },
-      {
+      })
+    }
+    if (!isLargeAndDown) {
+      baseColumns.push({
         id: 'md5',
         header: 'MD5',
         cell: FileEntityMD5Cell,
         enableSorting: false,
-      },
-      {
-        id: 'download',
-        header: 'Download',
-        cell: AddFileToDownloadListCell,
-        enableSorting: false,
-      },
-    ],
-    [enableSorting],
-  )
+      })
+    }
+
+    baseColumns.push({
+      id: 'download',
+      header: 'Download',
+      cell: AddFileToDownloadListCell,
+      enableSorting: false,
+    })
+
+    return baseColumns
+  }, [enableSorting, isLargeAndDown, isSmallAndDown])
 
   const table = useReactTable({
     data: rows,
