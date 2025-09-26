@@ -8,7 +8,7 @@ import {
 import { useGetEntityChildren } from '@/synapse-queries/entity/useGetEntityChildren'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
-import { Box } from '@mui/material'
+import { Box, Button, CircularProgress } from '@mui/material'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
 import { useGetEntityHeader } from '@/synapse-queries'
 import { EntityBadgeIconsCell } from '../EntityFinder/details/view/table/EntityBadgeIconsCell'
@@ -43,6 +43,7 @@ export type EntityBundleRow = {
   isLeaf: boolean
   parentId?: string
   versionNumber?: number
+  isLoadMore?: boolean
 }
 
 const includeTypes: EntityType[] = [
@@ -56,19 +57,25 @@ const ChildLoader: React.FC<{
   entityId: string
   isLoading: boolean
   isLoaded: boolean
-  onChildrenLoaded: (entityId: string, children: TreeNode[]) => void
-}> = ({ entityId, isLoading, isLoaded, onChildrenLoaded }) => {
+  pageToken?: string
+  onChildrenLoaded: (
+    entityId: string,
+    children: TreeNode[],
+    nextPageToken?: string,
+  ) => void
+}> = ({ entityId, isLoading, isLoaded, pageToken, onChildrenLoaded }) => {
   const { data: children } = useGetEntityChildren(
     {
       parentId: entityId,
       includeTypes,
+      nextPageToken: pageToken,
     },
     { enabled: isLoading && !isLoaded },
   )
 
   useEffect(() => {
     if (children && isLoading && !isLoaded) {
-      const childNodes: TreeNode[] = children.page.map(eh => ({
+      const childNodes: TreeNode[] = children.page.map((eh: EntityHeader) => ({
         entityHeader: eh,
         parentId: entityId,
         depth: 0, // Will be set correctly by the parent
@@ -77,7 +84,8 @@ const ChildLoader: React.FC<{
           convertToEntityType(eh.type) === EntityType.folder
         ),
       }))
-      onChildrenLoaded(entityId, childNodes)
+      const nextToken = children.nextPageToken
+      onChildrenLoaded(entityId, childNodes, nextToken)
     }
   }, [children, entityId, isLoading, isLoaded, onChildrenLoaded])
 
@@ -89,6 +97,12 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
   const [tree, setTree] = useState<Record<string, TreeNode>>({})
   const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set())
   const [loadedChildren, setLoadedChildren] = useState<Set<string>>(new Set())
+  const [nextPageTokens, setNextPageTokens] = useState<
+    Record<string, string | undefined>
+  >({})
+  const [loadingPageTokens, setLoadingPageTokens] = useState<
+    Record<string, string | undefined>
+  >({})
 
   // Get root entity header
   const { data: rootHeader } = useGetEntityHeader(rootId)
@@ -105,15 +119,17 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
   // Initialize root node and its children - only run once per rootId
   useEffect(() => {
     if (rootHeader && rootChildren && !loadedChildren.has(rootId)) {
-      const children: TreeNode[] = rootChildren.page.map(eh => ({
-        entityHeader: eh,
-        parentId: rootId,
-        depth: 1,
-        isLeaf: !(
-          convertToEntityType(eh.type) === EntityType.project ||
-          convertToEntityType(eh.type) === EntityType.folder
-        ),
-      }))
+      const children: TreeNode[] = rootChildren.page.map(
+        (eh: EntityHeader) => ({
+          entityHeader: eh,
+          parentId: rootId,
+          depth: 1,
+          isLeaf: !(
+            convertToEntityType(eh.type) === EntityType.project ||
+            convertToEntityType(eh.type) === EntityType.folder
+          ),
+        }),
+      )
 
       setTree({
         [rootId]: {
@@ -126,7 +142,14 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
           children.map(child => [child.entityHeader.id, child]),
         ),
       })
-      setLoadedChildren(prev => new Set(prev).add(rootId))
+      // store nextPageToken for root (if any)
+      const rootNext = rootChildren.nextPageToken
+      setNextPageTokens(prev => ({ ...prev, [rootId]: rootNext }))
+
+      // mark as loaded only if there is no next page token
+      if (!rootNext) {
+        setLoadedChildren(prev => new Set(prev).add(rootId))
+      }
     }
   }, [rootHeader, rootChildren, rootId, loadedChildren])
 
@@ -155,7 +178,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
 
   // Callback to handle when children are loaded
   const handleChildrenLoaded = useCallback(
-    (entityId: string, childNodes: TreeNode[]) => {
+    (entityId: string, childNodes: TreeNode[], nextPageToken?: string) => {
       setTree(prev => {
         const node = prev[entityId]
         if (node) {
@@ -165,25 +188,46 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
             depth: node.depth + 1,
           }))
 
+          const mergedChildren = node.children
+            ? [...node.children, ...childNodesWithDepth]
+            : childNodesWithDepth
+
           return {
             ...prev,
             [entityId]: {
               ...node,
-              children: childNodesWithDepth,
+              children: mergedChildren,
             },
             ...Object.fromEntries(
-              childNodesWithDepth.map(child => [child.entityHeader.id, child]),
+              mergedChildren.map(child => [child.entityHeader.id, child]),
             ),
           }
         }
         return prev
       })
+
+      // store nextPageToken for this parent (if any)
+      setNextPageTokens(prev => ({ ...prev, [entityId]: nextPageToken }))
+
       setLoadingIds(prev => {
         const next = new Set(prev)
         next.delete(entityId)
         return next
       })
-      setLoadedChildren(prev => new Set(prev).add(entityId))
+
+      // mark as loaded only if there is no next page token (i.e., fully loaded)
+      if (!nextPageToken) {
+        setLoadedChildren(prev => new Set(prev).add(entityId))
+      }
+    },
+    [],
+  )
+
+  const loadMoreChildren = useCallback(
+    (parentId: string, pageToken?: string) => {
+      // set which page token is being requested for this parent and mark loading
+      setLoadingPageTokens(prev => ({ ...prev, [parentId]: pageToken }))
+      setLoadingIds(prev => new Set(prev).add(parentId))
     },
     [],
   )
@@ -208,10 +252,23 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
         node.children.forEach(child => {
           rows.push(...flattenTree(child.entityHeader.id))
         })
+        // If there is a next page token for this node, add a synthetic 'Load more' row
+        const nextToken = nextPageTokens[node.entityHeader.id]
+        if (nextToken) {
+          rows.push({
+            entityId: `${node.entityHeader.id}::loadmore::${nextToken}`,
+            entityHeader: node.entityHeader,
+            depth: node.depth + 1,
+            isLeaf: true,
+            parentId: node.entityHeader.id,
+            versionNumber: undefined,
+            isLoadMore: true,
+          })
+        }
       }
       return rows
     },
-    [expanded, tree],
+    [expanded, tree, nextPageTokens, loadingIds, loadingPageTokens],
   )
 
   const rows: EntityBundleRow[] = useMemo(() => {
@@ -283,7 +340,13 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
   return (
     <Box>
       <EntityTreeTableContext.Provider
-        value={{ expanded, loadingIds, handleToggleExpanded }}
+        value={{
+          expanded,
+          loadingIds,
+          handleToggleExpanded,
+          loadMoreChildren,
+          nextPageTokens,
+        }}
       >
         {/* Render child loaders for nodes that need children loaded */}
         {nodesToLoad.map(entityId => (
@@ -292,6 +355,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
             entityId={entityId}
             isLoading={loadingIds.has(entityId)}
             isLoaded={loadedChildren.has(entityId)}
+            pageToken={loadingPageTokens[entityId]}
             onChildrenLoaded={handleChildrenLoaded}
           />
         ))}
@@ -313,18 +377,52 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
               ))}
             </thead>
             <tbody>
-              {table.getRowModel().rows.map(row => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map(cell => (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
+              {table.getRowModel().rows.map(row => {
+                const original = row.original
+                if (original.isLoadMore) {
+                  const colCount = table.getAllColumns().length
+                  return (
+                    <tr key={row.id}>
+                      <td colSpan={colCount}>
+                        {/* Render a simple load more action aligned to depth */}
+                        <div style={{ paddingLeft: original.depth * 16 + 32 }}>
+                          {loadingIds.has(original.parentId!) ? (
+                            <>
+                              <CircularProgress size={14} />
+                              <span>Loading...</span>
+                            </>
+                          ) : (
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              onClick={() => {
+                                loadMoreChildren(
+                                  original.parentId!,
+                                  nextPageTokens[original.parentId!],
+                                )
+                              }}
+                            >
+                              Show more...
+                            </Button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                }
+                return (
+                  <tr key={row.id}>
+                    {row.getVisibleCells().map(cell => (
+                      <td key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>

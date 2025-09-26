@@ -3,6 +3,8 @@ export type EntityTreeTableContextType = {
   expanded: Record<string, boolean>
   loadingIds: Set<string>
   handleToggleExpanded: (entityId: string) => void
+  loadMoreChildren: (parentId: string, pageToken?: string) => void
+  nextPageTokens: Record<string, string | undefined>
 }
 
 export const EntityTreeTableContext = React.createContext<
