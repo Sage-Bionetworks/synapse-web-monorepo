@@ -14,7 +14,6 @@ enum DownloadAction {
 function getMenuItemForAction(
   entityId: string,
   entityName: string,
-  entityType: EntityType,
   downloadAction: DownloadAction,
 ): DropdownMenuItem {
   switch (downloadAction) {
@@ -102,12 +101,7 @@ export function EntityDownloadButton(props: {
   const downloadActions = getDownloadActionsForEntityType(props.entityType)
   const downloadMenuItems = downloadActions.map(actionGroup =>
     actionGroup.map(action =>
-      getMenuItemForAction(
-        props.entityId,
-        props.name,
-        props.entityType,
-        action,
-      ),
+      getMenuItemForAction(props.entityId, props.name, action),
     ),
   )
 
