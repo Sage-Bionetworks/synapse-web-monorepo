@@ -227,6 +227,17 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
 
       // Initialize root and merge children into the tree
       setTree(prev => {
+        // If we already have data for this root, replace it completely to avoid duplicates
+        const existingRoot = prev[rootId]
+        if (
+          existingRoot &&
+          existingRoot.children &&
+          existingRoot.children.length > 0
+        ) {
+          // Only skip if we have the same sort parameters (check if this is truly the same data)
+          return prev
+        }
+
         const childEntries = Object.fromEntries(
           children.map(child => {
             const existing = prev[child.entityHeader.id]
@@ -275,7 +286,8 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     rootId,
     expandRootByDefault,
     showRootNode,
-    loadedChildren,
+    sortBy,
+    sortDirection,
   ])
 
   // Handler for expanding nodes
@@ -313,9 +325,14 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
             depth: node.depth + 1,
           }))
 
-          const mergedChildren = node.children
-            ? [...node.children, ...childNodesWithDepth]
-            : childNodesWithDepth
+          // Check if this is the first load (loading the first page) or pagination (loading more pages)
+          // If we're loading a page token, it means we're paginating and should append
+          // If no page token is being loaded, it's the first load and we should replace
+          const isFirstLoad = !loadingPageTokens[entityId]
+          const mergedChildren =
+            isFirstLoad || !node.children
+              ? childNodesWithDepth // Replace children on first load
+              : [...node.children, ...childNodesWithDepth] // Append for pagination
 
           // Merge children into the tree mapping while preserving existing
           // subtree entries for those children (so expanding deeper nodes
@@ -370,7 +387,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
         setLoadedChildren(prev => new Set(prev).add(entityId))
       }
     },
-    [],
+    [loadingPageTokens],
   )
 
   const loadMoreChildren = useCallback(
