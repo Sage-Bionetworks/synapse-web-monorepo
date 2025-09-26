@@ -1,43 +1,27 @@
-import {
-  ProgressCallback,
-  SYNAPSE_STORAGE_LOCATION_ID,
-} from '@/synapse-client/SynapseClient'
+import { SYNAPSE_STORAGE_LOCATION_ID } from '@/synapse-client/SynapseClient'
 import {
   useCreateEntity,
   useGetDefaultUploadDestination,
   useUpdateEntity,
 } from '@/synapse-queries'
-import { FileUploadArgs } from '@/synapse-queries/file/FileUploadArgs'
-import { useDirectUploadToS3 } from '@/synapse-queries/file/useDirectUploadToS3'
-import { useSynapseMultipartUpload } from '@/synapse-queries/file/useSynapseMultipartUpload'
-import { instanceOfExternalObjectStoreUploadDestination } from '@sage-bionetworks/synapse-client'
+import {
+  UploaderState,
+  UploadItem,
+  useUploadFiles,
+} from '@/utils/hooks/useUploadFileEntity/useUploadFiles'
 import { FileEntity } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
-import pLimit from 'p-limit'
 import { useCallback, useMemo } from 'react'
-import { fixDefaultContentType } from '../../ContentTypeUtils'
 import { useSynapseContext } from '../../context/index'
 import useConfirmItems from '../useConfirmItems'
 import {
   FilePreparedForUpload,
   PrepareDirsForUploadReturn,
   PrepareFileEntityUploadArgs,
-  UpdateEntityFileUpload,
+  UpdateEntityFilePreparedForUpload,
   usePrepareFileEntityUpload,
 } from './usePrepareFileEntityUpload'
-import {
-  TrackedUploadProgress,
-  useTrackFileUploads,
-} from './useTrackFileUploads'
 import { willUploadsExceedStorageLimit } from './willUploadsExceedStorageLimit'
-
-type UploadFileStatus =
-  | 'PREPARING'
-  | 'UPLOADING'
-  | 'PAUSED'
-  | 'CANCELED_BY_USER'
-  | 'FAILED'
-  | 'COMPLETE'
 
 export type PromptInfo = {
   type: 'CONFIRM_NEW_VERSION'
@@ -53,30 +37,23 @@ export type Prompt = {
   onCancelAll: () => void
 }
 
-export type UploaderState =
+export type EntityUploaderState =
+  | UploaderState
   | 'LOADING'
-  | 'WAITING'
   | 'PROMPT_USER'
-  | 'UPLOADING'
-  | 'COMPLETE'
   | 'ERROR'
-
-type FileUploadProgress = {
-  file: File
-  progress: ProgressCallback
-  status: UploadFileStatus
-  cancel: () => void
-  pause: () => void
-  resume: () => void
-  remove: () => void
-  failureReason?: string
-}
 
 export type InitiateUploadArgs = PrepareFileEntityUploadArgs
 
 export type UseUploadFileEntitiesReturn = {
-  state: UploaderState
+  /**
+   * The current state of the uploader
+   */
+  state: EntityUploaderState
   errorMessage?: string
+  /**
+   * True if the uploader is doing work to prepare the upload (e.g. creating folders, checking for existing files), but the upload has not started.
+   */
   isPrecheckingUpload: boolean
   /**
    * Prompts that require user input before the upload can proceed. Typically, these are prompts to confirm uploading a new version
@@ -94,15 +71,17 @@ export type UseUploadFileEntitiesReturn = {
    *   - existingEntityId: The ID of the FileEntity for which a new version should be uploaded. No prompts will be triggered by this option.
    */
   initiateUpload: (args: InitiateUploadArgs) => void
+  /**
+   * The total number of files that are actively being uploaded (PREPARING, UPLOADING, or PAUSED)
+   */
   activeUploadCount: number
-  uploadProgress: FileUploadProgress[]
+  /**
+   * A list of each file being uploaded, along with its progress, status, and callbacks that can be used to pause, resume, or cancel the upload.
+   */
+  uploadProgress: UploadItem[]
   /** True when files can be uploaded. */
   isUploadReady: boolean
 }
-
-// Limit the number of concurrent uploads to avoid overwhelming the browser
-// Note that within one upload operation, multiple parts could be uploaded in parallel
-const limitConcurrentUploads = pLimit(8)
 
 /**
  * Hook to start and track the progress of files uploads in Synapse, creating/updating a FileEntity for each uploaded file.
@@ -120,18 +99,74 @@ export function useUploadFileEntities(
   onStorageLimitExceeded: () => void = noop,
 ): UseUploadFileEntitiesReturn {
   /**
-   * General flow for how the functions in this hook are used is
+   * General flow of the internal logic in this hook is
    *
    * 1. `initiateUpload(files)` - called by the caller of the hook
-   * 2. `willUploadsExceedLimit(files, usage)` - client-side check if the uploads will exceed the storage limit
-   * 3. `prepareDirsForUpload(files)` - sets up the folder paths, checks for existing entities with the same name
-   * 4. `postPrepareUpload(files)` - may prompt the user to confirm uploading new versions of files, based on the results of `prepareUpload`
-   * 5. `startUpload(files)` - starts tracking file uploads, for each file, calls `uploadPreparedFile`
-   * 6. `uploadPreparedFile(file)` - uploads the file and creates/updates the entity
+   *    - Verify that the upload can proceed. Specifically:
+   *       1. Validate the upload destination
+   *       2. Check if the uploads will exceed a storage limit
+   *    - If either of these checks fail, do not proceed.
+   * 2. `prepareDirsForUpload(files)` - sets up the folder paths, checks for existing entities with the same name
+   * 3. `startUploadOrPromptForConfirmation(files)`
+   *     - For each file, check if the user should be prompted before the upload starts (e.g. if a new version will be created to update an existing file)
+   *     - If one or more prompts are required, they are added to the `activePrompts` array. Once the user resolves all prompts, the upload may start.
+   *     - If no prompts are required, the upload starts immediately.
+   * 6. `onUploadComplete(file, fileHandleId)` - using the file handle, creates or updates the FileEntity in Synapse
    */
 
   const { synapseClient } = useSynapseContext()
 
+  const { mutateAsync: createEntityWithNewFile } = useCreateEntity()
+  const { mutateAsync: updateEntityWithNewFile } = useUpdateEntity()
+
+  const onUploadComplete = useCallback(
+    async function onUploadComplete(
+      preparedFile: FilePreparedForUpload,
+      newFileHandleId: string,
+    ) {
+      if ('existingEntityId' in preparedFile && preparedFile.existingEntityId) {
+        // Update the existing entity
+        const entity =
+          await synapseClient.entityServicesClient.getRepoV1EntityId({
+            id: preparedFile.existingEntityId,
+          })
+        await updateEntityWithNewFile({
+          ...entity,
+          dataFileHandleId: newFileHandleId,
+        } as FileEntity)
+      } else if ('parentId' in preparedFile) {
+        // else, it's a new file entity
+        const newFileEntity: FileEntity = {
+          parentId: preparedFile.parentId,
+          name: preparedFile.file.name,
+          concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+          dataFileHandleId: newFileHandleId,
+        }
+        await createEntityWithNewFile(newFileEntity)
+      } else {
+        // this should never happen
+        throw new Error(
+          `Can't upload file without a parent ID or existing entity ID. File was: ${JSON.stringify(
+            preparedFile,
+          )}`,
+        )
+      }
+    },
+    [
+      createEntityWithNewFile,
+      synapseClient.entityServicesClient,
+      updateEntityWithNewFile,
+    ],
+  )
+
+  /*
+    TODO: We retrieve the upload destination from the root upload container, but what if:
+      1. The user is uploading a folder with nested subdirectories
+      2. One or more of the subdirectories already exists
+      3. An existing subdirectory has a different upload destination
+     The current implementation uploads everything into the root upload destination, but the correct behavior might be
+     to fetch the upload destination for each subdirectory.
+   */
   const {
     data: uploadDestination,
     isLoading: isLoadingUploadDestination,
@@ -158,182 +193,31 @@ export function useUploadFileEntities(
     clear: clearPendingFiles,
   } = useConfirmItems<FilePreparedForUpload>()
 
+  const onBeforeUpload = useCallback(() => {
+    clearPendingFiles()
+  }, [clearPendingFiles])
+
   const {
-    trackedUploadProgress,
-    setProgress,
-    setIsUploading,
-    trackNewFiles,
-    cancelUpload,
-    pauseUpload,
-    removeUpload,
-    setComplete,
-    setFailed,
-    isUploading,
-    isUploadComplete,
+    state,
+    startUpload,
     activeUploadCount,
+    uploadProgress,
     bytesPendingUpload,
-  } = useTrackFileUploads()
-
-  const state: UploaderState = useMemo(() => {
-    if (getUploadDestinationError) {
-      return 'ERROR'
-    }
-    if (isLoadingUploadDestination) {
-      return 'LOADING'
-    }
-    if (filesToConfirmNewVersion.length > 0) {
-      return 'PROMPT_USER'
-    }
-    if (isUploading) {
-      return 'UPLOADING'
-    }
-    if (isUploadComplete) {
-      return 'COMPLETE'
-    }
-    return 'WAITING'
-  }, [
-    filesToConfirmNewVersion.length,
-    getUploadDestinationError,
-    isLoadingUploadDestination,
-    isUploadComplete,
-    isUploading,
-  ])
-
-  const { mutateAsync: createEntityWithNewFile } = useCreateEntity()
-  const { mutateAsync: updateEntityWithNewFile } = useUpdateEntity()
-  const { mutateAsync: uploadFile } = useSynapseMultipartUpload()
-  const { mutateAsync: uploadFileDirectlyToS3 } = useDirectUploadToS3()
-
-  const uploadPreparedFile = useCallback(
-    async function uploadPreparedFile(
-      newTrackedUploadProgress: Map<File, TrackedUploadProgress>,
-      preparedFile: FilePreparedForUpload,
-    ) {
-      try {
-        const trackedProgress = newTrackedUploadProgress.get(preparedFile.file)!
-
-        const uploadArgs: FileUploadArgs = {
-          fileName: preparedFile.file.name,
-          blob: preparedFile.file,
-          storageLocationId,
-          contentType: fixDefaultContentType(
-            preparedFile.file.type,
-            preparedFile.file.name,
-          ),
-          progressCallback: progress => {
-            if (progress) {
-              setProgress(preparedFile.file, progress)
-            }
-          },
-          abortController: trackedProgress.abortController,
-          onMd5Computed: () => {
-            setIsUploading(preparedFile.file)
-          },
-        }
-
-        let newFileHandleId: string
-        if (
-          uploadDestination &&
-          instanceOfExternalObjectStoreUploadDestination(uploadDestination) &&
-          uploadDestination.endpointUrl != null
-        ) {
-          const fileHandle = await uploadFileDirectlyToS3({
-            ...uploadArgs,
-            bucketName: uploadDestination.bucket!,
-            endpoint: uploadDestination.endpointUrl,
-            keyPrefixUUID: uploadDestination.keyPrefixUUID!,
-            accessKey,
-            secretKey,
-          })
-          newFileHandleId = fileHandle.id!
-        } else {
-          const fileUploadComplete = await uploadFile(uploadArgs)
-
-          newFileHandleId = fileUploadComplete.fileHandleId
-        }
-
-        if (
-          'existingEntityId' in preparedFile &&
-          preparedFile.existingEntityId
-        ) {
-          // Update the existing entity
-          const entity =
-            await synapseClient.entityServicesClient.getRepoV1EntityId({
-              id: preparedFile.existingEntityId,
-            })
-          await updateEntityWithNewFile({
-            ...entity,
-            dataFileHandleId: newFileHandleId,
-          } as FileEntity)
-          // Mark file as done!
-          setComplete(preparedFile.file)
-        } else if ('parentId' in preparedFile) {
-          // else, it's a new file entity
-          const newFileEntity: FileEntity = {
-            parentId: preparedFile.parentId,
-            name: preparedFile.file.name,
-            concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-            dataFileHandleId: newFileHandleId,
-          }
-          await createEntityWithNewFile(newFileEntity)
-          // Mark file as done!
-          setComplete(preparedFile.file)
-        } else {
-          // this should never happen
-          throw new Error(
-            `Can't upload file without a parent ID or existing entity ID. File was: ${JSON.stringify(
-              preparedFile,
-            )}`,
-          )
-        }
-      } catch (e) {
-        console.error('File upload failed: ', e)
-        setFailed(preparedFile.file, e.message)
-      }
-    },
-    [
-      storageLocationId,
-      uploadDestination,
-      setProgress,
-      setIsUploading,
-      uploadFileDirectlyToS3,
-      accessKey,
-      secretKey,
-      uploadFile,
-      synapseClient.entityServicesClient,
-      updateEntityWithNewFile,
-      setComplete,
-      createEntityWithNewFile,
-      setFailed,
-    ],
-  )
-
-  /**
-   * Upload the list of prepared files to Synapse.
-   */
-  const startUpload = useCallback(
-    (...preparedFiles: FilePreparedForUpload[]) => {
-      clearPendingFiles()
-
-      const newTrackedUploadProgress = trackNewFiles(...preparedFiles)
-
-      // TODO: We already got the storage location from the root, but what if one of the sub-folders already existed
-      //   with a different storage location? should we use that storage location?
-      preparedFiles.map(preparedFile =>
-        limitConcurrentUploads(() =>
-          uploadPreparedFile(newTrackedUploadProgress, preparedFile),
-        ),
-      )
-    },
-    [clearPendingFiles, trackNewFiles, uploadPreparedFile],
-  )
+  } = useUploadFiles({
+    onBeforeUpload,
+    storageLocationId,
+    uploadDestination,
+    accessKey,
+    secretKey,
+    onUploadComplete,
+  })
 
   /**
    * After all files have been prepared for upload, process them to determine if the upload can automatically continue.
    * If all files can be uploaded without user intervention, start the upload. Otherwise, prompt the user to make required
    * decisions to continue the upload.
    */
-  const postPrepareUpload = useCallback(
+  const startUploadOrPromptForConfirmation = useCallback(
     (preparedFiles: PrepareDirsForUploadReturn) => {
       const { filesReadyForUpload, filesToPromptForNewVersion } = preparedFiles
       if (
@@ -357,11 +241,11 @@ export function useUploadFileEntities(
     ],
   )
 
-  const { mutate: prepareDirsForUpload, isPending: isPrecheckingUpload } =
+  const { mutateAsync: prepareDirsForUpload, isPending: isPrecheckingUpload } =
     usePrepareFileEntityUpload()
 
   const initiateUpload = useCallback(
-    (args: InitiateUploadArgs) => {
+    async (args: InitiateUploadArgs) => {
       if (uploadDestination == null) {
         console.error(
           'Upload destination was not loaded, or failed to load! Aborting upload.',
@@ -376,18 +260,16 @@ export function useUploadFileEntities(
         )
       ) {
         onStorageLimitExceeded()
-      } else {
-        prepareDirsForUpload(args, {
-          onSuccess: result => {
-            postPrepareUpload(result)
-          },
-        })
+        return
       }
+      const filesReadyForUpload = await prepareDirsForUpload(args)
+
+      startUploadOrPromptForConfirmation(filesReadyForUpload)
     },
     [
       bytesPendingUpload,
       onStorageLimitExceeded,
-      postPrepareUpload,
+      startUploadOrPromptForConfirmation,
       prepareDirsForUpload,
       uploadDestination,
     ],
@@ -399,7 +281,7 @@ export function useUploadFileEntities(
         info: {
           type: 'CONFIRM_NEW_VERSION',
           fileName: fileToPrompt.file.name,
-          existingEntityId: (fileToPrompt as UpdateEntityFileUpload)
+          existingEntityId: (fileToPrompt as UpdateEntityFilePreparedForUpload)
             .existingEntityId,
         },
         onConfirm: () => {
@@ -438,38 +320,23 @@ export function useUploadFileEntities(
     startUpload,
   ])
 
-  const uploadProgress: FileUploadProgress[] = useMemo(() => {
-    return [...trackedUploadProgress].map(([file, trackedProgress]) => {
-      return {
-        file: file,
-        progress: trackedProgress.progress,
-        status: trackedProgress.status,
-        failureReason: trackedProgress.failureReason,
-        cancel: () => {
-          cancelUpload(file)
-        },
-        pause: () => {
-          pauseUpload(file)
-        },
-        resume: () => {
-          startUpload(trackedProgress.filePreparedForUpload)
-        },
-        remove() {
-          removeUpload(file)
-        },
-      }
-    })
-  }, [
-    cancelUpload,
-    pauseUpload,
-    removeUpload,
-    startUpload,
-    trackedUploadProgress,
-  ])
+  // Override the uploader state with the checks custom to this hook
+  const uploaderStateOverride = useMemo<EntityUploaderState>(() => {
+    if (errorMessage) {
+      return 'ERROR'
+    }
+    if (isLoadingUploadDestination) {
+      return 'LOADING'
+    }
+    if (activePrompts.length > 0) {
+      return 'PROMPT_USER'
+    }
+    return state
+  }, [activePrompts.length, errorMessage, isLoadingUploadDestination, state])
 
   return useMemo(() => {
     return {
-      state,
+      state: uploaderStateOverride,
       errorMessage,
       isPrecheckingUpload,
       activeUploadCount,
@@ -479,7 +346,7 @@ export function useUploadFileEntities(
       isUploadReady,
     }
   }, [
-    state,
+    uploaderStateOverride,
     errorMessage,
     isPrecheckingUpload,
     activeUploadCount,

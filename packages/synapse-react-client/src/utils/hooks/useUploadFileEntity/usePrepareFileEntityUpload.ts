@@ -1,16 +1,27 @@
+import {
+  BaseFilePreparedForUpload,
+  BaseFileUploadArgs,
+} from '@/utils/hooks/useUploadFileEntity/useUploadFiles'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { useSynapseContext } from '../../context/index'
 import { getFileEntityIdWithSameName } from './getFileEntityIdWithSameName'
 import { useCreatePathsAndGetParentId } from './useCreatePathsAndGetParentId'
 
-export type NewEntityFileUploadArgs = { file: File; rootContainerId: string }
-export type NewEntityFileUploadReturn = { file: File; parentId: string }
-export type UpdateEntityFileUpload = { file: File; existingEntityId: string }
+export type NewEntityFileUploadArgs = BaseFileUploadArgs & {
+  rootContainerId: string
+}
+export type NewEntityFilePreparedForUpload = BaseFilePreparedForUpload & {
+  parentId: string
+}
+export type UpdateEntityFilePreparedForUpload = BaseFilePreparedForUpload & {
+  existingEntityId: string
+}
 
 export type FilePreparedForUpload =
-  | NewEntityFileUploadReturn
-  | UpdateEntityFileUpload
+  | BaseFilePreparedForUpload
+  | NewEntityFilePreparedForUpload
+  | UpdateEntityFilePreparedForUpload
 
 export type PrepareDirsForUploadReturn = {
   filesReadyForUpload: FilePreparedForUpload[]
@@ -19,7 +30,7 @@ export type PrepareDirsForUploadReturn = {
 
 export type PrepareFileEntityUploadArgs = (
   | NewEntityFileUploadArgs
-  | UpdateEntityFileUpload
+  | UpdateEntityFilePreparedForUpload
 )[]
 
 /**
