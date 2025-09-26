@@ -51,12 +51,8 @@ export type UseUploadFilesReturn = {
    */
   uploadProgress: UploadItem[]
   /**
-   * Arguments used to initialize an upload operation. In addition to providing a file, the caller must also provide one of
-   * the following:
-   *   - rootContainerId: The ID of the parent Project or Folder to upload files to. If the File objects include a webkitRelativePath,
-   *       then the Files will be uploaded into created sub-folders to match the relative path. Any files that match on path and file name
-   *       will trigger a prompt to confirm updating a new version in the `activePrompts` field, which must be resolved before the upload can proceed.
-   *   - existingEntityId: The ID of the FileEntity for which a new version should be uploaded. No prompts will be triggered by this option.
+   * Arguments used to initialize an upload operation. In addition to providing a file, the caller may also provide
+   * additional information that will be returned when `onUploadComplete` is invoked.
    */
   startUpload: <
     T extends BaseFilePreparedForUpload = BaseFilePreparedForUpload,
@@ -104,9 +100,7 @@ const STATIC_EMPTY_OBJECT = {}
 const limitConcurrentUploads = pLimit(8)
 
 /**
- * Hook to start and track the progress of files uploads in Synapse, creating/updating a FileEntity for each uploaded file.
- *
- * To start an upload, see `initiateUpload` returned by this hook.
+ * Hook to start and track the progress of file uploads in Synapse, creating a FileHandle for each uploaded file.
  */
 export function useUploadFiles(
   args: UseUploadFilesArgs = STATIC_EMPTY_OBJECT,

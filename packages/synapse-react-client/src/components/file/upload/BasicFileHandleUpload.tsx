@@ -34,7 +34,6 @@ export const BasicFileHandleUpload = forwardRef(function FileHandleUpload(
     onUploadReady = noop,
   } = props
 
-  // Convert to `useUploadFiles`?
   const { startUpload, state, uploadProgress } = useUploadFiles()
 
   useEffect(() => {
