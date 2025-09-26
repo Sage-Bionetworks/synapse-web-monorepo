@@ -70,13 +70,11 @@ const ChildLoader: React.FC<{
       includeTypes,
       nextPageToken: pageToken,
     },
-    {
-      enabled: isLoading && !isLoaded,
-    },
+    { enabled: isLoading && !isLoaded },
   )
 
   useEffect(() => {
-    if (children && isLoading) {
+    if (children && isLoading && !isLoaded) {
       const childNodes: TreeNode[] = children.page.map((eh: EntityHeader) => ({
         entityHeader: eh,
         parentId: entityId,
@@ -89,7 +87,7 @@ const ChildLoader: React.FC<{
       const nextToken = children.nextPageToken
       onChildrenLoaded(entityId, childNodes, nextToken)
     }
-  }, [children, entityId, isLoading, onChildrenLoaded])
+  }, [children, entityId, isLoading, isLoaded, onChildrenLoaded])
 
   return null
 }
@@ -184,7 +182,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
         setLoadedChildren(prev => new Set(prev).add(rootId))
       }
     }
-  }, [rootHeader, rootChildren, rootId, loadedChildren])
+  }, [rootHeader, rootChildren, rootId])
 
   // Handler for expanding nodes
   const handleToggleExpanded = useCallback(
@@ -317,8 +315,16 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
           rows.push(...flattenTree(child.entityHeader.id, visited))
         })
         // If there is a next page token for this node, add a synthetic 'Load more' row
+        // But only if we're not currently loading more children for this node
         const nextToken = nextPageTokens[node.entityHeader.id]
-        if (nextToken) {
+        const isCurrentlyLoading =
+          loadingIds.has(node.entityHeader.id) ||
+          Object.prototype.hasOwnProperty.call(
+            loadingPageTokens,
+            node.entityHeader.id,
+          )
+
+        if (nextToken && !isCurrentlyLoading) {
           rows.push({
             entityId: `${node.entityHeader.id}::loadmore::${nextToken}`,
             entityHeader: node.entityHeader,
@@ -332,7 +338,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
       }
       return rows
     },
-    [expanded, tree, nextPageTokens],
+    [expanded, tree, nextPageTokens, loadingIds, loadingPageTokens],
   )
 
   const rows: EntityBundleRow[] = useMemo(() => {
@@ -451,12 +457,14 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
                 const original = row.original
                 if (original.isLoadMore) {
                   const colCount = table.getAllColumns().length
+                  const isLoading = loadingIds.has(original.parentId!)
+
                   return (
                     <tr key={row.id}>
                       <td colSpan={colCount}>
                         {/* Render a simple load more action aligned to depth */}
                         <div style={{ paddingLeft: original.depth * 16 + 32 }}>
-                          {loadingIds.has(original.parentId!) ? (
+                          {isLoading ? (
                             <>
                               <SynapseSpinner size={16} />
                               <span>Loading...</span>
