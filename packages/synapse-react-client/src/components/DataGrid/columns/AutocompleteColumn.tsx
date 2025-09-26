@@ -19,7 +19,7 @@ export type AutocompleteCellProps = CellProps & {
   colType?: JSONSchema7Type
 }
 
-function castCellValueToString(toCast: any): string {
+export function castCellValueToString(toCast: any): string {
   if (typeof toCast === 'object') {
     return JSON.stringify(toCast)
   }

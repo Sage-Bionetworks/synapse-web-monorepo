@@ -3,7 +3,7 @@ import { EnumOptionsType, optionsList } from '@rjsf/utils'
 import isArray from 'lodash-es/isArray'
 import isObject from 'lodash-es/isObject'
 
-type EnumeratedValue =
+export type EnumeratedValue =
   | string
   | number
   | boolean
