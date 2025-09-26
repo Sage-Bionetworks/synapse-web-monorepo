@@ -195,20 +195,12 @@ describe('useUploadFileEntities', () => {
       hook.current.initiateUpload(initiateUploadArgs)
     })
 
-    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(1)
-    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-      initiateUploadArgs,
-      { onSuccess: expect.any(Function) },
-    )
-
-    // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
-    act(() => {
-      usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
-        prepareDirsForUploadReturn,
-        initiateUploadArgs,
-        null,
-      )
-    })
+    expect(
+      usePrepareFileEntityUploadMockReturn.mutateAsync,
+    ).toHaveBeenCalledTimes(1)
+    expect(
+      usePrepareFileEntityUploadMockReturn.mutateAsync,
+    ).toHaveBeenCalledWith(initiateUploadArgs)
 
     await waitFor(() => {
       expect(
@@ -293,20 +285,12 @@ describe('useUploadFileEntities', () => {
       hook.current.initiateUpload(initiateUploadArgs)
     })
 
-    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(1)
-    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-      initiateUploadArgs,
-      { onSuccess: expect.any(Function) },
-    )
-
-    // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
-    act(() => {
-      usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
-        prepareDirsForUploadReturn,
-        initiateUploadArgs,
-        null,
-      )
-    })
+    expect(
+      usePrepareFileEntityUploadMockReturn.mutateAsync,
+    ).toHaveBeenCalledTimes(1)
+    expect(
+      usePrepareFileEntityUploadMockReturn.mutateAsync,
+    ).toHaveBeenCalledWith(initiateUploadArgs)
 
     await waitFor(() => {
       expect(
@@ -404,20 +388,12 @@ describe('useUploadFileEntities', () => {
       hook.current.initiateUpload(initiateUploadArgs)
     })
 
-    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(1)
-    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-      initiateUploadArgs,
-      { onSuccess: expect.any(Function) },
-    )
-
-    // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
-    act(() => {
-      usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
-        prepareDirsForUploadReturn,
-        initiateUploadArgs,
-        null,
-      )
-    })
+    expect(
+      usePrepareFileEntityUploadMockReturn.mutateAsync,
+    ).toHaveBeenCalledTimes(1)
+    expect(
+      usePrepareFileEntityUploadMockReturn.mutateAsync,
+    ).toHaveBeenCalledWith(initiateUploadArgs)
 
     await waitFor(() => {
       expect(
@@ -513,19 +489,12 @@ describe('useUploadFileEntities', () => {
         hook.current.initiateUpload(initiateUploadArgs)
       })
 
-      expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(
-        1,
-      )
-      expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-        initiateUploadArgs,
-        { onSuccess: expect.any(Function) },
-      )
-
-      // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
-      act(() => {
-        usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!
-          .onSuccess!(prepareDirsForUploadReturn, initiateUploadArgs, null)
-      })
+      expect(
+        usePrepareFileEntityUploadMockReturn.mutateAsync,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        usePrepareFileEntityUploadMockReturn.mutateAsync,
+      ).toHaveBeenCalledWith(initiateUploadArgs)
 
       await waitFor(() => {
         expect(hook.current.state).toBe('PROMPT_USER')
@@ -686,19 +655,12 @@ describe('useUploadFileEntities', () => {
         hook.current.initiateUpload(initiateUploadArgs)
       })
 
-      expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(
-        1,
-      )
-      expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-        initiateUploadArgs,
-        { onSuccess: expect.any(Function) },
-      )
-
-      // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
-      act(() => {
-        usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!
-          .onSuccess!(prepareDirsForUploadReturn, initiateUploadArgs, null)
-      })
+      expect(
+        usePrepareFileEntityUploadMockReturn.mutateAsync,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        usePrepareFileEntityUploadMockReturn.mutateAsync,
+      ).toHaveBeenCalledWith(initiateUploadArgs)
 
       await waitFor(() => {
         expect(hook.current.state).toBe('PROMPT_USER')
@@ -827,19 +789,12 @@ describe('useUploadFileEntities', () => {
         hook.current.initiateUpload(initiateUploadArgs)
       })
 
-      expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(
-        1,
-      )
-      expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-        initiateUploadArgs,
-        { onSuccess: expect.any(Function) },
-      )
-
-      // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
-      act(() => {
-        usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!
-          .onSuccess!(prepareDirsForUploadReturn, initiateUploadArgs, null)
-      })
+      expect(
+        usePrepareFileEntityUploadMockReturn.mutateAsync,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        usePrepareFileEntityUploadMockReturn.mutateAsync,
+      ).toHaveBeenCalledWith(initiateUploadArgs)
 
       await waitFor(() => {
         expect(hook.current.state).toBe('PROMPT_USER')
@@ -986,19 +941,12 @@ describe('useUploadFileEntities', () => {
         hook.current.initiateUpload(initiateUploadArgs)
       })
 
-      expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(
-        1,
-      )
-      expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-        initiateUploadArgs,
-        { onSuccess: expect.any(Function) },
-      )
-
-      // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
-      act(() => {
-        usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!
-          .onSuccess!(prepareDirsForUploadReturn, initiateUploadArgs, null)
-      })
+      expect(
+        usePrepareFileEntityUploadMockReturn.mutateAsync,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        usePrepareFileEntityUploadMockReturn.mutateAsync,
+      ).toHaveBeenCalledWith(initiateUploadArgs)
 
       await waitFor(() => {
         expect(hook.current.state).toBe('PROMPT_USER')
@@ -1045,310 +993,6 @@ describe('useUploadFileEntities', () => {
     })
   })
 
-  test('pause and resume an upload', async () => {
-    const initiateUploadArgs: InitiateUploadArgs = [
-      { file: file1, rootContainerId: 'syn123' },
-    ]
-
-    setupUploadDestinationMock(mockSynapseUploadDestination)
-    const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
-      filesReadyForUpload: [{ file: file1, parentId: 'syn123' }],
-      filesToPromptForNewVersion: [],
-    }
-    const usePrepareFileEntityUploadMockReturn = setupPrepareDirsForUploadMock(
-      prepareDirsForUploadReturn,
-    )
-
-    const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock({
-      fileHandleId: createdFileHandleId1,
-      fileName: file1.name,
-    })
-    mockUseSynapseMultipartUpload.mockReturnValue(
-      useSynapseMultipartUploadMockReturn,
-    )
-    useSynapseMultipartUploadMockReturn.mutateAsync.mockRejectedValueOnce(
-      new Error('the request was aborted.'),
-    )
-    mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
-
-    const useCreateEntityReturn =
-      getUseMutationIdleMock<FileEntity>(createdEntity1)
-    mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
-
-    const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
-    mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
-
-    const { result: hook } = renderHook()
-
-    await waitFor(() => {
-      expect(hook.current.state).toBe('WAITING')
-      expect(hook.current.activePrompts.length).toBe(0)
-      expect(hook.current.initiateUpload).toBeDefined()
-    })
-
-    act(() => {
-      hook.current.initiateUpload(initiateUploadArgs)
-    })
-
-    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(1)
-    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-      initiateUploadArgs,
-      { onSuccess: expect.any(Function) },
-    )
-
-    // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
-    act(() => {
-      usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
-        prepareDirsForUploadReturn,
-        initiateUploadArgs,
-        null,
-      )
-    })
-
-    expect(hook.current.state).toBe('UPLOADING')
-
-    act(() => {
-      hook.current.uploadProgress[0].pause()
-    })
-
-    await waitFor(() => {
-      expect(
-        useSynapseMultipartUploadMockReturn.mutateAsync,
-      ).toHaveBeenCalledTimes(1)
-      expect(
-        useSynapseMultipartUploadMockReturn.mutateAsync,
-      ).toHaveBeenCalledWith({
-        fileName: file1.name,
-        blob: file1,
-        storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
-        contentType: 'text/plain',
-        progressCallback: expect.any(Function),
-        abortController: expect.any(AbortController),
-        onMd5Computed: expect.any(Function),
-      })
-
-      expect(useCreateEntityReturn.mutateAsync).not.toHaveBeenCalled()
-      expect(useUpdateEntityReturn.mutateAsync).not.toHaveBeenCalled()
-    })
-
-    act(() => {
-      hook.current.uploadProgress[0].resume()
-    })
-
-    await waitFor(() => {
-      expect(
-        useSynapseMultipartUploadMockReturn.mutateAsync,
-      ).toHaveBeenCalledTimes(2)
-      expect(
-        useSynapseMultipartUploadMockReturn.mutateAsync,
-      ).toHaveBeenNthCalledWith(2, {
-        fileName: file1.name,
-        blob: file1,
-        storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
-        contentType: 'text/plain',
-        progressCallback: expect.any(Function),
-        abortController: expect.any(AbortController),
-        onMd5Computed: expect.any(Function),
-      })
-
-      expect(useCreateEntityReturn.mutateAsync).toHaveBeenCalledTimes(1)
-      expect(useCreateEntityReturn.mutateAsync).toHaveBeenCalledWith({
-        parentId,
-        name: file1.name,
-        concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-        dataFileHandleId: createdFileHandleId1,
-      })
-      expect(useUpdateEntityReturn.mutateAsync).not.toHaveBeenCalled()
-    })
-
-    expect(hook.current.state).toBe('COMPLETE')
-  })
-
-  test('cancel and remove an upload', async () => {
-    const initiateUploadArgs: InitiateUploadArgs = [
-      { file: file1, rootContainerId: 'syn123' },
-    ]
-    setupUploadDestinationMock(mockSynapseUploadDestination)
-    const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
-      filesReadyForUpload: [{ file: file1, parentId: 'syn123' }],
-      filesToPromptForNewVersion: [],
-    }
-    const usePrepareFileEntityUploadMockReturn = setupPrepareDirsForUploadMock(
-      prepareDirsForUploadReturn,
-    )
-
-    const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock({
-      fileHandleId: createdFileHandleId1,
-      fileName: file1.name,
-    })
-    mockUseSynapseMultipartUpload.mockReturnValue(
-      useSynapseMultipartUploadMockReturn,
-    )
-    useSynapseMultipartUploadMockReturn.mutateAsync.mockRejectedValueOnce(
-      new Error('the request was aborted.'),
-    )
-    mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
-
-    const useCreateEntityReturn =
-      getUseMutationIdleMock<FileEntity>(createdEntity1)
-    mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
-
-    const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
-    mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
-
-    const { result: hook } = renderHook()
-
-    await waitFor(() => {
-      expect(hook.current.state).toBe('WAITING')
-      expect(hook.current.activePrompts.length).toBe(0)
-      expect(hook.current.initiateUpload).toBeDefined()
-    })
-
-    act(() => {
-      hook.current.initiateUpload(initiateUploadArgs)
-    })
-
-    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(1)
-    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-      initiateUploadArgs,
-      { onSuccess: expect.any(Function) },
-    )
-
-    // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
-    act(() => {
-      usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
-        prepareDirsForUploadReturn,
-        initiateUploadArgs,
-        null,
-      )
-    })
-
-    expect(hook.current.state).toBe('UPLOADING')
-
-    act(() => {
-      hook.current.uploadProgress[0].cancel()
-    })
-
-    await waitFor(() => {
-      expect(
-        useSynapseMultipartUploadMockReturn.mutateAsync,
-      ).toHaveBeenCalledTimes(1)
-      expect(
-        useSynapseMultipartUploadMockReturn.mutateAsync,
-      ).toHaveBeenCalledWith({
-        fileName: file1.name,
-        blob: file1,
-        storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
-        contentType: 'text/plain',
-        progressCallback: expect.any(Function),
-        abortController: expect.any(AbortController),
-        onMd5Computed: expect.any(Function),
-      })
-
-      expect(useCreateEntityReturn.mutateAsync).not.toHaveBeenCalled()
-      expect(useUpdateEntityReturn.mutateAsync).not.toHaveBeenCalled()
-    })
-
-    act(() => {
-      hook.current.uploadProgress[0].remove()
-    })
-
-    await waitFor(() => {
-      expect(hook.current.state).toBe('WAITING')
-      expect(hook.current.uploadProgress.length).toBe(0)
-      expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(
-        1,
-      )
-      expect(useCreateEntityReturn.mutateAsync).not.toHaveBeenCalled()
-      expect(useUpdateEntityReturn.mutateAsync).not.toHaveBeenCalled()
-    })
-  })
-
-  test('upload fails, and user removes it', async () => {
-    const initiateUploadArgs: InitiateUploadArgs = [
-      { file: file1, rootContainerId: 'syn123' },
-    ]
-    setupUploadDestinationMock(mockSynapseUploadDestination)
-    const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
-      filesReadyForUpload: [{ file: file1, parentId: 'syn123' }],
-      filesToPromptForNewVersion: [],
-    }
-    const usePrepareFileEntityUploadMockReturn = setupPrepareDirsForUploadMock(
-      prepareDirsForUploadReturn,
-    )
-
-    const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock({
-      fileHandleId: createdFileHandleId1,
-      fileName: file1.name,
-    })
-    mockUseSynapseMultipartUpload.mockReturnValue(
-      useSynapseMultipartUploadMockReturn,
-    )
-    useSynapseMultipartUploadMockReturn.mutateAsync.mockRejectedValue(
-      new Error('The upload failed'),
-    )
-    mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
-
-    const useCreateEntityReturn = getUseMutationIdleMock<FileEntity>()
-    mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
-    const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
-    mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
-
-    const { result: hook } = renderHook()
-
-    await waitFor(() => {
-      expect(hook.current.state).toBe('WAITING')
-      expect(hook.current.activePrompts.length).toBe(0)
-      expect(hook.current.initiateUpload).toBeDefined()
-    })
-
-    act(() => {
-      hook.current.initiateUpload(initiateUploadArgs)
-    })
-
-    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(1)
-    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-      initiateUploadArgs,
-      { onSuccess: expect.any(Function) },
-    )
-
-    // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
-    act(() => {
-      usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
-        prepareDirsForUploadReturn,
-        initiateUploadArgs,
-        null,
-      )
-    })
-
-    await waitFor(() => {
-      expect(hook.current.state).toBe('WAITING')
-      expect(hook.current.activePrompts.length).toBe(0)
-      expect(hook.current.uploadProgress.length).toBe(1)
-      expect(hook.current.uploadProgress[0].status).toBe('FAILED')
-      expect(hook.current.uploadProgress[0].failureReason).toEqual(
-        'The upload failed',
-      )
-      expect(
-        useSynapseMultipartUploadMockReturn.mutateAsync,
-      ).toHaveBeenCalledTimes(1)
-      expect(
-        useSynapseMultipartUploadMockReturn.mutateAsync,
-      ).toHaveBeenCalledWith({
-        fileName: file1.name,
-        blob: file1,
-        storageLocationId: SYNAPSE_STORAGE_LOCATION_ID,
-        contentType: 'text/plain',
-        progressCallback: expect.any(Function),
-        abortController: expect.any(AbortController),
-        onMd5Computed: expect.any(Function),
-      })
-
-      expect(useCreateEntityReturn.mutateAsync).not.toHaveBeenCalled()
-      expect(useUpdateEntityReturn.mutateAsync).not.toHaveBeenCalled()
-    })
-  })
-
   test('upload file via direct S3 upload', async () => {
     const initiateUploadArgs: InitiateUploadArgs = [
       { file: file1, rootContainerId: 'syn123' },
@@ -1389,20 +1033,12 @@ describe('useUploadFileEntities', () => {
       hook.current.initiateUpload(initiateUploadArgs)
     })
 
-    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledTimes(1)
-    expect(usePrepareFileEntityUploadMockReturn.mutate).toHaveBeenCalledWith(
-      initiateUploadArgs,
-      { onSuccess: expect.any(Function) },
-    )
-
-    // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
-    act(() => {
-      usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
-        prepareDirsForUploadReturn,
-        initiateUploadArgs,
-        null,
-      )
-    })
+    expect(
+      usePrepareFileEntityUploadMockReturn.mutateAsync,
+    ).toHaveBeenCalledTimes(1)
+    expect(
+      usePrepareFileEntityUploadMockReturn.mutateAsync,
+    ).toHaveBeenCalledWith(initiateUploadArgs)
 
     await waitFor(() => {
       expect(useDirectS3UploadReturn.mutateAsync).toHaveBeenCalledTimes(1)
@@ -1482,7 +1118,9 @@ describe('useUploadFileEntities', () => {
     })
 
     expect(mockOnStorageLimitSucceeded).toHaveBeenCalled()
-    expect(usePrepareFileEntityUploadMockReturn.mutate).not.toHaveBeenCalled()
+    expect(
+      usePrepareFileEntityUploadMockReturn.mutateAsync,
+    ).not.toHaveBeenCalled()
     expect(
       useSynapseMultipartUploadMockReturn.mutateAsync,
     ).not.toHaveBeenCalled()
@@ -1544,14 +1182,6 @@ describe('useUploadFileEntities', () => {
     act(() => {
       hook.current.initiateUpload(initiateUploadArgs)
     })
-    // Invoke the `onSuccess` callback passed to usePrepareFileEntityUploadMockReturn.mutate
-    act(() => {
-      usePrepareFileEntityUploadMockReturn.mutate.mock.lastCall![1]!.onSuccess!(
-        prepareDirsForUploadReturn,
-        initiateUploadArgs,
-        null,
-      )
-    })
 
     await waitFor(() => {
       expect(
@@ -1570,7 +1200,7 @@ describe('useUploadFileEntities', () => {
     await waitFor(() => {
       expect(mockOnStorageLimitSucceeded).toHaveBeenCalled()
       expect(
-        usePrepareFileEntityUploadMockReturn.mutate,
+        usePrepareFileEntityUploadMockReturn.mutateAsync,
       ).not.toHaveBeenCalledTimes(2)
     })
   })

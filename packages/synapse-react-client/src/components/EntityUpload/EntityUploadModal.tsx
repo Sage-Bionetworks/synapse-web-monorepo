@@ -1,4 +1,4 @@
-import { UploaderState } from '@/utils/hooks/useUploadFileEntity/useUploadFileEntities'
+import { EntityUploaderState } from '@/utils/hooks/useUploadFileEntity/useUploadFileEntities'
 import { Box, Button, Tab, Tabs } from '@mui/material'
 import {
   ForwardedRef,
@@ -35,7 +35,7 @@ export const EntityUploadModal = forwardRef(function EntityUploadModal(
   const { entityId, open, onClose, onUploadReady } = props
   const [tabValue, setTabValue] = useState<UploadTab>(UploadTab.UploadFile)
 
-  const [uploadState, setUploadState] = useState<UploaderState>('LOADING')
+  const [uploadState, setUploadState] = useState<EntityUploaderState>('LOADING')
 
   const [isLinkFormValid, setIsLinkFormValid] = useState(false)
   const linkToUrlFormRef = useRef<LinkToURLHandle>(null)
