@@ -2,7 +2,7 @@ import { GridModel } from '@/components/DataGrid/DataGridTypes'
 import { useCRDTModelView } from '@/components/DataGrid/useCRDTModelView'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { DataGridWebSocket } from './DataGridWebSocket'
-import { useGridPresignedUrl } from './hooks/useGridPresignedUrl'
+import { useGridPresignedUrl } from '@/synapse-queries/grid/useGridPresignedUrl'
 
 export function useDataGridWebSocket() {
   const [model, setModel] = useState<GridModel | null>(null)
