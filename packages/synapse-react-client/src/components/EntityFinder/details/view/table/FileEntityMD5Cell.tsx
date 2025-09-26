@@ -3,12 +3,12 @@ import { Skeleton, Tooltip } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
 import { CellContext } from '@tanstack/react-table'
 import { displayToast } from '../../../../ToastMessage/index'
-import { EntityFinderTableViewRowData } from '../DetailsView'
+import { EntityIdAndVersionNumber } from './TableCellTypes'
 import { FileHandleWithPreview } from './TableCellTypes'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
-export function FileEntityMD5Cell(
-  props: CellContext<EntityFinderTableViewRowData, unknown>,
+export function FileEntityMD5Cell<T extends EntityIdAndVersionNumber>(
+  props: CellContext<T, unknown>,
 ) {
   const { row } = props
   const { data: bundle, isLoading: isLoadingEntityBundle } = useGetEntityBundle(

@@ -13,16 +13,14 @@ import { Box, Button, CircularProgress } from '@mui/material'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
 import { useGetEntityHeader } from '@/synapse-queries'
 import { EntityBadgeIconsCell } from '../EntityFinder/details/view/table/EntityBadgeIconsCell'
-import {
-  AddFileToDownloadListCell,
-  CreatedOnCell,
-  FileEntityMD5Cell,
-  FileEntitySizeCell,
-  ModifiedByCell,
-  ModifiedOnCell,
-} from './components/CellWrappers'
 import { NameCell } from './components/EntityNameCell'
 import { IdCell } from './components/IdCell'
+import { ModifiedOnCell } from '../EntityFinder/details/view/table/ModifiedOnCell'
+import { ModifiedByCell } from '../EntityFinder/details/view/table/ModifiedByCell'
+import { CreatedOnCell } from '../EntityFinder/details/view/table/CreatedOnCell'
+import { FileEntitySizeCell } from '../EntityFinder/details/view/table/FileEntitySizeCell'
+import { FileEntityMD5Cell } from '../EntityFinder/details/view/table/FileEntityMD5Cell'
+import { AddFileToDownloadListCell } from '../EntityFinder/details/view/table/AddToDownloadListCell'
 import EntityTreeTableContext from './components/EntityTreeTableContext'
 
 type EntityTreeTableProps = {
@@ -234,8 +232,15 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
   )
 
   // Flatten tree for table rows
+  // Flatten tree for table rows. Track visited node ids to avoid cycles and
+  // duplicate rows when the same entity appears multiple times in the
+  // traversal (links, cycles, or bad/multiple parent relationships).
   const flattenTree = useCallback(
-    (nodeId: string): EntityBundleRow[] => {
+    (nodeId: string, visited = new Set<string>()): EntityBundleRow[] => {
+      // Prevent revisiting the same node and producing duplicate rows
+      if (visited.has(nodeId)) return []
+      visited.add(nodeId)
+
       const node = tree[nodeId]
       if (!node) return []
 
@@ -251,7 +256,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
       ]
       if (expanded[node.entityHeader.id] && node.children) {
         node.children.forEach(child => {
-          rows.push(...flattenTree(child.entityHeader.id))
+          rows.push(...flattenTree(child.entityHeader.id, visited))
         })
         // If there is a next page token for this node, add a synthetic 'Load more' row
         const nextToken = nextPageTokens[node.entityHeader.id]
@@ -269,12 +274,12 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
       }
       return rows
     },
-    [expanded, tree, nextPageTokens, loadingIds, loadingPageTokens],
+    [expanded, tree, nextPageTokens],
   )
 
   const rows: EntityBundleRow[] = useMemo(() => {
     const rootNode = tree[rootId]
-    return rootNode ? flattenTree(rootId) : []
+    return rootNode ? flattenTree(rootId, new Set<string>()) : []
   }, [tree, rootId, flattenTree])
 
   // Table columns
@@ -334,7 +339,13 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({ rootId }) => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     state: { expanded },
-    getRowId: row => row.entityId,
+    // Make row ids robust: include parent/depth for normal rows so that the
+    // same entity appearing in different places (or synthetic rows) won't
+    // collide. Keep load-more rows as-is since they are already unique.
+    getRowId: row =>
+      row.isLoadMore
+        ? row.entityId
+        : `${row.entityId}::${row.parentId ?? 'root'}::${row.depth}`,
     manualExpanding: true,
   })
 
