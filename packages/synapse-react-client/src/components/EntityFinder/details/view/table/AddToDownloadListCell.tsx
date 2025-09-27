@@ -4,13 +4,13 @@ import { useSynapseContext } from '@/utils/index'
 import { IconButton, Tooltip } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { CellContext } from '@tanstack/react-table'
+import { EntityIdAndVersionNumber } from './TableCellTypes'
 import { displayFilesWereAddedToDownloadListSuccess } from '../../../../download_list/DownloadConfirmationUtils'
 import IconSvg from '../../../../IconSvg/IconSvg'
 import { displayToast } from '../../../../ToastMessage/index'
-import { EntityFinderTableViewRowData } from '../DetailsView'
 
-export function AddFileToDownloadListCell(
-  props: CellContext<EntityFinderTableViewRowData, unknown>,
+export function AddFileToDownloadListCell<T extends EntityIdAndVersionNumber>(
+  props: CellContext<T, unknown>,
 ) {
   const { row } = props
   const { entityId, versionNumber } = row.original

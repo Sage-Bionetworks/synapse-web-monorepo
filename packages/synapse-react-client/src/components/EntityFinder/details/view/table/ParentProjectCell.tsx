@@ -19,7 +19,7 @@ export function ParentProjectCell<T extends EntityIdAndVersionNumber>(
   )
 
   if (isLoadingBundle || isLoadingProjectEntity) {
-    return <Skeleton width={200} />
+    return <Skeleton width={100} />
   }
 
   return project ? <EntityLink entity={project} /> : <></>
