@@ -32,6 +32,7 @@ export function useDataGridWebSocket() {
     mutateAsync: establishWebsocketConnection,
     isPending: isEstablishingWebsocketConnection,
     reconnect,
+    presignedUrl,
   } = useEstablishWebsocketConnection({
     onSuccess: (ws: DataGridWebSocket) => {
       wsRef.current = ws
@@ -98,5 +99,6 @@ export function useDataGridWebSocket() {
     model,
     modelSnapshot,
     connect,
+    presignedUrl,
   }
 }

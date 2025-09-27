@@ -70,7 +70,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
   ({ showDebugInfo = false }, ref) => {
     const [session, setSession] = useState<GridSession | null>(null)
     const [replicaId, setReplicaId] = useState<number | null>(null)
-    const [presignedUrl, setPresignedUrl] = useState<string>('')
     const [chatOpen, setChatOpen] = useState(false)
 
     const startGridSessionRef = useRef<StartGridSessionHandle | null>(null)
@@ -100,6 +99,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       model,
       modelSnapshot,
       connect,
+      presignedUrl,
     } = useDataGridWebSocket()
 
     useEffect(() => {
@@ -298,7 +298,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
               ref={startGridSessionRef}
               onSessionChange={setSession}
               onReplicaChange={setReplicaId}
-              onPresignedUrlChange={setPresignedUrl}
               show={showDebugInfo}
             />
           </Grid>

@@ -32,6 +32,7 @@ export function useEstablishWebsocketConnection(
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const wsRef = useRef<DataGridWebSocket | null>(null)
   const lastParamsRef = useRef<EstablishWebsocketParams | null>(null)
+  const lastPresignedUrlRef = useRef<string | null>(null)
 
   const createWebsocket = useCallback(
     async ({
@@ -41,6 +42,7 @@ export function useEstablishWebsocketConnection(
     }: EstablishWebsocketParams) => {
       if (!replicaId) throw new Error('replicaId is required')
       const url = await fetchPresignedUrl({ replicaId, sessionId })
+      lastPresignedUrlRef.current = url
 
       // If there is an existing WebSocket, disconnect it before creating a new one
       if (wsRef.current) {
@@ -141,5 +143,6 @@ export function useEstablishWebsocketConnection(
     ...mutation,
     websocketInstance: wsRef.current,
     reconnect,
+    presignedUrl: lastPresignedUrlRef.current,
   }
 }
