@@ -56,7 +56,6 @@ import { getCellClassName } from './utils/getCellClassName'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 import { Button } from '@mui/material'
 import GridAgentChat from '../SynapseChat/GridAgentChat'
-import { useDocumentVisibility } from '@react-hookz/web'
 
 export type SynapseGridProps = {
   showDebugInfo?: boolean
@@ -93,76 +92,21 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       [],
     )
 
-    const isVisible = useDocumentVisibility()
-
     // WebSocket state
     const {
       isConnected,
       websocketInstance,
-      createWebsocket,
       isGridReady,
       model,
       modelSnapshot,
-      reconnect,
+      connect,
     } = useDataGridWebSocket()
 
-    // Auto-reconnect WebSocket when the document becomes visible and disconnected.
-    // Exponential backoff with a max delay of 10s between attempts.
-    const retryRef = useRef(1000) // starting delay 1s
-    const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
     useEffect(() => {
-      if (!replicaId || !isVisible) return // only retry if tab is visible
-      if (!reconnect) return
-
-      let stopped = false
-
-      const attemptReconnect = () => {
-        if (stopped) return
-
-        const socketReady =
-          websocketInstance?.socket.readyState === WebSocket.OPEN
-
-        if (!socketReady) {
-          console.log(
-            `Reconnecting WebSocket... next retry in ${retryRef.current}ms`,
-          )
-
-          reconnect(replicaId, session?.sessionId || '')
-
-          // Schedule next attempt with exponential backoff
-          retryTimerRef.current = setTimeout(() => {
-            attemptReconnect()
-          }, retryRef.current)
-
-          // Double the delay for the next attempt, ceiling at 10s
-          retryRef.current = Math.min(retryRef.current * 2, 10000)
-        } else {
-          // If the socket is successfully connected, reset delay to 1s
-          retryRef.current = 1000
-          if (retryTimerRef.current) {
-            clearTimeout(retryTimerRef.current)
-            retryTimerRef.current = null
-          }
-        }
+      if (replicaId && session?.sessionId) {
+        connect(replicaId, session.sessionId)
       }
-
-      attemptReconnect()
-
-      return () => {
-        stopped = true
-        if (retryTimerRef.current) {
-          clearTimeout(retryTimerRef.current)
-          retryTimerRef.current = null
-        }
-      }
-    }, [replicaId, reconnect, isVisible])
-
-    useEffect(() => {
-      if (replicaId && presignedUrl) {
-        createWebsocket(replicaId, presignedUrl)
-      }
-    }, [replicaId, presignedUrl, createWebsocket])
+    }, [replicaId, session?.sessionId, connect])
 
     const { data: jsonSchema } = useGetSchema(
       session?.gridJsonSchema$Id ?? '',
@@ -371,15 +315,15 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                 </p>
                 <p>
                   Presigned URL:{' '}
-                  {presignedUrl.substring(0, 30) +
-                    (presignedUrl.length > 30
-                      ? ' ... ' +
-                        presignedUrl.substring(
-                          presignedUrl.length - 10,
-                          presignedUrl.length,
-                        )
-                      : '') || 'No URL generated'}
+                  {presignedUrl
+                    ? presignedUrl.substring(0, 30) +
+                      (presignedUrl.length > 30
+                        ? ' ... ' +
+                          presignedUrl.substring(presignedUrl.length - 10)
+                        : '')
+                    : 'No URL generated'}
                 </p>
+
                 <p>
                   WebSocket Status:{' '}
                   <span style={{ color: isConnected ? 'green' : 'red' }}>
