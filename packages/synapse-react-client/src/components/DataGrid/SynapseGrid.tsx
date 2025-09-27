@@ -70,7 +70,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
   ({ showDebugInfo = false }, ref) => {
     const [session, setSession] = useState<GridSession | null>(null)
     const [replicaId, setReplicaId] = useState<number | null>(null)
-    const [presignedUrl, setPresignedUrl] = useState<string>('')
     const [chatOpen, setChatOpen] = useState(false)
 
     const startGridSessionRef = useRef<StartGridSessionHandle | null>(null)
@@ -96,17 +95,18 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const {
       isConnected,
       websocketInstance,
-      createWebsocket,
       isGridReady,
       model,
       modelSnapshot,
+      connect,
+      presignedUrl,
     } = useDataGridWebSocket()
 
     useEffect(() => {
-      if (replicaId && presignedUrl) {
-        createWebsocket(replicaId, presignedUrl)
+      if (replicaId && session?.sessionId) {
+        connect(replicaId, session.sessionId)
       }
-    }, [replicaId, presignedUrl, createWebsocket])
+    }, [replicaId, session?.sessionId, connect])
 
     const { data: jsonSchema } = useGetSchema(
       session?.gridJsonSchema$Id ?? '',
@@ -298,7 +298,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
               ref={startGridSessionRef}
               onSessionChange={setSession}
               onReplicaChange={setReplicaId}
-              onPresignedUrlChange={setPresignedUrl}
               show={showDebugInfo}
             />
           </Grid>
@@ -315,15 +314,15 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                 </p>
                 <p>
                   Presigned URL:{' '}
-                  {presignedUrl.substring(0, 30) +
-                    (presignedUrl.length > 30
-                      ? ' ... ' +
-                        presignedUrl.substring(
-                          presignedUrl.length - 10,
-                          presignedUrl.length,
-                        )
-                      : '') || 'No URL generated'}
+                  {presignedUrl
+                    ? presignedUrl.substring(0, 30) +
+                      (presignedUrl.length > 30
+                        ? ' ... ' +
+                          presignedUrl.substring(presignedUrl.length - 10)
+                        : '')
+                    : 'No URL generated'}
                 </p>
+
                 <p>
                   WebSocket Status:{' '}
                   <span style={{ color: isConnected ? 'green' : 'red' }}>
