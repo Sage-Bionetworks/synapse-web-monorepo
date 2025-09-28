@@ -74,7 +74,7 @@ const mockTable = {
       {
         id: 'row-2',
         original: {
-          entityId: 'syn123::loadmore::nextToken',
+          entityId: '',
           entityHeader: { id: 'syn123', name: 'Entity 1' },
           depth: 1,
           isLeaf: true,
@@ -151,7 +151,7 @@ describe('EntityTreeTableView', () => {
           {
             id: 'row-load-more',
             original: {
-              entityId: 'syn456::loadmore::token',
+              entityId: '',
               entityHeader: { id: 'syn456', name: 'Entity 2' },
               depth: 1,
               isLeaf: true,
@@ -187,7 +187,7 @@ describe('EntityTreeTableView', () => {
           {
             id: 'row-load-more',
             original: {
-              entityId: 'syn999::loadmore::token',
+              entityId: '',
               entityHeader: { id: 'syn999', name: 'Entity 3' },
               depth: 1,
               isLeaf: true,

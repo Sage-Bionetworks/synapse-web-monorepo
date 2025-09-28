@@ -13,7 +13,7 @@ export const IdColumnHeader: React.FC<
   const getVisibleIds = () => {
     const visibleRows = table.getRowModel().rows
     return visibleRows
-      .filter(row => !row.original.isLoadMore) // Exclude "Load More" rows
+      .filter(row => !row.original.isLoadMore && row.original.entityId) // Exclude "Load More" rows and rows without entityId
       .map(row => row.original.entityId)
       .join('\n')
   }

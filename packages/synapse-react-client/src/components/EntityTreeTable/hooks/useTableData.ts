@@ -27,7 +27,7 @@ export const useTableData = (
         const nextToken = nextPageTokens[rootId]
         if (nextToken) {
           rows.push({
-            entityId: `${rootId}::loadmore::${nextToken}`,
+            entityId: '', // Empty placeholder for load more rows
             entityHeader: rootNode.entityHeader,
             depth: 0,
             isLeaf: true,

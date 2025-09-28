@@ -185,7 +185,7 @@ describe('useTableData', () => {
 
     expect(result.current).toHaveLength(2)
     expect(result.current[1]).toEqual({
-      entityId: 'syn123::loadmore::nextPageToken',
+      entityId: '',
       entityHeader: mockEntityHeader,
       depth: 0,
       isLeaf: true,

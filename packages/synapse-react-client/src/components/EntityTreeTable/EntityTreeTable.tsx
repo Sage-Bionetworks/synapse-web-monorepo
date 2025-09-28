@@ -117,11 +117,13 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     state: { expanded, sorting },
     // Make row ids robust: include parent/depth for normal rows so that the
     // same entity appearing in different places (or synthetic rows) won't
-    // collide. Keep load-more rows as-is since they are already unique.
+    // collide. For load-more rows, use parentId and depth to create unique identifier.
     getRowId: row =>
       row.isLoadMore
-        ? row.entityId
-        : `${row.entityId}::${row.parentId ?? 'root'}::${row.depth}`,
+        ? `loadmore::${row.parentId}::${row.depth}`
+        : `${row.entityId || row.entityHeader.id}::${row.parentId ?? 'root'}::${
+            row.depth
+          }`,
     manualExpanding: true,
     manualSorting: true,
     enableSorting,

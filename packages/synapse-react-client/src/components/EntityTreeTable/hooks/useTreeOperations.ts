@@ -164,7 +164,7 @@ export const useTreeOperations = (
 
         if (nextToken) {
           rows.push({
-            entityId: `${node.entityHeader.id}::loadmore::${nextToken}`,
+            entityId: '', // Empty placeholder for load more rows
             entityHeader: node.entityHeader,
             depth: node.depth + 1,
             isLeaf: true,

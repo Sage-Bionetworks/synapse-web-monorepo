@@ -70,7 +70,6 @@ export const useDataInitialization = (
           existingRoot.children &&
           existingRoot.children.length > 0
         ) {
-          // Only skip if we have the same sort parameters (check if this is truly the same data)
           return prev
         }
 

@@ -64,7 +64,7 @@ const mockRows: EntityBundleRow[] = [
     versionNumber: 1,
   },
   {
-    entityId: 'syn789::loadmore::token',
+    entityId: '',
     entityHeader: {
       id: 'syn789',
       name: 'Entity 3',
@@ -149,12 +149,12 @@ describe('IdColumnHeader', () => {
     const loadMoreOnlyRows = [
       {
         ...mockRows[2],
-        entityId: 'syn111::loadmore::token1',
+        entityId: '',
         isLoadMore: true,
       },
       {
         ...mockRows[2],
-        entityId: 'syn222::loadmore::token2',
+        entityId: '',
         isLoadMore: true,
       },
     ]
