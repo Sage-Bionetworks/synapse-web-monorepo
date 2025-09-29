@@ -16,9 +16,8 @@ import {
 import { displayToast } from '../ToastMessage/ToastMessage'
 
 export interface StartGridSessionProps {
-  onSessionChange?: (session: GridSession) => void
+  onSessionChange?: (session: GridSession | null) => void
   onReplicaChange?: (replicaId: number | null) => void
-  onPresignedUrlChange?: (url: string) => void
   show?: boolean
 }
 
@@ -33,23 +32,17 @@ export const StartGridSession = forwardRef<
   StartGridSessionHandle,
   StartGridSessionProps
 >((props, ref) => {
-  const {
-    show = false,
-    onSessionChange = noop,
-    onReplicaChange = noop,
-    onPresignedUrlChange = noop,
-  } = props
+  const { show = false, onSessionChange = noop, onReplicaChange = noop } = props
   const [inputValue, setInputValue] = useState('')
 
   const { mutate: initializeGridConnection } = useInitializeGridConnection({
     onMutate(args) {
       console.log('Starting grid session with args:', args)
     },
-    onSuccess({ session, replica, presignedUrl }) {
+    onSuccess({ session, replica }) {
       displayToast('Grid session started successfully', 'success')
       onSessionChange(session)
       onReplicaChange(replica.replicaId!)
-      onPresignedUrlChange(presignedUrl)
     },
   })
 
@@ -58,7 +51,6 @@ export const StartGridSession = forwardRef<
       displayToast('Successfully deleted grid session', 'success')
       onSessionChange(null)
       onReplicaChange(null)
-      onPresignedUrlChange('')
     },
     onError: error => {
       displayToast(error.reason, 'danger')

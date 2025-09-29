@@ -35,6 +35,7 @@ export const GridWithQuery = {
   },
   render: function GridWithButton({ query, ...args }) {
     const gridRef = useRef<SynapseGridHandle>(null)
+
     return (
       <div>
         <Button
