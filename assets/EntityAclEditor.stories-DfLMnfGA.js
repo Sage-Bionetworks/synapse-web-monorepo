@@ -1,0 +1,50 @@
+import{m as W}from"./mockFileEntity-Bq6FvrO-.js";import{m as C,a as f,b as L,c as j,d as x}from"./mockFileEntityACLVariants-F08FucNR.js";import{m as A}from"./mockProject-Bg7bDmAu.js";import{E as U}from"./EntityAclEditorModal-D7vMzR4R.js";import"./StringUtils-NPb0VexC.js";import"./VerificationSubmission-BDh1zA9f.js";import"./mock_file_handle-BSSHlK6B.js";import"./mock_user_profile-Bg50HGfI.js";import"./useFiles-S2V5XiQ5.js";import"./SynapseConstants-v0apzKoO.js";import"./OrientationBanner-DFmDuf7j.js";import"./jsx-runtime-D_zvdyIk.js";import"./index-C7cfG45a.js";import"./index-sbO4x94I.js";import"./iframe-B7VjNHo_.js";import"./spreadSx-CwcO6WA9.js";import"./react-4SSRkyYe.js";import"./FullWidthAlert-CNH_Dqfb.js";import"./Alert-DZ8CbtWA.js";import"./createTheme-iVg2ALkG.js";import"./DefaultPropsProvider-CRtidxfI.js";import"./useSlot-C9f_lDyM.js";import"./useForkRef-CYTdLXIx.js";import"./createSimplePaletteValueFilter-C8f66SCi.js";import"./createSvgIcon-D3jU8-M9.js";import"./Close-B3lKWl3N.js";import"./IconButton-tGIn719_.js";import"./useTimeout-CGLlUFdL.js";import"./ButtonBase-COsjseQ1.js";import"./isFocusVisible-B8k4qzLc.js";import"./CircularProgress-D013myXI.js";import"./Paper-Cpv8FcM0.js";import"./useTheme-DhBETySk.js";import"./useTheme-CYmu3bRJ.js";import"./Stack-BEg7pLQM.js";import"./extendSxProp-DFEfVq7i.js";import"./getThemeProps-DM9gIAd0.js";import"./Box-DravUX6M.js";import"./AlertTitle-BQ770Cwf.js";import"./Typography-DRTW8NuR.js";import"./index-DZ4LX7su.js";import"./ClickAwayListener-BSIiFOtQ.js";import"./getReactElementRef-BtsaYvD6.js";import"./index-DzYd1Bc_.js";import"./index-BKNU1Rjh.js";import"./ownerDocument-DW-IO8s5.js";import"./Grow-ChyhBvRk.js";import"./Tooltip-CJHx95Zp.js";import"./index-R2QlNZel.js";import"./useControlled-CfdyZ7Xn.js";import"./Popper-BuFN7FXQ.js";import"./Button-BK6paxd1.js";import"./fetchWithExponentialTimeout-UV9FrpR8.js";import"./useQuery-CBEaN3hw.js";import"./QueryClientProvider-CQeOfp_m.js";import"./Link-BJq7PyxB.js";import"./Collapse--UWddqzL.js";import"./_baseUniq-SRsv_8xH.js";import"./_Uint8Array-C4QD7eya.js";import"./isArray-BgCSpe1l.js";import"./_getTag-CFPOCuEk.js";import"./isEqual-C3QkQYs2.js";import"./merge-DYvHUG4s.js";import"./_initCloneObject-DwZJqav8.js";import"./identity-DKeuBCMA.js";import"./tinycolor-Begke6kS.js";import"./Fade-dEjfEC7w.js";import"./inputBaseClasses-Buwfxq9X.js";import"./calculateFriendlyFileSize-8dDJSstk.js";import"./CheckCircleTwoTone-3LbkrL10.js";import"./InfoTwoTone-BBLBptou.js";import"./useMutation-DxiTHEyI.js";import"./dayjs.min-d7VTqjeN.js";import"./chunk-AYJ5UCUI-D7s1T1vu.js";import"./cloneDeep-BOvso_ns.js";import"./Skeleton-lznIIFIC.js";import"./fakerUtils-DU1yZH1G.js";import"./mockTeam-Cx9yM2LM.js";import"./uniqueId-BYQQpX8l.js";import"./toString-BL0OxC_V.js";import"./isSymbol-DsPf4Jsh.js";import"./times-DRBzd2y5.js";import"./toInteger-DhBeNU-T.js";import"./ConfirmCloseWithoutSavingDialog-BRft7xyD.js";import"./ConfirmationDialog-BMj2EFGY.js";import"./DialogBase-OIGGBKyK.js";import"./Close-DOFDn3Fb.js";import"./HelpPopover-DSVYXFpa.js";import"./MarkdownPopover-Dzh4G3KF.js";import"./LightTooltip-C8QEL9OI.js";import"./MarkdownSynapse-Dx5uMMSh.js";import"./SkeletonButton-BfnxXOab.js";import"./SkeletonInlineBlock-Xy-wwnM5.js";import"./SkeletonTable-CRk7h5Zb.js";import"./SkeletonParagraph-D_p2L1Wx.js";import"./HelpOutlineTwoTone-DRdgsGsY.js";import"./DialogTitle-ic_dbiAz.js";import"./DialogContent-DCawu9UU.js";import"./DialogActions-BHR3A-MZ.js";import"./Dialog-CYwe15aC.js";import"./Modal-BY73-Ubt.js";import"./getScrollbarSize-CaCM53D3.js";import"./ownerWindow-HkKU3E4x.js";import"./createChainedFunction-BO_9K8Jh.js";import"./Backdrop-CrtgK3YQ.js";import"./useEntityBundle-it2aX1nD.js";import"./ToastMessage-CrFNx3l4.js";import"./CSSTransition-DW4i2oPj.js";import"./useEntity-DzNEHiNy.js";import"./pickBy-BAsAIYCP.js";import"./isString-D3KK8Pcm.js";import"./_baseIteratee-BzVTf_GZ.js";import"./_baseGet-Be7ElGYI.js";import"./hasIn-au1Ffwgv.js";import"./pick-BiLm74Db.js";import"./_baseSet-C0n_n3Zm.js";import"./omit-C0ze5oZu.js";import"./_baseSlice-F8doVSIJ.js";import"./useQueries-DBeq2bRA.js";import"./queryOptions-C9woPjwX.js";import"./useInfiniteQuery-BZb8K34c.js";import"./InfiniteQueryUtils-CKlRW-xB.js";import"./AccessControlListUtils-BCv-YVSI.js";import"./AclEditor-BLiwRjV4.js";import"./IconSvg-CUWfL4Gw.js";import"./LayersTwoTone-ByJFlKyH.js";import"./ContentCopyTwoTone-BwCPsUnN.js";import"./ErrorOutlined-CnTArT07.js";import"./GetAppTwoTone-BHKGpNuS.js";import"./InfoOutlined-d4iCJ-sL.js";import"./PhoneTwoTone-RjW_ANkL.js";import"./DeleteTwoTone-CggRgpD0.js";import"./UserSearchBoxV2-Cn0rwuUw.js";import"./useDebouncedEffect-DudC6pZZ.js";import"./use-deep-compare-effect.esm-CLqz-dfh.js";import"./uniq-Ok6cF1xa.js";import"./without-CKTUscrs.js";import"./UserBadge-BBVcvJP8.js";import"./Popover-Db4BtlDA.js";import"./isHostComponent-DVu5iVWx.js";import"./debounce-Be36O1Ab.js";import"./mergeSlotProps-BZrgW5By.js";import"./Menu-BEqZGYuu.js";import"./MenuList-CMIdnYPy.js";import"./List-DrTdv_XI.js";import"./Divider-PuZKbWUd.js";import"./dividerClasses-BgUOcg-O.js";import"./MenuItem-BQ9mqmjq.js";import"./Card-BUh5CScp.js";import"./Avatar-DfHRfO2D.js";import"./Chip-ASR1lI0N.js";import"./Select-aab027f3.esm-Culnvydi.js";import"./defineProperty-CegpTSss.js";import"./UserOrTeamBadge-B8K-4y2t.js";import"./TeamBadge-DKy3ROOk.js";import"./IconSvgButton-ClV5JjLD.js";import"./TextField-GNjRTdoo.js";import"./Select-BJdKRIEf.js";import"./FormControl-BBPrbm81.js";import"./useFormControl-CzAwUSqI.js";import"./isMuiElement-DvUrwV-j.js";import"./formControlState-Dq1zat_P.js";import"./InputBase-C-A7iuQU.js";import"./Input-lRf-548R.js";import"./InputLabel-B8Pp51qJ.js";import"./FormLabel-BMpnFVY2.js";import"./FormHelperText-BaEcrwpC.js";import"./FormControlLabel-IK-L9rHV.js";import"./Checkbox-BYAZTXUE.js";import"./SwitchBase-Kwp55R34.js";import"./useUpdateAcl-DeVE-tWQ.js";import"./useGetEntityHeaders-Bhxo2Vux.js";import"./EntityLink-WWWBegd2.js";import"./EntityIcon-B7yGB-Qr.js";import"./ErrorChip-QUv_lBSn.js";import"./OpenData-fNCp-HPN.js";import"./useMessage-DMEu6n-X.js";const Zo={title:"Synapse/Entity ACL Editor",component:U,args:{open:!0}},t={args:{entityId:A.id},parameters:{stack:"mock"}},r={args:{entityId:C.id},parameters:{stack:"mock"}},o={args:{entityId:W.id},parameters:{stack:"mock"}},i={args:{entityId:f.id},parameters:{stack:"mock"}},m={args:{entityId:L.id},parameters:{stack:"mock"}},p={args:{entityId:j.id},parameters:{stack:"mock"}},a={args:{entityId:x.id},parameters:{stack:"mock"}};var e,s,n;t.parameters={...t.parameters,docs:{...(e=t.parameters)==null?void 0:e.docs,source:{originalSource:`{
+  args: {
+    entityId: mockProject.id
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...(n=(s=t.parameters)==null?void 0:s.docs)==null?void 0:n.source}}};var c,d,l;r.parameters={...r.parameters,docs:{...(c=r.parameters)==null?void 0:c.docs,source:{originalSource:`{
+  args: {
+    entityId: mockFileEntityCurrentUserCannotEdit.id
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...(l=(d=r.parameters)==null?void 0:d.docs)==null?void 0:l.source}}};var k,u,g;o.parameters={...o.parameters,docs:{...(k=o.parameters)==null?void 0:k.docs,source:{originalSource:`{
+  args: {
+    entityId: mockFileEntity.id
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...(g=(u=o.parameters)==null?void 0:u.docs)==null?void 0:g.source}}};var y,D,I;i.parameters={...i.parameters,docs:{...(y=i.parameters)==null?void 0:y.docs,source:{originalSource:`{
+  args: {
+    entityId: mockFileEntityWithLocalSharingSettingsData.id
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...(I=(D=i.parameters)==null?void 0:D.docs)==null?void 0:I.source}}};var P,S,E;m.parameters={...m.parameters,docs:{...(P=m.parameters)==null?void 0:P.docs,source:{originalSource:`{
+  args: {
+    entityId: mockFileOpenDataWithPublicRead.id
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...(E=(S=m.parameters)==null?void 0:S.docs)==null?void 0:E.source}}};var O,h,F;p.parameters={...p.parameters,docs:{...(O=p.parameters)==null?void 0:O.docs,source:{originalSource:`{
+  args: {
+    entityId: mockFileOpenDataWithNoPublicRead.id
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...(F=(h=p.parameters)==null?void 0:h.docs)==null?void 0:F.source}}};var R,b,N;a.parameters={...a.parameters,docs:{...(R=a.parameters)==null?void 0:R.docs,source:{originalSource:`{
+  args: {
+    entityId: mockFilePublicReadNoOpenData.id
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...(N=(b=a.parameters)==null?void 0:b.docs)==null?void 0:N.source}}};const $o=["Project","ReadOnly","InheritedFile","LocalSharingSettings","OpenDataPublicCanRead","OpenDataNoPublicRead","NoOpenDataWithPublicRead"];export{o as InheritedFile,i as LocalSharingSettings,a as NoOpenDataWithPublicRead,p as OpenDataNoPublicRead,m as OpenDataPublicCanRead,t as Project,r as ReadOnly,$o as __namedExportsOrder,Zo as default};
