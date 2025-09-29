@@ -30,14 +30,11 @@ export function useDataGridWebSocket() {
   const isVisible = useDocumentVisibility()
 
   const {
-    mutate: establishWebsocketConnection,
+    mutateAsync: establishWebsocketConnection,
     isPending: isEstablishingWebsocketConnection,
     error: errorEstablishingWebsocketConnection,
     presignedUrl,
-  } = useEstablishWebsocketConnection({
-    onSuccess: ws => setWebSocketInstance(ws),
-    onError: err => console.error('Failed to establish WebSocket', err),
-  })
+  } = useEstablishWebsocketConnection()
 
   // Initiate (or re-initiate) a connection
   const connect = useCallback((replicaId: number, sessionId: string) => {
@@ -67,6 +64,8 @@ export function useDataGridWebSocket() {
         onModelCreate: setModel,
       },
     })
+      .then(ws => setWebSocketInstance(ws))
+      .catch(err => console.error('Failed to establish WebSocket', err))
   }, [
     shouldEstablishWebsocketConnection,
     connectionParams,
