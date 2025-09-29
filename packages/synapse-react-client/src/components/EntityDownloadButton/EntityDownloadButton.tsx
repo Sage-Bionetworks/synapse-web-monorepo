@@ -69,6 +69,7 @@ function getMenuItemForAction(
 function getDownloadActionsForEntityType(type: EntityType): DownloadAction[][] {
   switch (type) {
     case 'file':
+    case 'recordset':
       return [
         [DownloadAction.downloadFile],
         [DownloadAction.addToCart, DownloadAction.programmaticAccess],
@@ -88,7 +89,6 @@ function getDownloadActionsForEntityType(type: EntityType): DownloadAction[][] {
     case 'virtualtable':
       return [[DownloadAction.exportTable, DownloadAction.programmaticAccess]]
     case 'link':
-    case 'recordset':
       return [[DownloadAction.programmaticAccess]]
     default:
       // This will fail if a new EntityType is added and not handled
