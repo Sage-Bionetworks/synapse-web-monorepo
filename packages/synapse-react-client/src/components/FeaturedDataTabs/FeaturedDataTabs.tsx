@@ -27,7 +27,7 @@ function FeaturedDataTabs(props: FeaturedDataTabsProps) {
   return (
     <Box
       className="FeaturedDataTabs"
-      sx={{ padding: { xs: '0px 40px 40px 40px', lg: '0px 80px 80px 80px' } }}
+      sx={{ padding: { xs: '40px', lg: '80px' } }}
     >
       {/* tabs */}
       {configs.length > 1 && (
