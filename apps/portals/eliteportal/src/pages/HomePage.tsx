@@ -320,6 +320,18 @@ function HomePageInternal() {
                       unitDescription: 'Files',
                       plotType: 'STACKED_HORIZONTAL_BAR',
                     },
+                    {
+                      title: 'Cross-Species Fibroblast Study',
+                      description:
+                        'Multiomic assays were applied to a large scale cross species fibroblast cell culture collection derived from nearly 150 primate, bat, rodent, and bird species to determine factors related to aging and longevity.',
+                      facetsToPlot: ['dataTypes'],
+                      selectFacetColumnName: 'Study',
+                      selectFacetColumnValue: 'LC_CP_OMICS',
+                      detailsPagePath:
+                        '/Explore/Studies/DetailsPage/StudyDetails?studyKey=LC_CP_OMICS',
+                      unitDescription: 'Files',
+                      plotType: 'STACKED_HORIZONTAL_BAR',
+                    },
                   ],
                 },
               },
