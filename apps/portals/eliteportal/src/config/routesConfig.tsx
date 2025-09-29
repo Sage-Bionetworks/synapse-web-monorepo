@@ -39,7 +39,7 @@ const routes: RouteObject[] = [
               ),
           },
           {
-            path: 'How to Access Our Data',
+            path: 'How to Access Data',
             lazy: () =>
               import('@/pages/DataAccess').then(convertModuleToRouteObject),
           },
