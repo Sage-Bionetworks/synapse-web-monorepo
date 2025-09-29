@@ -81,9 +81,14 @@ export const EntityLink = (props: EntityLinkProps) => {
           target="_blank"
           rel="noopener noreferrer"
           onClick={
-            entityIdClicked ? () => entityIdClicked(entity.id!) : undefined
+            entityIdClicked
+              ? e => {
+                  e.preventDefault()
+                  entityIdClicked(entity.id!)
+                }
+              : undefined
           }
-          href={entityIdClicked ? undefined : href}
+          href={href}
         >
           {showIcon && (
             <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
