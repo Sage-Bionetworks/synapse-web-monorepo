@@ -1,72 +1,77 @@
 import React from 'react'
-import { flexRender, Table } from '@tanstack/react-table'
+import { Table, Row, flexRender } from '@tanstack/react-table'
 import { EntityBundleRow } from '../EntityTreeTable'
 import { AutoLoadMore } from './AutoLoadMore'
 import { useEntityTreeTableContext } from './EntityTreeTableContext'
+import StyledTanStackTable from '../../TanStackTable/StyledTanStackTable'
+import { TrProps } from '../../TanStackTable/types'
 
 type EntityTreeTableViewProps = {
   table: Table<EntityBundleRow>
 }
 
-export const EntityTreeTableView: React.FC<EntityTreeTableViewProps> = ({
-  table,
-}) => {
+// Custom table row component to handle load-more rows
+const EntityTreeTableRow: React.FC<
+  TrProps<EntityBundleRow, Row<EntityBundleRow>>
+> = ({ row, tableRow, ...rest }) => {
   const { loadingIds, loadMoreChildren, nextPageTokens } =
     useEntityTreeTableContext()
 
+  if (!tableRow) return null
+
+  const original = tableRow.original
+  if (original.isLoadMore) {
+    const colCount = tableRow.getAllCells().length
+    const isLoading = loadingIds.has(original.parentId!)
+
+    return (
+      <tr {...rest}>
+        <td colSpan={colCount}>
+          <AutoLoadMore
+            depth={original.depth}
+            isLoading={isLoading}
+            onLoadMore={() => {
+              loadMoreChildren(
+                original.parentId!,
+                nextPageTokens[original.parentId!],
+              )
+            }}
+          />
+        </td>
+      </tr>
+    )
+  }
+
+  // For normal rows, render cells normally
+  return (
+    <tr {...rest}>
+      {tableRow.getVisibleCells().map(cell => (
+        <td
+          key={cell.id}
+          style={{ width: `calc(var(--col-${cell.column.id}-size) * 1px)` }}
+        >
+          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </td>
+      ))}
+    </tr>
+  )
+}
+
+export const EntityTreeTableView: React.FC<EntityTreeTableViewProps> = ({
+  table,
+}) => {
   return (
     <div style={{ overflowX: 'auto' }}>
-      <table className="entity-tree-table">
-        <thead>
-          {table.getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map(header => (
-                <th key={header.id}>
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map(row => {
-            const original = row.original
-            if (original.isLoadMore) {
-              const colCount = table.getAllColumns().length
-              const isLoading = loadingIds.has(original.parentId!)
-
-              return (
-                <tr key={row.id}>
-                  <td colSpan={colCount}>
-                    <AutoLoadMore
-                      depth={original.depth}
-                      isLoading={isLoading}
-                      onLoadMore={() => {
-                        loadMoreChildren(
-                          original.parentId!,
-                          nextPageTokens[original.parentId!],
-                        )
-                      }}
-                    />
-                  </td>
-                </tr>
-              )
-            }
-            return (
-              <tr key={row.id}>
-                {row.getVisibleCells().map(cell => (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+      <StyledTanStackTable
+        table={table}
+        styledTableContainerProps={{
+          className: 'entity-tree-table',
+        }}
+        fullWidth={true}
+        slots={{
+          Tr: EntityTreeTableRow,
+        }}
+      />
     </div>
   )
 }

@@ -15,9 +15,13 @@ import { EntityTreeTableView } from './components/EntityTreeTableView'
 import { EntityTreeTableContext } from './components/EntityTreeTableContext'
 
 type EntityTreeTableProps = {
+  /** The Synapse ID of the root entity to display */
   rootId: string
+  /** Whether to expand the root node by default. Defaults to true */
   expandRootByDefault?: boolean
+  /** Whether to show the root node in the tree. Defaults to true */
   showRootNode?: boolean
+  /** Whether to enable column sorting. Defaults to true */
   enableSorting?: boolean
 }
 
@@ -114,6 +118,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     data: rows,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    columnResizeMode: 'onChange',
     state: { expanded, sorting },
     // Make row ids robust: include parent/depth for normal rows so that the
     // same entity appearing in different places (or synthetic rows) won't

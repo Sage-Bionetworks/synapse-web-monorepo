@@ -278,4 +278,16 @@ describe('EntityTreeTable', () => {
 
     expect(screen.queryByTestId(/child-loader-/)).not.toBeInTheDocument()
   })
+
+  it('should always enable column resizing', () => {
+    const mockUseReactTable = vi.mocked(useReactTable)
+
+    render(<EntityTreeTable {...defaultProps} />)
+
+    expect(mockUseReactTable).toHaveBeenCalledWith(
+      expect.objectContaining({
+        columnResizeMode: 'onChange',
+      }),
+    )
+  })
 })

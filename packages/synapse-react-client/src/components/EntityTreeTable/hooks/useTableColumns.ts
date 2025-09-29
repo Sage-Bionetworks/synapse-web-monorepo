@@ -33,6 +33,7 @@ export const useTableColumns = (enableSorting: boolean) => {
         header: NameColumnHeader,
         cell: NameCell,
         enableSorting: enableSorting,
+        size: 450, // Default width for Name column
       },
     ]
     if (isMediumAndUp) {
@@ -41,6 +42,7 @@ export const useTableColumns = (enableSorting: boolean) => {
         header: 'Badges',
         cell: EntityBadgeIconsCell,
         enableSorting: false,
+        size: 120, // Default width for Badges column
       })
       baseColumns.push({
         id: 'id',
@@ -100,6 +102,7 @@ export const useTableColumns = (enableSorting: boolean) => {
       header: 'Download',
       cell: AddFileToDownloadListCell,
       enableSorting: false,
+      size: 120, // Default width for Download column
     })
 
     return baseColumns
