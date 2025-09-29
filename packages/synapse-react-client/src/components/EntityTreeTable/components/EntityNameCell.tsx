@@ -1,10 +1,11 @@
 import { CellContext } from '@tanstack/react-table'
 import { EntityBundleRow } from '../EntityTreeTable'
 import { Box } from '@mui/system'
-import { IconButton, Skeleton } from '@mui/material'
+import { IconButton } from '@mui/material'
 import { ChevronRight, ExpandMore } from '@mui/icons-material'
 import { useEntityTreeTableContext } from './EntityTreeTableContext'
 import { EntityLink } from '@/components/EntityLink'
+import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
 
 export const NameCell: React.FC<CellContext<EntityBundleRow, unknown>> = ({
   row,
@@ -19,6 +20,8 @@ export const NameCell: React.FC<CellContext<EntityBundleRow, unknown>> = ({
       {hasChildren && (
         <IconButton
           size="small"
+          loading={loadingIds.has(entityHeader.id)}
+          loadingIndicator={<SynapseSpinner />}
           onClick={() => handleToggleExpanded(entityHeader.id)}
           aria-label={isExpanded ? 'Collapse' : 'Expand'}
         >
@@ -49,8 +52,6 @@ export const NameCell: React.FC<CellContext<EntityBundleRow, unknown>> = ({
       >
         <EntityLink entity={entityHeader} entityIdClicked={entityIdClicked} />
       </Box>
-
-      {loadingIds.has(entityHeader.id) && <Skeleton width={'100%'} />}
     </Box>
   )
 }

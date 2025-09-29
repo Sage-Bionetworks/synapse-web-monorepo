@@ -4,8 +4,6 @@ import { Skeleton } from '@mui/material'
 import { CellContext } from '@tanstack/react-table'
 import { EntityIdAndVersionNumber } from './TableCellTypes'
 import { FileHandleWithPreview } from './TableCellTypes'
-import { OPTIMIZED_ENTITY_BUNDLE_QUERY_OPTIONS } from './optimizedBundleConfig'
-import { ALL_ENTITY_BUNDLE_FIELDS } from '@sage-bionetworks/synapse-types'
 
 export function FileEntitySizeCell<T extends EntityIdAndVersionNumber>(
   props: CellContext<T, unknown>,
@@ -14,8 +12,6 @@ export function FileEntitySizeCell<T extends EntityIdAndVersionNumber>(
   const { data: bundle, isLoading } = useGetEntityBundle(
     row.original.entityId,
     row.original.versionNumber,
-    ALL_ENTITY_BUNDLE_FIELDS,
-    OPTIMIZED_ENTITY_BUNDLE_QUERY_OPTIONS,
   )
 
   if (isLoading) {
