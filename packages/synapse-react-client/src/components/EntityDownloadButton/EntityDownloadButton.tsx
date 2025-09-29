@@ -66,7 +66,9 @@ function getMenuItemForAction(
 }
 
 // Function that returns DropdownMenuItem
-function getDownloadActionsForEntityType(type: EntityType): DownloadAction[][] {
+export function getDownloadActionsForEntityType(
+  type: EntityType,
+): DownloadAction[][] {
   switch (type) {
     case 'file':
     case 'recordset':
