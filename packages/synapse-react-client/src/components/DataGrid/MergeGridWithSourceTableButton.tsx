@@ -2,6 +2,7 @@ import useMergeGridWithSource from '@/components/DataGrid/useMergeGridWithSource
 import { displayToast } from '@/components/index'
 import { Button } from '@mui/material'
 import {
+  EntityType,
   EntityUpdateResults,
   instanceOfEntityUpdateResults,
   instanceOfUploadToTableResult,
@@ -11,12 +12,17 @@ import {
 export type MergeGridWithSourceTableButtonProps = {
   sourceEntityId: string
   gridSessionId: string
+  sourceEntityType?: EntityType
 }
 
 export default function MergeGridWithSourceTableButton(
   props: MergeGridWithSourceTableButtonProps,
 ) {
-  const { sourceEntityId, gridSessionId } = props
+  const { sourceEntityId, gridSessionId, sourceEntityType } = props
+
+  // check source, file entity or record set
+  console.log('typed', sourceEntityType)
+  console.log('gridSessionId', gridSessionId)
 
   const { mutate: mergeGridWithSource, isPending } = useMergeGridWithSource({
     onSuccess: result => {
@@ -27,6 +33,11 @@ export default function MergeGridWithSourceTableButton(
     },
   })
 
+  const buttonText =
+    sourceEntityType === EntityType.recordset
+      ? 'Merge grid edits into RecordSet'
+      : 'Update table with changes'
+
   return (
     <Button
       loading={isPending}
@@ -35,7 +46,7 @@ export default function MergeGridWithSourceTableButton(
       }}
       variant="contained"
     >
-      Update table with changes
+      {buttonText}
     </Button>
   )
 }

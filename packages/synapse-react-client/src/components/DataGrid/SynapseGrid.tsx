@@ -56,6 +56,8 @@ import { getCellClassName } from './utils/getCellClassName'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 import { Button } from '@mui/material'
 import GridAgentChat from '../SynapseChat/GridAgentChat'
+import { useGetEntity } from '@/synapse-queries/index'
+import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
 
 export type SynapseGridProps = {
   showDebugInfo?: boolean
@@ -74,6 +76,8 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const [chatOpen, setChatOpen] = useState(false)
 
     const startGridSessionRef = useRef<StartGridSessionHandle | null>(null)
+
+    const { data: entity } = useGetEntity(session?.sourceEntityId)
 
     useImperativeHandle(
       ref,
@@ -445,6 +449,11 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                   <MergeGridWithSourceTableButton
                     sourceEntityId={session.sourceEntityId}
                     gridSessionId={session.sessionId!}
+                    sourceEntityType={
+                      entity?.concreteType
+                        ? convertToEntityType(entity.concreteType)
+                        : undefined
+                    }
                   />
                 </Grid>
               )}
