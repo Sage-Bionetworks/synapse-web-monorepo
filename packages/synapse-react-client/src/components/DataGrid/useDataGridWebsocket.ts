@@ -1,6 +1,6 @@
 import { GridModel } from '@/components/DataGrid/DataGridTypes'
 import { useCRDTModelView } from '@/components/DataGrid/useCRDTModelView'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { DataGridWebSocket } from './DataGridWebSocket'
 import { useEstablishWebsocketConnection } from '@/synapse-queries/grid/useEstablishWebsocketConnection'
 import { useDocumentVisibility } from '@react-hookz/web'
