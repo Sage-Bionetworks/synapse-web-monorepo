@@ -19,7 +19,73 @@ vi.mock('./AutoLoadMore', () => ({
   )),
 }))
 
+vi.mock('../../TanStackTable/StyledTanStackTable', () => ({
+  default: vi.fn(({ table, slots, styledTableContainerProps }) => {
+    const Tr = slots?.Tr || (({ children }: any) => <tr>{children}</tr>)
+
+    return (
+      <div style={{ overflowX: 'auto' }}>
+        <table className={styledTableContainerProps?.className}>
+          <thead>
+            {table.getHeaderGroups().map((headerGroup: any) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header: any) => (
+                  <th key={header.id}>
+                    {mockFlexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row: any) => (
+              <Tr key={row.id} tableRow={row} row={row} />
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  }),
+}))
+
 const mockFlexRender = vi.mocked(flexRender)
+
+// Reusable mock functions
+const createMockCells = () => [
+  {
+    id: 'cell-1',
+    column: { columnDef: { cell: 'Cell 1' }, id: 'name' },
+    getContext: vi.fn(() => ({})),
+  },
+  {
+    id: 'cell-2',
+    column: { columnDef: { cell: 'Cell 2' }, id: 'id' },
+    getContext: vi.fn(() => ({})),
+  },
+]
+
+const createMockRow = (original: any, id: string) => ({
+  id,
+  original,
+  getVisibleCells: vi.fn(() => createMockCells()),
+  getAllCells: vi.fn(() => createMockCells()),
+})
+
+const createMockLoadMoreRow = (parentId: string, depth: number = 1) =>
+  createMockRow(
+    {
+      entityId: '',
+      entityHeader: { id: parentId, name: `Entity ${parentId}` },
+      depth,
+      isLeaf: true,
+      parentId,
+      isLoadMore: true,
+    },
+    `row-load-more-${parentId}`,
+  )
 
 const mockContextValue = {
   expanded: { syn123: true },
@@ -36,12 +102,12 @@ const mockTable = {
       headers: [
         {
           id: 'header-1',
-          column: { columnDef: { header: 'Name' } },
+          column: { columnDef: { header: 'Name' }, id: 'name' },
           getContext: vi.fn(() => ({})),
         },
         {
           id: 'header-2',
-          column: { columnDef: { header: 'ID' } },
+          column: { columnDef: { header: 'ID' }, id: 'id' },
           getContext: vi.fn(() => ({})),
         },
       ],
@@ -49,43 +115,26 @@ const mockTable = {
   ]),
   getRowModel: vi.fn(() => ({
     rows: [
-      {
-        id: 'row-1',
-        original: {
+      createMockRow(
+        {
           entityId: 'syn123',
           entityHeader: { id: 'syn123', name: 'Entity 1' },
           depth: 0,
           isLeaf: false,
           isLoadMore: false,
         },
-        getVisibleCells: vi.fn(() => [
-          {
-            id: 'cell-1',
-            column: { columnDef: { cell: 'Cell 1' } },
-            getContext: vi.fn(() => ({})),
-          },
-          {
-            id: 'cell-2',
-            column: { columnDef: { cell: 'Cell 2' } },
-            getContext: vi.fn(() => ({})),
-          },
-        ]),
-      },
-      {
-        id: 'row-2',
-        original: {
-          entityId: '',
-          entityHeader: { id: 'syn123', name: 'Entity 1' },
-          depth: 1,
-          isLeaf: true,
-          parentId: 'syn123',
-          isLoadMore: true,
-        },
-        getVisibleCells: vi.fn(),
-      },
+        'row-1',
+      ),
+      createMockLoadMoreRow('syn123'),
     ],
   })),
-  getAllColumns: vi.fn(() => [{ id: 'col1' }, { id: 'col2' }]),
+  getAllColumns: vi.fn(() => [{ id: 'name' }, { id: 'id' }]),
+  getState: vi.fn(() => ({
+    columnSizingInfo: { isResizingColumn: false },
+    columnSizing: {},
+    columnVisibility: {},
+  })),
+  getTotalSize: vi.fn(() => 800),
 } as any
 
 describe('EntityTreeTableView', () => {
@@ -147,20 +196,7 @@ describe('EntityTreeTableView', () => {
     const customTable = {
       ...mockTable,
       getRowModel: vi.fn(() => ({
-        rows: [
-          {
-            id: 'row-load-more',
-            original: {
-              entityId: '',
-              entityHeader: { id: 'syn456', name: 'Entity 2' },
-              depth: 1,
-              isLeaf: true,
-              parentId: 'syn456',
-              isLoadMore: true,
-            },
-            getVisibleCells: vi.fn(),
-          },
-        ],
+        rows: [createMockLoadMoreRow('syn456')],
       })),
     }
 
@@ -183,20 +219,7 @@ describe('EntityTreeTableView', () => {
     const customTable = {
       ...mockTable,
       getRowModel: vi.fn(() => ({
-        rows: [
-          {
-            id: 'row-load-more',
-            original: {
-              entityId: '',
-              entityHeader: { id: 'syn999', name: 'Entity 3' },
-              depth: 1,
-              isLeaf: true,
-              parentId: 'syn999',
-              isLoadMore: true,
-            },
-            getVisibleCells: vi.fn(),
-          },
-        ],
+        rows: [createMockLoadMoreRow('syn999')],
       })),
     }
 
