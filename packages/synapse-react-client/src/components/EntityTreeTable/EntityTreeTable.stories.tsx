@@ -46,6 +46,17 @@ export const ProjectRootVisibleAndExpanded: Story = {
   },
 }
 
+export const CustomEntityIdClickHandler: Story = {
+  args: {
+    rootId: 'syn27229419',
+    showRootNode: false,
+    expandRootByDefault: true,
+    enableSorting: false,
+    entityIdClicked: (entityId: string) =>
+      alert(`Clicked entityId: ${entityId}`),
+  },
+}
+
 export const SortingDisabled: Story = {
   args: {
     rootId: 'syn27229419',

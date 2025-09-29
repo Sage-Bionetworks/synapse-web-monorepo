@@ -93,6 +93,7 @@ const mockContextValue = {
   handleToggleExpanded: vi.fn(),
   loadMoreChildren: vi.fn(),
   nextPageTokens: { syn123: 'nextToken' },
+  entityIdClicked: vi.fn(), // Mock function to satisfy EntityTreeTableContextType
 }
 
 const mockTable = {

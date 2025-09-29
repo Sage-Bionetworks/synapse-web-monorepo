@@ -9,7 +9,7 @@ import { EntityLink } from '@/components/EntityLink'
 export const NameCell: React.FC<CellContext<EntityBundleRow, unknown>> = ({
   row,
 }) => {
-  const { expanded, loadingIds, handleToggleExpanded } =
+  const { expanded, loadingIds, handleToggleExpanded, entityIdClicked } =
     useEntityTreeTableContext()
   const { entityHeader, depth, isLeaf } = row.original
   const isExpanded = !!expanded[entityHeader.id]
@@ -47,7 +47,7 @@ export const NameCell: React.FC<CellContext<EntityBundleRow, unknown>> = ({
           },
         }}
       >
-        <EntityLink entity={entityHeader} />
+        <EntityLink entity={entityHeader} entityIdClicked={entityIdClicked} />
       </Box>
 
       {loadingIds.has(entityHeader.id) && <Skeleton width={'100%'} />}
