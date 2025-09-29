@@ -1,0 +1,36 @@
+.entity-tree-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 10px 0px;
+  table-layout: auto;
+}
+
+.entity-tree-table tr {
+  height: 40px;
+}
+.entity-tree-table th,
+.entity-tree-table td {
+  padding: 0px;
+  text-align: left;
+  vertical-align: middle;
+  height: 40px;
+}
+
+.entity-tree-table th {
+  font-weight: 600;
+}
+
+/* Ensure cell content aligns nicely */
+.entity-tree-table td > *,
+.entity-tree-table th > * {
+  display: flex;
+  align-items: center;
+}
+
+/* Prevent text wrapping in all cells */
+.entity-tree-table th,
+.entity-tree-table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

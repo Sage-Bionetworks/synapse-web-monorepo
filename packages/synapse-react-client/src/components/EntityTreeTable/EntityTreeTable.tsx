@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import './EntityTreeTable.css'
+import './EntityTreeTable.scss'
 import { useReactTable, getCoreRowModel } from '@tanstack/react-table'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import { Box } from '@mui/material'
