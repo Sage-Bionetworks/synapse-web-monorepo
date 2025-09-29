@@ -151,6 +151,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     manualSorting: true,
     enableSorting,
     onSortingChange: setSorting,
+    enableColumnFilters: false
   })
 
   return (
