@@ -196,6 +196,7 @@ describe('EntityTreeTable', () => {
       expect.any(Function), // setNextPageTokens
       expect.any(Function), // setLoadedChildren
       expect.any(Function), // setExpanded
+      expect.any(Function), // resetTreeState
       undefined, // sortBy
       undefined, // sortDirection
     )

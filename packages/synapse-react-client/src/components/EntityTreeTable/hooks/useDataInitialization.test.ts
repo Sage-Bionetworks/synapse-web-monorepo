@@ -59,6 +59,7 @@ describe('useDataInitialization', () => {
   const mockSetNextPageTokens = vi.fn()
   const mockSetLoadedChildren = vi.fn()
   const mockSetExpanded = vi.fn()
+  const mockResetTreeState = vi.fn()
   const loadedChildren = new Set<string>()
 
   beforeEach(() => {
@@ -86,6 +87,7 @@ describe('useDataInitialization', () => {
         mockSetNextPageTokens,
         mockSetLoadedChildren,
         mockSetExpanded,
+        mockResetTreeState,
         SortBy.NAME,
         Direction.ASC,
       ),
@@ -115,6 +117,7 @@ describe('useDataInitialization', () => {
         mockSetNextPageTokens,
         mockSetLoadedChildren,
         mockSetExpanded,
+        mockResetTreeState,
       ),
     )
 
@@ -139,6 +142,7 @@ describe('useDataInitialization', () => {
         mockSetNextPageTokens,
         mockSetLoadedChildren,
         mockSetExpanded,
+        mockResetTreeState,
       ),
     )
 
@@ -168,6 +172,7 @@ describe('useDataInitialization', () => {
         mockSetNextPageTokens,
         mockSetLoadedChildren,
         mockSetExpanded,
+        mockResetTreeState,
       ),
     )
 
@@ -201,6 +206,7 @@ describe('useDataInitialization', () => {
         mockSetNextPageTokens,
         mockSetLoadedChildren,
         mockSetExpanded,
+        mockResetTreeState,
       ),
     )
 
@@ -234,6 +240,7 @@ describe('useDataInitialization', () => {
         mockSetNextPageTokens,
         mockSetLoadedChildren,
         mockSetExpanded,
+        mockResetTreeState,
       ),
     )
 
@@ -280,6 +287,7 @@ describe('useDataInitialization', () => {
         mockSetNextPageTokens,
         mockSetLoadedChildren,
         mockSetExpanded,
+        mockResetTreeState,
       ),
     )
 
@@ -310,6 +318,7 @@ describe('useDataInitialization', () => {
         mockSetNextPageTokens,
         mockSetLoadedChildren,
         mockSetExpanded,
+        mockResetTreeState,
         SortBy.MODIFIED_ON,
         Direction.DESC,
       ),

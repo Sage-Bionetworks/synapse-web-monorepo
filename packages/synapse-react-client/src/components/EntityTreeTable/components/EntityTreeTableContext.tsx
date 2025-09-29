@@ -5,7 +5,7 @@ export type EntityTreeTableContextType = {
   handleToggleExpanded: (entityId: string) => void
   loadMoreChildren: (parentId: string, pageToken?: string) => void
   nextPageTokens: Record<string, string | undefined>
-  entityIdClicked: (entityId: string) => void
+  entityIdClicked?: (entityId: string) => void
 }
 
 export const EntityTreeTableContext = React.createContext<
