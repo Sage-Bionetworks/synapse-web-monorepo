@@ -6,6 +6,8 @@ import { displayToast } from '../../../../ToastMessage/index'
 import { EntityIdAndVersionNumber } from './TableCellTypes'
 import { FileHandleWithPreview } from './TableCellTypes'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
+import { OPTIMIZED_ENTITY_BUNDLE_QUERY_OPTIONS } from './optimizedBundleConfig'
+import { ALL_ENTITY_BUNDLE_FIELDS } from '@sage-bionetworks/synapse-types'
 
 export function FileEntityMD5Cell<T extends EntityIdAndVersionNumber>(
   props: CellContext<T, unknown>,
@@ -14,6 +16,8 @@ export function FileEntityMD5Cell<T extends EntityIdAndVersionNumber>(
   const { data: bundle, isLoading: isLoadingEntityBundle } = useGetEntityBundle(
     row.original.entityId,
     row.original.versionNumber,
+    ALL_ENTITY_BUNDLE_FIELDS,
+    OPTIMIZED_ENTITY_BUNDLE_QUERY_OPTIONS,
   )
   const { mutate: copyMd5ToClipboard } = useMutation({
     mutationFn: (md5: string) => copyStringToClipboard(md5),

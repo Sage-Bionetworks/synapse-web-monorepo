@@ -95,6 +95,12 @@ vi.mock('./components/EntityTreeTableContext', () => ({
   },
 }))
 
+vi.mock('../SynapseTable/NoContentAvailable', () => ({
+  default: vi.fn(() => (
+    <div data-testid="no-content-available">NoContentAvailable</div>
+  )),
+}))
+
 describe('EntityTreeTable', () => {
   const defaultProps = {
     rootId: 'syn123',
@@ -289,5 +295,289 @@ describe('EntityTreeTable', () => {
         columnResizeMode: 'onChange',
       }),
     )
+  })
+
+  describe('NoContentAvailable', () => {
+    it('should not show NoContentAvailable when showRootNode is true', () => {
+      const mockUseTreeState = vi.mocked(useTreeState)
+      mockUseTreeState.mockReturnValueOnce({
+        expanded: { syn123: true },
+        setExpanded: vi.fn(),
+        tree: {
+          syn123: {
+            entityHeader: {
+              id: 'syn123',
+              name: 'Test Entity',
+              type: 'org.sagebionetworks.repo.model.Project',
+              versionNumber: 1,
+              versionLabel: 'v1',
+              benefactorId: 123,
+              createdOn: '2023-01-01T00:00:00.000Z',
+              modifiedOn: '2023-01-01T00:00:00.000Z',
+              createdBy: 'user1',
+              modifiedBy: 'user1',
+              isLatestVersion: true,
+            },
+            depth: 0,
+            isLeaf: false,
+            children: [], // Empty children
+          },
+        },
+        setTree: vi.fn(),
+        loadingIds: new Set(),
+        setLoadingIds: vi.fn(),
+        loadedChildren: new Set(['syn123']), // Children loaded
+        setLoadedChildren: vi.fn(),
+        nextPageTokens: {},
+        setNextPageTokens: vi.fn(),
+        loadingPageTokens: {},
+        setLoadingPageTokens: vi.fn(),
+        sorting: [],
+        setSorting: vi.fn(),
+        resetTreeState: vi.fn(),
+      })
+
+      render(<EntityTreeTable rootId="syn123" showRootNode={true} />)
+
+      expect(
+        screen.queryByTestId('no-content-available'),
+      ).not.toBeInTheDocument()
+      expect(screen.getByTestId('entity-tree-table-view')).toBeInTheDocument()
+    })
+
+    it('should show NoContentAvailable when showRootNode is false and root has no children', () => {
+      const mockUseTreeState = vi.mocked(useTreeState)
+      mockUseTreeState.mockReturnValueOnce({
+        expanded: { syn123: true },
+        setExpanded: vi.fn(),
+        tree: {
+          syn123: {
+            entityHeader: {
+              id: 'syn123',
+              name: 'Test Entity',
+              type: 'org.sagebionetworks.repo.model.Project',
+              versionNumber: 1,
+              versionLabel: 'v1',
+              benefactorId: 123,
+              createdOn: '2023-01-01T00:00:00.000Z',
+              modifiedOn: '2023-01-01T00:00:00.000Z',
+              createdBy: 'user1',
+              modifiedBy: 'user1',
+              isLatestVersion: true,
+            },
+            depth: 0,
+            isLeaf: false,
+            children: [], // Empty children
+          },
+        },
+        setTree: vi.fn(),
+        loadingIds: new Set(),
+        setLoadingIds: vi.fn(),
+        loadedChildren: new Set(['syn123']), // Children loaded
+        setLoadedChildren: vi.fn(),
+        nextPageTokens: {},
+        setNextPageTokens: vi.fn(),
+        loadingPageTokens: {},
+        setLoadingPageTokens: vi.fn(),
+        sorting: [],
+        setSorting: vi.fn(),
+        resetTreeState: vi.fn(),
+      })
+
+      render(<EntityTreeTable rootId="syn123" showRootNode={false} />)
+
+      expect(screen.getByTestId('no-content-available')).toBeInTheDocument()
+      expect(
+        screen.queryByTestId('entity-tree-table-view'),
+      ).not.toBeInTheDocument()
+    })
+
+    it('should show NoContentAvailable when showRootNode is false and root has undefined children', () => {
+      const mockUseTreeState = vi.mocked(useTreeState)
+      mockUseTreeState.mockReturnValueOnce({
+        expanded: { syn123: true },
+        setExpanded: vi.fn(),
+        tree: {
+          syn123: {
+            entityHeader: {
+              id: 'syn123',
+              name: 'Test Entity',
+              type: 'org.sagebionetworks.repo.model.Project',
+              versionNumber: 1,
+              versionLabel: 'v1',
+              benefactorId: 123,
+              createdOn: '2023-01-01T00:00:00.000Z',
+              modifiedOn: '2023-01-01T00:00:00.000Z',
+              createdBy: 'user1',
+              modifiedBy: 'user1',
+              isLatestVersion: true,
+            },
+            depth: 0,
+            isLeaf: false,
+            // children: undefined - no children property
+          },
+        },
+        setTree: vi.fn(),
+        loadingIds: new Set(),
+        setLoadingIds: vi.fn(),
+        loadedChildren: new Set(['syn123']), // Children loaded
+        setLoadedChildren: vi.fn(),
+        nextPageTokens: {},
+        setNextPageTokens: vi.fn(),
+        loadingPageTokens: {},
+        setLoadingPageTokens: vi.fn(),
+        sorting: [],
+        setSorting: vi.fn(),
+        resetTreeState: vi.fn(),
+      })
+
+      render(<EntityTreeTable rootId="syn123" showRootNode={false} />)
+
+      expect(screen.getByTestId('no-content-available')).toBeInTheDocument()
+      expect(
+        screen.queryByTestId('entity-tree-table-view'),
+      ).not.toBeInTheDocument()
+    })
+
+    it('should not show NoContentAvailable when children have not been loaded yet', () => {
+      const mockUseTreeState = vi.mocked(useTreeState)
+      mockUseTreeState.mockReturnValueOnce({
+        expanded: { syn123: true },
+        setExpanded: vi.fn(),
+        tree: {
+          syn123: {
+            entityHeader: {
+              id: 'syn123',
+              name: 'Test Entity',
+              type: 'org.sagebionetworks.repo.model.Project',
+              versionNumber: 1,
+              versionLabel: 'v1',
+              benefactorId: 123,
+              createdOn: '2023-01-01T00:00:00.000Z',
+              modifiedOn: '2023-01-01T00:00:00.000Z',
+              createdBy: 'user1',
+              modifiedBy: 'user1',
+              isLatestVersion: true,
+            },
+            depth: 0,
+            isLeaf: false,
+            children: [], // Empty children
+          },
+        },
+        setTree: vi.fn(),
+        loadingIds: new Set(),
+        setLoadingIds: vi.fn(),
+        loadedChildren: new Set(), // Children NOT loaded
+        setLoadedChildren: vi.fn(),
+        nextPageTokens: {},
+        setNextPageTokens: vi.fn(),
+        loadingPageTokens: {},
+        setLoadingPageTokens: vi.fn(),
+        sorting: [],
+        setSorting: vi.fn(),
+        resetTreeState: vi.fn(),
+      })
+
+      render(<EntityTreeTable rootId="syn123" showRootNode={false} />)
+
+      expect(
+        screen.queryByTestId('no-content-available'),
+      ).not.toBeInTheDocument()
+      expect(screen.getByTestId('entity-tree-table-view')).toBeInTheDocument()
+    })
+
+    it('should not show NoContentAvailable when root node does not exist', () => {
+      const mockUseTreeState = vi.mocked(useTreeState)
+      mockUseTreeState.mockReturnValueOnce({
+        expanded: {},
+        setExpanded: vi.fn(),
+        tree: {}, // Empty tree - no root node
+        setTree: vi.fn(),
+        loadingIds: new Set(),
+        setLoadingIds: vi.fn(),
+        loadedChildren: new Set(['syn123']),
+        setLoadedChildren: vi.fn(),
+        nextPageTokens: {},
+        setNextPageTokens: vi.fn(),
+        loadingPageTokens: {},
+        setLoadingPageTokens: vi.fn(),
+        sorting: [],
+        setSorting: vi.fn(),
+        resetTreeState: vi.fn(),
+      })
+
+      render(<EntityTreeTable rootId="syn123" showRootNode={false} />)
+
+      expect(
+        screen.queryByTestId('no-content-available'),
+      ).not.toBeInTheDocument()
+      expect(screen.getByTestId('entity-tree-table-view')).toBeInTheDocument()
+    })
+
+    it('should not show NoContentAvailable when showRootNode is false but root has children', () => {
+      const mockUseTreeState = vi.mocked(useTreeState)
+      mockUseTreeState.mockReturnValueOnce({
+        expanded: { syn123: true },
+        setExpanded: vi.fn(),
+        tree: {
+          syn123: {
+            entityHeader: {
+              id: 'syn123',
+              name: 'Test Entity',
+              type: 'org.sagebionetworks.repo.model.Project',
+              versionNumber: 1,
+              versionLabel: 'v1',
+              benefactorId: 123,
+              createdOn: '2023-01-01T00:00:00.000Z',
+              modifiedOn: '2023-01-01T00:00:00.000Z',
+              createdBy: 'user1',
+              modifiedBy: 'user1',
+              isLatestVersion: true,
+            },
+            depth: 0,
+            isLeaf: false,
+            children: [
+              {
+                entityHeader: {
+                  id: 'syn456',
+                  name: 'Child Entity',
+                  type: 'org.sagebionetworks.repo.model.Folder',
+                  versionNumber: 1,
+                  versionLabel: 'v1',
+                  benefactorId: 123,
+                  createdOn: '2023-01-01T00:00:00.000Z',
+                  modifiedOn: '2023-01-01T00:00:00.000Z',
+                  createdBy: 'user1',
+                  modifiedBy: 'user1',
+                  isLatestVersion: true,
+                },
+                depth: 1,
+                isLeaf: true,
+                parentId: 'syn123',
+              },
+            ],
+          },
+        },
+        setTree: vi.fn(),
+        loadingIds: new Set(),
+        setLoadingIds: vi.fn(),
+        loadedChildren: new Set(['syn123']), // Children loaded
+        setLoadedChildren: vi.fn(),
+        nextPageTokens: {},
+        setNextPageTokens: vi.fn(),
+        loadingPageTokens: {},
+        setLoadingPageTokens: vi.fn(),
+        sorting: [],
+        setSorting: vi.fn(),
+        resetTreeState: vi.fn(),
+      })
+
+      render(<EntityTreeTable rootId="syn123" showRootNode={false} />)
+
+      expect(
+        screen.queryByTestId('no-content-available'),
+      ).not.toBeInTheDocument()
+      expect(screen.getByTestId('entity-tree-table-view')).toBeInTheDocument()
+    })
   })
 })

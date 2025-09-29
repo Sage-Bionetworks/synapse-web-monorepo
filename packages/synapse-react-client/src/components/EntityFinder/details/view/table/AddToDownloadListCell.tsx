@@ -8,13 +8,20 @@ import { EntityIdAndVersionNumber } from './TableCellTypes'
 import { displayFilesWereAddedToDownloadListSuccess } from '../../../../download_list/DownloadConfirmationUtils'
 import IconSvg from '../../../../IconSvg/IconSvg'
 import { displayToast } from '../../../../ToastMessage/index'
+import { OPTIMIZED_ENTITY_BUNDLE_QUERY_OPTIONS } from './optimizedBundleConfig'
+import { ALL_ENTITY_BUNDLE_FIELDS } from '@sage-bionetworks/synapse-types'
 
 export function AddFileToDownloadListCell<T extends EntityIdAndVersionNumber>(
   props: CellContext<T, unknown>,
 ) {
   const { row } = props
   const { entityId, versionNumber } = row.original
-  const { data: bundle } = useGetEntityBundle(entityId, versionNumber)
+  const { data: bundle } = useGetEntityBundle(
+    entityId,
+    versionNumber,
+    ALL_ENTITY_BUNDLE_FIELDS,
+    OPTIMIZED_ENTITY_BUNDLE_QUERY_OPTIONS,
+  )
 
   const { downloadCartPageUrl } = useSynapseContext()
 

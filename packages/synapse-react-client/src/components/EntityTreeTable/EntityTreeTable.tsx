@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import './EntityTreeTable.css'
 import { useReactTable, getCoreRowModel } from '@tanstack/react-table'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
@@ -13,6 +13,7 @@ export { type TreeNode } from './hooks/useTreeState'
 import { ChildLoader } from './components/ChildLoader'
 import { EntityTreeTableView } from './components/EntityTreeTableView'
 import { EntityTreeTableContext } from './components/EntityTreeTableContext'
+import NoContentAvailable from '../SynapseTable/NoContentAvailable'
 
 type EntityTreeTableProps = {
   /** The Synapse ID of the root entity to display */
@@ -111,6 +112,23 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     flattenTree,
   )
 
+  // Check if there's no content to show
+  const hasNoContent = useMemo(() => {
+    const rootNode = tree[rootId]
+    if (!rootNode) return false
+
+    // If we're showing the root node, we always have content (at least the root)
+    if (showRootNode) return false
+
+    // If we're not showing root node, check if root has children loaded and they're empty
+    if (loadedChildren.has(rootId)) {
+      return !rootNode.children || rootNode.children.length === 0
+    }
+
+    // If children haven't been loaded yet, don't show no content
+    return false
+  }, [tree, rootId, showRootNode, loadedChildren])
+
   // Get the list of nodes that need their children loaded
   const nodesToLoad = Array.from(loadingIds)
 
@@ -160,7 +178,11 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
           />
         ))}
 
-        <EntityTreeTableView table={table} />
+        {hasNoContent ? (
+          <NoContentAvailable />
+        ) : (
+          <EntityTreeTableView table={table} />
+        )}
       </EntityTreeTableContext.Provider>
     </Box>
   )
