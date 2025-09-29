@@ -229,6 +229,7 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
       )}
     </div>
   )
+
   return (
     <div className="EntityBadge" ref={ref} style={{ flexWrap, justifyContent }}>
       {bundle && (

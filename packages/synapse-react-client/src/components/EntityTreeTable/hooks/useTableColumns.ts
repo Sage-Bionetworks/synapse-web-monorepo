@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 import { ColumnDef } from '@tanstack/react-table'
 import { useTheme, useMediaQuery } from '@mui/material'
 import { EntityBundleRow } from '../EntityTreeTable'
-import { EntityBadgeIconsCell } from '../../EntityFinder/details/view/table/EntityBadgeIconsCell'
 import { NameCell } from '../components/EntityNameCell'
 import { IdCell } from '../components/IdCell'
 import { IdColumnHeader } from '../components/IdColumnHeader'
@@ -17,6 +16,7 @@ import {
   CreatedOnColumnHeader,
   ModifiedOnColumnHeader,
 } from '../components/ColumnHeaders'
+import { EntityBadgeIconsCell } from '../components/EntityBadgeIconsCell'
 
 export const useTableColumns = (enableSorting: boolean) => {
   // Responsive design hooks
