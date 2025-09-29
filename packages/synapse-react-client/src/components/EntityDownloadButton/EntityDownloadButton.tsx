@@ -1,6 +1,17 @@
 import { DropdownMenu, DropdownMenuItem } from '../menu/DropdownMenu'
 import { DownloadOutlined as DownloadIcon } from '@mui/icons-material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
+import { useState } from 'react'
+import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
+
+// Python client import and login instructions
+export const PYTHON_CLIENT_IMPORT_AND_LOGIN = `import synapseclient
+syn = synapseclient.Synapse()
+syn.login(authToken="YOUR_TOKEN_HERE")`
+
+// R client import and login instructions
+export const R_CLIENT_IMPORT_AND_LOGIN = `library(synapser)
+synLogin(authToken="YOUR_TOKEN_HERE")`
 
 enum DownloadAction {
   downloadFile,
@@ -15,6 +26,7 @@ function getMenuItemForAction(
   entityId: string,
   entityName: string,
   downloadAction: DownloadAction,
+  setIsShowingModal: (show: boolean) => void,
 ): DropdownMenuItem {
   switch (downloadAction) {
     case DownloadAction.downloadFile:
@@ -39,8 +51,7 @@ function getMenuItemForAction(
       return {
         text: 'Programmatic Access',
         onClick: () => {
-          console.log('Show programmatic access for:', entityId)
-          // TODO: Implement programmatic access options
+          setIsShowingModal(true)
         },
         tooltipText: 'View programmatic access options',
       }
@@ -103,22 +114,57 @@ export function EntityDownloadButton(props: {
   name: string
   entityType: EntityType
 }) {
+  // state to manage modal visibility
+  const [isShowingModal, setIsShowingModal] = useState<boolean>(false)
+  const handleCloseModal = () => {
+    setIsShowingModal(false)
+  }
+
+  // Create download menu items
   const downloadActions = getDownloadActionsForEntityType(props.entityType)
   const downloadMenuItems = downloadActions.map(actionGroup =>
     actionGroup.map(action =>
-      getMenuItemForAction(props.entityId, props.name, action),
+      getMenuItemForAction(
+        props.entityId,
+        props.name,
+        action,
+        setIsShowingModal,
+      ),
     ),
   )
 
+  // Generate programmatic access instructions
+  const pythonCode = `${PYTHON_CLIENT_IMPORT_AND_LOGIN}
+# Download file
+syn.get('${props.entityId}')`
+
+  const rCode = `${R_CLIENT_IMPORT_AND_LOGIN}
+# Download file
+synGet('${props.entityId}')`
+
+  const cliCode = `synapse get ${props.entityId}`
+
   return (
-    <DropdownMenu
-      items={downloadMenuItems}
-      dropdownButtonText="Download"
-      buttonTooltip="Download options for this entity"
-      buttonProps={{
-        variant: 'outlined',
-        startIcon: <DownloadIcon />,
-      }}
-    />
+    <>
+      <DropdownMenu
+        items={downloadMenuItems}
+        dropdownButtonText="Download"
+        buttonTooltip="Download options for this entity"
+        buttonProps={{
+          variant: 'outlined',
+          startIcon: <DownloadIcon />,
+        }}
+      />
+      <ProgrammaticInstructionsModal
+        show={isShowingModal}
+        title={`Programmatic Access: ${props.name}`}
+        onClose={handleCloseModal}
+        pythonCode={pythonCode}
+        rCode={rCode}
+        cliCode={cliCode}
+        helpUrl="https://help.synapse.org/docs/Getting-Started-with-Downloading.2003796248.html"
+        hasCancelButton={false}
+      />
+    </>
   )
 }

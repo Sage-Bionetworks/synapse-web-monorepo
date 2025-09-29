@@ -20,6 +20,7 @@ export type ProgrammaticInstructionsModalProps = {
   cliCode?: string
   helpMarkdown?: string
   helpUrl?: string
+  hasCancelButton?: boolean
 }
 
 /**
@@ -40,6 +41,7 @@ export const ProgrammaticInstructionsModal = ({
   cliCode,
   helpMarkdown,
   helpUrl,
+  hasCancelButton = true,
 }: ProgrammaticInstructionsModalProps) => {
   let defaultTab
   if (cliCode) {
@@ -151,6 +153,7 @@ export const ProgrammaticInstructionsModal = ({
       maxWidth="md"
       titleHelpPopoverProps={titleHelpPopoverProps}
       content={dialogContent}
+      hasCancelButton={hasCancelButton}
     />
   )
 }
