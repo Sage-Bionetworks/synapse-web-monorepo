@@ -33,7 +33,7 @@ type DataGridWebSocketConstructorArgs = {
 const DEFAULT_MAX_PAYLOAD_SIZE_BYTES = 30 * 1024 // 30 KB
 
 export class DataGridWebSocket {
-  public socket: WebSocket
+  private socket: WebSocket
   private model: GridModel | null = null
   private messageCounter: MessageCounter
   private replicaId?: number

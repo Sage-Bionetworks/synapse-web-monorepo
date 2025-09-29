@@ -25,18 +25,18 @@ export function useDataGridWebSocket() {
   } | null>(null)
 
   const modelSnapshot = useCRDTModelView(model)
-  const wsRef = useRef<DataGridWebSocket | null>(null) // Reference to current WebSocket instance
+  const [websocketInstance, setWebSocketInstance] =
+    useState<DataGridWebSocket | null>(null)
   const isVisible = useDocumentVisibility()
 
   const {
-    mutateAsync: establishWebsocketConnection,
+    mutate: establishWebsocketConnection,
     isPending: isEstablishingWebsocketConnection,
-    reconnect,
+    error: errorEstablishingWebsocketConnection,
     presignedUrl,
   } = useEstablishWebsocketConnection({
-    onSuccess: (ws: DataGridWebSocket) => {
-      wsRef.current = ws
-    },
+    onSuccess: ws => setWebSocketInstance(ws),
+    onError: err => console.error('Failed to establish WebSocket', err),
   })
 
   // Initiate (or re-initiate) a connection
@@ -48,6 +48,7 @@ export function useDataGridWebSocket() {
     !!connectionParams &&
     !isConnected &&
     !isEstablishingWebsocketConnection &&
+    !errorEstablishingWebsocketConnection &&
     isVisible
 
   /**
@@ -55,30 +56,17 @@ export function useDataGridWebSocket() {
    * Delegates to the mutation hook for presigned URL fetch, WebSocket creation, and retry logic.
    */
   useEffect(() => {
-    if (shouldEstablishWebsocketConnection) {
-      const { replicaId, sessionId } = connectionParams
+    if (!shouldEstablishWebsocketConnection || !connectionParams) return
 
-      establishWebsocketConnection({
-        replicaId,
-        sessionId,
-        websocketOptions: {
-          onGridReady: () => {
-            setIsGridReady(true)
-          },
-          onStatusChange: (open: boolean) => {
-            setIsConnected(open)
-            if (!open && connectionParams) {
-              reconnect(connectionParams)
-            }
-          },
-          onModelCreate: model => {
-            setModel(model)
-          },
-        },
-      }).catch(err => {
-        console.error('Failed to establish WebSocket connection', err)
-      })
-    }
+    establishWebsocketConnection({
+      replicaId: connectionParams.replicaId,
+      sessionId: connectionParams.sessionId,
+      websocketOptions: {
+        onGridReady: () => setIsGridReady(true),
+        onStatusChange: (open: boolean) => setIsConnected(open),
+        onModelCreate: setModel,
+      },
+    })
   }, [
     shouldEstablishWebsocketConnection,
     connectionParams,
@@ -88,13 +76,13 @@ export function useDataGridWebSocket() {
 
   useEffect(() => {
     return () => {
-      wsRef.current?.disconnect()
+      websocketInstance?.disconnect()
     }
-  }, [])
+  }, [websocketInstance])
 
   return {
     isConnected,
-    websocketInstance: wsRef.current,
+    websocketInstance,
     isGridReady,
     model,
     modelSnapshot,
