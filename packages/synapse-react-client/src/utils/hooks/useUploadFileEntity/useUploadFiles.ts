@@ -24,6 +24,7 @@ export type BaseFilePreparedForUpload = { file: File }
 
 export type UploadItem = {
   file: File
+  fileHandleId?: string
   progress: ProgressCallback
   status: UploadFileStatus
   cancel: () => void
@@ -242,6 +243,7 @@ export function useUploadFiles(
     return [...trackedUploadProgress].map(([file, trackedProgress]) => {
       return {
         file: file,
+        fileHandleId: trackedProgress.fileHandleId,
         progress: trackedProgress.progress,
         status: trackedProgress.status,
         failureReason: trackedProgress.failureReason,
