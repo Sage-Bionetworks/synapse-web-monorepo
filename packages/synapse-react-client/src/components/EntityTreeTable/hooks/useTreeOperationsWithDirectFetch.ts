@@ -44,7 +44,12 @@ export const useTreeOperationsWithDirectFetch = (
 
   // Callback to handle when children are loaded - moved before handleToggleExpanded to fix dependency order
   const handleChildrenLoaded = useCallback(
-    (entityId: string, childNodes: TreeNode[], nextPageToken?: string) => {
+    (
+      entityId: string,
+      childNodes: TreeNode[],
+      nextPageToken?: string,
+      isPagination = false,
+    ) => {
       setTree(prev => {
         const node = prev[entityId]
         if (node) {
@@ -55,13 +60,10 @@ export const useTreeOperationsWithDirectFetch = (
           }))
 
           // Check if this is the first load (loading the first page) or pagination (loading more pages)
-          // If we're loading a page token, it means we're paginating and should append
-          // If no page token is being loaded, it's the first load and we should replace
-          const isFirstLoad = !loadingPageTokens[entityId]
-          const mergedChildren =
-            isFirstLoad || !node.children
-              ? childNodesWithDepth // Replace children on first load
-              : [...node.children, ...childNodesWithDepth] // Append for pagination
+          // Use explicit isPagination parameter for reliable detection
+          const mergedChildren = isPagination
+            ? [...(node.children || []), ...childNodesWithDepth] // Append for pagination
+            : childNodesWithDepth // Replace children on first load
 
           // Merge children into the tree mapping while preserving existing
           // subtree entries for those children (so expanding deeper nodes
@@ -175,7 +177,12 @@ export const useTreeOperationsWithDirectFetch = (
             )
 
             // Update the tree with the loaded children
-            handleChildrenLoaded(entityId, childNodes, children.nextPageToken)
+            handleChildrenLoaded(
+              entityId,
+              childNodes,
+              children.nextPageToken,
+              false,
+            )
           } catch (error) {
             console.error(
               'Failed to fetch children for entity:',
@@ -247,7 +254,7 @@ export const useTreeOperationsWithDirectFetch = (
         )
 
         // Update the tree with the loaded children
-        handleChildrenLoaded(entityId, childNodes, children.nextPageToken)
+        handleChildrenLoaded(entityId, childNodes, children.nextPageToken, true)
       } catch (error) {
         console.error(
           'Failed to load more children for entity:',

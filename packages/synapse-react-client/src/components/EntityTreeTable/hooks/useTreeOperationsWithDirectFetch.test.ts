@@ -310,6 +310,299 @@ describe('useTreeOperationsWithDirectFetch', () => {
       })
     })
 
+    it('should preserve existing children across n pages of pagination (fixes the n-page issue)', async () => {
+      // Create a tree with no children initially
+      const initialTree: Record<string, TreeNode> = {
+        syn123: {
+          entityHeader: {
+            id: 'syn123',
+            name: 'Parent',
+            type: 'org.sagebionetworks.repo.model.Project',
+            versionNumber: 1,
+            versionLabel: 'v1',
+            benefactorId: 123,
+            createdOn: '2023-01-01T00:00:00.000Z',
+            modifiedOn: '2023-01-01T00:00:00.000Z',
+            createdBy: 'user1',
+            modifiedBy: 'user1',
+            isLatestVersion: true,
+          },
+          depth: 0,
+          isLeaf: false,
+        },
+      }
+
+      // Mock responses for three pages
+      const page1Response = {
+        page: [
+          {
+            id: 'syn111',
+            name: 'Child 1',
+            type: 'org.sagebionetworks.repo.model.Folder',
+            versionNumber: 1,
+            versionLabel: 'v1',
+            benefactorId: 123,
+            createdOn: '2023-01-01T00:00:00.000Z',
+            modifiedOn: '2023-01-01T00:00:00.000Z',
+            createdBy: 'user1',
+            modifiedBy: 'user1',
+            isLatestVersion: true,
+          },
+        ],
+        nextPageToken: 'token-page-2',
+      }
+
+      const page2Response = {
+        page: [
+          {
+            id: 'syn222',
+            name: 'Child 2',
+            type: 'org.sagebionetworks.repo.model.Folder',
+            versionNumber: 1,
+            versionLabel: 'v1',
+            benefactorId: 123,
+            createdOn: '2023-01-01T00:00:00.000Z',
+            modifiedOn: '2023-01-01T00:00:00.000Z',
+            createdBy: 'user1',
+            modifiedBy: 'user1',
+            isLatestVersion: true,
+          },
+        ],
+        nextPageToken: 'token-page-3',
+      }
+
+      const page3Response = {
+        page: [
+          {
+            id: 'syn333',
+            name: 'Child 3',
+            type: 'org.sagebionetworks.repo.model.Folder',
+            versionNumber: 1,
+            versionLabel: 'v1',
+            benefactorId: 123,
+            createdOn: '2023-01-01T00:00:00.000Z',
+            modifiedOn: '2023-01-01T00:00:00.000Z',
+            createdBy: 'user1',
+            modifiedBy: 'user1',
+            isLatestVersion: true,
+          },
+        ],
+        nextPageToken: null, // Final page
+      }
+
+      // Set up mocks to return different responses for each call
+      mockQueryClient.fetchQuery
+        .mockResolvedValueOnce(page1Response)
+        .mockResolvedValueOnce(page2Response)
+        .mockResolvedValueOnce(page3Response)
+
+      let currentTree = initialTree
+      const mockSetTree = vi.fn(updateFn => {
+        currentTree = updateFn(currentTree)
+        return currentTree
+      })
+
+      const testProps = {
+        ...mockProps,
+        tree: currentTree,
+        setTree: mockSetTree,
+        loadingPageTokens: {},
+        nextPageTokens: {},
+      }
+
+      const { result, rerender } = renderHook(() =>
+        useTreeOperationsWithDirectFetch(
+          testProps.expanded,
+          testProps.setExpanded,
+          currentTree, // Use current tree state
+          testProps.setTree,
+          testProps.loadedChildren,
+          testProps.setLoadedChildren,
+          testProps.loadingIds,
+          testProps.setLoadingIds,
+          testProps.setNextPageTokens,
+          testProps.setLoadingPageTokens,
+          testProps.loadingPageTokens,
+          testProps.nextPageTokens,
+          testProps.sortBy,
+          testProps.sortDirection,
+        ),
+      )
+
+      // Load first page (initial expansion)
+      await act(async () => {
+        await result.current.handleToggleExpanded('syn123')
+      })
+
+      // Simulate updating loadingPageTokens and nextPageTokens after first page
+      testProps.loadingPageTokens = {}
+      testProps.nextPageTokens = { syn123: 'token-page-2' }
+
+      rerender()
+
+      // Verify first page loaded
+      expect(currentTree.syn123.children).toHaveLength(1)
+      expect(currentTree.syn123.children![0].entityHeader.id).toBe('syn111')
+
+      // Load second page
+      testProps.loadingPageTokens = { syn123: 'token-page-2' }
+      rerender()
+
+      await act(async () => {
+        await result.current.loadMoreChildren('syn123', 'token-page-2')
+      })
+
+      // Simulate updating tokens after second page
+      testProps.loadingPageTokens = {}
+      testProps.nextPageTokens = { syn123: 'token-page-3' }
+      rerender()
+
+      // Verify both pages are preserved
+      expect(currentTree.syn123.children).toHaveLength(2)
+      expect(currentTree.syn123.children![0].entityHeader.id).toBe('syn111')
+      expect(currentTree.syn123.children![1].entityHeader.id).toBe('syn222')
+
+      // Load third page
+      testProps.loadingPageTokens = { syn123: 'token-page-3' }
+      rerender()
+
+      await act(async () => {
+        await result.current.loadMoreChildren('syn123', 'token-page-3')
+      })
+
+      // Verify all three pages are preserved
+      expect(currentTree.syn123.children).toHaveLength(3)
+      expect(currentTree.syn123.children![0].entityHeader.id).toBe('syn111')
+      expect(currentTree.syn123.children![1].entityHeader.id).toBe('syn222')
+      expect(currentTree.syn123.children![2].entityHeader.id).toBe('syn333')
+    })
+
+    it('should preserve existing children when loading more pages', async () => {
+      // Create a tree with existing children
+      const treeWithExistingChildren: Record<string, TreeNode> = {
+        syn123: {
+          entityHeader: {
+            id: 'syn123',
+            name: 'Parent',
+            type: 'org.sagebionetworks.repo.model.Project',
+            versionNumber: 1,
+            versionLabel: 'v1',
+            benefactorId: 123,
+            createdOn: '2023-01-01T00:00:00.000Z',
+            modifiedOn: '2023-01-01T00:00:00.000Z',
+            createdBy: 'user1',
+            modifiedBy: 'user1',
+            isLatestVersion: true,
+          },
+          depth: 0,
+          isLeaf: false,
+          children: [
+            {
+              entityHeader: {
+                id: 'syn111',
+                name: 'Existing Child 1',
+                type: 'org.sagebionetworks.repo.model.Folder',
+                versionNumber: 1,
+                versionLabel: 'v1',
+                benefactorId: 123,
+                createdOn: '2023-01-01T00:00:00.000Z',
+                modifiedOn: '2023-01-01T00:00:00.000Z',
+                createdBy: 'user1',
+                modifiedBy: 'user1',
+                isLatestVersion: true,
+              },
+              depth: 1,
+              isLeaf: true,
+              parentId: 'syn123',
+            },
+            {
+              entityHeader: {
+                id: 'syn222',
+                name: 'Existing Child 2',
+                type: 'org.sagebionetworks.repo.model.Folder',
+                versionNumber: 1,
+                versionLabel: 'v1',
+                benefactorId: 123,
+                createdOn: '2023-01-01T00:00:00.000Z',
+                modifiedOn: '2023-01-01T00:00:00.000Z',
+                createdBy: 'user1',
+                modifiedBy: 'user1',
+                isLatestVersion: true,
+              },
+              depth: 1,
+              isLeaf: true,
+              parentId: 'syn123',
+            },
+          ],
+        },
+      }
+
+      const mockNewChildrenResponse = {
+        page: [
+          {
+            id: 'syn333',
+            name: 'New Child 3',
+            type: 'org.sagebionetworks.repo.model.Folder',
+            versionNumber: 1,
+            versionLabel: 'v1',
+            benefactorId: 123,
+            createdOn: '2023-01-01T00:00:00.000Z',
+            modifiedOn: '2023-01-01T00:00:00.000Z',
+            createdBy: 'user1',
+            modifiedBy: 'user1',
+            isLatestVersion: true,
+          },
+        ],
+        nextPageToken: null,
+      }
+
+      mockQueryClient.fetchQuery.mockResolvedValue(mockNewChildrenResponse)
+
+      const propsWithExistingChildren = {
+        ...mockProps,
+        tree: treeWithExistingChildren,
+        loadingPageTokens: { syn123: 'page-token-456' }, // Simulate pagination in progress
+      }
+
+      const { result } = renderHook(() =>
+        useTreeOperationsWithDirectFetch(
+          propsWithExistingChildren.expanded,
+          propsWithExistingChildren.setExpanded,
+          propsWithExistingChildren.tree,
+          propsWithExistingChildren.setTree,
+          propsWithExistingChildren.loadedChildren,
+          propsWithExistingChildren.setLoadedChildren,
+          propsWithExistingChildren.loadingIds,
+          propsWithExistingChildren.setLoadingIds,
+          propsWithExistingChildren.setNextPageTokens,
+          propsWithExistingChildren.setLoadingPageTokens,
+          propsWithExistingChildren.loadingPageTokens,
+          propsWithExistingChildren.nextPageTokens,
+          propsWithExistingChildren.sortBy,
+          propsWithExistingChildren.sortDirection,
+        ),
+      )
+
+      await act(async () => {
+        await result.current.loadMoreChildren('syn123', 'page-token-456')
+      })
+
+      // Should call setTree to append new children to existing ones
+      expect(propsWithExistingChildren.setTree).toHaveBeenCalledWith(
+        expect.any(Function),
+      )
+
+      // Verify the setTree function appends children correctly
+      const setTreeCall = propsWithExistingChildren.setTree.mock.calls[0][0]
+      const updatedTree = setTreeCall(treeWithExistingChildren)
+
+      // Should have 3 children total (2 existing + 1 new)
+      expect(updatedTree.syn123.children).toHaveLength(3)
+      expect(updatedTree.syn123.children![0].entityHeader.id).toBe('syn111')
+      expect(updatedTree.syn123.children![1].entityHeader.id).toBe('syn222')
+      expect(updatedTree.syn123.children![2].entityHeader.id).toBe('syn333')
+    })
+
     it('should handle loadMoreChildren fetch errors gracefully', async () => {
       const consoleErrorSpy = vi
         .spyOn(console, 'error')
