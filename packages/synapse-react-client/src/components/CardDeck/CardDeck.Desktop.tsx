@@ -25,7 +25,7 @@ export default function CardDeckDesktop({
           cardDeckType && `CardDeck__Card__header__image--${cardDeckType}`,
         )}
       >
-        {headerImage}
+        <Link href={ctaButtonURL}>{headerImage}</Link>
       </div>
       <div
         className={classNames(

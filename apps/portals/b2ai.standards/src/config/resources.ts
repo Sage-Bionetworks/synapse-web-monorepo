@@ -1,40 +1,43 @@
 import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2'
+import { AtLeastOne } from '@/config/types'
 
-export const TABLE_IDS = {
-  // CurrentTableVersions: { name: 'CurrentTableVersions', id: 'syn66330007' },
-  // DataStandardOrTool: { name: 'DataStandardOrTool', id: 'syn63096833' },
+type TableInfo = {
+  name: string
+  id: string
+  version?: string
+  columnConsts: ColumnConsts
+  queries?: Record<string, string>
+}
+type TableInfoMap = Record<string, Partial<TableInfo>>
+
+const tableInfo: TableInfoMap = {
   DST_denormalized: {
     name: 'DST_denormalized',
-    // version: 'syn65676531.67', /* DST_denormalized_current */,
-    id: 'syn65676531.67',
-    // id: 'syn69062839' /* DST_denormalized_current */,
+    id: 'syn65676531.68', // current version of DST_denormalized
   },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
   DataSet_denormalized: {
     name: 'DataSet_denormalized',
-    version: 'syn68258237.3',
-    id: 'syn69696299' /* DataSet_denormalized_current */,
+    id: 'syn68258237.4', // current version of DataSet_denormalized
   },
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
   DataTopic: { name: 'DataTopic', id: 'syn63096835' },
   // Organization: { name: 'Organization', id: 'syn63096836.31' },
   Organization_denormalized: {
     name: 'Organization',
-    id: 'syn69693360.20',
-    xid: 'syn69696403' /* Organization_denormalized_current */,
+    id: 'syn69693360.20', // current version of Organization_denormalized
   },
-  // D4D_content: { name: 'D4D_content', id: 'syn63096836.31' },
   D4D_content: {
     name: 'D4D_content',
-    version: 'syn68885644.2',
-    id: 'syn69696497' /* D4D_content_current */,
+    id: 'syn68885644.5', // current version of D4D_content
   },
   // UseCase: { name: 'UseCase', id: 'syn63096837' }, // not using this, might in the future?
 }
 
-export type ColumnNames = Record<string, string>
+// function assembleQuery({tableName, selectExpressions, additionalFilters})
+export type ColumnConsts = { ID: string } & Record<string, string>
 
-export const ORG_TABLE_COLUMN_NAMES: ColumnNames = {
+export const ORG_TABLE_COLUMN_CONSTS: ColumnConsts = {
   ID: 'id',
   NAME: 'name',
   DESCRIPTION: 'description',
@@ -54,37 +57,36 @@ export const ORG_TABLE_COLUMN_NAMES: ColumnNames = {
   DATASET_JSON: 'dataset_json',
   D4D: 'd4d',
 } as const
+tableInfo.Organization_denormalized.columnConsts = ORG_TABLE_COLUMN_CONSTS
 
 export const organizationDetailsPageSQL = `
   SELECT  
-    ${Object.values(ORG_TABLE_COLUMN_NAMES).join(', ')},
+    ${Object.values(ORG_TABLE_COLUMN_CONSTS).join(', ')},
     concat('/Explore/Organization/OrganizationDetailsPage?id=', ${
-      ORG_TABLE_COLUMN_NAMES.ID
+      ORG_TABLE_COLUMN_CONSTS.ID
     }) AS orgPageLink
-  FROM ${TABLE_IDS.Organization_denormalized.id}`
+  FROM ${tableInfo.Organization_denormalized.id}`
+tableInfo.Organization_denormalized.queries ??= {}
+tableInfo.Organization_denormalized.queries.detailsSQL =
+  organizationDetailsPageSQL
 
-export const D4D_CONTENT_COLUMN_NAMES = {
+export const D4D_CONTENT_COLUMN_CONSTS: ColumnConsts = {
   CONTENT_TYPE: 'content_type', // html or css
-  CONTENT_ID: 'content_id',
+  // CONTENT_ID: 'content_id',
+  ID: 'content_id',
   CONTENT_TEXT: 'content_text',
 }
-export const tableInfo = {
-  Organization_denormalized: {
-    tableColNames: ORG_TABLE_COLUMN_NAMES,
-    sql: organizationDetailsPageSQL,
-  },
-  D4D_content: {
-    tableColNames: D4D_CONTENT_COLUMN_NAMES,
-    sql: `SELECT * FROM ${TABLE_IDS.D4D_content.id}`,
-  },
-}
+tableInfo.D4D_content.columnConsts = D4D_CONTENT_COLUMN_CONSTS
+tableInfo.D4D_content.queries ??= {}
+
 export const GC_ORG_IDS = [114, 115, 116, 117].map(id => `B2AI_ORG:${id}`)
 
-export const DATASET_DENORMALIZED_COLUMN_NAMES = {
+export const DATASET_DENORMALIZED_COLUMN_CONSTS: ColumnConsts = {
   ID: 'id',
   NAME: 'name',
   DESCRIPTION: 'description',
   CATEGORY: 'category',
+  DATA_URL: 'DataURL',
   DATASHEET_URL: 'DatasheetURL',
   DOCUMENTATION_URL: 'DocumentationURL',
   IS_PUBLIC: 'isPublic',
@@ -94,12 +96,12 @@ export const DATASET_DENORMALIZED_COLUMN_NAMES = {
   SUBSTRATES: 'substrates',
   SUBSTRATES_JSON: 'substrates_json',
 }
+tableInfo.DataSet_denormalized.columnConsts = DATASET_DENORMALIZED_COLUMN_CONSTS
+tableInfo.DataSet_denormalized.queries ??= {}
+export const dataSetSQL = (tableInfo.DataSet_denormalized.queries.main =
+  getQueryString('DataSet_denormalized'))
 
-export const dataSetSQL = `SELECT  ${Object.values(
-  DATASET_DENORMALIZED_COLUMN_NAMES,
-).join(', ')} FROM ${TABLE_IDS.DataSet_denormalized.id}`
-
-export const DST_TABLE_COLUMN_NAMES: ColumnNames = {
+export const DST_TABLE_COLUMN_CONSTS: ColumnConsts = {
   ID: 'id',
   ACRONYM: 'acronym',
   NAME: 'name',
@@ -139,13 +141,13 @@ export const standardsSql = `
         , collections
         , topic
         , dataTypes
-        , ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_LINKS}
-        , ${DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS}
+        , ${DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_LINKS}
+        , ${DST_TABLE_COLUMN_CONSTS.RESPONSIBLE_ORG_LINKS}
         , isOpen
         , registration
         , "usedInBridge2AI"
         , hasAIApplication
-    FROM ${TABLE_IDS.DST_denormalized.id}
+    FROM ${tableInfo.DST_denormalized.id}
 `
 
 // removed topic column above to address @jay-hodgson's comment
@@ -157,24 +159,75 @@ export const standardsSql = `
 export const standardsDetailsPageSQL = `
     SELECT  id,
             acronym,
-            name as standardName,
+            name                                             as standardName,
             description,
-            URL as url,
+            URL                                              as url,
             category,
             collections,
             topic,
             dataTypes,
-            ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES},
-            ${DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS} as SDO,
-            ${DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS},
-            ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_LINKS},
+            ${DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_NAMES},
+            ${DST_TABLE_COLUMN_CONSTS.RESPONSIBLE_ORG_LINKS} as SDO,
+            ${DST_TABLE_COLUMN_CONSTS.RESPONSIBLE_ORG_LINKS},
+            ${DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_LINKS},
             isOpen,
             relatedTo,
             trainingResources,
             registration
-    FROM ${TABLE_IDS.DST_denormalized.id}
+    FROM ${tableInfo.DST_denormalized.id}
 `
 export const standardsFtsConfig: FTSConfig = {
   textMatchesMode: 'BOOLEAN',
   distance: 50,
+}
+
+export function getTableInfo(tableName: string): TableInfo {
+  const tinfo = tableInfo[tableName]
+  if (!tinfo) {
+    throw new Error(`tableInfo not defined for table ${tableName}`)
+  }
+  return tinfo as TableInfo
+}
+export function getColumnConsts(tableName: string): ColumnConsts {
+  const tinfo = getTableInfo(tableName)
+  if (!tinfo.columnConsts) {
+    throw new Error(`columnConsts not yet defined for table ${tableName}`)
+  }
+  return tinfo.columnConsts
+}
+export function getSynapseTableId(tableName: string): string {
+  return getTableInfo(tableName).id
+}
+type getColumnExpressionsProps = AtLeastOne<{
+  columnNames?: string[] // if undefined, use all cols of tableName
+  expressions?: string[] // column expressions. how will this work?
+  tableName?: string // use all if columnNames and expressions are undefined
+}>
+export function getColumnExpressions({
+  tableName,
+  columnNames,
+  expressions = [],
+}: getColumnExpressionsProps): string[] {
+  if (!columnNames) {
+    if (!tableName) {
+      // console.error(`Either columnNames or tableName required in getColumnExpressions`)
+      throw new Error('Either columnNames or tableName required')
+    }
+    columnNames = Object.values(tableInfo[tableName].columnConsts ?? {})
+  }
+  expressions = expressions.concat(columnNames)
+  return expressions
+}
+export function getQueryString(tableName: string, expressions?: string[]) {
+  // allow where clause? or use additionalFilters separately
+  if (!expressions) {
+    const qs = getTableInfo(tableName)?.queries?.main
+    if (qs) return qs
+    expressions = getColumnExpressions({ tableName })
+  }
+  return `SELECT ${expressions.join(', ')} FROM ${tableInfo[tableName].id}`
+}
+export function getIdCol(tableName: string) {
+  const columnConsts = getColumnConsts(tableName)
+  return columnConsts.ID
 }

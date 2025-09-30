@@ -11,9 +11,9 @@ import {
 // import { CardDeckCardProps } from 'synapse-react-client/components/CardDeck/CardDeckCardProps'
 // import { CardDeck } from 'synapse-react-client/components/CardDeck/CardDeck'
 import {
-  DATASET_DENORMALIZED_COLUMN_NAMES,
-  DST_TABLE_COLUMN_NAMES,
-  ORG_TABLE_COLUMN_NAMES,
+  DATASET_DENORMALIZED_COLUMN_CONSTS,
+  DST_TABLE_COLUMN_CONSTS,
+  ORG_TABLE_COLUMN_CONSTS,
   organizationDetailsPageSQL,
   dataSetSQL,
   standardsFtsConfig,
@@ -39,11 +39,11 @@ import { D4D } from '@/components/D4D'
 
 export const organizationCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.ORGANIZATION,
-  title: ORG_TABLE_COLUMN_NAMES.NAME,
-  subTitle: ORG_TABLE_COLUMN_NAMES.DESCRIPTION,
+  title: ORG_TABLE_COLUMN_CONSTS.NAME,
+  subTitle: ORG_TABLE_COLUMN_CONSTS.DESCRIPTION,
   secondaryLabels: [
-    ORG_TABLE_COLUMN_NAMES.ROR_ID,
-    ORG_TABLE_COLUMN_NAMES.WIKIDATA_ID,
+    ORG_TABLE_COLUMN_CONSTS.ROR_ID,
+    ORG_TABLE_COLUMN_CONSTS.WIKIDATA_ID,
   ],
 }
 
@@ -80,13 +80,13 @@ function OrgHeaderCard({ id }) {
 
 export default function OrganizationDetailsPage() {
   const { id } = useGetPortalComponentSearchParams()
-  const colNames = [
-    ORG_TABLE_COLUMN_NAMES.MAIN_ORGANIZATION_JSON,
-    ORG_TABLE_COLUMN_NAMES.ASSOCIATED_ORGANIZATION_JSON,
-    ORG_TABLE_COLUMN_NAMES.RELEVANT_STANDARDS_JSON,
-    ORG_TABLE_COLUMN_NAMES.GOVERNED_STANDARDS_JSON,
-    ORG_TABLE_COLUMN_NAMES.DATASET_JSON,
-    ORG_TABLE_COLUMN_NAMES.D4D,
+  const colExpressions = [
+    ORG_TABLE_COLUMN_CONSTS.MAIN_ORGANIZATION_JSON,
+    ORG_TABLE_COLUMN_CONSTS.ASSOCIATED_ORGANIZATION_JSON,
+    ORG_TABLE_COLUMN_CONSTS.RELEVANT_STANDARDS_JSON,
+    ORG_TABLE_COLUMN_CONSTS.GOVERNED_STANDARDS_JSON,
+    ORG_TABLE_COLUMN_CONSTS.DATASET_JSON,
+    ORG_TABLE_COLUMN_CONSTS.D4D,
   ]
   const {
     data = [],
@@ -94,7 +94,7 @@ export default function OrganizationDetailsPage() {
     isLoading,
   } = useFetchTableData({
     tableName: 'Organization_denormalized',
-    colNames,
+    colExpressions,
     id,
     countsOnly: true,
   })
@@ -134,13 +134,14 @@ export const linkedOrgCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: {
     // type: SynapseConstants.ORGANIZATION,
-    title: ORG_TABLE_COLUMN_NAMES.NAME,
-    description: ORG_TABLE_COLUMN_NAMES.DESCRIPTION,
+    title: ORG_TABLE_COLUMN_CONSTS.NAME,
+    description: ORG_TABLE_COLUMN_CONSTS.DESCRIPTION,
     link: 'orgPageLink',
     secondaryLabels: [
-      DATASET_DENORMALIZED_COLUMN_NAMES.DOCUMENTATION_URL,
-      DATASET_DENORMALIZED_COLUMN_NAMES.TOPICS,
-      DATASET_DENORMALIZED_COLUMN_NAMES.SUBSTRATES,
+      DATASET_DENORMALIZED_COLUMN_CONSTS.DATA_URL,
+      DATASET_DENORMALIZED_COLUMN_CONSTS.DOCUMENTATION_URL,
+      DATASET_DENORMALIZED_COLUMN_CONSTS.TOPICS,
+      DATASET_DENORMALIZED_COLUMN_CONSTS.SUBSTRATES,
     ],
   },
 }
@@ -148,13 +149,14 @@ export const linkedDataSetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: {
     // type: SynapseConstants.DATASET,
-    title: DATASET_DENORMALIZED_COLUMN_NAMES.NAME,
-    description: DATASET_DENORMALIZED_COLUMN_NAMES.DESCRIPTION,
-    link: DATASET_DENORMALIZED_COLUMN_NAMES.DATASHEET_URL,
+    title: DATASET_DENORMALIZED_COLUMN_CONSTS.NAME,
+    description: DATASET_DENORMALIZED_COLUMN_CONSTS.DESCRIPTION,
+    link: DATASET_DENORMALIZED_COLUMN_CONSTS.DATA_URL,
     secondaryLabels: [
-      DATASET_DENORMALIZED_COLUMN_NAMES.DOCUMENTATION_URL,
-      DATASET_DENORMALIZED_COLUMN_NAMES.TOPICS,
-      DATASET_DENORMALIZED_COLUMN_NAMES.SUBSTRATES,
+      DATASET_DENORMALIZED_COLUMN_CONSTS.DATA_URL,
+      DATASET_DENORMALIZED_COLUMN_CONSTS.DOCUMENTATION_URL,
+      DATASET_DENORMALIZED_COLUMN_CONSTS.TOPICS,
+      DATASET_DENORMALIZED_COLUMN_CONSTS.SUBSTRATES,
     ],
   },
 }
@@ -163,13 +165,13 @@ function detailSections({ detailOrg: jsonColCounts }) {
   const sections: DetailsPageSectionLayoutType[] = []
 
   // Main Organization section
-  if (jsonColCounts[ORG_TABLE_COLUMN_NAMES.MAIN_ORGANIZATION_JSON]) {
+  if (jsonColCounts[ORG_TABLE_COLUMN_CONSTS.MAIN_ORGANIZATION_JSON]) {
     sections.push({
       id: 'MainOrganization',
       title: 'Main Organization',
       element: (
         <DetailsPageContextConsumer
-          columnName={ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF}
+          columnName={ORG_TABLE_COLUMN_CONSTS.SUBCLASS_OF}
         >
           {({ value, context }) => {
             return (
@@ -188,12 +190,12 @@ function detailSections({ detailOrg: jsonColCounts }) {
   }
 
   // Associated Organization section
-  if (jsonColCounts[ORG_TABLE_COLUMN_NAMES.ASSOCIATED_ORGANIZATION_JSON]) {
+  if (jsonColCounts[ORG_TABLE_COLUMN_CONSTS.ASSOCIATED_ORGANIZATION_JSON]) {
     sections.push({
       id: 'AssociatedOrganization',
       title: 'Associated Organization',
       element: (
-        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
+        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_CONSTS.ID}>
           {({ value, context }) => {
             return (
               <CardContainerLogic
@@ -201,7 +203,7 @@ function detailSections({ detailOrg: jsonColCounts }) {
                 sql={organizationDetailsPageSQL}
                 // need a dummy value for search to properly exclude null values and an empty string doesn't work
                 searchParams={{
-                  [ORG_TABLE_COLUMN_NAMES.SUBCLASS_OF]: value || 'notreal',
+                  [ORG_TABLE_COLUMN_CONSTS.SUBCLASS_OF]: value || 'notreal',
                 }}
                 sqlOperator={ColumnMultiValueFunction.HAS}
               />
@@ -213,13 +215,13 @@ function detailSections({ detailOrg: jsonColCounts }) {
   }
 
   // DataSets section
-  if (jsonColCounts[ORG_TABLE_COLUMN_NAMES.DATASET_JSON]) {
+  if (jsonColCounts[ORG_TABLE_COLUMN_CONSTS.DATASET_JSON]) {
     sections.push({
       id: 'DataSets',
       title: 'DataSets',
       helpText: 'Metadata and links to a DataSet',
       element: (
-        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
+        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_CONSTS.ID}>
           {({ value }) => {
             return (
               <CardContainerLogic
@@ -227,7 +229,7 @@ function detailSections({ detailOrg: jsonColCounts }) {
                 sql={dataSetSQL}
                 // need a dummy value for search to properly exclude null values and an empty string doesn't work
                 searchParams={{
-                  [DATASET_DENORMALIZED_COLUMN_NAMES.PRODUCED_BY_ORG_ID]:
+                  [DATASET_DENORMALIZED_COLUMN_CONSTS.PRODUCED_BY_ORG_ID]:
                     value ?? 'no value',
                 }}
                 sqlOperator={ColumnMultiValueFunction.HAS}
@@ -240,18 +242,18 @@ function detailSections({ detailOrg: jsonColCounts }) {
   }
 
   // Relevant Standards section
-  if (jsonColCounts[ORG_TABLE_COLUMN_NAMES.RELEVANT_STANDARDS_JSON]) {
+  if (jsonColCounts[ORG_TABLE_COLUMN_CONSTS.RELEVANT_STANDARDS_JSON]) {
     sections.push({
       id: 'RelevantStandards',
       title: 'Relevant Standards',
       element: (
-        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
+        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_CONSTS.ID}>
           {({ value }) => (
             <StandaloneQueryWrapper
               rgbIndex={standardsRgbIndex}
               sql={standardsSql}
               searchParams={{
-                [DST_TABLE_COLUMN_NAMES.HAS_RELEVANT_ORGANIZATION]:
+                [DST_TABLE_COLUMN_CONSTS.HAS_RELEVANT_ORGANIZATION]:
                   value ?? 'no value',
               }}
               sqlOperator={ColumnMultiValueFunction.HAS}
@@ -274,18 +276,18 @@ function detailSections({ detailOrg: jsonColCounts }) {
   }
 
   // Governed Standards section
-  if (jsonColCounts[ORG_TABLE_COLUMN_NAMES.GOVERNED_STANDARDS_JSON]) {
+  if (jsonColCounts[ORG_TABLE_COLUMN_CONSTS.GOVERNED_STANDARDS_JSON]) {
     sections.push({
       id: 'GovernedStandards',
       title: 'Governed Standards',
       element: (
-        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
+        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_CONSTS.ID}>
           {({ value }) => (
             <StandaloneQueryWrapper
               rgbIndex={standardsRgbIndex}
               sql={standardsSql}
               searchParams={{
-                [DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION]:
+                [DST_TABLE_COLUMN_CONSTS.RESPONSIBLE_ORGANIZATION]:
                   value ?? 'no value',
               }}
               sqlOperator={ColumnMultiValueFunction.HAS}
@@ -306,13 +308,13 @@ function detailSections({ detailOrg: jsonColCounts }) {
       ),
     })
   }
-  if (jsonColCounts[ORG_TABLE_COLUMN_NAMES.D4D]) {
+  if (jsonColCounts[ORG_TABLE_COLUMN_CONSTS.D4D]) {
     sections.push({
       id: 'D4D',
       title: 'D4D',
       helpText: 'DataSheet for DataSet (D4D)',
       element: (
-        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_NAMES.ID}>
+        <DetailsPageContextConsumer columnName={ORG_TABLE_COLUMN_CONSTS.ID}>
           {({ value }) => {
             return <D4D org_id={String(value)} />
           }}

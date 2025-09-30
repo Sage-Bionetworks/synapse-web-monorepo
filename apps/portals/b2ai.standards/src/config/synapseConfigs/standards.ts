@@ -10,24 +10,24 @@ import {
   standardsFtsConfig,
   // dataSetExploreSql,
   standardsSql,
-  DST_TABLE_COLUMN_NAMES,
+  DST_TABLE_COLUMN_CONSTS,
 } from '@/config/resources'
 
 export const standardsRgbIndex = 0
 export const standardsColumnLinks: LabelLinkConfig = [
   {
     isMarkdown: true,
-    matchColumnName: DST_TABLE_COLUMN_NAMES.ACRONYM, // the column whose value will be used for the markdown
+    matchColumnName: DST_TABLE_COLUMN_CONSTS.ACRONYM, // the column whose value will be used for the markdown
     // tooltipText?: string // If set, also show a tooltip
   },
   {
     isMarkdown: true,
-    matchColumnName: DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_LINKS, // the column whose value will be used for the markdown
+    matchColumnName: DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_LINKS, // the column whose value will be used for the markdown
     // tooltipText?: string // If set, also show a tooltip
   },
   {
     isMarkdown: true,
-    matchColumnName: DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS,
+    matchColumnName: DST_TABLE_COLUMN_CONSTS.RESPONSIBLE_ORG_LINKS,
   },
   {
     isMarkdown: true,
@@ -51,7 +51,7 @@ export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     showDownloadColumn: false,
     columnLinks: standardsColumnLinks,
   },
-  facetsToPlot: ['topic', DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES],
+  facetsToPlot: ['topic', DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_NAMES],
   initialPlotType: 'BAR',
   searchConfiguration: {
     ftsConfig: standardsFtsConfig,
