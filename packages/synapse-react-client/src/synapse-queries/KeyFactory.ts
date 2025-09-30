@@ -14,6 +14,7 @@ import {
   EntityLookupRequest,
   GetRepoV1DoiAssociationRequest,
   GetRepoV1DoiRequest,
+  ListGridSessionsRequest,
   type UserSubmissionSearchRequest,
   ViewEntityType,
 } from '@sage-bionetworks/synapse-client'
@@ -1003,7 +1004,11 @@ export class KeyFactory {
     return this.getKey('portal', portalId, 'permissions')
   }
 
-  public getGridSessionListKey() {
-    return this.getKey('gridSession', 'list')
+  public getGridSessionListKey(request?: ListGridSessionsRequest) {
+    return this.getKey('gridSession', 'list', request)
+  }
+
+  public getCurationTaskListKey(projectId: string) {
+    return this.getKey('curationTask', 'list', projectId)
   }
 }

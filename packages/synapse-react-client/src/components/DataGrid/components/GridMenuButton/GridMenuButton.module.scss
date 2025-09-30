@@ -1,0 +1,17 @@
+@use '../../../../style/abstracts/variables' as SRC;
+@use 'sass:map';
+
+.button:global(.MuiButton-root) {
+  height: 36px;
+  font-size: 16px;
+  font-weight: 400;
+  white-space: nowrap;
+
+  &:global(.MuiButton-outlined:not(.Mui-disabled)) {
+    color: map.get(SRC.$colors, 'gray-900');
+    border: 1px solid map.get(SRC.$colors, 'gray-300');
+    :global(.MuiButton-icon) {
+      color: map.get(SRC.$colors, 'gray-700');
+    }
+  }
+}

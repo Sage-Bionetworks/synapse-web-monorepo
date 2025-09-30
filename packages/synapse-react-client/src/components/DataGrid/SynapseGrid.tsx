@@ -1,3 +1,4 @@
+import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import MergeGridWithSourceTableButton from '@/components/DataGrid/MergeGridWithSourceTableButton'
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
@@ -39,7 +40,9 @@ import { getCellClassName } from './utils/getCellClassName'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 import { modelColsToGrid } from './utils/modelColsToGrid'
 import { Button } from '@mui/material'
+import { Stack } from '@mui/material'
 import GridAgentChat from '../SynapseChat/GridAgentChat'
+import { SmartToyTwoTone } from '@mui/icons-material'
 
 export type SynapseGridProps = {
   showDebugInfo?: boolean
@@ -54,7 +57,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
   ({ showDebugInfo = false }, ref) => {
     const [session, setSession] = useState<GridSession | null>(null)
     const [replicaId, setReplicaId] = useState<number | null>(null)
-    const [presignedUrl, setPresignedUrl] = useState<string>('')
     const [chatOpen, setChatOpen] = useState(false)
 
     const startGridSessionRef = useRef<StartGridSessionHandle | null>(null)
@@ -80,17 +82,18 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const {
       isConnected,
       websocketInstance,
-      createWebsocket,
       isGridReady,
       model,
       modelSnapshot,
+      connect,
+      presignedUrl,
     } = useDataGridWebSocket()
 
     useEffect(() => {
-      if (replicaId && presignedUrl) {
-        createWebsocket(replicaId, presignedUrl)
+      if (replicaId && session?.sessionId) {
+        connect(replicaId, session.sessionId)
       }
-    }, [replicaId, presignedUrl, createWebsocket])
+    }, [replicaId, session?.sessionId, connect])
 
     const { data: jsonSchema } = useGetSchema(
       session?.gridJsonSchema$Id ?? '',
@@ -226,7 +229,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
               ref={startGridSessionRef}
               onSessionChange={setSession}
               onReplicaChange={setReplicaId}
-              onPresignedUrlChange={setPresignedUrl}
               show={showDebugInfo}
             />
           </Grid>
@@ -243,15 +245,15 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                 </p>
                 <p>
                   Presigned URL:{' '}
-                  {presignedUrl.substring(0, 30) +
-                    (presignedUrl.length > 30
-                      ? ' ... ' +
-                        presignedUrl.substring(
-                          presignedUrl.length - 10,
-                          presignedUrl.length,
-                        )
-                      : '') || 'No URL generated'}
+                  {presignedUrl
+                    ? presignedUrl.substring(0, 30) +
+                      (presignedUrl.length > 30
+                        ? ' ... ' +
+                          presignedUrl.substring(presignedUrl.length - 10)
+                        : '')
+                    : 'No URL generated'}
                 </p>
+
                 <p>
                   WebSocket Status:{' '}
                   <span style={{ color: isConnected ? 'green' : 'red' }}>
@@ -289,92 +291,107 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
 
               {/* Grid */}
               {isGridReady && (
-                <Grid size={12}>
-                  {undoUI}
-                  {redoUI}
-                  <Button onClick={() => setChatOpen(true)}>Open chat</Button>
-                  <GridAgentChat
-                    open={chatOpen}
-                    onClose={() => setChatOpen(false)}
-                    gridSessionId={session.sessionId!}
-                    usersReplicaId={replicaId!}
-                    chatbotName="Grid Assistant"
-                  />
-
-                  <DataSheetGrid
-                    ref={gridRef}
-                    value={rowValues}
-                    columns={colValues}
-                    rowKey={GRID_ROW_REACT_KEY_PROPERTY}
-                    rowClassName={({ rowData, rowIndex }) =>
-                      classNames({
-                        'row-valid':
-                          rowData.__validationResults?.isValid === true,
-                        'row-invalid':
-                          rowData.__validationResults?.isValid === false,
-                        'row-unknown':
-                          !!jsonSchema &&
-                          rowData.__validationResults?.isValid == undefined,
-                        'row-selected': selectedRowIndex === rowIndex,
-                      })
-                    }
-                    cellClassName={({ rowData, rowIndex, columnId }) =>
-                      getCellClassName({
-                        rowData: rowData as DataGridRow,
-                        rowIndex,
-                        columnId,
-                        selectedRowIndex,
-                      })
-                    }
-                    duplicateRow={({ rowData }: any) => ({
-                      ...rowData,
-                    })}
-                    onChange={handleChange}
-                    onActiveCellChange={({ cell }) => {
-                      if (cell) {
-                        setSelectedRowIndex(cell.row)
-                      }
-                    }}
-                    onSelectionChange={handleSelectionChange}
-                  />
-                  {/* Show validation messages for selected row */}
-                  {selectedRowIndex !== null &&
-                    rowValues[selectedRowIndex] &&
-                    Array.isArray(
-                      rowValues[selectedRowIndex].__validationResults
-                        ?.allValidationMessages,
-                    ) &&
-                    rowValues[selectedRowIndex].__validationResults
-                      ?.allValidationMessages.length > 0 && (
-                      <FullWidthAlert
-                        variant="warning"
-                        title="Validation Messages For Selected Row:"
-                        isGlobal={false}
-                        description={
-                          <ul>
-                            {rowValues[
-                              selectedRowIndex
-                            ].__validationResults.allValidationMessages.map(
-                              (msg: string) => (
-                                <li key={msg}>{msg}</li>
-                              ),
-                            )}
-                          </ul>
-                        }
-                        sx={{
-                          marginTop: '12px',
-                        }}
+                <>
+                  <Grid size={12}>
+                    <Stack
+                      direction={'row'}
+                      spacing={1}
+                      sx={{ justifyContent: 'flex-end' }}
+                    >
+                      {undoUI}
+                      {redoUI}
+                      <GridMenuButton
+                        variant={'outlined'}
+                        onClick={() => setChatOpen(true)}
+                        startIcon={<SmartToyTwoTone />}
+                      >
+                        Open chat
+                      </GridMenuButton>
+                      <GridAgentChat
+                        open={chatOpen}
+                        onClose={() => setChatOpen(false)}
+                        gridSessionId={session.sessionId!}
+                        usersReplicaId={replicaId!}
+                        chatbotName="Grid Assistant"
                       />
-                    )}
-                </Grid>
-              )}
-              {isGridReady && session.sourceEntityId && (
-                <Grid container size={12} sx={{ justifyContent: 'flex-end' }}>
-                  <MergeGridWithSourceTableButton
-                    sourceEntityId={session.sourceEntityId}
-                    gridSessionId={session.sessionId!}
-                  />
-                </Grid>
+                      {session.sourceEntityId && (
+                        <MergeGridWithSourceTableButton
+                          sourceEntityId={session.sourceEntityId}
+                          gridSessionId={session.sessionId!}
+                        />
+                      )}
+                    </Stack>
+                  </Grid>
+                  <Grid size={12}>
+                    <DataSheetGrid
+                      ref={gridRef}
+                      value={rowValues}
+                      columns={colValues}
+                      rowKey={GRID_ROW_REACT_KEY_PROPERTY}
+                      rowClassName={({ rowData, rowIndex }) =>
+                        classNames({
+                          'row-valid':
+                            rowData.__validationResults?.isValid === true,
+                          'row-invalid':
+                            rowData.__validationResults?.isValid === false,
+                          'row-unknown':
+                            !!jsonSchema &&
+                            rowData.__validationResults?.isValid == undefined,
+                          'row-selected': selectedRowIndex === rowIndex,
+                        })
+                      }
+                      cellClassName={({ rowData, rowIndex, columnId }) =>
+                        getCellClassName({
+                          rowData: rowData as DataGridRow,
+                          rowIndex,
+                          columnId,
+                          selectedRowIndex,
+                        })
+                      }
+                      duplicateRow={({ rowData }: any) => ({
+                        ...rowData,
+                      })}
+                      onChange={handleChange}
+                      onActiveCellChange={({ cell }) => {
+                        if (cell) {
+                          setSelectedRowIndex(cell.row)
+                        }
+                      }}
+                      onSelectionChange={handleSelectionChange}
+                    />
+                  </Grid>
+                  <Grid size={12}>
+                    {/* Show validation messages for selected row */}
+                    {selectedRowIndex !== null &&
+                      rowValues[selectedRowIndex] &&
+                      Array.isArray(
+                        rowValues[selectedRowIndex].__validationResults
+                          ?.allValidationMessages,
+                      ) &&
+                      rowValues[selectedRowIndex].__validationResults
+                        ?.allValidationMessages.length > 0 && (
+                        <FullWidthAlert
+                          variant="warning"
+                          title="Validation Messages For Selected Row:"
+                          isGlobal={false}
+                          description={
+                            <ul>
+                              {rowValues[
+                                selectedRowIndex
+                              ].__validationResults.allValidationMessages.map(
+                                (msg: string) => (
+                                  <li key={msg}>{msg}</li>
+                                ),
+                              )}
+                            </ul>
+                          }
+                          sx={{
+                            marginTop: '12px',
+                          }}
+                        />
+                      )}
+                  </Grid>
+                </>
               )}
               {/* Debug Model Snapshot */}
               {showDebugInfo && (

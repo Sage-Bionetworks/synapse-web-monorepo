@@ -47,8 +47,7 @@ function useCreateOrGetExistingGridSession() {
 }
 
 /**
- * Mutation to establish a grid connection by creating or getting an existing session,
- * creating a replica, and obtaining a presigned URL for the session.
+ * Mutation to establish a grid connection by creating or getting an existing session and creating a replica.
  *
  * @param gridSqlOrSessionId - The SQL query or session ID to use for the grid connection.
  * @param schemaId - Optional schema ID to associate with the session.
@@ -57,7 +56,7 @@ function useCreateOrGetExistingGridSession() {
 export default function useInitializeGridConnection(
   options?: Omit<
     UseMutationOptions<
-      { session: GridSession; replica: GridReplica; presignedUrl: string },
+      { session: GridSession; replica: GridReplica },
       unknown,
       CreateOrGetGridSessionInput
     >,
@@ -67,10 +66,9 @@ export default function useInitializeGridConnection(
   const { mutateAsync: createOrGetSession } =
     useCreateOrGetExistingGridSession()
   const { mutateAsync: createReplicaId } = useCreateGridReplica()
-  const { synapseClient } = useSynapseContext()
 
   return useMutation<
-    { session: GridSession; replica: GridReplica; presignedUrl: string },
+    { session: GridSession; replica: GridReplica },
     unknown,
     CreateOrGetGridSessionInput
   >({
@@ -91,21 +89,9 @@ export default function useInitializeGridConnection(
         console.log('Replica created:', createReplicaResponse)
         const replica = createReplicaResponse.replica!
 
-        const { presignedUrl } =
-          await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdPresignedUrl(
-            {
-              sessionId: sessionId,
-              createGridPresignedUrlRequest: {
-                gridSessionId: sessionId,
-                replicaId: replica.replicaId!,
-              },
-            },
-          )
-
         return {
           session,
           replica,
-          presignedUrl: presignedUrl!,
         }
       } catch (error) {
         throw new Error('Error starting session:', { cause: error })
