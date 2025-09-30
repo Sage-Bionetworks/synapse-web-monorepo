@@ -1,6 +1,6 @@
+import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import useMergeGridWithSource from '@/components/DataGrid/useMergeGridWithSource'
 import { displayToast } from '@/components/index'
-import { Button } from '@mui/material'
 import {
   EntityUpdateResults,
   instanceOfEntityUpdateResults,
@@ -28,15 +28,15 @@ export default function MergeGridWithSourceTableButton(
   })
 
   return (
-    <Button
+    <GridMenuButton
       loading={isPending}
       onClick={() => {
         mergeGridWithSource({ gridSessionId, sourceEntityId })
       }}
       variant="contained"
     >
-      Update table with changes
-    </Button>
+      Apply changes
+    </GridMenuButton>
   )
 }
 
