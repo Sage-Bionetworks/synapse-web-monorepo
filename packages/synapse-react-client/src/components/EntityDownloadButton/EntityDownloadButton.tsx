@@ -13,6 +13,9 @@ syn.login(authToken="YOUR_TOKEN_HERE")`
 export const R_CLIENT_IMPORT_AND_LOGIN = `library(synapser)
 synLogin(authToken="YOUR_TOKEN_HERE")`
 
+export const DOCKER_LOGIN =
+  'docker login -u <synapse username> -p <synapse password> docker.synapse.org'
+
 enum DownloadAction {
   downloadFile,
   addToCart,
@@ -26,7 +29,8 @@ function getMenuItemForAction(
   entityId: string,
   entityName: string,
   downloadAction: DownloadAction,
-  setIsShowingModal: (show: boolean) => void,
+  setIsShowingModalProgrammaticAccess: (show: boolean) => void,
+  setIsShowingModalDocker: (show: boolean) => void,
 ): DropdownMenuItem {
   switch (downloadAction) {
     case DownloadAction.downloadFile:
@@ -51,7 +55,7 @@ function getMenuItemForAction(
       return {
         text: 'Programmatic Access',
         onClick: () => {
-          setIsShowingModal(true)
+          setIsShowingModalProgrammaticAccess(true)
         },
         tooltipText: 'View programmatic access options',
       }
@@ -59,8 +63,7 @@ function getMenuItemForAction(
       return {
         text: 'Programmatic Access (Docker)',
         onClick: () => {
-          console.log('Show programmatic access (Docker) for:', entityId)
-          // TODO: Implement programmatic access (Docker) options
+          setIsShowingModalDocker(true)
         },
         tooltipText: 'View programmatic options to pull Docker image',
       }
@@ -114,24 +117,14 @@ export function EntityDownloadButton(props: {
   name: string
   entityType: EntityType
 }) {
-  // state to manage modal visibility
-  const [isShowingModal, setIsShowingModal] = useState<boolean>(false)
-  const handleCloseModal = () => {
-    setIsShowingModal(false)
+  // state to manage programmatic access modal visibility
+  const [
+    isShowingModalProgrammaticAccess,
+    setIsShowingModalProgrammaticAccess,
+  ] = useState<boolean>(false)
+  const handleCloseModalProgrammaticAccess = () => {
+    setIsShowingModalProgrammaticAccess(false)
   }
-
-  // Create download menu items
-  const downloadActions = getDownloadActionsForEntityType(props.entityType)
-  const downloadMenuItems = downloadActions.map(actionGroup =>
-    actionGroup.map(action =>
-      getMenuItemForAction(
-        props.entityId,
-        props.name,
-        action,
-        setIsShowingModal,
-      ),
-    ),
-  )
 
   // Generate programmatic access instructions
   const pythonCode = `${PYTHON_CLIENT_IMPORT_AND_LOGIN}
@@ -143,6 +136,32 @@ syn.get('${props.entityId}')`
 synGet('${props.entityId}')`
 
   const cliCode = `synapse get ${props.entityId}`
+
+  // state to manage docker modal visibility
+  const [isShowingModalDocker, setIsShowingModalDocker] =
+    useState<boolean>(false)
+  const handleCloseModalDocker = () => {
+    setIsShowingModalDocker(false)
+  }
+
+  // Generate Docker instructions
+  // FIXME: need to find a way to replace <myrepo>
+  const dockerCode = `${DOCKER_LOGIN}
+docker pull docker.synapse.org/${props.entityId}/myrepo`
+
+  // Create download menu items
+  const downloadActions = getDownloadActionsForEntityType(props.entityType)
+  const downloadMenuItems = downloadActions.map(actionGroup =>
+    actionGroup.map(action =>
+      getMenuItemForAction(
+        props.entityId,
+        props.name,
+        action,
+        setIsShowingModalProgrammaticAccess,
+        setIsShowingModalDocker,
+      ),
+    ),
+  )
 
   return (
     <>
@@ -156,13 +175,21 @@ synGet('${props.entityId}')`
         }}
       />
       <ProgrammaticInstructionsModal
-        show={isShowingModal}
+        show={isShowingModalProgrammaticAccess}
         title={`Programmatic Access: ${props.name}`}
-        onClose={handleCloseModal}
+        onClose={handleCloseModalProgrammaticAccess}
         pythonCode={pythonCode}
         rCode={rCode}
         cliCode={cliCode}
         helpUrl="https://help.synapse.org/docs/Getting-Started-with-Downloading.2003796248.html"
+        hasCancelButton={false}
+      />
+      <ProgrammaticInstructionsModal
+        show={isShowingModalDocker}
+        title={`Programmatic Access: ${props.name}`}
+        onClose={handleCloseModalDocker}
+        cliCode={dockerCode}
+        helpUrl="https://help.synapse.org/docs/Synapse-Docker-Registry.2011037752.html#SynapseDockerRegistry-UsingDockerImagesStoredintheSynapseDockerRegistry"
         hasCancelButton={false}
       />
     </>
