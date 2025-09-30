@@ -83,6 +83,7 @@ const createMockLoadMoreRow = (parentId: string, depth: number = 1) =>
       isLeaf: true,
       parentId,
       isLoadMore: true,
+      pageToken: 'nextToken',
     },
     `row-load-more-${parentId}`,
   )

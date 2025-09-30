@@ -34,6 +34,7 @@ export const useTableData = (
             parentId: rootId,
             versionNumber: rootNode.entityHeader.versionNumber,
             isLoadMore: true,
+            pageToken: nextToken,
           })
         }
       }

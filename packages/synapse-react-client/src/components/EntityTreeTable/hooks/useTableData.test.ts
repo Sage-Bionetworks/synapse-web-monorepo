@@ -192,6 +192,7 @@ describe('useTableData', () => {
       parentId: 'syn123',
       versionNumber: 1,
       isLoadMore: true,
+      pageToken: 'nextPageToken',
     })
   })
 
