@@ -58,13 +58,6 @@ const routes: RouteObject[] = [
                 convertModuleToRouteObject,
               ),
           },
-          {
-            path: STUDY_DETAILS_PAGE_DATA_TAB_PATH,
-            lazy: () =>
-              import('@/pages/StudyDetailsPage/StudyDataTab').then(
-                convertModuleToRouteObject,
-              ),
-          },
         ],
       },
       {
