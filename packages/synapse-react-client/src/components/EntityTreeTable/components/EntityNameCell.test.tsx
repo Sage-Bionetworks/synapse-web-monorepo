@@ -10,14 +10,12 @@ vi.mock('@/components/EntityLink', () => ({
   )),
 }))
 
-// Mock Skeleton component
-vi.mock('@mui/material', async () => {
-  const actual = await vi.importActual('@mui/material')
-  return {
-    ...actual,
-    Skeleton: vi.fn(() => <div data-testid="skeleton">Loading...</div>),
-  }
-})
+// Mock SynapseSpinner component
+vi.mock('@/components/LoadingScreen/LoadingScreen', () => ({
+  SynapseSpinner: vi.fn(() => (
+    <div data-testid="synapse-spinner">Loading...</div>
+  )),
+}))
 
 const mockContextValue = {
   expanded: { syn123: true, syn456: false },
@@ -137,7 +135,7 @@ describe('NameCell', () => {
     expect(mainBox).toHaveStyle('padding-left: 16px') // depth * 2 * 8px = 1 * 2 * 8 = 16px
   })
 
-  it('should show loading skeleton when entity is in loadingIds', () => {
+  it('should show loading spinner when entity is in loadingIds', () => {
     const loadingRow = {
       ...mockEntityBundleRow,
       entityId: 'syn789',
@@ -145,15 +143,15 @@ describe('NameCell', () => {
     }
     renderWithContext(loadingRow)
 
-    // Should show skeleton since syn789 is in loadingIds
-    expect(screen.getByTestId('skeleton')).toBeInTheDocument()
+    // Should show spinner since syn789 is in loadingIds
+    expect(screen.getByTestId('synapse-spinner')).toBeInTheDocument()
   })
 
-  it('should not show loading skeleton when entity is not in loadingIds', () => {
+  it('should not show loading spinner when entity is not in loadingIds', () => {
     renderWithContext(mockEntityBundleRow)
 
-    // Should not show skeleton since syn123 is not in loadingIds
-    expect(screen.queryByTestId('skeleton')).not.toBeInTheDocument()
+    // Should not show spinner since syn123 is not in loadingIds
+    expect(screen.queryByTestId('synapse-spinner')).not.toBeInTheDocument()
   })
 
   it('should render spacer for leaf nodes instead of expand button', () => {
