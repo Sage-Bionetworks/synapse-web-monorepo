@@ -91,7 +91,8 @@ describe('parseFreeTextGivenJsonSchemaType', () => {
     expect(parseFreeTextGivenJsonSchemaType('undefined', 'null')).toBe(
       'undefined',
     )
-    expect(parseFreeTextGivenJsonSchemaType('', 'null')).toBe('')
+    expect(parseFreeTextGivenJsonSchemaType('', 'null')).toBe(null)
+    expect(parseFreeTextGivenJsonSchemaType('null', 'null')).toBe(null)
     expect(parseFreeTextGivenJsonSchemaType('nil', 'null')).toBe('nil')
   })
 })
