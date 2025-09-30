@@ -325,6 +325,7 @@ export const useTreeOperationsWithDirectFetch = (
             parentId: node.entityHeader.id,
             versionNumber: node.entityHeader.versionNumber,
             isLoadMore: true,
+            pageToken: nextToken,
           })
         }
       }

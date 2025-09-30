@@ -35,6 +35,7 @@ export type EntityBundleRow = {
   parentId?: string
   versionNumber?: number
   isLoadMore?: boolean
+  pageToken?: string
 }
 
 export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
@@ -141,7 +142,9 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     // collide. For load-more rows, use parentId and depth to create unique identifier.
     getRowId: row =>
       row.isLoadMore
-        ? `loadmore::${row.parentId}::${row.depth}`
+        ? `loadmore::${row.parentId}::${row.depth}::${
+            row.pageToken || 'no-token'
+          }`
         : `${row.entityId || row.entityHeader.id}::${row.parentId ?? 'root'}::${
             row.depth
           }`,

@@ -14,8 +14,7 @@ type EntityTreeTableViewProps = {
 const EntityTreeTableRow: React.FC<
   TrProps<EntityBundleRow, Row<EntityBundleRow>>
 > = ({ row, tableRow, ...rest }) => {
-  const { loadingIds, loadMoreChildren, nextPageTokens } =
-    useEntityTreeTableContext()
+  const { loadingIds, loadMoreChildren } = useEntityTreeTableContext()
 
   if (!tableRow) return null
 
@@ -30,11 +29,9 @@ const EntityTreeTableRow: React.FC<
           <AutoLoadMore
             depth={original.depth}
             isLoading={isLoading}
+            pageToken={original.pageToken}
             onLoadMore={() => {
-              loadMoreChildren(
-                original.parentId!,
-                nextPageTokens[original.parentId!],
-              )
+              loadMoreChildren(original.parentId!, original.pageToken)
             }}
           />
         </td>
