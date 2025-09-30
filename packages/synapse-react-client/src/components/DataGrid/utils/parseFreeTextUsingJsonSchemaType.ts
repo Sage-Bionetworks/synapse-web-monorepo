@@ -39,7 +39,7 @@ export default function parseFreeTextGivenJsonSchemaType(
       return freeText
     }
   } else if (colType === 'null') {
-    if (freeText.toLowerCase() === 'null') {
+    if (freeText.toLowerCase() === 'null' || freeText.trim() === '') {
       return null
     } else {
       return freeText
