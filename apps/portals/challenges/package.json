@@ -5,6 +5,7 @@
   "type": "module",
   "dependencies": {
     "@mui/material": "^7.1.1",
+    "@sage-bionetworks/synapse-client": "workspace:*",
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "katex": "^0.16.22",

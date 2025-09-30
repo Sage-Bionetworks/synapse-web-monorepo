@@ -7,12 +7,8 @@ import {
   Typography,
   Stack,
 } from '@mui/material'
-import {
-  useGetEntity,
-  useGetFeatureFlag,
-} from 'synapse-react-client/synapse-queries'
+import { useGetEntity } from 'synapse-react-client/synapse-queries'
 import { isFileEntity } from 'synapse-react-client'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { useLocation, useNavigate } from 'react-router'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 
@@ -96,17 +92,8 @@ const RedirectDialog = (props: RedirectDialogProps) => {
 
   const isRedirectTargetFileEntity = entity ? isFileEntity(entity) : false
 
-  const isFeatureFlagEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.FILE_ENTITY_PAGE,
-  )
-
   useEffect(() => {
-    if (
-      redirectUrl &&
-      isRedirectTargetFileEntity &&
-      !isLoading &&
-      isFeatureFlagEnabled
-    ) {
+    if (redirectUrl && isRedirectTargetFileEntity && !isLoading) {
       const currentUrl = `${location.pathname}${location.search}`
       const internalUrl = `/FileEntity?entityId=${entityId}${
         versionNumber ? `&version=${versionNumber}` : ''
@@ -115,8 +102,8 @@ const RedirectDialog = (props: RedirectDialogProps) => {
       if (currentUrl === internalUrl) {
         return
       }
-
       navigate(internalUrl)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
       onCancelRedirect()
     }
   }, [
@@ -124,7 +111,6 @@ const RedirectDialog = (props: RedirectDialogProps) => {
     entityId,
     versionNumber,
     isRedirectTargetFileEntity,
-    isFeatureFlagEnabled,
     navigate,
     onCancelRedirect,
     isLoading,
@@ -173,7 +159,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
   }
 
   // Show loading state while fetching entity for FileEntity redirect
-  if (redirectUrl && entityId && isLoading && isFeatureFlagEnabled) {
+  if (redirectUrl && entityId && isLoading) {
     return (
       <Dialog
         open={true}

@@ -1,5 +1,5 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { FinderScope } from '../EntityFinder/tree/EntityTree'
 import { VersionSelectionType } from '../EntityFinder/VersionSelectionType'
@@ -49,8 +49,8 @@ describe('EntityViewScopeEditor tests', () => {
           initialScope: FinderScope.ALL_PROJECTS,
           initialContainer: 'root',
           selectableTypes: expect.arrayContaining([
-            EntityType.PROJECT,
-            EntityType.FOLDER,
+            EntityType.project,
+            EntityType.folder,
           ]),
         },
       }),
@@ -90,8 +90,8 @@ describe('EntityViewScopeEditor tests', () => {
           initialScope: FinderScope.ALL_PROJECTS,
           initialContainer: 'root',
           selectableTypes: expect.arrayContaining([
-            EntityType.PROJECT,
-            EntityType.FOLDER,
+            EntityType.project,
+            EntityType.folder,
           ]),
         },
       }),
@@ -125,9 +125,9 @@ describe('EntityViewScopeEditor tests', () => {
           initialScope: FinderScope.ALL_PROJECTS,
           initialContainer: 'root',
           selectableTypes: expect.arrayContaining([
-            EntityType.PROJECT,
+            EntityType.project,
             // Folders cannot be added to a Project View!
-            // EntityType.FOLDER,
+            // EntityType.folder,
           ]),
         },
       }),

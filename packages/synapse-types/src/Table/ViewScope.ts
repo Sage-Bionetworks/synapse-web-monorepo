@@ -1,4 +1,4 @@
-import { ViewEntityType } from './ViewEntityType'
+import { ViewEntityType } from '@sage-bionetworks/synapse-client'
 
 /**
  * List of parent IDs that define a view scope.

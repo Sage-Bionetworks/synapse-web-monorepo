@@ -1,3 +1,4 @@
+import { StandaloneLoginForm } from '@/components/Authentication/index'
 import SynapseClient, {
   getAccessTokenFromCookie,
   getAuthenticatedOn,
@@ -15,11 +16,16 @@ import useDetectSSOCode from '@/utils/hooks/useDetectSSOCode'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import dayjs from 'dayjs'
-import { atom, useAtom } from 'jotai'
+import { atom, createStore, useAtom } from 'jotai'
 import { ReactNode, Suspense, useEffect, useMemo } from 'react'
 import { createMemoryRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 import { SynapseToastContainer } from './ToastMessage'
+
+// Store auth token in global atom to avoid race conditions where the Story component
+// may not get the login token right away
+const authTokenAtom = atom<string | undefined>(undefined)
+const store = createStore()
 
 export async function sessionChangeHandler() {
   let accessToken: string | undefined = await getAccessTokenFromCookie()
@@ -45,6 +51,9 @@ export async function sessionChangeHandler() {
       date = dayjs(authenticatedOn.authenticatedOn).format('L LT')
     })
   }
+
+  store.set(authTokenAtom, accessToken)
+
   return { accessToken, profile, authenticatedOn: date }
 }
 
@@ -54,10 +63,6 @@ function overrideEndpoint(stack: SynapseStack) {
   const endpointConfig = STACK_MAP[stack]
   ;(window as any)['SRC_OVERRIDE_ENDPOINT_CONFIG'] = endpointConfig
 }
-
-// Store auth token in global atom to avoid race conditions where the Story component
-// may not get the login token right away
-const authTokenAtom = atom<string | undefined>(undefined)
 
 /**
  * Wraps storybook story components to ensure that all components receive required context.
@@ -78,6 +83,7 @@ export function StorybookComponentWrapper(props: {
     parameters: {
       stack?: SynapseStack
       withRouter?: boolean
+      requireLogin?: boolean
     }
   }
 }) {
@@ -90,14 +96,17 @@ export function StorybookComponentWrapper(props: {
     overrideEndpoint(currentStack)
   }, [currentStack])
 
-  const [accessToken, setAccessToken] = useAtom(authTokenAtom)
+  const [accessToken] = useAtom(authTokenAtom, { store })
+
+  const shouldPromptForLogin =
+    storybookContext.parameters.requireLogin &&
+    currentStack !== 'mock' &&
+    !accessToken
 
   useDetectSSOCode()
 
   useEffect(() => {
-    sessionChangeHandler().then(data => {
-      setAccessToken(data.accessToken)
-    })
+    sessionChangeHandler()
   })
 
   useEffect(() => {
@@ -136,7 +145,17 @@ export function StorybookComponentWrapper(props: {
             <ReactQueryDevtools />
           )}
           <SynapseToastContainer />
-          <main>{props.children}</main>
+          <main>
+            {shouldPromptForLogin ? (
+              <StandaloneLoginForm
+                sessionCallback={() => {
+                  void sessionChangeHandler()
+                }}
+              />
+            ) : (
+              props.children
+            )}
+          </main>
         </SynapseContextProvider>
       </QueryClientProvider>
     </Suspense>

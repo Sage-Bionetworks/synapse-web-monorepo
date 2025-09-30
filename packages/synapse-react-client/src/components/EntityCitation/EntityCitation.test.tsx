@@ -1,21 +1,18 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
-import EntityCitation from './EntityCitation'
-import { useGetEntityBundle } from '@/synapse-queries/entity/useEntityBundle'
 import { useGetDOIAssociation } from '@/synapse-queries/doi/useDOI'
+import { useGetEntityBundle } from '@/synapse-queries/entity/useEntityBundle'
 import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   DoiAssociation,
-  EntityBundle,
+  DoiAssociationObjectTypeEnum,
   EntityType,
-  ObjectType,
-} from '@sage-bionetworks/synapse-types'
-import {
-  DoiObjectType,
   SynapseClientError,
 } from '@sage-bionetworks/synapse-client'
-import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { vi } from 'vitest'
+import { EntityBundle } from '@sage-bionetworks/synapse-types'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { vi } from 'vitest'
+import EntityCitation from './EntityCitation'
 
 vi.mock('@/synapse-queries/entity/useEntityBundle', () => {
   return {
@@ -51,7 +48,7 @@ const mockProjectWithDoiId = 'syn68244561'
 
 const doiEntitySuccess: DoiAssociation = {
   objectId: mockEntityWithUnversionedDoiId,
-  objectType: DoiObjectType.ENTITY as ObjectType,
+  objectType: DoiAssociationObjectTypeEnum.ENTITY,
   doiUri: '10.7303/syn61841662',
   associationId: '',
   etag: '',
@@ -69,12 +66,12 @@ const fileWithDoiAssociation: Partial<EntityBundle> = {
     concreteType: 'org.sagebionetworks.repo.model.FileEntity',
   },
   doiAssociation: doiEntitySuccess,
-  entityType: EntityType.FILE,
+  entityType: EntityType.file,
 }
 
 const versionedDoiEntitySuccess: DoiAssociation = {
   objectId: mockEntityWithVersionedDoiId,
-  objectType: DoiObjectType.ENTITY as ObjectType,
+  objectType: DoiAssociationObjectTypeEnum.ENTITY,
   doiUri: '10.7303/syn66268092.1',
   associationId: '',
   etag: '',
@@ -87,7 +84,7 @@ const versionedDoiEntitySuccess: DoiAssociation = {
 
 const doiProjectSuccess: DoiAssociation = {
   objectId: 'syn64042437',
-  objectType: DoiObjectType.ENTITY as ObjectType,
+  objectType: DoiAssociationObjectTypeEnum.ENTITY,
   doiUri: '10.7303/syn64042437',
   associationId: '',
   etag: '',

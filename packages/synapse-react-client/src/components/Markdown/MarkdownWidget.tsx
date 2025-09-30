@@ -40,6 +40,11 @@ type Image = {
   widgetParamsMapped: ImageWidgetParams
 }
 
+type ImageLink = {
+  widgetType: 'imageLink'
+  widgetParamsMapped: ImageWidgetParams
+}
+
 type Plot = {
   widgetType: 'plot'
   widgetParamsMapped: MarkdownSynapsePlotProps
@@ -83,6 +88,7 @@ type Preview = {
 type MarkdownWidgetDefinition =
   | ButtonLink
   | Image
+  | ImageLink
   | Plot
   | TableOfContents
   | UserBadge
@@ -102,6 +108,7 @@ function MarkdownWidget(props: MarkdownWidgetProps) {
     case 'buttonlink':
       return <MarkdownButton {...widgetParamsMapped} />
     case 'image':
+    case 'imageLink':
       return <MarkdownSynapseImage {...widgetParamsMapped} />
     case 'plot':
       return <MarkdownSynapsePlot {...widgetParamsMapped} />

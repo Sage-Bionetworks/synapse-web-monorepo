@@ -4,7 +4,7 @@ import {
   rowsAreIdentical,
   removeNoOpOperations,
 } from './DataGridUtils'
-import { DataGridRow, Operation } from './DataGridTypes'
+import { DataGridRow, Operation } from '../DataGridTypes'
 
 describe('DataGridUtils', () => {
   describe('parseQueryInput', () => {
@@ -24,6 +24,12 @@ describe('DataGridUtils', () => {
       expect(parseQueryInput('\nSELECT id FROM t')).toEqual({
         type: 'sql',
         input: 'SELECT id FROM t',
+      })
+    })
+    it('returns type recordSetId for synID pattern', () => {
+      expect(parseQueryInput('syn1234')).toEqual({
+        type: 'recordSetId',
+        input: 'syn1234',
       })
     })
     it('returns type sessionId for session id pattern', () => {

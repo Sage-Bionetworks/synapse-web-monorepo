@@ -29,13 +29,17 @@ export const MarkdownCollapse = (props: MarkdownCollapseProps) => {
   const [wordCount, setWordCount] = useState<number>()
   const [plainText, setPlainText] = useState<string>()
 
-  const onMarkdownProcessingDone = (htmlContent: string | null | undefined) => {
+  const onMarkdownProcessingDone: (
+    htmlContent: string | null | undefined,
+  ) => void = htmlContent => {
     if (htmlContent) {
       const textContent = stripHTML(htmlContent)
-      setPlainText(textContent.trim())
-      setWordCount(textContent.trim().split(/\s+/).length)
-      if (props.setPlainTextResult) {
-        props.setPlainTextResult(textContent.trim())
+      if (textContent.trim() !== plainText) {
+        setPlainText(textContent.trim())
+        setWordCount(textContent.trim().split(/\s+/).length)
+        if (props.setPlainTextResult) {
+          props.setPlainTextResult(textContent.trim())
+        }
       }
     }
   }

@@ -1,5 +1,5 @@
 import { EntityHeader } from './EntityHeader'
-import { EntityType } from './EntityType'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/entity/SortBy.html
 export enum SortBy {

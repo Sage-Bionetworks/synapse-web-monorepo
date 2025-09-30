@@ -1,12 +1,11 @@
 import { normalizeNumericId } from '@/utils/functions/StringUtils'
+import { DoiAssociation, EntityType } from '@sage-bionetworks/synapse-client'
 import {
   ACCESS_TYPE,
   AnnotationsValueType,
-  DoiAssociation,
   EntityBundle,
   EntityHeader,
   EntityJson,
-  EntityType,
   ObjectType,
   Project,
   ProjectHeader,
@@ -79,7 +78,7 @@ const mockProjectAcl = {
 
 const mockProjectEntityBundle: EntityBundle = {
   entity: mockProjectEntity,
-  entityType: EntityType.PROJECT,
+  entityType: EntityType.project,
   annotations: {
     id: MOCK_PROJECT_ID,
     etag: '7849ff2c-1c93-4104-adcf-9e6d6b0c50b5',

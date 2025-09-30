@@ -1,7 +1,7 @@
+import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import { useSearchAccessApprovalsInfinite } from '@/synapse-queries/dataaccess/useAccessApprovals'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { Button, Typography } from '@mui/material'
 import {
   AccessApprovalSearchRequest,
   AccessApprovalSearchResult,
@@ -18,7 +18,6 @@ import {
 import dayjs from 'dayjs'
 import { upperFirst } from 'lodash-es'
 import { useMemo, useState } from 'react'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import UserOrTeamBadge from '../UserOrTeamBadge/index'
@@ -124,7 +123,7 @@ export function AccessApprovalsTable({
     [accessorId, accessRequirementId, tableSortState],
   )
 
-  const { data, hasNextPage, fetchNextPage, isLoading } =
+  const { data, hasNextPage, fetchNextPage, isLoading, isFetchingNextPage } =
     useSearchAccessApprovalsInfinite(searchRequest)
   const accessApprovals = useMemo(
     () => data?.pages.flatMap(page => page.results) ?? [],
@@ -143,30 +142,20 @@ export function AccessApprovalsTable({
     columnResizeMode: 'onChange',
   })
 
+  const isEmpty = !isLoading && table.getRowModel().rows.length === 0
+
   return (
     <div className="AccessApprovalsTable">
-      <StyledTanStackTable table={table} />
-      {isLoading && (
-        <div className="SRC-center-text">
-          <SynapseSpinner size={40} />
-        </div>
-      )}
-      {!isLoading && accessApprovals.length === 0 && (
-        <Typography className="SRC-center-text" variant="body1">
-          No Results
-        </Typography>
-      )}
-      {hasNextPage && (
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => {
-            fetchNextPage()
-          }}
-        >
-          Show More
-        </Button>
-      )}
+      <InfiniteTableLayout
+        table={<StyledTanStackTable table={table} />}
+        isLoading={isLoading}
+        isEmpty={isEmpty}
+        hasNextPage={hasNextPage}
+        onFetchNextPageClicked={() => {
+          void fetchNextPage()
+        }}
+        isFetchingNextPage={isFetchingNextPage}
+      />
     </div>
   )
 }

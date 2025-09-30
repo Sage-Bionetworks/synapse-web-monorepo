@@ -1,13 +1,16 @@
+import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import SynapseClient from '@/synapse-client'
 import { useGetOAuthClientInfinite } from '@/synapse-queries'
+import { MoreVert } from '@mui/icons-material'
 import { useSynapseContext } from '@/utils'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { AddCircleTwoTone } from '@mui/icons-material'
-import { Box, Button, Link } from '@mui/material'
+import { Box, Button, Link, IconButton, Menu, MenuItem } from '@mui/material'
 import { OAuthClient } from '@sage-bionetworks/synapse-client/generated/models/OAuthClient'
 import {
   createColumnHelper,
   getCoreRowModel,
+  Row,
   Table,
   useReactTable,
 } from '@tanstack/react-table'
@@ -20,6 +23,7 @@ import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import { displayToast } from '../ToastMessage'
 import { CreateOAuthModal } from './CreateOAuthClient'
+import OAuthAclEditorModal from '../OAuthClientAclEditor/OAuthAclEditorModal'
 
 const columnHelper = createColumnHelper<OAuthClient>()
 function getColumns(columnOptions: {
@@ -28,6 +32,7 @@ function getColumns(columnOptions: {
   setIsShowingSecretWarning: (value: boolean) => void
   setIsEdit: (value: boolean) => void
   setIsShowingCreateClientModal: (value: boolean) => void
+  setIsShowingSharingSettings: (value: boolean) => void
 }) {
   const {
     setIsShowingVerification,
@@ -35,6 +40,7 @@ function getColumns(columnOptions: {
     setIsShowingSecretWarning,
     setIsEdit,
     setIsShowingCreateClientModal,
+    setIsShowingSharingSettings,
   } = columnOptions
   return [
     columnHelper.accessor('createdOn', {
@@ -67,43 +73,107 @@ function getColumns(columnOptions: {
         ),
     }),
     columnHelper.display({
-      id: 'generateSecret',
-      header: props => <ColumnHeader {...props} title={'App Secret'} />,
-      cell: ({ row }) => (
-        <Button
-          variant="outlined"
-          onClick={() => {
-            setSelectedClient(row.original)
-            setIsShowingSecretWarning(true)
-          }}
-          size="small"
-        >
-          Generate Secret
-        </Button>
-      ),
-    }),
-    columnHelper.display({
       id: 'actions',
       header: props => <ColumnHeader {...props} title={'Actions'} />,
       cell: ({ row }) => (
-        <Button
-          variant="outlined"
-          onClick={() => {
-            setSelectedClient(row.original)
-            setIsEdit(true)
-            setIsShowingCreateClientModal(true)
-          }}
-          size="small"
-        >
-          Edit
-        </Button>
+        <ActionsMenuCell
+          row={row}
+          setSelectedClient={setSelectedClient}
+          setIsEdit={setIsEdit}
+          setIsShowingCreateClientModal={setIsShowingCreateClientModal}
+          setIsShowingSecretWarning={setIsShowingSecretWarning}
+          setIsShowingSharingSettings={setIsShowingSharingSettings}
+        />
       ),
     }),
   ]
 }
 
+function ActionsMenuCell({
+  row,
+  setSelectedClient,
+  setIsEdit,
+  setIsShowingCreateClientModal,
+  setIsShowingSecretWarning,
+  setIsShowingSharingSettings,
+}: {
+  row: Row<OAuthClient>
+  setSelectedClient: (value: OAuthClient) => void
+  setIsEdit: (value: boolean) => void
+  setIsShowingCreateClientModal: (value: boolean) => void
+  setIsShowingSecretWarning: (value: boolean) => void
+  setIsShowingSharingSettings: (value: boolean) => void
+}) {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleMenuClose = () => {
+    setAnchorEl(null)
+  }
+  return (
+    <>
+      <IconButton
+        aria-label="more"
+        aria-controls={`actions-menu-${row.id}`}
+        aria-haspopup="true"
+        onClick={handleMenuOpen}
+        size="small"
+      >
+        <MoreVert />
+      </IconButton>
+      <Menu
+        id={`actions-menu-${row.id}`}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleMenuClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        <MenuItem
+          onClick={() => {
+            setSelectedClient(row.original)
+            setIsEdit(true)
+            setIsShowingCreateClientModal(true)
+            handleMenuClose()
+          }}
+        >
+          Edit
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setSelectedClient(row.original)
+            setIsShowingSecretWarning(true)
+            handleMenuClose()
+          }}
+        >
+          Generate Secret
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setSelectedClient(row.original)
+            setIsShowingSharingSettings(true)
+            handleMenuClose()
+          }}
+        >
+          Sharing Settings
+        </MenuItem>
+      </Menu>
+    </>
+  )
+}
+
 export function OAuthManagement() {
   const { accessToken } = useSynapseContext()
+  const [isShowingSharingSettings, setIsShowingSharingSettings] =
+    useState(false)
   const [isShowingCreateClientModal, setIsShowingCreateClientModal] =
     useState(false)
   const [isEdit, setIsEdit] = useState<boolean>(false)
@@ -114,7 +184,8 @@ export function OAuthManagement() {
   const [secret, setSecret] = useState<string>()
   const [isShowingVerification, setIsShowingVerification] = useState(false)
 
-  const { data, hasNextPage, fetchNextPage } = useGetOAuthClientInfinite()
+  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useGetOAuthClientInfinite()
   const oAuthClientList = useMemo(
     () => data?.pages.flatMap(page => page.results || []) || [],
     [data],
@@ -147,6 +218,7 @@ export function OAuthManagement() {
         setIsShowingSecretWarning,
         setIsEdit,
         setIsShowingCreateClientModal,
+        setIsShowingSharingSettings,
       }),
     [],
   )
@@ -160,6 +232,8 @@ export function OAuthManagement() {
     getCoreRowModel: getCoreRowModel(),
     columnResizeMode: 'onChange',
   })
+
+  const isEmpty = !isLoading && table.getRowModel().rows.length === 0
 
   return (
     <div>
@@ -184,21 +258,16 @@ export function OAuthManagement() {
           Create New Client
         </Button>
       </Box>
-      <StyledTanStackTable table={table} />
-      {hasNextPage && (
-        <div className="text-center">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              fetchNextPage()
-            }}
-          >
-            Load more
-          </Button>
-        </div>
-      )}
-
+      <InfiniteTableLayout
+        table={<StyledTanStackTable table={table} />}
+        isLoading={isLoading}
+        isEmpty={isEmpty}
+        hasNextPage={hasNextPage}
+        onFetchNextPageClicked={() => {
+          void fetchNextPage()
+        }}
+        isFetchingNextPage={isFetchingNextPage}
+      />
       <CreateOAuthModal
         onClose={() => {
           setIsShowingCreateClientModal(false)
@@ -239,6 +308,11 @@ export function OAuthManagement() {
           </p> */}
           </>
         }
+      />
+      <OAuthAclEditorModal
+        clientId={selectedClient?.client_id!}
+        open={isShowingSharingSettings}
+        onClose={() => setIsShowingSharingSettings(false)}
       />
       <WarningDialog
         open={isShowingSecretWarning}

@@ -50,7 +50,7 @@ export class RssFeedCards extends Component<RssFeedCardsProps, RssState> {
       ? `/${filterType ?? 'tag'}/${filterValue.replace(' ', '-')}`
       : ''
     const allItems = `${url}${tagPath}`
-    const feedUrl = `${allItems}/feed/`
+    const feedUrl = `${allItems}/?feed=rss2`
     fetch(feedUrl)
       .then(response => response.text())
       .then(responseData => rssParser.parseString(responseData))

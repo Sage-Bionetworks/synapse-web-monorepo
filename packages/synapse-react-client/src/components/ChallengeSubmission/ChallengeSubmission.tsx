@@ -10,11 +10,11 @@ import {
 } from '@/synapse-queries'
 import { useGetTeam } from '@/synapse-queries/team/useTeam'
 import { useSynapseContext } from '@/utils'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   ACCESS_TYPE,
   Challenge,
   Entity,
-  EntityType,
   Project,
   PROJECT_CONCRETE_TYPE_VALUE,
   ResourceAccess,
@@ -31,7 +31,7 @@ export type EntityItem = Entity & {
 }
 
 export type ChallengeSubmissionProps = {
-  entityType: EntityType.DOCKER_REPO | EntityType.FILE
+  entityType: typeof EntityType.dockerrepo | typeof EntityType.file
   pageSize: number
   projectId: string
 }

@@ -14,16 +14,15 @@
 }
 
 .row-valid .dsg-cell-gutter {
-  background: rgba(120, 244, 54, 0.1); // green with opacity
+  background: #def0dd;
 }
 
 .row-invalid .dsg-cell-gutter {
-  background: rgba(244, 67, 54, 0.1); // red with opacity
+  background: #fccfcc;
 }
 
 .row-unknown .dsg-cell-gutter {
-  background: rgba(235, 244, 54, 0.1); // yellow with opacity
-  position: relative;
+  background: #fdfeeb;
 
   &::after {
     content: '';
@@ -46,4 +45,14 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.cell-invalid {
+  background: #fccfcc;
+}
+
+.header-cell-required {
+  background-color: #395979;
+  color: white;
+  font-weight: bold;
 }

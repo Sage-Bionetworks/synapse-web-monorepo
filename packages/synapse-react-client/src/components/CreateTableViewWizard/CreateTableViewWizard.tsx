@@ -6,14 +6,13 @@ import {
 import { useValidateDefiningSql } from '@/synapse-queries/table/useDefiningSql'
 import { convertToConcreteEntityType } from '@/utils/functions/EntityTypeUtils'
 import { Alert, Box, Button } from '@mui/material'
+import { EntityType, ViewEntityType } from '@sage-bionetworks/synapse-client'
 import {
   ColumnModel,
   Entity,
   ENTITY_VIEW_TYPE_MASK_FILE,
   ENTITY_VIEW_TYPE_MASK_PROJECT,
-  EntityType,
   ValidateDefiningSqlResponse,
-  ViewEntityType,
   ViewScope,
 } from '@sage-bionetworks/synapse-types'
 import { isUndefined, omitBy } from 'lodash-es'
@@ -88,13 +87,13 @@ export default function CreateTableViewWizard(
   const [sql, setSql] = useState('')
 
   const viewScope: ViewScope | undefined = useMemo(() => {
-    if (entityType === EntityType.ENTITY_VIEW) {
+    if (entityType === EntityType.entityview) {
       return {
         scope: entityViewScopeIds,
         viewTypeMask,
         viewEntityType: entityType as ViewEntityType,
       }
-    } else if (entityType === EntityType.SUBMISSION_VIEW) {
+    } else if (entityType === EntityType.submissionview) {
       return {
         scope: submissionViewScopeIds,
         viewEntityType: entityType as ViewEntityType,
@@ -177,8 +176,8 @@ export default function CreateTableViewWizard(
     if (
       columnModels &&
       // Do not create columns if this is a SQL-defined view
-      entityType !== EntityType.MATERIALIZED_VIEW &&
-      entityType !== EntityType.VIRTUAL_TABLE
+      entityType !== EntityType.materializedview &&
+      entityType !== EntityType.virtualtable
     ) {
       try {
         createdColumnModels = await createColumnModels(
@@ -204,7 +203,7 @@ export default function CreateTableViewWizard(
     maybeSetScopeIds(
       entityToCreate,
       entityType,
-      entityType === EntityType.SUBMISSION_VIEW
+      entityType === EntityType.submissionview
         ? submissionViewScopeIds
         : entityViewScopeIds,
     )
@@ -343,7 +342,7 @@ export default function CreateTableViewWizard(
         return (
           <TableTypeSelection
             onTableSelected={() => {
-              onTableTypeSelected(EntityType.TABLE)
+              onTableTypeSelected(EntityType.table)
             }}
             onViewSelected={onViewSelected}
           />

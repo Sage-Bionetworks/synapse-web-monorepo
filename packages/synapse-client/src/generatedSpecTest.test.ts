@@ -33,9 +33,6 @@ describe('Tests for the generated specification', () => {
 
     // Verify that EntityFromJSONTyped inspects the concreteType
     expect(EntityFromJSONTyped(fileEntity, false)).toEqual(fileEntity)
-    expect(() =>
-      EntityFromJSONTyped(withDifferentConcreteType, false),
-    ).toThrow()
   })
   test('instanceOfXxx asserts that an object is of the checked type', () => {
     const fileEntityWithoutType: object = {

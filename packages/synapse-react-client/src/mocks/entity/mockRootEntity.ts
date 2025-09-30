@@ -1,11 +1,11 @@
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   ACCESS_TYPE,
   AccessControlList,
-  EntityType,
   Folder,
 } from '@sage-bionetworks/synapse-types'
-import { MockEntityData } from './MockEntityData'
 import { generateBaseEntity } from '../faker/generateFakeEntity'
+import { MockEntityData } from './MockEntityData'
 
 const rootEntityBenefactorAcl: AccessControlList = {
   id: 'syn4489',
@@ -23,7 +23,7 @@ const mockRootEntityData: MockEntityData<Folder> = generateBaseEntity<Folder>({
   id: 4489,
   entity: { name: '' },
   acl: rootEntityBenefactorAcl,
-  type: EntityType.FOLDER,
+  type: EntityType.folder,
   permissions: {
     canView: false,
     canEdit: false,

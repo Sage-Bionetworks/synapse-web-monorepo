@@ -12,12 +12,12 @@ import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BackendDestinationEnum } from '@/utils/functions'
 import { getEndpoint } from '@/utils/functions/getEndpoint'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,
   ENTITY_VIEW_TYPE_MASK_FILE,
   ENTITY_VIEW_TYPE_MASK_FOLDER,
   ENTITY_VIEW_TYPE_MASK_PROJECT,
-  EntityType,
   MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE,
   SUBMISSION_VIEW_CONCRETE_TYPE_VALUE,
   TABLE_ENTITY_CONCRETE_TYPE_VALUE,
@@ -233,7 +233,7 @@ describe('CreateTableWizard integration tests', () => {
             viewTypeMask:
               ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_FOLDER,
             scope: ['syn123', 'syn456'],
-            viewEntityType: EntityType.ENTITY_VIEW,
+            viewEntityType: EntityType.entityview,
           },
           includeDerivedAnnotations: true,
         },
@@ -353,7 +353,7 @@ describe('CreateTableWizard integration tests', () => {
           viewScope: {
             viewTypeMask: ENTITY_VIEW_TYPE_MASK_PROJECT,
             scope: ['syn123', 'syn456'],
-            viewEntityType: EntityType.ENTITY_VIEW,
+            viewEntityType: EntityType.entityview,
           },
           includeDerivedAnnotations: true,
         },
@@ -458,7 +458,7 @@ describe('CreateTableWizard integration tests', () => {
           viewScope: {
             viewTypeMask: undefined,
             scope: [mockEvaluationQueue.id!],
-            viewEntityType: EntityType.SUBMISSION_VIEW,
+            viewEntityType: EntityType.submissionview,
           },
           includeDerivedAnnotations: true,
         },

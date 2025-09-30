@@ -1,4 +1,9 @@
-import { DataGridRow, Operation, QueryInput } from './DataGridTypes'
+import { SYNAPSE_ENTITY_ID_REGEX } from '@/utils/functions/RegularExpressions'
+import { DataGridRow, Operation, QueryInput } from '../DataGridTypes'
+
+// We embed a value into the in row data passed to react-datasheet-grid for use as a render optimization
+export const GRID_ROW_REACT_KEY_PROPERTY = '__rowKey'
+
 // Query Input can either be an empty string, a SQL query, or a session ID
 export const parseQueryInput = (input: string): QueryInput => {
   const trimmedInput = input.trim()
@@ -6,6 +11,8 @@ export const parseQueryInput = (input: string): QueryInput => {
     return { type: 'empty', input: '' }
   } else if (trimmedInput.toUpperCase().startsWith('SELECT')) {
     return { type: 'sql', input: trimmedInput }
+  } else if (SYNAPSE_ENTITY_ID_REGEX.test(trimmedInput)) {
+    return { type: 'recordSetId', input: trimmedInput }
   } else if (/^[A-Za-z]\w*=+$/.test(trimmedInput)) {
     return { type: 'sessionId', input: trimmedInput }
   }

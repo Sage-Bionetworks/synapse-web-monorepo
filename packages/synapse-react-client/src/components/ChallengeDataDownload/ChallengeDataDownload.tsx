@@ -2,7 +2,7 @@ import { useAddFileBatchToDownloadList } from '@/synapse-queries'
 import { useSynapseContext } from '@/utils'
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
 import { Box, Button } from '@mui/material'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { useCallback } from 'react'
 import { EntityChildrenDetails } from '../EntityFinder/details/configurations/EntityChildrenDetails'
 import { EntityDetailsListSharedProps } from '../EntityFinder/details/EntityDetailsList'
@@ -66,9 +66,9 @@ export function ChallengeDataDownload({
     versionSelection: VersionSelectionType.REQUIRED,
     selectColumnType: 'checkbox',
     enableSelectAll: true,
-    visibleTypes: [EntityType.FILE],
+    visibleTypes: [EntityType.file],
     selected: selectedEntities,
-    selectableTypes: [EntityType.FILE],
+    selectableTypes: [EntityType.file],
     isIdSelected,
     isSelectable: () => true,
     toggleSelection,

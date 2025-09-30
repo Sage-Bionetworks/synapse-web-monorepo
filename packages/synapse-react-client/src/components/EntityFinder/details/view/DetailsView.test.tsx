@@ -12,9 +12,9 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   EntityHeader,
-  EntityType,
   PaginatedResults,
   Reference,
   VersionInfo,
@@ -221,7 +221,7 @@ describe('DetailsView tests', () => {
         renderComponent({
           selected: Map(),
           visibleTypes: Object.values(EntityType),
-          selectableTypes: [EntityType.PROJECT], // !
+          selectableTypes: [EntityType.project], // !
         })
 
         const rows = await screen.findAllByRole('row')
@@ -381,7 +381,7 @@ describe('DetailsView tests', () => {
         enableSelectAll: true,
         selectAllIsChecked: false,
         hasNextPage: false,
-        selectableTypes: [EntityType.DATASET],
+        selectableTypes: [EntityType.dataset],
         selectColumnType: 'checkbox',
       })
       await screen.findByRole('checkbox', { checked: false })
@@ -485,8 +485,8 @@ describe('DetailsView tests', () => {
       renderComponent({
         enableSelectAll: true,
         selectAllIsChecked: false,
-        selectableTypes: [EntityType.FILE],
-        visibleTypes: [EntityType.FILE, EntityType.PROJECT],
+        selectableTypes: [EntityType.file],
+        visibleTypes: [EntityType.file, EntityType.project],
         hasNextPage: false,
         selectColumnType: 'checkbox',
       })
@@ -508,8 +508,8 @@ describe('DetailsView tests', () => {
       renderComponent({
         enableSelectAll: true,
         selectAllIsChecked: false,
-        selectableTypes: [EntityType.FILE, EntityType.PROJECT],
-        visibleTypes: [EntityType.FILE],
+        selectableTypes: [EntityType.file, EntityType.project],
+        visibleTypes: [EntityType.file],
         hasNextPage: false,
         selectColumnType: 'checkbox',
       })
@@ -573,8 +573,8 @@ describe('DetailsView tests', () => {
 
     it('does not toggle when clicked if disabled', async () => {
       renderComponent({
-        selectableTypes: [EntityType.PROJECT],
-        visibleTypes: [EntityType.PROJECT, EntityType.FILE],
+        selectableTypes: [EntityType.project],
+        visibleTypes: [EntityType.project, EntityType.file],
       })
 
       // Per props, File is a disabled type
@@ -586,8 +586,8 @@ describe('DetailsView tests', () => {
 
     it('renders a link to update the currentContainer for container entities', async () => {
       renderComponent({
-        selectableTypes: [EntityType.PROJECT, EntityType.FILE],
-        visibleTypes: [EntityType.PROJECT, EntityType.FILE],
+        selectableTypes: [EntityType.project, EntityType.file],
+        visibleTypes: [EntityType.project, EntityType.file],
       })
 
       // One link to navigate to the project should be visible (you can't navigate inside of a folder)
@@ -611,8 +611,8 @@ describe('DetailsView tests', () => {
     it('does not render a link to update the currentContainer when setCurrentContainer is undefined', () => {
       // For example, when we are searching, we have no "currentContainer" to update
       renderComponent({
-        selectableTypes: [EntityType.PROJECT, EntityType.FILE],
-        visibleTypes: [EntityType.PROJECT, EntityType.FILE],
+        selectableTypes: [EntityType.project, EntityType.file],
+        visibleTypes: [EntityType.project, EntityType.file],
         setCurrentContainer: undefined,
       })
 
@@ -639,7 +639,7 @@ describe('DetailsView tests', () => {
         renderComponent({
           enableSelectAll: false,
           hasNextPage: false,
-          selectableTypes: [EntityType.FILE],
+          selectableTypes: [EntityType.file],
           selectColumnType: 'checkbox',
         })
         // The project is disabled, so it won't have a checkbox
@@ -652,8 +652,8 @@ describe('DetailsView tests', () => {
         mockAllIsIntersecting(true)
 
         renderComponent({
-          selectableTypes: [EntityType.FILE],
-          visibleTypes: [EntityType.FILE],
+          selectableTypes: [EntityType.file],
+          visibleTypes: [EntityType.file],
           selected: Map([
             [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
           ]),
@@ -669,8 +669,8 @@ describe('DetailsView tests', () => {
         mockAllIsIntersecting(true)
 
         renderComponent({
-          selectableTypes: [EntityType.FILE],
-          visibleTypes: [EntityType.FILE],
+          selectableTypes: [EntityType.file],
+          visibleTypes: [EntityType.file],
           selected: Map([
             [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
           ]),
@@ -684,8 +684,8 @@ describe('DetailsView tests', () => {
         mockAllIsIntersecting(true)
 
         renderComponent({
-          selectableTypes: [EntityType.FILE],
-          visibleTypes: [EntityType.FILE],
+          selectableTypes: [EntityType.file],
+          visibleTypes: [EntityType.file],
           selected: Map([
             [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
           ]),
@@ -701,8 +701,8 @@ describe('DetailsView tests', () => {
         mockAllIsIntersecting(true)
 
         renderComponent({
-          selectableTypes: [EntityType.FILE],
-          visibleTypes: [EntityType.FILE],
+          selectableTypes: [EntityType.file],
+          visibleTypes: [EntityType.file],
           selected: Map([
             [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
           ]),
@@ -719,8 +719,8 @@ describe('DetailsView tests', () => {
         mockAllIsIntersecting(true)
 
         renderComponent({
-          selectableTypes: [EntityType.FILE],
-          visibleTypes: [EntityType.FILE],
+          selectableTypes: [EntityType.file],
+          visibleTypes: [EntityType.file],
           selected: Map<string, Reference>([
             [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
           ]),
@@ -763,8 +763,8 @@ describe('DetailsView tests', () => {
         mockAllIsIntersecting(true)
 
         renderComponent({
-          selectableTypes: [EntityType.FILE],
-          visibleTypes: [EntityType.FILE],
+          selectableTypes: [EntityType.file],
+          visibleTypes: [EntityType.file],
           selected: Map([
             [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
           ]),
@@ -796,8 +796,8 @@ describe('DetailsView tests', () => {
         mockAllIsIntersecting(true)
 
         renderComponent({
-          selectableTypes: [EntityType.FILE],
-          visibleTypes: [EntityType.FILE],
+          selectableTypes: [EntityType.file],
+          visibleTypes: [EntityType.file],
           selected: Map([
             [
               entityHeaders[0].id,
@@ -835,8 +835,8 @@ describe('DetailsView tests', () => {
         mockAllIsIntersecting(true)
 
         renderComponent({
-          selectableTypes: [EntityType.FILE],
-          visibleTypes: [EntityType.FILE],
+          selectableTypes: [EntityType.file],
+          visibleTypes: [EntityType.file],
           selected: Map([
             [entityHeaders[0].id, { targetId: entityHeaders[0].id }],
           ]),
@@ -875,8 +875,8 @@ describe('DetailsView tests', () => {
     it('File row contains MD5, file size, and add to download cart', async () => {
       mockAllIsIntersecting(true)
       renderComponent({
-        visibleTypes: [EntityType.FILE],
-        selectableTypes: [EntityType.FILE],
+        visibleTypes: [EntityType.file],
+        selectableTypes: [EntityType.file],
       })
 
       await screen.findByLabelText('MD5')
@@ -888,8 +888,8 @@ describe('DetailsView tests', () => {
     it('Project row does not contain MD5 or add to download cart', () => {
       mockAllIsIntersecting(true)
       renderComponent({
-        visibleTypes: [EntityType.PROJECT],
-        selectableTypes: [EntityType.PROJECT],
+        visibleTypes: [EntityType.project],
+        selectableTypes: [EntityType.project],
       })
       expect(screen.queryByLabelText('MD5')).not.toBeInTheDocument()
       expect(
