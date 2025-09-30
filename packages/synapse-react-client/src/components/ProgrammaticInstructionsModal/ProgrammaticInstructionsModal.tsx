@@ -116,7 +116,7 @@ export const ProgrammaticInstructionsModal = ({
           <>
             <Typography variant="body1">{cliNotes}</Typography>
             {installationInstructions}
-            <pre> {cliCode} </pre>
+            <pre>{cliCode}</pre>
           </>
         )}
         {currentTab === ProgrammaticOptionsTabs.R && (
