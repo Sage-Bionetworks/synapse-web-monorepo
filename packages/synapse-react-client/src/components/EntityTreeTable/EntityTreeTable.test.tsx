@@ -34,10 +34,9 @@ vi.mock('./hooks/useSorting', () => ({
   })),
 }))
 
-vi.mock('./hooks/useTreeOperations', () => ({
-  useTreeOperations: vi.fn(() => ({
+vi.mock('./hooks/useTreeOperationsWithDirectFetch', () => ({
+  useTreeOperationsWithDirectFetch: vi.fn(() => ({
     handleToggleExpanded: vi.fn(),
-    handleChildrenLoaded: vi.fn(),
     loadMoreChildren: vi.fn(),
     flattenTree: vi.fn(() => []),
   })),
@@ -74,13 +73,27 @@ vi.mock('@tanstack/react-table', () => ({
   getCoreRowModel: vi.fn(),
 }))
 
-// Mock child components
-vi.mock('./components/ChildLoader', () => ({
-  ChildLoader: vi.fn(({ entityId }) => (
-    <div data-testid={`child-loader-${entityId}`}>ChildLoader</div>
-  )),
+// Mock React Query
+vi.mock('@tanstack/react-query', () => ({
+  useQueryClient: vi.fn(() => ({
+    fetchQuery: vi.fn().mockResolvedValue({
+      page: [],
+      nextPageToken: null,
+    }),
+  })),
 }))
 
+// Mock Synapse Context
+vi.mock('@/utils/context/SynapseContext', () => ({
+  useSynapseContext: vi.fn(() => ({
+    accessToken: 'mock-token',
+    keyFactory: {
+      getEntityChildrenQueryKey: vi.fn(() => ['entity-children', 'syn123']),
+    },
+  })),
+}))
+
+// Mock child components
 vi.mock('./components/EntityTreeTableView', () => ({
   EntityTreeTableView: vi.fn(() => (
     <div data-testid="entity-tree-table-view">EntityTreeTableView</div>
@@ -129,50 +142,6 @@ describe('EntityTreeTable', () => {
     expect(screen.getByTestId('entity-tree-table-view')).toBeInTheDocument()
   })
 
-  it('should render child loaders for loading nodes', () => {
-    const mockUseTreeState = vi.mocked(useTreeState)
-    mockUseTreeState.mockReturnValueOnce({
-      expanded: { syn123: true },
-      setExpanded: vi.fn(),
-      tree: {
-        syn123: {
-          entityHeader: {
-            id: 'syn123',
-            name: 'Test Entity',
-            type: 'org.sagebionetworks.repo.model.Project',
-            versionNumber: 1,
-            versionLabel: 'v1',
-            benefactorId: 123,
-            createdOn: '2023-01-01T00:00:00.000Z',
-            modifiedOn: '2023-01-01T00:00:00.000Z',
-            createdBy: 'user1',
-            modifiedBy: 'user1',
-            isLatestVersion: true,
-          },
-          depth: 0,
-          isLeaf: false,
-        },
-      },
-      setTree: vi.fn(),
-      loadingIds: new Set(['syn456', 'syn789']),
-      setLoadingIds: vi.fn(),
-      loadedChildren: new Set(),
-      setLoadedChildren: vi.fn(),
-      nextPageTokens: {},
-      setNextPageTokens: vi.fn(),
-      loadingPageTokens: {},
-      setLoadingPageTokens: vi.fn(),
-      sorting: [],
-      setSorting: vi.fn(),
-      resetTreeState: vi.fn(),
-    })
-
-    render(<EntityTreeTable {...defaultProps} />)
-
-    expect(screen.getByTestId('child-loader-syn456')).toBeInTheDocument()
-    expect(screen.getByTestId('child-loader-syn789')).toBeInTheDocument()
-  })
-
   it('should call initialization hooks with correct parameters', () => {
     const mockUseDataInitialization = vi.mocked(useDataInitialization)
     const mockUseTableColumns = vi.mocked(useTableColumns)
@@ -210,6 +179,100 @@ describe('EntityTreeTable', () => {
       expect.any(Object), // nextPageTokens
       expect.any(Function), // flattenTree
     )
+  })
+
+  it('should verify children are initially loaded through useDataInitialization', () => {
+    const mockUseDataInitialization = vi.mocked(useDataInitialization)
+    const mockSetTree = vi.fn()
+    const mockSetLoadedChildren = vi.fn()
+    const mockSetNextPageTokens = vi.fn()
+    const mockSetExpanded = vi.fn()
+
+    // Mock useTreeState to return the setter functions
+    const mockUseTreeState = vi.mocked(useTreeState)
+    mockUseTreeState.mockReturnValueOnce({
+      expanded: { syn123: true },
+      setExpanded: mockSetExpanded,
+      tree: {
+        syn123: {
+          entityHeader: {
+            id: 'syn123',
+            name: 'Test Entity',
+            type: 'org.sagebionetworks.repo.model.Project',
+            versionNumber: 1,
+            versionLabel: 'v1',
+            benefactorId: 123,
+            createdOn: '2023-01-01T00:00:00.000Z',
+            modifiedOn: '2023-01-01T00:00:00.000Z',
+            createdBy: 'user1',
+            modifiedBy: 'user1',
+            isLatestVersion: true,
+          },
+          depth: 0,
+          isLeaf: false,
+          children: [
+            {
+              entityHeader: {
+                id: 'syn456',
+                name: 'Child Entity',
+                type: 'org.sagebionetworks.repo.model.Folder',
+                versionNumber: 1,
+                versionLabel: 'v1',
+                benefactorId: 123,
+                createdOn: '2023-01-01T00:00:00.000Z',
+                modifiedOn: '2023-01-01T00:00:00.000Z',
+                createdBy: 'user1',
+                modifiedBy: 'user1',
+                isLatestVersion: true,
+              },
+              depth: 1,
+              isLeaf: true,
+              parentId: 'syn123',
+            },
+          ],
+        },
+      },
+      setTree: mockSetTree,
+      loadingIds: new Set(),
+      setLoadingIds: vi.fn(),
+      loadedChildren: new Set(['syn123']), // Root children are loaded
+      setLoadedChildren: mockSetLoadedChildren,
+      nextPageTokens: {},
+      setNextPageTokens: mockSetNextPageTokens,
+      loadingPageTokens: {},
+      setLoadingPageTokens: vi.fn(),
+      sorting: [],
+      setSorting: vi.fn(),
+      resetTreeState: vi.fn(),
+    })
+
+    render(
+      <EntityTreeTable
+        rootId="syn123"
+        expandRootByDefault={true}
+        showRootNode={true}
+        enableSorting={true}
+      />,
+    )
+
+    // Verify that useDataInitialization was called with the correct parameters
+    expect(mockUseDataInitialization).toHaveBeenCalledWith(
+      'syn123', // rootId
+      true, // expandRootByDefault
+      true, // showRootNode
+      expect.any(Set), // loadedChildren - should contain 'syn123'
+      mockSetTree, // setTree
+      mockSetNextPageTokens, // setNextPageTokens
+      mockSetLoadedChildren, // setLoadedChildren
+      mockSetExpanded, // setExpanded
+      expect.any(Function), // resetTreeState
+      undefined, // sortBy
+      undefined, // sortDirection
+    )
+
+    // Verify that loadedChildren contains the root ID, indicating children have been loaded
+    const loadedChildrenArg = mockUseDataInitialization.mock.calls[0][3]
+    expect(loadedChildrenArg.has('syn123')).toBe(true)
   })
 
   it('should configure TanStack Table correctly', () => {

@@ -1,8 +1,25 @@
 import { useCallback } from 'react'
 import { EntityBundleRow } from '../EntityTreeTable'
 import { TreeNode } from './useTreeState'
+import { useQueryClient } from '@tanstack/react-query'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import SynapseClient from '@/synapse-client'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import {
+  EntityHeader,
+  SortBy,
+  Direction,
+} from '@sage-bionetworks/synapse-types'
+import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
 
-export const useTreeOperations = (
+const includeTypes: EntityType[] = [
+  EntityType.folder,
+  EntityType.file,
+  EntityType.link,
+  EntityType.recordset,
+]
+
+export const useTreeOperationsWithDirectFetch = (
   expanded: Record<string, boolean>,
   setExpanded: (value: React.SetStateAction<Record<string, boolean>>) => void,
   tree: Record<string, TreeNode>,
@@ -19,28 +36,13 @@ export const useTreeOperations = (
   ) => void,
   loadingPageTokens: Record<string, string | undefined>,
   nextPageTokens: Record<string, string | undefined>,
+  sortBy?: SortBy,
+  sortDirection?: Direction,
 ) => {
-  // Handler for expanding nodes
-  const handleToggleExpanded = useCallback(
-    (entityId: string) => {
-      const isCurrentlyExpanded = expanded[entityId]
-      setExpanded(prev => ({
-        ...prev,
-        [entityId]: !prev[entityId],
-      }))
+  const queryClient = useQueryClient()
+  const { accessToken, keyFactory } = useSynapseContext()
 
-      // If expanding and children haven't been loaded yet, mark for loading
-      if (!isCurrentlyExpanded && !loadedChildren.has(entityId)) {
-        const node = tree[entityId]
-        if (node && !node.isLeaf) {
-          setLoadingIds(prev => new Set(prev).add(entityId))
-        }
-      }
-    },
-    [expanded, loadedChildren, tree, setExpanded, setLoadingIds],
-  )
-
-  // Callback to handle when children are loaded
+  // Callback to handle when children are loaded - moved before handleToggleExpanded to fix dependency order
   const handleChildrenLoaded = useCallback(
     (entityId: string, childNodes: TreeNode[], nextPageToken?: string) => {
       setTree(prev => {
@@ -95,8 +97,7 @@ export const useTreeOperations = (
       // store nextPageToken for this parent (if any)
       setNextPageTokens(prev => ({ ...prev, [entityId]: nextPageToken }))
       // clear the loading page token entry for this parent since the
-      // requested page has completed (this prevents the ChildLoader
-      // from remaining mounted/considered "loading")
+      // requested page has completed (this prevents any remaining loading state)
       setLoadingPageTokens(prev => {
         const next = { ...prev }
         delete next[entityId]
@@ -124,13 +125,159 @@ export const useTreeOperations = (
     ],
   )
 
-  const loadMoreChildren = useCallback(
-    (parentId: string, pageToken?: string) => {
-      // set which page token is being requested for this parent and mark loading
-      setLoadingPageTokens(prev => ({ ...prev, [parentId]: pageToken }))
-      setLoadingIds(prev => new Set(prev).add(parentId))
+  // Handler for expanding nodes - now includes direct data fetching
+  const handleToggleExpanded = useCallback(
+    async (entityId: string) => {
+      const isCurrentlyExpanded = expanded[entityId]
+      setExpanded(prev => ({
+        ...prev,
+        [entityId]: !prev[entityId],
+      }))
+
+      // If expanding and children haven't been loaded yet, fetch them directly
+      if (!isCurrentlyExpanded && !loadedChildren.has(entityId)) {
+        const node = tree[entityId]
+        if (node && !node.isLeaf) {
+          setLoadingIds(prev => new Set(prev).add(entityId))
+
+          try {
+            // Fetch the children directly using queryClient
+            const entityChildrenRequest = {
+              parentId: entityId,
+              includeTypes,
+              sortBy,
+              sortDirection,
+            }
+
+            const children = await queryClient.fetchQuery({
+              queryKey: keyFactory.getEntityChildrenQueryKey(
+                entityChildrenRequest,
+                false,
+              ),
+              queryFn: () =>
+                SynapseClient.getEntityChildren(
+                  entityChildrenRequest,
+                  accessToken,
+                ),
+            })
+
+            // Convert to TreeNode format
+            const childNodes: TreeNode[] = children.page.map(
+              (eh: EntityHeader) => ({
+                entityHeader: eh,
+                parentId: entityId,
+                depth: node.depth + 1,
+                isLeaf: !(
+                  convertToEntityType(eh.type) === EntityType.project ||
+                  convertToEntityType(eh.type) === EntityType.folder
+                ),
+              }),
+            )
+
+            // Update the tree with the loaded children
+            handleChildrenLoaded(entityId, childNodes, children.nextPageToken)
+          } catch (error) {
+            console.error(
+              'Failed to fetch children for entity:',
+              entityId,
+              error,
+            )
+            // Remove from loading state on error
+            setLoadingIds(prev => {
+              const next = new Set(prev)
+              next.delete(entityId)
+              return next
+            })
+          }
+        }
+      }
     },
-    [setLoadingPageTokens, setLoadingIds],
+    [
+      expanded,
+      loadedChildren,
+      tree,
+      setExpanded,
+      setLoadingIds,
+      queryClient,
+      keyFactory,
+      accessToken,
+      sortBy,
+      sortDirection,
+      handleChildrenLoaded,
+    ],
+  )
+
+  const loadMoreChildren = useCallback(
+    async (entityId: string, pageToken?: string) => {
+      // set which page token is being requested for this parent and mark loading
+      setLoadingPageTokens(prev => ({ ...prev, [entityId]: pageToken }))
+      setLoadingIds(prev => new Set(prev).add(entityId))
+
+      try {
+        // Fetch the next page directly using queryClient
+        const entityChildrenRequest = {
+          parentId: entityId,
+          includeTypes,
+          nextPageToken: pageToken,
+          sortBy,
+          sortDirection,
+        }
+
+        const children = await queryClient.fetchQuery({
+          queryKey: keyFactory.getEntityChildrenQueryKey(
+            entityChildrenRequest,
+            false,
+          ),
+          queryFn: () =>
+            SynapseClient.getEntityChildren(entityChildrenRequest, accessToken),
+        })
+
+        // Convert to TreeNode format
+        const node = tree[entityId]
+        const childNodes: TreeNode[] = children.page.map(
+          (eh: EntityHeader) => ({
+            entityHeader: eh,
+            parentId: entityId,
+            depth: node ? node.depth + 1 : 0,
+            isLeaf: !(
+              convertToEntityType(eh.type) === EntityType.project ||
+              convertToEntityType(eh.type) === EntityType.folder
+            ),
+          }),
+        )
+
+        // Update the tree with the loaded children
+        handleChildrenLoaded(entityId, childNodes, children.nextPageToken)
+      } catch (error) {
+        console.error(
+          'Failed to load more children for entity:',
+          entityId,
+          error,
+        )
+        // Remove from loading state on error
+        setLoadingIds(prev => {
+          const next = new Set(prev)
+          next.delete(entityId)
+          return next
+        })
+        setLoadingPageTokens(prev => {
+          const next = { ...prev }
+          delete next[entityId]
+          return next
+        })
+      }
+    },
+    [
+      setLoadingPageTokens,
+      setLoadingIds,
+      queryClient,
+      keyFactory,
+      accessToken,
+      sortBy,
+      sortDirection,
+      tree,
+      handleChildrenLoaded,
+    ],
   )
 
   // Flatten tree for table rows. Track visited node ids to avoid cycles and

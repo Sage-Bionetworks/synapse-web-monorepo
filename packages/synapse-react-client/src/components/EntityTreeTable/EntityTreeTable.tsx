@@ -5,12 +5,11 @@ import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import { Box } from '@mui/material'
 import { useTreeState } from './hooks/useTreeState'
 import { useSorting } from './hooks/useSorting'
-import { useTreeOperations } from './hooks/useTreeOperations'
+import { useTreeOperationsWithDirectFetch } from './hooks/useTreeOperationsWithDirectFetch'
 import { useTableColumns } from './hooks/useTableColumns'
 import { useDataInitialization } from './hooks/useDataInitialization'
 import { useTableData } from './hooks/useTableData'
 export { type TreeNode } from './hooks/useTreeState'
-import { ChildLoader } from './components/ChildLoader'
 import { EntityTreeTableView } from './components/EntityTreeTableView'
 import { EntityTreeTableContext } from './components/EntityTreeTableContext'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
@@ -67,26 +66,24 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
   // Use sorting hook
   const { sortBy, sortDirection } = useSorting(sorting, resetTreeState)
 
-  // Use tree operations hook
-  const {
-    handleToggleExpanded,
-    handleChildrenLoaded,
-    loadMoreChildren,
-    flattenTree,
-  } = useTreeOperations(
-    expanded,
-    setExpanded,
-    tree,
-    setTree,
-    loadedChildren,
-    setLoadedChildren,
-    loadingIds,
-    setLoadingIds,
-    setNextPageTokens,
-    setLoadingPageTokens,
-    loadingPageTokens,
-    nextPageTokens,
-  )
+  // Use tree operations hook with direct fetch
+  const { handleToggleExpanded, loadMoreChildren, flattenTree } =
+    useTreeOperationsWithDirectFetch(
+      expanded,
+      setExpanded,
+      tree,
+      setTree,
+      loadedChildren,
+      setLoadedChildren,
+      loadingIds,
+      setLoadingIds,
+      setNextPageTokens,
+      setLoadingPageTokens,
+      loadingPageTokens,
+      nextPageTokens,
+      sortBy,
+      sortDirection,
+    )
 
   // Initialize data
   useDataInitialization(
@@ -133,9 +130,6 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     return false
   }, [tree, rootId, showRootNode, loadedChildren])
 
-  // Get the list of nodes that need their children loaded
-  const nodesToLoad = Array.from(loadingIds)
-
   const table = useReactTable({
     data: rows,
     columns,
@@ -164,26 +158,16 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
         value={{
           expanded,
           loadingIds,
-          handleToggleExpanded,
-          loadMoreChildren,
+          handleToggleExpanded: (entityId: string) => {
+            void handleToggleExpanded(entityId)
+          },
+          loadMoreChildren: (entityId: string, pageToken?: string) => {
+            void loadMoreChildren(entityId, pageToken)
+          },
           nextPageTokens,
           entityIdClicked,
         }}
       >
-        {/* Render child loaders for nodes that need children loaded */}
-        {nodesToLoad.map(entityId => (
-          <ChildLoader
-            key={entityId}
-            entityId={entityId}
-            isLoading={loadingIds.has(entityId)}
-            isLoaded={loadedChildren.has(entityId)}
-            pageToken={loadingPageTokens[entityId]}
-            sortBy={sortBy}
-            sortDirection={sortDirection}
-            onChildrenLoaded={handleChildrenLoaded}
-          />
-        ))}
-
         {hasNoContent ? (
           <NoContentAvailable />
         ) : (
