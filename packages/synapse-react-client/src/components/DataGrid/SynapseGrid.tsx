@@ -39,7 +39,6 @@ import {
 import { getCellClassName } from './utils/getCellClassName'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 import { modelColsToGrid } from './utils/modelColsToGrid'
-import { Button } from '@mui/material'
 import { Stack } from '@mui/material'
 import GridAgentChat from '../SynapseChat/GridAgentChat'
 import { SmartToyTwoTone } from '@mui/icons-material'
