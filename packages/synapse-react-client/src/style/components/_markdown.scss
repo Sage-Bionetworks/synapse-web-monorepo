@@ -70,8 +70,9 @@
   list-style-type: decimal;
   padding-left: 15px;
 }
-.markdown ol li {
-  padding-top: 5px;
+.markdown ol li,
+.markdown ul li {
+  margin-top: 5px;
 }
 .markdown ul {
   list-style-type: square;
@@ -80,8 +81,10 @@
     content: none;
   }
 }
-.markdown ul li {
-  padding-top: 5px;
+
+.markdown ol + p,
+.markdown ul + p {
+  margin-top: 10px;
 }
 .markdown strong {
   font-weight: bold;

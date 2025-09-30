@@ -1,8 +1,9 @@
-import { DataGridRow, Operation } from '../DataGridTypes'
-import { useCallback, useEffect, useState } from 'react'
-import { ModelChange } from '../utils/applyModelChange'
-import { Button, Menu, MenuItem } from '@mui/material'
+import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import { Menu, MenuItem } from '@mui/material'
+import { useCallback, useEffect, useState } from 'react'
+import { DataGridRow, Operation } from '../DataGridTypes'
+import { ModelChange } from '../utils/applyModelChange'
 import { convertActionToModelChange } from '../utils/convertActionToModelChange'
 import { useStack } from './useStack'
 
@@ -222,7 +223,8 @@ export function useGridUndoRedo(
 
   const undoUI = (
     <>
-      <Button
+      <GridMenuButton
+        variant={'outlined'}
         aria-controls={undoOpen ? 'undo-menu' : undefined}
         aria-haspopup="true"
         onClick={handleUndoClick}
@@ -230,7 +232,7 @@ export function useGridUndoRedo(
         endIcon={<KeyboardArrowDownIcon />}
       >
         Undo {undoPreview && `(${undoPreview.totalActions})`}
-      </Button>
+      </GridMenuButton>
       <Menu
         id="undo-menu"
         anchorEl={undoAnchorEl}
@@ -250,7 +252,8 @@ export function useGridUndoRedo(
 
   const redoUI = (
     <>
-      <Button
+      <GridMenuButton
+        variant={'outlined'}
         aria-controls={redoOpen ? 'redo-menu' : undefined}
         aria-haspopup="true"
         onClick={handleRedoClick}
@@ -258,7 +261,7 @@ export function useGridUndoRedo(
         endIcon={<KeyboardArrowDownIcon />}
       >
         Redo {redoPreview && `(${redoPreview.totalActions})`}
-      </Button>
+      </GridMenuButton>
       <Menu
         id="redo-menu"
         anchorEl={redoAnchorEl}
