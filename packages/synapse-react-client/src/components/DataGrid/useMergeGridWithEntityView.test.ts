@@ -13,9 +13,9 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { TableEntity } from '@sage-bionetworks/synapse-types'
 import { act, renderHook } from '@testing-library/react'
-import useMergeGridWithSource, {
+import useMergeGridWithEntityView, {
   getDownloadFromGridRequestParamsForEntity,
-} from './useMergeGridWithSource'
+} from './useMergeGridWithEntityView'
 
 vi.mock('@/synapse-queries/grid/useExportGrid', () => ({
   useExportGridAsCsv: vi.fn(),
@@ -52,7 +52,7 @@ describe('getDownloadFromGridRequestParamsForEntity', () => {
   })
 })
 
-describe('useMergeGridWithSource', () => {
+describe('useMergeGridWithEntityView', () => {
   const gridSessionId = 'session1'
   const tableEntityId = 'syn890'
   const fileHandleId = '123456'
@@ -93,7 +93,7 @@ describe('useMergeGridWithSource', () => {
     mockExportGridToCsv.mockResolvedValue({ resultsFileHandleId: fileHandleId })
     mockUpdateTable.mockResolvedValue({ success: true })
 
-    const { result } = renderHook(() => useMergeGridWithSource(), {
+    const { result } = renderHook(() => useMergeGridWithEntityView(), {
       wrapper: createWrapper(),
     })
     await act(async () => {
@@ -134,7 +134,7 @@ describe('useMergeGridWithSource', () => {
     mockGetEntity.mockRejectedValue(
       new SynapseClientError(400, 'error', expect.getState().currentTestName!),
     )
-    const { result } = renderHook(() => useMergeGridWithSource(), {
+    const { result } = renderHook(() => useMergeGridWithEntityView(), {
       wrapper: createWrapper(),
     })
     await expect(
