@@ -23,7 +23,7 @@ export type EntityLinkProps = {
   showIcon?: boolean
   /** The field of the entity to display. Default is 'name' */
   displayTextField?: keyof Entity | keyof EntityHeader
-  entityIdClicked?: (entityId: string) => void
+  onEntityIdClicked?: (entityId: string) => void
 }
 
 export const EntityLink = (props: EntityLinkProps) => {
