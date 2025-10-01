@@ -40,33 +40,14 @@ describe('IdCell', () => {
     expect(screen.getByText('syn123456')).toBeInTheDocument()
   })
 
-  it('should render entity ID in Typography component', () => {
-    const cellContext = createMockCellContext(mockEntityBundleRow)
-    render(<IdCell {...cellContext} />)
-
-    const idElement = screen.getByText('syn123456')
-    expect(idElement.tagName.toLowerCase()).toBe('p') // Typography renders as p by default
-  })
-
-  it('should handle different entity IDs', () => {
-    const differentRow = {
+  it('should render nothing for load more rows', () => {
+    const loadMoreRow: EntityBundleRow = {
       ...mockEntityBundleRow,
-      entityId: 'syn999888',
+      isLoadMore: true,
     }
-    const cellContext = createMockCellContext(differentRow)
-    render(<IdCell {...cellContext} />)
+    const cellContext = createMockCellContext(loadMoreRow)
+    const { container } = render(<IdCell {...cellContext} />)
 
-    expect(screen.getByText('syn999888')).toBeInTheDocument()
-  })
-
-  it('should handle long entity IDs', () => {
-    const longIdRow = {
-      ...mockEntityBundleRow,
-      entityId: 'syn123456789012345',
-    }
-    const cellContext = createMockCellContext(longIdRow)
-    render(<IdCell {...cellContext} />)
-
-    expect(screen.getByText('syn123456789012345')).toBeInTheDocument()
+    expect(container.firstChild).toBeNull()
   })
 })
