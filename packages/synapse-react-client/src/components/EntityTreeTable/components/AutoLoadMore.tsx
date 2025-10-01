@@ -1,6 +1,7 @@
 import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
 import { useEffect, useRef } from 'react'
 import { useInView } from 'react-intersection-observer'
+import { depthPaddingMultiplierPx } from './EntityNameCell'
 
 export const AutoLoadMore: React.FC<{
   depth: number
@@ -28,7 +29,7 @@ export const AutoLoadMore: React.FC<{
     <div
       ref={ref}
       style={{
-        paddingLeft: depth * 16 + 45,
+        paddingLeft: depth * depthPaddingMultiplierPx + 45,
         minHeight: '40px',
         display: 'flex',
         alignItems: 'center',

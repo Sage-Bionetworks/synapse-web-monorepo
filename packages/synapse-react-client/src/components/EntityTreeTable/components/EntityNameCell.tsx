@@ -7,6 +7,8 @@ import { useEntityTreeTableContext } from './EntityTreeTableContext'
 import { EntityLink } from '@/components/EntityLink'
 import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
 
+export const depthPaddingMultiplierPx = 16
+
 export const NameCell: React.FC<CellContext<EntityBundleRow, unknown>> = ({
   row,
 }) => {
@@ -16,7 +18,13 @@ export const NameCell: React.FC<CellContext<EntityBundleRow, unknown>> = ({
   const isExpanded = !!expanded[entityHeader.id]
   const hasChildren = !isLeaf
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', pl: depth * 2 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        pl: `${depth * depthPaddingMultiplierPx}px`,
+      }}
+    >
       {hasChildren && (
         <IconButton
           size="small"
