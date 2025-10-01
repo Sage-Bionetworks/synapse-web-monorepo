@@ -39,7 +39,7 @@ export const useTableColumns = (enableSorting: boolean) => {
     if (isMediumAndUp) {
       baseColumns.push({
         id: 'badges',
-        header: 'Badges',
+        header: '',
         cell: EntityBadgeIconsCell,
         enableSorting: false,
         size: 120, // Default width for Badges column
@@ -102,7 +102,7 @@ export const useTableColumns = (enableSorting: boolean) => {
       header: 'Download',
       cell: AddFileToDownloadListCell,
       enableSorting: false,
-      size: 120, // Default width for Download column
+      size: 70,
     })
 
     return baseColumns
