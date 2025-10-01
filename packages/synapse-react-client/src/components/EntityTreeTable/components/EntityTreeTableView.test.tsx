@@ -10,18 +10,10 @@ vi.mock('./EntityTreeTableRow', () => ({
 }))
 
 vi.mock('../../TanStackTable/StyledTanStackTable', () => ({
-  default: vi.fn(({ table, slots, styledTableContainerProps, fullWidth }) => (
-    <div data-testid="styled-tanstack-table">
-      <div data-testid="table-props">
-        {JSON.stringify({
-          className: styledTableContainerProps?.className,
-          fullWidth,
-          hasCustomTr: !!slots?.Tr,
-        })}
-      </div>
-    </div>
-  )),
+  default: vi.fn(() => <div data-testid="styled-tanstack-table" />),
 }))
+
+import StyledTanStackTable from '../../TanStackTable/StyledTanStackTable'
 
 const mockTable = {
   // Minimal mock - we're only testing that props are passed correctly
@@ -49,17 +41,18 @@ describe('EntityTreeTableView', () => {
     )
   }
 
-  it('should render StyledTanStackTable with correct props', () => {
+  it('should render StyledTanStackTable', () => {
     renderWithContext()
 
     expect(screen.getByTestId('styled-tanstack-table')).toBeInTheDocument()
+    expect(vi.mocked(StyledTanStackTable)).toHaveBeenCalledTimes(1)
 
-    const propsElement = screen.getByTestId('table-props')
-    const props = JSON.parse(propsElement.textContent!)
-
-    expect(props.className).toBe('entity-tree-table')
-    expect(props.fullWidth).toBe(true)
-    expect(props.hasCustomTr).toBe(true)
+    // Verify the props structure without being too strict about exact values
+    const call = vi.mocked(StyledTanStackTable).mock.calls[0][0]
+    expect(call.table).toBe(mockTable)
+    expect(call.styledTableContainerProps?.className).toBe('entity-tree-table')
+    expect(call.fullWidth).toBe(true)
+    expect(call.slots?.Tr).toBeDefined()
   })
 
   it('should render with horizontal scroll container', () => {
@@ -70,22 +63,13 @@ describe('EntityTreeTableView', () => {
     expect(scrollContainer).toHaveStyle({ overflowX: 'auto' })
   })
 
-  it('should pass the table prop to StyledTanStackTable', () => {
+  it('should pass custom table prop to StyledTanStackTable', () => {
     const customTable = {
       id: 'custom-table',
     } as unknown as Table<EntityBundleRow>
     renderWithContext(customTable)
 
-    // The mock should still be called, indicating the table prop was passed
-    expect(screen.getByTestId('styled-tanstack-table')).toBeInTheDocument()
-  })
-
-  it('should provide EntityTreeTableRow as custom Tr slot', () => {
-    renderWithContext()
-
-    const propsElement = screen.getByTestId('table-props')
-    const props = JSON.parse(propsElement.textContent!)
-
-    expect(props.hasCustomTr).toBe(true)
+    const call = vi.mocked(StyledTanStackTable).mock.calls[0][0]
+    expect(call.table).toBe(customTable)
   })
 })
