@@ -116,7 +116,7 @@ describe('NameCell', () => {
     renderWithContext(mockEntityBundleRow)
 
     const button = screen.getByRole('button')
-    fireEvent.click(button)
+    await userEvent.click(button)
 
     expect(mockContextValue.handleToggleExpanded).toHaveBeenCalledWith('syn123')
   })
