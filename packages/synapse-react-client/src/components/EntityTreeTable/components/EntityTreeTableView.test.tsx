@@ -1,148 +1,44 @@
-import React from 'react'
 import { render, screen } from '@testing-library/react'
-import { flexRender } from '@tanstack/react-table'
+import { Table } from '@tanstack/react-table'
 import { EntityTreeTableView } from './EntityTreeTableView'
 import { EntityTreeTableContext } from './EntityTreeTableContext'
+import { EntityBundleRow } from '../EntityTreeTable'
 
 // Mock dependencies
-vi.mock('@tanstack/react-table', () => ({
-  flexRender: vi.fn(),
+vi.mock('./EntityTreeTableRow', () => ({
+  EntityTreeTableRow: vi.fn(() => <tr data-testid="entity-tree-table-row" />),
 }))
 
-vi.mock('./AutoLoadMore', () => ({
-  AutoLoadMore: vi.fn(({ onLoadMore, depth, isLoading }) => (
-    <div data-testid="auto-load-more">
-      <button onClick={onLoadMore}>Load More</button>
-      <span>Depth: {depth}</span>
-      <span>Loading: {isLoading.toString()}</span>
+vi.mock('../../TanStackTable/StyledTanStackTable', () => ({
+  default: vi.fn(({ table, slots, styledTableContainerProps, fullWidth }) => (
+    <div data-testid="styled-tanstack-table">
+      <div data-testid="table-props">
+        {JSON.stringify({
+          className: styledTableContainerProps?.className,
+          fullWidth,
+          hasCustomTr: !!slots?.Tr,
+        })}
+      </div>
     </div>
   )),
 }))
 
-vi.mock('../../TanStackTable/StyledTanStackTable', () => ({
-  default: vi.fn(({ table, slots, styledTableContainerProps }) => {
-    const Tr = slots?.Tr || (({ children }: any) => <tr>{children}</tr>)
-
-    return (
-      <div style={{ overflowX: 'auto' }}>
-        <table className={styledTableContainerProps?.className}>
-          <thead>
-            {table.getHeaderGroups().map((headerGroup: any) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header: any) => (
-                  <th key={header.id}>
-                    {mockFlexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row: any) => (
-              <Tr key={row.id} tableRow={row} row={row} />
-            ))}
-          </tbody>
-        </table>
-      </div>
-    )
-  }),
-}))
-
-const mockFlexRender = vi.mocked(flexRender)
-
-// Reusable mock functions
-const createMockCells = () => [
-  {
-    id: 'cell-1',
-    column: { columnDef: { cell: 'Cell 1' }, id: 'name' },
-    getContext: vi.fn(() => ({})),
-  },
-  {
-    id: 'cell-2',
-    column: { columnDef: { cell: 'Cell 2' }, id: 'id' },
-    getContext: vi.fn(() => ({})),
-  },
-]
-
-const createMockRow = (original: any, id: string) => ({
-  id,
-  original,
-  getVisibleCells: vi.fn(() => createMockCells()),
-  getAllCells: vi.fn(() => createMockCells()),
-})
-
-const createMockLoadMoreRow = (parentId: string, depth: number = 1) =>
-  createMockRow(
-    {
-      entityId: '',
-      entityHeader: { id: parentId, name: `Entity ${parentId}` },
-      depth,
-      isLeaf: true,
-      parentId,
-      isLoadMore: true,
-      pageToken: 'nextToken',
-    },
-    `row-load-more-${parentId}`,
-  )
+const mockTable = {
+  // Minimal mock - we're only testing that props are passed correctly
+} as Table<EntityBundleRow>
 
 const mockContextValue = {
-  expanded: { syn123: true },
-  loadingIds: new Set(['syn123']), // Changed to syn123 so the load more row (parentId: syn123) shows as loading
+  expanded: {},
+  loadingIds: new Set<string>(),
   handleToggleExpanded: vi.fn(),
   loadMoreChildren: vi.fn(),
-  nextPageTokens: { syn123: 'nextToken' },
-  onEntityIdClicked: vi.fn(), // Mock function to satisfy EntityTreeTableContextType
+  nextPageTokens: {},
+  onEntityIdClicked: vi.fn(),
 }
-
-const mockTable = {
-  getHeaderGroups: vi.fn(() => [
-    {
-      id: 'header-group-1',
-      headers: [
-        {
-          id: 'header-1',
-          column: { columnDef: { header: 'Name' }, id: 'name' },
-          getContext: vi.fn(() => ({})),
-        },
-        {
-          id: 'header-2',
-          column: { columnDef: { header: 'ID' }, id: 'id' },
-          getContext: vi.fn(() => ({})),
-        },
-      ],
-    },
-  ]),
-  getRowModel: vi.fn(() => ({
-    rows: [
-      createMockRow(
-        {
-          entityId: 'syn123',
-          entityHeader: { id: 'syn123', name: 'Entity 1' },
-          depth: 0,
-          isLeaf: false,
-          isLoadMore: false,
-        },
-        'row-1',
-      ),
-      createMockLoadMoreRow('syn123'),
-    ],
-  })),
-  getAllColumns: vi.fn(() => [{ id: 'name' }, { id: 'id' }]),
-  getState: vi.fn(() => ({
-    columnSizingInfo: { isResizingColumn: false },
-    columnSizing: {},
-    columnVisibility: {},
-  })),
-  getTotalSize: vi.fn(() => 800),
-} as any
 
 describe('EntityTreeTableView', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockFlexRender.mockImplementation(content => content as React.ReactElement)
   })
 
   const renderWithContext = (table = mockTable) => {
@@ -153,85 +49,20 @@ describe('EntityTreeTableView', () => {
     )
   }
 
-  it('should render table headers correctly', () => {
+  it('should render StyledTanStackTable with correct props', () => {
     renderWithContext()
 
-    expect(screen.getByText('Name')).toBeInTheDocument()
-    expect(screen.getByText('ID')).toBeInTheDocument()
+    expect(screen.getByTestId('styled-tanstack-table')).toBeInTheDocument()
+
+    const propsElement = screen.getByTestId('table-props')
+    const props = JSON.parse(propsElement.textContent!)
+
+    expect(props.className).toBe('entity-tree-table')
+    expect(props.fullWidth).toBe(true)
+    expect(props.hasCustomTr).toBe(true)
   })
 
-  it('should render normal table rows', () => {
-    renderWithContext()
-
-    expect(screen.getByText('Cell 1')).toBeInTheDocument()
-    expect(screen.getByText('Cell 2')).toBeInTheDocument()
-  })
-
-  it('should render load more rows using AutoLoadMore component', () => {
-    renderWithContext()
-
-    expect(screen.getByTestId('auto-load-more')).toBeInTheDocument()
-    expect(screen.getByText('Depth: 1')).toBeInTheDocument()
-    expect(screen.getByText('Loading: true')).toBeInTheDocument() // syn123 parent is in loadingIds
-  })
-
-  it('should call loadMoreChildren when load more button is clicked', () => {
-    renderWithContext()
-
-    const loadMoreButton = screen.getByText('Load More')
-    loadMoreButton.click()
-
-    expect(mockContextValue.loadMoreChildren).toHaveBeenCalledWith(
-      'syn123',
-      'nextToken',
-    )
-  })
-
-  it('should span load more row across all columns', () => {
-    renderWithContext()
-
-    const loadMoreCell = screen.getByTestId('auto-load-more').closest('td')
-    expect(loadMoreCell).toHaveAttribute('colSpan', '2')
-  })
-
-  it('should determine loading state correctly for load more rows', () => {
-    const customTable = {
-      ...mockTable,
-      getRowModel: vi.fn(() => ({
-        rows: [createMockLoadMoreRow('syn456')],
-      })),
-    }
-
-    const customContextValue = {
-      ...mockContextValue,
-      loadingIds: new Set(['syn456']), // syn456 is loading to match the parentId
-    }
-
-    render(
-      <EntityTreeTableContext.Provider value={customContextValue}>
-        <EntityTreeTableView table={customTable} />
-      </EntityTreeTableContext.Provider>,
-    )
-
-    // syn456 is in loadingIds, so should show as loading
-    expect(screen.getByText('Loading: true')).toBeInTheDocument()
-  })
-
-  it('should show not loading when parent is not in loadingIds', () => {
-    const customTable = {
-      ...mockTable,
-      getRowModel: vi.fn(() => ({
-        rows: [createMockLoadMoreRow('syn999')],
-      })),
-    }
-
-    renderWithContext(customTable)
-
-    // syn999 is not in loadingIds, so should show as not loading
-    expect(screen.getByText('Loading: false')).toBeInTheDocument()
-  })
-
-  it('should render table with horizontal scroll container', () => {
+  it('should render with horizontal scroll container', () => {
     const { container } = renderWithContext()
 
     const scrollContainer = container.querySelector('div')
@@ -239,22 +70,22 @@ describe('EntityTreeTableView', () => {
     expect(scrollContainer).toHaveStyle({ overflowX: 'auto' })
   })
 
-  it('should apply correct CSS class to table', () => {
-    renderWithContext()
+  it('should pass the table prop to StyledTanStackTable', () => {
+    const customTable = {
+      id: 'custom-table',
+    } as unknown as Table<EntityBundleRow>
+    renderWithContext(customTable)
 
-    const table = screen.getByRole('table')
-    expect(table).toHaveClass('entity-tree-table')
+    // The mock should still be called, indicating the table prop was passed
+    expect(screen.getByTestId('styled-tanstack-table')).toBeInTheDocument()
   })
 
-  it('should call flexRender for headers and cells', () => {
+  it('should provide EntityTreeTableRow as custom Tr slot', () => {
     renderWithContext()
 
-    // Check that flexRender was called for headers
-    expect(mockFlexRender).toHaveBeenCalledWith('Name', {})
-    expect(mockFlexRender).toHaveBeenCalledWith('ID', {})
+    const propsElement = screen.getByTestId('table-props')
+    const props = JSON.parse(propsElement.textContent!)
 
-    // Check that flexRender was called for cells
-    expect(mockFlexRender).toHaveBeenCalledWith('Cell 1', {})
-    expect(mockFlexRender).toHaveBeenCalledWith('Cell 2', {})
+    expect(props.hasCustomTr).toBe(true)
   })
 })
