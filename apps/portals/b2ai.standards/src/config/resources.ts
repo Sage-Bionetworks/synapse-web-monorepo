@@ -197,11 +197,11 @@ export function getColumnConsts(tableName: string): ColumnConsts {
 export function getSynapseTableId(tableName: string): string {
   return getTableInfo(tableName).id
 }
-type getColumnExpressionsProps = AtLeastOne<{
+type getColumnExpressionsProps = {
   columnNames?: string[] // if undefined, use all cols of tableName
   expressions?: string[] // column expressions. how will this work?
   tableName?: string // use all if columnNames and expressions are undefined
-}>
+}
 export function getColumnExpressions({
   tableName,
   columnNames,
