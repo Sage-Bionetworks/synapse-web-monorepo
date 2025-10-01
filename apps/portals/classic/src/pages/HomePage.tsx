@@ -1,8 +1,16 @@
 import headerbackgroundvideo from '@/assets/header-video.mp4'
 import { Box, useTheme } from '@mui/material'
 import { TypeAnimation } from 'react-type-animation'
-import { PortalHomePageHeader } from 'synapse-react-client'
+
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
+import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
+import {
+  ImageCardGridWithLinks,
+  PortalHomePageHeader,
+  RssFeedCards,
+} from 'synapse-react-client'
+import { featuredResearchSql, whatWeDoSql } from '@/config/resources'
+import { FeaturedResearch } from 'synapse-react-client'
 
 function HomePageInternal() {
   const theme = useTheme()
@@ -65,6 +73,34 @@ function HomePageInternal() {
         backgroundMp4Css="#024472"
         textAreaWidth="850px"
       />
+      <ImageCardGridWithLinks
+        sql={whatWeDoSql}
+        title="What We Do"
+        summaryText="Supported by the National Institute on Aging, we provide tools and training to make study metadata easier to create, share, and reuse.
+Host workshops and trainings on metadata preparation
+Provide standardized codebooks and templates for studies
+Develop data sharing SOPs and access processes
+Curate metadata resources to support collaboration across cohorts"
+        columnCount={2}
+        heightPx={350}
+      />
+      <FeaturedResearch sql={featuredResearchSql} />
+      <SectionLayout
+        title={"What's New?"}
+        centerTitle={true}
+        ContainerProps={{
+          className: 'home-spacer',
+        }}
+      >
+        <RssFeedCards
+          url="https://sclasportnews.wpenginepowered.com"
+          itemsToShow={3}
+          allowCategories={[]}
+          // filter={{
+          //   value: "what's-new",
+          // }}
+        />
+      </SectionLayout>
     </>
   )
 }
