@@ -1,8 +1,9 @@
 import headerbackgroundvideo from '@/assets/header-video.mp4'
 import { Box, useTheme } from '@mui/material'
 import { TypeAnimation } from 'react-type-animation'
-import { PortalHomePageHeader } from 'synapse-react-client'
+import { PortalHomePageHeader, RssFeedCards } from 'synapse-react-client'
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
+import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 
 function HomePageInternal() {
   const theme = useTheme()
@@ -65,6 +66,22 @@ function HomePageInternal() {
         backgroundMp4Css="#024472"
         textAreaWidth="850px"
       />
+      <SectionLayout
+        title={"What's New?"}
+        centerTitle={true}
+        ContainerProps={{
+          className: 'home-spacer',
+        }}
+      >
+        <RssFeedCards
+          url="https://sclasportnews.wpenginepowered.com"
+          itemsToShow={3}
+          allowCategories={[]}
+          // filter={{
+          //   value: "what's-new",
+          // }}
+        />
+      </SectionLayout>
     </>
   )
 }
