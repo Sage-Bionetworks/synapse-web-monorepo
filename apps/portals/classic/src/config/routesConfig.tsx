@@ -1,9 +1,6 @@
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
-import {
-  STUDY_DETAILS_PAGE_DATA_TAB_PATH,
-  STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
-} from './routeConstants'
+import { STUDY_DETAILS_PAGE_DETAILS_TAB_PATH } from './routeConstants'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 
