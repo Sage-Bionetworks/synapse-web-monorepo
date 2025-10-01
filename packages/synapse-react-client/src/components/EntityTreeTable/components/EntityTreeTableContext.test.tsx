@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { renderHook } from '@testing-library/react'
 import {
   EntityTreeTableContext,
   useEntityTreeTableContext,
@@ -12,63 +12,40 @@ const mockContextValue = {
   nextPageTokens: { syn123: 'token123' },
 }
 
-// Test component to use the context
-const TestConsumer = () => {
-  const context = useEntityTreeTableContext()
-  return (
-    <div>
-      <div data-testid="expanded">{JSON.stringify(context.expanded)}</div>
-      <div data-testid="loading-ids">
-        {Array.from(context.loadingIds).join(',')}
-      </div>
-      <div data-testid="next-tokens">
-        {JSON.stringify(context.nextPageTokens)}
-      </div>
-      <button
-        data-testid="toggle-button"
-        onClick={() => context.handleToggleExpanded('syn123')}
-      >
-        Toggle
-      </button>
-      <button
-        data-testid="load-more-button"
-        onClick={() => context.loadMoreChildren('syn123', 'token')}
-      >
-        Load More
-      </button>
-    </div>
-  )
-}
-
 describe('EntityTreeTableContext', () => {
   it('should provide context values to consumers', () => {
-    const { getByTestId } = render(
-      <EntityTreeTableContext.Provider value={mockContextValue}>
-        <TestConsumer />
-      </EntityTreeTableContext.Provider>,
-    )
+    const { result } = renderHook(() => useEntityTreeTableContext(), {
+      wrapper: ({ children }) => (
+        <EntityTreeTableContext.Provider value={mockContextValue}>
+          {children}
+        </EntityTreeTableContext.Provider>
+      ),
+    })
 
-    expect(getByTestId('expanded')).toHaveTextContent('{"syn123":true}')
-    expect(getByTestId('loading-ids')).toHaveTextContent('syn456')
-    expect(getByTestId('next-tokens')).toHaveTextContent(
-      '{"syn123":"token123"}',
+    expect(result.current.expanded).toEqual({ syn123: true })
+    expect(result.current.loadingIds).toEqual(new Set(['syn456']))
+    expect(result.current.nextPageTokens).toEqual({ syn123: 'token123' })
+    expect(result.current.handleToggleExpanded).toBe(
+      mockContextValue.handleToggleExpanded,
+    )
+    expect(result.current.loadMoreChildren).toBe(
+      mockContextValue.loadMoreChildren,
     )
   })
 
   it('should allow calling context functions', () => {
-    const { getByTestId } = render(
-      <EntityTreeTableContext.Provider value={mockContextValue}>
-        <TestConsumer />
-      </EntityTreeTableContext.Provider>,
-    )
+    const { result } = renderHook(() => useEntityTreeTableContext(), {
+      wrapper: ({ children }) => (
+        <EntityTreeTableContext.Provider value={mockContextValue}>
+          {children}
+        </EntityTreeTableContext.Provider>
+      ),
+    })
 
-    const toggleButton = getByTestId('toggle-button')
-    const loadMoreButton = getByTestId('load-more-button')
-
-    toggleButton.click()
+    result.current.handleToggleExpanded('syn123')
     expect(mockContextValue.handleToggleExpanded).toHaveBeenCalledWith('syn123')
 
-    loadMoreButton.click()
+    result.current.loadMoreChildren('syn123', 'token')
     expect(mockContextValue.loadMoreChildren).toHaveBeenCalledWith(
       'syn123',
       'token',
@@ -80,7 +57,7 @@ describe('EntityTreeTableContext', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
     expect(() => {
-      render(<TestConsumer />)
+      renderHook(() => useEntityTreeTableContext())
     }).toThrow(
       'useEntityTreeTableContext must be used within EntityTreeTableContext.Provider',
     )
@@ -92,11 +69,13 @@ describe('EntityTreeTableContext', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
     expect(() => {
-      render(
-        <EntityTreeTableContext.Provider value={undefined}>
-          <TestConsumer />
-        </EntityTreeTableContext.Provider>,
-      )
+      renderHook(() => useEntityTreeTableContext(), {
+        wrapper: ({ children }) => (
+          <EntityTreeTableContext.Provider value={undefined}>
+            {children}
+          </EntityTreeTableContext.Provider>
+        ),
+      })
     }).toThrow(
       'useEntityTreeTableContext must be used within EntityTreeTableContext.Provider',
     )
@@ -113,15 +92,17 @@ describe('EntityTreeTableContext', () => {
       nextPageTokens: {},
     }
 
-    const { getByTestId } = render(
-      <EntityTreeTableContext.Provider value={emptyContextValue}>
-        <TestConsumer />
-      </EntityTreeTableContext.Provider>,
-    )
+    const { result } = renderHook(() => useEntityTreeTableContext(), {
+      wrapper: ({ children }) => (
+        <EntityTreeTableContext.Provider value={emptyContextValue}>
+          {children}
+        </EntityTreeTableContext.Provider>
+      ),
+    })
 
-    expect(getByTestId('expanded')).toHaveTextContent('{}')
-    expect(getByTestId('loading-ids')).toHaveTextContent('')
-    expect(getByTestId('next-tokens')).toHaveTextContent('{}')
+    expect(result.current.expanded).toEqual({})
+    expect(result.current.loadingIds).toEqual(new Set<string>())
+    expect(result.current.nextPageTokens).toEqual({})
   })
 
   it('should handle context with multiple expanded and loading items', () => {
@@ -133,18 +114,25 @@ describe('EntityTreeTableContext', () => {
       nextPageTokens: { syn123: 'token1', syn456: 'token2' },
     }
 
-    const { getByTestId } = render(
-      <EntityTreeTableContext.Provider value={multipleItemsContext}>
-        <TestConsumer />
-      </EntityTreeTableContext.Provider>,
-    )
+    const { result } = renderHook(() => useEntityTreeTableContext(), {
+      wrapper: ({ children }) => (
+        <EntityTreeTableContext.Provider value={multipleItemsContext}>
+          {children}
+        </EntityTreeTableContext.Provider>
+      ),
+    })
 
-    expect(getByTestId('expanded')).toHaveTextContent(
-      '{"syn123":true,"syn456":false,"syn789":true}',
+    expect(result.current.expanded).toEqual({
+      syn123: true,
+      syn456: false,
+      syn789: true,
+    })
+    expect(result.current.loadingIds).toEqual(
+      new Set(['syn456', 'syn789', 'syn999']),
     )
-    expect(getByTestId('loading-ids')).toHaveTextContent('syn456,syn789,syn999')
-    expect(getByTestId('next-tokens')).toHaveTextContent(
-      '{"syn123":"token1","syn456":"token2"}',
-    )
+    expect(result.current.nextPageTokens).toEqual({
+      syn123: 'token1',
+      syn456: 'token2',
+    })
   })
 })
