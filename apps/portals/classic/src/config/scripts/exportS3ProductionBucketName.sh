@@ -1,0 +1,2 @@
+export S3_PRODUCTION_BUCK_LOCATION=s3://prod-classic-synapse-org-websitebucket-abcdefg123
+export CF_PRODUCTION_DIST_ID=A123456789
