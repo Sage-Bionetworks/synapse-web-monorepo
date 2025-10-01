@@ -3,9 +3,7 @@ import {
   GridRecordSetExportRequest,
   GridRecordSetExportResponse,
   SynapseClientError,
-  GridRecordSetExportRequestConcreteTypeEnum,
   waitForAsyncResult,
-  EntityType,
 } from '@sage-bionetworks/synapse-client'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 
@@ -13,7 +11,9 @@ export type MergeGridWithRecordSetInput = {
   gridSessionId: string
 }
 
-/** Export a RecordSet grid */
+/**
+ * Query mutation hook for exporting a grid session back into a RecordSet.
+ */
 export default function useMergeGridWithRecordSet(
   options?: Omit<
     UseMutationOptions<
@@ -41,8 +41,9 @@ export default function useMergeGridWithRecordSet(
           'org.sagebionetworks.repo.model.grid.GridRecordSetExportRequest',
       }
 
-      console.log('GridRecordSetExportRequest payload:', gridExportRequest)
+      console.log('request:', gridExportRequest)
 
+      // Start the async export job
       const asyncJobId =
         await synapseClient.gridServicesClient.postRepoV1GridExportRecordsetAsyncStart(
           { gridRecordSetExportRequest: gridExportRequest },
@@ -57,38 +58,21 @@ export default function useMergeGridWithRecordSet(
 
       console.log('token', asyncJobId.token)
 
-      // const asyncJobResponse = await waitForAsyncResult(() =>
-      //   synapseClient.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId(
-      //     {
-      //       jobId: asyncJobId.token!,
-      //     },
-      //   ),
-      // )
+      // Poll for the async job
+      const asyncJobResponse = await waitForAsyncResult(() =>
+        synapseClient.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId(
+          {
+            jobId: asyncJobId.token!,
+          },
+        ),
+      )
 
-      let asyncJobResponse
-      try {
-        console.log('asyncJobId.token!', asyncJobId.token)
-        asyncJobResponse = await waitForAsyncResult(() =>
-          synapseClient.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId(
-            {
-              jobId: asyncJobId.token!,
-            },
-          ),
-        )
-      } catch (e) {
-        console.error('[RecordSetExport] waitForAsyncResult failed', e)
-        console.log(
-          '[RecordSetExport] error message:',
-          e?.message,
-          'status:',
-          e?.status,
-          'responseBody:',
-          e?.responseBody,
-        )
-      }
       console.log('asyncJobResponse', asyncJobResponse)
-      console.log('asyncJobResponseBody', asyncJobResponse?.responseBody)
-      console.log('asyncJobRequest', asyncJobResponse?.requestBody)
+      console.log(
+        'asyncJobResponse.responseBody',
+        asyncJobResponse?.responseBody,
+      )
+      console.log('asyncJobResponse.requestBody', asyncJobResponse?.requestBody)
 
       // const asyncJobResponse = await waitForAsyncResult(() =>
       //   synapseClient.gridServicesClient.getRepoV1GridExportRecordsetAsyncGetAsyncToken(
@@ -98,9 +82,9 @@ export default function useMergeGridWithRecordSet(
       //   ),
       // )
 
-      if (!asyncJobResponse) {
-        throw new Error('Async job response is undefined.')
-      }
+      // if (!asyncJobResponse) {
+      //   throw new Error('Async job response is undefined.')
+      // }
 
       return asyncJobResponse.responseBody as GridRecordSetExportResponse
 
@@ -108,3 +92,101 @@ export default function useMergeGridWithRecordSet(
     },
   })
 }
+
+// // refactor
+// import { useSynapseContext } from '@/utils'
+// import {
+//   GridRecordSetExportRequest,
+//   GridRecordSetExportResponse,
+//   SynapseClientError,
+//   waitForAsyncResult,
+// } from '@sage-bionetworks/synapse-client'
+// import { useMutation, UseMutationOptions } from '@tanstack/react-query'
+
+// export type MergeGridWithRecordSetInput = {
+//   gridSessionId: string
+// }
+
+// //
+
+// /**
+//  * Query mutation hook for exporting a grid session back into a RecordSet.
+//  */
+// export default function useMergeGridWithRecordSet(
+//   options?: Omit<
+//     UseMutationOptions<
+//       GridRecordSetExportResponse,
+//       SynapseClientError,
+//       MergeGridWithRecordSetInput
+//     >,
+//     'mutationFn'
+//   >,
+// ) {
+//   const { synapseClient } = useSynapseContext()
+
+//   return useMutation<
+//     GridRecordSetExportResponse,
+//     SynapseClientError,
+//     MergeGridWithRecordSetInput
+//   >({
+//     ...options,
+//     mutationFn: async ({ gridSessionId }) => {
+//       console.log('sessionid', gridSessionId)
+
+//       const gridExportRequest: GridRecordSetExportRequest = {
+//         sessionId: gridSessionId,
+//         concreteType:
+//           'org.sagebionetworks.repo.model.grid.GridRecordSetExportRequest',
+//       }
+
+//       console.log('request:', gridExportRequest)
+
+//       // Start the async export job
+//       const asyncJobId =
+//         await synapseClient.gridServicesClient.postRepoV1GridExportRecordsetAsyncStart(
+//           { gridRecordSetExportRequest: gridExportRequest },
+//         )
+
+//       // const asyncJobId =
+//       //   await synapseClient.gridServicesClient.postRepoV1GridDownloadCsvAsyncStart(
+//       //     {
+//       //       downloadFromGridRequest,
+//       //     },
+//       //   )
+
+//       console.log('token', asyncJobId.token)
+
+//       // Poll for the async job
+//       const asyncJobResponse = await waitForAsyncResult(() =>
+//         synapseClient.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId(
+//           {
+//             jobId: asyncJobId.token!,
+//           },
+//         ),
+//       )
+
+//       console.log('asyncJobResponse', asyncJobResponse)
+//       console.log(
+//         'asyncJobResponse.responseBody',
+//         asyncJobResponse?.responseBody,
+//       )
+//       console.log('asyncJobResponse.requestBody', asyncJobResponse?.requestBody)
+
+//       // const asyncJobResponse = await waitForAsyncResult(() =>
+//       //   synapseClient.gridServicesClient.getRepoV1GridExportRecordsetAsyncGetAsyncToken(
+//       //     {
+//       //       asyncToken: asyncJobId.token!,
+//       //     },
+//       //   ),
+//       // )
+
+//       // if (!asyncJobResponse) {
+//       //   throw new Error('Async job response is undefined.')
+//       // }
+
+//       return asyncJobResponse.responseBody as GridRecordSetExportResponse
+
+//       // return response as GridRecordSetExportResponse
+//     },
+//   })
+// }
