@@ -34,7 +34,7 @@ export const EntityLink = (props: EntityLinkProps) => {
     displayTextField = 'name',
     link = true,
     showIcon = true,
-    entityIdClicked,
+    onEntityIdClicked,
   } = props
 
   let entityId = ''
@@ -81,10 +81,10 @@ export const EntityLink = (props: EntityLinkProps) => {
           target="_blank"
           rel="noopener noreferrer"
           onClick={
-            entityIdClicked
+            onEntityIdClicked
               ? e => {
                   e.preventDefault()
-                  entityIdClicked(entity.id!)
+                  onEntityIdClicked(entity.id!)
                 }
               : undefined
           }

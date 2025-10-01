@@ -10,7 +10,7 @@ import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
 export const NameCell: React.FC<CellContext<EntityBundleRow, unknown>> = ({
   row,
 }) => {
-  const { expanded, loadingIds, handleToggleExpanded, entityIdClicked } =
+  const { expanded, loadingIds, handleToggleExpanded, onEntityIdClicked } =
     useEntityTreeTableContext()
   const { entityHeader, depth, isLeaf } = row.original
   const isExpanded = !!expanded[entityHeader.id]
@@ -50,7 +50,10 @@ export const NameCell: React.FC<CellContext<EntityBundleRow, unknown>> = ({
           },
         }}
       >
-        <EntityLink entity={entityHeader} entityIdClicked={entityIdClicked} />
+        <EntityLink
+          entity={entityHeader}
+          onEntityIdClicked={onEntityIdClicked}
+        />
       </Box>
     </Box>
   )

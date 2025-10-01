@@ -24,7 +24,7 @@ type EntityTreeTableProps = {
   /** Whether to enable column sorting. Defaults to true */
   enableSorting?: boolean
   /** Callback when an entity is clicked. If not provided, defaults to opening Synapse.org page. */
-  entityIdClicked?: (entityId: string) => void
+  onEntityIdClicked?: (entityId: string) => void
 }
 
 export type EntityBundleRow = {
@@ -43,7 +43,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
   expandRootByDefault = true,
   showRootNode = true,
   enableSorting = true,
-  entityIdClicked,
+  onEntityIdClicked,
 }) => {
   // Use custom hooks for state management
   const {
@@ -168,7 +168,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
             void loadMoreChildren(entityId, pageToken)
           },
           nextPageTokens,
-          entityIdClicked,
+          onEntityIdClicked,
         }}
       >
         {hasNoContent ? (

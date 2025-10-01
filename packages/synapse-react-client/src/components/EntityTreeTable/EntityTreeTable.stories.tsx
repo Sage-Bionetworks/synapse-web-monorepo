@@ -52,7 +52,7 @@ export const CustomEntityIdClickHandler: Story = {
     showRootNode: false,
     expandRootByDefault: true,
     enableSorting: false,
-    entityIdClicked: (entityId: string) =>
+    onEntityIdClicked: (entityId: string) =>
       alert(`Clicked entityId: ${entityId}`),
   },
 }
