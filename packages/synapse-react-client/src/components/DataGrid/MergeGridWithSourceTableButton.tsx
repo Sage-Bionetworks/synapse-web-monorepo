@@ -1,4 +1,5 @@
 import useMergeGridWithSource from '@/components/DataGrid/useMergeGridWithSource'
+import useMergeGridWithRecordSet from '@/components/DataGrid/useMergeGridWithRecordSet'
 import { displayToast } from '@/components/index'
 import { Button } from '@mui/material'
 import {
@@ -20,10 +21,6 @@ export default function MergeGridWithSourceTableButton(
 ) {
   const { sourceEntityId, gridSessionId, sourceEntityType } = props
 
-  // check source, file entity or record set
-  console.log('typed', sourceEntityType)
-  console.log('gridSessionId', gridSessionId)
-
   const { mutate: mergeGridWithSource, isPending } = useMergeGridWithSource({
     onSuccess: result => {
       onMergeSuccess(result)
@@ -33,16 +30,33 @@ export default function MergeGridWithSourceTableButton(
     },
   })
 
-  const buttonText =
-    sourceEntityType === EntityType.recordset
-      ? 'Merge grid edits into RecordSet'
-      : 'Update table with changes'
+  const { mutate: mergeGridWithRecordSet, isPending: isRecordSetPending } =
+    useMergeGridWithRecordSet({
+      onSuccess: result => {
+        displayToast(`Successfully exported RecordSet edits.`, 'success')
+      },
+      onError: e => {
+        displayToast(e.message, 'danger')
+      },
+    })
+
+  const isRecordSet = sourceEntityType === EntityType.recordset
+
+  const buttonText = isRecordSet
+    ? 'Merge grid edits into RecordSet'
+    : 'Update table with changes'
+
+  const isLoading = isRecordSet ? isRecordSetPending : isPending
 
   return (
     <Button
-      loading={isPending}
+      loading={isLoading}
       onClick={() => {
-        mergeGridWithSource({ gridSessionId, sourceEntityId })
+        if (isRecordSet) {
+          mergeGridWithRecordSet({ gridSessionId })
+        } else {
+          mergeGridWithSource({ gridSessionId, sourceEntityId })
+        }
       }}
       variant="contained"
     >
