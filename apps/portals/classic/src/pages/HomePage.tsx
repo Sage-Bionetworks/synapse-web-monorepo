@@ -4,6 +4,8 @@ import { TypeAnimation } from 'react-type-animation'
 import { PortalHomePageHeader, RssFeedCards } from 'synapse-react-client'
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
+import { ImageCardGridWithLinks } from 'synapse-react-client'
+import { whatWeDoSql } from '@/config/resources'
 
 function HomePageInternal() {
   const theme = useTheme()
@@ -65,6 +67,17 @@ function HomePageInternal() {
         backgroundMp4={headerbackgroundvideo}
         backgroundMp4Css="#024472"
         textAreaWidth="850px"
+      />
+      <ImageCardGridWithLinks
+        sql={whatWeDoSql}
+        title="What We Do"
+        summaryText="Supported by the National Institute on Aging, we provide tools and training to make study metadata easier to create, share, and reuse.
+Host workshops and trainings on metadata preparation
+Provide standardized codebooks and templates for studies
+Develop data sharing SOPs and access processes
+Curate metadata resources to support collaboration across cohorts"
+        columnCount={2}
+        heightPx={350}
       />
       <SectionLayout
         title={"What's New?"}
