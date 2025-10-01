@@ -87,13 +87,6 @@ describe('NameCell', () => {
     expect(screen.getByRole('link')).toHaveAttribute('href', '#syn123')
   })
 
-  it('should render expand button for non-leaf nodes', () => {
-    renderWithContext(mockEntityBundleRow)
-
-    const expandButton = screen.getByRole('button', { name: /collapse/i })
-    expect(expandButton).toBeInTheDocument()
-  })
-
   it('should render collapse button for expanded non-leaf nodes', () => {
     renderWithContext(mockEntityBundleRow)
 
