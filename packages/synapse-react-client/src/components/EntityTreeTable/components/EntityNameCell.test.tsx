@@ -1,7 +1,8 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { NameCell } from './EntityNameCell'
 import { EntityTreeTableContext } from './EntityTreeTableContext'
 import { EntityBundleRow } from '../EntityTreeTable'
+import { userEvent } from '@testing-library/user-event/dist/cjs/setup/index.js'
 
 // Mock EntityLink component
 vi.mock('@/components/EntityLink', () => ({
@@ -112,7 +113,7 @@ describe('NameCell', () => {
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
 
-  it('should call handleToggleExpanded when expand/collapse button is clicked', () => {
+  it('should call handleToggleExpanded when expand/collapse button is clicked', async () => {
     renderWithContext(mockEntityBundleRow)
 
     const button = screen.getByRole('button')
