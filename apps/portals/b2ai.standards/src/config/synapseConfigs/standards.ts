@@ -1,10 +1,5 @@
 import IsMatureIconMap from '@/components/IsMatureIconMap'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import {
-  LabelLinkConfig,
-  QueryWrapperPlotNavProps,
-  StandaloneQueryWrapperProps,
-} from 'synapse-react-client'
+import { LabelLinkConfig, QueryWrapperPlotNavProps } from 'synapse-react-client'
 import columnAliases from '@/config/columnAliases'
 import {
   standardsFtsConfig,

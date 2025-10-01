@@ -1,5 +1,4 @@
 import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2'
-import { AtLeastOne } from '@/config/types'
 
 type TableInfo = {
   name: string
