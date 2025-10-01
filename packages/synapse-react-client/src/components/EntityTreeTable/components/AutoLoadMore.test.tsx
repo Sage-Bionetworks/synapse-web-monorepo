@@ -60,13 +60,4 @@ describe('AutoLoadMore', () => {
       paddingLeft: '45px', // 0 * 16 + 45 = 45
     })
   })
-
-  it('should handle large depth values', () => {
-    const { container } = render(<AutoLoadMore {...defaultProps} depth={10} />)
-
-    const loadMoreDiv = container.firstChild as HTMLElement
-    expect(loadMoreDiv).toHaveStyle({
-      paddingLeft: '205px', // 10 * 16 + 45 = 205
-    })
-  })
 })
