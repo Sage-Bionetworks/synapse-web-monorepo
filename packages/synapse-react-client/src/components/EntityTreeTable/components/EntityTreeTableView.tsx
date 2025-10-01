@@ -1,9 +1,10 @@
 import React from 'react'
-import { Table, Row, flexRender } from '@tanstack/react-table'
+import { Table, Row } from '@tanstack/react-table'
 import { EntityBundleRow } from '../EntityTreeTable'
 import { AutoLoadMore } from './AutoLoadMore'
 import { useEntityTreeTableContext } from './EntityTreeTableContext'
 import StyledTanStackTable from '../../TanStackTable/StyledTanStackTable'
+import { TableCellRenderer } from '../../TanStackTable/TableCellRenderer'
 import { TrProps } from '../../TanStackTable/types'
 
 type EntityTreeTableViewProps = {
@@ -43,12 +44,7 @@ const EntityTreeTableRow: React.FC<
   return (
     <tr {...rest}>
       {tableRow.getVisibleCells().map(cell => (
-        <td
-          key={cell.id}
-          style={{ width: `calc(var(--col-${cell.column.id}-size) * 1px)` }}
-        >
-          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-        </td>
+        <TableCellRenderer key={cell.id} {...cell} />
       ))}
     </tr>
   )
