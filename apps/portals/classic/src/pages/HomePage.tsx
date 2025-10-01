@@ -1,11 +1,16 @@
 import headerbackgroundvideo from '@/assets/header-video.mp4'
 import { Box, useTheme } from '@mui/material'
 import { TypeAnimation } from 'react-type-animation'
-import { PortalHomePageHeader, RssFeedCards } from 'synapse-react-client'
+
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import { ImageCardGridWithLinks } from 'synapse-react-client'
-import { whatWeDoSql } from '@/config/resources'
+import {
+  ImageCardGridWithLinks,
+  PortalHomePageHeader,
+  RssFeedCards,
+} from 'synapse-react-client'
+import { featuredResearchSql, whatWeDoSql } from '@/config/resources'
+import { FeaturedResearch } from 'synapse-react-client'
 
 function HomePageInternal() {
   const theme = useTheme()
@@ -79,6 +84,7 @@ Curate metadata resources to support collaboration across cohorts"
         columnCount={2}
         heightPx={350}
       />
+      <FeaturedResearch sql={featuredResearchSql} />
       <SectionLayout
         title={"What's New?"}
         centerTitle={true}
