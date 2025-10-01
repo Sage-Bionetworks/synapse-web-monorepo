@@ -198,7 +198,7 @@ export function useUploadFiles(
         if (onUploadComplete) {
           await onUploadComplete(preparedFile, newFileHandleId)
         }
-        setComplete(preparedFile.file)
+        setComplete(preparedFile.file, newFileHandleId)
       } catch (e) {
         console.error('File upload failed: ', e)
         setFailed(preparedFile.file, e.message)

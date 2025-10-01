@@ -52,6 +52,7 @@ export default function RadioGroupWithOtherString(
       />
       <TextField
         value={inputValue}
+        slotProps={{ htmlInput: { 'aria-label': 'Other Value' } }}
         onChange={e => {
           setInputValue(e.target.value)
           onChange(e.target.value)

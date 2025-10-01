@@ -13,6 +13,11 @@ export type BasicFileHandleUploadProps = {
    * Currently, only single file upload is supported by this UI component.
    */
   allowMultipleUpload: false
+  /**
+   * Whether to disable "drag-and-drop to upload" functionality.
+   * Currently, drag-and-drop cannot be enabled.
+   */
+  disableDragAndDrop: true
   /** Callback that is invoked when the state of the uploader changes */
   onStateChange?: (state: UploaderState) => void
   /** Callback that is invoked when component is ready to upload */
@@ -74,6 +79,7 @@ export const BasicFileHandleUpload = forwardRef(function FileHandleUpload(
       <UploadFilePanel
         onUploadFileList={uploadFileList}
         allowMultipleFiles={allowMultipleUpload}
+        disableDragAndDrop={true}
       />
       <MultiFileUploadProgress
         uploaderState={state}

@@ -4,13 +4,13 @@ import CsvTableDescriptorForm, {
 import { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 
-const meta = {
+const meta: Meta<CsvTableDescriptorFormProps> = {
   title: 'Components/Table/CSV Table Descriptor Form',
   component: CsvTableDescriptorForm,
   args: {
     onChange: fn(),
   },
-} satisfies Meta<CsvTableDescriptorFormProps>
+}
 export default meta
 type Story = StoryObj<typeof meta>
 

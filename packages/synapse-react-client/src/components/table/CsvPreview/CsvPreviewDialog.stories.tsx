@@ -4,7 +4,7 @@ import CsvPreviewDialog, {
 import { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 
-const meta = {
+const meta: Meta<CsvPreviewDialogProps> = {
   title: 'Components/Table/CSV Preview Dialog',
   component: CsvPreviewDialog,
   args: {
@@ -15,7 +15,7 @@ const meta = {
   parameters: {
     requireLogin: true,
   },
-} satisfies Meta<CsvPreviewDialogProps>
+}
 export default meta
 type Story = StoryObj<typeof meta>
 

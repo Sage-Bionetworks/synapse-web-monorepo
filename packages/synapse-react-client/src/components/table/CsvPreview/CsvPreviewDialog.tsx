@@ -3,12 +3,10 @@ import {
   BasicFileHandleUpload,
   FileUploadHandle,
 } from '@/components/file/upload/BasicFileHandleUpload'
+import CsvPreview from '@/components/table/CsvPreview/CsvPreview'
 import CsvTableDescriptorForm, {
   CsvTableDescriptorFormHandle,
 } from '@/components/table/CsvTableDescriptorForm/CsvTableDescriptorForm'
-import ColumnHeader from '@/components/TanStackTable/ColumnHeader'
-import StyledTanStackTable from '@/components/TanStackTable/StyledTanStackTable'
-import { useGetCsvPreview } from '@/synapse-queries/table/useGetCsvPreview'
 import { RefreshTwoTone } from '@mui/icons-material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Accordion from '@mui/material/Accordion'
@@ -20,30 +18,9 @@ import Typography from '@mui/material/Typography'
 import {
   ColumnModel,
   CsvTableDescriptor,
-  TableRow,
+  UploadToTablePreviewResult,
 } from '@sage-bionetworks/synapse-client'
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
-import { useCallback, useMemo, useRef, useState } from 'react'
-
-function getPreviewColumns(columnModels: ColumnModel[]) {
-  return columnModels.map((columnModel, index) => {
-    return columnHelper.accessor(tr => tr.values![index], {
-      id: `column-${index}`,
-      header: props => (
-        <ColumnHeader
-          {...props}
-          title={`${columnModel.name} (${columnModel.columnType})`}
-        />
-      ),
-      enableColumnFilter: false,
-      enableSorting: false,
-    })
-  })
-}
+import { useCallback, useRef, useState } from 'react'
 
 enum CsvPreviewDialogStep {
   UPLOAD_CSV = 0,
@@ -55,11 +32,16 @@ export type CsvPreviewDialogProps = {
   open: boolean
   /** Callback when the dialog is closed */
   onClose: () => void
-  /** Callback when the user confirms the column models */
-  onConfirm: (columnModels: ColumnModel[]) => void
+  /** Callback when the user confirms the column models
+   * @param dataFileHandleId - The file handle ID of the uploaded CSV
+   * @param columnModels - The confirmed column models
+   * */
+  onConfirm: (
+    dataFileHandleId: string,
+    columnModels: ColumnModel[],
+    csvTableDescriptor: CsvTableDescriptor,
+  ) => void
 }
-
-const columnHelper = createColumnHelper<TableRow>()
 
 export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
   const { open, onClose, onConfirm } = props
@@ -72,6 +54,9 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
       lineEnd: '\n',
       isFirstLineHeader: true,
     })
+  const [csvPreviewData, setCsvPreviewData] =
+    useState<UploadToTablePreviewResult | null>(null)
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false)
 
   const [uploadedFileHandleId, setUploadedFileHandleId] = useState<
     string | null
@@ -85,13 +70,6 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
   const uploadRef = useRef<FileUploadHandle | null>(null)
   const csvDescriptorFormRef = useRef<CsvTableDescriptorFormHandle | null>(null)
 
-  const { data: csvPreviewData, isLoading } = useGetCsvPreview({
-    concreteType:
-      'org.sagebionetworks.repo.model.table.UploadToTablePreviewRequest',
-    uploadFileHandleId: uploadedFileHandleId!,
-    csvTableDescriptor: csvTableDescriptor,
-  })
-
   const uploadStepContent = (
     <BasicFileHandleUpload
       ref={uploadRef}
@@ -99,37 +77,19 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
       onFileUploadComplete={fileHandleId => {
         onFileUploaded(fileHandleId)
       }}
+      disableDragAndDrop={true}
     />
   )
 
-  const tableData = useMemo(
-    () => csvPreviewData?.sampleRows ?? [],
-    [csvPreviewData?.sampleRows],
-  )
-
-  const columns = useMemo(
-    () => getPreviewColumns(csvPreviewData?.suggestedColumns ?? []),
-    [csvPreviewData?.suggestedColumns],
-  )
-
-  const table = useReactTable({
-    getCoreRowModel: getCoreRowModel(),
-    data: tableData,
-    columns: columns,
-  })
-
   const previewStepContent = (
     <Stack spacing={2}>
-      {isLoading && <div>Loading preview...</div>}
-
-      {!isLoading && csvPreviewData && table && (
-        <>
-          <Typography variant={'body1'}>
-            Scanned {csvPreviewData?.rowsScanned?.toLocaleString()} rows to
-            generate preview:
-          </Typography>
-          <StyledTanStackTable table={table} />
-        </>
+      {uploadedFileHandleId && (
+        <CsvPreview
+          fileHandleId={uploadedFileHandleId}
+          csvTableDescriptor={csvTableDescriptor}
+          onCsvPreviewDataChange={setCsvPreviewData}
+          onIsLoadingChange={setIsLoadingPreview}
+        />
       )}
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -165,6 +125,34 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
         <>
           {step === CsvPreviewDialogStep.UPLOAD_CSV && uploadStepContent}
           {step === CsvPreviewDialogStep.COLUMN_PREVIEW && previewStepContent}
+        </>
+      }
+      actions={
+        <>
+          <Button
+            variant={'outlined'}
+            disabled={isLoadingPreview}
+            onClick={() => {
+              onClose()
+            }}
+          >
+            Cancel
+          </Button>
+          {step === CsvPreviewDialogStep.COLUMN_PREVIEW && (
+            <Button
+              disabled={isLoadingPreview}
+              variant={'contained'}
+              onClick={() => {
+                onConfirm(
+                  uploadedFileHandleId!,
+                  csvPreviewData!.suggestedColumns!,
+                  csvTableDescriptor,
+                )
+              }}
+            >
+              Confirm
+            </Button>
+          )}
         </>
       }
     />

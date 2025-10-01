@@ -8,19 +8,26 @@ import noop from 'lodash-es/noop'
 import { useEffect, useImperativeHandle, useState, Ref } from 'react'
 
 export type CsvTableDescriptorFormHandle = {
+  /** Call to retrieve the current form data */
   getFormData: () => CsvTableDescriptor
 }
 
 export type CsvTableDescriptorFormProps = {
   ref?: Ref<CsvTableDescriptorFormHandle>
+  /** The current value of the form, if a controlled form */
+  value?: CsvTableDescriptor
+  /** Invoked when the form data changes */
   onChange?: (descriptor: CsvTableDescriptor) => void
 }
 
+/**
+ * A form to describe a CsvTableDescriptor
+ */
 export default function CsvTableDescriptorForm(
   props: CsvTableDescriptorFormProps,
 ) {
-  const { onChange = noop } = props
-  const [csvTableDescriptor, setCsvTableDescriptor] = useState({
+  const { value: valueFromProps, onChange = noop } = props
+  const [localStateValue, setLocalStateValue] = useState<CsvTableDescriptor>({
     separator: ',',
     quoteCharacter: '"',
     escapeCharacter: '\\',
@@ -28,16 +35,18 @@ export default function CsvTableDescriptorForm(
     isFirstLineHeader: true,
   })
 
+  const value = valueFromProps ?? localStateValue
+
   useEffect(() => {
-    onChange(csvTableDescriptor)
-  }, [csvTableDescriptor, onChange])
+    onChange(localStateValue)
+  }, [localStateValue, onChange])
 
   useImperativeHandle(
     props.ref,
     () => ({
-      getFormData: () => csvTableDescriptor,
+      getFormData: () => localStateValue,
     }),
-    [csvTableDescriptor],
+    [localStateValue],
   )
 
   return (
@@ -46,9 +55,9 @@ export default function CsvTableDescriptorForm(
         <InputLabel>Separator</InputLabel>
         <RadioGroupWithOtherString
           radioGroupProps={{ row: true, name: 'separator' }}
-          value={csvTableDescriptor.separator}
+          value={value.separator ?? ','}
           onChange={value =>
-            setCsvTableDescriptor(current => ({
+            setLocalStateValue(current => ({
               ...current,
               separator: value,
             }))
@@ -70,9 +79,9 @@ export default function CsvTableDescriptorForm(
         <InputLabel>Escape Character</InputLabel>
         <RadioGroupWithOtherString
           radioGroupProps={{ row: true, name: 'escapeCharacter' }}
-          value={csvTableDescriptor.escapeCharacter}
+          value={value.escapeCharacter ?? '\\'}
           onChange={value =>
-            setCsvTableDescriptor(current => ({
+            setLocalStateValue(current => ({
               ...current,
               escapeCharacter: value,
             }))
@@ -84,9 +93,9 @@ export default function CsvTableDescriptorForm(
         <FormControlLabel
           control={<Checkbox />}
           label={'First line is the header'}
-          checked={csvTableDescriptor.isFirstLineHeader}
+          checked={localStateValue.isFirstLineHeader}
           onChange={(_e, checked) => {
-            setCsvTableDescriptor(current => ({
+            setLocalStateValue(current => ({
               ...current,
               isFirstLineHeader: checked,
             }))
