@@ -57,10 +57,6 @@ export default function useMergeGridWithRecordSet(
 
       console.log('token', asyncJobId.token)
 
-      //  The session is not a RecordSet grid session.
-      // Or, the grid session expired.
-      // Or, you are using a session created from a normal TableEntity.
-
       // const asyncJobResponse = await waitForAsyncResult(() =>
       //   synapseClient.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId(
       //     {
@@ -69,7 +65,6 @@ export default function useMergeGridWithRecordSet(
       //   ),
       // )
 
-      // Poll:
       let asyncJobResponse
       try {
         console.log('asyncJobId.token!', asyncJobId.token)
@@ -95,7 +90,6 @@ export default function useMergeGridWithRecordSet(
       console.log('asyncJobResponseBody', asyncJobResponse?.responseBody)
       console.log('asyncJobRequest', asyncJobResponse?.requestBody)
 
-      // Poll:
       // const asyncJobResponse = await waitForAsyncResult(() =>
       //   synapseClient.gridServicesClient.getRepoV1GridExportRecordsetAsyncGetAsyncToken(
       //     {
