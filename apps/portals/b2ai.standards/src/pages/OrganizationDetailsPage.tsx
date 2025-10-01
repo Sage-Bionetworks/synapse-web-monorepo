@@ -134,6 +134,7 @@ export const linkedOrgCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: {
     // type: SynapseConstants.ORGANIZATION,
+    type: '',
     title: ORG_TABLE_COLUMN_CONSTS.NAME,
     description: ORG_TABLE_COLUMN_CONSTS.DESCRIPTION,
     link: 'orgPageLink',
@@ -148,7 +149,7 @@ export const linkedOrgCardConfiguration: CardConfiguration = {
 export const linkedDataSetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: {
-    // type: SynapseConstants.DATASET,
+    type: '',
     title: DATASET_DENORMALIZED_COLUMN_CONSTS.NAME,
     description: DATASET_DENORMALIZED_COLUMN_CONSTS.DESCRIPTION,
     link: DATASET_DENORMALIZED_COLUMN_CONSTS.DATA_URL,
