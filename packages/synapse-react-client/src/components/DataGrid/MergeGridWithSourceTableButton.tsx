@@ -23,7 +23,6 @@ export default function MergeGridWithSourceTableButton(
   const { mutate: mergeGrid, isPending } = useMergeGridWithSource({
     onSuccess: result => {
       if (result.type === 'table') {
-        console.log('table result', result.data)
         onMergeSuccess(result.data as TableUpdateTransactionResponse)
       } else {
         displayToast('Successfully exported RecordSet edits.', 'success')
@@ -33,11 +32,6 @@ export default function MergeGridWithSourceTableButton(
   })
 
   const isRecordSet = sourceEntityType === EntityType.recordset
-
-  console.log('sourceEntityType', sourceEntityType)
-  console.log('sourceEntityId', sourceEntityId)
-
-  console.log('isRecordSet', isRecordSet)
 
   const buttonText = isRecordSet
     ? 'Merge grid edits into RecordSet'
@@ -57,7 +51,6 @@ export default function MergeGridWithSourceTableButton(
 }
 
 function onMergeSuccess(result: TableUpdateTransactionResponse) {
-  console.log('table update result', result)
   if (result.results?.length) {
     // There should only be one result since the CSV upload is done in one step
     const updateResult = result.results[0]

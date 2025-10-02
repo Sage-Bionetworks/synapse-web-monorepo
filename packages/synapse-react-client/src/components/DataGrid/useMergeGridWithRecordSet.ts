@@ -33,8 +33,6 @@ export default function useMergeGridWithRecordSet(
   >({
     ...options,
     mutationFn: async ({ gridSessionId }) => {
-      console.log('sessionid', gridSessionId)
-
       const gridExportRequest: GridRecordSetExportRequest = {
         sessionId: gridSessionId,
         concreteType:
