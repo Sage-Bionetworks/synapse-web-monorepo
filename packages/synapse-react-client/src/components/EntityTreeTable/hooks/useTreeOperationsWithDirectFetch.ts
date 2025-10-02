@@ -44,12 +44,7 @@ export const useTreeOperationsWithDirectFetch = (
 
   // Callback to handle when children are loaded - moved before handleToggleExpanded to fix dependency order
   const handleChildrenLoaded = useCallback(
-    (
-      entityId: string,
-      childNodes: TreeNode[],
-      nextPageToken?: string,
-      isPagination = false,
-    ) => {
+    (entityId: string, childNodes: TreeNode[], nextPageToken?: string) => {
       setTree(prev => {
         const node = prev[entityId]
         if (node) {
@@ -61,9 +56,10 @@ export const useTreeOperationsWithDirectFetch = (
 
           // Check if this is the first load (loading the first page) or pagination (loading more pages)
           // Use explicit isPagination parameter for reliable detection
-          const mergedChildren = isPagination
-            ? [...(node.children || []), ...childNodesWithDepth] // Append for pagination
-            : childNodesWithDepth // Replace children on first load
+          const mergedChildren = [
+            ...(node.children || []),
+            ...childNodesWithDepth,
+          ]
 
           // Merge children into the tree mapping while preserving existing
           // subtree entries for those children (so expanding deeper nodes
@@ -177,12 +173,7 @@ export const useTreeOperationsWithDirectFetch = (
             )
 
             // Update the tree with the loaded children
-            handleChildrenLoaded(
-              entityId,
-              childNodes,
-              children.nextPageToken,
-              false,
-            )
+            handleChildrenLoaded(entityId, childNodes, children.nextPageToken)
           } catch (error) {
             console.error(
               'Failed to fetch children for entity:',
@@ -254,7 +245,7 @@ export const useTreeOperationsWithDirectFetch = (
         )
 
         // Update the tree with the loaded children
-        handleChildrenLoaded(entityId, childNodes, children.nextPageToken, true)
+        handleChildrenLoaded(entityId, childNodes, children.nextPageToken)
       } catch (error) {
         console.error(
           'Failed to load more children for entity:',
