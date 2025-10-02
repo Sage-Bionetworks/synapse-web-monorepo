@@ -11,6 +11,7 @@ import {
 } from 'synapse-react-client'
 import { featuredResearchSql, whatWeDoSql } from '@/config/resources'
 import { FeaturedResearch } from 'synapse-react-client'
+import ClassicSupportedByNIABanner from '@sage-bionetworks/synapse-portal-framework/components/classic/ClassicSupportedByNIABanner/ClassicSupportedByNIABanner'
 
 function HomePageInternal() {
   const theme = useTheme()
@@ -73,6 +74,7 @@ function HomePageInternal() {
         backgroundMp4Css="#024472"
         textAreaWidth="850px"
       />
+      <ClassicSupportedByNIABanner />
       <ImageCardGridWithLinks
         sql={whatWeDoSql}
         title="What We Do"
