@@ -4,7 +4,7 @@ import { SortBy, Direction } from '@sage-bionetworks/synapse-types'
 
 export const useSorting = (
   sorting: SortingState,
-  resetTreeState: () => void,
+  resetTreeData: () => void,
 ) => {
   // Track previous sorting to detect changes
   const prevSortingRef = useRef<SortingState>([])
@@ -43,13 +43,14 @@ export const useSorting = (
       JSON.stringify(prevSortingRef.current) !== JSON.stringify(sorting)
 
     if (sortingChanged && !isInitialMount.current) {
-      // Reset tree state when sorting changes to force re-fetch with new sort order
-      resetTreeState()
+      // Reset tree data when sorting changes to force re-fetch with new sort order
+      // Don't reset sorting itself since that would clear the user's selection
+      resetTreeData()
     }
 
     prevSortingRef.current = sorting
     isInitialMount.current = false
-  }, [sorting, resetTreeState])
+  }, [sorting, resetTreeData])
 
   const { sortBy, sortDirection } = getSortingParams()
 

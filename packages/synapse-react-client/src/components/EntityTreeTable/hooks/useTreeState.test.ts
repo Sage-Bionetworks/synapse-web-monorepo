@@ -104,8 +104,9 @@ describe('useTreeState', () => {
       depth: 0,
       isLeaf: false,
     }
+    const sortingState = [{ id: 'name', desc: false }]
 
-    // Set up some state
+    // Set up some state including sorting
     act(() => {
       result.current.setTree({ syn123: treeNode })
       result.current.setExpanded({ syn123: true })
@@ -113,9 +114,10 @@ describe('useTreeState', () => {
       result.current.setLoadedChildren(new Set(['syn456']))
       result.current.setNextPageTokens({ syn123: 'token123' })
       result.current.setLoadingPageTokens({ syn456: 'loadingToken' })
+      result.current.setSorting(sortingState)
     })
 
-    // Reset state
+    // Reset state completely
     act(() => {
       result.current.resetTreeState()
     })
@@ -126,5 +128,40 @@ describe('useTreeState', () => {
     expect(result.current.loadedChildren).toEqual(new Set())
     expect(result.current.nextPageTokens).toEqual({})
     expect(result.current.loadingPageTokens).toEqual({})
+    expect(result.current.sorting).toEqual([])
+  })
+
+  it('should reset data but preserve sorting when resetTreeData is called', () => {
+    const { result } = renderHook(() => useTreeState())
+    const treeNode = {
+      entityHeader: mockEntityHeader,
+      depth: 0,
+      isLeaf: false,
+    }
+    const sortingState = [{ id: 'name', desc: false }]
+
+    // Set up some state including sorting
+    act(() => {
+      result.current.setTree({ syn123: treeNode })
+      result.current.setExpanded({ syn123: true })
+      result.current.setLoadingIds(new Set(['syn123']))
+      result.current.setLoadedChildren(new Set(['syn456']))
+      result.current.setNextPageTokens({ syn123: 'token123' })
+      result.current.setLoadingPageTokens({ syn456: 'loadingToken' })
+      result.current.setSorting(sortingState)
+    })
+
+    // Reset only data, not sorting
+    act(() => {
+      result.current.resetTreeData()
+    })
+
+    expect(result.current.tree).toEqual({})
+    expect(result.current.expanded).toEqual({})
+    expect(result.current.loadingIds).toEqual(new Set())
+    expect(result.current.loadedChildren).toEqual(new Set())
+    expect(result.current.nextPageTokens).toEqual({})
+    expect(result.current.loadingPageTokens).toEqual({})
+    expect(result.current.sorting).toEqual(sortingState) // Sorting should be preserved
   })
 })

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import './EntityTreeTable.scss'
+import styles from './EntityTreeTable.module.scss'
 import { useReactTable, getCoreRowModel } from '@tanstack/react-table'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import { Box } from '@mui/material'
@@ -62,10 +62,11 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     sorting,
     setSorting,
     resetTreeState,
+    resetTreeData,
   } = useTreeState()
 
   // Use sorting hook
-  const { sortBy, sortDirection } = useSorting(sorting, resetTreeState)
+  const { sortBy, sortDirection } = useSorting(sorting, resetTreeData)
 
   // Use tree operations hook with direct fetch
   const { handleToggleExpanded, loadMoreChildren, flattenTree } =
@@ -174,7 +175,10 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
         {hasNoContent ? (
           <NoContentAvailable />
         ) : (
-          <EntityTreeTableView table={table} />
+          <EntityTreeTableView
+            table={table}
+            className={styles.entityTreeTable}
+          />
         )}
       </EntityTreeTableContext.Provider>
     </Box>

@@ -6,17 +6,19 @@ import StyledTanStackTable from '../../TanStackTable/StyledTanStackTable'
 
 type EntityTreeTableViewProps = {
   table: Table<EntityBundleRow>
+  className?: string
 }
 
 export const EntityTreeTableView: React.FC<EntityTreeTableViewProps> = ({
   table,
+  className,
 }) => {
   return (
     <div style={{ overflowX: 'auto' }}>
       <StyledTanStackTable
         table={table}
         styledTableContainerProps={{
-          className: 'entity-tree-table',
+          className,
         }}
         fullWidth={true}
         slots={{

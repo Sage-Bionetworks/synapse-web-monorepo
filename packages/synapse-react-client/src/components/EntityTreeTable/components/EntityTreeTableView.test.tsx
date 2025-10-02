@@ -33,10 +33,13 @@ describe('EntityTreeTableView', () => {
     vi.clearAllMocks()
   })
 
-  const renderWithContext = (table = mockTable) => {
+  const renderWithContext = (
+    table = mockTable,
+    className = 'test-css-class',
+  ) => {
     return render(
       <EntityTreeTableContext.Provider value={mockContextValue}>
-        <EntityTreeTableView table={table} />
+        <EntityTreeTableView table={table} className={className} />
       </EntityTreeTableContext.Provider>,
     )
   }
@@ -50,7 +53,7 @@ describe('EntityTreeTableView', () => {
     // Verify the props structure without being too strict about exact values
     const call = vi.mocked(StyledTanStackTable).mock.calls[0][0]
     expect(call.table).toBe(mockTable)
-    expect(call.styledTableContainerProps?.className).toBe('entity-tree-table')
+    expect(call.styledTableContainerProps?.className).toBe('test-css-class')
     expect(call.fullWidth).toBe(true)
     expect(call.slots?.Tr).toBeDefined()
   })

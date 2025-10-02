@@ -23,15 +23,20 @@ export const useTreeState = () => {
   >({})
   const [sorting, setSorting] = useState<SortingState>([])
 
-  const resetTreeState = useCallback(() => {
+  const resetTreeData = useCallback(() => {
     setTree({})
     setLoadedChildren(new Set())
     setExpanded({})
     setNextPageTokens({})
     setLoadingPageTokens({})
     setLoadingIds(new Set())
-    setSorting([])
+    // Note: We don't reset sorting here - this is used when sorting changes
   }, [])
+
+  const resetTreeState = useCallback(() => {
+    resetTreeData()
+    setSorting([])
+  }, [resetTreeData])
 
   return {
     expanded,
@@ -49,5 +54,6 @@ export const useTreeState = () => {
     sorting,
     setSorting,
     resetTreeState,
+    resetTreeData,
   }
 }
