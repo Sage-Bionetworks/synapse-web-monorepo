@@ -397,7 +397,14 @@ export function SynapseChat({
       >
         <Box
           component="form"
-          sx={{ pb: '10px', position: 'sticky' }}
+          sx={{
+            pt: '8px',
+            mt: '5px',
+            pb: '10px',
+            position: 'sticky',
+            borderTop: '1px solid',
+            borderColor: 'grey.400',
+          }}
           onSubmit={handleSendMessage}
         >
           <TextField

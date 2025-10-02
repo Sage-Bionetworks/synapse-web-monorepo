@@ -1,6 +1,6 @@
+import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import useMergeGridWithSource from '@/components/DataGrid/useMergeGridWithSource'
 import { displayToast } from '@/components/index'
-import { Button } from '@mui/material'
 import {
   EntityType,
   EntityUpdateResults,
@@ -41,7 +41,7 @@ export default function MergeGridWithSourceTableButton(
   // const isLoading = isRecordSet ? isRecordSetPending : isPending
 
   return (
-    <Button
+    <GridMenuButton
       // loading={isLoading}
       loading={isPending}
       // onClick={() => {
@@ -57,7 +57,7 @@ export default function MergeGridWithSourceTableButton(
       variant="contained"
     >
       {buttonText}
-    </Button>
+    </GridMenuButton>
   )
 }
 

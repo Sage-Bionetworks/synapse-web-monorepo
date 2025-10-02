@@ -10,11 +10,14 @@ describe('parseFreeTextGivenJsonSchemaType', () => {
   it('returns string for string type', () => {
     expect(parseFreeTextGivenJsonSchemaType('abc', 'string')).toBe('abc')
     expect(parseFreeTextGivenJsonSchemaType('123', 'string')).toBe('123')
+    expect(parseFreeTextGivenJsonSchemaType('', 'string')).toBe('')
+    expect(parseFreeTextGivenJsonSchemaType('1.0', 'string')).toBe('1.0')
   })
 
   it('parses number for number type', () => {
     expect(parseFreeTextGivenJsonSchemaType('123', 'number')).toBe(123)
     expect(parseFreeTextGivenJsonSchemaType('12.34', 'number')).toBe(12.34)
+    expect(parseFreeTextGivenJsonSchemaType('1.0', 'number')).toBe(1.0)
   })
 
   it('returns input if number parsing fails', () => {
@@ -64,5 +67,32 @@ describe('parseFreeTextGivenJsonSchemaType', () => {
     expect(parseFreeTextGivenJsonSchemaType('abc', 'unknown' as any)).toBe(
       'abc',
     )
+  })
+
+  it('parses integer for integer type', () => {
+    expect(parseFreeTextGivenJsonSchemaType('123', 'integer')).toBe(123)
+    expect(parseFreeTextGivenJsonSchemaType('-456', 'integer')).toBe(-456)
+    expect(parseFreeTextGivenJsonSchemaType('12.34', 'integer')).toBe(12)
+    expect(parseFreeTextGivenJsonSchemaType('1.0', 'integer')).toBe(1)
+  })
+
+  it('returns input if integer parsing fails', () => {
+    expect(parseFreeTextGivenJsonSchemaType('abc', 'integer')).toBe('abc')
+    expect(parseFreeTextGivenJsonSchemaType('', 'integer')).toBe('')
+  })
+
+  it('parses null for null type', () => {
+    expect(parseFreeTextGivenJsonSchemaType('null', 'null')).toBe(null)
+    expect(parseFreeTextGivenJsonSchemaType('NULL', 'null')).toBe(null)
+    expect(parseFreeTextGivenJsonSchemaType('Null', 'null')).toBe(null)
+  })
+
+  it('returns input if null parsing fails', () => {
+    expect(parseFreeTextGivenJsonSchemaType('undefined', 'null')).toBe(
+      'undefined',
+    )
+    expect(parseFreeTextGivenJsonSchemaType('', 'null')).toBe(null)
+    expect(parseFreeTextGivenJsonSchemaType('null', 'null')).toBe(null)
+    expect(parseFreeTextGivenJsonSchemaType('nil', 'null')).toBe('nil')
   })
 })

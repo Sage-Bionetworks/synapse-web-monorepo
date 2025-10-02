@@ -1,0 +1,30 @@
+{
+  "extends": "../../../shared/tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "noImplicitAny": false,
+    "types": ["vite/client"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@sage-bionetworks/synapse-portal-framework": [
+        "../../synapse-portal-framework/src"
+      ],
+      "@sage-bionetworks/synapse-portal-framework/*": [
+        "../../synapse-portal-framework/src/*"
+      ],
+      "synapse-react-client": ["../../../packages/synapse-react-client/src"],
+      "synapse-react-client/*": [
+        "../../../packages/synapse-react-client/src/*"
+      ],
+      "vite-config": ["../../../packages/vite-config/src"],
+      "vite-config/*": ["../../../packages/vite-config/src/*"]
+    }
+  },
+  "include": ["src/**/*.tsx", "src/**/*.ts"],
+  "files": ["src/types.d.ts"],
+  "references": [
+    { "path": "../../synapse-portal-framework" },
+    { "path": "../../../packages/synapse-react-client" },
+    { "path": "../../../packages/vite-config" }
+  ]
+}

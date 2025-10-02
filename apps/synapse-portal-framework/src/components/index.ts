@@ -15,6 +15,7 @@ import ELGettingStarted from './eliteportal/ELGettingStarted'
 import AMPALSExploreTheData from './ampals/AMPALSExploreTheData'
 import ELSupportedByNIH from './eliteportal/ELSupportedByNIH'
 import ARKWelcomePage from './arkportal/ARKWelcomePage'
+import ClassicSupportedByNIABanner from './classic/ClassicSupportedByNIABanner/ClassicSupportedByNIABanner'
 
 import ExploreWrapper from './Explore/ExploreWrapper'
 import GenieHomePageHeader from './genie/GenieHomePageHeader'
@@ -49,6 +50,7 @@ const PortalComponents = {
   ELGettingStarted,
   AMPALSExploreTheData,
   ELSupportedByNIH,
+  ClassicSupportedByNIABanner,
   ARKWelcomePage,
   GenieHomePageHeader,
   CancerComplexityHeader,
