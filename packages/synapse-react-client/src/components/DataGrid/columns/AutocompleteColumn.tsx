@@ -59,7 +59,7 @@ function AutocompleteCell({
         // Update local input state to match the selected/created value
         setLocalInputState(castCellValueToString(newVal))
       }}
-      blurOnSelect={true}
+      blurOnSelect={false}
       onBlur={_event => {
         // Only update on blur if the input value differs from the current rowData
         // and no option was selected (which would have already updated via onChange)
