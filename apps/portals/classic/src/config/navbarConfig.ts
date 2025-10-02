@@ -23,11 +23,11 @@ export const navbarConfig: NavbarConfig = {
     },
     {
       name: 'News',
-      path: 'https://news.classic.org/',
+      path: 'https://news.classicportal.org/',
     },
     {
       name: 'Help',
-      path: 'https://help.classic.org/help/',
+      path: 'https://help.classicportal.org/help/',
     },
   ],
   isPortalsDropdownEnabled: true,
