@@ -42,8 +42,6 @@ import { modelColsToGrid } from './utils/modelColsToGrid'
 import { Stack } from '@mui/material'
 import GridAgentChat from '../SynapseChat/GridAgentChat'
 import { SmartToyTwoTone } from '@mui/icons-material'
-import { useGetEntity } from '@/synapse-queries/index'
-import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
 
 export type SynapseGridProps = {
   showDebugInfo?: boolean
@@ -61,8 +59,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const [chatOpen, setChatOpen] = useState(false)
 
     const startGridSessionRef = useRef<StartGridSessionHandle | null>(null)
-
-    const { data: entity } = useGetEntity(session?.sourceEntityId)
 
     useImperativeHandle(
       ref,
@@ -224,10 +220,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
 
     const gridRef = useRef<DataSheetGridRef | null>(null)
 
-    const sourceEntityType = entity?.concreteType
-      ? convertToEntityType(entity.concreteType)
-      : undefined
-
     return (
       <div>
         <Grid container spacing={2}>
@@ -323,7 +315,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       />
                       {session.sourceEntityId && (
                         <MergeGridWithSourceTableButton
-                          sourceEntityType={sourceEntityType}
                           sourceEntityId={session.sourceEntityId}
                           gridSessionId={session.sessionId!}
                         />

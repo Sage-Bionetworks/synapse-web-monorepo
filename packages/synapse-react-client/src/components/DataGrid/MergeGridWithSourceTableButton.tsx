@@ -1,6 +1,8 @@
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import useMergeGridWithSource from '@/components/DataGrid/useMergeGridWithSource'
 import { displayToast } from '@/components/index'
+import { useGetEntity } from '@/synapse-queries'
+import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
 import {
   EntityType,
   EntityUpdateResults,
@@ -18,34 +20,36 @@ export type MergeGridWithSourceTableButtonProps = {
 export default function MergeGridWithSourceTableButton(
   props: MergeGridWithSourceTableButtonProps,
 ) {
-  const { sourceEntityId, gridSessionId, sourceEntityType } = props
+  const { sourceEntityId, gridSessionId } = props
+
+  const { data: entity, isLoading: entityLoading } =
+    useGetEntity(sourceEntityId)
+
+  const sourceEntityType = entity?.concreteType
+    ? convertToEntityType(entity.concreteType)
+    : undefined
 
   const { mutate: mergeGrid, isPending } = useMergeGridWithSource({
     onSuccess: result => {
       if (result.type === 'table') {
-        onMergeSuccess(result.data as TableUpdateTransactionResponse)
+        onMergeSuccess(result.data)
       } else {
-        displayToast('Successfully exported RecordSet edits.', 'success')
+        displayToast('Successfully updated RecordSet.', 'success')
       }
     },
     onError: e => displayToast(e.message, 'danger'),
   })
 
-  const isRecordSet = sourceEntityType === EntityType.recordset
-
-  const buttonText = isRecordSet
-    ? 'Merge grid edits into RecordSet'
-    : 'Update table with changes'
-
   return (
     <GridMenuButton
       loading={isPending}
+      disabled={entityLoading}
       onClick={() =>
         mergeGrid({ gridSessionId, sourceEntityId, sourceEntityType })
       }
       variant="contained"
     >
-      {buttonText}
+      Apply changes
     </GridMenuButton>
   )
 }

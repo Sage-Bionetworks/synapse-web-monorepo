@@ -14,10 +14,15 @@ export type MergeGridWithSource = {
   sourceEntityType?: EntityType
 }
 
-export type MergeGridResult = {
-  type: 'recordset' | 'table'
-  data: GridRecordSetExportResponse | TableUpdateTransactionResponse
-}
+export type MergeGridResult =
+  | {
+      type: 'recordset'
+      data: GridRecordSetExportResponse
+    }
+  | {
+      type: 'table'
+      data: TableUpdateTransactionResponse
+    }
 
 /**
  * Single source of truth for merging grid edits.
