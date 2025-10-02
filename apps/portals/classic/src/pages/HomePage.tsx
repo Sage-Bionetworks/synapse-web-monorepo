@@ -3,6 +3,7 @@ import { Box, useTheme } from '@mui/material'
 import { TypeAnimation } from 'react-type-animation'
 import { PortalHomePageHeader } from 'synapse-react-client'
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
+import ClassicSupportedByNIABanner from '@sage-bionetworks/synapse-portal-framework/components/classic/ClassicSupportedByNIABanner/ClassicSupportedByNIABanner'
 
 function HomePageInternal() {
   const theme = useTheme()
@@ -65,6 +66,7 @@ function HomePageInternal() {
         backgroundMp4Css="#024472"
         textAreaWidth="850px"
       />
+      <ClassicSupportedByNIABanner />
     </>
   )
 }
