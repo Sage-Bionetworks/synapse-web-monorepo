@@ -11,6 +11,7 @@ import {
   Direction,
 } from '@sage-bionetworks/synapse-types'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
+import { omit } from 'lodash-es'
 
 const includeTypes: EntityType[] = [
   EntityType.folder,
@@ -96,9 +97,7 @@ export const useTreeOperationsWithDirectFetch = (
       // clear the loading page token entry for this parent since the
       // requested page has completed (this prevents any remaining loading state)
       setLoadingPageTokens(prev => {
-        const next = { ...prev }
-        delete next[entityId]
-        return next
+        return omit(prev, [entityId])
       })
 
       setLoadingIds(prev => {
@@ -122,7 +121,7 @@ export const useTreeOperationsWithDirectFetch = (
     ],
   )
 
-  // Handler for expanding nodes - now includes direct data fetching
+  // Handler for expanding nodes - handles fetching children
   const handleToggleExpanded = useCallback(
     async (entityId: string) => {
       const isCurrentlyExpanded = expanded[entityId]
@@ -132,7 +131,11 @@ export const useTreeOperationsWithDirectFetch = (
       }))
 
       // If expanding and children haven't been loaded yet, fetch them directly
-      if (!isCurrentlyExpanded && !loadedChildren.has(entityId)) {
+      if (
+        !isCurrentlyExpanded &&
+        !loadedChildren.has(entityId) &&
+        !loadingIds.has(entityId)
+      ) {
         const node = tree[entityId]
         if (node && !node.isLeaf) {
           setLoadingIds(prev => new Set(prev).add(entityId))
