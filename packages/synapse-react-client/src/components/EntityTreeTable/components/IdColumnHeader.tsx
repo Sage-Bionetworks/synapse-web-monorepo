@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { HeaderContext } from '@tanstack/react-table'
 import { EntityBundleRow } from '../EntityTreeTable'
 import ColumnHeader from '../../TanStackTable/ColumnHeader'
