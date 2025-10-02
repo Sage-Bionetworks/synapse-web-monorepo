@@ -43,6 +43,69 @@ export const useTreeOperationsWithDirectFetch = (
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
 
+  // Helper function to convert EntityHeaders to TreeNodes
+  const createTreeNodes = useCallback(
+    (
+      entityHeaders: EntityHeader[],
+      parentId: string,
+      parentDepth: number,
+    ): TreeNode[] => {
+      return entityHeaders.map((eh: EntityHeader) => ({
+        entityHeader: eh,
+        parentId,
+        depth: parentDepth + 1,
+        isLeaf: !(
+          convertToEntityType(eh.type) === EntityType.project ||
+          convertToEntityType(eh.type) === EntityType.folder
+        ),
+      }))
+    },
+    [],
+  )
+
+  // Helper function to clean up loading state on error
+  const cleanupLoadingState = useCallback(
+    (entityId: string, pageToken?: string) => {
+      setLoadingIds(prev => {
+        const next = new Set(prev)
+        next.delete(entityId)
+        return next
+      })
+
+      if (pageToken !== undefined) {
+        setLoadingPageTokens(prev => {
+          const next = { ...prev }
+          delete next[entityId]
+          return next
+        })
+      }
+    },
+    [setLoadingIds, setLoadingPageTokens],
+  )
+
+  // Helper function to fetch entity children
+  const fetchEntityChildren = useCallback(
+    async (entityId: string, pageToken?: string) => {
+      const entityChildrenRequest = {
+        parentId: entityId,
+        includeTypes,
+        ...(pageToken && { nextPageToken: pageToken }),
+        sortBy,
+        sortDirection,
+      }
+
+      return await queryClient.fetchQuery({
+        queryKey: keyFactory.getEntityChildrenQueryKey(
+          entityChildrenRequest,
+          false,
+        ),
+        queryFn: () =>
+          SynapseClient.getEntityChildren(entityChildrenRequest, accessToken),
+      })
+    },
+    [queryClient, keyFactory, accessToken, sortBy, sortDirection],
+  )
+
   // Callback to handle when children are loaded - moved before handleToggleExpanded to fix dependency order
   const handleChildrenLoaded = useCallback(
     (entityId: string, childNodes: TreeNode[], nextPageToken?: string) => {
@@ -141,40 +204,12 @@ export const useTreeOperationsWithDirectFetch = (
           setLoadingIds(prev => new Set(prev).add(entityId))
 
           try {
-            // Fetch the children directly using queryClient
-            const entityChildrenRequest = {
-              parentId: entityId,
-              includeTypes,
-              sortBy,
-              sortDirection,
-            }
-
-            const children = await queryClient.fetchQuery({
-              queryKey: keyFactory.getEntityChildrenQueryKey(
-                entityChildrenRequest,
-                false,
-              ),
-              queryFn: () =>
-                SynapseClient.getEntityChildren(
-                  entityChildrenRequest,
-                  accessToken,
-                ),
-            })
-
-            // Convert to TreeNode format
-            const childNodes: TreeNode[] = children.page.map(
-              (eh: EntityHeader) => ({
-                entityHeader: eh,
-                parentId: entityId,
-                depth: node.depth + 1,
-                isLeaf: !(
-                  convertToEntityType(eh.type) === EntityType.project ||
-                  convertToEntityType(eh.type) === EntityType.folder
-                ),
-              }),
+            const children = await fetchEntityChildren(entityId)
+            const childNodes = createTreeNodes(
+              children.page,
+              entityId,
+              node.depth,
             )
-
-            // Update the tree with the loaded children
             handleChildrenLoaded(entityId, childNodes, children.nextPageToken)
           } catch (error) {
             console.error(
@@ -182,12 +217,7 @@ export const useTreeOperationsWithDirectFetch = (
               entityId,
               error,
             )
-            // Remove from loading state on error
-            setLoadingIds(prev => {
-              const next = new Set(prev)
-              next.delete(entityId)
-              return next
-            })
+            cleanupLoadingState(entityId)
           }
         }
       }
@@ -198,12 +228,10 @@ export const useTreeOperationsWithDirectFetch = (
       tree,
       setExpanded,
       setLoadingIds,
-      queryClient,
-      keyFactory,
-      accessToken,
-      sortBy,
-      sortDirection,
+      fetchEntityChildren,
+      createTreeNodes,
       handleChildrenLoaded,
+      cleanupLoadingState,
     ],
   )
 
@@ -214,39 +242,13 @@ export const useTreeOperationsWithDirectFetch = (
       setLoadingIds(prev => new Set(prev).add(entityId))
 
       try {
-        // Fetch the next page directly using queryClient
-        const entityChildrenRequest = {
-          parentId: entityId,
-          includeTypes,
-          nextPageToken: pageToken,
-          sortBy,
-          sortDirection,
-        }
-
-        const children = await queryClient.fetchQuery({
-          queryKey: keyFactory.getEntityChildrenQueryKey(
-            entityChildrenRequest,
-            false,
-          ),
-          queryFn: () =>
-            SynapseClient.getEntityChildren(entityChildrenRequest, accessToken),
-        })
-
-        // Convert to TreeNode format
+        const children = await fetchEntityChildren(entityId, pageToken)
         const node = tree[entityId]
-        const childNodes: TreeNode[] = children.page.map(
-          (eh: EntityHeader) => ({
-            entityHeader: eh,
-            parentId: entityId,
-            depth: node ? node.depth + 1 : 0,
-            isLeaf: !(
-              convertToEntityType(eh.type) === EntityType.project ||
-              convertToEntityType(eh.type) === EntityType.folder
-            ),
-          }),
+        const childNodes = createTreeNodes(
+          children.page,
+          entityId,
+          node ? node.depth : -1,
         )
-
-        // Update the tree with the loaded children
         handleChildrenLoaded(entityId, childNodes, children.nextPageToken)
       } catch (error) {
         console.error(
@@ -254,29 +256,17 @@ export const useTreeOperationsWithDirectFetch = (
           entityId,
           error,
         )
-        // Remove from loading state on error
-        setLoadingIds(prev => {
-          const next = new Set(prev)
-          next.delete(entityId)
-          return next
-        })
-        setLoadingPageTokens(prev => {
-          const next = { ...prev }
-          delete next[entityId]
-          return next
-        })
+        cleanupLoadingState(entityId, pageToken)
       }
     },
     [
       setLoadingPageTokens,
       setLoadingIds,
-      queryClient,
-      keyFactory,
-      accessToken,
-      sortBy,
-      sortDirection,
+      fetchEntityChildren,
+      createTreeNodes,
       tree,
       handleChildrenLoaded,
+      cleanupLoadingState,
     ],
   )
 
