@@ -33,10 +33,9 @@ export const useTreeState = () => {
     // Note: We don't reset sorting here - this is used when sorting changes
   }, [])
 
-  const resetTreeState = useCallback(() => {
+  useEffect(() => {
     resetTreeData()
-    setSorting([])
-  }, [resetTreeData])
+  }, [sorting, resetTreeData])
 
   return {
     expanded,
