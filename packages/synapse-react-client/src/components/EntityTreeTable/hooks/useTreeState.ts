@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { SortingState } from '@tanstack/react-table'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
 
@@ -52,7 +52,6 @@ export const useTreeState = () => {
     setLoadingPageTokens,
     sorting,
     setSorting,
-    resetTreeState,
     resetTreeData,
   }
 }

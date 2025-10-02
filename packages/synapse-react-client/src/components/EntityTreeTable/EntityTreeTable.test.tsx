@@ -244,7 +244,6 @@ describe('EntityTreeTable', () => {
       setLoadingPageTokens: vi.fn(),
       sorting: [],
       setSorting: vi.fn(),
-      resetTreeState: vi.fn(),
       resetTreeData: vi.fn(),
     })
 
@@ -343,7 +342,6 @@ describe('EntityTreeTable', () => {
       setLoadingPageTokens: vi.fn(),
       sorting: [],
       setSorting: vi.fn(),
-      resetTreeState: vi.fn(),
       resetTreeData: vi.fn(),
     })
 
@@ -401,7 +399,6 @@ describe('EntityTreeTable', () => {
         setLoadingPageTokens: vi.fn(),
         sorting: [],
         setSorting: vi.fn(),
-        resetTreeState: vi.fn(),
         resetTreeData: vi.fn(),
       })
 
@@ -449,7 +446,6 @@ describe('EntityTreeTable', () => {
         setLoadingPageTokens: vi.fn(),
         sorting: [],
         setSorting: vi.fn(),
-        resetTreeState: vi.fn(),
         resetTreeData: vi.fn(),
       })
 
@@ -497,7 +493,6 @@ describe('EntityTreeTable', () => {
         setLoadingPageTokens: vi.fn(),
         sorting: [],
         setSorting: vi.fn(),
-        resetTreeState: vi.fn(),
         resetTreeData: vi.fn(),
       })
 
@@ -545,7 +540,6 @@ describe('EntityTreeTable', () => {
         setLoadingPageTokens: vi.fn(),
         sorting: [],
         setSorting: vi.fn(),
-        resetTreeState: vi.fn(),
         resetTreeData: vi.fn(),
       })
 
@@ -574,7 +568,6 @@ describe('EntityTreeTable', () => {
         setLoadingPageTokens: vi.fn(),
         sorting: [],
         setSorting: vi.fn(),
-        resetTreeState: vi.fn(),
         resetTreeData: vi.fn(),
       })
 
@@ -641,7 +634,6 @@ describe('EntityTreeTable', () => {
         setLoadingPageTokens: vi.fn(),
         sorting: [],
         setSorting: vi.fn(),
-        resetTreeState: vi.fn(),
         resetTreeData: vi.fn(),
       })
 

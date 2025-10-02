@@ -28,7 +28,7 @@ export const useDataInitialization = (
   ) => void,
   setLoadedChildren: (value: React.SetStateAction<Set<string>>) => void,
   setExpanded: (value: React.SetStateAction<Record<string, boolean>>) => void,
-  resetTreeState: () => void,
+  resetTreeData: () => void,
   sortBy?: SortBy,
   sortDirection?: Direction,
 ) => {
@@ -38,10 +38,10 @@ export const useDataInitialization = (
   // Reset tree state when rootId changes
   useEffect(() => {
     if (prevRootIdRef.current && prevRootIdRef.current !== rootId) {
-      resetTreeState()
+      resetTreeData()
     }
     prevRootIdRef.current = rootId
-  }, [rootId, resetTreeState])
+  }, [rootId, resetTreeData])
 
   // Get root entity header
   const { data: rootHeader } = useGetEntityHeader(rootId)
@@ -148,7 +148,7 @@ export const useDataInitialization = (
     setNextPageTokens,
     setLoadedChildren,
     setExpanded,
-    resetTreeState,
+    resetTreeData,
   ])
 
   return {

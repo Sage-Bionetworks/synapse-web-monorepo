@@ -1,15 +1,8 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback } from 'react'
 import { SortingState } from '@tanstack/react-table'
 import { SortBy, Direction } from '@sage-bionetworks/synapse-types'
 
-export const useSorting = (
-  sorting: SortingState,
-  resetTreeData: () => void,
-) => {
-  // Track previous sorting to detect changes
-  const prevSortingRef = useRef<SortingState>([])
-  const isInitialMount = useRef(true)
-
+export const useSorting = (sorting: SortingState) => {
   // Convert TanStack Table sorting to API sorting parameters
   const getSortingParams = useCallback(() => {
     if (!sorting.length) return {}
@@ -36,21 +29,6 @@ export const useSorting = (
       sortDirection: firstSort.desc ? Direction.DESC : Direction.ASC,
     }
   }, [sorting])
-
-  // Reset tree when sorting changes (but not on initial mount)
-  useEffect(() => {
-    const sortingChanged =
-      JSON.stringify(prevSortingRef.current) !== JSON.stringify(sorting)
-
-    if (sortingChanged && !isInitialMount.current) {
-      // Reset tree data when sorting changes to force re-fetch with new sort order
-      // Don't reset sorting itself since that would clear the user's selection
-      resetTreeData()
-    }
-
-    prevSortingRef.current = sorting
-    isInitialMount.current = false
-  }, [sorting, resetTreeData])
 
   const { sortBy, sortDirection } = getSortingParams()
 

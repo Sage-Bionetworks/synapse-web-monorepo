@@ -61,12 +61,11 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     setLoadingPageTokens,
     sorting,
     setSorting,
-    resetTreeState,
     resetTreeData,
   } = useTreeState()
 
   // Use sorting hook
-  const { sortBy, sortDirection } = useSorting(sorting, resetTreeData)
+  const { sortBy, sortDirection } = useSorting(sorting)
 
   // Use tree operations hook with direct fetch
   const { handleToggleExpanded, loadMoreChildren, flattenTree } =
@@ -97,7 +96,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     setNextPageTokens,
     setLoadedChildren,
     setExpanded,
-    resetTreeState,
+    resetTreeData,
     sortBy,
     sortDirection,
   )
