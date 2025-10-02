@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { EntityBundleRow } from '../EntityTreeTable'
-import { TreeNode } from './useTreeState'
+import { TreeNode } from './useEntityTreeState'
 import { useQueryClient } from '@tanstack/react-query'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import SynapseClient from '@/synapse-client'

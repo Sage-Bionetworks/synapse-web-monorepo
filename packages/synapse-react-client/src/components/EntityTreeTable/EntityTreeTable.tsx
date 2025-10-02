@@ -3,13 +3,11 @@ import styles from './EntityTreeTable.module.scss'
 import { useReactTable, getCoreRowModel } from '@tanstack/react-table'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import { Box } from '@mui/material'
-import { useTreeState } from './hooks/useTreeState'
-import { useSorting } from './hooks/useSorting'
+import { useEntityTreeState } from './hooks/useEntityTreeState'
 import { useTreeOperationsWithDirectFetch } from './hooks/useTreeOperationsWithDirectFetch'
 import { useTableColumns } from './hooks/useTableColumns'
-import { useDataInitialization } from './hooks/useDataInitialization'
 import { useTableData } from './hooks/useTableData'
-export { type TreeNode } from './hooks/useTreeState'
+export { type TreeNode } from './hooks/useEntityTreeState'
 import { EntityTreeTableView } from './components/EntityTreeTableView'
 import { EntityTreeTableContext } from './components/EntityTreeTableContext'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
@@ -45,7 +43,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
   enableSorting = true,
   onEntityIdClicked,
 }) => {
-  // Use custom hooks for state management
+  // Use hook for state management and data initialization
   const {
     expanded,
     setExpanded,
@@ -61,11 +59,9 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     setLoadingPageTokens,
     sorting,
     setSorting,
-    resetTreeData,
-  } = useTreeState()
-
-  // Use sorting hook
-  const { sortBy, sortDirection } = useSorting(sorting)
+    sortBy,
+    sortDirection,
+  } = useEntityTreeState(rootId, expandRootByDefault, showRootNode)
 
   // Use tree operations hook with direct fetch
   const { handleToggleExpanded, loadMoreChildren, flattenTree } =
@@ -85,21 +81,6 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
       sortBy,
       sortDirection,
     )
-
-  // Initialize data
-  useDataInitialization(
-    rootId,
-    expandRootByDefault,
-    showRootNode,
-    loadedChildren,
-    setTree,
-    setNextPageTokens,
-    setLoadedChildren,
-    setExpanded,
-    resetTreeData,
-    sortBy,
-    sortDirection,
-  )
 
   // Get table columns
   const columns = useTableColumns(enableSorting)

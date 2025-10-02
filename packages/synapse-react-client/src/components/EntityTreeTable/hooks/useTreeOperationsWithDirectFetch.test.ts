@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react'
 import { useTreeOperationsWithDirectFetch } from './useTreeOperationsWithDirectFetch'
-import { TreeNode } from './useTreeState'
+import { TreeNode } from './useEntityTreeState'
 import { useQueryClient } from '@tanstack/react-query'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 

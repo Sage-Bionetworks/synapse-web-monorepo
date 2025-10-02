@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react'
 import { useTableData } from './useTableData'
-import { TreeNode } from './useTreeState'
+import { TreeNode } from './useEntityTreeState'
 import { EntityBundleRow } from '../EntityTreeTable'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
 

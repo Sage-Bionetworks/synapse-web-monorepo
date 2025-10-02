@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { EntityBundleRow } from '../EntityTreeTable'
-import { TreeNode } from './useTreeState'
+import { TreeNode } from './useEntityTreeState'
 
 export const useTableData = (
   tree: Record<string, TreeNode>,
