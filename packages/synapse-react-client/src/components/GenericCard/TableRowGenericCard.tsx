@@ -50,8 +50,7 @@ import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
  */
 export type TableToGenericCardMapping = {
   /** The 'type' of resource a card refers to. Renders a label on the card with this string value.
-   *  If the card appears in DetailsPageContent, the type string will be redundant with
-   *  the DetailsPageSection title. If you don't want type at the top of the card, set it to ''
+   *  Can be hidden by setting it to '' (empty string)
    */
   type: string
   /** The column name whose data contains the title of the card */
