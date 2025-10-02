@@ -4,6 +4,8 @@ import { EntityType } from '@sage-bionetworks/synapse-client'
 import { useState } from 'react'
 import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 
+// Have to keep these consts outside of getProgrammaticAccessCode because
+// they are being called in ProgrammaticTableDownload.tsx
 // Python client import and login instructions
 export const PYTHON_CLIENT_IMPORT_AND_LOGIN = `import synapseclient
 syn = synapseclient.Synapse()
@@ -13,8 +15,60 @@ syn.login(authToken="YOUR_TOKEN_HERE")`
 export const R_CLIENT_IMPORT_AND_LOGIN = `library(synapser)
 synLogin(authToken="YOUR_TOKEN_HERE")`
 
-export const DOCKER_LOGIN =
-  'docker login -u <synapse username> -p <synapse password> docker.synapse.org'
+type ProgrammaticAccessCode = {
+  cliCode: string | undefined
+  rCode: string | undefined
+  pythonCode: string | undefined
+}
+
+// Generate programmatic access code snippet content based on entity type
+function getProgrammaticAccessCode(
+  type: EntityType,
+  entityId: string,
+): ProgrammaticAccessCode {
+  switch (type) {
+    case 'file':
+    case 'folder':
+    case 'project':
+      return {
+        cliCode: `${PYTHON_CLIENT_IMPORT_AND_LOGIN} \n
+# Download file
+syn.get('${entityId}')`,
+        rCode: `${R_CLIENT_IMPORT_AND_LOGIN} \n
+# Download file
+synGet('${entityId}')`,
+        pythonCode: `${PYTHON_CLIENT_IMPORT_AND_LOGIN} \n
+# Download file
+syn.get('${entityId}')`,
+      }
+    case 'dockerrepo':
+      return {
+        cliCode: `docker login -u <synapse username> -p <synapse password> docker.synapse.org \n
+docker pull docker.synapse.org/${entityId}/myrepo`,
+        rCode: undefined,
+        pythonCode: undefined,
+      }
+    case 'dataset':
+    case 'entityview':
+    case 'datasetcollection':
+    case 'table':
+    case 'materializedview':
+    case 'submissionview':
+    case 'virtualtable':
+    case 'recordset':
+      return {
+        cliCode: `synapse get -q "SELECT * FROM ${entityId}"`,
+        rCode: `${R_CLIENT_IMPORT_AND_LOGIN} \n
+query <- synTableQuery("SELECT * FROM ${entityId}")
+read.table(query$filepath, sep=",")`,
+        pythonCode: `${PYTHON_CLIENT_IMPORT_AND_LOGIN} \n
+query = syn.tableQuery("SELECT * FROM ${entityId}")
+query.asDataFrame()`,
+      }
+    default:
+      throw new Error(`Unhandled EntityType: ${type}`)
+  }
+}
 
 enum DownloadAction {
   downloadFile,
@@ -29,8 +83,7 @@ function getMenuItemForAction(
   entityId: string,
   entityName: string,
   downloadAction: DownloadAction,
-  setIsShowingModalProgrammaticAccess: (show: boolean) => void,
-  setIsShowingModalDocker: (show: boolean) => void,
+  setIsShowingModal: (show: boolean) => void,
 ): DropdownMenuItem {
   switch (downloadAction) {
     case DownloadAction.downloadFile:
@@ -55,7 +108,7 @@ function getMenuItemForAction(
       return {
         text: 'Programmatic Access',
         onClick: () => {
-          setIsShowingModalProgrammaticAccess(true)
+          setIsShowingModal(true)
         },
         tooltipText: 'View programmatic access options',
       }
@@ -63,7 +116,7 @@ function getMenuItemForAction(
       return {
         text: 'Programmatic Access (Docker)',
         onClick: () => {
-          setIsShowingModalDocker(true)
+          setIsShowingModal(true)
         },
         tooltipText: 'View programmatic options to pull Docker image',
       }
@@ -118,36 +171,11 @@ export function EntityDownloadButton(props: {
   entityType: EntityType
 }) {
   // state to manage programmatic access modal visibility
-  const [
-    isShowingModalProgrammaticAccess,
-    setIsShowingModalProgrammaticAccess,
-  ] = useState<boolean>(false)
-  const handleCloseModalProgrammaticAccess = () => {
-    setIsShowingModalProgrammaticAccess(false)
+  const [isShowingModal, setIsShowingModal] = useState<boolean>(false)
+
+  const handleCloseModal = () => {
+    setIsShowingModal(false)
   }
-
-  // Generate programmatic access instructions
-  const pythonCode = `${PYTHON_CLIENT_IMPORT_AND_LOGIN}
-# Download file
-syn.get('${props.entityId}')`
-
-  const rCode = `${R_CLIENT_IMPORT_AND_LOGIN}
-# Download file
-synGet('${props.entityId}')`
-
-  const cliCode = `synapse get ${props.entityId}`
-
-  // state to manage docker modal visibility
-  const [isShowingModalDocker, setIsShowingModalDocker] =
-    useState<boolean>(false)
-  const handleCloseModalDocker = () => {
-    setIsShowingModalDocker(false)
-  }
-
-  // Generate Docker instructions
-  // FIXME: need to find a way to replace <myrepo>
-  const dockerCode = `${DOCKER_LOGIN}
-docker pull docker.synapse.org/${props.entityId}/myrepo`
 
   // Create download menu items
   const downloadActions = getDownloadActionsForEntityType(props.entityType)
@@ -157,10 +185,15 @@ docker pull docker.synapse.org/${props.entityId}/myrepo`
         props.entityId,
         props.name,
         action,
-        setIsShowingModalProgrammaticAccess,
-        setIsShowingModalDocker,
+        setIsShowingModal,
       ),
     ),
+  )
+
+  // Return programmatic access modal content
+  const { cliCode, rCode, pythonCode } = getProgrammaticAccessCode(
+    props.entityType,
+    props.entityId,
   )
 
   return (
@@ -175,20 +208,12 @@ docker pull docker.synapse.org/${props.entityId}/myrepo`
         }}
       />
       <ProgrammaticInstructionsModal
-        show={isShowingModalProgrammaticAccess}
+        show={isShowingModal}
         title={`Programmatic Access: ${props.name}`}
-        onClose={handleCloseModalProgrammaticAccess}
+        onClose={handleCloseModal}
         pythonCode={pythonCode}
         rCode={rCode}
         cliCode={cliCode}
-        helpUrl="https://help.synapse.org/docs/Getting-Started-with-Downloading.2003796248.html"
-        hasCancelButton={false}
-      />
-      <ProgrammaticInstructionsModal
-        show={isShowingModalDocker}
-        title={`Programmatic Access: ${props.name}`}
-        onClose={handleCloseModalDocker}
-        cliCode={dockerCode}
         helpUrl="https://help.synapse.org/docs/Synapse-Docker-Registry.2011037752.html#SynapseDockerRegistry-UsingDockerImagesStoredintheSynapseDockerRegistry"
         hasCancelButton={false}
       />
