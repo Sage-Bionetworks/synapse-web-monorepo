@@ -10,15 +10,15 @@ export const IdColumnHeader: React.FC<
   const { table } = props
 
   // Get all visible rows and extract their entity IDs
-  const getVisibleIds = () => {
+  const visibleIds = useMemo(() => {
     const visibleRows = table.getRowModel().rows
     return visibleRows
       .filter(row => !row.original.isLoadMore && row.original.entityId) // Exclude "Load More" rows and rows without entityId
       .map(row => row.original.entityId)
       .join('\n')
-  }
+  }, [table.getRowModel().rows])
 
-  const copyButton = <CopyToClipboardIcon value={getVisibleIds()} sizePx={16} />
+  const copyButton = <CopyToClipboardIcon value={visibleIds} sizePx={16} />
 
   return <ColumnHeader {...props} title="ID" additionalButtons={copyButton} />
 }
