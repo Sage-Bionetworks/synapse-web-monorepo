@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useGetEntityHeader } from '@/synapse-queries'
 import { useGetEntityChildren } from '@/synapse-queries/entity/useGetEntityChildren'
 import { EntityType } from '@sage-bionetworks/synapse-client'
@@ -32,17 +32,6 @@ export const useDataInitialization = (
   sortBy?: SortBy,
   sortDirection?: Direction,
 ) => {
-  // Track previous rootId to detect changes
-  const prevRootIdRef = useRef<string | undefined>(undefined)
-
-  // Reset tree state when rootId changes
-  useEffect(() => {
-    if (prevRootIdRef.current && prevRootIdRef.current !== rootId) {
-      resetTreeData()
-    }
-    prevRootIdRef.current = rootId
-  }, [rootId, resetTreeData])
-
   // Get root entity header
   const { data: rootHeader } = useGetEntityHeader(rootId)
 
