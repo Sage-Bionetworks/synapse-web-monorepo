@@ -224,6 +224,10 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
 
     const gridRef = useRef<DataSheetGridRef | null>(null)
 
+    const sourceEntityType = entity?.concreteType
+      ? convertToEntityType(entity.concreteType)
+      : undefined
+
     return (
       <div>
         <Grid container spacing={2}>
@@ -319,6 +323,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       />
                       {session.sourceEntityId && (
                         <MergeGridWithSourceTableButton
+                          sourceEntityType={sourceEntityType}
                           sourceEntityId={session.sourceEntityId}
                           gridSessionId={session.sessionId!}
                         />

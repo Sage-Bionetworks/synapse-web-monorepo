@@ -34,23 +34,18 @@ export default function MergeGridWithSourceTableButton(
 
   const isRecordSet = sourceEntityType === EntityType.recordset
 
+  console.log('sourceEntityType', sourceEntityType)
+  console.log('sourceEntityId', sourceEntityId)
+
+  console.log('isRecordSet', isRecordSet)
+
   const buttonText = isRecordSet
     ? 'Merge grid edits into RecordSet'
     : 'Update table with changes'
 
-  // const isLoading = isRecordSet ? isRecordSetPending : isPending
-
   return (
     <GridMenuButton
-      // loading={isLoading}
       loading={isPending}
-      // onClick={() => {
-      //   if (isRecordSet) {
-      //     mergeGridWithRecordSet({ gridSessionId })
-      //   } else {
-      //     mergeGridWithSource({ gridSessionId, sourceEntityId })
-      //   }
-      // }}
       onClick={() =>
         mergeGrid({ gridSessionId, sourceEntityId, sourceEntityType })
       }
