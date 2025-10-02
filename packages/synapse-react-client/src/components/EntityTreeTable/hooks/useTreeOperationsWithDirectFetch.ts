@@ -74,9 +74,7 @@ export const useTreeOperationsWithDirectFetch = (
 
       if (pageToken !== undefined) {
         setLoadingPageTokens(prev => {
-          const next = { ...prev }
-          delete next[entityId]
-          return next
+          return omit(prev, [entityId])
         })
       }
     },
