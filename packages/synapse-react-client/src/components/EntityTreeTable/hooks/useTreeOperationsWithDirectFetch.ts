@@ -67,15 +67,14 @@ export const useTreeOperationsWithDirectFetch = (
           const mergedChildEntries = Object.fromEntries(
             mergedChildren.map(child => {
               const existing = prev[child.entityHeader.id]
-              const merged = existing
-                ? {
-                    ...existing,
-                    ...child,
-                    depth: child.depth,
-                    parentId: child.parentId,
-                    isLeaf: child.isLeaf,
-                  }
-                : child
+              const merged = {
+                ...existing,
+                ...child,
+                depth: child.depth,
+                parentId: child.parentId,
+                isLeaf: child.isLeaf,
+              }
+
               return [child.entityHeader.id, merged]
             }),
           )

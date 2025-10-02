@@ -114,8 +114,16 @@ export const useDataInitialization = (
       })
 
       // store nextPageToken for root (if any)
+      // Only update if we don't already have a token (avoid overwriting updated pagination tokens)
       const rootNext = rootChildren.nextPageToken
-      setNextPageTokens(prev => ({ ...prev, [rootId]: rootNext }))
+      setNextPageTokens(prev => {
+        // If we already have a token for this root, don't overwrite it
+        // This prevents cached initial data from overwriting updated pagination tokens
+        if (prev[rootId] !== undefined) {
+          return prev
+        }
+        return { ...prev, [rootId]: rootNext }
+      })
 
       // mark as loaded only if there is no next page token
       if (!rootNext) {
