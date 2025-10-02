@@ -1,22 +1,38 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { IdColumnHeader } from './IdColumnHeader'
 import { EntityBundleRow } from '../EntityTreeTable'
+import { HeaderContext } from '@tanstack/react-table'
 
 // Mock CopyToClipboardIcon component
+const mockCopyToClipboardIcon = vi.fn()
+
+interface CopyToClipboardIconProps {
+  value: string
+  sizePx?: number
+}
+
 vi.mock('../../CopyToClipboardIcon', () => ({
-  CopyToClipboardIcon: vi.fn(({ value }) => (
-    <button
-      data-testid="copy-button"
-      onClick={() => console.log('Copy:', value)}
-    >
-      Copy
-    </button>
-  )),
+  CopyToClipboardIcon: (props: CopyToClipboardIconProps) => {
+    mockCopyToClipboardIcon(props)
+    return (
+      <button
+        data-testid="copy-button"
+        onClick={() => console.log('Copy:', props.value)}
+      >
+        Copy
+      </button>
+    )
+  },
 }))
 
 // Mock ColumnHeader component
+interface ColumnHeaderProps {
+  title?: string
+  additionalButtons?: React.ReactNode
+}
+
 vi.mock('../../TanStackTable/ColumnHeader', () => ({
-  default: vi.fn(({ title, additionalButtons }) => (
+  default: vi.fn(({ title, additionalButtons }: ColumnHeaderProps) => (
     <div>
       <span>{title}</span>
       {additionalButtons}
@@ -86,16 +102,28 @@ const mockRows: EntityBundleRow[] = [
   },
 ]
 
-const mockTable = {
+interface MockTable {
+  getRowModel: () => {
+    rows: Array<{ original: EntityBundleRow }>
+  }
+}
+
+const mockTable: MockTable = {
   getRowModel: vi.fn(() => ({
     rows: mockRows.map(row => ({ original: row })),
   })),
-} as any
+}
 
-const createMockHeaderContext = () => ({
-  table: mockTable,
-  header: {} as any,
-  column: {} as any,
+const createMockHeaderContext = (): HeaderContext<
+  EntityBundleRow,
+  unknown
+> => ({
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+  table: mockTable as any,
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+  header: { id: 'test-header', colSpan: 1, isPlaceholder: false } as any,
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+  column: { id: 'test-column', columnDef: {} } as any,
 })
 
 describe('IdColumnHeader', () => {
@@ -121,28 +149,31 @@ describe('IdColumnHeader', () => {
     const headerContext = createMockHeaderContext()
     render(<IdColumnHeader {...headerContext} />)
 
-    const copyButton = screen.getByTestId('copy-button')
-    fireEvent.click(copyButton)
-
-    // Should log the IDs, excluding the load more row
-    // The console.log in the mock should show 'syn123\nsyn456'
+    // Should contain IDs, excluding the load more row
+    expect(mockCopyToClipboardIcon).toHaveBeenCalledWith(
+      expect.objectContaining({ value: 'syn123\nsyn456' }),
+    )
   })
 
   it('should handle empty row model', () => {
-    const emptyTable = {
+    const emptyTable: MockTable = {
       getRowModel: vi.fn(() => ({
         rows: [],
       })),
-    } as any
+    }
 
     const headerContext = {
       ...createMockHeaderContext(),
-      table: emptyTable,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      table: emptyTable as any,
     }
 
     render(<IdColumnHeader {...headerContext} />)
 
     expect(screen.getByTestId('copy-button')).toBeInTheDocument()
+    expect(mockCopyToClipboardIcon).toHaveBeenCalledWith(
+      expect.objectContaining({ value: '' }),
+    )
   })
 
   it('should handle all load more rows', () => {
@@ -159,21 +190,25 @@ describe('IdColumnHeader', () => {
       },
     ]
 
-    const loadMoreTable = {
+    const loadMoreTable: MockTable = {
       getRowModel: vi.fn(() => ({
         rows: loadMoreOnlyRows.map(row => ({ original: row })),
       })),
-    } as any
+    }
 
     const headerContext = {
       ...createMockHeaderContext(),
-      table: loadMoreTable,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      table: loadMoreTable as any,
     }
 
     render(<IdColumnHeader {...headerContext} />)
 
     expect(screen.getByTestId('copy-button')).toBeInTheDocument()
     // Should result in empty string for copy value since all rows are filtered out
+    expect(mockCopyToClipboardIcon).toHaveBeenCalledWith(
+      expect.objectContaining({ value: '' }),
+    )
   })
 
   it('should filter out load more rows correctly', () => {
@@ -183,31 +218,23 @@ describe('IdColumnHeader', () => {
       mockRows[1], // normal row
     ]
 
-    const mixedTable = {
+    const mixedTable: MockTable = {
       getRowModel: vi.fn(() => ({
         rows: mixedRows.map(row => ({ original: row })),
       })),
-    } as any
+    }
 
     const headerContext = {
       ...createMockHeaderContext(),
-      table: mixedTable,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      table: mixedTable as any,
     }
 
     render(<IdColumnHeader {...headerContext} />)
 
-    const copyButton = screen.getByTestId('copy-button')
-    fireEvent.click(copyButton)
-
     // Should only include syn123 and syn456, not the load more row
-  })
-
-  it('should join entity IDs with newlines', () => {
-    // This test verifies the getVisibleIds function behavior
-    const headerContext = createMockHeaderContext()
-    render(<IdColumnHeader {...headerContext} />)
-
-    // The copy functionality should join IDs with '\n'
-    expect(screen.getByTestId('copy-button')).toBeInTheDocument()
+    expect(mockCopyToClipboardIcon).toHaveBeenCalledWith(
+      expect.objectContaining({ value: 'syn123\nsyn456' }),
+    )
   })
 })
