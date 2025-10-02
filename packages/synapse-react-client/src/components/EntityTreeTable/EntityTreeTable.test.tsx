@@ -24,6 +24,7 @@ vi.mock('./hooks/useTreeState', () => ({
     sorting: [],
     setSorting: vi.fn(),
     resetTreeState: vi.fn(),
+    resetTreeData: vi.fn(),
   })),
 }))
 
@@ -244,6 +245,7 @@ describe('EntityTreeTable', () => {
       sorting: [],
       setSorting: vi.fn(),
       resetTreeState: vi.fn(),
+      resetTreeData: vi.fn(),
     })
 
     render(
@@ -342,6 +344,7 @@ describe('EntityTreeTable', () => {
       sorting: [],
       setSorting: vi.fn(),
       resetTreeState: vi.fn(),
+      resetTreeData: vi.fn(),
     })
 
     render(<EntityTreeTable {...defaultProps} />)
@@ -399,6 +402,7 @@ describe('EntityTreeTable', () => {
         sorting: [],
         setSorting: vi.fn(),
         resetTreeState: vi.fn(),
+        resetTreeData: vi.fn(),
       })
 
       render(<EntityTreeTable rootId="syn123" showRootNode={true} />)
@@ -446,6 +450,7 @@ describe('EntityTreeTable', () => {
         sorting: [],
         setSorting: vi.fn(),
         resetTreeState: vi.fn(),
+        resetTreeData: vi.fn(),
       })
 
       render(<EntityTreeTable rootId="syn123" showRootNode={false} />)
@@ -493,6 +498,7 @@ describe('EntityTreeTable', () => {
         sorting: [],
         setSorting: vi.fn(),
         resetTreeState: vi.fn(),
+        resetTreeData: vi.fn(),
       })
 
       render(<EntityTreeTable rootId="syn123" showRootNode={false} />)
@@ -540,6 +546,7 @@ describe('EntityTreeTable', () => {
         sorting: [],
         setSorting: vi.fn(),
         resetTreeState: vi.fn(),
+        resetTreeData: vi.fn(),
       })
 
       render(<EntityTreeTable rootId="syn123" showRootNode={false} />)
@@ -568,6 +575,7 @@ describe('EntityTreeTable', () => {
         sorting: [],
         setSorting: vi.fn(),
         resetTreeState: vi.fn(),
+        resetTreeData: vi.fn(),
       })
 
       render(<EntityTreeTable rootId="syn123" showRootNode={false} />)
@@ -634,6 +642,7 @@ describe('EntityTreeTable', () => {
         sorting: [],
         setSorting: vi.fn(),
         resetTreeState: vi.fn(),
+        resetTreeData: vi.fn(),
       })
 
       render(<EntityTreeTable rootId="syn123" showRootNode={false} />)

@@ -102,7 +102,7 @@ export const useTableColumns = (enableSorting: boolean) => {
       header: 'Download',
       cell: AddFileToDownloadListCell,
       enableSorting: false,
-      size: 70,
+      size: 90,
     })
 
     return baseColumns
