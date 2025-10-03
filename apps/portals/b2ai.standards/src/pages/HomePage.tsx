@@ -1,11 +1,11 @@
 import ChallengesCardDeck from '@/components/ChallengesCardDeck'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import StandardsHeader from '@sage-bionetworks/synapse-portal-framework/components/b2ai.standards/StandardsHeader'
-import StandardsContributeToTheRegistry from '@sage-bionetworks/synapse-portal-framework/components/b2ai.standards/StandardsContributeToTheRegistry'
+import StandardsHeader from '@/components/StandardsHeader'
+import StandardsContributeToTheRegistry from '@/components/StandardsContributeToTheRegistry'
 import {
   standardsFtsConfig,
   standardsSql,
-  DST_TABLE_COLUMN_NAMES,
+  DST_TABLE_COLUMN_CONSTS,
 } from '../config/resources'
 import { FeaturedDataTabs } from 'synapse-react-client'
 import CTASectionWrapper from 'synapse-react-client/components/CTASectionWrapper/CTASectionWrapper'
@@ -50,12 +50,12 @@ export default function HomePage() {
                 explorePagePath: '/Explore',
                 exploreObjectType: 'Standards',
                 plotsConfig: {
-                  sql: `${standardsSql} where ${DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES} is not null`,
+                  sql: `${standardsSql} where ${DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_NAMES} is not null`,
                   configs: [
                     {
                       facetsToPlot: [
                         'topic',
-                        DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
+                        DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_NAMES,
                       ],
                       unitDescription: 'standard',
                       plotType: 'BAR',
