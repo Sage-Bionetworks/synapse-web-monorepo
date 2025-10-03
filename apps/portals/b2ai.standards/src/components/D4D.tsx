@@ -1,10 +1,14 @@
-import { GCInfo } from '@/config/GrandChallengeResources'
+import { ErrorBanner } from 'synapse-react-client'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 import {
   D4D_CONTENT_COLUMN_CONSTS,
   getColumnExpressions,
 } from '@/config/resources'
-import { useFetchTableData } from '@/hooks/useFetchTableData'
-import { ErrorBanner } from 'synapse-react-client'
+import {
+  getQueryBundleRequestWithIdFilter,
+  getRowsAsObjects,
+} from '@/hooks/fetchDataUtils'
 
 type D4DProps = {
   org_id: string
@@ -15,15 +19,17 @@ export function D4D(props: D4DProps) {
 
   const colExpressions = getColumnExpressions({ tableName: 'D4D_content' })
 
+  const queryBundleRequest: QueryBundleRequest =
+    getQueryBundleRequestWithIdFilter('D4D_content', colExpressions, [org_id])
+
   const {
     data = [],
     error,
     isLoading,
-  } = useFetchTableData({
-    tableName: 'D4D_content',
-    colExpressions,
-    // queryString: getQueryString('D4D_content'),
-    id: org_id,
+  } = useGetQueryResultBundle(queryBundleRequest, {
+    select: result => {
+      return getRowsAsObjects(result)
+    },
   })
 
   if (error) {
@@ -39,26 +45,11 @@ export function D4D(props: D4DProps) {
           <div
             key={index}
             dangerouslySetInnerHTML={{
-              __html: d4d[D4D_CONTENT_COLUMN_CONSTS.CONTENT_TEXT],
+              __html: d4d[D4D_CONTENT_COLUMN_CONSTS.CONTENT_TEXT] ?? '',
             }}
           />
         )
       })}
-    </div>
-  )
-}
-
-export function D4D_old(props: D4DProps) {
-  const { org_id } = props
-  const html = GCInfo[org_id]?.d4dHtml ?? ''
-
-  if (!html) {
-    return <div>No datasheet available for organization: {org_id}</div>
-  }
-
-  return (
-    <div className="d4d-styles">
-      <div dangerouslySetInnerHTML={{ __html: html }} />
     </div>
   )
 }

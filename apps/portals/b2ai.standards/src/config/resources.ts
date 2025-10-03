@@ -33,10 +33,12 @@ const tableInfo: TableInfoMap = {
   // UseCase: { name: 'UseCase', id: 'syn63096837' }, // not using this, might in the future?
 }
 
-// function assembleQuery({tableName, selectExpressions, additionalFilters})
 export type ColumnConsts = { ID: string } & Record<string, string>
 
-export const ORG_TABLE_COLUMN_CONSTS: ColumnConsts = {
+export const ORG_TABLE_COLUMN_CONSTS: ColumnConsts & {
+  NAME: string
+  DESCRIPTION: string
+} = {
   ID: 'id',
   NAME: 'name',
   DESCRIPTION: 'description',

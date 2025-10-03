@@ -8,8 +8,19 @@ import {
   SynapseConstants,
   SynapseErrorType,
 } from 'synapse-react-client'
-// import { CardDeckCardProps } from 'synapse-react-client/components/CardDeck/CardDeckCardProps'
-// import { CardDeck } from 'synapse-react-client/components/CardDeck/CardDeck'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import { DetailsPageSectionLayoutType } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageSectionLayout'
+import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
+import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+  QueryBundleRequest,
+} from '@sage-bionetworks/synapse-types'
+import {
+  standardsColumnLinks,
+  standardsRgbIndex,
+} from '@/config/synapseConfigs/standards'
 import {
   DATASET_DENORMALIZED_COLUMN_CONSTS,
   DST_TABLE_COLUMN_CONSTS,
@@ -19,23 +30,14 @@ import {
   standardsFtsConfig,
   standardsSql,
 } from '@/config/resources'
-import { useFetchTableData } from '@/hooks/useFetchTableData'
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
-import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import {
-  ColumnMultiValueFunction,
-  ColumnSingleValueFilterOperator,
-} from '@sage-bionetworks/synapse-types'
+  getQueryBundleRequestWithIdFilter,
+  useFetchJsonArrayLengths,
+} from '@/hooks/fetchDataUtils'
+// import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
 import columnAliases from '@/config/columnAliases'
-import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-// import CardDeckDesktop from 'synapse-react-client/components/CardDeck/CardDeck.Desktop'
-import { DetailsPageSectionLayoutType } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageSectionLayout'
-import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
-import {
-  standardsColumnLinks,
-  standardsRgbIndex,
-} from '@/config/synapseConfigs/standards'
 import { D4D } from '@/components/D4D'
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
 
 export const organizationCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.ORGANIZATION,
@@ -88,16 +90,17 @@ export default function OrganizationDetailsPage() {
     ORG_TABLE_COLUMN_CONSTS.DATASET_JSON,
     ORG_TABLE_COLUMN_CONSTS.D4D,
   ]
+  const queryBundleRequest: QueryBundleRequest =
+    getQueryBundleRequestWithIdFilter(
+      'Organization_denormalized',
+      colExpressions,
+      [id],
+    )
   const {
     data = [],
     error,
     isLoading,
-  } = useFetchTableData({
-    tableName: 'Organization_denormalized',
-    colExpressions,
-    id,
-    countsOnly: true,
-  })
+  } = useFetchJsonArrayLengths(queryBundleRequest)
 
   if (error) {
     return <ErrorBanner error={error} />
