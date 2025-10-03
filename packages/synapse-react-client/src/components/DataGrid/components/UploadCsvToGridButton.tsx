@@ -31,12 +31,16 @@ export default function UploadCsvToGridButton(
 
   return (
     <>
-      <UploadCsvToGridDialog
-        gridSessionId={gridSessionId}
-        open={showDialog}
-        onClose={() => setShowDialog(false)}
-        onComplete={() => setShowDialog(false)}
-      />
+      {showDialog && (
+        // Explicitly unmount the dialog when it is closed so that its state is reset
+        // This prevents a user from getting stuck in an error state/uploading the wrong CSV
+        <UploadCsvToGridDialog
+          gridSessionId={gridSessionId}
+          open={showDialog}
+          onClose={() => setShowDialog(false)}
+          onComplete={() => setShowDialog(false)}
+        />
+      )}
       <GridMenuButton
         onClick={() => {
           setShowDialog(true)

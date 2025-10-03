@@ -3,6 +3,7 @@ import {
   BasicFileHandleUpload,
   FileUploadHandle,
 } from '@/components/file/upload/BasicFileHandleUpload'
+import { ErrorBanner } from '@/components/index'
 import CsvPreview from '@/components/table/CsvPreview/CsvPreview'
 import CsvTableDescriptorForm, {
   CsvTableDescriptorFormHandle,
@@ -41,10 +42,14 @@ export type CsvPreviewDialogProps = {
     columnModels: ColumnModel[],
     csvTableDescriptor: CsvTableDescriptor,
   ) => void
+  /** Whether the confirm action is pending */
+  confirmIsPending?: boolean
+  /** An optional error message to display */
+  errorMessage?: string
 }
 
 export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
-  const { open, onClose, onConfirm } = props
+  const { open, onClose, onConfirm, confirmIsPending, errorMessage } = props
   const [step, setStep] = useState(CsvPreviewDialogStep.UPLOAD_CSV)
   const [csvTableDescriptor, setCsvTableDescriptor] =
     useState<CsvTableDescriptor>({
@@ -125,6 +130,7 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
         <>
           {step === CsvPreviewDialogStep.UPLOAD_CSV && uploadStepContent}
           {step === CsvPreviewDialogStep.COLUMN_PREVIEW && previewStepContent}
+          {errorMessage && <ErrorBanner error={errorMessage} />}
         </>
       }
       actions={
@@ -149,6 +155,7 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
                   csvTableDescriptor,
                 )
               }}
+              loading={confirmIsPending}
             >
               Confirm
             </Button>

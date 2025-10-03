@@ -1,31 +1,16 @@
 import { useSynapseContext } from '@/utils/index'
 import {
-  ColumnModel,
-  CsvTableDescriptor,
+  GridCsvImportRequest,
+  GridCsvImportResponse,
   SynapseClientError,
   waitForAsyncResult,
 } from '@sage-bionetworks/synapse-client'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 
-// TODO: Pull from synapse-client
-type GridCsvImportRequest = {
-  concreteType: 'org.sagebionetworks.repo.model.grid.GridCsvImportRequest'
-  sessionId: string
-  fileHandleId: string
-  csvDescriptor: CsvTableDescriptor
-  schema: ColumnModel[]
-}
-type GridCsvImportResult = {
-  sessionId: string
-  totalCount: number
-  createdCount: number
-  updatedCount: number
-}
-
 export function useImportCsvIntoGrid(
   options?: Partial<
     UseMutationOptions<
-      GridCsvImportResult,
+      GridCsvImportResponse,
       SynapseClientError,
       GridCsvImportRequest
     >
@@ -34,27 +19,27 @@ export function useImportCsvIntoGrid(
   const { synapseClient } = useSynapseContext()
 
   return useMutation<
-    GridCsvImportResult,
+    GridCsvImportResponse,
     SynapseClientError,
     GridCsvImportRequest
   >({
     ...options,
     mutationFn: async request => {
-      const asyncJobId = { token: 'mock' }
-      // await synapseClient.gridServicesClient.postRepoV1GridImportCsvAsyncStart(
-      //   {
-      //     gridImportCsvRequest: request,
-      //   },
-      // )
+      const asyncJobId =
+        await synapseClient.gridServicesClient.postRepoV1GridImportCsvAsyncStart(
+          {
+            gridCsvImportRequest: request,
+          },
+        )
 
       const asyncJobResponse = await waitForAsyncResult(() =>
         synapseClient.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId(
           {
-            jobId: asyncJobId.token,
+            jobId: asyncJobId.token!,
           },
         ),
       )
-      return asyncJobResponse.responseBody as unknown as GridCsvImportResult
+      return asyncJobResponse.responseBody as unknown as GridCsvImportResponse
     },
   })
 }

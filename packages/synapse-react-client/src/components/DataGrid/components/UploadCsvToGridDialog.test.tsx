@@ -72,19 +72,34 @@ describe('UploadCsvToGridDialog', () => {
 
   describe('getUpdateMessage', () => {
     it('returns correct message when only createdCount is greater than 0', () => {
-      expect(getUpdateMessage({ createdCount: 5, updatedCount: 0 })).toBe(
-        'Created 5 rows.',
-      )
+      expect(
+        getUpdateMessage({
+          concreteType:
+            'org.sagebionetworks.repo.model.grid.GridCsvImportResponse',
+          createdCount: 5,
+          updatedCount: 0,
+        }),
+      ).toBe('Created 5 rows.')
     })
     it('returns correct message when only updatedCount is greater than 0', () => {
-      expect(getUpdateMessage({ createdCount: 0, updatedCount: 3 })).toBe(
-        'Updated 3 rows.',
-      )
+      expect(
+        getUpdateMessage({
+          concreteType:
+            'org.sagebionetworks.repo.model.grid.GridCsvImportResponse',
+          createdCount: 0,
+          updatedCount: 3,
+        }),
+      ).toBe('Updated 3 rows.')
     })
     it('returns correct message when both createdCount and updatedCount are greater than 0', () => {
-      expect(getUpdateMessage({ createdCount: 2, updatedCount: 4 })).toBe(
-        'Created 2 rows and updated 4 rows.',
-      )
+      expect(
+        getUpdateMessage({
+          concreteType:
+            'org.sagebionetworks.repo.model.grid.GridCsvImportResponse',
+          createdCount: 2,
+          updatedCount: 4,
+        }),
+      ).toBe('Created 2 rows and updated 4 rows.')
     })
   })
 })
