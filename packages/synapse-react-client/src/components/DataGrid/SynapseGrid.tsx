@@ -178,7 +178,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const handleSelectionChange = useCallback(
       (opts: { selection: SelectionWithId | null }) => {
         const { selection } = opts
-
         if (selection != null) {
           setLastSelection(selection)
 
@@ -348,25 +347,13 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                         })
                       }
                       cellClassName={({ rowData, rowIndex, columnId }) => {
-                        const baseCellClassName = getCellClassName({
+                        return getCellClassName({
                           rowData: rowData as DataGridRow,
                           rowIndex,
                           columnId,
                           selectedRowIndex,
-                        })
-
-                        // Add selection styling based on lastSelection
-                        const isInSelection =
-                          lastSelection &&
-                          rowIndex >= lastSelection.min.row &&
-                          rowIndex <= lastSelection.max.row &&
-                          colValues.findIndex(col => col.id === columnId) >=
-                            lastSelection.min.col &&
-                          colValues.findIndex(col => col.id === columnId) <=
-                            lastSelection.max.col
-
-                        return classNames(baseCellClassName, {
-                          'cell-selected': isInSelection,
+                          lastSelection,
+                          colValues,
                         })
                       }}
                       duplicateRow={({ rowData }: any) => ({
