@@ -39,7 +39,7 @@ export function useHasQueryResults({
     },
   }
 
-  const { data, error, isLoading } = useGetQueryResultBundle(
+  return useGetQueryResultBundle(
     queryBundleRequest,
     {
       select: data => {
@@ -48,6 +48,4 @@ export function useHasQueryResults({
       },
     },
   )
-
-  return { data, error, isLoading }
 }
