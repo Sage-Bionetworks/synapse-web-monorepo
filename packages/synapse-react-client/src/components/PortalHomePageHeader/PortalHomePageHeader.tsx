@@ -8,6 +8,7 @@ export type PortalHomePageHeaderProps = {
   description: React.ReactNode
   backgroundMp4?: string
   backgroundMp4Css?: string // while video is loading, what should the background color be?
+  textAreaWidth?: string // default is 746px.  used for md and up screen sizes
 }
 
 const PortalHomePageHeader = ({
@@ -18,6 +19,7 @@ const PortalHomePageHeader = ({
   description,
   backgroundMp4,
   backgroundMp4Css,
+  textAreaWidth = '746px',
 }: PortalHomePageHeaderProps) => {
   return (
     <Box
@@ -55,7 +57,7 @@ const PortalHomePageHeader = ({
           alignItems: 'flex-start',
           padding: { xs: '40px', md: '40px 0' },
           gap: '24px',
-          width: { sm: '100%', md: '746px' },
+          width: { sm: '100%', md: textAreaWidth },
         }}
       >
         <Typography

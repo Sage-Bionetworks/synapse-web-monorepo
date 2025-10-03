@@ -12,6 +12,8 @@ import {
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useRef, ReactNode, useEffect, useState } from 'react'
+import { useResizable } from '../ResizableContainer/hooks/useResizable'
+import { ResizableContainer } from '../ResizableContainer/ResizableContainer'
 
 type DraggableDialogProps = {
   open?: boolean
@@ -31,40 +33,40 @@ export default function DraggableDialog({
   const draggableRef = useRef<HTMLDivElement>(null)
   const [bounds, setBounds] = useState<DraggableBounds>()
   const [position, setPosition] = useState({ x: 100, y: 100 })
+  const { width, height, handleResizeStart } = useResizable({
+    initialWidth: 600,
+    initialHeight: 500,
+    minWidth: 300,
+    minHeight: 200,
+    maxWidth: 1200,
+    maxHeight: 800,
+  })
 
   useEffect(() => {
     // Calculate draggable bounds to keep dialog within viewport with margin
     function updateBounds() {
-      if (draggableRef.current) {
-        const { offsetWidth } = draggableRef.current
-        const margin = 100
+      const margin = 100
+      const dialogWidth = width
 
-        const newBounds = {
-          left: -(offsetWidth - margin),
-          top: 0,
-          right: window.innerWidth - margin,
-          bottom: window.innerHeight - margin,
-        }
-
-        setBounds(newBounds)
-
-        // Clamp dialog position to new bounds to keep it visible after window resize
-        setPosition(prevPosition => ({
-          x: Math.max(
-            newBounds.left,
-            Math.min(prevPosition.x, newBounds.right),
-          ),
-          y: Math.max(
-            newBounds.top,
-            Math.min(prevPosition.y, newBounds.bottom),
-          ),
-        }))
+      const newBounds = {
+        left: -(dialogWidth - margin),
+        top: 0,
+        right: window.innerWidth - margin,
+        bottom: window.innerHeight - margin,
       }
+
+      setBounds(newBounds)
+
+      // Clamp dialog position to new bounds to keep it visible after window resize
+      setPosition(prevPosition => ({
+        x: Math.max(newBounds.left, Math.min(prevPosition.x, newBounds.right)),
+        y: Math.max(newBounds.top, Math.min(prevPosition.y, newBounds.bottom)),
+      }))
     }
     updateBounds()
     window.addEventListener('resize', updateBounds)
     return () => window.removeEventListener('resize', updateBounds)
-  }, [])
+  }, [width, height])
 
   if (!open) {
     return null
@@ -72,22 +74,14 @@ export default function DraggableDialog({
 
   const paperContent = (
     <Paper
-      ref={draggableRef}
       elevation={5}
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        height: '500px',
-        width: '600px',
+        height: isMobile ? '95vh' : `${height}px`,
+        width: isMobile ? '95vw' : `${width}px`,
         ...(isMobile && {
           position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: '90vw',
-          height: '80vh',
-          maxWidth: '600px',
-          maxHeight: '500px',
         }),
       }}
     >
@@ -121,7 +115,7 @@ export default function DraggableDialog({
   )
 
   return (
-    <Box sx={{ position: 'fixed', zIndex: 1000, top: 0 }}>
+    <Box sx={{ position: 'fixed', zIndex: 1000, top: 0, left: 0 }}>
       {isMobile ? (
         paperContent
       ) : (
@@ -132,7 +126,15 @@ export default function DraggableDialog({
           bounds={bounds}
           handle=".drag-handle"
         >
-          {paperContent}
+          <div ref={draggableRef}>
+            <ResizableContainer
+              width={width}
+              height={height}
+              onResizeStart={handleResizeStart}
+            >
+              {paperContent}
+            </ResizableContainer>
+          </div>
         </Draggable>
       )}
     </Box>

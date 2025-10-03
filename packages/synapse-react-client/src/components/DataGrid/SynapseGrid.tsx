@@ -1,12 +1,10 @@
+import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import MergeGridWithSourceTableButton from '@/components/DataGrid/MergeGridWithSourceTableButton'
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { SkeletonTable } from '@/components/index'
 import { useGetSchema } from '@/synapse-queries/index'
-import getEnumeratedValues from '@/utils/jsonschema/getEnumeratedValues'
-import getRequiredAttributes from '@/utils/jsonschema/getRequiredAttributes'
-import getSchemaForProperty from '@/utils/jsonschema/getSchemaForProperty'
-import { getType } from '@/utils/jsonschema/getType'
+import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import Grid from '@mui/material/Grid'
 import {
   CreateGridRequest,
@@ -24,26 +22,12 @@ import {
   useRef,
   useState,
 } from 'react'
-import {
-  checkboxColumn,
-  Column,
-  createTextColumn,
-  DataSheetGrid,
-  DataSheetGridRef,
-  floatColumn,
-  keyColumn,
-} from 'react-datasheet-grid'
+import { DataSheetGrid, DataSheetGridRef } from 'react-datasheet-grid'
 import 'react-datasheet-grid/dist/style.css'
 import '../../style/components/_data-grid-extra.scss'
 import { SelectionWithId } from 'react-datasheet-grid/dist/types'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
-import { autocompleteColumn } from './columns/AutocompleteColumn'
-import {
-  DataGridRow,
-  GridModel,
-  GridModelSnapshot,
-  Operation,
-} from './DataGridTypes'
+import { DataGridRow, GridModel, Operation } from './DataGridTypes'
 import { useGridUndoRedo } from './hooks/useGridUndoRedo'
 import { StartGridSession, StartGridSessionHandle } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
@@ -54,8 +38,10 @@ import {
 } from './utils/DataGridUtils'
 import { getCellClassName } from './utils/getCellClassName'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
-import { Button } from '@mui/material'
+import { modelColsToGrid } from './utils/modelColsToGrid'
+import { Stack } from '@mui/material'
 import GridAgentChat from '../SynapseChat/GridAgentChat'
+import { SmartToyTwoTone } from '@mui/icons-material'
 
 export type SynapseGridProps = {
   showDebugInfo?: boolean
@@ -115,6 +101,11 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       },
     )
 
+    // Process schema properties once
+    const schemaPropertiesInfo = useMemo(() => {
+      return getSchemaPropertiesInfo(jsonSchema!)
+    }, [jsonSchema])
+
     const connectionStatus = isConnected ? 'Connected' : 'Disconnected'
 
     // Transform the model view rows and columns to DataSheetGrid format
@@ -122,74 +113,13 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       () => (modelSnapshot ? modelRowsToGrid(model, modelSnapshot) : []),
       [model, modelSnapshot],
     )
-    const colValues = modelSnapshot ? modelColsToGrid(modelSnapshot) : []
-
-    // Convert model columns to a format suitable for DataSheetGrid
-    function modelColsToGrid(modelSnapshot: GridModelSnapshot): Column[] {
-      if (!modelSnapshot) return []
-      const { columnNames, columnOrder } = modelSnapshot
-      const requiredFields = jsonSchema ? getRequiredAttributes(jsonSchema) : []
-      const gridCols: Column[] = columnOrder.map((index: number) => {
-        const columnName = columnNames[index]
-        const enumeratedValues = jsonSchema
-          ? getEnumeratedValues(
-              getSchemaForProperty(jsonSchema, columnName),
-            ).map(item => item.value)
-          : null
-        const colType = jsonSchema
-          ? getType(getSchemaForProperty(jsonSchema, columnName))
-          : null
-
-        if (colType === 'boolean') {
-          return {
-            ...keyColumn(columnName, checkboxColumn),
-            title: columnName,
-            headerClassName: requiredFields.includes(columnName)
-              ? 'header-cell-required'
-              : 'header-cell',
-          }
-        }
-
-        if (colType === 'number' || colType === 'integer') {
-          return {
-            ...keyColumn(columnName, floatColumn),
-            title: columnName,
-            headerClassName: requiredFields.includes(columnName)
-              ? 'header-cell-required'
-              : 'header-cell',
-          }
-        }
-
-        if (enumeratedValues && enumeratedValues.length > 0) {
-          // Use autocomplete column for columns with enumerated values
-          return {
-            ...keyColumn(
-              columnName,
-              autocompleteColumn({
-                choices: enumeratedValues,
-                colType: colType,
-              }),
-            ),
-            title: columnName,
-            headerClassName: requiredFields.includes(columnName)
-              ? 'header-cell-required'
-              : 'header-cell',
-          }
-        }
-        return {
-          // Default to text column for columns without enumerated values
-          ...keyColumn(
-            columnName,
-            createTextColumn({ continuousUpdates: false }),
-          ),
-          title: columnName,
-          headerClassName: requiredFields.includes(columnName)
-            ? 'header-cell-required'
-            : 'header-cell',
-        }
-      })
-      return gridCols
-    }
+    const colValues = useMemo(
+      () =>
+        modelSnapshot
+          ? modelColsToGrid(modelSnapshot, schemaPropertiesInfo)
+          : [],
+      [modelSnapshot, schemaPropertiesInfo],
+    )
 
     const commit = useCallback(
       throttle(() => {
@@ -360,92 +290,107 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
 
               {/* Grid */}
               {isGridReady && (
-                <Grid size={12}>
-                  {undoUI}
-                  {redoUI}
-                  <Button onClick={() => setChatOpen(true)}>Open chat</Button>
-                  <GridAgentChat
-                    open={chatOpen}
-                    onClose={() => setChatOpen(false)}
-                    gridSessionId={session.sessionId!}
-                    usersReplicaId={replicaId!}
-                    chatbotName="Grid Assistant"
-                  />
-
-                  <DataSheetGrid
-                    ref={gridRef}
-                    value={rowValues}
-                    columns={colValues}
-                    rowKey={GRID_ROW_REACT_KEY_PROPERTY}
-                    rowClassName={({ rowData, rowIndex }) =>
-                      classNames({
-                        'row-valid':
-                          rowData.__validationResults?.isValid === true,
-                        'row-invalid':
-                          rowData.__validationResults?.isValid === false,
-                        'row-unknown':
-                          !!jsonSchema &&
-                          rowData.__validationResults?.isValid == undefined,
-                        'row-selected': selectedRowIndex === rowIndex,
-                      })
-                    }
-                    cellClassName={({ rowData, rowIndex, columnId }) =>
-                      getCellClassName({
-                        rowData: rowData as DataGridRow,
-                        rowIndex,
-                        columnId,
-                        selectedRowIndex,
-                      })
-                    }
-                    duplicateRow={({ rowData }: any) => ({
-                      ...rowData,
-                    })}
-                    onChange={handleChange}
-                    onActiveCellChange={({ cell }) => {
-                      if (cell) {
-                        setSelectedRowIndex(cell.row)
-                      }
-                    }}
-                    onSelectionChange={handleSelectionChange}
-                  />
-                  {/* Show validation messages for selected row */}
-                  {selectedRowIndex !== null &&
-                    rowValues[selectedRowIndex] &&
-                    Array.isArray(
-                      rowValues[selectedRowIndex].__validationResults
-                        ?.allValidationMessages,
-                    ) &&
-                    rowValues[selectedRowIndex].__validationResults
-                      ?.allValidationMessages.length > 0 && (
-                      <FullWidthAlert
-                        variant="warning"
-                        title="Validation Messages For Selected Row:"
-                        isGlobal={false}
-                        description={
-                          <ul>
-                            {rowValues[
-                              selectedRowIndex
-                            ].__validationResults.allValidationMessages.map(
-                              (msg: string) => (
-                                <li key={msg}>{msg}</li>
-                              ),
-                            )}
-                          </ul>
-                        }
-                        sx={{
-                          marginTop: '12px',
-                        }}
+                <>
+                  <Grid size={12}>
+                    <Stack
+                      direction={'row'}
+                      spacing={1}
+                      sx={{ justifyContent: 'flex-end' }}
+                    >
+                      {undoUI}
+                      {redoUI}
+                      <GridMenuButton
+                        variant={'outlined'}
+                        onClick={() => setChatOpen(true)}
+                        startIcon={<SmartToyTwoTone />}
+                      >
+                        Open chat
+                      </GridMenuButton>
+                      <GridAgentChat
+                        open={chatOpen}
+                        onClose={() => setChatOpen(false)}
+                        gridSessionId={session.sessionId!}
+                        usersReplicaId={replicaId!}
+                        chatbotName="Grid Assistant"
                       />
-                    )}
-                </Grid>
-              )}
-              {isGridReady && session.sourceEntityId && (
-                <Grid container size={12} sx={{ justifyContent: 'flex-end' }}>
-                  <MergeGridWithSourceTableButton
-                    sourceEntityId={session.sourceEntityId}
-                    gridSessionId={session.sessionId!}
-                  />
-                </Grid>
+                      {session.sourceEntityId && (
+                        <MergeGridWithSourceTableButton
+                          sourceEntityId={session.sourceEntityId}
+                          gridSessionId={session.sessionId!}
+                        />
+                      )}
+                    </Stack>
+                  </Grid>
+                  <Grid size={12}>
+                    <DataSheetGrid
+                      ref={gridRef}
+                      value={rowValues}
+                      columns={colValues}
+                      rowKey={GRID_ROW_REACT_KEY_PROPERTY}
+                      rowClassName={({ rowData, rowIndex }) =>
+                        classNames({
+                          'row-valid':
+                            rowData.__validationResults?.isValid === true,
+                          'row-invalid':
+                            rowData.__validationResults?.isValid === false,
+                          'row-unknown':
+                            !!jsonSchema &&
+                            rowData.__validationResults?.isValid == undefined,
+                          'row-selected': selectedRowIndex === rowIndex,
+                        })
+                      }
+                      cellClassName={({ rowData, rowIndex, columnId }) =>
+                        getCellClassName({
+                          rowData: rowData as DataGridRow,
+                          rowIndex,
+                          columnId,
+                          selectedRowIndex,
+                        })
+                      }
+                      duplicateRow={({ rowData }: any) => ({
+                        ...rowData,
+                      })}
+                      onChange={handleChange}
+                      onActiveCellChange={({ cell }) => {
+                        if (cell) {
+                          setSelectedRowIndex(cell.row)
+                        }
+                      }}
+                      onSelectionChange={handleSelectionChange}
+                    />
+                  </Grid>
+                  <Grid size={12}>
+                    {/* Show validation messages for selected row */}
+                    {selectedRowIndex !== null &&
+                      rowValues[selectedRowIndex] &&
+                      Array.isArray(
+                        rowValues[selectedRowIndex].__validationResults
+                          ?.allValidationMessages,
+                      ) &&
+                      rowValues[selectedRowIndex].__validationResults
+                        ?.allValidationMessages.length > 0 && (
+                        <FullWidthAlert
+                          variant="warning"
+                          title="Validation Messages For Selected Row:"
+                          isGlobal={false}
+                          description={
+                            <ul>
+                              {rowValues[
+                                selectedRowIndex
+                              ].__validationResults.allValidationMessages.map(
+                                (msg: string) => (
+                                  <li key={msg}>{msg}</li>
+                                ),
+                              )}
+                            </ul>
+                          }
+                          sx={{
+                            marginTop: '12px',
+                          }}
+                        />
+                      )}
+                  </Grid>
+                </>
               )}
               {/* Debug Model Snapshot */}
               {showDebugInfo && (

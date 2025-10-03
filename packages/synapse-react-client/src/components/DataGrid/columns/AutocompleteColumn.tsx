@@ -19,7 +19,7 @@ export type AutocompleteCellProps = CellProps & {
   colType?: JSONSchema7Type
 }
 
-function castCellValueToString(toCast: any): string {
+export function castCellValueToString(toCast: any): string {
   if (typeof toCast === 'object') {
     return JSON.stringify(toCast)
   }
@@ -56,9 +56,17 @@ function AutocompleteCell({
           // The value was selected, so explicitly set it
           setRowData(newVal)
         }
+        // Update local input state to match the selected/created value
+        setLocalInputState(castCellValueToString(newVal))
       }}
-      blurOnSelect={true}
-      onBlur={() => setRowData(localInputState)}
+      blurOnSelect={false}
+      onBlur={_event => {
+        // Only update on blur if the input value differs from the current rowData
+        // and no option was selected (which would have already updated via onChange)
+        if (localInputState !== castCellValueToString(rowData)) {
+          setRowData(parseFreeTextGivenJsonSchemaType(localInputState, colType))
+        }
+      }}
       renderInput={params => (
         <TextField
           {...params}

@@ -38,6 +38,35 @@ describe('extractColumnValidationMessages', () => {
     expect(result.get('name')).toEqual(['cannot be empty'])
   })
 
+  it('should handle messages with array indices', () => {
+    const messages = [
+      '#/items/0: null is not a valid enum value',
+      '#/items/1: must be a number',
+    ]
+    const result = extractColumnValidationMessages(messages)
+
+    expect(result.size).toBe(1)
+    expect(result.get('items')).toEqual([
+      'null is not a valid enum value',
+      'must be a number',
+    ])
+  })
+
+  it('should handle messages with both array and string columns', () => {
+    const messages = [
+      '#/items/0: null is not a valid enum value',
+      '#/items/1: must be a number',
+      '#/name: cannot be empty',
+    ]
+    const result = extractColumnValidationMessages(messages)
+
+    expect(result.get('items')).toEqual([
+      'null is not a valid enum value',
+      'must be a number',
+    ])
+    expect(result.get('name')).toEqual(['cannot be empty'])
+  })
+
   it('should handle empty array', () => {
     const result = extractColumnValidationMessages([])
 
