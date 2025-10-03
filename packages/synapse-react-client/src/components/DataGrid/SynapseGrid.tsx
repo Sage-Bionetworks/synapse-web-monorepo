@@ -57,6 +57,9 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const [session, setSession] = useState<GridSession | null>(null)
     const [replicaId, setReplicaId] = useState<number | null>(null)
     const [chatOpen, setChatOpen] = useState(false)
+    const [lastSelection, setLastSelection] = useState<SelectionWithId | null>(
+      null,
+    )
 
     const startGridSessionRef = useRef<StartGridSessionHandle | null>(null)
 
@@ -175,19 +178,24 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const handleSelectionChange = useCallback(
       (opts: { selection: SelectionWithId | null }) => {
         const { selection } = opts
-        if (selection != null && model != null && replicaId != null) {
-          const replicaSelectionModel = computeReplicaSelectionModel(
-            selection,
-            model,
-          )
-          // insert it into the CRDT Model
-          applyAndCommitChanges(model, [
-            {
-              type: 'SET_SELECTION',
-              replicaId: replicaId.toString(),
-              selection: replicaSelectionModel,
-            },
-          ])
+
+        if (selection != null) {
+          setLastSelection(selection)
+
+          if (model != null && replicaId != null) {
+            const replicaSelectionModel = computeReplicaSelectionModel(
+              selection,
+              model,
+            )
+            // insert it into the CRDT Model
+            applyAndCommitChanges(model, [
+              {
+                type: 'SET_SELECTION',
+                replicaId: replicaId.toString(),
+                selection: replicaSelectionModel,
+              },
+            ])
+          }
         }
       },
       [applyAndCommitChanges, model, replicaId],
@@ -339,14 +347,28 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                           'row-selected': selectedRowIndex === rowIndex,
                         })
                       }
-                      cellClassName={({ rowData, rowIndex, columnId }) =>
-                        getCellClassName({
+                      cellClassName={({ rowData, rowIndex, columnId }) => {
+                        const baseCellClassName = getCellClassName({
                           rowData: rowData as DataGridRow,
                           rowIndex,
                           columnId,
                           selectedRowIndex,
                         })
-                      }
+
+                        // Add selection styling based on lastSelection
+                        const isInSelection =
+                          lastSelection &&
+                          rowIndex >= lastSelection.min.row &&
+                          rowIndex <= lastSelection.max.row &&
+                          colValues.findIndex(col => col.id === columnId) >=
+                            lastSelection.min.col &&
+                          colValues.findIndex(col => col.id === columnId) <=
+                            lastSelection.max.col
+
+                        return classNames(baseCellClassName, {
+                          'cell-selected': isInSelection,
+                        })
+                      }}
                       duplicateRow={({ rowData }: any) => ({
                         ...rowData,
                       })}
