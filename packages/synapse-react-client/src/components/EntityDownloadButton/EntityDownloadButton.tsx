@@ -3,6 +3,7 @@ import { DownloadOutlined as DownloadIcon } from '@mui/icons-material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { useState } from 'react'
 import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
+import { TableExportModal } from './TableExportModal'
 
 // Have to keep these consts outside of getProgrammaticAccessCode because
 // they are being called in ProgrammaticTableDownload.tsx
@@ -83,7 +84,8 @@ function getMenuItemForAction(
   entityId: string,
   entityName: string,
   downloadAction: DownloadAction,
-  setIsShowingModal: (show: boolean) => void,
+  setShowProgrammaticAccess: (show: boolean) => void,
+  setShowExportMetadata: (show: boolean) => void,
 ): DropdownMenuItem {
   switch (downloadAction) {
     case DownloadAction.downloadFile:
@@ -108,7 +110,7 @@ function getMenuItemForAction(
       return {
         text: 'Programmatic Access',
         onClick: () => {
-          setIsShowingModal(true)
+          setShowProgrammaticAccess(true)
         },
         tooltipText: 'View programmatic access options',
       }
@@ -116,7 +118,7 @@ function getMenuItemForAction(
       return {
         text: 'Programmatic Access (Docker)',
         onClick: () => {
-          setIsShowingModal(true)
+          setShowProgrammaticAccess(true)
         },
         tooltipText: 'View programmatic options to pull Docker image',
       }
@@ -124,8 +126,7 @@ function getMenuItemForAction(
       return {
         text: 'Export Table',
         onClick: () => {
-          console.log('Export table for:', entityId)
-          // TODO: Implement export table functionality
+          setShowExportMetadata(true)
         },
         tooltipText: 'Export table data',
       }
@@ -146,12 +147,11 @@ export function getDownloadActionsForEntityType(
     case 'project':
     case 'folder':
       return [[DownloadAction.addToCart, DownloadAction.programmaticAccess]]
+    case 'dockerrepo':
+      return [[DownloadAction.programmaticAccessDocker]]
     case 'entityview':
     case 'dataset':
     case 'table':
-      return [[DownloadAction.addToCart, DownloadAction.programmaticAccess]]
-    case 'dockerrepo':
-      return [[DownloadAction.programmaticAccessDocker]]
     case 'datasetcollection':
     case 'materializedview':
     case 'submissionview':
@@ -171,10 +171,18 @@ export function EntityDownloadButton(props: {
   entityType: EntityType
 }) {
   // state to manage programmatic access modal visibility
-  const [isShowingModal, setIsShowingModal] = useState<boolean>(false)
+  const [ShowProgrammaticAccess, setShowProgrammaticAccess] =
+    useState<boolean>(false)
 
-  const handleCloseModal = () => {
-    setIsShowingModal(false)
+  const handleCloseProgrammaticAccess = () => {
+    setShowProgrammaticAccess(false)
+  }
+
+  // state to manage export metadata modal visibility
+  const [showExportMetadata, setShowExportMetadata] = useState<boolean>(false)
+
+  const handleCloseExportMetadata = () => {
+    setShowExportMetadata(false)
   }
 
   // Create download menu items
@@ -185,7 +193,8 @@ export function EntityDownloadButton(props: {
         props.entityId,
         props.name,
         action,
-        setIsShowingModal,
+        setShowProgrammaticAccess,
+        setShowExportMetadata,
       ),
     ),
   )
@@ -208,15 +217,21 @@ export function EntityDownloadButton(props: {
         }}
       />
       <ProgrammaticInstructionsModal
-        show={isShowingModal}
+        show={ShowProgrammaticAccess}
         title={`Programmatic Access: ${props.name}`}
-        onClose={handleCloseModal}
+        onClose={handleCloseProgrammaticAccess}
         pythonCode={pythonCode}
         rCode={rCode}
         cliCode={cliCode}
         helpUrl="https://help.synapse.org/docs/Synapse-Docker-Registry.2011037752.html#SynapseDockerRegistry-UsingDockerImagesStoredintheSynapseDockerRegistry"
         hasCancelButton={false}
       />
+      {showExportMetadata && (
+        <TableExportModal
+          entityId={props.entityId}
+          onClose={handleCloseExportMetadata}
+        />
+      )}
     </>
   )
 }
