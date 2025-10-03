@@ -3,7 +3,10 @@ import 'vitest'
 
 interface CustomMatchers<R = unknown> {
   toHaveBeenRendered: () => R
-  toHaveBeenRenderedWithProps: (props: unknown) => R
+  toHaveBeenRenderedWithProps: (
+    props: unknown,
+    options?: { testId?: string },
+  ) => R
   toHaveBeenLastRenderedWithProps: (props: unknown) => R
 }
 

@@ -1,0 +1,30 @@
+.entityTreeTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 10px 0px;
+  table-layout: auto;
+
+  tr {
+    height: 51px;
+  }
+
+  th,
+  td {
+    padding: 0px 7px;
+    text-align: left;
+    vertical-align: middle;
+    height: 51px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    > * {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  th {
+    font-weight: 600;
+  }
+}

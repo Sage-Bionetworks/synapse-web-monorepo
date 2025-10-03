@@ -19,7 +19,7 @@ export function ModifiedByCell<T extends EntityIdAndVersionNumber>(
   )
 
   if (isLoading) {
-    return <Skeleton width={200} />
+    return <Skeleton width={100} />
   }
 
   return <UserBadgeCell {...props} cellData={bundle?.entity.modifiedBy} />

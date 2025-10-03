@@ -39,6 +39,8 @@ export function useGetEntityBundleQueryOptions<
             accessToken,
           )
       : skipToken,
+    staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh longer
+    gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache longer
   }
 }
 
