@@ -78,20 +78,35 @@ describe('CsvTableDescriptorForm', () => {
   })
 
   it('works as an uncontrolled component', async () => {
-    render(<CsvTableDescriptorForm />)
-    // Change separator to Semicolon
+    // Provide a defaultValue and verify initial state
+    const defaultValue = {
+      separator: ';',
+      quoteCharacter: '"',
+      escapeCharacter: '\\',
+      lineEnd: '\n',
+      isFirstLineHeader: false,
+    }
+    render(<CsvTableDescriptorForm defaultValue={defaultValue} />)
+    // Initial state should reflect defaultValue
     const semicolonRadio = screen.getByLabelText('Semicolon')
-    await userEvent.click(semicolonRadio)
-    // Change escape character (only one option, click it)
     const backslashRadio = screen.getByLabelText('Backslash')
-    await userEvent.click(backslashRadio)
-    // Uncheck header
     const checkbox = screen.getByLabelText('First line is the header')
-    await userEvent.click(checkbox)
-    // No errors should occur, and the UI should reflect the changes
     expect((semicolonRadio as HTMLInputElement).checked).toBe(true)
     expect((backslashRadio as HTMLInputElement).checked).toBe(true)
     expect((checkbox as HTMLInputElement).checked).toBe(false)
+
+    // Change separator to Tab
+    const tabRadio = screen.getByLabelText('Tab')
+    await userEvent.click(tabRadio)
+    expect((tabRadio as HTMLInputElement).checked).toBe(true)
+
+    // Change escape character (only one option, click it)
+    await userEvent.click(backslashRadio)
+    expect((backslashRadio as HTMLInputElement).checked).toBe(true)
+
+    // Check header
+    await userEvent.click(checkbox)
+    expect((checkbox as HTMLInputElement).checked).toBe(true)
   })
 
   it('works as a controlled component', async () => {

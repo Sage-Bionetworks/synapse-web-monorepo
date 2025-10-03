@@ -101,11 +101,16 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
           <Typography variant={'headline3'}>Show Options</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <CsvTableDescriptorForm ref={csvDescriptorFormRef} />
+          <CsvTableDescriptorForm
+            defaultValue={csvTableDescriptor}
+            ref={csvDescriptorFormRef}
+          />
           <Button
             variant={'outlined'}
             startIcon={<RefreshTwoTone />}
+            sx={{ mt: 2 }}
             onClick={() => {
+              // Get the state from the form and update local state, which will re-render the preview
               if (csvDescriptorFormRef.current) {
                 setCsvTableDescriptor(
                   csvDescriptorFormRef.current.getFormData(),

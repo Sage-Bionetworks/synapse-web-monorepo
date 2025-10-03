@@ -7,6 +7,14 @@ import { CsvTableDescriptor } from '@sage-bionetworks/synapse-client'
 import noop from 'lodash-es/noop'
 import { useEffect, useImperativeHandle, useState, Ref } from 'react'
 
+const DEFAULT_DESCRIPTOR_VALUE: CsvTableDescriptor = {
+  separator: ',',
+  quoteCharacter: '"',
+  escapeCharacter: '\\',
+  lineEnd: '\n',
+  isFirstLineHeader: true,
+}
+
 export type CsvTableDescriptorFormHandle = {
   /** Call to retrieve the current form data */
   getFormData: () => CsvTableDescriptor
@@ -14,6 +22,8 @@ export type CsvTableDescriptorFormHandle = {
 
 export type CsvTableDescriptorFormProps = {
   ref?: Ref<CsvTableDescriptorFormHandle>
+  /** The initial value of the form, if an uncontrolled form */
+  defaultValue?: CsvTableDescriptor
   /** The current value of the form, if a controlled form */
   value?: CsvTableDescriptor
   /** Invoked when the form data changes */
@@ -27,13 +37,11 @@ export default function CsvTableDescriptorForm(
   props: CsvTableDescriptorFormProps,
 ) {
   const { value: valueFromProps, onChange = noop } = props
-  const [localStateValue, setLocalStateValue] = useState<CsvTableDescriptor>({
-    separator: ',',
-    quoteCharacter: '"',
-    escapeCharacter: '\\',
-    lineEnd: '\n',
-    isFirstLineHeader: true,
-  })
+  const defaultValue =
+    valueFromProps ?? props.defaultValue ?? DEFAULT_DESCRIPTOR_VALUE
+
+  const [localStateValue, setLocalStateValue] =
+    useState<CsvTableDescriptor>(defaultValue)
 
   const value = valueFromProps ?? localStateValue
 
@@ -44,9 +52,9 @@ export default function CsvTableDescriptorForm(
   useImperativeHandle(
     props.ref,
     () => ({
-      getFormData: () => localStateValue,
+      getFormData: () => value,
     }),
-    [localStateValue],
+    [value],
   )
 
   return (
@@ -93,7 +101,7 @@ export default function CsvTableDescriptorForm(
         <FormControlLabel
           control={<Checkbox />}
           label={'First line is the header'}
-          checked={localStateValue.isFirstLineHeader}
+          checked={value.isFirstLineHeader}
           onChange={(_e, checked) => {
             setLocalStateValue(current => ({
               ...current,

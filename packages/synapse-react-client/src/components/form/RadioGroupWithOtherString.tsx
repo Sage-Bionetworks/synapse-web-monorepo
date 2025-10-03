@@ -20,8 +20,13 @@ export default function RadioGroupWithOtherString(
   props: RadioGroupWithOtherStringProps,
 ) {
   const { value, onChange, options, radioGroupProps } = props
-  const [radioValue, setRadioValue] = useState(value)
-  const [inputValue, setInputValue] = useState('')
+  // Determine if the initial value matches any of the options
+  const isPredefinedOption = options.some(option => option.value === value)
+
+  const [radioValue, setRadioValue] = useState(
+    isPredefinedOption ? value : OTHER_OPTION_VALUE,
+  )
+  const [inputValue, setInputValue] = useState(isPredefinedOption ? '' : value)
 
   return (
     <RadioGroup
