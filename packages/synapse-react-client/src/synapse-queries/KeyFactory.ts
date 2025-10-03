@@ -15,6 +15,7 @@ import {
   GetRepoV1DoiAssociationRequest,
   GetRepoV1DoiRequest,
   ListGridSessionsRequest,
+  UploadToTablePreviewRequest,
   type UserSubmissionSearchRequest,
   ViewEntityType,
 } from '@sage-bionetworks/synapse-client'
@@ -1010,5 +1011,9 @@ export class KeyFactory {
 
   public getCurationTaskListKey(projectId: string) {
     return this.getKey('curationTask', 'list', projectId)
+  }
+
+  public getCsvPreviewQueryKey(request: UploadToTablePreviewRequest) {
+    return this.getKey('csvPreview', request)
   }
 }

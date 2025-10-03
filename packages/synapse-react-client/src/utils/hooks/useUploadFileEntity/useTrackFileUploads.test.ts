@@ -2,6 +2,7 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { act, renderHook as _renderHook } from '@testing-library/react'
 import { useTrackFileUploads } from './useTrackFileUploads'
 
+const fileHandleId = '123'
 describe('useTrackFileUploads', () => {
   function renderHook() {
     return _renderHook(() => useTrackFileUploads(), {
@@ -121,7 +122,7 @@ describe('useTrackFileUploads', () => {
         parentId: 'syn123',
       })
 
-      hook.current.setComplete(file)
+      hook.current.setComplete(file, fileHandleId)
     })
 
     expect(hook.current.trackedUploadProgress.size).toBe(1)
@@ -315,7 +316,7 @@ describe('useTrackFileUploads', () => {
       hook.current.pauseUpload(pausedFile)
       hook.current.cancelUpload(canceledFile)
       hook.current.setFailed(failedFile, 'some reason')
-      hook.current.setComplete(completedFile)
+      hook.current.setComplete(completedFile, fileHandleId)
     })
 
     // Should count PREPARING, UPLOADING, and PAUSED
@@ -381,7 +382,7 @@ describe('useTrackFileUploads', () => {
 
     // Mark it as complete
     act(() => {
-      hook.current.setComplete(file1)
+      hook.current.setComplete(file1, fileHandleId)
     })
     expect(hook.current.isUploadComplete).toBe(true)
 
@@ -402,7 +403,7 @@ describe('useTrackFileUploads', () => {
 
     // Multiple files complete
     act(() => {
-      hook.current.setComplete(file2)
+      hook.current.setComplete(file2, fileHandleId)
     })
     expect(hook.current.isUploadComplete).toBe(true)
   })

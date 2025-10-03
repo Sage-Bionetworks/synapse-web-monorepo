@@ -3,6 +3,7 @@ import MergeGridWithSourceTableButton from '@/components/DataGrid/MergeGridWithS
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { SkeletonTable } from '@/components/index'
+import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
 import { useGetSchema } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import Grid from '@mui/material/Grid'
@@ -313,6 +314,12 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                         usersReplicaId={replicaId!}
                         chatbotName="Grid Assistant"
                       />
+                      {session.sourceEntityId && (
+                        <UploadCsvToGridButton
+                          sourceEntityId={session.sourceEntityId}
+                          gridSessionId={session.sessionId!}
+                        />
+                      )}
                       {session.sourceEntityId && (
                         <MergeGridWithSourceTableButton
                           sourceEntityId={session.sourceEntityId}

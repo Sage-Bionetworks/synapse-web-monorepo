@@ -24,6 +24,7 @@ export type BaseFilePreparedForUpload = { file: File }
 
 export type UploadItem = {
   file: File
+  fileHandleId?: string
   progress: ProgressCallback
   status: UploadFileStatus
   cancel: () => void
@@ -197,7 +198,7 @@ export function useUploadFiles(
         if (onUploadComplete) {
           await onUploadComplete(preparedFile, newFileHandleId)
         }
-        setComplete(preparedFile.file)
+        setComplete(preparedFile.file, newFileHandleId)
       } catch (e) {
         console.error('File upload failed: ', e)
         setFailed(preparedFile.file, e.message)
@@ -242,6 +243,7 @@ export function useUploadFiles(
     return [...trackedUploadProgress].map(([file, trackedProgress]) => {
       return {
         file: file,
+        fileHandleId: trackedProgress.fileHandleId,
         progress: trackedProgress.progress,
         status: trackedProgress.status,
         failureReason: trackedProgress.failureReason,

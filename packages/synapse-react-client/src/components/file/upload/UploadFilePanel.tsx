@@ -41,6 +41,11 @@ export type UploadFilePanelProps = {
    * @default false
    */
   disabled?: boolean
+  /**
+   * Whether to enable drag-and-drop to upload functionality.
+   * @default false
+   */
+  disableDragAndDrop?: boolean
 }
 
 /**
@@ -56,6 +61,7 @@ export default function UploadFilePanel(props: UploadFilePanelProps) {
     loadingText = 'Loading...',
     disabled = false,
     message,
+    disableDragAndDrop = false,
   } = props
   const fileInputRef = useRef<HTMLInputElement>(null)
   const folderInputRef = useRef<HTMLInputElement>(null)
@@ -147,7 +153,8 @@ export default function UploadFilePanel(props: UploadFilePanelProps) {
               my: 2,
             }}
           >
-            <Link onClick={handleClick}>Click to upload</Link> or drag and drop
+            <Link onClick={handleClick}>Click to upload</Link>
+            {!disableDragAndDrop && ' or drag and drop'}
           </Typography>
           <Menu
             anchorEl={anchorEl}

@@ -8,11 +8,22 @@ import { noop } from 'lodash-es'
 import { ForwardedRef, forwardRef, useEffect, useImperativeHandle } from 'react'
 
 export type BasicFileHandleUploadProps = {
-  allowMultipleUpload: boolean
+  /**
+   * Whether to allow uploading multiple files.
+   * Currently, only single file upload is supported by this UI component.
+   */
+  allowMultipleUpload: false
+  /**
+   * Whether to disable "drag-and-drop to upload" functionality.
+   * Currently, drag-and-drop cannot be enabled.
+   */
+  disableDragAndDrop: true
   /** Callback that is invoked when the state of the uploader changes */
   onStateChange?: (state: UploaderState) => void
   /** Callback that is invoked when component is ready to upload */
   onUploadReady?: () => void
+  /** Callback that is invoked when an individual upload is complete */
+  onFileUploadComplete?: (fileHandleIds: string) => void
 }
 
 export type FileUploadHandle = {
@@ -32,9 +43,15 @@ export const BasicFileHandleUpload = forwardRef(function FileHandleUpload(
     allowMultipleUpload,
     onStateChange = noop,
     onUploadReady = noop,
+    onFileUploadComplete = noop,
   } = props
 
-  const { startUpload, state, uploadProgress } = useUploadFiles()
+  const { startUpload, state, uploadProgress } = useUploadFiles({
+    onUploadComplete: (_, fileHandleId) => {
+      onFileUploadComplete(fileHandleId)
+      return Promise.resolve()
+    },
+  })
 
   useEffect(() => {
     onStateChange(state)
@@ -62,6 +79,7 @@ export const BasicFileHandleUpload = forwardRef(function FileHandleUpload(
       <UploadFilePanel
         onUploadFileList={uploadFileList}
         allowMultipleFiles={allowMultipleUpload}
+        disableDragAndDrop={true}
       />
       <MultiFileUploadProgress
         uploaderState={state}
