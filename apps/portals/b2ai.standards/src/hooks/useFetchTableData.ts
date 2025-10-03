@@ -67,7 +67,6 @@ export function useFetchTableData(props: UseFetchAllRowCountsProps) {
 
     queryToRun = { sql: qs, additionalFilters } as Query
   }
-  // console.log({tableName, queryToRun})
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId: getSynapseTableId(tableName),

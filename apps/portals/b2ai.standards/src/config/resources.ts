@@ -209,7 +209,6 @@ export function getColumnExpressions({
 }: getColumnExpressionsProps): string[] {
   if (!columnNames) {
     if (!tableName) {
-      // console.error(`Either columnNames or tableName required in getColumnExpressions`)
       throw new Error('Either columnNames or tableName required')
     }
     columnNames = Object.values(tableInfo[tableName].columnConsts ?? {})

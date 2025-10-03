@@ -117,8 +117,6 @@ export default function OrganizationDetailsPage() {
   const sections: DetailsPageSectionLayoutType[] = detailSections({
     detailOrg: jsonColCounts,
   })
-  console.log(data, sections)
-  // const deck = <CardDeck cards={challengeCards} cardDeckType="b2ai" />
 
   return (
     <DetailsPage

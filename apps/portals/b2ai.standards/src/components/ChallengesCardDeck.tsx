@@ -18,7 +18,6 @@ export function ChallengesCardDeck() {
     colExpressions: COLS_NEEDED,
     ids: GC_ORG_IDS,
   })
-  console.log({ data, error, isLoading })
   const gcOrgs = data ?? []
 
   if (error) {

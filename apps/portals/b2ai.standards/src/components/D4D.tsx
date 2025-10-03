@@ -25,7 +25,6 @@ export function D4D(props: D4DProps) {
     // queryString: getQueryString('D4D_content'),
     id: org_id,
   })
-  console.log({ data, error, isLoading })
 
   if (error) {
     return <ErrorBanner error={error} />
