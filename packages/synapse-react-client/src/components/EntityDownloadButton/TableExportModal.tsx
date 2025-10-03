@@ -21,6 +21,8 @@ import {
   writeHeaderOption,
 } from '../ModalDownload/ModalDownload.FormSchema'
 
+// Modified ModalDownload component to accept props directly rather than parsing queryBundleRequest
+
 type ModalDownloadState = {
   isLoading: boolean
   step: number
@@ -37,6 +39,7 @@ export type TableExportModalProps = {
   sort?: SortItem[]
 }
 
+// Pops up a modal for exporting table data
 export class TableExportModal extends Component<
   TableExportModalProps,
   ModalDownloadState
@@ -131,7 +134,7 @@ export class TableExportModal extends Component<
       <DialogBase
         open={true}
         onCancel={this.props.onClose}
-        title="Download query results"
+        title="Export Table"
         content={
           <>
             <Form
