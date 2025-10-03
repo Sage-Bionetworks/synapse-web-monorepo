@@ -16,6 +16,7 @@ import AMPALSExploreTheData from './ampals/AMPALSExploreTheData'
 import ELSupportedByNIH from './eliteportal/ELSupportedByNIH'
 import ARKWelcomePage from './arkportal/ARKWelcomePage'
 import ClassicSupportedByNIABanner from './classic/ClassicSupportedByNIABanner/ClassicSupportedByNIABanner'
+import ChallengeHeader from './challenges/ChallengeHeader/ChallengeHeader'
 
 import ExploreWrapper from './Explore/ExploreWrapper'
 import GenieHomePageHeader from './genie/GenieHomePageHeader'
@@ -33,6 +34,7 @@ import TabbedSynapseObjects from './TabbedSynapseObjects'
 import RepositoryUnderReviewAlert from './RepositoryUnderReviewAlert'
 
 const PortalComponents = {
+  ChallengeHeader,
   RouteControlWrapper: ExploreWrapper,
   DetailsPage,
   HomePageCardContainer,
