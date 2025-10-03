@@ -13,6 +13,6 @@ export const defaultSearchConfiguration: Omit<
 > = {
   ftsConfig: {
     textMatchesMode: 'NATURAL_LANGUAGE',
-    searchHelpURL: 'https://help.eliteportal.org/help/search-tips',
+    searchHelpURL: 'https://help.classicportal.org/help/search-tips',
   },
 }
