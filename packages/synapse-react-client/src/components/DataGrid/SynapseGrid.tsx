@@ -58,6 +58,9 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const [session, setSession] = useState<GridSession | null>(null)
     const [replicaId, setReplicaId] = useState<number | null>(null)
     const [chatOpen, setChatOpen] = useState(false)
+    const [lastSelection, setLastSelection] = useState<SelectionWithId | null>(
+      null,
+    )
 
     const startGridSessionRef = useRef<StartGridSessionHandle | null>(null)
 
@@ -176,19 +179,23 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const handleSelectionChange = useCallback(
       (opts: { selection: SelectionWithId | null }) => {
         const { selection } = opts
-        if (selection != null && model != null && replicaId != null) {
-          const replicaSelectionModel = computeReplicaSelectionModel(
-            selection,
-            model,
-          )
-          // insert it into the CRDT Model
-          applyAndCommitChanges(model, [
-            {
-              type: 'SET_SELECTION',
-              replicaId: replicaId.toString(),
-              selection: replicaSelectionModel,
-            },
-          ])
+        if (selection != null) {
+          setLastSelection(selection)
+
+          if (model != null && replicaId != null) {
+            const replicaSelectionModel = computeReplicaSelectionModel(
+              selection,
+              model,
+            )
+            // insert it into the CRDT Model
+            applyAndCommitChanges(model, [
+              {
+                type: 'SET_SELECTION',
+                replicaId: replicaId.toString(),
+                selection: replicaSelectionModel,
+              },
+            ])
+          }
         }
       },
       [applyAndCommitChanges, model, replicaId],
@@ -346,14 +353,16 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                           'row-selected': selectedRowIndex === rowIndex,
                         })
                       }
-                      cellClassName={({ rowData, rowIndex, columnId }) =>
-                        getCellClassName({
+                      cellClassName={({ rowData, rowIndex, columnId }) => {
+                        return getCellClassName({
                           rowData: rowData as DataGridRow,
                           rowIndex,
                           columnId,
                           selectedRowIndex,
+                          lastSelection,
+                          colValues,
                         })
-                      }
+                      }}
                       duplicateRow={({ rowData }: any) => ({
                         ...rowData,
                       })}

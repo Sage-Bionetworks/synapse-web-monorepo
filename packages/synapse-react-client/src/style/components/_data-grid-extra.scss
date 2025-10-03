@@ -64,3 +64,13 @@
 .multi-value-cell-large {
   min-height: 80px;
 }
+
+.cell-selected {
+  background-color: rgba(25, 118, 210, 0.08);
+  border: 1px solid rgba(25, 118, 210, 0.5);
+}
+
+.dsg-container:not(:focus-within) .cell-selected {
+  background-color: rgba(25, 118, 210, 0.04);
+  border: 1px solid rgba(25, 118, 210, 0.3);
+}
