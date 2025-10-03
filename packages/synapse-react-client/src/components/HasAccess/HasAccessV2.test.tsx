@@ -4,10 +4,12 @@ import {
   mockUnmetControlledDataRestrictionInformationACT,
   mockUnmetControlledDataRestrictionInformationRestricted,
 } from '@/mocks/mock_has_access_data'
+import { mockExternalObjectStoreFileHandle } from '@/mocks/mock_file_handle'
 import {
   MOCK_ACCESS_TOKEN,
   MOCK_CONTEXT_VALUE,
 } from '@/mocks/MockSynapseContext'
+import { getEntityBundleHandler } from '@/mocks/msw/handlers/entityHandlers'
 import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
@@ -18,12 +20,14 @@ import {
 } from '@/utils/functions/getEndpoint'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import {
+  EntityBundle,
   RestrictableObjectType,
   RestrictionInformationRequest,
   RestrictionInformationResponse,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
+import React from 'react'
 import { HasAccessProps, HasAccessV2 } from './HasAccessV2'
 
 const entityId = mockFileEntityData.id
@@ -305,6 +309,162 @@ describe('HasAccess tests', () => {
         'You must request access to this restricted item.',
       )
       await expectArButton('')
+    })
+  })
+
+  describe('External File Handle functionality', () => {
+    it('Shows external file handle icon when showExternalAccessIcon is true and file is external', async () => {
+      // Mock the entity bundle to return an external file handle with the correct ID
+      const externalFileHandle = {
+        ...mockExternalObjectStoreFileHandle,
+        id: mockFileEntityData.entity.dataFileHandleId, // Make sure ID matches
+      }
+      const externalEntityBundle: EntityBundle = {
+        ...mockFileEntityData.bundle,
+        fileHandles: [externalFileHandle],
+      }
+
+      server.use(
+        getEntityBundleHandler(
+          getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+          externalEntityBundle,
+        ),
+      )
+
+      useMswRestrictionInformation({
+        ...mockOpenRestrictionInformation,
+        userEntityPermissions: {
+          ...mockOpenRestrictionInformation.userEntityPermissions,
+          canDownload: true,
+        },
+      })
+
+      renderComponent({ ...props, showExternalAccessIcon: true })
+
+      await expectIcon(
+        'linkOff',
+        'Access may be controlled by an external system.',
+      )
+      expect(screen.queryByRole('button')).not.toBeInTheDocument()
+    })
+
+    it('SWC-7501: Shows regular access logic when showExternalAccessIcon is false despite cached external data', async () => {
+      // SWC-7501: This test specifically addresses the React Query caching issue we fixed
+      // First render with external file and enabled=true to populate cache
+      const externalFileHandle = {
+        ...mockExternalObjectStoreFileHandle,
+        id: mockFileEntityData.entity.dataFileHandleId,
+      }
+      const externalEntityBundle: EntityBundle = {
+        ...mockFileEntityData.bundle,
+        fileHandles: [externalFileHandle],
+      }
+
+      server.use(
+        getEntityBundleHandler(
+          getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+          externalEntityBundle,
+        ),
+      )
+
+      useMswRestrictionInformation({
+        ...mockOpenRestrictionInformation,
+        userEntityPermissions: {
+          ...mockOpenRestrictionInformation.userEntityPermissions,
+          canDownload: true,
+        },
+      })
+
+      // First render with enabled=true (should show external icon)
+      const { rerender } = renderComponent({
+        ...props,
+        showExternalAccessIcon: true,
+      })
+      await expectIcon(
+        'linkOff',
+        'Access may be controlled by an external system.',
+      )
+
+      // Now rerender with enabled=false - should show regular logic despite cached external data
+      rerender(
+        React.createElement(HasAccessV2, {
+          ...props,
+          showExternalAccessIcon: false,
+        }),
+      )
+
+      // Should show regular open access icon, not external (because external check is disabled)
+      await expectIcon('accessOpen', '')
+      expect(screen.queryByRole('button')).not.toBeInTheDocument()
+    })
+
+    it('Does not check for external file handle when showExternalAccessIcon is false', async () => {
+      // Even if we have an external file handle in the bundle, it shouldn't be used
+      const externalFileHandle = {
+        ...mockExternalObjectStoreFileHandle,
+        id: mockFileEntityData.entity.dataFileHandleId, // Make sure ID matches
+      }
+      const externalEntityBundle: EntityBundle = {
+        ...mockFileEntityData.bundle,
+        fileHandles: [externalFileHandle],
+      }
+
+      server.use(
+        getEntityBundleHandler(
+          getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+          externalEntityBundle,
+        ),
+      )
+
+      useMswRestrictionInformation({
+        ...mockOpenRestrictionInformation,
+        userEntityPermissions: {
+          ...mockOpenRestrictionInformation.userEntityPermissions,
+          canDownload: true,
+        },
+      })
+
+      renderComponent({ ...props, showExternalAccessIcon: false })
+
+      // Should show regular open access icon, not external, because the feature is disabled
+      await expectIcon('accessOpen', '')
+      expect(screen.queryByRole('button')).not.toBeInTheDocument()
+    })
+
+    it('Shows external file handle icon even when user has restrictions but file is external', async () => {
+      // Mock the entity bundle to return an external file handle with the correct ID
+      const externalFileHandle = {
+        ...mockExternalObjectStoreFileHandle,
+        id: mockFileEntityData.entity.dataFileHandleId, // Make sure ID matches
+      }
+      const externalEntityBundle: EntityBundle = {
+        ...mockFileEntityData.bundle,
+        fileHandles: [externalFileHandle],
+      }
+
+      server.use(
+        getEntityBundleHandler(
+          getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+          externalEntityBundle,
+        ),
+      )
+
+      useMswRestrictionInformation({
+        ...mockUnmetControlledDataRestrictionInformationACT,
+        userEntityPermissions: {
+          ...mockUnmetControlledDataRestrictionInformationACT.userEntityPermissions,
+          canDownload: true,
+        },
+      })
+
+      renderComponent({ ...props, showExternalAccessIcon: true })
+
+      // Should show external file handle icon, but still show access requirements button
+      await expectIcon(
+        'linkOff',
+        'Access may be controlled by an external system.',
+      )
+      await expectArButton('Request Access')
     })
   })
 
