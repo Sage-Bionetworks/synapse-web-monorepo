@@ -70,6 +70,11 @@
   border: 1px solid rgba(25, 118, 210, 0.5);
 }
 
+.cell-selected-invalid {
+  border: 2px solid red !important;
+  background-color: rgba(255, 0, 0, 0.1) !important;
+}
+
 .dsg-container:not(:focus-within) .cell-selected {
   background-color: rgba(25, 118, 210, 0.04);
   border: 1px solid rgba(25, 118, 210, 0.3);
