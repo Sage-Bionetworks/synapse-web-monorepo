@@ -3,7 +3,10 @@ import { DownloadOutlined as DownloadIcon } from '@mui/icons-material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { useState } from 'react'
 import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
-import { TableExportModal } from './TableExportModal'
+import { ModalDownload } from '../ModalDownload/ModalDownload'
+import { useGetEntity } from '@/synapse-queries'
+import { isVersionableEntity } from '@/utils/functions/EntityTypeUtils'
+import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 
 // Have to keep these consts outside of getProgrammaticAccessCode because
 // they are being called in ProgrammaticTableDownload.tsx
@@ -165,11 +168,50 @@ export function getDownloadActionsForEntityType(
   }
 }
 
+// get latest version number of the entityId
+function useGetLatestVersionNumber(entityId: string) {
+  const { data: entity, isLoading } = useGetEntity(entityId) // No version = latest
+
+  const latestVersionNumber =
+    entity && isVersionableEntity(entity) ? entity.versionNumber : undefined
+
+  return { latestVersionNumber, isLoading }
+}
+
+// create default queryBundleRequest
+function getDefaultQueryBundleRequestForEntity(
+  entityId: string,
+  versionNumber: number | undefined,
+  entityType: EntityType,
+): QueryBundleRequest {
+  const sql =
+    entityType === 'dataset'
+      ? `SELECT * FROM ${entityId}.${versionNumber}`
+      : `SELECT * FROM ${entityId}`
+
+  return {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId: `${entityId}`,
+    query: {
+      sql: sql,
+    } as Query,
+    partMask: 0,
+  }
+}
+
 export function EntityDownloadButton(props: {
   entityId: string
   name: string
   entityType: EntityType
 }) {
+  // create queryBundleRequest
+  const { latestVersionNumber } = useGetLatestVersionNumber(props.entityId)
+  const defaultQueryBundleRequest = getDefaultQueryBundleRequestForEntity(
+    props.entityId,
+    latestVersionNumber,
+    props.entityType,
+  )
+
   // state to manage programmatic access modal visibility
   const [ShowProgrammaticAccess, setShowProgrammaticAccess] =
     useState<boolean>(false)
@@ -227,8 +269,8 @@ export function EntityDownloadButton(props: {
         hasCancelButton={false}
       />
       {showExportMetadata && (
-        <TableExportModal
-          entityId={props.entityId}
+        <ModalDownload
+          queryBundleRequest={defaultQueryBundleRequest}
           onClose={handleCloseExportMetadata}
         />
       )}
