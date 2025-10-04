@@ -266,7 +266,6 @@ export function EntityDownloadButton(props: {
         rCode={rCode}
         cliCode={cliCode}
         helpUrl="https://help.synapse.org/docs/Synapse-Docker-Registry.2011037752.html#SynapseDockerRegistry-UsingDockerImagesStoredintheSynapseDockerRegistry"
-        hasCancelButton={false}
       />
       {showExportMetadata && (
         <ModalDownload
