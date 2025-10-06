@@ -1,3 +1,4 @@
+import { LinearProgress } from '@mui/material'
 import { ErrorBanner } from 'synapse-react-client'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
@@ -36,7 +37,7 @@ export function D4D(props: D4DProps) {
     return <ErrorBanner error={error} />
   }
   if (isLoading) {
-    return <div>Loading...</div>
+    return <LinearProgress />
   }
   return (
     <div className="d4d-styles">
