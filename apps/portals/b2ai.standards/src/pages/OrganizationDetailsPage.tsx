@@ -1,3 +1,4 @@
+import { LinearProgress } from '@mui/material'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import {
   CardConfiguration,
@@ -8,6 +9,7 @@ import {
   SynapseConstants,
   SynapseErrorType,
 } from 'synapse-react-client'
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageSectionLayoutType } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageSectionLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
@@ -34,10 +36,8 @@ import {
   getQueryBundleRequestWithIdFilter,
   useFetchJsonArrayLengths,
 } from '@/hooks/fetchDataUtils'
-// import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
 import columnAliases from '@/config/columnAliases'
 import { D4D } from '@/components/D4D'
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
 
 export const organizationCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.ORGANIZATION,
@@ -110,10 +110,12 @@ export default function OrganizationDetailsPage() {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
   }
   if (isLoading) {
-    return <div>Loading...</div>
+    return <LinearProgress />
   }
-  if (data.length !== 1) {
-    throw new Error(`Unexpected ${data.length} rows of Org data.`)
+  if (data.length == 0) {
+    return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
+  } else if (data.length > 1) {
+    console.error('Unexpected ${data.length} rows of Org data')
   }
   const jsonColCounts = data[0]
 
