@@ -87,7 +87,10 @@ export default function EnumFacetFilterUI<TValue = string>(
       .slice(MAX_ENUMERATION_VALUES_TO_SHOW)
       .some(({ isSelected }) => isSelected)
   const showAll =
-    toggleShowAll || showSearch || valueIndexedGreaterThanMaxToShowIsSelected
+    containerAs === 'Dropdown' ||
+    toggleShowAll ||
+    showSearch ||
+    valueIndexedGreaterThanMaxToShowIsSelected
 
   const facetValuesToShow = useMemo(() => {
     if (showSearch && searchTerm.length > 0) {
