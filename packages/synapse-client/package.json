@@ -33,7 +33,7 @@
     "vitest": "^3.2.2"
   },
   "scripts": {
-    "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
+    "clean": "rimraf ./dist && rimraf ./src/generated && rimraf *.tsbuildinfo",
     "format-spec": "prettier --write src/spec/openapispecification.json",
     "get-spec:staging": "npx tsx src/codegen/downloadSpec.ts --stack staging && pnpm format-spec",
     "get-spec:production": "npx tsx src/codegen/downloadSpec.ts --stack production && pnpm format-spec",
@@ -48,13 +48,13 @@
       "generate": {
         "inputs": [
           "{projectRoot}/src/spec/openapispecification.json",
-          "{projectRoot}/src/codegen",
+          "{projectRoot}/src/codegen/**/*",
           "{projectRoot}/package.json",
           "{projectRoot}/openapitools.json",
           "{projectRoot}/config.json"
         ],
         "outputs": [
-          "{projectRoot}/src/generated"
+          "{projectRoot}/src/generated/**/*"
         ]
       },
       "test": {
