@@ -30,12 +30,16 @@ vi.mock('./widget/MarkdownSynapseImage', () => ({
 vi.mock('./widget/MarkdownSynapsePlot', () => ({
   default: vi
     .fn()
-    .mockReturnValue(<figure data-testid={'MarkdownSynapsePlot'}></figure>),
+    .mockReturnValue(
+      <span role={'figure'} data-testid={'MarkdownSynapsePlot'}></span>,
+    ),
 }))
 vi.mock('./widget/MarkdownProvenanceGraph', () => ({
   default: vi
     .fn()
-    .mockReturnValue(<figure data-testid={'MarkdownProvenanceGraph'}></figure>),
+    .mockReturnValue(
+      <span role={'figure'} data-testid={'MarkdownProvenanceGraph'}></span>,
+    ),
 }))
 vi.mock('@/synapse-queries/wiki/useWiki')
 
@@ -135,14 +139,14 @@ describe('MarkdownSynapse tests', () => {
         objectType: undefined,
         markdown: undefined,
       }
-      renderComponent(props)
+      const { container } = renderComponent(props)
 
       await waitFor(() => {
-        expect(screen.getByTestId('markdown')).toBeEmptyDOMElement()
+        expect(container).toBeEmptyDOMElement()
       })
     })
 
-    it('by default, displays empty string when wiki markdown is empty string', () => {
+    it('by default, displays empty string when wiki markdown is empty string', async () => {
       const props: MarkdownSynapseProps = {
         wikiId: 'xxx', // placeholder
         ownerId: 'xxx', // placeholder
@@ -155,10 +159,11 @@ describe('MarkdownSynapse tests', () => {
         }),
       )
 
-      renderComponent(props)
+      const { container } = renderComponent(props)
 
-      const markdownField = screen.getByTestId('markdown')
-      expect(markdownField).toHaveTextContent('')
+      await waitFor(() => {
+        expect(container).toBeEmptyDOMElement()
+      })
     })
 
     it('when specified, displays no content placeholder when wiki markdown is undefined', async () => {
