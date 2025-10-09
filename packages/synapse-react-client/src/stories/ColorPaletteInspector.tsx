@@ -2,14 +2,14 @@ import {
   COLOR_PALETTE_EVEN,
   COLOR_PALETTE_ODD,
 } from '@/utils/functions/colorPalette'
-import { Box } from '@mui/material'
-import tinycolor from 'tinycolor2'
+import { Box, useTheme } from '@mui/material'
 
 type DivColorTextProps = {
   color: string
 }
 
 function DivWithColorText({ color }: DivColorTextProps) {
+  const theme = useTheme()
   return (
     <div>
       <Box
@@ -23,7 +23,7 @@ function DivWithColorText({ color }: DivColorTextProps) {
           fontSize: '10px',
           color: color,
           '&:hover': {
-            color: tinycolor(color).isDark() ? 'white' : 'black',
+            color: theme.palette.getContrastText(color),
           },
         }}
       >

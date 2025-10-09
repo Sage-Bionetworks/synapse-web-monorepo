@@ -2,7 +2,9 @@ import { useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { displayToast } from '../ToastMessage'
 import IconSvg from '../IconSvg'
-import { Button, ButtonProps } from '@mui/material'
+import Button, {
+  ButtonProps,
+} from '@sage-bionetworks/react-ui/components/Button'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 export type SharePageLinkButtonProps = {

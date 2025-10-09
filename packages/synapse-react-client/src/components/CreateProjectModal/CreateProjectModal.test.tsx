@@ -6,7 +6,7 @@ import { SynapseContextType } from '@/utils/context/SynapseContext'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CANCEL_BUTTON_TEXT } from '../ConfirmationDialog/ConfirmationDialog'
-import { CLOSE_BUTTON_LABEL } from '../DialogBase'
+import { CLOSE_BUTTON_LABEL } from '@sage-bionetworks/react-ui/components/DialogBase/DialogCloseButton'
 import {
   CreateProjectModal,
   CreateProjectModalProps,

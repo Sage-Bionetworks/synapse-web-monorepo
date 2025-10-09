@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { Button } from './MuiButton'
+import Button from './Button'
 import { GetAppTwoTone } from '@mui/icons-material'
 
 const meta = {
-  title: 'UI/MUI/Button',
+  title: 'Components/Button',
   component: Button,
   parameters: {
     design: {
@@ -19,14 +19,14 @@ type Story = StoryObj<typeof meta>
 export const Demo: Story = {
   args: {
     variant: 'contained',
-    label: 'Button Name',
+    children: 'Button Name',
   },
 }
 
 export const WithIcon: Story = {
   args: {
     variant: 'contained',
-    label: 'Button Name',
+    children: 'Button Name',
     startIcon: <GetAppTwoTone />,
   },
 }
@@ -34,7 +34,7 @@ export const WithIcon: Story = {
 export const Outlined: Story = {
   args: {
     variant: 'outlined',
-    label: 'Button Name',
+    children: 'Button Name',
     startIcon: <GetAppTwoTone />,
   },
 }
@@ -42,7 +42,7 @@ export const Outlined: Story = {
 export const Text: Story = {
   args: {
     variant: 'text',
-    label: 'Button Name',
+    children: 'Button Name',
     startIcon: <GetAppTwoTone />,
   },
 }

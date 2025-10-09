@@ -10,6 +10,7 @@ const config = new ConfigBuilder()
   .setIncludeLibraryConfig(true, {
     except: [
       // Include certain monorepo projects because the local versions may drift from the versions released on NPM
+      '@sage-bionetworks/react-ui',
       '@sage-bionetworks/synapse-types',
       '@sage-bionetworks/synapse-client',
     ],

@@ -1,6 +1,8 @@
 import { getFiles } from '@/synapse-client/SynapseClient'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { Button, ButtonProps } from '@mui/material'
+import Button, {
+  ButtonProps,
+} from '@sage-bionetworks/react-ui/components/Button'
 import {
   BatchFileRequest,
   FileHandleAssociation,

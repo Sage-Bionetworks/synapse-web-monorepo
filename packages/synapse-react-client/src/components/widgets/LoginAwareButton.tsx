@@ -1,6 +1,8 @@
 import { useSynapseContext } from '@/utils'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
-import { Button, ButtonProps } from '@mui/material'
+import Button, {
+  ButtonProps,
+} from '@sage-bionetworks/react-ui/components/Button'
 import { Link, LinkProps } from 'react-router'
 
 /* Allow component to behave as a MUI Button or a React Router Link */

@@ -1,6 +1,6 @@
 import { Alert, Button, Box } from '@mui/material'
 import { ReactNode } from 'react'
-import { DialogBase } from '../DialogBase'
+import DialogBase from '@sage-bionetworks/react-ui/components/DialogBase'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import SpinnerButton from '../SpinnerButton/SpinnerButton'
 import { DialogContentProps } from '@mui/material'
