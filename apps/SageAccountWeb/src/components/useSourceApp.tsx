@@ -16,7 +16,7 @@ import {
   useSourceAppConfigs,
 } from 'synapse-react-client/utils/hooks/useSourceAppConfigs'
 import { useLastLoginInfoState } from 'synapse-react-client/components/Authentication/LastLoginInfo'
-import { defaultMuiThemeOptions } from 'synapse-react-client/theme/DefaultTheme'
+import { defaultMuiThemeOptions } from '@sage-bionetworks/react-ui/theme/DefaultTheme'
 
 export type SourceAppContextType = SourceAppConfig
 

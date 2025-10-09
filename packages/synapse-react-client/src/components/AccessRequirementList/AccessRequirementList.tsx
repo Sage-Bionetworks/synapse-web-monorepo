@@ -31,7 +31,7 @@ import {
 import noop from 'lodash-es/noop'
 import groupBy from 'lodash-es/groupBy'
 import { ReactNode, useMemo, useState } from 'react'
-import { DialogBaseTitle } from '../DialogBase'
+import { DialogBaseTitle } from '@sage-bionetworks/react-ui/components/DialogBase/DialogBaseTitle'
 import { EntityLink } from '../EntityLink'
 import IconSvg from '../IconSvg/IconSvg'
 import UserOrTeamBadge from '../UserOrTeamBadge'

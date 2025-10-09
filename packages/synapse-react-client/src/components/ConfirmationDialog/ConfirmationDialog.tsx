@@ -1,6 +1,10 @@
-import { Button, ButtonProps } from '@mui/material'
+import Button, {
+  ButtonProps,
+} from '@sage-bionetworks/react-ui/components/Button'
 import { MouseEventHandler } from 'react'
-import { DialogBase, DialogBaseProps } from '../DialogBase'
+import DialogBase, {
+  DialogBaseProps,
+} from '@sage-bionetworks/react-ui/components/DialogBase'
 import { defaults } from 'lodash-es'
 
 export type ConfirmationButtonsProps = {

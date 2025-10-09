@@ -1,0 +1,100 @@
+{
+  "name": "@sage-bionetworks/react-ui",
+  "version": "0.0.1",
+  "private": false,
+  "type": "module",
+  "exports": {
+    "./dist/*": {
+      "import": "./dist/*",
+      "require": "./dist/*"
+    },
+    "./*": {
+      "import": "./dist/*",
+      "require": "./dist/*"
+    }
+  },
+  "homepage": "https://sage-bionetworks.github.io/synapse-web-monorepo/",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sage-Bionetworks/synapse-web-monorepo/packages/react-ui"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.3.4",
+    "@mui/material": "^7.3.4",
+    "@mui/system": "^7.3.3",
+    "@mui/utils": "^7.3.3",
+    "@mui/x-data-grid": "^8.5.1",
+    "@mui/x-date-pickers": "^8.4.0",
+    "@popperjs/core": "^2.11.8",
+    "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-virtual": "^3.13.8",
+    "tinycolor2": "^1.6.0"
+  },
+  "peerDependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@storybook/addon-a11y": "^8",
+    "@storybook/addon-actions": "^8.6.12",
+    "@storybook/addon-designs": "^8.2.1",
+    "@storybook/addon-essentials": "^8.6.12",
+    "@storybook/addon-interactions": "^8.6.12",
+    "@storybook/addon-links": "^8.6.12",
+    "@storybook/addon-themes": "^8.6.12",
+    "@storybook/manager-api": "^8.6.12",
+    "@storybook/react": "^8.6.12",
+    "@storybook/react-vite": "^8.6.12",
+    "@storybook/test": "^8.6.12",
+    "@storybook/theming": "^8.6.12",
+    "@svgr/plugin-jsx": "^8.1.0",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "6.4.7",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^20.17.41",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "@types/tinycolor2": "^1.4.6",
+    "@vitejs/plugin-react": "^4.4.1",
+    "@vitest/coverage-v8": "^3.2.2",
+    "@vitest/ui": "^3.2.4",
+    "@vitest/utils": "^3.2.2",
+    "chromatic": "^11.28.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-test-renderer": "^19.1.0",
+    "storybook": "^8.6.12",
+    "typescript": "5.8.3",
+    "vite": "^6.3.6",
+    "vite-config": "workspace:*",
+    "vitest": "^3.2.2",
+    "vitest-when": "^0.6.0"
+  },
+  "scripts": {
+    "clean": "rimraf dist storybook-static coverage *.tsbuildinfo",
+    "prepublishOnly": "pnpm install && pnpm nx run @sage-bionetworks/react-ui:build",
+    "start": "storybook dev -p 6060",
+    "test": "vitest",
+    "build": "vite build",
+    "storybook:build": "pnpm storybook build",
+    "type-check": "tsc --build",
+    "lint": "eslint src",
+    "watch:js": "tsc --watch"
+  },
+  "nx": {
+    "targets": {
+      "storybook:build": {
+        "dependsOn": [
+          "^build"
+        ]
+      }
+    }
+  }
+}

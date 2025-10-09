@@ -1,7 +1,7 @@
 import { ThemeOptions } from '@mui/material'
 import type { PartialDeep } from 'type-fest'
 import { deepmerge } from '@mui/utils'
-import defaultMuiThemeOptions from './DefaultTheme'
+import defaultMuiThemeOptions from '@sage-bionetworks/react-ui/theme/DefaultTheme'
 
 export function mergeTheme(
   themeOverrides: ThemeOptions | PartialDeep<ThemeOptions>,

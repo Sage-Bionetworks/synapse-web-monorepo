@@ -31,9 +31,11 @@ export class ConfigBuilder {
     externalizeDepsOptions?: Parameters<
       typeof getPluginConfig
     >[0]['externalizeDepsOptions'],
+    rollupTypes = true,
   ): ConfigBuilder {
     this.includeLibraryConfig = includeLibraryConfig
     this.pluginConfigOptions.externalizeDepsOptions = externalizeDepsOptions
+    this.pluginConfigOptions.rollupTypes = rollupTypes
     return this
   }
 

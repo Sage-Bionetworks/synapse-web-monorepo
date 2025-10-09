@@ -1,6 +1,6 @@
 import { displayToast } from './components'
 import * as SynapseTheme from './theme'
-import Palettes from './theme/palette/Palettes'
+import Palettes from '@sage-bionetworks/react-ui/theme/palette/Palettes'
 import {
   SynapseClientError,
   SynapseConstants,
