@@ -1,4 +1,4 @@
-import { spreadSx } from '@/theme/spreadSx'
+import { spreadSx } from '@sage-bionetworks/react-ui/theme/utils/spreadSx'
 import { Typography, TypographyProps } from '@mui/material'
 
 export default function WizardChoiceButtonDescription(

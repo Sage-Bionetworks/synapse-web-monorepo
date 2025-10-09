@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@sage-bionetworks/react-ui": "workspace:*",
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "katex": "^0.16.22",
@@ -11,7 +12,7 @@
     "react-dom": "^19.1.0",
     "react-router": "^7.5.3",
     "synapse-react-client": "workspace:*",
-    "vite": "^6.3.5"
+    "vite": "^6.3.6"
   },
   "devDependencies": {
     "@types/react": "19.1.8",

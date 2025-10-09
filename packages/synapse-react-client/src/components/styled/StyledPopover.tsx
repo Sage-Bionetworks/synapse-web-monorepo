@@ -1,5 +1,5 @@
 import LightTooltip from '@/components/styled/LightTooltip'
-import { spreadSx } from '@/theme/spreadSx'
+import { spreadSx } from '@sage-bionetworks/react-ui/theme/utils/spreadSx'
 import {
   Box,
   Button,

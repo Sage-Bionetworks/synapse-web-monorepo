@@ -12,7 +12,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material'
 import PortalFullTextSearchField from './PortalSearch/PortalFullTextSearchField'
-import { spreadSx } from 'synapse-react-client/theme/spreadSx'
+import { spreadSx } from '@sage-bionetworks/react-ui/theme/utils/spreadSx'
 import { useNavigate } from 'react-router'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import { useState } from 'react'

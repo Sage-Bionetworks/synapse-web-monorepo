@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@mui/icons-material": "^7.1.1",
-    "@mui/material": "^7.1.1",
+    "@mui/icons-material": "^7.3.4",
+    "@mui/material": "^7.3.4",
+    "@sage-bionetworks/react-ui": "workspace:*",
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "katex": "^0.16.22",
@@ -15,7 +16,7 @@
     "react-dom": "^19.1.0",
     "react-router": "^7.5.3",
     "synapse-react-client": "workspace:*",
-    "vite": "^6.3.5"
+    "vite": "^6.3.6"
   },
   "devDependencies": {
     "@types/lodash-es": "^4.17.12",

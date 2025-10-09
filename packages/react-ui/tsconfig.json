@@ -1,0 +1,18 @@
+{
+  "extends": "../../shared/tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "target": "esnext",
+    "allowJs": true,
+    "isolatedModules": true,
+    "noFallthroughCasesInSwitch": true,
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "vite-config": ["../vite-config/src/index.ts"],
+      "vite-config/*": ["../vite-config/src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.json"],
+  "references": [{ "path": "../vite-config" }]
+}
