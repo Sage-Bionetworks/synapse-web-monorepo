@@ -10,7 +10,10 @@ import {
   SortBy,
   Direction,
 } from '@sage-bionetworks/synapse-types'
-import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
+import {
+  convertToEntityType,
+  isContainerType,
+} from '@/utils/functions/EntityTypeUtils'
 import { omit } from 'lodash-es'
 
 const includeTypes: EntityType[] = [
@@ -54,10 +57,7 @@ export const useTreeOperationsWithDirectFetch = (
         entityHeader: eh,
         parentId,
         depth: parentDepth + 1,
-        isLeaf: !(
-          convertToEntityType(eh.type) === EntityType.project ||
-          convertToEntityType(eh.type) === EntityType.folder
-        ),
+        isLeaf: !isContainerType(convertToEntityType(eh.type)),
       }))
     },
     [],
@@ -106,18 +106,16 @@ export const useTreeOperationsWithDirectFetch = (
 
   // Callback to handle when children are loaded - moved before handleToggleExpanded to fix dependency order
   const handleChildrenLoaded = useCallback(
-    (entityId: string, childNodes: TreeNode[], nextPageToken?: string) => {
+    (entityId: string, children: TreeNode[], nextPageToken?: string) => {
       setTree(prev => {
         const node = prev[entityId]
         if (node) {
           // Set correct depth for child nodes
-          const childNodesWithDepth = childNodes.map(child => ({
+          const childNodesWithDepth = children.map(child => ({
             ...child,
             depth: node.depth + 1,
           }))
 
-          // Check if this is the first load (loading the first page) or pagination (loading more pages)
-          // Use explicit isPagination parameter for reliable detection
           const mergedChildren = [
             ...(node.children || []),
             ...childNodesWithDepth,
@@ -186,6 +184,7 @@ export const useTreeOperationsWithDirectFetch = (
   const handleToggleExpanded = useCallback(
     async (entityId: string) => {
       const isCurrentlyExpanded = expanded[entityId]
+
       setExpanded(prev => ({
         ...prev,
         [entityId]: !prev[entityId],
@@ -290,6 +289,7 @@ export const useTreeOperationsWithDirectFetch = (
           versionNumber: node.entityHeader.versionNumber,
         },
       ]
+
       if (expanded[node.entityHeader.id] && node.children) {
         node.children.forEach(child => {
           rows.push(...flattenTree(child.entityHeader.id, visited))

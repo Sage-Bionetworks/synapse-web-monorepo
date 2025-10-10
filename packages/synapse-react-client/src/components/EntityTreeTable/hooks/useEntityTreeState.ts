@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import { SortingState } from '@tanstack/react-table'
 import {
   EntityHeader,
@@ -98,21 +98,14 @@ export const useEntityTreeState = (
     { enabled: shouldFetchChildren },
   )
 
-  // Track if this is the first render to avoid resetting on mount
-  const isFirstRender = useRef(true)
-
-  // Effect to reset data when sorting changes (but not on initial mount)
+  // Effect to reset data when sorting changes
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
     resetTreeData()
-  }, [sorting])
+  }, [resetTreeData, sorting])
 
   // Effect to initialize root node and its children
   useEffect(() => {
-    if (rootHeader && rootChildren && !loadedChildren.has(rootId)) {
+    if (rootHeader && rootChildren && !tree[rootId]) {
       // Build the children nodes from the response
       const children: TreeNode[] = rootChildren.page.map(
         (eh: EntityHeader) => ({
@@ -153,7 +146,7 @@ export const useEntityTreeState = (
 
       // Expand root node by default if the flag is set
       if (expandRootByDefault) {
-        setExpanded({ [rootId]: true })
+        setExpanded(prev => ({ ...prev, [rootId]: true }))
       }
     }
   }, [
@@ -162,7 +155,7 @@ export const useEntityTreeState = (
     rootId,
     expandRootByDefault,
     showRootNode,
-    loadedChildren,
+    tree,
   ])
 
   return {

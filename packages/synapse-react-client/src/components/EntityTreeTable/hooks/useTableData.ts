@@ -21,7 +21,11 @@ export const useTableData = (
       const rows: EntityBundleRow[] = []
       if (expanded[rootId] && rootNode.children) {
         rootNode.children.forEach(child => {
-          rows.push(...flattenTree(child.entityHeader.id, new Set<string>()))
+          const childRows = flattenTree(
+            child.entityHeader.id,
+            new Set<string>(),
+          )
+          rows.push(...childRows)
         })
         // If there is a next page token for the root, add a synthetic 'Load more' row
         const nextToken = nextPageTokens[rootId]

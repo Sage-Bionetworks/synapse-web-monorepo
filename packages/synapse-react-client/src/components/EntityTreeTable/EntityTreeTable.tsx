@@ -95,8 +95,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     flattenTree,
   )
 
-  // Check if there's no content to show
-  const hasNoContent = useMemo(() => {
+  const isTreeEmpty = useMemo(() => {
     const rootNode = tree[rootId]
     if (!rootNode) return false
 
@@ -152,7 +151,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
           onEntityIdClicked,
         }}
       >
-        {hasNoContent ? (
+        {isTreeEmpty ? (
           <NoContentAvailable />
         ) : (
           <EntityTreeTableView

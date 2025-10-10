@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react'
 import { EntityTreeTable } from './EntityTreeTable'
 import { useEntityTreeState } from './hooks/useEntityTreeState'
 
-// Mock the new combined hook
 vi.mock('./hooks/useEntityTreeState', () => ({
   useEntityTreeState: vi.fn(() => ({
     expanded: {},
