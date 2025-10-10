@@ -6,11 +6,11 @@ import { SkeletonTable } from 'synapse-react-client'
 import CopyToClipboardIcon from 'synapse-react-client/components/CopyToClipboardIcon'
 import { EntityLink } from 'synapse-react-client/components/EntityLink'
 import { StyledTableContainer } from 'synapse-react-client/components/styled/StyledTableContainer'
-import { UserBadge } from 'synapse-react-client/components/UserCard/UserBadge'
 import { calculateFriendlyFileSize } from 'synapse-react-client/utils/functions/calculateFriendlyFileSize'
 import { formatDate } from 'synapse-react-client/utils/functions/DateFormatter'
 import { getStorageLocationName } from 'synapse-react-client/utils/functions/FileHandleUtils'
 import useGetEntityMetadata from 'synapse-react-client/utils/hooks/useGetEntityMetadata'
+import { usePortalContext } from '@/components/PortalContext'
 
 type SynapseFileEntityPagePropertiesProps = {
   entityId: string
@@ -54,23 +54,13 @@ const FilePropertyRow: React.FC<FilePropertyRowProps> = ({
         </>
       )
       break
-    case 'createdBy':
-      if (!fileEntity.createdBy) return null
-      content = (
-        <>
-          <UserBadge userId={fileEntity.createdBy} /> on{' '}
-          {formatDate(dayjs(fileEntity.createdOn))}
-        </>
-      )
+    case 'createdOn':
+      if (!fileEntity.createdOn) return null
+      content = <>{formatDate(dayjs(fileEntity.createdOn))}</>
       break
-    case 'modifiedBy':
-      if (!fileEntity.modifiedBy) return null
-      content = (
-        <>
-          <UserBadge userId={fileEntity.modifiedBy} /> on{' '}
-          {formatDate(dayjs(fileEntity.modifiedOn))}
-        </>
-      )
+    case 'modifiedOn':
+      if (!fileEntity.modifiedOn) return null
+      content = <>{formatDate(dayjs(fileEntity.modifiedOn))}</>
       break
     case 'contentMd5':
       if (!fileHandle?.contentMd5) return null
@@ -119,6 +109,14 @@ const SynapseFileEntityPageProperties = ({
     isLoading,
   } = useGetEntityMetadata(entityId, versionNumber)
 
+  const { fileEntityPageConfig } = usePortalContext()
+  const {
+    showContentSize = true,
+    showContentMd5 = true,
+    showStorageLocation = true,
+    showModifiedOn = true,
+  } = fileEntityPageConfig ?? {}
+
   const fileEntity = entityBundle?.entity as FileEntity | undefined
 
   const fileLocationName = fileHandle
@@ -133,16 +131,22 @@ const SynapseFileEntityPageProperties = ({
     return null
   }
 
-  const selectedKeys = [
-    { key: 'name', label: 'Filename' },
-    { key: 'id', label: 'Synapse ID (SynID)' },
-    { key: 'contentSize', label: 'Size' },
-    { key: 'versionLabel', label: 'Version' },
-    { key: 'contentMd5', label: 'MD5' },
-    { key: 'storageLocationId', label: 'Storage Location' },
-    { key: 'createdBy', label: 'Created by' },
-    { key: 'modifiedBy', label: 'Last Modified by' },
+  const allKeys = [
+    { key: 'name', label: 'Filename', show: true },
+    { key: 'id', label: 'Synapse ID (SynID)', show: true },
+    { key: 'contentSize', label: 'Size', show: showContentSize },
+    { key: 'versionLabel', label: 'Version', show: true },
+    { key: 'contentMd5', label: 'MD5', show: showContentMd5 },
+    {
+      key: 'storageLocationId',
+      label: 'Storage Location',
+      show: showStorageLocation,
+    },
+    { key: 'createdOn', label: 'Created on', show: true },
+    { key: 'modifiedOn', label: 'Last modified on', show: showModifiedOn },
   ]
+
+  const selectedKeys = allKeys.filter(({ show }) => show)
 
   return (
     <StyledTableContainer sx={{ width: '100%' }}>

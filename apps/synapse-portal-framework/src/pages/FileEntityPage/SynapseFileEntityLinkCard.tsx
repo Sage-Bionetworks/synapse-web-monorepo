@@ -4,9 +4,11 @@ import { ReactComponent as SynapseIconLogo } from './assets/SynapseIconLogo.svg'
 import { getSynapseEntityUrl } from 'synapse-react-client/utils/functions/getSynapseEntityUrl'
 
 const SynapseFileEntityLinkCard = ({
+  portalName,
   synId,
   version,
 }: {
+  portalName: string
   synId: string
   version?: number
 }) => {
@@ -42,8 +44,9 @@ const SynapseFileEntityLinkCard = ({
             View this file on Synapse.org
           </Typography>
           <Typography variant="smallText1" sx={{ color: 'grey.800' }}>
-            Synapse empowers biomedical researchers with tools for open science
-            and collaboration.
+            The {portalName} is powered by synapse.org. Synapse empowers
+            biomedical researchers with tools for open science and
+            collaboration.
           </Typography>
         </Stack>
         <OpenInNewIcon
