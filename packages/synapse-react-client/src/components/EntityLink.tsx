@@ -23,6 +23,7 @@ export type EntityLinkProps = {
   showIcon?: boolean
   /** The field of the entity to display. Default is 'name' */
   displayTextField?: keyof Entity | keyof EntityHeader
+  onEntityIdClicked?: (entityId: string) => void
 }
 
 export const EntityLink = (props: EntityLinkProps) => {
@@ -33,6 +34,7 @@ export const EntityLink = (props: EntityLinkProps) => {
     displayTextField = 'name',
     link = true,
     showIcon = true,
+    onEntityIdClicked,
   } = props
 
   let entityId = ''
@@ -66,21 +68,27 @@ export const EntityLink = (props: EntityLinkProps) => {
     } else {
       type = getEntityTypeFromHeader(entity)
     }
+    const href =
+      typeof link === 'string'
+        ? link
+        : `${getEndpoint(
+            BackendDestinationEnum.PORTAL_ENDPOINT,
+          )}Synapse:${entity.id!}${versionNumber ? `.${versionNumber}` : ''}`
     if (link) {
       return (
         <Link
           className={className}
           target="_blank"
           rel="noopener noreferrer"
-          href={
-            typeof link === 'string'
-              ? link
-              : `${getEndpoint(
-                  BackendDestinationEnum.PORTAL_ENDPOINT,
-                )}Synapse:${entity.id!}${
-                  versionNumber ? `.${versionNumber}` : ''
-                }`
+          onClick={
+            onEntityIdClicked
+              ? e => {
+                  e.preventDefault()
+                  onEntityIdClicked(entity.id!)
+                }
+              : undefined
           }
+          href={href}
         >
           {showIcon && (
             <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />

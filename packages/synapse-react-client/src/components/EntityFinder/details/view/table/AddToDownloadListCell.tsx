@@ -1,16 +1,16 @@
 import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import { useAddFileToDownloadList } from '@/synapse-queries/index'
 import { useSynapseContext } from '@/utils/index'
-import { IconButton, Tooltip } from '@mui/material'
+import { Box, IconButton, Tooltip } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { CellContext } from '@tanstack/react-table'
+import { EntityIdAndVersionNumber } from './TableCellTypes'
 import { displayFilesWereAddedToDownloadListSuccess } from '../../../../download_list/DownloadConfirmationUtils'
 import IconSvg from '../../../../IconSvg/IconSvg'
 import { displayToast } from '../../../../ToastMessage/index'
-import { EntityFinderTableViewRowData } from '../DetailsView'
 
-export function AddFileToDownloadListCell(
-  props: CellContext<EntityFinderTableViewRowData, unknown>,
+export function AddFileToDownloadListCell<T extends EntityIdAndVersionNumber>(
+  props: CellContext<T, unknown>,
 ) {
   const { row } = props
   const { entityId, versionNumber } = row.original
@@ -30,16 +30,25 @@ export function AddFileToDownloadListCell(
     return <></>
   }
   return (
-    <Tooltip title="Add to Download Cart" placement="right">
-      <IconButton
-        sx={{ height: '35px', width: '35px' }}
-        onClick={event => {
-          addToDownloadList({ entityId, entityVersionNumber: versionNumber })
-          event.stopPropagation()
-        }}
-      >
-        <IconSvg icon="download" />
-      </IconButton>
-    </Tooltip>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+      }}
+    >
+      <Tooltip title="Add to Download Cart" placement="right">
+        <IconButton
+          sx={{ height: '35px', width: '35px' }}
+          onClick={event => {
+            addToDownloadList({ entityId, entityVersionNumber: versionNumber })
+            event.stopPropagation()
+          }}
+        >
+          <IconSvg icon="download" />
+        </IconButton>
+      </Tooltip>
+    </Box>
   )
 }
