@@ -16,6 +16,7 @@ import AMPALSExploreTheData from './ampals/AMPALSExploreTheData'
 import ELSupportedByNIH from './eliteportal/ELSupportedByNIH'
 import ARKWelcomePage from './arkportal/ARKWelcomePage'
 import ClassicSupportedByNIABanner from './classic/ClassicSupportedByNIABanner/ClassicSupportedByNIABanner'
+import ChallengeMetrics from './challenges/ChallengeMetrics/ChallengeMetrics'
 
 import ExploreWrapper from './Explore/ExploreWrapper'
 import GenieHomePageHeader from './genie/GenieHomePageHeader'
@@ -50,6 +51,7 @@ const PortalComponents = {
   ELGettingStarted,
   AMPALSExploreTheData,
   ELSupportedByNIH,
+  ChallengeMetrics,
   ClassicSupportedByNIABanner,
   ARKWelcomePage,
   GenieHomePageHeader,

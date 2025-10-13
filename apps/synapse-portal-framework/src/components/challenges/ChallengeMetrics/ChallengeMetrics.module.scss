@@ -1,0 +1,30 @@
+.root {
+  position: relative;
+  overflow: hidden;
+}
+
+.metricsContainer {
+  display: flex;
+  padding: 120px 60px 20px 60px;
+}
+
+.statContainer {
+  align-items: center;
+}
+
+.bkgImage {
+  position: absolute;
+  width: 100%;
+  z-index: -1;
+}
+
+.statText:global(.MuiTypography-root) {
+  color: white;
+  font-size: 48px;
+  line-height: 56px;
+
+  @media (min-width: 768px) {
+    font-size: 96px;
+    line-height: 80px;
+  }
+}
