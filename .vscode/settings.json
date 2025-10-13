@@ -7,5 +7,9 @@
 
   // Tell VS Code to avoid importing from MUI Barrel files
   // https://mui.com/material-ui/guides/minimizing-bundle-size/#avoid-vs-code-auto-importing-from-barrel-files
-  "typescript.preferences.autoImportSpecifierExcludeRegexes": ["^@mui/[^/]+$"]
+  "typescript.preferences.autoImportSpecifierExcludeRegexes": [
+    "^@mui/[^/]+$", // Exclude all top-level MUI packages
+    "^@sage-bionetworks/react-ui$" // Exclude the react-ui barrel files
+    "^@sage-bionetworks/react-ui/components$"
+  ]
 }
