@@ -4,19 +4,21 @@ import { ReactComponent as BkgImage } from '../assets/metricsBkg.svg'
 
 const StatContainer = ({ stat, label, description }) => (
   <Stack className={styles.statContainer}>
-    <Typography variant="headline1" className={styles.statText}>
+    <Typography variant="headline1" className={styles.statHeaderText}>
       {stat}
     </Typography>
-    <Typography>{label}</Typography>
-    <Typography>{description}</Typography>
+    <Typography className={styles.statLabelText}>{label}</Typography>
+    <Typography className={styles.statDescriptionText}>
+      {description}
+    </Typography>
   </Stack>
 )
 
 const ChallengeMetrics = () => {
   return (
     <Box className={styles.root}>
-      <BkgImage className={styles.bkgImage} />
-      <Box className={styles.metricsContainer}>
+      <BkgImage className={styles.bkgImage} preserveAspectRatio="none" />
+      <Stack className={styles.metricsContainer}>
         <StatContainer
           stat="273"
           label="total challenges run"
@@ -32,7 +34,7 @@ const ChallengeMetrics = () => {
           label="disease areas positively impacted"
           description="including Alzheimer’s, AML leukemia, Rheumatoid Arthritis, lung cancer and more."
         />
-      </Box>
+      </Stack>
     </Box>
   )
 }
