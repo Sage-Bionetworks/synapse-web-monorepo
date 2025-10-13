@@ -19,7 +19,7 @@ export function ModifiedOnCell<T extends EntityIdAndVersionNumber>(
   )
 
   if (isLoading) {
-    return <Skeleton width={200} />
+    return <Skeleton width={100} />
   }
 
   return <DateCell {...props} cellData={bundle?.entity.modifiedOn} />

@@ -109,6 +109,9 @@ const SynapseComponents = {
   EntityPageTitleBar: lazy(
     () => import('./components/entity/page/title_bar/EntityPageTitleBar'),
   ),
+  EntityTreeTable: lazy(
+    () => import('./components/EntityTreeTable/EntityTreeTable'),
+  ),
   EntityTypeIcon: lazy(() => import('./components/EntityIcon')),
   EntityUploadModal: lazy(
     () => import('./components/EntityUpload/EntityUploadModal'),
