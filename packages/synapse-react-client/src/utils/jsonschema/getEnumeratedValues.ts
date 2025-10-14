@@ -57,7 +57,7 @@ export default function getEnumeratedValues(
       rjsfOptionsList = optionsList(jsonSchema) || []
     }
   } catch (e) {
-    // optionsList can throw if the schema is not valid
+    // optionsList can throw if the schema does not describe an enumeration
     console.error('Error getting enumerated values from schema', e, jsonSchema)
   }
   return rjsfOptionsList.map(rjsfOptionsListToValueList)
