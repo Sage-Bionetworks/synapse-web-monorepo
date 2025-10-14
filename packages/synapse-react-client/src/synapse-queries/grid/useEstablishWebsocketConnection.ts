@@ -2,7 +2,7 @@ import { useGridPresignedUrl } from '@/synapse-queries/grid/useGridPresignedUrl'
 import { DataGridWebSocket } from '@/components/DataGrid/DataGridWebSocket'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { GridModel } from '@/components/DataGrid/DataGridTypes'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 interface EstablishWebsocketParams {
   replicaId: number
@@ -11,6 +11,7 @@ interface EstablishWebsocketParams {
     onGridReady?: () => void
     onStatusChange?: (open: boolean) => void
     onModelCreate?: (model: GridModel) => void
+    model?: GridModel | null
   }
 }
 
@@ -25,6 +26,10 @@ export function useEstablishWebsocketConnection(
 ) {
   const { mutateAsync: fetchPresignedUrl } = useGridPresignedUrl()
   const [presignedUrl, setPresignedUrl] = useState<string | null>(null)
+
+  const clearPresignedUrl = useCallback(() => {
+    setPresignedUrl(null)
+  }, [])
 
   const mutation = useMutation({
     retry: 5,
@@ -48,5 +53,5 @@ export function useEstablishWebsocketConnection(
     ...options,
   })
 
-  return { ...mutation, presignedUrl }
+  return { ...mutation, presignedUrl, clearPresignedUrl }
 }

@@ -13,7 +13,6 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import classNames from 'classnames'
 import { ClickableJsonCrdt } from 'clickable-json'
-import throttle from 'lodash-es/throttle'
 import {
   forwardRef,
   useCallback,
@@ -92,11 +91,67 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       presignedUrl,
     } = useDataGridWebSocket()
 
+    const websocketInstanceRef = useRef<typeof websocketInstance | null>(null)
+
     useEffect(() => {
-      if (replicaId && session?.sessionId) {
-        connect(replicaId, session.sessionId)
+      websocketInstanceRef.current = websocketInstance
+    }, [websocketInstance])
+
+    // memoize connect function to avoid unnecessary useEffect calls
+    const connectMemoized = useCallback(
+      (replicaId: number, sessionId: string) => {
+        connect(replicaId, sessionId)
+      },
+      [connect],
+    )
+
+    // Track last connection parameters to avoid redundant connections
+    const lastConnectParamsRef = useRef<{
+      replicaId: number
+      sessionId: string
+    } | null>(null)
+
+    useEffect(() => {
+      if (
+        replicaId === null ||
+        replicaId === undefined ||
+        !session?.sessionId
+      ) {
+        lastConnectParamsRef.current = null
+        return
       }
-    }, [replicaId, session?.sessionId, connect])
+
+      const nextParams = {
+        replicaId,
+        sessionId: session.sessionId,
+      }
+
+      const prevParams = lastConnectParamsRef.current
+
+      if (
+        prevParams &&
+        prevParams.replicaId === nextParams.replicaId &&
+        prevParams.sessionId === nextParams.sessionId
+      ) {
+        return
+      }
+
+      lastConnectParamsRef.current = nextParams
+      connectMemoized(replicaId, session.sessionId)
+    }, [replicaId, session?.sessionId, connectMemoized])
+
+    // Reset grid state when model is reset (new session/replica)
+    useEffect(() => {
+      if (model === null) {
+        // Clear any grid-specific state when starting a new session
+        setLastSelection(null)
+        setSelectedRowIndex(null)
+        // Clear active cell if grid exists
+        if (gridRef.current) {
+          gridRef.current.setActiveCell(null)
+        }
+      }
+    }, [model])
 
     const { data: jsonSchema } = useGetSchema(
       session?.gridJsonSchema$Id ?? '',
@@ -125,14 +180,30 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       [modelSnapshot, schemaPropertiesInfo],
     )
 
-    const commit = useCallback(
-      throttle(() => {
-        console.log('Auto-committing changes')
-        // The model has already been updated in handleChange, just send the patch
-        websocketInstance?.sendPatch()
-      }, 500),
-      [websocketInstance],
-    )
+    const commit = useCallback(() => {
+      if (!isConnected || !websocketInstanceRef.current) {
+        return
+      }
+
+      const readyState =
+        (websocketInstanceRef.current as any)?.readyState ??
+        (websocketInstanceRef.current as any)?.socket?.readyState
+
+      if (readyState !== undefined && readyState !== WebSocket.OPEN) {
+        console.warn(
+          'WebSocket is not open. Deferring patch until connection is ready.',
+        )
+        return
+      }
+
+      websocketInstanceRef.current.sendPatch()
+    }, [isConnected, websocketInstanceRef])
+
+    useEffect(() => {
+      if (isConnected) {
+        commit()
+      }
+    }, [isConnected, commit])
 
     const applyAndCommitChanges = useCallback(
       (model: GridModel, modelChanges: ModelChange[]) => {
@@ -141,7 +212,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
           applyModelChange(model, change)
         })
 
-        // Push the changes to the server (throttled)
         commit()
       },
       [commit],

@@ -23,6 +23,7 @@ describe('DataGridWebSocket', () => {
       url: 'ws://test',
       socket: mockSocket as any,
       maxPayloadSizeBytes: 100, // very small to force splitting
+      model: null,
     })
     // Create a large patch
     const model = Model.create(gridSchema)
