@@ -1,5 +1,5 @@
 import {
-  useAddQueryToDownloadList,
+  useAddToDownloadList,
   useGetEntityChildren,
 } from '@/synapse-queries/index'
 import {
@@ -25,7 +25,7 @@ vi.mock('../../synapse-queries/index', () => ({
 }))
 
 const mockUseGetEntityChildren = vi.mocked(useGetEntityChildren)
-const mockUseAddQueryToDownloadList = vi.mocked(useAddQueryToDownloadList)
+const mockUseAddQueryToDownloadList = vi.mocked(useAddToDownloadList)
 
 const DOWNLOAD_CONFIRMATION_UI_TEST_ID = 'DownloadConfirmationUI'
 const mockDownloadConfirmationUi = vi
