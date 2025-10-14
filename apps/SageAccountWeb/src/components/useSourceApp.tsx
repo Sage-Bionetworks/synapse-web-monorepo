@@ -8,7 +8,6 @@ import {
   useEffect,
   useMemo,
 } from 'react'
-import { sourceAppConfigTableID } from '../resources'
 import { getSearchParam } from '../URLUtils'
 import { SourceAppConfig } from './SourceAppConfigs'
 import {
@@ -85,7 +84,9 @@ export function SourceAppProvider(props: SourceAppContextProviderProps) {
 
   const sourceAppId = idFromProps ?? idFromLocalStorage
 
-  const sourceAppConfigs = useSourceAppConfigs(sourceAppConfigTableID)
+  const sourceAppConfigs = useSourceAppConfigs(
+    import.meta.env.VITE_SOURCE_APP_CONFIGS_TABLE_ID,
+  )
   const defaultSageSourceApp =
     sourceAppConfigs?.find(config => config.appId === SYNAPSE_SOURCE_APP_ID) ??
     STATIC_SOURCE_APP_CONFIG
@@ -96,7 +97,9 @@ export function SourceAppProvider(props: SourceAppContextProviderProps) {
   )
   if (sourceAppConfigs !== undefined && sourceApp == undefined) {
     console.error(
-      `Source appId '${sourceAppId}' not found in the Synapse configuration table (${sourceAppConfigTableID})!`,
+      `Source appId '${sourceAppId}' not found in the Synapse configuration table (${
+        import.meta.env.VITE_SOURCE_APP_CONFIGS_TABLE_ID
+      })!`,
     )
     if (idFromProps == null) {
       // The invalid sourceAppId came from localStorage; reset it to the default
