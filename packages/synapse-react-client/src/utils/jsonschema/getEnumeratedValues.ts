@@ -39,21 +39,26 @@ export default function getEnumeratedValues(
 ): { value: EnumeratedValue }[] {
   let rjsfOptionsList: EnumOptionsType[] = []
 
-  if (
-    jsonSchema?.oneOf &&
-    isArray(jsonSchema.oneOf) &&
-    !isOneOfSchemaDescribingEnum(jsonSchema.oneOf)
-  ) {
-    // PORTALS-3723
-    // RJSF assumes that a schema with a `oneOf` passed to `optionsList` is a list of options with `const` properties.
-    // That is not the case in some of our schemas, so if there is only one `oneOf` schema that does not describe `null`,
-    // we use that schema directly.
-    const nonNullOneOfOption = getOnlyNonNullOneOfOption(jsonSchema)
-    if (nonNullOneOfOption && Object.hasOwn(nonNullOneOfOption, 'enum')) {
-      rjsfOptionsList = optionsList(nonNullOneOfOption) || []
+  try {
+    if (
+      jsonSchema?.oneOf &&
+      isArray(jsonSchema.oneOf) &&
+      !isOneOfSchemaDescribingEnum(jsonSchema.oneOf)
+    ) {
+      // PORTALS-3723
+      // RJSF assumes that a schema with a `oneOf` passed to `optionsList` is a list of options with `const` properties.
+      // That is not the case in some of our schemas, so if there is only one `oneOf` schema that does not describe `null`,
+      // we use that schema directly.
+      const nonNullOneOfOption = getOnlyNonNullOneOfOption(jsonSchema)
+      if (nonNullOneOfOption && Object.hasOwn(nonNullOneOfOption, 'enum')) {
+        rjsfOptionsList = optionsList(nonNullOneOfOption) || []
+      }
+    } else {
+      rjsfOptionsList = optionsList(jsonSchema) || []
     }
-  } else {
-    rjsfOptionsList = optionsList(jsonSchema) || []
+  } catch (e) {
+    // optionsList can throw if the schema is not valid
+    console.error('Error getting enumerated values from schema', e, jsonSchema)
   }
   return rjsfOptionsList.map(rjsfOptionsListToValueList)
 }

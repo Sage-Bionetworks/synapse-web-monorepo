@@ -34,4 +34,22 @@ describe('getEnumeratedValues', () => {
     const expected = [{ value: 'foo' }, { value: 'bar' }, { value: 'baz' }]
     expect(expected).toEqual(getEnumeratedValues(schema))
   })
+  it('Handles an anyOf that does not include an enum schema', () => {
+    // PORTALS-7507 - getEnumeratedValues should not throw an error
+    const schema = {
+      anyOf: [
+        {
+          type: 'number',
+          maximum: 10000,
+          minimum: 0,
+        },
+        {
+          type: 'string',
+          maxLength: 0,
+        },
+      ],
+    }
+
+    expect(getEnumeratedValues(schema)).toEqual([])
+  })
 })
