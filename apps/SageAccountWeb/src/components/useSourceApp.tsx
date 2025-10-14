@@ -23,6 +23,7 @@ export type SourceAppContextType = SourceAppConfig
 const SOURCE_APP_ID_QUERY_PARAM_KEY = 'appId'
 const SOURCE_APP_ID_LOCALSTORAGE_KEY = 'sourceAppId'
 export const SYNAPSE_SOURCE_APP_ID = 'synapse.org'
+export const ARCUS_SOURCE_APP_ID = 'arcusbio'
 
 /**
  * This must be exported to use the context in class components.

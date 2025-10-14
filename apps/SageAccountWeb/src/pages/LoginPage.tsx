@@ -6,7 +6,10 @@ import {
   StyledInnerContainer,
   StyledOuterContainer,
 } from '../components/StyledComponents.js'
-import { useSourceApp } from '../components/useSourceApp.js'
+import {
+  ARCUS_SOURCE_APP_ID,
+  useSourceApp,
+} from '../components/useSourceApp.js'
 import { RESET_2FA_ROUTE, RESET_2FA_SIGNED_TOKEN_PARAM } from '../Constants.js'
 import StandaloneLoginForm from 'synapse-react-client/components/Authentication/StandaloneLoginForm'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
@@ -47,6 +50,9 @@ function LoginPage(props: LoginPageProps) {
   const { revalidate } = useRevalidator()
   const navigate = useNavigate()
   const sourceApp = useSourceApp()
+  const { appId } = sourceApp
+  const isArcusApp = appId === ARCUS_SOURCE_APP_ID
+
   const {
     lastLoginDateState,
     lastLoginMethodState,
@@ -106,6 +112,7 @@ function LoginPage(props: LoginPageProps) {
                 }}
                 twoFactorAuthenticationRequired={twoFactorAuthSSOErrorResponse}
                 twoFactorAuthResetUri={`${window.location.origin}/${RESET_2FA_ROUTE}?${RESET_2FA_SIGNED_TOKEN_PARAM}=`}
+                showArcusSSOButtonOnly={isArcusApp}
               />
             </Box>
           </Box>

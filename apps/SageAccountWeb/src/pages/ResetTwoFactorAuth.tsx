@@ -14,6 +14,7 @@ import PasswordField from 'synapse-react-client/components/Authentication/Passwo
 import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
 import { useQuerySearchParam } from 'synapse-react-client/utils/hooks/useQuerySearchParam'
 import StandaloneLoginForm from 'synapse-react-client/components/Authentication/StandaloneLoginForm'
+import { ARCUS_SOURCE_APP_ID, useSourceApp } from '@/components/useSourceApp'
 
 function ResetTwoFactorAuth() {
   const navigate = useNavigate()
@@ -23,7 +24,8 @@ function ResetTwoFactorAuth() {
   const twoFactorAuthResetTokenParam = useQuerySearchParam(
     RESET_2FA_SIGNED_TOKEN_PARAM,
   )
-
+  const { appId } = useSourceApp()
+  const isArcusApp = appId === ARCUS_SOURCE_APP_ID
   const token = useMemo(() => {
     if (twoFactorAuthResetTokenParam) {
       return hexDecodeAndDeserialize(
@@ -90,6 +92,7 @@ function ResetTwoFactorAuth() {
                       // We will render our own password form
                       setShowPasswordField(true)
                     }}
+                    showArcusSSOButtonOnly={isArcusApp}
                   />
                 </>
               )}

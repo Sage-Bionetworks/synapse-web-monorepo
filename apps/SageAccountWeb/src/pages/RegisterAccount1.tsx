@@ -26,7 +26,11 @@ import {
   StyledInnerContainer,
   StyledOuterContainer,
 } from '@/components/StyledComponents'
-import { SYNAPSE_SOURCE_APP_ID, useSourceApp } from '@/components/useSourceApp'
+import {
+  ARCUS_SOURCE_APP_ID,
+  SYNAPSE_SOURCE_APP_ID,
+  useSourceApp,
+} from '@/components/useSourceApp'
 import SynapseClient from 'synapse-react-client/synapse-client'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
@@ -43,7 +47,7 @@ export enum Pages {
   CHOOSE_REGISTRATION,
   EMAIL_REGISTRATION,
   EMAIL_REGISTRATION_THANK_YOU,
-  GOOGLE_REGISTRATION,
+  OAUTH_REGISTRATION,
 }
 
 function BackButtonForPage(props: {
@@ -55,7 +59,7 @@ function BackButtonForPage(props: {
     case Pages.CHOOSE_REGISTRATION:
       return <BackButton to={'/authenticated/myaccount'} />
     case Pages.EMAIL_REGISTRATION:
-    case Pages.GOOGLE_REGISTRATION:
+    case Pages.OAUTH_REGISTRATION:
       return <BackButton onClick={() => setPage(Pages.CHOOSE_REGISTRATION)} />
     default:
       return <></>
@@ -86,11 +90,13 @@ const RegisterAccount1 = () => {
   const [usernameInvalidReason, setUsernameInvalidReason] = useState<
     string | null
   >(null)
-  const [page, setPage] = useState(Pages.CHOOSE_REGISTRATION)
   const { appId: sourceAppId, friendlyName: sourceAppName } = useSourceApp()
+  const isArcusApp = sourceAppId === ARCUS_SOURCE_APP_ID
+  const [page, setPage] = useState(Pages.CHOOSE_REGISTRATION)
   const [membershipInvitationEmail, setMembershipInvitationEmail] =
     useState<string>()
-
+  const [oauthRegistrationProvider, setOAuthRegistrationProvider] =
+    useState<string>(SynapseConstants.OAUTH2_PROVIDERS.GOOGLE)
   const { search } = useLocation()
   const queryParams = useMemo(() => new URLSearchParams(search), [search])
   const emailFromParams = queryParams.get('email')
@@ -104,6 +110,14 @@ const RegisterAccount1 = () => {
     // Initialize the email address field with the email query parameter, but allow the user to change it or register using OAuth
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // If this is the Arcus app, skip the "choose registration" page and go straight to OAuth registration
+  useEffect(() => {
+    if (isArcusApp) {
+      setPage(Pages.OAUTH_REGISTRATION)
+      setOAuthRegistrationProvider(SynapseConstants.OAUTH2_PROVIDERS.ARCUS)
+    }
+  }, [isArcusApp])
 
   // If we have a MembershipInvtnSignedToken, initialize the email address with the membership invitation invitee email.
   useEffect(() => {
@@ -159,8 +173,7 @@ const RegisterAccount1 = () => {
     }
   }
 
-  const onSignUpWithGoogle = async (event: SyntheticEvent) => {
-    event.preventDefault()
+  const onSignUpWithOAuthProvider = async (provider: string) => {
     if (!username) {
       setUsernameInvalidReason('Please provide a user name and try again.')
       return
@@ -185,11 +198,9 @@ const RegisterAccount1 = () => {
         SynapseConstants.LAST_PLACE_LOCALSTORAGE_KEY,
         `${SynapseClient.getRootURL()}authenticated/signTermsOfUse`,
       )
-      const redirectUrl = `${SynapseClient.getRootURL()}?provider=${
-        SynapseConstants.OAUTH2_PROVIDERS.GOOGLE
-      }`
+      const redirectUrl = `${SynapseClient.getRootURL()}?provider=${provider}`
       const { authorizationUrl } = await SynapseClient.oAuthUrlRequest(
-        SynapseConstants.OAUTH2_PROVIDERS.GOOGLE,
+        provider,
         redirectUrl,
         { registrationUsername: username },
       )
@@ -248,7 +259,12 @@ const RegisterAccount1 = () => {
                     <>
                       <div>
                         <Button
-                          onClick={() => setPage(Pages.GOOGLE_REGISTRATION)}
+                          onClick={() => {
+                            setOAuthRegistrationProvider(
+                              SynapseConstants.OAUTH2_PROVIDERS.GOOGLE,
+                            )
+                            setPage(Pages.OAUTH_REGISTRATION)
+                          }}
                           sx={chooseButtonSx}
                           variant="outlined"
                           startIcon={
@@ -333,7 +349,7 @@ const RegisterAccount1 = () => {
                       </Button>
                     </div>
                   )}
-                  {page === Pages.GOOGLE_REGISTRATION && (
+                  {page === Pages.OAUTH_REGISTRATION && (
                     <div>
                       <StyledFormControl
                         fullWidth
@@ -355,7 +371,10 @@ const RegisterAccount1 = () => {
                           value={username || ''}
                           onKeyDown={e => {
                             if (e.key === 'Enter') {
-                              void onSignUpWithGoogle(e)
+                              e.preventDefault()
+                              void onSignUpWithOAuthProvider(
+                                oauthRegistrationProvider,
+                              )
                             }
                           }}
                         />
@@ -364,7 +383,10 @@ const RegisterAccount1 = () => {
                         sx={buttonSx}
                         variant="contained"
                         onClick={e => {
-                          void onSignUpWithGoogle(e)
+                          e.preventDefault()
+                          void onSignUpWithOAuthProvider(
+                            oauthRegistrationProvider,
+                          )
                         }}
                         type="button"
                         disabled={!(username && !isLoading)}
@@ -389,7 +411,7 @@ const RegisterAccount1 = () => {
                 >
                   Create an Account
                 </Typography>
-                {page !== Pages.GOOGLE_REGISTRATION && (
+                {page !== Pages.OAUTH_REGISTRATION && (
                   <>
                     {sourceAppId != SYNAPSE_SOURCE_APP_ID && (
                       <Typography variant="body1" sx={{ marginBottom: '20px' }}>
@@ -406,7 +428,7 @@ const RegisterAccount1 = () => {
                     )}
                   </>
                 )}
-                {page === Pages.GOOGLE_REGISTRATION && (
+                {page === Pages.OAUTH_REGISTRATION && (
                   <Typography variant="body1" sx={{ marginBottom: '20px' }}>
                     {VALID_USERNAME_DESCRIPTION}
                   </Typography>
