@@ -1,4 +1,5 @@
 import { removeTrailingUndefinedElements } from '@/utils/functions/ArrayUtils'
+import { parseEntityIdFromSqlStatement } from '@/utils/functions/index'
 import { hashCode, normalizeNumericId } from '@/utils/functions/StringUtils'
 import {
   USER_BUNDLE_MASK_IS_ACT_MEMBER,
@@ -10,6 +11,7 @@ import {
   USER_BUNDLE_MASK_VERIFICATION_SUBMISSION,
 } from '@/utils/SynapseConstants'
 import {
+  AddToDownloadListStatsRequest,
   DiscussionSearchRequest,
   EntityLookupRequest,
   GetRepoV1DoiAssociationRequest,
@@ -1015,5 +1017,21 @@ export class KeyFactory {
 
   public getCsvPreviewQueryKey(request: UploadToTablePreviewRequest) {
     return this.getKey('csvPreview', request)
+  }
+
+  public getAddToDownloadListStatsQueryKey(
+    addToDownloadListStatsRequest: AddToDownloadListStatsRequest,
+  ) {
+    // Retrieve the entityId from the request so that changes to the entity can invalidate this query
+    const entityId =
+      addToDownloadListStatsRequest.request?.parentId ??
+      parseEntityIdFromSqlStatement(
+        addToDownloadListStatsRequest?.request?.query?.sql ?? '',
+      )
+    return this.getKey(
+      entityQueryKeyObjects.entity(entityId),
+      'addToDownloadListStats',
+      addToDownloadListStatsRequest,
+    )
   }
 }

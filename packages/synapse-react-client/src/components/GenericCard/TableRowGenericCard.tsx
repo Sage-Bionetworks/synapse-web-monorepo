@@ -149,7 +149,7 @@ function VersionLabel(props: { synapseId: string; version: string }) {
 export function TableRowGenericCard(props: TableRowGenericCardProps) {
   const [showDownloadConfirmation, setShowDownloadConfirmation] =
     useState(false)
-  const [downloadButtonDisabled, setDownloadButtonDisabled] = useState(false)
+  const [downloadButtonLoading, setDownloadButtonLoading] = useState(false)
 
   const { entityId, versionNumber } = useQueryContext()
   const { getColumnDisplayName } = useQueryVisualizationContext()
@@ -441,7 +441,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
               versionNumber={downloadCartVersionNumber}
               handleClose={() => setShowDownloadConfirmation(false)}
               onIsLoadingChange={isLoading => {
-                setDownloadButtonDisabled(isLoading)
+                setDownloadButtonLoading(isLoading)
               }}
             />
           </Collapse>
@@ -475,7 +475,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
                 onClick={() => setShowDownloadConfirmation(val => !val)}
                 variant="outlined"
                 startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
-                disabled={downloadButtonDisabled}
+                loading={downloadButtonLoading}
               >
                 Download
               </GenericCardActionButton>
