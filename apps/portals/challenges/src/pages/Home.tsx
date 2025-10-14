@@ -1,4 +1,5 @@
 import ChallengeHeader from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeHeader/ChallengeHeader'
+import ChallengeMetrics from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeMetrics/ChallengeMetrics'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import TabbedSynapseObjects from '@sage-bionetworks/synapse-portal-framework/components/TabbedSynapseObjects'
 import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
@@ -12,6 +13,7 @@ function Home() {
   return (
     <>
       <ChallengeHeader />
+      <ChallengeMetrics />
       <SectionLayout
         title="Listed Challenges"
         subtitle="Explore and join our currently running challenges, or browse completed ones and review their findings."
