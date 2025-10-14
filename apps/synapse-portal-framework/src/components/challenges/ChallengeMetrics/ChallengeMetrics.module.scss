@@ -1,4 +1,5 @@
-@use 'synapse-react-client/style/abstracts/breakpoints' as *;
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+@use 'sass:map';
 
 .root {
   position: relative;
@@ -6,13 +7,13 @@
   height: 100%;
 }
 
-.metricsContainer {
+.metricsContainer:global(.MuiStack-root) {
   display: flex;
   padding: 120px 60px 200px 60px;
   gap: 40px;
   justify-content: center;
 
-  @media (min-width: $breakpoint-large) {
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
     flex-direction: row;
     padding: 120px 60px;
   }
@@ -23,7 +24,7 @@
   gap: 8px;
   text-align: center;
 
-  @media (min-width: $breakpoint-large) {
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
     max-width: 400px;
   }
 }
@@ -40,7 +41,7 @@
   font-size: 48px;
   line-height: 56px;
 
-  @media (min-width: $breakpoint-large) {
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
     font-size: 96px;
     line-height: 80px;
   }
