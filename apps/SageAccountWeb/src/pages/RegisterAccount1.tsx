@@ -53,8 +53,12 @@ export enum Pages {
 function BackButtonForPage(props: {
   page: Pages
   setPage: (page: Pages) => void
+  isArcusApp: boolean
 }) {
-  const { page, setPage } = props
+  const { page, setPage, isArcusApp } = props
+  if (isArcusApp) {
+    return <></>
+  }
   switch (page) {
     case Pages.CHOOSE_REGISTRATION:
       return <BackButton to={'/authenticated/myaccount'} />
@@ -244,7 +248,11 @@ const RegisterAccount1 = () => {
           {page !== Pages.EMAIL_REGISTRATION_THANK_YOU && (
             <>
               <Box sx={{ py: 10, px: 8, height: '100%', position: 'relative' }}>
-                <BackButtonForPage page={page} setPage={setPage} />
+                <BackButtonForPage
+                  page={page}
+                  setPage={setPage}
+                  isArcusApp={isArcusApp}
+                />
                 <Box
                   sx={{
                     display: 'flex',
