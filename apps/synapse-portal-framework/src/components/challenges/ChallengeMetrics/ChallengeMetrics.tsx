@@ -2,7 +2,13 @@ import { Typography, Box, Stack } from '@mui/material'
 import styles from './ChallengeMetrics.module.scss'
 import { ReactComponent as BkgImage } from '../assets/metricsBkg.svg'
 
-const StatContainer = ({ stat, label, description }) => (
+interface StatContainerProps {
+  stat: string
+  label: string
+  description: string
+}
+
+const StatContainer = ({ stat, label, description }: StatContainerProps) => (
   <Stack className={styles.statContainer}>
     <Typography variant="headline1" className={styles.statHeaderText}>
       {stat}
