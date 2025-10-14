@@ -1,4 +1,4 @@
-import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
+import ChallengeHeader from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeHeader/ChallengeHeader'
 import ChallengeMetrics from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeMetrics/ChallengeMetrics'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import TabbedSynapseObjects from '@sage-bionetworks/synapse-portal-framework/components/TabbedSynapseObjects'
@@ -12,7 +12,7 @@ import {
 function Home() {
   return (
     <>
-      <Header />
+      <ChallengeHeader />
       <ChallengeMetrics />
       <SectionLayout
         title="Listed Challenges"

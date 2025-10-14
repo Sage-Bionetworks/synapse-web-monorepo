@@ -21,6 +21,7 @@ import { datasetCardConfiguration } from '../config/synapseConfigs/datasets'
 import { grantsCardConfiguration } from '../config/synapseConfigs/grants'
 import { peopleCardConfiguration } from '../config/synapseConfigs/people'
 import { publicationsCardConfiguration } from '../config/synapseConfigs/publications'
+import { DatasetJsonLdScript } from 'synapse-react-client'
 
 function DatasetsDetailsPage() {
   const { datasetId } = useGetPortalComponentSearchParams()
@@ -53,6 +54,10 @@ function DatasetsDetailsPage() {
     >
       <DetailsPageContent
         content={[
+          {
+            id: 'DatasetJsonLdScript',
+            element: <DatasetJsonLdScript entityId={datasetId} />,
+          },
           {
             id: 'Related Grants',
             title: 'Related Grants',
