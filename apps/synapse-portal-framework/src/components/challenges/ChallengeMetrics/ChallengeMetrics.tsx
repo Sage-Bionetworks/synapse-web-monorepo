@@ -20,26 +20,37 @@ const StatContainer = ({ stat, label, description }: StatContainerProps) => (
   </Stack>
 )
 
+const metricsData = [
+  {
+    stat: "273",
+    label: "total challenges run",
+    description: "with over 7,000 participants from 34 different countries and 248 different institutions",
+  },
+  {
+    stat: "$592,985",
+    label: "won in challenge prizes",
+    description: "and work published in over 297 journals and presented at over 80 research symposiums",
+  },
+  {
+    stat: "38",
+    label: "disease areas positively impacted",
+    description: "including Alzheimer’s, AML leukemia, Rheumatoid Arthritis, lung cancer and more.",
+  },
+]
+
 const ChallengeMetrics = () => {
   return (
     <Box className={styles.root}>
       <BkgImage className={styles.bkgImage} preserveAspectRatio="none" />
       <Stack className={styles.metricsContainer}>
-        <StatContainer
-          stat="273"
-          label="total challenges run"
-          description="with over 7,000 participants from 34 different countries and 248 different institutions"
-        />
-        <StatContainer
-          stat="$592,985"
-          label="won in challenge prizes"
-          description="and work published in over 297 journals and presented at over 80 research symposiums"
-        />
-        <StatContainer
-          stat="38"
-          label="disease areas positively impacted"
-          description="including Alzheimer’s, AML leukemia, Rheumatoid Arthritis, lung cancer and more."
-        />
+        {metricsData.map((metric, idx) => (
+          <StatContainer
+            key={idx}
+            stat={metric.stat}
+            label={metric.label}
+            description={metric.description}
+          />
+        ))}
       </Stack>
     </Box>
   )
