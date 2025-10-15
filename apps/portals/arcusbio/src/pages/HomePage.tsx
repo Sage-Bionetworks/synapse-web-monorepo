@@ -1,44 +1,24 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import { Box, Container, Typography, useTheme } from '@mui/material'
+import { Box, Container, Typography } from '@mui/material'
+import styles from './HomePage.module.scss'
 
 export default function HomePage() {
-  const theme = useTheme()
-
   const title = (
-    <Box sx={{ color: 'grey.100' }}>
-      <Typography
-        variant="headline1"
-        sx={{
-          textTransform: 'uppercase',
-          fontSize: { xs: '36px', md: '42px' },
-          lineHeight: '38px',
-        }}
-      >
-        Arcus Biosciences Data Portal
-      </Typography>
-    </Box>
+    <Typography variant="headline1" className={styles.title}>
+      Arcus Biosciences Data Portal
+    </Typography>
   )
   const description = (
-    <Box sx={{ color: theme.palette.grey[100] }}>
-      <Typography
-        variant="headline3"
-        sx={{
-          mt: '30px',
-          fontSize: { xs: '18px', md: '20px' },
-          fontWeight: '400',
-          lineHeight: '25px',
-        }}
-      >
-        Explore, search, and manage our research data all in one place. Use the
-        tools provided to access datasets, track file provenance, and
-        collaborate seamlessly across teams.
-      </Typography>
-    </Box>
+    <Typography variant="headline3" className={styles.description}>
+      Explore, search, and manage our research data all in one place. Use the
+      tools provided to access datasets, track file provenance, and collaborate
+      seamlessly across teams.
+    </Typography>
   )
   return (
     <>
-      <Box sx={{ background: '#252861', p: { xs: '30px', md: '60px' } }}>
-        <Container sx={{ p: '40px 0px' }}>
+      <Box className={styles.hero}>
+        <Container className={styles.heroContent}>
           {title}
           {description}
         </Container>
