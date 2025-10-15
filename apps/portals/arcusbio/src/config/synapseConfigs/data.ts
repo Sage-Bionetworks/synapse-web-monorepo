@@ -17,15 +17,6 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   tableConfiguration: {
     showAccessColumn: true,
     showDownloadColumn: true,
-    // columnLinks: [
-    //   {
-    //     matchColumnName: DATA_TABLE_COLUMN_NAMES.STUDY,
-    //     isMarkdown: false,
-    //     baseURL: 'Explore/Studies/DetailsPage',
-    //     URLColumnName: STUDY_TABLE_COLUMN_NAMES.STUDY_NAME,
-    //     wrapValueWithParens: true,
-    //   },
-    // ],
   },
   sql: dataSql,
   shouldDeepLink: true,
