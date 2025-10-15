@@ -48,10 +48,6 @@ export function getCellClassName(params: {
 
   if (isInvalid) {
     classList.push('cell-invalid')
-    // Add combined class for specific styling when both selected and invalid
-    if (isInSelection) {
-      classList.push('cell-selected-invalid')
-    }
   }
 
   return classList.length ? classNames(classList) : undefined
