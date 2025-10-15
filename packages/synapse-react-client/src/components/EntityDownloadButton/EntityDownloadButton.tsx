@@ -6,7 +6,13 @@ import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/
 import { ModalDownload } from '../ModalDownload/ModalDownload'
 import { useGetEntity, useGetVersions } from '@/synapse-queries'
 import { isVersionableEntity } from '@/utils/functions/EntityTypeUtils'
-import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+
+// WIP
+// Per Nick Grosenbacher: For this to be reusable, I think we would also need to accept versionNumber as a prop. Where we would have the following behavior:
+// - If the version number is present, use it
+// - If the version number is null, do not use it,
+// - If the version number is undefined, then we would try to do the 'smart' thing-- get the latest version for datasets, otherwise don't use it.
 
 // Have to keep these consts outside of getProgrammaticAccessCode because
 // they are being called in ProgrammaticTableDownload.tsx
@@ -178,18 +184,19 @@ function useGetLatestVersionNumber(entityId: string, entityType: EntityType) {
     useGetEntity(entityId) // No version = latest
 
   // for datasets, check if any versions exist and use the most recent one
+  const mustGetVersion = entityType === EntityType.dataset
   const { data: versionsData, isLoading: versionsLoading } = useGetVersions(
     entityId,
     0,
-    50,
+    1,
     {
-      enabled: entityType === EntityType.dataset,
+      enabled: mustGetVersion,
     },
   )
 
   let latestVersionNumber: number | undefined
 
-  if (entityType === EntityType.dataset) {
+  if (mustGetVersion) {
     // for datasets, check if any versions exist
     if (versionsData?.results && versionsData.results.length > 0) {
       // Use the most recent released version (first in the list, since versions are returned in descending order)
@@ -206,9 +213,7 @@ function useGetLatestVersionNumber(entityId: string, entityType: EntityType) {
         : undefined
   }
 
-  const isLoading =
-    entityDataLoading ||
-    (entityType === EntityType.dataset ? versionsLoading : false)
+  const isLoading = entityDataLoading || versionsLoading
 
   return { latestVersionNumber, isLoading }
 }
@@ -238,7 +243,7 @@ function getDefaultQueryBundleRequestForEntity(
     entityId: `${entityId}`,
     query: {
       sql: sql,
-    } as Query,
+    },
     partMask: 0,
   }
 }
