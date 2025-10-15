@@ -32,7 +32,7 @@ export default function HomePage() {
         </Typography>
       </SectionLayout>
       <SectionLayout title={'Accessing the data'}>
-        <Typography>
+        <Typography component="div">
           Access to the data in this portal is restricted to authorized members
           of the Arcus team. To browse or search for files:
           <ol>
@@ -52,7 +52,7 @@ export default function HomePage() {
         </Typography>
       </SectionLayout>
       <SectionLayout title={'Using file provenance'}>
-        <Typography>
+        <Typography component="div">
           The portal tracks the origin, ownership, and modification history of
           each file to ensure data integrity and reproducibility. You can view
           detailed provenance information, including:
