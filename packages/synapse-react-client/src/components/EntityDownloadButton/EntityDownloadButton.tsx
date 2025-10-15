@@ -4,7 +4,7 @@ import { EntityType } from '@sage-bionetworks/synapse-client'
 import { useState } from 'react'
 import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import { ModalDownload } from '../ModalDownload/ModalDownload'
-import { useGetEntity } from '@/synapse-queries'
+import { useGetEntity, useGetVersions } from '@/synapse-queries'
 import { isVersionableEntity } from '@/utils/functions/EntityTypeUtils'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 
@@ -29,15 +29,16 @@ type ProgrammaticAccessCode = {
 function getProgrammaticAccessCode(
   type: EntityType,
   entityId: string,
+  version: number | undefined,
 ): ProgrammaticAccessCode {
+  const id =
+    type === EntityType.dataset && version ? `${entityId}.${version}` : entityId
   switch (type) {
-    case 'file':
-    case 'folder':
-    case 'project':
+    case EntityType.file:
+    case EntityType.folder:
+    case EntityType.project:
       return {
-        cliCode: `${PYTHON_CLIENT_IMPORT_AND_LOGIN} \n
-# Download file
-syn.get('${entityId}')`,
+        cliCode: `synapse get -r ${entityId}`,
         rCode: `${R_CLIENT_IMPORT_AND_LOGIN} \n
 # Download file
 synGet('${entityId}')`,
@@ -45,28 +46,28 @@ synGet('${entityId}')`,
 # Download file
 syn.get('${entityId}')`,
       }
-    case 'dockerrepo':
+    case EntityType.dockerrepo:
       return {
         cliCode: `docker login -u <synapse username> -p <synapse password> docker.synapse.org \n
 docker pull docker.synapse.org/${entityId}/myrepo`,
         rCode: undefined,
         pythonCode: undefined,
       }
-    case 'dataset':
-    case 'entityview':
-    case 'datasetcollection':
-    case 'table':
-    case 'materializedview':
-    case 'submissionview':
-    case 'virtualtable':
-    case 'recordset':
+    case EntityType.dataset:
+    case EntityType.entityview:
+    case EntityType.datasetcollection:
+    case EntityType.table:
+    case EntityType.materializedview:
+    case EntityType.submissionview:
+    case EntityType.virtualtable:
+    case EntityType.recordset:
       return {
-        cliCode: `synapse get -q "SELECT * FROM ${entityId}"`,
+        cliCode: `synapse get -q "SELECT * FROM ${id}"`,
         rCode: `${R_CLIENT_IMPORT_AND_LOGIN} \n
-query <- synTableQuery("SELECT * FROM ${entityId}")
+query <- synTableQuery("SELECT * FROM ${id}")
 read.table(query$filepath, sep=",")`,
         pythonCode: `${PYTHON_CLIENT_IMPORT_AND_LOGIN} \n
-query = syn.tableQuery("SELECT * FROM ${entityId}")
+query = syn.tableQuery("SELECT * FROM ${id}")
 query.asDataFrame()`,
       }
     default:
@@ -141,53 +142,96 @@ export function getDownloadActionsForEntityType(
   type: EntityType,
 ): DownloadAction[][] {
   switch (type) {
-    case 'file':
-    case 'recordset':
+    case EntityType.file:
+    case EntityType.recordset:
       return [
         [DownloadAction.downloadFile],
         [DownloadAction.addToCart, DownloadAction.programmaticAccess],
       ]
-    case 'project':
-    case 'folder':
+    case EntityType.project:
+    case EntityType.folder:
       return [[DownloadAction.addToCart, DownloadAction.programmaticAccess]]
-    case 'dockerrepo':
+    case EntityType.dockerrepo:
       return [[DownloadAction.programmaticAccessDocker]]
-    case 'entityview':
-    case 'dataset':
-    case 'table':
-    case 'datasetcollection':
-    case 'materializedview':
-    case 'submissionview':
-    case 'virtualtable':
+    case EntityType.entityview:
+    case EntityType.dataset:
+    case EntityType.table:
+    case EntityType.datasetcollection:
+    case EntityType.materializedview:
+    case EntityType.submissionview:
+    case EntityType.virtualtable:
       return [[DownloadAction.exportTable, DownloadAction.programmaticAccess]]
-    case 'link':
+    case EntityType.link:
       return [[DownloadAction.programmaticAccess]]
     default:
-      // This will fail if a new EntityType is added and not handled
+      // this will fail if a new EntityType is added and not handled
       throw new Error(`Unhandled EntityType: ${type}`)
   }
 }
 
-// get latest version number of the entityId
-function useGetLatestVersionNumber(entityId: string) {
-  const { data: entity, isLoading } = useGetEntity(entityId) // No version = latest
+// get the appropriate version number for download based on entity type
+// for datasets: returns the most recent released version if any exist, undefined otherwise
+// for other entities: returns the current version number
+function useGetLatestVersionNumber(entityId: string, entityType: EntityType) {
+  // get entity data
+  const { data: entityData, isLoading: entityDataLoading } =
+    useGetEntity(entityId) // No version = latest
 
-  const latestVersionNumber =
-    entity && isVersionableEntity(entity) ? entity.versionNumber : undefined
+  // for datasets, check if any versions exist and use the most recent one
+  const { data: versionsData, isLoading: versionsLoading } = useGetVersions(
+    entityId,
+    0,
+    50,
+    {
+      enabled: entityType === EntityType.dataset,
+    },
+  )
+
+  let latestVersionNumber: number | undefined
+
+  if (entityType === EntityType.dataset) {
+    // for datasets, check if any versions exist
+    if (versionsData?.results && versionsData.results.length > 0) {
+      // Use the most recent released version (first in the list, since versions are returned in descending order)
+      latestVersionNumber = versionsData.results[0].versionNumber
+    } else {
+      // no versions exist, use undefined (will use current/draft version)
+      latestVersionNumber = undefined
+    }
+  } else {
+    // for non-datasets, use the entity's version number
+    latestVersionNumber =
+      entityData && isVersionableEntity(entityData)
+        ? entityData.versionNumber
+        : undefined
+  }
+
+  const isLoading =
+    entityDataLoading ||
+    (entityType === EntityType.dataset ? versionsLoading : false)
 
   return { latestVersionNumber, isLoading }
 }
 
-// create default queryBundleRequest
+// create default queryBundleRequest with appropriate SQL
 function getDefaultQueryBundleRequestForEntity(
   entityId: string,
   versionNumber: number | undefined,
   entityType: EntityType,
 ): QueryBundleRequest {
-  const sql =
-    entityType === 'dataset'
+  let sql: string
+
+  if (entityType === EntityType.dataset) {
+    // for datasets:
+    // - if a version number exists (released version), use it: syn123.5
+    // - if no version number (no released versions), use current/draft: syn123
+    sql = versionNumber
       ? `SELECT * FROM ${entityId}.${versionNumber}`
       : `SELECT * FROM ${entityId}`
+  } else {
+    // For non-datasets, always use entity ID without version
+    sql = `SELECT * FROM ${entityId}`
+  }
 
   return {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -204,8 +248,12 @@ export function EntityDownloadButton(props: {
   name: string
   entityType: EntityType
 }) {
-  // create queryBundleRequest
-  const { latestVersionNumber } = useGetLatestVersionNumber(props.entityId)
+  // get the appropriate version number for the entity
+  const { latestVersionNumber } = useGetLatestVersionNumber(
+    props.entityId,
+    props.entityType,
+  )
+  // create queryBundleRequest with appropriate SQL based on entity type and version
   const defaultQueryBundleRequest = getDefaultQueryBundleRequestForEntity(
     props.entityId,
     latestVersionNumber,
@@ -213,7 +261,7 @@ export function EntityDownloadButton(props: {
   )
 
   // state to manage programmatic access modal visibility
-  const [ShowProgrammaticAccess, setShowProgrammaticAccess] =
+  const [showProgrammaticAccess, setShowProgrammaticAccess] =
     useState<boolean>(false)
 
   const handleCloseProgrammaticAccess = () => {
@@ -245,6 +293,7 @@ export function EntityDownloadButton(props: {
   const { cliCode, rCode, pythonCode } = getProgrammaticAccessCode(
     props.entityType,
     props.entityId,
+    latestVersionNumber,
   )
 
   return (
@@ -259,7 +308,7 @@ export function EntityDownloadButton(props: {
         }}
       />
       <ProgrammaticInstructionsModal
-        show={ShowProgrammaticAccess}
+        show={showProgrammaticAccess}
         title={`Programmatic Access: ${props.name}`}
         onClose={handleCloseProgrammaticAccess}
         pythonCode={pythonCode}
