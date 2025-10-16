@@ -1,0 +1,2 @@
+export S3_PRODUCTION_BUCK_LOCATION=s3://prod.arcusbio.synapse.org
+export CF_PRODUCTION_DIST_ID=E1CMCI9H5DS1CH

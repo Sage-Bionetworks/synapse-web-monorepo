@@ -9,6 +9,7 @@ on:
         options:
           - adknowledgeportal
           - ampals
+          - arcusbio
           - arkportal
           - b2ai.standards
           - bsmn
