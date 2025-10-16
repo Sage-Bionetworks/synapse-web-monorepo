@@ -190,6 +190,12 @@ export const classicPalette: PaletteOptions = {
   secondary: generatePalette('#098169'),
 }
 
+export const arcusbioPalette: PaletteOptions = {
+  ...palette,
+  primary: generatePalette('#252861'),
+  secondary: generatePalette('#252861'),
+}
+
 export default {
   palette,
   generatePalette,
@@ -209,4 +215,5 @@ export default {
   standardsPortalPalette,
   ampalsPalette,
   classicPalette,
+  arcusbioPalette,
 }

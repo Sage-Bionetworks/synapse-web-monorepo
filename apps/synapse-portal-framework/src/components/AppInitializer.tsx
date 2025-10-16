@@ -11,6 +11,7 @@ import {
   useFramebuster,
 } from 'synapse-react-client/utils/AppUtils'
 import { useOneSageURL } from 'synapse-react-client/utils/hooks/useOneSageURL'
+import { KNOWN_SYNAPSE_ORG_URLS } from 'synapse-react-client/utils/functions/getEndpoint'
 
 const COOKIE_CONFIG_KEY = 'org.sagebionetworks.security.cookies.portal.config'
 
@@ -51,7 +52,7 @@ function AppInitializer(props: PropsWithChildren<Record<never, never>>) {
         if (anchorElement.href) {
           const { hostname } = new URL(anchorElement.href)
           if (
-            hostname.toLowerCase() === 'www.synapse.org' ||
+            KNOWN_SYNAPSE_ORG_URLS.includes(hostname.toLowerCase()) ||
             redirectInstructionsMap[anchorElement.href]
           ) {
             // && anchorElement.target !== '_blank') {  // should we skip the dialog if opening in a new window?
