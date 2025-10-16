@@ -49,7 +49,9 @@ import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
  * Maps a table query result to a GenericCard.
  */
 export type TableToGenericCardMapping = {
-  /** The 'type' of resource a card refers to. Renders a label on the card with this string value */
+  /** The 'type' of resource a card refers to. Renders a label on the card with this string value.
+   *  Can be hidden by setting it to '' (empty string)
+   */
   type: string
   /** The column name whose data contains the title of the card */
   title: string

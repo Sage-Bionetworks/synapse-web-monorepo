@@ -17,6 +17,7 @@ export type TrackedUploadProgress = {
   abortController: AbortController
   status: UploadFileStatus
   failureReason?: string
+  fileHandleId?: string
 }
 
 export const PENDING_UPLOAD_STATES: TrackedUploadProgress['status'][] = [
@@ -113,12 +114,27 @@ export function useTrackFileUploads() {
     })
   }
 
+  function setFileHandleId(file: File, fileHandleId: string) {
+    setTrackedUploadProgress(prev => {
+      const newMap = new Map(prev.entries())
+      const entry = newMap.get(file)
+      if (entry) {
+        newMap.set(file, {
+          ...entry,
+          fileHandleId,
+        })
+      }
+      return newMap
+    })
+  }
+
   function setIsUploading(file: File) {
     setStatus(file, 'UPLOADING')
   }
 
-  function setComplete(file: File) {
+  function setComplete(file: File, fileHandleId: string) {
     setStatus(file, 'COMPLETE')
+    setFileHandleId(file, fileHandleId)
   }
 
   function setFailed(file: File, failureReason: string) {

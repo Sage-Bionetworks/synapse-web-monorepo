@@ -73,12 +73,14 @@ export function useGetRestrictionUiType(
     return undefined
   }
 
-  if (isLoadingExternalFile) {
-    return undefined
-  }
-
-  if (isExternalFileHandle) {
-    return RestrictionUiType.AccessibleExternalFileHandle
+  // Only check for external file handle if the feature is enabled
+  if (useGetIsExternalFileHandleOptions.enabled) {
+    if (isLoadingExternalFile) {
+      return undefined
+    }
+    if (isExternalFileHandle) {
+      return RestrictionUiType.AccessibleExternalFileHandle
+    }
   }
 
   if (restrictionInformation.hasUnmetAccessRequirement) {

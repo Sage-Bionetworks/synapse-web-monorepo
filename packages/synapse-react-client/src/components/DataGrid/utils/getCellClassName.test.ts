@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { getCellClassName } from './getCellClassName'
 import { DataGridRow } from '../DataGridTypes'
+import { SelectionWithId } from 'react-datasheet-grid/dist/types'
+import { Column } from 'react-datasheet-grid'
 
 describe('getCellClassName', () => {
   const createMockRowData = (
@@ -9,6 +11,23 @@ describe('getCellClassName', () => {
     ({
       __cellValidationResults: validationResults,
     } as DataGridRow)
+
+  const createMockColumns = (): Column[] => [
+    { id: 'col1' } as Column,
+    { id: 'col2' } as Column,
+    { id: 'col3' } as Column,
+  ]
+
+  const createMockSelection = (
+    minRow: number,
+    maxRow: number,
+    minCol: number,
+    maxCol: number,
+  ): SelectionWithId =>
+    ({
+      min: { row: minRow, col: minCol },
+      max: { row: maxRow, col: maxCol },
+    } as SelectionWithId)
 
   it('returns undefined when no classes should be applied', () => {
     const result = getCellClassName({
@@ -148,5 +167,138 @@ describe('getCellClassName', () => {
     })
 
     expect(result).toBe('cell-invalid')
+  })
+
+  describe('lastSelection functionality', () => {
+    it('adds cell-selected class when cell is within selection bounds', () => {
+      const result = getCellClassName({
+        rowData: createMockRowData(),
+        rowIndex: 1,
+        columnId: 'col2',
+        selectedRowIndex: null,
+        lastSelection: createMockSelection(0, 2, 1, 2),
+        colValues: createMockColumns(),
+      })
+
+      expect(result).toBe('cell-selected')
+    })
+
+    it('does not add cell-selected class when cell is outside row selection bounds', () => {
+      const result = getCellClassName({
+        rowData: createMockRowData(),
+        rowIndex: 3,
+        columnId: 'col2',
+        selectedRowIndex: null,
+        lastSelection: createMockSelection(0, 2, 1, 2),
+        colValues: createMockColumns(),
+      })
+
+      expect(result).toBeUndefined()
+    })
+
+    it('does not add cell-selected class when cell is outside column selection bounds', () => {
+      const result = getCellClassName({
+        rowData: createMockRowData(),
+        rowIndex: 1,
+        columnId: 'col1',
+        selectedRowIndex: null,
+        lastSelection: createMockSelection(0, 2, 1, 2),
+        colValues: createMockColumns(),
+      })
+
+      expect(result).toBeUndefined()
+    })
+
+    it('does not add cell-selected class when lastSelection is null', () => {
+      const result = getCellClassName({
+        rowData: createMockRowData(),
+        rowIndex: 1,
+        columnId: 'col2',
+        selectedRowIndex: null,
+        lastSelection: null,
+        colValues: createMockColumns(),
+      })
+
+      expect(result).toBeUndefined()
+    })
+
+    it('does not add cell-selected class when columnId is undefined', () => {
+      const result = getCellClassName({
+        rowData: createMockRowData(),
+        rowIndex: 1,
+        columnId: undefined,
+        selectedRowIndex: null,
+        lastSelection: createMockSelection(0, 2, 1, 2),
+        colValues: createMockColumns(),
+      })
+
+      expect(result).toBeUndefined()
+    })
+
+    it('does not add cell-selected class when colValues is undefined', () => {
+      const result = getCellClassName({
+        rowData: createMockRowData(),
+        rowIndex: 1,
+        columnId: 'col2',
+        selectedRowIndex: null,
+        lastSelection: createMockSelection(0, 2, 1, 2),
+        colValues: undefined,
+      })
+
+      expect(result).toBeUndefined()
+    })
+
+    it('handles single cell selection', () => {
+      const result = getCellClassName({
+        rowData: createMockRowData(),
+        rowIndex: 1,
+        columnId: 'col2',
+        selectedRowIndex: null,
+        lastSelection: createMockSelection(1, 1, 1, 1),
+        colValues: createMockColumns(),
+      })
+
+      expect(result).toBe('cell-selected')
+    })
+
+    it('combines all three classes when applicable', () => {
+      const validationResults = new Map([['col2', ['Error']]])
+      const result = getCellClassName({
+        rowData: createMockRowData(validationResults),
+        rowIndex: 1,
+        columnId: 'col2',
+        selectedRowIndex: 1,
+        lastSelection: createMockSelection(0, 2, 1, 2),
+        colValues: createMockColumns(),
+      })
+
+      expect(result).toBe('cell-row-selected cell-selected cell-invalid')
+    })
+
+    it('handles column not found in colValues', () => {
+      const result = getCellClassName({
+        rowData: createMockRowData(),
+        rowIndex: 1,
+        columnId: 'nonexistent',
+        selectedRowIndex: null,
+        lastSelection: createMockSelection(0, 2, 1, 2),
+        colValues: createMockColumns(),
+      })
+
+      expect(result).toBeUndefined()
+    })
+
+    it('handles edge case where cell is at selection boundary', () => {
+      const result = getCellClassName({
+        rowData: createMockRowData(),
+        rowIndex: 2,
+        columnId: 'col3',
+        selectedRowIndex: null,
+        lastSelection: createMockSelection(0, 2, 1, 2),
+        colValues: createMockColumns(),
+      })
+
+      expect(result).toBe('cell-selected')
+    })
   })
 })

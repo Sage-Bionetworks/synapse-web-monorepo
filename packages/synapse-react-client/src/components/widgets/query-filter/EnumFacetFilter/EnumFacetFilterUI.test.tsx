@@ -1,5 +1,5 @@
 import { SynapseConstants } from '@/utils'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import EnumFacetFilterUI, {
   EnumFacetFilterUIProps,
@@ -118,7 +118,7 @@ describe('EnumFacetFilterUI (unit tests)', () => {
       const button = container.querySelector(
         'button.FacetFilterHeader__collapseToggleBtn',
       )!
-      fireEvent.click(button)
+      await userEvent.click(button)
 
       await waitFor(() =>
         expect(
@@ -173,6 +173,23 @@ describe('EnumFacetFilterUI (unit tests)', () => {
         '.EnumFacetFilter__count',
       )
       expect(labels).toHaveLength(5)
+    })
+
+    it('should not hide > 5 items if it is a dropdown', async () => {
+      const facetValues = generateManyFacetValues()
+
+      renderComponent({
+        facetValues: facetValues,
+        containerAs: 'Dropdown',
+        dropdownType: 'Icon',
+      })
+
+      await userEvent.click(screen.getByRole('button'))
+
+      await waitFor(() => {
+        // 20 visible values + 1 "Select All"
+        expect(screen.queryAllByRole('checkbox').length).toBe(21)
+      })
     })
 
     it('should show all items if items with index >=5 is selected', async () => {
