@@ -54,6 +54,7 @@ export default tseslint.config(
             ...allProjectDirs.map(dir => `${dir}/*.ts`),
             `packages/synapse-react-client/.storybook/*.ts`,
             `packages/synapse-react-client/.storybook/*.tsx`,
+            'scripts/*.js',
           ],
         },
         project: [
@@ -115,6 +116,26 @@ export default tseslint.config(
       ],
       '@typescript-eslint/no-redundant-type-constituents': 'warn',
       'barrel/avoid-barrel-files': 'warn',
+    },
+  },
+  {
+    files: ['scripts/*.js'],
+    languageOptions: {
+      parserOptions: {
+        project: null,
+      },
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      'no-undef': 'off',
     },
   },
   {
