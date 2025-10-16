@@ -85,7 +85,7 @@ const PartnerIcon = ({
       />
     )
 
-  const ImageContent = imageUrl ? (
+  const PartnerContent = imageUrl ? (
     <CardMedia
       component="img"
       image={imageUrl}
@@ -137,7 +137,7 @@ const PartnerIcon = ({
     </Box>
   )
 
-  return <PartnerWrapper website={website}>{ImageContent}</PartnerWrapper>
+  return <PartnerWrapper website={website}>{PartnerContent}</PartnerWrapper>
 }
 
 const PortalFeaturedPartners = ({
