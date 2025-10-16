@@ -1,8 +1,10 @@
+$breakpoint-md: 900px;
+
 .hero {
   background: #252861;
   padding: 30px;
 
-  @media (min-width: 900px) {
+  @media (min-width: $breakpoint-md) {
     padding: 60px;
   }
 }
@@ -17,7 +19,7 @@
   font-size: 36px;
   line-height: 38px;
 
-  @media (min-width: 900px) {
+  @media (min-width: $breakpoint-md) {
     font-size: 42px;
   }
 }
@@ -29,7 +31,7 @@
   font-weight: 400;
   line-height: 25px;
 
-  @media (min-width: 900px) {
+  @media (min-width: $breakpoint-md) {
     font-size: 20px;
   }
 }
