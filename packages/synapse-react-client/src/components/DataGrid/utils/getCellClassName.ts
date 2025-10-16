@@ -22,21 +22,19 @@ export function getCellClassName(params: {
 
   const isSelected = selectedRowIndex === rowIndex
   const cellValidationResults = rowData.__cellValidationResults
+  const isInvalid =
+    cellValidationResults && columnId && cellValidationResults.has(columnId)
 
   const classList: string[] = []
+
   if (isSelected) {
     classList.push('cell-row-selected')
   }
 
-  if (cellValidationResults && columnId) {
-    if (cellValidationResults.has(columnId)) {
-      classList.push('cell-invalid')
-    }
-  }
-
   // Add selection styling based on lastSelection
+  let isInSelection = false
   if (lastSelection && columnId && colValues) {
-    const isInSelection =
+    isInSelection =
       rowIndex >= lastSelection.min.row &&
       rowIndex <= lastSelection.max.row &&
       colValues.findIndex(col => col.id === columnId) >=
@@ -46,6 +44,10 @@ export function getCellClassName(params: {
     if (isInSelection) {
       classList.push('cell-selected')
     }
+  }
+
+  if (isInvalid) {
+    classList.push('cell-invalid')
   }
 
   return classList.length ? classNames(classList) : undefined

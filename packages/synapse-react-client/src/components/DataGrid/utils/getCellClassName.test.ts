@@ -272,7 +272,7 @@ describe('getCellClassName', () => {
         colValues: createMockColumns(),
       })
 
-      expect(result).toBe('cell-row-selected cell-invalid cell-selected')
+      expect(result).toBe('cell-row-selected cell-selected cell-invalid')
     })
 
     it('handles column not found in colValues', () => {
