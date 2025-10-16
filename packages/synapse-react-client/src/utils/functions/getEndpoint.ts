@@ -15,7 +15,7 @@ export type EndpointObject = {
   PORTAL: string
 }
 
-const KNOWN_SYNAPSE_ORG_URLS = [
+export const KNOWN_SYNAPSE_ORG_URLS = [
   'www.synapse.org',
   'staging.synapse.org',
   'tst.synapse.org',
