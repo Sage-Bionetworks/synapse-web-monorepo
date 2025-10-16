@@ -3,24 +3,12 @@
   "version": "3.4.50",
   "private": false,
   "type": "module",
-  "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./dist/*": {
-      "import": "./dist/*",
-      "require": "./dist/*"
-    },
-    "./*": {
-      "import": "./dist/*",
-      "require": "./dist/*"
-    },
-    "./package.json": "./package.json",
-    "./ThemeTypes": "./src/types/ThemeTypes.d.ts"
+    ".": "./dist/index.js",
+    "./*": "./dist/*",
+    "./package.json": "./package.json"
   },
   "homepage": "https://sage-bionetworks.github.io/synapse-web-monorepo/",
   "files": [
@@ -130,6 +118,7 @@
     "@faker-js/faker": "^8.4.1",
     "@googlemaps/jest-mocks": "^2.22.6",
     "@juggle/resize-observer": "^3.4.0",
+    "@microsoft/api-extractor": "^7.53.1",
     "@open-draft/deferred-promise": "^2.2.0",
     "@storybook/addon-a11y": "^8",
     "@storybook/addon-actions": "^8.6.12",
@@ -185,6 +174,7 @@
     "clickable-json": "^1.15.1",
     "copyfiles": "^2.4.1",
     "core-js": "^3.42.0",
+    "glob": "^11.0.3",
     "https-browserify": "^1.0.0",
     "identity-obj-proxy": "^3.0.0",
     "jest-environment-jsdom": "^29.7.0",
@@ -211,9 +201,14 @@
     "timers-browserify": "^2.0.12",
     "type-fest": "^4.41.0",
     "typescript": "5.8.3",
+    "unplugin-dts": "1.0.0-beta.6",
     "util": "^0.12.5",
     "vite": "^6.3.6",
     "vite-config": "workspace:*",
+    "vite-plugin-dts": "^4.5.4",
+    "vite-plugin-externalize-deps": "^0.8.0",
+    "vite-plugin-static-copy": "^3.1.4",
+    "vite-plugin-svgr": "^4.3.0",
     "vitest": "^3.2.2",
     "vitest-when": "^0.6.0",
     "weak-napi": "^2.0.2",
@@ -225,7 +220,7 @@
     "start": "storybook dev -p 6060",
     "test": "vitest",
     "build": "rimraf dist && pnpm --parallel run \"/^build:.*/\"",
-    "build:copy-assets": "copyfiles -u 1 \"src/**/*.{css,scss,svg}\" dist",
+    "notbuild:copy-assets": "copyfiles -u 1 \"src/**/*.{css,scss,svg}\" dist",
     "build:js": "vite build",
     "storybook:build": "pnpm storybook build",
     "type-check": "tsc --build",

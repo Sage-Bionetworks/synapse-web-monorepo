@@ -1,4 +1,4 @@
-import { spreadSx } from '@sage-bionetworks/react-ui/theme/utils/spreadSx'
+import spreadSx from '@sage-bionetworks/react-ui/theme/utils/mergeSx'
 import { isExternalLink } from '@/utils/functions/IsExternalLink'
 import {
   Box,

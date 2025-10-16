@@ -56,7 +56,7 @@ export interface ListStateReturn<T> {
  * @param initialState The initial value of the array
  * @returns an ListStateReturn object containing the useState value and additonal change/remove/push hnndlers. Use object destructuring
  */
-export const useListState = <T>(initialState: T[]): ListStateReturn<T> => {
+const useListState = <T>(initialState: T[]): ListStateReturn<T> => {
   const [list, setList] = useState<T[]>(initialState)
 
   const handleListChange =
@@ -79,3 +79,5 @@ export const useListState = <T>(initialState: T[]): ListStateReturn<T> => {
   }
   return { list, handleListChange, handleListRemove, appendToList, setList }
 }
+
+export default useListState

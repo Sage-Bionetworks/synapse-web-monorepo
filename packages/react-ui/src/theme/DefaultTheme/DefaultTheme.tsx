@@ -14,9 +14,9 @@ import {
   lighten,
   ThemeOptions,
 } from '@mui/material'
-import { palette } from './palette/Palettes'
-import linkTheme from './typography/Link'
-import { typographyOptions } from './typography/Typography'
+import { palette } from '../palette/Palettes'
+import linkTheme from '../typography/Link'
+import { typographyOptions } from '../typography/Typography'
 
 const DIALOG_INNER_PADDING = '2px'
 

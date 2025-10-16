@@ -6,7 +6,7 @@ import type { SxProps, Theme } from '@mui/material/styles'
  * See https://github.com/mui/material-ui/issues/29274#issuecomment-953980228
  * @param sxProps
  */
-export function spreadSx(
+export function mergeSx(
   ...sxProps: (SxProps<Theme> | undefined)[]
 ): SxProps<Theme> {
   return sxProps.filter(sx => sx !== undefined).flat()

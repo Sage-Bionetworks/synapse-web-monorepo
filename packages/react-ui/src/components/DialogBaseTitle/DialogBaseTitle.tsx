@@ -2,7 +2,7 @@ import Box from '@mui/material/Box'
 import DialogTitle from '@mui/material/DialogTitle'
 import Stack from '@mui/material/Stack'
 import { ReactNode } from 'react'
-import DialogCloseButton from './DialogCloseButton'
+import DialogCloseButton from '../DialogBase/DialogCloseButton'
 
 export type DialogBaseTitleProps = {
   title: ReactNode

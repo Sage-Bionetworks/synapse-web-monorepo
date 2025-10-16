@@ -1,9 +1,11 @@
-import { spreadSx } from '@/theme/utils/spreadSx'
+import mergeSx from '@/theme/utils/mergeSx'
 import Dialog, { DialogProps } from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent, { DialogContentProps } from '@mui/material/DialogContent'
 import { ReactNode } from 'react'
-import { DialogBaseTitle, DialogBaseTitleProps } from './DialogBaseTitle'
+import DialogBaseTitle, {
+  DialogBaseTitleProps,
+} from '@/components/DialogBaseTitle'
 
 const EMPTY_OBJECT = {}
 
@@ -45,7 +47,7 @@ const DialogBase = ({
       open={open}
       className={className}
       onClose={() => onCancel()}
-      sx={spreadSx(sx, theme => ({
+      sx={mergeSx(sx, theme => ({
         [theme.breakpoints.down('sm')]: {
           width: '100vw',
           '.MuiDialog-container > .MuiPaper-root': {

@@ -6,7 +6,6 @@
     "types": ["vite/client"],
     "paths": {
       "@/*": ["./src/*"],
-      "@sage-bionetworks/react-ui": ["../../../packages/react-ui/src"],
       "@sage-bionetworks/react-ui/*": ["../../../packages/react-ui/src/*"],
       "@sage-bionetworks/synapse-portal-framework": [
         "../../synapse-portal-framework/src"

@@ -1,4 +1,4 @@
-import { spreadSx } from '@sage-bionetworks/react-ui/theme/utils/spreadSx'
+import spreadSx from '@sage-bionetworks/react-ui/theme/utils/mergeSx'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
 const Proteomics = (props: SvgIconProps) => {

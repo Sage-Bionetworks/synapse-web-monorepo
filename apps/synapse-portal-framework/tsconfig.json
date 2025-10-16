@@ -10,7 +10,6 @@
     "types": ["vite/client", "@testing-library/jest-dom"],
     "paths": {
       "@/*": ["./src/*"],
-      "@sage-bionetworks/react-ui": ["../../packages/react-ui/src"],
       "@sage-bionetworks/react-ui/*": ["../../packages/react-ui/src/*"],
       "@sage-bionetworks/synapse-types": ["../../packages/synapse-types/src"],
       "@sage-bionetworks/synapse-types/*": [

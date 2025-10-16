@@ -3,7 +3,7 @@ import {
   useGetAccessRequirements,
   useUpdateAccessRequirement,
 } from '@/synapse-queries'
-import { spreadSx } from '@sage-bionetworks/react-ui/theme/utils/spreadSx'
+import spreadSx from '@sage-bionetworks/react-ui/theme/utils/mergeSx'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
 import {
   Alert,

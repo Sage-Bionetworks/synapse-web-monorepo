@@ -1,6 +1,6 @@
 import { getEvaluationRoundsList } from '@/synapse-client/SynapseClient'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { useListState } from '@/utils/hooks/useListState'
+import useListState from '@sage-bionetworks/react-ui/hooks/useListState/useListState'
 import Button from '@sage-bionetworks/react-ui/components/Button'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { EvaluationRoundListResponse } from '@sage-bionetworks/synapse-types'

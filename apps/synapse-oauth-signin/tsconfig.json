@@ -11,7 +11,6 @@
     "types": ["vite/client"],
     "paths": {
       "@/*": ["./*"],
-      "@sage-bionetworks/react-ui": ["../../../packages/react-ui/src"],
       "@sage-bionetworks/react-ui/*": ["../../../packages/react-ui/src/*"],
       "@sage-bionetworks/synapse-types": [
         "../../../packages/synapse-types/src"

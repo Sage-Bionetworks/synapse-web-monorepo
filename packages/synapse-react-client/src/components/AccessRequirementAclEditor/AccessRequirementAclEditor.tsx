@@ -4,7 +4,7 @@ import {
   useGetAccessRequirementACL,
   useUpdateAccessRequirementACL,
 } from '@/synapse-queries'
-import { spreadSx } from '@sage-bionetworks/react-ui/theme/utils/spreadSx'
+import spreadSx from '@sage-bionetworks/react-ui/theme/utils/mergeSx'
 import { PermissionLevel } from '@/utils/PermissionLevelToAccessType'
 import { Alert, Box, Stack, Typography } from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'

@@ -12,7 +12,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material'
 import PortalFullTextSearchField from './PortalSearch/PortalFullTextSearchField'
-import { spreadSx } from '@sage-bionetworks/react-ui/theme/utils/spreadSx'
+import { mergeSx } from '@sage-bionetworks/react-ui/theme/utils/mergeSx/mergeSx'
 import { useNavigate } from 'react-router'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import { useState } from 'react'
@@ -67,7 +67,7 @@ const HeaderSearchBox = ({
 
   return (
     <Box
-      sx={spreadSx(sx, {
+      sx={mergeSx(sx, {
         padding: { xs: '40px', lg: '40px 80px 40px 0' },
         width: '100%',
       })}

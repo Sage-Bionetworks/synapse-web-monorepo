@@ -1,6 +1,6 @@
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 import { ReactComponent as DataReuseSvg } from '../icons/dataReuse.svg'
-import { spreadSx } from '@sage-bionetworks/react-ui/theme/utils/spreadSx'
+import spreadSx from '@sage-bionetworks/react-ui/theme/utils/mergeSx'
 import { useTheme } from '@mui/material'
 
 const DataReuse = (props: SvgIconProps) => {

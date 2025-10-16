@@ -9,7 +9,6 @@
     "types": ["vitest/globals", "@testing-library/jest-dom"],
     "paths": {
       "@/*": ["./src/*"],
-      "@sage-bionetworks/react-ui": ["../react-ui/src"],
       "@sage-bionetworks/react-ui/*": ["../react-ui/src/*"],
       // HMR will work if we uncomment these, but doing so causes various build/typecheck errors
       //
