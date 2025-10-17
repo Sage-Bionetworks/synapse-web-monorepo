@@ -1,1 +1,0 @@
-import{a as m}from"./DefaultPropsProvider-p-VvPMcS.js";import{g as a}from"./getThemeProps-DBSpe4l4.js";import{u as p}from"./useTheme-B9Eo60Il.js";const n=m();function c({props:s,name:t,defaultTheme:o,themeId:r}){let e=p(o);return r&&(e=e[r]||e),a({theme:e,name:t,props:s})}export{n as s,c as u};
