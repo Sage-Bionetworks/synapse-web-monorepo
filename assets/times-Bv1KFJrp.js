@@ -1,1 +1,0 @@
-import{c as s}from"./_Uint8Array-B6jpFBB6.js";import{i as m}from"./identity-DKeuBCMA.js";import{t as f}from"./toInteger-BtKyyIvD.js";function c(t){return typeof t=="function"?t:m}var u=9007199254740991,i=4294967295,e=Math.min;function E(t,r){if(t=f(t),t<1||t>u)return[];var o=i,n=e(t,i);r=c(r),t-=i;for(var a=s(n,r);++o<t;)r(o);return a}export{c,E as t};
