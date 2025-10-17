@@ -25,23 +25,14 @@ const defaultProps: SynapsePortalBannersProps = {
   sourceAppConfigTableID: 'syn7000',
 }
 
-const mockUseGetEntityPathImplementation = vi.hoisted(() => vi.fn())
-const mockUseGetQueryResultBundleWithAsyncStatusImplementation = vi.hoisted(
-  () => vi.fn(),
-)
-const mockUseSourceAppConfigsImplementation = vi.hoisted(() =>
-  vi.fn<typeof useSourceAppConfigs>(),
-)
-
 vi.mock('@/synapse-queries', async () => {
   const actual = await vi.importActual<typeof import('@/synapse-queries')>(
     '@/synapse-queries',
   )
   return {
     ...actual,
-    useGetEntityPath: mockUseGetEntityPathImplementation,
-    useGetQueryResultBundleWithAsyncStatus:
-      mockUseGetQueryResultBundleWithAsyncStatusImplementation,
+    useGetEntityPath: vi.fn(),
+    useGetQueryResultBundleWithAsyncStatus: vi.fn(),
   }
 })
 
@@ -51,9 +42,8 @@ vi.mock('@/synapse-queries/entity', async () => {
   >('@/synapse-queries/entity')
   return {
     ...actual,
-    useGetEntityPath: mockUseGetEntityPathImplementation,
-    useGetQueryResultBundleWithAsyncStatus:
-      mockUseGetQueryResultBundleWithAsyncStatusImplementation,
+    useGetEntityPath: vi.fn(),
+    useGetQueryResultBundleWithAsyncStatus: vi.fn(),
   }
 })
 
@@ -63,7 +53,7 @@ vi.mock('@/synapse-queries/entity/useEntity', async () => {
   >('@/synapse-queries/entity/useEntity')
   return {
     ...actual,
-    useGetEntityPath: mockUseGetEntityPathImplementation,
+    useGetEntityPath: vi.fn(),
   }
 })
 
@@ -73,8 +63,7 @@ vi.mock('@/synapse-queries/entity/useGetQueryResultBundle', async () => {
   >('@/synapse-queries/entity/useGetQueryResultBundle')
   return {
     ...actual,
-    useGetQueryResultBundleWithAsyncStatus:
-      mockUseGetQueryResultBundleWithAsyncStatusImplementation,
+    useGetQueryResultBundleWithAsyncStatus: vi.fn(),
   }
 })
 
@@ -84,7 +73,7 @@ vi.mock('@/utils/hooks/useSourceAppConfigs', async () => {
   >('@/utils/hooks/useSourceAppConfigs')
   return {
     ...actual,
-    useSourceAppConfigs: mockUseSourceAppConfigsImplementation,
+    useSourceAppConfigs: vi.fn(),
   }
 })
 
@@ -94,7 +83,7 @@ vi.mock('@/utils/hooks', async () => {
   )
   return {
     ...actual,
-    useSourceAppConfigs: mockUseSourceAppConfigsImplementation,
+    useSourceAppConfigs: vi.fn(),
   }
 })
 
