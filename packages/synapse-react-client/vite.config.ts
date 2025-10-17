@@ -2,7 +2,7 @@ import react from '@vitejs/plugin-react'
 import { resolve, relative, extname, sep } from 'path'
 import { defineConfig, mergeConfig } from 'vite'
 import { baseConfig, vitestConfig } from 'vite-config'
-import dts from 'unplugin-dts/vite'
+import dts from 'vite-plugin-dts'
 import { externalizeDeps } from 'vite-plugin-externalize-deps'
 import svgr from 'vite-plugin-svgr'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
@@ -50,21 +50,21 @@ const config = defineConfig(({ command }) =>
       },
     },
     plugins: [
-      viteStaticCopy({
-        targets: [
-          {
-            overwrite: false,
-            src: 'src/**/*.{css,scss,svg}',
-            dest: '.',
-            rename: (fileName, fileExtension, fullPath) => {
-              // 1. Get the path relative to the project root
-              const relativePath = relative(__dirname, fullPath)
-              // 2. Remove the 'src/' part from the beginning
-              return relativePath.replace(`src${sep}`, '')
-            },
-          },
-        ],
-      }),
+      // viteStaticCopy({
+      //   targets: [
+      //     {
+      //       overwrite: false,
+      //       src: 'src/**/*.{css,scss,svg}',
+      //       dest: '.',
+      //       rename: (fileName, fileExtension, fullPath) => {
+      //         // 1. Get the path relative to the project root
+      //         const relativePath = relative(__dirname, fullPath)
+      //         // 2. Remove the 'src/' part from the beginning
+      //         return relativePath.replace(`src${sep}`, '')
+      //       },
+      //     },
+      //   ],
+      // }),
       react(),
       svgr({
         svgrOptions: {
@@ -76,7 +76,6 @@ const config = defineConfig(({ command }) =>
         include: /^.*\.svg$/,
       }),
       // Do not bundle any dependencies; the consumer's bundler will resolve and link them.
-
       externalizeDeps({
         except: [
           // Include certain monorepo projects because the local versions may drift from the versions released on NPM
@@ -87,8 +86,13 @@ const config = defineConfig(({ command }) =>
       }),
       dts({
         // include: ['src'],
-        // bundleTypes: true,
-        // exclude: ['../react-ui/**', 'node_modules/**'],
+        // rollupTypes: true,
+        // include: ['src/SWC.index.ts'],
+        // exclude: ['@sage-bionetworks/react-ui/**', '../react-ui/**'],
+        // aliasesExclude: ['@sage-bionetworks/react-ui', '../react-ui'],
+        // afterDiagnostic(diagnostic) {
+        //   console.error(diagnostic)
+        // },
       }),
     ],
     test: {

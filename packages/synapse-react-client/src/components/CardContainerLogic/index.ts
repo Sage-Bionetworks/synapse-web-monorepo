@@ -7,4 +7,5 @@ export type {
   ColumnSpecifiedLink,
   CardContainerLogicProps,
 } from './CardContainerLogic'
-export { default, CardContainerLogic } from './CardContainerLogic'
+import { CardContainerLogic } from './CardContainerLogic'
+export default CardContainerLogic
