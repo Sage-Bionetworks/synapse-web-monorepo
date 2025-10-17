@@ -96,5 +96,16 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,yml,scss,css,md}": "prettier --config .prettierrc --write"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "configurations": {
+          "development": {},
+          "staging": {},
+          "production": {}
+        }
+      }
+    }
   }
 }

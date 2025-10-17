@@ -45,7 +45,7 @@ jobs:
           ref: ${{ inputs.branch-or-tag }}
       - uses: ./.github/actions/pnpm-setup-action
       - name: build
-        run: pnpm nx run ${{ inputs.app-name }}:build --mode=${{ inputs.vite-mode }}
+        run: pnpm nx run ${{ inputs.app-name }}:build --mode=${{ inputs.vite-mode }} --configuration=${{ matrix.mode }}
       - name: Assume AWS Role
         uses: aws-actions/configure-aws-credentials@v4
         with:
