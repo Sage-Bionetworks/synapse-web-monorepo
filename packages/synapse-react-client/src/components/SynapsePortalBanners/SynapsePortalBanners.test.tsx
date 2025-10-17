@@ -25,6 +25,10 @@ const defaultProps: SynapsePortalBannersProps = {
   sourceAppConfigTableID: 'syn7000',
 }
 
+const mockUseSourceAppConfigsImplementation = vi.hoisted(() =>
+  vi.fn<typeof useSourceAppConfigs>(),
+)
+
 vi.mock('@/synapse-queries', async () => {
   const actual = await vi.importActual<typeof import('@/synapse-queries')>(
     '@/synapse-queries',
@@ -36,13 +40,23 @@ vi.mock('@/synapse-queries', async () => {
   }
 })
 
+vi.mock('@/utils/hooks/useSourceAppConfigs', async () => {
+  const actual = await vi.importActual<
+    typeof import('@/utils/hooks/useSourceAppConfigs')
+  >('@/utils/hooks/useSourceAppConfigs')
+  return {
+    ...actual,
+    useSourceAppConfigs: mockUseSourceAppConfigsImplementation,
+  }
+})
+
 vi.mock('@/utils/hooks', async () => {
   const actual = await vi.importActual<typeof import('@/utils/hooks')>(
     '@/utils/hooks',
   )
   return {
     ...actual,
-    useSourceAppConfigs: vi.fn(),
+    useSourceAppConfigs: mockUseSourceAppConfigsImplementation,
   }
 })
 
