@@ -26,7 +26,7 @@ export function castCellValueToString(toCast: any): string {
   return String(toCast)
 }
 
-function AutocompleteCell({
+export function AutocompleteCell({
   rowData,
   setRowData,
   choices,
