@@ -1,11 +1,20 @@
 import { Typography, Box, Stack } from '@mui/material'
 import styles from './ChallengeMetrics.module.scss'
 import { ReactComponent as BkgImage } from '../assets/metricsBkg.svg'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { SynapseConstants } from 'synapse-react-client'
+import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
+import { parseEntityIdFromSqlStatement } from 'synapse-react-client/utils/functions'
+import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 
 interface StatContainerProps {
   stat: string
   label: string
   description: string
+}
+
+type ChallengeMetricsProps = {
+  sql: string
 }
 
 const StatContainer = ({ stat, label, description }: StatContainerProps) => (
@@ -20,37 +29,60 @@ const StatContainer = ({ stat, label, description }: StatContainerProps) => (
   </Stack>
 )
 
-const metricsData = [
-  {
-    stat: "273",
-    label: "total challenges run",
-    description: "with over 7,000 participants from 34 different countries and 248 different institutions",
-  },
-  {
-    stat: "$592,985",
-    label: "won in challenge prizes",
-    description: "and work published in over 297 journals and presented at over 80 research symposiums",
-  },
-  {
-    stat: "38",
-    label: "disease areas positively impacted",
-    description: "including Alzheimer’s, AML leukemia, Rheumatoid Arthritis, lung cancer and more.",
-  },
-]
+const ChallengeMetrics = ({ sql }: ChallengeMetricsProps) => {
+  const entityId = parseEntityIdFromSqlStatement(sql)
 
-const ChallengeMetrics = () => {
+  const queryBundleRequest: QueryBundleRequest = {
+    partMask:
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId,
+    query: {
+      sql,
+    },
+  }
+
+  const { data: queryResultBundle } =
+    useGetQueryResultBundle(queryBundleRequest)
+
+  const dataRows = queryResultBundle?.queryResult!.queryResults.rows ?? []
+
+  enum ExpectedColumns {
+    TITLE = 'title',
+    DESCRIPTION = 'description',
+    METRIC_VALUE = 'metric_value',
+  }
+
+  const metricValueColumnIndex = getFieldIndex(
+    ExpectedColumns.METRIC_VALUE,
+    queryResultBundle,
+  )
+
+  const titleColumnIndex = getFieldIndex(
+    ExpectedColumns.TITLE,
+    queryResultBundle,
+  )
+
+  const descriptionColumnIndex = getFieldIndex(
+    ExpectedColumns.DESCRIPTION,
+    queryResultBundle,
+  )
+
   return (
     <Box className={styles.root}>
       <BkgImage className={styles.bkgImage} preserveAspectRatio="none" />
       <Stack className={styles.metricsContainer}>
-        {metricsData.map((metric, idx) => (
-          <StatContainer
-            key={idx}
-            stat={metric.stat}
-            label={metric.label}
-            description={metric.description}
-          />
-        ))}
+        {dataRows.map((metric, idx) => {
+          return (
+            <StatContainer
+              key={idx}
+              stat={metric.values[metricValueColumnIndex] ?? ''}
+              label={metric.values[titleColumnIndex] ?? ''}
+              description={metric.values[descriptionColumnIndex] ?? ''}
+            />
+          )
+        })}
       </Stack>
     </Box>
   )
