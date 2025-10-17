@@ -41,6 +41,10 @@ export const navbarConfig: NavbarConfig = {
           name: 'Required Data Acknowledgement',
           path: '/Data Access/Data Acknowledgement',
         },
+        {
+          name: 'AI/ML Acceptable Use Policy',
+          path: '/Data Access/AI_ML_Acceptable_Use_Policy',
+        },
       ],
     },
     {
