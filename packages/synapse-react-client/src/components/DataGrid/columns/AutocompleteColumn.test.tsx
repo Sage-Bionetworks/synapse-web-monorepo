@@ -4,12 +4,6 @@ import userEvent from '@testing-library/user-event'
 import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseFreeTextUsingJsonSchemaType'
 import { AutocompleteCell, AutocompleteCellProps } from './AutocompleteColumn'
 
-vi.mock('@/components/DataGrid/utils/parseFreeTextUsingJsonSchemaType', () => {
-  return {
-    default: vi.fn(val => val),
-  }
-})
-
 describe('AutocompleteColumn', () => {
   it('should initialize and render AutocompleteCell with basic props', () => {
     const mockSetRowData = vi.fn()
@@ -91,14 +85,11 @@ describe('AutocompleteColumn', () => {
     const input = screen.getByRole('combobox')
     await userEvent.clear(input)
     await userEvent.type(input, '42')
+    const expectedParsedValue = parseFreeTextGivenJsonSchemaType('42', 'number')
     await userEvent.tab()
 
     await waitFor(() => {
-      expect(parseFreeTextGivenJsonSchemaType).toHaveBeenCalledWith(
-        '42',
-        'number',
-      )
-      expect(mockSetRowData).toHaveBeenCalledWith('42')
+      expect(mockSetRowData).toHaveBeenCalledWith(expectedParsedValue)
     })
   })
 })
