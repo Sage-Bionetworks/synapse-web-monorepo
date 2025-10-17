@@ -25,6 +25,10 @@ const defaultProps: SynapsePortalBannersProps = {
   sourceAppConfigTableID: 'syn7000',
 }
 
+const mockUseGetEntityPathImplementation = vi.hoisted(() => vi.fn())
+const mockUseGetQueryResultBundleWithAsyncStatusImplementation = vi.hoisted(
+  () => vi.fn(),
+)
 const mockUseSourceAppConfigsImplementation = vi.hoisted(() =>
   vi.fn<typeof useSourceAppConfigs>(),
 )
@@ -35,8 +39,42 @@ vi.mock('@/synapse-queries', async () => {
   )
   return {
     ...actual,
-    useGetEntityPath: vi.fn(),
-    useGetQueryResultBundleWithAsyncStatus: vi.fn(),
+    useGetEntityPath: mockUseGetEntityPathImplementation,
+    useGetQueryResultBundleWithAsyncStatus:
+      mockUseGetQueryResultBundleWithAsyncStatusImplementation,
+  }
+})
+
+vi.mock('@/synapse-queries/entity', async () => {
+  const actual = await vi.importActual<
+    typeof import('@/synapse-queries/entity')
+  >('@/synapse-queries/entity')
+  return {
+    ...actual,
+    useGetEntityPath: mockUseGetEntityPathImplementation,
+    useGetQueryResultBundleWithAsyncStatus:
+      mockUseGetQueryResultBundleWithAsyncStatusImplementation,
+  }
+})
+
+vi.mock('@/synapse-queries/entity/useEntity', async () => {
+  const actual = await vi.importActual<
+    typeof import('@/synapse-queries/entity/useEntity')
+  >('@/synapse-queries/entity/useEntity')
+  return {
+    ...actual,
+    useGetEntityPath: mockUseGetEntityPathImplementation,
+  }
+})
+
+vi.mock('@/synapse-queries/entity/useGetQueryResultBundle', async () => {
+  const actual = await vi.importActual<
+    typeof import('@/synapse-queries/entity/useGetQueryResultBundle')
+  >('@/synapse-queries/entity/useGetQueryResultBundle')
+  return {
+    ...actual,
+    useGetQueryResultBundleWithAsyncStatus:
+      mockUseGetQueryResultBundleWithAsyncStatusImplementation,
   }
 })
 
