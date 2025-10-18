@@ -30,6 +30,7 @@ import {
   ARCUS_SOURCE_APP_ID,
   SYNAPSE_SOURCE_APP_ID,
   useSourceApp,
+  useSourceAppId,
 } from '@/components/useSourceApp'
 import SynapseClient from 'synapse-react-client/synapse-client'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
@@ -95,7 +96,8 @@ const RegisterAccount1 = () => {
     string | null
   >(null)
   const { appId: sourceAppId, friendlyName: sourceAppName } = useSourceApp()
-  const isArcusApp = sourceAppId === ARCUS_SOURCE_APP_ID
+  const appId = useSourceAppId()
+  const isArcusApp = appId === ARCUS_SOURCE_APP_ID
   const [page, setPage] = useState(Pages.CHOOSE_REGISTRATION)
   const [membershipInvitationEmail, setMembershipInvitationEmail] =
     useState<string>()

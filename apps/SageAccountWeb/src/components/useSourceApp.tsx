@@ -133,3 +133,16 @@ export function useSourceApp(): SourceAppContextType {
   }
   return context
 }
+
+/**
+ * useSourceAppId can be used if the only needed value is the source app ID, and
+ * the appId is not provided via props to the context provider.
+ * Will be much faster than useSourceApp, which uses the source app config table
+ * @returns
+ */
+export function useSourceAppId(): string | undefined {
+  useConfigureSourceAppFromQueryParams()
+  const { value: appId } = useLocalStorageValue(SOURCE_APP_ID_LOCALSTORAGE_KEY)
+  const appIdString = typeof appId === 'string' ? appId : undefined
+  return appIdString
+}

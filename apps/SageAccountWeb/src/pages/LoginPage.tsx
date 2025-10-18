@@ -9,6 +9,7 @@ import {
 import {
   ARCUS_SOURCE_APP_ID,
   useSourceApp,
+  useSourceAppId,
 } from '../components/useSourceApp.js'
 import { RESET_2FA_ROUTE, RESET_2FA_SIGNED_TOKEN_PARAM } from '../Constants.js'
 import StandaloneLoginForm from 'synapse-react-client/components/Authentication/StandaloneLoginForm'
@@ -50,7 +51,7 @@ function LoginPage(props: LoginPageProps) {
   const { revalidate } = useRevalidator()
   const navigate = useNavigate()
   const sourceApp = useSourceApp()
-  const { appId } = sourceApp
+  const appId = useSourceAppId()
   const isArcusApp = appId === ARCUS_SOURCE_APP_ID
 
   const {
