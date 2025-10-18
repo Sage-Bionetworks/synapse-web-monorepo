@@ -3,7 +3,11 @@ import ChallengeMetrics from '@sage-bionetworks/synapse-portal-framework/compone
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import TabbedSynapseObjects from '@sage-bionetworks/synapse-portal-framework/components/TabbedSynapseObjects'
 import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
-import { challengeProjectsSql, partnersSql } from '@/config/resources'
+import {
+  challengeProjectsSql,
+  metricsSql,
+  partnersSql,
+} from '@/config/resources'
 import {
   challengeTitleLinkConfig,
   challengeCardConfiguration,
@@ -14,7 +18,7 @@ function Home() {
   return (
     <>
       <ChallengeHeader />
-      <ChallengeMetrics />
+      <ChallengeMetrics sql={metricsSql} />
       <PortalFeaturedPartners
         variation="centered"
         sql={partnersSql}

@@ -1,4 +1,7 @@
-import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
+import {
+  useGetEntityPath,
+  useGetQueryResultBundleWithAsyncStatus,
+} from '@/synapse-queries'
 import { useSourceAppConfigs } from '@/utils/hooks'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 import { ChevronRightTwoTone } from '@mui/icons-material'
@@ -23,24 +26,39 @@ export default function SynapsePortalBanners({
   dataCatalogEntityId = 'syn61609402',
   sourceAppConfigTableID = 'syn45291362',
 }: SynapsePortalBannersProps) {
-  const dataCatalogAdditionalFilters: ColumnSingleValueQueryFilter[] = [
+  const { data: entityPathData } = useGetEntityPath(entityId)
+  // get all EntityHeader ids in the entity path data in a string array
+  // Note: we remove the first item from entityPathData.path as it is always the root Synapse folder which we don't want to include
+  const entityIdValues: string[] = entityPathData
+    ? entityPathData.path.map(header => header.id).slice(1)
+    : [entityId]
+
+  const dataCatalogAdditionalFilters: ColumnSingleValueQueryFilter[] =
+    entityPathData
+      ? [
+          {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+            columnName: 'id',
+            operator: ColumnSingleValueFilterOperator.IN,
+            values: entityIdValues,
+          },
+        ]
+      : []
+  const { data: dataCatalogData } = useGetQueryResultBundleWithAsyncStatus(
     {
-      concreteType:
-        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-      columnName: 'id',
-      operator: ColumnSingleValueFilterOperator.EQUAL,
-      values: [entityId],
+      entityId: dataCatalogEntityId,
+      query: {
+        sql: `SELECT appId, link FROM ${dataCatalogEntityId}`,
+        additionalFilters: dataCatalogAdditionalFilters,
+      },
+      partMask: BUNDLE_MASK_QUERY_RESULTS,
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     },
-  ]
-  const { data: dataCatalogData } = useGetQueryResultBundleWithAsyncStatus({
-    entityId: dataCatalogEntityId,
-    query: {
-      sql: `SELECT appId, link FROM ${dataCatalogEntityId}`,
-      additionalFilters: dataCatalogAdditionalFilters,
+    {
+      enabled: !!entityPathData,
     },
-    partMask: BUNDLE_MASK_QUERY_RESULTS,
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-  })
+  )
 
   const rowSet = dataCatalogData?.responseBody?.queryResult?.queryResults
   const hasPortalBanners = !!rowSet && rowSet?.rows.length > 0
