@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { EntityBundleRow } from '../EntityTreeTable'
 import { TreeNode } from './useEntityTreeState'
-import { useQueryClient } from '@tanstack/react-query'
+import { QueryKey, useQueryClient } from '@tanstack/react-query'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import SynapseClient from '@/synapse-client'
 import { EntityType } from '@sage-bionetworks/synapse-client'
@@ -15,6 +15,50 @@ import {
   isContainerType,
 } from '@/utils/functions/EntityTypeUtils'
 import { omit } from 'lodash-es'
+
+type EntityQueryKeySegment = {
+  objectType: 'entity'
+  id?: string
+  version?: string | number
+}
+
+const isEntityQueryKeySegmentWithId = (
+  segment: unknown,
+): segment is EntityQueryKeySegment & { id: string } => {
+  return (
+    !!segment &&
+    typeof segment === 'object' &&
+    'objectType' in segment &&
+    (segment as { objectType?: unknown }).objectType === 'entity' &&
+    'id' in segment &&
+    typeof (segment as { id?: unknown }).id === 'string'
+  )
+}
+
+const matchesEntityChildrenQueryKey = (
+  queryKey: QueryKey,
+  entityId: string,
+) => {
+  if (!Array.isArray(queryKey)) {
+    return false
+  }
+
+  const childrenSegmentIndex = queryKey.findIndex(
+    segment => segment === 'children',
+  )
+
+  if (childrenSegmentIndex <= 0) {
+    return false
+  }
+
+  const entitySegment: unknown = queryKey[childrenSegmentIndex - 1]
+
+  if (isEntityQueryKeySegmentWithId(entitySegment)) {
+    return entitySegment.id === entityId
+  }
+
+  return false
+}
 
 const includeTypes: EntityType[] = [
   EntityType.folder,
@@ -171,7 +215,6 @@ export const useTreeOperationsWithDirectFetch = (
       }
     },
     [
-      loadingPageTokens,
       setTree,
       setNextPageTokens,
       setLoadingPageTokens,
@@ -220,6 +263,7 @@ export const useTreeOperationsWithDirectFetch = (
       }
     },
     [
+      loadingPageTokens,
       expanded,
       loadedChildren,
       tree,
@@ -229,6 +273,7 @@ export const useTreeOperationsWithDirectFetch = (
       createTreeNodes,
       handleChildrenLoaded,
       cleanupLoadingState,
+      loadingIds,
     ],
   )
 
@@ -265,6 +310,21 @@ export const useTreeOperationsWithDirectFetch = (
       handleChildrenLoaded,
       cleanupLoadingState,
     ],
+  )
+
+  const invalidateEntityChildrenQueries = useCallback(
+    async (entityId: string | undefined | null) => {
+      if (!entityId || typeof entityId !== 'string') {
+        return
+      }
+
+      const predicate = ({ queryKey }: { queryKey: QueryKey }) =>
+        matchesEntityChildrenQueryKey(queryKey, entityId)
+
+      await queryClient.resetQueries({ predicate })
+      await queryClient.invalidateQueries({ predicate })
+    },
+    [queryClient],
   )
 
   // Flatten tree for table rows. Track visited node ids to avoid cycles and
@@ -320,5 +380,6 @@ export const useTreeOperationsWithDirectFetch = (
     handleChildrenLoaded,
     loadMoreChildren,
     flattenTree,
+    invalidateEntityChildrenQueries,
   }
 }

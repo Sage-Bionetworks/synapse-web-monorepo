@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import styles from './EntityTreeTable.module.scss'
 import { useReactTable, getCoreRowModel } from '@tanstack/react-table'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
@@ -23,6 +23,11 @@ type EntityTreeTableProps = {
   enableSorting?: boolean
   /** Callback when an entity is clicked. If not provided, defaults to opening Synapse.org page. */
   onEntityIdClicked?: (entityId: string) => void
+  /**
+   * Changes to this token trigger the table to reset local state and invalidate any cached
+   * `getEntityChildren` query results associated with the current root entity children.
+   */
+  invalidateCacheToken?: React.Key
 }
 
 export type EntityBundleRow = {
@@ -42,6 +47,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
   showRootNode = true,
   enableSorting = true,
   onEntityIdClicked,
+  invalidateCacheToken,
 }) => {
   // Use hook for state management and data initialization
   const {
@@ -61,26 +67,53 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     setSorting,
     sortBy,
     sortDirection,
+    resetTreeData,
   } = useEntityTreeState(rootId, expandRootByDefault, showRootNode)
 
   // Use tree operations hook with direct fetch
-  const { handleToggleExpanded, loadMoreChildren, flattenTree } =
-    useTreeOperationsWithDirectFetch(
-      expanded,
-      setExpanded,
-      tree,
-      setTree,
-      loadedChildren,
-      setLoadedChildren,
-      loadingIds,
-      setLoadingIds,
-      setNextPageTokens,
-      setLoadingPageTokens,
-      loadingPageTokens,
-      nextPageTokens,
-      sortBy,
-      sortDirection,
-    )
+  const {
+    handleToggleExpanded,
+    loadMoreChildren,
+    flattenTree,
+    invalidateEntityChildrenQueries,
+  } = useTreeOperationsWithDirectFetch(
+    expanded,
+    setExpanded,
+    tree,
+    setTree,
+    loadedChildren,
+    setLoadedChildren,
+    loadingIds,
+    setLoadingIds,
+    setNextPageTokens,
+    setLoadingPageTokens,
+    loadingPageTokens,
+    nextPageTokens,
+    sortBy,
+    sortDirection,
+  )
+
+  const lastInvalidateTokenRef = useRef<React.Key | undefined>(undefined)
+
+  useEffect(() => {
+    if (invalidateCacheToken === undefined) {
+      return
+    }
+
+    if (lastInvalidateTokenRef.current === invalidateCacheToken) {
+      return
+    }
+
+    lastInvalidateTokenRef.current = invalidateCacheToken
+
+    void invalidateEntityChildrenQueries(rootId)
+    resetTreeData()
+  }, [
+    invalidateCacheToken,
+    invalidateEntityChildrenQueries,
+    resetTreeData,
+    rootId,
+  ])
 
   // Get table columns
   const columns = useTableColumns(enableSorting)

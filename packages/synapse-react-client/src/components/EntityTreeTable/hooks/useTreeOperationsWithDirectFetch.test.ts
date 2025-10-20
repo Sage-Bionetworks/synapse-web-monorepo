@@ -1,8 +1,10 @@
 import { renderHook, act } from '@testing-library/react'
 import { useTreeOperationsWithDirectFetch } from './useTreeOperationsWithDirectFetch'
 import { TreeNode } from './useEntityTreeState'
-import { useQueryClient } from '@tanstack/react-query'
+import type { SetStateAction } from 'react'
+import { QueryKey, useQueryClient } from '@tanstack/react-query'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { EntityChildrenRequest } from '@sage-bionetworks/synapse-types'
 
 // Mock dependencies
 vi.mock('@tanstack/react-query')
@@ -15,12 +17,31 @@ vi.mock('@/synapse-client', () => ({
 
 const mockQueryClient = {
   fetchQuery: vi.fn(),
+  resetQueries: vi.fn(),
+  invalidateQueries: vi.fn(),
 }
+
+const buildEntityChildrenQueryKey = (
+  request: EntityChildrenRequest,
+  infinite: boolean,
+): QueryKey => [
+  'mock-token-hash',
+  { objectType: 'entity', id: request.parentId ?? 'root' },
+  'children',
+  { isInfinite: infinite, entityChildrenRequest: request },
+]
+
+const createEntityChildrenRequest = (
+  parentId: string,
+): EntityChildrenRequest => ({
+  parentId,
+  includeTypes: [] as EntityChildrenRequest['includeTypes'],
+})
 
 const mockSynapseContext = {
   accessToken: 'mock-token',
   keyFactory: {
-    getEntityChildrenQueryKey: vi.fn(() => ['entity-children', 'test-id']),
+    getEntityChildrenQueryKey: vi.fn(buildEntityChildrenQueryKey),
   },
 }
 
@@ -30,6 +51,8 @@ vi.mocked(useQueryClient).mockReturnValue(
 vi.mocked(useSynapseContext).mockReturnValue(
   mockSynapseContext as unknown as ReturnType<typeof useSynapseContext>,
 )
+
+type QueryLike = { queryKey: QueryKey }
 
 describe('useTreeOperationsWithDirectFetch', () => {
   const mockTree: Record<string, TreeNode> = {
@@ -71,6 +94,8 @@ describe('useTreeOperationsWithDirectFetch', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    mockQueryClient.resetQueries.mockResolvedValue(undefined)
+    mockQueryClient.invalidateQueries.mockResolvedValue(undefined)
   })
 
   describe('handleToggleExpanded', () => {
@@ -126,8 +151,13 @@ describe('useTreeOperationsWithDirectFetch', () => {
       expect(mockProps.setLoadingIds).toHaveBeenCalledWith(expect.any(Function))
 
       // Should fetch children
+      const [[request, infinite]] = mockSynapseContext.keyFactory
+        .getEntityChildrenQueryKey.mock.calls as Array<
+        [EntityChildrenRequest, boolean]
+      >
+
       expect(mockQueryClient.fetchQuery).toHaveBeenCalledWith({
-        queryKey: ['entity-children', 'test-id'],
+        queryKey: buildEntityChildrenQueryKey(request, infinite),
         queryFn: expect.any(Function),
       })
     })
@@ -249,6 +279,62 @@ describe('useTreeOperationsWithDirectFetch', () => {
     })
   })
 
+  describe('invalidateEntityChildrenQueries', () => {
+    it('calls reset and invalidate for matching entity ids', async () => {
+      const { result } = renderHook(() =>
+        useTreeOperationsWithDirectFetch(
+          mockProps.expanded,
+          mockProps.setExpanded,
+          mockProps.tree,
+          mockProps.setTree,
+          mockProps.loadedChildren,
+          mockProps.setLoadedChildren,
+          mockProps.loadingIds,
+          mockProps.setLoadingIds,
+          mockProps.setNextPageTokens,
+          mockProps.setLoadingPageTokens,
+          mockProps.loadingPageTokens,
+          mockProps.nextPageTokens,
+          mockProps.sortBy,
+          mockProps.sortDirection,
+        ),
+      )
+
+      await act(async () => {
+        await result.current.invalidateEntityChildrenQueries('syn123')
+      })
+
+      expect(mockQueryClient.resetQueries).toHaveBeenCalledTimes(1)
+      const resetFilters = mockQueryClient.resetQueries.mock.calls[0]?.[0] as {
+        predicate?: (query: QueryLike) => boolean
+      }
+      expect(resetFilters?.predicate).toBeDefined()
+
+      const matchingQuery: QueryLike = {
+        queryKey: buildEntityChildrenQueryKey(
+          createEntityChildrenRequest('syn123'),
+          false,
+        ),
+      }
+      const nonMatchingQuery: QueryLike = {
+        queryKey: buildEntityChildrenQueryKey(
+          createEntityChildrenRequest('syn999'),
+          false,
+        ),
+      }
+
+      expect(resetFilters.predicate?.(matchingQuery)).toBe(true)
+      expect(resetFilters.predicate?.(nonMatchingQuery)).toBe(false)
+
+      expect(mockQueryClient.invalidateQueries).toHaveBeenCalledTimes(1)
+      const invalidateFilters = mockQueryClient.invalidateQueries.mock
+        .calls[0]?.[0] as {
+        predicate?: (query: QueryLike) => boolean
+      }
+      expect(invalidateFilters.predicate?.(matchingQuery)).toBe(true)
+    })
+  })
+
   describe('loadMoreChildren', () => {
     it('should fetch additional children with page token', async () => {
       const mockChildrenResponse = {
@@ -256,7 +342,7 @@ describe('useTreeOperationsWithDirectFetch', () => {
           {
             id: 'syn789',
             name: 'More Child Entity',
-            type: 'org.sagebionetworks.repo.model.File',
+            type: 'org.sagebionetworks.repo.model.FileEntity',
             versionNumber: 1,
             versionLabel: 'v1',
             benefactorId: 123,
@@ -304,8 +390,13 @@ describe('useTreeOperationsWithDirectFetch', () => {
       expect(mockProps.setLoadingIds).toHaveBeenCalledWith(expect.any(Function))
 
       // Should fetch children with page token
+      const [[request, infinite]] = mockSynapseContext.keyFactory
+        .getEntityChildrenQueryKey.mock.calls as Array<
+        [EntityChildrenRequest, boolean]
+      >
+
       expect(mockQueryClient.fetchQuery).toHaveBeenCalledWith({
-        queryKey: ['entity-children', 'test-id'],
+        queryKey: buildEntityChildrenQueryKey(request, infinite),
         queryFn: expect.any(Function),
       })
     })
@@ -396,11 +487,20 @@ describe('useTreeOperationsWithDirectFetch', () => {
         .mockResolvedValueOnce(page2Response)
         .mockResolvedValueOnce(page3Response)
 
-      let currentTree = initialTree
-      const mockSetTree = vi.fn(updateFn => {
-        currentTree = updateFn(currentTree)
-        return currentTree
-      })
+      let currentTree: Record<string, TreeNode> = initialTree
+      const mockSetTree = vi.fn(
+        (update: SetStateAction<Record<string, TreeNode>>) => {
+          if (typeof update === 'function') {
+            currentTree = (
+              update as (
+                prev: Record<string, TreeNode>,
+              ) => Record<string, TreeNode>
+            )(currentTree)
+          } else {
+            currentTree = update
+          }
+        },
+      )
 
       const testProps = {
         ...mockProps,
@@ -593,7 +693,10 @@ describe('useTreeOperationsWithDirectFetch', () => {
       )
 
       // Verify the setTree function appends children correctly
-      const setTreeCall = propsWithExistingChildren.setTree.mock.calls[0][0]
+      const setTreeCall = propsWithExistingChildren.setTree.mock
+        .calls[0][0] as (
+        prev: Record<string, TreeNode>,
+      ) => Record<string, TreeNode>
       const updatedTree = setTreeCall(treeWithExistingChildren)
 
       // Should have 3 children total (2 existing + 1 new)
