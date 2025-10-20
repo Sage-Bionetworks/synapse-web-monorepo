@@ -66,9 +66,35 @@ vi.mocked(usePathBefore2FARedirect).mockReturnValue({
   fetch: vi.fn(),
 })
 
+const originalEnforce2FAEnv: string | undefined = import.meta.env
+  .VITE_ENFORCE_2FA_ENROLLMENT
+
+const setEnforce2FAEnv = (value: string) => {
+  Object.defineProperty(import.meta.env, 'VITE_ENFORCE_2FA_ENROLLMENT', {
+    value,
+    configurable: true,
+    writable: true,
+    enumerable: true,
+  })
+}
+
+const restoreEnforce2FAEnv = () => {
+  if (originalEnforce2FAEnv === undefined) {
+    Reflect.deleteProperty(import.meta.env, 'VITE_ENFORCE_2FA_ENROLLMENT')
+  } else {
+    setEnforce2FAEnv(originalEnforce2FAEnv)
+  }
+}
+
 describe('useMaybeForceEnable2FA', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(useLocation).mockReturnValue({ ...mockLocation })
+    setEnforce2FAEnv('true')
+  })
+
+  afterAll(() => {
+    restoreEnforce2FAEnv()
   })
 
   it('does not redirect and updates state to indicate no redirect when 2FA is enabled', async () => {
@@ -110,6 +136,25 @@ describe('useMaybeForceEnable2FA', () => {
       expect(hook.result.current.mayForceEnable2FA).toBe(true)
       expect(mockNavigate).toHaveBeenCalledWith('/authenticated/2faRequired')
       expect(mockSetPathBefore2FARedirect).toHaveBeenLastCalledWith('/')
+    })
+  })
+
+  it('does not redirect when 2FA enforcement is disabled via env flag', async () => {
+    setEnforce2FAEnv('false')
+    mockUseApplicationSessionContext.mockReturnValue({
+      ...mockApplicationSessionContext,
+      twoFactorStatus: {
+        status: 'DISABLED',
+      },
+    })
+
+    const hook = renderHook(() => useMaybeForceEnable2FA())
+    await waitFor(() => {
+      expect(hook.result.current.mayForceEnable2FA).toBe(false)
+      expect(mockNavigate).not.toHaveBeenCalledWith(
+        '/authenticated/2faRequired',
+      )
+      expect(mockSetPathBefore2FARedirect).not.toHaveBeenCalled()
     })
   })
 
