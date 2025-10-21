@@ -3,16 +3,27 @@ import { useEntityTreeState } from './useEntityTreeState'
 import { useGetEntityHeader } from '@/synapse-queries'
 import { useGetEntityChildren } from '@/synapse-queries/entity/useGetEntityChildren'
 import {
+  EntityChildrenRequest,
+  EntityChildrenResponse,
   EntityHeader,
   SortBy,
   Direction,
 } from '@sage-bionetworks/synapse-types'
 import { EntityType } from '@sage-bionetworks/synapse-client'
+import { KeyFactory } from '@/synapse-queries/KeyFactory'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { createWrapperAndQueryClient } from '@/testutils/TestingLibraryUtils'
 
 // Mock the query hooks
-vi.mock('@/synapse-queries', () => ({
-  useGetEntityHeader: vi.fn(),
-}))
+vi.mock('@/synapse-queries', async () => {
+  const actual = await vi.importActual<typeof import('@/synapse-queries')>(
+    '@/synapse-queries',
+  )
+  return {
+    ...actual,
+    useGetEntityHeader: vi.fn(),
+  }
+})
 
 vi.mock('@/synapse-queries/entity/useGetEntityChildren', () => ({
   useGetEntityChildren: vi.fn(),
@@ -20,6 +31,52 @@ vi.mock('@/synapse-queries/entity/useGetEntityChildren', () => ({
 
 const mockUseGetEntityHeader = vi.mocked(useGetEntityHeader)
 const mockUseGetEntityChildren = vi.mocked(useGetEntityChildren)
+
+let wrapperSetup: ReturnType<typeof createWrapperAndQueryClient> | undefined
+
+const renderUseEntityTreeState = (
+  rootId = 'syn123',
+  expandRootByDefault = true,
+  showRootNode = true,
+) => {
+  const activeWrapperSetup = wrapperSetup ?? createWrapperAndQueryClient()
+  wrapperSetup = activeWrapperSetup
+  const wrapper = (props: Parameters<typeof activeWrapperSetup.wrapperFn>[0]) =>
+    activeWrapperSetup.wrapperFn(props)
+  const renderResult = renderHook(
+    () => useEntityTreeState(rootId, expandRootByDefault, showRootNode),
+    { wrapper },
+  )
+
+  return { ...renderResult, queryClient: activeWrapperSetup.queryClient }
+}
+const contextKeyFactory = new KeyFactory(MOCK_ACCESS_TOKEN)
+
+const rootIncludeTypes: EntityType[] = [
+  EntityType.folder,
+  EntityType.file,
+  EntityType.link,
+  EntityType.recordset,
+]
+
+const buildRootChildrenRequest = (
+  overrides: Partial<EntityChildrenRequest> = {},
+): EntityChildrenRequest => ({
+  parentId: 'syn123',
+  includeTypes: rootIncludeTypes,
+  ...overrides,
+})
+
+type HeaderQueryResult = ReturnType<typeof useGetEntityHeader>
+type ChildrenQueryResult = ReturnType<typeof useGetEntityChildren>
+
+const createHeaderQueryResult = (
+  data: EntityHeader | undefined,
+): HeaderQueryResult => ({ data } as HeaderQueryResult)
+
+const createChildrenQueryResult = (
+  data: EntityChildrenResponse | undefined,
+): ChildrenQueryResult => ({ data } as ChildrenQueryResult)
 
 const mockEntityHeader: EntityHeader = {
   id: 'syn123',
@@ -76,19 +133,21 @@ const mockChildrenResponseWithPagination = {
 describe('useEntityTreeState', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseGetEntityHeader.mockReturnValue({
-      data: undefined,
-    } as any)
-    mockUseGetEntityChildren.mockReturnValue({
-      data: undefined,
-    } as any)
+    mockUseGetEntityHeader.mockReturnValue(createHeaderQueryResult(undefined))
+    mockUseGetEntityChildren.mockReturnValue(
+      createChildrenQueryResult(undefined),
+    )
+    wrapperSetup = createWrapperAndQueryClient()
+  })
+
+  afterEach(() => {
+    wrapperSetup?.queryClient.clear()
+    wrapperSetup = undefined
   })
 
   describe('initial state', () => {
     it('should initialize with default state', () => {
-      const { result } = renderHook(() =>
-        useEntityTreeState('syn123', true, true),
-      )
+      const { result } = renderUseEntityTreeState('syn123', true, true)
 
       expect(result.current.expanded).toEqual({})
       expect(result.current.tree).toEqual({})
@@ -102,7 +161,7 @@ describe('useEntityTreeState', () => {
     })
 
     it('should not fetch children when root header is not available', () => {
-      renderHook(() => useEntityTreeState('syn123', true, true))
+      renderUseEntityTreeState('syn123', true, true)
 
       expect(mockUseGetEntityChildren).toHaveBeenCalledWith(
         expect.any(Object),
@@ -113,17 +172,15 @@ describe('useEntityTreeState', () => {
 
   describe('data initialization', () => {
     it('should initialize tree when root header and children are available', async () => {
-      mockUseGetEntityHeader.mockReturnValue({
-        data: mockEntityHeader,
-      } as any)
-
-      mockUseGetEntityChildren.mockReturnValue({
-        data: mockChildrenResponse,
-      } as any)
-
-      const { result } = renderHook(() =>
-        useEntityTreeState('syn123', true, true),
+      mockUseGetEntityHeader.mockReturnValue(
+        createHeaderQueryResult(mockEntityHeader),
       )
+
+      mockUseGetEntityChildren.mockReturnValue(
+        createChildrenQueryResult(mockChildrenResponse),
+      )
+
+      const { result } = renderUseEntityTreeState('syn123', true, true)
 
       await waitFor(() => {
         expect(result.current.tree['syn123']).toBeDefined()
@@ -173,17 +230,15 @@ describe('useEntityTreeState', () => {
     })
 
     it('should not expand root by default when expandRootByDefault is false', async () => {
-      mockUseGetEntityHeader.mockReturnValue({
-        data: mockEntityHeader,
-      } as any)
-
-      mockUseGetEntityChildren.mockReturnValue({
-        data: mockChildrenResponse,
-      } as any)
-
-      const { result } = renderHook(() =>
-        useEntityTreeState('syn123', false, true),
+      mockUseGetEntityHeader.mockReturnValue(
+        createHeaderQueryResult(mockEntityHeader),
       )
+
+      mockUseGetEntityChildren.mockReturnValue(
+        createChildrenQueryResult(mockChildrenResponse),
+      )
+
+      const { result } = renderUseEntityTreeState('syn123', false, true)
 
       await waitFor(() => {
         expect(result.current.tree['syn123']).toBeDefined()
@@ -193,17 +248,15 @@ describe('useEntityTreeState', () => {
     })
 
     it('should handle pagination tokens correctly', async () => {
-      mockUseGetEntityHeader.mockReturnValue({
-        data: mockEntityHeader,
-      } as any)
-
-      mockUseGetEntityChildren.mockReturnValue({
-        data: mockChildrenResponseWithPagination,
-      } as any)
-
-      const { result } = renderHook(() =>
-        useEntityTreeState('syn123', true, true),
+      mockUseGetEntityHeader.mockReturnValue(
+        createHeaderQueryResult(mockEntityHeader),
       )
+
+      mockUseGetEntityChildren.mockReturnValue(
+        createChildrenQueryResult(mockChildrenResponseWithPagination),
+      )
+
+      const { result } = renderUseEntityTreeState('syn123', true, true)
 
       await waitFor(() => {
         expect(result.current.nextPageTokens['syn123']).toBe('next-token-123')
@@ -214,17 +267,15 @@ describe('useEntityTreeState', () => {
     })
 
     it('should set correct depths when showRootNode is false', async () => {
-      mockUseGetEntityHeader.mockReturnValue({
-        data: mockEntityHeader,
-      } as any)
-
-      mockUseGetEntityChildren.mockReturnValue({
-        data: mockChildrenResponse,
-      } as any)
-
-      const { result } = renderHook(() =>
-        useEntityTreeState('syn123', true, false),
+      mockUseGetEntityHeader.mockReturnValue(
+        createHeaderQueryResult(mockEntityHeader),
       )
+
+      mockUseGetEntityChildren.mockReturnValue(
+        createChildrenQueryResult(mockChildrenResponse),
+      )
+
+      const { result } = renderUseEntityTreeState('syn123', true, false)
 
       await waitFor(() => {
         expect(result.current.tree['syn123']).toBeDefined()
@@ -241,9 +292,7 @@ describe('useEntityTreeState', () => {
 
   describe('sorting functionality', () => {
     it('should derive sorting parameters correctly', () => {
-      const { result } = renderHook(() =>
-        useEntityTreeState('syn123', true, true),
-      )
+      const { result } = renderUseEntityTreeState('syn123', true, true)
 
       // Test name sorting ascending
       act(() => {
@@ -297,9 +346,7 @@ describe('useEntityTreeState', () => {
 
   describe('state management', () => {
     it('should allow updating individual state values', () => {
-      const { result } = renderHook(() =>
-        useEntityTreeState('syn123', true, true),
-      )
+      const { result } = renderUseEntityTreeState('syn123', true, true)
 
       // Test updating expanded state
       act(() => {
@@ -321,9 +368,7 @@ describe('useEntityTreeState', () => {
     })
 
     it('should allow manual reset of tree data', () => {
-      const { result } = renderHook(() =>
-        useEntityTreeState('syn123', true, true),
-      )
+      const { result } = renderUseEntityTreeState('syn123', true, true)
 
       // Set up some state
       act(() => {
@@ -356,19 +401,84 @@ describe('useEntityTreeState', () => {
     })
   })
 
+  describe('cache reset behavior', () => {
+    it('should remove the root children query when resetTreeData is called', () => {
+      mockUseGetEntityHeader.mockReturnValue(
+        createHeaderQueryResult(mockEntityHeader),
+      )
+      mockUseGetEntityChildren.mockReturnValue(
+        createChildrenQueryResult(mockChildrenResponse),
+      )
+
+      const { result, queryClient } = renderUseEntityTreeState(
+        'syn123',
+        true,
+        true,
+      )
+      const removeQueriesSpy = vi.spyOn(queryClient, 'removeQueries')
+      const expectedQueryKey = contextKeyFactory.getEntityChildrenQueryKey(
+        buildRootChildrenRequest(),
+        false,
+      )
+
+      act(() => {
+        result.current.resetTreeData()
+      })
+
+      expect(removeQueriesSpy).toHaveBeenCalledWith({
+        queryKey: expectedQueryKey,
+        exact: true,
+      })
+    })
+
+    it('should remove the root children query when the root entity query is invalidated', () => {
+      mockUseGetEntityHeader.mockReturnValue(
+        createHeaderQueryResult(mockEntityHeader),
+      )
+      mockUseGetEntityChildren.mockReturnValue(
+        createChildrenQueryResult(mockChildrenResponse),
+      )
+
+      const { queryClient } = renderUseEntityTreeState('syn123', true, true)
+      const removeQueriesSpy = vi.spyOn(queryClient, 'removeQueries')
+      const expectedRootQueryKey = contextKeyFactory.getEntityQueryKey('syn123')
+      const expectedChildrenQueryKey =
+        contextKeyFactory.getEntityChildrenQueryKey(
+          buildRootChildrenRequest(),
+          false,
+        )
+
+      const initialCallCount = removeQueriesSpy.mock.calls.length
+
+      act(() => {
+        queryClient.setQueryData(expectedRootQueryKey, mockEntityHeader)
+        queryClient.invalidateQueries({
+          queryKey: expectedRootQueryKey,
+          exact: true,
+        })
+      })
+
+      expect(removeQueriesSpy.mock.calls.length).toBeGreaterThan(
+        initialCallCount,
+      )
+      expect(removeQueriesSpy).toHaveBeenCalledWith({
+        queryKey: expectedChildrenQueryKey,
+        exact: true,
+      })
+    })
+  })
+
   describe('query integration', () => {
     it('should pass correct parameters to useGetEntityChildren', async () => {
-      mockUseGetEntityHeader.mockReturnValue({
-        data: mockEntityHeader,
-      } as any)
-
-      mockUseGetEntityChildren.mockReturnValue({
-        data: mockChildrenResponse,
-      } as any)
-
-      const { result } = renderHook(() =>
-        useEntityTreeState('syn123', true, true),
+      mockUseGetEntityHeader.mockReturnValue(
+        createHeaderQueryResult(mockEntityHeader),
       )
+
+      mockUseGetEntityChildren.mockReturnValue(
+        createChildrenQueryResult(mockChildrenResponse),
+      )
+
+      const { result } = renderUseEntityTreeState('syn123', true, true)
 
       // Set sorting
       act(() => {
@@ -394,14 +504,12 @@ describe('useEntityTreeState', () => {
     })
 
     it('should not fetch children when already loaded', () => {
-      mockUseGetEntityHeader.mockReturnValue({
-        data: mockEntityHeader,
-      } as any)
+      mockUseGetEntityHeader.mockReturnValue(
+        createHeaderQueryResult(mockEntityHeader),
+      )
 
       // Mock hook to return loaded children set
-      const { result } = renderHook(() =>
-        useEntityTreeState('syn123', true, true),
-      )
+      const { result } = renderUseEntityTreeState('syn123', true, true)
 
       // Manually mark as loaded to simulate already loaded state
       act(() => {
@@ -417,30 +525,27 @@ describe('useEntityTreeState', () => {
 
   describe('edge cases', () => {
     it('should handle missing root header gracefully', () => {
-      mockUseGetEntityHeader.mockReturnValue({
-        data: undefined,
-      } as any)
+      mockUseGetEntityHeader.mockReturnValue(createHeaderQueryResult(undefined))
 
-      const { result } = renderHook(() =>
-        useEntityTreeState('syn123', true, true),
-      )
+      const { result } = renderUseEntityTreeState('syn123', true, true)
 
       expect(result.current.tree).toEqual({})
       expect(result.current.rootHeader).toBeUndefined()
     })
 
     it('should handle empty children response', async () => {
-      mockUseGetEntityHeader.mockReturnValue({
-        data: mockEntityHeader,
-      } as any)
-
-      mockUseGetEntityChildren.mockReturnValue({
-        data: { page: [], nextPageToken: undefined },
-      } as any)
-
-      const { result } = renderHook(() =>
-        useEntityTreeState('syn123', true, true),
+      mockUseGetEntityHeader.mockReturnValue(
+        createHeaderQueryResult(mockEntityHeader),
       )
+
+      mockUseGetEntityChildren.mockReturnValue(
+        createChildrenQueryResult({
+          page: [],
+          nextPageToken: undefined,
+        }),
+      )
+
+      const { result } = renderUseEntityTreeState('syn123', true, true)
 
       await waitFor(() => {
         expect(result.current.tree['syn123']).toBeDefined()
@@ -451,16 +556,18 @@ describe('useEntityTreeState', () => {
     })
 
     it('should not initialize multiple times for the same root', async () => {
-      mockUseGetEntityHeader.mockReturnValue({
-        data: mockEntityHeader,
-      } as any)
+      mockUseGetEntityHeader.mockReturnValue(
+        createHeaderQueryResult(mockEntityHeader),
+      )
 
-      mockUseGetEntityChildren.mockReturnValue({
-        data: mockChildrenResponse,
-      } as any)
+      mockUseGetEntityChildren.mockReturnValue(
+        createChildrenQueryResult(mockChildrenResponse),
+      )
 
-      const { result, rerender } = renderHook(() =>
-        useEntityTreeState('syn123', true, true),
+      const { result, rerender } = renderUseEntityTreeState(
+        'syn123',
+        true,
+        true,
       )
 
       await waitFor(() => {
