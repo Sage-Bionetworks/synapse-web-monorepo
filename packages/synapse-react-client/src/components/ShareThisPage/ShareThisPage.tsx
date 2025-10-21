@@ -9,18 +9,18 @@ import {
   Box,
 } from '@mui/material'
 import { useState } from 'react'
-import { ReactComponent as ShareIcon } from '@/assets/icons/sharethispage.svg'
 import CloseIcon from '@mui/icons-material/Close'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
 import {
   LinkedinShareButton,
   LinkedinIcon,
   TwitterShareButton,
-  TwitterIcon,
   BlueskyShareButton,
   BlueskyIcon,
+  XIcon,
 } from 'react-share'
 import styles from './ShareThisPage.module.scss'
+import { Share } from '@mui/icons-material'
 
 type ShareThisPageProps = {
   variant?: 'light' | 'dark'
@@ -40,8 +40,8 @@ const ShareThisPage = ({ variant }: ShareThisPageProps) => {
         className={`${variant === 'dark' ? styles.triggerButtonDark : ''}`}
         variant="outlined"
         {...(variant === 'dark'
-          ? { startIcon: <ShareIcon width={18} height={18} /> }
-          : { endIcon: <ShareIcon width={18} height={18} /> })}
+          ? { startIcon: <Share width={18} height={18} /> }
+          : { endIcon: <Share width={18} height={18} /> })}
         onClick={handleClick}
       >
         Share
@@ -74,7 +74,7 @@ const ShareThisPage = ({ variant }: ShareThisPageProps) => {
 
               <TwitterShareButton url={url} aria-label="Share on X">
                 <div className={styles.shareItem}>
-                  <TwitterIcon size={48} round />
+                  <XIcon size={48} round />
                   <Typography variant="body1" className={styles.shareItemLabel}>
                     X
                   </Typography>
