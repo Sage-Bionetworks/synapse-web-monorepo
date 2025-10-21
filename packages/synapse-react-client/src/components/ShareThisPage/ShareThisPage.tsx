@@ -20,7 +20,7 @@ import {
   XIcon,
 } from 'react-share'
 import styles from './ShareThisPage.module.scss'
-import { Share } from '@mui/icons-material'
+import { ShareTwoTone } from '@mui/icons-material'
 
 type ShareThisPageProps = {
   variant?: 'light' | 'dark'
@@ -40,8 +40,8 @@ const ShareThisPage = ({ variant }: ShareThisPageProps) => {
         className={`${variant === 'dark' ? styles.triggerButtonDark : ''}`}
         variant="outlined"
         {...(variant === 'dark'
-          ? { startIcon: <Share width={18} height={18} /> }
-          : { endIcon: <Share width={18} height={18} /> })}
+          ? { startIcon: <ShareTwoTone width={18} height={18} /> }
+          : { endIcon: <ShareTwoTone width={18} height={18} /> })}
         onClick={handleClick}
       >
         Share
