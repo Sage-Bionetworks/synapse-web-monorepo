@@ -1,4 +1,3 @@
-import React from 'react'
 import { Meta, StoryObj } from '@storybook/react'
 import ShareThisPage from './ShareThisPage'
 import { useTheme } from '@mui/material/styles'
