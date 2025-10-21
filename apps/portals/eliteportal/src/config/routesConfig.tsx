@@ -43,6 +43,13 @@ const routes: RouteObject[] = [
             lazy: () =>
               import('@/pages/DataAccess').then(convertModuleToRouteObject),
           },
+          {
+            path: 'AI_ML_Acceptable_Use_Policy',
+            lazy: () =>
+              import('@/pages/AIMLAcceptableUsePolicy').then(
+                convertModuleToRouteObject,
+              ),
+          },
         ],
       },
       {
