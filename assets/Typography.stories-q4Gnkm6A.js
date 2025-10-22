@@ -1,5 +1,0 @@
-import{j as n}from"./jsx-runtime-D_zvdyIk.js";import{T as o}from"./Typography-7Hx3-lad.js";import"./index-dl3BENNE.js";import"./iframe-YzSniT58.js";import"./createTheme-BgxtNNjv.js";import"./index-DrWYxZ6u.js";import"./extendSxProp-BdGy26Iu.js";import"./DefaultPropsProvider-BY_0FA5C.js";import"./useTheme-9zFXKC6n.js";import"./createSimplePaletteValueFilter-DEkc7xSs.js";const x={title:"UI/Typography",component:o,argTypes:{children:{control:"text"},variant:{control:"select",options:["headline1","headline2","headline3","body1","body1Italic","body2","breadcrumb1","breadcrumb2","smallText1","smallText2","smallLink","label","buttonLink","hintText","sectionTitle","subsectionHeader","dataFieldKey"]}},render:r=>n.jsx(o,{...r,children:r.children??"Modify this sample text using the 'children' control below"})},e={args:{variant:"body1"}};var t,a,i;e.parameters={...e.parameters,docs:{...(t=e.parameters)==null?void 0:t.docs,source:{originalSource:`{
-  args: {
-    variant: 'body1'
-  }
-}`,...(i=(a=e.parameters)==null?void 0:a.docs)==null?void 0:i.source}}};const T=["TypographyDemo"];export{e as TypographyDemo,T as __namedExportsOrder,x as default};
