@@ -33,6 +33,7 @@ import { displayToast } from '../ToastMessage'
 import AccessLevelMenu from './AccessLevelMenu'
 import SynapseChatInteraction from './SynapseChatInteraction'
 import { GridAgentSessionContext } from '@sage-bionetworks/synapse-client'
+import { parse } from 'path'
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
@@ -154,16 +155,27 @@ export function SynapseChat({
       const latestEvent = newTraceEvents.page[
         newTraceEvents.page.length - 1
       ] as TraceEventWithFriendlyMessage
-      // if available, try to only show the "thinking" text
-      const parser = new DOMParser()
-      const htmlDoc = parser.parseFromString(latestEvent.message, 'text/html')
-      const thinkingElements = htmlDoc.getElementsByTagName('thinking')
-      // Extract the text content from each 'thinking' element
-      const thinkingTexts = Array.from(thinkingElements)
-        .map(element => element?.textContent?.trim())
-        .join('\n')
-      // Use the thinking texts - fall back to the full trace message if thinking elements are unavailable
-      latestEvent.friendlyMessage = thinkingTexts ?? latestEvent.message
+      // In the latest trace event response, the message is json text of unknown structure
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const parsedMessage = JSON.parse(latestEvent.message)
+      // find all keys in the parsed message that equal "text", and join them together to form the friendly message
+      // look in all sub-objects of the parsed message
+      // build up the friendly message
+      let friendlyMessage = ''
+      const findTextKeys = (obj: any) => {
+        for (const key in obj) {
+          if (key === 'text' && typeof obj[key] === 'string') {
+            friendlyMessage += obj[key] + '\n'
+          } else if (typeof obj[key] === 'object') {
+            findTextKeys(obj[key])
+          }
+        }
+      }
+      findTextKeys(parsedMessage)
+
+      // note - never surface the latestEvent.message to the user since it is unfriendly json text
+      latestEvent.friendlyMessage = friendlyMessage ?? 'Thinking...'
+
       setLatestTraceEvent(latestEvent)
       //send trace events to the console to ease agent debugging
       //if the trace events do not contain the latest event, add the events to the array
@@ -273,7 +285,7 @@ export function SynapseChat({
   }
 
   const latestTraceEventMessage =
-    latestTraceEvent?.friendlyMessage ?? 'Processing...'
+    latestTraceEvent?.friendlyMessage ?? 'Thinking...'
 
   return (
     <Box
