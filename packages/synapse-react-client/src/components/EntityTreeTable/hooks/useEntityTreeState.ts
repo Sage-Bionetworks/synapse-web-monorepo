@@ -87,14 +87,8 @@ export const useEntityTreeState = (
     const baseRequest: EntityChildrenRequest = {
       parentId: rootId,
       includeTypes,
-    }
-
-    if (sortBy !== undefined && sortDirection !== undefined) {
-      return {
-        ...baseRequest,
-        sortBy,
-        sortDirection,
-      }
+      sortBy,
+      sortDirection,
     }
 
     return baseRequest
