@@ -115,7 +115,15 @@ export default function DraggableDialog({
   )
 
   return (
-    <Box sx={{ position: 'fixed', zIndex: 1000, top: 0, left: 0 }}>
+    <Box
+      sx={{
+        position: 'fixed',
+        zIndex: 1000,
+        top: 0,
+        left: 0,
+        pointerEvents: isMobile ? 'auto' : 'none',
+      }}
+    >
       {isMobile ? (
         paperContent
       ) : (
@@ -126,7 +134,7 @@ export default function DraggableDialog({
           bounds={bounds}
           handle=".drag-handle"
         >
-          <div ref={draggableRef}>
+          <Box ref={draggableRef} sx={{ pointerEvents: 'auto' }}>
             <ResizableContainer
               width={width}
               height={height}
@@ -134,7 +142,7 @@ export default function DraggableDialog({
             >
               {paperContent}
             </ResizableContainer>
-          </div>
+          </Box>
         </Draggable>
       )}
     </Box>
