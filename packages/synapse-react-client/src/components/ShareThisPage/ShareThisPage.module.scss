@@ -64,6 +64,10 @@
   color: var(--gray-700);
 }
 
+.shareIcon {
+  font-size: 16px !important;
+}
+
 .copyLabel:global(.MuiTypography-root) {
   margin-bottom: 4px;
   color: var(--gray-800);

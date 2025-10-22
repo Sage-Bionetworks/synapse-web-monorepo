@@ -40,8 +40,8 @@ const ShareThisPage = ({ variant }: ShareThisPageProps) => {
         className={`${variant === 'dark' ? styles.triggerButtonDark : ''}`}
         variant="outlined"
         {...(variant === 'dark'
-          ? { startIcon: <ShareTwoTone width={18} height={18} /> }
-          : { endIcon: <ShareTwoTone width={18} height={18} /> })}
+          ? { startIcon: <ShareTwoTone className={styles.shareIcon} /> }
+          : { endIcon: <ShareTwoTone className={styles.shareIcon} /> })}
         onClick={handleClick}
       >
         Share

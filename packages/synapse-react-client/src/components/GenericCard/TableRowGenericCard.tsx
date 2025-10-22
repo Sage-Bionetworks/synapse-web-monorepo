@@ -44,6 +44,7 @@ import GenericCardActionButton from './GenericCardActionButton'
 import { SynapseCardLabel } from './SynapseCardLabel'
 import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
 import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
+import ShareThisPage from '../ShareThisPage/ShareThisPage'
 
 /**
  * Maps a table query result to a GenericCard.
@@ -61,6 +62,8 @@ export type TableToGenericCardMapping = {
   description?: string
   /** If true, a 'Cite As' button will be displayed for those cards with a DOI in the 'doi' column  */
   includeCitation?: boolean
+  /** If true, a 'Share this page' button will be displayed  */
+  includeShareButton?: boolean
   /**
    * Configuration for displaying the SustainabilityScorecard component
    */
@@ -183,6 +186,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     link = '',
     type,
     includeCitation,
+    includeShareButton,
     defaultCitationFormat,
     citationBoilerplateText,
     downloadCartSynId,
@@ -481,7 +485,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
               </GenericCardActionButton>
             </>
           )}
-          {includeCitation && (
+          {includeCitation && doiValue && (
             <CitationPopover
               title={title}
               doi={doiValue}
@@ -489,6 +493,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
               defaultCitationFormat={defaultCitationFormat}
             />
           )}
+          {includeShareButton && <ShareThisPage />}
         </>
       }
     />
