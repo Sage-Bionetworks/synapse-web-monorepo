@@ -1,0 +1,117 @@
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  IconButton,
+  Typography,
+  Input,
+  Box,
+} from '@mui/material'
+import { useState } from 'react'
+import CloseIcon from '@mui/icons-material/Close'
+import CopyToClipboardIcon from '../CopyToClipboardIcon'
+import {
+  LinkedinShareButton,
+  LinkedinIcon,
+  TwitterShareButton,
+  BlueskyShareButton,
+  BlueskyIcon,
+  XIcon,
+} from 'react-share'
+import styles from './ShareThisPage.module.scss'
+import { ShareTwoTone } from '@mui/icons-material'
+
+type ShareThisPageProps = {
+  variant?: 'light' | 'dark'
+}
+
+const ShareThisPage = ({ variant }: ShareThisPageProps) => {
+  const [open, setOpen] = useState(false)
+
+  const url = window.location.href
+
+  const handleClick = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+
+  return (
+    <div>
+      <Button
+        className={`${variant === 'dark' ? styles.triggerButtonDark : ''}`}
+        variant="outlined"
+        {...(variant === 'dark'
+          ? { startIcon: <ShareTwoTone width={18} height={18} /> }
+          : { endIcon: <ShareTwoTone width={18} height={18} /> })}
+        onClick={handleClick}
+      >
+        Share
+      </Button>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        maxWidth="xs"
+        className={styles.dialogPaper}
+      >
+        <DialogTitle className={styles.dialogTitle}>
+          Share this page
+          <IconButton onClick={handleClose} size="small">
+            <CloseIcon className={styles.closeIcon} />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent className={styles.dialogContent}>
+          <Box className={styles.contentStack}>
+            <div className={styles.shareButtonsContainer}>
+              <LinkedinShareButton url={url} aria-label="Share on LinkedIn">
+                <div className={styles.shareItem}>
+                  <LinkedinIcon size={48} round />
+                  <Typography variant="body1" className={styles.shareItemLabel}>
+                    LinkedIn
+                  </Typography>
+                </div>
+              </LinkedinShareButton>
+
+              <TwitterShareButton url={url} aria-label="Share on X">
+                <div className={styles.shareItem}>
+                  <XIcon size={48} round />
+                  <Typography variant="body1" className={styles.shareItemLabel}>
+                    X
+                  </Typography>
+                </div>
+              </TwitterShareButton>
+
+              <BlueskyShareButton url={url} aria-label="Share on Bluesky">
+                <div className={styles.shareItem}>
+                  <BlueskyIcon size={48} round />
+                  <Typography variant="body1" className={styles.shareItemLabel}>
+                    Bluesky
+                  </Typography>
+                </div>
+              </BlueskyShareButton>
+            </div>
+
+            <div className={styles.copySection}>
+              <Typography className={styles.copyLabel}>Page Link</Typography>
+              <div className={styles.copyRow}>
+                <Input
+                  className={styles.urlInput}
+                  value={url}
+                  readOnly
+                  aria-label="Page URL"
+                />
+                <CopyToClipboardIcon
+                  value={url}
+                  sizePx={24}
+                  className={styles.copyButton}
+                />
+              </div>
+            </div>
+          </Box>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
+
+export default ShareThisPage
