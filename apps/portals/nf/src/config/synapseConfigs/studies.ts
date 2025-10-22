@@ -70,6 +70,7 @@ export const studyCardConfiguration: CardConfiguration = {
     description: 'summary',
     subTitle: 'studyLeads',
     icon: 'studyStatus',
+    includeShareButton: true,
     secondaryLabels: [
       'studyStatus',
       'dataStatus',
@@ -127,6 +128,7 @@ const studies: QueryWrapperPlotNavProps = {
   shouldDeepLink: true,
   cardConfiguration: studyCardConfiguration,
   columnAliases,
+
   searchConfiguration: {
     searchable: [
       'studyName',

@@ -3,14 +3,12 @@ import {
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { Outlet } from 'react-router'
 import {
   CardContainerLogic,
   ErrorPage,
-  SharePageLinkButton,
   SynapseErrorType,
 } from 'synapse-react-client'
 import { studiesSql } from '../../config/resources'
@@ -67,7 +65,6 @@ function StudyDetailsPage() {
     <DetailsPage
       header={
         <>
-          <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
           <CardContainerLogic
             sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
             cardConfiguration={{
