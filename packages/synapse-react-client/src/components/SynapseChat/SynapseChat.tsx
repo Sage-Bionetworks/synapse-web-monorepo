@@ -33,7 +33,6 @@ import { displayToast } from '../ToastMessage'
 import AccessLevelMenu from './AccessLevelMenu'
 import SynapseChatInteraction from './SynapseChatInteraction'
 import { GridAgentSessionContext } from '@sage-bionetworks/synapse-client'
-import { parse } from 'path'
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
