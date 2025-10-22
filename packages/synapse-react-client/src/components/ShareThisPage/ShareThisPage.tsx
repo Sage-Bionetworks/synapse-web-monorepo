@@ -22,7 +22,7 @@ import {
 import styles from './ShareThisPage.module.scss'
 import { ShareTwoTone } from '@mui/icons-material'
 
-type ShareThisPageProps = {
+export type ShareThisPageProps = {
   variant?: 'light' | 'dark'
 }
 
