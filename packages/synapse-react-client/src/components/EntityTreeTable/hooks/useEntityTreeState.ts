@@ -129,19 +129,25 @@ export const useEntityTreeState = (
 
   useEffect(() => {
     const unsubscribe = queryClient.getQueryCache().subscribe(event => {
-      if (
-        event?.type === 'updated' &&
-        event.action?.type === 'invalidate' &&
-        matchQuery({ queryKey: rootEntityQueryKey, exact: true }, event.query)
-      ) {
-        resetTreeData()
+      if (event?.type === 'updated' && event.action?.type === 'invalidate') {
+        // Check if any entity in the tree was invalidated
+        const entityIds = Object.keys(tree)
+        for (const entityId of entityIds) {
+          const entityQueryKey = keyFactory.getEntityQueryKey(entityId)
+          if (
+            matchQuery({ queryKey: entityQueryKey, exact: false }, event.query)
+          ) {
+            resetTreeData()
+            return
+          }
+        }
       }
     })
 
     return () => {
       unsubscribe()
     }
-  }, [queryClient, rootEntityQueryKey, resetTreeData])
+  }, [queryClient, rootEntityQueryKey, resetTreeData, tree, keyFactory])
 
   // Effect to initialize root node and its children
   useEffect(() => {
