@@ -32,23 +32,18 @@ vi.mock('@/synapse-queries/entity/useGetEntityChildren', () => ({
 const mockUseGetEntityHeader = vi.mocked(useGetEntityHeader)
 const mockUseGetEntityChildren = vi.mocked(useGetEntityChildren)
 
-let wrapperSetup: ReturnType<typeof createWrapperAndQueryClient> | undefined
-
 const renderUseEntityTreeState = (
   rootId = 'syn123',
   expandRootByDefault = true,
   showRootNode = true,
 ) => {
-  const activeWrapperSetup = wrapperSetup ?? createWrapperAndQueryClient()
-  wrapperSetup = activeWrapperSetup
-  const wrapper = (props: Parameters<typeof activeWrapperSetup.wrapperFn>[0]) =>
-    activeWrapperSetup.wrapperFn(props)
+  const { wrapperFn, queryClient } = createWrapperAndQueryClient()
   const renderResult = renderHook(
     () => useEntityTreeState(rootId, expandRootByDefault, showRootNode),
-    { wrapper },
+    { wrapper: wrapperFn },
   )
 
-  return { ...renderResult, queryClient: activeWrapperSetup.queryClient }
+  return { ...renderResult, queryClient }
 }
 const contextKeyFactory = new KeyFactory(MOCK_ACCESS_TOKEN)
 
@@ -137,12 +132,6 @@ describe('useEntityTreeState', () => {
     mockUseGetEntityChildren.mockReturnValue(
       createChildrenQueryResult(undefined),
     )
-    wrapperSetup = createWrapperAndQueryClient()
-  })
-
-  afterEach(() => {
-    wrapperSetup?.queryClient.clear()
-    wrapperSetup = undefined
   })
 
   describe('initial state', () => {
