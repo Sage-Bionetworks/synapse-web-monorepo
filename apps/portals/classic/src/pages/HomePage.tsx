@@ -88,7 +88,7 @@ Host workshops and trainings on metadata preparation
 Provide standardized codebooks and templates for studies
 Develop data sharing SOPs and access processes
 Curate metadata resources to support collaboration across cohorts"
-        columnCount={3}
+        columnCount={2}
         heightPx={350}
       />
       <FeaturedResearch sql={featuredResearchSql} />
