@@ -44,6 +44,7 @@ import GenericCardActionButton from './GenericCardActionButton'
 import { SynapseCardLabel } from './SynapseCardLabel'
 import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
 import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
+import { SharePageLinkButtonProps } from '../SharePageLinkButton'
 import ShareThisPage from '../ShareThisPage/ShareThisPage'
 
 /**
@@ -127,6 +128,8 @@ export type TableRowGenericCardProps = {
   rowId?: number
   /** The versionNumber of the table row */
   versionNumber?: number
+  /** Optional props for the ShareThisPage component */
+  sharePageLinkButtonProps?: SharePageLinkButtonProps
 } & CommonCardProps
 
 // SWC-6115: special rendering of the version column (for Views)
@@ -168,6 +171,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     versionNumber: rowVersionNumber,
     genericCardSchema,
     secondaryLabelLimit,
+    sharePageLinkButtonProps,
     selectColumns,
     columnModels,
     iconOptions,
@@ -493,7 +497,9 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
               defaultCitationFormat={defaultCitationFormat}
             />
           )}
-          {includeShareButton && <ShareThisPage />}
+          {includeShareButton && (
+            <ShareThisPage {...sharePageLinkButtonProps} />
+          )}
         </>
       }
     />

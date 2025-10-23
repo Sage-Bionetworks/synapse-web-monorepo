@@ -23,6 +23,7 @@ import {
   STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
   STUDY_DETAILS_PAGE_FILES_TAB_PATH,
 } from '@/config/routeConstants'
+import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 
 const tabConfig: DetailsPageTabConfig[] = [
   {
@@ -72,6 +73,7 @@ function StudyDetailsPage() {
               secondaryLabelLimit: Infinity,
               iconOptions: studyHeaderIconOptions,
               isHeader: true,
+              sharePageLinkButtonProps: sharePageLinkButtonDetailPageProps,
             }}
             columnAliases={columnAliases}
             sql={studiesSql}
