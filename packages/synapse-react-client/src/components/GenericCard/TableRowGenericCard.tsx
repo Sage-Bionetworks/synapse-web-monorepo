@@ -497,7 +497,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
               defaultCitationFormat={defaultCitationFormat}
             />
           )}
-          {includeShareButton && (
+          {includeShareButton && isHeader && (
             <ShareThisPage {...sharePageLinkButtonProps} />
           )}
         </>
