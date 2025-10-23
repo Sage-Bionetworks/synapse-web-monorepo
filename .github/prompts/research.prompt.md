@@ -4,45 +4,32 @@ mode: agent
 
 # Find Similar Components and Patterns
 
-You are helping a developer discover existing components, hooks, and patterns in the Synapse web monorepo that they can reuse or reference as starting points for their implementation.
+You are helping a developer discover existing components, hooks, and patterns in the Synapse web monorepo for reuse or reference.
 
-## Discovery Process
+## Process
 
-Search these key areas and **provide clickable file links** for everything you find:
+**If a ticket ID is mentioned (e.g., PORTALS-1234), first fetch the ticket details using the Atlassian MCP server.**
 
-### 1. Component Library Search
+Search for relevant components and **provide clickable file links** for everything you find.
 
-### 2. Component Analysis
-
-For each relevant component found, note:
-
-- **Props interface** (link to TypeScript definitions)
-- **Hook dependencies** (link to custom hooks used)
-- **Styling approach** (MUI components, styled-components, etc.)
-- **Usage examples** (link to stories or other usage sites)
-
-## Research Findings
-
-Present your discoveries in this format:
+## Response Format
 
 ### 🎯 Direct Matches
 
 Components that do exactly what's needed:
 
-- **ComponentName** - Link to component file
-  - Props interface and usage examples
+- **`ComponentName`**
+  - Key props, hooks, patterns
 
 ### 📚 Reference Patterns
 
 Similar implementations to learn from:
 
-- **Similar features** - Components with comparable functionality
-- **Architectural patterns** - How similar problems are solved
+- **`Pattern/Feature`** - Brief description
 
-## Helpful Search Terms
+## Guidelines
 
-Use semantic search and grep for: "dialog", "modal", "form", "table", "button", "menu", "dropdown", "tooltip", "loading", "error", "validation", "fetch", "mutation"
-
-## Key Principle
-
-**Focus on discovery, not prescription.** Show the developer what exists and let them decide how to use it. Provide clickable file links for everything you reference so they can easily explore the code.
+- **Be concise** - Avoid repetition, focus on unique findings
+- **Provide file links** - Make everything clickable for easy exploration
+- **Show, don't prescribe** - Let the developer decide how to use findings
+- Use semantic search for: "dialog", "modal", "form", "table", "button", "menu", "dropdown", "tooltip", "loading", "error", "validation", "fetch", "mutation"

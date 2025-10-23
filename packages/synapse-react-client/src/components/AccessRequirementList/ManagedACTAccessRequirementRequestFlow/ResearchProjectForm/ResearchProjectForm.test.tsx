@@ -315,7 +315,7 @@ describe('ResearchProjectForm', { timeout: 30_000 }, () => {
       // user.type takes too long for an input this large, so use fireEvent.input
       fireEvent.input(iduInput!, {
         target: {
-          value: 'this is far too long for a valid idu statement '.repeat(51),
+          value: 'this is far too long for a valid idu statement '.repeat(100),
         },
       })
     })
