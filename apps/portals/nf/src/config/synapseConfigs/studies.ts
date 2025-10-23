@@ -128,7 +128,6 @@ const studies: QueryWrapperPlotNavProps = {
   shouldDeepLink: true,
   cardConfiguration: studyCardConfiguration,
   columnAliases,
-
   searchConfiguration: {
     searchable: [
       'studyName',
