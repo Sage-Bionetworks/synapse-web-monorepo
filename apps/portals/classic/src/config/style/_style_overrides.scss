@@ -1,4 +1,6 @@
 @use '@sage-bionetworks/synapse-portal-framework/src/style/variables' as Portal;
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+@use 'sass:map';
 
 #header,
 #footer {
@@ -36,5 +38,18 @@ footer {
 .ProgramsHomePage {
   .Programs__Card {
     width: 32%;
+  }
+}
+
+.Goals {
+  &__Card {
+    &__header {
+      background: unset;
+      min-height: unset;
+      padding-top: 20px;
+      &__title {
+        color: map.get(SrcVariables.$colors, 'gray-900');
+      }
+    }
   }
 }

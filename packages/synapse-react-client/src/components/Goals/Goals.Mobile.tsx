@@ -8,6 +8,7 @@ export default function GoalsMobile({
   summary,
   countSql,
   title,
+  linkText = 'Explore',
 }: GoalsDataProps) {
   const titleElement = (
     <div className="Goals__Mobile__Header">
@@ -28,7 +29,7 @@ export default function GoalsMobile({
         className="Goals__Mobile__Content__Link"
         href={link}
       >
-        Explore
+        {linkText}
       </Button>
     </div>
   )

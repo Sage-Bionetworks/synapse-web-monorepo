@@ -23,7 +23,7 @@ export const navbarConfig: NavbarConfig = {
     },
     {
       name: 'News',
-      path: 'https://news.classicportal.org/',
+      path: 'https://sclasportnews.wpenginepowered.com/',
     },
     {
       name: 'Help',

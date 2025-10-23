@@ -8,7 +8,7 @@ import {
   Input,
   Box,
 } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
 import {
@@ -21,18 +21,42 @@ import {
 } from 'react-share'
 import styles from './ShareThisPage.module.scss'
 import { ShareTwoTone } from '@mui/icons-material'
+import { useCreateShortUrl } from '../../utils/hooks/useCreateShortUrl'
 
 type ShareThisPageProps = {
   variant?: 'light' | 'dark'
+  shortIoPublicApiKey?: string
+  domain?: string
 }
 
-const ShareThisPage = ({ variant }: ShareThisPageProps) => {
+const ShareThisPage = ({
+  variant,
+  shortIoPublicApiKey,
+  domain = 'sageb.io',
+}: ShareThisPageProps) => {
   const [open, setOpen] = useState(false)
-
-  const url = window.location.href
+  const [url, setUrl] = useState('')
 
   const handleClick = () => setOpen(true)
   const handleClose = () => setOpen(false)
+
+  const { mutate: createShortUrl, isPending } = useCreateShortUrl({
+    shortIoPublicApiKey,
+    domain,
+    onSuccess: data => {
+      setUrl(data)
+    },
+    onError: error => {
+      console.error(error)
+      setUrl(window.location.href)
+    },
+  })
+
+  useEffect(() => {
+    if (open) {
+      createShortUrl()
+    }
+  }, [open, createShortUrl])
 
   return (
     <div>
@@ -40,8 +64,8 @@ const ShareThisPage = ({ variant }: ShareThisPageProps) => {
         className={`${variant === 'dark' ? styles.triggerButtonDark : ''}`}
         variant="outlined"
         {...(variant === 'dark'
-          ? { startIcon: <ShareTwoTone width={18} height={18} /> }
-          : { endIcon: <ShareTwoTone width={18} height={18} /> })}
+          ? { startIcon: <ShareTwoTone className={styles.shareIcon} /> }
+          : { endIcon: <ShareTwoTone className={styles.shareIcon} /> })}
         onClick={handleClick}
       >
         Share
@@ -99,6 +123,7 @@ const ShareThisPage = ({ variant }: ShareThisPageProps) => {
                   value={url}
                   readOnly
                   aria-label="Page URL"
+                  placeholder={isPending ? 'Generating link...' : ''}
                 />
                 <CopyToClipboardIcon
                   value={url}
