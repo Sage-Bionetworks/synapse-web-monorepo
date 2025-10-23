@@ -6,6 +6,7 @@
     "types": ["vite/client"],
     "paths": {
       "@/*": ["./src/*"],
+      "@sage-bionetworks/react-ui/*": ["../../../packages/react-ui/src/*"],
       "@sage-bionetworks/synapse-portal-framework": [
         "../../synapse-portal-framework/src"
       ],
@@ -24,6 +25,7 @@
   "files": ["src/types.d.ts"],
   "references": [
     { "path": "../../synapse-portal-framework" },
+    { "path": "../../../packages/react-ui" },
     { "path": "../../../packages/synapse-react-client" },
     { "path": "../../../packages/vite-config" }
   ]

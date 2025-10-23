@@ -4,7 +4,7 @@ import {
   updateEvaluationRound,
 } from '@/synapse-client/SynapseClient'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { useListState } from '@/utils/hooks/useListState'
+import useListState from '@sage-bionetworks/react-ui/hooks/useListState/useListState'
 import {
   Alert,
   Box,

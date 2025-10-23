@@ -9,6 +9,7 @@ export type PluginConfigOptions = {
   includeReactPlugins?: boolean
   includeLibraryPlugins?: boolean
   externalizeDepsOptions?: Parameters<typeof externalizeDeps>[0]
+  rollupTypes?: boolean
 }
 
 /**
@@ -37,13 +38,14 @@ const REACT_PLUGINS: PluginOption[] = [
  */
 function getLibraryPlugins(
   externalizeDepsOptions?: Parameters<typeof externalizeDeps>[0],
+  rollupTypes = true,
 ): PluginOption[] {
   return [
     // Do not bundle any dependencies; the consumer's bundler will resolve and link them.
     externalizeDeps(externalizeDepsOptions),
     // Generate a single type definition file for distribution.
     dts({
-      rollupTypes: true,
+      rollupTypes,
     }),
   ]
 }
@@ -58,7 +60,9 @@ export function getPluginConfig(options: PluginConfigOptions): PluginOption[] {
     plugins.push(...REACT_PLUGINS)
   }
   if (options.includeLibraryPlugins) {
-    plugins.push(...getLibraryPlugins(options.externalizeDepsOptions))
+    plugins.push(
+      ...getLibraryPlugins(options.externalizeDepsOptions, options.rollupTypes),
+    )
   }
   return plugins
 }

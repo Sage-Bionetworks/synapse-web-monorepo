@@ -6,9 +6,10 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^7.1.1",
-    "@mui/material": "^7.1.1",
+    "@mui/icons-material": "^7.3.4",
+    "@mui/material": "^7.3.4",
     "@react-hookz/web": "^25.1.1",
+    "@sage-bionetworks/react-ui": "workspace:*",
     "@sage-bionetworks/synapse-client": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "@tanstack/react-query": "5.80.10",
@@ -73,7 +74,7 @@
     "typescript": "5.8.3",
     "url": "^0.11.4",
     "util": "^0.12.5",
-    "vite": "^6.3.5",
+    "vite": "^6.3.6",
     "vite-config": "workspace:*",
     "vitest": "^3.2.2",
     "whatwg-fetch": "^3.6.20"

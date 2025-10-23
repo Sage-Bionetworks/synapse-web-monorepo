@@ -11,6 +11,7 @@
     "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"],
     "paths": {
       "@/*": ["./*"],
+      "@sage-bionetworks/react-ui/*": ["../../../packages/react-ui/src/*"],
       "@sage-bionetworks/synapse-client": [
         "../../../packages/synapse-client/src"
       ],

@@ -1,5 +1,5 @@
 import SynapseClient from '@/synapse-client'
-import { Button } from '@mui/material'
+import Button from '@sage-bionetworks/react-ui/components/Button'
 
 export type LogoutProps = {
   callback: () => void

@@ -2,7 +2,9 @@ import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils'
 import { EntityTypeGroup } from '@/utils/functions/EntityTypeUtils'
 import { DownloadTwoTone } from '@mui/icons-material'
-import { Button, ButtonProps } from '@mui/material'
+import Button, {
+  ButtonProps,
+} from '@sage-bionetworks/react-ui/components/Button'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { ColumnModel, Reference } from '@sage-bionetworks/synapse-types'
 import { useCallback, useState } from 'react'

@@ -13,7 +13,7 @@ import {
 } from './components/ToastMessage/ToastMessage'
 import SynapseClient, { HttpClient } from './synapse-client'
 import * as SynapseQueries from './synapse-queries'
-import Palettes from './theme/palette/Palettes'
+import Palettes from '@sage-bionetworks/react-ui/theme/palette'
 import { SynapseConstants } from './utils'
 import { sendAnalyticsEvent } from './utils/analytics/sendAnalyticsEvent'
 import {

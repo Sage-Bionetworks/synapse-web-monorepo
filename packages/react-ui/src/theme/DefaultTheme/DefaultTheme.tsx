@@ -1,6 +1,6 @@
-import Checked from '@/assets/icons/Checkbox/Checked'
-import Indeterminate from '@/assets/icons/Checkbox/Indeterminate'
-import Unchecked from '@/assets/icons/Checkbox/Unchecked'
+import Checked from '@/icons/Checkbox/Checked'
+import Indeterminate from '@/icons/Checkbox/Indeterminate'
+import Unchecked from '@/icons/Checkbox/Unchecked'
 import {
   CheckCircleTwoTone,
   ErrorTwoTone,
@@ -14,9 +14,9 @@ import {
   lighten,
   ThemeOptions,
 } from '@mui/material'
-import { palette } from './palette/Palettes'
-import linkTheme from './typography/Link'
-import { typographyOptions } from './typography/Typography'
+import { palette } from '../palette/Palettes'
+import linkTheme from '../typography/Link'
+import { typographyOptions } from '../typography/Typography'
 
 const DIALOG_INNER_PADDING = '2px'
 

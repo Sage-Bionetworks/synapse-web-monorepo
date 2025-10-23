@@ -10,7 +10,7 @@ const viteLibraryConfig = defineConfig({
     outDir: './dist',
     lib: {
       // Note: entry MUST be overridden by an overridden config.
-      entry: '',
+      entry: [],
       fileName: 'index',
       formats: ['es', 'cjs'],
     },

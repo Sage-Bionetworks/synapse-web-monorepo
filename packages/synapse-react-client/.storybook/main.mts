@@ -21,7 +21,7 @@ const config: StorybookConfig = {
     options: {
       strictMode: true,
       builder: {
-        viteConfigPath: './.storybook/storybook-vite.config.mts',
+        viteConfigPath: 'vite.config.ts',
       },
     },
   },
@@ -50,15 +50,13 @@ const config: StorybookConfig = {
   staticDirs: ['../public'],
 
   viteFinal(config, { configType }) {
-    let base,
-      plugins = undefined
+    let base
     // Fix deployment to github pages
     if (configType === 'PRODUCTION') {
       base = './'
     }
     const customStorybookConfig = defineConfig({
       base,
-      plugins,
     })
 
     // return the customized config

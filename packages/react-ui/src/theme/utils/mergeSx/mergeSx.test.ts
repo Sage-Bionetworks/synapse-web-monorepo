@@ -1,5 +1,5 @@
-import { SxProps, Theme } from '@mui/material'
-import { spreadSx } from './spreadSx'
+import type { SxProps, Theme } from '@mui/material/styles'
+import { mergeSx } from './mergeSx'
 
 describe('spreadSx', () => {
   const sxObject: SxProps<Theme> = { color: 'red' }
@@ -12,17 +12,17 @@ describe('spreadSx', () => {
   ]
 
   it('Removes undefined sx', () => {
-    expect(spreadSx(sxObject, undefined)).toEqual([sxObject])
+    expect(mergeSx(sxObject, undefined)).toEqual([sxObject])
   })
   it('Flattens a nested array', () => {
-    expect(spreadSx(sxObject, nestedSxObject)).toEqual([
+    expect(mergeSx(sxObject, nestedSxObject)).toEqual([
       sxObject,
       nestedSxObject[0],
     ])
   })
   it('Handles a mix of functions and objects', () => {
     expect(
-      spreadSx(
+      mergeSx(
         sxObject,
         nestedSxObject,
         sxFunction,
