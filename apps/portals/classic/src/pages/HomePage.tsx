@@ -100,7 +100,7 @@ Curate metadata resources to support collaboration across cohorts"
             className: 'home-spacer',
           }}
         >
-          <Goals entityId={goalsTable} />
+          <Goals entityId={goalsTable} linkText="View Study" />
         </SectionLayout>
       </div>
       <SectionLayout
