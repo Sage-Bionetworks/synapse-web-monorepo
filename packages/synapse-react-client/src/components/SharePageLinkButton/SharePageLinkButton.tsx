@@ -1,9 +1,9 @@
 import { useCallback } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { Button, ButtonProps } from '@mui/material'
 import { displayToast } from '../ToastMessage'
 import IconSvg from '../IconSvg'
-import { Button, ButtonProps } from '@mui/material'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
+import { useCreateShortUrl } from '@/utils/hooks/useCreateShortUrl'
 
 export type SharePageLinkButtonProps = {
   shortIoPublicApiKey?: string
@@ -21,32 +21,10 @@ export function SharePageLinkButton({
       displayToast('Page URL copied to the clipboard', 'success')
     })
   }, [])
-  // create short io link (if not already created)
-  const { mutate: createShortUrl } = useMutation({
-    mutationFn: async () => {
-      if (!shortIoPublicApiKey) {
-        return window.location.href
-      } else {
-        const response = await fetch('https://api.short.io/links/public', {
-          method: 'POST',
-          headers: {
-            Authorization: shortIoPublicApiKey,
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body: JSON.stringify({
-            originalURL: window.location.href,
-            domain: domain,
-          }),
-        })
-        if (!response.ok) {
-          const responseText = await response.text()
-          throw new Error(responseText)
-        }
-        const jsonResponse = await response.json()
-        return jsonResponse.shortURL
-      }
-    },
+
+  const { mutate: createShortUrl } = useCreateShortUrl({
+    shortIoPublicApiKey,
+    domain,
     onSuccess: data => {
       copyToClipboard(data)
     },
