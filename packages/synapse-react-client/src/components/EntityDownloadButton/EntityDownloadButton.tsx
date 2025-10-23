@@ -126,11 +126,15 @@ function getMenuItemForAction(
       }
     case DownloadAction.addToCart:
       return {
-        text: 'Add to Download Cart',
+        text: 'Add All Files to Download Cart',
         onClick: () => {
-          console.log('Add file(s) to cart:', entityId)
           // Use different functions based on entity type
-          if (entityType === EntityType.file) {
+          if (
+            entityType === EntityType.file ||
+            entityType === EntityType.recordset ||
+            entityType === EntityType.dataset ||
+            entityType === EntityType.datasetcollection
+          ) {
             addFileToDownloadList({
               entityId,
               entityVersionNumber: versionNumber,
@@ -195,7 +199,13 @@ export function getDownloadActionsForEntityType(
     case EntityType.materializedview:
     case EntityType.submissionview:
     case EntityType.virtualtable:
-      return [[DownloadAction.exportTable, DownloadAction.programmaticAccess]]
+      return [
+        [
+          DownloadAction.exportTable,
+          DownloadAction.programmaticAccess,
+          DownloadAction.addToCart,
+        ],
+      ]
     case EntityType.link:
       return [[DownloadAction.programmaticAccess]]
     default:
@@ -306,8 +316,15 @@ export function EntityDownloadButton(props: {
   })
 
   const { mutate: addQueryToDownloadList } = useAddQueryToDownloadList({
-    onSuccess: () => {
-      displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)
+    onSuccess: data => {
+      if (data.numberOfFilesAdded > 0) {
+        displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)
+      } else {
+        displayToast(
+          'This is an empty folder. 0 Files added to your Download Cart',
+          'info',
+        )
+      }
     },
     onError: error => {
       displayToast(error.reason, 'danger')
