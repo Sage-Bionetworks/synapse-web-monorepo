@@ -70,6 +70,7 @@ export const studyCardConfiguration: CardConfiguration = {
     description: 'summary',
     subTitle: 'studyLeads',
     icon: 'studyStatus',
+    includeShareButton: true,
     secondaryLabels: [
       'studyStatus',
       'dataStatus',
