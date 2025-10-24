@@ -97,14 +97,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       websocketInstanceRef.current = websocketInstance
     }, [websocketInstance])
 
-    // memoize connect function to avoid unnecessary useEffect calls
-    const connectMemoized = useCallback(
-      (replicaId: number, sessionId: string) => {
-        connect(replicaId, sessionId)
-      },
-      [connect],
-    )
-
     // Track last connection parameters to avoid redundant connections
     const lastConnectParamsRef = useRef<{
       replicaId: number
@@ -137,8 +129,8 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       }
 
       lastConnectParamsRef.current = nextParams
-      connectMemoized(replicaId, session.sessionId)
-    }, [replicaId, session?.sessionId, connectMemoized])
+      connect(replicaId, session.sessionId)
+    }, [replicaId, session?.sessionId, connect])
 
     // Reset grid state when model is reset (new session/replica)
     useEffect(() => {
@@ -433,7 +425,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                           colValues,
                         })
                       }}
-                      duplicateRow={({ rowData }: any) => ({
+                      duplicateRow={({ rowData }) => ({
                         ...rowData,
                       })}
                       onChange={handleChange}

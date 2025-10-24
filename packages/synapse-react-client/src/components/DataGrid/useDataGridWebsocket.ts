@@ -17,7 +17,7 @@ interface WebSocketState {
   } | null
   websocketInstance: DataGridWebSocket | null
   connectionAttemptId: number | null
-  connectionError: unknown | null
+  connectionError: unknown
 }
 
 // Action types
@@ -241,11 +241,11 @@ export function useDataGridWebSocket() {
         console.error('Failed to establish WebSocket', err)
       })
   }, [
+    state,
     state.connectionParams,
     state.connectionAttemptId,
     state.isConnected,
     state.isConnecting,
-    state.model,
     isEstablishingWebsocketConnection,
     errorEstablishingWebsocketConnection,
     isDocumentVisible,

@@ -75,7 +75,11 @@ export class DataGridWebSocket {
     }
 
     this.socket.onmessage = (event: MessageEvent) => {
-      this.handleMessage(event.data)
+      if (typeof event.data === 'string') {
+        this.handleMessage(event.data)
+      } else {
+        console.error('Received non-string message data:', event.data)
+      }
     }
 
     this.socket.onclose = () => {
@@ -105,6 +109,7 @@ export class DataGridWebSocket {
     this.throttledSendPatch = throttle(
       () => this.sendPatchImmediate(),
       patchThrottleMs ?? DEFAULT_PATCH_THROTTLE_MS,
+      { leading: false, trailing: true },
     )
   }
 
@@ -117,10 +122,6 @@ export class DataGridWebSocket {
     } else {
       console.warn('WebSocket is not open. No action taken.')
     }
-  }
-
-  public getModel(): GridModel | null {
-    return this.model
   }
 
   private messageHandler = (message: JsonRxMessage) => {
