@@ -2,6 +2,7 @@ import SynapseClient from '@/synapse-client'
 import { OAuth2State, SynapseClientError } from '@/utils'
 import {
   LOGIN_METHOD_EMAIL,
+  LOGIN_METHOD_OAUTH2_ARCUS,
   LOGIN_METHOD_OAUTH2_GOOGLE,
   LOGIN_METHOD_OAUTH2_ORCID,
   OAUTH2_PROVIDERS,
@@ -12,10 +13,11 @@ import LoginMethodButton from './LoginMethodButton'
 
 type AuthenticationMethodSelectionProps = {
   ssoRedirectUrl?: string
-  /* Invoked before redirecting to Google. Useful in portals where we may want to store the current URL to redirect back here. */
+  /* Invoked before redirecting to OAuth provider. Useful in portals where we may want to store the current URL to redirect back here. */
   onBeginOAuthSignIn?: () => void
   onSelectUsernameAndPassword: () => void
   state?: OAuth2State
+  showArcusSSOButtonOnly?: boolean
 }
 
 /**
@@ -31,6 +33,7 @@ export default function AuthenticationMethodSelection(
     ssoRedirectUrl,
     onSelectUsernameAndPassword,
     state,
+    showArcusSSOButtonOnly = false,
   } = props
 
   function onSSOSignIn(event: MouseEvent<HTMLButtonElement>, provider: string) {
@@ -54,25 +57,38 @@ export default function AuthenticationMethodSelection(
 
   return (
     <Box>
-      <LoginMethodButton
-        loginMethod={LOGIN_METHOD_OAUTH2_GOOGLE}
-        iconName="google24"
-        onClick={event => {
-          onSSOSignIn(event, OAUTH2_PROVIDERS.GOOGLE)
-        }}
-      />
-      <LoginMethodButton
-        loginMethod={LOGIN_METHOD_OAUTH2_ORCID}
-        iconName="orcid"
-        onClick={event => {
-          onSSOSignIn(event, OAUTH2_PROVIDERS.ORCID)
-        }}
-      />
-      <LoginMethodButton
-        loginMethod={LOGIN_METHOD_EMAIL}
-        iconName="email"
-        onClick={onSelectUsernameAndPassword}
-      />
+      {!showArcusSSOButtonOnly && (
+        <>
+          <LoginMethodButton
+            loginMethod={LOGIN_METHOD_OAUTH2_GOOGLE}
+            iconName="google24"
+            onClick={event => {
+              onSSOSignIn(event, OAUTH2_PROVIDERS.GOOGLE)
+            }}
+          />
+          <LoginMethodButton
+            loginMethod={LOGIN_METHOD_OAUTH2_ORCID}
+            iconName="orcid"
+            onClick={event => {
+              onSSOSignIn(event, OAUTH2_PROVIDERS.ORCID)
+            }}
+          />
+          <LoginMethodButton
+            loginMethod={LOGIN_METHOD_EMAIL}
+            iconName="email"
+            onClick={onSelectUsernameAndPassword}
+          />
+        </>
+      )}
+      {showArcusSSOButtonOnly && (
+        <LoginMethodButton
+          loginMethod={LOGIN_METHOD_OAUTH2_ARCUS}
+          // iconName="arcusbio"
+          onClick={event => {
+            onSSOSignIn(event, OAUTH2_PROVIDERS.ARCUS)
+          }}
+        />
+      )}
     </Box>
   )
 }
