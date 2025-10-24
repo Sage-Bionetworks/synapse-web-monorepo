@@ -16,22 +16,32 @@ describe('DataGridWebSocket', () => {
     public onerror = () => {}
   }
 
-  it('sends multiple messages for a large patch', () => {
+  it('sends multiple messages for a large patch', async () => {
     const mockSocket = new MockWebSocket()
     const ws = new DataGridWebSocket({
       replicaId: 1,
       url: 'ws://test',
       socket: mockSocket as any,
       maxPayloadSizeBytes: 100, // very small to force splitting
+      model: null,
+      patchThrottleMs: 0, // Disable throttling for immediate execution
     })
     // Create a large patch
     const model = Model.create(gridSchema)
+    model.api.flush() // Clear initial operations
     // Add several large values to force multiple ops
     for (let i = 0; i < 5; i++) {
       model.api.vec(['columnNames']).set([[i, 'x'.repeat(200)]])
     }
+
     ws['model'] = model
+
+    // Call sendPatch which will execute on next tick due to { leading: false }
     ws.sendPatch()
+
+    // Wait for the throttled function to execute
+    await new Promise(resolve => setTimeout(resolve, 10))
+
     // Should send more than one message
     expect(mockSocket.sentMessages.length).toBeGreaterThan(1)
     // Each message should be a JSON string with a patch payload

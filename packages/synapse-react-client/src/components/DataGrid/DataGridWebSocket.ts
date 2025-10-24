@@ -16,6 +16,8 @@ import {
 import { Encoder as VerboseEncoder } from 'json-joy/lib/json-crdt/codec/structural/verbose/Encoder'
 import { JsonCrdtVerboseLogicalTimestamp } from 'json-joy/lib/json-crdt/codec/structural/verbose/types'
 import noop from 'lodash-es/noop'
+import throttle from 'lodash-es/throttle'
+import type { DebouncedFunc } from 'lodash-es'
 
 type DataGridWebSocketConstructorArgs = {
   replicaId: number
@@ -23,14 +25,17 @@ type DataGridWebSocketConstructorArgs = {
   onGridReady?: () => void
   onStatusChange?: (isOpen: boolean, instance: DataGridWebSocket) => void
   onModelCreate?: (model: GridModel) => void
-  maxPayloadSizeBytes?: number // <-- allow injection for tests
-  socket?: WebSocket // <-- allow injection for tests
+  maxPayloadSizeBytes?: number
+  socket?: WebSocket
+  model?: GridModel | null
+  patchThrottleMs?: number
 }
 
 // API Gateway WebSocket payload size limit is 32 KB per message
 // There is some overhead we aren't computing in our utility, namely the size of the patch header and the communication protocol itself
 // So add some buffer
 const DEFAULT_MAX_PAYLOAD_SIZE_BYTES = 30 * 1024 // 30 KB
+const DEFAULT_PATCH_THROTTLE_MS = 250
 
 export class DataGridWebSocket {
   private socket: WebSocket
@@ -39,6 +44,7 @@ export class DataGridWebSocket {
   private replicaId?: number
   private verboseEncoder = new VerboseEncoder()
   private maxPayloadSizeBytes: number
+  private throttledSendPatch: DebouncedFunc<() => void>
 
   private onModelCreate: (model: GridModel) => void = noop
   private onGridReady: () => void = noop
@@ -54,6 +60,8 @@ export class DataGridWebSocket {
       onModelCreate,
       maxPayloadSizeBytes,
       socket,
+      model,
+      patchThrottleMs,
     } = args
     this.messageCounter = new MessageCounter()
     this.replicaId = replicaId
@@ -67,7 +75,11 @@ export class DataGridWebSocket {
     }
 
     this.socket.onmessage = (event: MessageEvent) => {
-      this.handleMessage(event.data)
+      if (typeof event.data === 'string') {
+        this.handleMessage(event.data)
+      } else {
+        console.error('Received non-string message data:', event.data)
+      }
     }
 
     this.socket.onclose = () => {
@@ -90,9 +102,20 @@ export class DataGridWebSocket {
     if (onStatusChange) {
       this.onStatusChange = onStatusChange
     }
+
+    // Restore existing model if provided
+    this.model = model || null
+
+    this.throttledSendPatch = throttle(
+      () => this.sendPatchImmediate(),
+      patchThrottleMs ?? DEFAULT_PATCH_THROTTLE_MS,
+      { leading: false, trailing: true },
+    )
   }
 
   public disconnect() {
+    this.throttledSendPatch.flush()
+    this.throttledSendPatch.cancel()
     if (this.socket.readyState === WebSocket.OPEN) {
       this.socket.close()
       console.debug('WebSocket connection closed')
@@ -151,17 +174,21 @@ export class DataGridWebSocket {
     // [8, <message>]
     else if (message instanceof JsonRxNotification) {
       const methodName = message.getMethodName()
-      // Clocks are in sync, no further action needed
       console.debug('Message received from server:', methodName)
+
       if (methodName === 'ping') {
-        // Handle ping response
         console.debug('Received ping response from server')
       }
+
       if (methodName === 'connected') {
-        // Handle connected response
         console.debug('Server ready to receive patches')
-        this.sendSyncMessage()
+        const verbModel = this.model
+          ? this.verboseEncoder.encode(this.model)
+          : null
+        // Send the persisted clock time if model exists, otherwise send empty sync
+        this.sendSyncMessage(verbModel?.time)
       }
+
       if (methodName === 'error') {
         // Handle error response
         console.warn('Error from server:', message.getPayload())
@@ -206,6 +233,10 @@ export class DataGridWebSocket {
   }
 
   public sendPatch() {
+    this.throttledSendPatch()
+  }
+
+  private sendPatchImmediate() {
     if (!this.model) {
       console.warn('Model is not initialized. Cannot send patch.')
       return
