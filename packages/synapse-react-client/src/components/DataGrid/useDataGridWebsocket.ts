@@ -211,6 +211,7 @@ export function useDataGridWebSocket() {
       state.isConnecting ||
       isEstablishingWebsocketConnection ||
       errorEstablishingWebsocketConnection ||
+      state.connectionError ||
       !isDocumentVisible
     ) {
       return

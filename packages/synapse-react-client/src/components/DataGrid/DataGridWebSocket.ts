@@ -236,10 +236,6 @@ export class DataGridWebSocket {
     this.throttledSendPatch()
   }
 
-  public flushPendingPatch() {
-    this.throttledSendPatch.flush()
-  }
-
   private sendPatchImmediate() {
     if (!this.model) {
       console.warn('Model is not initialized. Cannot send patch.')
