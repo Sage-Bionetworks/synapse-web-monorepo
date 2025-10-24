@@ -62,6 +62,13 @@ const routes: RouteObject[] = [
         lazy: () =>
           import('@/pages/ContributeData').then(convertModuleToRouteObject),
       },
+      {
+        path: 'Standard Metadata Collection Tools',
+        lazy: () =>
+          import('@/pages/StandardMetadataCollectionTools').then(
+            convertModuleToRouteObject,
+          ),
+      },
     ],
   },
 ]
