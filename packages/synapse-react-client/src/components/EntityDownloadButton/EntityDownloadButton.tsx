@@ -126,7 +126,7 @@ function getMenuItemForAction(
       }
     case DownloadAction.addToCart:
       return {
-        text: 'Add All Files to Download Cart',
+        text: 'Add to Download Cart',
         onClick: () => {
           // Use different functions based on entity type
           if (
@@ -196,9 +196,6 @@ export function getDownloadActionsForEntityType(
     case EntityType.dataset:
     case EntityType.table:
     case EntityType.datasetcollection:
-    case EntityType.materializedview:
-    case EntityType.submissionview:
-    case EntityType.virtualtable:
       return [
         [
           DownloadAction.exportTable,
@@ -206,6 +203,10 @@ export function getDownloadActionsForEntityType(
           DownloadAction.addToCart,
         ],
       ]
+    case EntityType.materializedview:
+    case EntityType.submissionview:
+    case EntityType.virtualtable:
+      return [[DownloadAction.exportTable, DownloadAction.programmaticAccess]]
     case EntityType.link:
       return [[DownloadAction.programmaticAccess]]
     default:
@@ -307,8 +308,12 @@ export function EntityDownloadButton(props: {
   // Get context and download functionality
   const { downloadCartPageUrl } = useSynapseContext()
   const { mutate: addFileToDownloadList } = useAddFileToDownloadList({
-    onSuccess: () => {
-      displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)
+    onSuccess: data => {
+      if (data.numberOfFilesAdded > 0) {
+        displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)
+      } else {
+        displayToast('0 Files added to your Download Cart', 'info')
+      }
     },
     onError: error => {
       displayToast(error.reason, 'danger')
@@ -320,10 +325,7 @@ export function EntityDownloadButton(props: {
       if (data.numberOfFilesAdded > 0) {
         displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)
       } else {
-        displayToast(
-          'This is an empty folder. 0 Files added to your Download Cart',
-          'info',
-        )
+        displayToast('0 Files added to your Download Cart', 'info')
       }
     },
     onError: error => {
