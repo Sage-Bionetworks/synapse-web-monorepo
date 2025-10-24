@@ -19,6 +19,7 @@ import { EntityTypeIcon } from '../EntityIcon'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import FavoriteButton from '../favorites/FavoriteButton'
 import { EntityDownloadButton } from '../EntityDownloadButton/EntityDownloadButton'
+import HasAccessV2 from '../HasAccess/HasAccessV2'
 
 export type SynapseSearchResultsCardProps = {
   entityId: string
@@ -96,6 +97,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
             textTransform: 'capitalize',
           }}
         />
+        <HasAccessV2 entityId={props.entityId} showButtonText={true} />
       </Box>
       <Box
         sx={{
