@@ -1,6 +1,9 @@
 import { useState, useCallback, useEffect, useMemo } from 'react'
 import { SortingState } from '@tanstack/react-table'
+import { useQueryClient } from '@tanstack/react-query'
+import { matchQuery } from '@tanstack/query-core'
 import {
+  EntityChildrenRequest,
   EntityHeader,
   SortBy,
   Direction,
@@ -9,6 +12,7 @@ import { EntityType } from '@sage-bionetworks/synapse-client'
 import { useGetEntityHeader } from '@/synapse-queries'
 import { useGetEntityChildren } from '@/synapse-queries/entity/useGetEntityChildren'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 
 export type TreeNode = {
   entityHeader: EntityHeader
@@ -45,6 +49,12 @@ export const useEntityTreeState = (
     Record<string, string | undefined>
   >({})
   const [sorting, setSorting] = useState<SortingState>([])
+  const queryClient = useQueryClient()
+  const { keyFactory } = useSynapseContext()
+  const rootEntityQueryKey = useMemo(
+    () => keyFactory.getEntityQueryKey(rootId),
+    [keyFactory, rootId],
+  )
 
   // Derive sorting parameters from state
   const { sortBy, sortDirection } = useMemo(() => {
@@ -73,35 +83,71 @@ export const useEntityTreeState = (
     }
   }, [sorting])
 
+  const rootChildrenRequest: EntityChildrenRequest = useMemo(() => {
+    const baseRequest: EntityChildrenRequest = {
+      parentId: rootId,
+      includeTypes,
+      sortBy,
+      sortDirection,
+    }
+
+    return baseRequest
+  }, [rootId, sortBy, sortDirection])
+
+  const rootChildrenQueryKey = useMemo(
+    () => keyFactory.getEntityChildrenQueryKey(rootChildrenRequest, false),
+    [keyFactory, rootChildrenRequest],
+  )
+
   // Reset tree data when sorting changes
   const resetTreeData = useCallback(() => {
+    void queryClient.removeQueries({
+      queryKey: rootChildrenQueryKey,
+      exact: true,
+    })
+
     setTree({})
     setLoadedChildren(new Set())
     setExpanded({})
     setNextPageTokens({})
     setLoadingPageTokens({})
     setLoadingIds(new Set())
-  }, [])
+  }, [queryClient, rootChildrenQueryKey])
 
   // Get root entity header
   const { data: rootHeader } = useGetEntityHeader(rootId)
-
   // Get root children - only fetch when we have header and haven't loaded children yet
   const shouldFetchChildren = !!rootHeader && !loadedChildren.has(rootId)
-  const { data: rootChildren } = useGetEntityChildren(
-    {
-      parentId: rootId,
-      includeTypes,
-      sortBy,
-      sortDirection,
-    },
-    { enabled: shouldFetchChildren },
-  )
+  const { data: rootChildren } = useGetEntityChildren(rootChildrenRequest, {
+    enabled: shouldFetchChildren,
+  })
 
   // Effect to reset data when sorting changes
   useEffect(() => {
     resetTreeData()
   }, [resetTreeData, sorting])
+
+  useEffect(() => {
+    const unsubscribe = queryClient.getQueryCache().subscribe(event => {
+      if (event?.type === 'updated' && event.action?.type === 'invalidate') {
+        // Check if any entity in the tree was invalidated
+        const entityIds = Object.keys(tree)
+        for (const entityId of entityIds) {
+          const entityQueryKey = keyFactory.getEntityQueryKey(entityId)
+          if (
+            matchQuery({ queryKey: entityQueryKey, exact: false }, event.query)
+          ) {
+            resetTreeData()
+            return
+          }
+        }
+      }
+    })
+
+    return () => {
+      unsubscribe()
+    }
+  }, [queryClient, rootEntityQueryKey, resetTreeData, tree, keyFactory])
 
   // Effect to initialize root node and its children
   useEffect(() => {
