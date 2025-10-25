@@ -27,18 +27,27 @@ export type ShareThisPageProps = {
   variant?: 'light' | 'dark'
   shortIoPublicApiKey?: string
   domain?: string
+  triggerMode?: 'button' | 'icon'
+  open?: boolean
+  onClose?: () => void
 }
 
 const ShareThisPage = ({
   variant,
   shortIoPublicApiKey,
   domain = 'sageb.io',
+  triggerMode = 'button',
+  open: externalOpen,
+  onClose: externalOnClose,
 }: ShareThisPageProps) => {
-  const [open, setOpen] = useState(false)
   const [url, setUrl] = useState('')
-
-  const handleClick = () => setOpen(true)
-  const handleClose = () => setOpen(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = triggerMode === 'button' ? internalOpen : !!externalOpen
+  const handleOpen = () => setInternalOpen(true)
+  const handleClose = () => {
+    setInternalOpen(false)
+    if (externalOnClose) externalOnClose()
+  }
 
   const { mutate: createShortUrl, isPending } = useCreateShortUrl({
     shortIoPublicApiKey,
@@ -60,16 +69,18 @@ const ShareThisPage = ({
 
   return (
     <div>
-      <Button
-        className={`${variant === 'dark' ? styles.triggerButtonDark : ''}`}
-        variant="outlined"
-        {...(variant === 'dark'
-          ? { startIcon: <ShareTwoTone className={styles.shareIcon} /> }
-          : { endIcon: <ShareTwoTone className={styles.shareIcon} /> })}
-        onClick={handleClick}
-      >
-        Share
-      </Button>
+      {triggerMode === 'button' && (
+        <Button
+          className={`${variant === 'dark' ? styles.triggerButtonDark : ''}`}
+          variant="outlined"
+          {...(variant === 'dark'
+            ? { startIcon: <ShareTwoTone className={styles.shareIcon} /> }
+            : { endIcon: <ShareTwoTone className={styles.shareIcon} /> })}
+          onClick={handleOpen}
+        >
+          Share
+        </Button>
+      )}
 
       <Dialog
         open={open}
