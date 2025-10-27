@@ -26,7 +26,7 @@ const renderContextMenuItem = (item: ContextMenuItem) => {
   if (item.type === 'CUT') {
     return <>Cut</>
   }
-  if (item.type === 'INSERT_ROW_BELOW') {
+  if (item.type === 'INSERT_ROW_BELLOW') {
     return <>Insert row below</>
   }
   if (item.type === 'DELETE_ROW') {

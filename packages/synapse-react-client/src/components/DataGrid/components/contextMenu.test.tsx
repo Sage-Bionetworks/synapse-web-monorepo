@@ -10,7 +10,7 @@ describe('FileContextMenuComponent', () => {
     const mockItems: ContextMenuItem[] = [
       { type: 'COPY', action: vi.fn() },
       { type: 'PASTE', action: vi.fn() },
-      { type: 'INSERT_ROW_BELOW', action: vi.fn() },
+      { type: 'INSERT_ROW_BELLOW', action: vi.fn() },
     ]
 
     const mockClose = vi.fn()
@@ -36,7 +36,7 @@ describe('TableContextMenuComponent', () => {
     const mockItems: ContextMenuItem[] = [
       { type: 'COPY', action: vi.fn() },
       { type: 'PASTE', action: vi.fn() },
-      { type: 'INSERT_ROW_BELOW', action: vi.fn() }, // This should be filtered out for tables
+      { type: 'INSERT_ROW_BELLOW', action: vi.fn() }, // This should be filtered out for tables
     ]
 
     const mockClose = vi.fn()
