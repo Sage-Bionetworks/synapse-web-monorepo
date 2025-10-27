@@ -10,7 +10,7 @@ describe('FileContextMenuComponent', () => {
     const mockItems: ContextMenuItem[] = [
       { type: 'COPY', action: vi.fn() },
       { type: 'PASTE', action: vi.fn() },
-      { type: 'INSERT_ROW_BELLOW', action: vi.fn() },
+      { type: 'INSERT_ROW_BELOW', action: vi.fn() },
     ]
 
     const mockClose = vi.fn()

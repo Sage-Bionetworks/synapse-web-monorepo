@@ -26,7 +26,7 @@ const renderContextMenuItem = (item: ContextMenuItem) => {
   if (item.type === 'CUT') {
     return <>Cut</>
   }
-  if (item.type === 'INSERT_ROW_BELLOW') {
+  if (item.type === 'INSERT_ROW_BELOW') {
     return <>Insert row below</>
   }
   if (item.type === 'DELETE_ROW') {
@@ -44,12 +44,11 @@ const renderContextMenuItem = (item: ContextMenuItem) => {
   return undefined
 }
 
-// Create a standard context menu component (for views - all options)
+// Create base context menus (copy/cut/paste for recordSet, default for views)
 const BaseViewContextMenuComponent = createContextMenuComponent(
   renderContextMenuItem,
 )
 
-// Create the base recordSet context menu component
 const RecordSetContextMenuComponent = createContextMenuComponent(
   renderContextMenuItem,
 )
