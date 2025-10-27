@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react'
 import { ContextMenuItem } from 'react-datasheet-grid'
-import { renderFileContextMenu, renderTableContextMenu } from './contextMenu'
+import {
+  renderRecordSetContextMenu,
+  renderViewContextMenu,
+} from './contextMenu'
 
 describe('FileContextMenuComponent', () => {
   it('renders with Copy menu item', () => {
@@ -12,7 +15,7 @@ describe('FileContextMenuComponent', () => {
 
     const mockClose = vi.fn()
 
-    const FileContextMenu = renderFileContextMenu?.({
+    const RecordSetContextMenu = renderRecordSetContextMenu?.({
       items: mockItems,
       clientX: 0,
       clientY: 0,
@@ -20,7 +23,7 @@ describe('FileContextMenuComponent', () => {
       close: mockClose,
     })
 
-    render(<>{FileContextMenu}</>)
+    render(<>{RecordSetContextMenu}</>)
 
     expect(screen.getByText('Copy')).toBeInTheDocument()
     expect(screen.getByText('Insert row below')).toBeInTheDocument()
@@ -38,7 +41,7 @@ describe('TableContextMenuComponent', () => {
 
     const mockClose = vi.fn()
 
-    const TableContextMenu = renderTableContextMenu?.({
+    const ViewContextMenu = renderViewContextMenu?.({
       items: mockItems,
       clientX: 0,
       clientY: 0,
@@ -46,7 +49,7 @@ describe('TableContextMenuComponent', () => {
       close: mockClose,
     })
 
-    render(<>{TableContextMenu}</>)
+    render(<>{ViewContextMenu}</>)
 
     expect(screen.getByText('Copy')).toBeInTheDocument()
     expect(screen.queryByText('Insert row below')).not.toBeInTheDocument()

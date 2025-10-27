@@ -6,7 +6,7 @@ import {
 } from 'react-datasheet-grid'
 
 // Define which context menu items are allowed for tables (a subset)
-const TABLE_ALLOWED_MENU_ITEMS: ContextMenuItem['type'][] = [
+const VIEW_ALLOWED_MENU_ITEMS: ContextMenuItem['type'][] = [
   'COPY',
   'PASTE',
   'CUT',
@@ -44,26 +44,26 @@ const renderContextMenuItem = (item: ContextMenuItem) => {
   return undefined
 }
 
-// Create a standard context menu component (for tables - all options)
-const BaseTableContextMenuComponent = createContextMenuComponent(
+// Create a standard context menu component (for views - all options)
+const BaseViewContextMenuComponent = createContextMenuComponent(
   renderContextMenuItem,
 )
 
-// Create the base file context menu component
-const FileContextMenuComponent = createContextMenuComponent(
+// Create the base recordSet context menu component
+const RecordSetContextMenuComponent = createContextMenuComponent(
   renderContextMenuItem,
 )
 
-// Create a wrapper component that filters items for tables
-const TableContextMenuComponent: React.FC<
-  React.ComponentProps<typeof BaseTableContextMenuComponent>
+// Create a wrapper component that filters items for views
+const ViewContextMenuComponent: React.FC<
+  React.ComponentProps<typeof BaseViewContextMenuComponent>
 > = props => {
-  // Filter the items to only include allowed ones for tables
+  // Filter the items to only include allowed ones for views
   const filteredItems = props.items.filter(item =>
-    TABLE_ALLOWED_MENU_ITEMS.includes(item.type),
+    VIEW_ALLOWED_MENU_ITEMS.includes(item.type),
   )
 
-  return <BaseTableContextMenuComponent {...props} items={filteredItems} />
+  return <BaseViewContextMenuComponent {...props} items={filteredItems} />
 }
 
 // Create stable render functions outside the component
@@ -71,10 +71,12 @@ export const renderAddRowsComponent: React.ComponentProps<
   typeof DataSheetGrid
 >['addRowsComponent'] = props => <AddRowsComponent {...props} />
 
-export const renderTableContextMenu: React.ComponentProps<
+export const renderViewContextMenu: React.ComponentProps<
   typeof DataSheetGrid
->['contextMenuComponent'] = props => <TableContextMenuComponent {...props} />
+>['contextMenuComponent'] = props => <ViewContextMenuComponent {...props} />
 
-export const renderFileContextMenu: React.ComponentProps<
+export const renderRecordSetContextMenu: React.ComponentProps<
   typeof DataSheetGrid
->['contextMenuComponent'] = props => <FileContextMenuComponent {...props} />
+>['contextMenuComponent'] = props => (
+  <RecordSetContextMenuComponent {...props} />
+)

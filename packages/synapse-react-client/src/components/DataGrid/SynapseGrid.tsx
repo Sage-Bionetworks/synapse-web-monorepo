@@ -44,8 +44,8 @@ import GridAgentChat from '../SynapseChat/GridAgentChat'
 import { SmartToyTwoTone } from '@mui/icons-material'
 import {
   renderAddRowsComponent,
-  renderFileContextMenu,
-  renderTableContextMenu,
+  renderRecordSetContextMenu,
+  renderViewContextMenu,
 } from './components/contextMenu'
 
 export type SynapseGridProps = {
@@ -416,8 +416,8 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       }
                       contextMenuComponent={
                         entityIsView
-                          ? renderTableContextMenu
-                          : renderFileContextMenu
+                          ? renderViewContextMenu
+                          : renderRecordSetContextMenu
                       }
                       rowKey={GRID_ROW_REACT_KEY_PROPERTY}
                       rowClassName={({ rowData, rowIndex }) =>
