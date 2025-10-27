@@ -7,4 +7,6 @@ export type OAuth2State = {
   /* If present, the user has signed in to attempt resetting 2FA on their account. This is the encoded signed token that
    is required to disable 2FA, in conjunction with a twoFaToken returned by the authentication request. */
   twoFaResetToken?: string
+  /* Random token generated before initiating SSO to protect the OAuth flow against CSRF */
+  csrfToken?: string
 }

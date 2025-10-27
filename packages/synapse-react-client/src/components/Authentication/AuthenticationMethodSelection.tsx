@@ -8,8 +8,26 @@ import {
   OAUTH2_PROVIDERS,
 } from '@/utils/SynapseConstants'
 import { Box } from '@mui/material'
-import { MouseEvent } from 'react'
+import { MouseEvent, useMemo } from 'react'
 import LoginMethodButton from './LoginMethodButton'
+
+const CSRF_TOKEN_STORAGE_KEY = 'oauth2_csrf_token'
+
+function generateCsrfToken(): string {
+  const { crypto } = window
+  if (crypto?.getRandomValues) {
+    const bytes = new Uint8Array(32)
+    crypto.getRandomValues(bytes)
+    return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join(
+      '',
+    )
+  }
+  if (crypto?.randomUUID) {
+    return crypto.randomUUID().replace(/-/g, '')
+  }
+
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
+}
 
 type AuthenticationMethodSelectionProps = {
   ssoRedirectUrl?: string
@@ -36,16 +54,29 @@ export default function AuthenticationMethodSelection(
     showArcusSSOButtonOnly = false,
   } = props
 
+  // generate and include a csrfToken in the state to prevent CSRF attacks
+  const csrfToken = useMemo(() => generateCsrfToken(), [])
+
+  const stateWithCSRF: OAuth2State | undefined = useMemo(
+    () => ({ ...state, csrfToken }),
+    [state, csrfToken],
+  )
+
   function onSSOSignIn(event: MouseEvent<HTMLButtonElement>, provider: string) {
     if (onBeginOAuthSignIn) {
       onBeginOAuthSignIn()
     }
 
     event.preventDefault()
+    try {
+      localStorage.setItem(CSRF_TOKEN_STORAGE_KEY, csrfToken)
+    } catch (err) {
+      console.warn('Unable to persist OAuth CSRF token.', err)
+    }
     const redirectUrl = ssoRedirectUrl
       ? `${ssoRedirectUrl}${provider}`
       : `${SynapseClient.getRootURL()}?provider=${provider}`
-    SynapseClient.oAuthUrlRequest(provider, redirectUrl, state)
+    SynapseClient.oAuthUrlRequest(provider, redirectUrl, stateWithCSRF)
       .then(data => {
         // Send the user to the authorization URL
         window.location.href = data.authorizationUrl
