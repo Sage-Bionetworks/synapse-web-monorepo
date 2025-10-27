@@ -167,12 +167,9 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       },
     )
 
-    const entityIsView = useMemo(() => {
-      const entityConcreteType = entityData?.concreteType
-      return (
-        entityConcreteType === 'org.sagebionetworks.repo.model.table.EntityView'
-      )
-    }, [entityData?.concreteType])
+    const entityIsView =
+      entityData?.concreteType ===
+      'org.sagebionetworks.repo.model.table.EntityView'
 
     // Process schema properties once
     const schemaPropertiesInfo = useMemo(() => {
