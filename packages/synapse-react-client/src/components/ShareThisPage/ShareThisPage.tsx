@@ -43,17 +43,17 @@ const ShareThisPage = ({
 
   // If externalOpen is defined, we’re in a controlled mode.
   // Otherwise, fall back to internal state.
-  const isControlled = externalOpen !== undefined
-  const open = isControlled ? externalOpen : internalOpen
+  const isControlled = externalOpen === undefined
+  const open = isControlled ? internalOpen : externalOpen
 
   const handleOpen = () => {
-    if (!isControlled) {
+    if (isControlled) {
       setInternalOpen(true)
     }
   }
 
   const handleClose = () => {
-    if (!isControlled) {
+    if (isControlled) {
       setInternalOpen(false)
     }
     if (externalOnClose) {
