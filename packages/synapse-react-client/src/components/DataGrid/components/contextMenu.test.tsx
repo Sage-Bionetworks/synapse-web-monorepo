@@ -27,7 +27,6 @@ describe('FileContextMenuComponent', () => {
 
     expect(screen.getByText('Copy')).toBeInTheDocument()
     expect(screen.getByText('Insert row below')).toBeInTheDocument()
-    expect(screen.queryByText('NotInDocument')).not.toBeInTheDocument()
   })
 })
 
