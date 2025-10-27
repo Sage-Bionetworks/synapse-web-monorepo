@@ -21,6 +21,7 @@ import {
 } from '@/utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { getColumnIndex } from '@/utils/functions/SqlFunctions'
+import { parseSynId } from '@/utils/functions/RegularExpressions'
 import { GetAppTwoTone } from '@mui/icons-material'
 import { Collapse, Link } from '@mui/material'
 import {
@@ -30,7 +31,7 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { TargetEnum } from '@/utils/html/TargetEnum'
 import CitationPopover from '../CitationPopover'
@@ -46,6 +47,61 @@ import { SustainabilityScorecardProps } from '../SustainabilityScorecard/Sustain
 import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
 import { SharePageLinkButtonProps } from '../SharePageLinkButton'
 import ShareThisPage from '../ShareThisPage/ShareThisPage'
+
+type RowSynapseEntityConfig = {
+  /** Use the table rowId to resolve the Synapse entity ID. */
+  id: {
+    source: 'rowId'
+  }
+  /** Use the table rowVersionNumber to resolve the Synapse entity version (if available). */
+  version?: {
+    source: 'rowVersionNumber'
+  }
+}
+
+type ColumnSynapseEntityConfig = {
+  /** Use a column value to resolve the Synapse entity ID. */
+  id: {
+    source: 'column'
+    columnName: string
+  }
+  /** Use a column value to resolve the Synapse entity version. */
+  version?: {
+    source: 'column'
+    columnName: string
+  }
+}
+
+export type SynapseEntityConfig =
+  | RowSynapseEntityConfig
+  | ColumnSynapseEntityConfig
+
+type SynapseEntityIdentifiers = {
+  entityId?: string
+  entityVersionNumber?: number
+}
+
+const SYNAPSE_ID_SEARCH_REGEX = /syn\d+(?:\.\d+)?/i
+
+function extractSynapseEntityIdentifiers(
+  value?: string,
+): SynapseEntityIdentifiers {
+  if (!value) {
+    return {}
+  }
+  const synIdMatch = value.match(SYNAPSE_ID_SEARCH_REGEX)
+  if (!synIdMatch) {
+    return {}
+  }
+  const parsed = parseSynId(synIdMatch[0])
+  if (!parsed) {
+    return {}
+  }
+  return {
+    entityId: parsed.targetId,
+    entityVersionNumber: parsed.targetVersionNumber,
+  }
+}
 
 /**
  * Maps a table query result to a GenericCard.
@@ -97,10 +153,11 @@ export type TableToGenericCardMapping = {
   link?: string
   /** Column name of the STRING_LIST column that includes icon names that represent icons that should be displayed on the card */
   dataTypeIconNames?: string
-  /** If true, uses the rowId and row versionNumber to display a button to add the card item to the download cart */
-  useRowIdAndVersionForDownloadCart?: boolean
-  /** The column name whose data contains a synId that can be used to show a button to add the corresponding entity to the download cart. Does nothing if
-   * useRowIdAndVersionForDownloadCart is true */
+  /** Configuration for resolving the Synapse entity ID/version represented by each card row.
+   *  The ID and version sources must both reference either row-based values or column-based values.
+   */
+  synapseEntityConfig?: SynapseEntityConfig
+  /** The column name whose data contains a synId that can be used to show a button to add the corresponding entity to the download cart. */
   downloadCartSynId?: string
   /** Configuration to display a DOI, as well as the ability to create one for users with such permission */
   portalDoiConfiguration?: PortalDOIConfiguration
@@ -195,7 +252,6 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     citationBoilerplateText,
     downloadCartSynId,
     portalDoiConfiguration,
-    useRowIdAndVersionForDownloadCart,
   } = genericCardSchema
   const title = data[schema[genericCardSchema.title]]
   let subTitle =
@@ -228,23 +284,115 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     rowId,
   )
 
-  let downloadCartSynIdValue: string | undefined
-  let downloadCartVersionNumber: number | undefined
-  if (useRowIdAndVersionForDownloadCart) {
-    downloadCartSynIdValue = `syn${rowId}`
-    downloadCartVersionNumber = rowVersionNumber
-  } else {
-    let downloadCartSynIdColumnIndex: number | undefined
-    if (downloadCartSynId) {
-      downloadCartSynIdColumnIndex = schema[downloadCartSynId]
-      downloadCartSynIdValue =
-        downloadCartSynIdColumnIndex !== undefined
-          ? data[downloadCartSynIdColumnIndex]
-          : undefined
+  const synapseEntityConfig = genericCardSchema.synapseEntityConfig
+
+  const getColumnValue = useCallback(
+    (columnName?: string) => {
+      if (!columnName) {
+        return undefined
+      }
+      const columnIndex = schema[columnName]
+      if (columnIndex === undefined) {
+        return undefined
+      }
+      return data[columnIndex]
+    },
+    [schema, data],
+  )
+
+  const {
+    entityId: resolvedSynapseEntityId,
+    entityVersionNumber: resolvedSynapseEntityVersionNumber,
+  } = useMemo(() => {
+    let entityId: string | undefined
+    let entityVersionNumber: number | undefined
+
+    const applyEntityIdentifiersFromValue = (
+      value?: string,
+      options?: { overrideId?: boolean; overrideVersion?: boolean },
+    ) => {
+      const { overrideId = false, overrideVersion = false } = options ?? {}
+      const { entityId: parsedId, entityVersionNumber: parsedVersion } =
+        extractSynapseEntityIdentifiers(value)
+      if (parsedId && (overrideId || !entityId)) {
+        entityId = parsedId
+      }
+      if (
+        parsedVersion !== undefined &&
+        (overrideVersion || entityVersionNumber === undefined)
+      ) {
+        entityVersionNumber = parsedVersion
+      }
     }
-    downloadCartSynIdValue = downloadCartSynIdValue?.match(
-      /syn\d+/i, // regex to extract the synapse ID from the URL
-    )?.[0]
+
+    if (synapseEntityConfig?.id?.source === 'rowId') {
+      if (rowId !== undefined) {
+        applyEntityIdentifiersFromValue(`syn${rowId}`, {
+          overrideId: true,
+          overrideVersion: true,
+        })
+      }
+      if (!synapseEntityConfig?.version && rowVersionNumber !== undefined) {
+        entityVersionNumber = rowVersionNumber
+      }
+    } else if (synapseEntityConfig?.id?.source === 'column') {
+      applyEntityIdentifiersFromValue(
+        getColumnValue(synapseEntityConfig.id.columnName),
+        { overrideId: true, overrideVersion: true },
+      )
+    }
+
+    if (synapseEntityConfig?.version?.source === 'rowVersionNumber') {
+      if (rowVersionNumber !== undefined) {
+        entityVersionNumber = rowVersionNumber
+      }
+    } else if (synapseEntityConfig?.version?.source === 'column') {
+      const versionValue = getColumnValue(
+        synapseEntityConfig.version.columnName,
+      )
+      if (versionValue !== undefined && versionValue !== '') {
+        const numericVersion = Number(versionValue)
+        if (!Number.isNaN(numericVersion)) {
+          entityVersionNumber = numericVersion
+        } else {
+          applyEntityIdentifiersFromValue(versionValue, {
+            overrideVersion: true,
+          })
+        }
+      }
+    }
+
+    if (!entityId && downloadCartSynId) {
+      applyEntityIdentifiersFromValue(getColumnValue(downloadCartSynId))
+    }
+
+    return {
+      entityId,
+      entityVersionNumber,
+    }
+  }, [
+    synapseEntityConfig,
+    getColumnValue,
+    rowId,
+    rowVersionNumber,
+    downloadCartSynId,
+  ])
+
+  let resolvedDownloadCartSynIdValue = resolvedSynapseEntityId
+  let resolvedDownloadCartVersionNumber = resolvedSynapseEntityVersionNumber
+
+  if (downloadCartSynId) {
+    const overrideValue = getColumnValue(downloadCartSynId)
+    if (overrideValue) {
+      const { entityId, entityVersionNumber } =
+        extractSynapseEntityIdentifiers(overrideValue)
+      if (entityId) {
+        resolvedDownloadCartSynIdValue = entityId
+        if (entityVersionNumber !== undefined) {
+          resolvedDownloadCartVersionNumber = entityVersionNumber
+        }
+      }
+    }
   }
 
   // Transform the row to a record of (columnName, value) pairs for compatibility with getCandidateDoiId
@@ -292,7 +440,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   // Overwrite the 'HOW TO DOWNLOAD' link if a synapse ID is available
   if (customLabelConfig?.isVisible(schema, data)) {
     const { key, value } = customLabelConfig
-    if (downloadCartSynIdValue) {
+    if (resolvedDownloadCartSynIdValue) {
       values.push({
         columnDisplayName: 'HOW TO DOWNLOAD',
         value: (
@@ -383,11 +531,15 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   }
 
   let croissantButton = <></>
-  if (rowId && rowVersionNumber) {
+  if (
+    resolvedSynapseEntityId !== undefined &&
+    resolvedSynapseEntityVersionNumber !== undefined &&
+    Number.isInteger(resolvedSynapseEntityVersionNumber)
+  ) {
     croissantButton = (
       <CroissantButton
-        datasetId={rowId}
-        datasetVersionNumber={rowVersionNumber}
+        datasetId={resolvedSynapseEntityId}
+        datasetVersionNumber={resolvedSynapseEntityVersionNumber}
       />
     )
   }
@@ -442,11 +594,11 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       columnIconOptions={columnIconOptions}
       useStylesForDisplayedImage={Boolean(imageFileHandleIdValue)}
       cardTopContent={
-        downloadCartSynIdValue && (
+        resolvedDownloadCartSynIdValue && (
           <Collapse in={showDownloadConfirmation}>
             <EntityDownloadConfirmation
-              entityId={downloadCartSynIdValue}
-              versionNumber={downloadCartVersionNumber}
+              entityId={resolvedDownloadCartSynIdValue}
+              versionNumber={resolvedDownloadCartVersionNumber}
               handleClose={() => setShowDownloadConfirmation(false)}
               onIsLoadingChange={isLoading => {
                 setDownloadButtonDisabled(isLoading)
@@ -463,7 +615,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
           <div style={{ marginTop: '20px' }}>
             <IconList
               iconConfigs={columnIconOptions.columns.dataType}
-              iconNames={JSON.parse(dataTypeIconNames)}
+              iconNames={JSON.parse(dataTypeIconNames) as string[]}
               commonIconProps={{
                 sx: { fontSize: '40px' },
               }}
@@ -477,7 +629,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         <>
           {croissantButton}
           {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
-          {downloadCartSynIdValue && (
+          {resolvedDownloadCartSynIdValue && (
             <>
               <GenericCardActionButton
                 onClick={() => setShowDownloadConfirmation(val => !val)}

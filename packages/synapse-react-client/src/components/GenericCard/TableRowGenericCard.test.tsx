@@ -1,4 +1,5 @@
 import PortalDOI from '@/components/GenericCard/PortalDOI/PortalDOI'
+import CroissantButton from '@/components/GenericCard/CroissantButton/CroissantButton'
 import {
   getCandidateDoiId,
   useShowDoiCardLabel,
@@ -40,6 +41,10 @@ vi.mock('@/components/GenericCard/PortalDOI/PortalDOI', () => ({
   default: vi.fn().mockReturnValue(<div data-testid="PortalDOI" />),
 }))
 vi.mock('@/components/GenericCard/PortalDOI/PortalDOIUtils')
+vi.mock('@/components/GenericCard/CroissantButton/CroissantButton', () => ({
+  __esModule: true,
+  default: vi.fn().mockReturnValue(<div data-testid="CroissantButton" />),
+}))
 vi.mock('../widgets/FileHandleLink', () => ({
   FileHandleLink: vi.fn().mockReturnValue(<div data-testid="FileHandleLink" />),
 }))
@@ -90,6 +95,7 @@ const mockGetCandidateDoiId = vi.mocked(getCandidateDoiId)
 const mockUseShowPortalDoi = vi.mocked(useShowDoiCardLabel)
 const mockEntityDownloadConfirmation = vi.mocked(EntityDownloadConfirmation)
 const mockIconSvg = vi.mocked(IconSvg)
+const mockCroissantButton = vi.mocked(CroissantButton)
 
 const iconOptions = {
   'AMP-AD': 'MOCKED_IMG_SVG_STRING',
@@ -465,6 +471,123 @@ describe('TableRowGenericCard tests', () => {
         {},
       )
       expect(howToDownloadLabel).toBeVisible()
+    })
+  })
+
+  describe('synapseEntityConfig', () => {
+    it('derives entity identifiers from column sources', async () => {
+      const entityIdColumnName = 'datasetEntityId'
+      const entityVersionColumnName = 'datasetEntityVersion'
+      const schemaWithEntityColumns = {
+        ...schema,
+        [entityIdColumnName]: data.length,
+        [entityVersionColumnName]: data.length + 1,
+      }
+      const entityId = 'syn6000'
+      const entityVersion = '4'
+      const dataWithEntityColumns = [...data, entityId, entityVersion]
+
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          data: dataWithEntityColumns,
+          schema: schemaWithEntityColumns,
+          genericCardSchema: {
+            ...genericCardSchema,
+            synapseEntityConfig: {
+              id: { source: 'column', columnName: entityIdColumnName },
+              version: {
+                source: 'column',
+                columnName: entityVersionColumnName,
+              },
+            },
+          },
+        },
+        'TableEntity',
+      )
+
+      const downloadButton = await screen.findByRole('button', {
+        name: /download/i,
+      })
+      fireEvent.click(downloadButton)
+
+      await screen.findByTestId('EntityDownloadConfirmation')
+
+      const downloadConfirmationCall =
+        mockEntityDownloadConfirmation.mock.calls[0]
+      expect(downloadConfirmationCall?.[0]).toMatchObject({
+        entityId,
+        versionNumber: Number(entityVersion),
+      })
+
+      const croissantCall = mockCroissantButton.mock.calls[0]
+      expect(croissantCall?.[0]).toMatchObject({
+        datasetId: entityId,
+        datasetVersionNumber: Number(entityVersion),
+      })
+    })
+
+    it('allows downloadCartSynId to override the download entity while keeping the Croissant entity unchanged', async () => {
+      const entityIdColumnName = 'datasetEntityId'
+      const entityVersionColumnName = 'datasetEntityVersion'
+      const croissantEntityId = 'syn6000'
+      const croissantEntityVersion = '4'
+      const downloadCartSynapseLink =
+        'https://www.synapse.org/#!Synapse:syn9999.2'
+
+      const dataWithOverrides = [...data]
+      dataWithOverrides[schema.datasetAlias] = downloadCartSynapseLink
+
+      const entityIdColumnIndex = dataWithOverrides.length
+      dataWithOverrides.push(croissantEntityId)
+      const entityVersionColumnIndex = dataWithOverrides.length
+      dataWithOverrides.push(croissantEntityVersion)
+
+      const schemaWithEntityColumns = {
+        ...schema,
+        [entityIdColumnName]: entityIdColumnIndex,
+        [entityVersionColumnName]: entityVersionColumnIndex,
+      }
+
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          data: dataWithOverrides,
+          schema: schemaWithEntityColumns,
+          genericCardSchema: {
+            ...genericCardSchema,
+            downloadCartSynId: 'datasetAlias',
+            synapseEntityConfig: {
+              id: { source: 'column', columnName: entityIdColumnName },
+              version: {
+                source: 'column',
+                columnName: entityVersionColumnName,
+              },
+            },
+          },
+        },
+        'TableEntity',
+      )
+
+      const downloadButton = await screen.findByRole('button', {
+        name: /download/i,
+      })
+      fireEvent.click(downloadButton)
+
+      await screen.findByTestId('EntityDownloadConfirmation')
+
+      const downloadConfirmationCall =
+        mockEntityDownloadConfirmation.mock.calls[0]
+      expect(downloadConfirmationCall?.[0]).toMatchObject({
+        entityId: 'syn9999',
+        versionNumber: 2,
+      })
+
+      const croissantCall = mockCroissantButton.mock.calls[0]
+      expect(croissantCall?.[0]).toMatchObject({
+        datasetId: croissantEntityId,
+        datasetVersionNumber: Number(croissantEntityVersion),
+      })
     })
   })
 
