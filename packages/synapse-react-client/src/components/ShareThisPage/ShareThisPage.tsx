@@ -26,7 +26,7 @@ import { useCreateShortUrl } from '../../utils/hooks/useCreateShortUrl'
 export type ShareThisPageProps = {
   shortIoPublicApiKey?: string
   domain?: string
-  triggerMode?: 'button' | 'icon'
+  renderAs?: 'button' | 'icon'
   open?: boolean
   onClose?: () => void
 }
@@ -34,17 +34,31 @@ export type ShareThisPageProps = {
 const ShareThisPage = ({
   shortIoPublicApiKey,
   domain = 'sageb.io',
-  triggerMode = 'button',
+  renderAs = 'button',
   open: externalOpen,
   onClose: externalOnClose,
 }: ShareThisPageProps) => {
   const [url, setUrl] = useState('')
   const [internalOpen, setInternalOpen] = useState(false)
-  const open = triggerMode === 'button' ? internalOpen : !!externalOpen
-  const handleOpen = () => setInternalOpen(true)
+
+  // If externalOpen is defined, we’re in a controlled mode.
+  // Otherwise, fall back to internal state.
+  const isControlled = externalOpen !== undefined
+  const open = isControlled ? externalOpen : internalOpen
+
+  const handleOpen = () => {
+    if (!isControlled) {
+      setInternalOpen(true)
+    }
+  }
+
   const handleClose = () => {
-    setInternalOpen(false)
-    if (externalOnClose) externalOnClose()
+    if (!isControlled) {
+      setInternalOpen(false)
+    }
+    if (externalOnClose) {
+      externalOnClose()
+    }
   }
 
   const { mutate: createShortUrl, isPending } = useCreateShortUrl({
@@ -67,7 +81,7 @@ const ShareThisPage = ({
 
   return (
     <div>
-      {triggerMode === 'button' && (
+      {renderAs === 'button' && (
         <Button
           variant="outlined"
           endIcon={<ShareTwoTone className={styles.shareIcon} />}
