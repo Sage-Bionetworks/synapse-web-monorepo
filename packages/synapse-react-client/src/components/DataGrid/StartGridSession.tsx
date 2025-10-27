@@ -37,18 +37,17 @@ export const StartGridSession = forwardRef<
 
   const { mutate: initializeGridConnection } = useInitializeGridConnection({
     onMutate(args) {
-      console.log('Starting grid session with args:', args)
+      console.debug('Starting grid session with args:', args)
     },
     onSuccess({ session, replica }) {
-      displayToast('Grid session started successfully', 'success')
       onSessionChange(session)
       onReplicaChange(replica.replicaId!)
     },
   })
 
   const { mutate: deleteSession } = useDeleteGridSession({
-    onSuccess: () => {
-      displayToast('Successfully deleted grid session', 'success')
+    onSuccess: (_data, sessionId) => {
+      displayToast(`Successfully deleted grid session ${sessionId}`, 'success')
       onSessionChange(null)
       onReplicaChange(null)
     },
@@ -192,7 +191,7 @@ function transformTextToCreateOrGetGridRequest(
   const parsedInput = parseQueryInput(gridSqlOrSessionId)
   if ('unknown' == parsedInput.type) {
     throw new Error(
-      'Unknown input type, please provide a valid SQL query or session ID.',
+      'Unknown input type, please provide a valid SQL query, Synapse ID, or session ID.',
     )
   }
 
