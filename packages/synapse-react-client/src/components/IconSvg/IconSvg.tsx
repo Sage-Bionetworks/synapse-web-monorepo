@@ -120,6 +120,7 @@ import {
   SyncTwoTone,
   TableChartTwoTone,
   TableRows,
+  ShareTwoTone,
   TableViewTwoTone,
   Title,
   UploadTwoTone,
@@ -209,6 +210,7 @@ export const IconStrings = [
   'linkOff',
   'table',
   'tableRows',
+  'share',
   'public',
   'people',
   'entityview',
@@ -367,6 +369,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <SyncTwoTone {...otherProps} />
     case 'tableRows':
       return <TableRows {...otherProps} />
+    case 'share':
+      return <ShareTwoTone {...otherProps} />
     case 'public':
       return <PublicTwoTone {...otherProps} />
     case 'clipboard':

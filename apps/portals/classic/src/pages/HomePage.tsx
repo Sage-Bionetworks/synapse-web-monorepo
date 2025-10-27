@@ -5,11 +5,16 @@ import { TypeAnimation } from 'react-type-animation'
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import {
+  Goals,
   ImageCardGridWithLinks,
   PortalHomePageHeader,
   RssFeedCards,
 } from 'synapse-react-client'
-import { featuredResearchSql, whatWeDoSql } from '@/config/resources'
+import {
+  featuredResearchSql,
+  goalsTable,
+  whatWeDoSql,
+} from '@/config/resources'
 import { FeaturedResearch } from 'synapse-react-client'
 import ClassicSupportedByNIABanner from '@sage-bionetworks/synapse-portal-framework/components/classic/ClassicSupportedByNIABanner/ClassicSupportedByNIABanner'
 
@@ -87,6 +92,17 @@ Curate metadata resources to support collaboration across cohorts"
         heightPx={350}
       />
       <FeaturedResearch sql={featuredResearchSql} />
+      <div className={'home-bg-dark'}>
+        <SectionLayout
+          title={'Featured Studies'}
+          centerTitle={true}
+          ContainerProps={{
+            className: 'home-spacer',
+          }}
+        >
+          <Goals entityId={goalsTable} linkText="View Study" />
+        </SectionLayout>
+      </div>
       <SectionLayout
         title={"What's New?"}
         centerTitle={true}

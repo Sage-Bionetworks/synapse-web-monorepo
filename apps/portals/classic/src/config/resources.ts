@@ -16,3 +16,5 @@ export const defaultSearchConfiguration: Omit<
     searchHelpURL: 'https://help.classicportal.org/help/search-tips',
   },
 }
+
+export const goalsTable = 'syn69883160'

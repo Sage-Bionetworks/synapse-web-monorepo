@@ -26,7 +26,12 @@ export function AddFileToDownloadListCell<T extends EntityIdAndVersionNumber>(
       displayToast(error.reason, 'danger')
     },
   })
-  if (bundle?.entityType !== EntityType.file) {
+  if (
+    !(
+      bundle?.entityType == EntityType.file ||
+      bundle?.entityType == EntityType.recordset
+    )
+  ) {
     return <></>
   }
   return (

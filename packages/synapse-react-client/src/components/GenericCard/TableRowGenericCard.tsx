@@ -44,6 +44,8 @@ import GenericCardActionButton from './GenericCardActionButton'
 import { SynapseCardLabel } from './SynapseCardLabel'
 import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
 import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
+import { SharePageLinkButtonProps } from '../SharePageLinkButton'
+import ShareThisPage from '../ShareThisPage/ShareThisPage'
 
 /**
  * Maps a table query result to a GenericCard.
@@ -61,6 +63,8 @@ export type TableToGenericCardMapping = {
   description?: string
   /** If true, a 'Cite As' button will be displayed for those cards with a DOI in the 'doi' column  */
   includeCitation?: boolean
+  /** If true, a 'Share this page' button will be displayed  */
+  includeShareButton?: boolean
   /**
    * Configuration for displaying the SustainabilityScorecard component
    */
@@ -124,6 +128,8 @@ export type TableRowGenericCardProps = {
   rowId?: number
   /** The versionNumber of the table row */
   versionNumber?: number
+  /** Optional props for the ShareThisPage component */
+  sharePageLinkButtonProps?: SharePageLinkButtonProps
 } & CommonCardProps
 
 // SWC-6115: special rendering of the version column (for Views)
@@ -165,6 +171,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     versionNumber: rowVersionNumber,
     genericCardSchema,
     secondaryLabelLimit,
+    sharePageLinkButtonProps,
     selectColumns,
     columnModels,
     iconOptions,
@@ -183,6 +190,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     link = '',
     type,
     includeCitation,
+    includeShareButton,
     defaultCitationFormat,
     citationBoilerplateText,
     downloadCartSynId,
@@ -481,13 +489,16 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
               </GenericCardActionButton>
             </>
           )}
-          {includeCitation && (
+          {includeCitation && doiValue && (
             <CitationPopover
               title={title}
               doi={doiValue}
               boilerplateText={citationBoilerplateText}
               defaultCitationFormat={defaultCitationFormat}
             />
+          )}
+          {includeShareButton && isHeader && (
+            <ShareThisPage {...sharePageLinkButtonProps} />
           )}
         </>
       }

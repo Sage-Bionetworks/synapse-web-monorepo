@@ -1,0 +1,103 @@
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+@use 'sass:map';
+
+.dialogPaper:global(.MuiDialog-root) {
+  @media (max-width: map.get(SrcVariables.$breakpoints, 'small')) {
+    :global(.MuiDialog-container > .MuiPaper-root) {
+      margin: 0;
+      width: 100%;
+      min-height: 100vh;
+    }
+  }
+}
+
+.dialogTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dialogContent:global(.MuiDialogContent-root) {
+  border-bottom: none;
+}
+
+.copyButton:global(.MuiIconButton-root) {
+  padding: 16px;
+  &:hover {
+    background-color: transparent;
+  }
+}
+
+.closeIcon {
+  color: #878e95;
+}
+
+.contentStack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.shareItem {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    padding: 20px;
+  }
+}
+
+.shareButtonsContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.shareItem:hover {
+  border-radius: 7px;
+  background-color: var(--gray-200);
+}
+
+.shareItemLabel {
+  color: var(--gray-700);
+}
+
+.shareIcon {
+  font-size: 16px !important;
+}
+
+.copyLabel:global(.MuiTypography-root) {
+  margin-bottom: 4px;
+  color: var(--gray-800);
+  font-weight: 700;
+}
+
+.copyRow {
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+}
+
+.urlInput {
+  border-radius: 0;
+  width: 100%;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.urlInput:global(.MuiInput-underline)::before {
+  border-bottom: none;
+}
+
+.triggerButtonDark:global(.MuiButton-root) {
+  color: #fff !important;
+  border-color: #fff;
+}
+
+.triggerButtonDark:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}

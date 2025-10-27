@@ -16,7 +16,7 @@ jobs:
     with:
       app-name: synapse-oauth-signin
       branch-or-tag: main
-      bucket-name: staging-signin.synapse.org
+      bucket-name: staging-signin-synapse-websitebucket-d0h9iyfy390u
       cfdist-id: EUE2TU70O0M2M
       deployment-role-arn: arn:aws:iam::325565585839:role/sagebase-github-oidc-synapseprod-web-monorepo-infra
       vite-mode: 'staging'

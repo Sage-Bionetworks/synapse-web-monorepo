@@ -9,6 +9,7 @@ export default function GoalsDesktop({
   countSql,
   title,
   isAssetIcon,
+  linkText = 'Explore',
 }: GoalsDataProps) {
   return (
     <Box
@@ -47,7 +48,7 @@ export default function GoalsDesktop({
           color="secondary"
           href={link}
         >
-          Explore
+          {linkText}
         </Button>
       </div>
     </Box>
