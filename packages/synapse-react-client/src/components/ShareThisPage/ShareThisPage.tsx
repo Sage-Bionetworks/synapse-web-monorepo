@@ -41,8 +41,8 @@ const ShareThisPage = ({
   const [url, setUrl] = useState('')
   const [internalOpen, setInternalOpen] = useState(false)
 
-  // If externalOpen is defined, we’re in a controlled mode.
-  // Otherwise, fall back to internal state.
+  // Use internal state if externalOpen is undefined
+  // Otherwise, the open state is controlled externally by externalOpen
   const isControlled = externalOpen === undefined
   const open = isControlled ? internalOpen : externalOpen
 
