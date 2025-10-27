@@ -11,6 +11,6 @@ export default meta
 
 type Story = StoryObj<typeof ShareThisPage>
 
-export const Light: Story = {
+export const Default: Story = {
   args: {},
 }
