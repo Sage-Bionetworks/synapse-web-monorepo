@@ -94,7 +94,10 @@ describe('AuthenticationMethodSelection', () => {
     expect(mockSynapseClient.oAuthUrlRequest).toHaveBeenCalledWith(
       OAUTH2_PROVIDERS.GOOGLE,
       expectedRedirect,
-      state,
+      expect.objectContaining({
+        ...state,
+        csrfToken: expect.any(String),
+      }),
     )
 
     await waitFor(() => expect(window.location.hash).toBe('#/auth'))
@@ -128,7 +131,10 @@ describe('AuthenticationMethodSelection', () => {
     expect(mockSynapseClient.oAuthUrlRequest).toHaveBeenCalledWith(
       OAUTH2_PROVIDERS.ARCUS,
       expectedRedirect,
-      state,
+      expect.objectContaining({
+        ...state,
+        csrfToken: expect.any(String),
+      }),
     )
 
     await waitFor(() => expect(window.location.hash).toBe('#/auth'))
