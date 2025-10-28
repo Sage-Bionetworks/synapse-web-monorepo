@@ -26,6 +26,11 @@ const typesToAddToDownloadListWithParentId: EntityType[] = [
   EntityType.datasetcollection,
 ]
 const typesToAddToDownloadListWithQuery: EntityType[] = [EntityType.entityview]
+/** Users expect the specific file version included in the dataset to be added to the cart */
+const typesWhereFileVersionNumberShouldBeUsed: EntityType[] = [
+  EntityType.dataset,
+  EntityType.datasetcollection,
+]
 
 /**
  * A component that allows users to add an entity to the download cart. It displays a confirmation dialog that displays
@@ -68,14 +73,13 @@ export function EntityDownloadConfirmation({
         }
       }
       if (typesToAddToDownloadListWithParentId.includes(entityType)) {
-        const useVersionNumber = [
-          EntityType.dataset,
-          EntityType.datasetcollection,
-        ].includes(entityType)
+        const useVersionNumber =
+          typesWhereFileVersionNumberShouldBeUsed.includes(entityType)
         return {
           concreteType:
             'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-          parentId: entityId, // TODO: dataset version number here?
+          // TODO: Specify version of dataset/dataset collection (PLFM-9311)
+          parentId: entityId,
           useVersionNumber,
         }
       }

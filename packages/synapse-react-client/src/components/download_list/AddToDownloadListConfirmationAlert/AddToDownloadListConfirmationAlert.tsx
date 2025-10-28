@@ -1,4 +1,5 @@
 import { displayToast } from '@/components/index'
+import { ErrorBanner } from '@/components/error/ErrorBanner'
 import {
   useAddToDownloadList,
   useGetAddToDownloadListStats,
@@ -31,7 +32,11 @@ function AddToDownloadListConfirmationAlert(
   const { addToDownloadListRequest, onClose } = props
   const { downloadCartPageUrl } = useSynapseContext()
 
-  const { data, isLoading } = useGetAddToDownloadListStats({
+  const {
+    data,
+    isLoading,
+    error: statsError,
+  } = useGetAddToDownloadListStats({
     concreteType:
       'org.sagebionetworks.repo.model.download.AddToDownloadListStatsRequest',
     request: addToDownloadListRequest,
@@ -51,6 +56,10 @@ function AddToDownloadListConfirmationAlert(
 
   const fileCount = data?.fileCount
   const fileSizeTotal = data?.fileSize
+
+  if (statsError) {
+    return <ErrorBanner error={statsError} />
+  }
 
   return (
     <DownloadConfirmationUI

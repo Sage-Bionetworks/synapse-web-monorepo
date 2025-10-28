@@ -22,7 +22,7 @@ import {
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { getColumnIndex } from '@/utils/functions/SqlFunctions'
 import { GetAppTwoTone } from '@mui/icons-material'
-import { Collapse, Link } from '@mui/material'
+import { Box, Collapse, Link } from '@mui/material'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -474,20 +474,18 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         )
       }
       cardTopButtons={
-        <>
+        <Box sx={{ display: 'flex', gap: 1 }}>
           {croissantButton}
           {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
           {downloadCartSynIdValue && (
-            <>
-              <GenericCardActionButton
-                onClick={() => setShowDownloadConfirmation(val => !val)}
-                variant="outlined"
-                startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
-                loading={downloadButtonLoading}
-              >
-                Download
-              </GenericCardActionButton>
-            </>
+            <GenericCardActionButton
+              onClick={() => setShowDownloadConfirmation(val => !val)}
+              variant="outlined"
+              startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
+              loading={downloadButtonLoading}
+            >
+              Download
+            </GenericCardActionButton>
           )}
           {includeCitation && doiValue && (
             <CitationPopover
@@ -500,7 +498,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
           {includeShareButton && isHeader && (
             <ShareThisPage {...sharePageLinkButtonProps} />
           )}
-        </>
+        </Box>
       }
     />
   )
