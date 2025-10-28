@@ -4,7 +4,7 @@ import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeRep
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { SkeletonTable } from '@/components/index'
 import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
-import { useGetSchema } from '@/synapse-queries/index'
+import { useGetEntity, useGetSchema } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import Grid from '@mui/material/Grid'
 import {
@@ -13,7 +13,6 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import classNames from 'classnames'
 import { ClickableJsonCrdt } from 'clickable-json'
-import throttle from 'lodash-es/throttle'
 import {
   forwardRef,
   useCallback,
@@ -43,6 +42,11 @@ import { modelColsToGrid } from './utils/modelColsToGrid'
 import { Stack } from '@mui/material'
 import GridAgentChat from '../SynapseChat/GridAgentChat'
 import { SmartToyTwoTone } from '@mui/icons-material'
+import {
+  renderAddRowsComponent,
+  renderRecordSetContextMenu,
+  renderViewContextMenu,
+} from './components/contextMenu'
 
 export type SynapseGridProps = {
   showDebugInfo?: boolean
@@ -92,11 +96,59 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       presignedUrl,
     } = useDataGridWebSocket()
 
+    const websocketInstanceRef = useRef<typeof websocketInstance | null>(null)
+
     useEffect(() => {
-      if (replicaId && session?.sessionId) {
-        connect(replicaId, session.sessionId)
+      websocketInstanceRef.current = websocketInstance
+    }, [websocketInstance])
+
+    // Track last connection parameters to avoid redundant connections
+    const lastConnectParamsRef = useRef<{
+      replicaId: number
+      sessionId: string
+    } | null>(null)
+
+    useEffect(() => {
+      if (
+        replicaId === null ||
+        replicaId === undefined ||
+        !session?.sessionId
+      ) {
+        lastConnectParamsRef.current = null
+        return
       }
+
+      const nextParams = {
+        replicaId,
+        sessionId: session.sessionId,
+      }
+
+      const prevParams = lastConnectParamsRef.current
+
+      if (
+        prevParams &&
+        prevParams.replicaId === nextParams.replicaId &&
+        prevParams.sessionId === nextParams.sessionId
+      ) {
+        return
+      }
+
+      lastConnectParamsRef.current = nextParams
+      connect(replicaId, session.sessionId)
     }, [replicaId, session?.sessionId, connect])
+
+    // Reset grid state when model is reset (new session/replica)
+    useEffect(() => {
+      if (model === null) {
+        // Clear any grid-specific state when starting a new session
+        setLastSelection(null)
+        setSelectedRowIndex(null)
+        // Clear active cell if grid exists
+        if (gridRef.current) {
+          gridRef.current.setActiveCell(null)
+        }
+      }
+    }, [model])
 
     const { data: jsonSchema } = useGetSchema(
       session?.gridJsonSchema$Id ?? '',
@@ -104,6 +156,20 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
         enabled: !!session?.gridJsonSchema$Id,
       },
     )
+
+    // Grid behaves differently for views vs recordSets
+    // Note for future: can get modifiedOn to refresh grid when view changes
+    const { data: entityData } = useGetEntity(
+      session?.sourceEntityId,
+      undefined,
+      {
+        enabled: !!session?.sourceEntityId,
+      },
+    )
+
+    const entityIsView =
+      entityData?.concreteType ===
+      'org.sagebionetworks.repo.model.table.EntityView'
 
     // Process schema properties once
     const schemaPropertiesInfo = useMemo(() => {
@@ -125,14 +191,19 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       [modelSnapshot, schemaPropertiesInfo],
     )
 
-    const commit = useCallback(
-      throttle(() => {
-        console.log('Auto-committing changes')
-        // The model has already been updated in handleChange, just send the patch
-        websocketInstance?.sendPatch()
-      }, 500),
-      [websocketInstance],
-    )
+    const commit = useCallback(() => {
+      if (!isConnected || !websocketInstanceRef.current) {
+        return
+      }
+
+      websocketInstanceRef.current.sendPatch()
+    }, [isConnected, websocketInstanceRef])
+
+    useEffect(() => {
+      if (isConnected) {
+        commit()
+      }
+    }, [isConnected, commit])
 
     const applyAndCommitChanges = useCallback(
       (model: GridModel, modelChanges: ModelChange[]) => {
@@ -141,7 +212,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
           applyModelChange(model, change)
         })
 
-        // Push the changes to the server (throttled)
         commit()
       },
       [commit],
@@ -340,6 +410,15 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       ref={gridRef}
                       value={rowValues}
                       columns={colValues}
+                      autoAddRow={entityIsView ? false : true}
+                      addRowsComponent={
+                        entityIsView ? false : renderAddRowsComponent
+                      }
+                      contextMenuComponent={
+                        entityIsView
+                          ? renderViewContextMenu
+                          : renderRecordSetContextMenu
+                      }
                       rowKey={GRID_ROW_REACT_KEY_PROPERTY}
                       rowClassName={({ rowData, rowIndex }) =>
                         classNames({
@@ -363,7 +442,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                           colValues,
                         })
                       }}
-                      duplicateRow={({ rowData }: any) => ({
+                      duplicateRow={({ rowData }) => ({
                         ...rowData,
                       })}
                       onChange={handleChange}
