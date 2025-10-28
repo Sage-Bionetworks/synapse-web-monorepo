@@ -5,7 +5,7 @@ import type {
   StandaloneQueryWrapperProps,
 } from 'synapse-react-client'
 import columnAliases from '../columnAliases'
-import { dataSql } from '../resources'
+import { dataSql, enabledAnalysisPlatforms } from '../resources'
 
 const rgbIndex = 0
 export const dataColumnLinks: LabelLinkConfig = [
@@ -42,6 +42,8 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   searchConfiguration: {
     searchable: ['name', 'program', 'project', 'id'],
   },
+  enabledExternalAnalysisPlatforms: enabledAnalysisPlatforms,
+  isRowSelectionVisible: true,
 }
 
 export const dataDetailPageProps: StandaloneQueryWrapperProps = {
