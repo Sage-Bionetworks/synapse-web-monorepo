@@ -50,7 +50,7 @@ export const datasetSchema: TableToGenericCardMapping = {
     },
     version: {
       source: 'column',
-      columnName: 'datasetVersionNumber',
+      columnName: 'version',
     },
   },
 }

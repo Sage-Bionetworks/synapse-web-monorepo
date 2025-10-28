@@ -76,33 +76,6 @@ export type SynapseEntityConfig =
   | RowSynapseEntityConfig
   | ColumnSynapseEntityConfig
 
-type SynapseEntityIdentifiers = {
-  entityId?: string
-  entityVersionNumber?: number
-}
-
-const SYNAPSE_ID_SEARCH_REGEX = /syn\d+(?:\.\d+)?/i
-
-function extractSynapseEntityIdentifiers(
-  value?: string,
-): SynapseEntityIdentifiers {
-  if (!value) {
-    return {}
-  }
-  const synIdMatch = value.match(SYNAPSE_ID_SEARCH_REGEX)
-  if (!synIdMatch) {
-    return {}
-  }
-  const parsed = parseSynId(synIdMatch[0])
-  if (!parsed) {
-    return {}
-  }
-  return {
-    entityId: parsed.targetId,
-    entityVersionNumber: parsed.targetVersionNumber,
-  }
-}
-
 /**
  * Maps a table query result to a GenericCard.
  */
@@ -307,45 +280,16 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     let entityId: string | undefined
     let entityVersionNumber: number | undefined
 
-    const applyEntityIdentifiersFromValue = (
-      value?: string,
-      options?: { overrideId?: boolean; overrideVersion?: boolean },
-    ) => {
-      const { overrideId = false, overrideVersion = false } = options ?? {}
-      const { entityId: parsedId, entityVersionNumber: parsedVersion } =
-        extractSynapseEntityIdentifiers(value)
-      if (parsedId && (overrideId || !entityId)) {
-        entityId = parsedId
-      }
-      if (
-        parsedVersion !== undefined &&
-        (overrideVersion || entityVersionNumber === undefined)
-      ) {
-        entityVersionNumber = parsedVersion
-      }
-    }
-
     if (synapseEntityConfig?.id?.source === 'rowId') {
       if (rowId !== undefined) {
-        applyEntityIdentifiersFromValue(`syn${rowId}`, {
-          overrideId: true,
-          overrideVersion: true,
-        })
-      }
-      if (!synapseEntityConfig?.version && rowVersionNumber !== undefined) {
-        entityVersionNumber = rowVersionNumber
+        entityId = `syn${rowId}`
       }
     } else if (synapseEntityConfig?.id?.source === 'column') {
-      applyEntityIdentifiersFromValue(
-        getColumnValue(synapseEntityConfig.id.columnName),
-        { overrideId: true, overrideVersion: true },
-      )
+      entityId = getColumnValue(synapseEntityConfig.id.columnName)
     }
 
     if (synapseEntityConfig?.version?.source === 'rowVersionNumber') {
-      if (rowVersionNumber !== undefined) {
-        entityVersionNumber = rowVersionNumber
-      }
+      entityVersionNumber = rowVersionNumber
     } else if (synapseEntityConfig?.version?.source === 'column') {
       const versionValue = getColumnValue(
         synapseEntityConfig.version.columnName,
@@ -354,45 +298,23 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         const numericVersion = Number(versionValue)
         if (!Number.isNaN(numericVersion)) {
           entityVersionNumber = numericVersion
-        } else {
-          applyEntityIdentifiersFromValue(versionValue, {
-            overrideVersion: true,
-          })
         }
       }
-    }
-
-    if (!entityId && downloadCartSynId) {
-      applyEntityIdentifiersFromValue(getColumnValue(downloadCartSynId))
     }
 
     return {
       entityId,
       entityVersionNumber,
     }
-  }, [
-    synapseEntityConfig,
-    getColumnValue,
-    rowId,
-    rowVersionNumber,
-    downloadCartSynId,
-  ])
+  }, [synapseEntityConfig, getColumnValue, rowId, rowVersionNumber])
 
   let resolvedDownloadCartSynIdValue = resolvedSynapseEntityId
   let resolvedDownloadCartVersionNumber = resolvedSynapseEntityVersionNumber
 
   if (downloadCartSynId) {
-    const overrideValue = getColumnValue(downloadCartSynId)
-    if (overrideValue) {
-      const { entityId, entityVersionNumber } =
-        extractSynapseEntityIdentifiers(overrideValue)
-      if (entityId) {
-        resolvedDownloadCartSynIdValue = entityId
-        if (entityVersionNumber !== undefined) {
-          resolvedDownloadCartVersionNumber = entityVersionNumber
-        }
-      }
-    }
+    const reference = parseSynId(getColumnValue(downloadCartSynId) ?? '')
+    resolvedDownloadCartSynIdValue = reference?.targetId
+    resolvedDownloadCartVersionNumber = reference?.targetVersionNumber
   }
 
   // Transform the row to a record of (columnName, value) pairs for compatibility with getCandidateDoiId

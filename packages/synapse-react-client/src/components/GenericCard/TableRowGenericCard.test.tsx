@@ -146,7 +146,7 @@ const MOCKED_ID = 'MOCKED_ID'
 const MOCKED_IMAGE_FILE_HANDLE_ID = 'MOCKED_IMAGE_FILE_HANDLE_ID'
 const MOCKED_USER_ID = `[${MOCK_USER_ID}]`
 const MOCKED_TYPE = 'folder'
-const MOCKED_SYNAPSE_LINK = 'https://www.synapse.org/#!Synapse:syn52623570'
+const MOCKED_SYNAPSE_ID = 'syn52623570'
 const MOCKED_INVALID_SYNAPSE_LINK = 'https://www.synapse.org/#!Synapse:1234560/'
 const MOCKED_EXTERNAL_LINK = 'http://example.com'
 
@@ -162,7 +162,7 @@ const data = [
   MOCKED_IMAGE_FILE_HANDLE_ID,
   MOCKED_USER_ID,
   MOCKED_TYPE,
-  MOCKED_SYNAPSE_LINK,
+  MOCKED_SYNAPSE_ID,
   MOCKED_EXTERNAL_LINK,
 ]
 
@@ -506,6 +506,14 @@ describe('TableRowGenericCard tests', () => {
         'TableEntity',
       )
 
+      await screen.findByTestId('CroissantButton')
+
+      const croissantCall = mockCroissantButton.mock.calls[0]
+      expect(croissantCall?.[0]).toMatchObject({
+        datasetId: entityId,
+        datasetVersionNumber: Number(entityVersion),
+      })
+
       const downloadButton = await screen.findByRole('button', {
         name: /download/i,
       })
@@ -519,12 +527,6 @@ describe('TableRowGenericCard tests', () => {
         entityId,
         versionNumber: Number(entityVersion),
       })
-
-      const croissantCall = mockCroissantButton.mock.calls[0]
-      expect(croissantCall?.[0]).toMatchObject({
-        datasetId: entityId,
-        datasetVersionNumber: Number(entityVersion),
-      })
     })
 
     it('allows downloadCartSynId to override the download entity while keeping the Croissant entity unchanged', async () => {
@@ -532,11 +534,10 @@ describe('TableRowGenericCard tests', () => {
       const entityVersionColumnName = 'datasetEntityVersion'
       const croissantEntityId = 'syn6000'
       const croissantEntityVersion = '4'
-      const downloadCartSynapseLink =
-        'https://www.synapse.org/#!Synapse:syn9999.2'
+      const downloadCartSynId = 'syn9999.2'
 
       const dataWithOverrides = [...data]
-      dataWithOverrides[schema.datasetAlias] = downloadCartSynapseLink
+      dataWithOverrides[schema.datasetAlias] = downloadCartSynId
 
       const entityIdColumnIndex = dataWithOverrides.length
       dataWithOverrides.push(croissantEntityId)
@@ -569,6 +570,14 @@ describe('TableRowGenericCard tests', () => {
         'TableEntity',
       )
 
+      await screen.findByTestId('CroissantButton')
+
+      const croissantCall = mockCroissantButton.mock.calls[0]
+      expect(croissantCall?.[0]).toMatchObject({
+        datasetId: croissantEntityId,
+        datasetVersionNumber: Number(croissantEntityVersion),
+      })
+
       const downloadButton = await screen.findByRole('button', {
         name: /download/i,
       })
@@ -581,12 +590,6 @@ describe('TableRowGenericCard tests', () => {
       expect(downloadConfirmationCall?.[0]).toMatchObject({
         entityId: 'syn9999',
         versionNumber: 2,
-      })
-
-      const croissantCall = mockCroissantButton.mock.calls[0]
-      expect(croissantCall?.[0]).toMatchObject({
-        datasetId: croissantEntityId,
-        datasetVersionNumber: Number(croissantEntityVersion),
       })
     })
   })
