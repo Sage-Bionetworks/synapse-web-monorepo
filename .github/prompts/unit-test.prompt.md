@@ -1,7 +1,3 @@
----
-applyTo: '**/*.test.{ts,tsx}'
----
-
 Your task is to write unit tests for one or more files.
 
 When writing unit tests in this codebase, follow these guidelines to ensure consistency and quality:
