@@ -2,6 +2,7 @@ import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlo
 import { useGetVersions } from 'synapse-react-client/synapse-queries'
 import { Row } from '@sage-bionetworks/synapse-types'
 import columnAliases from '../config/columnAliases'
+import { enabledAnalysisPlatforms } from '@/config/resources'
 
 export type DatasetDetailsFilesTableProps = {
   rowData?: Row
@@ -46,6 +47,8 @@ export default function DatasetDetailsFilesTable(
       shouldDeepLink={false}
       columnAliases={columnAliases}
       defaultShowPlots={false}
+      isRowSelectionVisible={true}
+      enabledExternalAnalysisPlatforms={enabledAnalysisPlatforms}
     />
   )
 }
