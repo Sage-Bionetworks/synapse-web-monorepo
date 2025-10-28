@@ -16,7 +16,7 @@ const bannerConfig: BannerConfig = {
   eliteportal: ['cookies'],
   nf: ['cookies', 'survey'],
   stopadportal: ['cookies'],
-  genie: ['cookies', 'survey'],
+  genie: ['cookies'],
 }
 
 export default bannerConfig
