@@ -43,13 +43,8 @@ describe('EntityDownloadConfirmation', () => {
     handleClose: vi.fn(),
   }
 
-  it.each([
-    EntityType.project,
-    EntityType.folder,
-    EntityType.dataset,
-    EntityType.datasetcollection,
-  ])(
-    'shows the download confirmation UI for %s (parentId) when clicked',
+  it.each([EntityType.project, EntityType.folder])(
+    'shows the download confirmation UI for a container (%s) when clicked',
     async entityType => {
       mockUseGetEntity.mockReturnValue(
         getUseQuerySuccessMock({
@@ -71,6 +66,40 @@ describe('EntityDownloadConfirmation', () => {
               concreteType:
                 'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
               parentId: props.entityId,
+              useVersionNumber: false,
+            },
+            onClose: props.handleClose,
+          },
+          { testId: 'AddToDownloadListConfirmationAlert' },
+        )
+      })
+    },
+  )
+
+  it.each([EntityType.dataset, EntityType.datasetcollection])(
+    'shows the download confirmation UI for a collection (%s) when clicked',
+    async entityType => {
+      mockUseGetEntity.mockReturnValue(
+        getUseQuerySuccessMock({
+          ...mockTableEntity.entity,
+          concreteType: convertToConcreteEntityType(entityType),
+        }),
+      )
+
+      render(<EntityDownloadConfirmation {...props} />, {
+        wrapper: createWrapper(),
+      })
+
+      await waitFor(() => {
+        expect(
+          mockAddToDownloadListConfirmationAlert,
+        ).toHaveBeenRenderedWithProps(
+          {
+            addToDownloadListRequest: {
+              concreteType:
+                'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+              parentId: props.entityId,
+              useVersionNumber: true,
             },
             onClose: props.handleClose,
           },
