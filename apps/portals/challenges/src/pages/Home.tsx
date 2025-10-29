@@ -1,5 +1,6 @@
 import ChallengeHeader from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeHeader/ChallengeHeader'
 import ChallengeMetrics from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeMetrics/ChallengeMetrics'
+import ChallengeFeaturedTeam from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeFeaturedTeam/ChallengeFeaturedTeam'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import TabbedSynapseObjects from '@sage-bionetworks/synapse-portal-framework/components/TabbedSynapseObjects'
 import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
@@ -7,6 +8,7 @@ import {
   challengeProjectsSql,
   metricsSql,
   partnersSql,
+  featuredTeamSql,
 } from '@/config/resources'
 import {
   challengeTitleLinkConfig,
@@ -25,7 +27,7 @@ function Home() {
         titleText="Our Challenge Partners"
         sx={{ marginBottom: '160px' }}
       />
-
+      <ChallengeFeaturedTeam sql={featuredTeamSql} />
       <SectionLayout
         title="Listed Challenges"
         subtitle="Explore and join our currently running challenges, or browse completed ones and review their findings."
