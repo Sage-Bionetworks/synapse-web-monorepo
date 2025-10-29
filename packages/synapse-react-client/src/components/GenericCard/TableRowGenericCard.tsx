@@ -454,8 +454,8 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
 
   let croissantButton = <></>
   if (
-    resolvedSynapseEntityId !== undefined &&
-    resolvedSynapseEntityVersionNumber !== undefined &&
+    resolvedSynapseEntityId != null &&
+    resolvedSynapseEntityVersionNumber != null &&
     Number.isInteger(resolvedSynapseEntityVersionNumber)
   ) {
     croissantButton = (
