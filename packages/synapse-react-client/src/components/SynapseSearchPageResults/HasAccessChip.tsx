@@ -2,16 +2,15 @@ import { RestrictionUiType } from '../HasAccess/AccessIcon'
 import { useGetRestrictionUiType, HasAccessV2 } from '../HasAccess/HasAccessV2'
 import { Chip } from '@mui/material'
 
-export interface HasAccessWithTextProps {
+export interface HasAccessChipProps {
   entityId: string
   size?: 'normal' | 'small'
 }
 
-export function HasAccessChip({
-  entityId,
-  size = 'normal',
-}: HasAccessWithTextProps) {
-  const restrictionUiType = useGetRestrictionUiType(entityId, { enabled: true })
+export function HasAccessChip({ entityId }: HasAccessChipProps) {
+  const restrictionUiType = useGetRestrictionUiType(entityId, {
+    enabled: false,
+  })
 
   const getAccessText = () => {
     switch (restrictionUiType) {
@@ -40,7 +39,7 @@ export function HasAccessChip({
   return (
     <Chip
       label={getAccessText()}
-      icon={HasAccessV2({ entityId, showButtonText: false })}
+      icon={<HasAccessV2 entityId={entityId} showButtonText={false} />}
       style={{ color: 'inherit' }}
       sx={{
         backgroundColor: '#DAE9E7',
