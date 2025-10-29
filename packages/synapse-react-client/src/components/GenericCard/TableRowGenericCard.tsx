@@ -47,6 +47,7 @@ import { SustainabilityScorecardProps } from '../SustainabilityScorecard/Sustain
 import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
 import { SharePageLinkButtonProps } from '../SharePageLinkButton'
 import ShareThisPage from '../ShareThisPage/ShareThisPage'
+import { useResolvedSynapseEntity } from './useResolvedSynapseEntity'
 
 type RowSynapseEntityConfig = {
   /** Use the table rowId to resolve the Synapse entity ID. */
@@ -276,42 +277,12 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   const {
     entityId: resolvedSynapseEntityId,
     entityVersionNumber: resolvedSynapseEntityVersionNumber,
-  } = useMemo(() => {
-    let entityId: string | undefined
-    let entityVersionNumber: number | undefined
-
-    if (synapseEntityConfig?.id?.source === 'rowId') {
-      if (rowId !== undefined) {
-        entityId = `syn${rowId}`
-      }
-    } else if (synapseEntityConfig?.id?.source === 'column') {
-      entityId = getColumnValue(synapseEntityConfig.id.columnName)
-    }
-
-    if (synapseEntityConfig?.version?.source === 'rowVersionNumber') {
-      if (
-        rowVersionNumber !== undefined &&
-        Number.isInteger(rowVersionNumber)
-      ) {
-        entityVersionNumber = rowVersionNumber
-      }
-    } else if (synapseEntityConfig?.version?.source === 'column') {
-      const versionValue = getColumnValue(
-        synapseEntityConfig.version.columnName,
-      )
-      if (versionValue !== undefined && versionValue !== '') {
-        const numericVersion = Number(versionValue)
-        if (!Number.isNaN(numericVersion) && Number.isInteger(numericVersion)) {
-          entityVersionNumber = numericVersion
-        }
-      }
-    }
-
-    return {
-      entityId,
-      entityVersionNumber,
-    }
-  }, [synapseEntityConfig, getColumnValue, rowId, rowVersionNumber])
+  } = useResolvedSynapseEntity({
+    synapseEntityConfig,
+    getColumnValue,
+    rowId,
+    rowVersionNumber,
+  })
 
   let resolvedDownloadCartSynIdValue = resolvedSynapseEntityId
   let resolvedDownloadCartVersionNumber = resolvedSynapseEntityVersionNumber
