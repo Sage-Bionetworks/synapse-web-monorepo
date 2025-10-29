@@ -51,6 +51,8 @@ const FeaturedTeam = ({ sql }: FeaturedTeamProps) => {
     A1 = 'A1',
     Q2 = 'Q2',
     A2 = 'A2',
+    Q3 = 'Q3',
+    A3 = 'A3',
   }
 
   const teamNameColumnIndex = getFieldIndex(
@@ -84,12 +86,13 @@ const FeaturedTeam = ({ sql }: FeaturedTeamProps) => {
   )
 
   const q1ColumnIndex = getFieldIndex(ExpectedColumns.Q1, queryResultBundle)
-
   const a1ColumnIndex = getFieldIndex(ExpectedColumns.A1, queryResultBundle)
 
   const q2ColumnIndex = getFieldIndex(ExpectedColumns.Q2, queryResultBundle)
-
   const a2ColumnIndex = getFieldIndex(ExpectedColumns.A2, queryResultBundle)
+
+  const q3ColumnIndex = getFieldIndex(ExpectedColumns.Q3, queryResultBundle)
+  const a3ColumnIndex = getFieldIndex(ExpectedColumns.A3, queryResultBundle)
 
   const teamName = dataRows[0]?.values[teamNameColumnIndex] ?? ''
   const rawTeamMemberNames =
@@ -111,6 +114,14 @@ const FeaturedTeam = ({ sql }: FeaturedTeamProps) => {
   const a1 = dataRows[0]?.values[a1ColumnIndex] ?? ''
   const q2 = dataRows[0]?.values[q2ColumnIndex] ?? ''
   const a2 = dataRows[0]?.values[a2ColumnIndex] ?? ''
+  const q3 = dataRows[0]?.values[q3ColumnIndex] ?? ''
+  const a3 = dataRows[0]?.values[a3ColumnIndex] ?? ''
+
+  const questionsAndAnswers: { question: string; answer: string }[] = [
+    { question: q1, answer: a1 },
+    { question: q2, answer: a2 },
+    { question: q3, answer: a3 },
+  ]
 
   const fha: FileHandleAssociation = {
     associateObjectId: entityId,
@@ -173,28 +184,25 @@ const FeaturedTeam = ({ sql }: FeaturedTeamProps) => {
           >
             View the {challengeName} Challenge here.
           </Link>
-          <Box className={styles.FeaturedTeam__qaSection}>
-            <Typography
-              variant="body1"
-              className={styles.FeaturedTeam__question}
-            >
-              Q: {q1}
-            </Typography>
-            <Typography variant="body1" className={styles.FeaturedTeam__answer}>
-              A: {a1}
-            </Typography>
-          </Box>
-          <Box className={styles.FeaturedTeam__qaSection}>
-            <Typography
-              variant="body1"
-              className={styles.FeaturedTeam__question}
-            >
-              Q: {q2}
-            </Typography>
-            <Typography variant="body1" className={styles.FeaturedTeam__answer}>
-              A: {a2}
-            </Typography>
-          </Box>
+          {questionsAndAnswers.map(
+            (qa, index) =>
+              qa.question && (
+                <Box key={index} className={styles.FeaturedTeam__qaSection}>
+                  <Typography
+                    variant="body1"
+                    className={styles.FeaturedTeam__question}
+                  >
+                    Q: {qa.question}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    className={styles.FeaturedTeam__answer}
+                  >
+                    A: {qa.answer}
+                  </Typography>
+                </Box>
+              ),
+          )}
           <Button
             variant="outlined"
             className={styles.FeaturedTeam__readMoreButton}
