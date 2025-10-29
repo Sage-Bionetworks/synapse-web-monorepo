@@ -1,5 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { OAuth2State, SynapseClientError } from '@/utils'
+import { useCsrfToken } from '@/utils/hooks'
 import {
   LOGIN_METHOD_EMAIL,
   LOGIN_METHOD_OAUTH2_ARCUS,
@@ -12,22 +13,6 @@ import { MouseEvent, useMemo } from 'react'
 import LoginMethodButton from './LoginMethodButton'
 
 const CSRF_TOKEN_STORAGE_KEY = 'oauth2_csrf_token'
-
-function generateCsrfToken(): string {
-  const { crypto } = window
-  if (crypto?.getRandomValues) {
-    const bytes = new Uint8Array(32)
-    crypto.getRandomValues(bytes)
-    return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join(
-      '',
-    )
-  }
-  if (crypto?.randomUUID) {
-    return crypto.randomUUID().replace(/-/g, '')
-  }
-
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
-}
 
 type AuthenticationMethodSelectionProps = {
   ssoRedirectUrl?: string
@@ -55,7 +40,7 @@ export default function AuthenticationMethodSelection(
   } = props
 
   // generate and include a csrfToken in the state to prevent CSRF attacks
-  const csrfToken = useMemo(() => generateCsrfToken(), [])
+  const csrfToken = useCsrfToken()
 
   const stateWithCSRF: OAuth2State | undefined = useMemo(
     () => ({ ...state, csrfToken }),

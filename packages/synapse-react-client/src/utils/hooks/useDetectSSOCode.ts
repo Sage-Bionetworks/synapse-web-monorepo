@@ -115,6 +115,7 @@ export default function useDetectSSOCode(
           const storedCsrfToken = safeLocalStorageGetItem(
             CSRF_TOKEN_STORAGE_KEY,
           )
+
           const expectedCsrfToken = state?.csrfToken ?? null
           const tokensMatch =
             typeof expectedCsrfToken === 'string' &&

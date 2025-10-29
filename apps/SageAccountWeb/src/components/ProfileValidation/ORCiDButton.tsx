@@ -6,6 +6,8 @@ import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { ValidationWizardStep } from './ProfileValidation'
 import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClient'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import { useCsrfToken } from 'synapse-react-client/utils/hooks'
+import { OAuth2State } from 'synapse-react-client/utils'
 
 export type ORCiDButtonProps = {
   redirectAfter?: string
@@ -13,9 +15,10 @@ export type ORCiDButtonProps = {
   sx?: SxProps
 }
 
-export const onBindToORCiD = (
+const onBindToORCiD = (
   event: SyntheticEvent,
   setIsLoading: (isLoading: boolean) => void,
+  state: OAuth2State,
   redirectAfter?: string,
 ) => {
   event.preventDefault()
@@ -41,6 +44,7 @@ export const onBindToORCiD = (
     SynapseClient.oAuthUrlRequest(
       SynapseConstants.OAUTH2_PROVIDERS.ORCID,
       redirectUrl,
+      state,
     )
       .then((data: any) => {
         const authUrl = data.authorizationUrl
@@ -58,19 +62,24 @@ export const onBindToORCiD = (
 
 export const ORCiDButton = (props: ORCiDButtonProps) => {
   const [isLoading, setIsLoading] = useState(false)
+  const csrfToken = useCsrfToken()
 
   return (
     <>
       {props.editButton ? (
         <button
-          onClick={e => onBindToORCiD(e, setIsLoading, props.redirectAfter)}
+          onClick={e =>
+            onBindToORCiD(e, setIsLoading, { csrfToken }, props.redirectAfter)
+          }
         >
           <img src={EditIcon} alt="edit icon" />
         </button>
       ) : (
         <Button
           variant="outlined"
-          onClick={e => onBindToORCiD(e, setIsLoading, props.redirectAfter)}
+          onClick={e =>
+            onBindToORCiD(e, setIsLoading, { csrfToken }, props.redirectAfter)
+          }
           type="button"
           sx={props.sx}
           disabled={isLoading}

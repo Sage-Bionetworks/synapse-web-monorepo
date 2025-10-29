@@ -43,6 +43,7 @@ import LastLoginInfo, {
 } from 'synapse-react-client/components/Authentication/LastLoginInfo'
 import RegisterPageLogoutPrompt from 'synapse-react-client/components/RegisterPageLogoutPrompt/RegisterPageLogoutPrompt'
 import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
+import { useCsrfToken } from 'synapse-react-client/utils/hooks'
 
 export enum Pages {
   CHOOSE_REGISTRATION,
@@ -106,6 +107,7 @@ const RegisterAccount1 = () => {
   const { search } = useLocation()
   const queryParams = useMemo(() => new URLSearchParams(search), [search])
   const emailFromParams = queryParams.get('email')
+  const csrfToken = useCsrfToken()
 
   // If we have an email param, initialize the email address with the param
   useEffect(() => {
@@ -208,7 +210,7 @@ const RegisterAccount1 = () => {
       const { authorizationUrl } = await SynapseClient.oAuthUrlRequest(
         provider,
         redirectUrl,
-        { registrationUsername: username },
+        { registrationUsername: username, csrfToken },
       )
       window.location.assign(authorizationUrl)
     } catch (e: unknown) {
