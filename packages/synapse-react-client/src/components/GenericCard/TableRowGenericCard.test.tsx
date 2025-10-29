@@ -517,7 +517,7 @@ describe('TableRowGenericCard tests', () => {
       const downloadButton = await screen.findByRole('button', {
         name: /download/i,
       })
-      fireEvent.click(downloadButton)
+      await userEvent.click(downloadButton)
 
       await screen.findByTestId('EntityDownloadConfirmation')
 
