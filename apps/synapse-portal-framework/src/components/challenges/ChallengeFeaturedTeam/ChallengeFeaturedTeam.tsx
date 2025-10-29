@@ -35,9 +35,6 @@ const FeaturedTeam = ({ sql }: FeaturedTeamProps) => {
     },
   }
 
-  console.log('entityId:', entityId)
-  console.log('queryBundleRequest:', queryBundleRequest)
-
   const { data: queryResultBundle } =
     useGetQueryResultBundle(queryBundleRequest)
 
