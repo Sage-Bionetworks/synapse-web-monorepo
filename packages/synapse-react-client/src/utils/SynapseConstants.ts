@@ -186,7 +186,6 @@ export const LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY =
   'last_login_sourceapp_url'
 export const LAST_LOGIN_DATE_LOCALSTORAGE_KEY = 'last_login_date'
 
-export const DOWNLOAD_FILES_MENU_TEXT = 'Download Files'
 export const ACCESS_TOKEN_COOKIE_KEY =
   'org.sagebionetworks.security.user.login.token'
 export const LAST_PLACE_LOCALSTORAGE_KEY = 'last_place_url'
