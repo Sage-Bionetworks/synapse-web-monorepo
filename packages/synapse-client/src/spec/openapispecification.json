@@ -3511,6 +3511,63 @@
         }
       }
     },
+    "/repo/v1/download/list/add/stats/async/start": {
+      "post": {
+        "tags": ["Download List Services"],
+        "operationId": "post-/repo/v1/download/list/add/stats/async/start",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.download.AddToDownloadListStatsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "201": {
+            "description": "Auto-generated description",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.asynch.AsyncJobId"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repo/v1/download/list/add/stats/async/get/{asyncToken}": {
+      "get": {
+        "tags": ["Download List Services"],
+        "operationId": "get-/repo/v1/download/list/add/stats/async/get/{asyncToken}",
+        "parameters": [
+          {
+            "name": "asyncToken",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "201": {
+            "description": "Auto-generated description",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.download.AddToDownloadListStatsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/repo/v1/download/list/package/async/start": {
       "post": {
         "tags": ["Download List Services"],
@@ -18133,7 +18190,8 @@
           "USE_NEW_ASYNC_GOOGLE_MULTIPART_UPLOAD",
           "ENFORCE_PROJECT_STORAGE_LIMITS",
           "ALLOW_AGENT_WRITES",
-          "DISABLE_2FA_REQUIREMENT"
+          "DISABLE_2FA_REQUIREMENT",
+          "DISABLE_INACTIVE_USERS"
         ]
       },
       "org.sagebionetworks.repo.model.dataaccess.AccessApprovalNotificationResponse": {
@@ -22435,25 +22493,6 @@
         "required": ["concreteType"],
         "discriminator": { "propertyName": "concreteType" }
       },
-      "org.sagebionetworks.repo.model.agent.AgentChatResponse": {
-        "type": "object",
-        "properties": {
-          "concreteType": {
-            "type": "string",
-            "enum": ["org.sagebionetworks.repo.model.agent.AgentChatResponse"]
-          },
-          "sessionId": {
-            "type": "string",
-            "description": "The sessionId that identifies the conversation with the agent."
-          },
-          "responseText": {
-            "type": "string",
-            "description": "The agent's text response to the user's request"
-          }
-        },
-        "description": "The response to an agent chat request.",
-        "required": ["concreteType"]
-      },
       "org.sagebionetworks.repo.model.audit.AccessRecord": {
         "type": "object",
         "properties": {
@@ -22556,6 +22595,25 @@
           }
         },
         "description": "Data recored from a single web-services methods."
+      },
+      "org.sagebionetworks.repo.model.agent.AgentChatResponse": {
+        "type": "object",
+        "properties": {
+          "concreteType": {
+            "type": "string",
+            "enum": ["org.sagebionetworks.repo.model.agent.AgentChatResponse"]
+          },
+          "sessionId": {
+            "type": "string",
+            "description": "The sessionId that identifies the conversation with the agent."
+          },
+          "responseText": {
+            "type": "string",
+            "description": "The agent's text response to the user's request"
+          }
+        },
+        "description": "The response to an agent chat request.",
+        "required": ["concreteType"]
       },
       "org.sagebionetworks.repo.model.table.FacetColumnRequest": {
         "type": "object",
@@ -22941,6 +22999,33 @@
           }
         ],
         "discriminator": { "propertyName": "concreteType" }
+      },
+      "org.sagebionetworks.repo.model.download.AddToDownloadListStatsResponse": {
+        "type": "object",
+        "properties": {
+          "concreteType": {
+            "type": "string",
+            "enum": [
+              "org.sagebionetworks.repo.model.download.AddToDownloadListStatsResponse"
+            ]
+          },
+          "fileCount": {
+            "type": "integer",
+            "description": "The number of files that a AddToDownloadListRequest request would attempt to add to the download list. Note that this might exceed the maximum number of files that can be added to the download list.",
+            "format": "int32"
+          },
+          "fileSize": {
+            "type": "integer",
+            "description": "The total size that a AddToDownloadListRequest would attempt to add to the download list.",
+            "format": "int32"
+          },
+          "isFileCountAndSizeEstimate": {
+            "type": "boolean",
+            "description": "When true the actual count and size might be greater than reported."
+          }
+        },
+        "description": "The results of a job to compute the estimate of number and size of files from a AddToDownloadListRequest request.",
+        "required": ["concreteType"]
       },
       "org.sagebionetworks.repo.model.table.TableUpdateResponse": {
         "type": "object",
@@ -24434,6 +24519,9 @@
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.agent.AgentChatRequest"
           },
           {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.download.AddToDownloadListStatsRequest"
+          },
+          {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.grid.CreateGridRequest"
           },
           {
@@ -25009,7 +25097,8 @@
               "USE_NEW_ASYNC_GOOGLE_MULTIPART_UPLOAD",
               "ENFORCE_PROJECT_STORAGE_LIMITS",
               "ALLOW_AGENT_WRITES",
-              "DISABLE_2FA_REQUIREMENT"
+              "DISABLE_2FA_REQUIREMENT",
+              "DISABLE_INACTIVE_USERS"
             ]
           },
           "enabled": {
@@ -25402,24 +25491,6 @@
           }
         },
         "description": "Metadata for a paginated list of personal access token records."
-      },
-      "org.sagebionetworks.repo.model.migration.BackfillLastSeenOnResponse": {
-        "type": "object",
-        "properties": {
-          "concreteType": {
-            "type": "string",
-            "enum": [
-              "org.sagebionetworks.repo.model.migration.BackfillLastSeenOnResponse"
-            ]
-          },
-          "count": {
-            "type": "integer",
-            "description": "The count of users processed in the request.",
-            "format": "int32"
-          }
-        },
-        "description": "Results for a lastSeenOn backfill request.",
-        "required": ["concreteType"]
       },
       "PaginatedResultsOfSubmissionStatus": {
         "type": "object",
@@ -27384,16 +27455,6 @@
         },
         "description": "JSON schema for fields associated with a DOI and its metadata. This object contains fields from both <a href=\"${org.sagebionetworks.repo.model.doi.v2.DoiAssociation}\">DoiAssociation</a> and <a href=\"${org.sagebionetworks.repo.model.doi.v2.DataciteMetadata}\">DataciteMetadata</a>.<br>To mint a DOI, the following fields are required: <ul> <li>Information that uniquely identifies an object in Synapse <ul><li> The object ID <i>(e.g. \"syn12345\")</i></li><li>The object type <i>(Note: as of this writing, only ENTITY is supported)</i></li><li>The version number of the object <i>(Optional. A \"null\" version will mint a DOI that will point to the most recent version of the object, even if the object changes)</i></li><li>An eTag <i>(Necessary when updating an existing DOI)</i></li></ul></li> <li>Additional supplementary information to mint a DOI <ul><li>Creator(s)</li><li>Title(s)</li><li>The general resource type</li><li>A publication year (no later than one year after the current year)</li></ul></li> </ul><br>For more information, see the <a href=\"${org.sagebionetworks.repo.model.doi.v2.DoiAssociation}\">DoiAssociation</a> and <a href=\"${org.sagebionetworks.repo.model.doi.v2.DataciteMetadata}\">DataciteMetadata</a> objects."
       },
-      "org.sagebionetworks.repo.model.grid.CreateReplicaRequest": {
-        "type": "object",
-        "properties": {
-          "gridSessionId": {
-            "type": "string",
-            "description": "The ID of the grid seesion."
-          }
-        },
-        "description": "Request to create a new replica. A replica represents an 'in-memory' grid document identifed by a unique replicaId."
-      },
       "org.sagebionetworks.repo.model.migration.BackupTypeResponse": {
         "type": "object",
         "properties": {
@@ -27410,6 +27471,16 @@
         },
         "description": "Results for a backup type job.",
         "required": ["concreteType"]
+      },
+      "org.sagebionetworks.repo.model.grid.CreateReplicaRequest": {
+        "type": "object",
+        "properties": {
+          "gridSessionId": {
+            "type": "string",
+            "description": "The ID of the grid seesion."
+          }
+        },
+        "description": "Request to create a new replica. A replica represents an 'in-memory' grid document identifed by a unique replicaId."
       },
       "org.sagebionetworks.repo.model.dataaccess.AccessRequirementSearchResult": {
         "type": "object",
@@ -29623,6 +29694,9 @@
           },
           {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.doi.v2.DoiResponse"
+          },
+          {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.download.AddToDownloadListStatsResponse"
           },
           {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.TableSearchChangeResponse"
@@ -31898,6 +31972,20 @@
         },
         "description": "Response from adding a part to multi-part upload or copy."
       },
+      "org.sagebionetworks.repo.model.principal.AccountCreationToken": {
+        "type": "object",
+        "properties": {
+          "emailValidationSignedToken": {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.principal.EmailValidationSignedToken",
+            "description": "Signed token containing the the information necessary to create a new account or add an email address to an existing account."
+          },
+          "encodedMembershipInvtnSignedToken": {
+            "type": "string",
+            "description": "Encoded signed token containing the information needed to retrieve a membership invitation."
+          }
+        },
+        "description": "Information needed to start the process of creating a new account."
+      },
       "org.sagebionetworks.repo.model.agent.TraceEventsRequest": {
         "type": "object",
         "properties": {
@@ -31912,20 +32000,6 @@
           }
         },
         "description": "A request to get a single page of trace events for a specified asynchronous job."
-      },
-      "org.sagebionetworks.repo.model.principal.AccountCreationToken": {
-        "type": "object",
-        "properties": {
-          "emailValidationSignedToken": {
-            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.principal.EmailValidationSignedToken",
-            "description": "Signed token containing the the information necessary to create a new account or add an email address to an existing account."
-          },
-          "encodedMembershipInvtnSignedToken": {
-            "type": "string",
-            "description": "Encoded signed token containing the information needed to retrieve a membership invitation."
-          }
-        },
-        "description": "Information needed to start the process of creating a new account."
       },
       "org.sagebionetworks.repo.model.search.query.SearchFieldName": {
         "type": "string",
@@ -32387,36 +32461,6 @@
         },
         "description": "Describes the response object for an Access Requirement search"
       },
-      "org.sagebionetworks.repo.model.grid.ReplicaSelectionModel": {
-        "type": "object",
-        "properties": {
-          "columnSelection": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.grid.CrdtId",
-              "description": "Represents a single CRDT node's identifier."
-            },
-            "description": "Each SelectionId is an arr node's id from the 'columnOrder' array"
-          },
-          "rowSelection": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.grid.CrdtId",
-              "description": "Represents a single CRDT node's identifier."
-            },
-            "description": "Each SelectionId is an arr node's id from the 'rows' array"
-          },
-          "columnSelectAll": {
-            "type": "boolean",
-            "description": "When true, all columns are selected and 'columnSelection' will be ignored."
-          },
-          "rowSelectAll": {
-            "type": "boolean",
-            "description": "When true, all rows are selected, and 'rowSelection' will be ignored."
-          }
-        },
-        "description": "Defines a user's selection of columns and rows for a replica."
-      },
       "org.sagebionetworks.repo.model.wiki.WikiPage": {
         "type": "object",
         "properties": {
@@ -32463,6 +32507,36 @@
           }
         },
         "description": "The WikiPage model object represent a single user managed wiki page."
+      },
+      "org.sagebionetworks.repo.model.grid.ReplicaSelectionModel": {
+        "type": "object",
+        "properties": {
+          "columnSelection": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.grid.CrdtId",
+              "description": "Represents a single CRDT node's identifier."
+            },
+            "description": "Each SelectionId is an arr node's id from the 'columnOrder' array"
+          },
+          "rowSelection": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.grid.CrdtId",
+              "description": "Represents a single CRDT node's identifier."
+            },
+            "description": "Each SelectionId is an arr node's id from the 'rows' array"
+          },
+          "columnSelectAll": {
+            "type": "boolean",
+            "description": "When true, all columns are selected and 'columnSelection' will be ignored."
+          },
+          "rowSelectAll": {
+            "type": "boolean",
+            "description": "When true, all rows are selected, and 'rowSelection' will be ignored."
+          }
+        },
+        "description": "Defines a user's selection of columns and rows for a replica."
       },
       "org.sagebionetworks.repo.model.oauth.OAuthGrantType": {
         "type": "string",
@@ -32557,9 +32631,6 @@
           },
           {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.MigrationTypeCount"
-          },
-          {
-            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.BackfillLastSeenOnResponse"
           },
           {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.BatchChecksumResponse"
@@ -34808,6 +34879,23 @@
         },
         "description": "JSON schema for a change message"
       },
+      "org.sagebionetworks.repo.model.download.AddToDownloadListStatsRequest": {
+        "type": "object",
+        "properties": {
+          "concreteType": {
+            "type": "string",
+            "enum": [
+              "org.sagebionetworks.repo.model.download.AddToDownloadListStatsRequest"
+            ]
+          },
+          "request": {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.download.AddToDownloadListRequest",
+            "description": "Start an asynchronous job to add files from the given view query or folder to the user's download list,"
+          }
+        },
+        "description": "Start an asynchronous job that computes an estimate of the number and size of files from the given AddToDownloadListRequest request.",
+        "required": ["concreteType"]
+      },
       "org.sagebionetworks.repo.model.CurationTrackingData": {
         "type": "object",
         "properties": {
@@ -35127,17 +35215,6 @@
         },
         "description": "A request to retrieve a page of accessor groups. Accessors will be group by submitter and access requirement."
       },
-      "org.sagebionetworks.repo.model.grid.UpdateGridResponse": {
-        "type": "object",
-        "properties": {
-          "updatedRowCount": {
-            "type": "integer",
-            "description": "The number of rows updated with this request.",
-            "format": "int32"
-          }
-        },
-        "description": "Response to an Update grid SQL request."
-      },
       "org.sagebionetworks.repo.model.migration.MigrationTypeList": {
         "type": "object",
         "properties": {
@@ -35279,6 +35356,17 @@
           }
         },
         "description": "List of Migration types."
+      },
+      "org.sagebionetworks.repo.model.grid.UpdateGridResponse": {
+        "type": "object",
+        "properties": {
+          "updatedRowCount": {
+            "type": "integer",
+            "description": "The number of rows updated with this request.",
+            "format": "int32"
+          }
+        },
+        "description": "Response to an Update grid SQL request."
       },
       "org.sagebionetworks.repo.model.TermsOfUseAccessRequirement": {
         "type": "object",
@@ -37188,9 +37276,6 @@
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.AsyncMigrationTypeCountsRequest"
           },
           {
-            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.BackfillLastSeenOnRequest"
-          },
-          {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.AsyncMigrationRangeChecksumRequest"
           },
           {
@@ -37796,24 +37881,6 @@
       "org.sagebionetworks.repo.model.entity.SortBy": {
         "type": "string",
         "enum": ["NAME", "CREATED_ON", "MODIFIED_ON"]
-      },
-      "org.sagebionetworks.repo.model.migration.BackfillLastSeenOnRequest": {
-        "type": "object",
-        "properties": {
-          "concreteType": {
-            "type": "string",
-            "enum": [
-              "org.sagebionetworks.repo.model.migration.BackfillLastSeenOnRequest"
-            ]
-          },
-          "maxUsersCount": {
-            "type": "integer",
-            "description": "The maximum number of users to process in the request, at least 500;",
-            "format": "int32"
-          }
-        },
-        "description": "Request to backfill the lastSeenOn status for existing users.",
-        "required": ["concreteType"]
       },
       "org.sagebionetworks.repo.model.table.TableSearchChangeResponse": {
         "type": "object",
@@ -38741,7 +38808,7 @@
           },
           "parentId": {
             "type": "string",
-            "description": "The synID of a folder, project, or dataset to add all of the children files to the user's download list.  This parameter should be excluded when adding files from a query. Note: This is not recursive, unless the recursive property is set to true."
+            "description": "The synID of a folder, project, dataset or dataset collection to add all of the children files to the user's download list.  This parameter should be excluded when adding files from a query. Note: This is not recursive, unless the recursive property is set to true."
           },
           "recursive": {
             "type": "boolean",

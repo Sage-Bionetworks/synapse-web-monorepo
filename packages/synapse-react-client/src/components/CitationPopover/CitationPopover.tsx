@@ -20,7 +20,7 @@ function CitationPopover(props: CitationProps) {
   const id = open ? 'cite-as-popover' : undefined
 
   return (
-    <div>
+    <>
       {props.doi && (
         <GenericCardActionButton
           onClick={handleClick}
@@ -40,7 +40,7 @@ function CitationPopover(props: CitationProps) {
         id={id}
         onClose={handleClose}
       />
-    </div>
+    </>
   )
 }
 

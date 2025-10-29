@@ -18,7 +18,7 @@ dayjs.extend(duration)
 dayjs.extend(relativeTime)
 
 export type DownloadDetailsProps = {
-  numFiles: number
+  numFiles?: number
   numBytes?: number
 }
 
@@ -72,14 +72,16 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
     : 'SRC-primary-text-color'
   return (
     <span className="download-details-container">
-      <span>
-        <InsertDriveFileTwoTone className={fileCountIconClass} />
-        {isZeroFiles ? (
-          <SkeletonInlineBlock width={50} />
-        ) : (
-          <>{numFiles.toLocaleString()}&nbsp;files</>
-        )}
-      </span>
+      {numFiles != null && (
+        <span>
+          <InsertDriveFileTwoTone className={fileCountIconClass} />
+          {isZeroFiles ? (
+            <SkeletonInlineBlock width={50} />
+          ) : (
+            <>{numFiles.toLocaleString()}&nbsp;files</>
+          )}
+        </span>
+      )}
       {hasNumBytes && (
         <Tooltip
           title="This is the total size of all files. Zipped package(s) will likely be smaller."
@@ -104,7 +106,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
         >
           <span data-testid="downloadTimeEstimateUI">
             <WatchLaterTwoTone className={timeEstimateIconClass} />
-            {isLoading && numFiles > 0 ? (
+            {isLoading && numFiles != null && numFiles > 0 ? (
               <SkeletonInlineBlock width={50} />
             ) : (
               friendlyTime

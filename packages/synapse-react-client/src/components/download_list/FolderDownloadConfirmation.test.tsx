@@ -1,5 +1,5 @@
 import {
-  useAddQueryToDownloadList,
+  useAddToDownloadList,
   useGetEntityChildren,
 } from '@/synapse-queries/index'
 import {
@@ -21,11 +21,11 @@ import { FolderDownloadConfirmation } from './index'
 
 vi.mock('../../synapse-queries/index', () => ({
   useGetEntityChildren: vi.fn(),
-  useAddQueryToDownloadList: vi.fn(),
+  useAddToDownloadList: vi.fn(),
 }))
 
 const mockUseGetEntityChildren = vi.mocked(useGetEntityChildren)
-const mockUseAddQueryToDownloadList = vi.mocked(useAddQueryToDownloadList)
+const mockUseAddToDownloadList = vi.mocked(useAddToDownloadList)
 
 const DOWNLOAD_CONFIRMATION_UI_TEST_ID = 'DownloadConfirmationUI'
 const mockDownloadConfirmationUi = vi
@@ -81,7 +81,7 @@ describe('FolderDownloadConfirmation', () => {
       AddToDownloadListRequest
     >(addFilesToDownloadListResponse)
 
-    mockUseAddQueryToDownloadList.mockReturnValue(mutationMockReturnValue)
+    mockUseAddToDownloadList.mockReturnValue(mutationMockReturnValue)
   })
 
   it('passes the correct props to DownloadConfirmationUI', async () => {
@@ -122,7 +122,7 @@ describe('FolderDownloadConfirmation', () => {
     })
 
     act(() => {
-      mockUseAddQueryToDownloadList.mock.lastCall![0]!.onSuccess!(
+      mockUseAddToDownloadList.mock.lastCall![0]!.onSuccess!(
         {
           concreteType:
             'org.sagebionetworks.repo.model.download.AddToDownloadListResponse',
@@ -176,7 +176,7 @@ describe('FolderDownloadConfirmation', () => {
     })
 
     act(() => {
-      mockUseAddQueryToDownloadList.mock.lastCall![0]!.onError!(
+      mockUseAddToDownloadList.mock.lastCall![0]!.onError!(
         new SynapseClientError(
           400,
           'some error message',

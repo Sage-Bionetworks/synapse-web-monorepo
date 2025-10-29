@@ -59,6 +59,12 @@ const SynapseComponents = {
   AccountLevelBadges: lazy(
     () => import('./components/AccountLevelBadges/AccountLevelBadges'),
   ),
+  AddToDownloadListConfirmationAlert: lazy(
+    () =>
+      import(
+        './components/download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert'
+      ),
+  ),
   AvailableEvaluationQueueList: lazy(
     () =>
       import('./components/ChallengeSubmission/AvailableEvaluationQueueList'),
