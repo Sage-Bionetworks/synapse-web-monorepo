@@ -289,14 +289,19 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     }
 
     if (synapseEntityConfig?.version?.source === 'rowVersionNumber') {
-      entityVersionNumber = rowVersionNumber
+      if (
+        rowVersionNumber !== undefined &&
+        Number.isInteger(rowVersionNumber)
+      ) {
+        entityVersionNumber = rowVersionNumber
+      }
     } else if (synapseEntityConfig?.version?.source === 'column') {
       const versionValue = getColumnValue(
         synapseEntityConfig.version.columnName,
       )
       if (versionValue !== undefined && versionValue !== '') {
         const numericVersion = Number(versionValue)
-        if (!Number.isNaN(numericVersion)) {
+        if (!Number.isNaN(numericVersion) && Number.isInteger(numericVersion)) {
           entityVersionNumber = numericVersion
         }
       }
@@ -455,8 +460,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   let croissantButton = <></>
   if (
     resolvedSynapseEntityId != null &&
-    resolvedSynapseEntityVersionNumber != null &&
-    Number.isInteger(resolvedSynapseEntityVersionNumber)
+    resolvedSynapseEntityVersionNumber != null
   ) {
     croissantButton = (
       <CroissantButton
