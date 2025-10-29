@@ -1,5 +1,6 @@
 import { useGetFullTableQueryResults } from '@/synapse-queries/index'
 import { getColumnIndex } from '@/utils/functions/index'
+import { normalizeSynPrefix } from '@/utils/functions/EntityTypeUtils'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 
 /* Synapse ID of table with all Croissant data (prod only) */
@@ -10,7 +11,7 @@ const CROISSANT_DATA_TABLE = 'syn65903895'
  * in Synapse prod that contains the Croissant URLs for all datasets.
  */
 export function useGetCroissantUrl(
-  datasetId: number,
+  datasetId: string,
   datasetVersionNumber: number,
 ) {
   /**
@@ -49,10 +50,15 @@ export function useGetCroissantUrl(
         ) {
           return null
         }
+        const normalizedDatasetId = normalizeSynPrefix(datasetId)
         const row = queryResultBundle.queryResult?.queryResults.rows.find(
           row => {
+            const rowDatasetId = row.values[datasetIdColumnIndex]
+            if (typeof rowDatasetId !== 'string') {
+              return false
+            }
             return (
-              row.values[datasetIdColumnIndex] === `syn${datasetId}` &&
+              normalizeSynPrefix(rowDatasetId) === normalizedDatasetId &&
               String(row.values[datasetVersionColumnIndex]) ===
                 String(datasetVersionNumber)
             )

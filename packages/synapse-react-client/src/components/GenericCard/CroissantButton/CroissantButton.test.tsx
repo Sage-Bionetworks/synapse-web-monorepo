@@ -17,7 +17,7 @@ describe('CroissantButton', () => {
   it('Displays the button when croissantUrl is available', () => {
     mockUseGetCroissantUrl.mockReturnValue(getUseQuerySuccessMock('some_url'))
 
-    render(<CroissantButton datasetId={123} datasetVersionNumber={4} />)
+    render(<CroissantButton datasetId={'syn123'} datasetVersionNumber={4} />)
 
     const croissantLink = screen.getByRole('link')
     expect(croissantLink).toHaveAttribute('href', 'some_url')
@@ -28,7 +28,7 @@ describe('CroissantButton', () => {
   it('Displays a skeleton when croissantUrl is loading', () => {
     mockUseGetCroissantUrl.mockReturnValue(getUseQueryLoadingMock())
 
-    render(<CroissantButton datasetId={123} datasetVersionNumber={4} />)
+    render(<CroissantButton datasetId={'syn123'} datasetVersionNumber={4} />)
 
     screen.getByRole('progressbar')
     expect(screen.queryByRole('link')).not.toBeInTheDocument()
@@ -37,7 +37,7 @@ describe('CroissantButton', () => {
   it('Does not display the button when croissantUrl is null', () => {
     mockUseGetCroissantUrl.mockReturnValue(getUseQuerySuccessMock(null))
 
-    render(<CroissantButton datasetId={123} datasetVersionNumber={4} />)
+    render(<CroissantButton datasetId={'syn123'} datasetVersionNumber={4} />)
 
     expect(screen.queryByRole('link')).not.toBeInTheDocument()
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
