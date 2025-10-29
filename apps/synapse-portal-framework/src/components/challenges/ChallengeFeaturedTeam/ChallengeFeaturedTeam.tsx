@@ -94,9 +94,9 @@ const FeaturedTeam = ({ sql }: FeaturedTeamProps) => {
 
   const a2ColumnIndex = getFieldIndex(ExpectedColumns.A2, queryResultBundle)
 
-  const teamName = dataRows[0]?.values[teamNameColumnIndex] ?? 'Unknown Team'
+  const teamName = dataRows[0]?.values[teamNameColumnIndex] ?? ''
   const rawTeamMemberNames =
-    dataRows[0]?.values[teamMemberNamesColumnIndex] ?? 'Team Members'
+    dataRows[0]?.values[teamMemberNamesColumnIndex] ?? ''
   let teamMemberNames: string[] = []
   try {
     teamMemberNames = JSON.parse(rawTeamMemberNames)
@@ -107,8 +107,7 @@ const FeaturedTeam = ({ sql }: FeaturedTeamProps) => {
     teamMemberNames = [rawTeamMemberNames]
   }
   const teamPhotoFileHandleId = dataRows[0]?.values[teamPhotoColumnIndex] ?? ''
-  const challengeName =
-    dataRows[0]?.values[challengeNameColumnIndex] ?? 'Unknown Challenge'
+  const challengeName = dataRows[0]?.values[challengeNameColumnIndex] ?? ''
   const challengeLink = dataRows[0]?.values[challengeLinkColumnIndex] ?? '#'
   const readMoreLink = dataRows[0]?.values[readMoreLinkColumnIndex] ?? '#'
   const q1 = dataRows[0]?.values[q1ColumnIndex] ?? ''
