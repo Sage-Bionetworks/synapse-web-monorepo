@@ -35,6 +35,7 @@ import TableRowGenericCard, {
   TableRowGenericCardProps,
   TableToGenericCardMapping,
 } from './TableRowGenericCard'
+import userEvent from '@testing-library/user-event'
 
 vi.mock('@/components/GenericCard/PortalDOI/PortalDOI', () => ({
   __esModule: true,
