@@ -14,7 +14,7 @@ import { BackendDestinationEnum } from '../functions'
 import { OAUTH2_PROVIDERS } from '../SynapseConstants'
 import { useOneSageURL } from './useOneSageURL'
 
-const CSRF_TOKEN_STORAGE_KEY = 'oauth2_csrf_token'
+export const CSRF_TOKEN_STORAGE_KEY = 'oauth2_csrf_token'
 
 function safeLocalStorageGetItem(key: string): string | null {
   try {

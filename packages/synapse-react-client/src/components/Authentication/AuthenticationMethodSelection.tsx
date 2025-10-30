@@ -12,8 +12,6 @@ import { Box } from '@mui/material'
 import { MouseEvent, useMemo } from 'react'
 import LoginMethodButton from './LoginMethodButton'
 
-const CSRF_TOKEN_STORAGE_KEY = 'oauth2_csrf_token'
-
 type AuthenticationMethodSelectionProps = {
   ssoRedirectUrl?: string
   /* Invoked before redirecting to OAuth provider. Useful in portals where we may want to store the current URL to redirect back here. */
@@ -53,11 +51,6 @@ export default function AuthenticationMethodSelection(
     }
 
     event.preventDefault()
-    try {
-      localStorage.setItem(CSRF_TOKEN_STORAGE_KEY, csrfToken)
-    } catch (err) {
-      console.warn('Unable to persist OAuth CSRF token.', err)
-    }
     const redirectUrl = ssoRedirectUrl
       ? `${ssoRedirectUrl}${provider}`
       : `${SynapseClient.getRootURL()}?provider=${provider}`
