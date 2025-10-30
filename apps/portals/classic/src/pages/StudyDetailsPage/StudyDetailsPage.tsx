@@ -29,8 +29,8 @@ function StudyDetailsPage() {
       <DetailsPageContent
         content={[
           {
-            title: 'Study Description',
-            id: 'Study Description',
+            // title: 'Study Description',
+            // id: 'Study Description',
             element: <MarkdownSynapseFromColumnData columnName={'id'} />,
           },
         ]}

@@ -34,6 +34,7 @@ export const studyCardConfiguration: CardConfiguration = {
     // icon: 'Access_Type',
     description: 'studyDescription',
     secondaryLabels: ['studyName', 'grantNumber', 'isFeatured', 'isReleased'],
+    includeShareButton: true,
   },
 }
 
