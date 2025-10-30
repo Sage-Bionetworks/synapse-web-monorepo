@@ -8,28 +8,24 @@ description: 'Generate a new React component given a Figma design, following Syn
 Create a new component that exactly matches the provided Figma design.
 Focus on structure, correct file placement, and accuracy of the design.
 
-# Text
-
-Copy all visible text exactly as shown in the design (punctuation, capitalization, spacing, and line breaks).
-Do not paraphrase, summarize, or alter the text in any way.
-
-# Typography
-
-**For each text element:**
-
 # Code Conventions
 
-1. Analyze the layout, typography (including font weight), spacing, background colors, and interactions visible in the image
-2. Use the component structure, file placement, and styling conventions shown in the examples below.
-3. When creating new components, use MUI components (such as `<Box>`, `<Stack>`, etc.) directly instead of HTML elements like `<div>`, whenever a `className` or style is present or for layout purposes.
-   - Use MUI `<Box>` for elements with a `className` or style.
-   - Use MUI `<Stack>` for vertical or horizontal layouts.
-   - Only use raw HTML elements if no MUI equivalent exists.
-4. **All new components must be functional components using the arrow function syntax:**
+1. Analyze the layout, typography (including font weight), spacing, background colors, and interactions visible in the image.
+
+   - Use MUI components (`Box`, `Stack`, `Typography`, `Button`, etc.) for all layout, structure, and typography. Do not use raw HTML elements unless no MUI equivalent exists.
+   - Define explicit prop types and interfaces for all props, even if the component is not generic.
+     - Use minimal props; define data within the component unless generic/reusable.
+   - Use arrow function syntax for all components. Do not use class components or `React.FC`.
+   - Export components as default, and use named exports for subcomponents if needed.
+   - Use global selectors to style MUI components (e.g., `.statHeaderText:global(.MuiTypography-root)`).
+   - Implement responsive design using SRC breakpoints.
+   - Always create and update the appropriate export files (`index.ts` for generic, `components/index.ts` for portal-specific).
+   - For generic components, also create a Storybook file.
+   - Do not add any styling, features, or UI elements that are not present in the design image.
 
    ```tsx
    const StatContainer = () => (
-   	 // ...component JSX...
+     // ...component JSX...
    )
 
    export default StatContainer
@@ -39,37 +35,19 @@ Do not paraphrase, summarize, or alter the text in any way.
    - Use named props for clarity.
    - See the example above for structure.
 
-Do not use `React.FC`, just use the arrow function syntax as shown above.
-
 ## Examples
 
 ### Portal-Specific Components
-
-Refer to **ChallengeMetrics** for structure, file placement, and export conventions.
 
 - Location: `apps/synapse-portal-framework/src/components/<portal-name>/<ComponentName>/`
 - Two files: `<ComponentName>.tsx` and `<ComponentName>.module.scss`
 - Export via `apps/synapse-portal-framework/src/components/index.ts` using the import pattern seen in the file.
 
-**Example:**
-
-- `apps/synapse-portal-framework/src/components/challenges/ChallengeMetrics/ChallengeMetrics.tsx`
-- `apps/synapse-portal-framework/src/components/challenges/ChallengeMetrics/ChallengeMetrics.module.scss`
-
 ### Generic Components
-
-Refer to **ShareThisPage** for structure, file placement, and export conventions.
 
 - Location: `packages/synapse-react-client/src/components/<ComponentName>/`
 - Four files: `<ComponentName>.tsx`, `<ComponentName>.module.scss`, `<ComponentName>.stories.tsx`, and `index.ts`
 - Export using named and default exports in `index.ts`.
-
-**Example:**
-
-- `packages/synapse-react-client/src/components/ShareThisPage/ShareThisPage.tsx`
-- `packages/synapse-react-client/src/components/ShareThisPage/ShareThisPage.module.scss`
-- `packages/synapse-react-client/src/components/ShareThisPage/ShareThisPage.stories.tsx`
-- `packages/synapse-react-client/src/components/ShareThisPage/index.ts`
 
 ## File Guidelines
 
@@ -103,3 +81,47 @@ Refer to **ShareThisPage** for structure, file placement, and export conventions
 - Use BEM-style naming (e.g., `.UserProfileCard`, `.UserProfileCard__header`).
 - Leverage SASS variables and CSS variables from `SrcVariables` instead of hard-coded values.
 - For buttons, use MUI `<Button>` and icons, matching variant, color, and placement as shown in Figma.
+
+# Text
+
+Copy all visible text exactly as shown in the design (punctuation, capitalization, spacing, and line breaks).
+Do not paraphrase, summarize, or alter the text in any way.
+
+**SCSS/CSS Variable Imports for Generic Components:**
+
+- For generic components, import shared style variables from the file:
+  ```
+  packages/synapse-react-client/src/style/abstracts/_variables.scss
+  ```
+- In your SCSS module, use the following import statement:
+  ```scss
+  @use '../../style/abstracts/variables' as SrcVariables;
+  ```
+  (Adjust the relative path as needed based on your component’s location.)
+- Reference variables using the `SrcVariables` namespace, for example: `SrcVariables.$primary-color`.
+- Do **not** use `@import` or hardcoded paths to `SRCVariables.scss`.
+- Always use the `@use` syntax and the correct relative path as shown above. This ensures consistency and compatibility with the codebase’s styling conventions.
+
+## SCSS Breakpoint Example
+
+When using breakpoints in your SCSS module, always reference the `$breakpoints` map from `SrcVariables` using the `map.get` function. **You must also import the Sass map module:**
+
+```scss
+@use '../../style/abstracts/variables' as SrcVariables;
+@use 'sass:map';
+
+.UserProfileCard {
+  // ...base styles...
+
+  @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    // Responsive styles for large screens and below
+    // e.g., adjust padding, font-size, layout, etc.
+  }
+}
+```
+
+- Always use `@use` to import variables and the Sass map module.
+- Use `map.get(SrcVariables.$breakpoints, 'breakpointName')` for responsive media queries.
+- Do not hardcode pixel values for breakpoints.
+
+Example breakpoint names: `'small'`, `'medium'`, `'large'`, `'xlarge'` (use those defined in `SrcVariables.$breakpoints`).
