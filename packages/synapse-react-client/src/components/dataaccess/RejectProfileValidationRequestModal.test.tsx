@@ -98,9 +98,8 @@ describe('RejectProfileValidationRequestModal', () => {
     const internalNotesTextBox = await screen.findByRole('textbox', {
       name: 'ACT Internal Notes',
     })
-    await act(async () => {
-      await user.type(internalNotesTextBox, internalNotes)
-    })
+
+    await user.type(internalNotesTextBox, internalNotes)
 
     // Generate the email using the mocked modal
     const onConfirmCallback =
