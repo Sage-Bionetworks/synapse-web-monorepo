@@ -44,6 +44,7 @@ storybook-static/
 src/umd
 
 build-storybook.log
+debug-storybook.log
 
 # Nx cache
 .nx/cache
