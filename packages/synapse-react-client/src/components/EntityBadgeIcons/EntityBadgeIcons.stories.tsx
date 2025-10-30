@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { EntityBadgeIcons, EntityBadgeIconsProps } from './EntityBadgeIcons'
 
 const meta: Meta<EntityBadgeIconsProps> = {

@@ -1,5 +1,5 @@
 import { SynapseContextProvider, useSynapseContext } from '@/utils'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import dayjs from 'dayjs'
 import { PropsWithChildren } from 'react'
 import DateTimePicker from './DateTimePicker'

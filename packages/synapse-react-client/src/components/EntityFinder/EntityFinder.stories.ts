@@ -1,6 +1,6 @@
 import { EntityType } from '@sage-bionetworks/synapse-client'
-import { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
+import { Meta, StoryObj } from '@storybook/react-vite'
+import { fn } from 'storybook/test'
 
 import EntityFinder from './EntityFinder'
 import { FinderScope } from './tree/EntityTree'

@@ -9,7 +9,7 @@ import {
 import { ENTITY_BUNDLE_V2 } from '@/utils/APIConstants'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { TableBundle } from '@sage-bionetworks/synapse-types'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { http, HttpResponse } from 'msw'
 import TableColumnSchemaEditor from './TableColumnSchemaEditor'
 

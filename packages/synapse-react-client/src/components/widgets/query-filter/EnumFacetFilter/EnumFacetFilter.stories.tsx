@@ -1,7 +1,7 @@
 import { FRIENDLY_VALUE_NOT_SET, VALUE_NOT_SET } from '@/utils/SynapseConstants'
 import { Paper } from '@mui/material'
-import { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
+import { Meta, StoryObj } from '@storybook/react-vite'
+import { fn } from 'storybook/test'
 import { cloneDeep } from 'lodash-es'
 import { EnumFacetFilterSkeleton } from './EnumFacetFilterSkeleton'
 import EnumFacetFilterUI, {

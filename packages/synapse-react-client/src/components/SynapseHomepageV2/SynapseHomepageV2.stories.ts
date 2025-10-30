@@ -7,7 +7,7 @@ import {
   PRODUCTION_ENDPOINT_CONFIG,
 } from '@/utils/functions/getEndpoint'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { SynapseHomepageV2 } from './SynapseHomepageV2'
 
 const meta = {

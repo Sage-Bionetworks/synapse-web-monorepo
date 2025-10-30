@@ -1,5 +1,5 @@
 import rawData from '@/mocks/distribution_data.json'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import Plotly from 'plotly.js-basic-dist'
 import Plot from './Plot'
 

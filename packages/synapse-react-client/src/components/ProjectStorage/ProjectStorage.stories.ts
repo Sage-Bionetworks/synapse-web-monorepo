@@ -6,7 +6,7 @@ import {
   UNDER_LIMIT_PROJECT_ID,
 } from '@/mocks/projectStorage/mockProjectStorageLimits'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import ProjectDataAvailability from './ProjectDataAvailability'
 
 const meta = {

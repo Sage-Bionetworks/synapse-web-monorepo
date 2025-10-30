@@ -6,7 +6,7 @@ import { getResetTwoFactorAuthHandlers } from '@/mocks/msw/handlers/resetTwoFact
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Paper } from '@mui/material'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import ChangePassword from './ChangePassword'
 
 const meta: Meta<typeof ChangePassword> = {

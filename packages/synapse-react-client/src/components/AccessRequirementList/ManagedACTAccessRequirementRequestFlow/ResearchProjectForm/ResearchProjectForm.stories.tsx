@@ -3,7 +3,7 @@ import { getAccessRequirementHandlers } from '@/mocks/msw/handlers/accessRequire
 import { getResearchProjectHandlers } from '@/mocks/msw/handlers/researchProjectHandlers'
 import { getWikiHandlers } from '@/mocks/msw/handlers/wikiHandlers'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import ResearchProjectForm from './ResearchProjectForm'
 
 const meta: Meta = {

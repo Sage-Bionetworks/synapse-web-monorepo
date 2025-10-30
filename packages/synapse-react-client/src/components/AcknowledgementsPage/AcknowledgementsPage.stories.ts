@@ -2,7 +2,7 @@ import { getFileHandlers } from '@/mocks/msw/handlers/fileHandlers'
 import { getHandlersForTableQuery } from '@/mocks/msw/handlers/tableQueryHandlers'
 import { registerSynapseHomepageMockQueries } from '@/mocks/query/mockHomepageQueryResultData'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import AcknowledgementPage from './AcknowledgementsPage'
 
 const meta = {

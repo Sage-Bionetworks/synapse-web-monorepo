@@ -2,7 +2,7 @@ import { getChatbotHandlers } from '@/mocks/msw/handlers/chatHandlers'
 import { getEntityHandlers } from '@/mocks/msw/handlers/entityHandlers'
 import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import SynapseChat from './SynapseChat'
 
 const meta = {

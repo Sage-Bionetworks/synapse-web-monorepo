@@ -1,8 +1,8 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import JSONArrayEditorModal, {
   JSONArrayEditorModalProps,
 } from './JSONArrayEditorModal'
-import { fn } from '@storybook/test'
+import { fn } from 'storybook/test'
 
 const meta = {
   title: 'UI/JSONArrayEditor',

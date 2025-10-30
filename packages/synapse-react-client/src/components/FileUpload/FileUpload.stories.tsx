@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import FileUpload from './FileUpload'
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined'
 

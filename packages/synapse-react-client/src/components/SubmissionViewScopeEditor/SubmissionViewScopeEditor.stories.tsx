@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import SubmissionViewScopeEditor from './SubmissionViewScopeEditor'
 import { Paper } from '@mui/material'
 import { useState } from 'react'

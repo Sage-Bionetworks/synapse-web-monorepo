@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import { GetApp } from '@mui/icons-material'
 import { RowSelectionUI, RowSelectionUIProps } from './RowSelectionUI'
