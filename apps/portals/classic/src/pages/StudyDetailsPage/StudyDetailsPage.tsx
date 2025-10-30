@@ -30,7 +30,7 @@ function StudyDetailsPage() {
         content={[
           {
             // title: 'Study Description',
-            // id: 'Study Description',
+            id: 'Study Description',
             element: <MarkdownSynapseFromColumnData columnName={'id'} />,
           },
         ]}
