@@ -1,4 +1,4 @@
-@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+@use '../../style/abstracts/variables' as SrcVariables;
 @use 'sass:map';
 
 .dialogPaper:global(.MuiDialog-root) {

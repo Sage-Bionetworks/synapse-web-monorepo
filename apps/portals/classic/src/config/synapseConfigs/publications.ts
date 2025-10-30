@@ -12,9 +12,9 @@ export const publicationCardProps: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: {
     type: SynapseConstants.PUBLICATION,
-    title: 'Title',
+    title: 'dataFileName',
     subTitle: 'Authors',
-    link: 'DOI',
+    link: 'dataFileKey',
     secondaryLabels: ['Year', 'Journal', 'Program', 'Grant', 'DOI', 'PubmedId'],
   },
 }

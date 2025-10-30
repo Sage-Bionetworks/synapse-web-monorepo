@@ -25,36 +25,30 @@ export const studyCardConfiguration: CardConfiguration = {
       URLColumnName: 'grant',
       matchColumnName: 'grants',
     },
-    {
-      isMarkdown: false,
-      matchColumnName: 'projectFullName',
-      overrideLinkURLColumnName: 'project',
-      overrideLinkURLColumnTransform: shortName =>
-        `/Explore/Projects/DetailsPage?shortName=${shortName}`,
-    },
+    // {
+    //   isMarkdown: false,
+    //   matchColumnName: 'projectFullName',
+    //   overrideLinkURLColumnName: 'project',
+    //   overrideLinkURLColumnTransform: shortName =>
+    //     `/Explore/Projects/DetailsPage?shortName=${shortName}`,
+    // },
   ],
   genericCardSchema: {
     type: SynapseConstants.STUDY,
     title: 'studyName',
-    // subTitle: 'dataContributor',
-    icon: 'Access_Type',
-    description: 'studyAbstract',
+    subTitle: 'studyFocus',
+    // icon: 'Access_Type',
+    description: 'studyDescription',
     secondaryLabels: [
-      'dataStatus',
-      'dataRestriction',
-      'dataTypeAll',
-      'studyFocus',
-      'Species',
-      'specimenType',
       'projectFullName',
       'grantNumber',
+      'isFeatured',
+      'isReleased',
     ],
   },
 }
 
 export const studyColumnAliases = {
-  dataTypeAll: 'Data Types',
-  Number_of_Individuals: 'Individuals',
   projectFullName: 'Project',
 }
 
