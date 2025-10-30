@@ -21,17 +21,14 @@ type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {
   args: {
-    onBeginTwoFactorEnrollment: () => {
-      displayToast(
-        'In-app, you would now redirect to the two-factor enrollment page',
-        'info',
-      )
-    },
     onRegenerateBackupCodes: () => {
       displayToast(
         'In-app, you would now redirect to the backup codes page',
         'info',
       )
+    },
+    onReset2FA: () => {
+      displayToast('In-app, you would now reset 2FA', 'info')
     },
   },
 }

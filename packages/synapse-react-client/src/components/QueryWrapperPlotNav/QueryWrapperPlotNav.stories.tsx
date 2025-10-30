@@ -263,7 +263,7 @@ const getAllIDs = async (event: CustomControlCallbackData) => {
   // get all ids
   const ids: string[] = []
   event.request!.query.sql = 'select id from syn51186974'
-  const results = await SynapseClient.getFullQueryTableResults(event.request)
+  const results = await SynapseClient.getFullQueryTableResults(event.request!)
   results.queryResult?.queryResults.rows.map(row => {
     if (row.values && row.values[0]) ids.push(row.values[0])
   })
