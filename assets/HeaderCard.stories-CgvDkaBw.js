@@ -1,0 +1,45 @@
+import{j as u}from"./jsx-runtime-D_zvdyIk.js";import{S as d}from"./SortDown-BPND54wp.js";import{H as g}from"./HeaderCard-Cj42-Ac4.js";import"./createSvgIcon-CyMI1MCl.js";import"./index-Z_niMZcI.js";import"./iframe-9d_xT48Y.js";import"./createTheme-Ckpp2aJZ.js";import"./DefaultPropsProvider-DNj85cPU.js";import"./index-DVygIRTT.js";import"./StringUtils-C95LMFI-.js";import"./VerificationSubmission-BDh1zA9f.js";import"./IconSvg-DIBc_q5i.js";import"./spreadSx-CwcO6WA9.js";import"./useTheme-De4w3W1h.js";import"./useTheme-BTCL84tt.js";import"./Tooltip-DkoGxs3D.js";import"./index-4CrF3sPv.js";import"./useSlot-CGhf7FeQ.js";import"./useForkRef-RZxkIAYG.js";import"./useTimeout-Lo-a2r10.js";import"./useControlled-BO3AYCap.js";import"./getReactElementRef-DjY0RuEK.js";import"./index-qAeAYKDl.js";import"./index-pthXlbu6.js";import"./Grow-B5ZRnJdx.js";import"./Popper-D7dI-vcX.js";import"./ownerDocument-DW-IO8s5.js";import"./isFocusVisible-B8k4qzLc.js";import"./LayersTwoTone-COzjlhti.js";import"./ContentCopyTwoTone-DLniuA9M.js";import"./HelpOutlineTwoTone-BqBs93R7.js";import"./ErrorOutlined-DHOhceP-.js";import"./GetAppTwoTone-MG_Nm398.js";import"./InfoOutlined-Br_HOvZi.js";import"./PhoneTwoTone-BQkyUPQ2.js";import"./DeleteTwoTone-B9gMBKdX.js";import"./CheckCircleTwoTone-DsSnAxaE.js";import"./Icon-S-aWXKoB.js";import"./mouse-BU7DUkD5.js";import"./SynapseConstants-hreeKAiu.js";import"./OrientationBanner-CYdEM79E.js";import"./index-DznES9q-.js";import"./react-CYczaA45.js";import"./FullWidthAlert-CAXTHdyF.js";import"./Alert-fhf9ZcTF.js";import"./createSimplePaletteValueFilter-DgrzAZvi.js";import"./Close-DKqsZ7f0.js";import"./IconButton-D8dvWPnB.js";import"./ButtonBase-D3TfkVgz.js";import"./CircularProgress-Bk44l8uz.js";import"./Paper-DB8P-rkI.js";import"./Stack-D6h9mjEk.js";import"./useThemeProps-DwadHsRm.js";import"./getThemeProps-C_wawT9I.js";import"./extendSxProp-D-Q_-68W.js";import"./Box-B0N2xX3m.js";import"./AlertTitle-DRXY24RG.js";import"./Typography-CO7fscfq.js";import"./index-BmRs8eVL.js";import"./ClickAwayListener-CuOvNdFo.js";import"./Button-CE2q8GZa.js";import"./ShowMore--uSwmQUZ.js";import"./HeaderCardV2-xZl_QNm0.js";import"./MarkdownSynapse-CW0fmQ3Q.js";import"./useFiles-zOESdhzI.js";import"./fetchWithExponentialTimeout-UV9FrpR8.js";import"./useQuery-D7eNVn05.js";import"./QueryClientProvider-wm4deiul.js";import"./Link-CkNjpNVk.js";import"./Collapse-B3lfXU47.js";import"./_baseUniq-BfPE21S4.js";import"./_Uint8Array-CxEDNqDG.js";import"./isArray-DEVg6Y6f.js";import"./_getTag-CyB7UJq2.js";import"./isEqual-CjQ0xsUP.js";import"./noop-DX6rZLP_.js";import"./merge-w5SVnV7S.js";import"./_initCloneObject-BXD3EUEW.js";import"./identity-DKeuBCMA.js";import"./tinycolor-Begke6kS.js";import"./Fade-BTsGKFOx.js";import"./inputBaseClasses-BquiKfq4.js";import"./calculateFriendlyFileSize-CV2UvVgj.js";import"./InfoTwoTone-OsnIp2rF.js";import"./useMutation-CwPhuXlo.js";import"./dayjs.min-BstykqR9.js";import"./chunk-AYJ5UCUI-CpTQ0xdT.js";import"./cloneDeep-Ba0G_3Y-.js";import"./Skeleton-DaUiC_M2.js";import"./SkeletonButton-Ds2Q6XmI.js";import"./SkeletonInlineBlock-CnqdYumQ.js";import"./SkeletonTable-7rz2uNeX.js";import"./times-7k16maVn.js";import"./toInteger-MqhnAcu0.js";import"./isSymbol-Ctb34mAm.js";import"./SkeletonParagraph--rzBUvwb.js";import"./index-WdbVxKqf.js";import"./Card-Pg-0Ijyf.js";import"./SustainabilityScorecard-B7GGbqhD.js";import"./Close-C5wk79nr.js";import"./Dial-DHDwllOb.js";import"./CheckIcon-rjxDpoqc.js";import"./NoContentAvailable-CrmWlq7l.js";const li={title:"Synapse/HeaderCard",component:g,parameters:{layout:"centered"},tags:["autodocs"]},t={args:{type:"Standard",title:"Example Study",description:"This is an example study description that demonstrates the HeaderCard component.",values:[{columnDisplayName:"Status",value:"Active"},{columnDisplayName:"Data Type",value:"Genomics"},{columnDisplayName:"Access",value:"Public"}],secondaryLabelLimit:3,isAlignToLeftNav:!1,descriptionConfig:{showFullDescriptionByDefault:!0},icon:u.jsx(d,{})}},i={args:{...t.args,title:"Study With Subtitle",subTitle:"Principal Investigator: John Doe"}},o={args:{...t.args,title:"DICOM",description:"Radiology imaging, including templates for narrative reports and machine-generated output. DICOM® — Digital Imaging and Communications in Medicine — is the international standard for medical images and related information. It defines the formats for medical images that can be exchanged with the data and quality necessary for clinical use.",values:[{columnDisplayName:"AUTHOR NAME",value:"DICOM (@dicom)"},{columnDisplayName:"LAT UPDATED",value:"2024-01-01"},{columnDisplayName:"BASED ON",value:"None"}]}};var r,e,a;t.parameters={...t.parameters,docs:{...(r=t.parameters)==null?void 0:r.docs,source:{originalSource:`{
+  args: {
+    type: 'Standard',
+    title: 'Example Study',
+    description: 'This is an example study description that demonstrates the HeaderCard component.',
+    values: [{
+      columnDisplayName: 'Status',
+      value: 'Active'
+    }, {
+      columnDisplayName: 'Data Type',
+      value: 'Genomics'
+    }, {
+      columnDisplayName: 'Access',
+      value: 'Public'
+    }],
+    secondaryLabelLimit: 3,
+    isAlignToLeftNav: false,
+    descriptionConfig: {
+      showFullDescriptionByDefault: true
+    },
+    icon: <Study />
+  }
+}`,...(a=(e=t.parameters)==null?void 0:e.docs)==null?void 0:a.source}}};var m,p,n;i.parameters={...i.parameters,docs:{...(m=i.parameters)==null?void 0:m.docs,source:{originalSource:`{
+  args: {
+    ...Default.args,
+    title: 'Study With Subtitle',
+    subTitle: 'Principal Investigator: John Doe'
+  }
+}`,...(n=(p=i.parameters)==null?void 0:p.docs)==null?void 0:n.source}}};var s,l,c;o.parameters={...o.parameters,docs:{...(s=o.parameters)==null?void 0:s.docs,source:{originalSource:`{
+  args: {
+    ...Default.args,
+    title: 'DICOM',
+    description: 'Radiology imaging, including templates for narrative reports and machine-generated output. DICOM® — Digital Imaging and Communications in Medicine — is the international standard for medical images and related information. It defines the formats for medical images that can be exchanged with the data and quality necessary for clinical use.',
+    values: [{
+      columnDisplayName: 'AUTHOR NAME',
+      value: 'DICOM (@dicom)'
+    }, {
+      columnDisplayName: 'LAT UPDATED',
+      value: '2024-01-01'
+    }, {
+      columnDisplayName: 'BASED ON',
+      value: 'None'
+    }]
+  }
+}`,...(c=(l=o.parameters)==null?void 0:l.docs)==null?void 0:c.source}}};const ci=["Default","WithSubtitle","Dicom"];export{t as Default,o as Dicom,i as WithSubtitle,ci as __namedExportsOrder,li as default};
