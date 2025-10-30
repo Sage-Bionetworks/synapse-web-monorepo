@@ -1,0 +1,1 @@
+import{s as n,k as s}from"./createTheme-CxdfWgKh.js";import{r}from"./index-Jc_eG4r1.js";function o(e){return Object.keys(e).length===0}function m(e=null){const t=r.useContext(n);return!t||o(t)?e:t}const u=s();function h(e=u){return m(e)}export{m as a,h as u};
