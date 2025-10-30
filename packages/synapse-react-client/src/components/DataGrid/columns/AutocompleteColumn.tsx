@@ -31,6 +31,8 @@ export function AutocompleteCell({
   setRowData,
   choices,
   colType,
+  stopEditing,
+  active,
 }: AutocompleteCellProps) {
   const [localInputState, setLocalInputState] = useState<string>(
     castCellValueToString(rowData),
@@ -46,6 +48,7 @@ export function AutocompleteCell({
       onInputChange={(_, newInputValue) => {
         setLocalInputState(newInputValue)
       }}
+      open={active}
       onChange={(_e, newVal, reason) => {
         if (reason === 'createOption') {
           // The user typed an option that wasn't a defined enum. Try to cast it to the correct type
