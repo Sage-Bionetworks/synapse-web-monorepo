@@ -14,17 +14,11 @@ export const studyCardConfiguration: CardConfiguration = {
   titleLinkConfig: {
     isMarkdown: false,
     baseURL: 'Explore/Studies/DetailsPage',
-    URLColumnName: 'studyKey',
-    matchColumnName: 'studyKey',
+    URLColumnName: 'id',
+    matchColumnName: 'id',
     target: TargetEnum.CURRENT_WINDOW,
   },
   labelLinkConfig: [
-    {
-      isMarkdown: false,
-      baseURL: 'Explore/Projects',
-      URLColumnName: 'grant',
-      matchColumnName: 'grants',
-    },
     // {
     //   isMarkdown: false,
     //   matchColumnName: 'projectFullName',
@@ -35,16 +29,11 @@ export const studyCardConfiguration: CardConfiguration = {
   ],
   genericCardSchema: {
     type: SynapseConstants.STUDY,
-    title: 'studyName',
+    title: 'projectFullName',
     subTitle: 'studyFocus',
     // icon: 'Access_Type',
     description: 'studyDescription',
-    secondaryLabels: [
-      'projectFullName',
-      'grantNumber',
-      'isFeatured',
-      'isReleased',
-    ],
+    secondaryLabels: ['studyName', 'grantNumber', 'isFeatured', 'isReleased'],
   },
 }
 
