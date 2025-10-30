@@ -17,6 +17,7 @@ import {
 } from '@/config/resources'
 import { FeaturedResearch } from 'synapse-react-client'
 import ClassicSupportedByNIABanner from '@sage-bionetworks/synapse-portal-framework/components/classic/ClassicSupportedByNIABanner/ClassicSupportedByNIABanner'
+import ClassicDevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/classic/ClassicDevelopedBySage'
 
 function HomePageInternal() {
   const theme = useTheme()
@@ -119,6 +120,15 @@ Curate metadata resources to support collaboration across cohorts"
           // }}
         />
       </SectionLayout>
+      <div className={'home-bg-dark'}>
+        <SectionLayout
+          ContainerProps={{
+            className: 'home-spacer',
+          }}
+        >
+          <ClassicDevelopedBySage />
+        </SectionLayout>
+      </div>
     </>
   )
 }
