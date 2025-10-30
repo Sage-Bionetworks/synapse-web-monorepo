@@ -1,8 +1,9 @@
 import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseFreeTextUsingJsonSchemaType'
 import { Autocomplete, TextField } from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CellComponent, CellProps, Column } from 'react-datasheet-grid'
+import { isNull } from 'lodash-es'
 
 export type AutocompleteOption =
   | string
@@ -20,6 +21,9 @@ export type AutocompleteCellProps = CellProps & {
 }
 
 export function castCellValueToString(toCast: any): string {
+  if (isNull(toCast)) {
+    return ''
+  }
   if (typeof toCast === 'object') {
     return JSON.stringify(toCast)
   }
@@ -36,13 +40,19 @@ export function AutocompleteCell({
     castCellValueToString(rowData),
   )
 
+  // Sync localInputState with rowData when it changes externally (e.g., after cut)
+  useEffect(() => {
+    setLocalInputState(castCellValueToString(rowData))
+  }, [rowData])
+
   return (
     <Autocomplete
       freeSolo
       disablePortal={false}
       options={choices}
       getOptionLabel={option => castCellValueToString(option)}
-      value={rowData}
+      value={rowData as AutocompleteOption}
+      inputValue={localInputState}
       onInputChange={(_, newInputValue) => {
         setLocalInputState(newInputValue)
       }}
