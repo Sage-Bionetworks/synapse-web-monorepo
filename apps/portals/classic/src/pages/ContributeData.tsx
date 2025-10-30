@@ -5,8 +5,8 @@ function ContributeData() {
   return (
     <SectionLayout title={'Contribute Data'}>
       <Markdown
-        ownerId="syn27229419"
-        wikiId="621277"
+        ownerId="syn68988177"
+        wikiId="635439"
         loadingSkeletonRowCount={15}
       />
     </SectionLayout>
