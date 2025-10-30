@@ -1,0 +1,35 @@
+/\*\*
+
+- Create a new React component that matches the Figma design exactly.
+-
+- 🔹 Follow Synapse conventions:
+- - Use MUI layout components instead of HTML tags.
+- ✅ Use <Box> for elements with className or styles.
+- ✅ Use <Stack direction="row" | "column"> for layout.
+- ✅ Use <Typography> for text.
+- - Import from @mui/material and @mui/icons-material as needed.
+- - Use SCSS modules for styling (BEM-style class names).
+- - Import SRC variables: @use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+-
+- 🔹 Example pattern (copy this structure):
+-
+- import { Box, Stack, Typography, Button } from '@mui/material'
+- import styles from './MyComponent.module.scss'
+-
+- const MyComponent = () => (
+- <Box className={styles.MyComponent}>
+-     <Stack spacing={2}>
+-       <Typography variant="h6">Heading Text</Typography>
+-       <Button variant="contained">Click Me</Button>
+-     </Stack>
+- </Box>
+- )
+-
+- export default MyComponent
+-
+- 🔹 Rules:
+- - Copy all visible text exactly from Figma (no paraphrasing).
+- - Match spacing, alignment, and colors.
+- - Use SRC variables for color/breakpoints.
+- - Do not add extra features or behavior.
+    \*/

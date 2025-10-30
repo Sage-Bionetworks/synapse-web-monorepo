@@ -15,12 +15,14 @@ import {
   challengeCardConfiguration,
 } from '@/config/synapseConfig/challenges'
 import { PortalFeaturedPartners } from 'synapse-react-client'
+import PortalCard from 'synapse-react-client/components/PortalCard/PortalCard'
 
 function Home() {
   return (
     <>
       <ChallengeHeader />
       <ChallengeMetrics sql={metricsSql} />
+      <PortalCard />
       <PortalFeaturedPartners
         variation="centered"
         sql={partnersSql}

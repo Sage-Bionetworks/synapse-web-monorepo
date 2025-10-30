@@ -1,4 +1,9 @@
-# Build a UI Component from an Image
+---
+mode: agent
+description: 'Generate a new React component given a Figma design, following Synapse code conventions.'
+---
+
+# Create a New UI Component
 
 Create a new component that exactly matches the provided Figma design.
 Focus on structure, correct file placement, and accuracy of the design.
@@ -12,12 +17,29 @@ Do not paraphrase, summarize, or alter the text in any way.
 
 **For each text element:**
 
-- Analyze and match the font weight (e.g., 400, 700) as shown in Figma.
-
 # Code Conventions
 
 1. Analyze the layout, typography (including font weight), spacing, background colors, and interactions visible in the image
 2. Use the component structure, file placement, and styling conventions shown in the examples below.
+3. When creating new components, use MUI components (such as `<Box>`, `<Stack>`, etc.) directly instead of HTML elements like `<div>`, whenever a `className` or style is present or for layout purposes.
+   - Use MUI `<Box>` for elements with a `className` or style.
+   - Use MUI `<Stack>` for vertical or horizontal layouts.
+   - Only use raw HTML elements if no MUI equivalent exists.
+4. **All new components must be functional components using the arrow function syntax:**
+
+   ```tsx
+   const StatContainer = () => (
+   	 // ...component JSX...
+   )
+
+   export default StatContainer
+   ```
+
+   - Do not use class components.
+   - Use named props for clarity.
+   - See the example above for structure.
+
+Do not use `React.FC`, just use the arrow function syntax as shown above.
 
 ## Examples
 
@@ -63,7 +85,6 @@ Refer to **ShareThisPage** for structure, file placement, and export conventions
 
 - ✅ Create `<ComponentName>.tsx`
 - ✅ Create `<ComponentName>.module.scss`
-- ✅ Create `<ComponentName>.stories.tsx`
 - ✅ Update `apps/synapse-portal-framework/src/components/index.ts` with export
 - ✅ Output complete file paths for all created/modified files
 
@@ -71,6 +92,7 @@ Refer to **ShareThisPage** for structure, file placement, and export conventions
 
 - ✅ Create `<ComponentName>.tsx`
 - ✅ Create `<ComponentName>.module.scss`
+- ✅ Create `<ComponentName>.stories.tsx`
 - ✅ Create `index.ts`
 - ✅ Output complete file paths for all created files
 
