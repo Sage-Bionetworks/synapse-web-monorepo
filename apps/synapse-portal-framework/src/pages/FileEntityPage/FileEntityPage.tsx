@@ -11,6 +11,7 @@ import { DetailsPageContent } from '../../components/DetailsPage/DetailsPageCont
 import SynapseFileEntityLinkCard from './SynapseFileEntityLinkCard'
 import SynapseFileEntityPageProperties from './SynapseFileEntityPageProperties'
 import { usePortalContext } from '@/components/PortalContext'
+import { AnnotationsTable } from 'synapse-react-client/components/entity/metadata/AnnotationsTable'
 
 function FileEntityPage() {
   const searchParams = useGetPortalComponentSearchParams()
@@ -20,7 +21,11 @@ function FileEntityPage() {
     : undefined
 
   const { fileEntityPageConfig, portalName } = usePortalContext()
-  const { showWiki = true, showProvenance = true } = fileEntityPageConfig ?? {}
+  const {
+    showWiki = true,
+    showProvenance = true,
+    showAnnotations = true,
+  } = fileEntityPageConfig ?? {}
 
   const { data: entityBundle, isLoading } = useGetEntityBundle(
     entityId,
@@ -73,6 +78,11 @@ function FileEntityPage() {
           containerHeight="400px"
         />
       ),
+    },
+    showAnnotations && {
+      id: 'annotations',
+      title: 'Annotations',
+      element: <AnnotationsTable entityId={entityId} versionNumber={version} />,
     },
   ].filter(Boolean) as DetailsPageSectionLayoutType[]
 
