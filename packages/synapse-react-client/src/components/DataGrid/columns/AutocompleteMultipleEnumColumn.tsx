@@ -1,7 +1,7 @@
 import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseFreeTextUsingJsonSchemaType'
 import { Autocomplete, TextField, Tooltip } from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CellComponent, Column } from 'react-datasheet-grid'
 import {
   AutocompleteOption,
@@ -58,8 +58,31 @@ function AutocompleteMultipleEnumCell({
   colType,
   limitTags = 2,
   active,
+  stopEditing,
+  focus,
 }: AutocompleteMultipleEnumCellProps) {
   const [localInputState, setLocalInputState] = useState<string>('')
+
+  // Local state to programmatically control the Autocomplete's dropdown
+  const [open, setOpen] = useState(false)
+  const inputRef = useRef<HTMLDivElement>(null)
+
+  // This useEffect is the solution.
+  // It syncs the dropdown's open state with the grid's active state.
+  useEffect(() => {
+    if (active) {
+      // Cell just became active: open the menu and focus the input.
+      setOpen(true)
+      // Use a brief timeout to ensure the input is rendered and focusable
+      setTimeout(() => {
+        inputRef.current?.querySelector('input')?.focus()
+      }, 0)
+    } else {
+      // Cell just became *inactive*: force the menu to close.
+      // This is what fires when you click another cell.
+      setOpen(false)
+    }
+  }, [active]) // This effect re-runs every time the 'active' prop changes
 
   const safeRowData = createSafeRowData(rowData)
   const optionsWithLabels = choices.map(createOptionFromValue)
@@ -81,6 +104,7 @@ function AutocompleteMultipleEnumCell({
       disableHoverListener={active || safeRowData.length <= limitTags}
     >
       <div
+        ref={inputRef}
         style={{
           width: '100%',
           height: '100%',
@@ -104,12 +128,25 @@ function AutocompleteMultipleEnumCell({
             const valueValue = typeof value === 'string' ? value : value.value
             return isEqual(optionValue, valueValue)
           }}
+          open={open}
+          onOpen={() => {
+            // Only allow opening if the cell is active
+            if (active) {
+              setOpen(true)
+            }
+          }}
+          onClose={() => {
+            // When the component *itself* decides to close (e.g., user hits Escape),
+            // we close the menu AND tell the grid to stop editing.
+            setOpen(false)
+            stopEditing()
+          }}
           value={selectedOptions}
           inputValue={localInputState}
           onInputChange={(_, newInputValue) => {
             setLocalInputState(newInputValue)
           }}
-          onChange={(_e, newVal, reason) => {
+          onChange={(_e, newVal, _reason) => {
             // Handle both selection/deselection and free text creation the same way
             const values = (newVal || []).map(item => {
               return typeof item === 'string'
