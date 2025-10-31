@@ -8,6 +8,7 @@ import columnAliases from '../columnAliases'
 import { datasetsSql } from '../resources'
 import { citationBoilerplateText } from './commonProps'
 import { columnIconConfigs } from './commonProps'
+import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 
 const rgbIndex = 0
 const CUSTOM_LABEL_KEY = 'HOW TO DOWNLOAD'
@@ -18,6 +19,7 @@ export const datasetSchema: TableToGenericCardMapping = {
   type: SynapseConstants.DATASET,
   title: 'datasetName',
   description: 'description',
+  includeShareButton: true,
   includeCitation: true,
   defaultCitationFormat: 'nature',
   citationBoilerplateText: citationBoilerplateText,
@@ -59,6 +61,7 @@ export const datasetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: datasetSchema,
   secondaryLabelLimit: 4,
+  sharePageLinkButtonProps: sharePageLinkButtonDetailPageProps,
   labelLinkConfig: [
     {
       isMarkdown: true,

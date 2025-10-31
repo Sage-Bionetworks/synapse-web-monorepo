@@ -5,8 +5,6 @@ import columnAliases from '@/config/columnAliases'
 import { toolsSql } from '@/config/resources'
 import DatasetSvg from '@/config/style/Dataset.svg?url'
 import { toolsConfiguration } from '@/config/synapseConfigs/tools'
-import { SharePageLinkButton } from 'synapse-react-client/components/SharePageLinkButton'
-import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 import ErrorPage, {
   SynapseErrorType,
 } from 'synapse-react-client/components/error/ErrorPage'
@@ -58,7 +56,6 @@ function ToolsDetailsPage() {
     <DetailsPage
       header={
         <>
-          <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
           <CardContainerLogic
             cardConfiguration={{
               ...toolsConfiguration,
