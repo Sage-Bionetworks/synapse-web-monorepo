@@ -1,8 +1,8 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { Link } from '@mui/material'
 import { InfoTwoTone } from '@mui/icons-material'
 import { Tooltip } from './MuiTooltip'
-import { userEvent, within } from '@storybook/test'
+import { userEvent, within } from 'storybook/test'
 
 const meta = {
   title: 'UI/MUI/Tooltip',

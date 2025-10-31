@@ -4,7 +4,7 @@ import {
   mockToUAccessRequirement,
 } from '@/mocks/accessRequirement/mockAccessRequirements'
 import { Button, Paper } from '@mui/material'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { useRef, useState } from 'react'
 import {
   SetBasicAccessRequirementFields,

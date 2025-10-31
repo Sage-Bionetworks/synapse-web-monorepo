@@ -5,7 +5,7 @@ import {
   mockSingleQueryResult,
 } from '@/mocks/query/mockFeaturedDataTabsQueryData'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import FeaturedDataTabs from './FeaturedDataTabs'
 
 const meta = {

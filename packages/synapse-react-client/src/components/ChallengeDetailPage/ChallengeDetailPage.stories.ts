@@ -1,5 +1,5 @@
 import mockProject from '@/mocks/entity/mockProject'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { ChallengeDetailPage } from './ChallengeDetailPage'
 
 const meta = {

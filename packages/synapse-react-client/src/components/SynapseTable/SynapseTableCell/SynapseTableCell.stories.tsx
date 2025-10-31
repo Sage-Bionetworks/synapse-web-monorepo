@@ -1,6 +1,6 @@
 import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { QueryContextProvider } from '@/components/QueryContext/QueryContext'
 import SynapseTableCell, { SynapseTableCellProps } from './SynapseTableCell'
 

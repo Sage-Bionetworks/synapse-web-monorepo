@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import IconSvg from '../IconSvg/IconSvg'
 import { ComplexMenu } from './ComplexMenu'
 

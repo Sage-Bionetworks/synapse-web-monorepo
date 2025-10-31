@@ -8,7 +8,7 @@ import {
   SMALL_USER_CARD,
 } from '@/utils/SynapseConstants'
 import { Box } from '@mui/material'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import UserCard, { UserCardProps } from './UserCard'
 
 const meta = {

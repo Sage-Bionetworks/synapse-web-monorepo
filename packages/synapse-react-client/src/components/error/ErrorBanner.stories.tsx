@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { ErrorBanner } from './ErrorBanner'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 
