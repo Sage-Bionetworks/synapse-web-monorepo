@@ -35,5 +35,6 @@ export type FileEntityPageConfig = {
   showContentMd5?: boolean
   showStorageLocation?: boolean
   showModifiedOn?: boolean
+  showAnnotations?: boolean
 }
 // FileEntityPageConfig end
