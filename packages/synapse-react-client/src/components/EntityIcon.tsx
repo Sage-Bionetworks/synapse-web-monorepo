@@ -33,12 +33,20 @@ type EntityTypeIconProps = {
   style?: CSSProperties
   className?: string
   includeTooltip?: boolean
+  wrap?: boolean
 }
 
 export function EntityTypeIcon(
   props: Omit<IconSvgProps, 'icon'> & EntityTypeIconProps,
 ) {
-  const { type, style, className, includeTooltip = true, ...rest } = props
+  const {
+    type,
+    style,
+    className,
+    includeTooltip = true,
+    wrap = true,
+    ...rest
+  } = props
   if (!type) {
     return <></>
   }
@@ -50,11 +58,14 @@ export function EntityTypeIcon(
 
   const label = includeTooltip ? entityTypeToFriendlyName(type) : undefined
 
-  return (
-    <span style={style} className={className}>
-      <IconSvg icon={iconType} label={label} {...rest} />
-    </span>
-  )
+  if (wrap) {
+    return (
+      <span style={style} className={className}>
+        <IconSvg icon={iconType} label={label} {...rest} />
+      </span>
+    )
+  }
+  return <IconSvg icon={iconType} label={label} {...rest} />
 }
 
 export default EntityTypeIcon
