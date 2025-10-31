@@ -20,7 +20,6 @@ export const datasetSchema: TableToGenericCardMapping = {
   title: 'datasetName',
   description: 'description',
   includeShareButton: true,
-
   includeCitation: true,
   defaultCitationFormat: 'nature',
   citationBoilerplateText: citationBoilerplateText,
