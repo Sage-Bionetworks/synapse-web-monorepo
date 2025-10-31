@@ -30,6 +30,7 @@ import PackagableFile from '@/assets/mui_components/PackagableFile'
 import Proteomics from '@/assets/mui_components/Proteomics'
 import Rat from '@/assets/mui_components/Rat'
 import SpatialProfiling from '@/assets/mui_components/SpatialProfiling'
+import { ReactComponent as ArcusBioIcon } from '@/assets/ArcusBioIcon.svg'
 import {
   AccessTimeTwoTone,
   AddBoxOutlined,
@@ -270,6 +271,7 @@ export const IconStrings = [
   'sortDown',
   'orcid',
   'google24',
+  'arcusbio',
   'openInFull',
   'tableview',
   'fileWithShield',
@@ -566,6 +568,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <Sort {...otherProps} />
     case 'google24':
       return <GoogleIcon24 {...otherProps} />
+    case 'arcusbio':
+      return <ArcusBioIcon {...otherProps} />
     case 'orcid':
       return <ORCIDIcon {...otherProps} />
     case 'filter':

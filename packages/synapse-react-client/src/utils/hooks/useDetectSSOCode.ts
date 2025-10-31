@@ -14,6 +14,25 @@ import { BackendDestinationEnum } from '../functions'
 import { OAUTH2_PROVIDERS } from '../SynapseConstants'
 import { useOneSageURL } from './useOneSageURL'
 
+export const CSRF_TOKEN_STORAGE_KEY = 'oauth2_csrf_token'
+
+function safeLocalStorageGetItem(key: string): string | null {
+  try {
+    return localStorage.getItem(key)
+  } catch (err) {
+    console.warn(`Unable to read from localStorage: ${key}`, err)
+    return null
+  }
+}
+
+function safeLocalStorageRemoveItem(key: string): void {
+  try {
+    localStorage.removeItem(key)
+  } catch (err) {
+    console.warn(`Unable to remove from localStorage: ${key}`, err)
+  }
+}
+
 export type UseDetectSSOCodeReturnType = {
   /* true iff SSO login has occurred and the completion of the OAuth flow in Synapse is pending */
   isLoading: boolean
@@ -33,7 +52,7 @@ export type UseDetectSSOCodeOptions = {
 }
 
 /*
- * During SSO login, the authorization provider (Google) will send the user back to the portal with an authorization code,
+ * During SSO login, the authorization provider (Google, ORCiD, ArcusBio Okta, ...) will send the user back to the portal with an authorization code,
  * which can be exchanged for a Synapse user session. This function should be called whenever the root App is initialized
  * (to look for this code parameter and complete the round-trip). If state is included, then we assume that this is being
  * used for account creation, where we pass the username through the process.
@@ -92,6 +111,32 @@ export default function useDetectSSOCode(
   useEffect(() => {
     if (!isInitializingSession) {
       if (code && provider) {
+        if (!isHandlingSynapseOAuthSignIn) {
+          const storedCsrfToken = safeLocalStorageGetItem(
+            CSRF_TOKEN_STORAGE_KEY,
+          )
+
+          const expectedCsrfToken = state?.csrfToken ?? null
+          const tokensMatch =
+            typeof expectedCsrfToken === 'string' &&
+            typeof storedCsrfToken === 'string' &&
+            expectedCsrfToken === storedCsrfToken
+
+          if (!tokensMatch) {
+            safeLocalStorageRemoveItem(CSRF_TOKEN_STORAGE_KEY)
+            console.error(
+              'Invalid or missing OAuth CSRF token detected. Aborting OAuth flow.',
+            )
+            if (onError) {
+              onError('Invalid OAuth state. Please try signing in again.')
+            }
+            setIsLoading(false)
+            return
+          }
+
+          safeLocalStorageRemoveItem(CSRF_TOKEN_STORAGE_KEY)
+        }
+
         const redirectUrl = `${redirectURL}?provider=${provider}`
 
         //If user is already logged in, and the provider is ORCID, then try to bind this OAuth provider to the account.
@@ -114,7 +159,8 @@ export default function useDetectSSOCode(
             .finally(() => setIsLoading(false))
         } else if (
           OAUTH2_PROVIDERS.GOOGLE == provider ||
-          OAUTH2_PROVIDERS.ORCID == provider
+          OAUTH2_PROVIDERS.ORCID == provider ||
+          OAUTH2_PROVIDERS.ARCUS == provider
         ) {
           const onSuccess = (
             response: LoginResponse | TwoFactorAuthErrorResponse | null,
@@ -156,7 +202,8 @@ export default function useDetectSSOCode(
           }
 
           if (
-            OAUTH2_PROVIDERS.GOOGLE == provider &&
+            (OAUTH2_PROVIDERS.GOOGLE == provider ||
+              OAUTH2_PROVIDERS.ARCUS == provider) &&
             state?.registrationUsername
           ) {
             oAuthRegisterAccountStep2(

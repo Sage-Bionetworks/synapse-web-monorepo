@@ -8,7 +8,6 @@ import {
   useEffect,
   useMemo,
 } from 'react'
-import { sourceAppConfigTableID } from '../resources'
 import { getSearchParam } from '../URLUtils'
 import { SourceAppConfig } from './SourceAppConfigs'
 import {
@@ -23,6 +22,7 @@ export type SourceAppContextType = SourceAppConfig
 const SOURCE_APP_ID_QUERY_PARAM_KEY = 'appId'
 const SOURCE_APP_ID_LOCALSTORAGE_KEY = 'sourceAppId'
 export const SYNAPSE_SOURCE_APP_ID = 'synapse.org'
+export const ARCUS_SOURCE_APP_ID = 'arcusbio'
 
 /**
  * This must be exported to use the context in class components.
@@ -84,7 +84,9 @@ export function SourceAppProvider(props: SourceAppContextProviderProps) {
 
   const sourceAppId = idFromProps ?? idFromLocalStorage
 
-  const sourceAppConfigs = useSourceAppConfigs(sourceAppConfigTableID)
+  const sourceAppConfigs = useSourceAppConfigs(
+    import.meta.env.VITE_SOURCE_APP_CONFIGS_TABLE_ID,
+  )
   const defaultSageSourceApp =
     sourceAppConfigs?.find(config => config.appId === SYNAPSE_SOURCE_APP_ID) ??
     STATIC_SOURCE_APP_CONFIG
@@ -95,7 +97,9 @@ export function SourceAppProvider(props: SourceAppContextProviderProps) {
   )
   if (sourceAppConfigs !== undefined && sourceApp == undefined) {
     console.error(
-      `Source appId '${sourceAppId}' not found in the Synapse configuration table (${sourceAppConfigTableID})!`,
+      `Source appId '${sourceAppId}' not found in the Synapse configuration table (${
+        import.meta.env.VITE_SOURCE_APP_CONFIGS_TABLE_ID
+      })!`,
     )
     if (idFromProps == null) {
       // The invalid sourceAppId came from localStorage; reset it to the default
@@ -128,4 +132,17 @@ export function useSourceApp(): SourceAppContextType {
     return STATIC_SOURCE_APP_CONFIG
   }
   return context
+}
+
+/**
+ * useSourceAppId can be used if the only needed value is the source app ID, and
+ * the appId is not provided via props to the context provider.
+ * Will be much faster than useSourceApp, which uses the source app config table
+ * @returns
+ */
+export function useSourceAppId(): string | undefined {
+  useConfigureSourceAppFromQueryParams()
+  const { value: appId } = useLocalStorageValue(SOURCE_APP_ID_LOCALSTORAGE_KEY)
+  const appIdString = typeof appId === 'string' ? appId : undefined
+  return appIdString
 }
