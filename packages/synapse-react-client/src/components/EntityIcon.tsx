@@ -61,11 +61,11 @@ export function EntityTypeIcon(
   if (wrap) {
     return (
       <span style={style} className={className}>
-        <IconSvg icon={iconType} label={label} {...rest} />
+        <IconSvg icon={iconType} label={label} wrap={wrap} {...rest} />
       </span>
     )
   }
-  return <IconSvg icon={iconType} label={label} {...rest} />
+  return <IconSvg icon={iconType} label={label} wrap={wrap} {...rest} />
 }
 
 export default EntityTypeIcon

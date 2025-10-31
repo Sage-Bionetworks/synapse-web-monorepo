@@ -46,8 +46,11 @@ const iconConfiguration: Record<
   },
 }
 
-function AccessIcon(props: { restrictionUiType: RestrictionUiType }) {
-  const { restrictionUiType } = props
+function AccessIcon(props: {
+  restrictionUiType: RestrictionUiType
+  wrap?: boolean
+}) {
+  const { restrictionUiType, wrap = true } = props
   const theme = useTheme()
   if (restrictionUiType) {
     const configuration = iconConfiguration[restrictionUiType]
@@ -55,6 +58,7 @@ function AccessIcon(props: { restrictionUiType: RestrictionUiType }) {
       <IconSvg
         icon={configuration.icon}
         label={configuration.tooltipText}
+        wrap={wrap}
         sx={{
           color: configuration.color(theme),
           height: '16px',

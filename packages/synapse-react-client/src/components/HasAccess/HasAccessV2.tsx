@@ -30,6 +30,7 @@ export type HasAccessProps = {
   entityId: string
   className?: string
   showButtonText?: boolean
+  wrap?: boolean
   /**
    * If true, the component will show enhanced UI for the case where
    * - the entity is a FileEntity, AND
@@ -142,6 +143,7 @@ export function HasAccessV2(props: HasAccessProps) {
   const {
     entityId,
     showButtonText = true,
+    wrap = true,
     showExternalAccessIcon = false,
   } = props
   const restrictionUiTypeValue = useGetRestrictionUiType(entityId, {
@@ -203,10 +205,10 @@ export function HasAccessV2(props: HasAccessProps) {
           }
         }}
       >
-        <AccessIcon restrictionUiType={restrictionUiTypeValue} />
+        <AccessIcon restrictionUiType={restrictionUiTypeValue} wrap={wrap} />
       </Button>
     ) : (
-      <AccessIcon restrictionUiType={restrictionUiTypeValue!} />
+      <AccessIcon restrictionUiType={restrictionUiTypeValue!} wrap={wrap} />
     )
   }, [restrictionUiTypeValue])
 
@@ -236,7 +238,7 @@ export function HasAccessV2(props: HasAccessProps) {
           className={props.className}
           onClick={handleGetAccess}
         >
-          <AccessIcon restrictionUiType={restrictionUiTypeValue} />
+          <AccessIcon restrictionUiType={restrictionUiTypeValue} wrap={wrap} />
           {showButtonText && (
             <Box
               sx={{
@@ -277,11 +279,14 @@ export function HasAccessV2(props: HasAccessProps) {
     return <></>
   }
 
-  return (
-    <span style={{ whiteSpace: 'nowrap' }}>
-      {accessRequirementsJsxOrIconContainer}
-    </span>
-  )
+  if (wrap) {
+    return (
+      <span style={{ whiteSpace: 'nowrap' }}>
+        {accessRequirementsJsxOrIconContainer}
+      </span>
+    )
+  }
+  return accessRequirementsJsxOrIconContainer
 }
 
 export default HasAccessV2

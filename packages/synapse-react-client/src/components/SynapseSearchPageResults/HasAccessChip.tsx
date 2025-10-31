@@ -39,14 +39,9 @@ export function HasAccessChip({ entityId }: HasAccessChipProps) {
   return (
     <Chip
       label={getAccessText()}
-      icon={<HasAccessV2 entityId={entityId} showButtonText={false} />}
-      style={{ color: 'inherit' }}
-      sx={{
-        backgroundColor: '#DAE9E7',
-        color: '#265149',
-        fontSize: '14px',
-        textTransform: 'capitalize',
-      }}
+      icon={
+        <HasAccessV2 entityId={entityId} showButtonText={false} wrap={false} />
+      }
     />
   )
 }
