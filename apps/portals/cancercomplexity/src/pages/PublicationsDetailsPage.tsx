@@ -132,7 +132,7 @@ function PublicationsDetailsPage() {
                     cardConfiguration={toolsConfiguration}
                     sql={toolsSql}
                     columnAliases={columnAliases}
-                    sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                    sqlOperator={ColumnSingleValueFilterOperator.LIKE}
                     searchParams={{
                       pubMedId: value!,
                     }}
