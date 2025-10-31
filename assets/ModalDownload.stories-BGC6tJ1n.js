@@ -1,0 +1,13 @@
+import{M as p}from"./ModalDownload-DAGPjXvA.js";import"./iframe-Ci1lmE8g.js";import"./index-r8ZA1smB.js";import"./SqlFunctions-DhkJEscO.js";import"./index-Cy9X1tra.js";import"./enums-DHUNt8f7.js";import"./_baseIteratee-BQlpWk-E.js";import"./isString-D4RD_z4s.js";import"./_arrayReduce-CrxnWFSq.js";import"./_baseEach-C_dLu_fx.js";import"./uniq-DZseOKB0.js";import"./forEach-B8iwwgef.js";import"./pickBy-DBr0S374.js";import"./Grid-C8ZSRzfO.js";import"./ListItem-CTeWo3cQ.js";import"./listItemButtonClasses-CkwAkACD.js";import"./ListItemIcon-BZCG7_P3.js";import"./MenuItem-DNhPNPdH.js";import"./ListItemText-B9vILOEk.js";import"./ArrowUpward-DhpXUuv9.js";import"./ContentCopy-DWqbG0qY.js";import"./FormControlLabel-CP9zrs5G.js";import"./Checkbox-CfXy5gYt.js";import"./SwitchBase-Dywev717.js";import"./FormGroup-BsM0vA4B.js";import"./RadioGroup-BSAFIhhK.js";import"./Radio-Dr9D4Szr.js";import"./Slider-uOaYJiAy.js";import"./visuallyHidden-Dan1xhjv.js";import"./DialogBase-BYGdPH-i.js";import"./Close-CELbEfBf.js";import"./HelpPopover-Dp5xAO-J.js";import"./MarkdownPopover-C8x7eb7i.js";import"./LightTooltip-D8-ypvp8.js";import"./MarkdownSynapse-3G1qoarh.js";import"./SkeletonButton-CC-6gNoS.js";import"./SkeletonInlineBlock-B2RYwmUI.js";import"./SkeletonTable-DkbE7er9.js";import"./SkeletonParagraph-ITJPOI8x.js";import"./SynapseFormRadioWidget-mc41lyK-.js";const K={title:"UI/ModalDownload",component:p},o={args:{queryBundleRequest:{concreteType:"org.sagebionetworks.repo.model.table.QueryBundleRequest",entityId:"",partMask:void 0,query:{sql:"SELECT * FROM syn26438037 LIMIT 5"}}}};var r,t,e;o.parameters={...o.parameters,docs:{...(r=o.parameters)==null?void 0:r.docs,source:{originalSource:`{
+  args: {
+    queryBundleRequest: {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      entityId: '',
+      // @ts-ignore
+      partMask: undefined,
+      query: {
+        sql: 'SELECT * FROM syn26438037 LIMIT 5'
+      }
+    }
+  }
+}`,...(e=(t=o.parameters)==null?void 0:t.docs)==null?void 0:e.source}}};const N=["Demo"];export{o as Demo,N as __namedExportsOrder,K as default};
