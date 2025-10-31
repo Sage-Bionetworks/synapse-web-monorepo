@@ -19,6 +19,7 @@ import { EntityTypeIcon } from '../EntityIcon'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import FavoriteButton from '../favorites/FavoriteButton'
 import { EntityDownloadButton } from '../EntityDownloadButton/EntityDownloadButton'
+import HasAccessChip from './HasAccessChip'
 
 export type SynapseSearchResultsCardProps = {
   entityId: string
@@ -78,7 +79,12 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
           />
         </Box>
       </Box>
-      <Box>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+        }}
+      >
         <Chip
           icon={
             <EntityTypeIcon
@@ -96,6 +102,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
             textTransform: 'capitalize',
           }}
         />
+        <HasAccessChip entityId={props.entityId} />
       </Box>
       <Box
         sx={{
