@@ -45,8 +45,9 @@ import GenericCardActionButton from './GenericCardActionButton'
 import { SynapseCardLabel } from './SynapseCardLabel'
 import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
 import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
-import { SharePageLinkButtonProps } from '../SharePageLinkButton'
-import ShareThisPage from '../ShareThisPage/ShareThisPage'
+import ShareThisPage, {
+  ShareThisPageProps,
+} from '../ShareThisPage/ShareThisPage'
 import { useResolvedSynapseEntity } from './useResolvedSynapseEntity'
 
 type RowSynapseEntityConfig = {
@@ -160,7 +161,7 @@ export type TableRowGenericCardProps = {
   /** The versionNumber of the table row */
   versionNumber?: number
   /** Optional props for the ShareThisPage component */
-  sharePageLinkButtonProps?: SharePageLinkButtonProps
+  sharePageLinkButtonProps?: ShareThisPageProps
 } & CommonCardProps
 
 // SWC-6115: special rendering of the version column (for Views)
