@@ -1,0 +1,1 @@
+import{as as s,ar as u,a9 as y}from"./iframe-SFoYirDz.js";function i(t,a){const{keyFactory:n,isInExperimentalMode:r}=s(),{data:e}=u({staleTime:1/0,...a,queryKey:n.getFeatureFlagQueryKey(),queryFn:()=>y.getFeatureFlags()});return r||!!(e!=null&&e[t])}export{i as u};
