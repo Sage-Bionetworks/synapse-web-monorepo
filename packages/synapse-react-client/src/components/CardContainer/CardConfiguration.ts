@@ -19,7 +19,7 @@ import {
 } from '@/utils/SynapseConstants'
 import { IconOptions } from '../Icon/Icon'
 import { SustainabilityScorecardProps } from '../SustainabilityScorecard'
-import { SharePageLinkButtonProps } from '../SharePageLinkButton'
+import { ShareThisPageProps } from '../ShareThisPage'
 
 // Card types with no additional props
 type StandardCardTypeConfiguration = {
@@ -78,7 +78,7 @@ export type CommonCardProps = {
   /**
    * Optional configuration for the ShareThisPage component.
    */
-  sharePageLinkButtonProps?: SharePageLinkButtonProps
+  sharePageLinkButtonProps?: ShareThisPageProps
   /**
    * The variant of the HeaderCard to use, if `isHeader` is true
    * @default 'HeaderCard'
