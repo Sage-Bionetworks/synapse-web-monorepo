@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
 import { useMatches } from 'react-router'
+import { useDocumentMetadata } from 'synapse-react-client/utils/context/DocumentMetadataContext'
 
 /**
  * Uses the current routes to set the document title. The title will only be set when routes change, so if placed high
@@ -9,19 +9,14 @@ import { useMatches } from 'react-router'
 export function useDocumentTitleFromRoutes() {
   const matches = useMatches()
 
-  useEffect(() => {
-    // As a heuristic, we get the last path string of the most specific current route.
+  const portalTitleEnv: unknown = import.meta.env.VITE_PORTAL_NAME
+  const portalTitle = typeof portalTitleEnv === 'string' ? portalTitleEnv : ''
+  const lastMatch = matches.at(-1)
+  const routeSegment = lastMatch?.pathname.split('/').at(-1) ?? ''
+  const decodedSegment = routeSegment ? decodeURIComponent(routeSegment) : ''
+  const documentTitle: string = decodedSegment
+    ? `${portalTitle} - ${decodedSegment}`
+    : portalTitle
 
-    // To improve this, we could put custom data in the route handle returned by useMatches:
-    // https://reactrouter.com/en/main/hooks/use-matches#usematches
-
-    const portalTitle = import.meta.env.VITE_PORTAL_NAME
-    const routeTitle = matches.at(-1)?.pathname.split('/').at(-1)
-    if (routeTitle) {
-      document.title = `${portalTitle} - ${routeTitle}`
-    } else {
-      // Set a default title
-      document.title = portalTitle
-    }
-  }, [matches])
+  useDocumentMetadata({ title: documentTitle, priority: 10 })
 }

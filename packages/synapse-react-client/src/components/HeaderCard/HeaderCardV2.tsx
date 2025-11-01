@@ -1,5 +1,5 @@
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
-import React, { useState, useEffect, forwardRef, ForwardedRef } from 'react'
+import React, { forwardRef, ForwardedRef } from 'react'
 import {
   Box,
   Card,
@@ -14,6 +14,7 @@ import {
 import { DescriptionConfig } from '../CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
 import { GenericCardProps } from '@/components/GenericCard/GenericCard'
+import { useDocumentMetadata } from '@/utils/context/DocumentMetadataContext'
 
 export type HeaderCardV2Props = {
   /** Type label displayed at the top of the card */
@@ -152,38 +153,17 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
     // constrain metadata to 5-line expandable block
   }
 
-  // Meta tags handling
-  const descriptionElement: Element | null = document.querySelector(
-    'meta[name="description"]',
-  )
   const descriptionConfiguration: DescriptionConfig = {
     ...descriptionConfig,
     showFullDescriptionByDefault:
       descriptionConfig?.showFullDescriptionByDefault ?? true,
   }
-  const [docTitle] = useState<string>(document.title)
-  const [docDescription] = useState<string>(
-    descriptionElement ? descriptionElement.getAttribute('content')! : '',
-  )
-
-  // Effect to handle meta tags
-  useEffect(() => {
-    if (title && document.title !== title) {
-      document.title = title
-    }
-
-    if (description || subTitle) {
-      descriptionElement?.setAttribute(
-        'content',
-        description ? description : subTitle,
-      )
-    }
-
-    return function cleanup() {
-      document.title = docTitle
-      descriptionElement?.setAttribute('content', docDescription)
-    }
-  }, [title, description, subTitle, docTitle, docDescription])
+  const metadataDescription = description || subTitle || undefined
+  useDocumentMetadata({
+    title,
+    description: metadataDescription,
+    priority: 100,
+  })
 
   // ctaLink stuff
   let ctaLinkBox = null
