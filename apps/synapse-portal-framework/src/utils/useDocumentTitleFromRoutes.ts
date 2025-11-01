@@ -9,14 +9,13 @@ import { useDocumentMetadata } from 'synapse-react-client/utils/context/Document
 export function useDocumentTitleFromRoutes() {
   const matches = useMatches()
 
-  const portalTitleEnv: unknown = import.meta.env.VITE_PORTAL_NAME
-  const portalTitle = typeof portalTitleEnv === 'string' ? portalTitleEnv : ''
-  const lastMatch = matches.at(-1)
-  const routeSegment = lastMatch?.pathname.split('/').at(-1) ?? ''
-  const decodedSegment = routeSegment ? decodeURIComponent(routeSegment) : ''
-  const documentTitle: string = decodedSegment
-    ? `${portalTitle} - ${decodedSegment}`
-    : portalTitle
+  const portalTitleEnv = import.meta.env.VITE_PORTAL_NAME
+  let newDocumentTitle = portalTitleEnv
 
-  useDocumentMetadata({ title: documentTitle, priority: 10 })
+  const routeTitle = matches.at(-1)?.pathname.split('/').at(-1)
+  if (routeTitle) {
+    newDocumentTitle = `${portalTitleEnv} - ${routeTitle}`
+  }
+
+  useDocumentMetadata({ title: newDocumentTitle, priority: 10 })
 }

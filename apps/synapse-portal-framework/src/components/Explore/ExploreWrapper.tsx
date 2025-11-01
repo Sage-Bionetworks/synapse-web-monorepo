@@ -40,10 +40,8 @@ export default function ExploreWrapper(props: ExploreWrapperProps) {
   const pageName =
     currentRoute?.displayName ?? currentRoute?.path?.replaceAll('/', '')
 
-  const portalTitleEnv: unknown = import.meta.env.VITE_PORTAL_NAME
-  const portalTitle = typeof portalTitleEnv === 'string' ? portalTitleEnv : ''
-  const exploreTitle = pageName ? `${portalTitle} - ${pageName}` : portalTitle
-  useDocumentMetadata({ title: exploreTitle, priority: 50 })
+  const newTitle: string = `${import.meta.env.VITE_PORTAL_NAME} - ${pageName}`
+  useDocumentMetadata({ title: newTitle, priority: 50 })
 
   // The canonical URL is the explore route with no searchParams
   useSetCanonicalUrl(new URL(pathname, window.location.origin).toString())
