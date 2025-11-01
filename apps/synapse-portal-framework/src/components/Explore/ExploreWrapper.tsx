@@ -38,7 +38,7 @@ export default function ExploreWrapper(props: ExploreWrapperProps) {
     route => encodeURI(route.path!) === currentExploreRoute,
   )
   const pageName =
-    currentRoute?.displayName ?? currentRoute?.path?.replaceAll('/', '')
+    currentRoute?.displayName ?? currentRoute?.path?.replaceAll('/', '') ?? 'Explore'
 
   const newTitle: string = `${import.meta.env.VITE_PORTAL_NAME} - ${pageName}`
   useDocumentMetadata({ title: newTitle, priority: 50 })
