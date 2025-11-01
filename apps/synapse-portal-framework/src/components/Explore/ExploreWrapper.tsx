@@ -5,11 +5,12 @@ import {
 import { useSetCanonicalUrl } from '@/utils/useSetCanonicalUrl'
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Outlet, useLocation, useMatch } from 'react-router'
 import OrientationBanner from 'synapse-react-client/components/OrientationBanner/OrientationBanner'
 import { ExplorePageRoute, ExploreWrapperProps } from './ExploreWrapperProps'
 import { ExploreWrapperTabs } from './ExploreWrapperTabs'
+import { useDocumentMetadata } from 'synapse-react-client/utils/context/DocumentMetadataContext'
 
 function RouteMatchedOrientationBanner(props: { route: ExplorePageRoute }) {
   const { route } = props
@@ -37,18 +38,10 @@ export default function ExploreWrapper(props: ExploreWrapperProps) {
     route => encodeURI(route.path!) === currentExploreRoute,
   )
   const pageName =
-    currentRoute?.displayName ?? currentRoute?.path?.replaceAll('/', '')
+    currentRoute?.displayName ?? currentRoute?.path?.replaceAll('/', '') ?? 'Explore'
 
-  useEffect(() => {
-    if (pageName) {
-      const newTitle: string = `${
-        import.meta.env.VITE_PORTAL_NAME
-      } - ${pageName}`
-      if (document.title !== newTitle) {
-        document.title = newTitle
-      }
-    }
-  }, [pathname, pageName])
+  const newTitle: string = `${import.meta.env.VITE_PORTAL_NAME} - ${pageName}`
+  useDocumentMetadata({ title: newTitle, priority: 50 })
 
   // The canonical URL is the explore route with no searchParams
   useSetCanonicalUrl(new URL(pathname, window.location.origin).toString())
