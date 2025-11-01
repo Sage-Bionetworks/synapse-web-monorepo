@@ -9,7 +9,7 @@ import { useDocumentMetadata } from 'synapse-react-client/utils/context/Document
 export function useDocumentTitleFromRoutes() {
   const matches = useMatches()
 
-  const portalTitleEnv = import.meta.env.VITE_PORTAL_NAME
+  const portalTitleEnv = import.meta.env.VITE_PORTAL_NAME ?? 'Synapse Portal'
   let newDocumentTitle = portalTitleEnv
 
   const routeTitle = matches.at(-1)?.pathname.split('/').at(-1)
