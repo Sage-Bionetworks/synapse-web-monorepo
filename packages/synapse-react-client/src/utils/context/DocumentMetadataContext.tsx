@@ -37,14 +37,9 @@ const DocumentMetadataContext = createContext<
 
 export function DocumentMetadataProvider(props: DocumentMetadataProviderProps) {
   // Centralizes document.title/meta description writes so consumers can register values
-  // with priorities; highest priority wins, then portal defaults, then the original page.
+  // with priorities; highest priority wins, then portal defaults
   const { children, defaultTitle, defaultDescription } = props
   const [entries, setEntries] = useState<MetadataEntry[]>([])
-  const [initialTitle] = useState<string>(() => document.title)
-  const [initialDescription] = useState<string>(() => {
-    const meta = document.querySelector('meta[name="description"]')
-    return meta?.getAttribute('content') ?? ''
-  })
 
   // Keep registrations stable between renders and automatically clean up on unmount.
   const sortedEntries = useMemo(
@@ -77,8 +72,7 @@ export function DocumentMetadataProvider(props: DocumentMetadataProviderProps) {
     // Resolve the highest-priority title/description and push them to the DOM.
     const resolvedTitle =
       sortedEntries.find(entry => entry.title !== undefined)?.title ??
-      defaultTitle ??
-      initialTitle
+      defaultTitle
 
     if (resolvedTitle !== undefined && document.title !== resolvedTitle) {
       document.title = resolvedTitle
@@ -90,9 +84,7 @@ export function DocumentMetadataProvider(props: DocumentMetadataProviderProps) {
     if (descriptionElement) {
       const resolvedDescription =
         sortedEntries.find(entry => entry.description !== undefined)
-          ?.description ??
-        defaultDescription ??
-        initialDescription
+          ?.description ?? defaultDescription
 
       if (
         typeof resolvedDescription === 'string' &&
@@ -101,27 +93,7 @@ export function DocumentMetadataProvider(props: DocumentMetadataProviderProps) {
         descriptionElement.setAttribute('content', resolvedDescription)
       }
     }
-  }, [
-    defaultTitle,
-    defaultDescription,
-    initialTitle,
-    initialDescription,
-    sortedEntries,
-  ])
-
-  useEffect(() => {
-    const originalTitle = initialTitle
-    const originalDescription = initialDescription
-    return () => {
-      const descriptionElement = document.querySelector(
-        'meta[name="description"]',
-      )
-      document.title = originalTitle
-      if (descriptionElement) {
-        descriptionElement.setAttribute('content', originalDescription)
-      }
-    }
-  }, [initialTitle, initialDescription])
+  }, [defaultTitle, defaultDescription, sortedEntries])
 
   return (
     <DocumentMetadataContext.Provider value={contextValue}>
@@ -140,8 +112,6 @@ export function useDocumentMetadata(
     if (context) {
       return context.register({ title, description, priority })
     }
-    // Tests occasionally invoke this hook without mounting the provider; align with repo
-    // convention by returning lodash's noop so the hook still returns a stable cleanup fn.
     return noop
   }, [context, title, description, priority])
 }
