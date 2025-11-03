@@ -20,7 +20,7 @@ export type FavoriteButtonProps = {
 export default function FavoriteButton(props: FavoriteButtonProps) {
   const { entityId } = props
   const { accessToken } = useSynapseContext()
-  const isSignedIn = !!accessToken
+  const isAuthenticated = !!accessToken
   const { isFavorite, isLoading } = useIsFavorite(entityId)
   const { mutate: onAddFavorite, isPending: isAddingFavorite } =
     useAddFavorite()
@@ -28,10 +28,10 @@ export default function FavoriteButton(props: FavoriteButtonProps) {
     useRemoveFavorite()
 
   const disableButton =
-    isLoading || isAddingFavorite || isRemovingFavorite || !isSignedIn
+    isLoading || isAddingFavorite || isRemovingFavorite || !isAuthenticated
 
   let tooltipText = 'Add to Favorites'
-  if (!isSignedIn) {
+  if (!isAuthenticated) {
     tooltipText = 'Sign in to add this to your favorites'
   } else if (isFavorite) {
     tooltipText = 'Remove from Favorites'

@@ -64,7 +64,7 @@ export function SynapseHomepageNavBar({
   gotoPlace,
 }: SynapseHomepageNavBarProps) {
   const { accessToken } = useSynapseContext()
-  const isLoggedIn = !!accessToken
+  const isAuthenticated = !!accessToken
   const registrationLink = useOneSageURL('/register1')
   const theme = useTheme()
   const isSmallView = useMediaQuery(theme.breakpoints.down('md'))
@@ -150,7 +150,7 @@ export function SynapseHomepageNavBar({
           >
             Sage Bionetworks
           </Button>
-          {!isLoggedIn && (
+          {!isAuthenticated && (
             <Button
               size="large"
               variant="outlined"
@@ -161,7 +161,7 @@ export function SynapseHomepageNavBar({
               Login
             </Button>
           )}
-          {!isLoggedIn && (
+          {!isAuthenticated && (
             <Button
               size="large"
               variant="contained"
@@ -172,7 +172,7 @@ export function SynapseHomepageNavBar({
               Register Now
             </Button>
           )}
-          {isLoggedIn && (
+          {isAuthenticated && (
             <Button
               size="large"
               variant="outlined"
@@ -290,7 +290,7 @@ export function SynapseHomepageNavBar({
             </StyledMenuItem>
 
             <Divider sx={{ pt: '100px' }} />
-            {!isLoggedIn && (
+            {!isAuthenticated && (
               <StyledMenuItem
                 sx={{ mt: '30px', color: 'secondary.main' }}
                 onClick={() => {
@@ -301,7 +301,7 @@ export function SynapseHomepageNavBar({
                 Register Now
               </StyledMenuItem>
             )}
-            {!isLoggedIn && (
+            {!isAuthenticated && (
               <StyledMenuItem
                 sx={{ mb: '40px' }}
                 onClick={() => {
@@ -312,7 +312,7 @@ export function SynapseHomepageNavBar({
                 Log In
               </StyledMenuItem>
             )}
-            {isLoggedIn && (
+            {isAuthenticated && (
               <StyledMenuItem
                 sx={{ mb: '40px', color: 'secondary.main' }}
                 onClick={() => {

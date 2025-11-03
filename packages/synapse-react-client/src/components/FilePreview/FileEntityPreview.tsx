@@ -28,8 +28,7 @@ export type FileEntityPreviewProps = {
  */
 export default function FileEntityPreview(props: FileEntityPreviewProps) {
   const { bundle } = props
-  const { accessToken } = useSynapseContext()
-  const isLoggedIn = !!accessToken
+  const { isAuthenticated } = useSynapseContext()
 
   if (!isFileEntity(bundle.entity)) {
     throw new Error(`Entity ${bundle.entity.id!} is not a FileEntity`)
@@ -45,7 +44,7 @@ export default function FileEntityPreview(props: FileEntityPreviewProps) {
     fh => fh.id === dataFileHandleId,
   )
 
-  if (!dataFileHandle && !isLoggedIn) {
+  if (!dataFileHandle && !isAuthenticated) {
     // We may be previewing a file handle that the anonymous user cannot see. Prompt the user to log in.
     return (
       <Alert severity={'error'}>

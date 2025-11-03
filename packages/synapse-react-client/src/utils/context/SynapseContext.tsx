@@ -7,6 +7,8 @@ import { BackendDestinationEnum, getEndpoint } from '../functions/getEndpoint'
 export type SynapseContextType = {
   /** The user's access token. If undefined, the user is not logged in */
   accessToken: string | undefined
+  /** Whether the user is authenticated. Derived from accessToken. */
+  isAuthenticated: boolean
   /** If the user has enabled experimental mode */
   isInExperimentalMode: boolean
   /** If the user prefers time to be displayed in UTC format */
@@ -25,6 +27,7 @@ export type SynapseContextType = {
 
 const defaultContext = {
   accessToken: undefined,
+  isAuthenticated: false,
   isInExperimentalMode: false,
   utcTime: false,
   withErrorBoundary: false,
@@ -72,6 +75,7 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
   const synapseContext: SynapseContextType = useMemo(
     () => ({
       accessToken: providedContext?.accessToken,
+      isAuthenticated: Boolean(providedContext?.accessToken),
       isInExperimentalMode: providedContext?.isInExperimentalMode ?? false,
       utcTime: providedContext?.utcTime ?? false,
       withErrorBoundary: providedContext?.withErrorBoundary ?? false,

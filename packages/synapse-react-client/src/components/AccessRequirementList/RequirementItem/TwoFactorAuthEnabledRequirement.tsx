@@ -15,11 +15,11 @@ const TWO_FACTOR_ENROLLMENT_LINK = `${getEndpoint(
 )}TwoFactorAuth:Enroll`
 
 function getState(
-  isSignedIn: boolean,
+  isAuthenticated: boolean,
   isLoading: boolean,
   status?: TwoFactorAuthStatus['status'],
 ): RequirementItemStatus {
-  if (!isSignedIn) {
+  if (!isAuthenticated) {
     return RequirementItemStatus.LOCKED
   }
   if (isLoading) {
@@ -34,13 +34,11 @@ function getState(
  * Displays a data access request requirement that prompts the user to enable two-factor authentication.
  */
 export default function TwoFactorAuthEnabledRequirement() {
-  const { accessToken } = useSynapseContext()
-
-  const isSignedIn = !!accessToken
+  const { isAuthenticated } = useSynapseContext()
 
   const { data: twoFactorAuthStatus, isLoading } =
     useGetTwoFactorEnrollmentStatus({
-      enabled: isSignedIn,
+      enabled: isAuthenticated,
       // If required, we send the user to a new tab to complete 2FA enrollment
       // Refetch on window focus so the enrollment state is immediately updated when they return to this tab
       refetchOnWindowFocus: true,
@@ -70,7 +68,7 @@ export default function TwoFactorAuthEnabledRequirement() {
 
   return (
     <RequirementItem
-      status={getState(isSignedIn, isLoading, twoFactorAuthStatus?.status)}
+      status={getState(isAuthenticated, isLoading, twoFactorAuthStatus?.status)}
       actions={actions}
     >
       <Typography variant={'body1'}>

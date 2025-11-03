@@ -18,9 +18,9 @@ export function ProjectDataAvailability({
   sx,
 }: ProjectDataAvailabilityProps) {
   const { accessToken } = useSynapseContext()
-  const isLoggedIn = !!accessToken
+  const isAuthenticated = !!accessToken
   const { data } = useProjectStorageUsage(projectId!, {
-    enabled: !!projectId && isLoggedIn,
+    enabled: !!projectId && isAuthenticated,
   })
   const projectDataUsageArray = data?.locations.filter(
     v => v.storageLocationId == SYNAPSE_STORAGE_LOCATION_ID,

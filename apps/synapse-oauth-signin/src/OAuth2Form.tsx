@@ -40,8 +40,7 @@ const sendGTagEvent = (event: string) => {
 export function OAuth2Form() {
   const { clearSession, hasInitializedSession } =
     AppUtils.useApplicationSessionContext()
-  const { accessToken } = useSynapseContext()
-  const isLoggedIn = Boolean(accessToken)
+  const { isAuthenticated } = useSynapseContext()
 
   const [searchParams] = useSearchParams()
 
@@ -98,7 +97,7 @@ export function OAuth2Form() {
     error: fetchProfileError,
     isLoading: isLoadingProfile,
   } = SynapseQueries.useGetCurrentUserProfile({
-    enabled: isLoggedIn,
+    enabled: isAuthenticated,
   })
 
   useEffect(() => {
@@ -336,7 +335,7 @@ export function OAuth2Form() {
   if (
     !isLoading &&
     !error &&
-    !isLoggedIn &&
+    !isAuthenticated &&
     oauthClientInfo &&
     oauthClientInfo.verified &&
     pendingRedirectURL === undefined &&
@@ -368,7 +367,7 @@ export function OAuth2Form() {
         />
       )}
       {!error &&
-        accessToken &&
+        isAuthenticated &&
         oauthClientInfo &&
         oauthClientInfo.verified &&
         !showPendingRedirectUi &&

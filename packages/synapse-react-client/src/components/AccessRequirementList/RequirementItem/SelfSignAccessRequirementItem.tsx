@@ -34,21 +34,20 @@ export default function SelfSignAccessRequirementItem(
   props: SelfSignAccessRequirementItemProps,
 ) {
   const { accessRequirement, onHide } = props
-  const { accessToken } = useSynapseContext()
-  const isSignedIn = !!accessToken
+  const { isAuthenticated, accessToken } = useSynapseContext()
   const isTermsOfUse = isTermsOfUseAccessRequirement(accessRequirement)
 
   const { data: user } = useGetCurrentUserProfile()
   const { data: userBundle } = useGetCurrentUserBundle()
 
   const certificationRequirementNotMet =
-    isSignedIn &&
+    isAuthenticated &&
     userBundle &&
     !isTermsOfUse &&
     accessRequirement.isCertifiedUserRequired &&
     !userBundle.isCertified
   const verificationRequirementNotMet =
-    isSignedIn &&
+    isAuthenticated &&
     userBundle &&
     !isTermsOfUse &&
     accessRequirement.isValidatedProfileRequired &&
