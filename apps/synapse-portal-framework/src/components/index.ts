@@ -18,6 +18,7 @@ import ARKWelcomePage from './arkportal/ARKWelcomePage'
 import ClassicSupportedByNIABanner from './classic/ClassicSupportedByNIABanner/ClassicSupportedByNIABanner'
 import ChallengeHeader from './challenges/ChallengeHeader/ChallengeHeader'
 import ChallengeMetrics from './challenges/ChallengeMetrics/ChallengeMetrics'
+import ChallengeFeaturedTeam from './challenges/ChallengeFeaturedTeam/ChallengeFeaturedTeam'
 
 import ExploreWrapper from './Explore/ExploreWrapper'
 import GenieHomePageHeader from './genie/GenieHomePageHeader'
@@ -58,6 +59,7 @@ const PortalComponents = {
   ARKWelcomePage,
   GenieHomePageHeader,
   CancerComplexityHeader,
+  ChallengeFeaturedTeam,
   TabbedSynapseObjects,
   Header,
   ChallengeParticipantGoogleMap,

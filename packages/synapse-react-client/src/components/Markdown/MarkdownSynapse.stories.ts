@@ -1,7 +1,7 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import MarkdownSynapse from './MarkdownSynapse'
 import { ObjectType } from '@sage-bionetworks/synapse-types'
-import { fn } from '@storybook/test'
+import { fn } from 'storybook/test'
 
 const meta: Meta<typeof MarkdownSynapse> = {
   title: 'Markdown/MarkdownSynapse',

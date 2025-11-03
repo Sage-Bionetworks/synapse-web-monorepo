@@ -7,6 +7,7 @@ const fileEntityPageConfig: FileEntityPageConfig = {
   showContentMd5: false,
   showStorageLocation: false,
   showModifiedOn: false,
+  showAnnotations: false,
 }
 
 export default fileEntityPageConfig

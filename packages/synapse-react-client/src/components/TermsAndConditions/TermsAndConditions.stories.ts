@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import TermsAndConditions from './TermsAndConditions'
 // import { getHandlersForTableQuery } from '@/mocks/msw/handlers/tableQueryHandlers'

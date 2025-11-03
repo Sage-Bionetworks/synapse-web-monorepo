@@ -2,7 +2,7 @@ import {
   AUTHENTICATED_PRINCIPAL_ID,
   PUBLIC_PRINCIPAL_ID,
 } from '@/utils/SynapseConstants'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { UserOrTeamBadge } from './index'
 
 const meta = {

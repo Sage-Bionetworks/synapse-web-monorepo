@@ -1,6 +1,6 @@
-import { fn } from '@storybook/test'
+import { fn } from 'storybook/test'
 import EntityDownloadConfirmation from './EntityDownloadConfirmation'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 
 const meta = {
   title: 'Synapse/Entity/EntityDownloadConfirmation',

@@ -6,7 +6,7 @@ import { QueryWrapper } from '@/components/QueryWrapper/index'
 import { mockQueryBundleRequest } from '@/mocks/mockFileViewQuery'
 import { getHandlers } from '@/mocks/msw/handlers'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { useEffect } from 'react'
 import ExportToAnalysisPlatformDialog, {
   ExportToAnalysisPlatformDialogProps,

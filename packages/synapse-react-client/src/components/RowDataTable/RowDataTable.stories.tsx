@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import RowDataTable from './RowDataTable'
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 

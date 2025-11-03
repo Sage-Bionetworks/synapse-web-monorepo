@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography'
 
 type CroissantButtonProps = {
   /** The synID of the dataset */
-  datasetId: number
+  datasetId: string
   /** The version number of the dataset */
   datasetVersionNumber: number
 }

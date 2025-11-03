@@ -14,47 +14,31 @@ export const studyCardConfiguration: CardConfiguration = {
   titleLinkConfig: {
     isMarkdown: false,
     baseURL: 'Explore/Studies/DetailsPage',
-    URLColumnName: 'studyKey',
-    matchColumnName: 'studyKey',
+    URLColumnName: 'id',
+    matchColumnName: 'id',
     target: TargetEnum.CURRENT_WINDOW,
   },
   labelLinkConfig: [
-    {
-      isMarkdown: false,
-      baseURL: 'Explore/Projects',
-      URLColumnName: 'grant',
-      matchColumnName: 'grants',
-    },
-    {
-      isMarkdown: false,
-      matchColumnName: 'projectFullName',
-      overrideLinkURLColumnName: 'project',
-      overrideLinkURLColumnTransform: shortName =>
-        `/Explore/Projects/DetailsPage?shortName=${shortName}`,
-    },
+    // {
+    //   isMarkdown: false,
+    //   matchColumnName: 'projectFullName',
+    //   overrideLinkURLColumnName: 'project',
+    //   overrideLinkURLColumnTransform: shortName =>
+    //     `/Explore/Projects/DetailsPage?shortName=${shortName}`,
+    // },
   ],
   genericCardSchema: {
     type: SynapseConstants.STUDY,
-    title: 'studyName',
-    // subTitle: 'dataContributor',
-    icon: 'Access_Type',
-    description: 'studyAbstract',
-    secondaryLabels: [
-      'dataStatus',
-      'dataRestriction',
-      'dataTypeAll',
-      'studyFocus',
-      'Species',
-      'specimenType',
-      'projectFullName',
-      'grantNumber',
-    ],
+    title: 'projectFullName',
+    subTitle: 'studyFocus',
+    // icon: 'Access_Type',
+    description: 'studyDescription',
+    secondaryLabels: ['studyName', 'grantNumber', 'isFeatured', 'isReleased'],
+    includeShareButton: true,
   },
 }
 
 export const studyColumnAliases = {
-  dataTypeAll: 'Data Types',
-  Number_of_Individuals: 'Individuals',
   projectFullName: 'Project',
 }
 

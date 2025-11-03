@@ -1,5 +1,5 @@
 import { SYNAPSE_STORAGE_LOCATION_ID } from '@/synapse-client/index'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { ProjectStorageLimitAlert } from './ProjectStorageLimitAlert'
 
 const meta = {

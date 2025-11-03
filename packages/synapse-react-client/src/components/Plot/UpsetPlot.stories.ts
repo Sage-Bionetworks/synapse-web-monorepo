@@ -1,7 +1,7 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import UpsetPlot from './UpsetPlot'
 import { Query } from '@sage-bionetworks/synapse-types'
-import { fn } from '@storybook/test'
+import { fn } from 'storybook/test'
 
 const meta = {
   title: 'Home Page/UpsetPlot',

@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import RowDataTableWithQuery from './RowDataTableWithQuery'
 import { Query } from '@sage-bionetworks/synapse-types'
 

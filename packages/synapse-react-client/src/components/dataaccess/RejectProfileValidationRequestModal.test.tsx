@@ -9,8 +9,8 @@ import {
 } from '@/utils/functions/getEndpoint'
 import { REJECT_VALIDATION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstants'
 import { VerificationStateEnum } from '@sage-bionetworks/synapse-types'
-import { userEvent } from '@storybook/test'
 import { act, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import failOnConsoleError from 'jest-fail-on-console'
 import { http } from 'msw'
 import { CannedRejectionDialog } from '../CannedRejectionDialog/CannedRejectionDialog'
@@ -98,9 +98,8 @@ describe('RejectProfileValidationRequestModal', () => {
     const internalNotesTextBox = await screen.findByRole('textbox', {
       name: 'ACT Internal Notes',
     })
-    await act(async () => {
-      await user.type(internalNotesTextBox, internalNotes)
-    })
+
+    await user.type(internalNotesTextBox, internalNotes)
 
     // Generate the email using the mocked modal
     const onConfirmCallback =

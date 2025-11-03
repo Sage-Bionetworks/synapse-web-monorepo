@@ -7,6 +7,13 @@ import { ModalDownload } from '../ModalDownload/ModalDownload'
 import { useGetEntity, useGetVersions } from '@/synapse-queries'
 import { isVersionableEntity } from '@/utils/functions/EntityTypeUtils'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { useSynapseContext } from '@/utils'
+import {
+  useAddFileToDownloadList,
+  useAddToDownloadList,
+} from '@/synapse-queries/index'
+import { displayFilesWereAddedToDownloadListSuccess } from '../download_list/DownloadConfirmationUtils'
+import { displayToast } from '../ToastMessage/index'
 
 // WIP
 // Per Nick Grosenbacher: For this to be reusable, I think we would also need to accept versionNumber as a prop. Where we would have the following behavior:
@@ -93,9 +100,19 @@ enum DownloadAction {
 function getMenuItemForAction(
   entityId: string,
   entityName: string,
+  entityType: EntityType,
   downloadAction: DownloadAction,
   setShowProgrammaticAccess: (show: boolean) => void,
   setShowExportMetadata: (show: boolean) => void,
+  addFileToDownloadList: (params: {
+    entityId: string
+    entityVersionNumber: number | undefined
+  }) => void,
+  addQueryToDownloadList: (request: {
+    parentId: string
+    concreteType: 'org.sagebionetworks.repo.model.download.AddToDownloadListRequest'
+  }) => void,
+  versionNumber?: number,
 ): DropdownMenuItem {
   switch (downloadAction) {
     case DownloadAction.downloadFile:
@@ -111,8 +128,24 @@ function getMenuItemForAction(
       return {
         text: 'Add to Download Cart',
         onClick: () => {
-          console.log('Add file(s) to cart:', entityId)
-          // TODO: Implement add to cart functionality
+          // Use different functions based on entity type
+          if (
+            entityType === EntityType.file ||
+            entityType === EntityType.recordset ||
+            entityType === EntityType.dataset ||
+            entityType === EntityType.datasetcollection
+          ) {
+            addFileToDownloadList({
+              entityId,
+              entityVersionNumber: versionNumber,
+            })
+          } else {
+            addQueryToDownloadList({
+              parentId: entityId,
+              concreteType:
+                'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+            })
+          }
         },
         tooltipText: 'Add file(s) to your download cart',
       }
@@ -163,6 +196,13 @@ export function getDownloadActionsForEntityType(
     case EntityType.dataset:
     case EntityType.table:
     case EntityType.datasetcollection:
+      return [
+        [
+          DownloadAction.exportTable,
+          DownloadAction.programmaticAccess,
+          DownloadAction.addToCart,
+        ],
+      ]
     case EntityType.materializedview:
     case EntityType.submissionview:
     case EntityType.virtualtable:
@@ -265,6 +305,34 @@ export function EntityDownloadButton(props: {
     props.entityType,
   )
 
+  // Get context and download functionality
+  const { downloadCartPageUrl } = useSynapseContext()
+  const { mutate: addFileToDownloadList } = useAddFileToDownloadList({
+    onSuccess: data => {
+      if (data.numberOfFilesAdded > 0) {
+        displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)
+      } else {
+        displayToast('0 Files added to your Download Cart', 'info')
+      }
+    },
+    onError: error => {
+      displayToast(error.reason, 'danger')
+    },
+  })
+
+  const { mutate: addQueryToDownloadList } = useAddToDownloadList({
+    onSuccess: data => {
+      if (data.numberOfFilesAdded != null && data.numberOfFilesAdded > 0) {
+        displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)
+      } else {
+        displayToast('0 Files added to your Download Cart', 'info')
+      }
+    },
+    onError: error => {
+      displayToast(error.reason, 'danger')
+    },
+  })
+
   // state to manage programmatic access modal visibility
   const [showProgrammaticAccess, setShowProgrammaticAccess] =
     useState<boolean>(false)
@@ -287,9 +355,13 @@ export function EntityDownloadButton(props: {
       getMenuItemForAction(
         props.entityId,
         props.name,
+        props.entityType,
         action,
         setShowProgrammaticAccess,
         setShowExportMetadata,
+        addFileToDownloadList,
+        addQueryToDownloadList,
+        latestVersionNumber,
       ),
     ),
   )

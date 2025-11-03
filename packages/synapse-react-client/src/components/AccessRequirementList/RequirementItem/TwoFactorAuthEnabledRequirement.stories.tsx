@@ -1,6 +1,6 @@
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { http, HttpResponse } from 'msw'
 import TwoFactorAuthEnabledRequirement from './TwoFactorAuthEnabledRequirement'
 
