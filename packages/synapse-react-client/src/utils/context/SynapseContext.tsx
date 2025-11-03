@@ -7,7 +7,7 @@ import { BackendDestinationEnum, getEndpoint } from '../functions/getEndpoint'
 export type SynapseContextType = {
   /** The user's access token. If undefined, the user is not logged in */
   accessToken: string | undefined
-  /** Whether the user is authenticated. Derived from accessToken. */
+  /** Whether the user is authenticated */
   isAuthenticated: boolean
   /** If the user has enabled experimental mode */
   isInExperimentalMode: boolean
@@ -75,6 +75,8 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
   const synapseContext: SynapseContextType = useMemo(
     () => ({
       accessToken: providedContext?.accessToken,
+      // Currently, isAuthenticated is derived from the presence of an access token
+      // In the future, this may be based on a non-null realm-specific anonymous user access token
       isAuthenticated: Boolean(providedContext?.accessToken),
       isInExperimentalMode: providedContext?.isInExperimentalMode ?? false,
       utcTime: providedContext?.utcTime ?? false,
