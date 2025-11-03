@@ -1,8 +1,0 @@
-import{S as m}from"./SynapseNavDrawer-BIl6p30Q.js";import"./iframe-DM9RvezN.js";import"./index-r8ZA1smB.js";import"./useDataAccessSubmission-4JJAL2ae.js";import"./useInfiniteQuery-oJo5Itzj.js";import"./useDownloadList-DRljCaIU.js";import"./waitForAsyncResult-MEJ8kGK3.js";import"./CreateProjectModal-DbaNoL-0.js";import"./ConfirmationDialog-Dl-jK7QM.js";import"./DialogBase-BAhxc9kZ.js";import"./Close-CuPbI5yA.js";import"./HelpPopover-C6nQ_3VR.js";import"./MarkdownPopover-DBancuF8.js";import"./LightTooltip-ywjxPoX5.js";import"./MarkdownSynapse-CE6jraB4.js";import"./SkeletonButton-GB1PBqFT.js";import"./SkeletonInlineBlock-74TZwrl_.js";import"./SkeletonTable-DWBPPyUA.js";import"./SkeletonParagraph-BhCOGAD2.js";import"./SynapseHomepageNavBar-Durc373j.js";import"./SageResourcesPopover-Db76GVKt.js";import"./Grid-BjH0Dgb5.js";import"./index-DqaILKWS.js";import"./MenuItem-Dpv8sefJ.js";import"./UserBadge-kFRXYAH-.js";import"./Card-0KjgSdyq.js";import"./Chip-BTSRizg_.js";import"./Slide-BPUNxcsC.js";import"./InputAdornment-BEO5xCDe.js";import"./listItemButtonClasses-BCKjpHxj.js";import"./Badge-DtPBva05.js";import"./usePreviousProps-DZ-rCkR2.js";const F={title:"Synapse/SynapseNavDrawer",component:m},r={args:{initIsOpen:!1,gotoPlace:p=>{window.alert(`Nav bar calling back to change route to ${p}`)}}};var o,t,i;r.parameters={...r.parameters,docs:{...(o=r.parameters)==null?void 0:o.docs,source:{originalSource:`{
-  args: {
-    initIsOpen: false,
-    gotoPlace: (href: string) => {
-      window.alert(\`Nav bar calling back to change route to \${href}\`);
-    }
-  }
-}`,...(i=(t=r.parameters)==null?void 0:t.docs)==null?void 0:i.source}}};const G=["Demo"];export{r as Demo,G as __namedExportsOrder,F as default};
