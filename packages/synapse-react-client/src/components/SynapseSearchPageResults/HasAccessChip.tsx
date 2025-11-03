@@ -1,6 +1,7 @@
 import { RestrictionUiType } from '../HasAccess/AccessIcon'
 import { useGetRestrictionUiType, HasAccessV2 } from '../HasAccess/HasAccessV2'
 import { Chip } from '@mui/material'
+import { searchResultsCardChipStyles } from '../SynapseSearchPageResults/chipStyles'
 
 export interface HasAccessChipProps {
   entityId: string
@@ -42,6 +43,7 @@ export function HasAccessChip({ entityId }: HasAccessChipProps) {
       icon={
         <HasAccessV2 entityId={entityId} showButtonText={false} wrap={false} />
       }
+      sx={{ ...searchResultsCardChipStyles }}
     />
   )
 }

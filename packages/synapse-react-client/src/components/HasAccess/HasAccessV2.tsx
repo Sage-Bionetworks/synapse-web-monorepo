@@ -6,7 +6,7 @@ import {
 import { SynapseClientError, useSynapseContext } from '@/utils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
-import { Box, Button } from '@mui/material'
+import { Box, Button, SxProps, Theme } from '@mui/material'
 import {
   AccessRequirement,
   EntityBundle,
@@ -40,6 +40,7 @@ export type HasAccessProps = {
    * @default false
    */
   showExternalAccessIcon?: boolean
+  sx?: SxProps<Theme>
 }
 
 const buttonSx = { p: '0px', minWidth: 'unset' }
@@ -145,6 +146,7 @@ export function HasAccessV2(props: HasAccessProps) {
     showButtonText = true,
     wrap = true,
     showExternalAccessIcon = false,
+    sx,
   } = props
   const restrictionUiTypeValue = useGetRestrictionUiType(entityId, {
     enabled: showExternalAccessIcon,
@@ -204,11 +206,13 @@ export function HasAccessV2(props: HasAccessProps) {
             ev.currentTarget.dispatchEvent(clickEvent)
           }
         }}
-      >
-        <AccessIcon restrictionUiType={restrictionUiTypeValue} wrap={wrap} />
-      </Button>
+      ></Button>
     ) : (
-      <AccessIcon restrictionUiType={restrictionUiTypeValue!} wrap={wrap} />
+      <AccessIcon
+        restrictionUiType={restrictionUiTypeValue!}
+        wrap={wrap}
+        sx={{ ...sx }}
+      />
     )
   }, [restrictionUiTypeValue])
 
@@ -238,7 +242,11 @@ export function HasAccessV2(props: HasAccessProps) {
           className={props.className}
           onClick={handleGetAccess}
         >
-          <AccessIcon restrictionUiType={restrictionUiTypeValue} wrap={wrap} />
+          <AccessIcon
+            restrictionUiType={restrictionUiTypeValue}
+            wrap={wrap}
+            sx={{ ...sx }}
+          />
           {showButtonText && (
             <Box
               sx={{

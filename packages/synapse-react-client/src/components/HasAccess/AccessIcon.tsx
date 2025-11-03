@@ -1,4 +1,4 @@
-import { Theme, useTheme } from '@mui/material'
+import { SxProps, Theme, useTheme } from '@mui/material'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 
 export enum RestrictionUiType {
@@ -49,8 +49,9 @@ const iconConfiguration: Record<
 function AccessIcon(props: {
   restrictionUiType: RestrictionUiType
   wrap?: boolean
+  sx?: SxProps<Theme>
 }) {
-  const { restrictionUiType, wrap = true } = props
+  const { restrictionUiType, wrap = true, sx } = props
   const theme = useTheme()
   if (restrictionUiType) {
     const configuration = iconConfiguration[restrictionUiType]
@@ -63,6 +64,7 @@ function AccessIcon(props: {
           color: configuration.color(theme),
           height: '16px',
           verticalAlign: 'text-top',
+          ...sx,
         }}
       />
     )
