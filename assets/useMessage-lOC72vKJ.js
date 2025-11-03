@@ -1,1 +1,0 @@
-import{as as t,aE as a,a9 as o}from"./iframe-DkJtXMGY.js";function c(s){const{accessToken:e}=t();return a({...s,mutationFn:n=>o.sendMessage(n.recipients,n.subject,n.body,e)})}function u(s){const{accessToken:e}=t();return a({...s,mutationFn:n=>o.sendMessageToEntityOwner(n.entityId,n.subject,n.body,e)})}export{u as a,c as u};
