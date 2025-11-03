@@ -1,8 +1,6 @@
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
-import { STUDY_DETAILS_PAGE_DETAILS_TAB_PATH } from './routeConstants'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
-import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 
 const routes: RouteObject[] = [
   {
@@ -41,21 +39,6 @@ const routes: RouteObject[] = [
           import('@/pages/StudyDetailsPage/StudyDetailsPage').then(
             convertModuleToRouteObject,
           ),
-        children: [
-          {
-            index: true,
-            element: (
-              <RedirectWithQuery to={STUDY_DETAILS_PAGE_DETAILS_TAB_PATH} />
-            ),
-          },
-          {
-            path: STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
-            lazy: () =>
-              import('@/pages/StudyDetailsPage/StudyDetailsTab').then(
-                convertModuleToRouteObject,
-              ),
-          },
-        ],
       },
       {
         path: 'Contribute Study Metadata',

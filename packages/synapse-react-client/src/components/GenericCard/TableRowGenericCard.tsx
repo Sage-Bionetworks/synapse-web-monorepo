@@ -21,8 +21,9 @@ import {
 } from '@/utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { getColumnIndex } from '@/utils/functions/SqlFunctions'
+import { parseSynId } from '@/utils/functions/RegularExpressions'
 import { GetAppTwoTone } from '@mui/icons-material'
-import { Collapse, Link } from '@mui/material'
+import { Box, Collapse, Link } from '@mui/material'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -30,7 +31,7 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { TargetEnum } from '@/utils/html/TargetEnum'
 import CitationPopover from '../CitationPopover'
@@ -44,8 +45,38 @@ import GenericCardActionButton from './GenericCardActionButton'
 import { SynapseCardLabel } from './SynapseCardLabel'
 import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
 import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
-import { SharePageLinkButtonProps } from '../SharePageLinkButton'
-import ShareThisPage from '../ShareThisPage/ShareThisPage'
+import ShareThisPage, {
+  ShareThisPageProps,
+} from '../ShareThisPage/ShareThisPage'
+import { useResolvedSynapseEntity } from './useResolvedSynapseEntity'
+
+type RowSynapseEntityConfig = {
+  /** Use the table rowId to resolve the Synapse entity ID. */
+  id: {
+    source: 'rowId'
+  }
+  /** Use the table rowVersionNumber to resolve the Synapse entity version (if available). */
+  version?: {
+    source: 'rowVersionNumber'
+  }
+}
+
+type ColumnSynapseEntityConfig = {
+  /** Use a column value to resolve the Synapse entity ID. */
+  id: {
+    source: 'column'
+    columnName: string
+  }
+  /** Use a column value to resolve the Synapse entity version. */
+  version?: {
+    source: 'column'
+    columnName: string
+  }
+}
+
+export type SynapseEntityConfig =
+  | RowSynapseEntityConfig
+  | ColumnSynapseEntityConfig
 
 /**
  * Maps a table query result to a GenericCard.
@@ -97,10 +128,11 @@ export type TableToGenericCardMapping = {
   link?: string
   /** Column name of the STRING_LIST column that includes icon names that represent icons that should be displayed on the card */
   dataTypeIconNames?: string
-  /** If true, uses the rowId and row versionNumber to display a button to add the card item to the download cart */
-  useRowIdAndVersionForDownloadCart?: boolean
-  /** The column name whose data contains a synId that can be used to show a button to add the corresponding entity to the download cart. Does nothing if
-   * useRowIdAndVersionForDownloadCart is true */
+  /** Configuration for resolving the Synapse entity ID/version represented by each card row.
+   *  The ID and version sources must both reference either row-based values or column-based values.
+   */
+  synapseEntityConfig?: SynapseEntityConfig
+  /** The column name whose data contains a synId that can be used to show a button to add the corresponding entity to the download cart. */
   downloadCartSynId?: string
   /** Configuration to display a DOI, as well as the ability to create one for users with such permission */
   portalDoiConfiguration?: PortalDOIConfiguration
@@ -129,7 +161,7 @@ export type TableRowGenericCardProps = {
   /** The versionNumber of the table row */
   versionNumber?: number
   /** Optional props for the ShareThisPage component */
-  sharePageLinkButtonProps?: SharePageLinkButtonProps
+  sharePageLinkButtonProps?: ShareThisPageProps
 } & CommonCardProps
 
 // SWC-6115: special rendering of the version column (for Views)
@@ -155,7 +187,7 @@ function VersionLabel(props: { synapseId: string; version: string }) {
 export function TableRowGenericCard(props: TableRowGenericCardProps) {
   const [showDownloadConfirmation, setShowDownloadConfirmation] =
     useState(false)
-  const [downloadButtonDisabled, setDownloadButtonDisabled] = useState(false)
+  const [downloadButtonLoading, setDownloadButtonLoading] = useState(false)
 
   const { entityId, versionNumber } = useQueryContext()
   const { getColumnDisplayName } = useQueryVisualizationContext()
@@ -195,7 +227,6 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     citationBoilerplateText,
     downloadCartSynId,
     portalDoiConfiguration,
-    useRowIdAndVersionForDownloadCart,
   } = genericCardSchema
   const title = data[schema[genericCardSchema.title]]
   let subTitle =
@@ -228,23 +259,39 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     rowId,
   )
 
-  let downloadCartSynIdValue: string | undefined
-  let downloadCartVersionNumber: number | undefined
-  if (useRowIdAndVersionForDownloadCart) {
-    downloadCartSynIdValue = `syn${rowId}`
-    downloadCartVersionNumber = rowVersionNumber
-  } else {
-    let downloadCartSynIdColumnIndex: number | undefined
-    if (downloadCartSynId) {
-      downloadCartSynIdColumnIndex = schema[downloadCartSynId]
-      downloadCartSynIdValue =
-        downloadCartSynIdColumnIndex !== undefined
-          ? data[downloadCartSynIdColumnIndex]
-          : undefined
-    }
-    downloadCartSynIdValue = downloadCartSynIdValue?.match(
-      /syn\d+/i, // regex to extract the synapse ID from the URL
-    )?.[0]
+  const synapseEntityConfig = genericCardSchema.synapseEntityConfig
+
+  const getColumnValue = useCallback(
+    (columnName?: string) => {
+      if (!columnName) {
+        return undefined
+      }
+      const columnIndex = schema[columnName]
+      if (columnIndex === undefined) {
+        return undefined
+      }
+      return data[columnIndex]
+    },
+    [schema, data],
+  )
+
+  const {
+    entityId: resolvedSynapseEntityId,
+    entityVersionNumber: resolvedSynapseEntityVersionNumber,
+  } = useResolvedSynapseEntity({
+    synapseEntityConfig,
+    getColumnValue,
+    rowId,
+    rowVersionNumber,
+  })
+
+  let resolvedDownloadCartSynIdValue = resolvedSynapseEntityId
+  let resolvedDownloadCartVersionNumber = resolvedSynapseEntityVersionNumber
+
+  if (downloadCartSynId) {
+    const reference = parseSynId(getColumnValue(downloadCartSynId) ?? '')
+    resolvedDownloadCartSynIdValue = reference?.targetId
+    resolvedDownloadCartVersionNumber = reference?.targetVersionNumber
   }
 
   // Transform the row to a record of (columnName, value) pairs for compatibility with getCandidateDoiId
@@ -292,7 +339,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   // Overwrite the 'HOW TO DOWNLOAD' link if a synapse ID is available
   if (customLabelConfig?.isVisible(schema, data)) {
     const { key, value } = customLabelConfig
-    if (downloadCartSynIdValue) {
+    if (resolvedDownloadCartSynIdValue) {
       values.push({
         columnDisplayName: 'HOW TO DOWNLOAD',
         value: (
@@ -383,11 +430,14 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   }
 
   let croissantButton = <></>
-  if (rowId && rowVersionNumber) {
+  if (
+    resolvedSynapseEntityId != null &&
+    resolvedSynapseEntityVersionNumber != null
+  ) {
     croissantButton = (
       <CroissantButton
-        datasetId={rowId}
-        datasetVersionNumber={rowVersionNumber}
+        datasetId={resolvedSynapseEntityId}
+        datasetVersionNumber={resolvedSynapseEntityVersionNumber}
       />
     )
   }
@@ -442,14 +492,14 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       columnIconOptions={columnIconOptions}
       useStylesForDisplayedImage={Boolean(imageFileHandleIdValue)}
       cardTopContent={
-        downloadCartSynIdValue && (
+        resolvedDownloadCartSynIdValue && (
           <Collapse in={showDownloadConfirmation}>
             <EntityDownloadConfirmation
-              entityId={downloadCartSynIdValue}
-              versionNumber={downloadCartVersionNumber}
+              entityId={resolvedDownloadCartSynIdValue}
+              versionNumber={resolvedDownloadCartVersionNumber}
               handleClose={() => setShowDownloadConfirmation(false)}
               onIsLoadingChange={isLoading => {
-                setDownloadButtonDisabled(isLoading)
+                setDownloadButtonLoading(isLoading)
               }}
             />
           </Collapse>
@@ -463,7 +513,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
           <div style={{ marginTop: '20px' }}>
             <IconList
               iconConfigs={columnIconOptions.columns.dataType}
-              iconNames={JSON.parse(dataTypeIconNames)}
+              iconNames={JSON.parse(dataTypeIconNames) as string[]}
               commonIconProps={{
                 sx: { fontSize: '40px' },
               }}
@@ -474,20 +524,18 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         )
       }
       cardTopButtons={
-        <>
+        <Box sx={{ display: 'flex', gap: 1 }}>
           {croissantButton}
           {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
-          {downloadCartSynIdValue && (
-            <>
-              <GenericCardActionButton
-                onClick={() => setShowDownloadConfirmation(val => !val)}
-                variant="outlined"
-                startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
-                disabled={downloadButtonDisabled}
-              >
-                Download
-              </GenericCardActionButton>
-            </>
+          {resolvedDownloadCartSynIdValue && (
+            <GenericCardActionButton
+              onClick={() => setShowDownloadConfirmation(val => !val)}
+              variant="outlined"
+              startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
+              loading={downloadButtonLoading}
+            >
+              Download
+            </GenericCardActionButton>
           )}
           {includeCitation && doiValue && (
             <CitationPopover
@@ -500,7 +548,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
           {includeShareButton && isHeader && (
             <ShareThisPage {...sharePageLinkButtonProps} />
           )}
-        </>
+        </Box>
       }
     />
   )

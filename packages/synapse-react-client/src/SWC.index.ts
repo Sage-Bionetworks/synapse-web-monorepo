@@ -59,6 +59,12 @@ const SynapseComponents = {
   AccountLevelBadges: lazy(
     () => import('./components/AccountLevelBadges/AccountLevelBadges'),
   ),
+  AddToDownloadListConfirmationAlert: lazy(
+    () =>
+      import(
+        './components/download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert'
+      ),
+  ),
   AvailableEvaluationQueueList: lazy(
     () =>
       import('./components/ChallengeSubmission/AvailableEvaluationQueueList'),
@@ -169,6 +175,7 @@ const SynapseComponents = {
   ReviewerDashboard: lazy(
     () => import('./components/dataaccess/ReviewerDashboard'),
   ),
+  ShareThisPage: lazy(() => import('./components/ShareThisPage')),
   SkeletonButton: lazy(() => import('./components/Skeleton/SkeletonButton')),
   SqlDefinedTableEditorModal: lazy(
     () =>

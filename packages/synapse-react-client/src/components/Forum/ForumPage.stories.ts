@@ -1,5 +1,5 @@
 import { MOCK_FORUM_ID } from '@/mocks/discussion/mock_discussion'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { ForumPage } from './ForumPage'
 
 const meta = {

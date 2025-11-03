@@ -1,6 +1,6 @@
 import { mockManagedACTAccessRequirementWikiPage } from '@/mocks/mockWiki'
 import { Paper } from '@mui/material'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import { displayToast } from '../../ToastMessage/ToastMessage'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'

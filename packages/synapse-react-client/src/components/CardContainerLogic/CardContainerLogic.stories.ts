@@ -16,7 +16,7 @@ import {
   PUBLICATION,
   RELEASE_CARD,
 } from '@/utils/SynapseConstants'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { TableToGenericCardMapping } from '../GenericCard/TableRowGenericCard'
 import { StatConfig } from '../ReleaseCard'
 import {

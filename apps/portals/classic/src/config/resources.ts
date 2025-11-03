@@ -3,9 +3,9 @@ import { SearchV2Props } from 'synapse-react-client/components/SynapseTable/Sear
 export const whatWeDoSql = 'SELECT * FROM syn69806893'
 export const featuredResearchSql =
   'SELECT * FROM syn69806889 ORDER BY order ASC'
-export const publicationsSql = 'SELECT * FROM syn51407023 ORDER BY "Year" DESC'
+export const publicationsSql = 'SELECT * FROM syn69806872 ORDER BY "Year" DESC'
 export const studiesSql =
-  'SELECT * FROM syn51523775 ORDER BY isFeatured DESC, dataStatus ASC, studyName ASC'
+  'SELECT * FROM syn70760510 ORDER BY isFeatured DESC, studyName ASC'
 
 export const defaultSearchConfiguration: Omit<
   SearchV2Props,

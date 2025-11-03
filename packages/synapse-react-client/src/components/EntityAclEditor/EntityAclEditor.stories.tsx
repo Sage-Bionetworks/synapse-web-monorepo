@@ -7,7 +7,7 @@ import {
   mockFilePublicReadNoOpenData,
 } from '@/mocks/entity/mockFileEntityACLVariants'
 import mockProject from '@/mocks/entity/mockProject'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import EntityAclEditorModal, {
   EntityAclEditorModalProps,
 } from './EntityAclEditorModal'

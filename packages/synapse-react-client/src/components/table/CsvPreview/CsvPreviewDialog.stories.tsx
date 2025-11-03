@@ -1,8 +1,8 @@
 import CsvPreviewDialog, {
   CsvPreviewDialogProps,
 } from '@/components/table/CsvPreview/CsvPreviewDialog'
-import { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
+import { Meta, StoryObj } from '@storybook/react-vite'
+import { fn } from 'storybook/test'
 
 const meta: Meta<CsvPreviewDialogProps> = {
   title: 'Components/Table/CSV Preview Dialog',

@@ -48,7 +48,14 @@ export const datasetCardConfiguration: CardConfiguration = {
       'visualizeDataOn',
     ],
     dataTypeIconNames: 'dataType',
-    useRowIdAndVersionForDownloadCart: true,
+    synapseEntityConfig: {
+      id: {
+        source: 'rowId',
+      },
+      version: {
+        source: 'rowVersionNumber',
+      },
+    },
   },
   labelLinkConfig: [
     {

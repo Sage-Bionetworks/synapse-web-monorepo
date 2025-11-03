@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { SynapseSearchResultsCard } from './SynapseSearchResultsCard'
 
 const meta: Meta<typeof SynapseSearchResultsCard> = {

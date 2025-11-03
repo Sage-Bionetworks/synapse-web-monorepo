@@ -1,8 +1,8 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import StandaloneLoginForm from '../StandaloneLoginForm'
 import { displayToast } from '../../ToastMessage/ToastMessage'
 import { sessionChangeHandler } from '../../StorybookComponentWrapper'
-import { fn } from '@storybook/test'
+import { fn } from 'storybook/test'
 
 const meta = {
   title: 'Authentication/Login',

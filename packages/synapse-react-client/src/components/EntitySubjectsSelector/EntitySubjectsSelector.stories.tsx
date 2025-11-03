@@ -2,8 +2,8 @@ import {
   RestrictableObjectDescriptor,
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
-import { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
+import { Meta, StoryObj } from '@storybook/react-vite'
+import { fn } from 'storybook/test'
 import { useState } from 'react'
 import EntitySubjectsSelector from './EntitySubjectsSelector'
 

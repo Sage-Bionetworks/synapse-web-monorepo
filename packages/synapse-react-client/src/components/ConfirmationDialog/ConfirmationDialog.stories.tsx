@@ -1,10 +1,10 @@
 import { Button } from '@mui/material'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import {
   ConfirmationDialog,
   ConfirmationDialogProps,
 } from './ConfirmationDialog'
-import { fn } from '@storybook/test'
+import { fn } from 'storybook/test'
 
 const meta = {
   title: 'UI/ConfirmationDialog',

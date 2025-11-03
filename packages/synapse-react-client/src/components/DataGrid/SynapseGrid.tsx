@@ -4,7 +4,7 @@ import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeRep
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { SkeletonTable } from '@/components/index'
 import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
-import { useGetSchema } from '@/synapse-queries/index'
+import { useGetEntity, useGetSchema } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import Grid from '@mui/material/Grid'
 import {
@@ -42,6 +42,11 @@ import { modelColsToGrid } from './utils/modelColsToGrid'
 import { Stack } from '@mui/material'
 import GridAgentChat from '../SynapseChat/GridAgentChat'
 import { SmartToyTwoTone } from '@mui/icons-material'
+import {
+  renderAddRowsComponent,
+  renderRecordSetContextMenu,
+  renderViewContextMenu,
+} from './components/contextMenu'
 
 export type SynapseGridProps = {
   showDebugInfo?: boolean
@@ -152,6 +157,20 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       },
     )
 
+    // Grid behaves differently for views vs recordSets
+    // Note for future: can get modifiedOn to refresh grid when view changes
+    const { data: entityData } = useGetEntity(
+      session?.sourceEntityId,
+      undefined,
+      {
+        enabled: !!session?.sourceEntityId,
+      },
+    )
+
+    const entityIsView =
+      entityData?.concreteType ===
+      'org.sagebionetworks.repo.model.table.EntityView'
+
     // Process schema properties once
     const schemaPropertiesInfo = useMemo(() => {
       return getSchemaPropertiesInfo(jsonSchema!)
@@ -174,17 +193,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
 
     const commit = useCallback(() => {
       if (!isConnected || !websocketInstanceRef.current) {
-        return
-      }
-
-      const readyState =
-        (websocketInstanceRef.current as any)?.readyState ??
-        (websocketInstanceRef.current as any)?.socket?.readyState
-
-      if (readyState !== undefined && readyState !== WebSocket.OPEN) {
-        console.warn(
-          'WebSocket is not open. Deferring patch until connection is ready.',
-        )
         return
       }
 
@@ -402,6 +410,15 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       ref={gridRef}
                       value={rowValues}
                       columns={colValues}
+                      autoAddRow={entityIsView ? false : true}
+                      addRowsComponent={
+                        entityIsView ? false : renderAddRowsComponent
+                      }
+                      contextMenuComponent={
+                        entityIsView
+                          ? renderViewContextMenu
+                          : renderRecordSetContextMenu
+                      }
                       rowKey={GRID_ROW_REACT_KEY_PROPERTY}
                       rowClassName={({ rowData, rowIndex }) =>
                         classNames({

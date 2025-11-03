@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { useEffect } from 'react'
 import FullWidthAlert from './FullWidthAlert'
 import { SynapseNavDrawer } from '../SynapseNavDrawer/SynapseNavDrawer'

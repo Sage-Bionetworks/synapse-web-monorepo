@@ -17,11 +17,9 @@ import { grantsCardConfiguration } from '../config/synapseConfigs/grants'
 import { peopleCardConfiguration } from '../config/synapseConfigs/people'
 import { publicationsCardConfiguration } from '../config/synapseConfigs/publications'
 import { toolsConfiguration } from '../config/synapseConfigs/tools'
-import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 import ErrorPage, {
   SynapseErrorType,
 } from 'synapse-react-client/components/error/ErrorPage'
-import SharePageLinkButton from 'synapse-react-client/components/SharePageLinkButton'
 import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
 
 function PublicationsDetailsPage() {
@@ -35,7 +33,6 @@ function PublicationsDetailsPage() {
     <DetailsPage
       header={
         <>
-          <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
           <CardContainerLogic
             cardConfiguration={{
               ...publicationsCardConfiguration,

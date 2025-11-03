@@ -1,5 +1,5 @@
 import { FolderTwoTone, InsertDriveFileTwoTone } from '@mui/icons-material'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import WizardChoiceButton from './WizardChoiceButton'
 import WizardChoiceButtonGroup from './WizardChoiceButtonGroup'
 

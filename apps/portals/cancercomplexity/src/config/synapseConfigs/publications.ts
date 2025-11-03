@@ -9,6 +9,7 @@ import columnAliases from '../columnAliases'
 import { publicationSql } from '../resources'
 import { citationBoilerplateText } from './commonProps'
 import { columnIconConfigs } from './commonProps'
+import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 
 const rgbIndex = 1
 
@@ -16,6 +17,7 @@ export const publicationSchema: TableToGenericCardMapping = {
   type: SynapseConstants.PUBLICATION,
   title: 'publicationTitle',
   subTitle: 'authors',
+  includeShareButton: true,
   includeCitation: true,
   defaultCitationFormat: 'nature',
   citationBoilerplateText: citationBoilerplateText,
@@ -67,6 +69,7 @@ export const publicationsCardConfiguration: CardConfiguration = {
     },
   ],
   columnIconOptions: columnIconConfigs,
+  sharePageLinkButtonProps: sharePageLinkButtonDetailPageProps,
 }
 
 export const publicationsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {

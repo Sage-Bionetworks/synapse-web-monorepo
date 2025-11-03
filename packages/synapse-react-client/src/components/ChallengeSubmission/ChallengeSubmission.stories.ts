@@ -1,5 +1,5 @@
 import { EntityType } from '@sage-bionetworks/synapse-client'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import ChallengeSubmission from './ChallengeSubmission'
 
 const meta = {

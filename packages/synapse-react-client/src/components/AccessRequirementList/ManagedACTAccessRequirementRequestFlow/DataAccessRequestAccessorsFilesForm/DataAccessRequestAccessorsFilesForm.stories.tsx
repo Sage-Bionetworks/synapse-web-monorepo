@@ -11,7 +11,7 @@ import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers
 import { getWikiHandlers } from '@/mocks/msw/handlers/wikiHandlers'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import DataAccessRequestAccessorsFilesForm, {
   DataAccessRequestAccessorsFilesFormProps,
 } from './DataAccessRequestAccessorsFilesForm'
