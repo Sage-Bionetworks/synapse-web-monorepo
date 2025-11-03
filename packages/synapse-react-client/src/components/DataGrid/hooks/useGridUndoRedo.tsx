@@ -294,7 +294,6 @@ export function useGridUndoRedo(
         })
       }
     }
-    console.log('Adding to undo stack:', batch)
     if (batch.length === 1) {
       addToUndoStack(batch[0])
     } else if (batch.length > 1) {
