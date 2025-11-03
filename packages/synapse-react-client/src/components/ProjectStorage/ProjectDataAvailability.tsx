@@ -17,8 +17,7 @@ export function ProjectDataAvailability({
   projectId,
   sx,
 }: ProjectDataAvailabilityProps) {
-  const { accessToken } = useSynapseContext()
-  const isAuthenticated = !!accessToken
+  const { isAuthenticated } = useSynapseContext()
   const { data } = useProjectStorageUsage(projectId!, {
     enabled: !!projectId && isAuthenticated,
   })

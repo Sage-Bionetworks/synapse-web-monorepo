@@ -63,8 +63,7 @@ export type SynapseHomepageNavBarProps = {
 export function SynapseHomepageNavBar({
   gotoPlace,
 }: SynapseHomepageNavBarProps) {
-  const { accessToken } = useSynapseContext()
-  const isAuthenticated = !!accessToken
+  const { isAuthenticated } = useSynapseContext()
   const registrationLink = useOneSageURL('/register1')
   const theme = useTheme()
   const isSmallView = useMediaQuery(theme.breakpoints.down('md'))

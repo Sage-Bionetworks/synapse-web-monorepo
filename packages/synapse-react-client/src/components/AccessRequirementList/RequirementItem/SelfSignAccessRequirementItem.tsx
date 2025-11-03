@@ -34,7 +34,7 @@ export default function SelfSignAccessRequirementItem(
   props: SelfSignAccessRequirementItemProps,
 ) {
   const { accessRequirement, onHide } = props
-  const { isAuthenticated, accessToken } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
   const isTermsOfUse = isTermsOfUseAccessRequirement(accessRequirement)
 
   const { data: user } = useGetCurrentUserProfile()
@@ -100,7 +100,7 @@ export default function SelfSignAccessRequirementItem(
   }
   let actions: ButtonProps[] | undefined = undefined
 
-  if (!!accessToken && !isApproved) {
+  if (isAuthenticated && !isApproved) {
     let acceptButtonText = 'I Accept Terms of Use'
     let acceptButtonDisabled = false
     if (certificationRequirementNotMet || verificationRequirementNotMet) {

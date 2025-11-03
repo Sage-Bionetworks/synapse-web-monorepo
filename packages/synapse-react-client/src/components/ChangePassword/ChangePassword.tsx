@@ -24,8 +24,7 @@ export default function ChangePassword(props: ChangePasswordProps) {
   )
   const [confirmPassword, setConfirmPassword] = useState<string>('')
   const [userName, setUserName] = useState<string>('')
-  const { accessToken } = useSynapseContext()
-  const isAuthenticated = !!accessToken
+  const { isAuthenticated } = useSynapseContext()
 
   const { data: userProfile, isLoading: isLoadingUserProfile } =
     useGetCurrentUserProfile({

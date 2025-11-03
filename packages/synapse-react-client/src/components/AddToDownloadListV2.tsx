@@ -12,8 +12,7 @@ export type AddToDownloadListV2Props = {
 
 function AddToDownloadListV2(props: AddToDownloadListV2Props) {
   const { entityId, entityVersionNumber } = props
-  const { accessToken } = useSynapseContext()
-  const isAuthenticated = !!accessToken
+  const { isAuthenticated } = useSynapseContext()
 
   const { data: entity } = useGetEntity(entityId, entityVersionNumber)
 

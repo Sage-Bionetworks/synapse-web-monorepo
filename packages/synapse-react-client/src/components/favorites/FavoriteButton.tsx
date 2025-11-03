@@ -19,8 +19,7 @@ export type FavoriteButtonProps = {
  */
 export default function FavoriteButton(props: FavoriteButtonProps) {
   const { entityId } = props
-  const { accessToken } = useSynapseContext()
-  const isAuthenticated = !!accessToken
+  const { isAuthenticated } = useSynapseContext()
   const { isFavorite, isLoading } = useIsFavorite(entityId)
   const { mutate: onAddFavorite, isPending: isAddingFavorite } =
     useAddFavorite()
