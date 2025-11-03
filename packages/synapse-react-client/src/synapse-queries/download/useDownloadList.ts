@@ -1,13 +1,18 @@
 import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
+import {
+  AddToDownloadListRequest,
+  AddToDownloadListResponse,
+  AddToDownloadListStatsRequest,
+  AddToDownloadListStatsResponse,
+  waitForAsyncResult,
+} from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   ActionRequiredCount,
   ActionRequiredRequest,
   ActionRequiredResponse,
   AddBatchOfFilesToDownloadListResponse,
-  AddToDownloadListRequest,
-  AddToDownloadListResponse,
   AvailableFilesRequest,
   AvailableFilesResponse,
   AvailableFilter,
@@ -226,7 +231,7 @@ export function useAddFileBatchToDownloadList(
   })
 }
 
-export function useAddQueryToDownloadList(
+export function useAddToDownloadList(
   options?: Partial<
     UseMutationOptions<
       AddToDownloadListResponse,
@@ -235,12 +240,28 @@ export function useAddQueryToDownloadList(
     >
   >,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const { synapseClient, keyFactory } = useSynapseContext()
   const queryClient = useQueryClient()
   return useMutation({
     ...options,
-    mutationFn: request =>
-      SynapseClient.addFilesToDownloadListV2(request, accessToken),
+    mutationFn: async addToDownloadListRequest => {
+      const jobId = (
+        await synapseClient.downloadListServicesClient.postRepoV1DownloadListAddAsyncStart(
+          {
+            addToDownloadListRequest,
+          },
+        )
+      ).token!
+
+      const asyncJobResponse = await waitForAsyncResult(() =>
+        synapseClient.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId(
+          {
+            jobId,
+          },
+        ),
+      )
+      return asyncJobResponse.responseBody as AddToDownloadListResponse
+    },
     mutationKey: ['addQueryToDownloadList'],
     onSuccess: async (data, variables, ctx) => {
       // Invalidate all download list queries
@@ -279,6 +300,31 @@ export function useRemoveFilesFromDownloadList(
         return options.onSuccess(data, variables, ctx)
       }
       return
+    },
+  })
+}
+
+export function useGetAddToDownloadListStats(
+  addToDownloadListStatsRequest: AddToDownloadListStatsRequest,
+) {
+  const { synapseClient, keyFactory } = useSynapseContext()
+  return useQuery({
+    queryKey: keyFactory.getAddToDownloadListStatsQueryKey(
+      addToDownloadListStatsRequest,
+    ),
+    queryFn: async () => {
+      const jobId = (
+        await synapseClient.downloadListServicesClient.postRepoV1DownloadListAddStatsAsyncStart(
+          { addToDownloadListStatsRequest },
+        )
+      ).token!
+
+      const asyncJobResponse = await waitForAsyncResult(() =>
+        synapseClient.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId(
+          { jobId },
+        ),
+      )
+      return asyncJobResponse.responseBody as AddToDownloadListStatsResponse
     },
   })
 }

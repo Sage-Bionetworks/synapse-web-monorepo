@@ -1,4 +1,6 @@
 import { QueryOrDeprecatedSearchParams } from '@/components/CardContainerLogic/CardContainerLogic'
+import AddToDownloadListConfirmationAlert from '@/components/download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert'
+import { useGetAddToDownloadListRequestForCurrentQuery } from '@/components/QueryWrapper/useGetAddToDownloadListRequestForCurrentQuery'
 import { NoContentPlaceholderType } from '@/components/SynapseTable/NoContentPlaceholderType'
 import { useGetEntity } from '@/synapse-queries'
 import { SynapseConstants } from '@/utils'
@@ -14,7 +16,6 @@ import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
 import { useMemo, useState } from 'react'
 import { CardConfiguration } from '../CardContainer/CardConfiguration'
-import { TableQueryDownloadConfirmation } from '../download_list'
 import { SynapseErrorBoundary } from '../error'
 import FullTextSearch from '../FullTextSearch/FullTextSearch'
 import ModalDownload from '../ModalDownload/ModalDownload'
@@ -181,6 +182,9 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     (currentQueryRequest?.query.additionalFilters !== undefined &&
       currentQueryRequest?.query.additionalFilters.length > 0)
 
+  const addToDownloadListRequest =
+    useGetAddToDownloadListRequestForCurrentQuery()
+
   return (
     <QueryVisualizationContextConsumer>
       {queryVisualizationContext => {
@@ -215,7 +219,8 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
               )}
               <SqlEditor />
               {queryVisualizationContext.showDownloadConfirmation && (
-                <TableQueryDownloadConfirmation
+                <AddToDownloadListConfirmationAlert
+                  addToDownloadListRequest={addToDownloadListRequest}
                   onClose={() =>
                     queryVisualizationContext.setShowDownloadConfirmation(false)
                   }
