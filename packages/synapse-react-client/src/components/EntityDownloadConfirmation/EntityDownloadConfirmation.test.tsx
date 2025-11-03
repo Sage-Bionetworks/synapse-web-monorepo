@@ -138,6 +138,40 @@ describe('EntityDownloadConfirmation', () => {
     })
   })
 
+  it('shows the download confirmation UI for entityview snapshot (query) when clicked', async () => {
+    const versionNumber = 3
+    mockUseGetEntity.mockReturnValue(
+      getUseQuerySuccessMock({
+        ...mockTableEntity.entity,
+        concreteType: convertToConcreteEntityType(EntityType.entityview),
+        versionNumber,
+      }),
+    )
+
+    render(
+      <EntityDownloadConfirmation {...props} versionNumber={versionNumber} />,
+      {
+        wrapper: createWrapper(),
+      },
+    )
+
+    await waitFor(() => {
+      expect(
+        mockAddToDownloadListConfirmationAlert,
+      ).toHaveBeenRenderedWithProps(
+        {
+          addToDownloadListRequest: {
+            concreteType:
+              'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+            query: { sql: `select * from ${props.entityId}.${versionNumber}` },
+          },
+          onClose: props.handleClose,
+        },
+        { testId: 'AddToDownloadListConfirmationAlert' },
+      )
+    })
+  })
+
   it('waits for the button to disappear for other entity types', async () => {
     mockUseGetEntity.mockReturnValue(
       getUseQuerySuccessMock(mockFileEntityData.entity),

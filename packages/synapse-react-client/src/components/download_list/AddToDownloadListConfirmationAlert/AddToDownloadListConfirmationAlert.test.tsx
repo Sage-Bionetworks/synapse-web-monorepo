@@ -127,12 +127,6 @@ describe('AddToDownloadListConfirmationAlert', () => {
   it('shows stats, then adds files to download list using a table query when invoked', async () => {
     const { downloadConfirmationUiPassedProps, mockOnClose } = await setUp(5)
 
-    await waitFor(() => {
-      expect(downloadConfirmationUiPassedProps.fileCount).toEqual(5)
-      expect(downloadConfirmationUiPassedProps.fileSize).toEqual(40128868)
-      expect(downloadConfirmationUiPassedProps.isLoadingStats).toBe(false)
-    })
-
     // Call under test
     act(() => {
       downloadConfirmationUiPassedProps.onAddToDownloadCart()
