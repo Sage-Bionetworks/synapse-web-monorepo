@@ -2,6 +2,7 @@ import WideButton from '@/components/styled/WideButton'
 import { Box } from '@mui/material'
 import { useEffect } from 'react'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { useIsBot } from '@/utils/hooks/useIsBot'
 import { useSuspenseGetQueryMetadata } from './useGetQueryMetadata'
 
 export type ViewMoreQueryResultsButtonProps = {
@@ -27,6 +28,7 @@ export function ViewMoreQueryResultsButton(
   const {
     data: { queryCount },
   } = useSuspenseGetQueryMetadata()
+  const isBot = useIsBot()
 
   useEffect(() => {
     if (
@@ -40,6 +42,13 @@ export function ViewMoreQueryResultsButton(
         onRemoveInitialLimit()
     }
   }, [initialLimitIsApplied, initialLimit, queryCount, onRemoveInitialLimit])
+
+  // Automatically fetch all pages for bots
+  useEffect(() => {
+    if (isBot && hasNextPage && !isFetchingNextPage) {
+      void fetchNextPage()
+    }
+  }, [isBot, hasNextPage, isFetchingNextPage, fetchNextPage])
 
   const showViewMoreButton = initialLimitIsApplied || hasNextPage
 
