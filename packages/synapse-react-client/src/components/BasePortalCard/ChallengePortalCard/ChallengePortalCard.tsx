@@ -14,6 +14,7 @@ import { ReactComponent as LongLineImage } from '../../../assets/illustrations/l
 import { ReactComponent as ShortLineImage } from '../../../assets/illustrations/shortLine.svg'
 import { ReactComponent as TriangleImage } from '../../../assets/illustrations/triangle.svg'
 import { ReactComponent as DoubleLineImage } from '../../../assets/illustrations/doubleLine.svg'
+import { hashCode } from '@/utils/functions/StringUtils'
 
 type ChallengePortalCardProps = {
   sql: string
@@ -30,18 +31,18 @@ type ChallengePortalCardRowProps = {
 
 const colors = ['#F8CC7D', '#BFE8F4', '#CEFBDD']
 
-const generateHash = (str: string) => {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash)
-  }
-  return hash
-}
-
 const getChicletColors = (badges: string[]) => {
+  let lastColorIndex = -1
   return badges.map((badge, i) => {
-    const hash = generateHash(badge)
-    const index = Math.abs(hash + i) % colors.length
+    const hash = hashCode(badge)
+    let index = Math.abs(hash + i) % colors.length
+
+    // prevent consecutive badges from being the same color
+    if (index === lastColorIndex && colors.length > 1) {
+      index = (index + 1) % colors.length
+    }
+
+    lastColorIndex = index
     return colors[index]
   })
 }
