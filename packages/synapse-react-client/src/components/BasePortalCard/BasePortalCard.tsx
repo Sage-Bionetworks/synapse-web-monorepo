@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import styles from './BasePortalCard.module.scss'
 import { ReactNode } from 'react'
-import { CardMedia, Stack, SxProps } from '@mui/material'
+import { CardMedia, Stack } from '@mui/material'
 
 type BasePortalCardProps = {
   children?: ReactNode

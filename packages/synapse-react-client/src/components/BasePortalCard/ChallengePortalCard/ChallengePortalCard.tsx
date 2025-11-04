@@ -204,7 +204,7 @@ const ChallengePortalCard = ({
       <Box className={styles.ChallengePortalCards__container}>
         {dataRows.map((row, index) => (
           <ChallengePortalCardRow
-            key={index}
+            key={row.rowId}
             row={row}
             entityId={entityId}
             indices={indices}
