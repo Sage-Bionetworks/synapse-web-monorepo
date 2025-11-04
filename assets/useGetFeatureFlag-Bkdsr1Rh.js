@@ -1,1 +1,0 @@
-import{at as r,as as u,aa as y}from"./iframe-Dz8P-dI2.js";function i(t,a){const{keyFactory:n,isInExperimentalMode:s}=r(),{data:e}=u({staleTime:1/0,...a,queryKey:n.getFeatureFlagQueryKey(),queryFn:()=>y.getFeatureFlags()});return s||!!(e!=null&&e[t])}export{i as u};
