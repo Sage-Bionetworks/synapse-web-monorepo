@@ -10,30 +10,27 @@ Focus on structure, correct file placement, and accuracy of the design.
 
 # Code Conventions
 
-1. Analyze the layout, typography (including font weight), spacing, background colors, and interactions visible in the image.
+- Analyze the layout, typography (including font weight), spacing, background colors, and interactions visible in the image.
+- Use MUI components (`Box`, `Stack`, `Typography`, `Button`, etc.) for all layout, structure, and typography. Do not use raw HTML elements unless no MUI equivalent exists.
+- Define explicit prop types and interfaces for all props, even if the component is not generic.
+- Use minimal, named props; define data within the component unless generic/reusable.
+- Use arrow function syntax for all components. Do not use class components or `React.FC`.
+- Export components as default, and use named exports for subcomponents if needed.
+- Use SCSS modules for styling, following BEM-style naming and leveraging SRC variables.
+- Implement responsive design using SRC breakpoints.
+- Do not add any styling, features, or UI elements that are not present in the design image.
 
-   - Use MUI components (`Box`, `Stack`, `Typography`, `Button`, etc.) for all layout, structure, and typography. Do not use raw HTML elements unless no MUI equivalent exists.
-   - Define explicit prop types and interfaces for all props, even if the component is not generic.
-     - Use minimal props; define data within the component unless generic/reusable.
-   - Use arrow function syntax for all components. Do not use class components or `React.FC`.
-   - Export components as default, and use named exports for subcomponents if needed.
-   - Use global selectors to style MUI components (e.g., `.statHeaderText:global(.MuiTypography-root)`).
-   - Implement responsive design using SRC breakpoints.
-   - Always create and update the appropriate export files (`index.ts` for generic, `components/index.ts` for portal-specific).
-   - For generic components, also create a Storybook file.
-   - Do not add any styling, features, or UI elements that are not present in the design image.
+```tsx
+const StatContainer = () => (
+  // ...component JSX...
+)
 
-   ```tsx
-   const StatContainer = () => (
-     // ...component JSX...
-   )
+export default StatContainer
+```
 
-   export default StatContainer
-   ```
-
-   - Do not use class components.
-   - Use named props for clarity.
-   - See the example above for structure.
+- Do not use class components.
+- Use named props for clarity.
+- See the example above for structure.
 
 ## Examples
 
@@ -96,32 +93,7 @@ Do not paraphrase, summarize, or alter the text in any way.
 - In your SCSS module, use the following import statement:
   ```scss
   @use '../../style/abstracts/variables' as SrcVariables;
+  @use 'sass:map';
   ```
   (Adjust the relative path as needed based on your component’s location.)
-- Reference variables using the `SrcVariables` namespace, for example: `SrcVariables.$primary-color`.
-- Do **not** use `@import` or hardcoded paths to `SRCVariables.scss`.
-- Always use the `@use` syntax and the correct relative path as shown above. This ensures consistency and compatibility with the codebase’s styling conventions.
-
-## SCSS Breakpoint Example
-
-When using breakpoints in your SCSS module, always reference the `$breakpoints` map from `SrcVariables` using the `map.get` function. **You must also import the Sass map module:**
-
-```scss
-@use '../../style/abstracts/variables' as SrcVariables;
-@use 'sass:map';
-
-.UserProfileCard {
-  // ...base styles...
-
-  @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
-    // Responsive styles for large screens and below
-    // e.g., adjust padding, font-size, layout, etc.
-  }
-}
-```
-
-- Always use `@use` to import variables and the Sass map module.
-- Use `map.get(SrcVariables.$breakpoints, 'breakpointName')` for responsive media queries.
-- Do not hardcode pixel values for breakpoints.
-
-Example breakpoint names: `'small'`, `'medium'`, `'large'`, `'xlarge'` (use those defined in `SrcVariables.$breakpoints`).
+- Reference breakpoints with `map.get(SrcVariables.$breakpoints, 'breakpointName')`.

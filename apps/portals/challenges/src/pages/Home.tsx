@@ -9,26 +9,27 @@ import {
   metricsSql,
   partnersSql,
   featuredTeamSql,
+  newChallengesSql,
 } from '@/config/resources'
 import {
   challengeTitleLinkConfig,
   challengeCardConfiguration,
 } from '@/config/synapseConfig/challenges'
 import { PortalFeaturedPartners } from 'synapse-react-client'
-import PortalCard from 'synapse-react-client/components/PortalCard/PortalCard'
+import { PortalCard } from 'synapse-react-client/components/BasePortalCard'
 
 function Home() {
   return (
     <>
       <ChallengeHeader />
       <ChallengeMetrics sql={metricsSql} />
-      <PortalCard />
       <PortalFeaturedPartners
         variation="centered"
         sql={partnersSql}
         titleText="Our Challenge Partners"
         sx={{ marginBottom: '160px' }}
       />
+      <PortalCard variant="challenge" sql={newChallengesSql} borderRadius={4} />
       <ChallengeFeaturedTeam sql={featuredTeamSql} />
       <SectionLayout
         title="Listed Challenges"
