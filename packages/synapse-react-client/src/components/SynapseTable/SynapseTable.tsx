@@ -125,7 +125,7 @@ export function SynapseTable(props: SynapseTableProps) {
     }),
     [columnLinks, showExternalAccessIcon],
   )
-  const isAuthenticated = !!useSynapseContext().accessToken
+  const { isAuthenticated } = useSynapseContext()
 
   const [isExportTableDownloadOpen, setIsExportTableDownloadOpen] =
     useState(false)
