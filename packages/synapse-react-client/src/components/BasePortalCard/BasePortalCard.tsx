@@ -4,8 +4,6 @@ import { ReactNode } from 'react'
 import { CardMedia, Stack, SxProps } from '@mui/material'
 
 type BasePortalCardProps = {
-  sql?: string
-  variant?: 'challenge'
   children?: ReactNode
   contentBelowCard?: ReactNode
   /** border radius in px */
@@ -13,7 +11,6 @@ type BasePortalCardProps = {
   boxShadow?: string
   cardSize?: 'small' | 'medium' | 'large'
   backgroundImage?: string
-  backgroundImageSx?: SxProps
   backgroundColor?: string
   className?: string
 }

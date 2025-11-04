@@ -92,13 +92,11 @@ const ChallengePortalCardRow = ({
     const parsed = JSON.parse(value ?? '[]')
     badges = Array.isArray(parsed) ? parsed.map(String) : [String(parsed)]
   } catch {
-    badges = [String(value)]
+    badges = value ? [String(value)] : []
   }
 
   return (
     <BasePortalCard
-      variant="challenge"
-      sql={sql}
       borderRadius={borderRadius}
       backgroundImage={imageUrl}
       backgroundColor={row.values[BACKGROUND_COLOR] ?? ''}
