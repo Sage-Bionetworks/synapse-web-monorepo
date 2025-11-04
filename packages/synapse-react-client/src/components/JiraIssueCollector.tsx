@@ -115,15 +115,15 @@ export function useJiraIssueCollector(config: UseJiraIssueCollectorConfig) {
     componentId,
   } = config
 
-  const { accessToken } = useSynapseContext()
+  const { accessToken, isAuthenticated } = useSynapseContext()
 
   const { data: currentUser, isLoading: profileIsLoading } =
     useGetCurrentUserProfile({
-      enabled: !!accessToken,
+      enabled: isAuthenticated,
     })
   const { data: notificationEmail, isLoading: emailIsLoading } =
     useGetNotificationEmail({
-      enabled: !!accessToken,
+      enabled: isAuthenticated,
     })
 
   useEffect(() => {

@@ -9,22 +9,20 @@ import RequirementItem from './RequirementItem'
  * Displays a data access request requirement prompts the user to authenticate if not already signed in.
  */
 export default function AuthenticatedRequirement() {
-  const { accessToken } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
   const { data: userProfile } = useGetCurrentUserProfile()
 
   const registrationUrl = useOneSageURL('/register1')
 
-  const isSignedIn = !!accessToken
-
   return (
     <RequirementItem
       status={
-        isSignedIn
+        isAuthenticated
           ? RequirementItemStatus.COMPLETE
           : RequirementItemStatus.LOCKED
       }
     >
-      {!isSignedIn && (
+      {!isAuthenticated && (
         <>
           <Typography variant={'body1'}>
             <Link className={SynapseConstants.SRC_SIGN_IN_CLASS}>Sign in</Link>{' '}
@@ -34,7 +32,7 @@ export default function AuthenticatedRequirement() {
           </Typography>
         </>
       )}
-      {isSignedIn && (
+      {isAuthenticated && (
         <Typography variant={'body1'}>
           You have signed in with the Sage Platform (Synapse) user account{' '}
           <b>{userProfile?.userName}@synapse.org</b>

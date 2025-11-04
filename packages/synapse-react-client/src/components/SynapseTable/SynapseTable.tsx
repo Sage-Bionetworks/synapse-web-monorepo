@@ -125,7 +125,7 @@ export function SynapseTable(props: SynapseTableProps) {
     }),
     [columnLinks, showExternalAccessIcon],
   )
-  const isLoggedIn = !!useSynapseContext().accessToken
+  const { isAuthenticated } = useSynapseContext()
 
   const [isExportTableDownloadOpen, setIsExportTableDownloadOpen] =
     useState(false)
@@ -141,7 +141,7 @@ export function SynapseTable(props: SynapseTableProps) {
   )
   const rowsAreDownloadable =
     entity &&
-    isLoggedIn &&
+    isAuthenticated &&
     ((isFileViewOrDataset(entity) && allRowsHaveId(rowSet)) || fileIdColumnName)
 
   const isShowingDirectDownloadColumn = Boolean(

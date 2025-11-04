@@ -56,8 +56,7 @@ const synapseQuickLinks: SynapseSettingLink[] = [
 
 export default function Navbar() {
   const { navbarConfig, logoHeaderConfig } = usePortalContext()
-  const { accessToken } = useSynapseContext()
-  const isSignedIn = !!accessToken
+  const { isAuthenticated } = useSynapseContext()
   const navigate = useNavigate()
   const { data: userProfile } = useGetCurrentUserProfile()
   const { isPortalsDropdownEnabled } = navbarConfig
@@ -170,7 +169,7 @@ export default function Navbar() {
           <span>&#10005;</span>
         </div>
         <div className="nav-link-container">
-          {isSignedIn &&
+          {isAuthenticated &&
             isSynapseSubdomainOrLocal && ( // mobile sign out
               <div className="center-content nav-button nav-button-signin mobile-signout-container">
                 <Button
@@ -186,7 +185,7 @@ export default function Navbar() {
                 </Button>
               </div>
             )}
-          {!isSignedIn &&
+          {!isAuthenticated &&
             isSynapseSubdomainOrLocal && ( // desktop sign in
               <div className="center-content nav-button-signin">
                 <Button
@@ -204,7 +203,7 @@ export default function Navbar() {
               </div>
             )}
 
-          {isSignedIn &&
+          {isAuthenticated &&
             userProfile &&
             isSynapseSubdomainOrLocal && ( // desktop version, show dropdown
               <>
@@ -313,7 +312,7 @@ export default function Navbar() {
                 </div>
               </>
             )}
-          {isSignedIn && (
+          {isAuthenticated && (
             <ShowDownloadV2
               className="nav-button nav-button-container center-content"
               to="/DownloadCart"

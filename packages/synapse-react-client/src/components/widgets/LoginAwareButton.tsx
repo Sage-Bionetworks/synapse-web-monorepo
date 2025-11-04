@@ -8,8 +8,7 @@ export type LoginAwareButtonProps = ButtonProps &
   Partial<Pick<LinkProps, 'to' | 'replace'>>
 
 export function LoginAwareButton(props: LoginAwareButtonProps) {
-  const { accessToken } = useSynapseContext()
-  const isSignedIn = !!accessToken
+  const { isAuthenticated } = useSynapseContext()
   const mergedProps = { ...props }
   const linkProps = {
     to: props.to,
@@ -17,13 +16,13 @@ export function LoginAwareButton(props: LoginAwareButtonProps) {
   }
   delete mergedProps.to
   delete mergedProps.replace
-  if (!isSignedIn) {
+  if (!isAuthenticated) {
     /* If token is missing, add css class to flag button to require login before continuing */
     delete mergedProps.href
     mergedProps.className = SRC_SIGN_IN_CLASS
   }
   let linkBtn = <Button {...mergedProps}>{mergedProps.children}</Button>
-  if (isSignedIn && linkProps.to && !mergedProps.href) {
+  if (isAuthenticated && linkProps.to && !mergedProps.href) {
     linkBtn = (
       <Link to={linkProps.to} replace={linkProps.replace}>
         {linkBtn}
