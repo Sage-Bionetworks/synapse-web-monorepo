@@ -30,7 +30,7 @@ type ChallengePortalCardRowProps = {
 
 const colors = ['#F8CC7D', '#BFE8F4', '#CEFBDD']
 
-const simpleHash = (str: string) => {
+const generateHash = (str: string) => {
   let hash = 0
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash)
@@ -40,7 +40,7 @@ const simpleHash = (str: string) => {
 
 const getChicletColors = (badges: string[]) => {
   return badges.map((badge, i) => {
-    const hash = simpleHash(badge)
+    const hash = generateHash(badge)
     const index = Math.abs(hash + i) % colors.length
     return colors[index]
   })
