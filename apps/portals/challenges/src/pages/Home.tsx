@@ -16,7 +16,7 @@ import {
   challengeCardConfiguration,
 } from '@/config/synapseConfig/challenges'
 import { PortalFeaturedPartners } from 'synapse-react-client'
-import { PortalCard } from 'synapse-react-client/components/BasePortalCard'
+import NewChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/NewChallengesSection/NewChallengesSection'
 
 function Home() {
   return (
@@ -29,7 +29,7 @@ function Home() {
         titleText="Our Challenge Partners"
         sx={{ marginBottom: '160px' }}
       />
-      <PortalCard variant="challenge" sql={newChallengesSql} borderRadius={4} />
+      <NewChallengesSection sql={newChallengesSql} borderRadiusPx={4} />
       <ChallengeFeaturedTeam sql={featuredTeamSql} />
       <SectionLayout
         title="Listed Challenges"

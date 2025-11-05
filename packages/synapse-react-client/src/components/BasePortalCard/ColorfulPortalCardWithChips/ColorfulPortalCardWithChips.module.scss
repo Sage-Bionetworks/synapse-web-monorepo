@@ -1,11 +1,11 @@
 @use 'sass:map';
 @use '../../../style/abstracts/variables' as SrcVariables;
 
-.ChallengePortalCard__root {
+.ColorfulPortalCardWithChips__root {
   position: relative;
 }
 
-.ChallengePortalCards__container {
+.ColorfulPortalCardWithChips__container {
   height: 100%;
   display: flex;
   justify-content: center;
@@ -21,11 +21,11 @@
   }
 }
 
-.ChallengePortalCard__titleSection {
+.ColorfulPortalCardWithChips__titleSection {
   color: #fff;
 }
 
-.ChallengePortalCard__sectionTitle:global(.MuiTypography-root) {
+.ColorfulPortalCardWithChips__sectionTitle:global(.MuiTypography-root) {
   color: var(--black);
   margin-bottom: 25px;
   font-size: 48px;
@@ -33,22 +33,22 @@
   text-align: center;
 }
 
-.ChallengePortalCard__challengeName:global(.MuiTypography-root) {
+.ColorfulPortalCardWithChips__challengeName:global(.MuiTypography-root) {
   font-weight: 300;
 }
 
-.ChallengePortalCard__sectionContainer {
+.ColorfulPortalCardWithChips__sectionContainer {
   height: 100%;
 }
 
-.ChallengePortalCard__topSection {
+.ColorfulPortalCardWithChips__topSection {
   flex: 0 0 60%;
   min-height: 0;
   gap: 20px;
   padding: 30px;
 }
 
-.ChallengePortalCard__bottomSection {
+.ColorfulPortalCardWithChips__bottomSection {
   flex: 0 0 40%;
   min-height: 0;
   flex-grow: 1;
@@ -58,24 +58,24 @@
   align-items: flex-start;
 }
 
-.ChallengePortalCard__registrationStatus:global(.MuiChip-root) {
+.ColorfulPortalCardWithChips__registrationStatus:global(.MuiChip-root) {
   margin-left: auto;
   color: var(--gray-900);
 }
 
-.ChallengePortalCard__chipsContainer {
+.ColorfulPortalCardWithChips__chipsContainer {
   display: flex;
   gap: 5px;
   flex-wrap: wrap;
   max-width: 400px;
 }
 
-.ChallengePortalCard__backgroundImage:global(.MuiCardMedia-root) {
+.ColorfulPortalCardWithChips__backgroundImage:global(.MuiCardMedia-root) {
   background-size: 100% 60%;
   background-position: top;
 }
 
-.ChallengePortalCard__learnMoreButton:global(.MuiButton-root) {
+.ColorfulPortalCardWithChips__learnMoreButton:global(.MuiButton-root) {
   display: flex;
   height: 36px;
   padding: 6px 16px;
@@ -88,26 +88,28 @@
   }
 }
 
-.ChallengePortalCard__chip {
+.ColorfulPortalCardWithChips__chip {
   flex-direction: row-reverse;
   padding-right: 0;
   gap: 5px;
   margin-bottom: 5px;
 }
 
-.ChallengePortalCard__chip:global(.MuiChip-root) :global(.MuiChip-label) {
+.ColorfulPortalCardWithChips__chip:global(.MuiChip-root)
+  :global(.MuiChip-label) {
   padding-right: 0;
   color: var(--gray-900);
 }
 
-.ChallengePortalCard__chip:global(.MuiChip-root) :global(.MuiChip-icon) {
+.ColorfulPortalCardWithChips__chip:global(.MuiChip-root)
+  :global(.MuiChip-icon) {
   margin-left: 0;
   margin-right: 5px;
   padding-right: 5px;
   color: var(--black);
 }
 
-.ChallengePortalCard__triangleImage {
+.ColorfulPortalCardWithChips__triangleImage {
   position: absolute;
   left: 10%;
   bottom: 100%;
@@ -119,7 +121,7 @@
   }
 }
 
-.ChallengePortalCard__circleImage {
+.ColorfulPortalCardWithChips__circleImage {
   position: absolute;
   left: 10%;
   top: 4%;
@@ -132,7 +134,7 @@
   }
 }
 
-.ChallengePortalCard__doubleLineImage {
+.ColorfulPortalCardWithChips__doubleLineImage {
   display: flex;
   position: absolute;
   left: 42%;
@@ -146,7 +148,7 @@
   }
 }
 
-.ChallengePortalCard__longLineImage {
+.ColorfulPortalCardWithChips__longLineImage {
   position: absolute;
   right: 10%;
   bottom: 100%;
@@ -159,7 +161,7 @@
   }
 }
 
-.ChallengePortalCard__shortLineImage {
+.ColorfulPortalCardWithChips__shortLineImage {
   position: absolute;
   right: 7%;
   transform: translateX(-50%);
