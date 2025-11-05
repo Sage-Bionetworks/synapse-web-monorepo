@@ -11,7 +11,6 @@ type ColorfulPortalCardWithChipsProps = {
   row: Row
   entityId: string | undefined
   indices: Record<string, number>
-  sql: string
   borderRadiusPx?: number
 }
 
