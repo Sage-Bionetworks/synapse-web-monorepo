@@ -40,7 +40,6 @@ export const Default = () => {
       row={mockRow}
       entityId={entityId}
       indices={mockIndices}
-      sql={newChallengesSql}
       borderRadiusPx={8}
     />
   )
