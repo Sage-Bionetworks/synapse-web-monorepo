@@ -5,16 +5,16 @@ type PortalCardProps = {
   /** The variant of the portal card. Add more portal variants here. */
   variant: 'challenge'
   /** border radius in px */
-  borderRadius?: number
+  borderRadiusPx?: number
 }
 
-const PortalCard = ({ sql, variant, borderRadius }: PortalCardProps) => {
+const PortalCard = ({ sql, variant, borderRadiusPx }: PortalCardProps) => {
   switch (variant) {
     case 'challenge':
       if (!sql) {
         throw new Error('The "challenge" variant requires an SQL statement.')
       }
-      return <ChallengePortalCard sql={sql} borderRadius={borderRadius} />
+      return <ChallengePortalCard sql={sql} borderRadiusPx={borderRadiusPx} />
   }
 }
 

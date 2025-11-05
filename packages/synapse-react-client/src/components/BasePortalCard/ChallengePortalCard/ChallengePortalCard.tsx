@@ -18,7 +18,7 @@ import { hashCode } from '@/utils/functions/StringUtils'
 
 type ChallengePortalCardProps = {
   sql: string
-  borderRadius?: number
+  borderRadiusPx?: number
 }
 
 type ChallengePortalCardRowProps = {
@@ -26,18 +26,18 @@ type ChallengePortalCardRowProps = {
   entityId: string | undefined
   indices: Record<string, number>
   sql: string
-  borderRadius?: number
+  borderRadiusPx?: number
 }
 
 const colors = ['#F8CC7D', '#BFE8F4', '#CEFBDD']
 
-const getChicletColors = (badges: string[]) => {
+const getChicletColors = (chips: string[]) => {
   let lastColorIndex = -1
-  return badges.map((badge, i) => {
-    const hash = hashCode(badge)
+  return chips.map((chip, i) => {
+    const hash = hashCode(chip)
     let index = Math.abs(hash + i) % colors.length
 
-    // prevent consecutive badges from being the same color
+    // prevent consecutive chips from being the same color
     if (index === lastColorIndex && colors.length > 1) {
       index = (index + 1) % colors.length
     }
@@ -47,16 +47,16 @@ const getChicletColors = (badges: string[]) => {
   })
 }
 
-const Chips = ({ badges }: { badges: string[] }) => {
-  const badgeColors = getChicletColors(badges)
+const Chips = ({ values }: { values: string[] }) => {
+  const chipColors = getChicletColors(values)
   return (
     <Box className={styles.ChallengePortalCard__chipsContainer}>
-      {badges.map((badge, index) => (
+      {values.map((chip, index) => (
         <Chip
-          key={badge}
-          label={<Typography variant="smallText1">{badge}</Typography>}
+          key={chip}
+          label={<Typography variant="smallText1">{chip}</Typography>}
           variant="filled"
-          style={{ backgroundColor: badgeColors[index] }}
+          style={{ backgroundColor: chipColors[index] }}
           icon={<Close fontSize="small" />}
           className={styles.ChallengePortalCard__chip}
         />
@@ -69,15 +69,14 @@ const ChallengePortalCardRow = ({
   row,
   entityId,
   indices,
-  sql,
-  borderRadius,
+  borderRadiusPx,
 }: ChallengePortalCardRowProps) => {
   const {
     TITLE,
     CHALLENGE_NAME,
     DESCRIPTION,
     LEARN_MORE_LINK,
-    BADGES,
+    CHIPS,
     REGISTRATION_STATUS,
     BACKGROUND_IMAGE,
     BACKGROUND_COLOR,
@@ -86,22 +85,22 @@ const ChallengePortalCardRow = ({
   const backgroundImageId = row.values[BACKGROUND_IMAGE] || ''
   const imageUrl = useImageUrl(backgroundImageId, entityId ?? '')
 
-  const value = row.values[BADGES]
-  let badges: string[]
+  const value = row.values[CHIPS]
+  let chips: string[]
   try {
     const parsed = JSON.parse(value ?? '[]')
-    badges = Array.isArray(parsed) ? parsed.map(String) : [String(parsed)]
+    chips = Array.isArray(parsed) ? parsed.map(String) : [String(parsed)]
   } catch {
-    badges = value ? [String(value)] : []
+    chips = value ? [String(value)] : []
   }
 
   return (
     <BasePortalCard
-      borderRadius={borderRadius}
+      borderRadiusPx={borderRadiusPx}
       backgroundImage={imageUrl}
       backgroundColor={row.values[BACKGROUND_COLOR] ?? ''}
       className={styles.ChallengePortalCard__backgroundImage}
-      contentBelowCard={badges.length > 0 && <Chips badges={badges} />}
+      contentBelowCard={chips.length > 0 && <Chips values={chips} />}
     >
       <Stack className={styles.ChallengePortalCard__sectionContainer}>
         <Stack className={styles.ChallengePortalCard__topSection}>
@@ -148,7 +147,7 @@ const ChallengePortalCardRow = ({
 
 const ChallengePortalCard = ({
   sql,
-  borderRadius,
+  borderRadiusPx,
 }: ChallengePortalCardProps) => {
   const { entityId } = parseEntityIdAndVersionFromSqlStatement(sql)
 
@@ -169,7 +168,7 @@ const ChallengePortalCard = ({
     CHALLENGE_NAME: 'challengeName',
     DESCRIPTION: 'description',
     LEARN_MORE_LINK: 'learnMoreLink',
-    BADGES: 'badges',
+    CHIPS: 'chips',
     REGISTRATION_STATUS: 'registrationStatus',
     BACKGROUND_IMAGE: 'backgroundImage',
     BACKGROUND_COLOR: 'cardColor',
@@ -202,14 +201,14 @@ const ChallengePortalCard = ({
         </Typography>
       </Box>
       <Box className={styles.ChallengePortalCards__container}>
-        {dataRows.map((row, index) => (
+        {dataRows.map(row => (
           <ChallengePortalCardRow
             key={row.rowId}
             row={row}
             entityId={entityId}
             indices={indices}
             sql={sql}
-            borderRadius={borderRadius}
+            borderRadiusPx={borderRadiusPx}
           />
         ))}
       </Box>

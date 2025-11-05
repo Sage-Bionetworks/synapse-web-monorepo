@@ -6,8 +6,7 @@ import { CardMedia, Stack } from '@mui/material'
 type BasePortalCardProps = {
   children?: ReactNode
   contentBelowCard?: ReactNode
-  /** border radius in px */
-  borderRadius?: number
+  borderRadiusPx?: number
   boxShadow?: string
   cardSize?: 'small' | 'medium' | 'large'
   backgroundImage?: string
@@ -16,7 +15,7 @@ type BasePortalCardProps = {
 }
 
 const BasePortalCard = ({
-  borderRadius,
+  borderRadiusPx,
   boxShadow,
   children,
   contentBelowCard,
@@ -28,16 +27,16 @@ const BasePortalCard = ({
   <Stack>
     <CardMedia
       image={backgroundImage}
-      className={`${className} ${styles.PortalCard} ${styles[cardSize]}`}
+      className={`${className} ${styles.BasePortalCard__root} ${styles[cardSize]}`}
       sx={{
         backgroundColor: backgroundColor,
-        borderRadius: borderRadius,
+        borderRadius: borderRadiusPx,
         boxShadow: boxShadow,
       }}
     >
       {children}
     </CardMedia>
-    <Box className={styles.ChallengePortalCard__contentBelow}>
+    <Box className={styles.BasePortalCard__contentBelow}>
       {contentBelowCard}
     </Box>
   </Stack>
