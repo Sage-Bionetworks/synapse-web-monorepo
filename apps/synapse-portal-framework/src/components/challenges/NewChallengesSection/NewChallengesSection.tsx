@@ -10,9 +10,7 @@ import { ReactComponent as CircleImage } from '../assets/circle.svg'
 import { ReactComponent as LongLineImage } from '../assets/longLine.svg'
 import { ReactComponent as ShortLineImage } from '../assets/shortLine.svg'
 import { ReactComponent as DoubleLineImage } from '../assets/doubleLine.svg'
-import ColorfulPortalCardWithChips, {
-  PortalCardColumnMapping,
-} from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
+import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
 
 type NewChallengesSectionProps = {
   sql: string
@@ -37,24 +35,6 @@ const NewChallengesSection = ({
   const { data: queryResultBundle } =
     useGetQueryResultBundle(queryBundleRequest)
 
-  const columnMapping: PortalCardColumnMapping = {
-    title: 'title',
-    subtitle: 'challengeName',
-    description: 'description',
-    learnMoreLink: 'learnMoreLink',
-    chips: 'chips',
-    tag: 'registrationStatus',
-    backgroundImage: 'backgroundImage',
-    backgroundColor: 'cardColor',
-  }
-
-  const indices = Object.fromEntries(
-    Object.entries(columnMapping).map(([key, name]) => [
-      key,
-      getFieldIndex(name, queryResultBundle),
-    ]),
-  )
-
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
   return (
@@ -75,15 +55,60 @@ const NewChallengesSection = ({
         </Typography>
       </Box>
       <Box className={styles.NewChallengesSection__container}>
-        {dataRows.map(row => (
-          <ColorfulPortalCardWithChips
-            key={row.rowId}
-            row={row}
-            entityId={entityId}
-            indices={indices}
-            borderRadiusPx={borderRadiusPx}
-          />
-        ))}
+        {dataRows.map(row => {
+          const chips = row.values[getFieldIndex('chips', queryResultBundle)]
+          let chipsArray: string[]
+
+          if (Array.isArray(chips)) {
+            chipsArray = chips.map(String)
+          } else {
+            try {
+              const parsed = JSON.parse(chips ?? '[]')
+              chipsArray = Array.isArray(parsed)
+                ? parsed.map(String)
+                : [String(parsed)]
+            } catch {
+              chipsArray = chips ? [String(chips)] : []
+            }
+          }
+
+          return (
+            <ColorfulPortalCardWithChips
+              key={row.rowId}
+              title={
+                row.values[getFieldIndex('title', queryResultBundle)] ?? ''
+              }
+              subtitle={
+                row.values[getFieldIndex('challengeName', queryResultBundle)] ??
+                ''
+              }
+              description={
+                row.values[getFieldIndex('description', queryResultBundle)] ??
+                ''
+              }
+              learnMoreLink={
+                row.values[getFieldIndex('learnMoreLink', queryResultBundle)] ??
+                ''
+              }
+              chips={chipsArray}
+              tag={
+                row.values[
+                  getFieldIndex('registrationStatus', queryResultBundle)
+                ] ?? ''
+              }
+              backgroundImage={
+                row.values[
+                  getFieldIndex('backgroundImage', queryResultBundle)
+                ] ?? ''
+              }
+              backgroundColor={
+                row.values[getFieldIndex('cardColor', queryResultBundle)] ?? ''
+              }
+              entityId={entityId}
+              borderRadiusPx={borderRadiusPx}
+            />
+          )
+        })}
       </Box>
     </Box>
   )

@@ -5,24 +5,18 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { useImageUrl } from '@/utils/hooks/useImageUrlUtils'
 import { Close } from '@mui/icons-material'
 import { hashCode } from '@/utils/functions/StringUtils'
-import { Row } from '@sage-bionetworks/synapse-types'
 
 type ColorfulPortalCardWithChipsProps = {
-  row: Row
-  entityId: string | undefined
-  indices: Record<string, number>
-  borderRadiusPx?: number
-}
-
-export type PortalCardColumnMapping = {
   title?: string
   subtitle?: string
   description?: string
   learnMoreLink?: string
-  chips?: string
-  tag?: string
+  chips?: string[]
   backgroundImage?: string
   backgroundColor?: string
+  tag?: string
+  entityId?: string
+  borderRadiusPx?: number
 }
 
 const colors = ['#F8CC7D', '#BFE8F4', '#CEFBDD']
@@ -62,73 +56,57 @@ const Chips = ({ values }: { values: string[] }) => {
 }
 
 const ColorfulPortalCardWithChips = ({
-  row,
+  title,
+  subtitle,
+  description,
+  learnMoreLink,
+  chips,
+  backgroundImage,
+  backgroundColor,
+  tag,
   entityId,
-  indices,
   borderRadiusPx,
 }: ColorfulPortalCardWithChipsProps) => {
-  const {
-    title,
-    subtitle,
-    description,
-    learnMoreLink,
-    chips,
-    backgroundImage,
-    backgroundColor,
-    tag,
-  } = indices
-
-  const backgroundImageId = row.values[backgroundImage] || ''
-  const imageUrl = useImageUrl(backgroundImageId, entityId ?? '')
-
-  const value = row.values[chips]
-  let chipsArray: string[]
-  try {
-    const parsed = JSON.parse(value ?? '[]')
-    chipsArray = Array.isArray(parsed) ? parsed.map(String) : [String(parsed)]
-  } catch {
-    chipsArray = value ? [String(value)] : []
-  }
+  const imageUrl = useImageUrl(backgroundImage ?? '', entityId ?? '')
+  const backgroundImageValue = imageUrl ?? backgroundImage
 
   return (
     <BasePortalCard
       borderRadiusPx={borderRadiusPx}
-      backgroundImage={imageUrl}
-      backgroundColor={row.values[backgroundColor] ?? ''}
+      backgroundImage={backgroundImageValue}
+      backgroundColor={backgroundColor ?? ''}
       className={styles.ColorfulPortalCardWithChips__backgroundImage}
-      contentBelowCard={chipsArray.length > 0 && <Chips values={chipsArray} />}
+      contentBelowCard={chips && chips.length > 0 && <Chips values={chips} />}
     >
       <Stack className={styles.ColorfulPortalCardWithChips__sectionContainer}>
         <Stack className={styles.ColorfulPortalCardWithChips__topSection}>
-          {row.values[tag] && (
+          {tag && (
             <Chip
               color="secondary"
               variant="filled"
               className={styles.ColorfulPortalCardWithChips__registrationStatus}
-              sx={{ backgroundColor: row.values[backgroundColor] }}
-              label={row.values[tag]}
+              sx={{ backgroundColor }}
+              label={tag}
             />
           )}
           <Stack className={styles.ColorfulPortalCardWithChips__titleSection}>
-            <Typography variant="headline1">{row.values[title]} </Typography>
+            <Typography variant="headline1">{title} </Typography>
             <Typography
               variant="headline1"
               className={styles.ColorfulPortalCardWithChips__challengeName}
             >
-              {row.values[subtitle]}
+              {subtitle}
             </Typography>
           </Stack>
         </Stack>
         <Stack className={styles.ColorfulPortalCardWithChips__bottomSection}>
-          <Typography variant="smallText1">
-            {row.values[description]}
-          </Typography>
-          {row.values[learnMoreLink] && (
+          <Typography variant="smallText1">{description}</Typography>
+          {learnMoreLink && (
             <Button
               className={styles.ColorfulPortalCardWithChips__learnMoreButton}
               variant="outlined"
               endIcon={<ArrowForwardIcon />}
-              href={row.values[learnMoreLink]}
+              href={learnMoreLink}
               target="_blank"
               rel="noopener noreferrer"
             >
