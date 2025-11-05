@@ -22,17 +22,9 @@ type ColorfulPortalCardWithChipsProps = {
 const colors = ['#F8CC7D', '#BFE8F4', '#CEFBDD']
 
 const getChicletColors = (chips: string[]) => {
-  let lastColorIndex = -1
   return chips.map((chip, i) => {
     const hash = hashCode(chip)
-    let index = Math.abs(hash + i) % colors.length
-
-    // prevent consecutive chips from being the same color
-    if (index === lastColorIndex && colors.length > 1) {
-      index = (index + 1) % colors.length
-    }
-
-    lastColorIndex = index
+    const index = Math.abs(hash) % colors.length
     return colors[index]
   })
 }
