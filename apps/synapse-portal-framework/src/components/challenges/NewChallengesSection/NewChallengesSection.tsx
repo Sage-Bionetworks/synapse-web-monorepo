@@ -81,7 +81,6 @@ const NewChallengesSection = ({
             row={row}
             entityId={entityId}
             indices={indices}
-            sql={sql}
             borderRadiusPx={borderRadiusPx}
           />
         ))}
