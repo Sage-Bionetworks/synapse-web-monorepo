@@ -18,7 +18,10 @@ function ToolDetailsPageObservationsTab() {
         {
           id: 'naturalHistoryObservationsTimeline',
           element: (
-            <DetailsPageContextConsumer columnName="resourceId">
+            <DetailsPageContextConsumer
+              columnName="resourceId"
+              showNoContentAvailableIfValueIsEmpty={false}
+            >
               {({ value }) => (
                 <TimelinePlot
                   title="Natural History Observations"

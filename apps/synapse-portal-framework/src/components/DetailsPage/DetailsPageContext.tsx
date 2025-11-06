@@ -1,6 +1,7 @@
 import { Row, RowSet } from '@sage-bionetworks/synapse-types'
 import { isEmpty } from 'lodash'
 import { createContext, PropsWithChildren, ReactNode, useContext } from 'react'
+import { NoContentAvailable } from 'synapse-react-client'
 
 import { getColumnIndex } from 'synapse-react-client/utils/functions/index'
 
@@ -78,6 +79,7 @@ type DetailsPageContextConsumerProps = {
     value?: string | null
   }) => ReactNode
   columnName?: string
+  showNoContentAvailableIfValueIsEmpty?: boolean
 }
 
 /**
@@ -89,11 +91,22 @@ type DetailsPageContextConsumerProps = {
 export function DetailsPageContextConsumer(
   props: DetailsPageContextConsumerProps,
 ) {
-  const { columnName, children } = props
+  const {
+    columnName,
+    children,
+    showNoContentAvailableIfValueIsEmpty = true,
+  } = props
   return (
     <DetailsPageContext.Consumer>
       {(context: DetailsPageContextType) => {
         const value = getValue(context, columnName)
+        if (
+          showNoContentAvailableIfValueIsEmpty &&
+          columnName !== undefined &&
+          isEmpty(value)
+        ) {
+          return <NoContentAvailable />
+        }
         return children({ context, value })
       }}
     </DetailsPageContext.Consumer>

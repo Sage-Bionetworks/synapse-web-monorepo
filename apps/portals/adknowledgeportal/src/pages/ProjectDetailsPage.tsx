@@ -60,6 +60,7 @@ function ProjectDetailsPage() {
     >
       <DetailsPageContextConsumer
         columnName={PROJECT_TABLE_COLUMN_NAMES.GRANT_NUMBER}
+        showNoContentAvailableIfValueIsEmpty={false}
       >
         {({ value: grantNumber }) => (
           <DetailsPageContent

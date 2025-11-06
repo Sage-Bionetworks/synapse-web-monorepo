@@ -48,6 +48,7 @@ function ProgramDetailsPage() {
       >
         <DetailsPageContextConsumer
           columnName={PROGRAM_TABLE_COLUMN_NAMES.PROGRAM}
+          showNoContentAvailableIfValueIsEmpty={false}
         >
           {({ value: program }) => (
             <DetailsPageContent
