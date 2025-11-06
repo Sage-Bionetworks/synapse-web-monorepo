@@ -148,6 +148,7 @@ export default function useDetectSSOCode(
               onError(err.reason)
             }
           }
+          debugger
           bindOAuthProviderToAccount(
             provider,
             code,
@@ -206,6 +207,7 @@ export default function useDetectSSOCode(
               OAUTH2_PROVIDERS.ARCUS == provider) &&
             state?.registrationUsername
           ) {
+            debugger
             oAuthRegisterAccountStep2(
               state.registrationUsername,
               provider,
@@ -217,6 +219,7 @@ export default function useDetectSSOCode(
               .catch(onFailure)
               .finally(() => setIsLoading(false))
           } else {
+            debugger
             oAuthSessionRequest(
               provider,
               code,
