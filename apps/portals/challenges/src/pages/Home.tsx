@@ -9,12 +9,14 @@ import {
   metricsSql,
   partnersSql,
   featuredTeamSql,
+  newChallengesSql,
 } from '@/config/resources'
 import {
   challengeTitleLinkConfig,
   challengeCardConfiguration,
 } from '@/config/synapseConfig/challenges'
 import { PortalFeaturedPartners } from 'synapse-react-client'
+import NewChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/NewChallengesSection/NewChallengesSection'
 
 function Home() {
   return (
@@ -27,6 +29,7 @@ function Home() {
         titleText="Our Challenge Partners"
         sx={{ marginBottom: '160px' }}
       />
+      <NewChallengesSection sql={newChallengesSql} borderRadiusPx={4} />
       <ChallengeFeaturedTeam sql={featuredTeamSql} />
       <SectionLayout
         title="Listed Challenges"

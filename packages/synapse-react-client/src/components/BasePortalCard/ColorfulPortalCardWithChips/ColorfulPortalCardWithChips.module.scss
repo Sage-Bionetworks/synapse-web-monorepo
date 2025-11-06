@@ -1,0 +1,174 @@
+@use 'sass:map';
+@use '../../../style/abstracts/variables' as SrcVariables;
+
+.ColorfulPortalCardWithChips__root {
+  position: relative;
+}
+
+.ColorfulPortalCardWithChips__container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 40px 100px 20px 100px;
+  }
+}
+
+.ColorfulPortalCardWithChips__titleSection {
+  color: #fff;
+}
+
+.ColorfulPortalCardWithChips__sectionTitle:global(.MuiTypography-root) {
+  color: var(--black);
+  margin-bottom: 25px;
+  font-size: 48px;
+  line-height: 80px;
+  text-align: center;
+}
+
+.ColorfulPortalCardWithChips__challengeName:global(.MuiTypography-root) {
+  font-weight: 300;
+}
+
+.ColorfulPortalCardWithChips__sectionContainer {
+  height: 100%;
+}
+
+.ColorfulPortalCardWithChips__topSection {
+  flex: 0 0 60%;
+  min-height: 0;
+  gap: 20px;
+  padding: 30px;
+}
+
+.ColorfulPortalCardWithChips__bottomSection {
+  flex: 0 0 40%;
+  min-height: 0;
+  flex-grow: 1;
+
+  gap: 20px;
+  padding: 30px;
+  align-items: flex-start;
+}
+
+.ColorfulPortalCardWithChips__registrationStatus:global(.MuiChip-root) {
+  margin-left: auto;
+  color: var(--gray-900);
+}
+
+.ColorfulPortalCardWithChips__chipsContainer {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  max-width: 400px;
+}
+
+.ColorfulPortalCardWithChips__backgroundImage:global(.MuiCardMedia-root) {
+  background-size: 100% 60%;
+  background-position: top;
+}
+
+.ColorfulPortalCardWithChips__learnMoreButton:global(.MuiButton-root) {
+  display: flex;
+  height: 36px;
+  padding: 6px 16px;
+  border-radius: 8px;
+  color: var(--black) !important;
+  border: 1px solid var(--black) !important;
+
+  @media (max-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    width: 100%;
+  }
+}
+
+.ColorfulPortalCardWithChips__chip {
+  flex-direction: row-reverse;
+  padding-right: 0;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.ColorfulPortalCardWithChips__chip:global(.MuiChip-root)
+  :global(.MuiChip-label) {
+  padding-right: 0;
+  color: var(--gray-900);
+}
+
+.ColorfulPortalCardWithChips__chip:global(.MuiChip-root)
+  :global(.MuiChip-icon) {
+  margin-left: 0;
+  margin-right: 5px;
+  padding-right: 5px;
+  color: var(--black);
+}
+
+.ColorfulPortalCardWithChips__triangleImage {
+  position: absolute;
+  left: 10%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  z-index: 1;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    left: 35%;
+  }
+}
+
+.ColorfulPortalCardWithChips__circleImage {
+  position: absolute;
+  left: 10%;
+  top: 4%;
+  transform: translateX(-50%);
+  z-index: 1;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    left: 35%;
+    top: 7%;
+  }
+}
+
+.ColorfulPortalCardWithChips__doubleLineImage {
+  display: flex;
+  position: absolute;
+  left: 42%;
+  top: 5%;
+  transform: translateX(-50%);
+  z-index: 1;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    left: 45%;
+    top: 10%;
+  }
+}
+
+.ColorfulPortalCardWithChips__longLineImage {
+  position: absolute;
+  right: 10%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  z-index: 1;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    right: 5%;
+    left: 62%;
+  }
+}
+
+.ColorfulPortalCardWithChips__shortLineImage {
+  position: absolute;
+  right: 7%;
+  transform: translateX(-50%);
+  z-index: 1;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    right: 2%;
+    left: 63%;
+  }
+}

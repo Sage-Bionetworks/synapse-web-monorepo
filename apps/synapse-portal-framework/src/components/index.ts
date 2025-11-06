@@ -19,6 +19,7 @@ import ClassicSupportedByNIABanner from './classic/ClassicSupportedByNIABanner/C
 import ChallengeHeader from './challenges/ChallengeHeader/ChallengeHeader'
 import ChallengeMetrics from './challenges/ChallengeMetrics/ChallengeMetrics'
 import ChallengeFeaturedTeam from './challenges/ChallengeFeaturedTeam/ChallengeFeaturedTeam'
+import NewChallengesSection from './challenges/NewChallengesSection/NewChallengesSection'
 
 import ExploreWrapper from './Explore/ExploreWrapper'
 import GenieHomePageHeader from './genie/GenieHomePageHeader'
@@ -55,6 +56,7 @@ const PortalComponents = {
   AMPALSExploreTheData,
   ELSupportedByNIH,
   ChallengeMetrics,
+  NewChallengesSection,
   ClassicSupportedByNIABanner,
   ARKWelcomePage,
   GenieHomePageHeader,
