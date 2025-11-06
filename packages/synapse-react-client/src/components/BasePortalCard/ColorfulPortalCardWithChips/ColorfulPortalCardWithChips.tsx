@@ -22,7 +22,7 @@ type ColorfulPortalCardWithChipsProps = {
 const colors = ['#F8CC7D', '#BFE8F4', '#CEFBDD']
 
 const getChicletColors = (chips: string[]) => {
-  return chips.map((chip, i) => {
+  return chips.map(chip => {
     const hash = hashCode(chip)
     const index = Math.abs(hash) % colors.length
     return colors[index]
