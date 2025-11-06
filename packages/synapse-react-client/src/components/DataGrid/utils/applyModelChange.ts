@@ -19,7 +19,7 @@ export type ModelChange =
       selection: ReplicaSelectionModel
     }
 
-export function getValueForProperty(
+export function getDefaultValueForProperty(
   row: DataGridRow,
   property: string,
   schemaPropertyInfo: SchemaPropertiesMap,
@@ -57,7 +57,9 @@ export function applyModelChange(
     case 'CREATE': {
       // Convert rowData object into a CRDT vector
       const rowData = columnNames.map(name =>
-        s.con(getValueForProperty(change.rowData, name, schemaPropertyInfo)),
+        s.con(
+          getDefaultValueForProperty(change.rowData, name, schemaPropertyInfo),
+        ),
       )
       // Insert a new row object at the specified index
       rowsArr?.ins(change.rowIndex, [

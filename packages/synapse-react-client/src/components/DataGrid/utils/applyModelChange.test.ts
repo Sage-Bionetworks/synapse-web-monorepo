@@ -4,7 +4,7 @@ import { Model } from 'json-joy/lib/json-crdt'
 import { s } from 'json-joy/lib/json-crdt-patch'
 import { applyModelChange, ModelChange } from './applyModelChange'
 import { gridSchema, ReplicaSelectionModel } from '../DataGridTypes'
-import { getValueForProperty } from './applyModelChange'
+import { getDefaultValueForProperty } from './applyModelChange'
 
 function createModel() {
   const model = Model.create(gridSchema)
@@ -305,7 +305,7 @@ describe('applyModelChange', () => {
   })
 })
 
-describe('getValueForProperty', () => {
+describe('getDefaultValueForProperty', () => {
   it('returns the value if the property exists in the row', () => {
     const row = { col1: 'value1', col2: null, col3: undefined }
     const schemaPropertyInfo: SchemaPropertiesMap = {
@@ -321,11 +321,13 @@ describe('getValueForProperty', () => {
       },
     }
 
-    expect(getValueForProperty(row, 'col1', schemaPropertyInfo)).toEqual(
+    expect(getDefaultValueForProperty(row, 'col1', schemaPropertyInfo)).toEqual(
       'value1',
     )
-    expect(getValueForProperty(row, 'col2', schemaPropertyInfo)).toEqual(null)
-    expect(getValueForProperty(row, 'col3', schemaPropertyInfo)).toEqual(
+    expect(getDefaultValueForProperty(row, 'col2', schemaPropertyInfo)).toEqual(
+      null,
+    )
+    expect(getDefaultValueForProperty(row, 'col3', schemaPropertyInfo)).toEqual(
       undefined,
     )
   })
@@ -345,13 +347,15 @@ describe('getValueForProperty', () => {
     }
 
     // required properties should be null
-    expect(getValueForProperty(row, 'col1', schemaPropertyInfo)).toEqual(null)
+    expect(getDefaultValueForProperty(row, 'col1', schemaPropertyInfo)).toEqual(
+      null,
+    )
     // optional properties should be undefined
-    expect(getValueForProperty(row, 'col2', schemaPropertyInfo)).toEqual(
+    expect(getDefaultValueForProperty(row, 'col2', schemaPropertyInfo)).toEqual(
       undefined,
     )
     // properties not in schema should be undefined
-    expect(getValueForProperty(row, 'col3', schemaPropertyInfo)).toEqual(
+    expect(getDefaultValueForProperty(row, 'col3', schemaPropertyInfo)).toEqual(
       undefined,
     )
   })
