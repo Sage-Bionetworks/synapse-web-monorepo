@@ -79,6 +79,10 @@ type DetailsPageContextConsumerProps = {
     value?: string | null
   }) => ReactNode
   columnName?: string
+  /**
+   * If true, displays NoContentAvailable component when the column value is empty.
+   * @default true
+   */
   showNoContentAvailableIfValueIsEmpty?: boolean
 }
 
