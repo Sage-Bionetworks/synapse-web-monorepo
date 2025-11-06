@@ -79,7 +79,6 @@ type DetailsPageContextConsumerProps = {
     value?: string | null
   }) => ReactNode
   columnName?: string
-  showNoContentAvailableIfValueIsEmpty?: boolean
 }
 
 /**
@@ -91,20 +90,12 @@ type DetailsPageContextConsumerProps = {
 export function DetailsPageContextConsumer(
   props: DetailsPageContextConsumerProps,
 ) {
-  const {
-    columnName,
-    children,
-    showNoContentAvailableIfValueIsEmpty = true,
-  } = props
+  const { columnName, children } = props
   return (
     <DetailsPageContext.Consumer>
       {(context: DetailsPageContextType) => {
         const value = getValue(context, columnName)
-        if (
-          showNoContentAvailableIfValueIsEmpty &&
-          columnName !== undefined &&
-          isEmpty(value)
-        ) {
+        if (columnName !== undefined && isEmpty(value)) {
           return <NoContentAvailable />
         }
         return children({ context, value })

@@ -46,17 +46,16 @@ function ProgramDetailsPage() {
         }
         sql={programsSql}
       >
-        <DetailsPageContextConsumer
-          columnName={PROGRAM_TABLE_COLUMN_NAMES.PROGRAM}
-          showNoContentAvailableIfValueIsEmpty={false}
-        >
-          {({ value: program }) => (
-            <DetailsPageContent
-              content={[
-                {
-                  title: 'Projects',
-                  id: 'Projects',
-                  element: (
+        <DetailsPageContent
+          content={[
+            {
+              title: 'Projects',
+              id: 'Projects',
+              element: (
+                <DetailsPageContextConsumer
+                  columnName={PROGRAM_TABLE_COLUMN_NAMES.PROGRAM}
+                >
+                  {({ value: program }) => (
                     <CardContainerLogic
                       cardConfiguration={projectCardConfiguration}
                       sql={projectsSql}
@@ -64,12 +63,18 @@ function ProgramDetailsPage() {
                         [PROJECT_TABLE_COLUMN_NAMES.PROGRAM]: program!,
                       }}
                     />
-                  ),
-                },
-                {
-                  title: 'Studies',
-                  id: 'Studies',
-                  element: (
+                  )}
+                </DetailsPageContextConsumer>
+              ),
+            },
+            {
+              title: 'Studies',
+              id: 'Studies',
+              element: (
+                <DetailsPageContextConsumer
+                  columnName={PROGRAM_TABLE_COLUMN_NAMES.PROGRAM}
+                >
+                  {({ value: program }) => (
                     <CardContainerLogic
                       cardConfiguration={studyCardConfiguration}
                       sql={studiesSql}
@@ -77,12 +82,12 @@ function ProgramDetailsPage() {
                         [STUDY_TABLE_COLUMN_NAMES.PROGRAM]: program!,
                       }}
                     />
-                  ),
-                },
-              ]}
-            />
-          )}
-        </DetailsPageContextConsumer>
+                  )}
+                </DetailsPageContextConsumer>
+              ),
+            },
+          ]}
+        />
       </DetailsPage>
     </>
   )
