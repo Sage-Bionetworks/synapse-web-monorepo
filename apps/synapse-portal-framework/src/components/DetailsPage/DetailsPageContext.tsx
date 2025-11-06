@@ -1,7 +1,7 @@
 import { Row, RowSet } from '@sage-bionetworks/synapse-types'
 import { isEmpty } from 'lodash'
 import { createContext, PropsWithChildren, ReactNode, useContext } from 'react'
-import { NoContentAvailable } from 'synapse-react-client'
+import NoContentAvailable from 'synapse-react-client/components/SynapseTable/NoContentAvailable'
 
 import { getColumnIndex } from 'synapse-react-client/utils/functions/index'
 
