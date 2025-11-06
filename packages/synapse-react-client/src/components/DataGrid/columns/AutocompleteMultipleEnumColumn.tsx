@@ -1,7 +1,7 @@
 import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseFreeTextUsingJsonSchemaType'
 import { Autocomplete, TextField, Tooltip } from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
-import { useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { CellComponent, Column } from 'react-datasheet-grid'
 import {
   AutocompleteOption,
@@ -58,7 +58,18 @@ function AutocompleteMultipleEnumCell({
   colType,
   limitTags = 2,
   active,
+  focus,
+  stopEditing,
 }: AutocompleteMultipleEnumCellProps) {
+  const ref = useRef<HTMLInputElement>(null)
+
+  useLayoutEffect(() => {
+    if (focus) {
+      ref.current?.focus()
+    } else {
+      ref.current?.blur()
+    }
+  }, [focus])
   const [localInputState, setLocalInputState] = useState<string>('')
 
   const safeRowData = createSafeRowData(rowData)
@@ -71,6 +82,8 @@ function AutocompleteMultipleEnumCell({
     safeRowData.length > 0
       ? safeRowData.map(item => castCellValueToString(item)).join(',')
       : ''
+
+  const hasValue = !isNil(rowData) && rowData !== ''
 
   return (
     <Tooltip
@@ -88,8 +101,12 @@ function AutocompleteMultipleEnumCell({
         }}
       >
         <Autocomplete
+          ref={ref}
+          forcePopupIcon={choices.length > 0}
+          disableClearable={!hasValue}
           multiple
           freeSolo
+          open={!!focus}
           disablePortal={false}
           limitTags={effectiveLimitTags}
           options={optionsWithLabels}
@@ -109,7 +126,8 @@ function AutocompleteMultipleEnumCell({
           onInputChange={(_, newInputValue) => {
             setLocalInputState(newInputValue)
           }}
-          onChange={(_e, newVal, reason) => {
+          onClose={() => stopEditing({ nextRow: false })}
+          onChange={(_e, newVal, _reason) => {
             // Handle both selection/deselection and free text creation the same way
             const values = (newVal || []).map(item => {
               return typeof item === 'string'
@@ -119,6 +137,7 @@ function AutocompleteMultipleEnumCell({
             setRowData(values)
             setLocalInputState('')
           }}
+          disableCloseOnSelect={choices.length > 1}
           onBlur={() => {
             if (localInputState.trim()) {
               const parsedValue = parseFreeTextGivenJsonSchemaType(
@@ -165,6 +184,7 @@ function AutocompleteMultipleEnumCell({
             width: '100%',
             height: '100%',
             '& .MuiAutocomplete-inputRoot': {
+              pointerEvents: focus ? undefined : 'none',
               padding: '0 10px',
               backgroundColor: 'inherit',
               // Allow tags to wrap and enable scrolling
@@ -193,6 +213,20 @@ function AutocompleteMultipleEnumCell({
             },
             '& .MuiAutocomplete-tag': {
               margin: '1px',
+            },
+            '& .MuiAutocomplete-clearIndicator': {
+              visibility: active ? 'visible' : 'hidden',
+              pointerEvents: 'auto',
+            },
+            '& .MuiAutocomplete-popupIndicator': {
+              visibility: active ? 'visible' : 'hidden',
+              pointerEvents: 'auto',
+            },
+            '&:hover .MuiAutocomplete-clearIndicator': {
+              visibility: 'visible',
+            },
+            '&:hover .MuiAutocomplete-popupIndicator': {
+              visibility: 'visible',
             },
           }}
         />
