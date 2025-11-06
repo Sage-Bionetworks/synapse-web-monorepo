@@ -29,13 +29,15 @@ describe('extractColumnValidationMessages', () => {
       '#/platform: null is not a valid enum value',
       '#/version: must be a number',
       '#/name: cannot be empty',
+      '#: only 1 subschema matches out of 2',
     ]
     const result = extractColumnValidationMessages(messages)
 
-    expect(result.size).toBe(3)
+    expect(result.size).toBe(4)
     expect(result.get('platform')).toEqual(['null is not a valid enum value'])
     expect(result.get('version')).toEqual(['must be a number'])
     expect(result.get('name')).toEqual(['cannot be empty'])
+    expect(result.get('_row')).toEqual(['only 1 subschema matches out of 2'])
   })
 
   it('should handle messages with array indices', () => {
@@ -52,11 +54,12 @@ describe('extractColumnValidationMessages', () => {
     ])
   })
 
-  it('should handle messages with both array and string columns', () => {
+  it('should handle messages with array and string columns, and row', () => {
     const messages = [
       '#/items/0: null is not a valid enum value',
       '#/items/1: must be a number',
       '#/name: cannot be empty',
+      '#: only 1 subschema matches out of 2',
     ]
     const result = extractColumnValidationMessages(messages)
 
@@ -65,6 +68,7 @@ describe('extractColumnValidationMessages', () => {
       'must be a number',
     ])
     expect(result.get('name')).toEqual(['cannot be empty'])
+    expect(result.get('_row')).toEqual(['only 1 subschema matches out of 2'])
   })
 
   it('should handle empty array', () => {
@@ -123,6 +127,20 @@ describe('extractColumnValidationMessages', () => {
     expect(result.size).toBe(1)
     expect(result.get('platform')).toEqual([
       'Error: null is not valid: check documentation',
+    ])
+  })
+
+  it('should handle object-level validation messages', () => {
+    const messages = [
+      '#: only 1 subschema matches out of 2',
+      '#: additional properties are not allowed',
+    ]
+    const result = extractColumnValidationMessages(messages)
+
+    expect(result.size).toBe(1)
+    expect(result.get('_row')).toEqual([
+      'only 1 subschema matches out of 2',
+      'additional properties are not allowed',
     ])
   })
 })
