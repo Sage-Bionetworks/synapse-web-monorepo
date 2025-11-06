@@ -3,7 +3,6 @@ import { Chip, Box, Button, Stack, Typography } from '@mui/material'
 import styles from './ColorfulPortalCardWithChips.module.scss'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { useImageUrl } from '@/utils/hooks/useImageUrlUtils'
-import { Close } from '@mui/icons-material'
 import { hashCode } from '@/utils/functions/StringUtils'
 
 type ColorfulPortalCardWithChipsProps = {
@@ -22,7 +21,7 @@ type ColorfulPortalCardWithChipsProps = {
 const colors = ['#F8CC7D', '#BFE8F4', '#CEFBDD']
 
 const getChicletColors = (chips: string[]) => {
-  return chips.map((chip, i) => {
+  return chips.map(chip => {
     const hash = hashCode(chip)
     const index = Math.abs(hash) % colors.length
     return colors[index]
@@ -39,7 +38,6 @@ const Chips = ({ values }: { values: string[] }) => {
           label={<Typography variant="smallText1">{chip}</Typography>}
           variant="filled"
           style={{ backgroundColor: chipColors[index] }}
-          icon={<Close fontSize="small" />}
           className={styles.ChallengePortalCard__chip}
         />
       ))}
