@@ -136,8 +136,8 @@ function AutocompleteMultipleEnumCell({
             })
             setRowData(values)
             setLocalInputState('')
-            setTimeout(() => stopEditing({ nextRow: false }), 0)
           }}
+          disableCloseOnSelect={choices.length > 1}
           onBlur={() => {
             if (localInputState.trim()) {
               const parsedValue = parseFreeTextGivenJsonSchemaType(
