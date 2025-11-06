@@ -181,10 +181,10 @@ function AutocompleteMultipleEnumCell({
             />
           )}
           sx={{
-            pointerEvents: focus ? undefined : 'none',
             width: '100%',
             height: '100%',
             '& .MuiAutocomplete-inputRoot': {
+              pointerEvents: focus ? undefined : 'none',
               padding: '0 10px',
               backgroundColor: 'inherit',
               // Allow tags to wrap and enable scrolling
@@ -213,6 +213,20 @@ function AutocompleteMultipleEnumCell({
             },
             '& .MuiAutocomplete-tag': {
               margin: '1px',
+            },
+            '& .MuiAutocomplete-clearIndicator': {
+              visibility: active ? 'visible' : 'hidden',
+              pointerEvents: 'auto',
+            },
+            '& .MuiAutocomplete-popupIndicator': {
+              visibility: active ? 'visible' : 'hidden',
+              pointerEvents: 'auto',
+            },
+            '&:hover .MuiAutocomplete-clearIndicator': {
+              visibility: 'visible',
+            },
+            '&:hover .MuiAutocomplete-popupIndicator': {
+              visibility: 'visible',
             },
           }}
         />

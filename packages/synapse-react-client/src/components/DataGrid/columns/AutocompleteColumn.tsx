@@ -37,6 +37,7 @@ export function AutocompleteCell({
   colType,
   focus,
   stopEditing,
+  active,
 }: AutocompleteCellProps) {
   const ref = useRef<HTMLInputElement>(null)
 
@@ -114,14 +115,28 @@ export function AutocompleteCell({
         />
       )}
       sx={{
-        pointerEvents: focus ? undefined : 'none',
         width: '100%',
         height: '100%',
         '& .MuiAutocomplete-inputRoot': {
           padding: '0 10px',
           backgroundColor: 'inherit',
+          pointerEvents: focus ? undefined : 'none',
         },
         '& .MuiFormControl-root': { height: '100%' },
+        '& .MuiAutocomplete-clearIndicator': {
+          visibility: active ? 'visible' : 'hidden',
+          pointerEvents: 'auto',
+        },
+        '& .MuiAutocomplete-popupIndicator': {
+          visibility: active ? 'visible' : 'hidden',
+          pointerEvents: 'auto',
+        },
+        '&:hover .MuiAutocomplete-clearIndicator': {
+          visibility: 'visible',
+        },
+        '&:hover .MuiAutocomplete-popupIndicator': {
+          visibility: 'visible',
+        },
       }}
     />
   )
