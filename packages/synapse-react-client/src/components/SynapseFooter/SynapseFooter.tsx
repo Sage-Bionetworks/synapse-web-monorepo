@@ -29,10 +29,9 @@ export function SynapseFooter({
   gotoPlace,
   onExperimentalModeToggle,
 }: SynapseFooterProps) {
-  const { accessToken } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
   const registrationUrl = useOneSageURL('/register1')
   const sageResourcesUrl = useOneSageURL('/sageresources')
-  const isLoggedIn = !!accessToken
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -58,7 +57,7 @@ export function SynapseFooter({
             >
               Powered by Sage Bionetworks
             </Typography>
-            {!isLoggedIn && (
+            {!isAuthenticated && (
               <Typography
                 variant="h5"
                 sx={{
@@ -72,7 +71,7 @@ export function SynapseFooter({
                 Sign up for Synapse today
               </Typography>
             )}
-            {!isLoggedIn && (
+            {!isAuthenticated && (
               <Box sx={{ display: 'flex', columnGap: '20px' }}>
                 <Button
                   variant="outlined"

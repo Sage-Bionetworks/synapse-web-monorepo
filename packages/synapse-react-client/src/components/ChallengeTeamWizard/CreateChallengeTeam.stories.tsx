@@ -4,8 +4,8 @@ import getAllTeamHandlers from '@/mocks/msw/handlers/teamHandlers'
 import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Button } from '@mui/material'
-import { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
+import { Meta, StoryObj } from '@storybook/react-vite'
+import { fn } from 'storybook/test'
 import { useRef, useState } from 'react'
 import {
   CreateChallengeTeam,

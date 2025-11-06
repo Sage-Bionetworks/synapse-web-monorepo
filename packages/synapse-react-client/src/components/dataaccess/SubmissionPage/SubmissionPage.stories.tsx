@@ -13,7 +13,7 @@ import {
 } from '@/utils/APIConstants'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstants'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { http, HttpResponse } from 'msw'
 import SubmissionPage from './SubmissionPage'
 import { ErrorResponse } from '@sage-bionetworks/synapse-types'

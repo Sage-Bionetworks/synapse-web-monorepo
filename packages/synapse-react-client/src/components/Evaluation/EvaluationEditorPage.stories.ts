@@ -1,8 +1,8 @@
 import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
-import { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
+import { Meta, StoryObj } from '@storybook/react-vite'
+import { fn } from 'storybook/test'
 import dayjs from 'dayjs'
 import { http, HttpResponse } from 'msw'
 import {

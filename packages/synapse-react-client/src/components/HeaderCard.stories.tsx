@@ -1,5 +1,5 @@
 import { Study } from '@/assets/themed_icons'
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import HeaderCard from './HeaderCard'
 
 const meta = {

@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import ErrorChip, { ErrorChipProps } from './ErrorChip'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 

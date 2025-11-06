@@ -32,7 +32,7 @@ export default function UnmanagedACTAccessRequirementItem(
   props: UnmanagedACTAccessRequirementItemProps,
 ) {
   const { accessRequirement, subjectId, subjectType, onHide } = props
-  const { accessToken } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
 
   const { data: accessRequirementStatus, isLoading: isLoadingStatus } =
     useGetAccessRequirementStatus(String(accessRequirement.id))
@@ -76,7 +76,7 @@ export default function UnmanagedACTAccessRequirementItem(
 
   let actions: ButtonProps[] | undefined = undefined
 
-  if (!!accessToken && !isApproved) {
+  if (isAuthenticated && !isApproved) {
     actions = [
       {
         variant: 'outlined',

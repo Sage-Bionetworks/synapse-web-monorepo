@@ -200,17 +200,18 @@ export function SynapseNavDrawer({
   const [isShowingCreateProjectModal, setIsShowingCreateProjectModal] =
     useState<boolean>(false)
 
-  const { accessToken } = useSynapseContext()
-  const isLoggedIn = !!accessToken
+  const { isAuthenticated } = useSynapseContext()
 
   const { data: currentUserBundle } = useGetCurrentUserBundle()
 
   // If the user is logged out, the UserBundle provides an "anonymous" user profile, so override that case with undefined
   const currentUserProfile =
-    isLoggedIn && currentUserBundle ? currentUserBundle.userProfile : undefined
+    isAuthenticated && currentUserBundle
+      ? currentUserBundle.userProfile
+      : undefined
 
   const { data: downloadListStatistics } = useGetDownloadListStatistics({
-    enabled: isLoggedIn,
+    enabled: isAuthenticated,
   })
 
   const numberOfFilesInDownloadList = downloadListStatistics?.totalNumberOfFiles
@@ -280,7 +281,7 @@ export function SynapseNavDrawer({
             </a>
           </div>
           <List>
-            {isLoggedIn && currentUserProfile && (
+            {isAuthenticated && currentUserProfile && (
               <>
                 <NavDrawerListItem
                   tooltip="Projects"
@@ -360,7 +361,7 @@ export function SynapseNavDrawer({
           </List>
           <div className="filler" />
           <List>
-            {isLoggedIn && currentUserProfile && (
+            {isAuthenticated && currentUserProfile && (
               <NavDrawerListItem
                 tooltip="Your Account"
                 onClickOpenNavMenu={NavItem.PROFILE}
@@ -376,7 +377,7 @@ export function SynapseNavDrawer({
                 handleDrawerOpen={handleDrawerOpen}
               />
             )}
-            {!isLoggedIn && (
+            {!isAuthenticated && (
               <NavDrawerListItem
                 tooltip="Sign in"
                 iconName="login"

@@ -10,7 +10,7 @@ import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '@/utils'
 import {
   useAddFileToDownloadList,
-  useAddQueryToDownloadList,
+  useAddToDownloadList,
 } from '@/synapse-queries/index'
 import { displayFilesWereAddedToDownloadListSuccess } from '../download_list/DownloadConfirmationUtils'
 import { displayToast } from '../ToastMessage/index'
@@ -320,9 +320,9 @@ export function EntityDownloadButton(props: {
     },
   })
 
-  const { mutate: addQueryToDownloadList } = useAddQueryToDownloadList({
+  const { mutate: addQueryToDownloadList } = useAddToDownloadList({
     onSuccess: data => {
-      if (data.numberOfFilesAdded > 0) {
+      if (data.numberOfFilesAdded != null && data.numberOfFilesAdded > 0) {
         displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)
       } else {
         displayToast('0 Files added to your Download Cart', 'info')

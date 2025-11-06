@@ -6,7 +6,7 @@ import { getHandlers } from '@/mocks/msw/handlers'
 import { SynapseContextConsumer } from '@/utils'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { ListRequest, StatusEnum } from '@sage-bionetworks/synapse-types'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { http, HttpResponse } from 'msw'
 import SynapseFormSubmissionGrid, {
   SynapseFormSubmissionGridProps,

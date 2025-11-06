@@ -1,9 +1,9 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import {
   DownloadConfirmationUI,
   DownloadConfirmationUIProps,
 } from './DownloadConfirmationUI'
-import { fn } from '@storybook/test'
+import { fn } from 'storybook/test'
 
 const meta: Meta<DownloadConfirmationUIProps & { isAuthenticated: boolean }> = {
   title: 'Download/DownloadConfirmationUI',

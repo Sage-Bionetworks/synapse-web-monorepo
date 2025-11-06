@@ -23,7 +23,7 @@ import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { getColumnIndex } from '@/utils/functions/SqlFunctions'
 import { parseSynId } from '@/utils/functions/RegularExpressions'
 import { GetAppTwoTone } from '@mui/icons-material'
-import { Collapse, Link } from '@mui/material'
+import { Box, Collapse, Link } from '@mui/material'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -45,8 +45,9 @@ import GenericCardActionButton from './GenericCardActionButton'
 import { SynapseCardLabel } from './SynapseCardLabel'
 import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
 import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
-import { SharePageLinkButtonProps } from '../SharePageLinkButton'
-import ShareThisPage from '../ShareThisPage/ShareThisPage'
+import ShareThisPage, {
+  ShareThisPageProps,
+} from '../ShareThisPage/ShareThisPage'
 import { useResolvedSynapseEntity } from './useResolvedSynapseEntity'
 
 type RowSynapseEntityConfig = {
@@ -160,7 +161,7 @@ export type TableRowGenericCardProps = {
   /** The versionNumber of the table row */
   versionNumber?: number
   /** Optional props for the ShareThisPage component */
-  sharePageLinkButtonProps?: SharePageLinkButtonProps
+  sharePageLinkButtonProps?: ShareThisPageProps
 } & CommonCardProps
 
 // SWC-6115: special rendering of the version column (for Views)
@@ -186,7 +187,7 @@ function VersionLabel(props: { synapseId: string; version: string }) {
 export function TableRowGenericCard(props: TableRowGenericCardProps) {
   const [showDownloadConfirmation, setShowDownloadConfirmation] =
     useState(false)
-  const [downloadButtonDisabled, setDownloadButtonDisabled] = useState(false)
+  const [downloadButtonLoading, setDownloadButtonLoading] = useState(false)
 
   const { entityId, versionNumber } = useQueryContext()
   const { getColumnDisplayName } = useQueryVisualizationContext()
@@ -498,7 +499,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
               versionNumber={resolvedDownloadCartVersionNumber}
               handleClose={() => setShowDownloadConfirmation(false)}
               onIsLoadingChange={isLoading => {
-                setDownloadButtonDisabled(isLoading)
+                setDownloadButtonLoading(isLoading)
               }}
             />
           </Collapse>
@@ -523,20 +524,18 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         )
       }
       cardTopButtons={
-        <>
+        <Box sx={{ display: 'flex', gap: 1 }}>
           {croissantButton}
           {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
           {resolvedDownloadCartSynIdValue && (
-            <>
-              <GenericCardActionButton
-                onClick={() => setShowDownloadConfirmation(val => !val)}
-                variant="outlined"
-                startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
-                disabled={downloadButtonDisabled}
-              >
-                Download
-              </GenericCardActionButton>
-            </>
+            <GenericCardActionButton
+              onClick={() => setShowDownloadConfirmation(val => !val)}
+              variant="outlined"
+              startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
+              loading={downloadButtonLoading}
+            >
+              Download
+            </GenericCardActionButton>
           )}
           {includeCitation && doiValue && (
             <CitationPopover
@@ -549,7 +548,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
           {includeShareButton && isHeader && (
             <ShareThisPage {...sharePageLinkButtonProps} />
           )}
-        </>
+        </Box>
       }
     />
   )

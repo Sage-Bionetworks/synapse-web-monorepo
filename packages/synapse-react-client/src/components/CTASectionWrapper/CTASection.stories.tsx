@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import CTASectionWrapper from './CTASectionWrapper'
 import { Button, Typography, Link } from '@mui/material'
 import { AddAlertTwoTone } from '@mui/icons-material'

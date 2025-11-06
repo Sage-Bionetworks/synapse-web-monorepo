@@ -135,9 +135,8 @@ export default function DataAccessRequestAccessorsFilesForm(
     onCancel,
     onBackClicked,
   } = props
-  const { accessToken } = useSynapseContext()
-  const isLoggedIn = Boolean(accessToken)
-  const { data: user } = useGetCurrentUserProfile({ enabled: isLoggedIn })
+  const { isAuthenticated } = useSynapseContext()
+  const { data: user } = useGetCurrentUserProfile({ enabled: isAuthenticated })
   const [alert, setAlert] = useState<AlertProps | undefined>()
   const [accessorChanges, setAccessorChanges] = useState<
     AccessorChange[] | undefined
@@ -147,7 +146,7 @@ export default function DataAccessRequestAccessorsFilesForm(
 
   const { data: dataAccessRequest, isLoading: isLoadingGetDataAccessRequest } =
     useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
-      enabled: isLoggedIn,
+      enabled: isAuthenticated,
       // Infinite staleTime ensures this won't get re-fetched unless explicitly invalidated by the mutation
       staleTime: Infinity,
       // This call should never fail, so if we run into an error, throwing to an error boundary is acceptable

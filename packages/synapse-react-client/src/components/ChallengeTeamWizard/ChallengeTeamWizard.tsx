@@ -66,8 +66,7 @@ export type ChallengeTeamWizardProps = {
  */
 function ChallengeTeamWizard(props: ChallengeTeamWizardProps) {
   const { projectId, isShowingModal = false, onClose } = props
-  const { accessToken } = useSynapseContext()
-  const isLoggedIn = Boolean(accessToken)
+  const { isAuthenticated } = useSynapseContext()
 
   const [step, setStep] = useState<ChallengeTeamWizardStep>(
     ChallengeTeamWizardStep.SELECT_YOUR_CHALLENGE_TEAM,
@@ -84,7 +83,7 @@ function ChallengeTeamWizard(props: ChallengeTeamWizardProps) {
 
   const { data: userProfile, isLoading: isLoadingUserProfile } =
     useGetCurrentUserProfile({
-      enabled: isLoggedIn,
+      enabled: isAuthenticated,
     })
 
   // Retrieve the challenge associated with the projectId passed through props
@@ -100,7 +99,7 @@ function ChallengeTeamWizard(props: ChallengeTeamWizardProps) {
   // Determine whether the given user belongs to any submission teams
   const { data: userSubmissionTeams, error: userSubmissionTeamError } =
     useGetUserSubmissionTeams(challenge?.id!, 1, 0, {
-      enabled: Boolean(isLoggedIn && challenge),
+      enabled: Boolean(isAuthenticated && challenge),
     })
 
   const isMemberOfSubmissionTeam =
@@ -111,7 +110,7 @@ function ChallengeTeamWizard(props: ChallengeTeamWizardProps) {
     isLoading: selectedTeamMembershipStatusIsLoading,
     error: selectedTeamMembershipStatusError,
   } = useGetMembershipStatus(selectedTeamId!, String(userProfile?.ownerId), {
-    enabled: isLoggedIn && !!selectedTeamId && !!userProfile,
+    enabled: isAuthenticated && !!selectedTeamId && !!userProfile,
   })
 
   const addUserToTeam = useCallback(async () => {
@@ -172,7 +171,7 @@ function ChallengeTeamWizard(props: ChallengeTeamWizardProps) {
 
   // Determine modal content based on step.id
   const { actions = <></>, content = <></> } = useMemo(() => {
-    if (!isLoggedIn) {
+    if (!isAuthenticated) {
       return {
         content: (
           <Alert severity={'error'}>
@@ -379,7 +378,7 @@ function ChallengeTeamWizard(props: ChallengeTeamWizardProps) {
       }
     }
   }, [
-    isLoggedIn,
+    isAuthenticated,
     isMemberOfSubmissionTeam,
     step,
     selectedTeamId,

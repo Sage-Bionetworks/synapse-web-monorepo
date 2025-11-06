@@ -85,8 +85,7 @@ function handleError(e: unknown) {
 }
 
 const RegisterAccount1 = () => {
-  const { accessToken } = useSynapseContext()
-  const isSignedIn = !!accessToken
+  const { isAuthenticated } = useSynapseContext()
   const appContext = useAppContext()
   const sessionContext = useApplicationSessionContext()
   const theme = useTheme()
@@ -224,7 +223,7 @@ const RegisterAccount1 = () => {
 
   const lastLoginInfo = <LastLoginInfo display="box" {...loginInfo} />
 
-  if (isSignedIn) {
+  if (isAuthenticated) {
     return (
       <StyledOuterContainer className="RegisterAccount1">
         <Box

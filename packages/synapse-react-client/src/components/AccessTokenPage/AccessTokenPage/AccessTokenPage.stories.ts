@@ -1,6 +1,6 @@
 import { getPersonalAccessTokenHandlers } from '@/mocks/msw/handlers/personalAccessTokenHandlers'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { AccessTokenPage } from '../AccessTokenPage'
 
 const meta = {

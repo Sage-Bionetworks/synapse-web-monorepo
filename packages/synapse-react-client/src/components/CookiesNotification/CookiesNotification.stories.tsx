@@ -1,5 +1,5 @@
 import { COOKIES_AGREEMENT_COOKIE_KEY } from '@/utils/hooks/useCookiePreferences'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import UniversalCookies from 'universal-cookie'
 import CookiesNotification from './CookiesNotification'
 

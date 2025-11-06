@@ -27,7 +27,7 @@ export const navbarConfig: NavbarConfig = {
     },
     {
       name: 'Help',
-      path: 'https://help.classicportal.org/help/',
+      path: 'https://help.classicportal.synapse.org/help/',
     },
   ],
   isPortalsDropdownEnabled: true,

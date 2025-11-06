@@ -1,0 +1,94 @@
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+@use 'sass:map';
+
+.NewChallengesSection__root {
+  position: relative;
+}
+
+.NewChallengesSection__sectionTitle:global(.MuiTypography-root) {
+  color: var(--black);
+  margin-bottom: 25px;
+  font-size: 48px;
+  line-height: 80px;
+  text-align: center;
+}
+
+.NewChallengesSection__container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 40px 100px 20px 100px;
+  }
+}
+
+.NewChallengesSection__triangleImage {
+  position: absolute;
+  left: 10%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  z-index: 1;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    left: 35%;
+  }
+}
+
+.NewChallengesSection__circleImage {
+  position: absolute;
+  left: 10%;
+  top: 4%;
+  transform: translateX(-50%);
+  z-index: 1;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    left: 35%;
+    top: 7%;
+  }
+}
+
+.NewChallengesSection__doubleLineImage {
+  display: flex;
+  position: absolute;
+  left: 42%;
+  top: 5%;
+  transform: translateX(-50%);
+  z-index: 1;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    left: 45%;
+    top: 10%;
+  }
+}
+
+.NewChallengesSection__longLineImage {
+  position: absolute;
+  right: 10%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  z-index: 1;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    right: 5%;
+    left: 62%;
+  }
+}
+
+.NewChallengesSection__shortLineImage {
+  position: absolute;
+  right: 7%;
+  transform: translateX(-50%);
+  z-index: 1;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    right: 2%;
+    left: 63%;
+  }
+}

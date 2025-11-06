@@ -1,6 +1,9 @@
 import { SynapseClientError, useSynapseContext } from '@/utils'
 import { PropsWithChildren, useCallback, useMemo } from 'react'
-import { ErrorBoundary, ErrorBoundaryPropsWithComponent } from 'react-error-boundary'
+import {
+  ErrorBoundary,
+  ErrorBoundaryPropsWithComponent,
+} from 'react-error-boundary'
 import { EntityActionsRequired } from './AccessRequirement/EntityActionsRequired'
 import { ErrorBanner } from './error/ErrorBanner'
 import { useQueryContext } from './QueryContext/QueryContext'
@@ -18,8 +21,7 @@ export function QueryWrapperErrorBoundary({
     () => getCurrentQueryRequest(),
     [getCurrentQueryRequest],
   )
-  const { accessToken } = useSynapseContext()
-  const isSignedIn = Boolean(accessToken)
+  const { isAuthenticated } = useSynapseContext()
 
   const FallbackComponent: ErrorBoundaryPropsWithComponent['FallbackComponent'] =
     useCallback(
@@ -27,7 +29,7 @@ export function QueryWrapperErrorBoundary({
         if (
           props.error instanceof SynapseClientError &&
           props.error.status === 403 &&
-          isSignedIn
+          isAuthenticated
         ) {
           return (
             <div className={`ErrorBannerWrapper`}>
@@ -45,7 +47,7 @@ export function QueryWrapperErrorBoundary({
           </div>
         )
       },
-      [entityId, isSignedIn, onViewSharingSettingsClicked],
+      [entityId, isAuthenticated, onViewSharingSettingsClicked],
     )
 
   return (

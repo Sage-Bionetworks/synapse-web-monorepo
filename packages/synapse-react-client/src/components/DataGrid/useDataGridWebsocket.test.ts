@@ -1,6 +1,5 @@
 import { GridModel } from '@/components/DataGrid/DataGridTypes'
 import { DataGridWebSocket } from '@/components/DataGrid/DataGridWebSocket'
-import { mocked } from '@storybook/test'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
@@ -55,11 +54,11 @@ vi.mock('./DataGridWebSocket', () => ({
   ),
 }))
 
-const MockDataGridWebSocket = mocked(DataGridWebSocket)
+const MockDataGridWebSocket = vi.mocked(DataGridWebSocket)
 const mockEstablishWebsocketConnection = vi.fn()
 const mockResetEstablishWebsocketConnection = vi.fn()
 const mockClearPresignedUrl = vi.fn()
-const MockUseEstablishWebsocketConnection = mocked(
+const MockUseEstablishWebsocketConnection = vi.mocked(
   useEstablishWebsocketConnection,
 )
 

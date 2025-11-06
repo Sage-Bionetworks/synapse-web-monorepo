@@ -15,7 +15,7 @@ enum StatusEnum {
 
 export type DownloadConfirmationUIProps = {
   onAddToDownloadCart: () => void
-  fileCount: number
+  fileCount?: number
   fileSize?: number
   onCancel: () => void
   isLoadingStats?: boolean
@@ -74,7 +74,7 @@ const StatusConstruct: UiStateDictionary = {
 
 type DownloadConfirmationContentProps = {
   status: StatusEnum
-  fileCount: number
+  fileCount?: number
   fileSize?: number
 }
 
@@ -202,3 +202,5 @@ export function DownloadConfirmationUI(props: DownloadConfirmationUIProps) {
     </>
   )
 }
+
+export default DownloadConfirmationUI

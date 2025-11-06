@@ -1,5 +1,5 @@
 import { GenericCardIcon } from '@/components/GenericCard/GenericCardIcon'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { GenericCard } from './GenericCard'
 
 const meta = {
