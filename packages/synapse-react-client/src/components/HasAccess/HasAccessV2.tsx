@@ -130,6 +130,50 @@ function useGetIsExternalFileHandle(
   })
 }
 
+//* Get the access level text */
+function getAccessText(props: RestrictionUiType | undefined) {
+  switch (props) {
+    case RestrictionUiType.Accessible:
+      return 'Open Access'
+    case RestrictionUiType.AccessibleWithTerms:
+      return 'View Terms'
+    case RestrictionUiType.AccessBlockedByRestriction:
+      return 'Request Access'
+    case RestrictionUiType.AccessBlockedByACL:
+      return 'Access Denied'
+    case RestrictionUiType.AccessBlockedToAnonymous:
+      return 'Sign In Required'
+    case RestrictionUiType.AccessibleExternalFileHandle:
+      return 'External Access'
+    case undefined:
+      return 'Loading...'
+    default:
+      return ''
+  }
+}
+
+// A hook that handles the logic for computing the correct access level, getting the text, and the icon
+export function useHasAccess(entityId: string) {
+  // get access level
+  const restrictionUiType = useGetRestrictionUiType(entityId, {
+    enabled: false,
+  })
+
+  // get access level text
+  const accessText = getAccessText(restrictionUiType)
+
+  // get access level icon
+  const icon = (
+    <AccessIcon restrictionUiType={restrictionUiType!} wrap={false} />
+  )
+
+  return {
+    restrictionUiType,
+    accessText,
+    icon,
+  }
+}
+
 /**
  * HasAccess shows if the user has access to the file or not. If the user doesn't have access due to a restriction,
  * then a link will be shown that opens a modal with steps to request access.

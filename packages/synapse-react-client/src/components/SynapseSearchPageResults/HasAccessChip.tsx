@@ -1,5 +1,4 @@
-import { RestrictionUiType } from '../HasAccess/AccessIcon'
-import { useGetRestrictionUiType, HasAccessV2 } from '../HasAccess/HasAccessV2'
+import { useHasAccess } from '../HasAccess/HasAccessV2'
 import { Chip } from '@mui/material'
 import { searchResultsCardChipStyles } from '../SynapseSearchPageResults/chipStyles'
 
@@ -9,42 +8,16 @@ export interface HasAccessChipProps {
 }
 
 export function HasAccessChip({ entityId }: HasAccessChipProps) {
-  const restrictionUiType = useGetRestrictionUiType(entityId, {
-    enabled: false,
-  })
+  const { accessText, icon } = useHasAccess(entityId)
 
-  const getAccessText = () => {
-    switch (restrictionUiType) {
-      case RestrictionUiType.Accessible:
-        return 'Open Access'
-      case RestrictionUiType.AccessibleWithTerms:
-        return 'View Terms'
-      case RestrictionUiType.AccessBlockedByRestriction:
-        return 'Request Access'
-      case RestrictionUiType.AccessBlockedByACL:
-        return 'Access Denied'
-      case RestrictionUiType.AccessBlockedToAnonymous:
-        return 'Sign In Required'
-      case RestrictionUiType.AccessibleExternalFileHandle:
-        return 'External Access'
-      case undefined:
-        return 'Loading...'
-      default:
-        return ''
-    }
-  }
-
-  if (!restrictionUiType) {
-    return null
-  }
   return (
-    <Chip
-      label={getAccessText()}
-      icon={
-        <HasAccessV2 entityId={entityId} showButtonText={false} wrap={false} />
-      }
-      sx={{ ...searchResultsCardChipStyles }}
-    />
+    <>
+      <Chip
+        label={accessText}
+        icon={icon}
+        sx={{ ...searchResultsCardChipStyles }}
+      />
+    </>
   )
 }
 
