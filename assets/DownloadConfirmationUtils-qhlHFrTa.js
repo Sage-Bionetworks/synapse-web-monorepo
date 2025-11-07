@@ -1,0 +1,1 @@
+import{J as s}from"./iframe-D6eR7C50.js";function a(o){s("File(s) were successfully added to your Download Cart.","success",{primaryButtonConfig:{text:"View Download Cart",onClick:()=>{window.location.href=o}}})}export{a as d};
