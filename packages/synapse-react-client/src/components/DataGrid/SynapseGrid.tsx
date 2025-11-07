@@ -49,6 +49,7 @@ import {
 } from './components/contextMenu'
 
 export type SynapseGridProps = {
+  agentRegistrationId?: string
   showDebugInfo?: boolean
 }
 
@@ -58,7 +59,7 @@ export type SynapseGridHandle = {
 }
 
 const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
-  ({ showDebugInfo = false }, ref) => {
+  ({ agentRegistrationId, showDebugInfo = false }, ref) => {
     const [session, setSession] = useState<GridSession | null>(null)
     const [replicaId, setReplicaId] = useState<number | null>(null)
     const [chatOpen, setChatOpen] = useState(false)
@@ -209,12 +210,12 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       (model: GridModel, modelChanges: ModelChange[]) => {
         // Apply each change to the model
         modelChanges.forEach(change => {
-          applyModelChange(model, change)
+          applyModelChange(model, change, schemaPropertiesInfo)
         })
 
         commit()
       },
-      [commit],
+      [commit, schemaPropertiesInfo],
     )
 
     const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
@@ -236,11 +237,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
         addOperationsToUndoStack(operations, rowValues, newValue)
 
         // Transform operations to model changes
-        const modelChanges = mapOperationsToModelChanges(
-          operations,
-          newValue,
-          rowValues,
-        )
+        const modelChanges = mapOperationsToModelChanges(operations, newValue)
 
         applyAndCommitChanges(model, modelChanges)
       }
@@ -385,6 +382,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                         Open chat
                       </GridMenuButton>
                       <GridAgentChat
+                        agentRegistrationId={agentRegistrationId}
                         open={chatOpen}
                         onClose={() => setChatOpen(false)}
                         gridSessionId={session.sessionId!}
@@ -410,7 +408,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       ref={gridRef}
                       value={rowValues}
                       columns={colValues}
-                      autoAddRow={entityIsView ? false : true}
+                      autoAddRow={!entityIsView}
                       addRowsComponent={
                         entityIsView ? false : renderAddRowsComponent
                       }

@@ -1007,8 +1007,16 @@ export class KeyFactory {
     return this.getKey('portal', portalId, 'permissions')
   }
 
+  public getGridSessionKey(sessionId: string) {
+    return this.getKey('gridSession', sessionId)
+  }
+
   public getGridSessionListKey(request?: ListGridSessionsRequest) {
     return this.getKey('gridSession', 'list', request)
+  }
+
+  public getCurationTaskKey(taskId: number) {
+    return this.getKey('curationTask', taskId)
   }
 
   public getCurationTaskListKey(projectId: string) {

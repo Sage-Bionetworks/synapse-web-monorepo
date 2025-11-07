@@ -24,7 +24,10 @@ export default function MetadataTaskTableActionCell(props: {
 
   const handleOpenDataGrid = useCallback(async () => {
     const gridSession = await getGridSessionForTask({ curationTask })
-    const gridUrl = getLinkToGridSession(gridSession.sessionId!)
+    const gridUrl = getLinkToGridSession(
+      gridSession.sessionId!,
+      curationTask.taskId,
+    )
 
     // Open the Grid in a new tab
     window.open(gridUrl, '_blank', 'noopener')

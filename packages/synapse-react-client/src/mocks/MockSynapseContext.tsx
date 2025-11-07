@@ -8,6 +8,7 @@ export const MOCK_ACCESS_TOKEN = 'mock-access-token'
 
 export const MOCK_CONTEXT_VALUE: SynapseContextType = {
   accessToken: MOCK_ACCESS_TOKEN,
+  isAuthenticated: true,
   utcTime: false,
   isInExperimentalMode: false,
   downloadCartPageUrl: '/DownloadCart',

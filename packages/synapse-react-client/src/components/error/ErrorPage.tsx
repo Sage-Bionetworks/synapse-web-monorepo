@@ -116,8 +116,7 @@ function ErrorPage(props: ErrorPageProps) {
   } = props
   const [isSendMessageToAdminDialogOpen, setSendMessageToAdminDialogOpen] =
     useState<boolean>(false)
-  const { accessToken } = useSynapseContext()
-  const isLoggedIn = !!accessToken
+  const { isAuthenticated } = useSynapseContext()
   const image = useMemo(() => getImage(type), [type])
   const title = useMemo(() => getTitle(type), [type])
 
@@ -125,7 +124,7 @@ function ErrorPage(props: ErrorPageProps) {
     const msgs: string[] = []
     switch (type) {
       case SynapseErrorType.ACCESS_DENIED:
-        if (!isLoggedIn) {
+        if (!isAuthenticated) {
           msgs.push(ACCESS_DENIED_ANONYMOUS_MESSAGE)
         } else {
           msgs.push(ACCESS_DENIED_MESSAGE)
@@ -139,12 +138,12 @@ function ErrorPage(props: ErrorPageProps) {
       msgs.push(message)
     }
     return msgs
-  }, [type, isLoggedIn, message])
+  }, [type, isAuthenticated, message])
 
   const actions = useMemo(() => {
     const acts: ErrorPageAction[] = []
     if (type === SynapseErrorType.ACCESS_DENIED) {
-      if (!isLoggedIn) {
+      if (!isAuthenticated) {
         acts.push({
           linkText: LOG_IN_LINK_TEXT,
           onClick: () => gotoPlace('/LoginPlace:0'),
@@ -165,7 +164,7 @@ function ErrorPage(props: ErrorPageProps) {
       }
     }
     return acts
-  }, [type, isLoggedIn, entityId, gotoPlace])
+  }, [type, isAuthenticated, entityId, gotoPlace])
 
   const handleCloseDialog = useCallback(
     () => setSendMessageToAdminDialogOpen(false),

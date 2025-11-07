@@ -58,8 +58,7 @@ export function useGetRestrictionUiType(
     UseQueryOptions<EntityBundle, SynapseClientError, boolean>
   >,
 ): RestrictionUiType | undefined {
-  const { accessToken } = useSynapseContext()
-  const isSignedIn = Boolean(accessToken)
+  const { isAuthenticated } = useSynapseContext()
 
   const { data: restrictionInformation } = useGetRestrictionInformation({
     restrictableObjectType: RestrictableObjectType.ENTITY,
@@ -97,7 +96,7 @@ export function useGetRestrictionUiType(
     }
   }
 
-  if (isSignedIn) {
+  if (isAuthenticated) {
     return RestrictionUiType.AccessBlockedByACL
   }
   return RestrictionUiType.AccessBlockedToAnonymous

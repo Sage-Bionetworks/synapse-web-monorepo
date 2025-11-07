@@ -1,0 +1,51 @@
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+@use '../ChallengeCardsSection.module.scss' as Base;
+@use 'sass:map';
+
+.PopularChallengesSection__root {
+  margin: 120px 0;
+  position: relative;
+}
+
+.PopularChallengesSection__sectionTitle:global(.MuiTypography-root) {
+  @include Base.sectionTitle;
+}
+
+.PopularChallengesSection__container {
+  @include Base.sectionContainer;
+}
+
+.PopularChallengesSection__triangleImage {
+  @include Base.imagePosition;
+  left: 83%;
+  top: 4%;
+  color: #eb8231;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    left: 60%;
+    top: 10%;
+  }
+}
+
+.PopularChallengesSection__circleImage {
+  @include Base.imagePosition;
+  left: 10%;
+  bottom: 100%;
+  color: #669fc1;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    left: 35%;
+  }
+}
+
+.PopularChallengesSection__longLineImage {
+  @include Base.imagePosition;
+  right: 10%;
+  bottom: 100%;
+  color: #6db56d;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    right: 5%;
+    left: 58%;
+  }
+}

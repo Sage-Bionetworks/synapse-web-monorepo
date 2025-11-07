@@ -1,0 +1,72 @@
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+@use '../ChallengeCardsSection.module.scss' as Base;
+@use 'sass:map';
+
+.NewChallengesSection__root {
+  position: relative;
+}
+
+.NewChallengesSection__sectionTitle:global(.MuiTypography-root) {
+  @include Base.sectionTitle;
+}
+
+.NewChallengesSection__container {
+  @include Base.sectionContainer;
+}
+
+.NewChallengesSection__triangleImage {
+  @include Base.imagePosition;
+  left: 10%;
+  bottom: 100%;
+  color: #679ec1;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    left: 35%;
+  }
+}
+
+.NewChallengesSection__circleImage {
+  @include Base.imagePosition;
+  left: 10%;
+  top: 4%;
+  color: #6db56d;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    left: 35%;
+    top: 7%;
+  }
+}
+
+.NewChallengesSection__doubleLineImage {
+  @include Base.imagePosition;
+  left: 42%;
+  top: 5%;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    left: 45%;
+    top: 10%;
+  }
+}
+
+.NewChallengesSection__longLineImage {
+  @include Base.imagePosition;
+  right: 10%;
+  bottom: 100%;
+
+  color: #679ec1;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    right: 5%;
+    left: 62%;
+  }
+}
+
+.NewChallengesSection__shortLineImage {
+  @include Base.imagePosition;
+  right: 7%;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    right: 2%;
+    left: 63%;
+  }
+}

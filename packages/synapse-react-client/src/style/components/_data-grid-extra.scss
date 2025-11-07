@@ -66,9 +66,11 @@
 }
 
 .cell-selected {
-  border: 1px solid rgba(25, 118, 210, 0.5);
+  border: 1px solid rgba(25, 118, 210, 1);
 }
 
 .dsg-container:not(:focus-within) .cell-selected {
-  border: 1px solid rgba(25, 118, 210, 0.3);
+  border: 1px solid rgba(25, 118, 210, 1);
+  background-color: rgba(25, 118, 210, 0.05);
+  z-index: 25;
 }

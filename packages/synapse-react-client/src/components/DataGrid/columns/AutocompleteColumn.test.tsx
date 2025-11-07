@@ -27,6 +27,7 @@ describe('AutocompleteColumn', () => {
   })
   it('should allow free text entry and update state accordingly', async () => {
     const mockSetRowData = vi.fn()
+    const mockStopEditing = vi.fn()
     const choices = ['option1', 'option2', 'option3']
     const rowData = ''
 
@@ -34,6 +35,9 @@ describe('AutocompleteColumn', () => {
       rowData,
       setRowData: mockSetRowData,
       choices,
+      focus: true,
+      active: true,
+      stopEditing: mockStopEditing,
     }
 
     render(<AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />)
@@ -55,10 +59,14 @@ describe('AutocompleteColumn', () => {
 
   it('should select an existing option and update rowData', async () => {
     const mockSetRowData = vi.fn()
+    const mockStopEditing = vi.fn()
     const mockCellProps: Partial<AutocompleteCellProps> = {
       rowData: 'option1',
       setRowData: mockSetRowData,
       choices: ['option1', 'option2'],
+      focus: true,
+      active: true,
+      stopEditing: mockStopEditing,
     }
 
     render(<AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />)
@@ -73,11 +81,15 @@ describe('AutocompleteColumn', () => {
 
   it('should parse free text with the provided colType on blur', async () => {
     const mockSetRowData = vi.fn()
+    const mockStopEditing = vi.fn()
     const mockCellProps: Partial<AutocompleteCellProps> = {
       rowData: '',
       setRowData: mockSetRowData,
       choices: ['option1'],
       colType: 'number',
+      focus: true,
+      active: true,
+      stopEditing: mockStopEditing,
     }
 
     render(<AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />)

@@ -9,12 +9,18 @@ import {
   metricsSql,
   partnersSql,
   featuredTeamSql,
+  newChallengesSql,
+  popularChallengesSql,
 } from '@/config/resources'
 import {
   challengeTitleLinkConfig,
   challengeCardConfiguration,
 } from '@/config/synapseConfig/challenges'
 import { PortalFeaturedPartners } from 'synapse-react-client'
+import NewChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/NewChallengesSection/NewChallengesSection'
+import PopularChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/PopularChallengesSection/PopularChallengesSection'
+
+const CARD_BORDER_RADIUS_PX = 4
 
 function Home() {
   return (
@@ -26,6 +32,14 @@ function Home() {
         sql={partnersSql}
         titleText="Our Challenge Partners"
         sx={{ marginBottom: '160px' }}
+      />
+      <NewChallengesSection
+        sql={newChallengesSql}
+        borderRadiusPx={CARD_BORDER_RADIUS_PX}
+      />
+      <PopularChallengesSection
+        sql={popularChallengesSql}
+        borderRadiusPx={CARD_BORDER_RADIUS_PX}
       />
       <ChallengeFeaturedTeam sql={featuredTeamSql} />
       <SectionLayout

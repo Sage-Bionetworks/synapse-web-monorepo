@@ -19,7 +19,8 @@ import ClassicSupportedByNIABanner from './classic/ClassicSupportedByNIABanner/C
 import ChallengeHeader from './challenges/ChallengeHeader/ChallengeHeader'
 import ChallengeMetrics from './challenges/ChallengeMetrics/ChallengeMetrics'
 import ChallengeFeaturedTeam from './challenges/ChallengeFeaturedTeam/ChallengeFeaturedTeam'
-
+import NewChallengesSection from './challenges/NewChallengesSection/NewChallengesSection'
+import PopularChallengesSection from './challenges/PopularChallengesSection/PopularChallengesSection'
 import ExploreWrapper from './Explore/ExploreWrapper'
 import GenieHomePageHeader from './genie/GenieHomePageHeader'
 import CancerComplexityHeader from './cancercomplexity/CancerComplexityHeader'
@@ -55,6 +56,8 @@ const PortalComponents = {
   AMPALSExploreTheData,
   ELSupportedByNIH,
   ChallengeMetrics,
+  NewChallengesSection,
+  PopularChallengesSection,
   ClassicSupportedByNIABanner,
   ARKWelcomePage,
   GenieHomePageHeader,

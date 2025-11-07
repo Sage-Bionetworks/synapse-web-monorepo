@@ -17,8 +17,7 @@ export type ChallengeDetailPageProps = {
 }
 
 export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
-  const { accessToken } = useSynapseContext()
-  const isLoggedIn = !!accessToken
+  const { isAuthenticated } = useSynapseContext()
   const [showSubmissionTeamWizard, setShowSubmissionTeamWizard] =
     useState<boolean>(false)
   const [showRegistrationModal, setShowRegistrationModal] =
@@ -45,7 +44,7 @@ export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
     1,
     0,
     {
-      enabled: Boolean(isLoggedIn && challenge),
+      enabled: Boolean(isAuthenticated && challenge),
     },
   )
   const isMemberOfSubmissionTeam =
@@ -61,7 +60,7 @@ export function ChallengeDetailPage({ projectId }: ChallengeDetailPageProps) {
   })
 
   const doLeaveChallenge = () => {
-    if (isLoggedIn && challenge && userProfile) {
+    if (isAuthenticated && challenge && userProfile) {
       /**
        * What does it mean to leave a challenge?
        * Simply leaving the participant team may not be enough...

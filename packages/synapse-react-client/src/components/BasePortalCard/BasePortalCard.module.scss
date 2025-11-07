@@ -1,0 +1,26 @@
+@use '../../style/abstracts/variables' as SrcVariables;
+@use 'sass:map';
+
+.BasePortalCard__root {
+  position: relative;
+}
+
+.BasePortalCard__contentBelow {
+  margin-top: 15px;
+}
+
+.small {
+  width: 250px;
+  min-height: 150px;
+}
+
+.medium {
+  width: 400px;
+  height: 400px;
+  min-height: 200px;
+}
+
+.large {
+  width: 600px;
+  min-height: 300px;
+}

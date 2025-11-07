@@ -1,5 +1,6 @@
 import { useSynapseContext } from '@/utils/index'
 import {
+  CurationTask,
   ListCurationTaskResponse,
   SynapseClientError,
 } from '@sage-bionetworks/synapse-client'
@@ -8,7 +9,25 @@ import {
   QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
+  useQuery,
+  UseQueryOptions,
 } from '@tanstack/react-query'
+
+export function useGetCurationTask<TData = CurationTask>(
+  taskId: number,
+  options?: Partial<UseQueryOptions<CurationTask, SynapseClientError, TData>>,
+) {
+  const { synapseClient, keyFactory } = useSynapseContext()
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getCurationTaskKey(taskId),
+    queryFn: async () => {
+      return synapseClient.curationTaskServicesClient.getRepoV1CurationTaskTaskId(
+        { taskId },
+      )
+    },
+  })
+}
 
 export function useGetCurationTasksByProjectInfinite<
   TData = InfiniteData<ListCurationTaskResponse>,
