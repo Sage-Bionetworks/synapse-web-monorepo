@@ -87,7 +87,13 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
         }}
       >
         <Chip
-          icon={<EntityTypeIcon type={props.entityType} wrap={false} />}
+          icon={
+            <EntityTypeIcon
+              type={props.entityType}
+              wrap={false}
+              sx={{ color: '#265149', width: '18px' }}
+            />
+          }
           label={props.entityType}
           sx={{ ...searchResultsCardChipStyles }}
         />

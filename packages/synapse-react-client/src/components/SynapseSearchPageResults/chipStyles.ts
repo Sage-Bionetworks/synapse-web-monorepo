@@ -13,7 +13,10 @@ export const searchResultsCardChipStyles: SxProps<Theme> = {
   backgroundColor: '#DAE9E7',
   fontSize: '15px',
   textTransform: 'capitalize',
-  padding: '8px',
+  padding: '12px',
   marginRight: '8px',
-  'MuiChip-icon': {},
+  '.MuiChip-label': {
+    pl: '5px',
+    pr: 0,
+  },
 }
