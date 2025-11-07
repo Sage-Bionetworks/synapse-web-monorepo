@@ -35,8 +35,9 @@ function GridPageInternal() {
         <SynapseGrid
           agentRegistrationId={agentRegistrationId ?? undefined}
           ref={handle => {
-            if (!handle) return
-            handle.loadExistingSession(sessionId)
+            if (handle) {
+              handle.loadExistingSession(sessionId)
+            }
           }}
         />
       </div>
