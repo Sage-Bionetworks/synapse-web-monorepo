@@ -22,7 +22,7 @@ export type RedirectDialogProps = {
 // This is the time before the redirect occurs, allowing users to cancel if needed.
 const initialCountdownSeconds = 10
 
-export const redirectInstructionsMap = {
+export const redirectInstructionsMap: Record<string, React.JSX.Element> = {
   'https://sites.google.com/sagebase.org/mc2intranet/home?authuser=0': (
     <>
       <Typography variant="body1" sx={{ paddingBottom: '20px' }}>
@@ -98,7 +98,9 @@ const parseSynIdFromRedirectUrl = (redirectUrl: string | undefined) => {
 const RedirectDialog = (props: RedirectDialogProps) => {
   const [countdownSeconds, setCountdownSeconds] = useState<number | undefined>()
   const { redirectUrl, onCancelRedirect } = props
-  const [redirectInstructions, setRedirectInstructions] = useState()
+  const [redirectInstructions, setRedirectInstructions] = useState<
+    React.JSX.Element | undefined
+  >()
   const navigate = useNavigate()
 
   const { entityId, versionNumber } =
@@ -107,6 +109,18 @@ const RedirectDialog = (props: RedirectDialogProps) => {
   const location = useLocation()
 
   const isRedirectTargetFileEntity = entity ? isFileEntity(entity) : false
+
+  const getRedirectInstructionsFromUrl = (
+    url: string,
+  ): React.JSX.Element | undefined => {
+    if (redirectInstructionsMap[url]) return redirectInstructionsMap[url]
+    try {
+      const parsedURL = new URL(url)
+      return redirectInstructionsMap[parsedURL.hostname]
+    } catch {
+      return undefined
+    }
+  }
 
   useEffect(() => {
     if (redirectUrl && isRedirectTargetFileEntity && !isLoading) {
@@ -156,7 +170,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
       setRedirectInstructions(
         isRedirectToSynapse
           ? synapseRedirectInstructions
-          : redirectInstructionsMap[redirectUrl],
+          : getRedirectInstructionsFromUrl(redirectUrl),
       )
     }
   }, [redirectUrl])
@@ -213,7 +227,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
           open={true}
           onClose={onClose}
           className="RedirectDialog"
-          PaperProps={{ sx: { padding: 0 } }}
+          slotProps={{ paper: { sx: { padding: 0 } } }}
         >
           <DialogContent sx={{ p: 0, ml: 0, mr: 0 }}>
             <div className="redirect-dialog-body">
@@ -236,7 +250,8 @@ const RedirectDialog = (props: RedirectDialogProps) => {
                       window.location.assign(redirectUrl)
                     }}
                   >
-                    Go to the site now
+                    Go to {isRdcapUrl(redirectUrl) ? 'RDCA-DAP' : 'the site'}{' '}
+                    now
                   </Button>
                   <Button variant="outlined" onClick={onClose}>
                     Stay in the Portal
@@ -260,8 +275,15 @@ const RedirectDialog = (props: RedirectDialogProps) => {
               </div>
             )}
             {isRdcapUrl(redirectUrl) && (
-              <div className="redirect-dialog-footer">
-                <RDCADAP />
+              <div
+                className="redirect-dialog-footer"
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <RDCADAP title="rdca-logo-image" />
               </div>
             )}
           </DialogContent>
