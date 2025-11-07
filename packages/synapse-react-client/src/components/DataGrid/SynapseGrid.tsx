@@ -209,12 +209,12 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       (model: GridModel, modelChanges: ModelChange[]) => {
         // Apply each change to the model
         modelChanges.forEach(change => {
-          applyModelChange(model, change)
+          applyModelChange(model, change, schemaPropertiesInfo)
         })
 
         commit()
       },
-      [commit],
+      [commit, schemaPropertiesInfo],
     )
 
     const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
@@ -236,11 +236,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
         addOperationsToUndoStack(operations, rowValues, newValue)
 
         // Transform operations to model changes
-        const modelChanges = mapOperationsToModelChanges(
-          operations,
-          newValue,
-          rowValues,
-        )
+        const modelChanges = mapOperationsToModelChanges(operations, newValue)
 
         applyAndCommitChanges(model, modelChanges)
       }
@@ -410,7 +406,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       ref={gridRef}
                       value={rowValues}
                       columns={colValues}
-                      autoAddRow={entityIsView ? false : true}
+                      autoAddRow={!entityIsView}
                       addRowsComponent={
                         entityIsView ? false : renderAddRowsComponent
                       }

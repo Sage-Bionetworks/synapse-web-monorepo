@@ -4,7 +4,6 @@ import { ModelChange } from './applyModelChange'
 export function mapOperationsToModelChanges(
   operations: Operation[],
   newValue: DataGridRow[],
-  oldValue: DataGridRow[],
 ): ModelChange[] {
   const modelChanges: ModelChange[] = []
 
