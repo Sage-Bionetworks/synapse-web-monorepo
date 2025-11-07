@@ -64,8 +64,6 @@ const ColorfulPortalCardWithChips = ({
   const imageUrl = useImageUrl(backgroundImage ?? '', entityId ?? '')
   const backgroundImageValue = imageUrl ?? backgroundImage
 
-  console.log('descriptionTitle', descriptionTitle)
-
   return (
     <BasePortalCard
       cardSize={cardSize}
