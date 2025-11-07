@@ -7,6 +7,9 @@
  *
  *  extractColumnValidationMessages(["#/requiredNumberArrayColumn/0: some error"])
  *  -> Map { "requiredNumberArrayColumn" => ["some error"] }
+ *
+ *  extractColumnValidationMessages(["#: row-level error"])
+ *  -> Map { "row" => ["row-level error"] }
  */
 export function extractColumnValidationMessages(
   messages: string[],
@@ -14,14 +17,15 @@ export function extractColumnValidationMessages(
   const columnMap = new Map<string, string[]>()
   // Validation message format: "#/columnName: message"
   // or for array items: "#/columnName/0: message"
-  const regex = /^#\/([^/:]+)(?:\/\d+)?:\s*(.*)$/
+  // or for object (row) level: "#: message"
+  const regex = /^#(?:\/([^/:]+)(?:\/\d+)?)?:\s*(.*)$/
 
   for (const raw of messages) {
     if (typeof raw !== 'string') continue
     const str = raw.trimStart()
     const match = str.match(regex)
     if (match) {
-      const columnName = match[1].trim()
+      const columnName = match[1]?.trim() ?? '_row'
       const message = match[2].trim()
 
       if (!columnMap.has(columnName)) {
