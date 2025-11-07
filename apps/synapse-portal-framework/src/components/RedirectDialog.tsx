@@ -11,6 +11,7 @@ import { useGetEntity } from 'synapse-react-client/synapse-queries'
 import { isFileEntity } from 'synapse-react-client'
 import { useLocation, useNavigate } from 'react-router'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
+import { ReactComponent as RDCADAP } from '/../../portals/ampals/src/config/style/RDCADAP.svg'
 
 export type RedirectDialogProps = {
   onCancelRedirect: () => void
@@ -48,6 +49,15 @@ export const redirectInstructionsMap = {
       </Typography>
     </>
   ),
+  'fair.dap.c-path.org': (
+    <>
+      <Typography variant="body1" sx={{ paddingBottom: '20px' }}>
+        <strong>
+          You are currently being redirected to RDCA-DAP to view this data.
+        </strong>
+      </Typography>
+    </>
+  ),
 }
 
 export const synapseRedirectInstructions = (
@@ -63,6 +73,12 @@ const isSynapseURL = (url: string) => {
     parsedURL.hostname.toLowerCase() === 'www.synapse.org' &&
     parsedURL.pathname.startsWith('/Synapse')
   )
+}
+
+const isRdcapUrl = (url: string) => {
+  if (!url) return false
+  const parsedURL = new URL(url)
+  return parsedURL.hostname.toLowerCase() === 'fair.dap.c-path.org'
 }
 
 const parseSynIdFromRedirectUrl = (redirectUrl: string | undefined) => {
@@ -241,6 +257,11 @@ const RedirectDialog = (props: RedirectDialogProps) => {
                   src="https://s3.amazonaws.com/static.synapse.org/images/homepage-composite.svg"
                   alt=""
                 />
+              </div>
+            )}
+            {isRdcapUrl(redirectUrl) && (
+              <div className="redirect-dialog-footer">
+                <RDCADAP />
               </div>
             )}
           </DialogContent>
