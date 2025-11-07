@@ -215,3 +215,8 @@ export const ONE_SAGE_APPID_QUERY_PARAM_KEY = 'appId'
 
 export const SAGE_OFFERINGS_HELP_URL =
   'https://help.synapse.org/docs/Sage-Offerings.2965078125.html'
+
+// Grid Page URL Query Parameters
+export const GRID_PAGE_SESSION_ID_QUERY_PARAM = 'sessionId'
+export const GRID_PAGE_AGENT_REGISTRATION_ID_QUERY_PARAM = 'agentRegistrationId'
+export const GRID_PAGE_TASK_ID_QUERY_PARAM = 'taskId'

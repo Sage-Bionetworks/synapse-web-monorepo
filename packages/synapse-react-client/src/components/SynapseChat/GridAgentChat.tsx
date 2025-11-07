@@ -12,6 +12,8 @@ export type GridAgentChatProps = {
   initialMessage?: string
   open: boolean
   onClose: () => void
+  /** Optional ID to use a different agent registered in Synapse */
+  agentRegistrationId?: string
 }
 
 export function GridAgentChat({
@@ -21,6 +23,7 @@ export function GridAgentChat({
   initialMessage,
   open,
   onClose,
+  agentRegistrationId,
 }: GridAgentChatProps) {
   // Storing state for the chat session here preserves chat history while the dialog is opened and closed.
   const [agentSession, setAgentSession] = useState<AgentSession | undefined>()
@@ -37,6 +40,7 @@ export function GridAgentChat({
   return (
     <DraggableDialog open={open} onClose={onClose} title={chatbotName}>
       <SynapseChat
+        agentRegistrationId={agentRegistrationId}
         chatbotName={chatbotName}
         initialMessage={initialMessage}
         sessionContext={sessionContext}

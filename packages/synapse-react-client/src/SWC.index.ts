@@ -142,6 +142,7 @@ const SynapseComponents = {
   GovernanceMarkdownGithub: lazy(
     () => import('./components/Markdown/GovernanceMarkdownGithub'),
   ),
+  GridPage: lazy(() => import('./features/curator/GridPage/GridPage')),
   HasAccess: lazy(() => import('./components/HasAccess/HasAccessV2')),
   HelpPopover: lazy(() => import('./components/HelpPopover/HelpPopover')),
   HtmlPreview: lazy(

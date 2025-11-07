@@ -49,6 +49,7 @@ import {
 } from './components/contextMenu'
 
 export type SynapseGridProps = {
+  agentRegistrationId?: string
   showDebugInfo?: boolean
 }
 
@@ -58,7 +59,7 @@ export type SynapseGridHandle = {
 }
 
 const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
-  ({ showDebugInfo = false }, ref) => {
+  ({ agentRegistrationId, showDebugInfo = false }, ref) => {
     const [session, setSession] = useState<GridSession | null>(null)
     const [replicaId, setReplicaId] = useState<number | null>(null)
     const [chatOpen, setChatOpen] = useState(false)
@@ -381,6 +382,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                         Open chat
                       </GridMenuButton>
                       <GridAgentChat
+                        agentRegistrationId={agentRegistrationId}
                         open={chatOpen}
                         onClose={() => setChatOpen(false)}
                         gridSessionId={session.sessionId!}

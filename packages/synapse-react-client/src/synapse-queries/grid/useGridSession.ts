@@ -5,6 +5,7 @@ import {
   CreateGridRequest,
   CreateGridResponse,
   CreateReplicaResponse,
+  GridSession,
   ListGridSessionsRequest,
   ListGridSessionsResponse,
   PostRepoV1GridSessionSessionIdReplicaRequest,
@@ -19,7 +20,9 @@ import {
   UseInfiniteQueryOptions,
   useMutation,
   UseMutationOptions,
+  useQuery,
   useQueryClient,
+  UseQueryOptions,
 } from '@tanstack/react-query'
 
 export function useCreateGridReplica(
@@ -127,6 +130,22 @@ export function useGetGridSessionsInfinite<
       }),
     initialPageParam: undefined,
     getNextPageParam: page => page.nextPageToken,
+  })
+}
+
+export function useGetGridSession<TData = GridSession>(
+  sessionId: string,
+  options?: Partial<UseQueryOptions<GridSession, SynapseClientError, TData>>,
+) {
+  const { keyFactory, synapseClient } = useSynapseContext()
+
+  return useQuery<GridSession, SynapseClientError, TData>({
+    ...options,
+    queryKey: keyFactory.getGridSessionKey(sessionId),
+    queryFn: () =>
+      synapseClient.gridServicesClient.getRepoV1GridSessionSessionId({
+        sessionId: sessionId,
+      }),
   })
 }
 
