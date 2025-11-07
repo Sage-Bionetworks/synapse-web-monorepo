@@ -1,0 +1,16 @@
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+@use '../ChallengeCardsSection.module.scss' as Base;
+@use 'sass:map';
+
+.GetInvolvedSection__root {
+  position: relative;
+  margin-top: 120px;
+}
+
+.GetInvolvedSection__sectionTitle:global(.MuiTypography-root) {
+  @include Base.sectionTitle;
+}
+
+.GetInvolvedSection__container {
+  @include Base.sectionContainer;
+}
