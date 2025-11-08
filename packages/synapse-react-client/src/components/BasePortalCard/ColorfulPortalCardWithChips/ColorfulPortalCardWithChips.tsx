@@ -74,14 +74,7 @@ const ColorfulPortalCardWithChips = ({
       contentBelowCard={chips && chips.length > 0 && <Chips values={chips} />}
     >
       <Stack className={styles.ColorfulPortalCardWithChips__sectionContainer}>
-        <Stack
-          className={styles.ColorfulPortalCardWithChips__topSection}
-          // className={`${
-          //   descriptionTitle
-          //     ? styles.ColorfulPortalCardWithChips__topSectionWithDescriptionTitle
-          //     : styles.ColorfulPortalCardWithChips__topSection
-          // }`}
-        >
+        <Stack className={styles.ColorfulPortalCardWithChips__topSection}>
           {tag && (
             <Chip
               color="secondary"
