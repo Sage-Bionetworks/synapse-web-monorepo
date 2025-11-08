@@ -16,39 +16,22 @@
 
 .NewChallengesSection__triangleImage {
   @include Base.imagePosition;
-  left: 10%;
+  left: 65%;
   bottom: 100%;
-  color: #679ec1;
+  color: #eb8231;
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
-    left: 35%;
+    left: 60%;
   }
 }
 
 .NewChallengesSection__circleImage {
   @include Base.imagePosition;
-  left: 10%;
-  top: 3%;
-  color: #6db56d;
+  left: 5%;
+  color: #669fc1;
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
-    left: 35%;
-    top: 7%;
-  }
-}
-
-.NewChallengesSection__doubleLineImage {
-  @include Base.imagePosition;
-  left: 42%;
-  top: 3%;
-
-  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
-    top: 3%;
-  }
-
-  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
-    left: 45%;
-    top: 6%;
+    left: 25%;
   }
 }
 
@@ -56,22 +39,20 @@
   @include Base.imagePosition;
   right: 10%;
   bottom: 100%;
-
-  color: #679ec1;
+  color: #6db56d;
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
-    right: 5%;
-    left: 62%;
+    left: 73%;
   }
 }
 
 .NewChallengesSection__shortLineImage {
   @include Base.imagePosition;
-  color: #eb8231;
   right: 7%;
+  color: #6db56d;
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
     right: 2%;
-    left: 63%;
+    left: 74%;
   }
 }

@@ -10,6 +10,7 @@ type ColorfulPortalCardWithChipsProps = {
   subtitle?: string
   description?: string
   learnMoreLink?: string
+  buttonOverrideText?: string
   chips?: string[]
   backgroundImage?: string
   backgroundColor?: string
@@ -50,6 +51,7 @@ const ColorfulPortalCardWithChips = ({
   subtitle,
   description,
   learnMoreLink,
+  buttonOverrideText,
   chips,
   backgroundImage,
   backgroundColor,
@@ -100,7 +102,7 @@ const ColorfulPortalCardWithChips = ({
               target="_blank"
               rel="noopener noreferrer"
             >
-              Learn more
+              {buttonOverrideText ?? 'Learn more'}
             </Button>
           )}
         </Stack>

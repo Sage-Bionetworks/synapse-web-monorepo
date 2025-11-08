@@ -11,6 +11,7 @@ import {
   featuredTeamSql,
   newChallengesSql,
   popularChallengesSql,
+  newsSql,
 } from '@/config/resources'
 import {
   challengeTitleLinkConfig,
@@ -18,6 +19,7 @@ import {
 } from '@/config/synapseConfig/challenges'
 import { PortalFeaturedPartners } from 'synapse-react-client'
 import NewChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/NewChallengesSection/NewChallengesSection'
+import ChallengeNewsSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeNewsSection/ChallengeNewsSection'
 import PopularChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/PopularChallengesSection/PopularChallengesSection'
 
 const CARD_BORDER_RADIUS_PX = 4
@@ -42,6 +44,10 @@ function Home() {
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
       />
       <ChallengeFeaturedTeam sql={featuredTeamSql} />
+      <ChallengeNewsSection
+        sql={newsSql}
+        borderRadiusPx={CARD_BORDER_RADIUS_PX}
+      />
       <SectionLayout
         title="Listed Challenges"
         subtitle="Explore and join our currently running challenges, or browse completed ones and review their findings."
