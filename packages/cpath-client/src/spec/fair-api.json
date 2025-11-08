@@ -1,0 +1,867 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "C-Path FAIR API (Filtered)",
+    "description": "Filtered C-Path FAIR API containing only required endpoints",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://fair.c-path-dev.aridhia.io/api",
+      "description": "C-Path FAIR API Development Server"
+    },
+    {
+      "url": "https://workspaces.westus2.c-path-dev.aridhia.io",
+      "description": "C-Path Workspaces API Development Server"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/fair/workflows/": {
+      "get": {
+        "tags": ["workflows"],
+        "summary": "List all available workflows",
+        "parameters": [
+          {
+            "name": "enabled",
+            "in": "query",
+            "description": "Returns only workflows that are enabled",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "disabled",
+            "in": "query",
+            "description": "Returns only workflows that are not enabled",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON structure containing all workflows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/WorkflowsList"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication Error"
+          },
+          "403": {
+            "description": "Authorisation Error"
+          }
+        }
+      }
+    },
+    "/fair/workflows/{code}": {
+      "get": {
+        "tags": ["workflows"],
+        "summary": "Get a specific workflow with code",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON structure containing workflow data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workflow"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication Error"
+          },
+          "403": {
+            "description": "Authorisation Error"
+          },
+          "404": {
+            "description": "Workflow not found"
+          }
+        }
+      }
+    },
+    "/fair/datasets/{code}/settings": {
+      "get": {
+        "tags": ["datasets"],
+        "summary": "Get settings for a specific dataset",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dataset settings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatasetSettings"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication Error"
+          },
+          "403": {
+            "description": "Authorisation Error"
+          },
+          "404": {
+            "description": "Dataset not found"
+          }
+        }
+      }
+    },
+    "/fair/requests/": {
+      "get": {
+        "tags": ["requests"],
+        "summary": "List all requests",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page number to return",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "The number of requests to return",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON structure containing all requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Request"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication Error"
+          },
+          "403": {
+            "description": "Authorisation Error"
+          }
+        }
+      },
+      "post": {
+        "tags": ["requests"],
+        "summary": "Create a new request",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestPost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "A request was created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A validation error occurred"
+          },
+          "401": {
+            "description": "Authentication Error"
+          },
+          "403": {
+            "description": "Authorisation Error"
+          }
+        }
+      }
+    },
+    "/fair/requests/{code}": {
+      "get": {
+        "tags": ["requests"],
+        "summary": "Get a specific request by code",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON structure containing request data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication Error"
+          },
+          "403": {
+            "description": "Authorisation Error"
+          },
+          "404": {
+            "description": "Request not found"
+          }
+        }
+      }
+    },
+    "/fair/datasets/": {
+      "get": {
+        "tags": ["datasets"],
+        "summary": "List all datasets",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page number to return",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "The number of datasets to return",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 20
+            }
+          },
+          {
+            "name": "requestable",
+            "in": "query",
+            "description": "Return datasets with an assigned workflow where requests can be made",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON structure containing datasets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Dataset"
+                      }
+                    },
+                    "paging": {
+                      "$ref": "#/components/schemas/Paging"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication Error"
+          },
+          "403": {
+            "description": "Authorisation Error"
+          }
+        }
+      }
+    },
+    "/fair/datasets/{code}": {
+      "get": {
+        "tags": ["datasets"],
+        "summary": "Get a specific dataset by code",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON structure containing dataset data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dataset"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication Error"
+          },
+          "403": {
+            "description": "Authorisation Error"
+          },
+          "404": {
+            "description": "Dataset not found"
+          }
+        }
+      }
+    },
+    "/authenticate": {
+      "post": {
+        "tags": ["authentication"],
+        "summary": "Authenticate user and get JWT token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authentication successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed"
+          }
+        }
+      }
+    },
+    "/workspace_admin/workspace/search": {
+      "post": {
+        "tags": ["workspace"],
+        "summary": "Search for workspaces",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspaceSearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Workspace"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication Error"
+          },
+          "403": {
+            "description": "Authorisation Error"
+          }
+        }
+      }
+    },
+    "/workspace_admin/form_definition/workspace_request": {
+      "get": {
+        "tags": ["workspace"],
+        "summary": "Get form definition for workspace request",
+        "responses": {
+          "200": {
+            "description": "Form definition",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormDefinition"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication Error"
+          },
+          "403": {
+            "description": "Authorisation Error"
+          }
+        }
+      }
+    },
+    "/workspace_admin/workspace": {
+      "post": {
+        "tags": ["workspace"],
+        "summary": "Create a new workspace",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkspaceCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Workspace created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workspace"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error"
+          },
+          "401": {
+            "description": "Authentication Error"
+          },
+          "403": {
+            "description": "Authorisation Error"
+          }
+        }
+      }
+    },
+    "/workspace_admin/workspace/{uuid}/upload_token": {
+      "post": {
+        "tags": ["workspace"],
+        "summary": "Get upload token for a workspace",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uuid",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Upload token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadToken"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication Error"
+          },
+          "403": {
+            "description": "Authorisation Error"
+          },
+          "404": {
+            "description": "Workspace not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Paging": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer"
+          },
+          "pageSize": {
+            "type": "integer"
+          },
+          "totalPages": {
+            "type": "integer"
+          },
+          "totalItems": {
+            "type": "integer"
+          }
+        }
+      },
+      "WorkflowsList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Workflow": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "DatasetSettings": {
+        "type": "object",
+        "properties": {
+          "visibility": {
+            "type": "string",
+            "enum": ["private", "internal", "public"]
+          },
+          "allow_private_cohorts": {
+            "type": "boolean"
+          },
+          "allow_internal_cohorts": {
+            "type": "boolean"
+          },
+          "expose_cohort_counts": {
+            "type": "boolean"
+          },
+          "expose_cohort_visualisations": {
+            "type": "boolean"
+          },
+          "minimum_cohort_size": {
+            "type": "integer"
+          },
+          "allow_dataset_update_subscriptions": {
+            "type": "boolean"
+          },
+          "dataset_actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Dataset": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "workflow_key": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": ["private", "internal", "public"]
+          }
+        }
+      },
+      "Request": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "approved", "denied", "error"]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "workspace_uuid": {
+            "type": "string"
+          },
+          "transfer_type": {
+            "type": "string",
+            "enum": ["clear", "pseudonymised", "manual"]
+          }
+        }
+      },
+      "RequestPost": {
+        "type": "object",
+        "required": ["name", "transfer_type"],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "workspace_uuid": {
+            "type": "string"
+          },
+          "terms": {
+            "type": "boolean"
+          },
+          "transfer_type": {
+            "type": "string",
+            "enum": ["clear", "pseudonymised", "manual"]
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "AuthenticationRequest": {
+        "type": "object",
+        "required": ["username", "password"],
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "AuthenticationResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "uuid": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "WorkspaceSearchRequest": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "Workspace": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "FormDefinition": {
+        "type": "object",
+        "properties": {
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "required": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      },
+      "WorkspaceCreateRequest": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "UploadToken": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }
+}

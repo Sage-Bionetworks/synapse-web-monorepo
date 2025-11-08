@@ -1428,6 +1428,48 @@ importers:
         specifier: ^3.6.20
         version: 3.6.20
 
+  packages/cpath-client:
+    devDependencies:
+      '@openapitools/openapi-generator-cli':
+        specifier: ^2.24.0
+        version: 2.24.0(@types/node@20.19.19)(encoding@0.1.13)
+      '@types/lodash-es':
+        specifier: ^4.17.12
+        version: 4.17.12
+      '@vitest/ui':
+        specifier: ^3.2.4
+        version: 3.2.4(vitest@3.2.2)
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
+      msw:
+        specifier: ^2.10.2
+        version: 2.10.2(@types/node@20.19.19)(typescript@5.8.3)
+      rimraf:
+        specifier: ^5.0.10
+        version: 5.0.10
+      tslib:
+        specifier: ^2.8.1
+        version: 2.8.1
+      tsx:
+        specifier: ^4.19.4
+        version: 4.19.4
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      undici:
+        specifier: ^6.21.2
+        version: 6.21.2
+      vite:
+        specifier: ^6.3.5
+        version: 6.3.5(@types/node@20.19.19)(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+      vite-config:
+        specifier: workspace:*
+        version: link:../vite-config
+      vitest:
+        specifier: ^3.2.2
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@20.19.19)(@vitest/ui@3.2.4)(jsdom@26.1.0)(msw@2.10.2(@types/node@20.19.19)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+
   packages/markdown-it-container:
     devDependencies:
       '@rollup/plugin-babel':
