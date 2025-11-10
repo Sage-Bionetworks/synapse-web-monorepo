@@ -72,7 +72,7 @@ const ChallengeNewsSection = ({
 
           return (
             <ColorfulPortalCardWithChips
-              //   cardSize={cardSize} todo
+              cardSize={cardSize}
               key={row.rowId}
               title={
                 row.values[getFieldIndex('title', queryResultBundle)] ?? ''
@@ -84,6 +84,11 @@ const ChallengeNewsSection = ({
               description={
                 row.values[getFieldIndex('description', queryResultBundle)] ??
                 ''
+              }
+              descriptionTitle={
+                row.values[
+                  getFieldIndex('descriptionTitle', queryResultBundle)
+                ] ?? ''
               }
               learnMoreLink={
                 row.values[getFieldIndex('learnMoreLink', queryResultBundle)] ??

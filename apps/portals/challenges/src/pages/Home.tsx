@@ -54,6 +54,7 @@ function Home() {
       <ChallengeNewsSection
         sql={newsSql}
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
+        cardSize="large"
       />
       <SectionLayout
         title="Listed Challenges"
