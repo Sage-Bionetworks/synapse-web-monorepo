@@ -70,11 +70,10 @@ const ColorfulPortalCardWithChips = ({
       borderRadiusPx={borderRadiusPx}
       backgroundImage={backgroundImageValue}
       backgroundColor={backgroundColor ?? ''}
-      className={styles.ColorfulPortalCardWithChips__backgroundImage}
       contentBelowCard={chips && chips.length > 0 && <Chips values={chips} />}
     >
       <Stack className={styles.ColorfulPortalCardWithChips__sectionContainer}>
-        <Stack className={styles.ColorfulPortalCardWithChips__topSection}>
+        <Stack>
           {tag && (
             <Chip
               color="secondary"
