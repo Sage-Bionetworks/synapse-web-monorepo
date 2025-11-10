@@ -12,6 +12,8 @@ export type DownloadPFBRequest = {
   entityId: string
   /* Required. Used for the PFB entity.name field of each row added to the resulting avro file. */
   pfbEntityName: string
+  /* The list of column names from the select list that should be used to compose the PFB entity id field for each row. The values will be concatenated using an underscore (_). If not provided, the entity id will be set to the concatentation of the implicit ROW_ID and ROW_VERSION of the underlying table. */
+  pfbEntityIdColumnNames?: string[]
   /* Set the name of the resulting PFB file. An auto-generated name will be used if omitted. */
   fileName?: string
   /* The SQL query string. */
