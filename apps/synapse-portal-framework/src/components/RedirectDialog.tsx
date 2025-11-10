@@ -11,7 +11,7 @@ import { useGetEntity } from 'synapse-react-client/synapse-queries'
 import { isFileEntity } from 'synapse-react-client'
 import { useLocation, useNavigate } from 'react-router'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
-import { ReactComponent as RDCADAP } from '../../portals/ampals/src/config/style/RDCADAP.svg'
+import { ReactComponent as RDCADAP } from '@/portals/ampals/src/config/style/RDCADAP.svg'
 
 export type RedirectDialogProps = {
   onCancelRedirect: () => void
