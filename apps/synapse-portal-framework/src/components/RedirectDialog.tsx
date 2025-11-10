@@ -11,7 +11,7 @@ import { useGetEntity } from 'synapse-react-client/synapse-queries'
 import { isFileEntity } from 'synapse-react-client'
 import { useLocation, useNavigate } from 'react-router'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
-import { ReactComponent as RDCADAP } from '/../../portals/ampals/src/config/style/RDCADAP.svg'
+import { ReactComponent as RDCADAP } from '../../portals/ampals/src/config/style/RDCADAP.svg'
 
 export type RedirectDialogProps = {
   onCancelRedirect: () => void
@@ -110,16 +110,23 @@ const RedirectDialog = (props: RedirectDialogProps) => {
 
   const isRedirectTargetFileEntity = entity ? isFileEntity(entity) : false
 
+  const getHostname = (url: string): string | null => {
+    try {
+      return new URL(url).hostname.toLowerCase()
+    } catch {
+      return null
+    }
+  }
+
   const getRedirectInstructionsFromUrl = (
     url: string,
   ): React.JSX.Element | undefined => {
     if (redirectInstructionsMap[url]) return redirectInstructionsMap[url]
-    try {
-      const parsedURL = new URL(url)
-      return redirectInstructionsMap[parsedURL.hostname]
-    } catch {
-      return undefined
+    const hostname = getHostname(url)
+    if (hostname && redirectInstructionsMap[hostname]) {
+      return redirectInstructionsMap[hostname]
     }
+    return undefined
   }
 
   useEffect(() => {
