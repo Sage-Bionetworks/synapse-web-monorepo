@@ -8,15 +8,31 @@ export interface HasAccessChipProps {
 }
 
 export function HasAccessChip({ entityId }: HasAccessChipProps) {
-  const { accessText, icon } = useHasAccess(entityId)
+  const {
+    accessText,
+    icon,
+    handleGetAccess,
+    isClickable,
+    accessRequirementDialog,
+  } = useHasAccess(entityId)
 
   return (
     <>
       <Chip
         label={accessText}
         icon={icon}
-        sx={{ ...searchResultsCardChipStyles }}
+        onClick={isClickable ? handleGetAccess : undefined}
+        sx={{
+          ...searchResultsCardChipStyles,
+          ...(isClickable && {
+            cursor: 'pointer',
+            '&:hover': {
+              backgroundColor: 'action.hover',
+            },
+          }),
+        }}
       />
+      {accessRequirementDialog}
     </>
   )
 }

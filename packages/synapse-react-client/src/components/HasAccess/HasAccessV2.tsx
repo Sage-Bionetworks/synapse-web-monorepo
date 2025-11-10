@@ -153,9 +153,22 @@ function getAccessText(props: RestrictionUiType | undefined) {
 
 // A hook that handles the logic for computing the correct access level, getting the text, and the icon
 export function useHasAccess(entityId: string) {
+  const [displayAccessRequirement, setDisplayAccessRequirement] =
+    useState(false)
+  const [accessRequirements, setAccessRequirements] = useState<
+    AccessRequirement[]
+  >([])
+
+  const { accessToken } = useSynapseContext()
+
   // get access level
   const restrictionUiType = useGetRestrictionUiType(entityId, {
     enabled: false,
+  })
+
+  const { data: restrictionInformation } = useGetRestrictionInformation({
+    restrictableObjectType: RestrictableObjectType.ENTITY,
+    objectId: entityId,
   })
 
   // get access level text
@@ -166,10 +179,61 @@ export function useHasAccess(entityId: string) {
     <AccessIcon restrictionUiType={restrictionUiType!} wrap={false} />
   )
 
+  const handleGetAccess = useCallback(() => {
+    // TODO: The fetch should really happen in the AR List component.
+    // If we need to open the AR page in synapse, the logic should be in the modal and it should just close itself right away
+    SynapseClient.getAllAccessRequirements(accessToken, entityId).then(
+      requirements => {
+        if (checkHasUnsupportedRequirement(requirements)) {
+          window.open(
+            `${getEndpoint(
+              BackendDestinationEnum.PORTAL_ENDPOINT,
+            )}AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
+            '_blank',
+          )
+        } else {
+          setAccessRequirements(requirements)
+          setDisplayAccessRequirement(true)
+        }
+      },
+    )
+  }, [accessToken, entityId])
+
+  // Determine if this access type should show a clickable button
+  const isClickable = useMemo(() => {
+    if (!restrictionInformation || !restrictionUiType) {
+      return false
+    }
+
+    const hasUnmetAccessRequirement =
+      restrictionInformation.hasUnmetAccessRequirement
+    const restrictionLevel = restrictionInformation.restrictionLevel
+
+    // Clickable if there are unmet requirements or if there are terms to view
+    return (
+      hasUnmetAccessRequirement || restrictionLevel !== RestrictionLevel.OPEN
+    )
+  }, [restrictionInformation, restrictionUiType])
+
+  const accessRequirementDialog = displayAccessRequirement ? (
+    <AccessRequirementList
+      subjectId={entityId}
+      subjectType={RestrictableObjectType.ENTITY}
+      accessRequirementFromProps={accessRequirements}
+      renderAsModal={true}
+      onHide={() => {
+        setDisplayAccessRequirement(false)
+      }}
+    />
+  ) : null
+
   return {
     restrictionUiType,
     accessText,
     icon,
+    handleGetAccess,
+    isClickable,
+    accessRequirementDialog,
   }
 }
 
