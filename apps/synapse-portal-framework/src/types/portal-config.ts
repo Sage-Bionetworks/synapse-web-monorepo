@@ -26,3 +26,15 @@ export type LogoConfig = {
   hideLogin?: boolean
 }
 // LogoConfig end
+
+// FileEntityPageConfig
+export type FileEntityPageConfig = {
+  showWiki?: boolean
+  showProvenance?: boolean
+  showContentSize?: boolean
+  showContentMd5?: boolean
+  showStorageLocation?: boolean
+  showModifiedOn?: boolean
+  showAnnotations?: boolean
+}
+// FileEntityPageConfig end

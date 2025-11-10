@@ -1,12 +1,11 @@
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import React, { Suspense, useEffect } from 'react'
+import AddToDownloadListConfirmationAlert from '@/components/download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert'
+import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
+import {
+  AddToDownloadListRequest,
+  EntityType,
+} from '@sage-bionetworks/synapse-client'
+import { useEffect, useMemo } from 'react'
 import { useGetEntity } from '../../synapse-queries/'
-import { SynapseConstants } from '../../utils'
-import { DEFAULT_PAGE_SIZE } from '../../utils/SynapseConstants'
-import { FolderDownloadConfirmation } from '../download_list/FolderDownloadConfirmation'
-import { TableQueryDownloadConfirmation } from '../download_list/TableQueryDownloadConfirmation'
-import { QueryWrapper } from '../QueryWrapper'
-import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 
 /**
  * Props for the EntityDownloadConfirmation component.
@@ -20,45 +19,27 @@ export type EntityDownloadConfirmationProps = {
   handleClose: () => void
 }
 
-const QueryWrapperTableDownloadConfirmation: React.FC<{
-  entityId: string
-  versionNumber?: number
-  onHide: () => void
-}> = ({ entityId, versionNumber, onHide }) => {
-  const initQueryRequest: QueryBundleRequest = {
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-    entityId: entityId,
-    query: {
-      sql: `select * from ${entityId}${
-        versionNumber != undefined ? `.${versionNumber}` : ''
-      }`,
-      limit: DEFAULT_PAGE_SIZE,
-      sort: undefined,
-      additionalFilters: undefined,
-    },
-    partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
-  }
-
-  return (
-    <Suspense fallback={<></>}>
-      <QueryWrapper initQueryRequest={initQueryRequest}>
-        <QueryWrapperErrorBoundary>
-          <TableQueryDownloadConfirmation onClose={onHide} />
-        </QueryWrapperErrorBoundary>
-      </QueryWrapper>
-    </Suspense>
-  )
-}
+const typesToAddToDownloadListWithParentId: EntityType[] = [
+  EntityType.project,
+  EntityType.folder,
+  EntityType.dataset,
+  EntityType.datasetcollection,
+]
+const typesToAddToDownloadListWithQuery: EntityType[] = [EntityType.entityview]
+/** Users expect the specific file version included in the dataset to be added to the cart */
+const typesWhereFileVersionNumberShouldBeUsed: EntityType[] = [
+  EntityType.dataset,
+  EntityType.datasetcollection,
+]
 
 /**
- * A component that allows users to add an entity to the download cart.
- * Depending on the type of entity, it displays a confirmation dialog for either
- * downloading a folder or downloading a table/query.
+ * A component that allows users to add an entity to the download cart. It displays a confirmation dialog that displays
+ * statistics about the set of items that will be added to the download cart.
  *
- * @param {EntityDownloadConfirmationProps} props - The properties for the component.
- * @param {string} props.entityId - The ID of the entity to be added to the download cart.
+ * @param props - The properties for the component.
+ * @param props.entityId - The ID of the entity to be added to the download cart.
  *
- * @returns {ReactNode} The rendered EntityDownloadConfirmation component.
+ * @returns The rendered EntityDownloadConfirmation component.
  */
 export function EntityDownloadConfirmation({
   entityId,
@@ -66,36 +47,56 @@ export function EntityDownloadConfirmation({
   handleClose,
   onIsLoadingChange,
 }: EntityDownloadConfirmationProps) {
-  const { data: entity, isLoading } = useGetEntity(entityId)
-  const entityConcreteType = entity?.concreteType
+  const { data: entity, isLoading: isLoadingEntity } = useGetEntity(entityId)
+  const entityType = entity?.concreteType
+    ? convertToEntityType(entity.concreteType)
+    : undefined
 
   useEffect(() => {
-    onIsLoadingChange(isLoading)
-  }, [isLoading, onIsLoadingChange])
+    onIsLoadingChange(isLoadingEntity)
+  }, [isLoadingEntity, onIsLoadingChange])
 
-  if (isLoading) {
-    if (
-      entityConcreteType &&
-      entityConcreteType !== 'org.sagebionetworks.repo.model.Folder' &&
-      entityConcreteType !==
-        'org.sagebionetworks.repo.model.table.TableEntity' &&
-      entityConcreteType !== 'org.sagebionetworks.repo.model.table.Dataset'
-    ) {
-      return <></>
-    }
+  const addToDownloadListRequest: AddToDownloadListRequest | null =
+    useMemo(() => {
+      if (!entityType) {
+        return null
+      }
+      if (typesToAddToDownloadListWithQuery.includes(entityType)) {
+        return {
+          concreteType:
+            'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+          query: {
+            sql: `select * from ${entityId}${
+              versionNumber != undefined ? `.${versionNumber}` : ''
+            }`,
+          },
+        }
+      }
+      if (typesToAddToDownloadListWithParentId.includes(entityType)) {
+        const useVersionNumber =
+          typesWhereFileVersionNumberShouldBeUsed.includes(entityType)
+        return {
+          concreteType:
+            'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+          // TODO: Specify version of dataset/dataset collection (PLFM-9311)
+          parentId: entityId,
+          useVersionNumber,
+        }
+      }
+
+      return null
+    }, [entityType, entityId, versionNumber])
+
+  if (!addToDownloadListRequest) {
+    return null
   }
 
   return (
     <div>
-      {entityConcreteType === 'org.sagebionetworks.repo.model.Folder' ? (
-        <FolderDownloadConfirmation folderId={entityId} fnClose={handleClose} />
-      ) : (
-        <QueryWrapperTableDownloadConfirmation
-          entityId={entityId}
-          versionNumber={versionNumber}
-          onHide={handleClose}
-        />
-      )}
+      <AddToDownloadListConfirmationAlert
+        addToDownloadListRequest={addToDownloadListRequest}
+        onClose={handleClose}
+      />
     </div>
   )
 }

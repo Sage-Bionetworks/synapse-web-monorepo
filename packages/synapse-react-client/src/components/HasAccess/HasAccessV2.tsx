@@ -56,8 +56,7 @@ export function useGetRestrictionUiType(
     UseQueryOptions<EntityBundle, SynapseClientError, boolean>
   >,
 ): RestrictionUiType | undefined {
-  const { accessToken } = useSynapseContext()
-  const isSignedIn = Boolean(accessToken)
+  const { isAuthenticated } = useSynapseContext()
 
   const { data: restrictionInformation } = useGetRestrictionInformation({
     restrictableObjectType: RestrictableObjectType.ENTITY,
@@ -73,12 +72,14 @@ export function useGetRestrictionUiType(
     return undefined
   }
 
-  if (isLoadingExternalFile) {
-    return undefined
-  }
-
-  if (isExternalFileHandle) {
-    return RestrictionUiType.AccessibleExternalFileHandle
+  // Only check for external file handle if the feature is enabled
+  if (useGetIsExternalFileHandleOptions.enabled) {
+    if (isLoadingExternalFile) {
+      return undefined
+    }
+    if (isExternalFileHandle) {
+      return RestrictionUiType.AccessibleExternalFileHandle
+    }
   }
 
   if (restrictionInformation.hasUnmetAccessRequirement) {
@@ -93,7 +94,7 @@ export function useGetRestrictionUiType(
     }
   }
 
-  if (isSignedIn) {
+  if (isAuthenticated) {
     return RestrictionUiType.AccessBlockedByACL
   }
   return RestrictionUiType.AccessBlockedToAnonymous

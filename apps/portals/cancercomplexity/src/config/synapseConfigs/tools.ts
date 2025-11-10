@@ -7,6 +7,7 @@ import { TableToGenericCardMapping } from 'synapse-react-client/components/Gener
 import columnAliases from '../columnAliases'
 import { toolsSql } from '../resources'
 import { citationBoilerplateText } from './commonProps'
+import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 
 const rgbIndex = 6
 
@@ -14,6 +15,7 @@ export const toolsSchema: TableToGenericCardMapping = {
   type: SynapseConstants.TOOL,
   title: 'toolName',
   description: 'description',
+  includeShareButton: true,
   includeCitation: true,
   defaultCitationFormat: 'nature',
   citationBoilerplateText: citationBoilerplateText,
@@ -47,6 +49,7 @@ export const toolsConfiguration: CardConfiguration = {
       matchColumnName: 'downloadLink',
     },
   ],
+  sharePageLinkButtonProps: sharePageLinkButtonDetailPageProps,
 }
 
 export const toolsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {

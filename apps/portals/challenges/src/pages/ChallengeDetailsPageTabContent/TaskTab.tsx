@@ -1,9 +1,10 @@
 import ChallengeDataDownloadWrapper from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeDataDownloadWrapper'
-import ChallengeSubmissionWrapper from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeSubmissionWrapper'
+import ChallengeSubmissionWrapper, {
+  ChallengeSubmissionWrapperProps,
+} from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeSubmissionWrapper'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
-import { EntityType } from '@sage-bionetworks/synapse-types'
 import { useParams } from 'react-router'
 import ErrorPage, {
   SynapseErrorType,
@@ -86,10 +87,7 @@ function TaskTab() {
                 {({ value }) => (
                   <ChallengeSubmissionWrapper
                     entityType={
-                      value as
-                        | EntityType.FILE
-                        | EntityType.DOCKER_REPO
-                        | undefined
+                      value as ChallengeSubmissionWrapperProps['entityType']
                     }
                   />
                 )}

@@ -1,8 +1,9 @@
 import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseFreeTextUsingJsonSchemaType'
 import { Autocomplete, TextField } from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
-import { useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { CellComponent, CellProps, Column } from 'react-datasheet-grid'
+import { isNil } from 'lodash-es'
 
 export type AutocompleteOption =
   | string
@@ -19,33 +20,61 @@ export type AutocompleteCellProps = CellProps & {
   colType?: JSONSchema7Type
 }
 
-function castCellValueToString(toCast: any): string {
+export function castCellValueToString(toCast: any): string {
+  if (isNil(toCast)) {
+    return ''
+  }
   if (typeof toCast === 'object') {
     return JSON.stringify(toCast)
   }
   return String(toCast)
 }
 
-function AutocompleteCell({
+export function AutocompleteCell({
   rowData,
   setRowData,
   choices,
   colType,
+  focus,
+  stopEditing,
+  active,
 }: AutocompleteCellProps) {
+  const ref = useRef<HTMLInputElement>(null)
+
+  useLayoutEffect(() => {
+    if (focus) {
+      ref.current?.focus()
+    } else {
+      ref.current?.blur()
+    }
+  }, [focus])
   const [localInputState, setLocalInputState] = useState<string>(
     castCellValueToString(rowData),
   )
 
+  // Sync localInputState with rowData when it changes externally (e.g., after cut)
+  useEffect(() => {
+    setLocalInputState(castCellValueToString(rowData))
+  }, [rowData])
+
+  const hasValue = !isNil(rowData) && rowData !== ''
+
   return (
     <Autocomplete
+      ref={ref}
+      open={!!focus}
+      forcePopupIcon={true}
+      disableClearable={!hasValue}
       freeSolo
       disablePortal={false}
       options={choices}
       getOptionLabel={option => castCellValueToString(option)}
-      value={rowData}
+      value={rowData as AutocompleteOption}
+      inputValue={localInputState}
       onInputChange={(_, newInputValue) => {
         setLocalInputState(newInputValue)
       }}
+      onClose={() => stopEditing({ nextRow: false })}
       onChange={(_e, newVal, reason) => {
         if (reason === 'createOption') {
           // The user typed an option that wasn't a defined enum. Try to cast it to the correct type
@@ -56,9 +85,18 @@ function AutocompleteCell({
           // The value was selected, so explicitly set it
           setRowData(newVal)
         }
+        // Update local input state to match the selected/created value
+        setLocalInputState(castCellValueToString(newVal))
+        setTimeout(() => stopEditing({ nextRow: false }), 0)
       }}
       blurOnSelect={true}
-      onBlur={() => setRowData(localInputState)}
+      onBlur={_event => {
+        // Only update on blur if the input value differs from the current rowData
+        // and no option was selected (which would have already updated via onChange)
+        if (localInputState !== castCellValueToString(rowData)) {
+          setRowData(parseFreeTextGivenJsonSchemaType(localInputState, colType))
+        }
+      }}
       renderInput={params => (
         <TextField
           {...params}
@@ -82,8 +120,23 @@ function AutocompleteCell({
         '& .MuiAutocomplete-inputRoot': {
           padding: '0 10px',
           backgroundColor: 'inherit',
+          pointerEvents: focus ? undefined : 'none',
         },
         '& .MuiFormControl-root': { height: '100%' },
+        '& .MuiAutocomplete-clearIndicator': {
+          visibility: active ? 'visible' : 'hidden',
+          pointerEvents: 'auto',
+        },
+        '& .MuiAutocomplete-popupIndicator': {
+          visibility: active ? 'visible' : 'hidden',
+          pointerEvents: 'auto',
+        },
+        '&:hover .MuiAutocomplete-clearIndicator': {
+          visibility: 'visible',
+        },
+        '&:hover .MuiAutocomplete-popupIndicator': {
+          visibility: 'visible',
+        },
       }}
     />
   )

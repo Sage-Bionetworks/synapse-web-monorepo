@@ -59,6 +59,12 @@ const SynapseComponents = {
   AccountLevelBadges: lazy(
     () => import('./components/AccountLevelBadges/AccountLevelBadges'),
   ),
+  AddToDownloadListConfirmationAlert: lazy(
+    () =>
+      import(
+        './components/download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert'
+      ),
+  ),
   AvailableEvaluationQueueList: lazy(
     () =>
       import('./components/ChallengeSubmission/AvailableEvaluationQueueList'),
@@ -109,6 +115,9 @@ const SynapseComponents = {
   EntityPageTitleBar: lazy(
     () => import('./components/entity/page/title_bar/EntityPageTitleBar'),
   ),
+  EntityTreeTable: lazy(
+    () => import('./components/EntityTreeTable/EntityTreeTable'),
+  ),
   EntityTypeIcon: lazy(() => import('./components/EntityIcon')),
   EntityUploadModal: lazy(
     () => import('./components/EntityUpload/EntityUploadModal'),
@@ -133,6 +142,7 @@ const SynapseComponents = {
   GovernanceMarkdownGithub: lazy(
     () => import('./components/Markdown/GovernanceMarkdownGithub'),
   ),
+  GridPage: lazy(() => import('./features/curator/GridPage/GridPage')),
   HasAccess: lazy(() => import('./components/HasAccess/HasAccessV2')),
   HelpPopover: lazy(() => import('./components/HelpPopover/HelpPopover')),
   HtmlPreview: lazy(
@@ -140,6 +150,10 @@ const SynapseComponents = {
   ),
   IDUReport: lazy(() => import('./components/IDUReport/IDUReport')),
   IconSvg: lazy(() => import('./components/IconSvg/IconSvg')),
+  MetadataTasksPage: lazy(
+    () =>
+      import('./features/entity/metadata-task/components/MetadataTasksPage'),
+  ),
   OAuthManagement: lazy(
     () => import('./components/OAuthClientManagement/OAuthManagement'),
   ),
@@ -162,6 +176,7 @@ const SynapseComponents = {
   ReviewerDashboard: lazy(
     () => import('./components/dataaccess/ReviewerDashboard'),
   ),
+  ShareThisPage: lazy(() => import('./components/ShareThisPage')),
   SkeletonButton: lazy(() => import('./components/Skeleton/SkeletonButton')),
   SqlDefinedTableEditorModal: lazy(
     () =>

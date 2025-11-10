@@ -1,9 +1,10 @@
 import { getSortApiRequestFromTableSortState } from '@/components/dataaccess/UserAccessRequestHistory/SubmissionSortStateTranslator'
+import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import { SkeletonTable } from '@/components/Skeleton'
 import UserOrTeamBadge from '@/components/UserOrTeamBadge/UserOrTeamBadge'
 import { useSearchAccessSubmissionUserRequestsInfinite } from '@/synapse-queries/dataaccess/useDataAccessSubmission'
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { Button, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import { UserSubmissionSearchResult } from '@sage-bionetworks/synapse-client'
 import {
   createColumnHelper,
@@ -127,30 +128,24 @@ export function UserAccessRequestHistoryTable() {
     onSortingChange: setTableSortState,
   })
 
-  if (isLoading) {
-    return <SkeletonTable numCols={columns.length} fullWidthCells />
-  }
-
-  if (data.length === 0) {
-    return (
-      <Typography variant={'body1'} sx={{ textAlign: 'center', my: 2 }}>
-        You have no access requests
-      </Typography>
-    )
-  }
+  const isEmpty = !isLoading && table.getRowModel().rows.length === 0
 
   return (
-    <>
-      <StyledTanStackTable table={table} fullWidth={true} />
-      {hasNextPage && (
-        <Button
-          variant="outlined"
-          onClick={() => void fetchNextPage()}
-          disabled={isFetchingNextPage}
-        >
-          Load More
-        </Button>
-      )}
-    </>
+    <InfiniteTableLayout
+      table={<StyledTanStackTable table={table} fullWidth={true} />}
+      isLoading={isLoading}
+      loader={<SkeletonTable numCols={columns.length} fullWidthCells />}
+      isEmpty={isEmpty}
+      noResults={
+        <Typography variant={'body1'} sx={{ textAlign: 'center', my: 2 }}>
+          You have no access requests
+        </Typography>
+      }
+      hasNextPage={hasNextPage}
+      onFetchNextPageClicked={() => {
+        void fetchNextPage()
+      }}
+      isFetchingNextPage={isFetchingNextPage}
+    />
   )
 }

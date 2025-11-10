@@ -184,6 +184,18 @@ export const ampalsPalette: PaletteOptions = {
   secondary: generatePalette('#2360A6'),
 }
 
+export const classicPalette: PaletteOptions = {
+  ...palette,
+  primary: generatePalette('#098169'),
+  secondary: generatePalette('#098169'),
+}
+
+export const arcusbioPalette: PaletteOptions = {
+  ...palette,
+  primary: generatePalette('#252861'),
+  secondary: generatePalette('#252861'),
+}
+
 export default {
   palette,
   generatePalette,
@@ -202,4 +214,6 @@ export default {
   geniePalette,
   standardsPortalPalette,
   ampalsPalette,
+  classicPalette,
+  arcusbioPalette,
 }

@@ -38,6 +38,7 @@ export const toolsSchema: TableToGenericCardMapping = {
     'latestPublicationDate',
     'species',
   ],
+  includeShareButton: true,
 }
 
 export const toolsCardConfiguration: CardConfiguration = {

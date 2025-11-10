@@ -1,6 +1,6 @@
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
 import { Box, SxProps } from '@mui/material'
-import { useState, useEffect, forwardRef, ForwardedRef } from 'react'
+import { ForwardedRef, forwardRef } from 'react'
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
 import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
@@ -9,6 +9,7 @@ import HeaderCardV2 from './HeaderCard/HeaderCardV2'
 import SustainabilityScorecard, {
   SustainabilityScorecardProps,
 } from './SustainabilityScorecard/SustainabilityScorecard'
+import { useDocumentMetadata } from '@/utils/context/DocumentMetadataContext'
 
 export type HeaderCardVariant = 'HeaderCard' | 'HeaderCardV2'
 
@@ -33,7 +34,7 @@ export type HeaderCardProps = {
   sx?: SxProps
 }
 
-const HeaderCard = forwardRef(function HeaderCard(
+const HeaderCardClassic = forwardRef(function HeaderCardClassic(
   props: HeaderCardProps,
   ref: ForwardedRef<HTMLDivElement>,
 ) {
@@ -49,7 +50,6 @@ const HeaderCard = forwardRef(function HeaderCard(
     href,
     target,
     icon,
-    headerCardVariant = 'HeaderCard',
     cardTopContent,
     cardTopButtons,
     sustainabilityScorecard,
@@ -57,43 +57,18 @@ const HeaderCard = forwardRef(function HeaderCard(
   } = props
 
   const hideIcon = Boolean(sustainabilityScorecard)
-
-  // store old document title and description so that we can restore when this component is removed
-  const descriptionElement: Element | null = document.querySelector(
-    'meta[name="description"]',
-  )
   const descriptionConfiguration: DescriptionConfig = {
     ...descriptionConfig,
     showFullDescriptionByDefault:
       descriptionConfig?.showFullDescriptionByDefault ?? true,
   }
-  const [docTitle] = useState<string>(document.title)
-  const [docDescription] = useState<string>(
-    descriptionElement ? descriptionElement.getAttribute('content')! : '',
-  )
 
-  useEffect(() => {
-    // update page title and description based on header card values
-    if (title && document.title !== title) {
-      document.title = title
-    }
-
-    if (description || subTitle) {
-      descriptionElement?.setAttribute(
-        'content',
-        description ? description : subTitle,
-      )
-    }
-
-    return function cleanup() {
-      document.title = docTitle
-      descriptionElement?.setAttribute('content', docDescription)
-    }
+  const metadataDescription = description || subTitle || undefined
+  useDocumentMetadata({
+    title,
+    description: metadataDescription,
+    priority: 100,
   })
-
-  if (headerCardVariant === 'HeaderCardV2') {
-    return <HeaderCardV2 {...props} />
-  }
 
   return (
     <Box
@@ -196,6 +171,17 @@ const HeaderCard = forwardRef(function HeaderCard(
       </div>
     </Box>
   )
+})
+
+const HeaderCard = forwardRef(function HeaderCard(
+  props: HeaderCardProps,
+  ref: ForwardedRef<HTMLDivElement>,
+) {
+  const { headerCardVariant = 'HeaderCard' } = props
+  if (headerCardVariant === 'HeaderCardV2') {
+    return <HeaderCardV2 {...props} ref={ref} />
+  }
+  return <HeaderCardClassic {...props} ref={ref} />
 })
 
 export default HeaderCard

@@ -14,11 +14,11 @@
 }
 
 .row-valid .dsg-cell-gutter {
-  background: #f1feeb;
+  background: #def0dd;
 }
 
 .row-invalid .dsg-cell-gutter {
-  background: #feeceb;
+  background: #fccfcc;
 }
 
 .row-unknown .dsg-cell-gutter {
@@ -45,4 +45,32 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.cell-invalid {
+  background: #fccfcc;
+}
+
+.header-cell-required {
+  background-color: #395979;
+  color: white;
+  font-weight: bold;
+}
+
+.multi-value-cell {
+  min-height: 40px;
+}
+
+.multi-value-cell-large {
+  min-height: 80px;
+}
+
+.cell-selected {
+  border: 1px solid rgba(25, 118, 210, 1);
+}
+
+.dsg-container:not(:focus-within) .cell-selected {
+  border: 1px solid rgba(25, 118, 210, 1);
+  background-color: rgba(25, 118, 210, 0.05);
+  z-index: 25;
 }

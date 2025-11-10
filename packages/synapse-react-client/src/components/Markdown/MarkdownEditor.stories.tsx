@@ -1,5 +1,5 @@
 import { mockManagedACTAccessRequirementWikiPage } from '@/mocks/mockWiki'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { MarkdownEditor } from './MarkdownEditor'
 

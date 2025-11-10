@@ -1,9 +1,9 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 
 import { LoginMethods } from './LoginMethod'
 import LoginMethodButton from './LoginMethodButton'
 import { IconStrings } from '../IconSvg/IconSvg'
-import { fn } from '@storybook/test'
+import { fn } from 'storybook/test'
 
 const meta = {
   title: 'Authentication/LoginMethodButton',

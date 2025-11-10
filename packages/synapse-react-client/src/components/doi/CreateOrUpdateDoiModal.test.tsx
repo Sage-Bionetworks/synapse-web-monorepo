@@ -16,7 +16,11 @@ import {
   getUseQuerySuccessMock,
 } from '@/testutils/ReactQueryMockUtils'
 import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
-import { DoiObjectType, DoiRequest } from '@sage-bionetworks/synapse-client'
+import {
+  DoiNameIdentifierNameIdentifierSchemeEnum,
+  DoiObjectType,
+  DoiRequest,
+} from '@sage-bionetworks/synapse-client'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { displayToast } from '../ToastMessage'
@@ -109,7 +113,11 @@ describe('CreateOrUpdateDoiModal', () => {
           {
             creatorName: 'Doe, John',
             nameIdentifiers: [
-              { identifier: 'foo', nameIdentifierScheme: 'scheme' },
+              {
+                identifier: 'foo',
+                nameIdentifierScheme:
+                  DoiNameIdentifierNameIdentifierSchemeEnum.ORCID,
+              },
             ],
           },
         ],

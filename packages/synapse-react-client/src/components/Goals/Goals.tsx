@@ -13,6 +13,7 @@ import { Box } from '@mui/material'
 export type GoalsProps = {
   entityId: string
   isAssetIcon?: boolean // If true, the asset will be used as an icon instead of a background image.
+  linkText?: string
 }
 
 export type GoalsDataProps = {
@@ -22,6 +23,7 @@ export type GoalsDataProps = {
   link: string
   asset: string
   isAssetIcon: boolean
+  linkText?: string
 }
 
 enum ExpectedColumns {
@@ -37,7 +39,7 @@ enum ExpectedColumns {
 const GOALS_DESKTOP_MIN_BREAKPOINT = 1200
 
 export function Goals(props: GoalsProps) {
-  const { entityId, isAssetIcon = false } = props
+  const { entityId, isAssetIcon = false, linkText } = props
   const showDesktop = useShowDesktop(GOALS_DESKTOP_MIN_BREAKPOINT)
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -141,7 +143,7 @@ export function Goals(props: GoalsProps) {
         }}
       >
         {goalsDataProps.map((props, index) => (
-          <GoalsDesktop key={index} {...props} />
+          <GoalsDesktop key={index} {...props} linkText={linkText} />
         ))}
       </Box>
     )
@@ -149,7 +151,7 @@ export function Goals(props: GoalsProps) {
     return (
       <div className={`Goals`}>
         {goalsDataProps.map((props, index) => (
-          <GoalsMobile key={index} {...props} />
+          <GoalsMobile key={index} {...props} linkText={linkText} />
         ))}
       </div>
     )

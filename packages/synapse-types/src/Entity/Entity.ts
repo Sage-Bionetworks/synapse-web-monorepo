@@ -1,9 +1,6 @@
-import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from './FileEntity'
-import { LINK_CONCRETE_TYPE } from './Link'
-import { DOCKER_REPOSITORY_CONCRETE_TYPE } from '../docker/DockerRepository'
+import { Entity as Entity_OpenAPI } from '@sage-bionetworks/synapse-client'
 import { TABLE_CONCRETE_TYPE_VALUES } from '../Table/ConcreteType'
-import { PROJECT_CONCRETE_TYPE } from './Project'
-import { FOLDER_CONCRETE_TYPE } from './Folder'
+import { FILE_ENTITY_CONCRETE_TYPE_VALUE } from './FileEntity'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/Entity.html
 
@@ -31,12 +28,7 @@ export interface Entity {
 }
 
 // This is not a real object in Synapse, merely a collection of potential string values to represent the "concreteType" field on Entities
-export type ENTITY_CONCRETE_TYPE =
-  | LINK_CONCRETE_TYPE
-  | DOCKER_REPOSITORY_CONCRETE_TYPE
-  | VERSIONABLE_ENTITY_CONCRETE_TYPE
-  | FOLDER_CONCRETE_TYPE
-  | PROJECT_CONCRETE_TYPE
+export type ENTITY_CONCRETE_TYPE = Entity_OpenAPI['concreteType']
 
 export interface Versionable {
   /* The version number issued to this version on the object */

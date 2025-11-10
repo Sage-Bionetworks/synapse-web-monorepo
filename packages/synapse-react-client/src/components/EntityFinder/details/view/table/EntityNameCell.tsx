@@ -12,7 +12,7 @@ export function EntityNameCell<T extends EntityIdAndVersionNumber>(
     props.row.original.versionNumber,
   )
   if (isLoading) {
-    return <Skeleton width={200} />
+    return <Skeleton width={100} />
   }
 
   return bundle ? (

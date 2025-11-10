@@ -24,12 +24,11 @@ export default function ChangePassword(props: ChangePasswordProps) {
   )
   const [confirmPassword, setConfirmPassword] = useState<string>('')
   const [userName, setUserName] = useState<string>('')
-  const { accessToken } = useSynapseContext()
-  const isSignedIn = !!accessToken
+  const { isAuthenticated } = useSynapseContext()
 
   const { data: userProfile, isLoading: isLoadingUserProfile } =
     useGetCurrentUserProfile({
-      enabled: isSignedIn,
+      enabled: isAuthenticated,
     })
 
   useEffect(() => {
@@ -83,7 +82,7 @@ export default function ChangePassword(props: ChangePasswordProps) {
             handleChangePassword(e)
           }}
         >
-          {!isSignedIn && (
+          {!isAuthenticated && (
             <TextField
               required
               fullWidth

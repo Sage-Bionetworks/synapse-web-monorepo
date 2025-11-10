@@ -29,7 +29,7 @@ vi.spyOn(SynapseClient, 'getFullQueryTableResults').mockResolvedValue(
 
 describe('useGetCroissantUrl', () => {
   it('should return correct URL', async () => {
-    const datasetId = 123
+    const datasetId = 'syn123'
     const datasetVersionNumber = 4
     const hook = renderHook(
       () => useGetCroissantUrl(datasetId, datasetVersionNumber),
@@ -49,7 +49,7 @@ describe('useGetCroissantUrl', () => {
   })
 
   it('should return null if no URL found', async () => {
-    const datasetId = 123
+    const datasetId = 'syn123'
     const datasetVersionNumber = 5
     const hook = renderHook(
       () => useGetCroissantUrl(datasetId, datasetVersionNumber),

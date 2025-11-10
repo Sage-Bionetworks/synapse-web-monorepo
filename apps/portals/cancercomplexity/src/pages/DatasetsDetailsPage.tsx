@@ -1,14 +1,12 @@
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
 import ErrorPage, {
   SynapseErrorType,
 } from 'synapse-react-client/components/error/ErrorPage'
-import { SharePageLinkButton } from 'synapse-react-client/components/SharePageLinkButton'
 import columnAliases from '../config/columnAliases'
 import {
   datasetsSql,
@@ -21,6 +19,7 @@ import { datasetCardConfiguration } from '../config/synapseConfigs/datasets'
 import { grantsCardConfiguration } from '../config/synapseConfigs/grants'
 import { peopleCardConfiguration } from '../config/synapseConfigs/people'
 import { publicationsCardConfiguration } from '../config/synapseConfigs/publications'
+import { DatasetJsonLdScript } from 'synapse-react-client'
 
 function DatasetsDetailsPage() {
   const { datasetId } = useGetPortalComponentSearchParams()
@@ -28,12 +27,10 @@ function DatasetsDetailsPage() {
   if (!datasetId) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
   }
-
   return (
     <DetailsPage
       header={
         <>
-          <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
           <CardContainerLogic
             cardConfiguration={{
               ...datasetCardConfiguration,
@@ -53,6 +50,10 @@ function DatasetsDetailsPage() {
     >
       <DetailsPageContent
         content={[
+          {
+            id: 'DatasetJsonLdScript',
+            element: <DatasetJsonLdScript entityId={datasetId} />,
+          },
           {
             id: 'Related Grants',
             title: 'Related Grants',

@@ -1,16 +1,19 @@
+import {
+  useCreateGridReplica,
+  useCreateGridSession,
+} from '@/synapse-queries/grid/useGridSession'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
   CreateGridRequest,
   GridReplica,
   GridSession,
-  TableQuery,
 } from '@sage-bionetworks/synapse-client'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
-import {
-  useCreateGridReplica,
-  useCreateGridSession,
-} from '../../synapse-queries/grid/useGridSession'
-import { parseQueryInput } from './utils/DataGridUtils'
+
+export type CreateOrGetGridSessionInput = {
+  createGridRequest?: CreateGridRequest
+  sessionId?: string
+}
 
 /**
  * Create a new grid session or retrieve an existing one based on the provided SQL query or session ID.
@@ -18,62 +21,33 @@ import { parseQueryInput } from './utils/DataGridUtils'
 function useCreateOrGetExistingGridSession() {
   const { mutateAsync: startGridSession } = useCreateGridSession()
   const { synapseClient } = useSynapseContext()
-  return useMutation<
-    GridSession,
-    unknown,
-    {
-      gridSqlOrSessionId: string
-      schemaId?: string
-    }
-  >({
-    mutationFn: async ({ gridSqlOrSessionId, schemaId }) => {
-      let session: GridSession
-      const parsedInput = parseQueryInput(gridSqlOrSessionId)
-      if (!['empty', 'sql', 'sessionId'].includes(parsedInput.type)) {
+  return useMutation<GridSession, unknown, CreateOrGetGridSessionInput>({
+    mutationFn: async ({ createGridRequest, sessionId }) => {
+      if (!(createGridRequest || sessionId)) {
         throw new Error(
-          'Unknown input type, please provide a valid SQL query or session ID.',
+          'Must provide either a CreateGridRequest or sessionId to create or get a grid session.',
         )
       }
-      if (parsedInput.type === 'empty' || parsedInput.type === 'sql') {
-        // Start a new session and clear replicaId and presignedUrl
-        const gridRequest = {
-          concreteType: 'org.sagebionetworks.repo.model.grid.CreateGridRequest',
-          initialQuery: undefined as TableQuery | undefined,
-          schema$id: schemaId || undefined,
-        } as CreateGridRequest
 
-        if (parsedInput.type === 'sql') {
-          gridRequest.initialQuery = {
-            sql: parsedInput.input,
-          } as TableQuery
-          console.log(
-            'Starting grid session with table query: ',
-            parsedInput.input,
-          )
-        } else {
-          console.log('Starting a new empty grid session.')
-        }
-
-        const gridSessionResponse = await startGridSession(gridRequest)
+      if (createGridRequest) {
+        const gridSessionResponse = await startGridSession(createGridRequest)
         console.log('Grid session started:', gridSessionResponse)
-        session = gridSessionResponse.gridSession!
-      } else {
-        // The input is a sessionId, so retrieve the session object
-        console.log(`Joining existing session ID: ${parsedInput.input}`)
-        session =
-          await synapseClient.gridServicesClient.getRepoV1GridSessionSessionId({
-            sessionId: parsedInput.input,
-          })
+        return gridSessionResponse.gridSession!
       }
 
-      return session
+      // The input is a sessionId, so retrieve the session object
+      console.log(`Joining existing session ID: ${sessionId}`)
+      return await synapseClient.gridServicesClient.getRepoV1GridSessionSessionId(
+        {
+          sessionId: sessionId!,
+        },
+      )
     },
   })
 }
 
 /**
- * Mutation to establish a grid connection by creating or getting an existing session,
- * creating a replica, and obtaining a presigned URL for the session.
+ * Mutation to establish a grid connection by creating or getting an existing session and creating a replica.
  *
  * @param gridSqlOrSessionId - The SQL query or session ID to use for the grid connection.
  * @param schemaId - Optional schema ID to associate with the session.
@@ -82,12 +56,9 @@ function useCreateOrGetExistingGridSession() {
 export default function useInitializeGridConnection(
   options?: Omit<
     UseMutationOptions<
-      { session: GridSession; replica: GridReplica; presignedUrl: string },
+      { session: GridSession; replica: GridReplica },
       unknown,
-      {
-        gridSqlOrSessionId: string
-        schemaId?: string
-      }
+      CreateOrGetGridSessionInput
     >,
     'mutationFn'
   >,
@@ -95,40 +66,32 @@ export default function useInitializeGridConnection(
   const { mutateAsync: createOrGetSession } =
     useCreateOrGetExistingGridSession()
   const { mutateAsync: createReplicaId } = useCreateGridReplica()
-  const { synapseClient } = useSynapseContext()
 
   return useMutation<
-    { session: GridSession; replica: GridReplica; presignedUrl: string },
+    { session: GridSession; replica: GridReplica },
     unknown,
-    {
-      gridSqlOrSessionId: string
-      schemaId?: string
-    }
+    CreateOrGetGridSessionInput
   >({
     ...options,
-    mutationFn: async ({ gridSqlOrSessionId, schemaId }) => {
-      const session = await createOrGetSession({ gridSqlOrSessionId, schemaId })
+    mutationFn: async ({ createGridRequest, sessionId: sessionIdArg }) => {
+      if (!(createGridRequest || sessionIdArg)) {
+        throw new Error(
+          'Must provide either a SQL query, recordSetId, or sessionId to initialize grid connection.',
+        )
+      }
+      const session = await createOrGetSession({
+        createGridRequest,
+        sessionId: sessionIdArg,
+      })
       const sessionId = session.sessionId!
       try {
         const createReplicaResponse = await createReplicaId(sessionId)
         console.log('Replica created:', createReplicaResponse)
         const replica = createReplicaResponse.replica!
 
-        const { presignedUrl } =
-          await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdPresignedUrl(
-            {
-              sessionId: sessionId,
-              createGridPresignedUrlRequest: {
-                gridSessionId: sessionId,
-                replicaId: replica.replicaId!,
-              },
-            },
-          )
-
         return {
           session,
           replica,
-          presignedUrl: presignedUrl!,
         }
       } catch (error) {
         throw new Error('Error starting session:', { cause: error })

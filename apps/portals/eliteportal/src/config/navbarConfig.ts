@@ -6,11 +6,6 @@ export const navbarConfig: NavbarConfig = {
       name: 'Home',
       path: '/',
     },
-    // EC-485: hide from nav bar for release
-    // {
-    //   name: 'Browse Tools',
-    //   path: '/Browse Tools',
-    // },
     {
       name: 'Explore',
       path: '/Explore',
@@ -37,6 +32,20 @@ export const navbarConfig: NavbarConfig = {
     {
       name: 'Data Access',
       path: '/Data Access',
+      children: [
+        {
+          name: 'How to Access Data',
+          path: '/Data Access/How to Access Data',
+        },
+        {
+          name: 'Required Data Acknowledgement',
+          path: '/Data Access/Data Acknowledgement',
+        },
+        {
+          name: 'AI/ML Acceptable Use Policy',
+          path: '/Data Access/AI_ML_Acceptable_Use_Policy',
+        },
+      ],
     },
     {
       name: 'Contribute Data',

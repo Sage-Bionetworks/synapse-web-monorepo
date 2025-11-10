@@ -7,8 +7,6 @@ import columnAliases from '../config/columnAliases'
 import { educationSql, grantsSql } from '../config/resources'
 import { educationDetailsCardConfiguration } from '../config/synapseConfigs/education'
 import { grantsCardConfiguration } from '../config/synapseConfigs/grants'
-import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
-import SharePageLinkButton from 'synapse-react-client/components/SharePageLinkButton'
 import ErrorPage, {
   SynapseErrorType,
 } from 'synapse-react-client/components/error/ErrorPage'
@@ -25,7 +23,6 @@ function EducationalResourcesDetailsPage() {
     <DetailsPage
       header={
         <>
-          <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
           <CardContainerLogic
             cardConfiguration={{
               ...educationDetailsCardConfiguration,

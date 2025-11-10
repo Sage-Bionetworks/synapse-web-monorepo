@@ -17,7 +17,7 @@ import {
   AccessRequirementStatus,
   ApprovalState,
 } from '@sage-bionetworks/synapse-types'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { http, HttpResponse } from 'msw'
 import SelfSignAccessRequirementItem from './SelfSignAccessRequirementItem'
 

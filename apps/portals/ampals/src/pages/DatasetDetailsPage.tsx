@@ -68,7 +68,7 @@ export default function DatasetDetailsPage() {
               id: 'Acknowledgment',
               element: (
                 <MarkdownSynapseFromColumnData
-                  columnName={'acknowledgmentStatement'}
+                  columnName={'acknowledgementStatement'}
                 />
               ),
             },

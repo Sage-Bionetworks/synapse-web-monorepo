@@ -1,5 +1,6 @@
 import { GoogleIcon24 } from '@/assets/GoogleIcon24'
 import CreateVersion from '@/assets/icons/CreateVersion'
+import FileWithShield from '@/assets/icons/FileWithShield'
 import { ORCIDIcon } from '@/assets/icons/ORCIDIcon'
 import AccessManagement from '@/assets/mui_components/AccessManagement'
 import AccountCertified from '@/assets/mui_components/AccountCertified'
@@ -118,6 +119,7 @@ import {
   SyncTwoTone,
   TableChartTwoTone,
   TableRows,
+  ShareTwoTone,
   TableViewTwoTone,
   Title,
   UploadTwoTone,
@@ -131,7 +133,7 @@ import {
 } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
 import { SvgIconProps } from '@mui/material/SvgIcon'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { ReactNode } from 'react'
 
 export const IconStrings = [
@@ -207,6 +209,7 @@ export const IconStrings = [
   'linkOff',
   'table',
   'tableRows',
+  'share',
   'public',
   'people',
   'entityview',
@@ -269,6 +272,7 @@ export const IconStrings = [
   'google24',
   'openInFull',
   'tableview',
+  'fileWithShield',
 ] as const
 
 export type IconName = (typeof IconStrings)[number]
@@ -363,6 +367,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <SyncTwoTone {...otherProps} />
     case 'tableRows':
       return <TableRows {...otherProps} />
+    case 'share':
+      return <ShareTwoTone {...otherProps} />
     case 'public':
       return <PublicTwoTone {...otherProps} />
     case 'clipboard':
@@ -566,6 +572,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <FilterAltTwoTone {...otherProps} />
     case 'openInFull':
       return <OpenInFull {...otherProps} />
+    case 'fileWithShield':
+      return <FileWithShield {...otherProps} />
     default:
       return <></>
   }
@@ -632,6 +640,7 @@ export const type2SvgIconName: Record<EntityType, IconName> = {
   submissionview: 'submissionview',
   dataset: 'dataset',
   datasetcollection: 'datasetcollection',
+  recordset: 'fileWithShield',
 }
 
 export default IconSvg

@@ -29,7 +29,7 @@ jobs:
         uses: actions/checkout@v4
       - uses: ./.github/actions/pnpm-setup-action
       - name: build
-        run: pnpm nx run SageAccountWeb:build --mode=${{ matrix.mode }}
+        run: pnpm nx run SageAccountWeb:build --mode=${{ matrix.mode }} --configuration=${{ matrix.mode }}
       # Build the image using the Dockerfile in the SageAccountWeb directory
       - name: Build image
         working-directory: apps/SageAccountWeb

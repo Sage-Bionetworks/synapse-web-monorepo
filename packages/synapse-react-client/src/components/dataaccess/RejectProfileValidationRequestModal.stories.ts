@@ -4,8 +4,8 @@ import mockRejectionReasonsTableQueryResultBundle from '@/mocks/query/mockReject
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { REJECT_VALIDATION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstants'
 import { VerificationStateEnum } from '@sage-bionetworks/synapse-types'
-import { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
+import { Meta, StoryObj } from '@storybook/react-vite'
+import { fn } from 'storybook/test'
 import { RejectProfileValidationRequestModal } from './RejectProfileValidationRequestModal'
 
 const meta = {

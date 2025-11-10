@@ -1,3 +1,4 @@
+import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import {
   useGetWebhooksInfinite,
   useResendVerificationCode,
@@ -247,6 +248,8 @@ export default function WebhookDashboard() {
     getCoreRowModel: getCoreRowModel(),
   })
 
+  const isEmpty = !isLoading && webhookTable.getRowModel().rows.length === 0
+
   return (
     <div>
       <WebhookVerificationDialog
@@ -305,25 +308,22 @@ export default function WebhookDashboard() {
           onClose={() => setShowCreateModal(false)}
         />
       </Box>
-      {!isLoading && webhooks.length === 0 && (
-        <Typography variant="body1">
-          You have not created any webhooks. Click &quot;Create Webhook&quot;
-          above to begin.
-        </Typography>
-      )}
-      {!isLoading && webhooks.length > 0 && (
-        <StyledTanStackTable table={webhookTable} />
-      )}
-      {hasNextPage && (
-        <Button
-          disabled={isFetchingNextPage}
-          onClick={() => {
-            void fetchNextPage()
-          }}
-        >
-          Load More
-        </Button>
-      )}
+      <InfiniteTableLayout
+        table={<StyledTanStackTable table={webhookTable} />}
+        isLoading={isLoading}
+        noResults={
+          <Typography variant="body1">
+            You have not created any webhooks. Click &quot;Create Webhook&quot;
+            above to begin.
+          </Typography>
+        }
+        isEmpty={isEmpty}
+        hasNextPage={hasNextPage}
+        onFetchNextPageClicked={() => {
+          void fetchNextPage()
+        }}
+        isFetchingNextPage={isFetchingNextPage}
+      />
     </div>
   )
 }

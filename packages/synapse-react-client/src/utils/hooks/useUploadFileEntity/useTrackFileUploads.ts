@@ -1,22 +1,26 @@
 import { ProgressCallback } from '@/synapse-client/index'
+import { BaseFileUploadArgs } from '@/utils/hooks/useUploadFileEntity/useUploadFiles'
 import { useState } from 'react'
 import { FilePreparedForUpload } from './usePrepareFileEntityUpload'
+
+export type UploadFileStatus =
+  | 'PREPARING'
+  | 'UPLOADING'
+  | 'PAUSED'
+  | 'CANCELED_BY_USER'
+  | 'FAILED'
+  | 'COMPLETE'
 
 export type TrackedUploadProgress = {
   filePreparedForUpload: FilePreparedForUpload
   progress: ProgressCallback
   abortController: AbortController
-  status:
-    | 'PREPARING'
-    | 'UPLOADING'
-    | 'PAUSED'
-    | 'CANCELED_BY_USER'
-    | 'FAILED'
-    | 'COMPLETE'
+  status: UploadFileStatus
   failureReason?: string
+  fileHandleId?: string
 }
 
-const PENDING_UPLOAD_STATES: TrackedUploadProgress['status'][] = [
+export const PENDING_UPLOAD_STATES: TrackedUploadProgress['status'][] = [
   'PREPARING',
   'UPLOADING',
   'PAUSED',
@@ -43,8 +47,8 @@ export function useTrackFileUploads() {
    * the state variable is updated.
    * @param preparedFiles
    */
-  function trackNewFiles(
-    ...preparedFiles: FilePreparedForUpload[]
+  function trackNewFiles<T extends BaseFileUploadArgs = BaseFileUploadArgs>(
+    ...preparedFiles: T[]
   ): Map<File, TrackedUploadProgress> {
     // If a matching file that is uploading already exists, cancel it!
     preparedFiles.forEach(preparedFile => {
@@ -110,12 +114,27 @@ export function useTrackFileUploads() {
     })
   }
 
+  function setFileHandleId(file: File, fileHandleId: string) {
+    setTrackedUploadProgress(prev => {
+      const newMap = new Map(prev.entries())
+      const entry = newMap.get(file)
+      if (entry) {
+        newMap.set(file, {
+          ...entry,
+          fileHandleId,
+        })
+      }
+      return newMap
+    })
+  }
+
   function setIsUploading(file: File) {
     setStatus(file, 'UPLOADING')
   }
 
-  function setComplete(file: File) {
+  function setComplete(file: File, fileHandleId: string) {
     setStatus(file, 'COMPLETE')
+    setFileHandleId(file, fileHandleId)
   }
 
   function setFailed(file: File, failureReason: string) {

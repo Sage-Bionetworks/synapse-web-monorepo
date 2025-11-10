@@ -32,6 +32,7 @@ import { SkeletonParagraph } from '../Skeleton'
 import { displayToast } from '../ToastMessage'
 import AccessLevelMenu from './AccessLevelMenu'
 import SynapseChatInteraction from './SynapseChatInteraction'
+import { GridAgentSessionContext } from '@sage-bionetworks/synapse-client'
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
@@ -39,9 +40,23 @@ export type SynapseChatProps = {
   chatbotName?: string // optional name of this chatbot agent
   hideTitle?: boolean
   textboxPositionOffset?: string // when embedded in a form, the textbox (form) stuck to the bottom may need to be offset due to container padding (dialog content for example!)
+  /* optional session context for the agent session */
+  sessionContext?: GridAgentSessionContext
+  /* The current session, if state is lifted out of this component */
+  externalSession?: AgentSession
+  /* A callback invoked to bootstrap the current session, if state is to be lifted out of this component */
+  setExternalSession?: (s: AgentSession | undefined) => void
+  /* The current chat history, if state is lifted out of this component */
+  externalInteractions?: ChatInteraction[]
+  /* A callback to update the current chat history, if state is to be lifted out of this component */
+  setExternalInteractions?: (i: ChatInteraction[]) => void
+  // default access level for the agent session.
+  defaultAgentAccessLevel?: AgentAccessLevel
+  // Whether to show the access level menu for the agent session.
+  showAccessLevelMenu?: boolean
 }
 
-type ChatInteraction = {
+export type ChatInteraction = {
   userMessage: string
   chatResponseText?: string
   chatErrorReason?: string
@@ -57,9 +72,18 @@ export function SynapseChat({
   chatbotName = 'SynapseChat',
   hideTitle = false,
   textboxPositionOffset = '0px',
+  sessionContext,
+  externalSession,
+  setExternalSession,
+  externalInteractions,
+  setExternalInteractions,
+  showAccessLevelMenu = true,
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
-  const [agentSession, setAgentSession] = useState<AgentSession>()
+  const [localAgentSession, setLocalAgentSession] = useState<AgentSession>()
+  const agentSession = externalSession ?? localAgentSession
+  const setAgentSession = setExternalSession ?? setLocalAgentSession
+
   const { mutate: createAgentSession, error: createAgentSessionError } =
     useCreateAgentSession({
       onSuccess: newAgentSession => setAgentSession(newAgentSession),
@@ -75,10 +99,17 @@ export function SynapseChat({
   })
   const theme = useTheme()
   const [agentAccessLevel, setAgentAccessLevel] = useState<AgentAccessLevel>(
-    AgentAccessLevel.PUBLICLY_ACCESSIBLE,
+    sessionContext
+      ? AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA
+      : AgentAccessLevel.PUBLICLY_ACCESSIBLE,
   )
   // When both the current message and current response are available, add a new ChatInteraction to the array
-  const [interactions, setInteractions] = useState<ChatInteraction[]>([])
+  const [localInteractions, setLocalInteractions] = useState<ChatInteraction[]>(
+    [],
+  )
+  const interactions = externalInteractions ?? localInteractions
+  const setInteractions = setExternalInteractions ?? setLocalInteractions
+
   const [pendingInteraction, setPendingInteraction] =
     useState<ChatInteraction>()
   const [currentlyProcessingJobId, setCurrentlyProcessingJobId] =
@@ -123,16 +154,27 @@ export function SynapseChat({
       const latestEvent = newTraceEvents.page[
         newTraceEvents.page.length - 1
       ] as TraceEventWithFriendlyMessage
-      // if available, try to only show the "thinking" text
-      const parser = new DOMParser()
-      const htmlDoc = parser.parseFromString(latestEvent.message, 'text/html')
-      const thinkingElements = htmlDoc.getElementsByTagName('thinking')
-      // Extract the text content from each 'thinking' element
-      const thinkingTexts = Array.from(thinkingElements)
-        .map(element => element?.textContent?.trim())
-        .join('\n')
-      // Use the thinking texts - fall back to the full trace message if thinking elements are unavailable
-      latestEvent.friendlyMessage = thinkingTexts ?? latestEvent.message
+      // In the latest trace event response, the message is json text of unknown structure
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const parsedMessage = JSON.parse(latestEvent.message)
+      // find all keys in the parsed message that equal "text", and join them together to form the friendly message
+      // look in all sub-objects of the parsed message
+      // build up the friendly message
+      let friendlyMessage = ''
+      const findTextKeys = (obj: any) => {
+        for (const key in obj) {
+          if (key === 'text' && typeof obj[key] === 'string') {
+            friendlyMessage += obj[key] + '\n'
+          } else if (typeof obj[key] === 'object') {
+            findTextKeys(obj[key])
+          }
+        }
+      }
+      findTextKeys(parsedMessage)
+
+      // note - never surface the latestEvent.message to the user since it is unfriendly json text
+      latestEvent.friendlyMessage = friendlyMessage ?? 'Thinking...'
+
       setLatestTraceEvent(latestEvent)
       //send trace events to the console to ease agent debugging
       //if the trace events do not contain the latest event, add the events to the array
@@ -185,9 +227,10 @@ export function SynapseChat({
       createAgentSession({
         agentAccessLevel,
         agentRegistrationId,
+        sessionContext,
       })
     }
-  }, [createAgentSession, agentSession, accessToken])
+  }, [createAgentSession, agentSession, accessToken, sessionContext])
 
   useEffect(() => {
     // on mount, resolve the initial message chat interaction (if set)
@@ -200,7 +243,12 @@ export function SynapseChat({
       })
       setInitialMessageProcessed(true)
     }
-  }, [agentSession, initialMessage, initialMessageProcessed])
+  }, [
+    agentSession,
+    initialMessage,
+    initialMessageProcessed,
+    sendChatMessageToAgent,
+  ])
 
   const handleSendMessage = () => {
     if (userChatTextfieldValue.trim()) {
@@ -234,8 +282,10 @@ export function SynapseChat({
       </Alert>
     )
   }
+
   const latestTraceEventMessage =
-    latestTraceEvent?.friendlyMessage ?? 'Processing...'
+    latestTraceEvent?.friendlyMessage ?? 'Thinking...'
+
   return (
     <Box
       sx={{
@@ -244,6 +294,7 @@ export function SynapseChat({
         justifyContent: 'space-between',
         maxWidth: '1100px',
         mx: 'auto',
+        height: '100%',
       }}
     >
       {!hideTitle && (
@@ -262,16 +313,18 @@ export function SynapseChat({
           {chatbotName}
         </Typography>
       )}
-      <AccessLevelMenu
-        initAccessLevel={agentAccessLevel}
-        onChange={newAccessLevel => {
-          setAgentAccessLevel(newAccessLevel)
-          updateAgentSession({
-            agentAccessLevel: newAccessLevel,
-            sessionId: agentSession!.sessionId,
-          })
-        }}
-      />
+      {showAccessLevelMenu && (
+        <AccessLevelMenu
+          initAccessLevel={agentAccessLevel}
+          onChange={newAccessLevel => {
+            setAgentAccessLevel(newAccessLevel)
+            updateAgentSession({
+              agentAccessLevel: newAccessLevel,
+              sessionId: agentSession!.sessionId,
+            })
+          }}
+        />
+      )}
       {!agentSession && <SkeletonParagraph numRows={10} />}
       {agentSession && (
         <Box sx={{ flexGrow: 1, overflowY: 'auto', mb: 2 }}>
@@ -355,7 +408,14 @@ export function SynapseChat({
       >
         <Box
           component="form"
-          sx={{ pb: '10px', position: 'sticky' }}
+          sx={{
+            pt: '8px',
+            mt: '5px',
+            pb: '10px',
+            position: 'sticky',
+            borderTop: '1px solid',
+            borderColor: 'grey.400',
+          }}
           onSubmit={handleSendMessage}
         >
           <TextField

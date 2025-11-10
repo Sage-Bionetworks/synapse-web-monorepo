@@ -1,0 +1,10 @@
+// Load variable_overrides first, so correct values for variables will be applied to the rest of the styles
+@use './config/style/variable_overrides';
+
+@use '@sage-bionetworks/synapse-portal-framework/src/style/App';
+
+// style_overrides should be last to ensure its styles have highest priority
+@use './config/style/style_overrides';
+
+// DM Sans font is used only on the CLASSIC Portal
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');

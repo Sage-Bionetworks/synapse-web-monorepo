@@ -3,7 +3,7 @@ import { MOCK_TABLE_ENTITY_ID } from '@/mocks/entity/mockTableEntity'
 import { getHandlers } from '@/mocks/msw/handlers'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { ReferenceList } from '@sage-bionetworks/synapse-types'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { EntityHeaderTable } from './EntityHeaderTable'
 
 const meta = {

@@ -1,19 +1,45 @@
-import { DataGridRow, Operation } from '../DataGridTypes'
-import { useCallback, useEffect, useState } from 'react'
-import { ModelChange } from '../utils/applyModelChange'
-import { Button, Menu, MenuItem } from '@mui/material'
+import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import { Menu, MenuItem } from '@mui/material'
+import { useCallback, useEffect, useState } from 'react'
+import { DataGridRow, Operation } from '../DataGridTypes'
+import { ModelChange } from '../utils/applyModelChange'
 import { convertActionToModelChange } from '../utils/convertActionToModelChange'
 import { useStack } from './useStack'
 
 /**
  * Represents a single action in the grid that can be undone or redone
  */
-export type GridAction = {
+export type SingleGridAction = {
   type: 'CREATE' | 'DELETE' | 'UPDATE'
   rowIndex: number
   previousValue?: DataGridRow
   newValue?: DataGridRow
+}
+
+/**
+ * Composite action for batch undo/redo
+ */
+export type CompositeGridAction = {
+  type: 'COMPOSITE'
+  actions: SingleGridAction[]
+}
+
+/**
+ * GridAction can be a single or composite action
+ */
+export type GridAction = SingleGridAction | CompositeGridAction
+
+/**
+ * Helper to batch multiple single actions into a composite action
+ */
+export function batchGridActions(
+  actions: SingleGridAction[],
+): CompositeGridAction {
+  return {
+    type: 'COMPOSITE',
+    actions,
+  }
 }
 
 const MAX_UNDO_STEPS = 100
@@ -53,15 +79,27 @@ export function useGridUndoRedo(
     if (undoStack.isEmpty()) return null
 
     const lastAction = undoStack.peek()
-    const lastType = lastAction.type
-
-    // Count consecutive actions of same type from the end
+    let lastType: string
     let sameTypeCount = 0
-    for (let i = undoStack.stack.length - 1; i >= 0; i--) {
-      if (undoStack.stack[i].type === lastType) {
-        sameTypeCount++
-      } else {
-        break
+
+    if (lastAction.type === 'COMPOSITE') {
+      lastType = 'COMPOSITE'
+      // Count consecutive composites from the end
+      for (let i = undoStack.stack.length - 1; i >= 0; i--) {
+        if (undoStack.stack[i].type === 'COMPOSITE') {
+          sameTypeCount++
+        } else {
+          break
+        }
+      }
+    } else {
+      lastType = lastAction.type
+      for (let i = undoStack.stack.length - 1; i >= 0; i--) {
+        if (undoStack.stack[i].type === lastType) {
+          sameTypeCount++
+        } else {
+          break
+        }
       }
     }
 
@@ -70,22 +108,28 @@ export function useGridUndoRedo(
       sameTypeCount,
       totalActions: undoStack.size,
     }
-  }, [undoStack.stack.length, undoStack])
+  }, [undoStack])
 
   // Generate preview information for the redo menu
   const getRedoPreview = useCallback(() => {
     if (redoStack.isEmpty()) return null
 
     const lastAction = redoStack.peek()
-    const lastType = lastAction.type
-
-    // Count consecutive actions of same type from the end
+    let lastType: string
     let sameTypeCount = 0
-    for (let i = redoStack.stack.length - 1; i >= 0; i--) {
-      if (redoStack.stack[i].type === lastType) {
-        sameTypeCount++
-      } else {
-        break
+
+    if (lastAction.type === 'COMPOSITE') {
+      lastType = 'COMPOSITE'
+      // Always treat composite as a single atomic action for preview
+      sameTypeCount = 1
+    } else {
+      lastType = lastAction.type
+      for (let i = redoStack.stack.length - 1; i >= 0; i--) {
+        if (redoStack.stack[i].type === lastType) {
+          sameTypeCount++
+        } else {
+          break
+        }
       }
     }
 
@@ -94,7 +138,7 @@ export function useGridUndoRedo(
       sameTypeCount,
       totalActions: redoStack.size,
     }
-  }, [redoStack.stack.length, redoStack])
+  }, [redoStack])
 
   const undoPreview = getUndoPreview()
   const redoPreview = getRedoPreview()
@@ -106,13 +150,27 @@ export function useGridUndoRedo(
     if (undoStack.isEmpty()) return
     const actionToUndo = undoStack.pop()
     if (actionToUndo) {
-      const inverseOperation = convertActionToModelChange(actionToUndo, 'undo')
-      if (!inverseOperation) return
-
-      // Move to redo stack when undoing
-      redoStack.push(actionToUndo)
-
-      onApplyModelChange(inverseOperation)
+      // If composite, undo all child actions in reverse order
+      if (actionToUndo.type === 'COMPOSITE') {
+        for (let i = actionToUndo.actions.length - 1; i >= 0; i--) {
+          const child = actionToUndo.actions[i]
+          const inverseOp = convertActionToModelChange(child, 'undo')
+          if (inverseOp) {
+            onApplyModelChange(inverseOp)
+          }
+        }
+        // Push the composite action itself to the redo stack
+        redoStack.push(actionToUndo)
+      } else {
+        const inverseOperation = convertActionToModelChange(
+          actionToUndo,
+          'undo',
+        )
+        if (!inverseOperation) return
+        onApplyModelChange(inverseOperation)
+        // Push the single action to the redo stack
+        redoStack.push(actionToUndo)
+      }
     }
     handleUndoClose()
   }, [onApplyModelChange, undoStack, redoStack])
@@ -126,13 +184,27 @@ export function useGridUndoRedo(
     const actionToRedo = redoStack.pop()
 
     if (actionToRedo) {
-      const originalOperation = convertActionToModelChange(actionToRedo, 'redo')
-      if (!originalOperation) return
-
-      // Move back to undo stack when redoing
-      undoStack.push(actionToRedo)
-
-      onApplyModelChange(originalOperation)
+      // If composite, redo all child actions in order
+      if (actionToRedo.type === 'COMPOSITE') {
+        for (let i = 0; i < actionToRedo.actions.length; i++) {
+          const child = actionToRedo.actions[i]
+          const originalOp = convertActionToModelChange(child, 'redo')
+          if (originalOp) {
+            onApplyModelChange(originalOp)
+          }
+        }
+        // Push the composite action itself back to the undo stack
+        undoStack.push(actionToRedo)
+      } else {
+        const originalOperation = convertActionToModelChange(
+          actionToRedo,
+          'redo',
+        )
+        if (!originalOperation) return
+        onApplyModelChange(originalOperation)
+        // Push the single action back to the undo stack
+        undoStack.push(actionToRedo)
+      }
     }
     handleRedoClose()
   }, [redoStack, undoStack, onApplyModelChange])
@@ -162,7 +234,9 @@ export function useGridUndoRedo(
     }
   }, [handleUndo, handleRedo])
 
-  const addToUndoStack = (action: GridAction) => undoStack.push(action)
+  const addToUndoStack = (action: GridAction) => {
+    undoStack.push(action)
+  }
 
   const clearUndoStack = () => undoStack.clear()
 
@@ -176,6 +250,8 @@ export function useGridUndoRedo(
     // Clear redo stack since new changes invalidate redo history
     clearRedoStack()
 
+    const batch: SingleGridAction[] = []
+
     for (const operation of operations) {
       const start = operation.fromRowIndex
       const end = operation.toRowIndex
@@ -183,7 +259,7 @@ export function useGridUndoRedo(
       if (operation.type === 'CREATE') {
         for (let i = start; i < end; i++) {
           const newRow = newValue[i]
-          addToUndoStack({
+          batch.push({
             type: 'CREATE',
             rowIndex: i,
             newValue: newRow,
@@ -198,7 +274,7 @@ export function useGridUndoRedo(
         newVal.forEach((newRow: DataGridRow, idx: number) => {
           const oldRow = oldVal[idx]
           const rowIndex = start + idx
-          addToUndoStack({
+          batch.push({
             type: 'UPDATE',
             rowIndex,
             previousValue: oldRow,
@@ -210,7 +286,7 @@ export function useGridUndoRedo(
       if (operation.type === 'DELETE') {
         const deletedRows = rowValues.slice(start, end)
         deletedRows.forEach((row, idx) => {
-          addToUndoStack({
+          batch.push({
             type: 'DELETE',
             rowIndex: start + idx,
             previousValue: row,
@@ -218,11 +294,17 @@ export function useGridUndoRedo(
         })
       }
     }
+    if (batch.length === 1) {
+      addToUndoStack(batch[0])
+    } else if (batch.length > 1) {
+      addToUndoStack(batchGridActions(batch))
+    }
   }
 
   const undoUI = (
     <>
-      <Button
+      <GridMenuButton
+        variant={'outlined'}
         aria-controls={undoOpen ? 'undo-menu' : undefined}
         aria-haspopup="true"
         onClick={handleUndoClick}
@@ -230,7 +312,7 @@ export function useGridUndoRedo(
         endIcon={<KeyboardArrowDownIcon />}
       >
         Undo {undoPreview && `(${undoPreview.totalActions})`}
-      </Button>
+      </GridMenuButton>
       <Menu
         id="undo-menu"
         anchorEl={undoAnchorEl}
@@ -250,7 +332,8 @@ export function useGridUndoRedo(
 
   const redoUI = (
     <>
-      <Button
+      <GridMenuButton
+        variant={'outlined'}
         aria-controls={redoOpen ? 'redo-menu' : undefined}
         aria-haspopup="true"
         onClick={handleRedoClick}
@@ -258,7 +341,7 @@ export function useGridUndoRedo(
         endIcon={<KeyboardArrowDownIcon />}
       >
         Redo {redoPreview && `(${redoPreview.totalActions})`}
-      </Button>
+      </GridMenuButton>
       <Menu
         id="redo-menu"
         anchorEl={redoAnchorEl}

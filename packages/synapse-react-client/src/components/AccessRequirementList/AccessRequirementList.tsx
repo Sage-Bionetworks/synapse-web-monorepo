@@ -185,8 +185,7 @@ export default function AccessRequirementList(
       : undefined
 
   let { dialogTitle = 'Data Access Request' } = props
-  const { accessToken } = useSynapseContext()
-  const isSignedIn = !!accessToken
+  const { isAuthenticated } = useSynapseContext()
   const [requestDataStep, setRequestDataStep] = useState<RequestDataStep>(
     RequestDataStep.SHOW_ALL_ARS,
   )
@@ -434,7 +433,7 @@ export default function AccessRequirementList(
                   subjectType={subjectType}
                   onHide={onHide}
                   onRequestAccess={accessRequirement => {
-                    const nextStep = isSignedIn
+                    const nextStep = isAuthenticated
                       ? RequestDataStep.UPDATE_RESEARCH_PROJECT
                       : RequestDataStep.PROMPT_LOGIN
                     requestDataStepCallback({

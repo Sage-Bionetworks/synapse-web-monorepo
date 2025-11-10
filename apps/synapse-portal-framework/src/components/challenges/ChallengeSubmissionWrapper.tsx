@@ -1,8 +1,8 @@
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { AppUtils, ChallengeSubmission } from 'synapse-react-client'
 
 export type ChallengeSubmissionWrapperProps = {
-  entityType?: EntityType.DOCKER_REPO | EntityType.FILE
+  entityType?: typeof EntityType.dockerrepo | typeof EntityType.file
 }
 
 const ChallengeSubmissionWrapper = (props: ChallengeSubmissionWrapperProps) => {

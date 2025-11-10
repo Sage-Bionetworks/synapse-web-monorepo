@@ -10,11 +10,11 @@ import {
 } from '@/synapse-queries'
 import { useGetTeam } from '@/synapse-queries/team/useTeam'
 import { useSynapseContext } from '@/utils'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   ACCESS_TYPE,
   Challenge,
   Entity,
-  EntityType,
   Project,
   PROJECT_CONCRETE_TYPE_VALUE,
   ResourceAccess,
@@ -31,7 +31,7 @@ export type EntityItem = Entity & {
 }
 
 export type ChallengeSubmissionProps = {
-  entityType: EntityType.DOCKER_REPO | EntityType.FILE
+  entityType: typeof EntityType.dockerrepo | typeof EntityType.file
   pageSize: number
   projectId: string
 }
@@ -41,8 +41,7 @@ export function ChallengeSubmission({
   projectId,
   pageSize = 10,
 }: ChallengeSubmissionProps) {
-  const { accessToken } = useSynapseContext()
-  const isLoggedIn = Boolean(accessToken)
+  const { isAuthenticated, accessToken } = useSynapseContext()
 
   const [loading, setLoading] = useState<boolean>(true)
   const [errorMessage, setErrorMessage] = useState<string>()
@@ -72,13 +71,13 @@ export function ChallengeSubmission({
   // Use the existing accessToken if present to get the current user's profile / userId
   const { data: userProfile, isLoading: isProfileLoading } =
     useGetCurrentUserProfile({
-      enabled: isLoggedIn,
+      enabled: isAuthenticated,
       throwOnError: true,
     })
 
   // Retrieve the challenge associated with the projectId passed through props
   const { data: challenge } = useGetEntityChallenge(projectId, {
-    enabled: isLoggedIn && !!projectId,
+    enabled: isAuthenticated && !!projectId,
     refetchInterval: Infinity,
     throwOnError: true,
   })
@@ -90,7 +89,7 @@ export function ChallengeSubmission({
   )
 
   useEffect(() => {
-    if (isLoggedIn && !!challenge && userSubmissionTeams) {
+    if (isAuthenticated && !!challenge && userSubmissionTeams) {
       const isReg = userSubmissionTeams.results.length > 0
       if (!isReg) {
         setErrorMessage(
@@ -106,7 +105,7 @@ export function ChallengeSubmission({
       }
       setSubmissionTeamId(userSubmissionTeams.results[0])
     }
-  }, [challenge, isLoggedIn, userSubmissionTeams])
+  }, [challenge, isAuthenticated, userSubmissionTeams])
 
   const { data: submissionTeam } = useGetTeam(submissionTeamId!, {
     enabled: !!submissionTeamId,
@@ -185,11 +184,11 @@ export function ChallengeSubmission({
   }, [entityPermissions])
 
   useEffect(() => {
-    if (!isLoggedIn && (!!userProfile || !isProfileLoading)) {
+    if (!isAuthenticated && (!!userProfile || !isProfileLoading)) {
       setLoading(false)
       setErrorMessage('Please login to continue.')
     }
-  }, [isLoggedIn, userProfile, isProfileLoading])
+  }, [isAuthenticated, userProfile, isProfileLoading])
 
   useEffect(() => {
     if (accessToken && submissionTeam && challenge && !newProject) {

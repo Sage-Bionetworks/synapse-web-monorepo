@@ -1,5 +1,5 @@
 import { ReactNode, useState } from 'react'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 
 import { StepperDialog, StepperDialogProps } from './index'
 import Button from '@mui/material/Button'

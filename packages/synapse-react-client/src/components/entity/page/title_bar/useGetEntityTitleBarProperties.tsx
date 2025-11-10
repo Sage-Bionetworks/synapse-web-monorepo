@@ -5,18 +5,16 @@ import {
   isEntityRefCollectionView,
   isVersionableEntity,
 } from '@/utils/functions/EntityTypeUtils'
+import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
 import { Box, Link } from '@mui/material'
-import {
-  EntityRefCollectionView,
-  EntityType,
-} from '@sage-bionetworks/synapse-types'
+import { DoiObjectType, EntityType } from '@sage-bionetworks/synapse-client'
+import { EntityRefCollectionView } from '@sage-bionetworks/synapse-types'
 import { ReactNode, useState } from 'react'
 import CopyToClipboardString from '../../../CopyToClipboardString/CopyToClipboardString'
 import { HasAccessV2 } from '../../../HasAccess/HasAccessV2'
-import { DoiObjectType } from '@sage-bionetworks/synapse-client'
-import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
+import { CitationsDialog } from './CitationsDialog'
 import { maxCitationCount, useDataCiteUsage } from './useDataCiteUsage'
-import { DataCiteCitationsDialog } from './DataCiteCitationsDialog'
+import { useGetMentions } from './useGetMentions'
 
 export type EntityProperty = {
   key: string
@@ -44,6 +42,7 @@ export function useGetEntityTitleBarProperties(
   } = useGetEntityMetadata(entityId, versionNumber)
   const [dataCiteCitationsDialogOpen, setDataCiteCitationsDialogOpen] =
     useState(false)
+  const [mentionsDialogOpen, setMentionsDialogOpen] = useState(false)
   const { data: entityChildrenResponse } = useGetEntityChildren(
     {
       parentId: entityId,
@@ -106,6 +105,8 @@ export function useGetEntityTitleBarProperties(
       ? ((bundle?.entity as EntityRefCollectionView).items ?? []).length
       : null
 
+  const { data: mentions } = useGetMentions(entityId)
+  const isMentions = !!mentions && mentions.length > 0
   return [
     {
       key: 'id',
@@ -135,6 +136,40 @@ export function useGetEntityTitleBarProperties(
         <Link href={doi} rel={'noopener noreferrer'} target={'_blank'}>
           {doi}
         </Link>
+      ),
+    },
+    isDoiUsage && {
+      key: 'citations',
+      title: 'Citations',
+      value: (
+        <>
+          <Link onClick={() => setDataCiteCitationsDialogOpen(true)}>
+            {dataCiteUsage.citationCount.toLocaleString()}
+            {dataCiteUsage.citationCount == maxCitationCount && '+'}
+          </Link>
+          <CitationsDialog
+            open={dataCiteCitationsDialogOpen}
+            onClose={() => setDataCiteCitationsDialogOpen(false)}
+            citations={dataCiteUsage.citations}
+          />
+        </>
+      ),
+    },
+    isMentions && {
+      key: 'mentions',
+      title: 'Mentions',
+      value: (
+        <>
+          <Link onClick={() => setMentionsDialogOpen(true)}>
+            {mentions.length.toLocaleString()}
+          </Link>
+          <CitationsDialog
+            open={mentionsDialogOpen}
+            onClose={() => setMentionsDialogOpen(false)}
+            citations={mentions}
+            title="Mentioned in"
+          />
+        </>
       ),
     },
     md5 && {
@@ -175,23 +210,6 @@ export function useGetEntityTitleBarProperties(
           <Box sx={{ display: 'inline', fontFamily: 'monospace' }}>
             {downloadAlias}
           </Box>
-        </>
-      ),
-    },
-    isDoiUsage && {
-      key: 'citations',
-      title: 'Citations',
-      value: (
-        <>
-          <Link onClick={() => setDataCiteCitationsDialogOpen(true)}>
-            {dataCiteUsage.citationCount}
-            {dataCiteUsage.citationCount == maxCitationCount && '+'}
-          </Link>
-          <DataCiteCitationsDialog
-            open={dataCiteCitationsDialogOpen}
-            onClose={() => setDataCiteCitationsDialogOpen(false)}
-            citations={dataCiteUsage.citations}
-          />
         </>
       ),
     },
