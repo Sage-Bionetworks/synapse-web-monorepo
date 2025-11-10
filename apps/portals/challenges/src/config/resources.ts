@@ -4,4 +4,5 @@ export const metricsSql = `SELECT * FROM syn70365471`
 export const featuredTeamSql = `SELECT * FROM syn70780975`
 export const newChallengesSql = `SELECT * FROM syn70820144`
 export const popularChallengesSql = `SELECT * FROM syn70984047`
+export const getInvolvedSql = `SELECT * FROM syn71103115`
 export const newsSql = `SELECT * FROM syn71103117`

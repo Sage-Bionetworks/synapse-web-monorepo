@@ -11,6 +11,7 @@ import {
   featuredTeamSql,
   newChallengesSql,
   popularChallengesSql,
+  getInvolvedSql,
   newsSql,
 } from '@/config/resources'
 import {
@@ -21,6 +22,7 @@ import { PortalFeaturedPartners } from 'synapse-react-client'
 import NewChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/NewChallengesSection/NewChallengesSection'
 import ChallengeNewsSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeNewsSection/ChallengeNewsSection'
 import PopularChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/PopularChallengesSection/PopularChallengesSection'
+import GetInvolvedSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/GetInvolvedSection/GetInvolvedSection'
 
 const CARD_BORDER_RADIUS_PX = 4
 
@@ -44,6 +46,11 @@ function Home() {
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
       />
       <ChallengeFeaturedTeam sql={featuredTeamSql} />
+      <GetInvolvedSection
+        sql={getInvolvedSql}
+        borderRadiusPx={CARD_BORDER_RADIUS_PX}
+        cardSize="large"
+      />
       <ChallengeNewsSection
         sql={newsSql}
         borderRadiusPx={CARD_BORDER_RADIUS_PX}

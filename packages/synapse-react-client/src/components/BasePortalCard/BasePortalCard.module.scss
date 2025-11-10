@@ -1,12 +1,20 @@
 @use '../../style/abstracts/variables' as SrcVariables;
 @use 'sass:map';
 
-.BasePortalCard__root {
+.BasePortalCard__root:global(.MuiCard-root) {
   position: relative;
 }
 
 .BasePortalCard__contentBelow {
   margin-top: 15px;
+}
+
+.BasePortalCard__content:global(.MuiCardContent-root) {
+  padding: 0;
+}
+
+.BasePortalCard__media:global(.MuiCardMedia-root) {
+  height: 60%;
 }
 
 .small {
@@ -22,5 +30,6 @@
 
 .large {
   width: 600px;
+  height: 500px;
   min-height: 300px;
 }
