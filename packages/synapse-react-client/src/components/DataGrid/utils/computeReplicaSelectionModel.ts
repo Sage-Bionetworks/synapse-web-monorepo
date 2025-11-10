@@ -54,8 +54,11 @@ function isSelectAll(arrSnapshot: unknown[], min: number, max: number) {
 function getCrdtIdsForArrayRange(array: ArrApi, min: number, max: number) {
   const crdtIds: CrdtId[] = []
   for (let i = min; i <= max; i++) {
-    const { node } = array.get(i)
-    crdtIds.push({ rep: node.id.sid, seq: node.id.time })
+    const findChunkResult = array.node.findChunk(i)
+    if (findChunkResult) {
+      const [chunk, offset] = findChunkResult
+      crdtIds.push({ rep: chunk.id.sid, seq: chunk.id.time + offset })
+    }
   }
   return crdtIds
 }
