@@ -180,7 +180,7 @@ const RedirectDialog = (props: RedirectDialogProps) => {
           : getRedirectInstructionsFromUrl(redirectUrl),
       )
     }
-  }, [redirectUrl, getRedirectInstructionsFromUrl])
+  }, [redirectUrl])
 
   useEffect(() => {
     if (redirectUrl && !countdownSeconds) {
