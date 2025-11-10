@@ -29,6 +29,10 @@ root.render(
       logoHeaderConfig={logoHeaderConfig}
       logoFooterConfig={logoFooterConfig}
       navbarConfig={navbarConfig}
+      cpathConfig={{
+        enabled: true,
+        workspacesApiBasePath: 'https://fair.c-path-dev.aridhia.io/api',
+      }}
     />
   </StrictMode>,
 )
