@@ -1,0 +1,7 @@
+import{A as s}from"./AccessRequirementSearchBox-B58-XLjh.js";import{J as a}from"./iframe-eAL3LCN3.js";import"./useAccessRequirements-B9olMQyi.js";import"./index-Dfyq_HAj.js";import"./_baseOrderBy-BTnFMAHT.js";import"./_baseIteratee-YB6gKiVY.js";import"./_baseMap-BQ8tF--O.js";import"./_baseEach-YQyv94F6.js";import"./useQueries-D_stMPeC.js";import"./useInfiniteQuery-BIjxq0oU.js";import"./Select-aab027f3.esm-ClK3n3NS.js";import"./defineProperty-CegpTSss.js";import"./index-r8ZA1smB.js";const q={title:"Governance/AccessRequirementSearchBox",component:s},e={args:{onChange:i=>{a("Selected id: "+String(i),"info")}}};var r,o,t;e.parameters={...e.parameters,docs:{...(r=e.parameters)==null?void 0:r.docs,source:{originalSource:`{
+  args: {
+    onChange: id => {
+      displayToast('Selected id: ' + String(id), 'info');
+    }
+  }
+}`,...(t=(o=e.parameters)==null?void 0:o.docs)==null?void 0:t.source}}};const B=["AccessRequirementSearchBoxDemo"];export{e as AccessRequirementSearchBoxDemo,B as __namedExportsOrder,q as default};
