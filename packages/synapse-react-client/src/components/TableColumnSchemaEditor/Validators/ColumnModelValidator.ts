@@ -14,6 +14,11 @@ import { omit } from 'lodash-es'
 
 const facetTypeSchema = z.union([z.literal('enumeration'), z.literal('range')])
 
+const facetColumnSortConfigSchema = z.object({
+  property: z.enum(['FREQUENCY', 'VALUE']).optional(),
+  direction: z.enum(['DESC', 'ASC']).optional(),
+})
+
 const columnModelBaseZodSchema = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
   columnType: z.nativeEnum(ColumnTypeEnum),
@@ -57,6 +62,7 @@ const unrefinedColumnModelSchema = columnModelBaseZodSchema.merge(
       .optional(),
     jsonSubColumns: z.array(jsonSubColumnModelZodSchema).optional(),
     facetType: facetTypeSchema.optional(),
+    facetSortConfig: facetColumnSortConfigSchema.optional(),
   }),
 )
 
@@ -143,7 +149,7 @@ export type JsonSubColumnModelFormData = z.input<
 >
 
 // Use the "unrefined" schema since we can extend it with form-only fields
-const columnModelFormDataSchema = unrefinedColumnModelSchema.merge(
+const _columnModelFormDataSchema = unrefinedColumnModelSchema.merge(
   z.object({
     isSelected: z.boolean(),
     isOriginallyDefaultColumn: z.boolean(),
@@ -155,7 +161,7 @@ const columnModelFormDataSchema = unrefinedColumnModelSchema.merge(
  * Type that represents possible form input data for a ColumnModel.
  * a
  */
-export type ColumnModelFormData = z.input<typeof columnModelFormDataSchema>
+export type ColumnModelFormData = z.input<typeof _columnModelFormDataSchema>
 
 export function validateColumnModelFormData(
   formData: SetOptional<

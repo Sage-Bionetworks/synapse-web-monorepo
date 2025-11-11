@@ -45,7 +45,7 @@ import { tableColumnSchemaFormDataAtom } from './TableColumnSchemaFormReducer'
 import { validateColumnModelFormData } from './Validators/ColumnModelValidator'
 
 const COLUMN_SCHEMA_FORM_GRID_TEMPLATE_COLUMNS =
-  '18px 18px 1.75fr 1.75fr 0.75fr 1fr 1.25fr 1.25fr 1fr'
+  '18px 18px 1.75fr 1.75fr 0.75fr 1fr 1.25fr 1.25fr 1fr 1.25fr'
 const GRID_CONTAINER_Y_MARGIN_PX = 6
 export const HIERARCHY_VERTICAL_LINE_COMPONENT = (
   <Box
@@ -316,9 +316,10 @@ function TableColumnSchemaFormInternal(
         <ColumnHeader>Default Value</ColumnHeader>
         <ColumnHeader>Restrict Values</ColumnHeader>
         <ColumnHeader>Facet</ColumnHeader>
+        <ColumnHeader>Sort Facet Values</ColumnHeader>
         <Box
           sx={{
-            gridColumn: '1 / span 10',
+            gridColumn: '1 / span 11',
             backgroundColor: 'grey.300',
             height: '2px',
           }}

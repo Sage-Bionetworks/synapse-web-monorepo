@@ -19,6 +19,8 @@ import {
   FacetType,
   VIEW_CONCRETE_TYPE_VALUES,
 } from '@sage-bionetworks/synapse-types'
+// Import from the specific file path as a workaround for type resolution
+import type { FacetColumnSortConfig } from '@sage-bionetworks/synapse-types/dist/Table/FacetColumnSortConfig'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { selectAtom } from 'jotai/utils'
 import { isArray, isEmpty, isEqual } from 'lodash-es'
@@ -68,7 +70,7 @@ const topLevelColumnModelFieldSx: SxProps = {
 
 function renderDefaultValue(
   defaultValue: string | unknown[] | undefined,
-  columnType: ColumnTypeEnum,
+  _columnType: ColumnTypeEnum,
 ): string {
   if (defaultValue == null) {
     return ''
@@ -78,6 +80,44 @@ function renderDefaultValue(
     return defaultValue.map(String).join(', ')
   }
   return defaultValue
+}
+
+// Helper type for the combined sort configuration value
+type FacetSortValue =
+  | 'FREQUENCY_DESC'
+  | 'FREQUENCY_ASC'
+  | 'VALUE_DESC'
+  | 'VALUE_ASC'
+  | ''
+
+/**
+ * Converts a FacetColumnSortConfig object to a single string value for the select dropdown
+ */
+function facetSortConfigToValue(
+  config: FacetColumnSortConfig | undefined,
+): FacetSortValue {
+  if (!config || (!config.property && !config.direction)) {
+    return ''
+  }
+  const property = config.property || 'FREQUENCY'
+  const direction = config.direction || 'DESC'
+  return `${property}_${direction}` as FacetSortValue
+}
+
+/**
+ * Converts a select dropdown value to a FacetColumnSortConfig object
+ */
+function valueToFacetSortConfig(
+  value: FacetSortValue,
+): FacetColumnSortConfig | undefined {
+  if (!value) {
+    return undefined
+  }
+  const [property, direction] = value.split('_') as [
+    'FREQUENCY' | 'VALUE',
+    'DESC' | 'ASC',
+  ]
+  return { property, direction }
 }
 
 /*
@@ -150,7 +190,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
       <Box
         sx={{
           display: 'grid',
-          gridColumn: '1 / span 10',
+          gridColumn: '1 / span 11',
           gridTemplateColumns: 'subgrid',
         }}
       >
@@ -505,12 +545,55 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
             )}
           </FormControl>
         </Box>
+        <Box>
+          <FormControl fullWidth>
+            <Select
+              label="Sort Facet Values"
+              value={facetSortConfigToValue(
+                'facetSortConfig' in columnModel
+                  ? columnModel.facetSortConfig
+                  : undefined,
+              )}
+              disabled={disabled || columnModel.facetType !== 'enumeration'}
+              onChange={e => {
+                dispatch({
+                  type: 'setColumnModelValue',
+                  columnModelIndex,
+                  jsonSubColumnModelIndex: jsonSubColumnIndex,
+                  value: {
+                    ...columnModel,
+                    facetSortConfig: valueToFacetSortConfig(
+                      e.target.value as FacetSortValue,
+                    ),
+                  },
+                })
+              }}
+              sx={fieldSx}
+              slotProps={{
+                input: {
+                  'aria-label': 'Sort Facet Values',
+                },
+              }}
+              error={!!errorsByField['facetSortConfig']}
+            >
+              <MenuItem value="">Frequency Descending (default)</MenuItem>
+              <MenuItem value="FREQUENCY_ASC">Frequency Ascending</MenuItem>
+              <MenuItem value="VALUE_DESC">Value Descending</MenuItem>
+              <MenuItem value="VALUE_ASC">Value Ascending</MenuItem>
+            </Select>
+            {errorsByField['facetSortConfig'] && (
+              <FormHelperText color={'error.main'}>
+                {errorsByField['facetSortConfig']}
+              </FormHelperText>
+            )}
+          </FormControl>
+        </Box>
       </Box>
       {isJsonSubColumn && (
         <Box
           sx={{
             display: 'grid',
-            gridColumn: '1 / span 10',
+            gridColumn: '1 / span 11',
             gridTemplateColumns: 'subgrid',
           }}
         >
