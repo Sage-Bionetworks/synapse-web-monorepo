@@ -5,8 +5,9 @@ import { Model } from 'json-joy/lib/json-crdt/index'
 export default function createTestModel(
   nRows: number,
   nCols: number,
+  sid?: number,
 ): GridModel {
-  const model = Model.create(gridSchema)
+  const model = Model.create(gridSchema, sid)
 
   for (let i = 0; i < nCols; i++) {
     model.api.arr(['columnOrder']).push(s.con(i))
