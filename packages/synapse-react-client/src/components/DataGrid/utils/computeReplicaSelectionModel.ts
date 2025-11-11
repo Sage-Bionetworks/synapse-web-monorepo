@@ -58,6 +58,10 @@ function getCrdtIdsForArrayRange(array: ArrApi, min: number, max: number) {
     if (findChunkResult) {
       const [chunk, offset] = findChunkResult
       crdtIds.push({ rep: chunk.id.sid, seq: chunk.id.time + offset })
+    } else {
+      console.warn(
+        `getCrdtIdsForArrayRange: No chunk found for array index ${i}. This may indicate an unexpected state.`,
+      )
     }
   }
   return crdtIds
