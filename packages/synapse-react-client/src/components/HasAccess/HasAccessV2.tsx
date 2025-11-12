@@ -211,7 +211,9 @@ export function useHasAccess(entityId: string) {
 
     // Clickable if there are unmet requirements or if there are terms to view
     return (
-      hasUnmetAccessRequirement || restrictionLevel !== RestrictionLevel.OPEN
+      hasUnmetAccessRequirement ||
+      restrictionLevel !== RestrictionLevel.OPEN ||
+      restrictionUiType === RestrictionUiType.AccessBlockedToAnonymous
     )
   }, [restrictionInformation, restrictionUiType])
 
