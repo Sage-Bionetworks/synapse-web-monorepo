@@ -250,7 +250,7 @@ describe('EnumFacetFilter', () => {
         expect(counts[2]).toHaveTextContent(`${integerFacetValues[2].count}`)
       })
 
-      it('should reverse sort order if configured', async () => {
+      it('should reverse sort order if configured (client-side)', async () => {
         const { container } = await init({
           sortConfig: {
             columnName: 'MAKE',
@@ -270,7 +270,53 @@ describe('EnumFacetFilter', () => {
 
         expect(checkboxes[0]).toHaveAccessibleName('All')
 
-        // PORTALS-3252 note: Facet values are reverse sorted! [0] will appear before [1] again
+        // sortConfig is ignored when columnModel has no facetSortConfig (client-side sorting)
+        // Client-side sorting applies alphabetical order
+        // [1] (Chevy) comes before [0] (Honda) alphabetically
+        expect(checkboxes[1]).toHaveAccessibleName(
+          `${stringFacetValues[1].value}`,
+        )
+        expect(counts[0]).toHaveTextContent(`${stringFacetValues[1].count}`)
+
+        expect(checkboxes[2]).toHaveAccessibleName(
+          `${stringFacetValues[0].value}`,
+        )
+        expect(counts[1]).toHaveTextContent(`${stringFacetValues[0].count}`)
+
+        expect(checkboxes[3]).toHaveAccessibleName(`Not Assigned`)
+        expect(counts[2]).toHaveTextContent(`${stringFacetValues[2].count}`)
+      })
+
+      it('should not apply client-side sorting when columnModel has facetSortConfig', async () => {
+        const columnModelWithSortConfig: ColumnModel = {
+          ...columnModel,
+          facetSortConfig: {
+            property: 'FREQUENCY',
+            direction: 'DESC',
+          },
+        }
+
+        registerTableQueryResult(nextQueryRequest.query, {
+          ...mockQueryResponseData,
+          columnModels: [columnModelWithSortConfig],
+        })
+
+        const { container } = await init()
+
+        const checkboxes = await screen.findAllByRole<HTMLInputElement>(
+          'checkbox',
+        )
+        const counts = container.querySelectorAll<HTMLDivElement>(
+          '.EnumFacetFilter__count',
+        )
+
+        expect(checkboxes).toHaveLength(4)
+        expect(counts).toHaveLength(3)
+
+        expect(checkboxes[0]).toHaveAccessibleName('All')
+
+        // Server-side sorting means we keep the order as-is from the server
+        // [0] appears first, then [1], then valueNotSet
         expect(checkboxes[1]).toHaveAccessibleName(
           `${stringFacetValues[0].value}`,
         )
