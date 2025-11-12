@@ -270,7 +270,6 @@ describe('EnumFacetFilter', () => {
 
         expect(checkboxes[0]).toHaveAccessibleName('All')
 
-        // sortConfig is ignored when columnModel has no facetSortConfig (client-side sorting)
         // Client-side sorting applies alphabetical order
         // [1] (Chevy) comes before [0] (Honda) alphabetically
         expect(checkboxes[1]).toHaveAccessibleName(
