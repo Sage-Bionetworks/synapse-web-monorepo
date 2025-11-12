@@ -42,9 +42,11 @@ const BasePortalCard = ({
         {children}
       </CardContent>
     </Card>
-    <Box className={styles.BasePortalCard__contentBelow}>
-      {contentBelowCard}
-    </Box>
+    {contentBelowCard && (
+      <Box className={styles.BasePortalCard__contentBelow}>
+        {contentBelowCard}
+      </Box>
+    )}
   </Stack>
 )
 
