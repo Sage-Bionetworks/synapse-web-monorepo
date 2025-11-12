@@ -160,7 +160,9 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
 
     // Apply client-side sorting if no server-side sort is specified
     let sortedValues: RenderedFacetValue[] = restOfFacetValuesArray
-    if (columnModel == undefined || columnModel.facetSortConfig == undefined) {
+    const isClientSideSort =
+      columnModel == undefined || columnModel.facetSortConfig == undefined
+    if (isClientSideSort) {
       if (isNumberColumnType) {
         sortedValues = sortBy(restOfFacetValuesArray, fv => Number(fv.value))
       } else {
@@ -171,17 +173,22 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
     }
 
     //PORTALS-3252: provide way to sort in descending order on the client-side
-    const sortDescending = sortConfig && sortConfig.direction == Direction.DESC
+    const sortDescending = isClientSideSort
+      ? false
+      : sortConfig && sortConfig.direction == Direction.DESC
     return [
       ...(sortDescending ? sortedValues.reverse() : sortedValues),
       ...valueNotSetFacetArray,
     ]
   }, [
+    facet.facetValues,
+    columnModel,
+    sortConfig,
     currentSelectedFacet?.facetValues,
+    userGroupHeaders,
     entityHeaders,
     evaluations,
-    facet.facetValues,
-    userGroupHeaders,
+    isNumberColumnType,
   ])
 
   if (!columnModel) {
