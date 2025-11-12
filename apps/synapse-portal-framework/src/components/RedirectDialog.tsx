@@ -22,6 +22,8 @@ export type RedirectDialogProps = {
 // This is the time before the redirect occurs, allowing users to cancel if needed.
 const initialCountdownSeconds = 10
 
+const RdcaDapUrl = 'fair.dap.c-path.org'
+
 export const redirectInstructionsMap: Record<string, React.JSX.Element> = {
   'https://sites.google.com/sagebase.org/mc2intranet/home?authuser=0': (
     <>
@@ -78,7 +80,7 @@ const isSynapseURL = (url: string) => {
 const isRdcapUrl = (url: string) => {
   if (!url) return false
   const parsedURL = new URL(url)
-  return parsedURL.hostname.toLowerCase() === 'fair.dap.c-path.org'
+  return parsedURL.hostname.toLowerCase() === RdcaDapUrl
 }
 
 const parseSynIdFromRedirectUrl = (redirectUrl: string | undefined) => {
