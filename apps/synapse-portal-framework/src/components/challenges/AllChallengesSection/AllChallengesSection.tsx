@@ -1,4 +1,5 @@
 import { Box, Button, Stack, Typography } from '@mui/material'
+import { Link as RouterLink } from 'react-router'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from 'synapse-react-client'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
@@ -100,8 +101,9 @@ const AllChallengesSection = ({
         })}
       </Box>
       <Button
+        component={RouterLink}
         variant="outlined"
-        href="/Challenge List"
+        to="/Challenge List"
         endIcon={<ArrowForwardIcon />}
         className={styles.AllChallengesSection__viewChallengeListButton}
       >
