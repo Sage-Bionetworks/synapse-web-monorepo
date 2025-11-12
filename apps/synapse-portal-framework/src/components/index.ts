@@ -20,6 +20,7 @@ import ChallengeHeader from './challenges/ChallengeHeader/ChallengeHeader'
 import ChallengeMetrics from './challenges/ChallengeMetrics/ChallengeMetrics'
 import ChallengeFeaturedTeam from './challenges/ChallengeFeaturedTeam/ChallengeFeaturedTeam'
 import NewChallengesSection from './challenges/NewChallengesSection/NewChallengesSection'
+import AllChallengesSection from './challenges/AllChallengesSection/AllChallengesSection'
 import GetInvolvedSection from './challenges/GetInvolvedSection/GetInvolvedSection'
 import ChallengeNewsSection from './challenges/ChallengeNewsSection/ChallengeNewsSection'
 import PopularChallengesSection from './challenges/PopularChallengesSection/PopularChallengesSection'
@@ -62,6 +63,7 @@ const PortalComponents = {
   GetInvolvedSection,
   ChallengeNewsSection,
   PopularChallengesSection,
+  AllChallengesSection,
   ClassicSupportedByNIABanner,
   ARKWelcomePage,
   GenieHomePageHeader,

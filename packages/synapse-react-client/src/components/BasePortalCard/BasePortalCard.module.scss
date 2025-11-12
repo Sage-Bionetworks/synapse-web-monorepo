@@ -14,22 +14,39 @@
 }
 
 .BasePortalCard__media:global(.MuiCardMedia-root) {
-  height: 60%;
+  height: 50%;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    height: 60%;
+  }
 }
 
 .small {
-  width: 250px;
+  width: 100%;
+  height: 250px;
   min-height: 150px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    width: 250px;
+  }
 }
 
 .medium {
-  width: 400px;
+  width: 100%;
   height: 400px;
   min-height: 200px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    width: 400px;
+  }
 }
 
 .large {
-  width: 600px;
+  width: 100%;
   height: 500px;
   min-height: 300px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    width: 600px;
+  }
 }

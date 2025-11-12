@@ -10,6 +10,8 @@ import {
   OVERVIEW_PATH,
 } from './challengeDetailsPageTabConfig'
 
+const CHALLENGE_LIST_PATH = '/Challenge List'
+
 const routes: RouteObject[] = [
   {
     path: '/',
@@ -19,6 +21,11 @@ const routes: RouteObject[] = [
       {
         index: true,
         lazy: () => import('@/pages/Home').then(convertModuleToRouteObject),
+      },
+      {
+        path: CHALLENGE_LIST_PATH,
+        lazy: () =>
+          import('@/pages/ChallengeListPage').then(convertModuleToRouteObject),
       },
       {
         path: 'Challenges/DetailsPage',
