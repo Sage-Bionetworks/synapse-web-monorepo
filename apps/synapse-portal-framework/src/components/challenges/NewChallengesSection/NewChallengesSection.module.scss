@@ -3,7 +3,7 @@
 @use 'sass:map';
 
 .NewChallengesSection__root {
-  position: relative;
+  @include Base.root;
 }
 
 .NewChallengesSection__sectionTitle:global(.MuiTypography-root) {

@@ -3,8 +3,7 @@
 @use 'sass:map';
 
 .GetInvolvedSection__root {
-  position: relative;
-  margin-top: 120px;
+  @include Base.root;
 }
 
 .GetInvolvedSection__sectionTitle:global(.MuiTypography-root) {
