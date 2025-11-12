@@ -9,7 +9,7 @@
   margin-top: 15px;
 }
 
-.BasePortalCard__content:global(.MuiCardContent-root) {
+.BasePortalCard__content:global(.MuiCardContent-root):last-child {
   padding: 0;
 }
 
