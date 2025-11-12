@@ -13,7 +13,7 @@ export type ChatState = {
   chatJobIds: string[]
 }
 
-export function useChat(agentSession?: AgentSession): ChatState {
+export function useChatState(agentSession?: AgentSession): ChatState {
   const [chatJobIds, setChatJobIds] = useState<string[]>([])
   // Optimistic update state for latest unprocessed message
   const [pendingMessage, setPendingMessage] = useState<string | null>(null)
@@ -24,13 +24,6 @@ export function useChat(agentSession?: AgentSession): ChatState {
         // set the pending message to the new chat message
         setPendingMessage(newChatMessage.chatText)
       },
-      // onSuccess: data => {
-      // whenever the response is returned, set the last interaction response text
-      // setCurrentResponse(data.responseText)
-      // },
-      // onError: err => {
-      //   setCurrentResponseError(err.reason)
-      // },
     },
     (status: AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>) => {
       if (!chatJobIds.includes(status.jobId)) {

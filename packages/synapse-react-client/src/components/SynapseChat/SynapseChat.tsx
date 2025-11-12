@@ -1,4 +1,4 @@
-import { ChatState, useChat } from '@/components/SynapseChat/useChat'
+import { ChatState, useChatState } from '@/components/SynapseChat/useChatState'
 import {
   useCreateAgentSession,
   useUpdateAgentSession,
@@ -96,7 +96,7 @@ export function SynapseChat({
       : AgentAccessLevel.PUBLICLY_ACCESSIBLE,
   )
 
-  const internalChatState = useChat(agentSession)
+  const internalChatState = useChatState(agentSession)
   const chatState = externalChatState ?? internalChatState
   const { pendingMessage, chatJobIds, sendChat } = chatState
 
