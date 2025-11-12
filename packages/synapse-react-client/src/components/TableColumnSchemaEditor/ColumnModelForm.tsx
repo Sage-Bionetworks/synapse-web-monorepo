@@ -576,7 +576,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
               }}
               error={!!errorsByField['facetSortConfig']}
             >
-              <MenuItem value="">Frequency Descending (default)</MenuItem>
+              <MenuItem value="FREQUENCY_DESC">Frequency Descending</MenuItem>
               <MenuItem value="FREQUENCY_ASC">Frequency Ascending</MenuItem>
               <MenuItem value="VALUE_DESC">Value Descending</MenuItem>
               <MenuItem value="VALUE_ASC">Value Ascending</MenuItem>
