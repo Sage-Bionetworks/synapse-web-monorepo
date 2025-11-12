@@ -1,12 +1,27 @@
-import { SmartToyTwoTone } from '@mui/icons-material'
-import { Alert, Box, ListItem, ListItemText, useTheme } from '@mui/material'
+import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
+import {
+  KeyboardArrowDown,
+  KeyboardArrowRight,
+  SmartToyTwoTone,
+} from '@mui/icons-material'
+import {
+  Alert,
+  Box,
+  Button,
+  Collapse,
+  ListItem,
+  ListItemText,
+  useTheme,
+} from '@mui/material'
 import { Color } from '@mui/material/styles'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import { TraceEventWithFriendlyMessage } from './SynapseChat'
 
 export type SynapseChatInteractionProps = {
   userMessage: string
   chatResponseText?: string
+  chatResponseTrace?: TraceEventWithFriendlyMessage[]
   scrollIntoView?: boolean
   chatErrorReason?: string
 }
@@ -15,10 +30,12 @@ export function SynapseChatInteraction({
   userMessage,
   chatResponseText,
   chatErrorReason,
+  chatResponseTrace,
   scrollIntoView = false,
 }: SynapseChatInteractionProps) {
   const theme = useTheme()
   const ref = useRef<HTMLLIElement | null>(null)
+  const [showTrace, setShowTrace] = useState(false)
   useEffect(() => {
     // on mount, scroll into view if instructed
     if (scrollIntoView) {
@@ -27,6 +44,27 @@ export function SynapseChatInteraction({
       }
     }
   }, [ref])
+
+  const isLoading = !chatResponseText && !chatErrorReason
+
+  const traceMessages = useMemo(
+    () =>
+      (chatResponseTrace ?? [])
+        ?.filter(trace => !!trace.friendlyMessage)
+        .map(trace => trace.friendlyMessage!),
+    [chatResponseTrace],
+  )
+
+  const hasTraceInfo = traceMessages.length > 0
+
+  const lastTraceMessage = traceMessages.at(-1)
+
+  const traceButtonLoadingText =
+    lastTraceMessage == null ? 'Thinking...' : lastTraceMessage
+
+  const traceButtonText = isLoading
+    ? traceButtonLoadingText
+    : `${showTrace ? 'Hide' : 'Show'} Trace`
 
   const textContent = useMemo(() => {
     const parser = new DOMParser()
@@ -54,41 +92,88 @@ export function SynapseChatInteraction({
       >
         <ListItemText primary={userMessage} />
       </ListItem>
-      {textContent && (
-        <ListItem
+      <ListItem
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: '50px auto',
+          columnGap: '0px',
+          justifyItems: 'center',
+          alignItems: 'start',
+          p: '0px',
+        }}
+      >
+        <Box
           sx={{
-            display: 'grid',
-            gridTemplateColumns: '50px auto',
-            columnGap: '0px',
-            justifyItems: 'center',
-            alignItems: 'start',
-            p: '0px',
+            p: '3px',
+            mt: '10px',
+            height: '31px',
+            borderRadius: '50%',
+            borderStyle: 'solid',
+            borderWidth: '1px',
+            borderColor: 'grey.300',
           }}
         >
-          <Box
+          <SmartToyTwoTone sx={{ color: 'secondary.main' }} />
+        </Box>
+        <Box
+          sx={{
+            borderRadius: '10px',
+            padding: '10px',
+            maxWidth: '100%',
+          }}
+        >
+          <Button
+            variant={'outlined'}
+            size={'small'}
+            startIcon={
+              isLoading ? (
+                <SynapseSpinner size={14} />
+              ) : showTrace ? (
+                <KeyboardArrowDown sx={{ width: '14px' }} />
+              ) : (
+                <KeyboardArrowRight sx={{ width: '14px' }} />
+              )
+            }
+            disabled={!hasTraceInfo}
+            onClick={() => {
+              setShowTrace(v => !v)
+            }}
             sx={{
-              p: '3px',
-              mt: '10px',
-              height: '31px',
-              borderRadius: '50%',
-              borderStyle: 'solid',
-              borderWidth: '1px',
-              borderColor: 'grey.300',
+              height: '20px',
+              fontSize: '12px',
+              fontWeight: 600,
+              mb: 1,
+              border: 'none !important',
+              color: 'grey.700',
+              // width: '100%',
+              justifyContent: 'flex-start',
+              whiteSpace: 'nowrap',
+              maxWidth: '325px',
+              // fontSize: '14px',
+              textTransform: 'none',
             }}
           >
-            <SmartToyTwoTone sx={{ color: 'secondary.main' }} />
-          </Box>
-          <Box
-            sx={{
-              borderRadius: '10px',
-              padding: '10px',
-              maxWidth: '100%',
-            }}
-          >
-            <MarkdownSynapse markdown={textContent} />
-          </Box>
-        </ListItem>
-      )}
+            <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {traceButtonText}
+            </Box>
+          </Button>
+          {chatResponseTrace && (
+            <Collapse in={showTrace}>
+              <MarkdownSynapse
+                markdown={
+                  '<blockquote>' +
+                  chatResponseTrace
+                    .filter(trace => !!trace.friendlyMessage)
+                    .map((trace): string => trace.friendlyMessage!)
+                    .join('<br/><br/>') +
+                  '</blockquote>'
+                }
+              />
+            </Collapse>
+          )}
+          {textContent && <MarkdownSynapse markdown={textContent} />}
+        </Box>
+      </ListItem>
       {chatErrorReason && (
         <Alert severity={'error'} sx={{ my: 2 }}>
           {chatErrorReason}

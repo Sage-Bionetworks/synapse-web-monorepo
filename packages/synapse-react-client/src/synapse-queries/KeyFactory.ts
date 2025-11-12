@@ -1042,4 +1042,8 @@ export class KeyFactory {
       addToDownloadListStatsRequest,
     )
   }
+
+  public getAsyncJobStatusQueryKey(jobId: string) {
+    return this.getKey('asyncJobStatus', jobId)
+  }
 }

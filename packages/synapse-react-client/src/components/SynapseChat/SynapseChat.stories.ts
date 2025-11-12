@@ -9,6 +9,7 @@ const meta = {
   title: 'Synapse/Chat',
   component: SynapseChat,
   parameters: {
+    requireLogin: true,
     chromatic: { viewports: [600, 1200] },
   },
   argTypes: {
