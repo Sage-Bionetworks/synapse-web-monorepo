@@ -421,12 +421,14 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       rowClassName={({ rowData, rowIndex }) =>
                         classNames({
                           'row-valid':
-                            rowData.__validationResults?.isValid === true,
+                            !!jsonSchema &&
+                            rowData.__validationStatus === 'valid',
                           'row-invalid':
-                            rowData.__validationResults?.isValid === false,
+                            !!jsonSchema &&
+                            rowData.__validationStatus === 'invalid',
                           'row-unknown':
                             !!jsonSchema &&
-                            rowData.__validationResults?.isValid == undefined,
+                            rowData.__validationStatus === 'pending',
                           'row-selected': selectedRowIndex === rowIndex,
                         })
                       }

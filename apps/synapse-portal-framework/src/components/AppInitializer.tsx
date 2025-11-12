@@ -39,7 +39,8 @@ function AppInitializer(props: PropsWithChildren<Record<never, never>>) {
           const { hostname } = new URL(anchorElement.href)
           if (
             KNOWN_SYNAPSE_ORG_URLS.includes(hostname.toLowerCase()) ||
-            redirectInstructionsMap[anchorElement.href]
+            redirectInstructionsMap[anchorElement.href] ||
+            redirectInstructionsMap[hostname]
           ) {
             // && anchorElement.target !== '_blank') {  // should we skip the dialog if opening in a new window?
             ev.preventDefault()

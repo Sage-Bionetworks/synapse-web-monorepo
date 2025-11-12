@@ -5,7 +5,10 @@ export const navbarConfig: NavbarConfig = {
     {
       name: 'Home',
       path: '/',
-      children: [{ name: 'Listed Challenges', path: '/#Listed Challenges' }],
+    },
+    {
+      name: 'Challenge List',
+      path: '/Challenge List',
     },
   ],
   isPortalsDropdownEnabled: false,
