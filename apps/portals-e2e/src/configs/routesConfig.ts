@@ -32,8 +32,8 @@ const routesConfig: RouteConfig = {
     links: ['News', 'Help'],
   },
   challenges: {
-    buttons: ['Home'],
-    links: [],
+    buttons: [],
+    links: ['Home', 'Challenge List'],
   },
   digitalhealth: {
     buttons: ['Home', 'Explore', 'Sign In'],
