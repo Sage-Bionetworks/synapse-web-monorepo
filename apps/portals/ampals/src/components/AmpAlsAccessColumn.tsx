@@ -4,7 +4,7 @@ import AccessIcon, {
   RestrictionUiType,
 } from 'synapse-react-client/components/HasAccess/AccessIcon'
 import HasAccessV2 from 'synapse-react-client/components/HasAccess/HasAccessV2'
-import IconSvg from 'synapse-react-client/components/IconSvg'
+import AridhiaAccessStatus from 'synapse-react-client/components/Aridhia/AridhiaAccessStatus'
 import { getColumnIndex } from 'synapse-react-client/utils/functions'
 
 type SourceValue = 'Synapse' | 'GEO' | 'Critical Path Institute' | null
@@ -18,17 +18,13 @@ function AccessBySource(props: {
   id: string
   url?: string
 }) {
-  const { source, id, url } = props
+  const { source, id } = props
 
   switch (source) {
     case 'GEO':
       return <AccessIcon restrictionUiType={RestrictionUiType.Accessible} />
     case 'Critical Path Institute':
-      return (
-        <a href={url} target="_blank">
-          <IconSvg icon="linkOff" wrap={false} />
-        </a>
-      )
+      return <AridhiaAccessStatus datasetCode={id} />
     case 'Synapse':
     default:
       return <HasAccessV2 entityId={id} showButtonText={false} />

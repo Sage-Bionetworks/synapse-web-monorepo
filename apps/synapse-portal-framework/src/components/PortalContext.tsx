@@ -9,8 +9,7 @@ import { RouteObject } from 'react-router'
 import { NavbarConfig } from './navbar/Navbar'
 
 export type AridhiaConfig = {
-  enabled: boolean
-  workspacesApiBasePath?: string
+  apiBasePath?: string
 }
 
 export type PortalContextType = {

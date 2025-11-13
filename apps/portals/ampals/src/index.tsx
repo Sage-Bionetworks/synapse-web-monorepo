@@ -30,8 +30,7 @@ root.render(
       logoFooterConfig={logoFooterConfig}
       navbarConfig={navbarConfig}
       aridhiaConfig={{
-        enabled: true,
-        workspacesApiBasePath: 'https://fair.c-path-dev.aridhia.io/api',
+        apiBasePath: 'https://gateway.westus2.c-path-dev.aridhia.io',
       }}
     />
   </StrictMode>,

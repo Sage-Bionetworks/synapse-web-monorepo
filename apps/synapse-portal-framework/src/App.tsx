@@ -32,10 +32,8 @@ export default function App(props: PropsWithChildren) {
   return (
     <SynapseErrorBoundary>
       <AppInitializer>
-        {aridhiaConfig?.enabled ? (
-          <AridhiaIntegration
-            workspacesApiBasePath={aridhiaConfig.workspacesApiBasePath}
-          >
+        {aridhiaConfig?.apiBasePath ? (
+          <AridhiaIntegration apiBasePath={aridhiaConfig.apiBasePath}>
             {content}
           </AridhiaIntegration>
         ) : (

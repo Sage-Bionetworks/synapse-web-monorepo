@@ -39,7 +39,7 @@ export type AridhiaContextProviderProps = PropsWithChildren<{
    * Base URL for the Aridhia Workspaces API (where authentication endpoint lives)
    * @default 'https://fair.c-path-dev.aridhia.io/api'
    */
-  workspacesApiBasePath?: string
+  apiBasePath?: string
 }>
 
 /**
@@ -47,10 +47,8 @@ export type AridhiaContextProviderProps = PropsWithChildren<{
  * The DAP token is automatically updated when the user logs in/out of Synapse.
  */
 export function AridhiaContextProvider(props: AridhiaContextProviderProps) {
-  const {
-    children,
-    workspacesApiBasePath = 'https://fair.c-path-dev.aridhia.io/api',
-  } = props
+  const { children, apiBasePath = 'https://fair.c-path-dev.aridhia.io/api' } =
+    props
 
   const { accessToken: synapseAccessToken } = useSynapseContext()
   const [dapToken, setDapToken] = useState<string | undefined>(undefined)
@@ -65,7 +63,7 @@ export function AridhiaContextProvider(props: AridhiaContextProviderProps) {
 
         const authApi = new AuthenticationApi(
           new Configuration({
-            basePath: workspacesApiBasePath,
+            basePath: apiBasePath,
             accessToken: synapseToken,
           }),
         )
@@ -89,7 +87,7 @@ export function AridhiaContextProvider(props: AridhiaContextProviderProps) {
         setIsLoading(false)
       }
     },
-    [workspacesApiBasePath],
+    [apiBasePath],
   )
 
   const refreshDapToken = async () => {
@@ -113,7 +111,7 @@ export function AridhiaContextProvider(props: AridhiaContextProviderProps) {
       setDapToken(undefined)
       setError(undefined)
     }
-  }, [synapseAccessToken, workspacesApiBasePath, exchangeTokenForDapToken])
+  }, [synapseAccessToken, apiBasePath, exchangeTokenForDapToken])
 
   const contextValue: AridhiaContextType = {
     dapToken,

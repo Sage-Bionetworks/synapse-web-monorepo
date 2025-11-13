@@ -4,9 +4,8 @@ import { AridhiaContextProvider } from 'synapse-react-client/utils/context/Aridh
 export type AridhiaIntegrationProps = PropsWithChildren<{
   /**
    * Base URL for the Aridhia Workspaces API
-   * @default 'https://workspaces.westus2.c-path-dev.aridhia.io'
    */
-  workspacesApiBasePath?: string
+  apiBasePath?: string
 }>
 
 /**
@@ -17,10 +16,10 @@ export type AridhiaIntegrationProps = PropsWithChildren<{
  * ```
  */
 export function AridhiaIntegration(props: AridhiaIntegrationProps) {
-  const { children, workspacesApiBasePath } = props
+  const { children, apiBasePath } = props
 
   return (
-    <AridhiaContextProvider workspacesApiBasePath={workspacesApiBasePath}>
+    <AridhiaContextProvider apiBasePath={apiBasePath}>
       {children}
     </AridhiaContextProvider>
   )
