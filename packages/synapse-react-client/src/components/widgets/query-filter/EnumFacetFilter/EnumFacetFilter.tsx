@@ -157,27 +157,38 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
     )
     const valueNotSetFacetArray = partitions[0]
     const restOfFacetValuesArray = partitions[1]
-    let sortedValues: RenderedFacetValue[]
-    if (isNumberColumnType) {
-      sortedValues = sortBy(restOfFacetValuesArray, fv => Number(fv.value))
-    } else {
-      sortedValues = sortBy(restOfFacetValuesArray, fv =>
-        fv.displayText.toLowerCase(),
-      )
+
+    // Apply client-side sorting if no server-side sort is specified
+    let sortedValues: RenderedFacetValue[] = restOfFacetValuesArray
+    const isClientSideSort =
+      columnModel == undefined || columnModel.facetSortConfig == undefined
+    if (isClientSideSort) {
+      if (isNumberColumnType) {
+        sortedValues = sortBy(restOfFacetValuesArray, fv => Number(fv.value))
+      } else {
+        sortedValues = sortBy(restOfFacetValuesArray, fv =>
+          fv.displayText.toLowerCase(),
+        )
+      }
     }
 
     //PORTALS-3252: provide way to sort in descending order on the client-side
-    const sortDescending = sortConfig && sortConfig.direction == Direction.DESC
+    const sortDescending = isClientSideSort
+      ? false
+      : sortConfig && sortConfig.direction == Direction.DESC
     return [
       ...(sortDescending ? sortedValues.reverse() : sortedValues),
       ...valueNotSetFacetArray,
     ]
   }, [
+    facet.facetValues,
+    columnModel,
+    sortConfig,
     currentSelectedFacet?.facetValues,
+    userGroupHeaders,
     entityHeaders,
     evaluations,
-    facet.facetValues,
-    userGroupHeaders,
+    isNumberColumnType,
   ])
 
   if (!columnModel) {
