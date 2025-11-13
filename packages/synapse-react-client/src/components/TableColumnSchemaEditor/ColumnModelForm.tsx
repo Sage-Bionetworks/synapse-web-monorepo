@@ -18,9 +18,8 @@ import {
   ColumnTypeEnum,
   FacetType,
   VIEW_CONCRETE_TYPE_VALUES,
+  FacetColumnSortConfig,
 } from '@sage-bionetworks/synapse-types'
-// Import from the specific file path as a workaround for type resolution
-import type { FacetColumnSortConfig } from '@sage-bionetworks/synapse-types/dist/Table/FacetColumnSortConfig'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { selectAtom } from 'jotai/utils'
 import { isArray, isEmpty, isEqual } from 'lodash-es'
