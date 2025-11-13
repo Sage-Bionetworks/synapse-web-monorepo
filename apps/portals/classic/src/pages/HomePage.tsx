@@ -84,11 +84,7 @@ function HomePageInternal() {
       <ImageCardGridWithLinks
         sql={whatWeDoSql}
         title="What We Do"
-        summaryText="Supported by the National Institute on Aging, we provide tools and training to make study metadata easier to create, share, and reuse.
-Host workshops and trainings on metadata preparation
-Provide standardized codebooks and templates for studies
-Develop data sharing SOPs and access processes
-Curate metadata resources to support collaboration across cohorts"
+        summaryText="Supported by the National Institute on Aging, we provide tools and training to make study metadata easier to create, share, and reuse. The CLASSIC Network hosts workshops and trainings on metadata preparation, provides standardized codebooks and templates for studies, develops standardized access procedures, and curates metadata resources to support collaboration."
         columnCount={2}
         heightPx={350}
       />
