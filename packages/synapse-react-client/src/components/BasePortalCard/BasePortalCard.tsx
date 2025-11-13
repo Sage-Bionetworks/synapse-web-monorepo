@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import styles from './BasePortalCard.module.scss'
 import { ReactNode } from 'react'
-import { CardMedia, Stack } from '@mui/material'
+import { Card, CardContent, CardMedia, Stack } from '@mui/material'
 
 type BasePortalCardProps = {
   children?: ReactNode
@@ -25,8 +25,7 @@ const BasePortalCard = ({
   backgroundColor,
 }: BasePortalCardProps) => (
   <Stack>
-    <CardMedia
-      image={backgroundImage}
+    <Card
       className={`${className} ${styles.BasePortalCard__root} ${styles[cardSize]}`}
       sx={{
         backgroundColor: backgroundColor,
@@ -34,11 +33,20 @@ const BasePortalCard = ({
         boxShadow: boxShadow,
       }}
     >
-      {children}
-    </CardMedia>
-    <Box className={styles.BasePortalCard__contentBelow}>
-      {contentBelowCard}
-    </Box>
+      <CardMedia
+        image={backgroundImage}
+        component="img"
+        className={styles.BasePortalCard__media}
+      />
+      <CardContent className={styles.BasePortalCard__content}>
+        {children}
+      </CardContent>
+    </Card>
+    {contentBelowCard && (
+      <Box className={styles.BasePortalCard__contentBelow}>
+        {contentBelowCard}
+      </Box>
+    )}
   </Stack>
 )
 

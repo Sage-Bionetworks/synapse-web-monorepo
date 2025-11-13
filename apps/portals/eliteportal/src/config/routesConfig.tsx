@@ -23,6 +23,11 @@ const routes: RouteObject[] = [
           import('@/pages/BrowseTools').then(convertModuleToRouteObject),
       },
       {
+        path: 'SWC-7536-test',
+        lazy: () =>
+          import('@/pages/SWC-7536-test').then(convertModuleToRouteObject),
+      },
+      {
         path: 'Data Access',
         children: [
           {

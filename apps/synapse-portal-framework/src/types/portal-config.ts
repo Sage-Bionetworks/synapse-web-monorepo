@@ -12,6 +12,7 @@ export type HomePageHeaderConfig = {
 // Footer - start
 export type FooterConfig = {
   contactUs?: string
+  help?: string
   termsOfService?: string
   forum?: string
   about?: string
