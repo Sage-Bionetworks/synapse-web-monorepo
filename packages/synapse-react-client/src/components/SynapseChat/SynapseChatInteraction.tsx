@@ -122,55 +122,65 @@ export function SynapseChatInteraction({
             maxWidth: '100%',
           }}
         >
-          <Button
-            variant={'outlined'}
-            size={'small'}
-            startIcon={
-              isLoading ? (
-                <SynapseSpinner size={14} />
-              ) : showTrace ? (
-                <KeyboardArrowDown sx={{ width: '14px' }} />
-              ) : (
-                <KeyboardArrowRight sx={{ width: '14px' }} />
-              )
-            }
-            disabled={!hasTraceInfo}
-            onClick={() => {
-              setShowTrace(v => !v)
-            }}
+          <Box
+            component={'aside'}
             sx={{
-              height: '20px',
-              fontSize: '12px',
-              fontWeight: 600,
-              mb: 1,
-              border: 'none !important',
-              color: 'grey.700',
-              // width: '100%',
-              justifyContent: 'flex-start',
-              whiteSpace: 'nowrap',
-              maxWidth: '325px',
-              // fontSize: '14px',
-              textTransform: 'none',
+              '.markdown': {
+                fontStyle: 'italic',
+                borderLeft: `4px solid ${theme.palette.grey[300]}`,
+                marginLeft: '4px',
+                paddingLeft: '8px',
+                mt: 1,
+                mb: 2,
+              },
             }}
           >
-            <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {traceButtonText}
-            </Box>
-          </Button>
-          {chatResponseTrace && (
-            <Collapse in={showTrace}>
-              <MarkdownSynapse
-                markdown={
-                  '<blockquote>' +
-                  chatResponseTrace
+            <Button
+              variant={'outlined'}
+              size={'small'}
+              startIcon={
+                isLoading ? (
+                  <SynapseSpinner size={14} />
+                ) : showTrace ? (
+                  <KeyboardArrowDown sx={{ width: '14px' }} />
+                ) : (
+                  <KeyboardArrowRight sx={{ width: '14px' }} />
+                )
+              }
+              disabled={!hasTraceInfo}
+              onClick={() => {
+                setShowTrace(v => !v)
+              }}
+              sx={{
+                height: '20px',
+                fontSize: '12px',
+                fontWeight: 600,
+                mb: 1,
+                border: 'none !important',
+                color: 'grey.700',
+                justifyContent: 'flex-start',
+                whiteSpace: 'nowrap',
+                maxWidth: '325px',
+                textTransform: 'none',
+                pl: 0,
+                '.MuiButton-startIcon': { mr: 0.5 },
+              }}
+            >
+              <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {traceButtonText}
+              </Box>
+            </Button>
+            {chatResponseTrace && (
+              <Collapse in={showTrace}>
+                <MarkdownSynapse
+                  markdown={chatResponseTrace
                     .filter(trace => !!trace.friendlyMessage)
                     .map((trace): string => trace.friendlyMessage!)
-                    .join('<br/><br/>') +
-                  '</blockquote>'
-                }
-              />
-            </Collapse>
-          )}
+                    .join('<br/><br/>')}
+                />
+              </Collapse>
+            )}
+          </Box>
           {textContent && <MarkdownSynapse markdown={textContent} />}
         </Box>
       </ListItem>

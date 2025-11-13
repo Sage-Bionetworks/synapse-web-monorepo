@@ -66,6 +66,10 @@
     line-height: unset;
   }
 }
+.markdown * .MuiTypography-body1 {
+  font-size: unset;
+}
+
 .markdown ol {
   list-style-type: decimal;
   padding-left: 15px;
@@ -101,9 +105,6 @@
   background-color: #fcf8f2;
   border-left: 3px solid #f0ad4e;
   font-size: 13px;
-  .MuiTypography-root {
-    font-size: 13px;
-  }
 }
 .markdown blockquote h4,
 .markdown blockquote h3,
