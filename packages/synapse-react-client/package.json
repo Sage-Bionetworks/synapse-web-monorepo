@@ -51,7 +51,7 @@
     "@rjsf/mui": "6.0.0-beta.10",
     "@rjsf/utils": "6.0.0-beta.10",
     "@rjsf/validator-ajv8": "6.0.0-beta.10",
-    "@sage-bionetworks/cpath-client": "workspace:*",
+    "@sage-bionetworks/aridhia-client": "workspace:*",
     "@sage-bionetworks/markdown-it-container": "workspace:*",
     "@sage-bionetworks/synapse-client": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",

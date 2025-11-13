@@ -9,10 +9,10 @@ import {
 import {
   AuthenticationApi,
   Configuration,
-} from '@sage-bionetworks/cpath-client'
+} from '@sage-bionetworks/aridhia-client'
 import { useSynapseContext } from './SynapseContext'
 
-export type CPathContextType = {
+export type AridhiaContextType = {
   /**
    * The DAP token obtained by exchanging the Synapse access token.
    * Will be undefined if the user is not logged in to Synapse or if the exchange fails.
@@ -32,21 +32,21 @@ export type CPathContextType = {
   refreshDapToken: () => Promise<void>
 }
 
-const CPathContext = createContext<CPathContextType | undefined>(undefined)
+const AridhiaContext = createContext<AridhiaContextType | undefined>(undefined)
 
-export type CPathContextProviderProps = PropsWithChildren<{
+export type AridhiaContextProviderProps = PropsWithChildren<{
   /**
-   * Base URL for the C-Path Workspaces API (where authentication endpoint lives)
+   * Base URL for the Aridhia Workspaces API (where authentication endpoint lives)
    * @default 'https://fair.c-path-dev.aridhia.io/api'
    */
   workspacesApiBasePath?: string
 }>
 
 /**
- * Context provider that monitors the Synapse access token and exchanges it for a C-Path DAP token.
+ * Context provider that monitors the Synapse access token and exchanges it for an Aridhia DAP token.
  * The DAP token is automatically updated when the user logs in/out of Synapse.
  */
-export function CPathContextProvider(props: CPathContextProviderProps) {
+export function AridhiaContextProvider(props: AridhiaContextProviderProps) {
   const {
     children,
     workspacesApiBasePath = 'https://fair.c-path-dev.aridhia.io/api',
@@ -115,7 +115,7 @@ export function CPathContextProvider(props: CPathContextProviderProps) {
     }
   }, [synapseAccessToken, workspacesApiBasePath, exchangeTokenForDapToken])
 
-  const contextValue: CPathContextType = {
+  const contextValue: AridhiaContextType = {
     dapToken,
     isLoading,
     error,
@@ -123,30 +123,30 @@ export function CPathContextProvider(props: CPathContextProviderProps) {
   }
 
   return (
-    <CPathContext.Provider value={contextValue}>
+    <AridhiaContext.Provider value={contextValue}>
       {children}
-    </CPathContext.Provider>
+    </AridhiaContext.Provider>
   )
 }
 
 /**
- * Hook to access the C-Path context containing the DAP token
- * @throws Error if used outside of CPathContextProvider
+ * Hook to access the Aridhia context containing the DAP token
+ * @throws Error if used outside of AridhiaContextProvider
  */
-export function useCPathContext(): CPathContextType {
-  const context = useContext(CPathContext)
+export function useAridhiaContext(): AridhiaContextType {
+  const context = useContext(AridhiaContext)
   if (!context) {
     throw new Error(
-      'useCPathContext must be used within a CPathContextProvider',
+      'useAridhiaContext must be used within an AridhiaContextProvider',
     )
   }
   return context
 }
 
 /**
- * Hook to access the C-Path context, returning undefined if not within a provider.
- * Useful for optional C-Path integration.
+ * Hook to access the Aridhia context, returning undefined if not within a provider.
+ * Useful for optional Aridhia integration.
  */
-export function useCPathContextOptional(): CPathContextType | undefined {
-  return useContext(CPathContext)
+export function useAridhiaContextOptional(): AridhiaContextType | undefined {
+  return useContext(AridhiaContext)
 }

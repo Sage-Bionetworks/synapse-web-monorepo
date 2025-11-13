@@ -1,5 +1,5 @@
 import { ReactComponent as SageLogo } from '../assets/sage-logo.svg'
-import { ReactComponent as CPATH } from './assets/cpath.svg'
+import { ReactComponent as ARIDHIA } from './assets/aridhia.svg'
 import { ReactComponent as FNIH } from './assets/fnih.svg'
 import NINDSUrl from './assets/nih-ninds.png'
 import { Link, Stack, Typography } from '@mui/material'

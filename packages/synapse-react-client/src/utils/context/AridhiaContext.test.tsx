@@ -1,15 +1,15 @@
 import { renderHook, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import {
-  CPathContextProvider,
-  useCPathContext,
-  useCPathContextOptional,
-} from './CPathContext'
+  AridhiaContextProvider,
+  useAridhiaContext,
+  useAridhiaContextOptional,
+} from './AridhiaContext'
 import { SynapseContextProvider } from './SynapseContext'
 import { PropsWithChildren } from 'react'
 
-// Mock the cpath-client
-vi.mock('@sage-bionetworks/cpath-client', () => ({
+// Mock the aridhia-client
+vi.mock('@sage-bionetworks/aridhia-client', () => ({
   AuthenticationApi: vi.fn().mockImplementation(() => ({
     authenticatePost: vi.fn().mockResolvedValue({
       token: 'mock-dap-token',
@@ -23,7 +23,7 @@ vi.mock('@sage-bionetworks/cpath-client', () => ({
   Configuration: vi.fn().mockImplementation(config => config),
 }))
 
-describe('CPathContext', () => {
+describe('AridhiaContext', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
@@ -37,11 +37,11 @@ describe('CPathContext', () => {
           utcTime: false,
         }}
       >
-        <CPathContextProvider>{children}</CPathContextProvider>
+        <AridhiaContextProvider>{children}</AridhiaContextProvider>
       </SynapseContextProvider>
     )
 
-    const { result } = renderHook(() => useCPathContext(), { wrapper })
+    const { result } = renderHook(() => useAridhiaContext(), { wrapper })
 
     expect(result.current.dapToken).toBeUndefined()
     expect(result.current.isLoading).toBe(false)
@@ -57,11 +57,11 @@ describe('CPathContext', () => {
           utcTime: false,
         }}
       >
-        <CPathContextProvider>{children}</CPathContextProvider>
+        <AridhiaContextProvider>{children}</AridhiaContextProvider>
       </SynapseContextProvider>
     )
 
-    const { result } = renderHook(() => useCPathContext(), { wrapper })
+    const { result } = renderHook(() => useAridhiaContext(), { wrapper })
 
     await waitFor(() => {
       expect(result.current.dapToken).toBe('mock-dap-token')
@@ -73,12 +73,14 @@ describe('CPathContext', () => {
 
   it('should throw error when used outside of provider', () => {
     expect(() => {
-      renderHook(() => useCPathContext())
-    }).toThrow('useCPathContext must be used within a CPathContextProvider')
+      renderHook(() => useAridhiaContext())
+    }).toThrow(
+      'useAridhiaContext must be used within an AridhiaContextProvider',
+    )
   })
 
   it('should return undefined when using optional hook outside provider', () => {
-    const { result } = renderHook(() => useCPathContextOptional())
+    const { result } = renderHook(() => useAridhiaContextOptional())
     expect(result.current).toBeUndefined()
   })
 
@@ -91,11 +93,11 @@ describe('CPathContext', () => {
           utcTime: false,
         }}
       >
-        <CPathContextProvider>{children}</CPathContextProvider>
+        <AridhiaContextProvider>{children}</AridhiaContextProvider>
       </SynapseContextProvider>
     )
 
-    const { result } = renderHook(() => useCPathContext(), { wrapper })
+    const { result } = renderHook(() => useAridhiaContext(), { wrapper })
 
     await waitFor(() => {
       expect(result.current.dapToken).toBe('mock-dap-token')

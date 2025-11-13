@@ -8,7 +8,7 @@ import { createContext, PropsWithChildren, useContext } from 'react'
 import { RouteObject } from 'react-router'
 import { NavbarConfig } from './navbar/Navbar'
 
-export type CPathConfig = {
+export type AridhiaConfig = {
   enabled: boolean
   workspacesApiBasePath?: string
 }
@@ -22,7 +22,7 @@ export type PortalContextType = {
   logoFooterConfig: LogoConfig
   navbarConfig: NavbarConfig
   fileEntityPageConfig?: FileEntityPageConfig
-  cpathConfig?: CPathConfig
+  aridhiaConfig?: AridhiaConfig
 }
 
 export const PortalContext = createContext<PortalContextType | undefined>(

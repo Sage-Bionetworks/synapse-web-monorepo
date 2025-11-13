@@ -1,7 +1,7 @@
 {
-  "name": "@sage-bionetworks/cpath-client",
+  "name": "@sage-bionetworks/aridhia-client",
   "version": "0.0.1",
-  "description": "C-Path FAIR API Client",
+  "description": "Aridhia FAIR API Client",
   "type": "module",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -5,7 +5,7 @@ import { SynapseErrorBoundary } from 'synapse-react-client/components/error/Erro
 import { CrispChat } from 'synapse-react-client/components/CrispChat/CrispChat'
 import { SynapseToastContainer } from 'synapse-react-client/components/ToastMessage'
 import AppInitializer from './components/AppInitializer'
-import { CPathIntegration } from './components/CPathIntegration'
+import { AridhiaIntegration } from './components/AridhiaIntegration'
 import Footer from './components/Footer'
 import Navbar from './components/navbar/Navbar'
 import { usePortalContext } from './components/PortalContext'
@@ -13,7 +13,7 @@ import { useDocumentTitleFromRoutes } from './utils/useDocumentTitleFromRoutes'
 
 export default function App(props: PropsWithChildren) {
   useDocumentTitleFromRoutes()
-  const { cpathConfig } = usePortalContext()
+  const { aridhiaConfig } = usePortalContext()
 
   const content = (
     <>
@@ -32,12 +32,12 @@ export default function App(props: PropsWithChildren) {
   return (
     <SynapseErrorBoundary>
       <AppInitializer>
-        {cpathConfig?.enabled ? (
-          <CPathIntegration
-            workspacesApiBasePath={cpathConfig.workspacesApiBasePath}
+        {aridhiaConfig?.enabled ? (
+          <AridhiaIntegration
+            workspacesApiBasePath={aridhiaConfig.workspacesApiBasePath}
           >
             {content}
-          </CPathIntegration>
+          </AridhiaIntegration>
         ) : (
           content
         )}

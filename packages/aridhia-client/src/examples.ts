@@ -1,7 +1,7 @@
 /**
- * Example usage of the C-Path Client
+ * Example usage of the Aridhia Client
  *
- * This file demonstrates how to use the generated C-Path API client
+ * This file demonstrates how to use the generated Aridhia API client
  * to interact with the FAIR and Workspaces APIs.
  */
 
@@ -12,7 +12,7 @@ import {
   DatasetsApi,
   RequestsApi,
   WorkspaceApi,
-} from '@sage-bionetworks/cpath-client'
+} from '@sage-bionetworks/aridhia-client'
 
 // Example 1: Authentication with username/password
 async function authenticateExample() {

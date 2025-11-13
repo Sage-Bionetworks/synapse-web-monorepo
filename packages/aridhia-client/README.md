@@ -1,18 +1,18 @@
-# C-Path Client
+# Aridhia Client
 
-TypeScript client for the C-Path FAIR and Workspaces APIs.
+TypeScript client for the Aridhia FAIR and Workspaces APIs.
 
 ## Overview
 
 This package provides a TypeScript client for interacting with:
 
-- C-Path FAIR API endpoints for workflows, datasets, and requests
-- C-Path Workspaces API endpoints for authentication and workspace management
+- Aridhia FAIR API endpoints for workflows, datasets, and requests
+- Aridhia Workspaces API endpoints for authentication and workspace management
 
 ## Installation
 
 ```bash
-pnpm add @sage-bionetworks/cpath-client
+pnpm add @sage-bionetworks/aridhia-client
 ```
 
 ## Usage
@@ -23,7 +23,7 @@ import {
   WorkflowsApi,
   DatasetsApi,
   RequestsApi,
-} from '@sage-bionetworks/cpath-client'
+} from '@sage-bionetworks/aridhia-client'
 
 // Configure the client
 const config = new Configuration({
