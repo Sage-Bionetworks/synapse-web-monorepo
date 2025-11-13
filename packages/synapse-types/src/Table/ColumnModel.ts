@@ -1,6 +1,7 @@
 import { ColumnType } from './ColumnType'
 import { JsonSubColumnModel } from './JsonSubColumnModel'
 import { FacetType } from './FacetType'
+import { FacetColumnSortConfig } from './FacetColumnSortConfig'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/ColumnModel.html
 export type ColumnModel = {
@@ -21,4 +22,6 @@ export type ColumnModel = {
   facetType?: FacetType
   /** For column of type JSON that represents the combination of multiple sub-columns, this property is used to define each sub-column. */
   jsonSubColumns?: JsonSubColumnModel[]
+  /** Configuration for sorting the facets of this column, only allowed if facetType is enumeration. */
+  facetSortConfig?: FacetColumnSortConfig
 }
