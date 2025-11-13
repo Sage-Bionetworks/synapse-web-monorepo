@@ -8,16 +8,22 @@ import {
 } from 'react'
 import {
   AuthenticationApi,
+  AuthenticationRequest,
+  AuthenticationResponse,
   Configuration,
 } from '@sage-bionetworks/aridhia-client'
 import { useSynapseContext } from './SynapseContext'
 
 export type AridhiaContextType = {
   /**
-   * The DAP token obtained by exchanging the Synapse access token.
+   * The Aridhia access token obtained by exchanging the Synapse access token.
    * Will be undefined if the user is not logged in to Synapse or if the exchange fails.
    */
-  dapToken: string | undefined
+  accessToken: string | undefined
+  /**
+   * The full authentication response from Aridhia, including token expiration info
+   */
+  authResponse: AuthenticationResponse | undefined
   /**
    * Whether the token exchange is currently in progress
    */
@@ -27,36 +33,48 @@ export type AridhiaContextType = {
    */
   error: Error | undefined
   /**
-   * Manually refresh the DAP token by re-exchanging the current Synapse token
+   * Manually refresh the Aridhia access token by re-exchanging the current Synapse token
    */
-  refreshDapToken: () => Promise<void>
+  refreshAccessToken: () => Promise<void>
 }
 
 const AridhiaContext = createContext<AridhiaContextType | undefined>(undefined)
 
 export type AridhiaContextProviderProps = PropsWithChildren<{
   /**
-   * Base URL for the Aridhia Workspaces API (where authentication endpoint lives)
-   * @default 'https://fair.c-path-dev.aridhia.io/api'
+   * Base URL for the Aridhia Gateway API (where authentication endpoint lives)
+   * @default 'https://gateway.westus2.c-path-dev.aridhia.io'
    */
   apiBasePath?: string
+  /**
+   * Authentication request parameters for token exchange
+   */
+  authenticationRequest: Omit<AuthenticationRequest, 'subject_token'>
 }>
 
 /**
- * Context provider that monitors the Synapse access token and exchanges it for an Aridhia DAP token.
- * The DAP token is automatically updated when the user logs in/out of Synapse.
+ * Context provider that monitors the Synapse access token and exchanges it for an Aridhia access token.
+ * The Aridhia access token is automatically updated when the user logs in/out of Synapse.
  */
 export function AridhiaContextProvider(props: AridhiaContextProviderProps) {
-  const { children, apiBasePath = 'https://fair.c-path-dev.aridhia.io/api' } =
-    props
+  const {
+    children,
+    apiBasePath = 'https://gateway.westus2.c-path-dev.aridhia.io',
+    authenticationRequest,
+  } = props
 
   const { accessToken: synapseAccessToken } = useSynapseContext()
-  const [dapToken, setDapToken] = useState<string | undefined>(undefined)
+  const [accessToken, setAccessToken] = useState<string | undefined>(undefined)
+  const [authResponse, setAuthResponse] = useState<
+    AuthenticationResponse | undefined
+  >(undefined)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | undefined>(undefined)
 
-  const exchangeTokenForDapToken = useCallback(
-    async (synapseToken: string): Promise<string | undefined> => {
+  const exchangeTokenForAridhiaToken = useCallback(
+    async (
+      synapseToken: string,
+    ): Promise<AuthenticationResponse | undefined> => {
       try {
         setIsLoading(true)
         setError(undefined)
@@ -68,56 +86,63 @@ export function AridhiaContextProvider(props: AridhiaContextProviderProps) {
           }),
         )
 
-        // Exchange the Synapse token for a DAP token
-        const authResponse = await authApi.authenticatePost({
+        // Exchange the Synapse token for an Aridhia access token
+        const response = await authApi.authenticatePost({
           authenticationRequest: {
-            username: '',
-            password: '',
+            ...authenticationRequest,
+            subject_token: synapseToken,
           },
         })
 
-        return authResponse.token
+        return response
       } catch (err) {
         const error =
           err instanceof Error ? err : new Error('Failed to exchange token')
         setError(error)
-        console.error('Failed to exchange Synapse token for DAP token:', error)
+        console.error(
+          'Failed to exchange Synapse token for Aridhia access token:',
+          error,
+        )
         return undefined
       } finally {
         setIsLoading(false)
       }
     },
-    [apiBasePath],
+    [apiBasePath, authenticationRequest],
   )
 
-  const refreshDapToken = async () => {
+  const refreshAccessToken = async () => {
     if (synapseAccessToken) {
-      const newDapToken = await exchangeTokenForDapToken(synapseAccessToken)
-      setDapToken(newDapToken)
+      const response = await exchangeTokenForAridhiaToken(synapseAccessToken)
+      setAuthResponse(response)
+      setAccessToken(response?.access_token)
     }
   }
 
   // Monitor Synapse access token changes
   useEffect(() => {
     if (synapseAccessToken) {
-      // User is logged in to Synapse, exchange for DAP token
-      exchangeTokenForDapToken(synapseAccessToken).then(
-        (token: string | undefined) => {
-          setDapToken(token)
+      // User is logged in to Synapse, exchange for Aridhia access token
+      exchangeTokenForAridhiaToken(synapseAccessToken).then(
+        (response: AuthenticationResponse | undefined) => {
+          setAuthResponse(response)
+          setAccessToken(response?.access_token)
         },
       )
     } else {
-      // User is not logged in to Synapse, clear DAP token
-      setDapToken(undefined)
+      // User is not logged in to Synapse, clear Aridhia access token
+      setAccessToken(undefined)
+      setAuthResponse(undefined)
       setError(undefined)
     }
-  }, [synapseAccessToken, apiBasePath, exchangeTokenForDapToken])
+  }, [synapseAccessToken, exchangeTokenForAridhiaToken])
 
   const contextValue: AridhiaContextType = {
-    dapToken,
+    accessToken,
+    authResponse,
     isLoading,
     error,
-    refreshDapToken,
+    refreshAccessToken,
   }
 
   return (
@@ -128,7 +153,7 @@ export function AridhiaContextProvider(props: AridhiaContextProviderProps) {
 }
 
 /**
- * Hook to access the Aridhia context containing the DAP token
+ * Hook to access the Aridhia context containing the access token
  * @throws Error if used outside of AridhiaContextProvider
  */
 export function useAridhiaContext(): AridhiaContextType {

@@ -24,8 +24,8 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
   const aridhiaContext = useAridhiaContextOptional()
 
   const { data: requestsResponse, isLoading } = useGetAridhiaRequests()
-  // If no Aridhia token is available, show sign-in button
-  if (!aridhiaContext?.dapToken) {
+  // If no Aridhia access token is available, show sign-in button
+  if (!aridhiaContext?.accessToken) {
     return (
       <Button
         sx={buttonSx}

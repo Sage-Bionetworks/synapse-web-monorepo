@@ -378,7 +378,12 @@
     "/authenticate": {
       "post": {
         "tags": ["authentication"],
-        "summary": "Authenticate user and get JWT token",
+        "summary": "Exchange third party token",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -743,12 +748,19 @@
       },
       "AuthenticationRequest": {
         "type": "object",
-        "required": ["username", "password"],
+        "required": [
+          "subject_token_type",
+          "subject_token_issuer",
+          "subject_token"
+        ],
         "properties": {
-          "username": {
+          "subject_token_type": {
             "type": "string"
           },
-          "password": {
+          "subject_token_issuer": {
+            "type": "string"
+          },
+          "subject_token": {
             "type": "string"
           }
         }
@@ -756,22 +768,29 @@
       "AuthenticationResponse": {
         "type": "object",
         "properties": {
-          "token": {
+          "access_token": {
             "type": "string"
           },
-          "user": {
-            "type": "object",
-            "properties": {
-              "uuid": {
-                "type": "string"
-              },
-              "email": {
-                "type": "string"
-              },
-              "name": {
-                "type": "string"
-              }
-            }
+          "expires_in": {
+            "type": "integer"
+          },
+          "refresh_expires_in": {
+            "type": "integer"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string"
+          },
+          "not-before-policy": {
+            "type": "integer"
+          },
+          "session_state": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
           }
         }
       },

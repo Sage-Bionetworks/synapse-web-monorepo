@@ -14,45 +14,50 @@ import {
   WorkspaceApi,
 } from '@sage-bionetworks/aridhia-client'
 
-// Example 1: Authentication with username/password
+// Example 1: Exchange third party token for Aridhia access token
 async function authenticateExample() {
+  // This example assumes you have a Synapse bearer token
+  const synapseToken = 'your-synapse-token'
+
   const authApi = new AuthenticationApi(
     new Configuration({
-      basePath: 'https://workspaces.westus2.c-path-dev.aridhia.io',
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io',
+      accessToken: synapseToken,
     }),
   )
 
   const authResponse = await authApi.authenticatePost({
     authenticationRequest: {
-      username: 'your-username',
-      password: 'your-password',
+      subject_token_type: 'string',
+      subject_token_issuer: 'string',
+      subject_token: 'string',
     },
   })
 
-  console.log('JWT Token:', authResponse.token)
-  return authResponse.token
+  console.log('Aridhia Access Token:', authResponse.access_token)
+  return authResponse.access_token
 }
 
 // Example 1b: Exchange bearer token for DAP token
 async function authenticateWithBearerTokenExample(bearerToken: string) {
   const authApi = new AuthenticationApi(
     new Configuration({
-      basePath: 'https://workspaces.westus2.c-path-dev.aridhia.io',
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io',
       accessToken: bearerToken,
     }),
   )
 
-  // POST /authenticate with bearer token returns a DAP token
-  // When using bearer token auth, username/password can be empty strings
+  // POST /authenticate with bearer token returns an Aridhia access token
   const authResponse = await authApi.authenticatePost({
     authenticationRequest: {
-      username: '',
-      password: '',
+      subject_token_type: 'string',
+      subject_token_issuer: 'string',
+      subject_token: 'string',
     },
   })
 
-  console.log('DAP Token:', authResponse.token)
-  return authResponse.token
+  console.log('Aridhia Access Token:', authResponse.access_token)
+  return authResponse.access_token
 }
 
 // Example 2: List Workflows

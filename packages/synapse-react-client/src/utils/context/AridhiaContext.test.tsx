@@ -12,12 +12,14 @@ import { PropsWithChildren } from 'react'
 vi.mock('@sage-bionetworks/aridhia-client', () => ({
   AuthenticationApi: vi.fn().mockImplementation(() => ({
     authenticatePost: vi.fn().mockResolvedValue({
-      token: 'mock-dap-token',
-      user: {
-        uuid: 'user-123',
-        email: 'test@example.com',
-        name: 'Test User',
-      },
+      access_token: 'mock-aridhia-token',
+      expires_in: 3600,
+      refresh_expires_in: 7200,
+      refresh_token: 'mock-refresh-token',
+      token_type: 'Bearer',
+      'not-before-policy': 0,
+      session_state: 'mock-session',
+      scope: 'openid',
     }),
   })),
   Configuration: vi.fn().mockImplementation(config => config),
@@ -28,7 +30,7 @@ describe('AridhiaContext', () => {
     vi.clearAllMocks()
   })
 
-  it('should provide undefined DAP token when not logged in to Synapse', () => {
+  it('should provide undefined access token when not logged in to Synapse', () => {
     const wrapper = ({ children }: PropsWithChildren) => (
       <SynapseContextProvider
         synapseContext={{
@@ -37,18 +39,25 @@ describe('AridhiaContext', () => {
           utcTime: false,
         }}
       >
-        <AridhiaContextProvider>{children}</AridhiaContextProvider>
+        <AridhiaContextProvider
+          authenticationRequest={{
+            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+            subject_token_issuer: 'synapse',
+          }}
+        >
+          {children}
+        </AridhiaContextProvider>
       </SynapseContextProvider>
     )
 
     const { result } = renderHook(() => useAridhiaContext(), { wrapper })
 
-    expect(result.current.dapToken).toBeUndefined()
+    expect(result.current.accessToken).toBeUndefined()
     expect(result.current.isLoading).toBe(false)
     expect(result.current.error).toBeUndefined()
   })
 
-  it('should exchange Synapse token for DAP token when logged in', async () => {
+  it('should exchange Synapse token for Aridhia access token when logged in', async () => {
     const wrapper = ({ children }: PropsWithChildren) => (
       <SynapseContextProvider
         synapseContext={{
@@ -57,14 +66,21 @@ describe('AridhiaContext', () => {
           utcTime: false,
         }}
       >
-        <AridhiaContextProvider>{children}</AridhiaContextProvider>
+        <AridhiaContextProvider
+          authenticationRequest={{
+            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+            subject_token_issuer: 'synapse',
+          }}
+        >
+          {children}
+        </AridhiaContextProvider>
       </SynapseContextProvider>
     )
 
     const { result } = renderHook(() => useAridhiaContext(), { wrapper })
 
     await waitFor(() => {
-      expect(result.current.dapToken).toBe('mock-dap-token')
+      expect(result.current.accessToken).toBe('mock-aridhia-token')
     })
 
     expect(result.current.isLoading).toBe(false)
@@ -84,7 +100,7 @@ describe('AridhiaContext', () => {
     expect(result.current).toBeUndefined()
   })
 
-  it('should provide refreshDapToken function', async () => {
+  it('should provide refreshAccessToken function', async () => {
     const wrapper = ({ children }: PropsWithChildren) => (
       <SynapseContextProvider
         synapseContext={{
@@ -93,17 +109,24 @@ describe('AridhiaContext', () => {
           utcTime: false,
         }}
       >
-        <AridhiaContextProvider>{children}</AridhiaContextProvider>
+        <AridhiaContextProvider
+          authenticationRequest={{
+            subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+            subject_token_issuer: 'synapse',
+          }}
+        >
+          {children}
+        </AridhiaContextProvider>
       </SynapseContextProvider>
     )
 
     const { result } = renderHook(() => useAridhiaContext(), { wrapper })
 
     await waitFor(() => {
-      expect(result.current.dapToken).toBe('mock-dap-token')
+      expect(result.current.accessToken).toBe('mock-aridhia-token')
     })
 
-    expect(result.current.refreshDapToken).toBeDefined()
-    expect(typeof result.current.refreshDapToken).toBe('function')
+    expect(result.current.refreshAccessToken).toBeDefined()
+    expect(typeof result.current.refreshAccessToken).toBe('function')
   })
 })

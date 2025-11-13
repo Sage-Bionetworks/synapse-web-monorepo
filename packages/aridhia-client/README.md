@@ -17,6 +17,37 @@ pnpm add @sage-bionetworks/aridhia-client
 
 ## Usage
 
+### Authentication
+
+First, exchange your third-party token (e.g., Synapse token) for an Aridhia access token:
+
+```typescript
+import {
+  Configuration,
+  AuthenticationApi,
+} from '@sage-bionetworks/aridhia-client'
+
+// Exchange third-party token for Aridhia access token
+const authApi = new AuthenticationApi(
+  new Configuration({
+    basePath: 'https://gateway.westus2.c-path-dev.aridhia.io',
+    accessToken: 'your-synapse-bearer-token',
+  }),
+)
+
+const authResponse = await authApi.authenticatePost({
+  authenticationRequest: {
+    subject_token_type: 'string',
+    subject_token_issuer: 'string',
+    subject_token: 'string',
+  },
+})
+
+const aridhiaToken = authResponse.access_token
+```
+
+### Using the FAIR API
+
 ```typescript
 import {
   Configuration,
@@ -25,10 +56,10 @@ import {
   RequestsApi,
 } from '@sage-bionetworks/aridhia-client'
 
-// Configure the client
+// Configure the client with Aridhia access token
 const config = new Configuration({
   basePath: 'https://fair.c-path-dev.aridhia.io/api',
-  accessToken: 'your-jwt-token',
+  accessToken: aridhiaToken,
 })
 
 // Create API instances
@@ -69,7 +100,10 @@ const datasets = await datasetsApi.fairDatasetsGet({
 
 - **Authentication**
 
-  - `POST /authenticate` - Authenticate and get JWT token
+  - `POST /authenticate` - Exchange third party token for Aridhia access token
+    - Requires bearer token authentication
+    - Request body: `{ subject_token_type, subject_token_issuer, subject_token }`
+    - Response: `{ access_token, expires_in, refresh_token, token_type, ... }`
 
 - **Workspace Management**
   - `POST /workspace_admin/workspace/search` - Search workspaces

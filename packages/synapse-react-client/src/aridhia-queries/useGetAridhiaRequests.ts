@@ -10,7 +10,7 @@ export const ARIDHIA_REQUESTS_QUERY_KEY = ['aridhia', 'requests'] as const
 
 /**
  * Hook to fetch data access requests from Aridhia FAIR API
- * Uses the DAP token from AridhiaContext for authentication
+ * Uses the Aridhia access token from AridhiaContext for authentication
  */
 export function useGetAridhiaRequests(
   options?: Partial<
@@ -22,25 +22,25 @@ export function useGetAridhiaRequests(
   >,
 ) {
   const aridhiaContext = useAridhiaContextOptional()
-  const dapToken = aridhiaContext?.dapToken
+  const accessToken = aridhiaContext?.accessToken
 
   return useQuery({
     ...options,
     queryKey: ARIDHIA_REQUESTS_QUERY_KEY,
     queryFn: async () => {
-      if (!dapToken) {
-        throw new Error('Aridhia DAP token is not available')
+      if (!accessToken) {
+        throw new Error('Aridhia access token is not available')
       }
 
       const requestsApi = new RequestsApi(
         new Configuration({
           basePath: 'https://fair.c-path-dev.aridhia.io/api',
-          accessToken: dapToken,
+          accessToken: accessToken,
         }),
       )
 
       return await requestsApi.fairRequestsGet()
     },
-    enabled: options?.enabled !== undefined ? options.enabled : !!dapToken,
+    enabled: options?.enabled !== undefined ? options.enabled : !!accessToken,
   })
 }

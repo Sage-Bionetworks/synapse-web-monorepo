@@ -3,7 +3,7 @@ import { AridhiaContextProvider } from 'synapse-react-client/utils/context/Aridh
 
 export type AridhiaIntegrationProps = PropsWithChildren<{
   /**
-   * Base URL for the Aridhia Workspaces API
+   * Base URL for the Aridhia API
    */
   apiBasePath?: string
 }>
