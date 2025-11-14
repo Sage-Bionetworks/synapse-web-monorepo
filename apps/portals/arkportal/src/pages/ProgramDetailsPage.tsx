@@ -39,6 +39,7 @@ function ProgramsDetailPage() {
         />
       }
       sql={programSql}
+      resourcePrimaryKey={['Program']}
     >
       <DetailsPageContent
         content={[

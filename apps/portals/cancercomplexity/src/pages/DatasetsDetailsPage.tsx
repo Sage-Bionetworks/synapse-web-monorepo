@@ -47,6 +47,7 @@ function DatasetsDetailsPage() {
       }
       sql={datasetsSql}
       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+      resourcePrimaryKey={['datasetId']}
     >
       <DetailsPageContent
         content={[

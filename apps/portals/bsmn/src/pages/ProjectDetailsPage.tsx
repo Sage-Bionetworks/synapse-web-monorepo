@@ -34,6 +34,7 @@ function ProjectDetailsPage() {
         />
       }
       sql={projectsSql}
+      resourcePrimaryKey={['id']}
     >
       <DetailsPageContextConsumer columnName={'id'}>
         {({ value: id }) => (

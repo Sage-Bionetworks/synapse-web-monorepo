@@ -51,6 +51,7 @@ function PublicationsDetailsPage() {
       }
       sql={publicationSql}
       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+      resourcePrimaryKey={['pubMedId']}
     >
       <DetailsPageContent
         content={[

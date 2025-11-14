@@ -44,6 +44,7 @@ const studiesDetailsPageProps: DetailsPageProps = {
   sql: studiesSql,
   sqlOperator: ColumnSingleValueFilterOperator.LIKE,
   portalDOIConfiguration: studyDoiConfiguration,
+  resourcePrimaryKey: [STUDY_TABLE_COLUMN_NAMES.STUDY],
 }
 
 function StudyDetailsPage() {
