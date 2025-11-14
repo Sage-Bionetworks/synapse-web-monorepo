@@ -1,0 +1,51 @@
+import{j as e,_ as h,fk as oe,fl as c,fa as re,a1 as ie}from"./iframe-BbBIbNbJ.js";import{E as le,u as me}from"./ExpandableContent-DDxCQjXs.js";import{c as d}from"./index-Dy0fAFKr.js";import{L as S}from"./LargeButton-Cc2e_a9G.js";import{I as U}from"./ImageFileHandle-BO4INOJS.js";import{u as se}from"./useEntity-Bj1_Aqx1.js";import"./SynapseCardLabel-D3kqXli4.js";import"./GenericCard-z6CFqqSL.js";import"./HeaderCardV2-DN3kTyHF.js";import{a as de,b as H}from"./CardUtils-0I7vTaP7.js";import"./index-r8ZA1smB.js";import"./index-CvPD71Wq.js";import"./pickBy-BDe1UelD.js";import"./isString-d2KaZuCr.js";import"./_baseIteratee-4zm-yijX.js";import"./useQueries-BL7xbtea.js";import"./queryOptions-C9woPjwX.js";import"./useInfiniteQuery-Dq3AohCE.js";import"./InfiniteQueryUtils-CKlRW-xB.js";import"./useEntityBundle-D7cfZbUS.js";import"./EntityLink-CeiJOH6X.js";import"./useGetEntityHeaders-DzVdA7aF.js";import"./EntityIcon-Co8jiaqv.js";import"./ErrorChip-DkuT6-uq.js";import"./Chip-BGbET8g7.js";import"./MarkdownSynapse-a5yQxqx5.js";import"./SkeletonButton-C0rZfSx5.js";import"./SkeletonInlineBlock-DVbB2SaF.js";import"./SkeletonTable-DeosQDQ2.js";import"./SkeletonParagraph-Cre22j3C.js";import"./UserBadge-h7JHA6Ak.js";import"./MenuItem-C_GiViVf.js";import"./Card-BSNHgx80.js";import"./Box-b2V2iYz0.js";import"./HeaderCard-Bh1tHycm.js";import"./index-Cvk7F0Sa.js";import"./Icon-Dfm1oCnB.js";import"./mouse-ss1iluaW.js";import"./SortDown-B9er6GAw.js";import"./ShowMore-FcAuPmXI.js";import"./SustainabilityScorecard-CZu5sYmE.js";import"./Close-Di_kFtUw.js";import"./Dial-CPvVbq-g.js";import"./CheckIcon-DQKYdDbB.js";import"./NoContentAvailable-BWc1I_rB.js";import"./FileHandleLink-D7jgCIgt.js";import"./index-UMjXJfzL.js";function f({title:t,description:i,ctaButtonText:r,ctaButtonURL:o,headerImage:l,titleIcon:m,cardDeckType:a}){return e.jsxs("div",{className:d("CardDeck__Card",a&&`CardDeck__Card--${a}`),children:[e.jsx("div",{className:d("CardDeck__Card__header__image",a&&`CardDeck__Card__header__image--${a}`),children:e.jsx(h,{href:o,children:l})}),e.jsxs("div",{className:d("CardDeck__Card__header",a&&`CardDeck__Card__header--${a}`),children:[e.jsx("div",{className:d("CardDeck__Card__header__icon",a&&`CardDeck__Card__header__icon--${a}`),children:m}),e.jsx("div",{className:"CardDeck__Card__header__info",children:e.jsxs("span",{className:d("CardDeck__Card__header__info__title",a&&`CardDeck__Card__header__info__title--${a}`),children:[" ",["b2ai","b2ai-detail-card"].includes(a??"")?e.jsx(h,{href:o,children:t}):t," "]})})]}),e.jsxs("div",{className:d("CardDeck__Card__summary",a&&`CardDeck__Card__summary--${a}`),children:[e.jsxs("p",{children:[" ",i," "]}),["b2ai","b2ai-detail-card"].includes(a??"")?null:e.jsx(S,{color:"primary",variant:"outlined",href:o,sx:{maxWidth:"200px",fontSize:"14px",boxShadow:"none",borderColor:"primary.main",color:"primary.main"},children:r})]})]})}try{f.displayName="CardDeckDesktop",f.__docgenInfo={description:"",displayName:"CardDeckDesktop",props:{}}}catch{}function x({description:t,title:i,titleIcon:r,ctaButtonText:o,ctaButtonURL:l,cardDeckType:m}){const a=e.jsxs("div",{className:"CardDeck__Mobile__Header",children:[e.jsx("span",{className:"CardDeck__Mobile__Header__icon",children:r}),e.jsxs("span",{className:"CardDeck__Mobile__Header__Title",children:[" ",i," "]})]}),_=e.jsxs("div",{className:"CardDeck__Mobile__Content",children:[e.jsx("p",{children:t}),m==="b2ai"?e.jsx(h,{href:l,underline:"none",children:o}):e.jsx(S,{color:"secondary",variant:"outlined",href:l,sx:{width:"170px",marginLeft:0,fontSize:"14px",boxShadow:"none",color:"primary.main"},children:o})]});return e.jsx(le,{title:a,content:_})}try{x.displayName="CardDeckMobile",x.__docgenInfo={description:"",displayName:"CardDeckMobile",props:{}}}catch{}function k(t){const{cards:i,cardDeckType:r}=t,o=me(),l=`CardDeck${o?"__Desktop":""}`;return e.jsx("div",{className:d(l,r&&`${l}--${r}`),children:i.map((m,a)=>o?e.jsx(f,{cardDeckType:r,...m},a):e.jsx(x,{cardDeckType:r,...m}))})}try{k.displayName="CardDeck",k.__docgenInfo={description:"UI for a 'deck' of cards.",displayName:"CardDeck",props:{cards:{defaultValue:null,description:"",name:"cards",required:!0,type:{name:"CardDeckCardProps[]"}},cardDeckType:{defaultValue:null,description:"",name:"cardDeckType",required:!1,type:{name:"enum",value:[{value:'"cckp"'},{value:'"b2ai"'},{value:'"b2ai-detail-card"'}]}}}}}catch{}function I(t){const{entityId:i,titleColumnName:r,descriptionColumnName:o,ctaButtonTextColumnName:l,ctaButtonURLColumnName:m,titleIconFileHandleColumnName:a,headerImageFileHandleColumnName:_,cardDeckType:y,linkConfig:V}=t,D=se(i),P={concreteType:"org.sagebionetworks.repo.model.table.QueryBundleRequest",entityId:i,partMask:re|ie,query:{sql:`select * from ${i}`}},{data:n}=oe(P),$=c(r,n),A=c(o,n),Q=c(l,n),K=c(m,n),O=c(a,n),W=c(_,n),z=n==null?void 0:n.queryResult.queryResults.rows.map(N=>{const s=N.values;s.some(g=>g===null)&&console.warn("Row has null value(s) when no nulls expected");const G=s[$],Y=s[A],J=s[Q],X=s[K]??"",Z=s[O]??"",ee=s[W]??"",b={};n==null||n.queryResult.queryResults.headers.forEach((g,ne)=>{b[g.name]=ne});const{href:ae}=de(X,V,s,b),R=H(D.data,Z,`syn${N.rowId}`),te=R?e.jsx(U,{fileHandleAssociation:R}):void 0,L=H(D.data,ee,`syn${N.rowId}`);return{title:G,description:Y,ctaButtonText:J,ctaButtonURL:ae,titleIcon:te,headerImage:L?e.jsx(U,{fileHandleAssociation:L}):void 0,cardDeckType:y}});return e.jsx(k,{cards:z||[],cardDeckType:y})}try{I.displayName="TableQueryCardDeck",I.__docgenInfo={description:"Transforms a Synapse table into a card deck.",displayName:"TableQueryCardDeck",props:{entityId:{defaultValue:null,description:"",name:"entityId",required:!0,type:{name:"string"}},titleColumnName:{defaultValue:null,description:"",name:"titleColumnName",required:!0,type:{name:"string"}},descriptionColumnName:{defaultValue:null,description:"",name:"descriptionColumnName",required:!0,type:{name:"string"}},ctaButtonTextColumnName:{defaultValue:null,description:"",name:"ctaButtonTextColumnName",required:!0,type:{name:"string"}},ctaButtonURLColumnName:{defaultValue:null,description:"",name:"ctaButtonURLColumnName",required:!0,type:{name:"string"}},titleIconFileHandleColumnName:{defaultValue:null,description:"",name:"titleIconFileHandleColumnName",required:!1,type:{name:"string"}},headerImageFileHandleColumnName:{defaultValue:null,description:"",name:"headerImageFileHandleColumnName",required:!1,type:{name:"string"}},cardDeckType:{defaultValue:null,description:"",name:"cardDeckType",required:!1,type:{name:"enum",value:[{value:'"cckp"'},{value:'"b2ai"'}]}},linkConfig:{defaultValue:null,description:"",name:"linkConfig",required:!0,type:{name:"{ matchColumnName: string; overrideValueWithRowID?: boolean; isMarkdown: false; tooltipText?: string; target?: TargetEnum; } & ({ baseURL: string; URLColumnName: string; wrapValueWithParens?: boolean; resolveEntityName?: boolean; } | { ...; })"}}}}}catch{}const ra={title:"Home Page/CardDeck",component:I,parameters:{chromatic:{viewports:[600,1200]}}},u={args:{entityId:"syn64943600",titleColumnName:"title",descriptionColumnName:"description",ctaButtonTextColumnName:"ctaButtonText",ctaButtonURLColumnName:"ctaButtonURL",titleIconFileHandleColumnName:"icon",headerImageFileHandleColumnName:"headerImage",cardDeckType:"cckp",linkConfig:{isMarkdown:!1,baseURL:"Explore/CardDeck/DetailsPage",URLColumnName:"title",matchColumnName:"title"}}},p={args:{entityId:"syn65484830",titleColumnName:"title",descriptionColumnName:"description",ctaButtonTextColumnName:"buttonText",ctaButtonURLColumnName:"buttonUrl",titleIconFileHandleColumnName:void 0,headerImageFileHandleColumnName:"headerImage",cardDeckType:"b2ai",linkConfig:{isMarkdown:!1,baseURL:"Explore/CardDeck/DetailsPage",URLColumnName:"title",matchColumnName:"title"}}},C={args:{entityId:"syn65414596",titleColumnName:"title",descriptionColumnName:"description",ctaButtonTextColumnName:"buttonText",ctaButtonURLColumnName:"buttonURL",titleIconFileHandleColumnName:"iconImage",headerImageFileHandleColumnName:"headerImage",linkConfig:{isMarkdown:!1,baseURL:"Explore/CardDeck/DetailsPage",URLColumnName:"title",matchColumnName:"title"}}};var B,j,v;u.parameters={...u.parameters,docs:{...(B=u.parameters)==null?void 0:B.docs,source:{originalSource:`{
+  args: {
+    entityId: 'syn64943600',
+    titleColumnName: 'title',
+    descriptionColumnName: 'description',
+    ctaButtonTextColumnName: 'ctaButtonText',
+    ctaButtonURLColumnName: 'ctaButtonURL',
+    titleIconFileHandleColumnName: 'icon',
+    headerImageFileHandleColumnName: 'headerImage',
+    cardDeckType: 'cckp',
+    linkConfig: {
+      isMarkdown: false,
+      baseURL: 'Explore/CardDeck/DetailsPage',
+      URLColumnName: 'title',
+      matchColumnName: 'title'
+    }
+  }
+}`,...(v=(j=u.parameters)==null?void 0:j.docs)==null?void 0:v.source}}};var F,T,w;p.parameters={...p.parameters,docs:{...(F=p.parameters)==null?void 0:F.docs,source:{originalSource:`{
+  args: {
+    entityId: 'syn65484830',
+    titleColumnName: 'title',
+    descriptionColumnName: 'description',
+    ctaButtonTextColumnName: 'buttonText',
+    ctaButtonURLColumnName: 'buttonUrl',
+    titleIconFileHandleColumnName: undefined,
+    headerImageFileHandleColumnName: 'headerImage',
+    cardDeckType: 'b2ai',
+    linkConfig: {
+      isMarkdown: false,
+      baseURL: 'Explore/CardDeck/DetailsPage',
+      URLColumnName: 'title',
+      matchColumnName: 'title'
+    }
+  }
+}`,...(w=(T=p.parameters)==null?void 0:T.docs)==null?void 0:w.source}}};var E,M,q;C.parameters={...C.parameters,docs:{...(E=C.parameters)==null?void 0:E.docs,source:{originalSource:`{
+  args: {
+    entityId: 'syn65414596',
+    titleColumnName: 'title',
+    descriptionColumnName: 'description',
+    ctaButtonTextColumnName: 'buttonText',
+    ctaButtonURLColumnName: 'buttonURL',
+    titleIconFileHandleColumnName: 'iconImage',
+    headerImageFileHandleColumnName: 'headerImage',
+    linkConfig: {
+      isMarkdown: false,
+      baseURL: 'Explore/CardDeck/DetailsPage',
+      URLColumnName: 'title',
+      matchColumnName: 'title'
+    }
+  }
+}`,...(q=(M=C.parameters)==null?void 0:M.docs)==null?void 0:q.source}}};const ia=["CCPKResourcesDemo","B2AIDemo","TestOptionalArgsDemo"];export{p as B2AIDemo,u as CCPKResourcesDemo,C as TestOptionalArgsDemo,ia as __namedExportsOrder,ra as default};

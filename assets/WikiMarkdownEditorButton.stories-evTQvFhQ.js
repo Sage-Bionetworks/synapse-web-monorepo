@@ -1,0 +1,21 @@
+import{bQ as r,k4 as i,k6 as a}from"./iframe-BbBIbNbJ.js";import{W as g}from"./WikiMarkdownEditorButton-D_XXssMx.js";import"./index-r8ZA1smB.js";import"./MarkdownSynapse-a5yQxqx5.js";import"./SkeletonButton-C0rZfSx5.js";import"./SkeletonInlineBlock-DVbB2SaF.js";import"./SkeletonTable-DeosQDQ2.js";import"./SkeletonParagraph-Cre22j3C.js";import"./WikiMarkdownEditor-DM3dPsRD.js";import"./ConfirmationDialog-B72wlxd4.js";import"./DialogBase-DRt0FohX.js";import"./Close-Di_kFtUw.js";import"./HelpPopover-CkUPARK8.js";import"./MarkdownPopover-DgQV4UBm.js";import"./LightTooltip-Ckf7mhk-.js";import"./MarkdownEditor-Djx0iDoD.js";import"./UserSearchBoxV2-TygQWuxq.js";import"./useDebouncedEffect-DCfbw7rb.js";import"./use-deep-compare-effect.esm-DK8jsI9o.js";import"./uniq-Ncn24Eei.js";import"./without-BHRnFZwV.js";import"./UserBadge-h7JHA6Ak.js";import"./MenuItem-C_GiViVf.js";import"./Card-BSNHgx80.js";import"./Chip-BGbET8g7.js";import"./Select-aab027f3.esm-baO3FIkz.js";import"./defineProperty-CegpTSss.js";import"./UserOrTeamBadge-DLRC_B-r.js";import"./TeamBadge-CMR_5LRt.js";import"./Tabs-DcQgyRG8.js";import"./KeyboardArrowRight-MLiyljrC.js";import"./_arrayReduce-CrxnWFSq.js";import"./upperFirst-D5kGgksa.js";import"./_stringToArray-BbaaQybA.js";const J={title:"Synapse/WikiMarkdownEditorButton",component:g,parameters:{stack:"mock"},argTypes:{ownerObjectType:{control:{type:"select"},options:[r.ACCESS_REQUIREMENT,r.ENTITY,r.EVALUATION]}}},e={args:{ownerObjectType:r.ACCESS_REQUIREMENT,ownerObjectId:"9602704"},parameters:{stack:"development"}},o={args:{ownerObjectType:i.ownerObjectType,ownerObjectId:i.ownerObjectId,wikiPageId:i.wikiPageId}},t={args:{ownerObjectType:a.ownerObjectType,ownerObjectId:a.ownerObjectId,wikiPageId:a.wikiPageId}};var p,n,c;e.parameters={...e.parameters,docs:{...(p=e.parameters)==null?void 0:p.docs,source:{originalSource:`{
+  args: {
+    ownerObjectType: ObjectType.ACCESS_REQUIREMENT,
+    ownerObjectId: '9602704'
+  },
+  parameters: {
+    stack: 'development'
+  }
+}`,...(c=(n=e.parameters)==null?void 0:n.docs)==null?void 0:c.source}}};var m,s,k;o.parameters={...o.parameters,docs:{...(m=o.parameters)==null?void 0:m.docs,source:{originalSource:`{
+  args: {
+    ownerObjectType: mockEntityRootWikiPageKey.ownerObjectType,
+    ownerObjectId: mockEntityRootWikiPageKey.ownerObjectId,
+    wikiPageId: mockEntityRootWikiPageKey.wikiPageId
+  }
+}`,...(k=(s=o.parameters)==null?void 0:s.docs)==null?void 0:k.source}}};var d,y,w;t.parameters={...t.parameters,docs:{...(d=t.parameters)==null?void 0:d.docs,source:{originalSource:`{
+  args: {
+    ownerObjectType: mockEntityWikiPageKey.ownerObjectType,
+    ownerObjectId: mockEntityWikiPageKey.ownerObjectId,
+    wikiPageId: mockEntityWikiPageKey.wikiPageId
+  }
+}`,...(w=(y=t.parameters)==null?void 0:y.docs)==null?void 0:w.source}}};const X=["AccessRequirementWiki","MockWikiRootPage","MockWikiSubpage"];export{e as AccessRequirementWiki,o as MockWikiRootPage,t as MockWikiSubpage,X as __namedExportsOrder,J as default};
