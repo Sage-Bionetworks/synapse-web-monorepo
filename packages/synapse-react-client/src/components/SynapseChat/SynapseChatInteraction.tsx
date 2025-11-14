@@ -147,6 +147,7 @@ export function SynapseChatInteraction({
             borderRadius: '10px',
             padding: '10px',
             maxWidth: '100%',
+            overflow: 'auto',
           }}
         >
           <Box
@@ -202,6 +203,7 @@ export function SynapseChatInteraction({
                 <MarkdownSynapse
                   markdown={traceMessages
                     .map(getMarkdownForTraceMessage)
+                    .filter(md => md.trim().length > 0)
                     .join('<br/><br/>')}
                 />
               </Collapse>
