@@ -86,7 +86,12 @@ const ColorfulPortalCardWithChips = ({
             />
           )}
           <Stack className={styles.ColorfulPortalCardWithChips__titleSection}>
-            <Typography variant="headline1">{title} </Typography>
+            <Typography
+              variant="headline1"
+              className={styles.ColorfulPortalCardWithChips__title}
+            >
+              {title}
+            </Typography>
             <Typography
               variant="headline1"
               className={styles.ColorfulPortalCardWithChips__challengeName}

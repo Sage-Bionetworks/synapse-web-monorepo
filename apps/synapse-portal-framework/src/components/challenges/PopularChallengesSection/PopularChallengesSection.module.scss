@@ -4,7 +4,6 @@
 
 .PopularChallengesSection__root {
   margin: 120px 0;
-  position: relative;
 }
 
 .PopularChallengesSection__sectionTitle:global(.MuiTypography-root) {
@@ -48,4 +47,17 @@
     right: 5%;
     left: 58%;
   }
+}
+
+.PopularChallengesSection__titleSectionVectors {
+  position: absolute;
+  bottom: 21%;
+  left: -1%;
+  width: 100%;
+}
+
+.PopularChallengesSection__headerSection {
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
