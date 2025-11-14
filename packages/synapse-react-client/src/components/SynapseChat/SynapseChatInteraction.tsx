@@ -73,7 +73,8 @@ export function SynapseChatInteraction({
     () =>
       (chatResponseTrace ?? [])
         .flatMap(traceEvent => extractMessageFromTraceEvent(traceEvent))
-        ?.filter(trace => !!trace)[chatResponseTrace],
+        ?.filter(trace => !!trace),
+    [chatResponseTrace],
   )
 
   const hasTraceInfo = traceMessages.length > 0

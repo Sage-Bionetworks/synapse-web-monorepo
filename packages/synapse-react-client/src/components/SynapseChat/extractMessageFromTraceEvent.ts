@@ -22,7 +22,7 @@ export default function extractMessageFromTraceEvent(
     json: parsedMessage,
   })
 
-  messages.forEach(message => {
+  messages.forEach((message: any) => {
     const reasoningMessage = JSONPath({
       path: '$.reasoningContent.reasoningText.text',
       json: message,
