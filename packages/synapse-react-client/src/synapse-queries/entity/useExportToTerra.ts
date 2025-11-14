@@ -38,6 +38,7 @@ export function useExportToTerra(
         additionalFilters: queryBundleRequest.query.additionalFilters,
         // Note - backend will respond with a 500 if illegal characters found in pfbEntityName (such as '-')
         pfbEntityName: `SynapseExport${tableEntityId}`,
+        pfbEntityIdColumnNames: [fileIdColumnName, fileVersionColumnName],
       }
       const result = await createPfb(downloadPfbRequest)
       // Send the user to Terra with the DRS URI that can be used to download the PFB result

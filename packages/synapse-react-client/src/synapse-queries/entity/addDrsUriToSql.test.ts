@@ -53,7 +53,7 @@ describe('addDrsUriToSql', () => {
     )
 
     expect(sql).toBe(
-      `SELECT CONCAT('drs://repo-prod.prod.sagebase.org/syn', ${fileId}, '.', ${fileVer}) AS drs_uri, ${fileName} as name, "age" as "age","last seen" as "lastseen" FROM syn999`,
+      `SELECT CONCAT('drs://repo-prod.prod.sagebase.org/syn', ${fileId}, '.', ${fileVer}) AS drs_uri, ${fileName} as name, "age","last seen" as "lastseen" FROM syn999`,
     )
   })
 })

@@ -37,4 +37,7 @@ export const cavaticaConnectAccountURL =
   'https://help.eliteportal.org/help/analysis-environments#IntegrationwithAnalysis&ComputeEnvironments-GainingAccess'
 export const goalsV2Table = 'syn64618674'
 
-export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = ['cavatica']
+export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = [
+  'cavatica',
+  'terra',
+]
