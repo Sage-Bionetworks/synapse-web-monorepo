@@ -22,6 +22,7 @@ function StudyDetailsPage() {
           sql={studiesSql}
           isAlignToLeftNav
           searchParams={searchParams}
+          resourcePrimaryKey={['id']}
         />
       }
       sql={studiesSql}
