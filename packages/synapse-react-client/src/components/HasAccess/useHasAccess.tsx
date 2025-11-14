@@ -217,3 +217,5 @@ export function useHasAccess(entityId: string) {
     accessRequirementDialog,
   }
 }
+
+export default useHasAccess
