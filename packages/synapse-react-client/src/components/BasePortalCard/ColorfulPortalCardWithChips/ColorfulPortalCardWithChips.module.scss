@@ -180,10 +180,14 @@
   }
 }
 
-.ColorfulPortalCardWithChips__description {
+.ColorfulPortalCardWithChips__description:global(.MuiTypography-root) {
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+}
+
+.ColorfulPortalCardWithChips__description :global(.markdown) {
+  color: var(--black) !important;
 }
