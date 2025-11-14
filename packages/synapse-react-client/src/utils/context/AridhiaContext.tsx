@@ -6,12 +6,10 @@ import {
   useEffect,
   useState,
 } from 'react'
-import {
-  AuthenticationApi,
-  AuthenticationRequest,
-  AuthenticationResponse,
-  Configuration,
-} from '@sage-bionetworks/aridhia-client'
+import { AuthenticationApi } from '@sage-bionetworks/aridhia-client/generated/apis/AuthenticationApi'
+import { AuthenticationRequest } from '@sage-bionetworks/aridhia-client/generated/models/AuthenticationRequest'
+import { AuthenticationResponse } from '@sage-bionetworks/aridhia-client/generated/models/AuthenticationResponse'
+import { Configuration } from '@sage-bionetworks/aridhia-client/generated/runtime'
 import { useSynapseContext } from './SynapseContext'
 
 export type AridhiaContextType = {

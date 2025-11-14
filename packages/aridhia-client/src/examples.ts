@@ -5,14 +5,12 @@
  * to interact with the FAIR and Workspaces APIs.
  */
 
-import {
-  Configuration,
-  AuthenticationApi,
-  WorkflowsApi,
-  DatasetsApi,
-  RequestsApi,
-  WorkspaceApi,
-} from '@sage-bionetworks/aridhia-client'
+import { Configuration } from './generated/runtime.js'
+import { AuthenticationApi } from './generated/apis/AuthenticationApi.js'
+import { WorkflowsApi } from './generated/apis/WorkflowsApi.js'
+import { DatasetsApi } from './generated/apis/DatasetsApi.js'
+import { RequestsApi } from './generated/apis/RequestsApi.js'
+import { WorkspaceApi } from './generated/apis/WorkspaceApi.js'
 
 // Example 1: Exchange third party token for Aridhia access token
 async function authenticateExample() {

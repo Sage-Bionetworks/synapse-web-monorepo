@@ -3,7 +3,7 @@ import { useGetAridhiaRequests } from '@/aridhia-queries'
 import { useAridhiaContextOptional } from '@/utils/context/AridhiaContext'
 import AccessIcon, { RestrictionUiType } from '../HasAccess/AccessIcon'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
-import { Request } from '@sage-bionetworks/aridhia-client'
+import { Request } from '@sage-bionetworks/aridhia-client/generated/models/Request'
 
 const buttonSx = { p: '0px', minWidth: 'unset' }
 
