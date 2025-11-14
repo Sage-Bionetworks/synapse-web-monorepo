@@ -61,6 +61,7 @@ function ToolDetailsPage() {
       sql={toolsSql}
       ContainerProps={{ maxWidth: 'xl' }}
       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+      resourcePrimaryKey={['resourceId']}
     >
       <DetailsPageTabs tabConfig={toolDetailsPageTabConfig} />
       <Outlet />

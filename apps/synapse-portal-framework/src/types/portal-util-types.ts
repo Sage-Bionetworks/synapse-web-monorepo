@@ -17,7 +17,7 @@ export type DetailsPageProps = {
   additionalFiltersSessionStorageKey?: string
   ContainerProps?: ContainerProps
   /** The set of column name(s) which define the main unique key of the column (used to define the canonical URL for SEO) */
-  resourcePrimaryKey?: string[]
+  resourcePrimaryKey: string[]
   /** Configuration for displaying a DOI */
   portalDOIConfiguration?: PortalDOIConfiguration
 }

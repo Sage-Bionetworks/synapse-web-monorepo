@@ -45,6 +45,7 @@ function ProgramDetailsPage() {
           />
         }
         sql={programsSql}
+        resourcePrimaryKey={[PROJECT_TABLE_COLUMN_NAMES.PROGRAM]}
       >
         <DetailsPageContent
           content={[
