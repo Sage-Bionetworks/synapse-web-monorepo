@@ -6,8 +6,8 @@ import {
   processMath,
 } from '@/components/Markdown/MarkdownUtils'
 import {
-  useGetWikiPage,
   useGetWikiAttachments,
+  useGetWikiPage,
 } from '@/synapse-queries/wiki/useWiki'
 import { sanitize } from '@/utils/functions/SanitizeHtmlUtils'
 import { Link, Typography } from '@mui/material'
@@ -25,7 +25,7 @@ import markdownitSynapsePlugin from 'markdown-it-synapse'
 import markdownitSynapseHeading from 'markdown-it-synapse-heading'
 import markdownitMath from 'markdown-it-synapse-math'
 import markdownitSynapseTable from 'markdown-it-synapse-table'
-import { Fragment, JSX, useEffect, useMemo, useRef } from 'react'
+import { JSX, useEffect, useMemo, useRef } from 'react'
 import { ErrorBanner } from '../error/ErrorBanner'
 import { SkeletonTable } from '../Skeleton'
 import MarkdownWidget from './MarkdownWidget'
@@ -169,9 +169,15 @@ function RenderMarkdown(props: {
   markdown: string
   isLoading: boolean
   showPlaceholderIfNoWikiContent: boolean
+  ref?: React.RefObject<HTMLDivElement | null>
 }) {
-  const { renderInline, markdown, isLoading, showPlaceholderIfNoWikiContent } =
-    props
+  const {
+    renderInline,
+    markdown,
+    isLoading,
+    showPlaceholderIfNoWikiContent,
+    ref,
+  } = props
 
   const markup = useMemo(() => {
     // create initial markup
@@ -187,7 +193,14 @@ function RenderMarkdown(props: {
   if (markup.length > 0) {
     const domParser = new DOMParser()
     const document = domParser.parseFromString(markup, 'text/html')
-    return <RecursiveRender element={document.body} markdown={markup} />
+    return (
+      <RecursiveRender
+        ref={ref}
+        element={document.body}
+        markdown={markup}
+        renderInline={renderInline}
+      />
+    )
   }
 
   if (!isLoading && showPlaceholderIfNoWikiContent && markup === '') {
@@ -208,8 +221,13 @@ function RenderMarkdown(props: {
  * @param {string} markdown The original markdown, its kept as a special case for the table of contents widget
  * @returns {*}
  */
-function RecursiveRender(props: { element: Node; markdown: string }) {
-  const { element, markdown } = props
+function RecursiveRender(props: {
+  element: Node
+  markdown: string
+  renderInline?: boolean
+  ref?: React.RefObject<HTMLDivElement | null>
+}) {
+  const { element, markdown, renderInline = false, ref } = props
   /*
     Recursively render the html tree created from the markdown, there are a few cases:
     1. element is Node and is text in which case it is simply rendered
@@ -226,10 +244,9 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
     element.nodeType === Node.ELEMENT_NODE &&
     element instanceof HTMLElement
   ) {
-    const Tag: keyof JSX.IntrinsicElements | typeof Fragment =
-      element.tagName.toLowerCase() === 'body'
-        ? Fragment // The component ultimately wraps this content, so if the tag is 'body', we use Fragment to avoid an extra nested element
-        : (element.tagName.toLowerCase() as keyof JSX.IntrinsicElements)
+    const Tag: keyof JSX.IntrinsicElements =
+      element.tagName.toLowerCase() as keyof JSX.IntrinsicElements
+
     const widgetParams = element.getAttribute('data-widgetparams')
     if (widgetParams) {
       // case 2
@@ -280,6 +297,23 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
     })
     // Render tagName as parent element of the children below
     switch (Tag) {
+      case 'body':
+        if (renderInline) {
+          return (
+            <span
+              data-testid="markdown"
+              className="markdown markdown-inline"
+              ref={ref}
+            >
+              {children}
+            </span>
+          )
+        }
+        return (
+          <div data-testid="markdown" className="markdown" ref={ref}>
+            {children}
+          </div>
+        )
       case 'p':
         return (
           <Typography variant={'body1'} {...props} component={Tag}>
@@ -406,7 +440,7 @@ function MarkdownSynapse(props: MarkdownSynapseProps) {
     if (markdown && onMarkdownProcessingDone) {
       onMarkdownProcessingDone(createHTML(renderInline, markdown).__html)
     }
-  }, [wikiPage, onMarkdownProcessingDone, renderInline])
+  }, [wikiPage, onMarkdownProcessingDone, renderInline, markdown])
 
   /* When the markdown changes, re-run the math processor */
   useEffect(() => {
@@ -424,7 +458,7 @@ function MarkdownSynapse(props: MarkdownSynapseProps) {
   if (error) {
     return <ErrorBanner error={error} />
   }
-  const content = (
+  return (
     <SynapseWikiContextProvider
       wikiContext={{
         ownerId: props.ownerId,
@@ -436,6 +470,7 @@ function MarkdownSynapse(props: MarkdownSynapseProps) {
       {isLoading && loader}
       {(markdown || showPlaceholderIfNoWikiContent) && (
         <RenderMarkdown
+          ref={markupRef}
           markdown={markdown}
           renderInline={renderInline}
           isLoading={isLoading}
@@ -446,22 +481,6 @@ function MarkdownSynapse(props: MarkdownSynapseProps) {
         <AddBookmarks renderInline={renderInline} markdown={markdown} />
       )}
     </SynapseWikiContextProvider>
-  )
-  if (renderInline) {
-    return (
-      <span
-        data-testid="markdown"
-        className="markdown markdown-inline"
-        ref={markupRef}
-      >
-        {content}
-      </span>
-    )
-  }
-  return (
-    <div data-testid="markdown" className="markdown" ref={markupRef}>
-      {content}
-    </div>
   )
 }
 

@@ -63,6 +63,7 @@ const CollapsibleSection = ({
             <Typography
               component="div"
               variant="sectionTitle"
+              component={'div'}
               sx={{
                 display: 'flex',
                 marginBottom: '14px',
