@@ -23,6 +23,7 @@ import AccessRequirementList, {
 } from '../AccessRequirementList/AccessRequirementList'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { UseQueryOptions } from '@tanstack/react-query'
+import { Shower } from '@mui/icons-material'
 
 /**
  * This hook determines if
@@ -131,7 +132,10 @@ function getAccessText(props: RestrictionUiType | undefined) {
 }
 
 // A hook that handles the logic for computing the correct access level, getting the text, and the icon
-export function useHasAccess(entityId: string) {
+export function useHasAccess(
+  entityId: string,
+  options: { showExternalAccessIcon?: boolean } = {},
+) {
   const [displayAccessRequirement, setDisplayAccessRequirement] =
     useState(false)
   const [accessRequirements, setAccessRequirements] = useState<
@@ -139,10 +143,11 @@ export function useHasAccess(entityId: string) {
   >([])
 
   const { accessToken } = useSynapseContext()
+  const { showExternalAccessIcon = false } = options
 
   // get access level
   const restrictionUiType = useGetRestrictionUiType(entityId, {
-    enabled: false,
+    enabled: showExternalAccessIcon,
   })
 
   const { data: restrictionInformation } = useGetRestrictionInformation({
@@ -215,6 +220,7 @@ export function useHasAccess(entityId: string) {
     handleGetAccess,
     isClickable,
     accessRequirementDialog,
+    setDisplayAccessRequirement,
   }
 }
 

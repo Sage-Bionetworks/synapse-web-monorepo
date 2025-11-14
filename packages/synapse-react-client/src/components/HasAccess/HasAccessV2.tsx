@@ -47,9 +47,8 @@ export function HasAccessV2(props: HasAccessProps) {
     accessText,
     icon,
     handleGetAccess,
-    isClickable,
     accessRequirementDialog,
-  } = useHasAccess(entityId)
+  } = useHasAccess(entityId, { showExternalAccessIcon })
 
   const { data: restrictionInformation } = useGetRestrictionInformation({
     restrictableObjectType: RestrictableObjectType.ENTITY,
