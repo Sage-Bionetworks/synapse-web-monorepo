@@ -35,7 +35,7 @@ type DataGridWebSocketConstructorArgs = {
 // There is some overhead we aren't computing in our utility, namely the size of the patch header and the communication protocol itself
 // So add some buffer
 const DEFAULT_MAX_PAYLOAD_SIZE_BYTES = 30 * 1024 // 30 KB
-const DEFAULT_PATCH_THROTTLE_MS = 250
+const DEFAULT_PATCH_THROTTLE_MS = 0
 
 export class DataGridWebSocket {
   private socket: WebSocket
