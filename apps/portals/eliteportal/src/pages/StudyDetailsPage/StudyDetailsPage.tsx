@@ -58,6 +58,7 @@ function StudyDetailsPage() {
       ContainerProps={{
         maxWidth: 'xl',
       }}
+      resourcePrimaryKey={['studyKey']}
     >
       <DetailsPageTabs tabConfig={studyDetailsPageTabConfig} />
       <Outlet />

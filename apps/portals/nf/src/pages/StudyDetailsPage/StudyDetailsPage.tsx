@@ -83,6 +83,7 @@ function StudyDetailsPage() {
       }
       sql={studiesSql}
       ContainerProps={{ maxWidth: 'xl' }}
+      resourcePrimaryKey={['studyId']}
     >
       <DetailsPageTabs tabConfig={tabConfig} />
       <Outlet />

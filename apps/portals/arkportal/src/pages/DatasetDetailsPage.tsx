@@ -33,6 +33,7 @@ function DatasetDetailsPage() {
       ContainerProps={{
         maxWidth: 'xl',
       }}
+      resourcePrimaryKey={['id']}
     >
       <DetailsPageContent
         content={[

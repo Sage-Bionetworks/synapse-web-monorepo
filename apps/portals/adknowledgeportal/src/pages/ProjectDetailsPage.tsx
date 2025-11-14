@@ -57,6 +57,7 @@ function ProjectDetailsPage() {
           searchParams={searchParams}
         />
       }
+      resourcePrimaryKey={[PROJECT_TABLE_COLUMN_NAMES.GRANT_NUMBER]}
     >
       <DetailsPageContent
         content={[

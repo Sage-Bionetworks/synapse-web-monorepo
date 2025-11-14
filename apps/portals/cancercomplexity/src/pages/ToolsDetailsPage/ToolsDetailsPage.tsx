@@ -75,6 +75,7 @@ function ToolsDetailsPage() {
       }
       sql={toolsSql}
       sqlOperator={ColumnSingleValueFilterOperator.LIKE}
+      resourcePrimaryKey={['toolName']}
     >
       <DetailsPageTabs tabConfig={toolDetailsPageTabConfig} />
       <Outlet />

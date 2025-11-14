@@ -49,6 +49,7 @@ function PeopleDetailsPage() {
       }
       sql={peopleSql}
       sqlOperator={ColumnSingleValueFilterOperator.LIKE}
+      resourcePrimaryKey={['name']}
     >
       <DetailsPageContent
         content={[
