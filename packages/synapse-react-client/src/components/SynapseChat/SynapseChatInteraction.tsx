@@ -1,4 +1,7 @@
 import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
+import extractMessageFromTraceEvent, {
+  TraceMessage,
+} from '@/components/SynapseChat/extractMessageFromTraceEvent'
 import {
   KeyboardArrowDown,
   KeyboardArrowRight,
@@ -14,16 +17,35 @@ import {
   useTheme,
 } from '@mui/material'
 import { Color } from '@mui/material/styles'
+import { TraceEvent } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
-import { TraceEventWithFriendlyMessage } from './SynapseChat'
 
 export type SynapseChatInteractionProps = {
   userMessage: string
   chatResponseText?: string
-  chatResponseTrace?: TraceEventWithFriendlyMessage[]
+  chatResponseTrace?: TraceEvent[]
   scrollIntoView?: boolean
   chatErrorReason?: string
+}
+
+// Show tool calls in the trace. Useful for development. We may want to show them to users in the future.
+const SHOW_TOOL_USE = false
+
+function getMarkdownForTraceMessage(traceMessage: TraceMessage): string {
+  if ('reasoningText' in traceMessage) {
+    return traceMessage.reasoningText
+  }
+  if (SHOW_TOOL_USE && 'toolName' in traceMessage) {
+    return `**Tool Used:** \`${
+      traceMessage.toolName
+    }\`\n\n**Tool Input:**\n\`\`\`json\n${JSON.stringify(
+      traceMessage.toolInput,
+      null,
+      2,
+    )}\n\`\`\`\n`
+  }
+  return ''
 }
 
 export function SynapseChatInteraction({
@@ -50,17 +72,21 @@ export function SynapseChatInteraction({
   const traceMessages = useMemo(
     () =>
       (chatResponseTrace ?? [])
-        ?.filter(trace => !!trace.friendlyMessage)
-        .map(trace => trace.friendlyMessage!),
-    [chatResponseTrace],
+        .flatMap(traceEvent => extractMessageFromTraceEvent(traceEvent))
+        ?.filter(trace => !!trace)[chatResponseTrace],
   )
 
   const hasTraceInfo = traceMessages.length > 0
 
-  const lastTraceMessage = traceMessages.at(-1)
+  const lastReasoningMessage = useMemo(
+    () => traceMessages.filter(trace => 'reasoningText' in trace).at(-1),
+    [traceMessages],
+  )
 
   const traceButtonLoadingText =
-    lastTraceMessage == null ? 'Thinking...' : lastTraceMessage
+    lastReasoningMessage == null
+      ? 'Thinking...'
+      : lastReasoningMessage.reasoningText
 
   const traceButtonText = isLoading
     ? traceButtonLoadingText
@@ -173,9 +199,8 @@ export function SynapseChatInteraction({
             {chatResponseTrace && (
               <Collapse in={showTrace}>
                 <MarkdownSynapse
-                  markdown={chatResponseTrace
-                    .filter(trace => !!trace.friendlyMessage)
-                    .map((trace): string => trace.friendlyMessage!)
+                  markdown={traceMessages
+                    .map(getMarkdownForTraceMessage)
                     .join('<br/><br/>')}
                 />
               </Collapse>

@@ -1,4 +1,3 @@
-import { TraceEventWithFriendlyMessage } from '@/components/SynapseChat/SynapseChat'
 import SynapseChatInteraction from '@/components/SynapseChat/SynapseChatInteraction'
 import usePollAsynchronousJob from '@/synapse-queries/asynchronous/usePollAsynchronousJob'
 import { useGetChatAgentTraceEvents } from '@/synapse-queries/chat/useChat'
@@ -7,36 +6,14 @@ import {
   AgentChatResponse,
   TraceEvent,
 } from '@sage-bionetworks/synapse-types'
-import jsonpath from 'jsonpath'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-
-function extractFriendlyMessageFromTraceEvent(
-  event: TraceEvent,
-): string | undefined {
-  // WARNING: The message format may change when we change models.
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const parsedMessage = JSON.parse(event.message)
-  // The reasoning text is located in each message at $..reasoningText.text
-  return (
-    jsonpath.query(parsedMessage, '$..reasoningText.text').join('\n') ||
-    undefined
-  )
-}
+import { useCallback, useEffect, useState } from 'react'
 
 function useTraceEvent(chatJobId: string, enabled: boolean) {
-  const [traceEvents, setTraceEvents] = useState<
-    TraceEventWithFriendlyMessage[]
-  >([])
+  const [traceEvents, setTraceEvents] = useState<TraceEvent[]>([])
 
   const appendTraceEvents = useCallback((newEvents: TraceEvent[]) => {
     setTraceEvents(prev => {
-      return [
-        ...prev,
-        ...newEvents.map(event => ({
-          ...event,
-          friendlyMessage: extractFriendlyMessageFromTraceEvent(event),
-        })),
-      ]
+      return [...prev, ...newEvents]
     })
   }, [])
 
@@ -87,20 +64,11 @@ export default function SynapseChatMessage(props: SynapseChatMessageProps) {
     (!asyncJobStatus?.jobState || asyncJobStatus.jobState == 'PROCESSING')
   const { traceEvents } = useTraceEvent(chatJobId, enableTrace)
 
-  const traceEventsWithFriendlyMessage = useMemo(
-    () =>
-      traceEvents.map(event => ({
-        ...event,
-        friendlyMessage: extractFriendlyMessageFromTraceEvent(event),
-      })),
-    [traceEvents],
-  )
-
   return (
     <SynapseChatInteraction
       userMessage={chatRequest?.chatText}
       chatResponseText={chatResponse?.responseText}
-      chatResponseTrace={traceEventsWithFriendlyMessage}
+      chatResponseTrace={traceEvents}
       chatErrorReason={chatError}
     />
   )
