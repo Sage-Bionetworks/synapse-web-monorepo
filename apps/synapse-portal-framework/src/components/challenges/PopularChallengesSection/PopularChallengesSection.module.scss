@@ -52,8 +52,13 @@
 .PopularChallengesSection__titleSectionVectors {
   position: absolute;
   bottom: 21%;
-  left: -1%;
-  width: 100%;
+  left: 5%;
+  width: 90%;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    width: 100%;
+    left: -1%;
+  }
 }
 
 .PopularChallengesSection__headerSection {

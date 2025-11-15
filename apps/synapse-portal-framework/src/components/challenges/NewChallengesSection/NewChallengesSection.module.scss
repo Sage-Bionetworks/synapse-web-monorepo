@@ -79,8 +79,13 @@
 .NewChallengesSection__titleSectionVectors {
   position: absolute;
   bottom: 31%;
-  left: -1%;
-  width: 100%;
+  left: 3%;
+  width: 90%;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    width: 100%;
+    left: -1%;
+  }
 }
 
 .NewChallengesSection__headerSection {
