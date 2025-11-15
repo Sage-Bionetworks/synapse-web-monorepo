@@ -5,12 +5,9 @@ import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity
 import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 import styles from './NewChallengesSection.module.scss'
-import { ReactComponent as TriangleImage } from '../assets/triangle.svg'
-import { ReactComponent as CircleImage } from '../assets/circle.svg'
-import { ReactComponent as LongLineImage } from '../assets/longLine.svg'
-import { ReactComponent as ShortLineImage } from '../assets/shortLine.svg'
-import { ReactComponent as DoubleLineImage } from '../assets/doubleLine.svg'
+import { ReactComponent as Vectors } from '../assets/newChallengesVectors.svg'
 import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
+import stringListToArray from '@/utils/stringListToArray'
 
 type NewChallengesSectionProps = {
   sql: string
@@ -37,16 +34,20 @@ const NewChallengesSection = ({
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
+  const filteredDataRows =
+    dataRows.filter(row => {
+      const landingPageSectionValues =
+        row.values[getFieldIndex('landingPageSection', queryResultBundle)] ?? ''
+      const landingPageSectionArray = stringListToArray(
+        landingPageSectionValues,
+      )
+      return landingPageSectionArray.includes('new')
+    }) ?? []
+
   return (
     <Box className={styles.NewChallengesSection__root}>
-      <TriangleImage className={styles.NewChallengesSection__triangleImage} />
-      <CircleImage className={styles.NewChallengesSection__circleImage} />
-      <DoubleLineImage
-        className={styles.NewChallengesSection__doubleLineImage}
-      />
-      <LongLineImage className={styles.NewChallengesSection__longLineImage} />
-      <ShortLineImage className={styles.NewChallengesSection__shortLineImage} />
-      <Box className={styles.NewChallengesSection__header}>
+      <Box className={styles.NewChallengesSection__headerSection}>
+        <Vectors className={styles.NewChallengesSection__titleSectionVectors} />
         <Typography
           variant="headline1"
           className={styles.NewChallengesSection__sectionTitle}
@@ -55,22 +56,10 @@ const NewChallengesSection = ({
         </Typography>
       </Box>
       <Box className={styles.NewChallengesSection__container}>
-        {dataRows.map(row => {
-          const chips = row.values[getFieldIndex('chips', queryResultBundle)]
-          let chipsArray: string[]
-
-          if (Array.isArray(chips)) {
-            chipsArray = chips.map(String)
-          } else {
-            try {
-              const parsed = JSON.parse(chips ?? '[]')
-              chipsArray = Array.isArray(parsed)
-                ? parsed.map(String)
-                : [String(parsed)]
-            } catch {
-              chipsArray = chips ? [String(chips)] : []
-            }
-          }
+        {filteredDataRows.map(row => {
+          const chips =
+            row.values[getFieldIndex('chips', queryResultBundle)] ?? ''
+          const chipsArray = stringListToArray(chips)
 
           return (
             <ColorfulPortalCardWithChips

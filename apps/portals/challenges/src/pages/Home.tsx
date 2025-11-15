@@ -5,8 +5,6 @@ import {
   metricsSql,
   partnersSql,
   featuredTeamSql,
-  newChallengesSql,
-  popularChallengesSql,
   getInvolvedSql,
   newsSql,
   allChallengesSql,
@@ -31,11 +29,11 @@ function Home() {
         titleText="Our Challenge Partners"
       />
       <NewChallengesSection
-        sql={newChallengesSql}
+        sql={allChallengesSql}
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
       />
       <PopularChallengesSection
-        sql={popularChallengesSql}
+        sql={allChallengesSql}
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
       />
       <ChallengeFeaturedTeam sql={featuredTeamSql} />

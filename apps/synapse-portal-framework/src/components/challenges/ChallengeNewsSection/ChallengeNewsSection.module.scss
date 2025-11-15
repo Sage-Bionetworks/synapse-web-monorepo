@@ -2,20 +2,19 @@
 @use '../ChallengeCardsSection.module.scss' as Base;
 @use 'sass:map';
 
-.NewChallengesSection__root {
-  position: relative;
+.ChallengeNewsSection__root {
   margin-top: 180px;
 }
 
-.NewChallengesSection__sectionTitle:global(.MuiTypography-root) {
+.ChallengeNewsSection__sectionTitle:global(.MuiTypography-root) {
   @include Base.sectionTitle;
 }
 
-.NewChallengesSection__container {
+.ChallengeNewsSection__container {
   @include Base.sectionContainer;
 }
 
-.NewChallengesSection__triangleImage {
+.ChallengeNewsSection__triangleImage {
   @include Base.imagePosition;
   left: 65%;
   bottom: 100%;
@@ -26,7 +25,7 @@
   }
 }
 
-.NewChallengesSection__circleImage {
+.ChallengeNewsSection__circleImage {
   @include Base.imagePosition;
   left: 5%;
   color: #669fc1;
@@ -36,7 +35,7 @@
   }
 }
 
-.NewChallengesSection__longLineImage {
+.ChallengeNewsSection__longLineImage {
   @include Base.imagePosition;
   right: 10%;
   bottom: 100%;
@@ -47,7 +46,7 @@
   }
 }
 
-.NewChallengesSection__shortLineImage {
+.ChallengeNewsSection__shortLineImage {
   @include Base.imagePosition;
   right: 7%;
   color: #6db56d;
@@ -56,4 +55,22 @@
     right: 2%;
     left: 74%;
   }
+}
+
+.ChallengeNewsSection__titleSectionVectors {
+  position: absolute;
+  top: -10%;
+  left: 5%;
+  width: 90%;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    width: 100%;
+    left: 0%;
+  }
+}
+
+.ChallengeNewsSection__headerSection {
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }

@@ -143,7 +143,7 @@ const FeaturedTeam = ({ sql }: FeaturedTeamProps) => {
       <MedalImage className={styles.FeaturedTeam__medalImage} />
       <TopLineImage className={styles.FeaturedTeam__topLineImage} />
       <BottomLineImage className={styles.FeaturedTeam__bottomLineImage} />
-      <Box className={styles.FeaturedTeam__header}>
+      <Box className={styles.FeaturedTeam__headerSection}>
         <Typography variant="headline1" className={styles.FeaturedTeam__title}>
           Featured Team
         </Typography>
