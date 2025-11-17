@@ -1,6 +1,7 @@
 import { LogoConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
-import icon from '/logo.svg?url'
+import challengesHeaderLogo from './style/challengesHeaderLogo.svg?url'
+
 const logoHeader: LogoConfig = {
-  icon,
+  icon: challengesHeaderLogo,
 }
 export default logoHeader

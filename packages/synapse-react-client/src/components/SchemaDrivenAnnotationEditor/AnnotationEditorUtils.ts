@@ -5,7 +5,7 @@ import {
   TranslatableString,
 } from '@rjsf/utils'
 import { JSONSchema7 } from 'json-schema'
-import jsonpath from 'jsonpath'
+import { JSONPath } from 'jsonpath-plus'
 import { flatMap, groupBy, isEmpty, isObject } from 'lodash-es'
 
 /**
@@ -211,7 +211,10 @@ export function getPossibleTopLevelPropertiesInObjectSchema(
   resolvedSchema: JSONSchema7,
 ): JSONSchema7['properties'] {
   const allProperties = {}
-  const foundPropertiesObjects = jsonpath.query(resolvedSchema, '$..properties')
+  const foundPropertiesObjects = JSONPath({
+    path: '$..properties',
+    json: resolvedSchema,
+  })
   for (const propertiesObject of foundPropertiesObjects) {
     Object.assign(allProperties, propertiesObject)
   }
