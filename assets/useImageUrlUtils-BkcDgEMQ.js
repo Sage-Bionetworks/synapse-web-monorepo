@@ -1,1 +1,0 @@
-import{F as l,e5 as o}from"./iframe-CQAvee5F.js";const r=(e,t)=>{const s={associateObjectId:t,associateObjectType:l.TableEntity,fileHandleId:e||""},a=o(s,!1,{enabled:!!e});return a==null?void 0:a.dataUrl};export{r as u};
