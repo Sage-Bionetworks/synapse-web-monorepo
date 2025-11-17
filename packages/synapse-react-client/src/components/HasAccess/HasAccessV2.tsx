@@ -82,7 +82,13 @@ export function HasAccessV2(props: HasAccessProps) {
             ev.currentTarget.dispatchEvent(clickEvent)
           }
         }}
-      ></Button>
+      >
+        <AccessIcon
+          restrictionUiType={restrictionUiTypeValue}
+          wrap={wrap}
+          sx={{ ...sx }}
+        />
+      </Button>
     ) : (
       <AccessIcon
         restrictionUiType={restrictionUiTypeValue!}
