@@ -87,6 +87,7 @@ describe('useExportToTerra ()', () => {
       sql: transformedSql,
       concreteType: 'org.sagebionetworks.repo.model.table.DownloadPFBRequest',
       entityId,
+      pfbEntityIdColumnNames: ['id', 'currentVersion'],
       selectedFacets: testQueryRequest.query.selectedFacets,
       additionalFilters: testQueryRequest.query.additionalFilters,
       pfbEntityName: `SynapseExport${entityId}`,
