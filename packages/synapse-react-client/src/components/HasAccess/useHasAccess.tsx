@@ -23,7 +23,6 @@ import AccessRequirementList, {
 } from '../AccessRequirementList/AccessRequirementList'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { UseQueryOptions } from '@tanstack/react-query'
-import { Shower } from '@mui/icons-material'
 
 /**
  * This hook determines if
