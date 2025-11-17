@@ -6,7 +6,7 @@ import {
   RestrictionLevel,
 } from '@sage-bionetworks/synapse-types'
 import { useMemo } from 'react'
-import AccessIcon, { RestrictionUiType } from './AccessIcon'
+import { RestrictionUiType } from './AccessIcon'
 import { useHasAccess } from './useHasAccess'
 
 export type HasAccessProps = {
