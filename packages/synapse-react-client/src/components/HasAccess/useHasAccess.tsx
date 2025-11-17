@@ -23,6 +23,7 @@ import AccessRequirementList, {
 } from '../AccessRequirementList/AccessRequirementList'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { UseQueryOptions } from '@tanstack/react-query'
+import { SxProps, Theme } from '@mui/material'
 
 /**
  * This hook determines if
@@ -133,6 +134,8 @@ function getAccessText(props: RestrictionUiType | undefined) {
 // A hook that handles the logic for computing the correct access level, getting the text, and the icon
 export function useHasAccess(
   entityId: string,
+  iconWrap: boolean = false,
+  iconSx?: SxProps<Theme>,
   options: { showExternalAccessIcon?: boolean } = {},
 ) {
   const [displayAccessRequirement, setDisplayAccessRequirement] =
@@ -159,7 +162,11 @@ export function useHasAccess(
 
   // get access level icon
   const icon = (
-    <AccessIcon restrictionUiType={restrictionUiType!} wrap={false} />
+    <AccessIcon
+      restrictionUiType={restrictionUiType!}
+      wrap={iconWrap}
+      sx={{ ...iconSx }}
+    />
   )
 
   const handleGetAccess = useCallback(() => {

@@ -48,7 +48,7 @@ export function HasAccessV2(props: HasAccessProps) {
     icon,
     handleGetAccess,
     accessRequirementDialog,
-  } = useHasAccess(entityId, { showExternalAccessIcon })
+  } = useHasAccess(entityId, wrap, sx, { showExternalAccessIcon })
 
   const { data: restrictionInformation } = useGetRestrictionInformation({
     restrictableObjectType: RestrictableObjectType.ENTITY,
@@ -83,18 +83,10 @@ export function HasAccessV2(props: HasAccessProps) {
           }
         }}
       >
-        <AccessIcon
-          restrictionUiType={restrictionUiTypeValue}
-          wrap={wrap}
-          sx={{ ...sx }}
-        />
+        {icon}
       </Button>
     ) : (
-      <AccessIcon
-        restrictionUiType={restrictionUiTypeValue!}
-        wrap={wrap}
-        sx={{ ...sx }}
-      />
+      icon
     )
   }, [restrictionUiTypeValue])
 
@@ -124,11 +116,7 @@ export function HasAccessV2(props: HasAccessProps) {
           className={props.className}
           onClick={handleGetAccess}
         >
-          <AccessIcon
-            restrictionUiType={restrictionUiTypeValue}
-            wrap={wrap}
-            sx={{ ...sx }}
-          />
+          {icon}
           {showButtonText && (
             <Box
               sx={{
