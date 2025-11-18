@@ -14,7 +14,7 @@ import {
   SYNAPSE_SOURCE_APP_ID,
   useSourceApp,
 } from '@/components/useSourceApp'
-import ShowMore from 'synapse-react-client/components/ShowMore/ShowMore'
+import ShowMore from 'synapse-react-client/components/ShowMore'
 import { useSourceAppConfigs } from 'synapse-react-client/utils/hooks/useSourceAppConfigs'
 import {
   ColumnSingleValueFilterOperator,

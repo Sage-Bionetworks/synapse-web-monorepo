@@ -1,5 +1,5 @@
 import ConditionalWrapper from '@/components/utils/ConditionalWrapper'
-import { spreadSx } from '@/theme/spreadSx'
+import spreadSx from '@/react-ui/theme/utils/mergeSx'
 import {
   AccessTimeFilled,
   CheckTwoTone,

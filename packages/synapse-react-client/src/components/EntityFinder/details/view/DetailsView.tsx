@@ -1,5 +1,5 @@
 import { getEntityVersions } from '@/synapse-client/SynapseClient'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import {
   getEntityTypeFromHeader,
   isContainerType,

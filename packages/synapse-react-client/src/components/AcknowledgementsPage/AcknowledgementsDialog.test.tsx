@@ -6,7 +6,7 @@ import AcknowledgementsDialog, {
 import userEvent from '@testing-library/user-event'
 
 // Mock DialogBase and utility functions
-vi.mock('../DialogBase', () => ({
+vi.mock('@/react-ui/components/DialogBase', () => ({
   DialogBase: ({ title, open, onCancel, content, actions }: any) => (
     <div data-testid="DialogBase">
       <div>{title}</div>

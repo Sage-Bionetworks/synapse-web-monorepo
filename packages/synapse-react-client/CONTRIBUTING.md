@@ -25,7 +25,7 @@ Hooks have a number of advantages, they can be read about in depth [here](https:
 
 #### Bundled distribution
 
-We create an ESM/CJS bundle using [Vite's library mode](https://vitejs.dev/guide/build#library-mode). Note - not all components are exported as part of the UMD bundle - only those in [SWC.index.ts](src/SWC.index.ts).
+We create an ESM/CJS bundle using [Vite's library mode](https://vitejs.dev/guide/build#library-mode). Note - not all components are exported as part of the UMD bundle - only those in [SWC.index.ts](src/SWC/index.ts).
 
 #### Submitting a new component
 

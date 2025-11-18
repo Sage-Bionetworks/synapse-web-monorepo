@@ -6,7 +6,7 @@ import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client/index'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ENTITY_JSON, ENTITY_SCHEMA_BINDING } from '@/utils/APIConstants'
-import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { SynapseContextType } from '@/stores/SynapseContext/SynapseContext'
 import {
   BackendDestinationEnum,
   getEndpoint,

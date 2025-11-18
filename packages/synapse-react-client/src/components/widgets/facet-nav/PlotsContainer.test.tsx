@@ -9,7 +9,7 @@ import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
-import { CLOSE_BUTTON_LABEL } from '../../DialogBase'
+import { CLOSE_BUTTON_LABEL } from '@/react-ui/components/DialogBase'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryWrapper } from '../../QueryWrapper'
 import PlotsContainer, {

@@ -1,6 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { useGetAccessRequirements } from '@/synapse-queries/dataaccess/useAccessRequirements'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { Skeleton, useTheme } from '@mui/material'
 import AsyncSelect from 'react-select/async'
 

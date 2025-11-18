@@ -1,6 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { TYPE_FILTER, UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import {
   useQuery,

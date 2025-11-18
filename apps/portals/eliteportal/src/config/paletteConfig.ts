@@ -1,4 +1,4 @@
-import { elPortalPalette } from 'synapse-react-client/theme/palette/Palettes'
+import { elPortalPalette } from 'synapse-react-client/react-ui/theme/palette/Palettes'
 
 const palette = elPortalPalette
 

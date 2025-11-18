@@ -12,7 +12,7 @@ import {
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
+import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse/MarkdownSynapse'
 import {
   AccessRequirementWikiInstructions,
   AccessRequirementWikiInstructionsProps,

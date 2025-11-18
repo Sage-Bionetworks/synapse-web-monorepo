@@ -5,7 +5,7 @@ import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { Query, QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { act, render, screen } from '@testing-library/react'
-import { Markdown } from '@/components/Markdown/MarkdownSynapse'
+import { Markdown } from '@/components/Markdown/MarkdownSynapse/MarkdownSynapse'
 
 vi.mock('@/components/Markdown/MarkdownSynapse', () => ({
   Markdown: vi.fn().mockReturnValue(<span data-testid={'Markdown'} />),

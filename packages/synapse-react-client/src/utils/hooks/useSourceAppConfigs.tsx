@@ -1,6 +1,6 @@
 import SourceAppImage from '@/components/SourceAppImage'
 import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
-import Palettes from '@/theme/palette/Palettes'
+import Palettes from '@/react-ui/theme/palette'
 import { PaletteOptions } from '@mui/material'
 import { ReactNode } from 'react'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../SynapseConstants'

@@ -2,7 +2,7 @@ import AMPALSResearchPageLayout from '@sage-bionetworks/synapse-portal-framework
 import contributorResourcesHeaderSlat from '@/assets/data_contributor_resources_slat.png'
 import Typography from '@mui/material/Typography'
 import Link from '@mui/material/Link'
-import { MarkdownSynapse } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
+import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
 function ResourcesForContributors() {
   return (

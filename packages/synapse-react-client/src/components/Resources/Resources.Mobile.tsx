@@ -1,5 +1,5 @@
 import { Data } from './Resources'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse/MarkdownSynapse'
 import ExpandableContent from '../home_page/ExpandableContent'
 
 export type ResourcesMobileProps = {

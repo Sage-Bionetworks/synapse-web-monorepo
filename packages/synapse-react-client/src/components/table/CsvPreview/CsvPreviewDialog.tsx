@@ -1,4 +1,4 @@
-import { DialogBase } from '@/components/DialogBase'
+import DialogBase from '@/react-ui/components/DialogBase'
 import {
   BasicFileHandleUpload,
   FileUploadHandle,
@@ -13,7 +13,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Accordion from '@mui/material/Accordion'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import AccordionSummary from '@mui/material/AccordionSummary'
-import Button from '@mui/material/Button'
+import Button from '@/react-ui/components/Button'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import {

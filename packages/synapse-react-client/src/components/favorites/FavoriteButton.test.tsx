@@ -3,7 +3,7 @@ import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { FAVORITES } from '@/utils/APIConstants'
-import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { SynapseContextType } from '@/stores/SynapseContext/SynapseContext'
 import {
   BackendDestinationEnum,
   getEndpoint,

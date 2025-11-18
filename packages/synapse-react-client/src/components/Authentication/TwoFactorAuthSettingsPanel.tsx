@@ -1,5 +1,5 @@
 import { Box, Button, Stack, Typography } from '@mui/material'
-import { TWO_FACTOR_DOCS_LINK } from './TwoFactorEnrollmentForm'
+import { TWO_FACTOR_DOCS_LINK } from './TwoFactorEnrollmentForm/TwoFactorEnrollmentForm'
 
 export type TwoFactorAuthSettingsPanelProps = {
   onRegenerateBackupCodes: () => void

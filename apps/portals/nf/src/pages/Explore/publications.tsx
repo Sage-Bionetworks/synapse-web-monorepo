@@ -1,6 +1,6 @@
 import React from 'react'
 import publications from '@/config/synapseConfigs/publications'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav'
 
 const ExplorePublications = (): React.ReactNode => {
   return <QueryWrapperPlotNav {...publications} />

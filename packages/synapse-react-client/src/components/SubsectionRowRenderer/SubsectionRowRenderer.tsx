@@ -1,6 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { SynapseConstants } from '@/utils'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import {
   getAdditionalFilters,
   parseEntityIdFromSqlStatement,
@@ -16,7 +16,7 @@ import {
 import { useState } from 'react'
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
 import { ColumnSpecifiedLink } from '../CardContainerLogic'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse/MarkdownSynapse'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
 
 export type FriendlyValuesMap = {

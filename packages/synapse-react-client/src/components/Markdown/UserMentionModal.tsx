@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { DialogBase } from '../DialogBase'
+import DialogBase from '@/react-ui/components/DialogBase'
 import { TYPE_FILTER, UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
 

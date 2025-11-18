@@ -1,12 +1,12 @@
 import { useGetTwoFactorEnrollmentStatus } from '@/synapse-queries/auth/useTwoFactorEnrollment'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
 import { ButtonProps, Typography } from '@mui/material'
 import { TwoFactorAuthStatus } from '@sage-bionetworks/synapse-types'
-import { TWO_FACTOR_DOCS_LINK } from '../../Authentication/TwoFactorEnrollmentForm'
+import { TWO_FACTOR_DOCS_LINK } from '../../Authentication/TwoFactorEnrollmentForm/TwoFactorEnrollmentForm'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 import RequirementItem, { RequirementItemProps } from './RequirementItem'
 

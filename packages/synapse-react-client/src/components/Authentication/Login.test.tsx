@@ -11,7 +11,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import StandaloneLoginForm, {
   StandaloneLoginFormProps,
-} from './StandaloneLoginForm'
+} from './StandaloneLoginForm/StandaloneLoginForm'
 
 const username = 'myUsername'
 const password = 'myPassword'

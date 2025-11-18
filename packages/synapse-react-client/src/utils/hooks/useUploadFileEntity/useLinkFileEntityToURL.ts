@@ -5,7 +5,7 @@ import {
 import { useCreateExternalFileHandle } from '@/synapse-queries/file/useFileHandle'
 import { FileEntity } from '@sage-bionetworks/synapse-types'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
-import { useSynapseContext } from '../../context/SynapseContext'
+import { useSynapseContext } from '../../../stores/SynapseContext/SynapseContext'
 import {
   convertToEntityType,
   isContainerType,

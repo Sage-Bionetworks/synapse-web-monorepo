@@ -1,4 +1,4 @@
-import { DialogBase } from '@/components/DialogBase'
+import DialogBase from '@/react-ui/components/DialogBase'
 import { displayToast } from '@/components/ToastMessage'
 import { useCancelDataAccessRequest } from '@/synapse-queries/index'
 import { Alert, Button, Typography } from '@mui/material'

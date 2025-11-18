@@ -2,7 +2,7 @@ import {
   useGetAccessRequirementStatus,
   useGetAccessRequirementWikiPageKey,
 } from '@/synapse-queries'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { Box, ButtonProps, Link, Typography } from '@mui/material'
 import {
@@ -10,7 +10,7 @@ import {
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
-import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
+import MarkdownSynapse from '../../Markdown/MarkdownSynapse/MarkdownSynapse'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 import RequirementItem from './RequirementItem'
 

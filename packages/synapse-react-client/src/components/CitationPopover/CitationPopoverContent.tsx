@@ -20,7 +20,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useState } from 'react'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
 import { CitationProps, CitationFormat } from './CitationTypes'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse/MarkdownSynapse'
 
 const selectSx: SxProps = {
   width: '100%',

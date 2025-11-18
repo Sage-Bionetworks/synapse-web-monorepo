@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 
 export function useGridPresignedUrl() {
   const { synapseClient } = useSynapseContext()

@@ -1,6 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { useGetEntityHeaders } from '@/synapse-queries'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { CircularProgress } from '@mui/material'
 import {
   Activity,

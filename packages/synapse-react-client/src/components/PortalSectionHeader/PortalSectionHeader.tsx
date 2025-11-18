@@ -1,5 +1,5 @@
 import React from 'react'
-import { spreadSx } from '@/theme/spreadSx'
+import spreadSx from '@/react-ui/theme/utils/mergeSx'
 import { isExternalLink } from '@/utils/functions/IsExternalLink'
 import {
   Box,

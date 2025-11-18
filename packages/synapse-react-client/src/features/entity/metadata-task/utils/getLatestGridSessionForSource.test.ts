@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { getLatestGridSessionForSource } from './getLatestGridSessionForSource'
 import { QueryClient } from '@tanstack/react-query'
 import { KeyFactory } from '@/synapse-queries/KeyFactory'
-import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { SynapseContextType } from '@/stores/SynapseContext'
 import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
 
 const mockKeyFactory = new KeyFactory(undefined)

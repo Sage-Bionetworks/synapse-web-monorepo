@@ -24,7 +24,7 @@ import {
 import { QueryWrapper } from '../QueryWrapper'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
-import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
+import { NoContentPlaceholderType } from '../NoContentPlaceholder'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.

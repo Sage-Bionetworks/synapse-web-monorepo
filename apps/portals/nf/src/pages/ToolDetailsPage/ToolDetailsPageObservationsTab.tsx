@@ -7,7 +7,7 @@ import {
   SynapseConstants,
   TimelinePlot,
 } from 'synapse-react-client'
-import DynamicFormModal from 'synapse-react-client/components/DynamicForm/DynamicFormModal'
+import { DynamicFormModal } from 'synapse-react-client/components/DynamicForm'
 import Markdown from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
 function ToolDetailsPageObservationsTab() {

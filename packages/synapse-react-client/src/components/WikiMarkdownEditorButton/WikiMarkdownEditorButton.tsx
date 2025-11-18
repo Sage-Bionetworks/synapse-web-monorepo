@@ -11,7 +11,7 @@ import { useMemo, useState } from 'react'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import MarkdownSynapse, {
   MarkdownSynapseProps,
-} from '../Markdown/MarkdownSynapse'
+} from '../Markdown/MarkdownSynapse/MarkdownSynapse'
 import WikiMarkdownEditor from '../WikiMarkdownEditor/WikiMarkdownEditor'
 
 export const ERROR_LOADING_WIKI_FAILED = 'Failed to load the wiki page: '

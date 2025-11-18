@@ -12,7 +12,7 @@ import {
 import { noop } from 'lodash-es'
 import pluralize from 'pluralize'
 import { useState } from 'react'
-import { DialogBase } from '../DialogBase'
+import DialogBase from '@/react-ui/components/DialogBase'
 
 type EntityUploadPromptDialogProps = {
   activePrompts: UseUploadFileEntitiesReturn['activePrompts']

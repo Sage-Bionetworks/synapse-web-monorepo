@@ -1,6 +1,6 @@
 import { KeyFactory } from '@/synapse-queries'
-import FullContextProvider from '@/utils/context/FullContextProvider'
-import { SynapseContextType } from '@/utils/context/SynapseContext'
+import FullContextProvider from '@/stores/FullContextProvider/FullContextProvider'
+import { SynapseContextType } from '@/stores/SynapseContext/SynapseContext'
 import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
 import { createContext, PropsWithChildren } from 'react'
 

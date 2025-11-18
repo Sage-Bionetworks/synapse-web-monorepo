@@ -1,7 +1,7 @@
 import { QueryOrDeprecatedSearchParams } from '@/components/CardContainerLogic/CardContainerLogic'
 import AddToDownloadListConfirmationAlert from '@/components/download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert'
 import { useGetAddToDownloadListRequestForCurrentQuery } from '@/components/QueryWrapper/useGetAddToDownloadListRequestForCurrentQuery'
-import { NoContentPlaceholderType } from '@/components/SynapseTable/NoContentPlaceholderType'
+import { NoContentPlaceholderType } from '@/components/NoContentPlaceholder/NoContentPlaceholderType'
 import { useGetEntity } from '@/synapse-queries'
 import { SynapseConstants } from '@/utils'
 import {

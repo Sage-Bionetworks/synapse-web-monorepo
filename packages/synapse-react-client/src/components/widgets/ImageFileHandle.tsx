@@ -1,6 +1,6 @@
 import React from 'react'
 import SynapseClient from '@/synapse-client'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
 import { ComponentProps, useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'

@@ -13,7 +13,7 @@ import {
 import { chunk, uniq, without } from 'lodash-es'
 import { useEffect, useState } from 'react'
 import useDeepCompareEffect from 'use-deep-compare-effect'
-import { useSynapseContext } from '../context/SynapseContext'
+import { useSynapseContext } from '../../stores/SynapseContext/SynapseContext'
 import { SynapseConstants } from '../index'
 
 export type UseGetInfoFromIdsProps<

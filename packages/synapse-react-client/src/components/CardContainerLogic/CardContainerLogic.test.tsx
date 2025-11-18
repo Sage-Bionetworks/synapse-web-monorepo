@@ -10,7 +10,7 @@ import * as CardContainerModule from '../CardContainer/CardContainer'
 import * as QueryVisualizationWrapperModule from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import * as QueryWrapperModule from '../QueryWrapper/QueryWrapper'
 import { QueryWrapperProps } from '../QueryWrapper/QueryWrapper'
-import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
+import { NoContentPlaceholderType } from '../NoContentPlaceholder/NoContentPlaceholderType'
 import CardContainerLogic, { CardContainerLogicProps } from './index'
 
 const queryWrapperSpy = vi.spyOn(QueryWrapperModule, 'QueryWrapper')

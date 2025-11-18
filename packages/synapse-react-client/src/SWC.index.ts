@@ -13,7 +13,7 @@ import {
 } from './components/ToastMessage/ToastMessage'
 import SynapseClient, { HttpClient } from './synapse-client'
 import * as SynapseQueries from './synapse-queries'
-import Palettes from './theme/palette/Palettes'
+import Palettes from '@/react-ui/theme/palette/Palettes'
 import { SynapseConstants } from './utils'
 import { sendAnalyticsEvent } from './utils/analytics/sendAnalyticsEvent'
 import {
@@ -22,12 +22,12 @@ import {
   sendSearchResultReturnedEvent,
   sendSearchResultsReturnedEvent,
 } from './utils/analytics/sendSearchEvent'
-import { FullContextProvider } from './utils/context/FullContextProvider'
+import FullContextProvider from '@/stores/FullContextProvider'
 import {
   SynapseContextConsumer,
   SynapseContextProvider,
   useSynapseContext,
-} from './utils/context/SynapseContext'
+} from '@/stores/SynapseContext'
 import { BackendDestinationEnum } from './utils/functions'
 import { xssOptions } from './utils/functions/SanitizeHtmlUtils'
 import { getCurrentCookiePreferences } from './utils/hooks'

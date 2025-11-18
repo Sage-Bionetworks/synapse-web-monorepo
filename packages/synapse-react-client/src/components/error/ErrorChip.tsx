@@ -1,4 +1,4 @@
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { ErrorOutlined, LockOutlined } from '@mui/icons-material'
 import { Avatar, Chip, Tooltip } from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'

@@ -13,7 +13,7 @@ import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-fra
 import { DetailsPageSectionLayoutType } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageSectionLayout'
 import { EntityResolver } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/EntityResolver'
 import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav'
 import RssFeedCards from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 

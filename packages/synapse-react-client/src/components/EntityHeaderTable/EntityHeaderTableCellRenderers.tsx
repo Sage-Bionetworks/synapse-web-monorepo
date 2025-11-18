@@ -1,7 +1,7 @@
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { Checkbox, Link, Typography } from '@mui/material'
 import { CellContext, HeaderContext } from '@tanstack/react-table'
-import { EntityLink } from '../EntityLink'
+import { EntityLink } from '../EntityLink/EntityLink'
 import { EntityHeaderOrDummy } from './EntityHeaderTable'
 
 export function EntityHeaderNameCell(

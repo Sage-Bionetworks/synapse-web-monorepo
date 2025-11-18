@@ -1,6 +1,6 @@
 import { SYNAPSE_STORAGE_LOCATION_ID } from '@/synapse-client'
 import { useProjectStorageUsage } from '@/synapse-queries'
-import { spreadSx } from '@/theme/spreadSx'
+import spreadSx from '@/react-ui/theme/utils/mergeSx'
 import { useSynapseContext } from '@/utils'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { SAGE_OFFERINGS_HELP_URL } from '@/utils/SynapseConstants'
