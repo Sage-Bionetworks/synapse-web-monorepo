@@ -8,7 +8,8 @@ import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 import styles from './AllChallengesSection.module.scss'
 import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import stringListToArray from '@/utils/stringListToArray'
+import filterRowsByLandingPageSection from '@/utils/filterRowsByLandingPageSection'
+import { stringListToArray } from 'synapse-react-client/utils/functions/StringUtils'
 
 type AllChallengesSectionProps = {
   sql: string
@@ -35,15 +36,11 @@ const AllChallengesSection = ({
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
-  const filteredDataRows =
-    dataRows.filter(row => {
-      const landingPageSectionValues =
-        row.values[getFieldIndex('landingPageSection', queryResultBundle)] ?? ''
-      const landingPageSectionArray = stringListToArray(
-        landingPageSectionValues,
-      )
-      return landingPageSectionArray.includes('all')
-    }) ?? []
+  const filteredDataRows = filterRowsByLandingPageSection(
+    'all',
+    dataRows,
+    queryResultBundle!,
+  )
 
   return (
     <Stack className={styles.AllChallengesSection__root}>

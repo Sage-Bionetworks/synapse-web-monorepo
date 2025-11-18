@@ -7,7 +7,8 @@ import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 import styles from './PopularChallengesSection.module.scss'
 import { ReactComponent as Vectors } from '../assets/popularChallengesVectors.svg'
 import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
-import stringListToArray from '@/utils/stringListToArray'
+import { stringListToArray } from 'synapse-react-client/utils/functions/StringUtils'
+import filterRowsByLandingPageSection from '@/utils/filterRowsByLandingPageSection'
 
 type PopularChallengesSectionProps = {
   sql: string
@@ -33,16 +34,11 @@ const PopularChallengesSection = ({
     useGetQueryResultBundle(queryBundleRequest)
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
-
-  const filteredDataRows =
-    dataRows.filter(row => {
-      const landingPageSectionValues =
-        row.values[getFieldIndex('landingPageSection', queryResultBundle)] ?? ''
-      const landingPageSectionArray = stringListToArray(
-        landingPageSectionValues,
-      )
-      return landingPageSectionArray.includes('popular')
-    }) ?? []
+  const filteredDataRows = filterRowsByLandingPageSection(
+    'popular',
+    dataRows,
+    queryResultBundle!,
+  )
 
   return (
     <Box className={styles.PopularChallengesSection__root}>

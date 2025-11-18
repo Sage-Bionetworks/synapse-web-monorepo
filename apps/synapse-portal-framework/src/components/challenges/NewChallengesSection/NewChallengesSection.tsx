@@ -7,7 +7,8 @@ import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 import styles from './NewChallengesSection.module.scss'
 import { ReactComponent as Vectors } from '../assets/newChallengesVectors.svg'
 import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
-import stringListToArray from '@/utils/stringListToArray'
+import { stringListToArray } from 'synapse-react-client/utils/functions/StringUtils'
+import filterRowsByLandingPageSection from '../../../utils/filterRowsByLandingPageSection'
 
 type NewChallengesSectionProps = {
   sql: string
@@ -34,15 +35,11 @@ const NewChallengesSection = ({
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
-  const filteredDataRows =
-    dataRows.filter(row => {
-      const landingPageSectionValues =
-        row.values[getFieldIndex('landingPageSection', queryResultBundle)] ?? ''
-      const landingPageSectionArray = stringListToArray(
-        landingPageSectionValues,
-      )
-      return landingPageSectionArray.includes('new')
-    }) ?? []
+  const filteredDataRows = filterRowsByLandingPageSection(
+    'new',
+    dataRows,
+    queryResultBundle!,
+  )
 
   return (
     <Box className={styles.NewChallengesSection__root}>
