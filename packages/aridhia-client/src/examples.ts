@@ -36,28 +36,6 @@ async function authenticateExample() {
   return authResponse.access_token
 }
 
-// Example 1b: Exchange bearer token for DAP token
-async function authenticateWithBearerTokenExample(bearerToken: string) {
-  const authApi = new AuthenticationApi(
-    new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io',
-      accessToken: bearerToken,
-    }),
-  )
-
-  // POST /authenticate with bearer token returns an Aridhia access token
-  const authResponse = await authApi.authenticatePost({
-    authenticationRequest: {
-      subject_token_type: 'string',
-      subject_token_issuer: 'string',
-      subject_token: 'string',
-    },
-  })
-
-  console.log('Aridhia Access Token:', authResponse.access_token)
-  return authResponse.access_token
-}
-
 // Example 2: List Workflows
 async function listWorkflowsExample(token: string) {
   const workflowsApi = new WorkflowsApi(
@@ -314,7 +292,6 @@ async function fullWorkflowExample() {
 
 export {
   authenticateExample,
-  authenticateWithBearerTokenExample,
   listWorkflowsExample,
   getWorkflowExample,
   listDatasetsExample,

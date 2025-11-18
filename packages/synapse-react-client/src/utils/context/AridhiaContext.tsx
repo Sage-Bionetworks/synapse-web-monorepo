@@ -80,7 +80,6 @@ export function AridhiaContextProvider(props: AridhiaContextProviderProps) {
         const authApi = new AuthenticationApi(
           new Configuration({
             basePath: apiBasePath,
-            accessToken: synapseToken,
           }),
         )
 

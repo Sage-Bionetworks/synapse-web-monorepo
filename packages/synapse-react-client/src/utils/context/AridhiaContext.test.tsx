@@ -18,7 +18,6 @@ vi.mock(
         expires_in: 3600,
         refresh_expires_in: 7200,
         refresh_token: 'mock-refresh-token',
-        token_type: 'Bearer',
         'not-before-policy': 0,
         session_state: 'mock-session',
         scope: 'openid',

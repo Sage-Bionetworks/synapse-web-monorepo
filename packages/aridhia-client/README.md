@@ -101,7 +101,6 @@ const datasets = await datasetsApi.fairDatasetsGet({
 - **Authentication**
 
   - `POST /authenticate` - Exchange third party token for Aridhia access token
-    - Requires bearer token authentication
     - Request body: `{ subject_token_type, subject_token_issuer, subject_token }`
     - Response: `{ access_token, expires_in, refresh_token, token_type, ... }`
 

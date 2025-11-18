@@ -19,7 +19,13 @@ export function AridhiaIntegration(props: AridhiaIntegrationProps) {
   const { children, apiBasePath } = props
 
   return (
-    <AridhiaContextProvider apiBasePath={apiBasePath}>
+    <AridhiaContextProvider
+      apiBasePath={apiBasePath}
+      authenticationRequest={{
+        subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
+        subject_token_issuer: 'synapse', //TODO: verify this idp-id with C-Path
+      }}
+    >
       {children}
     </AridhiaContextProvider>
   )
