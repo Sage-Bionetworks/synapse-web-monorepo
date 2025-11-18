@@ -42,6 +42,7 @@ function ProjectDetailsPage() {
         />
       }
       sql={projectsSql}
+      resourcePrimaryKey={['shortName']}
     >
       <DetailsPageContent
         content={[

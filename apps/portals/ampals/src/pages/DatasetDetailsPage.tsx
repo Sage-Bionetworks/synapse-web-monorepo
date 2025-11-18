@@ -41,6 +41,7 @@ export default function DatasetDetailsPage() {
       ContainerProps={{
         maxWidth: 'xl',
       }}
+      resourcePrimaryKey={['id']}
     >
       <DetailsPageContextConsumer>
         {({ context }) => {
