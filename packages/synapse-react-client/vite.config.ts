@@ -15,30 +15,36 @@ const config = new ConfigBuilder()
     ],
   })
   .setBuildLibEntry(resolve(__dirname, 'src/SWC.index.ts'))
-  .setConfigOverrides({
-    root: '.',
-    build: {
-      // Do not clean the output directory before building, since we build ESM/CJS and UMD separately.
-      emptyOutDir: false,
-      commonjsOptions: {
-        // react-datasheet-grid is common-js only and imports tanstack/react-virtual which is an ESM package
-        // for some reason this transitive import is treated as common-js but we can fix it with the config below:
-        esmExternals: id => {
-          if (id == '@tanstack/react-virtual') {
-            return true
-          }
-          return false
+  .setConfigOverrides([
+    {
+      test: './src/components/{DataGrid}/**/*.{js,jsx,ts,tsx}',
+      plugins: ['babel-plugin-react-compiler'],
+    },
+    {
+      root: '.',
+      build: {
+        // Do not clean the output directory before building, since we build ESM/CJS and UMD separately.
+        emptyOutDir: false,
+        commonjsOptions: {
+          // react-datasheet-grid is common-js only and imports tanstack/react-virtual which is an ESM package
+          // for some reason this transitive import is treated as common-js but we can fix it with the config below:
+          esmExternals: (id: string) => {
+            if (id == '@tanstack/react-virtual') {
+              return true
+            }
+            return false
+          },
         },
       },
+      test: {
+        globals: true,
+        include: ['**/*.test.?(c|m)[jt]s?(x)'],
+        setupFiles: ['./src/testutils/vitest.setup.ts'],
+        silent: process.env.CI === 'true' ? 'passed-only' : false,
+        testTimeout: 15_000, // 15 seconds
+      },
     },
-    test: {
-      globals: true,
-      include: ['**/*.test.?(c|m)[jt]s?(x)'],
-      setupFiles: ['./src/testutils/vitest.setup.ts'],
-      silent: process.env.CI === 'true' ? 'passed-only' : false,
-      testTimeout: 15_000, // 15 seconds
-    },
-  })
+  ])
   .build()
 
 export default config
