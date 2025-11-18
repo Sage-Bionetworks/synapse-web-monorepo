@@ -4,8 +4,7 @@ import styles from './ColorfulPortalCardWithChips.module.scss'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { useImageUrl } from '@/utils/hooks/useImageUrlUtils'
 import { hashCode } from '@/utils/functions/StringUtils'
-import { SynapseCardLabel } from '@/components/GenericCard'
-import { MarkdownLink } from '@/index'
+import MarkdownSynapse from '@/components/Markdown/MarkdownSynapse'
 
 type ColorfulPortalCardWithChipsProps = {
   title?: string
@@ -67,10 +66,6 @@ const ColorfulPortalCardWithChips = ({
 }: ColorfulPortalCardWithChipsProps) => {
   const imageUrl = useImageUrl(backgroundImage ?? '', entityId ?? '')
   const backgroundImageValue = imageUrl ?? backgroundImage
-  const descriptionText: MarkdownLink = {
-    isMarkdown: true,
-    matchColumnName: 'description',
-  }
 
   return (
     <BasePortalCard
@@ -114,15 +109,7 @@ const ColorfulPortalCardWithChips = ({
             variant="smallText1"
             className={styles.ColorfulPortalCardWithChips__description}
           >
-            <SynapseCardLabel
-              value={description ?? ''}
-              columnName={'description'}
-              labelLink={descriptionText}
-              selectColumns={undefined}
-              columnModels={undefined}
-              isHeader={false}
-              rowData={[]}
-            />
+            <MarkdownSynapse markdown={description ?? ''} />
           </Typography>
           {learnMoreLink && (
             <Button
