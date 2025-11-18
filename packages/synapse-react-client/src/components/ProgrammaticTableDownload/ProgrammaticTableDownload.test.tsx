@@ -3,7 +3,7 @@ import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { TABLE_QUERY_ASYNC_START } from '@/utils/APIConstants'
-import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { SynapseContextType } from '@/stores/SynapseContext/SynapseContext'
 import {
   BackendDestinationEnum,
   getEndpoint,

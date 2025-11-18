@@ -1,5 +1,5 @@
 import SynapseClient from '@/synapse-client'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { Alert } from '@mui/material'
 import { KeyboardEvent, useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'

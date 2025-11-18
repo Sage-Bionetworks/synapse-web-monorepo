@@ -1,6 +1,6 @@
 import { SynapseCardLabel } from './SynapseCardLabel'
+import GenericCard from './GenericCard'
 
-export { default, default as GenericCard } from './GenericCard'
 export {
   LongDescription,
   ShortDescription,
@@ -10,3 +10,5 @@ export { SynapseCardLabel }
 export { getLinkParams } from '@/components/GenericCard/CardUtils'
 export { getValueOrMultiValue } from '@/components/GenericCard/CardUtils'
 export { getFileHandleAssociation } from '@/components/GenericCard/CardUtils'
+
+export default GenericCard

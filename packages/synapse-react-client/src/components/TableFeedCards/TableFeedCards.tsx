@@ -1,7 +1,7 @@
 import LargeButton from '@/components/styled/LargeButton'
 import SynapseClient from '@/synapse-client'
 import { SynapseConstants } from '@/utils'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import {
   QueryBundleRequest,
   RowSet,
@@ -10,7 +10,7 @@ import {
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse/MarkdownSynapse'
 
 export type TableFeedCardsProps = {
   tableEntityId: string

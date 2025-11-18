@@ -4,7 +4,7 @@ import {
   KeyFactory,
   tableQueryUseQueryDefaults,
 } from '@/synapse-queries'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import {
   partitionQueryBundleRequestIntoRowsAndMetadata,
   removeLockedColumnFromFacetData,

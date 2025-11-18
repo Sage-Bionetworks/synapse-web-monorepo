@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import StandaloneLoginForm from '../StandaloneLoginForm'
+import StandaloneLoginForm from './StandaloneLoginForm'
 import { displayToast } from '../../ToastMessage/ToastMessage'
 import { sessionChangeHandler } from '../../StorybookComponentWrapper'
 import { fn } from 'storybook/test'

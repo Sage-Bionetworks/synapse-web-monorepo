@@ -1,7 +1,7 @@
 import { ReactNode, useState } from 'react'
 import type { IconName } from 'synapse-react-client'
 import Switch from 'react-switch'
-import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
+import IconSvg from 'synapse-react-client/components/IconSvg'
 
 export type ToggleSynapseObjectsProps = {
   icon1?: IconName

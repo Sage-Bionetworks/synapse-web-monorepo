@@ -24,7 +24,7 @@ import {
   MapValueToReactComponentConfig,
 } from '../../CardContainerLogic/CardContainerLogic'
 import DirectDownload from '../../DirectDownload/DirectDownload'
-import { EntityLink, EntityLinkProps } from '../../EntityLink'
+import { EntityLink, EntityLinkProps } from '../../EntityLink/EntityLink'
 import { SynapseCardLabel } from '../../GenericCard'
 import Linkify from '../../GenericCard/Linkify'
 import { useQueryContext } from '../../QueryContext'

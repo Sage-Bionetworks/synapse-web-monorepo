@@ -1,6 +1,6 @@
-import { Button, ButtonProps } from '@mui/material'
+import Button, { ButtonProps } from '@/react-ui/components/Button'
 import { MouseEventHandler } from 'react'
-import { DialogBase, DialogBaseProps } from '../DialogBase'
+import DialogBase, { DialogBaseProps } from '@/react-ui/components/DialogBase'
 import { defaults } from 'lodash-es'
 
 export type ConfirmationButtonsProps = {

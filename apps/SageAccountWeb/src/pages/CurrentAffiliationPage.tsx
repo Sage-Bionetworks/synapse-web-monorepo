@@ -6,10 +6,10 @@ import { ContinueButton } from '../components/ProfileValidation/ContinueButton'
 import { SourceAppLogo } from '../components/SourceApp'
 import { StyledFormControl } from '../components/StyledComponents'
 import { useSourceApp } from '../components/useSourceApp'
-import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import { useSynapseContext } from 'synapse-react-client/stores/SynapseContext'
 import { useGetCurrentUserProfile } from 'synapse-react-client/synapse-queries/user/useUserBundle'
 import SynapseClient from 'synapse-react-client/synapse-client'
-import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import { displayToast } from 'synapse-react-client/components/ToastMessage'
 
 function CurrentAffiliationPage() {
   const sourceApp = useSourceApp()

@@ -1,5 +1,5 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { SynapseContextType } from '@/stores/SynapseContext/SynapseContext'
 import {
   CURRENT_SOURCEAPP_NAME_LOCALSTORAGE_KEY,
   LAST_LOGIN_DATE_LOCALSTORAGE_KEY,

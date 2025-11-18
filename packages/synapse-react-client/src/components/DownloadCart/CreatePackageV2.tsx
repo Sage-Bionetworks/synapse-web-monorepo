@@ -2,7 +2,7 @@ import {
   createPackageFromDownloadListV2,
   getFileHandleByIdURL,
 } from '@/synapse-client/SynapseClient'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { Box, Button, InputAdornment, TextField } from '@mui/material'
 import { DownloadListPackageResponse } from '@sage-bionetworks/synapse-types'
 import { ChangeEvent, SyntheticEvent, useState } from 'react'

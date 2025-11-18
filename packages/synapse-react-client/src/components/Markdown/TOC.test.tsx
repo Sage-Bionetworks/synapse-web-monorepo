@@ -2,7 +2,7 @@ import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen } from '@testing-library/react'
-import MarkdownSynapse from './MarkdownSynapse'
+import MarkdownSynapse from './MarkdownSynapse/MarkdownSynapse'
 import { vi, describe, beforeAll, it } from 'vitest'
 import {
   useGetWikiPage,

@@ -12,7 +12,7 @@ import { EntityType } from '@sage-bionetworks/synapse-client'
 import { useGetEntityHeader } from '@/synapse-queries'
 import { useGetEntityChildren } from '@/synapse-queries/entity/useGetEntityChildren'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext'
 
 export type TreeNode = {
   entityHeader: EntityHeader

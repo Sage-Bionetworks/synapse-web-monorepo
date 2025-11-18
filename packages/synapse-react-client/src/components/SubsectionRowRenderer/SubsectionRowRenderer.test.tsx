@@ -2,7 +2,7 @@ import mockMultiValueColumnResultsJson from '@/mocks/query/mockMultiValueColumnR
 import syn26433429CatalogNumberJson from '@/mocks/query/syn26433429CatalogNumber.json'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { SynapseContextType } from '@/stores/SynapseContext/SynapseContext'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import SubsectionRowRenderer, {

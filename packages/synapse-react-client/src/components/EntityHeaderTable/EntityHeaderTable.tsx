@@ -1,5 +1,5 @@
 import AddAd from '@/assets/icons/AddAd'
-import { StyledTableContainer } from '@/components/styled/StyledTableContainer'
+import { StyledTableContainer } from '@/components/styled/StyledTableContainer/StyledTableContainer'
 import { useGetEntityHeaders } from '@/synapse-queries/entity/useGetEntityHeaders'
 import {
   entityTypeToFriendlyName,

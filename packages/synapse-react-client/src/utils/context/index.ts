@@ -1,3 +1,3 @@
-export * from './FullContextProvider'
-export * from './SynapseContext'
+export * from '@/stores/FullContextProvider/FullContextProvider'
+export * from '../../stores/SynapseContext/SynapseContext'
 export * from './DocumentMetadataContext'

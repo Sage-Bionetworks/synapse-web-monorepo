@@ -1,5 +1,5 @@
 import SynapseClient from '@/synapse-client'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { isExternalFileHandle, isFileEntity } from '@/utils/types/IsType'
 import { OpenInNewTwoTone } from '@mui/icons-material'
 import {
