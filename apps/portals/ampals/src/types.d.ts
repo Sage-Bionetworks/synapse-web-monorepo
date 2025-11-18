@@ -9,7 +9,7 @@ interface ImportMeta {
   readonly env: ImportMetaEnv
 }
 
-// Import MUI type augmentations from 'synapse-react-client' so we can use custom property values defined for our MUI theme
-import 'synapse-react-client/ThemeTypes'
+// Import MUI type augmentations from 'react-ui' so we can use custom property values defined for our MUI theme
+import 'synapse-react-client/react-ui/types/ThemeTypes'
 
 import 'synapse-react-client/types/tanstack-table-augmentation'

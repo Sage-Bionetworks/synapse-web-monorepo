@@ -17,9 +17,9 @@ import {
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper/QueryWrapper'
-import { QueryWrapperPlotNavProps } from '../QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { QueryWrapperPlotNavProps } from '../QueryWrapperPlotNav'
 import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
-import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
+import { NoContentPlaceholderType } from '../NoContentPlaceholder/NoContentPlaceholderType'
 import SearchV2, { SearchV2Props } from '../SynapseTable/SearchV2'
 import SqlEditor from '../SynapseTable/SqlEditor'
 import { SynapseTableConfiguration } from '../SynapseTable/SynapseTable'

@@ -1,6 +1,6 @@
-import { Button } from '@mui/material'
+import Button from '@/react-ui/components/Button'
 import SynapseChat, { SynapseChatProps } from './SynapseChat'
-import { DialogBase } from '../DialogBase'
+import DialogBase from '@/react-ui/components/DialogBase'
 
 export type SynapseChatDialogProps = {
   open: boolean

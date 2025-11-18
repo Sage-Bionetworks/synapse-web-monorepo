@@ -1,6 +1,6 @@
 import NoSearchResults from '@/assets/icons/NoSearchResults'
 import { useGetFavorites } from '@/synapse-queries/user/useFavorites'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import {
   convertToEntityType,
   entityTypeToFriendlyName,

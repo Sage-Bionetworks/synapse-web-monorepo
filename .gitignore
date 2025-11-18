@@ -52,3 +52,5 @@ debug-storybook.log
 
 apps/portals/*/public/build-date.txt
 apps/portals/*/public/deploy-date.txt
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md

@@ -2,7 +2,7 @@
 import LargeButton from '@/components/styled/LargeButton'
 import SynapseClient from '@/synapse-client'
 import { SynapseConstants } from '@/utils'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { ReactComponent as DiagonalLinePattern } from '@/assets/illustrations/diagonalLinePattern.svg'

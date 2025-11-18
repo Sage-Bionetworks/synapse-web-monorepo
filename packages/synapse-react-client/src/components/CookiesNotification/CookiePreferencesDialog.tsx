@@ -14,7 +14,7 @@ import {
   Typography,
 } from '@mui/material'
 import { useState } from 'react'
-import { DialogBaseTitle } from '../DialogBase'
+import DialogBaseTitle from '@/react-ui/components/DialogBaseTitle'
 
 export type CookiePreferencesDialogProps = {
   isOpen: boolean

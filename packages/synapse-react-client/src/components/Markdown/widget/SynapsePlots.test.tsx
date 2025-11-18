@@ -3,7 +3,7 @@ import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { render, waitFor } from '@testing-library/react'
-import MarkdownSynapse from '../MarkdownSynapse'
+import MarkdownSynapse from '../MarkdownSynapse/MarkdownSynapse'
 
 const tableQueryResult: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',

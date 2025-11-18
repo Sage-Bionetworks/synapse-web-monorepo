@@ -1,0 +1,2 @@
+import SynapseFormSubmissionGrid from './SynapseFormSubmissionGrid'
+export default SynapseFormSubmissionGrid

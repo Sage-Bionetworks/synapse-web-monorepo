@@ -1,4 +1,4 @@
-import { useCookiePreferences } from 'node_modules/synapse-react-client/src/utils/hooks/useCookiePreferences'
+import { useCookiePreferences } from 'synapse-react-client/utils/hooks/useCookiePreferences'
 import { useState } from 'react'
 import FullWidthAlert from 'synapse-react-client/components/FullWidthAlert/FullWidthAlert'
 

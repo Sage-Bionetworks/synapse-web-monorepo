@@ -1,5 +1,5 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { SynapseContextType } from '@/stores/SynapseContext/SynapseContext'
 import {
   CookiePreference,
   COOKIES_AGREEMENT_COOKIE_KEY,

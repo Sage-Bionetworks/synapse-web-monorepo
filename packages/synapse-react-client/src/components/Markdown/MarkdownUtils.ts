@@ -1,6 +1,6 @@
 import katex from 'katex'
 import { RefObject } from 'react'
-import { MarkdownSynapseProps } from './MarkdownSynapse'
+import { MarkdownSynapseProps } from './MarkdownSynapse/MarkdownSynapse'
 
 /**
  * Find all math identified elements of the form [id^=\"mathjax-\"]

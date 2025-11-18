@@ -24,7 +24,7 @@ const baseConfig: UserConfig = defineConfig({
     __DEV__: JSON.stringify(false),
   },
   optimizeDeps: {
-    esbuildOptions: {
+    rolldownOptions: {
       // Node.js global to browser globalThis
       define: {
         global: 'globalThis',

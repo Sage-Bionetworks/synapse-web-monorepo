@@ -1,5 +1,5 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
+import Markdown from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
 function Terms() {
   return (

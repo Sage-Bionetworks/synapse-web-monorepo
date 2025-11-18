@@ -17,7 +17,7 @@ import {
 import dayjs from 'dayjs'
 import { useMemo, useState } from 'react'
 import CopyToClipboardInput from '../CopyToClipboardInput/CopyToClipboardInput'
-import { DialogBase } from '../DialogBase'
+import DialogBase from '@/react-ui/components/DialogBase'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'

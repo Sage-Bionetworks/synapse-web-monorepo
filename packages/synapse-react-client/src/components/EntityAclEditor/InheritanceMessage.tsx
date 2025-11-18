@@ -4,7 +4,7 @@ import {
   entityTypeToFriendlyName,
 } from '@/utils/functions/EntityTypeUtils'
 import { Link, Typography } from '@mui/material'
-import { EntityLink } from '../EntityLink'
+import { EntityLink } from '../EntityLink/EntityLink'
 
 type InheritanceMessageProps = {
   isProject: boolean

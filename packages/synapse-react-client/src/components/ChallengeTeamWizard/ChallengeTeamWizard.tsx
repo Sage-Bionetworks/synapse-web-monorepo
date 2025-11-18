@@ -9,7 +9,7 @@ import { useSynapseContext } from '@/utils'
 import { Alert, Box, Button, Tooltip, Typography } from '@mui/material'
 import { noop } from 'lodash-es'
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { DialogBase } from '../DialogBase'
+import DialogBase from '@/react-ui/components/DialogBase'
 import { SignInPrompt, SynapseErrorBoundary } from '../error/ErrorBanner'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import {

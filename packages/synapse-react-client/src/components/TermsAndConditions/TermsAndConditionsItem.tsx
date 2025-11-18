@@ -4,7 +4,7 @@ import { Link, Skeleton } from '@mui/material'
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { times } from 'lodash-es'
 import { MouseEvent, useEffect, useState } from 'react'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse/MarkdownSynapse'
 import { SkeletonParagraph } from '../Skeleton'
 
 export type tcItem = {

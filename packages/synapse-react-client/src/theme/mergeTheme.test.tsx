@@ -1,5 +1,5 @@
 import { ThemeOptions } from '@mui/material'
-import defaultMuiThemeOptions from './DefaultTheme'
+import defaultMuiThemeOptions from '@/react-ui/theme/DefaultTheme'
 import { PartialDeep } from 'type-fest'
 import { mergeTheme } from './mergeTheme'
 

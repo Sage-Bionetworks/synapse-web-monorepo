@@ -1,6 +1,6 @@
 import { getFullQueryTableResults } from '@/synapse-client/SynapseClient'
 import { SynapseConstants } from '@/utils'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { parseEntityIdAndVersionFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import { QueryResultBundle, Row } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo, useState } from 'react'

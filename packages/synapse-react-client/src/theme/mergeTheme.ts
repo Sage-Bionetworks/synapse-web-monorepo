@@ -1,7 +1,7 @@
-import { ThemeOptions } from '@mui/material'
+import type { ThemeOptions } from '@mui/material/styles'
 import type { PartialDeep } from 'type-fest'
-import { deepmerge } from '@mui/utils'
-import defaultMuiThemeOptions from './DefaultTheme'
+import deepmerge from '@mui/utils/deepmerge'
+import defaultMuiThemeOptions from '@/react-ui/theme/DefaultTheme'
 
 export function mergeTheme(
   themeOverrides: ThemeOptions | PartialDeep<ThemeOptions>,

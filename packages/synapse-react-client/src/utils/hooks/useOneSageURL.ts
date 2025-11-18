@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useSynapseContext } from '../context/SynapseContext'
+import { useSynapseContext } from '../../stores/SynapseContext/SynapseContext'
 import { BackendDestinationEnum, getEndpoint } from '../functions/index'
 import {
   ONE_SAGE_APPID_QUERY_PARAM_KEY,

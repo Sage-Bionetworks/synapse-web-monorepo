@@ -5,7 +5,7 @@ import { SyntheticEvent, useState } from 'react'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { ValidationWizardStep } from './ProfileValidation'
 import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClient'
-import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import { displayToast } from 'synapse-react-client/components/ToastMessage'
 
 export type ORCiDButtonProps = {
   redirectAfter?: string

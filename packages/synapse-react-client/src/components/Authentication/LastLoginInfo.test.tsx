@@ -1,5 +1,5 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { SynapseContextType } from '@/stores/SynapseContext/SynapseContext'
 import { LOGIN_METHOD_OAUTH2_GOOGLE } from '@/utils/SynapseConstants'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'

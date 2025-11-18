@@ -35,7 +35,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
+import MarkdownSynapse from '../../../Markdown/MarkdownSynapse/MarkdownSynapse'
 import * as UserSearchBoxV2Module from '../../../UserSearchBox/UserSearchBoxV2'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 import DataAccessRequestAccessorsFilesForm, {

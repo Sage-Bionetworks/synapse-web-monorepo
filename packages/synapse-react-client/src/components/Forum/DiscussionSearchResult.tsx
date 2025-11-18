@@ -5,7 +5,7 @@ import {
   getThreadMessageUrl,
   getUserProfileById,
 } from '@/synapse-client/SynapseClient'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { Box, Skeleton, Typography } from '@mui/material'
