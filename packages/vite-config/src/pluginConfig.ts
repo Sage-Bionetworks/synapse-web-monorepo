@@ -20,11 +20,7 @@ const COMMON_PLUGINS: PluginOption[] = [nodePolyfills()]
  * Plugins that our React apps and libraries will use
  */
 const REACT_PLUGINS: PluginOption[] = [
-  react({
-    babel: {
-      plugins: ['babel-plugin-react-compiler'],
-    },
-  }),
+  react(),
   svgr({
     svgrOptions: {
       plugins: ['@svgr/plugin-jsx'],
