@@ -37,9 +37,7 @@ export function HasAccessV2(props: HasAccessProps) {
   const {
     entityId,
     showButtonText = true,
-    wrap = true,
     showExternalAccessIcon = false,
-    sx,
   } = props
 
   const {
@@ -48,7 +46,7 @@ export function HasAccessV2(props: HasAccessProps) {
     icon,
     handleGetAccess,
     accessRequirementDialog,
-  } = useHasAccess(entityId, wrap, sx, { showExternalAccessIcon })
+  } = useHasAccess(entityId, true, undefined, { showExternalAccessIcon })
 
   const { data: restrictionInformation } = useGetRestrictionInformation({
     restrictableObjectType: RestrictableObjectType.ENTITY,
@@ -138,8 +136,6 @@ export function HasAccessV2(props: HasAccessProps) {
     props.className,
     showButtonText,
     accessRequirementDialog,
-    wrap,
-    sx,
     accessText,
     icon,
   ])
@@ -149,13 +145,11 @@ export function HasAccessV2(props: HasAccessProps) {
     return <></>
   }
 
-  if (wrap) {
-    return (
-      <span style={{ whiteSpace: 'nowrap' }}>
-        {accessRequirementsJsxOrIconContainer}
-      </span>
-    )
-  }
+  return (
+    <span style={{ whiteSpace: 'nowrap' }}>
+      {accessRequirementsJsxOrIconContainer}
+    </span>
+  )
   return accessRequirementsJsxOrIconContainer
 }
 
