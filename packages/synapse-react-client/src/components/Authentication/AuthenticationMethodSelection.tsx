@@ -1,6 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { OAuth2State, SynapseClientError } from '@/utils'
-import { useCsrfToken } from '@/utils/hooks'
+import { generateCsrfToken } from '@/utils/functions/generateCsrfToken'
 import {
   LOGIN_METHOD_EMAIL,
   LOGIN_METHOD_OAUTH2_ARCUS,
@@ -9,7 +9,7 @@ import {
   OAUTH2_PROVIDERS,
 } from '@/utils/SynapseConstants'
 import { Box } from '@mui/material'
-import { MouseEvent, useMemo } from 'react'
+import { MouseEvent } from 'react'
 import LoginMethodButton from './LoginMethodButton'
 
 type AuthenticationMethodSelectionProps = {
@@ -20,6 +20,8 @@ type AuthenticationMethodSelectionProps = {
   state?: OAuth2State
   showArcusSSOButtonOnly?: boolean
 }
+
+const csrfToken = generateCsrfToken()
 
 /**
  *  To support Google SSO in your portal, you must add your domain to the Authorized Redirect URIs for Synapse authentication.
@@ -37,13 +39,7 @@ export default function AuthenticationMethodSelection(
     showArcusSSOButtonOnly = false,
   } = props
 
-  // generate and include a csrfToken in the state to prevent CSRF attacks
-  const csrfToken = useCsrfToken()
-
-  const stateWithCSRF: OAuth2State | undefined = useMemo(
-    () => ({ ...state, csrfToken }),
-    [state, csrfToken],
-  )
+  const stateWithCSRF: OAuth2State = { ...state, csrfToken }
 
   function onSSOSignIn(event: MouseEvent<HTMLButtonElement>, provider: string) {
     if (onBeginOAuthSignIn) {

@@ -6,7 +6,7 @@ import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { ValidationWizardStep } from './ProfileValidation'
 import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClient'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
-import { useCsrfToken } from 'synapse-react-client/utils/hooks'
+import { generateCsrfToken } from 'synapse-react-client/utils/functions/generateCsrfToken'
 import { OAuth2State } from 'synapse-react-client/utils'
 
 export type ORCiDButtonProps = {
@@ -14,6 +14,8 @@ export type ORCiDButtonProps = {
   editButton?: boolean
   sx?: SxProps
 }
+
+const csrfToken = generateCsrfToken()
 
 const onBindToORCiD = (
   event: SyntheticEvent,
@@ -62,7 +64,6 @@ const onBindToORCiD = (
 
 export const ORCiDButton = (props: ORCiDButtonProps) => {
   const [isLoading, setIsLoading] = useState(false)
-  const csrfToken = useCsrfToken()
 
   return (
     <>
