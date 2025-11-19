@@ -1,10 +1,11 @@
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
+import useGetSchemaForGrid from '@/components/DataGrid/hooks/useGetSchemaForGrid'
 import MergeGridWithSourceTableButton from '@/components/DataGrid/MergeGridWithSourceTableButton'
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { SkeletonTable } from '@/components/index'
 import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
-import { useGetEntity, useGetSchema } from '@/synapse-queries/index'
+import { useGetEntity } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import Grid from '@mui/material/Grid'
 import {
@@ -151,12 +152,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       }
     }, [model])
 
-    const { data: jsonSchema } = useGetSchema(
-      session?.gridJsonSchema$Id ?? '',
-      {
-        enabled: !!session?.gridJsonSchema$Id,
-      },
-    )
+    const jsonSchema = useGetSchemaForGrid(session)
 
     // Grid behaves differently for views vs recordSets
     // Note for future: can get modifiedOn to refresh grid when view changes
@@ -174,7 +170,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
 
     // Process schema properties once
     const schemaPropertiesInfo = useMemo(() => {
-      return getSchemaPropertiesInfo(jsonSchema!)
+      return getSchemaPropertiesInfo(jsonSchema ?? null)
     }, [jsonSchema])
 
     const connectionStatus = isConnected ? 'Connected' : 'Disconnected'

@@ -1,3 +1,4 @@
+import { dateTimeColumn } from '@/components/DataGrid/columns/DateTimeColumn'
 import {
   Column,
   keyColumn,
@@ -7,12 +8,12 @@ import {
 } from 'react-datasheet-grid'
 import { autocompleteColumn } from '../columns/AutocompleteColumn'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
-import { TypeInfo } from '@/utils/jsonschema/getType'
+import { FlatTypeInfo } from '@/utils/jsonschema/getType'
 import { EnumeratedValue } from '@/utils/jsonschema/getEnumeratedValues'
 
 type ColumnConfig = {
   columnName: string
-  typeInfo: TypeInfo | null
+  typeInfo: FlatTypeInfo | null
   enumeratedValues: EnumeratedValue[] | string[] | null
   isRequired: boolean
 }
@@ -37,7 +38,14 @@ const COLUMN_FACTORIES = {
   }),
 
   boolean: (config: ColumnConfig) => ({
-    ...keyColumn(config.columnName, checkboxColumn),
+    ...keyColumn(
+      config.columnName,
+      autocompleteColumn({
+        choices: [true, false],
+        colType: 'boolean',
+        freeSolo: false,
+      }),
+    ),
     title: config.columnName,
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
@@ -56,11 +64,24 @@ const COLUMN_FACTORIES = {
       autocompleteColumn({
         choices: config.enumeratedValues ?? [],
         colType: config.typeInfo?.type || null,
+        freeSolo: true,
       }),
     ),
     title: config.columnName,
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
+  }),
+
+  'date-time': (config: ColumnConfig) => ({
+    ...keyColumn(
+      config.columnName,
+      dateTimeColumn({
+        colType: config.typeInfo?.type || null,
+      }),
+    ),
+    title: config.columnName,
+    headerClassName: getHeaderClassName(config.isRequired),
+    minWidth: Math.max(calculateColumnWidth(config.columnName), 215),
   }),
 
   text: (config: ColumnConfig) => ({
@@ -79,7 +100,7 @@ function calculateColumnWidth(columnName: string): number {
 }
 
 function getColumnType(
-  typeInfo: TypeInfo | null,
+  typeInfo: FlatTypeInfo | null,
   enumeratedValues?: EnumeratedValue[] | string[] | null,
 ): keyof typeof COLUMN_FACTORIES {
   if (!typeInfo) {
@@ -88,8 +109,12 @@ function getColumnType(
       : 'text'
   }
 
+  if (typeInfo.format === 'date-time') {
+    return 'date-time'
+  }
+
   // Handle arrays - check if it's an array of enums
-  if (typeInfo.type === 'array') {
+  if (typeInfo.isArray) {
     return 'multipleEnum'
   }
 

@@ -18,6 +18,7 @@ export type AutocompleteCellProps = CellProps & {
   setRowData: (value: AutocompleteOption) => void
   choices: AutocompleteOption[]
   colType?: JSONSchema7Type
+  freeSolo: boolean
 }
 
 export function castCellValueToString(toCast: any): string {
@@ -38,6 +39,7 @@ export function AutocompleteCell({
   focus,
   stopEditing,
   active,
+  freeSolo,
 }: AutocompleteCellProps) {
   const ref = useRef<HTMLInputElement>(null)
 
@@ -65,7 +67,7 @@ export function AutocompleteCell({
       open={!!focus}
       forcePopupIcon={true}
       disableClearable={!hasValue}
-      freeSolo
+      freeSolo={freeSolo}
       disablePortal={false}
       options={choices}
       getOptionLabel={option => castCellValueToString(option)}
@@ -145,15 +147,22 @@ export function AutocompleteCell({
 export type AutocompleteColumnProps = {
   choices: AutocompleteOption[]
   colType?: JSONSchema7Type
+  freeSolo: boolean
 }
 
 export function autocompleteColumn({
   choices,
   colType,
+  freeSolo,
 }: AutocompleteColumnProps): Partial<Column> {
   return {
     component: ((props: Omit<AutocompleteCellProps, 'choices'>) => (
-      <AutocompleteCell {...props} choices={choices} colType={colType} />
+      <AutocompleteCell
+        {...props}
+        choices={choices}
+        colType={colType}
+        freeSolo={freeSolo}
+      />
     )) as CellComponent,
     // If we update our enums to support labels, then we can update copy to copy the label and paste to lookup the mapping from label -> value
     copyValue: ({ rowData }) => rowData,
