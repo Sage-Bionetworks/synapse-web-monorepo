@@ -8,14 +8,14 @@ import {
 import { TermsOfUseRightPanelText } from '../components/TermsOfUseRightPanelText'
 import { TermsAndConditionsLink } from '../components/TermsAndConditionsLink'
 import { useSourceApp } from '../components/useSourceApp'
-import TermsAndConditions from 'synapse-react-client/components/TermsAndConditions/TermsAndConditions'
-import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import TermsAndConditions from 'synapse-react-client/components/TermsAndConditions'
+import { useSynapseContext } from 'synapse-react-client/stores/SynapseContext'
 import {
   useSignTermsOfService,
   useTermsOfServiceInfo,
 } from 'synapse-react-client/synapse-queries/termsOfService/useTermsOfService'
-import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
-import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
+import { displayToast } from 'synapse-react-client/components/ToastMessage'
+import IconSvg from 'synapse-react-client/components/IconSvg'
 
 function TermsOfUsePage() {
   const theme = useTheme()

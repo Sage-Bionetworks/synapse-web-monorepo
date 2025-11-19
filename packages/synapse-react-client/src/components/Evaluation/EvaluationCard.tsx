@@ -3,7 +3,7 @@ import {
   getEvaluationPermissions,
 } from '@/synapse-client/SynapseClient'
 import { RequiredProperties } from '@/utils'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import {
   Box,
   Button,

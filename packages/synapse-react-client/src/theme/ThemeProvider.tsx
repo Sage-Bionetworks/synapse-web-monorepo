@@ -1,7 +1,7 @@
 import { createTheme, StyledEngineProvider, ThemeOptions } from '@mui/material'
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 import { PropsWithChildren, useMemo } from 'react'
-import defaultMuiThemeOptions from './DefaultTheme'
+import defaultMuiThemeOptions from '@/react-ui/theme/DefaultTheme'
 import { mergeTheme } from './mergeTheme'
 
 export type ThemeProviderProps = PropsWithChildren<{

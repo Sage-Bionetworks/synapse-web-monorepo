@@ -1,13 +1,18 @@
 // EntityForm:
 import SynapseClient from '@/synapse-client'
 import { getFileHandleContent } from '@/synapse-client/SynapseClient'
-import { SynapseContext } from '@/utils/context/SynapseContext'
+import { SynapseContext } from '@/stores/SynapseContext/SynapseContext'
 // Will generate a Form (based on your schema files).
 // Gathers user input (including files)
 // Will give you the Synapse ID of the FileEntity that contains the user form data.
 import Form from '@rjsf/core'
 import validator from '@rjsf/validator-ajv8'
-import { EntityId, EntityLookupRequest, FileEntity, UserProfile } from '@sage-bionetworks/synapse-types'
+import {
+  EntityId,
+  EntityLookupRequest,
+  FileEntity,
+  UserProfile,
+} from '@sage-bionetworks/synapse-types'
 import { Component, ContextType, createRef } from 'react'
 
 export type EntityFormProps = {

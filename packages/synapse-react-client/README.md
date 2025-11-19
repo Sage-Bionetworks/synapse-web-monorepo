@@ -23,7 +23,7 @@ Run the following command:
 
 See [`index.ts`](./src/index.tsx) for a comprehensive list of components that can be used.
 
-To function properly, all components must be wrapped in a [SynapseContextProvider](src/utils/context/SynapseContext.tsx). To make authenticated requests, you must provide the user's access token as a property to the context provider, among other values. You may maintain this in state, or provide it however you like.
+To function properly, all components must be wrapped in a [SynapseContextProvider](src/stores/SynapseContext/SynapseContext.tsx). To make authenticated requests, you must provide the user's access token as a property to the context provider, among other values. You may maintain this in state, or provide it however you like.
 
 The context provider also maintains a shared cache (via `react-query`). It is recommended to place the provider at the highest possible point in your component tree, and to use the same provider across components if possible.
 
@@ -99,7 +99,7 @@ In this example, make sure that your `node_modules` folder is in your Dart Sass 
 
 To expose a component from the library you must export it from [index.ts](src/index.ts). Ideally, your component will get its own subfolder within `src/components/`, which will contain an `index.ts` file that exports the public API of the component (typically the component and its props type). In `src/components/index.ts`, you can then export the contents of the new subfolder.
 
-To expose a component for use in synapse.org, you must export it from [SWC.index.ts](src/SWC.index.ts). Note that certain dependencies are not included in this bundle. See the config used to build the bundle, `vite.config.ts`, for more details.
+To expose a component for use in synapse.org, you must export it from [SWC.index.ts](src/SWC/index.ts). Note that certain dependencies are not included in this bundle. See the config used to build the bundle, `vite.config.ts`, for more details.
 
 ## Available Scripts
 

@@ -2,7 +2,7 @@ import {
   useCreateGridReplica,
   useCreateGridSession,
 } from '@/synapse-queries/grid/useGridSession'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import {
   CreateGridRequest,
   GridReplica,

@@ -2,7 +2,7 @@ import {
   useGetCurrentUserProfile,
   useGetNotificationEmail,
 } from '@/synapse-queries/user/useUserBundle'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { useEffect } from 'react'
 
 type IssueCollector = 'SWC' | 'Flagged Content' | 'Request Access'

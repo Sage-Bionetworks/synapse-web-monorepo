@@ -7,29 +7,12 @@ import barrel from 'eslint-plugin-barrel-files'
 import eslint from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import storybook from 'eslint-plugin-storybook'
-import { readdirSync } from 'fs'
+import { defineConfig } from 'eslint/config'
 
-const getDirectories = source =>
-  readdirSync(source, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name)
-
-// TODO: Use Nx API to retrieve project directories
-const appDirs = getDirectories(`${import.meta.dirname}/apps`).map(
-  app => `apps/${app}`,
-)
-const portalDirs = getDirectories(`${import.meta.dirname}/apps/portals`).map(
-  app => `apps/portals/${app}`,
-)
-const packageDirs = getDirectories(`${import.meta.dirname}/packages`).map(
-  pkg => `packages/${pkg}`,
-)
-const allProjectDirs = [...appDirs, ...portalDirs, ...packageDirs]
-
-export default tseslint.config(
+export default defineConfig(
   eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
-  ...storybook.configs['flat/recommended'],
+  tseslint.configs.recommendedTypeChecked,
+  storybook.configs['flat/recommended'],
   {
     plugins: {
       react,
@@ -41,26 +24,12 @@ export default tseslint.config(
     },
     settings: {
       react: {
-        version: '18',
+        version: '19',
       },
     },
     languageOptions: {
       parserOptions: {
-        projectService: {
-          // We must enumerate each file that we want to lint that is not explicitly captured by a project-specific tsconfig
-          // allowDefaultProject does not allow `**` globs.
-          // https://github.com/typescript-eslint/typescript-eslint/issues/9739
-          allowDefaultProject: [
-            ...allProjectDirs.map(dir => `${dir}/*.ts`),
-            `packages/synapse-react-client/.storybook/*.ts`,
-            `packages/synapse-react-client/.storybook/*.tsx`,
-          ],
-        },
-        project: [
-          './tsconfig.json',
-          './packages/**/*/tsconfig.json',
-          './apps/**/*/tsconfig.json',
-        ],
+        projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
       globals: {
@@ -115,10 +84,20 @@ export default tseslint.config(
       ],
       '@typescript-eslint/no-redundant-type-constituents': 'warn',
       'barrel/avoid-barrel-files': 'warn',
+      'no-restricted-imports': [
+        'warn',
+        {
+          // Prevent importing from MUI barrel files, which include all components which can slow down development
+          // https://mui.com/material-ui/guides/minimizing-bundle-size/#avoid-barrel-files
+          patterns: [{ regex: '^@mui/[^/]+$' }],
+        },
+      ],
     },
   },
   {
     ignores: [
+      '**/vite.config.ts',
+      '**/.storybook',
       '.nx/',
       '**/generated/',
       '**/build/',

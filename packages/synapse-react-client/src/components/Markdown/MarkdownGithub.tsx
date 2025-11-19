@@ -2,7 +2,7 @@ import { useFileContent } from '@/synapse-queries/file/useFiles'
 import { useLatestTag } from '@/synapse-queries/github/useGithub'
 import { Box, Button, Container } from '@mui/material'
 import { SkeletonParagraph } from '../Skeleton'
-import MarkdownSynapse from './MarkdownSynapse'
+import MarkdownSynapse from './MarkdownSynapse/MarkdownSynapse'
 import { useMemo, useState } from 'react'
 import { replaceFileExtension } from '@/utils/functions/StringUtils'
 

@@ -9,7 +9,7 @@ import {
 import { ContinueButton } from './ContinueButton'
 import { ReturnToAppButton } from './ReturnToAppButton'
 import { FileUpload } from 'synapse-react-client/components/FileUpload/FileUpload'
-import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import { displayToast } from 'synapse-react-client/components/ToastMessage'
 
 export type AttestationProps = {
   verificationSubmission: VerificationSubmission

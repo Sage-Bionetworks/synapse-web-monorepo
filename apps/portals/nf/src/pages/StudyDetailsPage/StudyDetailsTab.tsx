@@ -7,7 +7,7 @@ import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framewor
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { CardContainerLogic } from 'synapse-react-client'
-import { NoContentPlaceholderType } from 'synapse-react-client/components/SynapseTable/NoContentPlaceholderType'
+import { NoContentPlaceholderType } from 'synapse-react-client/components/NoContentPlaceholder'
 
 function StudyDetailsTab() {
   const { value: studyId } = useDetailsPageContext('studyId')

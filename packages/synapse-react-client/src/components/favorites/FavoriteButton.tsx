@@ -4,7 +4,7 @@ import {
   useIsFavorite,
   useRemoveFavorite,
 } from '@/synapse-queries'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { IconButton, Skeleton, Tooltip } from '@mui/material'
 import IconSvg from '../IconSvg/IconSvg'
 

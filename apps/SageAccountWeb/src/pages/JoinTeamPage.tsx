@@ -13,7 +13,7 @@ import { useAppContext } from '../AppContext'
 import { StyledOuterContainer } from '../components/StyledComponents'
 import SynapseClient from 'synapse-react-client/synapse-client'
 import UserOrTeamBadge from 'synapse-react-client/components/UserOrTeamBadge/UserOrTeamBadge'
-import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import { displayToast } from 'synapse-react-client/components/ToastMessage'
 
 function JoinTeamPage() {
   const context = useAppContext()

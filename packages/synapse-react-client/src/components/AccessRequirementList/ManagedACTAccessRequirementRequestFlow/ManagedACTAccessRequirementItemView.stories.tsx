@@ -1,4 +1,4 @@
-import MarkdownSynapse from '@/components/Markdown/MarkdownSynapse'
+import MarkdownSynapse from '@/components/Markdown/MarkdownSynapse/MarkdownSynapse'
 import { mockManagedACTAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
 import {
   RestrictionLevel,

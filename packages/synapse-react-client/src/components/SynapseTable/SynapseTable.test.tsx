@@ -51,7 +51,7 @@ import {
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
-import * as NoContentPlaceholderModule from '../QueryVisualizationWrapper/NoContentPlaceholder'
+import * as NoContentPlaceholderModule from '../NoContentPlaceholder/NoContentPlaceholder'
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
 import * as UserCardModule from '../UserCard/UserCard'
 import { SynapseTable, SynapseTableProps } from './SynapseTable'

@@ -18,8 +18,8 @@ import {
   EntityImage,
   MapValueToReactComponentConfig,
 } from '../CardContainerLogic/CardContainerLogic'
-import { EntityLink } from '../EntityLink'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import { EntityLink } from '../EntityLink/EntityLink'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse/MarkdownSynapse'
 import { UserBadge } from '../UserCard/UserBadge'
 import { EntityColumnImage } from '../widgets/EntityColumnImage'
 import Linkify from './Linkify'

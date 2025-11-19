@@ -3,5 +3,11 @@
   // This file is used to configure the project settings used by all devs
   // Your preferred overrides can go in your user settings file, or a custom code-workspace file
 
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // Tell VS Code to avoid importing from MUI Barrel files
+  // https://mui.com/material-ui/guides/minimizing-bundle-size/#avoid-vs-code-auto-importing-from-barrel-files
+  "typescript.preferences.autoImportSpecifierExcludeRegexes": [
+    "^@mui/[^/]+$" // Exclude all top-level MUI packages
+  ]
 }

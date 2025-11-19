@@ -1,6 +1,6 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import SynapseFormWrapper from 'synapse-react-client/components/SynapseForm/SynapseFormWrapper'
-import { useGetFormPropsFromSearchParams } from 'synapse-react-client/components/SynapseForm/useGetFormPropsFromSearchParams'
+import { useGetFormPropsFromSearchParams } from 'synapse-react-client/components/SynapseForm'
 
 function FormSubmissionPage() {
   const propsFromParams = useGetFormPropsFromSearchParams()

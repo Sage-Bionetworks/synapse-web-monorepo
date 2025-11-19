@@ -1,4 +1,4 @@
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { Optional } from '@/utils/types/Optional'
 import { Box, Button, Collapse, Stack } from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'

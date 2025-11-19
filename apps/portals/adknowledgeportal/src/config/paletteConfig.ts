@@ -1,4 +1,4 @@
-import { adKnowledgePortalPalette } from 'synapse-react-client/theme/palette/Palettes'
+import { adKnowledgePortalPalette } from 'synapse-react-client/react-ui/theme/palette/Palettes'
 
 const palette = adKnowledgePortalPalette
 

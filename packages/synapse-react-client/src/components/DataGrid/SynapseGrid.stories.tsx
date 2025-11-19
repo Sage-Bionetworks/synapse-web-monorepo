@@ -1,4 +1,4 @@
-import { Button } from '@mui/material'
+import Button from '@/react-ui/components/Button'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useRef } from 'react'
 import SynapseGrid, { SynapseGridHandle } from './SynapseGrid'
