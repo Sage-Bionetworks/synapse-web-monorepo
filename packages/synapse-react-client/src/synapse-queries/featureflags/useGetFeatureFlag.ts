@@ -1,9 +1,8 @@
 import SynapseClient from '@/synapse-client'
 import { SynapseClientError, useSynapseContext } from '@/utils'
-import { getFeatureFlagOverrides } from '@/utils/hooks/useFeatureFlagOverrides'
 import { FeatureFlagEnum, FeatureFlags } from '@sage-bionetworks/synapse-types'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useLocalStorageValue } from '@react-hookz/web'
 
 export function useGetFeatureFlag(
   featureFlag: FeatureFlagEnum,
@@ -18,21 +17,13 @@ export function useGetFeatureFlag(
     queryFn: () => SynapseClient.getFeatureFlags(),
   })
 
-  // Track user overrides and listen for changes
-  const [userOverrides, setUserOverrides] = useState(getFeatureFlagOverrides())
-
-  useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'synapseFeatureFlagOverrides') {
-        setUserOverrides(getFeatureFlagOverrides())
-      }
-    }
-    window.addEventListener('storage', handleStorageChange)
-    return () => window.removeEventListener('storage', handleStorageChange)
-  }, [])
+  // Track user overrides with synchronized localStorage
+  const { value: userOverrides } = useLocalStorageValue<
+    Record<FeatureFlagEnum, boolean | undefined>
+  >('synapseFeatureFlagOverrides', {})
 
   const globalFlagValue = featureFlags?.[featureFlag]
-  const userOverride = userOverrides[featureFlag]
+  const userOverride = userOverrides?.[featureFlag]
 
   // Precedence: Global enabled flags cannot be disabled → User overrides → Experimental mode
   // If feature flags haven't loaded yet, we only check experimental mode

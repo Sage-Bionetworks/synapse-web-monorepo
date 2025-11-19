@@ -2,13 +2,11 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { useGetFeatureFlag } from './useGetFeatureFlag'
-import {
-  clearFeatureFlagOverrides,
-  setFeatureFlagOverride,
-} from '@/utils/hooks/useFeatureFlagOverrides'
 import { server } from '@/mocks/msw/server'
 import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+
+const FEATURE_FLAG_OVERRIDES_KEY = 'synapseFeatureFlagOverrides'
 
 describe('useGetFeatureFlag', () => {
   beforeAll(() => {
@@ -16,7 +14,7 @@ describe('useGetFeatureFlag', () => {
   })
   afterEach(() => {
     server.restoreHandlers()
-    clearFeatureFlagOverrides()
+    localStorage.removeItem(FEATURE_FLAG_OVERRIDES_KEY)
   })
   afterAll(() => {
     server.close()
@@ -74,7 +72,10 @@ describe('useGetFeatureFlag', () => {
       }),
     )
 
-    setFeatureFlagOverride(FeatureFlagEnum.DESCRIPTION_FIELD, true)
+    localStorage.setItem(
+      FEATURE_FLAG_OVERRIDES_KEY,
+      JSON.stringify({ [FeatureFlagEnum.DESCRIPTION_FIELD]: true }),
+    )
 
     const { result } = renderHook(
       () => useGetFeatureFlag(FeatureFlagEnum.DESCRIPTION_FIELD),
@@ -97,7 +98,10 @@ describe('useGetFeatureFlag', () => {
     )
 
     // Try to set user override to false - should be ignored
-    setFeatureFlagOverride(FeatureFlagEnum.DESCRIPTION_FIELD, false)
+    localStorage.setItem(
+      FEATURE_FLAG_OVERRIDES_KEY,
+      JSON.stringify({ [FeatureFlagEnum.DESCRIPTION_FIELD]: false }),
+    )
 
     const { result } = renderHook(
       () => useGetFeatureFlag(FeatureFlagEnum.DESCRIPTION_FIELD),
@@ -140,7 +144,10 @@ describe('useGetFeatureFlag', () => {
     )
 
     // Set user override to explicitly true
-    setFeatureFlagOverride(FeatureFlagEnum.DESCRIPTION_FIELD, true)
+    localStorage.setItem(
+      FEATURE_FLAG_OVERRIDES_KEY,
+      JSON.stringify({ [FeatureFlagEnum.DESCRIPTION_FIELD]: true }),
+    )
 
     const { result } = renderHook(
       () => useGetFeatureFlag(FeatureFlagEnum.DESCRIPTION_FIELD),
