@@ -35,6 +35,11 @@ export function useGetFeatureFlag(
   const userOverride = userOverrides[featureFlag]
 
   // Precedence: Global enabled flags cannot be disabled → User overrides → Experimental mode
+  // If feature flags haven't loaded yet, we only check experimental mode
+  if (featureFlags === undefined) {
+    return isInExperimentalMode
+  }
+
   if (globalFlagValue === true) {
     return true
   }

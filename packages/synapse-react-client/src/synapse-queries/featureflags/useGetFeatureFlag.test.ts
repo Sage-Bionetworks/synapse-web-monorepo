@@ -8,6 +8,7 @@ import {
 } from '@/utils/hooks/useFeatureFlagOverrides'
 import { server } from '@/mocks/msw/server'
 import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 
 describe('useGetFeatureFlag', () => {
   beforeAll(() => {
@@ -21,9 +22,12 @@ describe('useGetFeatureFlag', () => {
     server.close()
   })
 
+  const portalOrigin = getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)
+
   it('Returns false when flag is disabled globally and no overrides', async () => {
     server.use(
       getFeatureFlagsOverride({
+        portalOrigin,
         overrides: {
           [FeatureFlagEnum.DESCRIPTION_FIELD]: false,
         },
@@ -43,6 +47,7 @@ describe('useGetFeatureFlag', () => {
   it('Returns true when flag is globally enabled', async () => {
     server.use(
       getFeatureFlagsOverride({
+        portalOrigin,
         overrides: {
           [FeatureFlagEnum.DESCRIPTION_FIELD]: true,
         },
@@ -62,6 +67,7 @@ describe('useGetFeatureFlag', () => {
   it('Returns true when user override is set, even if globally disabled', async () => {
     server.use(
       getFeatureFlagsOverride({
+        portalOrigin,
         overrides: {
           [FeatureFlagEnum.DESCRIPTION_FIELD]: false,
         },
@@ -83,6 +89,7 @@ describe('useGetFeatureFlag', () => {
   it('Returns true when globally enabled, ignoring user override', async () => {
     server.use(
       getFeatureFlagsOverride({
+        portalOrigin,
         overrides: {
           [FeatureFlagEnum.DESCRIPTION_FIELD]: true,
         },
@@ -105,6 +112,7 @@ describe('useGetFeatureFlag', () => {
   it('Returns true when experimental mode is on, even if flag is disabled', async () => {
     server.use(
       getFeatureFlagsOverride({
+        portalOrigin,
         overrides: {
           [FeatureFlagEnum.DESCRIPTION_FIELD]: false,
         },
@@ -124,6 +132,7 @@ describe('useGetFeatureFlag', () => {
   it('User override takes precedence over experimental mode', async () => {
     server.use(
       getFeatureFlagsOverride({
+        portalOrigin,
         overrides: {
           [FeatureFlagEnum.DESCRIPTION_FIELD]: false,
         },
