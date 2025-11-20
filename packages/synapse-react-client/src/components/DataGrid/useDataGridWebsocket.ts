@@ -9,6 +9,7 @@ import { useDocumentVisibility } from '@react-hookz/web'
 interface WebSocketState {
   model: GridModel | null
   isGridReady: boolean
+  hasRenderableModel: boolean
   isConnected: boolean
   isConnecting: boolean
   connectionParams: {
@@ -32,6 +33,7 @@ type WebSocketAction =
   | { type: 'GRID_READY' }
   | { type: 'MODEL_CREATED'; payload: GridModel }
   | { type: 'CONNECTION_ERROR'; payload: unknown }
+  | { type: 'MODEL_RENDERABLE' }
 
 // Reducer function
 function websocketReducer(
@@ -57,6 +59,7 @@ function websocketReducer(
         isConnecting: false,
         connectionAttemptId: action.payload.attemptId,
         connectionError: null,
+        hasRenderableModel: isSameConnection ? state.hasRenderableModel : false,
       }
     }
 
@@ -100,6 +103,9 @@ function websocketReducer(
         isConnecting: false,
       }
 
+    case 'MODEL_RENDERABLE':
+      return { ...state, hasRenderableModel: true }
+
     default:
       return state
   }
@@ -114,6 +120,7 @@ export const initialWebSocketState: WebSocketState = {
   websocketInstance: null,
   connectionAttemptId: null,
   connectionError: null,
+  hasRenderableModel: false,
 }
 
 /**
@@ -280,6 +287,20 @@ export function useDataGridWebSocket() {
     }
   }, [state.websocketInstance])
 
+  useEffect(() => {
+    if (!state.model || !modelSnapshot || state.hasRenderableModel) {
+      return
+    }
+    const { columnNames, columnOrder, rows } = modelSnapshot
+    const columnsReady = columnNames.length >= 1
+    const orderReady = columnOrder.length >= 1
+    const rowsReady = rows.length >= 1
+
+    if (columnsReady && orderReady && rowsReady) {
+      dispatch({ type: 'MODEL_RENDERABLE' })
+    }
+  }, [state.model, modelSnapshot, state.hasRenderableModel])
+
   return {
     isConnected: state.isConnected,
     websocketInstance: state.websocketInstance,
@@ -290,5 +311,6 @@ export function useDataGridWebSocket() {
     presignedUrl,
     errorEstablishingWebsocketConnection:
       state.connectionError ?? errorEstablishingWebsocketConnection,
+    hasRenderableModel: state.hasRenderableModel,
   }
 }

@@ -95,6 +95,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       modelSnapshot,
       connect,
       presignedUrl,
+      hasRenderableModel,
     } = useDataGridWebSocket()
 
     const websocketInstanceRef = useRef<typeof websocketInstance | null>(null)
@@ -341,7 +342,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
           {session && (
             <>
               {/* Grid Loading State */}
-              {!isGridReady && (
+              {!hasRenderableModel && (
                 <Grid size={12}>
                   <h3>Setting up grid...</h3>
                   <div style={{ marginBottom: '10px' }}>
@@ -362,9 +363,8 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                   </div>
                 </Grid>
               )}
-
               {/* Grid */}
-              {isGridReady && (
+              {hasRenderableModel && (
                 <>
                   <Grid size={12}>
                     <Stack
