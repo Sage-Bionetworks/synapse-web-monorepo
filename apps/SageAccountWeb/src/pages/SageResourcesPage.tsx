@@ -8,7 +8,6 @@ import {
   useTheme,
 } from '@mui/material'
 import { Link as RouterLink } from 'react-router'
-import { sourceAppConfigTableID } from '../resources'
 import { StyledOuterContainer } from '@/components/StyledComponents'
 import {
   SourceAppProvider,
@@ -35,7 +34,7 @@ function SageResourcesPageInternal() {
     },
   ]
   const sourceAppConfigs = useSourceAppConfigs(
-    sourceAppConfigTableID,
+    import.meta.env.VITE_SOURCE_APP_CONFIGS_TABLE_ID,
     additionalFilters,
   )
   const sageSourceAppConfig = useSourceApp()
