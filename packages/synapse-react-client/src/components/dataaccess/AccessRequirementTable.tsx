@@ -17,6 +17,7 @@ export type AccessRequirementTableProps = {
 }
 
 export function AccessRequirementTable(props: AccessRequirementTableProps) {
+  'use no memo' // skip react compiler for this component
   const {
     nameOrID,
     relatedProjectId,
