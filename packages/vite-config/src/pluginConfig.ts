@@ -22,12 +22,7 @@ const COMMON_PLUGINS: PluginOption[] = [nodePolyfills()]
 const REACT_PLUGINS: PluginOption[] = [
   react({
     babel: {
-      overrides: [
-        {
-          test: /src\/components\/DataGrid\/.*\.(t|j)sx?$/,
-          plugins: [['babel-plugin-react-compiler']],
-        },
-      ],
+      plugins: ['babel-plugin-react-compiler'],
     },
   }),
   svgr({
