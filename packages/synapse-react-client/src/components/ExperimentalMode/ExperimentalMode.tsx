@@ -1,8 +1,8 @@
 import { isInSynapseExperimentalMode } from '@/synapse-client/SynapseClient'
+import { useGetGlobalFeatureFlags } from '@/synapse-queries/featureflags'
 import { EXPERIMENTAL_MODE_COOKIE } from '@/utils/SynapseConstants'
 import { InfoOutlined } from '@mui/icons-material'
 import { Box, IconButton, Tooltip, Typography, useTheme } from '@mui/material'
-import { FeatureFlags } from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'
 import Switch from 'react-switch'
 import UniversalCookies from 'universal-cookie'
@@ -14,12 +14,11 @@ const experimentalModeText =
 
 export type ExperimentalModeProps = {
   onExperimentalModeToggle?: (newValue: boolean) => void
-  globalFeatureFlags?: FeatureFlags
 }
 function ExperimentalMode({
   onExperimentalModeToggle,
-  globalFeatureFlags,
 }: ExperimentalModeProps) {
+  const { data: globalFeatureFlags } = useGetGlobalFeatureFlags()
   const [isExperimentalModeOn, setIsExperimentalModeOn] =
     useState<boolean>(false)
   const cookies = new UniversalCookies()

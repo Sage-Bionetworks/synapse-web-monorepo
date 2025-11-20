@@ -4,18 +4,29 @@ import { FeatureFlagEnum, FeatureFlags } from '@sage-bionetworks/synapse-types'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { useLocalStorageValue } from '@react-hookz/web'
 
-export function useGetFeatureFlag(
-  featureFlag: FeatureFlagEnum,
+/**
+ * Hook to fetch global feature flags from the server
+ */
+export function useGetGlobalFeatureFlags(
   options?: Partial<UseQueryOptions<FeatureFlags, SynapseClientError>>,
-): boolean {
-  const { keyFactory, isInExperimentalMode } = useSynapseContext()
+) {
+  const { keyFactory } = useSynapseContext()
 
-  const { data: featureFlags } = useQuery<FeatureFlags, SynapseClientError>({
+  return useQuery<FeatureFlags, SynapseClientError>({
     staleTime: Infinity,
     ...options,
     queryKey: keyFactory.getFeatureFlagQueryKey(),
     queryFn: () => SynapseClient.getFeatureFlags(),
   })
+}
+
+export function useGetFeatureFlag(
+  featureFlag: FeatureFlagEnum,
+  options?: Partial<UseQueryOptions<FeatureFlags, SynapseClientError>>,
+): boolean {
+  const { isInExperimentalMode } = useSynapseContext()
+
+  const { data: featureFlags } = useGetGlobalFeatureFlags(options)
 
   // Track user overrides with synchronized localStorage
   const { value: userOverrides } = useLocalStorageValue<

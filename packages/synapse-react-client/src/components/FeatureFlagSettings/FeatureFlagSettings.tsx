@@ -1,4 +1,3 @@
-import { useGetFeatureFlagOverrides } from '@/synapse-queries/featureflags/useGetFeatureFlagOverrides'
 import { InfoOutlined, Settings } from '@mui/icons-material'
 import {
   Box,
@@ -15,22 +14,44 @@ import {
 import { FeatureFlagEnum, FeatureFlags } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import Switch from 'react-switch'
+import styles from './FeatureFlagSettings.module.scss'
+import { useFeatureFlagOverrides } from './useFeatureFlagOverrides'
 
-// Map of feature flags to their descriptions
-const FEATURE_FLAG_DESCRIPTIONS: Record<FeatureFlagEnum, string> = {
-  [FeatureFlagEnum.PORTAL_SEARCH_HEADER]:
-    'Show the new header component that uses the HeaderSearchBox component',
-  [FeatureFlagEnum.DESCRIPTION_FIELD]:
-    "Allow viewing & editing the 'description' string field on entities",
-  [FeatureFlagEnum.VIRTUALTABLE_SUPPORT]:
-    'Allow creation of VirtualTable entities',
-  [FeatureFlagEnum.REACT_ENTITY_ACL_EDITOR]:
-    'Use the re-implemented ACL Editor for entities',
-  [FeatureFlagEnum.HOMEPAGE_CHATBOT]:
-    'Show the chatbot entrypoint from the new Synapse Homepage',
-  [FeatureFlagEnum.WEBHOOKS_UI]:
-    'Account settings will link to a page to manage webhooks',
-  [FeatureFlagEnum.CRISP_CHAT]: 'Load the Crisp chat widget',
+// Map of feature flags to their friendly titles and descriptions
+const FEATURE_FLAG_INFO: Record<
+  FeatureFlagEnum,
+  { title: string; description: string }
+> = {
+  [FeatureFlagEnum.PORTAL_SEARCH_HEADER]: {
+    title: 'Portal Search Header',
+    description:
+      'Show the new header component that uses the HeaderSearchBox component',
+  },
+  [FeatureFlagEnum.DESCRIPTION_FIELD]: {
+    title: 'Description Field',
+    description:
+      "Allow viewing & editing the 'description' string field on entities",
+  },
+  [FeatureFlagEnum.VIRTUALTABLE_SUPPORT]: {
+    title: 'Virtual Table Support',
+    description: 'Allow creation of VirtualTable entities',
+  },
+  [FeatureFlagEnum.REACT_ENTITY_ACL_EDITOR]: {
+    title: 'React Entity ACL Editor',
+    description: 'Use the re-implemented ACL Editor for entities',
+  },
+  [FeatureFlagEnum.HOMEPAGE_CHATBOT]: {
+    title: 'Homepage Chatbot',
+    description: 'Show the chatbot entrypoint from the new Synapse Homepage',
+  },
+  [FeatureFlagEnum.WEBHOOKS_UI]: {
+    title: 'Webhooks UI',
+    description: 'Account settings will link to a page to manage webhooks',
+  },
+  [FeatureFlagEnum.CRISP_CHAT]: {
+    title: 'Crisp Chat',
+    description: 'Load the Crisp chat widget',
+  },
 }
 
 export type FeatureFlagSettingsProps = {
@@ -43,7 +64,7 @@ export function FeatureFlagSettings({
   const [open, setOpen] = useState(false)
   const theme = useTheme()
   const { overrides, setOverride, clearOverrides } =
-    useGetFeatureFlagOverrides()
+    useFeatureFlagOverrides()
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
@@ -86,34 +107,15 @@ export function FeatureFlagSettings({
         <IconButton
           onClick={handleOpen}
           aria-label="Feature flag settings"
-          sx={{
-            color: 'inherit',
-            '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.08)' },
-          }}
+          className={styles.settingsButton}
         >
           <Settings />
         </IconButton>
       </Tooltip>
 
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        maxWidth="md"
-        fullWidth
-        PaperProps={{
-          sx: {
-            backgroundColor: 'background.paper',
-          },
-        }}
-      >
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <DialogTitle>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
+          <Box className={styles.dialogTitle}>
             <Typography variant="h6">Feature Flag Settings</Typography>
             <Button
               onClick={handleClearAll}
@@ -125,8 +127,12 @@ export function FeatureFlagSettings({
           </Box>
         </DialogTitle>
         <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+          <Box className={styles.flagsContainer}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              className={styles.instructionText}
+            >
               Toggle individual feature flags that are disabled in the global
               configuration. Feature flags that are already enabled globally
               cannot be toggled off.
@@ -135,45 +141,34 @@ export function FeatureFlagSettings({
             {Object.values(FeatureFlagEnum).map(flag => {
               const { enabled, canToggle, isOverridden } =
                 getEffectiveState(flag)
-              const description = FEATURE_FLAG_DESCRIPTIONS[flag]
+              const { title, description } = FEATURE_FLAG_INFO[flag]
 
               return (
                 <Box
                   key={flag}
+                  className={`${styles.flagItem} ${isOverridden ? styles.overridden : ''}`}
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    p: 2,
-                    borderRadius: 1,
+                    borderColor: 'divider',
                     backgroundColor: isOverridden
                       ? 'action.hover'
                       : 'transparent',
-                    border: '1px solid',
-                    borderColor: 'divider',
                   }}
                 >
-                  <Box sx={{ flex: 1, mr: 2 }}>
-                    <Box
-                      sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}
-                    >
+                  <Box className={styles.flagContent}>
+                    <Box className={styles.flagHeader}>
                       <Typography
                         variant="body1"
                         sx={{ fontWeight: enabled ? 600 : 400 }}
                       >
-                        {flag}
+                        {title}
                       </Typography>
                       {isOverridden && (
                         <Typography
                           variant="caption"
+                          className={styles.overrideBadge}
                           sx={{
-                            ml: 1,
-                            px: 1,
-                            py: 0.25,
                             backgroundColor: 'primary.main',
                             color: 'primary.contrastText',
-                            borderRadius: 1,
-                            fontSize: '0.7rem',
                           }}
                         >
                           USER OVERRIDE
@@ -184,9 +179,7 @@ export function FeatureFlagSettings({
                           title="This feature is enabled globally and cannot be disabled"
                           arrow
                         >
-                          <InfoOutlined
-                            sx={{ ml: 1, fontSize: '1rem', opacity: 0.6 }}
-                          />
+                          <InfoOutlined className={styles.infoIcon} />
                         </Tooltip>
                       )}
                     </Box>

@@ -6,12 +6,9 @@ import { ReactComponent as Twitter } from '@/assets/homepage/twitter.svg'
 import { ReactComponent as Youtube } from '@/assets/homepage/youtube.svg'
 import SageFullLogo from '@/assets/icons/SageFullLogo'
 import SynapseFullLogo from '@/assets/icons/SynapseFullLogo'
-import SynapseClient from '@/synapse-client'
-import { SynapseClientError, useSynapseContext } from '@/utils'
+import { useSynapseContext } from '@/utils'
 import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
 import { Box, Button, Typography } from '@mui/material'
-import { FeatureFlags } from '@sage-bionetworks/synapse-types'
-import { useQuery } from '@tanstack/react-query'
 import ExperimentalMode from '../ExperimentalMode'
 import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
 import { SynapseLinksColumn } from './SynapseLinksColumn'
@@ -32,19 +29,9 @@ export function SynapseFooter({
   gotoPlace,
   onExperimentalModeToggle,
 }: SynapseFooterProps) {
-  const { isAuthenticated, keyFactory } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
   const registrationUrl = useOneSageURL('/register1')
   const sageResourcesUrl = useOneSageURL('/sageresources')
-
-  // Fetch feature flags for the settings component
-  const { data: globalFeatureFlags } = useQuery<
-    FeatureFlags,
-    SynapseClientError
-  >({
-    staleTime: Infinity,
-    queryKey: keyFactory.getFeatureFlagQueryKey(),
-    queryFn: () => SynapseClient.getFeatureFlags(),
-  })
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -321,7 +308,6 @@ export function SynapseFooter({
         </Box>
         <ExperimentalMode
           onExperimentalModeToggle={onExperimentalModeToggle}
-          globalFeatureFlags={globalFeatureFlags}
         />
       </Box>
     </Box>
