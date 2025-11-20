@@ -16,12 +16,6 @@ const config = new ConfigBuilder()
   })
   .setBuildLibEntry(resolve(__dirname, 'src/SWC.index.ts'))
   .setConfigOverrides({
-    plugins: [
-      [
-        'babel-plugin-react-compiler',
-        { test: './src/components/DataGrid/**/*.{js,jsx,ts,tsx}' },
-      ],
-    ],
     root: '.',
     build: {
       // Do not clean the output directory before building, since we build ESM/CJS and UMD separately.
