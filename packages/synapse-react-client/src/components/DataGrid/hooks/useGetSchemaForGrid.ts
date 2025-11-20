@@ -12,6 +12,7 @@ import {
   createDeduplicator,
   createIntersector,
 } from '@x0k/json-schema-merge/lib/array'
+import { JSONSchema7 } from 'json-schema'
 
 const { compareSchemaDefinitions, compareSchemaValues } = createComparator()
 

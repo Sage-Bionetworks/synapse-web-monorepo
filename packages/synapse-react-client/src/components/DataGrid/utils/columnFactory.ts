@@ -1,15 +1,14 @@
 import { dateTimeColumn } from '@/components/DataGrid/columns/DateTimeColumn'
+import { EnumeratedValue } from '@/utils/jsonschema/getEnumeratedValues'
+import { FlatTypeInfo } from '@/utils/jsonschema/getType'
 import {
   Column,
-  keyColumn,
-  checkboxColumn,
-  floatColumn,
   createTextColumn,
+  floatColumn,
+  keyColumn,
 } from 'react-datasheet-grid'
 import { autocompleteColumn } from '../columns/AutocompleteColumn'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
-import { FlatTypeInfo } from '@/utils/jsonschema/getType'
-import { EnumeratedValue } from '@/utils/jsonschema/getEnumeratedValues'
 
 type ColumnConfig = {
   columnName: string
@@ -43,7 +42,6 @@ const COLUMN_FACTORIES = {
       autocompleteColumn({
         choices: [true, false],
         colType: 'boolean',
-        freeSolo: false,
       }),
     ),
     title: config.columnName,
@@ -64,7 +62,6 @@ const COLUMN_FACTORIES = {
       autocompleteColumn({
         choices: config.enumeratedValues ?? [],
         colType: config.typeInfo?.type || null,
-        freeSolo: true,
       }),
     ),
     title: config.columnName,
@@ -92,6 +89,7 @@ const COLUMN_FACTORIES = {
     title: config.columnName,
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
+    cellClassName: 'MuiInputBase-input',
   }),
 }
 
