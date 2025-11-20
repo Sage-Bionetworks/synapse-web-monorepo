@@ -30,6 +30,15 @@
   padding-top: 50px;
 }
 
+.ColorfulPortalCardWithChips__title:global(.MuiTypography-root) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow-wrap: break-word;
+}
+
 .ColorfulPortalCardWithChips__sectionTitle:global(.MuiTypography-root) {
   color: var(--black);
   margin-bottom: 25px;
@@ -44,6 +53,12 @@
 
 .ColorfulPortalCardWithChips__challengeName:global(.MuiTypography-root) {
   font-weight: 300;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow-wrap: break-word;
 }
 
 .ColorfulPortalCardWithChips__sectionContainer {
