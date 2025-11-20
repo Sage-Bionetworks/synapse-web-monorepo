@@ -195,10 +195,16 @@
   }
 }
 
-.ColorfulPortalCardWithChips__description {
+.ColorfulPortalCardWithChips__description :global(.markdown) {
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+}
+
+.ColorfulPortalCardWithChips__description :global(.markdown) p {
+  color: var(--black) !important;
+  font-size: 14px;
+  line-height: 20px;
 }
