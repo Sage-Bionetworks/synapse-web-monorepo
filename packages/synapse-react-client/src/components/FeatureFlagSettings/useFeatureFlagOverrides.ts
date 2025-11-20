@@ -10,12 +10,12 @@ const FEATURE_FLAG_OVERRIDES_KEY = 'synapseFeatureFlagOverrides'
 export function useFeatureFlagOverrides() {
   const { value: overrides, set: setOverridesValue } = useLocalStorageValue<
     Record<FeatureFlagEnum, boolean | undefined>
-  >(FEATURE_FLAG_OVERRIDES_KEY, {})
+  >(FEATURE_FLAG_OVERRIDES_KEY, {} as Record<FeatureFlagEnum, boolean | undefined>)
 
   const setOverride = useCallback(
     (flag: FeatureFlagEnum, value: boolean | undefined) => {
-      const currentOverrides = overrides || {}
-      const newOverrides = { ...currentOverrides }
+      const currentOverrides: Record<FeatureFlagEnum, boolean | undefined> = overrides || {}
+      const newOverrides: Record<FeatureFlagEnum, boolean | undefined> = { ...currentOverrides }
 
       if (value === undefined) {
         delete newOverrides[flag]
@@ -29,11 +29,11 @@ export function useFeatureFlagOverrides() {
   )
 
   const clearOverrides = useCallback(() => {
-    setOverridesValue({})
+    setOverridesValue({} as Record<FeatureFlagEnum, boolean | undefined>)
   }, [setOverridesValue])
 
   return {
-    overrides: overrides || {},
+    overrides: (overrides || {}) as Record<FeatureFlagEnum, boolean | undefined>,
     setOverride,
     clearOverrides,
   }
