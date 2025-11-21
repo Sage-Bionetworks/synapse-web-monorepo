@@ -1,0 +1,60 @@
+.settingsButton {
+  color: inherit;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.dialogTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flagsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.instructionText {
+  margin-bottom: 8px;
+}
+
+.flagItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-radius: 4px;
+  border: 1px solid;
+
+  &.overridden {
+    // backgroundColor will be applied via theme
+  }
+}
+
+.flagContent {
+  flex: 1;
+  margin-right: 16px;
+}
+
+.flagHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.overrideBadge {
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+}
+
+.infoIcon {
+  margin-left: 8px;
+  font-size: 1rem;
+  opacity: 0.6;
+}
