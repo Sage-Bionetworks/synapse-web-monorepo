@@ -1,3 +1,5 @@
+'use no memo' // don't use react-compiler until MD5 test failure is resolved
+
 import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import { Skeleton, Tooltip } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
