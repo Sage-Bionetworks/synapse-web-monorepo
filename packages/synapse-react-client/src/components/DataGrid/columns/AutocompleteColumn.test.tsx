@@ -1,7 +1,7 @@
-import { vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseFreeTextUsingJsonSchemaType'
+import { act, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { vi } from 'vitest'
 import { AutocompleteCell, AutocompleteCellProps } from './AutocompleteColumn'
 
 describe('AutocompleteColumn', () => {
@@ -40,7 +40,9 @@ describe('AutocompleteColumn', () => {
       stopEditing: mockStopEditing,
     }
 
-    render(<AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />)
+    const { rerender } = render(
+      <AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />,
+    )
 
     // Check that the component renders an input field
     const input = screen.getByRole('combobox')
@@ -51,8 +53,16 @@ describe('AutocompleteColumn', () => {
     // Check that the input displays the current value
     expect(input).toHaveValue('freeText')
 
-    await userEvent.tab() // Simulate blur by tabbing away
-
+    // Simulate blurring by changing active/focus to false
+    act(() => {
+      rerender(
+        <AutocompleteCell
+          {...(mockCellProps as AutocompleteCellProps)}
+          focus={false}
+          active={false}
+        />,
+      )
+    })
     // Verify that setRowData was called with the free text value
     expect(mockSetRowData).toHaveBeenCalledWith('freeText')
   })
@@ -92,13 +102,25 @@ describe('AutocompleteColumn', () => {
       stopEditing: mockStopEditing,
     }
 
-    render(<AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />)
+    const { rerender } = render(
+      <AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />,
+    )
 
     const input = screen.getByRole('combobox')
     await userEvent.clear(input)
     await userEvent.type(input, '42')
     const expectedParsedValue = parseFreeTextGivenJsonSchemaType('42', 'number')
-    await userEvent.tab()
+
+    // Simulate blurring by changing active/focus to false
+    act(() => {
+      rerender(
+        <AutocompleteCell
+          {...(mockCellProps as AutocompleteCellProps)}
+          focus={false}
+          active={false}
+        />,
+      )
+    })
 
     await waitFor(() => {
       expect(mockSetRowData).toHaveBeenCalledWith(expectedParsedValue)

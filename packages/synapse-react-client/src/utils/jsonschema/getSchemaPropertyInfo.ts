@@ -1,11 +1,11 @@
 import getEnumeratedValues, { EnumeratedValue } from './getEnumeratedValues'
 import getSchemaForProperty from './getSchemaForProperty'
 import getRequiredAttributes from './getRequiredAttributes'
-import { getType, TypeInfo } from './getType'
+import { FlatTypeInfo, getFlatTypeInfo } from './getType'
 import { JSONSchema7 } from 'json-schema'
 
 export interface SchemaPropertyInfo {
-  type: TypeInfo | undefined
+  type: FlatTypeInfo | undefined
   isRequired: boolean
   enumeratedValues: EnumeratedValue[] | null
 }
@@ -33,7 +33,7 @@ export function getSchemaPropertiesInfo(
   if (schema.properties) {
     Object.keys(schema.properties).forEach(propertyName => {
       const propertySchema = getSchemaForProperty(schema, propertyName)
-      const type = getType(propertySchema)
+      const type = getFlatTypeInfo(propertySchema)
       let enumeratedValues = getEnumeratedValues(propertySchema).map(
         item => item.value,
       )

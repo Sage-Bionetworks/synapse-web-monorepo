@@ -2,28 +2,38 @@ import { getOnlyNonNullOneOfOption } from '@/utils/jsonschema/getOnlyNonNullOneO
 import { JSONSchema7 } from 'json-schema'
 import isArray from 'lodash-es/isArray'
 
-export interface TypeInfo {
+export interface FlatTypeInfo {
   type: string
-  itemType?: TypeInfo
+  format?: string
+  isArray: boolean
 }
 
-export function getType(jsonSchema: JSONSchema7): TypeInfo | undefined {
+export function getFlatTypeInfo(
+  jsonSchema: JSONSchema7,
+): FlatTypeInfo | undefined {
   if (jsonSchema.type) {
     if (jsonSchema.type === 'array' && jsonSchema.items) {
       const items = Array.isArray(jsonSchema.items)
         ? jsonSchema.items[0] // Take first item if tuple, assume same type for all
         : jsonSchema.items
 
-      const itemTypeInfo = getType(items as JSONSchema7)
+      const itemTypeInfo: FlatTypeInfo = getFlatTypeInfo(
+        items as JSONSchema7,
+      ) ?? {
+        type: 'string',
+        isArray: false,
+      }
 
       return {
-        type: 'array',
-        itemType: itemTypeInfo,
+        ...itemTypeInfo,
+        isArray: true,
       }
     }
 
     return {
       type: jsonSchema.type as string,
+      format: jsonSchema.format,
+      isArray: false,
     }
   }
 
@@ -32,7 +42,7 @@ export function getType(jsonSchema: JSONSchema7): TypeInfo | undefined {
       jsonSchema as Record<string, unknown>,
     )
     if (oneOfOption) {
-      return getType(oneOfOption as JSONSchema7)
+      return getFlatTypeInfo(oneOfOption as JSONSchema7)
     }
   }
 
