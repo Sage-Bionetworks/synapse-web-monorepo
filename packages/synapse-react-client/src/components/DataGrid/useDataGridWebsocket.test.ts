@@ -12,7 +12,15 @@ const mockUseDocumentVisibility = vi.fn(() => true)
 // Mock useCRDTModelView to just return the model passed in
 vi.mock('./useCRDTModelView', () => ({
   useCRDTModelView: vi.fn((model: GridModel | null | undefined) =>
-    model ? { snapshot: 'mockSnapshot', model } : undefined,
+    model
+      ? {
+          snapshot: 'mockSnapshot',
+          model,
+          columnNames: ['mock_col'],
+          columnOrder: [1],
+          rows: [{ id: 'mock_row' }],
+        }
+      : undefined,
   ),
 }))
 
@@ -133,6 +141,7 @@ describe('useDataGridWebSocket', () => {
     expect(result.current.modelSnapshot).toBeUndefined()
     expect(result.current.presignedUrl).toBe('ws://mocked-url')
     expect(result.current.errorEstablishingWebsocketConnection).toBeNull()
+    expect(result.current.hasRenderableModel).toBe(false)
   })
 
   it('should create websocket and update state via callbacks', async () => {
@@ -190,6 +199,9 @@ describe('useDataGridWebSocket', () => {
     expect(result.current.modelSnapshot).toEqual({
       snapshot: 'mockSnapshot',
       model: fakeModel,
+      columnNames: ['mock_col'],
+      columnOrder: [1],
+      rows: [{ id: 'mock_row' }],
     })
   })
 
@@ -280,6 +292,7 @@ describe('useDataGridWebSocket', () => {
 
     expect(result.current.model).toBe(existingModel)
     expect(result.current.isGridReady).toBe(true)
+    expect(result.current.hasRenderableModel).toBe(true)
 
     const clearCountAfterFirstConnection =
       mockClearPresignedUrl.mock.calls.length
@@ -305,6 +318,7 @@ describe('useDataGridWebSocket', () => {
     )
     expect(result.current.model).toBe(existingModel)
     expect(result.current.isGridReady).toBe(true)
+    expect(result.current.hasRenderableModel).toBe(true)
   })
 
   it('should avoid duplicate connection attempts while establish mutation is pending', async () => {
