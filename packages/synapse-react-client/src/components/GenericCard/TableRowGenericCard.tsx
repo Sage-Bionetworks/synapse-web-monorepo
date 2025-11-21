@@ -448,7 +448,10 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     )
   }
 
-  const resolvedCardTypeAdornment = cardTypeAdornment?.(schema, data)
+  const resolvedCardTypeAdornment = useMemo(
+    () => cardTypeAdornment?.(schema, data),
+    [cardTypeAdornment, schema, data]
+  )
 
   return (
     <GenericCard
