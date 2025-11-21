@@ -96,4 +96,16 @@ describe('getType', () => {
       isArray: true,
     })
   })
+
+  it('captures readOnly', () => {
+    const schema: JSONSchema7 = {
+      type: 'string',
+      readOnly: true,
+    }
+    expect(getFlatTypeInfo(schema)).toEqual({
+      type: 'string',
+      isArray: false,
+      readOnly: true,
+    })
+  })
 })
