@@ -1,3 +1,5 @@
+'use no memo' // don't use react-compiler until MD5 test failure is resolved
+
 import { useGetVersionsInfinite } from '@/synapse-queries/index'
 import { isTableType } from '@/utils/functions/EntityTypeUtils'
 import { Select } from '@mui/material'
