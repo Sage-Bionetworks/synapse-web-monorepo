@@ -1,8 +1,7 @@
-import { StablePresignedUrl, useGetStablePresignedUrl } from '@/synapse-queries'
-import {
-  getUseQueryIdleMock,
-  getUseQuerySuccessMock,
-} from '@/testutils/ReactQueryMockUtils'
+import { useGetStablePresignedUrl } from '@/synapse-queries'
+import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
+import { renderHook } from '@testing-library/react'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { useImageUrl } from './useImageUrlUtils'
 
@@ -20,18 +19,20 @@ describe('useImageUrl tests', () => {
   it('returns dataUrl when fileId and entityId are provided and dataUrl is available', () => {
     const fileId = 'file123'
     const entityId = 'entity123'
-    const response: StablePresignedUrl = {
-      dataUrl: 'https://somewebsite.com/imageofacat',
-      queryResult: getUseQuerySuccessMock(
-        new Blob(['image data'], { type: 'image/jpeg' }),
-      ),
-    }
+    const expectedDataUrl = 'https://somewebsite.com/imageofacat'
+    const { mock: mockQueryResult } = getUseQueryMock<
+      Blob,
+      SynapseClientError
+    >()
 
-    mockUseGetStablePresignedUrl.mockReturnValue(response)
+    mockUseGetStablePresignedUrl.mockImplementation(() => ({
+      dataUrl: expectedDataUrl,
+      queryResult: mockQueryResult(),
+    }))
 
-    const result = useImageUrl(fileId, entityId)
+    const { result } = renderHook(() => useImageUrl(fileId, entityId))
 
-    expect(result).toBe('https://somewebsite.com/imageofacat')
+    expect(result.current).toBe(expectedDataUrl)
     expect(mockUseGetStablePresignedUrl).toHaveBeenCalledWith(
       {
         associateObjectId: entityId,
@@ -47,21 +48,36 @@ describe('useImageUrl tests', () => {
     const fileId = 'file123'
     const entityId = 'entity123'
 
-    mockUseGetStablePresignedUrl.mockReturnValue({
-      dataUrl: undefined,
-      queryResult: getUseQueryIdleMock(),
-    })
+    const { mock: mockQueryResult } = getUseQueryMock<
+      Blob,
+      SynapseClientError
+    >()
 
-    const result = useImageUrl(fileId, entityId)
-    expect(result).toBeUndefined()
+    mockUseGetStablePresignedUrl.mockImplementation(() => ({
+      dataUrl: undefined,
+      queryResult: mockQueryResult(),
+    }))
+
+    const { result } = renderHook(() => useImageUrl(fileId, entityId))
+    expect(result.current).toBeUndefined()
   })
 
   it('returns undefined if fileId is not provided', () => {
     const fileId = ''
     const entityId = 'entity123'
 
-    const result = useImageUrl(fileId, entityId)
-    expect(result).toBeUndefined()
+    const { mock: mockQueryResult } = getUseQueryMock<
+      Blob,
+      SynapseClientError
+    >()
+
+    mockUseGetStablePresignedUrl.mockImplementation(() => ({
+      dataUrl: undefined,
+      queryResult: mockQueryResult(),
+    }))
+
+    const { result } = renderHook(() => useImageUrl(fileId, entityId))
+    expect(result.current).toBeUndefined()
 
     expect(mockUseGetStablePresignedUrl).toHaveBeenCalledWith(
       {
