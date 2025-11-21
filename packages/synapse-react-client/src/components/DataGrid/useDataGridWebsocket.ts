@@ -8,8 +8,11 @@ import { useDocumentVisibility } from '@react-hookz/web'
 // State type
 interface WebSocketState {
   model: GridModel | null
-  isGridReady: boolean
-  hasRenderableModel: boolean
+  /**
+   * True if the WebSocket has finished the initial sync (backfill) and can process CRDT updates.
+   * Corresponds to the `GRID_READY` action.
+   */
+  hasCompletedInitialSync: boolean
   isConnected: boolean
   isConnecting: boolean
   connectionParams: {
@@ -33,7 +36,6 @@ type WebSocketAction =
   | { type: 'GRID_READY' }
   | { type: 'MODEL_CREATED'; payload: GridModel }
   | { type: 'CONNECTION_ERROR'; payload: unknown }
-  | { type: 'MODEL_RENDERABLE' }
 
 // Reducer function
 function websocketReducer(
@@ -53,13 +55,14 @@ function websocketReducer(
           replicaId: action.payload.replicaId,
           sessionId: action.payload.sessionId,
         },
-        isGridReady: isSameConnection ? state.isGridReady : false,
+        hasCompletedInitialSync: isSameConnection
+          ? state.hasCompletedInitialSync
+          : false,
         model: isSameConnection ? state.model : null,
         isConnected: false,
         isConnecting: false,
         connectionAttemptId: action.payload.attemptId,
         connectionError: null,
-        hasRenderableModel: isSameConnection ? state.hasRenderableModel : false,
       }
     }
 
@@ -87,7 +90,7 @@ function websocketReducer(
     case 'GRID_READY':
       return {
         ...state,
-        isGridReady: true,
+        hasCompletedInitialSync: true,
       }
 
     case 'MODEL_CREATED':
@@ -103,9 +106,6 @@ function websocketReducer(
         isConnecting: false,
       }
 
-    case 'MODEL_RENDERABLE':
-      return { ...state, hasRenderableModel: true }
-
     default:
       return state
   }
@@ -113,14 +113,13 @@ function websocketReducer(
 
 export const initialWebSocketState: WebSocketState = {
   model: null,
-  isGridReady: false,
+  hasCompletedInitialSync: false,
   isConnected: false,
   isConnecting: false,
   connectionParams: null,
   websocketInstance: null,
   connectionAttemptId: null,
   connectionError: null,
-  hasRenderableModel: false,
 }
 
 /**
@@ -287,30 +286,30 @@ export function useDataGridWebSocket() {
     }
   }, [state.websocketInstance])
 
-  useEffect(() => {
-    if (!state.model || !modelSnapshot || state.hasRenderableModel) {
-      return
+  /**
+   * Checks if the model snapshot contains the minimum data required for rendering (columns and rows).
+   */
+  function isModelRenderable(model: GridModel | null) {
+    if (!model || !model.api.getSnapshot() || !modelSnapshot) {
+      return false
     }
     const { columnNames, columnOrder, rows } = modelSnapshot
     const columnsReady = columnNames.length >= 1
     const orderReady = columnOrder.length >= 1
     const rowsReady = rows.length >= 1
-
-    if (columnsReady && orderReady && rowsReady) {
-      dispatch({ type: 'MODEL_RENDERABLE' })
-    }
-  }, [state.model, modelSnapshot, state.hasRenderableModel])
+    return columnsReady && orderReady && rowsReady
+  }
 
   return {
     isConnected: state.isConnected,
     websocketInstance: state.websocketInstance,
-    isGridReady: state.isGridReady,
+    hasCompletedInitialSync: state.hasCompletedInitialSync,
     model: state.model,
     modelSnapshot,
     connect,
     presignedUrl,
     errorEstablishingWebsocketConnection:
       state.connectionError ?? errorEstablishingWebsocketConnection,
-    hasRenderableModel: state.hasRenderableModel,
+    hasSufficientData: isModelRenderable(state.model),
   }
 }

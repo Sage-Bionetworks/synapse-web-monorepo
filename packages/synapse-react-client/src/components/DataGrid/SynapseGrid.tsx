@@ -90,12 +90,12 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const {
       isConnected,
       websocketInstance,
-      isGridReady,
+      hasCompletedInitialSync,
       model,
       modelSnapshot,
       connect,
       presignedUrl,
-      hasRenderableModel,
+      hasSufficientData,
     } = useDataGridWebSocket()
 
     const websocketInstanceRef = useRef<typeof websocketInstance | null>(null)
@@ -342,7 +342,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
           {session && (
             <>
               {/* Grid Loading State */}
-              {!hasRenderableModel && (
+              {!hasSufficientData && (
                 <Grid size={12}>
                   <h3>Setting up grid...</h3>
                   <div style={{ marginBottom: '10px' }}>
@@ -356,7 +356,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                     {session && replicaId && presignedUrl && !isConnected && (
                       <p>Connecting to server...</p>
                     )}
-                    {isConnected && !isGridReady && (
+                    {isConnected && !hasCompletedInitialSync && (
                       <p>Loading table data...</p>
                     )}
                     <SkeletonTable numRows={4} numCols={1} />
@@ -364,7 +364,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                 </Grid>
               )}
               {/* Grid */}
-              {hasRenderableModel && (
+              {hasSufficientData && (
                 <>
                   <Grid size={12}>
                     <Stack

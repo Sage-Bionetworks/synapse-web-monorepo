@@ -137,11 +137,11 @@ describe('useDataGridWebSocket', () => {
     expect(result.current.model).toBeNull()
     expect(result.current.isConnected).toBe(false)
     expect(result.current.websocketInstance).toBeNull()
-    expect(result.current.isGridReady).toBe(false)
+    expect(result.current.hasCompletedInitialSync).toBe(false)
     expect(result.current.modelSnapshot).toBeUndefined()
     expect(result.current.presignedUrl).toBe('ws://mocked-url')
     expect(result.current.errorEstablishingWebsocketConnection).toBeNull()
-    expect(result.current.hasRenderableModel).toBe(false)
+    expect(result.current.hasSufficientData).toBe(false)
   })
 
   it('should create websocket and update state via callbacks', async () => {
@@ -176,7 +176,7 @@ describe('useDataGridWebSocket', () => {
     act(() => {
       MockDataGridWebSocket.mock.lastCall![0].onGridReady!()
     })
-    expect(result.current.isGridReady).toBe(true)
+    expect(result.current.hasCompletedInitialSync).toBe(true)
 
     // Simulate onStatusChange
     act(() => {
@@ -188,14 +188,16 @@ describe('useDataGridWebSocket', () => {
     expect(result.current.isConnected).toBe(true)
 
     // Simulate onModelCreate
-    const fakeModel = { foo: 'bar' }
+    const fakeModel = {
+      foo: 'bar',
+      api: { getSnapshot: vi.fn(() => ({ columns: [], rows: [] })) },
+    }
     act(() => {
       MockDataGridWebSocket.mock.lastCall![0].onModelCreate!(
         fakeModel as unknown as GridModel,
       )
     })
     expect(result.current.model).toEqual(fakeModel)
-    // modelSnapshot should reflect mocked useCRDTModelView
     expect(result.current.modelSnapshot).toEqual({
       snapshot: 'mockSnapshot',
       model: fakeModel,
@@ -203,6 +205,7 @@ describe('useDataGridWebSocket', () => {
       columnOrder: [1],
       rows: [{ id: 'mock_row' }],
     })
+    expect(result.current.hasSufficientData).toBe(true)
   })
 
   it('should defer connection attempts until the document becomes visible', async () => {
@@ -285,14 +288,17 @@ describe('useDataGridWebSocket', () => {
       MockDataGridWebSocket.mock.lastCall![0].onGridReady!()
     })
 
-    const existingModel = { baz: 'qux' } as unknown as GridModel
+    const existingModel = {
+      baz: 'qux',
+      api: { getSnapshot: vi.fn(() => ({ columns: [], rows: [] })) },
+    } as unknown as GridModel
     act(() => {
       MockDataGridWebSocket.mock.lastCall![0].onModelCreate!(existingModel)
     })
 
     expect(result.current.model).toBe(existingModel)
-    expect(result.current.isGridReady).toBe(true)
-    expect(result.current.hasRenderableModel).toBe(true)
+    expect(result.current.hasCompletedInitialSync).toBe(true)
+    expect(result.current.hasSufficientData).toBe(true)
 
     const clearCountAfterFirstConnection =
       mockClearPresignedUrl.mock.calls.length
@@ -317,8 +323,8 @@ describe('useDataGridWebSocket', () => {
       clearCountAfterFirstConnection,
     )
     expect(result.current.model).toBe(existingModel)
-    expect(result.current.isGridReady).toBe(true)
-    expect(result.current.hasRenderableModel).toBe(true)
+    expect(result.current.hasCompletedInitialSync).toBe(true)
+    expect(result.current.hasSufficientData).toBe(true)
   })
 
   it('should avoid duplicate connection attempts while establish mutation is pending', async () => {
@@ -425,7 +431,10 @@ describe('useDataGridWebSocket', () => {
       firstCallConfig.onStatusChange!(true, firstInstance)
     })
 
-    const existingModel = { fizz: 'buzz' } as unknown as GridModel
+    const existingModel = {
+      fizz: 'buzz',
+      api: { getSnapshot: vi.fn(() => ({ columns: [], rows: [] })) },
+    } as unknown as GridModel
     act(() => {
       firstCallConfig.onModelCreate!(existingModel)
     })
