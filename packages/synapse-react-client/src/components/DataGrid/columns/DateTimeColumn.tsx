@@ -20,11 +20,12 @@ export function DateTimeCell({
       onChange={(newValue: string | Dayjs | null) => {
         if (newValue == null) {
           setRowData(null)
-        } else if (colType == 'string') {
-          setRowData(dayjs(newValue).toISOString())
-        } else if (colType == 'number') {
+        } else if (colType === 'number') {
           // Assume unix millisecond timestamp
           setRowData(dayjs(newValue).valueOf())
+        } else {
+          // colType is 'string' or unspecified, use ISO string
+          setRowData(dayjs(newValue).toISOString())
         }
       }}
       sx={{

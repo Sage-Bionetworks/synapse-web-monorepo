@@ -18,7 +18,6 @@ export type AutocompleteCellProps = CellProps & {
   setRowData: (value: AutocompleteOption) => void
   choices: AutocompleteOption[]
   colType?: JSONSchema7Type
-  freeSolo: boolean
 }
 
 export function castCellValueToString(toCast: any): string {
