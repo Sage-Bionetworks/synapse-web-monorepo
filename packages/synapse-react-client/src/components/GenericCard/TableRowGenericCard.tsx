@@ -162,6 +162,11 @@ export type TableRowGenericCardProps = {
   versionNumber?: number
   /** Optional props for the ShareThisPage component */
   sharePageLinkButtonProps?: ShareThisPageProps
+  /** Optional function that receives schema and data and returns a ReactNode to be rendered next to the card type */
+  cardTypeAdornment?: (
+    schema: Record<string, number>,
+    data: string[],
+  ) => React.ReactNode
 } & CommonCardProps
 
 // SWC-6115: special rendering of the version column (for Views)
@@ -216,6 +221,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     labelLinkConfig,
     descriptionConfig,
     columnIconOptions,
+    cardTypeAdornment,
   } = props
 
   const {
@@ -442,6 +448,8 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     )
   }
 
+  const resolvedCardTypeAdornment = cardTypeAdornment?.(schema, data)
+
   return (
     <GenericCard
       ref={ref}
@@ -465,6 +473,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       title={title}
       subtitle={subTitle}
       titleLinkConfiguration={{ target, href }}
+      cardTypeAdornment={resolvedCardTypeAdornment}
       titleAsFileHandleLinkConfiguration={
         !titleLinkConfig &&
         titleColumnType === ColumnTypeEnum.FILEHANDLEID &&
