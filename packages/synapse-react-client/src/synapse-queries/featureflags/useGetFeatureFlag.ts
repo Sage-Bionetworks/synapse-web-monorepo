@@ -30,7 +30,7 @@ export function useGetFeatureFlag(
 
   // Track user overrides with synchronized localStorage
   const { value: userOverrides } = useLocalStorageValue<
-    Record<FeatureFlagEnum, boolean | undefined>
+    Partial<Record<FeatureFlagEnum, boolean>>
   >('synapseFeatureFlagOverrides', {})
 
   const globalFlagValue = featureFlags?.[featureFlag]
