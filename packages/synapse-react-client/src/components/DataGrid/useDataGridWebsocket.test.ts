@@ -198,6 +198,7 @@ describe('useDataGridWebSocket', () => {
       )
     })
     expect(result.current.model).toEqual(fakeModel)
+    // modelSnapshot should reflect mocked useCRDTModelView
     expect(result.current.modelSnapshot).toEqual({
       snapshot: 'mockSnapshot',
       model: fakeModel,

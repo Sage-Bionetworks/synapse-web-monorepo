@@ -9,7 +9,7 @@ import { useDocumentVisibility } from '@react-hookz/web'
 interface WebSocketState {
   model: GridModel | null
   /**
-   * True if the WebSocket has finished the initial sync (backfill) and can process CRDT updates.
+   * True if the WebSocket has finished the initial sync and can process CRDT updates.
    * Corresponds to the `GRID_READY` action.
    */
   hasCompletedInitialSync: boolean
