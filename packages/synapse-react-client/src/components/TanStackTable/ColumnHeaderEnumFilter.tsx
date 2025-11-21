@@ -1,3 +1,5 @@
+'use no memo' // skip react compiler for this component
+
 import { Column, RowData } from '@tanstack/react-table'
 import { isEmpty, isEqual, noop } from 'lodash-es'
 import { useMemo } from 'react'
@@ -78,7 +80,6 @@ function getMaybeFacetedUniqueValues<TData = unknown, TValue = unknown>(
 export function ColumnHeaderEnumFilter<TData = unknown, TValue = unknown>(
   props: ColumnHeaderEnumFilterProps<TData, TValue>,
 ) {
-  'use no memo' // skip react compiler for this component
   type EnumFilterValue = TValue[]
   const { column, title } = props
 
