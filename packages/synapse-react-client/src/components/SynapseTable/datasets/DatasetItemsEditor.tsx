@@ -1,3 +1,5 @@
+'use no memo' // skip react compiler for this component
+
 import WideButton from '@/components/styled/WideButton'
 import { datasetItemToReference } from '@/components/SynapseTable/datasets/DatasetEditorUtils'
 import {
@@ -379,7 +381,6 @@ function NoItemsPlaceholder(props: {
 }
 
 export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
-  'use no memo' // skip react compiler for this component
   const { entityId, onSave, onClose, onUnsavedChangesChange } = props
   const [showEntityFinder, setShowEntityFinder] = useState<boolean>(false)
   const [showWarningDialog, setShowWarningDialog] = useState<boolean>(false)

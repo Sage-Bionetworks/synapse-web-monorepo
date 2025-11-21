@@ -1,3 +1,5 @@
+'use no memo' // skip react compiler for this component
+
 import { getEntityVersions } from '@/synapse-client/SynapseClient'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
@@ -347,7 +349,6 @@ const DEFAULT_HIDDEN_COLUMNS = [DetailsViewColumn.DIRECT_DOWNLOAD]
  * an "infinite scroll" pattern, so entities should not be removed from the list when loading the next page.
  */
 export function DetailsView(props: DetailsViewProps) {
-  'use no memo' // skip react compiler for this component
   const {
     entities,
     isLoading,
