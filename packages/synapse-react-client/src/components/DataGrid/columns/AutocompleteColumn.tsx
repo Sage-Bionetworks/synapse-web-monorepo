@@ -113,8 +113,6 @@ export function AutocompleteCell({
           // The value was selected, so explicitly set it
           setRowData(newVal)
         }
-        // Update local input state to match the selected/created value
-        // setLocalInputState(castCellValueToString(newVal))
         setTimeout(() => stopEditing({ nextRow: false }), 0)
       }}
       blurOnSelect={true}

@@ -50,7 +50,6 @@ export function dateTimeColumn({
     component: ((props: DateTimeCellProps) => (
       <DateTimeCell {...props} colType={colType} />
     )) as CellComponent,
-    // If we update our enums to support labels, then we can update copy to copy the label and paste to lookup the mapping from label -> value
     copyValue: ({ rowData }) => rowData,
     pasteValue: ({ value }) => value,
     disableKeys: true,

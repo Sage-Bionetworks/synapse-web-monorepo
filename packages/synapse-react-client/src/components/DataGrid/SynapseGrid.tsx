@@ -284,9 +284,9 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
             />
           </Grid>
           {/* Debug Information */}
-          {showDebugInfo && (
-            <Grid size={{ xs: 12, xl: 4 }}>
-              <Stack>
+          <Grid size={{ xs: 12, xl: 4 }}>
+            {showDebugInfo && (
+              <div>
                 <p>Session ID: {session?.sessionId || 'No session created'}</p>
                 <p>Replica ID: {replicaId || 'No replica created'}</p>
                 <p>
@@ -308,16 +308,16 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                         : '')
                     : 'No URL generated'}
                 </p>
-
                 <p>
                   WebSocket Status:{' '}
                   <span style={{ color: isConnected ? 'green' : 'red' }}>
                     {connectionStatus}
                   </span>
                 </p>
-              </Stack>
-            </Grid>
-          )}
+              </div>
+            )}
+          </Grid>
+
           {session && (
             <>
               {/* Grid Loading State */}
