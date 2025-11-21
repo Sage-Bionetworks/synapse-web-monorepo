@@ -1,17 +1,19 @@
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
+import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
+import useGetSchemaForGrid from '@/components/DataGrid/hooks/useGetSchemaForGrid'
 import MergeGridWithSourceTableButton from '@/components/DataGrid/MergeGridWithSourceTableButton'
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { SkeletonTable } from '@/components/index'
-import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
-import { useGetEntity, useGetSchema } from '@/synapse-queries/index'
+import { useGetEntity } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
+import { SmartToyTwoTone } from '@mui/icons-material'
+import { Stack } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import {
   CreateGridRequest,
   GridSession,
 } from '@sage-bionetworks/synapse-client'
-import classNames from 'classnames'
 import { ClickableJsonCrdt } from 'clickable-json'
 import {
   forwardRef,
@@ -22,31 +24,18 @@ import {
   useRef,
   useState,
 } from 'react'
-import { DataSheetGrid, DataSheetGridRef } from 'react-datasheet-grid'
-import 'react-datasheet-grid/dist/style.css'
-import '../../style/components/_data-grid-extra.scss'
+import { DataSheetGridRef } from 'react-datasheet-grid'
 import { SelectionWithId } from 'react-datasheet-grid/dist/types'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
+import GridAgentChat from '../SynapseChat/GridAgentChat'
+import DataGrid from './DataGrid'
 import { DataGridRow, GridModel, Operation } from './DataGridTypes'
 import { useGridUndoRedo } from './hooks/useGridUndoRedo'
 import { StartGridSession, StartGridSessionHandle } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { applyModelChange, ModelChange } from './utils/applyModelChange'
-import {
-  GRID_ROW_REACT_KEY_PROPERTY,
-  removeNoOpOperations,
-} from './utils/DataGridUtils'
-import { getCellClassName } from './utils/getCellClassName'
+import { removeNoOpOperations } from './utils/DataGridUtils'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
-import { modelColsToGrid } from './utils/modelColsToGrid'
-import { Stack } from '@mui/material'
-import GridAgentChat from '../SynapseChat/GridAgentChat'
-import { SmartToyTwoTone } from '@mui/icons-material'
-import {
-  renderAddRowsComponent,
-  renderRecordSetContextMenu,
-  renderViewContextMenu,
-} from './components/contextMenu'
 
 export type SynapseGridProps = {
   agentRegistrationId?: string
@@ -151,12 +140,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       }
     }, [model])
 
-    const { data: jsonSchema } = useGetSchema(
-      session?.gridJsonSchema$Id ?? '',
-      {
-        enabled: !!session?.gridJsonSchema$Id,
-      },
-    )
+    const jsonSchema = useGetSchemaForGrid(session)
 
     // Grid behaves differently for views vs recordSets
     // Note for future: can get modifiedOn to refresh grid when view changes
@@ -174,7 +158,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
 
     // Process schema properties once
     const schemaPropertiesInfo = useMemo(() => {
-      return getSchemaPropertiesInfo(jsonSchema!)
+      return getSchemaPropertiesInfo(jsonSchema ?? null)
     }, [jsonSchema])
 
     const connectionStatus = isConnected ? 'Connected' : 'Disconnected'
@@ -183,13 +167,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const rowValues = useMemo(
       () => (modelSnapshot ? modelRowsToGrid(model, modelSnapshot) : []),
       [model, modelSnapshot],
-    )
-    const colValues = useMemo(
-      () =>
-        modelSnapshot
-          ? modelColsToGrid(modelSnapshot, schemaPropertiesInfo)
-          : [],
-      [modelSnapshot, schemaPropertiesInfo],
     )
 
     const commit = useCallback(() => {
@@ -313,6 +290,10 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                 <p>Session ID: {session?.sessionId || 'No session created'}</p>
                 <p>Replica ID: {replicaId || 'No replica created'}</p>
                 <p>
+                  Source Entity ID:{' '}
+                  {session?.sourceEntityId || 'No source entity'}
+                </p>
+                <p>
                   JSON Schema $id:{' '}
                   {session?.gridJsonSchema$Id ||
                     'No schema attached to session'}
@@ -327,7 +308,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                         : '')
                     : 'No URL generated'}
                 </p>
-
                 <p>
                   WebSocket Status:{' '}
                   <span style={{ color: isConnected ? 'green' : 'red' }}>
@@ -404,54 +384,19 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                     </Stack>
                   </Grid>
                   <Grid size={12}>
-                    <DataSheetGrid
-                      ref={gridRef}
-                      value={rowValues}
-                      columns={colValues}
-                      autoAddRow={!entityIsView}
-                      addRowsComponent={
-                        entityIsView ? false : renderAddRowsComponent
-                      }
-                      contextMenuComponent={
-                        entityIsView
-                          ? renderViewContextMenu
-                          : renderRecordSetContextMenu
-                      }
-                      rowKey={GRID_ROW_REACT_KEY_PROPERTY}
-                      rowClassName={({ rowData, rowIndex }) =>
-                        classNames({
-                          'row-valid':
-                            !!jsonSchema &&
-                            rowData.__validationStatus === 'valid',
-                          'row-invalid':
-                            !!jsonSchema &&
-                            rowData.__validationStatus === 'invalid',
-                          'row-unknown':
-                            !!jsonSchema &&
-                            rowData.__validationStatus === 'pending',
-                          'row-selected': selectedRowIndex === rowIndex,
-                        })
-                      }
-                      cellClassName={({ rowData, rowIndex, columnId }) => {
-                        return getCellClassName({
-                          rowData: rowData as DataGridRow,
-                          rowIndex,
-                          columnId,
-                          selectedRowIndex,
-                          lastSelection,
-                          colValues,
-                        })
-                      }}
-                      duplicateRow={({ rowData }) => ({
-                        ...rowData,
-                      })}
-                      onChange={handleChange}
-                      onActiveCellChange={({ cell }) => {
-                        if (cell) {
-                          setSelectedRowIndex(cell.row)
-                        }
-                      }}
-                      onSelectionChange={handleSelectionChange}
+                    <DataGrid
+                      gridRef={gridRef}
+                      rowValues={rowValues}
+                      columnNames={modelSnapshot?.columnNames ?? []}
+                      columnOrder={modelSnapshot?.columnOrder ?? []}
+                      schemaPropertiesInfo={schemaPropertiesInfo}
+                      entityIsView={entityIsView}
+                      jsonSchema={jsonSchema}
+                      selectedRowIndex={selectedRowIndex}
+                      lastSelection={lastSelection}
+                      handleChange={handleChange}
+                      setSelectedRowIndex={setSelectedRowIndex}
+                      handleSelectionChange={handleSelectionChange}
                     />
                   </Grid>
                   <Grid size={12}>

@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from 'vitest'
-import { modelColsToGrid } from './modelColsToGrid'
-import { GridModelSnapshot } from '../DataGridTypes'
+import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
+import { describe, expect, it, vi } from 'vitest'
 import { createColumn } from './columnFactory'
+import { modelColsToGrid } from './modelColsToGrid'
 
 // Mock the columnFactory
 vi.mock('./columnFactory', () => ({
@@ -13,48 +13,43 @@ vi.mock('./columnFactory', () => ({
 }))
 
 describe('modelColsToGrid', () => {
-  it('should return empty array when modelSnapshot is null', () => {
-    const result = modelColsToGrid(null as any, {})
-    expect(result).toEqual([])
-  })
-
-  it('should return empty array when modelSnapshot is undefined', () => {
-    const result = modelColsToGrid(undefined as any, {})
+  it('should return empty array when columns are empty', () => {
+    const result = modelColsToGrid([], [], {})
     expect(result).toEqual([])
   })
 
   it('should create columns in the correct order', () => {
-    const modelSnapshot = {
-      columnNames: ['id', 'name', 'email', 'age'],
-      columnOrder: [1, 0, 3, 2],
-      rows: [],
-      selections: {},
-    } as unknown as GridModelSnapshot
+    const columnNames = ['id', 'name', 'email', 'age']
+    const columnOrder = [1, 0, 3, 2]
 
-    const schemaPropertiesInfo = {
+    const schemaPropertiesInfo: SchemaPropertiesMap = {
       id: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: true,
         enumeratedValues: null,
       },
       name: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: true,
         enumeratedValues: null,
       },
       email: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: false,
         enumeratedValues: null,
       },
       age: {
-        type: { type: 'integer' },
+        type: { type: 'integer', isArray: false },
         isRequired: false,
         enumeratedValues: null,
       },
     }
 
-    const result = modelColsToGrid(modelSnapshot, schemaPropertiesInfo)
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+    )
 
     expect(result).toHaveLength(4)
     expect(result[0].title).toBe('name') // columnOrder[0] = 1, columnNames[1] = 'name'
@@ -64,43 +59,43 @@ describe('modelColsToGrid', () => {
   })
 
   it('should pass correct configuration to createColumn', () => {
-    const modelSnapshot = {
-      columnNames: ['status'],
-      columnOrder: [0],
-      rows: [],
-      selections: {},
-    } as unknown as GridModelSnapshot
+    const columnNames = ['status']
+    const columnOrder = [0]
 
     const schemaPropertiesInfo = {
       status: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         enumeratedValues: ['active', 'inactive'],
         isRequired: true,
       },
     }
 
-    const result = modelColsToGrid(modelSnapshot, schemaPropertiesInfo)
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+    )
 
     expect(result).toHaveLength(1)
     expect((result[0] as any).mockConfig).toEqual({
       columnName: 'status',
-      typeInfo: { type: 'string' },
+      typeInfo: { type: 'string', isArray: false },
       enumeratedValues: ['active', 'inactive'],
       isRequired: true,
     })
   })
 
   it('should handle missing schema properties gracefully', () => {
-    const modelSnapshot = {
-      columnNames: ['unknownColumn'],
-      columnOrder: [0],
-      rows: [],
-      selections: {},
-    } as unknown as GridModelSnapshot
+    const columnNames = ['unknownColumn']
+    const columnOrder = [0]
 
     const schemaPropertiesInfo = {}
 
-    const result = modelColsToGrid(modelSnapshot, schemaPropertiesInfo)
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+    )
 
     expect(result).toHaveLength(1)
     expect((result[0] as any).mockConfig).toEqual({
@@ -112,59 +107,59 @@ describe('modelColsToGrid', () => {
   })
 
   it('should handle partial schema properties', () => {
-    const modelSnapshot = {
-      columnNames: ['partialColumn'],
-      columnOrder: [0],
-      rows: [],
-      selections: {},
-    } as unknown as GridModelSnapshot
+    const columnNames = ['partialColumn']
+    const columnOrder = [0]
 
     const schemaPropertiesInfo = {
       partialColumn: {
-        type: { type: 'number' },
+        type: { type: 'number', isArray: false },
         isRequired: false,
         enumeratedValues: null,
       },
     }
 
-    const result = modelColsToGrid(modelSnapshot, schemaPropertiesInfo)
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+    )
 
     expect(result).toHaveLength(1)
     expect((result[0] as any).mockConfig).toEqual({
       columnName: 'partialColumn',
-      typeInfo: { type: 'number' },
+      typeInfo: { type: 'number', isArray: false },
       enumeratedValues: [],
       isRequired: false,
     })
   })
 
   it('should handle complex type objects with arrays', () => {
-    const modelSnapshot = {
-      columnNames: ['complexColumn'],
-      columnOrder: [0],
-      rows: [],
-      selections: {},
-    } as unknown as GridModelSnapshot
+    const columnNames = ['complexColumn']
+    const columnOrder = [0]
 
     const schemaPropertiesInfo = {
       complexColumn: {
         type: {
-          type: 'array',
-          itemType: { type: 'string' },
+          type: 'string',
+          isArray: true,
         },
         enumeratedValues: ['value1', 'value2'],
         isRequired: true,
       },
     }
 
-    const result = modelColsToGrid(modelSnapshot, schemaPropertiesInfo)
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+    )
 
     expect(result).toHaveLength(1)
     expect((result[0] as any).mockConfig).toEqual({
       columnName: 'complexColumn',
       typeInfo: {
-        type: 'array',
-        itemType: { type: 'string' },
+        type: 'string',
+        isArray: true,
       },
       enumeratedValues: ['value1', 'value2'],
       isRequired: true,
@@ -172,12 +167,8 @@ describe('modelColsToGrid', () => {
   })
 
   it('should handle undefined type gracefully', () => {
-    const modelSnapshot = {
-      columnNames: ['undefinedTypeColumn'],
-      columnOrder: [0],
-      rows: [],
-      selections: {},
-    } as unknown as GridModelSnapshot
+    const columnNames = ['undefinedTypeColumn']
+    const columnOrder = [0]
 
     const schemaPropertiesInfo = {
       undefinedTypeColumn: {
@@ -187,7 +178,11 @@ describe('modelColsToGrid', () => {
       },
     }
 
-    const result = modelColsToGrid(modelSnapshot, schemaPropertiesInfo)
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+    )
 
     expect(result).toHaveLength(1)
     expect((result[0] as any).mockConfig).toEqual({
@@ -199,73 +194,73 @@ describe('modelColsToGrid', () => {
   })
 
   it('should handle null enumeratedValues', () => {
-    const modelSnapshot = {
-      columnNames: ['nullEnumColumn'],
-      columnOrder: [0],
-      rows: [],
-      selections: {},
-    } as unknown as GridModelSnapshot
+    const columnNames = ['nullEnumColumn']
+    const columnOrder = [0]
 
     const schemaPropertiesInfo = {
       nullEnumColumn: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         enumeratedValues: null,
         isRequired: true,
       },
     }
 
-    const result = modelColsToGrid(modelSnapshot, schemaPropertiesInfo)
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+    )
 
     expect(result).toHaveLength(1)
     expect((result[0] as any).mockConfig).toEqual({
       columnName: 'nullEnumColumn',
-      typeInfo: { type: 'string' },
+      typeInfo: { type: 'string', isArray: false },
       enumeratedValues: [],
       isRequired: true,
     })
   })
 
   it('should handle multiple columns with mixed property configurations', () => {
-    const modelSnapshot = {
-      columnNames: ['id', 'tags', 'active', 'count'],
-      columnOrder: [0, 1, 2, 3],
-      rows: [],
-      selections: {},
-    } as unknown as GridModelSnapshot
+    const columnNames = ['id', 'tags', 'active', 'count']
+    const columnOrder = [0, 1, 2, 3]
 
     const schemaPropertiesInfo = {
       id: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: true,
         enumeratedValues: null,
       },
       tags: {
         type: {
-          type: 'array',
-          itemType: { type: 'string' },
+          type: 'string',
+          isArray: true,
         },
         enumeratedValues: ['tag1', 'tag2'],
         isRequired: false,
       },
       active: {
-        type: { type: 'boolean' },
+        type: { type: 'boolean', isArray: false },
         isRequired: true,
         enumeratedValues: null,
       },
       count: {
-        type: { type: 'integer' },
+        type: { type: 'integer', isArray: false },
         isRequired: false,
         enumeratedValues: null,
       },
     }
 
-    const result = modelColsToGrid(modelSnapshot, schemaPropertiesInfo)
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+    )
 
     expect(result).toHaveLength(4)
 
     expect((result[0] as any).mockConfig).toEqual({
       columnName: 'id',
-      typeInfo: { type: 'string' },
+      typeInfo: { type: 'string', isArray: false },
       enumeratedValues: [],
       isRequired: true,
     })
@@ -273,8 +268,8 @@ describe('modelColsToGrid', () => {
     expect((result[1] as any).mockConfig).toEqual({
       columnName: 'tags',
       typeInfo: {
-        type: 'array',
-        itemType: { type: 'string' },
+        type: 'string',
+        isArray: true,
       },
       enumeratedValues: ['tag1', 'tag2'],
       isRequired: false,
@@ -282,41 +277,41 @@ describe('modelColsToGrid', () => {
 
     expect((result[2] as any).mockConfig).toEqual({
       columnName: 'active',
-      typeInfo: { type: 'boolean' },
+      typeInfo: { type: 'boolean', isArray: false },
       enumeratedValues: [],
       isRequired: true,
     })
 
     expect((result[3] as any).mockConfig).toEqual({
       columnName: 'count',
-      typeInfo: { type: 'integer' },
+      typeInfo: { type: 'integer', isArray: false },
       enumeratedValues: [],
       isRequired: false,
     })
   })
 
   it('should handle empty columnOrder array', () => {
-    const modelSnapshot = {
-      columnNames: ['id', 'name'],
-      columnOrder: [],
-      rows: [],
-      selections: {},
-    } as unknown as GridModelSnapshot
+    const columnNames = ['id', 'name']
+    const columnOrder: number[] = []
 
     const schemaPropertiesInfo = {
       id: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: true,
         enumeratedValues: null,
       },
       name: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: false,
         enumeratedValues: null,
       },
     }
 
-    const result = modelColsToGrid(modelSnapshot, schemaPropertiesInfo)
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+    )
 
     expect(result).toEqual([])
   })
@@ -325,26 +320,22 @@ describe('modelColsToGrid', () => {
     const createColumnMock = vi.mocked(createColumn)
     createColumnMock.mockClear()
 
-    const modelSnapshot = {
-      columnNames: ['testColumn'],
-      columnOrder: [0],
-      rows: [],
-      selections: {},
-    } as unknown as GridModelSnapshot
+    const columnNames = ['testColumn']
+    const columnOrder = [0]
 
     const schemaPropertiesInfo = {
       testColumn: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         enumeratedValues: ['option1', 'option2'],
         isRequired: true,
       },
     }
 
-    modelColsToGrid(modelSnapshot, schemaPropertiesInfo)
+    modelColsToGrid(columnNames, columnOrder, schemaPropertiesInfo)
 
     expect(createColumnMock).toHaveBeenCalledWith({
       columnName: 'testColumn',
-      typeInfo: { type: 'string' },
+      typeInfo: { type: 'string', isArray: false },
       enumeratedValues: ['option1', 'option2'],
       isRequired: true,
     })
@@ -354,70 +345,76 @@ describe('modelColsToGrid', () => {
 // Integration test to ensure the functions work together correctly
 describe('modelColsToGrid integration', () => {
   it('should create the correct column types for a realistic schema', () => {
-    const modelSnapshot = {
-      columnNames: ['id', 'name', 'email', 'age', 'isActive', 'tags', 'status'],
-      columnOrder: [0, 1, 2, 3, 4, 5, 6],
-      rows: [],
-      selections: {},
-    } as unknown as GridModelSnapshot
+    const columnNames = [
+      'id',
+      'name',
+      'email',
+      'age',
+      'isActive',
+      'tags',
+      'status',
+    ]
+    const columnOrder = [0, 1, 2, 3, 4, 5, 6]
 
     const schemaPropertiesInfo = {
       id: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: true,
         enumeratedValues: null,
       },
       name: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: true,
         enumeratedValues: null,
       },
       email: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: false,
         enumeratedValues: null,
       },
       age: {
-        type: { type: 'integer' },
+        type: { type: 'integer', isArray: false },
         isRequired: false,
         enumeratedValues: null,
       },
       isActive: {
-        type: { type: 'boolean' },
+        type: { type: 'boolean', isArray: false },
         isRequired: true,
         enumeratedValues: null,
       },
       tags: {
         type: {
-          type: 'array',
-
-          itemType: { type: 'string' },
+          type: 'string',
+          isArray: true,
         },
         enumeratedValues: ['frontend', 'backend', 'mobile'],
         isRequired: false,
       },
       status: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         enumeratedValues: ['active', 'inactive', 'pending'],
         isRequired: true,
       },
     }
 
-    const columns = modelColsToGrid(modelSnapshot, schemaPropertiesInfo)
+    const columns = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+    )
 
     expect(columns).toHaveLength(7)
 
     // Verify each column is created correctly
     columns.forEach((column, index) => {
-      const columnName =
-        modelSnapshot.columnNames[modelSnapshot.columnOrder[index]]
+      const columnName = columnNames[columnOrder[index]]
       expect(column.title).toBe(columnName)
     })
 
     // Test individual column creation for specific types
     const idColumn = createColumn({
       columnName: 'id',
-      typeInfo: { type: 'string' },
+      typeInfo: { type: 'string', isArray: false },
       enumeratedValues: [],
       isRequired: true,
     })
@@ -426,8 +423,8 @@ describe('modelColsToGrid integration', () => {
     const tagsColumn = createColumn({
       columnName: 'tags',
       typeInfo: {
-        type: 'array',
-        itemType: { type: 'string' },
+        type: 'string',
+        isArray: true,
       },
       enumeratedValues: ['frontend', 'backend', 'mobile'],
       isRequired: false,
@@ -436,7 +433,7 @@ describe('modelColsToGrid integration', () => {
 
     const statusColumn = createColumn({
       columnName: 'status',
-      typeInfo: { type: 'string' },
+      typeInfo: { type: 'string', isArray: false },
       enumeratedValues: ['active', 'inactive', 'pending'],
       isRequired: true,
     })
