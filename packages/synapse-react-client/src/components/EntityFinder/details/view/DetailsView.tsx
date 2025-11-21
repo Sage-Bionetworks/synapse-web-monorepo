@@ -1,3 +1,5 @@
+'use no memo' // skip react compiler for this component
+
 import { getEntityVersions } from '@/synapse-client/SynapseClient'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {

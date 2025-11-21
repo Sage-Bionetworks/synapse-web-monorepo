@@ -1,3 +1,5 @@
+'use no memo' // skip react compiler for this component
+
 import WideButton from '@/components/styled/WideButton'
 import { datasetItemToReference } from '@/components/SynapseTable/datasets/DatasetEditorUtils'
 import {

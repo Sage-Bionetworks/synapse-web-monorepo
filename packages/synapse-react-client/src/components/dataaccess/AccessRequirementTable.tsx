@@ -1,3 +1,5 @@
+'use no memo' // skip react compiler for this component
+
 import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { Button, Typography } from '@mui/material'

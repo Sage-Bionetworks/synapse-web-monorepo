@@ -1,3 +1,4 @@
+'use no memo' // skip react compiler for this component
 import {
   useGetItemsInTrashCanInfinite,
   usePurgeEntities,
@@ -97,6 +98,7 @@ function getTrashCanColumns(
 }
 
 export function TrashCanList() {
+  'use no memo' // skip react compiler for this component
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
   const [errors, setErrors] = useState<SynapseClientError[]>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})

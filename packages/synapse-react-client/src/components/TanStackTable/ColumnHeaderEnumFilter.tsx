@@ -1,3 +1,5 @@
+'use no memo' // skip react compiler for this component
+
 import { Column, RowData } from '@tanstack/react-table'
 import { isEmpty, isEqual, noop } from 'lodash-es'
 import { useMemo } from 'react'
