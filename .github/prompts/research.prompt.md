@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 ---
 
 # Find Similar Components and Patterns

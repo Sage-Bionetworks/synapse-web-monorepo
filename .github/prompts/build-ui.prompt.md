@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: 'Generate a new React component given a Figma design, following Synapse code conventions.'
 ---
 
@@ -81,7 +81,7 @@ export default StatContainer
 
 # Text
 
-Copy all visible text exactly as shown in the design (punctuation, capitalization, spacing, and line breaks).
+IMPORTANT!: Copy all visible text exactly as shown in the design (punctuation, capitalization, spacing, and line breaks).
 Do not paraphrase, summarize, or alter the text in any way.
 
 **SCSS/CSS Variable Imports for Generic Components:**
