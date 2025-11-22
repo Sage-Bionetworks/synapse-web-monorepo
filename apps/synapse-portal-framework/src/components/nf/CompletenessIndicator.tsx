@@ -1,5 +1,6 @@
 import { CheckCircleTwoTone } from '@mui/icons-material'
 import { Box, Tooltip, Typography } from '@mui/material'
+import styles from './CompletenessIndicator.module.scss'
 
 export type CompletenessCategory =
   | 'Excellent'
@@ -13,11 +14,11 @@ type CompletenessIndicatorProps = {
 }
 
 const COMPLETENESS_COLORS: Record<CompletenessCategory, string> = {
-  Excellent: '#88C48A',
-  Good: '#B0D982',
-  Fair: '#FBDA79',
-  Poor: '#F6B260',
-  Minimal: '#ED8E87',
+  Excellent: styles.excellentColor,
+  Good: styles.goodColor,
+  Fair: styles.fairColor,
+  Poor: styles.poorColor,
+  Minimal: styles.minimalColor,
 }
 
 function isValidCompletenessCategory(
@@ -38,16 +39,12 @@ export function CompletenessIndicator({
 
   return (
     <Tooltip title={tooltipText} arrow>
-      <Box
-        sx={{
-          color: 'grey.700',
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '5px',
-        }}
-      >
-        <CheckCircleTwoTone sx={{ color, fontSize: '1.25rem' }} />
-        <Typography sx={{ fontWeight: 'bold' }}>
+      <Box className={styles.CompletenessIndicator__container}>
+        <CheckCircleTwoTone
+          className={styles.CompletenessIndicator__icon}
+          sx={{ color }}
+        />
+        <Typography className={styles.CompletenessIndicator__categoryText}>
           {completenessCategory}
         </Typography>
         <Typography>completeness</Typography>
