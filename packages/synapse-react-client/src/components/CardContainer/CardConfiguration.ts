@@ -79,6 +79,11 @@ export type CommonCardProps = {
    * Optional configuration for the ShareThisPage component.
    */
   sharePageLinkButtonProps?: ShareThisPageProps
+  /** Optional function that receives schema and data and returns a ReactNode to be rendered next to the card type */
+  cardTypeAdornment?: (
+    schema: Record<string, number>,
+    data: string[],
+  ) => React.ReactNode
   /**
    * The variant of the HeaderCard to use, if `isHeader` is true
    * @default 'HeaderCard'
