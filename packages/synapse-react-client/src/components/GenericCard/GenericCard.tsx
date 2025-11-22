@@ -171,7 +171,7 @@ export const GenericCard = forwardRef(function GenericCard(
             sx={{
               flexDirection: 'row',
               alignItems: 'center',
-              gap: 1,
+              gap: '10px',
             }}
           >
             <div className="SRC-type">{type}</div>
