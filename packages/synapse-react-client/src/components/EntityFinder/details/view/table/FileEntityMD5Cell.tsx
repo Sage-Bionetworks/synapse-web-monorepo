@@ -1,5 +1,3 @@
-'use no memo' // don't use react-compiler until MD5 test failure is resolved
-
 import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import { Skeleton, Tooltip } from '@mui/material'
 import { useMutation } from '@tanstack/react-query'
@@ -12,6 +10,7 @@ import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 export function FileEntityMD5Cell<T extends EntityIdAndVersionNumber>(
   props: CellContext<T, unknown>,
 ) {
+  'use no memo' // don't use react-compiler unt
   const { row } = props
   const { data: bundle, isLoading: isLoadingEntityBundle } = useGetEntityBundle(
     row.original.entityId,

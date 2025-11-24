@@ -1,4 +1,3 @@
-'use no memo' // skip react compiler for this component
 import {
   useGetItemsInTrashCanInfinite,
   usePurgeEntities,

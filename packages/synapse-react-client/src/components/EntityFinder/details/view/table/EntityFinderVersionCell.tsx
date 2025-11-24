@@ -1,5 +1,3 @@
-'use no memo' // don't use react-compiler until MD5 test failure is resolved
-
 import { useGetVersionsInfinite } from '@/synapse-queries/index'
 import { isTableType } from '@/utils/functions/EntityTypeUtils'
 import { Select } from '@mui/material'
@@ -15,6 +13,7 @@ function getLatestVersionText(
   versionSelection: VersionSelectionType,
   entityType: EntityType,
 ) {
+  'use no memo' // don't use react-compiler until MD5 test failure is resolved
   let versionDisplay = 'Latest'
   let snapshotDisplay = ''
   if (isTableType(entityType)) {
@@ -56,6 +55,7 @@ type EntityFinderVersionCellProps = {
 }
 
 export function EntityFinderVersionCell(props: EntityFinderVersionCellProps) {
+  'use no memo' // don't use react-compiler until MD5 test failure is resolved
   const { context, toggleSelection, versionSelection } = props
   const { row } = context
 

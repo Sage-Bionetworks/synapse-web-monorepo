@@ -1,5 +1,3 @@
-'use no memo' // skip react compiler for this component
-
 import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { Button, Typography } from '@mui/material'
@@ -19,6 +17,7 @@ export type AccessRequirementTableProps = {
 }
 
 export function AccessRequirementTable(props: AccessRequirementTableProps) {
+  'use no memo' // skip react compiler for this component
   const {
     nameOrID,
     relatedProjectId,

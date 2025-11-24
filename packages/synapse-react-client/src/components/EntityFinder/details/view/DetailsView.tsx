@@ -1,5 +1,3 @@
-'use no memo' // skip react compiler for this component
-
 import { getEntityVersions } from '@/synapse-client/SynapseClient'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
@@ -117,6 +115,7 @@ function NameRenderer(props: {
   context: CellContext<EntityFinderTableViewRowData, string>
   setCurrentContainer?: (containerId: string) => void
 }) {
+  'use no memo' // skip react compiler for this component
   const { context, setCurrentContainer } = props
   const { row, getValue } = context
   const rowName = getValue()
@@ -150,6 +149,7 @@ function SelectAllCheckboxRenderer(props: {
   checked: boolean
   onSelectAll: () => void
 }) {
+  'use no memo' // skip react compiler for this component
   const { isVisible, disabled, checked, onSelectAll } = props
   if (!isVisible) {
     return null
@@ -177,6 +177,7 @@ function getColumns(opts: {
   toggleSelection: (entity: Reference | Reference[]) => void
   sortableColumns?: DetailsViewColumn[]
 }) {
+  'use no memo' // skip react compiler for this component
   const {
     setCurrentContainer,
     isSelectAllVisible,
@@ -349,6 +350,7 @@ const DEFAULT_HIDDEN_COLUMNS = [DetailsViewColumn.DIRECT_DOWNLOAD]
  * an "infinite scroll" pattern, so entities should not be removed from the list when loading the next page.
  */
 export function DetailsView(props: DetailsViewProps) {
+  'use no memo' // skip react compiler for this component
   const {
     entities,
     isLoading,
@@ -643,6 +645,7 @@ export function DetailsView(props: DetailsViewProps) {
   })
 
   function onRowClick(rowData: EntityFinderTableViewRowData) {
+    'use no memo' // skip react compiler for this component
     const { id, isDisabled, isVersionableEntity } = rowData
     let { currentSelectedVersion } = rowData
     if (!isDisabled) {
