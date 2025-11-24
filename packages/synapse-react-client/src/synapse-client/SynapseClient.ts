@@ -348,6 +348,7 @@ import {
   isOutsideSynapseOrg,
   returnIfTwoFactorAuthError,
 } from './SynapseClientUtils'
+import { CSRF_TOKEN_STORAGE_KEY } from '@/utils/hooks'
 
 const cookies = new UniversalCookies()
 
@@ -701,6 +702,16 @@ export const oAuthUrlRequest = (
   state?: OAuth2State,
   endpoint = BackendDestinationEnum.REPO_ENDPOINT,
 ) => {
+  // Persist the CSRF token to localStorage if present, for validation when OAuth provider redirects back
+  const csrfToken = state?.csrfToken
+  if (csrfToken) {
+    try {
+      localStorage.setItem(CSRF_TOKEN_STORAGE_KEY, csrfToken)
+    } catch (err) {
+      console.warn('Unable to persist OAuth CSRF token.', err)
+    }
+  }
+
   return doPost<{ authorizationUrl: string }>(
     '/auth/v1/oauth2/authurl',
     {

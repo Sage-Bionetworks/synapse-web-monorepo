@@ -12,6 +12,7 @@ on:
 
 jobs:
   deploy:
+    if: github.repository_owner == 'Sage-Bionetworks'
     permissions:
       id-token: write
       contents: read

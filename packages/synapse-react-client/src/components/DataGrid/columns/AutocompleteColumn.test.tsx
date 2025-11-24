@@ -126,4 +126,38 @@ describe('AutocompleteColumn', () => {
       expect(mockSetRowData).toHaveBeenCalledWith(expectedParsedValue)
     })
   })
+
+  it("supports opening the menu and selecting an option when clicking the input's dropdown arrow", async () => {
+    const mockSetRowData = vi.fn()
+    const mockStopEditing = vi.fn()
+    const mockCellProps: Partial<AutocompleteCellProps> = {
+      rowData: 'option1',
+      setRowData: mockSetRowData,
+      choices: ['option1', 'option2'],
+      focus: true,
+      active: true,
+      stopEditing: mockStopEditing,
+    }
+
+    render(<AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />)
+
+    screen.getByRole('combobox')
+    // Click the dropdown arrow button
+    const dropdownButton = screen.getByRole('button', {
+      name: /open/i,
+    })
+    await userEvent.click(dropdownButton)
+
+    // Verify that the options are displayed
+    const option2 = await screen.findByRole('option', { name: 'option2' })
+    expect(option2).toBeInTheDocument()
+
+    // Select option2
+    await userEvent.click(option2)
+
+    // Verify that setRowData was called with 'option2'
+    await waitFor(() => {
+      expect(mockSetRowData).toHaveBeenCalledWith('option2')
+    })
+  })
 })

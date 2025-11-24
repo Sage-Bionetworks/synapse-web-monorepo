@@ -8,4 +8,4 @@ export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = [
 ]
 
 export const cavaticaConnectAccountURL =
-  'https://help.adknowledgeportal.org/apd/Analysis-Platforms.3088482318.html'
+  'https://help.adknowledgeportal.org/apd/CAVATICA.4271145000.html'

@@ -16,7 +16,7 @@ const iconSx: SxProps = {
 
 export type LoginMethodButtonProps = {
   loginMethod: LoginMethod
-  iconName: IconName
+  iconName?: IconName
   onClick: MouseEventHandler<HTMLButtonElement>
 }
 
@@ -58,7 +58,9 @@ export default function LoginMethodButton(props: LoginMethodButtonProps) {
                 mb: '10px',
               }}
             >
-              <IconSvg icon={iconName} sx={{ ...iconSx, mr: 1, ml: -0.5 }} />
+              {iconName && (
+                <IconSvg icon={iconName} sx={{ ...iconSx, mr: 1, ml: -0.5 }} />
+              )}
               {buttonText}
             </Box>
             {lastLoginInfo}
@@ -70,7 +72,7 @@ export default function LoginMethodButton(props: LoginMethodButtonProps) {
           variant="outlined"
           onClick={onClick}
           sx={{ ...buttonSx, height: '50px' }}
-          startIcon={<IconSvg icon={iconName} sx={iconSx} />}
+          startIcon={iconName && <IconSvg icon={iconName} sx={iconSx} />}
           data-testid="button-without-last-login-info"
         >
           {buttonText}

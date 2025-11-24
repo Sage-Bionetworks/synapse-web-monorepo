@@ -64,10 +64,12 @@ export function AutocompleteCell({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active])
 
-  // Sync localInputState with rowData when it changes externally (e.g., after cut)
+  // When not actively being edited, sync localInputState with rowData (e.g., after cut)
   useEffect(() => {
-    setLocalInputState(rowDataAsString)
-  }, [rowDataAsString])
+    if (!focus && !active) {
+      setLocalInputState(rowDataAsString)
+    }
+  }, [focus, active, rowDataAsString])
 
   const hasValue = !isNil(rowData) && rowData !== ''
 
@@ -82,6 +84,8 @@ export function AutocompleteCell({
       freeSolo={true}
       disablePortal={false}
       options={choices}
+      autoSelect
+      selectOnFocus
       getOptionLabel={option => castCellValueToString(option)}
       value={rowData as AutocompleteOption}
       inputValue={localInputState}
@@ -116,27 +120,17 @@ export function AutocompleteCell({
       }}
       blurOnSelect={true}
       renderInput={params => {
-        return (
-          <TextField
-            {...params}
-            inputRef={textInputRef}
-            slotProps={{
-              input: {
-                ...params.InputProps,
-                sx: {
-                  height: '100%',
-                  padding: '0 10px',
-                  backgroundColor: 'inherit',
-                  borderRadius: 0,
-                },
-              },
-            }}
-          />
-        )
+        return <TextField {...params} inputRef={textInputRef} />
       }}
       sx={{
         width: '100%',
         height: '100%',
+        '& .MuiTextField-root .MuiInputBase-root': {
+          height: '100%',
+          padding: '0 10px',
+          backgroundColor: 'inherit',
+          borderRadius: 0,
+        },
         '& .MuiAutocomplete-inputRoot': {
           padding: '0 10px',
           backgroundColor: 'inherit',
