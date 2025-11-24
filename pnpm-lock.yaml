@@ -1661,6 +1661,9 @@ importers:
       '@upsetjs/react':
         specifier: ^1.11.0
         version: 1.11.0(react@19.1.0)
+      '@x0k/json-schema-merge':
+        specifier: ^1.0.2
+        version: 1.0.2
       animate.css:
         specifier: ^4.1.1
         version: 4.1.1
@@ -5328,6 +5331,9 @@ packages:
     resolution: {integrity: sha512-tMgGkt30iVYeLMUKExNmtm019QgyjLtA7lwB0QAizYNEuihlCG2eoAWBBaz/bDeI7LeqAJ9msC6hY3vX+JB97g==}
     peerDependencies:
       react: ^19
+
+  '@x0k/json-schema-merge@1.0.2':
+    resolution: {integrity: sha512-1734qiJHNX3+cJGDMMw2yz7R+7kpbAtl5NdPs1c/0gO5kYT6s4dMbLXiIfpZNsOYhGZI3aH7FWrj4Zxz7epXNg==}
 
   '@xobotyi/scrollbar-width@1.9.5':
     resolution: {integrity: sha512-N8tkAACJx2ww8vFMneJmaAgmjAG1tnVBZJRLRcx061tmsLRZHSEZSLuGWnwPtunsSLvSqXQ2wfp7Mgqg1I+2dQ==}
@@ -15660,6 +15666,10 @@ snapshots:
     dependencies:
       lodash: 4.17.21
       react: 19.1.0
+
+  '@x0k/json-schema-merge@1.0.2':
+    dependencies:
+      '@types/json-schema': 7.0.15
 
   '@xobotyi/scrollbar-width@1.9.5': {}
 

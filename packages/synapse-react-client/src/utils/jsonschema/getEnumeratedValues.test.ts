@@ -52,4 +52,10 @@ describe('getEnumeratedValues', () => {
 
     expect(getEnumeratedValues(schema)).toEqual([])
   })
+  it('works with boolean', () => {
+    const result = getEnumeratedValues({
+      type: 'boolean',
+    })
+    expect(result).toEqual([{ value: true }, { value: false }])
+  })
 })

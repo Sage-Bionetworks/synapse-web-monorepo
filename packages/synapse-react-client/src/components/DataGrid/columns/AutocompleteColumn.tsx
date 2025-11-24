@@ -1,9 +1,9 @@
 import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseFreeTextUsingJsonSchemaType'
 import { Autocomplete, TextField } from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { CellComponent, CellProps, Column } from 'react-datasheet-grid'
 import { isNil } from 'lodash-es'
+import { useEffect, useRef, useState } from 'react'
+import { CellComponent, CellProps, Column } from 'react-datasheet-grid'
 
 export type AutocompleteOption =
   | string
@@ -39,42 +39,73 @@ export function AutocompleteCell({
   stopEditing,
   active,
 }: AutocompleteCellProps) {
-  const ref = useRef<HTMLInputElement>(null)
+  const [menuIsOpen, setMenuIsOpen] = useState(false)
+  const textInputRef = useRef<HTMLInputElement>(null)
 
-  useLayoutEffect(() => {
-    if (focus) {
-      ref.current?.focus()
-    } else {
-      ref.current?.blur()
-    }
-  }, [focus])
-  const [localInputState, setLocalInputState] = useState<string>(
-    castCellValueToString(rowData),
-  )
+  const rowDataAsString = castCellValueToString(rowData)
+  const [localInputState, setLocalInputState] =
+    useState<string>(rowDataAsString)
 
-  // Sync localInputState with rowData when it changes externally (e.g., after cut)
   useEffect(() => {
-    setLocalInputState(castCellValueToString(rowData))
-  }, [rowData])
+    // Treat `active` as the source of truth for blurring
+    // If we listen to Autocomplete's onBlur, it will fire when selecting an option from the dropdown, in which case
+    // we do not want to update rowData
+    if (active) {
+      textInputRef.current?.focus()
+    } else {
+      setMenuIsOpen(false)
+      textInputRef.current?.blur()
+      if (localInputState !== rowDataAsString) {
+        // If we have local edits that haven't been committed yet, commit them now
+        setRowData(parseFreeTextGivenJsonSchemaType(localInputState, colType))
+      }
+    }
+    // only invoke this if active changes!
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active])
+
+  // When not actively being edited, sync localInputState with rowData (e.g., after cut)
+  useEffect(() => {
+    if (!focus && !active) {
+      setLocalInputState(rowDataAsString)
+    }
+  }, [focus, active, rowDataAsString])
 
   const hasValue = !isNil(rowData) && rowData !== ''
 
   return (
     <Autocomplete
-      ref={ref}
-      open={!!focus}
+      open={menuIsOpen}
+      onOpen={() => {
+        setMenuIsOpen(true)
+      }}
       forcePopupIcon={true}
       disableClearable={!hasValue}
-      freeSolo
+      freeSolo={true}
       disablePortal={false}
       options={choices}
+      autoSelect
+      selectOnFocus
       getOptionLabel={option => castCellValueToString(option)}
       value={rowData as AutocompleteOption}
       inputValue={localInputState}
       onInputChange={(_, newInputValue) => {
         setLocalInputState(newInputValue)
       }}
-      onClose={() => stopEditing({ nextRow: false })}
+      onKeyDown={e => {
+        // tab
+        if (e.key === 'Tab') {
+          e.preventDefault()
+          stopEditing({ nextRow: false })
+        } else if (e.key === 'Enter') {
+          e.preventDefault()
+          stopEditing({ nextRow: true })
+        }
+      }}
+      onClose={() => {
+        setMenuIsOpen(false)
+        stopEditing({ nextRow: false })
+      }}
       onChange={(_e, newVal, reason) => {
         if (reason === 'createOption') {
           // The user typed an option that wasn't a defined enum. Try to cast it to the correct type
@@ -85,38 +116,21 @@ export function AutocompleteCell({
           // The value was selected, so explicitly set it
           setRowData(newVal)
         }
-        // Update local input state to match the selected/created value
-        setLocalInputState(castCellValueToString(newVal))
         setTimeout(() => stopEditing({ nextRow: false }), 0)
       }}
       blurOnSelect={true}
-      onBlur={_event => {
-        // Only update on blur if the input value differs from the current rowData
-        // and no option was selected (which would have already updated via onChange)
-        if (localInputState !== castCellValueToString(rowData)) {
-          setRowData(parseFreeTextGivenJsonSchemaType(localInputState, colType))
-        }
+      renderInput={params => {
+        return <TextField {...params} inputRef={textInputRef} />
       }}
-      renderInput={params => (
-        <TextField
-          {...params}
-          slotProps={{
-            input: {
-              ...params.InputProps,
-              disableUnderline: true,
-              sx: {
-                height: '100%',
-                padding: '0 10px',
-                backgroundColor: 'inherit',
-                borderRadius: 0,
-              },
-            },
-          }}
-        />
-      )}
       sx={{
         width: '100%',
         height: '100%',
+        '& .MuiTextField-root .MuiInputBase-root': {
+          height: '100%',
+          padding: '0 10px',
+          backgroundColor: 'inherit',
+          borderRadius: 0,
+        },
         '& .MuiAutocomplete-inputRoot': {
           padding: '0 10px',
           backgroundColor: 'inherit',
