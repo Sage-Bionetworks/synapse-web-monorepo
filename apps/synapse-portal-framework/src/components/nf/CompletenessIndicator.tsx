@@ -39,7 +39,7 @@ export function CompletenessIndicator({
 
   return (
     <Tooltip title={tooltipText} arrow>
-      <Box className={styles.CompletenessIndicator__container}>
+      <div className={styles.CompletenessIndicator__container}>
         <CheckCircleTwoTone
           className={styles.CompletenessIndicator__icon}
           sx={{ color }}
