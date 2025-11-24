@@ -80,10 +80,10 @@ export type CommonCardProps = {
    */
   sharePageLinkButtonProps?: ShareThisPageProps
   /** Optional function that receives schema and data and returns a ReactNode to be rendered next to the card type */
-  cardTypeAdornment?: (
+  CardTypeAdornment?: React.ComponentType<{
     schema: Record<string, number>,
     data: string[],
-  ) => React.ReactNode
+  }>
   /**
    * The variant of the HeaderCard to use, if `isHeader` is true
    * @default 'HeaderCard'
