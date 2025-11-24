@@ -28,6 +28,7 @@ export default function StyledTanStackTable<
   TData = unknown,
   TRowType = Row<TData>,
 >(props: StyledTanStackTableProps<TData, TRowType>) {
+  'use no memo' // skip react compiler for this component
   const {
     table,
     styledTableContainerProps,

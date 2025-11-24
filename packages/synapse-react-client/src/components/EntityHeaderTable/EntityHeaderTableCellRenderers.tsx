@@ -7,6 +7,7 @@ import { EntityHeaderOrDummy } from './EntityHeaderTable'
 export function EntityHeaderNameCell(
   props: CellContext<EntityHeaderOrDummy, string | null>,
 ) {
+  'use no memo' // opt out of react compiler
   const { cell } = props
   const { row } = cell
   const { original } = row
@@ -20,12 +21,14 @@ export function EntityHeaderNameCell(
 export function EntityHeaderIDCell(
   props: CellContext<EntityHeaderOrDummy, string | null>,
 ) {
+  'use no memo' // opt out of react compiler
   const { cell } = props
   return <Typography variant="body1">{cell.getContext().getValue()}</Typography>
 }
 export function EntityHeaderTypeCell(
   props: CellContext<EntityHeaderOrDummy, string | null>,
 ) {
+  'use no memo' // opt out of react compiler
   const { cell } = props
   return (
     <Typography variant="body1" sx={{ textTransform: 'capitalize' }}>
@@ -36,6 +39,7 @@ export function EntityHeaderTypeCell(
 export function CheckBoxHeader<TData = never, TValue = never>(
   props: HeaderContext<TData, TValue>,
 ) {
+  'use no memo' // opt out of react compiler
   const { table } = props
   return (
     <Checkbox
@@ -51,6 +55,7 @@ export function CheckBoxHeader<TData = never, TValue = never>(
 export function CheckBoxCell<TData = never, TValue = never>(
   props: CellContext<TData, TValue>,
 ) {
+  'use no memo' // opt out of react compiler
   const { row } = props
   return (
     <Checkbox
