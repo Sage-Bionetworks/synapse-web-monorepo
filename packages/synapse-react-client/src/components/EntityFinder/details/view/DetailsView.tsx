@@ -400,6 +400,7 @@ export function DetailsView(props: DetailsViewProps) {
 
   useEffect(() => {
     async function handleSelectAll() {
+      'use no memo' // skip react compiler for this component
       if (shouldSelectAll) {
         if (hasNextPage && fetchNextPage) {
           // Show the loading screen since we must fetch data (potentially a lot) to finish the task

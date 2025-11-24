@@ -81,6 +81,7 @@ function getColumns(
     changeVersionOnItem: (entityId: string, newVersion: number) => void
   },
 ) {
+  'use no memo' // skip react compiler for this component
   const {
     datasetToUpdate,
     selectedIds,
@@ -181,6 +182,7 @@ function getColumns(
 }
 
 function getSelectableTypes(entity: EntityRefCollectionView) {
+  'use no memo' // skip react compiler for this component
   if (isDataset(entity)) {
     return [EntityType.file]
   } else if (isDatasetCollection(entity)) {
@@ -195,6 +197,7 @@ function getSelectableTypes(entity: EntityRefCollectionView) {
 }
 
 export function getCopy(entity?: EntityRefCollectionView) {
+  'use no memo' // skip react compiler for this component
   const displayName = entity
     ? entityTypeToFriendlyName(convertToEntityType(entity.concreteType))
     : 'Collection'
@@ -250,6 +253,7 @@ function getDataSetDifference(
   oldDataSet: EntityRef[],
   changedItems: EntityRef[],
 ) {
+  'use no memo' // skip react compiler for this component
   const unchangedItems = oldDataSet.filter(
     oldItem =>
       !changedItems.find(newItem => newItem.entityId === oldItem.entityId),
@@ -285,6 +289,7 @@ function getDatasetChangedToastMessageTitle(
   >,
   datasetToUpdate?: RequiredProperties<EntityRefCollectionView, 'items'>,
 ) {
+  'use no memo' // skip react compiler for this component
   const { updatedItems, newItems, deletedItems } = getDataSetDifference(
     previousDatasetToUpdate?.items ?? [],
     datasetToUpdate?.items!,
@@ -361,6 +366,7 @@ function NoItemsPlaceholder(props: {
   buttonCopy: string
   onButtonClick: () => void
 }) {
+  'use no memo' // skip react compiler for this component
   const { titleCopy, buttonCopy, onButtonClick } = props
   return (
     <div className="NoItemsPlaceholder">
@@ -551,6 +557,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   )
 
   function addItemsToDataset(itemsToAdd: Reference[]) {
+    'use no memo' // skip react compiler for this component
     setDatasetToUpdate(datasetToUpdate => {
       if (datasetToUpdate) {
         const refToDatasetItem = itemsToAdd.map(item => ({
@@ -584,6 +591,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   }
 
   function removeSelectedItemsFromDataset() {
+    'use no memo' // skip react compiler for this component
     setDatasetToUpdate(dataset => ({
       ...dataset!,
       items: dataset!.items.filter(
@@ -594,6 +602,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
   }
 
   function changeVersionOnItem(entityId: string, newVersion: number) {
+    'use no memo' // skip react compiler for this component
     setDatasetToUpdate(dataset => ({
       ...dataset!,
       items: dataset!.items.map(datasetItem =>

@@ -10,6 +10,7 @@ function setEnumFilterValue<TData extends RowData, TValue = unknown>(
   column: Column<TData, TValue>,
   newValue: TValue,
 ) {
+  'use no memo' // skip react compiler for this component
   if (column.columnDef.meta?.enableMultipleSelect) {
     // Append the value to the list, or create the list if it does not exist
     column.setFilterValue((curr: TValue[] | null): TValue[] | null => {
@@ -28,6 +29,7 @@ function removeEnumFilterValue<TData extends RowData, TValue = unknown>(
   column: Column<TData, TValue>,
   valueToRemove: TValue,
 ) {
+  'use no memo' // skip react compiler for this component
   column.setFilterValue((curr: TValue[] | null): TValue[] | null => {
     if (curr) {
       const newValue = [
@@ -52,6 +54,7 @@ function getMaybeFacetedUniqueValues<TData = unknown, TValue = unknown>(
   value: TValue
   count?: number
 }[] {
+  'use no memo' // skip react compiler for this component
   if (column.getFacetedUniqueValues()) {
     // @tanstack/table currently has no API to define a unique set of values for a column without count statistics
     // In each instance, we manually defined a set of unique values and set the count to 0

@@ -33,6 +33,7 @@ import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 function toSynapseClientErrorList(
   results: PromiseSettledResult<void>[],
 ): SynapseClientError[] {
+  'use no memo' // skip react compiler for this component
   return results
     .filter(
       (result): result is PromiseRejectedResult => result.status === 'rejected',
@@ -45,6 +46,7 @@ const columnHelper = createColumnHelper<TrashedEntity>()
 function getTrashCanColumns(
   onRestore: (entityId: string) => void,
 ): ColumnDef<TrashedEntity, any>[] {
+  'use no memo' // skip react compiler for this component
   return [
     {
       id: 'select',
@@ -109,6 +111,7 @@ export function TrashCanList() {
     results?: PromiseSettledResult<void>[],
     error?: SynapseClientError | null,
   ) {
+    'use no memo' // skip react compiler for this component
     if (results) {
       setErrors(toSynapseClientErrorList(results))
     } else if (error) {
