@@ -1,6 +1,6 @@
 import { ACCESS_REQUIREMENT_SEARCH } from '@/utils/APIConstants'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { http, HttpResponse } from 'msw'
 import { AccessRequirementRelatedProjectsList } from './AccessRequirementRelatedProjectsList'
 

@@ -7,9 +7,10 @@ import {
   Typography,
 } from '@mui/material'
 import {
-  FileHandleAssociateType,
   OIDCAuthorizationRequest,
-} from '@sage-bionetworks/synapse-types'
+  OIDCAuthorizationRequestResponseTypeEnum,
+} from '@sage-bionetworks/synapse-client'
+import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import {
@@ -39,8 +40,7 @@ const sendGTagEvent = (event: string) => {
 export function OAuth2Form() {
   const { clearSession, hasInitializedSession } =
     AppUtils.useApplicationSessionContext()
-  const { accessToken } = useSynapseContext()
-  const isLoggedIn = Boolean(accessToken)
+  const { isAuthenticated } = useSynapseContext()
 
   const [searchParams] = useSearchParams()
 
@@ -97,7 +97,7 @@ export function OAuth2Form() {
     error: fetchProfileError,
     isLoading: isLoadingProfile,
   } = SynapseQueries.useGetCurrentUserProfile({
-    enabled: isLoggedIn,
+    enabled: isAuthenticated,
   })
 
   useEffect(() => {
@@ -139,7 +139,9 @@ export function OAuth2Form() {
     if (scope == null) {
       missingParams.push('scope')
     }
-    const responseType = searchParams.get('response_type')
+    const responseType = searchParams.get(
+      'response_type',
+    ) as OIDCAuthorizationRequestResponseTypeEnum
     if (responseType == null) {
       missingParams.push('response_type')
     }
@@ -333,7 +335,7 @@ export function OAuth2Form() {
   if (
     !isLoading &&
     !error &&
-    !isLoggedIn &&
+    !isAuthenticated &&
     oauthClientInfo &&
     oauthClientInfo.verified &&
     pendingRedirectURL === undefined &&
@@ -365,7 +367,7 @@ export function OAuth2Form() {
         />
       )}
       {!error &&
-        accessToken &&
+        isAuthenticated &&
         oauthClientInfo &&
         oauthClientInfo.verified &&
         !showPendingRedirectUi &&
@@ -384,7 +386,7 @@ export function OAuth2Form() {
             </Typography>
             {oidcRequestDescription && (
               <ul>
-                {oidcRequestDescription.scope.map((scope, index) => {
+                {oidcRequestDescription.scope?.map((scope, index) => {
                   return (
                     <li key={index}>
                       <Typography variant="body1">{scope}</Typography>

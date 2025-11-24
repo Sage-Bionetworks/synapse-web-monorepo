@@ -1,0 +1,35 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  background-color: #35403e;
+  color: #ffff;
+  gap: 60px;
+  padding: 80px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.logo {
+  max-width: 200px;
+  max-height: 76px;
+}
+
+.textContainer {
+  gap: 10px;
+  flex: 1;
+}
+
+.bodyText {
+  font-size: 18px;
+}
+
+.link {
+  color: #ffff !important;
+
+  &:hover {
+    text-decoration-color: #ffff !important;
+  }
+}

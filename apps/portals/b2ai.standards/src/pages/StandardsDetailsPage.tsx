@@ -18,7 +18,7 @@ import { TableToGenericCardMapping } from 'synapse-react-client/components/Gener
 import columnAliases from '@/config/columnAliases'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import {
-  DST_TABLE_COLUMN_NAMES,
+  DST_TABLE_COLUMN_CONSTS,
   standardsDetailsPageSQL,
 } from '@/config/resources'
 import { standardsColumnLinks } from '@/config/synapseConfigs/standards'
@@ -71,8 +71,8 @@ export const standardDetailsPageContent: DetailsPageContentType = [
                 headers={context.rowSet?.headers ?? []}
                 displayedColumns={[
                   'standardName',
-                  DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS,
-                  DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_LINKS,
+                  DST_TABLE_COLUMN_CONSTS.RESPONSIBLE_ORG_LINKS,
+                  DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_LINKS,
                   'isOpen',
                   'registration',
                 ]}
@@ -163,6 +163,7 @@ export default function StandardsDetailsPage() {
         />
       }
       sql={standardsDetailsPageSQL}
+      resourcePrimaryKey={['id']}
     >
       <DetailsPageContent content={standardDetailsPageContent} />
     </DetailsPage>

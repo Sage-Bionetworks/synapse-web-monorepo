@@ -1,7 +1,7 @@
 import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
 import { MOCK_USER_ID_3 } from '@/mocks/user/mock_user_profile'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { AccountLevelBadges } from '../AccountLevelBadges'
 
 const meta = {

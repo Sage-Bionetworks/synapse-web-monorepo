@@ -3,7 +3,6 @@ import ChallengeDataDownloadWrapper from './challenges/ChallengeDataDownloadWrap
 import ChallengeDetailPageWrapper from './challenges/ChallengeDetailPageWrapper'
 import ChallengeParticipantGoogleMap from './challenges/ChallengeParticipantGoogleMap'
 import ChallengeSubmissionWrapper from './challenges/ChallengeSubmissionWrapper'
-import ComponentCollapse from './ComponentCollapse'
 import ParticipantsBarPlot from './crc-researcher/ParticipantsBarPlot'
 import StatusLineChart from './crc-researcher/StatusLineChart'
 import SurveysCompletedPlots from './crc-researcher/SurveysCompletedPlots'
@@ -16,7 +15,15 @@ import ELGettingStarted from './eliteportal/ELGettingStarted'
 import AMPALSExploreTheData from './ampals/AMPALSExploreTheData'
 import ELSupportedByNIH from './eliteportal/ELSupportedByNIH'
 import ARKWelcomePage from './arkportal/ARKWelcomePage'
-
+import ClassicSupportedByNIABanner from './classic/ClassicSupportedByNIABanner/ClassicSupportedByNIABanner'
+import ChallengeHeader from './challenges/ChallengeHeader/ChallengeHeader'
+import ChallengeMetrics from './challenges/ChallengeMetrics/ChallengeMetrics'
+import ChallengeFeaturedTeam from './challenges/ChallengeFeaturedTeam/ChallengeFeaturedTeam'
+import NewChallengesSection from './challenges/NewChallengesSection/NewChallengesSection'
+import AllChallengesSection from './challenges/AllChallengesSection/AllChallengesSection'
+import GetInvolvedSection from './challenges/GetInvolvedSection/GetInvolvedSection'
+import ChallengeNewsSection from './challenges/ChallengeNewsSection/ChallengeNewsSection'
+import PopularChallengesSection from './challenges/PopularChallengesSection/PopularChallengesSection'
 import ExploreWrapper from './Explore/ExploreWrapper'
 import GenieHomePageHeader from './genie/GenieHomePageHeader'
 import CancerComplexityHeader from './cancercomplexity/CancerComplexityHeader'
@@ -33,6 +40,7 @@ import TabbedSynapseObjects from './TabbedSynapseObjects'
 import RepositoryUnderReviewAlert from './RepositoryUnderReviewAlert'
 
 const PortalComponents = {
+  ChallengeHeader,
   RouteControlWrapper: ExploreWrapper,
   DetailsPage,
   HomePageCardContainer,
@@ -50,9 +58,17 @@ const PortalComponents = {
   ELGettingStarted,
   AMPALSExploreTheData,
   ELSupportedByNIH,
+  ChallengeMetrics,
+  NewChallengesSection,
+  GetInvolvedSection,
+  ChallengeNewsSection,
+  PopularChallengesSection,
+  AllChallengesSection,
+  ClassicSupportedByNIABanner,
   ARKWelcomePage,
   GenieHomePageHeader,
   CancerComplexityHeader,
+  ChallengeFeaturedTeam,
   TabbedSynapseObjects,
   Header,
   ChallengeParticipantGoogleMap,
@@ -60,7 +76,6 @@ const PortalComponents = {
   ProjectDiscussionForum,
   ChallengeSubmissionWrapper,
   ChallengeDataDownloadWrapper,
-  SynapseComponentCollapse: ComponentCollapse,
   SurveyToast,
   PortalSearchTabs,
   PortalFullTextSearchField,

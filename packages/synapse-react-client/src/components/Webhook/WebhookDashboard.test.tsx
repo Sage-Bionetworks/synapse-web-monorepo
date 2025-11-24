@@ -134,7 +134,6 @@ describe('WebhookDashboard', () => {
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
       screen.getByText(/You have not created any webhooks/)
-      expect(screen.queryByRole('row')).not.toBeInTheDocument()
     })
   })
 

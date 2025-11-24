@@ -30,7 +30,7 @@ import { AlertProps } from '../DataAccessRequestAccessorsFilesForm/DataAccessReq
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
 
 const INTENDED_DATA_USE_MIN_WORD_COUNT = 50
-const INTENDED_DATA_USE_MAX_WORD_COUNT = 500
+const INTENDED_DATA_USE_MAX_WORD_COUNT = 750 // SWC-7526
 
 export type ResearchProjectFormProps = {
   /* The access requirement to which the research project refers */
@@ -78,9 +78,8 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
     existingResearchProject?.institution,
     existingResearchProject?.intendedDataUseStatement,
     existingResearchProject?.projectLead,
-    institution,
-    intendedDataUseStatement,
-    projectLead,
+    // PORTALS-3774: initialize from existingResearchProject, but do not reset institution,
+    // projectLead, or intendedDataUseStatement if they have been modified
   ])
 
   const { mutate, isPending: updateIsPending } = useUpdateResearchProject({

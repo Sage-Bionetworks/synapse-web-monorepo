@@ -45,9 +45,8 @@ function LoggedInRedirector() {
 }
 
 function RootPage() {
-  const { accessToken } = useSynapseContext()
-  const isLoggedIn = Boolean(accessToken)
-  if (isLoggedIn) {
+  const { isAuthenticated } = useSynapseContext()
+  if (isAuthenticated) {
     return <LoggedInRedirector />
   }
   return <LoginPage returnToUrl={'/'} />

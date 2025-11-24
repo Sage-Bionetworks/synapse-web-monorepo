@@ -39,6 +39,7 @@ function ChallengeDetailsPage() {
       }
       sql={challengeProjectsSql}
       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+      resourcePrimaryKey={['id']}
     >
       <DetailsPageTabs tabConfig={challengeDetailsPageTabConfig} />
       <Outlet />

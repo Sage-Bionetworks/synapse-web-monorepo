@@ -1,4 +1,4 @@
-import { ColumnType } from './index'
+import { ColumnType } from './ColumnType'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/SelectColumn.html
 export type SelectColumn = {

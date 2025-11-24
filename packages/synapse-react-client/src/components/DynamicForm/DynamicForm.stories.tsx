@@ -1,6 +1,6 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import DynamicForm, { DynamicFormProps } from './DynamicForm'
-import { fn } from '@storybook/test'
+import { fn } from 'storybook/test'
 
 const meta = {
   title: 'UI/DynamicForm',

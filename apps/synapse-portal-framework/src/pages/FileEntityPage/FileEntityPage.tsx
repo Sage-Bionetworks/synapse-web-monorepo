@@ -10,6 +10,8 @@ import CitationPopover from 'synapse-react-client/components/CitationPopover'
 import { DetailsPageContent } from '../../components/DetailsPage/DetailsPageContentLayout'
 import SynapseFileEntityLinkCard from './SynapseFileEntityLinkCard'
 import SynapseFileEntityPageProperties from './SynapseFileEntityPageProperties'
+import { usePortalContext } from '@/components/PortalContext'
+import { AnnotationsTable } from 'synapse-react-client/components/entity/metadata/AnnotationsTable'
 
 function FileEntityPage() {
   const searchParams = useGetPortalComponentSearchParams()
@@ -17,6 +19,13 @@ function FileEntityPage() {
   const version = searchParams?.version
     ? Number(searchParams.version)
     : undefined
+
+  const { fileEntityPageConfig, portalName } = usePortalContext()
+  const {
+    showWiki = true,
+    showProvenance = true,
+    showAnnotations = true,
+  } = fileEntityPageConfig ?? {}
 
   const { data: entityBundle, isLoading } = useGetEntityBundle(
     entityId,
@@ -31,7 +40,13 @@ function FileEntityPage() {
 
   const fileEntityPageSections = [
     {
-      element: <SynapseFileEntityLinkCard synId={entityId} version={version} />,
+      element: (
+        <SynapseFileEntityLinkCard
+          portalName={portalName}
+          synId={entityId}
+          version={version}
+        />
+      ),
     },
     {
       id: 'properties',
@@ -43,14 +58,18 @@ function FileEntityPage() {
         />
       ),
     },
-    entityBundle?.rootWikiId && {
-      id: 'wiki',
-      title: 'Wiki',
-      element: (
-        <MarkdownSynapse ownerId={entityId} wikiId={entityBundle?.rootWikiId} />
-      ),
-    },
-    {
+    showWiki &&
+      entityBundle?.rootWikiId && {
+        id: 'wiki',
+        title: 'Wiki',
+        element: (
+          <MarkdownSynapse
+            ownerId={entityId}
+            wikiId={entityBundle?.rootWikiId}
+          />
+        ),
+      },
+    showProvenance && {
       id: 'provenance',
       title: 'Provenance',
       element: (
@@ -59,6 +78,11 @@ function FileEntityPage() {
           containerHeight="400px"
         />
       ),
+    },
+    showAnnotations && {
+      id: 'annotations',
+      title: 'Annotations',
+      element: <AnnotationsTable entityId={entityId} versionNumber={version} />,
     },
   ].filter(Boolean) as DetailsPageSectionLayoutType[]
 

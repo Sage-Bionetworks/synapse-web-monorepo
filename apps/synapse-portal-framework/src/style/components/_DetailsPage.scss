@@ -81,6 +81,10 @@ $svg-icon-height: 30px;
     [role='heading'] {
       padding-top: 30px;
     }
+    // PORTALS-3808: remove padding when inside TopLevelControls
+    .TopLevelControls [role='heading'] {
+      padding-top: 0;
+    }
   }
 
   hr {

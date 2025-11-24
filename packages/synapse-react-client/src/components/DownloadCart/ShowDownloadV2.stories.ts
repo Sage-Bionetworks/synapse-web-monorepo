@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import ShowDownloadV2 from './ShowDownloadV2'
 
 const meta: Meta = {

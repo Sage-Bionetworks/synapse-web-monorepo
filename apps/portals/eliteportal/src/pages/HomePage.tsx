@@ -146,6 +146,8 @@ function HomePageInternal() {
         sql={whatWeDoSql}
         title="What We Do"
         summaryText="The ELITE Portal provides rich multi-omic datasets, computational tools, publications, and resources that empower researchers to discover novel therapeutic targets of health and disease. Learn more about our research domains and tools."
+        columnCount={3}
+        heightPx={245}
       />
       <FeaturedResearch sql={featuredResearchSql} />
       <Box sx={{ backgroundColor: 'grey.100' }}>
@@ -315,6 +317,18 @@ function HomePageInternal() {
                       selectFacetColumnValue: 'Gorbunova_CP_Transcriptomics',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage?studyKey=Gorbunova_CP_Transcriptomics',
+                      unitDescription: 'Files',
+                      plotType: 'STACKED_HORIZONTAL_BAR',
+                    },
+                    {
+                      title: 'Cross-Species Fibroblast Study',
+                      description:
+                        'Multiomic assays were applied to a large scale cross species fibroblast cell culture collection derived from nearly 150 primate, bat, rodent, and bird species to determine factors related to aging and longevity.',
+                      facetsToPlot: ['dataTypes'],
+                      selectFacetColumnName: 'Study',
+                      selectFacetColumnValue: 'LC_CP_OMICS',
+                      detailsPagePath:
+                        '/Explore/Studies/DetailsPage/StudyDetails?studyKey=LC_CP_OMICS',
                       unitDescription: 'Files',
                       plotType: 'STACKED_HORIZONTAL_BAR',
                     },

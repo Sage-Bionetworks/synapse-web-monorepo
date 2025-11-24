@@ -3,11 +3,8 @@ import { useSynapseContext } from '@/utils'
 import { EntityTypeGroup } from '@/utils/functions/EntityTypeUtils'
 import { DownloadTwoTone } from '@mui/icons-material'
 import { Button, ButtonProps } from '@mui/material'
-import {
-  ColumnModel,
-  EntityType,
-  Reference,
-} from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import { ColumnModel, Reference } from '@sage-bionetworks/synapse-types'
 import { useCallback, useState } from 'react'
 import { SetOptional } from 'type-fest'
 import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
@@ -73,7 +70,7 @@ export default function ImportTableColumnsButton(
           initialContainer: initialFinderProjectId ?? 'root',
           selectMultiple: false,
           selectableTypes: EntityTypeGroup.ALL_TABLES,
-          visibleTypesInTree: [EntityType.PROJECT],
+          visibleTypesInTree: [EntityType.project],
           versionSelection: VersionSelectionType.UNTRACKED,
         }}
         show={showFinder}

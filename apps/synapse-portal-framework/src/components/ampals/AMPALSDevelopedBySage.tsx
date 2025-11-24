@@ -9,7 +9,7 @@ const AMPALSDevelopedBySage = () => {
   return (
     <DevelopedBySage>
       <Typography sx={{ mb: 0 }}>
-        Research and Portal development was supported by FNIH (1OT2NS136939-01)
+        Research and Portal development was supported by NIH (1OT2NS136939-01)
       </Typography>
 
       <Stack

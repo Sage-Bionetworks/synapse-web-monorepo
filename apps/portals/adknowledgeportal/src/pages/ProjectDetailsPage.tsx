@@ -57,17 +57,18 @@ function ProjectDetailsPage() {
           searchParams={searchParams}
         />
       }
+      resourcePrimaryKey={[PROJECT_TABLE_COLUMN_NAMES.GRANT_NUMBER]}
     >
-      <DetailsPageContextConsumer
-        columnName={PROJECT_TABLE_COLUMN_NAMES.GRANT_NUMBER}
-      >
-        {({ value: grantNumber }) => (
-          <DetailsPageContent
-            content={[
-              {
-                title: 'Studies',
-                id: 'Studies',
-                element: (
+      <DetailsPageContent
+        content={[
+          {
+            title: 'Studies',
+            id: 'Studies',
+            element: (
+              <DetailsPageContextConsumer
+                columnName={PROJECT_TABLE_COLUMN_NAMES.GRANT_NUMBER}
+              >
+                {({ value: grantNumber }) => (
                   <CardContainerLogic
                     cardConfiguration={studyCardConfiguration}
                     sql={studiesSql}
@@ -75,12 +76,18 @@ function ProjectDetailsPage() {
                       [STUDY_TABLE_COLUMN_NAMES.GRANT_NUMBER]: grantNumber!,
                     }}
                   />
-                ),
-              },
-              {
-                title: 'Publications',
-                id: 'Publications',
-                element: (
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            title: 'Publications',
+            id: 'Publications',
+            element: (
+              <DetailsPageContextConsumer
+                columnName={PROJECT_TABLE_COLUMN_NAMES.GRANT_NUMBER}
+              >
+                {({ value: grantNumber }) => (
                   <CardContainerLogic
                     sql={publicationsSql}
                     cardConfiguration={publicationCardProps}
@@ -88,12 +95,18 @@ function ProjectDetailsPage() {
                       [PUBLICATIONS_TABLE_COLUMN_NAMES.GRANT]: grantNumber!,
                     }}
                   />
-                ),
-              },
-              {
-                title: 'Experimental Models',
-                id: 'Experimental Models',
-                element: (
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            title: 'Experimental Models',
+            id: 'Experimental Models',
+            element: (
+              <DetailsPageContextConsumer
+                columnName={PROJECT_TABLE_COLUMN_NAMES.GRANT_NUMBER}
+              >
+                {({ value: grantNumber }) => (
                   <ToggleSynapseObjects
                     icon1={'table'}
                     synapseObject1={
@@ -123,12 +136,18 @@ function ProjectDetailsPage() {
                       />
                     }
                   />
-                ),
-              },
-              {
-                title: 'Computational Tools',
-                id: 'Computational Tools',
-                element: (
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            title: 'Computational Tools',
+            id: 'Computational Tools',
+            element: (
+              <DetailsPageContextConsumer
+                columnName={PROJECT_TABLE_COLUMN_NAMES.GRANT_NUMBER}
+              >
+                {({ value: grantNumber }) => (
                   <CardContainerLogic
                     sql={computationalSql}
                     cardConfiguration={computationalCardConfiguration}
@@ -136,12 +155,18 @@ function ProjectDetailsPage() {
                       [COMPUTATIONAL_TOOLS_COLUMN_NAMES.GRANT]: grantNumber!,
                     }}
                   />
-                ),
-              },
-              {
-                title: 'Target Enabling Resources',
-                id: 'Target Enabling Resources',
-                element: (
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            title: 'Target Enabling Resources',
+            id: 'Target Enabling Resources',
+            element: (
+              <DetailsPageContextConsumer
+                columnName={PROJECT_TABLE_COLUMN_NAMES.GRANT_NUMBER}
+              >
+                {({ value: grantNumber }) => (
                   <CardContainerLogic
                     sql={targetEnablingResourcesDetailsPageSql}
                     cardConfiguration={targetEnablingResourcesCardConfiguration}
@@ -150,12 +175,18 @@ function ProjectDetailsPage() {
                         grantNumber!,
                     }}
                   />
-                ),
-              },
-              {
-                title: 'People',
-                id: 'People',
-                element: (
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            title: 'People',
+            id: 'People',
+            element: (
+              <DetailsPageContextConsumer
+                columnName={PROJECT_TABLE_COLUMN_NAMES.GRANT_NUMBER}
+              >
+                {({ value: grantNumber }) => (
                   <CardContainerLogic
                     sql={peopleSql}
                     limit={6}
@@ -166,12 +197,12 @@ function ProjectDetailsPage() {
                       [PEOPLE_COLUMN_NAMES.GRANT_NUMBER]: grantNumber!,
                     }}
                   />
-                ),
-              },
-            ]}
-          />
-        )}
-      </DetailsPageContextConsumer>
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+        ]}
+      />
     </DetailsPage>
   )
 }

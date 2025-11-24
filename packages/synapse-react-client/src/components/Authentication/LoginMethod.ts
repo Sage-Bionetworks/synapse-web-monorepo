@@ -1,10 +1,12 @@
 import {
   LOGIN_METHOD_EMAIL,
+  LOGIN_METHOD_OAUTH2_ARCUS,
   LOGIN_METHOD_OAUTH2_GOOGLE,
   LOGIN_METHOD_OAUTH2_ORCID,
 } from '@/utils/SynapseConstants'
 
 export const LoginMethods = [
+  LOGIN_METHOD_OAUTH2_ARCUS,
   LOGIN_METHOD_OAUTH2_GOOGLE,
   LOGIN_METHOD_OAUTH2_ORCID,
   LOGIN_METHOD_EMAIL,
@@ -13,6 +15,8 @@ export type LoginMethod = (typeof LoginMethods)[number]
 
 export function getLoginMethodFriendlyName(loginMethod: LoginMethod) {
   switch (loginMethod) {
+    case LOGIN_METHOD_OAUTH2_ARCUS:
+      return 'Arcus Biosciences'
     case LOGIN_METHOD_OAUTH2_GOOGLE:
       return 'Google'
     case LOGIN_METHOD_OAUTH2_ORCID:

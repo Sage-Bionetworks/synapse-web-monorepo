@@ -1,13 +1,12 @@
-import { EntityPath } from './EntityHeader'
+import { DoiAssociation, EntityType } from '@sage-bionetworks/synapse-client'
+import { AccessControlList } from './AccessControlList'
 import { Annotations } from './Annotations'
 import { Entity } from './Entity'
-import { EntityType } from './EntityType'
+import { EntityPath } from './EntityHeader'
 import { FileHandle } from './File'
-import { AccessControlList } from './AccessControlList'
 import { RestrictionInformationResponse } from './RestrictionInformation'
-import { UserEntityPermissions } from './UserEntityPermissions'
 import { TableBundle } from './Table/TableBundle'
-import { DoiAssociation } from './DoiAssociation'
+import { UserEntityPermissions } from './UserEntityPermissions'
 
 /**
  * The entity bundle type defined by Synapse. We are using Typescript to generate a more strongly-typed EntityBundle based on the passed EntityBundleRequest, which is exported below.

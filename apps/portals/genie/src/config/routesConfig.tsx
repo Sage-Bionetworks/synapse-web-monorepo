@@ -1,6 +1,5 @@
 import Typography from '@mui/material/Typography'
 import App from '@sage-bionetworks/synapse-portal-framework/App'
-import SurveyToast from '@sage-bionetworks/synapse-portal-framework/components/SurveyToast'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import { RouteObject } from 'react-router'
@@ -29,20 +28,6 @@ const routes: RouteObject[] = [
                 <HasAccessV2 entityId="syn7222066" />
               </Typography>
             </>
-          }
-        />
-        <SurveyToast
-          localStorageKey={
-            'org.sagebionetworks.security.cookies.portal.geniesurvey.dismissed'
-          }
-          title={
-            'What Metrics Matter to You? Help Us Improve the GENIE Portal!'
-          }
-          description={
-            'Take our quick survey and share your feedback to make the portal even better. Your input will directly impact the data and insights we provide.'
-          }
-          surveyURL={
-            'https://docs.google.com/forms/d/e/1FAIpQLSe6V_b-n8pVGjZEvjv4tBklFwRPzeOMvjGzOzURWLFyvOq4fw/viewform'
           }
         />
       </App>

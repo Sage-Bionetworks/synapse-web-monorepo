@@ -34,6 +34,7 @@ type Props = {
   twoFactorAuthResetUri?: string
   /* Invoked when password login is selected */
   onPasswordLoginSelected?: () => void
+  showArcusSSOButtonOnly?: boolean
 }
 
 export default function LoginForm(props: Props) {
@@ -62,6 +63,7 @@ export default function LoginForm(props: Props) {
       'twoFAResetToken',
     ),
     onPasswordLoginSelected = noop,
+    showArcusSSOButtonOnly,
   } = props
 
   return (
@@ -75,6 +77,7 @@ export default function LoginForm(props: Props) {
           onBeginOAuthSignIn={onBeginOAuthSignIn}
           ssoRedirectUrl={ssoRedirectUrl}
           state={ssoState}
+          showArcusSSOButtonOnly={showArcusSSOButtonOnly}
         />
       )}
       {step === 'USERNAME_PASSWORD' && (

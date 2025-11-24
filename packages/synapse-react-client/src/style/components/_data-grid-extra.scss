@@ -1,3 +1,8 @@
+.dsg-input {
+  font-size: inherit;
+  color: #353a3f; // grey-900
+}
+
 .row-deleted .dsg-cell {
   /* Red */
   background: #fff1f0;
@@ -11,4 +16,66 @@
 .row-updated .dsg-cell {
   /* Orange */
   background: #fff7e6;
+}
+
+.row-valid .dsg-cell-gutter {
+  background: #def0dd;
+}
+
+.row-invalid .dsg-cell-gutter {
+  background: #fccfcc;
+}
+
+.row-unknown .dsg-cell-gutter {
+  background: #fdfeeb;
+
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid #e6c200;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cell-invalid {
+  background: #fccfcc;
+}
+
+.header-cell-required {
+  background-color: #395979;
+  color: white;
+  font-weight: bold;
+}
+
+.multi-value-cell {
+  min-height: 40px;
+}
+
+.multi-value-cell-large {
+  min-height: 80px;
+}
+
+.cell-selected {
+  border: 1px solid rgba(25, 118, 210, 1);
+}
+
+.dsg-container:not(:focus-within) .cell-selected {
+  border: 1px solid rgba(25, 118, 210, 1);
+  background-color: rgba(25, 118, 210, 0.05);
+  z-index: 25;
 }

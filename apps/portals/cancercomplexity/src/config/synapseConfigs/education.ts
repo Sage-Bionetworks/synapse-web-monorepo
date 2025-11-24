@@ -8,6 +8,7 @@ import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { educationSql } from '../resources'
 import { citationBoilerplateText } from './commonProps'
+import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 
 const rgbIndex = 8
 
@@ -75,6 +76,7 @@ export const educationDetailsSchema: TableToGenericCardMapping = {
   title: 'title',
   subTitle: 'topic',
   description: 'description',
+  includeShareButton: true,
   secondaryLabels: [
     'link',
     'activityType',
@@ -99,6 +101,7 @@ export const educationDetailsCardConfiguration: CardConfiguration = {
   secondaryLabelLimit: 3,
   genericCardSchema: educationDetailsSchema,
   iconOptions,
+  sharePageLinkButtonProps: sharePageLinkButtonDetailPageProps,
   titleLinkConfig: {
     isMarkdown: false,
     URLColumnName: 'title',

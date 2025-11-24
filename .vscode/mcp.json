@@ -1,0 +1,16 @@
+{
+  "servers": {
+    "atlassian-mcp-server": {
+      "url": "https://mcp.atlassian.com/v1/sse",
+      "type": "http"
+    },
+    "github-mcp": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp"
+    },
+    "figma": {
+      "url": "https://mcp.figma.com/mcp",
+      "type": "http"
+    }
+  }
+}

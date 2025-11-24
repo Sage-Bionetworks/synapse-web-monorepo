@@ -13,8 +13,8 @@ import {
   Direction,
   Query,
 } from '@sage-bionetworks/synapse-types'
-import { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
+import { Meta, StoryObj } from '@storybook/react-vite'
+import { fn } from 'storybook/test'
 import { CustomControlCallbackData } from '../SynapseTable'
 import { displayToast } from '../ToastMessage'
 import QueryWrapperPlotNav, {

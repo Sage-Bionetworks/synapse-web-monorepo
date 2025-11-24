@@ -1,0 +1,55 @@
+@use '@sage-bionetworks/synapse-portal-framework/src/style/variables' as Portal;
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+@use 'sass:map';
+
+#header,
+#footer {
+  background-color: Portal.$primary-action-color;
+}
+
+.SRC-primary-background-color-border-left {
+  border-left-color: Portal.$primary-action-color !important;
+}
+.SRC-mailchimpSubscribeContainer {
+  button {
+    background-color: Portal.$primary-action-color !important;
+  }
+}
+
+footer {
+  img.nav-logo {
+    width: 250px;
+  }
+}
+
+.amp-project-component {
+  margin-top: 30px;
+}
+
+.ProgramCardList {
+  .SRC-imageThumbnail img {
+    max-width: 100px;
+    padding-top: 20px;
+    padding-right: 30px;
+    float: right;
+  }
+}
+
+.ProgramsHomePage {
+  .Programs__Card {
+    width: 32%;
+  }
+}
+
+.Goals {
+  &__Card {
+    &__header {
+      background: unset;
+      min-height: unset;
+      padding-top: 20px;
+      &__title {
+        color: map.get(SrcVariables.$colors, 'gray-900');
+      }
+    }
+  }
+}

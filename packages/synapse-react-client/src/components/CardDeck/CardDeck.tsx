@@ -6,7 +6,10 @@ import CardDeckMobile from './CardDeck.Mobile'
 
 export type CardDeckProps = {
   cards: CardDeckCardProps[]
-  cardDeckType?: 'cckp' | 'b2ai' /* The type of card deck (cckp or b2ai)*/
+  cardDeckType?:
+    | 'cckp'
+    | 'b2ai'
+    | 'b2ai-detail-card' /* The type of card deck (cckp or b2ai)*/
 }
 
 /**

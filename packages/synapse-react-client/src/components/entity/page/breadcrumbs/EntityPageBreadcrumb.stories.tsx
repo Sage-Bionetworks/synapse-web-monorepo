@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { SyntheticEvent } from 'react'
 import EntityPageBreadcrumbs from './EntityPageBreadcrumbs'
 

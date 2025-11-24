@@ -1,7 +1,7 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import CreateTableViewWizard from './CreateTableViewWizard'
 import { displayToast } from '../ToastMessage'
-import { fn } from '@storybook/test'
+import { fn } from 'storybook/test'
 
 const meta = {
   title: 'Synapse/Create Table Wizard',

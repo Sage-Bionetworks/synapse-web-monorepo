@@ -1,9 +1,9 @@
 import { InputSizedButton } from '@/components/styled/InputSizedButton'
 import { SYNAPSE_ENTITY_ID_REGEX } from '@/utils/functions/RegularExpressions'
 import { SearchOutlined } from '@mui/icons-material'
-import { Box, InputAdornment, TextField, Typography } from '@mui/material'
+import { Grid, InputAdornment, TextField, Typography } from '@mui/material'
 import { useDebouncedState } from '@react-hookz/web'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { omitBy } from 'lodash-es'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
@@ -118,7 +118,7 @@ export function AccessRequirementDashboard(
           initialScope: FinderScope.ALL_PROJECTS,
           initialContainer: null,
           selectMultiple: false,
-          selectableTypes: [EntityType.PROJECT],
+          selectableTypes: [EntityType.project],
           treeOnly: true,
         }}
         show={showEntityFinder}
@@ -135,8 +135,8 @@ export function AccessRequirementDashboard(
         }}
         confirmButtonCopy={'Select'}
       />
-      <form className="InputPanel">
-        <div>
+      <Grid component={'form'} container spacing={2} className="InputPanel">
+        <Grid size={{ xs: 12, md: 4 }}>
           <TextField
             label="Filter by Access Requirement Name or ID"
             id="ar-name-filter"
@@ -156,8 +156,9 @@ export function AccessRequirementDashboard(
               },
             }}
           />
-        </div>
-        <Box
+        </Grid>
+        <Grid
+          size={{ xs: 12, md: 4 }}
           sx={{
             display: 'flex',
             gap: '5px',
@@ -194,8 +195,8 @@ export function AccessRequirementDashboard(
           >
             Browse
           </InputSizedButton>
-        </Box>
-        <div>
+        </Grid>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Typography
             component="label"
             variant="smallText2"
@@ -209,8 +210,8 @@ export function AccessRequirementDashboard(
             defaultValue={reviewerId}
             onChange={onReviewerChange}
           />
-        </div>
-      </form>
+        </Grid>
+      </Grid>
       <AccessRequirementTable
         nameOrID={nameOrID}
         relatedProjectId={relatedProjectId}

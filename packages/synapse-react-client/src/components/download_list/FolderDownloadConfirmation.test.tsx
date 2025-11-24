@@ -1,17 +1,17 @@
 import {
-  useAddQueryToDownloadList,
+  useAddToDownloadList,
   useGetEntityChildren,
 } from '@/synapse-queries/index'
 import {
   getUseMutationIdleMock,
   getUseQuerySuccessMock,
 } from '@/testutils/ReactQueryMockUtils'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   AddToDownloadListRequest,
   AddToDownloadListResponse,
   EntityChildrenResponse,
-  EntityType,
 } from '@sage-bionetworks/synapse-types'
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -21,11 +21,11 @@ import { FolderDownloadConfirmation } from './index'
 
 vi.mock('../../synapse-queries/index', () => ({
   useGetEntityChildren: vi.fn(),
-  useAddQueryToDownloadList: vi.fn(),
+  useAddToDownloadList: vi.fn(),
 }))
 
 const mockUseGetEntityChildren = vi.mocked(useGetEntityChildren)
-const mockUseAddQueryToDownloadList = vi.mocked(useAddQueryToDownloadList)
+const mockUseAddToDownloadList = vi.mocked(useAddToDownloadList)
 
 const DOWNLOAD_CONFIRMATION_UI_TEST_ID = 'DownloadConfirmationUI'
 const mockDownloadConfirmationUi = vi
@@ -81,7 +81,7 @@ describe('FolderDownloadConfirmation', () => {
       AddToDownloadListRequest
     >(addFilesToDownloadListResponse)
 
-    mockUseAddQueryToDownloadList.mockReturnValue(mutationMockReturnValue)
+    mockUseAddToDownloadList.mockReturnValue(mutationMockReturnValue)
   })
 
   it('passes the correct props to DownloadConfirmationUI', async () => {
@@ -90,7 +90,7 @@ describe('FolderDownloadConfirmation', () => {
       parentId: FOLDER_ID,
       includeSumFileSizes: true,
       includeTotalChildCount: true,
-      includeTypes: [EntityType.FILE],
+      includeTypes: [EntityType.file],
     })
     expect(mockDownloadConfirmationUi).toHaveBeenCalled()
     const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]
@@ -122,7 +122,7 @@ describe('FolderDownloadConfirmation', () => {
     })
 
     act(() => {
-      mockUseAddQueryToDownloadList.mock.lastCall![0]!.onSuccess!(
+      mockUseAddToDownloadList.mock.lastCall![0]!.onSuccess!(
         {
           concreteType:
             'org.sagebionetworks.repo.model.download.AddToDownloadListResponse',
@@ -176,7 +176,7 @@ describe('FolderDownloadConfirmation', () => {
     })
 
     act(() => {
-      mockUseAddQueryToDownloadList.mock.lastCall![0]!.onError!(
+      mockUseAddToDownloadList.mock.lastCall![0]!.onError!(
         new SynapseClientError(
           400,
           'some error message',

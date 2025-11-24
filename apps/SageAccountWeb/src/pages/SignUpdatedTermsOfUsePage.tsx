@@ -27,12 +27,12 @@ import { GovernanceMarkdownGithub } from 'synapse-react-client/components/Markdo
 function SignUpdatedTermsOfUsePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isCheckboxSelected, setIsCheckboxSelected] = useState(false)
-  const { accessToken } = useSynapseContext()
+  const { accessToken, isAuthenticated } = useSynapseContext()
   const { mutate: signTermsOfService } = useSignTermsOfService()
   const navigate = useNavigate()
   const { data: tosInfo } = useTermsOfServiceInfo()
   const { data: tosStatus } = useTermsOfServiceStatus(accessToken, {
-    enabled: !!accessToken,
+    enabled: isAuthenticated,
   })
 
   const redirectAfterSignOrSkip = () => {

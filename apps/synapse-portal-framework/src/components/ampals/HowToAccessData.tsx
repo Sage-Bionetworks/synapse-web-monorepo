@@ -117,10 +117,10 @@ const HowToAccessData = () => {
         >
           <Stack sx={{ gap: '10px' }}>
             <Typography>
-              The ALS Knowledge Portal indexes data from multiple repositories.
-              Repositories have different procedures for requesting access to
-              data, and you may need to make multiple requests to access data
-              from them.
+              The ALS Knowledge Portal provides access to data from multiple
+              repositories. Repositories have different procedures for
+              requesting access to data, and you may need to make multiple
+              requests to access data from them.
             </Typography>
             {/* Todo */}
             {/* <Link>

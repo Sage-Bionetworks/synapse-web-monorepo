@@ -179,19 +179,30 @@ export function useUpdateEntity<T extends Entity>(
 }
 
 export function useDeleteEntity(
-  options?: Partial<UseMutationOptions<void, SynapseClientError, string>>,
+  options?: Partial<
+    UseMutationOptions<string | undefined, SynapseClientError, string>
+  >,
 ) {
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
 
-  return useMutation<void, SynapseClientError, string>({
+  return useMutation<string | undefined, SynapseClientError, string>({
     ...options,
-    mutationFn: (entityId: string) =>
-      SynapseClient.deleteEntity(accessToken, entityId),
-    onSuccess: async (voidReturn, entityId, ctx) => {
+    mutationFn: async (entityId: string) => {
+      const entity = await SynapseClient.getEntity<Entity>(
+        accessToken,
+        entityId,
+      )
+      await SynapseClient.deleteEntity(accessToken, entityId)
+      return entity.parentId
+    },
+    onSuccess: async (parentId, entityId, ctx) => {
       await invalidateAllQueriesForEntity(queryClient, keyFactory, entityId)
+      if (parentId) {
+        await invalidateAllQueriesForEntity(queryClient, keyFactory, parentId)
+      }
       if (options?.onSuccess) {
-        await options.onSuccess(voidReturn, entityId, ctx)
+        await options.onSuccess(parentId, entityId, ctx)
       }
     },
   })

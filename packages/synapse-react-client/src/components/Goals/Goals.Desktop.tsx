@@ -9,12 +9,13 @@ export default function GoalsDesktop({
   countSql,
   title,
   isAssetIcon,
+  linkText = 'Explore',
 }: GoalsDataProps) {
   return (
     <Box
       className="Goals__Card"
       sx={{ cursor: 'pointer', maxWidth: '335px', width: '335px' }}
-      onClick={() => window.open(link)}
+      onClick={() => window.open(link, '_self')}
     >
       <div
         className="Goals__Card__header"
@@ -47,7 +48,7 @@ export default function GoalsDesktop({
           color="secondary"
           href={link}
         >
-          Explore
+          {linkText}
         </Button>
       </div>
     </Box>

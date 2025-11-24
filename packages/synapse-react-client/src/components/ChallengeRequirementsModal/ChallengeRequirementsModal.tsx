@@ -36,14 +36,13 @@ export default function ChallengeRequirementsModal(
   const { open, projectId, onRegisterComplete, onCancel } = props
   const { data: project, error: getEntityError } = useGetEntity(projectId)
 
-  const { accessToken } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
 
   const { data: challenge, error: getChallengeError } =
     useGetEntityChallenge(projectId)
-  const isLoggedIn = !!accessToken
   const { data: userProfile, error: getProfileError } =
     useGetCurrentUserProfile({
-      enabled: isLoggedIn,
+      enabled: isAuthenticated,
     })
 
   const participantTeamId = challenge?.participantTeamId

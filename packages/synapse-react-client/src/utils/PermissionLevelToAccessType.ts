@@ -14,12 +14,19 @@ const accessRequirementPermissionLevels = [
   'IS_EXEMPTION_ELIGIBLE',
   'CAN_REVIEW_SUBMISSIONS_AND_IS_EXEMPTION_ELIGIBLE',
 ] as const
+
 export type AccessRequirementPermissionsLevel =
   (typeof accessRequirementPermissionLevels)[number]
+
+const oauthClientPermissionLevels = ['CAN_ADMINISTER_OAUTH_CLIENT'] as const
+
+export type OAuthClientPermissionsLevel =
+  (typeof oauthClientPermissionLevels)[number]
 
 export type PermissionLevel =
   | EntityPermissionsLevel
   | AccessRequirementPermissionsLevel
+  | OAuthClientPermissionsLevel
 
 const permissionLevelToAccessType: Record<PermissionLevel, ACCESS_TYPE[]> = {
   // Entity
@@ -55,6 +62,12 @@ const permissionLevelToAccessType: Record<PermissionLevel, ACCESS_TYPE[]> = {
   CAN_REVIEW_SUBMISSIONS_AND_IS_EXEMPTION_ELIGIBLE: [
     ACCESS_TYPE.EXEMPTION_ELIGIBLE,
     ACCESS_TYPE.REVIEW_SUBMISSIONS,
+  ],
+  CAN_ADMINISTER_OAUTH_CLIENT: [
+    ACCESS_TYPE.READ,
+    ACCESS_TYPE.CHANGE_PERMISSIONS,
+    ACCESS_TYPE.DELETE,
+    ACCESS_TYPE.UPDATE,
   ],
 }
 
@@ -95,4 +108,7 @@ export const permissionLevelToLabel: Record<PermissionLevel, string> = {
   IS_EXEMPTION_ELIGIBLE: 'Exempt Eligible',
   CAN_REVIEW_SUBMISSIONS_AND_IS_EXEMPTION_ELIGIBLE:
     'Can Review & Exempt Eligible',
+
+  // OAuth Client
+  CAN_ADMINISTER_OAUTH_CLIENT: 'Administrator',
 }

@@ -1,4 +1,4 @@
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { CellContext } from '@tanstack/react-table'
 import { EntityTypeIcon } from '../../../../EntityIcon'
 import { EntityFinderTableViewRowData } from '../DetailsView'

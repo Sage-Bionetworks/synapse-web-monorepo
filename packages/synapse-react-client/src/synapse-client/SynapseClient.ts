@@ -1,5 +1,4 @@
 import { ACCESS_TOKEN_COOKIE_KEY, getCookieDomain, OAuth2State } from '@/utils'
-import * as SynapseConstants from '@/utils/SynapseConstants'
 import {
   ACCESS_APPROVAL,
   ACCESS_APPROVAL_BY_ID,
@@ -100,7 +99,13 @@ import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFi
 import { dispatchDownloadListChangeEvent } from '@/utils/functions/dispatchDownloadListChangeEvent'
 import { removeUndefined } from '@/utils/functions/ObjectUtils'
 import { sanitize } from '@/utils/functions/SanitizeHtmlUtils'
+import * as SynapseConstants from '@/utils/SynapseConstants'
 import { DATETIME_UTC_COOKIE_KEY } from '@/utils/SynapseConstants'
+import {
+  DoiAssociation,
+  EntityType,
+  ViewEntityType,
+} from '@sage-bionetworks/synapse-client'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import {
   ACCESS_TYPE,
@@ -172,7 +177,6 @@ import {
   DiscussionThreadOrder,
   DockerCommit,
   Doi,
-  DoiAssociation,
   DownloadFromTableRequest,
   DownloadFromTableResult,
   DownloadList,
@@ -195,7 +199,6 @@ import {
   EntityJson,
   EntityLookupRequest,
   EntityPath,
-  EntityType,
   Evaluation,
   EvaluationRound,
   EvaluationRoundListRequest,
@@ -331,7 +334,6 @@ import {
   VersionInfo,
   ViewColumnModelRequest,
   ViewColumnModelResponse,
-  ViewEntityType,
   WikiPage,
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
@@ -346,6 +348,7 @@ import {
   isOutsideSynapseOrg,
   returnIfTwoFactorAuthError,
 } from './SynapseClientUtils'
+import { CSRF_TOKEN_STORAGE_KEY } from '@/utils/hooks'
 
 const cookies = new UniversalCookies()
 
@@ -699,6 +702,16 @@ export const oAuthUrlRequest = (
   state?: OAuth2State,
   endpoint = BackendDestinationEnum.REPO_ENDPOINT,
 ) => {
+  // Persist the CSRF token to localStorage if present, for validation when OAuth provider redirects back
+  const csrfToken = state?.csrfToken
+  if (csrfToken) {
+    try {
+      localStorage.setItem(CSRF_TOKEN_STORAGE_KEY, csrfToken)
+    } catch (err) {
+      console.warn('Unable to persist OAuth CSRF token.', err)
+    }
+  }
+
   return doPost<{ authorizationUrl: string }>(
     '/auth/v1/oauth2/authurl',
     {

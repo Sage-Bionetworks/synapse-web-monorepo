@@ -4,8 +4,7 @@ import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseCon
 import LoginPage from './LoginPage'
 
 function AuthenticatedLayout() {
-  const { accessToken } = useSynapseContext()
-  const isAuthenticated = Boolean(accessToken)
+  const { isAuthenticated } = useSynapseContext()
 
   let content = <Outlet />
 

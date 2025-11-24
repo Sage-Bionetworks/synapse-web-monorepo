@@ -7,6 +7,7 @@ import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { Project as ProjectIcon } from 'synapse-react-client/assets/themed_icons/Project'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { grantsSql } from '../resources'
+import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 
 const rgbIndex = 3
 
@@ -15,6 +16,7 @@ export const grantsSchema: TableToGenericCardMapping = {
   title: 'grantName',
   subTitle: 'grantInstitution',
   description: 'abstract',
+  includeShareButton: true,
   secondaryLabels: [
     'investigator',
     'grantNumber',
@@ -41,6 +43,7 @@ export const grantsCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   secondaryLabelLimit: 4,
   iconOptions,
+  sharePageLinkButtonProps: sharePageLinkButtonDetailPageProps,
 }
 
 export const grantQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {

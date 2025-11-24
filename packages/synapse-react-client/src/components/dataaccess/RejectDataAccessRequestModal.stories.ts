@@ -3,8 +3,8 @@ import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService
 import mockRejectionReasonsTableQueryResultBundle from '@/mocks/query/mockRejectionReasonsTableQueryResultBundle'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstants'
-import { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
+import { Meta, StoryObj } from '@storybook/react-vite'
+import { fn } from 'storybook/test'
 import RejectDataAccessRequestModal from './RejectDataAccessRequestModal'
 
 const meta = {

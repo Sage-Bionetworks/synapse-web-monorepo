@@ -39,9 +39,10 @@ import RJSF from '@rjsf/core'
 import {
   DoiObjectType,
   DoiResourceTypeGeneral,
+  DoiResourceTypeResourceTypeGeneralEnum,
+  EntityType,
   V2Doi,
 } from '@sage-bionetworks/synapse-client'
-import { EntityType } from '@sage-bionetworks/synapse-types'
 import { isEmpty } from 'lodash-es'
 import { useEffect, useRef, useState } from 'react'
 
@@ -63,14 +64,14 @@ type CreateOrUpdateDoiModalProps = {
 type DoiFormData = {
   titles?: string[]
   creators?: string[]
-  resourceTypeGeneral?: string
+  resourceTypeGeneral?: DoiResourceTypeResourceTypeGeneralEnum
   publicationYear?: number
 }
 
 function getSuggestedResourceTypeGeneral(
   type: EntityType,
 ): DoiResourceTypeGeneral {
-  if (type === EntityType.PROJECT || type === EntityType.FOLDER) {
+  if (type === EntityType.project || type === EntityType.folder) {
     return DoiResourceTypeGeneral.Collection
   } else {
     return DoiResourceTypeGeneral.Dataset
@@ -187,7 +188,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
 
   const entityType = entity
     ? convertToEntityType(entity.concreteType)
-    : EntityType.FILE
+    : EntityType.file
   const entityTypeDisplay = entityTypeToFriendlyName(entityType)
   let versionHelpMarkdown = `A DOI can be associated with a specific version of this ${entityTypeDisplay}.
   

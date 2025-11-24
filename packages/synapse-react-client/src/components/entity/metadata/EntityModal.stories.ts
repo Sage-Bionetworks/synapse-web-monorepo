@@ -1,6 +1,6 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { EntityModal } from './EntityModal'
-import { fn } from '@storybook/test'
+import { fn } from 'storybook/test'
 
 const meta = {
   title: 'Synapse/EntityModal',

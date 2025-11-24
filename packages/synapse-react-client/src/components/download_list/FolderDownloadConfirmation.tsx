@@ -1,9 +1,6 @@
-import {
-  useAddQueryToDownloadList,
-  useGetEntityChildren,
-} from '@/synapse-queries'
+import { useAddToDownloadList, useGetEntityChildren } from '@/synapse-queries'
 import { useSynapseContext } from '@/utils'
-import { EntityType } from '@sage-bionetworks/synapse-types'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { displayToast } from '../ToastMessage'
 import { DownloadConfirmationUI } from './DownloadConfirmationUI'
 import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
@@ -13,6 +10,9 @@ export type FolderDownloadConfirmationProps = {
   fnClose: () => void
 }
 
+/**
+ * @deprecated use AddToDownloadListConfirmationAlert instead
+ */
 export function FolderDownloadConfirmation(
   props: FolderDownloadConfirmationProps,
 ) {
@@ -24,14 +24,14 @@ export function FolderDownloadConfirmation(
       parentId: folderId,
       includeSumFileSizes: true,
       includeTotalChildCount: true,
-      includeTypes: [EntityType.FILE],
+      includeTypes: [EntityType.file],
     })
 
   const fileCount = entityChildrenData?.totalChildCount ?? 0
   const fileSizeTotal = entityChildrenData?.sumFileSizesBytes
 
   const { mutate: addToDownloadList, isPending: isAddingToDownloadCart } =
-    useAddQueryToDownloadList({
+    useAddToDownloadList({
       onSuccess: () => {
         displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)
         fnClose()

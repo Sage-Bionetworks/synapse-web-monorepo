@@ -48,6 +48,7 @@ function HackathonDetailsPage() {
       }
       sql={hackathonsSql}
       ContainerProps={{ maxWidth: 'xl' }}
+      resourcePrimaryKey={['id']}
     >
       <DetailsPageTabs tabConfig={tabConfig} />
       <Outlet />

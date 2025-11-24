@@ -1,0 +1,167 @@
+@use 'sass:map';
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+
+.FeaturedTeam {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.FeaturedTeam__bkgImage {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 8%;
+  transform: scaleY(1.3);
+  z-index: -1;
+}
+
+.FeaturedTeam__triangleImage {
+  position: absolute;
+  left: 38%;
+  bottom: 99%;
+  transform: translateX(-50%);
+  z-index: 1;
+
+  @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    left: 10%;
+  }
+}
+
+.FeaturedTeam__medalImage {
+  position: absolute;
+  left: 68%;
+  bottom: 88%;
+  transform: translateX(-50%);
+  z-index: 1;
+
+  @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    left: 92%;
+    bottom: 93%;
+    width: 50px;
+    height: 50px;
+  }
+}
+
+.FeaturedTeam__topLineImage {
+  position: absolute;
+  left: 59%;
+  bottom: 99%;
+  transform: translateX(-50%);
+  z-index: 1;
+
+  @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    left: 80%;
+    bottom: 100%;
+  }
+}
+
+.FeaturedTeam__bottomLineImage {
+  position: absolute;
+  left: 60%;
+  bottom: 98%;
+  transform: translateX(-50%);
+  z-index: 1;
+
+  @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    left: 81%;
+    bottom: 99%;
+  }
+}
+
+.FeaturedTeam__headerSection {
+  text-align: center;
+}
+
+.FeaturedTeam__title:global(.MuiTypography-root) {
+  color: var(--black);
+  margin-bottom: 25px;
+  font-size: 48px;
+  line-height: 80px;
+}
+
+.FeaturedTeam__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 35px;
+  width: 100%;
+  padding: 35px 40px 60px 40px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 35px 100px 60px 100px;
+  }
+}
+
+.FeaturedTeam__imageSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 0 0 50%;
+}
+
+.FeaturedTeam__image {
+  width: 100%;
+  object-fit: cover;
+}
+
+.FeaturedTeam__caption:global(.MuiTypography-root) {
+  line-height: 20px;
+  color: var(--gray-900);
+}
+
+.FeaturedTeam__infoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  flex: 0 0 50%;
+}
+
+.FeaturedTeam__winnerSection {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.FeaturedTeam__winnerTitle {
+  color: var(--gray-900);
+}
+
+.FeaturedTeam__challengeLink {
+  color: var(--info);
+}
+
+.FeaturedTeam__qaSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.FeaturedTeam__question:global(.MuiTypography-root) {
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.FeaturedTeam__answer:global(.MuiTypography-root) {
+  color: var(--gray-900);
+}
+
+.FeaturedTeam__readMoreButton {
+  display: flex;
+  height: 36px;
+  padding: 6px 16px;
+  width: fit-content;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  color: var(--black) !important;
+  border: 1px solid var(--black) !important;
+
+  @media (max-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    width: 100%;
+  }
+}

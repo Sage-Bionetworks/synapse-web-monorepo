@@ -41,6 +41,7 @@ export default function DatasetDetailsPage() {
       ContainerProps={{
         maxWidth: 'xl',
       }}
+      resourcePrimaryKey={['id']}
     >
       <DetailsPageContextConsumer>
         {({ context }) => {
@@ -68,7 +69,7 @@ export default function DatasetDetailsPage() {
               id: 'Acknowledgment',
               element: (
                 <MarkdownSynapseFromColumnData
-                  columnName={'acknowledgmentStatement'}
+                  columnName={'acknowledgementStatement'}
                 />
               ),
             },

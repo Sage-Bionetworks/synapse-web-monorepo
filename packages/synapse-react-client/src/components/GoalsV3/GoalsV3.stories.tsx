@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import GoalsV3 from './GoalsV3'
 import { ReactComponent as MouseSvg } from '@/assets/icons/mouse.svg'
 

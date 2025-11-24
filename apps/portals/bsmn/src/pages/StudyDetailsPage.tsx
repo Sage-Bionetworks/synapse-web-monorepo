@@ -27,6 +27,7 @@ function StudyDetailsPage() {
         />
       }
       sql={studiesSql}
+      resourcePrimaryKey={['id']}
     >
       <DetailsPageContent
         content={[

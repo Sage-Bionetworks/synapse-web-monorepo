@@ -1,4 +1,5 @@
 import { removeTrailingUndefinedElements } from '@/utils/functions/ArrayUtils'
+import { parseEntityIdFromSqlStatement } from '@/utils/functions/index'
 import { hashCode, normalizeNumericId } from '@/utils/functions/StringUtils'
 import {
   USER_BUNDLE_MASK_IS_ACT_MEMBER,
@@ -10,11 +11,15 @@ import {
   USER_BUNDLE_MASK_VERIFICATION_SUBMISSION,
 } from '@/utils/SynapseConstants'
 import {
+  AddToDownloadListStatsRequest,
   DiscussionSearchRequest,
   EntityLookupRequest,
   GetRepoV1DoiAssociationRequest,
   GetRepoV1DoiRequest,
+  ListGridSessionsRequest,
+  UploadToTablePreviewRequest,
   type UserSubmissionSearchRequest,
+  ViewEntityType,
 } from '@sage-bionetworks/synapse-client'
 import { OIDCAuthorizationRequest } from '@sage-bionetworks/synapse-client/generated/models/OIDCAuthorizationRequest'
 import { PrincipalAliasRequest } from '@sage-bionetworks/synapse-client/generated/models/PrincipalAliasRequest'
@@ -48,7 +53,6 @@ import {
   TraceEventsRequest,
   TYPE_FILTER,
   ViewColumnModelRequest,
-  ViewEntityType,
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
 import { QueryKey } from '@tanstack/react-query'
@@ -714,6 +718,10 @@ export class KeyFactory {
     return this.getKey('oauthClient', clientId)
   }
 
+  public getOAuthClientAclQueryKey(clientId: string) {
+    return this.getKey('oauthClient', clientId, 'acl')
+  }
+
   public getHasCurrentUserAuthorizedOAuthClientQueryKey(
     request: OIDCAuthorizationRequest,
   ) {
@@ -999,7 +1007,43 @@ export class KeyFactory {
     return this.getKey('portal', portalId, 'permissions')
   }
 
-  public getGridSessionListKey() {
-    return this.getKey('gridSession', 'list')
+  public getGridSessionKey(sessionId: string) {
+    return this.getKey('gridSession', sessionId)
+  }
+
+  public getGridSessionListKey(request?: ListGridSessionsRequest) {
+    return this.getKey('gridSession', 'list', request)
+  }
+
+  public getCurationTaskKey(taskId: number) {
+    return this.getKey('curationTask', taskId)
+  }
+
+  public getCurationTaskListKey(projectId: string) {
+    return this.getKey('curationTask', 'list', projectId)
+  }
+
+  public getCsvPreviewQueryKey(request: UploadToTablePreviewRequest) {
+    return this.getKey('csvPreview', request)
+  }
+
+  public getAddToDownloadListStatsQueryKey(
+    addToDownloadListStatsRequest: AddToDownloadListStatsRequest,
+  ) {
+    // Retrieve the entityId from the request so that changes to the entity can invalidate this query
+    const entityId =
+      addToDownloadListStatsRequest.request?.parentId ??
+      parseEntityIdFromSqlStatement(
+        addToDownloadListStatsRequest?.request?.query?.sql ?? '',
+      )
+    return this.getKey(
+      entityQueryKeyObjects.entity(entityId),
+      'addToDownloadListStats',
+      addToDownloadListStatsRequest,
+    )
+  }
+
+  public getAsyncJobStatusQueryKey(jobId: string) {
+    return this.getKey('asyncJobStatus', jobId)
   }
 }

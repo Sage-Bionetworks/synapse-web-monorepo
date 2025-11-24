@@ -16,10 +16,10 @@ import {
   PublicTwoTone,
 } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   ALL_ENTITY_BUNDLE_FIELDS,
   EntityBundle,
-  EntityType,
 } from '@sage-bionetworks/synapse-types'
 import { isEmpty } from 'lodash-es'
 import { useEffect, useState } from 'react'
@@ -229,6 +229,7 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
       )}
     </div>
   )
+
   return (
     <div className="EntityBadge" ref={ref} style={{ flexWrap, justifyContent }}>
       {bundle && (
@@ -324,7 +325,7 @@ export const EntityBadgeIcons = (props: EntityBadgeIconsProps) => {
               </Tooltip>
             )}
           {showUnlink &&
-            bundle.entityType === EntityType.LINK &&
+            bundle.entityType === EntityType.link &&
             bundle.permissions?.canDelete && (
               <>
                 <WarningDialog

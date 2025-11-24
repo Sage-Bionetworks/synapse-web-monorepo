@@ -7,7 +7,7 @@ type BannerConfig = Record<Portal, BannerType[]>
 // lists the full width alerts displayed on each Portal,
 // ...in the order in which the banners should be dismissed
 const bannerConfig: BannerConfig = {
-  adknowledgeportal: ['cookies', 'survey'],
+  adknowledgeportal: ['cookies'],
   arkportal: ['cookies'],
   bsmn: ['cookies'],
   cancercomplexity: ['cookies'],
@@ -16,7 +16,7 @@ const bannerConfig: BannerConfig = {
   eliteportal: ['cookies'],
   nf: ['cookies', 'survey'],
   stopadportal: ['cookies'],
-  genie: ['cookies', 'survey'],
+  genie: ['cookies'],
 }
 
 export default bannerConfig

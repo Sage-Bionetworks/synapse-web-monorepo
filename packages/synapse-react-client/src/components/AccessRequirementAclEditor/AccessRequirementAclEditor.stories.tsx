@@ -4,7 +4,7 @@ import { getAllAccessRequirementAclHandlers } from '@/mocks/msw/handlers/accessR
 import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Button, Paper } from '@mui/material'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { useRef, useState } from 'react'
 import {
   AccessRequirementAclEditor,

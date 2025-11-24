@@ -1,5 +1,5 @@
 import { LOGIN_METHOD_EMAIL } from '@/utils/SynapseConstants'
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 
 import LastLoginInfo from './LastLoginInfo'
 import { LoginMethods } from './LoginMethod'

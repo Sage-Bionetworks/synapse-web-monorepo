@@ -3,9 +3,9 @@ import { ExternalAnalysisPlatform } from 'synapse-react-client/components/Synaps
 export const SYNAPSE_PORTAL_ID = '1001'
 
 export const computationalSql = 'Select * from syn20337467'
-export const dataSql = 'SELECT * FROM syn11346063.74'
+export const dataSql = 'SELECT * FROM syn11346063.77'
 export const dataOnStudiesPageSql =
-  "SELECT id, name, metadataType, dataType, assay FROM syn11346063.74 WHERE `resourceType` = 'metadata'"
+  "SELECT id, name, metadataType, dataType, assay FROM syn11346063.77 WHERE `resourceType` = 'metadata'"
 export const peopleSql = 'SELECT * FROM syn13897207'
 export const projectsSql = 'SELECT * FROM syn17024229 ORDER BY isFeatured DESC'
 export const publicationsSql = 'SELECT * FROM syn20448807'
@@ -27,7 +27,7 @@ export const targetEnablingResourcesExploreSql =
 export const targetEnablingResourcesDetailsPageSql =
   'select * from syn26146692 WHERE `isPublic` = true'
 export const cavaticaConnectAccountURL =
-  'https://help.adknowledgeportal.org/apd/Analysis-Platforms.3088482318.html'
+  'https://help.adknowledgeportal.org/apd/CAVATICA.4271145000.html'
 
 export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = [
   'cavatica',

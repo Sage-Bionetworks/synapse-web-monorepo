@@ -70,6 +70,7 @@ export const studyCardConfiguration: CardConfiguration = {
     description: 'summary',
     subTitle: 'studyLeads',
     icon: 'studyStatus',
+    includeShareButton: true,
     secondaryLabels: [
       'studyStatus',
       'dataStatus',
@@ -81,6 +82,8 @@ export const studyCardConfiguration: CardConfiguration = {
       'grantDOI',
       'clinicalTrialID',
       'alternateDataRepository',
+      'nextPhaseProject',
+      'previousPhaseProject',
     ],
     dataTypeIconNames: 'dataType',
   },
@@ -89,6 +92,20 @@ export const studyCardConfiguration: CardConfiguration = {
     {
       isMarkdown: true,
       matchColumnName: 'grantDOI',
+    },
+    {
+      resolveEntityName: true,
+      baseURL: 'Explore/Studies/DetailsPage',
+      URLColumnName: 'studyId',
+      matchColumnName: 'nextPhaseProject',
+      isMarkdown: false,
+    },
+    {
+      resolveEntityName: true,
+      baseURL: 'Explore/Studies/DetailsPage',
+      URLColumnName: 'studyId',
+      matchColumnName: 'previousPhaseProject',
+      isMarkdown: false,
     },
   ],
   iconOptions: {

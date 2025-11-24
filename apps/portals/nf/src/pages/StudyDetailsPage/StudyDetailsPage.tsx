@@ -3,14 +3,12 @@ import {
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { Outlet } from 'react-router'
 import {
   CardContainerLogic,
   ErrorPage,
-  SharePageLinkButton,
   SynapseErrorType,
 } from 'synapse-react-client'
 import { studiesSql } from '../../config/resources'
@@ -25,6 +23,7 @@ import {
   STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
   STUDY_DETAILS_PAGE_FILES_TAB_PATH,
 } from '@/config/routeConstants'
+import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 
 const tabConfig: DetailsPageTabConfig[] = [
   {
@@ -67,7 +66,6 @@ function StudyDetailsPage() {
     <DetailsPage
       header={
         <>
-          <SharePageLinkButton {...sharePageLinkButtonDetailPageProps} />
           <CardContainerLogic
             sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
             cardConfiguration={{
@@ -75,6 +73,7 @@ function StudyDetailsPage() {
               secondaryLabelLimit: Infinity,
               iconOptions: studyHeaderIconOptions,
               isHeader: true,
+              sharePageLinkButtonProps: sharePageLinkButtonDetailPageProps,
             }}
             columnAliases={columnAliases}
             sql={studiesSql}
@@ -84,6 +83,7 @@ function StudyDetailsPage() {
       }
       sql={studiesSql}
       ContainerProps={{ maxWidth: 'xl' }}
+      resourcePrimaryKey={['studyId']}
     >
       <DetailsPageTabs tabConfig={tabConfig} />
       <Outlet />

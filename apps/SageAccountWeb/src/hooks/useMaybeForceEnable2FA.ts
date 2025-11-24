@@ -25,7 +25,9 @@ export default function useMaybeForceEnable2FA() {
         return
       }
       // redirect to 2FA enrollment if not enabled
-      if (!isTwoFactorEnabled) {
+      const envEnforce2FA = import.meta.env
+        .VITE_ENFORCE_2FA_ENROLLMENT as string
+      if (!isTwoFactorEnabled && envEnforce2FA.toLowerCase() === 'true') {
         // Store the current path before redirecting to 2FA required page, we will redirect back to this path after 2FA
         // enrollment is complete.
         const currentPath = location.pathname + location.search + location.hash

@@ -23,10 +23,9 @@ const ChallengeRegisterButton = ({
   onJoinClick,
   onLeaveClick,
 }: ChallengeRegisterButtonProps) => {
-  const { accessToken } = useSynapseContext()
-  const isLoggedIn = !!accessToken
+  const { isAuthenticated, accessToken } = useSynapseContext()
   const { data: userProfile } = useGetCurrentUserProfile({
-    enabled: isLoggedIn,
+    enabled: isAuthenticated,
   })
 
   const {
@@ -34,7 +33,7 @@ const ChallengeRegisterButton = ({
     isLoading: isLoadingChallenge,
     error: getChallengeError,
   } = useGetEntityChallenge(projectId, {
-    enabled: isLoggedIn,
+    enabled: isAuthenticated,
   })
 
   // Verify that user is a member of the participant team
@@ -57,7 +56,7 @@ const ChallengeRegisterButton = ({
     error: getSubmissionTeamsError,
     isLoading: isLoadingSubmissionTeams,
   } = useGetUserSubmissionTeams(challenge?.id!, 20, 0, {
-    enabled: !!challenge && isLoggedIn,
+    enabled: !!challenge && isAuthenticated,
   })
 
   const hasSubmissionTeam =

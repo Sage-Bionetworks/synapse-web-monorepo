@@ -1,35 +1,20 @@
-import SynapseClient from '@/synapse-client'
-import {
-  useGetEntityBundle,
-  useGetRestrictionInformation,
-} from '@/synapse-queries'
-import { SynapseClientError, useSynapseContext } from '@/utils'
-import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { useGetRestrictionInformation } from '@/synapse-queries'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
-import { Box, Button } from '@mui/material'
+import { Box, Button, SxProps, Theme } from '@mui/material'
 import {
-  AccessRequirement,
-  EntityBundle,
-  FileHandle,
   RestrictableObjectType,
   RestrictionLevel,
 } from '@sage-bionetworks/synapse-types'
-import { useCallback, useMemo, useState } from 'react'
-import AccessRequirementList, {
-  checkHasUnsupportedRequirement,
-} from '../AccessRequirementList/AccessRequirementList'
-import {
-  implementsExternalFileHandleInterface,
-  isFileEntity,
-} from '@/utils/types/IsType'
-import { UseQueryOptions } from '@tanstack/react-query'
-import AccessIcon, { RestrictionUiType } from './AccessIcon'
+import { useMemo } from 'react'
+import { RestrictionUiType } from './AccessIcon'
+import { useHasAccess } from './useHasAccess'
 
 export type HasAccessProps = {
   onHide?: () => void
   entityId: string
   className?: string
   showButtonText?: boolean
+  wrap?: boolean
   /**
    * If true, the component will show enhanced UI for the case where
    * - the entity is a FileEntity, AND
@@ -39,139 +24,34 @@ export type HasAccessProps = {
    * @default false
    */
   showExternalAccessIcon?: boolean
+  sx?: SxProps<Theme>
 }
 
 const buttonSx = { p: '0px', minWidth: 'unset' }
-
-/**
- * Determines whether an Entity is accessible for download, or if it is blocked by the ACL or unmet Access Requirements.
- *
- * To make download available, and determine if the file is downloadable via the web, see {@link DirectDownload.tsx}
- * @param entityId
- * @returns
- */
-export function useGetRestrictionUiType(
-  entityId: string,
-  useGetIsExternalFileHandleOptions: Partial<
-    UseQueryOptions<EntityBundle, SynapseClientError, boolean>
-  >,
-): RestrictionUiType | undefined {
-  const { accessToken } = useSynapseContext()
-  const isSignedIn = Boolean(accessToken)
-
-  const { data: restrictionInformation } = useGetRestrictionInformation({
-    restrictableObjectType: RestrictableObjectType.ENTITY,
-    objectId: entityId,
-  })
-
-  const { data: isExternalFileHandle, isLoading: isLoadingExternalFile } =
-    useGetIsExternalFileHandle(entityId, {
-      enabled: useGetIsExternalFileHandleOptions.enabled,
-    })
-
-  if (!restrictionInformation) {
-    return undefined
-  }
-
-  if (isLoadingExternalFile) {
-    return undefined
-  }
-
-  if (isExternalFileHandle) {
-    return RestrictionUiType.AccessibleExternalFileHandle
-  }
-
-  if (restrictionInformation.hasUnmetAccessRequirement) {
-    return RestrictionUiType.AccessBlockedByRestriction
-  }
-  if (restrictionInformation.userEntityPermissions!.canDownload) {
-    if (restrictionInformation.restrictionLevel !== RestrictionLevel.OPEN) {
-      // Indicate that there are requirements, but they have been met
-      return RestrictionUiType.AccessibleWithTerms
-    } else {
-      return RestrictionUiType.Accessible
-    }
-  }
-
-  if (isSignedIn) {
-    return RestrictionUiType.AccessBlockedByACL
-  }
-  return RestrictionUiType.AccessBlockedToAnonymous
-}
-
-/**
- * This hook determines if
- * - the entity is a FileEntity, AND
- * - the caller has permission to fetch the dataFileHandle, AND
- * - the dataFileHandle is an instance of ExternalFileHandleInterface (i.e. the file is not controlled by Synapse)
- * Note that this requires an additional API call that cannot be batched, so it should be avoided in bulk contexts if possible.
- */
-function useGetIsExternalFileHandle(
-  entityId: string,
-  options: Partial<UseQueryOptions<EntityBundle, SynapseClientError, boolean>>,
-) {
-  return useGetEntityBundle(entityId, undefined, undefined, {
-    ...options,
-    select: bundle => {
-      if (!isFileEntity(bundle.entity)) {
-        return false
-      }
-      const fileEntity = bundle.entity
-      const fileHandles = bundle.fileHandles
-      const fileHandle: FileHandle | undefined = fileHandles?.find(
-        fileHandle => fileHandle.id === fileEntity.dataFileHandleId,
-      )
-      return fileHandle && implementsExternalFileHandleInterface(fileHandle)
-    },
-  })
-}
 
 /**
  * HasAccess shows if the user has access to the file or not. If the user doesn't have access due to a restriction,
  * then a link will be shown that opens a modal with steps to request access.
  */
 export function HasAccessV2(props: HasAccessProps) {
-  const [displayAccessRequirement, setDisplayAccessRequirement] =
-    useState(false)
-  const [accessRequirements, setAccessRequirements] = useState<
-    AccessRequirement[]
-  >([])
-
   const {
     entityId,
     showButtonText = true,
     showExternalAccessIcon = false,
   } = props
-  const restrictionUiTypeValue = useGetRestrictionUiType(entityId, {
-    enabled: showExternalAccessIcon,
-  })
 
-  const { accessToken } = useSynapseContext()
+  const {
+    restrictionUiType: restrictionUiTypeValue,
+    accessText,
+    icon,
+    handleGetAccess,
+    accessRequirementDialog,
+  } = useHasAccess(entityId, true, undefined, { showExternalAccessIcon })
 
   const { data: restrictionInformation } = useGetRestrictionInformation({
     restrictableObjectType: RestrictableObjectType.ENTITY,
     objectId: entityId,
   })
-
-  const handleGetAccess = useCallback(() => {
-    // TODO: The fetch should really happen in the AR List component.
-    // If we need to open the AR page in synapse, the logic should be in the modal and it should just close itself right away
-    SynapseClient.getAllAccessRequirements(accessToken, entityId).then(
-      requirements => {
-        if (checkHasUnsupportedRequirement(requirements)) {
-          window.open(
-            `${getEndpoint(
-              BackendDestinationEnum.PORTAL_ENDPOINT,
-            )}AccessRequirements:ID=${entityId}&TYPE=ENTITY`,
-            '_blank',
-          )
-        } else {
-          setAccessRequirements(requirements)
-          setDisplayAccessRequirement(true)
-        }
-      },
-    )
-  }, [accessToken, entityId])
 
   // Sign-in wrapped icon or icon alone
   const iconContainer = useMemo(() => {
@@ -201,10 +81,10 @@ export function HasAccessV2(props: HasAccessProps) {
           }
         }}
       >
-        <AccessIcon restrictionUiType={restrictionUiTypeValue} />
+        {icon}
       </Button>
     ) : (
-      <AccessIcon restrictionUiType={restrictionUiTypeValue!} />
+      icon
     )
   }, [restrictionUiTypeValue])
 
@@ -234,7 +114,7 @@ export function HasAccessV2(props: HasAccessProps) {
           className={props.className}
           onClick={handleGetAccess}
         >
-          <AccessIcon restrictionUiType={restrictionUiTypeValue} />
+          {icon}
           {showButtonText && (
             <Box
               sx={{
@@ -245,29 +125,19 @@ export function HasAccessV2(props: HasAccessProps) {
             </Box>
           )}
         </Button>
-        {displayAccessRequirement && (
-          <AccessRequirementList
-            subjectId={entityId}
-            subjectType={RestrictableObjectType.ENTITY}
-            accessRequirementFromProps={accessRequirements}
-            renderAsModal={true}
-            onHide={() => {
-              setDisplayAccessRequirement(false)
-            }}
-          />
-        )}
+        {accessRequirementDialog}
       </>
     )
   }, [
-    entityId,
     restrictionInformation,
-    accessRequirements,
-    displayAccessRequirement,
+    restrictionUiTypeValue,
+    iconContainer,
     handleGetAccess,
     props.className,
-    restrictionUiTypeValue,
     showButtonText,
-    iconContainer,
+    accessRequirementDialog,
+    accessText,
+    icon,
   ])
 
   if (!restrictionUiTypeValue) {
@@ -280,6 +150,7 @@ export function HasAccessV2(props: HasAccessProps) {
       {accessRequirementsJsxOrIconContainer}
     </span>
   )
+  return accessRequirementsJsxOrIconContainer
 }
 
 export default HasAccessV2

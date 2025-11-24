@@ -164,9 +164,11 @@ export const LOGIN_BACK_BUTTON_CLASS_NAME = 'login-flow-back-button'
 /* Login methods */
 export const LOGIN_METHOD_EMAIL = 'EMAIL'
 export const LOGIN_METHOD_OAUTH2_GOOGLE = 'GOOGLE'
+export const LOGIN_METHOD_OAUTH2_ARCUS = 'ARCUS'
 export const LOGIN_METHOD_OAUTH2_ORCID = 'ORCID'
 
 export const OAUTH2_PROVIDERS = {
+  [LOGIN_METHOD_OAUTH2_ARCUS]: 'ARCUS_BIOSCIENCES',
   [LOGIN_METHOD_OAUTH2_GOOGLE]: 'GOOGLE_OAUTH_2_0',
   [LOGIN_METHOD_OAUTH2_ORCID]: 'ORCID',
 }
@@ -184,7 +186,6 @@ export const LAST_LOGIN_SOURCEAPP_URL_LOCALSTORAGE_KEY =
   'last_login_sourceapp_url'
 export const LAST_LOGIN_DATE_LOCALSTORAGE_KEY = 'last_login_date'
 
-export const DOWNLOAD_FILES_MENU_TEXT = 'Download Files'
 export const ACCESS_TOKEN_COOKIE_KEY =
   'org.sagebionetworks.security.user.login.token'
 export const LAST_PLACE_LOCALSTORAGE_KEY = 'last_place_url'
@@ -216,3 +217,8 @@ export const ONE_SAGE_APPID_QUERY_PARAM_KEY = 'appId'
 
 export const SAGE_OFFERINGS_HELP_URL =
   'https://help.synapse.org/docs/Sage-Offerings.2965078125.html'
+
+// Grid Page URL Query Parameters
+export const GRID_PAGE_SESSION_ID_QUERY_PARAM = 'sessionId'
+export const GRID_PAGE_AGENT_REGISTRATION_ID_QUERY_PARAM = 'agentRegistrationId'
+export const GRID_PAGE_TASK_ID_QUERY_PARAM = 'taskId'

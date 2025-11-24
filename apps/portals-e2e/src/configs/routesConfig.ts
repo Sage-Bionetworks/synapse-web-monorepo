@@ -32,23 +32,16 @@ const routesConfig: RouteConfig = {
     links: ['News', 'Help'],
   },
   challenges: {
-    buttons: ['Home'],
-    links: [],
+    buttons: [],
+    links: ['Home', 'Challenge List'],
   },
   digitalhealth: {
     buttons: ['Home', 'Explore', 'Sign In'],
     links: ['About', 'Help'],
   },
   eliteportal: {
-    buttons: ['Explore', 'Sign In'],
-    links: [
-      'Home',
-      'Analysis Platforms',
-      'Data Access',
-      'Contribute Data',
-      'News',
-      'Help',
-    ],
+    buttons: ['Explore', 'Data Access', 'Sign In'],
+    links: ['Home', 'Analysis Platforms', 'Contribute Data', 'News', 'Help'],
   },
   nf: {
     buttons: [
