@@ -141,7 +141,7 @@ describe('AutocompleteColumn', () => {
 
     render(<AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />)
 
-    const input = screen.getByRole('combobox')
+    screen.getByRole('combobox')
     // Click the dropdown arrow button
     const dropdownButton = screen.getByRole('button', {
       name: /open/i,
