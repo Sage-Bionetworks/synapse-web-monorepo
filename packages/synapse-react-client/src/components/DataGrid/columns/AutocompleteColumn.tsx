@@ -64,10 +64,12 @@ export function AutocompleteCell({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active])
 
-  // Sync localInputState with rowData when it changes externally (e.g., after cut)
+  // When not actively being edited, sync localInputState with rowData (e.g., after cut)
   useEffect(() => {
-    setLocalInputState(rowDataAsString)
-  }, [rowDataAsString])
+    if (!focus && !active) {
+      setLocalInputState(rowDataAsString)
+    }
+  }, [focus, active, rowDataAsString])
 
   const hasValue = !isNil(rowData) && rowData !== ''
 
