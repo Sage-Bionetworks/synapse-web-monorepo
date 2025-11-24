@@ -163,10 +163,10 @@ export type TableRowGenericCardProps = {
   /** Optional props for the ShareThisPage component */
   sharePageLinkButtonProps?: ShareThisPageProps
   /** Optional function that receives schema and data and returns a ReactNode to be rendered next to the card type */
-  cardTypeAdornment?: (
+  CardTypeAdornment?: React.ComponentType<{
     schema: Record<string, number>,
     data: string[],
-  ) => React.ReactNode
+  }>
 } & CommonCardProps
 
 // SWC-6115: special rendering of the version column (for Views)
