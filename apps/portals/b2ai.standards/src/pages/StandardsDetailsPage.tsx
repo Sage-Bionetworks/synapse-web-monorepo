@@ -157,6 +157,7 @@ export default function StandardsDetailsPage() {
             ctaLinkConfig: {
               text: 'View Standard on External Website',
               link: 'url',
+              noLinkIfEmpty: true,
             },
             labelLinkConfig: standardsColumnLinks,
           }}
