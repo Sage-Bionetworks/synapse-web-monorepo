@@ -4,6 +4,7 @@ import styles from './ColorfulPortalCardWithChips.module.scss'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { useImageUrl } from '@/utils/hooks/useImageUrlUtils'
 import { hashCode } from '@/utils/functions/StringUtils'
+import MarkdownSynapse from '@/components/Markdown/MarkdownSynapse'
 
 type ColorfulPortalCardWithChipsProps = {
   title?: string
@@ -86,7 +87,12 @@ const ColorfulPortalCardWithChips = ({
             />
           )}
           <Stack className={styles.ColorfulPortalCardWithChips__titleSection}>
-            <Typography variant="headline1">{title} </Typography>
+            <Typography
+              variant="headline1"
+              className={styles.ColorfulPortalCardWithChips__title}
+            >
+              {title}
+            </Typography>
             <Typography
               variant="headline1"
               className={styles.ColorfulPortalCardWithChips__challengeName}
@@ -108,7 +114,7 @@ const ColorfulPortalCardWithChips = ({
             variant="smallText1"
             className={styles.ColorfulPortalCardWithChips__description}
           >
-            {description}
+            <MarkdownSynapse markdown={description ?? ''} />
           </Typography>
           {learnMoreLink && (
             <Button

@@ -20,7 +20,16 @@ const COMMON_PLUGINS: PluginOption[] = [nodePolyfills()]
  * Plugins that our React apps and libraries will use
  */
 const REACT_PLUGINS: PluginOption[] = [
-  react(),
+  react({
+    babel: {
+      overrides: [
+        {
+          test: /src\/components\/DataGrid\/.*\.(t|j)sx?$/,
+          plugins: [['babel-plugin-react-compiler']],
+        },
+      ],
+    },
+  }),
   svgr({
     svgrOptions: {
       plugins: ['@svgr/plugin-jsx'],

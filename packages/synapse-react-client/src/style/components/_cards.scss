@@ -153,6 +153,10 @@ $text-color-lighter: #898989;
   }
 
   .SRC-cardThumbnail {
+    vertical-align: top;
+    margin-top: auto;
+    margin-bottom: auto;
+
     @media (max-width: map.get(SRC.$breakpoints, 'medium')) {
       display: none;
     }
@@ -160,9 +164,6 @@ $text-color-lighter: #898989;
       max-width: 215px;
       display: inline-block;
     }
-    vertical-align: top;
-    margin-top: auto;
-    margin-bottom: auto;
 
     img {
       margin: auto;
@@ -180,6 +181,10 @@ $text-color-lighter: #898989;
     }
   }
   .SRC-imageThumbnail {
+    vertical-align: top;
+    padding-right: 15px;
+    max-width: 215px;
+
     @media (max-width: map.get(SRC.$breakpoints, 'medium')) {
       width: 0%;
       display: none;
@@ -189,9 +194,6 @@ $text-color-lighter: #898989;
       display: inline-block;
     }
 
-    vertical-align: top;
-    padding-right: 15px;
-    max-width: 215px;
     img {
       display: block;
       width: 100%;

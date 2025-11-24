@@ -9,9 +9,13 @@
 @mixin sectionTitle() {
   color: var(--black);
   margin-bottom: 25px;
-  font-size: 48px;
+  font-size: 40px;
   line-height: 80px;
   text-align: center;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    font-size: 48px;
+  }
 }
 
 @mixin sectionContainer() {

@@ -15,6 +15,24 @@ import {
 import useDetectSSOCode, { UseDetectSSOCodeOptions } from './useDetectSSOCode'
 
 const authorizationCode = '12345'
+const CSRF_TOKEN_STORAGE_KEY = 'oauth2_csrf_token'
+const DEFAULT_CSRF_TOKEN = 'test-csrf-token'
+
+type OAuth2StateWithCsrf = OAuth2State & { csrfToken: string }
+
+function buildOAuthState(
+  overrides: Partial<OAuth2StateWithCsrf> = {},
+): OAuth2StateWithCsrf {
+  return {
+    csrfToken: DEFAULT_CSRF_TOKEN,
+    ...overrides,
+  }
+}
+
+function encodeAndStoreState(state: OAuth2StateWithCsrf): string {
+  localStorage.setItem(CSRF_TOKEN_STORAGE_KEY, state.csrfToken)
+  return encodeURIComponent(JSON.stringify(state))
+}
 
 const successfulLoginResponse: LoginResponse = {
   accessToken: 'abcd',
@@ -54,6 +72,7 @@ describe('useDetectSSOCode tests', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     history.replaceState({}, '', `/`)
+    localStorage.clear()
   })
 
   it('Does nothing if searchParams are not set', () => {
@@ -70,8 +89,8 @@ describe('useDetectSSOCode tests', () => {
   })
 
   it('Handles successful account registration with Google', async () => {
-    const state: OAuth2State = { registrationUsername: 'newUsername' }
-    const encodedState = encodeURIComponent(JSON.stringify(state))
+    const state = buildOAuthState({ registrationUsername: 'newUsername' })
+    const encodedState = encodeAndStoreState(state)
     history.replaceState(
       {},
       '',
@@ -104,10 +123,11 @@ describe('useDetectSSOCode tests', () => {
     })
   })
   it('Handles ORCID binding', async () => {
+    const encodedState = encodeAndStoreState(buildOAuthState())
     history.replaceState(
       {},
       '',
-      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.ORCID}`,
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.ORCID}&state=${encodedState}`,
     )
     mockBindOAuthProviderToAccount.mockResolvedValue(successfulLoginResponse)
 
@@ -135,10 +155,11 @@ describe('useDetectSSOCode tests', () => {
   })
   it('Handles ORCID binding failure', async () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const encodedState = encodeAndStoreState(buildOAuthState())
     history.replaceState(
       {},
       '',
-      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.ORCID}`,
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.ORCID}&state=${encodedState}`,
     )
 
     const mockOnError = vi.fn()
@@ -179,10 +200,11 @@ describe('useDetectSSOCode tests', () => {
   test.each(Object.values(OAUTH2_PROVIDERS))(
     'Handles successful login with %s',
     async provider => {
+      const encodedState = encodeAndStoreState(buildOAuthState())
       history.replaceState(
         {},
         '',
-        `/?code=${authorizationCode}&provider=${provider}`,
+        `/?code=${authorizationCode}&provider=${provider}&state=${encodedState}`,
       )
       mockOAuthSessionRequest.mockResolvedValue(successfulLoginResponse)
       mockSetAccessTokenCookie.mockResolvedValue(undefined)
@@ -215,10 +237,11 @@ describe('useDetectSSOCode tests', () => {
   test.each(Object.values(OAUTH2_PROVIDERS))(
     'Handles 2fa scenario on login with %s',
     async provider => {
+      const encodedState = encodeAndStoreState(buildOAuthState())
       history.replaceState(
         {},
         '',
-        `/?code=${authorizationCode}&provider=${provider}`,
+        `/?code=${authorizationCode}&provider=${provider}&state=${encodedState}`,
       )
       const mockOn2fa = vi.fn()
       mockOAuthSessionRequest.mockResolvedValue(twoFactorAuthErrorResponse)
@@ -249,10 +272,8 @@ describe('useDetectSSOCode tests', () => {
   test.each(Object.values(OAUTH2_PROVIDERS))(
     'Handles 2fa scenario on login with %s where a twoFaResetToken is passed in state',
     async provider => {
-      const state: OAuth2State = {
-        twoFaResetToken: 'asdf',
-      }
-      const encodedState = encodeURIComponent(JSON.stringify(state))
+      const state = buildOAuthState({ twoFaResetToken: 'asdf' })
+      const encodedState = encodeAndStoreState(state)
       history.replaceState(
         {},
         '',
@@ -291,10 +312,11 @@ describe('useDetectSSOCode tests', () => {
     'Redirects to account registration on failed login with %s where the status is 404',
     async provider => {
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const encodedState = encodeAndStoreState(buildOAuthState())
       history.replaceState(
         {},
         '',
-        `/?code=${authorizationCode}&provider=${provider}`,
+        `/?code=${authorizationCode}&provider=${provider}&state=${encodedState}`,
       )
       const notFoundError = new SynapseClientError(
         404,
@@ -320,6 +342,7 @@ describe('useDetectSSOCode tests', () => {
         )
         expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
         expect(onSignInComplete).not.toHaveBeenCalled()
+        // eslint-disable-next-line @typescript-eslint/unbound-method
         expect(window.location.replace).toHaveBeenCalledWith(
           'http://localhost:3000/register1',
         )
@@ -333,10 +356,11 @@ describe('useDetectSSOCode tests', () => {
     'Handles other error on login with %s',
     async provider => {
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      const encodedState = encodeAndStoreState(buildOAuthState())
       history.replaceState(
         {},
         '',
-        `/?code=${authorizationCode}&provider=${provider}`,
+        `/?code=${authorizationCode}&provider=${provider}&state=${encodedState}`,
       )
       const unhandledError = new SynapseClientError(
         500,
@@ -374,6 +398,35 @@ describe('useDetectSSOCode tests', () => {
       consoleSpy.mockReset()
     },
   )
+
+  it('Aborts the OAuth flow when the CSRF token does not match', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const state = buildOAuthState()
+    const encodedState = encodeURIComponent(JSON.stringify(state))
+    localStorage.setItem(CSRF_TOKEN_STORAGE_KEY, 'different-token')
+
+    history.replaceState(
+      {},
+      '',
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.GOOGLE}&state=${encodedState}`,
+    )
+    const mockOnError = vi.fn()
+
+    const hookReturn = renderHook({
+      onSignInComplete,
+      onError: mockOnError,
+      isInitializingSession: false,
+    })
+
+    await waitFor(() => {
+      expect(mockOAuthSessionRequest).not.toHaveBeenCalled()
+      expect(mockOnError).toHaveBeenCalledWith(
+        'Invalid OAuth state. Please try signing in again.',
+      )
+      expect(hookReturn.result.current.isLoading).toBe(false)
+    })
+    consoleSpy.mockRestore()
+  })
 
   test('Does not attempt to use the state param if we are acting as identity provider', async () => {
     const provider = OAUTH2_PROVIDERS[LOGIN_METHOD_OAUTH2_GOOGLE]

@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.4.55",
+  "version": "3.4.56",
   "private": false,
   "type": "module",
   "main": "./dist/index.cjs",
@@ -61,6 +61,7 @@
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.13.8",
     "@upsetjs/react": "^1.11.0",
+    "@x0k/json-schema-merge": "^1.0.2",
     "animate.css": "^4.1.1",
     "classnames": "^2.5.1",
     "dagre": "^0.8.5",
@@ -175,6 +176,7 @@
     "@vitest/ui": "^3.2.4",
     "@vitest/utils": "^3.2.2",
     "@welldone-software/why-did-you-render": "^10.0.1",
+    "babel-plugin-react-compiler": "^1.0.0",
     "buffer": "^6.0.3",
     "chromatic": "^11.28.2",
     "clickable-json": "^1.15.1",
