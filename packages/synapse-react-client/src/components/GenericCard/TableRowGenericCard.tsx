@@ -164,8 +164,8 @@ export type TableRowGenericCardProps = {
   sharePageLinkButtonProps?: ShareThisPageProps
   /** Optional function that receives schema and data and returns a ReactNode to be rendered next to the card type */
   CardTypeAdornment?: React.ComponentType<{
-    schema: Record<string, number>,
-    data: string[],
+    schema: Record<string, number>
+    data: string[]
   }>
 } & CommonCardProps
 
@@ -221,7 +221,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     labelLinkConfig,
     descriptionConfig,
     columnIconOptions,
-    cardTypeAdornment,
+    CardTypeAdornment,
   } = props
 
   const {
@@ -448,9 +448,9 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     )
   }
 
-  const resolvedCardTypeAdornment = CardTypeAdornment 
-      ? <CardTypeAdornment schema={schema} data={data} /> 
-      : null
+  const resolvedCardTypeAdornment = CardTypeAdornment ? (
+    <CardTypeAdornment schema={schema} data={data} />
+  ) : null
 
   return (
     <GenericCard

@@ -1,17 +1,4 @@
-@mixin container() {
-  color: var(--grey-700);
-  display: flex;
-  align-items: flex-start;
-  gap: 5px;
-}
-
-@mixin icon() {
-  font-size: 1.25rem;
-}
-
-@mixin categoryText() {
-  font-weight: bold;
-}
+@use 'sass:color';
 
 // Color variables for completeness categories
 $excellent-color: #88c48a;
@@ -21,15 +8,18 @@ $poor-color: #f6b260;
 $minimal-color: #ed8e87;
 
 .CompletenessIndicator__container {
-  @include container;
+  color: var(--gray-700);
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
 }
 
 .CompletenessIndicator__icon:global(.MuiSvgIcon-root) {
-  @include icon;
+  font-size: 1.25rem;
 }
 
 .CompletenessIndicator__categoryText:global(.MuiTypography-root) {
-  @include categoryText;
+  font-weight: bold;
 }
 
 // Color exports for completeness categories

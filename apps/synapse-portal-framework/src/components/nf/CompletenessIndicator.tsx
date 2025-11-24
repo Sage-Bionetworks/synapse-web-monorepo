@@ -1,5 +1,5 @@
 import { CheckCircleTwoTone } from '@mui/icons-material'
-import { Box, Tooltip, Typography } from '@mui/material'
+import { Tooltip, Typography } from '@mui/material'
 import styles from './CompletenessIndicator.module.scss'
 
 export type CompletenessCategory =
@@ -48,7 +48,7 @@ export function CompletenessIndicator({
           {completenessCategory}
         </Typography>
         <Typography>completeness</Typography>
-      </Box>
+      </div>
     </Tooltip>
   )
 }

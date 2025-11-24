@@ -53,7 +53,7 @@ export const toolsCardConfiguration: CardConfiguration = {
   },
   secondaryLabelLimit: 4,
   genericCardSchema: toolsSchema,
-  cardTypeAdornment: ({schema, data}) => {
+  CardTypeAdornment: ({ schema, data }) => {
     const completenessCategory = data[schema['completenessCategory']]
     if (!completenessCategory) return null
     return <CompletenessIndicator completenessCategory={completenessCategory} />
