@@ -23,7 +23,7 @@ export function AridhiaIntegration(props: AridhiaIntegrationProps) {
       apiBasePath={apiBasePath}
       authenticationRequest={{
         subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
-        subject_token_issuer: 'synapse', //TODO: verify this idp-id with C-Path
+        subject_token_issuer: 'sage-dev', //idp-id provided by C-Path
       }}
     >
       {children}
