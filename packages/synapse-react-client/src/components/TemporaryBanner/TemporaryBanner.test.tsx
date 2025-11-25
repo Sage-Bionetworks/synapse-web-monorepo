@@ -53,4 +53,27 @@ describe('TemporaryBanner', () => {
 
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
+
+  it('renders custom content when provided', () => {
+    vi.setSystemTime(new Date('2024-06-01T12:00:00Z'))
+
+    renderComponent({
+      deadline: '2024-06-30',
+      content: <div data-testid="custom">Hello!</div>,
+    })
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.getByTestId('custom')).toBeInTheDocument()
+  })
+
+  it('does not render custom content after the deadline', () => {
+    vi.setSystemTime(new Date('2024-07-01T00:00:00Z'))
+
+    renderComponent({
+      deadline: '2024-06-29',
+      content: <div data-testid="custom">Hello!</div>,
+    })
+
+    expect(screen.queryByTestId('custom')).not.toBeInTheDocument()
+  })
 })

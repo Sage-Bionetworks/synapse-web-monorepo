@@ -23,14 +23,8 @@ function RootApp() {
   return (
     <App>
       {/* PORTALS-3508 */}
-      <TemporaryBanner
-        description={description}
-        deadline="2026-01-26"
-        sx={{ m: 0 }}
-        isGlobal={false}
-      />
       <RepositoryUnderReviewAlert portalSpecificDisclaimer="This repository is developed by Sage Bionetworks to host and share resources related to Exceptional Longevity research, and remains fully operational. We continue to maintain and accept longevity-related data and resources throughout this review process." />
-      <FundingBanner />
+      <TemporaryBanner deadline="2026-01-26" content={<FundingBanner />} />
     </App>
   )
 }
