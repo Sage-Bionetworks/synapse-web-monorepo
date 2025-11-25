@@ -9,7 +9,11 @@ function RootApp() {
       Seeking U.S. Researchers: Apply by January 26, 2026 for up to $132,500 to
       expand Exceptional Longevity research with NIA-funded data. View the full
       FOA and submission requirements{' '}
-      <Link href="" target="_blank" rel="noopener noreferrer">
+      <Link
+        href="https://www.longevityconsortium.org/funding-opportunity/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         here
       </Link>
       .
@@ -18,13 +22,13 @@ function RootApp() {
   return (
     <App>
       {/* PORTALS-3508 */}
-      <RepositoryUnderReviewAlert portalSpecificDisclaimer="This repository is developed by Sage Bionetworks to host and share resources related to Exceptional Longevity research, and remains fully operational. We continue to maintain and accept longevity-related data and resources throughout this review process." />
       <TemporaryBanner
         description={description}
-        deadline="2026-01-26"
+        deadline="2026-01-26aa"
         sx={{ m: 0 }}
         isGlobal={false}
       />
+      <RepositoryUnderReviewAlert portalSpecificDisclaimer="This repository is developed by Sage Bionetworks to host and share resources related to Exceptional Longevity research, and remains fully operational. We continue to maintain and accept longevity-related data and resources throughout this review process." />
     </App>
   )
 }
