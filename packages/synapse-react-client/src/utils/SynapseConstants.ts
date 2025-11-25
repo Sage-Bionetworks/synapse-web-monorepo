@@ -220,3 +220,6 @@ export const SAGE_OFFERINGS_HELP_URL =
 export const GRID_PAGE_SESSION_ID_QUERY_PARAM = 'sessionId'
 export const GRID_PAGE_AGENT_REGISTRATION_ID_QUERY_PARAM = 'agentRegistrationId'
 export const GRID_PAGE_TASK_ID_QUERY_PARAM = 'taskId'
+
+// Search Page URL Query Parameters
+export const SEARCH_PAGE_QUERY_PARAM = 'searchQuery'

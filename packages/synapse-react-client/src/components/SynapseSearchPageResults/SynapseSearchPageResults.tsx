@@ -5,15 +5,18 @@ import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
 import React, { useState } from 'react'
 import { useSearchInfinite } from '@/synapse-queries/search/useSearch'
 import { SearchQuery } from '@sage-bionetworks/synapse-types'
-import { SearchResults } from '@sage-bionetworks/synapse-types'
-
-export type SynapseSearchPageResultsProps = {
-  results: SearchResults
-}
+import { useSearchParams } from 'react-router'
+import { SEARCH_PAGE_QUERY_PARAM } from '@/utils/SynapseConstants'
 
 export function SynapseSearchPageResults() {
-  const [searchInput, setSearchInput] = useState('')
-  const [searchQuery, setSearchQuery] = useState<SearchQuery | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchInputValue, setSearchInputValue] = useState(
+    searchParams.get(SEARCH_PAGE_QUERY_PARAM) || '',
+  )
+
+  const searchQuery: SearchQuery = {
+    queryTerm: searchInputValue ? [searchInputValue] : [],
+  }
 
   const {
     data,
@@ -22,17 +25,22 @@ export function SynapseSearchPageResults() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useSearchInfinite(searchQuery ?? { queryTerm: [] }, {
-    enabled: !!searchQuery,
+  } = useSearchInfinite(searchQuery, {
+    enabled: !!searchInputValue,
   })
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchInput(event.target.value)
+    setSearchInputValue(event.target.value)
   }
 
   const handleSearch = () => {
-    setSearchQuery({
-      queryTerm: searchInput ? [searchInput] : [],
+    setSearchParams(prev => {
+      if (searchInputValue) {
+        prev.set(SEARCH_PAGE_QUERY_PARAM, searchInputValue)
+      } else {
+        prev.delete(SEARCH_PAGE_QUERY_PARAM)
+      }
+      return prev
     })
   }
 
@@ -57,7 +65,7 @@ export function SynapseSearchPageResults() {
       >
         <TextField
           placeholder="Search…"
-          value={searchInput}
+          value={searchInputValue}
           onChange={handleInputChange}
           onKeyDown={e => {
             if (e.key === 'Enter') handleSearch()
