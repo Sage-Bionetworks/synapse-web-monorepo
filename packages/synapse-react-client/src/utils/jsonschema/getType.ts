@@ -6,6 +6,7 @@ export interface FlatTypeInfo {
   type: string
   format?: string
   isArray: boolean
+  readOnly?: boolean
 }
 
 export function getFlatTypeInfo(
@@ -34,6 +35,7 @@ export function getFlatTypeInfo(
       type: jsonSchema.type as string,
       format: jsonSchema.format,
       isArray: false,
+      readOnly: jsonSchema.readOnly,
     }
   }
 
