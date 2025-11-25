@@ -24,7 +24,7 @@ function RootApp() {
       {/* PORTALS-3508 */}
       <TemporaryBanner
         description={description}
-        deadline="2026-01-26aa"
+        deadline="2026-01-26"
         sx={{ m: 0 }}
         isGlobal={false}
       />
