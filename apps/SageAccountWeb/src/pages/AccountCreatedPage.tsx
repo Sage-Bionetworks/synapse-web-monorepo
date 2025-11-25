@@ -2,7 +2,6 @@ import { Button, GridLegacy as Grid, Link, Typography } from '@mui/material'
 import { Link as RouterLink } from 'react-router'
 import { AppContextConsumer } from '../AppContext'
 import useMembershipInvitationTokenHandler from '../hooks/useMembershipInvitationTokenHandler'
-import { sourceAppConfigTableID } from '../resources'
 import { LeftRightPanel } from '@/components/LeftRightPanel'
 import { SourceAppLogo } from '@/components/SourceApp'
 import { useSourceApp } from '@/components/useSourceApp'
@@ -12,7 +11,9 @@ import { processRedirectURLInOneSage } from 'synapse-react-client/utils/AppUtils
 function AccountCreatedPage() {
   const membershipInvitation = useMembershipInvitationTokenHandler()
   const sourceApp = useSourceApp()
-  const sourceAppConfigs = useSourceAppConfigs(sourceAppConfigTableID)
+  const sourceAppConfigs = useSourceAppConfigs(
+    import.meta.env.VITE_SOURCE_APP_CONFIGS_TABLE_ID,
+  )
 
   return (
     <>

@@ -121,12 +121,12 @@ describe('applyModelChange', () => {
     }
     schemaPropertyInfo = {
       col1: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: true,
         enumeratedValues: null,
       },
       col2: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: true,
         enumeratedValues: null,
       },
@@ -149,12 +149,12 @@ describe('applyModelChange', () => {
     }
     schemaPropertyInfo = {
       col1: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: false,
         enumeratedValues: null,
       },
       col2: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: false,
         enumeratedValues: null,
       },
@@ -310,12 +310,12 @@ describe('getDefaultValueForProperty', () => {
     const row = { col1: 'value1', col2: null, col3: undefined }
     const schemaPropertyInfo: SchemaPropertiesMap = {
       col1: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: true,
         enumeratedValues: null,
       },
       col2: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: true,
         enumeratedValues: null,
       },
@@ -335,12 +335,12 @@ describe('getDefaultValueForProperty', () => {
     const row = {} // all values missing
     const schemaPropertyInfo: SchemaPropertiesMap = {
       col1: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: true,
         enumeratedValues: null,
       },
       col2: {
-        type: { type: 'string' },
+        type: { type: 'string', isArray: false },
         isRequired: false,
         enumeratedValues: null,
       },

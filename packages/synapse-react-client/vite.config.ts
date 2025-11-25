@@ -23,7 +23,7 @@ const config = new ConfigBuilder()
       commonjsOptions: {
         // react-datasheet-grid is common-js only and imports tanstack/react-virtual which is an ESM package
         // for some reason this transitive import is treated as common-js but we can fix it with the config below:
-        esmExternals: id => {
+        esmExternals: (id: string) => {
           if (id == '@tanstack/react-virtual') {
             return true
           }

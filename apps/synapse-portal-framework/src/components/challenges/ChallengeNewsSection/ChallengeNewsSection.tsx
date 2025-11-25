@@ -5,10 +5,7 @@ import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity
 import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 import styles from './ChallengeNewsSection.module.scss'
-import { ReactComponent as TriangleImage } from '../assets/triangle.svg'
-import { ReactComponent as CircleImage } from '../assets/circle.svg'
-import { ReactComponent as LongLineImage } from '../assets/longLine.svg'
-import { ReactComponent as ShortLineImage } from '../assets/shortLine.svg'
+import { ReactComponent as Vectors } from '../assets/newsVectors.svg'
 import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
 
 type ChallengeNewsSectionProps = {
@@ -39,20 +36,17 @@ const ChallengeNewsSection = ({
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
   return (
-    <Box className={styles.NewChallengesSection__root}>
-      <TriangleImage className={styles.NewChallengesSection__triangleImage} />
-      <CircleImage className={styles.NewChallengesSection__circleImage} />
-      <LongLineImage className={styles.NewChallengesSection__longLineImage} />
-      <ShortLineImage className={styles.NewChallengesSection__shortLineImage} />
-      <Box className={styles.NewChallengesSection__header}>
+    <Box className={styles.ChallengeNewsSection__root}>
+      <Box className={styles.ChallengeNewsSection__headerSection}>
+        <Vectors className={styles.ChallengeNewsSection__titleSectionVectors} />
         <Typography
           variant="headline1"
-          className={styles.NewChallengesSection__sectionTitle}
+          className={styles.ChallengeNewsSection__sectionTitle}
         >
           Synapse Challenges in the News
         </Typography>
       </Box>
-      <Box className={styles.NewChallengesSection__container}>
+      <Box className={styles.ChallengeNewsSection__container}>
         {dataRows.map(row => {
           const chips = row.values[getFieldIndex('chips', queryResultBundle)]
           let chipsArray: string[]
