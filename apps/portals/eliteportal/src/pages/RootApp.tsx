@@ -1,6 +1,6 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
-import TemporaryBanner from 'synapse-react-client/components//TemporaryBanner/TemporaryBanner'
+import TemporaryBanner from 'synapse-react-client/components/TemporaryBanner/TemporaryBanner'
 import Link from '@mui/material/Link'
 
 function RootApp() {
@@ -8,8 +8,7 @@ function RootApp() {
     <>
       Seeking U.S. Researchers: Apply by January 26, 2026 for up to $132,500 to
       expand Exceptional Longevity research with NIA-funded data. View the full
-      FOA and submission requirements here.NIA-funded data. View the full FOA
-      and submission requirements{' '}
+      FOA and submission requirements{' '}
       <Link href="" target="_blank" rel="noopener noreferrer">
         here
       </Link>
