@@ -15,6 +15,10 @@ const TemporaryBanner = ({ deadline, ...props }: TemporaryBannerProps) => {
       new Date(`${trimmedDeadline}T23:59:59.999`)
     : new Date(trimmedDeadline)
   const currentDate = new Date()
+  if (isNaN(deadlineDate.getTime())) {
+    console.error('TemporaryBanner: Invalid deadline date:', deadline)
+    return null
+  }
   const isBeforeDeadline = currentDate <= deadlineDate
 
   if (!isBeforeDeadline) {
