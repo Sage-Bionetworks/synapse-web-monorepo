@@ -296,7 +296,7 @@ export function useDataGridWebSocket() {
     const { columnNames, columnOrder, rows } = modelSnapshot
     const columnsReady = columnNames.length >= 1
     const orderReady = columnOrder.length >= 1
-    const rowsReady = rows.length >= 1
+    const rowsReady = rows.length >= 0
     return columnsReady && orderReady && rowsReady
   }
 
