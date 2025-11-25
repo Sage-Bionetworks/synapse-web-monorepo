@@ -53,11 +53,11 @@ export const toolsCardConfiguration: CardConfiguration = {
   },
   secondaryLabelLimit: 4,
   genericCardSchema: toolsSchema,
-  CardTypeAdornment: ({ schema, data }) => {
-    const completenessCategory = data[schema['completenessCategory']]
-    if (!completenessCategory) return null
-    return <CompletenessIndicator completenessCategory={completenessCategory} />
-  },
+  // CardTypeAdornment: ({ schema, data }) => {
+  //   const completenessCategory = data[schema['completenessCategory']]
+  //   if (!completenessCategory) return null
+  //   return <CompletenessIndicator completenessCategory={completenessCategory} />
+  // },
 }
 const rgbIndex = 6
 const tools: QueryWrapperPlotNavProps = {
