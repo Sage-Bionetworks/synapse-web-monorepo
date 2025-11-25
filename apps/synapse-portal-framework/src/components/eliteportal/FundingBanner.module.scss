@@ -1,12 +1,11 @@
 .bannerContainer {
   background-color: #6d6e71;
   width: 100%;
-  padding: 2rem 1rem;
+  padding: 25px 80px;
 }
 
 .contentWrapper {
   max-width: 1200px;
-  margin: 0 auto;
   display: flex;
   align-items: center;
   gap: 2rem;
@@ -29,8 +28,8 @@
 }
 
 .logo {
-  width: 200px;
-  max-width: 200px;
+  width: 120px;
+  max-width: 120px;
   height: auto;
   display: block;
 
@@ -46,10 +45,10 @@
 
 .headlineText {
   color: white;
-  font-size: 32px !important;
+  font-size: 25px !important;
   font-weight: 600 !important;
   line-height: 1.4;
-  padding-bottom: 14px;
+  padding-bottom: 10px;
 }
 
 .mainText {

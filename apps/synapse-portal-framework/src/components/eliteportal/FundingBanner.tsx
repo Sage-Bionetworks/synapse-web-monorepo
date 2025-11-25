@@ -28,7 +28,7 @@ export const FundingBanner: React.FC = () => {
           </Typography>
           <Typography variant="body1" className={styles.mainText}>
             For up to <strong>$132,500</strong> to expand Exceptional Longevity
-            research with NIA-funded data.{' '}
+            research with NIA-funded data. <br></br>
             <Link
               href="https://www.longevityconsortium.org/funding-opportunity/"
               target="_blank"
