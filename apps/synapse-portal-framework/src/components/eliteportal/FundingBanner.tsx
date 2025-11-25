@@ -4,8 +4,20 @@ import { ReactComponent as LongevityLogo } from './assets/longevityconsortiumlog
 import styles from './FundingBanner.module.scss'
 
 export const FundingBanner: React.FC = () => {
+  const handleClick = () => {
+    window.open(
+      'https://www.longevityconsortium.org/funding-opportunity/',
+      '_blank',
+      'noopener,noreferrer',
+    )
+  }
+
   return (
-    <Box className={styles.bannerContainer}>
+    <Box
+      className={styles.bannerContainer}
+      onClick={handleClick}
+      sx={{ cursor: 'pointer' }}
+    >
       <Box className={styles.contentWrapper}>
         <Box className={styles.logoBox}>
           <LongevityLogo className={styles.logo} />
@@ -22,6 +34,7 @@ export const FundingBanner: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               className={styles.linkText}
+              onClick={e => e.stopPropagation()}
             >
               View the full FOA and submission requirements here.
             </Link>
