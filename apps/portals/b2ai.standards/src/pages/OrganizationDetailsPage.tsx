@@ -127,6 +127,7 @@ export default function OrganizationDetailsPage() {
     <DetailsPage
       header={<OrgHeaderCard id={id} />}
       sql={organizationDetailsPageSQL}
+      resourcePrimaryKey={['id']}
     >
       <DetailsPageContent content={sections} />
     </DetailsPage>

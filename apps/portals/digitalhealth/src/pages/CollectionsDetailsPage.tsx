@@ -123,6 +123,7 @@ function CollectionsDetailsPage() {
           searchParams={{ study }}
         />
       }
+      resourcePrimaryKey={['study']}
       sql={studySql}
     >
       <DetailsPageContent content={studyDetailsPageContent} />

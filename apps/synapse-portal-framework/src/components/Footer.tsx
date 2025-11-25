@@ -86,6 +86,13 @@ function Footer() {
               </a>
             </Typography>
           )}
+          {footerConfig.help && (
+            <Typography variant="body1">
+              <a href={footerConfig.help} target="_blank" rel="noreferrer">
+                Help
+              </a>
+            </Typography>
+          )}
           {footerConfig.additionalLogos &&
             footerConfig.additionalLogos.map(additionalLogoSvg => {
               return <img key={additionalLogoSvg} src={additionalLogoSvg} />

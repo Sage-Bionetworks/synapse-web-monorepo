@@ -1,9 +1,9 @@
+import { useChatState } from '@/components/SynapseChat/useChatState'
+import { GridAgentSessionContext } from '@sage-bionetworks/synapse-client'
+import { AgentAccessLevel, AgentSession } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import DraggableDialog from '../DraggableDialog/DraggableDialog'
 import { SynapseChat } from './index'
-import { ChatInteraction } from './SynapseChat'
-import { AgentSession, AgentAccessLevel } from '@sage-bionetworks/synapse-types'
-import { GridAgentSessionContext } from '@sage-bionetworks/synapse-client'
 
 export type GridAgentChatProps = {
   gridSessionId: string
@@ -27,7 +27,7 @@ export function GridAgentChat({
 }: GridAgentChatProps) {
   // Storing state for the chat session here preserves chat history while the dialog is opened and closed.
   const [agentSession, setAgentSession] = useState<AgentSession | undefined>()
-  const [interactions, setInteractions] = useState<ChatInteraction[]>([])
+  const chatState = useChatState(agentSession)
 
   // Create session context for grid sessions
   const sessionContext: GridAgentSessionContext = {
@@ -51,8 +51,7 @@ export function GridAgentChat({
         // lift state: allow GridAgentChat to control the agent session and interactions
         externalSession={agentSession}
         setExternalSession={setAgentSession}
-        externalInteractions={interactions}
-        setExternalInteractions={setInteractions}
+        externalChatState={chatState}
       />
     </DraggableDialog>
   )

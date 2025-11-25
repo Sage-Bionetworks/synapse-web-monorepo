@@ -44,6 +44,7 @@ function GrantDetailsPage() {
       }
       sql={grantsSql}
       sqlOperator={ColumnSingleValueFilterOperator.LIKE}
+      resourcePrimaryKey={['grantNumber']}
     >
       <DetailsPageContent
         content={[

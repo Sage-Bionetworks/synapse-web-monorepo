@@ -38,6 +38,7 @@ function EducationalResourcesDetailsPage() {
       }
       sql={educationSql}
       sqlOperator={ColumnSingleValueFilterOperator.LIKE}
+      resourcePrimaryKey={['title']}
     >
       <DetailsPageContent
         content={[

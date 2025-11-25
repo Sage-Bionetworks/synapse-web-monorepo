@@ -687,4 +687,151 @@ describe('ColumnModel validation', () => {
       })
     })
   })
+
+  describe('facetSortConfig', () => {
+    it('Handles no facetSortConfig', () => {
+      const columnModels = columnModelFormDataZodSchema.parse([
+        {
+          name: 'foo',
+          columnType: ColumnTypeEnum.STRING,
+          facetType: 'enumeration',
+        },
+      ])
+      expect(columnModels).toEqual([
+        {
+          name: 'foo',
+          columnType: ColumnTypeEnum.STRING,
+          facetType: 'enumeration',
+        },
+      ])
+    })
+
+    it('Handles facetSortConfig with property FREQUENCY', () => {
+      const columnModels = columnModelFormDataZodSchema.parse([
+        {
+          name: 'foo',
+          columnType: ColumnTypeEnum.STRING,
+          facetType: 'enumeration',
+          facetSortConfig: {
+            property: 'FREQUENCY',
+            direction: 'DESC',
+          },
+        },
+      ])
+      expect(columnModels).toEqual([
+        {
+          name: 'foo',
+          columnType: ColumnTypeEnum.STRING,
+          facetType: 'enumeration',
+          facetSortConfig: {
+            property: 'FREQUENCY',
+            direction: 'DESC',
+          },
+        },
+      ])
+    })
+
+    it('Handles facetSortConfig with property VALUE', () => {
+      const columnModels = columnModelFormDataZodSchema.parse([
+        {
+          name: 'foo',
+          columnType: ColumnTypeEnum.STRING,
+          facetType: 'enumeration',
+          facetSortConfig: {
+            property: 'VALUE',
+            direction: 'ASC',
+          },
+        },
+      ])
+      expect(columnModels).toEqual([
+        {
+          name: 'foo',
+          columnType: ColumnTypeEnum.STRING,
+          facetType: 'enumeration',
+          facetSortConfig: {
+            property: 'VALUE',
+            direction: 'ASC',
+          },
+        },
+      ])
+    })
+
+    it('Handles facetSortConfig with only property', () => {
+      const columnModels = columnModelFormDataZodSchema.parse([
+        {
+          name: 'foo',
+          columnType: ColumnTypeEnum.STRING,
+          facetType: 'enumeration',
+          facetSortConfig: {
+            property: 'VALUE',
+          },
+        },
+      ])
+      expect(columnModels).toEqual([
+        {
+          name: 'foo',
+          columnType: ColumnTypeEnum.STRING,
+          facetType: 'enumeration',
+          facetSortConfig: {
+            property: 'VALUE',
+          },
+        },
+      ])
+    })
+
+    it('Handles facetSortConfig with only direction', () => {
+      const columnModels = columnModelFormDataZodSchema.parse([
+        {
+          name: 'foo',
+          columnType: ColumnTypeEnum.STRING,
+          facetType: 'enumeration',
+          facetSortConfig: {
+            direction: 'ASC',
+          },
+        },
+      ])
+      expect(columnModels).toEqual([
+        {
+          name: 'foo',
+          columnType: ColumnTypeEnum.STRING,
+          facetType: 'enumeration',
+          facetSortConfig: {
+            direction: 'ASC',
+          },
+        },
+      ])
+    })
+
+    it('Rejects invalid property value', () => {
+      expect(() =>
+        columnModelFormDataZodSchema.parse([
+          {
+            name: 'foo',
+            columnType: ColumnTypeEnum.STRING,
+            facetType: 'enumeration',
+            facetSortConfig: {
+              property: 'INVALID',
+              direction: 'DESC',
+            },
+          },
+        ]),
+      ).toThrow()
+    })
+
+    it('Rejects invalid direction value', () => {
+      expect(() =>
+        columnModelFormDataZodSchema.parse([
+          {
+            name: 'foo',
+            columnType: ColumnTypeEnum.STRING,
+            facetType: 'enumeration',
+            facetSortConfig: {
+              property: 'FREQUENCY',
+              direction: 'INVALID',
+            },
+          },
+        ]),
+      ).toThrow()
+    })
+  })
 })

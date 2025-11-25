@@ -1,4 +1,5 @@
 import { ColumnType } from './ColumnType'
+import { FacetColumnSortConfig } from './FacetColumnSortConfig'
 import { FacetType } from './FacetType'
 
 /**
@@ -15,4 +16,6 @@ export type JsonSubColumnModel = {
   facetType: FacetType
   /** Defines the JSON path of the sub column. Use the '$' char to represent the root of JSON object. If the JSON key of a sub column is 'a', then the jsonPath for that column would be: '$.a'.} */
   jsonPath: string
+  /** Configuration for sorting the facets of this column, only allowed if facetType is enumeration. */
+  facetSortConfig?: FacetColumnSortConfig
 }

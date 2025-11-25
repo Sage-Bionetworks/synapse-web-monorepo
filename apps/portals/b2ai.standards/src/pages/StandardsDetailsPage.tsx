@@ -163,6 +163,7 @@ export default function StandardsDetailsPage() {
         />
       }
       sql={standardsDetailsPageSQL}
+      resourcePrimaryKey={['id']}
     >
       <DetailsPageContent content={standardDetailsPageContent} />
     </DetailsPage>

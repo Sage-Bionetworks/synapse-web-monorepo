@@ -43,6 +43,7 @@ function ProjectDetailsPage() {
       }
       sql={projectsSql}
       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+      resourcePrimaryKey={['Project']}
     >
       <DetailsPageContent
         content={[

@@ -66,6 +66,10 @@
     line-height: unset;
   }
 }
+.markdown * .MuiTypography-body1 {
+  font-size: unset;
+}
+
 .markdown ol {
   list-style-type: decimal;
   padding-left: 15px;
