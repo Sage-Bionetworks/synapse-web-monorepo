@@ -6,7 +6,6 @@ import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { toolsSql } from '../resources'
 import { columnAliases } from './commonProps'
-import { CompletenessIndicator } from '@sage-bionetworks/synapse-portal-framework/components/nf/CompletenessIndicator'
 
 export const newToolsSql = `${toolsSql} order by ROW_ID desc limit 3`
 
@@ -53,11 +52,11 @@ export const toolsCardConfiguration: CardConfiguration = {
   },
   secondaryLabelLimit: 4,
   genericCardSchema: toolsSchema,
-  CardTypeAdornment: ({ schema, data }) => {
-    const completenessCategory = data[schema['completenessCategory']]
-    if (!completenessCategory) return null
-    return <CompletenessIndicator completenessCategory={completenessCategory} />
-  },
+  // CardTypeAdornment: ({ schema, data }) => {
+  //   const completenessCategory = data[schema['completenessCategory']]
+  //   if (!completenessCategory) return null
+  //   return <CompletenessIndicator completenessCategory={completenessCategory} />
+  // },
 }
 const rgbIndex = 6
 const tools: QueryWrapperPlotNavProps = {
