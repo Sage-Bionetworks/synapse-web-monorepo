@@ -75,6 +75,10 @@ export type GenericCardProps = {
    * Optional sustainability scorecard to be displayed on the header card
    */
   sustainabilityScorecard?: SustainabilityScorecardProps
+  /**
+   * Optional ReactNode to be rendered next to the card type
+   */
+  cardTypeAdornment?: React.ReactNode
 }
 
 const EMPTY_CARD_LABEL_ARRAY: CardLabel[] = []
@@ -107,6 +111,7 @@ export const GenericCard = forwardRef(function GenericCard(
     ctaLinkConfig,
     renderedIconList,
     sustainabilityScorecard,
+    cardTypeAdornment,
   } = props
 
   const showFooter = labels.length > 0
@@ -165,9 +170,12 @@ export const GenericCard = forwardRef(function GenericCard(
           <Stack
             sx={{
               flexDirection: 'row',
+              alignItems: 'center',
+              gap: '10px',
             }}
           >
             <div className="SRC-type">{type}</div>
+            {cardTypeAdornment}
           </Stack>
           {renderedIconList}
           <div>

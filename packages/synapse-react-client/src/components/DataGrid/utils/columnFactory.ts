@@ -12,6 +12,7 @@ import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleE
 
 type ColumnConfig = {
   columnName: string
+  disabled?: boolean
   typeInfo: FlatTypeInfo | null
   enumeratedValues: EnumeratedValue[] | string[] | null
   isRequired: boolean
@@ -34,6 +35,7 @@ const COLUMN_FACTORIES = {
     title: config.columnName,
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
+    disabled: config.disabled,
   }),
 
   boolean: (config: ColumnConfig) => ({
@@ -47,6 +49,7 @@ const COLUMN_FACTORIES = {
     title: config.columnName,
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
+    disabled: config.disabled,
   }),
 
   number: (config: ColumnConfig) => ({
@@ -54,6 +57,7 @@ const COLUMN_FACTORIES = {
     title: config.columnName,
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
+    disabled: config.disabled,
   }),
 
   enumerated: (config: ColumnConfig) => ({
@@ -67,6 +71,7 @@ const COLUMN_FACTORIES = {
     title: config.columnName,
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
+    disabled: config.disabled,
   }),
 
   'date-time': (config: ColumnConfig) => ({
@@ -79,6 +84,7 @@ const COLUMN_FACTORIES = {
     title: config.columnName,
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: Math.max(calculateColumnWidth(config.columnName), 215),
+    disabled: config.disabled,
   }),
 
   text: (config: ColumnConfig) => ({
@@ -90,6 +96,7 @@ const COLUMN_FACTORIES = {
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
     cellClassName: 'MuiInputBase-input',
+    disabled: config.disabled,
   }),
 }
 

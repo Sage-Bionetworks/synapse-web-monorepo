@@ -29,6 +29,8 @@ export function DateTimeCell({
         }
       }}
       sx={{
+        // When disabled, allow selecting the entire cell
+        pointerEvents: disabled ? 'none' : undefined,
         width: '100%',
         height: '100%',
         '& .MuiInputBase-root': {
