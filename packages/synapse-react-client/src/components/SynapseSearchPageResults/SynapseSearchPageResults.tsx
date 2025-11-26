@@ -2,20 +2,28 @@ import { Box, TextField, InputAdornment, Button } from '@mui/material'
 import SynapseSearchResultsCard from './SynapseSearchResultsCard'
 import SearchIcon from '@mui/icons-material/Search'
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSearchInfinite } from '@/synapse-queries/search/useSearch'
 import { SearchQuery } from '@sage-bionetworks/synapse-types'
-import { useSearchParams } from 'react-router'
-import { SEARCH_PAGE_QUERY_PARAM } from '@/utils/SynapseConstants'
 
-export function SynapseSearchPageResults() {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [searchInputValue, setSearchInputValue] = useState(
-    searchParams.get(SEARCH_PAGE_QUERY_PARAM) || '',
-  )
+export interface SynapseSearchPageResultsProps {
+  query?: string
+  setQuery?: (newQuery: string) => void
+}
+
+export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
+  const { query = '', setQuery } = props
+
+  // Local state for the input field to allow typing without immediately triggering searches
+  const [searchInputValue, setSearchInputValue] = useState(query)
+
+  // Sync input value when query prop changes
+  useEffect(() => {
+    setSearchInputValue(query)
+  }, [query])
 
   const searchQuery: SearchQuery = {
-    queryTerm: searchInputValue ? [searchInputValue] : [],
+    queryTerm: query ? [query] : [],
   }
 
   const {
@@ -26,7 +34,7 @@ export function SynapseSearchPageResults() {
     hasNextPage,
     isFetchingNextPage,
   } = useSearchInfinite(searchQuery, {
-    enabled: !!searchInputValue,
+    enabled: !!query,
   })
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,14 +42,9 @@ export function SynapseSearchPageResults() {
   }
 
   const handleSearch = () => {
-    setSearchParams(prev => {
-      if (searchInputValue) {
-        prev.set(SEARCH_PAGE_QUERY_PARAM, searchInputValue)
-      } else {
-        prev.delete(SEARCH_PAGE_QUERY_PARAM)
-      }
-      return prev
-    })
+    if (setQuery) {
+      setQuery(searchInputValue)
+    }
   }
 
   return (
