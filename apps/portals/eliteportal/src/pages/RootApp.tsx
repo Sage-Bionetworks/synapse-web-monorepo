@@ -1,5 +1,6 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
+import TemporaryBanner from 'synapse-react-client/components/TemporaryBanner/TemporaryBanner'
 import FundingBanner from '@sage-bionetworks/synapse-portal-framework/components/eliteportal/FundingBanner'
 
 function RootApp() {
@@ -7,7 +8,7 @@ function RootApp() {
     <App>
       {/* PORTALS-3508 */}
       <RepositoryUnderReviewAlert portalSpecificDisclaimer="This repository is developed by Sage Bionetworks to host and share resources related to Exceptional Longevity research, and remains fully operational. We continue to maintain and accept longevity-related data and resources throughout this review process." />
-      <FundingBanner />
+      <TemporaryBanner deadline="2026-01-26" content={<FundingBanner />} />
     </App>
   )
 }
