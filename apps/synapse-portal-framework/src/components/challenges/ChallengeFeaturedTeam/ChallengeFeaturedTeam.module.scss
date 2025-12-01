@@ -18,61 +18,28 @@
   z-index: -1;
 }
 
-.FeaturedTeam__triangleImage {
-  position: absolute;
-  left: 38%;
-  bottom: 99%;
-  transform: translateX(-50%);
-  z-index: 1;
-
-  @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
-    left: 10%;
-  }
-}
-
-.FeaturedTeam__medalImage {
-  position: absolute;
-  left: 68%;
-  bottom: 88%;
-  transform: translateX(-50%);
-  z-index: 1;
-
-  @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
-    left: 92%;
-    bottom: 93%;
-    width: 50px;
-    height: 50px;
-  }
-}
-
-.FeaturedTeam__topLineImage {
-  position: absolute;
-  left: 59%;
-  bottom: 99%;
-  transform: translateX(-50%);
-  z-index: 1;
-
-  @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
-    left: 80%;
-    bottom: 100%;
-  }
-}
-
-.FeaturedTeam__bottomLineImage {
-  position: absolute;
-  left: 60%;
-  bottom: 98%;
-  transform: translateX(-50%);
-  z-index: 1;
-
-  @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
-    left: 81%;
-    bottom: 99%;
-  }
-}
-
 .FeaturedTeam__headerSection {
+  display: flex;
+  flex-direction: column;
+  position: relative;
   text-align: center;
+}
+
+.FeaturedTeam__vectorsContainer {
+  position: absolute;
+  bottom: 55%;
+  left: 7%;
+  width: 90%;
+  overflow-x: hidden;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    left: 8%;
+    bottom: 15%;
+  }
+}
+
+.FeaturedTeam__vectors {
+  width: 100%;
 }
 
 .FeaturedTeam__title:global(.MuiTypography-root) {
@@ -100,13 +67,18 @@
 .FeaturedTeam__imageSection {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
   flex: 0 0 50%;
 }
 
 .FeaturedTeam__image {
   width: 100%;
+  height: 300px;
   object-fit: cover;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    height: 550px;
+  }
 }
 
 .FeaturedTeam__caption:global(.MuiTypography-root) {
@@ -114,54 +86,26 @@
   color: var(--gray-900);
 }
 
-.FeaturedTeam__infoSection {
-  display: flex;
-  flex-direction: column;
-  gap: 36px;
-  flex: 0 0 50%;
-}
-
-.FeaturedTeam__winnerSection {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-}
-
-.FeaturedTeam__winnerTitle {
+.FeaturedTeam__textSection :global(.markdown) p:not(:last-child) {
   color: var(--gray-900);
+  margin-bottom: 20px;
 }
 
-.FeaturedTeam__challengeLink {
-  color: var(--info);
+.FeaturedTeam__textSection :global(.markdown) p:first-child {
+  font-size: 24px;
+  line-height: 28px;
 }
 
-.FeaturedTeam__qaSection {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.FeaturedTeam__question:global(.MuiTypography-root) {
-  font-weight: 700;
-  color: var(--gray-900);
-}
-
-.FeaturedTeam__answer:global(.MuiTypography-root) {
-  color: var(--gray-900);
-}
-
-.FeaturedTeam__readMoreButton {
-  display: flex;
-  height: 36px;
-  padding: 6px 16px;
-  width: fit-content;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px;
+.FeaturedTeam__textSection :global(.MuiButton-contained) {
+  background-color: transparent !important;
+  border: 1px solid;
   color: var(--black) !important;
-  border: 1px solid var(--black) !important;
+  box-shadow: none !important;
+  margin: 0;
+  padding: 3px;
+  border-radius: 8px;
+}
 
-  @media (max-width: map.get(SrcVariables.$breakpoints, 'medium')) {
-    width: 100%;
-  }
+.FeaturedTeam__textSection :global(.MuiButton-contained):hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
 }
