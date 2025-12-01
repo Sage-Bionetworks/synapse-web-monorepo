@@ -3,7 +3,7 @@ import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import classNames from 'classnames'
 import { JSONSchema7 } from 'json-schema'
 import { useMemo } from 'react'
-import { DataSheetGrid, DataSheetGridRef } from 'react-datasheet-grid'
+import { DynamicDataSheetGrid, DataSheetGridRef } from 'react-datasheet-grid'
 import 'react-datasheet-grid/dist/style.css'
 import '../../style/components/_data-grid-extra.scss'
 import { SelectionWithId } from 'react-datasheet-grid/dist/types'
@@ -60,7 +60,7 @@ export default function DataGrid(props: DataGridProps) {
   )
 
   return (
-    <DataSheetGrid
+    <DynamicDataSheetGrid
       ref={gridRef}
       value={rowValues}
       columns={colValues}
