@@ -24,7 +24,7 @@ type TeamImageCardProps = {
   teamMemberNames: string[]
 }
 
-const UseTeamPhotoUrl = (teamPhotoFileHandleId: string, entityId: string) => {
+const useTeamPhotoUrl = (teamPhotoFileHandleId: string, entityId: string) => {
   const fha: FileHandleAssociation = {
     associateObjectId: entityId,
     associateObjectType: FileHandleAssociateType.TableEntity,
@@ -38,13 +38,11 @@ const UseTeamPhotoUrl = (teamPhotoFileHandleId: string, entityId: string) => {
 }
 
 const TeamImageCard = (props: TeamImageCardProps) => {
+  const imageUrl = useTeamPhotoUrl(props.teamPhotoFileHandleId, props.entityId)
+
   return (
     <Box className={styles.FeaturedTeam__imageCard}>
-      <img
-        src={UseTeamPhotoUrl(props.teamPhotoFileHandleId, props.entityId)}
-        alt="Team"
-        className={styles.FeaturedTeam__image}
-      />
+      <img src={imageUrl} alt="Team" className={styles.FeaturedTeam__image} />
       <Typography variant="smallText1" className={styles.FeaturedTeam__caption}>
         From left to right: {props.teamMemberNames.join(', ')}
       </Typography>
@@ -116,6 +114,7 @@ const FeaturedTeam = ({ sql }: FeaturedTeamProps) => {
             }
             return (
               <TeamImageCard
+                key={row.rowId}
                 teamPhotoFileHandleId={row.values[teamPhotoColumnIndex] ?? ''}
                 entityId={entityId}
                 teamMemberNames={teamMemberNames}
