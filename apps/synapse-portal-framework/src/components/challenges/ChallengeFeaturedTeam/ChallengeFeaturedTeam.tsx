@@ -22,6 +22,7 @@ type TeamImageCardProps = {
   teamPhotoFileHandleId: string
   entityId: string
   teamMemberNames: string[]
+  teamMemberNamesDescription?: string
 }
 
 const useTeamPhotoUrl = (teamPhotoFileHandleId: string, entityId: string) => {
@@ -44,7 +45,7 @@ const TeamImageCard = (props: TeamImageCardProps) => {
     <Box className={styles.FeaturedTeam__imageCard}>
       <img src={imageUrl} alt="Team" className={styles.FeaturedTeam__image} />
       <Typography variant="smallText1" className={styles.FeaturedTeam__caption}>
-        From left to right: {props.teamMemberNames.join(', ')}
+        {props.teamMemberNamesDescription} {props.teamMemberNames.join(', ')}
       </Typography>
     </Box>
   )
@@ -72,6 +73,7 @@ const FeaturedTeam = ({ sql }: FeaturedTeamProps) => {
   enum ExpectedColumns {
     TEAM_PHOTO = 'teamPhoto',
     TEAM_MEMBER_NAMES = 'teamMemberNames',
+    TEAM_MEMBER_NAMES_DESCRIPTION = 'teamMemberNamesDescription',
   }
 
   const teamPhotoColumnIndex = getFieldIndex(
@@ -81,6 +83,11 @@ const FeaturedTeam = ({ sql }: FeaturedTeamProps) => {
 
   const teamMemberNamesColumnIndex = getFieldIndex(
     ExpectedColumns.TEAM_MEMBER_NAMES,
+    queryResultBundle,
+  )
+
+  const teamMemberNamesDescriptionColumnIndex = getFieldIndex(
+    ExpectedColumns.TEAM_MEMBER_NAMES_DESCRIPTION,
     queryResultBundle,
   )
 
@@ -118,6 +125,9 @@ const FeaturedTeam = ({ sql }: FeaturedTeamProps) => {
                 teamPhotoFileHandleId={row.values[teamPhotoColumnIndex] ?? ''}
                 entityId={entityId}
                 teamMemberNames={teamMemberNames}
+                teamMemberNamesDescription={
+                  row.values[teamMemberNamesDescriptionColumnIndex] ?? ''
+                }
               />
             )
           })}
