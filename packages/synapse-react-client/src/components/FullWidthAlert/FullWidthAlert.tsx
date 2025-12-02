@@ -148,7 +148,7 @@ function FullWidthAlert(props: FullWidthAlertProps) {
       >
         <Box>
           {title && <AlertTitle>{title}</AlertTitle>}
-          {description}
+          <span className="FullWidthAlertDescription">{description}</span>
         </Box>
         {(primaryButtonConfig ||
           secondaryButtonConfig ||
