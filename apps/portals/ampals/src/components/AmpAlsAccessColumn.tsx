@@ -18,13 +18,13 @@ function AccessBySource(props: {
   id: string
   url?: string
 }) {
-  const { source, id } = props
+  const { source, id, url } = props
 
   switch (source) {
     case 'GEO':
       return <AccessIcon restrictionUiType={RestrictionUiType.Accessible} />
     case 'Critical Path Institute':
-      return <AridhiaAccessStatus datasetCode={id} />
+      return <AridhiaAccessStatus url={url} datasetCode={id} />
     case 'Synapse':
     default:
       return <HasAccessV2 entityId={id} showButtonText={false} />
