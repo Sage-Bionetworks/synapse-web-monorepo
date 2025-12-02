@@ -6,9 +6,9 @@ import {
   useEffect,
   useState,
 } from 'react'
-import { AuthenticationApi } from '@sage-bionetworks/aridhia-client/generated/apis/AuthenticationApi'
-import { AuthenticationRequest } from '@sage-bionetworks/aridhia-client/generated/models/AuthenticationRequest'
-import { AuthenticationResponse } from '@sage-bionetworks/aridhia-client/generated/models/AuthenticationResponse'
+import { AuthenticationApi } from '@sage-bionetworks/aridhia-client/generated/apis'
+import { AuthenticationRequest } from '@sage-bionetworks/aridhia-client/generated/models'
+import { AuthenticationResponse } from '@sage-bionetworks/aridhia-client/generated/models'
 import { Configuration } from '@sage-bionetworks/aridhia-client/generated/runtime'
 import { useSynapseContext } from './SynapseContext'
 

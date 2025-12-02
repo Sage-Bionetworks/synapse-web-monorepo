@@ -9,22 +9,19 @@ import { SynapseContextProvider } from './SynapseContext'
 import { PropsWithChildren } from 'react'
 
 // Mock the aridhia-client
-vi.mock(
-  '@sage-bionetworks/aridhia-client/generated/apis/AuthenticationApi',
-  () => ({
-    AuthenticationApi: vi.fn().mockImplementation(() => ({
-      authenticatePost: vi.fn().mockResolvedValue({
-        access_token: 'mock-aridhia-token',
-        expires_in: 3600,
-        refresh_expires_in: 7200,
-        refresh_token: 'mock-refresh-token',
-        'not-before-policy': 0,
-        session_state: 'mock-session',
-        scope: 'openid',
-      }),
-    })),
-  }),
-)
+vi.mock('@sage-bionetworks/aridhia-client/generated/apis', () => ({
+  AuthenticationApi: vi.fn().mockImplementation(() => ({
+    authenticatePost: vi.fn().mockResolvedValue({
+      access_token: 'mock-aridhia-token',
+      expires_in: 3600,
+      refresh_expires_in: 7200,
+      refresh_token: 'mock-refresh-token',
+      'not-before-policy': 0,
+      session_state: 'mock-session',
+      scope: 'openid',
+    }),
+  })),
+}))
 
 vi.mock('@sage-bionetworks/aridhia-client/generated/runtime', () => ({
   Configuration: vi.fn().mockImplementation(config => config),

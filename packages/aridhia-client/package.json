@@ -8,11 +8,19 @@
       "types": "./dist/generated/runtime.d.ts",
       "default": "./dist/generated/runtime.js"
     },
-    "./generated/apis/*": {
+    "./generated/apis": {
+      "types": "./dist/generated/apis/index.d.ts",
+      "default": "./dist/generated/apis/index.js"
+    },
+    "./generated/apis/*.js": {
       "types": "./dist/generated/apis/*.d.ts",
       "default": "./dist/generated/apis/*.js"
     },
-    "./generated/models/*": {
+    "./generated/models": {
+      "types": "./dist/generated/models/index.d.ts",
+      "default": "./dist/generated/models/index.js"
+    },
+    "./generated/models/*.js": {
       "types": "./dist/generated/models/*.d.ts",
       "default": "./dist/generated/models/*.js"
     }

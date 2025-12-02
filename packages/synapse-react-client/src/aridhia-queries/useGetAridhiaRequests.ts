@@ -1,7 +1,7 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { Configuration } from '@sage-bionetworks/aridhia-client/generated/runtime'
-import { FairRequestsGet200Response } from '@sage-bionetworks/aridhia-client/generated/models/FairRequestsGet200Response'
-import { RequestsApi } from '@sage-bionetworks/aridhia-client/generated/apis/RequestsApi'
+import { FairRequestsGet200Response } from '@sage-bionetworks/aridhia-client/generated/models'
+import { RequestsApi } from '@sage-bionetworks/aridhia-client/generated/apis'
 import { useAridhiaContextOptional } from '@/utils/context/AridhiaContext'
 
 export const ARIDHIA_REQUESTS_QUERY_KEY = ['aridhia', 'requests'] as const
