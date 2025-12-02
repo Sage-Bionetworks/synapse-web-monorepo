@@ -41,9 +41,13 @@ export default function MetadataTaskTableActionCell(props: {
     },
   })
   const isCheckingAccess = accessFetchStatus === 'fetching'
-  const canOpenDataGrid = hasReadAccess === true
   const isOpenDataGridDisabled =
-    openGridIsPending || isCheckingAccess || !canOpenDataGrid
+    openGridIsPending || isCheckingAccess || !hasReadAccess
+  const toolTipTitle = hasReadAccess
+    ? 'Open a Working Copy document to edit metadata'
+    : 'You must have READ access to ' +
+      gridSourceId +
+      ' to view the Working Copy'
 
   const handleOpenDataGrid = useCallback(async () => {
     const gridSession = await getGridSessionForTask({ curationTask })
@@ -66,18 +70,20 @@ export default function MetadataTaskTableActionCell(props: {
   // const uploadButton = isFileBasedTask ? <></> : null
 
   const openDataGridButton = (
-    <Tooltip title={'Open a Working Copy document to edit metadata'}>
-      <Button
-        size={'small'}
-        startIcon={<StickyNote2Outlined />}
-        loading={openGridIsPending || isCheckingAccess}
-        disabled={isOpenDataGridDisabled}
-        onClick={() => {
-          void handleOpenDataGrid()
-        }}
-      >
-        Working Copy
-      </Button>
+    <Tooltip title={toolTipTitle}>
+      <span>
+        <Button
+          size={'small'}
+          startIcon={<StickyNote2Outlined />}
+          loading={openGridIsPending || isCheckingAccess}
+          disabled={isOpenDataGridDisabled}
+          onClick={() => {
+            void handleOpenDataGrid()
+          }}
+        >
+          Working Copy
+        </Button>
+      </span>
     </Tooltip>
   )
 
