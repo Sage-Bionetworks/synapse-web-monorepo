@@ -8,6 +8,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from 'synapse-react-client'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
+import useTableImageUrl from 'synapse-react-client/utils/hooks/useTableImageUrl'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 import { useGetStablePresignedUrl } from 'synapse-react-client/synapse-queries'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
@@ -25,21 +26,8 @@ type TeamImageCardProps = {
   teamMemberNamesDescription?: string
 }
 
-const useTeamPhotoUrl = (teamPhotoFileHandleId: string, entityId: string) => {
-  const fha: FileHandleAssociation = {
-    associateObjectId: entityId,
-    associateObjectType: FileHandleAssociateType.TableEntity,
-    fileHandleId: teamPhotoFileHandleId ?? '',
-  }
-  const stablePresignedUrl = useGetStablePresignedUrl(fha, false, {
-    enabled: !!teamPhotoFileHandleId,
-  })
-
-  return stablePresignedUrl?.dataUrl
-}
-
 const TeamImageCard = (props: TeamImageCardProps) => {
-  const imageUrl = useTeamPhotoUrl(props.teamPhotoFileHandleId, props.entityId)
+  const imageUrl = useTableImageUrl(props.teamPhotoFileHandleId, props.entityId)
 
   return (
     <Box className={styles.FeaturedTeam__imageCard}>
