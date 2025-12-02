@@ -16,6 +16,7 @@ export function modelColsToGrid(
       typeInfo: propertyInfo?.type || null,
       enumeratedValues: propertyInfo?.enumeratedValues || [],
       isRequired: propertyInfo?.isRequired || false,
+      disabled: propertyInfo?.type?.readOnly,
     })
   })
 }
