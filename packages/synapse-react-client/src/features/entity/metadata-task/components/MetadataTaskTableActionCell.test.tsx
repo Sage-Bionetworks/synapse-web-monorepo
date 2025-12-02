@@ -9,6 +9,7 @@ import type {
   GridSession,
   SynapseClientError,
 } from '@sage-bionetworks/synapse-client'
+import type { UserEntityPermissions } from '@sage-bionetworks/synapse-types'
 import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query'
 
 vi.mock('../hooks/useGridSessionForCurationTask', () => ({
@@ -39,7 +40,7 @@ type MutationResult = UseMutationResult<
   SynapseClientError,
   { curationTask: CurationTask }
 >
-type BooleanQueryResult = UseQueryResult<boolean>
+type EntityPermissionsQueryResult = UseQueryResult<UserEntityPermissions | null>
 
 const mockMutateAsync = vi.fn<MutationResult['mutateAsync']>()
 
@@ -53,14 +54,14 @@ const createMutationResult = (
   } as Partial<MutationResult> as MutationResult)
 
 const createQueryResult = (
-  overrides: Partial<BooleanQueryResult> = {},
-): BooleanQueryResult =>
+  overrides: Partial<EntityPermissionsQueryResult> = {},
+): EntityPermissionsQueryResult =>
   ({
-    data: true,
+    data: { canView: true } as UserEntityPermissions,
     fetchStatus: 'idle',
     status: 'success',
     ...overrides,
-  } as Partial<BooleanQueryResult> as BooleanQueryResult)
+  } as Partial<EntityPermissionsQueryResult> as EntityPermissionsQueryResult)
 
 const mockCurationTask = {
   taskId: 123,
@@ -107,7 +108,7 @@ describe('MetadataTaskTableActionCell', () => {
   it('disables the Working Copy button when READ access is denied', () => {
     mockUseQuery.mockReturnValue(
       createQueryResult({
-        data: false,
+        data: { canView: false } as UserEntityPermissions,
         fetchStatus: 'idle',
         status: 'success',
       }),
@@ -121,7 +122,7 @@ describe('MetadataTaskTableActionCell', () => {
   it('disables the Working Copy button while opening the grid session', () => {
     mockUseQuery.mockReturnValue(
       createQueryResult({
-        data: true,
+        data: { canView: true } as UserEntityPermissions,
         fetchStatus: 'idle',
         status: 'success',
       }),
@@ -140,7 +141,7 @@ describe('MetadataTaskTableActionCell', () => {
   it('requests a grid session and opens it in a new tab when clicked', async () => {
     mockUseQuery.mockReturnValue(
       createQueryResult({
-        data: true,
+        data: { canView: true } as UserEntityPermissions,
         fetchStatus: 'idle',
         status: 'success',
       }),
