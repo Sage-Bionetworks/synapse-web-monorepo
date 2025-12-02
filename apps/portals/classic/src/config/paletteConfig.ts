@@ -1,4 +1,4 @@
-import { classicPalette } from 'synapse-react-client/theme/palette/Palettes'
+import { classicPalette } from 'synapse-react-client/react-ui/theme/palette/Palettes'
 
 const palette = classicPalette
 

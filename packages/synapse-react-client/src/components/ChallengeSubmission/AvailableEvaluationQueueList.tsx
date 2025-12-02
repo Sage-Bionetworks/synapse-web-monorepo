@@ -14,7 +14,7 @@ import {
 import { Evaluation } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
 import { useEffect, useState } from 'react'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse/MarkdownSynapse'
 
 type TextWithHelpIconProps = {
   text: string

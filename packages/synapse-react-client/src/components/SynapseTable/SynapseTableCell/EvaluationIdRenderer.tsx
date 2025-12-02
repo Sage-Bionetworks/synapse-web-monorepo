@@ -1,5 +1,5 @@
 import { getEvaluation } from '@/synapse-client/SynapseClient'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 

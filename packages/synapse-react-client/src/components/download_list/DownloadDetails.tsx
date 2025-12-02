@@ -1,4 +1,4 @@
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { testDownloadSpeed } from '@/utils/functions/testDownloadSpeed'
 import {

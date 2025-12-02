@@ -1,5 +1,5 @@
 import datasets from '@/config/synapseConfigs/datasets'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav'
 
 const ExploreDatasets = () => {
   return <QueryWrapperPlotNav {...datasets} />

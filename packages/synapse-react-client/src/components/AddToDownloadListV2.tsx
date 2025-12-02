@@ -1,6 +1,6 @@
 import { useGetEntity } from '@/synapse-queries'
 import { useAddFileToDownloadList } from '@/synapse-queries/download/useDownloadList'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { Link, Tooltip } from '@mui/material'
 import IconSvg from './IconSvg/IconSvg'
 import { displayToast } from './ToastMessage/ToastMessage'

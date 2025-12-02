@@ -15,7 +15,7 @@
     "react-dom": "^19.1.0",
     "react-router": "^7.5.3",
     "synapse-react-client": "workspace:*",
-    "vite": "^6.3.5"
+    "vite": "^7.1.11"
   },
   "devDependencies": {
     "@types/lodash-es": "^4.17.12",
@@ -25,7 +25,7 @@
     "tslib": "^2.8.1",
     "typescript": "5.8.3",
     "vite-config": "workspace:*",
-    "vitest": "^3.2.2"
+    "vitest": "^3.2.4"
   },
   "scripts": {
     "start": "vite",

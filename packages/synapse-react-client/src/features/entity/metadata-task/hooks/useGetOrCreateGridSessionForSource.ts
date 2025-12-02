@@ -1,6 +1,6 @@
 import { getLatestGridSessionForSource } from '@/features/entity/metadata-task/utils/getLatestGridSessionForSource'
 import { useCreateGridSession } from '@/synapse-queries/grid/useGridSession'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import {
   CreateGridRequest,
   GridSession,

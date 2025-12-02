@@ -2,7 +2,7 @@ import { getEntity } from '@/synapse-client/SynapseClient'
 import { isLink } from '@/utils/types/IsType'
 import { Entity } from '@sage-bionetworks/synapse-types'
 import { QueryOptions, useQuery } from '@tanstack/react-query'
-import { useSynapseContext } from '../context/SynapseContext'
+import { useSynapseContext } from '../../stores/SynapseContext/SynapseContext'
 
 /**
  * Follows a Synapse entity ID to the end of the chain of links

@@ -1,5 +1,5 @@
 import { allowNotFoundError } from '@/synapse-client/SynapseClientUtils'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import {
   V2Doi as Doi,
   DoiAssociation,

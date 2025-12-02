@@ -27,7 +27,7 @@ import userEvent from '@testing-library/user-event'
 import { noop } from 'lodash-es'
 import { http, HttpResponse } from 'msw'
 import { createRef } from 'react'
-import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
+import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse/MarkdownSynapse'
 import {
   DUC_TEMPLATE_UPLOAD_ERROR,
   getValidExpirationPeriodOrErrorMessage,

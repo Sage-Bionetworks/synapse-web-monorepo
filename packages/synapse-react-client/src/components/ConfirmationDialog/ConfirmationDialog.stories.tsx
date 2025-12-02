@@ -1,10 +1,11 @@
-import { Button } from '@mui/material'
+import Button from '@/react-ui/components/Button'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import {
   ConfirmationDialog,
   ConfirmationDialogProps,
 } from './ConfirmationDialog'
 import { fn } from 'storybook/test'
+import { HelpPopover } from '../HelpPopover'
 
 const meta = {
   title: 'UI/ConfirmationDialog',
@@ -27,11 +28,12 @@ export const Demo: Story = {
         <Button variant="contained">Button</Button>
       </>
     ),
-    titleHelpPopoverProps: {
-      helpUrl: 'https://help.synapse.org',
-      markdownText:
-        'Option to show a _HelpPopover_ in the title bar with a link to the docs site',
-    },
+    titleHelp: (
+      <HelpPopover
+        helpUrl="https://help.synapse.org"
+        markdownText="Option to show a _HelpPopover_ in the title bar with a link to the docs site"
+      />
+    ),
     onCancel: fn(),
     onConfirm: fn(),
   },

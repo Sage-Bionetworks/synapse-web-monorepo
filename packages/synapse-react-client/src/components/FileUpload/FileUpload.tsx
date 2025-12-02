@@ -1,6 +1,6 @@
 import { ProgressCallback, uploadFile } from '@/synapse-client/SynapseClient'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { Button, ButtonProps } from '@mui/material'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
+import Button, { ButtonProps } from '@/react-ui/components/Button'
 import {
   FileUploadComplete,
   UploadCallbackResp,

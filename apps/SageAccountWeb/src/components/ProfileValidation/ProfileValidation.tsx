@@ -33,8 +33,8 @@ import ThankYou from './ThankYou'
 import { VerifyIdentify } from './VerifyIdentify'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClient'
-import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
-import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import { useSynapseContext } from 'synapse-react-client/stores/SynapseContext'
+import { displayToast } from 'synapse-react-client/components/ToastMessage'
 
 const IDENTITY_ATTESTATION_TEMPLATE_DOCUMENT_LINK =
   'https://help.synapse.org/__attachments/2007072795/signing_official.doc?inst-v=77bba77d-449d-4402-a8bb-6895820b38a9'

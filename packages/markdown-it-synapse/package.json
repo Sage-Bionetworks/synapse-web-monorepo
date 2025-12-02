@@ -43,7 +43,7 @@
   "devDependencies": {
     "@types/markdown-it": "^13.0.9",
     "@types/node": "^20.17.41",
-    "@vitest/coverage-v8": "^3.2.2",
+    "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
     "markdown-it": "^14.1.0",
     "markdown-it-testgen": "~0.1.6",
@@ -51,7 +51,7 @@
     "tsup": "^8.4.0",
     "typescript": "5.8.3",
     "vite-config": "workspace:*",
-    "vitest": "^3.2.2"
+    "vitest": "^3.2.4"
   },
   "directories": {
     "test": "test"

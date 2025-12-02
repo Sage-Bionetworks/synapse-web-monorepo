@@ -1,5 +1,5 @@
 import SynapseClient from '@/synapse-client'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { getEntityTypeFromHeader } from '@/utils/functions/EntityTypeUtils'
 import { parseSynId } from '@/utils/functions/RegularExpressions'
 import ClearIcon from '@mui/icons-material/Clear'

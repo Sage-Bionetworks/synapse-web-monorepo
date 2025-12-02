@@ -1,4 +1,4 @@
-import { MarkdownSynapse } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
+import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import AMPALSResearchPageLayout from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSResearchPageLayout'
 
 function ContactUs() {

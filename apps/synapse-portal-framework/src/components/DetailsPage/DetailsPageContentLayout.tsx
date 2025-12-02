@@ -3,7 +3,7 @@ import {
   DetailsPageSectionLayoutType,
 } from './DetailsPageSectionLayout'
 import DetailsPageMenu from '../DetailsPageMenu'
-import DetailsPageLayout from '../DetailsPageLayout'
+import styles from './DetailsPageContentLayout.module.scss'
 
 export type DetailsPageContentType = DetailsPageSectionLayoutType[]
 
@@ -16,13 +16,13 @@ export function DetailsPageContent(props: {
   const hideMenu = props.hideMenu ?? menuOptions.length <= 1
 
   return (
-    <DetailsPageLayout>
+    <div className={styles.DetailsPageLayout}>
       {!hideMenu && <DetailsPageMenu menuSections={menuOptions} />}
       <div className={'component-container'}>
         {content.map(option => (
           <DetailsPageSectionLayout key={option.id} {...option} />
         ))}
       </div>
-    </DetailsPageLayout>
+    </div>
   )
 }

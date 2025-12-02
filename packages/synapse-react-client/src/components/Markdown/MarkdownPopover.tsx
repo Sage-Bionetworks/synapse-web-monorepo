@@ -3,7 +3,9 @@ import {
   StyledPopoverProps,
 } from '@/components/styled/StyledPopover'
 import { Typography } from '@mui/material'
-import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
+import MarkdownSynapse, {
+  MarkdownSynapseProps,
+} from './MarkdownSynapse/MarkdownSynapse'
 
 export type MarkdownPopoverProps = Omit<
   StyledPopoverProps,

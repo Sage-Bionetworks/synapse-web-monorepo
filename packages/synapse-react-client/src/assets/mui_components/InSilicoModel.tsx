@@ -1,6 +1,6 @@
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 import { ReactComponent as InSilicoModelSvg } from '../icons/inSilicoModel.svg'
-import { spreadSx } from '@/theme/spreadSx'
+import spreadSx from '@/react-ui/theme/utils/mergeSx'
 import { useTheme } from '@mui/material'
 
 const InSilicoModel = (props: SvgIconProps) => {

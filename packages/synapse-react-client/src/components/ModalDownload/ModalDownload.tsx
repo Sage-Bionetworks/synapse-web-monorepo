@@ -1,7 +1,7 @@
 import SynapseClient from '@/synapse-client'
-import { SynapseContext } from '@/utils/context/SynapseContext'
+import { SynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
-import { Button } from '@mui/material'
+import Button from '@/react-ui/components/Button'
 import Form, { IChangeEvent } from '@rjsf/core'
 import validator from '@rjsf/validator-ajv8'
 import {
@@ -11,7 +11,7 @@ import {
   SortItem,
 } from '@sage-bionetworks/synapse-types'
 import { Component, ContextType, CSSProperties, Fragment } from 'react'
-import { DialogBase } from '../DialogBase'
+import DialogBase from '@/react-ui/components/DialogBase'
 import SynapseFormCheckboxesWidget from '../SynapseForm/SynapseFormCheckboxesWidget'
 import SynapseFormCheckboxWidget from '../SynapseForm/SynapseFormCheckboxWidget'
 import SynapseFormRadioWidget from '../SynapseForm/SynapseFormRadioWidget'

@@ -14,7 +14,7 @@ import {
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { SynapseClient, SynapseContextType } from '../../../index'
-import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
+import MarkdownSynapse from '../../Markdown/MarkdownSynapse/MarkdownSynapse'
 import ManagedACTAccessRequirementItem, {
   ManagedACTAccessRequirementItemProps,
 } from './ManagedACTAccessRequirementItem'

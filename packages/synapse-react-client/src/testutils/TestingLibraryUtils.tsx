@@ -1,8 +1,8 @@
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import FullContextProvider, {
   defaultQueryClientConfig,
-} from '@/utils/context/FullContextProvider'
-import { SynapseContextType } from '@/utils/context/SynapseContext'
+} from '@/stores/FullContextProvider/FullContextProvider'
+import { SynapseContextType } from '@/stores/SynapseContext/SynapseContext'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactNode } from 'react'
 

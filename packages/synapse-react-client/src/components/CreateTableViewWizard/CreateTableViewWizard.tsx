@@ -18,7 +18,7 @@ import {
 import { isUndefined, omitBy } from 'lodash-es'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { SetOptional } from 'type-fest'
-import { DialogBase } from '../DialogBase'
+import DialogBase from '@/react-ui/components/DialogBase'
 import EntityViewMaskEditor from '../EntityViewScopeEditor/EntityViewMaskEditor'
 import EntityViewScopeEditor from '../EntityViewScopeEditor/EntityViewScopeEditor'
 import SqlDefinedTableEditor from '../SqlDefinedTableEditor/SqlDefinedTableEditor'

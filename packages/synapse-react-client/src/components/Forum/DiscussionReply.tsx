@@ -8,7 +8,7 @@ import {
 import dayjs from 'dayjs'
 import { useState, useRef, useEffect } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse/MarkdownSynapse'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import { displayToast } from '../ToastMessage/ToastMessage'

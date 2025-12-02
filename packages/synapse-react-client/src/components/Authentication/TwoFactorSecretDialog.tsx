@@ -1,4 +1,4 @@
-import { monospaceFontFamily } from '@/theme/typography/Typography'
+import { monospaceFontFamily } from '@/react-ui/theme/typography'
 import {
   Box,
   Button,

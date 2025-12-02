@@ -22,7 +22,7 @@ import {
   CheckBoxCell,
   CheckBoxHeader,
 } from '../EntityHeaderTable/EntityHeaderTableCellRenderers'
-import { EntityLink } from '../EntityLink'
+import { EntityLink } from '../EntityLink/EntityLink'
 import { BlockingLoader, SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'

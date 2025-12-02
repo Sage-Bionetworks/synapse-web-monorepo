@@ -3,7 +3,7 @@ import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
 import { Button, Link } from '@mui/material'
 import { SyntheticEvent, useState } from 'react'
 import TextField from '../TextField/TextField'
-import PasswordField from './PasswordField'
+import PasswordField from './PasswordField/PasswordField'
 
 type UsernamePasswordFormProps = {
   onSubmit: (username: string, password: string) => void
