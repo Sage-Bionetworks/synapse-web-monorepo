@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react'
 import { useSearchInfinite } from '@/synapse-queries/search/useSearch'
 import { SearchQuery } from '@sage-bionetworks/synapse-types'
 
-export interface SynapseSearchPageResultsProps {
+export type SynapseSearchPageResultsProps = {
   query?: string
   setQuery?: (newQuery: string) => void
 }

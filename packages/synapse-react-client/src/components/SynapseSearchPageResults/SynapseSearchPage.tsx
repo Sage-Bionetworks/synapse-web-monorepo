@@ -1,6 +1,9 @@
 import { useSearchParams } from 'react-router'
 import { SEARCH_PAGE_QUERY_PARAM } from '@/utils/SynapseConstants'
 import { SynapseSearchPageResults } from './SynapseSearchPageResults'
+import SynapseSearchPageRouter, {
+  SynapseSearchPageRouterProps,
+} from './SynapseSearchPageRouter'
 
 function SearchPageInternal() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -21,6 +24,15 @@ function SearchPageInternal() {
   return <SynapseSearchPageResults query={query} setQuery={handleQueryChange} />
 }
 
-export function SynapseSearchPage() {
-  return <SearchPageInternal />
+export type SynapseSearchPageProps = Omit<
+  SynapseSearchPageRouterProps,
+  'children'
+>
+
+export default function SynapseSearchPage(props: SynapseSearchPageProps) {
+  return (
+    <SynapseSearchPageRouter {...props}>
+      <SearchPageInternal />
+    </SynapseSearchPageRouter>
+  )
 }
