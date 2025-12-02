@@ -1,16 +1,11 @@
 import { Box, Typography } from '@mui/material'
 import styles from './ChallengeFeaturedTeam.module.scss'
 import { parseEntityIdFromSqlStatement } from 'synapse-react-client/utils/functions'
-import {
-  FileHandleAssociateType,
-  FileHandleAssociation,
-  QueryBundleRequest,
-} from '@sage-bionetworks/synapse-types'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from 'synapse-react-client'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 import useTableImageUrl from 'synapse-react-client/utils/hooks/useTableImageUrl'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
-import { useGetStablePresignedUrl } from 'synapse-react-client/synapse-queries'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { ReactComponent as BkgImage } from '../assets/featuredTeamBkg.svg'
 import { ReactComponent as Vectors } from '../assets/featuredTeamVectors.svg'
