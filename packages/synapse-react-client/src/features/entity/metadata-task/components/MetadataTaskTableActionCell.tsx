@@ -4,11 +4,8 @@ import { Button, Tooltip } from '@mui/material'
 import { CurationTask } from '@sage-bionetworks/synapse-client'
 import { useCallback } from 'react'
 import useGridSessionForCurationTask from '../hooks/useGridSessionForCurationTask'
-import { useQuery } from '@tanstack/react-query'
-import SynapseClient from '@/synapse-client'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { getGridSourceIdForTask } from '../utils/getGridSourceIdForTask'
-import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
+import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 
 /**
  * Handles rendering the 'Actions' cell in the Metadata Task table, which provides buttons for the user
@@ -27,23 +24,11 @@ export default function MetadataTaskTableActionCell(props: {
   const { mutateAsync: getGridSessionForTask, isPending: openGridIsPending } =
     useGridSessionForCurationTask()
 
-  const { accessToken } = useSynapseContext()
   const gridSourceId = getGridSourceIdForTask(curationTask)
-  const { data: hasReadAccess, fetchStatus: accessFetchStatus } = useQuery({
-    queryKey: ['metadata-task', 'has-read-access', gridSourceId, accessToken],
-    queryFn: async () => {
-      const response = await SynapseClient.hasAccessToEntity(
-        gridSourceId,
-        ACCESS_TYPE.READ,
-        accessToken,
-      )
-      return response.result
-    },
-  })
-  const isCheckingAccess = accessFetchStatus === 'fetching'
+  const { data, isLoading } = useGetEntityPermissions(gridSourceId)
   const isOpenDataGridDisabled =
-    openGridIsPending || isCheckingAccess || !hasReadAccess
-  const toolTipTitle = hasReadAccess
+    openGridIsPending || isLoading || !data?.canView
+  const toolTipTitle = data?.canView
     ? 'Open a Working Copy document to edit metadata'
     : 'You must have READ access to ' +
       gridSourceId +
@@ -75,7 +60,7 @@ export default function MetadataTaskTableActionCell(props: {
         <Button
           size={'small'}
           startIcon={<StickyNote2Outlined />}
-          loading={openGridIsPending || isCheckingAccess}
+          loading={openGridIsPending || isLoading}
           disabled={isOpenDataGridDisabled}
           onClick={() => {
             void handleOpenDataGrid()
