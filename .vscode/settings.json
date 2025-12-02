@@ -3,5 +3,5 @@
   // This file is used to configure the project settings used by all devs
   // Your preferred overrides can go in your user settings file, or a custom code-workspace file
 
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "prettier.prettier-vscode"
 }

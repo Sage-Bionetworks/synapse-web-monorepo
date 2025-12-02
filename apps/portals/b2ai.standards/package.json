@@ -33,7 +33,7 @@
     "preview": "vite preview",
     "type-check": "tsc --build",
     "lint": "eslint src",
-    "_generate-sitemap": "node ../../synapse-portal-framework/sitemap/generate-sitemap.cjs \\\"$VITE_PORTAL_KEY\\\"",
+    "_generate-sitemap": "npx tsx ../../synapse-portal-framework/src/sitemap/cli.ts \\\"$VITE_PORTAL_KEY\\\" --config src/config/sitemapConfig.ts",
     "generate-sitemap": "dotenv -- pnpm _generate-sitemap",
     "save-build-date": "mkdir -p public && date > public/build-date.txt"
   }
