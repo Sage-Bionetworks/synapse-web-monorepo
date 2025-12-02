@@ -72,8 +72,6 @@ export type CTACardLink = {
   text: string
   // column name to use for href
   link: string
-  // don't show the link if it's not defined; currently gives empty link that causes page reload, which is confusing
-  noLinkIfEmpty?: boolean
 }
 
 export type DescriptionConfig = {

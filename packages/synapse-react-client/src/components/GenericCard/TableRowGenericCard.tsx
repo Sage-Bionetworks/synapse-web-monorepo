@@ -416,7 +416,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
 
   let ctaHref: string | undefined = undefined,
     ctaTarget: string | undefined = undefined
-  if (ctaLinkConfig && !ctaLinkConfig.noLinkIfEmpty) {
+  if (ctaLinkConfig) {
     const ctaLinkValue: string = data[schema[ctaLinkConfig.link]] || ''
     const { href: newCtaHref, target: newCtaTarget } = getLinkParams(
       ctaLinkValue,
@@ -476,7 +476,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
           : undefined
       }
       ctaLinkConfig={
-        ctaLinkConfig && !ctaLinkConfig.noLinkIfEmpty
+        ctaLinkConfig && ctaHref
           ? {
               text: ctaLinkConfig?.text,
               href: ctaHref,
