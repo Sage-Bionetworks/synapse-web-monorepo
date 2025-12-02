@@ -42,8 +42,11 @@ export const StartGridSession = forwardRef<
     },
     onError(error) {
       const message =
-        error && typeof error === 'object' && 'reason' in error
-          ? (error.reason as string)
+        error &&
+        typeof error === 'object' &&
+        'message' in error &&
+        typeof error.message === 'string'
+          ? error.message
           : 'An error occurred'
       displayToast(message, 'danger')
     },
