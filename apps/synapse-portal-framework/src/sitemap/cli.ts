@@ -23,7 +23,7 @@ async function main() {
 
   if (args.length === 0) {
     console.error(
-      'Usage: npx tsx sitemap/cli.ts <portal-name> [--config <config-path>]',
+      'Usage: tsx sitemap/cli.ts <portal-name> [--config <config-path>]',
     )
     console.error(
       '\nNote: sitemap.xml assumes portal is hosted on <portal-name>.synapse.org',
