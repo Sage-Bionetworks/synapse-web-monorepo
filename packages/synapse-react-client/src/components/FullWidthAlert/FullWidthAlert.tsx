@@ -11,6 +11,7 @@ import {
   Tooltip,
 } from '@mui/material'
 import { MouseEventHandler, ReactNode, useEffect } from 'react'
+import styles from './FullWidthAlert.module.scss'
 
 export type AlertButtonConfig = {
   text: string
@@ -148,7 +149,9 @@ function FullWidthAlert(props: FullWidthAlertProps) {
       >
         <Box>
           {title && <AlertTitle>{title}</AlertTitle>}
-          <span className="FullWidthAlertDescription">{description}</span>
+          <span className={styles.FullWidthAlertDescription}>
+            <span>{description}</span>
+          </span>
         </Box>
         {(primaryButtonConfig ||
           secondaryButtonConfig ||

@@ -1,0 +1,10 @@
+@use 'sass:map';
+@use '../../style/abstracts/variables' as SrcVariables;
+
+:global(.FullWidthAlert) .FullWidthAlertDescription,
+:global(.FullWidthAlert) .FullWidthAlertDescription * {
+  @media (max-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    font-size: 12px !important;
+    line-height: 16px !important;
+  }
+}

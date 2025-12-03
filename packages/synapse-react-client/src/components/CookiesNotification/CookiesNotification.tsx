@@ -15,6 +15,7 @@ import { useState } from 'react'
 import UniversalCookies from 'universal-cookie'
 import FullWidthAlert from '../FullWidthAlert'
 import CookiePreferencesDialog from './CookiePreferencesDialog'
+import styles from './CookiesNotification.module.scss'
 
 const cookies = new UniversalCookies()
 
@@ -33,7 +34,7 @@ export const alertConfig = {
       <Typography
         variant="smallText1"
         sx={{ mt: '20px' }}
-        className="child-minor-addendum"
+        className={styles.MinorAddendum}
       >
         Please read our{' '}
         <Link href={URL_TERMS_CONDITIONS_AGREEMENT}>Terms of Service</Link>{' '}
