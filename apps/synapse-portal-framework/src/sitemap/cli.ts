@@ -3,12 +3,13 @@
  * CLI entry point for sitemap generation.
  *
  * Usage:
- *   npx tsx sitemap/cli.ts <portal-name> [--config <config-path>]
+ *   npx tsx sitemap/cli.ts <portal-name> --routes <routes-json-path> [--config <config-path>]
  *
  * Arguments:
  *   portal-name: The name of the portal (used to construct base URL)
  *
  * Options:
+ *   --routes: Path to pre-extracted routes JSON file (from Vite SSR build)
  *   --config: Path to a sitemap config file (TypeScript or JSON)
  *             If not provided, only static routes will be included
  */
@@ -23,7 +24,7 @@ async function main() {
 
   if (args.length === 0) {
     console.error(
-      'Usage: tsx sitemap/cli.ts <portal-name> [--config <config-path>]',
+      'Usage: tsx sitemap/cli.ts <portal-name> --routes <routes-json-path> [--config <config-path>]',
     )
     console.error(
       '\nNote: sitemap.xml assumes portal is hosted on <portal-name>.synapse.org',
@@ -41,24 +42,29 @@ async function main() {
     sitemapConfigPath = args[configIndex + 1]
   }
 
-  // Find routes config file
-  const fileNameCandidates = ['routesConfig.ts', 'routesConfig.tsx']
-  let routesConfigPath = ''
-
-  for (const fileName of fileNameCandidates) {
-    const candidatePath = path.join(process.cwd(), 'src/config', fileName)
-    if (fs.existsSync(candidatePath)) {
-      routesConfigPath = candidatePath
-      break
-    }
-  }
-
-  if (!routesConfigPath) {
+  // Parse required --routes argument (path to pre-extracted routes JSON)
+  const routesIndex = args.indexOf('--routes')
+  if (routesIndex === -1 || !args[routesIndex + 1]) {
+    console.error('Error: --routes <routes-json-path> is required')
     console.error(
-      'Error: Could not find routesConfig.ts or routesConfig.tsx in src/config/',
+      'Run `pnpm build-sitemap-routes` first to generate the routes JSON file.',
     )
     process.exit(1)
   }
+  const routesJsonPath = args[routesIndex + 1]
+
+  const absoluteRoutesPath = path.isAbsolute(routesJsonPath)
+    ? routesJsonPath
+    : path.join(process.cwd(), routesJsonPath)
+
+  if (!fs.existsSync(absoluteRoutesPath)) {
+    console.error(`Error: Routes JSON file not found: ${absoluteRoutesPath}`)
+    console.error(
+      'Run `pnpm build-sitemap-routes` first to generate the routes JSON file.',
+    )
+    process.exit(1)
+  }
+  console.log(`Using pre-extracted routes from: ${absoluteRoutesPath}`)
 
   // Load sitemap config if provided
   let sitemapConfig: SitemapConfig | undefined
@@ -97,13 +103,12 @@ async function main() {
   const outputDir = path.join(process.cwd(), 'build')
 
   console.log(`Generating sitemap for ${portalName}...`)
-  console.log(`Routes config: ${routesConfigPath}`)
   console.log(`Output directory: ${outputDir}`)
 
   try {
     await generateSitemap({
       portalName,
-      routesConfigPath,
+      staticRoutesPath: absoluteRoutesPath,
       sitemapConfig,
       outputDir,
     })
