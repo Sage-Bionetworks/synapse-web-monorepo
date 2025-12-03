@@ -145,7 +145,6 @@
     "@types/dagre": "^0.7.52",
     "@types/google.maps": "^3.58.1",
     "@types/history": "^4.7.11",
-    "@types/jquery": "^3.5.32",
     "@types/json-schema": "^7.0.15",
     "@types/jsonpath": "^0.2.4",
     "@types/katex": "^0.16.7",
