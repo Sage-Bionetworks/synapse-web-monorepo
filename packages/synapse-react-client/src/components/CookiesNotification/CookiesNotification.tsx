@@ -15,6 +15,7 @@ import { useState } from 'react'
 import UniversalCookies from 'universal-cookie'
 import FullWidthAlert from '../FullWidthAlert'
 import CookiePreferencesDialog from './CookiePreferencesDialog'
+import styles from './CookiesNotification.module.scss'
 
 const cookies = new UniversalCookies()
 
@@ -30,7 +31,11 @@ export const alertConfig = {
         details. By clicking “Allow All,” you agree to our use of cookies. You
         can adjust your cookie preferences anytime on the Settings page.
       </Typography>
-      <Typography variant="smallText1" sx={{ mt: '20px' }}>
+      <Typography
+        variant="smallText1"
+        sx={{ mt: '20px' }}
+        className={styles.MinorAddendum}
+      >
         Please read our{' '}
         <Link href={URL_TERMS_CONDITIONS_AGREEMENT}>Terms of Service</Link>{' '}
         before using our website. If you are between 13 and 18, you must submit
