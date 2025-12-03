@@ -1,6 +1,7 @@
 import { PermissionLevel } from '@/utils/PermissionLevelToAccessType'
 import { Stack, Typography } from '@mui/material'
 import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
+import React from 'react'
 import { IconSvgButton } from '../IconSvgButton'
 import UserOrTeamBadge from '../UserOrTeamBadge'
 import { PermissionLevelMenu } from './PermissionLevelMenu'
@@ -18,7 +19,9 @@ type ResourceAccessItemProps = {
   onRemove: () => void
 }
 
-export function ResourceAccessItem(props: ResourceAccessItemProps) {
+export function ResourceAccessItem(
+  props: ResourceAccessItemProps,
+): React.JSX.Element {
   const {
     resourceAccess,
     availablePermissionLevels,

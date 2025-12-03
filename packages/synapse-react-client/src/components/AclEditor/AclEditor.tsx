@@ -16,7 +16,7 @@ import {
 } from '@mui/material'
 import { ResourceAccess } from '@sage-bionetworks/synapse-types'
 import { noop } from 'lodash-es'
-import { ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import { TransitionGroup } from 'react-transition-group'
 import IconSvg from '../IconSvg'
 import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
@@ -67,7 +67,7 @@ export type AclEditorProps = {
 
 export const NOTIFY_NEW_ACL_USERS_CHECKBOX_LABEL = 'Notify people via email'
 
-export function AclEditor(props: AclEditorProps) {
+export function AclEditor(props: AclEditorProps): React.JSX.Element {
   const {
     resourceAccessList,
     availablePermissionLevels,

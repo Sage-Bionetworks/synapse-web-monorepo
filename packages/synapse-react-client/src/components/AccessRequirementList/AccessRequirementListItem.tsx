@@ -7,6 +7,7 @@ import {
   TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
+import React from 'react'
 import UnmanagedACTAccessRequirementItem from './RequirementItem/UnmanagedACTAccessRequirementItem'
 import ManagedACTAccessRequirementItem from './ManagedACTAccessRequirementRequestFlow/ManagedACTAccessRequirementItem'
 import SelfSignAccessRequirementItem from './RequirementItem/SelfSignAccessRequirementItem'
@@ -24,7 +25,7 @@ export type AccessRequirementListItemProps = {
  */
 export function AccessRequirementListItem(
   props: AccessRequirementListItemProps,
-) {
+): React.JSX.Element {
   const { accessRequirement, subjectId, subjectType, onHide, onRequestAccess } =
     props
   switch (accessRequirement.concreteType) {

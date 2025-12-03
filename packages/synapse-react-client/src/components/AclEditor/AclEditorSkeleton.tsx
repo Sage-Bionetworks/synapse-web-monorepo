@@ -1,7 +1,8 @@
 import { Skeleton, Stack } from '@mui/material'
+import React from 'react'
 import { SkeletonParagraph, SkeletonTable } from '../Skeleton'
 
-export function AclEditorSkeleton() {
+export function AclEditorSkeleton(): React.JSX.Element {
   return (
     <Stack
       role={'progressbar'}

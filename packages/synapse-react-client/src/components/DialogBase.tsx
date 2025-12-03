@@ -12,7 +12,7 @@ import {
   Stack,
   SxProps,
 } from '@mui/material'
-import { ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import { HelpPopover, HelpPopoverProps } from './HelpPopover/HelpPopover'
 
 const EMPTY_OBJECT = {}
@@ -28,7 +28,7 @@ const DEFAULT_CLOSEBUTTON_SX: SxProps = { color: 'grey.700' }
 export function CloseButton({
   sx = DEFAULT_CLOSEBUTTON_SX,
   onClick,
-}: CloseButtonProps) {
+}: CloseButtonProps): React.JSX.Element {
   return (
     <IconButton sx={sx} onClick={onClick} aria-label={CLOSE_BUTTON_LABEL}>
       <CloseIcon />
@@ -43,7 +43,9 @@ export type DialogBaseTitleProps = {
   onCancel: () => void
 }
 
-export function DialogBaseTitle(props: DialogBaseTitleProps) {
+export function DialogBaseTitle(
+  props: DialogBaseTitleProps,
+): React.JSX.Element {
   const {
     title,
     titleHelpPopoverProps,

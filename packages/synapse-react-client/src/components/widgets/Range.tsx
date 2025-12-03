@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 import { Box, Button, TextField } from '@mui/material'
@@ -20,7 +20,7 @@ export type RangeProps = {
   onApplyClicked: (newValues: RangeValues) => void
 }
 
-export function Range(props: RangeProps) {
+export function Range(props: RangeProps): React.JSX.Element {
   const errorText = 'Min value should be less than max value'
   const [error, setError] = useState(false)
   const [values, setValues] = useState(() =>

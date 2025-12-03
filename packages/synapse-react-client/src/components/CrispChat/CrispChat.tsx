@@ -1,5 +1,5 @@
 import './CrispTypes'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { useGetFeatureFlag } from '@/synapse-queries'
 
@@ -10,7 +10,7 @@ let isScriptLoaded = false
  * CrispChat component that loads the Crisp chat widget when the CRISP_CHAT feature flag is enabled.
  * The script is only loaded once, even if the component is mounted multiple times.
  */
-export function CrispChat() {
+export function CrispChat(): React.JSX.Element | null {
   const isCrispChatEnabled = useGetFeatureFlag(FeatureFlagEnum.CRISP_CHAT)
 
   useEffect(() => {

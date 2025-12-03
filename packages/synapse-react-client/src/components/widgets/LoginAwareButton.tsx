@@ -1,13 +1,16 @@
 import { useSynapseContext } from '@/utils'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { Button, ButtonProps } from '@mui/material'
+import React from 'react'
 import { Link, LinkProps } from 'react-router'
 
 /* Allow component to behave as a MUI Button or a React Router Link */
 export type LoginAwareButtonProps = ButtonProps &
   Partial<Pick<LinkProps, 'to' | 'replace'>>
 
-export function LoginAwareButton(props: LoginAwareButtonProps) {
+export function LoginAwareButton(
+  props: LoginAwareButtonProps,
+): React.JSX.Element {
   const { isAuthenticated } = useSynapseContext()
   const mergedProps = { ...props }
   const linkProps = {
