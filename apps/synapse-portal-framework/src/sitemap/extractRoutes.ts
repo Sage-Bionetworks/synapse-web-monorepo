@@ -10,6 +10,7 @@ import type { RouteObject } from 'react-router'
  * - Are wildcard routes (path === '*')
  * - Contain route parameters (path includes ':')
  * - End with '/DetailsPage' (these are handled separately via dynamic URL generation)
+ * - Are sub-routes of a DetailsPage (e.g., '/DetailsPage/Details') since they require query params
  *
  * Index routes inherit the parent path (as they render at the parent URL).
  *
@@ -52,9 +53,18 @@ export function flattenRoutePaths(
     const isWildcard = route.path === '*'
     const hasParams = route.path?.includes(':') ?? false
     const isDetailsPage = encodedPath.endsWith('/DetailsPage')
+    // Also exclude sub-routes of DetailsPage (e.g., /DetailsPage/Details, /DetailsPage/AdditionalFiles)
+    // These require a query param to be useful and are covered by dynamic URL generation
+    const isDetailsPageSubRoute = encodedPath.includes('/DetailsPage/')
 
     // Add the path if it's valid and should be included
-    if (encodedPath && !isWildcard && !hasParams && !isDetailsPage) {
+    if (
+      encodedPath &&
+      !isWildcard &&
+      !hasParams &&
+      !isDetailsPage &&
+      !isDetailsPageSubRoute
+    ) {
       // Normalize path to start with /
       const normalizedPath = encodedPath.startsWith('/')
         ? encodedPath

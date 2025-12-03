@@ -83,6 +83,31 @@ describe('flattenRoutePaths', () => {
     expect(paths).not.toContain('/Explore/Studies/DetailsPage')
   })
 
+  it('skips DetailsPage sub-routes (they require query params)', () => {
+    const routes: RouteObject[] = [
+      {
+        path: 'Explore',
+        children: [
+          {
+            path: 'Studies',
+            children: [
+              {
+                path: 'DetailsPage',
+                children: [{ path: 'Details' }, { path: 'AdditionalFiles' }],
+              },
+            ],
+          },
+        ],
+      },
+    ]
+    const paths = flattenRoutePaths(routes)
+    expect(paths).toContain('/Explore')
+    expect(paths).toContain('/Explore/Studies')
+    expect(paths).not.toContain('/Explore/Studies/DetailsPage')
+    expect(paths).not.toContain('/Explore/Studies/DetailsPage/Details')
+    expect(paths).not.toContain('/Explore/Studies/DetailsPage/AdditionalFiles')
+  })
+
   it('URL-encodes spaces in paths', () => {
     const routes: RouteObject[] = [
       { path: 'Experimental Models' },
@@ -128,7 +153,7 @@ describe('flattenRoutePaths', () => {
             path: 'Studies',
             children: [
               {
-                path: 'DetailsPage',
+                path: 'Category',
                 children: [{ path: 'Overview' }, { path: 'Data' }],
               },
             ],
@@ -137,13 +162,11 @@ describe('flattenRoutePaths', () => {
       },
     ]
     const paths = flattenRoutePaths(routes)
-    // Note: DetailsPage routes themselves are skipped, but children inside them would be included
-    // if they don't also end in DetailsPage
     expect(paths).toContain('/Explore')
     expect(paths).toContain('/Explore/Studies')
-    // These are children of DetailsPage, but their full path still ends in something after DetailsPage
-    expect(paths).toContain('/Explore/Studies/DetailsPage/Overview')
-    expect(paths).toContain('/Explore/Studies/DetailsPage/Data')
+    expect(paths).toContain('/Explore/Studies/Category')
+    expect(paths).toContain('/Explore/Studies/Category/Overview')
+    expect(paths).toContain('/Explore/Studies/Category/Data')
   })
 
   it('handles routes with lazy loading (lazy property is ignored)', () => {
