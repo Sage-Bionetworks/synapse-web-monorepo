@@ -7,24 +7,23 @@ import { useSearchInfinite } from '@/synapse-queries/search/useSearch'
 import { SearchQuery } from '@sage-bionetworks/synapse-types'
 
 export type SynapseSearchPageResultsProps = {
-  query?: string
-  setQuery?: (newQuery: string) => void
+  query?: SearchQuery
+  setQuery?: (newQuery: SearchQuery) => void
 }
 
 export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
-  const { query = '', setQuery } = props
+  const { query, setQuery } = props
 
   // Local state for the input field to allow typing without immediately triggering searches
-  const [searchInputValue, setSearchInputValue] = useState(query)
+  // If SearchQuery is undefined  default queryTerm to an empty string
+  const [searchInputValue, setSearchInputValue] = useState(
+    query?.queryTerm?.[0] || '',
+  )
 
   // Sync input value when query prop changes
   useEffect(() => {
-    setSearchInputValue(query)
+    setSearchInputValue(query?.queryTerm?.[0] || '')
   }, [query])
-
-  const searchQuery: SearchQuery = {
-    queryTerm: query ? [query] : [],
-  }
 
   const {
     data,
@@ -33,7 +32,7 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useSearchInfinite(searchQuery, {
+  } = useSearchInfinite(query ?? { queryTerm: [] }, {
     enabled: !!query,
   })
 
@@ -43,7 +42,9 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
 
   const handleSearch = () => {
     if (setQuery) {
-      setQuery(searchInputValue)
+      setQuery({
+        queryTerm: searchInputValue ? [searchInputValue] : [],
+      })
     }
   }
 

@@ -4,16 +4,23 @@ import { SynapseSearchPageResults } from './SynapseSearchPageResults'
 import SynapseSearchPageRouter, {
   SynapseSearchPageRouterProps,
 } from './SynapseSearchPageRouter'
+import { SearchQuery } from '@sage-bionetworks/synapse-types'
 
 function SearchPageInternal() {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const query = searchParams.get(SEARCH_PAGE_QUERY_PARAM) || ''
+  // Convert URL parameter to SearchQuery object
+  const queryTerm = searchParams.get(SEARCH_PAGE_QUERY_PARAM) || ''
+  const query: SearchQuery = {
+    queryTerm: queryTerm ? [queryTerm] : [],
+  }
 
-  const handleQueryChange = (newQuery: string) => {
+  const handleQueryChange = (newQuery: SearchQuery) => {
     setSearchParams(prev => {
-      if (newQuery) {
-        prev.set(SEARCH_PAGE_QUERY_PARAM, newQuery)
+      // Extract the first query term to store in URL
+      const queryTerm = newQuery.queryTerm?.[0]
+      if (queryTerm) {
+        prev.set(SEARCH_PAGE_QUERY_PARAM, queryTerm)
       } else {
         prev.delete(SEARCH_PAGE_QUERY_PARAM)
       }
