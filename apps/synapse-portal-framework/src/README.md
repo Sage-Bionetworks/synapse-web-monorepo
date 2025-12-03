@@ -75,3 +75,70 @@ To log in to the portal running on localhost, follow these steps:
 1. Start the SageAccountWeb application locally by navigating to the app directory and running pnpm start (located in apps/SageAccountWeb).
 2. Once the application is running, log in to the local Accounts site.
 3. After successfully logging in, refresh the portal page to complete the process.
+
+# Sitemap Generation
+
+Each portal can generate a sitemap.xml file for SEO purposes. The sitemap includes both static routes (from the route configuration) and dynamic URLs for detail pages (fetched from Synapse tables at build time).
+
+## How It Works
+
+1. **Route Extraction**: The generator uses a Vite SSR build to import the portal's `routesConfig` and extract static route paths that should be surfaced in the sitemap.
+
+2. **Dynamic URL Generation**: If a `sitemapConfig.ts` file exists, the generator queries Synapse tables to fetch resource IDs and generates URLs for each detail page with the appropriate query parameters.
+
+3. **Output**: The sitemap is written to `build/sitemap.xml`. If the total URL count exceeds 50,000, multiple sitemap files are created with a sitemap index.
+
+## Generating Sitemaps
+
+To generate a sitemap for a portal:
+
+```bash
+cd apps/portals/<portal-name>
+pnpm generate-sitemap
+```
+
+Or to generate sitemaps for all portals:
+
+```bash
+pnpm nx run-many --target=generate-sitemap
+```
+
+## Adding a New Detail Page to the Sitemap
+
+When you add a new DetailsPage route to a portal, you need to update the portal's `sitemapConfig.ts` to include the dynamic URLs.
+
+1. **Locate or create `src/config/sitemapConfig.ts`** in the portal directory.
+
+2. **Add a new entry to the `detailPages` array**:
+
+```typescript
+import type { SitemapConfig } from '@sage-bionetworks/synapse-portal-framework/sitemap/types'
+import { studySql } from './resources.ts'
+
+export const sitemapConfig: SitemapConfig = {
+  detailPages: [
+    {
+      // The route path (without leading slash)
+      path: 'Explore/Studies/DetailsPage',
+      // SQL query to fetch resource IDs - must select the primary key column
+      sql: studySql,
+      // The column name containing the primary key
+      primaryKeyColumn: 'studyId',
+    },
+    // Add more detail pages as needed
+  ],
+}
+```
+
+3. **Test the sitemap generation**:
+
+```bash
+cd apps/portals/<portal-name>
+pnpm generate-sitemap
+```
+
+Check `build/sitemap.xml` to verify the new detail page URLs are included.
+
+## Environment Variables
+
+The sitemap generator requires `VITE_PORTAL_KEY` to be set (typically via `.env` file or `dotenv`). This determines the base URL (`https://<portal-key>.synapse.org`).

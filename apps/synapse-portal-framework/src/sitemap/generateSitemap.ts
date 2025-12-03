@@ -47,7 +47,7 @@ export async function generateDynamicUrls(
 
     console.log(`  Found ${result.ids.length} resources`)
 
-    const paramName = config.searchParamName || config.primaryKeyColumn
+    const paramName = config.primaryKeyColumn
     const encodedParamName = encodeURIComponent(paramName)
     for (const id of result.ids) {
       const encodedId = encodeURIComponent(id)

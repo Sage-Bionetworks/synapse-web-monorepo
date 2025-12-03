@@ -25,7 +25,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap stopadportal",
+    "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap",
     "preview": "vite preview",
     "type-check": "tsc --build",
     "lint": "eslint src",

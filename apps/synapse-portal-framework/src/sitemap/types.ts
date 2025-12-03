@@ -18,12 +18,6 @@ export interface DetailPageConfig {
    * This will be used as the search parameter value in the generated URLs
    */
   primaryKeyColumn: string
-
-  /**
-   * The search parameter name to use in the URL (e.g., 'studyId')
-   * If not provided, defaults to the primaryKeyColumn value
-   */
-  searchParamName?: string
 }
 
 /**

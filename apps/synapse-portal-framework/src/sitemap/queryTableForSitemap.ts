@@ -5,8 +5,10 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import type { DetailPageConfig, ResourceQueryResult } from './types'
 
-// Part masks for query bundle - we only need query results
+// Part masks for query bundle
+// See https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/QueryBundleRequest.html
 const BUNDLE_MASK_QUERY_RESULTS = 0x1
+const BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE = 0x8
 
 /**
  * Extracts the entity ID from a SQL query string.
@@ -50,22 +52,28 @@ export async function fetchResourceIds(
 
   const ids: string[] = []
   let offset = 0
-  const pageSize = 1000
   let hasMore = true
+  let limit: number | undefined = undefined // Will be set from maxRowsPerPage on first query
 
   const client = createAnonymousSynapseClient()
 
   try {
     while (hasMore) {
+      // On first query, also request maxRowsPerPage to determine optimal page size
+      const partMask =
+        limit === undefined
+          ? BUNDLE_MASK_QUERY_RESULTS | BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE
+          : BUNDLE_MASK_QUERY_RESULTS
+
       const queryBundleRequest = {
         concreteType:
           'org.sagebionetworks.repo.model.table.QueryBundleRequest' as const,
         entityId,
-        partMask: BUNDLE_MASK_QUERY_RESULTS,
+        partMask,
         query: {
           sql: config.sql,
           offset,
-          limit: pageSize,
+          limit,
         },
       }
 
@@ -86,8 +94,14 @@ export async function fetchResourceIds(
       )
       // Cast the asynchronous job result `responseBody` to our QueryResultBundle
       const responseBody = result.responseBody as QueryResultBundle | undefined
+
+      // On first query, extract maxRowsPerPage to use as limit for subsequent queries
+      if (limit === undefined && responseBody?.maxRowsPerPage) {
+        limit = responseBody.maxRowsPerPage
+      }
+
       const queryResults = responseBody?.queryResult?.queryResults
-      if (!queryResults?.rows) {
+      if (!queryResults?.rows || queryResults.rows.length === 0) {
         hasMore = false
         continue
       }
@@ -118,9 +132,14 @@ export async function fetchResourceIds(
         }
       }
 
-      // Check if there are more results
-      hasMore = rows.length === pageSize
-      offset += pageSize
+      // Move to next page
+      offset += rows.length
+
+      // If we got fewer rows than the limit, we've reached the end
+      // If limit is undefined (shouldn't happen), fall back to checking for empty results on next iteration
+      if (limit !== undefined && rows.length < limit) {
+        hasMore = false
+      }
     }
 
     return {

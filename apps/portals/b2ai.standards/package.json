@@ -29,7 +29,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap b2ai.standards",
+    "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap",
     "preview": "vite preview",
     "type-check": "tsc --build",
     "lint": "eslint src",
