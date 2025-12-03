@@ -68,6 +68,7 @@ const sitemapViteConfig: UserConfig = defineConfig({
     ssr: true,
     target: 'node18',
     outDir: 'build',
+    emptyOutDir: false,
     rollupOptions: {
       output: {
         entryFileNames: 'sitemap-entry.mjs',
