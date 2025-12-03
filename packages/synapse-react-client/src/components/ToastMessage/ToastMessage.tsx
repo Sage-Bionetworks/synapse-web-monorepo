@@ -46,7 +46,7 @@ export function ToastMessage({
  * Note that this will collide with other notification systems, such as the BootstrapNotify notifications
  * in SWC.
  */
-export function SynapseToastContainer(): React.JSX.Element {
+export function SynapseToastContainer(): React.ReactNode {
   return (
     <Toaster
       containerClassName="SynapseToastContainer"

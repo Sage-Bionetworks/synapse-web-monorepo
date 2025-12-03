@@ -9,7 +9,7 @@ export type JsonLdScriptProps = {
 /**
  * This component will add a json ld script tag to the page when rendered.
  */
-export function JsonLdScript({ thing }: JsonLdScriptProps): React.JSX.Element {
+export function JsonLdScript({ thing }: JsonLdScriptProps): React.ReactNode {
   useJsonLdScriptElement(JSON.stringify(thing))
   return <></>
 }

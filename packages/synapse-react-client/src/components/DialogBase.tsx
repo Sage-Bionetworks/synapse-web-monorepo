@@ -43,9 +43,7 @@ export type DialogBaseTitleProps = {
   onCancel: () => void
 }
 
-export function DialogBaseTitle(
-  props: DialogBaseTitleProps,
-): React.JSX.Element {
+export function DialogBaseTitle(props: DialogBaseTitleProps): React.ReactNode {
   const {
     title,
     titleHelpPopoverProps,

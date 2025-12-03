@@ -10,7 +10,7 @@ let isScriptLoaded = false
  * CrispChat component that loads the Crisp chat widget when the CRISP_CHAT feature flag is enabled.
  * The script is only loaded once, even if the component is mounted multiple times.
  */
-export function CrispChat(): React.JSX.Element | null {
+export function CrispChat(): React.ReactNode {
   const isCrispChatEnabled = useGetFeatureFlag(FeatureFlagEnum.CRISP_CHAT)
 
   useEffect(() => {

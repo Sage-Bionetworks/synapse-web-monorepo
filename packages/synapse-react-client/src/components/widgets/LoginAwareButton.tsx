@@ -10,7 +10,7 @@ export type LoginAwareButtonProps = ButtonProps &
 
 export function LoginAwareButton(
   props: LoginAwareButtonProps,
-): React.JSX.Element {
+): React.ReactNode {
   const { isAuthenticated } = useSynapseContext()
   const mergedProps = { ...props }
   const linkProps = {

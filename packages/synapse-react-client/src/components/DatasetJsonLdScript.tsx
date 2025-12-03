@@ -32,7 +32,7 @@ export function DatasetJsonLdScript({
   entityId: entityIdFromProps,
   version: versionFromProps,
   searchParams,
-}: DatasetJsonLdScriptProps): React.JSX.Element {
+}: DatasetJsonLdScriptProps): React.ReactNode {
   let entityId: string
   let version: number | undefined
   if (entityIdFromProps) {

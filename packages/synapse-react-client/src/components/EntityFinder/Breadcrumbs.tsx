@@ -14,7 +14,7 @@ export type BreadcrumbsProps = {
 export function Breadcrumbs({
   items,
   maxItemCount = 4,
-}: BreadcrumbsProps): React.JSX.Element {
+}: BreadcrumbsProps): React.ReactNode {
   const truncateBreadcrumbs = items.length > maxItemCount
   if (truncateBreadcrumbs) {
     items = items.slice(-maxItemCount)

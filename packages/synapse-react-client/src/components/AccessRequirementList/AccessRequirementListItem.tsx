@@ -25,7 +25,7 @@ export type AccessRequirementListItemProps = {
  */
 export function AccessRequirementListItem(
   props: AccessRequirementListItemProps,
-): React.JSX.Element {
+): React.ReactNode {
   const { accessRequirement, subjectId, subjectType, onHide, onRequestAccess } =
     props
   switch (accessRequirement.concreteType) {

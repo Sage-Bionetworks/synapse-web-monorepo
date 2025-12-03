@@ -21,7 +21,7 @@ type ResourceAccessItemProps = {
 
 export function ResourceAccessItem(
   props: ResourceAccessItemProps,
-): React.JSX.Element {
+): React.ReactNode {
   const {
     resourceAccess,
     availablePermissionLevels,

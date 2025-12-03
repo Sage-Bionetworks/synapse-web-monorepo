@@ -17,7 +17,7 @@ const usageBarWidth = 142 //px
 export function ProjectDataAvailability({
   projectId,
   sx,
-}: ProjectDataAvailabilityProps): React.JSX.Element {
+}: ProjectDataAvailabilityProps): React.ReactNode {
   const { isAuthenticated } = useSynapseContext()
   const { data } = useProjectStorageUsage(projectId!, {
     enabled: !!projectId && isAuthenticated,

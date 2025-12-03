@@ -19,7 +19,7 @@ const CUSTOM_TEXT = 'Custom'
 
 export function PermissionLevelMenu(
   props: PermissionLevelMenuProps,
-): React.JSX.Element {
+): React.ReactNode {
   const { currentAccessType, availablePermissionLevels, onChange } = props
 
   const selectedPermissionLevel: PermissionLevel | null =

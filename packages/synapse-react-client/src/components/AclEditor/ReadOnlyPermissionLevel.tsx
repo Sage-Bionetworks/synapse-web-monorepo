@@ -11,7 +11,7 @@ export type ReadOnlyPermissionLevelProps = {
 
 export function ReadOnlyPermissionLevel(
   props: ReadOnlyPermissionLevelProps,
-): string {
+): React.ReactNode {
   const { accessType } = props
 
   return (

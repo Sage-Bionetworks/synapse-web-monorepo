@@ -67,7 +67,7 @@ export type AclEditorProps = {
 
 export const NOTIFY_NEW_ACL_USERS_CHECKBOX_LABEL = 'Notify people via email'
 
-export function AclEditor(props: AclEditorProps): React.JSX.Element {
+export function AclEditor(props: AclEditorProps): React.ReactNode {
   const {
     resourceAccessList,
     availablePermissionLevels,

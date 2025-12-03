@@ -18,7 +18,7 @@ export type FullTextSearchProps = {
 
 export function FullTextSearch({
   ftsConfig,
-}: FullTextSearchProps): React.JSX.Element {
+}: FullTextSearchProps): React.ReactNode {
   const { executeQueryRequest } = useQueryContext()
   const { showSearchBar } = useQueryVisualizationContext()
   const [searchText, setSearchText] = useState('')

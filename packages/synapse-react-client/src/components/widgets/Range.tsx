@@ -20,7 +20,7 @@ export type RangeProps = {
   onApplyClicked: (newValues: RangeValues) => void
 }
 
-export function Range(props: RangeProps): React.JSX.Element {
+export function Range(props: RangeProps): React.ReactNode {
   const errorText = 'Min value should be less than max value'
   const [error, setError] = useState(false)
   const [values, setValues] = useState(() =>

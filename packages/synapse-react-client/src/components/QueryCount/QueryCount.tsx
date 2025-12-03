@@ -12,7 +12,7 @@ export type QueryCountProps = {
 /**
  * Shows the total count of results for a table query.
  */
-export function QueryCount(props: QueryCountProps): React.JSX.Element {
+export function QueryCount(props: QueryCountProps): React.ReactNode {
   const { query, parens } = props
   const entityId = parseEntityIdFromSqlStatement(query.sql)
 
