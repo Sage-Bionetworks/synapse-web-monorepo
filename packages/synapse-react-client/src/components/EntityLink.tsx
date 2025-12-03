@@ -1,3 +1,4 @@
+import React from 'react'
 import { useGetEntity, useGetEntityHeader } from '@/synapse-queries'
 import {
   convertToEntityType,
@@ -26,7 +27,7 @@ export type EntityLinkProps = {
   onEntityIdClicked?: (entityId: string) => void
 }
 
-export const EntityLink = (props: EntityLinkProps) => {
+export const EntityLink = (props: EntityLinkProps): React.ReactNode => {
   const {
     entity: entityOrId,
     className,

@@ -1,3 +1,4 @@
+import React from 'react'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { Box, IconButton } from '@mui/material'
 import { useLocation, useNavigate } from 'react-router'
@@ -8,7 +9,7 @@ import {
 import { useGetEntityForum } from 'synapse-react-client/synapse-queries/entity/useGetEntityForum'
 import { getIgnoredQueryFilterSearchParamKey } from 'synapse-react-client/utils/functions/SqlFunctions'
 
-const ProjectDiscussionForum = () => {
+const ProjectDiscussionForum = (): React.ReactNode => {
   const urlSearchParams = new URLSearchParams(window.location.search)
   const entityId = urlSearchParams.get('id') ?? ''
   const threadIdSearchParamKey: string = getIgnoredQueryFilterSearchParamKey(

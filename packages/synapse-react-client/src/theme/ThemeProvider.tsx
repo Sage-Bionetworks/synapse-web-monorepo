@@ -1,3 +1,4 @@
+import React from 'react'
 import { createTheme, StyledEngineProvider, ThemeOptions } from '@mui/material'
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 import { PropsWithChildren, useMemo } from 'react'
@@ -11,7 +12,7 @@ export type ThemeProviderProps = PropsWithChildren<{
 export const ThemeProvider = ({
   theme = defaultMuiThemeOptions,
   children,
-}: ThemeProviderProps) => {
+}: ThemeProviderProps): React.ReactNode => {
   const mergedTheme = useMemo(() => mergeTheme(theme), [theme])
   const muiTheme = createTheme(mergedTheme)
   return (

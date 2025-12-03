@@ -1,3 +1,4 @@
+import React from 'react'
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone'
 import DeleteIcon from '@mui/icons-material/DeleteTwoTone'
 import {
@@ -27,7 +28,7 @@ export type ConfigureEmailProps = {
   returnToPath: string
 }
 
-export const ConfigureEmail = (props: ConfigureEmailProps) => {
+export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
   const { accessToken } = useSynapseContext()
   const { data: currentProfile, refetch: refetchCurrentProfile } =
     useGetCurrentUserProfile()

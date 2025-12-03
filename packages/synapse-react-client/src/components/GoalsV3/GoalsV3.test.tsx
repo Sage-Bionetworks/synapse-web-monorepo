@@ -1,3 +1,4 @@
+import React from 'react'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
@@ -19,7 +20,7 @@ vi.mock('../QueryCount/QueryCount', () => {
   }
 })
 
-const DummySvgIcon = () => <svg data-testid="dummy-icon" />
+const DummySvgIcon = (): React.ReactNode => <svg data-testid="dummy-icon" />
 
 const mockSvgComponentMap = {
   datasets_and_files: DummySvgIcon,

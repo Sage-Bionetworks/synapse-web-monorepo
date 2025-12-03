@@ -1,3 +1,4 @@
+import React from 'react'
 import SynapseIconWhite from '@/assets/icons/SynapseIconWhite'
 import SynapseLogoName from '@/assets/icons/SynapseLogoName'
 import SynapseClient from '@/synapse-client'
@@ -129,7 +130,7 @@ const getProjectSearchToken = (queryTerm: string[]) => {
   return encodeURIComponent(JSON.stringify(searchQuery))
 }
 
-const NavDrawerListItem = (props: MenuItemParams) => {
+const NavDrawerListItem = (props: MenuItemParams): React.ReactNode => {
   const {
     tooltip,
     iconName,

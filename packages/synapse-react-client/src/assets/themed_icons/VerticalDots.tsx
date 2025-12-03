@@ -1,4 +1,5 @@
-export const VerticalDots = () => (
+import React from 'react'
+export const VerticalDots = (): React.ReactNode => (
   <svg
     data-icon="vertical-dots"
     width="24"

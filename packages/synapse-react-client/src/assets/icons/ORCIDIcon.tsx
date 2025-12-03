@@ -1,6 +1,7 @@
+import React from 'react'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
-export const ORCIDIcon = (props: SvgIconProps) => {
+export const ORCIDIcon = (props: SvgIconProps): React.ReactNode => {
   return (
     <SvgIcon {...props}>
       <svg

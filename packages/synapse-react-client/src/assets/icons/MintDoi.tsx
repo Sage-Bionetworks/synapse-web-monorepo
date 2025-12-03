@@ -1,6 +1,7 @@
+import React from 'react'
 import { SVGProps } from 'react'
 
-const MintDoi = (props: SVGProps<SVGSVGElement>) => (
+const MintDoi = (props: SVGProps<SVGSVGElement>): React.ReactNode => (
   <svg
     {...props}
     xmlns="http://www.w3.org/2000/svg"

@@ -1,6 +1,7 @@
+import React from 'react'
 import { Box, BoxProps } from '@mui/material'
 
-const NoSearchResults = (props: BoxProps) => (
+const NoSearchResults = (props: BoxProps): React.ReactNode => (
   <Box
     {...props}
     component={'img'}

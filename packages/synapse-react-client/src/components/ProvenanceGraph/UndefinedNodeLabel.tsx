@@ -1,7 +1,8 @@
+import React from 'react'
 import { Typography } from '@mui/material'
 import { HelpPopover } from '../HelpPopover/HelpPopover'
 
-export const UndefinedNodeLabel = () => {
+export const UndefinedNodeLabel = (): React.ReactNode => {
   return (
     <>
       <Typography variant="smallText1" className="description">

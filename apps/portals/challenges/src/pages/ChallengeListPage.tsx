@@ -1,3 +1,4 @@
+import React from 'react'
 import { challengeProjectsSql } from '@/config/resources'
 import {
   challengeCardConfiguration,
@@ -7,7 +8,7 @@ import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/compon
 import TabbedSynapseObjects from '@sage-bionetworks/synapse-portal-framework/components/TabbedSynapseObjects'
 import { CardContainerLogic } from 'synapse-react-client'
 
-const ChallengeListPage = () => {
+const ChallengeListPage = (): React.ReactNode => {
   return (
     <SectionLayout
       title="Listed Challenges"

@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Collapse, Tooltip, Typography } from '@mui/material'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { ReactNode, useState } from 'react'
@@ -22,7 +23,7 @@ const CollapsibleSection = ({
   id,
   helpText,
   hideTitle = false,
-}: CollapsibleSectionProps) => {
+}: CollapsibleSectionProps): React.ReactNode => {
   const [open, setOpen] = useState(true)
   const [showLink, setShowLink] = useState(false)
   const [copied, setCopied] = useState(false)

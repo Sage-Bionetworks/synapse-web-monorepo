@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Stack, Typography, Button } from '@mui/material'
 
 export type PortalHomePageHeaderProps = {
@@ -20,7 +21,7 @@ const PortalHomePageHeader = ({
   backgroundMp4,
   backgroundMp4Css,
   textAreaWidth = '746px',
-}: PortalHomePageHeaderProps) => {
+}: PortalHomePageHeaderProps): React.ReactNode => {
   return (
     <Box
       data-testid="HeaderContainer"

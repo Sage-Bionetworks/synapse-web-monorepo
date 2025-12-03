@@ -1,8 +1,9 @@
+import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { ReactComponent as IntroSvg } from '@/components/assets/cancerComplexityIntro.svg'
 import CancerComplexityIntroSubItem from './CancerComplexityIntroSubItem'
 
-const CancerComplexityIntro = () => {
+const CancerComplexityIntro = (): React.ReactNode => {
   return (
     <>
       <Box

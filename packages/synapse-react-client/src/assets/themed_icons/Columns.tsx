@@ -1,4 +1,5 @@
-export const Columns = () => (
+import React from 'react'
+export const Columns = (): React.ReactNode => (
   <svg
     data-icon="columns"
     width="20"

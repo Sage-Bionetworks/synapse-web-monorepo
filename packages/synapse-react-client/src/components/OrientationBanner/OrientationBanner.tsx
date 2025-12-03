@@ -3,7 +3,7 @@ import { spreadSx } from '@/theme/spreadSx'
 import { useCookiePreferences } from '@/utils/hooks/useCookiePreferences'
 import { Theme } from '@mui/material'
 import { SxProps } from '@mui/system'
-import { ReactNode, useState } from 'react'
+import React, { ReactNode, useState } from 'react'
 import FullWidthAlert, {
   AlertButtonConfig,
   FullWidthAlertProps,
@@ -47,7 +47,7 @@ export interface OrientationBannerProps {
   sx?: FullWidthAlertProps['sx']
 }
 
-function OrientationBanner(props: OrientationBannerProps) {
+function OrientationBanner(props: OrientationBannerProps): React.ReactNode {
   const { name, title, text, primaryButtonConfig, secondaryButtonConfig, sx } =
     props
   const [cookiePreferences] = useCookiePreferences()

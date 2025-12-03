@@ -1,3 +1,4 @@
+import React from 'react'
 import { Search } from '@/assets/themed_icons'
 import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
 import { SynapseConstants } from '@/utils'
@@ -31,7 +32,7 @@ const StyledPopper = styled(Popper)(() => ({
   },
 }))
 
-const PopperAlwaysPlacedBelow = (props: PopperProps) => {
+const PopperAlwaysPlacedBelow = (props: PopperProps): React.ReactNode => {
   // Modifier necessary to force placement to remain on the bottom of the anchor element, despite not having enough space to render
   return (
     <StyledPopper

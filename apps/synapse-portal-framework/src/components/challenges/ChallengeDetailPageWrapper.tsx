@@ -1,3 +1,4 @@
+import React from 'react'
 import { Link, Box, Skeleton } from '@mui/material'
 import {
   AppUtils,
@@ -13,7 +14,7 @@ import {
  * - Create/join a submission team
  * @returns
  */
-const ChallengeDetailPageWrapper = () => {
+const ChallengeDetailPageWrapper = (): React.ReactNode => {
   const projectId = AppUtils.useQuerySearchParam('id')
   const { data: entityBundle, isLoading: isEntityBundleLoading } =
     SynapseQueries.useGetEntityBundle(

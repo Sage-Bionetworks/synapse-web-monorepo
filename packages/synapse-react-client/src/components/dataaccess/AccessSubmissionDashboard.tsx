@@ -1,3 +1,4 @@
+import React from 'react'
 import { useIsCurrentUserACTMember } from '@/synapse-queries/index'
 import { useDebouncedEffect } from '@/utils/hooks/useDebouncedEffect'
 import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
@@ -31,7 +32,7 @@ export const getReviewerFilterID = (selected: string | null) => {
   }
 }
 
-export const DataAccessSubmissionDashboard = () => {
+export const DataAccessSubmissionDashboard = (): React.ReactNode => {
   const [accessRequirementId, setAccessRequirementId] = useState<
     string | undefined
   >()

@@ -1,6 +1,7 @@
+import React from 'react'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
-const Chromatin = (props: SvgIconProps) => {
+const Chromatin = (props: SvgIconProps): React.ReactNode => {
   return (
     <SvgIcon {...props}>
       <path d="M11.032 11.1808C12.6971 8.66928 13.4533 6.26769 12.7209 5.81666C11.9885 5.36563 10.045 7.03596 8.37986 9.54745C6.71474 12.0589 5.95861 14.4605 6.69099 14.9116C7.42337 15.3626 9.36691 13.6923 11.032 11.1808Z" />

@@ -1,6 +1,7 @@
+import React from 'react'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
-const HelpChatBubble = (props: SvgIconProps) => {
+const HelpChatBubble = (props: SvgIconProps): React.ReactNode => {
   return (
     <SvgIcon {...props} viewBox="0 0 20 20">
       <g clipPath="url(#clip0_2828_2720)">

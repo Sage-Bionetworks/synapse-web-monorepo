@@ -1,6 +1,9 @@
+import React from 'react'
 import { SVGProps } from 'react'
 
-const AccessDataAnywhere = (props: SVGProps<SVGSVGElement>) => (
+const AccessDataAnywhere = (
+  props: SVGProps<SVGSVGElement>,
+): React.ReactNode => (
   <svg
     {...props}
     version="1.1"

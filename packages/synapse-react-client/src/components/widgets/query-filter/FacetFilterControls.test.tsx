@@ -1,3 +1,4 @@
+import React from 'react'
 import { MOCK_TABLE_ENTITY_ID } from '@/mocks/entity/mockTableEntity'
 import mockQueryResponseData from '@/mocks/mockQueryResponseData'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
@@ -14,7 +15,7 @@ import FacetFilterControls, {
 } from './FacetFilterControls'
 import { getDefaultShownFacetFilters } from './FacetFilterUtils'
 
-const MockFacetFilter = (props: { testid: string }) => {
+const MockFacetFilter = (props: { testid: string }): React.ReactNode => {
   return <div data-testid={props.testid}></div>
 }
 

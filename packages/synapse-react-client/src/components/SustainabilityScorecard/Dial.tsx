@@ -1,3 +1,4 @@
+import React from 'react'
 import { ReactComponent as LightDialPosition1 } from '../../assets/sustainability/dialPosition1.svg'
 import { ReactComponent as LightDialPosition2 } from '../../assets/sustainability/dialPosition2.svg'
 import { ReactComponent as LightDialPosition3 } from '../../assets/sustainability/dialPosition3.svg'
@@ -20,7 +21,10 @@ export type ScoreDescriptor =
   | 'Maturing'
   | 'Stable'
 
-const Dial = ({ scoreDescriptor, isScorecardSummary }: DialProps) => {
+const Dial = ({
+  scoreDescriptor,
+  isScorecardSummary,
+}: DialProps): React.ReactNode => {
   const toolTipText: Record<ScoreDescriptor, string> = {
     Foundational:
       'Early-stage sustainability with opportunities for contributions',

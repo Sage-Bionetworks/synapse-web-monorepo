@@ -1,10 +1,13 @@
+import React from 'react'
 import HomePageCard, { HomePageCardProps } from './HomePageCard'
 
 export type HomePageCardContainerProps = {
   cardProps: HomePageCardProps[]
 }
 
-const HomePageCardContainer = (props: HomePageCardContainerProps) => {
+const HomePageCardContainer = (
+  props: HomePageCardContainerProps,
+): React.ReactNode => {
   const { cardProps } = props
   return (
     <div className="HomePageCardContainer">

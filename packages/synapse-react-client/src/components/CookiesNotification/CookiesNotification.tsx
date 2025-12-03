@@ -10,6 +10,7 @@ import {
   URL_TERMS_CONDITIONS_AGREEMENT,
   CHILD_MINOR_ADDENDUM_LINK,
 } from '@/utils/SynapseConstants'
+import React from 'react'
 import { Link, Typography } from '@mui/material'
 import { useState } from 'react'
 import UniversalCookies from 'universal-cookie'
@@ -48,7 +49,9 @@ export type CookieNotificationProps = {
   onClose?: (cookiePrefs: CookiePreference) => void
 }
 
-const CookiesNotification = (props: CookieNotificationProps) => {
+const CookiesNotification = (
+  props: CookieNotificationProps,
+): React.ReactNode => {
   const { onClose } = props
   const [, setCookiePreferences] = useCookiePreferences()
 

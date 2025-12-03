@@ -1,6 +1,7 @@
+import React from 'react'
 import { SVGProps } from 'react'
 
-const RLogo = (props: SVGProps<SVGSVGElement>) => (
+const RLogo = (props: SVGProps<SVGSVGElement>): React.ReactNode => (
   <svg
     {...props}
     className={`SRC-r-icon ${props.className ?? ''}`}
