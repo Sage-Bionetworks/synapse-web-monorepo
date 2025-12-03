@@ -1,0 +1,5 @@
+import{A as p}from"./AnnotationsTable-U_GMFEiP.js";import"./iframe-oNn-8uxy.js";import"./index-r8ZA1smB.js";import"./useEntity-NQfLZli_.js";import"./pickBy-DgR1SMI4.js";import"./isString-DyjIcYAW.js";import"./_baseIteratee-BbGDd72L.js";import"./useQueries-CKE-hIT5.js";import"./useSuspenseQuery-yMS-8lGQ.js";import"./queryOptions-C9woPjwX.js";import"./useInfiniteQuery-BMvK8V8y.js";import"./InfiniteQueryUtils-CKlRW-xB.js";import"./useEntityBundle-EJdEQ_Jp.js";import"./useSchema-Bzsm-MtZ.js";import"./SkeletonButton-D_D34Tmd.js";import"./SkeletonInlineBlock-B6YJwBFk.js";import"./SkeletonTable-iW-77ZUO.js";import"./SkeletonParagraph-DAXRxcWE.js";const T={title:"Synapse/AnnotationsTable",component:p},t={args:{entityId:"syn23567475"}};var o,r,m;t.parameters={...t.parameters,docs:{...(o=t.parameters)==null?void 0:o.docs,source:{originalSource:`{
+  args: {
+    entityId: 'syn23567475'
+  }
+}`,...(m=(r=t.parameters)==null?void 0:r.docs)==null?void 0:m.source}}};const _=["Demo"];export{t as Demo,_ as __namedExportsOrder,T as default};
