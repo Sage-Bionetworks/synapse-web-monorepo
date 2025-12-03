@@ -5,8 +5,8 @@ const meta = {
   title: 'Components/SynapseSearch/SynapseSearchPage',
   component: SynapseSearchPage,
   parameters: {
-    stack: 'staging',
-    requireLogin: true,
+    stack: 'production',
+    requireLogin: false,
   },
   args: {
     useMemoryRouter: true,
