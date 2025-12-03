@@ -41,3 +41,13 @@ export const ErrorDemo: Story = {
     reloadButtonFn: () => console.log('reload!'),
   },
 }
+
+export const ServerErrorErrorDemo: Story = {
+  args: {
+    error: new SynapseClientError(
+      500,
+      'Some message about why the server failed to process the request.',
+      'some-url',
+    ),
+  },
+}
