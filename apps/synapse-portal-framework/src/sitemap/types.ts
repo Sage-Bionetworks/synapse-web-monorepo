@@ -61,20 +61,6 @@ export interface SitemapUrl {
 }
 
 /**
- * Options for generating the sitemap
- */
-export interface SitemapGeneratorOptions {
-  /** The portal name (used to construct base URL) */
-  portalName: string
-  /** Path to the routes config file */
-  routesConfigPath: string
-  /** Optional sitemap configuration for detail pages */
-  sitemapConfig?: SitemapConfig
-  /** Output directory for sitemap files */
-  outputDir: string
-}
-
-/**
  * Maximum number of URLs allowed in a single sitemap file (per sitemap protocol spec)
  */
 export const MAX_URLS_PER_SITEMAP = 50000

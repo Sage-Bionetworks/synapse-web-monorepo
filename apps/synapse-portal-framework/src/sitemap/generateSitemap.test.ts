@@ -111,7 +111,7 @@ describe('splitUrlsIntoSitemaps', () => {
 describe('SQL column name handling', () => {
   it('handles column names with spaces when building SELECT', () => {
     // This test validates that column names with spaces are properly quoted
-    // in the SQL query builder. The actual quoting happens in synapseQuery.ts
+    // in the SQL query builder. The actual quoting happens in queryTableForSitemap.ts
     const columnName = 'Grant Number'
     const quotedColumn = `"${columnName}"`
     const sql = `SELECT ${quotedColumn} FROM syn12345`
