@@ -2,6 +2,7 @@ import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultB
 import { SynapseConstants } from '@/utils'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import React from 'react'
 
 export type QueryCountProps = {
   query: Query
@@ -11,7 +12,7 @@ export type QueryCountProps = {
 /**
  * Shows the total count of results for a table query.
  */
-export function QueryCount(props: QueryCountProps) {
+export function QueryCount(props: QueryCountProps): React.ReactNode {
   const { query, parens } = props
   const entityId = parseEntityIdFromSqlStatement(query.sql)
 

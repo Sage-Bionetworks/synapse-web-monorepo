@@ -1,4 +1,5 @@
 import useJsonLdScriptElement from '@/utils/hooks/useJsonLdScriptElement'
+import React from 'react'
 import { Thing, WithContext } from 'schema-dts'
 
 export type JsonLdScriptProps = {
@@ -8,7 +9,7 @@ export type JsonLdScriptProps = {
 /**
  * This component will add a json ld script tag to the page when rendered.
  */
-export function JsonLdScript({ thing }: JsonLdScriptProps) {
+export function JsonLdScript({ thing }: JsonLdScriptProps): React.ReactNode {
   useJsonLdScriptElement(JSON.stringify(thing))
   return <></>
 }
