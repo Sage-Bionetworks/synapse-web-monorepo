@@ -6,7 +6,7 @@ import {
   generateSitemapIndexXml,
   splitUrlsIntoSitemaps,
 } from './generateSitemap'
-import { extractEntityIdFromSql } from './synapseQuery'
+import { extractEntityIdFromSql } from './queryTableForSitemap'
 import type { SitemapUrl } from './types'
 
 describe('extractEntityIdFromSql', () => {

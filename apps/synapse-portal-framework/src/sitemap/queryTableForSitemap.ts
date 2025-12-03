@@ -13,7 +13,7 @@ const BUNDLE_MASK_QUERY_RESULTS = 0x1
  * Re-exports from synapse-react-client for convenience.
  */
 // Simple extractor for the Synapse entity ID from a SQL string.
-// Mirrors the behaviour of `parseEntityIdFromSqlStatement` in synapse-react-client
+// Mirrors the behavior of `parseEntityIdFromSqlStatement` in synapse-react-client
 export function extractEntityIdFromSql(sql: string): string | null {
   const matches = sql.match(/from\s+(syn\d+)(?:\.\d+)?/i)
   return matches ? matches[1] : null
@@ -57,18 +57,13 @@ export async function fetchResourceIds(
 
   try {
     while (hasMore) {
-      // Only select the primary key column to minimize data transfer.
-      // Quote column names to handle names with spaces or special characters.
-      const quotedColumnName = `"${config.primaryKeyColumn}"`
-      const selectSql = `SELECT ${quotedColumnName} FROM ${entityId}`
-
       const queryBundleRequest = {
         concreteType:
           'org.sagebionetworks.repo.model.table.QueryBundleRequest' as const,
         entityId,
         partMask: BUNDLE_MASK_QUERY_RESULTS,
         query: {
-          sql: selectSql,
+          sql: config.sql,
           offset,
           limit: pageSize,
         },

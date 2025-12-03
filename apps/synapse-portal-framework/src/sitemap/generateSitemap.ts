@@ -7,7 +7,7 @@ import type {
   ResourceQueryResult,
 } from './types'
 import { MAX_URLS_PER_SITEMAP } from './types'
-import { fetchResourceIds } from './synapseQuery'
+import { fetchResourceIds } from './queryTableForSitemap'
 
 /**
  * Extracts static routes from a routesConfig file by parsing path declarations.
