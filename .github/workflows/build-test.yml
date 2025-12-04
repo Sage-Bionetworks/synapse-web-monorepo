@@ -41,8 +41,7 @@ jobs:
         with:
           STORE_NX_CACHE: 'true'
       - id: test
-        # Test runners run in parallel, so we use `--parallel=1` to avoid running them all at once
-        run: pnpm nx affected --target test --base=remotes/origin/main --parallel=1
+        run: pnpm nx affected --target test --base=remotes/origin/main --parallel=3
         env:
           NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
       - name: Upload test report
