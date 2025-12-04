@@ -271,7 +271,7 @@ describe('fetchResourceIds', () => {
           },
         },
       },
-    }) as AsynchronousJobStatus
+    } as unknown as AsynchronousJobStatus)
 
     const result = await fetchResourceIds(mockConfig)
 
