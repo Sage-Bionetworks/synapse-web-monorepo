@@ -1,3 +1,4 @@
+import React from 'react'
 import mockQueryResponseData from '@/mocks/mockQueryResponseData'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
 import { server } from '@/mocks/msw/server'
@@ -27,7 +28,7 @@ const renderedTextConfirmation = 'QueryWrapper rendered!'
 let selectedRows: Row[] | undefined
 let setSelectedRows: ((value: SetStateAction<Row[]>) => void) | undefined
 
-const QueryContextReceiver = () => {
+const QueryContextReceiver = (): React.ReactNode => {
   // An error would be thrown if context was not provided by QueryWrapper
   const context = useQueryContext()
   selectedRows = useAtomValue(selectedRowsAtom)

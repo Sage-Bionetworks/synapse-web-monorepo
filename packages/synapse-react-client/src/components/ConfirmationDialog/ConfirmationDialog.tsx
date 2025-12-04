@@ -1,3 +1,4 @@
+import React from 'react'
 import { Button, ButtonProps } from '@mui/material'
 import { MouseEventHandler } from 'react'
 import { DialogBase, DialogBaseProps } from '../DialogBase'
@@ -24,7 +25,9 @@ const DEFAULT_CANCEL_BUTTON_PROPS: Omit<ButtonProps, 'onClick'> = {
   variant: 'outlined',
 }
 
-export const ConfirmationButtons = (props: ConfirmationButtonsProps) => {
+export const ConfirmationButtons = (
+  props: ConfirmationButtonsProps,
+): React.ReactNode => {
   const { onConfirm, onCancel, hasCancelButton = true } = props
 
   const confirmButtonProps: Omit<ButtonProps, 'onClick'> = defaults(

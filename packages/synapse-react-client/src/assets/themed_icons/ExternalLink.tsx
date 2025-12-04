@@ -1,4 +1,5 @@
-export const ExternalLink = () => (
+import React from 'react'
+export const ExternalLink = (): React.ReactNode => (
   <svg
     width="12"
     height="12"

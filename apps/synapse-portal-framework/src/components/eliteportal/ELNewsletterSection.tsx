@@ -1,8 +1,9 @@
+import React from 'react'
 import { AddAlertTwoTone } from '@mui/icons-material'
 import { Button, Typography, Link } from '@mui/material'
 import { CTASectionWrapper } from 'synapse-react-client'
 
-const ElNewsletterSection = () => {
+const ElNewsletterSection = (): React.ReactNode => {
   const title = 'Subscribe to the ELITE Portal Newsletter'
   const subtitle =
     'Get the latest on data releases, events, community highlights, and more'

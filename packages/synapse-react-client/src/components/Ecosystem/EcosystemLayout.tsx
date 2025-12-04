@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Tab, Tabs, useMediaQuery, useTheme } from '@mui/material'
 import Fade from '@mui/material/Fade'
 import { ReactNode, useState } from 'react'
@@ -16,7 +17,7 @@ export type EcosystemProps = {
  * @param props
  * @constructor
  */
-const EcosystemLayout = (props: EcosystemProps) => {
+const EcosystemLayout = (props: EcosystemProps): React.ReactNode => {
   const [index, setIndex] = useState(0)
   const { config } = props
 

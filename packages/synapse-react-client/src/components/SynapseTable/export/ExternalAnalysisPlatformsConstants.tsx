@@ -1,3 +1,4 @@
+import React from 'react'
 import { Link } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import { ReactComponent as AdWorkbenchLogo } from '../../../assets/logos/other/ad-workbench-logo.svg'
@@ -28,7 +29,7 @@ const ExternalAnalysisPlatformInstructions = (props: {
   platformLoginURL: string
   platformConnectAccountURL?: string
   platformSupportEmail?: string
-}) => {
+}): React.ReactNode => {
   const {
     platformName,
     platformLoginURL,

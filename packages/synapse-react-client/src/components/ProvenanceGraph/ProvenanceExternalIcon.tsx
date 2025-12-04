@@ -1,3 +1,4 @@
+import React from 'react'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 
 export type ProvenanceExternalIconProps = {
@@ -6,7 +7,9 @@ export type ProvenanceExternalIconProps = {
 const githubRegex = /^(.+?\.)?github\.com$/
 const githubusercontentRegex = /^(.+?\.)?githubusercontent\.com$/
 
-export const ProvenanceExternalIcon = (props: ProvenanceExternalIconProps) => {
+export const ProvenanceExternalIcon = (
+  props: ProvenanceExternalIconProps,
+): React.ReactNode => {
   const { url } = props
   let icon: IconName = 'link'
   const parsedUrl = new URL(url)

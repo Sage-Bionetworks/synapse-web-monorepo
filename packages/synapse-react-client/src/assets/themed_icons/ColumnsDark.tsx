@@ -1,4 +1,5 @@
-export const ColumnsDark = () => (
+import React from 'react'
+export const ColumnsDark = (): React.ReactNode => (
   <svg
     data-icon="columns-dark"
     width="20"

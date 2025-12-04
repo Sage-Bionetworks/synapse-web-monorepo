@@ -1,4 +1,5 @@
-export const ToolExperimental = () => (
+import React from 'react'
+export const ToolExperimental = (): React.ReactNode => (
   <svg width="61" height="76" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clipPath="url(#ToolExperimentalClip0)">
       <g clipPath="url(#ToolExperimentalClip1)">

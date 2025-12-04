@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Typography } from '@mui/material'
 
 type CancerComplexityIntroSubItemProps = {
@@ -7,7 +8,7 @@ type CancerComplexityIntroSubItemProps = {
 }
 const CancerComplexityIntroSubItem = (
   props: CancerComplexityIntroSubItemProps,
-) => {
+): React.ReactNode => {
   const { bulletColor, mainText, subText } = props
   return (
     <>

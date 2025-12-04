@@ -1,4 +1,5 @@
-export const Explore = () => (
+import React from 'react'
+export const Explore = (): React.ReactNode => (
   <svg
     data-icon="explore"
     viewBox="0 0 24 24"

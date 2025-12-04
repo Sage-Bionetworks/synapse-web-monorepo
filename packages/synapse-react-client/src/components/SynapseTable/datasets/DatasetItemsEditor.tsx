@@ -1,3 +1,4 @@
+import React from 'react'
 import WideButton from '@/components/styled/WideButton'
 import { datasetItemToReference } from '@/components/SynapseTable/datasets/DatasetEditorUtils'
 import {
@@ -331,7 +332,9 @@ type SelectAllCheckboxRendererProps = {
   allItemsAreSelected: boolean
 }
 
-const SelectAllCheckboxRenderer = (props: SelectAllCheckboxRendererProps) => {
+const SelectAllCheckboxRenderer = (
+  props: SelectAllCheckboxRendererProps,
+): React.ReactNode => {
   const {
     datasetToUpdate,
     clearSelectedIds,

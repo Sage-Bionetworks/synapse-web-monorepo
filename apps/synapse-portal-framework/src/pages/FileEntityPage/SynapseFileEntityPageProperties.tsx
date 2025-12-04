@@ -100,7 +100,7 @@ const FilePropertyRow: React.FC<FilePropertyRowProps> = ({
 const SynapseFileEntityPageProperties = ({
   entityId,
   versionNumber,
-}: SynapseFileEntityPagePropertiesProps) => {
+}: SynapseFileEntityPagePropertiesProps): React.ReactNode => {
   const {
     fileHandle,
     storageLocationUploadDestination,

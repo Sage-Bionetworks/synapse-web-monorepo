@@ -1,3 +1,4 @@
+import React from 'react'
 import { spreadSx } from '@/theme/spreadSx'
 import { isExternalLink } from '@/utils/functions/IsExternalLink'
 import {
@@ -29,7 +30,7 @@ const PortalSectionHeader = ({
   sx,
   centered = false,
   reverseButtonAndText = false,
-}: PortalSectionHeaderProps) => {
+}: PortalSectionHeaderProps): React.ReactNode => {
   const isExternal = isExternalLink(link ?? '')
 
   return (

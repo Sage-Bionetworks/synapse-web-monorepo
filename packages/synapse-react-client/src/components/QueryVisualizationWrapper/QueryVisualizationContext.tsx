@@ -1,3 +1,4 @@
+import React from 'react'
 import { ColumnType } from '@sage-bionetworks/synapse-types'
 import {
   createContext,
@@ -61,7 +62,7 @@ export type QueryVisualizationContextProviderProps = PropsWithChildren<{
 export const QueryVisualizationContextProvider = ({
   children,
   queryVisualizationContext,
-}: QueryVisualizationContextProviderProps) => {
+}: QueryVisualizationContextProviderProps): React.ReactNode => {
   return (
     <QueryVisualizationContext.Provider value={queryVisualizationContext}>
       {children}

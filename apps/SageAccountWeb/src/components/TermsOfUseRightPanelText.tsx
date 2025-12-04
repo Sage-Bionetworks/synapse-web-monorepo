@@ -1,8 +1,9 @@
+import React from 'react'
 import { Link, Typography } from '@mui/material'
 import { useSourceApp } from './useSourceApp'
 import { STATIC_SOURCE_APP_CONFIG } from 'synapse-react-client/utils/hooks/useSourceAppConfigs'
 
-export const TermsOfUseRightPanelText = () => {
+export const TermsOfUseRightPanelText = (): React.ReactNode => {
   const sourceApp = useSourceApp()
   const sourceAppName = sourceApp?.friendlyName
   const synapseAppName = STATIC_SOURCE_APP_CONFIG.friendlyName

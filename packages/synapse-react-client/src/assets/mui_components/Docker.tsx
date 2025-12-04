@@ -1,6 +1,7 @@
+import React from 'react'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
-const Docker = (props: SvgIconProps) => {
+const Docker = (props: SvgIconProps): React.ReactNode => {
   return (
     <SvgIcon viewBox="-2 0 26 17" {...props}>
       <path

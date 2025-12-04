@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from 'synapse-react-client'
@@ -17,7 +18,7 @@ const GetInvolvedSection = ({
   sql,
   borderRadiusPx,
   cardSize,
-}: GetInvolvedSectionProps) => {
+}: GetInvolvedSectionProps): React.ReactNode => {
   const { entityId } = parseEntityIdAndVersionFromSqlStatement(sql)
 
   const queryBundleRequest: QueryBundleRequest = {

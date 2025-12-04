@@ -1,4 +1,5 @@
-export const Chart = () => (
+import React from 'react'
+export const Chart = (): React.ReactNode => (
   <svg
     data-icon="chart"
     width="20"

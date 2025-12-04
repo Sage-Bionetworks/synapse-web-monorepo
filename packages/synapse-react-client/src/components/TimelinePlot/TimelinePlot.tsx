@@ -1,3 +1,4 @@
+import React from 'react'
 import { useGetFullTableQueryResults } from '@/synapse-queries'
 import {
   getAdditionalFilters,
@@ -48,7 +49,7 @@ export const TimelinePlot = ({
   defaultSpecies,
   title,
   subTitle,
-}: TimelinePlotProps) => {
+}: TimelinePlotProps): React.ReactNode => {
   // Fetch the table data
   const eventsTableId = parseEntityIdFromSqlStatement(sql)
   const [species, setSpecies] = useState<string | undefined | null>(
@@ -247,7 +248,7 @@ export const TimelinePlot = ({
   )
 }
 
-export const LoadingTimelinePlot = () => {
+export const LoadingTimelinePlot = (): React.ReactNode => {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>

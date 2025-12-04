@@ -1,3 +1,4 @@
+import React from 'react'
 import SynapsePlot from '../../Plot/SynapsePlot'
 import { AxisType, PlotType } from 'plotly.js-basic-dist'
 
@@ -18,7 +19,9 @@ const toBoolean = (v?: string, fallbackValue?: boolean) => {
   return v ? v.toLowerCase() == 'true' : fallbackValue ?? false
 }
 
-export const MarkdownSynapsePlot = (props: MarkdownSynapsePlotProps) => {
+export const MarkdownSynapsePlot = (
+  props: MarkdownSynapsePlotProps,
+): React.ReactNode => {
   const {
     query,
     title,

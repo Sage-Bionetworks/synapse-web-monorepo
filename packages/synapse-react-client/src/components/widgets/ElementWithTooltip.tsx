@@ -1,3 +1,4 @@
+import React from 'react'
 import { Menu, Tooltip } from '@mui/material'
 import {
   ComponentElement,
@@ -75,7 +76,7 @@ export const ElementWithTooltip = ({
   size,
   icon,
   menuItems,
-}: ElementWithTooltipProps) => {
+}: ElementWithTooltipProps): React.ReactNode => {
   const { place } = tooltipVisualProps
   const iconComponent = icon ? (
     typeof icon === 'string' ? (

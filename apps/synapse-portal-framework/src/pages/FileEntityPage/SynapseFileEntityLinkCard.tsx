@@ -1,3 +1,4 @@
+import React from 'react'
 import { Card, Link, Stack, Typography } from '@mui/material'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { ReactComponent as SynapseIconLogo } from './assets/SynapseIconLogo.svg'
@@ -11,7 +12,7 @@ const SynapseFileEntityLinkCard = ({
   portalName: string
   synId: string
   version?: number
-}) => {
+}): React.ReactNode => {
   const synapseUrl = getSynapseEntityUrl(synId, version)
 
   return (

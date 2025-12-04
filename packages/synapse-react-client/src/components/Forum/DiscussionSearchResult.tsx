@@ -5,6 +5,7 @@ import {
   getThreadMessageUrl,
   getUserProfileById,
 } from '@/synapse-client/SynapseClient'
+import React from 'react'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
@@ -37,7 +38,9 @@ export type DiscussionSearchResultProps = {
   replyId?: string
 }
 
-const DiscussionSearchResult = (props: DiscussionSearchResultProps) => {
+const DiscussionSearchResult = (
+  props: DiscussionSearchResultProps,
+): React.ReactNode => {
   const { threadId, replyId } = props
   const { accessToken } = useSynapseContext()
   const [threadBundle, setThreadBundle] = useState<DiscussionThreadBundle>()

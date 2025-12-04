@@ -105,7 +105,7 @@ export const DialogBase = ({
   sx,
   contentProps = EMPTY_OBJECT,
   DialogProps,
-}: DialogBaseProps) => {
+}: DialogBaseProps): React.ReactNode => {
   return (
     <Dialog
       fullWidth={fullWidth}
