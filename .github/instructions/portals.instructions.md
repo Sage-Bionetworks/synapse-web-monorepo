@@ -103,7 +103,9 @@ pnpm build
 
 Detail pages use query parameters to display resource-specific content:
 
-- Route: `Explore/Studies/DetailsPage` with children like `Details`, `Data`, etc.
+- Route: `Explore/Studies/DetailsPage`. A details page may have child routes that refer to different tabs shown in the details page.
+- The content of a details page comes from a row in a Synapse table identified by a primary key, which is retrieved from a query parameter.
+- The row data of a details page may be referential; e.g. a Study row may include a column that references a wiki that can be retrieved from Synapse.
 - URL: `https://portal.synapse.org/Explore/Studies/DetailsPage?Study=syn12345`
 - The sitemap generator creates URLs for each resource by querying Synapse tables
 
