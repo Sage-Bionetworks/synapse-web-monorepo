@@ -116,7 +116,7 @@ const FeaturedTeam = ({ sql }: FeaturedTeamProps) => {
           })}
         </Box>
         <Box className={styles.FeaturedTeam__textSection}>
-          <MarkdownSynapse wikiId="635914" ownerId="syn51476216" />
+          <MarkdownSynapse wikiId="635926" ownerId="syn51476216" />
         </Box>
       </Box>
     </Box>
