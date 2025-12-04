@@ -1,4 +1,4 @@
-import { OAuthClientError } from 'OAuthClientError'
+import { OAuthClientError } from './OAuthClientError'
 import { SynapseClientError } from 'synapse-react-client'
 
 /**

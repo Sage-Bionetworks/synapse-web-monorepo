@@ -7,8 +7,8 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { datasetsSql, enabledAnalysisPlatforms } from 'src/config/resources'
-import { columnAliases } from 'src/config/synapseConfigs/commonProps'
+import { datasetsSql, enabledAnalysisPlatforms } from '@/config/resources'
+import { columnAliases } from '@/config/synapseConfigs/commonProps'
 import {
   CardContainerLogic,
   DatasetJsonLdScript,
