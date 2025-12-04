@@ -1,10 +1,11 @@
+import React from 'react'
 import { ReactComponent as SageLogo } from '../assets/sage-logo.svg'
 import { ReactComponent as NCI } from './assets/nci.svg'
 import { ReactComponent as NIH } from './assets/nih.svg'
 import { Link, Stack, Typography } from '@mui/material'
 import DevelopedBySage from '../DevelopedBySage'
 
-const CCKPDevelopedBySage = () => {
+const CCKPDevelopedBySage = (): React.ReactNode => {
   return (
     <DevelopedBySage>
       <Typography sx={{ mb: 0 }}>

@@ -1,3 +1,4 @@
+import React from 'react'
 import { Skeleton } from '@mui/material'
 import { useGetEntityHeader } from 'synapse-react-client/synapse-queries'
 import CollapsibleSection, {
@@ -15,7 +16,7 @@ const CollapsibleSectionDerivedFromEntityId = ({
   helpText,
   hideTitle = false,
   entityTitlePrepend = '',
-}: CollapsibleSectionDerivedFromEntityIdProps) => {
+}: CollapsibleSectionDerivedFromEntityIdProps): React.ReactNode => {
   const { data: entityHeader, isLoading } = useGetEntityHeader(id)
 
   if (isLoading) {

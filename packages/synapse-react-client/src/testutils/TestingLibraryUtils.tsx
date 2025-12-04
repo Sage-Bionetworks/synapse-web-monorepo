@@ -1,3 +1,4 @@
+import React from 'react'
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import FullContextProvider, {
   defaultQueryClientConfig,
@@ -51,7 +52,11 @@ export function setupQueryClient() {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   })
-  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  const Wrapper = ({
+    children,
+  }: {
+    children: React.ReactNode
+  }): React.ReactNode => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   )
   return { Wrapper, queryClient }

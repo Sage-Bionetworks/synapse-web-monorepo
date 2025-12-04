@@ -1,3 +1,4 @@
+import React from 'react'
 import { useGetTeam } from '@/synapse-queries'
 import { Alert, Box, Typography } from '@mui/material'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
@@ -10,7 +11,7 @@ type RegistrationSuccessfulProps = {
 export const RegistrationSuccessful = ({
   createdNewTeam,
   teamId,
-}: RegistrationSuccessfulProps) => {
+}: RegistrationSuccessfulProps): React.ReactNode => {
   const {
     data: team,
     status,

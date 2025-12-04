@@ -2,13 +2,14 @@ import {
   convertToEntityType,
   isVersionableEntityType,
 } from '@/utils/functions/EntityTypeUtils'
+import React from 'react'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { Link, Tooltip } from '@mui/material'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import { useMemo } from 'react'
 import { ProvenanceEntityIcon } from './ProvenanceEntityIcon'
 
-export const EntityNodeLabel = (data: EntityHeader) => {
+export const EntityNodeLabel = (data: EntityHeader): React.ReactNode => {
   const targetVersionNumberString = data.versionNumber
     ? `.${data.versionNumber}`
     : ''

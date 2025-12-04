@@ -1,6 +1,7 @@
+import React from 'react'
 import { SVGProps } from 'react'
 
-const Terminal = (props: SVGProps<SVGSVGElement>) => (
+const Terminal = (props: SVGProps<SVGSVGElement>): React.ReactNode => (
   <svg
     {...props}
     className={`SRC-terminal-icon ${props.className ?? ''}`}

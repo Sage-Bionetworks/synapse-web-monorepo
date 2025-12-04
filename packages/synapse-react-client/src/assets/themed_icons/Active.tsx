@@ -1,4 +1,5 @@
-export const Active = () => (
+import React from 'react'
+export const Active = (): React.ReactNode => (
   <svg
     width="30"
     height="30"

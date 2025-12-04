@@ -1,3 +1,4 @@
+import React from 'react'
 import FullWidthAlert from '../FullWidthAlert'
 import type { FullWidthAlertProps } from '../FullWidthAlert'
 
@@ -10,7 +11,7 @@ const TemporaryBanner = ({
   deadline,
   content,
   ...props
-}: TemporaryBannerProps) => {
+}: TemporaryBannerProps): React.ReactNode => {
   const trimmedDeadline = deadline.trim()
   const deadlineDate = /^\d{4}-\d{2}-\d{2}$/.test(trimmedDeadline) // date-only pattern YYYY-MM-DD
     ? // Append a local end-of-day timestamp so "YYYY-MM-DD" deadlines last through 11:59 PM.

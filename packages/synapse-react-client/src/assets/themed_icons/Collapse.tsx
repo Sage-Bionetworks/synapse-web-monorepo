@@ -1,4 +1,5 @@
-export const Collapse = () => (
+import React from 'react'
+export const Collapse = (): React.ReactNode => (
   <svg
     data-icon="collapse"
     width="16"

@@ -1,3 +1,4 @@
+import React from 'react'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { getFieldIndex } from '@/utils/functions/queryUtils'
@@ -43,7 +44,7 @@ const FeaturedResearchCard = ({
   linkColIndex,
   imageColIndex,
   isLoading,
-}: FeaturedResearchCardProps) => {
+}: FeaturedResearchCardProps): React.ReactNode => {
   const fileId = research.values[imageColIndex] ?? ''
   const url = useImageUrl(fileId ?? '', entityId)
   if (isLoading) {
@@ -128,7 +129,7 @@ const FeaturedResearchTopCard = ({
   linkColIndex,
   imageColIndex,
   isLoading,
-}: FeaturedResearchCardProps) => {
+}: FeaturedResearchCardProps): React.ReactNode => {
   const [ref, inView] = useInView({ threshold: 0.3, triggerOnce: true })
   const fileId = research.values[imageColIndex] ?? ''
   const url = useImageUrl(fileId || '', entityId)

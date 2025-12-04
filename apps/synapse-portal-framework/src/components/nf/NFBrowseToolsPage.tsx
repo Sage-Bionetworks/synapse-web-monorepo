@@ -1,3 +1,4 @@
+import React from 'react'
 import { ReactComponent as AnimalModels } from '@/components/assets/animalmodels.svg'
 import { ReactComponent as Antibodies } from '@/components/assets/antibodies.svg'
 import { ReactComponent as Biobanks } from '@/components/assets/biobanks.svg'
@@ -82,7 +83,7 @@ export type NFBrowseToolsPageProps = {
   toolsSql: string
 }
 
-const NFBrowseToolsPage = (props: NFBrowseToolsPageProps) => {
+const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
   const { popularSearchesSql, toolsSql } = props
   const gotoExploreTools = () => {
     window.location.assign('/Explore/Tools')

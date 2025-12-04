@@ -1,3 +1,4 @@
+import React from 'react'
 import Slider from '@mui/material/Slider'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { Box, IconButton, SxProps } from '@mui/material'
@@ -19,7 +20,7 @@ export type ProfileAvatarProps = {
   onProfileUpdated: () => void
 }
 
-export const ProfileAvatar = (props: ProfileAvatarProps) => {
+export const ProfileAvatar = (props: ProfileAvatarProps): React.ReactNode => {
   const { userProfile, onProfileUpdated } = props
   const { accessToken } = useSynapseContext()
   const [profilePicUrl, setProfilePicUrl] = useState<string | undefined>()
@@ -72,7 +73,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
     }
   }
 
-  const UploadImageButton = () => {
+  const UploadImageButton = (): React.ReactNode => {
     const uploadButtonStyle: SxProps = {
       backgroundColor: 'grey.200',
       position: 'absolute',

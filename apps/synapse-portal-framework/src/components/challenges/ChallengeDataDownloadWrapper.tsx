@@ -1,3 +1,4 @@
+import React from 'react'
 import { Alert } from '@mui/material'
 import {
   AppUtils,
@@ -6,7 +7,9 @@ import {
   SynapseQueries,
 } from 'synapse-react-client'
 
-const ChallengeSubmissionWrapper = (props: ChallengeDataDownloadProps) => {
+const ChallengeSubmissionWrapper = (
+  props: ChallengeDataDownloadProps,
+): React.ReactNode => {
   const { parentContainerId } = props
   const projectId = AppUtils.useQuerySearchParam('id')
   const { data: challenge } = SynapseQueries.useGetEntityChallenge(projectId!, {

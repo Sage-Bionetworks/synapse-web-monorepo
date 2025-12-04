@@ -1,9 +1,10 @@
+import React from 'react'
 import { Box, Stack, Typography } from '@mui/material'
 import styles from './ChallengeHeader.module.scss'
 import { ReactComponent as HeaderImg } from '../assets/challengeHeaderImg.svg'
 import { ReactComponent as SageLogo } from '../assets/sageBionetworksLogo.svg'
 
-const ChallengeHeader = () => {
+const ChallengeHeader = (): React.ReactNode => {
   return (
     <Box className={styles.root}>
       <Box className={styles.imageWrapper}>

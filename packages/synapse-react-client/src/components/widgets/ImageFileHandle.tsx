@@ -1,3 +1,4 @@
+import React from 'react'
 import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
@@ -9,7 +10,9 @@ type ImageFileHandleProps = {
   imgProps?: ComponentProps<'img'>
 }
 
-export const ImageFileHandle = (props: ImageFileHandleProps) => {
+export const ImageFileHandle = (
+  props: ImageFileHandleProps,
+): React.ReactNode => {
   const {
     fileHandleAssociation: {
       fileHandleId,

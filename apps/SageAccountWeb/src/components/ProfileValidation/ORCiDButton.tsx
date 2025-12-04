@@ -1,3 +1,4 @@
+import React from 'react'
 import OrcId from '@/assets/ORCID.svg?url'
 import EditIcon from '@/assets/RedEditPencil.svg?url'
 import { Button, SxProps } from '@mui/material'
@@ -62,7 +63,7 @@ const onBindToORCiD = (
   }
 }
 
-export const ORCiDButton = (props: ORCiDButtonProps) => {
+export const ORCiDButton = (props: ORCiDButtonProps): React.ReactNode => {
   const [isLoading, setIsLoading] = useState(false)
 
   return (

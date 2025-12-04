@@ -1,4 +1,5 @@
-export const Expand = () => (
+import React from 'react'
+export const Expand = (): React.ReactNode => (
   <svg
     data-icon="expand"
     width="16"

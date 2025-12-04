@@ -1,3 +1,4 @@
+import React from 'react'
 import Arrow from '@/assets/Arrow.svg?url'
 import confirmProfile from '@/assets/ConfirmProfile.svg?url'
 import confirmProfileFilled from '@/assets/ConfirmProfileFilled.svg?url'
@@ -10,7 +11,7 @@ import verifyId from '@/assets/VerifyID.svg?url'
 import verifyIdFilled from '@/assets/VerifyIDFilled.svg?url'
 import { ValidationWizardStep } from './ProfileValidation'
 
-export const PlaneToRocket = () => {
+export const PlaneToRocket = (): React.ReactNode => {
   return (
     <div>
       <img src={PaperAirPlane} alt="paper airplane" />

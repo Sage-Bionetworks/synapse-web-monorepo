@@ -14,12 +14,13 @@ import {
   Ref,
   useCallback,
 } from 'react'
+import React from 'react'
 import { useQueryContext } from '../QueryContext'
 import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 
 import { usePrefetchTableRows } from './usePrefetchTableData'
 
-export const TablePagination = () => {
+export const TablePagination = (): React.ReactNode => {
   const { goToPage, pageSize, setPageSize, currentPage, currentQueryRequest } =
     useQueryContext()
 
@@ -51,7 +52,7 @@ export const TablePagination = () => {
   }
 
   const handlePageSize = (event: SelectChangeEvent<number>) => {
-    const value = event.target.value as number
+    const value = event.target.value
     setPageSize(value)
   }
 

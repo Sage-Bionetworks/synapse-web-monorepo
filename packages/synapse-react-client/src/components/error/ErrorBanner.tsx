@@ -1,3 +1,4 @@
+import React from 'react'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { Optional } from '@/utils/types/Optional'
 import { Box, Button, Collapse, Stack } from '@mui/material'
@@ -20,7 +21,7 @@ type ErrorBannerProps = {
 export const YOU_ARE_NOT_AUTHORIZED_MESSAGE =
   'You are not authorized to access this resource.'
 
-export const SignInPrompt = () => {
+export const SignInPrompt = (): React.ReactNode => {
   return (
     <>
       Please <SignInButton /> to view this resource.
@@ -28,7 +29,9 @@ export const SignInPrompt = () => {
   )
 }
 
-export const ClientError = (props: { error: SynapseClientError }) => {
+export const ClientError = (props: {
+  error: SynapseClientError
+}): React.ReactNode => {
   const [showDetailedError, setShowDetailedError] = useState(false)
   const { accessToken } = useSynapseContext()
   const { error } = props
@@ -73,7 +76,7 @@ export const ClientError = (props: { error: SynapseClientError }) => {
   }
 }
 
-export const ErrorBanner = (props: ErrorBannerProps) => {
+export const ErrorBanner = (props: ErrorBannerProps): React.ReactNode => {
   const { error, reloadButtonFn } = props
 
   if (!error) {
@@ -176,4 +179,6 @@ export const SynapseErrorBoundary = (
   props: PropsWithChildren<
     Optional<ErrorBoundaryPropsWithComponent, 'FallbackComponent'>
   >,
-) => <ErrorBoundary FallbackComponent={ErrorFallbackComponent} {...props} />
+): React.ReactNode => (
+  <ErrorBoundary FallbackComponent={ErrorFallbackComponent} {...props} />
+)

@@ -1,4 +1,5 @@
-export const Program = () => (
+import React from 'react'
+export const Program = (): React.ReactNode => (
   <svg
     width="60"
     height="60"

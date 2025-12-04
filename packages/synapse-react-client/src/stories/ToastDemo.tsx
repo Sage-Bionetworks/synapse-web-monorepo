@@ -1,3 +1,4 @@
+import React from 'react'
 import { displayToast } from '@/components/ToastMessage/index'
 import {
   Button,
@@ -9,7 +10,7 @@ import {
 } from '@mui/material'
 import { useState } from 'react'
 
-export const ToastDemo = () => {
+export const ToastDemo = (): React.ReactNode => {
   const [variant, setVariant] = useState<
     'info' | 'success' | 'warning' | 'danger'
   >('info')

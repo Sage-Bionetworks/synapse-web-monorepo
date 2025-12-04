@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Stack, Tooltip, Typography } from '@mui/material'
 import { InfoTwoTone } from '@mui/icons-material'
 import { ReactElement } from 'react'
@@ -10,7 +11,11 @@ export type DialLayoutProps = {
 }
 
 // Displayed on entity header of details page
-const DialLayout = ({ dial, label, toolTipText }: DialLayoutProps) => {
+const DialLayout = ({
+  dial,
+  label,
+  toolTipText,
+}: DialLayoutProps): React.ReactNode => {
   return (
     <Stack sx={{ alignItems: 'center', gap: '10px' }}>
       {dial}

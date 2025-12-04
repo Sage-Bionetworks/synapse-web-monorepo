@@ -1,8 +1,9 @@
+import React from 'react'
 import { Box, Link, Stack, Typography } from '@mui/material'
 import styles from './ClassicSupportedByNIABanner.module.scss'
 import { ReactComponent as NIALogo } from '../assets/NIA.svg'
 
-const ClassicSupportedByNIABanner = () => {
+const ClassicSupportedByNIABanner = (): React.ReactNode => {
   return (
     <Box className={styles.root}>
       <NIALogo className={styles.logo} />

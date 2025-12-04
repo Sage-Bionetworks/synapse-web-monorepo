@@ -1,7 +1,8 @@
+import React from 'react'
 import { Box, SxProps, Typography, useMediaQuery } from '@mui/material'
 import Background from './assets/genie-homepage-background.jpg?url'
 
-const GenieHomePageHeader = () => {
+const GenieHomePageHeader = (): React.ReactNode => {
   const isDesktop = useMediaQuery(`(min-width: ${1250}px)`)
   // if larger screen, show an additional extra background and show GreenPolygon's right side (which is angled)
   const additionalGreenBackgroundProps: SxProps = isDesktop

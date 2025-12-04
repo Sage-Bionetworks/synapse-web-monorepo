@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Stack, Typography, Link, Card } from '@mui/material'
 import { Link as RouterLink } from 'react-router'
 
@@ -12,7 +13,10 @@ export type CardGridWithLinksProps = {
   cards: CardGridWithLinksConfig[]
 }
 
-const CardGridWithLinks = ({ cards, linkText }: CardGridWithLinksProps) => {
+const CardGridWithLinks = ({
+  cards,
+  linkText,
+}: CardGridWithLinksProps): React.ReactNode => {
   return (
     <Box
       sx={{

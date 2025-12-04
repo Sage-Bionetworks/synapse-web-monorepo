@@ -1,3 +1,4 @@
+import React from 'react'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { EntityHeader } from '@sage-bionetworks/synapse-types'
@@ -62,7 +63,9 @@ const codeFileExtensionSet = new Set([
   '.json',
 ])
 
-export const ProvenanceEntityIcon = (props: ProvenanceEntityIconProps) => {
+export const ProvenanceEntityIcon = (
+  props: ProvenanceEntityIconProps,
+): React.ReactNode => {
   const { entityHeader } = props
   if (entityHeader) {
     const entityType: EntityType = convertToEntityType(entityHeader?.type)

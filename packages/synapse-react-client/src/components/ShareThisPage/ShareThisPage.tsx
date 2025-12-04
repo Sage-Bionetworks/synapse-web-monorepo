@@ -8,6 +8,7 @@ import {
   Input,
   Box,
 } from '@mui/material'
+import React from 'react'
 import { useEffect, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'
@@ -37,7 +38,7 @@ const ShareThisPage = ({
   renderAs = 'button',
   open: externalOpen,
   onClose: externalOnClose,
-}: ShareThisPageProps) => {
+}: ShareThisPageProps): React.ReactNode => {
   const [url, setUrl] = useState('')
   const [internalOpen, setInternalOpen] = useState(false)
 

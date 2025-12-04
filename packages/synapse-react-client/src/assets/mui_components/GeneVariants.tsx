@@ -1,6 +1,7 @@
+import React from 'react'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
-const GeneVariants = (props: SvgIconProps) => {
+const GeneVariants = (props: SvgIconProps): React.ReactNode => {
   return (
     <SvgIcon {...props} className={'icon-gene-variants'}>
       <g clipPath="url(#clip0)">

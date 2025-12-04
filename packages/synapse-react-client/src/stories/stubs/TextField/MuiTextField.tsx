@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   TextField as MuiTextField,
   TextFieldProps as MuiTextFieldProps,
@@ -5,4 +6,6 @@ import {
 
 export type TextFieldProps = MuiTextFieldProps
 
-export const TextField = (props: TextFieldProps) => <MuiTextField {...props} />
+export const TextField = (props: TextFieldProps): React.ReactNode => (
+  <MuiTextField {...props} />
+)

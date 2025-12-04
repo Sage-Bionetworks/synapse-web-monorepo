@@ -1,3 +1,4 @@
+import React from 'react'
 import Box from '@mui/material/Box'
 import styles from './BasePortalCard.module.scss'
 import { ReactNode } from 'react'
@@ -23,7 +24,7 @@ const BasePortalCard = ({
   className,
   backgroundImage,
   backgroundColor,
-}: BasePortalCardProps) => (
+}: BasePortalCardProps): React.ReactNode => (
   <Stack>
     <Card
       className={`${className} ${styles.BasePortalCard__root} ${styles[cardSize]}`}

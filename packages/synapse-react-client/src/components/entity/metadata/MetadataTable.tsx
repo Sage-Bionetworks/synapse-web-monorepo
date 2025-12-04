@@ -1,3 +1,4 @@
+import React from 'react'
 import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import { useGetUploadDestinationForStorageLocation } from '@/synapse-queries/file/useUploadDestination'
 import { formatDate } from '@/utils/functions/DateFormatter'
@@ -21,7 +22,7 @@ export type MetadataTableProps = {
 export const MetadataTable = ({
   entityId,
   versionNumber,
-}: MetadataTableProps) => {
+}: MetadataTableProps): React.ReactNode => {
   const { data: entityBundle } = useGetEntityBundle(entityId, versionNumber)
 
   const isVersionable = entityBundle && isVersionableEntity(entityBundle.entity)

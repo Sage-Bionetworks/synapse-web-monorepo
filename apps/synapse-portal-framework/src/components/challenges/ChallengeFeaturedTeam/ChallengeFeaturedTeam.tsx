@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Typography } from '@mui/material'
 import styles from './ChallengeFeaturedTeam.module.scss'
 import { parseEntityIdFromSqlStatement } from 'synapse-react-client/utils/functions'
@@ -21,7 +22,7 @@ type TeamImageCardProps = {
   teamMemberNamesDescription?: string
 }
 
-const TeamImageCard = (props: TeamImageCardProps) => {
+const TeamImageCard = (props: TeamImageCardProps): React.ReactNode => {
   const imageUrl = useTableImageUrl(props.teamPhotoFileHandleId, props.entityId)
 
   return (
@@ -34,7 +35,7 @@ const TeamImageCard = (props: TeamImageCardProps) => {
   )
 }
 
-const FeaturedTeam = ({ sql }: FeaturedTeamProps) => {
+const FeaturedTeam = ({ sql }: FeaturedTeamProps): React.ReactNode => {
   const entityId = parseEntityIdFromSqlStatement(sql)
 
   const queryBundleRequest: QueryBundleRequest = {

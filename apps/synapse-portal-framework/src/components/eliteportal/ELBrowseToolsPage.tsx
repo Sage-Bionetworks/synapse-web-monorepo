@@ -1,3 +1,4 @@
+import React from 'react'
 import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList'
 import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { WideButton } from 'synapse-react-client/components/styled/WideButton'
@@ -25,7 +26,7 @@ export type ELBrowseToolsPageProps = {
   toolsSql: string
 }
 
-const ELBrowseToolsPage = (props: ELBrowseToolsPageProps) => {
+const ELBrowseToolsPage = (props: ELBrowseToolsPageProps): React.ReactNode => {
   const { toolsSql } = props
   // const { popularSearchesSql } = props
   const gotoExploreTools = () => {

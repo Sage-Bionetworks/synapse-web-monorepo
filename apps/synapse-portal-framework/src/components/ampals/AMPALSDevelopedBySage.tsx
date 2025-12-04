@@ -1,3 +1,4 @@
+import React from 'react'
 import { ReactComponent as SageLogo } from '../assets/sage-logo.svg'
 import { ReactComponent as CPATH } from './assets/cpath.svg'
 import { ReactComponent as FNIH } from './assets/fnih.svg'
@@ -5,7 +6,7 @@ import NINDSUrl from './assets/nih-ninds.png'
 import { Link, Stack, Typography } from '@mui/material'
 import DevelopedBySage from '../DevelopedBySage'
 
-const AMPALSDevelopedBySage = () => {
+const AMPALSDevelopedBySage = (): React.ReactNode => {
   return (
     <DevelopedBySage>
       <Typography sx={{ mb: 0 }}>

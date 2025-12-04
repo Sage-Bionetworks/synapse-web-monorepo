@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, useTheme } from '@mui/material'
 import { PortalSectionHeader, UpsetPlot } from 'synapse-react-client'
 import { handleUpsetPlotClick } from '@/utils/handleUpsetPlotClick'
@@ -7,7 +8,9 @@ type AMPALSExploreTheDataProps = {
   sql: string
 }
 
-const AMPALSExploreTheData = ({ sql }: AMPALSExploreTheDataProps) => {
+const AMPALSExploreTheData = ({
+  sql,
+}: AMPALSExploreTheDataProps): React.ReactNode => {
   const theme = useTheme()
   const navigate = useNavigate()
 

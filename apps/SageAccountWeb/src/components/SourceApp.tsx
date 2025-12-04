@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, BoxProps, Typography } from '@mui/material'
 import Skeleton from '@mui/material/Skeleton'
 import { useSourceApp } from './useSourceApp'
@@ -12,7 +13,7 @@ export type SourceAppProps = {
  * @param props
  * @returns
  */
-export const SourceApp = (props: SourceAppProps) => {
+export const SourceApp = (props: SourceAppProps): React.ReactNode => {
   const { isAccountCreationTextVisible = false } = props
   const sourceApp = useSourceApp()
   return (
@@ -43,7 +44,7 @@ export function SourceAppLogo(props: Omit<BoxProps, 'children' | 'className'>) {
   )
 }
 
-export const SourceAppDescription = () => {
+export const SourceAppDescription = (): React.ReactNode => {
   const sourceAppConfig = useSourceApp()
   return sourceAppConfig ? (
     <Typography

@@ -1,4 +1,5 @@
-export const Close = () => (
+import React from 'react'
+export const Close = (): React.ReactNode => (
   <svg
     data-icon="close"
     width="13"
