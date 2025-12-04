@@ -12,6 +12,7 @@ import studyHeaderSvg from '../../config/style/study-header.svg?url'
 import {
   studyCardConfiguration,
   studyColumnAliases,
+  studyDoiConfiguration,
 } from '../../config/synapseConfigs/studies'
 import {
   STUDY_DETAILS_PAGE_DATA_TAB_PATH,
@@ -59,6 +60,7 @@ function StudyDetailsPage() {
         maxWidth: 'xl',
       }}
       resourcePrimaryKey={['studyKey']}
+      portalDOIConfiguration={studyDoiConfiguration}
     >
       <DetailsPageTabs tabConfig={studyDetailsPageTabConfig} />
       <Outlet />
