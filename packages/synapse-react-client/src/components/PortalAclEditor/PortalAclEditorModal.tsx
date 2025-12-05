@@ -1,36 +1,33 @@
 import { noop } from 'lodash-es'
 import { useRef } from 'react'
 import { displayToast } from '../ToastMessage'
-import {
-  OAuthClientAclEditor,
-  OAuthClientAclEditorHandle,
-} from './OAuthClientAclEditor'
+import { PortalAclEditor, PortalAclEditorHandle } from './PortalAclEditor'
 import { DialogBase } from '../DialogBase'
 import { Button } from '@mui/material'
 
-export type OAuthAclEditorModalProps = {
-  clientId: string
+export type PortalAclEditorModalProps = {
+  portalId: string
   open: boolean
   onUpdateSuccess?: () => void
   onClose: () => void
 }
 
-export default function OAuthAclEditorModal(
-  props: OAuthAclEditorModalProps,
+export default function PortalAclEditorModal(
+  props: PortalAclEditorModalProps,
 ): React.ReactNode {
-  const { clientId, open, onUpdateSuccess = noop, onClose } = props
-  const ref = useRef<OAuthClientAclEditorHandle>(null)
+  const { portalId, open, onUpdateSuccess = noop, onClose } = props
+  const ref = useRef<PortalAclEditorHandle>(null)
   return (
     <>
       <DialogBase
         open={open}
-        title="OAuth Client Sharing Settings"
+        title="Portal Sharing Settings"
         onCancel={onClose}
         maxWidth={'md'}
         content={
-          <OAuthClientAclEditor
+          <PortalAclEditor
             ref={ref}
-            clientId={clientId}
+            portalId={portalId}
             onSaveComplete={() => {
               displayToast(
                 'Permissions were successfully saved to Synapse',

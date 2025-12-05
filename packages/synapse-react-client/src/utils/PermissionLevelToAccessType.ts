@@ -23,10 +23,16 @@ const oauthClientPermissionLevels = ['CAN_ADMINISTER_OAUTH_CLIENT'] as const
 export type OAuthClientPermissionsLevel =
   (typeof oauthClientPermissionLevels)[number]
 
+const portalClientPermissionLevels = ['CAN_ADMINISTER_PORTAL'] as const
+
+export type PortalClientPermissionsLevel =
+  (typeof portalClientPermissionLevels)[number]
+
 export type PermissionLevel =
   | EntityPermissionsLevel
   | AccessRequirementPermissionsLevel
   | OAuthClientPermissionsLevel
+  | PortalClientPermissionsLevel
 
 const permissionLevelToAccessType: Record<PermissionLevel, ACCESS_TYPE[]> = {
   // Entity
@@ -68,6 +74,13 @@ const permissionLevelToAccessType: Record<PermissionLevel, ACCESS_TYPE[]> = {
     ACCESS_TYPE.CHANGE_PERMISSIONS,
     ACCESS_TYPE.DELETE,
     ACCESS_TYPE.UPDATE,
+  ],
+  CAN_ADMINISTER_PORTAL: [
+    ACCESS_TYPE.CHANGE_PERMISSIONS,
+    ACCESS_TYPE.CREATE,
+    ACCESS_TYPE.UPDATE,
+    ACCESS_TYPE.READ,
+    ACCESS_TYPE.DELETE,
   ],
 }
 
@@ -111,4 +124,7 @@ export const permissionLevelToLabel: Record<PermissionLevel, string> = {
 
   // OAuth Client
   CAN_ADMINISTER_OAUTH_CLIENT: 'Administrator',
+
+  // Portal
+  CAN_ADMINISTER_PORTAL: 'Administrator',
 }

@@ -1,10 +1,63 @@
 import { useSynapseContext } from '@/utils/index'
 import {
+  AccessControlList,
   Portal,
   SynapseClientError,
   type UserPortalPermissions,
 } from '@sage-bionetworks/synapse-client'
-import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query'
+
+export function useCreatePortal(
+  options?: Partial<UseMutationOptions<Portal, SynapseClientError, Portal>>,
+) {
+  const queryClient = useQueryClient()
+  const { synapseClient, keyFactory } = useSynapseContext()
+
+  return useMutation<Portal, SynapseClientError, Portal>({
+    ...options,
+    mutationFn: (portal: Portal) =>
+      synapseClient.portalsServicesClient.postRepoV1Portal({
+        createOrUpdatePortalRequest: portal,
+      }),
+    onSuccess: async (createdPortal, portal, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getListPortalsQueryKey(),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(createdPortal, portal, ctx)
+      }
+    },
+  })
+}
+
+export function useDeletePortal(
+  options?: Partial<UseMutationOptions<void, SynapseClientError, string>>,
+) {
+  const queryClient = useQueryClient()
+  const { synapseClient, keyFactory } = useSynapseContext()
+
+  return useMutation<void, SynapseClientError, string>({
+    ...options,
+    mutationFn: (portalId: string) =>
+      synapseClient.portalsServicesClient.deleteRepoV1PortalPortalId({
+        portalId,
+      }),
+    onSuccess: async (data, portalId, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getListPortalsQueryKey(),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(data, portalId, ctx)
+      }
+    },
+  })
+}
 
 export function useGetPortal(
   portalId: string,
@@ -36,5 +89,51 @@ export function useGetUserPortalPermissions<TData = UserPortalPermissions>(
       synapseClient.portalsServicesClient.getRepoV1PortalPortalIdPermissions({
         portalId,
       }),
+  })
+}
+
+export function useGetPortalACL(
+  portalId: string,
+  options?: Partial<
+    UseQueryOptions<AccessControlList | null, SynapseClientError>
+  >,
+) {
+  const { synapseClient, keyFactory } = useSynapseContext()
+
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getPortalAclQueryKey(portalId),
+    queryFn: () =>
+      synapseClient.portalsServicesClient.getRepoV1PortalPortalIdAcl({
+        portalId,
+      }),
+  })
+}
+
+export function useUpdatePortalACL(
+  options?: UseMutationOptions<
+    AccessControlList,
+    SynapseClientError,
+    AccessControlList
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { synapseClient, keyFactory } = useSynapseContext()
+  return useMutation<AccessControlList, SynapseClientError, AccessControlList>({
+    ...options,
+    mutationFn: acl =>
+      synapseClient.portalsServicesClient.putRepoV1PortalPortalIdAcl({
+        portalId: acl.id!,
+        accessControlList: acl,
+      }),
+    onSuccess: async (newAcl, acl, ctx) => {
+      const portalAclQueryKey = keyFactory.getPortalAclQueryKey(newAcl.id!)
+      queryClient.setQueryData(portalAclQueryKey, newAcl)
+
+      if (options?.onSuccess) {
+        return await options.onSuccess(newAcl, acl, ctx)
+      }
+      return
+    },
   })
 }
