@@ -9,18 +9,17 @@ import { SearchQuery } from '@sage-bionetworks/synapse-types'
 function SearchPageInternal() {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  // Convert URL parameter to SearchQuery object
-  const queryTerm = searchParams.get(SEARCH_PAGE_QUERY_PARAM) || ''
-  const query: SearchQuery = {
-    queryTerm: queryTerm ? [queryTerm] : [],
-  }
+  // Parse SearchQuery object from URL parameter
+  const queryParam = searchParams.get(SEARCH_PAGE_QUERY_PARAM) || ''
+  const query: SearchQuery = queryParam
+    ? JSON.parse(queryParam)
+    : { queryTerm: [] }
 
+  // Store the whole SearchQuery object as JSON in URL
   const handleQueryChange = (newQuery: SearchQuery) => {
     setSearchParams(prev => {
-      // Extract the first query term to store in URL
-      const queryTerm = newQuery.queryTerm?.[0]
-      if (queryTerm) {
-        prev.set(SEARCH_PAGE_QUERY_PARAM, queryTerm)
+      if (newQuery && newQuery.queryTerm && newQuery.queryTerm.length > 0) {
+        prev.set(SEARCH_PAGE_QUERY_PARAM, JSON.stringify(newQuery))
       } else {
         prev.delete(SEARCH_PAGE_QUERY_PARAM)
       }
@@ -28,6 +27,7 @@ function SearchPageInternal() {
     })
   }
 
+  // Render search results with new query
   return <SynapseSearchPageResults query={query} setQuery={handleQueryChange} />
 }
 

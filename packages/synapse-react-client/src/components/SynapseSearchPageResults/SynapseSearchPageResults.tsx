@@ -14,8 +14,7 @@ export type SynapseSearchPageResultsProps = {
 export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   const { query, setQuery } = props
 
-  // Local state for the input field to allow typing without immediately triggering searches
-  // If SearchQuery is undefined  default queryTerm to an empty string
+  // Capture local state to prevent search from executing on every keystroke
   const [searchInputValue, setSearchInputValue] = useState(
     query?.queryTerm?.[0] || '',
   )
@@ -25,6 +24,7 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
     setSearchInputValue(query?.queryTerm?.[0] || '')
   }, [query])
 
+  // Execute search
   const {
     data,
     isLoading,
@@ -33,18 +33,21 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
     hasNextPage,
     isFetchingNextPage,
   } = useSearchInfinite(query ?? { queryTerm: [] }, {
-    enabled: !!query,
+    enabled: !!query?.queryTerm?.[0],
   })
 
+  // Update local input state
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInputValue(event.target.value)
   }
 
+  // Update query only when user explicitly searches
   const handleSearch = () => {
     if (setQuery) {
-      setQuery({
+      const newQuery = {
         queryTerm: searchInputValue ? [searchInputValue] : [],
-      })
+      }
+      setQuery(newQuery)
     }
   }
 
@@ -72,7 +75,9 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
           value={searchInputValue}
           onChange={handleInputChange}
           onKeyDown={e => {
-            if (e.key === 'Enter') handleSearch()
+            if (e.key === 'Enter') {
+              handleSearch()
+            }
           }}
           slotProps={{
             input: {
