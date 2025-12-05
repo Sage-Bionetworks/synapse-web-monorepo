@@ -2,7 +2,6 @@
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "baseUrl": "src",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "isolatedModules": true,
@@ -10,19 +9,15 @@
     "useUnknownInCatchVariables": false,
     "types": ["vite/client"],
     "paths": {
-      "@/*": ["./*"],
-      "@sage-bionetworks/synapse-types": [
-        "../../../packages/synapse-types/src"
-      ],
+      "@/*": ["./src/*"],
+      "@sage-bionetworks/synapse-types": ["../../packages/synapse-types/src"],
       "@sage-bionetworks/synapse-types/*": [
-        "../../../packages/synapse-types/src/*"
+        "../../packages/synapse-types/src/*"
       ],
-      "synapse-react-client": ["../../../packages/synapse-react-client/src"],
-      "synapse-react-client/*": [
-        "../../../packages/synapse-react-client/src/*"
-      ],
-      "vite-config": ["../../../packages/vite-config/src"],
-      "vite-config/*": ["../../../packages/vite-config/src/*"]
+      "synapse-react-client": ["../../packages/synapse-react-client/src"],
+      "synapse-react-client/*": ["../../packages/synapse-react-client/src/*"],
+      "vite-config": ["../../packages/vite-config/src"],
+      "vite-config/*": ["../../packages/vite-config/src/*"]
     }
   },
   "include": ["src"],
