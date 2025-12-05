@@ -11,7 +11,7 @@ export type IDUReportProps = {
   accessRequirementId: string
 }
 
-export function IDUReport(props: IDUReportProps) {
+export function IDUReport(props: IDUReportProps): React.ReactNode {
   const { accessRequirementId } = props
   // Load the next page when this ref comes into view.
   const { ref, inView } = useInView()

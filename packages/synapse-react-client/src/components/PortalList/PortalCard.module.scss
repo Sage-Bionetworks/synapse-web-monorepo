@@ -1,0 +1,42 @@
+@use '../../style/abstracts/variables' as SrcVariables;
+
+.portalCard:global(.MuiCard-root) {
+  margin-bottom: 16px;
+  transition: box-shadow 0.2s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.header {
+  margin-bottom: 16px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.url {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.875rem;
+  word-break: break-all;
+}
+
+.metadata {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
