@@ -1,7 +1,0 @@
-import{H as p}from"./HelpPopover-BdMWF5AU.js";import"./iframe-CoDvXaHz.js";import"./index-r8ZA1smB.js";import"./MarkdownPopover-B1_6xWIE.js";import"./LightTooltip-CKjCC4Dp.js";import"./MarkdownSynapse-C2ElmG_P.js";import"./SkeletonButton-CllzTHSq.js";import"./SkeletonInlineBlock-C69n0VA9.js";import"./SkeletonTable-LuC_UCPV.js";import"./SkeletonParagraph-YdwHeP2z.js";const b={title:"UI/HelpPopover",component:p},e={args:{markdownText:'Help that supports _rendering_ basic **Markdown**. If a helpUrl is provided then a "More info" button will be available.',helpUrl:"https://help.synapse.org/",placement:"right"}};var r,o,t;e.parameters={...e.parameters,docs:{...(r=e.parameters)==null?void 0:r.docs,source:{originalSource:`{
-  args: {
-    markdownText: 'Help that supports _rendering_ basic **Markdown**. If a helpUrl is provided then a "More info" button will be available.',
-    helpUrl: 'https://help.synapse.org/',
-    placement: 'right'
-  }
-}`,...(t=(o=e.parameters)==null?void 0:o.docs)==null?void 0:t.source}}};const u=["HelpPopoverDemo"];export{e as HelpPopoverDemo,u as __namedExportsOrder,b as default};
