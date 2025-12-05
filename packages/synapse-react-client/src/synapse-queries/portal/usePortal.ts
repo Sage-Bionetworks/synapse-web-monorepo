@@ -13,6 +13,52 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query'
 
+export function useCreatePortal(
+  options?: Partial<UseMutationOptions<Portal, SynapseClientError, Portal>>,
+) {
+  const queryClient = useQueryClient()
+  const { synapseClient, keyFactory } = useSynapseContext()
+
+  return useMutation<Portal, SynapseClientError, Portal>({
+    ...options,
+    mutationFn: (portal: Portal) =>
+      synapseClient.portalsServicesClient.postRepoV1Portal({
+        createOrUpdatePortalRequest: portal,
+      }),
+    onSuccess: async (createdPortal, portal, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getListPortalsQueryKey(),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(createdPortal, portal, ctx)
+      }
+    },
+  })
+}
+
+export function useDeletePortal(
+  options?: Partial<UseMutationOptions<void, SynapseClientError, string>>,
+) {
+  const queryClient = useQueryClient()
+  const { synapseClient, keyFactory } = useSynapseContext()
+
+  return useMutation<void, SynapseClientError, string>({
+    ...options,
+    mutationFn: (portalId: string) =>
+      synapseClient.portalsServicesClient.deleteRepoV1PortalPortalId({
+        portalId,
+      }),
+    onSuccess: async (data, portalId, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getListPortalsQueryKey(),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(data, portalId, ctx)
+      }
+    },
+  })
+}
+
 export function useGetPortal(
   portalId: string,
   options?: Partial<UseQueryOptions<Portal, SynapseClientError>>,

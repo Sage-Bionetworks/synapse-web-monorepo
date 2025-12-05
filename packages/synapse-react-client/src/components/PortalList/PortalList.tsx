@@ -1,12 +1,15 @@
 import { useListPortalsInfinite } from '@/synapse-queries/portal/useListPortals'
-import { Box, Typography, CircularProgress, Alert } from '@mui/material'
-import { Fragment, useEffect } from 'react'
+import { Box, Typography, CircularProgress, Alert, Button } from '@mui/material'
+import { Fragment, useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import PortalCard from './PortalCard'
+import CreatePortalModal from './CreatePortalModal'
 import styles from './PortalList.module.scss'
+import { Add } from '@mui/icons-material'
 
 export function PortalList(): React.ReactNode {
   const { ref, inView } = useInView()
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   const {
     data,
@@ -44,9 +47,19 @@ export function PortalList(): React.ReactNode {
 
   return (
     <Box className={styles.portalListContainer}>
-      <Typography variant="h4" component="h2" className={styles.title}>
-        Portals
-      </Typography>
+      <Box className={styles.header}>
+        <Typography variant="h4" component="h2" className={styles.title}>
+          Portals
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<Add />}
+          onClick={() => setIsCreateModalOpen(true)}
+        >
+          Create New Portal
+        </Button>
+      </Box>
 
       {isLoading && (
         <Box className={styles.loadingContainer}>
@@ -78,6 +91,11 @@ export function PortalList(): React.ReactNode {
           <CircularProgress size={32} />
         </Box>
       )}
+
+      <CreatePortalModal
+        open={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+      />
     </Box>
   )
 }
