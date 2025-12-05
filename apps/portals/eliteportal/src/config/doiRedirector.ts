@@ -40,7 +40,7 @@ export const doiRedirector: PortalResourceRedirector<ELITEResourceType> = (
 ) => {
   switch (resourceType) {
     case 'STUDY':
-      return `/Explore/Studies/DetailsPage/StudyDetails?studyKey=${resourceAttributes.Study}`
+      return `/Explore/Studies/DetailsPage/StudyDetails?studyKey=${resourceAttributes.studyKey}`
     default:
       throw new Error(
         `Resource type ${resourceType} not supported in this portal.`,
