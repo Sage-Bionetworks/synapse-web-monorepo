@@ -15,13 +15,15 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   const { query, setQuery } = props
 
   // Capture local state to prevent search from executing on every keystroke
+  // Join query terms so that textfield input looks correct
   const [searchInputValue, setSearchInputValue] = useState(
-    query?.queryTerm?.[0] || '',
+    query?.queryTerm?.join(' ') || '',
   )
 
   // Sync input value when query prop changes
+  // Join query terms so that textfield input looks correct
   useEffect(() => {
-    setSearchInputValue(query?.queryTerm?.[0] || '')
+    setSearchInputValue(query?.queryTerm?.join(' ') || '')
   }, [query])
 
   // Execute search
@@ -42,10 +44,13 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   }
 
   // Update query only when user explicitly searches
+  // Split query terms to form array
   const handleSearch = () => {
     if (setQuery) {
       const newQuery = {
-        queryTerm: searchInputValue ? [searchInputValue] : [],
+        queryTerm: searchInputValue
+          ? searchInputValue.split(' ').filter(term => term.trim() !== '')
+          : [],
       }
       setQuery(newQuery)
     }
