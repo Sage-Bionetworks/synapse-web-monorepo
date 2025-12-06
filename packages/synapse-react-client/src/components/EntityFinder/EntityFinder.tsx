@@ -95,7 +95,7 @@ export function EntityFinder({
   visibleTypesInTree = TREE_DEFAULT_VISIBLE_TYPES,
   treeOnly = false,
   initialSelected,
-}: EntityFinderProps) {
+}: EntityFinderProps): React.ReactNode {
   const { accessToken } = useSynapseContext()
   const [currentTab, setCurrentTab] = React.useState(EntityFinderTab.BROWSE)
 

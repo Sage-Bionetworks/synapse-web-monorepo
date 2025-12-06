@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Button, Stack, Typography } from '@mui/material'
 import { Link as RouterLink } from 'react-router'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
@@ -19,7 +20,7 @@ type AllChallengesSectionProps = {
 const AllChallengesSection = ({
   sql,
   borderRadiusPx,
-}: AllChallengesSectionProps) => {
+}: AllChallengesSectionProps): React.ReactNode => {
   const { entityId } = parseEntityIdAndVersionFromSqlStatement(sql)
 
   const queryBundleRequest: QueryBundleRequest = {

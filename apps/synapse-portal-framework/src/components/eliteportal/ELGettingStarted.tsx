@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Typography } from '@mui/material'
 import exploreIcon from './assets/explore_icon.png'
 import uncoverIcon from './assets/uncover_icon.png'
@@ -42,7 +43,7 @@ export function IconSquare({ iconUrl, headline, description }) {
   )
 }
 
-const ELGettingStarted = () => {
+const ELGettingStarted = (): React.ReactNode => {
   return (
     <Box
       sx={{

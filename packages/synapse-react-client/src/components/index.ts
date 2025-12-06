@@ -97,6 +97,8 @@ export * from './PortalFeatureHighlights'
 export * from './FeaturedResearch'
 export * from './PortalHomePageHeader'
 export * from './PortalFeaturedPartners'
+export * from './PortalList'
+export * from './PortalAclEditor'
 export * from './PortalSectionHeader'
 
 // TODO: Find a better way to expose Icon components

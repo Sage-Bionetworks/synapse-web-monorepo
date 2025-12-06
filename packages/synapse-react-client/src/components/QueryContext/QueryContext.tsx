@@ -1,3 +1,4 @@
+import React from 'react'
 import { LockedColumn } from '@/utils'
 import { ImmutableTableQueryResult } from '@/utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
@@ -93,7 +94,7 @@ export type QueryContextProviderProps = PropsWithChildren<{
 export const QueryContextProvider = ({
   children,
   queryContext,
-}: QueryContextProviderProps) => {
+}: QueryContextProviderProps): React.ReactNode => {
   return (
     <QueryContext.Provider value={queryContext}>
       {children}

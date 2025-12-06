@@ -1,8 +1,9 @@
+import React from 'react'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 import { styled } from '@mui/material'
 import { Color } from '@mui/material/styles'
 
-export const LiveIcon = (props: SvgIconProps) => {
+export const LiveIcon = (props: SvgIconProps): React.ReactNode => {
   return (
     <SvgIcon {...props} fill="none" xmlns="http://www.w3.org/2000/svg">
       <svg

@@ -64,7 +64,7 @@ const DEFAULT_ZOOM = 0.85
  * and the output stored in 'nodes' and 'edges'. The 'nodes' and 'edges' arrays are used by the
  * ReactFlow component.
  */
-const ProvenanceReactFlow = (props: ProvenanceProps) => {
+const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
   const {
     entityRefs: rootEntityRefs,
     containerHeight = '200px',
@@ -420,7 +420,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps) => {
   )
 }
 
-const ProvenanceGraph = (props: ProvenanceProps) => {
+const ProvenanceGraph = (props: ProvenanceProps): React.ReactNode => {
   return (
     <SynapseErrorBoundary>
       <ReactFlowProvider>

@@ -1,3 +1,4 @@
+import React from 'react'
 import { ReactComponent as SageLogo } from '../assets/sage-logo.svg'
 import { ReactComponent as NCState } from './assets/ncstate.svg'
 import { ReactComponent as StonyBrook } from './assets/stonybrook.svg'
@@ -5,7 +6,7 @@ import { ReactComponent as NIA } from './assets/nia_light.svg'
 import { Link, Stack, Typography } from '@mui/material'
 import DevelopedBySage from '../DevelopedBySage'
 
-const ClassicDevelopedBySage = () => {
+const ClassicDevelopedBySage = (): React.ReactNode => {
   return (
     <DevelopedBySage>
       <Typography sx={{ mb: 0 }}>

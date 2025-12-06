@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from 'synapse-react-client'
@@ -18,7 +19,7 @@ type NewChallengesSectionProps = {
 const NewChallengesSection = ({
   sql,
   borderRadiusPx,
-}: NewChallengesSectionProps) => {
+}: NewChallengesSectionProps): React.ReactNode => {
   const { entityId } = parseEntityIdAndVersionFromSqlStatement(sql)
 
   const queryBundleRequest: QueryBundleRequest = {

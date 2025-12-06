@@ -1,3 +1,4 @@
+import React from 'react'
 import { HelpPopover } from '@/components/HelpPopover/HelpPopover'
 import IconSvg from '@/components/IconSvg/IconSvg'
 import {
@@ -19,7 +20,7 @@ export interface DialogProps extends Omit<MuiDialogProps, 'content'> {
   helpText?: string
 }
 
-export const Dialog = (props: DialogProps) => {
+export const Dialog = (props: DialogProps): React.ReactNode => {
   const { title, content, helpText, ...rest } = props
 
   return (

@@ -11,6 +11,7 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material'
+import React from 'react'
 import PortalFullTextSearchField from './PortalSearch/PortalFullTextSearchField'
 import { spreadSx } from 'synapse-react-client/theme/spreadSx'
 import { useNavigate } from 'react-router'
@@ -38,7 +39,7 @@ const HeaderSearchBox = ({
   callback,
   sx,
   roles,
-}: HeaderSearchBoxProps) => {
+}: HeaderSearchBoxProps): React.ReactNode => {
   const [role, setRole] = useState('')
   const theme = useTheme()
   const navigate = useNavigate()

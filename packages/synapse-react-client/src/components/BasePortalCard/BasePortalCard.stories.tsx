@@ -1,3 +1,4 @@
+import React from 'react'
 import BasePortalCard from './BasePortalCard'
 import ColorfulPortalCardWithChips from './ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
 
@@ -6,7 +7,7 @@ export default {
   component: BasePortalCard,
 }
 
-export const Default = () => {
+export const Default = (): React.ReactNode => {
   return (
     <ColorfulPortalCardWithChips
       title={'Challenge Title'}

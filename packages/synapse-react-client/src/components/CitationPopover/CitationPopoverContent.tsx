@@ -12,6 +12,7 @@ import {
   Typography,
   PopoverProps,
 } from '@mui/material'
+import React from 'react'
 import { useCitation } from './useCitation'
 import { createLinkAndDownload } from './CitationPopoverUtils'
 import { KeyboardArrowDown } from '@mui/icons-material'
@@ -48,7 +49,9 @@ const selectSx: SxProps = {
 export type CitationPopoverProps = CitationProps &
   Pick<PopoverProps, 'anchorEl' | 'open' | 'id' | 'onClose'>
 
-export const CitationPopoverContent = (props: CitationPopoverProps) => {
+export const CitationPopoverContent = (
+  props: CitationPopoverProps,
+): React.ReactNode => {
   const {
     doi,
     title,

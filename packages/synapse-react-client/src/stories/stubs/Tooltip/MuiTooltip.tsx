@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   Tooltip as MuiTooltip,
   TooltipProps as MuiTooltipProps,
@@ -5,4 +6,6 @@ import {
 
 export type TooltipProps = MuiTooltipProps
 
-export const Tooltip = (props: TooltipProps) => <MuiTooltip {...props} />
+export const Tooltip = (props: TooltipProps): React.ReactNode => (
+  <MuiTooltip {...props} />
+)

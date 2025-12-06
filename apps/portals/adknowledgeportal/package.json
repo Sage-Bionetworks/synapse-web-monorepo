@@ -24,11 +24,12 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap adknowledgeportal",
+    "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap",
     "preview": "vite preview",
     "type-check": "tsc --build",
     "lint": "eslint src",
-    "_generate-sitemap": "node ../../synapse-portal-framework/sitemap/generate-sitemap.cjs \\\"$VITE_PORTAL_KEY\\\"",
+    "build-sitemap-routes": "vite build --config sitemap.vite.config.ts && node build/sitemap-entry.mjs",
+    "_generate-sitemap": "pnpm build-sitemap-routes && tsx ../../synapse-portal-framework/src/sitemap/cli.ts \\\"$VITE_PORTAL_KEY\\\" --config src/config/sitemapConfig.ts --routes build/sitemap-routes.json",
     "generate-sitemap": "dotenv -- pnpm _generate-sitemap",
     "save-build-date": "mkdir -p public && date > public/build-date.txt"
   }

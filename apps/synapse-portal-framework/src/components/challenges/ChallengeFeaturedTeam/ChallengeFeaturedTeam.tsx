@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Typography } from '@mui/material'
 import styles from './ChallengeFeaturedTeam.module.scss'
 import { parseEntityIdFromSqlStatement } from 'synapse-react-client/utils/functions'
@@ -21,7 +22,7 @@ type TeamImageCardProps = {
   teamMemberNamesDescription?: string
 }
 
-const TeamImageCard = (props: TeamImageCardProps) => {
+const TeamImageCard = (props: TeamImageCardProps): React.ReactNode => {
   const imageUrl = useTableImageUrl(props.teamPhotoFileHandleId, props.entityId)
 
   return (
@@ -34,7 +35,7 @@ const TeamImageCard = (props: TeamImageCardProps) => {
   )
 }
 
-const FeaturedTeam = ({ sql }: FeaturedTeamProps) => {
+const FeaturedTeam = ({ sql }: FeaturedTeamProps): React.ReactNode => {
   const entityId = parseEntityIdFromSqlStatement(sql)
 
   const queryBundleRequest: QueryBundleRequest = {
@@ -116,7 +117,7 @@ const FeaturedTeam = ({ sql }: FeaturedTeamProps) => {
           })}
         </Box>
         <Box className={styles.FeaturedTeam__textSection}>
-          <MarkdownSynapse wikiId="635914" ownerId="syn51476216" />
+          <MarkdownSynapse wikiId="635926" ownerId="syn51476216" />
         </Box>
       </Box>
     </Box>

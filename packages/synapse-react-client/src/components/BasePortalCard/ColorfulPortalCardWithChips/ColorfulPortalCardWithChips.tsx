@@ -1,3 +1,4 @@
+import React from 'react'
 import BasePortalCard from '../BasePortalCard'
 import { Chip, Box, Button, Stack, Typography } from '@mui/material'
 import styles from './ColorfulPortalCardWithChips.module.scss'
@@ -32,7 +33,7 @@ const getChicletColors = (chips: string[]) => {
   })
 }
 
-const Chips = ({ values }: { values: string[] }) => {
+const Chips = ({ values }: { values: string[] }): React.ReactNode => {
   const chipColors = getChicletColors(values)
   return (
     <Box className={styles.ColorfulPortalCardWithChips__chipsContainer}>
@@ -63,7 +64,7 @@ const ColorfulPortalCardWithChips = ({
   entityId,
   borderRadiusPx,
   cardSize = 'medium',
-}: ColorfulPortalCardWithChipsProps) => {
+}: ColorfulPortalCardWithChipsProps): React.ReactNode => {
   const imageUrl = useImageUrl(backgroundImage ?? '', entityId ?? '')
   const backgroundImageValue = imageUrl ?? backgroundImage
 

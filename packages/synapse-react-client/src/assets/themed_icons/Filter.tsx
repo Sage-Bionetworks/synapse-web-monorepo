@@ -1,4 +1,5 @@
-export const Filter = () => (
+import React from 'react'
+export const Filter = (): React.ReactNode => (
   <svg
     data-icon="filter"
     width="13"

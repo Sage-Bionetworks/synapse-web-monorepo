@@ -10,6 +10,7 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import noop from 'lodash-es/noop'
 import { forwardRef, useImperativeHandle, useState } from 'react'
+import { displayToast } from '@/components/ToastMessage/ToastMessage'
 
 export interface StartGridSessionProps {
   onSessionChange?: (session: GridSession | null) => void
@@ -38,6 +39,16 @@ export const StartGridSession = forwardRef<
     onSuccess({ session, replica }) {
       onSessionChange(session)
       onReplicaChange(replica.replicaId!)
+    },
+    onError(error) {
+      const message =
+        error &&
+        typeof error === 'object' &&
+        'message' in error &&
+        typeof error.message === 'string'
+          ? error.message
+          : 'An error occurred'
+      displayToast(message, 'danger')
     },
   })
 

@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Typography, Button } from '@mui/material'
 import HeaderSearchBox from '@sage-bionetworks/synapse-portal-framework/components/HeaderSearchBox'
 import { Query } from '@sage-bionetworks/synapse-types'
@@ -9,7 +10,7 @@ export type StandardsHeaderProps = {
   ftsConfig: FTSConfig
 }
 
-const StandardsHeader = (props: StandardsHeaderProps) => {
+const StandardsHeader = (props: StandardsHeaderProps): React.ReactNode => {
   const searchPlaceholder = 'Search for a biomedical data standard'
   const searchExampleTerms = [
     'Imaging',

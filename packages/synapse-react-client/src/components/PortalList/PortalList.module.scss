@@ -1,0 +1,59 @@
+@use '../../style/abstracts/variables' as SrcVariables;
+@use 'sass:map';
+
+.portalListContainer {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.title {
+  margin: 0;
+  font-weight: 600;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px 0;
+}
+
+.portalGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.errorAlert {
+  margin-bottom: 16px;
+}
+
+.loadMoreTrigger {
+  height: 1px;
+  margin-top: 16px;
+}
+
+.loadingMoreContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 0;
+}

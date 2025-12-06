@@ -1,3 +1,4 @@
+import React from 'react'
 import { useGetStablePresignedUrl } from '@/synapse-queries'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { SynapseConstants } from '@/utils'
@@ -59,7 +60,7 @@ const ImageCard = ({
   fileId,
   columnCount = 3,
   heightPx = 245,
-}: ImageCardProps) => {
+}: ImageCardProps): React.ReactNode => {
   const fha: FileHandleAssociation = {
     associateObjectId: entityId,
     associateObjectType: FileHandleAssociateType.TableEntity,

@@ -1,4 +1,5 @@
-export const Publication = () => (
+import React from 'react'
+export const Publication = (): React.ReactNode => (
   <svg width="61" height="76" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M60.047 0H.953C.427 0 0 .387 0 .864v74.272c0 .477.427.864.953.864h59.094c.526 0 .953-.387.953-.864V.864C61 .387 60.573 0 60.047 0zm-.953 74.273H1.906V1.727h57.188v72.546z"

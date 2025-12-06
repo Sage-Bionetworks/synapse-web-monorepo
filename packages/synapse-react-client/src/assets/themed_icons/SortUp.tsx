@@ -1,6 +1,7 @@
+import React from 'react'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
-export const SortUp = (props: SvgIconProps) => (
+export const SortUp = (props: SvgIconProps): React.ReactNode => (
   <SvgIcon
     data-icon="sort-up"
     viewBox="-3 0 27 16"

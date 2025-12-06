@@ -1,3 +1,4 @@
+import React from 'react'
 import { StyledFormControl } from '@/components/StyledComponents'
 import { Box, TextField, useTheme } from '@mui/material'
 import { VerificationSubmission } from '@sage-bionetworks/synapse-types'
@@ -31,7 +32,9 @@ export type ProfileFieldsEditorProps = {
  * @param props
  * @returns
  */
-export const ProfileFieldsEditor = (props: ProfileFieldsEditorProps) => {
+export const ProfileFieldsEditor = (
+  props: ProfileFieldsEditorProps,
+): React.ReactNode => {
   const theme = useTheme()
   const [values, setValues] = useState({ ...props.verificationSubmission })
   const [errors] = useState({} as Partial<VerificationSubmission>)

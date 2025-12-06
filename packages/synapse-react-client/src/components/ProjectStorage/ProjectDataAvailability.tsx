@@ -5,6 +5,7 @@ import { useSynapseContext } from '@/utils'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { SAGE_OFFERINGS_HELP_URL } from '@/utils/SynapseConstants'
 import { Box, SxProps, Tooltip, Typography } from '@mui/material'
+import React from 'react'
 import HelpPopover from '../HelpPopover'
 
 export type ProjectDataAvailabilityProps = {
@@ -16,7 +17,7 @@ const usageBarWidth = 142 //px
 export function ProjectDataAvailability({
   projectId,
   sx,
-}: ProjectDataAvailabilityProps) {
+}: ProjectDataAvailabilityProps): React.ReactNode {
   const { isAuthenticated } = useSynapseContext()
   const { data } = useProjectStorageUsage(projectId!, {
     enabled: !!projectId && isAuthenticated,

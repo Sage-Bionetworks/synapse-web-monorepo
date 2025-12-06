@@ -1,3 +1,4 @@
+import React from 'react'
 import AddAd from '@/assets/icons/AddAd'
 import { StyledTableContainer } from '@/components/styled/StyledTableContainer'
 import { useGetEntityHeaders } from '@/synapse-queries/entity/useGetEntityHeaders'
@@ -84,7 +85,9 @@ export type EntityHeaderOrDummy = EntityHeader & { isDummy?: boolean }
  * Renders a sortable/filterable table for a set of entity references.  If editable, onUpdate will be called back
  * on any entity added/removed.
  */
-export const EntityHeaderTable = (props: EntityHeaderTableProps) => {
+export const EntityHeaderTable = (
+  props: EntityHeaderTableProps,
+): React.ReactNode => {
   const {
     references,
     isEditable,

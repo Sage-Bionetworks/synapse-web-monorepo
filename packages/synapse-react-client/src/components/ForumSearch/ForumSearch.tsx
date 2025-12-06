@@ -1,3 +1,4 @@
+import React from 'react'
 import NoSearchResults from '@/assets/icons/NoSearchResults'
 import { useGetEntity } from '@/synapse-queries/entity/useEntity'
 import { useSearchForumInfinite } from '@/synapse-queries/forum/useForum'
@@ -17,7 +18,7 @@ import DiscussionSearchResult from '../Forum/DiscussionSearchResult'
 import IconSvg from '../IconSvg/IconSvg'
 import { displayToast } from '../ToastMessage/ToastMessage'
 
-const NoSearchResultComponent = () => {
+const NoSearchResultComponent = (): React.ReactNode => {
   return (
     <Box
       sx={{
@@ -39,13 +40,13 @@ export type ForumSearchProps = {
   onSearchResultsVisible?: (visible: boolean) => void
 }
 
-export const ForumSearch = (props: ForumSearchProps) => {
+export const ForumSearch = (props: ForumSearchProps): React.ReactNode => {
   const { onSearchResultsVisible } = props
   const [searchInput, setSearchInput] = useState<string>('')
   const [lastSearchTerm, setLastSearchTerm] = useState<string>('')
   const [isShowingResults, setIsShowingResults] = useState(false)
 
-  const { data: entity } = useGetEntity<Project>(props.projectId!, undefined, {
+  const { data: entity } = useGetEntity<Project>(props.projectId, undefined, {
     enabled: !!props.projectId,
   })
 

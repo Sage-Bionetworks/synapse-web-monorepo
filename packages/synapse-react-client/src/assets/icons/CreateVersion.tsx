@@ -1,6 +1,7 @@
+import React from 'react'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
-const CreateVersion = (props: SvgIconProps) => {
+const CreateVersion = (props: SvgIconProps): React.ReactNode => {
   return (
     <SvgIcon {...props} viewBox={'0 0 18 24'}>
       <circle opacity="0.3" cx="4.74902" cy="3.49996" r="2.49999" />

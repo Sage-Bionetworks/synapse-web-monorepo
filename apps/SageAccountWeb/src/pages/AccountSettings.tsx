@@ -20,6 +20,7 @@ import {
   VerificationState,
   VerificationStateEnum,
 } from '@sage-bionetworks/synapse-types'
+import React from 'react'
 import { RefObject, useEffect, useRef, useState } from 'react'
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router'
 import RORInstitutionField from 'synapse-react-client/components/RORInstitutionField/RORInstitutionField'
@@ -58,7 +59,7 @@ function CompletionStatus({ isComplete }: { isComplete: boolean | undefined }) {
   )
 }
 
-const AccountSettings = () => {
+const AccountSettings = (): React.ReactNode => {
   const { accessToken } = useSynapseContext()
   const { hash } = useLocation()
   const [userProfile, setUserProfile] = useState<UserProfile>()

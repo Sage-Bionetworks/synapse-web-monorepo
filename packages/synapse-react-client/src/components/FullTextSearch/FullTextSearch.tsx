@@ -1,5 +1,5 @@
 import { Collapse, TextField } from '@mui/material'
-import { ChangeEvent, SyntheticEvent, useRef, useState } from 'react'
+import React, { ChangeEvent, SyntheticEvent, useRef, useState } from 'react'
 import { HelpPopover } from '../HelpPopover/HelpPopover'
 import IconSvg from '../IconSvg/IconSvg'
 import { IconSvgButton } from '../IconSvgButton'
@@ -16,7 +16,9 @@ export type FullTextSearchProps = {
   ftsConfig?: FTSConfig
 }
 
-export function FullTextSearch({ ftsConfig }: FullTextSearchProps) {
+export function FullTextSearch({
+  ftsConfig,
+}: FullTextSearchProps): React.ReactNode {
   const { executeQueryRequest } = useQueryContext()
   const { showSearchBar } = useQueryVisualizationContext()
   const [searchText, setSearchText] = useState('')

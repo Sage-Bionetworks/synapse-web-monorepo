@@ -1,3 +1,4 @@
+import React from 'react'
 import WideButton from '@/components/styled/WideButton'
 import { Box } from '@mui/material'
 import { useState } from 'react'
@@ -15,7 +16,7 @@ const DynamicFormModal = ({
   uiSchemaUrl,
   postUrl,
   submitButtonText,
-}: DynamicFormModalProps) => {
+}: DynamicFormModalProps): React.ReactNode => {
   const [open, setOpen] = useState(false)
 
   const handleClickOpen = () => {

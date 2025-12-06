@@ -1,10 +1,10 @@
 import { uniqueId } from 'lodash-es'
+import React, { ReactNode, useRef } from 'react'
 import { toast, ToastBar, Toaster } from 'react-hot-toast'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import FullWidthAlert, {
   AlertButtonConfig,
 } from '../FullWidthAlert/FullWidthAlert'
-import { ReactNode, useRef } from 'react'
 
 export type ToastMessageProps = {
   text: string
@@ -17,7 +17,11 @@ export type ToastMessageProps = {
  * Generalization of a Material-style toast message used in a couple of places. This component is simple and
  * cannot handle issuing multiple toast messages. For more sophisticated cases, see {@link displayToast}
  */
-export function ToastMessage({ text, show, autohide }: ToastMessageProps) {
+export function ToastMessage({
+  text,
+  show,
+  autohide,
+}: ToastMessageProps): React.JSX.Element {
   const modalRef = useRef<HTMLDivElement>(null)
   return (
     <TransitionGroup>
@@ -42,7 +46,7 @@ export function ToastMessage({ text, show, autohide }: ToastMessageProps) {
  * Note that this will collide with other notification systems, such as the BootstrapNotify notifications
  * in SWC.
  */
-export function SynapseToastContainer() {
+export function SynapseToastContainer(): React.ReactNode {
   return (
     <Toaster
       containerClassName="SynapseToastContainer"
