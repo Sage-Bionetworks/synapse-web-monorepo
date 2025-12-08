@@ -1,9 +1,6 @@
 import React from 'react'
 import { Box, Typography, Link } from '@mui/material'
 import HeaderSearchBox from '../HeaderSearchBox'
-import Header from '../Header'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
-import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries'
 import { AddAlertTwoTone } from '@mui/icons-material'
 
 const NFHeader = (): React.ReactNode => {
@@ -20,9 +17,6 @@ const NFHeader = (): React.ReactNode => {
     'patient reported outcomes',
   ]
 
-  const isFeatureEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.PORTAL_SEARCH_HEADER,
-  )
   const content = (
     <>
       <Box
@@ -71,44 +65,40 @@ const NFHeader = (): React.ReactNode => {
       </Box>
     </>
   )
-  if (isFeatureEnabled) {
-    return (
-      <header id="header">
+  return (
+    <header id="header">
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', lg: 'row' },
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '20px 0',
+        }}
+      >
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', lg: 'row' },
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: '20px 0',
+            margin: 0,
+            flex: 1,
+            padding: { xs: '40px', lg: '40px 80px' },
           }}
         >
-          <Box
-            sx={{
-              margin: 0,
-              flex: 1,
-              padding: { xs: '40px', lg: '40px 80px' },
-            }}
-          >
-            {content}
-          </Box>
-          <HeaderSearchBox
-            searchExampleTerms={searchExampleTerms}
-            searchPlaceholder={searchPlaceholder}
-            path="/Search"
-            sx={{
-              flex: 1,
-              '& > :first-child': {
-                background: 'rgba(184, 204, 226, 0.60)',
-              },
-            }}
-          />
+          {content}
         </Box>
-      </header>
-    )
-  }
-
-  return <Header />
+        <HeaderSearchBox
+          searchExampleTerms={searchExampleTerms}
+          searchPlaceholder={searchPlaceholder}
+          path="/Search"
+          sx={{
+            flex: 1,
+            '& > :first-child': {
+              background: 'rgba(184, 204, 226, 0.60)',
+            },
+          }}
+        />
+      </Box>
+    </header>
+  )
 }
 
 export default NFHeader
