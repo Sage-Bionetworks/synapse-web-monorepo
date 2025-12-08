@@ -9,7 +9,10 @@
  *  -> Map { "requiredNumberArrayColumn" => ["some error"] }
  *
  *  extractColumnValidationMessages(["#: row-level error"])
- *  -> Map { "row" => ["row-level error"] }
+ *  -> Map { "_row" => ["row-level error"] }
+ *
+ *  extractColumnValidationMessages(["#: required key [missingColumn] not found"])
+ *  -> Map { "missingColumn" => ["required key [missingColumn] not found"] }
  */
 export function extractColumnValidationMessages(
   messages: string[],
@@ -25,8 +28,16 @@ export function extractColumnValidationMessages(
     const str = raw.trimStart()
     const match = str.match(regex)
     if (match) {
-      const columnName = match[1]?.trim() ?? '_row'
+      let columnName = match[1]?.trim() ?? '_row'
       const message = match[2].trim()
+      if (columnName === '_row') {
+        const requiredKeyMatch = message.match(
+          /^required key \[([^\]]+)\] not found$/i,
+        )
+        if (requiredKeyMatch) {
+          columnName = requiredKeyMatch[1]
+        }
+      }
 
       if (!columnMap.has(columnName)) {
         columnMap.set(columnName, [])

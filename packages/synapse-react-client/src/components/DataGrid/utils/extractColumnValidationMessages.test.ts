@@ -143,4 +143,14 @@ describe('extractColumnValidationMessages', () => {
       'additional properties are not allowed',
     ])
   })
+
+  it('should extract column name from required key messages', () => {
+    const messages = ['#: required key [missingColumn] not found']
+    const result = extractColumnValidationMessages(messages)
+
+    expect(result.size).toBe(1)
+    expect(result.get('missingColumn')).toEqual([
+      'required key [missingColumn] not found',
+    ])
+  })
 })
