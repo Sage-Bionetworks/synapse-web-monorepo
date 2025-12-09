@@ -53,7 +53,6 @@ const publications: QueryWrapperPlotNavProps = {
   name: 'Publications',
   cardConfiguration: publicationsCardConfiguration,
   columnAliases,
-  facetValueSortConfigs: [{ columnName: 'year', direction: Direction.DESC }],
   searchConfiguration: {
     searchable: [
       'title',

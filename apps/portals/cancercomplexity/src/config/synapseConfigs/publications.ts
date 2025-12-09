@@ -79,9 +79,6 @@ export const publicationsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   shouldDeepLink: true,
   name: 'Publications',
   columnAliases,
-  facetValueSortConfigs: [
-    { columnName: 'publicationYear', direction: Direction.DESC },
-  ],
   searchConfiguration: {
     ftsConfig: {
       textMatchesMode: 'BOOLEAN',

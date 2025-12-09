@@ -37,7 +37,6 @@ export const publicationsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   sql: publicationsSql,
   name: 'Publications',
   shouldDeepLink: true,
-  facetValueSortConfigs: [{ columnName: 'year', direction: Direction.DESC }],
   facetsToPlot: ['Program', 'year', 'grant', 'journal'],
   cardConfiguration: publicationCardProps,
   columnAliases,

@@ -26,7 +26,6 @@ export const publicationsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   name: 'Publications',
   cardConfiguration: publicationsCardConfiguration,
   sql: publicationsSql,
-  facetValueSortConfigs: [{ columnName: 'year', direction: Direction.DESC }],
   facetsToPlot: ['grantNumber', 'year', 'journal', 'projectTitle'],
   searchConfiguration: {
     searchable: ['title', 'authors', 'year', 'journal', 'grantNumber'],
