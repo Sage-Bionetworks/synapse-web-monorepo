@@ -221,6 +221,7 @@ const queryWithAdditionalFilter: Query = {
         'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
       columnName: 'study',
       function: ColumnMultiValueFunction.HAS_LIKE,
+      _function: ColumnMultiValueFunction.HAS_LIKE,
       values: ['ADMC_ADNI_BakerLipidomics'],
     },
   ],
