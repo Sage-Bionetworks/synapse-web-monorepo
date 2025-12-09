@@ -49,7 +49,10 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
     if (setQuery) {
       const newQuery = {
         queryTerm: searchInputValue
-          ? searchInputValue.split(' ').filter(term => term.trim() !== '')
+          ? searchInputValue
+              .split(' ')
+              .map(term => term.trim())
+              .filter(Boolean)
           : [],
       }
       setQuery(newQuery)
