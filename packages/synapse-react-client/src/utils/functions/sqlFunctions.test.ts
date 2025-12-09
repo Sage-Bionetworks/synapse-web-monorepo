@@ -14,6 +14,7 @@ import {
   ColumnSingleValueQueryFilter,
   ColumnTypeEnum,
 } from '@sage-bionetworks/synapse-types'
+import { ColumnMultiValueFunctionQueryFilterToJSONTyped } from '@sage-bionetworks/synapse-client/generated/models/ColumnMultiValueFunctionQueryFilter'
 
 describe('parseEntityIdFromSqlStatement', () => {
   it('should get entityId correctly', () => {
@@ -189,6 +190,8 @@ describe('getAdditionalFilters', () => {
           'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
         columnName: 'study',
         function: ColumnMultiValueFunction.HAS,
+        // @ts-expect-error - Need both 'function' and '_function' due to type mismatch between synapse-types and synapse-client
+        _function: ColumnMultiValueFunction.HAS,
         values: ['syn21754060'],
       },
     ]
@@ -208,6 +211,8 @@ describe('getAdditionalFilters', () => {
           'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
         columnName: 'study',
         function: ColumnMultiValueFunction.HAS_LIKE,
+        // @ts-expect-error - Need both 'function' and '_function' due to type mismatch between synapse-types and synapse-client
+        _function: ColumnMultiValueFunction.HAS_LIKE,
         values: ['%abc%', '%def%'],
       },
     ]
@@ -252,6 +257,8 @@ describe('getAdditionalFilters', () => {
           'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
         columnName: 'APPLE',
         function: ColumnMultiValueFunction.HAS,
+        // @ts-expect-error - Need both 'function' and '_function' due to type mismatch between synapse-types and synapse-client
+        _function: ColumnMultiValueFunction.HAS,
         values: ['SMITH', 'FUJI'],
       },
     ]
@@ -271,6 +278,36 @@ describe('getAdditionalFilters', () => {
         getAdditionalFilters({ col: 'val' }, operator, 'syn123'),
       ).toBeDefined()
     })
+  })
+
+  it('verifies that ColumnMultiValueFunctionQueryFilter serializes correctly with both function and _function properties', () => {
+    const searchParams = {
+      study: 'testValue',
+    }
+    const operator: SQLOperator = ColumnMultiValueFunction.HAS
+
+    const result = getAdditionalFilters(searchParams, operator, 'syn123')
+    expect(result).toBeDefined()
+    expect(result?.length).toBe(1)
+
+    const filter = result![0] as ColumnMultiValueFunctionQueryFilter
+    expect(filter.concreteType).toBe(
+      'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
+    )
+
+    // Serialize using the synapse-client serializer
+    const serialized = ColumnMultiValueFunctionQueryFilterToJSONTyped(
+      filter,
+    ) as {
+      function: string
+      columnName: string
+      values: string[]
+    }
+
+    // Verify that the 'function' property is correctly set in the serialized output
+    expect(serialized.function).toBe(ColumnMultiValueFunction.HAS)
+    expect(serialized.columnName).toBe('study')
+    expect(serialized.values).toEqual(['testValue'])
   })
 })
 
