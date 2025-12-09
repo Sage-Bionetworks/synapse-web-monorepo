@@ -190,7 +190,6 @@ describe('getAdditionalFilters', () => {
           'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
         columnName: 'study',
         function: ColumnMultiValueFunction.HAS,
-        // @ts-expect-error - Need both 'function' and '_function' due to type mismatch between synapse-types and synapse-client
         _function: ColumnMultiValueFunction.HAS,
         values: ['syn21754060'],
       },
@@ -211,7 +210,6 @@ describe('getAdditionalFilters', () => {
           'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
         columnName: 'study',
         function: ColumnMultiValueFunction.HAS_LIKE,
-        // @ts-expect-error - Need both 'function' and '_function' due to type mismatch between synapse-types and synapse-client
         _function: ColumnMultiValueFunction.HAS_LIKE,
         values: ['%abc%', '%def%'],
       },
@@ -257,7 +255,6 @@ describe('getAdditionalFilters', () => {
           'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
         columnName: 'APPLE',
         function: ColumnMultiValueFunction.HAS,
-        // @ts-expect-error - Need both 'function' and '_function' due to type mismatch between synapse-types and synapse-client
         _function: ColumnMultiValueFunction.HAS,
         values: ['SMITH', 'FUJI'],
       },

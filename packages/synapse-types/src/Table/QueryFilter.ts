@@ -38,6 +38,8 @@ export interface ColumnMultiValueFunctionQueryFilter {
   isDefiningCondition?: boolean //When null (default) or false, this condition will be applied to WHERE clause of table/view query.  When set to true, for a query against a VirtualTable, this condition will be applied to the WHERE clause of the VirtualTable's definingSQL
   columnName: string // name of the column to filter
   function: ColumnMultiValueFunction // Determines the filter operation to perform
+  // PORTALS-3972:  Need both 'function' and '_function' due to type mismatch between synapse-types and synapse-client
+  _function: ColumnMultiValueFunction
   values: string[] // Values to used with the filter.
 }
 export type TextMatchesMode = 'NATURAL_LANGUAGE' | 'BOOLEAN'
