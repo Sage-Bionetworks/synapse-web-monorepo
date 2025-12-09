@@ -54,6 +54,7 @@ export const Demo: Story = {
                 'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
               values: ['Mus musculus'],
               function: ColumnMultiValueFunction.HAS,
+              _function: ColumnMultiValueFunction.HAS,
             },
           ],
         },

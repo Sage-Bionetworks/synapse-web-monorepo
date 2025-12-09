@@ -109,8 +109,6 @@ export const getAdditionalFilters = (
                   'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
                 columnName: key,
                 function: operator,
-                // PORTALS-3972
-                // @ts-expect-error - Need both 'function' and '_function' due to type mismatch between synapse-types and synapse-client
                 _function: operator,
                 values: searchParams[key].split(','),
               }
@@ -137,8 +135,6 @@ export const getAdditionalFilters = (
                   'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
                 columnName: key,
                 function: operator,
-                // PORTALS-3972
-                // @ts-expect-error - Need both 'function' and '_function' due to type mismatch between synapse-types and synapse-client
                 _function: operator,
                 values: searchParams[key].split(',').map(param => {
                   // Remove synId prefix for the same reasons as in the LIKE case
