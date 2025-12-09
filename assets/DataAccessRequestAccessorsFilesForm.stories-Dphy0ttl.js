@@ -1,0 +1,15 @@
+import{g as R,x as u,k as A,e as T,y as g,z as p,p as C,R as n,C as d,D as l,b as e}from"./iframe-CQJI7H2t.js";import{D as I}from"./DataAccessRequestAccessorsFilesForm-CC56QDF-.js";import"./index-r8ZA1smB.js";import"./enums-CMQwIa5M.js";import"./_baseIteratee-5cMs_epi.js";import"./isString-MdCpdfIL.js";import"./_arrayReduce-CrxnWFSq.js";import"./_baseEach-DN0mH8Et.js";import"./uniq-C8Thh210.js";import"./forEach-B8iwwgef.js";import"./useDataAccessSubmission-BSoyl4dh.js";import"./useInfiniteQuery-D6F9oIjz.js";import"./useAccessRequirements-DYyM5LI2.js";import"./index-DqkU7ALG.js";import"./_baseOrderBy-Bxe_T148.js";import"./_baseMap-DrS9-FBW.js";import"./useQueries-DxTHEh5Q.js";import"./useUserBundle-BJxyK2Lo.js";import"./useSuspenseQuery-Bc-UZawL.js";import"./UserBadge-Dyq7f4N_.js";import"./SkeletonTable-939R3x-7.js";import"./MenuItem-CsWn5GfW.js";import"./Card-yxllXAz0.js";import"./Chip-CsTJhxo4.js";import"./UserSearchBoxV2-DqBr4OoN.js";import"./useDebouncedEffect-BKWMUdzi.js";import"./use-deep-compare-effect.esm-BUsAUVzD.js";import"./without-Myf_x1iq.js";import"./Select-aab027f3.esm-DAjKwnsf.js";import"./defineProperty-CegpTSss.js";import"./UserOrTeamBadge-BTfCX5KN.js";import"./TeamBadge-DsBkcbTI.js";import"./RadioGroup-CeBzyp6I.js";import"./Radio-CnMFPJKi.js";import"./SwitchBase-24TTnX7U.js";import"./FormGroup-0d0XHNN_.js";import"./FormControlLabel-KQaj4uUj.js";import"./UploadDocumentField-Br05DISe.js";import"./FileUpload-BftYA1KY.js";import"./ManagedACTAccessRequirementFormWikiWrapper-CTdSIwyc.js";import"./MarkdownSynapse-Dg1sB7BI.js";import"./SkeletonButton-DUugX30x.js";import"./SkeletonInlineBlock-BCuuGuk5.js";import"./SkeletonParagraph-oxsYr-A_.js";import"./GridLegacy-DWdEjBy6.js";const de={title:"Governance/Data Access Request Flow/Managed Access Requirement/Step 2 - Accessors and Documentation",component:I,parameters:{stack:"mock",chromatic:{viewports:[600,1200]},msw:{handlers:[...R(e),...u(e),...A(e),...T(e),...g(e)]}},argTypes:{isAuthenticated:{type:"boolean"}},args:{isAuthenticated:!0}},t={args:{subjectId:d,subjectType:n.ENTITY,managedACTAccessRequirement:C,researchProjectId:p}},r={args:{subjectId:d,subjectType:n.ENTITY,managedACTAccessRequirement:l,researchProjectId:p}};var s,o,a;t.parameters={...t.parameters,docs:{...(s=t.parameters)==null?void 0:s.docs,source:{originalSource:`{
+  args: {
+    subjectId: MOCK_FOLDER_ID,
+    subjectType: RestrictableObjectType.ENTITY,
+    managedACTAccessRequirement: mockManagedACTAccessRequirement,
+    researchProjectId: MOCK_RESEARCH_PROJECT_ID
+  }
+}`,...(a=(o=t.parameters)==null?void 0:o.docs)==null?void 0:a.source}}};var m,c,i;r.parameters={...r.parameters,docs:{...(m=r.parameters)==null?void 0:m.docs,source:{originalSource:`{
+  args: {
+    subjectId: MOCK_FOLDER_ID,
+    subjectType: RestrictableObjectType.ENTITY,
+    managedACTAccessRequirement: mockManagedAccessRequirementWithNoACL,
+    researchProjectId: MOCK_RESEARCH_PROJECT_ID
+  }
+}`,...(i=(c=r.parameters)==null?void 0:c.docs)==null?void 0:i.source}}};const Re=["Request","Renewal"];export{r as Renewal,t as Request,Re as __namedExportsOrder,de as default};
