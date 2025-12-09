@@ -1,0 +1,15 @@
+import{p as R,r as s,j as r,B as S,P as k}from"./iframe-mfaqAuKn.js";import{S as a}from"./SetManagedAccessRequirementFields-fy0PiSvi.js";import"./index-r8ZA1smB.js";import"./useAccessRequirements-Ba3EFSgx.js";import"./index-D3AHZnx8.js";import"./_baseOrderBy-5R4U94mW.js";import"./_baseIteratee-DEOpNloE.js";import"./_baseMap-1AzMXr6e.js";import"./_baseEach-_IDFhxIe.js";import"./useQueries-CXO38aGV.js";import"./useInfiniteQuery-CFl_zl7K.js";import"./UploadDocumentField-91PvFVZ_.js";import"./FileUpload-DAp7yB5E.js";import"./SetBasicAccessRequirementFields-DUUPU5HV.js";import"./FormControlLabel-phRtYxCJ.js";import"./Checkbox-BXDlWSV_.js";import"./SwitchBase-N2YArUPS.js";import"./ConfirmationDialog-DK1C4L_H.js";import"./DialogBase-BA7H051B.js";import"./Close-YScbRJtZ.js";import"./HelpPopover-CYTH5UW2.js";import"./MarkdownPopover-B-BPuZn1.js";import"./LightTooltip-BuyZuxhp.js";import"./MarkdownSynapse-ChHwalJV.js";import"./SkeletonButton-Df6Re1Ke.js";import"./SkeletonInlineBlock-B--4faiZ.js";import"./SkeletonTable-CQAWTA0x.js";import"./SkeletonParagraph-BK2WyijI.js";import"./WikiMarkdownEditorButton-eHPH7mk9.js";import"./WikiMarkdownEditor-DVN9kEVh.js";import"./MarkdownEditor-CGz3V73w.js";import"./UserSearchBoxV2-Dvb4KSLm.js";import"./useDebouncedEffect-BT7rG54I.js";import"./use-deep-compare-effect.esm-BVXF_Pc-.js";import"./uniq-4uLo8lp5.js";import"./without-KQtmhIWX.js";import"./UserBadge-Bqjav_Ws.js";import"./useUserBundle-DyICHo5Z.js";import"./useSuspenseQuery-Ck8XhOTY.js";import"./MenuItem-Ce4v9NmO.js";import"./Card-DtMWtPD2.js";import"./Chip-BGU9tTve.js";import"./Select-aab027f3.esm-wYGPny1m.js";import"./defineProperty-CegpTSss.js";import"./UserOrTeamBadge-CF7tA5NW.js";import"./TeamBadge-CAM1kjxf.js";import"./Tabs-DHAglMAr.js";import"./KeyboardArrowRight-BqihLUIv.js";import"./_arrayReduce-CrxnWFSq.js";import"./upperFirst-BQUUS5OY.js";import"./_stringToArray-BWsdv7jD.js";const Sr={title:"Governance/SetManagedAccessRequirementFields",component:a,render:function(g){const[x,o]=s.useState(!1),m=s.useRef(null);return r.jsxs(r.Fragment,{children:[r.jsx(S,{onClick:()=>{var i;o(!0),(i=m.current)==null||i.save()},variant:"contained",disabled:x,children:"Save AR"}),r.jsx(k,{sx:{mx:"auto",p:"44px",maxWidth:"750px"},children:r.jsx(a,{...g,ref:m,onSave:()=>o(!1),onError:()=>o(!1)})})]})}},e={args:{accessRequirementId:R.id.toString()},parameters:{stack:"mock"}},t={args:{accessRequirementId:"9602704"},parameters:{stack:"development"}};var p,n,c;e.parameters={...e.parameters,docs:{...(p=e.parameters)==null?void 0:p.docs,source:{originalSource:`{
+  args: {
+    accessRequirementId: mockManagedACTAccessRequirement.id.toString()
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...(c=(n=e.parameters)==null?void 0:n.docs)==null?void 0:c.source}}};var d,u,l;t.parameters={...t.parameters,docs:{...(d=t.parameters)==null?void 0:d.docs,source:{originalSource:`{
+  args: {
+    accessRequirementId: '9602704'
+  },
+  parameters: {
+    stack: 'development'
+  }
+}`,...(l=(u=t.parameters)==null?void 0:u.docs)==null?void 0:l.source}}};const kr=["MockDemo","DevDemo"];export{t as DevDemo,e as MockDemo,kr as __namedExportsOrder,Sr as default};
