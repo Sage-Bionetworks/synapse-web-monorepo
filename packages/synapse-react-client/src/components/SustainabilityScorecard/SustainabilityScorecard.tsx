@@ -6,6 +6,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
+import React from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { getFieldIndex } from '@/utils/functions/queryUtils'
@@ -41,7 +42,10 @@ type MetricRowProps = {
   metricsConfig: MetricsConfig[]
 }
 
-const MetricRow = ({ metricValues, metricsConfig }: MetricRowProps) => {
+const MetricRow = ({
+  metricValues,
+  metricsConfig,
+}: MetricRowProps): React.ReactNode => {
   return (
     <>
       {metricsConfig.map((metric, index) => (
@@ -109,7 +113,7 @@ const SustainabilityScorecard = ({
   queryRequest,
   sx,
   sustainabilityReportLink,
-}: SustainabilityScorecardProps) => {
+}: SustainabilityScorecardProps): React.ReactNode => {
   const { data: queryResultBundle, isLoading } =
     useGetQueryResultBundle(queryRequest)
   const location = useLocation()

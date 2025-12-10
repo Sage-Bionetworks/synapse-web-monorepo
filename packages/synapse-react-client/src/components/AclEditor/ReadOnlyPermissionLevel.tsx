@@ -3,12 +3,15 @@ import {
   permissionLevelToLabel,
 } from '@/utils/PermissionLevelToAccessType'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
+import React from 'react'
 
 export type ReadOnlyPermissionLevelProps = {
   accessType: ACCESS_TYPE[]
 }
 
-export function ReadOnlyPermissionLevel(props: ReadOnlyPermissionLevelProps) {
+export function ReadOnlyPermissionLevel(
+  props: ReadOnlyPermissionLevelProps,
+): React.ReactNode {
   const { accessType } = props
 
   return (

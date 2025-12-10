@@ -1,3 +1,4 @@
+import React from 'react'
 import { DetailsPageSectionLayoutType } from '@/components/DetailsPage/DetailsPageSectionLayout'
 import { scrollToWithOffset } from '@/utils'
 import { Button, Stack, Typography } from '@mui/material'
@@ -7,7 +8,7 @@ const DetailsPageMenu = ({
   menuSections,
 }: {
   menuSections: DetailsPageSectionLayoutType[]
-}) => {
+}): React.ReactNode => {
   const location = useLocation()
   const navigate = useNavigate()
 

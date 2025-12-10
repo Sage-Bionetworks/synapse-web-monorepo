@@ -1,4 +1,5 @@
-export const Download = () => (
+import React from 'react'
+export const Download = (): React.ReactNode => (
   <svg
     data-icon="download"
     width="12"

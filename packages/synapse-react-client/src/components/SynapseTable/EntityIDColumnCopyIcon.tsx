@@ -1,3 +1,4 @@
+import React from 'react'
 import { getFullQueryTableResults } from '@/synapse-client/SynapseClient'
 import { SynapseConstants } from '@/utils'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
@@ -15,7 +16,9 @@ import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 type EntityIDColumnCopyIconProps = Omit<InteractiveCopyIdsIconProps, 'onCopy'>
 
-const EntityIDColumnCopyIcon = (props: EntityIDColumnCopyIconProps) => {
+const EntityIDColumnCopyIcon = (
+  props: EntityIDColumnCopyIconProps,
+): React.ReactNode => {
   const synapseContext = useSynapseContext()
   const { getCurrentQueryRequest } = useQueryContext()
   const queryRequestClone = useMemo(
@@ -46,7 +49,7 @@ const EntityIDColumnCopyIcon = (props: EntityIDColumnCopyIconProps) => {
     // ask for all pages of data
     const { sql: oldSql } = queryRequestClone.query
     const { entityId, versionNumber } =
-      parseEntityIdAndVersionFromSqlStatement(oldSql)!
+      parseEntityIdAndVersionFromSqlStatement(oldSql)
     const versionNumberString = versionNumber ? `.${versionNumber}` : ''
     queryRequestClone.partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
     const entityIdString = `${entityId}${versionNumberString}`

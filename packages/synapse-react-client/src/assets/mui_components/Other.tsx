@@ -1,6 +1,7 @@
+import React from 'react'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
-const Other = (props: SvgIconProps) => {
+const Other = (props: SvgIconProps): React.ReactNode => {
   const { fill, style, ...rest } = props
   return (
     <SvgIcon style={style} {...rest}>

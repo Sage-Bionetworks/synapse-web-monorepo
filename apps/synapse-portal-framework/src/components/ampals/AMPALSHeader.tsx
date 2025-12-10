@@ -1,10 +1,11 @@
+import React from 'react'
 import { Box, Typography } from '@mui/material'
 import HeaderSearchBox from '../HeaderSearchBox'
 
 type AMPALSHeaderProps = {
   headerSvgURL: string
 }
-const AMPALSHeader = (props: AMPALSHeaderProps) => {
+const AMPALSHeader = (props: AMPALSHeaderProps): React.ReactNode => {
   const { headerSvgURL } = props
   const searchPlaceholder = 'Search for ALS related data and resources'
   const searchExampleTerms = ['ALS', 'FTD', 'Sporadic ALS']

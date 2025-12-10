@@ -1,3 +1,4 @@
+import React from 'react'
 import { Typography, Box, Stack } from '@mui/material'
 import styles from './ChallengeMetrics.module.scss'
 import { ReactComponent as BkgImage } from '../assets/metricsBkg.svg'
@@ -17,7 +18,11 @@ type ChallengeMetricsProps = {
   sql: string
 }
 
-const StatContainer = ({ stat, label, description }: StatContainerProps) => (
+const StatContainer = ({
+  stat,
+  label,
+  description,
+}: StatContainerProps): React.ReactNode => (
   <Stack className={styles.statContainer}>
     <Typography variant="headline1" className={styles.statHeaderText}>
       {stat}
@@ -29,7 +34,7 @@ const StatContainer = ({ stat, label, description }: StatContainerProps) => (
   </Stack>
 )
 
-const ChallengeMetrics = ({ sql }: ChallengeMetricsProps) => {
+const ChallengeMetrics = ({ sql }: ChallengeMetricsProps): React.ReactNode => {
   const entityId = parseEntityIdFromSqlStatement(sql)
 
   const queryBundleRequest: QueryBundleRequest = {

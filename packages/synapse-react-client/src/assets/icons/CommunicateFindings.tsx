@@ -1,6 +1,9 @@
+import React from 'react'
 import { SVGProps } from 'react'
 
-const CommunicateFindings = (props: SVGProps<SVGSVGElement>) => (
+const CommunicateFindings = (
+  props: SVGProps<SVGSVGElement>,
+): React.ReactNode => (
   <svg
     {...props}
     xmlns="http://www.w3.org/2000/svg"

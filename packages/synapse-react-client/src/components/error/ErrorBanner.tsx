@@ -1,3 +1,4 @@
+import React from 'react'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { Optional } from '@/utils/types/Optional'
 import { Box, Button, Collapse, Stack } from '@mui/material'
@@ -9,8 +10,8 @@ import {
   FallbackProps,
 } from 'react-error-boundary'
 import FullWidthAlert from '../FullWidthAlert'
-import { useJiraIssueCollector } from '../JiraIssueCollector'
 import SignInButton from '../SignInButton'
+import { AlertButtonConfig } from '../FullWidthAlert/FullWidthAlert'
 
 type ErrorBannerProps = {
   error?: string | Error | SynapseClientError | null
@@ -20,7 +21,7 @@ type ErrorBannerProps = {
 export const YOU_ARE_NOT_AUTHORIZED_MESSAGE =
   'You are not authorized to access this resource.'
 
-export const SignInPrompt = () => {
+export const SignInPrompt = (): React.ReactNode => {
   return (
     <>
       Please <SignInButton /> to view this resource.
@@ -28,21 +29,15 @@ export const SignInPrompt = () => {
   )
 }
 
-export const ClientError = (props: { error: SynapseClientError }) => {
+export const ClientError = (props: {
+  error: SynapseClientError
+}): React.ReactNode => {
   const [showDetailedError, setShowDetailedError] = useState(false)
   const { accessToken } = useSynapseContext()
   const { error } = props
   const loginError =
     (error.status === 403 || error.status === 401) && !accessToken
   const accessDenied = error.status === 403 && accessToken
-
-  useJiraIssueCollector({
-    show: error.status >= 500,
-    issueCollector: 'SWC',
-    issueSummary: '',
-    issueDescription: error.reason,
-    issuePriority: '3',
-  })
 
   if (loginError) {
     return <SignInPrompt />
@@ -81,7 +76,7 @@ export const ClientError = (props: { error: SynapseClientError }) => {
   }
 }
 
-export const ErrorBanner = (props: ErrorBannerProps) => {
+export const ErrorBanner = (props: ErrorBannerProps): React.ReactNode => {
   const { error, reloadButtonFn } = props
 
   if (!error) {
@@ -98,6 +93,26 @@ export const ErrorBanner = (props: ErrorBannerProps) => {
   } else if (typeof error === 'string') {
     stringError = error
   }
+  const serverError = synapseClientError && synapseClientError.status >= 500
+  let primaryButtonConfig: AlertButtonConfig | undefined = undefined
+
+  if (serverError) {
+    primaryButtonConfig = {
+      text: 'Report Issue',
+      onClick: () => {
+        const issueUrl = `https://sagebionetworks.jira.com/servicedesk/customer/portal/9/group/16/create/84?description=${encodeURI(
+          `A server error occurred:\n\n${synapseClientError?.reason}`,
+        )}`
+        window.open(issueUrl, '_blank')
+      },
+    }
+  } else if (reloadButtonFn) {
+    primaryButtonConfig = {
+      text: 'Reload',
+      onClick: reloadButtonFn,
+    }
+  }
+
   return (
     <FullWidthAlert
       variant={'danger'}
@@ -109,12 +124,7 @@ export const ErrorBanner = (props: ErrorBannerProps) => {
           {stringError && stringError}
         </>
       }
-      primaryButtonConfig={
-        reloadButtonFn && {
-          text: 'Reload',
-          onClick: reloadButtonFn,
-        }
-      }
+      primaryButtonConfig={primaryButtonConfig}
     />
   )
 }
@@ -169,4 +179,6 @@ export const SynapseErrorBoundary = (
   props: PropsWithChildren<
     Optional<ErrorBoundaryPropsWithComponent, 'FallbackComponent'>
   >,
-) => <ErrorBoundary FallbackComponent={ErrorFallbackComponent} {...props} />
+): React.ReactNode => (
+  <ErrorBoundary FallbackComponent={ErrorFallbackComponent} {...props} />
+)

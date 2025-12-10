@@ -14,7 +14,9 @@ export type PortalFeatureHighlightsProps = {
 
 const transitionTimeoutMs = 400
 
-const PortalFeatureHighlights = (props: PortalFeatureHighlightsProps) => {
+const PortalFeatureHighlights = (
+  props: PortalFeatureHighlightsProps,
+): React.ReactNode => {
   const { reverseOrder, image, title, buttonText, summaryText, link } = props
   const [ref, inView] = useInView({ threshold: 0.3, triggerOnce: true })
   return (

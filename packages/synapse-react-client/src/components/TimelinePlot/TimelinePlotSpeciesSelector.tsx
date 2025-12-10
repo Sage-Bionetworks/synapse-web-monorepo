@@ -1,3 +1,4 @@
+import React from 'react'
 import { StyledFormControl } from '@/components/styled'
 import { useGetFullTableQueryResults } from '@/synapse-queries'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions'
@@ -18,7 +19,7 @@ export const TimelinePlotSpeciesSelector = ({
   additionalFilters,
   species,
   setSpecies,
-}: TimelinePlotSpeciesSelectorProps) => {
+}: TimelinePlotSpeciesSelectorProps): React.ReactNode => {
   const eventsTableId = parseEntityIdFromSqlStatement(sql)
   // Fetch the species
   const eventTableQuery = useGetFullTableQueryResults({

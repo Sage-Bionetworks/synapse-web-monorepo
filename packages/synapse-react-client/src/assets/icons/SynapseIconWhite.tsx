@@ -1,6 +1,7 @@
+import React from 'react'
 import { SVGProps } from 'react'
 
-const SynapseIconWhite = (props: SVGProps<SVGSVGElement>) => (
+const SynapseIconWhite = (props: SVGProps<SVGSVGElement>): React.ReactNode => (
   <svg
     {...props}
     width="30"

@@ -1,3 +1,4 @@
+import React from 'react'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { getFieldIndex } from '@/utils/functions/queryUtils'
 import {
@@ -29,7 +30,7 @@ const MetricSummaryRow = ({
   markdownText,
   metricValues,
   index,
-}: MetricSummaryRowProps) => {
+}: MetricSummaryRowProps): React.ReactNode => {
   return (
     <Box
       sx={{
@@ -80,7 +81,7 @@ const SustainabilityScorecardSummary = ({
   description,
   metricsConfig,
   scoreDescriptorColumnName,
-}: SustainabilityScorecardSummaryProps) => {
+}: SustainabilityScorecardSummaryProps): React.ReactNode => {
   const theme = useTheme()
 
   const { data: queryResultBundle, isLoading } =

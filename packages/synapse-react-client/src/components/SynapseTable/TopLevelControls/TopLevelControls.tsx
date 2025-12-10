@@ -1,3 +1,4 @@
+import React from 'react'
 import { useGetEntity } from '@/synapse-queries'
 import { SQL_EDITOR } from '@/utils/SynapseConstants'
 import { Button, Divider, Tooltip, Typography } from '@mui/material'
@@ -72,7 +73,7 @@ export type CustomControl = {
   buttonID?: string // optionally set the ID property of the element
 }
 
-const TopLevelControls = (props: TopLevelControlsProps) => {
+const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
   const {
     name,
     showColumnSelection = false,

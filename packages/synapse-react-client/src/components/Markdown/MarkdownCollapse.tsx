@@ -1,3 +1,4 @@
+import React from 'react'
 import { useState } from 'react'
 import MarkdownSynapse, { MarkdownSynapseProps } from './MarkdownSynapse'
 import { displayToast } from '../ToastMessage/ToastMessage'
@@ -24,7 +25,9 @@ export type MarkdownCollapseProps = {
  * the portal detail pages.
  * @param props
  */
-export const MarkdownCollapse = (props: MarkdownCollapseProps) => {
+export const MarkdownCollapse = (
+  props: MarkdownCollapseProps,
+): React.ReactNode => {
   const [show, setShow] = useState(false)
   const [wordCount, setWordCount] = useState<number>()
   const [plainText, setPlainText] = useState<string>()

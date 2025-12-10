@@ -1,6 +1,7 @@
+import React from 'react'
 import { SVGProps } from 'react'
 
-export const AlertIcon = (props: SVGProps<SVGSVGElement>) => (
+export const AlertIcon = (props: SVGProps<SVGSVGElement>): React.ReactNode => (
   <svg
     width="65"
     height="65"

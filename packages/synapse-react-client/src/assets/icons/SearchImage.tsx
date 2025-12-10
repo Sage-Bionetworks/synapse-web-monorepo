@@ -1,6 +1,7 @@
+import React from 'react'
 import { Box, BoxProps } from '@mui/material'
 
-const SearchImage = (props: BoxProps) => (
+const SearchImage = (props: BoxProps): React.ReactNode => (
   <Box {...props}>
     <svg
       width="100%"

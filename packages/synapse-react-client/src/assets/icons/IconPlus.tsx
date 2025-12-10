@@ -1,10 +1,13 @@
+import React from 'react'
 import { SVGProps } from 'react'
 
 type IconPlusProps = {
   title?: string
 }
 
-const IconPlus = (props: SVGProps<SVGSVGElement> & IconPlusProps) => (
+const IconPlus = (
+  props: SVGProps<SVGSVGElement> & IconPlusProps,
+): React.ReactNode => (
   <svg
     {...props}
     className={`Icon-Plus ${props.className ?? ''}`}

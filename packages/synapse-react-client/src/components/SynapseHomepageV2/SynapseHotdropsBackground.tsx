@@ -1,6 +1,7 @@
+import React from 'react'
 import { Box } from '@mui/material'
 
-const SynapseHotdropsBackground = () => {
+const SynapseHotdropsBackground = (): React.ReactNode => {
   return (
     <Box
       sx={{

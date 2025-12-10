@@ -7,7 +7,6 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": "${configDir}",
     "module": "esnext",
     "target": "es5",
     "lib": ["esnext", "dom"],

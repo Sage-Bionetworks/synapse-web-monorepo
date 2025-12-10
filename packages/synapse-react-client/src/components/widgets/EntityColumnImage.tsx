@@ -1,3 +1,4 @@
+import React from 'react'
 import { useGetEntity } from '@/synapse-queries'
 import { Box } from '@mui/system'
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
@@ -8,7 +9,9 @@ type EntityColumnImageProps = {
   entityId: string
 }
 
-export const EntityColumnImage = (props: EntityColumnImageProps) => {
+export const EntityColumnImage = (
+  props: EntityColumnImageProps,
+): React.ReactNode => {
   const { entityId } = props
   const [isExpanded, setIsExpanded] = useState(false)
 

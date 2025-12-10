@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Button, Typography } from '@mui/material'
 import ChallengeTeamTable from './ChallengeTeamTable'
 import { Stack } from '@mui/system'
@@ -20,7 +21,7 @@ export const SelectChallengeTeam = ({
   onCreateTeam,
   selectedTeamId,
   onSelectTeam,
-}: SelectChallengeTeamProps) => {
+}: SelectChallengeTeamProps): React.ReactNode => {
   return (
     <Stack spacing={2}>
       <Typography variant="body1" sx={{ lineHeight: '20px' }}>

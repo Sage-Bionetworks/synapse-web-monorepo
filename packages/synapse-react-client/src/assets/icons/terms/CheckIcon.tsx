@@ -1,6 +1,7 @@
+import React from 'react'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
-export const CheckIcon = (props: SvgIconProps) => {
+export const CheckIcon = (props: SvgIconProps): React.ReactNode => {
   return (
     <SvgIcon {...props} height={15} viewBox="0 0 19 15">
       <path

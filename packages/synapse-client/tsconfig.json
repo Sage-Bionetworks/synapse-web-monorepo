@@ -9,7 +9,10 @@
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": false,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "paths": {
+      "*": ["./*"]
+    }
   },
   "include": ["src/**/*.ts", "src/spec/**/*.json"]
 }

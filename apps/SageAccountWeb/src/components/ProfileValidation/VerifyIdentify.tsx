@@ -1,3 +1,4 @@
+import React from 'react'
 import { ORCiDButton } from './ORCiDButton'
 import { useEffect, useState } from 'react'
 import { VerificationSubmission } from '@sage-bionetworks/synapse-types'
@@ -14,7 +15,7 @@ export type VerifyIdentifyProps = {
   onNext: (vs: VerificationSubmission) => void
 }
 
-export const VerifyIdentify = (props: VerifyIdentifyProps) => {
+export const VerifyIdentify = (props: VerifyIdentifyProps): React.ReactNode => {
   const theme = useTheme()
   const { verificationSubmission } = props
   const [attachments] = useState(verificationSubmission.attachments)

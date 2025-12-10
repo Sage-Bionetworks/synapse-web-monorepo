@@ -1,3 +1,4 @@
+import React from 'react'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { SynapseConstants } from '@/utils'
 import { getFieldIndex } from '@/utils/functions/queryUtils'
@@ -34,7 +35,10 @@ enum ExpectedColumns {
 // PORTALS-2367
 const GOALSV2_DESKTOP_MIN_BREAKPOINT = 1200
 
-const GoalsV3 = ({ entityId, svgComponentMap }: GoalsV3Props) => {
+const GoalsV3 = ({
+  entityId,
+  svgComponentMap,
+}: GoalsV3Props): React.ReactNode => {
   const showDesktop = useShowDesktop(GOALSV2_DESKTOP_MIN_BREAKPOINT)
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',

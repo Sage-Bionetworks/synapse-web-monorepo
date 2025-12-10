@@ -487,7 +487,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
           : undefined
       }
       ctaLinkConfig={
-        ctaLinkConfig
+        ctaLinkConfig && ctaHref
           ? {
               text: ctaLinkConfig?.text,
               href: ctaHref,

@@ -1,3 +1,4 @@
+import React from 'react'
 import { getEntityChildren } from '@/synapse-client'
 import { useSynapseContext } from '@/utils'
 import { formatDate } from '@/utils/functions/DateFormatter'
@@ -499,7 +500,9 @@ export type VirtualizedTreeProps = Readonly<{
  * Component that utilizes react-vtree to efficiently display a tree of entities. react-vtree utilizes react-window
  * to only render visible nodes, which eliminates performance issues as seen in SWC-5978.
  */
-export const VirtualizedTree = (props: VirtualizedTreeProps) => {
+export const VirtualizedTree = (
+  props: VirtualizedTreeProps,
+): React.ReactNode => {
   const {
     rootNodeConfiguration,
     setSelectedId,

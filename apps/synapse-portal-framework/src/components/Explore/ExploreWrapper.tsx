@@ -11,8 +11,11 @@ import OrientationBanner from 'synapse-react-client/components/OrientationBanner
 import { ExplorePageRoute, ExploreWrapperProps } from './ExploreWrapperProps'
 import { ExploreWrapperTabs } from './ExploreWrapperTabs'
 import { useDocumentMetadata } from 'synapse-react-client/utils/context/DocumentMetadataContext'
+import React from 'react'
 
-function RouteMatchedOrientationBanner(props: { route: ExplorePageRoute }) {
+function RouteMatchedOrientationBanner(props: {
+  route: ExplorePageRoute
+}): React.ReactNode {
   const { route } = props
   const match = useMatch({ path: `/Explore/${route.path!}`, end: true })
 
@@ -25,7 +28,9 @@ function RouteMatchedOrientationBanner(props: { route: ExplorePageRoute }) {
 /**
  * The set of controls shared between Explore page to navigate the different Explore routes
  */
-export default function ExploreWrapper(props: ExploreWrapperProps) {
+export default function ExploreWrapper(
+  props: ExploreWrapperProps,
+): React.ReactNode {
   const { explorePaths } = props
 
   const theme = useTheme()
@@ -38,7 +43,9 @@ export default function ExploreWrapper(props: ExploreWrapperProps) {
     route => encodeURI(route.path!) === currentExploreRoute,
   )
   const pageName =
-    currentRoute?.displayName ?? currentRoute?.path?.replaceAll('/', '') ?? 'Explore'
+    currentRoute?.displayName ??
+    currentRoute?.path?.replaceAll('/', '') ??
+    'Explore'
 
   const newTitle: string = `${import.meta.env.VITE_PORTAL_NAME} - ${pageName}`
   useDocumentMetadata({ title: newTitle, priority: 50 })

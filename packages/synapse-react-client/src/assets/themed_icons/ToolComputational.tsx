@@ -1,4 +1,5 @@
-export const ToolComputational = () => (
+import React from 'react'
+export const ToolComputational = (): React.ReactNode => (
   <svg width="61" height="76" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clipPath="url(#ToolComputationalClip0)">
       <path

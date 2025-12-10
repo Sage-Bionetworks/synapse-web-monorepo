@@ -1,6 +1,7 @@
+import React from 'react'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
-const GeneExpression = (props: SvgIconProps) => {
+const GeneExpression = (props: SvgIconProps): React.ReactNode => {
   return (
     <SvgIcon {...props} className={'icon-gene-expression'}>
       <path d="M16.2599 8.28807C16.419 8.42065 16.6555 8.39916 16.7881 8.24005C16.9207 8.08095 16.8992 7.84449 16.7401 7.7119L16.2599 8.28807ZM13.2599 5.78807L16.2599 8.28807L16.7401 7.7119L13.7401 5.2119L13.2599 5.78807Z" />

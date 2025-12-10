@@ -1,4 +1,5 @@
-export const Database = () => (
+import React from 'react'
+export const Database = (): React.ReactNode => (
   <svg
     data-icon="database"
     width="28"

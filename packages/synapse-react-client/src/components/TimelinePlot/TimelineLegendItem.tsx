@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box } from '@mui/system'
 import { Typography } from '@mui/material'
 
@@ -5,7 +6,10 @@ type TimelineLegendItemProps = {
   color: string
   phaseName: string | null
 }
-const TimelineLegendItem = ({ color, phaseName }: TimelineLegendItemProps) => {
+const TimelineLegendItem = ({
+  color,
+  phaseName,
+}: TimelineLegendItemProps): React.ReactNode => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
       <Box

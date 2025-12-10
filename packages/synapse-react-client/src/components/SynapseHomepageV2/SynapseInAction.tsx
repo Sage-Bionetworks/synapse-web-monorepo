@@ -12,7 +12,6 @@ export function SynapseInAction({ tableId }: SynapseInActionProps) {
     entityId: tableId,
     query: {
       sql: `SELECT * FROM ${tableId}`,
-      limit: 5,
       sort: [{ column: 'order', direction: 'ASC' }],
     },
     partMask: BUNDLE_MASK_QUERY_RESULTS,

@@ -2,19 +2,31 @@ import { Box, TextField, InputAdornment, Button } from '@mui/material'
 import SynapseSearchResultsCard from './SynapseSearchResultsCard'
 import SearchIcon from '@mui/icons-material/Search'
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSearchInfinite } from '@/synapse-queries/search/useSearch'
 import { SearchQuery } from '@sage-bionetworks/synapse-types'
-import { SearchResults } from '@sage-bionetworks/synapse-types'
 
 export type SynapseSearchPageResultsProps = {
-  results: SearchResults
+  query?: SearchQuery
+  setQuery?: (newQuery: SearchQuery) => void
 }
 
-export function SynapseSearchPageResults() {
-  const [searchInput, setSearchInput] = useState('')
-  const [searchQuery, setSearchQuery] = useState<SearchQuery | null>(null)
+export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
+  const { query, setQuery } = props
 
+  // Capture local state to prevent search from executing on every keystroke
+  // Join query terms so that textfield input looks correct
+  const [searchInputValue, setSearchInputValue] = useState(
+    query?.queryTerm?.join(' ') || '',
+  )
+
+  // Sync input value when query prop changes
+  // Join query terms so that textfield input looks correct
+  useEffect(() => {
+    setSearchInputValue(query?.queryTerm?.join(' ') || '')
+  }, [query])
+
+  // Execute search
   const {
     data,
     isLoading,
@@ -22,18 +34,29 @@ export function SynapseSearchPageResults() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useSearchInfinite(searchQuery ?? { queryTerm: [] }, {
-    enabled: !!searchQuery,
+  } = useSearchInfinite(query ?? { queryTerm: [] }, {
+    enabled: !!query?.queryTerm?.[0],
   })
 
+  // Update local input state
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchInput(event.target.value)
+    setSearchInputValue(event.target.value)
   }
 
+  // Update query only when user explicitly searches
+  // Split query terms to form array
   const handleSearch = () => {
-    setSearchQuery({
-      queryTerm: searchInput ? [searchInput] : [],
-    })
+    if (setQuery) {
+      const newQuery = {
+        queryTerm: searchInputValue
+          ? searchInputValue
+              .split(' ')
+              .map(term => term.trim())
+              .filter(Boolean)
+          : [],
+      }
+      setQuery(newQuery)
+    }
   }
 
   return (
@@ -57,10 +80,12 @@ export function SynapseSearchPageResults() {
       >
         <TextField
           placeholder="Search…"
-          value={searchInput}
+          value={searchInputValue}
           onChange={handleInputChange}
           onKeyDown={e => {
-            if (e.key === 'Enter') handleSearch()
+            if (e.key === 'Enter') {
+              handleSearch()
+            }
           }}
           slotProps={{
             input: {

@@ -36,6 +36,8 @@ import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { applyModelChange, ModelChange } from './utils/applyModelChange'
 import { removeNoOpOperations } from './utils/DataGridUtils'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
+import { useGetCurrentUserBundle } from '@/synapse-queries'
+import CertificationRequirement from '@/components/AccessRequirementList/RequirementItem/CertificationRequirement'
 
 export type SynapseGridProps = {
   agentRegistrationId?: string
@@ -57,6 +59,8 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     )
 
     const startGridSessionRef = useRef<StartGridSessionHandle | null>(null)
+
+    const { data: userBundle, isLoading } = useGetCurrentUserBundle()
 
     useImperativeHandle(
       ref,
@@ -272,6 +276,10 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     )
 
     const gridRef = useRef<DataSheetGridRef | null>(null)
+
+    if (!isLoading && !userBundle?.isCertified) {
+      return <CertificationRequirement />
+    }
 
     return (
       <div>

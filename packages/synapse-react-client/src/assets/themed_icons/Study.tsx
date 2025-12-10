@@ -1,4 +1,5 @@
-export const Study = () => (
+import React from 'react'
+export const Study = (): React.ReactNode => (
   <svg
     data-icon="study"
     width="61"

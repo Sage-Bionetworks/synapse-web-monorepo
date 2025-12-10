@@ -1007,6 +1007,14 @@ export class KeyFactory {
     return this.getKey('portal', portalId, 'permissions')
   }
 
+  public getPortalAclQueryKey(portalId: string) {
+    return this.getKey('portal', portalId, 'acl')
+  }
+
+  public getListPortalsQueryKey() {
+    return this.getKey('portal', 'list')
+  }
+
   public getGridSessionKey(sessionId: string) {
     return this.getKey('gridSession', sessionId)
   }

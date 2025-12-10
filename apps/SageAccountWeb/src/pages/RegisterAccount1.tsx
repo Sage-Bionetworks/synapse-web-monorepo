@@ -1,3 +1,4 @@
+import React from 'react'
 import GoogleLogo from '@/assets/g-logo.png'
 import {
   VALID_USERNAME_DESCRIPTION,
@@ -86,7 +87,7 @@ function handleError(e: unknown) {
 
 const csrfToken = generateCsrfToken()
 
-const RegisterAccount1 = () => {
+const RegisterAccount1 = (): React.ReactNode => {
   const { isAuthenticated } = useSynapseContext()
   const appContext = useAppContext()
   const sessionContext = useApplicationSessionContext()

@@ -1,3 +1,4 @@
+import React from 'react'
 import { SyntheticEvent } from 'react'
 import {
   Button,
@@ -40,7 +41,9 @@ export type UnbindORCiDDialogProps = {
   redirectAfter: string
 }
 
-export const UnbindORCiDDialog = (props: UnbindORCiDDialogProps) => {
+export const UnbindORCiDDialog = (
+  props: UnbindORCiDDialogProps,
+): React.ReactNode => {
   const { accessToken } = useSynapseContext()
   return (
     <Dialog open={props.show} maxWidth="sm">

@@ -1,4 +1,5 @@
-export const Challenge = () => (
+import React from 'react'
+export const Challenge = (): React.ReactNode => (
   <svg
     width="61"
     height="76"

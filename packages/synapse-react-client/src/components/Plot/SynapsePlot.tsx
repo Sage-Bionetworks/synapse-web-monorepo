@@ -1,3 +1,4 @@
+import React from 'react'
 import { useGetFullTableQueryResults } from '@/synapse-queries'
 import { SynapseConstants } from '@/utils'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
@@ -38,7 +39,7 @@ export type SynapsePlotProps = {
   customPlotParams?: QueryWrapperPlotNavCustomPlotParams
 }
 
-export const SynapsePlot = (props: SynapsePlotProps) => {
+export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
   const { query } = props.synapsePlotWidgetParams
   const { selectedFacets, additionalFilters, onCustomPlotClick, queryContext } =
     props.customPlotParams ?? {}

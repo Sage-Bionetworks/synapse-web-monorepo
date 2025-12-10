@@ -1,10 +1,13 @@
+import React from 'react'
 import Typography from '@mui/material/Typography'
 
 export type SetPasswordInstructionsProps = {
   title: string
 }
 
-const SetPasswordInstructions = (props: SetPasswordInstructionsProps) => (
+const SetPasswordInstructions = (
+  props: SetPasswordInstructionsProps,
+): React.ReactNode => (
   <div>
     <Typography variant="headline2">{props.title}</Typography>
     <Typography variant="smallText1">

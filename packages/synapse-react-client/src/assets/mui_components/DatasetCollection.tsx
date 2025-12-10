@@ -1,6 +1,7 @@
+import React from 'react'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
-const DatasetCollection = (props: SvgIconProps) => {
+const DatasetCollection = (props: SvgIconProps): React.ReactNode => {
   return (
     <SvgIcon {...props}>
       <rect

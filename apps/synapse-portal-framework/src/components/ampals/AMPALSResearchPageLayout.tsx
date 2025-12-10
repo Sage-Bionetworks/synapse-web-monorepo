@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Container, ContainerProps, Typography } from '@mui/material'
 import { PropsWithChildren, ReactNode } from 'react'
 
@@ -9,7 +10,9 @@ type AMPALSResearchPageLayoutProps = PropsWithChildren<{
   sidebarContent?: ReactNode
 }>
 
-const AMPALSResearchPageLayout = (props: AMPALSResearchPageLayoutProps) => {
+const AMPALSResearchPageLayout = (
+  props: AMPALSResearchPageLayoutProps,
+): React.ReactNode => {
   const {
     ContainerProps,
     children,

@@ -1,3 +1,4 @@
+import React from 'react'
 import SynapseClient from '@/synapse-client'
 import { SynapseConstants } from '@/utils'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
@@ -15,7 +16,7 @@ type FileHandleLinkProps = {
   showDownloadIcon: boolean
   displayValue?: string
 }
-export const FileHandleLink = (props: FileHandleLinkProps) => {
+export const FileHandleLink = (props: FileHandleLinkProps): React.ReactNode => {
   const {
     fileHandleAssociation,
     showDownloadIcon,

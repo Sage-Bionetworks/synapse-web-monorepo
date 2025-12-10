@@ -12,7 +12,8 @@
     "./dist/index.js",
     "./dist/vite-config.js",
     "./dist/vitest-config.js",
-    "./dist/portals-vite-config.js"
+    "./dist/portals-vite-config.js",
+    "./dist/sitemap-vite-config.js"
   ],
   "peerDependencies": {
     "@vitest/coverage-v8": "^1.6.0",
