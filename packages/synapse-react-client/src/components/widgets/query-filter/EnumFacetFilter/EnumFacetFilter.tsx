@@ -6,7 +6,6 @@ import {
 import useGetInfoFromIds from '@/utils/hooks/useGetInfoFromIds'
 import {
   ColumnTypeEnum,
-  Direction,
   EntityHeader,
   Evaluation,
   FacetColumnRequest,

@@ -15,7 +15,6 @@ import { DEBOUNCE_DELAY_MS } from '@/utils/hooks/useImmutableTableQuery/useImmut
 import {
   ColumnModel,
   ColumnTypeEnum,
-  Direction,
   FacetColumnResultValueCount,
   FacetColumnResultValues,
   QueryBundleRequest,

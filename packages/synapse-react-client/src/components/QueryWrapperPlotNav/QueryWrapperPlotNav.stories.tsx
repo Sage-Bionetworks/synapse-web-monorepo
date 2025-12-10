@@ -10,7 +10,6 @@ import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
-  Direction,
   Query,
 } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react-vite'
