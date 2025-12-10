@@ -42,10 +42,11 @@ export function FullTextSearch({
           queryBundleRequest,
           columnModels,
           searchText,
-          setSearchText,
           ftsConfig,
         ),
       )
+      // Reset the search text after adding the filter
+      setSearchText('')
     }
   }
 
