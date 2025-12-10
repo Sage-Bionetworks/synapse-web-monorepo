@@ -2,19 +2,49 @@ import { createTheme, ThemeProvider } from '@mui/material'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { CookiesProvider } from 'react-cookie'
-import { createBrowserRouter } from 'react-router'
+import { createBrowserRouter, RouteObject } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 import { defaultQueryClientConfig } from 'synapse-react-client/utils/context/FullContextProvider'
 import { DocumentMetadataProvider } from 'synapse-react-client/utils/context/DocumentMetadataContext'
 import { mergeTheme } from 'synapse-react-client/theme/mergeTheme'
+import { RouteErrorBoundary } from 'synapse-react-client/components/error/RouteErrorBoundary'
 import { PortalContextProvider } from './components/PortalContext'
 import { PortalProps } from './components/PortalProps'
 
 const queryClient = new QueryClient(defaultQueryClientConfig)
 
+/**
+ * Recursively adds an errorElement to all routes that don't already have one
+ */
+function addErrorBoundaryToRoutes(
+  routes: RouteObject[],
+  logoIcon?: string,
+): RouteObject[] {
+  return routes.map(route => {
+    const result: RouteObject = {
+      ...route,
+      errorElement: route.errorElement ?? (
+        <RouteErrorBoundary icon={logoIcon} />
+      ),
+    }
+    if (route.children) {
+      result.children = addErrorBoundaryToRoutes(route.children, logoIcon)
+    }
+    return result
+  })
+}
+
 function Portal(props: PortalProps) {
   const { palette, ...context } = props
-  const router = createBrowserRouter(props.routeConfig)
+  const routesWithErrorBoundary = useMemo(
+    () =>
+      addErrorBoundaryToRoutes(
+        props.routeConfig,
+        context.logoHeaderConfig?.icon,
+      ),
+    [props.routeConfig, context.logoHeaderConfig?.icon],
+  )
+  const router = createBrowserRouter(routesWithErrorBoundary)
   const theme = useMemo(() => createTheme(mergeTheme({ palette })), [palette])
   const portalTitleEnv: unknown = import.meta.env.VITE_PORTAL_NAME
   const defaultTitle =
