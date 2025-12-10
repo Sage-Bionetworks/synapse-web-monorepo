@@ -65,6 +65,7 @@ export const TimelinePlot = ({
           'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
         values: [species],
         function: ColumnMultiValueFunction.HAS,
+        _function: ColumnMultiValueFunction.HAS,
       }
     : undefined
   const additionalFilters = [...queryFilters]

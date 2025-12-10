@@ -10,7 +10,6 @@ import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
-  Direction,
   Query,
 } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react-vite'
@@ -100,9 +99,6 @@ export const Cards: Story = {
     defaultShowPlots: false,
     defaultShowSearchBox: true,
     shouldDeepLink: true,
-    facetValueSortConfigs: [
-      { columnName: 'usageRequirements', direction: Direction.DESC },
-    ],
     cardConfiguration: {
       type: GENERIC_CARD,
       titleLinkConfig: {
@@ -221,6 +217,7 @@ const queryWithAdditionalFilter: Query = {
         'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
       columnName: 'study',
       function: ColumnMultiValueFunction.HAS_LIKE,
+      _function: ColumnMultiValueFunction.HAS_LIKE,
       values: ['ADMC_ADNI_BakerLipidomics'],
     },
   ],

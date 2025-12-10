@@ -176,6 +176,7 @@ class _Search extends Component<InternalSearchProps, SearchState> {
           {
             columnName,
             function: ColumnMultiValueFunction.HAS_LIKE,
+            _function: ColumnMultiValueFunction.HAS_LIKE,
             values: [`%${searchText}%`],
             concreteType:
               'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
