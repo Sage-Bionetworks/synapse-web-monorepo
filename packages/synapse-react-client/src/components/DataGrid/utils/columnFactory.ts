@@ -16,28 +16,24 @@ type ColumnConfig = {
   typeInfo: FlatTypeInfo | null
   enumeratedValues: EnumeratedValue[] | string[] | null
   isRequired: boolean
-  isConditionallyRequired?: boolean
 }
 
 function getHeaderClassName(isRequired: boolean): string {
   return isRequired ? 'header-cell-required' : 'header-cell'
 }
 
-function createDeleteValue(
-  columnName: string,
-  isConditionallyRequired?: boolean,
-) {
+function createDeleteValue(columnName: string, isRequired?: boolean) {
   return ({ rowData }: { rowData: Record<string, unknown> }) => ({
     ...rowData,
-    [columnName]: isConditionallyRequired ? undefined : null,
+    [columnName]: isRequired ? null : undefined,
   })
 }
 
-function createParseUserInput(isConditionallyRequired?: boolean) {
+function createParseUserInput(isRequired?: boolean) {
   return (value: string) => {
     const trimmedValue = value.trim()
     if (trimmedValue === '') {
-      return isConditionallyRequired ? undefined : null
+      return isRequired ? null : undefined
     }
     return trimmedValue
   }
@@ -57,10 +53,7 @@ const COLUMN_FACTORIES = {
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
     disabled: config.disabled,
-    deleteValue: createDeleteValue(
-      config.columnName,
-      config.isConditionallyRequired,
-    ),
+    deleteValue: createDeleteValue(config.columnName, config.isRequired),
   }),
 
   boolean: (config: ColumnConfig) => ({
@@ -75,10 +68,7 @@ const COLUMN_FACTORIES = {
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
     disabled: config.disabled,
-    deleteValue: createDeleteValue(
-      config.columnName,
-      config.isConditionallyRequired,
-    ),
+    deleteValue: createDeleteValue(config.columnName, config.isRequired),
   }),
 
   number: (config: ColumnConfig) => ({
@@ -87,10 +77,7 @@ const COLUMN_FACTORIES = {
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
     disabled: config.disabled,
-    deleteValue: createDeleteValue(
-      config.columnName,
-      config.isConditionallyRequired,
-    ),
+    deleteValue: createDeleteValue(config.columnName, config.isRequired),
   }),
 
   enumerated: (config: ColumnConfig) => ({
@@ -105,10 +92,7 @@ const COLUMN_FACTORIES = {
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
     disabled: config.disabled,
-    deleteValue: createDeleteValue(
-      config.columnName,
-      config.isConditionallyRequired,
-    ),
+    deleteValue: createDeleteValue(config.columnName, config.isRequired),
   }),
 
   'date-time': (config: ColumnConfig) => ({
@@ -122,10 +106,7 @@ const COLUMN_FACTORIES = {
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: Math.max(calculateColumnWidth(config.columnName), 215),
     disabled: config.disabled,
-    deleteValue: createDeleteValue(
-      config.columnName,
-      config.isConditionallyRequired,
-    ),
+    deleteValue: createDeleteValue(config.columnName, config.isRequired),
   }),
 
   text: (config: ColumnConfig) => ({
@@ -134,7 +115,7 @@ const COLUMN_FACTORIES = {
       createTextColumn({
         continuousUpdates: false,
         deletedValue: undefined,
-        parseUserInput: createParseUserInput(config.isConditionallyRequired),
+        parseUserInput: createParseUserInput(config.isRequired),
       }),
     ),
     title: config.columnName,
@@ -142,10 +123,7 @@ const COLUMN_FACTORIES = {
     minWidth: calculateColumnWidth(config.columnName),
     cellClassName: 'MuiInputBase-input',
     disabled: config.disabled,
-    deleteValue: createDeleteValue(
-      config.columnName,
-      config.isConditionallyRequired,
-    ),
+    deleteValue: createDeleteValue(config.columnName, config.isRequired),
   }),
 }
 
