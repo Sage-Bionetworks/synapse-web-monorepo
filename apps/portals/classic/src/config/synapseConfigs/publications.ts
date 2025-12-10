@@ -1,4 +1,3 @@
-import { Direction } from '@sage-bionetworks/synapse-types'
 import {
   CardConfiguration,
   QueryWrapperPlotNavProps,
