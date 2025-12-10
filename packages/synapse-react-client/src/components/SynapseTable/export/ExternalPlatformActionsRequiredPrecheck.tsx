@@ -92,14 +92,20 @@ export default function ExternalPlatformActionsRequiredPrecheck(
     selectedRows,
   ])
 
-  const { exportToCavatica, exportToTerra, exportToPluto, exportToPlutoDev } =
-    useExportTableQueryToAnalysisPlatform({
-      queryBundleRequest: queryFilteredBySelection,
-      selectColumns: queryMetadata?.selectColumns,
-      fileIdColumnName,
-      fileVersionColumnName,
-      fileNameColumnName,
-    })
+  const {
+    exportToCavatica,
+    exportToTerra,
+    exportToPluto,
+    exportToPlutoDev,
+    exportToADWorkbench,
+    exportToADWorkbenchDev,
+  } = useExportTableQueryToAnalysisPlatform({
+    queryBundleRequest: queryFilteredBySelection,
+    selectColumns: queryMetadata?.selectColumns,
+    fileIdColumnName,
+    fileVersionColumnName,
+    fileNameColumnName,
+  })
 
   const confirmButtonText = `Send ${getNumberOfResultsToInvokeActionCopy(
     hasResettableFilters,
@@ -124,7 +130,8 @@ export default function ExternalPlatformActionsRequiredPrecheck(
         await exportToPlutoDev()
         break
       case 'adworkbench':
-        console.warn('AD Workbench export not yet implemented')
+        // TODO: switch to exportToADWorkbench when AD Workbench is live
+        await exportToADWorkbenchDev()
         break
     }
     onSuccessfulExport()
@@ -135,6 +142,8 @@ export default function ExternalPlatformActionsRequiredPrecheck(
     exportToPlutoDev,
     onSuccessfulExport,
     selectedPlatform,
+    exportToADWorkbench,
+    exportToADWorkbenchDev,
   ])
 
   useEffect(() => {

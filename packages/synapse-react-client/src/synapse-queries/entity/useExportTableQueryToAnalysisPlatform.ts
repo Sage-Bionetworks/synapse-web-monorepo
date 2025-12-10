@@ -5,6 +5,7 @@ import {
 import { useExportToCavatica } from './useExportToCavatica'
 import { useExportToTerra } from './useExportToTerra'
 import { useExportToPluto } from './useExportToPluto'
+import { useExportToADWorkbench } from './useExportToADWorkbench'
 
 /**
  * Provides functions to export data from a Synapse table query to an external analysis platform.
@@ -55,10 +56,30 @@ export function useExportTableQueryToAnalysisPlatform(options: {
     true,
   )
 
+  const exportToADWorkbenchDev = useExportToADWorkbench(
+    queryBundleRequest,
+    selectColumns,
+    fileIdColumnName,
+    fileNameColumnName,
+    fileVersionColumnName,
+    true,
+  )
+
+  const exportToADWorkbench = useExportToADWorkbench(
+    queryBundleRequest,
+    selectColumns,
+    fileIdColumnName,
+    fileNameColumnName,
+    fileVersionColumnName,
+    false,
+  )
+
   return {
     exportToCavatica,
     exportToTerra,
     exportToPluto,
     exportToPlutoDev,
+    exportToADWorkbench,
+    exportToADWorkbenchDev,
   }
 }
