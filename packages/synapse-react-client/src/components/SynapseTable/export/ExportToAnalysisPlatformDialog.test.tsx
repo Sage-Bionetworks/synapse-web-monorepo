@@ -73,7 +73,7 @@ describe('ExportToAnalysisPlatformDialog tests', () => {
   test.each([
     { platform: 'cavatica', name: 'CAVATICA' },
     { platform: 'terra', name: 'Terra' },
-    { platform: 'adworkbench', name: 'AD Workbench' },
+    { platform: 'adworkbench', name: 'AD Discovery Portal' },
   ])(
     'Walk through each step of the dialog for $platform',
     async platformCase => {
@@ -90,7 +90,7 @@ describe('ExportToAnalysisPlatformDialog tests', () => {
       // Verify all platforms are shown
       screen.getByRole('menuitem', { name: 'CAVATICA' })
       screen.getByRole('menuitem', { name: 'Terra' })
-      screen.getByRole('menuitem', { name: 'AD Workbench' })
+      screen.getByRole('menuitem', { name: 'AD Discovery Portal' })
 
       const continueButton = screen.getByRole('button', { name: 'Continue' })
       expect(continueButton).toBeDisabled()
