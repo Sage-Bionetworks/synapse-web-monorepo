@@ -89,7 +89,7 @@ export const EXTERNAL_ANALYSIS_PLATFORMS: Record<
   adworkbench: {
     name: 'AD Discovery Portal',
     description:
-      "The AD Discovery Portal is designed to help researchers explore novel Alzheimer's disease and related dementias data through a publicly accessible dataset catalog. It offers a diverse collection of data, including imaging, omics, clinical, and multi-modal approaches, and brings together datasets from both industry and academia. The Discovery Portal is fully integrated with AD Workbench and enables seamless exploration, dataset access requests, and analysis. To learn more, check out Getting Started in the AD Discovery Portal.",
+      "The AD Discovery Portal is designed to help researchers explore novel Alzheimer's disease and related dementias data through a publicly accessible dataset catalog. It offers a diverse collection of data, including imaging, omics, clinical, and multi-modal approaches, and brings together datasets from both industry and academia. The Discovery Portal is fully integrated with AD Workbench and enables seamless exploration, dataset access requests, and analysis.",
     Logo: AdWorkbenchLogo,
     PlatformInstructions: () => <ADDiscoveryPortalInstructions />,
   },

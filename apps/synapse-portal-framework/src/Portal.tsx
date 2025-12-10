@@ -14,24 +14,16 @@ import { PortalProps } from './components/PortalProps'
 const queryClient = new QueryClient(defaultQueryClientConfig)
 
 /**
- * Recursively adds an errorElement to all routes that don't already have one
+ * Adds an errorElement to top-level routes that don't already have one
  */
 function addErrorBoundaryToRoutes(
   routes: RouteObject[],
   logoIcon?: string,
 ): RouteObject[] {
-  return routes.map(route => {
-    const result: RouteObject = {
-      ...route,
-      errorElement: route.errorElement ?? (
-        <RouteErrorBoundary icon={logoIcon} />
-      ),
-    }
-    if (route.children) {
-      result.children = addErrorBoundaryToRoutes(route.children, logoIcon)
-    }
-    return result
-  })
+  return routes.map(route => ({
+    ...route,
+    errorElement: route.errorElement ?? <RouteErrorBoundary icon={logoIcon} />,
+  }))
 }
 
 function Portal(props: PortalProps) {

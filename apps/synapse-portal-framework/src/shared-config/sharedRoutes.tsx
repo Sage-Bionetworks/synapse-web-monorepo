@@ -24,6 +24,14 @@ const routes: RouteObject[] = [
         convertModuleToRouteObject,
       ),
   },
+  {
+    path: 'test-init-error',
+    loader: () => {
+      throw new ReferenceError(
+        "Cannot access 'SomeComponent' before initialization",
+      )
+    },
+  },
 ]
 
 export default routes
