@@ -19,6 +19,7 @@ import {
 import { Color } from '@mui/material/styles'
 import { TraceEvent } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate } from 'react-router'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 
 export type SynapseChatInteractionProps = {
@@ -58,6 +59,8 @@ export function SynapseChatInteraction({
   const theme = useTheme()
   const ref = useRef<HTMLLIElement | null>(null)
   const [showTrace, setShowTrace] = useState(false)
+  const navigate = useNavigate()
+
   useEffect(() => {
     // on mount, scroll into view if instructed
     if (scrollIntoView) {
@@ -65,7 +68,7 @@ export function SynapseChatInteraction({
         ref.current.scrollIntoView({ behavior: 'smooth' })
       }
     }
-  }, [ref])
+  }, [ref, scrollIntoView])
 
   const isLoading = !chatResponseText && !chatErrorReason
 
@@ -96,10 +99,31 @@ export function SynapseChatInteraction({
   const textContent = useMemo(() => {
     const parser = new DOMParser()
     const doc = parser.parseFromString(chatResponseText ?? '', 'text/html')
+
+    // Remove tool_name elements
     const elementsToRemove = doc.querySelectorAll('tool_name')
     elementsToRemove.forEach(element => element.remove())
+
+    // Handle actions elements with redirect subelements
+    // custom agents are instructed to include these to indicate navigation
+    // in the format:
+    // <actions>
+    //   <redirect>/path/to/navigate/to</redirect>
+    // </actions>
+    const actionsElements = doc.querySelectorAll('actions')
+    actionsElements.forEach(actionsElement => {
+      const redirectElement = actionsElement.querySelector('redirect')
+      if (redirectElement && redirectElement.textContent) {
+        const redirectPath = redirectElement.textContent.trim()
+        // Navigate to the redirect path
+        navigate(redirectPath)
+      }
+      // Remove the actions element from the displayed content
+      actionsElement.remove()
+    })
+
     return doc.body.textContent ?? ''
-  }, [chatResponseText])
+  }, [chatResponseText, navigate])
 
   return (
     <>
