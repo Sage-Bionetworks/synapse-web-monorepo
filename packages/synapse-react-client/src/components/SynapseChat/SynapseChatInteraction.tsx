@@ -22,12 +22,22 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 
+// Hook to safely use navigate only when in a Router context
+function useSafeNavigate() {
+  try {
+    return useNavigate()
+  } catch {
+    return null
+  }
+}
+
 export type SynapseChatInteractionProps = {
   userMessage: string
   chatResponseText?: string
   chatResponseTrace?: TraceEvent[]
   scrollIntoView?: boolean
   chatErrorReason?: string
+  gotoPlace?: (href: string) => void
 }
 
 // Show tool calls in the trace. Useful for development. We may want to show them to users in the future.
@@ -55,11 +65,12 @@ export function SynapseChatInteraction({
   chatErrorReason,
   chatResponseTrace,
   scrollIntoView = false,
+  gotoPlace,
 }: SynapseChatInteractionProps) {
   const theme = useTheme()
   const ref = useRef<HTMLLIElement | null>(null)
   const [showTrace, setShowTrace] = useState(false)
-  const navigate = useNavigate()
+  const navigate = useSafeNavigate()
 
   useEffect(() => {
     // on mount, scroll into view if instructed
@@ -115,8 +126,15 @@ export function SynapseChatInteraction({
       const redirectElement = actionsElement.querySelector('redirect')
       if (redirectElement && redirectElement.textContent) {
         const redirectPath = redirectElement.textContent.trim()
-        // Navigate to the redirect path
-        navigate(redirectPath)
+        // Navigate to the redirect path.  Use gotoPlace, or react router if available, otherwise use window.location
+        if (gotoPlace) {
+          gotoPlace(redirectPath)
+        } else if (navigate) {
+          navigate(redirectPath)
+        } else {
+          // Fallback for when navigate is not available - note, this will lose chat state
+          window.location.href = redirectPath
+        }
       }
       // Remove the actions element from the displayed content
       actionsElement.remove()

@@ -46,6 +46,7 @@ function useTraceEvent(chatJobId: string, enabled: boolean) {
 
 type SynapseChatMessageProps = {
   chatJobId: string
+  gotoPlace?: (href: string) => void
 }
 
 export default function SynapseChatMessage(props: SynapseChatMessageProps) {

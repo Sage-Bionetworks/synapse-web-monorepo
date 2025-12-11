@@ -46,6 +46,8 @@ export type SynapseChatProps = {
   defaultAgentAccessLevel?: AgentAccessLevel
   // Whether to show the access level menu for the agent session.
   showAccessLevelMenu?: boolean
+  // A callback to navigate to a different place in the app (helpful for GWT app)
+  gotoPlace?: (href: string) => void
 }
 
 export type ChatInteraction = {
