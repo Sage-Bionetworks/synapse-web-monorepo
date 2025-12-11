@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useRef } from 'react'
 import SynapseIconWhite from '@/assets/icons/SynapseIconWhite'
 import SynapseLogoName from '@/assets/icons/SynapseLogoName'
 import {
@@ -167,6 +167,26 @@ export function SynapseNavDrawer({
     useState<boolean>(false)
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [chatSession, setChatSession] = useState<AgentSession>()
+  const [hasUnreadMessage, setHasUnreadMessage] = useState(false)
+  const isChatOpenRef = useRef(isChatOpen)
+
+  // Keep ref in sync with state
+  React.useEffect(() => {
+    isChatOpenRef.current = isChatOpen
+  }, [isChatOpen])
+
+  const handleNewMessage = useCallback(() => {
+    if (!isChatOpenRef.current) {
+      setHasUnreadMessage(true)
+    }
+  }, [])
+
+  // Clear unread indicator whenever chat opens
+  React.useEffect(() => {
+    if (isChatOpen) {
+      setHasUnreadMessage(false)
+    }
+  }, [isChatOpen])
 
   const { clearSession } = useApplicationSessionContext()
 
@@ -227,6 +247,19 @@ export function SynapseNavDrawer({
 
   const oneSageURL = useOneSageURL()
   const accountSettingsURL = useOneSageURL('/authenticated/myaccount')
+
+  // Keyboard shortcut: Cmd/Ctrl+K to toggle chat
+  React.useEffect(() => {
+    const handleKeyPress = (e: globalThis.KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        setIsChatOpen(prev => !prev)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [])
 
   return (
     <>
@@ -625,25 +658,44 @@ export function SynapseNavDrawer({
           </div>
         </Drawer>
       </div>
-      <Fab
-        color="primary"
-        aria-label="Open chat"
-        onClick={() => setIsChatOpen(true)}
+      <Box
         sx={{
           position: 'fixed',
           bottom: 20,
           right: 20,
+          transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           zIndex: 1200,
+          '&:hover': {
+            transform: 'scale(1.1)',
+          },
         }}
       >
-        <ChatIcon />
-      </Fab>
+        <Badge variant="dot" color="error" invisible={!hasUnreadMessage}>
+          <Fab
+            color="primary"
+            aria-label="Open chat assistant"
+            onClick={() => setIsChatOpen(true)}
+          >
+            <ChatIcon />
+          </Fab>
+        </Badge>
+      </Box>
       <Drawer
         anchor="right"
         open={isChatOpen}
         onClose={() => setIsChatOpen(false)}
         variant="persistent"
         className="SynapseChatPanel"
+        SlideProps={{
+          unmountOnExit: false,
+        }}
+        ModalProps={{
+          BackdropProps: {
+            sx: {
+              backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            },
+          },
+        }}
         sx={{
           '& .MuiDrawer-paper': {
             width: {
@@ -692,6 +744,7 @@ export function SynapseNavDrawer({
             setExternalSession={setChatSession}
             showAccessLevelMenu={true}
             textboxPositionOffset="0px"
+            onNewMessage={handleNewMessage}
           />
         </Box>
       </Drawer>

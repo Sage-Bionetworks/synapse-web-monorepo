@@ -46,6 +46,8 @@ export type SynapseChatProps = {
   defaultAgentAccessLevel?: AgentAccessLevel
   // Whether to show the access level menu for the agent session.
   showAccessLevelMenu?: boolean
+  /* Callback invoked when a new message is received */
+  onNewMessage?: () => void
 }
 
 export type ChatInteraction = {
@@ -70,6 +72,7 @@ export function SynapseChat({
   setExternalSession,
   externalChatState,
   showAccessLevelMenu = true,
+  onNewMessage,
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
   const [localAgentSession, setLocalAgentSession] = useState<AgentSession>()
@@ -243,7 +246,13 @@ export function SynapseChat({
               )
             })} */}
             {chatJobIds.map(jobId => {
-              return <SynapseChatMessage key={jobId} chatJobId={jobId} />
+              return (
+                <SynapseChatMessage
+                  key={jobId}
+                  chatJobId={jobId}
+                  onResponseReceived={onNewMessage}
+                />
+              )
             })}
             {pendingMessage && (
               <SynapseChatInteraction

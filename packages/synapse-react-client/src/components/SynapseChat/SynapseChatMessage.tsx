@@ -46,10 +46,11 @@ function useTraceEvent(chatJobId: string, enabled: boolean) {
 
 type SynapseChatMessageProps = {
   chatJobId: string
+  onResponseReceived?: (jobId: string) => void
 }
 
 export default function SynapseChatMessage(props: SynapseChatMessageProps) {
-  const { chatJobId } = props
+  const { chatJobId, onResponseReceived } = props
   const { data: asyncJobStatus } = usePollAsynchronousJob(chatJobId)
 
   const chatRequest = asyncJobStatus?.requestBody as AgentChatRequest
@@ -57,6 +58,13 @@ export default function SynapseChatMessage(props: SynapseChatMessageProps) {
     | AgentChatResponse
     | undefined
   const chatError = asyncJobStatus?.errorMessage
+
+  // Notify parent when response is received
+  useEffect(() => {
+    if ((chatResponse || chatError) && onResponseReceived) {
+      onResponseReceived(chatJobId)
+    }
+  }, [chatResponse, chatError, chatJobId, onResponseReceived])
 
   // enabled if the job has not finished processing
   const enableTrace =
