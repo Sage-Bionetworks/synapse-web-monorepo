@@ -4,12 +4,10 @@ import { Chat } from '@mui/icons-material'
 import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '@/utils'
 import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
-import SynapseChatDialog, { SynapseChatDialogProps } from './SynapseChatDialog'
+import DraggableDialog from '../DraggableDialog/DraggableDialog'
+import SynapseChat, { SynapseChatProps } from './SynapseChat'
 
-export type SynapsePortalChatFloatingActionButtonProps = Omit<
-  SynapseChatDialogProps,
-  'open' | 'onClose'
-> & {
+export type SynapsePortalChatFloatingActionButtonProps = SynapseChatProps & {
   tooltipText?: string
 }
 
@@ -40,19 +38,25 @@ export function SynapsePortalChatFloatingActionButton({
           onClick={() => setOpen(true)}
           sx={{
             position: 'fixed',
-            bottom: 16,
-            right: 16,
+            bottom: 20,
+            right: 20,
             zIndex: 1000,
           }}
         >
           <Chat />
         </Fab>
       </Tooltip>
-      <SynapseChatDialog
+      <DraggableDialog
         open={open}
         onClose={() => setOpen(false)}
-        {...chatDialogProps}
-      />
+        title={chatDialogProps.chatbotName || 'SynapseChat'}
+      >
+        <SynapseChat
+          hideTitle={true}
+          textboxPositionOffset="16px"
+          {...chatDialogProps}
+        />
+      </DraggableDialog>
     </>
   )
 }
