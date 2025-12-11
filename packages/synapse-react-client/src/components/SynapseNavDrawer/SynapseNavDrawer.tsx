@@ -31,6 +31,7 @@ import {
   Direction,
   SubmissionSortField,
   SubmissionState,
+  AgentSession,
 } from '@sage-bionetworks/synapse-types'
 import { KeyboardEvent, ReactNode, useState } from 'react'
 import { CreateProjectModal } from '../CreateProjectModal/CreateProjectModal'
@@ -165,6 +166,7 @@ export function SynapseNavDrawer({
   const [isShowingCreateProjectModal, setIsShowingCreateProjectModal] =
     useState<boolean>(false)
   const [isChatOpen, setIsChatOpen] = useState(false)
+  const [chatSession, setChatSession] = useState<AgentSession>()
 
   const { clearSession } = useApplicationSessionContext()
 
@@ -674,6 +676,23 @@ export function SynapseNavDrawer({
           >
             <CloseIcon />
           </IconButton>
+        </Box>
+        <Box
+          sx={{
+            flexGrow: 1,
+            height: 'calc(100vh - 73px)',
+            overflow: 'hidden',
+            padding: '16px',
+          }}
+        >
+          <SynapseChat
+            chatbotName="Synapse Assistant"
+            hideTitle={true}
+            externalSession={chatSession}
+            setExternalSession={setChatSession}
+            showAccessLevelMenu={true}
+            textboxPositionOffset="0px"
+          />
         </Box>
       </Drawer>
       <CreateProjectModal
