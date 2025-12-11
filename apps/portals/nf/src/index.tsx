@@ -29,6 +29,10 @@ root.render(
       logoHeaderConfig={logoHeaderConfig}
       logoFooterConfig={logoFooterConfig}
       navbarConfig={navbarConfig}
+      synapseChatProps={{
+        agentRegistrationId: '174',
+        chatbotName: 'NF Portal Assistant',
+      }}
     />
   </StrictMode>,
 )

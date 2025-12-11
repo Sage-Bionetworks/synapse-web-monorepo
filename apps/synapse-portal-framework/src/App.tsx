@@ -3,7 +3,7 @@ import { Outlet } from 'react-router'
 import CookiesNotification from 'synapse-react-client/components/CookiesNotification/CookiesNotification'
 import { SynapseErrorBoundary } from 'synapse-react-client/components/error/ErrorBanner'
 import { SynapseToastContainer } from 'synapse-react-client/components/ToastMessage'
-import { SynapseChatFloatingActionButton } from 'synapse-react-client'
+import { SynapsePortalChatFloatingActionButton } from 'synapse-react-client'
 import AppInitializer from './components/AppInitializer'
 import Footer from './components/Footer'
 import Navbar from './components/navbar/Navbar'
@@ -26,7 +26,7 @@ export default function App(props: PropsWithChildren) {
         </main>
         <Footer />
         {synapseChatProps && (
-          <SynapseChatFloatingActionButton {...synapseChatProps} />
+          <SynapsePortalChatFloatingActionButton {...synapseChatProps} />
         )}
       </AppInitializer>
     </SynapseErrorBoundary>

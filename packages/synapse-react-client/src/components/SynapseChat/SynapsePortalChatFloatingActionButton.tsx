@@ -6,7 +6,7 @@ import { useSynapseContext } from '@/utils'
 import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
 import SynapseChatDialog, { SynapseChatDialogProps } from './SynapseChatDialog'
 
-export type SynapseChatFloatingActionButtonProps = Omit<
+export type SynapsePortalChatFloatingActionButtonProps = Omit<
   SynapseChatDialogProps,
   'open' | 'onClose'
 > & {
@@ -18,10 +18,10 @@ export type SynapseChatFloatingActionButtonProps = Omit<
  * Positioned in the lower right corner of the screen.
  * Only shown when the user is logged in and the SYNAPSE_CHAT feature flag is enabled.
  */
-export function SynapseChatFloatingActionButton({
+export function SynapsePortalChatFloatingActionButton({
   tooltipText = 'Open Chat',
   ...chatDialogProps
-}: SynapseChatFloatingActionButtonProps) {
+}: SynapsePortalChatFloatingActionButtonProps) {
   const [open, setOpen] = useState(false)
   const { accessToken } = useSynapseContext()
   const isChatEnabled = useGetFeatureFlag(FeatureFlagEnum.SYNAPSE_CHAT)
@@ -57,4 +57,4 @@ export function SynapseChatFloatingActionButton({
   )
 }
 
-export default SynapseChatFloatingActionButton
+export default SynapsePortalChatFloatingActionButton

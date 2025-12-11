@@ -3,11 +3,11 @@ import { getEntityHandlers } from '@/mocks/msw/handlers/entityHandlers'
 import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react-vite'
-import SynapseChatFloatingActionButton from './SynapseChatFloatingActionButton'
+import SynapsePortalChatFloatingActionButton from './SynapsePortalChatFloatingActionButton'
 
 const meta = {
   title: 'Synapse/Chat',
-  component: SynapseChatFloatingActionButton,
+  component: SynapsePortalChatFloatingActionButton,
   parameters: {
     chromatic: { viewports: [600, 1200] },
   },
