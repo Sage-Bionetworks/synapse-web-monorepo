@@ -30,6 +30,7 @@ import { displayToast } from '../ToastMessage'
 import AccessLevelMenu from './AccessLevelMenu'
 import SynapseChatInteraction from './SynapseChatInteraction'
 import SynapseChatMessage from './SynapseChatMessage'
+import { SynapseChatContextChips } from './SynapseChatContextChips'
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
@@ -284,6 +285,23 @@ export function SynapseChat({
           backgroundColor: 'white',
         }}
       >
+        {promptContext && promptContext.length > 0 && (
+          <Box sx={{ mb: 1 }}>
+            <SynapseChatContextChips
+              contexts={promptContext}
+              onRemove={
+                isContextEditable && onPromptContextChange
+                  ? context => {
+                      onPromptContextChange(
+                        promptContext.filter(c => c !== context),
+                      )
+                    }
+                  : undefined
+              }
+              variant="compact"
+            />
+          </Box>
+        )}
         <Box
           component="form"
           sx={{
