@@ -8,7 +8,7 @@ import {
   AgentChatRequest,
   AgentPromptSessionContext,
 } from '@sage-bionetworks/synapse-client'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 export type ChatState = {
   sendChat: (message: string) => void
@@ -23,6 +23,12 @@ export function useChatState(
   const [chatJobIds, setChatJobIds] = useState<string[]>([])
   // Optimistic update state for latest unprocessed message
   const [pendingMessage, setPendingMessage] = useState<string | null>(null)
+
+  // Reset chat history when session changes
+  useEffect(() => {
+    setChatJobIds([])
+    setPendingMessage(null)
+  }, [agentSession?.sessionId])
 
   const { mutate: sendChatMessageToAgent } = useSendChatMessageToAgent(
     {

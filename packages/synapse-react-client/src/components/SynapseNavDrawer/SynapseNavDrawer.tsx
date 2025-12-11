@@ -16,6 +16,12 @@ import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
 import {
   Badge,
   Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Drawer,
   Fab,
   IconButton,
@@ -28,6 +34,7 @@ import {
 } from '@mui/material'
 import ChatIcon from '@mui/icons-material/Chat'
 import CloseIcon from '@mui/icons-material/Close'
+import AddCommentIcon from '@mui/icons-material/AddComment'
 import {
   Direction,
   SubmissionSortField,
@@ -173,26 +180,32 @@ export function SynapseNavDrawer({
   const [promptContext, setPromptContext] = useState<
     AgentPromptSessionContext[]
   >([])
+  const [isShowingNewChatConfirmation, setIsShowingNewChatConfirmation] =
+    useState(false)
+  const [chatJobCount, setChatJobCount] = useState(0)
   const isChatOpenRef = useRef(isChatOpen)
   const lastUrlRef = useRef<string>('')
 
+  // Helper function to extract and set context from current URL
+  const updateContextFromUrl = useCallback(() => {
+    const parsed = extractSynIdFromCurrentUrl()
+    if (parsed) {
+      const entityContext: AgentPromptSessionContext = {
+        concreteType: 'org.sagebionetworks.repo.model.agent.EntityContext',
+        entityId: parsed.entityId,
+        ...(parsed.versionNumber && {
+          versionNumber: parsed.versionNumber,
+        }),
+      }
+      setPromptContext([entityContext])
+    } else {
+      setPromptContext([])
+    }
+  }, [])
+
   // Update context when URL changes
   React.useEffect(() => {
-    const updateContext = () => {
-      const parsed = extractSynIdFromCurrentUrl()
-      if (parsed) {
-        const entityContext: AgentPromptSessionContext = {
-          concreteType: 'org.sagebionetworks.repo.model.agent.EntityContext',
-          entityId: parsed.entityId,
-          ...(parsed.versionNumber && {
-            versionNumber: parsed.versionNumber,
-          }),
-        }
-        setPromptContext([entityContext])
-      } else {
-        setPromptContext([])
-      }
-    }
+    const updateContext = updateContextFromUrl
 
     // Run on mount and when chat opens
     updateContext()
@@ -223,7 +236,7 @@ export function SynapseNavDrawer({
       }
       window.removeEventListener('popstate', handlePopState)
     }
-  }, [isChatOpen])
+  }, [isChatOpen, updateContextFromUrl])
 
   // Keep ref in sync with state
   React.useEffect(() => {
@@ -235,6 +248,27 @@ export function SynapseNavDrawer({
       setHasUnreadMessage(true)
     }
   }, [])
+
+  const handleChatStateChange = useCallback((chatJobIds: string[]) => {
+    setChatJobCount(chatJobIds.length)
+  }, [])
+
+  const startNewChat = useCallback(() => {
+    setChatSession(undefined)
+    updateContextFromUrl()
+    setHasUnreadMessage(false)
+    setChatJobCount(0)
+    setIsShowingNewChatConfirmation(false)
+  }, [updateContextFromUrl])
+
+  const handleNewChat = useCallback(() => {
+    if (chatJobCount === 0) {
+      startNewChat()
+      return
+    }
+
+    setIsShowingNewChatConfirmation(true)
+  }, [chatJobCount, startNewChat])
 
   // Clear unread indicator whenever chat opens
   React.useEffect(() => {
@@ -777,12 +811,23 @@ export function SynapseNavDrawer({
           }}
         >
           <Typography variant="h6">Synapse Assistant</Typography>
-          <IconButton
-            onClick={() => setIsChatOpen(false)}
-            aria-label="Close chat"
-          >
-            <CloseIcon />
-          </IconButton>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Tooltip title="Start new chat" placement="bottom">
+              <IconButton
+                onClick={handleNewChat}
+                aria-label="Start new chat"
+                disabled={!chatSession}
+              >
+                <AddCommentIcon />
+              </IconButton>
+            </Tooltip>
+            <IconButton
+              onClick={() => setIsChatOpen(false)}
+              aria-label="Close chat"
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
         </Box>
         <Box
           sx={{
@@ -800,12 +845,33 @@ export function SynapseNavDrawer({
             showAccessLevelMenu={true}
             textboxPositionOffset="0px"
             onNewMessage={handleNewMessage}
+            onChatStateChange={handleChatStateChange}
             promptContext={promptContext}
             onPromptContextChange={setPromptContext}
             isContextEditable={true}
           />
         </Box>
       </Drawer>
+      <Dialog
+        open={isShowingNewChatConfirmation}
+        onClose={() => setIsShowingNewChatConfirmation(false)}
+      >
+        <DialogTitle>Start New Chat?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Starting a new chat will clear your current conversation. This
+            action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsShowingNewChatConfirmation(false)}>
+            Cancel
+          </Button>
+          <Button onClick={startNewChat} variant="contained" autoFocus>
+            Start New Chat
+          </Button>
+        </DialogActions>
+      </Dialog>
       <CreateProjectModal
         onClose={() => setIsShowingCreateProjectModal(false)}
         isShowingModal={isShowingCreateProjectModal}

@@ -52,6 +52,8 @@ export type SynapseChatProps = {
   showAccessLevelMenu?: boolean
   /* Callback invoked when a new message is received */
   onNewMessage?: () => void
+  /* Callback invoked when chat state changes (for tracking message count) */
+  onChatStateChange?: (chatJobIds: string[]) => void
   /* Optional context to include with each chat message */
   promptContext?: AgentPromptSessionContext[]
   /* Callback invoked when prompt context is modified */
@@ -83,6 +85,7 @@ export function SynapseChat({
   externalChatState,
   showAccessLevelMenu = true,
   onNewMessage,
+  onChatStateChange,
   promptContext,
   onPromptContextChange,
   isContextEditable = false,
@@ -168,6 +171,19 @@ export function SynapseChat({
       setInitialMessageProcessed(true)
     }
   }, [agentSession, initialMessage, initialMessageProcessed, sendChat])
+
+  useEffect(() => {
+    // Notify parent when chat job IDs change
+    if (onChatStateChange) {
+      onChatStateChange(chatJobIds)
+    }
+  }, [chatJobIds, onChatStateChange])
+
+  useEffect(() => {
+    // Clear the text input field when session changes (new chat started)
+    setUserChatTextfieldValue('')
+    setInitialMessageProcessed(false)
+  }, [agentSession?.sessionId])
 
   const handleSendMessage = () => {
     if (userChatTextfieldValue.trim()) {
