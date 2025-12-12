@@ -35,12 +35,12 @@ export const datasetCardConfiguration: CardConfiguration = {
       },
     },
     secondaryLabels: [
-      // 'assay',
+      'measurementTechnique',
       'studyId',
       'doi',
       'datasetSizeInBytes',
       'diseaseFocus',
-      'fundingAgency',
+      'funder',
       'datasetItemCount',
       'dataType',
       'series',
@@ -88,7 +88,7 @@ const datasets: QueryWrapperPlotNavProps = {
       'studyName',
       'diseaseFocus',
       'manifestation',
-      'fundingAgency',
+      'funder',
     ],
   },
 }
