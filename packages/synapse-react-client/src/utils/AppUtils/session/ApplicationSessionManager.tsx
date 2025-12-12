@@ -194,6 +194,7 @@ export function ApplicationSessionManager(
           utcTime: SynapseClient.getUseUtcTimeFromCookie(),
           downloadCartPageUrl,
           appId: appId,
+          navigate,
         }}
       >
         {children}
