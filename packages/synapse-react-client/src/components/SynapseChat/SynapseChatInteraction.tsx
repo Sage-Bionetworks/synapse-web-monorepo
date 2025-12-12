@@ -116,8 +116,13 @@ export function SynapseChatInteraction({
     elementsToRemove.forEach(element => element.remove())
 
     // Handle actions elements with redirect subelements
-    // custom agents are instructed to include these to indicate navigation
-    // in the format:
+    // custom agents are instructed to include these to indicate navigation.
+    // The chat element is optional, and if present will be displayed as the chat response.
+    // The redirect element includes a target (path) and an optional Query.
+    // For example:
+    // <chat>
+    //   CHAT TEXT RESPONSE GOES HERE
+    // </chat>
     // <actions>
     //   <redirect>
     //     <target>/Explore</target>
@@ -174,6 +179,12 @@ export function SynapseChatInteraction({
       // Remove the actions element from the displayed content
       actionsElement.remove()
     })
+
+    // Extract text from <chat> element if present, otherwise use full body text
+    const chatElement = doc.querySelector('chat')
+    if (chatElement) {
+      return chatElement.textContent ?? ''
+    }
 
     return doc.body.textContent ?? ''
   }, [chatResponseText, navigate, gotoPlace])
