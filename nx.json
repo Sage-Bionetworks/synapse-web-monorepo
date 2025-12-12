@@ -22,8 +22,7 @@
       "dependsOn": ["build"]
     },
     "lint": {
-      "//": "We use @typescript-eslint/parser for type-aware linting, so we must build dependencies prior to linting",
-      "dependsOn": ["^build"]
+      "//": "Lint uses source paths in tsconfig, so no build dependency needed"
     },
     "test": {
       "//": "Tests don't depend a build for their own package, but they do depend on their dependencies being built",

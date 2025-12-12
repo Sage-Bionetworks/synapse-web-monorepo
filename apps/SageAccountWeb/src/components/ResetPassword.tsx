@@ -33,7 +33,7 @@ export const ResetPassword = (props: ResetPasswordProps): React.ReactNode => {
       )
     },
     onError: err => {
-      displayToast((err as SynapseClientError).reason, 'danger')
+      displayToast(err.reason, 'danger')
     },
   })
 

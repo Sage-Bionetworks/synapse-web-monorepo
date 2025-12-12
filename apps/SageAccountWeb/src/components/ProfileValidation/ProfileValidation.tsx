@@ -434,7 +434,7 @@ function ProfileValidation() {
     }
   }
 
-  const onPrevious = async (event: SyntheticEvent) => {
+  const onPrevious = (event: SyntheticEvent) => {
     event.preventDefault()
     switch (step) {
       case ValidationWizardStep.VERIFY_IDENTITY:
@@ -469,14 +469,20 @@ function ProfileValidation() {
           {verificationSubmission && (
             <Box>
               {step !== ValidationWizardStep.PROFILE_INFO && (
-                <BackButton onClick={onPrevious} />
+                <BackButton
+                  onClick={e => {
+                    onPrevious(e)
+                  }}
+                />
               )}
               <SourceAppLogo sx={{ textAlign: 'center' }} />
               <BodyControlFactory
                 {...{
                   step: step,
                   verificationSubmission: verificationSubmission,
-                  onNext: onNext,
+                  onNext: e => {
+                    void onNext(e)
+                  },
 
                   onReturnToSettings: () => {
                     setIsReturnToAccountSettings(true)

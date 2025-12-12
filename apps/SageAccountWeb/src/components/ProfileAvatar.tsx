@@ -20,6 +20,36 @@ export type ProfileAvatarProps = {
   onProfileUpdated: () => void
 }
 
+type UploadImageButtonProps = {
+  ref: React.RefObject<HTMLInputElement | null>
+  onSelectFile: (e: ChangeEvent<HTMLInputElement>) => void
+  clickHandler: () => void
+}
+const UploadImageButton = (props: UploadImageButtonProps): React.ReactNode => {
+  const { ref, onSelectFile, clickHandler } = props
+  const uploadButtonStyle: SxProps = {
+    backgroundColor: 'grey.200',
+    position: 'absolute',
+    marginLeft: '100px',
+    marginTop: '-65px',
+    '&:hover': { backgroundColor: 'grey.300' },
+  }
+
+  return (
+    <>
+      <input
+        type={'file'}
+        ref={ref}
+        onChange={onSelectFile}
+        style={{ display: 'none' }}
+      />
+      <IconButton sx={uploadButtonStyle} onClick={clickHandler}>
+        <IconSvg icon="edit" wrap={false} />
+      </IconButton>
+    </>
+  )
+}
+
 export const ProfileAvatar = (props: ProfileAvatarProps): React.ReactNode => {
   const { userProfile, onProfileUpdated } = props
   const { accessToken } = useSynapseContext()
@@ -71,30 +101,6 @@ export const ProfileAvatar = (props: ProfileAvatarProps): React.ReactNode => {
     if (hiddenFileInput?.current) {
       hiddenFileInput.current.click()
     }
-  }
-
-  const UploadImageButton = (): React.ReactNode => {
-    const uploadButtonStyle: SxProps = {
-      backgroundColor: 'grey.200',
-      position: 'absolute',
-      marginLeft: '100px',
-      marginTop: '-65px',
-      '&:hover': { backgroundColor: 'grey.300' },
-    }
-
-    return (
-      <>
-        <input
-          type={'file'}
-          ref={hiddenFileInput}
-          onChange={onSelectFile}
-          style={{ display: 'none' }}
-        />
-        <IconButton sx={uploadButtonStyle} onClick={clickHandler}>
-          <IconSvg icon="edit" wrap={false} />
-        </IconButton>
-      </>
-    )
   }
 
   const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
@@ -153,7 +159,11 @@ export const ProfileAvatar = (props: ProfileAvatarProps): React.ReactNode => {
             }}
           />
         )}
-        <UploadImageButton />
+        <UploadImageButton
+          ref={hiddenFileInput}
+          onSelectFile={onSelectFile}
+          clickHandler={clickHandler}
+        />
       </>
 
       <ConfirmationDialog
@@ -193,7 +203,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps): React.ReactNode => {
                 max={3}
                 step={0.1}
                 value={zoom}
-                onChange={(e, zoom) => setZoom(zoom as number)}
+                onChange={(e, zoom) => setZoom(zoom)}
                 sx={{ width: cropperSizePx }}
               />
             </Box>
