@@ -10,7 +10,6 @@ import { SourceAppLogo } from './SourceApp'
 import { useResetPassword } from 'synapse-react-client/synapse-queries/auth/useResetPassword'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 import ChangePasswordWithToken from 'synapse-react-client/components/ChangePassword/ChangePasswordWithToken'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import SetPasswordInstructions from './SetPasswordInstructions'
 
 export type ResetPasswordProps = {
