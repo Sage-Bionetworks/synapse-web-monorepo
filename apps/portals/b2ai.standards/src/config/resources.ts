@@ -28,7 +28,7 @@ const tableInfo: TableInfoMap = {
   },
   D4D_content: {
     name: 'D4D_content',
-    id: 'syn68885644.5', // current version of D4D_content
+    id: 'syn68885644.8', // current version of D4D_content
   },
   // UseCase: { name: 'UseCase', id: 'syn63096837' }, // not using this, might in the future?
 }
