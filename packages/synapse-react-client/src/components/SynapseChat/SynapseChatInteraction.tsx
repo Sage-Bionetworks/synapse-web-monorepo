@@ -141,11 +141,20 @@ export function SynapseChatInteraction({
         if (targetElement && targetElement.textContent) {
           const target = targetElement.textContent.trim()
           let redirectPath = target
-
           // If there's a query element, format depends on the navigation method
-          if (queryElement && queryElement.textContent) {
-            const query = queryElement.textContent.trim()
-
+          // Note: CDATA content is available via textContent or innerHTML
+          if (
+            queryElement &&
+            (queryElement.textContent || queryElement.innerHTML)
+          ) {
+            let query = (
+              queryElement.textContent || queryElement.innerHTML
+            ).trim()
+            // Remove CDATA wrapper if present (<!--[CDATA[ ... ]]-->)
+            query = query
+              .replace(/^<!--\[CDATA\[/, '')
+              .replace(/\]\]-->$/, '')
+              .trim()
             if (gotoPlace) {
               // For gotoPlace (SWC), use hash-based routing with base64 encoded query
               const base64Query = btoa(query)
