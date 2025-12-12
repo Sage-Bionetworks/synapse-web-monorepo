@@ -119,21 +119,56 @@ export function SynapseChatInteraction({
     // custom agents are instructed to include these to indicate navigation
     // in the format:
     // <actions>
-    //   <redirect>/path/to/navigate/to</redirect>
+    //   <redirect>
+    //     <target>/Explore</target>
+    //     <query><![CDATA[
+    //       { ... QueryBundleRequest JSON ... }
+    //     ]]></query>
+    //   </redirect>
     // </actions>
     const actionsElements = doc.querySelectorAll('actions')
     actionsElements.forEach(actionsElement => {
       const redirectElement = actionsElement.querySelector('redirect')
-      if (redirectElement && redirectElement.textContent) {
-        const redirectPath = redirectElement.textContent.trim()
-        // Navigate to the redirect path.  Use gotoPlace, or react router if available, otherwise use window.location
-        if (gotoPlace) {
-          gotoPlace(redirectPath)
-        } else if (navigate) {
-          navigate(redirectPath)
-        } else {
-          // Fallback for when navigate is not available - note, this will lose chat state
-          window.location.href = redirectPath
+      if (redirectElement) {
+        const targetElement = redirectElement.querySelector('target')
+        const queryElement = redirectElement.querySelector('query')
+
+        if (targetElement && targetElement.textContent) {
+          const target = targetElement.textContent.trim()
+          let redirectPath = target
+
+          // If there's a query element, format depends on the navigation method
+          if (queryElement && queryElement.textContent) {
+            const query = queryElement.textContent.trim()
+
+            if (gotoPlace) {
+              // For gotoPlace (SWC), use hash-based routing with base64 encoded query
+              const base64Query = btoa(query)
+              redirectPath = `${target}/tables/#query/${base64Query}`
+              gotoPlace(redirectPath)
+            } else if (navigate) {
+              // For React Router, use query parameter
+              redirectPath = `${target}?QueryWrapper0=${encodeURIComponent(
+                query,
+              )}`
+              navigate(redirectPath)
+            } else {
+              // Fallback for when navigate is not available - note, this will lose chat state
+              redirectPath = `${target}?QueryWrapper0=${encodeURIComponent(
+                query,
+              )}`
+              window.location.href = redirectPath
+            }
+          } else {
+            // No query element, just navigate to the target
+            if (gotoPlace) {
+              gotoPlace(redirectPath)
+            } else if (navigate) {
+              navigate(redirectPath)
+            } else {
+              window.location.href = redirectPath
+            }
+          }
         }
       }
       // Remove the actions element from the displayed content
@@ -141,7 +176,7 @@ export function SynapseChatInteraction({
     })
 
     return doc.body.textContent ?? ''
-  }, [chatResponseText, navigate])
+  }, [chatResponseText, navigate, gotoPlace])
 
   return (
     <>
