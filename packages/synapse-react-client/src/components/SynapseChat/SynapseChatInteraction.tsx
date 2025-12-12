@@ -127,7 +127,7 @@ export function SynapseChatInteraction({
     //   <redirect>
     //     <target>/Explore</target>
     //     <query><![CDATA[
-    //       { ... QueryBundleRequest JSON ... }
+    //       { ... Query JSON ... }
     //     ]]></query>
     //   </redirect>
     // </actions>
