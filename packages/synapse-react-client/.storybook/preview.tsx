@@ -1,33 +1,15 @@
 import { faker } from '@faker-js/faker'
-import { ThemeProvider } from '@mui/material'
-import { createTheme } from '@mui/material/styles'
-import { withThemeFromJSXProvider } from '@storybook/addon-themes'
 import { Preview } from '@storybook/react-vite'
 import whyDidYouRender from '@welldone-software/why-did-you-render'
 import { Buffer } from 'buffer'
 import isChromatic from 'chromatic/isChromatic'
 import { initialize, mswLoader } from 'msw-storybook-addon'
-import '../src/stories/DemoStyle.scss'
 import * as React from 'react'
 import { StorybookComponentWrapper } from '../src/components/StorybookComponentWrapper'
 import { getHandlers } from '../src/mocks/msw/handlers'
-import defaultMuiThemeOptions from '../src/theme/DefaultTheme'
-import {
-  adKnowledgePortalPalette,
-  arkPortalPalette,
-  bsmnPortalPalette,
-  cancerComplexityPortalPalette,
-  crcResearcherPortalPalette,
-  digitalHealthPortalPalette,
-  elPortalPalette,
-  geniePalette,
-  mtbPalette,
-  nfPortalPalette,
-  sageBionetworksPalette,
-  stopAdPortalPalette,
-  standardsPortalPalette,
-} from '../src/theme/palette/Palettes'
+import '../src/stories/DemoStyle.scss'
 import { MOCK_REPO_ORIGIN } from '../src/utils/functions/getEndpoint'
+import storybookThemeDecorator from '../src/react-ui/utils/StorybookThemeDecorator'
 
 // KaTeX CSS is not included in the SRC style bundle since it includes many large font files.
 import 'katex/dist/katex.css'
@@ -98,51 +80,7 @@ const preview: Preview = {
       )
     },
     // Adds global styles and theme switching support.
-    withThemeFromJSXProvider({
-      Provider: ThemeProvider,
-      themes: {
-        ['Synapse']: createTheme(defaultMuiThemeOptions),
-        ['Sage Bionetworks']: createTheme(defaultMuiThemeOptions, {
-          palette: sageBionetworksPalette,
-        }),
-        ['MTB']: createTheme(defaultMuiThemeOptions, { palette: mtbPalette }),
-        ['ARK Portal']: createTheme(defaultMuiThemeOptions, {
-          palette: arkPortalPalette,
-        }),
-        ['NF Portal']: createTheme(defaultMuiThemeOptions, {
-          palette: nfPortalPalette,
-        }),
-        ['BSMN Portal']: createTheme(defaultMuiThemeOptions, {
-          palette: bsmnPortalPalette,
-        }),
-        ['STOP AD Portal']: createTheme(defaultMuiThemeOptions, {
-          palette: stopAdPortalPalette,
-        }),
-        ['dhealth Portal']: createTheme(defaultMuiThemeOptions, {
-          palette: digitalHealthPortalPalette,
-        }),
-        ['CRC Researcher Portal']: createTheme(defaultMuiThemeOptions, {
-          palette: crcResearcherPortalPalette,
-        }),
-        ['Cancer Complexity Portal']: createTheme(defaultMuiThemeOptions, {
-          palette: cancerComplexityPortalPalette,
-        }),
-
-        ['AD Knowledge Portal']: createTheme(defaultMuiThemeOptions, {
-          palette: adKnowledgePortalPalette,
-        }),
-        ['EL Portal']: createTheme(defaultMuiThemeOptions, {
-          palette: elPortalPalette,
-        }),
-        ['GENIE Portal']: createTheme(defaultMuiThemeOptions, {
-          palette: geniePalette,
-        }),
-        ['Standards Explorer']: createTheme(defaultMuiThemeOptions, {
-          palette: standardsPortalPalette,
-        }),
-      },
-      defaultTheme: 'Synapse',
-    }),
+    storybookThemeDecorator,
   ],
   loaders,
   globalTypes: {

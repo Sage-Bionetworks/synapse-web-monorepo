@@ -2,7 +2,7 @@ import { formatDate } from '@/utils/functions/DateFormatter'
 import { Skeleton } from '@mui/material'
 import { SubmissionInfo } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse/MarkdownSynapse'
 import { SkeletonTable } from '../Skeleton/SkeletonTable'
 import { UserBadge } from '../UserCard/UserBadge'
 

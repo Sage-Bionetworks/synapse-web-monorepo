@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event'
 import CitationPopover from './CitationPopover'
 import { createLinkAndDownload } from './CitationPopoverUtils'
 import { useCitation } from './useCitation'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse/MarkdownSynapse'
 
 vi.mock('./useCitation', () => ({
   useCitation: vi.fn(),

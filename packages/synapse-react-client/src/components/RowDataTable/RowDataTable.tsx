@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyledTableContainer } from '@/components/styled/StyledTableContainer'
+import { StyledTableContainer } from '@/components/styled/StyledTableContainer/StyledTableContainer'
 import { SelectColumn } from '@sage-bionetworks/synapse-types'
 import { LabelLinkConfig } from '../CardContainerLogic'
 import { SynapseCardLabel } from '../GenericCard'

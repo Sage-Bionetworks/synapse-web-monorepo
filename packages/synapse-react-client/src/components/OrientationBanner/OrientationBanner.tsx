@@ -1,5 +1,5 @@
 import Illustrations from '@/assets/illustrations'
-import { spreadSx } from '@/theme/spreadSx'
+import spreadSx from '@/react-ui/theme/utils/mergeSx'
 import { useCookiePreferences } from '@/utils/hooks/useCookiePreferences'
 import { Theme } from '@mui/material'
 import { SxProps } from '@mui/system'

@@ -2,7 +2,7 @@ import { renderHook, act } from '@testing-library/react'
 import { useTreeOperationsWithDirectFetch } from './useTreeOperationsWithDirectFetch'
 import { TreeNode } from './useEntityTreeState'
 import { useQueryClient } from '@tanstack/react-query'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 
 // Mock dependencies
 vi.mock('@tanstack/react-query')

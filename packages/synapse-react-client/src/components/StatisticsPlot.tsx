@@ -1,5 +1,5 @@
 import SynapseClient from '@/synapse-client'
-import { SynapseContext } from '@/utils/context/SynapseContext'
+import { SynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import {
   FilesCountStatistics,
   ProjectFilesStatisticsRequest,

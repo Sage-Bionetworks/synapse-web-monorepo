@@ -19,7 +19,7 @@ import {
 } from '@testing-library/react'
 import userEvent, { UserEvent } from '@testing-library/user-event'
 import * as SynapseClient from '@/synapse-client/SynapseClient'
-import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
+import MarkdownSynapse from '../../../Markdown/MarkdownSynapse/MarkdownSynapse'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 import ResearchProjectForm, {
   ResearchProjectFormProps,

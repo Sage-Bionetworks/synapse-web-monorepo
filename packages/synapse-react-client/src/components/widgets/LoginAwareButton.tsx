@@ -1,6 +1,6 @@
 import { useSynapseContext } from '@/utils'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
-import { Button, ButtonProps } from '@mui/material'
+import Button, { ButtonProps } from '@/react-ui/components/Button'
 import React from 'react'
 import { Link, LinkProps } from 'react-router'
 

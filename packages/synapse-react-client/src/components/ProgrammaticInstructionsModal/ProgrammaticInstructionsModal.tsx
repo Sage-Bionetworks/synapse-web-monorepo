@@ -2,6 +2,7 @@ import React from 'react'
 import { Box, Link, Tab, Tabs, Typography } from '@mui/material'
 import { ReactElement, SyntheticEvent, useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
+import HelpPopover from '../HelpPopover/HelpPopover'
 
 export enum ProgrammaticOptionsTabs {
   COMMAND_LINE = 'Command Line',
@@ -136,12 +137,9 @@ export const ProgrammaticInstructionsModal = ({
     </>
   )
 
-  const titleHelpPopoverProps = helpMarkdown
-    ? {
-        markdownText: helpMarkdown,
-        helpUrl: helpUrl,
-      }
-    : undefined
+  const titleHelp = helpMarkdown ? (
+    <HelpPopover markdownText={helpMarkdown} helpUrl={helpUrl} />
+  ) : undefined
 
   return (
     <ConfirmationDialog
@@ -150,7 +148,7 @@ export const ProgrammaticInstructionsModal = ({
       onCancel={onClose}
       onConfirm={onClose}
       maxWidth="md"
-      titleHelpPopoverProps={titleHelpPopoverProps}
+      titleHelp={titleHelp}
       content={dialogContent}
       hasCancelButton={false}
     />

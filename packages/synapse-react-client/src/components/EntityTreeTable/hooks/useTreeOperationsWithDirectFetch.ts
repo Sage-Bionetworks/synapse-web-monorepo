@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { EntityBundleRow } from '../EntityTreeTable'
 import { TreeNode } from './useEntityTreeState'
 import { useQueryClient } from '@tanstack/react-query'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import SynapseClient from '@/synapse-client'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import {

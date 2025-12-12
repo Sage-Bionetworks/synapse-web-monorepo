@@ -5,8 +5,8 @@ import {
   OAuthClientAclEditor,
   OAuthClientAclEditorHandle,
 } from './OAuthClientAclEditor'
-import { DialogBase } from '../DialogBase'
-import { Button } from '@mui/material'
+import DialogBase from '@/react-ui/components/DialogBase'
+import Button from '@/react-ui/components/Button'
 
 export type OAuthAclEditorModalProps = {
   clientId: string

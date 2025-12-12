@@ -11,7 +11,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
 import Dial from './Dial'
-import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import MarkdownSynapse from '../Markdown/MarkdownSynapse/MarkdownSynapse'
 
 export type SustainabilityScorecardSummaryProps =
   SustainabilityScorecardBaseProps & {

@@ -35,15 +35,15 @@ import {
 } from '@/components/useSourceApp'
 import SynapseClient from 'synapse-react-client/synapse-client'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import { displayToast } from 'synapse-react-client/components/ToastMessage'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
-import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import { useSynapseContext } from 'synapse-react-client/stores/SynapseContext'
 import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
 import LastLoginInfo, {
   useLastLoginInfo,
 } from 'synapse-react-client/components/Authentication/LastLoginInfo'
 import RegisterPageLogoutPrompt from 'synapse-react-client/components/RegisterPageLogoutPrompt/RegisterPageLogoutPrompt'
-import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
+import IconSvg from 'synapse-react-client/components/IconSvg'
 import { generateCsrfToken } from 'synapse-react-client/utils/functions/generateCsrfToken'
 
 export enum Pages {

@@ -1,5 +1,5 @@
 import React from 'react'
-import { spreadSx } from '@/theme/spreadSx'
+import spreadSx from '@/react-ui/theme/utils/mergeSx'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
 const Proteomics = (props: SvgIconProps): React.ReactNode => {

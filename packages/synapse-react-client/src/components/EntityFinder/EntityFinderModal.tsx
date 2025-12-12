@@ -4,7 +4,7 @@ import { Box, Typography } from '@mui/material'
 import { Reference } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo, useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog'
-import { HelpPopoverProps } from '../HelpPopover/HelpPopover'
+import HelpPopover, { HelpPopoverProps } from '../HelpPopover/HelpPopover'
 import WarningDialog from '../SynapseForm/WarningDialog'
 import EntityFinder, { EntityFinderProps } from './EntityFinder'
 
@@ -61,7 +61,11 @@ export const EntityFinderModal = (
         title={props.title}
         fullWidth={false}
         maxWidth="xl"
-        titleHelpPopoverProps={props.titleHelpPopoverProps}
+        titleHelp={
+          props.titleHelpPopoverProps ? (
+            <HelpPopover {...props.titleHelpPopoverProps} />
+          ) : undefined
+        }
         confirmButtonProps={{ children: props.confirmButtonCopy }}
         onConfirm={() => {
           props.onConfirm(selected)

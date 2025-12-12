@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { DialogBase } from '../DialogBase'
+import DialogBase from '@/react-ui/components/DialogBase'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import {
   EntityUpload,

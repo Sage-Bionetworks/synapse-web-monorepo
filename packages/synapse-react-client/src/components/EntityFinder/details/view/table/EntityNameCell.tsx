@@ -1,7 +1,7 @@
 import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import { Skeleton } from '@mui/material'
 import { CellContext } from '@tanstack/react-table'
-import { EntityLink } from '../../../../EntityLink'
+import { EntityLink } from '../../../../EntityLink/EntityLink'
 import { EntityIdAndVersionNumber } from './TableCellTypes'
 
 export function EntityNameCell<T extends EntityIdAndVersionNumber>(

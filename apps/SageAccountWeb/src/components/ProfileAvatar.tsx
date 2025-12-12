@@ -9,11 +9,11 @@ import {
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
 import { getCroppedImg } from './CropImage'
-import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import { useSynapseContext } from 'synapse-react-client/stores/SynapseContext'
 import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClient'
-import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import { displayToast } from 'synapse-react-client/components/ToastMessage'
 import { ConfirmationDialog } from 'synapse-react-client/components/ConfirmationDialog/ConfirmationDialog'
-import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
+import IconSvg from 'synapse-react-client/components/IconSvg'
 
 export type ProfileAvatarProps = {
   userProfile?: UserProfile

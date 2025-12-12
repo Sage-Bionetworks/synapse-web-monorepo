@@ -11,6 +11,7 @@ import { ChangeEvent, useState } from 'react'
 import { ConfirmationDialog } from '../../ConfirmationDialog'
 import FullWidthAlert from '../../FullWidthAlert/FullWidthAlert'
 import { displayToast } from '../../ToastMessage/ToastMessage'
+import HelpPopover from '@/components/HelpPopover'
 
 export type ImposeRestrictionFormProps = {
   /* The ID of the entity that the user may choose to restrict */
@@ -74,12 +75,12 @@ export default function ImposeRestrictionDialog(
     <ConfirmationDialog
       title={'Conditions for Use'}
       onConfirm={() => okClickedHandler()}
-      titleHelpPopoverProps={{
-        markdownText:
-          'Conditions for use describes data use requirements that must be fulfilled before downloading.',
-        helpUrl:
-          'https://help.synapse.org/docs/Sharing-Settings,-Permissions,-and-Conditions-for-Use.2024276030.html#SharingSettings,Permissions,andConditionsforUse-ConditionsforUse',
-      }}
+      titleHelp={
+        <HelpPopover
+          markdownText="Conditions for use describes data use requirements that must be fulfilled before downloading."
+          helpUrl="https://help.synapse.org/docs/Sharing-Settings,-Permissions,-and-Conditions-for-Use.2024276030.html#SharingSettings,Permissions,andConditionsforUse-ConditionsforUse"
+        />
+      }
       confirmButtonProps={{
         disabled: isSensitiveHumanData == null || createLockedARIsPending,
       }}

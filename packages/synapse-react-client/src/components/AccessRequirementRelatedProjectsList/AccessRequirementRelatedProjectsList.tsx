@@ -3,7 +3,7 @@ import { useSearchAccessRequirementsInfinite } from '@/synapse-queries'
 import { Alert, List, ListItem, Typography } from '@mui/material'
 import { AccessRequirementSearchRequest } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
-import { EntityLink } from '../EntityLink'
+import { EntityLink } from '../EntityLink/EntityLink'
 
 export type AccessRequirementRelatedProjectsListProps = {
   accessRequirementId: number
