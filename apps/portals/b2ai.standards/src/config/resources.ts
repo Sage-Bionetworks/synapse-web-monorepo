@@ -24,7 +24,7 @@ const tableInfo: TableInfoMap = {
   // Organization: { name: 'Organization', id: 'syn63096836.31' },
   Organization_denormalized: {
     name: 'Organization',
-    id: 'syn69693360.20', // current version of Organization_denormalized
+    id: 'syn69693360.21', // current version of Organization_denormalized
   },
   D4D_content: {
     name: 'D4D_content',
