@@ -10,6 +10,7 @@ import SustainabilityScorecard, {
   SustainabilityScorecardProps,
 } from './SustainabilityScorecard/SustainabilityScorecard'
 import { useDocumentMetadata } from '@/utils/context/DocumentMetadataContext'
+import { isExternalLink } from '@/utils/functions/IsExternalLink'
 
 export type HeaderCardVariant = 'HeaderCard' | 'HeaderCardV2'
 
@@ -107,7 +108,10 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
                     <h3 className="SRC-boldText" style={{ margin: 'none' }}>
                       {href ? (
                         <a
-                          target={target}
+                          target={
+                            target ??
+                            (isExternalLink(href) ? '_blank' : '_self')
+                          }
                           href={href}
                           className="highlight-link"
                         >
