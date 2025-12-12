@@ -13,6 +13,7 @@ import 'katex/dist/katex.css'
 
 import './App.scss'
 import headerConfig from './config/headerConfig'
+import synapseChatConfig from './config/synapseChatConfig'
 
 const container = document.getElementById('root')
 
@@ -29,6 +30,7 @@ root.render(
       logoHeaderConfig={logoHeaderConfig}
       logoFooterConfig={logoFooterConfig}
       navbarConfig={navbarConfig}
+      synapseChatProps={synapseChatConfig}
     />
   </StrictMode>,
 )

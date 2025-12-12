@@ -7,6 +7,7 @@ import routes from './config/routesConfig'
 import footerConfig from './config/footerConfig'
 import logoHeaderConfig from './config/logoHeaderConfig'
 import logoFooterConfig from './config/logoFooterConfig'
+import synapseChatConfig from './config/synapseChatConfig'
 
 // KaTeX CSS is not included in the SRC style bundle since it includes many large font files.
 import 'katex/dist/katex.css'
@@ -29,6 +30,7 @@ root.render(
       logoHeaderConfig={logoHeaderConfig}
       logoFooterConfig={logoFooterConfig}
       navbarConfig={navbarConfig}
+      synapseChatProps={synapseChatConfig}
     />
   </StrictMode>,
 )
