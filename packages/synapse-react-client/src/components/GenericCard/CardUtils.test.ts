@@ -15,7 +15,7 @@ describe('TableRowGenericCard tests', () => {
         undefined,
       )
       expect(href).toEqual(synLink)
-      expect(target).toEqual(TargetEnum.CURRENT_WINDOW)
+      expect(target).toEqual(TargetEnum.NEW_WINDOW)
     })
 
     test('creates a DOI link', () => {
@@ -88,8 +88,8 @@ describe('TableRowGenericCard tests', () => {
         schema,
       )
       expect(href1).toEqual(expectedLink)
-      // PORTALS-2254: Open DetailsPage links in a new window by default
-      expect(target1).toEqual(TargetEnum.NEW_WINDOW)
+      // PORTALS-3792: Internal links should open in current window by default
+      expect(target1).toEqual(TargetEnum.CURRENT_WINDOW)
 
       titleLinkConfig.target = TargetEnum.FULL_WINDOW_BODY
       const { href: href2, target: target2 } = getLinkParams(
@@ -144,7 +144,7 @@ describe('TableRowGenericCard tests', () => {
       const expectedLink = 'https://example.com/bar'
       const { href, target } = getLinkParams('', titleLinkConfig, data, schema)
       expect(href).toEqual(expectedLink)
-      expect(target).toEqual(TargetEnum.CURRENT_WINDOW)
+      expect(target).toEqual(TargetEnum.NEW_WINDOW)
     })
   })
 })
