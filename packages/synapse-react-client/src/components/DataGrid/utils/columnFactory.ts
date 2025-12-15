@@ -62,6 +62,7 @@ const COLUMN_FACTORIES = {
       autocompleteColumn({
         choices: [true, false],
         colType: 'boolean',
+        clearValue: config.isRequired ? null : undefined,
       }),
     ),
     title: config.columnName,
@@ -86,6 +87,7 @@ const COLUMN_FACTORIES = {
       autocompleteColumn({
         choices: config.enumeratedValues ?? [],
         colType: config.typeInfo?.type || null,
+        clearValue: config.isRequired ? null : undefined,
       }),
     ),
     title: config.columnName,
