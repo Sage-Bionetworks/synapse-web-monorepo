@@ -6,7 +6,6 @@ import {
 import useGetInfoFromIds from '@/utils/hooks/useGetInfoFromIds'
 import {
   ColumnTypeEnum,
-  Direction,
   EntityHeader,
   Evaluation,
   FacetColumnRequest,
@@ -30,13 +29,7 @@ export type EnumFacetFilterProps = {
   containerAs?: 'Collapsible' | 'Dropdown'
   dropdownType?: 'Icon' | 'SelectBox'
   hideCollapsible?: boolean
-  sortConfig?: FacetValueSortConfig
   defaultShowAllValues?: boolean
-}
-
-export type FacetValueSortConfig = {
-  columnName: string
-  direction: Direction
 }
 
 function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
@@ -45,7 +38,6 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
     containerAs = 'Collapsible',
     dropdownType = 'Icon',
     hideCollapsible = false,
-    sortConfig,
     defaultShowAllValues = false,
   } = props
   const {
@@ -172,18 +164,10 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
       }
     }
 
-    //PORTALS-3252: provide way to sort in descending order on the client-side
-    const sortDescending = isClientSideSort
-      ? false
-      : sortConfig && sortConfig.direction == Direction.DESC
-    return [
-      ...(sortDescending ? sortedValues.reverse() : sortedValues),
-      ...valueNotSetFacetArray,
-    ]
+    return [...sortedValues, ...valueNotSetFacetArray]
   }, [
     facet.facetValues,
     columnModel,
-    sortConfig,
     currentSelectedFacet?.facetValues,
     userGroupHeaders,
     entityHeaders,
