@@ -47,6 +47,7 @@ const COLUMN_FACTORIES = {
         choices: config.enumeratedValues ?? [],
         colType: config.typeInfo?.type || null,
         limitTags: 3,
+        clearValue: config.isRequired ? null : undefined,
       }),
     ),
     title: config.columnName,
