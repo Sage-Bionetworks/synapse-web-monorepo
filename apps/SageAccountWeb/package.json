@@ -76,6 +76,7 @@
     "preview": "vite preview",
     "build": "vite build",
     "test": "vitest",
+    "lint": "eslint src",
     "type-check": "tsc --build"
   },
   "browserslist": {

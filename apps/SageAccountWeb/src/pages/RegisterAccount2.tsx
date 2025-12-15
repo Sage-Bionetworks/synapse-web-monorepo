@@ -185,7 +185,7 @@ function RegisterAccount2() {
               </StyledFormControl>
               <Button
                 variant="contained"
-                onClick={onCreateAccount}
+                onClick={e => void onCreateAccount(e)}
                 type="button"
                 disabled={isLoading}
               >
