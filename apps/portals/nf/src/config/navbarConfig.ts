@@ -82,7 +82,7 @@ export const navbarConfig: NavbarConfig = {
         { name: 'News', path: 'https://news.nfdataportal.org/' },
         {
           name: 'NF-OSI',
-          path: 'https://help.nf.synapse.org/NFdocs/about',
+          path: 'https://help.nf.synapse.org/nf-data-portal-documentation/about',
         },
         {
           name: 'Data Standards',
@@ -92,9 +92,9 @@ export const navbarConfig: NavbarConfig = {
     },
     {
       name: 'Contribute Data',
-      path: 'https://help.nf.synapse.org/NFdocs/how-to-share-data-an-overview',
+      path: 'https://help.nf.synapse.org/nf-data-portal-documentation/contributing-data',
     },
-    { name: 'Help', path: 'https://help.nf.synapse.org/NFdocs/' },
+    { name: 'Help', path: 'https://help.nf.synapse.org/nf-data-portal-documentation' },
   ],
   isPortalsDropdownEnabled: true,
 }
