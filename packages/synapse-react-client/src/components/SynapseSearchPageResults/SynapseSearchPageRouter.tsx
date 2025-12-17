@@ -24,7 +24,12 @@ export default function SynapseSearchPageRouter(
     () => [
       {
         path: '/',
-        element: <>{children}</>,
+        element: (
+          <>
+            {useMemoryRouter}
+            {children}
+          </>
+        ),
       },
     ],
     [children, useMemoryRouter],
