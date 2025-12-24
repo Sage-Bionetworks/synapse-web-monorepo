@@ -98,7 +98,6 @@ export default function ExternalPlatformActionsRequiredPrecheck(
     exportToPluto,
     exportToPlutoDev,
     exportToADWorkbench,
-    exportToADWorkbenchDev,
   } = useExportTableQueryToAnalysisPlatform({
     queryBundleRequest: queryFilteredBySelection,
     selectColumns: queryMetadata?.selectColumns,
@@ -130,8 +129,7 @@ export default function ExternalPlatformActionsRequiredPrecheck(
         await exportToPlutoDev()
         break
       case 'adworkbench':
-        // TODO: switch to exportToADWorkbench when AD Workbench is live
-        await exportToADWorkbenchDev()
+        await exportToADWorkbench()
         break
     }
     onSuccessfulExport()
@@ -143,7 +141,6 @@ export default function ExternalPlatformActionsRequiredPrecheck(
     onSuccessfulExport,
     selectedPlatform,
     exportToADWorkbench,
-    exportToADWorkbenchDev,
   ])
 
   useEffect(() => {
