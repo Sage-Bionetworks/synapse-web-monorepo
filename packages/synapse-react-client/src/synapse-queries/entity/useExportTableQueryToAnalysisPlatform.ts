@@ -56,22 +56,12 @@ export function useExportTableQueryToAnalysisPlatform(options: {
     true,
   )
 
-  const exportToADWorkbenchDev = useExportToADWorkbench(
-    queryBundleRequest,
-    selectColumns,
-    fileIdColumnName,
-    fileNameColumnName,
-    fileVersionColumnName,
-    true,
-  )
-
   const exportToADWorkbench = useExportToADWorkbench(
     queryBundleRequest,
     selectColumns,
     fileIdColumnName,
     fileNameColumnName,
     fileVersionColumnName,
-    false,
   )
 
   return {
@@ -80,6 +70,5 @@ export function useExportTableQueryToAnalysisPlatform(options: {
     exportToPluto,
     exportToPlutoDev,
     exportToADWorkbench,
-    exportToADWorkbenchDev,
   }
 }
