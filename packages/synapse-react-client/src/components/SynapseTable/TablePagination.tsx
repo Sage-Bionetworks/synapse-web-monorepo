@@ -30,30 +30,37 @@ export const TablePagination = (): React.ReactNode => {
     data: { queryCount, maxRowsPerPage },
   } = useSuspenseGetQueryMetadata()
 
+  const safeQueryCount = queryCount ?? 0
+
   const currentLimit = currentQueryRequest.query.limit
-  const maxPageSize = maxRowsPerPage ?? pageSize
+
+  const resolvedPageSize = Math.min(currentLimit ?? pageSize, safeQueryCount)
 
   const pageSizeOptions = [10, 25, 100, 500]
   if (currentLimit && !pageSizeOptions.includes(currentLimit)) {
     pageSizeOptions.push(currentLimit)
     pageSizeOptions.sort((a, b) => a - b)
   }
-  const pageSizeOptionsBasedOnData = pageSizeOptions.filter(
-    value => value < maxPageSize,
-  )
-  if (pageSizeOptionsBasedOnData.length == 0) {
-    pageSizeOptionsBasedOnData.push(maxPageSize)
-    if (maxRowsPerPage && pageSize > maxRowsPerPage) {
-      setPageSize(maxRowsPerPage)
-    }
-  }
+
+  const pageSizeOptionsBasedOnData = Array.from(
+    new Set([
+      ...pageSizeOptions.filter(v => v <= safeQueryCount),
+      resolvedPageSize,
+    ]),
+  ).sort((a, b) => a - b)
+
   const handlePage = (_event: ChangeEvent<unknown>, value: number) => {
     goToPage(value)
   }
 
   const handlePageSize = (event: SelectChangeEvent<number>) => {
     const value = event.target.value
-    setPageSize(value)
+    const clampedValue = maxRowsPerPage
+      ? Math.min(value, maxRowsPerPage)
+      : value
+
+    setPageSize(clampedValue)
+    goToPage(1)
   }
 
   // A custom `renderItem` implementation for the MUI Pagination component that prefetches a page's data when the page number button is hovered over
@@ -100,7 +107,7 @@ export const TablePagination = (): React.ReactNode => {
     <div>
       <Pagination
         page={currentPage}
-        count={Math.ceil(queryCount / pageSize)}
+        count={Math.ceil(queryCount / resolvedPageSize)}
         color="secondary"
         onChange={handlePage}
         shape={'rounded'}
@@ -116,7 +123,7 @@ export const TablePagination = (): React.ReactNode => {
       </Typography>
       <Select
         name="page size"
-        value={pageSize}
+        value={resolvedPageSize}
         size="small"
         onChange={handlePageSize}
         sx={{ ml: 0.5 }}
