@@ -141,8 +141,9 @@ describe('TablePagination component', () => {
     const comboBox = await screen.findByRole('combobox')
     await user.click(comboBox)
     const pageSizeOptions = await screen.findAllByRole('option')
-    expect(pageSizeOptions).toHaveLength(1)
+    expect(pageSizeOptions).toHaveLength(2)
     expect(pageSizeOptions[0].textContent).toEqual('5 per page')
+    expect(pageSizeOptions[1].textContent).toEqual('10 per page')
   })
 
   it('prefetches a page on hover', async () => {
