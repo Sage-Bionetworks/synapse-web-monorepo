@@ -21,7 +21,7 @@
     }
   ],
   "paths": {
-    "/fair/workflows/": {
+    "/workflows/": {
       "get": {
         "tags": ["workflows"],
         "summary": "List all available workflows",
@@ -71,7 +71,7 @@
         }
       }
     },
-    "/fair/workflows/{code}": {
+    "/workflows/{code}": {
       "get": {
         "tags": ["workflows"],
         "summary": "Get a specific workflow with code",
@@ -108,7 +108,7 @@
         }
       }
     },
-    "/fair/datasets/{code}/settings": {
+    "/datasets/{code}/settings": {
       "get": {
         "tags": ["datasets"],
         "summary": "Get settings for a specific dataset",
@@ -145,7 +145,7 @@
         }
       }
     },
-    "/fair/requests/": {
+    "/requests/": {
       "get": {
         "tags": ["requests"],
         "summary": "List all requests",
@@ -236,7 +236,7 @@
         }
       }
     },
-    "/fair/requests/{code}": {
+    "/requests/{code}": {
       "get": {
         "tags": ["requests"],
         "summary": "Get a specific request by code",
@@ -273,7 +273,7 @@
         }
       }
     },
-    "/fair/datasets/": {
+    "/datasets/": {
       "get": {
         "tags": ["datasets"],
         "summary": "List all datasets",
@@ -338,7 +338,7 @@
         }
       }
     },
-    "/fair/datasets/{code}": {
+    "/datasets/{code}": {
       "get": {
         "tags": ["datasets"],
         "summary": "Get a specific dataset by code",

@@ -45,7 +45,7 @@ async function listWorkflowsExample(token: string) {
     }),
   )
 
-  const workflows = await workflowsApi.fairWorkflowsGet({
+  const workflows = await workflowsApi.workflowsGet({
     enabled: true,
   })
 
@@ -62,7 +62,7 @@ async function getWorkflowExample(token: string, workflowCode: string) {
     }),
   )
 
-  const workflow = await workflowsApi.fairWorkflowsCodeGet({
+  const workflow = await workflowsApi.workflowsCodeGet({
     code: workflowCode,
   })
 
@@ -79,7 +79,7 @@ async function listDatasetsExample(token: string) {
     }),
   )
 
-  const datasets = await datasetsApi.fairDatasetsGet({
+  const datasets = await datasetsApi.datasetsGet({
     page: 1,
     pageSize: 20,
     requestable: true,
@@ -98,7 +98,7 @@ async function getDatasetExample(token: string, datasetCode: string) {
     }),
   )
 
-  const dataset = await datasetsApi.fairDatasetsCodeGet({
+  const dataset = await datasetsApi.datasetsCodeGet({
     code: datasetCode,
   })
 
@@ -115,7 +115,7 @@ async function getDatasetSettingsExample(token: string, datasetCode: string) {
     }),
   )
 
-  const settings = await datasetsApi.fairDatasetsCodeSettingsGet({
+  const settings = await datasetsApi.datasetsCodeSettingsGet({
     code: datasetCode,
   })
 
@@ -132,7 +132,7 @@ async function createRequestExample(token: string) {
     }),
   )
 
-  const newRequest = await requestsApi.fairRequestsPost({
+  const newRequest = await requestsApi.requestsPost({
     requestPost: {
       name: 'My Data Access Request',
       transfer_type: 'clear',
@@ -158,7 +158,7 @@ async function listRequestsExample(token: string) {
     }),
   )
 
-  const requests = await requestsApi.fairRequestsGet({
+  const requests = await requestsApi.requestsGet({
     page: 1,
     pageSize: 20,
   })
@@ -176,7 +176,7 @@ async function getRequestExample(token: string, requestCode: string) {
     }),
   )
 
-  const request = await requestsApi.fairRequestsCodeGet({
+  const request = await requestsApi.requestsCodeGet({
     code: requestCode,
   })
 

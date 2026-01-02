@@ -23,7 +23,6 @@ export type AridhiaAccessStatusProps = {
 export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
   const { datasetCode, url } = props
   const aridhiaContext = useAridhiaContextOptional()
-
   const { data: requestsResponse, isLoading } = useGetAridhiaRequests()
 
   // If no Aridhia access token is available, show sign-in button

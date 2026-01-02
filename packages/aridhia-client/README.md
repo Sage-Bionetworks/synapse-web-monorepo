@@ -82,19 +82,19 @@ const datasets = await datasetsApi.fairDatasetsGet({
 
 - **Workflows**
 
-  - `GET /fair/workflows/` - List all workflows
-  - `GET /fair/workflows/{code}` - Get workflow by code
+  - `GET /workflows/` - List all workflows
+  - `GET /workflows/{code}` - Get workflow by code
 
 - **Datasets**
 
-  - `GET /fair/datasets/` - List all datasets (with filtering)
-  - `GET /fair/datasets/{code}` - Get dataset by code
-  - `GET /fair/datasets/{code}/settings` - Get dataset settings
+  - `GET /datasets/` - List all datasets (with filtering)
+  - `GET /datasets/{code}` - Get dataset by code
+  - `GET /datasets/{code}/settings` - Get dataset settings
 
 - **Requests**
-  - `GET /fair/requests/` - List all requests
-  - `GET /fair/requests/{code}` - Get request by code
-  - `POST /fair/requests/` - Create a new request
+  - `GET /requests/` - List all requests
+  - `GET /requests/{code}` - Get request by code
+  - `POST /requests/` - Create a new request
 
 ### Workspaces API Endpoints
 
