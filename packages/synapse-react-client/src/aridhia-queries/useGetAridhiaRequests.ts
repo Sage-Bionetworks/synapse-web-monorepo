@@ -1,14 +1,15 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
-import { Configuration } from '@sage-bionetworks/aridhia-client/generated/runtime'
 import { RequestsGet200Response } from '@sage-bionetworks/aridhia-client/generated/models'
 import { RequestsApi } from '@sage-bionetworks/aridhia-client/generated/apis'
 import { useAridhiaContextOptional } from '@/utils/context/AridhiaContext'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { createAridhiaApiConfiguration } from './aridhiaTokenExchange'
 
 export const ARIDHIA_REQUESTS_QUERY_KEY = ['aridhia', 'requests'] as const
 
 /**
  * Hook to fetch data access requests from Aridhia FAIR API
- * Uses the Aridhia access token from AridhiaContext for authentication
+ * Exchanges the Synapse access token for an Aridhia token on each request
  */
 export function useGetAridhiaRequests(
   options?: Partial<
@@ -16,24 +17,36 @@ export function useGetAridhiaRequests(
   >,
 ) {
   const aridhiaContext = useAridhiaContextOptional()
-  const accessToken = aridhiaContext?.accessToken
+  const { accessToken: synapseAccessToken } = useSynapseContext()
+
   return useQuery({
     ...options,
     queryKey: ARIDHIA_REQUESTS_QUERY_KEY,
     queryFn: async () => {
-      if (!accessToken) {
-        throw new Error('Aridhia access token is not available')
+      if (!synapseAccessToken) {
+        throw new Error('Synapse access token is not available')
       }
 
-      const requestsApi = new RequestsApi(
-        new Configuration({
-          basePath: 'https://fair.c-path-dev.aridhia.io/api',
-          accessToken: accessToken,
-        }),
+      if (!aridhiaContext) {
+        throw new Error(
+          'AridhiaContext is not available. Make sure to wrap your component with AridhiaContextProvider',
+        )
+      }
+
+      // Exchange Synapse token for Aridhia token and create API configuration
+      const configuration = await createAridhiaApiConfiguration(
+        synapseAccessToken,
+        aridhiaContext.apiBasePath,
+        'https://fair.c-path-dev.aridhia.io/api',
+        aridhiaContext.authenticationRequest,
       )
 
+      const requestsApi = new RequestsApi(configuration)
       return await requestsApi.requestsGet()
     },
-    enabled: options?.enabled !== undefined ? options.enabled : !!accessToken,
+    enabled:
+      options?.enabled !== undefined
+        ? options.enabled
+        : !!synapseAccessToken && !!aridhiaContext,
   })
 }
