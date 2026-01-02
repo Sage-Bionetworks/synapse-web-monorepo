@@ -1,9 +1,9 @@
 import { Button } from '@mui/material'
 import { useGetAridhiaRequests } from '@/aridhia-queries'
-import { useAridhiaContextOptional } from '@/utils/context/AridhiaContext'
 import AccessIcon, { RestrictionUiType } from '../HasAccess/AccessIcon'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { Request } from '@sage-bionetworks/aridhia-client/generated/models'
+import { useSynapseContext } from '@/utils'
 
 const buttonSx = { p: '0px', minWidth: 'unset' }
 
@@ -22,11 +22,10 @@ export type AridhiaAccessStatusProps = {
  */
 export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
   const { datasetCode, url } = props
-  const aridhiaContext = useAridhiaContextOptional()
+  const { isAuthenticated } = useSynapseContext()
   const { data: requestsResponse, isLoading } = useGetAridhiaRequests()
 
-  // If no Aridhia access token is available, show sign-in button
-  if (!aridhiaContext?.accessToken) {
+  if (!isAuthenticated) {
     return (
       <Button
         sx={buttonSx}
@@ -65,15 +64,13 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
   }
 
   // Check if there's a request for this entity
-
   const requests: Request[] = requestsResponse?.items ?? []
-
   const entityRequest = requests.find(request => {
     return (
+      // TODO: what code should we be using here?
       request.code === datasetCode || request.workspace_uuid === datasetCode
     )
   })
-
   if (!entityRequest) {
     // No request found - user may need to request access
     const icon = (
@@ -99,7 +96,9 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
     case 'pending':
       icon = (
         <AccessIcon
-          restrictionUiType={RestrictionUiType.AccessBlockedByRestriction}
+          restrictionUiType={
+            RestrictionUiType.AccessBlockedByRestrictionWithPendingRequest
+          }
         />
       )
       break

@@ -5,6 +5,7 @@ export enum RestrictionUiType {
   Accessible = 'Accessible',
   AccessibleWithTerms = 'AccessibleWithTerms',
   AccessBlockedByRestriction = 'AccessBlockedByRestriction',
+  AccessBlockedByRestrictionWithPendingRequest = 'AccessBlockedByRestrictionWithPendingRequest',
   AccessBlockedByACL = 'AccessBlockedByACL',
   AccessBlockedToAnonymous = 'AccessBlockedToAnonymous',
   AccessibleExternalFileHandle = 'AccessibleExternalFileHandle',
@@ -23,6 +24,11 @@ const iconConfiguration: Record<
     icon: 'accessClosed',
     color: theme => theme.palette.warning.main,
     tooltipText: 'You must request access to this restricted item.',
+  },
+  [RestrictionUiType.AccessBlockedByRestrictionWithPendingRequest]: {
+    icon: 'accessClosed',
+    color: theme => theme.palette.warning.main,
+    tooltipText: 'Your access request is pending approval.',
   },
   [RestrictionUiType.AccessBlockedByACL]: {
     icon: 'accessClosed',
