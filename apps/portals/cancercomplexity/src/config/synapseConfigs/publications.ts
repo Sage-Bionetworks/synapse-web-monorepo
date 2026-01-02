@@ -1,4 +1,3 @@
-import { Direction } from '@sage-bionetworks/synapse-types'
 import type {
   CardConfiguration,
   QueryWrapperPlotNavProps,
@@ -79,9 +78,6 @@ export const publicationsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   shouldDeepLink: true,
   name: 'Publications',
   columnAliases,
-  facetValueSortConfigs: [
-    { columnName: 'publicationYear', direction: Direction.DESC },
-  ],
   searchConfiguration: {
     ftsConfig: {
       textMatchesMode: 'BOOLEAN',

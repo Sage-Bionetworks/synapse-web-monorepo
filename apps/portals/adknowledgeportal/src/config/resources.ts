@@ -32,4 +32,5 @@ export const cavaticaConnectAccountURL =
 export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = [
   'cavatica',
   'terra',
+  'adworkbench',
 ]
