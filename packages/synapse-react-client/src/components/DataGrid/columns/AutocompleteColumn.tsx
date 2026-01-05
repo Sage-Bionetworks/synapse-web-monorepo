@@ -109,7 +109,6 @@ export function AutocompleteCell({
         stopEditing({ nextRow: false })
       }}
       onChange={(_e, newVal, reason) => {
-        console.log('change reason', reason)
         if (reason === 'clear') {
           setRowData(clearValue)
         } else if (reason === 'createOption') {
