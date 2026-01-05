@@ -9,34 +9,39 @@ export interface FlatTypeInfo {
   readOnly?: boolean
 }
 
+const defaultFlatTypeInfo: FlatTypeInfo = {
+  type: 'string',
+  isArray: false,
+}
+
 export function getFlatTypeInfo(
   jsonSchema: JSONSchema7,
 ): FlatTypeInfo | undefined {
+  const flatTypeInfo: FlatTypeInfo = {
+    ...defaultFlatTypeInfo,
+  }
+
+  if (jsonSchema.format) {
+    flatTypeInfo.format = jsonSchema.format
+  }
+
+  if (jsonSchema.readOnly) {
+    flatTypeInfo.readOnly = jsonSchema.readOnly
+  }
+
   if (jsonSchema.type) {
     if (jsonSchema.type === 'array' && jsonSchema.items) {
       const items = Array.isArray(jsonSchema.items)
         ? jsonSchema.items[0] // Take first item if tuple, assume same type for all
         : jsonSchema.items
 
-      const itemTypeInfo: FlatTypeInfo = getFlatTypeInfo(
-        items as JSONSchema7,
-      ) ?? {
-        type: 'string',
-        isArray: false,
-      }
+      const itemTypeInfo: FlatTypeInfo =
+        getFlatTypeInfo(items as JSONSchema7) ?? defaultFlatTypeInfo
 
-      return {
-        ...itemTypeInfo,
-        isArray: true,
-      }
+      return { ...flatTypeInfo, ...itemTypeInfo, isArray: true }
     }
 
-    return {
-      type: jsonSchema.type as string,
-      format: jsonSchema.format,
-      isArray: false,
-      readOnly: jsonSchema.readOnly,
-    }
+    return { ...flatTypeInfo, type: jsonSchema.type as string }
   }
 
   if (jsonSchema?.oneOf && isArray(jsonSchema.oneOf)) {
@@ -48,5 +53,5 @@ export function getFlatTypeInfo(
     }
   }
 
-  return undefined
+  return flatTypeInfo
 }

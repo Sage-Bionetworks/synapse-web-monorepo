@@ -31,6 +31,10 @@ const GRID_ENTITY_READONLY_PROPERTIES = [
   'etag',
   'concreteType',
   'parentId',
+  'path',
+  'type',
+  'currentVersion',
+  'benefactorId',
 ]
 
 /**
@@ -53,6 +57,8 @@ function addReadonlyToEntityProperties(jsonSchema: JSONSchema7): JSONSchema7 {
         ...(isObject(updatedProperties[prop]) ? updatedProperties[prop] : {}),
         readOnly: true,
       }
+    } else {
+      updatedProperties[prop] = { readOnly: true }
     }
   })
 
