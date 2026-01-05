@@ -6,7 +6,6 @@ import {
   QueryBundleRequest,
   TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
-import * as React from 'react'
 import { getFileColumnModelId } from '../SynapseTable/SynapseTableUtils'
 import { FTSConfig } from '../SynapseTable/SearchV2'
 import { getWordCount } from '../TextField/TextFieldWithWordLimit'
@@ -58,7 +57,6 @@ export function updateQueryUsingSearchTerm(
   queryBundleRequest: QueryBundleRequest,
   columnModels: ColumnModel[] | undefined,
   searchText: string,
-  setSearchText: React.Dispatch<React.SetStateAction<string>>,
   ftsConfig?: FTSConfig,
 ): QueryBundleRequest {
   const { additionalFilters = [] } = queryBundleRequest.query
@@ -105,7 +103,5 @@ export function updateQueryUsingSearchTerm(
     additionalFilters.push(textMatchesQueryFilter)
   }
   queryBundleRequest.query.additionalFilters = additionalFilters
-  // reset the search text after adding this filter
-  setSearchText('')
   return queryBundleRequest
 }

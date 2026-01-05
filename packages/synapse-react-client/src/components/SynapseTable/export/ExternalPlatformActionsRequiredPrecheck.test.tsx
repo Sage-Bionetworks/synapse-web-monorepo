@@ -144,6 +144,7 @@ const mockExportToCavatica = vi.fn()
 const mockExportToTerra = vi.fn()
 const mockExportToPluto = vi.fn()
 const mockExportToPlutoDev = vi.fn()
+const mockExportToADWorkbench = vi.fn()
 
 describe('ExternalPlatformActionsRequiredPrecheck', () => {
   beforeEach(() => {
@@ -170,6 +171,7 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
       exportToTerra: mockExportToTerra,
       exportToPluto: mockExportToPluto,
       exportToPlutoDev: mockExportToPlutoDev,
+      exportToADWorkbench: mockExportToADWorkbench,
     })
 
     MockTableQueryActionsRequired.mockReturnValue(<></>)
