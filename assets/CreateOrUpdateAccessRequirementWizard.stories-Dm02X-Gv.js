@@ -1,0 +1,55 @@
+import{r as o,j as m,cV as J,R as w,s as X,t as Z}from"./iframe-C6DVh3a8.js";import{A as ee}from"./AccessRequirementAclEditor-BUQQOein.js";import{C as te}from"./ConfirmationDialog-Bn1YHVno.js";import{S as re}from"./SetAccessRequirementCommonFields-D9XblJdg.js";import{S as oe}from"./SetBasicAccessRequirementFields-CDnGJQ8r.js";import{S as ne}from"./SetManagedAccessRequirementFields-Dp8SPkw6.js";import"./index-r8ZA1smB.js";import"./useAccessRequirements-DhC-BgPU.js";import"./index-CWyeuUHI.js";import"./_baseOrderBy-BPJHiFB9.js";import"./_baseIteratee-CWWhk6NN.js";import"./_baseMap-DhNHWzMR.js";import"./_baseEach-LxprNQX-.js";import"./useQueries-B0aVwD29.js";import"./useInfiniteQuery-ClFk1pW2.js";import"./AclEditor-D_09umw1.js";import"./UserSearchBoxV2-BFaOo3Fw.js";import"./useDebouncedEffect-5Q2GMnjF.js";import"./use-deep-compare-effect.esm-SwhE2hrk.js";import"./uniq-D-JYaA-4.js";import"./without-BVYiPBRH.js";import"./UserBadge-CxhgYPLm.js";import"./useUserBundle-GB9vlSqF.js";import"./useSuspenseQuery-Chz7E6o7.js";import"./SkeletonTable-BaZC2los.js";import"./MenuItem-BQStYWQ5.js";import"./Card-BPBXAoVw.js";import"./Chip-DnxNYuul.js";import"./Select-aab027f3.esm-Bc_KSYKr.js";import"./defineProperty-CegpTSss.js";import"./UserOrTeamBadge-Qwm5AgjU.js";import"./TeamBadge-ZKhMo1dI.js";import"./SkeletonButton-DJ25ODSP.js";import"./SkeletonInlineBlock-DaN9DO1b.js";import"./SkeletonParagraph-BiRrs5sP.js";import"./IconSvgButton-DZzZgwXC.js";import"./FormControlLabel-CiJk5KuY.js";import"./Checkbox-DJfaxyg9.js";import"./SwitchBase-CuaC-at1.js";import"./useUpdateAcl-WoyCCfgJ.js";import"./DialogBase-DG3FOts0.js";import"./Close-Cvfvekss.js";import"./HelpPopover-D15layXw.js";import"./MarkdownPopover-DYELty5d.js";import"./LightTooltip-CehMS9nA.js";import"./MarkdownSynapse-DbU2DxXy.js";import"./pluralize-CC--1ngb.js";import"./EntitySubjectsSelector-P4uMcUP2.js";import"./EntityHeaderTable-CPI94zjb.js";import"./StyledTableContainer-C4lmQI5J.js";import"./useGetEntityHeaders-B5Tl33-4.js";import"./StyledTanStackTable-BTi37KPE.js";import"./ExpandCollapseButton-B_R42ktC.js";import"./index-5P-G-OXC.js";import"./papaparse.min-D1KxGBLm.js";import"./EntityFinderModal-DG5euRVJ.js";import"./WarningDialog-DJjDJm2X.js";import"./EntityFinder-qPtpj_NX.js";import"./Search-DEkfr6IC.js";import"./immutable.es-BJjDfH8f.js";import"./index-C-_p9hnQ.js";import"./index-Chjiymov.js";import"./extends-CF3RwP-h.js";import"./useEntitySelection-DQpCqEgv.js";import"./useGetEntityChildren-ByConZk3.js";import"./ColumnHeader-Cwrkut6F.js";import"./EnumFacetFilterUI-d8FD7YBu.js";import"./FacetFilterHeader-bj60yrmm.js";import"./Radio-CR1Rnskn.js";import"./HelpTwoTone-D0OxHOW8.js";import"./ModifiedOnCell-BbhNVVoe.js";import"./useEntityBundle-B90ambwW.js";import"./useDownloadList-7_MIlia5.js";import"./waitForAsyncResult-D8eeb4MN.js";import"./DownloadConfirmationUtils-BzjsfiFZ.js";import"./EntityBadgeIcons-B7ZctR4D.js";import"./useEntity-C-V6zgpE.js";import"./pickBy-tb-GfPY8.js";import"./isString-Cmdz_UQl.js";import"./InfiniteQueryUtils-CKlRW-xB.js";import"./useSchema-B7UxtqoP.js";import"./index-Ogid4YB8.js";import"./AnnotationsTable-B3iE1fIO.js";import"./EntityModal-BBCzB-8x.js";import"./SchemaDrivenAnnotationEditor-hdkkwTnU.js";import"./index-CZHpzthP.js";import"./enums-Bh7adedg.js";import"./_arrayReduce-CrxnWFSq.js";import"./forEach-B8iwwgef.js";import"./Add-sXAw-K23.js";import"./Grid-Ba5ajPM-.js";import"./ListItem-Dt0l7J3e.js";import"./listItemButtonClasses-CPX8fj-K.js";import"./ListItemIcon-Dyc8dnm4.js";import"./ListItemText-H3TsNHfd.js";import"./ArrowUpward-DLrHDvKg.js";import"./ContentCopy-CKkneaJo.js";import"./FormGroup-CbIk2vfI.js";import"./RadioGroup-CNFGXg9S.js";import"./Slider-Dp2g4Hya.js";import"./visuallyHidden-Dan1xhjv.js";import"./index-C148XJoK.js";import"./JsonSchemaForm-Xhg5tn5W.js";import"./GridLegacy-BLDxfJJy.js";import"./index-browser-esm-k-o2Qe0C.js";import"./groupBy-D5dCbDAd.js";import"./_createAggregator-BAZrz04R.js";import"./DateTimePicker-DxulpDwZ.js";import"./useMobilePicker-Bj0eeLeu.js";import"./InputAdornment-CQNkYQ5a.js";import"./Tabs-e4V2Y5Y_.js";import"./KeyboardArrowRight-CP1RGiAs.js";import"./Autocomplete-BrFOdlzt.js";import"./usePreviousProps-JdV1Aj9c.js";import"./TextWidget-tvV9adA-.js";import"./FileHandleUtils-CbBC2kuN.js";import"./LockTwoTone-eeLCc5NG.js";import"./EntityIcon-fNjsS_B0.js";import"./FileEntityDirectDownload-XhJbRnrp.js";import"./DirectDownload-9GtSbLer.js";import"./SynapseTableConstants-2qH3fDlQ.js";import"./useFavorites-798KDqXJ.js";import"./NoSearchResults-FnTa1B1Y.js";import"./useSearch-CGBNFEvF.js";import"./DropdownSelect-_a-PYWG6.js";import"./getValidReactChildren-7HPWDN1b.js";import"./index.esm-V8W7DzsI.js";import"./EntityHeaderTableCellRenderers-nY4cZqv1.js";import"./EntityLink-C-pb45f-.js";import"./ErrorChip-Bo5LWdtG.js";import"./upperFirst-VX9PKCZu.js";import"./_stringToArray-BSLi9szm.js";import"./TeamSubjectsSelector-C6CKYDIq.js";import"./useTeam-CT1gWJOC.js";import"./WikiMarkdownEditorButton-BLi7kItx.js";import"./WikiMarkdownEditor-YXv4BMn7.js";import"./MarkdownEditor-Cim6ovyN.js";import"./UploadDocumentField-C0pIsWrA.js";import"./FileUpload-RiPVJpfE.js";function ie(e,C){switch(e){case"SET_AR_COMMON_FIELDS":case"SET_MANAGED_AR_FIELDS":case"SET_BASIC_AR_FIELDS":return`${C?"Edit":"Create"} Access Requirement`;case"SET_MANAGED_AR_ACL_PERMISSIONS":return"Access Requirement Permissions"}}function se(e){switch(e){case"SET_MANAGED_AR_ACL_PERMISSIONS":case"SET_BASIC_AR_FIELDS":return!0}return!1}function T(e){const{open:C,onCancel:z,onComplete:f}=e,[i,q]=o.useState("SET_AR_COMMON_FIELDS"),[Y,r]=o.useState(!1),[n,K]=o.useState(e.accessRequirementId),a=o.useRef(null),p=o.useRef(null),c=o.useRef(null),u=o.useRef(null),Q=!!e.accessRequirementId,$=o.useMemo(()=>{switch(i){case"SET_AR_COMMON_FIELDS":return m.jsx(re,{ref:a,onSave:(s,l)=>{K(s),q(l===J?"SET_MANAGED_AR_FIELDS":"SET_BASIC_AR_FIELDS"),r(!1)},onError:()=>r(!1),subject:e.subject,accessRequirementId:e.accessRequirementId});case"SET_MANAGED_AR_FIELDS":return m.jsx(ne,{ref:p,accessRequirementId:n,onSave:()=>{q("SET_MANAGED_AR_ACL_PERMISSIONS"),r(!1)},onError:()=>{r(!1)}});case"SET_MANAGED_AR_ACL_PERMISSIONS":return m.jsx(ee,{ref:c,accessRequirementId:n,onSaveComplete:s=>{s&&f(n),r(!1)}});case"SET_BASIC_AR_FIELDS":return m.jsx(oe,{ref:u,accessRequirementId:n,onSave:()=>{f(n),r(!1)},onError:()=>r(!1)})}},[i,e.subject,e.accessRequirementId,n,f]),H=s=>{var l,I,g,M;switch(s.preventDefault(),r(!0),i){case"SET_AR_COMMON_FIELDS":(l=a==null?void 0:a.current)==null||l.save();return;case"SET_MANAGED_AR_FIELDS":(I=p==null?void 0:p.current)==null||I.save();return;case"SET_MANAGED_AR_ACL_PERMISSIONS":(g=c==null?void 0:c.current)==null||g.save();return;case"SET_BASIC_AR_FIELDS":(M=u==null?void 0:u.current)==null||M.save()}};return m.jsx(te,{open:C,onCancel:z,onConfirm:H,confirmButtonProps:{children:se(i)?"Save":"Save & Continue",disabled:Y},maxWidth:"md",title:ie(i,Q),content:$})}try{T.displayName="CreateOrUpdateAccessRequirementWizard",T.__docgenInfo={description:"",displayName:"CreateOrUpdateAccessRequirementWizard",props:{open:{defaultValue:null,description:"",name:"open",required:!0,type:{name:"boolean"}},onCancel:{defaultValue:null,description:"",name:"onCancel",required:!0,type:{name:"() => void"}},onComplete:{defaultValue:null,description:"",name:"onComplete",required:!0,type:{name:"(accessRequirementID?: string) => void"}},accessRequirementId:{defaultValue:null,description:"",name:"accessRequirementId",required:!1,type:{name:"string"}},subject:{defaultValue:null,description:"",name:"subject",required:!1,type:{name:"RestrictableObjectDescriptor"}}}}}catch{}const{fn:t}=__STORYBOOK_MODULE_TEST__,Ur={title:"Governance/CreateOrUpdateAccessRequirementWizard",component:T,parameters:{stack:"development"}},d={args:{open:!0,onComplete:t(),onCancel:t(),subject:{id:"3429759",type:w.TEAM}}},S={args:{open:!0,onComplete:t(),onCancel:t(),subject:{id:"syn12714410",type:w.ENTITY}}},A={args:{open:!0,onComplete:t(),onCancel:t(),accessRequirementId:"9602671"}},_={args:{open:!0,onComplete:t(),onCancel:t(),accessRequirementId:"9602700"}},R={args:{open:!0,onComplete:t(),onCancel:t(),accessRequirementId:X.id.toString()},parameters:{stack:"mock"}},E={args:{open:!0,onComplete:t(),onCancel:t(),accessRequirementId:Z.id.toString()},parameters:{stack:"mock"}};var D,O,N;d.parameters={...d.parameters,docs:{...(D=d.parameters)==null?void 0:D.docs,source:{originalSource:`{
+  args: {
+    open: true,
+    onComplete: fn(),
+    onCancel: fn(),
+    subject: {
+      id: '3429759',
+      type: RestrictableObjectType.TEAM
+    }
+  }
+}`,...(N=(O=d.parameters)==null?void 0:O.docs)==null?void 0:N.source}}};var L,y,j;S.parameters={...S.parameters,docs:{...(L=S.parameters)==null?void 0:L.docs,source:{originalSource:`{
+  args: {
+    open: true,
+    onComplete: fn(),
+    onCancel: fn(),
+    subject: {
+      id: 'syn12714410',
+      type: RestrictableObjectType.ENTITY
+    }
+  }
+}`,...(j=(y=S.parameters)==null?void 0:y.docs)==null?void 0:j.source}}};var b,k,v;A.parameters={...A.parameters,docs:{...(b=A.parameters)==null?void 0:b.docs,source:{originalSource:`{
+  args: {
+    open: true,
+    onComplete: fn(),
+    onCancel: fn(),
+    accessRequirementId: '9602671'
+  }
+}`,...(v=(k=A.parameters)==null?void 0:k.docs)==null?void 0:v.source}}};var x,F,G;_.parameters={..._.parameters,docs:{...(x=_.parameters)==null?void 0:x.docs,source:{originalSource:`{
+  args: {
+    open: true,
+    onComplete: fn(),
+    onCancel: fn(),
+    accessRequirementId: '9602700'
+  }
+}`,...(G=(F=_.parameters)==null?void 0:F.docs)==null?void 0:G.source}}};var U,P,B;R.parameters={...R.parameters,docs:{...(U=R.parameters)==null?void 0:U.docs,source:{originalSource:`{
+  args: {
+    open: true,
+    onComplete: fn(),
+    onCancel: fn(),
+    accessRequirementId: mockToUAccessRequirement.id.toString()
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...(B=(P=R.parameters)==null?void 0:P.docs)==null?void 0:B.source}}};var h,V,W;E.parameters={...E.parameters,docs:{...(h=E.parameters)==null?void 0:h.docs,source:{originalSource:`{
+  args: {
+    open: true,
+    onComplete: fn(),
+    onCancel: fn(),
+    accessRequirementId: mockACTAccessRequirement.id.toString()
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...(W=(V=E.parameters)==null?void 0:V.docs)==null?void 0:W.source}}};const Pr=["CreateTeamAR","CreateEntityAR","EditManagedAR","EditSelfSignAR","MockTermsOfUseAR","MockActAR"];export{S as CreateEntityAR,d as CreateTeamAR,A as EditManagedAR,_ as EditSelfSignAR,E as MockActAR,R as MockTermsOfUseAR,Pr as __namedExportsOrder,Ur as default};
