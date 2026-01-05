@@ -14,9 +14,7 @@ const defaultFlatTypeInfo: FlatTypeInfo = {
   isArray: false,
 }
 
-export function getFlatTypeInfo(
-  jsonSchema: JSONSchema7,
-): FlatTypeInfo | undefined {
+export function getFlatTypeInfo(jsonSchema: JSONSchema7): FlatTypeInfo {
   const flatTypeInfo: FlatTypeInfo = {
     ...defaultFlatTypeInfo,
   }
