@@ -1,5 +1,0 @@
-import{A as e}from"./AnnotationsTable-Bigc7Tad.js";import"./iframe-Djv8MYNB.js";import"./index-r8ZA1smB.js";import"./useEntity-D1Vbp73T.js";import"./pickBy-B4gnU8TW.js";import"./isString-CT6WYqqB.js";import"./_baseIteratee-DzOJkO1l.js";import"./useQueries-iQS82f7J.js";import"./useSuspenseQuery-Bke-3bkA.js";import"./useInfiniteQuery-By8at75o.js";import"./InfiniteQueryUtils-CKlRW-xB.js";import"./useEntityBundle-C2CqcUzD.js";import"./useSchema-DxolivkT.js";import"./SkeletonButton-D377GQsO.js";import"./SkeletonInlineBlock-Bo6_99BY.js";import"./SkeletonTable-5bHQrafN.js";import"./SkeletonParagraph-CvIzEYe-.js";const S={title:"Synapse/AnnotationsTable",component:e},t={args:{entityId:"syn23567475"}};var o,r,m;t.parameters={...t.parameters,docs:{...(o=t.parameters)==null?void 0:o.docs,source:{originalSource:`{
-  args: {
-    entityId: 'syn23567475'
-  }
-}`,...(m=(r=t.parameters)==null?void 0:r.docs)==null?void 0:m.source}}};const T=["Demo"];export{t as Demo,T as __namedExportsOrder,S as default};

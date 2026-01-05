@@ -1,0 +1,1 @@
+import{F as l,e1 as o}from"./iframe-DboE6cus.js";const r=(e,t)=>{const s={associateObjectId:t,associateObjectType:l.TableEntity,fileHandleId:e||""},a=o(s,!1,{enabled:!!e});return a==null?void 0:a.dataUrl};export{r as u};
