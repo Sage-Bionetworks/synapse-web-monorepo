@@ -22,7 +22,7 @@
       "dependsOn": ["build"]
     },
     "lint": {
-      "//": "Lint uses source paths in tsconfig, so no build dependency needed"
+      "dependsOn": ["^build"]
     },
     "test": {
       "//": "Tests don't depend a build for their own package, but they do depend on their dependencies being built",
