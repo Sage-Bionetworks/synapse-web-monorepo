@@ -1,16 +1,41 @@
 import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseFreeTextUsingJsonSchemaType'
-import { Autocomplete, TextField, Tooltip } from '@mui/material'
+import { Autocomplete, SxProps, TextField, Theme, Tooltip } from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
-import { useLayoutEffect, useRef, useState } from 'react'
+import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { CellComponent, Column } from 'react-datasheet-grid'
 import {
-  AutocompleteOption,
   AutocompleteCellProps,
   castCellValueToString,
+  AutocompleteOption,
 } from './AutocompleteColumn'
 import { GridAutocompleteChip } from './GridAutocompleteChip'
 import isNil from 'lodash-es/isNil'
 import isEqual from 'lodash-es/isEqual'
+
+// Static styles extracted to avoid recreation on every render
+const AUTOCOMPLETE_MULTIPLE_BASE_SX: SxProps<Theme> = {
+  width: '100%',
+  height: '100%',
+  '& .MuiFormControl-root': {
+    height: '100%',
+  },
+  '& .MuiAutocomplete-tag': {
+    margin: '1px',
+  },
+  '&:hover .MuiAutocomplete-clearIndicator': {
+    visibility: 'visible',
+  },
+  '&:hover .MuiAutocomplete-popupIndicator': {
+    visibility: 'visible',
+  },
+}
+
+const TEXT_FIELD_SX: SxProps<Theme> = {
+  height: '100%',
+  padding: '0 10px',
+  backgroundColor: 'inherit',
+  borderRadius: 0,
+}
 
 export type AutocompleteMultipleEnumOption =
   | AutocompleteOption
@@ -86,6 +111,47 @@ function AutocompleteMultipleEnumCell({
       : ''
 
   const hasValue = !isNil(rowData) && rowData !== ''
+
+  // Memoize sx to avoid recreation - dynamic styles change based on active/focus state
+  const autocompleteSx = useMemo<SxProps<Theme>>(
+    () => ({
+      ...AUTOCOMPLETE_MULTIPLE_BASE_SX,
+      '& .MuiAutocomplete-inputRoot': {
+        pointerEvents: focus ? undefined : 'none',
+        padding: '0 10px',
+        backgroundColor: 'inherit',
+        // Allow tags to wrap and enable scrolling
+        flexWrap: active ? 'wrap' : 'nowrap',
+        minHeight: '100%',
+        maxHeight: '100%',
+        overflowY: active ? 'auto' : 'hidden',
+        overflowX: 'hidden',
+        '&::-webkit-scrollbar': {
+          width: '6px',
+          height: '6px',
+        },
+        '&::-webkit-scrollbar-track': {
+          background: 'transparent',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: '#888',
+          borderRadius: '3px',
+        },
+        '&::-webkit-scrollbar-thumb:hover': {
+          background: '#555',
+        },
+      },
+      '& .MuiAutocomplete-clearIndicator': {
+        visibility: active ? 'visible' : 'hidden',
+        pointerEvents: 'auto',
+      },
+      '& .MuiAutocomplete-popupIndicator': {
+        visibility: active ? 'visible' : 'hidden',
+        pointerEvents: 'auto',
+      },
+    }),
+    [active, focus],
+  )
 
   return (
     <Tooltip
@@ -173,70 +239,40 @@ function AutocompleteMultipleEnumCell({
                 input: {
                   ...params.InputProps,
                   disableUnderline: true,
-                  sx: {
-                    height: '100%',
-                    padding: '0 10px',
-                    backgroundColor: 'inherit',
-                    borderRadius: 0,
-                  },
+                  sx: TEXT_FIELD_SX,
                 },
               }}
             />
           )}
-          sx={{
-            width: '100%',
-            height: '100%',
-            '& .MuiAutocomplete-inputRoot': {
-              pointerEvents: focus ? undefined : 'none',
-              padding: '0 10px',
-              backgroundColor: 'inherit',
-              // Allow tags to wrap and enable scrolling
-              flexWrap: active ? 'wrap' : 'nowrap',
-              minHeight: '100%',
-              maxHeight: '100%',
-              overflowY: active ? 'auto' : 'hidden',
-              overflowX: 'hidden',
-              '&::-webkit-scrollbar': {
-                width: '6px',
-                height: '6px',
-              },
-              '&::-webkit-scrollbar-track': {
-                background: 'transparent',
-              },
-              '&::-webkit-scrollbar-thumb': {
-                background: '#888',
-                borderRadius: '3px',
-              },
-              '&::-webkit-scrollbar-thumb:hover': {
-                background: '#555',
-              },
-            },
-            '& .MuiFormControl-root': {
-              height: '100%',
-            },
-            '& .MuiAutocomplete-tag': {
-              margin: '1px',
-            },
-            '& .MuiAutocomplete-clearIndicator': {
-              visibility: active ? 'visible' : 'hidden',
-              pointerEvents: 'auto',
-            },
-            '& .MuiAutocomplete-popupIndicator': {
-              visibility: active ? 'visible' : 'hidden',
-              pointerEvents: 'auto',
-            },
-            '&:hover .MuiAutocomplete-clearIndicator': {
-              visibility: 'visible',
-            },
-            '&:hover .MuiAutocomplete-popupIndicator': {
-              visibility: 'visible',
-            },
-          }}
+          sx={autocompleteSx}
         />
       </div>
     </Tooltip>
   )
 }
+
+// Memoize the cell component to prevent unnecessary re-renders
+// Custom comparison function that ignores function prop identity changes
+// since the grid library recreates them on each render but their behavior is stable
+const MemoizedAutocompleteMultipleEnumCell = memo(
+  AutocompleteMultipleEnumCell,
+  (prevProps, nextProps) => {
+    // Compare all non-function props that represent actual state changes
+    return (
+      prevProps.active === nextProps.active &&
+      prevProps.focus === nextProps.focus &&
+      prevProps.rowData === nextProps.rowData &&
+      prevProps.choices === nextProps.choices &&
+      prevProps.colType === nextProps.colType &&
+      prevProps.limitTags === nextProps.limitTags &&
+      prevProps.clearValue === nextProps.clearValue
+      // Note: We intentionally skip comparing stopEditing and setRowData
+      // These are recreated by react-datasheet-grid on every render but their
+      // behavior remains functionally identical for the same cell position.
+      // Comparing them would defeat the purpose of memoization.
+    )
+  },
+)
 
 export type AutocompleteMultipleEnumColumnProps = {
   choices: AutocompleteMultipleEnumOption[]
@@ -257,7 +293,7 @@ export function autocompleteMultipleEnumColumn({
     component: ((
       props: Omit<AutocompleteMultipleEnumCellProps, 'choices' | 'limitTags'>,
     ) => (
-      <AutocompleteMultipleEnumCell
+      <MemoizedAutocompleteMultipleEnumCell
         {...props}
         choices={choices}
         colType={colType}
