@@ -22,6 +22,7 @@
       "dependsOn": ["build"]
     },
     "lint": {
+      "//": "We use @typescript-eslint/parser for type-aware linting, so we must build dependencies prior to linting",
       "dependsOn": ["^build"]
     },
     "test": {
