@@ -64,7 +64,7 @@
     "typescript": "5.8.3",
     "url": "^0.11.4",
     "util": "^0.12.5",
-    "vite": "^6.3.5",
+    "vite": "^7.3.0",
     "vite-config": "workspace:*",
     "vitest": "^3.2.2",
     "vitest-when": "^0.6.1",
