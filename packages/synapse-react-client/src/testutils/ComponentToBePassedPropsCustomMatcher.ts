@@ -8,7 +8,9 @@ import { screen } from '@testing-library/react'
 expect.extend({
   toHaveBeenRendered(mockComponent: Mock) {
     try {
-      expect(mockComponent).toHaveBeenCalled()
+      if (mockComponent.mock.calls.length === 0) {
+        throw new Error('Component not rendered')
+      }
     } catch (error) {
       return {
         pass: false,
@@ -26,7 +28,12 @@ expect.extend({
     options?: { testId?: string },
   ) {
     try {
-      expect(mockComponent).toHaveBeenCalledWith(expectedProps, undefined)
+      const wasCalledWithProps = mockComponent.mock.calls.some(
+        c => JSON.stringify(c[0]) === JSON.stringify(expectedProps),
+      )
+      if (!wasCalledWithProps) {
+        throw new Error('Not called with expected props')
+      }
     } catch (error) {
       return {
         pass: false,
@@ -57,7 +64,14 @@ expect.extend({
   },
   toHaveBeenLastRenderedWithProps(mockComponent: Mock, expectedProps: unknown) {
     try {
-      expect(mockComponent).toHaveBeenLastCalledWith(expectedProps, undefined)
+      const lastCall =
+        mockComponent.mock.calls[mockComponent.mock.calls.length - 1]
+      if (
+        !lastCall ||
+        JSON.stringify(lastCall[0]) !== JSON.stringify(expectedProps)
+      ) {
+        throw new Error('Not last called with expected props')
+      }
     } catch (error) {
       return {
         pass: false,
