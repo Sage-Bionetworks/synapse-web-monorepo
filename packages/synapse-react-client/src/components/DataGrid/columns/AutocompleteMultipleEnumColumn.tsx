@@ -23,6 +23,7 @@ export type AutocompleteMultipleEnumCellProps = Omit<
 > & {
   choices: AutocompleteMultipleEnumOption[]
   limitTags?: number
+  clearValue?: undefined | null
 }
 
 type EnumOption = {
@@ -60,6 +61,7 @@ function AutocompleteMultipleEnumCell({
   active,
   focus,
   stopEditing,
+  clearValue = undefined,
 }: AutocompleteMultipleEnumCellProps) {
   const ref = useRef<HTMLInputElement>(null)
 
@@ -134,7 +136,8 @@ function AutocompleteMultipleEnumCell({
                 ? parseFreeTextGivenJsonSchemaType(item, colType)
                 : item.value
             })
-            setRowData(values)
+            // Use clearValue when all items are removed
+            setRowData(values.length === 0 ? clearValue : values)
             setLocalInputState('')
           }}
           disableCloseOnSelect={choices.length > 1}
@@ -240,6 +243,7 @@ export type AutocompleteMultipleEnumColumnProps = {
   colType?: JSONSchema7Type
   limitTags?: number
   dynamicHeight?: boolean
+  clearValue?: undefined | null
 }
 
 export function autocompleteMultipleEnumColumn({
@@ -247,6 +251,7 @@ export function autocompleteMultipleEnumColumn({
   colType,
   limitTags = 2,
   dynamicHeight = false,
+  clearValue = undefined,
 }: AutocompleteMultipleEnumColumnProps): Partial<Column> {
   return {
     component: ((
@@ -257,6 +262,7 @@ export function autocompleteMultipleEnumColumn({
         choices={choices}
         colType={colType}
         limitTags={limitTags}
+        clearValue={clearValue}
       />
     )) as CellComponent,
     copyValue: ({ rowData }) => {

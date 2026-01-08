@@ -19,19 +19,22 @@ export type SynapseVideoProps = {
     oggSynapseId?: string
     mp4SynapseId?: string
     webmSynapseId?: string
+    vttSynapseId?: string
   }
 }
 
 export default function SynapseVideo({ params }: SynapseVideoProps) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, isAuthenticated } = useSynapseContext()
   const [externalVideoUrl, setExternalVideoUrl] = useState<string>()
   const [synapseVideoPresignedUrl, setSynapseVideoPresignedUrl] =
+    useState<string>()
+  const [synapseVideoVttPresignedUrl, setSynapseVideoVttPresignedUrl] =
     useState<string>()
 
   const videoWidth = params.width ?? ''
   const videoHeight = params.height ?? ''
   useEffect(() => {
-    const getVideo = () => {
+    const getVideo = async () => {
       if (params.videoId)
         setExternalVideoUrl(`https://www.youtube.com/embed/${params.videoId}`)
       else if (params.vimeoId)
@@ -40,24 +43,41 @@ export default function SynapseVideo({ params }: SynapseVideoProps) {
         const videoKey =
           params.oggSynapseId || params.mp4SynapseId || params.webmSynapseId
 
-        getEntity<FileEntity>(accessToken, videoKey!).then(
-          (data: FileEntity) => {
-            const fileHandleAssociationList: FileHandleAssociation[] = [
-              {
-                associateObjectId: videoKey!,
-                associateObjectType: FileHandleAssociateType.FileEntity,
-                fileHandleId: data.dataFileHandleId,
-              },
-            ]
-            getSynapseFiles(fileHandleAssociationList, data.dataFileHandleId)
+        const videoEntity = await getEntity<FileEntity>(accessToken, videoKey!)
+        const fileHandleAssociationList: FileHandleAssociation[] = [
+          {
+            associateObjectId: videoKey!,
+            associateObjectType: FileHandleAssociateType.FileEntity,
+            fileHandleId: videoEntity.dataFileHandleId,
           },
+        ]
+
+        let vttFileHandleId: string | undefined
+        if (params.vttSynapseId) {
+          const vttEntity = await getEntity<FileEntity>(
+            accessToken,
+            params.vttSynapseId,
+          )
+          vttFileHandleId = vttEntity.dataFileHandleId
+          fileHandleAssociationList.push({
+            associateObjectId: params.vttSynapseId,
+            associateObjectType: FileHandleAssociateType.FileEntity,
+            fileHandleId: vttEntity.dataFileHandleId,
+          })
+        }
+
+        getSynapseFiles(
+          fileHandleAssociationList,
+          videoEntity.dataFileHandleId,
+          vttFileHandleId,
         )
       }
     }
 
     const getSynapseFiles = (
       fileHandleAssociationList: FileHandleAssociation[],
-      id: string,
+      videoFileHandleId: string,
+      vttFileHandleId?: string,
     ) => {
       const request: BatchFileRequest = {
         includeFileHandles: false,
@@ -68,10 +88,21 @@ export default function SynapseVideo({ params }: SynapseVideoProps) {
 
       getFiles(request, accessToken)
         .then((data: BatchFileResult) => {
-          const { preSignedURL } = data.requestedFiles.filter(
-            el => el.fileHandleId === id,
-          )[0]
-          setSynapseVideoPresignedUrl(preSignedURL)
+          const videoFile = data.requestedFiles.find(
+            el => el.fileHandleId === videoFileHandleId,
+          )
+          if (videoFile?.preSignedURL) {
+            setSynapseVideoPresignedUrl(videoFile.preSignedURL)
+          }
+
+          if (vttFileHandleId) {
+            const vttFile = data.requestedFiles.find(
+              el => el.fileHandleId === vttFileHandleId,
+            )
+            if (vttFile?.preSignedURL) {
+              setSynapseVideoVttPresignedUrl(vttFile.preSignedURL)
+            }
+          }
         })
         .catch(err => {
           console.error('Error on getting video ', err)
@@ -80,35 +111,38 @@ export default function SynapseVideo({ params }: SynapseVideoProps) {
     getVideo()
   }, [externalVideoUrl, params, accessToken, videoHeight, videoWidth])
 
-  if (synapseVideoPresignedUrl) {
-    if (accessToken) {
-      return (
-        <video
-          controls
-          src={synapseVideoPresignedUrl}
-          width={videoWidth}
-          height={videoHeight}
-          data-testid="synapse-video-url"
+  if (!isAuthenticated && !externalVideoUrl) {
+    // if not logged in, show login button
+    return (
+      <p>
+        You will need to
+        <button
+          data-testid="video-login"
+          className={`${SynapseConstants.SRC_SIGN_IN_CLASS} sign-in-btn default
+              `}
         >
-          It does not support the HTML5 Video element.
-        </video>
-      )
-    } else {
-      // if not logged in, show login button
-      return (
-        <p>
-          You will need to
-          <button
-            data-testid="video-login"
-            className={`${SynapseConstants.SRC_SIGN_IN_CLASS} sign-in-btn default
-                `}
-          >
-            Sign in
-          </button>
-          in for access to that resource.
-        </p>
-      )
-    }
+          Sign in
+        </button>
+        in for access to that resource.
+      </p>
+    )
+  }
+  if (synapseVideoPresignedUrl) {
+    return (
+      <video
+        controls
+        width={videoWidth}
+        height={videoHeight}
+        data-testid="synapse-video-url"
+        crossOrigin="anonymous"
+      >
+        <source src={synapseVideoPresignedUrl} />
+        {synapseVideoVttPresignedUrl && (
+          <track src={synapseVideoVttPresignedUrl} kind="subtitles" default />
+        )}
+        It does not support the HTML5 Video element.
+      </video>
+    )
   } else if (externalVideoUrl) {
     return (
       <iframe
