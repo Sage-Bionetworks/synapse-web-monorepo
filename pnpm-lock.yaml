@@ -2137,7 +2137,7 @@ importers:
         version: 1.6.1(vitest@3.2.2)
       '@vitest/ui':
         specifier: ^1.6.0
-        version: 3.2.2(vitest@3.2.2)
+        version: 1.6.1(vitest@3.2.2)
       '@vitest/utils':
         specifier: ^1.6.0
         version: 1.6.1
@@ -2177,7 +2177,7 @@ importers:
         version: 5.1.4(typescript@5.8.3)(vite@7.3.0(@types/node@20.19.27)(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1))
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@20.19.27)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@2.10.2(@types/node@20.19.27)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@20.19.27)(@vitest/ui@1.6.1)(jsdom@26.1.0)(msw@2.10.2(@types/node@20.19.27)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1)
 
 packages:
 
@@ -5234,9 +5234,6 @@ packages:
 
   '@types/node@20.17.41':
     resolution: {integrity: sha512-bOB0a6u/e7Ey/Gyc+ghRg+xoXFGYug4I7pdvwxudh+Ewmk93Z4wTudn4NIKiIRYQyujf9jm2uTBzQK8tg8oUeQ==}
-
-  '@types/node@20.19.19':
-    resolution: {integrity: sha512-pb1Uqj5WJP7wrcbLU7Ru4QtA0+3kAXrkutGiD26wUKzSMgNNaPARTUDQmElUXp64kh3cWdou3Q0C7qwwxqSFmg==}
 
   '@types/node@20.19.27':
     resolution: {integrity: sha512-N2clP5pJhB2YnZJ3PIHFk5RkygRX5WO/5f0WC08tp0wd+sv0rsJk3MqWn3CbNmT2J505a5336jaQj4ph1AdMug==}
@@ -12899,14 +12896,6 @@ snapshots:
     optionalDependencies:
       '@types/node': 20.17.41
 
-  '@inquirer/confirm@5.1.9(@types/node@20.19.19)':
-    dependencies:
-      '@inquirer/core': 10.1.10(@types/node@20.19.19)
-      '@inquirer/type': 3.0.6(@types/node@20.19.19)
-    optionalDependencies:
-      '@types/node': 20.19.19
-    optional: true
-
   '@inquirer/confirm@5.1.9(@types/node@20.19.27)':
     dependencies:
       '@inquirer/core': 10.1.10(@types/node@20.19.27)
@@ -12926,20 +12915,6 @@ snapshots:
       yoctocolors-cjs: 2.1.2
     optionalDependencies:
       '@types/node': 20.17.41
-
-  '@inquirer/core@10.1.10(@types/node@20.19.19)':
-    dependencies:
-      '@inquirer/figures': 1.0.11
-      '@inquirer/type': 3.0.6(@types/node@20.19.19)
-      ansi-escapes: 4.3.2
-      cli-width: 4.1.0
-      mute-stream: 2.0.0
-      signal-exit: 4.1.0
-      wrap-ansi: 6.2.0
-      yoctocolors-cjs: 2.1.2
-    optionalDependencies:
-      '@types/node': 20.19.19
-    optional: true
 
   '@inquirer/core@10.1.10(@types/node@20.19.27)':
     dependencies:
@@ -12966,11 +12941,6 @@ snapshots:
   '@inquirer/type@3.0.6(@types/node@20.17.41)':
     optionalDependencies:
       '@types/node': 20.17.41
-
-  '@inquirer/type@3.0.6(@types/node@20.19.19)':
-    optionalDependencies:
-      '@types/node': 20.19.19
-    optional: true
 
   '@inquirer/type@3.0.6(@types/node@20.19.27)':
     optionalDependencies:
@@ -15367,11 +15337,6 @@ snapshots:
     dependencies:
       undici-types: 6.19.8
 
-  '@types/node@20.19.19':
-    dependencies:
-      undici-types: 6.21.0
-    optional: true
-
   '@types/node@20.19.27':
     dependencies:
       undici-types: 6.21.0
@@ -15621,7 +15586,7 @@ snapshots:
       std-env: 3.9.0
       strip-literal: 2.1.1
       test-exclude: 6.0.0
-      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@20.19.19)(@vitest/ui@1.6.1)(jsdom@26.1.0)(msw@2.10.2(@types/node@20.19.19)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1)
+      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@20.19.27)(@vitest/ui@1.6.1)(jsdom@26.1.0)(msw@2.10.2(@types/node@20.19.27)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -15695,15 +15660,6 @@ snapshots:
     optionalDependencies:
       msw: 2.10.2(@types/node@20.17.41)(typescript@5.8.3)
       vite: 7.3.0(@types/node@20.17.41)(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1)
-
-  '@vitest/mocker@3.2.2(msw@2.10.2(@types/node@20.19.19)(typescript@5.8.3))(vite@7.3.0(@types/node@20.19.19)(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1))':
-    dependencies:
-      '@vitest/spy': 3.2.2
-      estree-walker: 3.0.3
-      magic-string: 0.30.17
-    optionalDependencies:
-      msw: 2.10.2(@types/node@20.19.19)(typescript@5.8.3)
-      vite: 7.3.0(@types/node@20.19.19)(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1)
 
   '@vitest/mocker@3.2.2(msw@2.10.2(@types/node@20.19.27)(typescript@5.8.3))(vite@7.3.0(@types/node@20.19.27)(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))':
     dependencies:
@@ -15789,8 +15745,7 @@ snapshots:
       pathe: 1.1.2
       picocolors: 1.1.1
       sirv: 2.0.4
-      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@20.19.19)(@vitest/ui@1.6.1)(jsdom@26.1.0)(msw@2.10.2(@types/node@20.19.19)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1)
-    optional: true
+      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@20.19.27)(@vitest/ui@1.6.1)(jsdom@26.1.0)(msw@2.10.2(@types/node@20.19.27)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1)
 
   '@vitest/ui@3.2.2(vitest@3.2.2)':
     dependencies:
@@ -15802,6 +15757,7 @@ snapshots:
       tinyglobby: 0.2.15
       tinyrainbow: 2.0.0
       vitest: 3.2.2(@types/debug@4.1.12)(@types/node@20.19.27)(@vitest/ui@3.2.2)(jsdom@26.1.0)(msw@2.10.2(@types/node@20.19.27)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1)
+    optional: true
 
   '@vitest/ui@3.2.4(vitest@3.2.2)':
     dependencies:
@@ -20044,32 +20000,6 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  msw@2.10.2(@types/node@20.19.19)(typescript@5.8.3):
-    dependencies:
-      '@bundled-es-modules/cookie': 2.0.1
-      '@bundled-es-modules/statuses': 1.0.1
-      '@bundled-es-modules/tough-cookie': 0.1.6
-      '@inquirer/confirm': 5.1.9(@types/node@20.19.19)
-      '@mswjs/interceptors': 0.39.2
-      '@open-draft/deferred-promise': 2.2.0
-      '@open-draft/until': 2.1.0
-      '@types/cookie': 0.6.0
-      '@types/statuses': 2.0.5
-      graphql: 16.11.0
-      headers-polyfill: 4.0.3
-      is-node-process: 1.2.0
-      outvariant: 1.4.3
-      path-to-regexp: 6.3.0
-      picocolors: 1.1.1
-      strict-event-emitter: 0.5.1
-      type-fest: 4.41.0
-      yargs: 17.7.2
-    optionalDependencies:
-      typescript: 5.8.3
-    transitivePeerDependencies:
-      - '@types/node'
-    optional: true
-
   msw@2.10.2(@types/node@20.19.27)(typescript@5.8.3):
     dependencies:
       '@bundled-es-modules/cookie': 2.0.1
@@ -20623,8 +20553,7 @@ snapshots:
 
   pathe@0.2.0: {}
 
-  pathe@1.1.2:
-    optional: true
+  pathe@1.1.2: {}
 
   pathe@2.0.3: {}
 
@@ -21900,7 +21829,6 @@ snapshots:
       '@polka/url': 1.0.0-next.29
       mrmime: 2.0.1
       totalist: 3.0.1
-    optional: true
 
   sirv@3.0.1:
     dependencies:
@@ -21913,6 +21841,7 @@ snapshots:
       '@polka/url': 1.0.0-next.29
       mrmime: 2.0.1
       totalist: 3.0.1
+    optional: true
 
   sister@3.0.2: {}
 
@@ -22881,27 +22810,6 @@ snapshots:
       - tsx
       - yaml
 
-  vite-node@3.2.2(@types/node@20.19.19)(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1):
-    dependencies:
-      cac: 6.7.14
-      debug: 4.4.3
-      es-module-lexer: 1.7.0
-      pathe: 2.0.3
-      vite: 7.3.0(@types/node@20.19.19)(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1)
-    transitivePeerDependencies:
-      - '@types/node'
-      - jiti
-      - less
-      - lightningcss
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-      - tsx
-      - yaml
-
   vite-node@3.2.2(@types/node@20.19.27)(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1):
     dependencies:
       cac: 6.7.14
@@ -23047,22 +22955,6 @@ snapshots:
       tsx: 4.21.0
       yaml: 2.7.1
 
-  vite@7.3.0(@types/node@20.19.19)(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1):
-    dependencies:
-      esbuild: 0.27.2
-      fdir: 6.5.0(picomatch@4.0.3)
-      picomatch: 4.0.3
-      postcss: 8.5.6
-      rollup: 4.55.1
-      tinyglobby: 0.2.15
-    optionalDependencies:
-      '@types/node': 20.19.19
-      fsevents: 2.3.3
-      sass: 1.87.0
-      terser: 5.42.0
-      tsx: 4.21.0
-      yaml: 2.7.1
-
   vite@7.3.0(@types/node@20.19.27)(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1):
     dependencies:
       esbuild: 0.27.2
@@ -23197,11 +23089,11 @@ snapshots:
       - tsx
       - yaml
 
-  vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.19.19)(@vitest/ui@1.6.1)(jsdom@26.1.0)(msw@2.10.2(@types/node@20.19.19)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1):
+  vitest@3.2.2(@types/debug@4.1.12)(@types/node@20.19.27)(@vitest/ui@1.6.1)(jsdom@26.1.0)(msw@2.10.2(@types/node@20.19.27)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1):
     dependencies:
       '@types/chai': 5.2.2
       '@vitest/expect': 3.2.2
-      '@vitest/mocker': 3.2.2(msw@2.10.2(@types/node@20.19.19)(typescript@5.8.3))(vite@7.3.0(@types/node@20.19.19)(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1))
+      '@vitest/mocker': 3.2.2(msw@2.10.2(@types/node@20.19.27)(typescript@5.8.3))(vite@7.3.0(@types/node@20.19.27)(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1))
       '@vitest/pretty-format': 3.2.2
       '@vitest/runner': 3.2.2
       '@vitest/snapshot': 3.2.2
@@ -23219,12 +23111,12 @@ snapshots:
       tinyglobby: 0.2.14
       tinypool: 1.1.0
       tinyrainbow: 2.0.0
-      vite: 7.3.0(@types/node@20.19.19)(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1)
-      vite-node: 3.2.2(@types/node@20.19.19)(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1)
+      vite: 7.3.0(@types/node@20.19.27)(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1)
+      vite-node: 3.2.2(@types/node@20.19.27)(sass@1.87.0)(terser@5.42.0)(tsx@4.21.0)(yaml@2.7.1)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/debug': 4.1.12
-      '@types/node': 20.19.19
+      '@types/node': 20.19.27
       '@vitest/ui': 1.6.1(vitest@3.2.2)
       jsdom: 26.1.0
     transitivePeerDependencies:
