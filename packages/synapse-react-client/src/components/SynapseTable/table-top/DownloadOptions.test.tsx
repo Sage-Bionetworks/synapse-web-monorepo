@@ -10,10 +10,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import {
-  ColumnTypeEnum,
-  QueryBundleRequest,
-} from '@sage-bionetworks/synapse-types'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
