@@ -191,8 +191,7 @@ describe('useUploadFiles', () => {
 
       expect(mockUseSynapseMultipartUpload().mutateAsync).not.toHaveBeenCalled()
       expect(mockUseSynapseMultipartUpload().mutateAsync).not.toHaveBeenCalled()
-      expect(mockOnUploadComplete).toHaveBeenCalledOnce()
-      expect(mockOnUploadComplete).toHaveBeenCalledWith(
+      expect(mockOnUploadComplete).toHaveBeenCalledExactlyOnceWith(
         { file: file1 },
         createdFileHandleId1,
       )
