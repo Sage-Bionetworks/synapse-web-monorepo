@@ -5,9 +5,9 @@ describe('autocompleteMultipleEnumColumn', () => {
   it('copyValue converts row data into a comma-separated string', () => {
     const column = autocompleteMultipleEnumColumn({ choices: [] })
     const copyValue = column.copyValue!
-    expect(copyValue({ rowData: ['foo', 'bar'] } as any)).toBe('foo,bar')
-    expect(copyValue({ rowData: 'freeText' } as any)).toBe('freeText')
-    expect(copyValue({ rowData: null } as any)).toBe('')
+    expect(copyValue({ rowData: ['foo', 'bar'], rowIndex: 0 })).toBe('foo,bar')
+    expect(copyValue({ rowData: 'freeText', rowIndex: 0 })).toBe('freeText')
+    expect(copyValue({ rowData: null, rowIndex: 0 })).toBe('')
   })
 
   it('pasteValue parses delimited text using the JSON schema type', () => {
@@ -17,7 +17,11 @@ describe('autocompleteMultipleEnumColumn', () => {
     })
     const pasteValue = column.pasteValue!
 
-    const result = pasteValue({ value: 'one, two\tthree' } as any)
+    const result = pasteValue({
+      rowData: null,
+      value: 'one, two\tthree',
+      rowIndex: 0,
+    }) as string[]
 
     expect(Array.isArray(result)).toBe(true)
     expect(result).toContain('one')
@@ -32,7 +36,11 @@ describe('autocompleteMultipleEnumColumn', () => {
     })
     const pasteValue = column.pasteValue!
 
-    const result = pasteValue({ value: ',valid,' } as any)
+    const result = pasteValue({
+      rowData: null,
+      value: ',valid,',
+      rowIndex: 0,
+    }) as string[]
     // Depending on how parseFreeTextUsingJsonSchemaType behaves, nulls or empties should be removed
     expect(result).toContain('valid')
   })
@@ -43,8 +51,14 @@ describe('autocompleteMultipleEnumColumn', () => {
       colType: 'number',
     })
     const pasteValue = column.pasteValue!
-    const array = ['someValue']
-    expect(pasteValue({ value: array } as any)).toBe(array)
+    const nonStringValue = 123
+    expect(
+      pasteValue({
+        rowData: null,
+        value: nonStringValue as unknown as string,
+        rowIndex: 0,
+      }),
+    ).toBe(nonStringValue)
   })
 
   it('cellClassName reflects value count when dynamic height is enabled', () => {
@@ -56,19 +70,28 @@ describe('autocompleteMultipleEnumColumn', () => {
     const cellClassName = column.cellClassName
     expect(typeof cellClassName).toBe('function')
 
-    if (typeof cellClassName === 'function') {
-      // fewer than 3 values gets the multi-value-cell class
-      expect(cellClassName({ rowData: ['one'] } as any)).toBe(
-        'multi-value-cell',
-      )
-      // empty or null/undefined gets the multi-value-cell class
-      expect(cellClassName({ rowData: undefined } as any)).toBe(
-        'multi-value-cell',
-      )
-      // 3 or more values gets the multi-value-cell-large class
-      expect(cellClassName({ rowData: ['1', '2', '3', '4'] } as any)).toBe(
-        'multi-value-cell-large',
-      )
-    }
+    // Define the proper type for cellClassName
+    type CellClassNameFn = (args: {
+      rowData: unknown
+      rowIndex: number
+    }) => string
+
+    // cellClassName is a function, so we can call it directly
+    expect(cellClassName).toBeTypeOf('function')
+    // fewer than 3 values gets the multi-value-cell class
+    expect(
+      (cellClassName as CellClassNameFn)({ rowData: ['one'], rowIndex: 0 }),
+    ).toBe('multi-value-cell')
+    // empty or null/undefined gets the multi-value-cell class
+    expect(
+      (cellClassName as CellClassNameFn)({ rowData: undefined, rowIndex: 0 }),
+    ).toBe('multi-value-cell')
+    // 3 or more values gets the multi-value-cell-large class
+    expect(
+      (cellClassName as CellClassNameFn)({
+        rowData: ['1', '2', '3', '4'],
+        rowIndex: 0,
+      }),
+    ).toBe('multi-value-cell-large')
   })
 })

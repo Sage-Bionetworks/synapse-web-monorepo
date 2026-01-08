@@ -31,7 +31,7 @@
     "lint-staged": "^15.5.2",
     "nx": "19.7.3",
     "prettier": "^2.8.8",
-    "rimraf": "^5.0.10",
+    "rimraf": "^6.1.2",
     "tsx": "^4.21.0",
     "typescript": "5.8.3",
     "typescript-eslint": "^8.51.0"
@@ -50,7 +50,8 @@
     "overrides": {
       "@types/react": "19.1.8",
       "@types/react-dom": "19.1.6",
-      "node-fetch": "^2.6.7"
+      "node-fetch": "^2.6.7",
+      "glob": "^10.5.0"
     }
   },
   "packageManager": "pnpm@10.16.0+sha512.8066e7b034217b700a9a4dbb3a005061d641ba130a89915213a10b3ca4919c19c037bec8066afdc559b89635fdb806b16ea673f2468fbb28aabfa13c53e3f769"
