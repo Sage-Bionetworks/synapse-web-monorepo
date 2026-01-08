@@ -22,7 +22,7 @@ import {
   standardsDetailsPageSQL,
 } from '@/config/resources'
 import { standardsColumnLinks } from '@/config/synapseConfigs/standards'
-import { CardsFromData, CardFromDataProps } from '@/components/CardsFromData'
+import { CardsFromData, CardData } from '@/components/CardsFromData'
 
 export const standardsCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.STANDARD_DATA_MODEL,
@@ -94,10 +94,51 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     title: 'Applications',
     element: (
       <DetailsPageContextConsumer columnName={'hasApplication'}>
-        {({ value, context }) => {
-          // console.log(value, context)
-          const apps: CardFromDataProps[] = JSON.parse(value as string)
-          return <CardsFromData data={apps} />
+        {({ value }) => {
+          if (!value) return null
+          const apps = JSON.parse(value) as Array<{
+            id: string
+            name: string
+            category: string
+            references?: string[]
+            description: string
+            used_in_bridge2ai: boolean
+          }>
+          const cards: CardData[] = apps.map(app => ({
+            key: app.id,
+            // omit type to avoid redundant "APPLICATION" header under "Applications" section
+            title: app.name,
+            description: app.description || '',
+            labels: [
+              ...(app.used_in_bridge2ai
+                ? [{ columnDisplayName: 'Used in Bridge2AI', value: 'Yes' }]
+                : []),
+              ...(app.references?.length
+                ? [
+                    {
+                      columnDisplayName: 'References',
+                      value: (
+                        <>
+                          {app.references.map((url, i) => (
+                            <span key={url}>
+                              {i > 0 && ', '}
+                              <a
+                                href={url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {url}
+                              </a>
+                            </span>
+                          ))}
+                        </>
+                      ),
+                    },
+                  ]
+                : []),
+            ],
+          }))
+          return <CardsFromData data={cards} />
         }}
       </DetailsPageContextConsumer>
     ),

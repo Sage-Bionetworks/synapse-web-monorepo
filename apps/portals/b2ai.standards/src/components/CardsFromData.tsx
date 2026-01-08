@@ -1,44 +1,52 @@
-import { CardDeck } from 'synapse-react-client/components/CardDeck/CardDeck'
-import { CardDeckCardProps } from 'synapse-react-client/components/CardDeck/CardDeckCardProps'
+import { GenericCard } from 'synapse-react-client/components/GenericCard/GenericCard'
+import { GenericCardIcon } from 'synapse-react-client/components/GenericCard/GenericCardIcon'
+import { CardLabel } from 'synapse-react-client/components/row_renderers/utils/CardFooter'
 
 /**
- * Generate CardDeck cards from a list of objects passed in
- * Current use is for has_application cards on standards details page.
- * The has_application column is a JSON list like:
- *    [
- *        {
- *            "id": "B2AI_APP:34",
- *            "name": "Cumulus Federated EHR Learning with Bulk FHIR and AI/NLP",
- *            "category": "B2AI:Application",
- *            "references": [
- *                "https://doi.org/10.1101/2024.02.02.24301940"
- *            ],
- *            "description": "The Cumulus platform operationalizes SMART/HL7 Bulk FHIR Access API for standardized data export across multiple healthcare institutions, then applies AI and natural language processing for computable phenotyping to define cohorts and outcomes from both structured and unstructured EHR data. The SMART Text2FHIR pipeline extracts insights from clinical texts and converts them into structured FHIR data elements for analysis. Only aggregate outputs leave each institution, enabling privacy-preserving federated learning across sites for public health monitoring and research while maintaining data sovereignty and interoperability through standardized FHIR exchange.",
- *            "used_in_bridge2ai": false
- *        },
- *    ]
- * For these cards we'll need:
- *    title: name,
- *    description: description,
- *    secondaryLabels: [ used_in_bridge2ai, ],
- *    links: references.map(ref => ({linkText: 'link', url: ref}) // am hoping to get appropriate link text, but the object doesn't contain that now
+ * Generate GenericCard cards from a list of objects passed in.
+ * Example use: has_application cards on standards details page where data looks like:
+ *    {
+ *        "id": "B2AI_APP:34",
+ *        "name": "Cumulus Federated EHR Learning...",
+ *        "category": "B2AI:Application",
+ *        "references": ["https://doi.org/..."],
+ *        "description": "The Cumulus platform...",
+ *        "used_in_bridge2ai": false
+ *    }
+ * The caller transforms this to CardData with title, description, type, labels, etc.
  */
 
-export type CardFromDataProps = {
-  // basing these on GenericCard props I think
+export type CardData = {
+  key?: string
+  type?: string // optional - omit to hide redundant type header when section name matches
   title: string
+  subtitle?: string
   description: string
-  secondaryLabels: Record<string, string>[]
-  links: Record<string, string>[]
+  labels?: CardLabel[]
 }
-export function CardsFromData(data: CardFromDataProps[]) {
-  const cards = data.map((obj, i) => {
-    return (
-      <div key={i}>
-        <div>{obj.title}</div>
-        ... {/* put card JSX here */}
-      </div>
-    )
-  })
-  return <div>{cards}</div>
+
+export type CardsFromDataProps = {
+  data: CardData[]
+}
+
+export function CardsFromData({ data }: CardsFromDataProps) {
+  if (!data || data.length === 0) {
+    return null
+  }
+
+  return (
+    <>
+      {data.map((card, i) => (
+        <GenericCard
+          key={card.key || i}
+          type={card.type ?? ''}
+          title={card.title}
+          subtitle={card.subtitle}
+          description={card.description}
+          icon={card.type ? <GenericCardIcon type={card.type} /> : null}
+          labels={card.labels}
+        />
+      ))}
+    </>
+  )
 }
