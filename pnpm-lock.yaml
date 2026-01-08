@@ -149,8 +149,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/synapse-react-client
       universal-cookie:
-        specifier: ^4.0.4
-        version: 4.0.4
+        specifier: ^7.2.2
+        version: 7.2.2
     devDependencies:
       '@testing-library/jest-dom':
         specifier: ^6.6.3
@@ -1127,8 +1127,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/synapse-react-client
       universal-cookie:
-        specifier: ^4.0.4
-        version: 4.0.4
+        specifier: ^7.2.2
+        version: 7.2.2
     devDependencies:
       '@sage-bionetworks/synapse-types':
         specifier: workspace:*
@@ -1846,8 +1846,8 @@ importers:
         specifier: ^1.0.40
         version: 1.0.40
       universal-cookie:
-        specifier: ^4.0.4
-        version: 4.0.4
+        specifier: ^7.2.2
+        version: 7.2.2
       use-deep-compare-effect:
         specifier: ^1.8.1
         version: 1.8.1(react@19.1.0)
@@ -10795,6 +10795,9 @@ packages:
 
   universal-cookie@4.0.4:
     resolution: {integrity: sha512-lbRVHoOMtItjWbM7TwDLdl8wug7izB0tq3/YVKhT/ahB4VDvWMyvnADfnJI8y6fSvsjh51Ix7lTGC6Tn4rMPhw==}
+
+  universal-cookie@7.2.2:
+    resolution: {integrity: sha512-fMiOcS3TmzP2x5QV26pIH3mvhexLIT0HmPa3V7Q7knRfT9HG6kTwq02HZGLPw0sAOXrAmotElGRvTLCMbJsvxQ==}
 
   universalify@0.2.0:
     resolution: {integrity: sha512-CJ1QgKmNg3CwvAv/kOFmtnEN05f0D/cn9QntgNOQlQF9dgvVTHj3t+8JPdjqawCHk7V/KA+fbUqzZ9XWhcqPUg==}
@@ -21670,6 +21673,11 @@ snapshots:
     dependencies:
       '@types/cookie': 0.3.3
       cookie: 0.4.2
+
+  universal-cookie@7.2.2:
+    dependencies:
+      '@types/cookie': 0.6.0
+      cookie: 0.7.2
 
   universalify@0.2.0: {}
 
