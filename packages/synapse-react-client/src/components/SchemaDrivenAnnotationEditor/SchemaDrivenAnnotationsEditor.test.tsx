@@ -19,7 +19,6 @@ import {
   RenderResult,
   screen,
   waitFor,
-  waitForElementToBeRemoved,
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -345,10 +344,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
       successfulUpdateHandler,
     )
     const { container, rerender } = await renderComponent()
-    const schemaAlert = await screen.findByText(
-      'requires scientific annotations',
-      { exact: false },
-    )
+    await screen.findByText('requires scientific annotations', { exact: false })
 
     await waitFor(() => {
       const countryInput = container.querySelector(

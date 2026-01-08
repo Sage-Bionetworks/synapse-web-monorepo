@@ -57,6 +57,9 @@ describe('autocompleteMultipleEnumColumn', () => {
     expect(typeof cellClassName).toBe('function')
 
     // TypeScript ensures cellClassName is a function at this point
+    if (typeof cellClassName !== 'function') {
+      throw new Error('cellClassName should be a function')
+    }
     // fewer than 3 values gets the multi-value-cell class
     expect(cellClassName({ rowData: ['one'] } as any)).toBe('multi-value-cell')
     // empty or null/undefined gets the multi-value-cell class
