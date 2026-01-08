@@ -4,7 +4,7 @@ import { Box } from '@mui/system'
 import { IconButton } from '@mui/material'
 import { ChevronRight, ExpandMore } from '@mui/icons-material'
 import { useEntityTreeTableContext } from './EntityTreeTableContext'
-import { EntityLink } from '@/components/EntityLink'
+import { EntityLink } from '@/components/EntityLink/EntityLink'
 import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
 
 export const depthPaddingMultiplierPx = 16

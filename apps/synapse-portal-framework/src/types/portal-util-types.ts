@@ -3,7 +3,7 @@ import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
-import { PortalDOIConfiguration } from 'synapse-react-client/components/GenericCard/PortalDOI/PortalDOIConfiguration'
+import { PortalDOIConfiguration } from 'synapse-react-client/components/GenericCard/PortalDOI'
 
 export type DetailsPageProps = {
   header?: React.ReactNode

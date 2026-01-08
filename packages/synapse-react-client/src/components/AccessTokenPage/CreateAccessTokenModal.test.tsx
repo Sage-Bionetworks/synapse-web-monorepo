@@ -1,11 +1,11 @@
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import * as SynapseContext from '@/utils/context/SynapseContext'
+import * as SynapseContext from '@/stores/SynapseContext/SynapseContext'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CANCEL_BUTTON_TEXT } from '../ConfirmationDialog/ConfirmationDialog'
-import { CLOSE_BUTTON_LABEL } from '../DialogBase'
+import { CLOSE_BUTTON_LABEL } from '@/react-ui/components/DialogBase'
 import {
   CreateAccessTokenModal,
   CreateAccessTokenModalProps,

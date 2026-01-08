@@ -1,5 +1,5 @@
 import { KeyFactory } from '@/synapse-queries/index'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import startGridSession from '@/utils/functions/GridApiUtils'
 import {
   CreateGridRequest,

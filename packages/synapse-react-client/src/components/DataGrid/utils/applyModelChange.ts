@@ -77,7 +77,7 @@ export function applyModelChange(
         if (key.startsWith('_')) return // Skip internal properties like _rowId
         const colIndex = columnNames.indexOf(key)
         if (colIndex !== -1) {
-          // Get the CRDT array of cell values for this row
+          // Get the CRDT array of cell values for this rowpack
           const rowVec = model.api.vec([
             'rows',
             String(change.rowIndex),

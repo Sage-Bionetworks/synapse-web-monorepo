@@ -4,7 +4,7 @@
 
 import SynapseClient from '@/synapse-client'
 import { allowNotFoundError } from '@/synapse-client/SynapseClientUtils'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { entityJsonKeys } from '@/utils/functions/EntityTypeUtils'
 import { createTableUpdateTransactionRequest } from '@/utils/functions/TableColumnSchemaUtils'
 import {

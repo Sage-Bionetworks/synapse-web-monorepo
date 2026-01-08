@@ -15,14 +15,14 @@ import {
 } from '@mui/material'
 import { SyntheticEvent, useEffect, useState } from 'react'
 import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
-import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import { useSynapseContext } from 'synapse-react-client/stores/SynapseContext'
 import {
   useGetCurrentUserProfile,
   useGetNotificationEmail,
 } from 'synapse-react-client/synapse-queries/user/useUserBundle'
 import { updateMyUserProfile } from 'synapse-react-client/synapse-client/SynapseClient'
 import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClient'
-import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import { displayToast } from 'synapse-react-client/components/ToastMessage'
 
 export type ConfigureEmailProps = {
   returnToPath: string

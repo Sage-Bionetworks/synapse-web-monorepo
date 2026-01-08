@@ -3,7 +3,7 @@ import { mockCompleteAsyncJob } from '@/mocks/mockFileViewQuery'
 import syn20337467Json from '@/mocks/query/syn20337467.json'
 import SynapseClient from '@/synapse-client/index'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { SynapseContextType } from '@/stores/SynapseContext/SynapseContext'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import StandaloneQueryWrapper, {

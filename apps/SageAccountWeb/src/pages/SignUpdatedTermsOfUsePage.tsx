@@ -11,7 +11,7 @@ import { SyntheticEvent, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY } from '../hooks/useMaybePromptToSignTermsOfService'
 import { StyledOuterContainer } from '../components/StyledComponents'
-import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import { useSynapseContext } from 'synapse-react-client/stores/SynapseContext'
 import {
   useSignTermsOfService,
   useTermsOfServiceInfo,
@@ -21,8 +21,8 @@ import {
   processRedirectURLInOneSage,
   restoreLastPlace,
 } from 'synapse-react-client/utils/AppUtils/AppUtils'
-import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
-import { GovernanceMarkdownGithub } from 'synapse-react-client/components/Markdown/GovernanceMarkdownGithub'
+import { displayToast } from 'synapse-react-client/components/ToastMessage'
+import GovernanceMarkdownGithub from 'synapse-react-client/components/Markdown/GovernanceMarkdownGithub'
 
 function SignUpdatedTermsOfUsePage() {
   const [isLoading, setIsLoading] = useState(false)

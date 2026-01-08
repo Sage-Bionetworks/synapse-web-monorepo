@@ -5,7 +5,7 @@ import {
   useGetCurrentUserBundle,
   useGetCurrentUserProfile,
 } from '@/synapse-queries'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { isTermsOfUseAccessRequirement } from '@/utils/types/IsType'
 import { Alert, Box, ButtonProps, Link, Typography } from '@mui/material'
 import {
@@ -15,7 +15,7 @@ import {
   TermsOfUseAccessRequirement,
 } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
-import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
+import MarkdownSynapse from '../../Markdown/MarkdownSynapse/MarkdownSynapse'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 import RequirementItem from './RequirementItem'
 

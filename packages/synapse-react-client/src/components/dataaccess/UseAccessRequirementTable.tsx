@@ -35,7 +35,7 @@ import {
 import dayjs from 'dayjs'
 import { noop } from 'lodash-es'
 import { Fragment, useCallback, useMemo, useState } from 'react'
-import { EntityLink } from '../EntityLink'
+import { EntityLink } from '../EntityLink/EntityLink'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 

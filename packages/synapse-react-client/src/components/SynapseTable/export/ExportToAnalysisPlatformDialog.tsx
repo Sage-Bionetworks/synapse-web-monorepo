@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@mui/material'
 import { useCallback, useMemo, useState } from 'react'
-import { DialogBase } from '../../DialogBase'
+import DialogBase from '@/react-ui/components/DialogBase'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper/QueryVisualizationContext'
 import WizardChoiceButton from '../../WizardChoiceButton/WizardChoiceButton'
 import WizardChoiceButtonGroup from '../../WizardChoiceButton/WizardChoiceButtonGroup'

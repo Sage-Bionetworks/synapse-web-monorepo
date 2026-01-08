@@ -20,7 +20,7 @@ import userEvent from '@testing-library/user-event'
 import { SynapseClient, SynapseContextType } from '../../../index'
 import MarkdownSynapse, {
   MarkdownSynapseProps,
-} from '../../Markdown/MarkdownSynapse'
+} from '../../Markdown/MarkdownSynapse/MarkdownSynapse'
 import SelfSignAccessRequirementItem, {
   SelfSignAccessRequirementItemProps,
 } from './SelfSignAccessRequirementItem'

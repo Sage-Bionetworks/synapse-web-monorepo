@@ -1,7 +1,7 @@
 import React from 'react'
 import SynapseClient from '@/synapse-client'
 import { SynapseConstants } from '@/utils'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import {
   BatchFileRequest,
   BatchFileResult,

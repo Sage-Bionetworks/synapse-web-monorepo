@@ -1,6 +1,6 @@
 import Footer from '@/components/Footer'
 import { Outlet } from 'react-router'
-import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
+import { useSynapseContext } from 'synapse-react-client/stores/SynapseContext'
 import LoginPage from './LoginPage'
 
 function AuthenticatedLayout() {

@@ -6,7 +6,7 @@ import {
   isEntityRefCollectionView,
   isEntityView,
 } from '@/utils/functions/EntityTypeUtils'
-import { Button } from '@mui/material'
+import Button from '@/react-ui/components/Button'
 import { RestrictionLevel } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import IconSvg from '../../IconSvg/IconSvg'

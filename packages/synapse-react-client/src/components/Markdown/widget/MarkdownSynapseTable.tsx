@@ -1,4 +1,4 @@
-import QueryWrapperPlotNav from '../../QueryWrapperPlotNav/QueryWrapperPlotNav'
+import QueryWrapperPlotNav from '../../QueryWrapperPlotNav'
 import StandaloneQueryWrapper from '../../StandaloneQueryWrapper/StandaloneQueryWrapper'
 
 export type MarkdownSynapseTableProps = {

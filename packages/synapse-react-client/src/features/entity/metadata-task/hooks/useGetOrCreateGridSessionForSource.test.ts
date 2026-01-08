@@ -1,6 +1,6 @@
 import * as gridSession from '@/synapse-queries/grid/useGridSession'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import * as context from '@/utils/context/SynapseContext'
+import * as context from '@/stores/SynapseContext/SynapseContext'
 import { CreateGridRequest } from '@sage-bionetworks/synapse-client'
 import { act, renderHook } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'

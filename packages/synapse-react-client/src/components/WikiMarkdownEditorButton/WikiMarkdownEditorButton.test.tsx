@@ -23,7 +23,7 @@ import { ErrorResponse, ObjectType } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
-import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
+import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse/MarkdownSynapse'
 import {
   DEFAULT_BUTTON_TEXT,
   WikiMarkdownEditorButton,

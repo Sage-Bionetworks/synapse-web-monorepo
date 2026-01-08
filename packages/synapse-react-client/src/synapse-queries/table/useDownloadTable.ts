@@ -5,7 +5,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import SynapseClient from '../../synapse-client/index'
-import { useSynapseContext } from '../../utils/context/SynapseContext'
+import { useSynapseContext } from '../../stores/SynapseContext/SynapseContext'
 
 /**
  * useMutation wrapper for POST /entity/:id/table/download/pfb/async/start and GET /entity/:id/table/download/pfb/async/get/asyncToken

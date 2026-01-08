@@ -11,7 +11,7 @@ import {
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
 import { ReactNode, useCallback } from 'react'
-import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
+import MarkdownSynapse from '../../Markdown/MarkdownSynapse/MarkdownSynapse'
 import RequirementItem from '../RequirementItem/RequirementItem'
 import ManagedACTAccessRequirementItemView from './ManagedACTAccessRequirementItemView'
 

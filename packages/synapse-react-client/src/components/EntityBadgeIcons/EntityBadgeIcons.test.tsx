@@ -15,7 +15,7 @@ import {
   ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
 } from '@/utils/APIConstants'
-import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { SynapseContextType } from '@/stores/SynapseContext/SynapseContext'
 import {
   BackendDestinationEnum,
   getEndpoint,

@@ -1,7 +1,7 @@
 import { GoalsV3CardProps } from './GoalsV3'
 import ExpandableContent from '../home_page/ExpandableContent'
 import QueryCount from '../QueryCount/QueryCount'
-import { Button } from '@mui/material'
+import Button from '@/react-ui/components/Button'
 
 export default function GoalsV3Mobile({
   link,

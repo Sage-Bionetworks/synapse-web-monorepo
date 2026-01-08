@@ -6,7 +6,7 @@ import {
   mockUserBundle,
 } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { SynapseContextType } from '@/stores/SynapseContext/SynapseContext'
 import {
   SubmissionSearchResult,
   SubmissionState,

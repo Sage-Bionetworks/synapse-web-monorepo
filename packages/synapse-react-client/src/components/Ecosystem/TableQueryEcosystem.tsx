@@ -1,6 +1,6 @@
 import EcosystemCard from '@/components/Ecosystem/EcosystemCard'
 import EcosystemSkeleton from '@/components/Ecosystem/EcosystemSkeleton'
-import { Markdown } from '@/components/Markdown/MarkdownSynapse'
+import { Markdown } from '@/components/Markdown/MarkdownSynapse/MarkdownSynapse'
 import { ImageFileHandle } from '@/components/widgets/ImageFileHandle'
 import { useGetFullTableQueryResults } from '@/synapse-queries/entity/useGetQueryResultBundle'
 import {

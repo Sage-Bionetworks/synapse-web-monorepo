@@ -1,5 +1,5 @@
 import LightTooltip from '@/components/styled/LightTooltip'
-import { spreadSx } from '@/theme/spreadSx'
+import spreadSx from '@/react-ui/theme/utils/mergeSx'
 import {
   Box,
   Button,

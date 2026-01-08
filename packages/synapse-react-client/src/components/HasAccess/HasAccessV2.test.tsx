@@ -13,7 +13,7 @@ import { getEntityBundleHandler } from '@/mocks/msw/handlers/entityHandlers'
 import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { SynapseContextType } from '@/utils/context/SynapseContext'
+import { SynapseContextType } from '@/stores/SynapseContext/SynapseContext'
 import {
   BackendDestinationEnum,
   getEndpoint,

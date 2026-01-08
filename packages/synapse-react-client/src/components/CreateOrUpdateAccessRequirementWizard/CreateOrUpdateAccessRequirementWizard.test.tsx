@@ -29,7 +29,7 @@ import {
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { REMOVE_BUTTON_LABEL } from '../AclEditor/ResourceAccessItem'
-import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
+import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse/MarkdownSynapse'
 import CreateOrUpdateAccessRequirementWizard, {
   CreateOrUpdateAccessRequirementWizardProps,
 } from './CreateOrUpdateAccessRequirementWizard'

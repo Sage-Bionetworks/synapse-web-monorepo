@@ -1,5 +1,5 @@
 import { Box, Button, Link, Typography } from '@mui/material'
-import { DialogBase } from '../DialogBase'
+import DialogBase from '@/react-ui/components/DialogBase'
 import { AcknowledgementItem } from './AcknowledgementsPage'
 import { useMemo } from 'react'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'

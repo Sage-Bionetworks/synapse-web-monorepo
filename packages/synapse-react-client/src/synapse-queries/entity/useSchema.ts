@@ -3,7 +3,7 @@
  */
 
 import SynapseClient from '@/synapse-client'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { JSONSchema7 } from 'json-schema'

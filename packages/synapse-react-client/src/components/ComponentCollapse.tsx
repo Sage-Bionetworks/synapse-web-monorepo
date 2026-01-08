@@ -1,4 +1,4 @@
-import { spreadSx } from '@/theme/spreadSx'
+import spreadSx from '@/react-ui/theme/utils/mergeSx'
 import {
   KeyboardArrowDownTwoTone,
   KeyboardArrowUpTwoTone,

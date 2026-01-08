@@ -13,7 +13,7 @@ import {
   MARKDOWN_COMMANDS_DATA,
 } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../IconSvg/IconSvg'
-import MarkdownSynapse from './MarkdownSynapse'
+import MarkdownSynapse from './MarkdownSynapse/MarkdownSynapse'
 import { UserMentionModal } from './UserMentionModal'
 import { startCase } from 'lodash-es'
 

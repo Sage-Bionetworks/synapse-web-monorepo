@@ -3,8 +3,8 @@ import {
   deleteEvaluationRound,
   updateEvaluationRound,
 } from '@/synapse-client/SynapseClient'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { useListState } from '@/utils/hooks/useListState'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
+import useListState from '@/react-ui/hooks/useListState'
 import {
   Alert,
   Box,

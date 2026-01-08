@@ -1,5 +1,5 @@
 import ConfirmCloseWithoutSavingDialog from '@/components/Dialog/ConfirmCloseWithoutSavingDialog'
-import { DialogBase } from '@/components/DialogBase'
+import DialogBase from '@/react-ui/components/DialogBase'
 import { doiFormSchema, doiFormUiSchema } from '@/components/doi/DoiFormSchemas'
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
 import { MarkdownPopover } from '@/components/Markdown/MarkdownPopover'

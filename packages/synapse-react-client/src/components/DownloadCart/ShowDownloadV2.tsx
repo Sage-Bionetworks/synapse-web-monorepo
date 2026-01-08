@@ -1,5 +1,5 @@
 import { useGetDownloadListStatistics } from '@/synapse-queries/download/useDownloadList'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useSynapseContext } from '@/stores/SynapseContext/SynapseContext'
 import { Link as MuiLink, Tooltip } from '@mui/material'
 import { Suspense, useEffect } from 'react'
 import { ErrorBoundary, useErrorHandler } from 'react-error-boundary'
