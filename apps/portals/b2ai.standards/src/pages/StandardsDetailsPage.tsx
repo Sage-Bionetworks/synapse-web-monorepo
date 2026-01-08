@@ -22,6 +22,7 @@ import {
   standardsDetailsPageSQL,
 } from '@/config/resources'
 import { standardsColumnLinks } from '@/config/synapseConfigs/standards'
+import { CardsFromData, CardFromDataProps } from '@/components/CardsFromData'
 
 export const standardsCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.STANDARD_DATA_MODEL,
@@ -34,6 +35,7 @@ export const standardsCardSchema: TableToGenericCardMapping = {
     'collections',
     'topic',
     'dataTypes',
+    'applicationCount',
     // DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION,
     // DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS,
     // DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
@@ -83,6 +85,19 @@ export const standardDetailsPageContent: DetailsPageContentType = [
           } else {
             return <SkeletonTable numRows={8} numCols={1} />
           }
+        }}
+      </DetailsPageContextConsumer>
+    ),
+  },
+  {
+    id: 'Applications',
+    title: 'Applications',
+    element: (
+      <DetailsPageContextConsumer columnName={'hasApplication'}>
+        {({ value, context }) => {
+          // console.log(value, context)
+          const apps: CardFromDataProps[] = JSON.parse(value as string)
+          return <CardsFromData data={apps} />
         }}
       </DetailsPageContextConsumer>
     ),
