@@ -43,7 +43,6 @@
     "identity-obj-proxy": "^3.0.0",
     "isomorphic-fetch": "^3.0.0",
     "jsdom": "^26.1.0",
-    "lint-staged": "^13.3.0",
     "memfs": "^3.5.3",
     "msw": "^2.10.2",
     "object-assign": "^4.1.1",
