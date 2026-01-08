@@ -1,28 +1,12 @@
-import { GenericCard } from 'synapse-react-client/components/GenericCard/GenericCard'
-import { GenericCardIcon } from 'synapse-react-client/components/GenericCard/GenericCardIcon'
-import { CardLabel } from 'synapse-react-client/components/row_renderers/utils/CardFooter'
-
-/**
- * Generate GenericCard cards from a list of objects passed in.
- * Example use: has_application cards on standards details page where data looks like:
- *    {
- *        "id": "B2AI_APP:34",
- *        "name": "Cumulus Federated EHR Learning...",
- *        "category": "B2AI:Application",
- *        "references": ["https://doi.org/..."],
- *        "description": "The Cumulus platform...",
- *        "used_in_bridge2ai": false
- *    }
- * The caller transforms this to CardData with title, description, type, labels, etc.
- */
+import { Box, Link, Typography } from '@mui/material'
+import { CollapsibleDescription } from 'synapse-react-client/components/GenericCard/CollapsibleDescription'
 
 export type CardData = {
   key?: string
-  type?: string // optional - omit to hide redundant type header when section name matches
   title: string
   subtitle?: string
   description: string
-  labels?: CardLabel[]
+  links?: string[]
 }
 
 export type CardsFromDataProps = {
@@ -37,15 +21,49 @@ export function CardsFromData({ data }: CardsFromDataProps) {
   return (
     <>
       {data.map((card, i) => (
-        <GenericCard
+        <Box
           key={card.key || i}
-          type={card.type ?? ''}
-          title={card.title}
-          subtitle={card.subtitle}
-          description={card.description}
-          icon={card.type ? <GenericCardIcon type={card.type} /> : null}
-          labels={card.labels}
-        />
+          sx={{
+            border: '1px solid',
+            borderColor: 'grey.300',
+            borderRadius: 1,
+            p: 3,
+            mb: 2,
+          }}
+        >
+          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+            {card.title}
+          </Typography>
+          {card.subtitle && (
+            <Typography
+              variant="body2"
+              sx={{ fontStyle: 'italic', color: 'text.secondary', mb: 1 }}
+            >
+              {card.subtitle}
+            </Typography>
+          )}
+          <CollapsibleDescription
+            description={card.description}
+            descriptionSubTitle=""
+          />
+          {card.links?.length ? (
+            <Box sx={{ mt: 2 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{ color: 'text.secondary', mb: 0.5 }}
+              >
+                Links
+              </Typography>
+              {card.links.map(url => (
+                <Box key={url}>
+                  <Link href={url} target="_blank" rel="noopener noreferrer">
+                    {url}
+                  </Link>
+                </Box>
+              ))}
+            </Box>
+          ) : null}
+        </Box>
       ))}
     </>
   )

@@ -216,6 +216,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     labelLinkConfig,
     descriptionConfig,
     columnIconOptions,
+    charCountCutoff,
   } = props
 
   const {
@@ -487,6 +488,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       description={description}
       descriptionSubTitle={descriptionSubTitle}
       descriptionConfig={descriptionConfig}
+      charCountCutoff={charCountCutoff}
       labels={values}
       secondaryLabelLimit={secondaryLabelLimit}
       columnIconOptions={columnIconOptions}

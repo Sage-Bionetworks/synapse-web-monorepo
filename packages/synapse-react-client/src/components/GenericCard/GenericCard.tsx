@@ -75,6 +75,11 @@ export type GenericCardProps = {
    * Optional sustainability scorecard to be displayed on the header card
    */
   sustainabilityScorecard?: SustainabilityScorecardProps
+  /**
+   * Character count threshold for truncating description
+   * @default 400
+   */
+  charCountCutoff?: number
 }
 
 const EMPTY_CARD_LABEL_ARRAY: CardLabel[] = []
@@ -107,6 +112,7 @@ export const GenericCard = forwardRef(function GenericCard(
     ctaLinkConfig,
     renderedIconList,
     sustainabilityScorecard,
+    charCountCutoff,
   } = props
 
   const showFooter = labels.length > 0
@@ -125,6 +131,7 @@ export const GenericCard = forwardRef(function GenericCard(
         ref={ref}
         headerCardVariant={headerCardVariant}
         descriptionConfig={descriptionConfig}
+        charCountCutoff={charCountCutoff}
         title={title}
         subTitle={subtitle}
         description={description}

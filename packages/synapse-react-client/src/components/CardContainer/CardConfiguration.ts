@@ -84,6 +84,11 @@ export type CommonCardProps = {
    * @default 'HeaderCard'
    */
   headerCardVariant?: HeaderCardVariant
+  /**
+   * Character count threshold for truncating description in collapsible text
+   * @default 400
+   */
+  charCountCutoff?: number
 }
 
 export type CardConfiguration = CommonCardProps &

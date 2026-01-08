@@ -108,35 +108,9 @@ export const standardDetailsPageContent: DetailsPageContentType = [
             key: app.id,
             // omit type to avoid redundant "APPLICATION" header under "Applications" section
             title: app.name,
+            subtitle: app.used_in_bridge2ai ? 'Used in Bridge2AI' : undefined,
             description: app.description || '',
-            labels: [
-              ...(app.used_in_bridge2ai
-                ? [{ columnDisplayName: 'Used in Bridge2AI', value: 'Yes' }]
-                : []),
-              ...(app.references?.length
-                ? [
-                    {
-                      columnDisplayName: 'References',
-                      value: (
-                        <>
-                          {app.references.map((url, i) => (
-                            <span key={url}>
-                              {i > 0 && ', '}
-                              <a
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {url}
-                              </a>
-                            </span>
-                          ))}
-                        </>
-                      ),
-                    },
-                  ]
-                : []),
-            ],
+            links: app.references,
           }))
           return <CardsFromData data={cards} />
         }}
@@ -210,6 +184,7 @@ export default function StandardsDetailsPage() {
             secondaryLabelLimit: 6,
             isHeader: true,
             headerCardVariant: 'HeaderCardV2',
+            charCountCutoff: 800,
             ctaLinkConfig: {
               text: 'View Standard on External Website',
               link: 'url',
