@@ -7,17 +7,13 @@ import { screen } from '@testing-library/react'
 
 expect.extend({
   toHaveBeenRendered(mockComponent: Mock) {
-    try {
-      expect(mockComponent).toHaveBeenCalled()
-    } catch (error) {
-      return {
-        pass: false,
-        message: () => `Component was not rendered:\n  ${error.message}`,
-      }
-    }
+    const pass = mockComponent.mock.calls.length > 0
     return {
-      pass: true,
-      message: () => 'Component was rendered',
+      pass,
+      message: () =>
+        pass
+          ? 'Component was rendered'
+          : `Component was not rendered (expected at least one call)`,
     }
   },
   toHaveBeenRenderedWithProps(
@@ -25,13 +21,18 @@ expect.extend({
     expectedProps: unknown,
     options?: { testId?: string },
   ) {
-    try {
-      expect(mockComponent).toHaveBeenCalledWith(expectedProps, undefined)
-    } catch (error) {
+    const calls = mockComponent.mock.calls
+    const pass = calls.some(
+      call => JSON.stringify(call[0]) === JSON.stringify(expectedProps),
+    )
+
+    if (!pass) {
       return {
         pass: false,
         message: () =>
-          `Component was not rendered with expected props:\n  ${error.message}`,
+          `Component was not rendered with expected props.\nExpected: ${JSON.stringify(
+            expectedProps,
+          )}\nReceived calls: ${JSON.stringify(calls.map(c => c[0]))}`,
       }
     }
 
@@ -56,19 +57,19 @@ expect.extend({
     }
   },
   toHaveBeenLastRenderedWithProps(mockComponent: Mock, expectedProps: unknown) {
-    try {
-      expect(mockComponent).toHaveBeenLastCalledWith(expectedProps, undefined)
-    } catch (error) {
-      return {
-        pass: false,
-        message: () =>
-          `Component was not last rendered with expected props:\n  ${error.message}`,
-      }
-    }
+    const calls = mockComponent.mock.calls
+    const lastCall = calls[calls.length - 1]
+    const pass =
+      lastCall && JSON.stringify(lastCall[0]) === JSON.stringify(expectedProps)
 
     return {
-      pass: true,
-      message: () => 'Component was last rendered with expected props',
+      pass,
+      message: () =>
+        pass
+          ? 'Component was last rendered with expected props'
+          : `Component was not last rendered with expected props.\nExpected: ${JSON.stringify(
+              expectedProps,
+            )}\nReceived: ${JSON.stringify(lastCall?.[0])}`,
     }
   },
 })

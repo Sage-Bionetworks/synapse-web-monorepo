@@ -228,15 +228,17 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
       })
 
       await waitFor(() => {
-        if (externalPlatform === 'cavatica') {
-          expect(mockExportToCavatica).toHaveBeenCalled()
-          expect(mockExportToTerra).not.toHaveBeenCalled()
-        } else if (externalPlatform === 'terra') {
-          expect(mockExportToTerra).toHaveBeenCalled()
-          expect(mockExportToCavatica).not.toHaveBeenCalled()
-        }
         expect(mockOnSuccessfulExport).toHaveBeenCalled()
       })
+
+      // Verify the correct export function was called for the platform
+      const cavaticaCalled = mockExportToCavatica.mock.calls.length > 0
+      const terraCalled = mockExportToTerra.mock.calls.length > 0
+
+      expect(
+        (externalPlatform === 'cavatica' && cavaticaCalled && !terraCalled) ||
+          (externalPlatform === 'terra' && terraCalled && !cavaticaCalled),
+      ).toBe(true)
     },
   )
 

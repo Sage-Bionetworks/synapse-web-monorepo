@@ -85,7 +85,7 @@ const mockQueryResponseDataWithoutEntityIdColumn = cloneDeep(
 )
 mockQueryResponseDataWithoutEntityIdColumn.columnModels =
   mockQueryResponseDataWithoutEntityIdColumn.columnModels?.filter(
-    cm => cm.columnType !== ColumnTypeEnum.ENTITYID,
+    cm => cm.columnType !== (ColumnTypeEnum.ENTITYID as unknown as string),
   )
 
 describe('Download Options tests', () => {

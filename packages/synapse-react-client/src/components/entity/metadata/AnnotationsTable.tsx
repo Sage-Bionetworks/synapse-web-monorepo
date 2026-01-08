@@ -82,13 +82,12 @@ export function AnnotationsTable(props: AnnotationsTableProps) {
 
   const onRefetch = useCallback(async () => {
     setIsManuallyRefetching(true)
-    const promises = [
-      // Refetch the annotations, which may have changed if new derived annotations have been calculated
-      void refetchEntityData(),
-      // Refetch the validation information, which we use to determine if derived annotations may still be pending
-      void refetchValidationInformation(),
-    ]
-    await Promise.allSettled(promises)
+    // Refetch the annotations, which may have changed if new derived annotations have been calculated
+    // Refetch the validation information, which we use to determine if derived annotations may still be pending
+    await Promise.allSettled([
+      refetchEntityData(),
+      refetchValidationInformation(),
+    ])
     setIsManuallyRefetching(false)
   }, [refetchEntityData, refetchValidationInformation])
 

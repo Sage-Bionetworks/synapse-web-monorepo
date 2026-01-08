@@ -358,12 +358,10 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     })
 
     // Clear the component to ensure we get a full re-render
-    await Promise.all([
-      waitForElementToBeRemoved(schemaAlert),
-      act(() => {
-        rerender(<></>)
-      }),
-    ])
+    await waitForElementToBeRemoved(schemaAlert)
+    act(() => {
+      rerender(<></>)
+    })
 
     // Re-rendering the editor should reload the existing annotations
     act(() => {
