@@ -1,3 +1,4 @@
+import React from 'react'
 import { StyledTableContainer } from '@/components/styled/StyledTableContainer'
 import { SelectColumn } from '@sage-bionetworks/synapse-types'
 import { LabelLinkConfig } from '../CardContainerLogic'
@@ -19,7 +20,7 @@ export type RowDataTableProps = {
 /**
  * Displays a table of column names and Synapse Table row data represented as key/value pairs
  */
-const RowDataTable = (props: RowDataTableProps) => {
+const RowDataTable = (props: RowDataTableProps): React.ReactNode => {
   const { columnAliases, columnLinks, headers, rowData, displayedColumns } =
     props
 

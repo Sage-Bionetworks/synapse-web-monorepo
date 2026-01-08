@@ -1,3 +1,4 @@
+import React from 'react'
 import { hasDifference } from '@/utils/functions/ArrayUtils'
 import { Box, Typography } from '@mui/material'
 import { Reference } from '@sage-bionetworks/synapse-types'
@@ -21,7 +22,9 @@ export type EntityFinderModalProps = {
   initialSelected?: Reference[]
 }
 
-export const EntityFinderModal = (props: EntityFinderModalProps) => {
+export const EntityFinderModal = (
+  props: EntityFinderModalProps,
+): React.ReactNode => {
   const [selected, setSelected] = useState<Reference[]>([])
   useEffect(() => {
     if (props.initialSelected) {

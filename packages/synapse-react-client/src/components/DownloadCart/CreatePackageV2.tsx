@@ -2,6 +2,7 @@ import {
   createPackageFromDownloadListV2,
   getFileHandleByIdURL,
 } from '@/synapse-client/SynapseClient'
+import React from 'react'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { Box, Button, InputAdornment, TextField } from '@mui/material'
 import { DownloadListPackageResponse } from '@sage-bionetworks/synapse-types'
@@ -22,7 +23,9 @@ type AlertConfig = {
 export const TEMPLATE_ERROR_FILE_NAME =
   'Please provide a package file name and try again.'
 
-export const CreatePackageV2 = (props: CreatePackageV2Props) => {
+export const CreatePackageV2 = (
+  props: CreatePackageV2Props,
+): React.ReactNode => {
   const { accessToken } = useSynapseContext()
   const [isLoading, setIsLoading] = useState(false)
   const [fileName, setZipFileName] = useState('')

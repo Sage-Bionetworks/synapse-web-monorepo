@@ -1,10 +1,11 @@
+import React from 'react'
 import { SVGProps } from 'react'
 
 type ArrowProps = SVGProps<SVGSVGElement> & {
   arrowDirection: 'left' | 'right'
 }
 
-const Arrow = ({ arrowDirection, ...props }: ArrowProps) => {
+const Arrow = ({ arrowDirection, ...props }: ArrowProps): React.ReactNode => {
   return (
     <svg
       {...props}

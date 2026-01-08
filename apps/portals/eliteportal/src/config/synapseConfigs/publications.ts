@@ -1,4 +1,3 @@
-import { Direction } from '@sage-bionetworks/synapse-types'
 import {
   CardConfiguration,
   QueryWrapperPlotNavProps,
@@ -25,7 +24,6 @@ const publicationsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   name: 'Publications',
   shouldDeepLink: true,
   facetsToPlot: ['Program', 'Year', 'Grant', 'Journal'],
-  facetValueSortConfigs: [{ columnName: 'Year', direction: Direction.DESC }],
   cardConfiguration: publicationCardProps,
   searchConfiguration: defaultSearchConfiguration,
 }

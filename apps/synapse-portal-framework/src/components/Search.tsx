@@ -1,3 +1,4 @@
+import React from 'react'
 import { useState } from 'react'
 import { TextField, Button, InputAdornment } from '@mui/material'
 
@@ -5,7 +6,7 @@ type SearchProps = {
   onSearch: (searchText: string) => void
 }
 
-const Search = ({ onSearch }: SearchProps) => {
+const Search = ({ onSearch }: SearchProps): React.ReactNode => {
   const [searchText, setSearchText] = useState<string>('')
 
   return (

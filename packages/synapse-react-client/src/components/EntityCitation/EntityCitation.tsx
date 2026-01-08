@@ -1,3 +1,4 @@
+import React from 'react'
 import { ReactComponent as DoubleQuotes } from '@/assets/icons/DoubleQuotes.svg'
 import { Button, Skeleton } from '@mui/material'
 import { useGetDOIAssociation } from '@/synapse-queries/doi/useDOI'
@@ -18,7 +19,7 @@ const EntityCitation = ({
   projectId,
   entityId,
   versionNumber,
-}: EntityCitationProps) => {
+}: EntityCitationProps): React.ReactNode => {
   const { data: bundle, isLoading: isEntityLoading } = useGetEntityBundle(
     entityId,
     versionNumber,

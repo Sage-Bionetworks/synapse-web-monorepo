@@ -8,7 +8,11 @@ import { useDocumentVisibility } from '@react-hookz/web'
 // State type
 interface WebSocketState {
   model: GridModel | null
-  isGridReady: boolean
+  /**
+   * True if the WebSocket has finished the initial sync and can process CRDT updates.
+   * Corresponds to the `GRID_READY` action.
+   */
+  hasCompletedInitialSync: boolean
   isConnected: boolean
   isConnecting: boolean
   connectionParams: {
@@ -51,7 +55,9 @@ function websocketReducer(
           replicaId: action.payload.replicaId,
           sessionId: action.payload.sessionId,
         },
-        isGridReady: isSameConnection ? state.isGridReady : false,
+        hasCompletedInitialSync: isSameConnection
+          ? state.hasCompletedInitialSync
+          : false,
         model: isSameConnection ? state.model : null,
         isConnected: false,
         isConnecting: false,
@@ -84,7 +90,7 @@ function websocketReducer(
     case 'GRID_READY':
       return {
         ...state,
-        isGridReady: true,
+        hasCompletedInitialSync: true,
       }
 
     case 'MODEL_CREATED':
@@ -107,7 +113,7 @@ function websocketReducer(
 
 export const initialWebSocketState: WebSocketState = {
   model: null,
-  isGridReady: false,
+  hasCompletedInitialSync: false,
   isConnected: false,
   isConnecting: false,
   connectionParams: null,
@@ -280,15 +286,30 @@ export function useDataGridWebSocket() {
     }
   }, [state.websocketInstance])
 
+  /**
+   * Checks if the model snapshot contains the minimum data required for rendering (columns and rows).
+   */
+  function isModelRenderable(model: GridModel | null) {
+    if (!model || !model.api.getSnapshot() || !modelSnapshot) {
+      return false
+    }
+    const { columnNames, columnOrder, rows } = modelSnapshot
+    const columnsReady = columnNames.length >= 1
+    const orderReady = columnOrder.length >= 1
+    const rowsReady = rows.length >= 0
+    return columnsReady && orderReady && rowsReady
+  }
+
   return {
     isConnected: state.isConnected,
     websocketInstance: state.websocketInstance,
-    isGridReady: state.isGridReady,
+    hasCompletedInitialSync: state.hasCompletedInitialSync,
     model: state.model,
     modelSnapshot,
     connect,
     presignedUrl,
     errorEstablishingWebsocketConnection:
       state.connectionError ?? errorEstablishingWebsocketConnection,
+    hasSufficientData: isModelRenderable(state.model),
   }
 }

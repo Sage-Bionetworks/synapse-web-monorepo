@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Link, Tab, Tabs, Typography } from '@mui/material'
 import { ReactElement, SyntheticEvent, useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
@@ -40,7 +41,7 @@ export const ProgrammaticInstructionsModal = ({
   cliCode,
   helpMarkdown,
   helpUrl,
-}: ProgrammaticInstructionsModalProps) => {
+}: ProgrammaticInstructionsModalProps): React.ReactNode => {
   let defaultTab
   if (cliCode) {
     defaultTab = ProgrammaticOptionsTabs.COMMAND_LINE

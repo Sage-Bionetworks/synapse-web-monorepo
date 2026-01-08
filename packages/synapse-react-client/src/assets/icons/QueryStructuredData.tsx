@@ -1,6 +1,9 @@
+import React from 'react'
 import { SVGProps } from 'react'
 
-const QueryStructuredData = (props: SVGProps<SVGSVGElement>) => (
+const QueryStructuredData = (
+  props: SVGProps<SVGSVGElement>,
+): React.ReactNode => (
   <svg
     {...props}
     width="46"

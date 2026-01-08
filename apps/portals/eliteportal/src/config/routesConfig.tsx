@@ -6,6 +6,8 @@ import {
 } from './routeConstants'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
+import { getDoiRedirectRoute } from '@sage-bionetworks/synapse-portal-framework/shared-config/DoiRedirectRoute'
+import { doiRedirector, doiSerializer } from '@/config/doiRedirector'
 
 const routes: RouteObject[] = [
   {
@@ -13,6 +15,10 @@ const routes: RouteObject[] = [
     lazy: () => import('@/pages/RootApp').then(convertModuleToRouteObject),
     children: [
       ...sharedRoutes,
+      getDoiRedirectRoute({
+        redirector: doiRedirector,
+        deserializer: doiSerializer,
+      }),
       {
         index: true,
         lazy: () => import('@/pages/HomePage').then(convertModuleToRouteObject),

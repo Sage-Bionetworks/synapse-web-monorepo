@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Stack, SxProps, useTheme } from '@mui/material'
 import Illustrations from '../../assets/illustrations'
 
@@ -13,7 +14,7 @@ const CTASectionWrapper = ({
   themeMode,
   showBlobs = true,
   sx,
-}: CTASectionWrapperProps) => {
+}: CTASectionWrapperProps): React.ReactNode => {
   const theme = useTheme()
   const blobStyles = {
     position: 'absolute',

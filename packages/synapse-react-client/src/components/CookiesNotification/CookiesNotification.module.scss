@@ -1,0 +1,8 @@
+@use 'sass:map';
+@use '../../style/abstracts/variables' as SrcVariables;
+
+.MinorAddendum {
+  @media (max-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    display: none;
+  }
+}

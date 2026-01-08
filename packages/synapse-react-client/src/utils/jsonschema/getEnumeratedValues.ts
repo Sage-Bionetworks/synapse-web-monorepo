@@ -39,6 +39,10 @@ export default function getEnumeratedValues(
 ): { value: EnumeratedValue }[] {
   let rjsfOptionsList: EnumOptionsType[] = []
 
+  if (jsonSchema.type === 'boolean') {
+    return [{ value: true }, { value: false }]
+  }
+
   try {
     if (
       jsonSchema?.oneOf &&

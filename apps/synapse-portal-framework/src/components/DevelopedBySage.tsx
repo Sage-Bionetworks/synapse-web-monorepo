@@ -1,3 +1,4 @@
+import React from 'react'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { Box, Link, Typography } from '@mui/material'
 import { ReactNode } from 'react'
@@ -6,7 +7,9 @@ type DevelopedBySageProps = {
   children?: ReactNode
 }
 
-const DevelopedBySage = ({ children }: DevelopedBySageProps) => {
+const DevelopedBySage = ({
+  children,
+}: DevelopedBySageProps): React.ReactNode => {
   return (
     <Box
       sx={{ mt: '65px', fontSize: 15, color: '#515359', textAlign: 'center' }}

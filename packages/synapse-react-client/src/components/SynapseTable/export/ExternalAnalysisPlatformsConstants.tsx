@@ -1,9 +1,10 @@
-import { Link } from '@mui/material'
-import Typography from '@mui/material/Typography'
+import React from 'react'
 import { ReactComponent as AdWorkbenchLogo } from '../../../assets/logos/other/ad-workbench-logo.svg'
 import { ReactComponent as CavaticaLogo } from '../../../assets/logos/other/cavatica-logo.svg'
 import { ReactComponent as TerraLogo } from '../../../assets/logos/other/terra-logo.svg'
 import { ReactComponent as PlutoLogo } from '../../../assets/logos/other/pluto-logo.svg'
+import { ExternalAnalysisPlatformInstructions } from './ExternalAnalysisPlatformInstructions'
+import { ADDiscoveryPortalInstructions } from './ADDiscoveryPortalInstructions'
 
 export type PlatformInstructionProps = {
   cavaticaConnectAccountURL?: string
@@ -22,65 +23,6 @@ export type ExternalAnalysisPlatform =
   | 'adworkbench'
   | 'pluto'
   | 'plutodev'
-
-const ExternalAnalysisPlatformInstructions = (props: {
-  platformName: string
-  platformLoginURL: string
-  platformConnectAccountURL?: string
-  platformSupportEmail?: string
-}) => {
-  const {
-    platformName,
-    platformLoginURL,
-    platformConnectAccountURL,
-    platformSupportEmail,
-  } = props
-  return (
-    <>
-      <Typography variant="body1" sx={{ fontWeight: 700 }} gutterBottom>
-        You must meet these requirements from {platformName} to send data:
-      </Typography>
-      <Typography
-        variant="body1"
-        component={'ol'}
-        gutterBottom
-        sx={{ marginLeft: '10px', li: { mb: 1 } }}
-      >
-        <li>You must complete all required Access Actions in the next step.</li>
-        <li>
-          You must be logged in to a {platformName} account.{' '}
-          <Link
-            href={platformLoginURL}
-            rel={'noopener noreferrer'}
-            target={'_blank'}
-          >
-            Click here to login or register for {platformName}
-          </Link>
-          .
-        </li>
-        <li>
-          You must connect your {platformName} account to Synapse.{' '}
-          {platformConnectAccountURL && (
-            <Link href={platformConnectAccountURL} target="_blank">
-              Click here for instructions.
-            </Link>
-          )}
-        </li>
-      </Typography>
-
-      <Typography variant="body1" gutterBottom>
-        Note that we cannot provide support for {platformName}.&nbsp;&nbsp;
-        {platformSupportEmail && (
-          <>
-            Please contact {platformName}'s{' '}
-            <Link href={platformSupportEmail}>technical support</Link> for
-            issues related to the above.
-          </>
-        )}
-      </Typography>
-    </>
-  )
-}
 
 const plutoAnalysisPlatformDescription: ExternalAnalysisPlatformDescription = {
   name: 'Pluto',
@@ -145,9 +87,10 @@ export const EXTERNAL_ANALYSIS_PLATFORMS: Record<
   pluto: plutoAnalysisPlatformDescription,
   plutodev: plutoDevAnalysisPlatformDescription,
   adworkbench: {
-    name: 'AD Workbench',
+    name: 'AD Discovery Portal',
     description:
-      'AD Workbench – a secure, cloud-based data sharing and analytics environment – is the interoperability layer of the AD Data Initiative technical suite and its flagship product offering. Easy to use and available at no cost, AD Workbench empowers researchers around the world to share, access and analyze data across platforms.',
+      "The AD Discovery Portal is designed to help researchers explore novel Alzheimer's disease and related dementias data through a publicly accessible dataset catalog. It offers a diverse collection of data, including imaging, omics, clinical, and multi-modal approaches, and brings together datasets from both industry and academia. The Discovery Portal is fully integrated with AD Workbench and enables seamless exploration, dataset access requests, and analysis.",
     Logo: AdWorkbenchLogo,
+    PlatformInstructions: () => <ADDiscoveryPortalInstructions />,
   },
 } as const

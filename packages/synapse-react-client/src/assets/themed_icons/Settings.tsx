@@ -1,4 +1,5 @@
-export const Settings = () => (
+import React from 'react'
+export const Settings = (): React.ReactNode => (
   <svg
     data-icon="settings"
     width="40"

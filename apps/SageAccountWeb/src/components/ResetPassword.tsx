@@ -1,3 +1,4 @@
+import React from 'react'
 import { Box, Button, SxProps, TextField, Typography } from '@mui/material'
 import { PasswordResetSignedToken } from '@sage-bionetworks/synapse-types'
 import { FormEvent, useMemo, useState } from 'react'
@@ -16,7 +17,7 @@ export type ResetPasswordProps = {
   returnToUrl: string
 }
 
-export const ResetPassword = (props: ResetPasswordProps) => {
+export const ResetPassword = (props: ResetPasswordProps): React.ReactNode => {
   const navigate = useNavigate()
   const [userName, setUserName] = useState('')
 

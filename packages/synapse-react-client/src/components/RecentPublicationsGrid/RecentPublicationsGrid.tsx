@@ -1,3 +1,4 @@
+import React from 'react'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/index'
@@ -38,7 +39,7 @@ const PublicationCard = ({
   journalColIndex,
   publicationDateColIndex,
   doiColIndex,
-}: PublicationCardProps) => (
+}: PublicationCardProps): React.ReactNode => (
   <Grid
     key={pub.rowId}
     sx={{

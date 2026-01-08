@@ -1,4 +1,5 @@
-export const SqlEditorIcon = () => (
+import React from 'react'
+export const SqlEditorIcon = (): React.ReactNode => (
   <svg
     data-icon="build"
     width="13"

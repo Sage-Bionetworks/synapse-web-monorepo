@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   AlertTitle,
   Alert as MuiAlert,
@@ -9,7 +10,11 @@ export interface AlertProps extends MuiAlertProps {
   title?: string
 }
 
-export const Alert = ({ message, title, ...rest }: AlertProps) => (
+export const Alert = ({
+  message,
+  title,
+  ...rest
+}: AlertProps): React.ReactNode => (
   <>
     <span>
       Note: use FullWidthAlert for alerts with primary, secondary, and close

@@ -17,10 +17,7 @@ import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { useSuspenseGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import { CombinedRangeFacetFilter } from './CombinedRangeFacetFilter'
-import {
-  EnumFacetFilter,
-  FacetValueSortConfig,
-} from './EnumFacetFilter/EnumFacetFilter'
+import { EnumFacetFilter } from './EnumFacetFilter/EnumFacetFilter'
 import { FacetChip } from './FacetChip'
 import { FacetFilterHeader } from './FacetFilterHeader'
 import { FacetFilterControlsSkeleton } from './FacetFilterSkeleton'
@@ -32,7 +29,6 @@ export type FacetFilterControlsProps = {
   /* The set of faceted column names that should be shown in the Facet controls. If undefined, all faceted columns with
     at least one non-null value will be shown. */
   availableFacets?: string[]
-  facetValueSortConfigs?: FacetValueSortConfig[]
   initialExpandedFacetControls?: string[]
 }
 
@@ -103,11 +99,7 @@ export function applyChangesToValuesColumn(
 }
 
 function FacetFilterControls(props: FacetFilterControlsProps) {
-  const {
-    availableFacets,
-    facetValueSortConfigs,
-    initialExpandedFacetControls,
-  } = props
+  const { availableFacets, initialExpandedFacetControls } = props
   const { getCurrentQueryRequest, combineRangeFacetConfig } = useQueryContext()
   const { getColumnDisplayName } = useQueryVisualizationContext()
   const lastRequest = useMemo(
@@ -256,17 +248,10 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
       )}
       {shownTopLevelFacets.map(facet => {
         const columnModel = getCorrespondingColumnForFacet(facet, columnModels!)
-        const sortConfig = facetValueSortConfigs?.find(
-          config => config.columnName == facet.columnName,
-        )
         return (
           <div className="FacetFilterControls__facet" key={facet.columnName}>
             {facet.facetType === 'enumeration' && columnModel && (
-              <EnumFacetFilter
-                containerAs="Collapsible"
-                facet={facet}
-                sortConfig={sortConfig}
-              />
+              <EnumFacetFilter containerAs="Collapsible" facet={facet} />
             )}
             {facet.facetType === 'range' && columnModel && (
               <RangeFacetFilter facetResult={facet} />

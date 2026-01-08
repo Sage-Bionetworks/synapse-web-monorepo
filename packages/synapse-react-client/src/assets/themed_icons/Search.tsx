@@ -1,8 +1,9 @@
+import React from 'react'
 export type SearchProps = {
   size?: number
   fill?: string
 }
-export const Search = (props: SearchProps) => {
+export const Search = (props: SearchProps): React.ReactNode => {
   const { size = 16, fill = '#47337D' } = props
   return (
     <svg

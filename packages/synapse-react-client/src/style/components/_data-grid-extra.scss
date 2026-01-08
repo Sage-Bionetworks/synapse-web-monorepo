@@ -1,3 +1,12 @@
+.dsg-input {
+  font-size: inherit;
+  color: #353a3f; // grey-900
+}
+
+.dsg-cell-disabled input {
+  color: #71767f; // gray-700
+}
+
 .row-deleted .dsg-cell {
   /* Red */
   background: #fff1f0;

@@ -1,3 +1,4 @@
+import React from 'react'
 import { OBSERVATION_CARD } from '@/utils/SynapseConstants'
 import { Dialog, DialogContent } from '@mui/material'
 import {
@@ -202,7 +203,7 @@ const TimelinePhase = ({
   schema,
   widthPx,
   sql,
-}: TimelinePhaseProps) => {
+}: TimelinePhaseProps): React.ReactNode => {
   const [clickEvent, setClickEvent] = useState<Plotly.PlotMouseEvent>()
   const [hoverEvent, setHoverEvent] = useState<Plotly.PlotHoverEvent>()
   const [plotKey, setPlotKey] = useState(1)

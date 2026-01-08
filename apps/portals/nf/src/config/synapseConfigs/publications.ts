@@ -4,8 +4,6 @@ import type {
 } from 'synapse-react-client'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { columnAliases } from './commonProps'
-
-import { Direction } from '@sage-bionetworks/synapse-types'
 import { publicationsSql } from '../resources'
 
 export const newPublicationsSql = `${publicationsSql} order by ROW_ID desc limit 3`
@@ -53,7 +51,6 @@ const publications: QueryWrapperPlotNavProps = {
   name: 'Publications',
   cardConfiguration: publicationsCardConfiguration,
   columnAliases,
-  facetValueSortConfigs: [{ columnName: 'year', direction: Direction.DESC }],
   searchConfiguration: {
     searchable: [
       'title',

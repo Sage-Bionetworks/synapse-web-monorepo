@@ -65,6 +65,15 @@ vi.mocked(useGlobalIsEditingContext).mockReturnValue({
 })
 
 describe('CreateOrUpdateDoiModal', () => {
+  beforeAll(() => {
+    // Mock the current time, since the current year is used to populate the publication year field
+    vi.setSystemTime(new Date('2025-05-01T12:00:00Z'))
+  })
+
+  afterAll(() => {
+    vi.useRealTimers()
+  })
+
   const defaultProps = {
     open: true,
     onClose: vi.fn(),

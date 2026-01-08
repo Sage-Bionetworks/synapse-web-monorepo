@@ -1,3 +1,4 @@
+import React from 'react'
 import SearchImage from '@/assets/icons/SearchImage'
 import { useGetCurrentUserBundle } from '@/synapse-queries'
 import { useDebouncedEffect } from '@/utils/hooks/useDebouncedEffect'
@@ -19,7 +20,7 @@ import {
 } from './AccessRequestSubmissionTable'
 import AccessRequirementSearchBox from './AccessRequirementSearchBox/AccessRequirementSearchBox'
 
-const SearchStartComponent = () => {
+const SearchStartComponent = (): React.ReactNode => {
   return (
     <div className="text-center">
       <SearchImage className="SearchPlaceholderImage" height="167px" />
@@ -31,7 +32,7 @@ const SearchStartComponent = () => {
   )
 }
 
-export const UserHistoryDashboard = () => {
+export const UserHistoryDashboard = (): React.ReactNode => {
   const [accessRequirementId, setAccessRequirementId] = useState<
     string | undefined
   >()

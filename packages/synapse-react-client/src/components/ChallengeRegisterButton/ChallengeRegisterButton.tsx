@@ -4,6 +4,7 @@ import {
   useGetIsUserMemberOfTeam,
   useGetUserSubmissionTeams,
 } from '@/synapse-queries'
+import React from 'react'
 import { SynapseClientError, useSynapseContext } from '@/utils'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import { Box } from '@mui/material'
@@ -22,7 +23,7 @@ const ChallengeRegisterButton = ({
   onError,
   onJoinClick,
   onLeaveClick,
-}: ChallengeRegisterButtonProps) => {
+}: ChallengeRegisterButtonProps): React.ReactNode => {
   const { isAuthenticated, accessToken } = useSynapseContext()
   const { data: userProfile } = useGetCurrentUserProfile({
     enabled: isAuthenticated,

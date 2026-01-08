@@ -109,6 +109,7 @@ export const getAdditionalFilters = (
                   'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
                 columnName: key,
                 function: operator,
+                _function: operator,
                 values: searchParams[key].split(','),
               }
               return filter
@@ -134,6 +135,7 @@ export const getAdditionalFilters = (
                   'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
                 columnName: key,
                 function: operator,
+                _function: operator,
                 values: searchParams[key].split(',').map(param => {
                   // Remove synId prefix for the same reasons as in the LIKE case
                   return `%${removePrefixIfSynId(param)}%`

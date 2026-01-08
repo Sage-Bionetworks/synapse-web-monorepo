@@ -114,7 +114,6 @@ describe('FullTextSearch tests', () => {
     it('adds the appropriate filter when searching', () => {
       const columnModels = mockQueryResultBundle.columnModels
       const searchQuery = 'NF1'
-      const setSearchText = vi.fn()
       const initialRequest: QueryBundleRequest = {
         entityId: 'syn123',
         query: {
@@ -128,7 +127,6 @@ describe('FullTextSearch tests', () => {
         initialRequest,
         columnModels,
         searchQuery,
-        setSearchText,
       )
 
       expect(updatedRequest).toEqual({
@@ -145,13 +143,11 @@ describe('FullTextSearch tests', () => {
           ],
         },
       })
-      expect(setSearchText).toHaveBeenCalledWith('')
     })
 
     it('adds the appropriate filter when searching in BOOLEAN mode', () => {
       const columnModels = mockQueryResultBundle.columnModels
       const searchQuery = 'nf "drug resistence"'
-      const setSearchText = vi.fn()
       const booleanModeDistance = 10
       const ftsConfig: FTSConfig = {
         textMatchesMode: 'BOOLEAN',
@@ -170,7 +166,6 @@ describe('FullTextSearch tests', () => {
         initialRequest,
         columnModels,
         searchQuery,
-        setSearchText,
         ftsConfig,
       )
 
@@ -189,13 +184,11 @@ describe('FullTextSearch tests', () => {
           ],
         },
       })
-      expect(setSearchText).toHaveBeenCalledWith('')
     })
     it('adds the appropriate filter when searching in BOOLEAN mode where the search term word length is larger than distance', () => {
       const columnModels = mockQueryResultBundle.columnModels
       const searchQuery =
         '    a long search-term sentence  that exceeds the     distance set (by the config)       '
-      const setSearchText = vi.fn()
       const booleanModeDistance = 3
       const ftsConfig: FTSConfig = {
         textMatchesMode: 'BOOLEAN',
@@ -214,7 +207,6 @@ describe('FullTextSearch tests', () => {
         initialRequest,
         columnModels,
         searchQuery,
-        setSearchText,
         ftsConfig,
       )
 
@@ -233,12 +225,10 @@ describe('FullTextSearch tests', () => {
           ],
         },
       })
-      expect(setSearchText).toHaveBeenCalledWith('')
     })
     it('adds the appropriate QueryFilter when searching for Synapse ID', () => {
       const columnModels = mockQueryResultBundle.columnModels
       const searchQuery = 'syn123'
-      const setSearchText = vi.fn()
       const initialRequest: QueryBundleRequest = {
         entityId: 'syn123',
         query: {
@@ -252,7 +242,6 @@ describe('FullTextSearch tests', () => {
         initialRequest,
         columnModels,
         searchQuery,
-        setSearchText,
       )
 
       expect(updatedRequest).toEqual({
@@ -270,7 +259,6 @@ describe('FullTextSearch tests', () => {
           ],
         },
       })
-      expect(setSearchText).toHaveBeenCalledWith('')
     })
   })
 })

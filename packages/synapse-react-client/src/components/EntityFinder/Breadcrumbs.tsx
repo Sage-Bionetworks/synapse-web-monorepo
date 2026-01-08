@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import React, { Fragment } from 'react'
 
 export type BreadcrumbItem = {
   name: string
@@ -11,7 +11,10 @@ export type BreadcrumbsProps = {
   maxItemCount?: number
 }
 
-export function Breadcrumbs({ items, maxItemCount = 4 }: BreadcrumbsProps) {
+export function Breadcrumbs({
+  items,
+  maxItemCount = 4,
+}: BreadcrumbsProps): React.ReactNode {
   const truncateBreadcrumbs = items.length > maxItemCount
   if (truncateBreadcrumbs) {
     items = items.slice(-maxItemCount)

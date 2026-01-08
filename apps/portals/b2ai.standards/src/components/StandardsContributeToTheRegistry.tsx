@@ -1,6 +1,7 @@
+import React from 'react'
 import { Button, Stack, Typography } from '@mui/material'
 
-const StandardsContributeToTheRegistry = () => {
+const StandardsContributeToTheRegistry = (): React.ReactNode => {
   const subtitle =
     'Help expand our catalog of biomedical research data standards by contributing your own. Submit your standards through our easy submission process to share them with the community and advance data harmonization. Join us in shaping the future of biomedical research!'
   const buttonText = 'Add a STANDARD to the registry'

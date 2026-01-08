@@ -9,6 +9,7 @@ import {
   COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
   Query,
 } from '@sage-bionetworks/synapse-types'
+import React from 'react'
 
 interface DatasetJsonLdScriptOption1Props {
   entityId?: string
@@ -31,7 +32,7 @@ export function DatasetJsonLdScript({
   entityId: entityIdFromProps,
   version: versionFromProps,
   searchParams,
-}: DatasetJsonLdScriptProps) {
+}: DatasetJsonLdScriptProps): React.ReactNode {
   let entityId: string
   let version: number | undefined
   if (entityIdFromProps) {

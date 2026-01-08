@@ -2,7 +2,6 @@ import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { ErrorOutlined, LockOutlined } from '@mui/icons-material'
 import { Avatar, Chip, Tooltip } from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { useJiraIssueCollector } from '../JiraIssueCollector'
 import { SignInPrompt, YOU_ARE_NOT_AUTHORIZED_MESSAGE } from './ErrorBanner'
 
 export type ErrorChipProps = {
@@ -21,14 +20,6 @@ export default function ErrorChip(props: ErrorChipProps) {
   const loginError =
     (error.status === 403 || error.status === 401) && !accessToken
   const accessDenied = error.status === 403 && accessToken
-
-  useJiraIssueCollector({
-    show: error.status >= 500,
-    issueCollector: 'SWC',
-    issueSummary: '',
-    issueDescription: error.reason,
-    issuePriority: '3',
-  })
 
   const variant = loginError ? 'warning' : 'error'
   let avatar

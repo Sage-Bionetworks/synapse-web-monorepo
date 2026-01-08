@@ -1,3 +1,4 @@
+import React from 'react'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions'
 import {
@@ -23,7 +24,9 @@ export type RowDataTableWithQueryProps = {
 /**
  * For the first row returned by the query, displays a table of column names and Synapse Table row data represented as key/value pairs
  */
-const RowDataTableWithQuery = (props: RowDataTableWithQueryProps) => {
+const RowDataTableWithQuery = (
+  props: RowDataTableWithQueryProps,
+): React.ReactNode => {
   const { columnAliases, columnLinks, query, displayedColumns } = props
   const entityId = parseEntityIdFromSqlStatement(query.sql)
 

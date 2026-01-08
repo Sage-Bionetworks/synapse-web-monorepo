@@ -1,3 +1,4 @@
+import React from 'react'
 import { useState, useEffect } from 'react'
 import {
   Dialog,
@@ -97,7 +98,7 @@ const parseSynIdFromRedirectUrl = (redirectUrl: string | undefined) => {
   }
 }
 
-const RedirectDialog = (props: RedirectDialogProps) => {
+const RedirectDialog = (props: RedirectDialogProps): React.ReactNode => {
   const [countdownSeconds, setCountdownSeconds] = useState<number | undefined>()
   const { redirectUrl, onCancelRedirect } = props
   const [redirectInstructions, setRedirectInstructions] = useState<

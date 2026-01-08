@@ -1,6 +1,7 @@
+import React from 'react'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
 
-const AccessManagement = (props: SvgIconProps) => {
+const AccessManagement = (props: SvgIconProps): React.ReactNode => {
   return (
     <SvgIcon {...props}>
       <path d="M10.959 10.8524C11.0694 12.9636 11.7494 14.0782 12.0009 14.0782C12.2523 14.0782 12.9331 12.9636 13.0427 10.8524H10.959Z" />

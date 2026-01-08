@@ -1,3 +1,4 @@
+import React from 'react'
 import { useSearchAccessRequirementsInfinite } from '@/synapse-queries'
 import { Alert, List, ListItem, Typography } from '@mui/material'
 import { AccessRequirementSearchRequest } from '@sage-bionetworks/synapse-types'
@@ -10,7 +11,7 @@ export type AccessRequirementRelatedProjectsListProps = {
 
 export const AccessRequirementRelatedProjectsList = (
   props: AccessRequirementRelatedProjectsListProps,
-) => {
+): React.ReactNode => {
   const searchRequest: Omit<AccessRequirementSearchRequest, 'nextPageToken'> = {
     ids: [props.accessRequirementId],
   }

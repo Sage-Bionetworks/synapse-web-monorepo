@@ -1,3 +1,4 @@
+import React from 'react'
 import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { isExternalFileHandle, isFileEntity } from '@/utils/types/IsType'
@@ -15,7 +16,9 @@ export type ExternalFileHandleLinkProps = {
   className?: string
 }
 
-export const ExternalFileHandleLink = (props: ExternalFileHandleLinkProps) => {
+export const ExternalFileHandleLink = (
+  props: ExternalFileHandleLinkProps,
+): React.ReactNode => {
   const { accessToken } = useSynapseContext()
   const { synId, className } = props
   const [data, setData] = useState<

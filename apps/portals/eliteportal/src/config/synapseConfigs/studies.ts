@@ -3,10 +3,28 @@ import {
   QueryWrapperPlotNavProps,
 } from 'synapse-react-client'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { defaultSearchConfiguration, studiesSql } from '../resources'
+import {
+  defaultSearchConfiguration,
+  studiesSql,
+  SYNAPSE_PORTAL_ID,
+} from '../resources'
 import { TargetEnum } from 'synapse-react-client/utils/html/TargetEnum'
+import { PortalDOIConfiguration } from 'synapse-react-client/components/GenericCard/PortalDOI/PortalDOIConfiguration'
+import {
+  doiSerializer,
+  ELITEResourceType,
+  RESOURCE_TYPE_KEY_CONFIGURATION,
+} from '../doiRedirector'
 
 export const studiesRgbIndex = 0
+
+export const studyDoiConfiguration: PortalDOIConfiguration = {
+  portalId: SYNAPSE_PORTAL_ID,
+  resourceType: 'STUDY',
+  resourceIdKeyColumns: RESOURCE_TYPE_KEY_CONFIGURATION['STUDY'],
+  serializeDoiString: (type, attrs) =>
+    doiSerializer.serialize(type as ELITEResourceType, attrs),
+}
 
 export const studyCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
@@ -49,6 +67,7 @@ export const studyCardConfiguration: CardConfiguration = {
       'projectFullName',
       'grantNumber',
     ],
+    portalDoiConfiguration: studyDoiConfiguration,
   },
 }
 

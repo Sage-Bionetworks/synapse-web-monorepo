@@ -15,7 +15,9 @@ export type OAuthAclEditorModalProps = {
   onClose: () => void
 }
 
-export default function OAuthAclEditorModal(props: OAuthAclEditorModalProps) {
+export default function OAuthAclEditorModal(
+  props: OAuthAclEditorModalProps,
+): React.ReactNode {
   const { clientId, open, onUpdateSuccess = noop, onClose } = props
   const ref = useRef<OAuthClientAclEditorHandle>(null)
   return (

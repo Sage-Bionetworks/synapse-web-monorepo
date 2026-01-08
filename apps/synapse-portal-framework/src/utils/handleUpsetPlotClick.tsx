@@ -32,6 +32,7 @@ export function handleUpsetPlotClick({
           COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE_VALUE,
         columnName: columnName,
         function: ColumnMultiValueFunction.HAS,
+        _function: ColumnMultiValueFunction.HAS,
         values: [value],
       })),
     }

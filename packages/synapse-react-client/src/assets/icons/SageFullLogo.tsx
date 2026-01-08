@@ -1,8 +1,9 @@
+import React from 'react'
 import { SVGProps } from 'react'
 
 const SageFullLogo = (
   props: SVGProps<SVGSVGElement> & { textColor?: string },
-) => (
+): React.ReactNode => (
   <svg
     width={props.width ?? '566'}
     height={props.height ?? '92'}

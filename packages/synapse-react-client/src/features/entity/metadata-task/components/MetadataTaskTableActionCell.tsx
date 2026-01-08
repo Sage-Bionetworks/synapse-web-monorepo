@@ -4,6 +4,8 @@ import { Button, Tooltip } from '@mui/material'
 import { CurationTask } from '@sage-bionetworks/synapse-client'
 import { useCallback } from 'react'
 import useGridSessionForCurationTask from '../hooks/useGridSessionForCurationTask'
+import { getGridSourceIdForTask } from '../utils/getGridSourceIdForTask'
+import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 
 /**
  * Handles rendering the 'Actions' cell in the Metadata Task table, which provides buttons for the user
@@ -21,6 +23,16 @@ export default function MetadataTaskTableActionCell(props: {
 
   const { mutateAsync: getGridSessionForTask, isPending: openGridIsPending } =
     useGridSessionForCurationTask()
+
+  const gridSourceId = getGridSourceIdForTask(curationTask)
+  const { data, isLoading } = useGetEntityPermissions(gridSourceId)
+  const isOpenDataGridDisabled =
+    openGridIsPending || isLoading || !data?.canView
+  const toolTipTitle = data?.canView
+    ? 'Open a Working Copy document to edit metadata'
+    : 'You must have READ access to ' +
+      gridSourceId +
+      ' to view the Working Copy'
 
   const handleOpenDataGrid = useCallback(async () => {
     const gridSession = await getGridSessionForTask({ curationTask })
@@ -43,17 +55,20 @@ export default function MetadataTaskTableActionCell(props: {
   // const uploadButton = isFileBasedTask ? <></> : null
 
   const openDataGridButton = (
-    <Tooltip title={'Open a Working Copy document to edit metadata'}>
-      <Button
-        size={'small'}
-        startIcon={<StickyNote2Outlined />}
-        loading={openGridIsPending}
-        onClick={() => {
-          void handleOpenDataGrid()
-        }}
-      >
-        Working Copy
-      </Button>
+    <Tooltip title={toolTipTitle}>
+      <span>
+        <Button
+          size={'small'}
+          startIcon={<StickyNote2Outlined />}
+          loading={openGridIsPending || isLoading}
+          disabled={isOpenDataGridDisabled}
+          onClick={() => {
+            void handleOpenDataGrid()
+          }}
+        >
+          Working Copy
+        </Button>
+      </span>
     </Tooltip>
   )
 

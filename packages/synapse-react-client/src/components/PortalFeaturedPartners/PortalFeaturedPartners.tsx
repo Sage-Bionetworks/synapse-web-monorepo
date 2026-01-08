@@ -1,3 +1,4 @@
+import React from 'react'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { SynapseConstants } from '@/utils'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions'
@@ -38,7 +39,10 @@ type PartnerWrapperProps = {
   children: React.ReactNode
 }
 
-const PartnerWrapper = ({ website, children }: PartnerWrapperProps) => {
+const PartnerWrapper = ({
+  website,
+  children,
+}: PartnerWrapperProps): React.ReactNode => {
   const commonSx = {
     display: 'flex',
     alignItems: 'center',
@@ -68,7 +72,7 @@ const PartnerIcon = ({
   websiteColIndex,
   entityId,
   isLoading,
-}: PartnerIcons) => {
+}: PartnerIcons): React.ReactNode => {
   const fileId = partner.values[imageColIndex] ?? ''
   const organizationName = partner.values[organizationNameColIndex]
   const website = partner.values[websiteColIndex]
@@ -145,7 +149,7 @@ const PortalFeaturedPartners = ({
   titleText = 'Our Partners',
   variation = 'default',
   sx,
-}: PortalFeaturedPartnersProps) => {
+}: PortalFeaturedPartnersProps): React.ReactNode => {
   const entityId = parseEntityIdFromSqlStatement(sql)
 
   const queryBundleRequest: QueryBundleRequest = {
