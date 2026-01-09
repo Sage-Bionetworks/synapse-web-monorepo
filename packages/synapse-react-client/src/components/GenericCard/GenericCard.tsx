@@ -79,6 +79,11 @@ export type GenericCardProps = {
    * Optional ReactNode to be rendered next to the card type
    */
   cardTypeAdornment?: React.ReactNode
+  /**
+   * Character count threshold for truncating description
+   * @default 400
+   */
+  charCountCutoff?: number
 }
 
 const EMPTY_CARD_LABEL_ARRAY: CardLabel[] = []
@@ -112,6 +117,7 @@ export const GenericCard = forwardRef(function GenericCard(
     renderedIconList,
     sustainabilityScorecard,
     cardTypeAdornment,
+    charCountCutoff,
   } = props
 
   const showFooter = labels.length > 0
@@ -130,6 +136,7 @@ export const GenericCard = forwardRef(function GenericCard(
         ref={ref}
         headerCardVariant={headerCardVariant}
         descriptionConfig={descriptionConfig}
+        charCountCutoff={charCountCutoff}
         title={title}
         subTitle={subtitle}
         description={description}

@@ -100,7 +100,7 @@ describe('HasAccess tests', () => {
 
     renderComponent(props)
 
-    await expectIcon('accessOpen', '')
+    await expectIcon('accessOpen', 'You have access to this item.')
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
 
     const expectedRestrictionInformationRequest: RestrictionInformationRequest =
@@ -394,7 +394,7 @@ describe('HasAccess tests', () => {
       )
 
       // Should show regular open access icon, not external (because external check is disabled)
-      await expectIcon('accessOpen', '')
+      await expectIcon('accessOpen', 'You have access to this item.')
       expect(screen.queryByRole('button')).not.toBeInTheDocument()
     })
 
@@ -427,7 +427,7 @@ describe('HasAccess tests', () => {
       renderComponent({ ...props, showExternalAccessIcon: false })
 
       // Should show regular open access icon, not external, because the feature is disabled
-      await expectIcon('accessOpen', '')
+      await expectIcon('accessOpen', 'You have access to this item.')
       expect(screen.queryByRole('button')).not.toBeInTheDocument()
     })
 
