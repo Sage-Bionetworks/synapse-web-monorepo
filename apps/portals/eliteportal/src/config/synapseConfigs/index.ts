@@ -6,6 +6,7 @@ import peopleQueryWrapperPlotNavProps from './people'
 import projectsQueryWrapperPlotNavProps from './projects'
 import publications from './publications'
 import studiesQueryWrapperPlotNavProps from './studies'
+import { dataQueryWrapperPlotNavProps } from './data'
 
 export {
   projectsQueryWrapperPlotNavProps,
@@ -14,6 +15,7 @@ export {
   publications,
   individualsViewQueryWrapperPlotNavProps,
   filesViewQueryWrapperPlotNavProps,
+  dataQueryWrapperPlotNavProps,
 }
 
 export default {
@@ -23,4 +25,5 @@ export default {
   publications,
   individualsView: individualsViewQueryWrapperPlotNavProps,
   filesView: filesViewQueryWrapperPlotNavProps,
+  data: dataQueryWrapperPlotNavProps,
 }

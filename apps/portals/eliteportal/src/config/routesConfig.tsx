@@ -75,10 +75,22 @@ const routes: RouteObject[] = [
           },
           {
             path: 'Cohort Builder',
-            lazy: () =>
-              import('@/pages/Explore/cohortBuilder').then(
-                convertModuleToRouteObject,
-              ),
+            children: [
+              {
+                path: 'Individuals',
+                lazy: () =>
+                  import('@/pages/Explore/cohortBuilder').then(
+                    convertModuleToRouteObject,
+                  ),
+              },
+              {
+                path: 'Data',
+                lazy: () =>
+                  import('@/pages/Explore/cohortBuilderData').then(
+                    convertModuleToRouteObject,
+                  ),
+              },
+            ],
           },
           {
             path: 'Projects',

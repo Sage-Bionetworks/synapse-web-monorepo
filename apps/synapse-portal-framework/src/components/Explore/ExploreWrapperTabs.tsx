@@ -42,12 +42,33 @@ export function ExploreWrapperTabs(props: ExploreWrapperProps) {
     [pathname],
   )
 
+  // Determine which tab should be selected based on current pathname
+  const selectedTabValue = useMemo(() => {
+    for (const route of explorePaths) {
+      const routePath = encodeURI(`/Explore/${route.path}`)
+      // Check if current path matches the main path
+      if (pathnameWithoutTrailingSlash === routePath) {
+        return routePath
+      }
+      // Check if current path matches any of the matchPaths
+      if (route.matchPaths) {
+        for (const matchPath of route.matchPaths) {
+          const encodedMatchPath = encodeURI(`/Explore/${matchPath}`)
+          if (pathnameWithoutTrailingSlash === encodedMatchPath) {
+            return routePath
+          }
+        }
+      }
+    }
+    return pathnameWithoutTrailingSlash
+  }, [pathnameWithoutTrailingSlash, explorePaths])
+
   /**
    * In the desktop view, we use Material UI tabs
    */
   return (
     <Tabs
-      value={pathnameWithoutTrailingSlash}
+      value={selectedTabValue}
       variant="scrollable"
       orientation={isMobileView ? 'vertical' : 'horizontal'}
       scrollButtons="auto"

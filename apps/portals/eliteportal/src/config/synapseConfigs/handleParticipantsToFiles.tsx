@@ -72,5 +72,5 @@ export const handleSelectedParticipantsToFiles = async (
       ),
     )
   }
-  window.location.href = '/Explore/Data'
+  window.location.href = '/Explore/Cohort Builder/Data'
 }
