@@ -31,6 +31,10 @@ export const getIgnoredQueryFilterSearchParamKey = (
 ) => {
   return `__${namespace ?? ''}_${key}`
 }
+// Split a comma-separated value and remove leading/trailing spaces
+export function splitAndTrim(value: string): string[] {
+  return value?.split(',').map(v => v.trim()) ?? []
+}
 
 // Special search parameter key that will automatically apply a FTS search term to a Query Wrapper if present
 export const FTS_SEARCH_TERM = 'FTS_SEARCH_TERM'
