@@ -46,10 +46,14 @@ function useTraceEvent(chatJobId: string, enabled: boolean) {
 
 type SynapseChatMessageProps = {
   chatJobId: string
+  processResponseDocument?: (
+    doc: Document,
+    navigate?: (to: string) => void | Promise<void>,
+  ) => void
 }
 
 export default function SynapseChatMessage(props: SynapseChatMessageProps) {
-  const { chatJobId } = props
+  const { chatJobId, processResponseDocument } = props
   const { data: asyncJobStatus } = usePollAsynchronousJob(chatJobId)
 
   const chatRequest = asyncJobStatus?.requestBody as AgentChatRequest
@@ -70,6 +74,7 @@ export default function SynapseChatMessage(props: SynapseChatMessageProps) {
       chatResponseText={chatResponse?.responseText}
       chatResponseTrace={traceEvents}
       chatErrorReason={chatError}
+      processResponseDocument={processResponseDocument}
     />
   )
 }

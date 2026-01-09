@@ -13,6 +13,7 @@ import logoHeaderConfig from './config/logoHeaderConfig'
 import { navbarConfig } from './config/navbarConfig'
 import palette from './config/paletteConfig'
 import routes from './config/routesConfig'
+import synapseChatConfig from './config/synapseChatConfig'
 
 const container = document.getElementById('root')
 
@@ -29,6 +30,7 @@ root.render(
       logoHeaderConfig={logoHeaderConfig}
       logoFooterConfig={logoFooterConfig}
       navbarConfig={navbarConfig}
+      synapseChatProps={synapseChatConfig}
     />
   </StrictMode>,
 )
