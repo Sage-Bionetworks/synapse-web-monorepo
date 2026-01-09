@@ -10,7 +10,7 @@
     "katex": "^0.16.22",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router": "7.12.0",
+    "react-router": "^7.12.0",
     "synapse-react-client": "workspace:*",
     "vite": "^7.3.0"
   },
