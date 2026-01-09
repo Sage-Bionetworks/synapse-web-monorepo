@@ -103,7 +103,7 @@ export const getAdditionalFilters = (
                   'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
                 columnName: key,
                 operator: operator,
-                values: searchParams[key].split(','),
+                values: splitAndTrim(searchParams[key]),
               }
               return filter
             }
@@ -114,7 +114,7 @@ export const getAdditionalFilters = (
                 columnName: key,
                 function: operator,
                 _function: operator,
-                values: searchParams[key].split(','),
+                values: splitAndTrim(searchParams[key]),
               }
               return filter
             }
