@@ -10,6 +10,7 @@ import {
   TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { SYNAPSE_ENTITY_ID_REGEX } from './RegularExpressions'
+import { splitAndTrim } from './StringUtils'
 
 export type SQLOperator =
   | ColumnSingleValueFilterOperator
@@ -30,10 +31,6 @@ export const getIgnoredQueryFilterSearchParamKey = (
   namespace?: string,
 ) => {
   return `__${namespace ?? ''}_${key}`
-}
-// Split a comma-separated value and remove leading/trailing spaces
-export function splitAndTrim(value: string): string[] {
-  return value?.split(',').map(v => v.trim()) ?? []
 }
 
 // Special search parameter key that will automatically apply a FTS search term to a Query Wrapper if present
