@@ -86,7 +86,7 @@
     "markdown-it-synapse-table": "workspace:*",
     "mui-one-time-password-input": "^5.0.0",
     "papaparse": "^5.5.2",
-    "plotly.js": "2.28.0",
+    "plotly.js": "2.34.0",
     "plotly.js-basic-dist": "^2.35.3",
     "pluralize": "^8.0.0",
     "qrcode": "^1.5.4",
