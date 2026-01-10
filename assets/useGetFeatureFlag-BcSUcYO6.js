@@ -1,1 +1,0 @@
-import{an as s,am as u,aa as y}from"./iframe-_xC4R-9l.js";function F(e,a){const{keyFactory:t,isInExperimentalMode:n}=s(),{data:r}=u({staleTime:1/0,...a,queryKey:t.getFeatureFlagQueryKey(),queryFn:()=>y.getFeatureFlags()});return n||!!r?.[e]}export{F as u};
