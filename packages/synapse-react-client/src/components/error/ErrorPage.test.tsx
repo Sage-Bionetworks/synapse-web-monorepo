@@ -50,6 +50,9 @@ describe('ErrorPage: basic functionality', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
   it('403 error on an entity', async () => {
+    const mockWindowOpen = vi.fn()
+    window.open = mockWindowOpen
+
     const props: ErrorPageProps = {
       type: SynapseErrorType.ACCESS_DENIED,
       entityId: 'syn123',
@@ -72,7 +75,10 @@ describe('ErrorPage: basic functionality', () => {
     const contactUsLink = screen.getByText(CONTACT_US_LINK_TEXT)
     await user.click(contactUsLink)
     await waitFor(() =>
-      expect(mockGotoPlace).toHaveBeenLastCalledWith('/SynapseForum:default'),
+      expect(mockWindowOpen).toHaveBeenLastCalledWith(
+        'https://sagebionetworks.jira.com/servicedesk/customer/portals',
+        '_blank',
+      ),
     )
 
     // SWC-7073
