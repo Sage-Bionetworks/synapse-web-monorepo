@@ -1,0 +1,45 @@
+import{j as i}from"./iframe-CaOcC-hf.js";import{c as n}from"./SortDown-BSytflEc.js";import{H as o}from"./HeaderCard-8_BOcQ5T.js";import"./index-Chi_LkuB.js";import"./index-D71-JBvW.js";import"./Icon-BDgK3wXk.js";import"./mouse-ORlR0ytA.js";import"./ShowMore-h_XNpiQI.js";import"./HeaderCardV2-Coocb1ax.js";import"./MarkdownSynapse-Bu_iQFQg.js";import"./SkeletonButton-C1Ne2e4S.js";import"./SkeletonInlineBlock-CXC8p12o.js";import"./SkeletonTable-BGTjeLmw.js";import"./SkeletonParagraph-DlGa_aoP.js";import"./index-DGAj4kvP.js";import"./Card-CpYJILgz.js";import"./SustainabilityScorecard-DXdSHmbf.js";import"./Close-7gN2buzZ.js";import"./Dial-CY--0xyv.js";import"./CheckIcon-DQc1YY6L.js";import"./NoContentAvailable-CiBeCTlI.js";const x={title:"Synapse/HeaderCard",component:o,parameters:{layout:"centered"},tags:["autodocs"]},e={args:{type:"Standard",title:"Example Study",description:"This is an example study description that demonstrates the HeaderCard component.",values:[{columnDisplayName:"Status",value:"Active"},{columnDisplayName:"Data Type",value:"Genomics"},{columnDisplayName:"Access",value:"Public"}],secondaryLabelLimit:3,isAlignToLeftNav:!1,descriptionConfig:{showFullDescriptionByDefault:!0},icon:i.jsx(n,{})}},a={args:{...e.args,title:"Study With Subtitle",subTitle:"Principal Investigator: John Doe"}},t={args:{...e.args,title:"DICOM",description:"Radiology imaging, including templates for narrative reports and machine-generated output. DICOM® — Digital Imaging and Communications in Medicine — is the international standard for medical images and related information. It defines the formats for medical images that can be exchanged with the data and quality necessary for clinical use.",values:[{columnDisplayName:"AUTHOR NAME",value:"DICOM (@dicom)"},{columnDisplayName:"LAT UPDATED",value:"2024-01-01"},{columnDisplayName:"BASED ON",value:"None"}]}};e.parameters={...e.parameters,docs:{...e.parameters?.docs,source:{originalSource:`{
+  args: {
+    type: 'Standard',
+    title: 'Example Study',
+    description: 'This is an example study description that demonstrates the HeaderCard component.',
+    values: [{
+      columnDisplayName: 'Status',
+      value: 'Active'
+    }, {
+      columnDisplayName: 'Data Type',
+      value: 'Genomics'
+    }, {
+      columnDisplayName: 'Access',
+      value: 'Public'
+    }],
+    secondaryLabelLimit: 3,
+    isAlignToLeftNav: false,
+    descriptionConfig: {
+      showFullDescriptionByDefault: true
+    },
+    icon: <Study />
+  }
+}`,...e.parameters?.docs?.source}}};a.parameters={...a.parameters,docs:{...a.parameters?.docs,source:{originalSource:`{
+  args: {
+    ...Default.args,
+    title: 'Study With Subtitle',
+    subTitle: 'Principal Investigator: John Doe'
+  }
+}`,...a.parameters?.docs?.source}}};t.parameters={...t.parameters,docs:{...t.parameters?.docs,source:{originalSource:`{
+  args: {
+    ...Default.args,
+    title: 'DICOM',
+    description: 'Radiology imaging, including templates for narrative reports and machine-generated output. DICOM® — Digital Imaging and Communications in Medicine — is the international standard for medical images and related information. It defines the formats for medical images that can be exchanged with the data and quality necessary for clinical use.',
+    values: [{
+      columnDisplayName: 'AUTHOR NAME',
+      value: 'DICOM (@dicom)'
+    }, {
+      columnDisplayName: 'LAT UPDATED',
+      value: '2024-01-01'
+    }, {
+      columnDisplayName: 'BASED ON',
+      value: 'None'
+    }]
+  }
+}`,...t.parameters?.docs?.source}}};const O=["Default","WithSubtitle","Dicom"];export{e as Default,t as Dicom,a as WithSubtitle,O as __namedExportsOrder,x as default};
