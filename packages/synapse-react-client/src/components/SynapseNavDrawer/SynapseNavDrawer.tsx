@@ -634,14 +634,14 @@ export function SynapseNavDrawer({
                   </a>
                   <a
                     className="SRC-whiteText"
-                    onClick={() => gotoPlace('/SynapseForum:default')}
+                    href="https://blog.synapse.org/"
                     rel="noopener noreferrer"
                   >
-                    Help Forum
+                    Blog
                   </a>
                   <a
                     className="SRC-whiteText"
-                    href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9"
+                    href="https://sagebionetworks.jira.com/servicedesk/customer/portals/"
                     rel="noopener noreferrer"
                     target="_blank"
                   >
