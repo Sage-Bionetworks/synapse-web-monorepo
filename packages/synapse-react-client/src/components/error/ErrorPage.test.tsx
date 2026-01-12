@@ -12,7 +12,7 @@ import ErrorPage, {
   ACCESS_DENIED_MESSAGE,
   ACCESS_DENIED_TITLE,
   ErrorPageProps,
-  HELP_FORUM_LINK_TEXT,
+  CONTACT_US_LINK_TEXT,
   LOG_IN_LINK_TEXT,
   NOT_FOUND_MESSAGE,
   NOT_FOUND_TITLE,
@@ -69,8 +69,8 @@ describe('ErrorPage: basic functionality', () => {
     await screen.findByText(new RegExp(MOCK_DOI.creators[0].creatorName))
     await screen.findByText(new RegExp(MOCK_DOI.titles[0].title))
 
-    const helpForumLink = screen.getByText(HELP_FORUM_LINK_TEXT)
-    await user.click(helpForumLink)
+    const contactUsLink = screen.getByText(CONTACT_US_LINK_TEXT)
+    await user.click(contactUsLink)
     await waitFor(() =>
       expect(mockGotoPlace).toHaveBeenLastCalledWith('/SynapseForum:default'),
     )
