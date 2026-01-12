@@ -32,7 +32,7 @@ export const SYNAPSE_DOWN_TITLE = 'Synapse is down for maintenance.'
 export const ACCESS_DENIED_TITLE = 'You don’t have permission to view this.'
 export const NOT_FOUND_TITLE = 'This page isn’t available.'
 export const LOG_IN_LINK_TEXT = 'Log in to Synapse'
-export const HELP_FORUM_LINK_TEXT = 'Leave a message in the Help Forum'
+export const CONTACT_US_LINK_TEXT = 'Contact us for more information'
 export const CONTACT_ADMIN_LINK_TEXT = 'Contact the Administrator'
 export const ACCESS_DENIED_ANONYMOUS_MESSAGE =
   'Try logging in. If you still see this message after logging in, you have not been granted access to view this resource.'
@@ -151,8 +151,12 @@ function ErrorPage(props: ErrorPageProps) {
         })
       } else if (entityId) {
         acts.push({
-          linkText: HELP_FORUM_LINK_TEXT,
-          onClick: () => gotoPlace('/SynapseForum:default'),
+          linkText: CONTACT_US_LINK_TEXT,
+          onClick: () =>
+            window.open(
+              'https://sagebionetworks.jira.com/servicedesk/customer/portals',
+              '_blank',
+            ),
           description: ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION,
         })
         // SWC-7073: Remove ability to send a message to the admins until we have a better option for the majority of the cases (service desk, contact emails, ...)
