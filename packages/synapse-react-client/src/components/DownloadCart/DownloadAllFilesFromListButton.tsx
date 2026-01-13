@@ -397,11 +397,9 @@ export function DownloadAllFilesFromListButton(
             )
 
             // Create file handle in selected directory
-            const fileHandle = await directoryHandle.getFileHandle(
-              fileResult.fileHandle?.fileName ||
-                `file-${fileResult.fileHandleId}`,
-              { create: true },
-            )
+            const fileHandle = await directoryHandle.getFileHandle(fileName, {
+              create: true,
+            })
             const writableStream = await fileHandle.createWritable()
 
             // Stream the response body to the file with progress tracking
@@ -678,6 +676,9 @@ export function DownloadAllFilesFromListButton(
 
   const handleCancel = useCallback(() => {
     isCancelledRef.current = true
+    setDownloadProgress(null)
+    setIsDownloading(false)
+    isDownloadingRef.current = false
   }, [])
 
   if (error) {
