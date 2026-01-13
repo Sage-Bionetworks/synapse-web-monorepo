@@ -623,6 +623,8 @@ export function DownloadAllFilesFromListButton(
         })
         // Refetch statistics after removing files
         await refetchDownloadListStatistics()
+        // Scroll to top of page to show updated statistics
+        window.scrollTo({ top: 0, behavior: 'smooth' })
       }
 
       // Show completion message
