@@ -21,4 +21,7 @@ export enum FeatureFlagEnum {
 
   // If enabled, load the Crisp chat widget
   CRISP_CHAT = 'CRISP_CHAT',
+
+  // If enabled, show the Download All Files button on the download cart page
+  DOWNLOAD_CART_INDIVIDUAL_FILE_DOWNLOADS = 'DOWNLOAD_CART_INDIVIDUAL_FILE_DOWNLOADS',
 }

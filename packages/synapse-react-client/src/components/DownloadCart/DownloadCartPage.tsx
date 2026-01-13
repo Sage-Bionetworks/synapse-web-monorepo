@@ -1,8 +1,10 @@
 import SynapseClient from '@/synapse-client'
 import { useGetDownloadListStatistics } from '@/synapse-queries/download/useDownloadList'
+import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { DeleteTwoTone } from '@mui/icons-material'
 import { Button, Tooltip, Typography } from '@mui/material'
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'
 import { ErrorBanner } from '../error/ErrorBanner'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
@@ -12,6 +14,7 @@ import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/
 import AvailableForDownloadTable from './AvailableForDownloadTable'
 import { CreatePackageV2 } from './CreatePackageV2'
 import { PYTHON_CLIENT_IMPORT_AND_LOGIN } from './DirectProgrammaticDownload'
+import { DownloadAllFilesFromListButton } from './DownloadAllFilesFromListButton'
 import {
   DownloadListActionsRequired,
   DownloadListActionsRequiredProps,
@@ -34,6 +37,9 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
   const [isShowingDownloadSuccessAlert, setIsShowingDownloadSuccessAlert] =
     useState(false)
   const [error, setError] = useState<Error>()
+  const isDownloadAllEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.DOWNLOAD_CART_INDIVIDUAL_FILE_DOWNLOADS,
+  )
   const {
     data,
     isLoading,
@@ -239,6 +245,43 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                       </Tooltip>
                     )}
                   </div>
+                  {isDownloadAllEnabled && (
+                    <div>
+                      <div className="headlineWithHelp">
+                        <Typography variant={'headline3'} sx={{ mb: 2 }}>
+                          <IconSvg icon="download" /> Download All Files
+                          Individually
+                        </Typography>
+                        <HelpPopover
+                          markdownText="This will trigger individual downloads for all files in your download list. The files will be removed from your list as they are downloaded."
+                          helpUrl="https://help.synapse.org/docs/Downloading-Data-From-the-Synapse-UI.2004254837.html"
+                        />
+                      </div>
+                      <Typography
+                        variant={'body1'}
+                        component={'div'}
+                        sx={{
+                          mb: 2,
+                          display: { xs: 'none', md: 'block' },
+                        }}
+                      >
+                        <ul>
+                          <li>
+                            Downloads all files individually through your
+                            browser
+                          </li>
+                          <li>
+                            Files are automatically removed from your download
+                            list as they are downloaded
+                          </li>
+                          <li>
+                            Works with all file types including external links
+                          </li>
+                        </ul>
+                      </Typography>
+                      <DownloadAllFilesFromListButton />
+                    </div>
+                  )}
                   <div>
                     <div className="headlineWithHelp">
                       <Typography variant={'headline3'} sx={{ mb: 2 }}>
