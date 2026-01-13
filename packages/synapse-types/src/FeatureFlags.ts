@@ -21,4 +21,7 @@ export enum FeatureFlagEnum {
 
   // If enabled, load the Crisp chat widget
   CRISP_CHAT = 'CRISP_CHAT',
+
+  // If enabled, use react based search
+  SEARCHV2_ENABLED = 'SEARCHV2_ENABLED',
 }

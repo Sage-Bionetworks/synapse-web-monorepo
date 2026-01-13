@@ -1,6 +1,7 @@
 import React from 'react'
 import { Search } from '@/assets/themed_icons'
 import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
+import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
 import { SynapseConstants } from '@/utils'
 import {
   Autocomplete,
@@ -14,7 +15,10 @@ import {
   TextField,
   useTheme,
 } from '@mui/material'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import {
+  QueryBundleRequest,
+  FeatureFlagEnum,
+} from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 
 export type SynapseHomepageSearchProps = {
@@ -54,6 +58,7 @@ export function SynapseHomepageSearch({
 }: SynapseHomepageSearchProps) {
   const [isPopperOpen, setIsPopperOpen] = useState(false)
   const theme = useTheme()
+  const searchV2Enabled = useGetFeatureFlag(FeatureFlagEnum.SEARCHV2_ENABLED)
   const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
   const request: QueryBundleRequest = {
     partMask,
@@ -86,7 +91,13 @@ export function SynapseHomepageSearch({
         }
         onChange={(_event, newValue: string | null) => {
           if (newValue) {
-            gotoPlace(`/Search:${encodeURIComponent(newValue)}`)
+            if (searchV2Enabled) {
+              gotoPlace(
+                `/SearchV2:default?query=${encodeURIComponent(newValue)}`,
+              )
+            } else {
+              gotoPlace(`/Search:${encodeURIComponent(newValue)}`)
+            }
           }
         }}
         slots={{
