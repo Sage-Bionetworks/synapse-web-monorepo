@@ -110,13 +110,9 @@
         padding: 0px 50px;
       }
 
-      > * {
+      > *:not(:last-child) {
         border-right: 1px solid #d0d4d9;
       }
-      > *:last-child {
-        border-right: none;
-      }
-
       .headlineWithHelp {
         display: flex;
         column-gap: 10px;
