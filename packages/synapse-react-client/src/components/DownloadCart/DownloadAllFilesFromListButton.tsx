@@ -278,8 +278,8 @@ export function DownloadAllFilesFromListButton(
           anchor.click()
           document.body.removeChild(anchor)
 
-          // Clean up blob URL after a delay
-          setTimeout(() => URL.revokeObjectURL(blobUrl), 100)
+          // Clean up blob URL after a delay to ensure download initiation
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 1000)
 
           return true
         } catch (error) {
@@ -345,12 +345,13 @@ export function DownloadAllFilesFromListButton(
           }
 
           // Update progress with current file info
+          const currentFileIndex = downloadedCount + 1
           setDownloadProgress(prev =>
             prev
               ? {
                   ...prev,
                   currentFile: fileName,
-                  fileIndex: downloadedCount + 1,
+                  fileIndex: currentFileIndex,
                   bytesDownloaded: 0,
                   totalBytes: 0,
                 }
@@ -361,7 +362,7 @@ export function DownloadAllFilesFromListButton(
           if (!useFileSystemAccess) {
             const success = await downloadFileTraditional(downloadUrl, fileName)
             if (success) {
-              downloadedCount++
+              downloadedCount = currentFileIndex
               if (originalItem) {
                 successfullyDownloadedItems.push(originalItem)
               }
@@ -437,7 +438,7 @@ export function DownloadAllFilesFromListButton(
               await writableStream.close()
             }
 
-            downloadedCount++
+            downloadedCount = currentFileIndex
 
             // Track successfully downloaded item for batch removal
             if (originalItem) {
@@ -452,7 +453,7 @@ export function DownloadAllFilesFromListButton(
             // Fallback to window.open if File System Access API fails
             try {
               window.open(downloadUrl, '_blank', 'noopener,noreferrer')
-              downloadedCount++
+              downloadedCount = currentFileIndex
               if (originalItem) {
                 successfullyDownloadedItems.push(originalItem)
               }
