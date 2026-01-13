@@ -284,9 +284,9 @@ export function DownloadAllFilesFromListButton(
           return true
         } catch (error) {
           console.error(`Failed to download file ${fileName}:`, error)
-          // Fallback to window.open
+          // Fallback to downloadFileTraditional method
           try {
-            window.open(downloadUrl, '_blank', 'noopener,noreferrer')
+            downloadFileTraditional(downloadUrl, fileName)
             return true
           } catch (fallbackError) {
             console.error(`Fallback window.open also failed:`, fallbackError)

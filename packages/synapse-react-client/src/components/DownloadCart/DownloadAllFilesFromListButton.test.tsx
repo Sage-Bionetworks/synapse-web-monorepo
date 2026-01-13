@@ -187,7 +187,7 @@ describe('DownloadAllFilesFromListButton', () => {
   // - Streams file downloads using fetch() and ReadableStream
   // - Shows progress UI with file name, count, and bytes downloaded
   // - Uses calculateFriendlyFileSize() for formatting byte sizes
-  // - Falls back to window.open() if streaming fails
+  // - Falls back to traditional download method if streaming fails
   // - Handles filename collisions by adding a counter suffix (e.g., "data.csv", "data (1).csv", "data (2).csv")
   //   to prevent files from different projects/locations from overwriting each other
   // - Implements retry logic for failed batch requests
