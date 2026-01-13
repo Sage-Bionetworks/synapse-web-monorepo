@@ -1,8 +1,6 @@
 import React from 'react'
 import { Box, Typography, Button } from '@mui/material'
 import HeaderSearchBox from '@sage-bionetworks/synapse-portal-framework/components/HeaderSearchBox'
-import { Query } from '@sage-bionetworks/synapse-types'
-import { getTextMatchesQueryFilter } from 'synapse-react-client/components/FullTextSearch/FullTextSearchUtils'
 import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2'
 
 export type StandardsHeaderProps = {
