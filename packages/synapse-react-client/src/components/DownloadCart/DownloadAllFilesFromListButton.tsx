@@ -284,9 +284,9 @@ export function DownloadAllFilesFromListButton(
           return true
         } catch (error) {
           console.error(`Failed to download file ${fileName}:`, error)
-          // Fallback to downloadFileTraditional method
+          // Fallback to window.open method
           try {
-            downloadFileTraditional(downloadUrl, fileName)
+            window.open(downloadUrl, '_blank', 'noopener,noreferrer')
             return true
           } catch (fallbackError) {
             console.error(`Fallback window.open also failed:`, fallbackError)
@@ -456,7 +456,7 @@ export function DownloadAllFilesFromListButton(
             )
             // Fallback to window.open if File System Access API fails
             try {
-              window.open(downloadUrl, '_blank', 'noopener,noreferrer')
+              downloadFileTraditional(downloadUrl, fileName)
               downloadedCount = currentFileIndex
               if (originalItem) {
                 successfullyDownloadedItems.push(originalItem)
@@ -464,7 +464,7 @@ export function DownloadAllFilesFromListButton(
               return true
             } catch (fallbackError) {
               console.error(
-                `Fallback window.open also failed for ${fileResult.fileHandleId}:`,
+                `Fallback downloadFileTraditional also failed for ${fileResult.fileHandleId}:`,
                 fallbackError,
               )
               return false
@@ -632,7 +632,7 @@ export function DownloadAllFilesFromListButton(
         )
       } else if (downloadedCount > 0) {
         displayToast(
-          `Started download for ${downloadedCount} file${
+          `Download started for ${downloadedCount} file${
             downloadedCount !== 1 ? 's' : ''
           }${
             failedCount > 0
