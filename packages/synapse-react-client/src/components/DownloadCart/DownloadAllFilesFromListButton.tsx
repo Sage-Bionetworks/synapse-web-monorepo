@@ -426,16 +426,20 @@ export function DownloadAllFilesFromListButton(
                       : null,
                   )
                 }
-                await writableStream.close()
               } catch (streamError) {
                 await writableStream.abort()
                 throw streamError
+              } finally {
+                await writableStream.close()
               }
             } else {
               // Fallback if streaming not supported
-              const blob = await response.blob()
-              await writableStream.write(blob)
-              await writableStream.close()
+              try {
+                const blob = await response.blob()
+                await writableStream.write(blob)
+              } finally {
+                await writableStream.close()
+              }
             }
 
             downloadedCount = currentFileIndex
