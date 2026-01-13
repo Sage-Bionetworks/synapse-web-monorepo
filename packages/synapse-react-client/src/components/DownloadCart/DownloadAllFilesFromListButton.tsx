@@ -1,7 +1,7 @@
 import { useSynapseContext } from '@/utils'
 import { implementsExternalFileHandleInterface } from '@/utils/types/IsType'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
-import { Button, LinearProgress, Typography, Box } from '@mui/material'
+import { Button, LinearProgress, Typography } from '@mui/material'
 import { Download } from '@mui/icons-material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
@@ -21,8 +21,62 @@ import {
 } from '@/synapse-queries/download/useDownloadList'
 import { getFiles } from '@/synapse-client/SynapseClient'
 import { useGetEntities } from '@/synapse-queries/entity/useEntity'
+import { DialogBase } from '../DialogBase'
+
+// Type declarations for File System Access API
+// https://developer.mozilla.org/en-US/docs/Web/API/File_System_Access_API
+interface FileSystemWritableFileStream extends WritableStream {
+  write(data: BufferSource | Blob | string): Promise<void>
+  seek(position: number): Promise<void>
+  truncate(size: number): Promise<void>
+}
+
+interface FileSystemFileHandle {
+  readonly kind: 'file'
+  readonly name: string
+  getFile(): Promise<File>
+  createWritable(options?: {
+    keepExistingData?: boolean
+  }): Promise<FileSystemWritableFileStream>
+}
+
+interface FileSystemDirectoryHandle {
+  readonly kind: 'directory'
+  readonly name: string
+  getFileHandle(
+    name: string,
+    options?: { create?: boolean },
+  ): Promise<FileSystemFileHandle>
+  getDirectoryHandle(
+    name: string,
+    options?: { create?: boolean },
+  ): Promise<FileSystemDirectoryHandle>
+}
+
+interface FileSystemAccessWindow extends Window {
+  showDirectoryPicker(options?: {
+    mode?: 'read' | 'readwrite'
+    startIn?:
+      | 'desktop'
+      | 'documents'
+      | 'downloads'
+      | 'music'
+      | 'pictures'
+      | 'videos'
+  }): Promise<FileSystemDirectoryHandle>
+}
+
+/**
+ * Type guard to check if File System Access API is available
+ */
+function supportsFileSystemAccess(
+  window: Window,
+): window is FileSystemAccessWindow {
+  return 'showDirectoryPicker' in window
+}
 
 const BATCH_SIZE = 50 // Maximum batch size for fetching presigned URLs
+const MAX_BATCH_RETRIES = 2 // Number of times to retry a failed batch
 
 export type DownloadAllFilesFromListButtonProps = {
   buttonText?: string
@@ -44,6 +98,7 @@ export function DownloadAllFilesFromListButton(
   const { accessToken, isAuthenticated } = useSynapseContext()
   const [isDownloading, setIsDownloading] = useState(false)
   const isDownloadingRef = useRef(false)
+  const isCancelledRef = useRef(false)
   const [downloadProgress, setDownloadProgress] = useState<{
     currentFile: string
     fileIndex: number
@@ -114,6 +169,7 @@ export function DownloadAllFilesFromListButton(
 
     try {
       isDownloadingRef.current = true
+      isCancelledRef.current = false
       const allItems = data.pages.flatMap(page => page.page)
 
       if (allItems.length === 0) {
@@ -162,8 +218,15 @@ export function DownloadAllFilesFromListButton(
       let failedCount = 0
       const successfullyDownloadedItems: typeof allItems = []
 
-      // Prompt user to select a directory for downloads
-      let directoryHandle: FileSystemDirectoryHandle
+      // Track used filenames to prevent collisions
+      const usedFilenames = new Map<string, number>()
+
+      // Determine if File System Access API is available
+      const useFileSystemAccess = supportsFileSystemAccess(window)
+
+      // Prompt user to select a directory for downloads (only for File System Access API)
+      let directoryHandle: FileSystemDirectoryHandle | undefined
+
       // Initialize progress tracking
       setDownloadProgress({
         currentFile: '',
@@ -173,25 +236,261 @@ export function DownloadAllFilesFromListButton(
         totalBytes: 0,
       })
 
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        directoryHandle = await (window as any).showDirectoryPicker({
-          mode: 'readwrite',
-        })
-      } catch (error) {
-        // User cancelled directory picker or browser doesn't support it
-        console.error('Failed to select directory:', error)
+      if (useFileSystemAccess) {
+        // TypeScript narrowing: we know window has showDirectoryPicker at this point
+        const fileSystemWindow = window as unknown as FileSystemAccessWindow
+
+        try {
+          directoryHandle = await fileSystemWindow.showDirectoryPicker({
+            mode: 'readwrite',
+          })
+        } catch (error) {
+          // User cancelled directory picker
+          console.error('Failed to select directory:', error)
+          displayToast(
+            'Directory selection is required to directly download files from the website.',
+            'warning',
+          )
+          setIsDownloading(false)
+          isDownloadingRef.current = false
+          return
+        }
+      } else {
+        // Show info message for browsers without File System Access API
         displayToast(
-          'Directory selection is required to download files',
-          'warning',
+          'Your browser will download files individually to your default downloads folder. Each file may trigger a separate download prompt.',
+          'info',
         )
-        setIsDownloading(false)
-        isDownloadingRef.current = false
-        return
       }
 
-      // Process each batch
-      for (const batch of batches) {
+      /**
+       * Helper function to download file using traditional anchor tag method
+       */
+      const downloadFileTraditional = async (
+        downloadUrl: string,
+        fileName: string,
+      ): Promise<boolean> => {
+        try {
+          const response = await fetch(downloadUrl)
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+
+          const blob = await response.blob()
+          const blobUrl = URL.createObjectURL(blob)
+          const anchor = document.createElement('a')
+          anchor.href = blobUrl
+          anchor.download = fileName
+          anchor.style.display = 'none'
+          document.body.appendChild(anchor)
+          anchor.click()
+          document.body.removeChild(anchor)
+
+          // Clean up blob URL after a delay
+          setTimeout(() => URL.revokeObjectURL(blobUrl), 100)
+
+          return true
+        } catch (error) {
+          console.error(`Failed to download file ${fileName}:`, error)
+          // Fallback to window.open
+          try {
+            window.open(downloadUrl, '_blank', 'noopener,noreferrer')
+            return true
+          } catch (fallbackError) {
+            console.error(`Fallback window.open also failed:`, fallbackError)
+            return false
+          }
+        }
+      }
+
+      /**
+       * Helper function to process a single file download
+       */
+      const processFileDownload = async (
+        fileResult: BatchFileResult['requestedFiles'][0],
+        originalItem: (typeof allItems)[0] | undefined,
+      ): Promise<boolean> => {
+        try {
+          let downloadUrl: string | undefined
+
+          // Check if this is an external file handle
+          if (
+            fileResult.fileHandle &&
+            implementsExternalFileHandleInterface(fileResult.fileHandle)
+          ) {
+            // For external file handles, use the externalURL
+            downloadUrl = (fileResult.fileHandle as ExternalFileHandle)
+              .externalURL
+          } else if (fileResult.preSignedURL) {
+            // For other file types, use the presigned URL
+            downloadUrl = fileResult.preSignedURL
+          }
+
+          if (!downloadUrl) {
+            return false
+          }
+
+          // Get filename from file result or create a default name
+          let fileName: string =
+            fileResult.fileHandle?.fileName || `file-${fileResult.fileHandleId}`
+
+          // Handle filename collisions by adding a counter suffix
+          if (usedFilenames.has(fileName)) {
+            const count = usedFilenames.get(fileName)! + 1
+            usedFilenames.set(fileName, count)
+
+            // Split filename into base and extension
+            const lastDotIndex = fileName.lastIndexOf('.')
+            if (lastDotIndex > 0) {
+              const baseName = fileName.substring(0, lastDotIndex)
+              const extension = fileName.substring(lastDotIndex)
+              fileName = `${baseName} (${count})${extension}`
+            } else {
+              fileName = `${fileName} (${count})`
+            }
+          } else {
+            usedFilenames.set(fileName, 0)
+          }
+
+          // Update progress with current file info
+          setDownloadProgress(prev =>
+            prev
+              ? {
+                  ...prev,
+                  currentFile: fileName,
+                  fileIndex: downloadedCount + 1,
+                  bytesDownloaded: 0,
+                  totalBytes: 0,
+                }
+              : null,
+          )
+
+          // Use traditional download method for unsupported browsers
+          if (!useFileSystemAccess) {
+            const success = await downloadFileTraditional(downloadUrl, fileName)
+            if (success) {
+              downloadedCount++
+              if (originalItem) {
+                successfullyDownloadedItems.push(originalItem)
+              }
+            }
+            return success
+          }
+
+          // Use File System Access API for supported browsers
+          if (!directoryHandle) {
+            return false
+          }
+
+          try {
+            // Fetch the file
+            const response = await fetch(downloadUrl)
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`)
+            }
+
+            // Get total file size from headers
+            const contentLength = response.headers.get('content-length')
+            const totalBytes = contentLength ? parseInt(contentLength, 10) : 0
+
+            // Update progress with file size
+            setDownloadProgress(prev =>
+              prev
+                ? {
+                    ...prev,
+                    bytesDownloaded: 0,
+                    totalBytes,
+                  }
+                : null,
+            )
+
+            // Create file handle in selected directory
+            const fileHandle = await directoryHandle.getFileHandle(
+              fileResult.fileHandle?.fileName ||
+                `file-${fileResult.fileHandleId}`,
+              { create: true },
+            )
+            const writableStream = await fileHandle.createWritable()
+
+            // Stream the response body to the file with progress tracking
+            if (response.body) {
+              const reader = response.body.getReader()
+              let bytesReceived = 0
+
+              try {
+                while (true) {
+                  const { done, value } = await reader.read()
+                  if (done) break
+
+                  bytesReceived += value.length
+                  await writableStream.write(value)
+
+                  // Update progress
+                  setDownloadProgress(prev =>
+                    prev
+                      ? {
+                          ...prev,
+                          bytesDownloaded: bytesReceived,
+                        }
+                      : null,
+                  )
+                }
+                await writableStream.close()
+              } catch (streamError) {
+                await writableStream.abort()
+                throw streamError
+              }
+            } else {
+              // Fallback if streaming not supported
+              const blob = await response.blob()
+              await writableStream.write(blob)
+              await writableStream.close()
+            }
+
+            downloadedCount++
+
+            // Track successfully downloaded item for batch removal
+            if (originalItem) {
+              successfullyDownloadedItems.push(originalItem)
+            }
+            return true
+          } catch (fetchError) {
+            console.error(
+              `Failed to fetch/write file ${fileResult.fileHandleId}:`,
+              fetchError,
+            )
+            // Fallback to window.open if File System Access API fails
+            try {
+              window.open(downloadUrl, '_blank', 'noopener,noreferrer')
+              downloadedCount++
+              if (originalItem) {
+                successfullyDownloadedItems.push(originalItem)
+              }
+              return true
+            } catch (fallbackError) {
+              console.error(
+                `Fallback window.open also failed for ${fileResult.fileHandleId}:`,
+                fallbackError,
+              )
+              return false
+            }
+          }
+        } catch (error) {
+          console.error(
+            `Failed to download file ${fileResult.fileHandleId}:`,
+            error,
+          )
+          return false
+        }
+      }
+
+      /**
+       * Helper function to fetch presigned URLs for a batch with retry logic
+       */
+      const fetchBatchWithRetry = async (
+        batch: FileHandleAssociation[],
+        retryCount = 0,
+      ): Promise<BatchFileResult | null> => {
         try {
           const batchRequest: BatchFileRequest = {
             requestedFiles: batch,
@@ -200,148 +499,117 @@ export function DownloadAllFilesFromListButton(
             includePreviewPreSignedURLs: false,
           }
 
-          const batchResult: BatchFileResult = await getFiles(
-            batchRequest,
-            accessToken,
+          return await getFiles(batchRequest, accessToken)
+        } catch (error) {
+          if (retryCount < MAX_BATCH_RETRIES) {
+            console.warn(
+              `Batch fetch failed (attempt ${retryCount + 1}/${
+                MAX_BATCH_RETRIES + 1
+              }), retrying...`,
+              error,
+            )
+            // Wait briefly before retrying (exponential backoff)
+            await new Promise(resolve =>
+              setTimeout(resolve, 1000 * Math.pow(2, retryCount)),
+            )
+            return fetchBatchWithRetry(batch, retryCount + 1)
+          }
+          console.error(
+            `Failed to fetch batch after ${MAX_BATCH_RETRIES + 1} attempts:`,
+            error,
           )
+          return null
+        }
+      }
 
-          // Trigger download for each file in the batch
+      /**
+       * Fallback function to fetch files individually when batch fails
+       */
+      const fetchIndividually = async (
+        batch: FileHandleAssociation[],
+      ): Promise<void> => {
+        console.info(
+          `Attempting to fetch ${batch.length} files individually after batch failure`,
+        )
+
+        for (const fileHandleAssociation of batch) {
+          // Check if user cancelled the operation
+          if (isCancelledRef.current) {
+            console.info('Individual file fetch cancelled by user')
+            break
+          }
+
+          const singleBatch = [fileHandleAssociation]
+          try {
+            const batchRequest: BatchFileRequest = {
+              requestedFiles: singleBatch,
+              includeFileHandles: true,
+              includePreSignedURLs: true,
+              includePreviewPreSignedURLs: false,
+            }
+
+            const batchResult = await getFiles(batchRequest, accessToken)
+
+            if (batchResult.requestedFiles.length > 0) {
+              const fileResult = batchResult.requestedFiles[0]
+              const originalItem = allItems.find(
+                item =>
+                  item.fileEntityId === fileHandleAssociation.associateObjectId,
+              )
+
+              const success = await processFileDownload(
+                fileResult,
+                originalItem,
+              )
+              if (!success) {
+                failedCount++
+              }
+            } else {
+              failedCount++
+            }
+          } catch (error) {
+            console.error(
+              `Failed to fetch individual file ${fileHandleAssociation.fileHandleId}:`,
+              error,
+            )
+            failedCount++
+          }
+        }
+      }
+
+      // Process each batch
+      for (const batch of batches) {
+        // Check if user cancelled the operation
+        if (isCancelledRef.current) {
+          console.info('Download cancelled by user')
+          break
+        }
+
+        // Try to fetch the entire batch with retry logic
+        const batchResult = await fetchBatchWithRetry(batch)
+
+        if (batchResult) {
+          // Batch fetch succeeded, process all files
           for (let i = 0; i < batchResult.requestedFiles.length; i++) {
+            // Check if user cancelled the operation
+            if (isCancelledRef.current) {
+              console.info('Download cancelled by user during batch processing')
+              break
+            }
+
             const fileResult = batchResult.requestedFiles[i]
             const originalItem = allItems.find(
               item => item.fileEntityId === batch[i].associateObjectId,
             )
 
-            try {
-              let downloadUrl: string | undefined
-
-              // Check if this is an external file handle
-              if (
-                fileResult.fileHandle &&
-                implementsExternalFileHandleInterface(fileResult.fileHandle)
-              ) {
-                // For external file handles, use the externalURL
-                downloadUrl = (fileResult.fileHandle as ExternalFileHandle)
-                  .externalURL
-              } else if (fileResult.preSignedURL) {
-                // For other file types, use the presigned URL
-                downloadUrl = fileResult.preSignedURL
-              }
-
-              if (downloadUrl) {
-                try {
-                  // Fetch the file
-                  const response = await fetch(downloadUrl)
-                  if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`)
-                  }
-
-                  // Get filename from file result or create a default name
-                  const fileName: string =
-                    fileResult.fileHandle?.fileName ||
-                    `file-${fileResult.fileHandleId}`
-
-                  // Get total file size from headers
-                  const contentLength = response.headers.get('content-length')
-                  const totalBytes = contentLength
-                    ? parseInt(contentLength, 10)
-                    : 0
-
-                  // Update progress with current file info
-                  setDownloadProgress(prev =>
-                    prev
-                      ? {
-                          ...prev,
-                          currentFile: fileName,
-                          fileIndex: downloadedCount + 1,
-                          bytesDownloaded: 0,
-                          totalBytes,
-                        }
-                      : null,
-                  )
-
-                  // Create file handle in selected directory
-                  const fileHandle = await directoryHandle.getFileHandle(
-                    fileName,
-                    { create: true },
-                  )
-                  const writableStream = await fileHandle.createWritable()
-
-                  // Stream the response body to the file with progress tracking
-                  if (response.body) {
-                    const reader = response.body.getReader()
-                    let bytesReceived = 0
-
-                    try {
-                      while (true) {
-                        const { done, value } = await reader.read()
-                        if (done) break
-
-                        bytesReceived += value.length
-                        await writableStream.write(value)
-
-                        // Update progress
-                        setDownloadProgress(prev =>
-                          prev
-                            ? {
-                                ...prev,
-                                bytesDownloaded: bytesReceived,
-                              }
-                            : null,
-                        )
-                      }
-                      await writableStream.close()
-                    } catch (streamError) {
-                      await writableStream.abort()
-                      throw streamError
-                    }
-                  } else {
-                    // Fallback if streaming not supported
-                    const blob = await response.blob()
-                    await writableStream.write(blob)
-                    await writableStream.close()
-                  }
-
-                  downloadedCount++
-
-                  // Track successfully downloaded item for batch removal
-                  if (originalItem) {
-                    successfullyDownloadedItems.push(originalItem)
-                  }
-                } catch (fetchError) {
-                  console.error(
-                    `Failed to fetch/write file ${fileResult.fileHandleId}:`,
-                    fetchError,
-                  )
-                  // Fallback to window.open if File System Access API fails
-                  try {
-                    window.open(downloadUrl, '_blank', 'noopener,noreferrer')
-                    downloadedCount++
-                    if (originalItem) {
-                      successfullyDownloadedItems.push(originalItem)
-                    }
-                  } catch (fallbackError) {
-                    console.error(
-                      `Fallback window.open also failed for ${fileResult.fileHandleId}:`,
-                      fallbackError,
-                    )
-                    failedCount++
-                  }
-                }
-              } else {
-                failedCount++
-              }
-            } catch (error) {
-              console.error(
-                `Failed to download file ${fileResult.fileHandleId}:`,
-                error,
-              )
+            const success = await processFileDownload(fileResult, originalItem)
+            if (!success) {
               failedCount++
             }
           }
-        } catch (error) {
-          console.error('Failed to process batch:', error)
-          failedCount += batch.length
+        } else {
+          // Batch fetch failed after retries, try fetching files individually
+          await fetchIndividually(batch)
         }
       }
 
@@ -358,7 +626,14 @@ export function DownloadAllFilesFromListButton(
       }
 
       // Show completion message
-      if (downloadedCount > 0) {
+      if (isCancelledRef.current) {
+        displayToast(
+          `Download cancelled. ${downloadedCount} file${
+            downloadedCount !== 1 ? 's were' : ' was'
+          } downloaded before cancellation.`,
+          'info',
+        )
+      } else if (downloadedCount > 0) {
         displayToast(
           `Started download for ${downloadedCount} file${
             downloadedCount !== 1 ? 's' : ''
@@ -374,11 +649,11 @@ export function DownloadAllFilesFromListButton(
       }
     } catch (error) {
       console.error('Error downloading files:', error)
-      displayToast(
-        (error as SynapseClientError).reason ??
-          'An error occurred while downloading files',
-        'danger',
-      )
+      const message =
+        (error as SynapseClientError | undefined)?.reason ??
+        (error instanceof Error ? error.message : undefined) ??
+        'An error occurred while downloading files'
+      displayToast(message, 'danger')
     } finally {
       setDownloadProgress(null)
       setIsDownloading(false)
@@ -406,71 +681,78 @@ export function DownloadAllFilesFromListButton(
     setIsDownloading(true)
   }, [isDownloading])
 
+  const handleCancel = useCallback(() => {
+    isCancelledRef.current = true
+  }, [])
+
   if (error) {
     return null
   }
 
   return (
     <>
-      {downloadProgress && (
-        <Box
-          sx={{
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 2,
-            minWidth: 400,
-            zIndex: 1300,
-          }}
-        >
-          <Typography variant="h6" gutterBottom>
-            Downloading Files
-          </Typography>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
-            File {downloadProgress.fileIndex} of {downloadProgress.totalFiles}
-          </Typography>
-          <Typography variant="body2" noWrap gutterBottom>
-            {downloadProgress.currentFile}
-          </Typography>
-          {downloadProgress.totalBytes > 0 && (
+      <DialogBase
+        open={!!downloadProgress}
+        title="Downloading Files"
+        hasCloseButton={false}
+        onCancel={handleCancel}
+        maxWidth="sm"
+        content={
+          downloadProgress ? (
             <>
-              <LinearProgress
-                variant="determinate"
-                value={
-                  (downloadProgress.bytesDownloaded /
-                    downloadProgress.totalBytes) *
-                  100
-                }
-                sx={{ my: 2 }}
-              />
-              <Typography variant="body2" color="text.secondary">
-                {calculateFriendlyFileSize(downloadProgress.bytesDownloaded)} of{' '}
-                {calculateFriendlyFileSize(downloadProgress.totalBytes)}
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                gutterBottom
+                id="download-progress-description"
+              >
+                File {downloadProgress.fileIndex} of{' '}
+                {downloadProgress.totalFiles}
               </Typography>
+              <Typography variant="body2" noWrap gutterBottom>
+                {downloadProgress.currentFile}
+              </Typography>
+              {downloadProgress.totalBytes > 0 && (
+                <>
+                  <LinearProgress
+                    variant="determinate"
+                    value={
+                      (downloadProgress.bytesDownloaded /
+                        downloadProgress.totalBytes) *
+                      100
+                    }
+                    sx={{ my: 2 }}
+                    aria-label="Download progress"
+                  />
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    aria-live="polite"
+                    aria-atomic="true"
+                  >
+                    {calculateFriendlyFileSize(
+                      downloadProgress.bytesDownloaded,
+                    )}{' '}
+                    of {calculateFriendlyFileSize(downloadProgress.totalBytes)}
+                  </Typography>
+                </>
+              )}
+              {downloadProgress.totalBytes === 0 && (
+                <LinearProgress sx={{ my: 2 }} aria-label="Download progress" />
+              )}
             </>
-          )}
-          {downloadProgress.totalBytes === 0 && (
-            <LinearProgress sx={{ my: 2 }} />
-          )}
-        </Box>
-      )}
-      {downloadProgress && (
-        <Box
-          sx={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            bgcolor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 1299,
-          }}
-        />
-      )}
+          ) : null
+        }
+        actions={
+          <Button variant="outlined" color="error" onClick={handleCancel}>
+            Cancel
+          </Button>
+        }
+        DialogProps={{
+          'aria-describedby': 'download-progress-description',
+          disableEscapeKeyDown: false,
+        }}
+      />
       <Button
         variant={variant}
         onClick={handleClick}

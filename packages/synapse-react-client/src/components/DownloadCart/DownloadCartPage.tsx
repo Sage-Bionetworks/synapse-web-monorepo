@@ -272,7 +272,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                           </li>
                           <li>
                             Files are automatically removed from your download
-                            list as they are downloaded
+                            list when their download is initiated
                           </li>
                           <li>
                             Works with all file types including external links
