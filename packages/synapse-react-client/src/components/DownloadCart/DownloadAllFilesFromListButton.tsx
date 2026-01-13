@@ -135,14 +135,6 @@ export function DownloadAllFilesFromListButton(
   // Fetch all FileEntity objects to get dataFileHandleId
   const entityQueries = useGetEntities(entityHeaders)
 
-  // Keep a ref to the latest entityQueries to avoid stale closures
-  const entityQueriesRef = useRef(entityQueries)
-
-  // Keep ref updated
-  useEffect(() => {
-    entityQueriesRef.current = entityQueries
-  }, [entityQueries])
-
   // When downloading, fetch all pages first
   useEffect(() => {
     if (
@@ -180,7 +172,7 @@ export function DownloadAllFilesFromListButton(
       }
 
       // Check if all entities have been loaded
-      const allEntitiesLoaded = entityQueriesRef.current.every(
+      const allEntitiesLoaded = entityQueries.every(
         query => query.status === 'success',
       )
       if (!allEntitiesLoaded) {
@@ -193,7 +185,7 @@ export function DownloadAllFilesFromListButton(
       // Convert download list items to file handle associations using dataFileHandleId from FileEntity
       const fileHandleAssociations: FileHandleAssociation[] = allItems
         .map((item, index) => {
-          const entityQuery = entityQueriesRef.current[index]
+          const entityQuery = entityQueries[index]
           if (!entityQuery.data) return null
 
           const fileEntity = entityQuery.data as FileEntity
@@ -665,6 +657,7 @@ export function DownloadAllFilesFromListButton(
     data,
     accessToken,
     isAuthenticated,
+    entityQueries,
     removeFilesFromDownloadList,
     refetchDownloadListStatistics,
   ])
