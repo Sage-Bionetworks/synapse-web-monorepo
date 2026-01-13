@@ -25,12 +25,14 @@ import {
   Direction,
   SubmissionSortField,
   SubmissionState,
+  FeatureFlagEnum,
 } from '@sage-bionetworks/synapse-types'
 import { KeyboardEvent, ReactNode, useState } from 'react'
 import { CreateProjectModal } from '../CreateProjectModal/CreateProjectModal'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
 import UserCard from '../UserCard/UserCard'
+import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
@@ -217,6 +219,8 @@ export function SynapseNavDrawer({
 
   const numberOfFilesInDownloadList = downloadListStatistics?.totalNumberOfFiles
 
+  const searchV2Enabled = useGetFeatureFlag(FeatureFlagEnum.SEARCHV2_ENABLED)
+
   const { data: openSubmissionData } = useSearchAccessSubmissionsInfinite(
     {
       submissionState: SubmissionState.SUBMITTED,
@@ -258,7 +262,15 @@ export function SynapseNavDrawer({
   }
 
   const onProjectSearch = (searchTerm: string) => {
-    gotoPlace(`/Search:${getProjectSearchToken(searchTerm.split(/[ ,]+/))}`)
+    if (searchV2Enabled) {
+      gotoPlace(
+        `/SearchV2:default?query=${getProjectSearchToken(
+          searchTerm.split(/[ ,]+/),
+        )}`,
+      )
+    } else {
+      gotoPlace(`/Search:${getProjectSearchToken(searchTerm.split(/[ ,]+/))}`)
+    }
   }
 
   const oneSageURL = useOneSageURL()
@@ -355,7 +367,9 @@ export function SynapseNavDrawer({
             <NavDrawerListItem
               tooltip="Search"
               iconName="search"
-              onClickGoToPlace={() => gotoPlace('/Search:')}
+              onClickGoToPlace={() =>
+                gotoPlace(searchV2Enabled ? '/SearchV2:default' : '/Search:')
+              }
               handleDrawerClose={handleDrawerClose}
               handleDrawerOpen={handleDrawerOpen}
             />
