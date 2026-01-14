@@ -24,4 +24,6 @@ export enum FeatureFlagEnum {
 
   // If enabled, show the Download All Files button on the download cart page
   DOWNLOAD_CART_INDIVIDUAL_FILE_DOWNLOADS = 'DOWNLOAD_CART_INDIVIDUAL_FILE_DOWNLOADS',
+  // If enabled, use react based search
+  SEARCHV2_ENABLED = 'SEARCHV2_ENABLED',
 }
