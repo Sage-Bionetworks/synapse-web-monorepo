@@ -1,6 +1,6 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { Box, Container, Grid, Typography } from '@mui/material'
-import { QueryCountButton } from 'synapse-react-client/components/QueryCountButton'
+import { QueryCountButton } from 'synapse-react-client/components/QueryCountButton/QueryCountButton'
 import { dataSql } from '@/config/resources'
 import styles from './HomePage.module.scss'
 
