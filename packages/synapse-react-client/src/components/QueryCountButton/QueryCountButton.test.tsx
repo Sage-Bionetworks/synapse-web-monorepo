@@ -8,6 +8,7 @@ import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/Synaps
 import SynapseClient from '@/synapse-client'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { BUNDLE_MASK_QUERY_COUNT } from '@/utils/SynapseConstants'
+import { MemoryRouter } from 'react-router'
 
 const mockQueryResult: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
@@ -43,7 +44,7 @@ describe('QueryCountButton', () => {
     })
 
     // Button should display "Explore 42 files"
-    const button = screen.getByRole('button', { name: 'Explore 42 files' })
+    const button = screen.getByRole('link', { name: 'Explore 42 files' })
     expect(button).toBeInTheDocument()
 
     // Verify the query was called with correct parameters
@@ -59,7 +60,6 @@ describe('QueryCountButton', () => {
 
   it('navigates to href when clicked', async () => {
     mockGetQueryTableResults.mockResolvedValue(mockQueryResult)
-    const originalLocation = window.location.href
 
     render(
       <QueryCountButton
@@ -75,12 +75,68 @@ describe('QueryCountButton', () => {
       expect(mockGetQueryTableResults).toHaveBeenCalled()
     })
 
-    const button = screen.getByRole('button', { name: 'View 42 items' })
-    await userEvent.click(button)
+    const button = screen.getByRole('link', { name: 'View 42 items' })
 
-    // Note: In a test environment, navigation might not work as expected
-    // In real implementation, you might want to use react-router or similar
-    expect(window.location.href).toBe(originalLocation)
+    // Button should have href attribute when not in router context
+    expect(button).toHaveAttribute('href', mockHref)
+  })
+
+  it('uses RouterLink for internal links in router context', async () => {
+    mockGetQueryTableResults.mockResolvedValue(mockQueryResult)
+    const internalHref = '/explore/data'
+
+    const RouterWrapper = ({ children }: { children: React.ReactNode }) => (
+      <MemoryRouter>{createWrapper()({ children })}</MemoryRouter>
+    )
+
+    render(
+      <QueryCountButton
+        sql={mockSql}
+        href={internalHref}
+        prefixText="View"
+        suffixText="items"
+      />,
+      { wrapper: RouterWrapper },
+    )
+
+    await waitFor(() => {
+      expect(mockGetQueryTableResults).toHaveBeenCalled()
+    })
+
+    const button = screen.getByRole('link', { name: 'View 42 items' })
+
+    // Button should use RouterLink, which doesn't set href attribute
+    // Instead it should have a parent link or be rendered as a link component
+    expect(button.tagName).toBe('A')
+  })
+
+  it('uses regular link for external URLs even in router context', async () => {
+    mockGetQueryTableResults.mockResolvedValue(mockQueryResult)
+
+    const RouterWrapper = ({ children }: { children: React.ReactNode }) => (
+      <MemoryRouter>{createWrapper()({ children })}</MemoryRouter>
+    )
+
+    render(
+      <QueryCountButton
+        sql={mockSql}
+        href={mockHref}
+        prefixText="View"
+        suffixText="items"
+      />,
+      { wrapper: RouterWrapper },
+    )
+
+    await waitFor(() => {
+      expect(mockGetQueryTableResults).toHaveBeenCalled()
+    })
+
+    const button = screen.getByRole('link', { name: 'View 42 items' })
+
+    // Button should have href and target="_blank" for external links
+    expect(button).toHaveAttribute('href', mockHref)
+    expect(button).toHaveAttribute('target', '_blank')
+    expect(button).toHaveAttribute('rel', 'noopener noreferrer')
   })
 
   it('calls custom onClick handler', async () => {
@@ -102,7 +158,7 @@ describe('QueryCountButton', () => {
       expect(mockGetQueryTableResults).toHaveBeenCalled()
     })
 
-    const button = screen.getByRole('button', { name: 'View 42 items' })
+    const button = screen.getByRole('link', { name: 'View 42 items' })
     await userEvent.click(button)
 
     expect(mockOnClick).toHaveBeenCalledTimes(1)
@@ -127,7 +183,7 @@ describe('QueryCountButton', () => {
       expect(mockGetQueryTableResults).toHaveBeenCalled()
     })
 
-    const button = screen.getByRole('button', { name: 'View 42 items' })
+    const button = screen.getByRole('link', { name: 'View 42 items' })
     expect(button).toHaveClass('MuiButton-outlined')
     expect(button).toHaveClass('MuiButton-colorSecondary')
   })
@@ -148,8 +204,8 @@ describe('QueryCountButton', () => {
     )
 
     // Button should be disabled while loading
-    const button = screen.getByRole('button')
-    expect(button).toBeDisabled()
+    const button = screen.getByRole('link')
+    expect(button).toHaveAttribute('aria-disabled', 'true')
 
     // Should show only prefix and suffix, no count
     expect(button).toHaveTextContent('View items')
@@ -176,7 +232,7 @@ describe('QueryCountButton', () => {
     })
 
     // Should show prefix and suffix but no count
-    const button = screen.getByRole('button', { name: 'View items' })
+    const button = screen.getByRole('link', { name: 'View items' })
     expect(button).toBeInTheDocument()
   })
 
@@ -203,7 +259,7 @@ describe('QueryCountButton', () => {
     })
 
     // Button should still be visible with prefix and suffix
-    const button = screen.getByRole('button', { name: 'View items' })
+    const button = screen.getByRole('link', { name: 'View items' })
     expect(button).toBeInTheDocument()
   })
 
@@ -225,7 +281,7 @@ describe('QueryCountButton', () => {
 
     // Wait for count to be loaded and check it's formatted with commas
     await waitFor(() => {
-      const button = screen.getByRole('button', {
+      const button = screen.getByRole('link', {
         name: 'Download 1,234,567 records',
       })
       expect(button).toBeInTheDocument()
@@ -241,7 +297,7 @@ describe('QueryCountButton', () => {
     )
 
     await waitFor(() => {
-      const button = screen.getByRole('button', { name: 'Total: 42' })
+      const button = screen.getByRole('link', { name: 'Total: 42' })
       expect(button).toBeInTheDocument()
     })
   })
@@ -255,7 +311,7 @@ describe('QueryCountButton', () => {
     )
 
     await waitFor(() => {
-      const button = screen.getByRole('button', { name: '42 available' })
+      const button = screen.getByRole('link', { name: '42 available' })
       expect(button).toBeInTheDocument()
     })
   })
@@ -268,7 +324,7 @@ describe('QueryCountButton', () => {
     })
 
     await waitFor(() => {
-      const button = screen.getByRole('button', { name: '42' })
+      const button = screen.getByRole('link', { name: '42' })
       expect(button).toBeInTheDocument()
     })
   })

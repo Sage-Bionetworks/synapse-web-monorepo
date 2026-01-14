@@ -5,6 +5,7 @@ import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { Box, Button, ButtonProps } from '@mui/material'
 import { NavigateNext } from '@mui/icons-material'
 import React from 'react'
+import { Link as RouterLink, useInRouterContext } from 'react-router'
 
 export type QueryCountButtonProps = {
   /**
@@ -36,6 +37,7 @@ export type QueryCountButtonProps = {
 export function QueryCountButton(props: QueryCountButtonProps) {
   const { sql, href, prefixText = '', suffixText = '', ...buttonProps } = props
   const entityId = parseEntityIdFromSqlStatement(sql)
+  const inRouterContext = useInRouterContext()
 
   const request: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -48,12 +50,29 @@ export function QueryCountButton(props: QueryCountButtonProps) {
 
   const count = queryResult?.queryCount
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (buttonProps.onClick) {
-      buttonProps.onClick(event)
+  const isExternalLink =
+    href?.startsWith('http://') || href?.startsWith('https://')
+
+  // Determine the appropriate link props based on context
+  let linkProps: Partial<ButtonProps> & { target?: string; to?: string } = {}
+
+  if (isExternalLink) {
+    linkProps = {
+      href,
+      target: '_blank',
+      rel: 'noopener noreferrer',
+      component: 'a',
     }
-    if (href && !event.defaultPrevented) {
-      window.location.href = href
+  } else if (inRouterContext) {
+    // For internal links, if we are in a react-router context, use RouterLink
+    linkProps = {
+      to: href,
+      component: RouterLink,
+    }
+  } else {
+    linkProps = {
+      href,
+      component: 'a',
     }
   }
 
@@ -76,14 +95,14 @@ export function QueryCountButton(props: QueryCountButtonProps) {
     return parts.join(' ')
   }, [prefixText, count, suffixText, isLoading])
 
-  // Icon with white circular background
+  // Icon with theme-aware circular background
   const endIcon = (
     <Box
       sx={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'white',
+        backgroundColor: 'background.paper',
         borderRadius: '50%',
         width: 24,
         height: 24,
@@ -96,7 +115,7 @@ export function QueryCountButton(props: QueryCountButtonProps) {
   return (
     <Button
       {...buttonProps}
-      onClick={handleClick}
+      {...linkProps}
       disabled={isLoading || buttonProps.disabled}
       endIcon={endIcon}
     >
