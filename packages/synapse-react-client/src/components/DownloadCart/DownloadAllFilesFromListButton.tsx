@@ -162,7 +162,7 @@ export function DownloadAllFilesFromListButton(
         return
       }
 
-      if (!downloadListItems || !isAuthenticated || !accessToken) {
+      if (!downloadListItems || !isAuthenticated) {
         setIsDownloading(false)
         return
       }
