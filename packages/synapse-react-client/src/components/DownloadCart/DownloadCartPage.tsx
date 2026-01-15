@@ -14,7 +14,7 @@ import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/
 import AvailableForDownloadTable from './AvailableForDownloadTable'
 import { CreatePackageV2 } from './CreatePackageV2'
 import { PYTHON_CLIENT_IMPORT_AND_LOGIN } from './DirectProgrammaticDownload'
-import { DownloadAllFilesFromListButton } from './DownloadAllFilesFromListButton'
+import { DownloadIneligibleForPackagingFilesFromListButton } from './DownloadIneligibleForPackagingFilesFromListButton'
 import {
   DownloadListActionsRequired,
   DownloadListActionsRequiredProps,
@@ -38,7 +38,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
     useState(false)
   const [error, setError] = useState<Error>()
   const isDownloadAllEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.DOWNLOAD_CART_INDIVIDUAL_FILE_DOWNLOADS,
+    FeatureFlagEnum.DOWNLOAD_CART_INELIGIBLE_FILE_DOWNLOADS,
   )
   const {
     data,
@@ -179,8 +179,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                   <div>
                     <div className="headlineWithHelp">
                       <Typography variant={'headline3'} sx={{ mb: 2 }}>
-                        <IconSvg icon="packagableFile" /> Web Download (.ZIP
-                        Packages)
+                        <IconSvg icon="packagableFile" /> Web Download
                       </Typography>
                       <HelpPopover
                         markdownText="This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a separate login process."
@@ -205,8 +204,8 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                           packages
                         </li>
                         <li>
-                          Will only include files which are hosted on Synapse
-                          native storage
+                          Packages will only include files which are hosted on
+                          Synapse native storage
                         </li>
                         <li>
                           Packages include a CSV manifest that contains file
@@ -244,44 +243,14 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                         </span>
                       </Tooltip>
                     )}
+                    {isDownloadAllEnabled &&
+                      data.numberOfFilesAvailableForDownloadAndEligibleForPackaging <
+                        data.numberOfFilesAvailableForDownload && (
+                        <div style={{ marginTop: '1rem' }}>
+                          <DownloadIneligibleForPackagingFilesFromListButton />
+                        </div>
+                      )}
                   </div>
-                  {isDownloadAllEnabled && (
-                    <div>
-                      <div className="headlineWithHelp">
-                        <Typography variant={'headline3'} sx={{ mb: 2 }}>
-                          <IconSvg icon="download" /> Download All Files
-                          Individually
-                        </Typography>
-                        <HelpPopover
-                          markdownText="This will trigger individual downloads for all files in your download list. The files will be removed from your list as they are downloaded."
-                          helpUrl="https://help.synapse.org/docs/Downloading-Data-From-the-Synapse-UI.2004254837.html"
-                        />
-                      </div>
-                      <Typography
-                        variant={'body1'}
-                        component={'div'}
-                        sx={{
-                          mb: 2,
-                          display: { xs: 'none', md: 'block' },
-                        }}
-                      >
-                        <ul>
-                          <li>
-                            Downloads all files individually through your
-                            browser
-                          </li>
-                          <li>
-                            Files are automatically removed from your download
-                            list when their download is initiated
-                          </li>
-                          <li>
-                            Works with all file types including external links
-                          </li>
-                        </ul>
-                      </Typography>
-                      <DownloadAllFilesFromListButton />
-                    </div>
-                  )}
                   <div>
                     <div className="headlineWithHelp">
                       <Typography variant={'headline3'} sx={{ mb: 2 }}>

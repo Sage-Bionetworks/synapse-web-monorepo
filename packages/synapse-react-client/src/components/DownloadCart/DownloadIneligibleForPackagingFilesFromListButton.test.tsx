@@ -4,7 +4,7 @@ import { server } from '@/mocks/msw/server'
 import { http, HttpResponse } from 'msw'
 import { getEndpoint, BackendDestinationEnum } from '@/utils/functions'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { DownloadAllFilesFromListButton } from './DownloadAllFilesFromListButton'
+import { DownloadIneligibleForPackagingFilesFromListButton } from './DownloadIneligibleForPackagingFilesFromListButton'
 
 // Mock File System Access API
 const mockWritableStream = {
@@ -78,7 +78,7 @@ function setupEmptyDownloadListHandlers() {
   )
 }
 
-describe('DownloadAllFilesFromListButton', () => {
+describe('DownloadIneligibleForPackagingFilesFromListButton', () => {
   beforeAll(() => server.listen())
   afterEach(() => {
     server.restoreHandlers()
@@ -89,12 +89,12 @@ describe('DownloadAllFilesFromListButton', () => {
   it('renders the button', () => {
     setupEmptyDownloadListHandlers()
 
-    render(<DownloadAllFilesFromListButton />, {
+    render(<DownloadIneligibleForPackagingFilesFromListButton />, {
       wrapper: createWrapper(),
     })
 
     const button = screen.getByRole('button', {
-      name: 'Download All Files Individually',
+      name: 'Download Non-Packageable Files',
     })
     expect(button).toBeDefined()
   })
@@ -103,7 +103,7 @@ describe('DownloadAllFilesFromListButton', () => {
     setupEmptyDownloadListHandlers()
 
     render(
-      <DownloadAllFilesFromListButton buttonText="Download All My Files" />,
+      <DownloadIneligibleForPackagingFilesFromListButton buttonText="Download All My Files" />,
       {
         wrapper: createWrapper(),
       },
@@ -118,12 +118,15 @@ describe('DownloadAllFilesFromListButton', () => {
   it('renders with custom variant', () => {
     setupEmptyDownloadListHandlers()
 
-    render(<DownloadAllFilesFromListButton variant="outlined" />, {
-      wrapper: createWrapper(),
-    })
+    render(
+      <DownloadIneligibleForPackagingFilesFromListButton variant="outlined" />,
+      {
+        wrapper: createWrapper(),
+      },
+    )
 
     const button = screen.getByRole('button', {
-      name: 'Download All Files Individually',
+      name: 'Download Non-Packageable Files',
     })
     expect(button).toBeDefined()
     expect(button.className).toContain('MuiButton-outlined')
@@ -144,9 +147,12 @@ describe('DownloadAllFilesFromListButton', () => {
       ),
     )
 
-    const { container } = render(<DownloadAllFilesFromListButton />, {
-      wrapper: createWrapper(),
-    })
+    const { container } = render(
+      <DownloadIneligibleForPackagingFilesFromListButton />,
+      {
+        wrapper: createWrapper(),
+      },
+    )
 
     // Wait for query to fail and component to handle error
     await waitFor(() => {
@@ -157,12 +163,12 @@ describe('DownloadAllFilesFromListButton', () => {
   it('does not call download functions when not authenticated', async () => {
     setupEmptyDownloadListHandlers()
 
-    render(<DownloadAllFilesFromListButton />, {
+    render(<DownloadIneligibleForPackagingFilesFromListButton />, {
       wrapper: createWrapper({ isAuthenticated: false }),
     })
 
     const button = screen.getByRole('button', {
-      name: 'Download All Files Individually',
+      name: 'Download Non-Packageable Files',
     })
 
     await userEvent.click(button)

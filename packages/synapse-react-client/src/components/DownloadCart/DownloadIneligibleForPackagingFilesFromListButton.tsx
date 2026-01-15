@@ -50,23 +50,21 @@ function supportsFileSystemAccess(
 
 const FILE_BATCH_SIZE = 50 // Maximum batch size for fetching presigned URLs
 
-export type DownloadAllFilesFromListButtonProps = {
+export type DownloadIneligibleForPackagingFilesFromListButtonProps = {
   buttonText?: string
   variant?: 'text' | 'outlined' | 'contained'
 }
 
 /**
- * Button component that downloads all files from the user's download list.
+ * Button component that downloads files from the user's download list that are ineligible for packaging.
  * Uses the infinite query hook to fetch all pages of download list items,
  * batches requests to get presigned URLs, and triggers browser downloads.
  */
-export function DownloadAllFilesFromListButton(
-  props: DownloadAllFilesFromListButtonProps,
+export function DownloadIneligibleForPackagingFilesFromListButton(
+  props: DownloadIneligibleForPackagingFilesFromListButtonProps,
 ) {
-  const {
-    buttonText = 'Directly Download All Non-packageable Files',
-    variant = 'contained',
-  } = props
+  const { buttonText = 'Download Non-Packageable Files', variant = 'text' } =
+    props
   const { accessToken, isAuthenticated } = useSynapseContext()
   const queryClient = useQueryClient()
   const getEntityQueryOptions = useGetEntityQueryOptions<FileEntity>()
@@ -748,4 +746,4 @@ export function DownloadAllFilesFromListButton(
   )
 }
 
-export default DownloadAllFilesFromListButton
+export default DownloadIneligibleForPackagingFilesFromListButton
