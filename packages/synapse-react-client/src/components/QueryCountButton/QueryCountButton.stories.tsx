@@ -44,7 +44,7 @@ export const Default: Story = {
   ],
   parameters: {
     msw: {
-      handlers: getHandlersForTableQuery(),
+      handlers: getHandlersForTableQuery(undefined, TABLE_ID),
     },
   },
 }
@@ -61,7 +61,7 @@ export const WithoutPrefixText: Story = {
   ],
   parameters: {
     msw: {
-      handlers: getHandlersForTableQuery(),
+      handlers: getHandlersForTableQuery(undefined, TABLE_ID),
     },
   },
 }
@@ -78,7 +78,7 @@ export const WithoutSuffixText: Story = {
   ],
   parameters: {
     msw: {
-      handlers: getHandlersForTableQuery(),
+      handlers: getHandlersForTableQuery(undefined, TABLE_ID),
     },
   },
 }
@@ -94,7 +94,7 @@ export const CountOnly: Story = {
   ],
   parameters: {
     msw: {
-      handlers: getHandlersForTableQuery(),
+      handlers: getHandlersForTableQuery(undefined, TABLE_ID),
     },
   },
 }
@@ -113,7 +113,7 @@ export const WithVariant: Story = {
   ],
   parameters: {
     msw: {
-      handlers: getHandlersForTableQuery(),
+      handlers: getHandlersForTableQuery(undefined, TABLE_ID),
     },
   },
 }
@@ -134,7 +134,7 @@ export const LargeCount: Story = {
   ],
   parameters: {
     msw: {
-      handlers: getHandlersForTableQuery(),
+      handlers: getHandlersForTableQuery(undefined, TABLE_ID),
     },
   },
 }

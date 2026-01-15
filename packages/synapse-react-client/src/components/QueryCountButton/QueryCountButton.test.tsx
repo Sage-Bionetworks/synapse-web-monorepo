@@ -188,7 +188,7 @@ describe('QueryCountButton', () => {
     expect(button).toHaveClass('MuiButton-colorSecondary')
   })
 
-  it('disables button while loading', () => {
+  it('button loading state', async () => {
     mockGetQueryTableResults.mockImplementation(
       () => new Promise(() => {}), // Never resolves
     )
@@ -203,11 +203,14 @@ describe('QueryCountButton', () => {
       { wrapper: createWrapper() },
     )
 
-    // Button should be disabled while loading
-    const button = screen.getByRole('link')
-    expect(button).toHaveAttribute('aria-disabled', 'true')
+    // Button should be in loading state with spinner visible
+    await waitFor(() => {
+      const loadingSpinner = screen.getByRole('progressbar')
+      expect(loadingSpinner).toBeInTheDocument()
+    })
 
     // Should show only prefix and suffix, no count
+    const button = screen.getByRole('link')
     expect(button).toHaveTextContent('View items')
   })
 

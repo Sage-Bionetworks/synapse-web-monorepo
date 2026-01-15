@@ -117,6 +117,7 @@ export function QueryCountButton(props: QueryCountButtonProps) {
       {...buttonProps}
       {...linkProps}
       endIcon={endIcon}
+      loading={isLoading}
     >
       {buttonText}
     </Button>
