@@ -116,7 +116,6 @@ export function QueryCountButton(props: QueryCountButtonProps) {
     <Button
       {...buttonProps}
       {...linkProps}
-      disabled={isLoading || buttonProps.disabled}
       endIcon={endIcon}
     >
       {buttonText}
