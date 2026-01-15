@@ -23,36 +23,7 @@ import { getFiles } from '@/synapse-client/SynapseClient'
 import { useGetEntities } from '@/synapse-queries/entity/useEntity'
 import { DialogBase } from '../DialogBase'
 
-// Type declarations for File System Access API
-// https://developer.mozilla.org/en-US/docs/Web/API/File_System_Access_API
-interface FileSystemWritableFileStream extends WritableStream {
-  write(data: BufferSource | Blob | string): Promise<void>
-  seek(position: number): Promise<void>
-  truncate(size: number): Promise<void>
-}
-
-interface FileSystemFileHandle {
-  readonly kind: 'file'
-  readonly name: string
-  getFile(): Promise<File>
-  createWritable(options?: {
-    keepExistingData?: boolean
-  }): Promise<FileSystemWritableFileStream>
-}
-
-interface FileSystemDirectoryHandle {
-  readonly kind: 'directory'
-  readonly name: string
-  getFileHandle(
-    name: string,
-    options?: { create?: boolean },
-  ): Promise<FileSystemFileHandle>
-  getDirectoryHandle(
-    name: string,
-    options?: { create?: boolean },
-  ): Promise<FileSystemDirectoryHandle>
-}
-
+// showDirectoryPicker is not yet available on the Window interface.
 interface FileSystemAccessWindow extends Window {
   showDirectoryPicker(options?: {
     mode?: 'read' | 'readwrite'
