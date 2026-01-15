@@ -783,7 +783,7 @@ export function DownloadAllFilesFromListButton(
       <Button
         variant={variant}
         onClick={handleClick}
-        disabled={isDownloading}
+        loading={isDownloading}
         startIcon={<Download />}
       >
         {buttonText}
