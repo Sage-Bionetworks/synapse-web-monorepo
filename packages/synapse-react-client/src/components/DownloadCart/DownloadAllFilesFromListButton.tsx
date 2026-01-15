@@ -615,19 +615,34 @@ export function DownloadAllFilesFromListButton(
 
     // Fetch all remaining pages imperatively, then download
     void (async () => {
-      let stillHasNextPage = hasNextPage
-      while (stillHasNextPage && fetchNextPage) {
-        const result = await fetchNextPage()
-        stillHasNextPage = result.hasNextPage
-      }
+      try {
+        let stillHasNextPage = hasNextPage
+        while (stillHasNextPage && fetchNextPage) {
+          const result = await fetchNextPage()
+          stillHasNextPage = result.hasNextPage
+        }
 
-      // All pages loaded, now download
-      if (status === 'success' && data) {
-        void downloadAllFiles(entityQueries, data)
-      } else {
-        // Failed to load data
+        // All pages loaded, now download
+        if (status === 'success' && data) {
+          void downloadAllFiles(entityQueries, data)
+        } else {
+          // Failed to load data
+          setIsDownloading(false)
+          isDownloadingRef.current = false
+          displayToast(
+            'Failed to load download list. Please try again.',
+            'danger',
+          )
+        }
+      } catch (error) {
+        console.error('Error fetching download list pages:', error)
         setIsDownloading(false)
         isDownloadingRef.current = false
+        const message =
+          (error as SynapseClientError | undefined)?.reason ??
+          (error instanceof Error ? error.message : undefined) ??
+          'An error occurred while preparing files for download'
+        displayToast(message, 'danger')
       }
     })()
   }, [
