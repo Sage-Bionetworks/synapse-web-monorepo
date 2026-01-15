@@ -257,6 +257,7 @@ export function DownloadAllFilesFromListButton(
 
         /**
          * Helper function to process a single file download
+         * @returns boolean indicating if download is successful
          */
         const processFileDownload = async (
           fileResult: BatchFileResult['requestedFiles'][0],
