@@ -12,7 +12,7 @@ import {
   FileHandleAssociation,
   FileHandleAssociateType,
 } from '@sage-bionetworks/synapse-types'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import {
   useGetAvailableFilesToDownloadInfinite,
@@ -47,7 +47,6 @@ function supportsFileSystemAccess(
 }
 
 const BATCH_SIZE = 50 // Maximum batch size for fetching presigned URLs
-const MAX_BATCH_RETRIES = 2 // Number of times to retry a failed batch
 
 export type DownloadAllFilesFromListButtonProps = {
   buttonText?: string
@@ -78,14 +77,8 @@ export function DownloadAllFilesFromListButton(
     totalBytes: number
   } | null>(null)
 
-  const {
-    data,
-    status,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-    error,
-  } = useGetAvailableFilesToDownloadInfinite()
+  const { data, status, hasNextPage, fetchNextPage, error } =
+    useGetAvailableFilesToDownloadInfinite()
 
   const { mutateAsync: removeFilesFromDownloadList } =
     useRemoveFilesFromDownloadList()
@@ -105,19 +98,6 @@ export function DownloadAllFilesFromListButton(
 
   // Fetch all FileEntity objects to get dataFileHandleId
   const entityQueries = useGetEntities(entityHeaders)
-
-  // When downloading, fetch all pages first
-  useEffect(() => {
-    if (
-      isDownloading &&
-      status === 'success' &&
-      !isFetchingNextPage &&
-      hasNextPage &&
-      fetchNextPage
-    ) {
-      void fetchNextPage()
-    }
-  }, [isDownloading, status, isFetchingNextPage, hasNextPage, fetchNextPage])
 
   /**
    * Downloads all files from the download list.
@@ -463,44 +443,6 @@ export function DownloadAllFilesFromListButton(
         }
 
         /**
-         * Helper function to fetch presigned URLs for a batch with retry logic
-         */
-        const fetchBatchWithRetry = async (
-          batch: FileHandleAssociation[],
-          retryCount = 0,
-        ): Promise<BatchFileResult | null> => {
-          try {
-            const batchRequest: BatchFileRequest = {
-              requestedFiles: batch,
-              includeFileHandles: true,
-              includePreSignedURLs: true,
-              includePreviewPreSignedURLs: false,
-            }
-
-            return await getFiles(batchRequest, accessToken)
-          } catch (error) {
-            if (retryCount < MAX_BATCH_RETRIES) {
-              console.warn(
-                `Batch fetch failed (attempt ${retryCount + 1}/${
-                  MAX_BATCH_RETRIES + 1
-                }), retrying...`,
-                error,
-              )
-              // Wait briefly before retrying (exponential backoff)
-              await new Promise(resolve =>
-                setTimeout(resolve, 1000 * Math.pow(2, retryCount)),
-              )
-              return fetchBatchWithRetry(batch, retryCount + 1)
-            }
-            console.error(
-              `Failed to fetch batch after ${MAX_BATCH_RETRIES + 1} attempts:`,
-              error,
-            )
-            return null
-          }
-        }
-
-        /**
          * Fallback function to fetch files individually when batch fails
          */
         const fetchIndividually = async (
@@ -564,8 +506,19 @@ export function DownloadAllFilesFromListButton(
             break
           }
 
-          // Try to fetch the entire batch with retry logic
-          const batchResult = await fetchBatchWithRetry(batch)
+          // Try to fetch the entire batch (getFiles has built-in retry logic)
+          let batchResult: BatchFileResult | null = null
+          try {
+            const batchRequest: BatchFileRequest = {
+              requestedFiles: batch,
+              includeFileHandles: true,
+              includePreSignedURLs: true,
+              includePreviewPreSignedURLs: false,
+            }
+            batchResult = await getFiles(batchRequest, accessToken)
+          } catch (error) {
+            console.error('Failed to fetch batch:', error)
+          }
 
           if (batchResult) {
             // Batch fetch succeeded, process all files
@@ -654,27 +607,38 @@ export function DownloadAllFilesFromListButton(
     ],
   )
 
-  // Once all pages are loaded, start downloading
-  // Pass current entity queries and data explicitly to downloadAllFiles
-  useEffect(() => {
-    if (isDownloading && status === 'success' && !hasNextPage && data) {
-      void downloadAllFiles(entityQueries, data)
-    }
-  }, [
-    isDownloading,
-    status,
-    hasNextPage,
-    data,
-    entityQueries,
-    downloadAllFiles,
-  ])
-
   const handleClick = useCallback(() => {
     if (isDownloading) {
       return
     }
     setIsDownloading(true)
-  }, [isDownloading])
+
+    // Fetch all remaining pages imperatively, then download
+    void (async () => {
+      let stillHasNextPage = hasNextPage
+      while (stillHasNextPage && fetchNextPage) {
+        const result = await fetchNextPage()
+        stillHasNextPage = result.hasNextPage
+      }
+
+      // All pages loaded, now download
+      if (status === 'success' && data) {
+        void downloadAllFiles(entityQueries, data)
+      } else {
+        // Failed to load data
+        setIsDownloading(false)
+        isDownloadingRef.current = false
+      }
+    })()
+  }, [
+    isDownloading,
+    hasNextPage,
+    fetchNextPage,
+    status,
+    data,
+    entityQueries,
+    downloadAllFiles,
+  ])
 
   const handleCancel = useCallback(() => {
     isCancelledRef.current = true
