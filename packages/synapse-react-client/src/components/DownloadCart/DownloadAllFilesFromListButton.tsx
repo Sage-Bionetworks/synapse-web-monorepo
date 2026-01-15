@@ -216,6 +216,7 @@ export function DownloadAllFilesFromListButton(
 
         /**
          * Helper function to download file using traditional anchor tag method
+         * @returns boolean indicating if the download was successful 
          */
         const downloadFileTraditional = async (
           downloadUrl: string,
