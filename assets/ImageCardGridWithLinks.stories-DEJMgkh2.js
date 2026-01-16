@@ -1,0 +1,10 @@
+import{j as e,iD as m}from"./iframe-DtZANp-B.js";import{I as t}from"./ImageCardGridWithLinks-DE_GOdaQ.js";import"./index-Chi_LkuB.js";import"./PortalSectionHeader-DAAjPG4F.js";import"./GridLegacy-x-VFIW1c.js";import"./Card-Dphefr3a.js";import"./CardMedia-MwkWEWnF.js";const u={title:"Home Page/ImageCardGridWithLinks",component:t,parameters:{chromatic:{viewports:[600,1200]}}},r={render:s=>e.jsx(m,{children:e.jsx(t,{...s})}),args:{sql:"SELECT * FROM syn64130706",title:"title",summaryText:"summary"}};r.parameters={...r.parameters,docs:{...r.parameters?.docs,source:{originalSource:`{
+  render: args => <MemoryRouter>
+      <ImageCardGridWithLinks {...args} />
+    </MemoryRouter>,
+  args: {
+    sql: 'SELECT * FROM syn64130706',
+    title: 'title',
+    summaryText: 'summary'
+  }
+}`,...r.parameters?.docs?.source}}};const l=["Demo"];export{r as Demo,l as __namedExportsOrder,u as default};
