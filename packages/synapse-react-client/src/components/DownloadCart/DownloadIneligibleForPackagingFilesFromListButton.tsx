@@ -165,6 +165,7 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
 
         // Fetch entities to get dataFileHandleId for each file
         // Use React Query's ensureQueryData to leverage cache and built-in retry logic (handles 429s with exponential backoff)
+        // Map key combines entity ID and version to handle multiple versions of the same entity
         const entityIdToFileHandleId = new Map<string, string>()
 
         // Fetch all entities in parallel - React Query handles concurrency and retries
@@ -180,7 +181,9 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
                 item.versionNumber?.toString(),
               ),
             )
-            entityIdToFileHandleId.set(entity.id!, entity.dataFileHandleId)
+            // Use composite key: entityId-version (or entityId if no version)
+            const mapKey = `${entity.id!}-${item.versionNumber ?? 'latest'}`
+            entityIdToFileHandleId.set(mapKey, entity.dataFileHandleId)
           } catch (error) {
             console.error(`Failed to fetch entity ${item.fileEntityId}:`, error)
             // Continue even if one entity fails
@@ -192,12 +195,22 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
         // Convert download list items to file handle associations using the fetched dataFileHandleIds
         const fileHandleAssociations: FileHandleAssociation[] =
           nonPackageableFiles
-            .filter(item => entityIdToFileHandleId.has(item.fileEntityId))
-            .map(item => ({
-              fileHandleId: entityIdToFileHandleId.get(item.fileEntityId)!,
-              associateObjectId: item.fileEntityId,
-              associateObjectType: FileHandleAssociateType.FileEntity,
-            }))
+            .filter(item => {
+              const mapKey = `${item.fileEntityId}-${
+                item.versionNumber ?? 'latest'
+              }`
+              return entityIdToFileHandleId.has(mapKey)
+            })
+            .map(item => {
+              const mapKey = `${item.fileEntityId}-${
+                item.versionNumber ?? 'latest'
+              }`
+              return {
+                fileHandleId: entityIdToFileHandleId.get(mapKey)!,
+                associateObjectId: item.fileEntityId,
+                associateObjectType: FileHandleAssociateType.FileEntity,
+              }
+            })
 
         if (fileHandleAssociations.length === 0) {
           displayToast(
@@ -608,48 +621,46 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
     ],
   )
 
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback(async () => {
     if (isDownloading) {
       return
     }
     setIsDownloading(true)
 
     // Fetch all remaining pages imperatively, then download
-    void (async () => {
-      try {
-        let stillHasNextPage = hasNextPage
-        let latestData = data
-        while (stillHasNextPage && fetchNextPage) {
-          const result = await fetchNextPage()
-          stillHasNextPage = result.hasNextPage
-          if (result.data) {
-            latestData = result.data
-          }
+    try {
+      let stillHasNextPage = hasNextPage
+      let latestData = data
+      while (stillHasNextPage && fetchNextPage) {
+        const result = await fetchNextPage()
+        stillHasNextPage = result.hasNextPage
+        if (result.data) {
+          latestData = result.data
         }
+      }
 
-        // All pages loaded, now download
-        if (status === 'success' && latestData) {
-          void downloadAllFiles(latestData)
-        } else {
-          // Failed to load data
-          setIsDownloading(false)
-          isDownloadingRef.current = false
-          displayToast(
-            'Failed to load download list. Please try again.',
-            'danger',
-          )
-        }
-      } catch (error) {
-        console.error('Error downloading files:', error)
+      // All pages loaded, now download
+      if (status === 'success' && latestData) {
+        void downloadAllFiles(latestData)
+      } else {
+        // Failed to load data
         setIsDownloading(false)
         isDownloadingRef.current = false
-        const message =
-          (error as SynapseClientError | undefined)?.reason ??
-          (error instanceof Error ? error.message : undefined) ??
-          'An error occurred while preparing files for download'
-        displayToast(message, 'danger')
+        displayToast(
+          'Failed to load download list. Please try again.',
+          'danger',
+        )
       }
-    })()
+    } catch (error) {
+      console.error('Error downloading files:', error)
+      setIsDownloading(false)
+      isDownloadingRef.current = false
+      const message =
+        (error as SynapseClientError | undefined)?.reason ??
+        (error instanceof Error ? error.message : undefined) ??
+        'An error occurred while preparing files for download'
+      displayToast(message, 'danger')
+    }
   }, [
     isDownloading,
     hasNextPage,
@@ -736,7 +747,9 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
       />
       <Button
         variant={variant}
-        onClick={handleClick}
+        onClick={() => {
+          void handleClick()
+        }}
         loading={isDownloading}
         startIcon={<Download />}
       >
