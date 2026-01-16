@@ -1,8 +1,10 @@
 import SynapseClient from '@/synapse-client'
 import { useGetDownloadListStatistics } from '@/synapse-queries/download/useDownloadList'
+import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { DeleteTwoTone } from '@mui/icons-material'
 import { Button, Tooltip, Typography } from '@mui/material'
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'
 import { ErrorBanner } from '../error/ErrorBanner'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
@@ -12,6 +14,7 @@ import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/
 import AvailableForDownloadTable from './AvailableForDownloadTable'
 import { CreatePackageV2 } from './CreatePackageV2'
 import { PYTHON_CLIENT_IMPORT_AND_LOGIN } from './DirectProgrammaticDownload'
+import { DownloadIneligibleForPackagingFilesFromListButton } from './DownloadIneligibleForPackagingFilesFromListButton'
 import {
   DownloadListActionsRequired,
   DownloadListActionsRequiredProps,
@@ -34,6 +37,9 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
   const [isShowingDownloadSuccessAlert, setIsShowingDownloadSuccessAlert] =
     useState(false)
   const [error, setError] = useState<Error>()
+  const isDownloadAllEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.DOWNLOAD_CART_INELIGIBLE_FILE_DOWNLOADS,
+  )
   const {
     data,
     isLoading,
@@ -173,8 +179,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                   <div>
                     <div className="headlineWithHelp">
                       <Typography variant={'headline3'} sx={{ mb: 2 }}>
-                        <IconSvg icon="packagableFile" /> Web Download (.ZIP
-                        Packages)
+                        <IconSvg icon="packagableFile" /> Web Download
                       </Typography>
                       <HelpPopover
                         markdownText="This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a separate login process."
@@ -199,8 +204,8 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                           packages
                         </li>
                         <li>
-                          Will only include files which are hosted on Synapse
-                          native storage
+                          Packages will only include files which are hosted on
+                          Synapse native storage
                         </li>
                         <li>
                           Packages include a CSV manifest that contains file
@@ -238,6 +243,13 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                         </span>
                       </Tooltip>
                     )}
+                    {isDownloadAllEnabled &&
+                      data.numberOfFilesAvailableForDownloadAndEligibleForPackaging <
+                        data.numberOfFilesAvailableForDownload && (
+                        <div style={{ marginTop: '1rem' }}>
+                          <DownloadIneligibleForPackagingFilesFromListButton />
+                        </div>
+                      )}
                   </div>
                   <div>
                     <div className="headlineWithHelp">

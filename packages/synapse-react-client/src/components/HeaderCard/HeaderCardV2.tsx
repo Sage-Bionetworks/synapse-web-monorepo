@@ -33,6 +33,8 @@ export type HeaderCardV2Props = {
   isAlignToLeftNav?: boolean
   /** Configuration for the collapsible description */
   descriptionConfig?: DescriptionConfig
+  /** Character count threshold for truncating description (default 400) */
+  charCountCutoff?: number
   /** Optional URL for making the title clickable */
   href?: string
   /** Target attribute for the title link */
@@ -134,6 +136,7 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
     // secondaryLabelLimit,
     isAlignToLeftNav,
     descriptionConfig,
+    charCountCutoff,
     href,
     target,
     icon,
@@ -156,7 +159,7 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
   const descriptionConfiguration: DescriptionConfig = {
     ...descriptionConfig,
     showFullDescriptionByDefault:
-      descriptionConfig?.showFullDescriptionByDefault ?? true,
+      descriptionConfig?.showFullDescriptionByDefault ?? false,
   }
   const metadataDescription = description || subTitle || undefined
   useDocumentMetadata({
@@ -322,6 +325,7 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
               description={description}
               descriptionSubTitle=""
               descriptionConfig={descriptionConfiguration}
+              charCountCutoff={charCountCutoff}
             />
             {ctaLinkBox}
           </Box>
