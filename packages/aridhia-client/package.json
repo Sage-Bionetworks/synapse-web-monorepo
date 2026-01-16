@@ -3,26 +3,28 @@
   "version": "0.0.1",
   "description": "Aridhia FAIR API Client",
   "type": "module",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
   "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
     "./generated/runtime": {
       "types": "./dist/generated/runtime.d.ts",
       "default": "./dist/generated/runtime.js"
-    },
-    "./generated/apis": {
-      "types": "./dist/generated/apis/index.d.ts",
-      "default": "./dist/generated/apis/index.js"
-    },
-    "./generated/apis/*.js": {
-      "types": "./dist/generated/apis/*.d.ts",
-      "default": "./dist/generated/apis/*.js"
     },
     "./generated/models": {
       "types": "./dist/generated/models/index.d.ts",
       "default": "./dist/generated/models/index.js"
     },
-    "./generated/models/*.js": {
-      "types": "./dist/generated/models/*.d.ts",
-      "default": "./dist/generated/models/*.js"
+    "./generated/apis": {
+      "types": "./dist/generated/apis/index.d.ts",
+      "default": "./dist/generated/apis/index.js"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*.js"
     }
   },
   "devDependencies": {
