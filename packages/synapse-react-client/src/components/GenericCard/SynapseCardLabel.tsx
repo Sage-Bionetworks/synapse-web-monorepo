@@ -188,12 +188,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
                   <Fragment key={el}>
                     <Link
                       href={href ?? undefined}
-                      target={
-                        linkTarget ??
-                        (href && isExternalLink(href)
-                          ? TargetEnum.NEW_WINDOW
-                          : TargetEnum.CURRENT_WINDOW)
-                      }
+                      target={linkTarget ?? TargetEnum.NEW_WINDOW}
                       rel="noopener noreferrer"
                       key={el}
                       className={newClassName}
