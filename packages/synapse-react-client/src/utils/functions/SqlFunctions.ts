@@ -10,6 +10,7 @@ import {
   TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { SYNAPSE_ENTITY_ID_REGEX } from './RegularExpressions'
+import { splitAndTrim } from './StringUtils'
 
 export type SQLOperator =
   | ColumnSingleValueFilterOperator
@@ -99,7 +100,7 @@ export const getAdditionalFilters = (
                   'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
                 columnName: key,
                 operator: operator,
-                values: searchParams[key].split(','),
+                values: splitAndTrim(searchParams[key]),
               }
               return filter
             }
@@ -110,7 +111,7 @@ export const getAdditionalFilters = (
                 columnName: key,
                 function: operator,
                 _function: operator,
-                values: searchParams[key].split(','),
+                values: splitAndTrim(searchParams[key]),
               }
               return filter
             }

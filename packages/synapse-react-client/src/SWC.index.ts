@@ -208,6 +208,9 @@ const SynapseComponents = {
   SynapsePortalBanners: lazy(
     () => import('./components/SynapsePortalBanners/SynapsePortalBanners'),
   ),
+  SynapseSearchPage: lazy(
+    () => import('./components/SynapseSearchPageResults/SynapseSearchPage'),
+  ),
   SynapseToastContainer,
   TableColumnSchemaEditor: lazy(
     () =>

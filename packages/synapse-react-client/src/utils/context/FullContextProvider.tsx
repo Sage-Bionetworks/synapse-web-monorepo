@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-query'
 import { PropsWithChildren, Suspense } from 'react'
 import { SynapseContextProvider, SynapseContextType } from './SynapseContext'
+import { DocumentMetadataProvider } from './DocumentMetadataContext'
 
 export const defaultQueryClientConfig = {
   defaultOptions: {
@@ -38,6 +39,7 @@ export type FullContextProviderProps = PropsWithChildren<{
  * - SynapseContext
  * - QueryClientContext (react-query)
  * - ThemeContext (@mui)
+ * - DocumentMetadataContext - for managing page title and meta descriptions
  * - isEditingStore - used to sync editing state across the application
  */
 export function FullContextProvider(props: FullContextProviderProps) {
@@ -58,13 +60,15 @@ export function FullContextProvider(props: FullContextProviderProps) {
     <QueryClientProvider client={queryClient ?? defaultQueryClient}>
       <ThemeProvider theme={theme}>
         <SynapseContextProvider synapseContext={synapseContext}>
-          <GlobalIsEditingContextProvider
-            subscribe={isEditingStore.subscribe}
-            getSnapshot={isEditingStore.getSnapshot}
-            setIsEditing={isEditingStore.setIsEditing}
-          >
-            <Suspense fallback={null}>{children}</Suspense>
-          </GlobalIsEditingContextProvider>
+          <DocumentMetadataProvider>
+            <GlobalIsEditingContextProvider
+              subscribe={isEditingStore.subscribe}
+              getSnapshot={isEditingStore.getSnapshot}
+              setIsEditing={isEditingStore.setIsEditing}
+            >
+              <Suspense fallback={null}>{children}</Suspense>
+            </GlobalIsEditingContextProvider>
+          </DocumentMetadataProvider>
         </SynapseContextProvider>
       </ThemeProvider>
     </QueryClientProvider>

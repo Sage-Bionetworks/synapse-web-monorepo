@@ -27,9 +27,13 @@ export default function ExpandableTableDataCell(
          */
         const contentElement = target.getElementsByTagName('p')[0]
         if (contentElement) {
+          // Add 2px threshold to account for sub-pixel rounding errors
+          const threshold = 2
           setIsOverflowingWhenNotExpanded(
-            contentElement.scrollHeight > contentElement.clientHeight ||
-              contentElement.scrollWidth > contentElement.clientWidth,
+            contentElement.scrollHeight >
+              contentElement.clientHeight + threshold ||
+              contentElement.scrollWidth >
+                contentElement.clientWidth + threshold,
           )
         }
       }

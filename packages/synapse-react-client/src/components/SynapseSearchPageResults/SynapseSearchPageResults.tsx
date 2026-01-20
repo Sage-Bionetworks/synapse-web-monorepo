@@ -5,6 +5,7 @@ import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
 import React, { useState, useEffect } from 'react'
 import { useSearchInfinite } from '@/synapse-queries/search/useSearch'
 import { SearchQuery } from '@sage-bionetworks/synapse-types'
+import { useDocumentMetadata } from '@/utils/context/DocumentMetadataContext'
 
 export type SynapseSearchPageResultsProps = {
   query?: SearchQuery
@@ -13,6 +14,9 @@ export type SynapseSearchPageResultsProps = {
 
 export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   const { query, setQuery } = props
+
+  // Set page title (replaces jsniUtils.setPageTitle(DisplayConstants.LABEL_SEARCH) from Java)
+  useDocumentMetadata({ title: `Search: ${query?.queryTerm?.join(' ')}` })
 
   // Capture local state to prevent search from executing on every keystroke
   // Join query terms so that textfield input looks correct

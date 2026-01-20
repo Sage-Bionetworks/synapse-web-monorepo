@@ -18,6 +18,7 @@ export type AutocompleteCellProps = CellProps & {
   setRowData: (value: AutocompleteOption) => void
   choices: AutocompleteOption[]
   colType?: JSONSchema7Type
+  clearValue?: undefined | null
 }
 
 export function castCellValueToString(toCast: any): string {
@@ -38,6 +39,7 @@ export function AutocompleteCell({
   focus,
   stopEditing,
   active,
+  clearValue = undefined,
 }: AutocompleteCellProps) {
   const [menuIsOpen, setMenuIsOpen] = useState(false)
   const textInputRef = useRef<HTMLInputElement>(null)
@@ -107,7 +109,9 @@ export function AutocompleteCell({
         stopEditing({ nextRow: false })
       }}
       onChange={(_e, newVal, reason) => {
-        if (reason === 'createOption') {
+        if (reason === 'clear') {
+          setRowData(clearValue)
+        } else if (reason === 'createOption') {
           // The user typed an option that wasn't a defined enum. Try to cast it to the correct type
           setRowData(
             parseFreeTextGivenJsonSchemaType(newVal as string, colType),
@@ -159,15 +163,22 @@ export function AutocompleteCell({
 export type AutocompleteColumnProps = {
   choices: AutocompleteOption[]
   colType?: JSONSchema7Type
+  clearValue: undefined | null
 }
 
 export function autocompleteColumn({
   choices,
   colType,
+  clearValue,
 }: AutocompleteColumnProps): Partial<Column> {
   return {
     component: ((props: Omit<AutocompleteCellProps, 'choices'>) => (
-      <AutocompleteCell {...props} choices={choices} colType={colType} />
+      <AutocompleteCell
+        {...props}
+        choices={choices}
+        colType={colType}
+        clearValue={clearValue}
+      />
     )) as CellComponent,
     // If we update our enums to support labels, then we can update copy to copy the label and paste to lookup the mapping from label -> value
     copyValue: ({ rowData }) => rowData,
