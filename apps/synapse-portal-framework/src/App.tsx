@@ -8,12 +8,18 @@ import Footer from './components/Footer'
 import Navbar from './components/navbar/Navbar'
 import { useDocumentTitleFromRoutes } from './utils/useDocumentTitleFromRoutes'
 
-export default function App(props: PropsWithChildren) {
+export type AppProps = PropsWithChildren<{
+  /** If true, redirects unauthenticated users to OneSage login after session initialization */
+  requireAuthentication?: boolean
+}>
+
+export default function App(props: AppProps) {
+  const { requireAuthentication } = props
   useDocumentTitleFromRoutes()
 
   return (
     <SynapseErrorBoundary>
-      <AppInitializer>
+      <AppInitializer requireAuthentication={requireAuthentication}>
         <SynapseToastContainer />
         <Navbar />
         <CookiesNotification />

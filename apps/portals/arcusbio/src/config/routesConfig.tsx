@@ -11,7 +11,11 @@ import { dataQueryWrapperPlotNavProps } from './synapseConfigs/data'
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: <App>{/* Add any global banners here if needed */}</App>,
+    element: (
+      <App requireAuthentication={true}>
+        {/* Add any global banners here if needed */}
+      </App>
+    ),
     children: [
       ...sharedRoutes,
       {

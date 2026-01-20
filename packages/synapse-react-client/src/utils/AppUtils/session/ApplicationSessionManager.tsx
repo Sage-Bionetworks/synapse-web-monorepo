@@ -5,10 +5,53 @@ import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/gen
 import dayjs from 'dayjs'
 import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { SynapseContextProvider, SynapseContextType } from '../../context'
+import {
+  SynapseContextProvider,
+  SynapseContextType,
+  useSynapseContext,
+} from '../../context'
 import useDetectSSOCode from '../../hooks/useDetectSSOCode'
-import { restoreLastPlace } from '../AppUtils'
+import {
+  restoreLastPlace,
+  storeRedirectURLForOneSageLoginAndGotoURL,
+} from '../AppUtils'
+import { useApplicationSessionContext } from './ApplicationSessionContext'
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
+import { useOneSageURL } from '../../hooks/useOneSageURL'
+import { BlockingLoader } from '@/components/LoadingScreen/LoadingScreen'
+
+/**
+ * Internal component that redirects unauthenticated users to OneSage login
+ * after session initialization is complete
+ */
+function AuthenticationGuard({ children }: PropsWithChildren) {
+  const { isAuthenticated } = useSynapseContext()
+  const { hasInitializedSession } = useApplicationSessionContext()
+  const oneSageURL = useOneSageURL()
+  const [hasCheckedAuth, setHasCheckedAuth] = useState(false)
+
+  useEffect(() => {
+    if (hasInitializedSession && !hasCheckedAuth) {
+      setHasCheckedAuth(true)
+      if (!isAuthenticated) {
+        storeRedirectURLForOneSageLoginAndGotoURL(oneSageURL.toString())
+      }
+    }
+  }, [hasInitializedSession, isAuthenticated, hasCheckedAuth, oneSageURL])
+
+  // Show loading screen while checking authentication
+  if (!hasCheckedAuth) {
+    return <BlockingLoader show={true} hintText="Checking authentication..." />
+  }
+
+  // If authenticated, show children
+  // If not authenticated, the redirect has been triggered above, show loading
+  return isAuthenticated ? (
+    <>{children}</>
+  ) : (
+    <BlockingLoader show={true} hintText="Redirecting to sign in..." />
+  )
+}
 
 export type ApplicationSessionManagerProps = PropsWithChildren<{
   downloadCartPageUrl?: string
@@ -27,6 +70,8 @@ export type ApplicationSessionManagerProps = PropsWithChildren<{
     twoFaResetToken: string,
   ) => void
   appId?: SynapseContextType['appId']
+  /* If true, redirects unauthenticated users to OneSage login after session initialization */
+  requireAuthentication?: boolean
 }>
 
 /**
@@ -54,6 +99,7 @@ export function ApplicationSessionManager(
     onNoAccessTokenFound,
     onTwoFactorAuthResetThroughSSO,
     appId,
+    requireAuthentication,
   } = props
   const navigate = useNavigate()
 
@@ -196,7 +242,11 @@ export function ApplicationSessionManager(
           appId: appId,
         }}
       >
-        {children}
+        {requireAuthentication ? (
+          <AuthenticationGuard>{children}</AuthenticationGuard>
+        ) : (
+          children
+        )}
       </SynapseContextProvider>
     </ApplicationSessionContextProvider>
   )
