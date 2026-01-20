@@ -22,7 +22,6 @@ import { EntityLink } from '../EntityLink'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { UserBadge } from '../UserCard/UserBadge'
 import { EntityColumnImage } from '../widgets/EntityColumnImage'
-import { isExternalLink } from '@/utils/functions/IsExternalLink'
 import Linkify from './Linkify'
 
 type SynapseCardLabelProps = {
