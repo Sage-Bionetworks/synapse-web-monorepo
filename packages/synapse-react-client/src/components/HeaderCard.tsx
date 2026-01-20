@@ -23,6 +23,7 @@ export type HeaderCardProps = {
   values?: CardLabel[]
   isAlignToLeftNav?: boolean
   descriptionConfig?: DescriptionConfig
+  charCountCutoff?: number
   href?: string
   target?: string
   icon: React.ReactNode

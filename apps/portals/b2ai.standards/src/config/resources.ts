@@ -12,7 +12,7 @@ type TableInfoMap = Record<string, Partial<TableInfo>>
 const tableInfo: TableInfoMap = {
   DST_denormalized: {
     name: 'DST_denormalized',
-    id: 'syn65676531.75', // current version of DST_denormalized
+    id: 'syn65676531.82', // current version of DST_denormalized
   },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
   DataSet_denormalized: {
@@ -24,11 +24,11 @@ const tableInfo: TableInfoMap = {
   // Organization: { name: 'Organization', id: 'syn63096836.31' },
   Organization_denormalized: {
     name: 'Organization',
-    id: 'syn69693360.20', // current version of Organization_denormalized
+    id: 'syn69693360.21', // current version of Organization_denormalized
   },
   D4D_content: {
     name: 'D4D_content',
-    id: 'syn68885644.5', // current version of D4D_content
+    id: 'syn68885644.8', // current version of D4D_content
   },
   // UseCase: { name: 'UseCase', id: 'syn63096837' }, // not using this, might in the future?
 }
@@ -109,7 +109,8 @@ export const DST_TABLE_COLUMN_CONSTS: ColumnConsts = {
   CATEGORY: 'category',
   DESCRIPTION: 'description',
   COLLECTIONS: 'collections',
-  HAS_AI_APPLICATION: 'hasAIApplication',
+  HAS_APPLICATION: 'hasApplication',
+  APPLICATION_COUNT: 'applicationCount',
   MATURE: 'mature',
   CONCERNS_DATA_TOPIC: 'concerns_data_topic',
   HAS_RELEVANT_DATA_SUBSTRATE: 'has_relevant_data_substrate',
@@ -140,6 +141,8 @@ export const standardsSql = `
         , name
         , category
         , collections
+        , JSON_EXTRACT(hasApplication, '$[*].name') as hasApplication
+        , applicationCount
         , topic
         , dataTypes
         , ${DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_LINKS}
@@ -147,7 +150,6 @@ export const standardsSql = `
         , isOpen
         , registration
         , "usedInBridge2AI"
-        , hasAIApplication
     FROM ${tableInfo.DST_denormalized.id}
 `
 
@@ -165,6 +167,8 @@ export const standardsDetailsPageSQL = `
             URL                                              as url,
             category,
             collections,
+            hasApplication,
+            applicationCount,
             topic,
             dataTypes,
             ${DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_NAMES},

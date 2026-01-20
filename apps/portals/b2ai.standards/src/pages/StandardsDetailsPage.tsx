@@ -22,6 +22,7 @@ import {
   standardsDetailsPageSQL,
 } from '@/config/resources'
 import { standardsColumnLinks } from '@/config/synapseConfigs/standards'
+import { CardsFromData, CardData } from '@/components/CardsFromData'
 
 export const standardsCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.STANDARD_DATA_MODEL,
@@ -34,6 +35,7 @@ export const standardsCardSchema: TableToGenericCardMapping = {
     'collections',
     'topic',
     'dataTypes',
+    'applicationCount',
     // DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION,
     // DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS,
     // DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
@@ -83,6 +85,34 @@ export const standardDetailsPageContent: DetailsPageContentType = [
           } else {
             return <SkeletonTable numRows={8} numCols={1} />
           }
+        }}
+      </DetailsPageContextConsumer>
+    ),
+  },
+  {
+    id: 'Applications',
+    title: 'Applications',
+    element: (
+      <DetailsPageContextConsumer columnName={'hasApplication'}>
+        {({ value }) => {
+          if (!value) return null
+          const apps = JSON.parse(value) as Array<{
+            id: string
+            name: string
+            category: string
+            references?: string[]
+            description: string
+            used_in_bridge2ai: boolean
+          }>
+          const cards: CardData[] = apps.map(app => ({
+            key: app.id,
+            // omit type to avoid redundant "APPLICATION" header under "Applications" section
+            title: app.name,
+            subtitle: app.used_in_bridge2ai ? 'Used in Bridge2AI' : undefined,
+            description: app.description || '',
+            links: app.references,
+          }))
+          return <CardsFromData data={cards} />
         }}
       </DetailsPageContextConsumer>
     ),
@@ -154,6 +184,7 @@ export default function StandardsDetailsPage() {
             secondaryLabelLimit: 6,
             isHeader: true,
             headerCardVariant: 'HeaderCardV2',
+            charCountCutoff: 800,
             ctaLinkConfig: {
               text: 'View Standard on External Website',
               link: 'url',

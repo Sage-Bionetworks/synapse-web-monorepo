@@ -37,7 +37,7 @@ const iconConfiguration: Record<
   [RestrictionUiType.Accessible]: {
     icon: 'accessOpen',
     color: theme => theme.palette.success.main,
-    tooltipText: '',
+    tooltipText: 'You have access to this item.',
   },
   [RestrictionUiType.AccessibleExternalFileHandle]: {
     icon: 'linkOff',

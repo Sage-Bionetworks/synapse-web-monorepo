@@ -22,6 +22,23 @@ function getHeaderClassName(isRequired: boolean): string {
   return isRequired ? 'header-cell-required' : 'header-cell'
 }
 
+function createDeleteValue(columnName: string, isRequired?: boolean) {
+  return ({ rowData }: { rowData: Record<string, unknown> }) => ({
+    ...rowData,
+    [columnName]: isRequired ? null : undefined,
+  })
+}
+
+function createParseUserInput(isRequired?: boolean) {
+  return (value: string) => {
+    const trimmedValue = value.trim()
+    if (trimmedValue === '') {
+      return isRequired ? null : undefined
+    }
+    return trimmedValue
+  }
+}
+
 const COLUMN_FACTORIES = {
   multipleEnum: (config: ColumnConfig) => ({
     ...keyColumn(
@@ -30,12 +47,14 @@ const COLUMN_FACTORIES = {
         choices: config.enumeratedValues ?? [],
         colType: config.typeInfo?.type || null,
         limitTags: 3,
+        clearValue: config.isRequired ? null : undefined,
       }),
     ),
     title: config.columnName,
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
     disabled: config.disabled,
+    deleteValue: createDeleteValue(config.columnName, config.isRequired),
   }),
 
   boolean: (config: ColumnConfig) => ({
@@ -44,12 +63,14 @@ const COLUMN_FACTORIES = {
       autocompleteColumn({
         choices: [true, false],
         colType: 'boolean',
+        clearValue: config.isRequired ? null : undefined,
       }),
     ),
     title: config.columnName,
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
     disabled: config.disabled,
+    deleteValue: createDeleteValue(config.columnName, config.isRequired),
   }),
 
   number: (config: ColumnConfig) => ({
@@ -58,6 +79,7 @@ const COLUMN_FACTORIES = {
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
     disabled: config.disabled,
+    deleteValue: createDeleteValue(config.columnName, config.isRequired),
   }),
 
   enumerated: (config: ColumnConfig) => ({
@@ -66,12 +88,14 @@ const COLUMN_FACTORIES = {
       autocompleteColumn({
         choices: config.enumeratedValues ?? [],
         colType: config.typeInfo?.type || null,
+        clearValue: config.isRequired ? null : undefined,
       }),
     ),
     title: config.columnName,
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
     disabled: config.disabled,
+    deleteValue: createDeleteValue(config.columnName, config.isRequired),
   }),
 
   'date-time': (config: ColumnConfig) => ({
@@ -85,18 +109,24 @@ const COLUMN_FACTORIES = {
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: Math.max(calculateColumnWidth(config.columnName), 215),
     disabled: config.disabled,
+    deleteValue: createDeleteValue(config.columnName, config.isRequired),
   }),
 
   text: (config: ColumnConfig) => ({
     ...keyColumn(
       config.columnName,
-      createTextColumn({ continuousUpdates: false }),
+      createTextColumn({
+        continuousUpdates: false,
+        deletedValue: undefined,
+        parseUserInput: createParseUserInput(config.isRequired),
+      }),
     ),
     title: config.columnName,
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: calculateColumnWidth(config.columnName),
     cellClassName: 'MuiInputBase-input',
     disabled: config.disabled,
+    deleteValue: createDeleteValue(config.columnName, config.isRequired),
   }),
 }
 
