@@ -107,7 +107,7 @@ export function SynapseFooter({
                   {
                     text: 'Contact Us',
                     props: {
-                      href: 'https://sagebionetworks.jira.com/servicedesk/customer/portal/9',
+                      href: 'https://sagebionetworks.jira.com/servicedesk/customer/portals',
                     },
                   },
                   {
@@ -132,7 +132,7 @@ export function SynapseFooter({
                 synapseLinks={[
                   {
                     text: 'Blog',
-                    props: { href: 'https://sagebionetworks.pubpub.org/' },
+                    props: { href: 'https://blog.synapse.org/' },
                   },
                   {
                     text: 'FAQs',

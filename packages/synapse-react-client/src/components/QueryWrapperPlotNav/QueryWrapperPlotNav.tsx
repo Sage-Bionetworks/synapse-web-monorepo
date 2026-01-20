@@ -273,7 +273,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
   )
 }
 
-function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
+export default function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
   const {
     sql: deprecatedSql,
     tableConfiguration,
@@ -387,5 +387,3 @@ function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
     </QueryWrapper>
   )
 }
-
-export default QueryWrapperPlotNav

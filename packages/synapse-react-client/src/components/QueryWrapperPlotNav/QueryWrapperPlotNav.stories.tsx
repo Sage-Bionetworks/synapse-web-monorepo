@@ -42,22 +42,7 @@ const meta: Meta<QueryWrapperPlotNavProps> = {
 
 export default meta
 type Story = StoryObj<typeof meta>
-const handlePlotClick = (event: QueryWrapperSynapsePlotRowClickEvent) => {
-  // window.alert(`Handling click on this row: ${JSON.stringify(event.row)}`)
-  const { getCurrentQueryRequest, executeQueryRequest } = event.queryContext
-  const requestCopy = getCurrentQueryRequest()
-  requestCopy.query.additionalFilters = [
-    ...(requestCopy.query.additionalFilters || []),
-    {
-      concreteType:
-        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-      columnName: 'resourceType',
-      operator: ColumnSingleValueFilterOperator.EQUAL,
-      values: [event.row.values[0] as string],
-    },
-  ]
-  executeQueryRequest(requestCopy)
-}
+
 export const DataCatalogCards: Story = {
   args: {
     name: 'Data Catalog',
@@ -79,6 +64,23 @@ export const DataCatalogCards: Story = {
       },
     },
   },
+}
+
+const handlePlotClick = (event: QueryWrapperSynapsePlotRowClickEvent) => {
+  // window.alert(`Handling click on this row: ${JSON.stringify(event.row)}`)
+  const { getCurrentQueryRequest, executeQueryRequest } = event.queryContext
+  const requestCopy = getCurrentQueryRequest()
+  requestCopy.query.additionalFilters = [
+    ...(requestCopy.query.additionalFilters || []),
+    {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      columnName: 'resourceType',
+      operator: ColumnSingleValueFilterOperator.EQUAL,
+      values: [event.row.values[0] as string],
+    },
+  ]
+  executeQueryRequest(requestCopy)
 }
 
 export const Cards: Story = {

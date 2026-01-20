@@ -86,7 +86,7 @@ function PeopleDetailsPage() {
                     cardConfiguration={publicationsCardConfiguration}
                     sql={publicationSql}
                     columnAliases={columnAliases}
-                    sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                    sqlOperator={ColumnSingleValueFilterOperator.IN}
                     searchParams={{
                       pubMedId: value!,
                     }}
@@ -107,7 +107,7 @@ function PeopleDetailsPage() {
                     cardConfiguration={datasetCardConfiguration}
                     sql={datasetsSql}
                     columnAliases={columnAliases}
-                    sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                    sqlOperator={ColumnSingleValueFilterOperator.IN}
                     searchParams={{
                       datasetAlias: value!,
                     }}
@@ -128,7 +128,7 @@ function PeopleDetailsPage() {
                     cardConfiguration={toolsConfiguration}
                     sql={toolsSql}
                     columnAliases={columnAliases}
-                    sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                    sqlOperator={ColumnSingleValueFilterOperator.IN}
                     searchParams={{
                       toolName: value!,
                     }}
