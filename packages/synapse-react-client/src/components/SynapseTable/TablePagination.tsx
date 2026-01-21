@@ -37,14 +37,19 @@ export const TablePagination = (): React.ReactNode => {
   const resolvedPageSize = Math.min(currentLimit ?? pageSize, safeQueryCount)
 
   const pageSizeOptions = [10, 25, 100, 500]
-  if (currentLimit && !pageSizeOptions.includes(currentLimit)) {
-    pageSizeOptions.push(currentLimit)
-    pageSizeOptions.sort((a, b) => a - b)
+
+  const filteredOptions = maxRowsPerPage
+    ? pageSizeOptions.filter(option => option <= maxRowsPerPage)
+    : pageSizeOptions
+
+  if (currentLimit && !filteredOptions.includes(currentLimit)) {
+    filteredOptions.push(currentLimit)
+    filteredOptions.sort((a, b) => a - b)
   }
 
   const pageSizeOptionsBasedOnData = Array.from(
     new Set([
-      ...pageSizeOptions.filter(v => v <= safeQueryCount),
+      ...filteredOptions.filter(v => v <= safeQueryCount),
       resolvedPageSize,
     ]),
   ).sort((a, b) => a - b)
