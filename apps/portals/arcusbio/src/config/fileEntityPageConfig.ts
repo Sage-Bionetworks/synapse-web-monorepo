@@ -1,14 +1,14 @@
 import { FileEntityPageConfig } from '@sage-bionetworks/synapse-portal-framework/types/portal-config'
 
 const fileEntityPageConfig: FileEntityPageConfig = {
-  showWiki: false,
-  showProvenance: false,
-  showContentSize: false,
-  showContentMd5: false,
+  showWiki: true,
+  showProvenance: true,
+  showContentSize: true,
+  showContentMd5: true,
   showStorageLocation: false,
-  showModifiedOn: false,
-  showAnnotations: false,
-  restrictSynapseLinkCardToEditableEntity: false,
+  showModifiedOn: true,
+  showAnnotations: true,
+  restrictSynapseLinkCardToEditableEntity: true,
 }
 
 export default fileEntityPageConfig
