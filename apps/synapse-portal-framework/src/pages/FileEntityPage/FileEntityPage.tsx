@@ -46,10 +46,7 @@ function FileEntityPage() {
 
   const showLinkCard: boolean =
     !restrictSynapseLinkCardToEditableEntity ||
-    Boolean(
-      restrictSynapseLinkCardToEditableEntity &&
-        entityPermissions?.canEdit === true,
-    )
+    entityPermissions?.canEdit === true
 
   const fileEntityPageSections = [
     showLinkCard && {
