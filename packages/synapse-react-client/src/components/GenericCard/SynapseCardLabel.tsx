@@ -12,8 +12,10 @@ import {
 import dayjs from 'dayjs'
 import { isEmpty } from 'lodash-es'
 import { CSSProperties, Fragment, ReactNode } from 'react'
+import { Link as RouterLink, useInRouterContext } from 'react-router'
 import { ColumnSpecifiedLink, MarkdownLink } from '../CardContainerLogic'
 import { TargetEnum } from '@/utils/html/TargetEnum'
+import { isExternalLink } from '@/utils/functions/IsExternalLink'
 import {
   EntityImage,
   MapValueToReactComponentConfig,
@@ -53,6 +55,9 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
     rowData,
     rowId,
   } = props
+
+  const inRouterContext = useInRouterContext()
+
   if (!value) {
     return <p>{value}</p>
   }
@@ -180,21 +185,34 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
         if (isEmpty(href)) {
           labelContent = <>{value}</>
         } else {
+          const hrefIsExternal = Boolean(href && isExternalLink(href))
           labelContent = (
             <p>
               {split.map((el, index) => {
                 return (
                   <Fragment key={el}>
-                    <Link
-                      href={href ?? undefined}
-                      target={linkTarget ?? TargetEnum.NEW_WINDOW}
-                      rel="noopener noreferrer"
-                      key={el}
-                      className={newClassName}
-                      style={style}
-                    >
-                      {el}
-                    </Link>
+                    {!hrefIsExternal && inRouterContext ? (
+                      <Link
+                        component={RouterLink}
+                        to={href ?? ''}
+                        key={el}
+                        className={newClassName}
+                        style={style}
+                      >
+                        {el}
+                      </Link>
+                    ) : (
+                      <Link
+                        href={href ?? undefined}
+                        target={linkTarget ?? TargetEnum.NEW_WINDOW}
+                        rel="noopener noreferrer"
+                        key={el}
+                        className={newClassName}
+                        style={style}
+                      >
+                        {el}
+                      </Link>
+                    )}
                     {index < split.length - 1 && (
                       <span style={{ marginRight: 4 }}>, </span>
                     )}
@@ -237,15 +255,27 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
 
             return (
               <Fragment key={el}>
-                <Link
-                  href={href}
-                  key={el}
-                  className={newClassName}
-                  style={style}
-                  target={linkTarget ?? TargetEnum.CURRENT_WINDOW}
-                >
-                  {el}
-                </Link>
+                {!isExternalLink(href) && inRouterContext ? (
+                  <Link
+                    component={RouterLink}
+                    to={href}
+                    key={el}
+                    className={newClassName}
+                    style={style}
+                  >
+                    {el}
+                  </Link>
+                ) : (
+                  <Link
+                    href={href}
+                    key={el}
+                    className={newClassName}
+                    style={style}
+                    target={linkTarget ?? TargetEnum.CURRENT_WINDOW}
+                  >
+                    {el}
+                  </Link>
+                )}
                 {index < split.length - 1 && (
                   <span style={{ marginRight: 4 }}>, </span>
                 )}

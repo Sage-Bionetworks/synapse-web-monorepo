@@ -160,11 +160,11 @@ export function getLinkParams(
     href = getCardLinkHref(cardLinkConfig, data, schema, rowId) ?? ''
   }
 
-  const defaultTarget =
-    href && isExternalLink(href)
-      ? TargetEnum.NEW_WINDOW
-      : TargetEnum.CURRENT_WINDOW
+  const isExternal = Boolean(href && isExternalLink(href))
+  const defaultTarget = isExternal
+    ? TargetEnum.NEW_WINDOW
+    : TargetEnum.CURRENT_WINDOW
 
   const target = cardLinkConfig?.target ?? defaultTarget
-  return { href, target }
+  return { href, target, isExternal }
 }

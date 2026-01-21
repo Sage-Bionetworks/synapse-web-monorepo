@@ -1,6 +1,7 @@
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
-import { Box, SxProps } from '@mui/material'
+import { Box, Link, SxProps } from '@mui/material'
 import { ForwardedRef, forwardRef } from 'react'
+import { Link as RouterLink, useInRouterContext } from 'react-router'
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
 import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
@@ -25,6 +26,7 @@ export type HeaderCardProps = {
   charCountCutoff?: number
   href?: string
   target?: string
+  isExternal?: boolean
   icon: React.ReactNode
   headerCardVariant?: HeaderCardVariant
   cardTopContent?: React.ReactNode
@@ -50,12 +52,15 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
     descriptionConfig,
     href,
     target,
+    isExternal,
     icon,
     cardTopContent,
     cardTopButtons,
     sustainabilityScorecard,
     sx,
   } = props
+
+  const inRouterContext = useInRouterContext()
 
   const hideIcon = Boolean(sustainabilityScorecard)
   const descriptionConfiguration: DescriptionConfig = {
@@ -107,13 +112,23 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
                   <div>
                     <h3 className="SRC-boldText" style={{ margin: 'none' }}>
                       {href ? (
-                        <a
-                          target={target}
-                          href={href}
-                          className="highlight-link"
-                        >
-                          {title}
-                        </a>
+                        !isExternal && inRouterContext ? (
+                          <Link
+                            component={RouterLink}
+                            to={href}
+                            className="highlight-link"
+                          >
+                            {title}
+                          </Link>
+                        ) : (
+                          <Link
+                            target={target}
+                            href={href}
+                            className="highlight-link"
+                          >
+                            {title}
+                          </Link>
+                        )
                       ) : (
                         <span>{title}</span>
                       )}

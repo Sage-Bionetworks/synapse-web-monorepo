@@ -3,6 +3,7 @@ import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
 import { Box, Link, Stack } from '@mui/material'
 import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
 import React, { CSSProperties, forwardRef } from 'react'
+import { Link as RouterLink, useInRouterContext } from 'react-router'
 import { ColumnIconConfigs, DescriptionConfig } from '../CardContainerLogic'
 import HeaderCard, { HeaderCardVariant } from '../HeaderCard'
 import { CardFooter } from '../row_renderers/utils'
@@ -16,7 +17,11 @@ export type GenericCardProps = {
   /** The title displayed on the card. */
   title: string
   /** Optionally provide href/target if the title should be a link */
-  titleLinkConfiguration?: { href: string; target: string }
+  titleLinkConfiguration?: {
+    href: string
+    target: string
+    isExternal?: boolean
+  }
   /** Optionally provide configuration if the title should be a link to a Synapse FileHandle */
   titleAsFileHandleLinkConfiguration?: {
     /** The FileHandleAssociation used to get access to the file handle */
@@ -66,6 +71,7 @@ export type GenericCardProps = {
     text: React.ReactNode
     href?: string
     target?: string
+    isExternal?: boolean
   }
   /**
    * The rendered icon list on the card
@@ -120,6 +126,7 @@ export const GenericCard = forwardRef(function GenericCard(
     charCountCutoff,
   } = props
 
+  const inRouterContext = useInRouterContext()
   const showFooter = labels.length > 0
 
   const style: CSSProperties = {
@@ -145,6 +152,7 @@ export const GenericCard = forwardRef(function GenericCard(
         values={labels}
         href={titleLinkConfiguration?.href}
         target={titleLinkConfiguration?.target}
+        isExternal={titleLinkConfiguration?.isExternal}
         ctaLinkConfig={ctaLinkConfig}
         isAlignToLeftNav={true}
         secondaryLabelLimit={secondaryLabelLimit}
@@ -195,6 +203,7 @@ export const GenericCard = forwardRef(function GenericCard(
                   title={title}
                   href={titleLinkConfiguration?.href}
                   target={titleLinkConfiguration?.target}
+                  isExternal={titleLinkConfiguration?.isExternal}
                 />
               )}
               {titleAsFileHandleLinkConfiguration && (
@@ -218,13 +227,19 @@ export const GenericCard = forwardRef(function GenericCard(
           />
           {ctaLinkConfig && ctaLinkConfig.text && ctaLinkConfig.href && (
             <Box sx={{ mt: '20px' }}>
-              <Link
-                target={ctaLinkConfig.target}
-                rel="noopener noreferrer"
-                href={ctaLinkConfig.href}
-              >
-                {ctaLinkConfig.text}
-              </Link>
+              {!ctaLinkConfig.isExternal && inRouterContext ? (
+                <Link component={RouterLink} to={ctaLinkConfig.href}>
+                  {ctaLinkConfig.text}
+                </Link>
+              ) : (
+                <Link
+                  target={ctaLinkConfig.target}
+                  rel="noopener noreferrer"
+                  href={ctaLinkConfig.href}
+                >
+                  {ctaLinkConfig.text}
+                </Link>
+              )}
             </Box>
           )}
         </div>
