@@ -9,6 +9,7 @@ import { SynapseContextProvider, SynapseContextType } from '../../context'
 import useDetectSSOCode from '../../hooks/useDetectSSOCode'
 import { restoreLastPlace } from '../AppUtils'
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
+import { AuthenticationGuard } from './AuthenticationGuard'
 
 export type ApplicationSessionManagerProps = PropsWithChildren<{
   downloadCartPageUrl?: string
@@ -27,6 +28,8 @@ export type ApplicationSessionManagerProps = PropsWithChildren<{
     twoFaResetToken: string,
   ) => void
   appId?: SynapseContextType['appId']
+  /* If true, redirects unauthenticated users to OneSage login after session initialization */
+  requireAuthentication?: boolean
 }>
 
 /**
@@ -54,6 +57,7 @@ export function ApplicationSessionManager(
     onNoAccessTokenFound,
     onTwoFactorAuthResetThroughSSO,
     appId,
+    requireAuthentication,
   } = props
   const navigate = useNavigate()
 
@@ -196,7 +200,11 @@ export function ApplicationSessionManager(
           appId: appId,
         }}
       >
-        {children}
+        {requireAuthentication ? (
+          <AuthenticationGuard>{children}</AuthenticationGuard>
+        ) : (
+          children
+        )}
       </SynapseContextProvider>
     </ApplicationSessionContextProvider>
   )
