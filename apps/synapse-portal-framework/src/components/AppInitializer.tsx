@@ -11,7 +11,12 @@ import {
 import { useOneSageURL } from 'synapse-react-client/utils/hooks/useOneSageURL'
 import { KNOWN_SYNAPSE_ORG_URLS } from 'synapse-react-client/utils/functions/getEndpoint'
 
-function AppInitializer(props: PropsWithChildren<Record<never, never>>) {
+export type AppInitializerProps = PropsWithChildren<{
+  requireAuthentication?: boolean
+}>
+
+function AppInitializer(props: AppInitializerProps) {
+  const { requireAuthentication } = props
   const [cookiePreferences] = useCookiePreferences()
   const [redirectUrl, setRedirectUrl] = useState<string | undefined>(undefined)
 
@@ -64,6 +69,7 @@ function AppInitializer(props: PropsWithChildren<Record<never, never>>) {
     <ApplicationSessionManager
       downloadCartPageUrl={'/DownloadCart'}
       appId={import.meta.env.VITE_PORTAL_KEY}
+      requireAuthentication={requireAuthentication}
     >
       {!isFramed && props.children}
       <RedirectDialog

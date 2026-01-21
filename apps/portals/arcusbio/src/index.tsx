@@ -13,6 +13,7 @@ import logoHeaderConfig from './config/logoHeaderConfig'
 import { navbarConfig } from './config/navbarConfig'
 import palette from './config/paletteConfig'
 import routes from './config/routesConfig'
+import fileEntityPageConfig from './config/fileEntityPageConfig'
 
 const container = document.getElementById('root')
 
@@ -29,6 +30,7 @@ root.render(
       logoHeaderConfig={logoHeaderConfig}
       logoFooterConfig={logoFooterConfig}
       navbarConfig={navbarConfig}
+      fileEntityPageConfig={fileEntityPageConfig}
     />
   </StrictMode>,
 )
