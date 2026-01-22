@@ -42,4 +42,14 @@ describe('useSmartLink', () => {
       rel: 'noopener noreferrer',
     })
   })
+
+  it('returns "a" component for internal links NOT in useInRouterContext', () => {
+    useInRouterContextMock.mockReturnValue(false)
+    const { result } = renderHook(() => useSmartLink('/dashboard'))
+
+    expect(result.current).toEqual({
+      component: 'a',
+      href: '/dashboard',
+    })
+  })
 })
