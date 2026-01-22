@@ -166,5 +166,5 @@ export function getLinkParams(
     : TargetEnum.CURRENT_WINDOW
 
   const target = cardLinkConfig?.target ?? defaultTarget
-  return { href, target, isExternal }
+  return { href, target }
 }

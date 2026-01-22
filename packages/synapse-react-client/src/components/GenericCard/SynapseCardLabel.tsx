@@ -2,7 +2,7 @@ import { CardLink } from '@/components/CardContainer/CardLink'
 import { getValueOrMultiValue } from '@/components/GenericCard/CardUtils'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { getColumnIndex } from '@/utils/functions/index'
-import { Link, Tooltip } from '@mui/material'
+import { Tooltip } from '@mui/material'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -12,10 +12,8 @@ import {
 import dayjs from 'dayjs'
 import { isEmpty } from 'lodash-es'
 import { CSSProperties, Fragment, ReactNode } from 'react'
-import { Link as RouterLink, useInRouterContext } from 'react-router'
 import { ColumnSpecifiedLink, MarkdownLink } from '../CardContainerLogic'
 import { TargetEnum } from '@/utils/html/TargetEnum'
-import { isExternalLink } from '@/utils/functions/IsExternalLink'
 import {
   EntityImage,
   MapValueToReactComponentConfig,
@@ -25,6 +23,7 @@ import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { UserBadge } from '../UserCard/UserBadge'
 import { EntityColumnImage } from '../widgets/EntityColumnImage'
 import Linkify from './Linkify'
+import { SmartLink } from '../SmartLink/SmartLink'
 
 type SynapseCardLabelProps = {
   value: string
@@ -55,8 +54,6 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
     rowData,
     rowId,
   } = props
-
-  const inRouterContext = useInRouterContext()
 
   if (!value) {
     return <p>{value}</p>
@@ -185,34 +182,20 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
         if (isEmpty(href)) {
           labelContent = <>{value}</>
         } else {
-          const hrefIsExternal = Boolean(href && isExternalLink(href))
           labelContent = (
             <p>
               {split.map((el, index) => {
                 return (
                   <Fragment key={el}>
-                    {!hrefIsExternal && inRouterContext ? (
-                      <Link
-                        component={RouterLink}
-                        to={href ?? ''}
-                        key={el}
-                        className={newClassName}
-                        style={style}
-                      >
-                        {el}
-                      </Link>
-                    ) : (
-                      <Link
-                        href={href ?? undefined}
-                        target={linkTarget ?? TargetEnum.NEW_WINDOW}
-                        rel="noopener noreferrer"
-                        key={el}
-                        className={newClassName}
-                        style={style}
-                      >
-                        {el}
-                      </Link>
-                    )}
+                    <SmartLink
+                      href={href ?? ''}
+                      target={linkTarget ?? TargetEnum.NEW_WINDOW}
+                      key={el}
+                      className={newClassName}
+                      style={style}
+                    >
+                      {el}
+                    </SmartLink>
                     {index < split.length - 1 && (
                       <span style={{ marginRight: 4 }}>, </span>
                     )}
@@ -255,27 +238,14 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
 
             return (
               <Fragment key={el}>
-                {!isExternalLink(href) && inRouterContext ? (
-                  <Link
-                    component={RouterLink}
-                    to={href}
-                    key={el}
-                    className={newClassName}
-                    style={style}
-                  >
-                    {el}
-                  </Link>
-                ) : (
-                  <Link
-                    href={href}
-                    key={el}
-                    className={newClassName}
-                    style={style}
-                    target={linkTarget ?? TargetEnum.CURRENT_WINDOW}
-                  >
-                    {el}
-                  </Link>
-                )}
+                <SmartLink
+                  href={href}
+                  className={newClassName}
+                  style={style}
+                  target={linkTarget ?? TargetEnum.CURRENT_WINDOW}
+                >
+                  {el}
+                </SmartLink>
                 {index < split.length - 1 && (
                   <span style={{ marginRight: 4 }}>, </span>
                 )}

@@ -1,5 +1,4 @@
-import { Link } from '@mui/material'
-import { Link as RouterLink, useInRouterContext } from 'react-router'
+import { SmartLink } from '../SmartLink/SmartLink'
 
 type GenericCardTitleProps = {
   title: string
@@ -9,21 +8,13 @@ type GenericCardTitleProps = {
 }
 
 export function GenericCardTitle(props: GenericCardTitleProps) {
-  const { target, title, href, isExternal } = props
-  const inRouterContext = useInRouterContext()
+  const { target, title, href } = props
 
   if (href) {
-    if (!isExternal && inRouterContext) {
-      return (
-        <Link component={RouterLink} to={href}>
-          {title}
-        </Link>
-      )
-    }
     return (
-      <Link target={target} href={href}>
+      <SmartLink target={target} href={href}>
         {title}
-      </Link>
+      </SmartLink>
     )
   } else {
     return <span>{title}</span>
