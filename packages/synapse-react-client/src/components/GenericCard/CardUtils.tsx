@@ -6,6 +6,7 @@ import {
   SYNAPSE_ENTITY_ID_REGEX,
 } from '@/utils/functions/RegularExpressions'
 import { TargetEnum } from '@/utils/html/TargetEnum'
+import { isExternalLink } from '@/utils/functions/IsExternalLink'
 import {
   ColumnModel,
   Entity,
@@ -150,21 +151,19 @@ export function getLinkParams(
   link = link.trim()
   let href = link
   const doiLink = convertDoiToLink(href)
-  let defaultTarget = TargetEnum.CURRENT_WINDOW
   if (link.match(SYNAPSE_ENTITY_ID_REGEX)) {
     // its a synId
     href = `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Synapse:${link}`
   } else if (doiLink) {
-    defaultTarget = TargetEnum.NEW_WINDOW
     href = doiLink
-  } else if (!cardLinkConfig) {
-    defaultTarget = TargetEnum.NEW_WINDOW
   } else if (cardLinkConfig) {
     href = getCardLinkHref(cardLinkConfig, data, schema, rowId) ?? ''
-    if (href.includes('/DetailsPage')) {
-      defaultTarget = TargetEnum.NEW_WINDOW
-    }
   }
+
+  const isExternal = Boolean(href && isExternalLink(href))
+  const defaultTarget = isExternal
+    ? TargetEnum.NEW_WINDOW
+    : TargetEnum.CURRENT_WINDOW
 
   const target = cardLinkConfig?.target ?? defaultTarget
   return { href, target }
