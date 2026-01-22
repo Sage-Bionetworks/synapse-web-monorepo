@@ -57,4 +57,23 @@ export const explorePageRoutes: RouteObject[] = [
     lazy: () =>
       import('@/pages/Explore/results').then(convertModuleToRouteObject),
   },
+  {
+    path: 'Cohort Builder',
+    children: [
+      {
+        path: 'Individuals',
+        lazy: () =>
+          import('@/pages/Explore/cohortBuilder').then(
+            convertModuleToRouteObject,
+          ),
+      },
+      {
+        path: 'Data',
+        lazy: () =>
+          import('@/pages/Explore/cohortBuilderData').then(
+            convertModuleToRouteObject,
+          ),
+      },
+    ],
+  },
 ]

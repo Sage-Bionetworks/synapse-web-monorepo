@@ -15,6 +15,9 @@ export const programsSql = 'SELECT * FROM syn17024173'
 export const experimentalModelsSql =
   'select * from syn22219805 ORDER BY isFeatured DESC'
 
+export const cohortBuilderSql = 'SELECT * FROM syn72123781'
+export const cohortBuilderFilesSql = 'SELECT * FROM syn72123859'
+
 // PORTALS-2028: /MODEL-ADstrains redirects to "/Explore/Experimental Models" with this facet preselected
 export const modelADStrainsSelectedFacet = {
   columnName: 'program',

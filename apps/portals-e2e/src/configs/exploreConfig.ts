@@ -13,7 +13,12 @@ type ExploreConfig = Record<Portal, ExploreTabTypes>
 // lists the objects (cards, charts, table, people) on each Explore tab per Portal
 const exploreConfig: ExploreConfig = {
   adknowledgeportal: {
-    table_charts: ['Data', 'Experimental Models', 'Target Enabling Resources'],
+    table_charts: [
+      'Data',
+      'Experimental Models',
+      'Target Enabling Resources',
+      'Cohort Builder',
+    ],
     cards: ['Programs'],
     cards_charts: [
       'Projects',

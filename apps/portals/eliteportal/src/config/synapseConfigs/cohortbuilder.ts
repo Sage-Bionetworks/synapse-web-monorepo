@@ -11,8 +11,10 @@ import {
   defaultSearchConfiguration,
   enabledAnalysisPlatforms,
 } from '../resources'
-import { handleSelectedFilesToParticipants } from './handleFilesToParticipants'
-import { handleSelectedParticipantsToFiles } from './handleParticipantsToFiles'
+import {
+  handleSelectedFilesToParticipants,
+  handleSelectedParticipantsToFiles,
+} from '@sage-bionetworks/synapse-portal-framework/shared-config/cohortBuilderHandlers'
 
 const rgbIndex = 1
 
