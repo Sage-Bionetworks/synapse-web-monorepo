@@ -51,6 +51,10 @@ export const TablePagination = (): React.ReactNode => {
     new Set([
       ...filteredOptions.filter(v => v <= safeQueryCount),
       resolvedPageSize,
+      // Only include total count as an option if it doesn't exceed maxRowsPerPage
+      ...(!maxRowsPerPage || safeQueryCount <= maxRowsPerPage
+        ? [safeQueryCount]
+        : []),
     ]),
   ).sort((a, b) => a - b)
 
@@ -60,11 +64,8 @@ export const TablePagination = (): React.ReactNode => {
 
   const handlePageSize = (event: SelectChangeEvent<number>) => {
     const value = event.target.value
-    const clampedValue = maxRowsPerPage
-      ? Math.min(value, maxRowsPerPage)
-      : value
 
-    setPageSize(clampedValue)
+    setPageSize(value)
     goToPage(1)
   }
 
@@ -103,7 +104,8 @@ export const TablePagination = (): React.ReactNode => {
   // Also hide pagination if the query count is unavailable.
   if (
     (currentPage == 1 && queryCount == 1 && pageSize != 1) ||
-    queryCount == undefined
+    queryCount == undefined ||
+    (maxRowsPerPage && maxRowsPerPage < 5)
   ) {
     return null
   }
