@@ -258,7 +258,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   const titleColumnType = titleColumnModel?.columnType
   // wrap link in parens because undefined would throw an error
   const linkValue: string = data[schema[link]] || ''
-  const { href, target, isExternal } = getLinkParams(
+  const { href, target } = getLinkParams(
     linkValue,
     titleLinkConfig,
     data,
@@ -422,15 +422,10 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     doiColumnIndex !== undefined ? data[doiColumnIndex] : undefined
 
   let ctaHref: string | undefined = undefined,
-    ctaTarget: string | undefined = undefined,
-    ctaIsExternal: boolean | undefined = undefined
+    ctaTarget: string | undefined = undefined
   if (ctaLinkConfig) {
     const ctaLinkValue: string = data[schema[ctaLinkConfig.link]] || ''
-    const {
-      href: newCtaHref,
-      target: newCtaTarget,
-      isExternal: newCtaIsExternal,
-    } = getLinkParams(
+    const { href: newCtaHref, target: newCtaTarget } = getLinkParams(
       ctaLinkValue,
       undefined, //card link config
       data,
@@ -439,7 +434,6 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     )
     ctaHref = newCtaHref
     ctaTarget = newCtaTarget
-    ctaIsExternal = newCtaIsExternal
   }
 
   let croissantButton = <></>
@@ -481,7 +475,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       type={type}
       title={title}
       subtitle={subTitle}
-      titleLinkConfiguration={{ target, href, isExternal }}
+      titleLinkConfiguration={{ target, href }}
       cardTypeAdornment={resolvedCardTypeAdornment}
       titleAsFileHandleLinkConfiguration={
         !titleLinkConfig &&
@@ -499,7 +493,6 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
               text: ctaLinkConfig?.text,
               href: ctaHref,
               target: ctaTarget,
-              isExternal: ctaIsExternal,
             }
           : undefined
       }

@@ -4,7 +4,6 @@ type GenericCardTitleProps = {
   title: string
   target?: string
   href?: string
-  isExternal?: boolean
 }
 
 export function GenericCardTitle(props: GenericCardTitleProps) {

@@ -240,6 +240,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
               <Fragment key={el}>
                 <SmartLink
                   href={href}
+                  key={el}
                   className={newClassName}
                   style={style}
                   target={linkTarget ?? TargetEnum.CURRENT_WINDOW}
