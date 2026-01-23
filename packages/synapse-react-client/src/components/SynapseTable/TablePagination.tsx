@@ -20,6 +20,8 @@ import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata
 
 import { usePrefetchTableRows } from './usePrefetchTableData'
 
+const PAGE_SIZE_OPTIONS = [10, 25, 100, 500]
+
 export const TablePagination = (): React.ReactNode => {
   const { goToPage, pageSize, setPageSize, currentPage, currentQueryRequest } =
     useQueryContext()
@@ -30,33 +32,29 @@ export const TablePagination = (): React.ReactNode => {
     data: { queryCount, maxRowsPerPage },
   } = useSuspenseGetQueryMetadata()
 
-  const safeQueryCount = queryCount ?? 0
-
   const currentLimit = currentQueryRequest.query.limit
+  const resolvedPageSize = currentLimit ?? pageSize
 
-  const resolvedPageSize = Math.min(currentLimit ?? pageSize, safeQueryCount)
+  // Filter by backend limit maxRowsPerPage
+  let pageSizeOptions = maxRowsPerPage
+    ? PAGE_SIZE_OPTIONS.filter(option => option < maxRowsPerPage)
+    : [...PAGE_SIZE_OPTIONS]
 
-  const pageSizeOptions = [10, 25, 100, 500]
-
-  const filteredOptions = maxRowsPerPage
-    ? pageSizeOptions.filter(option => option <= maxRowsPerPage)
-    : pageSizeOptions
-
-  if (currentLimit && !filteredOptions.includes(currentLimit)) {
-    filteredOptions.push(currentLimit)
-    filteredOptions.sort((a, b) => a - b)
+  if (queryCount) {
+    // first option that is >= queryCount (show all rows)
+    const firstSufficientOptionIndex = pageSizeOptions.findIndex(
+      option => option >= queryCount,
+    )
+    // If found, slice to only include options up to and including that one
+    if (firstSufficientOptionIndex !== -1) {
+      pageSizeOptions = pageSizeOptions.slice(0, firstSufficientOptionIndex + 1)
+    }
   }
 
-  const pageSizeOptionsBasedOnData = Array.from(
-    new Set([
-      ...filteredOptions.filter(v => v <= safeQueryCount),
-      resolvedPageSize,
-      // Only include total count as an option if it doesn't exceed maxRowsPerPage
-      ...(!maxRowsPerPage || safeQueryCount <= maxRowsPerPage
-        ? [safeQueryCount]
-        : []),
-    ]),
-  ).sort((a, b) => a - b)
+  // If resolvedPageSize isn't in the options, use the smallest available option
+  const displayedPageSize = pageSizeOptions.includes(resolvedPageSize)
+    ? resolvedPageSize
+    : pageSizeOptions[0]
 
   const handlePage = (_event: ChangeEvent<unknown>, value: number) => {
     goToPage(value)
@@ -114,7 +112,7 @@ export const TablePagination = (): React.ReactNode => {
     <div>
       <Pagination
         page={currentPage}
-        count={Math.ceil(queryCount / resolvedPageSize)}
+        count={Math.ceil(queryCount / displayedPageSize)}
         color="secondary"
         onChange={handlePage}
         shape={'rounded'}
@@ -130,12 +128,12 @@ export const TablePagination = (): React.ReactNode => {
       </Typography>
       <Select
         name="page size"
-        value={resolvedPageSize}
+        value={displayedPageSize}
         size="small"
         onChange={handlePageSize}
         sx={{ ml: 0.5 }}
       >
-        {pageSizeOptionsBasedOnData.map(pageSize => {
+        {pageSizeOptions.map(pageSize => {
           return (
             <MenuItem key={pageSize} value={pageSize}>
               {pageSize} per page
