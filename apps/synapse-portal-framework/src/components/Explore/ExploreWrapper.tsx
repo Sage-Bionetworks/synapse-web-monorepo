@@ -38,17 +38,20 @@ export default function ExploreWrapper(
   const [showSubNav, setShowSubNav] = useState<boolean>(false)
 
   const { pathname } = useLocation()
-  const currentExploreRoute = pathname.substring('/Explore/'.length)
+  const pathnameWithoutTrailingSlash = pathname.replace(/\/$/, '')
+
+  // Find the current route by matching the full pathname with encoded route paths
   const currentRoute = explorePaths.find(route => {
-    const routePath = encodeURI(route.path!)
+    const routePath = encodeURI(`/Explore/${route.path}`)
     // Check if current path matches the main path
-    if (currentExploreRoute === routePath) {
+    if (pathnameWithoutTrailingSlash === routePath) {
       return true
     }
     // Check if current path matches any of the matchPaths
     if (route.matchPaths) {
       return route.matchPaths.some(
-        matchPath => currentExploreRoute === encodeURI(matchPath),
+        matchPath =>
+          pathnameWithoutTrailingSlash === encodeURI(`/Explore/${matchPath}`),
       )
     }
     return false

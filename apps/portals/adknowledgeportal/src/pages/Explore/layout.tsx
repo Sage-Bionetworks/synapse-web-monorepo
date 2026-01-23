@@ -19,7 +19,7 @@ function Layout() {
         {
           displayName: 'Cohort Builder',
           path: 'Cohort Builder/Individuals',
-          matchPaths: ['Cohort Builder/Data'],
+          matchPaths: ['Cohort Builder', 'Cohort Builder/Data'],
         },
         {
           path: 'Publications',
