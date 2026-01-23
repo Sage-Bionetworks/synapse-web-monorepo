@@ -17,7 +17,8 @@ const exploreConfig: ExploreConfig = {
       'Data',
       'Experimental Models',
       'Target Enabling Resources',
-      'Cohort Builder',
+      // Commented out until ADKP Cohort Builder tables are made public
+      // 'Cohort Builder',
     ],
     cards: ['Programs'],
     cards_charts: [
