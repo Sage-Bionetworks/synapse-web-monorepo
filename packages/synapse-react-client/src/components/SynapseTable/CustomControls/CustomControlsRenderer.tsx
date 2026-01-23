@@ -43,7 +43,7 @@ export function CustomControlsRenderer(props: CustomControlsRendererProps) {
     >
       {customControls.map((customControl: CustomControl, index: number) => (
         <CustomControlPanel
-          key={index}
+          key={customControl.buttonID ?? `${customControl.buttonText}-${index}`}
           disabled={!numberOfResultsToInvokeAction}
           control={customControl}
           callbackData={{

@@ -69,6 +69,7 @@ const getAllIndividualIDs = async (event: CustomControlCallbackData) => {
 
 export const handleSelectedFilesToParticipants = async (
   event: CustomControlCallbackData,
+  individualsPath: string = '/Explore/Cohort Builder/Individuals',
 ) => {
   // add filter for files perspective, to show participants associated to the selected files only.
   const idColIndex = event.queryMetadata?.columnModels?.findIndex(
@@ -102,11 +103,12 @@ export const handleSelectedFilesToParticipants = async (
       ),
     )
   }
-  window.location.href = '/Explore/Cohort Builder/Individuals'
+  window.location.href = individualsPath
 }
 
 export const handleSelectedParticipantsToFiles = async (
   event: CustomControlCallbackData,
+  filesPath: string = '/Explore/Cohort Builder/Data',
 ) => {
   // add filter for files perspective, to show files associated to the selected participants only.
   const idColIndex = event.queryMetadata?.columnModels?.findIndex(
@@ -140,25 +142,50 @@ export const handleSelectedParticipantsToFiles = async (
       ),
     )
   }
-  window.location.href = '/Explore/Cohort Builder/Data'
+  window.location.href = filesPath
 }
 
-export const viewAssociatedParticipantsCustomControl: CustomControl = {
+/**
+ * Factory function to create a custom control for viewing associated participants.
+ * @param individualsPath - The path to navigate to when viewing participants (default: '/Explore/Cohort Builder/Individuals')
+ */
+export const createViewAssociatedParticipantsCustomControl = (
+  individualsPath: string = '/Explore/Cohort Builder/Individuals',
+): CustomControl => ({
   buttonText: 'View associated participants',
   onClick: event => {
-    handleSelectedFilesToParticipants(event)
+    handleSelectedFilesToParticipants(event, individualsPath)
   },
   title: 'Refining & Exporting Data',
   description:
     'Fine-tune your results using dataset or file-level filters. Once ready, add your files to the download cart or transfer them directly to an analysis platform. To adjust your source cohort, select "View participants" to return to the participant records associated with your current file selection.',
-}
-export const viewAssociatedFilesCustomControl: CustomControl = {
+})
+
+/**
+ * Factory function to create a custom control for viewing associated files.
+ * @param filesPath - The path to navigate to when viewing files (default: '/Explore/Cohort Builder/Data')
+ */
+export const createViewAssociatedFilesCustomControl = (
+  filesPath: string = '/Explore/Cohort Builder/Data',
+): CustomControl => ({
   buttonText: 'View associated files',
   onClick: event => {
-    handleSelectedParticipantsToFiles(event)
+    handleSelectedParticipantsToFiles(event, filesPath)
   },
   buttonID: 'ViewAllFilesButton',
   title: 'Cohort Discovery',
   description:
     'Use the Cohort Builder to define your custom research cohort. Filter for human research participants based on demographic or clinical attributes, browse their associated data files, then refine your selection using specific dataset or file-level properties. Once you have identified the data you need, add the files to your download cart or send results to an analysis platform. ',
-}
+})
+
+/**
+ * @deprecated Use createViewAssociatedParticipantsCustomControl() instead. This will be removed in a future version.
+ */
+export const viewAssociatedParticipantsCustomControl: CustomControl =
+  createViewAssociatedParticipantsCustomControl()
+
+/**
+ * @deprecated Use createViewAssociatedFilesCustomControl() instead. This will be removed in a future version.
+ */
+export const viewAssociatedFilesCustomControl: CustomControl =
+  createViewAssociatedFilesCustomControl()
