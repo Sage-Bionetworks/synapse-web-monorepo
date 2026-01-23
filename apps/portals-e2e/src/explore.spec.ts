@@ -71,6 +71,9 @@ const expectTopLevelControls = async (
   await test.step('expect top level controls', async () => {
     const header = page.getByTestId('TopLevelControls')
 
+    // Wait for the TopLevelControls to be visible
+    await expect(header).toBeVisible()
+
     await test.step('confirm heading', async () => {
       let exploreTabHeading = exploreTab
       if (
@@ -79,12 +82,15 @@ const expectTopLevelControls = async (
       ) {
         exploreTabHeading = 'Data'
       } else if (
-        getPortal() === 'eliteportal' &&
+        (getPortal() === 'eliteportal' ||
+          getPortal() === 'adknowledgeportal') &&
         exploreTab === 'Cohort Builder'
       ) {
         exploreTabHeading = 'Participants'
       }
-      await expect(header.getByRole('heading')).toContainText(exploreTabHeading)
+      const heading = header.getByRole('heading')
+      await expect(heading).toBeVisible()
+      await expect(heading).toContainText(exploreTabHeading)
     })
 
     await test.step('confirm header buttons', async () => {

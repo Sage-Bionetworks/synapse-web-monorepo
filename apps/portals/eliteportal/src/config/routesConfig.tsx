@@ -77,6 +77,14 @@ const routes: RouteObject[] = [
             path: 'Cohort Builder',
             children: [
               {
+                index: true,
+                element: (
+                  <RedirectWithQuery
+                    to={'/Explore/Cohort Builder/Individuals'}
+                  />
+                ),
+              },
+              {
                 path: 'Individuals',
                 lazy: () =>
                   import('@/pages/Explore/cohortBuilder').then(

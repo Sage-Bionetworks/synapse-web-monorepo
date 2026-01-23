@@ -1,4 +1,5 @@
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
+import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import { RouteObject } from 'react-router'
 
 export const explorePageRoutes: RouteObject[] = [
@@ -60,6 +61,12 @@ export const explorePageRoutes: RouteObject[] = [
   {
     path: 'Cohort Builder',
     children: [
+      {
+        index: true,
+        element: (
+          <RedirectWithQuery to={'/Explore/Cohort Builder/Individuals'} />
+        ),
+      },
       {
         path: 'Individuals',
         lazy: () =>
