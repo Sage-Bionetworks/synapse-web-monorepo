@@ -6,8 +6,8 @@ import {
   enabledAnalysisPlatforms,
 } from '../resources'
 import {
-  handleSelectedFilesToParticipants,
-  handleSelectedParticipantsToFiles,
+  viewAssociatedParticipantsCustomControl,
+  viewAssociatedFilesCustomControl,
 } from '@sage-bionetworks/synapse-portal-framework/shared-config/cohortBuilderHandlers'
 
 const rgbIndex = 1
@@ -49,22 +49,14 @@ export const individualsViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps =
     },
     additionalFiltersSessionStorageKey:
       'cohort-builder-individuals-perspective',
-    customControls: [
-      {
-        buttonText: 'View associated files',
-        onClick: event => {
-          handleSelectedParticipantsToFiles(event)
-        },
-        buttonID: 'ViewAllFilesButton',
-      },
-    ],
+    customControls: [viewAssociatedFilesCustomControl],
     sql: cohortBuilderSql,
     shouldDeepLink: false,
   }
 
 export const filesViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   rgbIndex,
-  name: 'Data',
+  name: 'Participant Data',
   enabledExternalAnalysisPlatforms: enabledAnalysisPlatforms,
   fileIdColumnName: 'id',
   fileNameColumnName: 'fileName',
@@ -96,13 +88,6 @@ export const filesViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   },
   sql: cohortBuilderFilesSql,
 
-  customControls: [
-    {
-      buttonText: 'View associated participants',
-      onClick: event => {
-        handleSelectedFilesToParticipants(event)
-      },
-    },
-  ],
+  customControls: [viewAssociatedParticipantsCustomControl],
   shouldDeepLink: false,
 }

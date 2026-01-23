@@ -12,7 +12,7 @@ import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { selectedRowsAtom } from '../../QueryWrapper/TableRowSelectionState'
 import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import { getFileColumnModelId } from '../SynapseTableUtils'
-import CustomControlButton from '../TopLevelControls/CustomControlButton'
+import CustomControlPanel from '../CustomControls/CustomControlPanel'
 import { CustomControl } from '../TopLevelControls/TopLevelControls'
 import { RowSelectionUI } from './RowSelectionUI'
 
@@ -70,7 +70,7 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
         <>
           {customControls.map(customControl => {
             return (
-              <CustomControlButton
+              <CustomControlPanel
                 key={customControl.buttonText}
                 variant="contained"
                 callbackData={{

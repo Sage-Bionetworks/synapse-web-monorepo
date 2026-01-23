@@ -25,7 +25,9 @@ import SqlEditor from '../SynapseTable/SqlEditor'
 import { SynapseTableConfiguration } from '../SynapseTable/SynapseTable'
 import TopLevelControls, {
   TopLevelControlsProps,
+  CustomControl,
 } from '../SynapseTable/TopLevelControls/TopLevelControls'
+import { CustomControlsRenderer } from '../SynapseTable/CustomControls/CustomControlsRenderer'
 import TotalQueryResults from '../TotalQueryResults'
 
 type StandaloneQueryWrapperOwnProps = {
@@ -34,7 +36,8 @@ type StandaloneQueryWrapperOwnProps = {
     SearchV2Props,
     'queryContext' | 'queryVisualizationContext'
   >
-} & TopLevelControlsProps &
+  customControls?: CustomControl[]
+} & Omit<TopLevelControlsProps, 'customControls'> &
   Pick<
     QueryVisualizationWrapperProps,
     | 'rgbIndex'
@@ -200,6 +203,10 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
                       {showTopLevelControls && (
                         <TotalQueryResults frontText={''} />
                       )}
+                      <CustomControlsRenderer
+                        customControls={props.customControls}
+                        remount={remount}
+                      />
 
                       <RowSetView
                         tableConfiguration={

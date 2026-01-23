@@ -31,7 +31,8 @@
       .QueryWrapperSearchInput,
       .QueryWrapperSqlEditorInput,
       .RowSetView,
-      .SynapsePlots {
+      .SynapsePlots,
+      .CustomControlsRenderer {
         grid-column: 2 / span 1;
       }
 
@@ -73,19 +74,23 @@
       margin: 5px 0px;
     }
   }
-  .ErrorBannerWrapper {
+  .CustomControlsRenderer {
     grid-row: 6 / span 1;
+  }
+
+  .ErrorBannerWrapper {
+    grid-row: 7 / span 1;
   }
   // This is the placement for mobile.  See above for desktop position
   // (when showing these facet filters we render a 2 column layout)
   .FacetFilterControls {
-    grid-row: 7 / span 1;
-  }
-  .PlotsContainer {
     grid-row: 8 / span 1;
   }
-  .RowSetView {
+  .PlotsContainer {
     grid-row: 9 / span 1;
+  }
+  .RowSetView {
+    grid-row: 10 / span 1;
   }
 
   &.isHidingFacetFilters {

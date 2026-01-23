@@ -11,7 +11,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useAtomValue } from 'jotai'
 import { cloneDeep } from 'lodash-es'
-import { Fragment, ReactNode, useMemo, useState } from 'react'
+import { ReactNode, useMemo, useState } from 'react'
 import IconSvg from '../../IconSvg'
 import MissingQueryResultsWarning from '../../MissingQueryResultsWarning/MissingQueryResultsWarning'
 import { useQueryContext } from '../../QueryContext'
@@ -27,7 +27,6 @@ import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import ExportToAnalysisPlatformDialog from '../export/ExportToAnalysisPlatformDialog'
 import { RowSelectionControls } from '../RowSelection/RowSelectionControls'
 import { ColumnSelection, DownloadOptions } from '../table-top'
-import CustomControlButton from './CustomControlButton'
 import {
   getNumberOfResultsToInvokeAction,
   getNumberOfResultsToInvokeActionCopy,
@@ -45,7 +44,6 @@ export type TopLevelControlsProps = {
   hideQueryCount?: boolean
   hideSqlEditorControl?: boolean
   showColumnSelection?: boolean
-  customControls?: CustomControl[]
   cavaticaConnectAccountURL?: string
   remount?: () => void
 }
@@ -71,6 +69,8 @@ export type CustomControl = {
   classNames?: string
   icon?: ReactNode
   buttonID?: string // optionally set the ID property of the element
+  title?: string // optionally set the title for the custom control
+  description?: string // optionally set the description for the custom control
 }
 
 const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
@@ -82,18 +82,12 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
     hideFacetFilterControl = false,
     hideQueryCount = false,
     hideSqlEditorControl = true,
-    customControls,
     cavaticaConnectAccountURL,
     remount,
   } = props
 
-  const {
-    entityId,
-    versionNumber,
-    getInitQueryRequest,
-    hasResettableFilters,
-    getCurrentQueryRequest,
-  } = useQueryContext()
+  const { entityId, versionNumber, getInitQueryRequest, hasResettableFilters } =
+    useQueryContext()
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
   const { data: queryMetadata } = useGetQueryMetadata()
   const { lockedColumn } = useQueryContext()
@@ -174,10 +168,6 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
       unitDescription,
     )
 
-  const refresh = () => {
-    if (remount) remount()
-  }
-
   return (
     <div className={`TopLevelControls`} data-testid="TopLevelControls">
       <div>
@@ -217,27 +207,6 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
           )}
         </div>
         <div className="TopLevelControls__actions">
-          {customControls &&
-            customControls.map((customControl, index) => {
-              return (
-                <Fragment key={index}>
-                  <CustomControlButton
-                    variant="text"
-                    disabled={!numberOfResultsToInvokeAction}
-                    control={customControl}
-                    callbackData={{
-                      tableId: entityId!,
-                      queryMetadata: queryMetadata,
-                      selectedRows,
-                      refresh,
-                      request: getCurrentQueryRequest(),
-                    }}
-                    startIcon={customControl.icon}
-                  />
-                  <Divider orientation="vertical" variant="middle" flexItem />
-                </Fragment>
-              )
-            })}
           {showExportToAnalysisPlatformButton && (
             <>
               <Tooltip
@@ -329,12 +298,7 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
             />
           )}
 
-          {isRowSelectionVisible && (
-            <RowSelectionControls
-              customControls={customControls}
-              remount={remount}
-            />
-          )}
+          {isRowSelectionVisible && <RowSelectionControls remount={remount} />}
           {showColumnSelection && (
             <ColumnSelection
               headers={queryMetadata?.selectColumns}

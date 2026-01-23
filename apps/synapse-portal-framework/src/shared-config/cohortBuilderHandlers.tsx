@@ -8,6 +8,7 @@ import {
   CustomControlCallbackData,
 } from 'synapse-react-client'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { CustomControl } from 'synapse-react-client/components/SynapseTable/TopLevelControls/TopLevelControls'
 
 const getAllIDs = async (event: CustomControlCallbackData) => {
   const selectedFacets = event.request?.query.selectedFacets
@@ -140,4 +141,24 @@ export const handleSelectedParticipantsToFiles = async (
     )
   }
   window.location.href = '/Explore/Cohort Builder/Data'
+}
+
+export const viewAssociatedParticipantsCustomControl: CustomControl = {
+  buttonText: 'View associated participants',
+  onClick: event => {
+    handleSelectedFilesToParticipants(event)
+  },
+  title: 'Refining & Exporting Data',
+  description:
+    'Fine-tune your results using dataset or file-level filters. Once ready, add your files to the download cart or transfer them directly to an analysis platform. To adjust your source cohort, select "View participants" to return to the participant records associated with your current file selection.',
+}
+export const viewAssociatedFilesCustomControl: CustomControl = {
+  buttonText: 'View associated files',
+  onClick: event => {
+    handleSelectedParticipantsToFiles(event)
+  },
+  buttonID: 'ViewAllFilesButton',
+  title: 'Cohort Discovery',
+  description:
+    'Use the Cohort Builder to define your custom research cohort. Filter for human research participants based on demographic or clinical attributes, browse their associated data files, then refine your selection using specific dataset or file-level properties. Once you have identified the data you need, add the files to your download cart or send results to an analysis platform. ',
 }
