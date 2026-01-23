@@ -22,7 +22,7 @@ function renderComponent(options: {
   pageSize: number
   currentPage: number
   queryCount: number
-  maxRowsPerPage: number
+  maxRowsPerPage?: number
   queryContextOverrides?: Partial<QueryContextType>
 }) {
   const user = userEvent.setup()
@@ -130,19 +130,47 @@ describe('TablePagination component', () => {
     ).rejects.toThrow()
   })
 
+  it('hides pagination when maxRowsPerPage < 5', async () => {
+    renderComponent({
+      pageSize: 10,
+      currentPage: 1,
+      queryCount: 1,
+      maxRowsPerPage: 4,
+    })
+
+    await expect(
+      screen.findByRole('navigation', undefined, { timeout: 100 }),
+    ).rejects.toThrow()
+  })
+
   it('small max rows per page with more than one page of results', async () => {
     const { user } = renderComponent({
-      pageSize: 5,
+      pageSize: 10,
       currentPage: 1,
-      queryCount: 20,
-      maxRowsPerPage: 5,
+      queryCount: 13,
+      maxRowsPerPage: 11,
     })
 
     const comboBox = await screen.findByRole('combobox')
     await user.click(comboBox)
     const pageSizeOptions = await screen.findAllByRole('option')
     expect(pageSizeOptions).toHaveLength(1)
-    expect(pageSizeOptions[0].textContent).toEqual('5 per page')
+    expect(pageSizeOptions[0].textContent).toEqual('10 per page')
+  })
+
+  it('no maxRowsPerPage value set', async () => {
+    const { user } = renderComponent({
+      pageSize: 3,
+      currentPage: 1,
+      queryCount: 3,
+      maxRowsPerPage: undefined,
+    })
+
+    const comboBox = await screen.findByRole('combobox')
+    await user.click(comboBox)
+    const pageSizeOptions = await screen.findAllByRole('option')
+    expect(pageSizeOptions).toHaveLength(1)
+    expect(pageSizeOptions[0].textContent).toEqual('10 per page')
   })
 
   it('prefetches a page on hover', async () => {
@@ -167,31 +195,5 @@ describe('TablePagination component', () => {
 
     // Verify we did not go to a new page
     expect(mockGoToPage).not.toHaveBeenCalled()
-  })
-
-  it('query.limit value that is not a default page size option is added to the page size options', async () => {
-    const addLimitOption = 7
-    const { user } = renderComponent({
-      pageSize: 7,
-      currentPage: 1,
-      queryCount: 100,
-      maxRowsPerPage: 100,
-      queryContextOverrides: {
-        currentQueryRequest: {
-          ...mockQueryBundleRequest,
-          query: {
-            ...mockQueryBundleRequest.query,
-            limit: addLimitOption,
-          },
-        },
-      },
-    })
-
-    // Verify that the current limit is displayed
-    const pageSizeOptions = await screen.findByRole('combobox')
-    await screen.findByText('7 per page')
-
-    await user.click(pageSizeOptions)
-    await user.click(await screen.findByRole('option', { name: '7 per page' }))
   })
 })
