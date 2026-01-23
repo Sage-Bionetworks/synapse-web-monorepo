@@ -12,6 +12,10 @@ import {
 import { PropsWithChildren, Suspense } from 'react'
 import { SynapseContextProvider, SynapseContextType } from './SynapseContext'
 import { DocumentMetadataProvider } from './DocumentMetadataContext'
+import {
+  ApplicationSessionContextProvider,
+  ApplicationSessionContextType,
+} from '../AppUtils/session/ApplicationSessionContext'
 
 export const defaultQueryClientConfig = {
   defaultOptions: {
@@ -31,6 +35,7 @@ export type FullContextProviderProps = PropsWithChildren<{
   synapseContext: Partial<SynapseContextType>
   queryClient?: QueryClient
   theme?: ThemeOptions
+  applicationSessionContext?: ApplicationSessionContextType
 }>
 
 /**
@@ -40,6 +45,7 @@ export type FullContextProviderProps = PropsWithChildren<{
  * - QueryClientContext (react-query)
  * - ThemeContext (@mui)
  * - DocumentMetadataContext - for managing page title and meta descriptions
+ * - ApplicationSessionContext - for managing user session state
  * - isEditingStore - used to sync editing state across the application
  */
 export function FullContextProvider(props: FullContextProviderProps) {
@@ -49,6 +55,7 @@ export function FullContextProvider(props: FullContextProviderProps) {
     queryClient,
     theme,
     isEditingStore: isEditingStoreFromProps,
+    applicationSessionContext,
   } = props
   const isEditingStore = isEditingStoreFromProps || {
     subscribe: () => () => {},
@@ -56,19 +63,31 @@ export function FullContextProvider(props: FullContextProviderProps) {
     setIsEditing: () => {},
   }
 
+  const defaultApplicationSessionContext: ApplicationSessionContextType =
+    applicationSessionContext || {
+      hasInitializedSession: true,
+      refreshSession: async () => {},
+      clearSession: async () => {},
+      isLoadingSSO: false,
+    }
+
   return (
     <QueryClientProvider client={queryClient ?? defaultQueryClient}>
       <ThemeProvider theme={theme}>
         <SynapseContextProvider synapseContext={synapseContext}>
-          <DocumentMetadataProvider>
-            <GlobalIsEditingContextProvider
-              subscribe={isEditingStore.subscribe}
-              getSnapshot={isEditingStore.getSnapshot}
-              setIsEditing={isEditingStore.setIsEditing}
-            >
-              <Suspense fallback={null}>{children}</Suspense>
-            </GlobalIsEditingContextProvider>
-          </DocumentMetadataProvider>
+          <ApplicationSessionContextProvider
+            context={defaultApplicationSessionContext}
+          >
+            <DocumentMetadataProvider>
+              <GlobalIsEditingContextProvider
+                subscribe={isEditingStore.subscribe}
+                getSnapshot={isEditingStore.getSnapshot}
+                setIsEditing={isEditingStore.setIsEditing}
+              >
+                <Suspense fallback={null}>{children}</Suspense>
+              </GlobalIsEditingContextProvider>
+            </DocumentMetadataProvider>
+          </ApplicationSessionContextProvider>
         </SynapseContextProvider>
       </ThemeProvider>
     </QueryClientProvider>
