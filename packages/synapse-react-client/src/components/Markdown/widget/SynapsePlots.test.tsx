@@ -35,7 +35,7 @@ const tableQueryResult: QueryResultBundle = {
 }
 
 // PORTALS-3720 : Commented out failing test for SynapsePlot rendering in MarkdownSynapse
-describe.skip('SynapsePlot', () => {
+describe('SynapsePlot', () => {
   beforeAll(() => {
     server.listen()
     registerTableQueryResult(
