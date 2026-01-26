@@ -27,7 +27,6 @@ function ExploreLayout() {
         {
           displayName: 'Cohort Builder',
           path: 'Cohort Builder/Individuals',
-          matchPaths: ['Cohort Builder', 'Cohort Builder/Data'],
           OrientationBannerProps: {
             name: 'CohortBuilder',
             title: 'Getting Started With Cohort Builder',
