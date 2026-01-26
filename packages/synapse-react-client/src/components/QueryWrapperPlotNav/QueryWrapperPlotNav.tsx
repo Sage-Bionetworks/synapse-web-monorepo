@@ -36,7 +36,7 @@ import TopLevelControls, {
   TopLevelControlsProps,
   CustomControl,
 } from '../SynapseTable/TopLevelControls/TopLevelControls'
-import { CustomControlsRenderer } from '../SynapseTable/CustomControls/CustomControlsRenderer'
+import { CustomControls } from '../SynapseTable/CustomControls/CustomControls'
 import TotalQueryResults from '../TotalQueryResults'
 import PlotsContainer, {
   PlotsContainerProps,
@@ -250,7 +250,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                 endText={hasFacetsOrFilters ? 'filtered by' : ''}
                 hideIfUnfiltered={true}
               />
-              <CustomControlsRenderer
+              <CustomControls
                 customControls={customControls}
                 remount={remount}
               />

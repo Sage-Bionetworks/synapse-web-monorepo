@@ -103,6 +103,8 @@ export const handleSelectedFilesToParticipants = async (
       ),
     )
   }
+  // Use window.location.href instead of react-router navigate to trigger a full page reload.
+  // The reload is necessary to ensure the component loads the filters from sessionStorage.
   window.location.href = individualsPath
 }
 
@@ -142,6 +144,8 @@ export const handleSelectedParticipantsToFiles = async (
       ),
     )
   }
+  // Use window.location.href instead of react-router navigate to trigger a full page reload.
+  // The reload is necessary to ensure the component loads the filters from sessionStorage.
   window.location.href = filesPath
 }
 

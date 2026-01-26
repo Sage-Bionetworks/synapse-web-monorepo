@@ -27,7 +27,7 @@ import TopLevelControls, {
   TopLevelControlsProps,
   CustomControl,
 } from '../SynapseTable/TopLevelControls/TopLevelControls'
-import { CustomControlsRenderer } from '../SynapseTable/CustomControls/CustomControlsRenderer'
+import { CustomControls } from '../SynapseTable/CustomControls/CustomControls'
 import TotalQueryResults from '../TotalQueryResults'
 
 type StandaloneQueryWrapperOwnProps = {
@@ -203,7 +203,7 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
                       {showTopLevelControls && (
                         <TotalQueryResults frontText={''} />
                       )}
-                      <CustomControlsRenderer
+                      <CustomControls
                         customControls={props.customControls}
                         remount={remount}
                       />

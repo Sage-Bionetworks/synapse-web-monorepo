@@ -9,12 +9,12 @@ import CustomControlPanel from './CustomControlPanel'
 import { CustomControl } from '../TopLevelControls/TopLevelControls'
 import { getNumberOfResultsToInvokeAction } from '../TopLevelControls/TopLevelControlsUtils'
 
-export type CustomControlsRendererProps = {
+export type CustomControlsProps = {
   customControls?: CustomControl[]
   remount: () => void
 }
 
-export function CustomControlsRenderer(props: CustomControlsRendererProps) {
+export function CustomControls(props: CustomControlsProps) {
   const { customControls, remount } = props
   const queryContext = useQueryContext()
   const { data: queryMetadata } = useGetQueryMetadata()
@@ -38,7 +38,7 @@ export function CustomControlsRenderer(props: CustomControlsRendererProps) {
 
   return (
     <Box
-      className="CustomControlsRenderer"
+      className="CustomControls"
       sx={{ display: 'flex', flexDirection: 'column', gap: 2, my: 0 }}
     >
       {customControls.map((customControl: CustomControl, index: number) => (
