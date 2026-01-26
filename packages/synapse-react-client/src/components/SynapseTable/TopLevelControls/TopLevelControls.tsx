@@ -32,6 +32,7 @@ import {
   getNumberOfResultsToInvokeActionCopy,
 } from './TopLevelControlsUtils'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
+import { CustomControlButton } from '../CustomControls/CustomControlButton'
 
 const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
   'SendToAnalysisPlatformTopLevelControlButton'
@@ -43,6 +44,7 @@ export type TopLevelControlsProps = {
   hideFacetFilterControl?: boolean
   hideQueryCount?: boolean
   hideSqlEditorControl?: boolean
+  customControls?: CustomControl[]
   showColumnSelection?: boolean
   cavaticaConnectAccountURL?: string
   remount?: () => void
@@ -82,12 +84,18 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
     hideFacetFilterControl = false,
     hideQueryCount = false,
     hideSqlEditorControl = true,
+    customControls,
     cavaticaConnectAccountURL,
     remount,
   } = props
 
-  const { entityId, versionNumber, getInitQueryRequest, hasResettableFilters } =
-    useQueryContext()
+  const {
+    entityId,
+    versionNumber,
+    getInitQueryRequest,
+    getCurrentQueryRequest,
+    hasResettableFilters,
+  } = useQueryContext()
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
   const { data: queryMetadata } = useGetQueryMetadata()
   const { lockedColumn } = useQueryContext()
@@ -298,7 +306,39 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
             />
           )}
 
-          {isRowSelectionVisible && <RowSelectionControls remount={remount} />}
+          {isRowSelectionVisible && (
+            <RowSelectionControls
+              customControls={customControls}
+              remount={remount}
+            />
+          )}
+          {!isRowSelectionVisible &&
+            customControls &&
+            customControls.length > 0 && (
+              <>
+                {customControls.map(customControl => {
+                  return (
+                    <CustomControlButton
+                      key={customControl.buttonText}
+                      variant="text"
+                      callbackData={{
+                        tableId: entityId!,
+                        queryMetadata: queryMetadata,
+                        selectedRows,
+                        refresh: () => {
+                          if (remount) {
+                            remount()
+                          }
+                        },
+                        request: getCurrentQueryRequest(),
+                      }}
+                      control={customControl}
+                      startIcon={customControl.icon}
+                    />
+                  )
+                })}
+              </>
+            )}
           {showColumnSelection && (
             <ColumnSelection
               headers={queryMetadata?.selectColumns}

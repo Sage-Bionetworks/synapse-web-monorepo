@@ -1,9 +1,9 @@
-import { useState } from 'react'
-import { Button, ButtonProps, Box, Typography, Paper } from '@mui/material'
+import { ButtonProps, Box, Typography, Paper } from '@mui/material'
 import {
   CustomControl,
   CustomControlCallbackData,
 } from '../TopLevelControls/TopLevelControls'
+import { CustomControlButton } from './CustomControlButton'
 
 export interface CustomControlPanelProps extends Omit<ButtonProps, 'onClick'> {
   control: CustomControl
@@ -11,14 +11,11 @@ export interface CustomControlPanelProps extends Omit<ButtonProps, 'onClick'> {
 }
 
 function CustomControlPanel(props: CustomControlPanelProps) {
-  const { control, callbackData, disabled, ...buttonProps } = props
-  const { onClick, buttonText, buttonID, title, description } = control
-  const [isLoading, setIsLoading] = useState(false)
-  const isDisabled = disabled || isLoading
+  const { control, callbackData, ...buttonProps } = props
+  const { title, description } = control
 
   return (
     <Paper
-      id={buttonID}
       sx={{
         backgroundColor: 'grey.100',
         p: 2,
@@ -44,24 +41,12 @@ function CustomControlPanel(props: CustomControlPanelProps) {
           </Typography>
         )}
       </Box>
-      <Button
-        {...buttonProps}
+      <CustomControlButton
+        control={control}
+        callbackData={callbackData}
         variant="outlined"
-        disabled={isDisabled}
-        onClick={() => {
-          setIsLoading(true)
-          onClick({
-            ...callbackData,
-            refresh: () => {
-              setIsLoading(false)
-              callbackData.refresh()
-            },
-          })
-        }}
-        loading={isLoading}
-      >
-        {buttonText}
-      </Button>
+        {...buttonProps}
+      />
     </Paper>
   )
 }

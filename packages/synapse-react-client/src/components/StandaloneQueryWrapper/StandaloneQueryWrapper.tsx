@@ -124,6 +124,7 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
     cardConfiguration,
     tableConfiguration,
     shouldDeepLink,
+    customControls,
     ...rest
   } = props
   const [componentKey, setComponentKey] = useState(1)
@@ -186,6 +187,7 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
                           hideFacetFilterControl={true}
                           hideVisualizationsControl={true}
                           remount={remount}
+                          customControls={customControls}
                         />
                       )}
                       {entity && isTable(entity) && entity.isSearchEnabled ? (

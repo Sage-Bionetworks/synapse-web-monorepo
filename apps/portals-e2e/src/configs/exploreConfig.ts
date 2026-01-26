@@ -53,7 +53,7 @@ const exploreConfig: ExploreConfig = {
     table_charts: ['Data'],
   },
   eliteportal: {
-    table_charts: ['Data', 'Cohort Builder'],
+    table_charts: ['Data', 'Cohort Builder/Individuals'],
     cards_charts: [
       'Projects',
       'Studies',

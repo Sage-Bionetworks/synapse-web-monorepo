@@ -235,6 +235,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                   hideSqlEditorControl={hideSqlEditorControl}
                   cavaticaConnectAccountURL={cavaticaConnectAccountURL}
                   remount={remount}
+                  customControls={customControls}
                 />
               </SynapseErrorBoundary>
               {isFaceted && (
