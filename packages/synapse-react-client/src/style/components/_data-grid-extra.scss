@@ -83,3 +83,63 @@
   background-color: rgba(25, 118, 210, 0.05);
   z-index: 25;
 }
+
+// Ensure grid container is positioned for absolute children (resize handles)
+.dsg-container {
+  position: relative;
+}
+
+// Column resize handle styles
+.column-resize-handle {
+  position: absolute;
+  width: 8px;
+  cursor: col-resize;
+  user-select: none;
+  z-index: 100;
+  background-color: transparent;
+  transition: background-color 0.15s ease;
+
+  // Subtle grip indicator on hover (visible only in header area)
+  &::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 16px;
+    background: transparent;
+    border-left: 1px solid transparent;
+    border-right: 1px solid transparent;
+    transition: border-color 0.15s ease;
+  }
+
+  &:hover {
+    background-color: rgba(128, 128, 128, 0.15);
+
+    &::before {
+      border-left-color: rgba(128, 128, 128, 0.5);
+      border-right-color: rgba(128, 128, 128, 0.5);
+    }
+  }
+
+  &.is-resizing {
+    background-color: rgba(128, 128, 128, 0.3);
+
+    &::before {
+      border-left-color: rgba(100, 100, 100, 0.8);
+      border-right-color: rgba(100, 100, 100, 0.8);
+    }
+  }
+}
+
+// Change cursor globally when resizing
+body.col-resizing {
+  cursor: col-resize;
+  user-select: none;
+
+  .dsg-container,
+  .dsg-container * {
+    cursor: col-resize;
+  }
+}
