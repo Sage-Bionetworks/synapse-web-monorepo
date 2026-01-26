@@ -34,7 +34,6 @@ const tableQueryResult: QueryResultBundle = {
   maxRowsPerPage: 48770,
 }
 
-// PORTALS-3720 : Commented out failing test for SynapsePlot rendering in MarkdownSynapse
 describe('SynapsePlot', () => {
   beforeAll(() => {
     server.listen()
