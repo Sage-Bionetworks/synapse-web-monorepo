@@ -4,11 +4,6 @@ import { OrientationBannerProps } from 'synapse-react-client/components/Orientat
 export type ExplorePageRoute = RouteObject & {
   displayName?: string
   OrientationBannerProps?: OrientationBannerProps
-  /**
-   * Additional paths that should cause this tab to appear as selected.
-   * Useful when a tab has child routes and you want all of them to show the tab as active.
-   */
-  matchPaths?: string[]
 }
 
 export type ExploreWrapperProps = {

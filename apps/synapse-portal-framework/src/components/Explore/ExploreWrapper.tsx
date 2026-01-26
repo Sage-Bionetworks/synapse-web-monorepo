@@ -11,6 +11,7 @@ import OrientationBanner from 'synapse-react-client/components/OrientationBanner
 import { ExplorePageRoute, ExploreWrapperProps } from './ExploreWrapperProps'
 import { ExploreWrapperTabs } from './ExploreWrapperTabs'
 import { useDocumentMetadata } from 'synapse-react-client/utils/context/DocumentMetadataContext'
+import { matchPath } from 'react-router'
 import React from 'react'
 
 function RouteMatchedOrientationBanner(props: {
@@ -38,7 +39,6 @@ export default function ExploreWrapper(
   const [showSubNav, setShowSubNav] = useState<boolean>(false)
 
   const { pathname } = useLocation()
-  const pathnameWithoutTrailingSlash = pathname.replace(/\/$/, '')
 
   const currentRoute = explorePaths.find(route => {
     const routePath = encodeURI(`/Explore/${route.path}`)

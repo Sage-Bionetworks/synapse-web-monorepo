@@ -9,6 +9,7 @@ import {
 import { useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { ExploreWrapperProps } from './ExploreWrapperProps'
+import { matchPath } from 'react-router'
 
 export function CustomScrollButton(props: TabScrollButtonProps) {
   if (props.disabled) {
