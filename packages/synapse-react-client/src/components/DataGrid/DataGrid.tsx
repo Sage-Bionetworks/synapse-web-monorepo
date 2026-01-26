@@ -179,13 +179,6 @@ export default function DataGrid(props: DataGridProps) {
     null,
   )
 
-  // Store the scroll position and resized column to navigate to it after remount
-  const scrollStateRef = useRef<{
-    scrollLeft: number
-    scrollTop: number
-    resizedColumnName: string
-  } | null>(null)
-
   // Handle column resize callback
   const handleColumnResize = useCallback(
     (columnName: string, newWidth: number) => {

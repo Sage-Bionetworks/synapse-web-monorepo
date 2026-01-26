@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { ValidationAlert } from './ValidationAlert'
-import { DataGridRow } from './DataGridTypes'
+import { DataGridRow } from '../DataGridTypes'
 
 describe('ValidationAlert', () => {
   it('returns null when selectedRowIndex is null', () => {
