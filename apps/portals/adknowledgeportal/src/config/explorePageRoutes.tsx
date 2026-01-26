@@ -17,9 +17,7 @@ export const explorePaths: ExplorePageRoute[] = [
     path: 'Data',
   },
   {
-    displayName: 'Cohort Builder',
-    path: 'Cohort Builder/Individuals',
-    matchPaths: ['Cohort Builder', 'Cohort Builder/Data'],
+    path: 'Cohort Builder',
   },
   {
     path: 'Publications',
