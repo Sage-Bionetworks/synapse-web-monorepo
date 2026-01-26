@@ -4,7 +4,6 @@ import {
   CustomControl,
   CustomControlCallbackData,
 } from '../TopLevelControls/TopLevelControls'
-import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 
 export interface CustomControlPanelProps extends Omit<ButtonProps, 'onClick'> {
   control: CustomControl

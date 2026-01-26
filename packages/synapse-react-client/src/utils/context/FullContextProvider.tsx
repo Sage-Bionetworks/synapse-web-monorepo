@@ -35,18 +35,23 @@ export type FullContextProviderProps = PropsWithChildren<{
   synapseContext: Partial<SynapseContextType>
   queryClient?: QueryClient
   theme?: ThemeOptions
-  applicationSessionContext?: ApplicationSessionContextType
+  applicationSessionContext: ApplicationSessionContextType
 }>
 
 /**
  * Provides all context necessary for components in SRC.
- * Contexts include
+ *
+ * Contexts include:
  * - SynapseContext
  * - QueryClientContext (react-query)
  * - ThemeContext (@mui)
  * - DocumentMetadataContext - for managing page title and meta descriptions
  * - ApplicationSessionContext - for managing user session state
  * - isEditingStore - used to sync editing state across the application
+ *
+ * IMPORTANT: The `applicationSessionContext` prop is required. For applications that need
+ * full session management (e.g., login/logout), use `ApplicationSessionManager` which
+ * provides its own context. For testing or simple use cases, use `MOCK_APPLICATION_SESSION_CONTEXT`.
  */
 export function FullContextProvider(props: FullContextProviderProps) {
   const {
@@ -63,20 +68,12 @@ export function FullContextProvider(props: FullContextProviderProps) {
     setIsEditing: () => {},
   }
 
-  const defaultApplicationSessionContext: ApplicationSessionContextType =
-    applicationSessionContext || {
-      hasInitializedSession: true,
-      refreshSession: async () => {},
-      clearSession: async () => {},
-      isLoadingSSO: false,
-    }
-
   return (
     <QueryClientProvider client={queryClient ?? defaultQueryClient}>
       <ThemeProvider theme={theme}>
         <SynapseContextProvider synapseContext={synapseContext}>
           <ApplicationSessionContextProvider
-            context={defaultApplicationSessionContext}
+            context={applicationSessionContext}
           >
             <DocumentMetadataProvider>
               <GlobalIsEditingContextProvider

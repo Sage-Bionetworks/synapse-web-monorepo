@@ -1,7 +1,4 @@
-import {
-  MOCK_ACCESS_TOKEN,
-  MOCK_CONTEXT_VALUE,
-} from '@/mocks/MockSynapseContext'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
@@ -11,14 +8,11 @@ import {
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
 import { QueryClient } from '@tanstack/query-core'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { renderHook, waitFor } from '@testing-library/react'
 import dayjs from 'dayjs'
 import { MemoryRouter } from 'react-router'
-import {
-  defaultQueryClientConfig,
-  FullContextProvider,
-  SynapseClient,
-} from '../../../index'
+import { defaultQueryClientConfig, SynapseClient } from '../../../index'
 import * as UseDetectSSOCodeModule from '../../hooks/useDetectSSOCode'
 import { UseDetectSSOCodeOptions } from '../../hooks/useDetectSSOCode'
 import {
@@ -31,20 +25,16 @@ import ApplicationSessionManager, {
 
 function render(props?: ApplicationSessionManagerProps) {
   const queryClient = new QueryClient(defaultQueryClientConfig)
-  const wrapperProps = { ...MOCK_CONTEXT_VALUE, ...props }
   return renderHook(() => useApplicationSessionContext(), {
     wrapper: ({ children }) => {
       return (
-        <FullContextProvider
-          synapseContext={wrapperProps}
-          queryClient={queryClient}
-        >
+        <QueryClientProvider client={queryClient}>
           <MemoryRouter>
             <ApplicationSessionManager {...props}>
               {children}
             </ApplicationSessionManager>
           </MemoryRouter>
-        </FullContextProvider>
+        </QueryClientProvider>
       )
     },
   })

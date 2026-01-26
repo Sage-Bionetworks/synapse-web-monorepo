@@ -3,6 +3,7 @@ import FullContextProvider from '@/utils/context/FullContextProvider'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
 import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
 import { createContext, PropsWithChildren } from 'react'
+import { MOCK_APPLICATION_SESSION_CONTEXT } from './applicationSessionContext/MockApplicationSessionContext'
 
 export const MOCK_ACCESS_TOKEN = 'mock-access-token'
 
@@ -28,7 +29,10 @@ export const MOCK_CONTEXT = createContext(MOCK_CONTEXT_VALUE)
  */
 export function SynapseTestContext({ children }: PropsWithChildren) {
   return (
-    <FullContextProvider synapseContext={MOCK_CONTEXT_VALUE}>
+    <FullContextProvider
+      synapseContext={MOCK_CONTEXT_VALUE}
+      applicationSessionContext={MOCK_APPLICATION_SESSION_CONTEXT}
+    >
       {children}
     </FullContextProvider>
   )

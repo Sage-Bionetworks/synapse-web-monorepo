@@ -2,7 +2,10 @@ import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { AppContextProvider } from '../AppContext'
 import LoginPage from '../pages/LoginPage'
-import { FullContextProvider } from 'synapse-react-client/utils/context/FullContextProvider'
+import {
+  FullContextProvider,
+  MOCK_APPLICATION_SESSION_CONTEXT,
+} from 'synapse-react-client'
 
 describe('App initialization tests', () => {
   it.skip('renders a branded experience', async () => {
@@ -23,6 +26,7 @@ describe('App initialization tests', () => {
               isInExperimentalMode: false,
               downloadCartPageUrl: '',
             }}
+            applicationSessionContext={MOCK_APPLICATION_SESSION_CONTEXT}
           >
             <LoginPage returnToUrl="/" />
           </FullContextProvider>
