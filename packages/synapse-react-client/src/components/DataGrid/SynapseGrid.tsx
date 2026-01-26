@@ -26,7 +26,6 @@ import {
 } from 'react'
 import { DataSheetGridRef } from 'react-datasheet-grid'
 import { SelectionWithId } from 'react-datasheet-grid/dist/types'
-import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import GridAgentChat from '../SynapseChat/GridAgentChat'
 import DataGrid from './DataGrid'
 import { DataGridRow, GridModel, Operation } from './DataGridTypes'
@@ -38,6 +37,7 @@ import { removeNoOpOperations } from './utils/DataGridUtils'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 import { useGetCurrentUserBundle } from '@/synapse-queries'
 import CertificationRequirement from '@/components/AccessRequirementList/RequirementItem/CertificationRequirement'
+import { ValidationAlert } from './components/ValidationAlert'
 
 export type SynapseGridProps = {
   agentRegistrationId?: string
@@ -421,41 +421,10 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                     />
                   </Grid>
                   <Grid size={12}>
-                    {/* Show validation messages for selected row */}
-                    {(() => {
-                      const selectedRowIndex = selectedRowIndexRef.current
-                      if (selectedRowIndex === null) return null
-
-                      const selectedRow = rowValues[selectedRowIndex]
-                      if (!selectedRow) return null
-
-                      const validationMessages =
-                        selectedRow.__validationResults?.allValidationMessages
-                      if (
-                        !Array.isArray(validationMessages) ||
-                        validationMessages.length === 0
-                      ) {
-                        return null
-                      }
-
-                      return (
-                        <FullWidthAlert
-                          variant="warning"
-                          title="Validation Messages For Selected Row:"
-                          isGlobal={false}
-                          description={
-                            <ul>
-                              {validationMessages.map((msg: string) => (
-                                <li key={msg}>{msg}</li>
-                              ))}
-                            </ul>
-                          }
-                          sx={{
-                            marginTop: '12px',
-                          }}
-                        />
-                      )
-                    })()}
+                    <ValidationAlert
+                      selectedRowIndex={selectedRowIndexRef.current}
+                      rowValues={rowValues}
+                    />
                   </Grid>
                 </>
               )}
