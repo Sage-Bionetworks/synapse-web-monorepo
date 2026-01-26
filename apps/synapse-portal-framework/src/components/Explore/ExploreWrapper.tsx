@@ -40,21 +40,9 @@ export default function ExploreWrapper(
   const { pathname } = useLocation()
   const pathnameWithoutTrailingSlash = pathname.replace(/\/$/, '')
 
-  // Find the current route by matching the full pathname with encoded route paths
   const currentRoute = explorePaths.find(route => {
     const routePath = encodeURI(`/Explore/${route.path}`)
-    // Check if current path matches the main path
-    if (pathnameWithoutTrailingSlash === routePath) {
-      return true
-    }
-    // Check if current path matches any of the matchPaths
-    if (route.matchPaths) {
-      return route.matchPaths.some(
-        matchPath =>
-          pathnameWithoutTrailingSlash === encodeURI(`/Explore/${matchPath}`),
-      )
-    }
-    return false
+    return Boolean(matchPath({ path: routePath, end: false }, pathname))
   })
   const pageName =
     currentRoute?.displayName ??
