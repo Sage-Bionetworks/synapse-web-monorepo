@@ -1,0 +1,1 @@
+import{S as o}from"./SkeletonButton-4jGLqIPK.js";import"./iframe-Byg5KEO3.js";import"./index-Chi_LkuB.js";const a={title:"Synapse/SkeletonButton",component:o},e={};e.parameters={...e.parameters,docs:{...e.parameters?.docs,source:{originalSource:"{}",...e.parameters?.docs?.source}}};const m=["Demo"];export{e as Demo,m as __namedExportsOrder,a as default};
