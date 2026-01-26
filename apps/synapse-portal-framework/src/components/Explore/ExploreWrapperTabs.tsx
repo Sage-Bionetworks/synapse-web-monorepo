@@ -46,22 +46,12 @@ export function ExploreWrapperTabs(props: ExploreWrapperProps) {
   const selectedTabValue = useMemo(() => {
     for (const route of explorePaths) {
       const routePath = encodeURI(`/Explore/${route.path}`)
-      // Check if current path matches the main path
-      if (pathnameWithoutTrailingSlash === routePath) {
+      if (matchPath({ path: routePath, end: false }, pathname)) {
         return routePath
-      }
-      // Check if current path matches any of the matchPaths
-      if (route.matchPaths) {
-        for (const matchPath of route.matchPaths) {
-          const encodedMatchPath = encodeURI(`/Explore/${matchPath}`)
-          if (pathnameWithoutTrailingSlash === encodedMatchPath) {
-            return routePath
-          }
-        }
       }
     }
     return pathnameWithoutTrailingSlash
-  }, [pathnameWithoutTrailingSlash, explorePaths])
+  }, [pathnameWithoutTrailingSlash, explorePaths, pathname])
 
   /**
    * In the desktop view, we use Material UI tabs
