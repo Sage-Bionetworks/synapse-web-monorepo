@@ -59,8 +59,8 @@ function CustomControlPanel(props: CustomControlPanelProps) {
             },
           })
         }}
+        loading={isLoading}
       >
-        {isLoading && <SynapseSpinner size={30} />}
         {buttonText}
       </Button>
     </Paper>
