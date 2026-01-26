@@ -26,8 +26,7 @@ import {
 import useComputeRowSelectionPrimaryKey from './useComputeRowSelectionPrimaryKey'
 import useHasFacetedSelectColumn from './useHasFacetedSelectColumn'
 import useOnQueryDataChange from './useOnQueryDataChange'
-import { useApplicationSessionContext } from '@/utils/AppUtils/session/ApplicationSessionContext'
-import { BlockingLoader } from '../LoadingScreen/LoadingScreen'
+import { SessionInitializedGuard } from '@/utils/AppUtils/session/SessionInitializedGuard'
 
 export type QueryWrapperProps = PropsWithChildren<{
   initQueryRequest: QueryBundleRequest
@@ -59,14 +58,11 @@ export type QueryWrapperProps = PropsWithChildren<{
  * either `useQueryContext` or `QueryContextConsumer`.
  */
 function QueryWrapperInternal(props: QueryWrapperProps) {
-  // Wait for session initialization before proceeding with queries
-  const { hasInitializedSession } = useApplicationSessionContext()
-
-  if (!hasInitializedSession) {
-    return <BlockingLoader show={true} />
-  }
-
-  return <QueryWrapperInternalWithSession {...props} />
+  return (
+    <SessionInitializedGuard>
+      <QueryWrapperInternalWithSession {...props} />
+    </SessionInitializedGuard>
+  )
 }
 
 /**
