@@ -203,18 +203,6 @@ export default function DataGrid(props: DataGridProps) {
         }
       }
 
-      // Save scroll position to restore it after remount
-      const gridContainer = wrapperRef.current?.querySelector(
-        '.dsg-container',
-      ) as HTMLElement
-      if (gridContainer) {
-        scrollStateRef.current = {
-          scrollLeft: gridContainer.scrollLeft,
-          scrollTop: gridContainer.scrollTop,
-          resizedColumnName: columnName,
-        }
-      }
-
       setColumnWidths(prev => ({
         ...prev,
         [columnName]: newWidth,
