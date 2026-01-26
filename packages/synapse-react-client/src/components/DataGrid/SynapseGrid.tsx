@@ -1,5 +1,6 @@
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
+import ExportCsvFromGridButton from '@/components/DataGrid/components/ExportCsvFromGridButton'
 import useGetSchemaForGrid from '@/components/DataGrid/hooks/useGetSchemaForGrid'
 import MergeGridWithSourceTableButton from '@/components/DataGrid/MergeGridWithSourceTableButton'
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
@@ -395,6 +396,12 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                         <UploadCsvToGridButton
                           sourceEntityId={session.sourceEntityId}
                           gridSessionId={session.sessionId!}
+                        />
+                      )}
+                      {session.sourceEntityId && (
+                        <ExportCsvFromGridButton
+                          modelSnapshot={modelSnapshot}
+                          filename={session.sourceEntityId}
                         />
                       )}
                       {session.sourceEntityId && (
