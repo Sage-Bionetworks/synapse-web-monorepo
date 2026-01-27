@@ -14,6 +14,7 @@ import {
 } from '@x0k/json-schema-merge/lib/array'
 import { JSONSchema7 } from 'json-schema'
 import isObject from 'lodash-es/isObject'
+import { useMemo } from 'react'
 
 const { compareSchemaDefinitions, compareSchemaValues } = createComparator()
 const { mergeArrayOfSchemaDefinitions } = createMerger({
@@ -98,11 +99,13 @@ export default function useGetSchemaForGrid(session: GridSession | null) {
     },
   )
 
-  if (jsonSchema && entityJsonSchema) {
-    return shallowAllOfMerge({
-      allOf: [entityJsonSchema, jsonSchema],
-    }) as JSONSchema7
-  } else {
-    return jsonSchema
-  }
+  return useMemo(() => {
+    if (jsonSchema && entityJsonSchema) {
+      return shallowAllOfMerge({
+        allOf: [entityJsonSchema, jsonSchema],
+      }) as JSONSchema7
+    } else {
+      return jsonSchema
+    }
+  }, [jsonSchema, entityJsonSchema])
 }

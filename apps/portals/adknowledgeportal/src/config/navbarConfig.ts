@@ -10,6 +10,7 @@ export const navbarConfig: NavbarConfig = {
         { name: 'Projects', path: '/Explore/Projects' },
         { name: 'Studies', path: '/Explore/Studies' },
         { name: 'Data', path: '/Explore/Data' },
+        { name: 'Cohort Builder', path: '/Explore/Cohort Builder/Individuals' },
         { name: 'Publications', path: '/Explore/Publications' },
         { name: 'People', path: '/Explore/People' },
         {

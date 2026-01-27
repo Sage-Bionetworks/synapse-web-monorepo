@@ -9,6 +9,7 @@ import {
 import { useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { ExploreWrapperProps } from './ExploreWrapperProps'
+import { matchPath } from 'react-router'
 
 export function CustomScrollButton(props: TabScrollButtonProps) {
   if (props.disabled) {
@@ -42,12 +43,23 @@ export function ExploreWrapperTabs(props: ExploreWrapperProps) {
     [pathname],
   )
 
+  // Determine which tab should be selected based on current pathname
+  const selectedTabValue = useMemo(() => {
+    for (const route of explorePaths) {
+      const routePath = encodeURI(`/Explore/${route.path}`)
+      if (matchPath({ path: routePath, end: false }, pathname)) {
+        return routePath
+      }
+    }
+    return pathnameWithoutTrailingSlash
+  }, [pathnameWithoutTrailingSlash, explorePaths, pathname])
+
   /**
    * In the desktop view, we use Material UI tabs
    */
   return (
     <Tabs
-      value={pathnameWithoutTrailingSlash}
+      value={selectedTabValue}
       variant="scrollable"
       orientation={isMobileView ? 'vertical' : 'horizontal'}
       scrollButtons="auto"

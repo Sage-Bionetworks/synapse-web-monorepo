@@ -2,7 +2,7 @@ import { CardLink } from '@/components/CardContainer/CardLink'
 import { getValueOrMultiValue } from '@/components/GenericCard/CardUtils'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { getColumnIndex } from '@/utils/functions/index'
-import { Link, Tooltip } from '@mui/material'
+import { Tooltip } from '@mui/material'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -23,6 +23,7 @@ import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import { UserBadge } from '../UserCard/UserBadge'
 import { EntityColumnImage } from '../widgets/EntityColumnImage'
 import Linkify from './Linkify'
+import { SmartLink } from '../SmartLink/SmartLink'
 
 type SynapseCardLabelProps = {
   value: string
@@ -53,6 +54,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
     rowData,
     rowId,
   } = props
+
   if (!value) {
     return <p>{value}</p>
   }
@@ -185,16 +187,15 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
               {split.map((el, index) => {
                 return (
                   <Fragment key={el}>
-                    <Link
-                      href={href ?? undefined}
+                    <SmartLink
+                      href={href ?? ''}
                       target={linkTarget ?? TargetEnum.NEW_WINDOW}
-                      rel="noopener noreferrer"
                       key={el}
                       className={newClassName}
                       style={style}
                     >
                       {el}
-                    </Link>
+                    </SmartLink>
                     {index < split.length - 1 && (
                       <span style={{ marginRight: 4 }}>, </span>
                     )}
@@ -237,7 +238,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
 
             return (
               <Fragment key={el}>
-                <Link
+                <SmartLink
                   href={href}
                   key={el}
                   className={newClassName}
@@ -245,7 +246,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
                   target={linkTarget ?? TargetEnum.CURRENT_WINDOW}
                 >
                   {el}
-                </Link>
+                </SmartLink>
                 {index < split.length - 1 && (
                   <span style={{ marginRight: 4 }}>, </span>
                 )}

@@ -4,9 +4,7 @@ import {
   Box,
   Card,
   Typography,
-  Link,
   // Stack,
-  Button,
   // ButtonProps,
   useTheme,
   useMediaQuery,
@@ -15,6 +13,8 @@ import { DescriptionConfig } from '../CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
 import { GenericCardProps } from '@/components/GenericCard/GenericCard'
 import { useDocumentMetadata } from '@/utils/context/DocumentMetadataContext'
+import { SmartButton } from '../SmartLink/SmartButton'
+import { SmartLink } from '../SmartLink/SmartLink'
 
 export type HeaderCardV2Props = {
   /** Type label displayed at the top of the card */
@@ -144,6 +144,7 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
     forceStackedLayout = false,
     ctaLinkConfig,
   } = props
+
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -172,14 +173,10 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
   let ctaLinkBox = null
   if (ctaLinkConfig) {
     ctaLinkBox = (
-      <Button
+      <SmartButton
         variant="outlined"
-        component={Link}
         href={ctaLinkConfig.href}
         target={ctaLinkConfig.target}
-        rel={
-          ctaLinkConfig.target === '_blank' ? 'noopener noreferrer' : undefined
-        }
         size="large"
         sx={{
           color: '#FFF',
@@ -198,7 +195,7 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
         {/* TODO: add an external open icon like https://materialui.co/icon/open-in-new */}
         {/*<AddAlertTwoTone sx={{ width: '24px', height: '24px' }} />*/}
         {ctaLinkConfig.text}
-      </Button>
+      </SmartButton>
     )
   }
 
@@ -277,14 +274,14 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
               }}
             >
               {href ? (
-                <Link
+                <SmartLink
                   href={href}
                   target={target}
                   underline="hover"
                   color="inherit"
                 >
                   {title}
-                </Link>
+                </SmartLink>
               ) : (
                 title
               )}

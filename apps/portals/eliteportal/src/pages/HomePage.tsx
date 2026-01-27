@@ -192,7 +192,7 @@ function HomePageInternal() {
           combinationName="Intersection Size"
           onClick={handleUpsetPlotClick({
             sql: cohortBuilderSql,
-            explorePath: 'Cohort Builder',
+            explorePath: 'Cohort Builder/Individuals',
             columnName: 'dataTypes',
             navigate,
           })}

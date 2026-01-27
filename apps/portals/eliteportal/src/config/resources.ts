@@ -3,6 +3,7 @@ import { SearchV2Props } from 'synapse-react-client/components/SynapseTable/Sear
 
 export const SYNAPSE_PORTAL_ID = '1003'
 
+// TODO: dataSql and dataOnStudiesPageSql should point to main file view table once available (instead of Cohort Builder data files Virtual Table)
 export const dataSql = 'SELECT * FROM syn52234677'
 export const dataOnStudiesPageSql =
   "SELECT * FROM syn52234677 WHERE `resourceType` = 'metadata'"

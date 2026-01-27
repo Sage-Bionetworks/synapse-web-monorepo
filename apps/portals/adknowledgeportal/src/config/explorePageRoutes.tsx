@@ -1,5 +1,43 @@
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
+import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import { RouteObject } from 'react-router'
+import { ExplorePageRoute } from '@sage-bionetworks/synapse-portal-framework/components/Explore/ExploreWrapperProps'
+
+export const explorePaths: ExplorePageRoute[] = [
+  {
+    path: 'Programs',
+  },
+  {
+    path: 'Projects',
+  },
+  {
+    path: 'Studies',
+  },
+  {
+    path: 'Data',
+  },
+  {
+    path: 'Cohort Builder',
+  },
+  {
+    path: 'Publications',
+  },
+  {
+    path: 'People',
+  },
+  {
+    path: 'Experimental Models',
+  },
+  {
+    path: 'Computational Tools',
+  },
+  {
+    path: 'Target Enabling Resources',
+  },
+  {
+    path: 'Results',
+  },
+]
 
 export const explorePageRoutes: RouteObject[] = [
   {
@@ -56,5 +94,30 @@ export const explorePageRoutes: RouteObject[] = [
     path: 'Results',
     lazy: () =>
       import('@/pages/Explore/results').then(convertModuleToRouteObject),
+  },
+  {
+    path: 'Cohort Builder',
+    children: [
+      {
+        index: true,
+        element: (
+          <RedirectWithQuery to={'/Explore/Cohort Builder/Individuals'} />
+        ),
+      },
+      {
+        path: 'Individuals',
+        lazy: () =>
+          import('@/pages/Explore/cohortBuilder').then(
+            convertModuleToRouteObject,
+          ),
+      },
+      {
+        path: 'Data',
+        lazy: () =>
+          import('@/pages/Explore/cohortBuilderData').then(
+            convertModuleToRouteObject,
+          ),
+      },
+    ],
   },
 ]

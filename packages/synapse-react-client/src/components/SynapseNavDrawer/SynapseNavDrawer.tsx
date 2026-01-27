@@ -648,6 +648,14 @@ export function SynapseNavDrawer({
                   </a>
                   <a
                     className="SRC-whiteText"
+                    href="https://r-docs.synapse.org/"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    R Client Documentation
+                  </a>
+                  <a
+                    className="SRC-whiteText"
                     href="https://blog.synapse.org/"
                     rel="noopener noreferrer"
                   >

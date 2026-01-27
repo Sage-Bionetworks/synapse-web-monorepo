@@ -1,6 +1,6 @@
 import { GenericCardTitle } from '@/components/GenericCard/GenericCardTitle'
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
-import { Box, Link, Stack } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
 import React, { CSSProperties, forwardRef } from 'react'
 import { ColumnIconConfigs, DescriptionConfig } from '../CardContainerLogic'
@@ -9,6 +9,7 @@ import { CardFooter } from '../row_renderers/utils'
 import { FileHandleLink } from '../widgets/FileHandleLink'
 import { CollapsibleDescription } from './CollapsibleDescription'
 import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
+import { SmartLink } from '../SmartLink/SmartLink'
 
 export type GenericCardProps = {
   /** String representing the 'type' of object. This is displayed as a label on the card. */
@@ -16,7 +17,10 @@ export type GenericCardProps = {
   /** The title displayed on the card. */
   title: string
   /** Optionally provide href/target if the title should be a link */
-  titleLinkConfiguration?: { href: string; target: string }
+  titleLinkConfiguration?: {
+    href: string
+    target: string
+  }
   /** Optionally provide configuration if the title should be a link to a Synapse FileHandle */
   titleAsFileHandleLinkConfiguration?: {
     /** The FileHandleAssociation used to get access to the file handle */
@@ -218,13 +222,12 @@ export const GenericCard = forwardRef(function GenericCard(
           />
           {ctaLinkConfig && ctaLinkConfig.text && ctaLinkConfig.href && (
             <Box sx={{ mt: '20px' }}>
-              <Link
-                target={ctaLinkConfig.target}
-                rel="noopener noreferrer"
+              <SmartLink
                 href={ctaLinkConfig.href}
+                target={ctaLinkConfig.target}
               >
                 {ctaLinkConfig.text}
-              </Link>
+              </SmartLink>
             </Box>
           )}
         </div>
