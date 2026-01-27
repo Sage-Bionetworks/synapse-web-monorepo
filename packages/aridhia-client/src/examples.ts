@@ -40,12 +40,12 @@ async function authenticateExample() {
 async function listWorkflowsExample(token: string) {
   const workflowsApi = new WorkflowsApi(
     new Configuration({
-      basePath: 'https://fair.c-path-dev.aridhia.io/api',
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
       accessToken: token,
     }),
   )
 
-  const workflows = await workflowsApi.workflowsGet({
+  const workflows = await workflowsApi.fairWorkflowsGet({
     enabled: true,
   })
 
@@ -57,12 +57,12 @@ async function listWorkflowsExample(token: string) {
 async function getWorkflowExample(token: string, workflowCode: string) {
   const workflowsApi = new WorkflowsApi(
     new Configuration({
-      basePath: 'https://fair.c-path-dev.aridhia.io/api',
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
       accessToken: token,
     }),
   )
 
-  const workflow = await workflowsApi.workflowsCodeGet({
+  const workflow = await workflowsApi.fairWorkflowsCodeGet({
     code: workflowCode,
   })
 
@@ -74,12 +74,12 @@ async function getWorkflowExample(token: string, workflowCode: string) {
 async function listDatasetsExample(token: string) {
   const datasetsApi = new DatasetsApi(
     new Configuration({
-      basePath: 'https://fair.c-path-dev.aridhia.io/api',
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
       accessToken: token,
     }),
   )
 
-  const datasets = await datasetsApi.datasetsGet({
+  const datasets = await datasetsApi.fairDatasetsGet({
     page: 1,
     pageSize: 20,
     requestable: true,
@@ -93,12 +93,12 @@ async function listDatasetsExample(token: string) {
 async function getDatasetExample(token: string, datasetCode: string) {
   const datasetsApi = new DatasetsApi(
     new Configuration({
-      basePath: 'https://fair.c-path-dev.aridhia.io/api',
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
       accessToken: token,
     }),
   )
 
-  const dataset = await datasetsApi.datasetsCodeGet({
+  const dataset = await datasetsApi.fairDatasetsCodeGet({
     code: datasetCode,
   })
 
@@ -110,12 +110,12 @@ async function getDatasetExample(token: string, datasetCode: string) {
 async function getDatasetSettingsExample(token: string, datasetCode: string) {
   const datasetsApi = new DatasetsApi(
     new Configuration({
-      basePath: 'https://fair.c-path-dev.aridhia.io/api',
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
       accessToken: token,
     }),
   )
 
-  const settings = await datasetsApi.datasetsCodeSettingsGet({
+  const settings = await datasetsApi.fairDatasetsCodeSettingsGet({
     code: datasetCode,
   })
 
@@ -127,12 +127,12 @@ async function getDatasetSettingsExample(token: string, datasetCode: string) {
 async function createRequestExample(token: string) {
   const requestsApi = new RequestsApi(
     new Configuration({
-      basePath: 'https://fair.c-path-dev.aridhia.io/api',
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
       accessToken: token,
     }),
   )
 
-  const newRequest = await requestsApi.requestsPost({
+  const newRequest = await requestsApi.fairRequestsPost({
     requestPost: {
       name: 'My Data Access Request',
       transfer_type: 'clear',
@@ -153,12 +153,12 @@ async function createRequestExample(token: string) {
 async function listRequestsExample(token: string) {
   const requestsApi = new RequestsApi(
     new Configuration({
-      basePath: 'https://fair.c-path-dev.aridhia.io/api',
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
       accessToken: token,
     }),
   )
 
-  const requests = await requestsApi.requestsGet({
+  const requests = await requestsApi.fairRequestsGet({
     page: 1,
     pageSize: 20,
   })
@@ -171,12 +171,12 @@ async function listRequestsExample(token: string) {
 async function getRequestExample(token: string, requestCode: string) {
   const requestsApi = new RequestsApi(
     new Configuration({
-      basePath: 'https://fair.c-path-dev.aridhia.io/api',
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
       accessToken: token,
     }),
   )
 
-  const request = await requestsApi.requestsCodeGet({
+  const request = await requestsApi.fairRequestsCodeGet({
     code: requestCode,
   })
 

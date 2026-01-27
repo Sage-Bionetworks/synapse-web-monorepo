@@ -57,8 +57,9 @@ import {
 } from '@sage-bionetworks/aridhia-client'
 
 // Configure the client with Aridhia access token
+// All FAIR API calls must go through the gateway using the /fair path
 const config = new Configuration({
-  basePath: 'https://fair.c-path-dev.aridhia.io/api',
+  basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
   accessToken: aridhiaToken,
 })
 

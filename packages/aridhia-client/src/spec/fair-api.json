@@ -7,12 +7,8 @@
   },
   "servers": [
     {
-      "url": "https://fair.c-path-dev.aridhia.io/api",
-      "description": "C-Path FAIR API Development Server"
-    },
-    {
-      "url": "https://workspaces.westus2.c-path-dev.aridhia.io",
-      "description": "C-Path Workspaces API Development Server"
+      "url": "https://gateway.westus2.c-path-dev.aridhia.io",
+      "description": "C-Path Gateway (Development)"
     }
   ],
   "security": [
@@ -21,8 +17,13 @@
     }
   ],
   "paths": {
-    "/workflows/": {
+    "/fair/workflows/": {
       "get": {
+        "servers": [
+          {
+            "url": "https://gateway.westus2.c-path-dev.aridhia.io/fair"
+          }
+        ],
         "tags": ["workflows"],
         "summary": "List all available workflows",
         "parameters": [
@@ -71,8 +72,13 @@
         }
       }
     },
-    "/workflows/{code}": {
+    "/fair/workflows/{code}": {
       "get": {
+        "servers": [
+          {
+            "url": "https://gateway.westus2.c-path-dev.aridhia.io/fair"
+          }
+        ],
         "tags": ["workflows"],
         "summary": "Get a specific workflow with code",
         "parameters": [
@@ -108,7 +114,7 @@
         }
       }
     },
-    "/datasets/{code}/settings": {
+    "/fair/datasets/{code}/settings": {
       "get": {
         "tags": ["datasets"],
         "summary": "Get settings for a specific dataset",
@@ -145,8 +151,13 @@
         }
       }
     },
-    "/requests/": {
+    "/fair/requests/": {
       "get": {
+        "servers": [
+          {
+            "url": "https://gateway.westus2.c-path-dev.aridhia.io/fair"
+          }
+        ],
         "tags": ["requests"],
         "summary": "List all requests",
         "parameters": [
@@ -201,6 +212,11 @@
         }
       },
       "post": {
+        "servers": [
+          {
+            "url": "https://gateway.westus2.c-path-dev.aridhia.io/fair"
+          }
+        ],
         "tags": ["requests"],
         "summary": "Create a new request",
         "requestBody": {
@@ -236,8 +252,13 @@
         }
       }
     },
-    "/requests/{code}": {
+    "/fair/requests/{code}": {
       "get": {
+        "servers": [
+          {
+            "url": "https://gateway.westus2.c-path-dev.aridhia.io/fair"
+          }
+        ],
         "tags": ["requests"],
         "summary": "Get a specific request by code",
         "parameters": [
@@ -273,8 +294,13 @@
         }
       }
     },
-    "/datasets/": {
+    "/fair/datasets/": {
       "get": {
+        "servers": [
+          {
+            "url": "https://gateway.westus2.c-path-dev.aridhia.io/fair"
+          }
+        ],
         "tags": ["datasets"],
         "summary": "List all datasets",
         "parameters": [
@@ -338,8 +364,13 @@
         }
       }
     },
-    "/datasets/{code}": {
+    "/fair/datasets/{code}": {
       "get": {
+        "servers": [
+          {
+            "url": "https://gateway.westus2.c-path-dev.aridhia.io/fair"
+          }
+        ],
         "tags": ["datasets"],
         "summary": "Get a specific dataset by code",
         "parameters": [
@@ -377,6 +408,11 @@
     },
     "/authenticate": {
       "post": {
+        "servers": [
+          {
+            "url": "https://gateway.westus2.c-path-dev.aridhia.io"
+          }
+        ],
         "tags": ["authentication"],
         "summary": "Exchange third party token",
         "security": [
@@ -413,6 +449,11 @@
     },
     "/workspace_admin/workspace/search": {
       "post": {
+        "servers": [
+          {
+            "url": "https://workspaces.westus2.c-path-dev.aridhia.io"
+          }
+        ],
         "tags": ["workspace"],
         "summary": "Search for workspaces",
         "requestBody": {
@@ -450,6 +491,11 @@
     },
     "/workspace_admin/form_definition/workspace_request": {
       "get": {
+        "servers": [
+          {
+            "url": "https://workspaces.westus2.c-path-dev.aridhia.io"
+          }
+        ],
         "tags": ["workspace"],
         "summary": "Get form definition for workspace request",
         "responses": {
@@ -474,6 +520,11 @@
     },
     "/workspace_admin/workspace": {
       "post": {
+        "servers": [
+          {
+            "url": "https://workspaces.westus2.c-path-dev.aridhia.io"
+          }
+        ],
         "tags": ["workspace"],
         "summary": "Create a new workspace",
         "requestBody": {
@@ -511,6 +562,11 @@
     },
     "/workspace_admin/workspace/{uuid}/upload_token": {
       "post": {
+        "servers": [
+          {
+            "url": "https://workspaces.westus2.c-path-dev.aridhia.io"
+          }
+        ],
         "tags": ["workspace"],
         "summary": "Get upload token for a workspace",
         "parameters": [

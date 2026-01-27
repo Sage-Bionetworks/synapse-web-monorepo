@@ -1,5 +1,5 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
-import { RequestsGet200Response } from '@sage-bionetworks/aridhia-client/generated/models'
+import { FairRequestsGet200Response } from '@sage-bionetworks/aridhia-client/generated/models'
 import { RequestsApi } from '@sage-bionetworks/aridhia-client/generated/apis'
 import { useAridhiaContextOptional } from '@/utils/context/AridhiaContext'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
@@ -13,7 +13,11 @@ export const ARIDHIA_REQUESTS_QUERY_KEY = ['aridhia', 'requests'] as const
  */
 export function useGetAridhiaRequests(
   options?: Partial<
-    UseQueryOptions<RequestsGet200Response, Error, RequestsGet200Response>
+    UseQueryOptions<
+      FairRequestsGet200Response,
+      Error,
+      FairRequestsGet200Response
+    >
   >,
 ) {
   const aridhiaContext = useAridhiaContextOptional()
@@ -34,15 +38,15 @@ export function useGetAridhiaRequests(
       }
 
       // Exchange Synapse token for Aridhia token and create API configuration
+      // All FAIR API calls go through the gateway with /fair prefix
       const configuration = await createAridhiaApiConfiguration(
         synapseAccessToken,
         aridhiaContext.apiBasePath,
-        'https://fair.c-path-dev.aridhia.io/api',
         aridhiaContext.authenticationRequest,
       )
 
       const requestsApi = new RequestsApi(configuration)
-      return await requestsApi.requestsGet()
+      return await requestsApi.fairRequestsGet()
     },
     enabled:
       options?.enabled !== undefined

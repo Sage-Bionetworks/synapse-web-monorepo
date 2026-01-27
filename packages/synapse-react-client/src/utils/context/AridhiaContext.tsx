@@ -3,7 +3,9 @@ import { AuthenticationRequest } from '@sage-bionetworks/aridhia-client/generate
 
 export type AridhiaContextType = {
   /**
-   * Base URL for the Aridhia Gateway API (where authentication endpoint lives)
+   * Base URL for the Aridhia Gateway API.
+   * All API calls, including FAIR API calls, should go through the gateway.
+   * For FAIR API calls, the gateway routes to /fair/<api path>
    */
   apiBasePath: string
   /**
@@ -16,7 +18,8 @@ const AridhiaContext = createContext<AridhiaContextType | undefined>(undefined)
 
 export type AridhiaContextProviderProps = PropsWithChildren<{
   /**
-   * Base URL for the Aridhia Gateway API (where authentication endpoint lives)
+   * Base URL for the Aridhia Gateway API.
+   * All API calls should go through this gateway.
    * @default 'https://gateway.westus2.c-path-dev.aridhia.io'
    */
   apiBasePath?: string

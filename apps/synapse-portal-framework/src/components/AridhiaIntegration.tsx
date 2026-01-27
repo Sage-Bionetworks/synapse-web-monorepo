@@ -3,7 +3,8 @@ import { AridhiaContextProvider } from 'synapse-react-client/utils/context/Aridh
 
 export type AridhiaIntegrationProps = PropsWithChildren<{
   /**
-   * Base URL for the Aridhia API
+   * Base URL for the Aridhia Gateway API.
+   * All API calls, including FAIR API calls, should go through the gateway.
    */
   apiBasePath?: string
 }>

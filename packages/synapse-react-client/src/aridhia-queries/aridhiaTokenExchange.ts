@@ -44,16 +44,17 @@ export async function exchangeSynapseTokenForAridhia(
  * Creates an Aridhia API Configuration object with a freshly exchanged access token.
  * This is a convenience function for creating API instances.
  *
+ * All API calls should go through the gateway. For FAIR API calls, use the path:
+ * https://gateway.../fair/<api path>
+ *
  * @param synapseAccessToken - The Synapse access token to exchange
- * @param gatewayBasePath - Base URL for the Aridhia Gateway API (for authentication)
- * @param apiBasePath - Base URL for the Aridhia API being called
+ * @param gatewayBasePath - Base URL for the Aridhia Gateway API (used for both authentication and API calls)
  * @param authenticationRequest - Authentication request parameters (excluding subject_token)
  * @returns A Configuration object ready to use with Aridhia API clients
  */
 export async function createAridhiaApiConfiguration(
   synapseAccessToken: string,
   gatewayBasePath: string,
-  apiBasePath: string,
   authenticationRequest: Omit<AuthenticationRequest, 'subject_token'>,
 ): Promise<Configuration> {
   const authResponse = await exchangeSynapseTokenForAridhia(
@@ -63,7 +64,7 @@ export async function createAridhiaApiConfiguration(
   )
 
   return new Configuration({
-    basePath: apiBasePath,
+    basePath: gatewayBasePath,
     accessToken: authResponse.access_token,
   })
 }
