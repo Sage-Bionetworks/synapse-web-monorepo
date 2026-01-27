@@ -34,7 +34,9 @@ import SearchV2, { SearchV2Props } from '../SynapseTable/SearchV2'
 import SqlEditor from '../SynapseTable/SqlEditor'
 import TopLevelControls, {
   TopLevelControlsProps,
+  CustomControl,
 } from '../SynapseTable/TopLevelControls/TopLevelControls'
+import { CustomControls } from '../SynapseTable/CustomControls/CustomControls'
 import TotalQueryResults from '../TotalQueryResults'
 import PlotsContainer, {
   PlotsContainerProps,
@@ -71,6 +73,7 @@ type QueryWrapperPlotNavOwnProps = {
   availableFacets?: FacetFilterControlsProps['availableFacets']
   initialExpandedFacetControls?: FacetFilterControlsProps['initialExpandedFacetControls']
   customPlots?: QueryWrapperSynapsePlotProps[]
+  customControls?: CustomControl[]
   defaultColumn?: string
   defaultShowSearchBox?: boolean
   lockedColumn?: QueryWrapperProps['lockedColumn']
@@ -231,8 +234,8 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                   }
                   hideSqlEditorControl={hideSqlEditorControl}
                   cavaticaConnectAccountURL={cavaticaConnectAccountURL}
-                  customControls={customControls}
                   remount={remount}
+                  customControls={customControls}
                 />
               </SynapseErrorBoundary>
               {isFaceted && (
@@ -247,6 +250,10 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                 frontText={''}
                 endText={hasFacetsOrFilters ? 'filtered by' : ''}
                 hideIfUnfiltered={true}
+              />
+              <CustomControls
+                customControls={customControls}
+                remount={remount}
               />
               <PlotsContainer
                 facetsToPlot={facetsToPlot}

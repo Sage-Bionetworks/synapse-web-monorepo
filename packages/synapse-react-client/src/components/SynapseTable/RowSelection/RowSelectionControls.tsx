@@ -12,7 +12,7 @@ import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { selectedRowsAtom } from '../../QueryWrapper/TableRowSelectionState'
 import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import { getFileColumnModelId } from '../SynapseTableUtils'
-import CustomControlButton from '../TopLevelControls/CustomControlButton'
+import { CustomControlButton } from '../CustomControls/CustomControlButton'
 import { CustomControl } from '../TopLevelControls/TopLevelControls'
 import { RowSelectionUI } from './RowSelectionUI'
 

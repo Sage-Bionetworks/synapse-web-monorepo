@@ -13,7 +13,13 @@ type ExploreConfig = Record<Portal, ExploreTabTypes>
 // lists the objects (cards, charts, table, people) on each Explore tab per Portal
 const exploreConfig: ExploreConfig = {
   adknowledgeportal: {
-    table_charts: ['Data', 'Experimental Models', 'Target Enabling Resources'],
+    table_charts: [
+      'Data',
+      'Experimental Models',
+      'Target Enabling Resources',
+      // Commented out until ADKP Cohort Builder tables are made public
+      // 'Cohort Builder',
+    ],
     cards: ['Programs'],
     cards_charts: [
       'Projects',
@@ -47,7 +53,7 @@ const exploreConfig: ExploreConfig = {
     table_charts: ['Data'],
   },
   eliteportal: {
-    table_charts: ['Data', 'Cohort Builder'],
+    table_charts: ['Data', 'Cohort Builder/Individuals'],
     cards_charts: [
       'Projects',
       'Studies',

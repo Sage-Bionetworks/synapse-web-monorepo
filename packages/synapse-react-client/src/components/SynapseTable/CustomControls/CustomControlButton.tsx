@@ -1,22 +1,28 @@
 import { useState } from 'react'
 import { Button, ButtonProps } from '@mui/material'
-import { CustomControl, CustomControlCallbackData } from './TopLevelControls'
-import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
+import {
+  CustomControl,
+  CustomControlCallbackData,
+} from '../TopLevelControls/TopLevelControls'
 
-export interface CustomControlButtonProps extends ButtonProps {
+export interface CustomControlButtonProps extends Omit<ButtonProps, 'onClick'> {
   control: CustomControl
   callbackData: CustomControlCallbackData
 }
 
-function CustomControlButton(props: CustomControlButtonProps) {
-  const { control, callbackData, disabled } = props
+export function CustomControlButton(props: CustomControlButtonProps) {
+  const { control, callbackData, disabled, ...buttonProps } = props
   const { onClick, buttonText, buttonID } = control
   const [isLoading, setIsLoading] = useState(false)
   const isDisabled = disabled || isLoading
+
   return (
     <Button
-      {...props}
+      {...buttonProps}
+      id={buttonID}
+      variant="outlined"
       disabled={isDisabled}
+      loading={isLoading}
       onClick={() => {
         setIsLoading(true)
         onClick({
@@ -27,12 +33,8 @@ function CustomControlButton(props: CustomControlButtonProps) {
           },
         })
       }}
-      id={buttonID}
     >
-      {isLoading && <SynapseSpinner size={30} />}
       {buttonText}
     </Button>
   )
 }
-
-export default CustomControlButton

@@ -75,10 +75,30 @@ const routes: RouteObject[] = [
           },
           {
             path: 'Cohort Builder',
-            lazy: () =>
-              import('@/pages/Explore/cohortBuilder').then(
-                convertModuleToRouteObject,
-              ),
+            children: [
+              {
+                index: true,
+                element: (
+                  <RedirectWithQuery
+                    to={'/Explore/Cohort Builder/Individuals'}
+                  />
+                ),
+              },
+              {
+                path: 'Individuals',
+                lazy: () =>
+                  import('@/pages/Explore/cohortBuilder').then(
+                    convertModuleToRouteObject,
+                  ),
+              },
+              {
+                path: 'Data',
+                lazy: () =>
+                  import('@/pages/Explore/cohortBuilderData').then(
+                    convertModuleToRouteObject,
+                  ),
+              },
+            ],
           },
           {
             path: 'Projects',
