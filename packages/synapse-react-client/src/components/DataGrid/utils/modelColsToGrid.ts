@@ -6,6 +6,7 @@ export function modelColsToGrid(
   columnNames: string[],
   columnOrder: number[],
   schemaPropertiesInfo: SchemaPropertiesMap,
+  columnWidths: Record<string, number> = {},
 ): Column[] {
   return columnOrder.map((index: number) => {
     const columnName = columnNames[index]
@@ -17,6 +18,7 @@ export function modelColsToGrid(
       enumeratedValues: propertyInfo?.enumeratedValues || [],
       isRequired: propertyInfo?.isRequired || false,
       disabled: propertyInfo?.type?.readOnly,
+      customWidth: columnWidths[columnName],
     })
   })
 }

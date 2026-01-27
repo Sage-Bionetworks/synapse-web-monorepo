@@ -25,7 +25,9 @@ import SqlEditor from '../SynapseTable/SqlEditor'
 import { SynapseTableConfiguration } from '../SynapseTable/SynapseTable'
 import TopLevelControls, {
   TopLevelControlsProps,
+  CustomControl,
 } from '../SynapseTable/TopLevelControls/TopLevelControls'
+import { CustomControls } from '../SynapseTable/CustomControls/CustomControls'
 import TotalQueryResults from '../TotalQueryResults'
 
 type StandaloneQueryWrapperOwnProps = {
@@ -34,7 +36,8 @@ type StandaloneQueryWrapperOwnProps = {
     SearchV2Props,
     'queryContext' | 'queryVisualizationContext'
   >
-} & TopLevelControlsProps &
+  customControls?: CustomControl[]
+} & Omit<TopLevelControlsProps, 'customControls'> &
   Pick<
     QueryVisualizationWrapperProps,
     | 'rgbIndex'
@@ -121,6 +124,7 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
     cardConfiguration,
     tableConfiguration,
     shouldDeepLink,
+    customControls,
     ...rest
   } = props
   const [componentKey, setComponentKey] = useState(1)
@@ -183,6 +187,7 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
                           hideFacetFilterControl={true}
                           hideVisualizationsControl={true}
                           remount={remount}
+                          customControls={customControls}
                         />
                       )}
                       {entity && isTable(entity) && entity.isSearchEnabled ? (
@@ -200,6 +205,10 @@ function StandaloneQueryWrapper(props: StandaloneQueryWrapperProps) {
                       {showTopLevelControls && (
                         <TotalQueryResults frontText={''} />
                       )}
+                      <CustomControls
+                        customControls={props.customControls}
+                        remount={remount}
+                      />
 
                       <RowSetView
                         tableConfiguration={

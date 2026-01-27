@@ -10,26 +10,32 @@ import Navbar from './components/navbar/Navbar'
 import { usePortalContext } from './components/PortalContext'
 import { useDocumentTitleFromRoutes } from './utils/useDocumentTitleFromRoutes'
 
-export default function App(props: PropsWithChildren) {
+export type AppProps = PropsWithChildren<{
+  /** If true, redirects unauthenticated users to OneSage login after session initialization */
+  requireAuthentication?: boolean
+}>
+
+export default function App(props: AppProps) {
+  const { requireAuthentication } = props
   useDocumentTitleFromRoutes()
   const { aridhiaConfig } = usePortalContext()
 
   const content = (
     <>
-        <SynapseToastContainer />
-        <Navbar />
-        <CookiesNotification />
-        <main className="main">
-          {props.children}
-          <Outlet />
-        </main>
-        <Footer />
+      <SynapseToastContainer />
+      <Navbar />
+      <CookiesNotification />
+      <main className="main">
+        {props.children}
+        <Outlet />
+      </main>
+      <Footer />
     </>
   )
 
   return (
     <SynapseErrorBoundary>
-      <AppInitializer>
+      <AppInitializer requireAuthentication={requireAuthentication}>
         {aridhiaConfig?.apiBasePath ? (
           <AridhiaIntegration apiBasePath={aridhiaConfig.apiBasePath}>
             {content}

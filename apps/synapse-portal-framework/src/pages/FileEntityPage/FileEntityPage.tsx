@@ -2,7 +2,10 @@ import { useGetPortalComponentSearchParams } from '@/utils/UseGetPortalComponent
 import { Box, Container, Stack } from '@mui/material'
 import { IconSvg, ProvenanceGraph } from 'synapse-react-client'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
-import { useGetEntityBundle } from 'synapse-react-client/synapse-queries'
+import {
+  useGetEntityBundle,
+  useGetEntityPermissions,
+} from 'synapse-react-client/synapse-queries'
 import { DetailsPageSectionLayoutType } from '@/components/DetailsPage/DetailsPageSectionLayout'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 import HeaderCard from 'synapse-react-client/components/HeaderCard'
@@ -25,6 +28,7 @@ function FileEntityPage() {
     showWiki = true,
     showProvenance = true,
     showAnnotations = true,
+    restrictSynapseLinkCardToEditableEntity = false,
   } = fileEntityPageConfig ?? {}
 
   const { data: entityBundle, isLoading } = useGetEntityBundle(
@@ -38,8 +42,14 @@ function FileEntityPage() {
     },
   )
 
+  const { data: entityPermissions } = useGetEntityPermissions(entityId)
+
+  const showLinkCard: boolean =
+    !restrictSynapseLinkCardToEditableEntity ||
+    entityPermissions?.canEdit === true
+
   const fileEntityPageSections = [
-    {
+    showLinkCard && {
       element: (
         <SynapseFileEntityLinkCard
           portalName={portalName}

@@ -25,7 +25,8 @@ function ExploreLayout() {
           path: 'Data',
         },
         {
-          path: 'Cohort Builder',
+          displayName: 'Cohort Builder',
+          path: 'Cohort Builder/Individuals',
           OrientationBannerProps: {
             name: 'CohortBuilder',
             title: 'Getting Started With Cohort Builder',

@@ -11,7 +11,7 @@ export const navbarConfig: NavbarConfig = {
       path: '/Explore',
       children: [
         { name: 'Data', path: '/Explore/Data' },
-        { name: 'Cohort Builder', path: '/Explore/Cohort Builder' },
+        { name: 'Cohort Builder', path: '/Explore/Cohort Builder/Individuals' },
         {
           name: 'Projects',
           path: '/Explore/Projects',
