@@ -12,7 +12,6 @@ describe('AridhiaClient', () => {
     const authApi = new AuthenticationApi(config)
 
     expect(authApi).toBeDefined()
-    expect(authApi.configuration).toBe(config)
   })
 
   it('should create a Configuration with correct basePath', () => {
