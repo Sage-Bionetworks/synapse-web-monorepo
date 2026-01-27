@@ -282,6 +282,42 @@ export type AutocompleteMultipleEnumColumnProps = {
   clearValue?: undefined | null
 }
 
+// Extract paste logic for easier testing
+export function parseMultipleEnumPasteValue(
+  value: unknown,
+  colType?: JSONSchema7Type,
+): unknown {
+  if (typeof value !== 'string') {
+    return value
+  }
+
+  // Handle bracket-enclosed JSON arrays: ["a","b"] or ['a','b']
+  const trimmedValue = value.trim()
+  if (trimmedValue.startsWith('[') && trimmedValue.endsWith(']')) {
+    try {
+      const parsed = JSON.parse(trimmedValue)
+      if (Array.isArray(parsed)) {
+        return parsed
+          .map(item => parseFreeTextGivenJsonSchemaType(item, colType))
+          .filter(item => item !== null && item !== undefined)
+      }
+    } catch {
+      // If JSON parse fails, fall through to comma-split logic
+    }
+  }
+
+  // Handle comma or tab delimited values: a,b,c
+  const delimiters = /[,\t]/
+  const parsedValues = value
+    .split(delimiters)
+    .map(item => item.trim())
+    .filter(item => item.length > 0)
+    .map(item => parseFreeTextGivenJsonSchemaType(item, colType))
+    .filter(item => item !== null && item !== undefined)
+
+  return parsedValues.length > 0 ? parsedValues : []
+}
+
 export function autocompleteMultipleEnumColumn({
   choices,
   colType,
@@ -306,30 +342,13 @@ export function autocompleteMultipleEnumColumn({
       const safeRowData = createSafeRowData(rowData)
       return safeRowData.map(item => castCellValueToString(item)).join(',')
     },
-    pasteValue: ({ value }) => {
-      if (typeof value !== 'string') {
-        return value
-      }
-
-      // Split by comma or tab and clean up values
-      const delimiters = /[,\t]/
-      const parsedValues = value
-        .split(delimiters)
-        .map(item => item.trim())
-        .filter(item => item.length > 0)
-        .map(item => parseFreeTextGivenJsonSchemaType(item, colType))
-        .filter(item => item !== null && item !== undefined)
-
-      return parsedValues.length > 0 ? parsedValues : []
-    },
+    pasteValue: ({ value }) => parseMultipleEnumPasteValue(value, colType),
     disableKeys: true,
     keepFocus: true,
     ...(dynamicHeight && {
       cellClassName: ({ rowData }) => {
         const safeRowData = createSafeRowData(rowData)
-        return safeRowData.length > 3
-          ? 'multi-value-cell-large'
-          : 'multi-value-cell'
+        return safeRowData.length > limitTags ? 'dynamic-height-cell' : ''
       },
     }),
   }
