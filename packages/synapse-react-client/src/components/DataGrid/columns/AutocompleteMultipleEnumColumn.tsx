@@ -295,6 +295,7 @@ export function parseMultipleEnumPasteValue(
   const trimmedValue = value.trim()
   if (trimmedValue.startsWith('[') && trimmedValue.endsWith(']')) {
     try {
+      // Try parsing as-is first (handles double-quote JSON)
       const parsed = JSON.parse(trimmedValue)
       if (Array.isArray(parsed)) {
         return parsed
@@ -302,7 +303,19 @@ export function parseMultipleEnumPasteValue(
           .filter(item => item !== null && item !== undefined)
       }
     } catch {
-      // If JSON parse fails, fall through to comma-split logic
+      // If that fails, try converting single quotes to double quotes
+      // This handles JavaScript array literal syntax: ['a','b']
+      try {
+        const withDoubleQuotes = trimmedValue.replace(/'/g, '"')
+        const parsed = JSON.parse(withDoubleQuotes)
+        if (Array.isArray(parsed)) {
+          return parsed
+            .map(item => parseFreeTextGivenJsonSchemaType(item, colType))
+            .filter(item => item !== null && item !== undefined)
+        }
+      } catch {
+        // If both attempts fail, fall through to comma-split logic
+      }
     }
   }
 
