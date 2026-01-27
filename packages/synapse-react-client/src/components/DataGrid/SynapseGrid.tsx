@@ -398,10 +398,10 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                           gridSessionId={session.sessionId!}
                         />
                       )}
-                      {session.sourceEntityId && (
+                      {session.sessionId && (
                         <ExportCsvFromGridButton
-                          modelSnapshot={modelSnapshot}
-                          filename={session.sourceEntityId}
+                          gridSessionId={session.sessionId}
+                          filename={session.sourceEntityId || 'export'}
                         />
                       )}
                       {session.sourceEntityId && (

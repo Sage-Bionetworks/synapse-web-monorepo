@@ -1,37 +1,31 @@
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import { useExportDataGridToCsv } from '@/components/DataGrid/hooks/useExportDataGridToCsv'
-import { GridModelSnapshot } from '@/components/DataGrid/DataGridTypes'
 import { DownloadTwoTone } from '@mui/icons-material'
 import { CircularProgress } from '@mui/material'
 
 export type ExportCsvFromGridButtonProps = {
-  modelSnapshot: GridModelSnapshot | null
+  gridSessionId: string
   filename: string
 }
 
 export default function ExportCsvFromGridButton(
   props: ExportCsvFromGridButtonProps,
 ) {
-  const { modelSnapshot, filename } = props
+  const { gridSessionId, filename } = props
 
   const { exportToCsv, isExporting } = useExportDataGridToCsv({
+    gridSessionId,
     filename,
   })
 
-  const handleExport = () => {
-    if (modelSnapshot) {
-      exportToCsv(modelSnapshot)
-    }
-  }
-
   return (
     <GridMenuButton
-      onClick={handleExport}
+      onClick={exportToCsv}
       variant="outlined"
       startIcon={
         isExporting ? <CircularProgress size={20} /> : <DownloadTwoTone />
       }
-      disabled={isExporting || !modelSnapshot}
+      disabled={isExporting}
     >
       {isExporting ? 'Exporting...' : 'Export CSV'}
     </GridMenuButton>
