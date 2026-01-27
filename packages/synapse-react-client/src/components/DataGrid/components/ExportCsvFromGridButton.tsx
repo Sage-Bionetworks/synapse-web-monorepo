@@ -1,7 +1,6 @@
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import { useExportDataGridToCsv } from '@/components/DataGrid/hooks/useExportDataGridToCsv'
 import { DownloadTwoTone } from '@mui/icons-material'
-import { CircularProgress } from '@mui/material'
 
 export type ExportCsvFromGridButtonProps = {
   gridSessionId: string
@@ -22,9 +21,7 @@ export default function ExportCsvFromGridButton(
     <GridMenuButton
       onClick={exportToCsv}
       variant="outlined"
-      startIcon={
-        isExporting ? <CircularProgress size={20} /> : <DownloadTwoTone />
-      }
+      startIcon={<DownloadTwoTone />}
       loading={isExporting}
     >
       Export CSV
