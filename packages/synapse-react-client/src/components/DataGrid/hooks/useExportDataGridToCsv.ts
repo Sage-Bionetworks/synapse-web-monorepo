@@ -18,17 +18,25 @@ export function useExportDataGridToCsv(options: UseExportDataGridToCsvOptions) {
         // Get presigned URL and trigger download
         getFileHandleByIdURL(data.resultsFileHandleId, accessToken)
           .then(presignedUrl => {
-            // Create a link and trigger download
-            const link = document.createElement('a')
-            link.href = presignedUrl
-            // Generate filename with timestamp
-            const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
-            link.setAttribute('download', `${filename}-${timestamp}.csv`)
-            document.body.appendChild(link)
-            link.click()
-            document.body.removeChild(link)
+            // Fetch the file as a blob to control the filename
+            return fetch(presignedUrl)
+              .then(response => response.blob())
+              .then(blob => {
+                // Create a blob URL with our custom filename
+                const blobUrl = URL.createObjectURL(blob)
+                const link = document.createElement('a')
+                link.href = blobUrl
+                // Generate filename with timestamp
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+                link.setAttribute('download', `${filename}-${timestamp}.csv`)
+                document.body.appendChild(link)
+                link.click()
+                document.body.removeChild(link)
+                // Clean up the blob URL
+                URL.revokeObjectURL(blobUrl)
 
-            displayToast('CSV export completed successfully', 'success')
+                displayToast('CSV export completed successfully', 'success')
+              })
           })
           .catch(err => {
             displayToast(
