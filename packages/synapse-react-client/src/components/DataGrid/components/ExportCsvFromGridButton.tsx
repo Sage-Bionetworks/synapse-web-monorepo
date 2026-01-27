@@ -25,9 +25,9 @@ export default function ExportCsvFromGridButton(
       startIcon={
         isExporting ? <CircularProgress size={20} /> : <DownloadTwoTone />
       }
-      disabled={isExporting}
+      loading={isExporting}
     >
-      {isExporting ? 'Exporting...' : 'Export CSV'}
+      Export CSV
     </GridMenuButton>
   )
 }
