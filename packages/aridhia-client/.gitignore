@@ -3,4 +3,3 @@ dist/
 *.tsbuildinfo
 coverage/
 .DS_Store
-src/generated/
