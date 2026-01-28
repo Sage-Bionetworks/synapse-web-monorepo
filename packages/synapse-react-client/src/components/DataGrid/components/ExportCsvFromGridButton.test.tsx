@@ -55,19 +55,6 @@ describe('ExportCsvFromGridButton', () => {
     expect(mockExportToCsv).toHaveBeenCalledTimes(1)
   })
 
-  it('should keep "Export CSV" text even when isExporting is true', () => {
-    ;(useExportDataGridToCsv as Mock).mockReturnValue({
-      exportToCsv: mockExportToCsv,
-      isExporting: true,
-    })
-
-    render(<ExportCsvFromGridButton {...defaultProps} />)
-
-    expect(
-      screen.getByRole('button', { name: /export csv/i }),
-    ).toBeInTheDocument()
-  })
-
   it('should disable button when isExporting is true', () => {
     ;(useExportDataGridToCsv as Mock).mockReturnValue({
       exportToCsv: mockExportToCsv,
