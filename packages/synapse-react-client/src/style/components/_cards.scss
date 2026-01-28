@@ -1,5 +1,4 @@
 @use '../abstracts/variables' as SRC;
-@use 'sass:color';
 @use 'sass:map';
 
 //Variables
@@ -52,7 +51,7 @@ $text-color-lighter: #898989;
     color: white;
     margin-top: 0px;
     margin-bottom: 0px;
-    background: SRC.$primary-action-color;
+    background: var(--synapse-primary-action-color);
     @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
       padding-top: 40px;
     }
@@ -83,10 +82,10 @@ $text-color-lighter: #898989;
       height: 24px;
 
       &:hover {
-        background-color: map.get(SRC.$primary-color-palette, 700);
+        background-color: var(--synapse-primary-700);
       }
       &:active {
-        background-color: map.get(SRC.$primary-color-palette, 800);
+        background-color: var(--synapse-primary-800);
       }
     }
     .SRC-cardMetadata .SRC-row-label {
@@ -224,7 +223,11 @@ $text-color-lighter: #898989;
     .SRC-cardAnnotations {
       margin: ($baseline-grid * 0.5) 0;
       span {
-        background: color.change(SRC.$secondary-action-color, $alpha: 0.05);
+        background: color-mix(
+          in srgb,
+          var(--synapse-secondary-action-color) 5%,
+          transparent
+        );
         display: inline-block;
         padding: 2px 15px 4px 15px;
         margin: 0 10px 5px 0;

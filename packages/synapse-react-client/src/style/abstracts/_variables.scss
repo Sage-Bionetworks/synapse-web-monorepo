@@ -1,8 +1,149 @@
 @use 'sass:color';
 @use 'sass:map';
 
+$raw-primary: rgb(64, 123, 160);
+$raw-secondary: #469285;
+$raw-tertiary: #f1d285;
+
 // CSS Variables
 :root {
+  // primary color palette
+  --synapse-primary-active: #{color.adjust(
+      $raw-primary,
+      $saturation: 50%,
+      $lightness: 0%
+    )};
+
+  --synapse-primary-100: #{color.adjust(
+      $raw-primary,
+      $saturation: -25%,
+      $lightness: 50%
+    )};
+  --synapse-primary-200: #{color.adjust(
+      $raw-primary,
+      $saturation: -13%,
+      $lightness: 20%
+    )};
+  --synapse-primary-300: #{color.adjust(
+      $raw-primary,
+      $saturation: -3%,
+      $lightness: 10%
+    )};
+  --synapse-primary-400: #{color.adjust(
+      $raw-primary,
+      $saturation: -1%,
+      $lightness: 5%
+    )};
+  --synapse-primary-500: var(
+    --synapse-primary-action-color
+  ); // This is the base color
+  --synapse-primary-600: #{color.adjust(
+      $raw-primary,
+      $saturation: 5%,
+      $lightness: -4%
+    )};
+  --synapse-primary-700: #{color.adjust(
+      $raw-primary,
+      $saturation: 11%,
+      $lightness: -8%
+    )};
+  --synapse-primary-800: #{color.adjust(
+      $raw-primary,
+      $saturation: 18%,
+      $lightness: -10%
+    )};
+  --synapse-primary-900: #{color.adjust(
+      $raw-primary,
+      $saturation: 24%,
+      $lightness: -18%
+    )};
+
+  // secondary color palette
+  --synapse-secondary-100: #{color.adjust(
+      $raw-secondary,
+      $saturation: -25%,
+      $lightness: 50%
+    )};
+  --synapse-secondary-200: #{color.adjust(
+      $raw-secondary,
+      $saturation: -13%,
+      $lightness: 20%
+    )};
+  --synapse-secondary-300: #{color.adjust(
+      $raw-secondary,
+      $saturation: -3%,
+      $lightness: 10%
+    )};
+  --synapse-secondary-400: #{color.adjust(
+      $raw-secondary,
+      $saturation: -1%,
+      $lightness: 5%
+    )};
+  --synapse-secondary-500: var(--synapse-secondary-action-color);
+  --synapse-secondary-600: #{color.adjust(
+      $raw-secondary,
+      $saturation: 5%,
+      $lightness: -4%
+    )};
+  --synapse-secondary-700: #{color.adjust(
+      $raw-secondary,
+      $saturation: 11%,
+      $lightness: -8%
+    )};
+  --synapse-secondary-800: #{color.adjust(
+      $raw-secondary,
+      $saturation: 18%,
+      $lightness: -10%
+    )};
+  --synapse-secondary-900: #{color.adjust(
+      $raw-secondary,
+      $saturation: 24%,
+      $lightness: -18%
+    )};
+
+  // tertiary color palette
+  --synapse-tertiary-100: #{color.adjust(
+      $raw-tertiary,
+      $saturation: -25%,
+      $lightness: 50%
+    )};
+  --synapse-tertiary-200: #{color.adjust(
+      $raw-tertiary,
+      $saturation: -13%,
+      $lightness: 20%
+    )};
+  --synapse-tertiary-300: #{color.adjust(
+      $raw-tertiary,
+      $saturation: -3%,
+      $lightness: 10%
+    )};
+  --synapse-tertiary-400: #{color.adjust(
+      $raw-tertiary,
+      $saturation: -1%,
+      $lightness: 5%
+    )};
+  --synapse-tertiary-500: var(--synapse-tertiary-action-color);
+  --synapse-tertiary-600: #{color.adjust(
+      $raw-tertiary,
+      $saturation: 5%,
+      $lightness: -4%
+    )};
+  --synapse-tertiary-700: #{color.adjust(
+      $raw-tertiary,
+      $saturation: 11%,
+      $lightness: -8%
+    )};
+  --synapse-tertiary-800: #{color.adjust(
+      $raw-tertiary,
+      $saturation: 18%,
+      $lightness: -10%
+    )};
+  --synapse-tertiary-900: #{color.adjust(
+      $raw-tertiary,
+      $saturation: 24%,
+      $lightness: -18%
+    )};
+
   // Greyscale colors
   --synapse-black: #000;
   --synapse-white: #ffffff;
@@ -141,47 +282,42 @@ $box-shadow-soft: var(--synapse-box-shadow-soft);
 $active-tab-text: var(--synapse-active-tab-text);
 $inactive-tab-text: var(--synapse-inactive-tab-text);
 
-// adjust is a sass function (compile time) vs css variables are resolved at runtime
-$primary-action-color-active: color.adjust(
-  $primary-action-color,
-  $saturation: 50%,
-  $lightness: 0%
-) !default;
+$primary-action-color-active: var(--synapse-primary-active) !default;
 
 $primary-color-palette: (
-  100: color.adjust($primary-action-color, $saturation: -25%, $lightness: 50%),
-  200: color.adjust($primary-action-color, $saturation: -13%, $lightness: 20%),
-  300: color.adjust($primary-action-color, $saturation: -3%, $lightness: 10%),
-  400: color.adjust($primary-action-color, $saturation: -1%, $lightness: 5%),
-  500: $primary-action-color,
-  600: color.adjust($primary-action-color, $saturation: 5%, $lightness: -4%),
-  700: color.adjust($primary-action-color, $saturation: 11%, $lightness: -8%),
-  800: color.adjust($primary-action-color, $saturation: 18%, $lightness: -10%),
-  900: color.adjust($primary-action-color, $saturation: 24%, $lightness: -18%),
+  100: var(--synapse-primary-100),
+  200: var(--synapse-primary-200),
+  300: var(--synapse-primary-300),
+  400: var(--synapse-primary-400),
+  500: var(--synapse-primary-500),
+  600: var(--synapse-primary-600),
+  700: var(--synapse-primary-700),
+  800: var(--synapse-primary-800),
+  900: var(--synapse-primary-900),
 ) !default;
 
 $secondary-color-palette: (
-  100: color.adjust($secondary-action-color, $saturation: -25%, $lightness: 50%),
-  200: color.adjust($secondary-action-color, $saturation: -13%, $lightness: 20%),
-  300: color.adjust($secondary-action-color, $saturation: -3%, $lightness: 10%),
-  400: color.adjust($secondary-action-color, $saturation: -1%, $lightness: 5%),
-  500: $secondary-action-color,
-  600: color.adjust($secondary-action-color, $saturation: 5%, $lightness: -4%),
-  700: color.adjust($secondary-action-color, $saturation: 11%, $lightness: -8%),
-  800: color.adjust($secondary-action-color, $saturation: 18%, $lightness: -10%),
-  900: color.adjust($secondary-action-color, $saturation: 24%, $lightness: -18%),
+  100: var(--synapse-secondary-100),
+  200: var(--synapse-secondary-200),
+  300: var(--synapse-secondary-300),
+  400: var(--synapse-secondary-400),
+  500: var(--synapse-secondary-500),
+  600: var(--synapse-secondary-600),
+  700: var(--synapse-secondary-700),
+  800: var(--synapse-secondary-800),
+  900: var(--synapse-secondary-900),
 ) !default;
 
 $tertiary-color-palette: (
-  100: color.adjust($tertiary-action-color, $saturation: -25%, $lightness: 50%),
-  200: color.adjust($tertiary-action-color, $saturation: -13%, $lightness: 20%),
-  300: color.adjust($tertiary-action-color, $saturation: -3%, $lightness: 10%),
-  400: color.adjust($tertiary-action-color, $saturation: -1%, $lightness: 5%),
-  500: $tertiary-action-color,
-  600: color.adjust($tertiary-action-color, $saturation: 5%, $lightness: -4%),
-  700: color.adjust($tertiary-action-color, $saturation: 11%, $lightness: -8%),
-  800: color.adjust($tertiary-action-color, $saturation: 18%, $lightness: -10%),
-  900: color.adjust($tertiary-action-color, $saturation: 24%, $lightness: -18%),
+  100: var(--synapse-tertiary-100),
+  200: var(--synapse-tertiary-200),
+  300: var(--synapse-tertiary-300),
+  400: var(--synapse-tertiary-400),
+  500: var(--synapse-tertiary-500),
+  600: var(--synapse-tertiary-600),
+  700: var(--synapse-tertiary-700),
+  800: var(--synapse-tertiary-800),
+  900: var(--synapse-tertiary-900),
 ) !default;
 
 /// Breakpoints map
