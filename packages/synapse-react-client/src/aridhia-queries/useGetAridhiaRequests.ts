@@ -24,6 +24,7 @@ export function useGetAridhiaRequests(
   const { accessToken: synapseAccessToken } = useSynapseContext()
 
   return useQuery({
+    enabled: !!synapseAccessToken && !!aridhiaContext,
     ...options,
     queryKey: ARIDHIA_REQUESTS_QUERY_KEY,
     queryFn: async () => {
@@ -48,9 +49,5 @@ export function useGetAridhiaRequests(
       const requestsApi = new RequestsApi(configuration)
       return await requestsApi.fairRequestsGet()
     },
-    enabled:
-      options?.enabled !== undefined
-        ? options.enabled
-        : !!synapseAccessToken && !!aridhiaContext,
   })
 }
