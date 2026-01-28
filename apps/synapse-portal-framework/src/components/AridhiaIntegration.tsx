@@ -23,6 +23,7 @@ export function AridhiaIntegration(props: AridhiaIntegrationProps) {
     <AridhiaContextProvider
       apiBasePath={apiBasePath}
       authenticationRequest={{
+        //Note: PLFM-9439 would enable us to switch this to an id_token (type 'jwt') rather than passing an access_token
         subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
         subject_token_issuer: 'sage-dev', //idp-id provided by C-Path
       }}
