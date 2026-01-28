@@ -50,6 +50,31 @@
     "test": "vitest",
     "lint": "eslint src"
   },
+  "nx": {
+    "targets": {
+      "generate": {
+        "inputs": [
+          "{projectRoot}/src/spec/fair-api.json",
+          "{projectRoot}/package.json",
+          "{projectRoot}/openapitools.json",
+          "{projectRoot}/config.json"
+        ],
+        "outputs": [
+          "{projectRoot}/src/generated"
+        ]
+      },
+      "test": {
+        "dependsOn": [
+          "generate"
+        ]
+      },
+      "build": {
+        "dependsOn": [
+          "generate"
+        ]
+      }
+    }
+  },
   "keywords": [],
   "author": "",
   "license": "Apache-2.0"
