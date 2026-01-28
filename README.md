@@ -53,3 +53,5 @@ Some notes:
 
 - If the test step fails, you can find the failed tests by downloading the artifacts from the job, which includes HTML reports of the tests.
 - We currently have many warnings and errors emitted in each test, so we have configured each test run to silence the output. If you need to see these warnings and errors, remove the 'silent' parameter from the script or configuration file.
+
+## Styling
