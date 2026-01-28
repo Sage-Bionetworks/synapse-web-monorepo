@@ -1,4 +1,4 @@
-import { Link } from '@mui/material'
+import { SmartLink } from '../SmartLink/SmartLink'
 
 type GenericCardTitleProps = {
   title: string
@@ -11,9 +11,9 @@ export function GenericCardTitle(props: GenericCardTitleProps) {
 
   if (href) {
     return (
-      <Link target={target} href={href}>
+      <SmartLink target={target} href={href}>
         {title}
-      </Link>
+      </SmartLink>
     )
   } else {
     return <span>{title}</span>

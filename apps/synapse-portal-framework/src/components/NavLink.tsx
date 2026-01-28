@@ -1,6 +1,6 @@
 import { Link as MuiLink } from '@mui/material'
 import { CSSProperties, ReactNode } from 'react'
-import { NavLink as ReactRouterNavLink } from 'react-router'
+import { useSmartLink } from 'synapse-react-client/components/SmartLink/useSmartLink'
 
 /*
   
@@ -21,24 +21,18 @@ type Props = {
   target?: string
 }
 export default function NavLink(props: Props) {
-  const link = props.to
-  let defaultTarget = '_self' // default to open in the same window
-  let isExternal = false
-  if (link.startsWith('http')) {
-    defaultTarget = '_blank' // if this is an external link, default to open in a new window
-    isExternal = true
-  } else if (link.includes('mailto')) {
-    isExternal = true
-  }
-  const target = props.target ?? defaultTarget
+  const { to, children, target, onClick, className, id, style } = props
+  const smartLinkProps = useSmartLink(to, target)
 
-  return isExternal ? (
-    <MuiLink href={link} target={target} rel="noreferrer noopener" {...props}>
-      {props.children}
+  return (
+    <MuiLink
+      {...smartLinkProps}
+      onClick={onClick}
+      className={className}
+      id={id}
+      style={style}
+    >
+      {children}
     </MuiLink>
-  ) : (
-    <ReactRouterNavLink {...props} target={target}>
-      {props.children}
-    </ReactRouterNavLink>
   )
 }

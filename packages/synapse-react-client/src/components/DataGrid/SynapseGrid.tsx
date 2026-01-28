@@ -1,5 +1,6 @@
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
+import ExportCsvFromGridButton from '@/components/DataGrid/components/ExportCsvFromGridButton'
 import useGetSchemaForGrid from '@/components/DataGrid/hooks/useGetSchemaForGrid'
 import MergeGridWithSourceTableButton from '@/components/DataGrid/MergeGridWithSourceTableButton'
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
@@ -26,7 +27,6 @@ import {
 } from 'react'
 import { DataSheetGridRef } from 'react-datasheet-grid'
 import { SelectionWithId } from 'react-datasheet-grid/dist/types'
-import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import GridAgentChat from '../SynapseChat/GridAgentChat'
 import DataGrid from './DataGrid'
 import { DataGridRow, GridModel, Operation } from './DataGridTypes'
@@ -38,6 +38,7 @@ import { removeNoOpOperations } from './utils/DataGridUtils'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 import { useGetCurrentUserBundle } from '@/synapse-queries'
 import CertificationRequirement from '@/components/AccessRequirementList/RequirementItem/CertificationRequirement'
+import { ValidationAlert } from './components/ValidationAlert'
 
 export type SynapseGridProps = {
   agentRegistrationId?: string
@@ -59,6 +60,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     )
 
     const startGridSessionRef = useRef<StartGridSessionHandle | null>(null)
+    const gridRef = useRef<DataSheetGridRef | null>(null)
 
     const { data: userBundle, isLoading } = useGetCurrentUserBundle()
 
@@ -137,7 +139,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       if (model === null) {
         // Clear any grid-specific state when starting a new session
         setLastSelection(null)
-        setSelectedRowIndex(null)
         // Clear active cell if grid exists
         if (gridRef.current) {
           gridRef.current.setActiveCell(null)
@@ -200,30 +201,59 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       [commit, schemaPropertiesInfo],
     )
 
-    const handleChange = (newValue: DataGridRow[], operations: Operation[]) => {
-      if (!model) {
-        console.error('Model is not initialized')
-        return
-      }
+    const applyModelChangeFromUndoRedo = useCallback(
+      (change: ModelChange) => {
+        if (!model) {
+          console.error('Model is not initialized')
+          return
+        }
 
-      // Check that something changed before updating the model
-      operations = removeNoOpOperations(newValue, rowValues, operations)
+        if (change.type === 'DELETE' && gridRef.current) {
+          // The user may have set a cell as active that we are removing with an 'undo'. In that case, clear the active state
+          gridRef.current.setActiveCell(null)
+        }
 
-      if (operations.length > 0) {
-        // Clear redo stack since new changes invalidate redo history
-        clearRedoStack()
+        applyAndCommitChanges(model, [change])
+      },
+      [model, applyAndCommitChanges],
+    )
 
-        // Track row creation, updates, and deletions to keep UI state and undo history in sync
+    const { undoUI, redoUI, addOperationsToUndoStack, clearRedoStack } =
+      useGridUndoRedo(applyModelChangeFromUndoRedo)
 
-        // Add all operations to the undo stack
-        addOperationsToUndoStack(operations, rowValues, newValue)
+    const handleChange = useCallback(
+      (newValue: DataGridRow[], operations: Operation[]) => {
+        if (!model) {
+          console.error('Model is not initialized')
+          return
+        }
 
-        // Transform operations to model changes
-        const modelChanges = mapOperationsToModelChanges(operations, newValue)
+        // Check that something changed before updating the model
+        operations = removeNoOpOperations(newValue, rowValues, operations)
 
-        applyAndCommitChanges(model, modelChanges)
-      }
-    }
+        if (operations.length > 0) {
+          // Clear redo stack since new changes invalidate redo history
+          clearRedoStack()
+
+          // Track row creation, updates, and deletions to keep UI state and undo history in sync
+
+          // Add all operations to the undo stack
+          addOperationsToUndoStack(operations, rowValues, newValue)
+
+          // Transform operations to model changes
+          const modelChanges = mapOperationsToModelChanges(operations, newValue)
+
+          applyAndCommitChanges(model, modelChanges)
+        }
+      },
+      [
+        model,
+        rowValues,
+        clearRedoStack,
+        addOperationsToUndoStack,
+        applyAndCommitChanges,
+      ],
+    )
 
     const handleSelectionChange = useCallback(
       (opts: { selection: SelectionWithId | null }) => {
@@ -250,32 +280,17 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       [applyAndCommitChanges, model, replicaId],
     )
 
-    const applyModelChangeFromUndoRedo = useCallback(
-      (change: ModelChange) => {
-        if (!model) {
-          console.error('Model is not initialized')
-          return
-        }
+    // Track selected row index for validation display
+    const selectedRowIndexRef = useRef<number | null>(null)
+    const [, forceUpdate] = useState({})
 
-        if (change.type === 'DELETE' && gridRef.current) {
-          // The user may have set a cell as active that we are removing with an 'undo'. In that case, clear the active state
-          gridRef.current.setActiveCell(null)
-        }
-
-        applyAndCommitChanges(model, [change])
+    const handleSelectedRowChange = useCallback(
+      (rowIndex: number | null, _row: DataGridRow | null) => {
+        selectedRowIndexRef.current = rowIndex
+        forceUpdate({}) // Force re-render to update validation display
       },
-      [model, applyAndCommitChanges],
+      [],
     )
-
-    const { undoUI, redoUI, addOperationsToUndoStack, clearRedoStack } =
-      useGridUndoRedo(applyModelChangeFromUndoRedo)
-
-    // Track the currently selected row index
-    const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(
-      null,
-    )
-
-    const gridRef = useRef<DataSheetGridRef | null>(null)
 
     if (!isLoading && !userBundle?.isCertified) {
       return <CertificationRequirement />
@@ -383,6 +398,12 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                           gridSessionId={session.sessionId!}
                         />
                       )}
+                      {session.sessionId && (
+                        <ExportCsvFromGridButton
+                          gridSessionId={session.sessionId}
+                          filename={'grid-' + (session.sourceEntityId || 'export')}
+                        />
+                      )}
                       {session.sourceEntityId && (
                         <MergeGridWithSourceTableButton
                           sourceEntityId={session.sourceEntityId}
@@ -400,43 +421,17 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       schemaPropertiesInfo={schemaPropertiesInfo}
                       entityIsView={entityIsView}
                       jsonSchema={jsonSchema}
-                      selectedRowIndex={selectedRowIndex}
                       lastSelection={lastSelection}
                       handleChange={handleChange}
-                      setSelectedRowIndex={setSelectedRowIndex}
                       handleSelectionChange={handleSelectionChange}
+                      onSelectedRowChange={handleSelectedRowChange}
                     />
                   </Grid>
                   <Grid size={12}>
-                    {/* Show validation messages for selected row */}
-                    {selectedRowIndex !== null &&
-                      rowValues[selectedRowIndex] &&
-                      Array.isArray(
-                        rowValues[selectedRowIndex].__validationResults
-                          ?.allValidationMessages,
-                      ) &&
-                      rowValues[selectedRowIndex].__validationResults
-                        ?.allValidationMessages.length > 0 && (
-                        <FullWidthAlert
-                          variant="warning"
-                          title="Validation Messages For Selected Row:"
-                          isGlobal={false}
-                          description={
-                            <ul>
-                              {rowValues[
-                                selectedRowIndex
-                              ].__validationResults.allValidationMessages.map(
-                                (msg: string) => (
-                                  <li key={msg}>{msg}</li>
-                                ),
-                              )}
-                            </ul>
-                          }
-                          sx={{
-                            marginTop: '12px',
-                          }}
-                        />
-                      )}
+                    <ValidationAlert
+                      selectedRowIndex={selectedRowIndexRef.current}
+                      rowValues={rowValues}
+                    />
                   </Grid>
                 </>
               )}

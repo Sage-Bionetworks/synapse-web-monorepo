@@ -36,6 +36,10 @@ const ChallengeNewsSection = ({
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
+  if (dataRows.length === 0) {
+    return null
+  }
+
   return (
     <Box className={styles.ChallengeNewsSection__root}>
       <Box className={styles.ChallengeNewsSection__headerSection}>

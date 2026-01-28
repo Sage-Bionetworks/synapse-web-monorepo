@@ -6,6 +6,9 @@ import {
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 
 export function isOutsideSynapseOrg() {
+  if (typeof window === 'undefined') {
+    return true // In Node.js/test environment, treat as outside synapse.org
+  }
   return !window.location.hostname.toLowerCase().endsWith('.synapse.org')
 }
 

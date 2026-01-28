@@ -37,5 +37,6 @@ export type FileEntityPageConfig = {
   showStorageLocation?: boolean
   showModifiedOn?: boolean
   showAnnotations?: boolean
+  restrictSynapseLinkCardToEditableEntity?: boolean
 }
 // FileEntityPageConfig end

@@ -1,5 +1,6 @@
 import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
 import { Box, SxProps } from '@mui/material'
+import { SmartLink } from './SmartLink/SmartLink'
 import { ForwardedRef, forwardRef } from 'react'
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
@@ -107,13 +108,13 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
                   <div>
                     <h3 className="SRC-boldText" style={{ margin: 'none' }}>
                       {href ? (
-                        <a
-                          target={target}
-                          href={href}
+                        <SmartLink
+                          href={href ?? ''}
                           className="highlight-link"
+                          target={target}
                         >
                           {title}
-                        </a>
+                        </SmartLink>
                       ) : (
                         <span>{title}</span>
                       )}
