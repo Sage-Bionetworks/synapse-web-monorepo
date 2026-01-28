@@ -7,6 +7,11 @@ $raw-tertiary: #f1d285;
 
 // CSS Variables
 :root {
+  --synapse-secondary-200-hover: #{color.adjust(
+      $raw-secondary,
+      $saturation: -13%,
+      $lightness: 10%
+    )};
   // primary color palette
   --synapse-primary-active: #{color.adjust(
       $raw-primary,

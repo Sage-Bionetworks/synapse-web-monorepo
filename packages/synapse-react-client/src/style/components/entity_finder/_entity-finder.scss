@@ -1,17 +1,10 @@
-@use '../../abstracts/variables' as SRC;
-@use 'sass:color';
-@use 'sass:map';
-
 $-border-size: 1px;
-$border: $-border-size solid SRC.$border-color-gray;
+$border: $-border-size solid var(--synapse-border-color-gray);
 $finder-height: 500px;
 $breadcrumb-height: 40px;
-$selected-background-color: map.get(SRC.$secondary-color-palette, 200);
-$selected-hover-background-color: color.adjust(
-  $selected-background-color,
-  $lightness: -10%
-);
-$-hover-background-color: map.get(SRC.$primary-color-palette, 100);
+$selected-background-color: var(--synapse-secondary-200);
+$selected-hover-background-color: var(--synapse-secondary-200-hover);
+$-hover-background-color: var(--synapse-primary-100);
 $tree-only-width: 600px;
 $-splitter-width: 12px;
 
@@ -52,7 +45,7 @@ $-splitter-width: 12px;
   &__MainPanel {
     max-width: 100%;
     transition: width 0.25s linear;
-    border: $-border-size solid SRC.$border-color-gray;
+    border: $-border-size solid var(--synapse-border-color-gray);
     height: $finder-height + ($-border-size * 2);
   }
   &__MainPanel.MainPanelDualPane,
@@ -75,7 +68,7 @@ $-splitter-width: 12px;
   }
   .reflex-container.vertical > .reflex-splitter:hover,
   .reflex-container.vertical > .reflex-splitter:active {
-    border-left: 3px solid SRC.$primary-action-color;
+    border-left: 3px solid var(--synapse-primary-action-color);
     border-right: none;
 
     background-color: transparent;
