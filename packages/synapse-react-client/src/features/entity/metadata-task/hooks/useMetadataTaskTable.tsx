@@ -21,7 +21,7 @@ function getColumns(canEdit: boolean) {
   const columnHelper = createColumnHelper<CurationTask>()
   return [
     columnHelper.accessor('dataType', {
-      header: props => <ColumnHeader {...props} title={'Data Type'} />,
+      header: props => <ColumnHeader {...props} title={'Tasks'} />,
       cell: ({ row, getValue }) => {
         const entityId = getGridSourceIdForTask(row.original)
         return <Link href={getLinkToEntityPage(entityId)}>{getValue()}</Link>
