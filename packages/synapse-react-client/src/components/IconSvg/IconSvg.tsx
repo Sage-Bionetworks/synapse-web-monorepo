@@ -2,6 +2,7 @@ import { GoogleIcon24 } from '@/assets/GoogleIcon24'
 import CreateVersion from '@/assets/icons/CreateVersion'
 import FileWithShield from '@/assets/icons/FileWithShield'
 import { ORCIDIcon } from '@/assets/icons/ORCIDIcon'
+import { TasksIcon } from '@/assets/icons/TasksIcon'
 import AccessManagement from '@/assets/mui_components/AccessManagement'
 import AccountCertified from '@/assets/mui_components/AccountCertified'
 import AccountRegistered from '@/assets/mui_components/AccountRegistered'
@@ -270,6 +271,7 @@ export const IconStrings = [
   'sortUp',
   'sortDown',
   'orcid',
+  'tasks',
   'google24',
   'arcusbio',
   'openInFull',
@@ -572,6 +574,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <ArcusBioIcon {...otherProps} />
     case 'orcid':
       return <ORCIDIcon {...otherProps} />
+    case 'tasks':
+      return <TasksIcon {...otherProps} />
     case 'filter':
       return <FilterAltTwoTone {...otherProps} />
     case 'openInFull':
