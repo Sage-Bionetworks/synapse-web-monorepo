@@ -1,16 +1,12 @@
-@use '../abstracts/variables' as SRC;
-@use '../abstracts/mixins' as SRCMixins;
-@use 'sass:map';
-
 .DownloadListTableV2 {
   white-space: pre;
 
   .eligibileIcon {
-    color: map.get(SRC.$colors, 'gray-800');
+    color: var(--synapse-gray-800);
   }
 
   .ineligibileIcon {
-    color: map.get(SRC.$colors, 'warning');
+    color: var(--synapse-warning);
   }
   .ineligibleForPackaging > td:first-of-type {
     background-color: #f9f5e7;
@@ -28,7 +24,7 @@
     }
 
     .download-cart-size {
-      background-color: SRC.$secondary-action-color;
+      background-color: var(--synapse-secondary-action-color);
       color: white;
       border-radius: 8px;
       top: -9px;

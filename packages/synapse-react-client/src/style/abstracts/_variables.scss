@@ -7,11 +7,30 @@ $raw-tertiary: #f1d285;
 
 // CSS Variables
 :root {
+  // pre-comuted adjusted colors
   --synapse-secondary-200-hover: #{color.adjust(
       $raw-secondary,
       $saturation: -13%,
       $lightness: 10%
     )};
+  --synapse-link-underline-color: #{color.adjust(
+      $raw-primary,
+      $saturation: -50%,
+      $lightness: 40%
+    )};
+  --synapse-secondary-action-color-alpha-10: #{color.change(
+      $raw-secondary,
+      $alpha: 0.1
+    )};
+  --synapse-secondary-action-color-alpha-20: #{color.change(
+      $raw-secondary,
+      $alpha: 0.2
+    )};
+  --synapse-secondary-action-color-alpha-50: #{color.change(
+      $raw-secondary,
+      $alpha: 0.5
+    )};
+  --synapse-dropdown-disabled-text: #{color.adjust(#212529, $lightness: 35%)};
   // primary color palette
   --synapse-primary-active: #{color.adjust(
       $raw-primary,
@@ -39,9 +58,7 @@ $raw-tertiary: #f1d285;
       $saturation: -1%,
       $lightness: 5%
     )};
-  --synapse-primary-500: var(
-    --synapse-primary-action-color
-  ); // This is the base color
+  --synapse-primary-500: var(--synapse-primary-action-color);
   --synapse-primary-600: #{color.adjust(
       $raw-primary,
       $saturation: 5%,
@@ -256,7 +273,7 @@ $background-color-gray-light: var(
   --synapse-background-color-gray-light
 ) !default;
 
-$primary-action-color: rgb(64, 123, 160) !default;
+$primary-action-color: var(--synapse-primary-action-color) !default;
 $primary-bgcolor-rgba: var(--synapse-primary-bgcolor-rgba) !default;
 
 $text-color-dark: var(--synapse-text-color-dark) !default;
