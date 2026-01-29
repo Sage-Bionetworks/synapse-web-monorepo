@@ -3,7 +3,7 @@ import { Box, Button, Stack, Typography } from '@mui/material'
 import { Link as RouterLink } from 'react-router'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from 'synapse-react-client'
-import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
+import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 import styles from './AllChallengesSection.module.scss'
@@ -33,7 +33,7 @@ const AllChallengesSection = ({
   }
 
   const { data: queryResultBundle } =
-    useGetQueryResultBundle(queryBundleRequest)
+    useGetFullTableQueryResults(queryBundleRequest)
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
