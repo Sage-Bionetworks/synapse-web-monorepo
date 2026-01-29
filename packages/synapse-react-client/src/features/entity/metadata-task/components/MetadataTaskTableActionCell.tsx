@@ -66,7 +66,7 @@ export default function MetadataTaskTableActionCell(props: {
             void handleOpenDataGrid()
           }}
         >
-          Working Copy
+          Open Curator
         </Button>
       </span>
     </Tooltip>
