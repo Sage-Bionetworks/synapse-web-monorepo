@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react'
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { useColumnResizeHandles } from './useColumnResizeHandles'
-import { Column } from 'react-datasheet-grid'
+import { Column } from '@sage-bionetworks/react-datasheet-grid'
 import * as reactHookz from '@react-hookz/web'
 
 // Mock useResizeObserver

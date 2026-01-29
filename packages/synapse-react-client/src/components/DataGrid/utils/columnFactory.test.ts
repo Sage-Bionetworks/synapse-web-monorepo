@@ -1,4 +1,8 @@
-import { createTextColumn, floatColumn, keyColumn } from 'react-datasheet-grid'
+import {
+  createTextColumn,
+  floatColumn,
+  keyColumn,
+} from '@sage-bionetworks/react-datasheet-grid'
 import { autocompleteColumn } from '../columns/AutocompleteColumn'
 import { mocked } from 'storybook/test'
 import { describe, expect, it } from 'vitest'
@@ -6,8 +10,10 @@ import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleE
 import { dateTimeColumn } from '../columns/DateTimeColumn'
 import { createColumn } from './columnFactory'
 
-vi.mock('react-datasheet-grid', async importActual => {
-  const actual = await importActual<typeof import('react-datasheet-grid')>()
+vi.mock('@sage-bionetworks/react-datasheet-grid', async importActual => {
+  const actual = await importActual<
+    typeof import('@sage-bionetworks/react-datasheet-grid')
+  >()
   return {
     ...actual,
     keyColumn: vi.fn().mockImplementation(actual.keyColumn),

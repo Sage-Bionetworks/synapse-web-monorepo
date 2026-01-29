@@ -32,6 +32,7 @@
     "url": "https://github.com/Sage-Bionetworks/synapse-web-monorepo/packages/synapse-react-client"
   },
   "dependencies": {
+    "@sage-bionetworks/react-datasheet-grid": "4.11.5-sage.1",
     "@apidevtools/json-schema-ref-parser": "^14.1.1",
     "@aws-sdk/client-s3": "^3.803.0",
     "@aws-sdk/lib-storage": "^3.803.0",
@@ -195,7 +196,7 @@
     "prettier": "^2.8.8",
     "process": "^0.11.10",
     "react": "^19.1.0",
-    "react-datasheet-grid": "^4.11.5",
+    "react-datasheet-grid": "github:sage-bionetworks/react-datasheet-grid",
     "react-dom": "^19.1.0",
     "react-select-event": "^5.5.1",
     "react-test-renderer": "^19.1.0",

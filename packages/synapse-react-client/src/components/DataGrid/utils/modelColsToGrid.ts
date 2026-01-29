@@ -1,4 +1,4 @@
-import { Column } from 'react-datasheet-grid'
+import { Column } from '@sage-bionetworks/react-datasheet-grid'
 import { createColumn } from './columnFactory'
 import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
 

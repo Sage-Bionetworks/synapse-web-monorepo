@@ -25,8 +25,8 @@ import {
   useRef,
   useState,
 } from 'react'
-import { DataSheetGridRef } from 'react-datasheet-grid'
-import { SelectionWithId } from 'react-datasheet-grid/dist/types'
+import { DataSheetGridRef } from '@sage-bionetworks/react-datasheet-grid'
+import { SelectionWithId } from '@sage-bionetworks/react-datasheet-grid'
 import GridAgentChat from '../SynapseChat/GridAgentChat'
 import DataGrid from './DataGrid'
 import { DataGridRow, GridModel, Operation } from './DataGridTypes'
@@ -401,7 +401,9 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       {session.sessionId && (
                         <ExportCsvFromGridButton
                           gridSessionId={session.sessionId}
-                          filename={'grid-' + (session.sourceEntityId || 'export')}
+                          filename={
+                            'grid-' + (session.sourceEntityId || 'export')
+                          }
                         />
                       )}
                       {session.sourceEntityId && (

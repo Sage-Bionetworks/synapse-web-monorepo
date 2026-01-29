@@ -4,7 +4,7 @@ import {
   ReplicaSelectionModel,
 } from '@/components/DataGrid/DataGridTypes'
 import { ArrApi } from 'json-joy'
-import { SelectionWithId } from 'react-datasheet-grid/dist/types'
+import { SelectionWithId } from '@sage-bionetworks/react-datasheet-grid'
 
 /**
  * Compute the ReplicaSelectionModel that should be attached to the grid model

@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { DataGridRow } from '../DataGridTypes'
-import { SelectionWithId } from 'react-datasheet-grid/dist/types'
-import { Column } from 'react-datasheet-grid'
+import { SelectionWithId } from '@sage-bionetworks/react-datasheet-grid'
+import { Column } from '@sage-bionetworks/react-datasheet-grid'
 
 export function getCellClassName(params: {
   rowData: DataGridRow
