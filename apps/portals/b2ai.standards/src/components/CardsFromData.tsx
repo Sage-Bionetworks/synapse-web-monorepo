@@ -1,4 +1,5 @@
-import { Box, Link, Typography } from '@mui/material'
+import { ReactNode } from 'react'
+import { Box, Typography } from '@mui/material'
 import { CollapsibleDescription } from 'synapse-react-client/components/GenericCard/CollapsibleDescription'
 
 export type CardData = {
@@ -6,7 +7,7 @@ export type CardData = {
   title: string
   subtitle?: string
   description: string
-  links?: string[]
+  footer?: ReactNode
 }
 
 export type CardsFromDataProps = {
@@ -46,23 +47,7 @@ export function CardsFromData({ data }: CardsFromDataProps) {
             description={card.description}
             descriptionSubTitle=""
           />
-          {card.links?.length ? (
-            <Box sx={{ mt: 2 }}>
-              <Typography
-                variant="subtitle2"
-                sx={{ color: 'text.secondary', mb: 0.5 }}
-              >
-                Links
-              </Typography>
-              {card.links.map(url => (
-                <Box key={url}>
-                  <Link href={url} target="_blank" rel="noopener noreferrer">
-                    {url}
-                  </Link>
-                </Box>
-              ))}
-            </Box>
-          ) : null}
+          {card.footer}
         </Box>
       ))}
     </>

@@ -23,6 +23,7 @@ import {
 } from '@/config/resources'
 import { standardsColumnLinks } from '@/config/synapseConfigs/standards'
 import { CardsFromData, CardData } from '@/components/CardsFromData'
+import { Box, Link, Typography } from '@mui/material'
 
 export const standardsCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.STANDARD_DATA_MODEL,
@@ -35,7 +36,7 @@ export const standardsCardSchema: TableToGenericCardMapping = {
     'collections',
     'topic',
     'dataTypes',
-    'applicationCount',
+    'aiApplicationCount',
     // DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION,
     // DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS,
     // DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
@@ -90,17 +91,23 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     ),
   },
   {
-    id: 'Applications',
-    title: 'Applications',
+    id: 'AIApplications',
+    title: 'AI Applications',
     element: (
-      <DetailsPageContextConsumer columnName={'hasApplication'}>
+      <DetailsPageContextConsumer columnName={'AIApplicationJSON'}>
         {({ value }) => {
           if (!value) return null
           const apps = JSON.parse(value) as Array<{
             id: string
             name: string
             category: string
-            references?: string[]
+            references?: Array<{
+              ref_url: string
+              ref_title: string
+              ref_authors: string[]
+              ref_journal: string
+              ref_publication_year: number
+            }>
             description: string
             used_in_bridge2ai: boolean
           }>
@@ -110,7 +117,39 @@ export const standardDetailsPageContent: DetailsPageContentType = [
             title: app.name,
             subtitle: app.used_in_bridge2ai ? 'Used in Bridge2AI' : undefined,
             description: app.description || '',
-            links: app.references,
+            footer: app.references?.length ? (
+              <Box sx={{ mt: 2 }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ color: 'text.secondary', mb: 0.5 }}
+                >
+                  References
+                </Typography>
+                {app.references.map(ref => (
+                  <Box key={ref.ref_url} sx={{ mb: 0.5 }}>
+                    <Link
+                      href={ref.ref_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {ref.ref_title}
+                    </Link>
+                    <Typography
+                      variant="body2"
+                      component="span"
+                      sx={{ color: 'text.secondary' }}
+                    >
+                      {` — ${ref.ref_authors
+                        .slice(0, 4)
+                        .map(a => a + ', ')
+                        .join('')}et al., ${ref.ref_journal} (${
+                        ref.ref_publication_year
+                      })`}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            ) : undefined,
           }))
           return <CardsFromData data={cards} />
         }}
