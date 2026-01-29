@@ -421,20 +421,30 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   const doiValue =
     doiColumnIndex !== undefined ? data[doiColumnIndex] : undefined
 
-  let ctaHref: string | undefined = undefined,
-    ctaTarget: string | undefined = undefined
-  if (ctaLinkConfig) {
-    const ctaLinkValue: string = data[schema[ctaLinkConfig.link]] || ''
-    const { href: newCtaHref, target: newCtaTarget } = getLinkParams(
-      ctaLinkValue,
-      undefined, //card link config
-      data,
-      schema,
-      rowId,
-    )
-    ctaHref = newCtaHref
-    ctaTarget = newCtaTarget
-  }
+  // Normalize ctaLinkConfig to array and resolve each config
+  const ctaLinkConfigs = ctaLinkConfig
+    ? Array.isArray(ctaLinkConfig)
+      ? ctaLinkConfig
+      : [ctaLinkConfig]
+    : []
+  const resolvedCtaLinkConfigs = ctaLinkConfigs
+    .map(config => {
+      const ctaLinkValue: string = data[schema[config.link]] || ''
+      if (!ctaLinkValue) return null
+      const { href, target } = getLinkParams(
+        ctaLinkValue,
+        undefined, //card link config
+        data,
+        schema,
+        rowId,
+      )
+      return {
+        text: config.text,
+        href,
+        target,
+      }
+    })
+    .filter(Boolean) as { text: string; href: string; target?: string }[]
 
   let croissantButton = <></>
   if (
@@ -488,13 +498,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
           : undefined
       }
       ctaLinkConfig={
-        ctaLinkConfig && ctaHref
-          ? {
-              text: ctaLinkConfig?.text,
-              href: ctaHref,
-              target: ctaTarget,
-            }
-          : undefined
+        resolvedCtaLinkConfigs.length > 0 ? resolvedCtaLinkConfigs : undefined
       }
       description={description}
       descriptionSubTitle={descriptionSubTitle}

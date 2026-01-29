@@ -224,10 +224,16 @@ export default function StandardsDetailsPage() {
             isHeader: true,
             headerCardVariant: 'HeaderCardV2',
             charCountCutoff: 800,
-            ctaLinkConfig: {
-              text: 'View Standard on External Website',
-              link: 'url',
-            },
+            ctaLinkConfig: [
+              {
+                text: 'View Standard on External Website',
+                link: 'url',
+              },
+              {
+                text: 'View Formal Specification',
+                link: 'formalSpec',
+              },
+            ],
             labelLinkConfig: standardsColumnLinks,
           }}
         />

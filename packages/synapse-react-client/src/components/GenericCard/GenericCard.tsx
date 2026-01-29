@@ -64,13 +64,11 @@ export type GenericCardProps = {
    */
   columnIconOptions?: ColumnIconConfigs
   /**
-   * Optional configuration for displaying a CTA button on the card
+   * Optional configuration for displaying CTA button(s) on the card. Accepts a single config or an array.
    */
-  ctaLinkConfig?: {
-    text: React.ReactNode
-    href?: string
-    target?: string
-  }
+  ctaLinkConfig?:
+    | { text: React.ReactNode; href?: string; target?: string }
+    | { text: React.ReactNode; href?: string; target?: string }[]
   /**
    * The rendered icon list on the card
    */
@@ -220,14 +218,24 @@ export const GenericCard = forwardRef(function GenericCard(
             descriptionSubTitle={descriptionSubTitle}
             descriptionConfig={descriptionConfig}
           />
-          {ctaLinkConfig && ctaLinkConfig.text && ctaLinkConfig.href && (
-            <Box sx={{ mt: '20px' }}>
-              <SmartLink
-                href={ctaLinkConfig.href}
-                target={ctaLinkConfig.target}
-              >
-                {ctaLinkConfig.text}
-              </SmartLink>
+          {ctaLinkConfig && (
+            <Box sx={{ mt: '20px', display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+              {(Array.isArray(ctaLinkConfig)
+                ? ctaLinkConfig
+                : [ctaLinkConfig]
+              ).map(
+                (config, index) =>
+                  config.text &&
+                  config.href && (
+                    <SmartLink
+                      key={index}
+                      href={config.href}
+                      target={config.target}
+                    >
+                      {config.text}
+                    </SmartLink>
+                  ),
+              )}
             </Box>
           )}
         </div>
