@@ -23,7 +23,12 @@ import {
 } from '@/config/resources'
 import { standardsColumnLinks } from '@/config/synapseConfigs/standards'
 import { CardsFromData, CardData } from '@/components/CardsFromData'
-import { Box, Link, Typography } from '@mui/material'
+import {
+  CitationCard,
+  Citation,
+  extractJsonFromContext,
+} from '@/components/CitationCard'
+import { Box, Typography } from '@mui/material'
 
 export const standardsCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.STANDARD_DATA_MODEL,
@@ -68,20 +73,37 @@ export const standardDetailsPageContent: DetailsPageContentType = [
       <DetailsPageContextConsumer columnName={'id'}>
         {({ context }) => {
           if (context.rowData && context.rowSet) {
+            const publication = extractJsonFromContext<Citation>(
+              context,
+              'publication',
+            )
             return (
-              <RowDataTable
-                rowData={context.rowData.values ?? []}
-                headers={context.rowSet?.headers ?? []}
-                displayedColumns={[
-                  'standardName',
-                  DST_TABLE_COLUMN_CONSTS.RESPONSIBLE_ORG_LINKS,
-                  DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_LINKS,
-                  'isOpen',
-                  'registration',
-                ]}
-                columnAliases={columnAliases}
-                columnLinks={standardsColumnLinks}
-              />
+              <div>
+                <RowDataTable
+                  rowData={context.rowData.values ?? []}
+                  headers={context.rowSet?.headers ?? []}
+                  displayedColumns={[
+                    'standardName',
+                    DST_TABLE_COLUMN_CONSTS.RESPONSIBLE_ORG_LINKS,
+                    DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_LINKS,
+                    'isOpen',
+                    'registration',
+                  ]}
+                  columnAliases={columnAliases}
+                  columnLinks={standardsColumnLinks}
+                />
+                {publication && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ color: 'text.secondary', mb: 0.5 }}
+                    >
+                      Publication
+                    </Typography>
+                    <CitationCard citation={publication} />
+                  </Box>
+                )}
+              </div>
             )
           } else {
             return <SkeletonTable numRows={8} numCols={1} />
@@ -101,13 +123,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
             id: string
             name: string
             category: string
-            references?: Array<{
-              ref_url: string
-              ref_title: string
-              ref_authors: string[]
-              ref_journal: string
-              ref_publication_year: number
-            }>
+            references?: Citation[]
             description: string
             used_in_bridge2ai: boolean
           }>
@@ -126,27 +142,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
                   References
                 </Typography>
                 {app.references.map(ref => (
-                  <Box key={ref.ref_url} sx={{ mb: 0.5 }}>
-                    <Link
-                      href={ref.ref_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {ref.ref_title}
-                    </Link>
-                    <Typography
-                      variant="body2"
-                      component="span"
-                      sx={{ color: 'text.secondary' }}
-                    >
-                      {` — ${ref.ref_authors
-                        .slice(0, 4)
-                        .map(a => a + ', ')
-                        .join('')}et al., ${ref.ref_journal} (${
-                        ref.ref_publication_year
-                      })`}
-                    </Typography>
-                  </Box>
+                  <CitationCard key={ref.ref_url} citation={ref} />
                 ))}
               </Box>
             ) : undefined,

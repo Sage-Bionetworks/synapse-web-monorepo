@@ -167,6 +167,7 @@ export const standardsDetailsPageSQL = `
             URL                                              as url,
             CASE WHEN URL = formalSpec
                  THEN '' ELSE formalSpec END as formalSpec,
+            publication,
             category,
             collections,
             AIApplicationJSON,
