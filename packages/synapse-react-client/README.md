@@ -66,13 +66,22 @@ The core css lives in [`src/style`](src/style) and `src/template_style`.
 
 For a list of variables you can override, see [`src/style/abstracts/_variables.scss`](src/style/abstracts/_variables.scss).
 
-Override the variables by importing the SCSS in your project like so:
+### CSS Variables
+
+Theme colors are defined using CSS variables. To customize the theme in your application, override the CSS variables in your `:root` selector:
 
 ```scss
-@use 'synapse-react-client/dist/style/main.scss' with ($primary-action-color:
-      $-my-primary-color, $secondary-action-color: $-my-secondary-color, // ...any other overrides continue);
+// In your application's SCSS file
+:root {
+  --synapse-primary-action-color: #395979;
+  --synapse-secondary-action-color: #469285;
+}
+
+@use 'synapse-react-client/dist/style/main.scss';
 @use 'synapse-react-client/dist/template_style/Index.scss';
 ```
+
+For a list of all available CSS variables, see [`src/style/abstracts/_variables.scss`](src/style/abstracts/_variables.scss).
 
 In this example, make sure that your `node_modules` folder is in your Dart Sass load path.
 

@@ -157,18 +157,34 @@ Resource-specific configurations for portal objects. Each file contains UI setti
 
 ### Styling (`src/config/style/`)
 
-| File                       | Purpose                                             |
-| -------------------------- | --------------------------------------------------- |
-| `_variable_overrides.scss` | Primary/secondary colors, header/footer backgrounds |
-| `_style_overrides.scss`    | Custom CSS overrides                                |
-| `*.svg`                    | Custom icons for cards, tabs, etc.                  |
+| File                       | Purpose                                                                                         |
+| -------------------------- | ----------------------------------------------------------------------------------------------- |
+| `_variable_overrides.scss` | SCSS variables only, header/footer background, URLs                                             |
+| `_style_overrides.scss`    | CSS variable overrides for theme colors and custom CSS overrides, loaded last to ensure cascade |
+| `*.svg`                    | Custom icons for cards, tabs, etc.                                                              |
 
 Example `_variable_overrides.scss`:
 
 ```scss
+// SCSS variables for URLs only (must remain SCSS - used in compile-time functions)
 @use '@sage-bionetworks/synapse-portal-framework/src/style/variables' with (
-  $primary-action-color: #125e81,
-  $secondary-action-color: #404b63,
-  $header-url: 'config/style/molecule-back.svg'
+  $header-url: 'config/style/molecule-back.svg',
+  $footer-url: ''
 );
+```
+
+Example `_style_overrides.scss`:
+
+```scss
+// CSS variable overrides for theme colors (must be in style_overrides to load AFTER SRC defaults)
+:root {
+  --synapse-primary-action-color: #125e81;
+  --synapse-secondary-action-color: #404b63;
+}
+
+// Additional CSS overrides
+#header,
+#footer {
+  background-color: var(--synapse-primary-action-color);
+}
 ```

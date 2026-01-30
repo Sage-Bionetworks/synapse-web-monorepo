@@ -1,6 +1,11 @@
 @use 'sass:map';
 @use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
 
+:root:root {
+  --synapse-primary-action-color: #4d5491;
+  --synapse-secondary-action-color: #4d5491;
+}
+
 #header,
 #footer {
   background-color: var(--synapse-primary-action-color);

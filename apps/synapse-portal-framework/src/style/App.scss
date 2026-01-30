@@ -1,12 +1,6 @@
 @use './variables' as Portal;
 
-// Use raw Sass hex values here; CSS variables (var()) might break something
-@use 'synapse-react-client/style/main.scss' with (
-  $primary-action-color: Portal.$raw-primary,
-  $secondary-action-color: Portal.$raw-secondary,
-  $tertiary-action-color: #f1d285,
-  $primary-bgcolor-rgba: unset
-);
+@use 'synapse-react-client/style/main.scss';
 
 @use 'synapse-react-client/template_style/Index.scss';
 @use './components/csbc-home-page/all.scss';

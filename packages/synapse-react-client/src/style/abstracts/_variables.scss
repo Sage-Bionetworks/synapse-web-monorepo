@@ -1,5 +1,4 @@
 @use 'sass:color';
-@use 'sass:map';
 
 $raw-primary: rgb(64, 123, 160);
 $raw-secondary: #469285;
@@ -249,105 +248,8 @@ $raw-tertiary: #f1d285;
 }
 
 // -----------------------------------------------------------------------------
-// This file contains all application-wide Sass variables.
+// SCSS
 // -----------------------------------------------------------------------------
-
-// Colors defined by design: https://www.figma.com/file/0oPm5lLSUva8kyfVNMS6FA/Synapse-Style-%26-Component-Library?node-id=77%3A1232
-$colors: (
-  'gray-1000': var(--synapse-gray-1000),
-  'gray-900': var(--synapse-gray-900),
-  'gray-800': var(--synapse-gray-800),
-  'gray-700': var(--synapse-gray-700),
-  'gray-600': var(--synapse-gray-600),
-  'gray-500': var(--synapse-gray-500),
-  'gray-400': var(--synapse-gray-400),
-  'gray-300': var(--synapse-gray-300),
-  'gray-200': var(--synapse-gray-200),
-  'gray-100': var(--synapse-gray-100),
-  'white': var(--synapse-white),
-  'success': var(--synapse-success),
-  // --synapse-theme-color-success
-  'info': var(--synapse-info),
-  'warning': var(--synapse-warning),
-  'error': var(--synapse-error),
-) !default;
-
-$gray-dark: var(--synapse-gray-dark) !default;
-$gray-light: var(--synapse-gray-light) !default;
-$background-color-gray: $gray-light !default;
-$border-color-gray: $gray-dark !default;
-$background-color-gray-light: var(
-  --synapse-background-color-gray-light
-) !default;
-
-$primary-action-color: var(--synapse-primary-action-color) !default;
-$primary-bgcolor-rgba: var(--synapse-primary-bgcolor-rgba) !default;
-
-$text-color-dark: var(--synapse-text-color-dark) !default;
-$text-color-disabled: var(--synapse-text-color-disabled) !default;
-
-$secondary-action-color: #469285 !default;
-$secondary-action-color-dark: var(
-  --synapse-secondary-action-color-dark
-) !default;
-
-$tertiary-action-color: #f1d285 !default;
-
-$gray-formtext: var(--synapse-gray-formtext) !default;
-$gray-regular: var(--synapse-gray-regular) !default;
-$gray-deemphasized: var(--synapse-gray-deemphasized) !default;
-$red-error: var(--synapse-red-error) !default;
-$red-error2: var(--synapse-red-error2) !default;
-$space-unit: var(--synapse-space-unit);
-
-$green-affirmative: map.get($colors, 'success') !default;
-$yellow-warning: map.get($colors, 'warning') !default;
-$red-delete: $red-error2 !default;
-$red-required: map.get($colors, 'error') !default;
-
-$box-shadow-med: var(--synapse-box-shadow-med);
-$box-shadow-soft: var(--synapse-box-shadow-soft);
-
-$active-tab-text: var(--synapse-active-tab-text);
-$inactive-tab-text: var(--synapse-inactive-tab-text);
-
-$primary-action-color-active: var(--synapse-primary-active) !default;
-
-$primary-color-palette: (
-  100: var(--synapse-primary-100),
-  200: var(--synapse-primary-200),
-  300: var(--synapse-primary-300),
-  400: var(--synapse-primary-400),
-  500: var(--synapse-primary-500),
-  600: var(--synapse-primary-600),
-  700: var(--synapse-primary-700),
-  800: var(--synapse-primary-800),
-  900: var(--synapse-primary-900),
-) !default;
-
-$secondary-color-palette: (
-  100: var(--synapse-secondary-100),
-  200: var(--synapse-secondary-200),
-  300: var(--synapse-secondary-300),
-  400: var(--synapse-secondary-400),
-  500: var(--synapse-secondary-500),
-  600: var(--synapse-secondary-600),
-  700: var(--synapse-secondary-700),
-  800: var(--synapse-secondary-800),
-  900: var(--synapse-secondary-900),
-) !default;
-
-$tertiary-color-palette: (
-  100: var(--synapse-tertiary-100),
-  200: var(--synapse-tertiary-200),
-  300: var(--synapse-tertiary-300),
-  400: var(--synapse-tertiary-400),
-  500: var(--synapse-tertiary-500),
-  600: var(--synapse-tertiary-600),
-  700: var(--synapse-tertiary-700),
-  800: var(--synapse-tertiary-800),
-  900: var(--synapse-tertiary-900),
-) !default;
 
 /// Breakpoints map
 /// @prop {String} keys - Keys are identifiers mapped to a given length
@@ -358,12 +260,7 @@ $breakpoints: (
   'large': 1024px,
 ) !default;
 
-// Buttons
-$button-border-radius: var(--synapse-button-border-radius);
-$button-text-transform: var(--synapse-button-text-transform);
-
-// done - placeholder cannot be convereted to CSS variable
-// To reset bootstrap button style
+// Placeholder for Bootstrap button reset (cannot be converted to CSS variable)
 %button-reset {
   border: 0;
   outline: none;
@@ -371,7 +268,3 @@ $button-text-transform: var(--synapse-button-text-transform);
   border-radius: var(--synapse-button-border-radius);
   text-transform: var(--synapse-button-text-transform);
 }
-
-// Form Control
-$gray-input-border: var(--synapse-gray-input-border);
-$input-padding: var(--synapse-input-padding);

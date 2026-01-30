@@ -34,14 +34,7 @@ $footer-accent-base: #ffecca;
   --synapse-banner-height: 47px;
 }
 
-$primary-action-color: var(--synapse-primary-action-color) !default;
-$secondary-action-color: var(--synapse-secondary-action-color) !default;
-$dark-gray: var(--synapse-dark-gray) !default;
-$border-color-gray: var(--synapse-border-color-gray) !default;
-
-$header-height: var(--synapse-header-height) !default;
-$banner-height: var(--synapse-banner-height) !default;
-
+// SCSS variables for header/footer URLs (must remain SCSS - used in compile-time functions)
 $header-url: '' !default;
 $footer-url: '' !default;
 

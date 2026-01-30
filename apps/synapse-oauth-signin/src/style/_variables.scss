@@ -1,4 +1,5 @@
-// Variables used in Portals SCSS should be defined in this file.
-
-$primary-action-color: rgb(64, 123, 160) !default;
-$secondary-action-color: rgb(98, 172, 98) !default;
+// CSS variable overrides for theme colors
+:root {
+  --synapse-primary-action-color: rgb(64, 123, 160);
+  --synapse-secondary-action-color: rgb(98, 172, 98);
+}

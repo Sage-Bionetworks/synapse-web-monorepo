@@ -1,11 +1,4 @@
 @use '@sage-bionetworks/synapse-portal-framework/src/style/variables' with (
-  $primary-action-color: #00255c,
-  $secondary-action-color: #2699a7,
   $header-url: 'config/style/molecule-back.svg',
   $footer-url: 'config/style/molecule-back.svg'
 );
-
-#header,
-#footer {
-  background-color: #154c9a;
-}

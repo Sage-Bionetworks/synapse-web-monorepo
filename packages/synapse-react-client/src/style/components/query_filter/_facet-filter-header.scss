@@ -1,11 +1,9 @@
-@use '../../abstracts/variables'; // TODO: deleted this line if this file is already imported in _all.scss
-
 $icon-size: 14px; // component-specific variable
 
 .FacetFilterHeader {
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid variables.$border-color-gray;
+  border-bottom: 1px solid var(--synapse-border-color-gray);
   margin-bottom: 8px;
   margin-top: 20px;
 
@@ -18,10 +16,10 @@ $icon-size: 14px; // component-specific variable
     padding: 0;
     line-height: 14px;
     font-size: 18px;
-    color: variables.$primary-action-color !important;
+    color: var(--synapse-primary-action-color) !important;
 
     &:hover {
-      color: variables.$primary-action-color !important;
+      color: var(--synapse-primary-action-color) !important;
       text-decoration: underline;
     }
 

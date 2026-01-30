@@ -1,48 +1,9 @@
-@use 'sass:map';
-
-// The color palettes used in Synapse should be maintained in the SWC project. They are copied here for demo purposes, and may not always be up-to-date.
-$synapse-primary-color-palette: (
-  100: #d7dee4,
-  200: #b0bdc9,
-  300: #889baf,
-  400: #617a94,
-  500: #395979,
-  600: #2e4761,
-  700: #223549,
-  800: #172430,
-  900: #0b1218,
-);
-
-$synapse-secondary-color-palette: (
-  100: #dae9e7,
-  200: #b5d3ce,
-  300: #90beb6,
-  400: #6ba89d,
-  500: #469285,
-  600: #38756a,
-  700: #2a6960,
-  800: #1c3a35,
-  900: #0e1d1b,
-);
-
-$synapse-tertiary-color-palette: (
-  100: #fbf4e0,
-  200: #f8e9c2,
-  300: #f4dda3,
-  400: #f1d285,
-  500: #edc766,
-  600: #be9f52,
-  700: #8e773d,
-  800: #5f5029,
-  900: #2f2814,
-);
-
-@use '../style/main' with (
-  $primary-action-color: map.get($synapse-primary-color-palette, 500),
-  $secondary-action-color: map.get($synapse-secondary-color-palette, 500),
-  $primary-color-palette: $synapse-primary-color-palette,
-  $secondary-color-palette: $synapse-secondary-color-palette,
-  $primary-bgcolor-rgba: rgba(64, 123, 160, 0.03)
-);
+@use '../style/main';
 
 @use '../template_style/Index';
+
+// Storybook theme colors - these override the defaults in SRC's :root
+:root {
+  --synapse-primary-action-color: #395979;
+  --synapse-secondary-action-color: #469285;
+}
