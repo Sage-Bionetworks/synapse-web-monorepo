@@ -32,7 +32,7 @@
     }
 
     .EnumFacetFilter__checkboxContainer:hover {
-      background-color: color.change(SRC.$primary-action-color, $alpha: 0.1);
+      background-color: var(--synapse-primary-action-color-alpha-10);
     }
   }
   &__checkboxContainer {
@@ -45,7 +45,7 @@
     }
 
     &--forAll {
-      border-bottom: dotted 1px SRC.$border-color-gray;
+      border-bottom: dotted 1px var(--synapse-border-color-gray);
       padding: 0;
     }
   }
@@ -80,10 +80,10 @@
     width: 100%;
     margin: 10px 0 0 0;
     padding: 0;
-    color: SRC.$primary-action-color !important;
+    color: var(--synapse-primary-action-color) !important;
 
     &:hover {
-      color: SRC.$primary-action-color !important;
+      color: var(--synapse-primary-action-color) !important;
       text-decoration: underline;
     }
   }
@@ -95,7 +95,7 @@
   &__count {
     margin-left: 10px;
     align-self: center;
-    color: SRC.$gray-deemphasized;
+    color: var(--synapse-gray-deemphasized);
   }
 
   &__noMatch {
@@ -103,7 +103,7 @@
   }
 
   button {
-    color: SRC.$primary-action-color;
+    color: var(--synapse-primary-action-color);
   }
 }
 

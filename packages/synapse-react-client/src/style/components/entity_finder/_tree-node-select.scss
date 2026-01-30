@@ -1,4 +1,3 @@
-@use '../../abstracts/variables' as SRC;
 @use 'entity-finder' as EntityFinder;
 @use 'sass:color';
 
@@ -9,7 +8,7 @@
   .Header {
     padding-left: 20px;
     padding-right: 20px;
-    border-bottom: 1px solid SRC.$gray-light;
+    border-bottom: 1px solid var(--synapse-gray-light);
   }
 
   .Tree {

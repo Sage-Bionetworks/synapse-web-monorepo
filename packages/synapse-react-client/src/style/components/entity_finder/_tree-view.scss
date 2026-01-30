@@ -1,4 +1,3 @@
-@use '../../abstracts/variables' as SRC;
 @use 'entity-finder' as EntityFinder;
 @use 'sass:color';
 
@@ -10,7 +9,7 @@
 }
 
 .TreeView {
-  background-color: SRC.$background-color-gray;
+  background-color: var(--synapse-background-color-gray);
   height: EntityFinder.$finder-height;
   overflow: hidden;
   .Tree {
@@ -35,7 +34,7 @@
 
         .ExpandButton {
           display: block;
-          color: SRC.$primary-action-color-active;
+          color: var(--synapse-primary-action-color-active);
         }
       }
 

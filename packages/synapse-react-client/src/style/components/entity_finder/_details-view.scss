@@ -1,11 +1,10 @@
-@use '../../abstracts/variables' as SRC;
 @use './entity-finder' as EntityFinder;
 @use '../../abstracts/mixins' as SrcMixins;
 
 .DetailsViewReflexElement {
   .EntityFinderDetailsView {
     height: EntityFinder.$finder-height - EntityFinder.$breadcrumb-height;
-    border-bottom: 1px solid SRC.$border-color-gray;
+    border-bottom: 1px solid var(--synapse-border-color-gray);
   }
 }
 .DetailsViewTable {
@@ -16,7 +15,7 @@
 
 .EntityFinderDetailsView {
   height: EntityFinder.$finder-height;
-  background-color: SRC.$background-color-gray-light;
+  background-color: var(--synapse-background-color-gray-light);
   overflow-y: hidden;
 }
 
@@ -39,7 +38,7 @@
   &[data-index$='5'],
   &[data-index$='7'],
   &[data-index$='9'] {
-    background: SRC.$background-color-gray;
+    background: var(--synapse-background-color-gray);
   }
 
   &[aria-disabled='false'][aria-selected='false']:hover {

@@ -1,5 +1,3 @@
-@use '../../abstracts/variables' as SRC;
-
 .evaluation-round-editor {
   .card-body {
     // even though all sides have the same padding,
@@ -31,7 +29,7 @@
     }
 
     .status-in-progress {
-      color: SRC.$green-affirmative;
+      color: var(--synapse-green-affirmative);
       .status {
         align-items: center;
       }
@@ -41,17 +39,17 @@
     }
     .status-completed {
       svg {
-        color: SRC.$green-affirmative;
+        color: var(--synapse-green-affirmative);
       }
       span {
-        color: SRC.$gray-deemphasized;
+        color: var(--synapse-gray-deemphasized);
       }
       .status {
         align-items: baseline;
       }
     }
     .status-not-yet-started {
-      color: SRC.$gray-deemphasized;
+      color: var(--synapse-gray-deemphasized);
     }
   }
 

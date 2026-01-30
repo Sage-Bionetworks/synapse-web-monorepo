@@ -15,11 +15,11 @@
     h2 {
       font-size: 2.1rem;
       font-weight: 700;
-      color: SrcVariables.$gray-formtext;
+      color: var(--synapse-gray-formtext);
     }
     &.submitted {
       div {
-        color: SrcVariables.$primary-action-color;
+        color: var(--synapse-primary-action-color);
         font-weight: bold;
         text-transform: uppercase;
       }
@@ -29,7 +29,7 @@
     }
   }
   hr {
-    margin: SrcVariables.$space-unit 0 SrcVariables.$space-unit 0;
+    margin: var(--synapse-space-unit) 0 var(--synapse-space-unit) 0;
   }
   .fade {
     opacity: inherit;
@@ -38,7 +38,7 @@
   .nav-link,
   a.nav-link,
   .nav-link > a {
-    color: SrcVariables.$primary-action-color;
+    color: var(--synapse-primary-action-color);
     font-weight: bold;
     cursor: pointer;
   }
@@ -47,12 +47,12 @@
   }
 
   .btn-action {
-    background-color: SrcVariables.$primary-action-color;
+    background-color: var(--synapse-primary-action-color);
     color: #fff;
   }
   .btn-action:hover,
   .btn-action:focus {
-    background-color: SrcVariables.$primary-action-color;
+    background-color: var(--synapse-primary-action-color);
     color: #fff;
     @include SrcMixins.box-shadow(3px, 3px, 5px, rgba(0, 0, 0, 0.5));
   }
@@ -64,8 +64,8 @@
   .btn-success,
   .btn-success:active,
   .btn-success:focus {
-    background-color: SrcVariables.$primary-action-color;
-    border-color: SrcVariables.$primary-action-color;
+    background-color: var(--synapse-primary-action-color);
+    border-color: var(--synapse-primary-action-color);
   }
 
   /* padding */
@@ -90,15 +90,15 @@
       padding-left: 0.8rem;
     }
     .panel {
-      background-color: SrcVariables.$gray-light;
+      background-color: var(--synapse-gray-light);
     }
     .file-table {
       @include SrcMixins.calc(
         margin-bottom,
-        '#{SrcVariables.$space-unit} * #{3}'
+        '#{var(--synapse-space-unit)} * #{3}'
       );
       button.btn {
-        color: SrcVariables.$primary-action-color;
+        color: var(--synapse-primary-action-color);
       }
 
       table {
@@ -141,13 +141,13 @@
     overflow: hidden;
     width: 100%;
     clear: both;
-    background-color: SrcVariables.$gray-light;
+    background-color: var(--synapse-gray-light);
     @media (min-width: map.get(SrcVariables.$breakpoints, 'small')) {
-      padding: SrcVariables.$space-unit SrcVariables.$space-unit 1rem
-        SrcVariables.$space-unit;
+      padding: var(--synapse-space-unit) var(--synapse-space-unit) 1rem
+        var(--synapse-space-unit);
     }
     @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
-      padding: SrcVariables.$space-unit 0 1rem SrcVariables.$space-unit;
+      padding: var(--synapse-space-unit) 0 1rem var(--synapse-space-unit);
     }
     h4 {
       margin-top: 0;
@@ -169,9 +169,9 @@
   }
 
   .notification-area {
-    color: SrcVariables.$primary-action-color;
+    color: var(--synapse-primary-action-color);
     font-style: italic;
-    margin-bottom: SrcVariables.$space-unit;
+    margin-bottom: var(--synapse-space-unit);
   }
 
   .inner-wrap {
@@ -222,15 +222,15 @@
   ul.error-detail li {
     list-style: none;
     font-style: italic;
-    color: SrcVariables.$red-error2;
+    color: var(--synapse-red-error2);
   }
 
   .step-exclude-directions {
     font-style: italic;
     vertical-align: middle;
-    @include SrcMixins.calc(height, '#{SrcVariables.$space-unit} * 2');
+    @include SrcMixins.calc(height, '#{var(--synapse-space-unit)} * 2');
     button.btn-link {
-      color: SrcVariables.$primary-action-color;
+      color: var(--synapse-primary-action-color);
       font-weight: 700;
       font-style: normal;
     }
@@ -251,16 +251,16 @@
   .has-error.checkbox-inline label,
   .has-error.radio label,
   .has-error.radio-inline label {
-    color: SrcVariables.$red-error2;
+    color: var(--synapse-red-error2);
   }
 
   input[type='checkbox']:checked + label::before,
   input[type='checkbox']:checked + span::before {
-    color: SrcVariables.$primary-action-color;
+    color: var(--synapse-primary-action-color);
   }
 
   .has-error .form-control {
-    border-color: SrcVariables.$red-error2;
+    border-color: var(--synapse-red-error2);
   }
 
   /*--- form ---*/
@@ -292,7 +292,7 @@
       }
       legend {
         font-weight: normal;
-        color: SrcVariables.$gray-formtext;
+        color: var(--synapse-gray-formtext);
         display: block;
         margin-bottom: 0;
         margin-bottom: 10px;
@@ -315,7 +315,7 @@
   .data-range legend {
     font-size: 1.4rem;
     font-weight: normal;
-    color: SrcVariables.$gray-formtext;
+    color: var(--synapse-gray-formtext);
   }
 
   .form-group {
@@ -349,7 +349,7 @@
   }
 
   .rjsf-array-item {
-    border: 1px solid SrcVariables.$gray-dark;
+    border: 1px solid var(--synapse-gray-dark);
     padding: 2rem 1rem;
     overflow: auto;
     margin: 0 1.6rem 2rem 1.6rem;
@@ -397,7 +397,7 @@
     button,
     button:hover {
       background-color: transparent;
-      color: SrcVariables.$primary-action-color;
+      color: var(--synapse-primary-action-color);
       border: none;
       box-shadow: none;
       cursor: pointer;
@@ -406,7 +406,7 @@
     }
 
     i.glyphicon {
-      background: SrcVariables.$primary-action-color;
+      background: var(--synapse-primary-action-color);
       color: white;
       font-weight: 100;
       margin-right: 1rem;
@@ -426,8 +426,8 @@
     width: 100%;
     button.btn-info.btn-add {
       background-color: transparent;
-      color: SrcVariables.$primary-action-color;
-      border: 1px solid SrcVariables.$gray-dark;
+      color: var(--synapse-primary-action-color);
+      border: 1px solid var(--synapse-gray-dark);
       padding: 2rem 3.3rem;
       text-align: right;
       /*box-shadow: none;*/
@@ -438,7 +438,7 @@
     }
 
     i.glyphicon {
-      background-color: SrcVariables.$primary-action-color;
+      background-color: var(--synapse-primary-action-color);
       color: white;
       font-weight: 100;
       margin-right: 1rem;
@@ -451,7 +451,7 @@
   }
   .toggle-help-label {
     line-height: 3em;
-    border: 1px solid SrcVariables.$gray-light;
+    border: 1px solid var(--synapse-gray-light);
     font-size: 0.85em;
 
     @media (min-width: map.get(SrcVariables.$breakpoints, 'small')) {
@@ -468,7 +468,7 @@
     vertical-align: middle;
     margin: 0 5px;
     .react-switch-bg {
-      background-color: SrcVariables.$primary-action-color;
+      background-color: var(--synapse-primary-action-color);
     }
   }
 

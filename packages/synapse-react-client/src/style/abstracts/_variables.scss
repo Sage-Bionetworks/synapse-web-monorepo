@@ -7,7 +7,9 @@ $raw-tertiary: #f1d285;
 
 // CSS Variables
 :root {
-  // pre-comuted adjusted colors
+  // Pre-comuted adjusted colors
+  --synapse-primary-focus-border: #{color.adjust($raw-primary, $lightness: 25%)};
+  --synapse-primary-focus-shadow: #{rgba($raw-primary, 0.25)};
   --synapse-secondary-200-hover: #{color.adjust(
       $raw-secondary,
       $saturation: -13%,
@@ -18,8 +20,17 @@ $raw-tertiary: #f1d285;
       $saturation: -50%,
       $lightness: 40%
     )};
+  --synapse-primary-action-color-alpha-4: #{color.change(
+      $raw-primary,
+      $alpha: 0.04
+    )};
+  --synapse-primary-alpha-05: #{color.change($raw-primary, $alpha: 0.05)};
   --synapse-secondary-action-color-alpha-10: #{color.change(
       $raw-secondary,
+      $alpha: 0.1
+    )};
+  --synapse-primary-action-color-alpha-10: #{color.change(
+      $raw-primary,
       $alpha: 0.1
     )};
   --synapse-secondary-action-color-alpha-20: #{color.change(
@@ -31,7 +42,8 @@ $raw-tertiary: #f1d285;
       $alpha: 0.5
     )};
   --synapse-dropdown-disabled-text: #{color.adjust(#212529, $lightness: 35%)};
-  // primary color palette
+
+  // Primary color palette
   --synapse-primary-active: #{color.adjust(
       $raw-primary,
       $saturation: 50%,
@@ -80,7 +92,7 @@ $raw-tertiary: #f1d285;
       $lightness: -18%
     )};
 
-  // secondary color palette
+  // Secondary color palette
   --synapse-secondary-100: #{color.adjust(
       $raw-secondary,
       $saturation: -25%,
@@ -123,7 +135,7 @@ $raw-tertiary: #f1d285;
       $lightness: -18%
     )};
 
-  // tertiary color palette
+  // Tertiary color palette
   --synapse-tertiary-100: #{color.adjust(
       $raw-tertiary,
       $saturation: -25%,
@@ -224,19 +236,14 @@ $raw-tertiary: #f1d285;
   // Form Control
   --synapse-gray-input-border: 1px solid #f2f2f2;
   --synapse-input-padding: 12px 13px;
+  --synapse-gray-formtext: #515359;
 
   // Buttons
   --synapse-button-border-radius: 3px;
   --synapse-button-text-transform: capitalize;
 
-  // pre-calculate color values
-  // todo
-
-  --synapse-button-text-transform: capitalize;
-
   --synapse-space-unit: 2.1rem;
 
-  --synapse-gray-formtext: #515359;
   --synapse-gray-regular: #515359;
   --synapse-gray-deemphasized: #ababac;
 }

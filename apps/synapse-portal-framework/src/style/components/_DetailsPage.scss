@@ -1,4 +1,3 @@
-@use '../variables' as Portal;
 @use 'synapse-react-client/style/abstracts/mixins' as SrcMixins;
 // local variable for study page
 
@@ -12,8 +11,8 @@ $svg-icon-height: 30px;
 }
 
 %svg-icon-active {
-  color: Portal.$primary-action-color;
-  fill: Portal.$primary-action-color;
+  color: var(--synapse-primary-action-color);
+  fill: var(--synapse-primary-action-color);
 }
 
 %alignContent {

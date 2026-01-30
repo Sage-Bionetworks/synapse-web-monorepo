@@ -1,5 +1,3 @@
-@use '../abstracts/variables' as SRC;
-
 .FeaturedDataTabs {
   padding-top: 20px;
   &__tabs {
@@ -30,7 +28,7 @@
       &__selected {
         font-weight: bold;
         border-bottom: 5px solid;
-        border-bottom-color: SRC.$secondary-action-color;
+        border-bottom-color: var(--synapse-secondary-action-color);
         button {
           color: #515359;
         }

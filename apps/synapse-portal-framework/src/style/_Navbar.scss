@@ -1,5 +1,4 @@
 // Import the theme css
-@use './variables' as Portal;
 
 .crawler-link {
   position: absolute;
@@ -74,7 +73,7 @@
       }
 
       .show .nav-button {
-        background-color: Portal.$secondary-action-color;
+        background-color: var(--synapse-secondary-action-color);
         color: #fff;
         border-bottom: 0;
         border-radius: 0;
@@ -126,7 +125,7 @@
       }
       .dropdown-menu > li > a {
         padding: 3px $mb-menu-item-padding;
-        color: Portal.$dark-gray;
+        color: var(--synapse-dark-gray);
       }
 
       .Download-Link {
@@ -178,7 +177,7 @@
       .user-account {
         font-size: 14px;
         line-height: 21px;
-        text-decoration: Portal.$primary-action-color underline;
+        text-decoration: var(--synapse-primary-action-color) underline;
       }
       .mb-user-extra {
         display: inline-block;

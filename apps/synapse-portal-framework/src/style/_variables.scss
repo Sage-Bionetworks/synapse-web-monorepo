@@ -1,22 +1,52 @@
-// Variables used in Portals SCSS should be defined in this file.
+@use 'sass:color';
+
+$raw-primary: rgb(64, 123, 160);
+$raw-secondary: rgb(98, 172, 98);
+$footer-accent-base: #ffecca;
 
 // CSS Variables
 :root {
-  --gray-700: #6e7377;
-  --gray-900: #353a3f;
-  --black: #000000;
+  // Pre-computed
+  --synapse-primary-action-color-alpha-5: #{color.change(
+      $raw-primary,
+      $alpha: 0.05
+    )};
+  --synapse-primary-alpha-08: #{color.change($raw-primary, $alpha: 0.08)};
+  --synapse-footer-accent: #{$footer-accent-base};
+  --synapse-footer-accent-dark: #{color.adjust(
+      $footer-accent-base,
+      $lightness: -5%
+    )};
+
+  // Primary / Secondary Action Colors
+  --synapse-primary-action-color: #{$raw-primary};
+  --synapse-secondary-action-color: #{$raw-secondary};
+
+  // Greyscale colors
+  --synapse-gray-700: #6e7377;
+  --synapse-gray-900: #353a3f;
+  --synapse-black: #000000;
+  --synapse-dark-gray: #1a1c29;
+  --synapse-border-color-gray: #dcdcdc;
+
+  // Layout Dimensions
+  --synapse-header-height: 75px;
+  --synapse-banner-height: 47px;
 }
 
-$primary-action-color: rgb(64, 123, 160) !default;
-$secondary-action-color: rgb(98, 172, 98) !default;
+$primary-action-color: var(--synapse-primary-action-color) !default;
+$secondary-action-color: var(--synapse-secondary-action-color) !default;
+$dark-gray: var(--synapse-dark-gray) !default;
+$border-color-gray: var(--synapse-border-color-gray) !default;
+
+$header-height: var(--synapse-header-height) !default;
+$banner-height: var(--synapse-banner-height) !default;
+
 $header-url: '' !default;
 $footer-url: '' !default;
-$dark-gray: #1a1c29;
-$header-height: 75px;
-$banner-height: 47px;
-$border-color-gray: #dcdcdc;
 
 // Since scss breaks if a file is missing in a local url link these functions must get manually overwitten
+// Must remain Sass functions as CSS variables lack if/else conditional logic
 @function getHeader() {
   @if $header-url == '' {
     @return none;

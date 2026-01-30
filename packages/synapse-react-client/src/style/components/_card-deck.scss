@@ -1,4 +1,3 @@
-@use '../abstracts/variables' as SRC;
 @use '../abstracts/mixins' as SrcMixins;
 
 .CardDeck {
@@ -31,7 +30,7 @@
     display: flex;
     min-height: 300px;
     flex-direction: column;
-    box-shadow: SRC.$box-shadow-soft;
+    box-shadow: var(--synapse-box-shadow-soft);
     background: #ffffff;
     margin: 5px;
 

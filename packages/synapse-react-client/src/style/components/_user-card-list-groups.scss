@@ -24,12 +24,9 @@
           padding: 10px;
           &.isSelected,
           &:not(.gap-fill):hover {
-            color: SRC.$primary-action-color;
-            background-color: color.change(
-              SRC.$primary-action-color,
-              $alpha: 0.04
-            );
-            border-right: 2px solid SRC.$primary-action-color;
+            color: var(--synapse-primary-action-color);
+            background-color: var(--synapse-primary-action-color-alpha-4);
+            border-right: 2px solid var(--synapse-primary-action-color);
           }
           border-right: 2px solid #dcdcdc;
           font-weight: bold;

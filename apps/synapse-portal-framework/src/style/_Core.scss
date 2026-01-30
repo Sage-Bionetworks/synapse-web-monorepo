@@ -17,7 +17,7 @@
 }
 
 %home-bg-util {
-  background: rgba(Portal.$primary-action-color, 0.05);
+  background: var(--synapse-primary-action-color-alpha-5);
   &:last-child {
     // this handles the case when the last element on the home page
     // has its background colored and should not have padding on the bottom
@@ -80,18 +80,18 @@ body {
   font-family: 'DM Sans', sans-serif;
   button:focus {
     // bootstrap override
-    outline: Portal.$primary-action-color;
+    outline: var(--synapse-primary-action-color);
   }
 }
 
 .nav + .spacer {
-  min-height: Portal.$header-height;
-  height: Portal.$header-height;
+  min-height: var(--synapse-header-height);
+  height: var(--synapse-header-height);
 }
 
 #banner + .nav + .spacer {
-  min-height: Portal.$header-height + Portal.$banner-height;
-  height: Portal.$header-height + Portal.$banner-height;
+  min-height: calc(var(--synapse-header-height) + var(--synapse-banner-height));
+  height: calc(var(--synapse-header-height) + var(--synapse-banner-height));
 }
 
 .flex-display {
@@ -113,7 +113,7 @@ body {
 
 // banner
 #banner {
-  height: Portal.$banner-height;
+  height: var(--synapse-banner-height);
   width: 100%;
   position: fixed;
   z-index: 6;
@@ -154,7 +154,7 @@ body {
 // if banner exists then make sure the nav sits right below it bet setting its top to the height of
 // the banner above it
 #banner + .nav {
-  top: Portal.$banner-height;
+  top: var(--synapse-banner-height);
 }
 
 .DownloadCartPage .pageHeader {
@@ -162,8 +162,8 @@ body {
 }
 .nav {
   margin-bottom: -3px;
-  min-height: Portal.$header-height;
-  height: Portal.$header-height;
+  min-height: var(--synapse-header-height);
+  height: var(--synapse-header-height);
   width: 100%;
   z-index: 1001;
   a:hover {
@@ -177,7 +177,7 @@ body {
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
     background: rgba(256, 256, 256, 1);
     .nav-button {
-      color: Portal.$dark-gray;
+      color: var(--synapse-dark-gray);
     }
   }
   &.explore-nav {
@@ -245,7 +245,7 @@ a.nav-button,
 
 %bottomBorderNav {
   @extend %borderStyle;
-  border-bottom-color: Portal.$secondary-action-color;
+  border-bottom-color: var(--synapse-secondary-action-color);
 }
 .nav-button-container:hover,
 .nav-button-container.active {
@@ -276,7 +276,7 @@ button.dropdown-toggle.nav-button:hover {
   border-left: 0;
 }
 .nav-link-container .show button.dropdown-toggle {
-  border-bottom-color: Portal.$secondary-action-color;
+  border-bottom-color: var(--synapse-secondary-action-color);
 }
 
 #home-link {
@@ -310,7 +310,7 @@ button.dropdown-toggle.nav-button:hover {
 .show #user-menu-button,
 #user-menu-button:hover {
   background: unset !important;
-  color: Portal.$primary-action-color;
+  color: var(--synapse-primary-action-color);
   @extend %bottomBorderNav;
 }
 
@@ -350,7 +350,7 @@ button.dropdown-toggle.nav-button:hover {
 }
 
 .SRC-primary-text-color-background {
-  background-color: Portal.$primary-action-color;
+  background-color: var(--synapse-primary-action-color);
   color: white;
 }
 
@@ -510,9 +510,9 @@ button.dropdown-toggle.nav-button:hover {
   border: none;
   &.alert-info {
     background-color: rgb(249, 249, 249);
-    border-left: 10px solid Portal.$primary-action-color;
+    border-left: 10px solid var(--synapse-primary-action-color);
     .iconBackground {
-      color: Portal.$primary-action-color;
+      color: var(--synapse-primary-action-color);
     }
   }
   &.alert-danger {
