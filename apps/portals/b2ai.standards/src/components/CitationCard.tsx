@@ -3,10 +3,10 @@ import { Row, RowSet, SelectColumn } from '@sage-bionetworks/synapse-types'
 
 export type Citation = {
   ref_url: string
-  ref_title: string
-  ref_authors: string[]
-  ref_journal: string
-  ref_publication_year: number
+  ref_title?: string
+  ref_authors?: string[]
+  ref_journal?: string
+  ref_publication_year?: number
 }
 
 type DetailsPageContext = {
@@ -47,11 +47,25 @@ export function CitationCard({ citation }: CitationCardProps) {
   const { ref_url, ref_title, ref_authors, ref_journal, ref_publication_year } =
     citation
 
-  // Format authors: show first 3, then "et al." if more
-  const authorDisplay =
-    ref_authors.length > 3
-      ? `${ref_authors.slice(0, 3).join(', ')}, et al.`
-      : ref_authors.join(', ')
+  // Show all authors
+  const authorDisplay = ref_authors?.join(', ')
+  // Truncate author list if desired:
+  // const authorDisplay =
+  //   ref_authors && ref_authors.length > 3
+  //     ? `${ref_authors.slice(0, 3).join(', ')}, et al.`
+  //     : ref_authors?.join(', ')
+
+  // Build metadata parts, filtering out missing values
+  const metadataParts = [
+    authorDisplay,
+    ref_journal,
+    ref_publication_year,
+  ].filter(Boolean)
+  const metadata =
+    metadataParts.length > 0 ? ` — ${metadataParts.join(', ')}` : ''
+
+  // Use title if available, otherwise fall back to showing the URL
+  const label = ref_title || ref_url
 
   return (
     <Box sx={{ mb: 1 }}>
@@ -61,15 +75,17 @@ export function CitationCard({ citation }: CitationCardProps) {
         rel="noopener noreferrer"
         sx={{ fontWeight: 'bold' }}
       >
-        {ref_title}
+        {label}
       </Link>
-      <Typography
-        variant="body2"
-        component="span"
-        sx={{ color: 'text.secondary' }}
-      >
-        {` — ${authorDisplay}, ${ref_journal} (${ref_publication_year})`}
-      </Typography>
+      {metadata && (
+        <Typography
+          variant="body2"
+          component="span"
+          sx={{ color: 'text.secondary' }}
+        >
+          {metadata}
+        </Typography>
+      )}
     </Box>
   )
 }
