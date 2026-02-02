@@ -29,7 +29,7 @@ export default function MetadataTaskTableActionCell(props: {
   const isOpenDataGridDisabled =
     openGridIsPending || isLoading || !data?.canView
   const toolTipTitle = data?.canView
-    ? 'Open a Working Copy document to edit metadata'
+    ? 'Open Curator to edit metadata'
     : 'You must have READ access to ' +
       gridSourceId +
       ' to view the Working Copy'
@@ -66,7 +66,7 @@ export default function MetadataTaskTableActionCell(props: {
             void handleOpenDataGrid()
           }}
         >
-          Working Copy
+          Open Curator
         </Button>
       </span>
     </Tooltip>
