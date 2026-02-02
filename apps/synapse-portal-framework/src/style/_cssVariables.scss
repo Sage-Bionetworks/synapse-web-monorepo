@@ -1,0 +1,31 @@
+@use 'sass:color';
+@use 'variables' as v;
+
+:root {
+  // Pre-computed adjusted values
+  --synapse-primary-action-color-alpha-5: #{color.change(
+      v.$raw-primary,
+      $alpha: 0.05
+    )};
+  --synapse-primary-alpha-08: #{color.change(v.$raw-primary, $alpha: 0.08)};
+  --synapse-footer-accent: #{v.$footer-accent-base};
+  --synapse-footer-accent-dark: #{color.adjust(
+      v.$footer-accent-base,
+      $lightness: -5%
+    )};
+
+  // Action Colors
+  --synapse-primary-action-color: #{v.$raw-primary};
+  --synapse-secondary-action-color: #{v.$raw-secondary};
+
+  // Greyscale
+  --synapse-gray-700: #6e7377;
+  --synapse-gray-900: #353a3f;
+  --synapse-black: #000;
+  --synapse-dark-gray: #1a1c29;
+  --synapse-border-color-gray: #dcdcdc;
+
+  // Layout
+  --synapse-header-height: 75px;
+  --synapse-banner-height: 47px;
+}

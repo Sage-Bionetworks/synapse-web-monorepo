@@ -4,36 +4,6 @@ $raw-primary: rgb(64, 123, 160);
 $raw-secondary: rgb(98, 172, 98);
 $footer-accent-base: #ffecca;
 
-// CSS Variables
-:root {
-  // Pre-computed
-  --synapse-primary-action-color-alpha-5: #{color.change(
-      $raw-primary,
-      $alpha: 0.05
-    )};
-  --synapse-primary-alpha-08: #{color.change($raw-primary, $alpha: 0.08)};
-  --synapse-footer-accent: #{$footer-accent-base};
-  --synapse-footer-accent-dark: #{color.adjust(
-      $footer-accent-base,
-      $lightness: -5%
-    )};
-
-  // Primary / Secondary Action Colors
-  --synapse-primary-action-color: #{$raw-primary};
-  --synapse-secondary-action-color: #{$raw-secondary};
-
-  // Greyscale colors
-  --synapse-gray-700: #6e7377;
-  --synapse-gray-900: #353a3f;
-  --synapse-black: #000000;
-  --synapse-dark-gray: #1a1c29;
-  --synapse-border-color-gray: #dcdcdc;
-
-  // Layout Dimensions
-  --synapse-header-height: 75px;
-  --synapse-banner-height: 47px;
-}
-
 // SCSS variables for header/footer URLs (must remain SCSS - used in compile-time functions)
 $header-url: '' !default;
 $footer-url: '' !default;
