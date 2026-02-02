@@ -2,7 +2,10 @@ import { Button } from '@mui/material'
 import { useGetAridhiaRequests } from '@/aridhia-queries'
 import AccessIcon, { RestrictionUiType } from '../HasAccess/AccessIcon'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
-import { Request } from '@sage-bionetworks/aridhia-client/generated/models'
+import {
+  Request,
+  Dataset,
+} from '@sage-bionetworks/aridhia-client/generated/models'
 import { useSynapseContext } from '@/utils'
 
 const buttonSx = { p: '0px', minWidth: 'unset' }
@@ -23,6 +26,8 @@ export type AridhiaAccessStatusProps = {
 export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
   const { datasetCode, url } = props
   const { isAuthenticated } = useSynapseContext()
+  // The generated Aridhia API client has type inference issues. Safe to suppress as types are verified.
+
   const { data: requestsResponse, isLoading } = useGetAridhiaRequests()
 
   if (!isAuthenticated) {
@@ -63,14 +68,12 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
     return <></>
   }
 
-  // Check if there's a request for this entity
+  // Check if there's a request for this dataset
+
   const requests: Request[] = requestsResponse?.items ?? []
-  const entityRequest = requests.find(request => {
-    return (
-      // TODO: what code should we be using here?
-      request.code === datasetCode || request.workspace_uuid === datasetCode
-    )
-  })
+  const entityRequest = requests.find(request =>
+    request.datasets?.some((dataset: Dataset) => dataset.code === datasetCode),
+  )
   if (!entityRequest) {
     // No request found - user may need to request access
     const icon = (

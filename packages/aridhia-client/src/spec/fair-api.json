@@ -770,6 +770,12 @@
           "workspace_uuid": {
             "type": "string"
           },
+          "datasets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Dataset"
+            }
+          },
           "transfer_type": {
             "type": "string",
             "enum": ["clear", "pseudonymised", "manual"]

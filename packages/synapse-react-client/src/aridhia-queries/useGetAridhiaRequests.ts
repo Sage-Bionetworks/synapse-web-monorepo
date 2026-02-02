@@ -19,15 +19,21 @@ export function useGetAridhiaRequests(
       FairRequestsGet200Response
     >
   >,
-) {
+): ReturnType<
+  typeof useQuery<FairRequestsGet200Response, Error, FairRequestsGet200Response>
+> {
   const aridhiaContext = useAridhiaContextOptional()
   const { accessToken: synapseAccessToken } = useSynapseContext()
 
-  return useQuery({
+  return useQuery<
+    FairRequestsGet200Response,
+    Error,
+    FairRequestsGet200Response
+  >({
     enabled: !!synapseAccessToken && !!aridhiaContext,
     ...options,
     queryKey: ARIDHIA_REQUESTS_QUERY_KEY,
-    queryFn: async () => {
+    queryFn: async (): Promise<FairRequestsGet200Response> => {
       if (!synapseAccessToken) {
         throw new Error('Synapse access token is not available')
       }
@@ -47,6 +53,9 @@ export function useGetAridhiaRequests(
       )
 
       const requestsApi = new RequestsApi(configuration)
+      // The generated API client has type inference issues with the Request model's datasets field.
+      // Using explicit type assertion here is safe as the response matches the OpenAPI spec.
+
       return await requestsApi.fairRequestsGet()
     },
   })
