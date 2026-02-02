@@ -1641,8 +1641,8 @@ importers:
         specifier: workspace:*
         version: link:../markdown-it-container
       '@sage-bionetworks/react-datasheet-grid':
-        specifier: 4.11.5-sage.1
-        version: 4.11.5-sage.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 4.11.5-sage.2
+        version: 4.11.5-sage.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@sage-bionetworks/synapse-client':
         specifier: workspace:*
         version: link:../synapse-client
@@ -4404,8 +4404,8 @@ packages:
   '@rushstack/ts-command-line@5.0.1':
     resolution: {integrity: sha512-bsbUucn41UXrQK7wgM8CNM/jagBytEyJqXw/umtI8d68vFm1Jwxh1OtLrlW7uGZgjCWiiPH6ooUNa1aVsuVr3Q==}
 
-  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.1':
-    resolution: {integrity: sha512-u63Wab+9NYU7PLxGm22HiFoqUPl7IrdKIQNjcoUzv4Pm1dL+eqf9JK0NV6qcp1RjgQbH6H7iM0lfGWYRw/0k0g==, tarball: https://npm.pkg.github.com/download/@sage-bionetworks/react-datasheet-grid/4.11.5-sage.1/25a06c1571997e9e754658d89e35cb5346e72f9f}
+  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.2':
+    resolution: {integrity: sha512-4tdpsXqYjxMiZsgsWQP0lLm+6A6hTJAaxOhDZtRFTUCjrL7zwkjYknFUzs86DieXO5gfEsqtxpg5sYrU9ejEWQ==, tarball: https://npm.pkg.github.com/download/@sage-bionetworks/react-datasheet-grid/4.11.5-sage.2/10edc1827ca77b3978424b24a4fa169890f15ca3}
     peerDependencies:
       react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -13987,7 +13987,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@tanstack/react-virtual': 3.13.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       classnames: 2.5.1
