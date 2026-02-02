@@ -1641,8 +1641,8 @@ importers:
         specifier: workspace:*
         version: link:../markdown-it-container
       '@sage-bionetworks/react-datasheet-grid':
-        specifier: 4.11.5-sage.2
-        version: 4.11.5-sage.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 4.11.5-sage.3
+        version: 4.11.5-sage.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@sage-bionetworks/synapse-client':
         specifier: workspace:*
         version: link:../synapse-client
@@ -4404,8 +4404,8 @@ packages:
   '@rushstack/ts-command-line@5.0.1':
     resolution: {integrity: sha512-bsbUucn41UXrQK7wgM8CNM/jagBytEyJqXw/umtI8d68vFm1Jwxh1OtLrlW7uGZgjCWiiPH6ooUNa1aVsuVr3Q==}
 
-  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.2':
-    resolution: {integrity: sha512-4tdpsXqYjxMiZsgsWQP0lLm+6A6hTJAaxOhDZtRFTUCjrL7zwkjYknFUzs86DieXO5gfEsqtxpg5sYrU9ejEWQ==, tarball: https://npm.pkg.github.com/download/@sage-bionetworks/react-datasheet-grid/4.11.5-sage.2/10edc1827ca77b3978424b24a4fa169890f15ca3}
+  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.3':
+    resolution: {integrity: sha512-vVM7ZsTSY5qD/bsNBzRJeTWG8QiI1QALznjAkdpRLbW6HA87+GchkXlvzjjtPVI3OjuParYdr4zTlGek6VlZcg==, tarball: https://npm.pkg.github.com/download/@sage-bionetworks/react-datasheet-grid/4.11.5-sage.3/2cef2e1b5fe764b2076a639dfa98706159bbab90}
     peerDependencies:
       react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -9643,6 +9643,12 @@ packages:
     resolution: {integrity: sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ==}
     engines: {node: '>=0.10.0'}
 
+  react-resize-detector@10.0.1:
+    resolution: {integrity: sha512-CR2EdP83ycGlWkhhrd6+hhZVhPJO4xnzClFCTBXlODVTHOgiDJQu77sBt67J7P3gfU4ec/kOuf2c5EcyTUNLXQ==}
+    peerDependencies:
+      react: ^18.0.0
+      react-dom: ^18.0.0
+
   react-resize-detector@7.1.2:
     resolution: {integrity: sha512-zXnPJ2m8+6oq9Nn8zsep/orts9vQv3elrpA+R8XTcW7DVVUJ9vwDwMXaBtykAYjMnkCIaOoK9vObyR7ZgFNlOw==}
     peerDependencies:
@@ -13987,13 +13993,13 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@tanstack/react-virtual': 3.13.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       classnames: 2.5.1
       fast-deep-equal: 3.1.3
       react: 19.1.0
-      react-resize-detector: 7.1.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react-resize-detector: 10.0.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       throttle-debounce: 3.0.1
     transitivePeerDependencies:
       - react-dom
@@ -20532,6 +20538,12 @@ snapshots:
       - react-dom
 
   react-refresh@0.17.0: {}
+
+  react-resize-detector@10.0.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      lodash: 4.17.23
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   react-resize-detector@7.1.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
