@@ -1,4 +1,10 @@
-import { Box, TextField, InputAdornment, Button } from '@mui/material'
+import {
+  Box,
+  TextField,
+  InputAdornment,
+  Button,
+  Typography,
+} from '@mui/material'
 import SynapseSearchResultsCard from './SynapseSearchResultsCard'
 import SearchIcon from '@mui/icons-material/Search'
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
@@ -6,6 +12,8 @@ import React, { useState, useEffect } from 'react'
 import { useSearchInfinite } from '@/synapse-queries/search/useSearch'
 import { SearchQuery } from '@sage-bionetworks/synapse-types'
 import { useDocumentMetadata } from '@/utils/context/DocumentMetadataContext'
+import { ArrowForward } from '@mui/icons-material'
+import styles from './SynapseSearchPageResults.module.scss'
 
 export type SynapseSearchPageResultsProps = {
   query?: SearchQuery
@@ -132,6 +140,22 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
       >
         {isLoading && <div>Loading...</div>}
         {error && <div>Error: {error.message}</div>}
+        {data && (
+          <div className={styles.didYouMeanContainer}>
+            <div className={styles.didYouMeanCurrentlyShowing}>
+              Currently showing results for <b>{searchInputValue}</b>.
+            </div>
+            <div className={styles.didYouMeanSuggestion}>
+              <SearchIcon />
+              <Typography variant="body1" className={styles.didYouMeanText}>
+                Search for alzeimers instead?
+              </Typography>
+              <div className={styles.didYouMeanArrowContainer}>
+                <ArrowForward />
+              </div>
+            </div>
+          </div>
+        )}
         {data &&
           data.pages &&
           data.pages.map((page, pageIndex) =>

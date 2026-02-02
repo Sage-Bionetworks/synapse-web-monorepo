@@ -1,0 +1,24 @@
+.didYouMeanContainer {
+  display: flex;
+  width: 100%;
+}
+
+.didYouMeanSuggestion {
+  display: flex;
+  margin-left: auto;
+}
+
+.didYouMeanCurrentlyShowing {
+  margin-right: 0;
+}
+
+.didYouMeanArrowContainer {
+  border: 1px solid var(--gray-700);
+  display: flex;
+  align-items: center;
+  padding: 0px 16px;
+}
+
+.didYouMeanText {
+  margin-right: 16px !important;
+}
