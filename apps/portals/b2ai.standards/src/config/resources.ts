@@ -12,7 +12,7 @@ type TableInfoMap = Record<string, Partial<TableInfo>>
 const tableInfo: TableInfoMap = {
   DST_denormalized: {
     name: 'DST_denormalized',
-    id: 'syn65676531.85', // current version of DST_denormalized
+    id: 'syn65676531.87', // current version of DST_denormalized
   },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
   DataSet_denormalized: {
@@ -141,8 +141,7 @@ export const standardsSql = `
         , name
         , category
         , collections
-        , JSON_EXTRACT(AIApplicationJSON, '$[*].name') as hasApplication
-        , aiApplicationCount
+        , aiAppMarkdown
         , topic
         , dataTypes
         , ${DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_LINKS}
@@ -152,6 +151,10 @@ export const standardsSql = `
         , "usedInBridge2AI"
     FROM ${tableInfo.DST_denormalized.id}
 `
+// , concat('**[', aiApplicationCount, '](/Explore/Standard/DetailsPage?id=', id, '#AIApplications) apps:**\n', group_concat(concat(' - ', unnest(applicationNames)) separator '\n ') ) as AIApplications
+// , JSON_EXTRACT(AIApplicationJSON, '$[*].name') as hasApplication
+// , JSON_ARRAYAGG(JSON_EXTRACT(AIApplicationJSON, '$[*].name'), ', ') as hasAIApplication
+// , aiApplicationCount
 
 // removed topic column above to address @jay-hodgson's comment
 //  https://github.com/Sage-Bionetworks/synapse-web-monorepo/pull/1612#discussion_r2029425831

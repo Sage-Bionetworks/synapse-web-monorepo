@@ -92,7 +92,7 @@ export const standardDetailsPageContent: DetailsPageContentType = [
                   columnAliases={columnAliases}
                   columnLinks={standardsColumnLinks}
                 />
-                {publication && (
+                {publication && publication.ref_url && (
                   <Box sx={{ mt: 2 }}>
                     <Typography
                       variant="subtitle2"
@@ -141,9 +141,11 @@ export const standardDetailsPageContent: DetailsPageContentType = [
                 >
                   References
                 </Typography>
-                {app.references.map(ref => (
-                  <CitationCard key={ref.ref_url} citation={ref} />
-                ))}
+                {app.references
+                  .filter(ref => ref.ref_url)
+                  .map(ref => (
+                    <CitationCard key={ref.ref_url} citation={ref} />
+                  ))}
               </Box>
             ) : undefined,
           }))
