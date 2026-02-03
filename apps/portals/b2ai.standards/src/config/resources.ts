@@ -151,6 +151,8 @@ export const standardsSql = `
         , "usedInBridge2AI"
     FROM ${tableInfo.DST_denormalized.id}
 `
+// removed these and composed aiAppMarkdown in create_denormalized_tables: https://github.com/bridge2ai/b2ai-standards-registry/blob/issue-480-ai-apps-and-links/scripts/create_denormalized_tables.py#L128-L137
+// keeping them in comments in case i need json examples sometime
 // , concat('**[', aiApplicationCount, '](/Explore/Standard/DetailsPage?id=', id, '#AIApplications) apps:**\n', group_concat(concat(' - ', unnest(applicationNames)) separator '\n ') ) as AIApplications
 // , JSON_EXTRACT(AIApplicationJSON, '$[*].name') as hasApplication
 // , JSON_ARRAYAGG(JSON_EXTRACT(AIApplicationJSON, '$[*].name'), ', ') as hasAIApplication
