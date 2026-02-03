@@ -17,6 +17,7 @@ import {
   GetRepoV1DoiAssociationRequest,
   GetRepoV1DoiRequest,
   ListGridSessionsRequest,
+  SuggestionQuery,
   UploadToTablePreviewRequest,
   type UserSubmissionSearchRequest,
   ViewEntityType,
@@ -764,6 +765,10 @@ export class KeyFactory {
 
   public getSearchEntitiesQueryKey(query: SearchQuery) {
     return this.getKey('searchEntities', query)
+  }
+
+  public getSuggestionQueryKey(query: SuggestionQuery) {
+    return this.getKey('suggestion', query)
   }
 
   public getTeamQueryKey(teamId: string) {

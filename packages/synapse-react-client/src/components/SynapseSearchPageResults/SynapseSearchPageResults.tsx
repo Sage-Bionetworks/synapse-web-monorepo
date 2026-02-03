@@ -8,12 +8,13 @@ import {
 import SynapseSearchResultsCard from './SynapseSearchResultsCard'
 import SearchIcon from '@mui/icons-material/Search'
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useSearchInfinite } from '@/synapse-queries/search/useSearch'
 import { SearchQuery } from '@sage-bionetworks/synapse-types'
 import { useDocumentMetadata } from '@/utils/context/DocumentMetadataContext'
 import { ArrowForward } from '@mui/icons-material'
 import styles from './SynapseSearchPageResults.module.scss'
+import { useSuggestion } from '@/synapse-queries/search/useSuggestion'
 
 export type SynapseSearchPageResultsProps = {
   query?: SearchQuery
@@ -21,6 +22,7 @@ export type SynapseSearchPageResultsProps = {
 }
 
 export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
+  const MIN_SUGGESTION_SCORE = 0.75
   const { query, setQuery } = props
 
   // Set page title (replaces jsniUtils.setPageTitle(DisplayConstants.LABEL_SEARCH) from Java)
@@ -66,6 +68,62 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
               .map(term => term.trim())
               .filter(Boolean)
           : [],
+      }
+      setQuery(newQuery)
+    }
+  }
+
+  // Fetch spelling suggestions for the search terms
+  const { data: suggestionData } = useSuggestion(
+    { searchTerm: query?.queryTerm },
+    {
+      enabled: !!query?.queryTerm?.[0],
+    },
+  )
+
+  const getSuggestion = useMemo(() => {
+    const suggestionValues = suggestionData?.suggestions
+    const terms = query?.queryTerm || []
+
+    if (!suggestionValues) return null
+
+    // Map original terms to their best suggestions if available
+    const suggestionMap = new Map<string, string>()
+    let hasSuggestion = false
+
+    for (const suggestionList of suggestionValues) {
+      const originalTerm = suggestionList.key
+      const suggestions = Array.from(suggestionList.values ?? [])
+
+      // Find the best suggestion for each term above the minimum score threshold
+      const bestSuggestion = suggestions.find(
+        s => s.score !== undefined && s.score >= MIN_SUGGESTION_SCORE,
+      )
+
+      // If a valid suggestion is found and it's different from the original term, add it to the map
+      if (bestSuggestion?.term && bestSuggestion.term !== originalTerm) {
+        suggestionMap.set(originalTerm!, bestSuggestion.term)
+        hasSuggestion = true
+      }
+
+      console.log('suggestionmap', suggestionMap)
+    }
+
+    if (!hasSuggestion) return null
+
+    // Build the corrected search string by replacing misspelled terms
+    const correctedTerms = terms.map(term => suggestionMap.get(term) || term)
+
+    return correctedTerms.join(' ')
+  }, [suggestionData, query?.queryTerm])
+
+  const handleUseSuggestion = () => {
+    if (setQuery && getSuggestion) {
+      const newQuery = {
+        queryTerm: getSuggestion
+          .split(' ')
+          .map(term => term.trim())
+          .filter(Boolean),
       }
       setQuery(newQuery)
     }
@@ -140,15 +198,25 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
       >
         {isLoading && <div>Loading...</div>}
         {error && <div>Error: {error.message}</div>}
-        {data && (
+        {data && getSuggestion && (
           <div className={styles.didYouMeanContainer}>
             <div className={styles.didYouMeanCurrentlyShowing}>
-              Currently showing results for <b>{searchInputValue}</b>.
+              Currently showing results for <b>{query?.queryTerm?.join(' ')}</b>
+              .
             </div>
-            <div className={styles.didYouMeanSuggestion}>
+            <div
+              className={styles.didYouMeanSuggestion}
+              role="button"
+              onClick={handleUseSuggestion}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  handleUseSuggestion()
+                }
+              }}
+            >
               <SearchIcon />
               <Typography variant="body1" className={styles.didYouMeanText}>
-                Search for alzeimers instead?
+                Search for <b>{getSuggestion}</b> instead?
               </Typography>
               <div className={styles.didYouMeanArrowContainer}>
                 <ArrowForward />
