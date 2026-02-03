@@ -2,11 +2,11 @@ import { Button } from '@mui/material'
 import { useGetAridhiaRequests } from '@/aridhia-queries'
 import AccessIcon, { RestrictionUiType } from '../HasAccess/AccessIcon'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
-import {
-  Request,
-  Dataset,
-} from '@sage-bionetworks/aridhia-client/generated/models'
 import { useSynapseContext } from '@/utils'
+import {
+  getRestrictionUiTypeFromAridhiaRequest,
+  findRequestForDataset,
+} from './aridhiaAccessStatusUtils'
 
 const buttonSx = { p: '0px', minWidth: 'unset' }
 
@@ -69,56 +69,26 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
   }
 
   // Check if there's a request for this dataset
-
-  const requests: Request[] = requestsResponse?.items ?? []
-  const entityRequest = requests.find(request =>
-    request.datasets?.some((dataset: Dataset) => dataset.code === datasetCode),
+  const entityRequest = findRequestForDataset(
+    requestsResponse?.items ?? [],
+    datasetCode,
   )
-  if (!entityRequest) {
-    // No request found - user may need to request access
-    const icon = (
-      <AccessIcon
-        restrictionUiType={RestrictionUiType.AccessBlockedByRestriction}
-      />
-    )
-    return url ? (
+
+  const restrictionUiType =
+    getRestrictionUiTypeFromAridhiaRequest(entityRequest)
+
+  const icon = <AccessIcon restrictionUiType={restrictionUiType} />
+
+  // If no request found and URL provided, wrap icon in link
+  if (!entityRequest && url) {
+    return (
       <a href={url} target="_blank" rel="noopener noreferrer">
         {icon}
       </a>
-    ) : (
-      icon
     )
   }
 
-  // Show status based on request status
-  let icon: React.ReactNode
-  switch (entityRequest.status) {
-    case 'approved':
-      icon = <AccessIcon restrictionUiType={RestrictionUiType.Accessible} />
-      break
-    case 'pending':
-      icon = (
-        <AccessIcon
-          restrictionUiType={
-            RestrictionUiType.AccessBlockedByRestrictionWithPendingRDCADAPRequest
-          }
-        />
-      )
-      break
-    case 'denied':
-    case 'error':
-      icon = (
-        <AccessIcon restrictionUiType={RestrictionUiType.AccessBlockedByACL} />
-      )
-      break
-    default:
-      icon = (
-        <AccessIcon
-          restrictionUiType={RestrictionUiType.AccessBlockedByRestriction}
-        />
-      )
-  }
-
+  // If URL provided, wrap icon in link
   return url ? (
     <a href={url} target="_blank" rel="noopener noreferrer">
       {icon}
