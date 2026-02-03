@@ -100,7 +100,7 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
       icon = (
         <AccessIcon
           restrictionUiType={
-            RestrictionUiType.AccessBlockedByRestrictionWithPendingRequest
+            RestrictionUiType.AccessBlockedByRestrictionWithPendingExternalRequest
           }
         />
       )
