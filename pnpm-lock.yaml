@@ -2055,9 +2055,6 @@ importers:
       react:
         specifier: ^19.1.0
         version: 19.1.0
-      react-datasheet-grid:
-        specifier: github:sage-bionetworks/react-datasheet-grid
-        version: https://codeload.github.com/sage-bionetworks/react-datasheet-grid/tar.gz/778bdbc93f35a7f1b94e37d0fc26f56e3aa7cf65(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-dom:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
@@ -9515,12 +9512,6 @@ packages:
     peerDependencies:
       react: '>= 16.3.0'
 
-  react-datasheet-grid@https://codeload.github.com/sage-bionetworks/react-datasheet-grid/tar.gz/778bdbc93f35a7f1b94e37d0fc26f56e3aa7cf65:
-    resolution: {tarball: https://codeload.github.com/sage-bionetworks/react-datasheet-grid/tar.gz/778bdbc93f35a7f1b94e37d0fc26f56e3aa7cf65}
-    version: 4.11.5
-    peerDependencies:
-      react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
-
   react-datetime@3.3.1:
     resolution: {integrity: sha512-CMgQFLGidYu6CAlY6S2Om2UZiTfZsjC6j4foXcZ0kb4cSmPomdJ2S1PhK0v3fwflGGVuVARGxwkEUWtccHapJA==}
     peerDependencies:
@@ -9648,12 +9639,6 @@ packages:
     peerDependencies:
       react: ^18.0.0
       react-dom: ^18.0.0
-
-  react-resize-detector@7.1.2:
-    resolution: {integrity: sha512-zXnPJ2m8+6oq9Nn8zsep/orts9vQv3elrpA+R8XTcW7DVVUJ9vwDwMXaBtykAYjMnkCIaOoK9vObyR7ZgFNlOw==}
-    peerDependencies:
-      react: ^16.0.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0
 
   react-router-lite@1.6.0:
     resolution: {integrity: sha512-IQykI2uPPaVsV6jCazUSQcsbIoyVNxKHr4LpuLQHraU7qV+h5uk91E2wK9adbmAtpuI9zmyat9NK8byoTwyNWA==}
@@ -20375,17 +20360,6 @@ snapshots:
       react: 19.1.0
       universal-cookie: 4.0.4
 
-  react-datasheet-grid@https://codeload.github.com/sage-bionetworks/react-datasheet-grid/tar.gz/778bdbc93f35a7f1b94e37d0fc26f56e3aa7cf65(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
-    dependencies:
-      '@tanstack/react-virtual': 3.13.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      classnames: 2.5.1
-      fast-deep-equal: 3.1.3
-      react: 19.1.0
-      react-resize-detector: 7.1.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      throttle-debounce: 3.0.1
-    transitivePeerDependencies:
-      - react-dom
-
   react-datetime@3.3.1(moment@2.30.1)(react@19.1.0):
     dependencies:
       moment: 2.30.1
@@ -20540,12 +20514,6 @@ snapshots:
   react-refresh@0.17.0: {}
 
   react-resize-detector@10.0.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
-    dependencies:
-      lodash: 4.17.23
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-
-  react-resize-detector@7.1.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       lodash: 4.17.23
       react: 19.1.0
