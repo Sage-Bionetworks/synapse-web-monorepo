@@ -1,0 +1,9 @@
+# Generated code - do not lint
+src/codegen/**
+
+# Build output
+dist/**
+node_modules/**
+
+# Generated API client
+src/generated/**
