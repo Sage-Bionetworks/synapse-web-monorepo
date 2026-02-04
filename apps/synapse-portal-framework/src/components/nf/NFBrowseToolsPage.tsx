@@ -9,6 +9,7 @@ import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import { ReactElement } from 'react'
 import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList'
+import { FTS_SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctions'
 import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { WideButton } from 'synapse-react-client/components/styled/WideButton'
 import EcosystemLayout from 'synapse-react-client/components/Ecosystem/EcosystemLayout'
@@ -107,17 +108,10 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
   }
 
   const gotoExploreToolsWithFullTextSearch = (fullTextSearchString: string) => {
-    const filter: TextMatchesQueryFilter = {
-      concreteType:
-        'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
-      searchExpression: fullTextSearchString,
-    }
-    const query: Query = {
-      sql: toolsSql,
-      additionalFilters: [filter],
-    }
     window.location.assign(
-      `/Explore/Tools?QueryWrapper0=${JSON.stringify(query)}`,
+      `/Search/Tools?${FTS_SEARCH_TERM}=${encodeURIComponent(
+        fullTextSearchString,
+      )}`,
     )
   }
 
