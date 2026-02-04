@@ -26,8 +26,6 @@ export type AridhiaAccessStatusProps = {
 export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
   const { datasetCode, url } = props
   const { isAuthenticated } = useSynapseContext()
-  // The generated Aridhia API client has type inference issues. Safe to suppress as types are verified.
-
   const { data: requestsResponse, isLoading } = useGetAridhiaRequests()
 
   if (!isAuthenticated) {
@@ -78,15 +76,6 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
     getRestrictionUiTypeFromAridhiaRequest(entityRequest)
 
   const icon = <AccessIcon restrictionUiType={restrictionUiType} />
-
-  // If no request found and URL provided, wrap icon in link
-  if (!entityRequest && url) {
-    return (
-      <a href={url} target="_blank" rel="noopener noreferrer">
-        {icon}
-      </a>
-    )
-  }
 
   // If URL provided, wrap icon in link
   return url ? (

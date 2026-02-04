@@ -46,8 +46,8 @@
     "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
     "format-spec": "prettier --write src/spec/fair-api.json",
     "generate": "rimraf src/generated && openapi-generator-cli generate -i src/spec/fair-api.json -c config.json -o src/generated",
-    "build": "pnpm generate && pnpm tsc --build",
-    "test": "pnpm generate && vitest",
+    "build": "pnpm tsc --build",
+    "test": "vitest",
     "lint": "eslint src"
   },
   "nx": {

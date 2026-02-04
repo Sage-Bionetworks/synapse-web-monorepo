@@ -1,4 +1,8 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import {
+  useQuery,
+  UseQueryOptions,
+  UseQueryResult,
+} from '@tanstack/react-query'
 import { FairRequestsGet200Response } from '@sage-bionetworks/aridhia-client/generated/models'
 import { RequestsApi } from '@sage-bionetworks/aridhia-client/generated/apis'
 import { useAridhiaContextOptional } from '@/utils/context/AridhiaContext'
@@ -19,9 +23,7 @@ export function useGetAridhiaRequests(
       FairRequestsGet200Response
     >
   >,
-): ReturnType<
-  typeof useQuery<FairRequestsGet200Response, Error, FairRequestsGet200Response>
-> {
+): UseQueryResult<FairRequestsGet200Response, Error> {
   const aridhiaContext = useAridhiaContextOptional()
   const { accessToken: synapseAccessToken } = useSynapseContext()
 
@@ -53,9 +55,6 @@ export function useGetAridhiaRequests(
       )
 
       const requestsApi = new RequestsApi(configuration)
-      // The generated API client has type inference issues with the Request model's datasets field.
-      // Using explicit type assertion here is safe as the response matches the OpenAPI spec.
-
       return await requestsApi.fairRequestsGet()
     },
   })
