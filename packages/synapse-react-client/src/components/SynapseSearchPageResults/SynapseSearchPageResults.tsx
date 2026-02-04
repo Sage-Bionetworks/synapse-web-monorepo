@@ -4,6 +4,7 @@ import {
   InputAdornment,
   Button,
   Typography,
+  IconButton,
 } from '@mui/material'
 import SynapseSearchResultsCard from './SynapseSearchResultsCard'
 import SearchIcon from '@mui/icons-material/Search'
@@ -184,6 +185,34 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
           Filter By
         </Button>
       </Box>
+      {data && getSuggestion && (
+        <div className={styles.didYouMeanContainer}>
+          <div className={styles.didYouMeanCurrentlyShowing}>
+            Currently showing results for <b>{query?.queryTerm?.join(' ')}</b>.
+          </div>
+          <div className={styles.didYouMeanSuggestion}>
+            <SearchIcon
+              sx={{ color: 'grey.600' }}
+              className={styles.searchIcon}
+            />
+            <Typography variant="body1" className={styles.didYouMeanText}>
+              Search for{' '}
+              <b className={styles.suggestionText}>{getSuggestion}</b> instead?
+            </Typography>
+            <IconButton
+              className={styles.didYouMeanArrowContainer}
+              onClick={handleUseSuggestion}
+              aria-label={`Search for ${getSuggestion} instead`}
+              sx={{
+                borderColor: 'primary.main',
+                svg: { color: 'primary.main' },
+              }}
+            >
+              <ArrowForward />
+            </IconButton>
+          </div>
+        </div>
+      )}
       <Box
         sx={{
           display: 'flex',
@@ -196,39 +225,6 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
       >
         {isLoading && <div>Loading...</div>}
         {error && <div>Error: {error.message}</div>}
-        {data && getSuggestion && (
-          <div className={styles.didYouMeanContainer}>
-            <div className={styles.didYouMeanCurrentlyShowing}>
-              Currently showing results for <b>{query?.queryTerm?.join(' ')}</b>
-              .
-            </div>
-            <div className={styles.didYouMeanSuggestion}>
-              <SearchIcon
-                sx={{ color: 'grey.600' }}
-                className={styles.searchIcon}
-              />
-              <Typography variant="body1" className={styles.didYouMeanText}>
-                Search for{' '}
-                <b className={styles.suggestionText}>{getSuggestion}</b>{' '}
-                instead?
-              </Typography>
-              <Box
-                className={styles.didYouMeanArrowContainer}
-                sx={{ borderColor: 'primary.main' }}
-                role="button"
-                tabIndex={0}
-                onClick={handleUseSuggestion}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    handleUseSuggestion()
-                  }
-                }}
-              >
-                <ArrowForward sx={{ color: 'primary.main' }} />
-              </Box>
-            </div>
-          </div>
-        )}
         {data &&
           data.pages &&
           data.pages.map((page, pageIndex) =>

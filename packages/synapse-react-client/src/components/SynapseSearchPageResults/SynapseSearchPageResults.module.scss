@@ -1,6 +1,7 @@
 .didYouMeanContainer {
   display: flex;
   width: 100%;
+  margin-top: 20px;
 }
 
 .didYouMeanSuggestion {
@@ -23,10 +24,9 @@
 }
 
 .didYouMeanArrowContainer {
-  border: 1px solid;
-  display: flex;
-  align-items: center;
-  padding: 6px 16px;
+  border: 1px solid !important;
+  padding: 6px 16px !important;
+  border-radius: 0 !important;
 }
 
 .didYouMeanText {
