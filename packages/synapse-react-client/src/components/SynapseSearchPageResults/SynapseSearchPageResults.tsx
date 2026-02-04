@@ -216,6 +216,7 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
                 className={styles.didYouMeanArrowContainer}
                 sx={{ borderColor: 'primary.main' }}
                 role="button"
+                tabIndex={0}
                 onClick={handleUseSuggestion}
                 onKeyDown={e => {
                   if (e.key === 'Enter' || e.key === ' ') {
