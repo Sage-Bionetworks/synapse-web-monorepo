@@ -1,0 +1,5 @@
+import{G as e}from"./Goals-BXDO4lxa.js";import"./iframe-PYPp7xnK.js";import"./index-Chi_LkuB.js";import"./ExpandableContent-BrGlN2Ij.js";import"./QueryCount-BFm-2RSD.js";const n={title:"Home Page/Goals",component:e,parameters:{chromatic:{viewports:[600,1200]}}},r={args:{entityId:"syn22315959"}};r.parameters={...r.parameters,docs:{...r.parameters?.docs,source:{originalSource:`{
+  args: {
+    entityId: 'syn22315959'
+  }
+}`,...r.parameters?.docs?.source}}};const p=["Demo"];export{r as Demo,p as __namedExportsOrder,n as default};
