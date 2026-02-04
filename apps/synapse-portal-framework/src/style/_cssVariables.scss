@@ -2,6 +2,8 @@
 @use 'sass:map';
 @use 'variables' as v;
 
+// Single source of CSS variables for portal builds
+// Computes theme-specific values from SCSS variables configured by portals
 :root {
   // --- UI Focus & Interaction ---
   --synapse-primary-focus-border: #{v.$primary-focus-border};
