@@ -1,7 +1,6 @@
 @use './variables' as Portal;
-@use './cssVariables';
-
 @use 'synapse-react-client/style/main.scss';
+@use './cssVariables';
 
 @use 'synapse-react-client/template_style/Index.scss';
 @use './components/csbc-home-page/all.scss';

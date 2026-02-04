@@ -1,12 +1,98 @@
 @use 'sass:color';
 
-$raw-primary: rgb(64, 123, 160);
-$raw-secondary: #469285;
-$raw-tertiary: #f1d285;
-
 // -----------------------------------------------------------------------------
 // SCSS
 // -----------------------------------------------------------------------------
+$primary-action-color: rgb(64, 123, 160) !default;
+$secondary-action-color: #469285 !default;
+$tertiary-action-color: #f1d285 !default;
+
+$primary-action-color-active: color.adjust(
+  $primary-action-color,
+  $saturation: 50%,
+  $lightness: 0%
+) !default;
+
+// --- UI Focus & Interaction ---
+$primary-focus-border: color.adjust(
+  $primary-action-color,
+  $lightness: 25%
+) !default;
+$primary-focus-shadow: rgba($primary-action-color, 0.25) !default;
+$secondary-200-hover: color.adjust(
+  $secondary-action-color,
+  $saturation: -13%,
+  $lightness: 10%
+) !default;
+$link-underline-color: color.adjust(
+  $primary-action-color,
+  $saturation: -50%,
+  $lightness: 40%
+) !default;
+
+// --- Primary Alpha Variants ---
+$primary-action-color-alpha-4: color.change(
+  $primary-action-color,
+  $alpha: 0.04
+) !default;
+$primary-alpha-05: color.change($primary-action-color, $alpha: 0.05) !default;
+$primary-action-color-alpha-10: color.change(
+  $primary-action-color,
+  $alpha: 0.1
+) !default;
+
+// --- Secondary Alpha Variants ---
+$secondary-action-color-alpha-10: color.change(
+  $secondary-action-color,
+  $alpha: 0.1
+) !default;
+$secondary-action-color-alpha-20: color.change(
+  $secondary-action-color,
+  $alpha: 0.2
+) !default;
+$secondary-action-color-alpha-50: color.change(
+  $secondary-action-color,
+  $alpha: 0.5
+) !default;
+
+// --- Miscellaneous ---
+$dropdown-disabled-text: color.adjust(#212529, $lightness: 35%) !default;
+
+$primary-color-palette: (
+  100: color.adjust($primary-action-color, $saturation: -25%, $lightness: 50%),
+  200: color.adjust($primary-action-color, $saturation: -13%, $lightness: 20%),
+  300: color.adjust($primary-action-color, $saturation: -3%, $lightness: 10%),
+  400: color.adjust($primary-action-color, $saturation: -1%, $lightness: 5%),
+  500: $primary-action-color,
+  600: color.adjust($primary-action-color, $saturation: 5%, $lightness: -4%),
+  700: color.adjust($primary-action-color, $saturation: 11%, $lightness: -8%),
+  800: color.adjust($primary-action-color, $saturation: 18%, $lightness: -10%),
+  900: color.adjust($primary-action-color, $saturation: 24%, $lightness: -18%),
+) !default;
+
+$secondary-color-palette: (
+  100: color.adjust($secondary-action-color, $saturation: -25%, $lightness: 50%),
+  200: color.adjust($secondary-action-color, $saturation: -13%, $lightness: 20%),
+  300: color.adjust($secondary-action-color, $saturation: -3%, $lightness: 10%),
+  400: color.adjust($secondary-action-color, $saturation: -1%, $lightness: 5%),
+  500: $secondary-action-color,
+  600: color.adjust($secondary-action-color, $saturation: 5%, $lightness: -4%),
+  700: color.adjust($secondary-action-color, $saturation: 11%, $lightness: -8%),
+  800: color.adjust($secondary-action-color, $saturation: 18%, $lightness: -10%),
+  900: color.adjust($secondary-action-color, $saturation: 24%, $lightness: -18%),
+) !default;
+
+$tertiary-color-palette: (
+  100: color.adjust($tertiary-action-color, $saturation: -25%, $lightness: 50%),
+  200: color.adjust($tertiary-action-color, $saturation: -13%, $lightness: 20%),
+  300: color.adjust($tertiary-action-color, $saturation: -3%, $lightness: 10%),
+  400: color.adjust($tertiary-action-color, $saturation: -1%, $lightness: 5%),
+  500: $tertiary-action-color,
+  600: color.adjust($tertiary-action-color, $saturation: 5%, $lightness: -4%),
+  700: color.adjust($tertiary-action-color, $saturation: 11%, $lightness: -8%),
+  800: color.adjust($tertiary-action-color, $saturation: 18%, $lightness: -10%),
+  900: color.adjust($tertiary-action-color, $saturation: 24%, $lightness: -18%),
+) !default;
 
 /// Breakpoints map
 /// @prop {String} keys - Keys are identifiers mapped to a given length

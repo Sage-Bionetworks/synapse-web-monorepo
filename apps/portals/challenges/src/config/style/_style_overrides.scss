@@ -1,11 +1,6 @@
 @use '@sage-bionetworks/synapse-portal-framework/src/style/variables' as Portal;
 @use 'sass:color';
 
-:root {
-  --synapse-primary-action-color: #407ba0;
-  --synapse-secondary-action-color: #407ba0;
-}
-
 #header {
   background-color: var(--synapse-primary-action-color);
 }

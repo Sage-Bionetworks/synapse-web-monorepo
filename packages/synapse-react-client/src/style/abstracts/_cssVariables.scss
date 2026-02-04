@@ -1,4 +1,5 @@
 @use 'sass:color';
+@use 'sass:map';
 @use 'variables' as v;
 
 // -----------------------------------------------------------------------------
@@ -6,179 +7,55 @@
 // -----------------------------------------------------------------------------
 
 :root {
-  // Pre-computed adjusted colors
-  --synapse-primary-focus-border: #{color.adjust(
-      v.$raw-primary,
-      $lightness: 25%
-    )};
-  --synapse-primary-focus-shadow: #{rgba(v.$raw-primary, 0.25)};
-  --synapse-secondary-200-hover: #{color.adjust(
-      v.$raw-secondary,
-      $saturation: -13%,
-      $lightness: 10%
-    )};
-  --synapse-link-underline-color: #{color.adjust(
-      v.$raw-primary,
-      $saturation: -50%,
-      $lightness: 40%
-    )};
-  --synapse-primary-action-color-alpha-4: #{color.change(
-      v.$raw-primary,
-      $alpha: 0.04
-    )};
-  --synapse-primary-alpha-05: #{color.change(v.$raw-primary, $alpha: 0.05)};
-  --synapse-secondary-action-color-alpha-10: #{color.change(
-      v.$raw-secondary,
-      $alpha: 0.1
-    )};
-  --synapse-primary-action-color-alpha-10: #{color.change(
-      v.$raw-primary,
-      $alpha: 0.1
-    )};
-  --synapse-secondary-action-color-alpha-20: #{color.change(
-      v.$raw-secondary,
-      $alpha: 0.2
-    )};
-  --synapse-secondary-action-color-alpha-50: #{color.change(
-      v.$raw-secondary,
-      $alpha: 0.5
-    )};
-  --synapse-dropdown-disabled-text: #{color.adjust(#212529, $lightness: 35%)};
+  --synapse-primary-focus-border: #{v.$primary-focus-border};
+  --synapse-primary-focus-shadow: #{v.$primary-focus-shadow};
+  --synapse-secondary-200-hover: #{v.$secondary-200-hover};
+  --synapse-link-underline-color: #{v.$link-underline-color};
+
+  --synapse-primary-action-color-alpha-4: #{v.$primary-action-color-alpha-4};
+  --synapse-primary-alpha-05: #{v.$primary-alpha-05};
+  --synapse-primary-action-color-alpha-10: #{v.$primary-action-color-alpha-10};
+
+  --synapse-secondary-action-color-alpha-10: #{v.$secondary-action-color-alpha-10};
+  --synapse-secondary-action-color-alpha-20: #{v.$secondary-action-color-alpha-20};
+  --synapse-secondary-action-color-alpha-50: #{v.$secondary-action-color-alpha-50};
+
+  --synapse-dropdown-disabled-text: #{v.$dropdown-disabled-text};
 
   // Primary color palette
-  --synapse-primary-active: #{color.adjust(
-      v.$raw-primary,
-      $saturation: 50%,
-      $lightness: 0%
-    )};
+  --synapse-primary-active: #{v.$primary-action-color-active};
 
-  --synapse-primary-100: #{color.adjust(
-      v.$raw-primary,
-      $saturation: -25%,
-      $lightness: 50%
-    )};
-  --synapse-primary-200: #{color.adjust(
-      v.$raw-primary,
-      $saturation: -13%,
-      $lightness: 20%
-    )};
-  --synapse-primary-300: #{color.adjust(
-      v.$raw-primary,
-      $saturation: -3%,
-      $lightness: 10%
-    )};
-  --synapse-primary-400: #{color.adjust(
-      v.$raw-primary,
-      $saturation: -1%,
-      $lightness: 5%
-    )};
-  --synapse-primary-500: var(--synapse-primary-action-color);
-  --synapse-primary-600: #{color.adjust(
-      v.$raw-primary,
-      $saturation: 5%,
-      $lightness: -4%
-    )};
-  --synapse-primary-700: #{color.adjust(
-      v.$raw-primary,
-      $saturation: 11%,
-      $lightness: -8%
-    )};
-  --synapse-primary-800: #{color.adjust(
-      v.$raw-primary,
-      $saturation: 18%,
-      $lightness: -10%
-    )};
-  --synapse-primary-900: #{color.adjust(
-      v.$raw-primary,
-      $saturation: 24%,
-      $lightness: -18%
-    )};
+  --synapse-primary-100: #{map.get(v.$primary-color-palette, 100)};
+  --synapse-primary-200: #{map.get(v.$primary-color-palette, 200)};
+  --synapse-primary-300: #{map.get(v.$primary-color-palette, 300)};
+  --synapse-primary-400: #{map.get(v.$primary-color-palette, 400)};
+  --synapse-primary-500: #{map.get(v.$primary-color-palette, 500)};
+  --synapse-primary-600: #{map.get(v.$primary-color-palette, 600)};
+  --synapse-primary-700: #{map.get(v.$primary-color-palette, 700)};
+  --synapse-primary-800: #{map.get(v.$primary-color-palette, 800)};
+  --synapse-primary-900: #{map.get(v.$primary-color-palette, 900)};
 
   // Secondary color palette
-  --synapse-secondary-100: #{color.adjust(
-      v.$raw-secondary,
-      $saturation: -25%,
-      $lightness: 50%
-    )};
-  --synapse-secondary-200: #{color.adjust(
-      v.$raw-secondary,
-      $saturation: -13%,
-      $lightness: 20%
-    )};
-  --synapse-secondary-300: #{color.adjust(
-      v.$raw-secondary,
-      $saturation: -3%,
-      $lightness: 10%
-    )};
-  --synapse-secondary-400: #{color.adjust(
-      v.$raw-secondary,
-      $saturation: -1%,
-      $lightness: 5%
-    )};
-  --synapse-secondary-500: var(--synapse-secondary-action-color);
-  --synapse-secondary-600: #{color.adjust(
-      v.$raw-secondary,
-      $saturation: 5%,
-      $lightness: -4%
-    )};
-  --synapse-secondary-700: #{color.adjust(
-      v.$raw-secondary,
-      $saturation: 11%,
-      $lightness: -8%
-    )};
-  --synapse-secondary-800: #{color.adjust(
-      v.$raw-secondary,
-      $saturation: 18%,
-      $lightness: -10%
-    )};
-  --synapse-secondary-900: #{color.adjust(
-      v.$raw-secondary,
-      $saturation: 24%,
-      $lightness: -18%
-    )};
+  --synapse-secondary-100: #{map.get(v.$secondary-color-palette, 100)};
+  --synapse-secondary-200: #{map.get(v.$secondary-color-palette, 200)};
+  --synapse-secondary-300: #{map.get(v.$secondary-color-palette, 300)};
+  --synapse-secondary-400: #{map.get(v.$secondary-color-palette, 400)};
+  --synapse-secondary-500: #{map.get(v.$secondary-color-palette, 500)};
+  --synapse-secondary-600: #{map.get(v.$secondary-color-palette, 600)};
+  --synapse-secondary-700: #{map.get(v.$secondary-color-palette, 700)};
+  --synapse-secondary-800: #{map.get(v.$secondary-color-palette, 800)};
+  --synapse-secondary-900: #{map.get(v.$secondary-color-palette, 900)};
 
   // Tertiary color palette
-  --synapse-tertiary-100: #{color.adjust(
-      v.$raw-tertiary,
-      $saturation: -25%,
-      $lightness: 50%
-    )};
-  --synapse-tertiary-200: #{color.adjust(
-      v.$raw-tertiary,
-      $saturation: -13%,
-      $lightness: 20%
-    )};
-  --synapse-tertiary-300: #{color.adjust(
-      v.$raw-tertiary,
-      $saturation: -3%,
-      $lightness: 10%
-    )};
-  --synapse-tertiary-400: #{color.adjust(
-      v.$raw-tertiary,
-      $saturation: -1%,
-      $lightness: 5%
-    )};
-  --synapse-tertiary-500: var(--synapse-tertiary-action-color);
-  --synapse-tertiary-600: #{color.adjust(
-      v.$raw-tertiary,
-      $saturation: 5%,
-      $lightness: -4%
-    )};
-  --synapse-tertiary-700: #{color.adjust(
-      v.$raw-tertiary,
-      $saturation: 11%,
-      $lightness: -8%
-    )};
-  --synapse-tertiary-800: #{color.adjust(
-      v.$raw-tertiary,
-      $saturation: 18%,
-      $lightness: -10%
-    )};
-  --synapse-tertiary-900: #{color.adjust(
-      v.$raw-tertiary,
-      $saturation: 24%,
-      $lightness: -18%
-    )};
+  --synapse-tertiary-100: #{map.get(v.$tertiary-color-palette, 100)};
+  --synapse-tertiary-200: #{map.get(v.$tertiary-color-palette, 200)};
+  --synapse-tertiary-300: #{map.get(v.$tertiary-color-palette, 300)};
+  --synapse-tertiary-400: #{map.get(v.$tertiary-color-palette, 400)};
+  --synapse-tertiary-500: #{map.get(v.$tertiary-color-palette, 500)};
+  --synapse-tertiary-600: #{map.get(v.$tertiary-color-palette, 600)};
+  --synapse-tertiary-700: #{map.get(v.$tertiary-color-palette, 700)};
+  --synapse-tertiary-800: #{map.get(v.$tertiary-color-palette, 800)};
+  --synapse-tertiary-900: #{map.get(v.$tertiary-color-palette, 900)};
 
   // Greyscale colors
   --synapse-black: #000;
@@ -207,11 +84,11 @@
   --synapse-error: #c13415;
 
   // Primary / Secondary / Tertiary Action Colors
-  --synapse-primary-action-color: #{v.$raw-primary};
+  --synapse-primary-action-color: #{v.$primary-action-color};
   --synapse-primary-bgcolor-rgba: rgba(201, 66, 129, 0.03);
-  --synapse-secondary-action-color: #{v.$raw-secondary};
+  --synapse-secondary-action-color: #{v.$secondary-action-color};
   --synapse-secondary-action-color-dark: #5660e5;
-  --synapse-tertiary-action-color: #{v.$raw-tertiary};
+  --synapse-tertiary-action-color: #{v.$tertiary-action-color};
 
   // Text
   --synapse-text-color-dark: #1a1c29;
