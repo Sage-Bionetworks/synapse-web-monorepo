@@ -105,8 +105,6 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
         suggestionMap.set(originalTerm!, bestSuggestion.term)
         hasSuggestion = true
       }
-
-      console.log('suggestionmap', suggestionMap)
     }
 
     if (!hasSuggestion) return null
@@ -204,23 +202,29 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
               Currently showing results for <b>{query?.queryTerm?.join(' ')}</b>
               .
             </div>
-            <div
-              className={styles.didYouMeanSuggestion}
-              role="button"
-              onClick={handleUseSuggestion}
-              onKeyDown={e => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handleUseSuggestion()
-                }
-              }}
-            >
-              <SearchIcon />
+            <div className={styles.didYouMeanSuggestion}>
+              <SearchIcon
+                sx={{ color: 'grey.600' }}
+                className={styles.searchIcon}
+              />
               <Typography variant="body1" className={styles.didYouMeanText}>
-                Search for <b>{getSuggestion}</b> instead?
+                Search for{' '}
+                <b className={styles.suggestionText}>{getSuggestion}</b>{' '}
+                instead?
               </Typography>
-              <div className={styles.didYouMeanArrowContainer}>
-                <ArrowForward />
-              </div>
+              <Box
+                className={styles.didYouMeanArrowContainer}
+                sx={{ borderColor: 'primary.main' }}
+                role="button"
+                onClick={handleUseSuggestion}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    handleUseSuggestion()
+                  }
+                }}
+              >
+                <ArrowForward sx={{ color: 'primary.main' }} />
+              </Box>
             </div>
           </div>
         )}

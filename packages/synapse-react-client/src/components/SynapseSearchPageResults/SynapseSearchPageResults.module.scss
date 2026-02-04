@@ -6,6 +6,16 @@
 .didYouMeanSuggestion {
   display: flex;
   margin-left: auto;
+  align-items: center;
+}
+
+.searchIcon {
+  margin-right: 3px;
+}
+
+.suggestionText {
+  text-decoration: underline;
+  font-style: italic;
 }
 
 .didYouMeanCurrentlyShowing {
@@ -13,10 +23,10 @@
 }
 
 .didYouMeanArrowContainer {
-  border: 1px solid var(--gray-700);
+  border: 1px solid;
   display: flex;
   align-items: center;
-  padding: 0px 16px;
+  padding: 6px 16px;
 }
 
 .didYouMeanText {
