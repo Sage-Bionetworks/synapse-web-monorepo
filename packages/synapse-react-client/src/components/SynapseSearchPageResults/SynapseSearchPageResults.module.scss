@@ -1,0 +1,35 @@
+.didYouMeanContainer {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.didYouMeanSuggestion {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+}
+
+.searchIcon {
+  margin-right: 3px;
+}
+
+.suggestionText {
+  text-decoration: underline;
+  font-style: italic;
+}
+
+.didYouMeanCurrentlyShowing {
+  margin-right: 0;
+}
+
+.didYouMeanArrowContainer:global(.MuiIconButton-root) {
+  border: 1px solid;
+  padding: 6px 16px;
+  border-radius: 0;
+}
+
+.didYouMeanText:global(.MuiTypography-root) {
+  margin-right: 16px;
+}
