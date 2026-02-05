@@ -41,6 +41,8 @@ jobs:
 
       - uses: ./.github/actions/pnpm-setup-action
       - name: Determine if portal has had any changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           affected=$(pnpm nx show projects --affected)
           affected_array=($affected)
