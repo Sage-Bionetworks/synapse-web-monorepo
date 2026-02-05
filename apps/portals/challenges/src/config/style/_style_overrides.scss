@@ -1,11 +1,19 @@
 @use '@sage-bionetworks/synapse-portal-framework/src/style/variables' as Portal;
 @use 'sass:color';
 
+$challenges-footer-accent-color: #ffecca;
+$challenges-footer-accent-dark: color.adjust(
+  $challenges-footer-accent-color,
+  $lightness: -5%
+);
+
 #header {
   background-color: var(--synapse-primary-action-color);
 }
 
 #footer {
+  --challenges-synapse-footer-accent: #{$challenges-footer-accent-color};
+  --challenges-synapse-footer-accent-dark: #{$challenges-footer-accent-dark};
   color: var(--gray-800);
 }
 
@@ -14,9 +22,9 @@
 }
 
 #footer > div:first-of-type {
-  background-color: var(--synapse-footer-accent);
+  background-color: var(--challenges-synapse-footer-accent);
 }
 
 #footer > div:last-of-type {
-  background-color: var(--synapse-footer-accent-dark);
+  background-color: var(--challenges-synapse-footer-accent-dark);
 }
