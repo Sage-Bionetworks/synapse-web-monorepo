@@ -127,18 +127,4 @@
   --synapse-gray-deemphasized: #ababac;
 
   --synapse-space-unit: 2.1rem;
-
-  --entity-finder-border-size: 1px;
-  --entity-finder-border: var(--entity-finder-border-size) solid
-    var(--synapse-border-color-gray);
-  --entity-finder-height: 500px;
-  --entity-finder-tree-header-height: 65px;
-  --entity-finder-breadcrumb-height: 40px;
-  --entity-finder-selected-background-color: var(--synapse-secondary-200);
-  --entity-finder-selected-hover-background-color: var(
-    --synapse-secondary-200-hover
-  );
-  --entity-finder-hover-background-color: var(--synapse-primary-100);
-  --entity-finder-tree-only-width: 600px;
-  --entity-finder-splitter-width: 12px;
 }
