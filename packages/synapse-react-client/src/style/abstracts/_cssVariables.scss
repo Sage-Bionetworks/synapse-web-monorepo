@@ -71,6 +71,9 @@
   --synapse-gray-200: #f1f3f5;
   --synapse-gray-100: #fbfbfc;
 
+  // scss stuff that cannot be referenced - breakpoints, computation
+  // if it doesn't change per app and is constant, it can stay here
+
   --synapse-gray-dark: #dcdcdc;
   --synapse-gray-light: #f9f9f9;
   --synapse-background-color-gray: var(--synapse-gray-light);
@@ -85,9 +88,8 @@
 
   // Primary / Secondary / Tertiary Action Colors
   --synapse-primary-action-color: #{v.$primary-action-color};
-  --synapse-primary-bgcolor-rgba: rgba(201, 66, 129, 0.03);
+  --synapse-primary-bgcolor-rgba: #{v.$primary-bgcolor-rgba};
   --synapse-secondary-action-color: #{v.$secondary-action-color};
-  --synapse-secondary-action-color-dark: #5660e5;
   --synapse-tertiary-action-color: #{v.$tertiary-action-color};
 
   // Text
@@ -118,11 +120,11 @@
   --synapse-gray-formtext: #515359;
 
   // Buttons
-  --synapse-button-border-radius: 3px;
-  --synapse-button-text-transform: capitalize;
+  --synapse-button-border-radius: #{v.$button-border-radius};
+  --synapse-button-text-transform: #{v.$button-text-transform};
+
+  --synapse-gray-regular: #515359; // this is fine, not changing,
+  --synapse-gray-deemphasized: #ababac;
 
   --synapse-space-unit: 2.1rem;
-
-  --synapse-gray-regular: #515359;
-  --synapse-gray-deemphasized: #ababac;
 }

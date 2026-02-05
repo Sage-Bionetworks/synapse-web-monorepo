@@ -21,8 +21,8 @@
   padding: 6px 16px;
   margin-top: 36px;
   border-radius: 8px;
-  color: var(--black) !important;
-  border: 1px solid var(--black) !important;
+  color: var(--synapse-black) !important;
+  border: 1px solid var(--synapse-black) !important;
   width: 400px;
 
   @media (max-width: map.get(SrcVariables.$breakpoints, 'medium')) {

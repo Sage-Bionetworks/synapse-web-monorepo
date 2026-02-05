@@ -1,7 +1,11 @@
 @use './variables' as Portal;
-@use 'synapse-react-client/style/main.scss';
 @use './cssVariables';
-
+@use 'synapse-react-client/style/main.scss' with (
+  $primary-action-color: Portal.$primary-action-color,
+  $secondary-action-color: Portal.$secondary-action-color,
+  $tertiary-action-color: #f1d285,
+  $primary-bgcolor-rgba: unset
+);
 @use 'synapse-react-client/template_style/Index.scss';
 @use './components/csbc-home-page/all.scss';
 

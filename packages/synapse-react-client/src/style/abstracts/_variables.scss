@@ -3,15 +3,11 @@
 // -----------------------------------------------------------------------------
 // SCSS
 // -----------------------------------------------------------------------------
+
 $primary-action-color: rgb(64, 123, 160) !default;
 $secondary-action-color: #469285 !default;
 $tertiary-action-color: #f1d285 !default;
-
-$primary-action-color-active: color.adjust(
-  $primary-action-color,
-  $saturation: 50%,
-  $lightness: 0%
-) !default;
+$primary-bgcolor-rgba: rgba(201, 66, 129, 0.03) !default;
 
 // --- UI Focus & Interaction ---
 $primary-focus-border: color.adjust(
@@ -58,6 +54,17 @@ $secondary-action-color-alpha-50: color.change(
 // --- Miscellaneous ---
 $dropdown-disabled-text: color.adjust(#212529, $lightness: 35%) !default;
 
+$synapse-gray-regular: #515359 !default;
+$synapse-gray-deemphasized: #ababac !default;
+
+$synapse-space-unit: 2.1rem !default;
+
+$primary-action-color-active: color.adjust(
+  $primary-action-color,
+  $saturation: 50%,
+  $lightness: 0%
+) !default;
+
 $primary-color-palette: (
   100: color.adjust($primary-action-color, $saturation: -25%, $lightness: 50%),
   200: color.adjust($primary-action-color, $saturation: -13%, $lightness: 20%),
@@ -103,11 +110,15 @@ $breakpoints: (
   'large': 1024px,
 ) !default;
 
-// Placeholder for Bootstrap button reset (cannot be converted to CSS variable)
+// Buttons
+$button-text-transform: capitalize;
+$button-border-radius: 3px;
+
+// To reset bootstrap button style
 %button-reset {
   border: 0;
   outline: none;
   box-shadow: none;
-  border-radius: var(--synapse-button-border-radius);
-  text-transform: var(--synapse-button-text-transform);
+  border-radius: $button-border-radius;
+  text-transform: $button-text-transform;
 }
