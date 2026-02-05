@@ -2,3 +2,6 @@ packages:
   - 'apps/**/*'
   - 'packages/*'
 minimumReleaseAge: 4320 # 3 days
+registry: https://registry.npmjs.org/
+'@sage-bionetworks:registry': https://npm.pkg.github.com
+'//npm.pkg.github.com/:_authToken': '${GITHUB_TOKEN}'
