@@ -1,4 +1,8 @@
-@use 'synapse-react-client/style/main.scss';
+@use 'synapse-react-client/style/main.scss' with (
+  $primary-action-color: rgb(64, 123, 160) !default,
+  $secondary-action-color: rgb(98, 172, 98) !default,
+  $primary-bgcolor-rgba: unset
+);
 
 .App {
   font-family: 'DM Sans', sans-serif;
