@@ -18,6 +18,8 @@ runs:
       id: pnpm-install
       with:
         run_install: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Get pnpm store directory
       id: pnpm-cache
       shell: bash
@@ -46,3 +48,5 @@ runs:
     - name: Install dependencies (use frozen lockfile)
       run: pnpm install --frozen-lockfile
       shell: bash
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
