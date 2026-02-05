@@ -18,6 +18,8 @@ runs:
       id: pnpm-install
       with:
         run_install: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITUHB_TOKEN }}
     - name: Get pnpm store directory
       id: pnpm-cache
       shell: bash
