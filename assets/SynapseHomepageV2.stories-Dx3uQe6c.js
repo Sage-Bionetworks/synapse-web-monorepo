@@ -1,0 +1,25 @@
+import{x as t,a2 as a,jQ as i,b as r,cy as p,e3 as m}from"./iframe-Fj4lak5c.js";import{r as s}from"./mockHomepageQueryResultData-CFf6j4aw.js";import{b as n}from"./SynapseHomepageV2-J6WOhcDw.js";import"./index-Chi_LkuB.js";import"./SageFullLogo-Bu8uB4lv.js";import"./SynapsePlans-DFMzKX0j.js";import"./index-DY9riMRX.js";import"./Plot-_xU308j1.js";import"./index-Chjiymov.js";import"./Card-BAE-Z3hw.js";import"./Chip-CGB0K5Hb.js";import"./index-_4NbbnB5.js";import"./SynapseNavDrawer-B9jl4V1k.js";import"./useDataAccessSubmission-BO7HfJ-V.js";import"./useInfiniteQuery-CbadcZWG.js";import"./useDownloadList-Ns9YtaA3.js";import"./waitForAsyncResult-LZN026nS.js";import"./useGetFeatureFlag-p8R_C-S_.js";import"./useUserBundle-DYUW7eSP.js";import"./useSuspenseQuery-DCz9tJ8h.js";import"./CreateProjectModal-DYdN-DUy.js";import"./ConfirmationDialog-DfmVN50m.js";import"./DialogBase-DO9GwF3-.js";import"./Close-D8Dcnzwn.js";import"./HelpPopover-Dir9cMCM.js";import"./MarkdownPopover-CTr2IYFG.js";import"./LightTooltip-BvGcOz9H.js";import"./MarkdownSynapse-o56dOjAb.js";import"./SkeletonButton-Caf_IZFe.js";import"./SkeletonInlineBlock-BlJ5s_Kh.js";import"./SkeletonTable-t4KSioMX.js";import"./SkeletonParagraph-CrmOE7Us.js";import"./SynapseHomepageNavBar-yeDO6K06.js";import"./SageResourcesPopover-DziziM84.js";import"./Grid-DgOwfEQi.js";import"./MenuItem-B8CcEiWE.js";import"./UserBadge-D8gfab1c.js";import"./Slide-BJodx4It.js";import"./InputAdornment-W-fmil8B.js";import"./listItemButtonClasses-DJ1LX7Q2.js";import"./Badge-BNqD603a.js";import"./usePreviousProps-D80ZqI7V.js";import"./useGetEntityHeaders-CGPovO9d.js";import"./NavigateNext-BTwloXrR.js";import"./relativeTime-DVX9LeFM.js";const re={title:"Synapse/HomePage",component:n,parameters:{chromatic:{viewports:[600,1200]}}},e={args:{gotoPlace:o=>{window.alert(`SynapseHomepageV2 calling back to change route to ${o}`)}},loaders:[()=>{s()}],parameters:{stack:"production",design:{type:"figma",url:"https://www.figma.com/design/z2pi8sF6E2he3Q0ncey1S0/Synapse-Homepage-Refresh-(Copy)?node-id=2097-64422&t=lbZKhHAaWWC5JfDB-0"},msw:{handlers:[...t(r),...a(r),i({portalOrigin:p.PORTAL,overrides:{[m.HOMEPAGE_CHATBOT]:!0}})]}}};e.parameters={...e.parameters,docs:{...e.parameters?.docs,source:{originalSource:`{
+  args: {
+    gotoPlace: (href: string) => {
+      window.alert(\`SynapseHomepageV2 calling back to change route to \${href}\`);
+    }
+  },
+  loaders: [() => {
+    registerSynapseHomepageMockQueries();
+  }],
+  parameters: {
+    stack: 'production',
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/z2pi8sF6E2he3Q0ncey1S0/Synapse-Homepage-Refresh-(Copy)?node-id=2097-64422&t=lbZKhHAaWWC5JfDB-0'
+    },
+    msw: {
+      handlers: [...getFileHandlers(MOCK_REPO_ORIGIN), ...getHandlersForTableQuery(MOCK_REPO_ORIGIN), getFeatureFlagsOverride({
+        portalOrigin: PRODUCTION_ENDPOINT_CONFIG.PORTAL,
+        overrides: {
+          [FeatureFlagEnum.HOMEPAGE_CHATBOT]: true
+        }
+      })]
+    }
+  }
+}`,...e.parameters?.docs?.source}}};const oe=["DemoVersion2"];export{e as DemoVersion2,oe as __namedExportsOrder,re as default};
