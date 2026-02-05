@@ -3,7 +3,8 @@
 /* --- Steps Left Nav ---*/
 .json-forms-menu {
   // top level menu
-  $item-height: 3.6rem;
+  --item-height: 3.6rem;
+  --left-offset: 2.3rem;
   $left-offset: 2.3rem;
   ul {
     position: relative;
@@ -13,8 +14,8 @@
     background-color: var(--synapse-gray-light);
 
     li {
-      min-height: $item-height;
-      line-height: $item-height;
+      min-height: var(--item-height);
+      line-height: var(--item-height);
       text-align: left;
       position: relative;
       font-weight: bold;
@@ -26,9 +27,9 @@
     }
 
     li div.pointed {
-      min-height: $item-height;
-      height: $item-height;
-      line-height: $item-height;
+      min-height: var(--item-height);
+      height: var(--item-height);
+      line-height: var(--item-height);
       text-align: left;
       color: var(--synapse-primary-action-color);
       background-color: var(--synapse-gray-dark);
@@ -110,7 +111,7 @@
     }
 
     ul {
-      margin-left: $left-offset;
+      margin-left: var(--left-offset);
 
       /* vertical line */
       &::before {
@@ -121,11 +122,11 @@
         position: absolute;
         top: 0;
         bottom: 0;
-        left: $left-offset;
+        left: var(--left-offset);
       }
 
       li {
-        margin-left: -$left-offset;
+        margin-left: var(--left-offset);
 
         div.item {
           $b: 1.7rem;

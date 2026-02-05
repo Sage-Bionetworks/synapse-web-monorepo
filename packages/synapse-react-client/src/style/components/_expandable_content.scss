@@ -1,6 +1,5 @@
-$gutter: 15px;
-
 .ExpandableContent {
+  --gutter: 15px;
   background: #ffffff;
   box-shadow: 0px 3px 10px rgba(93, 105, 171, 0.1);
   margin-top: 5px;
@@ -16,8 +15,8 @@ $gutter: 15px;
       height: 100%;
       width: 100%;
       display: flex;
-      margin-left: $gutter;
-      margin-right: $gutter;
+      margin-left: var(--gutter);
+      margin-right: var(--gutter);
       justify-content: space-between;
       align-items: center;
       word-break: keep-all;
@@ -26,7 +25,7 @@ $gutter: 15px;
     }
   }
   &__content__container {
-    padding: $gutter;
+    padding: var(--gutter);
     padding-top: 10px;
   }
 }

@@ -14,11 +14,11 @@ type CompletenessIndicatorProps = {
 }
 
 const COMPLETENESS_COLORS: Record<CompletenessCategory, string> = {
-  Excellent: styles.excellentColor,
-  Good: styles.goodColor,
-  Fair: styles.fairColor,
-  Poor: styles.poorColor,
-  Minimal: styles.minimalColor,
+  Excellent: 'var(--synapse-completeness-excellent)',
+  Good: 'var(--synapse-completeness-good)',
+  Fair: 'var(--synapse-completeness-fair)',
+  Poor: 'var(--synapse-completeness-poor)',
+  Minimal: 'var(--synapse-completeness-minimal)',
 }
 
 function isValidCompletenessCategory(

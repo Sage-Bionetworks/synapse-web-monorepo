@@ -2,7 +2,7 @@
 @use 'sass:color';
 
 .EnumFacetFilter {
-  $input-icon-margin: 5px;
+  --input-icon-margin: 5px;
 
   &__dropdown_menu {
     overflow-y: auto;
@@ -57,11 +57,11 @@
   }
 
   &__closeSearch {
-    left: $input-icon-margin;
+    left: var(--input-icon-margin);
   }
 
   &__resetSearch {
-    right: $input-icon-margin;
+    right: var(--input-icon-margin);
   }
 
   label {

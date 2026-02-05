@@ -3,7 +3,9 @@
 
 .DetailsViewReflexElement {
   .EntityFinderDetailsView {
-    height: EntityFinder.$finder-height - EntityFinder.$breadcrumb-height;
+    height: calc(
+      var(--entity-finder-height) - var(--entity-finder-breadcrumb-height)
+    );
     border-bottom: 1px solid var(--synapse-border-color-gray);
   }
 }
@@ -14,7 +16,7 @@
 }
 
 .EntityFinderDetailsView {
-  height: EntityFinder.$finder-height;
+  height: var(--entity-finder-height);
   background-color: var(--synapse-background-color-gray-light);
   overflow-y: hidden;
 }
@@ -46,11 +48,13 @@
   }
 
   &[aria-disabled='false'][aria-selected='true']:hover {
-    @include EntityFinder.hover(EntityFinder.$selected-hover-background-color);
+    @include EntityFinder.hover(
+      var(--entity-finder-selected-hover-background-color)
+    );
   }
 
   &[aria-selected='true'] {
-    background-color: EntityFinder.$selected-background-color;
+    background-color: var(--entity-finder-selected-background-color);
   }
 
   &[aria-disabled='true'] {

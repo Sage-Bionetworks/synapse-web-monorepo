@@ -1,18 +1,8 @@
-$-border-size: 1px;
-$border: $-border-size solid var(--synapse-border-color-gray);
-$finder-height: 500px;
-$breadcrumb-height: 40px;
-$selected-background-color: var(--synapse-secondary-200);
-$selected-hover-background-color: var(--synapse-secondary-200-hover);
-$-hover-background-color: var(--synapse-primary-100);
-$tree-only-width: 600px;
-$-splitter-width: 12px;
-
 @mixin hover($background-color: '', $text-color: '') {
   @if $background-color != '' {
     background-color: $background-color;
   } @else {
-    background-color: $-hover-background-color;
+    background-color: var(--entity-finder-hover-background-color);
   }
   @if $text-color != '' {
     color: $text-color;
@@ -37,16 +27,17 @@ $-splitter-width: 12px;
 }
 
 .EntityFinder {
-  --entity-finder-height: #{$finder-height};
-  --entity-tree-header-height: 65px;
   width: 100%;
   margin: auto;
 
   &__MainPanel {
     max-width: 100%;
     transition: width 0.25s linear;
-    border: $-border-size solid var(--synapse-border-color-gray);
-    height: $finder-height + ($-border-size * 2);
+    border: var(--entity-finder-border-size) solid
+      var(--synapse-border-color-gray);
+    height: calc(
+      var(--entity-finder-height) + (var(--entity-finder-border-size) * 2)
+    );
   }
   &__MainPanel.MainPanelDualPane,
   &__MainPanel.MainPanelSearch {
@@ -54,17 +45,20 @@ $-splitter-width: 12px;
   }
 
   &__MainPanel.MainPanelSinglePane {
-    width: $tree-only-width + ($-border-size * 2);
+    width: calc(
+      var(--entity-finder-tree-only-width) +
+        (var(--entity-finder-border-size) * 2)
+    );
   }
 
   .reflex-container.vertical > .reflex-splitter {
-    height: $finder-height;
+    height: var(--entity-finder-height);
     border-left: 3px solid transparent;
     border-right: none;
     background: transparent;
     box-sizing: border-box;
-    width: $-splitter-width;
-    margin-right: -1 * $-splitter-width;
+    width: var(--entity-finder-splitter-width);
+    margin-right: calc(-1 * var(--entity-finder-splitter-width));
   }
   .reflex-container.vertical > .reflex-splitter:hover,
   .reflex-container.vertical > .reflex-splitter:active {
@@ -77,9 +71,4 @@ $-splitter-width: 12px;
   .TreeView.BrowseTree {
     padding-left: 20px;
   }
-}
-
-.EntityFileBrowser {
-  --entity-finder-height: #{$finder-height};
-  --entity-tree-header-height: 0px;
 }

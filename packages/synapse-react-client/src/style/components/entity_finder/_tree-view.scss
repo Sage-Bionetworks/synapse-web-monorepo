@@ -4,17 +4,18 @@
 .TreeViewReflexElement {
   .TreeView {
     border: none;
-    border-right: EntityFinder.$border;
+    border-right: var(--entity-finder-border);
   }
 }
 
 .TreeView {
   background-color: var(--synapse-background-color-gray);
-  height: EntityFinder.$finder-height;
+  height: var(--entity-finder-height);
   overflow: hidden;
+
   .Tree {
     height: calc(
-      var(--entity-finder-height) - var(--entity-tree-header-height)
+      var(--entity-finder-height) - var(--entity-finder-tree-header-height)
     );
     overflow: auto;
 
@@ -58,7 +59,7 @@
   }
 
   .Header {
-    height: var(--entity-tree-header-height);
+    height: var(--entity-finder-tree-header-height);
     display: flex;
     justify-content: center;
     align-items: center;

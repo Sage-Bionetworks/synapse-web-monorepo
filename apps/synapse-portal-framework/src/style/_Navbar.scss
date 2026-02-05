@@ -20,13 +20,13 @@
 }
 
 @media screen and (max-width: 1280px) {
-  $mb-menu-item-padding: 46px;
-  $mb-menu-divider: 1px solid #b2b3b6;
-
   .nav.top-nav {
     background: rgba(255, 255, 255, 1);
   }
   .nav {
+    --mb-menu-item-padding: 46px;
+    --mb-menu-divider: 1px solid #b2b3b6;
+
     display: grid;
     grid-template-rows: auto;
     grid-template-areas:
@@ -63,7 +63,7 @@
       overflow-y: hidden;
 
       .nav-button {
-        padding: 18px $mb-menu-item-padding;
+        padding: 18px var(--synapse-menu-item-padding);
         margin: 0;
         width: 100%;
         height: auto;
@@ -81,7 +81,7 @@
 
       .nav-button-signin {
         padding: 20px 22px;
-        border-top: $mb-menu-divider;
+        border-top: var(--synapse-menu-divider);
         margin-top: 30px;
         margin-left: 0px;
         box-sizing: border-box;
@@ -124,7 +124,7 @@
         width: 100%;
       }
       .dropdown-menu > li > a {
-        padding: 3px $mb-menu-item-padding;
+        padding: 3px var(--mb-menu-item-padding);
         color: var(--synapse-dark-gray);
       }
 
@@ -132,7 +132,7 @@
         text-align: left;
         padding: 20px 42px;
         order: 1;
-        border-bottom: $mb-menu-divider;
+        border-bottom: var(--mb-menu-divider);
 
         // Download size
         .position-by-button {

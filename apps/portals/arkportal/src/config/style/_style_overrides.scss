@@ -39,21 +39,21 @@
   }
 }
 
-/** 
+.Goals {
+  /** 
 Adam's style hacks
 **/
-$ARK-gray-100: #f9f9f9 !default;
-$ARK-gray-200: #dcdcdc !default;
-$ARK-gray-600: #87878b !default;
-$ARK-gray-700: #6b6b6f !default;
-$ARK-gray-800: #3c3c42 !default;
-$ARK-gray-900: #1d1d22 !default;
+  --ARK-gray-100: #f9f9f9;
+  --ARK-gray-200: #dcdcdc;
+  --ARK-gray-600: #87878b;
+  --ARK-gray-700: #6b6b6f;
+  --ARK-gray-800: #3c3c42;
+  --ARK-gray-900: #1d1d22;
 
-.Goals {
   &__Card {
     position: relative;
     background: #fff;
-    border: 1px solid $ARK-gray-200;
+    border: 1px solid var(--ARK-gray-200);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05),
       0px 1px 1px rgba(208, 212, 217, 0.05);
     border-radius: 10px;
@@ -79,7 +79,7 @@ $ARK-gray-900: #1d1d22 !default;
         font-weight: 900;
         font-size: 24px;
         line-height: 150%;
-        color: $ARK-gray-900;
+        color: var(--ARK-gray-900);
       }
     }
     &__summary {
@@ -87,7 +87,7 @@ $ARK-gray-900: #1d1d22 !default;
       justify-content: space-between;
       font-size: 18px;
       line-height: 1.5;
-      color: $ARK-gray-700;
+      color: var(--ARK-gray-700);
       margin-bottom: 40px;
       &__link.MuiButton-root {
         border-color: transparent;

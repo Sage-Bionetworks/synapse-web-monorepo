@@ -541,13 +541,13 @@ button {
 }
 
 a.dropdown-item {
-  $color: #212529;
+  --color: #212529;
   display: block;
   width: 100%;
   padding: 0.55rem 1.5rem;
   clear: both;
   font-weight: 400;
-  color: $color;
+  color: var(--color);
   text-align: inherit;
   white-space: nowrap;
   background-color: transparent;

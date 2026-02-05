@@ -3,7 +3,7 @@
 
 .TreeView.SelectTree {
   background: unset;
-  max-width: EntityFinder.$tree-only-width;
+  max-width: var(--entity-finder-tree-only-width);
 
   .Header {
     padding-left: 20px;
@@ -33,10 +33,10 @@
       }
     }
     .Node.SelectNode[aria-selected='true'] {
-      background: EntityFinder.$selected-background-color;
+      background: var(--entity-finder-selected-background-color);
       &:hover {
         @include EntityFinder.hover(
-          EntityFinder.$selected-hover-background-color
+          var(--entity-finder-selected-hover-background-color)
         );
       }
     }

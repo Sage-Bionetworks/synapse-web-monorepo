@@ -1,7 +1,6 @@
-$facetNavPanel-btn-padding: 3px;
-$facetNavPanel-btn-margin: 0 1px;
-
 .FacetNavPanel {
+  --facetNavPanel-btn-padding: 3px;
+  --facetNavPanel-btn-margin: 0 1px;
   &--expanded .main-svg,
   .main-svg {
     // https://sagebionetworks.jira.com/browse/PORTALS-1454
@@ -41,8 +40,8 @@ $facetNavPanel-btn-margin: 0 1px;
 
       .dropdown .btn {
         // reset inherit margin/padding
-        margin: $facetNavPanel-btn-margin;
-        padding: $facetNavPanel-btn-padding;
+        margin: var(--facetNavPanel-btn-margin);
+        padding: var(--facetNavPanel-btn-padding);
         border: 0;
         border-radius: 0;
 
@@ -53,8 +52,8 @@ $facetNavPanel-btn-margin: 0 1px;
 
       .dropdown .btn .btn,
       .ElementWithTooltip {
-        padding: $facetNavPanel-btn-padding;
-        margin: $facetNavPanel-btn-margin;
+        padding: var(--facetNavPanel-btn-padding);
+        margin: var(--facetNavPanel-btn-margin);
       }
     }
   }
