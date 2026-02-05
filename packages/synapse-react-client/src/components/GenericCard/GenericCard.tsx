@@ -11,6 +11,13 @@ import { CollapsibleDescription } from './CollapsibleDescription'
 import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
 import { SmartLink } from '../SmartLink/SmartLink'
 
+/** Resolved CTA link configuration with actual href values (as opposed to CTACardLink which uses column names) */
+export type CTALinkConfig = {
+  text: React.ReactNode
+  href?: string
+  target?: string
+}
+
 export type GenericCardProps = {
   /** String representing the 'type' of object. This is displayed as a label on the card. */
   type: string
@@ -64,13 +71,9 @@ export type GenericCardProps = {
    */
   columnIconOptions?: ColumnIconConfigs
   /**
-   * Optional configuration for displaying a CTA button on the card
+   * Optional configuration for displaying CTA button(s) on the card. Accepts a single config or an array.
    */
-  ctaLinkConfig?: {
-    text: React.ReactNode
-    href?: string
-    target?: string
-  }
+  ctaLinkConfig?: CTALinkConfig | CTALinkConfig[]
   /**
    * The rendered icon list on the card
    */
@@ -220,14 +223,24 @@ export const GenericCard = forwardRef(function GenericCard(
             descriptionSubTitle={descriptionSubTitle}
             descriptionConfig={descriptionConfig}
           />
-          {ctaLinkConfig && ctaLinkConfig.text && ctaLinkConfig.href && (
-            <Box sx={{ mt: '20px' }}>
-              <SmartLink
-                href={ctaLinkConfig.href}
-                target={ctaLinkConfig.target}
-              >
-                {ctaLinkConfig.text}
-              </SmartLink>
+          {ctaLinkConfig && (
+            <Box sx={{ mt: '20px', display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+              {(Array.isArray(ctaLinkConfig)
+                ? ctaLinkConfig
+                : [ctaLinkConfig]
+              ).map(
+                (config, index) =>
+                  config.text &&
+                  config.href && (
+                    <SmartLink
+                      key={index}
+                      href={config.href}
+                      target={config.target}
+                    >
+                      {config.text}
+                    </SmartLink>
+                  ),
+              )}
             </Box>
           )}
         </div>

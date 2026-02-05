@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.4.67",
+  "version": "3.4.68",
   "private": false,
   "type": "module",
   "main": "./dist/index.cjs",
@@ -52,6 +52,7 @@
     "@rjsf/mui": "6.0.0-beta.10",
     "@rjsf/utils": "6.0.0-beta.10",
     "@rjsf/validator-ajv8": "6.0.0-beta.10",
+    "@sage-bionetworks/aridhia-client": "workspace:*",
     "@sage-bionetworks/markdown-it-container": "workspace:*",
     "@sage-bionetworks/synapse-client": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",

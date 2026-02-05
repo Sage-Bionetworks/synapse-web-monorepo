@@ -1,7 +1,10 @@
 import { GoogleIcon24 } from '@/assets/GoogleIcon24'
 import CreateVersion from '@/assets/icons/CreateVersion'
 import FileWithShield from '@/assets/icons/FileWithShield'
+import { ReactComponent as AccessPending } from '@/assets/icons/AccessPending.svg'
+import { ReactComponent as AccessPendingCloud } from '@/assets/icons/AccessPendingCloud.svg'
 import { ORCIDIcon } from '@/assets/icons/ORCIDIcon'
+import { TasksIcon } from '@/assets/icons/TasksIcon'
 import AccessManagement from '@/assets/mui_components/AccessManagement'
 import AccountCertified from '@/assets/mui_components/AccountCertified'
 import AccountRegistered from '@/assets/mui_components/AccountRegistered'
@@ -139,6 +142,8 @@ import { ReactNode } from 'react'
 
 export const IconStrings = [
   'accessOpen',
+  'accessPending',
+  'accessPendingCloud',
   'accessClosed',
   'actionKey',
   'arrowBack',
@@ -270,6 +275,7 @@ export const IconStrings = [
   'sortUp',
   'sortDown',
   'orcid',
+  'tasks',
   'google24',
   'arcusbio',
   'openInFull',
@@ -301,6 +307,10 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <LockOpenTwoTone {...otherProps} />
     case 'accessClosed':
       return <VpnKeyTwoTone {...otherProps} />
+    case 'accessPending':
+      return <AccessPending {...otherProps} />
+    case 'accessPendingCloud':
+      return <AccessPendingCloud {...otherProps} />
     case 'add':
       return <AddTwoTone {...otherProps} />
     case 'addConditions':
@@ -572,6 +582,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <ArcusBioIcon {...otherProps} />
     case 'orcid':
       return <ORCIDIcon {...otherProps} />
+    case 'tasks':
+      return <TasksIcon {...otherProps} />
     case 'filter':
       return <FilterAltTwoTone {...otherProps} />
     case 'openInFull':

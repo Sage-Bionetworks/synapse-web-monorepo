@@ -29,6 +29,10 @@ export const standardsColumnLinks: LabelLinkConfig = [
     matchColumnName: 'SDO',
   },
   {
+    isMarkdown: true,
+    matchColumnName: 'aiAppMarkdown',
+  },
+  {
     matchColumnName: 'mature',
     isMapValueToReactNodeConfig: true,
     Component: IsMatureIconMap,
