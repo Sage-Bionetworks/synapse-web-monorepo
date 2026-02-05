@@ -24,12 +24,12 @@
   margin-right: 0;
 }
 
-.didYouMeanArrowContainer {
-  border: 1px solid !important;
-  padding: 6px 16px !important;
-  border-radius: 0 !important;
+.didYouMeanArrowContainer:global(.MuiIconButton-root) {
+  border: 1px solid;
+  padding: 6px 16px;
+  border-radius: 0;
 }
 
-.didYouMeanText {
-  margin-right: 16px !important;
+.didYouMeanText:global(.MuiTypography-root) {
+  margin-right: 16px;
 }
