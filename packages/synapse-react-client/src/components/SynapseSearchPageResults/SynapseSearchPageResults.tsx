@@ -16,6 +16,7 @@ import { useDocumentMetadata } from '@/utils/context/DocumentMetadataContext'
 import { ArrowForward } from '@mui/icons-material'
 import styles from './SynapseSearchPageResults.module.scss'
 import { useSuggestion } from '@/synapse-queries/search/useSuggestion'
+import { Suggestion } from '@sage-bionetworks/synapse-client'
 
 export type SynapseSearchPageResultsProps = {
   query?: SearchQuery
@@ -77,12 +78,13 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   // Fetch spelling suggestions for the search terms
   const { data: suggestionData } = useSuggestion(
     { searchTerm: query?.queryTerm },
+
     {
       enabled: !!query?.queryTerm?.[0],
     },
   )
 
-  const getSuggestion = useMemo(() => {
+  const suggestion = useMemo(() => {
     const suggestionValues = suggestionData?.suggestions
     const terms = query?.queryTerm || []
 
@@ -96,9 +98,21 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
       const originalTerm = suggestionList.key
       const suggestions = Array.from(suggestionList.values ?? [])
 
-      // Find the best suggestion for each term above the minimum score threshold
-      const bestSuggestion = suggestions.find(
-        s => s.score !== undefined && s.score >= MIN_SUGGESTION_SCORE,
+      // Find the best suggestion for each term with the highest score above the threshold
+      const bestSuggestion = suggestions.reduce<Suggestion | null>(
+        (best, current) => {
+          if (
+            current.score === undefined ||
+            current.score < MIN_SUGGESTION_SCORE
+          ) {
+            return best
+          }
+          if (!best || current.score > best.score!) {
+            return current
+          }
+          return best
+        },
+        null,
       )
 
       // If a valid suggestion is found and it's different from the original term, add it to the map
@@ -117,9 +131,9 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   }, [suggestionData, query?.queryTerm])
 
   const handleUseSuggestion = () => {
-    if (setQuery && getSuggestion) {
+    if (setQuery && suggestion) {
       const newQuery = {
-        queryTerm: getSuggestion
+        queryTerm: suggestion
           .split(' ')
           .map(term => term.trim())
           .filter(Boolean),
@@ -185,7 +199,7 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
           Filter By
         </Button>
       </Box>
-      {data && getSuggestion && (
+      {data && suggestion && (
         <div className={styles.didYouMeanContainer}>
           <div className={styles.didYouMeanCurrentlyShowing}>
             Currently showing results for <b>{query?.queryTerm?.join(' ')}</b>.
@@ -196,13 +210,13 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
               className={styles.searchIcon}
             />
             <Typography variant="body1" className={styles.didYouMeanText}>
-              Search for{' '}
-              <b className={styles.suggestionText}>{getSuggestion}</b> instead?
+              Search for <b className={styles.suggestionText}>{suggestion}</b>{' '}
+              instead?
             </Typography>
             <IconButton
               className={styles.didYouMeanArrowContainer}
               onClick={handleUseSuggestion}
-              aria-label={`Search for ${getSuggestion} instead`}
+              aria-label={`Search for ${suggestion} instead`}
               sx={{
                 borderColor: 'primary.main',
                 svg: { color: 'primary.main' },
