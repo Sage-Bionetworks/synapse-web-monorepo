@@ -1,1 +1,4 @@
-// arcusbio has no URL overrides, but CSS variables are in _style_overrides.scss
+@use '@sage-bionetworks/synapse-portal-framework/src/style/variables' with (
+  $primary-action-color: #252861,
+  $secondary-action-color: #252861
+);
