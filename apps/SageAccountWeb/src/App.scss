@@ -1,6 +1,6 @@
 @use 'synapse-react-client/style/main.scss' with (
-  $primary-action-color: #395979,
-  $secondary-action-color: #4db3b9,
+  $primary-action-color: #395979 !default,
+  $secondary-action-color: #4db3b9 !default,
   $primary-bgcolor-rgba: unset
 );
 @use './style/all';
