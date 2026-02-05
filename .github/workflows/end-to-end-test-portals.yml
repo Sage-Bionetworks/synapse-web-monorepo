@@ -63,6 +63,7 @@ jobs:
         run: pnpm nx run portals-e2e:portal:build
         env:
           PORTAL: ${{ matrix.PORTAL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install Playwright Browsers
         if: ${{ env.PROJECT_AFFECTED == 'true' }}
