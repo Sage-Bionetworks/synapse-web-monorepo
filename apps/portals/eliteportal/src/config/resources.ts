@@ -43,4 +43,5 @@ export const goalsV2Table = 'syn64618674'
 export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = [
   'cavatica',
   'terra',
+  'adworkbench',
 ]
