@@ -12,3 +12,12 @@
 .CompletenessIndicator__categoryText:global(.MuiTypography-root) {
   font-weight: bold;
 }
+
+// Color exports for completeness categories
+:export {
+  excellentColor: #88c48a;
+  goodColor: #b0d982;
+  fairColor: #fbda79;
+  poorColor: #f6b260;
+  minimalColor: #ed8e87;
+}
