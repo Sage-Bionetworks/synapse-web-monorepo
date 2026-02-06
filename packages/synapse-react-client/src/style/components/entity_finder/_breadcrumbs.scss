@@ -1,7 +1,7 @@
 @use '../../abstracts/mixins' as mixins;
 
 .Breadcrumbs {
-  height: var(entity-finder-breadcrumb-height);
+  height: var(--entity-finder-breadcrumb-height);
   background: var(--synapse-background-color-gray);
   padding-left: 15px;
   display: flex;
