@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.4.69",
+  "version": "3.4.70",
   "private": false,
   "type": "module",
   "main": "./dist/index.cjs",
@@ -51,7 +51,6 @@
     "@rjsf/mui": "6.0.0-beta.10",
     "@rjsf/utils": "6.0.0-beta.10",
     "@rjsf/validator-ajv8": "6.0.0-beta.10",
-    "@sage-bionetworks/aridhia-client": "workspace:*",
     "@sage-bionetworks/markdown-it-container": "workspace:*",
     "@sage-bionetworks/synapse-client": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
@@ -125,14 +124,21 @@
     "zod": "^3.24.4"
   },
   "peerDependencies": {
+    "@sage-bionetworks/aridhia-client": "*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@sage-bionetworks/aridhia-client": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "@googlemaps/jest-mocks": "^2.22.6",
     "@juggle/resize-observer": "^3.4.0",
     "@open-draft/deferred-promise": "^2.2.0",
+    "@sage-bionetworks/aridhia-client": "workspace:*",
     "@storybook/addon-a11y": "10.1.11",
     "@storybook/addon-designs": "^11.1.1",
     "@storybook/addon-links": "10.1.11",
