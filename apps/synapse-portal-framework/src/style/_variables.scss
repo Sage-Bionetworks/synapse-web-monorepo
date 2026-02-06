@@ -5,19 +5,11 @@ $secondary-action-color: rgb(98, 172, 98) !default;
 $header-url: '' !default;
 $footer-url: '' !default;
 
-$footer-accent-base: #ffecca;
-
 $primary-action-color-alpha-5: color.change(
   $primary-action-color,
   $alpha: 0.05
 ) !default;
 $primary-alpha-08: color.change($primary-action-color, $alpha: 0.08) !default;
-
-$footer-accent: $footer-accent-base !default;
-$footer-accent-dark: color.adjust(
-  $footer-accent-base,
-  $lightness: -5%
-) !default;
 
 // Since scss breaks if a file is missing in a local url link these functions must get manually overwitten
 @function getHeader() {

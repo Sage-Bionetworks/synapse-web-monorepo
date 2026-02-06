@@ -77,8 +77,6 @@ const COLOR_VARS = [
 
   /* UI Specific */
   '--synapse-link-underline-color',
-  '--synapse-footer-accent',
-  '--synapse-footer-accent-dark',
   '--synapse-text-color-dark',
   '--synapse-text-color-disabled',
   '--synapse-active-tab-text',

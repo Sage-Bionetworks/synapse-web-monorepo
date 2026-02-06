@@ -78,6 +78,8 @@
 
 body {
   font-family: 'DM Sans', sans-serif;
+  --synapse-header-height: 75px;
+  --synapse-banner-height: 47px;
   button:focus {
     // bootstrap override
     outline: var(--synapse-primary-action-color);
