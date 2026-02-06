@@ -9,6 +9,7 @@ export const dataOnStudiesPageSql =
   "SELECT * FROM syn73452292 WHERE `resourceType` = 'metadata'"
 export const peopleSql = 'SELECT * FROM syn51209684'
 export const projectsSql = 'SELECT * FROM syn51209786'
+export const programsSql = 'SELECT * FROM syn73580515'
 export const publicationsSql = 'SELECT * FROM syn51407023 ORDER BY "Year" DESC'
 export const topPublicationsSql =
   'SELECT * FROM syn51407023 WHERE preprint = \'no\' ORDER BY "publicationDate" DESC LIMIT 6'
