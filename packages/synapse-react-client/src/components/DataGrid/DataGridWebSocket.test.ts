@@ -419,16 +419,12 @@ describe('DataGridWebSocket', () => {
       expect(mockSocket.sentMessages.length).toBe(0)
     })
 
-    it('does not throw or send messages on "ping" notification', () => {
+    it('accepts "ping" notification', () => {
       vi.spyOn(console, 'debug').mockImplementation(() => {})
       vi.spyOn(console, 'log').mockImplementation(() => {})
       const { mockSocket } = createDataGridWebSocket()
 
       expect(() => mockSocket.simulateMessage([8, 'ping'])).not.toThrow()
-      // ping does also match 'connected' check in the current non-exclusive if-chain,
-      // but 'connected' != 'ping', so no sync message should be sent for ping alone
-      // However the current code uses non-exclusive ifs, so ALL ifs are checked.
-      // After refactoring to switch/else-if, ping will be a clean no-op.
     })
 
     it('logs a warning on "error" notification', () => {
