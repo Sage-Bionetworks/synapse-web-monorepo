@@ -3,7 +3,7 @@ import { Model } from 'json-joy/lib/json-crdt'
 import { s } from 'json-joy/lib/json-crdt-patch'
 import { useCRDTModelView } from './useCRDTModelView'
 
-const schema = s.obj({ foo: s.con('bar') })
+const schema = s.val(s.obj({ foo: s.con('bar') }))
 function createModel() {
   return Model.create(schema)
 }
@@ -15,7 +15,7 @@ describe('useCRDTModelView', () => {
     expect(result.current).toEqual({ foo: 'bar' })
 
     act(() => {
-      model.api.obj('').set({ foo: 'baz' })
+      model.api.val().get().asObj().set({ foo: 'baz' })
     })
 
     await waitFor(() => expect(result.current).toEqual({ foo: 'baz' }))
