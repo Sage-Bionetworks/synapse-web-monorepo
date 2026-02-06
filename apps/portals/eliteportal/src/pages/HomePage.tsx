@@ -218,7 +218,7 @@ function HomePageInternal() {
                       description:
                         'The Long Life Family Study (LLFS) is an international study of genetics and familial components of exceptional survival, longevity, and healthy aging, providing rich longitudinal data including physical, cognitive, and cardiovascular phenotypes and comprehensive genetic and multi-OMIC profiles from families with exceptional longevity.',
                       facetsToPlot: ['dataTypes'],
-                      selectFacetColumnName: 'Study',
+                      selectFacetColumnName: 'studyKey',
                       selectFacetColumnValue: 'LLFS',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage?studyKey=LLFS',
@@ -230,7 +230,7 @@ function HomePageInternal() {
                       description:
                         'This study evaluates Longevity-Associated Variants (LAVs) from a GWAS of parental lifespan and assesses their translational potential by applying Mendelian Randomization to evaluate the influence of tissue-specific LAG expression on disease pathways using data from the MrOS, SOF, and Health ABC cohorts.',
                       facetsToPlot: ['dataTypes'],
-                      selectFacetColumnName: 'Study',
+                      selectFacetColumnName: 'studyKey',
                       selectFacetColumnValue: 'ADAMTS7',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
@@ -243,7 +243,7 @@ function HomePageInternal() {
                       description:
                         'The study provides metagenomics data from 209 samples including 78 centenarian samples (over 100 years of age) and 131 younger samples (59-99). Samples were collected as part of the Integrative longevity Omics (ILO) study with the aim to discover molecular profiles that associate with exceptional longevity and healthy aging phenotypes including delay of or escape from Alzheimer’s disease.',
                       facetsToPlot: ['dataTypes'],
-                      selectFacetColumnName: 'Study',
+                      selectFacetColumnName: 'studyKey',
                       selectFacetColumnValue: 'ILOMGS',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage?studyKey=ILOMGS',
@@ -265,7 +265,7 @@ function HomePageInternal() {
                       description:
                         'The Mendelian randomization of human longevity using genetically-predicted exposures from the GWAS catalog (MRGWAS) study provides analysis results of a two Sample Mendelian Randomization used to analyze the relationship between significantly associated GWAS  traits and five distinct definitions of longevity.',
                       facetsToPlot: ['dataTypes'],
-                      selectFacetColumnName: 'Study',
+                      selectFacetColumnName: 'studyKey',
                       selectFacetColumnValue: 'MRGWAS',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage?studyKey=MRGWAS',
@@ -277,7 +277,7 @@ function HomePageInternal() {
                       description:
                         'This study is a collection of genetically-predicted tissue-specific gene expression associations with a collection of aging-related traits and outcomes.',
                       facetsToPlot: ['dataTypes'],
-                      selectFacetColumnName: 'Study',
+                      selectFacetColumnName: 'studyKey',
                       selectFacetColumnValue: 'Aging-PheWAS',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage?studyKey=Aging-PheWAS',
@@ -300,7 +300,7 @@ function HomePageInternal() {
                       description:
                         'The Gladyshev Multi-Omic Signatures of Longevity Across Avian and Mammalian Species (G_M-OSLAMS) study analyzes transcriptomic, proteomic, and metabolomic data across multiple avian tissues to identify key gene expression biomarkers linked to lifespan. Comparing these longevity signatures to those previously identified in mammals, the research aims to uncover universal and species-specific pathways regulating lifespan across vertebrates.',
                       facetsToPlot: ['dataTypes'],
-                      selectFacetColumnName: 'Study',
+                      selectFacetColumnName: 'studyKey',
                       selectFacetColumnValue: 'G_M-OSLAMS',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage?studyKey=G_M-OSLAMS',
@@ -313,7 +313,7 @@ function HomePageInternal() {
                       description:
                         'This study conducted comparative transcriptomics on 26 species with diverse lifespans, identifying thousands of genes correlated with maximum lifespan. This work provides targets for anti-aging interventions by defining pathways correlated with longevity across mammals and uncovers circadian and pluripotency networks as central regulators of longevity.',
                       facetsToPlot: ['dataTypes'],
-                      selectFacetColumnName: 'Study',
+                      selectFacetColumnName: 'studyKey',
                       selectFacetColumnValue: 'Gorbunova_CP_Transcriptomics',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage?studyKey=Gorbunova_CP_Transcriptomics',
@@ -325,7 +325,7 @@ function HomePageInternal() {
                       description:
                         'Multiomic assays were applied to a large scale cross species fibroblast cell culture collection derived from nearly 150 primate, bat, rodent, and bird species to determine factors related to aging and longevity.',
                       facetsToPlot: ['dataTypes'],
-                      selectFacetColumnName: 'Study',
+                      selectFacetColumnName: 'studyKey',
                       selectFacetColumnValue: 'LC_CP_OMICS',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage/StudyDetails?studyKey=LC_CP_OMICS',

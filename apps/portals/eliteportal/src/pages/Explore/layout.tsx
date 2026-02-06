@@ -40,6 +40,9 @@ function ExploreLayout() {
           },
         },
         {
+          path: 'Programs',
+        },
+        {
           path: 'Projects',
         },
         {
