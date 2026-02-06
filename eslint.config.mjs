@@ -121,7 +121,6 @@ export default tseslint.config(
       '**/build/',
       '**/dist/',
       '**/playwright-report/',
-      '**/node_modules',
     ],
   },
 )
