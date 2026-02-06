@@ -1,10 +1,9 @@
-@use '../style/main';
-@use '../style/abstracts/cssVariables';
+@use 'sass:map';
+
+@use '../style/main' with (
+  $primary-action-color: #395979,
+  $secondary-action-color: #469285,
+  $primary-bgcolor-rgba: rgba(64, 123, 160, 0.03)
+);
 
 @use '../template_style/Index';
-
-// Storybook theme colors - these override the defaults in SRC's :root
-:root {
-  --synapse-primary-action-color: #395979;
-  --synapse-secondary-action-color: #469285;
-}
