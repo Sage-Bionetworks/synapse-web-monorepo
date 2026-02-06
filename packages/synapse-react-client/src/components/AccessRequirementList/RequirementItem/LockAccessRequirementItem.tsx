@@ -20,7 +20,7 @@ export default function LockAccessRequirementItem() {
         Contributor has not completed access conditions for this asset.
       </Typography>
       <Typography variant="body1">
-        Sage cannot grant access without contributor approval.
+        Sage Bionetworks cannot grant access without contributor approval.
       </Typography>
     </RequirementItem>
   )
