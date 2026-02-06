@@ -17,7 +17,18 @@ import { Encoder as VerboseEncoder } from 'json-joy/lib/json-crdt/codec/structur
 import { JsonCrdtVerboseLogicalTimestamp } from 'json-joy/lib/json-crdt/codec/structural/verbose/types'
 import noop from 'lodash-es/noop'
 import throttle from 'lodash-es/throttle'
-import type { DebouncedFunc } from 'lodash-es'
+import { isArray, type DebouncedFunc } from 'lodash-es'
+import { Decoder as SnapshotDecoder } from 'json-joy/lib/json-crdt/codec/indexed/binary/Decoder'
+import { decode as decodeCbor } from 'cbor2'
+import { IndexedFields } from 'json-joy/esm/json-crdt/codec/indexed/binary'
+
+type SynapseGridWebSocketMessagePayload =
+  | CompactCodecPatch
+  | {
+      type: 'patch'
+      body: CompactCodecPatch
+    }
+  | { type: 'snapshot'; body: string }
 
 type DataGridWebSocketConstructorArgs = {
   replicaId: number
@@ -45,6 +56,7 @@ export class DataGridWebSocket {
   private verboseEncoder = new VerboseEncoder()
   private maxPayloadSizeBytes: number
   private throttledSendPatch: DebouncedFunc<() => void>
+  private snapshotDecoder = new SnapshotDecoder()
 
   private onModelCreate: (model: GridModel) => void = noop
   private onGridReady: () => void = noop
@@ -104,7 +116,9 @@ export class DataGridWebSocket {
     }
 
     // Restore existing model if provided
-    this.model = model || null
+    if (model) {
+      this.model = model
+    }
 
     this.throttledSendPatch = throttle(
       () => this.sendPatchImmediate(),
@@ -124,42 +138,68 @@ export class DataGridWebSocket {
     }
   }
 
+  private onModelSynced() {
+    if (!this.model) {
+      console.error('Model is not initialized. Cannot sync model.')
+      return
+    }
+    const modelClock = this.model.api.flush()
+    let encodedModelClock
+    if (modelClock?.ops.length !== 0) {
+      encodedModelClock = encode(modelClock)
+    }
+    if (encodedModelClock) {
+      const msg = new JsonRxRequestComplete(
+        this.messageCounter.getNext(),
+        'patch',
+        encodedModelClock,
+      )
+      console.debug('Responding with patch:', msg)
+      this.sendMessage(msg)
+    } else {
+      const verbModel = this.verboseEncoder.encode(this.model)
+      this.sendSyncMessage(verbModel.time)
+    }
+  }
+
   private messageHandler = (message: JsonRxMessage) => {
+    console.log('Received message:', message)
     if (message instanceof JsonRxResponse) {
-      const payload = message.getPayload() as CompactCodecPatch
+      const payload = (
+        message as JsonRxResponse<SynapseGridWebSocketMessagePayload>
+      ).getPayload()
+      console.log('Applying payload from server:', payload)
       try {
-        // Apply patch to model
-        const patch = decode(payload)
-        if (!this.model) {
-          // Initialize the model if it doesn't exist
-          console.debug('Initializing new model from patch:')
-          console.debug(patch.toString())
-          // use the replica ID the server gives us - don't use an empty one
-          this.model = (
-            Model.fromPatches([patch]) as unknown as GridModel
-          ).fork(this.replicaId)
-          this.onModelCreate(this.model)
-        } else {
-          console.debug('Applying patch from server:', patch)
-          this.model?.applyPatch(patch)
-        }
-        // Calculate the new clock
-        const modelClock = this.model?.api.flush()
-        let encodedModelClock
-        if (modelClock?.ops.length !== 0) {
-          encodedModelClock = encode(modelClock)
-        }
-        if (encodedModelClock) {
-          const msg = new JsonRxRequestComplete(
-            this.messageCounter.getNext(),
-            'patch',
-            encodedModelClock,
-          )
-          console.debug('Responding with patch:', msg)
-          this.sendMessage(msg)
-        } else {
-          const verbModel = this.verboseEncoder.encode(this.model)
-          this.sendSyncMessage(verbModel.time)
+        if (isArray(payload) || payload.type == 'patch') {
+          const encodedPatch = isArray(payload) ? payload : payload.body
+          console.log('Received patch from server:', encodedPatch)
+          try {
+            if (!this.model) {
+              this.model = Model.create(undefined, 0).fork(
+                this.replicaId,
+              ) as unknown as GridModel
+              if (this.onModelCreate) {
+                this.onModelCreate(this.model)
+              }
+            }
+            // Apply patch to model
+            const patch = decode(encodedPatch)
+            console.debug('Applying patch from server:', patch)
+            this.model.applyPatch(patch)
+            this.onModelSynced()
+          } catch (err) {
+            console.error('Failed to apply patch or send clock:', err)
+          }
+        } else if (payload.type == 'snapshot') {
+          console.log('Received snapshot URL from server:', payload.body)
+          const snapshotUrl = payload.body
+          this.fetchAndDecodeSnapshot(snapshotUrl).then(decodedModel => {
+            this.model = decodedModel.fork(
+              this.replicaId,
+            ) as unknown as GridModel
+            this.onModelCreate(this.model)
+            this.onModelSynced()
+          })
         }
       } catch (err) {
         console.error('Failed to apply patch or send clock:', err)
@@ -268,5 +308,18 @@ export class DataGridWebSocket {
       clock,
     )
     this.sendMessage(message)
+  }
+
+  private async fetchAndDecodeSnapshot(
+    snapshotUrl: string,
+  ): Promise<GridModel> {
+    const response = await fetch(snapshotUrl)
+    const blob = await response.blob()
+    const buffer = await blob.arrayBuffer()
+    const decodedFromCbor = decodeCbor(new Uint8Array(buffer))
+    const decodedModel = this.snapshotDecoder.decode(
+      decodedFromCbor as IndexedFields,
+    ) as unknown as GridModel
+    return decodedModel
   }
 }
