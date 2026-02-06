@@ -1,0 +1,180 @@
+import{ey as r,ez as c,eA as u,eB as h,eC as F,eD as w,eE as d,g as E,d as b,a3 as T,e0 as S,b as e}from"./iframe-CL1UF9wq.js";import{C as L}from"./CardContainerLogic-E4Nk7YoW.js";import"./index-Chi_LkuB.js";import"./QueryContext-fjZvdKac.js";import"./QueryWrapper-CYc6SpGg.js";import"./unCamelCase-ZiU_emRy.js";import"./use-deep-compare-effect.esm-BsYNt22s.js";import"./useSuspenseQuery-LePCNQBH.js";import"./NoSearchResults-OqKLs0X1.js";import"./NoData-Dohtlag1.js";import"./NoContentAvailable-DinTKr_e.js";import"./index-BgZTTymO.js";import"./index-BLKIkjBN.js";import"./index-C-P7sG9s.js";import"./ConfirmationDialog-BgArY7GH.js";import"./DialogBase-D_WMzDU9.js";import"./Close-BWRQhN2m.js";import"./HelpPopover-jj4j5zDP.js";import"./MarkdownPopover-BLBfaCop.js";import"./LightTooltip-DY-wPTTk.js";import"./MarkdownSynapse-CdtBHZEE.js";import"./SkeletonButton-CYgioBCP.js";import"./SkeletonInlineBlock-CJQan7gL.js";import"./SkeletonTable-DMqnct0i.js";import"./SkeletonParagraph-D55VBz6b.js";import"./TableRowSelectionState-D0g4JseF.js";import"./useEntity-D195lckg.js";import"./pickBy-Dh62N0PQ.js";import"./isString-Bk_2wf3u.js";import"./_baseIteratee-DMV55V0L.js";import"./useQueries-NvxyI8_9.js";import"./useInfiniteQuery-DWi368jF.js";import"./InfiniteQueryUtils-CKlRW-xB.js";import"./useEntityBundle-BEcFfxs5.js";import"./SynapseTableUtils-4Jj-J7_N.js";import"./Autocomplete-CFb4DNDP.js";import"./usePreviousProps-D-L7dkh6.js";import"./Chip-DXWiT4yo.js";import"./UserSearchBoxV2-BaM_QAoS.js";import"./useDebouncedEffect-wae5cBnA.js";import"./uniq-BczlDYoN.js";import"./without-BjgmvzHg.js";import"./UserBadge-CnO0Rkgm.js";import"./useUserBundle-BcHOhtU-.js";import"./MenuItem-LKo31BtE.js";import"./Card-B9BQCfND.js";import"./Select-aab027f3.esm-ClNr34_w.js";import"./defineProperty-Cp4flQ_6.js";import"./toPropertyKey-C9c9JG92.js";import"./UserOrTeamBadge-Cz4F3ETX.js";import"./TeamBadge-QzNTY3sF.js";import"./JsonSchemaForm-kCyXQMKG.js";import"./enums-C46JrnLF.js";import"./_arrayReduce-CrxnWFSq.js";import"./_baseEach-Bcjl1bpK.js";import"./forEach-CWOCpBhE.js";import"./index-C_VS7e0_.js";import"./Add-wAQLjUyN.js";import"./Grid-BA52H04o.js";import"./ListItem-BwABetlb.js";import"./listItemButtonClasses-C02VQ1J6.js";import"./ListItemIcon-CbcKYjGn.js";import"./ListItemText-5CEhn3nz.js";import"./ArrowUpward-CHY2wzP0.js";import"./ContentCopy-C12K-Xgg.js";import"./FormControlLabel-CYpBZGqx.js";import"./Checkbox-D2ule7FR.js";import"./SwitchBase-CZN2jDS4.js";import"./FormGroup-D8Ocobxf.js";import"./RadioGroup-04Bd-wn_.js";import"./Radio-C7rC3Lmu.js";import"./Slider-CJxMFe0z.js";import"./visuallyHidden-Dan1xhjv.js";import"./index-C148XJoK.js";import"./GridLegacy-CcNSqfTl.js";import"./HelpTwoTone-o_u3o2Hq.js";import"./index-browser-esm-k-o2Qe0C.js";import"./groupBy-B-yZMmX9.js";import"./_createAggregator-BqE9c8uK.js";import"./_baseMap-OqYiEbFz.js";import"./DateTimePicker-BaN8Ah46.js";import"./useMobilePicker-J7eeA4ny.js";import"./index-CvmZKthN.js";import"./index-Chjiymov.js";import"./InputAdornment-DFPs_6TF.js";import"./index-D_p7qk7E.js";import"./Tabs-DL2Gsrb_.js";import"./KeyboardArrowRight-dy3Z24dK.js";import"./FeaturedDataTabs-CZWoE_kw.js";import"./ActionRequiredListItem-Cs4cf9P0.js";import"./differenceWith-DzwGZv5b.js";import"./MeetAccessRequirementCard-DGlixhum.js";import"./WideButton-COo9vwAQ.js";import"./useAccessRequirements-h24F7TBD.js";import"./_baseOrderBy-BNZ_rKpc.js";import"./AccessRequirementList-fuLcCzCD.js";import"./EntityLink-CwwiTXLB.js";import"./useGetEntityHeaders-CyRN7NGS.js";import"./EntityIcon-Cx60DiI_.js";import"./ErrorChip-CzlSJgzl.js";import"./UnmanagedACTAccessRequirementItem-Bnck3ko3.js";import"./RequirementItem-CZmrqvf3.js";import"./LockTwoTone-BlZpEYXc.js";import"./ManagedACTAccessRequirementItemView-CejwbGfE.js";import"./SelfSignAccessRequirementItem-daInFlLQ.js";import"./DataAccessRequestAccessorsFilesForm-jekk8wwp.js";import"./useDataAccessSubmission-BLRR7TJ8.js";import"./UploadDocumentField-zOnAa3Ri.js";import"./FileUpload-DJoGNx63.js";import"./ManagedACTAccessRequirementFormWikiWrapper-BBLhaWEG.js";import"./ResearchProjectForm-B8M5gAS3.js";import"./TextFieldWithWordLimit-D2jMp7fX.js";import"./AuthenticatedRequirement-ty5M9ltR.js";import"./CertificationRequirement-CdpdfSMT.js";import"./TwoFactorAuthEnabledRequirement-NZhzYAEu.js";import"./ValidationRequirement-DcSJ94gj.js";import"./ActionRequiredCard-C3qbpcBr.js";import"./Icon-DhdfHsv0.js";import"./mouse-Bicu5HX1.js";import"./SortDown-DbauHWnw.js";import"./RequestDownloadCard-TLPTbawM.js";import"./useGetFeatureFlag-CKmUrMQS.js";import"./EntityAclEditorModal-DlcE9QLY.js";import"./ConfirmCloseWithoutSavingDialog-DC-0vR2f.js";import"./AccessControlListUtils-B9RHKGGk.js";import"./AclEditor-CwE2Tjy7.js";import"./IconSvgButton-BJLO1Lq0.js";import"./useUpdateAcl-D_ZrMLfa.js";import"./OpenData-BZZCP3wS.js";import"./useMessage-cyU4LEi0.js";import"./EnableTwoFaRequirementCard-DWeOs_Pm.js";import"./Plot-Bv6DROR1.js";import"./index-8MLsnqMr.js";import"./ShowMore-BjPTnYWu.js";import"./ColorGradient-Zy7TAKxK.js";import"./colorPalette-BALeOMsp.js";import"./EnumFacetFilter-CmEfP-8J.js";import"./EnumFacetFilterSkeleton-C7_4b11V.js";import"./EnumFacetFilterUI-D1nRnOqC.js";import"./FacetFilterHeader-LzBBTcdb.js";import"./index-DuJ-JrKk.js";import"./index-DS1oVGGB.js";import"./RangeFacetFilterUI-Bfq_r-iT.js";import"./RangeSlider-Dqwb-YvT.js";import"./CardUtils-AhBea-fw.js";import"./IsExternalLink-DeYq7Mrk.js";import"./GenericCardIcon-BlWgiuON.js";import"./ImageFileHandle-C3sez4AT.js";import"./index-D3npuHdf.js";import"./CopyToClipboardIcon-DjcmnTdI.js";import"./CreateOrUpdateDoiModal-fv1sXXbo.js";import"./useDOI-B-aVVhl9.js";import"./waitForAsyncResult-CPjw8Ifw.js";import"./usePortal-Cr4gCmN6.js";import"./CitationPopoverContent-BRK7a299.js";import"./KeyboardArrowDown-Dcu8u6hG.js";import"./ErrorPage-pCAn1NVu.js";import"./AccessTokenPage-f_dYeB5U.js";import"./relativeTime-DVX9LeFM.js";import"./WarningDialog-VWFHNP6T.js";import"./CopyToClipboardInput-Bhjc_vCA.js";import"./AccountLevelBadges-HBcr1W3m.js";import"./AccountLevelBadge-Czocaept.js";import"./CardGridWithLinks-lZJUPfGM.js";import"./RowDataTable-97aD-Bmh.js";import"./StyledTableContainer-DEzxahf1.js";import"./SynapseCardLabel-EpwlJTHR.js";import"./Box-CBL4XC_V.js";import"./HeaderCardV2-1-ua9q-s.js";import"./GenericCard-D-DFDA7a.js";import"./HeaderCard-BkfNPnBT.js";import"./SustainabilityScorecard-BuBhwP5P.js";import"./Dial-C_HwePqW.js";import"./CheckIcon-CkhW_hek.js";import"./FileHandleLink-CrJW1erk.js";import"./RowDataTableWithQuery-BEIP7Trq.js";import"./useDownloadList-BpHusZM-.js";import"./CertificationAnswer-bTi5wYp2.js";import"./ChallengeDetailPage-gHKZGoek.js";import"./useGetEntityChallenge-nDbAudtN.js";import"./useTeamMembers-BqIo6ezA.js";import"./useGetUserTeams-BTRccqsP.js";import"./ChallengeRegisterButton-Cs9dKaj7.js";import"./ExitToApp-CV09sHCC.js";import"./SpinnerButton-Bkxe9fwD.js";import"./LoginAwareButton-D3CHo59J.js";import"./ChallengeTeamWizard-D-Epnhrq.js";import"./CreateChallengeTeam-DqLEdKbT.js";import"./useTeam-CSLYJpWt.js";import"./papaparse.min-B5u3t1TT.js";import"./Search-w1cj0NTe.js";import"./DataGrid-u2IEKGDh.js";import"./index-SRvurcp0.js";import"./Switch-CRRzW1Ff.js";import"./Badge-o4tGLbls.js";import"./index-DyEO3Oaa.js";import"./useEntitySelection-JgOjDTJ1.js";import"./useGetEntityChildren-ioUckl_B.js";import"./StyledTanStackTable-D_1oUIxD.js";import"./ExpandCollapseButton-DHN_VDY7.js";import"./ColumnHeader-BAB6iLMa.js";import"./ModifiedOnCell-Bi7QN8eC.js";import"./DownloadConfirmationUtils-DAnyepSu.js";import"./EntityBadgeIcons-B4fjL7Xn.js";import"./useSchema-CLt8KsUA.js";import"./AnnotationsTable-WnkCulm2.js";import"./EntityModal-DD7c0rXR.js";import"./SchemaDrivenAnnotationEditor-CWHOCdzK.js";import"./TextWidget-BpFTeI0X.js";import"./FileHandleUtils-Bl7ZIKTW.js";import"./FileEntityDirectDownload-BA0j7T-f.js";import"./DirectDownload-pyC0A3Yo.js";import"./SynapseTableConstants-2qH3fDlQ.js";import"./immutable.es-C7Y1z7XT.js";import"./AvailableEvaluationQueueList-D_2BLtHV.js";import"./ChallengeSubmission-CAIS8raJ.js";import"./StepperDialog-DnlziDKI.js";import"./useEvaluation-CDZyUi8l.js";import"./ChangePassword-CFabe12l.js";import"./useChangePasswordFormState-CYwLVG53.js";import"./ChangePasswordWithToken-DJTLF7dO.js";import"./CookiesNotification-GmNZQKYc.js";import"./CTASectionWrapper-CgIbYP-W.js";import"./DownloadCartPage-CDp-w5sy.js";import"./ProgrammaticInstructionsModal-Cq4QOhWF.js";import"./InteractiveCopyIdsIcon-XOhF7pss.js";import"./pluralize-DvqWrKl4.js";import"./ShowDownloadV2-DaKqNwv1.js";import"./DynamicForm-tzoQCeJc.js";import"./EntityFinder-fCFFJ90Z.js";import"./useFavorites-78NU-zuV.js";import"./useSearch-B3Q0twhj.js";import"./DropdownSelect-Dd2pQh3j.js";import"./getValidReactChildren-CHSmdSU7.js";import"./index.esm-Bu4VXbv5.js";import"./EvaluationCard-S0Qw3hhF.js";import"./CreatedOnByUserDiv-COJppAx8.js";import"./CardContent-DRD_6_A0.js";import"./EvaluationEditorPage-CB-KDHaf.js";import"./upperFirst-cu3C1wgQ.js";import"./_stringToArray-uahiwV50.js";import"./ExperimentalMode-jgzeHT2X.js";import"./index.prod-D544Vtay.js";import"./FeaturedToolsList-DTbnk87E.js";import"./DiscussionThread-MJjboBQG.js";import"./ForumThreadEditor-jJSe-3YZ.js";import"./useThread-DMMeVsFB.js";import"./MarkdownEditor-cAyE6LX9.js";import"./useSubscription-DANQ613l.js";import"./SubscribersModal-CKWYd-0o.js";import"./useForum-Cs9i6ji5.js";import"./ForumPage-B-bwcmfe.js";import"./InfiniteTableLayout-CTYQv2CB.js";import"./Goals-CXSQ-N15.js";import"./ExpandableContent-D-q7RCbB.js";import"./QueryCount-DsvJWK7i.js";import"./GoalsV2-EYAqxF7J.js";import"./PortalSectionHeader-CZETcxVD.js";import"./NavigateNext-DYe4A6Jy.js";import"./CardActionArea-mr3kNOuP.js";import"./CardMedia-CAIDZsVc.js";import"./GoalsV3-e3rCaQP1.js";import"./GoogleMap-DPgA0kVy.js";import"./HasAccessV2-D38TCusC.js";import"./AccessIcon-DcZD08DA.js";import"./useHasAccess-DQmrebwL.js";import"./MarkdownCollapse-Bzrb5Vc6.js";import"./MarkdownGithub-AgS3IOXY.js";import"./Container-BFzbdqiR.js";import"./ModalDownload-DmJv4SUm.js";import"./SynapseFormRadioWidget-BheObjbL.js";import"./OAuthAclEditorModal-C9AXSjwq.js";import"./OAuthClientAclEditor-Cpg8qfQp.js";import"./ThemesPlot-9ns3OcD3.js";import"./head-aneRfQQJ.js";import"./UpsetPlot-CY1mugZ4.js";import"./LargeButton-CKyPLvq6.js";import"./SynapsePlot-CwfhRy-g.js";import"./Programs-BjH_l7jj.js";import"./ProvenanceGraph-CykzfIkU.js";import"./ProjectDataAvailability-CY8ZsHdV.js";import"./ExportToAnalysisPlatformDialog-BpURhr50.js";import"./WizardChoiceButtonGroup-DhsWL8aw.js";import"./RowSelectionUI-Dh-Z8QaS.js";import"./DownloadLoginModal-CTdul5Ok.js";import"./SelectionCriteriaPill-CuWsYuRe.js";import"./RegisterPageLogoutPrompt-BDE3qEeb.js";import"./SageFullLogo-MgkmdZHk.js";import"./RenderIfInView-aASsL7Kv.js";import"./Resources-CB7yZnwb.js";import"./AccessRequirementAclEditor-BSNJiUkE.js";import"./RssFeedCards-88lQAvAe.js";import"./index-BtB7dkFq.js";import"./index-CtXYsozW.js";import"./events-DQ172AOg.js";import"./InputSizedButton-Bnh4Dgs4.js";import"./SubscriptionItem-7B1t9QyT.js";import"./Topic-Cy2LAZa6.js";import"./SubsectionRowRenderer-DxFfTnGy.js";import"./SynapseFormWrapper-BulnjpJo.js";import"./types-CP9zjM1W.js";import"./SynapseFormSubmissionGrid-D00VEEAp.js";import"./SynapseTable-wHjM8sUA.js";import"./SynapseTableCell-qXfgSPUo.js";import"./SynapseChat-CyBKUbQe.js";import"./TableFeedCards-B_p6SBj_.js";import"./TermsAndConditions-ClFl4C0j.js";import"./UserCardListRotate-CEUylR1T.js";import"./UserCardListGroups-DuH3XcjP.js";import"./UserProfileLinks-fVEakgFn.js";import"./EntityHeaderTable-BJKT8QXb.js";import"./EntityFinderModal-D5j7XBw2.js";import"./EntityHeaderTableCellRenderers-CHlu_lP4.js";import"./AccessRequirementRelatedProjectsList-BUlIDaF0.js";import"./SageResourcesPopover-BKiRLYlK.js";import"./RecentPublicationsGrid-D_DhYZR6.js";import"./ImageCardGridWithLinks-DEyGu-Vj.js";import"./PortalFeatureHighlights-4Lm4f2nf.js";import"./Slide-BEWkR5T5.js";import"./useImageUrlUtils-DjoywP70.js";import"./CreatePortalModal-1eW0TNbf.js";import"./DownloadConfirmationUI-Bsxn9lTq.js";import"./duration-DbmI10NM.js";import"./IconList-tAZ1lsq8.js";import"./ShareThisPage-D1aqMSU-.js";import"./index-DbDXKBSr.js";const C=[{name:"releaseEntityId",columnType:"ENTITYID",id:"207864"},{name:"releaseName",columnType:"STRING",id:"207865",maximumSize:50},{name:"releaseDate",columnType:"DATE",id:"207866"},{name:"countPatients",columnType:"INTEGER",id:"207920"},{name:"countSamples",columnType:"INTEGER",id:"207921"},{name:"isCurrentRelease",columnType:"BOOLEAN",id:"207868"},{name:"releaseType",columnType:"STRING",facetType:"enumeration",id:"208002",maximumSize:50,enumValues:["CRC","NSCLC"]},{name:"releaseExplorePath",columnType:"STRING",id:"208001",defaultValue:"/explore/files/genie",maximumSize:50,enumValues:["/explore/files/genie","/explore/files/genie-bpc"]},{name:"exploreDataSql",columnType:"STRING",id:"208850",defaultValue:"select * from syn54100284",maximumSize:50,enumValues:["select * from syn54100284","select * from syn54100290"]},{name:"version",columnType:"STRING",id:"208851",maximumSize:50}],g=C.map(O=>({...O})),N=g,P={concreteType:"org.sagebionetworks.repo.model.table.QueryResultBundle",queryResult:{concreteType:"org.sagebionetworks.repo.model.table.QueryResult",queryResults:{concreteType:"org.sagebionetworks.repo.model.table.RowSet",tableId:r,etag:"e2bac0de-5ab6-411d-bf76-7c5a2a2df707",headers:g,rows:[{rowId:1,versionNumber:16,values:["syn53701297","GENIE 15.0-public","1704235503000","198041","172005","true","main","/explore/files/genie","select * from syn54100284","15.0-public"]},{rowId:2,versionNumber:14,values:["syn51417430","CRC 2.0-public","1667339328000","1486","1552","true","CRC","/explore/files/genie-bpc","select * from syn54100290","2.0-public"]},{rowId:3,versionNumber:14,values:["syn51417430","NSCLC 2.0-public","1651441766000","1846","2004","true","NSCLC","/explore/files/genie-bpc","select * from syn54100290","2.0-public"]}]}},queryCount:3,selectColumns:N,maxRowsPerPage:2957,columnModels:C,facets:[{concreteType:"org.sagebionetworks.repo.model.table.FacetColumnResultValues",columnName:"releaseType",facetType:"enumeration",facetValues:[{value:"main",count:1,isSelected:!1},{value:"CRC",count:1,isSelected:!1},{value:"NSCLC",count:1,isSelected:!1}]}],sumFileSizes:{sumFileSizesBytes:0,greaterThan:!1},lastUpdatedOn:"2024-03-02T16:16:43.968Z"},q={concreteType:"org.sagebionetworks.repo.model.table.QueryResultBundle",queryResult:{concreteType:"org.sagebionetworks.repo.model.table.QueryResult",queryResults:{concreteType:"org.sagebionetworks.repo.model.table.RowSet",tableId:r,etag:"e2bac0de-5ab6-411d-bf76-7c5a2a2df707",headers:g,rows:[{rowId:4,versionNumber:16,values:["syn51417430","14.1-public","1704235808000","170505","196541","false","main","/explore/files/genie","select * from syn54100284","14.1-public"]},{rowId:5,versionNumber:16,values:["syn51417430","14.0-public","1699570245000","169005","195041","false","main","/explore/files/genie","select * from syn54100284","14.0-public"]},{rowId:6,versionNumber:16,values:["syn53701297","13.1-public","1694814677000","166005","192041","false","main","/explore/files/genie","select * from syn54100284","13.1-public"]},{rowId:7,versionNumber:16,values:["syn53701297","13.0-public","1692913961000","166005","192041","false","main","/explore/files/genie","select * from syn54100284","13.0-public"]},{rowId:8,versionNumber:16,values:["syn53701297","12.1-public","1692914000000","163005","189041","false","main","/explore/files/genie","select * from syn54100284","12.1-public"]},{rowId:10,versionNumber:16,values:["syn53701297","11.0-public","1689194860000","160005","180022","false","main","/explore/files/genie","select * from syn54100284","11.0-public"]},{rowId:11,versionNumber:16,values:["syn53701297","10.1-public","1687898860000","150525","172324","false","main","/explore/files/genie","select * from syn54100284","10.1-public"]},{rowId:12,versionNumber:18,values:["syn53701297","test release missing data","1686689260000",null,"172324","false","main","/explore/files/genie","select * from syn54100284","Test.1-public"]},{rowId:13,versionNumber:16,values:["syn53701297","very very long release name","1709165287000","123456789012345","123456789012345","false","main","/explore/files/genie","select * from syn54100284","Test.2-public"]}]}},queryCount:9,selectColumns:N,maxRowsPerPage:2957,columnModels:C,facets:[{concreteType:"org.sagebionetworks.repo.model.table.FacetColumnResultValues",columnName:"releaseType",facetType:"enumeration",facetValues:[{value:"main",count:9,isSelected:!1}]}],sumFileSizes:{sumFileSizesBytes:0,greaterThan:!1},lastUpdatedOn:"2024-03-02T16:16:43.968Z"},Bi={title:"Explore/CardContainerLogic",component:L},t={args:{sql:"SELECT * FROM syn22095937.4 order by authors asc",initialLimit:2,limit:5,cardConfiguration:{type:u,genericCardSchema:{type:c,title:"title",description:"abstract",subTitle:"authors",secondaryLabels:["year","journal","study","grants","DOI"]}},sortConfig:{defaultColumn:"authors",defaultDirection:"ASC",sortableColumns:["authors","title","createdOn","journal"]}}},o={args:{sql:"SELECT * FROM syn22095937.4 WHERE study='not a study value'",cardConfiguration:{type:u,genericCardSchema:{type:c,title:"title",description:"abstract",subTitle:"authors",secondaryLabels:["year","journal","study","grants","DOI"]}}}},a={args:{sql:"SELECT * FROM syn51735464",cardConfiguration:{type:h},limit:3}},i={args:{sql:"SELECT * FROM syn16858699",cardConfiguration:{type:F},limit:3}},s={args:{sql:"SELECT * FROM syn16859580",cardConfiguration:{type:w},limit:3}},v={type:c,title:"publicationTitle",subTitle:"authors",secondaryLabels:["pubMedLink","journal","publicationYear","theme","tumorType","tissue","assay","keywords","doi","consortium"]},m={args:{sql:`SELECT * FROM syn21868591 WHERE ( ( "grantNumber" HAS ( 'CA209988' ) ) )`,cardConfiguration:{type:u,genericCardSchema:v}}},y=[{destinationTableColumnName:"cohort",sourceTableColumnName:"Cohort"},{destinationTableColumnName:"version",sourceTableColumnName:"version"}],n={args:{sql:"select * from syn54338474 where IsCurrentVersion = 'TRUE' order by ReleaseDate desc",limit:3,cardConfiguration:{type:d,releaseCardConfig:{cardSize:"large",prependRelease:!1,releaseMetadataConfig:{releaseDateColumnName:"ReleaseDate",releaseEntityIdColumnName:"id",releaseNameColumnName:"nameReleaseCard"},statsConfig:[{columnName:"Patients",label:"Patients"},{columnName:"Samples",label:"Samples"}],primaryBtnConfig:{label:"Explore Data Release",sourceTablePathColumnName:"releaseExplorePath",sourceTableSqlColumnName:"exploreDataSql",selectedFacetConfigs:y},secondaryBtnConfig:{label:"View Data Guide",sourceTablePathColumnName:"releaseExplorePath",sourceTableSqlColumnName:"exploreDataSql",selectedFacetConfigs:y,staticSelectedFacets:[{facet:"dataType",facetValue:"data_guide"}]}}}}},I={releaseDateColumnName:"releaseDate",releaseEntityIdColumnName:"releaseEntityId",releaseNameColumnName:"releaseName"},D=[{columnName:"countPatients",label:"Patients"},{columnName:"countSamples",label:"Samples"}],f=[{destinationTableColumnName:"releaseType",sourceTableColumnName:"releaseType"},{destinationTableColumnName:"version",sourceTableColumnName:"version"}],R=`SELECT * FROM ${r} WHERE isCurrentRelease = true`,l={args:{sql:R,limit:3,cardConfiguration:{type:d,releaseCardConfig:{cardSize:"large",prependRelease:!1,releaseMetadataConfig:I,statsConfig:D,primaryBtnConfig:{label:"Explore Current Data Release",sourceTablePathColumnName:"releaseExplorePath",sourceTableSqlColumnName:"exploreDataSql",selectedFacetConfigs:f},secondaryBtnConfig:{label:"View Data Guide",sourceTablePathColumnName:"releaseExplorePath",sourceTableSqlColumnName:"exploreDataSql",selectedFacetConfigs:f,staticSelectedFacets:[{facet:"dataType",facetValue:"data_guide"}]}}}},loaders:[()=>S({sql:R},P)],parameters:{stack:"mock",design:{type:"figma",url:"https://www.figma.com/file/BI4y33EHA95onN8DourTNZ/Two-Projects?type=design&node-id=195-13615&mode=design&t=76oHvfvp9FWFtDSR-4"},msw:{handlers:[...E(e),...b(e),...T(e)]}}},p={args:{sql:`SELECT * FROM ${r} WHERE isCurrentRelease = false`,initialLimit:5,cardConfiguration:{type:d,releaseCardConfig:{cardSize:"medium",requestAccessPath:"data access",releaseMetadataConfig:I,statsConfig:D}}},loaders:[()=>{S({sql:`SELECT * FROM ${r} WHERE isCurrentRelease = false`},q)}],parameters:{stack:"mock",design:{type:"figma",url:"https://www.figma.com/file/BI4y33EHA95onN8DourTNZ/Two-Projects?type=design&node-id=259-14622&mode=design&t=76oHvfvp9FWFtDSR-4"},msw:{handlers:[...E(e),...b(e),...T(e)]}}};t.parameters={...t.parameters,docs:{...t.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: 'SELECT * FROM syn22095937.4 order by authors asc',
+    initialLimit: 2,
+    limit: 5,
+    cardConfiguration: {
+      type: GENERIC_CARD,
+      genericCardSchema: {
+        type: PUBLICATION,
+        title: 'title',
+        description: 'abstract',
+        subTitle: 'authors',
+        secondaryLabels: ['year', 'journal', 'study', 'grants', 'DOI']
+      }
+    },
+    sortConfig: {
+      defaultColumn: 'authors',
+      defaultDirection: 'ASC',
+      sortableColumns: ['authors', 'title', 'createdOn', 'journal']
+    }
+  }
+}`,...t.parameters?.docs?.source}}};o.parameters={...o.parameters,docs:{...o.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: "SELECT * FROM syn22095937.4 WHERE study='not a study value'",
+    cardConfiguration: {
+      type: GENERIC_CARD,
+      genericCardSchema: {
+        type: PUBLICATION,
+        title: 'title',
+        description: 'abstract',
+        subTitle: 'authors',
+        secondaryLabels: ['year', 'journal', 'study', 'grants', 'DOI']
+      }
+    }
+  }
+}`,...o.parameters?.docs?.source}}};a.parameters={...a.parameters,docs:{...a.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: \`SELECT * FROM syn51735464\`,
+    cardConfiguration: {
+      type: OBSERVATION_CARD
+    },
+    limit: 3
+  }
+}`,...a.parameters?.docs?.source}}};i.parameters={...i.parameters,docs:{...i.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: \`SELECT * FROM syn16858699\`,
+    cardConfiguration: {
+      type: FUNDER
+    },
+    limit: 3
+  }
+}`,...i.parameters?.docs?.source}}};s.parameters={...s.parameters,docs:{...s.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: \`SELECT * FROM syn16859580\`,
+    cardConfiguration: {
+      type: DATASET
+    },
+    limit: 3
+  }
+}`,...s.parameters?.docs?.source}}};m.parameters={...m.parameters,docs:{...m.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: \`SELECT * FROM syn21868591 WHERE ( ( "grantNumber" HAS ( 'CA209988' ) ) )\`,
+    cardConfiguration: {
+      type: GENERIC_CARD,
+      genericCardSchema: publicationSchema
+    }
+  }
+}`,...m.parameters?.docs?.source}}};n.parameters={...n.parameters,docs:{...n.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: "select * from syn54338474 where IsCurrentVersion = 'TRUE' order by ReleaseDate desc",
+    limit: 3,
+    cardConfiguration: {
+      type: RELEASE_CARD,
+      releaseCardConfig: {
+        cardSize: 'large',
+        prependRelease: false,
+        releaseMetadataConfig: {
+          releaseDateColumnName: 'ReleaseDate',
+          releaseEntityIdColumnName: 'id',
+          releaseNameColumnName: 'nameReleaseCard'
+        },
+        statsConfig: [{
+          columnName: 'Patients',
+          label: 'Patients'
+        }, {
+          columnName: 'Samples',
+          label: 'Samples'
+        }],
+        primaryBtnConfig: {
+          label: 'Explore Data Release',
+          sourceTablePathColumnName: 'releaseExplorePath',
+          sourceTableSqlColumnName: 'exploreDataSql',
+          selectedFacetConfigs: genieSelectedFacetConfigs
+        },
+        secondaryBtnConfig: {
+          label: 'View Data Guide',
+          sourceTablePathColumnName: 'releaseExplorePath',
+          sourceTableSqlColumnName: 'exploreDataSql',
+          selectedFacetConfigs: genieSelectedFacetConfigs,
+          staticSelectedFacets: [{
+            facet: 'dataType',
+            facetValue: 'data_guide'
+          }]
+        }
+      }
+    }
+  }
+}`,...n.parameters?.docs?.source}}};l.parameters={...l.parameters,docs:{...l.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: currentReleaseCardSql,
+    limit: 3,
+    cardConfiguration: {
+      type: RELEASE_CARD,
+      releaseCardConfig: {
+        cardSize: 'large',
+        prependRelease: false,
+        releaseMetadataConfig: releaseMetadataConfig,
+        statsConfig: statsConfig,
+        primaryBtnConfig: {
+          label: 'Explore Current Data Release',
+          sourceTablePathColumnName: 'releaseExplorePath',
+          sourceTableSqlColumnName: 'exploreDataSql',
+          selectedFacetConfigs: selectedFacetConfigs
+        },
+        secondaryBtnConfig: {
+          label: 'View Data Guide',
+          sourceTablePathColumnName: 'releaseExplorePath',
+          sourceTableSqlColumnName: 'exploreDataSql',
+          selectedFacetConfigs: selectedFacetConfigs,
+          staticSelectedFacets: [{
+            facet: 'dataType',
+            facetValue: 'data_guide'
+          }]
+        }
+      }
+    }
+  },
+  loaders: [() => registerTableQueryResult({
+    sql: currentReleaseCardSql
+  }, mockCurrentReleaseCardsQueryResultBundle)],
+  parameters: {
+    stack: 'mock',
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/file/BI4y33EHA95onN8DourTNZ/Two-Projects?type=design&node-id=195-13615&mode=design&t=76oHvfvp9FWFtDSR-4'
+    },
+    msw: {
+      handlers: [...getUserProfileHandlers(MOCK_REPO_ORIGIN), ...getEntityHandlers(MOCK_REPO_ORIGIN), ...getHandlersForTableQuery(MOCK_REPO_ORIGIN)]
+    }
+  }
+}`,...l.parameters?.docs?.source}}};p.parameters={...p.parameters,docs:{...p.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: \`SELECT * FROM \${MOCK_RELEASE_CARDS_TABLE_ID} WHERE isCurrentRelease = false\`,
+    initialLimit: 5,
+    cardConfiguration: {
+      type: RELEASE_CARD,
+      releaseCardConfig: {
+        cardSize: 'medium',
+        requestAccessPath: 'data access',
+        releaseMetadataConfig: releaseMetadataConfig,
+        statsConfig: statsConfig
+      }
+    }
+  },
+  loaders: [() => {
+    registerTableQueryResult({
+      sql: \`SELECT * FROM \${MOCK_RELEASE_CARDS_TABLE_ID} WHERE isCurrentRelease = false\`
+    }, mockPreviousReleaseCardsQueryResultBundle);
+  }],
+  parameters: {
+    stack: 'mock',
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/file/BI4y33EHA95onN8DourTNZ/Two-Projects?type=design&node-id=259-14622&mode=design&t=76oHvfvp9FWFtDSR-4'
+    },
+    msw: {
+      handlers: [...getUserProfileHandlers(MOCK_REPO_ORIGIN), ...getEntityHandlers(MOCK_REPO_ORIGIN), ...getHandlersForTableQuery(MOCK_REPO_ORIGIN)]
+    }
+  }
+}`,...p.parameters?.docs?.source}}};const Hi=["GenericCard","EmptyResults","ObservationCard","FunderCard","DatasetCard","PublicationCard","ReleaseCardLarge","ReleaseCardLargeMock","ReleaseCardMediumMock"];export{s as DatasetCard,o as EmptyResults,i as FunderCard,t as GenericCard,a as ObservationCard,m as PublicationCard,n as ReleaseCardLarge,l as ReleaseCardLargeMock,p as ReleaseCardMediumMock,Hi as __namedExportsOrder,Bi as default};
