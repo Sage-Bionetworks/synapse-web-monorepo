@@ -54,6 +54,7 @@
     "@rjsf/validator-ajv8": "6.0.0-beta.10",
     "@sage-bionetworks/aridhia-client": "workspace:*",
     "@sage-bionetworks/markdown-it-container": "workspace:*",
+    "@sage-bionetworks/react-datasheet-grid": "4.11.5-sage.3",
     "@sage-bionetworks/synapse-client": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "@tanstack/query-core": "5.80.10",
