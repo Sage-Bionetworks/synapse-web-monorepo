@@ -29,6 +29,9 @@ root.render(
       logoHeaderConfig={logoHeaderConfig}
       logoFooterConfig={logoFooterConfig}
       navbarConfig={navbarConfig}
+      aridhiaConfig={{
+        apiBasePath: 'https://gateway.westus2.c-path-dev.aridhia.io',
+      }}
     />
   </StrictMode>,
 )

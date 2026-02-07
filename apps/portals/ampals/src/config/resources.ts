@@ -1,5 +1,6 @@
 import { ExternalAnalysisPlatform } from 'synapse-react-client/components/SynapseTable/export/ExternalAnalysisPlatformsConstants'
-export const datasetsSql = 'SELECT name,id,contributor,keywords,collection,source,sameAs,GEOSuperSeries,url,disease,individualCount,assay,studyType,dataType,dataSubtype,species,biospecimenSubtype,biospecimenType,CNSRegion,cellType,libraryLayout,duoCodes,subject,acknowledgementStatement,portalRelease,description,acknowledgmentStatement,datasetItemCount FROM syn66496326'
+export const datasetsSql =
+  'SELECT name,id,contributor,keywords,collection,source,sameAs,GEOSuperSeries,url,disease,individualCount,assay,studyType,dataType,dataSubtype,species,biospecimenSubtype,biospecimenType,CNSRegion,cellType,libraryLayout,duoCodes,subject,acknowledgementStatement,portalRelease,description,acknowledgmentStatement,datasetItemCount,dataset_code FROM syn66496326'
 export const datasetCollectionsSql =
   'SELECT * FROM syn67801190 ORDER BY ItemOrder'
 export const programsSql = 'SELECT * FROM syn64941043'

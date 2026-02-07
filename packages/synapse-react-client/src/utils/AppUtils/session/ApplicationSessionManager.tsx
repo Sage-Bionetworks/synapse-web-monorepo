@@ -174,6 +174,10 @@ export function ApplicationSessionManager(
         onTwoFactorAuthResetThroughSSO(twoFactorAuthError, twoFaResetToken)
       }
     },
+    onError: (err: unknown) => {
+      // Throw the error so it propagates to an error boundary
+      throw err
+    },
     isInitializingSession: !hasInitializedSession,
     token,
   })

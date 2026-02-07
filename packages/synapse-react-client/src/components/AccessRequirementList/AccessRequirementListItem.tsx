@@ -1,6 +1,7 @@
 import {
   ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   AccessRequirement,
+  LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   ManagedACTAccessRequirement,
   SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
@@ -11,6 +12,7 @@ import React from 'react'
 import UnmanagedACTAccessRequirementItem from './RequirementItem/UnmanagedACTAccessRequirementItem'
 import ManagedACTAccessRequirementItem from './ManagedACTAccessRequirementRequestFlow/ManagedACTAccessRequirementItem'
 import SelfSignAccessRequirementItem from './RequirementItem/SelfSignAccessRequirementItem'
+import LockAccessRequirementItem from './RequirementItem/LockAccessRequirementItem'
 
 export type AccessRequirementListItemProps = {
   accessRequirement: AccessRequirement
@@ -58,11 +60,13 @@ export function AccessRequirementListItem(
           }}
         />
       )
+    case LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
+      return <LockAccessRequirementItem />
     // case not supported yet
     default:
       console.warn(
         'Unsupported access requirement type:',
-        accessRequirement.concreteType,
+        (accessRequirement as AccessRequirement).concreteType,
       )
       return <></>
   }

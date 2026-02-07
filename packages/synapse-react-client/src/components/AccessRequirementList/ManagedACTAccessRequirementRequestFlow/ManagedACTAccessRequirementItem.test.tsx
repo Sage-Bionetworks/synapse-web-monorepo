@@ -153,6 +153,13 @@ const revokedStatus: AccessRequirementStatus = {
   },
 }
 
+const approvedWithoutSubmissionStatus: AccessRequirementStatus = {
+  ...noSubmissionStatus,
+  isApproved: true,
+  // No currentSubmissionStatus - this can happen when approval was granted
+  // through other means (back door direct ACT approval?)
+}
+
 async function testWikiToggle() {
   expect(screen.queryByText(mockRenderedMarkdown)).not.toBeInTheDocument()
 
@@ -231,6 +238,36 @@ describe('ManagedACTAccessRequirementItem', () => {
 
     it('Request can be updated', async () => {
       await screen.findByText('Your data access request has been approved.')
+      const button = await screen.findByRole('button', {
+        name: 'Update Request',
+      })
+      await userEvent.click(button)
+      expect(mockOnRequestAccess).toHaveBeenCalled()
+    })
+
+    it('Wiki is hidden and can be shown', async () => {
+      await testWikiToggle()
+    })
+  })
+
+  describe('Access is approved without active submission', () => {
+    beforeEach(async () => {
+      mockGetAccessRequirementStatus.mockResolvedValue(
+        approvedWithoutSubmissionStatus,
+      )
+      await renderComponent(defaultProps)
+    })
+
+    it('Shows approved message and complete status', async () => {
+      await screen.findByText('Your data access request has been approved.')
+      // Verify the status icon shows complete (green checkmark) not locked (yellow lock)
+      const checkmark = await screen.findByTestId(
+        'AccessApprovalCheckMark-COMPLETE',
+      )
+      expect(checkmark).toBeInTheDocument()
+    })
+
+    it('Request can be updated', async () => {
       const button = await screen.findByRole('button', {
         name: 'Update Request',
       })

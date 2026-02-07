@@ -4,8 +4,10 @@ import CookiesNotification from 'synapse-react-client/components/CookiesNotifica
 import { SynapseErrorBoundary } from 'synapse-react-client/components/error/ErrorBanner'
 import { SynapseToastContainer } from 'synapse-react-client/components/ToastMessage'
 import AppInitializer from './components/AppInitializer'
+import { AridhiaIntegration } from './components/AridhiaIntegration'
 import Footer from './components/Footer'
 import Navbar from './components/navbar/Navbar'
+import { usePortalContext } from './components/PortalContext'
 import { useDocumentTitleFromRoutes } from './utils/useDocumentTitleFromRoutes'
 
 export type AppProps = PropsWithChildren<{
@@ -16,18 +18,31 @@ export type AppProps = PropsWithChildren<{
 export default function App(props: AppProps) {
   const { requireAuthentication } = props
   useDocumentTitleFromRoutes()
+  const { aridhiaConfig } = usePortalContext()
+
+  const content = (
+    <>
+      <SynapseToastContainer />
+      <Navbar />
+      <CookiesNotification />
+      <main className="main">
+        {props.children}
+        <Outlet />
+      </main>
+      <Footer />
+    </>
+  )
 
   return (
     <SynapseErrorBoundary>
       <AppInitializer requireAuthentication={requireAuthentication}>
-        <SynapseToastContainer />
-        <Navbar />
-        <CookiesNotification />
-        <main className="main">
-          {props.children}
-          <Outlet />
-        </main>
-        <Footer />
+        {aridhiaConfig?.apiBasePath ? (
+          <AridhiaIntegration apiBasePath={aridhiaConfig.apiBasePath}>
+            {content}
+          </AridhiaIntegration>
+        ) : (
+          content
+        )}
       </AppInitializer>
     </SynapseErrorBoundary>
   )

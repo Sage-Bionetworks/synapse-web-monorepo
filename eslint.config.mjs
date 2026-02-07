@@ -52,6 +52,7 @@ export default tseslint.config(
           // https://github.com/typescript-eslint/typescript-eslint/issues/9739
           allowDefaultProject: [
             ...allProjectDirs.map(dir => `${dir}/*.ts`),
+            ...allProjectDirs.map(dir => `${dir}/*.test.ts`),
             `packages/synapse-react-client/.storybook/*.ts`,
             `packages/synapse-react-client/.storybook/*.tsx`,
           ],
@@ -121,6 +122,7 @@ export default tseslint.config(
     ignores: [
       '.nx/',
       '**/generated/',
+      '**/codegen/',
       '**/build/',
       '**/dist/',
       '**/playwright-report/',

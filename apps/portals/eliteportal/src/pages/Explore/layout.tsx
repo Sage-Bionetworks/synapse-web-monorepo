@@ -26,7 +26,7 @@ function ExploreLayout() {
         },
         {
           displayName: 'Cohort Builder',
-          path: 'Cohort Builder/Individuals',
+          path: 'Cohort Builder',
           OrientationBannerProps: {
             name: 'CohortBuilder',
             title: 'Getting Started With Cohort Builder',
@@ -38,6 +38,9 @@ function ExploreLayout() {
             //    href: '',
             // }
           },
+        },
+        {
+          path: 'Programs',
         },
         {
           path: 'Projects',

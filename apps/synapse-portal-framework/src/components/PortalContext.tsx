@@ -8,6 +8,10 @@ import { createContext, PropsWithChildren, useContext } from 'react'
 import { RouteObject } from 'react-router'
 import { NavbarConfig } from './navbar/Navbar'
 
+export type AridhiaConfig = {
+  apiBasePath?: string
+}
+
 export type PortalContextType = {
   portalName: string
   routeConfig: RouteObject[]
@@ -17,6 +21,7 @@ export type PortalContextType = {
   logoFooterConfig: LogoConfig
   navbarConfig: NavbarConfig
   fileEntityPageConfig?: FileEntityPageConfig
+  aridhiaConfig?: AridhiaConfig
 }
 
 export const PortalContext = createContext<PortalContextType | undefined>(
