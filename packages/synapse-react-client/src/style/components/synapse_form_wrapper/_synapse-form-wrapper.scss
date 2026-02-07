@@ -93,10 +93,7 @@
       background-color: var(--synapse-gray-light);
     }
     .file-table {
-      @include SrcMixins.calc(
-        margin-bottom,
-        '#{var(--synapse-space-unit)} * #{3}'
-      );
+      margin-bottom: calc(var(--synapse-space-unit) * 3);
       button.btn {
         color: var(--synapse-primary-action-color);
       }
@@ -226,7 +223,7 @@
   .step-exclude-directions {
     font-style: italic;
     vertical-align: middle;
-    @include SrcMixins.calc(height, '#{var(--synapse-space-unit)} * 2');
+    height: calc(var(--synapse-space-unit) * 2);
     button.btn-link {
       color: var(--synapse-primary-action-color);
       font-weight: 700;
