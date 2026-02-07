@@ -1,7 +1,9 @@
 @use 'sass:color';
 
 // -----------------------------------------------------------------------------
-// SCSS
+// Global SCSS variables, used throughout the app.
+// These variables are explicitly transformed using SCSS functions where CSS does not provide an alternative.
+// They are re-exported as CSS variables in ./_cssVariables.scss .
 // -----------------------------------------------------------------------------
 
 $primary-action-color: rgb(64, 123, 160) !default;

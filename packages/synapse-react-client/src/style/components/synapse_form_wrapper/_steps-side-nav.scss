@@ -126,7 +126,7 @@
       }
 
       li {
-        margin-left: var(--left-offset);
+        margin-left: calc(-1 * var(--left-offset));
 
         div.item {
           $b: 1.7rem;
