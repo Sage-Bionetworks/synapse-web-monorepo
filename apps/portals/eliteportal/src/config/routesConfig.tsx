@@ -108,6 +108,13 @@ const routes: RouteObject[] = [
               ),
           },
           {
+            path: 'Programs',
+            lazy: () =>
+              import('@/pages/Explore/programs').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
             path: 'Studies',
             lazy: () =>
               import('@/pages/Explore/studies').then(
@@ -139,6 +146,11 @@ const routes: RouteObject[] = [
         path: 'Explore/Projects/DetailsPage',
         lazy: () =>
           import('@/pages/ProjectDetailsPage').then(convertModuleToRouteObject),
+      },
+      {
+        path: 'Explore/Programs/DetailsPage',
+        lazy: () =>
+          import('@/pages/ProgramDetailsPage').then(convertModuleToRouteObject),
       },
       {
         path: 'Explore/Studies/DetailsPage',

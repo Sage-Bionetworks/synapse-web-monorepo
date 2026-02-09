@@ -4,11 +4,12 @@ import { SearchV2Props } from 'synapse-react-client/components/SynapseTable/Sear
 export const SYNAPSE_PORTAL_ID = '1003'
 
 // TODO: dataSql and dataOnStudiesPageSql should point to main file view table once available (instead of Cohort Builder data files Virtual Table)
-export const dataSql = 'SELECT * FROM syn52234677'
+export const dataSql = 'SELECT * FROM syn73452292'
 export const dataOnStudiesPageSql =
-  "SELECT * FROM syn52234677 WHERE `resourceType` = 'metadata'"
+  "SELECT * FROM syn73452292 WHERE `resourceType` = 'metadata'"
 export const peopleSql = 'SELECT * FROM syn51209684'
 export const projectsSql = 'SELECT * FROM syn51209786'
+export const programsSql = 'SELECT * FROM syn73580515'
 export const publicationsSql = 'SELECT * FROM syn51407023 ORDER BY "Year" DESC'
 export const topPublicationsSql =
   'SELECT * FROM syn51407023 WHERE preprint = \'no\' ORDER BY "publicationDate" DESC LIMIT 6'
@@ -43,4 +44,5 @@ export const goalsV2Table = 'syn64618674'
 export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = [
   'cavatica',
   'terra',
+  'adworkbench',
 ]

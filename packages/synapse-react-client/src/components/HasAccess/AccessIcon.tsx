@@ -5,6 +5,9 @@ export enum RestrictionUiType {
   Accessible = 'Accessible',
   AccessibleWithTerms = 'AccessibleWithTerms',
   AccessBlockedByRestriction = 'AccessBlockedByRestriction',
+  AccessBlockedByRestrictionWithPendingRequest = 'AccessBlockedByRestrictionWithPendingRequest',
+  AccessBlockedByRestrictionWithPendingExternalRequest = 'AccessBlockedByRestrictionWithPendingExternalRequest',
+  AccessBlockedByRestrictionWithPendingRDCADAPRequest = 'AccessBlockedByRestrictionWithPendingRDCADAPRequest',
   AccessBlockedByACL = 'AccessBlockedByACL',
   AccessBlockedToAnonymous = 'AccessBlockedToAnonymous',
   AccessibleExternalFileHandle = 'AccessibleExternalFileHandle',
@@ -24,6 +27,23 @@ const iconConfiguration: Record<
     color: theme => theme.palette.warning.main,
     tooltipText: 'You must request access to this restricted item.',
   },
+  [RestrictionUiType.AccessBlockedByRestrictionWithPendingRequest]: {
+    icon: 'accessPending',
+    color: theme => theme.palette.warning.main,
+    tooltipText: 'Your access request is pending approval.',
+  },
+  [RestrictionUiType.AccessBlockedByRestrictionWithPendingExternalRequest]: {
+    icon: 'accessPendingCloud',
+    color: theme => theme.palette.warning.main,
+    tooltipText:
+      'Your access request is pending approval from an external system.',
+  },
+  [RestrictionUiType.AccessBlockedByRestrictionWithPendingRDCADAPRequest]: {
+    icon: 'accessPendingCloud',
+    color: theme => theme.palette.warning.main,
+    tooltipText: 'Your access request is pending approval by RDCA-DAP.',
+  },
+
   [RestrictionUiType.AccessBlockedByACL]: {
     icon: 'accessClosed',
     color: theme => theme.palette.warning.main,

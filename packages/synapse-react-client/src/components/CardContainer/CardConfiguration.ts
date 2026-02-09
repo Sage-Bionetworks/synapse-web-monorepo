@@ -54,8 +54,8 @@ export type CommonCardProps = {
   secondaryLabelLimit?: number
   /** Optional configuration to configure the display/linking of the card's title */
   titleLinkConfig?: CardLink
-  /** Optional configuration to configure the display/linking of the card's CTA button */
-  ctaLinkConfig?: CTACardLink
+  /** Optional configuration to configure the display/linking of the card's CTA button(s). Accepts a single config or an array. */
+  ctaLinkConfig?: CTACardLink | CTACardLink[]
   /** Optional configuration to configure the display/linking of the card's secondary labels */
   labelLinkConfig?: LabelLinkConfig
   /** Optional configuration for the description */

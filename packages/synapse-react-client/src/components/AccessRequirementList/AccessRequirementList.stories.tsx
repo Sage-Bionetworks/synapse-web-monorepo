@@ -1,6 +1,7 @@
 import {
   mockAccessRequirements,
   mockACTAccessRequirement,
+  mockLockAccessRequirement,
   mockManagedACTAccessRequirement,
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
@@ -371,5 +372,37 @@ export const RejectedRequirement: Story = {
     entityId: mockFileEntity.id,
     isAuthenticated: true,
     renderAsModal: true,
+  },
+}
+
+export const LockAccessRequirement: Story = {
+  args: {
+    entityId: mockFileEntity.id,
+    isAuthenticated: true,
+    renderAsModal: true,
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        ...getEntityHandlers(MOCK_REPO_ORIGIN),
+        getCurrentUserCertifiedValidatedHandler(MOCK_REPO_ORIGIN, true, true),
+        ...getTwoFactorAuthStatusHandler(true),
+        ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
+        ...getAccessRequirementEntityBindingHandlers(
+          MOCK_REPO_ORIGIN,
+          undefined,
+          [mockLockAccessRequirement],
+        ),
+        ...getAccessRequirementStatusHandlers(MOCK_REPO_ORIGIN, [
+          {
+            accessRequirementId: mockLockAccessRequirement.id.toString(),
+            concreteType:
+              'org.sagebionetworks.repo.model.dataaccess.BasicAccessRequirementStatus',
+            isApproved: false,
+          },
+        ]),
+        ...getWikiHandlers(MOCK_REPO_ORIGIN),
+      ],
+    },
   },
 }

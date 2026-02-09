@@ -45,7 +45,7 @@ export type HeaderCardV2Props = {
   backgroundImage?: string
   /** Force values section to appear below main content */
   forceStackedLayout?: boolean
-  /** Optional CTA link to display below description */
+  /** Optional CTA link(s) to display below description. Accepts a single config or an array. */
   ctaLinkConfig?: GenericCardProps['ctaLinkConfig']
 }
 
@@ -169,35 +169,42 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
     priority: 100,
   })
 
-  // ctaLink stuff
-  let ctaLinkBox = null
-  if (ctaLinkConfig) {
-    ctaLinkBox = (
-      <SmartButton
-        variant="outlined"
-        href={ctaLinkConfig.href}
-        target={ctaLinkConfig.target}
-        size="large"
-        sx={{
-          color: '#FFF',
-          '&:hover': {
-            color: '#FFF',
-            textDecorationColor: '#FFF',
-            border: '2px solid white',
-          },
-          '&:focus': { color: '#FFF' },
-          textDecorationColor: '#FFF',
-          padding: '6px 24px',
-          marginTop: '22px',
-          border: '1px solid white',
-        }}
+  // ctaLink stuff - normalize to array
+  const ctaLinkConfigs = ctaLinkConfig
+    ? Array.isArray(ctaLinkConfig)
+      ? ctaLinkConfig
+      : [ctaLinkConfig]
+    : []
+  const ctaLinkBox =
+    ctaLinkConfigs.length > 0 ? (
+      <Box
+        sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', marginTop: '22px' }}
       >
-        {/* TODO: add an external open icon like https://materialui.co/icon/open-in-new */}
-        {/*<AddAlertTwoTone sx={{ width: '24px', height: '24px' }} />*/}
-        {ctaLinkConfig.text}
-      </SmartButton>
-    )
-  }
+        {ctaLinkConfigs.map((config, index) => (
+          <SmartButton
+            key={index}
+            variant="outlined"
+            href={config?.href}
+            target={config?.target}
+            size="large"
+            sx={{
+              color: '#FFF',
+              '&:hover': {
+                color: '#FFF',
+                textDecorationColor: '#FFF',
+                border: '2px solid white',
+              },
+              '&:focus': { color: '#FFF' },
+              textDecorationColor: '#FFF',
+              padding: '6px 24px',
+              border: '1px solid white',
+            }}
+          >
+            {config?.text}
+          </SmartButton>
+        ))}
+      </Box>
+    ) : null
 
   return (
     <Card

@@ -1,0 +1,308 @@
+/**
+ * Example usage of the Aridhia Client
+ *
+ * This file demonstrates how to use the generated Aridhia API client
+ * to interact with the FAIR and Workspaces APIs.
+ */
+
+import { Configuration } from './generated/runtime.js'
+import { AuthenticationApi } from './generated/apis/AuthenticationApi.js'
+import { WorkflowsApi } from './generated/apis/WorkflowsApi.js'
+import { DatasetsApi } from './generated/apis/DatasetsApi.js'
+import { RequestsApi } from './generated/apis/RequestsApi.js'
+import { WorkspaceApi } from './generated/apis/WorkspaceApi.js'
+
+// Example 1: Exchange third party token for Aridhia access token
+async function authenticateExample() {
+  // This example assumes you have a Synapse bearer token
+  const synapseToken = 'your-synapse-token'
+
+  const authApi = new AuthenticationApi(
+    new Configuration({
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io',
+      accessToken: synapseToken,
+    }),
+  )
+
+  const authResponse = await authApi.authenticatePost({
+    authenticationRequest: {
+      subject_token_type: 'string',
+      subject_token_issuer: 'string',
+      subject_token: 'string',
+    },
+  })
+
+  console.log('Aridhia Access Token:', authResponse.access_token)
+  return authResponse.access_token
+}
+
+// Example 2: List Workflows
+async function listWorkflowsExample(token: string) {
+  const workflowsApi = new WorkflowsApi(
+    new Configuration({
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      accessToken: token,
+    }),
+  )
+
+  const workflows = await workflowsApi.fairWorkflowsGet({
+    enabled: true,
+  })
+
+  console.log('Workflows:', workflows.items)
+  return workflows
+}
+
+// Example 3: Get a specific workflow
+async function getWorkflowExample(token: string, workflowCode: string) {
+  const workflowsApi = new WorkflowsApi(
+    new Configuration({
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      accessToken: token,
+    }),
+  )
+
+  const workflow = await workflowsApi.fairWorkflowsCodeGet({
+    code: workflowCode,
+  })
+
+  console.log('Workflow:', workflow)
+  return workflow
+}
+
+// Example 4: List Datasets (with filtering)
+async function listDatasetsExample(token: string) {
+  const datasetsApi = new DatasetsApi(
+    new Configuration({
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      accessToken: token,
+    }),
+  )
+
+  const datasets = await datasetsApi.fairDatasetsGet({
+    page: 1,
+    pageSize: 20,
+    requestable: true,
+  })
+
+  console.log('Datasets:', datasets.items)
+  return datasets
+}
+
+// Example 5: Get a specific dataset
+async function getDatasetExample(token: string, datasetCode: string) {
+  const datasetsApi = new DatasetsApi(
+    new Configuration({
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      accessToken: token,
+    }),
+  )
+
+  const dataset = await datasetsApi.fairDatasetsCodeGet({
+    code: datasetCode,
+  })
+
+  console.log('Dataset:', dataset)
+  return dataset
+}
+
+// Example 6: Get dataset settings
+async function getDatasetSettingsExample(token: string, datasetCode: string) {
+  const datasetsApi = new DatasetsApi(
+    new Configuration({
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      accessToken: token,
+    }),
+  )
+
+  const settings = await datasetsApi.fairDatasetsCodeSettingsGet({
+    code: datasetCode,
+  })
+
+  console.log('Dataset Settings:', settings)
+  return settings
+}
+
+// Example 7: Create a new request
+async function createRequestExample(token: string) {
+  const requestsApi = new RequestsApi(
+    new Configuration({
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      accessToken: token,
+    }),
+  )
+
+  const newRequest = await requestsApi.fairRequestsPost({
+    requestPost: {
+      name: 'My Data Access Request',
+      transfer_type: 'clear',
+      terms: true,
+      fields: {
+        project_name: 'Research Project',
+        project_description: 'Description of research',
+        purpose: 'Research purposes',
+      },
+    },
+  })
+
+  console.log('Created Request:', newRequest)
+  return newRequest
+}
+
+// Example 8: List all requests
+async function listRequestsExample(token: string) {
+  const requestsApi = new RequestsApi(
+    new Configuration({
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      accessToken: token,
+    }),
+  )
+
+  const requests = await requestsApi.fairRequestsGet({
+    page: 1,
+    pageSize: 20,
+  })
+
+  console.log('Requests:', requests.items)
+  return requests
+}
+
+// Example 9: Get a specific request
+async function getRequestExample(token: string, requestCode: string) {
+  const requestsApi = new RequestsApi(
+    new Configuration({
+      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      accessToken: token,
+    }),
+  )
+
+  const request = await requestsApi.fairRequestsCodeGet({
+    code: requestCode,
+  })
+
+  console.log('Request:', request)
+  return request
+}
+
+// Example 10: Search workspaces
+async function searchWorkspacesExample(token: string) {
+  const workspaceApi = new WorkspaceApi(
+    new Configuration({
+      basePath: 'https://workspaces.westus2.c-path-dev.aridhia.io',
+      accessToken: token,
+    }),
+  )
+
+  const workspaces = await workspaceApi.workspaceAdminWorkspaceSearchPost({
+    workspaceSearchRequest: {
+      query: 'my-workspace',
+    },
+  })
+
+  console.log('Workspaces:', workspaces)
+  return workspaces
+}
+
+// Example 11: Get workspace request form definition
+async function getWorkspaceFormExample(token: string) {
+  const workspaceApi = new WorkspaceApi(
+    new Configuration({
+      basePath: 'https://workspaces.westus2.c-path-dev.aridhia.io',
+      accessToken: token,
+    }),
+  )
+
+  const formDefinition =
+    await workspaceApi.workspaceAdminFormDefinitionWorkspaceRequestGet()
+
+  console.log('Form Definition:', formDefinition)
+  return formDefinition
+}
+
+// Example 12: Create a new workspace
+async function createWorkspaceExample(token: string) {
+  const workspaceApi = new WorkspaceApi(
+    new Configuration({
+      basePath: 'https://workspaces.westus2.c-path-dev.aridhia.io',
+      accessToken: token,
+    }),
+  )
+
+  const workspace = await workspaceApi.workspaceAdminWorkspacePost({
+    workspaceCreateRequest: {
+      name: 'My Research Workspace',
+      description: 'Workspace for data analysis',
+    },
+  })
+
+  console.log('Created Workspace:', workspace)
+  return workspace
+}
+
+// Example 13: Get upload token for a workspace
+async function getUploadTokenExample(token: string, workspaceUuid: string) {
+  const workspaceApi = new WorkspaceApi(
+    new Configuration({
+      basePath: 'https://workspaces.westus2.c-path-dev.aridhia.io',
+      accessToken: token,
+    }),
+  )
+
+  const uploadToken =
+    await workspaceApi.workspaceAdminWorkspaceUuidUploadTokenPost({
+      uuid: workspaceUuid,
+    })
+
+  console.log('Upload Token:', uploadToken)
+  return uploadToken
+}
+
+// Full workflow example
+async function fullWorkflowExample() {
+  try {
+    // Step 1: Authenticate
+    const token = await authenticateExample()
+
+    // Step 2: List available workflows
+    await listWorkflowsExample(token!)
+
+    // Step 3: List requestable datasets
+    const datasets = await listDatasetsExample(token!)
+
+    // Step 4: Get dataset settings for a specific dataset
+    if (datasets.items && datasets.items.length > 0) {
+      const datasetCode = datasets.items[0].code!
+      await getDatasetSettingsExample(token!, datasetCode)
+    }
+
+    // Step 5: Create a data access request
+    const request = await createRequestExample(token!)
+
+    // Step 6: Check request status
+    if (request.code) {
+      await getRequestExample(token!, request.code)
+    }
+
+    // Step 7: Search for workspaces
+    await searchWorkspacesExample(token!)
+  } catch (error) {
+    console.error('Error in workflow:', error)
+  }
+}
+
+export {
+  authenticateExample,
+  listWorkflowsExample,
+  getWorkflowExample,
+  listDatasetsExample,
+  getDatasetExample,
+  getDatasetSettingsExample,
+  createRequestExample,
+  listRequestsExample,
+  getRequestExample,
+  searchWorkspacesExample,
+  getWorkspaceFormExample,
+  createWorkspaceExample,
+  getUploadTokenExample,
+  fullWorkflowExample,
+}

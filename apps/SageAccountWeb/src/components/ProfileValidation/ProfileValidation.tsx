@@ -37,10 +37,10 @@ import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseCon
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 
 const IDENTITY_ATTESTATION_TEMPLATE_DOCUMENT_LINK =
-  'https://help.synapse.org/__attachments/2007072795/signing_official.doc?inst-v=77bba77d-449d-4402-a8bb-6895820b38a9'
+  'https://docs.synapse.org/__attachments/a_0e25a19df7aba279fafe5d7c82f58ac249857e91858a599a51a4abbe6b9ae3e3/signing_official.doc?cb=6e5bee79a4f557fcfeb54f5352ef5969'
 
 const NOTARIZED_LETTER_TEMPLATE_DOCUMENT_LINK =
-  'https://help.synapse.org/__attachments/2007072795/notarized_letter.doc?inst-v=77bba77d-449d-4402-a8bb-6895820b38a9'
+  'https://docs.synapse.org/__attachments/a_308df8654f4bd6b32eaba979252133cd6e0eb571a29c2e181900c7203914321f/notarized_letter.doc?cb=2322b7fdd04da7d57f8e0f1711d774da'
 
 const STEP_CONTENT = [
   {
