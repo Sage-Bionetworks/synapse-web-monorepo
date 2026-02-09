@@ -58,9 +58,15 @@ Some notes:
 
 We use CSS variables for runtime theming across the monorepo.
 
+### Rules for Migration
+
+Use CSS variables where ever possible.Certain Sass-specific features require values to be known at compile-time. Functions like color.adjust, color.mix, or color.change cannot process var() functions. var() functions also cannot be used within @media declarations.
+
+If a value is used in multiple components (e.g., brand colors), define it in the global \_cssVariables.scss file. If specific to a component, you can define it locally within that component's selector.
+
 ### Naming Convention
 
-CSS variables in the synapse-web-monorepo follow the pattern: `--synapse-{name}`:
+Global CSS variables in the synapse-web-monorepo follow the pattern: `--synapse-{name}`:
 
 | Category | Example                                |
 | -------- | -------------------------------------- |
