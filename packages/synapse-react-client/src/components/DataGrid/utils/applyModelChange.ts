@@ -90,9 +90,9 @@ export function applyModelChange(
       break
     }
     case 'SET_SELECTION': {
-      if (!model.api.val().get().asObj().has('selection')) {
+      if (!model.api.obj().has('selection')) {
         // Create if not exists
-        model.api.val().get().asObj().add(['selection'], s.obj({}))
+        model.api.obj().add(['selection'], s.obj({}))
       }
       model.api
         .obj(['selection'])

@@ -20,15 +20,13 @@ type SelectionMap = Record<
 >
 const selectionSchema = s.obj<SelectionMap, SelectionMap>({})
 
-export const gridSchema = s.val(
-  s.obj({
-    doc_version: s.con('0.1.0'),
-    columnNames: s.vec(s.con('')),
-    columnOrder: s.arr([]),
-    selection: selectionSchema,
-    rows: s.arr<typeof gridRowSchema>([]),
-  }),
-)
+export const gridSchema = s.obj({
+  doc_version: s.con('0.1.0'),
+  columnNames: s.vec(s.con('')),
+  columnOrder: s.arr([]),
+  selection: selectionSchema,
+  rows: s.arr<typeof gridRowSchema>([]),
+})
 
 export type CrdtId = {
   rep: number

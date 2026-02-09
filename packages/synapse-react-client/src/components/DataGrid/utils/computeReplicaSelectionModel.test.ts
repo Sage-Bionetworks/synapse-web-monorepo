@@ -193,7 +193,7 @@ describe('computeReplicaSelectionModel', () => {
         seq: columnChunk[0].id.time + columnChunk[1],
       },
     ])
-    expect(result.columnSelection).toEqual([{ rep: sid, seq: 18 }])
+    expect(result.columnSelection).toEqual([{ rep: sid, seq: 16 }])
   })
 
   it('handles a select all columns selection', () => {
