@@ -186,15 +186,16 @@ export class DataGridWebSocket {
     // TODO: Support for raw patch arrays can be removed once PLFM-9398 is safely released to production
     const encodedPatch = Array.isArray(payload) ? payload : payload.body
     try {
+      const patch = decode(encodedPatch)
+      console.debug('Applying patch from server:', patch)
       if (!this.model) {
-        this.model = Model.create(undefined, 0).fork(
+        this.model = Model.fromPatches([patch]).fork(
           this.replicaId,
         ) as unknown as GridModel
         this.onModelCreate(this.model)
+      } else {
+        this.model.applyPatch(patch)
       }
-      const patch = decode(encodedPatch)
-      console.debug('Applying patch from server:', patch)
-      this.model.applyPatch(patch)
       this.sendClockSync()
     } catch (err) {
       console.error('Failed to apply patch or send clock:', err)
