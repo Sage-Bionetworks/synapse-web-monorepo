@@ -1,0 +1,25 @@
+{
+  "extends": "../../shared/tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": ".",
+    "outDir": "dist",
+    "jsx": "react",
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "importHelpers": false,
+    "strict": false,
+    "types": ["vitest/globals", "react"]
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "example",
+    "website",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "tests"
+  ]
+}
