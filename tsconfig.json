@@ -27,7 +27,6 @@
     { "path": "./packages/markdown-it-container" },
     { "path": "./packages/markdown-it-synapse" },
     { "path": "./packages/markdown-it-synapse-table" },
-    { "path": "./packages/react-datasheet-grid" },
     { "path": "./packages/synapse-client" },
     { "path": "./packages/synapse-react-client" },
     { "path": "./packages/synapse-types" },
