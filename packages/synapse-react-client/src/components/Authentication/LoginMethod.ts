@@ -26,7 +26,7 @@ export function getLoginMethodFriendlyName(loginMethod: LoginMethod) {
     case LOGIN_METHOD_EMAIL:
       return 'your email'
     case LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS:
-      return 'Sage Bionetworks'
+      return 'Sage Bionetworks (Realm)'
     default:
       return 'unknown login method'
   }

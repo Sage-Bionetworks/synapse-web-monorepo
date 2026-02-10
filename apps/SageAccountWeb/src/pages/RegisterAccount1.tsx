@@ -14,6 +14,7 @@ import {
 } from '@mui/material'
 import {
   AliasType,
+  FeatureFlagEnum,
   isMembershipInvtnSignedToken,
 } from '@sage-bionetworks/synapse-types'
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react'
@@ -45,6 +46,7 @@ import LastLoginInfo, {
 import RegisterPageLogoutPrompt from 'synapse-react-client/components/RegisterPageLogoutPrompt/RegisterPageLogoutPrompt'
 import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
 import { generateCsrfToken } from 'synapse-react-client/utils/functions/generateCsrfToken'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/featureflags/useGetFeatureFlag'
 
 export enum Pages {
   CHOOSE_REGISTRATION,
@@ -99,6 +101,9 @@ const RegisterAccount1 = (): React.ReactNode => {
     string | null
   >(null)
   const { appId: sourceAppId, friendlyName: sourceAppName } = useSourceApp()
+  const showSageBionetworksIdp = useGetFeatureFlag(
+    FeatureFlagEnum.SAGE_BIONETWORKS_IDP,
+  )
   const appId = useSourceAppId()
   const isArcusApp = appId === ARCUS_SOURCE_APP_ID
   const [page, setPage] = useState(Pages.CHOOSE_REGISTRATION)
@@ -299,8 +304,7 @@ const RegisterAccount1 = (): React.ReactNode => {
                         >
                           Create account with your email
                         </Button>
-                        {sourceAppId ===
-                          SynapseConstants.SAGE_BIONETWORKS_SOURCE_APP_ID && (
+                        {showSageBionetworksIdp && (
                           <Button
                             onClick={() => {
                               setOAuthRegistrationProvider(
@@ -312,7 +316,7 @@ const RegisterAccount1 = (): React.ReactNode => {
                             sx={chooseButtonSx}
                             variant="outlined"
                           >
-                            Create account with Sage Bionetworks IdP
+                            Create account with Sage Bionetworks (Realm)
                           </Button>
                         )}
                       </div>
