@@ -1,36 +1,37 @@
 @use '../abstracts/variables' as SRC;
-@use 'sass:color';
 @use 'sass:map';
 
-//Variables
-$baseline-grid: 21px;
-$text-size-base: 16px;
-$text-size-title: 18px;
-$color-divider: #dddddf;
-$color-gray-background: #f9f9f9;
-$color-chicklet-base: #3c4a63;
-$text-color-base: #515359;
-$text-color-lighter: #898989;
+.SRC-font-size-base,
+.SRC-portalCard {
+  // Variables
+  --baseline-grid: 21px;
+  --text-size-base: 16px;
+  --text-size-title: 18px;
+  --color-divider: #dddddf;
+  --color-gray-background: #f9f9f9;
+  --text-color-base: #515359;
+  --text-color-lighter: #898989;
+}
 
 .SRC-font-size-base {
-  font-size: $text-size-base;
+  font-size: var(--text-size-base);
 }
 
 .SRC-portalCard {
   display: block;
   font-family: 'DM Sans', sans-serif;
-  font-size: $text-size-base;
-  line-height: $baseline-grid;
+  font-size: var(--text-size-base);
+  line-height: var(--baseline-grid);
 
-  border: 1px solid $color-divider;
+  border: 1px solid var(--color-divider);
   margin-top: 30px;
   margin-bottom: 30px;
 
   // default (non-header styles)
-  color: $text-color-base;
+  color: var(--text-color-base);
   .SRC-type,
   .SRC-cardThumbnail {
-    color: $text-color-lighter;
+    color: var(--text-color-lighter);
   }
   .SRC-cardThumbnail {
     width: 15%;
@@ -45,14 +46,14 @@ $text-color-lighter: #898989;
     }
   }
   .SRC-cardMetadata {
-    background-color: $color-gray-background;
+    background-color: var(--color-gray-background);
   }
 
   &.SRC-portalCardHeader {
     color: white;
     margin-top: 0px;
     margin-bottom: 0px;
-    background: SRC.$primary-action-color;
+    background: var(--synapse-primary-action-color);
     @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
       padding-top: 40px;
     }
@@ -65,7 +66,7 @@ $text-color-lighter: #898989;
     .SRC-cardThumbnail {
       margin-top: unset;
       margin-bottom: unset;
-      padding-top: $baseline-grid;
+      padding-top: var(--baseline-grid);
       color: inherit;
       img,
       svg {
@@ -83,10 +84,10 @@ $text-color-lighter: #898989;
       height: 24px;
 
       &:hover {
-        background-color: map.get(SRC.$primary-color-palette, 700);
+        background-color: var(--synapse-primary-700);
       }
       &:active {
-        background-color: map.get(SRC.$primary-color-palette, 800);
+        background-color: var(--synapse-primary-800);
       }
     }
     .SRC-cardMetadata .SRC-row-label {
@@ -137,9 +138,9 @@ $text-color-lighter: #898989;
   }
 
   h3 {
-    margin: $baseline-grid, 0, $baseline-grid * 0.5, 0 !important;
+    margin: var(--baseline-grid) 0 calc(var(--baseline-grid) * 0.5) 0 !important;
     padding: 0;
-    font-size: $text-size-title !important;
+    font-size: var(--text-size-title) !important;
     line-height: 150%;
     a {
       margin: 0;
@@ -176,7 +177,7 @@ $text-color-lighter: #898989;
     }
     > div {
       // icon label
-      margin-top: $baseline-grid * 0.5;
+      margin-top: calc(var(--baseline-grid) * 0.5);
       text-align: center;
     }
   }
@@ -208,8 +209,8 @@ $text-color-lighter: #898989;
   .SRC-cardContent {
     padding-left: 0px;
     padding-right: 4%;
-    padding-top: $baseline-grid;
-    margin-bottom: $baseline-grid;
+    padding-top: var(--baseline-grid);
+    margin-bottom: var(--baseline-grid);
     max-width: 850px;
     overflow-x: hidden;
     &.SRC-dataset {
@@ -218,13 +219,17 @@ $text-color-lighter: #898989;
 
     .SRC-author {
       font-style: italic;
-      padding-bottom: $baseline-grid * 0.5;
+      padding-bottom: calc(var(--baseline-grid) * 0.5);
     }
 
     .SRC-cardAnnotations {
-      margin: ($baseline-grid * 0.5) 0;
+      margin: calc(var(--baseline-grid) * 0.5) 0;
       span {
-        background: color.change(SRC.$secondary-action-color, $alpha: 0.05);
+        background: color-mix(
+          in srgb,
+          var(--synapse-secondary-action-color) 5%,
+          transparent
+        );
         display: inline-block;
         padding: 2px 15px 4px 15px;
         margin: 0 10px 5px 0;
@@ -250,8 +255,8 @@ $text-color-lighter: #898989;
 
   .SRC-cardMetadata {
     display: block;
-    padding-top: $baseline-grid;
-    padding-bottom: $baseline-grid;
+    padding-top: var(--baseline-grid);
+    padding-bottom: var(--baseline-grid);
     > * {
       margin-left: 15px;
     }
@@ -273,7 +278,7 @@ $text-color-lighter: #898989;
     }
     .SRC-row-label {
       white-space: nowrap;
-      color: $text-color-lighter;
+      color: var(--text-color-lighter);
       text-transform: uppercase;
       margin-right: 40px;
     }
@@ -304,7 +309,7 @@ $text-color-lighter: #898989;
       min-width: 0;
     }
     .SRC-row-data {
-      padding-right: $baseline-grid * 2;
+      padding-right: calc(var(--baseline-grid) * 2);
     }
   }
 
@@ -319,15 +324,16 @@ $text-color-lighter: #898989;
     .SRC-cardContent {
       max-width: 100%;
       width: 90% !important;
-      margin-left: $baseline-grid * 2;
+      margin-left: calc(var(--baseline-grid) * 2);
       .SRC-website a {
         display: inline-block;
-        font-size: $text-size-base;
-        padding-bottom: $baseline-grid * 0.5;
+        font-size: var(--text-size-base);
+        padding-bottom: calc(var(--baseline-grid) * 0.5);
       }
     }
     .SRC-cardAction {
-      margin: $baseline-grid 0 $baseline-grid $baseline-grid * 2;
+      margin: var(--baseline-grid) 0 var(--baseline-grid)
+        calc(var(--baseline-grid) * 2);
       a {
         display: inline-flex;
         padding: 5px 20px;
@@ -340,7 +346,7 @@ $text-color-lighter: #898989;
 
   &.SRC-typeTool {
     .SRC-cardAction {
-      margin: $baseline-grid 0 $baseline-grid 15%;
+      margin: var(--baseline-grid) 0 var(--baseline-grid) 15%;
     }
   }
 }

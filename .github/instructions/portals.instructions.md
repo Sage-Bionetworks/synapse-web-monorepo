@@ -172,3 +172,22 @@ Example `_variable_overrides.scss`:
   $header-url: 'config/style/molecule-back.svg'
 );
 ```
+
+### CSS Variables
+
+| File                 | Purpose               |
+| -------------------- | --------------------- |
+| `_variable.scss`     | Global SCSS variables |
+| `_cssVariables.scss` | Global CSS variables  |
+
+CSS variables can be scoped to any selector. They are only available to that specific element and its children.
+
+Example entity-finder.scss`:
+
+```scss
+.EntityFinder {
+  --entity-finder-height: 500px;
+  --entity-finder-splitter-width: 12px;
+  /* ... other variables ... */
+}
+```

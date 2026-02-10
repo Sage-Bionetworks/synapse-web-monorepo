@@ -1,21 +1,21 @@
-@use '../../abstracts/variables' as SrcVars;
 @use '../../abstracts/mixins' as SrcMixins;
 
 /* --- Steps Left Nav ---*/
 .json-forms-menu {
   // top level menu
-  $item-height: 3.6rem;
+  --item-height: 3.6rem;
+  --left-offset: 2.3rem;
   $left-offset: 2.3rem;
   ul {
     position: relative;
     list-style-type: none;
     padding: 0px;
     margin: 0px;
-    background-color: SrcVars.$gray-light;
+    background-color: var(--synapse-gray-light);
 
     li {
-      min-height: $item-height;
-      line-height: $item-height;
+      min-height: var(--item-height);
+      line-height: var(--item-height);
       text-align: left;
       position: relative;
       font-weight: bold;
@@ -27,13 +27,13 @@
     }
 
     li div.pointed {
-      min-height: $item-height;
-      height: $item-height;
-      line-height: $item-height;
+      min-height: var(--item-height);
+      height: var(--item-height);
+      line-height: var(--item-height);
       text-align: left;
-      color: SrcVars.$primary-action-color;
-      background-color: SrcVars.$gray-dark;
-      border-left-color: SrcVars.$gray-dark;
+      color: var(--synapse-primary-action-color);
+      background-color: var(--synapse-gray-dark);
+      border-left-color: var(--synapse-gray-dark);
 
       .btn-link {
         color: white;
@@ -61,7 +61,7 @@
     }
 
     .btn-link {
-      color: SrcVars.$primary-action-color;
+      color: var(--synapse-primary-action-color);
       font-weight: bold;
       padding: 0;
       margin: 0;
@@ -75,23 +75,23 @@
     }
 
     .fa-check-circle {
-      color: SrcVars.$primary-action-color;
+      color: var(--synapse-primary-action-color);
     }
 
     .fa-circle {
       border-radius: 50%;
-      border: 1px solid SrcVars.$gray-dark;
-      color: SrcVars.$gray-light;
+      border: 1px solid var(--synapse-gray-dark);
+      color: var(--synapse-gray-light);
     }
 
     .static .fa-circle {
-      border: 1px solid SrcVars.$secondary-action-color;
-      color: SrcVars.$primary-action-color;
+      border: 1px solid var(--synapse-secondary-action-color);
+      color: var(--synapse-primary-action-color);
     }
 
     .fa-exclamation-circle {
-      color: SrcVars.$red-error;
-      background-color: SrcVars.$gray-light;
+      color: var(--synapse-red-error);
+      background-color: var(--synapse-gray-light);
       border-radius: 50%;
     }
 
@@ -111,7 +111,7 @@
     }
 
     ul {
-      margin-left: $left-offset;
+      margin-left: var(--left-offset);
 
       /* vertical line */
       &::before {
@@ -122,11 +122,11 @@
         position: absolute;
         top: 0;
         bottom: 0;
-        left: $left-offset;
+        left: var(--left-offset);
       }
 
       li {
-        margin-left: -$left-offset;
+        margin-left: calc(-1 * var(--left-offset));
 
         div.item {
           $b: 1.7rem;

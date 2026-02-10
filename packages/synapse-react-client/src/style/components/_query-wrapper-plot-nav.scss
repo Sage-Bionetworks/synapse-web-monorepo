@@ -111,8 +111,8 @@
   }
 
   .TotalQueryResults.hasFilters {
-    background-color: map.get(SRC.$colors, 'gray-100');
-    border-bottom: 1px solid map.get(SRC.$colors, 'gray-300');
+    background-color: var(--synapse-gray-100);
+    border-bottom: 1px solid var(--synapse-gray-300);
     padding-left: 15px;
     padding-bottom: 13px;
   }
@@ -142,7 +142,7 @@
 }
 
 .TopLevelControls {
-  background-color: map.get(SRC.$colors, 'gray-200');
+  background-color: var(--synapse-gray-200);
   > * {
     display: flex;
     justify-content: space-between;

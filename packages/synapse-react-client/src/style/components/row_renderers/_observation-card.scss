@@ -1,17 +1,15 @@
-@use '../../abstracts/variables' as SRC;
-
 .ObservationCard {
   max-width: 850px;
 
   &__submitter {
-    background-color: SRC.$gray-light;
+    background-color: var(--synapse-gray-light);
     padding: 10px 25px;
   }
 
   &__time {
     padding: 10px 25px;
     svg {
-      color: SRC.$primary-action-color;
+      color: var(--synapse-primary-action-color);
       padding-bottom: 4px;
       margin-right: 5px;
     }
@@ -20,7 +18,7 @@
     padding: 10px 25px;
     max-width: 750px;
     font-size: 16px;
-    color: SRC.$gray-regular;
+    color: var(--synapse-gray-regular);
   }
   &__tags {
     display: flex;

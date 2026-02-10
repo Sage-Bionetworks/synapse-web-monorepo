@@ -1,10 +1,9 @@
-$terms-text-color: #ababac;
-$terms-accent-gray: #dcdcdc;
-$terms-margin: 20px;
-$terms-checkbox-dimension: 40px;
-$signatureLine-width: 420px;
-
 .terms-conditions {
+  --terms-text-color: #ababac;
+  --terms-accent-gray: #dcdcdc;
+  --terms-margin: 20px;
+  --terms-checkbox-dimension: 40px;
+
   font-size: 14px;
 
   .page-header {
@@ -13,7 +12,7 @@ $signatureLine-width: 420px;
   }
   label {
     font-weight: normal;
-    margin-bottom: $terms-margin;
+    margin-bottom: var(--terms-margin);
   }
   svg {
     vertical-align: middle;
@@ -25,8 +24,8 @@ $signatureLine-width: 420px;
     > li {
       display: flex;
       padding: 20px 0;
-      border: 1px solid $terms-accent-gray;
-      margin-bottom: $terms-margin;
+      border: 1px solid var(--terms-accent-gray);
+      margin-bottom: var(--terms-margin);
       opacity: 0.3;
 
       &.terms-enabled {
@@ -38,7 +37,7 @@ $signatureLine-width: 420px;
       .terms-desc {
         ul {
           list-style: disc;
-          margin-bottom: $terms-margin;
+          margin-bottom: var(--terms-margin);
         }
       }
       .terms-checkbox {
@@ -48,7 +47,7 @@ $signatureLine-width: 420px;
         flex: 0 0 150px;
       }
       .terms-desc-content {
-        margin-bottom: $terms-margin;
+        margin-bottom: var(--terms-margin);
       }
       .terms-show-desc {
         display: inline-block;
@@ -64,15 +63,15 @@ $signatureLine-width: 420px;
         }
       }
       .terms-circle {
-        width: $terms-checkbox-dimension;
-        height: $terms-checkbox-dimension;
-        border: 2px solid $terms-accent-gray;
+        width: var(--terms-checkbox-dimension);
+        height: var(--terms-checkbox-dimension);
+        border: 2px solid var(--terms-accent-gray);
         display: inline-block;
         border-radius: 50%;
         vertical-align: middle;
         margin-right: 14px;
         display: inline-block;
-        line-height: $terms-checkbox-dimension;
+        line-height: var(--terms-checkbox-dimension);
         cursor: pointer;
       }
       .terms-checked {
@@ -89,7 +88,7 @@ $signatureLine-width: 420px;
 
   .view-terms a,
   .view-terms a:active:focus {
-    background-color: $terms-accent-gray;
+    background-color: var(--terms-accent-gray);
     padding: 10px 30px;
     color: #1a1c29;
     font-weight: bold;

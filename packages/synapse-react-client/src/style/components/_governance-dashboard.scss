@@ -1,6 +1,4 @@
-@use '../abstracts/variables' as SRC;
 @use '../abstracts/mixins' as SrcMixins;
-@use 'sass:map';
 
 .ReviewerDashboard {
   .Breadcrumb {
@@ -37,14 +35,14 @@
   margin-top: 20px;
   .requester {
     font-style: italic;
-    color: map.get(SRC.$colors, 'gray-700') !important;
+    color: var(--synapse-gray-700) !important;
   }
   .InlineLabel,
   .expired {
-    color: map.get(SRC.$colors, 'gray-700');
+    color: var(--synapse-gray-700);
   }
   .non-expire {
-    color: map.get(SRC.$colors, 'gray-700');
+    color: var(--synapse-gray-700);
     font-style: italic;
   }
 }

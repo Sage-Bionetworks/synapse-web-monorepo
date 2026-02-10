@@ -29,7 +29,7 @@
     }
   }
   label {
-    color: SrcVars.$gray-formtext;
+    color: var(--synapse-gray-formtext);
     display: block;
     margin-bottom: 0;
   }
@@ -99,10 +99,7 @@ $login-wrapper-height: 560px;
     align-self: center;
   }
   .panel-right {
-    background-color: color.adjust(
-      SrcVars.$primary-action-color,
-      $alpha: -0.95
-    );
+    background-color: var(--synapse-primary-alpha-05);
     flex: 0 1 auto;
     padding: 0 60px;
     .panel-tagline {

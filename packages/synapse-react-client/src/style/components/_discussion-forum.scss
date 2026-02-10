@@ -1,6 +1,3 @@
-@use '../abstracts/variables' as SRC;
-@use 'sass:map';
-
 .ForumTable {
   &__top-level-control {
     margin-bottom: 16px;
@@ -31,7 +28,7 @@
 .reply-container {
   padding: 5px;
   margin-bottom: 5px;
-  background-color: SRC.$gray-light;
+  background-color: var(--synapse-gray-light);
   border: solid #ccc;
   border-width: 0.1em;
   border-radius: 0.4em;
