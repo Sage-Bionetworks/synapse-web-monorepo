@@ -1,12 +1,10 @@
 import SynapseClient from '@/synapse-client'
-import { OAUTH2_PROVIDERS } from '@/utils/SynapseConstants'
+import { ARCUS_SOURCE_APP_ID, OAUTH2_PROVIDERS } from '@/utils/SynapseConstants'
 import { OAuth2State } from '@/utils'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import AuthenticationMethodSelection, {
-  ARCUS_SOURCE_APP_ID,
-} from './AuthenticationMethodSelection'
+import AuthenticationMethodSelection from './AuthenticationMethodSelection'
 
 vi.mock('@/synapse-client', () => ({
   default: {

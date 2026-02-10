@@ -299,6 +299,22 @@ const RegisterAccount1 = (): React.ReactNode => {
                         >
                           Create account with your email
                         </Button>
+                        {sourceAppId ===
+                          SynapseConstants.SAGE_BIONETWORKS_SOURCE_APP_ID && (
+                          <Button
+                            onClick={() => {
+                              setOAuthRegistrationProvider(
+                                SynapseConstants.OAUTH2_PROVIDERS
+                                  .SAGE_BIONETWORKS,
+                              )
+                              setPage(Pages.OAUTH_REGISTRATION)
+                            }}
+                            sx={chooseButtonSx}
+                            variant="outlined"
+                          >
+                            Create account with Sage Bionetworks IdP
+                          </Button>
+                        )}
                       </div>
                       {lastLoginInfo && (
                         <Box

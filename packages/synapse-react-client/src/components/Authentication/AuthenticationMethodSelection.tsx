@@ -2,17 +2,18 @@ import SynapseClient from '@/synapse-client'
 import { OAuth2State, SynapseClientError } from '@/utils'
 import { generateCsrfToken } from '@/utils/functions/generateCsrfToken'
 import {
+  ARCUS_SOURCE_APP_ID,
   LOGIN_METHOD_EMAIL,
   LOGIN_METHOD_OAUTH2_ARCUS,
   LOGIN_METHOD_OAUTH2_GOOGLE,
   LOGIN_METHOD_OAUTH2_ORCID,
+  LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS,
   OAUTH2_PROVIDERS,
+  SAGE_BIONETWORKS_SOURCE_APP_ID,
 } from '@/utils/SynapseConstants'
 import { Box } from '@mui/material'
 import { MouseEvent } from 'react'
 import LoginMethodButton from './LoginMethodButton'
-
-export const ARCUS_SOURCE_APP_ID = 'arcusbio'
 
 type AuthenticationMethodSelectionProps = {
   ssoRedirectUrl?: string
@@ -87,6 +88,14 @@ export default function AuthenticationMethodSelection(
             iconName="email"
             onClick={onSelectUsernameAndPassword}
           />
+          {sourceAppId == SAGE_BIONETWORKS_SOURCE_APP_ID && (
+            <LoginMethodButton
+              loginMethod={LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS}
+              onClick={event => {
+                onSSOSignIn(event, OAUTH2_PROVIDERS.SAGE_BIONETWORKS)
+              }}
+            />
+          )}
         </>
       )}
       {showArcusSSOButtonOnly && (
