@@ -4,7 +4,9 @@ import { OAuth2State } from '@/utils'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import AuthenticationMethodSelection from './AuthenticationMethodSelection'
+import AuthenticationMethodSelection, {
+  ARCUS_SOURCE_APP_ID,
+} from './AuthenticationMethodSelection'
 
 vi.mock('@/synapse-client', () => ({
   default: {
@@ -45,11 +47,11 @@ describe('AuthenticationMethodSelection', () => {
     expect(onSelectUsernameAndPassword).toHaveBeenCalledTimes(1)
   })
 
-  it('shows only the Arcus SSO button when showArcusSSOButtonOnly is true', () => {
+  it('shows only the Arcus SSO button when sourceAppId is arcusbio', () => {
     render(
       <AuthenticationMethodSelection
         onSelectUsernameAndPassword={vi.fn()}
-        showArcusSSOButtonOnly={true}
+        sourceAppId={ARCUS_SOURCE_APP_ID}
       />,
     )
 
@@ -118,7 +120,7 @@ describe('AuthenticationMethodSelection', () => {
         onBeginOAuthSignIn={onBeginOAuthSignIn}
         onSelectUsernameAndPassword={vi.fn()}
         state={state}
-        showArcusSSOButtonOnly={true}
+        sourceAppId="arcusbio"
       />,
     )
 

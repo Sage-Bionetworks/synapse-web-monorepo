@@ -12,13 +12,15 @@ import { Box } from '@mui/material'
 import { MouseEvent } from 'react'
 import LoginMethodButton from './LoginMethodButton'
 
+export const ARCUS_SOURCE_APP_ID = 'arcusbio'
+
 type AuthenticationMethodSelectionProps = {
   ssoRedirectUrl?: string
   /* Invoked before redirecting to OAuth provider. Useful in portals where we may want to store the current URL to redirect back here. */
   onBeginOAuthSignIn?: () => void
   onSelectUsernameAndPassword: () => void
   state?: OAuth2State
-  showArcusSSOButtonOnly?: boolean
+  sourceAppId?: string
 }
 
 const csrfToken = generateCsrfToken()
@@ -36,8 +38,10 @@ export default function AuthenticationMethodSelection(
     ssoRedirectUrl,
     onSelectUsernameAndPassword,
     state,
-    showArcusSSOButtonOnly = false,
+    sourceAppId,
   } = props
+
+  const showArcusSSOButtonOnly = sourceAppId === ARCUS_SOURCE_APP_ID
 
   const stateWithCSRF: OAuth2State = { ...state, csrfToken }
 
