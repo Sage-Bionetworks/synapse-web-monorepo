@@ -106,6 +106,62 @@ describe('promiseWithRetry', () => {
     expect(fn).toHaveBeenCalledTimes(3)
   })
 
+  it('should cap exponential backoff with maxDelayMs', async () => {
+    const fn = vi
+      .fn()
+      .mockRejectedValueOnce(new RetryError('retry', 'cause1'))
+      .mockRejectedValueOnce(new RetryError('retry', 'cause2'))
+      .mockRejectedValueOnce(new RetryError('retry', 'cause3'))
+      .mockRejectedValueOnce(new RetryError('retry', 'cause4'))
+      .mockResolvedValue('success')
+
+    // delay 1000, backoff, maxDelay 3000 → delays are 1000, 2000, 3000, 3000
+    const resultPromise = promiseWithRetry(fn, 5, 1000, true, 3000)
+
+    expect(fn).toHaveBeenCalledTimes(1)
+
+    // First retry after 1000ms
+    await vi.advanceTimersByTimeAsync(1000)
+    expect(fn).toHaveBeenCalledTimes(2)
+
+    // Second retry after 2000ms (doubled)
+    await vi.advanceTimersByTimeAsync(2000)
+    expect(fn).toHaveBeenCalledTimes(3)
+
+    // Third retry after 3000ms (capped at maxDelayMs)
+    await vi.advanceTimersByTimeAsync(3000)
+    expect(fn).toHaveBeenCalledTimes(4)
+
+    // Fourth retry after 3000ms (still capped)
+    await vi.advanceTimersByTimeAsync(3000)
+    await resultPromise
+
+    expect(fn).toHaveBeenCalledTimes(5)
+  })
+
+  it('should not affect delay when maxDelayMs is above the current delay', async () => {
+    const fn = vi
+      .fn()
+      .mockRejectedValueOnce(new RetryError('retry', 'cause1'))
+      .mockRejectedValueOnce(new RetryError('retry', 'cause2'))
+      .mockResolvedValue('success')
+
+    // maxDelayMs of 10000 should have no effect when delays are 50 and 100
+    const resultPromise = promiseWithRetry(fn, 3, 50, true, 10000)
+
+    expect(fn).toHaveBeenCalledTimes(1)
+
+    // First retry after 50ms
+    await vi.advanceTimersByTimeAsync(50)
+    expect(fn).toHaveBeenCalledTimes(2)
+
+    // Second retry after 100ms (doubled, still under cap)
+    await vi.advanceTimersByTimeAsync(100)
+    await resultPromise
+
+    expect(fn).toHaveBeenCalledTimes(3)
+  })
+
   it('should not retry if retries is 0', async () => {
     const error = new RetryError('retry', 'cause')
     const fn = vi.fn().mockRejectedValue(error)

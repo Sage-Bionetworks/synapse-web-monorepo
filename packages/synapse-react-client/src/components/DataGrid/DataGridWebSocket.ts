@@ -20,7 +20,7 @@ import { type DebouncedFunc } from 'lodash-es'
 import { Decoder as SnapshotDecoder } from 'json-joy/lib/json-crdt/codec/indexed/binary/Decoder'
 import { decode as decodeCbor } from 'cbor2'
 import type { IndexedFields } from 'json-joy/lib/json-crdt/codec/indexed/binary'
-import { fetchWithRetry } from '@/utils/promise'
+import { fetchWithExponentialTimeout } from '@sage-bionetworks/synapse-client'
 
 type SynapseGridWebSocketMessagePayload =
   | CompactCodecPatch
@@ -326,7 +326,7 @@ export class DataGridWebSocket {
   private async fetchAndDecodeSnapshot(
     snapshotUrl: string,
   ): Promise<GridModel> {
-    const response = await fetchWithRetry(snapshotUrl)
+    const response = await fetchWithExponentialTimeout(snapshotUrl)
     const blob = await response.blob()
     const buffer = await blob.arrayBuffer()
     const decodedFromCbor = decodeCbor(new Uint8Array(buffer))

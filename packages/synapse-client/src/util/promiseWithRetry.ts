@@ -30,6 +30,7 @@ export class RetryError extends Error {
  * @param retries - Maximum number of retry attempts (0 means no retries, just one attempt)
  * @param delayMs - Delay in milliseconds between retry attempts
  * @param exponentialBackoff - If true, doubles the delay after each retry (default: false)
+ * @param maxDelayMs - If provided, caps the delay between retries to this value in milliseconds
  * @returns A promise that resolves with the result of `fn` on success
  * @throws {RetryError} If all retry attempts are exhausted and the last attempt throws a RetryError
  * @throws {Error} Immediately if `fn` throws any error that is not a RetryError
@@ -66,6 +67,7 @@ export async function promiseWithRetry<T>(
   retries: number,
   delayMs: number,
   exponentialBackoff = false,
+  maxDelayMs?: number,
 ): Promise<T> {
   let lastError: unknown
   let currentDelay = delayMs
@@ -81,6 +83,9 @@ export async function promiseWithRetry<T>(
 
         if (exponentialBackoff) {
           currentDelay *= 2
+        }
+        if (maxDelayMs !== undefined) {
+          currentDelay = Math.min(currentDelay, maxDelayMs)
         }
       } else {
         throw error

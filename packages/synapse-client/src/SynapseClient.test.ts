@@ -3,27 +3,25 @@ import { ErrorResponse } from './generated/index'
 import { FileEntity } from './generated/models/FileEntity'
 import { server } from './mocks/node'
 import { SynapseClient } from './SynapseClient'
-import { fetchResponseWithExponentialTimeout } from './util/fetchWithExponentialTimeout'
+import { synapseFetchWithRetry } from './util/synapseClientFetch'
 import { SynapseClientError } from './util/SynapseClientError'
 
-vi.mock('./util/fetchWithExponentialTimeout', async importOriginal => {
+vi.mock('./util/synapseClientFetch', async importOriginal => {
   const original = await importOriginal<
-    typeof import('./util/fetchWithExponentialTimeout')
+    typeof import('./util/synapseClientFetch')
   >()
   return {
     ...original,
-    fetchResponseWithExponentialTimeout: vi
+    synapseFetchWithRetry: vi
       .fn()
-      .mockImplementation(original.fetchResponseWithExponentialTimeout),
+      .mockImplementation(original.synapseFetchWithRetry),
   }
 })
 
-const fetchResponseWithExponentialTimeoutSpy = vi.mocked(
-  fetchResponseWithExponentialTimeout,
-)
+const synapseFetchWithRetrySpy = vi.mocked(synapseFetchWithRetry)
 
 describe('SynapseClient', () => {
-  it('Should use fetchWithExponentialTimeout as the default fetchApi', async () => {
+  it('Should use synapseFetchWithRetry as the default fetchApi', async () => {
     // Set up mock service worker
     const expectedResponse: FileEntity = {
       id: 'syn123',
@@ -43,7 +41,7 @@ describe('SynapseClient', () => {
     expect(actual).toEqual(expectedResponse)
 
     // verify fetchApi is used
-    expect(fetchResponseWithExponentialTimeoutSpy).toHaveBeenCalled()
+    expect(synapseFetchWithRetrySpy).toHaveBeenCalled()
   })
 
   it('allows overriding the base path', async () => {
@@ -67,7 +65,7 @@ describe('SynapseClient', () => {
     expect(actual).toEqual(expectedResponse)
 
     // verify fetchApi is used
-    expect(fetchResponseWithExponentialTimeoutSpy).toHaveBeenCalled()
+    expect(synapseFetchWithRetrySpy).toHaveBeenCalled()
   })
 
   it('Should throw SynapseClientError on a 400-level error', async () => {

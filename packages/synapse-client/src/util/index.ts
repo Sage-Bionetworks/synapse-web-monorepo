@@ -1,11 +1,10 @@
-import { NETWORK_UNAVAILABLE_MESSAGE } from './Constants'
-import { fetchWithExponentialTimeout } from './fetchWithExponentialTimeout'
-import { SynapseClientError } from './SynapseClientError'
-import { waitForAsyncResult } from './waitForAsyncResult'
-
+export { delay } from './delay'
 export {
   fetchWithExponentialTimeout,
-  NETWORK_UNAVAILABLE_MESSAGE,
-  SynapseClientError,
-  waitForAsyncResult,
-}
+  HttpFetchError,
+} from './fetchWithExponentialTimeout'
+export { promiseWithRetry, RetryError } from './promiseWithRetry'
+export { synapseClientFetch, synapseFetchWithRetry } from './synapseClientFetch'
+export { SynapseClientError } from './SynapseClientError'
+export { NETWORK_UNAVAILABLE_MESSAGE } from './Constants'
+export { waitForAsyncResult } from './waitForAsyncResult'
