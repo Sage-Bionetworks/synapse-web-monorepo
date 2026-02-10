@@ -15,7 +15,7 @@ describe('useCRDTModelView', () => {
     expect(result.current).toEqual({ foo: 'bar' })
 
     act(() => {
-      model.api.obj().set({ foo: 'baz' })
+      model.api.obj('').set({ foo: 'baz' })
     })
 
     await waitFor(() => expect(result.current).toEqual({ foo: 'baz' }))

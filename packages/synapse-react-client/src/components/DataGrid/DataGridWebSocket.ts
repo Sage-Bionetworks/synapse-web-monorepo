@@ -19,7 +19,8 @@ import throttle from 'lodash-es/throttle'
 import { type DebouncedFunc } from 'lodash-es'
 import { Decoder as SnapshotDecoder } from 'json-joy/lib/json-crdt/codec/indexed/binary/Decoder'
 import { decode as decodeCbor } from 'cbor2'
-import { IndexedFields } from 'json-joy/esm/json-crdt/codec/indexed/binary'
+import type { IndexedFields } from 'json-joy/lib/json-crdt/codec/indexed/binary'
+import { fetchWithRetry } from '@/utils/promise'
 
 type SynapseGridWebSocketMessagePayload =
   | CompactCodecPatch
@@ -173,18 +174,19 @@ export class DataGridWebSocket {
   ) {
     const payload = message.getPayload()
 
-    if (Array.isArray(payload) || payload.type === 'patch') {
+    if (Array.isArray(payload)) {
+      // TODO: Support for raw patch arrays can be removed once PLFM-9398 is safely released to production
       this.handlePatchPayload(payload)
+      return
+    }
+    if (payload.type === 'patch') {
+      this.handlePatchPayload(payload.body)
     } else if (payload.type === 'snapshot') {
-      this.handleSnapshotPayload(payload.body)
+      void this.handleSnapshotPayload(payload.body)
     }
   }
 
-  private handlePatchPayload(
-    payload: CompactCodecPatch | { type: 'patch'; body: CompactCodecPatch },
-  ) {
-    // TODO: Support for raw patch arrays can be removed once PLFM-9398 is safely released to production
-    const encodedPatch = Array.isArray(payload) ? payload : payload.body
+  private handlePatchPayload(encodedPatch: CompactCodecPatch) {
     try {
       const patch = decode(encodedPatch)
       console.debug('Applying patch from server:', patch)
@@ -202,17 +204,16 @@ export class DataGridWebSocket {
     }
   }
 
-  private handleSnapshotPayload(snapshotUrl: string) {
+  private async handleSnapshotPayload(snapshotUrl: string) {
     console.debug('Received snapshot URL from server:', snapshotUrl)
-    this.fetchAndDecodeSnapshot(snapshotUrl)
-      .then(decodedModel => {
-        this.model = decodedModel.fork(this.replicaId) as unknown as GridModel
-        this.onModelCreate(this.model)
-        this.sendClockSync()
-      })
-      .catch(err => {
-        throw new Error('Failed to fetch or decode snapshot', { cause: err })
-      })
+    try {
+      const decodedModel = await this.fetchAndDecodeSnapshot(snapshotUrl)
+      this.model = decodedModel.fork(this.replicaId) as unknown as GridModel
+      this.onModelCreate(this.model)
+      this.sendClockSync()
+    } catch (err) {
+      console.error('Failed to fetch or decode snapshot', err)
+    }
   }
 
   private handleResponseComplete() {
@@ -325,7 +326,7 @@ export class DataGridWebSocket {
   private async fetchAndDecodeSnapshot(
     snapshotUrl: string,
   ): Promise<GridModel> {
-    const response = await fetch(snapshotUrl)
+    const response = await fetchWithRetry(snapshotUrl)
     const blob = await response.blob()
     const buffer = await blob.arrayBuffer()
     const decodedFromCbor = decodeCbor(new Uint8Array(buffer))
