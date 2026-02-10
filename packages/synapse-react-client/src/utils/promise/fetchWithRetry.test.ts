@@ -2,23 +2,61 @@ import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { fetchWithRetry, FetchError } from './fetchWithRetry'
 import { RetryError } from './promiseWithRetry'
 
+vi.mock('./promiseWithRetry', async () => {
+  const actual = await vi.importActual('./promiseWithRetry')
+  return {
+    ...actual,
+    promiseWithRetry: vi.fn(),
+  }
+})
+
+import { promiseWithRetry } from './promiseWithRetry'
+
+const mockedPromiseWithRetry = vi.mocked(promiseWithRetry)
+
 describe('fetchWithRetry', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('should return the response if the fetch succeeds on the first attempt', async () => {
+  it('should return the response if the fetch succeeds', async () => {
     const mockResponse = new Response('{"data": "test"}', {
       status: 200,
       statusText: 'OK',
     })
-    const fetchMock = vi.fn().mockResolvedValue(mockResponse)
-    global.fetch = fetchMock
+
+    mockedPromiseWithRetry.mockImplementation(async fn => fn())
+    global.fetch = vi.fn().mockResolvedValue(mockResponse)
 
     const response = await fetchWithRetry('https://api.example.com/data')
 
     expect(response.status).toBe(200)
-    expect(fetchMock).toHaveBeenCalledTimes(1)
+    expect(mockedPromiseWithRetry).toHaveBeenCalledWith(
+      expect.any(Function),
+      3,
+      1000,
+      true,
+    )
+  })
+
+  it('should use custom retry options when provided', async () => {
+    const mockResponse = new Response('{"data": "test"}', { status: 200 })
+
+    mockedPromiseWithRetry.mockImplementation(async fn => fn())
+    global.fetch = vi.fn().mockResolvedValue(mockResponse)
+
+    await fetchWithRetry('https://api.example.com/data', undefined, {
+      retries: 5,
+      delayMs: 500,
+      exponentialBackoff: false,
+    })
+
+    expect(mockedPromiseWithRetry).toHaveBeenCalledWith(
+      expect.any(Function),
+      5,
+      500,
+      false,
+    )
   })
 
   describe('retryable status codes', () => {
@@ -29,35 +67,29 @@ describe('fetchWithRetry', () => {
       [502, 'Bad Gateway'],
       [503, 'Service Unavailable'],
       [504, 'Gateway Timeout'],
-    ])('should retry on status %i (%s)', async (statusCode, statusText) => {
-      const successResponse = new Response('{"data": "success"}', {
-        status: 200,
-      })
-      const errorResponse = new Response('error', {
-        status: statusCode,
-        statusText,
-      })
+    ])(
+      'should throw RetryError for status %i (%s)',
+      async (statusCode, statusText) => {
+        const errorResponse = new Response('error', {
+          status: statusCode,
+          statusText,
+        })
 
-      const fetchMock = vi
-        .fn()
-        .mockResolvedValueOnce(errorResponse)
-        .mockResolvedValueOnce(errorResponse)
-        .mockResolvedValue(successResponse)
+        mockedPromiseWithRetry.mockImplementation(async fn => fn())
+        global.fetch = vi.fn().mockResolvedValue(errorResponse)
 
-      global.fetch = fetchMock
+        await expect(
+          fetchWithRetry('https://api.example.com/data'),
+        ).rejects.toThrow(RetryError)
 
-      const response = await fetchWithRetry(
-        'https://api.example.com/data',
-        undefined,
-        {
-          retries: 3,
-          delayMs: 10,
-        },
-      )
+        const thrownError = await fetchWithRetry(
+          'https://api.example.com/data',
+        ).catch(e => e)
 
-      expect(response.status).toBe(200)
-      expect(fetchMock).toHaveBeenCalledTimes(3)
-    })
+        expect(thrownError).toBeInstanceOf(RetryError)
+        expect(thrownError.message).toBe(`HTTP ${statusCode}: ${statusText}`)
+      },
+    )
   })
 
   describe('non-retryable status codes', () => {
@@ -67,21 +99,31 @@ describe('fetchWithRetry', () => {
       [403, 'Forbidden'],
       [404, 'Not Found'],
       [422, 'Unprocessable Entity'],
-    ])('should not retry on status %i (%s)', async (statusCode, statusText) => {
-      const errorResponse = new Response('error', {
-        status: statusCode,
-        statusText,
-      })
+    ])(
+      'should throw FetchError for status %i (%s)',
+      async (statusCode, statusText) => {
+        const errorResponse = new Response('error', {
+          status: statusCode,
+          statusText,
+        })
 
-      const fetchMock = vi.fn().mockResolvedValue(errorResponse)
-      global.fetch = fetchMock
+        mockedPromiseWithRetry.mockImplementation(async fn => fn())
+        global.fetch = vi.fn().mockResolvedValue(errorResponse)
 
-      await expect(
-        fetchWithRetry('https://api.example.com/data'),
-      ).rejects.toThrow(FetchError)
+        await expect(
+          fetchWithRetry('https://api.example.com/data'),
+        ).rejects.toThrow(FetchError)
 
-      expect(fetchMock).toHaveBeenCalledTimes(1)
-    })
+        const thrownError = await fetchWithRetry(
+          'https://api.example.com/data',
+        ).catch(e => e)
+
+        expect(thrownError).toBeInstanceOf(FetchError)
+        expect(thrownError.status).toBe(statusCode)
+        expect(thrownError.message).toBe(`HTTP ${statusCode}: ${statusText}`)
+        expect(thrownError.response).toBe(errorResponse)
+      },
+    )
   })
 
   it('should throw FetchError for non-retryable errors', async () => {
@@ -90,6 +132,7 @@ describe('fetchWithRetry', () => {
       statusText: 'Not Found',
     })
 
+    mockedPromiseWithRetry.mockImplementation(async fn => fn())
     global.fetch = vi.fn().mockResolvedValue(errorResponse)
 
     try {
@@ -105,75 +148,12 @@ describe('fetchWithRetry', () => {
     }
   })
 
-  it('should throw RetryError when all retries are exhausted', async () => {
-    const errorResponse = new Response('Service Unavailable', {
-      status: 503,
-      statusText: 'Service Unavailable',
-    })
-
-    global.fetch = vi.fn().mockResolvedValue(errorResponse)
-
-    await expect(
-      fetchWithRetry('https://api.example.com/data', undefined, {
-        retries: 2,
-        delayMs: 10,
-      }),
-    ).rejects.toThrow(RetryError)
-
-    expect(global.fetch).toHaveBeenCalledTimes(3)
-  })
-
-  it('should use default retry options', async () => {
-    const successResponse = new Response('{"data": "success"}', {
-      status: 200,
-    })
-    const errorResponse = new Response('error', { status: 503 })
-
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(errorResponse)
-      .mockResolvedValue(successResponse)
-
-    global.fetch = fetchMock
-
-    const startTime = Date.now()
-    const response = await fetchWithRetry('https://api.example.com/data')
-    const endTime = Date.now()
-
-    expect(response.status).toBe(200)
-    expect(fetchMock).toHaveBeenCalledTimes(2)
-    expect(endTime - startTime).toBeGreaterThanOrEqual(1000)
-  })
-
-  it('should respect custom retry configuration', async () => {
-    const successResponse = new Response('{"data": "success"}', {
-      status: 200,
-    })
-    const errorResponse = new Response('error', { status: 503 })
-
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(errorResponse)
-      .mockResolvedValue(successResponse)
-
-    global.fetch = fetchMock
-
-    const startTime = Date.now()
-    await fetchWithRetry('https://api.example.com/data', undefined, {
-      retries: 5,
-      delayMs: 50,
-      exponentialBackoff: false,
-    })
-    const endTime = Date.now()
-
-    expect(endTime - startTime).toBeGreaterThanOrEqual(50)
-    expect(endTime - startTime).toBeLessThan(100)
-  })
-
   it('should pass fetch options correctly', async () => {
     const mockResponse = new Response('{"data": "test"}', { status: 200 })
     const fetchMock = vi.fn().mockResolvedValue(mockResponse)
     global.fetch = fetchMock
+
+    mockedPromiseWithRetry.mockImplementation(async fn => fn())
 
     const init: RequestInit = {
       method: 'POST',
@@ -191,6 +171,8 @@ describe('fetchWithRetry', () => {
     const fetchMock = vi.fn().mockResolvedValue(mockResponse)
     global.fetch = fetchMock
 
+    mockedPromiseWithRetry.mockImplementation(async fn => fn())
+
     const url = new URL('https://api.example.com/data')
     await fetchWithRetry(url)
 
@@ -202,6 +184,8 @@ describe('fetchWithRetry', () => {
     const fetchMock = vi.fn().mockResolvedValue(mockResponse)
     global.fetch = fetchMock
 
+    mockedPromiseWithRetry.mockImplementation(async fn => fn())
+
     const request = new Request('https://api.example.com/data', {
       method: 'GET',
     })
@@ -210,62 +194,51 @@ describe('fetchWithRetry', () => {
     expect(fetchMock).toHaveBeenCalledWith(request, undefined)
   })
 
-  it('should use exponential backoff by default', async () => {
-    const successResponse = new Response('{"data": "success"}', {
-      status: 200,
-    })
-    const errorResponse = new Response('error', { status: 503 })
-
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(errorResponse)
-      .mockResolvedValueOnce(errorResponse)
-      .mockResolvedValue(successResponse)
-
-    global.fetch = fetchMock
-
-    const startTime = Date.now()
-    await fetchWithRetry('https://api.example.com/data', undefined, {
-      retries: 3,
-      delayMs: 50,
-    })
-    const endTime = Date.now()
-
-    // First retry: 50ms, second retry: 100ms, total: 150ms
-    expect(endTime - startTime).toBeGreaterThanOrEqual(150)
-    expect(endTime - startTime).toBeLessThan(200)
-  })
-
-  it('should handle network errors without retrying', async () => {
+  it('should handle network errors (TypeError) from fetch', async () => {
     const networkError = new TypeError('Failed to fetch')
     global.fetch = vi.fn().mockRejectedValue(networkError)
+
+    mockedPromiseWithRetry.mockImplementation(async fn => fn())
 
     await expect(
       fetchWithRetry('https://api.example.com/data'),
     ).rejects.toThrow(TypeError)
-
-    expect(global.fetch).toHaveBeenCalledTimes(1)
   })
 
   it('should clone response before throwing RetryError', async () => {
     const errorResponse = new Response('Service Unavailable', {
       status: 503,
     })
-    const clonedResponse = errorResponse.clone()
 
-    const fetchMock = vi.fn().mockResolvedValue(errorResponse)
-    global.fetch = fetchMock
+    mockedPromiseWithRetry.mockImplementation(async fn => fn())
+    global.fetch = vi.fn().mockResolvedValue(errorResponse)
 
     try {
-      await fetchWithRetry('https://api.example.com/data', undefined, {
-        retries: 0,
-        delayMs: 10,
-      })
+      await fetchWithRetry('https://api.example.com/data')
     } catch (error) {
       if (error instanceof RetryError) {
         expect(error.cause).toBeInstanceOf(Response)
         const response = error.cause as Response
         expect(response.status).toBe(503)
+        expect(error.cause).not.toBe(errorResponse)
+      }
+    }
+  })
+
+  it('should handle responses without statusText', async () => {
+    const errorResponse = new Response('error', {
+      status: 503,
+      statusText: '',
+    })
+
+    mockedPromiseWithRetry.mockImplementation(async fn => fn())
+    global.fetch = vi.fn().mockResolvedValue(errorResponse)
+
+    try {
+      await fetchWithRetry('https://api.example.com/data')
+    } catch (error) {
+      if (error instanceof RetryError) {
+        expect(error.message).toBe('HTTP 503: Unknown error')
       }
     }
   })

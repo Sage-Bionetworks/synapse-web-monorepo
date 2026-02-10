@@ -1,11 +1,21 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 import { promiseWithRetry, RetryError } from './promiseWithRetry'
 
 describe('promiseWithRetry', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+    vi.useRealTimers()
+  })
+
   it('should return the result if the function succeeds on the first attempt', async () => {
     const fn = vi.fn().mockResolvedValue('success')
 
-    const result = await promiseWithRetry(fn, 3, 100)
+    const resultPromise = promiseWithRetry(fn, 3, 100)
+    const result = await resultPromise
 
     expect(result).toBe('success')
     expect(fn).toHaveBeenCalledTimes(1)
@@ -18,7 +28,10 @@ describe('promiseWithRetry', () => {
       .mockRejectedValueOnce(new RetryError('retry', 'cause2'))
       .mockResolvedValue('success')
 
-    const result = await promiseWithRetry(fn, 3, 10)
+    const resultPromise = promiseWithRetry(fn, 3, 100)
+
+    await vi.runAllTimersAsync()
+    const result = await resultPromise
 
     expect(result).toBe('success')
     expect(fn).toHaveBeenCalledTimes(3)
@@ -32,7 +45,13 @@ describe('promiseWithRetry', () => {
       .mockRejectedValueOnce(new RetryError('retry', 'cause2'))
       .mockRejectedValue(lastError)
 
-    await expect(promiseWithRetry(fn, 2, 10)).rejects.toThrow(lastError)
+    const resultPromise = promiseWithRetry(fn, 2, 100)
+    // eslint-disable-next-line vitest/valid-expect -- We need to capture the promise rejection before advancing timers
+    const assertionPromise = expect(resultPromise).rejects.toThrow(lastError)
+
+    await vi.runAllTimersAsync()
+    await assertionPromise
+
     expect(fn).toHaveBeenCalledTimes(3)
   })
 
@@ -40,7 +59,7 @@ describe('promiseWithRetry', () => {
     const error = new Error('non-retry error')
     const fn = vi.fn().mockRejectedValue(error)
 
-    await expect(promiseWithRetry(fn, 3, 10)).rejects.toThrow(error)
+    await expect(promiseWithRetry(fn, 3, 100)).rejects.toThrow(error)
     expect(fn).toHaveBeenCalledTimes(1)
   })
 
@@ -50,12 +69,19 @@ describe('promiseWithRetry', () => {
       .mockRejectedValueOnce(new RetryError('retry', 'cause'))
       .mockResolvedValue('success')
 
-    const startTime = Date.now()
-    await promiseWithRetry(fn, 3, 100)
-    const endTime = Date.now()
+    const resultPromise = promiseWithRetry(fn, 3, 100)
 
-    expect(endTime - startTime).toBeGreaterThanOrEqual(100)
-    expect(endTime - startTime).toBeLessThan(150)
+    expect(fn).toHaveBeenCalledTimes(1)
+
+    // Timer should not fire before 100ms
+    await vi.advanceTimersByTimeAsync(99)
+    expect(fn).toHaveBeenCalledTimes(1)
+
+    // After 100ms, retry should happen
+    await vi.advanceTimersByTimeAsync(1)
+    await resultPromise
+
+    expect(fn).toHaveBeenCalledTimes(2)
   })
 
   it('should use exponential backoff when enabled', async () => {
@@ -65,20 +91,26 @@ describe('promiseWithRetry', () => {
       .mockRejectedValueOnce(new RetryError('retry', 'cause2'))
       .mockResolvedValue('success')
 
-    const startTime = Date.now()
-    await promiseWithRetry(fn, 3, 50, true)
-    const endTime = Date.now()
+    const resultPromise = promiseWithRetry(fn, 3, 50, true)
 
-    // First retry: 50ms, second retry: 100ms, total: 150ms
-    expect(endTime - startTime).toBeGreaterThanOrEqual(150)
-    expect(endTime - startTime).toBeLessThan(200)
+    expect(fn).toHaveBeenCalledTimes(1)
+
+    // First retry after 50ms
+    await vi.advanceTimersByTimeAsync(50)
+    expect(fn).toHaveBeenCalledTimes(2)
+
+    // Second retry after 100ms (doubled)
+    await vi.advanceTimersByTimeAsync(100)
+    await resultPromise
+
+    expect(fn).toHaveBeenCalledTimes(3)
   })
 
   it('should not retry if retries is 0', async () => {
     const error = new RetryError('retry', 'cause')
     const fn = vi.fn().mockRejectedValue(error)
 
-    await expect(promiseWithRetry(fn, 0, 10)).rejects.toThrow(error)
+    await expect(promiseWithRetry(fn, 0, 100)).rejects.toThrow(error)
     expect(fn).toHaveBeenCalledTimes(1)
   })
 
@@ -87,9 +119,9 @@ describe('promiseWithRetry', () => {
     const numberFn = vi.fn().mockResolvedValue(42)
     const arrayFn = vi.fn().mockResolvedValue([1, 2, 3])
 
-    const objectResult = await promiseWithRetry(objectFn, 3, 10)
-    const numberResult = await promiseWithRetry(numberFn, 3, 10)
-    const arrayResult = await promiseWithRetry(arrayFn, 3, 10)
+    const objectResult = await promiseWithRetry(objectFn, 3, 100)
+    const numberResult = await promiseWithRetry(numberFn, 3, 100)
+    const arrayResult = await promiseWithRetry(arrayFn, 3, 100)
 
     expect(objectResult).toEqual({ data: 'test' })
     expect(numberResult).toBe(42)
@@ -102,7 +134,7 @@ describe('promiseWithRetry', () => {
     const fn = vi.fn().mockRejectedValue(error)
 
     try {
-      await promiseWithRetry(fn, 0, 10)
+      await promiseWithRetry(fn, 0, 100)
     } catch (e) {
       expect(e).toBeInstanceOf(RetryError)
       if (e instanceof RetryError) {
