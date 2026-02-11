@@ -15,11 +15,11 @@ export type ErrorChipProps = {
  */
 export default function ErrorChip(props: ErrorChipProps) {
   const { chipText, error } = props
-  const { accessToken } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
 
   const loginError =
-    (error.status === 403 || error.status === 401) && !accessToken
-  const accessDenied = error.status === 403 && accessToken
+    (error.status === 403 || error.status === 401) && !isAuthenticated
+  const accessDenied = error.status === 403 && isAuthenticated
 
   const variant = loginError ? 'warning' : 'error'
   let avatar

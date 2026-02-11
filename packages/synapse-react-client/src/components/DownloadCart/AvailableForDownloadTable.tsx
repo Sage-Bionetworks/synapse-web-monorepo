@@ -6,8 +6,8 @@ import DownloadListTable from './DownloadListTable'
  * Table of the files added to the Download Cart that are currently available for download.
  */
 export default function AvailableForDownloadTable() {
-  const { accessToken } = useSynapseContext()
-  if (!accessToken) {
+  const { isAuthenticated } = useSynapseContext()
+  if (!isAuthenticated) {
     return <></>
   }
   return (

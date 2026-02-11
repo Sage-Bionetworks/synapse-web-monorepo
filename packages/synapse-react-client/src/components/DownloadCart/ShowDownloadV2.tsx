@@ -19,7 +19,7 @@ export type ShowDownloadV2Props = {
  * This must be configured with the URL of a page dedicated to showing the Download Cart.
  */
 function ShowDownloadV2Internal({ to, className = '' }: ShowDownloadV2Props) {
-  const { accessToken } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
   const handleError = useErrorHandler()
   const tooltipText = 'Click to view items in your download cart.'
 
@@ -31,12 +31,12 @@ function ShowDownloadV2Internal({ to, className = '' }: ShowDownloadV2Props) {
   } = useGetDownloadListStatistics()
 
   useEffect(() => {
-    if (isError && newError && accessToken) {
+    if (isError && newError && isAuthenticated) {
       handleError(newError)
     }
-  }, [isError, newError, handleError, accessToken])
+  }, [isError, newError, handleError, isAuthenticated])
 
-  if (!accessToken || isLoading) {
+  if (!isAuthenticated || isLoading) {
     return <></>
   }
 

@@ -130,19 +130,19 @@ export function DownloadConfirmationUI(props: DownloadConfirmationUIProps) {
     isLoadingStats = false,
     isAddingToDownloadCart = false,
   } = props
-  const { accessToken } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
 
   const { data: downloadListStatistics } = useGetDownloadListStatistics()
 
   const status = useMemo(() => {
-    if (!accessToken) return StatusEnum.SIGNED_OUT
+    if (!isAuthenticated) return StatusEnum.SIGNED_OUT
     if (isLoadingStats) return StatusEnum.LOADING_INFO
     if (isAddingToDownloadCart) return StatusEnum.PROCESSING
     if (downloadListStatistics && downloadListStatistics.totalNumberOfFiles > 0)
       return StatusEnum.INFO_ITEMS_IN_LIST
     return StatusEnum.INFO
   }, [
-    accessToken,
+    isAuthenticated,
     isLoadingStats,
     isAddingToDownloadCart,
     downloadListStatistics,
