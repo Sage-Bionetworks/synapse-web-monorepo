@@ -1,10 +1,11 @@
 import SynapseClient from '@/synapse-client'
-import { OAUTH2_PROVIDERS } from '@/utils/SynapseConstants'
+import { ARCUS_SOURCE_APP_ID, OAUTH2_PROVIDERS } from '@/utils/SynapseConstants'
 import { OAuth2State } from '@/utils'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import AuthenticationMethodSelection from './AuthenticationMethodSelection'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 
 vi.mock('@/synapse-client', () => ({
   default: {
@@ -28,6 +29,7 @@ describe('AuthenticationMethodSelection', () => {
       <AuthenticationMethodSelection
         onSelectUsernameAndPassword={onSelectUsernameAndPassword}
       />,
+      { wrapper: createWrapper() },
     )
 
     expect(
@@ -45,12 +47,13 @@ describe('AuthenticationMethodSelection', () => {
     expect(onSelectUsernameAndPassword).toHaveBeenCalledTimes(1)
   })
 
-  it('shows only the Arcus SSO button when showArcusSSOButtonOnly is true', () => {
+  it('shows only the Arcus SSO button when sourceAppId is arcusbio', () => {
     render(
       <AuthenticationMethodSelection
         onSelectUsernameAndPassword={vi.fn()}
-        showArcusSSOButtonOnly={true}
+        sourceAppId={ARCUS_SOURCE_APP_ID}
       />,
+      { wrapper: createWrapper() },
     )
 
     expect(
@@ -83,6 +86,7 @@ describe('AuthenticationMethodSelection', () => {
         onSelectUsernameAndPassword={vi.fn()}
         state={state}
       />,
+      { wrapper: createWrapper() },
     )
 
     const googleButton = screen.getByRole('button', {
@@ -118,8 +122,9 @@ describe('AuthenticationMethodSelection', () => {
         onBeginOAuthSignIn={onBeginOAuthSignIn}
         onSelectUsernameAndPassword={vi.fn()}
         state={state}
-        showArcusSSOButtonOnly={true}
+        sourceAppId={ARCUS_SOURCE_APP_ID}
       />,
+      { wrapper: createWrapper() },
     )
 
     const arcusButton = screen.getByRole('button', {
