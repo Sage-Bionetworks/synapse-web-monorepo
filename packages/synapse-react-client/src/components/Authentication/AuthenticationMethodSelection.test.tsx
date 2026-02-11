@@ -122,7 +122,7 @@ describe('AuthenticationMethodSelection', () => {
         onBeginOAuthSignIn={onBeginOAuthSignIn}
         onSelectUsernameAndPassword={vi.fn()}
         state={state}
-        sourceAppId="arcusbio"
+        sourceAppId={ARCUS_SOURCE_APP_ID}
       />,
       { wrapper: createWrapper() },
     )
