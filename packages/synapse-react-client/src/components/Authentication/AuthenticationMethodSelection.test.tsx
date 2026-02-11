@@ -5,6 +5,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import AuthenticationMethodSelection from './AuthenticationMethodSelection'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 
 vi.mock('@/synapse-client', () => ({
   default: {
@@ -28,6 +29,7 @@ describe('AuthenticationMethodSelection', () => {
       <AuthenticationMethodSelection
         onSelectUsernameAndPassword={onSelectUsernameAndPassword}
       />,
+      { wrapper: createWrapper() },
     )
 
     expect(
@@ -51,6 +53,7 @@ describe('AuthenticationMethodSelection', () => {
         onSelectUsernameAndPassword={vi.fn()}
         sourceAppId={ARCUS_SOURCE_APP_ID}
       />,
+      { wrapper: createWrapper() },
     )
 
     expect(
@@ -83,6 +86,7 @@ describe('AuthenticationMethodSelection', () => {
         onSelectUsernameAndPassword={vi.fn()}
         state={state}
       />,
+      { wrapper: createWrapper() },
     )
 
     const googleButton = screen.getByRole('button', {
@@ -120,6 +124,7 @@ describe('AuthenticationMethodSelection', () => {
         state={state}
         sourceAppId="arcusbio"
       />,
+      { wrapper: createWrapper() },
     )
 
     const arcusButton = screen.getByRole('button', {
