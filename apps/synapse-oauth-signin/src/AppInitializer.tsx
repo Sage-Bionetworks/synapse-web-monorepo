@@ -25,7 +25,7 @@ function AppInitializer(props: PropsWithChildren<Record<string, unknown>>) {
     maxAge = parseInt(maxAgeURLParam)
   }
   const clientId = searchParams.get('client_id') ?? undefined
-  const onNoAccessTokenFound = useCallback(() => {
+  const onMissingAuthentication = useCallback(() => {
     if (prompt === 'none') {
       // not logged in, and prompt is "none".
       handleErrorRedirect(
@@ -36,7 +36,7 @@ function AppInitializer(props: PropsWithChildren<Record<string, unknown>>) {
         ),
       )
     }
-  }, [prompt])
+  }, [searchParams, prompt])
 
   const isFramed = useFramebuster()
   if (prompt === 'login') {
@@ -45,7 +45,7 @@ function AppInitializer(props: PropsWithChildren<Record<string, unknown>>) {
   return (
     <ApplicationSessionManager
       maxAge={maxAge}
-      onNoAccessTokenFound={onNoAccessTokenFound}
+      onMissingAuthentication={onMissingAuthentication}
       appId={clientId}
     >
       {!isFramed && props.children}

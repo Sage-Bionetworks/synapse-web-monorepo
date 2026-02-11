@@ -363,8 +363,8 @@ describe('ApplicationSessionManager tests', () => {
     })
   })
 
-  it('Calls onNoAccessTokenFound prop on error', async () => {
-    const onNoAccessTokenFound = vi.fn()
+  it('Calls onMissingAuthentication prop on error', async () => {
+    const onMissingAuthentication = vi.fn()
     const error = new SynapseClientError(
       500,
       'some error',
@@ -372,24 +372,24 @@ describe('ApplicationSessionManager tests', () => {
     )
     mockGetAccessToken.mockRejectedValue(error)
 
-    const context = render({ onNoAccessTokenFound })
+    const context = render({ onMissingAuthentication })
 
     await waitFor(() => {
-      expect(onNoAccessTokenFound).toHaveBeenCalled()
+      expect(onMissingAuthentication).toHaveBeenCalled()
       expect(mockGetAccessToken).toHaveBeenCalled()
       expect(signOutSpy).toHaveBeenCalled()
       expect(context.result.current).toMatchObject(EXPECTED_ANONYMOUS_STATE)
     })
   })
 
-  it('Calls onNoAccessTokenFound prop when undefined token', async () => {
+  it('Calls onMissingAuthentication prop when undefined token', async () => {
     mockGetAccessToken.mockResolvedValue(undefined)
-    const onNoAccessTokenFound = vi.fn()
+    const onMissingAuthentication = vi.fn()
 
-    const context = render({ onNoAccessTokenFound })
+    const context = render({ onMissingAuthentication })
 
     await waitFor(() => {
-      expect(onNoAccessTokenFound).toHaveBeenCalled()
+      expect(onMissingAuthentication).toHaveBeenCalled()
       expect(mockGetAccessToken).toHaveBeenCalled()
       expect(signOutSpy).toHaveBeenCalled()
       expect(context.result.current).toMatchObject(EXPECTED_ANONYMOUS_STATE)

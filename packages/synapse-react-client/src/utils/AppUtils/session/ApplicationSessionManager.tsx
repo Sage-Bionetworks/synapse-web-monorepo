@@ -17,7 +17,8 @@ export type ApplicationSessionManagerProps = PropsWithChildren<{
   maxAge?: number
   /* Called when the session is reset, i.e. the user has signed out.*/
   onResetSessionComplete?: () => void
-  onNoAccessTokenFound?: () => void
+  /** Called if the user is not authenticated when the session is initialized. Can be used to trigger an error if authentication is expected. */
+  onMissingAuthentication?: () => void
   /*
    * Callback invoked after the user has successfully signed in through SSO when the purpose of signing in is to disable 2FA on the account.
    * The twoFactorAuthSSOError and twoFaResetToken are passed in the callback and can be used to complete the 2FA reset process.
@@ -54,7 +55,7 @@ export function ApplicationSessionManager(
     downloadCartPageUrl,
     onResetSessionComplete,
     maxAge,
-    onNoAccessTokenFound,
+    onMissingAuthentication,
     onTwoFactorAuthResetThroughSSO,
     appId,
     requireAuthentication,
@@ -67,15 +68,15 @@ export function ApplicationSessionManager(
     TwoFactorAuthErrorResponse | undefined
   >()
   const initAnonymousUserState = useCallback(() => {
-    if (onNoAccessTokenFound) {
-      onNoAccessTokenFound()
+    if (onMissingAuthentication) {
+      onMissingAuthentication()
     }
     SynapseClient.signOut().then(() => {
       // reset token
       setToken(undefined)
       setHasInitializedSession(true)
     })
-  }, [onNoAccessTokenFound])
+  }, [onMissingAuthentication])
   const { data: tosStatus } = useTermsOfServiceStatus(token, {
     enabled: !!token,
   })
