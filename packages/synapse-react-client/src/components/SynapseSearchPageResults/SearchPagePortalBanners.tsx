@@ -21,23 +21,16 @@ export default function SearchPagePortalBanners({
   dataCatalogEntityId = 'syn61609402',
   sourceAppConfigTableID = 'syn45291362',
 }: SearchPagePortalBannersProps) {
-  const ROOT_SYNAPSE_FOLDER_ID = 'syn4489' // Root Synapse folder to exclude from portal detection
-
-  // Filter out root folder and empty IDs
-  const entityIdValues: string[] = entityIds.filter(
-    id => id && id !== ROOT_SYNAPSE_FOLDER_ID,
-  )
-
   // Query data catalog to find portal mappings for the entity IDs
   const dataCatalogAdditionalFilters: ColumnSingleValueQueryFilter[] =
-    entityIdValues.length > 0
+    entityIds.length > 0
       ? [
           {
             concreteType:
               'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
             columnName: 'id',
             operator: ColumnSingleValueFilterOperator.IN,
-            values: entityIdValues,
+            values: entityIds,
           },
         ]
       : []
@@ -53,7 +46,7 @@ export default function SearchPagePortalBanners({
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     },
     {
-      enabled: entityIdValues.length > 0,
+      enabled: entityIds.length > 0,
     },
   )
 
@@ -116,6 +109,11 @@ export default function SearchPagePortalBanners({
                   href={appConfig.appURL}
                   target="_blank"
                   rel="noopener noreferrer"
+                  sx={{
+                    color: theme => `${theme.palette.grey[900]} !important`,
+                    textDecorationColor: theme =>
+                      `${theme.palette.grey[900]} !important`,
+                  }}
                 >
                   Visit the {appConfig.friendlyName}
                 </Link>

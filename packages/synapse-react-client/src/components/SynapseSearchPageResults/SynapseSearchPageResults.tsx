@@ -27,7 +27,6 @@ export type SynapseSearchPageResultsProps = {
 
 export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   const MIN_SUGGESTION_SCORE = 0.75
-  const ROOT_SYNAPSE_FOLDER_ID = 'syn4489' // Root Synapse folder to exclude from portal detection, index 0 of hit.path.path
   const { query, setQuery } = props
 
   // Set page title (replaces jsniUtils.setPageTitle(DisplayConstants.LABEL_SEARCH) from Java)
@@ -159,10 +158,9 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
           entityIds.add(hit.id)
         }
 
-        // for nested entities, iterate path until we find the Project ID that contains this file.
         if (hit.path?.path) {
-          for (const pathEntity of hit.path.path) {
-            if (pathEntity.id && pathEntity.id !== ROOT_SYNAPSE_FOLDER_ID) {
+          for (const pathEntity of hit.path.path.slice(1)) {
+            if (pathEntity.id) {
               entityIds.add(pathEntity.id)
             }
           }
