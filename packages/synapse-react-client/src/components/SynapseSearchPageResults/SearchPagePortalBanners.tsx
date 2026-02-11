@@ -14,8 +14,7 @@ export type SearchPagePortalBannersProps = {
 }
 
 /**
- * Portal banners specifically designed for the search results page.
- * Shows relevant portal sites based on entities found in the first page of search results.
+ * Portal banner based on entities found in the first page of search results.
  */
 export default function SearchPagePortalBanners({
   entityIds,
