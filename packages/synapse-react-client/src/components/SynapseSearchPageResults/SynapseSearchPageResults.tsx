@@ -208,7 +208,6 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
           py: '40px',
           px: '80px',
           gap: '16px',
-          marginBottom: '20px',
         }}
       >
         <TextField
@@ -249,76 +248,79 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
           Filter By
         </Button>
       </Box>
-      {noResults && (
-        <div className={styles.didYouMeanCurrentlyShowing}>
-          {' '}
-          No results found for <b>{query?.queryTerm?.join(' ')}</b>.
-        </div>
-      )}
-      {data && !isSynId && suggestion && !noResults && (
-        <div className={styles.didYouMeanContainer}>
+      <Box sx={{ padding: '30px' }}>
+        {noResults && (
           <div className={styles.didYouMeanCurrentlyShowing}>
-            Currently showing results for <b>{query?.queryTerm?.join(' ')}</b>.
+            {' '}
+            No results found for <b>{query?.queryTerm?.join(' ')}</b>.
           </div>
-          <div className={styles.didYouMeanSuggestion}>
-            <SearchIcon
-              sx={{ color: 'grey.600' }}
-              className={styles.searchIcon}
-            />
-            <Typography variant="body1" className={styles.didYouMeanText}>
-              Search for <b className={styles.suggestionText}>{suggestion}</b>{' '}
-              instead?
-            </Typography>
-            <IconButton
-              className={styles.didYouMeanArrowContainer}
-              onClick={handleUseSuggestion}
-              aria-label={`Search for ${suggestion} instead`}
-              sx={{
-                borderColor: 'primary.main',
-                svg: { color: 'primary.main' },
-              }}
-            >
-              <ArrowForward />
-            </IconButton>
-          </div>
-        </div>
-      )}
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-end',
-          gap: '25px',
-        }}
-      >
-        {isLoading && <div>Loading...</div>}
-        {error && <div>Error: {error.message}</div>}
-        <SearchPagePortalBanners entityIds={entityIdsForPortalBanners} />
-        {data &&
-          data.pages &&
-          data.pages.map((page, pageIndex) =>
-            page.hits.map((hit: any) => (
-              <SynapseSearchResultsCard
-                key={hit.id + '-' + pageIndex}
-                entityId={hit.id}
-                name={hit.name}
-                entityType={hit.node_type}
-                modifiedOn={hit.modified_on}
-              />
-            )),
-          )}
-        {hasNextPage && (
-          <Button
-            onClick={() => {
-              void fetchNextPage()
-            }}
-            loading={isFetchingNextPage}
-            variant="contained"
-            sx={{ mt: 2 }}
-          >
-            {isFetchingNextPage ? 'Loading more...' : 'Load More'}
-          </Button>
         )}
+        {data && !isSynId && suggestion && !noResults && (
+          <div className={styles.didYouMeanContainer}>
+            <div className={styles.didYouMeanCurrentlyShowing}>
+              Currently showing results for <b>{query?.queryTerm?.join(' ')}</b>
+              .
+            </div>
+            <div className={styles.didYouMeanSuggestion}>
+              <SearchIcon
+                sx={{ color: 'grey.600' }}
+                className={styles.searchIcon}
+              />
+              <Typography variant="body1" className={styles.didYouMeanText}>
+                Search for <b className={styles.suggestionText}>{suggestion}</b>{' '}
+                instead?
+              </Typography>
+              <IconButton
+                className={styles.didYouMeanArrowContainer}
+                onClick={handleUseSuggestion}
+                aria-label={`Search for ${suggestion} instead`}
+                sx={{
+                  borderColor: 'primary.main',
+                  svg: { color: 'primary.main' },
+                }}
+              >
+                <ArrowForward />
+              </IconButton>
+            </div>
+          </div>
+        )}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-end',
+            gap: '25px',
+          }}
+        >
+          {isLoading && <div>Loading...</div>}
+          {error && <div>Error: {error.message}</div>}
+          <SearchPagePortalBanners entityIds={entityIdsForPortalBanners} />
+          {data &&
+            data.pages &&
+            data.pages.map((page, pageIndex) =>
+              page.hits.map((hit: any) => (
+                <SynapseSearchResultsCard
+                  key={hit.id + '-' + pageIndex}
+                  entityId={hit.id}
+                  name={hit.name}
+                  entityType={hit.node_type}
+                  modifiedOn={hit.modified_on}
+                />
+              )),
+            )}
+          {hasNextPage && (
+            <Button
+              onClick={() => {
+                void fetchNextPage()
+              }}
+              loading={isFetchingNextPage}
+              variant="contained"
+              sx={{ mt: 2 }}
+            >
+              {isFetchingNextPage ? 'Loading more...' : 'Load More'}
+            </Button>
+          )}
+        </Box>
       </Box>
     </Box>
   )
