@@ -2,11 +2,10 @@ import { Chip, Typography } from '@mui/material'
 import {
   SearchQuery,
   KeyValue,
-  SearchFieldName,
-  SearchFacetSort,
   FeatureFlagEnum,
 } from '@sage-bionetworks/synapse-types'
 import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
+import { DEFAULT_SEARCH_QUERY } from '@/utils/searchDefaults'
 
 const searchValues = [
   "Alzheimer's Disease",
@@ -54,48 +53,9 @@ export function SynapseSearchChips({ gotoPlace }: SynapseSearchChipsProps) {
             }
             onClick={() => {
               const searchQuery: SearchQuery = {
+                ...DEFAULT_SEARCH_QUERY,
                 queryTerm: [value],
                 booleanQuery: value == 'Cancer' ? [projectKeyValue] : undefined,
-                // match existing facet options in SWC search
-                facetOptions: [
-                  {
-                    name: SearchFieldName.ENTITY_TYPE,
-                    maxResultCount: 300,
-                    sortType: SearchFacetSort.COUNT,
-                  },
-                  {
-                    name: SearchFieldName.CONSORTIUM,
-                    maxResultCount: 300,
-                    sortType: SearchFacetSort.COUNT,
-                  },
-                  {
-                    name: SearchFieldName.MODIFIED_ON,
-                    maxResultCount: 300,
-                    sortType: SearchFacetSort.COUNT,
-                  },
-                  {
-                    name: SearchFieldName.MODIFIED_BY,
-                    maxResultCount: 300,
-                    sortType: SearchFacetSort.COUNT,
-                  },
-                  {
-                    name: SearchFieldName.CREATED_ON,
-                    maxResultCount: 300,
-                    sortType: SearchFacetSort.COUNT,
-                  },
-                  {
-                    name: SearchFieldName.TISSUE,
-                    maxResultCount: 300,
-                    sortType: SearchFacetSort.COUNT,
-                  },
-                  {
-                    name: SearchFieldName.CREATED_BY,
-                    maxResultCount: 300,
-                    sortType: SearchFacetSort.COUNT,
-                  },
-                ],
-                start: 0,
-                size: 30,
               }
               if (searchV2Enabled) {
                 gotoPlace(

@@ -33,6 +33,7 @@ import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
 import UserCard from '../UserCard/UserCard'
 import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
+import { DEFAULT_SEARCH_QUERY } from '@/utils/searchDefaults'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
@@ -65,58 +66,16 @@ export enum NavItem {
 
 export const getSearchToken = (queryTerm: string[]) => {
   const searchQuery = {
-    ...searchJson,
+    ...DEFAULT_SEARCH_QUERY,
     queryTerm,
   }
   return encodeURIComponent(JSON.stringify(searchQuery))
 }
 
-// To support project search, we send this json object in the url.
-// We update the queryTerm array based on user input.
-const searchJson = {
-  queryTerm: [] as string[],
-  facetOptions: [
-    {
-      name: 'EntityType',
-      maxResultCount: 300,
-      sortType: 'COUNT',
-    },
-    {
-      name: 'Consortium',
-      maxResultCount: 300,
-      sortType: 'COUNT',
-    },
-    {
-      name: 'ModifiedOn',
-      maxResultCount: 300,
-      sortType: 'COUNT',
-    },
-    {
-      name: 'ModifiedBy',
-      maxResultCount: 300,
-      sortType: 'COUNT',
-    },
-    {
-      name: 'CreatedOn',
-      maxResultCount: 300,
-      sortType: 'COUNT',
-    },
-    {
-      name: 'Tissue',
-      maxResultCount: 300,
-      sortType: 'COUNT',
-    },
-    {
-      name: 'CreatedBy',
-      maxResultCount: 300,
-      sortType: 'COUNT',
-    },
-  ],
-  start: 0,
-  size: 30,
-}
 const projectSearchJson = {
-  ...searchJson,
+  // To support project search, we send this json object in the url.
+  // We update the queryTerm array based on user input.
+  ...DEFAULT_SEARCH_QUERY,
   booleanQuery: [
     {
       key: 'node_type',
