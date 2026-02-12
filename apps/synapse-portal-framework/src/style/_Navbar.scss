@@ -63,7 +63,7 @@
       overflow-y: hidden;
 
       .nav-button {
-        padding: 18px var(--synapse-menu-item-padding);
+        padding: 18px var(--mb-menu-item-padding);
         margin: 0;
         width: 100%;
         height: auto;
@@ -81,7 +81,7 @@
 
       .nav-button-signin {
         padding: 20px 22px;
-        border-top: var(--synapse-menu-divider);
+        border-top: var(--mb-menu-divider);
         margin-top: 30px;
         margin-left: 0px;
         box-sizing: border-box;
