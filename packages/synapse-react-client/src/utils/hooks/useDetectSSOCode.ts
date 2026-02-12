@@ -160,7 +160,8 @@ export default function useDetectSSOCode(
         } else if (
           OAUTH2_PROVIDERS.GOOGLE == provider ||
           OAUTH2_PROVIDERS.ORCID == provider ||
-          OAUTH2_PROVIDERS.ARCUS == provider
+          OAUTH2_PROVIDERS.ARCUS == provider ||
+          OAUTH2_PROVIDERS.SAGE_BIONETWORKS == provider
         ) {
           const onSuccess = (
             response: LoginResponse | TwoFactorAuthErrorResponse | null,
@@ -203,7 +204,8 @@ export default function useDetectSSOCode(
 
           if (
             (OAUTH2_PROVIDERS.GOOGLE == provider ||
-              OAUTH2_PROVIDERS.ARCUS == provider) &&
+              OAUTH2_PROVIDERS.ARCUS == provider ||
+              OAUTH2_PROVIDERS.SAGE_BIONETWORKS == provider) &&
             state?.registrationUsername
           ) {
             oAuthRegisterAccountStep2(

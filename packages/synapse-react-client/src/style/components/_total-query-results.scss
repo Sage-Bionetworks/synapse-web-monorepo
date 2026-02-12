@@ -1,9 +1,5 @@
-@use '../abstracts/variables' as SRC;
-@use 'sass:color';
-@use 'sass:map';
-
 .TotalQueryResults {
-  color: SRC.$text-color-dark;
+  color: var(--synapse-text-color-dark);
   background: unset;
   /* Divider */
   padding: 1px 0px;
@@ -35,23 +31,23 @@
   border-radius: 20px;
   line-height: 100%;
   cursor: default;
-  background-color: color.change(SRC.$secondary-action-color, $alpha: 0.1);
-  color: SRC.$text-color-dark;
+  background-color: var(--synapse-secondary-action-color-alpha-10);
+  color: var(--synapse-text-color-dark);
   font-weight: normal;
   margin: 5px;
   margin-left: 0;
   &:hover {
-    background-color: color.change(SRC.$secondary-action-color, $alpha: 0.2);
+    background-color: var(--synapse-secondary-action-color-alpha-20);
   }
   &:hover &__btnRemove {
-    background-color: color.change(SRC.$secondary-action-color, $alpha: 0.5);
+    background-color: var(--synapse-secondary-action-color-alpha-50);
   }
   span {
     margin: auto;
   }
 
   &__btnRemove {
-    color: map.get(SRC.$colors, 'gray-900');
+    color: var(--synapse-gray-900);
     border-radius: 100%;
     padding: 3px;
     margin-left: 1px;

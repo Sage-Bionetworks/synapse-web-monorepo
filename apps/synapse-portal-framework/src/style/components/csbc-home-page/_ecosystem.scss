@@ -1,5 +1,3 @@
-@use '../../../style/variables' as Portal;
-
 @use 'sass:color';
 
 .Ecosystem {
@@ -25,10 +23,7 @@
         font-size: 16px;
         padding: 20px;
         &:hover {
-          background-color: color.change(
-            Portal.$primary-action-color,
-            $alpha: 0.08
-          );
+          background-color: var(--synapse-primary-alpha-08);
         }
       }
     }

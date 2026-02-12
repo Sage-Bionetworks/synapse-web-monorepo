@@ -1,6 +1,4 @@
-@use '../abstracts/variables' as SRC;
 @use '../abstracts/mixins' as SrcMixins;
-@use 'sass:map';
 
 .DownloadCartPage {
   .description {
@@ -39,7 +37,7 @@
     .active {
       padding-top: 5px;
       border-bottom: 5px solid;
-      border-bottom-color: SRC.$secondary-action-color;
+      border-bottom-color: var(--synapse-secondary-action-color);
 
       button {
         color: #515359;
@@ -90,7 +88,7 @@
 
   .subSectionOverviewContainer {
     padding: 30px 0px;
-    background-color: SRC.$background-color-gray;
+    background-color: var(--synapse-background-color-gray);
   }
 
   .DownloadListTabContent {

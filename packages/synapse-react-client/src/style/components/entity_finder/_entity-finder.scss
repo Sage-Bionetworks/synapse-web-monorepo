@@ -1,25 +1,8 @@
-@use '../../abstracts/variables' as SRC;
-@use 'sass:color';
-@use 'sass:map';
-
-$-border-size: 1px;
-$border: $-border-size solid SRC.$border-color-gray;
-$finder-height: 500px;
-$breadcrumb-height: 40px;
-$selected-background-color: map.get(SRC.$secondary-color-palette, 200);
-$selected-hover-background-color: color.adjust(
-  $selected-background-color,
-  $lightness: -10%
-);
-$-hover-background-color: map.get(SRC.$primary-color-palette, 100);
-$tree-only-width: 600px;
-$-splitter-width: 12px;
-
 @mixin hover($background-color: '', $text-color: '') {
   @if $background-color != '' {
     background-color: $background-color;
   } @else {
-    background-color: $-hover-background-color;
+    background-color: var(--entity-finder-hover-background-color);
   }
   @if $text-color != '' {
     color: $text-color;
@@ -44,16 +27,31 @@ $-splitter-width: 12px;
 }
 
 .EntityFinder {
-  --entity-finder-height: #{$finder-height};
-  --entity-tree-header-height: 65px;
+  --entity-finder-border-size: 1px;
+  --entity-finder-border: var(--entity-finder-border-size) solid
+    var(--synapse-border-color-gray);
+  --entity-finder-height: 500px;
+  --entity-finder-tree-header-height: 65px;
+  --entity-finder-breadcrumb-height: 40px;
+  --entity-finder-selected-background-color: var(--synapse-secondary-200);
+  --entity-finder-selected-hover-background-color: var(
+    --synapse-secondary-200-hover
+  );
+  --entity-finder-hover-background-color: var(--synapse-primary-100);
+  --entity-finder-tree-only-width: 600px;
+  --entity-finder-splitter-width: 12px;
+
   width: 100%;
   margin: auto;
 
   &__MainPanel {
     max-width: 100%;
     transition: width 0.25s linear;
-    border: $-border-size solid SRC.$border-color-gray;
-    height: $finder-height + ($-border-size * 2);
+    border: var(--entity-finder-border-size) solid
+      var(--synapse-border-color-gray);
+    height: calc(
+      var(--entity-finder-height) + (var(--entity-finder-border-size) * 2)
+    );
   }
   &__MainPanel.MainPanelDualPane,
   &__MainPanel.MainPanelSearch {
@@ -61,21 +59,24 @@ $-splitter-width: 12px;
   }
 
   &__MainPanel.MainPanelSinglePane {
-    width: $tree-only-width + ($-border-size * 2);
+    width: calc(
+      var(--entity-finder-tree-only-width) +
+        (var(--entity-finder-border-size) * 2)
+    );
   }
 
   .reflex-container.vertical > .reflex-splitter {
-    height: $finder-height;
+    height: var(--entity-finder-height);
     border-left: 3px solid transparent;
     border-right: none;
     background: transparent;
     box-sizing: border-box;
-    width: $-splitter-width;
-    margin-right: -1 * $-splitter-width;
+    width: var(--entity-finder-splitter-width);
+    margin-right: calc(-1 * var(--entity-finder-splitter-width));
   }
   .reflex-container.vertical > .reflex-splitter:hover,
   .reflex-container.vertical > .reflex-splitter:active {
-    border-left: 3px solid SRC.$primary-action-color;
+    border-left: 3px solid var(--synapse-primary-action-color);
     border-right: none;
 
     background-color: transparent;
@@ -84,9 +85,4 @@ $-splitter-width: 12px;
   .TreeView.BrowseTree {
     padding-left: 20px;
   }
-}
-
-.EntityFileBrowser {
-  --entity-finder-height: #{$finder-height};
-  --entity-tree-header-height: 0px;
 }

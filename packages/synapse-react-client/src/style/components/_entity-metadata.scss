@@ -1,4 +1,3 @@
-@use '../abstracts/variables' as SRC;
 @use '../abstracts/mixins' as SRCMixins;
 
 .EntityMetadata {
@@ -40,7 +39,7 @@
     }
 
     &__Key.Schema {
-      color: SRC.$gray-deemphasized;
+      color: var(--synapse-gray-deemphasized);
     }
   }
 }

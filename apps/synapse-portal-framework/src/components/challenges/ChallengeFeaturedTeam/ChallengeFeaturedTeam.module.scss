@@ -43,7 +43,7 @@
 }
 
 .FeaturedTeam__title:global(.MuiTypography-root) {
-  color: var(--black);
+  color: var(--synapse-black);
   margin-bottom: 25px;
   font-size: 48px;
   line-height: 80px;
@@ -83,11 +83,11 @@
 
 .FeaturedTeam__caption:global(.MuiTypography-root) {
   line-height: 20px;
-  color: var(--gray-900);
+  color: var(--synapse-gray-900);
 }
 
 .FeaturedTeam__textSection :global(.markdown) p:not(:last-child) {
-  color: var(--gray-900);
+  color: var(--synapse-gray-900);
   margin-bottom: 20px;
 }
 
@@ -99,7 +99,7 @@
 .FeaturedTeam__textSection :global(.MuiButton-contained) {
   background-color: transparent !important;
   border: 1px solid;
-  color: var(--black) !important;
+  color: (--synapse-black) !important;
   box-shadow: none !important;
   margin: 0;
   padding: 3px;
