@@ -17,6 +17,7 @@ import { ArrowForward } from '@mui/icons-material'
 import styles from './SynapseSearchPageResults.module.scss'
 import { useSuggestion } from '@/synapse-queries/search/useSuggestion'
 import { Suggestion } from '@sage-bionetworks/synapse-client'
+import { DEFAULT_SEARCH_QUERY } from '@/utils/searchDefaults'
 
 export type SynapseSearchPageResultsProps = {
   query?: SearchQuery
@@ -64,6 +65,7 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   const handleSearch = () => {
     if (setQuery) {
       const newQuery = {
+        ...DEFAULT_SEARCH_QUERY,
         queryTerm: searchInputValue
           ? searchInputValue
               .split(' ')
@@ -133,6 +135,7 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   const handleUseSuggestion = () => {
     if (setQuery && suggestion) {
       const newQuery = {
+        ...DEFAULT_SEARCH_QUERY,
         queryTerm: suggestion
           .split(' ')
           .map(term => term.trim())
