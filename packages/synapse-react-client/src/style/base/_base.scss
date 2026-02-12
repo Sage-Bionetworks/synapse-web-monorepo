@@ -1,7 +1,6 @@
 // -----------------------------------------------------------------------------
 // This file contains very basic styles.
 // -----------------------------------------------------------------------------
-@use '../abstracts/variables' as SRC;
 
 /**
  * Set up a decent box model on the root element
@@ -24,9 +23,9 @@ html {
 }
 
 body {
-  color: SRC.$gray-regular;
+  color: var(--synapse-gray-regular);
   font-family: 'DM Sans';
-  accent-color: SRC.$secondary-action-color;
+  accent-color: var(--synapse-secondary-action-color);
 }
 
 strong {

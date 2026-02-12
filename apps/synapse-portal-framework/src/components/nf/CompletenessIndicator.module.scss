@@ -1,14 +1,5 @@
-@use 'sass:color';
-
-// Color variables for completeness categories
-$excellent-color: #88c48a;
-$good-color: #b0d982;
-$fair-color: #fbda79;
-$poor-color: #f6b260;
-$minimal-color: #ed8e87;
-
 .CompletenessIndicator__container {
-  color: var(--gray-700);
+  color: var(--synapse-gray-700);
   display: flex;
   align-items: flex-start;
   gap: 5px;
@@ -24,9 +15,9 @@ $minimal-color: #ed8e87;
 
 // Color exports for completeness categories
 :export {
-  excellentColor: $excellent-color;
-  goodColor: $good-color;
-  fairColor: $fair-color;
-  poorColor: $poor-color;
-  minimalColor: $minimal-color;
+  excellentColor: #88c48a;
+  goodColor: #b0d982;
+  fairColor: #fbda79;
+  poorColor: #f6b260;
+  minimalColor: #ed8e87;
 }

@@ -258,6 +258,7 @@ export default function TwoFactorEnrollmentForm(
               >
                 <TextField
                   noWrapInFormControl
+                  autoFocus
                   inputProps={{ maxLength: totpSecret?.digits }}
                   value={totp}
                   onChange={e => {

@@ -1,8 +1,6 @@
-@use '@sage-bionetworks/synapse-portal-framework/src/style/variables' as Portal;
-
 #header,
 #footer {
-  background-color: Portal.$primary-action-color;
+  background-color: var(--synapse-primary-action-color);
   background-blend-mode: multiply;
 }
 .InitiativeCardList {

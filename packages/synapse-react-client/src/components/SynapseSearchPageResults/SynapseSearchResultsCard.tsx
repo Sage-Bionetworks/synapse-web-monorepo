@@ -38,7 +38,7 @@ const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
   display: 'flex',
   flexDirection: 'column',
   minHeight: '250px',
-  width: '80%',
+  width: '100%',
   borderRadius: '10px',
   padding: '32px',
   gap: '15px',

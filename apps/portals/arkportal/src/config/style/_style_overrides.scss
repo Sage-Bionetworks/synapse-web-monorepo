@@ -1,5 +1,3 @@
-@use '@sage-bionetworks/synapse-portal-framework/src/style/variables' as Portal;
-
 #header {
   height: fit-content;
   background-image: none;
@@ -28,7 +26,7 @@
     a::before {
       display: inline-block;
       content: ' ';
-      background-color: Portal.$primary-action-color;
+      background-color: var(--synapse-primary-action-color);
       mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='MuiSvgIcon-root MuiSvgIcon-fontSizeSmall' focusable='false' aria-hidden='true' viewBox='0 0 24 24' data-testid='InfoIcon' aria-label='fontSize small'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z'%3E%3C/path%3E%3C/svg%3E ");
       width: 15px;
       height: 15px;
@@ -41,21 +39,21 @@
   }
 }
 
-/** 
+.Goals {
+  /** 
 Adam's style hacks
 **/
-$ARK-gray-100: #f9f9f9 !default;
-$ARK-gray-200: #dcdcdc !default;
-$ARK-gray-600: #87878b !default;
-$ARK-gray-700: #6b6b6f !default;
-$ARK-gray-800: #3c3c42 !default;
-$ARK-gray-900: #1d1d22 !default;
+  --ARK-gray-100: #f9f9f9;
+  --ARK-gray-200: #dcdcdc;
+  --ARK-gray-600: #87878b;
+  --ARK-gray-700: #6b6b6f;
+  --ARK-gray-800: #3c3c42;
+  --ARK-gray-900: #1d1d22;
 
-.Goals {
   &__Card {
     position: relative;
     background: #fff;
-    border: 1px solid $ARK-gray-200;
+    border: 1px solid var(--ARK-gray-200);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05),
       0px 1px 1px rgba(208, 212, 217, 0.05);
     border-radius: 10px;
@@ -81,7 +79,7 @@ $ARK-gray-900: #1d1d22 !default;
         font-weight: 900;
         font-size: 24px;
         line-height: 150%;
-        color: $ARK-gray-900;
+        color: var(--ARK-gray-900);
       }
     }
     &__summary {
@@ -89,7 +87,7 @@ $ARK-gray-900: #1d1d22 !default;
       justify-content: space-between;
       font-size: 18px;
       line-height: 1.5;
-      color: $ARK-gray-700;
+      color: var(--ARK-gray-700);
       margin-bottom: 40px;
       &__link.MuiButton-root {
         border-color: transparent;
@@ -97,7 +95,7 @@ $ARK-gray-900: #1d1d22 !default;
         box-sizing: border-box;
         border-radius: 10px;
         padding: 20px;
-        color: Portal.$primary-action-color;
+        color: var(--synapse-primary-action-color);
         font-size: 0px;
         position: absolute;
         margin: 0;

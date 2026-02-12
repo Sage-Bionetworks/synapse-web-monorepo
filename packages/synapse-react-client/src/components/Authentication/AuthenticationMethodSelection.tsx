@@ -2,15 +2,19 @@ import SynapseClient from '@/synapse-client'
 import { OAuth2State, SynapseClientError } from '@/utils'
 import { generateCsrfToken } from '@/utils/functions/generateCsrfToken'
 import {
+  ARCUS_SOURCE_APP_ID,
   LOGIN_METHOD_EMAIL,
   LOGIN_METHOD_OAUTH2_ARCUS,
   LOGIN_METHOD_OAUTH2_GOOGLE,
   LOGIN_METHOD_OAUTH2_ORCID,
+  LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS,
   OAUTH2_PROVIDERS,
 } from '@/utils/SynapseConstants'
 import { Box } from '@mui/material'
 import { MouseEvent } from 'react'
 import LoginMethodButton from './LoginMethodButton'
+import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 
 type AuthenticationMethodSelectionProps = {
   ssoRedirectUrl?: string
@@ -18,7 +22,7 @@ type AuthenticationMethodSelectionProps = {
   onBeginOAuthSignIn?: () => void
   onSelectUsernameAndPassword: () => void
   state?: OAuth2State
-  showArcusSSOButtonOnly?: boolean
+  sourceAppId?: string
 }
 
 const csrfToken = generateCsrfToken()
@@ -36,9 +40,13 @@ export default function AuthenticationMethodSelection(
     ssoRedirectUrl,
     onSelectUsernameAndPassword,
     state,
-    showArcusSSOButtonOnly = false,
+    sourceAppId,
   } = props
 
+  const showArcusSSOButtonOnly = sourceAppId === ARCUS_SOURCE_APP_ID
+  const showSageBionetworksIdp = useGetFeatureFlag(
+    FeatureFlagEnum.SAGE_BIONETWORKS_IDP,
+  )
   const stateWithCSRF: OAuth2State = { ...state, csrfToken }
 
   function onSSOSignIn(event: MouseEvent<HTMLButtonElement>, provider: string) {
@@ -83,6 +91,14 @@ export default function AuthenticationMethodSelection(
             iconName="email"
             onClick={onSelectUsernameAndPassword}
           />
+          {showSageBionetworksIdp && (
+            <LoginMethodButton
+              loginMethod={LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS}
+              onClick={event => {
+                onSSOSignIn(event, OAUTH2_PROVIDERS.SAGE_BIONETWORKS)
+              }}
+            />
+          )}
         </>
       )}
       {showArcusSSOButtonOnly && (

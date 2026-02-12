@@ -50,6 +50,7 @@ function getProgrammaticAccessCode(
     case EntityType.file:
     case EntityType.folder:
     case EntityType.project:
+    case EntityType.link:
       return {
         cliCode: `synapse get -r ${entityId}`,
         rCode: `${R_CLIENT_IMPORT_AND_LOGIN} \n

@@ -1679,9 +1679,6 @@ importers:
       '@rjsf/validator-ajv8':
         specifier: 6.0.0-beta.10
         version: 6.0.0-beta.10(@rjsf/utils@6.0.0-beta.10(react@19.1.0))
-      '@sage-bionetworks/aridhia-client':
-        specifier: workspace:*
-        version: link:../aridhia-client
       '@sage-bionetworks/markdown-it-container':
         specifier: workspace:*
         version: link:../markdown-it-container
@@ -1911,6 +1908,9 @@ importers:
       '@open-draft/deferred-promise':
         specifier: ^2.2.0
         version: 2.2.0
+      '@sage-bionetworks/aridhia-client':
+        specifier: workspace:*
+        version: link:../aridhia-client
       '@storybook/addon-a11y':
         specifier: 10.1.11
         version: 10.1.11(storybook@10.1.11(@testing-library/dom@10.4.0)(prettier@2.8.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))

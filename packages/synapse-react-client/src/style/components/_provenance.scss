@@ -1,10 +1,7 @@
-@use '../abstracts/variables' as SRC;
-@use 'sass:map';
-
 .react-flow {
   &__attribution a {
-    color: map.get(SRC.$colors, 'gray-400') !important;
-    text-decoration-color: map.get(SRC.$colors, 'gray-400') !important;
+    color: var(--synapse-gray-400);
+    text-decoration-color: var(--synapse-gray-400);
   }
   &__node {
     cursor: default !important;
@@ -29,7 +26,7 @@
 
     &.EntityPlaceholderNode {
       svg {
-        color: map.get(SRC.$colors, 'gray-400');
+        color: var(--synapse-gray-400);
       }
     }
     &.UndefinedNode {
