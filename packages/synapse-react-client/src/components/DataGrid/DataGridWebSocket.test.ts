@@ -49,12 +49,14 @@ class MockWebSocket {
   }
 }
 
+const replicaId = 4324438
+
 function createDataGridWebSocket(
   overrides: Partial<ConstructorParameters<typeof DataGridWebSocket>[0]> = {},
   mockSocket = new MockWebSocket(),
 ) {
   const ws = new DataGridWebSocket({
-    replicaId: 1,
+    replicaId: replicaId,
     url: 'ws://test',
     socket: mockSocket as unknown as WebSocket,
     patchThrottleMs: 0,
@@ -262,6 +264,8 @@ describe('DataGridWebSocket', () => {
       mockSocket.simulateMessage(rawPatchMessage)
 
       expect(onModelCreate).toHaveBeenCalledTimes(1)
+      const createdModel = onModelCreate.mock.calls[0][0] as GridModel
+      expect(createdModel.clock.sid).toEqual(replicaId)
     })
 
     it('sends a sync message after applying a patch', () => {
@@ -340,6 +344,8 @@ describe('DataGridWebSocket', () => {
       // Wait for async promise chain
       await vi.waitFor(() => {
         expect(onModelCreate).toHaveBeenCalledTimes(1)
+        const createdModel = onModelCreate.mock.calls[0][0] as GridModel
+        expect(createdModel.clock.sid).toEqual(replicaId)
       })
     })
   })

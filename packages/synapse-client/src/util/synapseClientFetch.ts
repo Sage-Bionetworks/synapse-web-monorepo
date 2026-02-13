@@ -5,6 +5,7 @@ import { SynapseClientError } from './SynapseClientError'
 
 const RATE_LIMIT_MAX_RETRY = 10
 const SERVER_ERROR_MAX_RETRY = 3
+export const SERVER_ERROR_RETRY_CODES = [502, 503, 504]
 
 /**
  * Fetches data, retrying if the HTTP status code indicates that it could be retried.
@@ -29,7 +30,7 @@ export async function synapseFetchWithRetry(
         if (rateLimitRetryCount < RATE_LIMIT_MAX_RETRY) {
           throw new RetryError(`HTTP ${response.status}`, response)
         }
-      } else if ([502, 503, 504].includes(response.status)) {
+      } else if (SERVER_ERROR_RETRY_CODES.includes(response.status)) {
         serverErrorRetryCount++
         if (serverErrorRetryCount < SERVER_ERROR_MAX_RETRY) {
           throw new RetryError(`HTTP ${response.status}`, response)

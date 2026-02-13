@@ -22,13 +22,18 @@ import { decode as decodeCbor } from 'cbor2'
 import type { IndexedFields } from 'json-joy/lib/json-crdt/codec/indexed/binary'
 import { fetchWithExponentialTimeout } from '@sage-bionetworks/synapse-client'
 
+enum SynapseGridWebSocketMessagePayloadType {
+  PATCH = 'patch',
+  SNAPSHOT = 'snapshot',
+}
+
 type SynapseGridWebSocketMessagePayload =
   | CompactCodecPatch
   | {
-      type: 'patch'
+      type: SynapseGridWebSocketMessagePayloadType.PATCH
       body: CompactCodecPatch
     }
-  | { type: 'snapshot'; body: string }
+  | { type: SynapseGridWebSocketMessagePayloadType.SNAPSHOT; body: string }
 
 type DataGridWebSocketConstructorArgs = {
   replicaId: number
@@ -154,8 +159,6 @@ export class DataGridWebSocket {
 
   private handleMessage(rawMessage: string) {
     const message = JsonRx.fromJson(JSON.parse(rawMessage))
-    console.debug('Received message:', message)
-
     if (message instanceof JsonRxResponse) {
       this.handleResponse(
         message as JsonRxResponse<SynapseGridWebSocketMessagePayload>,
@@ -179,17 +182,25 @@ export class DataGridWebSocket {
       this.handlePatchPayload(payload)
       return
     }
-    if (payload.type === 'patch') {
-      this.handlePatchPayload(payload.body)
-    } else if (payload.type === 'snapshot') {
-      void this.handleSnapshotPayload(payload.body)
+
+    switch (payload.type) {
+      case SynapseGridWebSocketMessagePayloadType.PATCH:
+        this.handlePatchPayload(payload.body)
+        break
+
+      case SynapseGridWebSocketMessagePayloadType.SNAPSHOT:
+        void this.handleSnapshotPayload(payload.body)
+        break
+
+      default:
+        console.warn('Unknown payload type:', payload)
+        break
     }
   }
 
   private handlePatchPayload(encodedPatch: CompactCodecPatch) {
     try {
       const patch = decode(encodedPatch)
-      console.debug('Applying patch from server:', patch)
       if (!this.model) {
         this.model = Model.fromPatches([patch]).fork(
           this.replicaId,
@@ -271,7 +282,6 @@ export class DataGridWebSocket {
 
   private sendMessage(message: JsonRxMessage) {
     if (this.socket.readyState === WebSocket.OPEN) {
-      console.debug('Sending message:', message)
       this.socket.send(JSON.stringify(message.getJson()))
     } else {
       console.error(

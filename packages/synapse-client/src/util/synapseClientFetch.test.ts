@@ -1,5 +1,8 @@
 import { NETWORK_UNAVAILABLE_MESSAGE } from './Constants'
-import { synapseClientFetch } from './synapseClientFetch'
+import {
+  SERVER_ERROR_RETRY_CODES,
+  synapseClientFetch,
+} from './synapseClientFetch'
 import { SynapseClientError } from './SynapseClientError'
 
 describe('synapseClientFetch', () => {
@@ -107,7 +110,7 @@ describe('synapseClientFetch', () => {
     await expect(responsePromise).resolves.toEqual({ success: true })
   })
 
-  it.each([502, 503, 504])(
+  it.each(SERVER_ERROR_RETRY_CODES)(
     'should retry a limited number of times on %i status code',
     async code => {
       const mockErrorResponse = new Response(
