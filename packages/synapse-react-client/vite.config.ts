@@ -12,7 +12,6 @@ const config = new ConfigBuilder()
       // Include certain monorepo projects because the local versions may drift from the versions released on NPM
       '@sage-bionetworks/synapse-types',
       '@sage-bionetworks/synapse-client',
-      '@sage-bionetworks/react-datasheet-grid',
     ],
   })
   .setBuildLibEntry(resolve(__dirname, 'src/SWC.index.ts'))
