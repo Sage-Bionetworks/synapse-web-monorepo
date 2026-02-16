@@ -31,6 +31,7 @@ import { OpenIDConnectServicesApi } from './generated/apis/OpenIDConnectServices
 import { PortalsServicesApi } from './generated/apis/PortalsServicesApi'
 import { PrincipalServicesApi } from './generated/apis/PrincipalServicesApi'
 import { ProjectSettingsServicesApi } from './generated/apis/ProjectSettingsServicesApi'
+import { RealmServicesApi } from './generated/apis/RealmServicesApi'
 import { RecycleBinServicesApi } from './generated/apis/RecycleBinServicesApi'
 import { SearchServicesApi } from './generated/apis/SearchServicesApi'
 import { StatisticsServicesApi } from './generated/apis/StatisticsServicesApi'
@@ -134,6 +135,7 @@ export class SynapseClient {
   public portalsServicesClient: PortalsServicesApi
   public principalServicesClient: PrincipalServicesApi
   public projectSettingsServicesClient: ProjectSettingsServicesApi
+  public realmServicesClient: RealmServicesApi
   public recycleBinServicesClient: RecycleBinServicesApi
   public searchServicesClient: SearchServicesApi
   public statisticsServicesClient: StatisticsServicesApi
@@ -213,6 +215,7 @@ export class SynapseClient {
     this.projectSettingsServicesClient = new ProjectSettingsServicesApi(
       configuration,
     )
+    this.realmServicesClient = new RealmServicesApi(configuration)
     this.recycleBinServicesClient = new RecycleBinServicesApi(configuration)
     this.searchServicesClient = new SearchServicesApi(configuration)
     this.statisticsServicesClient = new StatisticsServicesApi(configuration)
