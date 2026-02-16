@@ -21,12 +21,12 @@ export default function TeamBadge(props: TeamBadgeProps) {
 
   let icon: IconName = 'team'
 
-  if (authenticatedUsersId && teamId == authenticatedUsersId) {
+  if (authenticatedUsersId && teamId === authenticatedUsersId) {
     icon = 'public'
     teamName = AUTHENTICATED_GROUP_DISPLAY_TEXT
     disableHref = true
   }
-  if (publicGroupId && teamId == publicGroupId) {
+  if (publicGroupId && teamId === publicGroupId) {
     icon = 'public'
     teamName = PUBLIC_GROUP_DISPLAY_TEXT
     disableHref = true
