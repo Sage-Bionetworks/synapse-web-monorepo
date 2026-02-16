@@ -6,7 +6,7 @@ import {
   useGetValidationResults,
 } from '@/synapse-queries'
 import React from 'react'
-import { PUBLIC_PRINCIPAL_IDS } from '@/utils/SynapseConstants'
+import { useRealmPrincipals } from '@/utils/context/RealmPrincipalsContext'
 import {
   ChatBubbleTwoTone,
   CheckTwoTone,
@@ -29,9 +29,9 @@ import { getDisplayedAnnotation } from '../entity/metadata/AnnotationsTable'
 import { EntityModal } from '../entity/metadata/EntityModal'
 import WarningDialog from '../SynapseForm/WarningDialog'
 
-function isPublic(bundle: EntityBundle): boolean {
+function isPublic(bundle: EntityBundle, publicPrincipalIds: string[]): boolean {
   return bundle.benefactorAcl.resourceAccess.some(ra => {
-    return PUBLIC_PRINCIPAL_IDS.includes(ra.principalId)
+    return publicPrincipalIds.includes(String(ra.principalId))
   })
 }
 
@@ -93,6 +93,14 @@ export const EntityBadgeIcons = (
     },
     canOpenModal,
   } = props
+
+  const { authenticatedUsersId, publicGroupId, anonymousUserId } =
+    useRealmPrincipals()
+  const publicPrincipalIds = [
+    authenticatedUsersId,
+    publicGroupId,
+    anonymousUserId,
+  ].filter((id): id is string => id !== undefined)
 
   enum SchemaConformanceState {
     NO_SCHEMA = '', // or not in experimental mode
@@ -246,7 +254,9 @@ export const EntityBadgeIcons = (
               initialTab={'ANNOTATIONS'}
             />
           </div>
-          {showIsPublicPrivate && bundle.benefactorAcl && isPublic(bundle) ? (
+          {showIsPublicPrivate &&
+          bundle.benefactorAcl &&
+          isPublic(bundle, publicPrincipalIds) ? (
             <Tooltip title="Public" enterNextDelay={100} placement="right">
               <PublicTwoTone
                 aria-hidden={false}
@@ -256,7 +266,9 @@ export const EntityBadgeIcons = (
               />
             </Tooltip>
           ) : null}
-          {showIsPublicPrivate && bundle.benefactorAcl && !isPublic(bundle) ? (
+          {showIsPublicPrivate &&
+          bundle.benefactorAcl &&
+          !isPublic(bundle, publicPrincipalIds) ? (
             <Tooltip title="Private" enterNextDelay={100} placement="right">
               <LockTwoTone
                 aria-hidden={false}

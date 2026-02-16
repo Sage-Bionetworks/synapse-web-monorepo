@@ -3,7 +3,7 @@ import {
   useGetUserGroupHeaders,
   useSendMessage,
 } from '@/synapse-queries'
-import { PUBLIC_PRINCIPAL_IDS } from '@/utils/SynapseConstants'
+import { useRealmPrincipals } from '@/utils/context/RealmPrincipalsContext'
 import {
   ResourceAccess,
   UserGroupHeader,
@@ -23,13 +23,14 @@ export function shouldNotifyUserInNewResourceAccess(
   initialResourceAccessList: ResourceAccess[],
   userGroupHeader: UserGroupHeader,
   currentUserId: string,
+  publicPrincipalIds: string[],
 ): boolean {
   const isInInitialResourceAccess = initialResourceAccessList.some(
     initialResourceAccess => principalId === initialResourceAccess.principalId,
   )
   const isIndividual = userGroupHeader.isIndividual
   const isCurrentUser = String(principalId) === currentUserId
-  const isPublic = PUBLIC_PRINCIPAL_IDS.includes(principalId)
+  const isPublic = publicPrincipalIds.includes(String(principalId))
 
   return (
     !isInInitialResourceAccess && // Is not in the initial list
@@ -44,6 +45,14 @@ export default function useNotifyNewACLUsers(
 ) {
   const { subject, body, initialResourceAccessList, newResourceAccessList } =
     options
+
+  const { authenticatedUsersId, publicGroupId, anonymousUserId } =
+    useRealmPrincipals()
+  const publicPrincipalIds = [
+    authenticatedUsersId,
+    publicGroupId,
+    anonymousUserId,
+  ].filter((id): id is string => id !== undefined)
 
   const { data: currentUserProfile, isLoading: isLoadingCurrentUserProfile } =
     useGetCurrentUserProfile()
@@ -76,6 +85,7 @@ export default function useNotifyNewACLUsers(
           initialResourceAccessList,
           userGroupHeader,
           currentUserProfile!.ownerId,
+          publicPrincipalIds,
         )
       })
       .map(ra => String(ra.principalId))
@@ -93,6 +103,7 @@ export default function useNotifyNewACLUsers(
     initialResourceAccessList,
     isLoading,
     newResourceAccessList,
+    publicPrincipalIds,
     sendMessage,
     subject,
     userGroupHeaders,

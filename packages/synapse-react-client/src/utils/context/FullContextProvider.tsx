@@ -16,6 +16,7 @@ import {
   ApplicationSessionContextProvider,
   ApplicationSessionContextType,
 } from '../AppUtils/session/ApplicationSessionContext'
+import { RealmPrincipalsContextProvider } from './RealmPrincipalsContext'
 
 export const defaultQueryClientConfig = {
   defaultOptions: {
@@ -47,6 +48,7 @@ export type FullContextProviderProps = PropsWithChildren<{
  * - ThemeContext (@mui)
  * - DocumentMetadataContext - for managing page title and meta descriptions
  * - ApplicationSessionContext - for managing user session state
+ * - RealmPrincipalsContext - for realm-specific principal IDs
  * - isEditingStore - used to sync editing state across the application
  *
  * IMPORTANT: The `applicationSessionContext` prop is required. For applications that need
@@ -72,19 +74,21 @@ export function FullContextProvider(props: FullContextProviderProps) {
     <QueryClientProvider client={queryClient ?? defaultQueryClient}>
       <ThemeProvider theme={theme}>
         <SynapseContextProvider synapseContext={synapseContext}>
-          <ApplicationSessionContextProvider
-            context={applicationSessionContext}
-          >
-            <DocumentMetadataProvider>
-              <GlobalIsEditingContextProvider
-                subscribe={isEditingStore.subscribe}
-                getSnapshot={isEditingStore.getSnapshot}
-                setIsEditing={isEditingStore.setIsEditing}
-              >
-                <Suspense fallback={null}>{children}</Suspense>
-              </GlobalIsEditingContextProvider>
-            </DocumentMetadataProvider>
-          </ApplicationSessionContextProvider>
+          <RealmPrincipalsContextProvider>
+            <ApplicationSessionContextProvider
+              context={applicationSessionContext}
+            >
+              <DocumentMetadataProvider>
+                <GlobalIsEditingContextProvider
+                  subscribe={isEditingStore.subscribe}
+                  getSnapshot={isEditingStore.getSnapshot}
+                  setIsEditing={isEditingStore.setIsEditing}
+                >
+                  <Suspense fallback={null}>{children}</Suspense>
+                </GlobalIsEditingContextProvider>
+              </DocumentMetadataProvider>
+            </ApplicationSessionContextProvider>
+          </RealmPrincipalsContextProvider>
         </SynapseContextProvider>
       </ThemeProvider>
     </QueryClientProvider>

@@ -1,8 +1,5 @@
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import {
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-} from '@/utils/SynapseConstants'
+import { useRealmPrincipals } from '@/utils/context/RealmPrincipalsContext'
 import { Box, Link } from '@mui/material'
 import IconSvg, { IconName } from './IconSvg/IconSvg'
 
@@ -20,14 +17,16 @@ export default function TeamBadge(props: TeamBadgeProps) {
   const { teamId, openLinkInNewTab } = props
   let { teamName, disableHref } = props
 
+  const { authenticatedUsersId, publicGroupId } = useRealmPrincipals()
+
   let icon: IconName = 'team'
 
-  if (teamId == AUTHENTICATED_PRINCIPAL_ID) {
+  if (authenticatedUsersId && teamId == authenticatedUsersId) {
     icon = 'public'
     teamName = AUTHENTICATED_GROUP_DISPLAY_TEXT
     disableHref = true
   }
-  if (teamId == PUBLIC_PRINCIPAL_ID) {
+  if (publicGroupId && teamId == publicGroupId) {
     icon = 'public'
     teamName = PUBLIC_GROUP_DISPLAY_TEXT
     disableHref = true

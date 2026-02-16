@@ -1,8 +1,8 @@
 import { getAccessTypeFromPermissionLevel } from '@/utils/PermissionLevelToAccessType'
 import {
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-} from '@/utils/SynapseConstants'
+  MOCK_AUTHENTICATED_PRINCIPAL_ID as AUTHENTICATED_PRINCIPAL_ID,
+  MOCK_PUBLIC_PRINCIPAL_ID as PUBLIC_PRINCIPAL_ID,
+} from '@/mocks/realm/mockRealmPrincipal'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { FileEntity } from '@sage-bionetworks/synapse-types'
 import { generateBaseEntity } from '../faker/generateFakeEntity'

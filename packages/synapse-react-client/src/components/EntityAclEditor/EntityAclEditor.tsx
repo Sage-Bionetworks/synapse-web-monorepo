@@ -15,11 +15,7 @@ import {
   PermissionLevel,
   permissionLevelToLabel,
 } from '@/utils/PermissionLevelToAccessType'
-import {
-  ANONYMOUS_PRINCIPAL_ID,
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-} from '@/utils/SynapseConstants'
+import { useRealmPrincipals } from '@/utils/context/RealmPrincipalsContext'
 import { Alert, Link, Stack } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
@@ -87,6 +83,7 @@ function getCanEditResourceAccess(
   canEdit: boolean,
   isInherited: boolean,
   ownProfile: UserProfile,
+  publicGroupId: string | undefined,
 ): AclEditorProps['canEdit'] {
   if (!canEdit || isInherited) {
     return false
@@ -96,7 +93,9 @@ function getCanEditResourceAccess(
     const isSelf = ownProfile.ownerId === String(resourceAccess.principalId)
     // Users cannot change permission level for the public group, only add/remove it.
     // To give the public group DOWNLOAD access, ACT must mark it as anonymous access.
-    const isPublicGroup = resourceAccess.principalId === PUBLIC_PRINCIPAL_ID
+    const isPublicGroup =
+      publicGroupId !== undefined &&
+      String(resourceAccess.principalId) === publicGroupId
     if (isSelf || isPublicGroup) {
       return false
     }
@@ -124,9 +123,13 @@ function getCanDeleteResourceAccess(
 
 function getDisplayedPermissionLevelOverride(
   isOpenData: boolean,
+  publicGroupId: string | undefined,
 ): AclEditorProps['displayedPermissionLevelOverride'] {
   return (resourceAccess: ResourceAccess) => {
-    if (resourceAccess.principalId === PUBLIC_PRINCIPAL_ID) {
+    if (
+      publicGroupId !== undefined &&
+      String(resourceAccess.principalId) === publicGroupId
+    ) {
       return isOpenData
         ? permissionLevelToLabel['CAN_DOWNLOAD']
         : permissionLevelToLabel['CAN_VIEW']
@@ -147,6 +150,8 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
   } = props
 
   const { data: ownProfile } = useSuspenseGetCurrentUserProfile()
+  const { authenticatedUsersId, publicGroupId, anonymousUserId } =
+    useRealmPrincipals()
   const { data: entityBundle } = useSuspenseGetEntityBundle(
     entityId,
     undefined,
@@ -221,11 +226,9 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
   ])
 
   const isPublic = updatedResourceAccessList.some(ra =>
-    [
-      AUTHENTICATED_PRINCIPAL_ID,
-      PUBLIC_PRINCIPAL_ID,
-      ANONYMOUS_PRINCIPAL_ID,
-    ].includes(ra.principalId),
+    [authenticatedUsersId, publicGroupId, anonymousUserId]
+      .filter((id): id is string => id !== undefined)
+      .includes(String(ra.principalId)),
   )
 
   const {
@@ -387,6 +390,7 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
           canEdit,
           updatedIsInherited,
           ownProfile,
+          publicGroupId,
         )}
         canRemoveEntry={getCanDeleteResourceAccess(
           canEdit,
@@ -398,9 +402,10 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
         emptyText={/* This should never happen */ ''}
         displayedPermissionLevelOverride={getDisplayedPermissionLevelOverride(
           isOpenData,
+          publicGroupId,
         )}
         onAddPrincipalToAcl={id => {
-          if (id === PUBLIC_PRINCIPAL_ID) {
+          if (publicGroupId !== undefined && String(id) === publicGroupId) {
             addResourceAccessItem(
               id,
               getAccessTypeFromPermissionLevel('CAN_VIEW'),

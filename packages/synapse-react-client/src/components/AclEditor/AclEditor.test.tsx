@@ -13,11 +13,11 @@ import {
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { PermissionLevel } from '@/utils/PermissionLevelToAccessType'
 import {
-  ANONYMOUS_PRINCIPAL_ID,
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_IDS,
-} from '@/utils/SynapseConstants'
+  MOCK_ANONYMOUS_PRINCIPAL_ID as ANONYMOUS_PRINCIPAL_ID,
+  MOCK_AUTHENTICATED_PRINCIPAL_ID as AUTHENTICATED_PRINCIPAL_ID,
+  MOCK_PUBLIC_PRINCIPAL_ID as PUBLIC_PRINCIPAL_ID,
+  MOCK_PUBLIC_PRINCIPAL_IDS as PUBLIC_PRINCIPAL_IDS,
+} from '@/mocks/realm/mockRealmPrincipal'
 import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
