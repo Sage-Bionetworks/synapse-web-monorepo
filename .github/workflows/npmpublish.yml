@@ -25,8 +25,6 @@ jobs:
       - uses: ./.github/actions/pnpm-setup-action
       - name: Get package path
         id: package-path
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           packagePath=$(pnpm nx show project ${{ matrix.publishablePackage }} --json | jq -r '.sourceRoot')
           echo "packagePath=${packagePath}" >> "$GITHUB_OUTPUT"
@@ -39,8 +37,6 @@ jobs:
       # Build the package to publish
       - name: Build package
         run: pnpm nx run ${{ matrix.publishablePackage }}:build
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # If the package version changed, and the build succeeded, create the tag using the output of the previous step.
       - name: Create tag
         uses: actions/github-script@v7
@@ -59,4 +55,3 @@ jobs:
         working-directory: './${{ steps.package-path.outputs.packagePath }}'
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

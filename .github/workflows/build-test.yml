@@ -27,7 +27,6 @@ jobs:
       - run: pnpm nx affected --target=build --base=remotes/origin/main
         env:
           NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   test:
     needs: build
     runs-on:
@@ -46,7 +45,6 @@ jobs:
         run: pnpm nx affected --target test --base=remotes/origin/main --parallel=1
         env:
           NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload test report
         if: success() || steps.test.conclusion == 'failure'
         uses: actions/upload-artifact@v4
@@ -68,7 +66,6 @@ jobs:
       - run: pnpm nx affected --target=lint --base=remotes/origin/main
         env:
           NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   typecheck:
     needs: build
     runs-on: ubuntu-latest
@@ -82,7 +79,6 @@ jobs:
       - run: pnpm nx affected --target=type-check --base=remotes/origin/main
         env:
           NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   sonarqube-src:
     # For monorepos, create one sonarcloud job per project and specify its directory
     needs: test
