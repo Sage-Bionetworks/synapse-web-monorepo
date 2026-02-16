@@ -31,7 +31,11 @@ function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
   }, [])
 
   const createExperimentalModeCookie = () => {
-    cookies.set(EXPERIMENTAL_MODE_COOKIE, 'true', { path: '/' })
+    const hostname = window.location.hostname.toLowerCase()
+    cookies.set(EXPERIMENTAL_MODE_COOKIE, 'true', {
+      path: '/',
+      domain: hostname.endsWith('.synapse.org') ? 'synapse.org' : undefined,
+    })
     setIsExperimentalModeOn(true)
     if (onExperimentalModeToggle) {
       onExperimentalModeToggle(true)
