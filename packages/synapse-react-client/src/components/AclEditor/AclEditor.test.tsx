@@ -355,11 +355,17 @@ describe('AclEditor', () => {
         },
       ],
       showAddRemovePublicButton: true,
+      canEdit: true,
     })
 
-    const removePublicAccessButton = screen.getByRole('button', {
-      name: REMOVE_PUBLIC_PRINCIPALS_BUTTON_TEXT,
-    })
+    // Wait for the button to show up (realm principals need to be loaded first)
+    const removePublicAccessButton = await screen.findByRole(
+      'button',
+      {
+        name: REMOVE_PUBLIC_PRINCIPALS_BUTTON_TEXT,
+      },
+      { timeout: 3000 },
+    )
     await user.click(removePublicAccessButton)
 
     expect(mockRemoveResourceAccessItem).toHaveBeenCalledWith(

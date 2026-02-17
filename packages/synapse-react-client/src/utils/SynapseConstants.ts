@@ -5,6 +5,9 @@ export const ACT_TEAM_ID = 464532
 /** The team containing Synapse users whose HTML files may be rendered without sanitization */
 export const TRUSTED_HTML_USERS_TEAM_ID = '3351236'
 
+/** The default Synapse realm ID */
+export const SYNAPSE_REALM = '0'
+
 /** QueryBundleRequest constants */
 export const BUNDLE_MASK_QUERY_RESULTS: number = 1
 export const BUNDLE_MASK_QUERY_COUNT: number = 2

@@ -36,12 +36,14 @@ import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
 import { useCookiePreferences } from 'synapse-react-client/utils/hooks/useCookiePreferences'
 import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/featureflags/useGetFeatureFlag'
+import { useGetCurrentRealm } from 'synapse-react-client/synapse-queries/realm/useRealmPrincipals'
 import SynapseClient from 'synapse-react-client/synapse-client'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 import ChangePassword from 'synapse-react-client/components/ChangePassword/ChangePassword'
 import TwoFactorAuthSettingsPanel from 'synapse-react-client/components/Authentication/TwoFactorAuthSettingsPanel'
 import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import CookiePreferencesDialog from 'synapse-react-client/components/CookiesNotification/CookiePreferencesDialog'
+import { SYNAPSE_REALM } from 'synapse-react-client/utils/SynapseConstants'
 
 function CompletionStatus({ isComplete }: { isComplete: boolean | undefined }) {
   return (
@@ -99,6 +101,7 @@ const AccountSettings = (): React.ReactNode => {
 
   const { clearSession } = useApplicationSessionContext()
   const showWebhooks = useGetFeatureFlag(FeatureFlagEnum.WEBHOOKS_UI)
+  const { data: currentRealm } = useGetCurrentRealm()
 
   const cookies = new UniversalCookies()
   const [isUTCTime, setUTCTime] = useState<string>(
@@ -537,50 +540,52 @@ const AccountSettings = (): React.ReactNode => {
                     </Link>
                   </div>
                 </div>
-                <div className="credential-partition">
-                  <h4>ORCID Profile</h4>
-                  <div className="item-completion">
-                    {orcid ? (
-                      <a href={orcid}>{orcid}</a>
-                    ) : (
-                      <CompletionStatus isComplete={false} />
-                    )}
-                  </div>
-                  <p>
-                    <i>
-                      Linking your ORCID profile is useful for other
-                      researchers, and is required for profile validation.
-                    </i>
-                  </p>
-                  <div className="primary-button-container">
-                    {orcid ? (
-                      <Button
-                        variant="outlined"
-                        sx={credentialButtonSX}
-                        onClick={() => setShowUnbindORCiDDialog(true)}
+                {currentRealm === SYNAPSE_REALM && (
+                  <div className="credential-partition">
+                    <h4>ORCID Profile</h4>
+                    <div className="item-completion">
+                      {orcid ? (
+                        <a href={orcid}>{orcid}</a>
+                      ) : (
+                        <CompletionStatus isComplete={false} />
+                      )}
+                    </div>
+                    <p>
+                      <i>
+                        Linking your ORCID profile is useful for other
+                        researchers, and is required for profile validation.
+                      </i>
+                    </p>
+                    <div className="primary-button-container">
+                      {orcid ? (
+                        <Button
+                          variant="outlined"
+                          sx={credentialButtonSX}
+                          onClick={() => setShowUnbindORCiDDialog(true)}
+                        >
+                          Unlink your ORCID profile
+                        </Button>
+                      ) : (
+                        <ORCiDButton
+                          sx={credentialButtonSX}
+                          redirectAfter={`${SynapseClient.getRootURL()}authenticated/myaccount`}
+                        />
+                      )}
+                      <Link
+                        href="https://help.synapse.org/docs/Synapse-User-Account-Types.2007072795.html#SynapseUserAccountTypes-ValidatedUsers"
+                        target="_blank"
                       >
-                        Unlink your ORCID profile
-                      </Button>
-                    ) : (
-                      <ORCiDButton
-                        sx={credentialButtonSX}
-                        redirectAfter={`${SynapseClient.getRootURL()}authenticated/myaccount`}
-                      />
-                    )}
-                    <Link
-                      href="https://help.synapse.org/docs/Synapse-User-Account-Types.2007072795.html#SynapseUserAccountTypes-ValidatedUsers"
-                      target="_blank"
-                    >
-                      More information
-                    </Link>
+                        More information
+                      </Link>
+                    </div>
+                    <UnbindORCiDDialog
+                      show={showUnbindORCiDDialog}
+                      setShow={setShowUnbindORCiDDialog}
+                      orcid={orcid}
+                      redirectAfter={`${SynapseClient.getRootURL()}authenticated/myaccount`}
+                    />
                   </div>
-                  <UnbindORCiDDialog
-                    show={showUnbindORCiDDialog}
-                    setShow={setShowUnbindORCiDDialog}
-                    orcid={orcid}
-                    redirectAfter={`${SynapseClient.getRootURL()}authenticated/myaccount`}
-                  />
-                </div>
+                )}
                 <div className="credential-partition">
                   <h4>Profile Validation</h4>
                   {(verificationState === undefined ||

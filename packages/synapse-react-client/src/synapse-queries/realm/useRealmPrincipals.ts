@@ -1,7 +1,33 @@
 import { useSynapseContext } from '@/utils'
+import { SYNAPSE_REALM } from '@/utils/SynapseConstants'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { RealmPrincipal } from '@sage-bionetworks/synapse-client/generated/models/RealmPrincipal'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+
+/**
+ * Get the current realm ID for the logged in user.
+ * Returns the default Synapse realm ID regardless of authentication status.
+ * Note: The API does not provide a direct way to get the current user's realm ID from the access token,
+ * so this hook returns the default realm ID.
+ *
+ * @param options - Query options
+ * @returns The realm ID for the current user (always SYNAPSE_REALM)
+ */
+export function useGetCurrentRealm(
+  options?: Partial<UseQueryOptions<string, SynapseClientError>>,
+) {
+  const { keyFactory } = useSynapseContext()
+
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getCurrentRealmQueryKey(),
+    queryFn: () => {
+      // The API does not provide an endpoint to get the current user's realm ID from the access token.
+      // Always return the default Synapse realm ID.
+      return SYNAPSE_REALM
+    },
+  })
+}
 
 /**
  * Get the realm principals for the current user's realm.
@@ -24,9 +50,9 @@ export function useGetRealmPrincipals(
         // Use authenticated endpoint which determines realm from access token
         return await synapseClient.realmServicesClient.getRepoV1RealmPrincipals()
       } else {
-        // Use unauthenticated endpoint with default realm
+        // Use unauthenticated endpoint with default Synapse realm
         return await synapseClient.realmServicesClient.getRepoV1RealmIdPrincipals(
-          { id: '0' },
+          { id: SYNAPSE_REALM },
         )
       }
     },
