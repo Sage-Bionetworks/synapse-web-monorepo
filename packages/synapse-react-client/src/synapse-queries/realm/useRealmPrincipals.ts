@@ -6,25 +6,30 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 
 /**
  * Get the current realm ID for the logged in user.
- * Returns the default Synapse realm ID regardless of authentication status.
- * Note: The API does not provide a direct way to get the current user's realm ID from the access token,
- * so this hook returns the default realm ID.
+ * If authenticated, fetches the realm ID from the API using the access token.
+ * If not authenticated, returns the default Synapse realm ID.
  *
  * @param options - Query options
- * @returns The realm ID for the current user (always SYNAPSE_REALM)
+ * @returns The realm ID for the current user
  */
 export function useGetCurrentRealm(
   options?: Partial<UseQueryOptions<string, SynapseClientError>>,
 ) {
-  const { keyFactory } = useSynapseContext()
+  const { synapseClient, keyFactory, isAuthenticated } = useSynapseContext()
 
   return useQuery({
     ...options,
     queryKey: keyFactory.getCurrentRealmQueryKey(),
-    queryFn: () => {
-      // The API does not provide an endpoint to get the current user's realm ID from the access token.
-      // Always return the default Synapse realm ID.
-      return SYNAPSE_REALM
+    queryFn: async () => {
+      if (isAuthenticated) {
+        // Fetch realm principals which includes the realmId
+        const realmPrincipal =
+          await synapseClient.realmServicesClient.getRepoV1RealmPrincipals()
+        return realmPrincipal.realmId ?? SYNAPSE_REALM
+      } else {
+        // Return the default Synapse realm ID for unauthenticated users
+        return SYNAPSE_REALM
+      }
     },
   })
 }

@@ -8,9 +8,99 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { renderHook, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
-import { useGetRealmPrincipals } from './useRealmPrincipals'
+import { useGetCurrentRealm, useGetRealmPrincipals } from './useRealmPrincipals'
 
 const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+
+describe('useGetCurrentRealm', () => {
+  beforeAll(() => server.listen())
+  afterEach(() => {
+    server.resetHandlers(
+      getRealmPrincipalsHandler(),
+      getRealmPrincipalsByIdHandler(),
+    )
+  })
+  afterAll(() => server.close())
+
+  describe('when authenticated', () => {
+    it('fetches realm ID from authenticated endpoint', async () => {
+      const { result } = renderHook(() => useGetCurrentRealm(), {
+        wrapper: createWrapper({ accessToken: 'fake-token' }),
+      })
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+      expect(result.current.data).toBe('0')
+      expect(result.current.isLoading).toBe(false)
+      expect(result.current.error).toBe(null)
+    })
+
+    it('handles error state when authenticated', async () => {
+      const errorMessage = 'Failed to fetch realm principals'
+      server.use(
+        http.get(`${REPO_ENDPOINT}/repo/v1/realm/principals`, () => {
+          return HttpResponse.json({ reason: errorMessage }, { status: 500 })
+        }),
+      )
+
+      const { result } = renderHook(() => useGetCurrentRealm(), {
+        wrapper: createWrapper({ accessToken: 'fake-token' }),
+      })
+
+      await waitFor(() => expect(result.current.isError).toBe(true))
+
+      expect(result.current.error).toBeDefined()
+      expect(result.current.data).toBeUndefined()
+    })
+  })
+
+  describe('when not authenticated', () => {
+    it('returns default Synapse realm ID', async () => {
+      const { result } = renderHook(() => useGetCurrentRealm(), {
+        wrapper: createWrapper({ accessToken: undefined }),
+      })
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+      expect(result.current.data).toBe('0')
+      expect(result.current.isLoading).toBe(false)
+      expect(result.current.error).toBe(null)
+    })
+  })
+
+  describe('query options', () => {
+    it('respects custom query options', async () => {
+      const { result } = renderHook(
+        () =>
+          useGetCurrentRealm({
+            staleTime: 10000,
+          }),
+        {
+          wrapper: createWrapper({ accessToken: 'fake-token' }),
+        },
+      )
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+      expect(result.current.data).toBe('0')
+    })
+
+    it('can be disabled via enabled option', () => {
+      const { result } = renderHook(
+        () =>
+          useGetCurrentRealm({
+            enabled: false,
+          }),
+        {
+          wrapper: createWrapper({ accessToken: 'fake-token' }),
+        },
+      )
+
+      expect(result.current.isLoading).toBe(false)
+      expect(result.current.data).toBeUndefined()
+    })
+  })
+})
 
 describe('useGetRealmPrincipals', () => {
   beforeAll(() => server.listen())

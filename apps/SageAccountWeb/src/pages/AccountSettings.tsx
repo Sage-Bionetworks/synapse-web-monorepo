@@ -102,7 +102,6 @@ const AccountSettings = (): React.ReactNode => {
   const { clearSession } = useApplicationSessionContext()
   const showWebhooks = useGetFeatureFlag(FeatureFlagEnum.WEBHOOKS_UI)
   const { data: currentRealm } = useGetCurrentRealm()
-
   const cookies = new UniversalCookies()
   const [isUTCTime, setUTCTime] = useState<string>(
     SynapseClient.getUseUtcTimeFromCookie().toString(),
