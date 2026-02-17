@@ -16,9 +16,9 @@ export const explorePaths: ExplorePageRoute[] = [
   {
     path: 'Data',
   },
-  // {
-  //   path: 'Cohort Builder',
-  // },
+  {
+    path: 'Cohort Builder',
+  },
   {
     path: 'Publications',
   },
