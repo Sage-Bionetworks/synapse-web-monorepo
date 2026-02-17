@@ -6,6 +6,7 @@ import {
   Typography,
   IconButton,
   Collapse,
+  Badge,
 } from '@mui/material'
 import SynapseSearchResultsCard from './SynapseSearchResultsCard'
 import SearchIcon from '@mui/icons-material/Search'
@@ -367,13 +368,16 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
     return query ? getAppliedRangeFacet(query, facetName) : undefined
   }
 
+  const appliedFacetsCount =
+    (query?.booleanQuery?.length || 0) + (query?.rangeQuery?.length || 0)
+
   return (
     <Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        py: '30px',
+        p: '30px',
         gap: '20px',
       }}
     >
@@ -432,8 +436,29 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
               color: theme => theme.palette.primary.dark,
             }}
           >
-            <Typography sx={{ fontWeight: 700, lineHeight: '16px' }}>
-              Filter Search Results
+            <Typography
+              sx={{
+                fontWeight: 700,
+                lineHeight: '16px',
+                display: 'flex',
+                gap: '8px',
+              }}
+            >
+              <div>Filter Search Results</div>
+              {appliedFacetsCount > 0 && (
+                <Badge
+                  badgeContent={appliedFacetsCount}
+                  color="primary"
+                  sx={{
+                    '& .MuiBadge-badge': {
+                      position: 'static',
+                      transform: 'none',
+                      height: '18px',
+                      minWidth: '18px',
+                    },
+                  }}
+                />
+              )}
             </Typography>
           </Button>
         </Box>
