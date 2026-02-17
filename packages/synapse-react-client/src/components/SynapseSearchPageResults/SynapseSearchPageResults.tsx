@@ -444,7 +444,7 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
                 gap: '8px',
               }}
             >
-              <div>Filter Search Results</div>
+              <span>Filter Search Results</span>
               {appliedFacetsCount > 0 && (
                 <Badge
                   badgeContent={appliedFacetsCount}
