@@ -17,7 +17,6 @@ import { SynapseNavDrawer, SynapseNavDrawerProps } from './SynapseNavDrawer'
 
 const defaultProps: SynapseNavDrawerProps = {
   initIsOpen: false,
-  signoutCallback: vi.fn(),
   gotoPlace: vi.fn(),
 }
 
