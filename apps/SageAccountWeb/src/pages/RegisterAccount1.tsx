@@ -236,9 +236,6 @@ const RegisterAccount1 = (): React.ReactNode => {
           }}
         >
           <RegisterPageLogoutPrompt
-            onLogout={() => {
-              void sessionContext.refreshSession()
-            }}
             logo={<SourceAppLogo sx={{ width: '100%' }} />}
           />
         </Box>

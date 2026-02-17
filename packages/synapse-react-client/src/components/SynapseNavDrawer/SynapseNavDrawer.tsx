@@ -1,7 +1,6 @@
 import React from 'react'
 import SynapseIconWhite from '@/assets/icons/SynapseIconWhite'
 import SynapseLogoName from '@/assets/icons/SynapseLogoName'
-import SynapseClient from '@/synapse-client'
 import {
   useGetCurrentUserBundle,
   useGetDownloadListStatistics,
@@ -9,6 +8,7 @@ import {
 } from '@/synapse-queries'
 import {
   storeRedirectURLForOneSageLoginAndGotoURL,
+  useApplicationSessionContext,
   useSynapseContext,
 } from '@/utils'
 import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
@@ -36,7 +36,6 @@ import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureF
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
-  signoutCallback?: () => void
   gotoPlace: (href: string) => void
 }
 
@@ -193,7 +192,6 @@ const NavDrawerListItem = (props: MenuItemParams): React.ReactNode => {
  */
 export function SynapseNavDrawer({
   initIsOpen = false,
-  signoutCallback,
   gotoPlace,
 }: SynapseNavDrawerProps) {
   const [isOpen, setOpen] = useState(initIsOpen)
@@ -202,6 +200,8 @@ export function SynapseNavDrawer({
   const [docSiteSearchText, setDocSiteSearchText] = useState<string>('')
   const [isShowingCreateProjectModal, setIsShowingCreateProjectModal] =
     useState<boolean>(false)
+
+  const { clearSession } = useApplicationSessionContext()
 
   const { isAuthenticated } = useSynapseContext()
 
@@ -240,15 +240,6 @@ export function SynapseNavDrawer({
     openSubmissionData?.pages[0].results.length ?? 0
   if (openSubmissionData?.pages[0].nextPageToken) {
     countOfOpenSubmissionsForReview = `${countOfOpenSubmissionsForReview}+`
-  }
-
-  const signOut = async () => {
-    if (signoutCallback) {
-      signoutCallback()
-    } else {
-      await SynapseClient.signOut()
-      window.location.reload()
-    }
   }
 
   const handleDrawerOpen = (navItem?: NavItem) => {
@@ -570,7 +561,7 @@ export function SynapseNavDrawer({
                   <a
                     className="SRC-whiteText"
                     onClick={() => {
-                      void signOut()
+                      void clearSession()
                     }}
                     rel="noopener noreferrer"
                   >

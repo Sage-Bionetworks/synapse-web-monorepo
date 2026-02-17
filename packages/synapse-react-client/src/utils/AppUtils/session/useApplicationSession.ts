@@ -170,11 +170,17 @@ export function useApplicationSession(
     setIsAuthenticated(currentUserId !== realmPrincipals.anonymousUser!)
   }, [initAnonymousUserState, maxAge])
 
-  const clearSession = useCallback(async () => {
-    await initAnonymousUserState()
-    // In all cases when the session is cleared we should refresh the page to ensure private data is not being shown
-    navigate(0)
-  }, [navigate, initAnonymousUserState])
+  const clearSession = useCallback(
+    async (onBeforeReload?: () => void) => {
+      await initAnonymousUserState()
+      if (onBeforeReload) {
+        onBeforeReload()
+      }
+      // In all cases when the session is cleared we should refresh the page to ensure private data is not being shown
+      navigate(0)
+    },
+    [navigate, initAnonymousUserState],
+  )
 
   /** Call refreshSession on mount and set up periodic refresh */
   useEffect(() => {
@@ -206,7 +212,7 @@ export function useApplicationSession(
       throw err
     },
     isInitializingSession: !hasInitializedSession,
-    token,
+    isAuthenticated,
   })
 
   const sessionContext: ApplicationSessionContextType = {

@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router'
-import SynapseClient from 'synapse-react-client/synapse-client'
+import { useApplicationSessionContext } from 'synapse-react-client'
 
 function LogoutPage() {
   const navigate = useNavigate()
-  SynapseClient.signOut().then(() => {
+  const { clearSession } = useApplicationSessionContext()
+  clearSession(() => {
     navigate('/authenticated/myaccount', { replace: true })
   })
   return <></>

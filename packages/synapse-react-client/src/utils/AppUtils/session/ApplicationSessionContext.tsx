@@ -24,8 +24,11 @@ export type ApplicationSessionContextType = {
   refreshSession: () => Promise<void>
   /* Error object encountered when a Synapse user signs in with SSO and has 2FA enabled. A code within this error object is required to complete sign-in. */
   twoFactorAuthSSOErrorResponse?: TwoFactorAuthErrorResponse
-  /* Signs the user out and updates this context. */
-  clearSession: () => Promise<void>
+  /**
+   * Signs the user out and updates this context. After clearing the session, the page will be reloaded.
+   * @param onBeforeReload Optionally synchronous callback that will be executed just before reloading.
+   */
+  clearSession: (onBeforeReload?: () => void) => Promise<void>
   /** Whether detection of a single-sign-on (SSO) event is pending.
    * For example, detecting an authorization code passed by an external identity provider via the user's browser.
    * A reload may be forced before this completes.
