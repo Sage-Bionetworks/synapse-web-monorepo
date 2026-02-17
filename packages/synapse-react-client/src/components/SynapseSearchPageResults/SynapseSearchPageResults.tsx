@@ -5,13 +5,14 @@ import {
   Button,
   Typography,
   IconButton,
+  Collapse,
 } from '@mui/material'
 import SynapseSearchResultsCard from './SynapseSearchResultsCard'
 import SearchIcon from '@mui/icons-material/Search'
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
 import React, { useState, useEffect, useMemo } from 'react'
 import { useSearchInfinite } from '@/synapse-queries/search/useSearch'
-import { SearchQuery } from '@sage-bionetworks/synapse-types'
+import { SearchQuery, KeyRange, Hit } from '@sage-bionetworks/synapse-types'
 import { useDocumentMetadata } from '@/utils/context/DocumentMetadataContext'
 import { ArrowForward } from '@mui/icons-material'
 import styles from './SynapseSearchPageResults.module.scss'
@@ -20,6 +21,136 @@ import { Suggestion } from '@sage-bionetworks/synapse-client'
 import SearchPagePortalBanners from './SearchPagePortalBanners'
 import { SYNAPSE_ENTITY_ID_REGEX } from '@/utils/functions/RegularExpressions'
 import { DEFAULT_SEARCH_QUERY } from '@/utils/searchDefaults'
+import {
+  SearchFacetPanel,
+  AppliedFacetsChips,
+} from './SearchFacetPanel/SearchFacetPanel'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+
+/**
+ * Add a literal facet filter to the query
+ */
+function addFacetToQuery(
+  query: SearchQuery,
+  facetName: string,
+  facetValue: string,
+): SearchQuery {
+  const booleanQuery = query.booleanQuery || []
+
+  const isFilterAlreadyApplied = booleanQuery.some(
+    kv => kv.key === facetName && kv.value === facetValue,
+  )
+
+  if (isFilterAlreadyApplied) {
+    return query
+  }
+
+  return {
+    ...query,
+    facetOptions: query.facetOptions || DEFAULT_SEARCH_QUERY.facetOptions,
+    booleanQuery: [
+      ...booleanQuery,
+      { key: facetName, value: facetValue, not: false },
+    ],
+    start: 0, // Reset to first page
+  }
+}
+
+/**
+ * Remove a literal facet filter from the query
+ */
+function removeFacetFromQuery(
+  query: SearchQuery,
+  facetName: string,
+  facetValue: string,
+): SearchQuery {
+  const booleanQuery = query.booleanQuery || []
+
+  return {
+    ...query,
+    facetOptions: query.facetOptions || DEFAULT_SEARCH_QUERY.facetOptions,
+    booleanQuery: booleanQuery.filter(
+      kv => !(kv.key === facetName && kv.value === facetValue),
+    ),
+    start: 0,
+  }
+}
+
+/**
+ * Set a range facet (ex, for modified on, created on)
+ */
+function setRangeFacetInQuery(
+  query: SearchQuery,
+  facetName: string,
+  minValue: string,
+): SearchQuery {
+  const rangeQuery = query.rangeQuery || []
+
+  // Remove any existing range for this facet
+  const filteredRangeQuery = rangeQuery.filter(kr => kr.key !== facetName)
+
+  const maxValue = String(Math.floor(Date.now() / 1000)) // Now in seconds
+
+  return {
+    ...query,
+    facetOptions: query.facetOptions || DEFAULT_SEARCH_QUERY.facetOptions,
+    rangeQuery: [
+      ...filteredRangeQuery,
+      { key: facetName, min: minValue, max: maxValue },
+    ],
+    start: 0,
+  }
+}
+
+/**
+ * Remove a range facet from the query
+ */
+function removeRangeFacetFromQuery(
+  query: SearchQuery,
+  facetName: string,
+): SearchQuery {
+  const rangeQuery = query.rangeQuery || []
+
+  return {
+    ...query,
+    facetOptions: query.facetOptions || DEFAULT_SEARCH_QUERY.facetOptions,
+    rangeQuery: rangeQuery.filter(kr => kr.key !== facetName),
+    start: 0,
+  }
+}
+
+/**
+ * Check if a facet filter is currently applied
+ */
+function isFacetApplied(
+  query: SearchQuery,
+  facetName: string,
+  facetValue: string,
+): boolean {
+  const booleanQuery = query.booleanQuery || []
+  return booleanQuery.some(
+    kv => kv.key === facetName && kv.value === facetValue,
+  )
+}
+
+/**
+ * Check if a range facet is currently applied
+ */
+function isRangeFacetApplied(query: SearchQuery, facetName: string): boolean {
+  const rangeQuery = query.rangeQuery || []
+  return rangeQuery.some(kr => kr.key === facetName)
+}
+
+/**
+ * Get the applied range facet value for a given facet name
+ */
+function getAppliedRangeFacet(
+  query: SearchQuery,
+  facetName: string,
+): KeyRange | undefined {
+  const rangeQuery = query.rangeQuery || []
+  return rangeQuery.find(kr => kr.key === facetName)
+}
 
 export type SynapseSearchPageResultsProps = {
   query?: SearchQuery
@@ -29,6 +160,7 @@ export type SynapseSearchPageResultsProps = {
 export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   const MIN_SUGGESTION_SCORE = 0.75
   const { query, setQuery } = props
+  const [expanded, setExpanded] = useState(false)
 
   // Set page title (replaces jsniUtils.setPageTitle(DisplayConstants.LABEL_SEARCH) from Java)
   useDocumentMetadata({ title: `Search: ${query?.queryTerm?.join(' ')}` })
@@ -56,6 +188,7 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   } = useSearchInfinite(
     query
       ? {
+          ...DEFAULT_SEARCH_QUERY,
           ...query,
           size: 50,
           returnFields: ['path'],
@@ -77,12 +210,14 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
     if (setQuery) {
       const newQuery = {
         ...DEFAULT_SEARCH_QUERY,
+        ...query,
         queryTerm: searchInputValue
           ? searchInputValue
               .split(' ')
               .map(term => term.trim())
               .filter(Boolean)
           : [],
+        start: 0,
       }
       setQuery(newQuery)
     }
@@ -179,10 +314,12 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
     if (setQuery && suggestion) {
       const newQuery = {
         ...DEFAULT_SEARCH_QUERY,
+        ...query,
         queryTerm: suggestion
           .split(' ')
           .map(term => term.trim())
           .filter(Boolean),
+        start: 0,
       }
       setQuery(newQuery)
     }
@@ -191,64 +328,148 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   const noResults = data?.pages?.[0]?.hits?.length === 0
   const isSynId = SYNAPSE_ENTITY_ID_REGEX.test(query?.queryTerm?.[0] || '')
 
+  const facets = data?.pages?.[0]?.facets || []
+
+  // Create handler functions for facet operations
+  const handleAddFacet = (facetName: string, facetValue: string) => {
+    if (setQuery && query) {
+      setQuery(addFacetToQuery(query, facetName, facetValue))
+    }
+  }
+
+  const handleRemoveFacet = (facetName: string, facetValue: string) => {
+    if (setQuery && query) {
+      setQuery(removeFacetFromQuery(query, facetName, facetValue))
+    }
+  }
+
+  const handleSetRangeFacet = (facetName: string, minValue: string) => {
+    if (setQuery && query) {
+      setQuery(setRangeFacetInQuery(query, facetName, minValue))
+    }
+  }
+
+  const handleRemoveRangeFacet = (facetName: string) => {
+    if (setQuery && query) {
+      setQuery(removeRangeFacetFromQuery(query, facetName))
+    }
+  }
+
+  const handleIsFacetApplied = (facetName: string, facetValue: string) => {
+    return query ? isFacetApplied(query, facetName, facetValue) : false
+  }
+
+  const handleIsRangeFacetApplied = (facetName: string) => {
+    return query ? isRangeFacetApplied(query, facetName) : false
+  }
+
+  const handleGetAppliedRangeFacet = (facetName: string) => {
+    return query ? getAppliedRangeFacet(query, facetName) : undefined
+  }
+
   return (
     <Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
+        py: '30px',
+        gap: '20px',
       }}
     >
       <Box
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          height: '200px',
-          bgcolor: theme => theme.palette.primary.dark,
-          py: '40px',
-          px: '80px',
+          height: 'auto',
           gap: '16px',
         }}
       >
-        <TextField
-          placeholder="Search…"
-          value={searchInputValue}
-          onChange={handleInputChange}
-          onKeyDown={e => {
-            if (e.key === 'Enter') {
-              handleSearch()
-            }
-          }}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{ color: 'secondary.600' }} />
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-        <Button
-          variant="outlined"
-          endIcon={<FilterAltOutlinedIcon />}
+        <Box
           sx={{
-            py: '10px',
-            px: '20px',
-            width: '200px',
-            bgcolor: 'grey.700',
-            color: 'white',
-            '&:hover': {
-              //remove hover
-              boxShadow: 'none',
-              color: 'white',
-            },
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: '16px',
+            width: '100%',
           }}
         >
-          Filter By
-        </Button>
+          <TextField
+            placeholder="Search…"
+            sx={{ flex: 1 }}
+            value={searchInputValue}
+            onChange={handleInputChange}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                handleSearch()
+              }
+            }}
+            slotProps={{
+              input: {
+                sx: {
+                  borderRadius: '96px',
+                  boxShadow: '0px 1px 4px var(--synapse-gray-500)',
+                  backgroundColor: 'var(--synapse-white)',
+                },
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ color: 'secondary.600' }} />
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+          <Button
+            variant="outlined"
+            startIcon={<FilterAltOutlinedIcon />}
+            onClick={() => setExpanded(!expanded)}
+            sx={{
+              py: '10px',
+              px: '20px',
+              height: '100%',
+              borderRadius: 0,
+              width: 'fit-content',
+              color: theme => theme.palette.primary.dark,
+            }}
+          >
+            <Typography sx={{ fontWeight: 700, lineHeight: '16px' }}>
+              Filter Search Results
+            </Typography>
+          </Button>
+        </Box>
+        {isLoading && <SynapseSpinner size={40} />}
+        <Box>
+          {!isLoading && facets.length > 0 && (
+            <Collapse in={expanded}>
+              <Box
+                sx={{
+                  border: '1px solid',
+                  borderColor: 'var(--synapse-gray-100)',
+                  backgroundColor: 'var(--synapse-white)',
+                  padding: '25px',
+                  boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.04)',
+                }}
+              >
+                {query && setQuery && (
+                  <SearchFacetPanel
+                    query={query}
+                    setQuery={setQuery}
+                    facets={facets}
+                    onAddFacet={handleAddFacet}
+                    onRemoveFacet={handleRemoveFacet}
+                    onSetRangeFacet={handleSetRangeFacet}
+                    onRemoveRangeFacet={handleRemoveRangeFacet}
+                    isFacetApplied={handleIsFacetApplied}
+                    isRangeFacetApplied={handleIsRangeFacetApplied}
+                    getAppliedRangeFacet={handleGetAppliedRangeFacet}
+                  />
+                )}
+              </Box>
+            </Collapse>
+          )}
+        </Box>
       </Box>
-      <Box sx={{ padding: '30px' }}>
+      <>
         {noResults && (
           <div className={styles.didYouMeanCurrentlyShowing}>
             {' '}
@@ -289,16 +510,25 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-end',
-            gap: '25px',
+            gap: '20px',
           }}
         >
           {isLoading && <div>Loading...</div>}
           {error && <div>Error: {error.message}</div>}
           <SearchPagePortalBanners entityIds={entityIdsForPortalBanners} />
+          {query && (
+            <Box sx={{ alignSelf: 'flex-start' }}>
+              <AppliedFacetsChips
+                query={query}
+                onRemoveFacet={handleRemoveFacet}
+                onRemoveRangeFacet={handleRemoveRangeFacet}
+              />
+            </Box>
+          )}
           {data &&
             data.pages &&
             data.pages.map((page, pageIndex) =>
-              page.hits.map((hit: any) => (
+              page.hits.map((hit: Hit) => (
                 <SynapseSearchResultsCard
                   key={hit.id + '-' + pageIndex}
                   entityId={hit.id}
@@ -321,7 +551,7 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
             </Button>
           )}
         </Box>
-      </Box>
+      </>
     </Box>
   )
 }
