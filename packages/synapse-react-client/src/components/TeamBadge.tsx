@@ -21,12 +21,15 @@ export default function TeamBadge(props: TeamBadgeProps) {
 
   let icon: IconName = 'team'
 
-  if (authenticatedUsersId && teamId === authenticatedUsersId) {
+  // Convert teamId to string for comparison with realm principal IDs
+  const teamIdStr = String(teamId)
+
+  if (authenticatedUsersId && teamIdStr === authenticatedUsersId) {
     icon = 'public'
     teamName = AUTHENTICATED_GROUP_DISPLAY_TEXT
     disableHref = true
   }
-  if (publicGroupId && teamId === publicGroupId) {
+  if (publicGroupId && teamIdStr === publicGroupId) {
     icon = 'public'
     teamName = PUBLIC_GROUP_DISPLAY_TEXT
     disableHref = true

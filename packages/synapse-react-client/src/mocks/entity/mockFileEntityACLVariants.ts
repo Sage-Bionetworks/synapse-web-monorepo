@@ -15,6 +15,7 @@ import { MockEntityData } from './MockEntityData'
 
 export const mockFileOpenDataWithPublicRead: MockEntityData<FileEntity> =
   generateBaseEntity({
+    id: 30001,
     type: EntityType.file,
     acl: {
       resourceAccess: [
@@ -28,7 +29,7 @@ export const mockFileOpenDataWithPublicRead: MockEntityData<FileEntity> =
         },
         {
           principalId: PUBLIC_PRINCIPAL_ID,
-          accessType: getAccessTypeFromPermissionLevel('CAN_VIEW'),
+          accessType: getAccessTypeFromPermissionLevel('CAN_DOWNLOAD'),
         },
       ],
     },
@@ -39,6 +40,7 @@ export const mockFileOpenDataWithPublicRead: MockEntityData<FileEntity> =
 
 export const mockFileOpenDataWithNoPublicRead: MockEntityData<FileEntity> =
   generateBaseEntity({
+    id: 30002,
     type: EntityType.file,
     acl: {
       resourceAccess: [
@@ -55,6 +57,7 @@ export const mockFileOpenDataWithNoPublicRead: MockEntityData<FileEntity> =
 
 export const mockFilePublicReadNoOpenData: MockEntityData<FileEntity> =
   generateBaseEntity({
+    id: 30003,
     type: EntityType.file,
     acl: {
       resourceAccess: [
@@ -79,6 +82,7 @@ export const mockFilePublicReadNoOpenData: MockEntityData<FileEntity> =
 
 export const mockFileEntityWithLocalSharingSettingsData: MockEntityData<FileEntity> =
   generateBaseEntity({
+    id: 30004,
     type: EntityType.file,
     entity: {
       name: 'mock file with local sharing settings',
@@ -95,6 +99,7 @@ export const mockFileEntityWithLocalSharingSettingsData: MockEntityData<FileEnti
 
 export const mockFileEntityCurrentUserCannotEdit: MockEntityData<FileEntity> =
   generateBaseEntity({
+    id: 30005,
     type: EntityType.file,
     entity: {
       name: 'mock file with local sharing settings',

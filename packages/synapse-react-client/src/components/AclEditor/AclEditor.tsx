@@ -82,8 +82,12 @@ export function AclEditor(props: AclEditorProps): React.ReactNode {
     displayedPermissionLevelOverride,
   } = props
 
-  const { authenticatedUsersId, publicGroupId, anonymousUserId } =
-    useRealmPrincipals()
+  const {
+    authenticatedUsersId,
+    publicGroupId,
+    anonymousUserId,
+    isLoading: isLoadingRealmPrincipals,
+  } = useRealmPrincipals()
 
   const publicPrincipalIds = [
     authenticatedUsersId,
@@ -91,7 +95,7 @@ export function AclEditor(props: AclEditorProps): React.ReactNode {
     anonymousUserId,
   ].filter((id): id is string => id !== undefined)
 
-  if (isLoading) {
+  if (isLoading || isLoadingRealmPrincipals) {
     return <AclEditorSkeleton />
   }
 
