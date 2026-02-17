@@ -1,5 +1,9 @@
 import { MOCK_REALM_PRINCIPAL } from '@/mocks/realm/mockRealmPrincipal'
 import { server } from '@/mocks/msw/server'
+import {
+  getRealmPrincipalsHandler,
+  getRealmPrincipalsByIdHandler,
+} from '@/mocks/msw/handlers/realmHandlers'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { renderHook, waitFor } from '@testing-library/react'
@@ -10,7 +14,13 @@ const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
 describe('useGetRealmPrincipals', () => {
   beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
+  afterEach(() => {
+    // Reset handlers to original state after each test to prevent pollution
+    server.resetHandlers(
+      getRealmPrincipalsHandler(),
+      getRealmPrincipalsByIdHandler(),
+    )
+  })
   afterAll(() => server.close())
 
   describe('when authenticated', () => {
@@ -117,7 +127,7 @@ describe('useGetRealmPrincipals', () => {
             staleTime: 10000,
           }),
         {
-          wrapper: createWrapper(),
+          wrapper: createWrapper({ accessToken: 'fake-token' }),
         },
       )
 
@@ -133,7 +143,7 @@ describe('useGetRealmPrincipals', () => {
             enabled: false,
           }),
         {
-          wrapper: createWrapper(),
+          wrapper: createWrapper({ accessToken: 'fake-token' }),
         },
       )
 
