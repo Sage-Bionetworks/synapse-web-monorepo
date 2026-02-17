@@ -420,21 +420,19 @@ export function AppliedFacetsChips({
             }
             onDelete={() => onRemoveFacet(kv.key, kv.value)}
             label={
-              <>
-                {isUserFacet(kv.key) ? (
-                  <Box
-                    sx={{
-                      '& .MuiTypography-root': {
-                        color: 'var(--synapse-white)',
-                      },
-                    }}
-                  >
-                    <UserBadge userId={kv.value} />
-                  </Box>
-                ) : (
-                  <Typography variant="smallText1">{kv.value}</Typography>
-                )}
-              </>
+              isUserFacet(kv.key) ? (
+                <Box
+                  sx={{
+                    '& .MuiTypography-root': {
+                      color: 'var(--synapse-white)',
+                    },
+                  }}
+                >
+                  <UserBadge userId={kv.value} />
+                </Box>
+              ) : (
+                <Typography variant="smallText1">{kv.value}</Typography>
+              )
             }
           />
         )
