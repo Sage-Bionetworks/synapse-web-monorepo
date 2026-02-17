@@ -219,7 +219,11 @@ const AccountSettings = (): React.ReactNode => {
     { label: 'Webhooks', ref: webhooksRef },
     { label: 'Privacy Preferences', ref: cookieManagementRef },
     { label: 'Sign Out', ref: signOutSectionRef },
-  ].filter(item => item.label !== 'Webhooks' || showWebhooks)
+  ].filter(
+    item =>
+      (item.label !== 'Webhooks' || showWebhooks) &&
+      (item.label !== 'Change Password' || currentRealm === SYNAPSE_REALM),
+  )
 
   const handleScroll = (ref: RefObject<HTMLDivElement | null>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' })
@@ -418,16 +422,18 @@ const AccountSettings = (): React.ReactNode => {
                 <Typography variant={'headline2'}>Email Addresses</Typography>
                 <ConfigureEmail returnToPath="authenticated/myaccount" />
               </Paper>
-              <Paper
-                ref={changePasswordRef}
-                className="account-setting-panel main-panel"
-              >
-                <Typography variant={'headline2'}>Change Password</Typography>
-                <ChangePassword
-                  // The user is logged in. If they want to disable 2FA, they can do so from this page.
-                  hideReset2FA={true}
-                />
-              </Paper>
+              {currentRealm === SYNAPSE_REALM && (
+                <Paper
+                  ref={changePasswordRef}
+                  className="account-setting-panel main-panel"
+                >
+                  <Typography variant={'headline2'}>Change Password</Typography>
+                  <ChangePassword
+                    // The user is logged in. If they want to disable 2FA, they can do so from this page.
+                    hideReset2FA={true}
+                  />
+                </Paper>
+              )}
               <Paper
                 ref={timezoneRef}
                 className="account-setting-panel main-panel"

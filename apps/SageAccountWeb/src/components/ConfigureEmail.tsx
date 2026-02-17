@@ -23,6 +23,8 @@ import {
 import { updateMyUserProfile } from 'synapse-react-client/synapse-client/SynapseClient'
 import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClient'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import { useGetCurrentRealm } from 'synapse-react-client/synapse-queries/realm/useRealmPrincipals'
+import { SYNAPSE_REALM } from 'synapse-react-client/utils/SynapseConstants'
 
 export type ConfigureEmailProps = {
   returnToPath: string
@@ -34,6 +36,7 @@ export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
     useGetCurrentUserProfile()
   const { data: primaryEmail, refetch: refetchNotificationEmail } =
     useGetNotificationEmail()
+  const { data: currentRealm } = useGetCurrentRealm()
   const [newEmail, setNewEmail] = useState('')
   const sendEmailNotifications =
     currentProfile?.notificationSettings?.sendEmailNotifications ?? true
@@ -182,26 +185,30 @@ export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
           gap: 2,
         }}
       >
-        <TextField
-          label={'Add an email address'}
-          id="additionalEmail"
-          fullWidth
-          value={newEmail}
-          onChange={e => setNewEmail(e.target.value)}
-        />
-        <Button
-          startIcon={<AddCircleTwoToneIcon />}
-          disabled={!newEmail}
-          variant={'contained'}
-          onClick={e => {
-            addEmail(e)
-          }}
-          sx={{
-            alignSelf: 'flex-start',
-          }}
-        >
-          Add
-        </Button>
+        {currentRealm === SYNAPSE_REALM && (
+          <>
+            <TextField
+              label={'Add an email address'}
+              id="additionalEmail"
+              fullWidth
+              value={newEmail}
+              onChange={e => setNewEmail(e.target.value)}
+            />
+            <Button
+              startIcon={<AddCircleTwoToneIcon />}
+              disabled={!newEmail}
+              variant={'contained'}
+              onClick={e => {
+                addEmail(e)
+              }}
+              sx={{
+                alignSelf: 'flex-start',
+              }}
+            >
+              Add
+            </Button>
+          </>
+        )}
         <FormControlLabel
           control={
             <Checkbox
