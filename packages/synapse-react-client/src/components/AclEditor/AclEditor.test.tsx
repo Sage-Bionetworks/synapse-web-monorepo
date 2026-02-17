@@ -101,6 +101,13 @@ async function setUp(
       PUBLIC_PRINCIPAL_IDS.includes(ra.principalId),
     ).length
 
+  // Wait for realm principals to load (skeleton to disappear) unless isLoading prop is true
+  if (!props.isLoading) {
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
+    })
+  }
+
   // wait for UserOrTeamBadge(s) to finish loading
   await waitFor(() => {
     expect(screen.queryAllByRole('link')).toHaveLength(
