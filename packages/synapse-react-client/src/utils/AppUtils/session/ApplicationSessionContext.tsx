@@ -1,5 +1,4 @@
 import { createContext, PropsWithChildren, useContext } from 'react'
-import { UseDetectSSOCodeReturnType } from '../../hooks'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import {
   TermsOfServiceStatus,
@@ -7,8 +6,14 @@ import {
 } from '@sage-bionetworks/synapse-types'
 
 export type ApplicationSessionContextType = {
-  /* The Synapse Authentication token. If undefined, the user is not signed in. */
+  /* The Synapse access token. */
   token?: string
+  /** The realm ID of the current user. */
+  realmId?: string
+  /** The user ID of the current user. */
+  userId?: string
+  /* Whether the current user is authenticated (as opposed to anonymous). */
+  isAuthenticated: boolean
   /* Whether the current user accepts the terms of use. May be undefined while status is fetched. Will always be undefined for the anonymous user. */
   termsOfServiceStatus?: TermsOfServiceStatus
   /* Whether 2FA has been enabled on the user account */
@@ -21,7 +26,11 @@ export type ApplicationSessionContextType = {
   twoFactorAuthSSOErrorResponse?: TwoFactorAuthErrorResponse
   /* Signs the user out and updates this context. */
   clearSession: () => Promise<void>
-  isLoadingSSO: UseDetectSSOCodeReturnType['isLoading']
+  /** Whether detection of a single-sign-on (SSO) event is pending.
+   * For example, detecting an authorization code passed by an external identity provider via the user's browser.
+   * A reload may be forced before this completes.
+   */
+  isLoadingSSO: boolean
 }
 
 const ApplicationSessionContext = createContext<

@@ -45,7 +45,7 @@ function AppInitializer(props: PropsWithChildren<Record<string, unknown>>) {
   return (
     <ApplicationSessionManager
       maxAge={maxAge}
-      onMissingAuthentication={onMissingAuthentication}
+      onMissingExpectedAuthentication={onMissingAuthentication}
       appId={clientId}
     >
       {!isFramed && props.children}

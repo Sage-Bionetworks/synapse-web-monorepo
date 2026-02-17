@@ -1,24 +1,19 @@
 import SynapseClient from '@/synapse-client'
-import { useTermsOfServiceStatus } from '@/synapse-queries/termsOfService/useTermsOfService'
-import { useGetTwoFactorEnrollmentStatusWithAccessToken } from '@/synapse-queries/auth/useTwoFactorEnrollment'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
-import dayjs from 'dayjs'
-import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { PropsWithChildren } from 'react'
 import { SynapseContextProvider, SynapseContextType } from '../../context'
-import useDetectSSOCode from '../../hooks/useDetectSSOCode'
-import { restoreLastPlace } from '../AppUtils'
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
 import { AuthenticationGuard } from './AuthenticationGuard'
+import { useApplicationSession } from './useApplicationSession'
 
 export type ApplicationSessionManagerProps = PropsWithChildren<{
+  /** The realm that an unauthenticated user should be signed in to. Defaults to "0", the public Synapse realm */
+  defaultRealm?: string
   downloadCartPageUrl?: string
   /* If defined, specifies the allowable elapsed time in seconds since the last time the End-User was actively authenticated. If the elapsed time is greater than this value, the session will be cleared and the user will have to re-authenticate. */
   maxAge?: number
-  /* Called when the session is reset, i.e. the user has signed out.*/
-  onResetSessionComplete?: () => void
   /** Called if the user is not authenticated when the session is initialized. Can be used to trigger an error if authentication is expected. */
-  onMissingAuthentication?: () => void
+  onMissingExpectedAuthentication?: () => void
   /*
    * Callback invoked after the user has successfully signed in through SSO when the purpose of signing in is to disable 2FA on the account.
    * The twoFactorAuthSSOError and twoFaResetToken are passed in the callback and can be used to complete the 2FA reset process.
@@ -53,152 +48,19 @@ export function ApplicationSessionManager(
   const {
     children,
     downloadCartPageUrl,
-    onResetSessionComplete,
-    maxAge,
-    onMissingAuthentication,
-    onTwoFactorAuthResetThroughSSO,
     appId,
     requireAuthentication,
+    ...hookOptions
   } = props
-  const navigate = useNavigate()
 
-  const [token, setToken] = useState<string | undefined>()
-  const [hasInitializedSession, setHasInitializedSession] = useState(false)
-  const [twoFactorAuthSSOError, setTwoFactorAuthSSOError] = useState<
-    TwoFactorAuthErrorResponse | undefined
-  >()
-  const initAnonymousUserState = useCallback(() => {
-    if (onMissingAuthentication) {
-      onMissingAuthentication()
-    }
-    SynapseClient.signOut().then(() => {
-      // reset token
-      setToken(undefined)
-      setHasInitializedSession(true)
-    })
-  }, [onMissingAuthentication])
-  const { data: tosStatus } = useTermsOfServiceStatus(token, {
-    enabled: !!token,
-  })
-  const { data: twoFactorStatus } =
-    useGetTwoFactorEnrollmentStatusWithAccessToken(token, {
-      enabled: !!token,
-    })
-
-  const refreshSession = useCallback(async () => {
-    setTwoFactorAuthSSOError(undefined)
-    let token
-    try {
-      token = await SynapseClient.getAccessTokenFromCookie()
-      if (!token) {
-        initAnonymousUserState()
-        return
-      }
-    } catch (e) {
-      console.error('Unable to get the access token: ', e)
-      initAnonymousUserState()
-      return
-    }
-    if (maxAge !== undefined && !!token) {
-      // SWC-5597: if max_age is defined, then return if the user last authenticated more than max_age seconds ago
-      const authenticatedOnResponse = await SynapseClient.getAuthenticatedOn(
-        token,
-      )
-      const lastAuthenticatedOn = dayjs.utc(
-        authenticatedOnResponse.authenticatedOn,
-      )
-      const now = dayjs.utc()
-      if (now.diff(lastAuthenticatedOn, 'seconds') > maxAge) {
-        // Invalidate the token (if present) so the user must re-authenticate to use this app
-        initAnonymousUserState()
-        return
-      }
-    }
-    setToken(token)
-    setHasInitializedSession(true)
-    try {
-      // get the user terms of service status
-      await SynapseClient.getTermsOfServiceStatus(token)
-    } catch (e) {
-      console.error('Error on refreshSession: ', e)
-      // if status number field is present, then
-      //if 400 level, then clear
-      if ('status' in e && typeof e['status'] === 'number') {
-        const status = e['status']
-        if (status >= 400 && status < 500) {
-          // intentionally calling sign out because the token could be stale so we want
-          // the stored session to be cleared out.
-          SynapseClient.signOut().then(() => {
-            // PORTALS-2293: if the token was invalid (caused an error), reload the app to ensure all children
-            // are loading as the anonymous user
-            window.location.reload()
-          })
-        }
-      }
-    }
-  }, [initAnonymousUserState, maxAge])
-
-  const clearSession = useCallback(async () => {
-    await SynapseClient.signOut()
-    await refreshSession()
-    if (onResetSessionComplete) {
-      onResetSessionComplete()
-    }
-    //in all cases when the session is cleared we should refresh the page to ensure private data is not being shown
-    navigate(0)
-  }, [refreshSession, onResetSessionComplete])
-
-  /** Call refreshSession on mount */
-  useEffect(() => {
-    refreshSession()
-    // PORTALS-3249: Set up an interval to call refreshSession every 60 seconds (60000 milliseconds)
-    const intervalId = setInterval(() => {
-      refreshSession()
-    }, 60000)
-
-    // Clean up the interval when the component is unmounted
-    return () => clearInterval(intervalId)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const { isLoading: isLoadingSSO } = useDetectSSOCode({
-    onSignInComplete: () => {
-      restoreLastPlace(navigate)
-      refreshSession()
-    },
-    onTwoFactorAuthRequired: twoFactorAuthError => {
-      setTwoFactorAuthSSOError(twoFactorAuthError)
-    },
-    onTwoFactorAuthResetTokenPresent: (twoFactorAuthError, twoFaResetToken) => {
-      setTwoFactorAuthSSOError(twoFactorAuthError)
-      if (onTwoFactorAuthResetThroughSSO) {
-        onTwoFactorAuthResetThroughSSO(twoFactorAuthError, twoFaResetToken)
-      }
-    },
-    onError: (err: unknown) => {
-      // Throw the error so it propagates to an error boundary
-      throw err
-    },
-    isInitializingSession: !hasInitializedSession,
-    token,
-  })
+  const { sessionContext, token } = useApplicationSession(hookOptions)
 
   return (
-    <ApplicationSessionContextProvider
-      context={{
-        token,
-        termsOfServiceStatus: tosStatus,
-        refreshSession,
-        clearSession,
-        isLoadingSSO,
-        twoFactorAuthSSOErrorResponse: twoFactorAuthSSOError,
-        hasInitializedSession,
-        twoFactorStatus,
-      }}
-    >
+    <ApplicationSessionContextProvider context={sessionContext}>
       <SynapseContextProvider
         synapseContext={{
           accessToken: token,
+          isAuthenticated: sessionContext.isAuthenticated,
           isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
           utcTime: SynapseClient.getUseUtcTimeFromCookie(),
           downloadCartPageUrl,
