@@ -26,6 +26,7 @@ import {
   getSelectedTimeRangeId,
   formatTimeRangeDisplayValue,
   isUserFacet,
+  shouldShowFacetValue,
 } from './SearchFacetPanelUtils'
 
 const ChipStyles = {
@@ -230,20 +231,9 @@ function LiteralFacetValues({
 
   const allValues = Array.from(new Set([...appliedValues, ...availableValues]))
 
-  // Filter out the link node_type/EntityType facet and any values with colons (prefixed values)
-  const filteredValues = allValues.filter(value => {
-    if (
-      (facet.name === 'node_type' || facet.name === 'EntityType') &&
-      value === 'link'
-    ) {
-      return false
-    }
-
-    if (value.includes(':')) {
-      return false
-    }
-    return true
-  })
+  const filteredValues = allValues.filter(value =>
+    shouldShowFacetValue(facet.name, value),
+  )
 
   const displayValues = showAll
     ? filteredValues
@@ -396,11 +386,7 @@ export function AppliedFacetsChips({
       }}
     >
       {booleanQuery.map((kv, index) => {
-        // Skip the 'link' type facet
-        if (
-          (kv.key === 'node_type' || kv.key === 'EntityType') &&
-          kv.value === 'link'
-        ) {
+        if (!shouldShowFacetValue(kv.key, kv.value)) {
           return null
         }
 

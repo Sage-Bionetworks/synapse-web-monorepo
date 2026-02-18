@@ -51,6 +51,23 @@ export const USER_FACET_NAMES = [
 
 // Helper functions
 /**
+ * Determines if a facet value should be displayed in the UI.
+ * Hides 'link' entity types and colon-prefixed values
+ */
+export function shouldShowFacetValue(
+  facetName: string,
+  value: string,
+): boolean {
+  const isHiddenEntityType =
+    (facetName === 'node_type' || facetName === 'EntityType') &&
+    value === 'link'
+
+  const isInternalPrefixedValue = value.includes(':')
+
+  return !isHiddenEntityType && !isInternalPrefixedValue
+}
+
+/**
  * Check if a facet is a user facet (e.g., 'modified_by' or 'created_by')
  */
 export const isUserFacet = (name: string) => USER_FACET_NAMES.includes(name)

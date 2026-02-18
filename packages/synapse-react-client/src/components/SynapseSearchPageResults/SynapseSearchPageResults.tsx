@@ -27,6 +27,7 @@ import {
   AppliedFacetsChips,
 } from './SearchFacetPanel/SearchFacetPanel'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { shouldShowFacetValue } from './SearchFacetPanel/SearchFacetPanelUtils'
 
 /**
  * Add a literal facet filter to the query
@@ -369,7 +370,8 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   }
 
   const appliedFacetsCount =
-    (query?.booleanQuery?.length || 0) + (query?.rangeQuery?.length || 0)
+    (query?.booleanQuery?.filter(kv => shouldShowFacetValue(kv.key, kv.value))
+      .length || 0) + (query?.rangeQuery?.length || 0)
 
   return (
     <Box
