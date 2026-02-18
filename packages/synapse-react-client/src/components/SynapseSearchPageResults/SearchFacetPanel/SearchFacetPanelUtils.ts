@@ -120,7 +120,7 @@ export function getSelectedTimeRangeId(timestamp: string): string {
   // Find which key exists in the relative string
   const match = Object.keys(mapping).find(key => relative.includes(key))
 
-  return mapping[match!] || 'ANY_TIME'
+  return match ? mapping[match] : 'ANY_TIME'
 }
 
 /**
