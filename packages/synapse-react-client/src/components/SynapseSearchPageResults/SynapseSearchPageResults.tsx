@@ -429,6 +429,8 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
             variant="outlined"
             startIcon={<FilterAltOutlinedIcon />}
             onClick={() => setExpanded(!expanded)}
+            aria-expanded={expanded}
+            aria-controls="filter-search-results-panel"
             sx={{
               py: '10px',
               px: '20px',
@@ -446,7 +448,9 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
                 gap: '8px',
               }}
             >
-              <span>Filter Search Results</span>
+              <span id="filter-results-button-label">
+                Filter Search Results
+              </span>
               {appliedFacetsCount > 0 && (
                 <Badge
                   badgeContent={appliedFacetsCount}
@@ -466,7 +470,11 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
         </Box>
         <Box>
           {!isLoading && facets.length > 0 && (
-            <Collapse in={expanded}>
+            <Collapse
+              in={expanded}
+              id="filter-search-results-panel"
+              aria-labelledby="filter-results-button-label"
+            >
               <Box
                 sx={{
                   border: '1px solid',
