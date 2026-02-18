@@ -105,7 +105,11 @@ describe('useGetRealmPrincipals', () => {
 
       await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-      expect(result.current.data).toEqual(MOCK_REALM_PRINCIPAL)
+      expect(result.current.data).toEqual({
+        authenticatedUsersId: MOCK_REALM_PRINCIPAL.authenticatedUsers,
+        publicGroupId: MOCK_REALM_PRINCIPAL.publicGroup,
+        anonymousUserId: MOCK_REALM_PRINCIPAL.anonymousUser,
+      })
       expect(result.current.isLoading).toBe(false)
       expect(result.current.error).toBe(null)
     })
@@ -116,7 +120,10 @@ describe('useGetRealmPrincipals', () => {
       })
 
       expect(result.current.isLoading).toBe(true)
-      expect(result.current.data).toBeUndefined()
+      expect(result.current.data).toBeDefined()
+      expect(result.current.data.authenticatedUsersId).toBeUndefined()
+      expect(result.current.data.publicGroupId).toBeUndefined()
+      expect(result.current.data.anonymousUserId).toBeUndefined()
     })
 
     it('handles error state', async () => {
@@ -134,7 +141,10 @@ describe('useGetRealmPrincipals', () => {
       await waitFor(() => expect(result.current.isError).toBe(true))
 
       expect(result.current.error).toBeDefined()
-      expect(result.current.data).toBeUndefined()
+      expect(result.current.data).toBeDefined()
+      expect(result.current.data.authenticatedUsersId).toBeUndefined()
+      expect(result.current.data.publicGroupId).toBeUndefined()
+      expect(result.current.data.anonymousUserId).toBeUndefined()
     })
   })
 
@@ -162,7 +172,11 @@ describe('useGetRealmPrincipals', () => {
 
       expect(unauthenticatedEndpointCalled).toBe(true)
       expect(capturedRealmId).toBe('0')
-      expect(result.current.data).toEqual(MOCK_REALM_PRINCIPAL)
+      expect(result.current.data).toEqual({
+        authenticatedUsersId: MOCK_REALM_PRINCIPAL.authenticatedUsers,
+        publicGroupId: MOCK_REALM_PRINCIPAL.publicGroup,
+        anonymousUserId: MOCK_REALM_PRINCIPAL.anonymousUser,
+      })
     })
 
     it('handles loading state when not authenticated', () => {
@@ -171,7 +185,10 @@ describe('useGetRealmPrincipals', () => {
       })
 
       expect(result.current.isLoading).toBe(true)
-      expect(result.current.data).toBeUndefined()
+      expect(result.current.data).toBeDefined()
+      expect(result.current.data.authenticatedUsersId).toBeUndefined()
+      expect(result.current.data.publicGroupId).toBeUndefined()
+      expect(result.current.data.anonymousUserId).toBeUndefined()
     })
 
     it('handles error state when not authenticated', async () => {
@@ -189,7 +206,10 @@ describe('useGetRealmPrincipals', () => {
       await waitFor(() => expect(result.current.isError).toBe(true))
 
       expect(result.current.error).toBeDefined()
-      expect(result.current.data).toBeUndefined()
+      expect(result.current.data).toBeDefined()
+      expect(result.current.data.authenticatedUsersId).toBeUndefined()
+      expect(result.current.data.publicGroupId).toBeUndefined()
+      expect(result.current.data.anonymousUserId).toBeUndefined()
     })
   })
 
@@ -207,7 +227,10 @@ describe('useGetRealmPrincipals', () => {
 
       // Should not start loading
       expect(result.current.isLoading).toBe(false)
-      expect(result.current.data).toBeUndefined()
+      expect(result.current.data).toBeDefined()
+      expect(result.current.data.authenticatedUsersId).toBeUndefined()
+      expect(result.current.data.publicGroupId).toBeUndefined()
+      expect(result.current.data.anonymousUserId).toBeUndefined()
     })
   })
 })
