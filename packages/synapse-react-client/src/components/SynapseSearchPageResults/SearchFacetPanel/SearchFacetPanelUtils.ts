@@ -58,6 +58,10 @@ export function shouldShowFacetValue(
   facetName: string,
   value: string,
 ): boolean {
+  if (!value || value.trim() === '') {
+    return false
+  }
+
   const isHiddenEntityType =
     (facetName === 'node_type' || facetName === 'EntityType') &&
     value === 'link'
