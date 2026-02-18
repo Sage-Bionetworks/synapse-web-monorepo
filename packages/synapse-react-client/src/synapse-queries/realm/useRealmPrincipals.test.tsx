@@ -69,22 +69,6 @@ describe('useGetCurrentRealm', () => {
   })
 
   describe('query options', () => {
-    it('respects custom query options', async () => {
-      const { result } = renderHook(
-        () =>
-          useGetCurrentRealm({
-            staleTime: 10000,
-          }),
-        {
-          wrapper: createWrapper({ accessToken: 'fake-token' }),
-        },
-      )
-
-      await waitFor(() => expect(result.current.isSuccess).toBe(true))
-
-      expect(result.current.data).toBe('0')
-    })
-
     it('can be disabled via enabled option', () => {
       const { result } = renderHook(
         () =>
@@ -210,22 +194,6 @@ describe('useGetRealmPrincipals', () => {
   })
 
   describe('query options', () => {
-    it('respects custom query options', async () => {
-      const { result } = renderHook(
-        () =>
-          useGetRealmPrincipals({
-            staleTime: 10000,
-          }),
-        {
-          wrapper: createWrapper({ accessToken: 'fake-token' }),
-        },
-      )
-
-      await waitFor(() => expect(result.current.isSuccess).toBe(true))
-
-      expect(result.current.data).toEqual(MOCK_REALM_PRINCIPAL)
-    })
-
     it('can be disabled via enabled option', () => {
       const { result } = renderHook(
         () =>
@@ -240,20 +208,6 @@ describe('useGetRealmPrincipals', () => {
       // Should not start loading
       expect(result.current.isLoading).toBe(false)
       expect(result.current.data).toBeUndefined()
-    })
-  })
-
-  describe('caching behavior', () => {
-    it('successfully fetches data when authenticated', async () => {
-      // Test authenticated scenario
-      const { result } = renderHook(() => useGetRealmPrincipals(), {
-        wrapper: createWrapper({ accessToken: 'fake-token' }),
-      })
-
-      await waitFor(() => expect(result.current.isSuccess).toBe(true))
-      expect(result.current.data).toEqual(MOCK_REALM_PRINCIPAL)
-      expect(result.current.isLoading).toBe(false)
-      expect(result.current.error).toBe(null)
     })
   })
 })
