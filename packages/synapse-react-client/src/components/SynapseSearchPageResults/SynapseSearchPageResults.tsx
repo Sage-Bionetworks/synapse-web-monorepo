@@ -48,8 +48,8 @@ function addFacetToQuery(
   }
 
   return {
+    ...DEFAULT_SEARCH_QUERY,
     ...query,
-    facetOptions: query.facetOptions || DEFAULT_SEARCH_QUERY.facetOptions,
     booleanQuery: [
       ...booleanQuery,
       { key: facetName, value: facetValue, not: false },
@@ -69,8 +69,8 @@ function removeFacetFromQuery(
   const booleanQuery = query.booleanQuery || []
 
   return {
+    ...DEFAULT_SEARCH_QUERY,
     ...query,
-    facetOptions: query.facetOptions || DEFAULT_SEARCH_QUERY.facetOptions,
     booleanQuery: booleanQuery.filter(
       kv => !(kv.key === facetName && kv.value === facetValue),
     ),
@@ -94,8 +94,8 @@ function setRangeFacetInQuery(
   const maxValue = String(Math.floor(Date.now() / 1000)) // Now in seconds
 
   return {
+    ...DEFAULT_SEARCH_QUERY,
     ...query,
-    facetOptions: query.facetOptions || DEFAULT_SEARCH_QUERY.facetOptions,
     rangeQuery: [
       ...filteredRangeQuery,
       { key: facetName, min: minValue, max: maxValue },
@@ -114,8 +114,8 @@ function removeRangeFacetFromQuery(
   const rangeQuery = query.rangeQuery || []
 
   return {
+    ...DEFAULT_SEARCH_QUERY,
     ...query,
-    facetOptions: query.facetOptions || DEFAULT_SEARCH_QUERY.facetOptions,
     rangeQuery: rangeQuery.filter(kr => kr.key !== facetName),
     start: 0,
   }
