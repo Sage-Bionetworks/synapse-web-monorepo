@@ -11,7 +11,7 @@ import {
 import SynapseSearchResultsCard from './SynapseSearchResultsCard'
 import SearchIcon from '@mui/icons-material/Search'
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { useSearchInfinite } from '@/synapse-queries/search/useSearch'
 import { SearchQuery, KeyRange, Hit } from '@sage-bionetworks/synapse-types'
 import { useDocumentMetadata } from '@/utils/context/DocumentMetadataContext'
@@ -333,29 +333,57 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   const facets = data?.pages?.[0]?.facets || []
 
   // Create handler functions for facet operations
-  const handleAddFacet = (facetName: string, facetValue: string) => {
-    if (setQuery && query) {
-      setQuery(addFacetToQuery(query, facetName, facetValue))
-    }
-  }
+  const handleAddFacet = useCallback(
+    (facetName: string, facetValue: string) => {
+      if (setQuery && query) {
+        setQuery(addFacetToQuery(query, facetName, facetValue))
+      }
+    },
+    [query, setQuery],
+  )
 
-  const handleRemoveFacet = (facetName: string, facetValue: string) => {
-    if (setQuery && query) {
-      setQuery(removeFacetFromQuery(query, facetName, facetValue))
-    }
-  }
+  const handleRemoveFacet = useCallback(
+    (facetName: string, facetValue: string) => {
+      if (setQuery && query) {
+        setQuery(removeFacetFromQuery(query, facetName, facetValue))
+      }
+    },
+    [query, setQuery],
+  )
 
-  const handleSetRangeFacet = (facetName: string, minValue: string) => {
-    if (setQuery && query) {
-      setQuery(setRangeFacetInQuery(query, facetName, minValue))
-    }
-  }
+  const handleSetRangeFacet = useCallback(
+    (facetName: string, minValue: string) => {
+      if (setQuery && query) {
+        setQuery(setRangeFacetInQuery(query, facetName, minValue))
+      }
+    },
+    [query, setQuery],
+  )
 
-  const handleRemoveRangeFacet = (facetName: string) => {
-    if (setQuery && query) {
-      setQuery(removeRangeFacetFromQuery(query, facetName))
-    }
-  }
+  const handleRemoveRangeFacet = useCallback(
+    (facetName: string) => {
+      if (setQuery && query) {
+        setQuery(removeRangeFacetFromQuery(query, facetName))
+      }
+    },
+    [query, setQuery],
+  )
+
+  const isFacetAppliedCallback = useCallback(
+    (name: string, val: string) =>
+      query ? isFacetApplied(query, name, val) : false,
+    [query],
+  )
+
+  const isRangeFacetAppliedCallback = useCallback(
+    (name: string) => (query ? isRangeFacetApplied(query, name) : false),
+    [query],
+  )
+
+  const getAppliedRangeFacetCallback = useCallback(
+    (name: string) => (query ? getAppliedRangeFacet(query, name) : undefined),
+    [query],
+  )
 
   const appliedFacetsCount =
     (query?.booleanQuery?.filter(kv => shouldShowFacetValue(kv.key, kv.value))
@@ -481,15 +509,9 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
                     onRemoveFacet={handleRemoveFacet}
                     onSetRangeFacet={handleSetRangeFacet}
                     onRemoveRangeFacet={handleRemoveRangeFacet}
-                    isFacetApplied={(name, val) =>
-                      isFacetApplied(query, name, val)
-                    }
-                    isRangeFacetApplied={name =>
-                      isRangeFacetApplied(query, name)
-                    }
-                    getAppliedRangeFacet={name =>
-                      getAppliedRangeFacet(query, name)
-                    }
+                    isFacetApplied={isFacetAppliedCallback}
+                    isRangeFacetApplied={isRangeFacetAppliedCallback}
+                    getAppliedRangeFacet={getAppliedRangeFacetCallback}
                   />
                 )}
               </Box>
