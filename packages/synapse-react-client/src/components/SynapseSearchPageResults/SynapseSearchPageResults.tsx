@@ -357,18 +357,6 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
     }
   }
 
-  const handleIsFacetApplied = (facetName: string, facetValue: string) => {
-    return query ? isFacetApplied(query, facetName, facetValue) : false
-  }
-
-  const handleIsRangeFacetApplied = (facetName: string) => {
-    return query ? isRangeFacetApplied(query, facetName) : false
-  }
-
-  const handleGetAppliedRangeFacet = (facetName: string) => {
-    return query ? getAppliedRangeFacet(query, facetName) : undefined
-  }
-
   const appliedFacetsCount =
     (query?.booleanQuery?.filter(kv => shouldShowFacetValue(kv.key, kv.value))
       .length || 0) + (query?.rangeQuery?.length || 0)
@@ -493,9 +481,15 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
                     onRemoveFacet={handleRemoveFacet}
                     onSetRangeFacet={handleSetRangeFacet}
                     onRemoveRangeFacet={handleRemoveRangeFacet}
-                    isFacetApplied={handleIsFacetApplied}
-                    isRangeFacetApplied={handleIsRangeFacetApplied}
-                    getAppliedRangeFacet={handleGetAppliedRangeFacet}
+                    isFacetApplied={(name, val) =>
+                      isFacetApplied(query, name, val)
+                    }
+                    isRangeFacetApplied={name =>
+                      isRangeFacetApplied(query, name)
+                    }
+                    getAppliedRangeFacet={name =>
+                      getAppliedRangeFacet(query, name)
+                    }
                   />
                 )}
               </Box>
