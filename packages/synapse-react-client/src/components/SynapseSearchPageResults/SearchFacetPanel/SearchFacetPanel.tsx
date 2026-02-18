@@ -372,10 +372,6 @@ export function AppliedFacetsChips({
     return null
   }
 
-  const formatDisplayValue = (timestamp: string): string => {
-    return formatTimeRangeDisplayValue(timestamp)
-  }
-
   return (
     <Box
       sx={{
@@ -425,7 +421,7 @@ export function AppliedFacetsChips({
       })}
 
       {rangeQuery.map((kr, index) => {
-        const displayValue = formatDisplayValue(kr.min)
+        const displayValue = formatTimeRangeDisplayValue(kr.min)
 
         return (
           <Chip
