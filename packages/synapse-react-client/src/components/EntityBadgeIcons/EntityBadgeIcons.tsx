@@ -6,7 +6,7 @@ import {
   useGetValidationResults,
 } from '@/synapse-queries'
 import React from 'react'
-import { useRealmPrincipals } from '@/utils/context/RealmPrincipalsContext'
+import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import {
   ChatBubbleTwoTone,
   CheckTwoTone,
@@ -94,8 +94,8 @@ export const EntityBadgeIcons = (
     canOpenModal,
   } = props
 
-  const { authenticatedUsersId, publicGroupId, anonymousUserId } =
-    useRealmPrincipals()
+  const { data } = useGetRealmPrincipals()
+  const { authenticatedUsersId, publicGroupId, anonymousUserId } = data
   const publicPrincipalIds = [
     authenticatedUsersId,
     publicGroupId,

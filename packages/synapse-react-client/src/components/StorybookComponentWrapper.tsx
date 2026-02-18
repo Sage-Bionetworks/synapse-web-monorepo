@@ -11,7 +11,6 @@ import {
   SynapseContextProvider,
   SynapseContextType,
 } from '@/utils'
-import { RealmPrincipalsContextProvider } from '@/utils/context/RealmPrincipalsContext'
 import { STACK_MAP, SynapseStack } from '@/utils/functions/getEndpoint'
 import useDetectSSOCode from '@/utils/hooks/useDetectSSOCode'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -142,23 +141,21 @@ export function StorybookComponentWrapper(props: {
           key={currentStack}
           synapseContext={synapseContext}
         >
-          <RealmPrincipalsContextProvider>
-            {storybookContext.globals.showReactQueryDevtools && (
-              <ReactQueryDevtools />
+          {storybookContext.globals.showReactQueryDevtools && (
+            <ReactQueryDevtools />
+          )}
+          <SynapseToastContainer />
+          <main>
+            {shouldPromptForLogin ? (
+              <StandaloneLoginForm
+                sessionCallback={() => {
+                  void sessionChangeHandler()
+                }}
+              />
+            ) : (
+              props.children
             )}
-            <SynapseToastContainer />
-            <main>
-              {shouldPromptForLogin ? (
-                <StandaloneLoginForm
-                  sessionCallback={() => {
-                    void sessionChangeHandler()
-                  }}
-                />
-              ) : (
-                props.children
-              )}
-            </main>
-          </RealmPrincipalsContextProvider>
+          </main>
         </SynapseContextProvider>
       </QueryClientProvider>
     </Suspense>

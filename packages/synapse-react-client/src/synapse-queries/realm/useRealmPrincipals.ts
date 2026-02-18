@@ -3,6 +3,16 @@ import { SYNAPSE_REALM } from '@/utils/SynapseConstants'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { RealmPrincipal } from '@sage-bionetworks/synapse-client/generated/models/RealmPrincipal'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import { useMemo } from 'react'
+
+export type RealmPrincipalIds = {
+  /** The principal ID representing all authenticated users */
+  authenticatedUsersId: string | undefined
+  /** The principal ID representing all users (authenticated and anonymous) */
+  publicGroupId: string | undefined
+  /** The principal ID representing the anonymous user */
+  anonymousUserId: string | undefined
+}
 
 /**
  * Get the current realm ID for the logged in user.
@@ -40,14 +50,14 @@ export function useGetCurrentRealm(
  * If the user is not authenticated, uses getRepoV1RealmIdPrincipals() with realm ID '0' (the default realm).
  *
  * @param options - Query options
- * @returns The realm principals containing authenticatedUsers, publicGroup, and anonymousUser IDs
+ * @returns The realm principal IDs as strings (authenticatedUsersId, publicGroupId, anonymousUserId), along with loading and error states
  */
 export function useGetRealmPrincipals(
   options?: Partial<UseQueryOptions<RealmPrincipal, SynapseClientError>>,
 ) {
   const { synapseClient, keyFactory, isAuthenticated } = useSynapseContext()
 
-  return useQuery({
+  const query = useQuery({
     ...options,
     queryKey: keyFactory.getRealmPrincipalsQueryKey(),
     queryFn: async () => {
@@ -62,4 +72,30 @@ export function useGetRealmPrincipals(
       }
     },
   })
+
+  const data: RealmPrincipalIds = useMemo(() => {
+    if (!query.data) {
+      return {
+        authenticatedUsersId: undefined,
+        publicGroupId: undefined,
+        anonymousUserId: undefined,
+      }
+    }
+    return {
+      authenticatedUsersId: query.data.authenticatedUsers
+        ? String(query.data.authenticatedUsers)
+        : undefined,
+      publicGroupId: query.data.publicGroup
+        ? String(query.data.publicGroup)
+        : undefined,
+      anonymousUserId: query.data.anonymousUser
+        ? String(query.data.anonymousUser)
+        : undefined,
+    }
+  }, [query.data])
+
+  return {
+    ...query,
+    data,
+  }
 }

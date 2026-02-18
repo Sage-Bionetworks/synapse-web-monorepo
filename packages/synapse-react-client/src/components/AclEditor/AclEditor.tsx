@@ -1,5 +1,5 @@
 import { PermissionLevel } from '@/utils/PermissionLevelToAccessType'
-import { useRealmPrincipals } from '@/utils/context/RealmPrincipalsContext'
+import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import {
   Box,
   Button,
@@ -82,12 +82,8 @@ export function AclEditor(props: AclEditorProps): React.ReactNode {
     displayedPermissionLevelOverride,
   } = props
 
-  const {
-    authenticatedUsersId,
-    publicGroupId,
-    anonymousUserId,
-    isLoading: isLoadingRealmPrincipals,
-  } = useRealmPrincipals()
+  const { data, isLoading: isLoadingRealmPrincipals } = useGetRealmPrincipals()
+  const { authenticatedUsersId, publicGroupId, anonymousUserId } = data
 
   const publicPrincipalIds = [
     authenticatedUsersId,

@@ -1,5 +1,5 @@
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { useRealmPrincipals } from '@/utils/context/RealmPrincipalsContext'
+import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import { Box, Link } from '@mui/material'
 import IconSvg, { IconName } from './IconSvg/IconSvg'
 
@@ -17,7 +17,8 @@ export default function TeamBadge(props: TeamBadgeProps) {
   const { teamId, openLinkInNewTab } = props
   let { teamName, disableHref } = props
 
-  const { authenticatedUsersId, publicGroupId } = useRealmPrincipals()
+  const { data } = useGetRealmPrincipals()
+  const { authenticatedUsersId, publicGroupId } = data
 
   let icon: IconName = 'team'
 

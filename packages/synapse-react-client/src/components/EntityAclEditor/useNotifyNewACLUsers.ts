@@ -3,7 +3,7 @@ import {
   useGetUserGroupHeaders,
   useSendMessage,
 } from '@/synapse-queries'
-import { useRealmPrincipals } from '@/utils/context/RealmPrincipalsContext'
+import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import {
   ResourceAccess,
   UserGroupHeader,
@@ -46,8 +46,8 @@ export default function useNotifyNewACLUsers(
   const { subject, body, initialResourceAccessList, newResourceAccessList } =
     options
 
-  const { authenticatedUsersId, publicGroupId, anonymousUserId } =
-    useRealmPrincipals()
+  const { data } = useGetRealmPrincipals()
+  const { authenticatedUsersId, publicGroupId, anonymousUserId } = data
   const publicPrincipalIds = [
     authenticatedUsersId,
     publicGroupId,

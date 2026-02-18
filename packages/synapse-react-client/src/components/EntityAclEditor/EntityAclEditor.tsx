@@ -15,7 +15,7 @@ import {
   PermissionLevel,
   permissionLevelToLabel,
 } from '@/utils/PermissionLevelToAccessType'
-import { useRealmPrincipals } from '@/utils/context/RealmPrincipalsContext'
+import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import { Alert, Link, Stack } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
@@ -150,8 +150,9 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
   } = props
 
   const { data: ownProfile } = useSuspenseGetCurrentUserProfile()
+  const { data: realmPrincipals } = useGetRealmPrincipals()
   const { authenticatedUsersId, publicGroupId, anonymousUserId } =
-    useRealmPrincipals()
+    realmPrincipals
   const { data: entityBundle } = useSuspenseGetEntityBundle(
     entityId,
     undefined,

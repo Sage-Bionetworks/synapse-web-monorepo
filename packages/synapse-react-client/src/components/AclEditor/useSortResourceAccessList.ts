@@ -1,5 +1,5 @@
 import { useGetUserGroupHeaders } from '@/synapse-queries'
-import { useRealmPrincipals } from '@/utils/context/RealmPrincipalsContext'
+import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import { ResourceAccess } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo } from 'react'
 import {
@@ -14,7 +14,8 @@ import {
 export default function useSortResourceAccessList(
   resourceAccessList: ResourceAccess[],
 ) {
-  const { authenticatedUsersId, publicGroupId } = useRealmPrincipals()
+  const { data } = useGetRealmPrincipals()
+  const { authenticatedUsersId, publicGroupId } = data
   const principalIdsOnResourceAccessList = useMemo(
     () => resourceAccessList.map(ra => ra.principalId),
     [resourceAccessList],

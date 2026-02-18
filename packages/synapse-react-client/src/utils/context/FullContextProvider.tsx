@@ -16,7 +16,6 @@ import {
   ApplicationSessionContextProvider,
   ApplicationSessionContextType,
 } from '../AppUtils/session/ApplicationSessionContext'
-import { RealmPrincipalsContextProvider } from './RealmPrincipalsContext'
 
 export const defaultQueryClientConfig = {
   defaultOptions: {
@@ -74,21 +73,19 @@ export function FullContextProvider(props: FullContextProviderProps) {
     <QueryClientProvider client={queryClient ?? defaultQueryClient}>
       <ThemeProvider theme={theme}>
         <SynapseContextProvider synapseContext={synapseContext}>
-          <RealmPrincipalsContextProvider>
-            <ApplicationSessionContextProvider
-              context={applicationSessionContext}
-            >
-              <DocumentMetadataProvider>
-                <GlobalIsEditingContextProvider
-                  subscribe={isEditingStore.subscribe}
-                  getSnapshot={isEditingStore.getSnapshot}
-                  setIsEditing={isEditingStore.setIsEditing}
-                >
-                  <Suspense fallback={null}>{children}</Suspense>
-                </GlobalIsEditingContextProvider>
-              </DocumentMetadataProvider>
-            </ApplicationSessionContextProvider>
-          </RealmPrincipalsContextProvider>
+          <ApplicationSessionContextProvider
+            context={applicationSessionContext}
+          >
+            <DocumentMetadataProvider>
+              <GlobalIsEditingContextProvider
+                subscribe={isEditingStore.subscribe}
+                getSnapshot={isEditingStore.getSnapshot}
+                setIsEditing={isEditingStore.setIsEditing}
+              >
+                <Suspense fallback={null}>{children}</Suspense>
+              </GlobalIsEditingContextProvider>
+            </DocumentMetadataProvider>
+          </ApplicationSessionContextProvider>
         </SynapseContextProvider>
       </ThemeProvider>
     </QueryClientProvider>
