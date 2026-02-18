@@ -464,7 +464,21 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
             </Typography>
           </Button>
         </Box>
-        {isLoading && <SynapseSpinner size={40} />}
+        {isLoading && facets.length === 0 && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              mt: 1,
+            }}
+          >
+            <SynapseSpinner size={40} />
+            <Typography variant="body2" color="text.secondary">
+              Loading filters...
+            </Typography>
+          </Box>
+        )}
         <Box>
           {!isLoading && facets.length > 0 && (
             <Collapse in={expanded}>
