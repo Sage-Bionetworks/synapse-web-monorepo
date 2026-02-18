@@ -69,8 +69,16 @@ export function shouldShowFacetValue(
 
 /**
  * Check if a facet is a user facet (e.g., 'modified_by' or 'created_by')
+ * Accepts either snake_case or PascalCase facet names.
  */
-export const isUserFacet = (name: string) => USER_FACET_NAMES.includes(name)
+export const isUserFacet = (name: string): boolean => {
+  // Normalize by removing underscores and converting to lowercase
+  const normalizedFacetName = name.toLowerCase().replace(/_/g, '')
+
+  return USER_FACET_NAMES.some(
+    facet => facet.toLowerCase().replace(/_/g, '') === normalizedFacetName,
+  )
+}
 
 /**
  * Format facet name: capitalize first letter, replace underscores with spaces
