@@ -195,16 +195,23 @@ describe('LiteralFacetValues', () => {
   })
 
   it('shows only MAX_FACET_VALUES_SHOWN checkboxes by default when there are more', async () => {
-    const values = Array.from({ length: 15 }, (_, i) => `consortium-${i}`)
+    const dataLength = 15
+    const values = Array.from(
+      { length: dataLength },
+      (_, i) => `consortium-${i}`,
+    )
 
     renderWithLiteralFacet('consortium', values)
     // Render with 16 values (including "all" facet), but only MAX_FACET_VALUES_SHOWN should be shown initially
-    expect(screen.getAllByRole('checkbox')).toHaveLength(MAX_FACET_VALUES_SHOWN)
-    expect(screen.getByText('Show all 16')).toBeInTheDocument()
+    expect(screen.getAllByRole('checkbox')).toHaveLength(
+      MAX_FACET_VALUES_SHOWN + 1,
+    ) // +1 for the "All" option
+
+    expect(screen.getByText(`Show all ${dataLength}`)).toBeInTheDocument()
 
     // After clicking "Show all", all checkboxes should be visible
-    await userEvent.click(screen.getByText('Show all 16'))
-    expect(screen.getAllByRole('checkbox')).toHaveLength(15)
+    await userEvent.click(screen.getByText(`Show all ${dataLength}`))
+    expect(screen.getAllByRole('checkbox')).toHaveLength(dataLength + 1)
   })
 
   it('calls onAddFacet when an unchecked checkbox is clicked', async () => {

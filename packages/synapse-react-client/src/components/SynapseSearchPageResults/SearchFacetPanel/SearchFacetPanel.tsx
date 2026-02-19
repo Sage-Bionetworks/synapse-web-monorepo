@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import styles from './SearchFacelPanel.module.scss'
+import styles from './SearchFacetPanel.module.scss'
 import dayjs from 'dayjs'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { entityTypeToFriendlyName } from '../../../utils/functions/EntityTypeUtils'
