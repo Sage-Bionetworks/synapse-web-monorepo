@@ -9,9 +9,9 @@ import { useApplicationSessionContext } from './ApplicationSessionContext'
 import ApplicationSessionManager, {
   ApplicationSessionManagerProps,
 } from './ApplicationSessionManager'
-import { useApplicationSession } from './useApplicationSession'
+import { useSessionManager } from './useSessionManager'
 
-vi.mock('./useApplicationSession')
+vi.mock('./useSessionManager')
 
 function render(props?: ApplicationSessionManagerProps) {
   const queryClient = new QueryClient(defaultQueryClientConfig)
@@ -36,13 +36,13 @@ function render(props?: ApplicationSessionManagerProps) {
   )
 }
 
-const mockUseApplicationSession = vi.mocked(useApplicationSession)
+const mockUseSessionManager = vi.mocked(useSessionManager)
 
 describe('ApplicationSessionManager wiring tests', () => {
   beforeEach(() => {
     vi.clearAllMocks()
 
-    mockUseApplicationSession.mockReturnValue({
+    mockUseSessionManager.mockReturnValue({
       sessionContext: {
         token: MOCK_ACCESS_TOKEN,
         realmId: '0',

@@ -19,9 +19,9 @@ import * as UseDetectSSOCodeModule from '../../hooks/useDetectSSOCode'
 import { UseDetectSSOCodeOptions } from '../../hooks/useDetectSSOCode'
 import { ApplicationSessionContextType } from './ApplicationSessionContext'
 import {
-  useApplicationSession,
-  UseApplicationSessionOptions,
-} from './useApplicationSession'
+  useSessionManager,
+  UseSessionManagerOptions,
+} from './useSessionManager'
 import { defaultQueryClientConfig } from '@/utils/context'
 import SynapseClient from '@/synapse-client'
 
@@ -45,9 +45,9 @@ vi.mock('@sage-bionetworks/synapse-client', async () => {
   }
 })
 
-function renderSessionHook(options?: UseApplicationSessionOptions) {
+function renderSessionHook(options?: UseSessionManagerOptions) {
   const queryClient = new QueryClient(defaultQueryClientConfig)
-  return renderHook(() => useApplicationSession(options), {
+  return renderHook(() => useSessionManager(options), {
     wrapper: ({ children }) => {
       return (
         <QueryClientProvider client={queryClient}>
@@ -131,7 +131,7 @@ const EXPECTED_AUTH_STATE_TERMS_NOT_ACCEPTED: Partial<ApplicationSessionContextT
     termsOfServiceStatus: TERMS_OF_SERVICE_STATUS_MUST_AGREE_NOW,
   }
 
-describe('useApplicationSession tests', () => {
+describe('useSessionManager tests', () => {
   const mockGetAccessToken = vi.spyOn(SynapseClient, 'getAccessTokenFromCookie')
   const signOutSpy = vi
     .spyOn(SynapseClient, 'signOut')

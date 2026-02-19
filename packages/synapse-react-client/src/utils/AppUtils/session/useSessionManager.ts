@@ -14,7 +14,7 @@ import { restoreLastPlace } from '../AppUtils'
 import { ApplicationSessionContextType } from './ApplicationSessionContext'
 import { SynapseSessionManager } from './SynapseSessionManager'
 
-export type UseApplicationSessionOptions = {
+export type UseSessionManagerOptions = {
   /** The realm that an unauthenticated user should be signed in to. Defaults to "0", the public Synapse realm */
   defaultRealm?: string
   /* If defined, specifies the allowable elapsed time in seconds since the last time the End-User was actively authenticated. If the elapsed time is greater than this value, the session will be cleared and the user will have to re-authenticate. */
@@ -32,7 +32,7 @@ export type UseApplicationSessionOptions = {
   ) => void
 }
 
-export type UseApplicationSessionReturn = {
+export type UseSessionManagerReturn = {
   sessionContext: ApplicationSessionContextType
   token: string | undefined
 }
@@ -49,9 +49,9 @@ export type UseApplicationSessionReturn = {
  *
  * Must be called within a react-router Router and a react-query QueryClientProvider.
  */
-export function useApplicationSession(
-  options: UseApplicationSessionOptions = {},
-): UseApplicationSessionReturn {
+export function useSessionManager(
+  options: UseSessionManagerOptions = {},
+): UseSessionManagerReturn {
   const {
     defaultRealm = '0',
     maxAge,

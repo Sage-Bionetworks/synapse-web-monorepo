@@ -1,5 +1,6 @@
-import { useSynapseContext } from '@/utils'
+import { useApplicationSessionContext, useSynapseContext } from '@/utils'
 import {
+  Realm,
   SynapseClient,
   SynapseClientError,
 } from '@sage-bionetworks/synapse-client'
@@ -26,15 +27,17 @@ export type RealmPrincipalIds = {
  * @param options - Query options
  * @returns The realm ID for the current user
  */
-export function useGetCurrentRealm<TData = RealmPrincipal>(
-  options?: Partial<UseQueryOptions<RealmPrincipal, SynapseClientError, TData>>,
+export function useGetCurrentRealm<TData = Realm>(
+  options?: Partial<UseQueryOptions<Realm, SynapseClientError, TData>>,
 ) {
+  const { realmId } = useApplicationSessionContext()
   const { synapseClient, keyFactory } = useSynapseContext()
 
   return useQuery({
     ...options,
     queryKey: keyFactory.getCurrentRealmQueryKey(),
-    queryFn: () => synapseClient.realmServicesClient.getRepoV1RealmPrincipals(),
+    queryFn: () =>
+      synapseClient.realmServicesClient.getRepoV1RealmId({ id: realmId! }),
   })
 }
 

@@ -4,7 +4,7 @@ import { PropsWithChildren } from 'react'
 import { SynapseContextProvider, SynapseContextType } from '../../context'
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
 import { AuthenticationGuard } from './AuthenticationGuard'
-import { useApplicationSession } from './useApplicationSession'
+import { useSessionManager } from './useSessionManager'
 
 export type ApplicationSessionManagerProps = PropsWithChildren<{
   /** The realm that an unauthenticated user should be signed in to. Defaults to "0", the public Synapse realm */
@@ -53,7 +53,7 @@ export function ApplicationSessionManager(
     ...hookOptions
   } = props
 
-  const { sessionContext, token } = useApplicationSession(hookOptions)
+  const { sessionContext, token } = useSessionManager(hookOptions)
 
   return (
     <ApplicationSessionContextProvider context={sessionContext}>

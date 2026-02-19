@@ -8,7 +8,7 @@ import {
 export type ApplicationSessionContextType = {
   /* The Synapse access token. */
   token?: string
-  /** The realm ID of the current user. */
+  /** The realm of the current user. */
   realmId?: string
   /** The user ID of the current user. */
   userId?: string
