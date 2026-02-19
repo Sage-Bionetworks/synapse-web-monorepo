@@ -1067,8 +1067,4 @@ export class KeyFactory {
   public getAsyncJobStatusQueryKey(jobId: string) {
     return this.getKey('asyncJobStatus', jobId)
   }
-
-  public getCurrentRealmPrincipalsQueryKey() {
-    return this.getKey('realm', 'current', 'principals')
-  }
 }

@@ -120,10 +120,7 @@ describe('useGetRealmPrincipals', () => {
       })
 
       expect(result.current.isLoading).toBe(true)
-      expect(result.current.data).toBeDefined()
-      expect(result.current.data.authenticatedUsersId).toBeUndefined()
-      expect(result.current.data.publicGroupId).toBeUndefined()
-      expect(result.current.data.anonymousUserId).toBeUndefined()
+      expect(result.current.data).toBeUndefined()
     })
 
     it('handles error state', async () => {
@@ -141,10 +138,7 @@ describe('useGetRealmPrincipals', () => {
       await waitFor(() => expect(result.current.isError).toBe(true))
 
       expect(result.current.error).toBeDefined()
-      expect(result.current.data).toBeDefined()
-      expect(result.current.data.authenticatedUsersId).toBeUndefined()
-      expect(result.current.data.publicGroupId).toBeUndefined()
-      expect(result.current.data.anonymousUserId).toBeUndefined()
+      expect(result.current.data).toBeUndefined()
     })
   })
 
@@ -185,10 +179,7 @@ describe('useGetRealmPrincipals', () => {
       })
 
       expect(result.current.isLoading).toBe(true)
-      expect(result.current.data).toBeDefined()
-      expect(result.current.data.authenticatedUsersId).toBeUndefined()
-      expect(result.current.data.publicGroupId).toBeUndefined()
-      expect(result.current.data.anonymousUserId).toBeUndefined()
+      expect(result.current.data).toBeUndefined()
     })
 
     it('handles error state when not authenticated', async () => {
@@ -206,10 +197,7 @@ describe('useGetRealmPrincipals', () => {
       await waitFor(() => expect(result.current.isError).toBe(true))
 
       expect(result.current.error).toBeDefined()
-      expect(result.current.data).toBeDefined()
-      expect(result.current.data.authenticatedUsersId).toBeUndefined()
-      expect(result.current.data.publicGroupId).toBeUndefined()
-      expect(result.current.data.anonymousUserId).toBeUndefined()
+      expect(result.current.data).toBeUndefined()
     })
   })
 
@@ -227,10 +215,7 @@ describe('useGetRealmPrincipals', () => {
 
       // Should not start loading
       expect(result.current.isLoading).toBe(false)
-      expect(result.current.data).toBeDefined()
-      expect(result.current.data.authenticatedUsersId).toBeUndefined()
-      expect(result.current.data.publicGroupId).toBeUndefined()
-      expect(result.current.data.anonymousUserId).toBeUndefined()
+      expect(result.current.data).toBeUndefined()
     })
   })
 })

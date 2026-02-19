@@ -151,8 +151,11 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
 
   const { data: ownProfile } = useSuspenseGetCurrentUserProfile()
   const { data: realmPrincipals } = useGetRealmPrincipals()
-  const { authenticatedUsersId, publicGroupId, anonymousUserId } =
-    realmPrincipals
+  const {
+    authenticatedUsers: authenticatedUsersId,
+    publicGroup: publicGroupId,
+    anonymousUser: anonymousUserId,
+  } = realmPrincipals || {}
   const { data: entityBundle } = useSuspenseGetEntityBundle(
     entityId,
     undefined,

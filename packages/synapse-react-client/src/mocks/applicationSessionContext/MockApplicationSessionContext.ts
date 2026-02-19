@@ -1,5 +1,5 @@
 import { ApplicationSessionContextType } from '@/utils/AppUtils/session/ApplicationSessionContext'
-import { ANONYMOUS_PRINCIPAL_ID } from '@/utils/SynapseConstants'
+import { MOCK_ANONYMOUS_PRINCIPAL_ID } from '../realm/mockRealmPrincipal'
 
 /**
  * Mock ApplicationSessionContext for testing purposes.
@@ -7,7 +7,7 @@ import { ANONYMOUS_PRINCIPAL_ID } from '@/utils/SynapseConstants'
  */
 export const MOCK_APPLICATION_SESSION_CONTEXT: ApplicationSessionContextType = {
   token: 'mock-anonymous-token',
-  userId: ANONYMOUS_PRINCIPAL_ID.toString(),
+  userId: MOCK_ANONYMOUS_PRINCIPAL_ID.toString(),
   realmId: '0',
   isAuthenticated: false,
   termsOfServiceStatus: undefined,
