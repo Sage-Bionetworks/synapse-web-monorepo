@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import dayjs from 'dayjs'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import { entityTypeToFriendlyName } from '../../../utils/functions/EntityTypeUtils'
 import {
   Box,
   FormControlLabel,
@@ -269,7 +271,9 @@ function LiteralFacetValues({
                 <UserBadge userId={value} />
               ) : (
                 <Typography variant="smallText1" sx={{ lineHeight: '20px' }}>
-                  {value}
+                  {facet.name === 'node_type'
+                    ? entityTypeToFriendlyName(value as EntityType) || value
+                    : value}
                 </Typography>
               )
             }
@@ -425,7 +429,12 @@ export function AppliedFacetsChips({
                   <UserBadge userId={kv.value} />
                 </Box>
               ) : (
-                <Typography variant="smallText1">{kv.value}</Typography>
+                <Typography variant="smallText1">
+                  {kv.key === 'node_type'
+                    ? entityTypeToFriendlyName(kv.value as EntityType) ||
+                      kv.value
+                    : kv.value}
+                </Typography>
               )
             }
           />

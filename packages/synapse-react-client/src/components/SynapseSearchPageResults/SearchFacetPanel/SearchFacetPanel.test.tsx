@@ -150,17 +150,23 @@ describe('LiteralFacetValues', () => {
     vi.clearAllMocks()
   })
 
-  const renderWithNodeTypeFacet = (
+  const renderWithLiteralFacet = (
+    name: string,
     values: string[],
     overrides: Partial<typeof defaultPanelProps> = {},
   ) =>
     render(
       <SearchFacetPanel
         {...defaultPanelProps}
-        facets={[makeLiteralFacet('node_type', values)]}
+        facets={[makeLiteralFacet(name, values)]}
         {...overrides}
       />,
     )
+
+  const renderWithNodeTypeFacet = (
+    values: string[],
+    overrides: Partial<typeof defaultPanelProps> = {},
+  ) => renderWithLiteralFacet('node_type', values, overrides)
 
   it('renders a checkbox for each visible value', () => {
     renderWithNodeTypeFacet(['dataset', 'file', 'folder'])
@@ -189,10 +195,10 @@ describe('LiteralFacetValues', () => {
   })
 
   it('shows only MAX_FACET_VALUES_SHOWN checkboxes by default when there are more', async () => {
-    const values = Array.from({ length: 15 }, (_, i) => `type-${i}`)
+    const values = Array.from({ length: 15 }, (_, i) => `consortium-${i}`)
 
+    renderWithLiteralFacet('consortium', values)
     // Render with 15 values, but only MAX_FACET_VALUES_SHOWN should be shown initially
-    renderWithNodeTypeFacet(values)
     expect(screen.getAllByRole('checkbox')).toHaveLength(MAX_FACET_VALUES_SHOWN)
     expect(screen.getByText('Show all 15')).toBeInTheDocument()
 
@@ -316,7 +322,7 @@ describe('AppliedFacetsChips', () => {
         }}
       />,
     )
-    expect(screen.getByText('dataset')).toBeInTheDocument()
+    expect(screen.getByText('Dataset')).toBeInTheDocument()
     expect(screen.getByText('HTAN')).toBeInTheDocument()
   })
 
