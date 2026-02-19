@@ -7,9 +7,9 @@ function RootApp() {
       <FullWidthAlert
         sx={{ m: 0 }}
         isGlobal={false}
-        variant={'info'}
+        variant={'success'}
         show={true}
-        title={"You're Using an Alpha Version!"}
+        title={"You're Using a Beta Version!"}
         description={
           'This is an early version of the portal. Things might break, and your feedback helps us build a better experience. Try it out and let us know what you think!'
         }
