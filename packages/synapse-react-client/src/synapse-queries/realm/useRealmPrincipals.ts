@@ -1,16 +1,7 @@
 import { useApplicationSessionContext, useSynapseContext } from '@/utils'
-import {
-  Realm,
-  SynapseClient,
-  SynapseClientError,
-} from '@sage-bionetworks/synapse-client'
+import { Realm, SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { RealmPrincipal } from '@sage-bionetworks/synapse-client/generated/models/RealmPrincipal'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
-import { KeyFactory } from '../KeyFactory'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '@/utils/functions/getEndpoint'
 
 export type RealmPrincipalIds = {
   /** The principal ID representing all authenticated users */
@@ -41,18 +32,6 @@ export function useGetCurrentRealm<TData = Realm>(
   })
 }
 
-function useGetRealmPrincipalsInternal<TData = RealmPrincipal>(
-  synapseClient: SynapseClient,
-  keyFactory: KeyFactory,
-  options?: Partial<UseQueryOptions<RealmPrincipal, SynapseClientError, TData>>,
-) {
-  return useQuery({
-    ...options,
-    queryKey: keyFactory.getRealmPrincipalsQueryKey(),
-    queryFn: () => synapseClient.realmServicesClient.getRepoV1RealmPrincipals(),
-  })
-}
-
 /**
  * Get the realm principals for the current user's realm.
  *
@@ -64,24 +43,9 @@ export function useGetRealmPrincipals<TData = RealmPrincipal>(
 ) {
   const { synapseClient, keyFactory } = useSynapseContext()
 
-  return useGetRealmPrincipalsInternal(synapseClient, keyFactory, options)
-}
-
-/**
- * Get the realm principals for the current user's realm, using a provided access token instead of the using SynapseContext.
- *
- * @param accessToken - The access token to use for the query
- * @param options - Query options
- * @returns The realm principal IDs as strings (authenticatedUsersId, publicGroupId, anonymousUserId), along with loading and error states
- */
-export function useGetRealmPrincipalsWithToken<TData = RealmPrincipal>(
-  accessToken: string,
-  options?: Partial<UseQueryOptions<RealmPrincipal, SynapseClientError, TData>>,
-) {
-  const keyFactory = new KeyFactory(accessToken)
-  const synapseClient = new SynapseClient({
-    basePath: getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getRealmPrincipalsQueryKey(),
+    queryFn: () => synapseClient.realmServicesClient.getRepoV1RealmPrincipals(),
   })
-
-  return useGetRealmPrincipalsInternal(synapseClient, keyFactory, options)
 }
