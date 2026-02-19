@@ -2082,27 +2082,22 @@ export const signOut = async (realm = '0'): Promise<string> => {
   let accessToken: string | undefined = undefined
   try {
     accessToken = await getAccessTokenFromCookie()
-  } catch (e) {
-    console.warn('Could not get the access token from the cookie', e)
-  }
-  if (accessToken) {
-    try {
+    if (accessToken) {
       // This call may fail if the token was already revoked, so just log any encountered errors
       await deleteSessionAccessToken(accessToken)
-    } catch (e) {
-      console.warn('Could not delete session token', e)
     }
+  } catch (e) {
+    console.warn('Could not get/revoke the current access token', e)
   }
 
   // Get a new anonymous token and set it in the cookie.
   let newAccessToken: string = ''
   try {
-    const accessTokenResponse =
-      await new SynapseOpenAPIClient().authenticationServicesClient.getAuthV1AnonymousToken(
-        {
-          realm,
-        },
-      )
+    const accessTokenResponse = await new SynapseOpenAPIClient({
+      basePath: getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+    }).authenticationServicesClient.getAuthV1AnonymousToken({
+      realm,
+    })
     newAccessToken = accessTokenResponse.accessToken!
   } catch (e) {
     console.error('Failed to get an anonymous access token.', e)

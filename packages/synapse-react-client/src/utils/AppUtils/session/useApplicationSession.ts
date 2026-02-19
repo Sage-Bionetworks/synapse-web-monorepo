@@ -1,17 +1,18 @@
-import SynapseClient from '@/synapse-client'
 import { useTermsOfServiceStatus } from '@/synapse-queries/termsOfService/useTermsOfService'
 import { useGetTwoFactorEnrollmentStatusWithAccessToken } from '@/synapse-queries/auth/useTwoFactorEnrollment'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
-import { useCallback, useEffect, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react'
 import { useNavigate } from 'react-router'
 import useDetectSSOCode from '../../hooks/useDetectSSOCode'
 import { restoreLastPlace } from '../AppUtils'
 import { ApplicationSessionContextType } from './ApplicationSessionContext'
-import {
-  OAuthTokenIntrospectionResponse,
-  RealmPrincipal,
-  SynapseClient as SynapseOpenApiClient,
-} from '@sage-bionetworks/synapse-client'
+import { SynapseSessionManager } from './SynapseSessionManager'
 
 export type UseApplicationSessionOptions = {
   /** The realm that an unauthenticated user should be signed in to. Defaults to "0", the public Synapse realm */
@@ -31,59 +32,6 @@ export type UseApplicationSessionOptions = {
   ) => void
 }
 
-/**
- * Attempt to get the stored access token from the browser cookie.
- * Returns the token string, or undefined if not found or on error.
- */
-async function getStoredToken(): Promise<string | undefined> {
-  try {
-    return await SynapseClient.getAccessTokenFromCookie()
-  } catch (e) {
-    console.error('Unable to get the access token: ', e)
-    return undefined
-  }
-}
-
-/**
- * Validate the token by calling the token introspection service.
- * @return the current token or null if the token is invalid
- */
-async function validateToken(
-  accessToken: string,
-  maxAge?: number,
-): Promise<OAuthTokenIntrospectionResponse | null> {
-  const synapseClient = new SynapseOpenApiClient({ accessToken: accessToken })
-  try {
-    const response =
-      await synapseClient.openIDConnectServicesClient.postAuthV1Oauth2Introspect(
-        {
-          oAuthTokenIntrospectionRequest: {
-            token: accessToken,
-            max_age: maxAge,
-          },
-        },
-      )
-    if (!response.active) {
-      throw new Error('Token is not active.')
-    }
-    return response
-  } catch (e) {
-    console.error(
-      'Error validating the access token. Clearing session. Error: ',
-      (e as Error).message,
-    )
-  }
-
-  return null
-}
-
-async function getCurrentRealmPrincipals(
-  accessToken: string,
-): Promise<RealmPrincipal> {
-  const synapseClient = new SynapseOpenApiClient({ accessToken })
-  return synapseClient.realmServicesClient.getRepoV1RealmPrincipals()
-}
-
 export type UseApplicationSessionReturn = {
   sessionContext: ApplicationSessionContextType
   token: string | undefined
@@ -94,6 +42,10 @@ export type UseApplicationSessionReturn = {
  *
  * Handles token acquisition, validation, SSO detection, and provides
  * all values needed for the ApplicationSessionContext and SynapseContext.
+ *
+ * This is a React wrapper around {@link SynapseSessionManager}, which contains
+ * the framework-agnostic session logic. Session state is synchronized via
+ * `useSyncExternalStore`.
  *
  * Must be called within a react-router Router and a react-query QueryClientProvider.
  */
@@ -109,89 +61,66 @@ export function useApplicationSession(
 
   const navigate = useNavigate()
 
-  const [token, setToken] = useState<string | undefined>()
-  const [realmId, setRealmId] = useState<string | undefined>()
-  const [userId, setUserId] = useState<string | undefined>()
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-
-  const [hasInitializedSession, setHasInitializedSession] = useState(false)
   const [twoFactorAuthSSOError, setTwoFactorAuthSSOError] = useState<
     TwoFactorAuthErrorResponse | undefined
   >()
 
-  /**
-   * Initialize the session and token for an anonymous user.
-   * If onMissingExpectedAuthentication is defined, it will be called to allow the app to handle this case (e.g. by showing an error if the user was expected to be authenticated).
-   * @return the new token.
-   */
-  const initAnonymousUserState = useCallback(async () => {
-    if (onMissingExpectedAuthentication) {
-      onMissingExpectedAuthentication()
-    }
-    const newToken = await SynapseClient.signOut(defaultRealm)
-    return newToken
-  }, [defaultRealm, onMissingExpectedAuthentication])
+  // Store latest callback refs so the manager doesn't need to be recreated when callbacks change
+  const onMissingExpectedAuthenticationRef = useRef(
+    onMissingExpectedAuthentication,
+  )
+  onMissingExpectedAuthenticationRef.current = onMissingExpectedAuthentication
 
-  const { data: tosStatus } = useTermsOfServiceStatus(token, {
-    enabled: isAuthenticated,
+  const [manager] = useState(
+    () =>
+      new SynapseSessionManager({
+        defaultRealm,
+        maxAge,
+        onMissingExpectedAuthentication: () => {
+          onMissingExpectedAuthenticationRef.current?.()
+        },
+      }),
+  )
+
+  // Keep mutable options in sync with props
+  useEffect(() => {
+    manager.setOptions({ defaultRealm, maxAge })
+  }, [manager, defaultRealm, maxAge])
+
+  const sessionState = useSyncExternalStore(
+    manager.subscribe,
+    manager.getSnapshot,
+  )
+
+  useEffect(() => {
+    manager.start()
+    return () => manager.dispose()
+  }, [manager])
+
+  const { data: tosStatus } = useTermsOfServiceStatus(sessionState.token, {
+    enabled: sessionState.isAuthenticated,
   })
   const { data: twoFactorStatus } =
-    useGetTwoFactorEnrollmentStatusWithAccessToken(token, {
-      enabled: isAuthenticated,
+    useGetTwoFactorEnrollmentStatusWithAccessToken(sessionState.token, {
+      enabled: sessionState.isAuthenticated,
     })
 
   const refreshSession = useCallback(async () => {
     setTwoFactorAuthSSOError(undefined)
-
-    let token = await getStoredToken()
-
-    if (!token) {
-      token = await initAnonymousUserState()
-    }
-
-    // Verify that the token is valid. If not, `validateToken` will clear the session and reload the page.
-    const introspectionResponse = await validateToken(token, maxAge)
-    if (introspectionResponse === null) {
-      // Token was invalid. We may be in this state because the token expired. Clear the token from browser storage.
-      await SynapseClient.signOut()
-      // Refresh the page to clear any potentially stale data from the previous session
-      window.location.reload()
-      return
-    }
-    const currentUserId = introspectionResponse.sub
-
-    // Get the realm's principals to see if the user is anonymous.
-    const realmPrincipals = await getCurrentRealmPrincipals(token)
-
-    setToken(token)
-    setHasInitializedSession(true)
-    setRealmId(realmPrincipals.realmId)
-    setUserId(currentUserId)
-    setIsAuthenticated(currentUserId !== realmPrincipals.anonymousUser!)
-  }, [initAnonymousUserState, maxAge])
+    await manager.refreshSession()
+  }, [manager])
 
   const clearSession = useCallback(
     async (onBeforeReload?: () => void) => {
-      await initAnonymousUserState()
+      await manager.clearSession()
       if (onBeforeReload) {
         onBeforeReload()
       }
       // In all cases when the session is cleared we should refresh the page to ensure private data is not being shown
       navigate(0)
     },
-    [navigate, initAnonymousUserState],
+    [navigate, manager],
   )
-
-  /** Call refreshSession on mount and set up periodic refresh */
-  useEffect(() => {
-    refreshSession()
-    // PORTALS-3249: Set up an interval to call refreshSession every 60 seconds
-    const intervalId = setInterval(() => {
-      refreshSession()
-    }, 60000)
-
-    return () => clearInterval(intervalId)
-  }, [refreshSession])
 
   const { isLoading: isLoadingSSO } = useDetectSSOCode({
     onSignInComplete: () => {
@@ -211,23 +140,23 @@ export function useApplicationSession(
       // Throw the error so it propagates to an error boundary
       throw err
     },
-    isInitializingSession: !hasInitializedSession,
-    isAuthenticated,
+    isInitializingSession: !sessionState.hasInitializedSession,
+    isAuthenticated: sessionState.isAuthenticated,
   })
 
   const sessionContext: ApplicationSessionContextType = {
-    token,
-    userId,
-    realmId,
-    isAuthenticated,
+    token: sessionState.token,
+    userId: sessionState.userId,
+    realmId: sessionState.realmId,
+    isAuthenticated: sessionState.isAuthenticated,
     termsOfServiceStatus: tosStatus,
     refreshSession,
     clearSession,
     isLoadingSSO,
     twoFactorAuthSSOErrorResponse: twoFactorAuthSSOError,
-    hasInitializedSession,
+    hasInitializedSession: sessionState.hasInitializedSession,
     twoFactorStatus,
   }
 
-  return { sessionContext, token }
+  return { sessionContext, token: sessionState.token }
 }

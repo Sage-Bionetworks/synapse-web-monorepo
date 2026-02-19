@@ -12,11 +12,13 @@ import { useOneSageURL } from 'synapse-react-client/utils/hooks/useOneSageURL'
 import { KNOWN_SYNAPSE_ORG_URLS } from 'synapse-react-client/utils/functions/getEndpoint'
 
 export type AppInitializerProps = PropsWithChildren<{
+  /** The default realm ID to use for the application. Anonymous users will use this realm. */
+  defaultRealmId?: string
   requireAuthentication?: boolean
 }>
 
 function AppInitializer(props: AppInitializerProps) {
-  const { requireAuthentication } = props
+  const { requireAuthentication, defaultRealmId } = props
   const [cookiePreferences] = useCookiePreferences()
   const [redirectUrl, setRedirectUrl] = useState<string | undefined>(undefined)
 
@@ -67,6 +69,7 @@ function AppInitializer(props: AppInitializerProps) {
 
   return (
     <ApplicationSessionManager
+      defaultRealmId={defaultRealmId}
       downloadCartPageUrl={'/DownloadCart'}
       appId={import.meta.env.VITE_PORTAL_KEY}
       requireAuthentication={requireAuthentication}

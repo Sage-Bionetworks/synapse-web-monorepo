@@ -8,7 +8,7 @@ import { useApplicationSession } from './useApplicationSession'
 
 export type ApplicationSessionManagerProps = PropsWithChildren<{
   /** The realm that an unauthenticated user should be signed in to. Defaults to "0", the public Synapse realm */
-  defaultRealm?: string
+  defaultRealmId?: string
   downloadCartPageUrl?: string
   /* If defined, specifies the allowable elapsed time in seconds since the last time the End-User was actively authenticated. If the elapsed time is greater than this value, the session will be cleared and the user will have to re-authenticate. */
   maxAge?: number
