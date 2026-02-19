@@ -6,7 +6,7 @@ import {
   createTextColumn,
   floatColumn,
   keyColumn,
-} from 'react-datasheet-grid'
+} from '@sage-bionetworks/react-datasheet-grid'
 import { autocompleteColumn } from '../columns/AutocompleteColumn'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
 import { calculateDefaultColumnWidth } from './calculateColumnWidth'

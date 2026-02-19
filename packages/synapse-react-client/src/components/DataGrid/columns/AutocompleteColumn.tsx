@@ -3,7 +3,11 @@ import { Autocomplete, SxProps, TextField, Theme } from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
 import { isNil } from 'lodash-es'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
-import { CellComponent, CellProps, Column } from 'react-datasheet-grid'
+import {
+  CellComponent,
+  CellProps,
+  Column,
+} from '@sage-bionetworks/react-datasheet-grid'
 
 // Static styles extracted to avoid recreation on every render
 const AUTOCOMPLETE_BASE_SX: SxProps<Theme> = {

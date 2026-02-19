@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { Column } from 'react-datasheet-grid'
+import { Column } from '@sage-bionetworks/react-datasheet-grid'
 import { useResizeObserver } from '@react-hookz/web'
 
 // Extended HTMLDivElement with custom properties for resize handles

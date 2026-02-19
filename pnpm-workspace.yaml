@@ -2,3 +2,5 @@ packages:
   - 'apps/**/*'
   - 'packages/*'
 minimumReleaseAge: 4320 # 3 days
+minimumReleaseAgeExclude:
+  - '@sage-bionetworks/*'

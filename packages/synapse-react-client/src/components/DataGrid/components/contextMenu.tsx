@@ -3,7 +3,7 @@ import {
   createContextMenuComponent,
   ContextMenuItem,
   DataSheetGrid,
-} from 'react-datasheet-grid'
+} from '@sage-bionetworks/react-datasheet-grid'
 
 // Define which context menu items are allowed for tables (a subset)
 const VIEW_ALLOWED_MENU_ITEMS: ContextMenuItem['type'][] = [

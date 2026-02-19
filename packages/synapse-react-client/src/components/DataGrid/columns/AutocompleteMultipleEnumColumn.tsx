@@ -2,7 +2,7 @@ import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseF
 import { Autocomplete, SxProps, TextField, Theme, Tooltip } from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
 import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { CellComponent, Column } from 'react-datasheet-grid'
+import { CellComponent, Column } from '@sage-bionetworks/react-datasheet-grid'
 import {
   AutocompleteCellProps,
   castCellValueToString,
