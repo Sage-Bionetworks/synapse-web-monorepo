@@ -290,7 +290,6 @@ function LiteralFacetValues({
   )
 }
 
-// continue here todo
 type DateRangeFacetValuesProps = {
   facet: Facet
   query: SearchQuery
