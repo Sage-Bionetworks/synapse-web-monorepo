@@ -30,6 +30,7 @@ import {
   formatTimeRangeDisplayValue,
   isUserFacet,
   shouldShowFacetValue,
+  getAllFacetLabel,
 } from './SearchFacetPanelUtils'
 
 const ChipStyles = {
@@ -229,6 +230,8 @@ function LiteralFacetValues({
       ?.filter(kv => kv.key === facet.name)
       .map(kv => kv.value) || []
 
+  const isAllChecked = appliedValues.length === 0
+
   // Get values returned by the search results response
   const availableValues = facet.constraints.map(c => c.value)
 
@@ -250,8 +253,30 @@ function LiteralFacetValues({
     }
   }
 
+  const handleToggleAll = (checked: boolean) => {
+    // If "All" is checked, remove all specific facet values from the query
+    if (checked) {
+      appliedValues.forEach(value => onRemoveFacet(facet.name, value))
+    }
+  }
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+      <FormControlLabel
+        sx={{ mb: '8px' }}
+        control={
+          <Checkbox
+            checked={isAllChecked}
+            onChange={e => handleToggleAll(e.target.checked)}
+            size="small"
+          />
+        }
+        label={
+          <Typography variant="smallText1" sx={{ lineHeight: '20px' }}>
+            {getAllFacetLabel(facet.name)}
+          </Typography>
+        }
+      />
       {displayValues.map(value => {
         const isChecked = isFacetApplied(facet.name, value)
 

@@ -48,7 +48,26 @@ export const USER_FACET_NAMES = [
   'CreatedBy',
 ]
 
+export const FACET_PLURAL_DISPLAY_NAMES: Record<string, string> = {
+  node_type: 'Entity Types',
+  consortium: 'Consortiums',
+  disease: 'Diseases',
+  tissue: 'Tissues',
+  num_samples: 'Num Samples',
+  modified_by: 'Last Modified By',
+  created_by: 'Created By',
+}
+
 // Helper functions
+/**
+ * Get the label for the "All" option in a facet, e.g. "All Entity Types" for the 'node_type' facet
+ */
+export function getAllFacetLabel(facetName: string): string {
+  const pluralName =
+    FACET_PLURAL_DISPLAY_NAMES[facetName] || formatFacetName(facetName)
+  return `All ${pluralName}`
+}
+
 /**
  * Determines if a facet value should be displayed in the UI.
  * Hides 'link' entity types and colon-prefixed values
