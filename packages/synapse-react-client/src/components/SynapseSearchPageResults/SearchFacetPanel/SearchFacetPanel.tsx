@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import dayjs from 'dayjs'
 import {
   Box,
   FormControlLabel,
@@ -325,9 +326,21 @@ function DateRangeFacetValues({
     }
 
     // Always calculate 'min' relative to the moment of the click.
-    const minValue = String(
-      Math.floor(Date.now() / 1000) - selectedTimeRange.range,
-    )
+    // Use dayjs unit-aware subtraction so month/year account for varying lengths.
+    const unitMap: Record<string, dayjs.ManipulateType> = {
+      PAST_HOUR: 'hour',
+      PAST_DAY: 'day',
+      PAST_WEEK: 'week',
+      PAST_MONTH: 'month',
+      PAST_YEAR: 'year',
+    }
+
+    /**
+     * We use dayjs.subtract() instead of fixed seconds to handle
+     * calendar irregularities. dayjs correctly calculates "one month ago"
+     * whether the current month has 28, 30, or 31 days.
+     */
+    const minValue = String(dayjs().subtract(1, unitMap[rangeId]).unix())
     onSetRangeFacet(facet.name, minValue)
   }
 

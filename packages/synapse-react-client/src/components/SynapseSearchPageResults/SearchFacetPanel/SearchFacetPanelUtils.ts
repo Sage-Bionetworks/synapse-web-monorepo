@@ -1,8 +1,5 @@
 import { Facet } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
-
-dayjs.extend(relativeTime)
 
 // Constants
 export const MAX_FACET_VALUES_SHOWN = 10
@@ -14,6 +11,8 @@ const WEEK_IN_SEC = DAY_IN_SEC * 7
 const MONTH_IN_SEC = DAY_IN_SEC * 30
 const YEAR_IN_SEC = DAY_IN_SEC * 365
 
+// 'range' is the approximate duration in seconds used to match a stored URL timestamp back to a preset.
+// null (ANY_TIME) means no date filter is applied.
 export const timeRanges = [
   { id: 'ANY_TIME', label: 'Any Time', range: null },
   { id: 'PAST_HOUR', label: 'Past Hour', range: HOUR_IN_SEC },
@@ -117,22 +116,34 @@ export function shouldRenderFacet(facet: Facet): boolean {
  */
 export function getSelectedTimeRangeId(timestamp: string): string {
   const storedTimestamp = parseInt(timestamp)
-  if (!storedTimestamp) return 'ANY_TIME'
 
-  const relative = dayjs(storedTimestamp * 1000).fromNow()
-
-  const mapping: Record<string, string> = {
-    'an hour ago': 'PAST_HOUR',
-    'a day ago': 'PAST_DAY',
-    '7 days ago': 'PAST_WEEK',
-    'a month ago': 'PAST_MONTH',
-    'a year ago': 'PAST_YEAR',
+  if (!storedTimestamp) {
+    return 'ANY_TIME'
   }
 
-  // Find which key exists in the relative string
-  const match = Object.keys(mapping).find(key => relative.includes(key))
+  const diffInSeconds = dayjs().unix() - storedTimestamp
 
-  return match ? mapping[match] : 'ANY_TIME'
+  if (diffInSeconds <= 0) {
+    return 'ANY_TIME'
+  }
+
+  // Filter out 'ANY_TIME' since it doesn't have a numeric range
+  const presets = timeRanges.filter(
+    (range): range is { id: string; label: string; range: number } =>
+      range.id !== 'ANY_TIME',
+  )
+
+  // Find the closest preset by comparing the absolute difference.
+  // Ex: If diffInSeconds is 3605, it is 5 seconds away from PAST_HOUR (3600)
+  // but 82,795 seconds away from PAST_DAY (86400) so we would match to PAST_HOUR.
+  const closest = presets.reduce((best, preset) =>
+    Math.abs(diffInSeconds - preset.range) <
+    Math.abs(diffInSeconds - best.range)
+      ? preset
+      : best,
+  )
+
+  return closest.id
 }
 
 /**
@@ -152,7 +163,7 @@ export function formatTimeRangeDisplayValue(timestamp: string): string {
     return 'any time'
   }
 
-  // Try to match to a preset using dayjs
+  // Try to match to a preset
   const rangeId = getSelectedTimeRangeId(timestamp)
   const matchedRange = timeRanges.find(r => r.id === rangeId)
 
