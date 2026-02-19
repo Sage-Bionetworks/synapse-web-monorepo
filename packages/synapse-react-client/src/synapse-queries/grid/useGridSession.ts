@@ -10,6 +10,9 @@ import {
   ListGridSessionsResponse,
   PostRepoV1GridSessionSessionIdReplicaRequest,
   SynapseClient,
+  SynchronizeGridRequest,
+  SynchronizeGridResponse,
+  waitForAsyncResult,
 } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
@@ -167,4 +170,49 @@ export const useCreateGridSession = (
         await startGridSession(synapseClient, request),
     },
   )
+}
+
+export function useSynchronizeGridSession(
+  options?: Omit<
+    UseMutationOptions<
+      SynchronizeGridResponse,
+      SynapseClientError,
+      Omit<SynchronizeGridRequest, 'concreteType'>
+    >,
+    'mutationFn'
+  >,
+) {
+  const { synapseClient } = useSynapseContext()
+
+  return useMutation<
+    SynchronizeGridResponse,
+    SynapseClientError,
+    Omit<SynchronizeGridRequest, 'concreteType'>
+  >({
+    ...options,
+    mutationFn: async request => {
+      const synchronizeGridRequest: SynchronizeGridRequest = {
+        ...request,
+        concreteType:
+          'org.sagebionetworks.repo.model.grid.SynchronizeGridRequest',
+      }
+
+      // Start the async export job
+      const asyncJobId =
+        await synapseClient.gridServicesClient.postRepoV1GridSynchronizeAsyncStart(
+          { synchronizeGridRequest },
+        )
+
+      // Poll for the async job
+      const asyncJobResponse = await waitForAsyncResult(() =>
+        synapseClient.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId(
+          {
+            jobId: asyncJobId.token!,
+          },
+        ),
+      )
+
+      return asyncJobResponse.responseBody as SynchronizeGridResponse
+    },
+  })
 }
