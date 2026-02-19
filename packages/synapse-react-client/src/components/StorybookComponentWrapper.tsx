@@ -1,64 +1,41 @@
 import { StandaloneLoginForm } from '@/components/Authentication/index'
+import SynapseClient from '@/synapse-client'
 import {
-  getAccessTokenFromCookie,
-  getAuthenticatedOn,
-  getUserProfile,
-  signOut,
-} from '@/synapse-client'
-import {
-  ApplicationSessionManager,
   defaultQueryClientConfig,
-  SynapseClientError,
+  SynapseContextProvider,
+  SynapseContextType,
 } from '@/utils'
+import { ApplicationSessionContextProvider } from '@/utils/AppUtils/session/ApplicationSessionContext'
+import {
+  SynapseSessionManager,
+  type SessionState,
+} from '@/utils/AppUtils/session/SynapseSessionManager'
 import { STACK_MAP, SynapseStack } from '@/utils/functions/getEndpoint'
 import useDetectSSOCode from '@/utils/hooks/useDetectSSOCode'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import dayjs from 'dayjs'
-import { atom, createStore, useAtom } from 'jotai'
-import { ReactNode, Suspense, useEffect } from 'react'
-import { createMemoryRouter, MemoryRouter } from 'react-router'
+import {
+  ReactNode,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useSyncExternalStore,
+} from 'react'
+import { createMemoryRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
-import { BlockingLoader } from './LoadingScreen/LoadingScreen'
 import { SynapseToastContainer } from './ToastMessage'
-import { SynapseErrorBoundary } from './error'
-
-// Store auth token in global atom to avoid race conditions where the Story component
-// may not get the login token right away
-const authTokenAtom = atom<string | undefined>(undefined)
-const store = createStore()
-
-export async function sessionChangeHandler() {
-  let accessToken: string | undefined = await getAccessTokenFromCookie()
-  let profile
-  try {
-    profile = await getUserProfile(accessToken)
-  } catch (err) {
-    if (err instanceof SynapseClientError && err.status === 401) {
-      console.error(
-        'Encountered error fetching profile: ',
-        err,
-        'Signing out...',
-      )
-      await signOut()
-      accessToken = undefined
-    }
-    // Otherwise rethrow
-    throw err
-  }
-  let date
-  if (accessToken) {
-    getAuthenticatedOn(accessToken).then(authenticatedOn => {
-      date = dayjs(authenticatedOn.authenticatedOn).format('L LT')
-    })
-  }
-
-  store.set(authTokenAtom, accessToken)
-
-  return { accessToken, profile, authenticatedOn: date }
-}
 
 const storybookQueryClient = new QueryClient(defaultQueryClientConfig)
+
+// Module-level session manager instance, stable across story switches (like the QueryClient above)
+const sessionManager = new SynapseSessionManager({
+  onSessionInvalid: () => {
+    // In Storybook, just refresh the session instead of reloading the page
+    sessionManager.refreshSession()
+  },
+})
 
 function overrideEndpoint(stack: SynapseStack) {
   const endpointConfig = STACK_MAP[stack]
@@ -97,17 +74,52 @@ export function StorybookComponentWrapper(props: {
     overrideEndpoint(currentStack)
   }, [currentStack])
 
-  const [accessToken] = useAtom(authTokenAtom, { store })
+  // Subscribe to the framework-agnostic SynapseSessionManager for token/auth state
+  // These methods are bound in the SynapseSessionManager constructor, so they are safe to pass directly.
+  const sessionState: SessionState = useSyncExternalStore(
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    sessionManager.subscribe,
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    sessionManager.getSnapshot,
+  )
+
+  // Track whether we've started the manager so we only start once (module-level instance persists across renders)
+  const managerStartedRef = useRef(false)
+
+  useEffect(() => {
+    if (!managerStartedRef.current) {
+      sessionManager.start()
+      managerStartedRef.current = true
+    }
+    return () => {
+      sessionManager.dispose()
+      managerStartedRef.current = false
+    }
+  }, [])
+
+  // When the stack changes, restart the session manager to pick up the new endpoint
+  useEffect(() => {
+    if (managerStartedRef.current) {
+      sessionManager.dispose()
+      sessionManager.start()
+    }
+  }, [currentStack])
 
   const shouldPromptForLogin =
     storybookContext.parameters.requireLogin &&
     currentStack !== 'mock' &&
-    !accessToken
+    sessionState.hasInitializedSession &&
+    !sessionState.isAuthenticated
 
-  useDetectSSOCode()
-
-  useEffect(() => {
-    sessionChangeHandler()
+  const { isLoading: isLoadingSSO } = useDetectSSOCode({
+    onSignInComplete: () => {
+      void sessionManager.refreshSession()
+    },
+    onError: (err: unknown) => {
+      console.error('SSO error in Storybook:', err)
+    },
+    isInitializingSession: !sessionState.hasInitializedSession,
+    isAuthenticated: sessionState.isAuthenticated,
   })
 
   useEffect(() => {
@@ -117,36 +129,98 @@ export function StorybookComponentWrapper(props: {
     }
 
     void resetCache()
-  }, [accessToken, currentStack])
+  }, [sessionState.token, currentStack])
+
+  const effectiveToken = useMemo(() => {
+    if (currentStack === 'mock') {
+      return storybookContext.args.isAuthenticated ? 'fake token' : undefined
+    }
+    return sessionState.token
+  }, [sessionState.token, currentStack, storybookContext.args.isAuthenticated])
+
+  const effectiveIsAuthenticated = useMemo(() => {
+    if (currentStack === 'mock') {
+      return !!storybookContext.args.isAuthenticated
+    }
+    return sessionState.isAuthenticated
+  }, [
+    sessionState.isAuthenticated,
+    currentStack,
+    storybookContext.args.isAuthenticated,
+  ])
+
+  const refreshSession = useCallback(async () => {
+    await sessionManager.refreshSession()
+  }, [])
+
+  const clearSession = useCallback(async () => {
+    await sessionManager.clearSession()
+  }, [])
+
+  const applicationSessionContext = useMemo(
+    () => ({
+      token: effectiveToken,
+      realmId: sessionState.realmId,
+      userId: sessionState.userId,
+      isAuthenticated: effectiveIsAuthenticated,
+      hasInitializedSession: sessionState.hasInitializedSession,
+      refreshSession,
+      clearSession,
+      isLoadingSSO,
+      twoFactorAuthSSOErrorResponse: undefined,
+      termsOfServiceStatus: undefined,
+      twoFactorStatus: undefined,
+    }),
+    [
+      effectiveToken,
+      effectiveIsAuthenticated,
+      sessionState.realmId,
+      sessionState.userId,
+      sessionState.hasInitializedSession,
+      refreshSession,
+      clearSession,
+      isLoadingSSO,
+    ],
+  )
+
+  const synapseContext: Partial<SynapseContextType> = useMemo(
+    () => ({
+      accessToken: effectiveToken,
+      isAuthenticated: effectiveIsAuthenticated,
+      isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
+      utcTime: SynapseClient.getUseUtcTimeFromCookie(),
+      withErrorBoundary: true,
+      downloadCartPageUrl: '/?path=/story/download-downloadcartpage--demo',
+    }),
+    [effectiveToken, effectiveIsAuthenticated],
+  )
 
   const wrappedStory = (
-    <Suspense fallback={<BlockingLoader show hintText="Loading Story..." />}>
-      <SynapseErrorBoundary>
-        <MemoryRouter>
-          <QueryClientProvider client={storybookQueryClient}>
-            <ApplicationSessionManager
-              key={currentStack}
-              downloadCartPageUrl="/?path=/story/download-downloadcartpage--demo"
-            >
-              {storybookContext.globals.showReactQueryDevtools && (
-                <ReactQueryDevtools />
+    <Suspense fallback={'global suspense loading...'}>
+      <QueryClientProvider client={storybookQueryClient}>
+        <ApplicationSessionContextProvider context={applicationSessionContext}>
+          <SynapseContextProvider
+            key={currentStack}
+            synapseContext={synapseContext}
+          >
+            {storybookContext.globals.showReactQueryDevtools && (
+              <ReactQueryDevtools />
+            )}
+            <SynapseToastContainer />
+            <main>
+              {shouldPromptForLogin ? (
+                <StandaloneLoginForm
+                  sessionCallback={() => {
+                    void sessionManager.refreshSession()
+                  }}
+                />
+              ) : (
+                props.children
               )}
-              <SynapseToastContainer />
-              <main>
-                {shouldPromptForLogin ? (
-                  <StandaloneLoginForm
-                    sessionCallback={() => {
-                      void sessionChangeHandler()
-                    }}
-                  />
-                ) : (
-                  props.children
-                )}
-              </main>
-            </ApplicationSessionManager>
-          </QueryClientProvider>
-        </MemoryRouter>
-      </SynapseErrorBoundary>
+            </main>
+          </SynapseContextProvider>
+        </ApplicationSessionContextProvider>
+      </QueryClientProvider>
     </Suspense>
   )
 
