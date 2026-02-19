@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import styles from './SearchFacelPanel.module.scss'
 import dayjs from 'dayjs'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { entityTypeToFriendlyName } from '../../../utils/functions/EntityTypeUtils'
@@ -32,16 +33,6 @@ import {
   shouldShowFacetValue,
   getAllFacetLabel,
 } from './SearchFacetPanelUtils'
-
-const ChipStyles = {
-  borderRadius: '48px',
-  color: 'var(--synapse-white)',
-  backgroundColor: 'var(--synapse-primary-600)',
-  width: 'fit-content',
-  display: 'flex',
-  alignItems: 'center',
-  padding: '6px 12px',
-}
 
 type SearchFacetPanelProps = {
   query: SearchQuery
@@ -91,18 +82,7 @@ export function SearchFacetPanel({
           onClick={handleResetFilters}
           variant="text"
           size="small"
-          sx={{
-            padding: '6px 16px',
-            gap: '8px',
-            color: 'var(--synapse-gray-700) !important',
-            border: '1px solid',
-            borderColor: 'var(--synapse-gray-700) !important',
-            width: 'fit-content',
-
-            '&:hover': {
-              textDecoration: 'none',
-            },
-          }}
+          className={styles.resetFilterButton}
         >
           <UTurnLeftIcon sx={{ transform: 'rotate(90deg)' }} />
           <Typography sx={{ fontSize: '16px', fontWeight: 700 }}>
@@ -171,15 +151,7 @@ function SearchFacetGroup({
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minWidth: '200px' }}>
-      <Typography
-        variant="smallText2"
-        sx={{
-          fontSize: '1rem',
-          lineHeight: '20px',
-          mb: '10px',
-          color: 'var(--synapse-gray-900)',
-        }}
-      >
+      <Typography variant="smallText2" className={styles.displayName}>
         {displayName}
       </Typography>
       {facet.type === FacetTypeNames.LITERAL ? (
@@ -430,17 +402,8 @@ export function AppliedFacetsChips({
         return (
           <Chip
             key={`${kv.key}-${kv.value}-${index}`}
-            sx={ChipStyles}
-            deleteIcon={
-              <CloseIcon
-                sx={{
-                  width: '16px',
-                  '& path': {
-                    fill: 'var(--synapse-white)',
-                  },
-                }}
-              />
-            }
+            className={styles.chipStyles}
+            deleteIcon={<CloseIcon className={styles.closeIcon} />}
             onDelete={() => onRemoveFacet(kv.key, kv.value)}
             label={
               isUserFacet(kv.key) ? (
@@ -471,19 +434,10 @@ export function AppliedFacetsChips({
 
         return (
           <Chip
-            sx={ChipStyles}
+            className={styles.chipStyles}
             key={`${kr.key}-${kr.min}-${index}`}
             label={`${displayValue}`}
-            deleteIcon={
-              <CloseIcon
-                sx={{
-                  width: '16px',
-                  '& path': {
-                    fill: 'var(--synapse-white)',
-                  },
-                }}
-              />
-            }
+            deleteIcon={<CloseIcon className={styles.closeIcon} />}
             onDelete={() => onRemoveRangeFacet(kr.key)}
           />
         )

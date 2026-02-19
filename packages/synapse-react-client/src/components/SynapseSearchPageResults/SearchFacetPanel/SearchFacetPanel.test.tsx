@@ -198,12 +198,12 @@ describe('LiteralFacetValues', () => {
     const values = Array.from({ length: 15 }, (_, i) => `consortium-${i}`)
 
     renderWithLiteralFacet('consortium', values)
-    // Render with 15 values, but only MAX_FACET_VALUES_SHOWN should be shown initially
+    // Render with 16 values (including "all" facet), but only MAX_FACET_VALUES_SHOWN should be shown initially
     expect(screen.getAllByRole('checkbox')).toHaveLength(MAX_FACET_VALUES_SHOWN)
-    expect(screen.getByText('Show all 15')).toBeInTheDocument()
+    expect(screen.getByText('Show all 16')).toBeInTheDocument()
 
     // After clicking "Show all", all checkboxes should be visible
-    await userEvent.click(screen.getByText('Show all 15'))
+    await userEvent.click(screen.getByText('Show all 16'))
     expect(screen.getAllByRole('checkbox')).toHaveLength(15)
   })
 
