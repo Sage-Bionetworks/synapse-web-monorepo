@@ -1,8 +1,7 @@
-import { SynapseConstants } from '@/utils'
 import {
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-} from '@/utils/SynapseConstants'
+  MOCK_AUTHENTICATED_PRINCIPAL_ID as AUTHENTICATED_PRINCIPAL_ID,
+  MOCK_PUBLIC_PRINCIPAL_ID as PUBLIC_PRINCIPAL_ID,
+} from '@/mocks/realm/mockRealmPrincipal'
 import { ACCESS_TYPE, UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import { compareResourceAccessAndUserGroupHeader } from './ResourceAccessAndUserGroupHeader'
 
@@ -45,7 +44,14 @@ describe('ResourceAccessAndUserGroupHeader', () => {
         },
         userGroupHeader: userGroupHeaderB,
       }
-      expect(compareResourceAccessAndUserGroupHeader(a, b)).toBe(1)
+      expect(
+        compareResourceAccessAndUserGroupHeader(
+          a,
+          b,
+          String(AUTHENTICATED_PRINCIPAL_ID),
+          String(PUBLIC_PRINCIPAL_ID),
+        ),
+      ).toBe(1)
     })
 
     test('sorts alphabetically by username if both have change permissions', () => {
@@ -64,7 +70,14 @@ describe('ResourceAccessAndUserGroupHeader', () => {
         userGroupHeader: userGroupHeaderB,
       }
 
-      expect(compareResourceAccessAndUserGroupHeader(a, b)).toBe(-1)
+      expect(
+        compareResourceAccessAndUserGroupHeader(
+          a,
+          b,
+          String(AUTHENTICATED_PRINCIPAL_ID),
+          String(PUBLIC_PRINCIPAL_ID),
+        ),
+      ).toBe(-1)
     })
 
     test('CHANGE_PERMISSIONS comes before AUTHENTICATED', () => {
@@ -77,38 +90,52 @@ describe('ResourceAccessAndUserGroupHeader', () => {
       }
       const b = {
         resourceAccess: {
-          principalId: SynapseConstants.AUTHENTICATED_PRINCIPAL_ID,
+          principalId: AUTHENTICATED_PRINCIPAL_ID,
           accessType: [ACCESS_TYPE.READ],
         },
         userGroupHeader: authenticatedGroupHeader,
       }
 
-      expect(compareResourceAccessAndUserGroupHeader(a, b)).toBe(-1)
+      expect(
+        compareResourceAccessAndUserGroupHeader(
+          a,
+          b,
+          String(AUTHENTICATED_PRINCIPAL_ID),
+          String(PUBLIC_PRINCIPAL_ID),
+        ),
+      ).toBe(-1)
     })
 
     test('AUTHENTICATED comes before PUBLIC', () => {
       const a = {
         resourceAccess: {
-          principalId: SynapseConstants.AUTHENTICATED_PRINCIPAL_ID,
+          principalId: AUTHENTICATED_PRINCIPAL_ID,
           accessType: [ACCESS_TYPE.READ],
         },
         userGroupHeader: authenticatedGroupHeader,
       }
       const b = {
         resourceAccess: {
-          principalId: SynapseConstants.PUBLIC_PRINCIPAL_ID,
+          principalId: PUBLIC_PRINCIPAL_ID,
           accessType: [ACCESS_TYPE.READ],
         },
         userGroupHeader: publicGroupHeader,
       }
 
-      expect(compareResourceAccessAndUserGroupHeader(a, b)).toBe(-1)
+      expect(
+        compareResourceAccessAndUserGroupHeader(
+          a,
+          b,
+          String(AUTHENTICATED_PRINCIPAL_ID),
+          String(PUBLIC_PRINCIPAL_ID),
+        ),
+      ).toBe(-1)
     })
 
     test('PUBLIC comes before an arbitrary usergroup without CHANGE_PERMISSIONS', () => {
       const a = {
         resourceAccess: {
-          principalId: SynapseConstants.AUTHENTICATED_PRINCIPAL_ID,
+          principalId: AUTHENTICATED_PRINCIPAL_ID,
           accessType: [ACCESS_TYPE.READ],
         },
         userGroupHeader: authenticatedGroupHeader,
@@ -118,10 +145,17 @@ describe('ResourceAccessAndUserGroupHeader', () => {
           principalId: 1,
           accessType: [ACCESS_TYPE.UPDATE],
         },
-        userGroupHeader: userGroupHeaderA,
+        userGroupHeader: userGroupHeaderB,
       }
 
-      expect(compareResourceAccessAndUserGroupHeader(a, b)).toBe(-1)
+      expect(
+        compareResourceAccessAndUserGroupHeader(
+          a,
+          b,
+          String(AUTHENTICATED_PRINCIPAL_ID),
+          String(PUBLIC_PRINCIPAL_ID),
+        ),
+      ).toBe(-1)
     })
 
     test('usergroups without CHANGE_PERMISSIONS are sorted alphabetically by userName', () => {
@@ -140,7 +174,14 @@ describe('ResourceAccessAndUserGroupHeader', () => {
         userGroupHeader: userGroupHeaderB,
       }
 
-      expect(compareResourceAccessAndUserGroupHeader(a, b)).toBe(-1)
+      expect(
+        compareResourceAccessAndUserGroupHeader(
+          a,
+          b,
+          String(AUTHENTICATED_PRINCIPAL_ID),
+          String(PUBLIC_PRINCIPAL_ID),
+        ),
+      ).toBe(-1)
     })
   })
 })

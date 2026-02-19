@@ -15,10 +15,10 @@ import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { getAccessTypeFromPermissionLevel } from '@/utils/PermissionLevelToAccessType'
 import {
-  ANONYMOUS_PRINCIPAL_ID,
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-} from '@/utils/SynapseConstants'
+  MOCK_ANONYMOUS_PRINCIPAL_ID as ANONYMOUS_PRINCIPAL_ID,
+  MOCK_AUTHENTICATED_PRINCIPAL_ID as AUTHENTICATED_PRINCIPAL_ID,
+  MOCK_PUBLIC_PRINCIPAL_ID as PUBLIC_PRINCIPAL_ID,
+} from '@/mocks/realm/mockRealmPrincipal'
 import { ResourceAccess } from '@sage-bionetworks/synapse-types'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import useNotifyNewACLUsers, {
@@ -27,6 +27,12 @@ import useNotifyNewACLUsers, {
 
 const subject = 'the message subject'
 const body = 'the message body'
+
+const PUBLIC_PRINCIPAL_IDS = [
+  String(AUTHENTICATED_PRINCIPAL_ID),
+  String(PUBLIC_PRINCIPAL_ID),
+  String(ANONYMOUS_PRINCIPAL_ID),
+]
 
 const CURRENT_USER_RESOURCE_ACCESS: ResourceAccess = {
   principalId: mockUserData1.id,
@@ -151,6 +157,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         initialResourceAccessList,
         mockUserData2.userGroupHeader,
         CURRENT_USER_ID,
+        PUBLIC_PRINCIPAL_IDS,
       ),
     ).toBe(false)
     // User 2 is in the list
@@ -160,6 +167,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         initialResourceAccessList,
         mockUserData2.userGroupHeader,
         String(mockUserData1.id),
+        PUBLIC_PRINCIPAL_IDS,
       ),
     ).toBe(false)
     // User 3 is not in the list
@@ -169,6 +177,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         initialResourceAccessList,
         mockUserData3.userGroupHeader,
         CURRENT_USER_ID,
+        PUBLIC_PRINCIPAL_IDS,
       ),
     ).toBe(true)
   })
@@ -188,6 +197,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         mockTeamUserGroups.find(team => team.id === MOCK_TEAM_ID)!
           .userGroupHeader,
         CURRENT_USER_ID,
+        PUBLIC_PRINCIPAL_IDS,
       ),
     ).toBe(false)
     // User 1 is not in the list, but is the current user, so they should not be notified
@@ -197,6 +207,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         initialResourceAccessList,
         mockUserData1.userGroupHeader,
         CURRENT_USER_ID,
+        PUBLIC_PRINCIPAL_IDS,
       ),
     ).toBe(false)
   })
@@ -212,6 +223,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         initialResourceAccessList,
         mockAuthenticatedGroupData.userGroupHeader,
         CURRENT_USER_ID,
+        PUBLIC_PRINCIPAL_IDS,
       ),
     ).toBe(false)
     expect(
@@ -220,6 +232,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         initialResourceAccessList,
         mockPublicGroupData.userGroupHeader,
         CURRENT_USER_ID,
+        PUBLIC_PRINCIPAL_IDS,
       ),
     ).toBe(false)
     expect(
@@ -228,6 +241,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         initialResourceAccessList,
         mockAnonymousUserGroupData.userGroupHeader,
         CURRENT_USER_ID,
+        PUBLIC_PRINCIPAL_IDS,
       ),
     ).toBe(false)
   })
@@ -244,6 +258,7 @@ describe('shouldNotifyUserInNewResourceAccess', () => {
         mockTeamUserGroups.find(team => team.id === MOCK_TEAM_ID)!
           .userGroupHeader,
         CURRENT_USER_ID,
+        PUBLIC_PRINCIPAL_IDS,
       ),
     ).toBe(false)
   })

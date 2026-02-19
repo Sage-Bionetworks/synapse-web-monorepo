@@ -13,11 +13,11 @@ import {
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { PermissionLevel } from '@/utils/PermissionLevelToAccessType'
 import {
-  ANONYMOUS_PRINCIPAL_ID,
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_IDS,
-} from '@/utils/SynapseConstants'
+  MOCK_ANONYMOUS_PRINCIPAL_ID as ANONYMOUS_PRINCIPAL_ID,
+  MOCK_AUTHENTICATED_PRINCIPAL_ID as AUTHENTICATED_PRINCIPAL_ID,
+  MOCK_PUBLIC_PRINCIPAL_ID as PUBLIC_PRINCIPAL_ID,
+  MOCK_PUBLIC_PRINCIPAL_IDS as PUBLIC_PRINCIPAL_IDS,
+} from '@/mocks/realm/mockRealmPrincipal'
 import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -100,6 +100,13 @@ async function setUp(
     props.resourceAccessList.filter(ra =>
       PUBLIC_PRINCIPAL_IDS.includes(ra.principalId),
     ).length
+
+  // Wait for realm principals to load (skeleton to disappear) unless isLoading prop is true
+  if (!props.isLoading) {
+    await waitFor(() => {
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
+    })
+  }
 
   // wait for UserOrTeamBadge(s) to finish loading
   await waitFor(() => {
@@ -355,11 +362,17 @@ describe('AclEditor', () => {
         },
       ],
       showAddRemovePublicButton: true,
+      canEdit: true,
     })
 
-    const removePublicAccessButton = screen.getByRole('button', {
-      name: REMOVE_PUBLIC_PRINCIPALS_BUTTON_TEXT,
-    })
+    // Wait for the button to show up (realm principals need to be loaded first)
+    const removePublicAccessButton = await screen.findByRole(
+      'button',
+      {
+        name: REMOVE_PUBLIC_PRINCIPALS_BUTTON_TEXT,
+      },
+      { timeout: 3000 },
+    )
     await user.click(removePublicAccessButton)
 
     expect(mockRemoveResourceAccessItem).toHaveBeenCalledWith(

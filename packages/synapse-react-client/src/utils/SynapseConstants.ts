@@ -1,23 +1,12 @@
 import { ORIENTATION_BANNER_KEYS } from '@/components/OrientationBanner'
 
-/** Bootstrapped principals */
-/** The group representing all users logged-in to Synapse */
-export const AUTHENTICATED_PRINCIPAL_ID = 273948
-/** The group representing all logged-in Synapse users AND anonymous */
-export const PUBLIC_PRINCIPAL_ID = 273949
-/** The single user representing all unauthenticated users */
-export const ANONYMOUS_PRINCIPAL_ID = 273950
-
-export const PUBLIC_PRINCIPAL_IDS = [
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-  ANONYMOUS_PRINCIPAL_ID,
-]
-
 /** The Synapse Access and Compliance team */
 export const ACT_TEAM_ID = 464532
 /** The team containing Synapse users whose HTML files may be rendered without sanitization */
 export const TRUSTED_HTML_USERS_TEAM_ID = '3351236'
+
+/** The default Synapse realm ID */
+export const SYNAPSE_REALM = '0'
 
 /** QueryBundleRequest constants */
 export const BUNDLE_MASK_QUERY_RESULTS: number = 1
