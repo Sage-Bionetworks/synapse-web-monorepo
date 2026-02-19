@@ -47,7 +47,6 @@ export type FullContextProviderProps = PropsWithChildren<{
  * - ThemeContext (@mui)
  * - DocumentMetadataContext - for managing page title and meta descriptions
  * - ApplicationSessionContext - for managing user session state
- * - RealmPrincipalsContext - for realm-specific principal IDs
  * - isEditingStore - used to sync editing state across the application
  *
  * IMPORTANT: The `applicationSessionContext` prop is required. For applications that need
