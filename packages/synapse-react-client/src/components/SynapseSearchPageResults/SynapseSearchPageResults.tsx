@@ -26,7 +26,6 @@ import {
   SearchFacetPanel,
   AppliedFacetsChips,
 } from './SearchFacetPanel/SearchFacetPanel'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { shouldShowFacetValue } from './SearchFacetPanel/SearchFacetPanelUtils'
 
 /**
