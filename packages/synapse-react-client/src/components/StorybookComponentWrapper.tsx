@@ -1,15 +1,14 @@
 import { StandaloneLoginForm } from '@/components/Authentication/index'
-import SynapseClient, {
+import {
   getAccessTokenFromCookie,
   getAuthenticatedOn,
   getUserProfile,
   signOut,
 } from '@/synapse-client'
 import {
+  ApplicationSessionManager,
   defaultQueryClientConfig,
   SynapseClientError,
-  SynapseContextProvider,
-  SynapseContextType,
 } from '@/utils'
 import { STACK_MAP, SynapseStack } from '@/utils/functions/getEndpoint'
 import useDetectSSOCode from '@/utils/hooks/useDetectSSOCode'
@@ -17,10 +16,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import dayjs from 'dayjs'
 import { atom, createStore, useAtom } from 'jotai'
-import { ReactNode, Suspense, useEffect, useMemo } from 'react'
-import { createMemoryRouter } from 'react-router'
+import { ReactNode, Suspense, useEffect } from 'react'
+import { createMemoryRouter, MemoryRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
+import { BlockingLoader } from './LoadingScreen/LoadingScreen'
 import { SynapseToastContainer } from './ToastMessage'
+import { SynapseErrorBoundary } from './error'
 
 // Store auth token in global atom to avoid race conditions where the Story component
 // may not get the login token right away
@@ -118,46 +119,34 @@ export function StorybookComponentWrapper(props: {
     void resetCache()
   }, [accessToken, currentStack])
 
-  const synapseContext: Partial<SynapseContextType> = useMemo(
-    () => ({
-      accessToken:
-        storybookContext.args.isAuthenticated && currentStack === 'mock'
-          ? 'fake token'
-          : !storybookContext.args.isAuthenticated && currentStack === 'mock'
-          ? undefined
-          : accessToken,
-      isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
-      utcTime: SynapseClient.getUseUtcTimeFromCookie(),
-      withErrorBoundary: true,
-      downloadCartPageUrl: '/?path=/story/download-downloadcartpage--demo',
-    }),
-    [accessToken, currentStack, storybookContext.args.isAuthenticated],
-  )
-
   const wrappedStory = (
-    <Suspense fallback={'global suspense loading...'}>
-      <QueryClientProvider client={storybookQueryClient}>
-        <SynapseContextProvider
-          key={currentStack}
-          synapseContext={synapseContext}
-        >
-          {storybookContext.globals.showReactQueryDevtools && (
-            <ReactQueryDevtools />
-          )}
-          <SynapseToastContainer />
-          <main>
-            {shouldPromptForLogin ? (
-              <StandaloneLoginForm
-                sessionCallback={() => {
-                  void sessionChangeHandler()
-                }}
-              />
-            ) : (
-              props.children
-            )}
-          </main>
-        </SynapseContextProvider>
-      </QueryClientProvider>
+    <Suspense fallback={<BlockingLoader show hintText="Loading Story..." />}>
+      <SynapseErrorBoundary>
+        <MemoryRouter>
+          <QueryClientProvider client={storybookQueryClient}>
+            <ApplicationSessionManager
+              key={currentStack}
+              downloadCartPageUrl="/?path=/story/download-downloadcartpage--demo"
+            >
+              {storybookContext.globals.showReactQueryDevtools && (
+                <ReactQueryDevtools />
+              )}
+              <SynapseToastContainer />
+              <main>
+                {shouldPromptForLogin ? (
+                  <StandaloneLoginForm
+                    sessionCallback={() => {
+                      void sessionChangeHandler()
+                    }}
+                  />
+                ) : (
+                  props.children
+                )}
+              </main>
+            </ApplicationSessionManager>
+          </QueryClientProvider>
+        </MemoryRouter>
+      </SynapseErrorBoundary>
     </Suspense>
   )
 
