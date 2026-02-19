@@ -332,7 +332,6 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
 
   const facets = data?.pages?.[0]?.facets || []
 
-  // Create handler functions for facet operations
   const handleAddFacet = useCallback(
     (facetName: string, facetValue: string) => {
       if (setQuery && query) {
