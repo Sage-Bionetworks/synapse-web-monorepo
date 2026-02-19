@@ -17,6 +17,9 @@ import { ArrowForward } from '@mui/icons-material'
 import styles from './SynapseSearchPageResults.module.scss'
 import { useSuggestion } from '@/synapse-queries/search/useSuggestion'
 import { Suggestion } from '@sage-bionetworks/synapse-client'
+import SearchPagePortalBanners from './SearchPagePortalBanners'
+import { SYNAPSE_ENTITY_ID_REGEX } from '@/utils/functions/RegularExpressions'
+import { DEFAULT_SEARCH_QUERY } from '@/utils/searchDefaults'
 
 export type SynapseSearchPageResultsProps = {
   query?: SearchQuery
@@ -50,9 +53,18 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useSearchInfinite(query ?? { queryTerm: [] }, {
-    enabled: !!query?.queryTerm?.[0],
-  })
+  } = useSearchInfinite(
+    query
+      ? {
+          ...query,
+          size: 50,
+          returnFields: ['path'],
+        }
+      : { queryTerm: [], size: 50, returnFields: ['path'] },
+    {
+      enabled: !!query?.queryTerm?.[0],
+    },
+  )
 
   // Update local input state
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,6 +76,7 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   const handleSearch = () => {
     if (setQuery) {
       const newQuery = {
+        ...DEFAULT_SEARCH_QUERY,
         queryTerm: searchInputValue
           ? searchInputValue
               .split(' ')
@@ -130,9 +143,42 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
     return correctedTerms.join(' ')
   }, [suggestionData, query?.queryTerm])
 
+  // Extract entity IDs from search results for relevant portal banner display
+  const entityIdsForPortalBanners = useMemo(() => {
+    if (!data?.pages || data.pages.length === 0) {
+      return []
+    }
+
+    const entityIds = new Set<string>()
+
+    const firstPage = data.pages[0]
+
+    if (firstPage?.hits) {
+      for (const hit of firstPage.hits) {
+        // search result is the top-level Project itself
+        if (hit.id) {
+          entityIds.add(hit.id)
+        }
+
+        if (hit.path?.path) {
+          for (const pathEntity of hit.path.path.slice(1)) {
+            if (pathEntity.id) {
+              entityIds.add(pathEntity.id)
+            }
+          }
+        }
+      }
+    }
+
+    const finalIds = Array.from(entityIds)
+
+    return finalIds
+  }, [data])
+
   const handleUseSuggestion = () => {
     if (setQuery && suggestion) {
       const newQuery = {
+        ...DEFAULT_SEARCH_QUERY,
         queryTerm: suggestion
           .split(' ')
           .map(term => term.trim())
@@ -141,6 +187,9 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
       setQuery(newQuery)
     }
   }
+
+  const noResults = data?.pages?.[0]?.hits?.length === 0
+  const isSynId = SYNAPSE_ENTITY_ID_REGEX.test(query?.queryTerm?.[0] || '')
 
   return (
     <Box
@@ -199,71 +248,79 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
           Filter By
         </Button>
       </Box>
-      {data && suggestion && (
-        <div className={styles.didYouMeanContainer}>
+      <Box sx={{ padding: '30px' }}>
+        {noResults && (
           <div className={styles.didYouMeanCurrentlyShowing}>
-            Currently showing results for <b>{query?.queryTerm?.join(' ')}</b>.
+            {' '}
+            No results found for <b>{query?.queryTerm?.join(' ')}</b>.
           </div>
-          <div className={styles.didYouMeanSuggestion}>
-            <SearchIcon
-              sx={{ color: 'grey.600' }}
-              className={styles.searchIcon}
-            />
-            <Typography variant="body1" className={styles.didYouMeanText}>
-              Search for <b className={styles.suggestionText}>{suggestion}</b>{' '}
-              instead?
-            </Typography>
-            <IconButton
-              className={styles.didYouMeanArrowContainer}
-              onClick={handleUseSuggestion}
-              aria-label={`Search for ${suggestion} instead`}
-              sx={{
-                borderColor: 'primary.main',
-                svg: { color: 'primary.main' },
-              }}
-            >
-              <ArrowForward />
-            </IconButton>
-          </div>
-        </div>
-      )}
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-end',
-          pr: '150px',
-          py: '25px',
-          gap: '25px',
-        }}
-      >
-        {isLoading && <div>Loading...</div>}
-        {error && <div>Error: {error.message}</div>}
-        {data &&
-          data.pages &&
-          data.pages.map((page, pageIndex) =>
-            page.hits.map((hit: any) => (
-              <SynapseSearchResultsCard
-                key={hit.id + '-' + pageIndex}
-                entityId={hit.id}
-                name={hit.name}
-                entityType={hit.node_type}
-                modifiedOn={hit.modified_on}
-              />
-            )),
-          )}
-        {hasNextPage && (
-          <Button
-            onClick={() => {
-              void fetchNextPage()
-            }}
-            loading={isFetchingNextPage}
-            variant="contained"
-            sx={{ mt: 2 }}
-          >
-            {isFetchingNextPage ? 'Loading more...' : 'Load More'}
-          </Button>
         )}
+        {data && !isSynId && suggestion && !noResults && (
+          <div className={styles.didYouMeanContainer}>
+            <div className={styles.didYouMeanCurrentlyShowing}>
+              Currently showing results for <b>{query?.queryTerm?.join(' ')}</b>
+              .
+            </div>
+            <div className={styles.didYouMeanSuggestion}>
+              <SearchIcon
+                sx={{ color: 'grey.600' }}
+                className={styles.searchIcon}
+              />
+              <Typography variant="body1" className={styles.didYouMeanText}>
+                Search for <b className={styles.suggestionText}>{suggestion}</b>{' '}
+                instead?
+              </Typography>
+              <IconButton
+                className={styles.didYouMeanArrowContainer}
+                onClick={handleUseSuggestion}
+                aria-label={`Search for ${suggestion} instead`}
+                sx={{
+                  borderColor: 'primary.main',
+                  svg: { color: 'primary.main' },
+                }}
+              >
+                <ArrowForward />
+              </IconButton>
+            </div>
+          </div>
+        )}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-end',
+            gap: '25px',
+          }}
+        >
+          {isLoading && <div>Loading...</div>}
+          {error && <div>Error: {error.message}</div>}
+          <SearchPagePortalBanners entityIds={entityIdsForPortalBanners} />
+          {data &&
+            data.pages &&
+            data.pages.map((page, pageIndex) =>
+              page.hits.map((hit: any) => (
+                <SynapseSearchResultsCard
+                  key={hit.id + '-' + pageIndex}
+                  entityId={hit.id}
+                  name={hit.name}
+                  entityType={hit.node_type}
+                  modifiedOn={hit.modified_on}
+                />
+              )),
+            )}
+          {hasNextPage && (
+            <Button
+              onClick={() => {
+                void fetchNextPage()
+              }}
+              loading={isFetchingNextPage}
+              variant="contained"
+              sx={{ mt: 2 }}
+            >
+              {isFetchingNextPage ? 'Loading more...' : 'Load More'}
+            </Button>
+          )}
+        </Box>
       </Box>
     </Box>
   )

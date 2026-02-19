@@ -23,4 +23,7 @@ export enum FeatureFlagEnum {
   DOWNLOAD_CART_INELIGIBLE_FILE_DOWNLOADS = 'DOWNLOAD_CART_INELIGIBLE_FILE_DOWNLOADS',
   // If enabled, use react based search
   SEARCHV2_ENABLED = 'SEARCHV2_ENABLED',
+
+  // If enabled, provide the ability to login or create an account using the Sage Bionetworks IdP OAuth2 provider
+  SAGE_BIONETWORKS_IDP = 'SAGE_BIONETWORKS_IDP',
 }

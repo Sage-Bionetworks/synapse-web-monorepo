@@ -53,11 +53,11 @@ import {
   ResponseContext,
 } from './generated/runtime'
 import { NETWORK_UNAVAILABLE_MESSAGE } from './util/Constants'
-import { fetchResponseWithExponentialTimeout } from './util/fetchWithExponentialTimeout'
+import { synapseFetchWithRetry } from './util/synapseClientFetch'
 import { SynapseClientError } from './util/SynapseClientError'
 
 const DEFAULT_CONFIG_PARAMETERS: ConfigurationParameters = {
-  fetchApi: fetchResponseWithExponentialTimeout,
+  fetchApi: synapseFetchWithRetry,
   middleware: [
     {
       async post(context: ResponseContext): Promise<Response | void> {

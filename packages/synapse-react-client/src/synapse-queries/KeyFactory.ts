@@ -951,6 +951,14 @@ export class KeyFactory {
     return this.getKey('termsOfServiceStatus')
   }
 
+  public getRealmPrincipalsQueryKey() {
+    return this.getKey('realmPrincipals')
+  }
+
+  public getCurrentRealmQueryKey() {
+    return this.getKey('currentRealm')
+  }
+
   public getProjectStorageUsageKey(projectId: string) {
     return this.getKey('projectstorageusage', projectId)
   }

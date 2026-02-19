@@ -32,7 +32,7 @@ export type StandaloneLoginFormProps = {
   twoFactorAuthResetUri?: string
   /* Invoked when password login is selected */
   onPasswordLoginSelected?: () => void
-  showArcusSSOButtonOnly?: boolean
+  sourceAppId?: string
 }
 
 export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
@@ -48,7 +48,7 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
     ssoState,
     twoFactorAuthResetUri,
     onPasswordLoginSelected,
-    showArcusSSOButtonOnly,
+    sourceAppId,
   } = props
 
   const {
@@ -112,7 +112,7 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
         ssoState={ssoState}
         twoFactorAuthResetUri={twoFactorAuthResetUri}
         onPasswordLoginSelected={onPasswordLoginSelected}
-        showArcusSSOButtonOnly={showArcusSSOButtonOnly}
+        sourceAppId={sourceAppId}
       />
     </Box>
   )

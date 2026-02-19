@@ -5,15 +5,24 @@ import SynapseSearchPageRouter, {
   SynapseSearchPageRouterProps,
 } from './SynapseSearchPageRouter'
 import { SearchQuery } from '@sage-bionetworks/synapse-types'
+import { DEFAULT_SEARCH_QUERY } from '@/utils/searchDefaults'
 
 function SearchPageInternal() {
   const [searchParams, setSearchParams] = useSearchParams()
 
   // Parse SearchQuery object from URL parameter
   const queryParam = searchParams.get(SEARCH_PAGE_QUERY_PARAM) || ''
-  const query: SearchQuery = queryParam
-    ? JSON.parse(queryParam)
-    : { queryTerm: [] }
+  let parsedURLQuery = {}
+  try {
+    parsedURLQuery = queryParam ? JSON.parse(queryParam) : {}
+  } catch (error) {
+    console.error('Error parsing search query from URL:', error)
+  }
+
+  const query: SearchQuery = {
+    ...DEFAULT_SEARCH_QUERY,
+    ...parsedURLQuery,
+  }
 
   // Store the whole SearchQuery object as JSON in URL
   const handleQueryChange = (newQuery: SearchQuery) => {

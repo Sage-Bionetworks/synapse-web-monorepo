@@ -1,7 +1,7 @@
 import {
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-} from '@/utils/SynapseConstants'
+  MOCK_AUTHENTICATED_PRINCIPAL_ID as AUTHENTICATED_PRINCIPAL_ID,
+  MOCK_PUBLIC_PRINCIPAL_ID as PUBLIC_PRINCIPAL_ID,
+} from '@/mocks/realm/mockRealmPrincipal'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { UserOrTeamBadge } from './index'
 

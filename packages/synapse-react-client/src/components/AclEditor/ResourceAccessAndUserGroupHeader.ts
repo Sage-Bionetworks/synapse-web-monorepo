@@ -1,5 +1,8 @@
-import { SynapseConstants } from '@/utils'
-import { ACCESS_TYPE, ResourceAccess, UserGroupHeader } from '@sage-bionetworks/synapse-types'
+import {
+  ACCESS_TYPE,
+  ResourceAccess,
+  UserGroupHeader,
+} from '@sage-bionetworks/synapse-types'
 
 /**
  * Utility type to combine a ResourceAccess and the associated UserGroupHeader for that principalId.
@@ -20,6 +23,8 @@ export type ResourceAccessAndUserGroupHeader = {
 export function compareResourceAccessAndUserGroupHeader(
   a: ResourceAccessAndUserGroupHeader,
   b: ResourceAccessAndUserGroupHeader,
+  authenticatedPrincipalId?: string,
+  publicPrincipalId?: string,
 ): number {
   enum CompareResult {
     A_FIRST = -1,
@@ -42,27 +47,29 @@ export function compareResourceAccessAndUserGroupHeader(
 
   // AUTHENTICATED group always appears before PUBLIC group
   if (
-    a.resourceAccess.principalId ===
-      SynapseConstants.AUTHENTICATED_PRINCIPAL_ID &&
-    b.resourceAccess.principalId !== SynapseConstants.AUTHENTICATED_PRINCIPAL_ID
+    authenticatedPrincipalId &&
+    String(a.resourceAccess.principalId) === authenticatedPrincipalId &&
+    String(b.resourceAccess.principalId) !== authenticatedPrincipalId
   )
     return CompareResult.A_FIRST
   if (
-    a.resourceAccess.principalId !==
-      SynapseConstants.AUTHENTICATED_PRINCIPAL_ID &&
-    b.resourceAccess.principalId === SynapseConstants.AUTHENTICATED_PRINCIPAL_ID
+    authenticatedPrincipalId &&
+    String(a.resourceAccess.principalId) !== authenticatedPrincipalId &&
+    String(b.resourceAccess.principalId) === authenticatedPrincipalId
   )
     return CompareResult.B_FIRST
 
   // PUBLIC group always appears before other users / teams
   if (
-    a.resourceAccess.principalId === SynapseConstants.PUBLIC_PRINCIPAL_ID &&
-    b.resourceAccess.principalId !== SynapseConstants.PUBLIC_PRINCIPAL_ID
+    publicPrincipalId &&
+    String(a.resourceAccess.principalId) === publicPrincipalId &&
+    String(b.resourceAccess.principalId) !== publicPrincipalId
   )
     return CompareResult.A_FIRST
   if (
-    a.resourceAccess.principalId !== SynapseConstants.PUBLIC_PRINCIPAL_ID &&
-    b.resourceAccess.principalId === SynapseConstants.PUBLIC_PRINCIPAL_ID
+    publicPrincipalId &&
+    String(a.resourceAccess.principalId) !== publicPrincipalId &&
+    String(b.resourceAccess.principalId) === publicPrincipalId
   )
     return CompareResult.B_FIRST
 

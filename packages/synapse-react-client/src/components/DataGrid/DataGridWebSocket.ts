@@ -11,13 +11,29 @@ import { Model } from 'json-joy/lib/json-crdt'
 import {
   CompactCodecPatch,
   decode,
-  encode,
 } from 'json-joy/lib/json-crdt-patch/codec/compact'
 import { Encoder as VerboseEncoder } from 'json-joy/lib/json-crdt/codec/structural/verbose/Encoder'
 import { JsonCrdtVerboseLogicalTimestamp } from 'json-joy/lib/json-crdt/codec/structural/verbose/types'
 import noop from 'lodash-es/noop'
 import throttle from 'lodash-es/throttle'
-import type { DebouncedFunc } from 'lodash-es'
+import { type DebouncedFunc } from 'lodash-es'
+import { Decoder as SnapshotDecoder } from 'json-joy/lib/json-crdt/codec/indexed/binary/Decoder'
+import { decode as decodeCbor } from 'cbor2'
+import type { IndexedFields } from 'json-joy/lib/json-crdt/codec/indexed/binary'
+import { fetchWithExponentialTimeout } from '@sage-bionetworks/synapse-client'
+
+enum SynapseGridWebSocketMessagePayloadType {
+  PATCH = 'patch',
+  SNAPSHOT = 'snapshot',
+}
+
+type SynapseGridWebSocketMessagePayload =
+  | CompactCodecPatch
+  | {
+      type: SynapseGridWebSocketMessagePayloadType.PATCH
+      body: CompactCodecPatch
+    }
+  | { type: SynapseGridWebSocketMessagePayloadType.SNAPSHOT; body: string }
 
 type DataGridWebSocketConstructorArgs = {
   replicaId: number
@@ -41,15 +57,15 @@ export class DataGridWebSocket {
   private socket: WebSocket
   private model: GridModel | null = null
   private messageCounter: MessageCounter
-  private replicaId?: number
+  private replicaId: number
   private verboseEncoder = new VerboseEncoder()
   private maxPayloadSizeBytes: number
   private throttledSendPatch: DebouncedFunc<() => void>
+  private snapshotDecoder = new SnapshotDecoder()
 
-  private onModelCreate: (model: GridModel) => void = noop
-  private onGridReady: () => void = noop
-  private onStatusChange: (isOpen: boolean, _this: DataGridWebSocket) => void =
-    noop
+  private onModelCreate: (model: GridModel) => void
+  private onGridReady: () => void
+  private onStatusChange: (isOpen: boolean, _this: DataGridWebSocket) => void
 
   constructor(args: DataGridWebSocketConstructorArgs) {
     const {
@@ -69,6 +85,26 @@ export class DataGridWebSocket {
       maxPayloadSizeBytes ?? DEFAULT_MAX_PAYLOAD_SIZE_BYTES
     this.socket = socket ?? new WebSocket(url)
 
+    // Assign callbacks, falling back to no-ops
+    this.onModelCreate = onModelCreate ?? noop
+    this.onGridReady = onGridReady ?? noop
+    this.onStatusChange = onStatusChange ?? noop
+
+    // Restore existing model if provided
+    if (model) {
+      this.model = model
+    }
+
+    this.attachSocketHandlers()
+
+    this.throttledSendPatch = throttle(
+      () => this.sendPatchImmediate(),
+      patchThrottleMs ?? DEFAULT_PATCH_THROTTLE_MS,
+      { leading: false, trailing: true },
+    )
+  }
+
+  private attachSocketHandlers() {
     this.socket.onopen = () => {
       console.debug('Connected to the WebSocket server')
       this.onStatusChange(true, this)
@@ -90,27 +126,6 @@ export class DataGridWebSocket {
     this.socket.onerror = (error: Event) => {
       console.error('WebSocket error:', error)
     }
-
-    if (onModelCreate) {
-      this.onModelCreate = onModelCreate
-    }
-
-    if (onGridReady) {
-      this.onGridReady = onGridReady
-    }
-
-    if (onStatusChange) {
-      this.onStatusChange = onStatusChange
-    }
-
-    // Restore existing model if provided
-    this.model = model || null
-
-    this.throttledSendPatch = throttle(
-      () => this.sendPatchImmediate(),
-      patchThrottleMs ?? DEFAULT_PATCH_THROTTLE_MS,
-      { leading: false, trailing: true },
-    )
   }
 
   public disconnect() {
@@ -124,105 +139,149 @@ export class DataGridWebSocket {
     }
   }
 
-  private messageHandler = (message: JsonRxMessage) => {
-    if (message instanceof JsonRxResponse) {
-      const payload = message.getPayload() as CompactCodecPatch
-      try {
-        // Apply patch to model
-        const patch = decode(payload)
-        if (!this.model) {
-          // Initialize the model if it doesn't exist
-          console.debug('Initializing new model from patch:')
-          console.debug(patch.toString())
-          // use the replica ID the server gives us - don't use an empty one
-          this.model = (
-            Model.fromPatches([patch]) as unknown as GridModel
-          ).fork(this.replicaId)
-          this.onModelCreate(this.model)
-        } else {
-          console.debug('Applying patch from server:', patch)
-          this.model?.applyPatch(patch)
-        }
-        // Calculate the new clock
-        const modelClock = this.model?.api.flush()
-        let encodedModelClock
-        if (modelClock?.ops.length !== 0) {
-          encodedModelClock = encode(modelClock)
-        }
-        if (encodedModelClock) {
-          const msg = new JsonRxRequestComplete(
-            this.messageCounter.getNext(),
-            'patch',
-            encodedModelClock,
-          )
-          console.debug('Responding with patch:', msg)
-          this.sendMessage(msg)
-        } else {
-          const verbModel = this.verboseEncoder.encode(this.model)
-          this.sendSyncMessage(verbModel.time)
-        }
-      } catch (err) {
-        console.error('Failed to apply patch or send clock:', err)
-      }
-    } else if (message instanceof JsonRxResponseComplete) {
-      // Clocks are in sync, no further action needed
-      this.onGridReady()
-      console.debug(
-        'Clocks synchronized with server. Incrementing sequence number.',
-      )
+  /**
+   * Flushes the local model clock and sends the resulting patch (or a clock-sync
+   * message) to the server so that both sides converge.
+   */
+  private sendClockSync() {
+    if (!this.model) {
+      console.error('Model is not initialized. Cannot sync model.')
+      return
     }
-    // [8, <message>]
-    else if (message instanceof JsonRxNotification) {
-      const methodName = message.getMethodName()
-      console.debug('Message received from server:', methodName)
 
-      if (methodName === 'ping') {
-        console.debug('Received ping response from server')
-      }
+    const patchesWereSent = this.sendPatchImmediate()
+    if (!patchesWereSent) {
+      // We've flushed all of our changes, so now we can receive changes from the server
+      const verbModel = this.verboseEncoder.encode(this.model)
+      this.sendSyncMessage(verbModel.time)
+    }
+  }
 
-      if (methodName === 'connected') {
-        console.debug('Server ready to receive patches')
-        const verbModel = this.model
-          ? this.verboseEncoder.encode(this.model)
-          : null
-        // Send the persisted clock time if model exists, otherwise send empty sync
-        this.sendSyncMessage(verbModel?.time)
-      }
-
-      if (methodName === 'error') {
-        // Handle error response
-        console.warn('Error from server:', message.getPayload())
-        //this.disconnect()
-        return
-      }
-      if (methodName === 'new-patch') {
-        if (!this.model) {
-          console.warn(
-            "Model is not initialized. Cannot handle 'new-patch' message.",
-          )
-          return
-        }
-        const verbModel = this.verboseEncoder.encode(this.model)
-        console.debug('New patch received, syncing data:', verbModel.time)
-        const msg = new JsonRxRequestComplete(
-          this.messageCounter.getNext(),
-          'synchronize-clock',
-          verbModel.time,
-        )
-        this.sendMessage(msg)
-      }
+  private handleMessage(rawMessage: string) {
+    const message = JsonRx.fromJson(JSON.parse(rawMessage))
+    if (message instanceof JsonRxResponse) {
+      this.handleResponse(
+        message as JsonRxResponse<SynapseGridWebSocketMessagePayload>,
+      )
+    } else if (message instanceof JsonRxResponseComplete) {
+      this.handleResponseComplete()
+    } else if (message instanceof JsonRxNotification) {
+      this.handleNotification(message)
     } else {
       console.warn('Unexpected WebSocket message format:', message)
     }
   }
 
-  private handleMessage(message: string) {
-    this.messageHandler(JsonRx.fromJson(JSON.parse(message)))
+  private handleResponse(
+    message: JsonRxResponse<SynapseGridWebSocketMessagePayload>,
+  ) {
+    const payload = message.getPayload()
+
+    if (Array.isArray(payload)) {
+      // TODO: Support for raw patch arrays can be removed once PLFM-9398 is safely released to production
+      this.handlePatchPayload(payload)
+      return
+    }
+
+    switch (payload.type) {
+      case SynapseGridWebSocketMessagePayloadType.PATCH:
+        this.handlePatchPayload(payload.body)
+        break
+
+      case SynapseGridWebSocketMessagePayloadType.SNAPSHOT:
+        void this.handleSnapshotPayload(payload.body)
+        break
+
+      default:
+        console.warn('Unknown payload type:', payload)
+        break
+    }
+  }
+
+  private handlePatchPayload(encodedPatch: CompactCodecPatch) {
+    try {
+      const patch = decode(encodedPatch)
+      if (!this.model) {
+        this.model = Model.fromPatches([patch]).fork(
+          this.replicaId,
+        ) as unknown as GridModel
+        this.onModelCreate(this.model)
+      } else {
+        this.model.applyPatch(patch)
+      }
+      this.sendClockSync()
+    } catch (err) {
+      console.error('Failed to apply patch or send clock:', err)
+    }
+  }
+
+  private async handleSnapshotPayload(snapshotUrl: string) {
+    console.debug('Received snapshot URL from server:', snapshotUrl)
+    try {
+      const decodedModel = await this.fetchAndDecodeSnapshot(snapshotUrl)
+      this.model = decodedModel.fork(this.replicaId) as unknown as GridModel
+      this.onModelCreate(this.model)
+      this.sendClockSync()
+    } catch (err) {
+      console.error('Failed to fetch or decode snapshot', err)
+    }
+  }
+
+  private handleResponseComplete() {
+    // Clocks are in sync, no further action needed
+    this.onGridReady()
+    console.debug(
+      'Clocks synchronized with server. Incrementing sequence number.',
+    )
+  }
+
+  private handleNotification(message: JsonRxNotification) {
+    const methodName = message.getMethodName()
+    console.debug('Notification received from server:', methodName)
+
+    switch (methodName) {
+      case 'ping':
+        console.debug('Received ping from server')
+        break
+
+      case 'connected':
+        console.debug('Server ready to receive patches')
+        this.sendSyncMessage(
+          this.model ? this.verboseEncoder.encode(this.model).time : undefined,
+        )
+        break
+
+      case 'error':
+        console.warn('Error from server:', message.getPayload())
+        break
+
+      case 'new-patch':
+        if (!this.model) {
+          console.warn(
+            "Model is not initialized. Cannot handle 'new-patch' message.",
+          )
+          break
+        }
+        {
+          const verbModel = this.verboseEncoder.encode(this.model)
+          console.debug('New patch received, syncing data:', verbModel.time)
+          const msg = new JsonRxRequestComplete(
+            this.messageCounter.getNext(),
+            'synchronize-clock',
+            verbModel.time,
+          )
+          this.sendMessage(msg)
+        }
+        break
+
+      default:
+        console.warn('Unknown notification method:', methodName)
+        break
+    }
   }
 
   private sendMessage(message: JsonRxMessage) {
     if (this.socket.readyState === WebSocket.OPEN) {
-      console.debug('Sending message:', message)
       this.socket.send(JSON.stringify(message.getJson()))
     } else {
       console.error(
@@ -236,15 +295,19 @@ export class DataGridWebSocket {
     this.throttledSendPatch()
   }
 
-  private sendPatchImmediate() {
+  /**
+   * @returns true if one or more patches were sent
+   */
+  private sendPatchImmediate(): boolean {
     if (!this.model) {
       console.warn('Model is not initialized. Cannot send patch.')
-      return
+      return false
     }
 
     const patch = this.model.api.flush()
+    const hasOperationsToDispatch = patch.ops.length > 0
 
-    if (patch) {
+    if (hasOperationsToDispatch) {
       // Split the patch if it exceeds the maximum size we can send in a single frame
       const patches = splitPatch(patch, this.maxPayloadSizeBytes)
       patches.forEach(compactEncodedPatch => {
@@ -257,16 +320,29 @@ export class DataGridWebSocket {
         this.sendMessage(msg)
       })
     }
+
+    return hasOperationsToDispatch
   }
 
-  private sendSyncMessage(
-    clock: number | JsonCrdtVerboseLogicalTimestamp[] = [],
-  ) {
+  private sendSyncMessage(clock?: number | JsonCrdtVerboseLogicalTimestamp[]) {
     const message = new JsonRxRequestComplete(
       this.messageCounter.getNext(),
       'synchronize-clock',
-      clock,
+      clock ?? [],
     )
     this.sendMessage(message)
+  }
+
+  private async fetchAndDecodeSnapshot(
+    snapshotUrl: string,
+  ): Promise<GridModel> {
+    const response = await fetchWithExponentialTimeout(snapshotUrl)
+    const blob = await response.blob()
+    const buffer = await blob.arrayBuffer()
+    const decodedFromCbor = decodeCbor(new Uint8Array(buffer))
+    const decodedModel = this.snapshotDecoder.decode(
+      decodedFromCbor as IndexedFields,
+    ) as unknown as GridModel
+    return decodedModel
   }
 }
