@@ -78,11 +78,7 @@ describe('useRealm', () => {
 
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true)
-        expect(result.current.data).toEqual({
-          authenticatedUsersId: MOCK_REALM_PRINCIPAL.authenticatedUsers,
-          publicGroupId: MOCK_REALM_PRINCIPAL.publicGroup,
-          anonymousUserId: MOCK_REALM_PRINCIPAL.anonymousUser,
-        })
+        expect(result.current.data).toEqual(MOCK_REALM_PRINCIPAL)
 
         expect(result.current.isLoading).toBe(false)
         expect(result.current.error).toBe(null)
