@@ -249,34 +249,42 @@ function LiteralFacetValues({
           </Typography>
         }
       />
-      {displayValues.map(value => {
-        const isChecked = isFacetApplied(facet.name, value)
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          ...(showAll && { maxHeight: '280px', overflowY: 'auto' }),
+        }}
+      >
+        {displayValues.map(value => {
+          const isChecked = isFacetApplied(facet.name, value)
 
-        return (
-          <FormControlLabel
-            key={value}
-            sx={{ mb: '8px' }}
-            control={
-              <Checkbox
-                checked={isChecked}
-                onChange={e => handleToggle(value, e.target.checked)}
-                size="small"
-              />
-            }
-            label={
-              isUserFacet(facet.name) ? (
-                <UserBadge userId={value} />
-              ) : (
-                <Typography variant="smallText1" sx={{ lineHeight: '20px' }}>
-                  {facet.name === 'node_type'
-                    ? entityTypeToFriendlyName(value as EntityType) || value
-                    : value}
-                </Typography>
-              )
-            }
-          />
-        )
-      })}
+          return (
+            <FormControlLabel
+              key={value}
+              sx={{ mb: '8px' }}
+              control={
+                <Checkbox
+                  checked={isChecked}
+                  onChange={e => handleToggle(value, e.target.checked)}
+                  size="small"
+                />
+              }
+              label={
+                isUserFacet(facet.name) ? (
+                  <UserBadge userId={value} />
+                ) : (
+                  <Typography variant="smallText1" sx={{ lineHeight: '20px' }}>
+                    {facet.name === 'node_type'
+                      ? entityTypeToFriendlyName(value as EntityType) || value
+                      : value}
+                  </Typography>
+                )
+              }
+            />
+          )
+        })}
+      </Box>
       {filteredValues.length > MAX_FACET_VALUES_SHOWN && !showAll && (
         <Button
           onClick={() => setShowAll(true)}
