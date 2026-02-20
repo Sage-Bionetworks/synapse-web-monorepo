@@ -16,11 +16,11 @@
     "./dist/sitemap-vite-config.js"
   ],
   "peerDependencies": {
-    "@vitest/coverage-v8": "^1.6.0",
-    "@vitest/ui": "^1.6.0",
-    "@vitest/utils": "^1.6.0",
+    "@vitest/coverage-v8": "^4.0.18",
+    "@vitest/ui": "^4.0.18",
+    "@vitest/utils": "^4.0.18",
     "vite": "^5.1.6",
-    "vitest": "^1.6.0"
+    "vitest": "^4.0.18"
   },
   "peerDependenciesMeta": {
     "vitest": {
@@ -48,6 +48,6 @@
     "vite-plugin-node-polyfills": "0.17.0",
     "vite-plugin-svgr": "^4.3.0",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.2"
+    "vitest": "^4.0.18"
   }
 }
