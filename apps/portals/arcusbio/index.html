@@ -7,14 +7,14 @@
     -->
     <%- headContent %>
 
-    <script>
-      // TODO: Remove this snippet and use the standard endpoint resolution logic from SRC once ARCUSBIO is available in all environments!
+    <!-- <script>
+      // Endpoint override snippet to simplify testing against different environments
       const endpoint = {
-        REPO: 'https://repo-dev.dev.sagebase.org',
-        PORTAL: 'https://dev.synapse.org/',
+        REPO: 'https://repo-staging.prod.sagebase.org',
+        PORTAL: 'https://staging.synapse.org/',
       }
       window.SRC_OVERRIDE_ENDPOINT_CONFIG = endpoint;
-    </script>
+    </script> -->
     <script type="module" src='./src/index.tsx'></script>
   </head>
   <body>
