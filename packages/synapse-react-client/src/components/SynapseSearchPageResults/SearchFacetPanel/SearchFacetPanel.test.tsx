@@ -195,7 +195,7 @@ describe('LiteralFacetValues', () => {
   })
 
   it('shows only MAX_FACET_VALUES_SHOWN checkboxes by default when there are more', async () => {
-    const dataLength = 15
+    const dataLength = MAX_FACET_VALUES_SHOWN + 5
     const values = Array.from(
       { length: dataLength },
       (_, i) => `consortium-${i}`,
