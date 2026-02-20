@@ -328,7 +328,11 @@ export function SynapseFooter({
                 realm: {realm.name}
               </Typography>
               {realm.id !== SYNAPSE_REALM && (
-                <Tooltip title="Reset Realm">
+                <Tooltip
+                  title={`Reset Realm${
+                    isAuthenticated ? ' (will log you out)' : ''
+                  }`}
+                >
                   <IconButton
                     size="small"
                     sx={{ color: 'currentcolor' }}

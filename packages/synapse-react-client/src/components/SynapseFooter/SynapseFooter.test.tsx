@@ -46,16 +46,16 @@ describe('SynapseFooter', () => {
   beforeEach(() => {
     vi.clearAllMocks()
 
-    mockUseApplicationSessionContext.mockReturnValue({
-      isAuthenticated: true,
-      clearSession: mockClearSession,
-    } as unknown as ApplicationSessionContextType)
-
     mockUseOneSageURL.mockReturnValue(new URL('https://example.org'))
   })
 
   describe('Realm support', () => {
     it('hides reset realm button when realm is the Synapse realm', () => {
+      mockUseApplicationSessionContext.mockReturnValue({
+        isAuthenticated: false,
+        clearSession: mockClearSession,
+      } as unknown as ApplicationSessionContextType)
+
       mockUseGetCurrentRealm.mockReturnValue({
         data: {
           id: SYNAPSE_REALM,
@@ -71,6 +71,11 @@ describe('SynapseFooter', () => {
     })
 
     it('shows reset realm button when realm differs and clears the session', async () => {
+      mockUseApplicationSessionContext.mockReturnValue({
+        isAuthenticated: false,
+        clearSession: mockClearSession,
+      } as unknown as ApplicationSessionContextType)
+
       mockUseGetCurrentRealm.mockReturnValue({
         data: {
           id: 'syn123',
@@ -81,6 +86,29 @@ describe('SynapseFooter', () => {
       renderComponent()
 
       const resetButton = screen.getByRole('button', { name: 'Reset Realm' })
+      await userEvent.setup().click(resetButton)
+
+      expect(mockClearSession).toHaveBeenCalledTimes(1)
+    })
+
+    it('reset realm button tells auth user they will be logged out', async () => {
+      mockUseApplicationSessionContext.mockReturnValue({
+        isAuthenticated: true,
+        clearSession: mockClearSession,
+      } as unknown as ApplicationSessionContextType)
+
+      mockUseGetCurrentRealm.mockReturnValue({
+        data: {
+          id: 'syn123',
+          name: 'Other Realm',
+        },
+      } as UseQueryResult<Realm, SynapseClientError>)
+
+      renderComponent()
+
+      const resetButton = screen.getByRole('button', {
+        name: 'Reset Realm (will log you out)',
+      })
       await userEvent.setup().click(resetButton)
 
       expect(mockClearSession).toHaveBeenCalledTimes(1)
