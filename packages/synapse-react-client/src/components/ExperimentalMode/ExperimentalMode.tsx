@@ -1,10 +1,12 @@
 import { isInSynapseExperimentalMode } from '@/synapse-client/SynapseClient'
+import { useGetGlobalFeatureFlags } from '@/synapse-queries/featureflags'
 import { EXPERIMENTAL_MODE_COOKIE } from '@/utils/SynapseConstants'
 import { InfoOutlined } from '@mui/icons-material'
 import { Box, IconButton, Tooltip, Typography, useTheme } from '@mui/material'
 import { useEffect, useState } from 'react'
 import Switch from 'react-switch'
 import UniversalCookies from 'universal-cookie'
+import { FeatureFlagSettings } from '../FeatureFlagSettings'
 
 const EXPERIMENTAL_MODE_SWITCH_ID = 'experimental-mode'
 const experimentalModeText =
@@ -13,7 +15,10 @@ const experimentalModeText =
 export type ExperimentalModeProps = {
   onExperimentalModeToggle?: (newValue: boolean) => void
 }
-function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
+function ExperimentalMode({
+  onExperimentalModeToggle,
+}: ExperimentalModeProps) {
+  const { data: globalFeatureFlags } = useGetGlobalFeatureFlags()
   const [isExperimentalModeOn, setIsExperimentalModeOn] =
     useState<boolean>(false)
   const cookies = new UniversalCookies()
@@ -51,7 +56,7 @@ function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
   }
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
       <Typography
         component={'label'}
         variant="body1"
@@ -82,6 +87,7 @@ function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
             : createExperimentalModeCookie
         }
       />
+      <FeatureFlagSettings globalFeatureFlags={globalFeatureFlags} />
     </Box>
   )
 }

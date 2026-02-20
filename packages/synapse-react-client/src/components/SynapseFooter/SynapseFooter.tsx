@@ -306,7 +306,9 @@ export function SynapseFooter({
             repo: {repoVersion}
           </Typography>
         </Box>
-        <ExperimentalMode onExperimentalModeToggle={onExperimentalModeToggle} />
+        <ExperimentalMode
+          onExperimentalModeToggle={onExperimentalModeToggle}
+        />
       </Box>
     </Box>
   )
