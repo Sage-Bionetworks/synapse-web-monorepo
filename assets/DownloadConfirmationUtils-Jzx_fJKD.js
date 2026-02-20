@@ -1,0 +1,1 @@
+import{K as s}from"./iframe-CKbLOTsP.js";function a(o){s("File(s) were successfully added to your Download Cart.","success",{primaryButtonConfig:{text:"View Download Cart",onClick:()=>{window.location.href=o}}})}export{a as d};
