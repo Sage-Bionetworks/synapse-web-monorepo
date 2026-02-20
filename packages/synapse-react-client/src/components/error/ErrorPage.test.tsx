@@ -1,6 +1,4 @@
 import { MOCK_DOI } from '@/mocks/doi/MockDoi'
-
-import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, waitFor } from '@testing-library/react'
