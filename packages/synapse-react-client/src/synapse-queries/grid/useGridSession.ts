@@ -172,6 +172,23 @@ export const useCreateGridSession = (
   )
 }
 
+/**
+ * Synchronization is a two-phase process that ensures consistency between the user's local
+ * changes and external changes made to the source:
+ *
+ * Phase 1: Schema Synchronization
+ * - Synchronizes column definitions between the grid copy and source
+ * - Resolves schema conflicts
+ *
+ * Phase 2: Row Synchronization
+ * - Synchronizes row data using the final schema from Phase 1
+ * - Merges cell-level changes when rows conflict
+ * - Pushes user changes from copy to source
+ * - Pulls external changes from source to copy
+ *
+ * @see {@link https://rest-docs.synapse.org/rest/POST/grid/synchronize/async/start.html}
+ * @see {@link https://rest-docs.synapse.org/rest/GET/grid/synchronize/async/get/asyncToken.html}
+ */
 export function useSynchronizeGridSession(
   options?: Omit<
     UseMutationOptions<

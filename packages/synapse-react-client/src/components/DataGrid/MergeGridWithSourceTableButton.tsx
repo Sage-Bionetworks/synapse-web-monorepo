@@ -2,7 +2,6 @@ import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/Grid
 import useMergeGridWithSource from '@/components/DataGrid/useMergeGridWithSource'
 import { displayToast } from '@/components/index'
 import { useGetEntity } from '@/synapse-queries'
-import { useSynchronizeGridSession } from '@/synapse-queries/grid/useGridSession'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
 import {
   EntityType,
@@ -11,7 +10,6 @@ import {
   instanceOfUploadToTableResult,
   TableUpdateTransactionResponse,
 } from '@sage-bionetworks/synapse-client'
-import { useCallback } from 'react'
 
 export type MergeGridWithSourceTableButtonProps = {
   sourceEntityId: string
@@ -31,15 +29,18 @@ export default function MergeGridWithSourceTableButton(
     ? convertToEntityType(entity.concreteType)
     : undefined
 
-  const { mutate: synchronizeWithView, isPending: isSynchronizePending } =
-    useSynchronizeGridSession({
-      onSuccess: result => {
-        if (result.errorMessages == null || result.errorMessages.length === 0) {
+  const { mutate: mergeGrid, isPending } = useMergeGridWithSource({
+    onSuccess: result => {
+      if (result.type === 'entityview') {
+        if (
+          result.data.errorMessages == null ||
+          result.data.errorMessages.length === 0
+        ) {
           displayToast('Successfully synchronized metadata.', 'success')
         } else {
           displayToast(
             <ul>
-              {result.errorMessages.map((msg, index) => (
+              {result.data.errorMessages.map((msg, index) => (
                 <li key={index}>{msg}</li>
               ))}
             </ul>,
@@ -47,45 +48,28 @@ export default function MergeGridWithSourceTableButton(
             { title: 'Some changes could not be applied' },
           )
         }
-      },
-    })
+      } else if (result.type === 'table') {
+        onMergeSuccess(result.data)
+      } else {
+        displayToast('Successfully updated RecordSet.', 'success')
+      }
+    },
+    onError: e => displayToast(e.message, 'danger'),
+  })
 
-  const { mutate: mergeGrid, isPending: isMergePending } =
-    useMergeGridWithSource({
-      onSuccess: result => {
-        if (result.type === 'table') {
-          onMergeSuccess(result.data)
-        } else {
-          displayToast('Successfully updated RecordSet.', 'success')
-        }
-      },
-      onError: e => displayToast(e.message, 'danger'),
-    })
-
-  const isPending = isSynchronizePending || isMergePending
-
-  const mergeChanges = useCallback(() => {
-    if (sourceEntityType === 'entityview') {
-      synchronizeWithView({ gridSessionId })
-    } else {
-      mergeGrid({ gridSessionId, sourceEntityId, sourceEntityType })
-    }
-  }, [
-    sourceEntityType,
-    synchronizeWithView,
-    gridSessionId,
-    mergeGrid,
-    sourceEntityId,
-  ])
+  const buttonText =
+    sourceEntityType === 'entityview' ? 'Sync changes' : 'Apply changes'
 
   return (
     <GridMenuButton
       loading={isPending}
       disabled={entityLoading}
-      onClick={() => mergeChanges()}
+      onClick={() => {
+        mergeGrid({ gridSessionId, sourceEntityId, sourceEntityType })
+      }}
       variant="contained"
     >
-      {sourceEntityType == 'entityview' && 'Synchronize &'} Apply changes
+      {buttonText}
     </GridMenuButton>
   )
 }
