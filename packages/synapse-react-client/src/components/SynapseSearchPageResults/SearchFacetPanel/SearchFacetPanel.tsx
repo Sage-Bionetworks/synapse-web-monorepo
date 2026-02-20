@@ -12,6 +12,7 @@ import {
   Radio,
   Typography,
   Chip,
+  Tooltip,
 } from '@mui/material'
 import UTurnLeftIcon from '@mui/icons-material/UTurnLeft'
 import CloseIcon from '@mui/icons-material/Close'
@@ -439,15 +440,21 @@ export function AppliedFacetsChips({
 
       {rangeQuery.map((kr, index) => {
         const displayValue = formatTimeRangeDisplayValue(kr.min)
+        const startDate = dayjs(parseInt(kr.min) * 1000).format('MMMM D, YYYY')
 
         return (
-          <Chip
-            className={styles.chipStyles}
+          <Tooltip
+            title={`Since ${startDate}`}
+            arrow
             key={`${kr.key}-${kr.min}-${index}`}
-            label={`${displayValue}`}
-            deleteIcon={<CloseIcon className={styles.closeIcon} />}
-            onDelete={() => onRemoveRangeFacet(kr.key)}
-          />
+          >
+            <Chip
+              className={styles.chipStyles}
+              label={`${displayValue}`}
+              deleteIcon={<CloseIcon className={styles.closeIcon} />}
+              onDelete={() => onRemoveRangeFacet(kr.key)}
+            />
+          </Tooltip>
         )
       })}
     </Box>
