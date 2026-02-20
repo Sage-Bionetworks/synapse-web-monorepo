@@ -8,6 +8,8 @@ export default {
   [DST_TABLE_COLUMN_CONSTS.MATURE]: 'Maturity',
   [DST_TABLE_COLUMN_CONSTS.RESPONSIBLE_ORG_LINKS]: 'Responsible Organizations',
   [DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_LINKS]: 'Relevant Organizations',
+  [DST_TABLE_COLUMN_CONSTS.APPLICATION_COUNT]: 'AI Applications Count',
+  [DST_TABLE_COLUMN_CONSTS.AI_APP_MARKDOWN]: 'AI Applications',
   standardName: 'Name of Standard',
   isOpen: 'Is Open?',
   registration: 'Requires Registration?',
