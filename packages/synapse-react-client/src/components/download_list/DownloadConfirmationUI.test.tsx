@@ -111,7 +111,8 @@ describe('DownloadConfirmationUI', () => {
       onCancel: mockOnCancel,
     }
     const { user, addButton, closeButton, cancelButton } = await setUp(props, {
-      accessToken: undefined,
+      accessToken: 'anon-token',
+      isAuthenticated: false,
     })
 
     await screen.findByText(/Sign In/i)

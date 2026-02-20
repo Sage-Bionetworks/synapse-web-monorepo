@@ -219,7 +219,7 @@ describe('FileHandleContentRenderer tests', () => {
       },
       {
         ...defaultWrapperProps,
-        accessToken: undefined, // unauthenticated
+        isAuthenticated: false,
       },
     )
 

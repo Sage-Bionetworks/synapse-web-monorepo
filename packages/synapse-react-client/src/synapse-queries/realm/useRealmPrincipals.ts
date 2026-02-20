@@ -3,15 +3,6 @@ import { Realm, SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { RealmPrincipal } from '@sage-bionetworks/synapse-client/generated/models/RealmPrincipal'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 
-export type RealmPrincipalIds = {
-  /** The principal ID representing all authenticated users */
-  authenticatedUsersId: string | undefined
-  /** The principal ID representing all users (authenticated and anonymous) */
-  publicGroupId: string | undefined
-  /** The principal ID representing the anonymous user */
-  anonymousUserId: string | undefined
-}
-
 /**
  * Get the current realm for the logged in user.
  *

@@ -22,18 +22,18 @@ import ErrorPage, {
 
 const mockGotoPlace = vi.fn()
 
-function renderComponent(props: ErrorPageProps, isLoggedIn: boolean) {
+function renderComponent(props: ErrorPageProps, isAuthenticated: boolean) {
   const component = render(<ErrorPage {...props} />, {
     wrapper: createWrapper({
-      accessToken: isLoggedIn ? MOCK_ACCESS_TOKEN : undefined,
+      isAuthenticated,
     }),
   })
   return { component }
 }
 
-async function setUp(props: ErrorPageProps, isLoggedIn: boolean) {
+async function setUp(props: ErrorPageProps, isAuthenticated: boolean) {
   const user = userEvent.setup()
-  const { component } = renderComponent(props, isLoggedIn)
+  const { component } = renderComponent(props, isAuthenticated)
 
   let imageElement: HTMLElement | undefined
   await waitFor(() => {

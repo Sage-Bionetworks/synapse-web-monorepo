@@ -37,7 +37,7 @@ export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
   const { data: primaryEmail, refetch: refetchNotificationEmail } =
     useGetNotificationEmail()
   const { data: currentRealm } = useGetCurrentRealm({
-    select: realm => realm.realmId,
+    select: realm => realm.id,
   })
   const [newEmail, setNewEmail] = useState('')
   const sendEmailNotifications =

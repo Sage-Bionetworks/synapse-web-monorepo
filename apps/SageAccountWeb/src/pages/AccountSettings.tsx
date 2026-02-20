@@ -102,7 +102,7 @@ const AccountSettings = (): React.ReactNode => {
   const { clearSession } = useApplicationSessionContext()
   const showWebhooks = useGetFeatureFlag(FeatureFlagEnum.WEBHOOKS_UI)
   const { data: currentRealm } = useGetCurrentRealm({
-    select: realm => realm.realmId,
+    select: realm => realm.id,
   })
   const cookies = new UniversalCookies()
   const [isUTCTime, setUTCTime] = useState<string>(

@@ -29,6 +29,7 @@ import ChangePassword, {
   PASSWORD_CHANGED_SUCCESS_MESSAGE,
 } from './ChangePassword'
 import { TWO_FACTOR_AUTH_CHANGE_PASSWORD_PROMPT } from './useChangePasswordFormState'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
 
 const mockDisplayToast = vi
   .spyOn(ToastMessage, 'displayToast')
@@ -278,7 +279,8 @@ describe('ChangePassword tests', () => {
       {},
       {
         keyFactory: new KeyFactory(undefined),
-        accessToken: undefined,
+        accessToken: 'anon-token',
+        isAuthenticated: false,
       },
     )
 
