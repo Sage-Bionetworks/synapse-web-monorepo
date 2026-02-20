@@ -42,8 +42,6 @@ export const NOT_FOUND_MESSAGE =
   'The link you followed may be broken, or the page may have been removed.'
 export const ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION =
   'A Synapse account is free, and lets you view public resources.'
-export const ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION =
-  'Please remember that all messages left in the forum are public.'
 export const ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION =
   'Write a message to the owner of the resource asking for permission to view.'
 
@@ -157,7 +155,7 @@ function ErrorPage(props: ErrorPageProps) {
               'https://sagebionetworks.jira.com/servicedesk/customer/portals',
               '_blank',
             ),
-          description: ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION,
+          description: '',
         })
         // SWC-7073: Remove ability to send a message to the admins until we have a better option for the majority of the cases (service desk, contact emails, ...)
         // acts.push({
