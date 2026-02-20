@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { ContextMenuItem } from 'react-datasheet-grid'
+import { ContextMenuItem } from '@sage-bionetworks/react-datasheet-grid'
 import {
   renderRecordSetContextMenu,
   renderViewContextMenu,

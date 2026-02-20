@@ -3,10 +3,13 @@ import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import classNames from 'classnames'
 import { JSONSchema7 } from 'json-schema'
 import { useEffect, useMemo, useState, useRef, useCallback } from 'react'
-import { DynamicDataSheetGrid, DataSheetGridRef } from 'react-datasheet-grid'
-import 'react-datasheet-grid/dist/style.css'
+import {
+  DynamicDataSheetGrid,
+  DataSheetGridRef,
+} from '@sage-bionetworks/react-datasheet-grid'
+import '@sage-bionetworks/react-datasheet-grid/dist/style.css'
 import '../../style/components/_data-grid-extra.scss'
-import { SelectionWithId } from 'react-datasheet-grid/dist/types'
+import { SelectionWithId } from '@sage-bionetworks/react-datasheet-grid'
 import {
   renderAddRowsComponent,
   renderRecordSetContextMenu,

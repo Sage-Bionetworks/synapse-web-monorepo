@@ -1,7 +1,7 @@
 import { GridModel } from '@/components/DataGrid/DataGridTypes'
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
 import createTestModel from '@/components/DataGrid/utils/createTestModel'
-import { SelectionWithId } from 'react-datasheet-grid/dist/types'
+import { SelectionWithId } from '@sage-bionetworks/react-datasheet-grid'
 
 describe('computeReplicaSelectionModel', () => {
   const sid: number = 123

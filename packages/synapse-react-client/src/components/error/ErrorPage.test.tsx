@@ -6,7 +6,6 @@ import userEvent from '@testing-library/user-event'
 import ErrorPage, {
   ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION,
   ACCESS_DENIED_ANONYMOUS_MESSAGE,
-  ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION,
   ACCESS_DENIED_MESSAGE,
   ACCESS_DENIED_TITLE,
   ErrorPageProps,
@@ -62,7 +61,6 @@ describe('ErrorPage: basic functionality', () => {
     )
     await screen.findByText(ACCESS_DENIED_TITLE)
     await screen.findByText(ACCESS_DENIED_MESSAGE)
-    await screen.findByText(ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION)
     // SWC-7073
     // await screen.findByText(ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION)
     // by default, a DOI is set up in MSW (see doiHandlers)

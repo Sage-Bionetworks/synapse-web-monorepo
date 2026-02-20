@@ -116,7 +116,9 @@ export const standardDetailsPageContent: DetailsPageContentType = [
     id: 'AIApplications',
     title: 'AI Applications',
     element: (
-      <DetailsPageContextConsumer columnName={'AIApplicationJSON'}>
+      <DetailsPageContextConsumer
+        columnName={DST_TABLE_COLUMN_CONSTS.AI_APP_JSON}
+      >
         {({ value }) => {
           if (!value) return null
           const apps = JSON.parse(value) as Array<{
