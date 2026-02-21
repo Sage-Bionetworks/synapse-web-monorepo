@@ -18,7 +18,11 @@ export default function TeamBadge(props: TeamBadgeProps) {
   let { teamName, disableHref } = props
 
   const { data } = useGetRealmPrincipals()
-  const { authenticatedUsersId, publicGroupId } = data
+  const realmPrincipals = data || {}
+  const {
+    authenticatedUsers: authenticatedUsersId,
+    publicGroup: publicGroupId,
+  } = realmPrincipals
 
   let icon: IconName = 'team'
 

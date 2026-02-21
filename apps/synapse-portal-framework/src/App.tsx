@@ -11,12 +11,14 @@ import { usePortalContext } from './components/PortalContext'
 import { useDocumentTitleFromRoutes } from './utils/useDocumentTitleFromRoutes'
 
 export type AppProps = PropsWithChildren<{
+  /** The default realm ID to use for the application */
+  defaultRealmId?: string
   /** If true, redirects unauthenticated users to OneSage login after session initialization */
   requireAuthentication?: boolean
 }>
 
 export default function App(props: AppProps) {
-  const { requireAuthentication } = props
+  const { defaultRealmId, requireAuthentication } = props
   useDocumentTitleFromRoutes()
   const { aridhiaConfig } = usePortalContext()
 
@@ -35,7 +37,10 @@ export default function App(props: AppProps) {
 
   return (
     <SynapseErrorBoundary>
-      <AppInitializer requireAuthentication={requireAuthentication}>
+      <AppInitializer
+        defaultRealmId={defaultRealmId}
+        requireAuthentication={requireAuthentication}
+      >
         {aridhiaConfig?.apiBasePath ? (
           <AridhiaIntegration apiBasePath={aridhiaConfig.apiBasePath}>
             {content}

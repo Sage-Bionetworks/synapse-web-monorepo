@@ -17,7 +17,6 @@ import { SynapseNavDrawer, SynapseNavDrawerProps } from './SynapseNavDrawer'
 
 const defaultProps: SynapseNavDrawerProps = {
   initIsOpen: false,
-  signoutCallback: vi.fn(),
   gotoPlace: vi.fn(),
 }
 
@@ -63,7 +62,7 @@ const mockGetUserBundle = vi.spyOn(SynapseClient, 'getMyUserBundle')
 describe('SynapseNavDrawer tests', () => {
   it('Shows logged-out user items', async () => {
     renderComponent({
-      accessToken: undefined,
+      isAuthenticated: false,
     })
 
     const buttonGroups = await screen.findAllByRole('list')

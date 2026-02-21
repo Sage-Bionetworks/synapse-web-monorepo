@@ -49,6 +49,10 @@ beforeAll(() => {
         configurable: true,
         value: vi.fn(),
       },
+      reload: {
+        configurable: true,
+        value: vi.fn(),
+      },
     },
   ) as Location
 

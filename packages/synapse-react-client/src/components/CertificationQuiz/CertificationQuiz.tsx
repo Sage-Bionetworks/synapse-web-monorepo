@@ -35,7 +35,7 @@ import { displayToast } from '../ToastMessage/ToastMessage'
 import CertificationAnswer from './CertificationAnswer'
 
 function CertificationQuiz() {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, isAuthenticated } = useSynapseContext()
   const handleError = useErrorHandler()
   const [quiz, setQuiz] = useState<Quiz | undefined>()
   const [isRetakingQuiz, setIsRetakingQuiz] = useState(false)
@@ -74,10 +74,10 @@ function CertificationQuiz() {
   // user is taking the quiz if user is not certified, and either there is no passing record or if the user clicked to retake the quiz
   const isTakingQuiz = !isCertified && (passingRecord == null || isRetakingQuiz)
   useEffect(() => {
-    if (accessToken) {
+    if (isAuthenticated) {
       getQuiz()
     }
-  }, [accessToken])
+  }, [isAuthenticated])
 
   if (isLoadingPassingRecord || quiz == undefined) {
     return <CertificationQuizSkeleton />

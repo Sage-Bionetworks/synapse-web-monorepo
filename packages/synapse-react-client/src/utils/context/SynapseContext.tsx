@@ -75,9 +75,7 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
   const synapseContext: SynapseContextType = useMemo(
     () => ({
       accessToken: providedContext?.accessToken,
-      // Currently, isAuthenticated is derived from the presence of an access token
-      // In the future, this may be based on a non-null realm-specific anonymous user access token
-      isAuthenticated: Boolean(providedContext?.accessToken),
+      isAuthenticated: providedContext?.isAuthenticated ?? false,
       isInExperimentalMode: providedContext?.isInExperimentalMode ?? false,
       utcTime: providedContext?.utcTime ?? false,
       withErrorBoundary: providedContext?.withErrorBoundary ?? false,
@@ -89,6 +87,7 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
     }),
     [
       providedContext?.accessToken,
+      providedContext?.isAuthenticated,
       providedContext?.downloadCartPageUrl,
       providedContext?.isInExperimentalMode,
       providedContext?.keyFactory,

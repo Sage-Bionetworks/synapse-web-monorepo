@@ -6,12 +6,22 @@ import { ReactComponent as Twitter } from '@/assets/homepage/twitter.svg'
 import { ReactComponent as Youtube } from '@/assets/homepage/youtube.svg'
 import SageFullLogo from '@/assets/icons/SageFullLogo'
 import SynapseFullLogo from '@/assets/icons/SynapseFullLogo'
-import { useSynapseContext } from '@/utils'
+import { useApplicationSessionContext } from '@/utils'
 import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
-import { Box, Button, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import ExperimentalMode from '../ExperimentalMode'
 import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
 import { SynapseLinksColumn } from './SynapseLinksColumn'
+import { LogoutTwoTone } from '@mui/icons-material'
+import { SYNAPSE_REALM } from '@/utils/SynapseConstants'
+import { useGetCurrentRealm } from '@/synapse-queries/realm/useRealmPrincipals'
 
 export type SynapseFooterProps = {
   portalVersion: string
@@ -29,7 +39,9 @@ export function SynapseFooter({
   gotoPlace,
   onExperimentalModeToggle,
 }: SynapseFooterProps) {
-  const { isAuthenticated } = useSynapseContext()
+  const { isAuthenticated, clearSession } = useApplicationSessionContext()
+  const { data: realm } = useGetCurrentRealm()
+
   const registrationUrl = useOneSageURL('/register1')
   const sageResourcesUrl = useOneSageURL('/sageresources')
 
@@ -305,6 +317,35 @@ export function SynapseFooter({
           >
             repo: {repoVersion}
           </Typography>
+          {realm && (
+            <Stack direction="row" alignItems="center">
+              <Typography
+                variant="body1"
+                sx={{
+                  fontSize: '14px',
+                }}
+              >
+                realm: {realm.name}
+              </Typography>
+              {realm.id !== SYNAPSE_REALM && (
+                <Tooltip
+                  title={`Reset Realm${
+                    isAuthenticated ? ' (will log you out)' : ''
+                  }`}
+                >
+                  <IconButton
+                    size="small"
+                    sx={{ color: 'currentcolor' }}
+                    onClick={() => {
+                      void clearSession()
+                    }}
+                  >
+                    <LogoutTwoTone sx={{ fontSize: 'inherit' }} />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </Stack>
+          )}
         </Box>
         <ExperimentalMode onExperimentalModeToggle={onExperimentalModeToggle} />
       </Box>

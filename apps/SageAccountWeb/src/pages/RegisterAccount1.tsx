@@ -39,7 +39,6 @@ import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
-import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
 import LastLoginInfo, {
   useLastLoginInfo,
 } from 'synapse-react-client/components/Authentication/LastLoginInfo'
@@ -92,7 +91,6 @@ const csrfToken = generateCsrfToken()
 const RegisterAccount1 = (): React.ReactNode => {
   const { isAuthenticated } = useSynapseContext()
   const appContext = useAppContext()
-  const sessionContext = useApplicationSessionContext()
   const theme = useTheme()
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState('')
@@ -241,9 +239,6 @@ const RegisterAccount1 = (): React.ReactNode => {
           }}
         >
           <RegisterPageLogoutPrompt
-            onLogout={() => {
-              void sessionContext.refreshSession()
-            }}
             logo={<SourceAppLogo sx={{ width: '100%' }} />}
           />
         </Box>

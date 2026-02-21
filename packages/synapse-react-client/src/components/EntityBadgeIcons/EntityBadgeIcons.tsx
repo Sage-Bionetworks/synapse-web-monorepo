@@ -95,7 +95,12 @@ export const EntityBadgeIcons = (
   } = props
 
   const { data } = useGetRealmPrincipals()
-  const { authenticatedUsersId, publicGroupId, anonymousUserId } = data
+  const realmPrincipals = data || {}
+  const {
+    authenticatedUsers: authenticatedUsersId,
+    publicGroup: publicGroupId,
+    anonymousUser: anonymousUserId,
+  } = realmPrincipals
   const publicPrincipalIds = [
     authenticatedUsersId,
     publicGroupId,

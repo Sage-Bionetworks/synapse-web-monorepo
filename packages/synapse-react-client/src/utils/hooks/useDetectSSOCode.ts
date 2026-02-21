@@ -48,7 +48,7 @@ export type UseDetectSSOCodeOptions = {
     encodedTwoFaResetToken: string,
   ) => void
   isInitializingSession: boolean
-  token?: string
+  isAuthenticated: boolean
 }
 
 /*
@@ -58,7 +58,10 @@ export type UseDetectSSOCodeOptions = {
  * used for account creation, where we pass the username through the process.
  */
 export default function useDetectSSOCode(
-  opts: UseDetectSSOCodeOptions = { isInitializingSession: true },
+  opts: UseDetectSSOCodeOptions = {
+    isInitializingSession: true,
+    isAuthenticated: false,
+  },
 ): UseDetectSSOCodeReturnType {
   const defaultRegisterAccountURL = useOneSageURL('/register1')
 
@@ -69,7 +72,7 @@ export default function useDetectSSOCode(
     onTwoFactorAuthRequired,
     onTwoFactorAuthResetTokenPresent,
     isInitializingSession,
-    token,
+    isAuthenticated,
   } = opts
   const redirectURL = getRootURL()
   // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
@@ -140,7 +143,7 @@ export default function useDetectSSOCode(
         const redirectUrl = `${redirectURL}?provider=${provider}`
 
         //If user is already logged in, and the provider is ORCID, then try to bind this OAuth provider to the account.
-        if (OAUTH2_PROVIDERS.ORCID == provider && token !== undefined) {
+        if (OAUTH2_PROVIDERS.ORCID == provider && isAuthenticated) {
           // now bind this to the user account
           const onFailure = (err: SynapseClientError) => {
             console.error('Error binding ORCiD to account: ', err)

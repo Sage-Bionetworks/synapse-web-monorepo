@@ -191,11 +191,11 @@ export function ChallengeSubmission({
   }, [isAuthenticated, userProfile, isProfileLoading])
 
   useEffect(() => {
-    if (accessToken && submissionTeam && challenge && !newProject) {
+    if (isAuthenticated && submissionTeam && challenge && !newProject) {
       const project = getProject(challenge, submissionTeam)
       setNewProject(project)
     }
-  }, [accessToken, submissionTeam, challenge, newProject])
+  }, [isAuthenticated, submissionTeam, challenge, newProject])
 
   useEffect(() => {
     async function createChallengeProject() {
@@ -207,7 +207,7 @@ export function ChallengeSubmission({
       }
     }
     if (
-      accessToken &&
+      isAuthenticated &&
       submissionTeam &&
       challenge &&
       newProject &&
@@ -215,7 +215,14 @@ export function ChallengeSubmission({
     ) {
       createChallengeProject()
     }
-  }, [accessToken, submissionTeam, challenge, newProject, projectAliasFound])
+  }, [
+    isAuthenticated,
+    submissionTeam,
+    challenge,
+    newProject,
+    projectAliasFound,
+    accessToken,
+  ])
 
   const itemSelectedHandler = (entity: EntityItem) => {
     setSelectedEntity(entity)

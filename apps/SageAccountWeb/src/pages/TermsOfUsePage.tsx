@@ -22,7 +22,7 @@ function TermsOfUsePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isFormComplete, setIsFormComplete] = useState(false)
   const [isDone, setIsDone] = useState(false)
-  const { accessToken } = useSynapseContext()
+  const { isAuthenticated, accessToken } = useSynapseContext()
   const sourceApp = useSourceApp()
 
   const { mutate: signTermsOfService } = useSignTermsOfService()
@@ -32,7 +32,7 @@ function TermsOfUsePage() {
     event.preventDefault()
     setIsLoading(true)
     try {
-      if (accessToken) {
+      if (isAuthenticated && accessToken) {
         signTermsOfService(
           {
             accessToken,

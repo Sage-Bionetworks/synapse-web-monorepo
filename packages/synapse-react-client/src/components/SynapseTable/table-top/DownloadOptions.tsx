@@ -24,7 +24,7 @@ export type DownloadOptionsProps = {
 }
 
 export function DownloadOptions(props: DownloadOptionsProps) {
-  const { accessToken } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
   const {
     entityId,
     versionNumber,
@@ -78,7 +78,7 @@ export function DownloadOptions(props: DownloadOptionsProps) {
             // If disabled, add pointer-events-auto so the tooltip still works
             style={disableDownload ? { pointerEvents: 'auto' } : {}}
             onClick={() =>
-              accessToken ? onDownloadFiles() : setShowLoginModal(true)
+              isAuthenticated ? onDownloadFiles() : setShowLoginModal(true)
             }
           >
             {getNumberOfResultsToAddToDownloadListCopy(
@@ -127,7 +127,7 @@ export function DownloadOptions(props: DownloadOptionsProps) {
     )
     return downloadMenuItems
   }, [
-    accessToken,
+    isAuthenticated,
     disableDownload,
     hasResettableFilters,
     hasSelectedRows,

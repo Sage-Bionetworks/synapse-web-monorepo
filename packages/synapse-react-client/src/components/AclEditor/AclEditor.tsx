@@ -83,7 +83,12 @@ export function AclEditor(props: AclEditorProps): React.ReactNode {
   } = props
 
   const { data, isLoading: isLoadingRealmPrincipals } = useGetRealmPrincipals()
-  const { authenticatedUsersId, publicGroupId, anonymousUserId } = data
+  const realmPrincipals = data || {}
+  const {
+    authenticatedUsers: authenticatedUsersId,
+    publicGroup: publicGroupId,
+    anonymousUser: anonymousUserId,
+  } = realmPrincipals
 
   const publicPrincipalIds = [
     authenticatedUsersId,

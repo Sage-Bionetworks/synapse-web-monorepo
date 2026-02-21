@@ -31,6 +31,7 @@ import {
 import { BackendDestinationEnum } from './utils/functions'
 import { xssOptions } from './utils/functions/SanitizeHtmlUtils'
 import { getCurrentCookiePreferences } from './utils/hooks'
+import { SynapseSessionManager } from './utils/AppUtils'
 
 // Also include scss in the bundle
 import './style/main.scss'
@@ -254,4 +255,5 @@ export {
   SynapseQueries,
   Palettes,
   xssOptions,
+  SynapseSessionManager,
 }

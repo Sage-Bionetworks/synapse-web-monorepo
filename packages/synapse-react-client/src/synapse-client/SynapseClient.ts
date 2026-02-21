@@ -102,6 +102,7 @@ import { sanitize } from '@/utils/functions/SanitizeHtmlUtils'
 import * as SynapseConstants from '@/utils/SynapseConstants'
 import { DATETIME_UTC_COOKIE_KEY } from '@/utils/SynapseConstants'
 import {
+  SynapseClient as SynapseOpenAPIClient,
   DoiAssociation,
   EntityType,
   ViewEntityType,
@@ -2072,22 +2073,37 @@ export async function deleteAllSessionAccessTokens(accessToken: string) {
   )
 }
 
-export const signOut = async () => {
+/**
+ * Sign out of the current session by replacing the current token with a fresh anonymous token in the specified realm.
+ * @returns the new anonymous access token that was set in the cookie
+ * @deprecated - Use `clearSession` provided by context, which will provide the correct default realm for the current application.
+ */
+export const signOut = async (realm = '0'): Promise<string> => {
   let accessToken: string | undefined = undefined
   try {
     accessToken = await getAccessTokenFromCookie()
-  } catch (e) {
-    console.warn('Could not get the access token from the cookie', e)
-  }
-  if (accessToken) {
-    try {
+    if (accessToken) {
       // This call may fail if the token was already revoked, so just log any encountered errors
       await deleteSessionAccessToken(accessToken)
-    } catch (e) {
-      console.warn('Could not delete session token', e)
     }
+  } catch (e) {
+    console.warn('Could not get/revoke the current access token', e)
   }
-  await setAccessTokenCookie(undefined)
+
+  // Get a new anonymous token and set it in the cookie.
+  let newAccessToken: string = ''
+  try {
+    const accessTokenResponse = await new SynapseOpenAPIClient({
+      basePath: getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+    }).authenticationServicesClient.getAuthV1AnonymousToken({
+      realm,
+    })
+    newAccessToken = accessTokenResponse.accessToken!
+  } catch (e) {
+    console.error('Failed to get an anonymous access token.', e)
+  }
+  await setAccessTokenCookie(newAccessToken)
+  return newAccessToken
 }
 
 // Progress sent back during upload, will report when a part of a file is finished processing

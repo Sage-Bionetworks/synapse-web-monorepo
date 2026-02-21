@@ -7,7 +7,12 @@ import { SynapseContext } from '@/utils/context/SynapseContext'
 // Will give you the Synapse ID of the FileEntity that contains the user form data.
 import Form from '@rjsf/core'
 import validator from '@rjsf/validator-ajv8'
-import { EntityId, EntityLookupRequest, FileEntity, UserProfile } from '@sage-bionetworks/synapse-types'
+import {
+  EntityId,
+  EntityLookupRequest,
+  FileEntity,
+  UserProfile,
+} from '@sage-bionetworks/synapse-types'
 import { Component, ContextType, createRef } from 'react'
 
 export type EntityFormProps = {
@@ -54,7 +59,7 @@ export class EntityForm extends Component<EntityFormProps, EntityFormState> {
   }
 
   refresh = () => {
-    if (this.context.accessToken) {
+    if (this.context.isAuthenticated && this.context.accessToken) {
       const promises = [
         SynapseClient.getUserProfile(this.context.accessToken),
         SynapseClient.getEntity(

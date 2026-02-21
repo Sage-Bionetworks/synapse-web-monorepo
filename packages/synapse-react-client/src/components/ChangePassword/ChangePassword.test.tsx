@@ -278,7 +278,8 @@ describe('ChangePassword tests', () => {
       {},
       {
         keyFactory: new KeyFactory(undefined),
-        accessToken: undefined,
+        accessToken: 'anon-token',
+        isAuthenticated: false,
       },
     )
 

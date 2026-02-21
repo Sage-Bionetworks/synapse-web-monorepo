@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router'
 import { SynapseClient, useSynapseContext } from 'synapse-react-client'
 
 export function LoginComponent() {
-  const { accessToken } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
   const [searchParams] = useSearchParams()
   useEffect(() => {
     const code = searchParams.get('code')
@@ -11,5 +11,7 @@ export function LoginComponent() {
     SynapseClient.setAccessTokenCookie(code ?? undefined)
   }, [])
 
-  return <p style={{ margin: 10 }}>{accessToken ? 'Logged' : 'Logging'} in</p>
+  return (
+    <p style={{ margin: 10 }}>{isAuthenticated ? 'Logged' : 'Logging'} in</p>
+  )
 }

@@ -8,11 +8,13 @@ import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSy
 import HomePage from '../pages/HomePage'
 import { dataQueryWrapperPlotNavProps } from './synapseConfigs/data'
 
+const ARCUS_BIO_REALM_ID = '0' // replace me!
+
 const routes: RouteObject[] = [
   {
     path: '/',
     element: (
-      <App requireAuthentication={true}>
+      <App defaultRealmId={ARCUS_BIO_REALM_ID} requireAuthentication={true}>
         {/* Add any global banners here if needed */}
       </App>
     ),

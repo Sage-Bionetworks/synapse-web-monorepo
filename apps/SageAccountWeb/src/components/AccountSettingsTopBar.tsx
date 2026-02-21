@@ -8,7 +8,6 @@ import MenuIcon from '@mui/icons-material/Menu'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
-import { signOut } from 'synapse-react-client/synapse-client/SynapseClient'
 
 interface AccountSettingsTopBarProps {
   accountSettingsPanelConfig: Array<{
@@ -28,7 +27,7 @@ const AccountSettingsTopBar: React.FC<AccountSettingsTopBarProps> = ({
     mr: '10px',
   }
   const appContext = useAppContext()
-  const { refreshSession } = useApplicationSessionContext()
+  const { clearSession } = useApplicationSessionContext()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const signOutSectionRef = useRef<HTMLDivElement>(null)
 
@@ -103,9 +102,7 @@ const AccountSettingsTopBar: React.FC<AccountSettingsTopBarProps> = ({
               onClick={() => {
                 handleClose()
                 if (item.ref === signOutSectionRef) {
-                  signOut().then(() => {
-                    refreshSession()
-                  })
+                  clearSession()
                 } else if (item.ref) {
                   handleScroll(item.ref)
                   setAnchorEl(item.ref)
