@@ -74,7 +74,7 @@ const MOCK_TOKEN_INTROSPECTION_ACTIVE_AUTHENTICATED: OAuthTokenIntrospectionResp
   {
     active: true,
     sub: mockUserId.toString(),
-    scope: ['openid'],
+    scope: 'openid',
     token_type: 'OIDC_ACCESS_TOKEN',
     exp: dayjs().add(1, 'hour').unix(),
     iat: dayjs().unix(),
@@ -86,7 +86,7 @@ const MOCK_TOKEN_INTROSPECTION_ACTIVE_ANONYMOUS: OAuthTokenIntrospectionResponse
   {
     active: true,
     sub: mockAnonymousPrincipalId.toString(),
-    scope: ['openid'],
+    scope: 'openid',
     token_type: 'OIDC_ACCESS_TOKEN',
     exp: dayjs().add(1, 'hour').unix(),
     iat: dayjs().unix(),

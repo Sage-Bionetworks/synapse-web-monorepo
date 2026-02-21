@@ -43,7 +43,7 @@ const MOCK_REALM_PRINCIPAL: RealmPrincipal = {
 const MOCK_INTROSPECTION_AUTHENTICATED: OAuthTokenIntrospectionResponse = {
   active: true,
   sub: MOCK_USER_ID,
-  scope: ['openid'],
+  scope: 'openid',
   token_type: 'OIDC_ACCESS_TOKEN',
   exp: dayjs().add(1, 'hour').unix(),
   iat: dayjs().unix(),
@@ -54,7 +54,7 @@ const MOCK_INTROSPECTION_AUTHENTICATED: OAuthTokenIntrospectionResponse = {
 const MOCK_INTROSPECTION_ANONYMOUS: OAuthTokenIntrospectionResponse = {
   active: true,
   sub: MOCK_ANONYMOUS_PRINCIPAL_ID,
-  scope: ['openid'],
+  scope: 'openid',
   token_type: 'OIDC_ACCESS_TOKEN',
   exp: dayjs().add(1, 'hour').unix(),
   iat: dayjs().unix(),
