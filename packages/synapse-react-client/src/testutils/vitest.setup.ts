@@ -22,23 +22,6 @@ window.URL.revokeObjectURL = vi.fn()
 // ResizeObserver polyfill for JSDOM
 global.ResizeObserver = ResizeObserver
 
-// Vitest 4 requires vi.fn() implementations to use 'function' or 'class' syntax when called as
-// constructors. Some libraries (e.g. react-intersection-observer/test-utils) pass arrow functions
-// to vi.fn() and then use the resulting mock as a constructor (via `new`). This patch wraps arrow
-// function implementations in regular functions to ensure constructor compatibility.
-const _origViFn = vi.fn
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-;(vi as any).fn = (impl?: (...args: unknown[]) => unknown) => {
-  if (!impl || impl.prototype !== undefined) {
-    // No implementation, or already a regular function/class (has .prototype): pass through
-    return _origViFn(impl as never)
-  }
-  // Arrow function (prototype is undefined): wrap in regular function for constructor compatibility
-  return _origViFn(function (this: unknown, ...args: unknown[]) {
-    return (impl as (...args: unknown[]) => unknown).apply(this, args)
-  } as never)
-}
-
 // IntersectionObserver polyfill for JSDOM
 setupIntersectionMocking(vi.fn)
 
