@@ -8,9 +8,11 @@ import {
 import UniversalCookies from 'universal-cookie'
 import { OAuthClientError } from './OAuthClientError'
 import { handleErrorRedirect } from './URLUtils'
+import useGoogleAnalytics from 'synapse-react-client/utils/analytics/useGoogleAnalytics'
 
 const cookies = new UniversalCookies()
 function AppInitializer(props: PropsWithChildren<Record<string, unknown>>) {
+  useGoogleAnalytics()
   const [searchParams] = useSearchParams()
   const accountSitePrompted =
     cookies.get(SynapseConstants.ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY) ==

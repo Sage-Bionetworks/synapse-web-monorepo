@@ -1,6 +1,9 @@
 import './AnalyticsTypes'
 import { useEffect } from 'react'
-import { useCookiePreferences } from '../hooks/useCookiePreferences'
+import {
+  CookiePreference,
+  useCookiePreferences,
+} from '../hooks/useCookiePreferences'
 
 // This hook code is globally executed once
 let isExecuted = false
@@ -9,7 +12,13 @@ export const useGoogleAnalytics = (measurementId: string = 'GTM-KPW4KS62') => {
   const [cookiePreferences] = useCookiePreferences()
 
   useEffect(() => {
-    if (cookiePreferences.analyticsAllowed && !isExecuted) {
+    if (
+      shouldEnableGoogleAnalytics(
+        window.location.hostname,
+        cookiePreferences,
+      ) &&
+      !isExecuted
+    ) {
       window.dataLayer = window.dataLayer || []
 
       window.dataLayer.push({
@@ -29,6 +38,21 @@ export const useGoogleAnalytics = (measurementId: string = 'GTM-KPW4KS62') => {
   }, [cookiePreferences, measurementId])
 
   return isExecuted
+}
+
+export function shouldEnableGoogleAnalytics(
+  hostname: string,
+  cookiePreferences: CookiePreference,
+) {
+  const isAnalyticsAllowed = cookiePreferences.analyticsAllowed
+
+  const isOnSynapseDomain = hostname.includes('synapse.org')
+  const isOnTestDomain =
+    hostname.includes('localhost') ||
+    hostname.includes('staging') ||
+    hostname.includes('dev')
+
+  return isAnalyticsAllowed && isOnSynapseDomain && !isOnTestDomain
 }
 
 export default useGoogleAnalytics
