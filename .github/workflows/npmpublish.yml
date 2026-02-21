@@ -39,7 +39,7 @@ jobs:
         run: pnpm nx run ${{ matrix.publishablePackage }}:build
       # If the package version changed, and the build succeeded, create the tag using the output of the previous step.
       - name: Create tag
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         if: github.event_name == 'push' && steps.package-version-check.outputs.changed == 'true'
         with:
           github-token: ${{ github.token }}
