@@ -3,7 +3,7 @@ import { uploadToS3 } from './UploadToS3'
 
 vi.mock('@aws-sdk/lib-storage', () => {
   return {
-    Upload: vi.fn().mockImplementation(() => {
+    Upload: vi.fn().mockImplementation(function () {
       return {
         on: vi.fn(),
         done: vi.fn(),
@@ -52,7 +52,7 @@ describe('UploadToS3', () => {
 
   test('failed upload', async () => {
     // @ts-expect-error - Only implement required properties
-    mockUpload.mockImplementation(() => {
+    mockUpload.mockImplementation(function () {
       return {
         on: vi.fn(),
         done: vi.fn().mockRejectedValue(new Error('Access Denied')),
