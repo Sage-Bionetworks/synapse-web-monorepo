@@ -46,11 +46,11 @@ export function shouldEnableGoogleAnalytics(
 ) {
   const isAnalyticsAllowed = cookiePreferences.analyticsAllowed
 
-  const isOnSynapseDomain = hostname.includes('synapse.org')
+  const isOnSynapseDomain = hostname.endsWith('synapse.org')
   const isOnTestDomain =
-    hostname.includes('localhost') ||
-    hostname.includes('staging') ||
-    hostname.includes('dev')
+    hostname.includes('localhost.') ||
+    hostname.includes('staging.') ||
+    hostname.includes('dev.')
 
   return isAnalyticsAllowed && isOnSynapseDomain && !isOnTestDomain
 }
