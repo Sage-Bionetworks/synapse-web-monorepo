@@ -118,7 +118,7 @@ export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
       }?emailValidationSignedToken=`
       await SynapseClient.addEmailAddressStep1(
         newEmail,
-        currentProfile!.ownerId!,
+        currentProfile!.ownerId,
         callbackUrl,
         accessToken,
       )
@@ -163,13 +163,17 @@ export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
                 <Box sx={{ flexGrow: 1, marginRight: '10px' }}>{email}</Box>
                 <Button
                   variant="outlined"
-                  onClick={e => changePrimaryEmail(e, email)}
+                  onClick={e => {
+                    void changePrimaryEmail(e, email)
+                  }}
                 >
                   Make Primary
                 </Button>
                 <IconButton
                   aria-label="close"
-                  onClick={e => deleteEmail(e, email)}
+                  onClick={e => {
+                    void deleteEmail(e, email)
+                  }}
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -213,7 +217,9 @@ export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
           control={
             <Checkbox
               checked={sendEmailNotifications}
-              onChange={e => updateEmailNotifications(!sendEmailNotifications)}
+              onChange={e => {
+                void updateEmailNotifications(!sendEmailNotifications)
+              }}
             />
           }
           label={

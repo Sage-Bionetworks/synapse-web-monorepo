@@ -38,11 +38,7 @@
   },
   "npmClient": "pnpm",
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,yml,scss,css,md}": [
+    "*.{js,jsx,ts,tsx,json,yml,scss,css,md}": [
       "prettier --write"
     ]
   },

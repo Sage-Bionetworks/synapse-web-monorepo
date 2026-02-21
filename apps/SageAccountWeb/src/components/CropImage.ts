@@ -4,7 +4,7 @@ export const createImg = (url: string) =>
   new Promise<HTMLImageElement>((res, rej) => {
     const img = new Image()
     img.addEventListener('load', () => res(img))
-    img.addEventListener('error', err => rej(err))
+    img.addEventListener('error', err => rej(err.error as Error))
     img.setAttribute('crossOrigin', 'anonymous')
     img.src = url
   })
@@ -43,7 +43,7 @@ export const getCroppedImg = async (
         reject(new Error('Canvas is empty'))
         return
       }
-      resolve(new File([file!], 'profilePic.jpg', { type: 'image/jpeg' }))
+      resolve(new File([file], 'profilePic.jpg', { type: 'image/jpeg' }))
     }, 'image/jpeg')
   })
 }

@@ -28,7 +28,7 @@ function TermsOfUsePage() {
   const { mutate: signTermsOfService } = useSignTermsOfService()
   const { data: tosInfo } = useTermsOfServiceInfo()
 
-  const onSignTermsOfUse = async (event: SyntheticEvent) => {
+  const onSignTermsOfUse = (event: SyntheticEvent) => {
     event.preventDefault()
     setIsLoading(true)
     try {
@@ -43,7 +43,7 @@ function TermsOfUsePage() {
               setIsDone(true)
             },
             onError: err => {
-              displayToast(err.reason as string, 'danger')
+              displayToast(err.reason, 'danger')
             },
           },
         )

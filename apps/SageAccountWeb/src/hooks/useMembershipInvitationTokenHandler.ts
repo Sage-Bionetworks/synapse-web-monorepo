@@ -37,9 +37,8 @@ export default function useMembershipInvitationTokenHandler():
         signedToken &&
         isMembershipInvtnSignedToken(signedToken)
       ) {
-        let membershipInvitation = await SynapseClient.getMembershipInvitation(
-          signedToken,
-        )
+        const membershipInvitation =
+          await SynapseClient.getMembershipInvitation(signedToken)
         setMembershipInvitation(membershipInvitation)
         if (!membershipInvitation.inviteeId) {
           // email is filled in, we must first bind the invitation

@@ -807,7 +807,7 @@ const AccountSettings = (): React.ReactNode => {
                   <Button
                     variant="outlined"
                     sx={credentialButtonSX}
-                    onClick={() => clearSession()}
+                    onClick={() => void clearSession()}
                   >
                     Sign out
                   </Button>

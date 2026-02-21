@@ -65,7 +65,7 @@ export const UnbindORCiDDialog = (
         <Button
           variant="contained"
           onClick={event =>
-            unbindORCiD(
+            void unbindORCiD(
               event,
               props.orcid,
               accessToken,
