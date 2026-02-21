@@ -8,6 +8,7 @@ import { getSearchParam } from './URLUtils'
 import { hex2ascii } from 'synapse-react-client/utils/functions/StringUtils'
 import { useFramebuster } from 'synapse-react-client/utils/AppUtils/AppUtils'
 import useMaybeForceEnable2FA from './hooks/useMaybeForceEnable2FA'
+import useGoogleAnalytics from 'synapse-react-client/utils/analytics/useGoogleAnalytics'
 
 function AppInitializer(props: { children?: ReactNode }) {
   const [signedToken, setSignedToken] = useState<
@@ -16,6 +17,7 @@ function AppInitializer(props: { children?: ReactNode }) {
 
   const isFramed = useFramebuster()
   const { appId, appURL } = useSourceApp()
+  useGoogleAnalytics()
 
   useEffect(() => {
     // PORTALS-3138: override endpoints if staging or dev are inthe hostname

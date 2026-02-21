@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="utf-8" />
     <link rel="icon" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,46 +12,44 @@
     <!-- <link rel="manifest" href="/manifest.json" /> -->
 
     <link
-            href="https://fonts.googleapis.com/css?family=Lato"
-            rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Lato"
+      rel="stylesheet"
     />
     <link
-            rel="stylesheet"
-            href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-            crossorigin="anonymous"
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+      crossorigin="anonymous"
     />
 
     <title>Sage Bionetworks Sign-in</title>
-      <!-- Google Tag Manager -->
-      <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-KPW4KS62');
-      </script>
-      <!-- End Google Tag Manager -->
 
     <script>
-        const endpointOverride = {
-          REPO: "%VITE_SYNAPSE_REPO_ENDPOINT%",
-          PORTAL: "%VITE_SYNAPSE_PORTAL_ENDPOINT%"
-        }
+      const endpointOverride = {
+        REPO: '%VITE_SYNAPSE_REPO_ENDPOINT%',
+        PORTAL: '%VITE_SYNAPSE_PORTAL_ENDPOINT%',
+      }
 
-        if (endpointOverride.REPO && endpointOverride.PORTAL) {
-            window.SRC_OVERRIDE_ENDPOINT_CONFIG = endpointOverride;
-        }
-      </script>
+      if (endpointOverride.REPO && endpointOverride.PORTAL) {
+        window.SRC_OVERRIDE_ENDPOINT_CONFIG = endpointOverride
+      }
+    </script>
     <script type="module" src="./src/index.tsx"></script>
-</head>
-<body id="body">
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KPW4KS62"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-<noscript>You need to enable JavaScript to run this app.</noscript>
-<div id="accountWebRoot"></div>
-<!--
+  </head>
+  <body id="body">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-KPW4KS62"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="accountWebRoot"></div>
+    <!--
   This HTML file is a template.
   If you open it directly in the browser, you will see an empty page.
 
@@ -61,5 +59,5 @@
   To begin the development, run `pnpm start`.
   To create a production bundle, use `pnpm build`.
 -->
-</body>
+  </body>
 </html>
