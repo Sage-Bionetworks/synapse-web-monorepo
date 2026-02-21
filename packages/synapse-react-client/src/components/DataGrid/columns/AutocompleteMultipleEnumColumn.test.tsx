@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import {
   autocompleteMultipleEnumColumn,
   AutocompleteMultipleEnumCellProps,
+  parseMultipleEnumPasteValue,
 } from './AutocompleteMultipleEnumColumn'
 
 // Helper to create a test cell component from the column factory
@@ -82,18 +83,14 @@ describe('autocompleteMultipleEnumColumn', () => {
     expect(typeof cellClassName).toBe('function')
 
     if (typeof cellClassName === 'function') {
-      // fewer than 3 values gets the multi-value-cell class
-      expect(cellClassName({ rowData: ['one'], rowIndex: 0 })).toBe(
-        'multi-value-cell',
-      )
-      // empty or null/undefined gets the multi-value-cell class
-      expect(cellClassName({ rowData: undefined, rowIndex: 0 })).toBe(
-        'multi-value-cell',
-      )
-      // 3 or more values gets the multi-value-cell-large class
+      // fewer than limitTags (2) values gets empty string
+      expect(cellClassName({ rowData: ['one'], rowIndex: 0 })).toBe('')
+      // empty or null/undefined gets empty string
+      expect(cellClassName({ rowData: undefined, rowIndex: 0 })).toBe('')
+      // more than limitTags (2) values gets the dynamic-height-cell class
       expect(
         cellClassName({ rowData: ['1', '2', '3', '4'], rowIndex: 0 }),
-      ).toBe('multi-value-cell-large')
+      ).toBe('dynamic-height-cell')
     }
   })
 
@@ -660,6 +657,82 @@ describe('autocompleteMultipleEnumColumn', () => {
       expect(
         await screen.findByRole('option', { name: 'option2' }),
       ).toBeInTheDocument()
+    })
+  })
+})
+
+// Example test file
+describe('parseMultipleEnumPasteValue', () => {
+  describe('bracket-enclosed arrays', () => {
+    it('should parse valid JSON array strings with double quotes', () => {
+      expect(parseMultipleEnumPasteValue('["a","b","c"]', 'string')).toEqual([
+        'a',
+        'b',
+        'c',
+      ])
+    })
+
+    it('should parse JavaScript array literals with single quotes', () => {
+      // Single quotes are converted to double quotes and parsed
+      expect(parseMultipleEnumPasteValue("['x','y']", 'string')).toEqual([
+        'x',
+        'y',
+      ])
+      expect(parseMultipleEnumPasteValue("['a', 'b', 'c']", 'string')).toEqual([
+        'a',
+        'b',
+        'c',
+      ])
+    })
+
+    it('should fall through to comma-split on invalid JSON', () => {
+      expect(parseMultipleEnumPasteValue('[invalid json', 'string')).toEqual([
+        '[invalid json',
+      ])
+    })
+  })
+
+  describe('comma-delimited values', () => {
+    it('should parse comma-separated values', () => {
+      expect(parseMultipleEnumPasteValue('a,b,c', 'string')).toEqual([
+        'a',
+        'b',
+        'c',
+      ])
+    })
+
+    it('should parse tab-delimited values', () => {
+      expect(parseMultipleEnumPasteValue('a\tb\tc', 'string')).toEqual([
+        'a',
+        'b',
+        'c',
+      ])
+    })
+
+    it('should trim whitespace', () => {
+      expect(parseMultipleEnumPasteValue(' a , b , c ', 'string')).toEqual([
+        'a',
+        'b',
+        'c',
+      ])
+    })
+
+    it('should filter empty values', () => {
+      expect(parseMultipleEnumPasteValue('a,,b', 'string')).toEqual(['a', 'b'])
+    })
+
+    it('should return empty array for empty string', () => {
+      expect(parseMultipleEnumPasteValue('', 'string')).toEqual([])
+    })
+  })
+
+  describe('non-string values', () => {
+    it('should pass through non-string values unchanged', () => {
+      expect(parseMultipleEnumPasteValue(['a', 'b'], 'string')).toEqual([
+        'a',
+        'b',
+      ])
+      expect(parseMultipleEnumPasteValue(null, 'string')).toBe(null)
     })
   })
 })

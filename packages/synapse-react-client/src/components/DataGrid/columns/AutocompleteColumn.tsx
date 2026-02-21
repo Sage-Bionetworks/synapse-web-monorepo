@@ -207,13 +207,43 @@ export type AutocompleteColumnProps = {
   clearValue: undefined | null
 }
 
+// Extract paste logic for easier testing
+export function parseAutocompletePasteValue(
+  value: unknown,
+  colType?: JSONSchema7Type,
+): unknown {
+  // Only coerce string values to boolean if this is explicitly a boolean column
+  if (colType === 'boolean' && typeof value === 'string') {
+    const upperValue = value.trim().toUpperCase()
+
+    // Handle TRUE values (including Excel-style TRUE, 1, YES)
+    if (upperValue === 'TRUE' || upperValue === '1' || upperValue === 'YES') {
+      return true
+    }
+
+    // Handle FALSE values (including Excel-style FALSE, 0, NO, empty string)
+    if (
+      upperValue === 'FALSE' ||
+      upperValue === '0' ||
+      upperValue === 'NO' ||
+      upperValue === ''
+    ) {
+      return false
+    }
+  }
+
+  return value
+}
+
 export function autocompleteColumn({
   choices,
   colType,
   clearValue,
 }: AutocompleteColumnProps): Partial<Column> {
   return {
-    component: ((props: Omit<AutocompleteCellProps, 'choices'>) => (
+    component: ((
+      props: Omit<AutocompleteCellProps, 'choices' | 'colType' | 'clearValue'>,
+    ) => (
       <MemoizedAutocompleteCell
         {...props}
         choices={choices}
@@ -221,9 +251,8 @@ export function autocompleteColumn({
         clearValue={clearValue}
       />
     )) as CellComponent,
-    // If we update our enums to support labels, then we can update copy to copy the label and paste to lookup the mapping from label -> value
-    copyValue: ({ rowData }) => rowData,
-    pasteValue: ({ value }) => value,
+    copyValue: ({ rowData }) => castCellValueToString(rowData),
+    pasteValue: ({ value }) => parseAutocompletePasteValue(value, colType),
     disableKeys: true,
     keepFocus: true,
   }

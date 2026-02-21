@@ -2,7 +2,11 @@ import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseF
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
-import { AutocompleteCell, AutocompleteCellProps } from './AutocompleteColumn'
+import {
+  AutocompleteCell,
+  AutocompleteCellProps,
+  parseAutocompletePasteValue,
+} from './AutocompleteColumn'
 
 describe('AutocompleteColumn', () => {
   it('should initialize and render AutocompleteCell with basic props', () => {
@@ -528,6 +532,47 @@ describe('AutocompleteColumn', () => {
 
       render(<AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />)
       expect(screen.getByRole('combobox')).toHaveValue('2')
+    })
+  })
+})
+
+describe('parseAutocompletePasteValue', () => {
+  describe('boolean columns', () => {
+    it('should parse TRUE string to true', () => {
+      expect(parseAutocompletePasteValue('TRUE', 'boolean')).toBe(true)
+      expect(parseAutocompletePasteValue('true', 'boolean')).toBe(true)
+      expect(parseAutocompletePasteValue('True', 'boolean')).toBe(true)
+    })
+
+    it('should parse FALSE string to false', () => {
+      expect(parseAutocompletePasteValue('FALSE', 'boolean')).toBe(false)
+      expect(parseAutocompletePasteValue('false', 'boolean')).toBe(false)
+    })
+
+    it('should parse numeric boolean representations', () => {
+      expect(parseAutocompletePasteValue('1', 'boolean')).toBe(true)
+      expect(parseAutocompletePasteValue('0', 'boolean')).toBe(false)
+    })
+
+    it('should parse YES/NO', () => {
+      expect(parseAutocompletePasteValue('YES', 'boolean')).toBe(true)
+      expect(parseAutocompletePasteValue('NO', 'boolean')).toBe(false)
+    })
+
+    it('should handle empty string as false', () => {
+      expect(parseAutocompletePasteValue('', 'boolean')).toBe(false)
+    })
+  })
+
+  describe('non-boolean columns', () => {
+    it('should not coerce strings for string columns', () => {
+      expect(parseAutocompletePasteValue('TRUE', 'string')).toBe('TRUE')
+      expect(parseAutocompletePasteValue('false', 'string')).toBe('false')
+    })
+
+    it('should pass through non-string values unchanged', () => {
+      expect(parseAutocompletePasteValue(123, 'boolean')).toBe(123)
+      expect(parseAutocompletePasteValue(null, 'boolean')).toBe(null)
     })
   })
 })
