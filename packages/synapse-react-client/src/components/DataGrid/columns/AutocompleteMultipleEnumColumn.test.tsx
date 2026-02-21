@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import {
   autocompleteMultipleEnumColumn,
@@ -520,6 +521,145 @@ describe('autocompleteMultipleEnumColumn', () => {
       expect(screen.getByRole('combobox')).toBeInTheDocument()
       expect(screen.getByText('1')).toBeInTheDocument()
       expect(screen.getByText('2')).toBeInTheDocument()
+    })
+  })
+
+  describe('Dropdown Menu Behavior', () => {
+    it('should open the dropdown menu when clicking the dropdown button', async () => {
+      const mockSetRowData = vi.fn()
+      const mockStopEditing = vi.fn()
+      const choices = ['option1', 'option2', 'option3']
+
+      const TestCell = createTestCell(choices, 'string')
+
+      const mockCellProps: Partial<AutocompleteMultipleEnumCellProps> = {
+        rowData: ['option1'],
+        setRowData: mockSetRowData,
+        focus: true,
+        active: true,
+        stopEditing: mockStopEditing,
+      }
+
+      render(
+        <TestCell {...(mockCellProps as AutocompleteMultipleEnumCellProps)} />,
+      )
+
+      // Click the dropdown arrow button
+      const dropdownButton = screen.getByRole('button', { name: /open/i })
+      await userEvent.click(dropdownButton)
+
+      // Verify options are displayed
+      const option2 = await screen.findByRole('option', { name: 'option2' })
+      expect(option2).toBeInTheDocument()
+    })
+
+    it('should allow selecting an option from the dropdown without flickering', async () => {
+      const mockSetRowData = vi.fn()
+      const mockStopEditing = vi.fn()
+      const choices = ['option1', 'option2', 'option3']
+
+      const TestCell = createTestCell(choices, 'string')
+
+      const mockCellProps: Partial<AutocompleteMultipleEnumCellProps> = {
+        rowData: [],
+        setRowData: mockSetRowData,
+        focus: true,
+        active: true,
+        stopEditing: mockStopEditing,
+      }
+
+      render(
+        <TestCell {...(mockCellProps as AutocompleteMultipleEnumCellProps)} />,
+      )
+
+      // Click the dropdown arrow button
+      const dropdownButton = screen.getByRole('button', { name: /open/i })
+      await userEvent.click(dropdownButton)
+
+      // Select option2
+      const option2 = await screen.findByRole('option', { name: 'option2' })
+      await userEvent.click(option2)
+
+      // Verify setRowData was called with the selected value
+      await waitFor(() => {
+        expect(mockSetRowData).toHaveBeenCalledWith(['option2'])
+      })
+    })
+
+    it('should close the dropdown menu when active becomes false', async () => {
+      const mockSetRowData = vi.fn()
+      const mockStopEditing = vi.fn()
+      const choices = ['option1', 'option2']
+
+      const TestCell = createTestCell(choices, 'string')
+
+      const mockCellProps: Partial<AutocompleteMultipleEnumCellProps> = {
+        rowData: [],
+        setRowData: mockSetRowData,
+        focus: true,
+        active: true,
+        stopEditing: mockStopEditing,
+      }
+
+      const { rerender } = render(
+        <TestCell {...(mockCellProps as AutocompleteMultipleEnumCellProps)} />,
+      )
+
+      // Open dropdown
+      const dropdownButton = screen.getByRole('button', { name: /open/i })
+      await userEvent.click(dropdownButton)
+
+      // Verify options are displayed
+      expect(
+        await screen.findByRole('option', { name: 'option1' }),
+      ).toBeInTheDocument()
+
+      // Simulate cell becoming inactive
+      rerender(
+        <TestCell
+          {...(mockCellProps as AutocompleteMultipleEnumCellProps)}
+          active={false}
+          focus={false}
+        />,
+      )
+
+      // Dropdown should close (no options visible)
+      await waitFor(() => {
+        expect(screen.queryByRole('option')).not.toBeInTheDocument()
+      })
+    })
+
+    it('should keep dropdown open while selecting multiple options', async () => {
+      const mockSetRowData = vi.fn()
+      const mockStopEditing = vi.fn()
+      const choices = ['option1', 'option2', 'option3']
+
+      const TestCell = createTestCell(choices, 'string')
+
+      const mockCellProps: Partial<AutocompleteMultipleEnumCellProps> = {
+        rowData: [],
+        setRowData: mockSetRowData,
+        focus: true,
+        active: true,
+        stopEditing: mockStopEditing,
+      }
+
+      render(
+        <TestCell {...(mockCellProps as AutocompleteMultipleEnumCellProps)} />,
+      )
+
+      // Open dropdown
+      const dropdownButton = screen.getByRole('button', { name: /open/i })
+      await userEvent.click(dropdownButton)
+
+      // Select first option
+      const option1 = await screen.findByRole('option', { name: 'option1' })
+      await userEvent.click(option1)
+
+      // Dropdown should remain open (disableCloseOnSelect is true when choices > 1)
+      expect(
+        await screen.findByRole('option', { name: 'option2' }),
+      ).toBeInTheDocument()
     })
   })
 })
