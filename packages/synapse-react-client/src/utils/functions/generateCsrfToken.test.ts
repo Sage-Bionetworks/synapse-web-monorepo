@@ -28,6 +28,7 @@ describe('generateCsrfToken', () => {
 
     // If crypto is available, the token should be 64 characters (32 bytes in hex)
     if (window.crypto && 'getRandomValues' in window.crypto) {
+      // eslint-disable-next-line vitest/no-conditional-expect
       expect(token).toHaveLength(64)
     }
   })

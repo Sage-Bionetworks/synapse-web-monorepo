@@ -945,9 +945,10 @@ describe('useColumnResizeHandles', () => {
       const handleA = initialHandles.find(
         h => h.dataset.columnName === 'Column A',
       )
-      if (handleA) {
-        expect(handleA.style.display).toBe('none')
+      if (!handleA) {
+        throw new Error('Handle for Column A should exist in initial handles')
       }
+      expect(handleA.style.display).toBe('none')
 
       // New handles should exist for new columns
       const newHandles = document.querySelectorAll<HTMLElement>(

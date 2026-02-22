@@ -79,21 +79,25 @@ describe('autocompleteMultipleEnumColumn', () => {
     })
     const cellClassName = column.cellClassName
     expect(typeof cellClassName).toBe('function')
-
-    if (typeof cellClassName === 'function') {
-      // fewer than 3 values gets the multi-value-cell class
-      expect(cellClassName({ rowData: ['one'], rowIndex: 0 })).toBe(
-        'multi-value-cell',
+    if (typeof cellClassName !== 'function') {
+      // type guard
+      throw new Error(
+        'cellClassName should be a function when dynamicHeight is enabled',
       )
-      // empty or null/undefined gets the multi-value-cell class
-      expect(cellClassName({ rowData: undefined, rowIndex: 0 })).toBe(
-        'multi-value-cell',
-      )
-      // 3 or more values gets the multi-value-cell-large class
-      expect(
-        cellClassName({ rowData: ['1', '2', '3', '4'], rowIndex: 0 }),
-      ).toBe('multi-value-cell-large')
     }
+
+    // fewer than 3 values gets the multi-value-cell class
+    expect(cellClassName({ rowData: ['one'], rowIndex: 0 })).toBe(
+      'multi-value-cell',
+    )
+    // empty or null/undefined gets the multi-value-cell class
+    expect(cellClassName({ rowData: undefined, rowIndex: 0 })).toBe(
+      'multi-value-cell',
+    )
+    // 3 or more values gets the multi-value-cell-large class
+    expect(cellClassName({ rowData: ['1', '2', '3', '4'], rowIndex: 0 })).toBe(
+      'multi-value-cell-large',
+    )
   })
 
   describe('Memoization and Performance', () => {

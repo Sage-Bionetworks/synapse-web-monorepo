@@ -1,3 +1,4 @@
+/* eslint-disable vitest/no-conditional-expect */
 import {
   ColumnModel,
   ColumnSingleValueFilterOperator,

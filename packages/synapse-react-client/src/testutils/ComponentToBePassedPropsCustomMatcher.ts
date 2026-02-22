@@ -1,3 +1,4 @@
+/* eslint-disable vitest/no-standalone-expect */
 import { Mock } from 'vitest'
 import { screen } from '@testing-library/react'
 

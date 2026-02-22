@@ -28,9 +28,11 @@ describe('AridhiaClient', () => {
     // accessToken getter returns a function that returns the token
     const tokenFn = config.accessToken
     expect(tokenFn).toBeDefined()
-    if (tokenFn) {
-      const token = await tokenFn()
-      expect(token).toBe(accessToken)
+    if (!tokenFn) {
+      throw new Error('accessToken should be a function that returns the token')
     }
+
+    const token = await tokenFn()
+    expect(token).toBe(accessToken)
   })
 })

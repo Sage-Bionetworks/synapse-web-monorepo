@@ -172,17 +172,21 @@ describe('fetchWithExponentialTimeout', () => {
     mockedPromiseWithRetry.mockImplementation(async fn => fn())
     global.fetch = vi.fn().mockResolvedValue(errorResponse)
 
+    let error
     try {
       await fetchWithExponentialTimeout('https://api.example.com/data')
       expect.fail('Should have thrown HttpFetchError')
-    } catch (error) {
-      expect(error).toBeInstanceOf(HttpFetchError)
-      if (error instanceof HttpFetchError) {
-        expect(error.status).toBe(404)
-        expect(error.message).toBe('HTTP 404: Not Found')
-        expect(error.response).toBeDefined()
-      }
+    } catch (e) {
+      error = e
     }
+    expect(error).toBeInstanceOf(HttpFetchError)
+    if (!(error instanceof HttpFetchError)) {
+      throw new Error('Error should be an instance of HttpFetchError')
+    }
+
+    expect(error.status).toBe(404)
+    expect(error.message).toBe('HTTP 404: Not Found')
+    expect(error.response).toBeDefined()
   })
 
   it('should pass fetch options correctly', async () => {
@@ -250,16 +254,19 @@ describe('fetchWithExponentialTimeout', () => {
     mockedPromiseWithRetry.mockImplementation(async fn => fn())
     global.fetch = vi.fn().mockResolvedValue(errorResponse)
 
+    let error
     try {
       await fetchWithExponentialTimeout('https://api.example.com/data')
-    } catch (error) {
-      if (error instanceof RetryError) {
-        expect(error.cause).toBeInstanceOf(Response)
-        const response = error.cause as Response
-        expect(response.status).toBe(503)
-        expect(error.cause).not.toBe(errorResponse)
-      }
+    } catch (e) {
+      error = e
     }
+    if (!(error instanceof RetryError)) {
+      throw new Error('Error should be an instance of RetryError')
+    }
+    expect(error.cause).toBeInstanceOf(Response)
+    const response = error.cause as Response
+    expect(response.status).toBe(503)
+    expect(error.cause).not.toBe(errorResponse)
   })
 
   it('should handle responses without statusText', async () => {
@@ -271,13 +278,17 @@ describe('fetchWithExponentialTimeout', () => {
     mockedPromiseWithRetry.mockImplementation(async fn => fn())
     global.fetch = vi.fn().mockResolvedValue(errorResponse)
 
+    let error
     try {
       await fetchWithExponentialTimeout('https://api.example.com/data')
-    } catch (error) {
-      if (error instanceof RetryError) {
-        expect(error.message).toBe('HTTP 503: Unknown error')
-      }
+    } catch (e) {
+      error = e
     }
+    if (!(error instanceof RetryError)) {
+      throw new Error('Error should be an instance of RetryError')
+    }
+
+    expect(error.message).toBe('HTTP 503: Unknown error')
   })
 })
 

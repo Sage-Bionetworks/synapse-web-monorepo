@@ -189,15 +189,18 @@ describe('promiseWithRetry', () => {
     const error = new RetryError('retry failed', cause)
     const fn = vi.fn().mockRejectedValue(error)
 
+    let thrownError
     try {
       await promiseWithRetry(fn, 0, 100)
     } catch (e) {
-      expect(e).toBeInstanceOf(RetryError)
-      if (e instanceof RetryError) {
-        expect(e.cause).toBe(cause)
-        expect(e.message).toBe('retry failed')
-      }
+      thrownError = e
     }
+    expect(error).toBeInstanceOf(RetryError)
+    if (!(error instanceof RetryError)) {
+      throw new Error('Error should be an instance of RetryError')
+    }
+    expect(error.cause).toBe(cause)
+    expect(error.message).toBe('retry failed')
   })
 })
 
