@@ -1,0 +1,4 @@
+import{j as e,Y as s,$ as o,cw as c}from"./iframe-81JeKJJY.js";import{e as u}from"./useUserBundle-C7u0mSik.js";import{a as i,R as m}from"./RequirementItem-Cj3Xh3Xz.js";function n(){const{data:r,isLoading:t}=u(),a=t?i.LOADING:r?.isCertified?i.COMPLETE:i.LOCKED;return e.jsxs(m,{status:a,children:[e.jsxs(s,{variant:"body1",children:["You must first become a"," ",e.jsx(o,{href:`${c.PORTAL}Quiz:`,children:"certified user"})]}),t&&e.jsx("span",{className:"spinner"}),r?.isCertified&&e.jsx(s,{variant:"body1",children:"You are a certified user"})]})}try{n.displayName="CertificationRequirement",n.__docgenInfo={description:`When creating requests for access requirements on a particular file, one or more access requirements may require that the
+user is certified.
+
+This component checks if the user is certified, and if not, provides a link on how to begin certification.`,displayName:"CertificationRequirement",props:{}}}catch{}export{n as C};
