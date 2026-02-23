@@ -99,7 +99,6 @@ describe('useDirectUploadToS3', () => {
   })
 
   it('does not create a file handle when s3 upload fails', async () => {
-    // @ts-expect-error - Only implement required properties
     mockUpload.mockImplementation(() => {
       return {
         on: vi.fn(),

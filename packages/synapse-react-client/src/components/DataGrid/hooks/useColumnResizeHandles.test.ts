@@ -13,7 +13,7 @@ describe('useColumnResizeHandles', () => {
   let mockWrapperRef: React.RefObject<HTMLDivElement | null>
   let mockGridContainer: HTMLElement
   let mockHeaderRow: HTMLElement
-  let mockOnColumnResize: ReturnType<typeof vi.fn>
+  let mockOnColumnResize = vi.fn()
   let mockColValues: Column[]
   let resizeObserverCallback: ((entry: ResizeObserverEntry) => void) | null =
     null

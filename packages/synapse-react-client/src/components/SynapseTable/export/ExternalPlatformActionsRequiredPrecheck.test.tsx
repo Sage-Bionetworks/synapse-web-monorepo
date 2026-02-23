@@ -100,7 +100,7 @@ const mockQueryContext: QueryContextType = {
   },
   rowDataInfiniteQueryOptions: {
     queryKey: ['rowDataInfiniteQueryOptions'],
-    queryFn: vi.fn(),
+    queryFn: vi.fn() as any,
     initialPageParam: undefined,
     getNextPageParam: vi.fn(),
   },

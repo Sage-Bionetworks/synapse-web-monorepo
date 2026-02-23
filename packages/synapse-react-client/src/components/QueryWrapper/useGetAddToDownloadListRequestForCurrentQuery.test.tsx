@@ -85,7 +85,7 @@ const mockQueryContextValue: QueryContextType = {
   resetQuery: vi.fn(),
   rowDataInfiniteQueryOptions: {
     queryKey: [],
-    queryFn: vi.fn(),
+    queryFn: vi.fn() as any,
     initialPageParam: undefined,
     getNextPageParam: vi.fn(),
   },

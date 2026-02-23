@@ -7,19 +7,12 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { http, HttpResponse } from 'msw'
 import { SynapseApiResponse } from 'synapse-react-client/mocks/msw/handlers'
-import { Mock, vi } from 'vitest'
 import mockOauthClient from './MockOAuthClient'
 
 let hasConsented = false
 
 export function resetConsentedInMockService(newValue: boolean) {
   hasConsented = newValue
-}
-
-let mockPostConsentFn = vi.fn()
-
-export function setMockPostConsentFn(fn: Mock<any>) {
-  mockPostConsentFn = fn
 }
 
 export const ACCESS_CODE_PROVIDED_BY_SERVER = 'some Access Code' //contains value that will be encoded in the redirect to test for double-encoding
@@ -94,7 +87,6 @@ export const handlers = [
     'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/consent',
     () => {
       hasConsented = true
-      mockPostConsentFn()
       return HttpResponse.json(
         { access_code: ACCESS_CODE_PROVIDED_BY_SERVER },
         { status: 200 },
