@@ -9,6 +9,15 @@ import { describe, expect, it } from 'vitest'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
 import { dateTimeColumn } from '../columns/DateTimeColumn'
 import { createColumn } from './columnFactory'
+import { isValidElement, ReactElement } from 'react'
+
+/** Helper to extract column name from title (now a React element) */
+function getTitleName(title: unknown): string | undefined {
+  if (isValidElement(title)) {
+    return (title as ReactElement<{ name: string }>).props.name
+  }
+  return undefined
+}
 
 vi.mock('@sage-bionetworks/react-datasheet-grid', async importActual => {
   const actual = await importActual<
@@ -67,7 +76,7 @@ describe('columnFactory', () => {
       const column = createColumn(config)
       expect(mockAutocompleteMultipleEnumColumn).toHaveBeenCalled()
 
-      expect(column.title).toBe('tags')
+      expect(getTitleName(column.title)).toBe('tags')
       expect(column.headerClassName).toBe('header-cell-required')
     })
 
@@ -82,7 +91,7 @@ describe('columnFactory', () => {
       const column = createColumn(config)
       expect(mockAutocompleteColumn).toHaveBeenCalled()
 
-      expect(column.title).toBe('isActive')
+      expect(getTitleName(column.title)).toBe('isActive')
       expect(column.headerClassName).toBe('header-cell')
     })
 
@@ -97,7 +106,7 @@ describe('columnFactory', () => {
       const column = createColumn(config)
       expect(mockDateTimeColumn).toHaveBeenCalled()
 
-      expect(column.title).toBe('isActive')
+      expect(getTitleName(column.title)).toBe('isActive')
       expect(column.headerClassName).toBe('header-cell')
     })
 
@@ -112,7 +121,7 @@ describe('columnFactory', () => {
       const column = createColumn(config)
       expect(keyColumnSpy).toHaveBeenCalledWith('count', floatColumn)
 
-      expect(column.title).toBe('count')
+      expect(getTitleName(column.title)).toBe('count')
       expect(column.headerClassName).toBe('header-cell-required')
     })
 
@@ -126,7 +135,7 @@ describe('columnFactory', () => {
 
       const column = createColumn(config)
 
-      expect(column.title).toBe('age')
+      expect(getTitleName(column.title)).toBe('age')
       expect(column.headerClassName).toBe('header-cell')
     })
 
@@ -141,7 +150,7 @@ describe('columnFactory', () => {
       const column = createColumn(config)
       expect(mockAutocompleteColumn).toHaveBeenCalled()
 
-      expect(column.title).toBe('status')
+      expect(getTitleName(column.title)).toBe('status')
       expect(column.headerClassName).toBe('header-cell-required')
     })
 
@@ -156,7 +165,7 @@ describe('columnFactory', () => {
       const column = createColumn(config)
       expect(mockCreateTextColumn).toHaveBeenCalled()
 
-      expect(column.title).toBe('description')
+      expect(getTitleName(column.title)).toBe('description')
       expect(column.headerClassName).toBe('header-cell')
     })
 
