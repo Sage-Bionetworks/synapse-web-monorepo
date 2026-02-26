@@ -22,6 +22,8 @@ root.render(
   <StrictMode>
     <Portal
       portalName={import.meta.env.VITE_PORTAL_NAME}
+      portalDescription={import.meta.env.VITE_PORTAL_DESCRIPTION}
+      portalKey={import.meta.env.VITE_PORTAL_KEY}
       palette={palette}
       routeConfig={routes}
       headerConfig={headerConfig}

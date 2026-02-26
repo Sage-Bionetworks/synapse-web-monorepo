@@ -13,6 +13,7 @@ import { ExploreWrapperTabs } from './ExploreWrapperTabs'
 import { useDocumentMetadata } from 'synapse-react-client/utils/context/DocumentMetadataContext'
 import { matchPath } from 'react-router'
 import React from 'react'
+import { usePortalContext } from '@/components/PortalContext'
 
 function RouteMatchedOrientationBanner(props: {
   route: ExplorePageRoute
@@ -44,12 +45,13 @@ export default function ExploreWrapper(
     const routePath = encodeURI(`/Explore/${route.path}`)
     return Boolean(matchPath({ path: routePath, end: false }, pathname))
   })
+  const { portalName } = usePortalContext()
   const pageName =
     currentRoute?.displayName ??
     currentRoute?.path?.replaceAll('/', '') ??
     'Explore'
 
-  const newTitle: string = `${import.meta.env.VITE_PORTAL_NAME} - ${pageName}`
+  const newTitle: string = `${portalName} - ${pageName}`
   useDocumentMetadata({ title: newTitle, priority: 50 })
 
   // The canonical URL is the explore route with no searchParams

@@ -1,11 +1,13 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material'
 import HeaderSearchBox from '../HeaderSearchBox'
+import { usePortalContext } from '@/components/PortalContext'
 
 type AMPALSHeaderProps = {
   headerSvgURL: string
 }
 const AMPALSHeader = (props: AMPALSHeaderProps): React.ReactNode => {
+  const { portalName, portalDescription } = usePortalContext()
   const { headerSvgURL } = props
   const searchPlaceholder = 'Search for ALS related data and resources'
   const searchExampleTerms = ['ALS', 'FTD', 'Sporadic ALS']
@@ -26,13 +28,13 @@ const AMPALSHeader = (props: AMPALSHeaderProps): React.ReactNode => {
             lineHeight: '54px',
           }}
         >
-          Welcome to the {import.meta.env.VITE_PORTAL_NAME}
+          Welcome to the {portalName}
         </Typography>
         <Typography
           variant="body1"
           sx={{ fontSize: '18px', lineHeight: '144%' }}
         >
-          {import.meta.env.VITE_PORTAL_DESCRIPTION}
+          {portalDescription}
         </Typography>
         {/* <Typography
           variant="body1"
