@@ -1,0 +1,1 @@
+import{cO as t}from"./iframe-CZFJJ8mF.js";import{c as p}from"./_createAggregator-CVJq-d0C.js";var e=Object.prototype,s=e.hasOwnProperty,i=p(function(r,a,o){s.call(r,o)?r[o].push(a):t(r,o,[a])});export{i as g};
