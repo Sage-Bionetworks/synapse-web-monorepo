@@ -7,11 +7,9 @@ import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/D
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { Outlet } from 'react-router'
-import {
-  CardContainerLogic,
-  ErrorPage,
-  SynapseErrorType,
-} from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import ErrorPage from 'synapse-react-client/components/error/ErrorPage'
+import { SynapseErrorType } from 'synapse-react-client/components/error/ErrorPage'
 
 function ChallengeDetailsPage() {
   const { id } = useGetPortalComponentSearchParams()

@@ -3,7 +3,7 @@ import useMaybePromptToSignTermsOfService from '@/hooks/useMaybePromptToSignTerm
 import { getSearchParam } from '@/URLUtils'
 import { useEffect } from 'react'
 import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
-import { processRedirectURLInOneSage } from 'synapse-react-client/utils/AppUtils'
+import { processRedirectURLInOneSage } from 'synapse-react-client/utils/AppUtils/index'
 import LoginPage from '@/pages/LoginPage'
 import useMaybeForceEnable2FA from '@/hooks/useMaybeForceEnable2FA'
 

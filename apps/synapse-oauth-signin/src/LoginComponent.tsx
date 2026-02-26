@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useSearchParams } from 'react-router'
-import { SynapseClient, useSynapseContext } from 'synapse-react-client'
+import SynapseClient from 'synapse-react-client/synapse-client/index'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 
 export function LoginComponent() {
   const { isAuthenticated } = useSynapseContext()

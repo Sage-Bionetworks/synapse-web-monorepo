@@ -9,9 +9,9 @@ import { http, HttpResponse } from 'msw'
 import { SynapseApiResponse } from 'synapse-react-client/mocks/msw/handlers'
 import { Mock, vi } from 'vitest'
 import mockOauthClient from './MockOAuthClient'
-import { MOCK_ANONYMOUS_PRINCIPAL_ID } from 'synapse-react-client'
-import { MOCK_PUBLIC_PRINCIPAL_ID } from 'synapse-react-client'
-import { MOCK_AUTHENTICATED_PRINCIPAL_ID } from 'synapse-react-client'
+import { MOCK_ANONYMOUS_PRINCIPAL_ID } from 'synapse-react-client/mocks/realm/mockRealmPrincipal'
+import { MOCK_PUBLIC_PRINCIPAL_ID } from 'synapse-react-client/mocks/realm/mockRealmPrincipal'
+import { MOCK_AUTHENTICATED_PRINCIPAL_ID } from 'synapse-react-client/mocks/realm/mockRealmPrincipal'
 
 let hasConsented = false
 

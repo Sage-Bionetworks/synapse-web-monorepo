@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import { memo } from 'react'
-import { ExperimentalMode } from 'synapse-react-client/components/ExperimentalMode'
+import { ExperimentalMode } from 'synapse-react-client/components/ExperimentalMode/index'
 
 function Footer() {
   return (

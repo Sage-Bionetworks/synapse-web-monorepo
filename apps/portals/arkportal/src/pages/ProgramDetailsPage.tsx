@@ -6,7 +6,7 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
 import columnAliases from '../config/columnAliases'
 import { datasetsSql, programSql, projectsSql } from '../config/resources'
 import {

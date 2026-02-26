@@ -3,14 +3,13 @@ import AMPALSHeader from '@sage-bionetworks/synapse-portal-framework/components/
 import AMPALSPublishingRequirements from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSPublishingRequirements'
 import HowToAccessData from '@sage-bionetworks/synapse-portal-framework/components/ampals/HowToAccessData'
 // import AMPALSExploreTheData from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSExploreTheData'
-import { FeaturedDataTabs, RssFeedCards } from 'synapse-react-client'
+import FeaturedDataTabs from 'synapse-react-client/components/FeaturedDataTabs/FeaturedDataTabs'
+import { RssFeedCards } from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
 // import columnAliases from '../config/columnAliases'
 import headerSvg from '../config/style/header.svg?url'
-import {
-  CardGridWithLinks,
-  GoalsV3,
-  PortalFeaturedPartners,
-} from 'synapse-react-client'
+import CardGridWithLinks from 'synapse-react-client/components/CardGridWithLinks/CardGridWithLinks'
+import GoalsV3 from 'synapse-react-client/components/GoalsV3/GoalsV3'
+import PortalFeaturedPartners from 'synapse-react-client/components/PortalFeaturedPartners/PortalFeaturedPartners'
 import {
   datasetsSql,
   goalsTableEntityId,

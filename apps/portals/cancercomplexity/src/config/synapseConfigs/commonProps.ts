@@ -1,4 +1,4 @@
-import type { ColumnIconConfigs } from 'synapse-react-client'
+import type { ColumnIconConfigs } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 
 export const detailPageLinks = [
   {

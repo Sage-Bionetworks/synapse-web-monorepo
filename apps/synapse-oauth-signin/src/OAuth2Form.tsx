@@ -13,19 +13,17 @@ import {
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import {
-  AppUtils,
-  FullWidthAlert,
-  storeRedirectURLForOneSageLoginAndGotoURL,
-  StyledOuterContainer,
-  SynapseClient,
-  SynapseClientError,
-  SynapseConstants,
-  SynapseHookUtils,
-  SynapseQueries,
-  UserCard,
-  useSynapseContext,
-} from 'synapse-react-client'
+import * as AppUtils from 'synapse-react-client/utils/AppUtils/index'
+import FullWidthAlert from 'synapse-react-client/components/FullWidthAlert/FullWidthAlert'
+import { storeRedirectURLForOneSageLoginAndGotoURL } from 'synapse-react-client/utils/AppUtils/AppUtils'
+import { StyledOuterContainer } from 'synapse-react-client/components/styled/LeftRightPanel'
+import SynapseClient from 'synapse-react-client/synapse-client/index'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import * as SynapseHookUtils from 'synapse-react-client/utils/hooks/index'
+import * as SynapseQueries from 'synapse-react-client/synapse-queries/index'
+import { UserCard } from 'synapse-react-client/components/UserCard/UserCard'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import { sendAnalyticsEvent } from 'synapse-react-client/utils/analytics/sendAnalyticsEvent'
 import UniversalCookies from 'universal-cookie'
 import { OAuthClientError } from './OAuthClientError'

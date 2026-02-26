@@ -19,10 +19,8 @@ import {
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { createMemoryRouter, RouterProvider } from 'react-router'
-import {
-  defaultQueryClientConfig,
-  SynapseConstants,
-} from 'synapse-react-client'
+import { defaultQueryClientConfig } from 'synapse-react-client/utils/context/FullContextProvider'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { getRoutes } from '../routes'
 

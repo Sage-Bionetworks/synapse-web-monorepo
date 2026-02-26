@@ -37,7 +37,7 @@ import { useCookiePreferences } from 'synapse-react-client/utils/hooks/useCookie
 import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/featureflags/useGetFeatureFlag'
 import { useGetCurrentRealm } from 'synapse-react-client/synapse-queries/realm/useRealmPrincipals'
-import SynapseClient from 'synapse-react-client/synapse-client'
+import SynapseClient from 'synapse-react-client/synapse-client/index'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 import ChangePassword from 'synapse-react-client/components/ChangePassword/ChangePassword'
 import TwoFactorAuthSettingsPanel from 'synapse-react-client/components/Authentication/TwoFactorAuthSettingsPanel'

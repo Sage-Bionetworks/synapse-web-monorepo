@@ -1,6 +1,10 @@
 import { resolve } from 'path'
-import { globSync } from 'node:fs'
+import { globSync, readFileSync } from 'node:fs'
 import { ConfigBuilder } from 'vite-config'
+
+const packageJson = JSON.parse(
+  readFileSync(resolve(__dirname, 'package.json'), 'utf-8'),
+)
 
 /**
  * Vite config to generate the ESM library build for Synapse React Client.
@@ -19,8 +23,7 @@ const allSourceFiles = globSync('src/**/*.{ts,tsx}', {
     f.includes('.test.') ||
     f.includes('.stories.') ||
     f.endsWith('.d.ts') ||
-    f.includes('/testutils/') ||
-    f.includes('/mocks/'),
+    f.includes('/testutils/'),
 }).map(file => resolve(__dirname, file))
 
 const config = new ConfigBuilder()
@@ -31,6 +34,9 @@ const config = new ConfigBuilder()
   .setBuildLibEntry(allSourceFiles)
   .setConfigOverrides({
     root: '.',
+    define: {
+      __SRC_VERSION__: JSON.stringify(packageJson.version),
+    },
     build: {
       commonjsOptions: {
         // react-datasheet-grid is common-js only and imports tanstack/react-virtual which is an ESM package

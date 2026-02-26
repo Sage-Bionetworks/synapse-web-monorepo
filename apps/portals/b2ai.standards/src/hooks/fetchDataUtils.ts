@@ -5,7 +5,7 @@ import {
   Query,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 import { getSynapseTableId, getIdCol, getQueryString } from '@/config/resources'
 

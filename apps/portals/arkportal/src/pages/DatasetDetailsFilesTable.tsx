@@ -1,5 +1,5 @@
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav'
-import { useGetVersions } from 'synapse-react-client/synapse-queries'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import { useGetVersions } from 'synapse-react-client/synapse-queries/index'
 import { Row } from '@sage-bionetworks/synapse-types'
 import columnAliases from '../config/columnAliases'
 import { enabledAnalysisPlatforms } from '@/config/resources'

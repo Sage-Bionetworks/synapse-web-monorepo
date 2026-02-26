@@ -23,7 +23,7 @@ import { peopleCardConfiguration } from '../config/synapseConfigs/people'
 import { projectCardConfiguration } from '../config/synapseConfigs/projects'
 import { publicationsCardConfiguration } from '../config/synapseConfigs/publications'
 import { toolsConfiguration } from '../config/synapseConfigs/tools'
-import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/index'
 
 function GrantDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()

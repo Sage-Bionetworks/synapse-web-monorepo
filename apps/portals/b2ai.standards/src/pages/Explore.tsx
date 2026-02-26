@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/index'
 import { standardsQueryWrapperPlotNavProps } from '@/config/synapseConfigs/standards'
 
 export default function ExploreWrapper() {

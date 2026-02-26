@@ -5,15 +5,13 @@ import {
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import {
-  ErrorPage,
-  SynapseConstants,
-  SynapseErrorType,
-  RowDataTable,
-  SkeletonTable,
-  CardConfiguration,
-} from 'synapse-react-client'
-import { CardContainerLogic } from 'synapse-react-client'
+import ErrorPage from 'synapse-react-client/components/error/ErrorPage'
+import { SynapseErrorType } from 'synapse-react-client/components/error/ErrorPage'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import RowDataTable from 'synapse-react-client/components/RowDataTable/RowDataTable'
+import { SkeletonTable } from 'synapse-react-client/components/Skeleton/SkeletonTable'
+import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '@/config/columnAliases'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'

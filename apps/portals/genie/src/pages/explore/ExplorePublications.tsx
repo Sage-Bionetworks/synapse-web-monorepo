@@ -1,4 +1,4 @@
-import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/index'
 import { publicationsProps } from '@/config/synapseConfigs/publications'
 
 function ExplorePublications() {

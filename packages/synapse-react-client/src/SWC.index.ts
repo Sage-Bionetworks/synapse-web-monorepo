@@ -6,7 +6,13 @@
  */
 
 import { lazy } from 'react'
-import { version } from '../package.json'
+/**
+ * Injected at build time by Vite's `define` (see vite.config.ts).
+ * Using a compile-time constant avoids importing ../package.json, which
+ * caused Rollup to resolve through the package.json exports map and emit
+ * a stray `dist/packages/synapse-react-client/package.json.js` file.
+ */
+declare const __SRC_VERSION__: string
 import {
   displayToast,
   SynapseToastContainer,
@@ -241,7 +247,7 @@ const Analytics = {
 }
 
 // Include the version in the build
-const SynapseReactClientVersion = version
+const SynapseReactClientVersion = __SRC_VERSION__
 
 export {
   Analytics,

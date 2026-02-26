@@ -1,5 +1,5 @@
 import { ThemeOptions, ThemeProvider, darken, useTheme } from '@mui/material'
-import { DeepPartial } from 'synapse-react-client'
+import type { DeepPartial } from 'synapse-react-client/utils/types/DeepPartial'
 import { deepmerge } from '@mui/utils'
 import React from 'react'
 

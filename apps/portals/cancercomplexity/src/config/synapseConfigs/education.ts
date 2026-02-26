@@ -1,9 +1,7 @@
 import educationalResourceSvg from '@/config/style/EducationalResource.svg?url'
-import type {
-  CardConfiguration,
-  IconOptions,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
+import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
+import type { IconOptions } from 'synapse-react-client/components/Icon/Icon'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { educationSql } from '../resources'

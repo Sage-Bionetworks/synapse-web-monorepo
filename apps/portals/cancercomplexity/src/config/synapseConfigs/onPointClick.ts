@@ -6,8 +6,8 @@ import {
   toolsSql,
   projectsSql,
 } from '../resources'
-import type { ClickCallbackParams } from 'synapse-react-client'
-import { generateEncodedPathAndQueryForSelectedFacetURL } from 'synapse-react-client/components/QueryWrapper'
+import type { ClickCallbackParams } from 'synapse-react-client/components/Plot/types'
+import { generateEncodedPathAndQueryForSelectedFacetURL } from 'synapse-react-client/components/QueryWrapper/index'
 
 const sqlAndEntityMap: {
   [value: string]: string

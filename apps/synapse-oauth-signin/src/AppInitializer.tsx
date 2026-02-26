@@ -1,10 +1,8 @@
 import { PropsWithChildren, useCallback } from 'react'
 import { useSearchParams } from 'react-router'
-import {
-  ApplicationSessionManager,
-  SynapseConstants,
-  useFramebuster,
-} from 'synapse-react-client'
+import { ApplicationSessionManager } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionManager'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { useFramebuster } from 'synapse-react-client/utils/AppUtils/AppUtils'
 import UniversalCookies from 'universal-cookie'
 import { OAuthClientError } from './OAuthClientError'
 import { handleErrorRedirect } from './URLUtils'

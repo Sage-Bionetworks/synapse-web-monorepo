@@ -8,11 +8,11 @@ import CancerComplexityHeader from '@sage-bionetworks/synapse-portal-framework/c
 import CancerComplexityIntro from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityIntro'
 import CCKPDevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/CCKPDevelopedBySage'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import { Goals } from 'synapse-react-client'
+import { Goals } from 'synapse-react-client/components/Goals/Goals'
 import TableQueryEcosystem from 'synapse-react-client/components/Ecosystem/TableQueryEcosystem'
 import { ThemesPlot } from 'synapse-react-client/components/Plot/ThemesPlot'
-import Programs from 'synapse-react-client/components/Programs'
-import RssFeedCards from 'synapse-react-client/components/RssFeedCards'
+import Programs from 'synapse-react-client/components/Programs/index'
+import RssFeedCards from 'synapse-react-client/components/RssFeedCards/index'
 
 function Home() {
   return (
