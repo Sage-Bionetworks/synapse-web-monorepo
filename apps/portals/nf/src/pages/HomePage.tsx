@@ -1,4 +1,47 @@
+import type { MetaDescriptor } from 'react-router'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
+
+export function meta(): MetaDescriptor[] {
+  const portalDescription =
+    import.meta.env.VITE_PORTAL_DESCRIPTION ??
+    'An open science platform for neurofibromatosis research data.'
+  return [
+    { title: 'NF Data Portal' },
+    { name: 'description', content: portalDescription },
+    {
+      'script:ld+json': {
+        '@context': 'https://schema.org',
+        '@type': 'DataCatalog',
+        '@id': 'https://nf.synapse.org',
+        keywords: [
+          'neurofibromatosis',
+          'schwannomatosis',
+          'NF1',
+          'NF2',
+          'RASopathies',
+          'rare tumor syndrome',
+          'genetics',
+          'tumor biology',
+          'biomedical research',
+          'Human Data',
+          'Life Science',
+        ],
+        description:
+          'The NF Data Portal provides a data repository for neurofibromatosis type 1 and schwannomatosis research data, aimed at improving understanding and treatment of the disorder.',
+        name: 'NF Data Portal',
+        provider: [
+          {
+            '@type': 'Organization',
+            '@id': 'Sage Bionetworks',
+            name: 'Sage Bionetworks',
+            url: 'https://www.synapse.org/',
+          },
+        ],
+        alternateName: 'Neurofibromatosis Data Portal',
+      },
+    },
+  ]
+}
 import { fundersSql, peopleSql, topProjectsSql } from '../config/resources'
 import { columnAliases } from '../config/synapseConfigs/commonProps'
 import {

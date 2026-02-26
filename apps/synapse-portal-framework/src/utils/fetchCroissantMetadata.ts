@@ -1,0 +1,301 @@
+import {
+  QueryResultBundle,
+  SynapseClient,
+  waitForAsyncResult,
+} from '@sage-bionetworks/synapse-client'
+
+const BUNDLE_MASK_QUERY_RESULTS = 0x1
+
+/**
+ * Synapse ID of the table containing Croissant metadata file URLs for all
+ * datasets. Each row maps a dataset entity ID (and optional version) to the S3
+ * URL of its Croissant (JSON-LD) metadata file.
+ */
+const CROISSANT_DATA_TABLE = 'syn65903895'
+
+/** Maximum number of concurrent S3 file fetches during batch pre-loading. */
+const FETCH_CONCURRENCY = 20
+
+/**
+ * How long cached data remains valid.
+ *
+ * - During SSG builds the process is short-lived, so this TTL is effectively
+ *   infinite — data is fetched once and reused for the entire build.
+ * - During SSR the server runs indefinitely, so this TTL ensures Croissant
+ *   data is refreshed periodically without manual intervention.
+ */
+const CACHE_TTL_MS = 60 * 60 * 1000 // 1 hour
+
+// ---------------------------------------------------------------------------
+// Cache types
+// ---------------------------------------------------------------------------
+
+interface CacheEntry<T> {
+  data: T
+  expiresAt: number
+}
+
+// ---------------------------------------------------------------------------
+// URL index cache: dataset entity ID → S3 URL
+// ---------------------------------------------------------------------------
+
+let urlIndexCache: CacheEntry<Map<string, string>> | null = null
+/** Deduplicate concurrent loadCroissantUrlIndex calls. */
+let urlIndexPromise: Promise<Map<string, string>> | null = null
+
+function createAnonymousSynapseClient(): SynapseClient {
+  return new SynapseClient({
+    basePath: 'https://repo-prod.prod.sagebase.org',
+  })
+}
+
+/**
+ * Fetches the entire Croissant table and builds a Map of dataset → S3 URL.
+ * The result is cached with a TTL; concurrent calls are de-duplicated.
+ */
+async function loadCroissantUrlIndex(): Promise<Map<string, string>> {
+  if (urlIndexCache && Date.now() < urlIndexCache.expiresAt) {
+    return urlIndexCache.data
+  }
+
+  if (urlIndexPromise) return urlIndexPromise
+
+  urlIndexPromise = (async () => {
+    try {
+      const client = createAnonymousSynapseClient()
+
+      const queryBundleRequest = {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.QueryBundleRequest' as const,
+        entityId: CROISSANT_DATA_TABLE,
+        partMask: BUNDLE_MASK_QUERY_RESULTS,
+        query: {
+          sql: `SELECT dataset, croissant_file_s3_object FROM ${CROISSANT_DATA_TABLE}`,
+        },
+      }
+
+      const asyncJobId =
+        await client.tableServicesClient.postRepoV1EntityIdTableQueryAsyncStart(
+          {
+            id: CROISSANT_DATA_TABLE,
+            queryBundleRequest,
+          },
+        )
+
+      const result = await waitForAsyncResult(() =>
+        client.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId({
+          jobId: asyncJobId.token!,
+        }),
+      )
+
+      const responseBody = result.responseBody as QueryResultBundle | undefined
+      const headers = responseBody?.queryResult?.queryResults?.headers ?? []
+      const rows = responseBody?.queryResult?.queryResults?.rows ?? []
+
+      const datasetIdx = headers.findIndex(
+        h => h.name?.toLowerCase() === 'dataset',
+      )
+      const urlIdx = headers.findIndex(
+        h => h.name?.toLowerCase() === 'croissant_file_s3_object',
+      )
+
+      const index = new Map<string, string>()
+      if (datasetIdx >= 0 && urlIdx >= 0) {
+        for (const row of rows) {
+          const datasetId = row.values?.[datasetIdx]
+          const s3Url = row.values?.[urlIdx]
+          if (
+            typeof datasetId === 'string' &&
+            datasetId &&
+            typeof s3Url === 'string' &&
+            s3Url
+          ) {
+            index.set(datasetId, s3Url)
+          }
+        }
+      }
+
+      urlIndexCache = { data: index, expiresAt: Date.now() + CACHE_TTL_MS }
+      return index
+    } finally {
+      urlIndexPromise = null
+    }
+  })()
+
+  return urlIndexPromise
+}
+
+// ---------------------------------------------------------------------------
+// Content cache: dataset entity ID → parsed JSON-LD object
+// ---------------------------------------------------------------------------
+
+const contentCache = new Map<string, CacheEntry<Record<string, unknown>>>()
+
+/**
+ * Fetches a single Croissant file from S3 and parses it as JSON.
+ */
+async function fetchSingleCroissantFile(
+  s3Url: string,
+): Promise<Record<string, unknown> | null> {
+  try {
+    const response = await fetch(s3Url)
+    if (!response.ok) return null
+    const content = await response.text()
+    return JSON.parse(content) as Record<string, unknown>
+  } catch {
+    return null
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Concurrency helper
+// ---------------------------------------------------------------------------
+
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  concurrency: number,
+  fn: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const results: R[] = new Array(items.length)
+  let nextIndex = 0
+
+  async function worker() {
+    while (nextIndex < items.length) {
+      const index = nextIndex++
+      results[index] = await fn(items[index])
+    }
+  }
+
+  const workers = Array.from(
+    { length: Math.min(concurrency, items.length) },
+    () => worker(),
+  )
+  await Promise.all(workers)
+  return results
+}
+
+// ---------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------
+
+/** Deduplicate concurrent preload calls. */
+let preloadPromise: Promise<void> | null = null
+
+/**
+ * Batch-fetches ALL Croissant metadata files into the content cache.
+ *
+ * Designed to be called once from the first dataset detail page loader during
+ * SSG pre-rendering. Subsequent {@link fetchCroissantMetadata} calls become
+ * instant cache lookups.
+ *
+ * In SSR mode this also works: the first request triggers the preload, and
+ * subsequent requests within the TTL window are cache hits. After the TTL
+ * expires the next call re-fetches.
+ *
+ * Safe to call multiple times — concurrent invocations are de-duplicated and
+ * a no-op is returned if the cache is still valid.
+ */
+export async function preloadAllCroissantMetadata(): Promise<void> {
+  // If all entries are still fresh, skip.
+  if (
+    urlIndexCache &&
+    Date.now() < urlIndexCache.expiresAt &&
+    contentCache.size > 0
+  ) {
+    return
+  }
+
+  if (preloadPromise) return preloadPromise
+
+  preloadPromise = (async () => {
+    try {
+      const index = await loadCroissantUrlIndex()
+      const entries = Array.from(index.entries())
+
+      console.log(
+        `Pre-fetching ${entries.length} Croissant metadata files (concurrency: ${FETCH_CONCURRENCY})...`,
+      )
+
+      const results = await mapWithConcurrency(
+        entries,
+        FETCH_CONCURRENCY,
+        async ([datasetId, s3Url]) => {
+          const jsonLd = await fetchSingleCroissantFile(s3Url)
+          return { datasetId, jsonLd }
+        },
+      )
+
+      let successCount = 0
+      const now = Date.now()
+      for (const { datasetId, jsonLd } of results) {
+        if (jsonLd) {
+          contentCache.set(datasetId, {
+            data: jsonLd,
+            expiresAt: now + CACHE_TTL_MS,
+          })
+          successCount++
+        }
+      }
+
+      console.log(
+        `Croissant pre-fetch complete: ${successCount}/${entries.length} files loaded`,
+      )
+    } finally {
+      preloadPromise = null
+    }
+  })()
+
+  return preloadPromise
+}
+
+/**
+ * Fetches the Croissant (Schema.org Dataset) JSON-LD metadata for a given
+ * Synapse dataset entity.
+ *
+ * This function is isomorphic — it works in both Node.js (build-time
+ * pre-rendering / SSR) and browser environments.
+ *
+ * **SSG / SSR server-side:** If {@link preloadAllCroissantMetadata} was called
+ * first (recommended), this is an instant cache lookup. Otherwise it falls
+ * back to fetching the URL index + individual S3 file.
+ *
+ * **Client-side (CSR fallback):** Fetches the URL index once (cached) then
+ * the individual S3 file.
+ *
+ * All cached data respects the configured TTL so long-running SSR servers
+ * automatically refresh stale entries.
+ *
+ * @param entityId - The Synapse entity ID of the dataset (e.g. 'syn12345678')
+ * @returns The parsed JSON-LD object, or null if not available
+ */
+export async function fetchCroissantMetadata(
+  entityId: string,
+): Promise<Record<string, unknown> | null> {
+  // Fast path: content cache hit that hasn't expired
+  const cached = contentCache.get(entityId)
+  if (cached && Date.now() < cached.expiresAt) {
+    return cached.data
+  }
+
+  // Slow path: look up S3 URL from the index, then fetch the file
+  try {
+    const index = await loadCroissantUrlIndex()
+    const s3Url = index.get(entityId)
+    if (!s3Url) return null
+
+    const jsonLd = await fetchSingleCroissantFile(s3Url)
+    if (jsonLd) {
+      contentCache.set(entityId, {
+        data: jsonLd,
+        expiresAt: Date.now() + CACHE_TTL_MS,
+      })
+    }
+    return jsonLd
+  } catch (error) {
+    console.warn(
+      `fetchCroissantMetadata: Error fetching Croissant metadata for ${entityId}:`,
+      error instanceof Error ? error.message : error,
+    )
+    return null
+  }
+}

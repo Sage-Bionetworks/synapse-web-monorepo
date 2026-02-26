@@ -1,4 +1,24 @@
+import type { MetaDescriptor } from 'react-router'
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
+
+/**
+ * Default meta tags for the root route.
+ *
+ * React Router uses the `meta()` export from the deepest matching route that
+ * defines one. Routes that export their own `meta()` (detail pages, Explore
+ * tabs, etc.) completely replace these defaults. Routes that do NOT export
+ * `meta()` inherit these.
+ */
+export function meta(): MetaDescriptor[] {
+  const portalName = import.meta.env.VITE_PORTAL_NAME ?? 'NF Data Portal'
+  const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION ?? ''
+  return [
+    { title: portalName },
+    ...(portalDescription
+      ? [{ name: 'description', content: portalDescription }]
+      : []),
+  ]
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const portalKey = import.meta.env.VITE_PORTAL_KEY ?? ''
@@ -32,7 +52,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="twitter:description" content={portalDescription} />
         <meta name="twitter:image" content={`${baseUrl}/socialmedia.png`} />
 
-        <meta name="description" content={portalDescription} />
+        {/*
+          Note: <meta name="description"> is provided by route-level meta() exports
+          (rendered by <Meta /> below), NOT as a hardcoded tag here.
+          This avoids duplicate description tags when child routes provide their own.
+        */}
 
         <link rel="shortcut icon" href="/favicon.svg" />
 

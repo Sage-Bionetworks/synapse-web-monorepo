@@ -5,12 +5,70 @@ import {
   DetailsPageTabConfig,
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
+import {
+  fetchDetailPageMetadata,
+  type DetailPageMetadataConfig,
+} from '@sage-bionetworks/synapse-portal-framework/utils/fetchDetailPageMetadata'
+import type { MetaDescriptor } from 'react-router'
 import { Outlet, useParams } from 'react-router'
 import { CardContainerLogic, SynapseConstants } from 'synapse-react-client'
 import {
   ORGANIZATION_DATA_TAB_PATH,
   ORGANIZATION_DETAILS_TAB_PATH,
 } from '@/config/routeConstants'
+
+const metadataConfig: DetailPageMetadataConfig = {
+  sql: fundersSql,
+  titleColumn: 'organizationName',
+  descriptionColumn: 'summary',
+  paramName: 'abbreviation',
+}
+
+export async function loader({
+  params,
+}: {
+  params: { abbreviation?: string }
+}) {
+  if (!params.abbreviation) return { title: null, description: null }
+  return fetchDetailPageMetadata(metadataConfig, params.abbreviation)
+}
+
+export async function clientLoader({
+  params,
+  serverLoader,
+}: {
+  params: { abbreviation?: string }
+  serverLoader: () => Promise<{
+    title: string | null
+    description: string | null
+  }>
+}) {
+  try {
+    return await serverLoader()
+  } catch {
+    if (!params.abbreviation) return { title: null, description: null }
+    return fetchDetailPageMetadata(metadataConfig, params.abbreviation)
+  }
+}
+
+export function meta({
+  loaderData,
+  matches,
+}: {
+  loaderData?: { title: string | null; description: string | null }
+  matches: Array<{ meta: MetaDescriptor[] }>
+}): MetaDescriptor[] {
+  if (!loaderData?.title) {
+    return matches.flatMap(match => match.meta ?? [])
+  }
+  const descriptors: MetaDescriptor[] = [
+    { title: `${loaderData.title} | NF Data Portal` },
+  ]
+  if (loaderData.description) {
+    descriptors.push({ name: 'description', content: loaderData.description })
+  }
+  return descriptors
+}
 
 const tabConfig: DetailsPageTabConfig[] = [
   {

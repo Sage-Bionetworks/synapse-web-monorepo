@@ -2,10 +2,12 @@ import type { Config } from '@react-router/dev/config'
 
 export default {
   appDirectory: 'src',
-  ssr: false, // static pre-render only; no Node server required
+  ssr: true,
+  // Pre-render a small set of static routes at build time.
+  // These pages have no dynamic content or authentication requirements, so
+  // pre-rendering avoids unnecessary server load. All other routes (detail
+  // pages, search, etc.) are server-rendered on demand.
   async prerender() {
-    // Phase 1: static list routes only.
-    // Phase 2 (P2.2) will expand this with dynamic detail page routes.
     return [
       '/',
       '/Explore/Studies',

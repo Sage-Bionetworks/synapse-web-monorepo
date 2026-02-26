@@ -10,7 +10,12 @@ import {
   DetailsPageTabConfig,
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
+import {
+  fetchDetailPageMetadata,
+  type DetailPageMetadataConfig,
+} from '@sage-bionetworks/synapse-portal-framework/utils/fetchDetailPageMetadata'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import type { MetaDescriptor } from 'react-router'
 import { Outlet, useParams } from 'react-router'
 import {
   CardContainerLogic,
@@ -18,6 +23,55 @@ import {
   SynapseConstants,
   SynapseErrorType,
 } from 'synapse-react-client'
+
+const metadataConfig: DetailPageMetadataConfig = {
+  sql: toolsSql,
+  titleColumn: 'resourceName',
+  descriptionColumn: 'description',
+  paramName: 'resourceId',
+}
+
+export async function loader({ params }: { params: { resourceId?: string } }) {
+  if (!params.resourceId) return { title: null, description: null }
+  return fetchDetailPageMetadata(metadataConfig, params.resourceId)
+}
+
+export async function clientLoader({
+  params,
+  serverLoader,
+}: {
+  params: { resourceId?: string }
+  serverLoader: () => Promise<{
+    title: string | null
+    description: string | null
+  }>
+}) {
+  try {
+    return await serverLoader()
+  } catch {
+    if (!params.resourceId) return { title: null, description: null }
+    return fetchDetailPageMetadata(metadataConfig, params.resourceId)
+  }
+}
+
+export function meta({
+  loaderData,
+  matches,
+}: {
+  loaderData?: { title: string | null; description: string | null }
+  matches: Array<{ meta: MetaDescriptor[] }>
+}): MetaDescriptor[] {
+  if (!loaderData?.title) {
+    return matches.flatMap(match => match.meta ?? [])
+  }
+  const descriptors: MetaDescriptor[] = [
+    { title: `${loaderData.title} | NF Data Portal` },
+  ]
+  if (loaderData.description) {
+    descriptors.push({ name: 'description', content: loaderData.description })
+  }
+  return descriptors
+}
 
 export const toolDetailsPageTabConfig: DetailsPageTabConfig[] = [
   {

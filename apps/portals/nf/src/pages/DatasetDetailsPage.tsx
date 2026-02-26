@@ -5,7 +5,13 @@ import {
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import {
+  fetchDetailPageMetadata,
+  type DetailPageMetadataConfig,
+} from '@sage-bionetworks/synapse-portal-framework/utils/fetchDetailPageMetadata'
+import { fetchCroissantMetadata } from '@sage-bionetworks/synapse-portal-framework/utils/fetchCroissantMetadata'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import type { MetaDescriptor } from 'react-router'
 import { useParams } from 'react-router'
 import { datasetsSql, enabledAnalysisPlatforms } from '@/config/resources'
 import { columnAliases } from '@/config/synapseConfigs/commonProps'
@@ -16,6 +22,77 @@ import {
   QueryWrapperPlotNav,
   SynapseErrorType,
 } from 'synapse-react-client'
+
+const metadataConfig: DetailPageMetadataConfig = {
+  sql: datasetsSql,
+  titleColumn: 'title',
+  descriptionColumn: 'description',
+  paramName: 'id',
+}
+
+interface DatasetLoaderData {
+  title: string | null
+  description: string | null
+  croissantJsonLd: Record<string, unknown> | null
+}
+
+export async function loader({
+  params,
+}: {
+  params: { id?: string }
+}): Promise<DatasetLoaderData> {
+  if (!params.id)
+    return { title: null, description: null, croissantJsonLd: null }
+  const [metadata, croissantJsonLd] = await Promise.all([
+    fetchDetailPageMetadata(metadataConfig, params.id),
+    fetchCroissantMetadata(params.id),
+  ])
+  return { ...metadata, croissantJsonLd }
+}
+
+export async function clientLoader({
+  params,
+  serverLoader,
+}: {
+  params: { id?: string }
+  serverLoader: () => Promise<DatasetLoaderData>
+}) {
+  try {
+    return await serverLoader()
+  } catch {
+    if (!params.id)
+      return { title: null, description: null, croissantJsonLd: null }
+    const [metadata, croissantJsonLd] = await Promise.all([
+      fetchDetailPageMetadata(metadataConfig, params.id),
+      fetchCroissantMetadata(params.id),
+    ])
+    return { ...metadata, croissantJsonLd }
+  }
+}
+
+export function meta({
+  loaderData,
+  matches,
+}: {
+  loaderData?: DatasetLoaderData
+  matches: Array<{ meta: MetaDescriptor[] }>
+}): MetaDescriptor[] {
+  if (!loaderData?.title) {
+    return matches.flatMap(match => match.meta ?? [])
+  }
+  const descriptors: MetaDescriptor[] = [
+    { title: `${loaderData.title} | NF Data Portal` },
+  ]
+  if (loaderData.description) {
+    descriptors.push({ name: 'description', content: loaderData.description })
+  }
+  if (loaderData.croissantJsonLd) {
+    descriptors.push({
+      'script:ld+json': loaderData.croissantJsonLd,
+    })
+  }
+  return descriptors
+}
 
 function DatasetDetailsPage() {
   const { id } = useParams<{ id: string }>()

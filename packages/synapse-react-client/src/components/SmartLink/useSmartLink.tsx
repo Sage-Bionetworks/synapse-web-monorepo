@@ -5,8 +5,6 @@ export function useSmartLink(href?: string, target?: string) {
   const inRouterContext = useInRouterContext()
   const isExternal = href ? isExternalLink(href) : false
 
-  console.log('useSmartLink', { href, target, inRouterContext, isExternal })
-
   if (href && inRouterContext && !isExternal) {
     return {
       component: ReactRouterLink,

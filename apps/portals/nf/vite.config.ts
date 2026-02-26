@@ -2,7 +2,6 @@ import { reactRouter } from '@react-router/dev/vite'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import svgr from 'vite-plugin-svgr'
-import { mergeConfig } from 'vitest/config'
 import { defineConfig, type Plugin } from 'vite'
 
 /**
@@ -55,13 +54,31 @@ function clientOnlyPlugin(plugin: Plugin): Plugin {
   }
 }
 
-const frameworkConfig = defineConfig({
+/**
+ * Uses the callback form of defineConfig to conditionally set rollupOptions.input
+ * for the SSR build only. The client build does not need a custom entry —
+ * reactRouter() handles that automatically.
+ *
+ * Note: vitest's mergeConfig() does not support the callback form of defineConfig,
+ * so we include the test config directly inside the callback return value.
+ */
+export default defineConfig(({ isSsrBuild }) => ({
   server: { port: 3001 }, // Reserve port 3000 for SageAccountWeb
   build: {
     outDir: './build',
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+    rollupOptions: isSsrBuild
+      ? {
+          // Point the SSR build entry to server/app.ts (Express handler).
+          // The virtual:react-router/server-build module is dynamically imported
+          // by server/app.ts, but React Router's writeBundle hook expects it to
+          // appear as a top-level entry in the Vite manifest. Providing it as an
+          // additional input ensures it's listed as an entry, not just a chunk.
+          input: ['./server/app.ts', 'virtual:react-router/server-build'],
+        }
+      : undefined,
   },
   plugins: [
     // Apply nodePolyfills only to the client environment
@@ -99,14 +116,17 @@ const frameworkConfig = defineConfig({
   ssr: {
     // Bundle MUI and Emotion for SSR — their CJS/ESM dual-publish causes issues when externalized
     noExternal: [/^@mui\//, /^@emotion\//],
-  },
-})
-
-// Merge in vitest config for testing
-export default mergeConfig(frameworkConfig, {
-  optimizeDeps: {
-    exclude: ['vitest/utils'],
-    include: ['@vitest/utils', 'vitest/browser'],
+    // Pre-bundle large barrel exports for SSR dev mode.
+    // Without this, Vite's SSR module runner processes each sub-module import
+    // individually in @mui/icons-material (13,000+ re-exports), which hangs the dev server.
+    optimizeDeps: {
+      include: [
+        '@mui/icons-material',
+        '@mui/material',
+        '@emotion/react',
+        '@emotion/styled',
+      ],
+    },
   },
   test: {
     watch: false,
@@ -125,4 +145,4 @@ export default mergeConfig(frameworkConfig, {
       },
     },
   },
-})
+}))
