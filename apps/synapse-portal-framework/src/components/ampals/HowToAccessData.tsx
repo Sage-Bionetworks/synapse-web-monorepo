@@ -1,8 +1,8 @@
 import React from 'react'
 import { Stack, Box, Typography } from '@mui/material'
-import { ReactComponent as HowToAccessDataLogo } from '../../../../portals/ampals/src/config/style/howToAccessDataLogo.svg'
-import { ReactComponent as GeneExpressionOmnibusLogo } from '../../../../portals/ampals/src/config/style/geneExpressionOmnibus.svg'
-import { ReactComponent as RDCADAP } from '../../../../portals/ampals/src/config/style/RDCADAP.svg'
+import { ReactComponent as HowToAccessDataLogo } from '../../portal-assets/howToAccessDataLogo.svg'
+import { ReactComponent as GeneExpressionOmnibusLogo } from '../../portal-assets/geneExpressionOmnibus.svg'
+import { ReactComponent as RDCADAP } from '../../portal-assets/RDCADAP.svg'
 import SynapseFullLogo from 'synapse-react-client/assets/icons/SynapseFullLogo'
 
 const HowToAccessData = (): React.ReactNode => {

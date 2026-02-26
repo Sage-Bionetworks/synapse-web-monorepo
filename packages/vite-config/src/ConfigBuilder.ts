@@ -1,11 +1,15 @@
 import { getPluginConfig, PluginConfigOptions } from './pluginConfig.js'
 import baseConfig from './baseConfig.js'
 import { mergeConfig } from 'vitest/config'
-import viteLibraryConfig from './vite-library-config.js'
+import {
+  viteLibraryConfig,
+  viteLibraryPreserveModulesConfig,
+} from './vite-library-config.js'
 import vitestConfig from './vitest-config.js'
 
 export class ConfigBuilder {
   private includeLibraryConfig = false
+  private preserveModules = false
   private buildLibEntry: string | string[] | undefined = undefined
   private includeVitestConfig = false
   private pluginConfigOptions: PluginConfigOptions = {}
@@ -23,6 +27,21 @@ export class ConfigBuilder {
 
   setBuildLibEntry(buildLibEntry: string | string[]): ConfigBuilder {
     this.buildLibEntry = buildLibEntry
+    return this
+  }
+
+  /**
+   * When true, the library build will produce one output file per source module
+   * (preserving the src/ directory structure in dist/) instead of code-split chunks.
+   *
+   * This enables consuming apps to resolve deep imports like
+   * `my-package/components/Foo` directly to `dist/components/Foo.js`.
+   *
+   * Output is ESM-only (no CJS). Type declarations are emitted per-file
+   * instead of a single rolled-up index.d.ts.
+   */
+  setPreserveModules(preserveModules: boolean): ConfigBuilder {
+    this.preserveModules = preserveModules
     return this
   }
 
@@ -50,7 +69,10 @@ export class ConfigBuilder {
           'buildLibEntry must be provided when includeLibraryConfig is true',
         )
       }
-      config = mergeConfig(config, viteLibraryConfig)
+      const libraryConfig = this.preserveModules
+        ? viteLibraryPreserveModulesConfig
+        : viteLibraryConfig
+      config = mergeConfig(config, libraryConfig)
       config = mergeConfig(config, {
         build: { lib: { entry: this.buildLibEntry } },
       })
@@ -63,6 +85,7 @@ export class ConfigBuilder {
         plugins: getPluginConfig({
           ...this.pluginConfigOptions,
           includeLibraryPlugins: this.includeLibraryConfig,
+          preserveModules: this.preserveModules,
         }),
       })
     }

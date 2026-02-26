@@ -1,15 +1,15 @@
 import { RESPONSIVE_SIDE_PADDING } from '@/utils'
 import { Box, Button, Divider, Link, Menu, MenuItem } from '@mui/material'
 import { MouseEvent, useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, useRouteLoaderData } from 'react-router'
 import ShowDownloadV2 from 'synapse-react-client/components/DownloadCart/ShowDownloadV2'
 import SageResourcesPopover from 'synapse-react-client/components/SageResourcesPopover/index'
 import { useGetCurrentUserProfile } from 'synapse-react-client/synapse-queries/user/useUserBundle'
 import {
   storeRedirectURLForOneSageLoginAndGotoURL,
   useApplicationSessionContext,
-} from 'synapse-react-client/utils/AppUtils/'
-import { useSynapseContext } from 'synapse-react-client/utils/context'
+} from 'synapse-react-client/utils/AppUtils/index'
+import { useSynapseContext } from 'synapse-react-client/utils/context/index'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -105,8 +105,18 @@ export default function Navbar() {
   ) : (
     <></>
   )
+  // Prefer the server-provided hostname from the RootApp loader so that
+  // SSR and client hydration see the same value (avoids hydration mismatch).
+  // Falls back to window.location.hostname for SPA-mode portals that have
+  // not yet been migrated to React Router Framework Mode.
+  const rootAppData = useRouteLoaderData('pages/RootApp') as
+    | { hostname: string }
+    | undefined
   const hostname =
-    typeof window !== 'undefined' ? window.location.hostname.toLowerCase() : ''
+    rootAppData?.hostname ??
+    (typeof window !== 'undefined'
+      ? window.location.hostname.toLowerCase()
+      : '')
   // for now, we only support login in the dev environment (localstorage) or from a .synapse.org subdomain (http-only secure cookie)
   const isSynapseSubdomainOrLocal =
     (hostname.endsWith('.synapse.org') ||

@@ -1,5 +1,5 @@
 import { ReactNode, useState } from 'react'
-import type { IconName } from 'synapse-react-client'
+import type { IconName } from 'synapse-react-client/components/IconSvg/IconSvg'
 import Switch from 'react-switch'
 import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
 

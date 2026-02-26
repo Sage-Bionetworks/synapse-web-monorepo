@@ -1,6 +1,6 @@
 import { fundersSql } from '@/config/resources'
 import { organizationCardSchema } from '@/config/synapseConfigs/organizations'
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import {
   DetailsPageTabConfig,
   DetailsPageTabs,
@@ -11,7 +11,8 @@ import {
 } from '@sage-bionetworks/synapse-portal-framework/utils/fetchDetailPageMetadata'
 import type { MetaDescriptor } from 'react-router'
 import { Outlet, useParams } from 'react-router'
-import { CardContainerLogic, SynapseConstants } from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import {
   ORGANIZATION_DATA_TAB_PATH,
   ORGANIZATION_DETAILS_TAB_PATH,

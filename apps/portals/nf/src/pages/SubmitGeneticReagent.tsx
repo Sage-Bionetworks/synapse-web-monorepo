@@ -1,5 +1,5 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import { DynamicForm } from 'synapse-react-client'
+import DynamicForm from 'synapse-react-client/components/DynamicForm/DynamicForm'
 
 function SubmitGeneticReagent() {
   return (

@@ -1,11 +1,9 @@
 import React from 'react'
 import { Link, Box, Skeleton } from '@mui/material'
-import {
-  AppUtils,
-  ChallengeDetailPage,
-  SynapseQueries,
-  SynapseUtilityFunctions,
-} from 'synapse-react-client'
+import * as AppUtils from 'synapse-react-client/utils/AppUtils/index'
+import { ChallengeDetailPage } from 'synapse-react-client/components/ChallengeDetailPage/ChallengeDetailPage'
+import * as SynapseQueries from 'synapse-react-client/synapse-queries/index'
+import * as SynapseUtilityFunctions from 'synapse-react-client/utils/functions/index'
 
 /**
  * This is the Challenge Registration button.  This includes:

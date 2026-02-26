@@ -1,7 +1,7 @@
 import { hackathonsSql } from '@/config/resources'
 import { columnAliases } from '@/config/synapseConfigs/commonProps'
 import { hackathonCardConfiguration } from '@/config/synapseConfigs/hackathons'
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import {
   DetailsPageTabConfig,
   DetailsPageTabs,
@@ -13,11 +13,10 @@ import {
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import type { MetaDescriptor } from 'react-router'
 import { Outlet, useParams } from 'react-router'
-import {
-  CardContainerLogic,
-  ErrorPage,
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import ErrorPage, {
   SynapseErrorType,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/error/ErrorPage'
 import {
   HACKATHONS_DETAILS_PAGE_BACKGROUND_AND_RESULTS_TAB_PATH,
   HACKATHONS_DETAILS_PAGE_METHODOLOGY_TAB_PATH,

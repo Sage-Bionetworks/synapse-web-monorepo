@@ -1,5 +1,5 @@
 import { RouteObject } from 'react-router'
-import { OrientationBannerProps } from 'synapse-react-client/components/OrientationBanner'
+import { OrientationBannerProps } from 'synapse-react-client/components/OrientationBanner/index'
 
 export type ExplorePageRoute = RouteObject & {
   displayName?: string

@@ -1,15 +1,16 @@
 import { useGetPortalComponentSearchParams } from '@/utils/UseGetPortalComponentSearchParams'
 import { Box, Container, Stack } from '@mui/material'
-import { IconSvg, ProvenanceGraph } from 'synapse-react-client'
+import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
+import ProvenanceGraph from 'synapse-react-client/components/ProvenanceGraph/ProvenanceGraph'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import {
   useGetEntityBundle,
   useGetEntityPermissions,
-} from 'synapse-react-client/synapse-queries'
+} from 'synapse-react-client/synapse-queries/index'
 import { DetailsPageSectionLayoutType } from '@/components/DetailsPage/DetailsPageSectionLayout'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 import HeaderCard from 'synapse-react-client/components/HeaderCard'
-import CitationPopover from 'synapse-react-client/components/CitationPopover'
+import CitationPopover from 'synapse-react-client/components/CitationPopover/index'
 import { DetailsPageContent } from '../../components/DetailsPage/DetailsPageContentLayout'
 import SynapseFileEntityLinkCard from './SynapseFileEntityLinkCard'
 import SynapseFileEntityPageProperties from './SynapseFileEntityPageProperties'

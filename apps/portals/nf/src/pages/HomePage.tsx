@@ -53,14 +53,12 @@ import {
   studyCardConfiguration,
   studyColumnIconConfigs,
 } from '../config/synapseConfigs/studies'
-import {
-  CardContainerLogic,
-  Goals,
-  RssFeedCards,
-  SynapseConstants,
-  UserCardListRotate,
-  JsonLdScript,
-} from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import { Goals } from 'synapse-react-client/components/Goals/Goals'
+import RssFeedCards from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { UserCardListRotate } from 'synapse-react-client/components/UserCardList/UserCardListRotate'
+import { JsonLdScript } from 'synapse-react-client/components/JsonLdScript'
 import NFHeader from '@sage-bionetworks/synapse-portal-framework/components/nf/NFHeader'
 
 const limit = 3

@@ -17,13 +17,11 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import {
-  CardContainerLogic,
-  StandaloneQueryWrapper,
-  SubsectionRowRenderer,
-  SynapseConstants,
-  UserCardListRotate,
-} from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import StandaloneQueryWrapper from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
+import SubsectionRowRenderer from 'synapse-react-client/components/SubsectionRowRenderer/SubsectionRowRenderer'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { UserCardListRotate } from 'synapse-react-client/components/UserCardList/UserCardListRotate'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
 function ToolDetailsPageDetailsTab() {

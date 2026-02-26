@@ -6,19 +6,7 @@
     "noImplicitAny": false,
     "types": ["vite/client", "node"],
     "paths": {
-      "@/*": ["./src/*"],
-      "@sage-bionetworks/synapse-portal-framework": [
-        "../../synapse-portal-framework/src"
-      ],
-      "@sage-bionetworks/synapse-portal-framework/*": [
-        "../../synapse-portal-framework/src/*"
-      ],
-      "synapse-react-client": ["../../../packages/synapse-react-client/src"],
-      "synapse-react-client/*": [
-        "../../../packages/synapse-react-client/src/*"
-      ],
-      "vite-config": ["../../../packages/vite-config/src"],
-      "vite-config/*": ["../../../packages/vite-config/src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [

@@ -7,7 +7,7 @@ import { useCookiePreferences } from 'synapse-react-client/utils/hooks/useCookie
 import {
   storeRedirectURLForOneSageLoginAndGotoURL,
   useFramebuster,
-} from 'synapse-react-client/utils/AppUtils'
+} from 'synapse-react-client/utils/AppUtils/index'
 import { useOneSageURL } from 'synapse-react-client/utils/hooks/useOneSageURL'
 import { KNOWN_SYNAPSE_ORG_URLS } from 'synapse-react-client/utils/functions/getEndpoint'
 

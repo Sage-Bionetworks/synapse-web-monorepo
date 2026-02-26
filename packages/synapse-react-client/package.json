@@ -3,24 +3,21 @@
   "version": "3.4.75",
   "private": false,
   "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./dist/*": {
-      "import": "./dist/*",
-      "require": "./dist/*"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./*": {
-      "import": "./dist/*",
-      "require": "./dist/*"
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js"
     },
+    "./style/*": "./dist/style/*",
+    "./template_style/*": "./dist/template_style/*",
     "./package.json": "./package.json",
-    "./ThemeTypes": "./src/types/ThemeTypes.d.ts"
+    "./ThemeTypes": "./dist/types/ThemeTypes.d.ts"
   },
   "homepage": "https://sage-bionetworks.github.io/synapse-web-monorepo/",
   "files": [
@@ -32,7 +29,6 @@
     "url": "https://github.com/Sage-Bionetworks/synapse-web-monorepo/packages/synapse-react-client"
   },
   "dependencies": {
-    "@sage-bionetworks/react-datasheet-grid": "4.11.5-sage.3",
     "@apidevtools/json-schema-ref-parser": "^14.1.1",
     "@aws-sdk/client-s3": "^3.803.0",
     "@aws-sdk/lib-storage": "^3.803.0",
@@ -53,6 +49,7 @@
     "@rjsf/utils": "6.0.0-beta.10",
     "@rjsf/validator-ajv8": "6.0.0-beta.10",
     "@sage-bionetworks/markdown-it-container": "workspace:*",
+    "@sage-bionetworks/react-datasheet-grid": "4.11.5-sage.3",
     "@sage-bionetworks/synapse-client": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "@tanstack/query-core": "5.80.10",
@@ -226,9 +223,8 @@
     "prepublishOnly": "pnpm install && pnpm nx run synapse-react-client:build",
     "start": "storybook dev -p 6060",
     "test": "vitest",
-    "build": "rimraf dist && pnpm --parallel run \"/^build:.*/\"",
-    "build:copy-assets": "copyfiles -u 1 \"src/**/*.{css,scss,svg}\" dist",
-    "build:js": "vite build",
+    "build": "vite build && tsc -p tsconfig.build.json && pnpm run build:copy-assets",
+    "build:copy-assets": "copyfiles -u 1 \"src/**/*.{css,scss,svg}\" \"src/types/*.d.ts\" dist",
     "storybook:build": "pnpm storybook build",
     "type-check": "tsc --build",
     "lint": "eslint src",

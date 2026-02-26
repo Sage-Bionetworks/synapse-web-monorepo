@@ -6,10 +6,8 @@ import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/Lo
 import { PortalSearchTabConfig, PortalSearchTabs } from './PortalSearchTabs'
 import PortalFullTextSearchField from './PortalFullTextSearchField'
 import SearchParamAwareQueryWrapperPlotNav from './SearchParamAwareQueryWrapperPlotNav'
-import {
-  QueryWrapperPlotNavProps,
-  StandaloneQueryWrapperProps,
-} from 'synapse-react-client'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import type { StandaloneQueryWrapperProps } from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
 
 export type PortalSearchPageProps = {
   selectedTabIndex?: number

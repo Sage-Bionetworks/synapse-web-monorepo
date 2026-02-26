@@ -1,5 +1,17 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import SurveyToast from '@sage-bionetworks/synapse-portal-framework/components/SurveyToast'
+import type { Route } from './+types/RootApp'
+
+/**
+ * Server-side loader that extracts the hostname from the incoming request.
+ * This is serialized into the HTML by React Router so that client hydration
+ * uses the same value, avoiding hydration mismatches in components (e.g. Navbar)
+ * that conditionally render based on the hostname.
+ */
+export function loader({ request }: Route.LoaderArgs) {
+  const hostname = new URL(request.url).hostname.toLowerCase()
+  return { hostname }
+}
 
 function RootApp() {
   return (

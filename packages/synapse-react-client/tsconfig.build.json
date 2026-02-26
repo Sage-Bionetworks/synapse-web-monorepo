@@ -1,0 +1,32 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationMap": true,
+    // Disable composite — not needed for declaration-only emit and avoids
+    // conflicts with the main tsconfig's tsbuildinfo
+    "composite": false,
+    // Storybook types are not needed for library declarations
+    "types": ["vitest/globals"],
+    // The vite-config path is build-tooling only, not part of the library API
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": [
+    "src/**/*.test.*",
+    "src/**/*.stories.*",
+    "src/**/*TestUtils*",
+    "src/testutils/**",
+    "src/mocks/**"
+  ],
+  "references": [
+    { "path": "../synapse-client" },
+    { "path": "../synapse-types" },
+    { "path": "../markdown-it-synapse" },
+    { "path": "../markdown-it-synapse-table" }
+  ]
+}

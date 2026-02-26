@@ -1,25 +1,37 @@
 import { resolve } from 'path'
+import { globSync } from 'node:fs'
 import { ConfigBuilder } from 'vite-config'
 
 /**
- * Vite config to generate the ESM & CJS bundles for Synapse React Client.
+ * Vite config to generate the ESM library build for Synapse React Client.
+ *
+ * Uses preserveModules to emit one output file per source module, enabling
+ * deep imports like `synapse-react-client/components/Foo` to resolve to
+ * `dist/components/Foo.js` without needing code-split chunk hashes.
+ *
+ * Uses a glob of all source files as the entry to ensure every module is
+ * included in the output, including files not reachable from index.ts
+ * (e.g., SWC.index.ts used by the GWT SynapseWebClient).
  */
+const allSourceFiles = globSync('src/**/*.{ts,tsx}', {
+  cwd: __dirname,
+  exclude: (f: string) =>
+    f.includes('.test.') ||
+    f.includes('.stories.') ||
+    f.endsWith('.d.ts') ||
+    f.includes('/testutils/') ||
+    f.includes('/mocks/'),
+}).map(file => resolve(__dirname, file))
+
 const config = new ConfigBuilder()
   .setIncludeVitestConfig(true)
   .setIncludeReactConfig(true)
-  .setIncludeLibraryConfig(true, {
-    except: [
-      // Include certain monorepo projects because the local versions may drift from the versions released on NPM
-      '@sage-bionetworks/synapse-types',
-      '@sage-bionetworks/synapse-client',
-    ],
-  })
-  .setBuildLibEntry(resolve(__dirname, 'src/SWC.index.ts'))
+  .setIncludeLibraryConfig(true)
+  .setPreserveModules(true)
+  .setBuildLibEntry(allSourceFiles)
   .setConfigOverrides({
     root: '.',
     build: {
-      // Do not clean the output directory before building, since we build ESM/CJS and UMD separately.
-      emptyOutDir: false,
       commonjsOptions: {
         // react-datasheet-grid is common-js only and imports tanstack/react-virtual which is an ESM package
         // for some reason this transitive import is treated as common-js but we can fix it with the config below:

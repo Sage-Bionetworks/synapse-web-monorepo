@@ -10,11 +10,10 @@ import {
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import type { MetaDescriptor } from 'react-router'
 import { Outlet, useParams } from 'react-router'
-import {
-  CardContainerLogic,
-  ErrorPage,
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import ErrorPage, {
   SynapseErrorType,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/error/ErrorPage'
 import { studiesSql } from '../../config/resources'
 import { columnAliases } from '../../config/synapseConfigs/commonProps'
 import {

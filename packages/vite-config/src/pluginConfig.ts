@@ -9,6 +9,12 @@ export type PluginConfigOptions = {
   includeReactPlugins?: boolean
   includeLibraryPlugins?: boolean
   externalizeDepsOptions?: Parameters<typeof externalizeDeps>[0]
+  /**
+   * When true, the library build preserves the source module structure.
+   * This switches vite-plugin-dts from emitting a single rolled-up index.d.ts
+   * to emitting per-file .d.ts declarations alongside each output .js file.
+   */
+  preserveModules?: boolean
 }
 
 /**
@@ -46,15 +52,28 @@ const REACT_PLUGINS: PluginOption[] = [
  */
 function getLibraryPlugins(
   externalizeDepsOptions?: Parameters<typeof externalizeDeps>[0],
+  preserveModules?: boolean,
 ): PluginOption[] {
-  return [
+  const plugins: PluginOption[] = [
     // Do not bundle any dependencies; the consumer's bundler will resolve and link them.
-    externalizeDeps(externalizeDepsOptions),
-    // Generate a single type definition file for distribution.
-    dts({
-      rollupTypes: true,
+    // When preserveModules is true, also externalize devDependencies to prevent
+    // test utilities (vitest, faker, testing-library, etc.) from leaking into dist.
+    externalizeDeps({
+      devDeps: preserveModules ?? false,
+      ...externalizeDepsOptions,
     }),
   ]
+
+  if (!preserveModules) {
+    // For non-preserveModules builds, use vite-plugin-dts to generate a single
+    // rolled-up index.d.ts. For preserveModules builds, per-file .d.ts files
+    // are emitted by a separate `tsc --emitDeclarationOnly` step in the build
+    // script, which is faster (incremental) and avoids vite-plugin-dts issues
+    // with glob entries.
+    plugins.push(dts({ rollupTypes: true }))
+  }
+
+  return plugins
 }
 
 /**
@@ -67,7 +86,12 @@ export function getPluginConfig(options: PluginConfigOptions): PluginOption[] {
     plugins.push(...REACT_PLUGINS)
   }
   if (options.includeLibraryPlugins) {
-    plugins.push(...getLibraryPlugins(options.externalizeDepsOptions))
+    plugins.push(
+      ...getLibraryPlugins(
+        options.externalizeDepsOptions,
+        options.preserveModules,
+      ),
+    )
   }
   return plugins
 }

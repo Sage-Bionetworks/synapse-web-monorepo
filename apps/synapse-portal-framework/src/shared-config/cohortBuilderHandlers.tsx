@@ -2,11 +2,9 @@ import {
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
 } from '@sage-bionetworks/synapse-types'
-import {
-  SynapseClient,
-  SynapseUtilityFunctions,
-  CustomControlCallbackData,
-} from 'synapse-react-client'
+import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClient'
+import * as SynapseUtilityFunctions from 'synapse-react-client/utils/functions/index'
+import type { CustomControlCallbackData } from 'synapse-react-client/components/SynapseTable/TopLevelControls/TopLevelControls'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { CustomControl } from 'synapse-react-client/components/SynapseTable/TopLevelControls/TopLevelControls'
 

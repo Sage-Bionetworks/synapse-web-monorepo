@@ -1,5 +1,5 @@
 import React from 'react'
-import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList'
+import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList/index'
 import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { WideButton } from 'synapse-react-client/components/styled/WideButton'
 import Layout from '../Layout'

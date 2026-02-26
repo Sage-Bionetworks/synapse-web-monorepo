@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from 'react-router'
 import {
   DiscussionThread,
   ForumPage,
-} from 'synapse-react-client/components/Forum'
+} from 'synapse-react-client/components/Forum/index'
 import { useGetEntityForum } from 'synapse-react-client/synapse-queries/entity/useGetEntityForum'
 import { getIgnoredQueryFilterSearchParamKey } from 'synapse-react-client/utils/functions/SqlFunctions'
 
