@@ -65,7 +65,8 @@ WORKDIR /app
 # Copy pruned production node_modules from pnpm deploy
 COPY --from=build /app/deploy/node_modules ./node_modules
 
-# Copy build output (client bundle, server bundle, pre-rendered HTML, sitemap)
+# Copy build output (client bundle, server bundle, pre-rendered HTML)
+# Note: the sitemap is generated dynamically by the SSR server at /sitemap.xml
 COPY --from=build /app/apps/portals/nf/build ./build
 
 # Copy server entry point and package.json (needed for "type": "module")

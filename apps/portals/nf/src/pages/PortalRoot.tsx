@@ -22,7 +22,6 @@ import footerConfig from '../config/footerConfig'
 import logoHeaderConfig from '../config/logoHeaderConfig'
 import logoFooterConfig from '../config/logoFooterConfig'
 import headerConfig from '../config/headerConfig'
-import routes from '../config/routesConfig'
 
 // KaTeX CSS is not included in the SRC style bundle since it includes many large font files.
 import 'katex/dist/katex.css'
@@ -30,7 +29,9 @@ import '../App.scss'
 
 const portalContext = {
   portalName: import.meta.env.VITE_PORTAL_NAME ?? '',
-  routeConfig: routes,
+  // routeConfig is unused in SSR/Framework Mode — routing is handled by routes.ts.
+  // Pass empty array to satisfy the PortalContextType (other SPA-mode portals still use it).
+  routeConfig: [],
   headerConfig,
   footerConfig,
   logoHeaderConfig,

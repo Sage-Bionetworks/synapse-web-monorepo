@@ -10,6 +10,9 @@ import type { RouteConfig } from '@react-router/dev/routes'
  * Route file paths are relative to appDirectory (src/).
  */
 export default [
+  // Sitemap resource route — outside the PortalRoot layout (no React app shell needed)
+  route('sitemap.xml', 'pages/sitemap.ts'),
+
   // Top-level providers layout (ThemeProvider, QueryClientProvider, etc.)
   layout('pages/PortalRoot.tsx', [
     // Root layout route — App shell (Navbar, Footer, SurveyToast, etc.)

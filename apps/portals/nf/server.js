@@ -44,4 +44,24 @@ if (DEVELOPMENT) {
 
 app.listen(PORT, () => {
   console.log(`NF portal server listening on http://localhost:${PORT}`)
+
+  if (!DEVELOPMENT) {
+    // Warm up the sitemap cache on startup so the first real request gets
+    // a full sitemap (with dynamic resources from Synapse tables) instead
+    // of the static-only fallback. Re-fetch every 24 hours to keep the
+    // cache fresh — this matches the sitemap loader's 24-hour TTL.
+    const SITEMAP_URL = `http://localhost:${PORT}/sitemap.xml`
+    const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000
+
+    const warmSitemap = () => {
+      fetch(SITEMAP_URL).then(
+        res => console.log(`[sitemap] Warmup: ${res.status}`),
+        err => console.warn('[sitemap] Warmup failed:', err.message),
+      )
+    }
+
+    // Initial warmup after a short delay to let the server fully initialize
+    setTimeout(warmSitemap, 1000)
+    setInterval(warmSitemap, TWENTY_FOUR_HOURS_MS)
+  }
 })
