@@ -25,6 +25,7 @@
   "scripts": {
     "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
     "build": "tsc --build",
+    "type-check": "tsc --build",
     "prepublishOnly": "pnpm install && pnpm nx run @sage-bionetworks/synapse-types:build"
   },
   "devDependencies": {

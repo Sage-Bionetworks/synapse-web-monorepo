@@ -6,7 +6,8 @@
   "types": "dist/index.ts",
   "scripts": {
     "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "type-check": "tsc --build"
   },
   "exports": [
     "./dist/index.js",
