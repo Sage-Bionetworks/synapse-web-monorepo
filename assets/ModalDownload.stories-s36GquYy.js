@@ -1,0 +1,13 @@
+import{M as r}from"./ModalDownload-eRqaO5UI.js";import"./iframe-HR5efO_6.js";import"./index-Chi_LkuB.js";import"./index-1dgX1C3K.js";import"./enums-DwbyUcCH.js";import"./_baseIteratee-CTXbCQzb.js";import"./isString-DCUbJhtU.js";import"./_arrayReduce-CrxnWFSq.js";import"./_baseEach-DeceRv-z.js";import"./uniq-BkxzrQ3D.js";import"./forEach-CWOCpBhE.js";import"./pickBy-B4lHgJ27.js";import"./Add-BEiUgytS.js";import"./Grid-Crcn3maU.js";import"./ListItem-BxL9gmb1.js";import"./listItemButtonClasses-M7LT5_He.js";import"./ListItemIcon-C1urDyEd.js";import"./MenuItem-BBTtHw-Z.js";import"./ListItemText-eV1etz5l.js";import"./ArrowUpward-3PxnkKCA.js";import"./ContentCopy-Dp4ZTKbT.js";import"./FormControlLabel-B64hA87S.js";import"./Checkbox-CZhCtDAe.js";import"./SwitchBase-Bx2dA3EB.js";import"./FormGroup-hLVMEmoo.js";import"./RadioGroup-BMNqRdN6.js";import"./Radio-DKiY7dcP.js";import"./Slider-ByALUZPF.js";import"./visuallyHidden-Dan1xhjv.js";import"./DialogBase-CheFJngv.js";import"./Close-DAks8q53.js";import"./HelpPopover-C2dZwoeG.js";import"./MarkdownPopover-DV3WT5Oj.js";import"./LightTooltip-DgluAXFh.js";import"./MarkdownSynapse-BD_kELiG.js";import"./SkeletonButton-CpPX_nit.js";import"./SkeletonInlineBlock-pMLRfvW-.js";import"./SkeletonTable-Bm63jMKW.js";import"./SkeletonParagraph-BGy70kQG.js";import"./SynapseFormRadioWidget-nJJALGUf.js";const G={title:"UI/ModalDownload",component:r},o={args:{queryBundleRequest:{concreteType:"org.sagebionetworks.repo.model.table.QueryBundleRequest",entityId:"",partMask:void 0,query:{sql:"SELECT * FROM syn26438037 LIMIT 5"}}}};o.parameters={...o.parameters,docs:{...o.parameters?.docs,source:{originalSource:`{
+  args: {
+    queryBundleRequest: {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      entityId: '',
+      // @ts-ignore
+      partMask: undefined,
+      query: {
+        sql: 'SELECT * FROM syn26438037 LIMIT 5'
+      }
+    }
+  }
+}`,...o.parameters?.docs?.source}}};const H=["Demo"];export{o as Demo,H as __namedExportsOrder,G as default};
