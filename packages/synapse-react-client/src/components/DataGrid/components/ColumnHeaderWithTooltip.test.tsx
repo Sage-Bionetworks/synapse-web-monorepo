@@ -10,7 +10,7 @@ describe('ColumnHeaderWithTooltip', () => {
     expect(screen.getByText('myColumn')).toBeInTheDocument()
   })
 
-  it('renders column name with tooltip when description is provided', async () => {
+  it('renders column name with help icon when description is provided', async () => {
     const user = userEvent.setup()
 
     render(
@@ -23,10 +23,14 @@ describe('ColumnHeaderWithTooltip', () => {
     const columnHeader = screen.getByText('myColumn')
     expect(columnHeader).toBeInTheDocument()
 
-    // Hover over the element to show tooltip
-    await user.hover(columnHeader)
+    // Help icon should be present
+    const helpButton = screen.getByRole('button')
+    expect(helpButton).toBeInTheDocument()
 
-    // Tooltip should appear (may need to wait for delay)
+    // Hover over the help icon to show tooltip
+    await user.hover(helpButton)
+
+    // Tooltip should appear
     expect(
       await screen.findByText('This is a helpful description'),
     ).toBeInTheDocument()

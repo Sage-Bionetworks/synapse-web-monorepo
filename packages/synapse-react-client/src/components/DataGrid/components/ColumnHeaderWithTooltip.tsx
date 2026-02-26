@@ -1,4 +1,5 @@
-import { Tooltip } from '@mui/material'
+import { Box, IconButton, Tooltip } from '@mui/material'
+import { HelpTwoTone } from '@mui/icons-material'
 import { TOOLTIP_DELAY_SHOW } from '@/components/SynapseTable/SynapseTableConstants'
 
 type ColumnHeaderWithTooltipProps = {
@@ -7,24 +8,27 @@ type ColumnHeaderWithTooltipProps = {
 }
 
 /**
- * Renders a column header with an optional tooltip showing the column description.
- * If no description is provided, renders only the column name.
+ * Renders a column header with an optional help icon showing the column description.
+ * Adopts the help icon pattern from ColumnHeader for consistent UX.
  */
 export function ColumnHeaderWithTooltip({
   name,
   description,
 }: ColumnHeaderWithTooltipProps) {
-  if (!description) {
-    return <>{name}</>
-  }
-
   return (
-    <Tooltip
-      title={description}
-      placement="top"
-      enterNextDelay={TOOLTIP_DELAY_SHOW}
-    >
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
       <span>{name}</span>
-    </Tooltip>
+      {description && (
+        <Tooltip
+          title={description}
+          placement="top"
+          enterNextDelay={TOOLTIP_DELAY_SHOW}
+        >
+          <IconButton size="small">
+            <HelpTwoTone fontSize="inherit" />
+          </IconButton>
+        </Tooltip>
+      )}
+    </Box>
   )
 }
