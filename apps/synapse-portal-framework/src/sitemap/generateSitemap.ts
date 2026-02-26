@@ -47,12 +47,12 @@ export async function generateDynamicUrls(
 
     console.log(`  Found ${result.ids.length} resources`)
 
-    const paramName = config.primaryKeyColumn
-    const encodedParamName = encodeURIComponent(paramName)
     for (const id of result.ids) {
       const encodedId = encodeURIComponent(id)
+      // Use path-segment URLs now that detail pages use /:param routing
+      // e.g. /Explore/Datasets/syn123 instead of /Explore/Datasets/DetailsPage?id=syn123
       urls.push({
-        loc: `${baseUrl}/${config.path}?${encodedParamName}=${encodedId}`,
+        loc: `${baseUrl}/${config.path}/${encodedId}`,
         lastmod,
       })
     }

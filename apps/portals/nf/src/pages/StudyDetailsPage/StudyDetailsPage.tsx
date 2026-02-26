@@ -3,9 +3,8 @@ import {
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { Outlet } from 'react-router'
+import { Outlet, useParams } from 'react-router'
 import {
   CardContainerLogic,
   ErrorPage,
@@ -56,7 +55,7 @@ const tabConfig: DetailsPageTabConfig[] = [
 ]
 
 function StudyDetailsPage() {
-  const { studyId } = useGetPortalComponentSearchParams()
+  const { studyId } = useParams<{ studyId: string }>()
 
   if (!studyId) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />

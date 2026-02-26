@@ -17,7 +17,12 @@ function getCanonicalUrl(
   rowData: Row,
 ) {
   try {
-    const canonicalUrl = new URL(pathname, window.location.origin)
+    const canonicalUrl = new URL(
+      pathname,
+      typeof window !== 'undefined'
+        ? window.location.origin
+        : 'https://nf.synapse.org',
+    )
     resourcePrimaryKey.forEach(columnName => {
       const columnIndex = getColumnIndex(resourcePrimaryKey[0], rowSet?.headers)
       if (columnIndex == null) {

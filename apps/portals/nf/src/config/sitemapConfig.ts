@@ -15,32 +15,32 @@ import {
 const sitemapConfig: SitemapConfig = {
   detailPages: [
     {
-      path: 'Explore/Initiatives/DetailsPage',
+      path: 'Explore/Initiatives',
       sql: initiativesSql,
       primaryKeyColumn: 'initiative',
     },
     {
-      path: 'Explore/Datasets/DetailsPage',
+      path: 'Explore/Datasets',
       sql: datasetsSql,
       primaryKeyColumn: 'id',
     },
     {
-      path: 'Explore/Studies/DetailsPage',
+      path: 'Explore/Studies',
       sql: studiesSql,
       primaryKeyColumn: 'studyId',
     },
     {
-      path: 'Explore/Tools/DetailsPage',
+      path: 'Explore/Tools',
       sql: toolsSql,
       primaryKeyColumn: 'resourceId',
     },
     {
-      path: 'Explore/Hackathon/DetailsPage',
+      path: 'Explore/Hackathon',
       sql: hackathonsSql,
       primaryKeyColumn: 'id',
     },
     {
-      path: 'Organizations/DetailsPage',
+      path: 'Organizations',
       sql: fundersSql,
       primaryKeyColumn: 'abbreviation',
     },

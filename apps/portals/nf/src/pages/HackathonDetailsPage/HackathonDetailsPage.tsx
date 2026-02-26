@@ -6,10 +6,13 @@ import {
   DetailsPageTabConfig,
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { Outlet } from 'react-router'
-import { CardContainerLogic } from 'synapse-react-client'
+import { Outlet, useParams } from 'react-router'
+import {
+  CardContainerLogic,
+  ErrorPage,
+  SynapseErrorType,
+} from 'synapse-react-client'
 import {
   HACKATHONS_DETAILS_PAGE_BACKGROUND_AND_RESULTS_TAB_PATH,
   HACKATHONS_DETAILS_PAGE_METHODOLOGY_TAB_PATH,
@@ -30,7 +33,12 @@ const tabConfig: DetailsPageTabConfig[] = [
 ]
 
 function HackathonDetailsPage() {
-  const { id } = useGetPortalComponentSearchParams()
+  const { id } = useParams<{ id: string }>()
+
+  if (!id) {
+    return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
+  }
+
   return (
     <DetailsPage
       header={

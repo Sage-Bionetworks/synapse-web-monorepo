@@ -10,7 +10,12 @@ import {
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
 import { forwardRef } from 'react'
-import { UAParser } from 'ua-parser-js'
+import uaParserLib from 'ua-parser-js'
+// ua-parser-js is CJS-only; pull UAParser from the default export to avoid
+// "named export not found" in Vite dev mode.
+const { UAParser } = uaParserLib as unknown as {
+  UAParser: typeof import('ua-parser-js')['UAParser']
+}
 import IconSvg, { IconSvgProps } from '../IconSvg/IconSvg'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 

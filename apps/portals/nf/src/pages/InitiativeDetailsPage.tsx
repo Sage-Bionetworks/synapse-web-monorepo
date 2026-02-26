@@ -1,7 +1,7 @@
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { useParams } from 'react-router'
 import {
   CardContainerLogic,
   ErrorPage,
@@ -13,7 +13,7 @@ import { initiativeCardConfiguration } from '../config/synapseConfigs/initiative
 import { studyCardConfiguration } from '../config/synapseConfigs/studies'
 
 function InitiativeDetailsPage() {
-  const { initiative } = useGetPortalComponentSearchParams()
+  const { initiative } = useParams<{ initiative: string }>()
 
   if (!initiative) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />

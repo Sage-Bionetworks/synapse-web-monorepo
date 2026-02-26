@@ -43,8 +43,9 @@ export const hackathonCardConfiguration: CardConfiguration = {
   },
   titleLinkConfig: {
     isMarkdown: false,
-    baseURL: 'Explore/Hackathon/DetailsPage',
+    baseURL: 'Explore/Hackathon',
     URLColumnName: 'id',
+    urlParamStyle: 'path',
     matchColumnName: 'id',
   },
   columnIconOptions: {

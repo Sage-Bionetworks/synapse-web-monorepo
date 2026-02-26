@@ -165,8 +165,9 @@ export default function HomePage() {
             secondaryLabelLimit: 5,
             titleLinkConfig: {
               isMarkdown: false,
-              baseURL: 'Explore/Studies/DetailsPage',
+              baseURL: 'Explore/Studies',
               URLColumnName: 'studyId',
+              urlParamStyle: 'path',
               matchColumnName: 's.studyId',
             },
           }}

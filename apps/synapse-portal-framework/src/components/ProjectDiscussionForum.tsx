@@ -10,14 +10,14 @@ import { useGetEntityForum } from 'synapse-react-client/synapse-queries/entity/u
 import { getIgnoredQueryFilterSearchParamKey } from 'synapse-react-client/utils/functions/SqlFunctions'
 
 const ProjectDiscussionForum = (): React.ReactNode => {
-  const urlSearchParams = new URLSearchParams(window.location.search)
+  const location = useLocation()
+  const urlSearchParams = new URLSearchParams(location.search)
   const entityId = urlSearchParams.get('id') ?? ''
   const threadIdSearchParamKey: string = getIgnoredQueryFilterSearchParamKey(
     'threadId',
     'forum',
   )
   const threadId = urlSearchParams.get(threadIdSearchParamKey) ?? ''
-  const location = useLocation()
   const navigate = useNavigate()
   const { data: forum } = useGetEntityForum(entityId)
   const updateThreadId = (threadId?: string) => {

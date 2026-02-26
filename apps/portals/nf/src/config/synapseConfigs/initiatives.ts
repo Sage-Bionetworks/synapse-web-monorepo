@@ -30,8 +30,9 @@ const initiatives: QueryWrapperPlotNavProps = {
     titleLinkConfig: {
       matchColumnName: 'initiative',
       isMarkdown: false,
-      baseURL: 'Explore/Initiatives/DetailsPage',
+      baseURL: 'Explore/Initiatives',
       URLColumnName: 'initiative',
+      urlParamStyle: 'path',
     },
     ctaLinkConfig: {
       text: 'Visit Website',

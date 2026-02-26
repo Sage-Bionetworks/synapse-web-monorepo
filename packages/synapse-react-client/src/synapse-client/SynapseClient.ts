@@ -359,6 +359,9 @@ const MAX_NUMBER_OF_PARTS = 10000
 // This corresponds to the Synapse-managed S3 storage location:
 export const SYNAPSE_STORAGE_LOCATION_ID = 1
 export function getRootURL(): string {
+  if (typeof window === 'undefined') {
+    return 'http://localhost/'
+  }
   const portString = window.location.port ? `:${window.location.port}` : ''
   return `${window.location.protocol}//${window.location.hostname}${portString}/`
 }

@@ -30,7 +30,9 @@ const categories: Category[] = [
   { resourceName: 'Biobank', image: <Biobanks /> },
 ]
 
-const host = window.location.host
+// Defer window access to call time so this module can be imported in Node.js (SSR/pre-render)
+const getHost = () =>
+  typeof window !== 'undefined' ? window.location.host : 'nf.synapse.org'
 const baseUrl = `${encodeURIComponent(
   'Research Tools Central',
 )}/${encodeURIComponent('Submit ')}`
@@ -39,7 +41,7 @@ const baseSchemaUrl =
 const postUrl = 'https://submit-form.com/KwZ46H4T'
 
 const createHref = path =>
-  `http://${host}/${baseUrl}${encodeURIComponent(path)}`
+  `http://${getHost()}/${baseUrl}${encodeURIComponent(path)}`
 
 const submitToolButtons = [
   {
@@ -235,7 +237,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
             descriptionColumnName={'description'}
             typeColumnName={'resourceType'}
             dateColumnName={'dateAdded'}
-            toolDetailPageURL={'/Explore/Tools/DetailsPage?resourceId='}
+            toolDetailPageURL={'/Explore/Tools/'}
             filterClause={'ORDER BY dateAdded DESC'}
           />
         </div>

@@ -68,22 +68,26 @@ describe('flattenRoutePaths', () => {
     expect(paths).not.toContain('/profile/:userId')
   })
 
-  it('skips DetailsPage routes', () => {
+  it('skips routes with dynamic path parameters (new-style clean URLs)', () => {
+    // With clean-URL routing, detail pages use /:param instead of /DetailsPage?param=
+    // These are excluded from static sitemap extraction; per-record URLs come from sitemapConfig.
     const routes: RouteObject[] = [
       {
         path: 'Explore',
         children: [
           { path: 'Studies' },
-          { path: 'Studies/DetailsPage' }, // Should be skipped
+          { path: 'Studies/:studyId' }, // Should be skipped (has :param)
         ],
       },
     ]
     const paths = flattenRoutePaths(routes)
     expect(paths).toContain('/Explore/Studies')
-    expect(paths).not.toContain('/Explore/Studies/DetailsPage')
+    expect(paths).not.toContain('/Explore/Studies/:studyId')
   })
 
-  it('skips DetailsPage sub-routes (they require query params)', () => {
+  it('skips dynamic param sub-routes (tab routes under /:param)', () => {
+    // Tab routes nested under a dynamic param route are also excluded since
+    // they inherit the :param requirement.
     const routes: RouteObject[] = [
       {
         path: 'Explore',
@@ -92,7 +96,8 @@ describe('flattenRoutePaths', () => {
             path: 'Studies',
             children: [
               {
-                path: 'DetailsPage',
+                // Clean-URL detail page — :studyId is the record identifier
+                path: ':studyId',
                 children: [{ path: 'Details' }, { path: 'AdditionalFiles' }],
               },
             ],
@@ -103,9 +108,28 @@ describe('flattenRoutePaths', () => {
     const paths = flattenRoutePaths(routes)
     expect(paths).toContain('/Explore')
     expect(paths).toContain('/Explore/Studies')
-    expect(paths).not.toContain('/Explore/Studies/DetailsPage')
-    expect(paths).not.toContain('/Explore/Studies/DetailsPage/Details')
-    expect(paths).not.toContain('/Explore/Studies/DetailsPage/AdditionalFiles')
+    // All :studyId-dependent paths are excluded
+    expect(paths).not.toContain('/Explore/Studies/:studyId')
+    expect(paths).not.toContain('/Explore/Studies/:studyId/Details')
+    expect(paths).not.toContain('/Explore/Studies/:studyId/AdditionalFiles')
+  })
+
+  it('includes legacy /DetailsPage redirect routes (static paths, no params)', () => {
+    // Legacy /DetailsPage redirect routes are plain static paths — no dynamic
+    // segment — so they ARE included in the static sitemap extraction.
+    // They will redirect browsers but are still valid crawlable paths.
+    const routes: RouteObject[] = [
+      {
+        path: 'Explore',
+        children: [
+          { path: 'Studies' },
+          { path: 'Studies/DetailsPage' }, // Legacy redirect — static, included
+        ],
+      },
+    ]
+    const paths = flattenRoutePaths(routes)
+    expect(paths).toContain('/Explore/Studies')
+    expect(paths).toContain('/Explore/Studies/DetailsPage')
   })
 
   it('URL-encodes spaces in paths', () => {

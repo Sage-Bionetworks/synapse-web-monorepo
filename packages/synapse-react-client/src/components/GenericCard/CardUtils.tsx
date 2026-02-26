@@ -130,10 +130,13 @@ export function getCardLinkHref(
         `Could not find match for data: ${data} with columnName ${matchColumnName}`,
       )
     } else if ('baseURL' in cardLink) {
-      const { baseURL, URLColumnName } = cardLink
+      const { baseURL, URLColumnName, urlParamStyle = 'query' } = cardLink
       const value = overrideValueWithRowID ? `syn${rowId}` : data[indexInData]
       if (value) {
         // value is defined!
+        if (urlParamStyle === 'path') {
+          return `/${baseURL}/${encodeURIComponent(value)}`
+        }
         return `/${baseURL}?${URLColumnName}=${encodeURIComponent(value)}`
       }
     }

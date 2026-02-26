@@ -5,8 +5,8 @@ import {
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { useParams } from 'react-router'
 import { datasetsSql, enabledAnalysisPlatforms } from '@/config/resources'
 import { columnAliases } from '@/config/synapseConfigs/commonProps'
 import {
@@ -18,7 +18,7 @@ import {
 } from 'synapse-react-client'
 
 function DatasetDetailsPage() {
-  const { id } = useGetPortalComponentSearchParams()
+  const { id } = useParams<{ id: string }>()
 
   if (!id) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />

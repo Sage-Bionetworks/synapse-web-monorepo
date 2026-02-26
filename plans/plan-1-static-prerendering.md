@@ -594,6 +594,61 @@ Verify the S3 bucket policy and CloudFront distribution settings allow this. No 
 
 ---
 
+## Phase 3 — MUI / Emotion SSR Configuration
+
+With Framework Mode using `hydrateRoot(document, ...)`, MUI and Emotion require additional setup to function correctly during pre-rendering and hydration. Without this, the pre-rendered HTML is missing Emotion-generated `<style>` tags (causing FOUC) and MUI hooks like `useMediaQuery` produce incorrect server-side defaults (causing hydration mismatches).
+
+### P3.1 — Create a custom `entry.server.tsx` with Emotion cache extraction
+
+The default `entry.server.tsx` renders `<ServerRouter>` without an Emotion `CacheProvider`. This means MUI component styles are not collected during pre-rendering — the HTML ships with the correct DOM structure but no inline `<style>` tags. On hydration the styles appear, causing a flash of unstyled content.
+
+**New file:** `apps/portals/nf/src/entry.server.tsx`
+
+The custom server entry must:
+
+1. Create a fresh `@emotion/cache` instance per render request
+2. Wrap `<ServerRouter>` with `<CacheProvider>`
+3. Use `@emotion/server/create-instance`'s `extractCriticalToChunks` + `constructStyleTagsFromChunks` to extract the generated CSS
+4. Inject the extracted `<style>` tags into the response HTML
+
+This requires adding `@emotion/server` to the NF portal's dependencies:
+
+```bash
+pnpm add @emotion/server --filter nf
+```
+
+> **Risk:** Low. This is an additive change — the existing client-side Emotion cache is unaffected. The server cache is per-request. Verify styles appear in the pre-rendered HTML with `pnpm nx run nf:build` then inspect `build/client/index.html`.
+
+### P3.2 — Configure `useMediaQuery` for SSR hydration
+
+MUI's `useMediaQuery` defaults to `false` on the server (no `window.matchMedia`). For pre-rendered static HTML with `ssr: false`, the server has no knowledge of the client's viewport width. This causes `DropdownNavButton`'s `isSmallView` to be `false` during pre-render, so the HTML always contains the desktop navbar layout.
+
+On a narrow viewport, hydration sees the desktop HTML but immediately switches to the mobile Accordion layout, causing a hydration mismatch warning and a re-render.
+
+Options (in order of preference):
+
+1. **Use CSS media queries for responsive layout** — Instead of `{isSmallView && <Accordion>}` / `{!isSmallView && <Button>}`, render both variants and use CSS `display: none` to hide the inactive one. This avoids any JS-based hydration mismatch. This is what the MUI docs recommend: _"Try relying on client-side CSS media queries first."_
+
+2. **Accept the two-pass render** — MUI's `useMediaQuery` already does a two-pass render during hydration (first with `defaultMatches`, then with the real value). The hydration mismatch warning is expected and React recovers gracefully. Document this as a known warning.
+
+3. **Provide `ssrMatchMedia` via the theme** — Set a default assumed width (e.g., 1024px) in the MUI theme's `MuiUseMediaQuery.defaultProps.ssrMatchMedia`. This makes the server render match desktop browsers, reducing mismatches on wide viewports but not eliminating them on mobile.
+
+> **Risk:** Option 1 requires refactoring `DropdownNavButton` to render both mobile and desktop variants simultaneously. Medium effort but eliminates the category of bug entirely. Option 2 is zero-effort but leaves the warning and a brief layout shift. Option 3 is low-effort but only reduces (not eliminates) mismatches.
+
+### P3.3 — Audit `hydrateRoot(document)` event delegation implications
+
+React Router Framework Mode uses `hydrateRoot(document, ...)`, which attaches React's event delegation to `document` itself. This differs from the old SPA setup where `createRoot(rootElement)` attached delegation to a child element (e.g., `#root`).
+
+**Consequence:** `event.stopPropagation()` inside a React synthetic event handler **cannot** prevent a native `document.addEventListener('click', ...)` listener from firing, because both operate at the same DOM level. Code that relies on this pattern will break.
+
+**Already fixed:** `Navbar.tsx`'s `handleClickOutside` was updated to use DOM containment checks (`navRef.current.contains(node)`) instead of relying on `stopPropagation()`.
+
+**Action:** Audit all `document.addEventListener` / `window.addEventListener` listeners in the codebase that are paired with `stopPropagation()` calls in React handlers. Each instance is a potential bug. See the systematic search approach below.
+
+> **Risk:** Any component using `document.addEventListener` + `stopPropagation()` coordination will break silently. The fix pattern is the same as Navbar: replace `stopPropagation()` reliance with explicit DOM containment or ref checks.
+
+---
+
 ## Success Criteria
 
 - [ ] `pnpm nx run nf:build` completes without errors

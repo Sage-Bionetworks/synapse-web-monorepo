@@ -10,9 +10,8 @@ import {
   DetailsPageTabConfig,
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { Outlet } from 'react-router'
+import { Outlet, useParams } from 'react-router'
 import {
   CardContainerLogic,
   ErrorPage,
@@ -36,7 +35,7 @@ export const toolDetailsPageTabConfig: DetailsPageTabConfig[] = [
 ] satisfies DetailsPageTabConfig[]
 
 function ToolDetailsPage() {
-  const { resourceId } = useGetPortalComponentSearchParams()
+  const { resourceId } = useParams<{ resourceId: string }>()
 
   if (!resourceId) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />

@@ -61,17 +61,20 @@ export default function Navbar() {
   const { data: userProfile } = useGetCurrentUserProfile()
   const { isPortalsDropdownEnabled } = navbarConfig
   const [showMenu, setShowMenu] = useState(false)
-  const openBtnRef = useRef<HTMLDivElement>(null)
+  const navRef = useRef<HTMLElement>(null)
 
   const { clearSession } = useApplicationSessionContext()
 
   useEffect(() => {
     function handleClickOutside(e: Event) {
       const node = e.target as HTMLElement
-      if (
-        openBtnRef &&
-        !(openBtnRef.current === node || node?.closest('.dropdown-toggle'))
-      ) {
+      // Close the mobile menu when clicking outside the entire nav bar.
+      // Note: we use DOM containment check instead of stopPropagation()
+      // because React Router Framework Mode uses hydrateRoot(document, ...),
+      // which attaches React event delegation to `document` — the same level
+      // as this native listener. stopPropagation() inside React handlers
+      // cannot prevent this listener from firing in that scenario.
+      if (navRef.current && !navRef.current.contains(node)) {
         setShowMenu(false)
       }
     }
@@ -102,7 +105,8 @@ export default function Navbar() {
   ) : (
     <></>
   )
-  const hostname = window.location.hostname.toLowerCase()
+  const hostname =
+    typeof window !== 'undefined' ? window.location.hostname.toLowerCase() : ''
   // for now, we only support login in the dev environment (localstorage) or from a .synapse.org subdomain (http-only secure cookie)
   const isSynapseSubdomainOrLocal =
     (hostname.endsWith('.synapse.org') ||
@@ -131,6 +135,7 @@ export default function Navbar() {
   return (
     <>
       <Box
+        ref={navRef}
         component={'nav'}
         className={
           !showMenu
@@ -156,7 +161,6 @@ export default function Navbar() {
           onClick={() => {
             setShowMenu(true)
           }}
-          ref={openBtnRef}
         >
           MENU
         </div>

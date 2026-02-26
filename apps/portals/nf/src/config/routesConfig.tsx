@@ -16,6 +16,7 @@ import {
   TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH,
   TOOLS_DETAILS_PAGE_OBSERVATIONS_TAB_PATH,
 } from './routeConstants'
+import LegacyDetailsPageRedirect from '../pages/LegacyDetailsPageRedirect'
 
 const routes: RouteObject[] = [
   {
@@ -137,20 +138,21 @@ const routes: RouteObject[] = [
           },
         ],
       },
+      // ── Clean-URL detail page routes (path param style) ─────────────────
       {
-        path: 'Explore/Initiatives/DetailsPage',
+        path: 'Explore/Initiatives/:initiative',
         lazy: () =>
           import('@/pages/InitiativeDetailsPage').then(
             convertModuleToRouteObject,
           ),
       },
       {
-        path: 'Explore/Datasets/DetailsPage',
+        path: 'Explore/Datasets/:id',
         lazy: () =>
           import('@/pages/DatasetDetailsPage').then(convertModuleToRouteObject),
       },
       {
-        path: 'Explore/Studies/DetailsPage',
+        path: 'Explore/Studies/:studyId',
         lazy: () =>
           import('@/pages/StudyDetailsPage/StudyDetailsPage').then(
             convertModuleToRouteObject,
@@ -202,7 +204,7 @@ const routes: RouteObject[] = [
         ],
       },
       {
-        path: 'Explore/Tools/DetailsPage',
+        path: 'Explore/Tools/:resourceId',
         lazy: () =>
           import('@/pages/ToolDetailsPage/ToolDetailsPage').then(
             convertModuleToRouteObject,
@@ -247,7 +249,7 @@ const routes: RouteObject[] = [
         ],
       },
       {
-        path: 'Explore/Hackathon/DetailsPage',
+        path: 'Explore/Hackathon/:id',
         lazy: () =>
           import('@/pages/HackathonDetailsPage/HackathonDetailsPage').then(
             convertModuleToRouteObject,
@@ -287,47 +289,70 @@ const routes: RouteObject[] = [
         ],
       },
       {
-        path: 'Organizations',
+        path: 'Organizations/:abbreviation',
+        lazy: () =>
+          import(
+            '@/pages/OrganizationDetailsPage/OrganizationDetailsPage'
+          ).then(convertModuleToRouteObject),
         children: [
           {
-            path: 'DetailsPage',
+            index: true,
+            element: <RedirectWithQuery to={ORGANIZATION_DETAILS_TAB_PATH} />,
+          },
+          {
+            // PORTALS-3708 - Add fallback for nonmatching routes to handle route changes.
+            path: '*',
+            element: (
+              <RedirectWithQuery to={`../${ORGANIZATION_DETAILS_TAB_PATH}`} />
+            ),
+          },
+          {
+            path: ORGANIZATION_DETAILS_TAB_PATH,
             lazy: () =>
               import(
-                '@/pages/OrganizationDetailsPage/OrganizationDetailsPage'
+                '@/pages/OrganizationDetailsPage/OrganizationDetailsTab'
               ).then(convertModuleToRouteObject),
-            children: [
-              {
-                index: true,
-                element: (
-                  <RedirectWithQuery to={ORGANIZATION_DETAILS_TAB_PATH} />
-                ),
-              },
-              {
-                // PORTALS-3708 - Add fallback for nonmatching routes to handle route changes.
-                path: '*',
-                element: (
-                  <RedirectWithQuery
-                    to={`../${ORGANIZATION_DETAILS_TAB_PATH}`}
-                  />
-                ),
-              },
-              {
-                path: ORGANIZATION_DETAILS_TAB_PATH,
-                lazy: () =>
-                  import(
-                    '@/pages/OrganizationDetailsPage/OrganizationDetailsTab'
-                  ).then(convertModuleToRouteObject),
-              },
-              {
-                path: ORGANIZATION_DATA_TAB_PATH,
-                lazy: () =>
-                  import(
-                    '@/pages/OrganizationDetailsPage/OrganizationDataTab'
-                  ).then(convertModuleToRouteObject),
-              },
-            ],
+          },
+          {
+            path: ORGANIZATION_DATA_TAB_PATH,
+            lazy: () =>
+              import(
+                '@/pages/OrganizationDetailsPage/OrganizationDataTab'
+              ).then(convertModuleToRouteObject),
           },
         ],
+      },
+      // ── Legacy /DetailsPage redirect routes ──────────────────────────────
+      // Redirects old query-string URLs (e.g. /Explore/Datasets/DetailsPage?id=syn123)
+      // to the new clean-URL form (/Explore/Datasets/syn123).
+      {
+        path: 'Explore/Initiatives/DetailsPage',
+        element: <LegacyDetailsPageRedirect paramName="initiative" />,
+      },
+      {
+        path: 'Explore/Datasets/DetailsPage',
+        element: <LegacyDetailsPageRedirect paramName="id" />,
+      },
+      {
+        path: 'Explore/Studies/DetailsPage',
+        element: <LegacyDetailsPageRedirect paramName="studyId" />,
+      },
+      {
+        path: 'Explore/Tools/DetailsPage',
+        element: <LegacyDetailsPageRedirect paramName="resourceId" />,
+      },
+      {
+        path: 'Explore/Hackathon/DetailsPage',
+        element: <LegacyDetailsPageRedirect paramName="id" />,
+      },
+      {
+        path: 'Organizations/DetailsPage',
+        element: (
+          <LegacyDetailsPageRedirect
+            paramName="abbreviation"
+            fallbackParamName="fundingAgency"
+          />
+        ),
       },
       {
         // PORTALS-2277 - Renamed "Hackathon Projects" to "Hackathon"

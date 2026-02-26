@@ -2,7 +2,11 @@ import Blocker from '@/components/utils/Blocker'
 import Form from '@rjsf/core'
 import { ErrorListProps, RJSFValidationError, UiSchema } from '@rjsf/utils'
 import validator from '@rjsf/validator-ajv8'
-import { Engine, EngineResult } from 'json-rules-engine'
+import type { EngineResult } from 'json-rules-engine'
+// json-rules-engine is CJS-only; use a namespace import so Vite can resolve it
+// via CJS interop without requiring named ESM exports.
+import * as jsonRulesEngine from 'json-rules-engine'
+const { Engine } = jsonRulesEngine
 import cloneDeep from 'lodash-es/cloneDeep'
 import find from 'lodash-es/find'
 import findIndex from 'lodash-es/findIndex'

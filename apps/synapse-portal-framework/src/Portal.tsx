@@ -1,6 +1,6 @@
 import { createTheme, ThemeProvider } from '@mui/material'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { CookiesProvider } from 'react-cookie'
 import { createBrowserRouter, RouteObject } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
@@ -10,8 +10,6 @@ import { mergeTheme } from 'synapse-react-client/theme/mergeTheme'
 import { RouteErrorBoundary } from 'synapse-react-client/components/error/RouteErrorBoundary'
 import { PortalContextProvider } from './components/PortalContext'
 import { PortalProps } from './components/PortalProps'
-
-const queryClient = new QueryClient(defaultQueryClientConfig)
 
 /**
  * Adds an errorElement to top-level routes that don't already have one
@@ -28,6 +26,11 @@ function addErrorBoundaryToRoutes(
 
 function Portal(props: PortalProps) {
   const { palette, ...context } = props
+  // Per-component QueryClient instance (stable via useState initializer).
+  // Prevents cross-render cache leakage during SSR and avoids stale HMR state.
+  const [queryClient] = useState(
+    () => new QueryClient(defaultQueryClientConfig),
+  )
   const routesWithErrorBoundary = useMemo(
     () =>
       addErrorBoundaryToRoutes(

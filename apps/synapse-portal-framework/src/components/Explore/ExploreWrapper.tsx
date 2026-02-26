@@ -53,7 +53,11 @@ export default function ExploreWrapper(
   useDocumentMetadata({ title: newTitle, priority: 50 })
 
   // The canonical URL is the explore route with no searchParams
-  useSetCanonicalUrl(new URL(pathname, window.location.origin).toString())
+  const origin =
+    typeof window !== 'undefined'
+      ? window.location.origin
+      : 'https://nf.synapse.org'
+  useSetCanonicalUrl(new URL(pathname, origin).toString())
 
   return (
     <>

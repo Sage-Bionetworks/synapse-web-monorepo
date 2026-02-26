@@ -88,7 +88,7 @@ export function EntityModal(props: EntityModalProps) {
   const showOpenEntityPageButton =
     currentTab === 'METADATA' &&
     entityBundle &&
-    !window.location.href.includes(entityId)
+    !(typeof window !== 'undefined' && window.location.href.includes(entityId))
   const openEntityPageButton = (
     <Button
       variant={'contained'}
