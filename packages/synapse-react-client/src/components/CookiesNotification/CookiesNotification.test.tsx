@@ -4,7 +4,7 @@ import {
   CookiePreference,
   COOKIES_AGREEMENT_COOKIE_KEY,
 } from '@/utils/hooks/useCookiePreferences'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import UniversalCookies from 'universal-cookie'
 import CookiesNotification, { alertConfig } from './CookiesNotification'
@@ -89,13 +89,17 @@ describe('CookiesNotification', () => {
     expect(privacyPrefsDialogTitle).toBeInTheDocument()
   })
 
-  it('does not display the alert when cookies have been accepted', () => {
+  it('does not display the alert when cookies have been accepted', async () => {
     const cookiePrefence: CookiePreference = {
       analyticsAllowed: true,
       functionalAllowed: true,
     }
     cookies.set(COOKIES_AGREEMENT_COOKIE_KEY, cookiePrefence)
-    const { alert } = renderComponent()
-    expect(alert).not.toBeInTheDocument()
+    renderComponent()
+    // The cookie check is deferred to useEffect so the alert may briefly
+    // appear before being dismissed after hydration.
+    await waitFor(() => {
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    })
   })
 })

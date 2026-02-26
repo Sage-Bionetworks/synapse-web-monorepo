@@ -12,13 +12,11 @@ import {
 } from '@/utils/SynapseConstants'
 import React from 'react'
 import { Link, Typography } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import UniversalCookies from 'universal-cookie'
 import FullWidthAlert from '../FullWidthAlert'
 import CookiePreferencesDialog from './CookiePreferencesDialog'
 import styles from './CookiesNotification.module.scss'
-
-const cookies = new UniversalCookies()
 
 export const alertConfig = {
   title: 'Our site uses cookies.',
@@ -60,9 +58,11 @@ const CookiesNotification = (
   const { onClose } = props
   const [, setCookiePreferences] = useCookiePreferences()
 
-  const [notificationDismissed, setNotificationDismissed] = useState(
-    !!cookies.get(COOKIES_AGREEMENT_COOKIE_KEY),
-  )
+  const [notificationDismissed, setNotificationDismissed] = useState(true)
+  useEffect(() => {
+    const cookies = new UniversalCookies()
+    setNotificationDismissed(cookies.get(COOKIES_AGREEMENT_COOKIE_KEY))
+  }, [])
 
   const [isCookiePrefsDialogVisible, setIsCookiePrefsDialogVisible] =
     useState(false)
