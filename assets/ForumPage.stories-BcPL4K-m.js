@@ -1,0 +1,17 @@
+import{jf as t}from"./iframe-B7KGf7-k.js";import{F as m}from"./ForumPage--Dy0IjIG.js";import"./index-Chi_LkuB.js";import"./useUserBundle-Dv5e5E2c.js";import"./useForum-C_R3ExYG.js";import"./useInfiniteQuery-DoSxFn_y.js";import"./InfiniteQueryUtils-CKlRW-xB.js";import"./useSubscription-BuembzxL.js";import"./ConfirmationDialog-CfHwuMwA.js";import"./DialogBase-D0__VBEg.js";import"./Close-T1I-2ajn.js";import"./HelpPopover-rsd36_y9.js";import"./MarkdownPopover-CgOyBUHV.js";import"./LightTooltip-BjN2xTIz.js";import"./MarkdownSynapse-1Rv7JxA3.js";import"./SkeletonButton-DY-_GYdD.js";import"./SkeletonInlineBlock-C6U7Upal.js";import"./SkeletonTable-DLLgVxsK.js";import"./SkeletonParagraph-D-OkfrQQ.js";import"./InfiniteTableLayout-CuNiKOs-.js";import"./StyledTanStackTable-CjiNcB6o.js";import"./StyledTableContainer-Jcd40sR6.js";import"./ExpandCollapseButton-DSr7xlbU.js";import"./index-DK2YCkQp.js";import"./ColumnHeader-COE6DID0.js";import"./EnumFacetFilterUI-BxTI7CFa.js";import"./FacetFilterHeader-BdSXOGR0.js";import"./FormControlLabel-reBugk4M.js";import"./Checkbox-BtT9IXA1.js";import"./SwitchBase-N3lkwIv1.js";import"./Radio-DVH_4n43.js";import"./MenuItem-BFpLBTs1.js";import"./HelpTwoTone-hW9oEGbM.js";import"./UserBadge-O_YNKCQM.js";import"./Card-FkpFOr7A.js";import"./Chip-BchH_Wga.js";import"./ForumThreadEditor-BBuDfuVA.js";import"./useThread-Lvo_JPPT.js";import"./MarkdownEditor-BiyTHQoQ.js";import"./UserSearchBoxV2-DGGu5VOX.js";import"./useDebouncedEffect-BERLuVjT.js";import"./use-deep-compare-effect.esm-CdPym0xJ.js";import"./uniq-v1kE_RCi.js";import"./without-BwFRkplG.js";import"./Select-aab027f3.esm-DBxLl7Lu.js";import"./defineProperty-Cp4flQ_6.js";import"./toPropertyKey-C9c9JG92.js";import"./UserOrTeamBadge-B2_L-lsY.js";import"./TeamBadge-DkbqZHoj.js";import"./Tabs-CeGHqF7Z.js";import"./KeyboardArrowRight-CDK73nY-.js";import"./_arrayReduce-CrxnWFSq.js";import"./upperFirst-CRfV52pe.js";import"./_stringToArray-DitouZPj.js";import"./SubscribersModal-Iae4SFjL.js";const pr={title:"Synapse/ForumPage",component:m,args:{onClickLink:()=>alert("This functionality has not been implemented yet")}},r={parameters:{stack:"mock"},args:{forumId:t,limit:5}},o={parameters:{stack:"production"},args:{forumId:"1032",limit:10}};r.parameters={...r.parameters,docs:{...r.parameters?.docs,source:{originalSource:`{
+  parameters: {
+    stack: 'mock'
+  },
+  args: {
+    forumId: MOCK_FORUM_ID,
+    limit: 5
+  }
+}`,...r.parameters?.docs?.source}}};o.parameters={...o.parameters,docs:{...o.parameters?.docs,source:{originalSource:`{
+  parameters: {
+    stack: 'production'
+  },
+  args: {
+    forumId: '1032',
+    limit: 10
+  }
+}`,...o.parameters?.docs?.source}}};const er=["ForumPageDemo","ProdHelpForum"];export{r as ForumPageDemo,o as ProdHelpForum,er as __namedExportsOrder,pr as default};
