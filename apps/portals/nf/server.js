@@ -8,6 +8,11 @@ const app = express()
 
 app.disable('x-powered-by')
 
+// Health check endpoint for load balancers (ALB, etc.)
+app.get('/health', (_req, res) => {
+  res.status(200).json({ status: 'ok' })
+})
+
 if (DEVELOPMENT) {
   console.log('Starting development server')
   const viteDevServer = await import('vite').then(vite =>

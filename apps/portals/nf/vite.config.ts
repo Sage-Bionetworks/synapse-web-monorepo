@@ -112,6 +112,10 @@ export default defineConfig(({ isSsrBuild }) => ({
       // plugin which is wrapped to only apply to the client environment.
       src: new URL('./src', import.meta.url).pathname,
     },
+    // Force all React imports (including from pre-bundled SSR deps) to resolve
+    // to a single copy. Without this, ssr.optimizeDeps.include causes esbuild to
+    // inline React into the pre-bundle, creating dual-React "Invalid hook call" errors.
+    dedupe: ['react', 'react-dom'],
   },
   ssr: {
     // Bundle MUI and Emotion for SSR — their CJS/ESM dual-publish causes issues when externalized
@@ -120,12 +124,7 @@ export default defineConfig(({ isSsrBuild }) => ({
     // Without this, Vite's SSR module runner processes each sub-module import
     // individually in @mui/icons-material (13,000+ re-exports), which hangs the dev server.
     optimizeDeps: {
-      include: [
-        '@mui/icons-material',
-        '@mui/material',
-        '@emotion/react',
-        '@emotion/styled',
-      ],
+      include: ['@emotion/*', '@mui/*'],
     },
   },
   test: {

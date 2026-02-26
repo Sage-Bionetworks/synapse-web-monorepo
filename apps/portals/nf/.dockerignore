@@ -1,0 +1,15 @@
+# Exclude everything not needed in the production Docker image
+node_modules
+src
+server
+public
+.vite
+*.tsbuildinfo
+coverage
+vite.config.ts
+react-router.config.ts
+sitemap.vite.config.ts
+tsconfig.json
+index.html
+Dockerfile
+.dockerignore
