@@ -109,9 +109,7 @@ export function CreateOAuthModal({
     setSectorUri(client?.sector_identifier_uri ?? '')
     setUserinfoSignedResponseAlg(
       (client?.userinfo_signed_response_alg ??
-        defaultUserInfoSignedResponseAlgorithm) as
-        | 'JSON'
-        | OIDCSigningAlgorithm,
+        defaultUserInfoSignedResponseAlgorithm),
     )
     setTosUri(client?.tos_uri ?? '')
   }, [isShowingModal, client])
