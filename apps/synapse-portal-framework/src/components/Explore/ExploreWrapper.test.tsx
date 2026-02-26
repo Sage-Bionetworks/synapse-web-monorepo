@@ -3,6 +3,20 @@ import { createMemoryRouter, RouterProvider } from 'react-router'
 import { describe, expect, it } from 'vitest'
 import ExploreWrapper from './ExploreWrapper'
 import { ExploreWrapperProps } from './ExploreWrapperProps'
+import {
+  PortalContextProvider,
+  PortalContextType,
+} from '@/components/PortalContext'
+
+const mockPortalContext: PortalContextType = {
+  portalName: 'TestPortal',
+  routeConfig: [],
+  headerConfig: { title: 'Test', summary: 'Test summary' },
+  footerConfig: {},
+  logoHeaderConfig: {},
+  logoFooterConfig: {},
+  navbarConfig: { routes: [], isPortalsDropdownEnabled: false },
+}
 
 describe('ExploreWrapper', () => {
   const props = {
@@ -23,7 +37,11 @@ describe('ExploreWrapper', () => {
   ])
 
   it('renders tabs', async () => {
-    render(<RouterProvider router={router} />)
+    render(
+      <PortalContextProvider value={mockPortalContext}>
+        <RouterProvider router={router} />
+      </PortalContextProvider>,
+    )
     const tabs = await screen.findAllByRole('tab')
     expect(tabs).toHaveLength(2)
     screen.getByText(props.explorePaths[0].path)
