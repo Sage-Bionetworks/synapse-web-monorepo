@@ -14,12 +14,21 @@ app.get('/health', (_req, res) => {
 })
 
 if (DEVELOPMENT) {
-  console.log('Starting development server')
+  console.log('Starting development server...')
+  console.time('  Vite server created')
   const viteDevServer = await import('vite').then(vite =>
     vite.createServer({
       server: { middlewareMode: true },
     }),
   )
+  console.timeEnd('  Vite server created')
+
+
+  console.log("  Loading SSR modules...")
+  console.time('  SSR modules loaded')
+  await viteDevServer.ssrLoadModule('virtual:react-router/server-build')
+  console.timeEnd('  SSR modules loaded')
+
   app.use(viteDevServer.middlewares)
   app.use(async (req, res, next) => {
     try {

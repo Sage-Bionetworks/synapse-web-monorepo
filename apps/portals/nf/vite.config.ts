@@ -118,13 +118,23 @@ export default defineConfig(({ isSsrBuild }) => ({
     dedupe: ['react', 'react-dom'],
   },
   ssr: {
-    // Bundle MUI and Emotion for SSR — their CJS/ESM dual-publish causes issues when externalized
-    noExternal: [/^@mui\//, /^@emotion\//],
-    // Pre-bundle large barrel exports for SSR dev mode.
+    // Bundle MUI, Emotion, and workspace packages for SSR.
+    // MUI/Emotion: their CJS/ESM dual-publish causes issues when externalized.
+    // Workspace packages: pre-bundling consolidates their many dist files into
+    // fewer chunks, reducing individual module evaluations during SSR dev mode.
+    noExternal: [
+      /^@mui\//,
+      /^@emotion\//,
+    ],
+    // Pre-bundle large barrel exports and workspace packages for SSR dev mode.
     // Without this, Vite's SSR module runner processes each sub-module import
-    // individually in @mui/icons-material (13,000+ re-exports), which hangs the dev server.
+    // individually (e.g. @mui/icons-material has 13,000+ re-exports,
+    // synapse-react-client has 1,574 dist files), which hangs the dev server.
     optimizeDeps: {
-      include: ['@emotion/*', '@mui/*'],
+      include: [
+        '@emotion/*',
+        '@mui/*',
+      ],
     },
   },
   test: {
