@@ -24,7 +24,7 @@ export function ColumnHeaderWithTooltip({
           placement="top"
           enterNextDelay={TOOLTIP_DELAY_SHOW}
         >
-          <IconButton size="small">
+          <IconButton size="small" color="inherit">
             <HelpTwoTone fontSize="inherit" />
           </IconButton>
         </Tooltip>
