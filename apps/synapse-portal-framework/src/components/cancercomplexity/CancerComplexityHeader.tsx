@@ -4,6 +4,7 @@ import HeaderSearchBox from '../HeaderSearchBox'
 import { AddAlertTwoTone } from '@mui/icons-material'
 import { TypeAnimation } from 'react-type-animation'
 import headerBackground from '../assets/cckp-header-background.jpeg'
+import { visuallyHidden } from 'synapse-react-client'
 
 const CancerComplexityHeader = (): React.ReactNode => {
   const searchPlaceholder = 'Search for cancer related data and resources'
@@ -24,6 +25,16 @@ const CancerComplexityHeader = (): React.ReactNode => {
     { value: 'funder', label: 'Funder' },
     { value: 'trainee', label: 'Trainee' },
     { value: 'patientAdvocate', label: 'Patient Advocate' },
+  ]
+
+  const animationPhrases = [
+    'cancer',
+    'metastasis',
+    'tumor-immune microenvironment',
+    'drug resistance',
+    'tumor heterogeneity',
+    'software analysis tools',
+    'tumor progression',
   ]
 
   const discoverAndExplore = (
@@ -51,21 +62,8 @@ const CancerComplexityHeader = (): React.ReactNode => {
         })}
       >
         <TypeAnimation
-          sequence={[
-            'cancer',
-            3000,
-            'metastasis',
-            3000,
-            'tumor-immune microenvironment',
-            3000,
-            'drug resistance',
-            3000,
-            'tumor heterogeneity',
-            3000,
-            'software analysis tools',
-            3000,
-            'tumor progression',
-          ]}
+          aria-hidden="true"
+          sequence={animationPhrases.flatMap(phrase => [phrase, 3000])}
           wrapper="span"
           speed={20}
           repeat={Infinity}
@@ -74,6 +72,10 @@ const CancerComplexityHeader = (): React.ReactNode => {
             color: '#76E9F0',
           }}
         />
+        {/* Screen reader only text */}
+        <Box component="span" sx={visuallyHidden}>
+          {animationPhrases.join(', ')}
+        </Box>
       </Box>
     </Box>
   )

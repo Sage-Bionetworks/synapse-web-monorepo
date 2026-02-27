@@ -24,7 +24,7 @@ function ResetTwoFactorAuth() {
   const twoFactorAuthResetTokenParam = useQuerySearchParam(
     RESET_2FA_SIGNED_TOKEN_PARAM,
   )
-  const { appId } = useSourceApp()
+  const sourceApp = useSourceApp()
   const token = useMemo(() => {
     if (twoFactorAuthResetTokenParam) {
       return hexDecodeAndDeserialize(
@@ -91,7 +91,7 @@ function ResetTwoFactorAuth() {
                       // We will render our own password form
                       setShowPasswordField(true)
                     }}
-                    sourceAppId={appId}
+                    realm={sourceApp?.defaultRealm}
                   />
                 </>
               )}

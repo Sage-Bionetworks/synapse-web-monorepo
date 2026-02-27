@@ -47,3 +47,20 @@ export const sidePadding: SxProps = {
     sm: '50px',
   },
 }
+
+/**
+ * Visually hides content while keeping it accessible to screen readers.
+ * Use this for content that provides context to assistive technologies
+ * but should not be visible on screen.
+ */
+export const visuallyHidden: SxProps = {
+  position: 'absolute',
+  width: '1px',
+  height: '1px',
+  padding: 0,
+  margin: '-1px',
+  overflow: 'hidden',
+  clip: 'rect(0, 0, 0, 0)',
+  whiteSpace: 'nowrap',
+  border: 0,
+}

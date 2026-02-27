@@ -8,6 +8,7 @@ import {
   homepageBodyText,
   sidePadding,
   titleSx,
+  visuallyHidden,
 } from '@/components/SynapseHomepageV2/HomepageStyles'
 import { SAGE_OFFERINGS_HELP_URL } from '@/utils/SynapseConstants'
 import {
@@ -50,6 +51,14 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
   const isDesktopView = useMediaQuery(theme.breakpoints.up('lg'))
   //optimization - prioritize loading above-the-fold content (delay loading below the fold)
   const { ref, inView } = useInView({ triggerOnce: true })
+
+  // Rotating text phrases for the hero section
+  const heroTextPhrases = [
+    'the next cure',
+    'the next diagnostic',
+    'the next preventive therapy',
+  ]
+
   return (
     <Box sx={{ overflow: 'hidden' }}>
       <SynapseHomepageNavBar gotoPlace={gotoPlace} />
@@ -107,20 +116,11 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
         }}
       >
         <Typography variant="headline1" sx={titleSx}>
-          Explore the data
-        </Typography>
-        <Typography variant="headline1" sx={titleSx}>
+          Explore the data <br />
           behind&nbsp;
           <TypeAnimation
-            sequence={[
-              // Same substring at the start will only be typed out once, initially
-              'the next cure',
-              3000,
-              'the next diagnostic',
-              3000,
-              'the next preventive therapy',
-              3000,
-            ]}
+            aria-hidden="true"
+            sequence={heroTextPhrases.flatMap(phrase => [phrase, 3000])}
             wrapper="span"
             speed={20}
             repeat={Infinity}
@@ -128,6 +128,10 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
               color: '#B5D3CE',
             }}
           />
+          {/* Screen reader only text */}
+          <Box component="span" sx={visuallyHidden}>
+            {heroTextPhrases.join(', ')}
+          </Box>
         </Typography>
       </Box>
 

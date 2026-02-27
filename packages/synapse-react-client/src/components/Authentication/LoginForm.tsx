@@ -3,6 +3,7 @@ import appendFinalQueryParamKey from '@/utils/appendFinalQueryParamKey'
 import { UseLoginReturn, useOneSageURL } from '@/utils/hooks'
 import { Box, Link } from '@mui/material'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-types'
+import { Realm } from '@sage-bionetworks/synapse-client'
 import { noop } from 'lodash-es'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import AuthenticationMethodSelection from './AuthenticationMethodSelection'
@@ -34,7 +35,7 @@ type Props = {
   twoFactorAuthResetUri?: string
   /* Invoked when password login is selected */
   onPasswordLoginSelected?: () => void
-  sourceAppId?: string
+  realm?: Realm
 }
 
 export default function LoginForm(props: Props) {
@@ -63,7 +64,7 @@ export default function LoginForm(props: Props) {
       'twoFAResetToken',
     ),
     onPasswordLoginSelected = noop,
-    sourceAppId,
+    realm,
   } = props
 
   return (
@@ -77,7 +78,7 @@ export default function LoginForm(props: Props) {
           onBeginOAuthSignIn={onBeginOAuthSignIn}
           ssoRedirectUrl={ssoRedirectUrl}
           state={ssoState}
-          sourceAppId={sourceAppId}
+          realm={realm}
         />
       )}
       {step === 'USERNAME_PASSWORD' && (

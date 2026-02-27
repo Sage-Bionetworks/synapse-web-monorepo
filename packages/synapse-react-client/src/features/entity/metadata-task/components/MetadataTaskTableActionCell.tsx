@@ -6,6 +6,7 @@ import { useCallback } from 'react'
 import useGridSessionForCurationTask from '../hooks/useGridSessionForCurationTask'
 import { getGridSourceIdForTask } from '../utils/getGridSourceIdForTask'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
+import { displayToast } from '@/components/ToastMessage/ToastMessage'
 
 /**
  * Handles rendering the 'Actions' cell in the Metadata Task table, which provides buttons for the user
@@ -35,14 +36,21 @@ export default function MetadataTaskTableActionCell(props: {
       ' to view the Working Copy'
 
   const handleOpenDataGrid = useCallback(async () => {
-    const gridSession = await getGridSessionForTask({ curationTask })
-    const gridUrl = getLinkToGridSession(
-      gridSession.sessionId!,
-      curationTask.taskId,
-    )
+    try {
+      const gridSession = await getGridSessionForTask({ curationTask })
+      const gridUrl = getLinkToGridSession(
+        gridSession.sessionId!,
+        curationTask.taskId,
+      )
 
-    // Open the Grid in a new tab
-    window.open(gridUrl, '_blank', 'noopener')
+      // Open the Grid in a new tab
+      window.open(gridUrl, '_blank', 'noopener')
+    } catch (error) {
+      console.error('Error opening Curator for curation task', error)
+      displayToast(error.message, 'danger', {
+        title: 'An error occurred while trying to open Curator',
+      })
+    }
   }, [curationTask, getGridSessionForTask])
 
   // TODO: SWC-7480

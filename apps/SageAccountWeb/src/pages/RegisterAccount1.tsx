@@ -28,12 +28,7 @@ import {
   StyledInnerContainer,
   StyledOuterContainer,
 } from '@/components/StyledComponents'
-import {
-  ARCUS_SOURCE_APP_ID,
-  SYNAPSE_SOURCE_APP_ID,
-  useSourceApp,
-  useSourceAppId,
-} from '@/components/useSourceApp'
+import { SYNAPSE_SOURCE_APP_ID, useSourceApp } from '@/components/useSourceApp'
 import SynapseClient from 'synapse-react-client/synapse-client/index'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
@@ -46,6 +41,7 @@ import RegisterPageLogoutPrompt from 'synapse-react-client/components/RegisterPa
 import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
 import { generateCsrfToken } from 'synapse-react-client/utils/functions/generateCsrfToken'
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/featureflags/useGetFeatureFlag'
+import { hasArcusProvider } from 'synapse-react-client/utils/functions/RealmUtils'
 
 export enum Pages {
   CHOOSE_REGISTRATION,
@@ -98,12 +94,15 @@ const RegisterAccount1 = (): React.ReactNode => {
   const [usernameInvalidReason, setUsernameInvalidReason] = useState<
     string | null
   >(null)
-  const { appId: sourceAppId, friendlyName: sourceAppName } = useSourceApp()
+  const {
+    appId: sourceAppId,
+    friendlyName: sourceAppName,
+    defaultRealm,
+  } = useSourceApp()
   const showSageBionetworksIdp = useGetFeatureFlag(
     FeatureFlagEnum.SAGE_BIONETWORKS_IDP,
   )
-  const appId = useSourceAppId()
-  const isArcusApp = appId === ARCUS_SOURCE_APP_ID
+  const isArcusApp = hasArcusProvider(defaultRealm)
   const [page, setPage] = useState(Pages.CHOOSE_REGISTRATION)
   const [membershipInvitationEmail, setMembershipInvitationEmail] =
     useState<string>()

@@ -1,4 +1,3 @@
-import { oauth2PromptFor2FAHandler } from '@/mocks/handlers/oauth2Handlers'
 import { server } from '@/mocks/node.js'
 import { TwoFactorAuthResetToken } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
@@ -7,6 +6,8 @@ import { vitest } from 'vitest'
 import { RESET_2FA_SIGNED_TOKEN_PARAM } from '../../Constants'
 import TestWrapper, { TestWrapperProps } from '../../tests/TestWrapper'
 import ResetTwoFactorAuth from '../../pages/ResetTwoFactorAuth'
+import { SourceAppContext } from '@/components/useSourceApp'
+import { STATIC_SOURCE_APP_CONFIG } from 'synapse-react-client/utils/hooks/useSourceAppConfigs'
 
 describe('ResetTwoFactorAuth', () => {
   beforeAll(() => {
@@ -37,11 +38,25 @@ describe('ResetTwoFactorAuth', () => {
     'utf-8',
   ).toString('hex')
 
+  // Mock source app config with a valid realm to avoid skeleton loading state
+  const testSourceAppConfig = {
+    ...STATIC_SOURCE_APP_CONFIG,
+    defaultRealm: {
+      id: '1',
+      name: 'Synapse',
+    },
+  }
+
   function renderComponent(wrapperProps?: TestWrapperProps) {
     const user = userEvent.setup()
-    render(<ResetTwoFactorAuth />, {
-      wrapper: props => <TestWrapper {...props} {...wrapperProps} />,
-    })
+    render(
+      <SourceAppContext.Provider value={testSourceAppConfig}>
+        <ResetTwoFactorAuth />
+      </SourceAppContext.Provider>,
+      {
+        wrapper: props => <TestWrapper {...props} {...wrapperProps} />,
+      },
+    )
     return { user }
   }
 
@@ -88,33 +103,49 @@ describe('ResetTwoFactorAuth', () => {
     )
   })
 
-  it.todo(
-    'Handles resetting 2FA with twoFaToken retrieved via 3rd party login',
-    async () => {
-      server.use(oauth2PromptFor2FAHandler)
-      const { user } = renderComponent({
-        memoryRouterProps: {
-          initialEntries: [
-            // TODO: How to simulate that ApplicationSessionManager will redirect the user back here with the twoFaToken after sign-in with external IdP?
-            `?${RESET_2FA_SIGNED_TOKEN_PARAM}=${hexEncodedResetToken}`,
-          ],
-        },
-      })
+  it('Handles resetting 2FA with twoFaToken retrieved via 3rd party login', async () => {
+    // Import MOCK_APPLICATION_SESSION_CONTEXT at the top
+    const { MOCK_APPLICATION_SESSION_CONTEXT } = await import(
+      'synapse-react-client/mocks'
+    )
 
-      const disableTwoFactorAuthButton = await screen.findByRole('button', {
-        name: 'Disable Two-Factor Authentication',
-      })
+    // Simulate that the user has completed SSO and received a 2FA error response
+    const twoFactorAuthSSOErrorResponse = {
+      concreteType:
+        'org.sagebionetworks.repo.model.auth.TwoFactorAuthErrorResponse' as const,
+      userId: 123,
+      twoFaToken: 'fakeTwoFaToken',
+      reason: 'Two-factor auth is required',
+      errorCode: 'TWO_FA_REQUIRED' as const,
+    }
 
-      // No password is required because the user logged in with an external IdP
-      expect(screen.queryByLabelText('Password')).not.toBeInTheDocument()
+    const { user } = renderComponent({
+      memoryRouterProps: {
+        initialEntries: [
+          `?${RESET_2FA_SIGNED_TOKEN_PARAM}=${hexEncodedResetToken}`,
+        ],
+      },
+      applicationSessionContext: {
+        ...MOCK_APPLICATION_SESSION_CONTEXT,
+        twoFactorAuthSSOErrorResponse,
+      },
+    })
 
-      expect(disableTwoFactorAuthButton).toBeEnabled()
+    const disableTwoFactorAuthButton = await screen.findByRole('button', {
+      name: 'Disable Two-Factor Authentication',
+    })
 
-      await user.click(disableTwoFactorAuthButton)
+    // No password is required because the user logged in with an external IdP
+    expect(screen.queryByLabelText('Password')).not.toBeInTheDocument()
 
-      await screen.findByText(
-        '2FA has been successfully disabled on your account.',
-      )
-    },
-  )
+    expect(disableTwoFactorAuthButton).toBeEnabled()
+
+    await user.click(disableTwoFactorAuthButton)
+
+    // Wait for the success message - using findAll in case there are toast remnants from previous tests
+    const successMessages = await screen.findAllByText(
+      '2FA has been successfully disabled on your account.',
+    )
+    expect(successMessages.length).toBeGreaterThanOrEqual(1)
+  })
 })

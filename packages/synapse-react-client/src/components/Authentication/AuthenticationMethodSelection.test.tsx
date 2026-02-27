@@ -1,11 +1,28 @@
 import SynapseClient from '@/synapse-client'
-import { ARCUS_SOURCE_APP_ID, OAUTH2_PROVIDERS } from '@/utils/SynapseConstants'
+import { OAUTH2_PROVIDERS } from '@/utils/SynapseConstants'
 import { OAuth2State } from '@/utils'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import AuthenticationMethodSelection from './AuthenticationMethodSelection'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  Realm,
+  OAuthIdentityProviderProviderEnum,
+  OAuthIdentityProviderConcreteTypeEnum,
+} from '@sage-bionetworks/synapse-client'
+
+const ARCUS_REALM: Realm = {
+  id: '1',
+  name: 'Arcus',
+  identityProvider: [
+    {
+      concreteType:
+        OAuthIdentityProviderConcreteTypeEnum.org_sagebionetworks_repo_model_auth_OAuthIdentityProvider,
+      provider: OAuthIdentityProviderProviderEnum.ARCUS_BIOSCIENCES,
+    },
+  ],
+}
 
 vi.mock('@/synapse-client', () => ({
   default: {
@@ -47,11 +64,11 @@ describe('AuthenticationMethodSelection', () => {
     expect(onSelectUsernameAndPassword).toHaveBeenCalledTimes(1)
   })
 
-  it('shows only the Arcus SSO button when sourceAppId is arcusbio', () => {
+  it('shows only the Arcus SSO button when realm has ARCUS_BIOSCIENCES provider', () => {
     render(
       <AuthenticationMethodSelection
         onSelectUsernameAndPassword={vi.fn()}
-        sourceAppId={ARCUS_SOURCE_APP_ID}
+        realm={ARCUS_REALM}
       />,
       { wrapper: createWrapper() },
     )
@@ -122,7 +139,7 @@ describe('AuthenticationMethodSelection', () => {
         onBeginOAuthSignIn={onBeginOAuthSignIn}
         onSelectUsernameAndPassword={vi.fn()}
         state={state}
-        sourceAppId={ARCUS_SOURCE_APP_ID}
+        realm={ARCUS_REALM}
       />,
       { wrapper: createWrapper() },
     )
