@@ -36,7 +36,7 @@ export function updateUrlWithNewSearchParam(
 
   const searchString = currentSearch.toString()
   window.history.replaceState(
-    null,
+    window.history.state,
     '',
     window.location.pathname +
       (Array.from(currentSearch).length > 0

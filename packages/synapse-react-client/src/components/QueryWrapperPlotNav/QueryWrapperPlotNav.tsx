@@ -14,7 +14,7 @@ import { Box } from '@mui/material'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
-import { useMemo, useState } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 import { CardConfiguration } from '../CardContainer/CardConfiguration'
 import { SynapseErrorBoundary } from '../error'
 import FullTextSearch from '../FullTextSearch/FullTextSearch'
@@ -46,6 +46,7 @@ import FacetFilterControls, {
 } from '../widgets/query-filter/FacetFilterControls'
 import { QueryWrapperSynapsePlotProps } from './QueryWrapperSynapsePlot'
 import { RowSetView } from './RowSetView'
+import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -367,30 +368,32 @@ export default function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
       key={queryWrapperKey}
       isInfinite={isInfinite}
     >
-      <QueryVisualizationWrapper
-        unitDescription={unitDescription}
-        rgbIndex={props.rgbIndex}
-        columnAliases={props.columnAliases}
-        helpConfiguration={helpConfiguration}
-        visibleColumnCount={props.visibleColumnCount}
-        defaultShowPlots={props.defaultShowPlots}
-        hideCopyToClipboard={props.hideCopyToClipboard}
-        defaultShowSearchBar={
-          (props.defaultShowSearchBox || isFullTextSearchEnabled) &&
-          !props.hideSearchBarControl
-        }
-        hideSearchBarControl={props.hideSearchBarControl}
-        showLastUpdatedOn={showLastUpdatedOn}
-        noContentPlaceholderType={NoContentPlaceholderType.INTERACTIVE}
-        hasCustomPlots={Array.isArray(customPlots) && customPlots.length > 0}
-        enabledExternalAnalysisPlatforms={enabledExternalAnalysisPlatforms}
-      >
-        <QueryWrapperPlotNavContents
-          {...props}
-          isFullTextSearchEnabled={isFullTextSearchEnabled}
-          remount={remount}
-        />
-      </QueryVisualizationWrapper>
+      <Suspense fallback={<QueryWrapperLoadingScreen />}>
+        <QueryVisualizationWrapper
+          unitDescription={unitDescription}
+          rgbIndex={props.rgbIndex}
+          columnAliases={props.columnAliases}
+          helpConfiguration={helpConfiguration}
+          visibleColumnCount={props.visibleColumnCount}
+          defaultShowPlots={props.defaultShowPlots}
+          hideCopyToClipboard={props.hideCopyToClipboard}
+          defaultShowSearchBar={
+            (props.defaultShowSearchBox || isFullTextSearchEnabled) &&
+            !props.hideSearchBarControl
+          }
+          hideSearchBarControl={props.hideSearchBarControl}
+          showLastUpdatedOn={showLastUpdatedOn}
+          noContentPlaceholderType={NoContentPlaceholderType.INTERACTIVE}
+          hasCustomPlots={Array.isArray(customPlots) && customPlots.length > 0}
+          enabledExternalAnalysisPlatforms={enabledExternalAnalysisPlatforms}
+        >
+          <QueryWrapperPlotNavContents
+            {...props}
+            isFullTextSearchEnabled={isFullTextSearchEnabled}
+            remount={remount}
+          />
+        </QueryVisualizationWrapper>
+      </Suspense>
     </QueryWrapper>
   )
 }

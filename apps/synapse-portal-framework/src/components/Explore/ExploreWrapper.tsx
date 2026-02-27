@@ -5,8 +5,8 @@ import {
 import { useSetCanonicalUrl } from '@/utils/useSetCanonicalUrl'
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
-import { useState } from 'react'
-import { Outlet, useLocation, useMatch } from 'react-router'
+import { Suspense, useState } from 'react'
+import { Outlet, useLocation, useMatch, useNavigation } from 'react-router'
 import OrientationBanner from 'synapse-react-client/components/OrientationBanner/OrientationBanner'
 import { ExplorePageRoute, ExploreWrapperProps } from './ExploreWrapperProps'
 import { ExploreWrapperTabs } from './ExploreWrapperTabs'
@@ -14,6 +14,7 @@ import { useDocumentMetadata } from 'synapse-react-client/utils/context/Document
 import { matchPath } from 'react-router'
 import React from 'react'
 import { usePortalContext } from '@/components/PortalContext'
+import loadingScreen from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 
 function RouteMatchedOrientationBanner(props: {
   route: ExplorePageRoute
@@ -40,10 +41,16 @@ export default function ExploreWrapper(
   const [showSubNav, setShowSubNav] = useState<boolean>(false)
 
   const { pathname } = useLocation()
+  const navigation = useNavigation()
+
+  // Use the pending navigation destination for immediate UI feedback
+  const effectivePathname = navigation.location?.pathname ?? pathname
 
   const currentRoute = explorePaths.find(route => {
     const routePath = encodeURI(`/Explore/${route.path}`)
-    return Boolean(matchPath({ path: routePath, end: false }, pathname))
+    return Boolean(
+      matchPath({ path: routePath, end: false }, effectivePathname),
+    )
   })
   const { portalName } = usePortalContext()
   const pageName =
@@ -116,7 +123,9 @@ export default function ExploreWrapper(
           },
         }}
       >
-        <Outlet />
+        <Suspense fallback={loadingScreen}>
+          <Outlet />
+        </Suspense>
       </Box>
     </>
   )
