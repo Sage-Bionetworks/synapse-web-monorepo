@@ -111,6 +111,7 @@ function ToolDetailsPage() {
         </>
       }
       sql={toolsSql}
+      searchParams={{ resourceId }}
       ContainerProps={{ maxWidth: 'xl' }}
       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
       resourcePrimaryKey={['resourceId']}

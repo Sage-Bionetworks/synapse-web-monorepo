@@ -111,6 +111,7 @@ function DatasetDetailsPage() {
         />
       }
       sql={datasetsSql}
+      searchParams={{ id }}
       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
       ContainerProps={{
         maxWidth: 'xl',

@@ -35,6 +35,7 @@ import { useScrollOnMount } from './utils'
 export default function DetailsPage(props: DetailsPageProps) {
   const {
     sql,
+    searchParams: searchParamsProp,
     sqlOperator,
     additionalFiltersSessionStorageKey,
     ContainerProps,
@@ -44,7 +45,14 @@ export default function DetailsPage(props: DetailsPageProps) {
     portalDOIConfiguration,
   } = props
 
-  const searchParams = useGetPortalComponentSearchParams()
+  const queryStringSearchParams = useGetPortalComponentSearchParams()
+  // Merge URL query string params with any explicitly provided searchParams prop.
+  // The prop takes priority, allowing callers to pass params from route path params
+  // (e.g. useParams()) while still supporting legacy query string-based filtering.
+  const searchParams = useMemo(
+    () => ({ ...queryStringSearchParams, ...searchParamsProp }),
+    [queryStringSearchParams, searchParamsProp],
+  )
 
   useScrollOnMount()
 

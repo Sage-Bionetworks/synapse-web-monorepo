@@ -108,6 +108,7 @@ function HackathonDetailsPage() {
         />
       }
       sql={hackathonsSql}
+      searchParams={{ id }}
       ContainerProps={{ maxWidth: 'xl' }}
       resourcePrimaryKey={['id']}
     >

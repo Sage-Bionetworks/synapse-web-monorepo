@@ -144,6 +144,7 @@ function StudyDetailsPage() {
         </>
       }
       sql={studiesSql}
+      searchParams={{ studyId }}
       ContainerProps={{ maxWidth: 'xl' }}
       resourcePrimaryKey={['studyId']}
     >

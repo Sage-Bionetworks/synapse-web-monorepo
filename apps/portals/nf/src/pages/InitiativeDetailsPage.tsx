@@ -84,6 +84,7 @@ function InitiativeDetailsPage() {
         />
       }
       sql={initiativesSql}
+      searchParams={{ initiative }}
       ContainerProps={{
         maxWidth: 'xl',
       }}

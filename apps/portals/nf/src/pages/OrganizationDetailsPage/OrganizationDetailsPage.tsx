@@ -122,6 +122,7 @@ function OrganizationDetailsPage() {
         />
       }
       sql={fundersSql}
+      searchParams={searchParams}
       ContainerProps={{ maxWidth: 'xl' }}
       resourcePrimaryKey={['abbreviation']}
     >
