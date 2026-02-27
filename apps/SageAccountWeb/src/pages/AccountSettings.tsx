@@ -104,7 +104,6 @@ const AccountSettings = (): React.ReactNode => {
   const { data: currentRealm } = useGetCurrentRealm({
     select: realm => realm.id,
   })
-  const cookies = new UniversalCookies()
   const [isUTCTime, setUTCTime] = useState<string>(
     SynapseClient.getUseUtcTimeFromCookie().toString(),
   )
@@ -113,6 +112,7 @@ const AccountSettings = (): React.ReactNode => {
     navigate(`/authenticated/${val}`)
   }
   useEffect(() => {
+    const cookies = new UniversalCookies()
     const current = new Date()
     const nextYear = new Date()
     nextYear.setFullYear(current.getFullYear() + 1)

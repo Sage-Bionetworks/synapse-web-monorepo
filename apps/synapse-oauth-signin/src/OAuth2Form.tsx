@@ -30,7 +30,6 @@ import { OAuthClientError } from './OAuthClientError'
 import { StyledInnerContainer } from './StyledInnerContainer'
 import { handleErrorRedirect } from './URLUtils'
 
-const cookies = new UniversalCookies()
 const sendGTagEvent = (event: string) => {
   sendAnalyticsEvent(event, { event_category: 'SynapseOAUTH' })
 }
@@ -195,7 +194,7 @@ export function OAuth2Form() {
         }
         // done!  redirect with access code.
         const redirectUri = searchParams.get('redirect_uri')!
-        cookies.remove(
+        new UniversalCookies().remove(
           SynapseConstants.ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY,
           {
             path: '/',
