@@ -1,6 +1,6 @@
 import { RESPONSIVE_SIDE_PADDING } from '@/utils'
 import { Box, Button, Divider, Link, Menu, MenuItem } from '@mui/material'
-import { MouseEvent, useEffect, useRef, useState } from 'react'
+import { MouseEvent, Suspense, useEffect, useRef, useState } from 'react'
 import { useNavigate, useRouteLoaderData } from 'react-router'
 import ShowDownloadV2 from 'synapse-react-client/components/DownloadCart/ShowDownloadV2'
 import SageResourcesPopover from 'synapse-react-client/components/SageResourcesPopover/index'
@@ -109,9 +109,7 @@ export default function Navbar() {
   // SSR and client hydration see the same value (avoids hydration mismatch).
   // Falls back to window.location.hostname for SPA-mode portals that have
   // not yet been migrated to React Router Framework Mode.
-  const rootAppData = useRouteLoaderData('pages/RootApp') as
-    | { hostname: string }
-    | undefined
+  const rootAppData = useRouteLoaderData('pages/RootApp')
   const hostname =
     rootAppData?.hostname ??
     (typeof window !== 'undefined'
@@ -342,11 +340,13 @@ export default function Navbar() {
               >
                 Portals
               </a>
-              <SageResourcesPopover
-                filterByType="SynapsePortal"
-                anchorEl={portalResourcesAnchorEl}
-                onClose={handleClosePortalResources}
-              />
+              <Suspense fallback={null}>
+                <SageResourcesPopover
+                  filterByType="SynapsePortal"
+                  anchorEl={portalResourcesAnchorEl}
+                  onClose={handleClosePortalResources}
+                />
+              </Suspense>
             </>
           )}
           {navbarConfig.routes.toReversed().map(route => {

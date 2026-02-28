@@ -1,5 +1,23 @@
 import type { MetaDescriptor } from 'react-router'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
+import { fundersSql, peopleSql, topProjectsSql } from '../config/resources'
+import { columnAliases } from '../config/synapseConfigs/commonProps'
+import {
+  organizationCardSchema,
+  organizationDetailsPageLinkConfig,
+} from '../config/synapseConfigs/organizations'
+import {
+  newStudiesSql,
+  studyCardConfiguration,
+  studyColumnIconConfigs,
+} from '../config/synapseConfigs/studies'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import { Goals } from 'synapse-react-client/components/Goals/Goals'
+import RssFeedCards from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { UserCardListRotate } from 'synapse-react-client/components/UserCardList/UserCardListRotate'
+import { JsonLdScript } from 'synapse-react-client/components/JsonLdScript'
+import NFHeader from '@sage-bionetworks/synapse-portal-framework/components/nf/NFHeader'
 
 export function meta(): MetaDescriptor[] {
   const portalDescription =
@@ -42,24 +60,6 @@ export function meta(): MetaDescriptor[] {
     },
   ]
 }
-import { fundersSql, peopleSql, topProjectsSql } from '../config/resources'
-import { columnAliases } from '../config/synapseConfigs/commonProps'
-import {
-  organizationCardSchema,
-  organizationDetailsPageLinkConfig,
-} from '../config/synapseConfigs/organizations'
-import {
-  newStudiesSql,
-  studyCardConfiguration,
-  studyColumnIconConfigs,
-} from '../config/synapseConfigs/studies'
-import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
-import { Goals } from 'synapse-react-client/components/Goals/Goals'
-import RssFeedCards from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
-import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { UserCardListRotate } from 'synapse-react-client/components/UserCardList/UserCardListRotate'
-import { JsonLdScript } from 'synapse-react-client/components/JsonLdScript'
-import NFHeader from '@sage-bionetworks/synapse-portal-framework/components/nf/NFHeader'
 
 const limit = 3
 
