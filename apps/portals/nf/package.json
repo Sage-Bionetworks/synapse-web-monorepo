@@ -59,7 +59,7 @@
     "start": "NODE_ENV=production node server.js",
     "dev": "NODE_ENV=development node server.js",
     "build": "pnpm save-build-date && react-router build",
-    "preview": "vite preview",
+    "preview": "pnpm start",
     "typegen": "react-router typegen",
     "type-check": "tsc --build",
     "lint": "eslint src",
