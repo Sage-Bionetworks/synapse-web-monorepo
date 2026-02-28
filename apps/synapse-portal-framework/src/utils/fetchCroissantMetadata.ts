@@ -1,8 +1,10 @@
 import {
   QueryResultBundle,
-  SynapseClient,
   waitForAsyncResult,
 } from '@sage-bionetworks/synapse-client'
+import { TTLCache } from './cache'
+import { mapWithConcurrency } from './concurrency'
+import { createAnonymousSynapseClient } from './synapseClient'
 
 const BUNDLE_MASK_QUERY_RESULTS = 0x1
 
@@ -27,109 +29,85 @@ const FETCH_CONCURRENCY = 20
 const CACHE_TTL_MS = 60 * 60 * 1000 // 1 hour
 
 // ---------------------------------------------------------------------------
-// Cache types
-// ---------------------------------------------------------------------------
-
-interface CacheEntry<T> {
-  data: T
-  expiresAt: number
-}
-
-// ---------------------------------------------------------------------------
 // URL index cache: dataset entity ID → S3 URL
 // ---------------------------------------------------------------------------
 
-let urlIndexCache: CacheEntry<Map<string, string>> | null = null
-/** Deduplicate concurrent loadCroissantUrlIndex calls. */
-let urlIndexPromise: Promise<Map<string, string>> | null = null
-
-function createAnonymousSynapseClient(): SynapseClient {
-  return new SynapseClient({
-    basePath: 'https://repo-prod.prod.sagebase.org',
-  })
-}
+/**
+ * Cache for the URL index. Uses TTLCache for TTL + stale-while-revalidate
+ * semantics. The single key 'index' holds the entire Map.
+ */
+const urlIndexCache = new TTLCache<string, Map<string, string>>({
+  ttlMs: CACHE_TTL_MS,
+})
 
 /**
  * Fetches the entire Croissant table and builds a Map of dataset → S3 URL.
  * The result is cached with a TTL; concurrent calls are de-duplicated.
  */
 async function loadCroissantUrlIndex(): Promise<Map<string, string>> {
-  if (urlIndexCache && Date.now() < urlIndexCache.expiresAt) {
-    return urlIndexCache.data
-  }
+  return urlIndexCache.get('index', async () => {
+    const client = createAnonymousSynapseClient()
 
-  if (urlIndexPromise) return urlIndexPromise
+    const queryBundleRequest = {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.QueryBundleRequest' as const,
+      entityId: CROISSANT_DATA_TABLE,
+      partMask: BUNDLE_MASK_QUERY_RESULTS,
+      query: {
+        sql: `SELECT dataset, croissant_file_s3_object FROM ${CROISSANT_DATA_TABLE}`,
+      },
+    }
 
-  urlIndexPromise = (async () => {
-    try {
-      const client = createAnonymousSynapseClient()
+    const asyncJobId =
+      await client.tableServicesClient.postRepoV1EntityIdTableQueryAsyncStart({
+        id: CROISSANT_DATA_TABLE,
+        queryBundleRequest,
+      })
 
-      const queryBundleRequest = {
-        concreteType:
-          'org.sagebionetworks.repo.model.table.QueryBundleRequest' as const,
-        entityId: CROISSANT_DATA_TABLE,
-        partMask: BUNDLE_MASK_QUERY_RESULTS,
-        query: {
-          sql: `SELECT dataset, croissant_file_s3_object FROM ${CROISSANT_DATA_TABLE}`,
-        },
-      }
+    const result = await waitForAsyncResult(() =>
+      client.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId({
+        jobId: asyncJobId.token!,
+      }),
+    )
 
-      const asyncJobId =
-        await client.tableServicesClient.postRepoV1EntityIdTableQueryAsyncStart(
-          {
-            id: CROISSANT_DATA_TABLE,
-            queryBundleRequest,
-          },
-        )
+    const responseBody = result.responseBody as QueryResultBundle | undefined
+    const headers = responseBody?.queryResult?.queryResults?.headers ?? []
+    const rows = responseBody?.queryResult?.queryResults?.rows ?? []
 
-      const result = await waitForAsyncResult(() =>
-        client.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId({
-          jobId: asyncJobId.token!,
-        }),
-      )
+    const datasetIdx = headers.findIndex(
+      h => h.name?.toLowerCase() === 'dataset',
+    )
+    const urlIdx = headers.findIndex(
+      h => h.name?.toLowerCase() === 'croissant_file_s3_object',
+    )
 
-      const responseBody = result.responseBody as QueryResultBundle | undefined
-      const headers = responseBody?.queryResult?.queryResults?.headers ?? []
-      const rows = responseBody?.queryResult?.queryResults?.rows ?? []
-
-      const datasetIdx = headers.findIndex(
-        h => h.name?.toLowerCase() === 'dataset',
-      )
-      const urlIdx = headers.findIndex(
-        h => h.name?.toLowerCase() === 'croissant_file_s3_object',
-      )
-
-      const index = new Map<string, string>()
-      if (datasetIdx >= 0 && urlIdx >= 0) {
-        for (const row of rows) {
-          const datasetId = row.values?.[datasetIdx]
-          const s3Url = row.values?.[urlIdx]
-          if (
-            typeof datasetId === 'string' &&
-            datasetId &&
-            typeof s3Url === 'string' &&
-            s3Url
-          ) {
-            index.set(datasetId, s3Url)
-          }
+    const index = new Map<string, string>()
+    if (datasetIdx >= 0 && urlIdx >= 0) {
+      for (const row of rows) {
+        const datasetId = row.values?.[datasetIdx]
+        const s3Url = row.values?.[urlIdx]
+        if (
+          typeof datasetId === 'string' &&
+          datasetId &&
+          typeof s3Url === 'string' &&
+          s3Url
+        ) {
+          index.set(datasetId, s3Url)
         }
       }
-
-      urlIndexCache = { data: index, expiresAt: Date.now() + CACHE_TTL_MS }
-      return index
-    } finally {
-      urlIndexPromise = null
     }
-  })()
 
-  return urlIndexPromise
+    return index
+  })
 }
 
 // ---------------------------------------------------------------------------
 // Content cache: dataset entity ID → parsed JSON-LD object
 // ---------------------------------------------------------------------------
 
-const contentCache = new Map<string, CacheEntry<Record<string, unknown>>>()
+const contentCache = new TTLCache<string, Record<string, unknown>>({
+  ttlMs: CACHE_TTL_MS,
+})
 
 /**
  * Fetches a single Croissant file from S3 and parses it as JSON.
@@ -145,33 +123,6 @@ async function fetchSingleCroissantFile(
   } catch {
     return null
   }
-}
-
-// ---------------------------------------------------------------------------
-// Concurrency helper
-// ---------------------------------------------------------------------------
-
-async function mapWithConcurrency<T, R>(
-  items: T[],
-  concurrency: number,
-  fn: (item: T) => Promise<R>,
-): Promise<R[]> {
-  const results: R[] = new Array(items.length)
-  let nextIndex = 0
-
-  async function worker() {
-    while (nextIndex < items.length) {
-      const index = nextIndex++
-      results[index] = await fn(items[index])
-    }
-  }
-
-  const workers = Array.from(
-    { length: Math.min(concurrency, items.length) },
-    () => worker(),
-  )
-  await Promise.all(workers)
-  return results
 }
 
 // ---------------------------------------------------------------------------
@@ -196,12 +147,8 @@ let preloadPromise: Promise<void> | null = null
  * a no-op is returned if the cache is still valid.
  */
 export async function preloadAllCroissantMetadata(): Promise<void> {
-  // If all entries are still fresh, skip.
-  if (
-    urlIndexCache &&
-    Date.now() < urlIndexCache.expiresAt &&
-    contentCache.size > 0
-  ) {
+  // If the index is still fresh and we have content cached, skip.
+  if (urlIndexCache.has('index') && contentCache.size > 0) {
     return
   }
 
@@ -226,13 +173,9 @@ export async function preloadAllCroissantMetadata(): Promise<void> {
       )
 
       let successCount = 0
-      const now = Date.now()
       for (const { datasetId, jsonLd } of results) {
         if (jsonLd) {
-          contentCache.set(datasetId, {
-            data: jsonLd,
-            expiresAt: now + CACHE_TTL_MS,
-          })
+          contentCache.set(datasetId, jsonLd)
           successCount++
         }
       }
@@ -271,10 +214,19 @@ export async function preloadAllCroissantMetadata(): Promise<void> {
 export async function fetchCroissantMetadata(
   entityId: string,
 ): Promise<Record<string, unknown> | null> {
-  // Fast path: content cache hit that hasn't expired
-  const cached = contentCache.get(entityId)
-  if (cached && Date.now() < cached.expiresAt) {
-    return cached.data
+  // Fast path: content cache hit (TTLCache handles TTL + SWR internally)
+  if (contentCache.has(entityId)) {
+    return contentCache.get(entityId, async () => {
+      // This fetcher is only called on cache miss or stale-while-revalidate.
+      // For a SWR refresh, re-fetch from S3.
+      const index = await loadCroissantUrlIndex()
+      const s3Url = index.get(entityId)
+      if (!s3Url) return {} as Record<string, unknown>
+      return (
+        (await fetchSingleCroissantFile(s3Url)) ??
+        ({} as Record<string, unknown>)
+      )
+    })
   }
 
   // Slow path: look up S3 URL from the index, then fetch the file
@@ -285,10 +237,7 @@ export async function fetchCroissantMetadata(
 
     const jsonLd = await fetchSingleCroissantFile(s3Url)
     if (jsonLd) {
-      contentCache.set(entityId, {
-        data: jsonLd,
-        expiresAt: Date.now() + CACHE_TTL_MS,
-      })
+      contentCache.set(entityId, jsonLd)
     }
     return jsonLd
   } catch (error) {

@@ -1,9 +1,10 @@
 import {
   QueryResultBundle,
-  SynapseClient,
   waitForAsyncResult,
 } from '@sage-bionetworks/synapse-client'
 import { extractEntityIdFromSql } from '../sitemap/queryTableForSitemap'
+import { TTLCache } from './cache'
+import { createAnonymousSynapseClient } from './synapseClient'
 
 const BUNDLE_MASK_QUERY_RESULTS = 0x1
 
@@ -29,15 +30,31 @@ export interface DetailPageMetadata {
   description: string | null
 }
 
+// ---------------------------------------------------------------------------
+// In-memory cache with stale-while-revalidate
+// ---------------------------------------------------------------------------
+
 /**
- * Creates an anonymous SynapseClient instance (no access token).
+ * Module-level cache for detail page metadata.
  *
- * This is the same pattern used by fetchResourceIds in the sitemap tooling.
+ * - **TTL**: 1 hour — metadata (titles/descriptions) changes infrequently.
+ * - **Stale-while-revalidate**: After TTL expires, stale data is returned
+ *   immediately while a background refresh is triggered.
+ * - **Request deduplication**: Concurrent requests for the same key share
+ *   a single in-flight fetch (thundering herd protection).
+ *
+ * Cache key format: `${sql}:${paramValue}`
  */
-function createAnonymousSynapseClient(): SynapseClient {
-  return new SynapseClient({
-    basePath: 'https://repo-prod.prod.sagebase.org',
-  })
+const metadataCache = new TTLCache<string, DetailPageMetadata>()
+
+/**
+ * Builds a cache key from the SQL query and filter parameter value.
+ */
+function cacheKey(
+  config: DetailPageMetadataConfig,
+  paramValue: string,
+): string {
+  return `${config.sql}:${paramValue}`
 }
 
 /**
@@ -50,11 +67,27 @@ function createAnonymousSynapseClient(): SynapseClient {
  *
  * This function is isomorphic — it works in both Node.js and browser environments.
  *
+ * Results are cached in memory with a 1-hour TTL and stale-while-revalidate
+ * semantics. See {@link metadataCache} for details.
+ *
  * @param config - Describes which table, columns, and filter to use
  * @param paramValue - The URL parameter value to filter by (e.g. 'syn12345')
  * @returns The title and description, or nulls if not found
  */
 export async function fetchDetailPageMetadata(
+  config: DetailPageMetadataConfig,
+  paramValue: string,
+): Promise<DetailPageMetadata> {
+  const key = cacheKey(config, paramValue)
+  return metadataCache.get(key, () =>
+    fetchDetailPageMetadataFromApi(config, paramValue),
+  )
+}
+
+/**
+ * Internal: performs the actual Synapse API call (uncached).
+ */
+async function fetchDetailPageMetadataFromApi(
   config: DetailPageMetadataConfig,
   paramValue: string,
 ): Promise<DetailPageMetadata> {

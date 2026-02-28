@@ -93,6 +93,19 @@ export function meta({
   return descriptors
 }
 
+/**
+ * Sets HTTP cache headers on the SSR response for this route.
+ *
+ * - `max-age=300` (5 min): CDN/browser serves cached HTML without revalidation.
+ * - `stale-while-revalidate=3600` (1 hr): After max-age, serves stale while
+ *   refreshing in the background.
+ */
+export function headers() {
+  return {
+    'Cache-Control': 'public, max-age=300, stale-while-revalidate=3600',
+  }
+}
+
 function DatasetDetailsPage() {
   const { id } = useParams<{ id: string }>()
 
