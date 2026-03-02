@@ -58,6 +58,11 @@
           "{projectRoot}/src/generated"
         ]
       },
+      "type-check": {
+        "dependsOn": [
+          "generate"
+        ]
+      },
       "test": {
         "dependsOn": [
           "generate"

@@ -34,7 +34,7 @@ import {
   queryForAddUserCombobox,
   removeItem,
   updatePermissionLevel,
-} from './AclEditorTestUtils'
+} from './AclEditor.test-utils'
 
 const DEFAULT_RESOURCE_ACCESS: ResourceAccess[] = [
   {
