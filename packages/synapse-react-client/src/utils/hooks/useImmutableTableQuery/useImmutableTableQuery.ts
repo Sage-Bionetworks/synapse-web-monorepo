@@ -129,6 +129,7 @@ function useSynchronizeQueryWithUrl(
       const queryRequestFromLink = DeepLinkingUtils.getQueryRequestFromLink(
         'QueryWrapper',
         componentIndex,
+        initQueryRequest.query,
       )
       if (queryRequestFromLink && queryRequestFromLink.query) {
         setQuery(prevState => ({
@@ -153,13 +154,14 @@ function useSynchronizeQueryWithUrl(
           'QueryWrapper',
           componentIndex,
           null,
+          null,
         )
       } else {
-        const queryJsonString = JSON.stringify(currentQueryRequest.query)
         DeepLinkingUtils.updateUrlWithNewSearchParam(
           'QueryWrapper',
           componentIndex,
-          queryJsonString,
+          currentQueryRequest.query,
+          initQueryRequest.query,
         )
       }
     }

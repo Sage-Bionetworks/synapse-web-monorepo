@@ -219,7 +219,7 @@ describe('useImmutableTableQuery tests', () => {
     )
 
     // called with `null`, which would remove the query parameter, if it exists
-    expect(mockUpdateUrl).toHaveBeenCalledWith('QueryWrapper', 4, null)
+    expect(mockUpdateUrl).toHaveBeenCalledWith('QueryWrapper', 4, null, null)
 
     const newQuery = cloneDeep(options.initQueryRequest)
     newQuery.query.sql = 'SELECT * FROM syn123.3 WHERE "foo"=\'baz\''
@@ -231,14 +231,20 @@ describe('useImmutableTableQuery tests', () => {
     expect(mockUpdateUrl).toHaveBeenCalledWith(
       'QueryWrapper',
       4,
-      JSON.stringify(newQuery.query),
+      newQuery.query,
+      options.initQueryRequest.query,
     )
 
     // Change the query back to the initial query, and the parameter should be removed
     act(() => {
       result.current.setQuery(options.initQueryRequest)
     })
-    expect(mockUpdateUrl).toHaveBeenLastCalledWith('QueryWrapper', 4, null)
+    expect(mockUpdateUrl).toHaveBeenLastCalledWith(
+      'QueryWrapper',
+      4,
+      null,
+      null,
+    )
   })
 
   it('Updates the query on mount one is found in the URL', () => {
@@ -262,6 +268,11 @@ describe('useImmutableTableQuery tests', () => {
     )
 
     expect(mockUpdateUrl).toHaveBeenCalledTimes(1)
+    expect(mockUpdateUrl).toHaveBeenCalledWith(
+      'QueryWrapper',
+      4,
+      options.initQueryRequest.query,
+    )
 
     expect(result.current.getCurrentQueryRequest().query.sql).toEqual(sqlInURL)
   })
