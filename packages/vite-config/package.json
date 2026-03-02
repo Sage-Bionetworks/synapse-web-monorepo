@@ -3,37 +3,28 @@
   "name": "vite-config",
   "main": "dist/index.js",
   "type": "module",
-  "types": "dist/index.ts",
+  "types": "dist/index.d.ts",
   "scripts": {
     "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
     "build": "tsc --build",
     "type-check": "tsc --build"
   },
-  "exports": [
-    "./dist/index.js",
-    "./dist/vite-config.js",
-    "./dist/vitest-config.js",
-    "./dist/portals-vite-config.js",
-    "./dist/sitemap-vite-config.js"
-  ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./baseConfig": "./dist/baseConfig.js",
+    "./vitestConfig": "./dist/vitest-config.js",
+    "./plugins": "./dist/plugins.js",
+    "./clientOnly": "./dist/clientOnly.js",
+    "./libraryConfig": "./dist/vite-library-config.js",
+    "./portalsViteConfig": "./dist/portals-vite-config.js",
+    "./sitemapViteConfig": "./dist/sitemap-vite-config.js"
+  },
   "peerDependencies": {
-    "@vitest/coverage-v8": "^1.6.0",
-    "@vitest/ui": "^1.6.0",
-    "@vitest/utils": "^1.6.0",
-    "vite": "^5.1.6",
-    "vitest": "^1.6.0"
+    "vite": "^7.0.0",
+    "vitest": "^3.0.0"
   },
   "peerDependenciesMeta": {
     "vitest": {
-      "optional": true
-    },
-    "@vitest/coverage-v8": {
-      "optional": true
-    },
-    "@vitest/ui": {
-      "optional": true
-    },
-    "@vitest/utils": {
       "optional": true
     }
   },

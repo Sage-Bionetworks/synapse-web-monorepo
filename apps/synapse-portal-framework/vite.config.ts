@@ -1,6 +1,15 @@
-import { ConfigBuilder } from 'vite-config'
 import { resolve } from 'path'
 import { globSync } from 'node:fs'
+import { mergeConfig } from 'vite'
+import {
+  baseConfig,
+  vitestConfig,
+  reactPlugins,
+  nodePolyfillsPlugin,
+  tsconfigPathsPlugin,
+  libraryPlugins,
+  preserveModulesBuildConfig,
+} from 'vite-config'
 
 /**
  * Vite config for synapse-portal-framework.
@@ -23,19 +32,23 @@ const allSourceFiles = globSync('src/**/*.{ts,tsx}', {
   .filter(file => !file.endsWith('sitemap/cli.ts'))
   .map(file => resolve(__dirname, file))
 
-const config = new ConfigBuilder()
-  .setIncludeReactConfig(true)
-  .setIncludeLibraryConfig(true)
-  .setPreserveModules(true)
-  .setBuildLibEntry(allSourceFiles)
-  .setIncludeVitestConfig(true)
-  .setConfigOverrides({
-    test: {
-      include: ['src/**/*.test.[jt]s?(x)'],
-      setupFiles: ['src/tests/setupTests.ts'],
-      environment: 'jsdom',
-    },
-  })
-  .build()
+const config = mergeConfig(
+  baseConfig,
+  mergeConfig(
+    vitestConfig,
+    mergeConfig(preserveModulesBuildConfig(allSourceFiles), {
+      plugins: [
+        nodePolyfillsPlugin(),
+        tsconfigPathsPlugin(),
+        ...reactPlugins(),
+        ...libraryPlugins({ preserveModules: true }),
+      ],
+      test: {
+        include: ['src/**/*.test.[jt]s?(x)'],
+        setupFiles: ['src/tests/setupTests.ts'],
+      },
+    }),
+  ),
+)
 
 export default config

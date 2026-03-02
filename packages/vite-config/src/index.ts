@@ -1,5 +1,25 @@
-import { ConfigBuilder } from './ConfigBuilder.js'
-import portalsViteConfig from './portals-vite-config.js'
-import sitemapViteConfig from './sitemap-vite-config.js'
+// Config fragments
+export { default as baseConfig } from './baseConfig.js'
+export { default as vitestConfig } from './vitest-config.js'
 
-export { portalsViteConfig, sitemapViteConfig, ConfigBuilder }
+// Build config helpers
+export {
+  libraryBuildConfig,
+  preserveModulesBuildConfig,
+} from './vite-library-config.js'
+
+// Plugin helpers
+export {
+  reactPlugins,
+  nodePolyfillsPlugin,
+  tsconfigPathsPlugin,
+  libraryPlugins,
+} from './plugins.js'
+export type { LibraryPluginsOptions } from './plugins.js'
+
+// SSR utility
+export { clientOnly } from './clientOnly.js'
+
+// Pre-composed configs (convenience exports for common cases)
+export { default as portalsViteConfig } from './portals-vite-config.js'
+export { default as sitemapViteConfig } from './sitemap-vite-config.js'

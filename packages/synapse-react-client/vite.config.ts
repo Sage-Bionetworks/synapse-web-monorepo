@@ -1,6 +1,15 @@
 import { resolve } from 'path'
 import { globSync, readFileSync } from 'node:fs'
-import { ConfigBuilder } from 'vite-config'
+import { mergeConfig } from 'vite'
+import {
+  baseConfig,
+  vitestConfig,
+  reactPlugins,
+  nodePolyfillsPlugin,
+  tsconfigPathsPlugin,
+  libraryPlugins,
+  preserveModulesBuildConfig,
+} from 'vite-config'
 
 const packageJson = JSON.parse(
   readFileSync(resolve(__dirname, 'package.json'), 'utf-8'),
@@ -26,37 +35,41 @@ const allSourceFiles = globSync('src/**/*.{ts,tsx}', {
     f.includes('/testutils/'),
 }).map(file => resolve(__dirname, file))
 
-const config = new ConfigBuilder()
-  .setIncludeVitestConfig(true)
-  .setIncludeReactConfig(true)
-  .setIncludeLibraryConfig(true)
-  .setPreserveModules(true)
-  .setBuildLibEntry(allSourceFiles)
-  .setConfigOverrides({
-    root: '.',
-    define: {
-      __SRC_VERSION__: JSON.stringify(packageJson.version),
-    },
-    build: {
-      commonjsOptions: {
-        // react-datasheet-grid is common-js only and imports tanstack/react-virtual which is an ESM package
-        // for some reason this transitive import is treated as common-js but we can fix it with the config below:
-        esmExternals: (id: string) => {
-          if (id == '@tanstack/react-virtual') {
-            return true
-          }
-          return false
+const config = mergeConfig(
+  baseConfig,
+  mergeConfig(
+    vitestConfig,
+    mergeConfig(preserveModulesBuildConfig(allSourceFiles), {
+      root: '.',
+      plugins: [
+        nodePolyfillsPlugin(),
+        tsconfigPathsPlugin(),
+        ...reactPlugins(),
+        ...libraryPlugins({ preserveModules: true }),
+      ],
+      define: {
+        __SRC_VERSION__: JSON.stringify(packageJson.version),
+      },
+      build: {
+        commonjsOptions: {
+          // react-datasheet-grid is common-js only and imports tanstack/react-virtual which is an ESM package
+          // for some reason this transitive import is treated as common-js but we can fix it with the config below:
+          esmExternals: (id: string) => {
+            if (id == '@tanstack/react-virtual') {
+              return true
+            }
+            return false
+          },
         },
       },
-    },
-    test: {
-      globals: true,
-      include: ['**/*.test.?(c|m)[jt]s?(x)'],
-      setupFiles: ['./src/testutils/vitest.setup.ts'],
-      silent: process.env.CI === 'true' ? 'passed-only' : false,
-      testTimeout: 15_000, // 15 seconds
-    },
-  })
-  .build()
+      test: {
+        include: ['**/*.test.?(c|m)[jt]s?(x)'],
+        setupFiles: ['./src/testutils/vitest.setup.ts'],
+        silent: process.env.CI === 'true' ? 'passed-only' : false,
+        testTimeout: 15_000, // 15 seconds
+      },
+    }),
+  ),
+)
 
 export default config

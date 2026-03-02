@@ -1,20 +1,34 @@
 import { resolve } from 'path'
-import { ConfigBuilder } from 'vite-config'
+import { mergeConfig } from 'vite'
+import {
+  baseConfig,
+  vitestConfig,
+  nodePolyfillsPlugin,
+  tsconfigPathsPlugin,
+  libraryPlugins,
+} from 'vite-config'
 
-export default new ConfigBuilder()
-  .setIncludeLibraryConfig(true)
-  .setBuildLibEntry(resolve(__dirname, 'src/index.ts'))
-  .setIncludeVitestConfig(true)
-  .setConfigOverrides({
+export default mergeConfig(
+  baseConfig,
+  mergeConfig(vitestConfig, {
+    plugins: [
+      nodePolyfillsPlugin(),
+      tsconfigPathsPlugin(),
+      ...libraryPlugins(),
+    ],
     build: {
+      sourcemap: true,
+      emptyOutDir: true,
+      outDir: './dist',
       lib: {
+        entry: resolve(__dirname, 'src/index.ts'),
         name: 'markdownitSynapseTable',
+        fileName: 'index',
         formats: ['es', 'cjs', 'umd'],
       },
     },
     test: {
-      globals: true,
       include: ['test/**/*.test.[jt]s?(x)'],
     },
-  })
-  .build()
+  }),
+)
