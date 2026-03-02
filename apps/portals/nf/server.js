@@ -1,4 +1,5 @@
 import express from 'express'
+import { createRequestHandler } from '@react-router/express'
 
 const BUILD_PATH = './build/server/index.js'
 const DEVELOPMENT = process.env.NODE_ENV === 'development'
@@ -23,8 +24,7 @@ if (DEVELOPMENT) {
   )
   console.timeEnd('  Vite server created')
 
-
-  console.log("  Loading SSR modules...")
+  console.log('  Loading SSR modules...')
   console.time('  SSR modules loaded')
   await viteDevServer.ssrLoadModule('virtual:react-router/server-build')
   console.timeEnd('  SSR modules loaded')
@@ -48,7 +48,15 @@ if (DEVELOPMENT) {
     express.static('build/client/assets', { immutable: true, maxAge: '1y' }),
   )
   app.use(express.static('build/client', { maxAge: '1h' }))
-  app.use(await import(BUILD_PATH).then(mod => mod.app))
+  const build = await import(BUILD_PATH)
+  app.use(
+    createRequestHandler({
+      build,
+      getLoadContext: () => ({
+        serverBuild: () => import(BUILD_PATH),
+      }),
+    }),
+  )
 }
 
 app.listen(PORT, () => {

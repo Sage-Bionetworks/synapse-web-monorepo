@@ -22,7 +22,7 @@ import {
 } from '@sage-bionetworks/synapse-portal-framework/sitemap/index'
 import sitemapConfig from '../config/sitemapConfig'
 
-const BASE_URL = 'https://nf.synapse.org'
+const BASE_URL = `https://${import.meta.env.VITE_PORTAL_KEY}.synapse.org`
 const TTL_MS = 24 * 60 * 60 * 1000 // 24 hours
 
 /** In-memory cache for the generated sitemap XML. */

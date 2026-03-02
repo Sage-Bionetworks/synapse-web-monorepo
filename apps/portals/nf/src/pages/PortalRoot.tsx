@@ -29,6 +29,7 @@ import '../App.scss'
 
 const portalContext = {
   portalName: import.meta.env.VITE_PORTAL_NAME ?? '',
+  portalKey: import.meta.env.VITE_PORTAL_KEY ?? '',
   // routeConfig is unused in SSR/Framework Mode — routing is handled by routes.ts.
   // Pass empty array to satisfy the PortalContextType (other SPA-mode portals still use it).
   routeConfig: [],

@@ -2,6 +2,7 @@ import {
   NEGATIVE_RESPONSIVE_SIDE_MARGIN,
   RESPONSIVE_SIDE_PADDING,
 } from '@/utils'
+import { getPortalOrigin } from '@/utils/getPortalOrigin'
 import { useSetCanonicalUrl } from '@/utils/useSetCanonicalUrl'
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
@@ -52,7 +53,7 @@ export default function ExploreWrapper(
       matchPath({ path: routePath, end: false }, effectivePathname),
     )
   })
-  const { portalName } = usePortalContext()
+  const { portalName, portalKey } = usePortalContext()
   const pageName =
     currentRoute?.displayName ??
     currentRoute?.path?.replaceAll('/', '') ??
@@ -62,10 +63,7 @@ export default function ExploreWrapper(
   useDocumentMetadata({ title: newTitle, priority: 50 })
 
   // The canonical URL is the explore route with no searchParams
-  const origin =
-    typeof window !== 'undefined'
-      ? window.location.origin
-      : 'https://nf.synapse.org'
+  const origin = getPortalOrigin(portalKey)
   useSetCanonicalUrl(new URL(pathname, origin).toString())
 
   return (
