@@ -44,14 +44,19 @@ describe('deepLinkingUtils', () => {
       selectedFacets: [],
     }
 
-    it('should store only the diff when queries differ', () => {
+    it('should store compressed diff when queries differ', async () => {
       const currentQuery: Query = {
         ...initQuery,
         limit: 50,
         offset: 25,
       }
 
-      updateUrlWithNewSearchParam('QueryWrapper', 0, currentQuery, initQuery)
+      await updateUrlWithNewSearchParam(
+        'QueryWrapper',
+        0,
+        currentQuery,
+        initQuery,
+      )
 
       // Verify the call was made
       expect(mockHistoryReplaceState).toHaveBeenCalled()
@@ -61,28 +66,27 @@ describe('deepLinkingUtils', () => {
       const urlString = callArgs[2] as string
       expect(urlString).toContain('/test?QueryWrapper0=')
 
-      // Parse and verify the diff content
+      // The value should be base64-encoded compressed data
       const searchParams = new URLSearchParams(urlString.split('?')[1])
-      const diffJson = searchParams.get('QueryWrapper0')
-      expect(diffJson).toBeTruthy()
-
-      const diff = JSON.parse(diffJson!) as Partial<Query>
-      expect(diff).toEqual({ offset: 25, limit: 50 })
+      const compressedValue = searchParams.get('QueryWrapper0')
+      expect(compressedValue).toBeTruthy()
+      // Should be base64 encoded (only contains valid base64 characters)
+      expect(compressedValue).toMatch(/^[A-Za-z0-9+/=]+$/)
     })
 
-    it('should remove the search param when queries are equal', () => {
-      updateUrlWithNewSearchParam('QueryWrapper', 0, initQuery, initQuery)
+    it('should remove the search param when queries are equal', async () => {
+      await updateUrlWithNewSearchParam('QueryWrapper', 0, initQuery, initQuery)
 
       expect(mockHistoryReplaceState).toHaveBeenCalledWith(null, '', '/test')
     })
 
-    it('should remove the search param when currentQuery is null', () => {
-      updateUrlWithNewSearchParam('QueryWrapper', 0, null, initQuery)
+    it('should remove the search param when currentQuery is null', async () => {
+      await updateUrlWithNewSearchParam('QueryWrapper', 0, null, initQuery)
 
       expect(mockHistoryReplaceState).toHaveBeenCalledWith(null, '', '/test')
     })
 
-    it('should handle complex query differences', () => {
+    it('should handle complex query differences', async () => {
       const currentQuery: Query = {
         ...initQuery,
         selectedFacets: [
@@ -102,20 +106,84 @@ describe('deepLinkingUtils', () => {
         ],
       }
 
-      updateUrlWithNewSearchParam('QueryWrapper', 0, currentQuery, initQuery)
+      await updateUrlWithNewSearchParam(
+        'QueryWrapper',
+        0,
+        currentQuery,
+        initQuery,
+      )
 
       const callArgs = mockHistoryReplaceState.mock.calls[0]
       const urlString = callArgs[2] as string
       const searchParams = new URLSearchParams(urlString.split('?')[1])
-      const diffJson = searchParams.get('QueryWrapper0')
-      expect(diffJson).toBeTruthy()
+      const compressedValue = searchParams.get('QueryWrapper0')
+      expect(compressedValue).toBeTruthy()
+      // Should be base64 encoded
+      expect(compressedValue).toMatch(/^[A-Za-z0-9+/=]+$/)
+    })
 
-      const diff = JSON.parse(diffJson!) as Partial<Query>
-      expect(diff).toHaveProperty('selectedFacets')
-      expect(diff).toHaveProperty('additionalFilters')
-      expect(diff).not.toHaveProperty('sql')
-      expect(diff).not.toHaveProperty('limit')
-      expect(diff).not.toHaveProperty('offset')
+    it('should demonstrate compression reduces size significantly', async () => {
+      const currentQuery: Query = {
+        ...initQuery,
+        limit: 100,
+        offset: 50,
+        selectedFacets: [
+          {
+            columnName: 'category',
+            concreteType:
+              'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+            facetValues: ['value1', 'value2', 'value3'],
+          },
+          {
+            columnName: 'status',
+            concreteType:
+              'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+            facetValues: ['active', 'inactive'],
+          },
+        ],
+        additionalFilters: [
+          {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
+            searchExpression: 'test query with multiple words',
+          },
+        ],
+      }
+
+      await updateUrlWithNewSearchParam(
+        'QueryWrapper',
+        0,
+        currentQuery,
+        initQuery,
+      )
+
+      const callArgs = mockHistoryReplaceState.mock.calls[0]
+      const urlString = callArgs[2] as string
+      const searchParams = new URLSearchParams(urlString.split('?')[1])
+      const compressedValue = searchParams.get('QueryWrapper0')!
+
+      // Compute what the uncompressed diff would look like
+      const diff = {
+        limit: 100,
+        offset: 50,
+        selectedFacets: currentQuery.selectedFacets,
+        additionalFilters: currentQuery.additionalFilters,
+      }
+      const uncompressedJson = JSON.stringify(diff)
+
+      // Log for debugging
+      console.log('Uncompressed size:', uncompressedJson.length)
+      console.log('Compressed size:', compressedValue.length)
+      console.log(
+        'Compression ratio:',
+        ((1 - compressedValue.length / uncompressedJson.length) * 100).toFixed(
+          1,
+        ) + '%',
+      )
+
+      // Compression should reduce size (even modest reduction is valuable)
+      // Note: Small payloads may not compress as well due to gzip overhead
+      expect(compressedValue.length).toBeLessThan(uncompressedJson.length)
     })
   })
 
@@ -127,13 +195,24 @@ describe('deepLinkingUtils', () => {
       selectedFacets: [],
     }
 
-    it('should reconstruct query from diff', () => {
+    it('should reconstruct query from compressed diff', async () => {
       const diff = { limit: 50, offset: 25 }
-      window.location.search = `?QueryWrapper0=${encodeURIComponent(
-        JSON.stringify(diff),
-      )}`
 
-      const result = getQueryRequestFromLink('QueryWrapper', 0, initQuery)
+      // We need to compress and encode the diff the same way updateUrlWithNewSearchParam does
+      const jsonString = JSON.stringify(diff)
+      const encoder = new TextEncoder()
+      const data = encoder.encode(jsonString)
+      const stream = new Response(data).body!.pipeThrough(
+        new CompressionStream('gzip'),
+      )
+      const compressedData = await new Response(stream).arrayBuffer()
+      const base64 = btoa(
+        String.fromCharCode(...new Uint8Array(compressedData)),
+      )
+
+      window.location.search = `?QueryWrapper0=${encodeURIComponent(base64)}`
+
+      const result = await getQueryRequestFromLink('QueryWrapper', 0, initQuery)
 
       expect(result).toBeDefined()
       expect(result?.query).toEqual({
@@ -143,15 +222,15 @@ describe('deepLinkingUtils', () => {
       })
     })
 
-    it('should return undefined when no search param exists', () => {
+    it('should return undefined when no search param exists', async () => {
       window.location.search = ''
 
-      const result = getQueryRequestFromLink('QueryWrapper', 0, initQuery)
+      const result = await getQueryRequestFromLink('QueryWrapper', 0, initQuery)
 
       expect(result).toBeUndefined()
     })
 
-    it('should handle complex diffs', () => {
+    it('should handle complex diffs', async () => {
       const diff = {
         selectedFacets: [
           {
@@ -169,11 +248,22 @@ describe('deepLinkingUtils', () => {
           },
         ],
       }
-      window.location.search = `?QueryWrapper0=${encodeURIComponent(
-        JSON.stringify(diff),
-      )}`
 
-      const result = getQueryRequestFromLink('QueryWrapper', 0, initQuery)
+      // Compress and encode the diff
+      const jsonString = JSON.stringify(diff)
+      const encoder = new TextEncoder()
+      const data = encoder.encode(jsonString)
+      const stream = new Response(data).body!.pipeThrough(
+        new CompressionStream('gzip'),
+      )
+      const compressedData = await new Response(stream).arrayBuffer()
+      const base64 = btoa(
+        String.fromCharCode(...new Uint8Array(compressedData)),
+      )
+
+      window.location.search = `?QueryWrapper0=${encodeURIComponent(base64)}`
+
+      const result = await getQueryRequestFromLink('QueryWrapper', 0, initQuery)
 
       expect(result).toBeDefined()
       expect(result?.query).toEqual({
@@ -182,17 +272,17 @@ describe('deepLinkingUtils', () => {
       })
     })
 
-    it('should handle invalid JSON gracefully', () => {
-      window.location.search = '?QueryWrapper0=invalid-json'
+    it('should handle invalid data gracefully', async () => {
+      window.location.search = '?QueryWrapper0=invalid-base64'
 
-      const result = getQueryRequestFromLink('QueryWrapper', 0, initQuery)
+      const result = await getQueryRequestFromLink('QueryWrapper', 0, initQuery)
 
       expect(result).toBeUndefined()
     })
   })
 
   describe('round-trip test', () => {
-    it('should correctly store and retrieve query differences', () => {
+    it('should correctly store and retrieve query differences with compression', async () => {
       const initQuery: Query = {
         sql: 'SELECT * FROM syn123',
         limit: 25,
@@ -215,7 +305,12 @@ describe('deepLinkingUtils', () => {
       }
 
       // Store the query diff
-      updateUrlWithNewSearchParam('QueryWrapper', 0, currentQuery, initQuery)
+      await updateUrlWithNewSearchParam(
+        'QueryWrapper',
+        0,
+        currentQuery,
+        initQuery,
+      )
 
       // Extract the search params that were set
       const callArgs = mockHistoryReplaceState.mock.calls[0]
@@ -225,7 +320,7 @@ describe('deepLinkingUtils', () => {
         : ''
 
       // Retrieve the query
-      const result = getQueryRequestFromLink('QueryWrapper', 0, initQuery)
+      const result = await getQueryRequestFromLink('QueryWrapper', 0, initQuery)
 
       expect(result).toBeDefined()
       expect(result?.query).toEqual(currentQuery)

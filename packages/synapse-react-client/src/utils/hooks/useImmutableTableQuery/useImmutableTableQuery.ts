@@ -126,21 +126,22 @@ function useSynchronizeQueryWithUrl(
   useEffect(() => {
     // Only run this effect if deep linking is enabled
     if (shouldDeepLink) {
-      const queryRequestFromLink = DeepLinkingUtils.getQueryRequestFromLink(
+      DeepLinkingUtils.getQueryRequestFromLink(
         'QueryWrapper',
         componentIndex,
         initQueryRequest.query,
-      )
-      if (queryRequestFromLink && queryRequestFromLink.query) {
-        setQuery(prevState => ({
-          ...prevState,
-          ...queryRequestFromLink,
-          query: {
-            ...prevState.query,
-            ...queryRequestFromLink.query,
-          },
-        }))
-      }
+      ).then(queryRequestFromLink => {
+        if (queryRequestFromLink && queryRequestFromLink.query) {
+          setQuery(prevState => ({
+            ...prevState,
+            ...queryRequestFromLink,
+            query: {
+              ...prevState.query,
+              ...queryRequestFromLink.query,
+            },
+          }))
+        }
+      })
     }
     // should only run on mount, or if the component index changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
