@@ -5,10 +5,11 @@ import { WideButton } from 'synapse-react-client/components/styled/WideButton'
 import Layout from '../Layout'
 import { Box, Link, Typography } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
-// import PopularSearches from '../PopularSearches'
 import pluralize from 'pluralize'
 import EcosystemLayout from 'synapse-react-client/components/Ecosystem/EcosystemLayout'
 import Search from '../Search'
+import { useNavigate } from 'react-router'
+// import PopularSearches from '../PopularSearches'
 
 type Category = {
   resourceName: string
@@ -27,10 +28,11 @@ export type ELBrowseToolsPageProps = {
 }
 
 const ELBrowseToolsPage = (props: ELBrowseToolsPageProps): React.ReactNode => {
+  const navigate = useNavigate()
   const { toolsSql } = props
   // const { popularSearchesSql } = props
   const gotoExploreTools = () => {
-    window.location.assign('/Explore/Computational%20Tools')
+    navigate('/Explore/Computational%20Tools')
   }
 
   const gotoExploreToolsWithSelectedResource = (selectedResource: string) => {
@@ -45,8 +47,10 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps): React.ReactNode => {
         },
       ],
     }
-    window.location.assign(
-      `/Explore/Computational%20Tools?QueryWrapper0=${JSON.stringify(query)}`,
+    navigate(
+      `/Explore/Computational%20Tools?QueryWrapper0=${encodeURIComponent(
+        JSON.stringify(query),
+      )}`,
     )
   }
 
@@ -60,8 +64,10 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps): React.ReactNode => {
       sql: toolsSql,
       additionalFilters: [filter],
     }
-    window.location.assign(
-      `/Explore/Computational%20Tools?QueryWrapper0=${JSON.stringify(query)}`,
+    navigate(
+      `/Explore/Computational%20Tools?QueryWrapper0=${encodeURIComponent(
+        JSON.stringify(query),
+      )}`,
     )
   }
 
