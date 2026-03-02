@@ -1,23 +1,14 @@
-import { getFiles } from '@/synapse-client/SynapseClient'
 import { useGetFileBatch } from '@/synapse-queries/file/useFiles'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { implementsExternalFileHandleInterface } from '@/utils/types/IsType'
 import { Tooltip } from '@mui/material'
 import {
-  BatchFileRequest,
   ExternalFileHandle,
   FileHandleAssociateType,
-  FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
 import { forwardRef } from 'react'
-import uaParserLib from 'ua-parser-js'
-// ua-parser-js is CJS-only; pull UAParser from the default export to avoid
-// "named export not found" in Vite dev mode.
-const { UAParser } = uaParserLib as unknown as {
-  UAParser: typeof import('ua-parser-js')['UAParser']
-}
 import IconSvg, { IconSvgProps } from '../IconSvg/IconSvg'
 import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
+import { useDirectDownloadHandler } from '@/utils/hooks/useDirectDownloadHandler'
 
 export type DirectFileDownloadProps = {
   associatedObjectId: string
@@ -98,7 +89,6 @@ const DirectDownloadIcon = forwardRef<
 })
 
 function DirectDownload(props: DirectFileDownloadProps) {
-  const { accessToken } = useSynapseContext()
   const {
     associatedObjectId,
     associatedObjectType,
@@ -134,79 +124,18 @@ function DirectDownload(props: DirectFileDownloadProps) {
     ? (fileHandle as ExternalFileHandle).externalURL
     : undefined
 
+  const { downloadFile } = useDirectDownloadHandler()
+
   const getDownloadLink = async () => {
-    let preSignedURL
-    // SWC-5907: opening in the file must be strictly done in the same click event process (Safari only).
-    // https://stackoverflow.com/questions/6628949/window-open-popup-getting-blocked-during-click-event
-    const parser = new UAParser()
-    const isSafari = parser.getBrowser().name == 'Safari'
-    let safariDownloadWindow: Window | null = null
-    if (isSafari) {
-      safariDownloadWindow = window.open(
-        '',
-        'Safari Download',
-        'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,popup,width=600,height=200',
-      )
-      safariDownloadWindow!.document.body.innerHTML =
-        'Downloading file on Safari...'
-    }
-    try {
-      if (associatedObjectType === FileHandleAssociateType.TableEntity) {
-        const files = await getTableEntityFileHandle(true)
-        preSignedURL = files.requestedFiles[0].preSignedURL!
-      } else {
-        const file = (
-          await getFiles(
-            {
-              requestedFiles: [fileHandleAssociation],
-              includePreSignedURLs: true,
-              includePreviewPreSignedURLs: false,
-              includeFileHandles: false,
-            },
-            accessToken,
-          )
-        ).requestedFiles[0]
-        preSignedURL = file.preSignedURL
-      }
-    } catch (e) {
-      console.log('Fail to get file download link: ', e)
-    }
+    await downloadFile({
+      fileHandleId,
+      associatedObjectId,
+      associatedObjectType,
+    })
 
-    if (!preSignedURL) {
-      safariDownloadWindow?.close()
-      console.log('Fail to get file download link')
-    } else {
-      if (isSafari && safariDownloadWindow) {
-        safariDownloadWindow.location = preSignedURL
-        setTimeout(() => {
-          if (safariDownloadWindow) {
-            safariDownloadWindow.close()
-          }
-        }, 10000)
-      } else {
-        window.open(preSignedURL)
-      }
-      if (onClickCallback) {
-        onClickCallback(isExternalFile!)
-      }
+    if (onClickCallback) {
+      onClickCallback(isExternalFile!)
     }
-  }
-
-  const getTableEntityFileHandle = (includePreSignedURLs: boolean = false) => {
-    const fileHandleAssociationList: FileHandleAssociation[] = [
-      {
-        associateObjectId: associatedObjectId,
-        associateObjectType: associatedObjectType,
-        fileHandleId: fileHandleId,
-      },
-    ]
-    const batchFileRequest: BatchFileRequest = {
-      includeFileHandles: true,
-      includePreSignedURLs: includePreSignedURLs,
-      includePreviewPreSignedURLs: false,
-      requestedFiles: fileHandleAssociationList,
-    }
-    return getFiles(batchFileRequest, accessToken)
   }
 
   return (

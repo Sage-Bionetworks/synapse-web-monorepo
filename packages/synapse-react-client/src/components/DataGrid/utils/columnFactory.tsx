@@ -10,9 +10,11 @@ import {
 import { autocompleteColumn } from '../columns/AutocompleteColumn'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
 import { calculateDefaultColumnWidth } from './calculateColumnWidth'
+import { ColumnHeaderWithTooltip } from '../components/ColumnHeaderWithTooltip'
 
 type ColumnConfig = {
   columnName: string
+  description?: string
   disabled?: boolean
   typeInfo: FlatTypeInfo | null
   enumeratedValues: EnumeratedValue[] | string[] | null
@@ -47,7 +49,12 @@ function createBaseColumn(config: ColumnConfig, columnImpl: any) {
 
   return {
     ...keyColumn(config.columnName, columnImpl),
-    title: config.columnName,
+    title: (
+      <ColumnHeaderWithTooltip
+        name={config.columnName}
+        description={config.description}
+      />
+    ),
     headerClassName: getHeaderClassName(config.isRequired),
     minWidth: width,
     basis: width,

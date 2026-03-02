@@ -3,14 +3,20 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
+import { useInView } from 'react-intersection-observer'
 import { StyledComponent } from '@emotion/styled'
-import { Update as UpdateIcon } from '@mui/icons-material'
+import {
+  DashboardTwoTone,
+  InfoOutline,
+  Update as UpdateIcon,
+} from '@mui/icons-material'
 import {
   Box,
   Chip,
   Link,
   Paper,
   PaperProps,
+  Stack,
   styled,
   Typography,
 } from '@mui/material'
@@ -21,12 +27,17 @@ import FavoriteButton from '../favorites/FavoriteButton'
 import { EntityDownloadButton } from '../EntityDownloadButton/EntityDownloadButton'
 import HasAccessChip from './HasAccessChip'
 import { searchResultsCardChipStyles } from './chipStyles'
+import styles from './SynapseSearchResultsCard.module.scss'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
+import { useGetEntityBundle } from '@/synapse-queries'
+import { FileHandleWithPreview } from '../EntityFinder/details/view/table/TableCellTypes'
 
 export type SynapseSearchResultsCardProps = {
   entityId: string
   name: string
   entityType: EntityType
   modifiedOn: number
+  locatedIn?: { name: string; id: string }
 }
 
 const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
@@ -34,7 +45,7 @@ const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
   {
     label: 'SynapseSearchResultsCardContainer',
   },
-)(({ theme }) => ({
+)({
   display: 'flex',
   flexDirection: 'column',
   minHeight: '250px',
@@ -42,11 +53,31 @@ const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
   borderRadius: '10px',
   padding: '32px',
   gap: '15px',
-}))
+})
 
 export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    rootMargin: '250px 0px',
+  })
+
+  const { data: entityBundle } = useGetEntityBundle(
+    props.entityId,
+    undefined,
+    { includeFileHandles: true },
+    { enabled: props.entityType === EntityType.file && inView },
+  )
+
+  const file = entityBundle?.fileHandles.find(
+    (file: FileHandleWithPreview) => file.isPreview !== true,
+  )
+
+  const friendlySize = file?.contentSize
+    ? calculateFriendlyFileSize(file?.contentSize)
+    : ''
+
   return (
-    <SynapseSearchResultsCardContainer>
+    <SynapseSearchResultsCardContainer ref={ref}>
       <Box
         sx={{
           display: 'flex',
@@ -106,14 +137,46 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
           gap: '8px',
         }}
       >
-        <UpdateIcon />
-        <Typography
-          sx={{
-            fontSize: '14px',
-          }}
-        >
-          Last updated: {formatDate(dayjs.unix(props.modifiedOn), 'M/D/YYYY')}
-        </Typography>
+        <Stack sx={{ gap: '20px' }}>
+          <Box sx={{ display: 'flex' }}>
+            <UpdateIcon className={styles.cardMetadataIcon} />
+            <Typography className={styles.cardMetadataTypographyWithIcon}>
+              Last updated:{' '}
+              {formatDate(dayjs.unix(props.modifiedOn), 'M/D/YYYY')}
+            </Typography>
+          </Box>
+          {friendlySize && (
+            <Box sx={{ display: 'flex' }}>
+              <InfoOutline className={styles.cardMetadataIcon} />
+              <Typography className={styles.cardMetadataTypographyWithIcon}>
+                File size: <b>{friendlySize}</b>
+              </Typography>
+            </Box>
+          )}
+          {props.locatedIn && (
+            <Box
+              sx={{ display: 'flex', marginLeft: '24px', alignItems: 'center' }}
+            >
+              <Typography className={styles.cardMetadataTypographyWithIcon}>
+                Located in:{' '}
+              </Typography>
+              <DashboardTwoTone
+                className={styles.cardMetadataIcon}
+                sx={{
+                  marginRight: '4px',
+                }}
+              />
+              <Link
+                className={styles.locatedInLink}
+                href={`${getEndpoint(
+                  BackendDestinationEnum.PORTAL_ENDPOINT,
+                )}Synapse:${props.locatedIn?.id}`}
+              >
+                {props.locatedIn?.name}
+              </Link>
+            </Box>
+          )}
+        </Stack>
       </Box>
     </SynapseSearchResultsCardContainer>
   )

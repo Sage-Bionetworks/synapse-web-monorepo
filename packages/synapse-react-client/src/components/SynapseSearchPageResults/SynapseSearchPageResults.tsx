@@ -582,15 +582,19 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
           {data &&
             data.pages &&
             data.pages.map((page, pageIndex) =>
-              page.hits.map((hit: Hit) => (
-                <SynapseSearchResultsCard
-                  key={hit.id + '-' + pageIndex}
-                  entityId={hit.id}
-                  name={hit.name}
-                  entityType={hit.node_type}
-                  modifiedOn={hit.modified_on}
-                />
-              )),
+              page.hits.map((hit: Hit) => {
+                const projectPath = hit.path?.path?.[1]
+                return (
+                  <SynapseSearchResultsCard
+                    key={hit.id + '-' + pageIndex}
+                    entityId={hit.id}
+                    name={hit.name}
+                    entityType={hit.node_type}
+                    modifiedOn={hit.modified_on}
+                    locatedIn={projectPath}
+                  />
+                )
+              }),
             )}
           {hasNextPage && (
             <Button
