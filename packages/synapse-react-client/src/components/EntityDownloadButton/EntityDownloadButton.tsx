@@ -240,7 +240,7 @@ export function getDownloadActionsForEntityType(
         [DownloadAction.addToCart, DownloadAction.programmaticAccess],
       ]
     case EntityType.project:
-      return []
+      return [[DownloadAction.programmaticAccess]]
     case EntityType.folder:
       return [[DownloadAction.addToCart, DownloadAction.programmaticAccess]]
     case EntityType.dockerrepo:
@@ -451,10 +451,6 @@ export function EntityDownloadButton(props: {
 
   // Create download menu items
   const downloadActions = getDownloadActionsForEntityType(props.entityType)
-  if (downloadActions.length === 0) {
-    return null
-  }
-
   const downloadMenuItems = downloadActions.map(actionGroup =>
     actionGroup.map(action =>
       getMenuItemForAction(

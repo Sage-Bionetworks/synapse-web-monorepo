@@ -36,10 +36,6 @@ describe('getDownloadActionsForEntityType', () => {
       }).not.toThrow()
     },
   )
-
-  it('Returns no actions for project entity', () => {
-    expect(getDownloadActionsForEntityType(EntityType.project)).toEqual([])
-  })
 })
 
 describe('EntityDownloadButton', () => {
