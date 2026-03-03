@@ -208,3 +208,32 @@ export async function getQueryRequestFromLink(
   }
   return queryRequest
 }
+
+/**
+ * Generates a URL with a compressed query diff parameter.
+ * @param path - The base path for the URL
+ * @param componentName - The component name (e.g., 'QueryWrapper')
+ * @param componentIndex - The component index (e.g., 0)
+ * @param currentQuery - The query to encode
+ * @param initQuery - The initial/default query to compute the diff against
+ * @returns A Promise that resolves to the full URL with compressed query parameter
+ */
+export async function generateCompressedQueryURL(
+  path: string,
+  componentName: string,
+  componentIndex: number,
+  currentQuery: Query,
+  initQuery: Query,
+): Promise<string> {
+  const diff = computeQueryDiff(currentQuery, initQuery)
+  if (!diff) {
+    // Queries are equal, no need for a parameter
+    return path
+  }
+
+  const jsonString = JSON.stringify(diff)
+  const compressed = await compressString(jsonString)
+  const paramKey = getComponentSearchHashId(componentName, componentIndex)
+
+  return `${path}?${paramKey}=${encodeURIComponent(compressed)}`
+}

@@ -20,8 +20,84 @@ import { ReactComponent as DatasetsIcon } from '../../src/config/style/datasets.
 import { ReactComponent as FilesIcon } from '../../src/config/style/files.svg'
 import { ReactComponent as ProjectsIcon } from '../../src/config/style/projects.svg'
 import AMPALSDevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSDevelopedBySage'
+import { Query } from '@sage-bionetworks/synapse-types'
+import { generateCompressedQueryURL } from 'synapse-react-client/utils/functions/deepLinkingUtils'
+import { useEffect, useState } from 'react'
 
 export default function HomePage() {
+  const [geoUrl, setGeoUrl] = useState<string>('')
+  const [nygcUrl, setNygcUrl] = useState<string>('')
+  const [barmadaUrl, setBarmadaUrl] = useState<string>('')
+
+  useEffect(() => {
+    const initQuery: Query = {
+      sql: datasetsSql,
+    }
+
+    // Generate URL for Gene Expression Omnibus
+    const geoQuery: Query = {
+      sql: datasetsSql,
+      limit: 25,
+      selectedFacets: [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          columnName: 'source',
+          facetValues: ['Gene Expression Omnibus'],
+        },
+      ],
+    }
+    generateCompressedQueryURL(
+      '/Explore/Datasets',
+      'QueryWrapper',
+      0,
+      geoQuery,
+      initQuery,
+    ).then(setGeoUrl)
+
+    // Generate URL for NYGC ALS Consortium
+    const nygcQuery: Query = {
+      sql: datasetsSql,
+      limit: 25,
+      selectedFacets: [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          columnName: 'contributor',
+          facetValues: ['NYGC ALS Consortium'],
+        },
+      ],
+    }
+    generateCompressedQueryURL(
+      '/Explore/Datasets',
+      'QueryWrapper',
+      0,
+      nygcQuery,
+      initQuery,
+    ).then(setNygcUrl)
+
+    // Generate URL for Barmada Lab
+    const barmadaQuery: Query = {
+      sql: datasetsSql,
+      limit: 25,
+      selectedFacets: [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          columnName: 'contributor',
+          facetValues: ['Barmada Lab - University of Michigan'],
+        },
+      ],
+    }
+    generateCompressedQueryURL(
+      '/Explore/Datasets',
+      'QueryWrapper',
+      0,
+      barmadaQuery,
+      initQuery,
+    ).then(setBarmadaUrl)
+  }, [])
+
   const moreResourcesCards = [
     {
       title: 'For Researchers',
@@ -133,8 +209,7 @@ export default function HomePage() {
                     facetsToPlot: ['dataType'],
                     selectFacetColumnName: 'source',
                     selectFacetColumnValue: 'Gene Expression Omnibus',
-                    detailsPagePath:
-                      '/Explore/Datasets?QueryWrapper0=%7B"sql"%3A"SELECT+*+FROM+syn66496326"%2C"limit"%3A25%2C"selectedFacets"%3A%5B%7B"concreteType"%3A"org.sagebionetworks.repo.model.table.FacetColumnValuesRequest"%2C"columnName"%3A"source"%2C"facetValues"%3A%5B"Gene+Expression+Omnibus"%5D%7D%5D%7D',
+                    detailsPagePath: geoUrl,
                     unitDescription: 'Datasets',
                     plotType: 'STACKED_HORIZONTAL_BAR',
                   },
@@ -144,8 +219,7 @@ export default function HomePage() {
                     facetsToPlot: ['dataType'],
                     selectFacetColumnName: 'contributor',
                     selectFacetColumnValue: 'NYGC ALS Consortium',
-                    detailsPagePath:
-                      '/Explore/Datasets?QueryWrapper0=%7B"sql"%3A"SELECT+*+FROM+syn66496326"%2C"limit"%3A25%2C"selectedFacets"%3A%5B%7B"concreteType"%3A"org.sagebionetworks.repo.model.table.FacetColumnValuesRequest"%2C"columnName"%3A"contributor"%2C"facetValues"%3A%5B"NYGC+ALS+Consortium"%5D%7D%5D%7D',
+                    detailsPagePath: nygcUrl,
                     unitDescription: 'Datasets',
                     plotType: 'STACKED_HORIZONTAL_BAR',
                   },
@@ -156,8 +230,7 @@ export default function HomePage() {
                     selectFacetColumnName: 'contributor',
                     selectFacetColumnValue:
                       'Barmada Lab - University of Michigan',
-                    detailsPagePath:
-                      '/Explore/Datasets?QueryWrapper0=%7B"sql"%3A"SELECT+*+FROM+syn66496326"%2C"limit"%3A25%2C"selectedFacets"%3A%5B%7B"concreteType"%3A"org.sagebionetworks.repo.model.table.FacetColumnValuesRequest"%2C"columnName"%3A"contributor"%2C"facetValues"%3A%5B"Barmada+Lab+-+University+of+Michigan"%5D%7D%5D%7D',
+                    detailsPagePath: barmadaUrl,
                     unitDescription: 'Datasets',
                     plotType: 'STACKED_HORIZONTAL_BAR',
                   },

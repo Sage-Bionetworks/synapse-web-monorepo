@@ -1,6 +1,6 @@
 import { CalendarTodayTwoTone } from '@mui/icons-material'
 import { Box, Button, Divider, Stack, Typography } from '@mui/material'
-import { Fragment } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Link as ReactRouterLink } from 'react-router'
 import { ReleaseCardProps } from './ReleaseCard'
 import { ReleaseCardLargeConfig, ReleaseCardStat } from './ReleaseCardTypes'
@@ -53,16 +53,23 @@ export function ReleaseCardLarge({
     releaseCardConfig.statsConfig,
   )
   const { primaryBtnConfig, secondaryBtnConfig } = releaseCardConfig
-  const primaryBtnPathAndQuery = formatExplorePagePathAndQueryString(
-    schema,
-    data,
-    primaryBtnConfig,
-  )
-  const secondaryBtnPathAndQuery = formatExplorePagePathAndQueryString(
-    schema,
-    data,
-    secondaryBtnConfig,
-  )
+
+  const [primaryBtnPathAndQuery, setPrimaryBtnPathAndQuery] = useState<
+    string | null
+  >(null)
+  const [secondaryBtnPathAndQuery, setSecondaryBtnPathAndQuery] = useState<
+    string | null
+  >(null)
+
+  useEffect(() => {
+    formatExplorePagePathAndQueryString(schema, data, primaryBtnConfig).then(
+      setPrimaryBtnPathAndQuery,
+    )
+
+    formatExplorePagePathAndQueryString(schema, data, secondaryBtnConfig).then(
+      setSecondaryBtnPathAndQuery,
+    )
+  }, [schema, data, primaryBtnConfig, secondaryBtnConfig])
 
   if (releaseName === null) return <></>
 

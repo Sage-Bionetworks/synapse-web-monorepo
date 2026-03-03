@@ -5,6 +5,7 @@ import { WideButton } from 'synapse-react-client/components/styled/WideButton'
 import Layout from '../Layout'
 import { Box, Link, Typography } from '@mui/material'
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
+import { generateCompressedQueryURL } from 'synapse-react-client/utils/functions/deepLinkingUtils'
 // import PopularSearches from '../PopularSearches'
 import pluralize from 'pluralize'
 import EcosystemLayout from 'synapse-react-client/components/Ecosystem/EcosystemLayout'
@@ -33,8 +34,10 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps): React.ReactNode => {
     window.location.assign('/Explore/Computational%20Tools')
   }
 
-  const gotoExploreToolsWithSelectedResource = (selectedResource: string) => {
-    const query: Query = {
+  const gotoExploreToolsWithSelectedResource = async (
+    selectedResource: string,
+  ) => {
+    const currentQuery: Query = {
       sql: toolsSql,
       selectedFacets: [
         {
@@ -45,24 +48,42 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps): React.ReactNode => {
         },
       ],
     }
-    window.location.assign(
-      `/Explore/Computational%20Tools?QueryWrapper0=${JSON.stringify(query)}`,
+    const initQuery: Query = {
+      sql: toolsSql,
+    }
+    const url = await generateCompressedQueryURL(
+      '/Explore/Computational%20Tools',
+      'QueryWrapper',
+      0,
+      currentQuery,
+      initQuery,
     )
+    window.location.assign(url)
   }
 
-  const gotoExploreToolsWithFullTextSearch = (fullTextSearchString: string) => {
+  const gotoExploreToolsWithFullTextSearch = async (
+    fullTextSearchString: string,
+  ) => {
     const filter: TextMatchesQueryFilter = {
       concreteType:
         'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
       searchExpression: fullTextSearchString,
     }
-    const query: Query = {
+    const currentQuery: Query = {
       sql: toolsSql,
       additionalFilters: [filter],
     }
-    window.location.assign(
-      `/Explore/Computational%20Tools?QueryWrapper0=${JSON.stringify(query)}`,
+    const initQuery: Query = {
+      sql: toolsSql,
+    }
+    const url = await generateCompressedQueryURL(
+      '/Explore/Computational%20Tools',
+      'QueryWrapper',
+      0,
+      currentQuery,
+      initQuery,
     )
+    window.location.assign(url)
   }
 
   const wideButtonSx = { marginTop: '50px' }
@@ -118,9 +139,11 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps): React.ReactNode => {
                 }}
               >
                 <button
-                  onClick={() =>
-                    gotoExploreToolsWithSelectedResource(category.resourceName)
-                  }
+                  onClick={() => {
+                    void gotoExploreToolsWithSelectedResource(
+                      category.resourceName,
+                    )
+                  }}
                 >
                   <Typography
                     variant="headline3"
@@ -137,7 +160,9 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps): React.ReactNode => {
           <WideButton
             sx={wideButtonSx}
             variant="contained"
-            onClick={() => gotoExploreTools()}
+            onClick={() => {
+              void gotoExploreTools()
+            }}
           >
             View All Tools
           </WideButton>
@@ -172,7 +197,11 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps): React.ReactNode => {
             Learn More About MySQL Full Text Search
           </Link>
         </Typography>
-        <Search onSearch={gotoExploreToolsWithFullTextSearch} />
+        <Search
+          onSearch={searchTerm => {
+            void gotoExploreToolsWithFullTextSearch(searchTerm)
+          }}
+        />
         {/* <Typography variant="sectionTitle" className="sectionTitle">
           Suggested Searches
         </Typography>
