@@ -24,6 +24,9 @@ importers:
       '@eslint/js':
         specifier: ^9.26.0
         version: 9.26.0
+      '@nx/shared-fs-cache':
+        specifier: ^5.0.0
+        version: 5.0.0(nx@22.5.2)
       '@vitest/eslint-plugin':
         specifier: ^1.2.1
         version: 1.2.1(eslint@9.26.0)(typescript@5.8.3)(vitest@4.0.18)
@@ -3873,6 +3876,73 @@ packages:
     engines: {node: '>=8.0.0', npm: '>=5.0.0'}
     hasBin: true
 
+  '@nx/devkit@22.0.3':
+    resolution: {integrity: sha512-98Iq6+FIrAEv7ZK3n86Nr8zUZ20394fpyJBBhvQJiywH+JRonk7JWY5tUaSuL8kfY8vM+WCnFoWHJ+2Hsgw9EA==}
+    peerDependencies:
+      nx: '>= 21 <= 23 || ^22.0.0-0'
+
+  '@nx/key-darwin-arm64@5.0.0':
+    resolution: {integrity: sha512-bpjAgv4VAoywpBXr6rzUd6DvvI3lAUAuIFUue568CHRYaHRijdhuzCKZ5UJh3kKsIHTLYcj+DIGC+agBrq1e4w==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@nx/key-darwin-x64@5.0.0':
+    resolution: {integrity: sha512-/iTPVxbVwMx4Tull5dHnrrNJr0HiK+hwTvj88NPFzneVfEPfSFihN1+e38bKS/iDME1VSbmFbuTpPq0z1ddlyQ==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@nx/key-linux-arm-gnueabihf@5.0.0':
+    resolution: {integrity: sha512-6xleI0Rt4teVe5ljVNU2KIaIyEizaL1GGv54nVJOj9AT85YDwvFDzgEcdejAS/1+KlYMcnDKeXSRT69ZIvdv5w==}
+    engines: {node: '>= 10'}
+    cpu: [arm]
+    os: [linux]
+
+  '@nx/key-linux-arm64-gnu@5.0.0':
+    resolution: {integrity: sha512-ChXslJVDOTaptnJB5/qY52fHfq7b6YBb6tllouEZ9lXjd/uD3b4LsebGEkI7/Upo2YOhwkJAzKWJKlxDykMBBA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@nx/key-linux-arm64-musl@5.0.0':
+    resolution: {integrity: sha512-/bFNNPabJIs9undsDg9xuiiF3ltugEr8v0R5FLjLhpIQhPue5CwXH7RF+kVRvaOCj7UEFpYckZqb6j76qAvzGA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@nx/key-linux-x64-gnu@5.0.0':
+    resolution: {integrity: sha512-W6IPZJcMyAzMLv+9x5pzZAhcYnX8ZdVhLaKgMGQS8F56gxmDces1PCXujKzlEMveurhIR9HvXvOUl/GV/cS59g==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@nx/key-linux-x64-musl@5.0.0':
+    resolution: {integrity: sha512-sw1v8s5CYoeVOOAuSZKLKaelgYLPhnNs+o+7cHzyyoFjbneBHBab4cPvixmMVAnRO0ANkRaBwnsk95mDnLqcbw==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@nx/key-win32-arm64-msvc@5.0.0':
+    resolution: {integrity: sha512-N53Klx96qtYvyjS0cSCUITyQ4M/Gt8Ysjnrv4s0tqGbd7wNn3pwUN9eZzRtk9/sG1RLcLbm6zFYCq4HtBeSpwQ==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@nx/key-win32-x64-msvc@5.0.0':
+    resolution: {integrity: sha512-CYQrycXtdvgkSd0Q5t6iLJFQOOYnIL3Fb2qfZ0lCqN1xPQkNaQPQUdatcS0oIyB8rleYuh1zovhvx6dyyzNo2w==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+
+  '@nx/key@5.0.0':
+    resolution: {integrity: sha512-AnECKdURwqB6TJNKl25hLb2y/7rcSOy6thYG07focFt57QagsUgKnuCLwUFTS0vGBNePSE0Kcmucz0nMR6n3XQ==}
+    engines: {node: '>= 10'}
+
   '@nx/nx-darwin-arm64@22.5.2':
     resolution: {integrity: sha512-CPtgK/s4FQ0Y/6WmHpJccOTANve5UjlFajLp+S8Z538zHdc5a5MjJBcXo9oRzKNvhTHoGijr/fCMU2erMrYYtg==}
     cpu: [arm64]
@@ -3926,6 +3996,11 @@ packages:
     resolution: {integrity: sha512-IK9Xd5Gh9ys4oun5ko8Uv8AEi2byN2FPXBsR1BLkt93SJ0bJVTdXGyEA+fWmEclLZIM0PiZj1KbCajVn9NEPtw==}
     cpu: [x64]
     os: [win32]
+
+  '@nx/shared-fs-cache@5.0.0':
+    resolution: {integrity: sha512-DHebL/kqhkvLicU3HRGNU/7HRxF2Cff6uBg8X2DzecX51j9PFWajDw0I2VJvdX88Z+RgfHw3Nf8FRXxij38WuQ==}
+    peerDependencies:
+      nx: '>= 18 < 23'
 
   '@open-draft/deferred-promise@2.2.0':
     resolution: {integrity: sha512-CecwLWx3rhxVQF6V4bAgPS5t+So2sTbPgAzafKkVizyi7tlwpcFpdFqq+wqF2OwNBmqFuu6tOyouTuxgpMfzmA==}
@@ -5824,6 +5899,11 @@ packages:
     resolution: {integrity: sha512-Xm7bpRXnDSX2YE2YFfBk2FnF0ep6tmG7xPh8iHee8MIcrgq762Nkce856dYtJYLkuIoYZvGfTs/PbZhideTcEg==}
     engines: {node: '>=4'}
 
+  axios-retry@4.5.0:
+    resolution: {integrity: sha512-aR99oXhpEDGo0UuAlYcn2iGRds30k366Zfa05XWScR9QaQD4JYiP3/1Qt1u7YlefUOK+cn0CcwoL1oefavQUlQ==}
+    peerDependencies:
+      axios: 0.x || 1.x
+
   axios@1.13.2:
     resolution: {integrity: sha512-VPk9ebNqPcy5lRGuSlKx752IlDatOjT9paPlm8A7yOuW2Fbvp4X3JznJtT4f0GzGLLiWE9W8onz51SqLYwzGaA==}
 
@@ -6963,6 +7043,10 @@ packages:
 
   enquirer@2.3.6:
     resolution: {integrity: sha512-yjNnPr315/FjS4zIsUxYguYUPP2e1NK4d7E7ZOLiyYCcbFBiTMyID+2wvm2w6+pZ/odMA7cRkjhsPbltwBOrLg==}
+    engines: {node: '>=8.6'}
+
+  enquirer@2.4.1:
+    resolution: {integrity: sha512-rRqJg/6gd538VHvR3PSrdRBb/1Vy2YfzHqzvbhGIQpDRKIa4FgV/54b5Q1xYSxOOwKvjXweS26E0Q+nAMwp2pQ==}
     engines: {node: '>=8.6'}
 
   entities@2.2.0:
@@ -8107,6 +8191,10 @@ packages:
     resolution: {integrity: sha512-MjYsKHO5O7mCsmRGxWcLWheFqN9DJ/2TmngvjKXihe6efViPqc274+Fx/4fYj/r03+ESvBdTXK0V6tA3rgez1g==}
     engines: {node: '>= 0.4'}
 
+  is-retry-allowed@2.2.0:
+    resolution: {integrity: sha512-XVm7LOeLpTW4jV19QSH38vkswxoLud8sQ57YwJVTPWdiaI9I8keEhGFpBlslyVsgdQy4Opg8QOLb8YRgsyZiQg==}
+    engines: {node: '>=10'}
+
   is-set@2.0.3:
     resolution: {integrity: sha512-iPAjerrse27/ygGLxw+EBR9agv9Y6uLeYVJMu+QNCoouJ1/1ri0mGrcWpfCqFZuzzx3WjtwxG098X+n4OuRkPg==}
     engines: {node: '>= 0.4'}
@@ -8891,6 +8979,10 @@ packages:
   minimatch@5.1.6:
     resolution: {integrity: sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==}
     engines: {node: '>=10'}
+
+  minimatch@9.0.3:
+    resolution: {integrity: sha512-RHiac9mvaRw0x3AYRgDC1CxAP7HTcNrrECeA8YYJeWnpo+2Q5CegtZjaotWTWxDG3UeGA1coE05iH1mPjT/2mg==}
+    engines: {node: '>=16 || 14 >=14.17'}
 
   minimatch@9.0.5:
     resolution: {integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==}
@@ -13565,7 +13657,6 @@ snapshots:
       '@emnapi/core': 1.4.3
       '@emnapi/runtime': 1.4.3
       '@tybys/wasm-util': 0.9.0
-    optional: true
 
   '@nestjs/axios@4.0.1(@nestjs/common@11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.13.2)(rxjs@7.8.2)':
     dependencies:
@@ -13621,6 +13712,65 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
+  '@nx/devkit@22.0.3(nx@22.5.2)':
+    dependencies:
+      '@zkochan/js-yaml': 0.0.7
+      ejs: 3.1.10
+      enquirer: 2.3.6
+      minimatch: 9.0.3
+      nx: 22.5.2
+      semver: 7.7.4
+      tslib: 2.8.1
+      yargs-parser: 21.1.1
+
+  '@nx/key-darwin-arm64@5.0.0':
+    optional: true
+
+  '@nx/key-darwin-x64@5.0.0':
+    optional: true
+
+  '@nx/key-linux-arm-gnueabihf@5.0.0':
+    optional: true
+
+  '@nx/key-linux-arm64-gnu@5.0.0':
+    optional: true
+
+  '@nx/key-linux-arm64-musl@5.0.0':
+    optional: true
+
+  '@nx/key-linux-x64-gnu@5.0.0':
+    optional: true
+
+  '@nx/key-linux-x64-musl@5.0.0':
+    optional: true
+
+  '@nx/key-win32-arm64-msvc@5.0.0':
+    optional: true
+
+  '@nx/key-win32-x64-msvc@5.0.0':
+    optional: true
+
+  '@nx/key@5.0.0':
+    dependencies:
+      '@napi-rs/wasm-runtime': 0.2.9
+      axios: 1.13.2
+      axios-retry: 4.5.0(axios@1.13.2)
+      chalk: 4.1.2
+      enquirer: 2.4.1
+      ora: 5.4.1
+    optionalDependencies:
+      '@nx/key-darwin-arm64': 5.0.0
+      '@nx/key-darwin-x64': 5.0.0
+      '@nx/key-linux-arm-gnueabihf': 5.0.0
+      '@nx/key-linux-arm64-gnu': 5.0.0
+      '@nx/key-linux-arm64-musl': 5.0.0
+      '@nx/key-linux-x64-gnu': 5.0.0
+      '@nx/key-linux-x64-musl': 5.0.0
+      '@nx/key-win32-arm64-msvc': 5.0.0
+      '@nx/key-win32-x64-msvc': 5.0.0
+    transitivePeerDependencies:
+      - debug
+
   '@nx/nx-darwin-arm64@22.5.2':
     optional: true
 
@@ -13650,6 +13800,15 @@ snapshots:
 
   '@nx/nx-win32-x64-msvc@22.5.2':
     optional: true
+
+  '@nx/shared-fs-cache@5.0.0(nx@22.5.2)':
+    dependencies:
+      '@nx/devkit': 22.0.3(nx@22.5.2)
+      '@nx/key': 5.0.0
+      nx: 22.5.2
+      semver: 7.5.4
+    transitivePeerDependencies:
+      - debug
 
   '@open-draft/deferred-promise@2.2.0': {}
 
@@ -15321,7 +15480,7 @@ snapshots:
       fast-glob: 3.3.3
       is-glob: 4.0.3
       minimatch: 9.0.5
-      semver: 7.7.3
+      semver: 7.7.4
       ts-api-utils: 2.1.0(typescript@5.8.3)
       typescript: 5.8.3
     transitivePeerDependencies:
@@ -15870,6 +16029,11 @@ snapshots:
       possible-typed-array-names: 1.1.0
 
   axe-core@4.10.3: {}
+
+  axios-retry@4.5.0(axios@1.13.2):
+    dependencies:
+      axios: 1.13.2
+      is-retry-allowed: 2.2.0
 
   axios@1.13.2:
     dependencies:
@@ -17116,6 +17280,11 @@ snapshots:
   enquirer@2.3.6:
     dependencies:
       ansi-colors: 4.1.3
+
+  enquirer@2.4.1:
+    dependencies:
+      ansi-colors: 4.1.3
+      strip-ansi: 6.0.1
 
   entities@2.2.0: {}
 
@@ -18511,6 +18680,8 @@ snapshots:
       has-tostringtag: 1.0.2
       hasown: 2.0.2
 
+  is-retry-allowed@2.2.0: {}
+
   is-set@2.0.3: {}
 
   is-shared-array-buffer@1.0.4:
@@ -19396,7 +19567,7 @@ snapshots:
 
   make-dir@4.0.0:
     dependencies:
-      semver: 7.7.3
+      semver: 7.7.4
 
   make-error@1.3.6:
     optional: true
@@ -19571,6 +19742,10 @@ snapshots:
       brace-expansion: 1.1.11
 
   minimatch@5.1.6:
+    dependencies:
+      brace-expansion: 2.0.1
+
+  minimatch@9.0.3:
     dependencies:
       brace-expansion: 2.0.1
 
