@@ -17,21 +17,8 @@ async function compressString(str: string): Promise<string> {
   // Start consuming from the readable side immediately to prevent backpressure deadlock
   const readPromise = new Response(compressionStream.readable).arrayBuffer()
 
-  try {
-    await writer.write(data)
-    await writer.close()
-  } catch (error) {
-    // Ensure writer is released even if write fails
-    await writer.abort().catch(() => {
-      // Ignore abort errors if writer is already closed
-    })
-    console.error('Failed to compress string:', error)
-    throw new Error(
-      `Compression failed: ${
-        error instanceof Error ? error.message : String(error)
-      }`,
-    )
-  }
+  await writer.write(data)
+  await writer.close()
 
   const compressedArrayBuffer = await readPromise
 
@@ -63,21 +50,8 @@ async function decompressString(base64Str: string): Promise<string> {
   // Start consuming from the readable side immediately to prevent backpressure deadlock
   const readPromise = new Response(decompressionStream.readable).arrayBuffer()
 
-  try {
-    await writer.write(bytes)
-    await writer.close()
-  } catch (error) {
-    // Ensure writer is released even if write fails
-    await writer.abort().catch(() => {
-      // Ignore abort errors if writer is already closed
-    })
-    console.error('Failed to decompress string:', error)
-    throw new Error(
-      `Decompression failed: ${
-        error instanceof Error ? error.message : String(error)
-      }`,
-    )
-  }
+  await writer.write(bytes)
+  await writer.close()
 
   const decompressedArrayBuffer = await readPromise
 
