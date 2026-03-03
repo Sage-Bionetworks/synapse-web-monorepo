@@ -7,10 +7,16 @@ export function modelColsToGrid(
   columnOrder: number[],
   schemaPropertiesInfo: SchemaPropertiesMap,
   columnWidths: Record<string, number> = {},
+  pinnedColumns: Set<number> = new Set(),
+  onTogglePin?: (columnIndex: number) => void,
 ): Column[] {
-  return columnOrder.map((index: number) => {
+  return columnOrder.map((index: number, arrayIndex: number) => {
     const columnName = columnNames[index]
     const propertyInfo = schemaPropertiesInfo[columnName]
+
+    // Only show pin functionality for the first two columns
+    const showPinIcon = arrayIndex < 2
+    const isPinned = pinnedColumns.has(arrayIndex)
 
     return createColumn({
       columnName,
@@ -20,6 +26,9 @@ export function modelColsToGrid(
       isRequired: propertyInfo?.isRequired || false,
       disabled: propertyInfo?.type?.readOnly,
       customWidth: columnWidths[columnName],
+      showPinIcon,
+      isPinned,
+      onTogglePin: () => onTogglePin?.(arrayIndex),
     })
   })
 }
