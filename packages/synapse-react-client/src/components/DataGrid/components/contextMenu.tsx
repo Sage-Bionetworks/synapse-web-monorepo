@@ -41,7 +41,7 @@ const renderContextMenuItem = (item: ContextMenuItem) => {
   if (item.type === 'DUPLICATE_ROWS') {
     return <>Duplicate rows</>
   }
-  return undefined
+  return <></>
 }
 
 // Create base context menus (copy/cut/paste for recordSet, default for views)
