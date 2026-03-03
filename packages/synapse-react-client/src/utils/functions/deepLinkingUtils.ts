@@ -13,12 +13,14 @@ async function compressString(str: string): Promise<string> {
 
   const compressionStream = new CompressionStream('gzip')
   const writer = compressionStream.writable.getWriter()
+
+  // Start consuming from the readable side immediately to prevent backpressure deadlock
+  const readPromise = new Response(compressionStream.readable).arrayBuffer()
+
   await writer.write(data)
   await writer.close()
 
-  const compressedArrayBuffer = await new Response(
-    compressionStream.readable,
-  ).arrayBuffer()
+  const compressedArrayBuffer = await readPromise
 
   // Convert to base64
   const bytes = new Uint8Array(compressedArrayBuffer)
@@ -44,12 +46,14 @@ async function decompressString(base64Str: string): Promise<string> {
 
   const decompressionStream = new DecompressionStream('gzip')
   const writer = decompressionStream.writable.getWriter()
+
+  // Start consuming from the readable side immediately to prevent backpressure deadlock
+  const readPromise = new Response(decompressionStream.readable).arrayBuffer()
+
   await writer.write(bytes)
   await writer.close()
 
-  const decompressedArrayBuffer = await new Response(
-    decompressionStream.readable,
-  ).arrayBuffer()
+  const decompressedArrayBuffer = await readPromise
 
   const decoder = new TextDecoder()
   return decoder.decode(decompressedArrayBuffer)
