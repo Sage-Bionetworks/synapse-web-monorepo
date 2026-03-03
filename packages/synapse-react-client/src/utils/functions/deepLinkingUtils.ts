@@ -13,12 +13,27 @@ async function compressString(str: string): Promise<string> {
 
   const compressionStream = new CompressionStream('gzip')
   const writer = compressionStream.writable.getWriter()
-  await writer.write(data)
-  await writer.close()
 
-  const compressedArrayBuffer = await new Response(
-    compressionStream.readable,
-  ).arrayBuffer()
+  // Start consuming from the readable side immediately to prevent backpressure deadlock
+  const readPromise = new Response(compressionStream.readable).arrayBuffer()
+
+  try {
+    await writer.write(data)
+    await writer.close()
+  } catch (error) {
+    // Ensure writer is released even if write fails
+    await writer.abort().catch(() => {
+      // Ignore abort errors if writer is already closed
+    })
+    console.error('Failed to compress string:', error)
+    throw new Error(
+      `Compression failed: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    )
+  }
+
+  const compressedArrayBuffer = await readPromise
 
   // Convert to base64
   const bytes = new Uint8Array(compressedArrayBuffer)
@@ -44,12 +59,27 @@ async function decompressString(base64Str: string): Promise<string> {
 
   const decompressionStream = new DecompressionStream('gzip')
   const writer = decompressionStream.writable.getWriter()
-  await writer.write(bytes)
-  await writer.close()
 
-  const decompressedArrayBuffer = await new Response(
-    decompressionStream.readable,
-  ).arrayBuffer()
+  // Start consuming from the readable side immediately to prevent backpressure deadlock
+  const readPromise = new Response(decompressionStream.readable).arrayBuffer()
+
+  try {
+    await writer.write(bytes)
+    await writer.close()
+  } catch (error) {
+    // Ensure writer is released even if write fails
+    await writer.abort().catch(() => {
+      // Ignore abort errors if writer is already closed
+    })
+    console.error('Failed to decompress string:', error)
+    throw new Error(
+      `Decompression failed: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    )
+  }
+
+  const decompressedArrayBuffer = await readPromise
 
   const decoder = new TextDecoder()
   return decoder.decode(decompressedArrayBuffer)
