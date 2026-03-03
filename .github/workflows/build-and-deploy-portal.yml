@@ -39,7 +39,7 @@ jobs:
       - name: Get package path
         id: package-path
         run: |
-          packagePath=$(pnpm nx show project ${{ inputs.portal-name }} --json | jq -r '.sourceRoot')
+          packagePath=$(pnpm nx show project ${{ inputs.portal-name }} --json | jq -r '.root')
           echo "packagePath=${packagePath}" >> "$GITHUB_OUTPUT"
       - name: setup-outputbucket-staging
         run: |
