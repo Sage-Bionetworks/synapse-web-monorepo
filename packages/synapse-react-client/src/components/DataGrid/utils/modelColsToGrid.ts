@@ -14,8 +14,8 @@ export function modelColsToGrid(
     const columnName = columnNames[index]
     const propertyInfo = schemaPropertiesInfo[columnName]
 
-    // Only show pin functionality for the first two columns
-    const showPinIcon = arrayIndex < 2
+    // Only show pin functionality for the first column
+    const showPinIcon = arrayIndex === 0
     const isPinned = pinnedColumns.has(arrayIndex)
 
     return createColumn({
