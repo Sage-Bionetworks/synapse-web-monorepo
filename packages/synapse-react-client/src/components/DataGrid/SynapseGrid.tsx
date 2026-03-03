@@ -43,7 +43,7 @@ import { ValidationAlert } from './components/ValidationAlert'
 export type SynapseGridProps = {
   agentRegistrationId?: string
   showDebugInfo?: boolean
-  pinFirstColumns?: number
+  pinFirstColumn?: boolean
 }
 
 export type SynapseGridHandle = {
@@ -52,7 +52,7 @@ export type SynapseGridHandle = {
 }
 
 const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
-  ({ agentRegistrationId, showDebugInfo = false, pinFirstColumns }, ref) => {
+  ({ agentRegistrationId, showDebugInfo = false, pinFirstColumn }, ref) => {
     const [session, setSession] = useState<GridSession | null>(null)
     const [replicaId, setReplicaId] = useState<number | null>(null)
     const [chatOpen, setChatOpen] = useState(false)
@@ -428,7 +428,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       handleChange={handleChange}
                       handleSelectionChange={handleSelectionChange}
                       onSelectedRowChange={handleSelectedRowChange}
-                      pinFirstColumns={pinFirstColumns}
+                      pinFirstColumn={pinFirstColumn}
                     />
                   </Grid>
                   <Grid size={12}>
