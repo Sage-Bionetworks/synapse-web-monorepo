@@ -37,13 +37,17 @@ export function calculateDefaultColumnWidth(
   const characterBasedWidth = columnName.length * 11
 
   // Calculate additional width needed for header icons
-  let additionalWidth = HEADER_ELEMENT_WIDTHS.padding
+  let additionalWidth = 0
   if (headerOptions?.showPinIcon) {
     additionalWidth += HEADER_ELEMENT_WIDTHS.pin + HEADER_ELEMENT_WIDTHS.spacing
   }
   if (headerOptions?.hasDescription) {
     additionalWidth +=
       HEADER_ELEMENT_WIDTHS.help + HEADER_ELEMENT_WIDTHS.spacing
+  }
+  // Only add container padding if we have icons
+  if (additionalWidth > 0) {
+    additionalWidth += HEADER_ELEMENT_WIDTHS.padding
   }
 
   // Calculate total width needed for text + icons
