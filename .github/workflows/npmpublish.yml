@@ -26,7 +26,7 @@ jobs:
       - name: Get package path
         id: package-path
         run: |
-          packagePath=$(pnpm nx show project ${{ matrix.publishablePackage }} --json | jq -r '.sourceRoot')
+          packagePath=$(pnpm nx show project ${{ matrix.publishablePackage }} --json | jq -r '.root')
           echo "packagePath=${packagePath}" >> "$GITHUB_OUTPUT"
       # Check if the package version changed
       - id: package-version-check
