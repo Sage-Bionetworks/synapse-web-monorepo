@@ -51,7 +51,7 @@ export const GridWithQuery = {
         >
           Start Grid Session
         </Button>
-        <SynapseGrid ref={gridRef} {...args} />
+        <SynapseGrid ref={gridRef} {...args} pinFirstColumns={1} />
       </div>
     )
   },

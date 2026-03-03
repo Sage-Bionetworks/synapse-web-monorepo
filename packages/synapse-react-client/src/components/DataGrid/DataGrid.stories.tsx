@@ -272,6 +272,7 @@ function DataGridStoryWrapper({
       lastSelection={lastSelection}
       handleChange={handleChange}
       handleSelectionChange={handleSelectionChange}
+      pinFirstColumns={1}
     />
   )
 }
