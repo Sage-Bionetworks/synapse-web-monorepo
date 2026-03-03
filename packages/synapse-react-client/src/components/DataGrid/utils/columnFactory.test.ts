@@ -9,7 +9,7 @@ import { describe, expect, it } from 'vitest'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
 import { dateTimeColumn } from '../columns/DateTimeColumn'
 import { createColumn } from './columnFactory'
-import { isValidElement, ReactElement } from 'react'
+import React, { isValidElement, ReactElement } from 'react'
 
 vi.mock('../components/ColumnHeaderWithTooltip', () => ({
   ColumnHeaderWithTooltip: ({ name }: { name: string }) => name,
@@ -57,7 +57,7 @@ function getHeaderProps(title: unknown): {
 }
 
 const fakeColumn = {
-  component: () => null,
+  component: () => React.createElement('div'),
 }
 
 const keyColumnSpy = vi.mocked(keyColumn)
