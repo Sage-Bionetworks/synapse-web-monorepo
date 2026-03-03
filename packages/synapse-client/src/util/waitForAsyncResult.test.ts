@@ -52,4 +52,27 @@ describe('waitForAsyncResult', () => {
       ),
     )
   })
+
+  test('include errorDetails when errorMessage is missing', async () => {
+    const mockFailedResult: AsynchronousJobStatus = {
+      requestBody: {
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      },
+      jobState: 'FAILED',
+      errorMessage: undefined,
+      errorDetails: 'Some error details',
+    }
+    const mockGetAsyncResult = vi.fn()
+    mockGetAsyncResult.mockResolvedValueOnce(mockFailedResult)
+
+    const result = waitForAsyncResult(mockGetAsyncResult)
+
+    await expect(result).rejects.toThrow(
+      new SynapseClientError(
+        400,
+        'Some error details',
+        'waitForAsyncResult - org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      ),
+    )
+  })
 })

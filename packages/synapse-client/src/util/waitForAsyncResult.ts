@@ -38,11 +38,18 @@ export async function waitForAsyncResult<
       '\nDetails:\n',
       response.errorDetails,
     )
+
+    const errorMessage =
+      response.errorMessage ??
+      response.errorDetails ??
+      response.exception ??
+      'An unknown error occurred.'
+
     // TODO: Get the correct HTTP status code for the error.
     //  GET /asynchronous/job/{jobId} does not provide the error (it always returns 200 to get the status).
     throw new SynapseClientError(
       400,
-      response.errorMessage!,
+      errorMessage,
       `waitForAsyncResult - ${response.requestBody?.concreteType}`,
     )
   }
