@@ -1,0 +1,5 @@
+import{iw as d,ix as u,g,iy as C,r as o,j as e,B as p,b as r}from"./iframe-Dbbh8EoS.js";import{C as i}from"./CreateChallengeTeam-CKX-I0B3.js";import"./index-Chi_LkuB.js";import"./useTeam-BYu0cAd0.js";import"./useTeamMembers-B1Dhm5wk.js";import"./papaparse.min-B5u3t1TT.js";const{fn:l}=__STORYBOOK_MODULE_TEST__,T={title:"Synapse/Challenge/CreateChallengeTeam",component:i,parameters:{stack:"mock",msw:{handlers:[...d(r),...u(r),...g(r)]}},argTypes:{isAuthenticated:{control:{type:"boolean"}}},args:{isAuthenticated:!0,onCanSubmitChange:l(),onFinished:l()},render:function(n){const[m,c]=o.useState(!1),t=o.useRef(null);return e.jsxs(e.Fragment,{children:[e.jsx(i,{...n,onCanSubmitChange:s=>{c(s),n?.onCanSubmitChange&&n.onCanSubmitChange(s)},ref:t}),t.current&&e.jsx(p,{onClick:()=>{t.current.submit()},variant:"contained",disabled:!m,sx:{my:2},children:"Submit"})]})}},a={args:{challengeId:C.id}};a.parameters={...a.parameters,docs:{...a.parameters?.docs,source:{originalSource:`{
+  args: {
+    challengeId: mockChallenge.id
+  }
+}`,...a.parameters?.docs?.source}}};const E=["Demo"];export{a as Demo,E as __namedExportsOrder,T as default};
