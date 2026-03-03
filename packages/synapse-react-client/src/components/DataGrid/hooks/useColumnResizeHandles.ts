@@ -121,7 +121,7 @@ class ColumnResizeManager {
     cellElement: HTMLElement,
     columnIndex: number,
   ): void {
-    const columnName = this.colValues[columnIndex]?.title as string
+    const columnName = this.colValues[columnIndex]?.id as string
     if (!columnName || !this.gridContainer) return
 
     let handle = this.handlesMap.get(columnName)
@@ -235,13 +235,14 @@ class ColumnResizeManager {
       // This is more reliable than using DOM index with virtualization
       const cellText = cellElement.textContent?.trim() || ''
 
-      // Find the actual column index in colValues by matching the title
+      // Find the actual column index in colValues by matching the id (column name)
+      // Note: col.title may be a React element (e.g. ColumnHeaderWithTooltip), so we use col.id
       const actualColumnIndex = this.colValues.findIndex(
-        col => col.title === cellText,
+        col => col.id === cellText,
       )
 
       if (actualColumnIndex !== -1) {
-        const columnName = this.colValues[actualColumnIndex]?.title as string
+        const columnName = this.colValues[actualColumnIndex]?.id as string
         visibleColumns.add(columnName)
         this.createOrUpdateHandle(cellElement, actualColumnIndex)
       }

@@ -39,18 +39,18 @@
     ".storybook/**/*/.mts"
   ],
   "references": [
-    //    {
-    //      "path": "../synapse-client"
-    //    },
-    //    {
-    //      "path": "../synapse-types"
-    //    },
-    //    {
-    //      "path": "../markdown-it-synapse"
-    //    },
-    //    {
-    //      "path": "../markdown-it-synapse-table"
-    //    },
+    {
+      "path": "../synapse-client"
+    },
+    {
+      "path": "../synapse-types"
+    },
+    {
+      "path": "../markdown-it-synapse"
+    },
+    {
+      "path": "../markdown-it-synapse-table"
+    },
     { "path": "../vite-config" }
   ]
 }

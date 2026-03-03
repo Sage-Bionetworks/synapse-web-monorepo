@@ -25,13 +25,17 @@ import { fetchWithExponentialTimeout } from '@sage-bionetworks/synapse-client'
 enum SynapseGridWebSocketMessagePayloadType {
   PATCH = 'patch',
   SNAPSHOT = 'snapshot',
+  PATCHES = 'patches',
 }
 
 type SynapseGridWebSocketMessagePayload =
-  | CompactCodecPatch
   | {
       type: SynapseGridWebSocketMessagePayloadType.PATCH
       body: CompactCodecPatch
+    }
+  | {
+      type: SynapseGridWebSocketMessagePayloadType.PATCHES
+      body: CompactCodecPatch[]
     }
   | { type: SynapseGridWebSocketMessagePayloadType.SNAPSHOT; body: string }
 
@@ -177,15 +181,13 @@ export class DataGridWebSocket {
   ) {
     const payload = message.getPayload()
 
-    if (Array.isArray(payload)) {
-      // TODO: Support for raw patch arrays can be removed once PLFM-9398 is safely released to production
-      this.handlePatchPayload(payload)
-      return
-    }
-
     switch (payload.type) {
       case SynapseGridWebSocketMessagePayloadType.PATCH:
-        this.handlePatchPayload(payload.body)
+        this.handlePatchPayload([payload.body])
+        break
+
+      case SynapseGridWebSocketMessagePayloadType.PATCHES:
+        void this.handlePatchPayload(payload.body)
         break
 
       case SynapseGridWebSocketMessagePayloadType.SNAPSHOT:
@@ -198,20 +200,20 @@ export class DataGridWebSocket {
     }
   }
 
-  private handlePatchPayload(encodedPatch: CompactCodecPatch) {
+  private handlePatchPayload(encodedPatch: CompactCodecPatch[]) {
     try {
-      const patch = decode(encodedPatch)
+      const patches = encodedPatch.map(decode)
       if (!this.model) {
-        this.model = Model.fromPatches([patch]).fork(
+        this.model = Model.fromPatches(patches).fork(
           this.replicaId,
         ) as unknown as GridModel
         this.onModelCreate(this.model)
       } else {
-        this.model.applyPatch(patch)
+        this.model.applyBatch(patches)
       }
       this.sendClockSync()
     } catch (err) {
-      console.error('Failed to apply patch or send clock:', err)
+      console.error('Failed to apply patches or send clock:', err)
     }
   }
 

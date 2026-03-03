@@ -14,6 +14,7 @@ export function modelColsToGrid(
 
     return createColumn({
       columnName,
+      description: propertyInfo?.description,
       typeInfo: propertyInfo?.type || null,
       enumeratedValues: propertyInfo?.enumeratedValues || [],
       isRequired: propertyInfo?.isRequired || false,

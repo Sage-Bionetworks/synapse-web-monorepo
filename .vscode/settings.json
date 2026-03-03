@@ -4,5 +4,6 @@
   // Your preferred overrides can go in your user settings file, or a custom code-workspace file
 
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "github.copilot.chat.searchSubagent.enabled": true
+  "github.copilot.chat.searchSubagent.enabled": true,
+  "eslint.workingDirectories": [{ "mode": "auto" }]
 }

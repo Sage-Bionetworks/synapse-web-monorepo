@@ -1,0 +1,19 @@
+.cardMetadataIcon:global(.MuiSvgIcon-root) {
+  width: 24px;
+  color: var(--synapse-gray-700);
+}
+
+.cardMetadataTypographyWithIcon:global(.MuiTypography-root) {
+  font-size: 14px;
+  margin-left: 10px;
+  margin-right: 4px;
+}
+
+.locatedInLink:global(.MuiTypography-root) {
+  font-weight: 400;
+  color: var(--synapse-gray-900) !important;
+}
+
+.locatedInLink:global(.MuiTypography-root):hover {
+  text-decoration-color: var(--synapse-gray-900) !important;
+}

@@ -9,6 +9,11 @@ import { describe, expect, it } from 'vitest'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
 import { dateTimeColumn } from '../columns/DateTimeColumn'
 import { createColumn } from './columnFactory'
+import { isValidElement, ReactElement } from 'react'
+
+vi.mock('../components/ColumnHeaderWithTooltip', () => ({
+  ColumnHeaderWithTooltip: ({ name }: { name: string }) => name,
+}))
 
 vi.mock('@sage-bionetworks/react-datasheet-grid', async importActual => {
   const actual = await importActual<
@@ -32,6 +37,24 @@ vi.mock('../columns/DateTimeColumn', () => ({
 vi.mock('../columns/AutocompleteMultipleEnumColumn', () => ({
   autocompleteMultipleEnumColumn: vi.fn(),
 }))
+
+/** Helper to extract props from ColumnHeaderWithTooltip React element */
+function getHeaderProps(title: unknown): {
+  name?: string
+  description?: string
+} {
+  if (isValidElement(title)) {
+    const element = title as ReactElement<{
+      name: string
+      description?: string
+    }>
+    return {
+      name: element.props.name,
+      description: element.props.description,
+    }
+  }
+  return {}
+}
 
 const fakeColumn = {
   component: () => null,
@@ -67,7 +90,9 @@ describe('columnFactory', () => {
       const column = createColumn(config)
       expect(mockAutocompleteMultipleEnumColumn).toHaveBeenCalled()
 
-      expect(column.title).toBe('tags')
+      const headerProps = getHeaderProps(column.title)
+      expect(headerProps.name).toBe('tags')
+      expect(headerProps.description).toBeUndefined()
       expect(column.headerClassName).toBe('header-cell-required')
     })
 
@@ -82,7 +107,9 @@ describe('columnFactory', () => {
       const column = createColumn(config)
       expect(mockAutocompleteColumn).toHaveBeenCalled()
 
-      expect(column.title).toBe('isActive')
+      const headerProps = getHeaderProps(column.title)
+      expect(headerProps.name).toBe('isActive')
+      expect(headerProps.description).toBeUndefined()
       expect(column.headerClassName).toBe('header-cell')
     })
 
@@ -97,7 +124,9 @@ describe('columnFactory', () => {
       const column = createColumn(config)
       expect(mockDateTimeColumn).toHaveBeenCalled()
 
-      expect(column.title).toBe('isActive')
+      const headerProps = getHeaderProps(column.title)
+      expect(headerProps.name).toBe('isActive')
+      expect(headerProps.description).toBeUndefined()
       expect(column.headerClassName).toBe('header-cell')
     })
 
@@ -112,7 +141,9 @@ describe('columnFactory', () => {
       const column = createColumn(config)
       expect(keyColumnSpy).toHaveBeenCalledWith('count', floatColumn)
 
-      expect(column.title).toBe('count')
+      const headerProps = getHeaderProps(column.title)
+      expect(headerProps.name).toBe('count')
+      expect(headerProps.description).toBeUndefined()
       expect(column.headerClassName).toBe('header-cell-required')
     })
 
@@ -126,7 +157,9 @@ describe('columnFactory', () => {
 
       const column = createColumn(config)
 
-      expect(column.title).toBe('age')
+      const headerProps = getHeaderProps(column.title)
+      expect(headerProps.name).toBe('age')
+      expect(headerProps.description).toBeUndefined()
       expect(column.headerClassName).toBe('header-cell')
     })
 
@@ -141,7 +174,9 @@ describe('columnFactory', () => {
       const column = createColumn(config)
       expect(mockAutocompleteColumn).toHaveBeenCalled()
 
-      expect(column.title).toBe('status')
+      const headerProps = getHeaderProps(column.title)
+      expect(headerProps.name).toBe('status')
+      expect(headerProps.description).toBeUndefined()
       expect(column.headerClassName).toBe('header-cell-required')
     })
 
@@ -156,7 +191,9 @@ describe('columnFactory', () => {
       const column = createColumn(config)
       expect(mockCreateTextColumn).toHaveBeenCalled()
 
-      expect(column.title).toBe('description')
+      const headerProps = getHeaderProps(column.title)
+      expect(headerProps.name).toBe('description')
+      expect(headerProps.description).toBeUndefined()
       expect(column.headerClassName).toBe('header-cell')
     })
 

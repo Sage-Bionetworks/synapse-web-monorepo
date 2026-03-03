@@ -2,6 +2,7 @@ import {
   FacetColumnValuesRequest,
   Query,
 } from '@sage-bionetworks/synapse-types'
+import { generateCompressedQueryURL } from '../../utils/functions/deepLinkingUtils'
 
 export type SelectedFacet = {
   facet: string
@@ -21,25 +22,19 @@ const formatSelectedFacetsRequest = (
   })
 }
 
-const generateEncodedQueryForSelectedFacetURL = (
-  sql: string,
-  selectedFacets: SelectedFacet[],
-): string => {
-  const query: Query = {
-    sql,
-    selectedFacets: formatSelectedFacetsRequest(selectedFacets),
-  }
-  return encodeURIComponent(JSON.stringify(query))
-}
-
-export const generateEncodedPathAndQueryForSelectedFacetURL = (
+export const generateEncodedPathAndQueryForSelectedFacetURL = async (
   path: string,
   sql: string,
   selectedFacets: SelectedFacet[],
-): string => {
-  const encodedQuery = generateEncodedQueryForSelectedFacetURL(
+): Promise<string> => {
+  const currentQuery: Query = {
     sql,
-    selectedFacets,
-  )
-  return `${path}?QueryWrapper0=${encodedQuery}`
+    selectedFacets: formatSelectedFacetsRequest(selectedFacets),
+  }
+
+  const initQuery: Query = {
+    sql,
+  }
+
+  return generateCompressedQueryURL(path, 'qw', 0, currentQuery, initQuery)
 }
