@@ -65,7 +65,7 @@ export const getAdditionalFilters = (
   }
   if (searchParams) {
     const isQueryWrapperKey = (key: string) =>
-      key.startsWith('QueryWrapper') || key.startsWith('__')
+      key.startsWith('qw') || key.startsWith('__')
     additionalFilters = additionalFilters.concat(
       Object.keys(searchParams || {})
         .filter(
