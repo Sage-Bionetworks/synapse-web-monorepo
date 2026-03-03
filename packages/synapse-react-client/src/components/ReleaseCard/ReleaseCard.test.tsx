@@ -1,5 +1,4 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { Query } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { SelectedFacet } from '../QueryWrapper/generateEncodedPathAndQueryForSelectedFacetURL'
