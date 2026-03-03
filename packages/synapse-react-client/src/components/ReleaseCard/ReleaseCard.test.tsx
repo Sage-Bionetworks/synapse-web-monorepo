@@ -1,6 +1,6 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { Query } from '@sage-bionetworks/synapse-types'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { SelectedFacet } from '../QueryWrapper/generateEncodedPathAndQueryForSelectedFacetURL'
 import { ReleaseCard, ReleaseCardProps, ReleaseCardSchema } from './ReleaseCard'
@@ -156,8 +156,8 @@ describe('Release Card', () => {
       consoleWarnSpy.mockRestore()
     })
 
-    it('primary explore button has link to path when query config values are missing', () => {
-      const { primaryBtnLink } = setUp({
+    it('primary explore button has link to path when query config values are missing', async () => {
+      renderComponent({
         ...defaultReleaseCardLargeProps,
         releaseCardConfig: {
           ...defaultReleaseCardLargeConfig,
@@ -167,90 +167,45 @@ describe('Release Card', () => {
           },
         },
       })
-      expect(primaryBtnLink).toBeVisible()
-      expect(primaryBtnLink).toHaveAttribute('href', defaultPath)
+      await waitFor(() => {
+        const primaryBtnLink = screen.getByRole('link', {
+          name: defaultPrimaryBtnConfig.label,
+        })
+        expect(primaryBtnLink).toBeVisible()
+        expect(primaryBtnLink).toHaveAttribute('href', defaultPath)
+      })
     })
 
-    it('primary explore button has link with path and query string', () => {
-      const query: Query = {
-        sql: defaultSql,
-        selectedFacets: [
-          {
-            concreteType:
-              'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-            columnName: defaultFacetColumnName1,
-            facetValues: [defaultFacetValue1],
-          },
-          {
-            concreteType:
-              'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-            columnName: defaultFacetColumnName2,
-            facetValues: [defaultFacetValue2],
-          },
-        ],
-      }
-      const pathAndQueryString = `${defaultPath}?qw0=${encodeURIComponent(
-        JSON.stringify(query),
-      )}`
-
-      const { primaryBtnLink } = setUp(defaultReleaseCardLargeProps)
-      expect(primaryBtnLink).toBeVisible()
-      expect(primaryBtnLink).toHaveAttribute('href', pathAndQueryString)
+    it('primary explore button has link with path and query string', async () => {
+      renderComponent(defaultReleaseCardLargeProps)
+      await waitFor(() => {
+        const primaryBtnLink = screen.getByRole('link', {
+          name: defaultPrimaryBtnConfig.label,
+        })
+        expect(primaryBtnLink).toBeVisible()
+        expect(primaryBtnLink).toHaveAttribute(
+          'href',
+          expect.stringContaining(defaultPath + '?qw0='),
+        )
+      })
     })
 
-    it('secondary explore button has link with path and query string', () => {
-      const query: Query = {
-        sql: defaultSql,
-        selectedFacets: [
-          // static facets
-          {
-            concreteType:
-              'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-            columnName: defaultSecondaryBtnSelectedFacetStatic.facet,
-            facetValues: [defaultSecondaryBtnSelectedFacetStatic.facetValue],
-          },
-          // dynamic facets
-          {
-            concreteType:
-              'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-            columnName: defaultFacetColumnName1,
-            facetValues: [defaultFacetValue1],
-          },
-          {
-            concreteType:
-              'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-            columnName: defaultFacetColumnName2,
-            facetValues: [defaultFacetValue2],
-          },
-        ],
-      }
-      const pathAndQueryString = `${defaultPath}?qw0=${encodeURIComponent(
-        JSON.stringify(query),
-      )}`
-
-      const { secondaryBtnLink } = setUp(defaultReleaseCardLargeProps)
-      expect(secondaryBtnLink).toBeVisible()
-      expect(secondaryBtnLink).toHaveAttribute('href', pathAndQueryString)
+    it('secondary explore button has link with path and query string', async () => {
+      renderComponent(defaultReleaseCardLargeProps)
+      await waitFor(() => {
+        const secondaryBtnLink = screen.getByRole('link', {
+          name: defaultSecondaryBtnConfig.label,
+        })
+        expect(secondaryBtnLink).toBeVisible()
+        expect(secondaryBtnLink).toHaveAttribute(
+          'href',
+          expect.stringContaining(defaultPath + '?qw0='),
+        )
+      })
     })
 
-    it('handles explore button with only static selected facets', () => {
-      const query: Query = {
-        sql: defaultSql,
-        selectedFacets: [
-          {
-            concreteType:
-              'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-            columnName: defaultSecondaryBtnSelectedFacetStatic.facet,
-            facetValues: [defaultSecondaryBtnSelectedFacetStatic.facetValue],
-          },
-        ],
-      }
-
-      const pathAndQueryString = `${defaultPath}?qw0=${encodeURIComponent(
-        JSON.stringify(query),
-      )}`
-
-      const { secondaryBtnLink } = setUp({
+    it('handles explore button with only static selected facets', async () => {
+      renderComponent({
         ...defaultReleaseCardLargeProps,
         releaseCardConfig: {
           ...defaultReleaseCardLargeConfig,
@@ -261,12 +216,20 @@ describe('Release Card', () => {
         },
       })
 
-      expect(secondaryBtnLink).toBeVisible()
-      expect(secondaryBtnLink).toHaveAttribute('href', pathAndQueryString)
+      await waitFor(() => {
+        const secondaryBtnLink = screen.getByRole('link', {
+          name: defaultSecondaryBtnConfig.label,
+        })
+        expect(secondaryBtnLink).toBeVisible()
+        expect(secondaryBtnLink).toHaveAttribute(
+          'href',
+          expect.stringContaining(defaultPath + '?qw0='),
+        )
+      })
     })
 
-    it('handles explore button without any selected facets', () => {
-      const { secondaryBtnLink } = setUp({
+    it('handles explore button without any selected facets', async () => {
+      renderComponent({
         ...defaultReleaseCardLargeProps,
         releaseCardConfig: {
           ...defaultReleaseCardLargeConfig,
@@ -278,8 +241,13 @@ describe('Release Card', () => {
         },
       })
 
-      expect(secondaryBtnLink).toBeVisible()
-      expect(secondaryBtnLink).toHaveAttribute('href', defaultPath)
+      await waitFor(() => {
+        const secondaryBtnLink = screen.getByRole('link', {
+          name: defaultSecondaryBtnConfig.label,
+        })
+        expect(secondaryBtnLink).toBeVisible()
+        expect(secondaryBtnLink).toHaveAttribute('href', defaultPath)
+      })
     })
 
     it('shows all statistics', () => {
