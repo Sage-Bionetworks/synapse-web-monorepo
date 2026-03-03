@@ -20,6 +20,9 @@ type ColumnConfig = {
   enumeratedValues: EnumeratedValue[] | string[] | null
   isRequired: boolean
   customWidth?: number
+  showPinIcon?: boolean
+  isPinned?: boolean
+  onTogglePin?: () => void
 }
 
 function getHeaderClassName(isRequired: boolean): string {
@@ -53,6 +56,9 @@ function createBaseColumn(config: ColumnConfig, columnImpl: any) {
       <ColumnHeaderWithTooltip
         name={config.columnName}
         description={config.description}
+        showPinIcon={config.showPinIcon}
+        isPinned={config.isPinned}
+        onTogglePin={config.onTogglePin}
       />
     ),
     headerClassName: getHeaderClassName(config.isRequired),
