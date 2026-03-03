@@ -1,0 +1,50 @@
+import{is as m,j4 as n,m as c,j5 as p,j6 as d,j7 as l,j8 as k}from"./iframe-Caumy8OG.js";import{E as u}from"./EntityAclEditorModal-hQ9Zsm0c.js";import"./index-Chi_LkuB.js";import"./ConfirmCloseWithoutSavingDialog-DDDBe2Bv.js";import"./ConfirmationDialog-IHEJhKNR.js";import"./DialogBase-BwhcKSSX.js";import"./Close-DQtVppmx.js";import"./HelpPopover-DLbRiMnr.js";import"./MarkdownPopover-Ed--YpdW.js";import"./LightTooltip-VmaxT5-P.js";import"./MarkdownSynapse-BvD7qHpg.js";import"./SkeletonButton-CJd-6_Rb.js";import"./SkeletonInlineBlock-Mrzyi1ZX.js";import"./SkeletonTable-Cy3CPYvw.js";import"./SkeletonParagraph-tEoCsyXm.js";import"./useEntityBundle-DTuMLcTt.js";import"./useEntity-NcbfSa9c.js";import"./pickBy-GnA78qLv.js";import"./isString-3W3sh8x8.js";import"./_baseIteratee-DzjmW7wv.js";import"./useInfiniteQuery-BettF6mH.js";import"./InfiniteQueryUtils-CKlRW-xB.js";import"./useUserBundle-YBqMkgNg.js";import"./AccessControlListUtils-Do36E_qO.js";import"./AclEditor-Duwqlekv.js";import"./UserSearchBoxV2-CVqmuKlx.js";import"./useDebouncedEffect-Dxp3O6Ms.js";import"./use-deep-compare-effect.esm-w94gK5Iv.js";import"./uniq-8GX06W3w.js";import"./without-DzQSpwit.js";import"./UserBadge-D_bg6T3T.js";import"./MenuItem-C3S0i9k3.js";import"./Card-CcHhVuhh.js";import"./Chip-BD4K8GZ0.js";import"./Select-aab027f3.esm-lemzqpZg.js";import"./defineProperty-Cp4flQ_6.js";import"./toPropertyKey-C9c9JG92.js";import"./UserOrTeamBadge-uz5_kFYs.js";import"./TeamBadge-BRbRw6fE.js";import"./IconSvgButton-B1WoDw1s.js";import"./FormControlLabel-D5JHQXeU.js";import"./Checkbox-MkkB8eUh.js";import"./SwitchBase-C6I4ypvl.js";import"./useUpdateAcl-M-xufBd-.js";import"./useGetEntityHeaders-Blpjnni5.js";import"./EntityLink-CUN0dREC.js";import"./EntityIcon-Bhy-ZX_f.js";import"./ErrorChip-CBCwiNpg.js";import"./OpenData-BsMHz-tA.js";import"./useMessage-Bg9PjuFW.js";const dt={title:"Synapse/Entity ACL Editor",component:u,args:{open:!0}},t={args:{entityId:m.id},parameters:{stack:"mock"}},r={args:{entityId:n.id},parameters:{stack:"mock"}},a={args:{entityId:c.id},parameters:{stack:"mock"}},e={args:{entityId:p.id},parameters:{stack:"mock"}},o={args:{entityId:d.id},parameters:{stack:"mock"}},i={args:{entityId:l.id},parameters:{stack:"mock"}},s={args:{entityId:k.id},parameters:{stack:"mock"}};t.parameters={...t.parameters,docs:{...t.parameters?.docs,source:{originalSource:`{
+  args: {
+    entityId: mockProject.id
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...t.parameters?.docs?.source}}};r.parameters={...r.parameters,docs:{...r.parameters?.docs,source:{originalSource:`{
+  args: {
+    entityId: mockFileEntityCurrentUserCannotEdit.id
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...r.parameters?.docs?.source}}};a.parameters={...a.parameters,docs:{...a.parameters?.docs,source:{originalSource:`{
+  args: {
+    entityId: mockFileEntity.id
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...a.parameters?.docs?.source}}};e.parameters={...e.parameters,docs:{...e.parameters?.docs,source:{originalSource:`{
+  args: {
+    entityId: mockFileEntityWithLocalSharingSettingsData.id
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...e.parameters?.docs?.source}}};o.parameters={...o.parameters,docs:{...o.parameters?.docs,source:{originalSource:`{
+  args: {
+    entityId: mockFileOpenDataWithPublicRead.id
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...o.parameters?.docs?.source}}};i.parameters={...i.parameters,docs:{...i.parameters?.docs,source:{originalSource:`{
+  args: {
+    entityId: mockFileOpenDataWithNoPublicRead.id
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...i.parameters?.docs?.source}}};s.parameters={...s.parameters,docs:{...s.parameters?.docs,source:{originalSource:`{
+  args: {
+    entityId: mockFilePublicReadNoOpenData.id
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...s.parameters?.docs?.source}}};const lt=["Project","ReadOnly","InheritedFile","LocalSharingSettings","OpenDataPublicCanRead","OpenDataNoPublicRead","NoOpenDataWithPublicRead"];export{a as InheritedFile,e as LocalSharingSettings,s as NoOpenDataWithPublicRead,i as OpenDataNoPublicRead,o as OpenDataPublicCanRead,t as Project,r as ReadOnly,lt as __namedExportsOrder,dt as default};
