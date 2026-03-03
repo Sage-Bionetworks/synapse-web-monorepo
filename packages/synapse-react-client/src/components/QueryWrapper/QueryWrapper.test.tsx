@@ -8,6 +8,7 @@ import {
   ALL_QUERY_BUNDLE_PARTS,
   DEFAULT_PAGE_SIZE,
 } from '@/utils/SynapseConstants'
+import { getQueryRequestFromLink } from '@/utils/functions/deepLinkingUtils'
 import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -156,12 +157,15 @@ describe('QueryWrapper', () => {
         })
       })
 
-      await waitFor(() => {
+      await waitFor(async () => {
         expect(location.search).toContain('qw0')
-        const query = JSON.parse(
-          new URLSearchParams(location.search).get('qw0')!,
+        const queryRequest = await getQueryRequestFromLink(
+          'qw',
+          0,
+          initialQueryRequest.query,
         )
-        expect(query.sql).toEqual(newSql)
+        expect(queryRequest).toBeDefined()
+        expect(queryRequest?.query?.sql).toEqual(newSql)
         expect(getQueryTableAsyncJobResultsSpy).toHaveBeenCalled()
       })
     })

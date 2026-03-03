@@ -151,19 +151,23 @@ function useSynchronizeQueryWithUrl(
   useEffect(() => {
     if (shouldDeepLink) {
       if (isEqual(initQueryRequest, currentQueryRequest)) {
-        DeepLinkingUtils.updateUrlWithNewSearchParam(
+        void DeepLinkingUtils.updateUrlWithNewSearchParam(
           'qw',
           componentIndex,
           null,
           null,
-        )
+        ).catch(error => {
+          console.error('Failed to update URL with search param:', error)
+        })
       } else {
-        DeepLinkingUtils.updateUrlWithNewSearchParam(
+        void DeepLinkingUtils.updateUrlWithNewSearchParam(
           'qw',
           componentIndex,
           currentQueryRequest.query,
           initQueryRequest.query,
-        )
+        ).catch(error => {
+          console.error('Failed to update URL with search param:', error)
+        })
       }
     }
   }, [componentIndex, currentQueryRequest, initQueryRequest, shouldDeepLink])

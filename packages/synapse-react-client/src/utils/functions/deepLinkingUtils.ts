@@ -13,8 +13,8 @@ async function compressString(str: string): Promise<string> {
 
   const compressionStream = new CompressionStream('gzip')
   const writer = compressionStream.writable.getWriter()
-  writer.write(data)
-  writer.close()
+  await writer.write(data)
+  await writer.close()
 
   const compressedArrayBuffer = await new Response(
     compressionStream.readable,
@@ -44,8 +44,8 @@ async function decompressString(base64Str: string): Promise<string> {
 
   const decompressionStream = new DecompressionStream('gzip')
   const writer = decompressionStream.writable.getWriter()
-  writer.write(bytes)
-  writer.close()
+  await writer.write(bytes)
+  await writer.close()
 
   const decompressedArrayBuffer = await new Response(
     decompressionStream.readable,
@@ -81,10 +81,17 @@ function computeQueryDiff(
 
   const diff: Partial<Query> = {}
 
-  // Iterate over all keys in currentQuery
-  for (const key of Object.keys(currentQuery) as Array<keyof Query>) {
+  // Get the union of keys from both currentQuery and initQuery to handle
+  // both additions/changes and removals/omissions
+  const allKeys = new Set([
+    ...Object.keys(currentQuery),
+    ...Object.keys(initQuery),
+  ]) as Set<keyof Query>
+
+  for (const key of allKeys) {
     if (!isEqual(currentQuery[key], initQuery[key])) {
       // Type assertion needed for dynamic key assignment
+      // Include currentQuery[key] even if undefined to represent removals
       ;(diff as any)[key] = currentQuery[key]
     }
   }
