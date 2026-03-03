@@ -82,6 +82,12 @@ describe('modelColsToGrid', () => {
       typeInfo: { type: 'string', isArray: false },
       enumeratedValues: ['active', 'inactive'],
       isRequired: true,
+      customWidth: undefined,
+      description: undefined,
+      disabled: undefined,
+      isPinned: false,
+      onTogglePin: expect.any(Function),
+      showPinIcon: true,
     })
   })
 
@@ -103,6 +109,12 @@ describe('modelColsToGrid', () => {
       typeInfo: null,
       enumeratedValues: [],
       isRequired: false,
+      customWidth: undefined,
+      description: undefined,
+      disabled: undefined,
+      isPinned: false,
+      onTogglePin: expect.any(Function),
+      showPinIcon: true,
     })
   })
 
@@ -130,6 +142,12 @@ describe('modelColsToGrid', () => {
       typeInfo: { type: 'number', isArray: false },
       enumeratedValues: [],
       isRequired: false,
+      customWidth: undefined,
+      description: undefined,
+      disabled: undefined,
+      isPinned: false,
+      onTogglePin: expect.any(Function),
+      showPinIcon: true,
     })
   })
 
@@ -163,6 +181,12 @@ describe('modelColsToGrid', () => {
       },
       enumeratedValues: ['value1', 'value2'],
       isRequired: true,
+      customWidth: undefined,
+      description: undefined,
+      disabled: undefined,
+      isPinned: false,
+      onTogglePin: expect.any(Function),
+      showPinIcon: true,
     })
   })
 
@@ -190,6 +214,12 @@ describe('modelColsToGrid', () => {
       typeInfo: null,
       enumeratedValues: ['test'],
       isRequired: false,
+      customWidth: undefined,
+      description: undefined,
+      disabled: undefined,
+      isPinned: false,
+      onTogglePin: expect.any(Function),
+      showPinIcon: true,
     })
   })
 
@@ -217,6 +247,12 @@ describe('modelColsToGrid', () => {
       typeInfo: { type: 'string', isArray: false },
       enumeratedValues: [],
       isRequired: true,
+      customWidth: undefined,
+      description: undefined,
+      disabled: undefined,
+      isPinned: false,
+      onTogglePin: expect.any(Function),
+      showPinIcon: true,
     })
   })
 
@@ -263,6 +299,12 @@ describe('modelColsToGrid', () => {
       typeInfo: { type: 'string', isArray: false },
       enumeratedValues: [],
       isRequired: true,
+      customWidth: undefined,
+      description: undefined,
+      disabled: undefined,
+      isPinned: false,
+      onTogglePin: expect.any(Function),
+      showPinIcon: true,
     })
 
     expect((result[1] as any).mockConfig).toEqual({
@@ -273,6 +315,12 @@ describe('modelColsToGrid', () => {
       },
       enumeratedValues: ['tag1', 'tag2'],
       isRequired: false,
+      customWidth: undefined,
+      description: undefined,
+      disabled: undefined,
+      isPinned: false,
+      onTogglePin: expect.any(Function),
+      showPinIcon: false,
     })
 
     expect((result[2] as any).mockConfig).toEqual({
@@ -280,6 +328,12 @@ describe('modelColsToGrid', () => {
       typeInfo: { type: 'boolean', isArray: false },
       enumeratedValues: [],
       isRequired: true,
+      customWidth: undefined,
+      description: undefined,
+      disabled: undefined,
+      isPinned: false,
+      onTogglePin: expect.any(Function),
+      showPinIcon: false,
     })
 
     expect((result[3] as any).mockConfig).toEqual({
@@ -287,6 +341,12 @@ describe('modelColsToGrid', () => {
       typeInfo: { type: 'integer', isArray: false },
       enumeratedValues: [],
       isRequired: false,
+      customWidth: undefined,
+      description: undefined,
+      disabled: undefined,
+      isPinned: false,
+      onTogglePin: expect.any(Function),
+      showPinIcon: false,
     })
   })
 
@@ -338,6 +398,12 @@ describe('modelColsToGrid', () => {
       typeInfo: { type: 'string', isArray: false },
       enumeratedValues: ['option1', 'option2'],
       isRequired: true,
+      customWidth: undefined,
+      description: undefined,
+      disabled: undefined,
+      isPinned: false,
+      onTogglePin: expect.any(Function),
+      showPinIcon: true,
     })
   })
 })
