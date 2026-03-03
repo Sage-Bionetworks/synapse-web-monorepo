@@ -7,6 +7,60 @@
   color: #71767f; // gray-700
 }
 
+// Row-level validation states for sticky columns
+.row-deleted .dsg-cell.dsg-cell-sticky-left {
+  background: #fff1f0 !important; /* Red - opaque */
+}
+
+.row-created .dsg-cell.dsg-cell-sticky-left {
+  background: #f6ffed !important; /* Green - opaque */
+}
+
+.row-updated .dsg-cell.dsg-cell-sticky-left {
+  background: #fff7e6 !important; /* Orange - opaque */
+}
+
+.row-valid
+  .dsg-cell.dsg-cell-sticky-left:not(.dsg-cell-header):not(.dsg-cell-gutter) {
+  background: #def0dd !important; /* Valid green - opaque */
+}
+
+.row-invalid
+  .dsg-cell.dsg-cell-sticky-left:not(.dsg-cell-header):not(.dsg-cell-gutter) {
+  background: #fccfcc !important; /* Invalid red - opaque */
+}
+
+.row-unknown
+  .dsg-cell.dsg-cell-sticky-left:not(.dsg-cell-header):not(.dsg-cell-gutter) {
+  background: #fdfeeb !important; /* Unknown yellow - opaque */
+}
+
+// Cell-level validation states for sticky columns (higher specificity)
+.dsg-cell.dsg-cell-sticky-left.cell-invalid:not(.dsg-cell-header):not(
+    .dsg-cell-gutter
+  ) {
+  background: #fccfcc !important; /* Invalid red - opaque */
+}
+
+.dsg-cell.dsg-cell-sticky-left.cell-valid:not(.dsg-cell-header):not(
+    .dsg-cell-gutter
+  ) {
+  background: #def0dd !important; /* Valid green - opaque */
+}
+
+.dsg-cell.dsg-cell-sticky-left.cell-unknown:not(.dsg-cell-header):not(
+    .dsg-cell-gutter
+  ) {
+  background: #fdfeeb !important; /* Unknown yellow - opaque */
+}
+
+// Default sticky cells (no validation state) should have solid white background - lowest priority
+.dsg-cell.dsg-cell-sticky-left:not(.dsg-cell-header):not(.dsg-cell-gutter):not(
+    .cell-invalid
+  ):not(.cell-valid):not(.cell-unknown) {
+  background: var(--dsg-cell-background-color, white) !important;
+}
+
 .row-deleted .dsg-cell {
   /* Red */
   background: #fff1f0;
@@ -48,6 +102,11 @@
     animation: spin 1s linear infinite;
     z-index: 1;
   }
+}
+
+// Cell-level validation states (for individual cell validation)
+.cell-invalid {
+  background: #fccfcc;
 }
 
 @keyframes spin {
