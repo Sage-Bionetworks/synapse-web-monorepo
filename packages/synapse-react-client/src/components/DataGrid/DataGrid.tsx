@@ -36,6 +36,7 @@ type DataGridProps = {
     rowIndex: number | null,
     row: DataGridRow | null,
   ) => void
+  pinFirstColumns?: number
 }
 
 /**
@@ -56,10 +57,18 @@ export default function DataGrid(props: DataGridProps) {
     handleChange,
     handleSelectionChange,
     onSelectedRowChange,
+    pinFirstColumns,
   } = props
 
   // Move columnWidths state into DataGrid
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({})
+
+  // Pin state management - track which of the first two columns are pinned
+  const [pinnedColumns, setPinnedColumns] = useState<Set<number>>(new Set())
+
+  // Calculate actual pinFirstColumns value based on pinned state
+  const actualPinFirstColumns =
+    pinnedColumns.size > 0 ? Math.max(...Array.from(pinnedColumns)) + 1 : 0
 
   // Initialize column widths with defaults when columns first become available
   useEffect(() => {
@@ -93,6 +102,31 @@ export default function DataGrid(props: DataGridProps) {
     })
   }, [columnNames, columnOrder, schemaPropertiesInfo])
 
+  // Handler to toggle pin state for a column
+  const handleTogglePin = useCallback((columnIndex: number) => {
+    setPinnedColumns(prev => {
+      const newPinned = new Set(prev)
+
+      if (newPinned.has(columnIndex)) {
+        // Unpinning a column
+        newPinned.delete(columnIndex)
+        // If unpinning the first column, also unpin the second
+        if (columnIndex === 0) {
+          newPinned.delete(1)
+        }
+      } else {
+        // Pinning a column
+        newPinned.add(columnIndex)
+        // If pinning the second column, also pin the first
+        if (columnIndex === 1) {
+          newPinned.add(0)
+        }
+      }
+
+      return newPinned
+    })
+  }, [])
+
   const colValues = useMemo(
     () =>
       modelColsToGrid(
@@ -100,8 +134,17 @@ export default function DataGrid(props: DataGridProps) {
         columnOrder,
         schemaPropertiesInfo,
         columnWidths,
+        pinnedColumns,
+        handleTogglePin,
       ),
-    [columnNames, columnOrder, schemaPropertiesInfo, columnWidths],
+    [
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+      columnWidths,
+      pinnedColumns,
+      handleTogglePin,
+    ],
   )
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
 
@@ -231,6 +274,9 @@ export default function DataGrid(props: DataGridProps) {
         onChange={handleChange}
         onActiveCellChange={handleActiveCellChange}
         onSelectionChange={handleSelectionChange}
+        pinFirstColumns={
+          actualPinFirstColumns > 0 ? actualPinFirstColumns : pinFirstColumns
+        }
       />
     </div>
   )
