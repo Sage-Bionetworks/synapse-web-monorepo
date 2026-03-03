@@ -127,7 +127,7 @@ function useSynchronizeQueryWithUrl(
     // Only run this effect if deep linking is enabled
     if (shouldDeepLink) {
       DeepLinkingUtils.getQueryRequestFromLink(
-        'QueryWrapper',
+        'qw',
         componentIndex,
         initQueryRequest.query,
       ).then(queryRequestFromLink => {
@@ -152,14 +152,14 @@ function useSynchronizeQueryWithUrl(
     if (shouldDeepLink) {
       if (isEqual(initQueryRequest, currentQueryRequest)) {
         DeepLinkingUtils.updateUrlWithNewSearchParam(
-          'QueryWrapper',
+          'qw',
           componentIndex,
           null,
           null,
         )
       } else {
         DeepLinkingUtils.updateUrlWithNewSearchParam(
-          'QueryWrapper',
+          'qw',
           componentIndex,
           currentQueryRequest.query,
           initQueryRequest.query,

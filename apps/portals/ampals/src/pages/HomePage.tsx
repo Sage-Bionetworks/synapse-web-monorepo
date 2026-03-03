@@ -49,7 +49,7 @@ export default function HomePage() {
     }
     generateCompressedQueryURL(
       '/Explore/Datasets',
-      'QueryWrapper',
+      'qw',
       0,
       geoQuery,
       initQuery,
@@ -70,7 +70,7 @@ export default function HomePage() {
     }
     generateCompressedQueryURL(
       '/Explore/Datasets',
-      'QueryWrapper',
+      'qw',
       0,
       nygcQuery,
       initQuery,
@@ -91,7 +91,7 @@ export default function HomePage() {
     }
     generateCompressedQueryURL(
       '/Explore/Datasets',
-      'QueryWrapper',
+      'qw',
       0,
       barmadaQuery,
       initQuery,

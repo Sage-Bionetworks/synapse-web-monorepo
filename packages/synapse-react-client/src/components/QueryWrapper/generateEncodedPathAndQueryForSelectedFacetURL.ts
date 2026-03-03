@@ -36,11 +36,5 @@ export const generateEncodedPathAndQueryForSelectedFacetURL = async (
     sql,
   }
 
-  return generateCompressedQueryURL(
-    path,
-    'QueryWrapper',
-    0,
-    currentQuery,
-    initQuery,
-  )
+  return generateCompressedQueryURL(path, 'qw', 0, currentQuery, initQuery)
 }

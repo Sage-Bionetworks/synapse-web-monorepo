@@ -189,7 +189,7 @@ describe('Release Card', () => {
           },
         ],
       }
-      const pathAndQueryString = `${defaultPath}?QueryWrapper0=${encodeURIComponent(
+      const pathAndQueryString = `${defaultPath}?qw0=${encodeURIComponent(
         JSON.stringify(query),
       )}`
 
@@ -224,7 +224,7 @@ describe('Release Card', () => {
           },
         ],
       }
-      const pathAndQueryString = `${defaultPath}?QueryWrapper0=${encodeURIComponent(
+      const pathAndQueryString = `${defaultPath}?qw0=${encodeURIComponent(
         JSON.stringify(query),
       )}`
 
@@ -246,7 +246,7 @@ describe('Release Card', () => {
         ],
       }
 
-      const pathAndQueryString = `${defaultPath}?QueryWrapper0=${encodeURIComponent(
+      const pathAndQueryString = `${defaultPath}?qw0=${encodeURIComponent(
         JSON.stringify(query),
       )}`
 

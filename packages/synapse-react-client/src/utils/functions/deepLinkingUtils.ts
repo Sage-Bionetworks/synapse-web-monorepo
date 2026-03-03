@@ -66,6 +66,7 @@ function getComponentSearchHashId(
 /**
  * Computes the difference between the current query and the initial query.
  * Returns only the fields that differ from the initial query.
+ * Dynamically handles all fields in the Query type, making it safe for future changes.
  * @param currentQuery - The current query state
  * @param initQuery - The initial query state
  * @returns A partial Query object containing only the differences, or null if queries are equal
@@ -78,30 +79,14 @@ function computeQueryDiff(
     return null
   }
 
-  // Create a diff object with only the fields that differ from initQuery
   const diff: Partial<Query> = {}
 
-  // Check each field and include it only if it differs from initQuery
-  if (currentQuery.sql !== initQuery.sql) {
-    diff.sql = currentQuery.sql
-  }
-  if (!isEqual(currentQuery.selectedFacets, initQuery.selectedFacets)) {
-    diff.selectedFacets = currentQuery.selectedFacets
-  }
-  if (currentQuery.includeEntityEtag !== initQuery.includeEntityEtag) {
-    diff.includeEntityEtag = currentQuery.includeEntityEtag
-  }
-  if (currentQuery.offset !== initQuery.offset) {
-    diff.offset = currentQuery.offset
-  }
-  if (currentQuery.limit !== initQuery.limit) {
-    diff.limit = currentQuery.limit
-  }
-  if (!isEqual(currentQuery.sort, initQuery.sort)) {
-    diff.sort = currentQuery.sort
-  }
-  if (!isEqual(currentQuery.additionalFilters, initQuery.additionalFilters)) {
-    diff.additionalFilters = currentQuery.additionalFilters
+  // Iterate over all keys in currentQuery
+  for (const key of Object.keys(currentQuery) as Array<keyof Query>) {
+    if (!isEqual(currentQuery[key], initQuery[key])) {
+      // Type assertion needed for dynamic key assignment
+      ;(diff as any)[key] = currentQuery[key]
+    }
   }
 
   return Object.keys(diff).length > 0 ? diff : null
@@ -212,7 +197,7 @@ export async function getQueryRequestFromLink(
 /**
  * Generates a URL with a compressed query diff parameter.
  * @param path - The base path for the URL
- * @param componentName - The component name (e.g., 'QueryWrapper')
+ * @param componentName - The component name (e.g., 'qw')
  * @param componentIndex - The component index (e.g., 0)
  * @param currentQuery - The query to encode
  * @param initQuery - The initial/default query to compute the diff against

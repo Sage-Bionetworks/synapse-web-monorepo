@@ -110,7 +110,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
     }
     const url = await generateCompressedQueryURL(
       '/Explore/Tools',
-      'QueryWrapper',
+      'qw',
       0,
       currentQuery,
       initQuery,

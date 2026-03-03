@@ -157,9 +157,9 @@ describe('QueryWrapper', () => {
       })
 
       await waitFor(() => {
-        expect(location.search).toContain('QueryWrapper0')
+        expect(location.search).toContain('qw0')
         const query = JSON.parse(
-          new URLSearchParams(location.search).get('QueryWrapper0')!,
+          new URLSearchParams(location.search).get('qw0')!,
         )
         expect(query.sql).toEqual(newSql)
         expect(getQueryTableAsyncJobResultsSpy).toHaveBeenCalled()
@@ -250,7 +250,7 @@ describe('QueryWrapper', () => {
       window.history.pushState(
         {},
         'Page Title',
-        '/any/url/you/like?QueryWrapper0=' +
+        '/any/url/you/like?qw0=' +
           encodeURIComponent(JSON.stringify(lqr.query)),
       )
       renderComponent({
@@ -274,7 +274,7 @@ describe('QueryWrapper', () => {
       window.history.pushState(
         {},
         'Page Title',
-        '/any/url/you/like?QueryWrapper0=' +
+        '/any/url/you/like?qw0=' +
           encodeURIComponent(JSON.stringify(lqr.query)),
       )
       renderComponent({
@@ -298,7 +298,7 @@ describe('QueryWrapper', () => {
       window.history.pushState(
         {},
         'Page Title',
-        '/any/url/you/like?someotherParam=param&QueryWrapper0=' +
+        '/any/url/you/like?someotherParam=param&qw0=' +
           encodeURIComponent(JSON.stringify(lqr.query)) +
           '&anotherPram=somethingElse',
       )

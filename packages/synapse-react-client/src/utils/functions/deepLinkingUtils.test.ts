@@ -51,12 +51,7 @@ describe('deepLinkingUtils', () => {
         offset: 25,
       }
 
-      await updateUrlWithNewSearchParam(
-        'QueryWrapper',
-        0,
-        currentQuery,
-        initQuery,
-      )
+      await updateUrlWithNewSearchParam('qw', 0, currentQuery, initQuery)
 
       // Verify the call was made
       expect(mockHistoryReplaceState).toHaveBeenCalled()
@@ -64,24 +59,24 @@ describe('deepLinkingUtils', () => {
       // Extract and verify the URL
       const callArgs = mockHistoryReplaceState.mock.calls[0]
       const urlString = callArgs[2] as string
-      expect(urlString).toContain('/test?QueryWrapper0=')
+      expect(urlString).toContain('/test?qw0=')
 
       // The value should be base64-encoded compressed data
       const searchParams = new URLSearchParams(urlString.split('?')[1])
-      const compressedValue = searchParams.get('QueryWrapper0')
+      const compressedValue = searchParams.get('qw0')
       expect(compressedValue).toBeTruthy()
       // Should be base64 encoded (only contains valid base64 characters)
       expect(compressedValue).toMatch(/^[A-Za-z0-9+/=]+$/)
     })
 
     it('should remove the search param when queries are equal', async () => {
-      await updateUrlWithNewSearchParam('QueryWrapper', 0, initQuery, initQuery)
+      await updateUrlWithNewSearchParam('qw', 0, initQuery, initQuery)
 
       expect(mockHistoryReplaceState).toHaveBeenCalledWith(null, '', '/test')
     })
 
     it('should remove the search param when currentQuery is null', async () => {
-      await updateUrlWithNewSearchParam('QueryWrapper', 0, null, initQuery)
+      await updateUrlWithNewSearchParam('qw', 0, null, initQuery)
 
       expect(mockHistoryReplaceState).toHaveBeenCalledWith(null, '', '/test')
     })
@@ -106,17 +101,12 @@ describe('deepLinkingUtils', () => {
         ],
       }
 
-      await updateUrlWithNewSearchParam(
-        'QueryWrapper',
-        0,
-        currentQuery,
-        initQuery,
-      )
+      await updateUrlWithNewSearchParam('qw', 0, currentQuery, initQuery)
 
       const callArgs = mockHistoryReplaceState.mock.calls[0]
       const urlString = callArgs[2] as string
       const searchParams = new URLSearchParams(urlString.split('?')[1])
-      const compressedValue = searchParams.get('QueryWrapper0')
+      const compressedValue = searchParams.get('qw0')
       expect(compressedValue).toBeTruthy()
       // Should be base64 encoded
       expect(compressedValue).toMatch(/^[A-Za-z0-9+/=]+$/)
@@ -150,17 +140,12 @@ describe('deepLinkingUtils', () => {
         ],
       }
 
-      await updateUrlWithNewSearchParam(
-        'QueryWrapper',
-        0,
-        currentQuery,
-        initQuery,
-      )
+      await updateUrlWithNewSearchParam('qw', 0, currentQuery, initQuery)
 
       const callArgs = mockHistoryReplaceState.mock.calls[0]
       const urlString = callArgs[2] as string
       const searchParams = new URLSearchParams(urlString.split('?')[1])
-      const compressedValue = searchParams.get('QueryWrapper0')!
+      const compressedValue = searchParams.get('qw0')!
 
       // Compute what the uncompressed diff would look like
       const diff = {
@@ -210,9 +195,9 @@ describe('deepLinkingUtils', () => {
         String.fromCharCode(...new Uint8Array(compressedData)),
       )
 
-      window.location.search = `?QueryWrapper0=${encodeURIComponent(base64)}`
+      window.location.search = `?qw0=${encodeURIComponent(base64)}`
 
-      const result = await getQueryRequestFromLink('QueryWrapper', 0, initQuery)
+      const result = await getQueryRequestFromLink('qw', 0, initQuery)
 
       expect(result).toBeDefined()
       expect(result?.query).toEqual({
@@ -225,7 +210,7 @@ describe('deepLinkingUtils', () => {
     it('should return undefined when no search param exists', async () => {
       window.location.search = ''
 
-      const result = await getQueryRequestFromLink('QueryWrapper', 0, initQuery)
+      const result = await getQueryRequestFromLink('qw', 0, initQuery)
 
       expect(result).toBeUndefined()
     })
@@ -261,9 +246,9 @@ describe('deepLinkingUtils', () => {
         String.fromCharCode(...new Uint8Array(compressedData)),
       )
 
-      window.location.search = `?QueryWrapper0=${encodeURIComponent(base64)}`
+      window.location.search = `?qw0=${encodeURIComponent(base64)}`
 
-      const result = await getQueryRequestFromLink('QueryWrapper', 0, initQuery)
+      const result = await getQueryRequestFromLink('qw', 0, initQuery)
 
       expect(result).toBeDefined()
       expect(result?.query).toEqual({
@@ -273,9 +258,9 @@ describe('deepLinkingUtils', () => {
     })
 
     it('should handle invalid data gracefully', async () => {
-      window.location.search = '?QueryWrapper0=invalid-base64'
+      window.location.search = '?qw0=invalid-base64'
 
-      const result = await getQueryRequestFromLink('QueryWrapper', 0, initQuery)
+      const result = await getQueryRequestFromLink('qw', 0, initQuery)
 
       expect(result).toBeUndefined()
     })
@@ -305,12 +290,7 @@ describe('deepLinkingUtils', () => {
       }
 
       // Store the query diff
-      await updateUrlWithNewSearchParam(
-        'QueryWrapper',
-        0,
-        currentQuery,
-        initQuery,
-      )
+      await updateUrlWithNewSearchParam('qw', 0, currentQuery, initQuery)
 
       // Extract the search params that were set
       const callArgs = mockHistoryReplaceState.mock.calls[0]
@@ -320,7 +300,7 @@ describe('deepLinkingUtils', () => {
         : ''
 
       // Retrieve the query
-      const result = await getQueryRequestFromLink('QueryWrapper', 0, initQuery)
+      const result = await getQueryRequestFromLink('qw', 0, initQuery)
 
       expect(result).toBeDefined()
       expect(result?.query).toEqual(currentQuery)
