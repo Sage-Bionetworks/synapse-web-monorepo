@@ -9,7 +9,10 @@ import {
 } from '@sage-bionetworks/react-datasheet-grid'
 import { autocompleteColumn } from '../columns/AutocompleteColumn'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
-import { calculateDefaultColumnWidth } from './calculateColumnWidth'
+import {
+  calculateDefaultColumnWidth,
+  HeaderOptions,
+} from './calculateColumnWidth'
 import { ColumnHeaderWithTooltip } from '../components/ColumnHeaderWithTooltip'
 
 type ColumnConfig = {
@@ -47,8 +50,18 @@ function createParseUserInput(isRequired?: boolean) {
 }
 
 function createBaseColumn(config: ColumnConfig, columnImpl: any) {
+  const headerOptions: HeaderOptions = {
+    showPinIcon: config.showPinIcon,
+    hasDescription: !!config.description,
+  }
+
   const width =
-    config.customWidth ?? calculateDefaultColumnWidth(config.columnName)
+    config.customWidth ??
+    calculateDefaultColumnWidth(
+      config.columnName,
+      undefined, // propertyInfo is not available here, passed from higher level
+      headerOptions,
+    )
 
   return {
     ...keyColumn(config.columnName, columnImpl),
@@ -116,13 +129,22 @@ const COLUMN_FACTORIES = {
     })
 
     // Date-time needs special width calculation
+    const headerOptions: HeaderOptions = {
+      showPinIcon: config.showPinIcon,
+      hasDescription: !!config.description,
+    }
+
     const width =
       config.customWidth ??
-      calculateDefaultColumnWidth(config.columnName, {
-        type: config.typeInfo ?? undefined,
-        isRequired: config.isRequired,
-        enumeratedValues: null,
-      })
+      calculateDefaultColumnWidth(
+        config.columnName,
+        {
+          type: config.typeInfo ?? undefined,
+          isRequired: config.isRequired,
+          enumeratedValues: null,
+        },
+        headerOptions,
+      )
 
     return {
       ...createBaseColumn(config, columnImpl),
