@@ -90,6 +90,7 @@ export function ColumnHeaderEnumFilter<TData = unknown, TValue = unknown>(
   )
 
   // Use the column's enumValues and filterValues to create the facet value objects used by EnumFacetFilterUI
+  const facetedUniqueValues = column.getFacetedUniqueValues()
   const transformedFilterValues: RenderedFacetValue<TValue>[] = useMemo(
     () =>
       getMaybeFacetedUniqueValues(column).map(
@@ -107,7 +108,7 @@ export function ColumnHeaderEnumFilter<TData = unknown, TValue = unknown>(
           return { ...facetValue, displayText, isSelected }
         },
       ),
-    [column, filterValues],
+    [column, filterValues, facetedUniqueValues],
   )
   return (
     <EnumFacetFilterUI
