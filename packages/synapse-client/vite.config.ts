@@ -1,12 +1,19 @@
-import { ConfigBuilder } from 'vite-config'
+import { mergeConfig } from 'vite'
+import {
+  baseConfig,
+  vitestConfig,
+  nodePolyfillsPlugin,
+  tsconfigPathsPlugin,
+} from 'vite-config'
 
-const config = new ConfigBuilder()
-  .setIncludeVitestConfig(true)
-  .setConfigOverrides({
+const config = mergeConfig(
+  baseConfig,
+  mergeConfig(vitestConfig, {
+    plugins: [nodePolyfillsPlugin(), tsconfigPathsPlugin()],
     test: {
       setupFiles: ['./src/vitest.setup.ts'],
     },
-  })
-  .build()
+  }),
+)
 
 export default config

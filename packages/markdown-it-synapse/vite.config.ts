@@ -1,11 +1,17 @@
-import { ConfigBuilder } from 'vite-config'
+import { mergeConfig } from 'vite'
+import {
+  baseConfig,
+  vitestConfig,
+  nodePolyfillsPlugin,
+  tsconfigPathsPlugin,
+} from 'vite-config'
 
-export default new ConfigBuilder()
-  .setIncludeVitestConfig(true)
-  .setConfigOverrides({
+export default mergeConfig(
+  baseConfig,
+  mergeConfig(vitestConfig, {
+    plugins: [nodePolyfillsPlugin(), tsconfigPathsPlugin()],
     test: {
-      globals: true,
       include: ['test/**/*.test.[jt]s?(x)'],
     },
-  })
-  .build()
+  }),
+)

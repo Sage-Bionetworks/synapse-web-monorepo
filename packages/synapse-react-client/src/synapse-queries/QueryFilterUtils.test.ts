@@ -9,7 +9,7 @@ import {
   getAllActionsRequiredQueryFilters,
   invalidateAllQueriesForEntity,
 } from './QueryFilterUtils'
-import { doesQueryFilterMatch } from './QueryMatchingTestUtils'
+import { doesQueryFilterMatch } from './QueryMatching.test-utils'
 
 const keyFactory = new KeyFactory(MOCK_ACCESS_TOKEN)
 
