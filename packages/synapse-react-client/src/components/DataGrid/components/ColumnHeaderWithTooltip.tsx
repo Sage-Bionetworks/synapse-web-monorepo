@@ -57,7 +57,10 @@ export function ColumnHeaderWithTooltip({
             <IconButton
               size="small"
               color="inherit"
-              onClick={onTogglePin}
+              onMouseDown={e => {
+                e.stopPropagation()
+                onTogglePin?.()
+              }}
               sx={{
                 color: 'inherit',
                 opacity: isPinned ? 1 : 0.7,
