@@ -9,56 +9,56 @@
 
 // Row-level validation states for sticky columns
 .row-deleted .dsg-cell.dsg-cell-sticky-left {
-  background: #fff1f0 !important; /* Red - opaque */
+  background: #fff1f0; /* Red - opaque */
 }
 
 .row-created .dsg-cell.dsg-cell-sticky-left {
-  background: #f6ffed !important; /* Green - opaque */
+  background: #f6ffed; /* Green - opaque */
 }
 
 .row-updated .dsg-cell.dsg-cell-sticky-left {
-  background: #fff7e6 !important; /* Orange - opaque */
+  background: #fff7e6; /* Orange - opaque */
 }
 
 .row-valid
   .dsg-cell.dsg-cell-sticky-left:not(.dsg-cell-header):not(.dsg-cell-gutter) {
-  background: #def0dd !important; /* Valid green - opaque */
+  background: #def0dd; /* Valid green - opaque */
 }
 
 .row-invalid
   .dsg-cell.dsg-cell-sticky-left:not(.dsg-cell-header):not(.dsg-cell-gutter) {
-  background: #fccfcc !important; /* Invalid red - opaque */
+  background: #fccfcc; /* Invalid red - opaque */
 }
 
 .row-unknown
   .dsg-cell.dsg-cell-sticky-left:not(.dsg-cell-header):not(.dsg-cell-gutter) {
-  background: #fdfeeb !important; /* Unknown yellow - opaque */
+  background: #fdfeeb; /* Unknown yellow - opaque */
 }
 
 // Cell-level validation states for sticky columns (higher specificity)
 .dsg-cell.dsg-cell-sticky-left.cell-invalid:not(.dsg-cell-header):not(
     .dsg-cell-gutter
   ) {
-  background: #fccfcc !important; /* Invalid red - opaque */
+  background: #fccfcc; /* Invalid red - opaque */
 }
 
 .dsg-cell.dsg-cell-sticky-left.cell-valid:not(.dsg-cell-header):not(
     .dsg-cell-gutter
   ) {
-  background: #def0dd !important; /* Valid green - opaque */
+  background: #def0dd; /* Valid green - opaque */
 }
 
 .dsg-cell.dsg-cell-sticky-left.cell-unknown:not(.dsg-cell-header):not(
     .dsg-cell-gutter
   ) {
-  background: #fdfeeb !important; /* Unknown yellow - opaque */
+  background: #fdfeeb; /* Unknown yellow - opaque */
 }
 
 // Default sticky cells (no validation state) should have solid white background - lowest priority
 .dsg-cell.dsg-cell-sticky-left:not(.dsg-cell-header):not(.dsg-cell-gutter):not(
     .cell-invalid
   ):not(.cell-valid):not(.cell-unknown) {
-  background: var(--dsg-cell-background-color, white) !important;
+  background: var(--dsg-cell-background-color, white);
 }
 
 .row-deleted .dsg-cell {
