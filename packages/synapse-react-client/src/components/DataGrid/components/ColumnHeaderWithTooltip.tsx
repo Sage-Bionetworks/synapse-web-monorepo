@@ -59,7 +59,7 @@ export function ColumnHeaderWithTooltip({
             </IconButton>
           </Tooltip>
         )}
-        {showPinIcon && (
+        {showPinIcon && onTogglePin && (
           <Tooltip
             title={isPinned ? 'Unpin column' : 'Pin column'}
             placement="top"
@@ -68,11 +68,12 @@ export function ColumnHeaderWithTooltip({
             <IconButton
               size="small"
               color="inherit"
+              aria-label={isPinned ? 'Unpin column' : 'Pin column'}
               // Use onMouseDown instead of onClick to prevent column selection
               // when clicking the pin icon. stopPropagation prevents event bubbling.
               onMouseDown={e => {
                 e.stopPropagation()
-                onTogglePin?.()
+                onTogglePin()
               }}
               sx={{
                 color: 'inherit',
