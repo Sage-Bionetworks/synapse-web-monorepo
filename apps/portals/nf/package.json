@@ -40,6 +40,9 @@
   "nx": {
     "targets": {
       "typegen": {
+        "dependsOn": [
+          "^build"
+        ],
         "inputs": [
           "{projectRoot}/react-router.config.ts",
           "{projectRoot}/src/routes.ts"
