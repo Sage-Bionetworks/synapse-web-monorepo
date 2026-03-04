@@ -1683,8 +1683,8 @@ importers:
         specifier: workspace:*
         version: link:../markdown-it-container
       '@sage-bionetworks/react-datasheet-grid':
-        specifier: 4.11.5-sage.3
-        version: 4.11.5-sage.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 4.11.5-sage.4
+        version: 4.11.5-sage.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@sage-bionetworks/synapse-client':
         specifier: workspace:*
         version: link:../synapse-client
@@ -4503,8 +4503,8 @@ packages:
   '@rushstack/ts-command-line@5.0.1':
     resolution: {integrity: sha512-bsbUucn41UXrQK7wgM8CNM/jagBytEyJqXw/umtI8d68vFm1Jwxh1OtLrlW7uGZgjCWiiPH6ooUNa1aVsuVr3Q==}
 
-  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.3':
-    resolution: {integrity: sha512-7DiTKFDE9TljK70PnT3j0ySlbY0OgvUNcvgmS+VoLZDCXQNWRLfFZe4HxkLiHQJah9GJyhSIVHGCheqrui0tJw==}
+  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.4':
+    resolution: {integrity: sha512-c5L8h+rz7geWsING1I6ygLq8iZ4JWFLzJiRrsBgmHAPZ3d7J14pUoHeX83mVtRLzjwi+7zmgnOJAErdN5cyhCA==}
     peerDependencies:
       react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -5879,6 +5879,7 @@ packages:
   basic-ftp@5.0.5:
     resolution: {integrity: sha512-4Bcg1P8xhUuqcii/S0Z9wiHIrQVPMermM1any+MX5GeGD7faD3/msQUDGLol9wOcz4/jbg/WJnGqoJF6LiBdtg==}
     engines: {node: '>=10.0.0'}
+    deprecated: Security vulnerability fixed in 5.2.0, please upgrade
 
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
@@ -14351,7 +14352,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@tanstack/react-virtual': 3.13.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       classnames: 2.5.1
