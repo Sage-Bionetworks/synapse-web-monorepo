@@ -1,8 +1,9 @@
+import { ReactComponent as ArcusBioIcon } from '@/assets/ArcusBioIcon.svg'
 import { GoogleIcon24 } from '@/assets/GoogleIcon24'
-import CreateVersion from '@/assets/icons/CreateVersion'
-import FileWithShield from '@/assets/icons/FileWithShield'
 import { ReactComponent as AccessPending } from '@/assets/icons/AccessPending.svg'
 import { ReactComponent as AccessPendingCloud } from '@/assets/icons/AccessPendingCloud.svg'
+import CreateVersion from '@/assets/icons/CreateVersion'
+import FileWithShield from '@/assets/icons/FileWithShield'
 import { ORCIDIcon } from '@/assets/icons/ORCIDIcon'
 import { TasksIcon } from '@/assets/icons/TasksIcon'
 import AccessManagement from '@/assets/mui_components/AccessManagement'
@@ -33,7 +34,6 @@ import PackagableFile from '@/assets/mui_components/PackagableFile'
 import Proteomics from '@/assets/mui_components/Proteomics'
 import Rat from '@/assets/mui_components/Rat'
 import SpatialProfiling from '@/assets/mui_components/SpatialProfiling'
-import { ReactComponent as ArcusBioIcon } from '@/assets/ArcusBioIcon.svg'
 import {
   AccessTimeTwoTone,
   AddBoxOutlined,
@@ -111,19 +111,18 @@ import {
   RestoreFromTrashTwoTone,
   SearchOutlined,
   SearchTwoTone,
+  ShareTwoTone,
   ShoppingCartOutlined,
   Sort,
   Star,
   StarOutline,
   StarTwoTone,
-  StorageTwoTone,
   StrikethroughS,
   Subscript,
   Superscript,
   SyncTwoTone,
   TableChartTwoTone,
   TableRows,
-  ShareTwoTone,
   TableViewTwoTone,
   Title,
   UploadTwoTone,
@@ -489,7 +488,7 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
     case 'entityview':
       return <ListTwoTone {...otherProps} />
     case 'submissionview':
-      return <StorageTwoTone {...otherProps} />
+      return <ArticleTwoTone {...otherProps} />
     case 'challenge':
       return <AssessmentTwoTone {...otherProps} />
     case 'discussion':

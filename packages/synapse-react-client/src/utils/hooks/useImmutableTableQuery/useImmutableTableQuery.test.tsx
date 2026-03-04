@@ -2,7 +2,7 @@ import {
   ColumnSingleValueFilterOperator,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import { act, renderHook } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { cloneDeep } from 'lodash-es'
 import * as DeepLinkingUtils from '../../functions/deepLinkingUtils'
 import useImmutableTableQuery, {
@@ -209,7 +209,7 @@ describe('useImmutableTableQuery tests', () => {
   it('Updates the URL if shouldDeepLink is true', () => {
     const mockUpdateUrl = vi
       .spyOn(DeepLinkingUtils, 'updateUrlWithNewSearchParam')
-      .mockImplementation(() => {})
+      .mockImplementation(() => Promise.resolve())
     const { result } = renderHook(() =>
       useImmutableTableQuery({
         ...options,
@@ -219,7 +219,7 @@ describe('useImmutableTableQuery tests', () => {
     )
 
     // called with `null`, which would remove the query parameter, if it exists
-    expect(mockUpdateUrl).toHaveBeenCalledWith('QueryWrapper', 4, null)
+    expect(mockUpdateUrl).toHaveBeenCalledWith('qw', 4, null, null)
 
     const newQuery = cloneDeep(options.initQueryRequest)
     newQuery.query.sql = 'SELECT * FROM syn123.3 WHERE "foo"=\'baz\''
@@ -229,29 +229,30 @@ describe('useImmutableTableQuery tests', () => {
       result.current.setQuery(newQuery)
     })
     expect(mockUpdateUrl).toHaveBeenCalledWith(
-      'QueryWrapper',
+      'qw',
       4,
-      JSON.stringify(newQuery.query),
+      newQuery.query,
+      options.initQueryRequest.query,
     )
 
     // Change the query back to the initial query, and the parameter should be removed
     act(() => {
       result.current.setQuery(options.initQueryRequest)
     })
-    expect(mockUpdateUrl).toHaveBeenLastCalledWith('QueryWrapper', 4, null)
+    expect(mockUpdateUrl).toHaveBeenLastCalledWith('qw', 4, null, null)
   })
 
-  it('Updates the query on mount one is found in the URL', () => {
+  it('Updates the query on mount one is found in the URL', async () => {
     const sqlInURL = 'SELECT * FROM syn123.3 WHERE "foo"=\'baz\''
     const mockUpdateUrl = vi
       .spyOn(DeepLinkingUtils, 'getQueryRequestFromLink')
       .mockImplementation(() => {
-        return {
+        return Promise.resolve({
           ...options.initQueryRequest,
           query: {
             sql: sqlInURL,
           },
-        }
+        })
       })
     const { result } = renderHook(() =>
       useImmutableTableQuery({
@@ -262,8 +263,18 @@ describe('useImmutableTableQuery tests', () => {
     )
 
     expect(mockUpdateUrl).toHaveBeenCalledTimes(1)
+    expect(mockUpdateUrl).toHaveBeenCalledWith(
+      'qw',
+      4,
+      options.initQueryRequest.query,
+    )
 
-    expect(result.current.getCurrentQueryRequest().query.sql).toEqual(sqlInURL)
+    // Wait for the async effect to complete
+    await waitFor(() => {
+      expect(result.current.getCurrentQueryRequest().query.sql).toEqual(
+        sqlInURL,
+      )
+    })
   })
 
   it('onConfirmChange works when required', () => {

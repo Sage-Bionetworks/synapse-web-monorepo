@@ -126,20 +126,22 @@ function useSynchronizeQueryWithUrl(
   useEffect(() => {
     // Only run this effect if deep linking is enabled
     if (shouldDeepLink) {
-      const queryRequestFromLink = DeepLinkingUtils.getQueryRequestFromLink(
-        'QueryWrapper',
+      DeepLinkingUtils.getQueryRequestFromLink(
+        'qw',
         componentIndex,
-      )
-      if (queryRequestFromLink && queryRequestFromLink.query) {
-        setQuery(prevState => ({
-          ...prevState,
-          ...queryRequestFromLink,
-          query: {
-            ...prevState.query,
-            ...queryRequestFromLink.query,
-          },
-        }))
-      }
+        initQueryRequest.query,
+      ).then(queryRequestFromLink => {
+        if (queryRequestFromLink && queryRequestFromLink.query) {
+          setQuery(prevState => ({
+            ...prevState,
+            ...queryRequestFromLink,
+            query: {
+              ...prevState.query,
+              ...queryRequestFromLink.query,
+            },
+          }))
+        }
+      })
     }
     // should only run on mount, or if the component index changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -149,18 +151,23 @@ function useSynchronizeQueryWithUrl(
   useEffect(() => {
     if (shouldDeepLink) {
       if (isEqual(initQueryRequest, currentQueryRequest)) {
-        DeepLinkingUtils.updateUrlWithNewSearchParam(
-          'QueryWrapper',
+        void DeepLinkingUtils.updateUrlWithNewSearchParam(
+          'qw',
           componentIndex,
           null,
-        )
+          null,
+        ).catch(error => {
+          console.error('Failed to update URL with search param:', error)
+        })
       } else {
-        const queryJsonString = JSON.stringify(currentQueryRequest.query)
-        DeepLinkingUtils.updateUrlWithNewSearchParam(
-          'QueryWrapper',
+        void DeepLinkingUtils.updateUrlWithNewSearchParam(
+          'qw',
           componentIndex,
-          queryJsonString,
-        )
+          currentQueryRequest.query,
+          initQueryRequest.query,
+        ).catch(error => {
+          console.error('Failed to update URL with search param:', error)
+        })
       }
     }
     // Clean up the URL param when this component unmounts or deep linking is disabled
