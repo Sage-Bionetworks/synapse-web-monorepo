@@ -36,7 +36,6 @@ export default function ManagedACTAccessRequirementFormWikiWrapper(
         md={6}
         lg={5}
         sx={{
-          maxHeight: '500px',
           overflow: 'auto',
           pr: {
             xs: 0,
@@ -52,7 +51,6 @@ export default function ManagedACTAccessRequirementFormWikiWrapper(
           md={6}
           lg={7}
           sx={{
-            maxHeight: '500px',
             overflowY: 'scroll',
             pr: 1,
           }}

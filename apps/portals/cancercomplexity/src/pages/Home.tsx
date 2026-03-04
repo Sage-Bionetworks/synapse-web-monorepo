@@ -41,10 +41,12 @@ function Home() {
         }}
       >
         <ThemesPlot
-          onPointClick={onPointClick}
-          onIndividualThemeBarPlotPointClick={
-            onIndividualThemeBarPlotPointClick
-          }
+          onPointClick={params => {
+            void onPointClick(params)
+          }}
+          onIndividualThemeBarPlotPointClick={params => {
+            void onIndividualThemeBarPlotPointClick(params)
+          }}
           topBarPlot={{
             entityId: 'syn21641485',
             xField: 'totalCount',

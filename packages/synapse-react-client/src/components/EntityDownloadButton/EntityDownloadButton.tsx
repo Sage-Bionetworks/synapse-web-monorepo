@@ -240,6 +240,7 @@ export function getDownloadActionsForEntityType(
         [DownloadAction.addToCart, DownloadAction.programmaticAccess],
       ]
     case EntityType.project:
+      return [[DownloadAction.programmaticAccess]]
     case EntityType.folder:
       return [[DownloadAction.addToCart, DownloadAction.programmaticAccess]]
     case EntityType.dockerrepo:
