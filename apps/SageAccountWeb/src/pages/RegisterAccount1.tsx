@@ -29,7 +29,7 @@ import {
   StyledOuterContainer,
 } from '@/components/StyledComponents'
 import { SYNAPSE_SOURCE_APP_ID, useSourceApp } from '@/components/useSourceApp'
-import SynapseClient from 'synapse-react-client/synapse-client'
+import SynapseClient from 'synapse-react-client/synapse-client/index'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'

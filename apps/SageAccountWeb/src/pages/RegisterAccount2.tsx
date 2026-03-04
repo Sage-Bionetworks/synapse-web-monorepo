@@ -9,7 +9,7 @@ import { getSearchParam, hexDecodeAndDeserialize } from '../URLUtils'
 import { LeftRightPanel } from '../components/LeftRightPanel'
 import { SourceAppLogo } from '../components/SourceApp'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
-import SynapseClient from 'synapse-react-client/synapse-client'
+import SynapseClient from 'synapse-react-client/synapse-client/index'
 
 function RegisterAccount2() {
   const [isLoading, setIsLoading] = useState(false)

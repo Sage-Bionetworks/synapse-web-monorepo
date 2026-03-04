@@ -1,9 +1,7 @@
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import {
-  LabelLinkConfig,
-  QueryWrapperPlotNavProps,
-  StandaloneQueryWrapperProps,
-} from 'synapse-react-client'
+import type { LabelLinkConfig } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import type { StandaloneQueryWrapperProps } from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
 import columnAliases from '../columnAliases'
 import { dataSql } from '../resources'
 

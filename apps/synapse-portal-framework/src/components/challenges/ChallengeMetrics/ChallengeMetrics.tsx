@@ -3,9 +3,9 @@ import { Typography, Box, Stack } from '@mui/material'
 import styles from './ChallengeMetrics.module.scss'
 import { ReactComponent as BkgImage } from '../assets/metricsBkg.svg'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
-import { parseEntityIdFromSqlStatement } from 'synapse-react-client/utils/functions'
+import { parseEntityIdFromSqlStatement } from 'synapse-react-client/utils/functions/index'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 
 interface StatContainerProps {

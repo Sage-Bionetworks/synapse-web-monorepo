@@ -23,7 +23,7 @@ import { toolsConfiguration } from '../config/synapseConfigs/tools'
 import ErrorPage, {
   SynapseErrorType,
 } from 'synapse-react-client/components/error/ErrorPage'
-import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/index'
 
 function PublicationsDetailsPage() {
   const { pubMedId } = useGetPortalComponentSearchParams()

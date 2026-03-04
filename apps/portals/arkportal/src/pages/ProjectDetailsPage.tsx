@@ -6,7 +6,7 @@ import {
   ColumnSingleValueFilterOperator,
   ColumnMultiValueFunction,
 } from '@sage-bionetworks/synapse-types'
-import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
 import columnAliases from '../config/columnAliases'
 import { datasetsSql, projectsSql } from '../config/resources'
 import {

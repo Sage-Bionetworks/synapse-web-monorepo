@@ -1,4 +1,4 @@
-import type { QueryWrapperPlotNavProps } from 'synapse-react-client'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 import { peopleSql } from '../resources'

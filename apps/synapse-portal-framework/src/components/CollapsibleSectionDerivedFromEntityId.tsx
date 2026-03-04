@@ -1,6 +1,6 @@
 import React from 'react'
 import { Skeleton } from '@mui/material'
-import { useGetEntityHeader } from 'synapse-react-client/synapse-queries'
+import { useGetEntityHeader } from 'synapse-react-client/synapse-queries/index'
 import CollapsibleSection, {
   BaseCollapsibleSectionProps,
 } from './CollapsibleSection'

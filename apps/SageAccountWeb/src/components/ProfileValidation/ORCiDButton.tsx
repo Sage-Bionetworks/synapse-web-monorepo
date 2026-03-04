@@ -8,7 +8,7 @@ import { ValidationWizardStep } from './ProfileValidation'
 import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClient'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 import { generateCsrfToken } from 'synapse-react-client/utils/functions/generateCsrfToken'
-import { OAuth2State } from 'synapse-react-client/utils'
+import { OAuth2State } from 'synapse-react-client/utils/index'
 
 export type ORCiDButtonProps = {
   redirectAfter?: string

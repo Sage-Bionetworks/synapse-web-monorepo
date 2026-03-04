@@ -8,8 +8,8 @@ import { useGetCurrentUserProfile } from 'synapse-react-client/synapse-queries/u
 import {
   storeRedirectURLForOneSageLoginAndGotoURL,
   useApplicationSessionContext,
-} from 'synapse-react-client/utils/AppUtils/'
-import { useSynapseContext } from 'synapse-react-client/utils/context'
+} from 'synapse-react-client/utils/AppUtils/index'
+import { useSynapseContext } from 'synapse-react-client/utils/context/index'
 import {
   BackendDestinationEnum,
   getEndpoint,

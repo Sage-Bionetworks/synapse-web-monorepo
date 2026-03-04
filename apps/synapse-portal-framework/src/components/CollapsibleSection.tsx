@@ -3,7 +3,8 @@ import { Box, Collapse, Tooltip, Typography } from '@mui/material'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { ReactNode, useState } from 'react'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import { HelpPopover, IconSvg } from 'synapse-react-client'
+import { HelpPopover } from 'synapse-react-client/components/HelpPopover/HelpPopover'
+import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
 import { copyStringToClipboard } from 'synapse-react-client/utils/functions/StringUtils'
 
 export type BaseCollapsibleSectionProps = {

@@ -10,13 +10,13 @@ import {
   STUDY_TABLE_COLUMN_NAMES,
   studyCardConfiguration,
 } from '@/config/synapseConfigs/studies'
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import RedirectToURL from '@sage-bionetworks/synapse-portal-framework/components/RedirectToURL'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
 
 function ProgramDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()

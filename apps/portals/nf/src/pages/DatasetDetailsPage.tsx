@@ -2,20 +2,20 @@ import {
   datasetCardConfiguration,
   datasetsRgbIndex,
 } from '@/config/synapseConfigs/datasets'
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { datasetsSql, enabledAnalysisPlatforms } from '@/config/resources'
 import { columnAliases } from '@/config/synapseConfigs/commonProps'
-import {
-  CardContainerLogic,
-  DatasetJsonLdScript,
-  ErrorPage,
-  QueryWrapperPlotNav,
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import { DatasetJsonLdScript } from 'synapse-react-client/components/DatasetJsonLdScript'
+import ErrorPage, {
   SynapseErrorType,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/error/ErrorPage'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+
 
 function DatasetDetailsPage() {
   const { id } = useGetPortalComponentSearchParams()

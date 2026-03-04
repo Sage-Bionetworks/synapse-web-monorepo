@@ -1,6 +1,6 @@
 import { CardDeck } from 'synapse-react-client/components/CardDeck/CardDeck'
 import { CardDeckCardProps } from 'synapse-react-client/components/CardDeck/CardDeckCardProps'
-import { ErrorBanner } from 'synapse-react-client'
+import { ErrorBanner } from 'synapse-react-client/components/error/ErrorBanner'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 import { ORG_TABLE_COLUMN_CONSTS, GC_ORG_IDS } from '@/config/resources'
 import { GCImages } from '@/config/GrandChallengeImages'

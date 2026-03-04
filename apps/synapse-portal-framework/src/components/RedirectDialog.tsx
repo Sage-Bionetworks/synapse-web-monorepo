@@ -8,8 +8,8 @@ import {
   Typography,
   Stack,
 } from '@mui/material'
-import { useGetEntity } from 'synapse-react-client/synapse-queries'
-import { isFileEntity } from 'synapse-react-client'
+import { useGetEntity } from 'synapse-react-client/synapse-queries/index'
+import { isFileEntity } from 'synapse-react-client/utils/types/IsType'
 import { useLocation, useNavigate } from 'react-router'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 import { ReactComponent as RDCADAP } from '../portal-assets/RDCADAP.svg'
