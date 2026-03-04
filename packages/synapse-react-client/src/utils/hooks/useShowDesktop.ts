@@ -6,8 +6,8 @@ const MOBILE_VIEWPORT_MAX_WIDTH_PX = 768
 
 export default function useShowDesktop(breakpoint?: UseShowDesktopProps) {
   const usedBreakpoint = breakpoint ?? MOBILE_VIEWPORT_MAX_WIDTH_PX
-  const [showDesktop, setShowDesktop] = useState(
-    window.innerWidth > usedBreakpoint,
+  const [showDesktop, setShowDesktop] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth > usedBreakpoint : true,
   )
   useEffect(() => {
     const listener = () => {

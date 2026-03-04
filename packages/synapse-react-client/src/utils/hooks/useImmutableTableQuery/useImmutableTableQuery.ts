@@ -170,6 +170,17 @@ function useSynchronizeQueryWithUrl(
         })
       }
     }
+    // Clean up the URL param when this component unmounts or deep linking is disabled
+    return () => {
+      if (shouldDeepLink) {
+        DeepLinkingUtils.updateUrlWithNewSearchParam(
+          'QueryWrapper',
+          componentIndex,
+          null,
+          initQueryRequest.query,
+        )
+      }
+    }
   }, [componentIndex, currentQueryRequest, initQueryRequest, shouldDeepLink])
 }
 

@@ -1,6 +1,6 @@
 import { useCookiePreferences } from 'synapse-react-client/utils/hooks/useCookiePreferences'
 import React from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import FullWidthAlert from 'synapse-react-client/components/FullWidthAlert/FullWidthAlert'
 
 export type SurveyToastProps = {
@@ -20,9 +20,12 @@ const SurveyToast = (props: SurveyToastProps): React.ReactNode => {
     surveyButtonText = 'Take The Survey',
   } = props
   const [cookiePreferences] = useCookiePreferences()
-  const [showBanner, setShowBanner] = useState(
-    localStorage.getItem(localStorageKey) === null,
-  )
+  const [showBanner, setShowBanner] = useState(false)
+  useEffect(() => {
+    if (localStorage.getItem(localStorageKey) === null) {
+      setShowBanner(true)
+    }
+  }, [localStorageKey])
   return !showBanner ? (
     <></>
   ) : (

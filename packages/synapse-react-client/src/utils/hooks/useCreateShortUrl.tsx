@@ -14,7 +14,7 @@ export function useCreateShortUrl({
   onError,
 }: UseCreateShortUrlOptions) {
   const queryClient = useQueryClient()
-  const currentUrl = window.location.href
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : ''
   // Create a unique cache key based on the current URL to store the short URL
   const cacheKey = ['shortUrl', currentUrl]
 

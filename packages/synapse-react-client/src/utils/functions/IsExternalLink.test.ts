@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { isExternalLink } from './IsExternalLink'
 
 describe('IsExternalLink tests', () => {
-  const originalLocation = new URL('https://internal-link.com/page')
+  const originalLocation = window.location
 
   beforeAll(() => {
     // Override window.location with a mock and compare links against this base

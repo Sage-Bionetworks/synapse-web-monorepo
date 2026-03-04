@@ -26,7 +26,7 @@ export function SageResourcesPopover({
 }: SageResourcesPopoverProps) {
   const theme = useTheme()
   const open = Boolean(anchorEl)
-  const hostname = window.location.hostname
+  const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
 
   const additionalFilters: ColumnSingleValueQueryFilter[] = [
     {
