@@ -86,8 +86,8 @@ describe('modelColsToGrid', () => {
       description: undefined,
       disabled: undefined,
       isPinned: false,
-      onTogglePin: expect.any(Function),
-      showPinIcon: true,
+      onTogglePin: undefined,
+      showPinIcon: false,
     })
   })
 
@@ -113,8 +113,8 @@ describe('modelColsToGrid', () => {
       description: undefined,
       disabled: undefined,
       isPinned: false,
-      onTogglePin: expect.any(Function),
-      showPinIcon: true,
+      onTogglePin: undefined,
+      showPinIcon: false,
     })
   })
 
@@ -146,8 +146,8 @@ describe('modelColsToGrid', () => {
       description: undefined,
       disabled: undefined,
       isPinned: false,
-      onTogglePin: expect.any(Function),
-      showPinIcon: true,
+      onTogglePin: undefined,
+      showPinIcon: false,
     })
   })
 
@@ -185,8 +185,8 @@ describe('modelColsToGrid', () => {
       description: undefined,
       disabled: undefined,
       isPinned: false,
-      onTogglePin: expect.any(Function),
-      showPinIcon: true,
+      onTogglePin: undefined,
+      showPinIcon: false,
     })
   })
 
@@ -218,8 +218,8 @@ describe('modelColsToGrid', () => {
       description: undefined,
       disabled: undefined,
       isPinned: false,
-      onTogglePin: expect.any(Function),
-      showPinIcon: true,
+      onTogglePin: undefined,
+      showPinIcon: false,
     })
   })
 
@@ -251,8 +251,8 @@ describe('modelColsToGrid', () => {
       description: undefined,
       disabled: undefined,
       isPinned: false,
-      onTogglePin: expect.any(Function),
-      showPinIcon: true,
+      onTogglePin: undefined,
+      showPinIcon: false,
     })
   })
 
@@ -303,8 +303,8 @@ describe('modelColsToGrid', () => {
       description: undefined,
       disabled: undefined,
       isPinned: false,
-      onTogglePin: expect.any(Function),
-      showPinIcon: true,
+      onTogglePin: undefined,
+      showPinIcon: false,
     })
 
     expect((result[1] as any).mockConfig).toEqual({
@@ -319,7 +319,7 @@ describe('modelColsToGrid', () => {
       description: undefined,
       disabled: undefined,
       isPinned: false,
-      onTogglePin: expect.any(Function),
+      onTogglePin: undefined,
       showPinIcon: false,
     })
 
@@ -332,7 +332,7 @@ describe('modelColsToGrid', () => {
       description: undefined,
       disabled: undefined,
       isPinned: false,
-      onTogglePin: expect.any(Function),
+      onTogglePin: undefined,
       showPinIcon: false,
     })
 
@@ -345,7 +345,7 @@ describe('modelColsToGrid', () => {
       description: undefined,
       disabled: undefined,
       isPinned: false,
-      onTogglePin: expect.any(Function),
+      onTogglePin: undefined,
       showPinIcon: false,
     })
   })
@@ -402,8 +402,8 @@ describe('modelColsToGrid', () => {
       description: undefined,
       disabled: undefined,
       isPinned: false,
-      onTogglePin: expect.any(Function),
-      showPinIcon: true,
+      onTogglePin: undefined,
+      showPinIcon: false,
     })
   })
 })
