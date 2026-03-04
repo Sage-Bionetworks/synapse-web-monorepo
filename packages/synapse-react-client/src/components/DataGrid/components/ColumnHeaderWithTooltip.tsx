@@ -48,6 +48,17 @@ export function ColumnHeaderWithTooltip({
 
       {/* Icons area - fixed size, never shrinks */}
       <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0 }}>
+        {description && (
+          <Tooltip
+            title={description}
+            placement="top"
+            enterNextDelay={TOOLTIP_DELAY_SHOW}
+          >
+            <IconButton size="small" color="inherit">
+              <HelpTwoTone fontSize="inherit" />
+            </IconButton>
+          </Tooltip>
+        )}
         {showPinIcon && (
           <Tooltip
             title={isPinned ? 'Unpin column' : 'Pin column'}
@@ -57,6 +68,8 @@ export function ColumnHeaderWithTooltip({
             <IconButton
               size="small"
               color="inherit"
+              // Use onMouseDown instead of onClick to prevent column selection
+              // when clicking the pin icon. stopPropagation prevents event bubbling.
               onMouseDown={e => {
                 e.stopPropagation()
                 onTogglePin?.()
@@ -74,17 +87,6 @@ export function ColumnHeaderWithTooltip({
               ) : (
                 <PushPinOutlined fontSize="inherit" />
               )}
-            </IconButton>
-          </Tooltip>
-        )}
-        {description && (
-          <Tooltip
-            title={description}
-            placement="top"
-            enterNextDelay={TOOLTIP_DELAY_SHOW}
-          >
-            <IconButton size="small" color="inherit">
-              <HelpTwoTone fontSize="inherit" />
             </IconButton>
           </Tooltip>
         )}
