@@ -56,6 +56,8 @@ function getHeaderProps(title: unknown): {
   return {}
 }
 
+// Mock column must return a valid React element, not null
+// React.createElement creates a proper element for testing
 const fakeColumn = {
   component: () => React.createElement('div'),
 }
