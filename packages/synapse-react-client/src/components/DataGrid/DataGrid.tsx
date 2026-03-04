@@ -98,7 +98,7 @@ export default function DataGrid(props: DataGridProps) {
           // Calculate default width using centralized function
           const propertyInfo = schemaPropertiesInfo[columnName]
           const headerOptions: HeaderOptions = {
-            showPinIcon: arrayIndex === 0, // Always show pin icon for first column when internal state is managed
+            showPinIcon: arrayIndex === 0 && pinFirstColumn === undefined,
             hasDescription: !!propertyInfo?.description,
           }
           newWidths[columnName] = calculateDefaultColumnWidth(
@@ -110,7 +110,7 @@ export default function DataGrid(props: DataGridProps) {
       })
       return newWidths
     })
-  }, [columnNames, columnOrder, schemaPropertiesInfo])
+  }, [columnNames, columnOrder, schemaPropertiesInfo, pinFirstColumn])
 
   // Handler to toggle pin state for the first column only
   const handleTogglePin = useCallback(
@@ -148,7 +148,7 @@ export default function DataGrid(props: DataGridProps) {
         schemaPropertiesInfo,
         columnWidths,
         pinnedColumnsSet,
-        handleTogglePin,
+        pinFirstColumn === undefined ? handleTogglePin : undefined,
       ),
     [
       columnNames,
@@ -157,6 +157,7 @@ export default function DataGrid(props: DataGridProps) {
       columnWidths,
       pinnedColumnsSet,
       handleTogglePin,
+      pinFirstColumn,
     ],
   )
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
