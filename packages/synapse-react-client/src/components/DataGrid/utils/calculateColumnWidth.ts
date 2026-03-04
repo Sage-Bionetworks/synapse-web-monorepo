@@ -17,7 +17,7 @@ export type HeaderOptions = {
  * Calculates the default width for a column based on its name and schema property info.
  * The width is determined by:
  * - A base minimum width (175px for most columns, 215px for date-time columns)
- * - Character-based calculation (10px per character in the column name)
+ * - Character-based calculation (11px per character in the column name)
  * - Additional width for header icons (pin icon, help tooltip)
  *
  * @param columnName - The name of the column
