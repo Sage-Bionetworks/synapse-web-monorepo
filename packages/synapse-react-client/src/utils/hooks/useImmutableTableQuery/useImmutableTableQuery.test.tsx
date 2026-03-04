@@ -264,7 +264,6 @@ describe('useImmutableTableQuery tests', () => {
 
     expect(mockUpdateUrl).toHaveBeenCalledTimes(1)
     expect(mockUpdateUrl).toHaveBeenCalledWith(
-      'qw',
       4,
       options.initQueryRequest.query,
     )

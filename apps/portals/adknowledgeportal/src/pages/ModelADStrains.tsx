@@ -30,13 +30,11 @@ export function Component() {
       sql: experimentalModelsSql,
     }
 
-    generateCompressedQueryURL('', 'qw', 0, currentQuery, initQuery).then(
-      url => {
-        // Extract the search param from the generated URL
-        const searchString = url.split('?')[1] || ''
-        setSearchParam(searchString)
-      },
-    )
+    generateCompressedQueryURL('', 0, currentQuery, initQuery).then(url => {
+      // Extract the search param from the generated URL
+      const searchString = url.split('?')[1] || ''
+      setSearchParam(searchString)
+    })
   }, [])
 
   if (!searchParam) {
