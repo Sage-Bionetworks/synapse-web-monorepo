@@ -14,8 +14,8 @@ export function modelColsToGrid(
     const columnName = columnNames[index]
     const propertyInfo = schemaPropertiesInfo[columnName]
 
-    // Only show pin functionality for the first column
-    const showPinIcon = arrayIndex === 0
+    // Only show pin functionality for the first column and when toggle handler exists
+    const showPinIcon = arrayIndex === 0 && onTogglePin !== undefined
     const isPinned = pinnedColumns.has(arrayIndex)
 
     return createColumn({
@@ -28,7 +28,7 @@ export function modelColsToGrid(
       customWidth: columnWidths[columnName],
       showPinIcon,
       isPinned,
-      onTogglePin: () => onTogglePin?.(arrayIndex),
+      onTogglePin: onTogglePin ? () => onTogglePin(arrayIndex) : undefined,
     })
   })
 }
