@@ -115,6 +115,16 @@ export default function DataGrid(props: DataGridProps) {
   // Handler to toggle pin state for the first column only
   const handleTogglePin = useCallback(
     (columnIndex: number) => {
+      // Validate columnIndex
+      if (
+        typeof columnIndex !== 'number' ||
+        columnIndex < 0 ||
+        !columnOrder ||
+        columnIndex >= columnOrder.length
+      ) {
+        return
+      }
+
       if (columnIndex !== 0) return // Only allow first column pinning
 
       // Only allow toggling if no external pinFirstColumn prop is provided
@@ -122,7 +132,7 @@ export default function DataGrid(props: DataGridProps) {
         setInternalPinFirstColumn(prev => !prev)
       }
     },
-    [pinFirstColumn],
+    [pinFirstColumn, columnOrder],
   )
 
   // Memoize the pinned columns set to prevent recalculation during scroll
