@@ -6,15 +6,12 @@ import { MarkdownPopover } from '@/components/Markdown/MarkdownPopover'
 import { StyledFormControl } from '@/components/styled/StyledFormControl'
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import { useCreateOrUpdateDOI, useGetDOI } from '@/synapse-queries/doi/useDOI'
-import {
-  useGetEntity,
-  useGetVersions,
-} from '@/synapse-queries/entity/useEntity'
+import { useGetVersions } from '@/synapse-queries/entity/useEntity'
+import { useGetEntityBundle } from '@/synapse-queries/entity/useEntityBundle'
 import { useGetPortal } from '@/synapse-queries/portal/usePortal'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user/useUserBundle'
 import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
 import {
-  convertToEntityType,
   entityTypeToFriendlyName,
   isDataset,
   isTable,
@@ -151,12 +148,16 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
   })
   const { data: currentUser, isLoading: isLoadingCurrentUser } =
     useGetCurrentUserProfile()
-  const { data: entity, isLoading: isLoadingEntity } = useGetEntity(
+  const { data: entityBundle, isLoading: isLoadingEntity } = useGetEntityBundle(
     objectId,
     selectedVersionNumber,
     {
+      includeEntity: true,
+      includeBenefactorACL: true,
+    },
+    {
+      enabled: objectType === DoiObjectType.ENTITY,
       staleTime: Infinity,
-      enabled: objectType === 'ENTITY',
       throwOnError: true,
     },
   )
@@ -174,7 +175,9 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
   )
 
   const doiCanBeAppliedToVersion =
-    objectType === DoiObjectType.ENTITY && entity && isVersionableEntity(entity)
+    objectType === DoiObjectType.ENTITY &&
+    entityBundle?.entity &&
+    isVersionableEntity(entityBundle.entity)
 
   const { data: entityVersions } = useGetVersions(
     objectId,
@@ -186,9 +189,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
   )
   const formRef = useRef<RJSF>(null)
 
-  const entityType = entity
-    ? convertToEntityType(entity.concreteType)
-    : EntityType.file
+  const entityType = entityBundle?.entityType ?? EntityType.file
   const entityTypeDisplay = entityTypeToFriendlyName(entityType)
   let versionHelpMarkdown = `A DOI can be associated with a specific version of this ${entityTypeDisplay}.
   
@@ -196,8 +197,10 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
   
   A DOI without a version will always link to the newest version of this ${entityTypeDisplay},
      so the data that someone retrieves using the DOI may change over time.`
-  if (entity && isTable(entity)) {
-    const tableVersionCopy = isDataset(entity) ? 'version' : 'snapshot'
+  if (entityBundle?.entity && isTable(entityBundle.entity)) {
+    const tableVersionCopy = isDataset(entityBundle.entity)
+      ? 'version'
+      : 'snapshot'
     versionHelpMarkdown += `\n\nTo create a DOI that will always link to the current set of data in the ${entityTypeDisplay},
      create a new ${tableVersionCopy} and mint a DOI for that ${tableVersionCopy}.`
   }
@@ -223,12 +226,12 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
       setFormData(convertDoiToFormData(doi))
     }
     // If there is no DOI, then pre-fill the form.
-    if (currentUser && entity && doi === null) {
+    if (currentUser && entityBundle?.entity && doi === null) {
       const newFormData = {
-        titles: [entity.name],
+        titles: [entityBundle.entity.name],
         creators: new Array<string>(),
         resourceTypeGeneral: getSuggestedResourceTypeGeneral(
-          convertToEntityType(entity.concreteType),
+          entityBundle.entityType,
         ),
         publicationYear: new Date().getFullYear(),
       } satisfies DoiFormData
@@ -239,7 +242,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
       }
       setFormData(newFormData)
     }
-  }, [currentUser, doi, entity])
+  }, [currentUser, doi, entityBundle])
 
   function onSave() {
     if (formRef.current && formRef.current.validateForm()) {
