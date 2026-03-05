@@ -506,3 +506,157 @@ describe('modelColsToGrid integration', () => {
     expect(statusColumn.headerClassName).toBe('header-cell-required')
   })
 })
+
+describe('modelColsToGrid - column pinning', () => {
+  const columnNames = ['id', 'name', 'email', 'age']
+  const columnOrder = [0, 1, 2, 3]
+  const schemaPropertiesInfo: SchemaPropertiesMap = {
+    id: {
+      type: { type: 'string', isArray: false },
+      isRequired: true,
+      enumeratedValues: null,
+    },
+    name: {
+      type: { type: 'string', isArray: false },
+      isRequired: true,
+      enumeratedValues: null,
+    },
+    email: {
+      type: { type: 'string', isArray: false },
+      isRequired: false,
+      enumeratedValues: null,
+    },
+    age: {
+      type: { type: 'integer', isArray: false },
+      isRequired: false,
+      enumeratedValues: null,
+    },
+  }
+
+  it('should show pin icon only on the first column when handler is provided', () => {
+    const onTogglePin = vi.fn()
+
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+      {},
+      new Set<number>(),
+      onTogglePin,
+    )
+
+    expect(result).toHaveLength(4)
+    expect((result[0] as any).mockConfig.showPinIcon).toBe(true)
+    expect((result[1] as any).mockConfig.showPinIcon).toBe(false)
+    expect((result[2] as any).mockConfig.showPinIcon).toBe(false)
+    expect((result[3] as any).mockConfig.showPinIcon).toBe(false)
+  })
+
+  it('should not show pin icon on first column when handler is not provided', () => {
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+      {},
+      new Set<number>(),
+      undefined,
+    )
+
+    expect(result).toHaveLength(4)
+    expect((result[0] as any).mockConfig.showPinIcon).toBe(false)
+  })
+
+  it('should set isPinned to true on first column when it is in pinnedColumns set', () => {
+    const onTogglePin = vi.fn()
+    const pinnedColumns = new Set<number>([0]) // Pin first column
+
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+      {},
+      pinnedColumns,
+      onTogglePin,
+    )
+
+    expect(result).toHaveLength(4)
+    expect((result[0] as any).mockConfig.isPinned).toBe(true)
+  })
+
+  it('should set isPinned to false on first column when pinnedColumns set is empty', () => {
+    const onTogglePin = vi.fn()
+    const pinnedColumns = new Set<number>()
+
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+      {},
+      pinnedColumns,
+      onTogglePin,
+    )
+
+    expect(result).toHaveLength(4)
+    expect((result[0] as any).mockConfig.isPinned).toBe(false)
+  })
+
+  it('should invoke callback with position 0 when first column pin is toggled', () => {
+    const onTogglePin = vi.fn()
+
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+      {},
+      new Set<number>(),
+      onTogglePin,
+    )
+
+    expect(result).toHaveLength(4)
+
+    const firstColumnToggle = (result[0] as any).mockConfig.onTogglePin
+    expect(firstColumnToggle).toBeDefined()
+    firstColumnToggle()
+    expect(onTogglePin).toHaveBeenCalledWith(0)
+  })
+
+  it('should not provide onTogglePin callback on first column when handler is not defined', () => {
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+      {},
+      new Set<number>(),
+      undefined,
+    )
+
+    expect(result).toHaveLength(4)
+    expect((result[0] as any).mockConfig.onTogglePin).toBeUndefined()
+  })
+
+  it('should show pin icon on first column even when columns are reordered', () => {
+    const onTogglePin = vi.fn()
+    const reorderedColumnOrder = [1, 0, 3, 2] // Different order
+    const pinnedColumns = new Set<number>([0]) // Pin first column (arrayIndex 0)
+
+    const result = modelColsToGrid(
+      columnNames,
+      reorderedColumnOrder,
+      schemaPropertiesInfo,
+      {},
+      pinnedColumns,
+      onTogglePin,
+    )
+
+    expect(result).toHaveLength(4)
+
+    // Pin icon should only be on first column
+    expect((result[0] as any).mockConfig.showPinIcon).toBe(true)
+    expect((result[0] as any).mockConfig.isPinned).toBe(true)
+
+    // Other columns should not have pin icon
+    expect((result[1] as any).mockConfig.showPinIcon).toBe(false)
+    expect((result[2] as any).mockConfig.showPinIcon).toBe(false)
+    expect((result[3] as any).mockConfig.showPinIcon).toBe(false)
+  })
+})

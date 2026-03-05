@@ -2,10 +2,11 @@ import { SchemaPropertyInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 
 // Icon and spacing width constants for header content
 const HEADER_ELEMENT_WIDTHS = {
-  pin: 12,
-  help: 12,
+  // Approximate effective width of each header IconButton (icon + padding)
+  pin: 28,
+  help: 28,
   spacing: 4, // gap between elements
-  padding: 1, // container padding
+  padding: 4, // container padding
 } as const
 
 export type HeaderOptions = {

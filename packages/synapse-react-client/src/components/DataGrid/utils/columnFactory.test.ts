@@ -65,8 +65,8 @@ function getHeaderProps(title: unknown): {
   return {}
 }
 
-// Mock column must return a valid React element, not null
-// React.createElement creates a proper element for testing
+// For these tests, the mock column returns a concrete React element (not null)
+// so the grid always has something to render during assertions.
 const fakeColumn = {
   component: () => React.createElement('div'),
 }
