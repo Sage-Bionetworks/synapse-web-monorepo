@@ -586,6 +586,7 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
                 const projectPath = hit.path?.path?.[1]
                 return (
                   <SynapseSearchResultsCard
+                    searchTerms={query?.queryTerm ?? []}
                     key={hit.id + '-' + pageIndex}
                     entityId={hit.id}
                     name={hit.name}
