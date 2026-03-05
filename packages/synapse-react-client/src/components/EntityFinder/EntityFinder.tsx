@@ -140,7 +140,7 @@ export function EntityFinder({
     [setBreadcrumbsProps],
   )
 
-  const { selectedEntities, toggleSelection, setSelection } =
+  const { selectedEntities, toggleSelection, setSelection, setInitialVersion } =
     useEntitySelection(selectMultiple)
 
   useEffect(() => {
@@ -219,6 +219,7 @@ export function EntityFinder({
     selectableTypes: selectableTypes,
     selectColumnType: selectMultiple ? 'checkbox' : 'none',
     toggleSelection: toggleSelection,
+    setInitialVersion: setInitialVersion,
     enableSelectAll: selectMultiple,
     setCurrentContainer: setCurrentContainer,
   }
@@ -347,6 +348,7 @@ export function EntityFinder({
               visibleTypes={selectableTypes}
               selectableTypes={selectableTypes}
               toggleSelection={toggleSelection}
+              setInitialVersion={setInitialVersion}
               enableSelectAll={selectMultiple}
               // Intentionally do not pass "setCurrentContainer" -- search does not use the tree so it has nothing to update
               setCurrentContainer={undefined}

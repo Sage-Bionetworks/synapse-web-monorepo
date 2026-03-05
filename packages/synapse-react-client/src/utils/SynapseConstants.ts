@@ -216,3 +216,6 @@ export const GRID_PAGE_TASK_ID_QUERY_PARAM = 'taskId'
 
 // Search Page URL Query Parameters
 export const SEARCH_PAGE_QUERY_PARAM = 'query'
+
+// Version label used by the backend for version that has not been snapshotted
+export const TABLE_VERSION_IN_PROGRESS = 'in progress'
