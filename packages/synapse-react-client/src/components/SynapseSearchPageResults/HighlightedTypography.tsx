@@ -1,14 +1,6 @@
 import { Typography, TypographyProps } from '@mui/material'
 import styles from './HighlightedTypography.module.scss'
 
-// Maybe we need a new highlighted Typography component
-// (that takes Typography properties, the raw text, as well as an array of search terms).
-// Then split the text on each search term,
-// and insert a styled <span> between each split piece (where the style, from a css module, highlights the text).
-// Then you could use this for today's search result hit title,
-// and we can enhance later if the backend tells us the actual match strings
-// (and apply to other indexed data, and it's included).
-
 type HighlightedTypographyProps = {
   text: string
   searchTerms: string[]
