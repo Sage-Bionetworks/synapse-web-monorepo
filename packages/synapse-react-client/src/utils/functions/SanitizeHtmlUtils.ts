@@ -1,7 +1,6 @@
 import DOMPurify from 'dompurify'
 import xssLib from 'xss'
 import type { IFilterXSSOptions } from 'xss'
-import { JSDOM } from 'jsdom'
 
 // xss is a CJS-only module; pull runtime values from the default import to
 // avoid "named export not found" errors in Vite dev mode (native ESM).
@@ -190,15 +189,19 @@ function configureDomPurify(instance: typeof DOMPurify): void {
 
 let domPurifyInstance: typeof DOMPurify | null = null
 
+if (typeof window === 'undefined') {
+  await import('jsdom').then(({ JSDOM }) => {
+    domPurifyInstance = DOMPurify(new JSDOM('<!DOCTYPE html>').window)
+    configureDomPurify(domPurifyInstance)
+  })
+} else {
+  domPurifyInstance = DOMPurify
+  configureDomPurify(domPurifyInstance)
+}
+
 export function sanitize(input: string): string {
   if (domPurifyInstance == null) {
-    if (typeof window === 'undefined') {
-      // Create a DOMPurify instance with a JSDOM window for SSR
-      domPurifyInstance = DOMPurify(new JSDOM('<!DOCTYPE html>').window)
-    } else {
-      domPurifyInstance = DOMPurify
-    }
-    configureDomPurify(domPurifyInstance)
+    throw new Error('DOMPurify instance not initialized')
   }
 
   return domPurifyInstance.sanitize(input)
