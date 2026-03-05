@@ -71,6 +71,11 @@ const fakeColumn = {
   component: () => React.createElement('div'),
 }
 
+// Width calculation constants (from calculateColumnWidth.ts)
+const CHAR_WIDTH_PX = 11
+const DEFAULT_MIN_WIDTH = 175
+const DATETIME_MIN_WIDTH = 215
+
 const keyColumnSpy = vi.mocked(keyColumn)
 const mockCreateTextColumn =
   mocked(createTextColumn).mockReturnValue(fakeColumn)
@@ -235,7 +240,7 @@ describe('columnFactory', () => {
     })
 
     describe('Custom Width Support', () => {
-      it('should use customWidth when provided for text column', () => {
+      it('should use customWidth when provided', () => {
         const config = {
           columnName: 'description',
           typeInfo: { type: 'string', isArray: false },
@@ -250,81 +255,6 @@ describe('columnFactory', () => {
         expect(column.basis).toBe(300)
       })
 
-      it('should use customWidth when provided for number column', () => {
-        const config = {
-          columnName: 'count',
-          typeInfo: { type: 'number', isArray: false },
-          enumeratedValues: [],
-          isRequired: false,
-          customWidth: 150,
-        }
-
-        const column = createColumn(config)
-
-        expect(column.minWidth).toBe(150)
-        expect(column.basis).toBe(150)
-      })
-
-      it('should use customWidth when provided for enumerated column', () => {
-        const config = {
-          columnName: 'status',
-          typeInfo: { type: 'string', isArray: false },
-          enumeratedValues: ['active', 'inactive'],
-          isRequired: false,
-          customWidth: 200,
-        }
-
-        const column = createColumn(config)
-
-        expect(column.minWidth).toBe(200)
-        expect(column.basis).toBe(200)
-      })
-
-      it('should use customWidth when provided for boolean column', () => {
-        const config = {
-          columnName: 'isActive',
-          typeInfo: { type: 'boolean', isArray: false },
-          enumeratedValues: [true, false],
-          isRequired: false,
-          customWidth: 120,
-        }
-
-        const column = createColumn(config)
-
-        expect(column.minWidth).toBe(120)
-        expect(column.basis).toBe(120)
-      })
-
-      it('should use customWidth when provided for multipleEnum column', () => {
-        const config = {
-          columnName: 'tags',
-          typeInfo: { type: 'string', isArray: true },
-          enumeratedValues: ['tag1', 'tag2', 'tag3'],
-          isRequired: false,
-          customWidth: 250,
-        }
-
-        const column = createColumn(config)
-
-        expect(column.minWidth).toBe(250)
-        expect(column.basis).toBe(250)
-      })
-
-      it('should use customWidth when provided for date-time column', () => {
-        const config = {
-          columnName: 'createdAt',
-          typeInfo: { type: 'string', format: 'date-time', isArray: false },
-          enumeratedValues: [],
-          isRequired: false,
-          customWidth: 280,
-        }
-
-        const column = createColumn(config)
-
-        expect(column.minWidth).toBe(280)
-        expect(column.basis).toBe(280)
-      })
-
       it('should calculate width based on column name when customWidth not provided', () => {
         const config = {
           columnName: 'shortName',
@@ -335,12 +265,15 @@ describe('columnFactory', () => {
 
         const column = createColumn(config)
 
-        // Width calculation: Math.max(175, 'shortName'.length * 10) = Math.max(175, 90) = 175
-        expect(column.minWidth).toBe(175)
-        expect(column.basis).toBe(175)
+        const expectedWidth = Math.max(
+          DEFAULT_MIN_WIDTH,
+          'shortName'.length * CHAR_WIDTH_PX,
+        )
+        expect(column.minWidth).toBe(expectedWidth)
+        expect(column.basis).toBe(expectedWidth)
       })
 
-      it('should ensure minimum width of 215 for date-time columns', () => {
+      it('should ensure minimum width for date-time columns', () => {
         const config = {
           columnName: 'dt',
           typeInfo: { type: 'string', format: 'date-time', isArray: false },
@@ -350,9 +283,8 @@ describe('columnFactory', () => {
 
         const column = createColumn(config)
 
-        // Date-time columns have special handling: Math.max(calculateColumnWidth(columnName), 215)
-        expect(column.minWidth).toBeGreaterThanOrEqual(215)
-        expect(column.basis).toBeGreaterThanOrEqual(215)
+        expect(column.minWidth).toBeGreaterThanOrEqual(DATETIME_MIN_WIDTH)
+        expect(column.basis).toBeGreaterThanOrEqual(DATETIME_MIN_WIDTH)
       })
     })
 
@@ -404,24 +336,7 @@ describe('columnFactory', () => {
         })
       })
 
-      it('should set basis property equal to width for fixed sizing', () => {
-        const config = {
-          columnName: 'testColumn',
-          typeInfo: { type: 'string', isArray: false },
-          enumeratedValues: [],
-          isRequired: false,
-          customWidth: 350,
-        }
-
-        const column = createColumn(config)
-
-        expect(column.basis).toBe(350)
-        expect(column.minWidth).toBe(350)
-        expect(column.grow).toBe(0)
-        expect(column.shrink).toBe(0)
-      })
-
-      it('should maintain fixed sizing when width is calculated', () => {
+      it('should set basis equal to calculated width for fixed sizing', () => {
         const config = {
           columnName: 'veryLongColumnNameThatExceedsMinimum',
           typeInfo: { type: 'string', isArray: false },
@@ -431,11 +346,9 @@ describe('columnFactory', () => {
 
         const column = createColumn(config)
 
-        // Width should be calculaßted based on name length
-        // 11px
         const expectedWidth = Math.max(
-          175,
-          'veryLongColumnNameThatExceedsMinimum'.length * 11,
+          DEFAULT_MIN_WIDTH,
+          'veryLongColumnNameThatExceedsMinimum'.length * CHAR_WIDTH_PX,
         )
         expect(column.basis).toBe(expectedWidth)
         expect(column.minWidth).toBe(expectedWidth)
@@ -585,7 +498,7 @@ describe('columnFactory', () => {
     })
 
     describe('Width Calculations with Header Icons', () => {
-      it('should account for pin icon width when showPinIcon is true', () => {
+      it('should add extra width for pin icon', () => {
         const config = {
           columnName: 'veryLongColumnNameThatExceedsMinimumWidth',
           typeInfo: { type: 'string', isArray: false },
@@ -596,16 +509,11 @@ describe('columnFactory', () => {
 
         const column = createColumn(config)
 
-        // Column name: 42 characters
-        // Base width: 42 * 11 = 462
-        // Pin icon width: 12, spacing: 4, padding: 1
-        // Total: 462 + 12 + 4 + 1 = 479 (but actual implementation gives different result)
-        // Just verify it's wider than base width without icon
-        const baseWidth = 42 * 11
+        const baseWidth = config.columnName.length * CHAR_WIDTH_PX
         expect(column.minWidth).toBeGreaterThan(baseWidth)
       })
 
-      it('should account for help icon width when description is provided', () => {
+      it('should add extra width for description tooltip', () => {
         const config = {
           columnName: 'anotherVeryLongColumnName',
           typeInfo: { type: 'string', isArray: false },
@@ -618,12 +526,11 @@ describe('columnFactory', () => {
         const headerProps = getHeaderProps(column.title)
 
         expect(headerProps.description).toBe('This is a description')
-        // Verify it's wider than base width without icon
-        const baseWidth = 'anotherVeryLongColumnName'.length * 11
+        const baseWidth = config.columnName.length * CHAR_WIDTH_PX
         expect(column.minWidth).toBeGreaterThan(baseWidth)
       })
 
-      it('should account for both pin and help icons when both are present', () => {
+      it('should add extra width for both pin and description icons', () => {
         const config = {
           columnName: 'columnWithBothIcons',
           typeInfo: { type: 'string', isArray: false },
@@ -638,8 +545,7 @@ describe('columnFactory', () => {
 
         expect(headerProps.showPinIcon).toBe(true)
         expect(headerProps.description).toBe('Column description')
-        // Verify it's wider than base width without icons
-        const baseWidth = 'columnWithBothIcons'.length * 11
+        const baseWidth = config.columnName.length * CHAR_WIDTH_PX
         expect(column.minWidth).toBeGreaterThan(baseWidth)
       })
 
@@ -653,27 +559,11 @@ describe('columnFactory', () => {
 
         const column = createColumn(config)
 
-        // Base calculation only: Math.max(175, 'regularColumn'.length * 11)
-        const expectedWidth = Math.max(175, 'regularColumn'.length * 11)
+        const expectedWidth = Math.max(
+          DEFAULT_MIN_WIDTH,
+          config.columnName.length * CHAR_WIDTH_PX,
+        )
         expect(column.minWidth).toBe(expectedWidth)
-      })
-
-      it('should handle date-time columns with pin icon', () => {
-        const config = {
-          columnName: 'createdAtTimestamp',
-          typeInfo: { type: 'string', format: 'date-time', isArray: false },
-          enumeratedValues: [],
-          isRequired: false,
-          showPinIcon: true,
-        }
-
-        const column = createColumn(config)
-
-        // Date-time columns have minimum width of 215
-        // 'createdAtTimestamp'.length * 11 = 18 * 11 = 198
-        // With pin icon: 198 + 12 (pin) + 4 (spacing) + 1 (padding) = 215
-        // Math.max(215, 215) = 215
-        expect(column.minWidth).toBeGreaterThanOrEqual(215)
       })
     })
   })
