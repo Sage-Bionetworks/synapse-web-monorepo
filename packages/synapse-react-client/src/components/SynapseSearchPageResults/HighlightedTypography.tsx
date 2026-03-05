@@ -22,7 +22,6 @@ export function HighlightedTypography({
   const regex = new RegExp(`(${pattern})`, 'gi')
   const parts = text.split(regex)
 
-  console.log('pattern', pattern, 'regex', regex, 'parts', parts)
   return (
     <Typography {...typographyProps}>
       {parts.map((part, i) =>
