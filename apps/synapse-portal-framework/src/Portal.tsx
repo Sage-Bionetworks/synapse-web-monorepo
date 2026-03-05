@@ -41,9 +41,7 @@ function Portal(props: PortalProps) {
   )
   const router = createBrowserRouter(routesWithErrorBoundary)
   const theme = useMemo(() => createTheme(mergeTheme({ palette })), [palette])
-  const portalTitleEnv: unknown = import.meta.env.VITE_PORTAL_NAME
-  const defaultTitle =
-    typeof portalTitleEnv === 'string' ? portalTitleEnv : undefined
+  const defaultTitle = props.portalName || undefined
 
   return (
     <PortalContextProvider value={context}>
