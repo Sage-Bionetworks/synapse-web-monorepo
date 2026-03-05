@@ -57,7 +57,7 @@ export type EntityDetailsListSharedProps = {
   isIdSelected: (header: EntityFinderHeader) => boolean
   isSelectable: (header: EntityFinderHeader) => boolean
   toggleSelection: (entity: Reference | Reference[]) => void
-  setVersionIfSelected: (entityId: string, version: number) => void
+  setInitialVersion: (entityId: string, version: number) => void
   setCurrentContainer?: Dispatch<SetStateAction<EntityTreeContainer>>
   /** Chosen columns to hide. Defaults to just the DirectDownload column. */
   hiddenColumns?: DetailsViewColumn[]

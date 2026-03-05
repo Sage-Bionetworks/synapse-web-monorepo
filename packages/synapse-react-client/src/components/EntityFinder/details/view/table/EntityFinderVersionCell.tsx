@@ -51,11 +51,11 @@ type EntityFinderVersionCellProps = {
   context: CellContext<EntityFinderTableViewRowData, any>
   versionSelection: VersionSelectionType
   toggleSelection: (entity: Reference | Reference[]) => void
-  setVersionIfSelected: (entityId: string, version: number) => void
+  setInitialVersion: (entityId: string, version: number) => void
 }
 
 export function EntityFinderVersionCell(props: EntityFinderVersionCellProps) {
-  const { context, toggleSelection, setVersionIfSelected, versionSelection } =
+  const { context, toggleSelection, setInitialVersion, versionSelection } =
     props
   const { row } = context
 
@@ -90,14 +90,14 @@ export function EntityFinderVersionCell(props: EntityFinderVersionCellProps) {
       currentSelectedVersion == null &&
       firstVersionNumber != null
     ) {
-      setVersionIfSelected(id, firstVersionNumber)
+      setInitialVersion(id, firstVersionNumber)
     }
   }, [
     currentSelectedVersion,
     id,
     isSelected,
     versionSelection,
-    setVersionIfSelected,
+    setInitialVersion,
     firstVersionNumber,
   ])
 

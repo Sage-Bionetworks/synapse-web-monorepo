@@ -189,7 +189,7 @@ function getColumns(opts: {
   onSelectAll: () => void
   versionSelection: VersionSelectionType
   toggleSelection: (entity: Reference | Reference[]) => void
-  setVersionIfSelected: (entityId: string, version: number) => void
+  setInitialVersion: (entityId: string, version: number) => void
   sortableColumns?: DetailsViewColumn[]
 }) {
   const {
@@ -200,7 +200,7 @@ function getColumns(opts: {
     onSelectAll,
     versionSelection,
     toggleSelection,
-    setVersionIfSelected,
+    setInitialVersion,
     sortableColumns = [],
   } = opts
   return [
@@ -269,7 +269,7 @@ function getColumns(opts: {
         <EntityFinderVersionCell
           versionSelection={versionSelection}
           toggleSelection={toggleSelection}
-          setVersionIfSelected={setVersionIfSelected}
+          setInitialVersion={setInitialVersion}
           context={context}
         />
       ),
@@ -378,7 +378,7 @@ export function DetailsView(props: DetailsViewProps) {
     visibleTypes,
     selectableTypes,
     toggleSelection,
-    setVersionIfSelected,
+    setInitialVersion,
     enableSorting,
     enableMultiSort,
     sortableColumns,
@@ -606,7 +606,7 @@ export function DetailsView(props: DetailsViewProps) {
         },
         versionSelection,
         toggleSelection,
-        setVersionIfSelected,
+        setInitialVersion,
         sortableColumns,
       }),
     [
@@ -614,7 +614,7 @@ export function DetailsView(props: DetailsViewProps) {
       isSelectAllVisible,
       selectAllIsChecked,
       setCurrentContainer,
-      setVersionIfSelected,
+      setInitialVersion,
       sortableColumns,
       toggleSelection,
       versionSelection,

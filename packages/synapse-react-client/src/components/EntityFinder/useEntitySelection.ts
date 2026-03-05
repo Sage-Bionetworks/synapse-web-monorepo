@@ -37,7 +37,7 @@ export function useEntitySelection(
         selection: EntitySelectionMapType
       }
     | {
-        type: 'setVersionIfSelected'
+        type: 'setInitialVersion'
         entityId: string
         version: number
       }
@@ -56,7 +56,7 @@ export function useEntitySelection(
       if (action.type === 'setSelection') {
         return action.selection
       }
-      if (action.type === 'setVersionIfSelected') {
+      if (action.type === 'setInitialVersion') {
         // Safe to call from effects multiple times — only acts the first time
         const existing = currentState.get(action.entityId)
         if (existing != null && existing.targetVersionNumber == null) {
@@ -111,9 +111,9 @@ export function useEntitySelection(
     [],
   )
 
-  const setVersionIfSelected = useCallback(
+  const setInitialVersion = useCallback(
     (entityId: string, version: number) =>
-      dispatch({ type: 'setVersionIfSelected', entityId, version }),
+      dispatch({ type: 'setInitialVersion', entityId, version }),
     [],
   )
 
@@ -121,6 +121,6 @@ export function useEntitySelection(
     selectedEntities,
     toggleSelection,
     setSelection,
-    setVersionIfSelected,
+    setInitialVersion,
   }
 }

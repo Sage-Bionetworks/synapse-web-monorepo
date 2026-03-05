@@ -138,7 +138,7 @@ describe('useEntitySelection', () => {
     expect(result.current.selectedEntities.get(ref2.targetId)).toEqual(ref2)
   })
 
-  describe('setVersionIfSelected', () => {
+  describe('setInitialVersion', () => {
     it('sets the version when the entity is selected with no version', () => {
       const ref: Reference = {
         targetId: 'syn123',
@@ -150,7 +150,7 @@ describe('useEntitySelection', () => {
       )
 
       act(() => {
-        result.current.setVersionIfSelected('syn123', 5)
+        result.current.setInitialVersion('syn123', 5)
       })
 
       expect(result.current.selectedEntities.get('syn123')).toEqual({
@@ -163,7 +163,7 @@ describe('useEntitySelection', () => {
       const { result } = renderHook(false, Map<string, Reference>())
 
       act(() => {
-        result.current.setVersionIfSelected('syn123', 5)
+        result.current.setInitialVersion('syn123', 5)
       })
 
       expect(result.current.selectedEntities.size).toBe(0)
@@ -177,7 +177,7 @@ describe('useEntitySelection', () => {
       )
 
       act(() => {
-        result.current.setVersionIfSelected('syn123', 5)
+        result.current.setInitialVersion('syn123', 5)
       })
 
       expect(result.current.selectedEntities.get('syn123')).toEqual(ref)
@@ -197,7 +197,7 @@ describe('useEntitySelection', () => {
       )
 
       act(() => {
-        result.current.setVersionIfSelected('syn123', 5)
+        result.current.setInitialVersion('syn123', 5)
       })
 
       expect(result.current.selectedEntities.get('syn123')).toEqual({

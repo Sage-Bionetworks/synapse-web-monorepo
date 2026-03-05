@@ -37,7 +37,7 @@ const mockEntityBadgeIcons = vi
 const mockFileEntityHeader = mockFileEntityData.entityHeader
 
 const mockToggleSelection = vi.fn()
-const mockSetVersionIfSelected = vi.fn()
+const mockSetInitialVersion = vi.fn()
 const mockFetchNextPage = vi.fn()
 const mockSetSort = vi.fn()
 
@@ -105,7 +105,7 @@ const defaultProps: DetailsViewProps = {
   selected: Map(),
   selectableTypes: Object.values(EntityType),
   toggleSelection: mockToggleSelection,
-  setVersionIfSelected: mockSetVersionIfSelected,
+  setInitialVersion: mockSetInitialVersion,
   entities: entityHeaders,
   isLoading: false,
   hasNextPage: false,
@@ -907,7 +907,7 @@ describe('DetailsView tests', () => {
           (screen.getAllByRole('option')[1] as HTMLOptionElement).selected,
         ).toBe(false)
 
-        expect(mockSetVersionIfSelected).toBeCalledWith(
+        expect(mockSetInitialVersion).toBeCalledWith(
           entityHeaders[0].id,
           versionResult.results[0].versionNumber,
         )
