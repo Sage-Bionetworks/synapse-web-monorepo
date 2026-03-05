@@ -92,6 +92,10 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
           href={`${getEndpoint(
             BackendDestinationEnum.PORTAL_ENDPOINT,
           )}Synapse:${props.entityId}`}
+          sx={{
+            textDecoration: 'underline 2px',
+            textUnderlineOffset: '9px',
+          }}
         >
           <HighlightedTypography
             variant="headline3"
