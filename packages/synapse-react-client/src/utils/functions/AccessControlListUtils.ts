@@ -57,3 +57,33 @@ export function updateACLWithSRCResourceAccessList(
   )
   return newAcl
 }
+
+/**
+ * Determines if an entity is publicly accessible by checking if any public principals
+ * (authenticated users, public group, or anonymous user) have access in the resource access list.
+ *
+ * @param resourceAccess - The list of resource access entries to check
+ * @param realmPrincipals - An object containing the principal IDs for public groups
+ * @param realmPrincipals.authenticatedUsers - The principal ID for authenticated users
+ * @param realmPrincipals.publicGroup - The principal ID for the public group
+ * @param realmPrincipals.anonymousUser - The principal ID for anonymous users
+ * @returns true if any public principal has access, false otherwise
+ */
+export function isEntityPublic(
+  resourceAccess: ResourceAccess[],
+  realmPrincipals: {
+    authenticatedUsers?: string
+    publicGroup?: string
+    anonymousUser?: string
+  },
+): boolean {
+  const publicPrincipalIds = [
+    realmPrincipals.authenticatedUsers,
+    realmPrincipals.publicGroup,
+    realmPrincipals.anonymousUser,
+  ].filter((id): id is string => id !== undefined)
+
+  return resourceAccess.some(ra =>
+    publicPrincipalIds.includes(String(ra.principalId)),
+  )
+}

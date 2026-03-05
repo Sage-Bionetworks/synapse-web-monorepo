@@ -7,7 +7,10 @@ import {
   useUpdateEntityACL,
 } from '@/synapse-queries'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
-import { resourceAccessListIsEqual } from '@/utils/functions/AccessControlListUtils'
+import {
+  isEntityPublic,
+  resourceAccessListIsEqual,
+} from '@/utils/functions/AccessControlListUtils'
 import { getDisplayNameFromProfile } from '@/utils/functions/DisplayUtils'
 import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
 import {
@@ -229,11 +232,11 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
     updatedIsInherited,
   ])
 
-  const isPublic = updatedResourceAccessList.some(ra =>
-    [authenticatedUsersId, publicGroupId, anonymousUserId]
-      .filter((id): id is string => id !== undefined)
-      .includes(String(ra.principalId)),
-  )
+  const isPublic = isEntityPublic(updatedResourceAccessList, {
+    authenticatedUsers: authenticatedUsersId,
+    publicGroup: publicGroupId,
+    anonymousUser: anonymousUserId,
+  })
 
   const {
     sendNotification,
