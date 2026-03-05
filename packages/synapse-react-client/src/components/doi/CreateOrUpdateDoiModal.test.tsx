@@ -1,13 +1,18 @@
 import {
+  mockFileAuthenticatedUsersOnly,
+  mockFileOpenDataWithNoPublicRead,
+  mockFileOpenDataWithPublicRead,
+} from '@/mocks/entity/mockFileEntityACLVariants'
+import { MOCK_REALM_PRINCIPAL } from '@/mocks/realm/mockRealmPrincipal'
+import {
   MOCK_USER_ID,
   mockUserProfileData,
 } from '@/mocks/user/mock_user_profile'
 import { useCreateOrUpdateDOI, useGetDOI } from '@/synapse-queries/doi/useDOI'
-import {
-  useGetEntity,
-  useGetVersions,
-} from '@/synapse-queries/entity/useEntity'
+import { useGetVersions } from '@/synapse-queries/entity/useEntity'
+import { useGetEntityBundle } from '@/synapse-queries/entity/useEntityBundle'
 import { useGetPortal } from '@/synapse-queries/portal/usePortal'
+import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user/useUserBundle'
 import {
   getUseMutationIdleMock,
@@ -24,10 +29,15 @@ import {
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { displayToast } from '../ToastMessage'
-import { CreateOrUpdateDoiModal } from './CreateOrUpdateDoiModal'
+import {
+  CreateOrUpdateDoiModal,
+  CreateOrUpdateDoiModalProps,
+} from './CreateOrUpdateDoiModal'
 
 vi.mock('@/synapse-queries/doi/useDOI')
 vi.mock('@/synapse-queries/entity/useEntity')
+vi.mock('@/synapse-queries/entity/useEntityBundle')
+vi.mock('@/synapse-queries/realm/useRealmPrincipals')
 vi.mock('@/synapse-queries/user/useUserBundle')
 vi.mock('@/components/ToastMessage/ToastMessage')
 vi.mock('@/synapse-queries/portal/usePortal')
@@ -37,12 +47,15 @@ const mockUseCreateOrUpdateDOI = vi
   .mocked(useCreateOrUpdateDOI)
   .mockReturnValue(getUseMutationIdleMock())
 
-const mockUseGetEntity = vi.mocked(useGetEntity).mockReturnValue(
-  getUseQuerySuccessMock({
-    name: 'Test Entity',
-    concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-  }),
-)
+const mockUseGetEntityBundle = vi
+  .mocked(useGetEntityBundle)
+  .mockReturnValue(
+    getUseQuerySuccessMock(mockFileOpenDataWithPublicRead.bundle),
+  )
+
+const mockUseGetRealmPrincipals = vi
+  .mocked(useGetRealmPrincipals)
+  .mockReturnValue(getUseQuerySuccessMock(MOCK_REALM_PRINCIPAL))
 
 const mockUseGetDOI = vi
   .mocked(useGetDOI)
@@ -64,6 +77,42 @@ vi.mocked(useGlobalIsEditingContext).mockReturnValue({
   setIsEditing: mockSetIsEditing,
 })
 
+const defaultProps: CreateOrUpdateDoiModalProps = {
+  open: true,
+  onClose: vi.fn(),
+  objectType: DoiObjectType.ENTITY,
+  objectId: 'syn123',
+  defaultVersionNumber: undefined,
+}
+const setup = (props = defaultProps) => {
+  const user = userEvent.setup()
+  const { rerender } = render(<CreateOrUpdateDoiModal {...props} />)
+  return { user, rerender }
+}
+
+const expectWarningStep = (isVisible: boolean) => {
+  const header = screen.queryByRole('heading', {
+    level: 2,
+    name: 'This page is private',
+  })
+  if (isVisible) {
+    expect(header).toBeInTheDocument()
+  } else {
+    expect(header).not.toBeInTheDocument()
+  }
+}
+const expectFormStep = (isVisible: boolean) => {
+  const header = screen.queryByRole('heading', {
+    level: 2,
+    name: 'Create or Update a DOI',
+  })
+  if (isVisible) {
+    expect(header).toBeInTheDocument()
+  } else {
+    expect(header).not.toBeInTheDocument()
+  }
+}
+
 describe('CreateOrUpdateDoiModal', () => {
   beforeAll(() => {
     // Mock the current time, since the current year is used to populate the publication year field
@@ -74,16 +123,16 @@ describe('CreateOrUpdateDoiModal', () => {
     vi.useRealTimers()
   })
 
-  const defaultProps = {
-    open: true,
-    onClose: vi.fn(),
-    objectType: DoiObjectType.ENTITY,
-    objectId: 'syn123',
-    defaultVersionNumber: undefined,
-  }
+  beforeEach(() => {
+    mockUseGetEntityBundle.mockReturnValue(
+      getUseQuerySuccessMock(mockFileOpenDataWithPublicRead.bundle),
+    )
+    mockUseGetDOI.mockReturnValue(getUseQuerySuccessMock(null))
+    mockUseCreateOrUpdateDOI.mockReturnValue(getUseMutationIdleMock())
+  })
 
   it('renders the modal with default content', () => {
-    render(<CreateOrUpdateDoiModal {...defaultProps} />)
+    setup()
 
     expect(screen.getByText('Create or Update a DOI')).toBeInTheDocument()
     expect(
@@ -97,10 +146,10 @@ describe('CreateOrUpdateDoiModal', () => {
   })
 
   it('calls onClose when the Cancel button is clicked', async () => {
-    render(<CreateOrUpdateDoiModal {...defaultProps} />)
+    const { user } = setup()
 
     const cancelButton = screen.getByText('Cancel')
-    await userEvent.click(cancelButton)
+    await user.click(cancelButton)
 
     expect(defaultProps.onClose).toHaveBeenCalled()
   })
@@ -108,7 +157,7 @@ describe('CreateOrUpdateDoiModal', () => {
   it('disables the Save button when loading', () => {
     mockUseCreateOrUpdateDOI.mockReturnValue(getUseMutationPendingMock())
 
-    render(<CreateOrUpdateDoiModal {...defaultProps} />)
+    setup()
 
     const saveButton = screen.getByText('Save')
     expect(saveButton).toBeDisabled()
@@ -132,7 +181,7 @@ describe('CreateOrUpdateDoiModal', () => {
         ],
       }),
     )
-    render(<CreateOrUpdateDoiModal {...defaultProps} />)
+    setup()
 
     expect(
       screen.getByText(
@@ -144,9 +193,9 @@ describe('CreateOrUpdateDoiModal', () => {
   it('renders the form with pre-filled data when DOI is null', async () => {
     mockUseGetDOI.mockReturnValue(getUseQuerySuccessMock(null))
 
-    render(<CreateOrUpdateDoiModal {...defaultProps} />)
+    setup()
 
-    await screen.findByDisplayValue('Test Entity')
+    await screen.findByDisplayValue(mockFileOpenDataWithPublicRead.entity.name)
     await screen.findByDisplayValue('Last, First') // matching the mockUserProfile data
   })
 
@@ -159,13 +208,13 @@ describe('CreateOrUpdateDoiModal', () => {
 
     mockUseGetDOI.mockReturnValue(getUseQuerySuccessMock(null))
 
-    render(<CreateOrUpdateDoiModal {...defaultProps} />)
+    const { user } = setup()
 
     const pubYearInput = await screen.findByLabelText(/Publication Year/i)
-    await userEvent.clear(pubYearInput)
+    await user.clear(pubYearInput)
 
     const saveButton = screen.getByText(/Save/i)
-    await userEvent.click(saveButton)
+    await user.click(saveButton)
 
     await screen.findByText("must have required property 'Publication Year'")
     expect(mockMutate).not.toHaveBeenCalled()
@@ -177,29 +226,23 @@ describe('CreateOrUpdateDoiModal', () => {
       ...getUseMutationIdleMock(),
       mutate: mockMutate,
     })
-    mockUseGetEntity.mockReturnValue(
-      getUseQuerySuccessMock({
-        name: 'Test Entity',
-        concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-      }),
-    )
     mockUseGetCurrentUserProfile.mockReturnValue(
       getUseQuerySuccessMock(mockUserProfileData),
     )
 
-    render(<CreateOrUpdateDoiModal {...defaultProps} />)
+    const { user } = setup()
 
     // Fill out the form
     const titleInput = screen.getByLabelText(/Title/i)
-    await userEvent.clear(titleInput)
-    await userEvent.type(titleInput, 'New DOI Title')
+    await user.clear(titleInput)
+    await user.type(titleInput, 'New DOI Title')
 
     const creatorInput = screen.getByLabelText(/Creator/i)
-    await userEvent.clear(creatorInput)
-    await userEvent.type(creatorInput, 'Doe, John')
+    await user.clear(creatorInput)
+    await user.type(creatorInput, 'Doe, John')
 
     const saveButton = screen.getByText(/Save/i)
-    await userEvent.click(saveButton)
+    await user.click(saveButton)
 
     const expectedDoiRequest: DoiRequest = {
       concreteType: 'org.sagebionetworks.repo.model.doi.v2.DoiRequest',
@@ -252,12 +295,6 @@ describe('CreateOrUpdateDoiModal', () => {
       ...getUseMutationIdleMock(),
       mutate: mockMutate,
     })
-    mockUseGetEntity.mockReturnValue(
-      getUseQuerySuccessMock({
-        name: 'Test Entity',
-        concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-      }),
-    )
     mockUseGetVersions.mockReturnValue(
       getUseQuerySuccessMock({
         results: [
@@ -288,32 +325,32 @@ describe('CreateOrUpdateDoiModal', () => {
       getUseQuerySuccessMock(mockUserProfileData),
     )
 
-    render(<CreateOrUpdateDoiModal {...defaultProps} />)
+    const { user } = setup()
 
     // Wait for the versions to be rendered
     const versionInput = await screen.findByLabelText(/Version/i)
-    await userEvent.click(versionInput)
+    await user.click(versionInput)
     await screen.findByRole('option', { name: 'No version' })
     await screen.findByRole('option', { name: 'Version 1 / v1' })
     await screen.findByRole('option', { name: 'Version 2 / v2' })
 
     // Select a version
     const versionSelect = screen.getByLabelText(/Version/i)
-    await userEvent.click(versionSelect)
+    await user.click(versionSelect)
     const versionOption = screen.getByText('Version 2 / v2')
-    await userEvent.click(versionOption)
+    await user.click(versionOption)
 
     // Fill out the form
     const titleInput = screen.getByLabelText(/Title/i)
-    await userEvent.clear(titleInput)
-    await userEvent.type(titleInput, 'New DOI Title')
+    await user.clear(titleInput)
+    await user.type(titleInput, 'New DOI Title')
 
     const creatorInput = screen.getByLabelText(/Creator/i)
-    await userEvent.clear(creatorInput)
-    await userEvent.type(creatorInput, 'Doe, John')
+    await user.clear(creatorInput)
+    await user.type(creatorInput, 'Doe, John')
 
     const saveButton = screen.getByText(/Save/i)
-    await userEvent.click(saveButton)
+    await user.click(saveButton)
 
     const expectedDoiRequest: DoiRequest = {
       concreteType: 'org.sagebionetworks.repo.model.doi.v2.DoiRequest',
@@ -350,7 +387,7 @@ describe('CreateOrUpdateDoiModal', () => {
       getUseQuerySuccessMock({ id: '123', name: mockPortalName }),
     )
 
-    render(<CreateOrUpdateDoiModal {...defaultProps} portalId="123" />)
+    setup({ ...defaultProps, portalId: '123' })
 
     const publisherField = await screen.findByLabelText('Publisher')
     expect(publisherField).toHaveValue(mockPortalName)
@@ -358,14 +395,129 @@ describe('CreateOrUpdateDoiModal', () => {
   })
 
   it('Sets global editing state when open', () => {
-    const { rerender } = render(
-      <CreateOrUpdateDoiModal {...defaultProps} open={true} />,
-    )
+    const { rerender } = setup({ ...defaultProps, open: true })
 
     expect(mockSetIsEditing).toHaveBeenLastCalledWith(true)
 
     rerender(<CreateOrUpdateDoiModal {...defaultProps} open={false} />)
 
     expect(mockSetIsEditing).toHaveBeenLastCalledWith(false)
+  })
+
+  describe('Private Entity DOI Warning Step', () => {
+    it('shows warning step when creating DOI for private entity', async () => {
+      mockUseGetEntityBundle.mockReturnValue(
+        getUseQuerySuccessMock(mockFileOpenDataWithNoPublicRead.bundle),
+      )
+
+      setup()
+
+      await waitFor(() => {
+        expectWarningStep(true)
+      })
+      expectFormStep(false)
+    })
+
+    it('shows form directly when creating DOI for public entity', async () => {
+      setup()
+
+      await waitFor(() => {
+        expectFormStep(true)
+      })
+      expectWarningStep(false)
+    })
+
+    it('shows form directly when updating existing DOI regardless of privacy', async () => {
+      mockUseGetEntityBundle.mockReturnValue(
+        getUseQuerySuccessMock(mockFileOpenDataWithNoPublicRead.bundle),
+      )
+      mockUseGetDOI.mockReturnValue(
+        getUseQuerySuccessMock({
+          titles: [{ title: 'Existing DOI Title' }],
+          creators: [{ creatorName: 'Doe, John' }],
+        }),
+      )
+
+      setup()
+
+      await waitFor(() => {
+        expectFormStep(true)
+      })
+      expectWarningStep(false)
+    })
+
+    it('advances to form step when clicking Continue on warning', async () => {
+      mockUseGetEntityBundle.mockReturnValue(
+        getUseQuerySuccessMock(mockFileOpenDataWithNoPublicRead.bundle),
+      )
+
+      const { user } = setup()
+
+      expectWarningStep(true)
+
+      const continueButton = screen.getByRole('button', { name: /continue/i })
+      await user.click(continueButton)
+
+      expectFormStep(true)
+      expectWarningStep(false)
+    })
+
+    it('closes modal when clicking Cancel on warning step', async () => {
+      mockUseGetEntityBundle.mockReturnValue(
+        getUseQuerySuccessMock(mockFileOpenDataWithNoPublicRead.bundle),
+      )
+
+      const onClose = vi.fn()
+      const { user } = setup({ ...defaultProps, onClose })
+
+      await waitFor(() => {
+        expectWarningStep(true)
+      })
+
+      const cancelButton = screen.getByRole('button', { name: /cancel/i })
+      await user.click(cancelButton)
+
+      expect(onClose).toHaveBeenCalled()
+    })
+
+    it('resets to warning step when modal is reopened', async () => {
+      mockUseGetEntityBundle.mockReturnValue(
+        getUseQuerySuccessMock(mockFileOpenDataWithNoPublicRead.bundle),
+      )
+
+      const { rerender, user } = setup({ ...defaultProps, open: true })
+
+      await waitFor(() => {
+        expectWarningStep(true)
+      })
+
+      const continueButton = screen.getByRole('button', { name: /continue/i })
+      await user.click(continueButton)
+
+      await waitFor(() => {
+        expectFormStep(true)
+      })
+
+      rerender(<CreateOrUpdateDoiModal {...defaultProps} open={false} />)
+
+      rerender(<CreateOrUpdateDoiModal {...defaultProps} open={true} />)
+
+      await waitFor(() => {
+        expectWarningStep(true)
+      })
+    })
+
+    it('uses authenticated users principal for public check', async () => {
+      mockUseGetEntityBundle.mockReturnValue(
+        getUseQuerySuccessMock(mockFileAuthenticatedUsersOnly.bundle),
+      )
+
+      setup()
+
+      await waitFor(() => {
+        expectFormStep(true)
+      })
+      expectWarningStep(false)
+    })
   })
 })

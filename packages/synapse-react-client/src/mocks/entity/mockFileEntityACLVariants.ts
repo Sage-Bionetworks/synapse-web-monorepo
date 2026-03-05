@@ -122,10 +122,32 @@ export const mockFileEntityCurrentUserCannotEdit: MockEntityData<FileEntity> =
     },
   })
 
+export const mockFileAuthenticatedUsersOnly: MockEntityData<FileEntity> =
+  generateBaseEntity({
+    id: 30006,
+    type: EntityType.file,
+    acl: {
+      resourceAccess: [
+        {
+          principalId: MOCK_USER_ID,
+          accessType: getAccessTypeFromPermissionLevel('CAN_ADMINISTER'),
+        },
+        {
+          principalId: AUTHENTICATED_PRINCIPAL_ID,
+          accessType: getAccessTypeFromPermissionLevel('CAN_DOWNLOAD'),
+        },
+      ],
+    },
+    permissions: {
+      isEntityOpenData: false,
+    },
+  })
+
 export const aclCustomizedMockFileEntities = [
   mockFileOpenDataWithPublicRead,
   mockFileOpenDataWithNoPublicRead,
   mockFilePublicReadNoOpenData,
   mockFileEntityWithLocalSharingSettingsData,
   mockFileEntityCurrentUserCannotEdit,
+  mockFileAuthenticatedUsersOnly,
 ]

@@ -1,6 +1,7 @@
 import ConfirmCloseWithoutSavingDialog from '@/components/Dialog/ConfirmCloseWithoutSavingDialog'
 import { DialogBase } from '@/components/DialogBase'
 import { doiFormSchema, doiFormUiSchema } from '@/components/doi/DoiFormSchemas'
+import { PrivateEntityDoiWarning } from '@/components/doi/PrivateEntityDoiWarning'
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
 import { MarkdownPopover } from '@/components/Markdown/MarkdownPopover'
 import { StyledFormControl } from '@/components/styled/StyledFormControl'
@@ -9,8 +10,10 @@ import { useCreateOrUpdateDOI, useGetDOI } from '@/synapse-queries/doi/useDOI'
 import { useGetVersions } from '@/synapse-queries/entity/useEntity'
 import { useGetEntityBundle } from '@/synapse-queries/entity/useEntityBundle'
 import { useGetPortal } from '@/synapse-queries/portal/usePortal'
+import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user/useUserBundle'
 import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
+import { isEntityPublic } from '@/utils/functions/AccessControlListUtils'
 import {
   entityTypeToFriendlyName,
   isDataset,
@@ -41,9 +44,11 @@ import {
   V2Doi,
 } from '@sage-bionetworks/synapse-client'
 import { isEmpty } from 'lodash-es'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
-type CreateOrUpdateDoiModalProps = {
+type CreateOrUpdateDoiModalStep = 'warning' | 'form'
+
+export type CreateOrUpdateDoiModalProps = {
   /** Whether the dialog is open */
   open: boolean
   /** Callback to call when the dialog is closed */
@@ -118,6 +123,9 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
   } = props
 
   const [showConfirmCloseModal, setShowConfirmCloseDialog] = useState(false)
+  const [currentStep, setCurrentStep] =
+    useState<CreateOrUpdateDoiModalStep | null>(null)
+  const hasSetInitialStepForThisSession = useRef(false)
   const { isEditing, setIsEditing } = useGlobalIsEditingContext()
   useEffect(() => {
     setIsEditing(open)
@@ -161,6 +169,10 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
       throwOnError: true,
     },
   )
+  const { data: realmPrincipals, isLoading: isLoadingRealmPrincipals } =
+    useGetRealmPrincipals()
+  const { publicGroup, authenticatedUsers, anonymousUser } =
+    realmPrincipals || {}
   const { data: doi, isLoading: isLoadingDoi } = useGetDOI(
     {
       id: objectId,
@@ -173,6 +185,43 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
       throwOnError: true,
     },
   )
+
+  const shouldShowWarning = useMemo(() => {
+    return (
+      open &&
+      doi === null && // Creating new DOI
+      entityBundle?.benefactorAcl &&
+      realmPrincipals &&
+      !isEntityPublic(entityBundle.benefactorAcl.resourceAccess, {
+        authenticatedUsers,
+        publicGroup,
+        anonymousUser,
+      })
+    )
+  }, [
+    open,
+    doi,
+    entityBundle,
+    realmPrincipals,
+    publicGroup,
+    authenticatedUsers,
+    anonymousUser,
+  ])
+
+  useEffect(() => {
+    if (
+      open &&
+      !hasSetInitialStepForThisSession.current &&
+      shouldShowWarning !== undefined
+    ) {
+      const newStep = shouldShowWarning ? 'warning' : 'form'
+      setCurrentStep(newStep)
+      hasSetInitialStepForThisSession.current = true
+    } else if (!open) {
+      setCurrentStep(null)
+      hasSetInitialStepForThisSession.current = false
+    }
+  }, [shouldShowWarning, open])
 
   const doiCanBeAppliedToVersion =
     objectType === DoiObjectType.ENTITY &&
@@ -217,7 +266,11 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
   })
 
   const isLoading =
-    updateIsPending || isLoadingCurrentUser || isLoadingEntity || isLoadingDoi
+    updateIsPending ||
+    isLoadingCurrentUser ||
+    isLoadingEntity ||
+    isLoadingDoi ||
+    isLoadingRealmPrincipals
 
   const wasModifiedViaAPI = Boolean(doi && getWasModifiedViaAPI(doi))
 
@@ -383,13 +436,17 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
       <Button
         variant="contained"
         disabled={isLoading}
-        onClick={e => {
-          // SWC-7055 - The default action may trigger `beforeunload` and erroneously warn the user about leaving the page.
-          e.preventDefault()
-          onSave()
-        }}
+        onClick={
+          currentStep === 'warning'
+            ? () => setCurrentStep('form')
+            : e => {
+                // SWC-7055 - The default action may trigger `beforeunload` and erroneously warn the user about leaving the page.
+                e.preventDefault()
+                onSave()
+              }
+        }
       >
-        Save
+        {currentStep === 'warning' ? 'Continue' : 'Save'}
       </Button>
     </>
   )
@@ -406,13 +463,24 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
           onClose()
         }}
       />
-      <DialogBase
-        open={open}
-        onCancel={handleClose}
-        title={'Create or Update a DOI'}
-        content={dialogContent}
-        actions={dialogActions}
-      />
+      {currentStep && (
+        <DialogBase
+          open={open}
+          onCancel={handleClose}
+          title={
+            currentStep === 'warning'
+              ? 'This page is private'
+              : 'Create or Update a DOI'
+          }
+          content={
+            <>
+              {currentStep === 'warning' && <PrivateEntityDoiWarning />}
+              {currentStep === 'form' && dialogContent}
+            </>
+          }
+          actions={dialogActions}
+        />
+      )}
     </>
   )
 }
