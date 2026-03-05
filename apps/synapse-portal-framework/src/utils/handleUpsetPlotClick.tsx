@@ -46,7 +46,6 @@ export function handleUpsetPlotClick({
       const encodedExplorePath = encodeURIComponent(explorePath)
       const url = await generateCompressedQueryURL(
         `/Explore/${encodedExplorePath}`,
-        'qw',
         0,
         currentQuery,
         initQuery,

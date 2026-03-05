@@ -167,17 +167,15 @@ export async function updateUrlWithNewSearchParam(
 
 /**
  * Retrieves a query request from the URL by applying the stored diff to the initial query.
- * @param componentName
  * @param componentIndex
  * @param initQuery - The initial query to apply the diff to
  * @returns A partial QueryBundleRequest with the reconstructed query, or undefined if no diff is stored
  */
 export async function getQueryRequestFromLink(
-  componentName: string,
   componentIndex: number,
   initQuery: Query,
 ): Promise<Partial<QueryBundleRequest> | undefined> {
-  const paramKey = getComponentSearchHashId(componentName, componentIndex)
+  const paramKey = getComponentSearchHashId('qw', componentIndex)
   const searchParamValue = new URLSearchParams(window.location.search).get(
     paramKey,
   )
@@ -202,13 +200,36 @@ export async function getQueryRequestFromLink(
       console.error('Failed to parse query diff from URL:', error)
     }
   }
+
+  // check for legacy search param for backward compatibility, but prioritize the new format if both are present
+  const legacyParamKey = getComponentSearchHashId(
+    'QueryWrapper',
+    componentIndex,
+  )
+  const legacySearchParamValue = new URLSearchParams(
+    window.location.search,
+  ).get(legacyParamKey)
+  if (legacySearchParamValue && !queryRequest) {
+    try {
+      const query = JSON.parse(legacySearchParamValue) as Query
+      if (query.sql) {
+        queryRequest = {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+          entityId: parseEntityIdFromSqlStatement(query.sql),
+          query,
+        }
+      }
+    } catch (error) {
+      console.error('Failed to parse legacy query from URL:', error)
+    }
+  }
   return queryRequest
 }
 
 /**
  * Generates a URL with a compressed query diff parameter.
  * @param path - The base path for the URL
- * @param componentName - The component name (e.g., 'qw')
  * @param componentIndex - The component index (e.g., 0)
  * @param currentQuery - The query to encode
  * @param initQuery - The initial/default query to compute the diff against
@@ -216,7 +237,6 @@ export async function getQueryRequestFromLink(
  */
 export async function generateCompressedQueryURL(
   path: string,
-  componentName: string,
   componentIndex: number,
   currentQuery: Query,
   initQuery: Query,
@@ -229,7 +249,7 @@ export async function generateCompressedQueryURL(
 
   const jsonString = JSON.stringify(diff)
   const compressed = await compressString(jsonString)
-  const paramKey = getComponentSearchHashId(componentName, componentIndex)
+  const paramKey = getComponentSearchHashId('qw', componentIndex)
 
   return `${path}?${paramKey}=${encodeURIComponent(compressed)}`
 }
