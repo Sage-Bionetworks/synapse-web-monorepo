@@ -190,10 +190,12 @@ function configureDomPurify(instance: typeof DOMPurify): void {
 let domPurifyInstance: typeof DOMPurify | null = null
 
 if (typeof window === 'undefined') {
-  await import('jsdom').then(({ JSDOM }) => {
-    domPurifyInstance = DOMPurify(new JSDOM('<!DOCTYPE html>').window)
-    configureDomPurify(domPurifyInstance)
-  })
+  // Running in a Node.js environment; initialize JSDOM and create a DOMPurify instance
+  // Cannot use top-level await is unsafe in Safari: https://caniuse.com/wf-top-level-await
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { JSDOM } = require('jsdom')
+  domPurifyInstance = DOMPurify(new JSDOM('<!DOCTYPE html>').window)
+  configureDomPurify(domPurifyInstance)
 } else {
   domPurifyInstance = DOMPurify
   configureDomPurify(domPurifyInstance)
