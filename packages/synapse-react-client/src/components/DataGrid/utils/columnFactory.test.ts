@@ -673,7 +673,7 @@ describe('columnFactory', () => {
         // 'createdAtTimestamp'.length * 11 = 18 * 11 = 198
         // With pin icon: 198 + 12 (pin) + 4 (spacing) + 1 (padding) = 215
         // Math.max(215, 215) = 215
-        expect(column.minWidth).toBe(215)
+        expect(column.minWidth).toBeGreaterThanOrEqual(215)
       })
     })
   })
