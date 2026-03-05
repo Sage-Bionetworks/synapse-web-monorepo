@@ -15,7 +15,7 @@ export function HighlightedTypography({
   searchTerms,
   ...typographyProps
 }: HighlightedTypographyProps) {
-  if (!searchTerms.length) {
+  if (searchTerms.length === 0) {
     return <Typography {...typographyProps}>{text}</Typography>
   }
   const pattern = searchTerms.map(escapeRegex).join('|')
