@@ -10,6 +10,7 @@ import pluralize from 'pluralize'
 import { ReactElement } from 'react'
 import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList'
 import { FTS_SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctions'
+import { generateCompressedQueryURL } from 'synapse-react-client/utils/functions/deepLinkingUtils'
 import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { WideButton } from 'synapse-react-client/components/styled/WideButton'
 import EcosystemLayout from 'synapse-react-client/components/Ecosystem/EcosystemLayout'
@@ -38,7 +39,7 @@ const baseSchemaUrl =
   'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/'
 const postUrl = 'https://submit-form.com/KwZ46H4T'
 
-const createHref = path =>
+const createHref = (path: string) =>
   `http://${host}/${baseUrl}${encodeURIComponent(path)}`
 
 const submitToolButtons = [
@@ -90,8 +91,10 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
     window.location.assign('/Explore/Tools')
   }
 
-  const gotoExploreToolsWithSelectedResource = (selectedResource: string) => {
-    const query: Query = {
+  const gotoExploreToolsWithSelectedResource = async (
+    selectedResource: string,
+  ) => {
+    const currentQuery: Query = {
       sql: toolsSql,
       selectedFacets: [
         {
@@ -102,9 +105,17 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
         },
       ],
     }
-    window.location.assign(
-      `/Explore/Tools?QueryWrapper0=${JSON.stringify(query)}`,
+    const initQuery: Query = {
+      sql: toolsSql,
+    }
+    const url = await generateCompressedQueryURL(
+      '/Explore/Tools',
+      'qw',
+      0,
+      currentQuery,
+      initQuery,
     )
+    window.location.assign(url)
   }
 
   const gotoExploreToolsWithFullTextSearch = (fullTextSearchString: string) => {
@@ -153,9 +164,11 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
             return (
               <button
                 key={category.resourceName}
-                onClick={() =>
-                  gotoExploreToolsWithSelectedResource(category.resourceName)
-                }
+                onClick={() => {
+                  void gotoExploreToolsWithSelectedResource(
+                    category.resourceName,
+                  )
+                }}
               >
                 <Box sx={{ position: 'relative' }}>
                   {category.image}

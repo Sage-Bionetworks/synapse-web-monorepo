@@ -18,6 +18,7 @@
     "@eslint/compat": "^1.2.9",
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.26.0",
+    "@nx/shared-fs-cache": "^5.0.0",
     "@vitest/eslint-plugin": "^1.2.1",
     "dotenv-cli": "^7.4.4",
     "eslint": "^9.26.0",
@@ -29,7 +30,7 @@
     "eslint-plugin-testing-library": "^7.1.1",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
-    "nx": "19.7.3",
+    "nx": "22.5.3",
     "prettier": "^2.8.8",
     "rimraf": "^6.1.2",
     "tsx": "^4.19.4",
@@ -55,5 +56,5 @@
       "js-yaml": "^4.1.1"
     }
   },
-  "packageManager": "pnpm@10.16.0+sha512.8066e7b034217b700a9a4dbb3a005061d641ba130a89915213a10b3ca4919c19c037bec8066afdc559b89635fdb806b16ea673f2468fbb28aabfa13c53e3f769"
+  "packageManager": "pnpm@10.30.3+sha512.c961d1e0a2d8e354ecaa5166b822516668b7f44cb5bd95122d590dd81922f606f5473b6d23ec4a5be05e7fcd18e8488d47d978bbe981872f1145d06e9a740017"
 }

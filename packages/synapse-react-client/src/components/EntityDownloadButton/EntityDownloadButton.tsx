@@ -19,7 +19,10 @@ import {
   isEntityView,
   isVersionableEntity,
 } from '@/utils/functions/EntityTypeUtils'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import {
+  FileHandleAssociateType,
+  QueryBundleRequest,
+} from '@sage-bionetworks/synapse-types'
 import { useSynapseContext } from '@/utils'
 import {
   useAddFileToDownloadList,
@@ -27,6 +30,8 @@ import {
 } from '@/synapse-queries/index'
 import { displayFilesWereAddedToDownloadListSuccess } from '../download_list/DownloadConfirmationUtils'
 import { displayToast } from '../ToastMessage/index'
+import { useDirectDownloadHandler } from '@/utils/hooks/useDirectDownloadHandler'
+import { isFileEntity } from '@/utils/types/IsType'
 
 // WIP
 // Per Nick Grosenbacher: For this to be reusable, I think we would also need to accept versionNumber as a prop. Where we would have the following behavior:
@@ -125,16 +130,20 @@ function getMenuItemForAction(
   addQueryToDownloadList: (request: AddToDownloadListRequest) => void,
   versionNumber?: number,
   addToCartDisabled?: boolean,
+  onDownloadFile?: () => void,
+  isAuthenticated?: boolean,
 ): DropdownMenuItem {
   switch (downloadAction) {
     case DownloadAction.downloadFile:
       return {
         text: 'Download File',
         onClick: () => {
-          console.log('Download file:', entityId, entityName)
-          // TODO: Implement file download functionality
+          if (onDownloadFile) onDownloadFile()
         },
-        tooltipText: 'Download this file directly',
+        tooltipText: isAuthenticated
+          ? 'Download this file directly'
+          : 'Sign in to download this file',
+        disabled: !isAuthenticated,
       }
     case DownloadAction.addToCart:
       return {
@@ -227,10 +236,11 @@ export function getDownloadActionsForEntityType(
     case EntityType.file:
     case EntityType.recordset:
       return [
-        // [DownloadAction.downloadFile], // todo: implement direct file download functionality then uncomment this option
+        [DownloadAction.downloadFile],
         [DownloadAction.addToCart, DownloadAction.programmaticAccess],
       ]
     case EntityType.project:
+      return [[DownloadAction.programmaticAccess]]
     case EntityType.folder:
       return [[DownloadAction.addToCart, DownloadAction.programmaticAccess]]
     case EntityType.dockerrepo:
@@ -349,7 +359,7 @@ export function EntityDownloadButton(props: {
   )
 
   // Get context and download functionality
-  const { downloadCartPageUrl } = useSynapseContext()
+  const { downloadCartPageUrl, isAuthenticated } = useSynapseContext()
   const { mutate: addFileToDownloadList } = useAddFileToDownloadList({
     onSuccess: data => {
       if (data.numberOfFilesAdded > 0) {
@@ -404,6 +414,23 @@ export function EntityDownloadButton(props: {
 
   const { data: entityData } = useGetEntity(props.entityId)
 
+  const { downloadFile } = useDirectDownloadHandler()
+
+  const fileHandleId =
+    entityData && isFileEntity(entityData)
+      ? entityData.dataFileHandleId
+      : undefined
+
+  const onDownloadFile = fileHandleId
+    ? () => {
+        void downloadFile({
+          fileHandleId,
+          associatedObjectId: props.entityId,
+          associatedObjectType: FileHandleAssociateType.FileEntity,
+        })
+      }
+    : undefined
+
   const entityViewHasNoFiles =
     entityData && isEntityView(entityData) && !hasFilesInView(entityData)
 
@@ -437,6 +464,8 @@ export function EntityDownloadButton(props: {
         addQueryToDownloadList,
         latestVersionNumber,
         addToCartDisabled,
+        onDownloadFile,
+        isAuthenticated,
       ),
     ),
   )
