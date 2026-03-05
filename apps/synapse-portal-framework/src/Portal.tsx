@@ -39,7 +39,10 @@ function Portal(props: PortalProps) {
       ),
     [props.routeConfig, context.logoHeaderConfig?.icon],
   )
-  const router = createBrowserRouter(routesWithErrorBoundary)
+  const router = useMemo(
+    () => createBrowserRouter(routesWithErrorBoundary),
+    [routesWithErrorBoundary],
+  )
   const theme = useMemo(() => createTheme(mergeTheme({ palette })), [palette])
   const defaultTitle = props.portalName || undefined
 

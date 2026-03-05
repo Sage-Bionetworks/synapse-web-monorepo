@@ -22,9 +22,7 @@ const SurveyToast = (props: SurveyToastProps): React.ReactNode => {
   const [cookiePreferences] = useCookiePreferences()
   const [showBanner, setShowBanner] = useState(false)
   useEffect(() => {
-    if (localStorage.getItem(localStorageKey) === null) {
-      setShowBanner(true)
-    }
+    setShowBanner(localStorage.getItem(localStorageKey) === null)
   }, [localStorageKey])
   return !showBanner ? (
     <></>
