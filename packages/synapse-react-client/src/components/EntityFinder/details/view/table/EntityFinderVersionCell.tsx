@@ -4,7 +4,7 @@ import { Select } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { Reference } from '@sage-bionetworks/synapse-types'
 import { CellContext } from '@tanstack/react-table'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import IconSvg from '../../../../IconSvg/IconSvg'
 import { VersionSelectionType } from '../../../VersionSelectionType'
 import { EntityFinderTableViewRowData } from '../DetailsView'
@@ -51,10 +51,12 @@ type EntityFinderVersionCellProps = {
   context: CellContext<EntityFinderTableViewRowData, any>
   versionSelection: VersionSelectionType
   toggleSelection: (entity: Reference | Reference[]) => void
+  setVersionIfSelected: (entityId: string, version: number) => void
 }
 
 export function EntityFinderVersionCell(props: EntityFinderVersionCellProps) {
-  const { context, toggleSelection, versionSelection } = props
+  const { context, toggleSelection, setVersionIfSelected, versionSelection } =
+    props
   const { row } = context
 
   const {
@@ -71,7 +73,14 @@ export function EntityFinderVersionCell(props: EntityFinderVersionCellProps) {
     enabled: isVersionableEntity,
     staleTime: 60 * 1000, // 60 seconds
   })
-  const versions = versionData?.pages.flatMap(page => page.results) ?? []
+
+  const versions = useMemo(
+    () => versionData?.pages.flatMap(page => page.results) ?? [],
+    [versionData],
+  )
+
+  // Use a primitive dep instead of the versions array to avoid re-running the effect on new array references
+  const firstVersionNumber = versions[0]?.versionNumber
 
   useEffect(() => {
     // If VersionSelectionType.REQUIRED, and the user has selected this entity and hasn't selected a version, then we force a version selection
@@ -79,20 +88,17 @@ export function EntityFinderVersionCell(props: EntityFinderVersionCellProps) {
       isSelected &&
       versionSelection == VersionSelectionType.REQUIRED &&
       currentSelectedVersion == null &&
-      versions.length > 0
+      firstVersionNumber != null
     ) {
-      toggleSelection({
-        targetId: id,
-        targetVersionNumber: versions[0].versionNumber,
-      })
+      setVersionIfSelected(id, firstVersionNumber)
     }
   }, [
     currentSelectedVersion,
     id,
     isSelected,
     versionSelection,
-    toggleSelection,
-    versions,
+    setVersionIfSelected,
+    firstVersionNumber,
   ])
 
   const showLatestVersion =

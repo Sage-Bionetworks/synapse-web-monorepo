@@ -1,6 +1,6 @@
 import { useEntitySelection } from '@/components/EntityFinder/useEntitySelection'
 import { Reference } from '@sage-bionetworks/synapse-types'
-import { act, renderHook as _renderHook } from '@testing-library/react'
+import { renderHook as _renderHook, act } from '@testing-library/react'
 import { Map } from 'immutable'
 
 describe('useEntitySelection', () => {
@@ -136,5 +136,75 @@ describe('useEntitySelection', () => {
     expect(result.current.selectedEntities.size).toBe(2)
     expect(result.current.selectedEntities.get(ref1.targetId)).toEqual(ref1)
     expect(result.current.selectedEntities.get(ref2.targetId)).toEqual(ref2)
+  })
+
+  describe('setVersionIfSelected', () => {
+    it('sets the version when the entity is selected with no version', () => {
+      const ref: Reference = {
+        targetId: 'syn123',
+        targetVersionNumber: undefined,
+      }
+      const { result } = renderHook(
+        false,
+        Map<string, Reference>().set(ref.targetId, ref),
+      )
+
+      act(() => {
+        result.current.setVersionIfSelected('syn123', 5)
+      })
+
+      expect(result.current.selectedEntities.get('syn123')).toEqual({
+        targetId: 'syn123',
+        targetVersionNumber: 5,
+      })
+    })
+
+    it('is a no-op when the entity is not selected', () => {
+      const { result } = renderHook(false, Map<string, Reference>())
+
+      act(() => {
+        result.current.setVersionIfSelected('syn123', 5)
+      })
+
+      expect(result.current.selectedEntities.size).toBe(0)
+    })
+
+    it('is a no-op when the entity already has a version', () => {
+      const ref: Reference = { targetId: 'syn123', targetVersionNumber: 2 }
+      const { result } = renderHook(
+        false,
+        Map<string, Reference>().set(ref.targetId, ref),
+      )
+
+      act(() => {
+        result.current.setVersionIfSelected('syn123', 5)
+      })
+
+      expect(result.current.selectedEntities.get('syn123')).toEqual(ref)
+    })
+
+    it('does not affect other selected entities in multi-select mode', () => {
+      const ref1: Reference = {
+        targetId: 'syn123',
+        targetVersionNumber: undefined,
+      }
+      const ref2: Reference = { targetId: 'syn456', targetVersionNumber: 1 }
+      const { result } = renderHook(
+        true,
+        Map<string, Reference>()
+          .set(ref1.targetId, ref1)
+          .set(ref2.targetId, ref2),
+      )
+
+      act(() => {
+        result.current.setVersionIfSelected('syn123', 5)
+      })
+
+      expect(result.current.selectedEntities.get('syn123')).toEqual({
+        targetId: 'syn123',
+        targetVersionNumber: 5,
+      })
+      expect(result.current.selectedEntities.get('syn456')).toEqual(ref2)
+    })
   })
 })
