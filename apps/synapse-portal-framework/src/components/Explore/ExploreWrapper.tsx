@@ -45,7 +45,7 @@ export default function ExploreWrapper(
     const routePath = encodeURI(`/Explore/${route.path}`)
     return Boolean(matchPath({ path: routePath, end: false }, pathname))
   })
-  const { portalName, portalKey } = usePortalContext()
+  const { portalName } = usePortalContext()
   const pageName =
     currentRoute?.displayName ??
     currentRoute?.path?.replaceAll('/', '') ??
