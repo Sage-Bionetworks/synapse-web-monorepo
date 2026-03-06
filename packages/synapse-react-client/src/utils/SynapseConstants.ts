@@ -190,6 +190,8 @@ export const PERSISTENT_LOCAL_STORAGE_KEYS = [
   EXTERNAL_COMPUTE_ENV_DISCLAIMER,
 ]
 
+export const DATA_CATALOG_PATH_SEGMENT = 'DataCatalog:0'
+
 export const PRIVACY_POLICY_LINK =
   'https://www.synapse.org/TrustCenter:PrivacyPolicy'
 export const CHILD_MINOR_ADDENDUM_LINK =
@@ -208,6 +210,9 @@ export const ONE_SAGE_APPID_QUERY_PARAM_KEY = 'appId'
 
 export const SAGE_OFFERINGS_HELP_URL =
   'https://help.synapse.org/docs/Sage-Offerings.2965078125.html'
+
+export const SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL =
+  'https://docs.synapse.org/synapse-docs/sharing-settings-permissions-and-conditions-for-use'
 
 // Grid Page URL Query Parameters
 export const GRID_PAGE_SESSION_ID_QUERY_PARAM = 'sessionId'

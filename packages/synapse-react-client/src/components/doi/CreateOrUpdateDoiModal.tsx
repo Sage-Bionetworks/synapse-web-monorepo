@@ -24,6 +24,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
+import { DATA_CATALOG_PATH_SEGMENT } from '@/utils/SynapseConstants'
 import { HelpTwoTone } from '@mui/icons-material'
 import {
   Alert,
@@ -317,7 +318,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
         <Link
           href={`${getEndpoint(
             BackendDestinationEnum.PORTAL_ENDPOINT,
-          )}DataCatalog:0`}
+          )}${DATA_CATALOG_PATH_SEGMENT}`}
           target="_blank"
           rel="noopener"
         >

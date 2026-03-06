@@ -6,6 +6,7 @@ import {
   useSuspenseGetEntityBundle,
   useUpdateEntityACL,
 } from '@/synapse-queries'
+import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import {
   isEntityPublic,
@@ -18,7 +19,7 @@ import {
   PermissionLevel,
   permissionLevelToLabel,
 } from '@/utils/PermissionLevelToAccessType'
-import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
+import { SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL } from '@/utils/SynapseConstants'
 import { Alert, Link, Stack } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
@@ -374,7 +375,7 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
                 View the instructions above for setting your{' '}
                 <Link
                   href={
-                    'https://help.synapse.org/docs/Sharing-Settings,-Permissions,-and-Conditions-for-Use.2024276030.html'
+                    SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL
                   }
                   target={'_blank'}
                 >

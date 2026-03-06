@@ -1,4 +1,5 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL } from '@/utils/SynapseConstants'
 import { render, screen } from '@testing-library/react'
 import { PrivateEntityDoiWarning } from './PrivateEntityDoiWarning'
 
@@ -37,7 +38,7 @@ describe('PrivateEntityDoiWarning', () => {
     expect(docLink).toBeInTheDocument()
     expect(docLink).toHaveAttribute(
       'href',
-      'https://docs.synapse.org/synapse-docs/sharing-settings-permissions-and-conditions-for-use',
+      SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL,
     )
   })
 

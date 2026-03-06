@@ -1,6 +1,7 @@
 import ConfirmCloseWithoutSavingDialog from '@/components/Dialog/ConfirmCloseWithoutSavingDialog'
 import { useGetEntityBundle } from '@/synapse-queries'
 import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
+import { SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL } from '@/utils/SynapseConstants'
 import { noop } from 'lodash-es'
 import { useRef, useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog'
@@ -8,8 +9,6 @@ import { displayToast } from '../ToastMessage'
 import EntityAclEditor, { EntityAclEditorHandle } from './EntityAclEditor'
 
 const ENTITY_SHARING_SETTINGS_HELP_MARKDOWN = `Sharing settings determine who can access your content, and what kind of access they have. Choose people/teams and define their level of access below.\n\n_Only Administrators can add, delete, or change access levels for other people._`
-const ENTITY_SHARING_SETTINGS_HELP_URL =
-  'https://help.synapse.org/docs/Sharing-Settings,-Permissions,-and-Conditions-for-Use.2024276030.html'
 
 export type EntityAclEditorModalProps = {
   entityId: string
@@ -65,7 +64,8 @@ export default function EntityAclEditorModal(props: EntityAclEditorModalProps) {
         maxWidth={'md'}
         titleHelpPopoverProps={{
           markdownText: ENTITY_SHARING_SETTINGS_HELP_MARKDOWN,
-          helpUrl: ENTITY_SHARING_SETTINGS_HELP_URL,
+          helpUrl:
+            SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL,
         }}
         content={
           <EntityAclEditor

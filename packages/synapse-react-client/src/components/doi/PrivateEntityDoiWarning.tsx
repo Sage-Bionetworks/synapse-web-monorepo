@@ -1,4 +1,8 @@
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import {
+  DATA_CATALOG_PATH_SEGMENT,
+  SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL,
+} from '@/utils/SynapseConstants'
 import { Box, Link, Typography } from '@mui/material'
 
 export function PrivateEntityDoiWarning() {
@@ -27,7 +31,7 @@ export function PrivateEntityDoiWarning() {
         </Link>
         <Link
           href={
-            'https://docs.synapse.org/synapse-docs/sharing-settings-permissions-and-conditions-for-use'
+            SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL
           }
           target={'_blank'}
           rel={'noreferrer noopener'}
@@ -40,7 +44,7 @@ export function PrivateEntityDoiWarning() {
           <Link
             href={`${getEndpoint(
               BackendDestinationEnum.PORTAL_ENDPOINT,
-            )}DataCatalog:0`}
+            )}${DATA_CATALOG_PATH_SEGMENT}`}
             target="_blank"
             rel="noopener"
           >
