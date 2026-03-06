@@ -23,10 +23,6 @@ const meta = {
       description:
         'Show debug information including session details and model snapshot',
     },
-    pinFirstColumn: {
-      control: 'boolean',
-      description: 'Pin the first column to the left side of the grid',
-    },
   },
 } satisfies Meta<SynapseGridPropsAndCustomArgs>
 export default meta
@@ -36,7 +32,6 @@ type Story = StoryObj<SynapseGridPropsAndCustomArgs>
 export const GridWithQuery = {
   args: {
     query: 'SELECT * FROM syn35295069',
-    pinFirstColumn: true,
   },
   render: function GridWithButton({ query, ...args }) {
     const gridRef = useRef<SynapseGridHandle>(null)
