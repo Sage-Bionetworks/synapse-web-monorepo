@@ -1,8 +1,8 @@
-import { getAccessTypeFromPermissionLevel } from '@/utils/PermissionLevelToAccessType'
 import {
   MOCK_AUTHENTICATED_PRINCIPAL_ID as AUTHENTICATED_PRINCIPAL_ID,
   MOCK_PUBLIC_PRINCIPAL_ID as PUBLIC_PRINCIPAL_ID,
 } from '@/mocks/realm/mockRealmPrincipal'
+import { getAccessTypeFromPermissionLevel } from '@/utils/PermissionLevelToAccessType'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { FileEntity } from '@sage-bionetworks/synapse-types'
 import { generateBaseEntity } from '../faker/generateFakeEntity'
@@ -122,32 +122,10 @@ export const mockFileEntityCurrentUserCannotEdit: MockEntityData<FileEntity> =
     },
   })
 
-export const mockFileAuthenticatedUsersOnly: MockEntityData<FileEntity> =
-  generateBaseEntity({
-    id: 30006,
-    type: EntityType.file,
-    acl: {
-      resourceAccess: [
-        {
-          principalId: MOCK_USER_ID,
-          accessType: getAccessTypeFromPermissionLevel('CAN_ADMINISTER'),
-        },
-        {
-          principalId: AUTHENTICATED_PRINCIPAL_ID,
-          accessType: getAccessTypeFromPermissionLevel('CAN_DOWNLOAD'),
-        },
-      ],
-    },
-    permissions: {
-      isEntityOpenData: false,
-    },
-  })
-
 export const aclCustomizedMockFileEntities = [
   mockFileOpenDataWithPublicRead,
   mockFileOpenDataWithNoPublicRead,
   mockFilePublicReadNoOpenData,
   mockFileEntityWithLocalSharingSettingsData,
   mockFileEntityCurrentUserCannotEdit,
-  mockFileAuthenticatedUsersOnly,
 ]

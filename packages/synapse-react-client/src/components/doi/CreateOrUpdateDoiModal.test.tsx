@@ -1,9 +1,9 @@
+import { generateBaseEntity } from '@/mocks/faker/generateFakeEntity'
 import {
-  mockFileAuthenticatedUsersOnly,
-  mockFileOpenDataWithNoPublicRead,
-  mockFileOpenDataWithPublicRead,
-} from '@/mocks/entity/mockFileEntityACLVariants'
-import { MOCK_REALM_PRINCIPAL } from '@/mocks/realm/mockRealmPrincipal'
+  MOCK_AUTHENTICATED_PRINCIPAL_ID,
+  MOCK_PUBLIC_PRINCIPAL_ID,
+  MOCK_REALM_PRINCIPAL,
+} from '@/mocks/realm/mockRealmPrincipal'
 import {
   MOCK_USER_ID,
   mockUserProfileData,
@@ -21,6 +21,7 @@ import {
   getUseQuerySuccessMock,
 } from '@/testutils/ReactQueryMockUtils'
 import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
+import { getAccessTypeFromPermissionLevel } from '@/utils/PermissionLevelToAccessType'
 import {
   DoiNameIdentifierNameIdentifierSchemeEnum,
   DoiObjectType,
@@ -43,15 +44,39 @@ vi.mock('@/components/ToastMessage/ToastMessage')
 vi.mock('@/synapse-queries/portal/usePortal')
 vi.mock('@/utils/context/GlobalIsEditingContext')
 
+const mockEntityWithPublicAccess = generateBaseEntity({
+  acl: {
+    resourceAccess: [
+      {
+        principalId: MOCK_PUBLIC_PRINCIPAL_ID,
+        accessType: getAccessTypeFromPermissionLevel('CAN_DOWNLOAD'),
+      },
+      {
+        principalId: MOCK_AUTHENTICATED_PRINCIPAL_ID,
+        accessType: getAccessTypeFromPermissionLevel('CAN_DOWNLOAD'),
+      },
+    ],
+  },
+})
+
+const mockEntityWithNoPublicAccess = generateBaseEntity({
+  acl: {
+    resourceAccess: [
+      {
+        principalId: MOCK_USER_ID,
+        accessType: getAccessTypeFromPermissionLevel('CAN_ADMINISTER'),
+      },
+    ],
+  },
+})
+
 const mockUseCreateOrUpdateDOI = vi
   .mocked(useCreateOrUpdateDOI)
   .mockReturnValue(getUseMutationIdleMock())
 
 const mockUseGetEntityBundle = vi
   .mocked(useGetEntityBundle)
-  .mockReturnValue(
-    getUseQuerySuccessMock(mockFileOpenDataWithPublicRead.bundle),
-  )
+  .mockReturnValue(getUseQuerySuccessMock(mockEntityWithPublicAccess.bundle))
 
 const mockUseGetRealmPrincipals = vi
   .mocked(useGetRealmPrincipals)
@@ -126,7 +151,7 @@ describe('CreateOrUpdateDoiModal', () => {
 
   beforeEach(() => {
     mockUseGetEntityBundle.mockReturnValue(
-      getUseQuerySuccessMock(mockFileOpenDataWithPublicRead.bundle),
+      getUseQuerySuccessMock(mockEntityWithPublicAccess.bundle),
     )
     mockUseGetDOI.mockReturnValue(getUseQuerySuccessMock(null))
     mockUseCreateOrUpdateDOI.mockReturnValue(getUseMutationIdleMock())
@@ -196,7 +221,7 @@ describe('CreateOrUpdateDoiModal', () => {
 
     setup()
 
-    await screen.findByDisplayValue(mockFileOpenDataWithPublicRead.entity.name)
+    await screen.findByDisplayValue(mockEntityWithPublicAccess.entity.name)
     await screen.findByDisplayValue('Last, First') // matching the mockUserProfile data
   })
 
@@ -408,7 +433,7 @@ describe('CreateOrUpdateDoiModal', () => {
   describe('Private Entity DOI Warning Step', () => {
     it('shows warning step when creating DOI for private entity', async () => {
       mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(mockFileOpenDataWithNoPublicRead.bundle),
+        getUseQuerySuccessMock(mockEntityWithNoPublicAccess.bundle),
       )
 
       setup()
@@ -430,7 +455,7 @@ describe('CreateOrUpdateDoiModal', () => {
 
     it('shows form directly when updating existing DOI regardless of privacy', async () => {
       mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(mockFileOpenDataWithNoPublicRead.bundle),
+        getUseQuerySuccessMock(mockEntityWithNoPublicAccess.bundle),
       )
       mockUseGetDOI.mockReturnValue(
         getUseQuerySuccessMock({
@@ -449,7 +474,7 @@ describe('CreateOrUpdateDoiModal', () => {
 
     it('advances to form step when clicking Continue on warning', async () => {
       mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(mockFileOpenDataWithNoPublicRead.bundle),
+        getUseQuerySuccessMock(mockEntityWithNoPublicAccess.bundle),
       )
 
       const { user } = setup()
@@ -465,7 +490,7 @@ describe('CreateOrUpdateDoiModal', () => {
 
     it('closes modal when clicking Cancel on warning step', async () => {
       mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(mockFileOpenDataWithNoPublicRead.bundle),
+        getUseQuerySuccessMock(mockEntityWithNoPublicAccess.bundle),
       )
 
       const onClose = vi.fn()
@@ -483,7 +508,7 @@ describe('CreateOrUpdateDoiModal', () => {
 
     it('resets to warning step when modal is reopened', async () => {
       mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(mockFileOpenDataWithNoPublicRead.bundle),
+        getUseQuerySuccessMock(mockEntityWithNoPublicAccess.bundle),
       )
 
       const { rerender, user } = setup({ ...defaultProps, open: true })
@@ -510,8 +535,19 @@ describe('CreateOrUpdateDoiModal', () => {
     })
 
     it('uses authenticated users principal for public check', async () => {
+      const entityWithAuthUsersAccess = generateBaseEntity({
+        acl: {
+          resourceAccess: [
+            {
+              principalId: MOCK_AUTHENTICATED_PRINCIPAL_ID,
+              accessType: getAccessTypeFromPermissionLevel('CAN_DOWNLOAD'),
+            },
+          ],
+        },
+      })
+
       mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(mockFileAuthenticatedUsersOnly.bundle),
+        getUseQuerySuccessMock(entityWithAuthUsersAccess.bundle),
       )
 
       setup()
