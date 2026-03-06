@@ -39,7 +39,6 @@ type DataGridProps = {
     rowIndex: number | null,
     row: DataGridRow | null,
   ) => void
-  pinFirstColumn?: boolean
 }
 
 /**
@@ -60,20 +59,13 @@ export default function DataGrid(props: DataGridProps) {
     handleChange,
     handleSelectionChange,
     onSelectedRowChange,
-    pinFirstColumn,
   } = props
 
   // Move columnWidths state into DataGrid
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({})
 
-  // Internal pin state management
-  const [internalPinFirstColumn, setInternalPinFirstColumn] = useState(false)
-
-  // Use external prop if provided, otherwise use internal state
-  // Memoize this to prevent unnecessary recalculations during scroll
-  const effectivePinFirstColumn = useMemo(() => {
-    return pinFirstColumn ?? internalPinFirstColumn
-  }, [pinFirstColumn, internalPinFirstColumn])
+  // Pin state management for first column
+  const [isPinned, setIsPinned] = useState(false)
 
   // Initialize column widths with defaults when columns first become available
   useEffect(() => {
@@ -98,7 +90,7 @@ export default function DataGrid(props: DataGridProps) {
           // Calculate default width using centralized function
           const propertyInfo = schemaPropertiesInfo[columnName]
           const headerOptions: HeaderOptions = {
-            showPinIcon: arrayIndex === 0 && pinFirstColumn === undefined,
+            showPinIcon: arrayIndex === 0,
             hasDescription: !!propertyInfo?.description,
           }
           newWidths[columnName] = calculateDefaultColumnWidth(
@@ -110,7 +102,7 @@ export default function DataGrid(props: DataGridProps) {
       })
       return newWidths
     })
-  }, [columnNames, columnOrder, schemaPropertiesInfo, pinFirstColumn])
+  }, [columnNames, columnOrder, schemaPropertiesInfo])
 
   // Handler to toggle pin state for the first column only
   const handleTogglePin = useCallback(
@@ -127,18 +119,15 @@ export default function DataGrid(props: DataGridProps) {
 
       if (columnIndex !== 0) return // Only allow first column pinning
 
-      // Only allow toggling if no external pinFirstColumn prop is provided
-      if (pinFirstColumn === undefined) {
-        setInternalPinFirstColumn(prev => !prev)
-      }
+      setIsPinned(prev => !prev)
     },
-    [pinFirstColumn, columnOrder],
+    [columnOrder],
   )
 
   // Memoize the pinned columns set to prevent recalculation during scroll
   const pinnedColumnsSet = useMemo<Set<number>>(() => {
-    return effectivePinFirstColumn ? new Set([0]) : new Set()
-  }, [effectivePinFirstColumn])
+    return isPinned ? new Set([0]) : new Set()
+  }, [isPinned])
 
   const colValues = useMemo(
     () =>
@@ -148,7 +137,7 @@ export default function DataGrid(props: DataGridProps) {
         schemaPropertiesInfo,
         columnWidths,
         pinnedColumnsSet,
-        pinFirstColumn === undefined ? handleTogglePin : undefined,
+        handleTogglePin,
       ),
     [
       columnNames,
@@ -157,7 +146,6 @@ export default function DataGrid(props: DataGridProps) {
       columnWidths,
       pinnedColumnsSet,
       handleTogglePin,
-      pinFirstColumn,
     ],
   )
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
@@ -288,7 +276,6 @@ export default function DataGrid(props: DataGridProps) {
         onChange={handleChange}
         onActiveCellChange={handleActiveCellChange}
         onSelectionChange={handleSelectionChange}
-        pinFirstColumn={effectivePinFirstColumn}
       />
     </div>
   )
