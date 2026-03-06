@@ -121,6 +121,7 @@ describe('CreateOrUpdateDoiModal', () => {
 
   afterAll(() => {
     vi.useRealTimers()
+    vi.resetAllMocks()
   })
 
   beforeEach(() => {
@@ -486,6 +487,7 @@ describe('CreateOrUpdateDoiModal', () => {
       )
 
       const { rerender, user } = setup({ ...defaultProps, open: true })
+      expect(mockUseGetRealmPrincipals).toHaveBeenCalled()
 
       await waitFor(() => {
         expectWarningStep(true)
