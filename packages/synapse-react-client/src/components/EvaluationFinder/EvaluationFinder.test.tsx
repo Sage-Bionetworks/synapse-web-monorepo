@@ -33,10 +33,10 @@ vi.spyOn(SynapseClient, 'getEvaluations').mockImplementation(params => {
 })
 
 describe('EvaluationFinder', () => {
-  it('fetches and shows pages of evaluations', async () => {
+  it('fetches and shows all pages of evaluations', async () => {
     renderComponent({ onChange, selectedIds })
 
-    // The first page is visible
+    // Wait for the first page to be visible
     let evaluationsToSelect = await screen.findAllByRole('checkbox')
     expect(evaluationsToSelect).toHaveLength(2)
 
@@ -44,31 +44,44 @@ describe('EvaluationFinder', () => {
     expect(evaluationsToSelect[0]).not.toBeChecked()
     expect(evaluationsToSelect[1]).toBeChecked()
 
-    const nextPageButton = await screen.findByRole('button', {
-      name: 'Next Page',
-    })
+    // Wait for the second page to be automatically fetched and displayed
+    await waitFor(
+      () => {
+        evaluationsToSelect = screen.getAllByRole('checkbox')
+        expect(evaluationsToSelect).toHaveLength(3)
+      },
+      { timeout: 3000 },
+    )
 
-    await waitFor(() => expect(nextPageButton).not.toBeDisabled())
-    await userEvent.click(nextPageButton)
+    // All evaluations from both pages should now be visible
+    expect(evaluationsToSelect).toHaveLength(3)
 
-    // Page 2 will be shown
-    await waitFor(() => {
-      evaluationsToSelect = screen.getAllByRole('checkbox')
-      expect(evaluationsToSelect).toHaveLength(1)
-      expect(nextPageButton).toBeDisabled()
-    })
-    // Go back to page 1
-    const previousPageButton = await screen.findByRole('button', {
-      name: 'Previous Page',
-    })
-    await userEvent.click(previousPageButton)
-    await waitFor(() => expect(screen.getAllByRole('checkbox')).toHaveLength(2))
-
-    evaluationsToSelect = await screen.findAllByRole('checkbox')
-    expect(evaluationsToSelect).toHaveLength(2)
+    // Verify the selection is still correct
+    expect(evaluationsToSelect[0]).not.toBeChecked()
+    expect(evaluationsToSelect[1]).toBeChecked()
+    expect(evaluationsToSelect[2]).not.toBeChecked()
 
     // Click the first evaluation and verify that the onChange callback is called
     await userEvent.click(evaluationsToSelect[0])
     expect(onChange).toHaveBeenCalledWith(expect.arrayContaining(['1', '2']))
+
+    // Test the search filter
+    const searchInput = screen.getByPlaceholderText('Search Evaluations')
+    await userEvent.type(searchInput, 'Eval 1')
+
+    // Only one evaluation should be visible after filtering
+    await waitFor(() => {
+      evaluationsToSelect = screen.getAllByRole('checkbox')
+      expect(evaluationsToSelect).toHaveLength(1)
+    })
+
+    // Clear the search
+    await userEvent.clear(searchInput)
+
+    // All evaluations should be visible again
+    await waitFor(() => {
+      evaluationsToSelect = screen.getAllByRole('checkbox')
+      expect(evaluationsToSelect).toHaveLength(3)
+    })
   })
 })

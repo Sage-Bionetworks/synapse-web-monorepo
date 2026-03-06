@@ -14,6 +14,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { HelpPopover } from '../HelpPopover'
 import { IconSvg } from '../IconSvg'
 import { IconSvgButton } from '../IconSvgButton'
+import styles from './EvaluationFinder.module.scss'
 
 export type EvaluationFinderProps = Pick<
   GetEvaluationParameters,
@@ -76,7 +77,7 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
         variant="outlined"
         value={searchTerm}
         onChange={e => setSearchTerm(e.target.value)}
-        sx={{ mb: 2 }}
+        className={styles.searchField}
         placeholder="Search Evaluations"
         slotProps={{
           input: {
@@ -84,10 +85,7 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
               <IconSvg
                 icon="search"
                 wrap={false}
-                sx={{
-                  mr: 1,
-                  color: 'grey.600',
-                }}
+                className={styles.searchIcon}
               />
             ),
             endAdornment: (
@@ -106,18 +104,9 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
           },
         }}
       />
-      <Box
-        sx={{
-          maxHeight: '400px',
-          overflowY: 'auto',
-          border: '1px solid',
-          borderColor: 'grey.300',
-          borderRadius: 1,
-          p: 2,
-        }}
-      >
+      <Box className={styles.scrollContainer}>
         <FormControl fullWidth>
-          <FormGroup sx={{ gap: 1 }}>
+          <FormGroup className={styles.formGroup}>
             {filteredEvaluations.map(evaluation => (
               <FormControlLabel
                 control={
@@ -125,21 +114,11 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
                 }
                 key={evaluation.id}
                 label={
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 1,
-                    }}
-                  >
+                  <Box className={styles.labelContainer}>
                     {evaluation.name}
                     {evaluation.submissionInstructionsMessage &&
                       evaluation.submissionInstructionsMessage.length > 0 && (
-                        <Box
-                          sx={{
-                            fontSize: '10px',
-                          }}
-                        >
+                        <Box className={styles.helpPopoverWrapper}>
                           <HelpPopover
                             markdownText={
                               evaluation.submissionInstructionsMessage
@@ -161,15 +140,13 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
               />
             ))}
             {filteredEvaluations.length === 0 && (
-              <Box sx={{ textAlign: 'center', py: 2, color: 'text.secondary' }}>
-                No evaluations found
-              </Box>
+              <Box className={styles.emptyState}>No evaluations found</Box>
             )}
           </FormGroup>
         </FormControl>
       </Box>
       {isFetchingNextPage && (
-        <Box sx={{ mt: 1 }}>
+        <Box className={styles.loadingContainer}>
           <LinearProgress />
         </Box>
       )}
