@@ -81,6 +81,7 @@ function createBaseColumn(config: ColumnConfig, columnImpl: any) {
     shrink: 0,
     disabled: config.disabled,
     deleteValue: createDeleteValue(config.columnName, config.isRequired),
+    stickyLeft: config.isPinned,
   }
 }
 
