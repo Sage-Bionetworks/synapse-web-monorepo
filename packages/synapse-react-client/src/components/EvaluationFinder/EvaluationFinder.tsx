@@ -2,16 +2,18 @@ import { useGetEvaluationsInfinite } from '@/synapse-queries/evaluation/useEvalu
 import {
   Alert,
   Box,
-  Button,
   Checkbox,
   FormControl,
   FormControlLabel,
   FormGroup,
   LinearProgress,
+  TextField,
 } from '@mui/material'
 import { GetEvaluationParameters } from '@sage-bionetworks/synapse-types'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { HelpPopover } from '../HelpPopover'
+import { IconSvg } from '../IconSvg'
+import { IconSvgButton } from '../IconSvgButton'
 
 export type EvaluationFinderProps = Pick<
   GetEvaluationParameters,
@@ -23,20 +25,37 @@ export type EvaluationFinderProps = Pick<
 
 export default function EvaluationFinder(props: EvaluationFinderProps) {
   const { accessType, activeOnly, selectedIds = [], onChange } = props
-  const [currentPage, setCurrentPage] = useState(0)
-  const {
-    data,
-    isLoading,
-    hasNextPage: hasNextPageOnServer,
-    fetchNextPage,
-    isFetchingNextPage,
-  } = useGetEvaluationsInfinite(
-    {
-      accessType,
-      activeOnly,
-    },
-    { placeholderData: previousData => previousData, throwOnError: true },
-  )
+  const [searchTerm, setSearchTerm] = useState('')
+  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useGetEvaluationsInfinite(
+      {
+        accessType,
+        activeOnly,
+      },
+      { placeholderData: previousData => previousData, throwOnError: true },
+    )
+
+  // Automatically fetch all pages
+  useEffect(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+
+  // Flatten all evaluations from all pages
+  const allEvaluations = useMemo(() => {
+    return data?.pages?.flatMap(page => page.results) ?? []
+  }, [data])
+
+  // Filter evaluations based on search term
+  const filteredEvaluations = useMemo(() => {
+    if (!searchTerm.trim()) {
+      return allEvaluations
+    }
+    return allEvaluations.filter(evaluation =>
+      evaluation.name?.toLowerCase().includes(searchTerm.toLowerCase()),
+    )
+  }, [allEvaluations, searchTerm])
 
   if (isLoading) {
     return <LinearProgress />
@@ -50,92 +69,110 @@ export default function EvaluationFinder(props: EvaluationFinderProps) {
     )
   }
 
-  const hasNextPageInState = data.pages.length - 1 > currentPage
-  const canGoToNextPage =
-    hasNextPageInState || (hasNextPageOnServer && !isFetchingNextPage)
-
   return (
     <>
-      <FormControl>
-        <FormGroup sx={{ gap: 1 }}>
-          {data.pages[currentPage]?.results.map(evaluation => (
-            <FormControlLabel
-              control={
-                <Checkbox inputProps={{ 'aria-label': evaluation.name! }} />
-              }
-              key={evaluation.id}
-              label={
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                  }}
-                >
-                  {evaluation.name}
-                  {evaluation.submissionInstructionsMessage &&
-                    evaluation.submissionInstructionsMessage.length > 0 && (
-                      <Box
-                        sx={{
-                          fontSize: '10px',
-                        }}
-                      >
-                        <HelpPopover
-                          markdownText={
-                            evaluation.submissionInstructionsMessage
-                          }
-                          placement={'right'}
-                        />
-                      </Box>
-                    )}
-                </Box>
-              }
-              checked={selectedIds.includes(evaluation.id!)}
-              onChange={() => {
-                if (selectedIds.includes(evaluation.id!)) {
-                  onChange(selectedIds.filter(id => id !== evaluation.id))
-                } else {
-                  onChange([...selectedIds, evaluation.id!])
-                }
-              }}
-            />
-          ))}
-        </FormGroup>
-      </FormControl>
+      <TextField
+        fullWidth
+        variant="outlined"
+        value={searchTerm}
+        onChange={e => setSearchTerm(e.target.value)}
+        sx={{ mb: 2 }}
+        placeholder="Search Evaluations"
+        slotProps={{
+          input: {
+            startAdornment: (
+              <IconSvg
+                icon="search"
+                wrap={false}
+                sx={{
+                  mr: 1,
+                  color: 'grey.600',
+                }}
+              />
+            ),
+            endAdornment: (
+              <>
+                {searchTerm.length > 0 && (
+                  <IconSvgButton
+                    icon="close"
+                    size="small"
+                    onClick={() => {
+                      setSearchTerm('')
+                    }}
+                  />
+                )}
+              </>
+            ),
+          },
+        }}
+      />
       <Box
         sx={{
-          display: 'flex',
-          my: 2,
-          gap: 1,
+          maxHeight: '400px',
+          overflowY: 'auto',
+          border: '1px solid',
+          borderColor: 'grey.300',
+          borderRadius: 1,
+          p: 2,
         }}
       >
-        {currentPage > 0 && (
-          <Button
-            variant={'outlined'}
-            onClick={() => setCurrentPage(page => page - 1)}
-          >
-            Previous Page
-          </Button>
-        )}
-        <Button
-          variant={'outlined'}
-          disabled={!canGoToNextPage}
-          onClick={() => {
-            if (data.pages[currentPage + 1]) {
-              setCurrentPage(page => page + 1)
-            } else {
-              fetchNextPage()
-                .then(() => setCurrentPage(page => page + 1))
-                .catch(() => {
-                  // The error will be thrown by the useGetEvaluationsInfinite hook handled by the error boundary
-                  console.error('Error fetching next page of evaluations')
-                })
-            }
-          }}
-        >
-          Next Page
-        </Button>
+        <FormControl fullWidth>
+          <FormGroup sx={{ gap: 1 }}>
+            {filteredEvaluations.map(evaluation => (
+              <FormControlLabel
+                control={
+                  <Checkbox inputProps={{ 'aria-label': evaluation.name! }} />
+                }
+                key={evaluation.id}
+                label={
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                    }}
+                  >
+                    {evaluation.name}
+                    {evaluation.submissionInstructionsMessage &&
+                      evaluation.submissionInstructionsMessage.length > 0 && (
+                        <Box
+                          sx={{
+                            fontSize: '10px',
+                          }}
+                        >
+                          <HelpPopover
+                            markdownText={
+                              evaluation.submissionInstructionsMessage
+                            }
+                            placement={'right'}
+                          />
+                        </Box>
+                      )}
+                  </Box>
+                }
+                checked={selectedIds.includes(evaluation.id!)}
+                onChange={() => {
+                  if (selectedIds.includes(evaluation.id!)) {
+                    onChange(selectedIds.filter(id => id !== evaluation.id))
+                  } else {
+                    onChange([...selectedIds, evaluation.id!])
+                  }
+                }}
+              />
+            ))}
+            {filteredEvaluations.length === 0 && (
+              <Box sx={{ textAlign: 'center', py: 2, color: 'text.secondary' }}>
+                No evaluations found
+              </Box>
+            )}
+          </FormGroup>
+        </FormControl>
       </Box>
+      {isFetchingNextPage && (
+        <Box sx={{ mt: 1 }}>
+          <LinearProgress />
+        </Box>
+      )}
     </>
   )
 }
