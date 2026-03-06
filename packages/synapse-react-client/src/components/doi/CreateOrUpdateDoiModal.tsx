@@ -46,6 +46,7 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { isEmpty } from 'lodash-es'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 
 type CreateOrUpdateDoiModalStep = 'warning' | 'form'
 
@@ -455,24 +456,26 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
           onClose()
         }}
       />
-      {currentStep && (
-        <DialogBase
-          open={open}
-          onCancel={handleClose}
-          title={
-            currentStep === 'warning'
-              ? 'This page is private'
-              : 'Create or Update a DOI'
-          }
-          content={
+      <DialogBase
+        open={open}
+        onCancel={handleClose}
+        title={
+          currentStep === 'warning'
+            ? 'This page is private'
+            : 'Create or Update a DOI'
+        }
+        content={
+          !currentStep ? (
+            <SynapseSpinner />
+          ) : (
             <>
               {currentStep === 'warning' && <PrivateEntityDoiWarning />}
               {currentStep === 'form' && dialogContent}
             </>
-          }
-          actions={dialogActions}
-        />
-      )}
+          )
+        }
+        actions={dialogActions}
+      />
     </>
   )
 }
