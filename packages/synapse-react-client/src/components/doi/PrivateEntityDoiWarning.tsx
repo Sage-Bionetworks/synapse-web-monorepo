@@ -20,7 +20,7 @@ export function PrivateEntityDoiWarning() {
         <Link
           href={'https://www.doi.org/the-identifier/what-is-a-doi/'}
           target={'_blank'}
-          rel={'noreferrer'}
+          rel={'noreferrer noopener'}
           variant="body1"
         >
           More about DOIs (external URL)
@@ -30,7 +30,7 @@ export function PrivateEntityDoiWarning() {
             'https://docs.synapse.org/synapse-docs/sharing-settings-permissions-and-conditions-for-use'
           }
           target={'_blank'}
-          rel={'noreferrer'}
+          rel={'noreferrer noopener'}
           variant="body1"
         >
           Show me how to make this page public
@@ -42,6 +42,7 @@ export function PrivateEntityDoiWarning() {
               BackendDestinationEnum.PORTAL_ENDPOINT,
             )}DataCatalog:0`}
             target="_blank"
+            rel="noopener"
           >
             Synapse Data Catalog
           </Link>

@@ -171,8 +171,6 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
   )
   const { data: realmPrincipals, isLoading: isLoadingRealmPrincipals } =
     useGetRealmPrincipals()
-  const { publicGroup, authenticatedUsers, anonymousUser } =
-    realmPrincipals || {}
   const { data: doi, isLoading: isLoadingDoi } = useGetDOI(
     {
       id: objectId,
@@ -192,26 +190,18 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
       doi === null && // Creating new DOI
       entityBundle?.benefactorAcl &&
       realmPrincipals &&
-      !isEntityPublic(entityBundle.benefactorAcl.resourceAccess, {
-        authenticatedUsers,
-        publicGroup,
-        anonymousUser,
-      })
+      !isEntityPublic(
+        entityBundle.benefactorAcl.resourceAccess,
+        realmPrincipals,
+      )
     )
-  }, [
-    open,
-    doi,
-    entityBundle,
-    realmPrincipals,
-    publicGroup,
-    authenticatedUsers,
-    anonymousUser,
-  ])
+  }, [open, doi, entityBundle, realmPrincipals])
 
   useEffect(() => {
     if (
       open &&
       !hasSetInitialStepForThisSession.current &&
+      doi !== undefined && // Wait for DOI query to resolve before determining step
       shouldShowWarning !== undefined
     ) {
       const newStep = shouldShowWarning ? 'warning' : 'form'
@@ -221,7 +211,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
       setCurrentStep(null)
       hasSetInitialStepForThisSession.current = false
     }
-  }, [shouldShowWarning, open])
+  }, [shouldShowWarning, open, doi])
 
   const doiCanBeAppliedToVersion =
     objectType === DoiObjectType.ENTITY &&
@@ -329,6 +319,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
             BackendDestinationEnum.PORTAL_ENDPOINT,
           )}DataCatalog:0`}
           target="_blank"
+          rel="noopener"
         >
           Synapse Data Catalog
         </Link>

@@ -154,11 +154,7 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
 
   const { data: ownProfile } = useSuspenseGetCurrentUserProfile()
   const { data: realmPrincipals } = useGetRealmPrincipals()
-  const {
-    authenticatedUsers: authenticatedUsersId,
-    publicGroup: publicGroupId,
-    anonymousUser: anonymousUserId,
-  } = realmPrincipals || {}
+  const { publicGroup: publicGroupId } = realmPrincipals || {}
   const { data: entityBundle } = useSuspenseGetEntityBundle(
     entityId,
     undefined,
@@ -232,11 +228,10 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
     updatedIsInherited,
   ])
 
-  const isPublic = isEntityPublic(updatedResourceAccessList, {
-    authenticatedUsers: authenticatedUsersId,
-    publicGroup: publicGroupId,
-    anonymousUser: anonymousUserId,
-  })
+  const isPublic = isEntityPublic(
+    updatedResourceAccessList,
+    realmPrincipals ?? {},
+  )
 
   const {
     sendNotification,
