@@ -437,6 +437,8 @@ describe('columnFactory', () => {
 
         expect(headerProps.showPinIcon).toBe(true)
         expect(headerProps.isPinned).toBe(true)
+        expect(column.stickyLeft).toBe(true)
+        expect(column.stickyLeft).toBe(true)
       })
 
       it('should pass onTogglePin handler to header when provided', () => {
@@ -470,7 +472,9 @@ describe('columnFactory', () => {
 
         expect(headerProps.showPinIcon).toBeUndefined()
         expect(headerProps.isPinned).toBeUndefined()
+        expect(column.stickyLeft).toBeUndefined()
         expect(headerProps.onTogglePin).toBeUndefined()
+        expect(column.stickyLeft).toBeUndefined()
       })
 
       it('should work with pin props and custom width together', () => {
@@ -492,8 +496,10 @@ describe('columnFactory', () => {
         expect(headerProps.showPinIcon).toBe(true)
         expect(headerProps.isPinned).toBe(true)
         expect(headerProps.onTogglePin).toBe(mockToggleHandler)
+        expect(column.stickyLeft).toBe(true)
         expect(column.minWidth).toBe(250)
         expect(column.basis).toBe(250)
+        expect(column.stickyLeft).toBe(true)
       })
     })
 
