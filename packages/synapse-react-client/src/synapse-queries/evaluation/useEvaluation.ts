@@ -43,7 +43,7 @@ export function useGetEvaluationsInfinite<
     >
   >,
 ) {
-  const LIMIT = 20
+  const LIMIT = 100
   const { accessToken, keyFactory } = useSynapseContext()
   const queryClient = useQueryClient()
 
