@@ -3,17 +3,15 @@ import {
   DATA_CATALOG_PATH_SEGMENT,
   SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL,
 } from '@/utils/SynapseConstants'
-import { Box, Link, Typography } from '@mui/material'
+import { Alert, Box, Link, Typography } from '@mui/material'
 
 export function PrivateEntityDoiWarning() {
   return (
     <>
-      <Box sx={{ backgroundColor: '#F9EBE8' }} mb={2} p={'5px 10px'}>
-        <Typography variant="body1">
-          This page is currently <strong>private</strong>.<br />
-          You may want to make it <strong>public</strong> before you continue.
-        </Typography>
-      </Box>
+      <Alert severity="error" sx={{ mb: 2 }}>
+        This page is currently <strong>private</strong>.<br />
+        You may want to make it <strong>public</strong> before you continue.
+      </Alert>
       <Box rowGap={'15px'} display="flex" flexDirection="column">
         <Typography variant="body1">
           DOIs are permanent identifiers for citing research works. When someone
