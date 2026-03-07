@@ -40,6 +40,8 @@ const defaultQuery: SearchQuery = {
 
 const defaultPanelProps = {
   query: defaultQuery,
+  expanded: true,
+  onCollapse: vi.fn(),
   setQuery: vi.fn() as (newQuery: SearchQuery) => void,
   facets: [] as Facet[],
   onAddFacet: vi.fn() as (facetName: string, facetValue: string) => void,
@@ -120,6 +122,19 @@ describe('SearchFacetPanel', () => {
       rangeQuery: [],
       start: 0,
     })
+  })
+
+  it('calls onCollapse when the close button is clicked', async () => {
+    const onCollapse = vi.fn()
+    render(
+      <SearchFacetPanel
+        {...defaultPanelProps}
+        onCollapse={onCollapse}
+        expanded={true}
+      />,
+    )
+    await userEvent.click(screen.getByTestId('CloseIcon'))
+    expect(onCollapse).toHaveBeenCalled()
   })
 
   it('does not render a facet with empty constraints', () => {
