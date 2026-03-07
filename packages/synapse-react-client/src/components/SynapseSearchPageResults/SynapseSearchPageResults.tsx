@@ -446,7 +446,6 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
           <Button
             variant="outlined"
             startIcon={<FilterAltOutlinedIcon />}
-            onClick={() => setExpanded(!expanded)}
             aria-expanded={expanded}
             aria-controls="filter-search-results-panel"
             sx={{
@@ -506,6 +505,8 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
               >
                 {query && setQuery && (
                   <SearchFacetPanel
+                    expanded={expanded}
+                    onCollapse={() => setExpanded(false)}
                     disabled={isLoading}
                     query={query}
                     setQuery={setQuery}

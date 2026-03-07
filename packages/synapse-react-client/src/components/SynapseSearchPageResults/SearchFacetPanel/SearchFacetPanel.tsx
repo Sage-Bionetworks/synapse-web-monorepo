@@ -12,6 +12,7 @@ import {
   Typography,
   Chip,
   Tooltip,
+  Collapse,
 } from '@mui/material'
 import UTurnLeftIcon from '@mui/icons-material/UTurnLeft'
 import CloseIcon from '@mui/icons-material/Close'
@@ -39,6 +40,8 @@ type SearchFacetPanelProps = {
   setQuery: (newQuery: SearchQuery) => void
   facets: Facet[]
   disabled?: boolean
+  expanded: boolean
+  onCollapse: () => void
   onAddFacet: (facetName: string, facetValue: string) => void
   onRemoveFacet: (facetName: string, facetValue: string) => void
   onSetRangeFacet: (facetName: string, minValue: string) => void
@@ -61,6 +64,8 @@ export function SearchFacetPanel({
   onRemoveRangeFacet,
   isRangeFacetApplied,
   getAppliedRangeFacet,
+  expanded,
+  onCollapse,
 }: SearchFacetPanelProps) {
   const hasAppliedFacets =
     (query.booleanQuery && query.booleanQuery.length > 0) ||
@@ -76,48 +81,67 @@ export function SearchFacetPanel({
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      {hasAppliedFacets && (
-        <Button
-          onClick={handleResetFilters}
-          variant="text"
-          size="small"
-          className={styles.resetFilterButton}
-          disabled={disabled}
-        >
-          <UTurnLeftIcon sx={{ transform: 'rotate(90deg)' }} />
-          <Typography sx={{ fontSize: '16px', fontWeight: 700 }}>
-            Reset Filters
-          </Typography>
-        </Button>
-      )}
-      <Box
-        sx={{ display: 'flex', flexDirection: 'row', gap: 3, flexWrap: 'wrap' }}
-      >
-        {FACET_DISPLAY_ORDER.map(facetName => {
-          const facet = facets.find(f => f.name === facetName)
-
-          if (!facet || !shouldRenderFacet(facet)) {
-            return null
-          }
-
-          return (
-            <SearchFacetGroup
+    <Collapse
+      in={expanded}
+      id="filter-search-results-panel"
+      aria-labelledby="filter-results-button-label"
+    >
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {hasAppliedFacets && (
+            <Button
+              onClick={handleResetFilters}
+              variant="text"
+              size="small"
+              className={styles.resetFilterButton}
               disabled={disabled}
-              key={facet.name}
-              facet={facet}
-              query={query}
-              onAddFacet={onAddFacet}
-              onRemoveFacet={onRemoveFacet}
-              onSetRangeFacet={onSetRangeFacet}
-              onRemoveRangeFacet={onRemoveRangeFacet}
-              isRangeFacetApplied={isRangeFacetApplied}
-              getAppliedRangeFacet={getAppliedRangeFacet}
-            />
-          )
-        })}
+            >
+              <UTurnLeftIcon sx={{ transform: 'rotate(90deg)' }} />
+              <Typography sx={{ fontSize: '16px', fontWeight: 700 }}>
+                Reset Filters
+              </Typography>
+            </Button>
+          )}
+          <CloseIcon
+            sx={{ marginLeft: 'auto', cursor: 'pointer' }}
+            onClick={onCollapse}
+            aria-expanded={expanded}
+            aria-controls="filter-search-results-panel"
+          />
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: 3,
+            flexWrap: 'wrap',
+          }}
+        >
+          {FACET_DISPLAY_ORDER.map(facetName => {
+            const facet = facets.find(f => f.name === facetName)
+
+            if (!facet || !shouldRenderFacet(facet)) {
+              return null
+            }
+
+            return (
+              <SearchFacetGroup
+                disabled={disabled}
+                key={facet.name}
+                facet={facet}
+                query={query}
+                onAddFacet={onAddFacet}
+                onRemoveFacet={onRemoveFacet}
+                onSetRangeFacet={onSetRangeFacet}
+                onRemoveRangeFacet={onRemoveRangeFacet}
+                isRangeFacetApplied={isRangeFacetApplied}
+                getAppliedRangeFacet={getAppliedRangeFacet}
+              />
+            )
+          })}
+        </Box>
       </Box>
-    </Box>
+    </Collapse>
   )
 }
 
