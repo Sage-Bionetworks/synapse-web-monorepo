@@ -4,14 +4,10 @@ import {
   AddToDownloadListRequest,
   EntityType,
 } from '@sage-bionetworks/synapse-client'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import { ModalDownload } from '../ModalDownload/ModalDownload'
-import {
-  useGetEntity,
-  useGetVersions,
-  useGetEntityChildren,
-} from '@/synapse-queries'
+import { useGetEntity, useGetVersions } from '@/synapse-queries'
 import {
   entityTypeToFriendlyName,
   hasFilesInView,
@@ -28,6 +24,7 @@ import { useSynapseContext } from '@/utils'
 import {
   useAddFileToDownloadList,
   useAddToDownloadList,
+  useGetAddToDownloadListStats,
 } from '@/synapse-queries/index'
 import { displayFilesWereAddedToDownloadListSuccess } from '../download_list/DownloadConfirmationUtils'
 import { displayToast } from '../ToastMessage/index'
@@ -396,23 +393,35 @@ export function EntityDownloadButton(props: {
     setShowProgrammaticAccess(false)
   }
 
-  const isFolderOrProject =
-    props.entityType === EntityType.folder ||
-    props.entityType === EntityType.project
+  const isFolderOrProject = isContainerType(props.entityType)
 
-  const { data: entityChildren } = useGetEntityChildren(
+  const folderOrProjectStatsRequest: AddToDownloadListRequest | undefined =
+    useMemo(
+      () =>
+        isFolderOrProject
+          ? {
+              parentId: props.entityId,
+              concreteType:
+                'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+              recursive: true,
+            }
+          : undefined,
+      [isFolderOrProject, props.entityId],
+    )
+
+  const { data: folderOrProjectStats } = useGetAddToDownloadListStats(
     {
-      parentId: props.entityId,
-      includeTypes: [EntityType.file],
-      includeTotalChildCount: true,
+      concreteType:
+        'org.sagebionetworks.repo.model.download.AddToDownloadListStatsRequest',
+      request: folderOrProjectStatsRequest!,
     },
     {
       enabled: isFolderOrProject,
     },
   )
 
-  const hasNoImmediateFileChildren =
-    isFolderOrProject && entityChildren?.totalChildCount === 0
+  const folderOrProjectHasNoFiles =
+    isFolderOrProject && folderOrProjectStats?.fileCount === 0
 
   const { data: entityData } = useGetEntity(props.entityId)
 
@@ -442,7 +451,7 @@ export function EntityDownloadButton(props: {
     (!entityData.items || entityData.items.length === 0)
 
   const addToCartDisabled =
-    hasNoImmediateFileChildren || entityViewHasNoFiles || datasetHasNoFiles
+    folderOrProjectHasNoFiles || entityViewHasNoFiles || datasetHasNoFiles
 
   // state to manage export metadata modal visibility
   const [showExportMetadata, setShowExportMetadata] = useState<boolean>(false)

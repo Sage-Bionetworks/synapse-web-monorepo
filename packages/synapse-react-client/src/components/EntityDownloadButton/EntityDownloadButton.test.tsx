@@ -2,8 +2,8 @@ import mockFileEntityData from '@/mocks/entity/mockFileEntity'
 import {
   useAddFileToDownloadList,
   useAddToDownloadList,
+  useGetAddToDownloadListStats,
   useGetEntity,
-  useGetEntityChildren,
   useGetVersions,
 } from '@/synapse-queries'
 import {
@@ -14,11 +14,13 @@ import {
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { convertToConcreteEntityType } from '@/utils/functions/EntityTypeUtils'
 import { useDirectDownloadHandler } from '@/utils/hooks/useDirectDownloadHandler'
-import { EntityType } from '@sage-bionetworks/synapse-client'
+import {
+  AddToDownloadListStatsResponse,
+  EntityType,
+} from '@sage-bionetworks/synapse-client'
 import {
   AddToDownloadListRequest,
   ENTITY_VIEW_TYPE_MASK_FILE,
-  EntityChildrenResponse,
   PaginatedResults,
   VersionInfo,
 } from '@sage-bionetworks/synapse-types'
@@ -51,12 +53,12 @@ describe('EntityDownloadButton', () => {
       getUseQuerySuccessMock(mockFileEntityData.entity),
     )
     vi.mocked(useGetVersions).mockReturnValue(getUseQueryLoadingMock())
-    vi.mocked(useGetEntityChildren).mockReturnValue(
-      getUseQuerySuccessMock<EntityChildrenResponse>({
-        page: [],
-        nextPageToken: '',
-        totalChildCount: 100,
-        sumFileSizesBytes: 1000,
+    vi.mocked(useGetAddToDownloadListStats).mockReturnValue(
+      getUseQuerySuccessMock<AddToDownloadListStatsResponse>({
+        concreteType:
+          'org.sagebionetworks.repo.model.download.AddToDownloadListStatsResponse',
+        fileCount: 100,
+        fileSize: 1000,
       }),
     )
     vi.mocked(useAddFileToDownloadList).mockReturnValue(
@@ -170,6 +172,70 @@ describe('EntityDownloadButton', () => {
           'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
         recursive: true,
       } satisfies AddToDownloadListRequest)
+    })
+
+    it('enables Add to Download Cart when folder has files in nested subfolders', async () => {
+      const folderId = 'syn123456'
+      vi.mocked(useGetEntity).mockReturnValue(
+        getUseQuerySuccessMock({
+          ...mockFileEntityData.entity,
+          id: folderId,
+          concreteType: convertToConcreteEntityType(EntityType.folder),
+        }),
+      )
+      vi.mocked(useGetAddToDownloadListStats).mockReturnValue(
+        getUseQuerySuccessMock<AddToDownloadListStatsResponse>({
+          concreteType:
+            'org.sagebionetworks.repo.model.download.AddToDownloadListStatsResponse',
+          fileCount: 5, // files exist in nested subfolders
+          fileSize: 5000,
+        }),
+      )
+
+      render(
+        <EntityDownloadButton
+          entityId={folderId}
+          name="Test Folder With Nested Files"
+          entityType={EntityType.folder}
+        />,
+      )
+
+      await openDropdown()
+
+      const addToCartMenuItem = screen.getByText('Add to Download Cart')
+      expect(addToCartMenuItem).toBeEnabled()
+    })
+
+    it('disables Add to Download Cart when folder has no files recursively', async () => {
+      const folderId = 'syn123456'
+      vi.mocked(useGetEntity).mockReturnValue(
+        getUseQuerySuccessMock({
+          ...mockFileEntityData.entity,
+          id: folderId,
+          concreteType: convertToConcreteEntityType(EntityType.folder),
+        }),
+      )
+      vi.mocked(useGetAddToDownloadListStats).mockReturnValue(
+        getUseQuerySuccessMock<AddToDownloadListStatsResponse>({
+          concreteType:
+            'org.sagebionetworks.repo.model.download.AddToDownloadListStatsResponse',
+          fileCount: 0, // no files exist anywhere in the folder hierarchy
+          fileSize: 0,
+        }),
+      )
+
+      render(
+        <EntityDownloadButton
+          entityId={folderId}
+          name="Empty Folder"
+          entityType={EntityType.folder}
+        />,
+      )
+
+      await openDropdown()
+
+      const addToCartMenuItem = screen.getByText('Add to Download Cart')
+      expect(addToCartMenuItem).toBeDisabled()
     })
 
     it('sets recursive: false when adding a dataset to download cart', async () => {
