@@ -174,7 +174,7 @@ function useSynchronizeQueryWithUrl(
     return () => {
       if (shouldDeepLink) {
         DeepLinkingUtils.updateUrlWithNewSearchParam(
-          'QueryWrapper',
+          'qw',
           componentIndex,
           null,
           initQueryRequest.query,
