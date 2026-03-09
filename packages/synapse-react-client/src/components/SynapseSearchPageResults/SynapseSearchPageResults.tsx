@@ -603,6 +603,7 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
                     name={hit.name}
                     entityType={hit.node_type}
                     modifiedOn={hit.modified_on}
+                    description={hit.description}
                     locatedIn={projectPath}
                   />
                 )
