@@ -1,17 +1,16 @@
 import {
   useAddToDownloadList,
-  useGetEntityChildren,
+  useGetAddToDownloadListStats,
 } from '@/synapse-queries/index'
 import {
   getUseMutationIdleMock,
   getUseQuerySuccessMock,
 } from '@/testutils/ReactQueryMockUtils'
-import { EntityType } from '@sage-bionetworks/synapse-client'
+import { AddToDownloadListStatsResponse } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   AddToDownloadListRequest,
   AddToDownloadListResponse,
-  EntityChildrenResponse,
 } from '@sage-bionetworks/synapse-types'
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -20,11 +19,11 @@ import * as DownloadConfirmationUIModule from './DownloadConfirmationUI'
 import { FolderDownloadConfirmation } from './index'
 
 vi.mock('../../synapse-queries/index', () => ({
-  useGetEntityChildren: vi.fn(),
+  useGetAddToDownloadListStats: vi.fn(),
   useAddToDownloadList: vi.fn(),
 }))
 
-const mockUseGetEntityChildren = vi.mocked(useGetEntityChildren)
+const mockUseGetAddToDownloadListStats = vi.mocked(useGetAddToDownloadListStats)
 const mockUseAddToDownloadList = vi.mocked(useAddToDownloadList)
 
 const DOWNLOAD_CONFIRMATION_UI_TEST_ID = 'DownloadConfirmationUI'
@@ -66,12 +65,12 @@ describe('FolderDownloadConfirmation', () => {
   beforeEach(() => {
     vi.clearAllMocks()
 
-    mockUseGetEntityChildren.mockReturnValue(
-      getUseQuerySuccessMock<EntityChildrenResponse>({
-        page: [],
-        nextPageToken: '',
-        totalChildCount: 100,
-        sumFileSizesBytes: 1000,
+    mockUseGetAddToDownloadListStats.mockReturnValue(
+      getUseQuerySuccessMock<AddToDownloadListStatsResponse>({
+        concreteType:
+          'org.sagebionetworks.repo.model.download.AddToDownloadListStatsResponse',
+        fileCount: 100,
+        fileSize: 1000,
       }),
     )
 
@@ -86,11 +85,15 @@ describe('FolderDownloadConfirmation', () => {
 
   it('passes the correct props to DownloadConfirmationUI', async () => {
     await setUp()
-    expect(mockUseGetEntityChildren).toHaveBeenCalledWith({
-      parentId: FOLDER_ID,
-      includeSumFileSizes: true,
-      includeTotalChildCount: true,
-      includeTypes: [EntityType.file],
+    expect(mockUseGetAddToDownloadListStats).toHaveBeenCalledWith({
+      concreteType:
+        'org.sagebionetworks.repo.model.download.AddToDownloadListStatsRequest',
+      request: {
+        parentId: FOLDER_ID,
+        concreteType:
+          'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+        recursive: true,
+      },
     })
     expect(mockDownloadConfirmationUi).toHaveBeenCalled()
     const passedProps = mockDownloadConfirmationUi.mock.lastCall![0]

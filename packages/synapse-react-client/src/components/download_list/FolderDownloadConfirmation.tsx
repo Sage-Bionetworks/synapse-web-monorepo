@@ -1,6 +1,10 @@
-import { useAddToDownloadList, useGetEntityChildren } from '@/synapse-queries'
+import {
+  useAddToDownloadList,
+  useGetAddToDownloadListStats,
+} from '@/synapse-queries'
 import { useSynapseContext } from '@/utils'
-import { EntityType } from '@sage-bionetworks/synapse-client'
+import { AddToDownloadListRequest } from '@sage-bionetworks/synapse-client'
+import { useMemo } from 'react'
 import { displayToast } from '../ToastMessage'
 import { DownloadConfirmationUI } from './DownloadConfirmationUI'
 import { displayFilesWereAddedToDownloadListSuccess } from './DownloadConfirmationUtils'
@@ -19,16 +23,25 @@ export function FolderDownloadConfirmation(
   const { folderId, fnClose } = props
   const { downloadCartPageUrl } = useSynapseContext()
 
-  const { data: entityChildrenData, isLoading: isLoadingStats } =
-    useGetEntityChildren({
+  const addToDownloadListRequest: AddToDownloadListRequest = useMemo(
+    () => ({
       parentId: folderId,
-      includeSumFileSizes: true,
-      includeTotalChildCount: true,
-      includeTypes: [EntityType.file],
+      concreteType:
+        'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+      recursive: true,
+    }),
+    [folderId],
+  )
+
+  const { data: statsData, isLoading: isLoadingStats } =
+    useGetAddToDownloadListStats({
+      concreteType:
+        'org.sagebionetworks.repo.model.download.AddToDownloadListStatsRequest',
+      request: addToDownloadListRequest,
     })
 
-  const fileCount = entityChildrenData?.totalChildCount ?? 0
-  const fileSizeTotal = entityChildrenData?.sumFileSizesBytes
+  const fileCount = statsData?.fileCount
+  const fileSizeTotal = statsData?.fileSize
 
   const { mutate: addToDownloadList, isPending: isAddingToDownloadCart } =
     useAddToDownloadList({
@@ -44,14 +57,7 @@ export function FolderDownloadConfirmation(
 
   return (
     <DownloadConfirmationUI
-      onAddToDownloadCart={() =>
-        addToDownloadList({
-          parentId: folderId,
-          concreteType:
-            'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-          recursive: true,
-        })
-      }
+      onAddToDownloadCart={() => addToDownloadList(addToDownloadListRequest)}
       fileCount={fileCount}
       fileSize={fileSizeTotal}
       isAddingToDownloadCart={isAddingToDownloadCart}
