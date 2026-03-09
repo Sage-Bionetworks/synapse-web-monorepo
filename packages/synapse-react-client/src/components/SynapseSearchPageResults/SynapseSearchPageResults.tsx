@@ -412,16 +412,16 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
           gap: '16px',
         }}
       >
+        {peopleSearchPageUrl && (
+          <Typography variant="smallText1">
+            Searching for a user profile? Try our{' '}
+            <Link href={peopleSearchPageUrl}>People Search.</Link>
+          </Typography>
+        )}
         <Box className={styles.searchContainer}>
-          {peopleSearchPageUrl && (
-            <Box>
-              Searching for a user profile? Try our{' '}
-              <Link href={peopleSearchPageUrl}>People Search.</Link>
-            </Box>
-          )}
           <TextField
             placeholder="Search…"
-            sx={{ flex: 1, width: '100%' }}
+            sx={{ flex: 1 }}
             value={searchInputValue}
             onChange={handleInputChange}
             onKeyDown={e => {

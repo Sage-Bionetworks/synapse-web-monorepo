@@ -40,12 +40,12 @@
 .searchContainer {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 16px;
   width: 100%;
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
     flex-direction: row;
+    align-items: center;
   }
 }
 
