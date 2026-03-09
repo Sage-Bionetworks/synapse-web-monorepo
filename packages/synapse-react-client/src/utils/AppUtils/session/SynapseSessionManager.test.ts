@@ -1,6 +1,7 @@
 import {
   OAuthTokenIntrospectionResponse,
   RealmPrincipal,
+  SynapseClientError,
 } from '@sage-bionetworks/synapse-client'
 import dayjs from 'dayjs'
 import {
@@ -210,6 +211,131 @@ describe('SynapseSessionManager', () => {
       await manager.refreshSession()
 
       expect(signOutSpy).toHaveBeenCalledWith('42')
+    })
+
+    it('initializes session when Terms of Service error occurs', async () => {
+      mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
+      mockPostAuthV1Oauth2Introspect.mockResolvedValue(
+        MOCK_INTROSPECTION_AUTHENTICATED,
+      )
+
+      const tosError = new SynapseClientError(
+        403,
+        'Login to https://synapse.org to accept the latest Terms of Service.',
+        '',
+        {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+          reason:
+            'Login to https://synapse.org to accept the latest Terms of Service.',
+        },
+      )
+      mockGetRepoV1RealmPrincipals.mockRejectedValue(tosError)
+
+      const manager = createManager({ defaultRealm: '5' })
+      const listener = vi.fn()
+      manager.subscribe(listener)
+
+      await manager.refreshSession()
+
+      // Should initialize session with default realm and mark as authenticated
+      const expectedState: SessionState = {
+        token: MOCK_ACCESS_TOKEN,
+        realmId: '5', // Uses defaultRealm
+        userId: MOCK_USER_ID,
+        isAuthenticated: true,
+        hasInitializedSession: true,
+      }
+      expect(manager.getSnapshot()).toEqual(expectedState)
+      expect(listener).toHaveBeenCalledTimes(1)
+      expect(onSessionInvalid).not.toHaveBeenCalled()
+    })
+
+    it('initializes session when Terms of Service error occurs (case insensitive)', async () => {
+      mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
+      mockPostAuthV1Oauth2Introspect.mockResolvedValue(
+        MOCK_INTROSPECTION_AUTHENTICATED,
+      )
+
+      const tosError = new SynapseClientError(
+        403,
+        'Login to https://synapse.org to accept the latest TERMS OF SERVICE.',
+        '',
+        {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+          reason:
+            'Login to https://synapse.org to accept the latest TERMS OF SERVICE.',
+        },
+      )
+      mockGetRepoV1RealmPrincipals.mockRejectedValue(tosError)
+
+      const manager = createManager()
+      await manager.refreshSession()
+
+      // Should still initialize session successfully
+      expect(manager.getSnapshot().hasInitializedSession).toBe(true)
+      expect(manager.getSnapshot().isAuthenticated).toBe(true)
+    })
+
+    it('initializes session when 2FA error occurs', async () => {
+      mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
+      mockPostAuthV1Oauth2Introspect.mockResolvedValue(
+        MOCK_INTROSPECTION_AUTHENTICATED,
+      )
+
+      const twoFaError = new SynapseClientError(
+        403,
+        'Two factor authentication must be enabled to perform this operation.',
+        'TWO_FA_ENABLED_REQUIRED',
+        {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+          reason:
+            'Two factor authentication must be enabled to perform this operation.',
+          errorCode: 'TWO_FA_ENABLED_REQUIRED',
+        },
+      )
+      mockGetRepoV1RealmPrincipals.mockRejectedValue(twoFaError)
+
+      const manager = createManager({ defaultRealm: '7' })
+      const listener = vi.fn()
+      manager.subscribe(listener)
+
+      await manager.refreshSession()
+
+      // Should initialize session with default realm and mark as authenticated
+      const expectedState: SessionState = {
+        token: MOCK_ACCESS_TOKEN,
+        realmId: '7', // Uses defaultRealm
+        userId: MOCK_USER_ID,
+        isAuthenticated: true,
+        hasInitializedSession: true,
+      }
+      expect(manager.getSnapshot()).toEqual(expectedState)
+      expect(listener).toHaveBeenCalledTimes(1)
+      expect(onSessionInvalid).not.toHaveBeenCalled()
+    })
+
+    it('re-throws non-ToS and non-2FA errors from getCurrentRealmPrincipals', async () => {
+      mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
+      mockPostAuthV1Oauth2Introspect.mockResolvedValue(
+        MOCK_INTROSPECTION_AUTHENTICATED,
+      )
+
+      const otherError = new SynapseClientError(
+        500,
+        'Internal server error',
+        '',
+        {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+          reason: 'Internal server error',
+        },
+      )
+      mockGetRepoV1RealmPrincipals.mockRejectedValue(otherError)
+
+      const manager = createManager()
+
+      await expect(manager.refreshSession()).rejects.toThrow(
+        'Internal server error',
+      )
     })
   })
 

@@ -7,6 +7,7 @@ import {
   OAuthTokenIntrospectionResponse,
   RealmPrincipal,
   SynapseClient as SynapseOpenApiClient,
+  SynapseClientError,
 } from '@sage-bionetworks/synapse-client'
 
 const REFRESH_INTERVAL_MS = 60_000
@@ -157,8 +158,46 @@ export class SynapseSessionManager {
     }
 
     const currentUserId = introspectionResponse.sub
-    const realmPrincipals =
-      await SynapseSessionManager.getCurrentRealmPrincipals(token)
+
+    let realmPrincipals: RealmPrincipal | undefined
+    try {
+      realmPrincipals = await SynapseSessionManager.getCurrentRealmPrincipals(
+        token,
+      )
+    } catch (error) {
+      // Special handling for Terms of Service and 2FA errors - allow initialization to continue
+      // so the app can prompt the user to complete the required action
+      const isTosError =
+        error instanceof SynapseClientError &&
+        error.reason?.toLowerCase().includes('terms of service')
+      const isTwoFaError =
+        error instanceof SynapseClientError &&
+        error.errorResponse &&
+        'errorCode' in error.errorResponse &&
+        error.errorResponse.errorCode === 'TWO_FA_ENABLED_REQUIRED'
+
+      if (isTosError || isTwoFaError) {
+        const errorType = isTosError
+          ? 'Terms of Service not accepted'
+          : 'Two factor authentication required'
+        console.warn(
+          `${errorType}. Session will be initialized without realm principals.`,
+        )
+        // Continue initialization with partial data - the app's flow will handle this
+        this.updateState({
+          token,
+          hasInitializedSession: true,
+          realmId: this.options.defaultRealm,
+          userId: currentUserId,
+          isAuthenticated: true, // User has a valid token, even if ToS/2FA not complete
+        })
+        return
+      }
+      // For any other error, re-throw to be handled by caller
+      console.error('Error fetching realm principals: ', error)
+      throw error
+    }
+
     const isAuthenticated = currentUserId !== realmPrincipals.anonymousUser
 
     /*
