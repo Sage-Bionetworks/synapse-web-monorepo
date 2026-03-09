@@ -15,6 +15,7 @@ import {
 import {
   entityTypeToFriendlyName,
   hasFilesInView,
+  isContainerType,
   isDataset,
   isEntityView,
   isVersionableEntity,
@@ -183,6 +184,7 @@ function getMenuItemForAction(
               parentId: entityId,
               concreteType:
                 'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+              recursive: isContainerType(entityType),
             })
           }
         },

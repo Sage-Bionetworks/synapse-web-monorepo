@@ -119,6 +119,7 @@ describe('FolderDownloadConfirmation', () => {
       parentId: FOLDER_ID,
       concreteType:
         'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+      recursive: true,
     })
 
     act(() => {
@@ -132,6 +133,7 @@ describe('FolderDownloadConfirmation', () => {
           parentId: FOLDER_ID,
           concreteType:
             'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+          recursive: true,
         },
         null,
       )
@@ -173,6 +175,7 @@ describe('FolderDownloadConfirmation', () => {
       parentId: FOLDER_ID,
       concreteType:
         'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+      recursive: true,
     })
 
     act(() => {
@@ -186,6 +189,7 @@ describe('FolderDownloadConfirmation', () => {
           parentId: FOLDER_ID,
           concreteType:
             'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+          recursive: true,
         },
         null,
       )

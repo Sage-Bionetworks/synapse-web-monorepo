@@ -49,6 +49,7 @@ export function FolderDownloadConfirmation(
           parentId: folderId,
           concreteType:
             'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+          recursive: true,
         })
       }
       fileCount={fileCount}
