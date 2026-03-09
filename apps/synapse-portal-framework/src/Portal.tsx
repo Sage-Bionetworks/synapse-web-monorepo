@@ -1,6 +1,6 @@
 import { createTheme, ThemeProvider } from '@mui/material'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import { CookiesProvider } from 'react-cookie'
 import { createBrowserRouter, RouteObject } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
