@@ -17,6 +17,8 @@ export type SynapseContextType = {
   withErrorBoundary: boolean
   /** The URL of the download cart page in the current app. Used to properly link components */
   downloadCartPageUrl: string
+  /** The URL of the people search page in the current app */
+  peopleSearchPageUrl?: string
   /** The key factory to use for react-query. Generated automatically. */
   keyFactory: KeyFactory
   /** The appId identifying the product. Used to brand the Synapse account management site, aka OneSage. */
@@ -33,6 +35,7 @@ const defaultContext = {
   withErrorBoundary: false,
   keyFactory: new KeyFactory(undefined),
   downloadCartPageUrl: '/DownloadCart',
+  peopleSearchPageUrl: '/PeopleSearch:',
   appId: undefined,
   synapseClient: new SynapseClient(),
 } satisfies SynapseContextType
@@ -81,6 +84,8 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
       withErrorBoundary: providedContext?.withErrorBoundary ?? false,
       downloadCartPageUrl:
         providedContext?.downloadCartPageUrl ?? '/DownloadCart',
+      peopleSearchPageUrl:
+        providedContext?.peopleSearchPageUrl ?? '/PeopleSearch:',
       keyFactory: providedContext?.keyFactory ?? queryKeyFactory,
       appId: providedContext?.appId,
       synapseClient: synapseApiClient,
