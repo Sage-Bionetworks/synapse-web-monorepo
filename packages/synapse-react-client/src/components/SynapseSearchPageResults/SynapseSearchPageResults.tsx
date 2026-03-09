@@ -7,13 +7,25 @@ import {
   IconButton,
   Collapse,
   Badge,
+  Skeleton,
 } from '@mui/material'
 import SynapseSearchResultsCard from './SynapseSearchResultsCard'
 import SearchIcon from '@mui/icons-material/Search'
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
-import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  Suspense,
+} from 'react'
 import { useSearchInfinite } from '@/synapse-queries/search/useSearch'
-import { SearchQuery, KeyRange, Hit } from '@sage-bionetworks/synapse-types'
+import {
+  SearchQuery,
+  KeyRange,
+  Hit,
+  Facet,
+} from '@sage-bionetworks/synapse-types'
 import { useDocumentMetadata } from '@/utils/context/DocumentMetadataContext'
 import { ArrowForward } from '@mui/icons-material'
 import styles from './SynapseSearchPageResults.module.scss'
@@ -27,6 +39,7 @@ import {
   AppliedFacetsChips,
 } from './SearchFacetPanel/SearchFacetPanel'
 import { shouldShowFacetValue } from './SearchFacetPanel/SearchFacetPanelUtils'
+import { SkeletonInlineBlock } from '../Skeleton'
 
 /**
  * Add a literal facet filter to the query
@@ -118,20 +131,6 @@ function removeRangeFacetFromQuery(
     rangeQuery: rangeQuery.filter(kr => kr.key !== facetName),
     start: 0,
   }
-}
-
-/**
- * Check if a facet filter is currently applied
- */
-function isFacetApplied(
-  query: SearchQuery,
-  facetName: string,
-  facetValue: string,
-): boolean {
-  const booleanQuery = query.booleanQuery || []
-  return booleanQuery.some(
-    kv => kv.key === facetName && kv.value === facetValue,
-  )
 }
 
 /**
@@ -332,7 +331,15 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   const noResults = data?.pages?.[0]?.hits?.length === 0
   const isSynId = SYNAPSE_ENTITY_ID_REGEX.test(query?.queryTerm?.[0] || '')
 
-  const facets = data?.pages?.[0]?.facets || []
+  // cached facets in local state to prevent them from being cleared when the query changes and new search results are loading
+  const [facets, setFacets] = useState<Facet[]>([])
+
+  useEffect(() => {
+    const newFacets = data?.pages?.[0]?.facets
+    if (newFacets) {
+      setFacets(newFacets)
+    }
+  }, [data])
 
   const handleAddFacet = useCallback(
     (facetName: string, facetValue: string) => {
@@ -368,12 +375,6 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
       }
     },
     [query, setQuery],
-  )
-
-  const isFacetAppliedCallback = useCallback(
-    (name: string, val: string) =>
-      query ? isFacetApplied(query, name, val) : false,
-    [query],
   )
 
   const isRangeFacetAppliedCallback = useCallback(
@@ -486,7 +487,7 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
           </Button>
         </Box>
         <Box>
-          {!isLoading && facets.length > 0 && (
+          {facets.length > 0 && (
             <Collapse
               in={expanded}
               id="filter-search-results-panel"
@@ -499,10 +500,13 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
                   backgroundColor: 'var(--synapse-white)',
                   padding: '25px',
                   boxShadow: '0 4px 16px 0 rgba(0, 0, 0, 0.04)',
+                  pointerEvents: isLoading ? 'none' : 'auto',
+                  opacity: isLoading ? 0.5 : 1,
                 }}
               >
                 {query && setQuery && (
                   <SearchFacetPanel
+                    disabled={isLoading}
                     query={query}
                     setQuery={setQuery}
                     facets={facets}
@@ -510,7 +514,6 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
                     onRemoveFacet={handleRemoveFacet}
                     onSetRangeFacet={handleSetRangeFacet}
                     onRemoveRangeFacet={handleRemoveRangeFacet}
-                    isFacetApplied={isFacetAppliedCallback}
                     isRangeFacetApplied={isRangeFacetAppliedCallback}
                     getAppliedRangeFacet={getAppliedRangeFacetCallback}
                   />
@@ -567,9 +570,16 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
             gap: '20px',
           }}
         >
-          {isLoading && <div>Loading data...</div>}
+          {isLoading &&
+            Array.from({ length: 3 }, () => (
+              <Skeleton variant="rectangular" width={'100%'} height={'250px'} />
+            ))}
           {error && <div>Error: {error.message}</div>}
-          <SearchPagePortalBanners entityIds={entityIdsForPortalBanners} />
+          <Suspense
+            fallback={<SkeletonInlineBlock width={'100%'} height={'150px'} />}
+          >
+            <SearchPagePortalBanners entityIds={entityIdsForPortalBanners} />
+          </Suspense>
           {query && (
             <Box sx={{ alignSelf: 'flex-start' }}>
               <AppliedFacetsChips
@@ -586,6 +596,7 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
                 const projectPath = hit.path?.path?.[1]
                 return (
                   <SynapseSearchResultsCard
+                    searchTerms={query?.queryTerm ?? []}
                     key={hit.id + '-' + pageIndex}
                     entityId={hit.id}
                     name={hit.name}

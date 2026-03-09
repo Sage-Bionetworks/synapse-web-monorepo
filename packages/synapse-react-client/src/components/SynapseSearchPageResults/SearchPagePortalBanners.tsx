@@ -89,6 +89,7 @@ export default function SearchPagePortalBanners({
               padding: '32px',
               backgroundColor: 'secondary.100',
               borderRadius: '8px',
+              width: '100%',
               transition: 'background-color 0.3s',
               justifyContent: 'space-between',
               alignItems: 'center',

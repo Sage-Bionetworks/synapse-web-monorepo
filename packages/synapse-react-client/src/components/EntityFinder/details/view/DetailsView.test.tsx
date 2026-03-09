@@ -1,4 +1,5 @@
 import * as EntityBadgeModule from '@/components/EntityBadgeIcons/EntityBadgeIcons'
+import mockDatasetData from '@/mocks/entity/mockDataset'
 import { mockProjectHeader } from '@/mocks/entity/mockEntity'
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
 import { mockFileHandle } from '@/mocks/mock_file_handle'
@@ -36,6 +37,7 @@ const mockEntityBadgeIcons = vi
 const mockFileEntityHeader = mockFileEntityData.entityHeader
 
 const mockToggleSelection = vi.fn()
+const mockSetInitialVersion = vi.fn()
 const mockFetchNextPage = vi.fn()
 const mockSetSort = vi.fn()
 
@@ -103,6 +105,7 @@ const defaultProps: DetailsViewProps = {
   selected: Map(),
   selectableTypes: Object.values(EntityType),
   toggleSelection: mockToggleSelection,
+  setInitialVersion: mockSetInitialVersion,
   entities: entityHeaders,
   isLoading: false,
   hasNextPage: false,
@@ -431,6 +434,37 @@ describe('DetailsView tests', () => {
       )
     })
 
+    it('Clicking select all does not use "in progress" version for table types when versionSelection is REQUIRED', async () => {
+      const datasetHeader = mockDatasetData.entityHeader
+      renderComponent({
+        entities: [datasetHeader],
+        enableSelectAll: true,
+        selectAllIsChecked: false,
+        hasNextPage: false,
+        versionSelection: VersionSelectionType.REQUIRED,
+        selectableTypes: [EntityType.dataset],
+        visibleTypes: [EntityType.dataset],
+        selectColumnType: 'checkbox',
+      })
+
+      const inProgressVersionNumber = mockDatasetData.entityHeader.versionNumber
+      const latestStableVersionNumber =
+        mockDatasetData.versionInfo[0].versionNumber
+      expect(inProgressVersionNumber).not.toBe(latestStableVersionNumber)
+
+      const selectAll = await screen.findByLabelText('Select All')
+      expect(mockToggleSelection).not.toHaveBeenCalled()
+      await userEvent.click(selectAll)
+      await waitFor(() =>
+        expect(mockToggleSelection).toHaveBeenCalledWith([
+          {
+            targetId: datasetHeader.id,
+            targetVersionNumber: latestStableVersionNumber,
+          },
+        ]),
+      )
+    })
+
     it('Clicking select all toggles selection for all entities when some are selected', async () => {
       renderComponent({
         enableSelectAll: true,
@@ -553,6 +587,25 @@ describe('DetailsView tests', () => {
       expect(mockToggleSelection).toBeCalledWith({
         targetId: mockFileEntityHeader.id,
         targetVersionNumber: mockFileEntityHeader.versionNumber,
+      })
+    })
+
+    it('does not use "in progress" version for table types when versionSelection is REQUIRED', async () => {
+      const mockDatasetHeader = mockDatasetData.entityHeader
+
+      renderComponent({
+        versionSelection: VersionSelectionType.REQUIRED,
+        entities: [mockDatasetHeader],
+        visibleTypes: [EntityType.dataset],
+        selectableTypes: [EntityType.dataset],
+      })
+
+      const rows = await screen.findAllByRole('row')
+      await userEvent.click(rows[1])
+
+      expect(mockToggleSelection).toBeCalledWith({
+        targetId: mockDatasetHeader.id,
+        targetVersionNumber: undefined, // NOT the "in progress" version (3)
       })
     })
 
@@ -854,10 +907,10 @@ describe('DetailsView tests', () => {
           (screen.getAllByRole('option')[1] as HTMLOptionElement).selected,
         ).toBe(false)
 
-        expect(mockToggleSelection).toBeCalledWith({
-          targetId: entityHeaders[0].id,
-          targetVersionNumber: versionResult.results[0].versionNumber,
-        })
+        expect(mockSetInitialVersion).toBeCalledWith(
+          entityHeaders[0].id,
+          versionResult.results[0].versionNumber,
+        )
 
         // The version number passed to renderers (such as the EntityBadgeIcons) should be the automatically selected version
         await waitFor(() =>

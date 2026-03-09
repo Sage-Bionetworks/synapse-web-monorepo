@@ -1,0 +1,40 @@
+.searchField {
+  margin-bottom: 16px;
+}
+
+.searchIcon {
+  margin-right: 8px;
+  color: #666;
+}
+
+.scrollContainer {
+  max-height: 325px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 16px;
+}
+
+.formGroup {
+  gap: 8px;
+}
+
+.labelContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.helpPopoverWrapper {
+  font-size: 10px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 16px 0;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.loadingContainer {
+  margin-top: 8px;
+}

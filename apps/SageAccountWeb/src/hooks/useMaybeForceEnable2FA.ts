@@ -20,7 +20,10 @@ export default function useMaybeForceEnable2FA() {
       if (
         location.pathname.startsWith('/authenticated/2fa') || // 2faRequired, 2fa/enroll, 2fa/generatecodes, etc.
         location.pathname === '/authenticated/signTermsOfUse' || // user should sign the ToS before enabling 2FA
-        location.pathname === '/authenticated/signUpdatedTermsOfUse'
+        location.pathname === '/authenticated/signUpdatedTermsOfUse' ||
+        location.pathname === '/authenticated/currentaffiliation' || // user is completing registration flow (affiliation comes before accountcreated)
+        location.pathname === '/register1' || // user is in registration flow (unauthenticated)
+        location.pathname === '/register2' // user is in registration flow (unauthenticated)
       ) {
         return
       }

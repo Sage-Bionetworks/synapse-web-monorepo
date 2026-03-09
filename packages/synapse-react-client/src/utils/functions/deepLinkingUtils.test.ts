@@ -197,7 +197,7 @@ describe('deepLinkingUtils', () => {
 
       window.location.search = `?qw0=${encodeURIComponent(base64)}`
 
-      const result = await getQueryRequestFromLink('qw', 0, initQuery)
+      const result = await getQueryRequestFromLink(0, initQuery)
 
       expect(result).toBeDefined()
       expect(result?.query).toEqual({
@@ -210,7 +210,7 @@ describe('deepLinkingUtils', () => {
     it('should return undefined when no search param exists', async () => {
       window.location.search = ''
 
-      const result = await getQueryRequestFromLink('qw', 0, initQuery)
+      const result = await getQueryRequestFromLink(0, initQuery)
 
       expect(result).toBeUndefined()
     })
@@ -248,7 +248,7 @@ describe('deepLinkingUtils', () => {
 
       window.location.search = `?qw0=${encodeURIComponent(base64)}`
 
-      const result = await getQueryRequestFromLink('qw', 0, initQuery)
+      const result = await getQueryRequestFromLink(0, initQuery)
 
       expect(result).toBeDefined()
       expect(result?.query).toEqual({
@@ -260,7 +260,96 @@ describe('deepLinkingUtils', () => {
     it('should handle invalid data gracefully', async () => {
       window.location.search = '?qw0=invalid-base64'
 
-      const result = await getQueryRequestFromLink('qw', 0, initQuery)
+      const result = await getQueryRequestFromLink(0, initQuery)
+
+      expect(result).toBeUndefined()
+    })
+
+    it('should parse legacy QueryWrapper search param', async () => {
+      const legacyQuery: Query = {
+        sql: 'SELECT * FROM syn456',
+        limit: 100,
+        offset: 50,
+        selectedFacets: [
+          {
+            columnName: 'projectId',
+            concreteType:
+              'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+            facetValues: ['syn123'],
+          },
+        ],
+      }
+
+      window.location.search = `?QueryWrapper0=${encodeURIComponent(
+        JSON.stringify(legacyQuery),
+      )}`
+
+      const result = await getQueryRequestFromLink(0, initQuery)
+
+      expect(result).toBeDefined()
+      expect(result?.query).toEqual(legacyQuery)
+      expect(result?.entityId).toBe('syn456')
+    })
+
+    it('should prioritize new format over legacy format when both are present', async () => {
+      const diff = { limit: 50, offset: 25 }
+
+      // Create compressed new format param
+      const jsonString = JSON.stringify(diff)
+      const encoder = new TextEncoder()
+      const data = encoder.encode(jsonString)
+      const stream = new Response(data).body!.pipeThrough(
+        new CompressionStream('gzip'),
+      )
+      const compressedData = await new Response(stream).arrayBuffer()
+      const base64 = btoa(
+        String.fromCharCode(...new Uint8Array(compressedData)),
+      )
+
+      const legacyQuery: Query = {
+        sql: 'SELECT * FROM syn999',
+        limit: 999,
+        offset: 999,
+      }
+
+      // Set both params - new format should win
+      window.location.search = `?qw0=${encodeURIComponent(
+        base64,
+      )}&QueryWrapper0=${encodeURIComponent(JSON.stringify(legacyQuery))}`
+
+      const result = await getQueryRequestFromLink(0, initQuery)
+
+      expect(result).toBeDefined()
+      // Should use the new format (diff applied to initQuery)
+      expect(result?.query).toEqual({
+        ...initQuery,
+        limit: 50,
+        offset: 25,
+      })
+      expect(result?.entityId).toBe('syn123')
+    })
+
+    it('should handle legacy format with different component index', async () => {
+      const legacyQuery: Query = {
+        sql: 'SELECT * FROM syn789',
+        limit: 10,
+      }
+
+      window.location.search = `?QueryWrapper3=${encodeURIComponent(
+        JSON.stringify(legacyQuery),
+      )}`
+
+      const result = await getQueryRequestFromLink(3, initQuery)
+
+      expect(result).toBeDefined()
+      expect(result?.query).toEqual(legacyQuery)
+      expect(result?.entityId).toBe('syn789')
+    })
+
+    it('should return undefined when legacy param is invalid JSON', async () => {
+      window.location.search = '?QueryWrapper0=not-valid-json'
+
+      const result = await getQueryRequestFromLink(0, initQuery)
 
       expect(result).toBeUndefined()
     })
@@ -300,7 +389,7 @@ describe('deepLinkingUtils', () => {
         : ''
 
       // Retrieve the query
-      const result = await getQueryRequestFromLink('qw', 0, initQuery)
+      const result = await getQueryRequestFromLink(0, initQuery)
 
       expect(result).toBeDefined()
       expect(result?.query).toEqual(currentQuery)
