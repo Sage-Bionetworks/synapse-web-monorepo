@@ -35,6 +35,7 @@ import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 import { CustomControlButton } from '../CustomControls/CustomControlButton'
 import { useSynapseContext } from '@/utils'
 import { SignInRequiredModal } from '@/components/SignInRequiredModal/SignInRequiredModal'
+import { SEND_TO_ANALYSIS_PLATFORM_SIGN_IN_MESSAGE } from '../SynapseTableUtils'
 
 const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
   'SendToAnalysisPlatformTopLevelControlButton'
@@ -265,7 +266,7 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
           {showLoginModal && (
             <SignInRequiredModal
               onHide={() => setShowLoginModal(false)}
-              content="You must be signed in to send results to an analysis platform."
+              content={SEND_TO_ANALYSIS_PLATFORM_SIGN_IN_MESSAGE}
             />
           )}
           {!hideSearchBarControl && (

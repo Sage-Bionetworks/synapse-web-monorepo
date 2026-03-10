@@ -16,6 +16,9 @@ import {
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
 
+export const SEND_TO_ANALYSIS_PLATFORM_SIGN_IN_MESSAGE =
+  'You must be signed in to send results to an analysis platform.'
+
 export const getColumnIndicesWithType = (
   data: QueryResultBundle | undefined,
   ...columnTypes: ColumnType[]

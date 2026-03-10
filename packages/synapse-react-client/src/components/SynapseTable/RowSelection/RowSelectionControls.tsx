@@ -13,7 +13,10 @@ import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { selectedRowsAtom } from '../../QueryWrapper/TableRowSelectionState'
 import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
-import { getFileColumnModelId } from '../SynapseTableUtils'
+import {
+  getFileColumnModelId,
+  SEND_TO_ANALYSIS_PLATFORM_SIGN_IN_MESSAGE,
+} from '../SynapseTableUtils'
 import { CustomControlButton } from '../CustomControls/CustomControlButton'
 import { CustomControl } from '../TopLevelControls/TopLevelControls'
 import { RowSelectionUI } from './RowSelectionUI'
@@ -109,7 +112,7 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
           {showLoginModal && (
             <SignInRequiredModal
               onHide={() => setShowLoginModal(false)}
-              content="You must be signed in to send results to an analysis platform."
+              content={SEND_TO_ANALYSIS_PLATFORM_SIGN_IN_MESSAGE}
             />
           )}
           {showAddToDownloadCart && (
