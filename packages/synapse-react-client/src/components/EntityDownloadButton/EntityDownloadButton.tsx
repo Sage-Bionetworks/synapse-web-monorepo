@@ -24,7 +24,7 @@ import {
   FileHandleAssociateType,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { displayFilesWereAddedToDownloadListSuccess } from '../download_list/DownloadConfirmationUtils'
 import { DropdownMenu, DropdownMenuItem } from '../menu/DropdownMenu'
 import { ModalDownload } from '../ModalDownload/ModalDownload'
@@ -394,20 +394,6 @@ export function EntityDownloadButton(props: {
 
   const isFolderOrProject = isContainerType(props.entityType)
 
-  const folderOrProjectStatsRequest: AddToDownloadListRequest | undefined =
-    useMemo(
-      () =>
-        isFolderOrProject
-          ? {
-              parentId: props.entityId,
-              concreteType:
-                'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-              recursive: true,
-            }
-          : undefined,
-      [isFolderOrProject, props.entityId],
-    )
-
   const {
     data: folderOrProjectStats,
     isLoading: isLoadingFolderOrProjectStats,
@@ -415,7 +401,12 @@ export function EntityDownloadButton(props: {
     {
       concreteType:
         'org.sagebionetworks.repo.model.download.AddToDownloadListStatsRequest',
-      request: folderOrProjectStatsRequest!,
+      request: {
+        parentId: props.entityId,
+        concreteType:
+          'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+        recursive: true,
+      },
     },
     {
       enabled: isFolderOrProject,
