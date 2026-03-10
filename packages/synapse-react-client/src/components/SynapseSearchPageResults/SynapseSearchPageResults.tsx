@@ -8,6 +8,7 @@ import {
   Collapse,
   Badge,
   Skeleton,
+  Link,
 } from '@mui/material'
 import SynapseSearchResultsCard from './SynapseSearchResultsCard'
 import SearchIcon from '@mui/icons-material/Search'
@@ -40,6 +41,7 @@ import {
 } from './SearchFacetPanel/SearchFacetPanel'
 import { shouldShowFacetValue } from './SearchFacetPanel/SearchFacetPanelUtils'
 import { SkeletonInlineBlock } from '../Skeleton'
+import { useSynapseContext } from '@/utils'
 
 /**
  * Add a literal facet filter to the query
@@ -160,6 +162,7 @@ export type SynapseSearchPageResultsProps = {
 export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
   const MIN_SUGGESTION_SCORE = 0.75
   const { query, setQuery } = props
+  const { peopleSearchPageUrl } = useSynapseContext()
   const [expanded, setExpanded] = useState(false)
 
   // Set page title (replaces jsniUtils.setPageTitle(DisplayConstants.LABEL_SEARCH) from Java)
@@ -409,15 +412,13 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
           gap: '16px',
         }}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '16px',
-            width: '100%',
-          }}
-        >
+        {peopleSearchPageUrl && (
+          <Typography variant="smallText1">
+            Searching for a user profile? Try our{' '}
+            <Link href={peopleSearchPageUrl}>People Search.</Link>
+          </Typography>
+        )}
+        <Box className={styles.searchContainer}>
           <TextField
             placeholder="Search…"
             sx={{ flex: 1 }}
@@ -444,19 +445,15 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
             }}
           />
           <Button
+            onClick={() => setExpanded(true)}
             variant="outlined"
             startIcon={<FilterAltOutlinedIcon />}
-            onClick={() => setExpanded(!expanded)}
             aria-expanded={expanded}
             aria-controls="filter-search-results-panel"
             sx={{
-              py: '10px',
-              px: '20px',
-              height: '100%',
-              borderRadius: 0,
-              width: 'fit-content',
               color: theme => theme.palette.primary.dark,
             }}
+            className={styles.filterButton}
           >
             <Typography
               sx={{
@@ -506,6 +503,8 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
               >
                 {query && setQuery && (
                   <SearchFacetPanel
+                    expanded={expanded}
+                    onCollapse={() => setExpanded(false)}
                     disabled={isLoading}
                     query={query}
                     setQuery={setQuery}
@@ -602,6 +601,7 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
                     name={hit.name}
                     entityType={hit.node_type}
                     modifiedOn={hit.modified_on}
+                    description={hit.description}
                     locatedIn={projectPath}
                   />
                 )
