@@ -1,28 +1,37 @@
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
-import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
+import {
+  ConfirmationDialog,
+  ConfirmationDialogProps,
+} from '../ConfirmationDialog/ConfirmationDialog'
 
-export type SignInRequiredModalProps = {
+export type SignInRequiredModalProps = Partial<
+  Omit<ConfirmationDialogProps, 'title' | 'onConfirm' | 'onCancel'>
+> & {
   onHide: () => void
-  content?: React.ReactNode
 }
 
 export const CONFIRM_BUTTON_TEXT = 'Sign in'
 export const DEFAULT_CONTENT =
   'You will need to sign in for access to that resource.'
+export const TITLE = 'Sign In Required'
 
 export function SignInRequiredModal({
   onHide,
-  content,
+  content = DEFAULT_CONTENT,
+  open = true,
+  ...rest
 }: SignInRequiredModalProps) {
   return (
     <ConfirmationDialog
-      open={true}
-      title="Sign In Required"
-      content={content ?? DEFAULT_CONTENT}
+      {...rest}
+      open={open}
+      title={TITLE}
+      content={content}
       onCancel={onHide}
       onConfirm={onHide}
       confirmButtonProps={{
-        children: CONFIRM_BUTTON_TEXT,
+        ...rest.confirmButtonProps,
+        children: rest.confirmButtonProps?.children ?? CONFIRM_BUTTON_TEXT,
         className: SRC_SIGN_IN_CLASS,
       }}
     />

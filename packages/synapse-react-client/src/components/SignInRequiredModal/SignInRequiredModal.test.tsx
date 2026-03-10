@@ -52,4 +52,12 @@ describe('SignInRequiredModal', () => {
     await userEvent.click(signInButton)
     expect(mockOnHide).toHaveBeenCalledTimes(1)
   })
+
+  it('does not show cancel button when hasCancelButton is false', () => {
+    renderComponent({ hasCancelButton: false })
+
+    expect(
+      screen.queryByRole('button', { name: CANCEL_BUTTON_TEXT }),
+    ).not.toBeInTheDocument()
+  })
 })
