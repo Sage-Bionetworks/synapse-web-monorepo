@@ -1,13 +1,10 @@
-import { DropdownMenu, DropdownMenuItem } from '../menu/DropdownMenu'
-import { DownloadOutlined as DownloadIcon } from '@mui/icons-material'
-import {
-  AddToDownloadListRequest,
-  EntityType,
-} from '@sage-bionetworks/synapse-client'
-import { useMemo, useState } from 'react'
-import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
-import { ModalDownload } from '../ModalDownload/ModalDownload'
 import { useGetEntity, useGetVersions } from '@/synapse-queries'
+import {
+  useAddFileToDownloadList,
+  useAddToDownloadList,
+  useGetAddToDownloadListStats,
+} from '@/synapse-queries/index'
+import { useSynapseContext } from '@/utils'
 import {
   entityTypeToFriendlyName,
   hasFilesInView,
@@ -16,20 +13,23 @@ import {
   isEntityView,
   isVersionableEntity,
 } from '@/utils/functions/EntityTypeUtils'
+import { useDirectDownloadHandler } from '@/utils/hooks/useDirectDownloadHandler'
+import { isFileEntity } from '@/utils/types/IsType'
+import { DownloadOutlined as DownloadIcon } from '@mui/icons-material'
+import {
+  AddToDownloadListRequest,
+  EntityType,
+} from '@sage-bionetworks/synapse-client'
 import {
   FileHandleAssociateType,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import { useSynapseContext } from '@/utils'
-import {
-  useAddFileToDownloadList,
-  useAddToDownloadList,
-  useGetAddToDownloadListStats,
-} from '@/synapse-queries/index'
+import { useMemo, useState } from 'react'
 import { displayFilesWereAddedToDownloadListSuccess } from '../download_list/DownloadConfirmationUtils'
+import { DropdownMenu, DropdownMenuItem } from '../menu/DropdownMenu'
+import { ModalDownload } from '../ModalDownload/ModalDownload'
+import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import { displayToast } from '../ToastMessage/index'
-import { useDirectDownloadHandler } from '@/utils/hooks/useDirectDownloadHandler'
-import { isFileEntity } from '@/utils/types/IsType'
 
 // WIP
 // Per Nick Grosenbacher: For this to be reusable, I think we would also need to accept versionNumber as a prop. Where we would have the following behavior:
@@ -408,7 +408,10 @@ export function EntityDownloadButton(props: {
       [isFolderOrProject, props.entityId],
     )
 
-  const { data: folderOrProjectStats } = useGetAddToDownloadListStats(
+  const {
+    data: folderOrProjectStats,
+    isLoading: isLoadingFolderOrProjectStats,
+  } = useGetAddToDownloadListStats(
     {
       concreteType:
         'org.sagebionetworks.repo.model.download.AddToDownloadListStatsRequest',
@@ -420,7 +423,8 @@ export function EntityDownloadButton(props: {
   )
 
   const folderOrProjectHasNoFiles =
-    isFolderOrProject && folderOrProjectStats?.fileCount === 0
+    isFolderOrProject &&
+    (isLoadingFolderOrProjectStats || folderOrProjectStats?.fileCount === 0)
 
   const { data: entityData } = useGetEntity(props.entityId)
 

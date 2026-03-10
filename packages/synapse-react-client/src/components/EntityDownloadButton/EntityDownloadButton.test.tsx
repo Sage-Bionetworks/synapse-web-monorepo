@@ -202,8 +202,10 @@ describe('EntityDownloadButton', () => {
 
       await openDropdown()
 
-      const addToCartMenuItem = screen.getByText('Add to Download Cart')
-      expect(addToCartMenuItem).toBeEnabled()
+      const addToCartMenuItem = screen
+        .getByText('Add to Download Cart')
+        .closest('[role="menuitem"]') as HTMLElement
+      expect(addToCartMenuItem).not.toHaveAttribute('aria-disabled', 'true')
     })
 
     it('disables Add to Download Cart when folder has no files recursively', async () => {
@@ -234,8 +236,10 @@ describe('EntityDownloadButton', () => {
 
       await openDropdown()
 
-      const addToCartMenuItem = screen.getByText('Add to Download Cart')
-      expect(addToCartMenuItem).toBeDisabled()
+      const addToCartMenuItem = screen
+        .getByText('Add to Download Cart')
+        .closest('[role="menuitem"]') as HTMLElement
+      expect(addToCartMenuItem).toHaveAttribute('aria-disabled', 'true')
     })
 
     it('sets recursive: false when adding a dataset to download cart', async () => {
