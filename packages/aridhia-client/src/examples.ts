@@ -19,7 +19,7 @@ async function authenticateExample() {
 
   const authApi = new AuthenticationApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io',
+      basePath: 'https://gateway.westeurope.dap.c-path.org',
       accessToken: synapseToken,
     }),
   )
@@ -40,7 +40,7 @@ async function authenticateExample() {
 async function listWorkflowsExample(token: string) {
   const workflowsApi = new WorkflowsApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
       accessToken: token,
     }),
   )
@@ -57,7 +57,7 @@ async function listWorkflowsExample(token: string) {
 async function getWorkflowExample(token: string, workflowCode: string) {
   const workflowsApi = new WorkflowsApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
       accessToken: token,
     }),
   )
@@ -74,7 +74,7 @@ async function getWorkflowExample(token: string, workflowCode: string) {
 async function listDatasetsExample(token: string) {
   const datasetsApi = new DatasetsApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
       accessToken: token,
     }),
   )
@@ -93,7 +93,7 @@ async function listDatasetsExample(token: string) {
 async function getDatasetExample(token: string, datasetCode: string) {
   const datasetsApi = new DatasetsApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
       accessToken: token,
     }),
   )
@@ -110,7 +110,7 @@ async function getDatasetExample(token: string, datasetCode: string) {
 async function getDatasetSettingsExample(token: string, datasetCode: string) {
   const datasetsApi = new DatasetsApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
       accessToken: token,
     }),
   )
@@ -127,7 +127,7 @@ async function getDatasetSettingsExample(token: string, datasetCode: string) {
 async function createRequestExample(token: string) {
   const requestsApi = new RequestsApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
       accessToken: token,
     }),
   )
@@ -153,7 +153,7 @@ async function createRequestExample(token: string) {
 async function listRequestsExample(token: string) {
   const requestsApi = new RequestsApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
       accessToken: token,
     }),
   )
@@ -171,7 +171,7 @@ async function listRequestsExample(token: string) {
 async function getRequestExample(token: string, requestCode: string) {
   const requestsApi = new RequestsApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
       accessToken: token,
     }),
   )

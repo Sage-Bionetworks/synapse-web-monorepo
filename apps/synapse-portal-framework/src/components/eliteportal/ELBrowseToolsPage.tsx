@@ -55,7 +55,6 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps): React.ReactNode => {
     }
     const url = await generateCompressedQueryURL(
       '/Explore/Computational%20Tools',
-      'qw',
       0,
       currentQuery,
       initQuery,
@@ -80,7 +79,6 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps): React.ReactNode => {
     }
     const url = await generateCompressedQueryURL(
       '/Explore/Computational%20Tools',
-      'qw',
       0,
       currentQuery,
       initQuery,

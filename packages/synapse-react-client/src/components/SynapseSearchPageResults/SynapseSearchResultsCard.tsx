@@ -6,6 +6,7 @@ import {
 import { useInView } from 'react-intersection-observer'
 import { StyledComponent } from '@emotion/styled'
 import {
+  ArticleOutlined,
   DashboardTwoTone,
   InfoOutline,
   Update as UpdateIcon,
@@ -31,13 +32,17 @@ import styles from './SynapseSearchResultsCard.module.scss'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { useGetEntityBundle } from '@/synapse-queries'
 import { FileHandleWithPreview } from '../EntityFinder/details/view/table/TableCellTypes'
+import { HighlightedTypography } from './HighlightedTypography'
+import { markdownToPlainText } from '../Markdown/MarkdownUtils'
 
 export type SynapseSearchResultsCardProps = {
   entityId: string
   name: string
+  description?: string
   entityType: EntityType
   modifiedOn: number
   locatedIn?: { name: string; id: string }
+  searchTerms?: string[]
 }
 
 const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
@@ -56,6 +61,8 @@ const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
 })
 
 export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
+  const HIT_DESCRIPTION_LENGTH_CHAR = 200
+
   const { ref, inView } = useInView({
     triggerOnce: true,
     rootMargin: '250px 0px',
@@ -86,15 +93,21 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
           width: '100%',
         }}
       >
-        <Typography variant="headline3">
-          <Link
-            href={`${getEndpoint(
-              BackendDestinationEnum.PORTAL_ENDPOINT,
-            )}Synapse:${props.entityId}`}
-          >
-            {props.name}
-          </Link>
-        </Typography>
+        <Link
+          href={`${getEndpoint(
+            BackendDestinationEnum.PORTAL_ENDPOINT,
+          )}Synapse:${props.entityId}`}
+          sx={{
+            textDecoration: 'underline 2px',
+            textUnderlineOffset: '9px',
+          }}
+        >
+          <HighlightedTypography
+            variant="headline3"
+            text={props.name}
+            searchTerms={props.searchTerms ?? []}
+          />
+        </Link>
 
         <Box
           sx={{
@@ -145,6 +158,18 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
               {formatDate(dayjs.unix(props.modifiedOn), 'M/D/YYYY')}
             </Typography>
           </Box>
+          {props.description && (
+            <Box sx={{ display: 'flex' }}>
+              <ArticleOutlined className={styles.cardMetadataIcon} />
+              <Typography className={styles.cardMetadataTypographyWithIcon}>
+                {markdownToPlainText(
+                  props.description,
+                  HIT_DESCRIPTION_LENGTH_CHAR,
+                )}
+              </Typography>
+            </Box>
+          )}
+
           {friendlySize && (
             <Box sx={{ display: 'flex' }}>
               <InfoOutline className={styles.cardMetadataIcon} />

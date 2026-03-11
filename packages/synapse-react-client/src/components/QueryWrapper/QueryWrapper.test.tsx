@@ -163,7 +163,6 @@ describe('QueryWrapper', () => {
       await waitFor(async () => {
         expect(location.search).toContain('qw0')
         const queryRequest = await getQueryRequestFromLink(
-          'qw',
           0,
           initialQueryRequest.query,
         )
@@ -256,7 +255,6 @@ describe('QueryWrapper', () => {
 
       const url = await generateCompressedQueryURL(
         '/any/url/you/like',
-        'qw',
         0,
         lqr.query,
         initialQueryRequest.query,
@@ -306,7 +304,6 @@ describe('QueryWrapper', () => {
 
       const baseUrl = await generateCompressedQueryURL(
         '/any/url/you/like',
-        'qw',
         0,
         lqr.query,
         initialQueryRequest.query,

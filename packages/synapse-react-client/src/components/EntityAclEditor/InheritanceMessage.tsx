@@ -3,6 +3,7 @@ import {
   convertToEntityType,
   entityTypeToFriendlyName,
 } from '@/utils/functions/EntityTypeUtils'
+import { SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL } from '@/utils/SynapseConstants'
 import { Link, Typography } from '@mui/material'
 import { EntityLink } from '../EntityLink'
 
@@ -51,7 +52,7 @@ export function InheritanceMessage(props: InheritanceMessageProps) {
           settings for, then navigate to File Tools &gt;{' '}
           <Link
             href={
-              'https://help.synapse.org/docs/Sharing-Settings,-Permissions,-and-Conditions-for-Use.2024276030.html'
+              SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL
             }
           >
             File Sharing Settings

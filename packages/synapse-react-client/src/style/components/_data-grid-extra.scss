@@ -1,65 +1,146 @@
+// Color variables for validation states
+$color-deleted: #fff1f0;
+$color-created: #f6ffed;
+$color-updated: #fff7e6;
+$color-valid: #def0dd;
+$color-invalid: #fccfcc;
+$color-unknown: #fdfeeb;
+$color-spinner: #e6c200;
+$color-text-primary: #353a3f; // grey-900
+$color-text-disabled: #71767f; // gray-700
+
+// Input styles
 .dsg-input {
   font-size: inherit;
-  color: #353a3f; // grey-900
+  color: $color-text-primary;
 }
 
 .dsg-cell-disabled input {
-  color: #71767f; // gray-700
+  color: $color-text-disabled;
 }
 
-.row-deleted .dsg-cell {
-  /* Red */
-  background: #fff1f0;
-}
-
-.row-created .dsg-cell {
-  /* Green */
-  background: #f6ffed;
-}
-
-.row-updated .dsg-cell {
-  /* Orange */
-  background: #fff7e6;
-}
-
-.row-valid .dsg-cell-gutter {
-  background: #def0dd;
-}
-
-.row-invalid .dsg-cell-gutter {
-  background: #fccfcc;
-}
-
-.row-unknown .dsg-cell-gutter {
-  background: #fdfeeb;
-
-  &::after {
-    content: '';
-    display: block;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 16px;
-    height: 16px;
-    margin: -8px 0 0 -8px;
-    border: 2px solid #e6c200;
-    border-top: 2px solid transparent;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    z-index: 1;
+// Mixin for non-header/gutter cells
+@mixin data-cell-only {
+  &:not(.dsg-cell-header):not(.dsg-cell-gutter) {
+    @content;
   }
 }
 
+// Mixin for sticky column backgrounds
+@mixin sticky-column-bg($color) {
+  .dsg-cell.dsg-cell-sticky-left {
+    @include data-cell-only {
+      background: $color;
+    }
+  }
+}
+
+// Row-level operation states
+.row-deleted {
+  .dsg-cell {
+    background: $color-deleted;
+  }
+  @include sticky-column-bg($color-deleted);
+}
+
+.row-created {
+  .dsg-cell {
+    background: $color-created;
+  }
+  @include sticky-column-bg($color-created);
+}
+
+.row-updated {
+  .dsg-cell {
+    background: $color-updated;
+  }
+  @include sticky-column-bg($color-updated);
+}
+
+// Row-level validation states
+.row-valid {
+  .dsg-cell-gutter {
+    background: $color-valid;
+  }
+  @include sticky-column-bg($color-valid);
+}
+
+.row-invalid {
+  .dsg-cell-gutter {
+    background: $color-invalid;
+  }
+  @include sticky-column-bg($color-invalid);
+}
+
+.row-unknown {
+  .dsg-cell-gutter {
+    background: $color-unknown;
+
+    &::after {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 16px;
+      height: 16px;
+      margin: -8px 0 0 -8px;
+      border: 2px solid $color-spinner;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      z-index: 1;
+    }
+  }
+  @include sticky-column-bg($color-unknown);
+}
+
+// Cell-level validation states (higher specificity - override row states)
+.dsg-cell {
+  &.cell-invalid {
+    background: $color-invalid;
+
+    &.dsg-cell-sticky-left {
+      @include data-cell-only {
+        background: $color-invalid;
+      }
+    }
+  }
+
+  &.cell-valid {
+    &.dsg-cell-sticky-left {
+      @include data-cell-only {
+        background: $color-valid;
+      }
+    }
+  }
+
+  &.cell-unknown {
+    &.dsg-cell-sticky-left {
+      @include data-cell-only {
+        background: $color-unknown;
+      }
+    }
+  }
+
+  // Default sticky cells (no validation state)
+  &.dsg-cell-sticky-left:not(.cell-invalid):not(.cell-valid):not(
+      .cell-unknown
+    ) {
+    @include data-cell-only {
+      background: var(--dsg-cell-background-color, white);
+    }
+  }
+}
+
+// Animation
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-.cell-invalid {
-  background: #fccfcc;
-}
-
+// Header & selection styles
 .header-cell-required {
   background-color: #395979;
   color: white;
@@ -84,7 +165,7 @@
   z-index: 25;
 }
 
-// Ensure grid container is positioned for absolute children (resize handles)
+// Container positioning
 .dsg-container {
   position: relative;
 }
@@ -99,7 +180,6 @@
   background-color: transparent;
   transition: background-color 0.15s ease;
 
-  // Subtle grip indicator on hover (visible only in header area)
   &::before {
     content: '';
     position: absolute;
@@ -133,7 +213,7 @@
   }
 }
 
-// Change cursor globally when resizing
+// Global cursor during resize
 body.col-resizing {
   cursor: col-resize;
   user-select: none;
