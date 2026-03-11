@@ -19,16 +19,17 @@ export function useGetUserGroupHeader(
   principalId: string,
   options?: Partial<UseQueryOptions<UserGroupHeader, SynapseClientError>>,
 ) {
-  const { keyFactory } = useSynapseContext()
+  const { keyFactory, accessToken } = useSynapseContext()
   const queryKey = keyFactory.getUserGroupHeaderQueryKey(principalId)
 
   return useQuery({
     ...options,
     queryKey: queryKey,
     queryFn: async () => {
-      const responsePage = await SynapseClient.getGroupHeadersBatch([
-        principalId,
-      ])
+      const responsePage = await SynapseClient.getGroupHeadersBatch(
+        [principalId],
+        accessToken,
+      )
       if (responsePage.children.length !== 1) {
         throw new Error(
           `Expected one response in useGetUserGroupHeader for id: ${principalId}, got ${responsePage.children.length}`,
@@ -50,11 +51,14 @@ export function useGetUserGroupHeaders(
   principalIds: string[],
   options?: Partial<UseQueryOptions<UserGroupHeader[], SynapseClientError>>,
 ) {
-  const { keyFactory } = useSynapseContext()
+  const { keyFactory, accessToken } = useSynapseContext()
   const queryClient = useQueryClient()
   const queryKey = keyFactory.getUserGroupHeaderBatchQueryKey(principalIds)
   const queryFn = async () => {
-    const response = await SynapseClient.getGroupHeadersBatch(principalIds)
+    const response = await SynapseClient.getGroupHeadersBatch(
+      principalIds,
+      accessToken,
+    )
 
     // Update the cache with each individual header
     response.children.forEach(userGroupHeader => {
@@ -79,7 +83,7 @@ export function useSearchUserGroupHeaders(
   filter?: TYPE_FILTER,
   options?: Partial<UseQueryOptions<UserGroupHeader[], SynapseClientError>>,
 ) {
-  const { keyFactory } = useSynapseContext()
+  const { keyFactory, accessToken } = useSynapseContext()
   const queryKey = keyFactory.getUserGroupHeaderSearchQueryKey(prefix, filter)
 
   return useQuery({
@@ -89,6 +93,9 @@ export function useSearchUserGroupHeaders(
       const responsePage = await SynapseClient.getUserGroupHeaders(
         prefix,
         filter,
+        undefined,
+        undefined,
+        accessToken,
       )
       return responsePage.children
     },
@@ -99,7 +106,7 @@ export function useGetUserGroupHeaderWithAlias(
   aliases: string[],
   options?: Partial<UseQueryOptions<UserGroupHeader[], SynapseClientError>>,
 ) {
-  const { keyFactory } = useSynapseContext()
+  const { keyFactory, accessToken } = useSynapseContext()
 
   const queryKey = keyFactory.getUserGroupHeaderWithAliasQueryKey(aliases)
 
@@ -109,6 +116,7 @@ export function useGetUserGroupHeaderWithAlias(
     queryFn: async () => {
       const response = await SynapseClient.postUserGroupHeadersWithAlias(
         aliases,
+        accessToken,
       )
       return response.list
     },
