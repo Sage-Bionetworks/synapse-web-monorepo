@@ -93,9 +93,6 @@ const SynapseComponents = {
   DownloadCartPage: lazy(
     () => import('./components/DownloadCart/DownloadCartPage'),
   ),
-  DownloadConfirmation: lazy(
-    () => import('./components/download_list/FolderDownloadConfirmation'),
-  ),
   EntityAclEditorModal: lazy(
     () => import('./components/EntityAclEditor/EntityAclEditorModal'),
   ),
