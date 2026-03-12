@@ -20,11 +20,7 @@ exports[`MarkdownSynapse tests > Snapshot tests > supports bootstrap rows and co
           >
             Left
           </p>
-          
-
         </div>
-        
-
         <div
           class="col-sm-4"
         >
@@ -33,11 +29,7 @@ exports[`MarkdownSynapse tests > Snapshot tests > supports bootstrap rows and co
           >
             Center
           </p>
-          
-
         </div>
-        
-
         <div
           class="col-sm-4"
         >
@@ -46,15 +38,9 @@ exports[`MarkdownSynapse tests > Snapshot tests > supports bootstrap rows and co
           >
             Right
           </p>
-          
-
         </div>
-        
-
       </div>
     </div>
-    
-
   </div>
 </div>
 `;
@@ -70,8 +56,6 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with a br statement and 
     >
       some more free
     </p>
-    
-
     <h1
       class="MuiTypography-root MuiTypography-headline1 css-40zh3-MuiTypography-root"
       id="SRC-header-1"
@@ -79,15 +63,11 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with a br statement and 
     >
       header
     </h1>
-    
-
     <p
       class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
     >
       loose text
     </p>
-    
-
   </div>
 </div>
 `;
@@ -113,8 +93,6 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with header and a link 1
         text
       </a>
     </h1>
-    
-
   </div>
 </div>
 `;
@@ -147,8 +125,6 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 
         </a>
       </span>
     </div>
-    
-
   </div>
 </div>
 `;
@@ -183,8 +159,6 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 
         </a>
       </span>
     </div>
-    
-
   </div>
 </div>
 `;
