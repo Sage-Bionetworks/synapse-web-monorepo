@@ -23,7 +23,7 @@ describe('AridhiaContext', () => {
     const { result } = renderHook(() => useAridhiaContext(), { wrapper })
 
     expect(result.current.apiBasePath).toBe(
-      'https://gateway.westus2.c-path-dev.aridhia.io',
+      'https://gateway.westeurope.dap.c-path.org',
     )
     expect(result.current.authenticationRequest).toEqual(authenticationRequest)
   })

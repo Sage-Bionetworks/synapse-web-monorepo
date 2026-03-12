@@ -30,7 +30,7 @@ import {
 // Exchange third-party token for Aridhia access token
 const authApi = new AuthenticationApi(
   new Configuration({
-    basePath: 'https://gateway.westus2.c-path-dev.aridhia.io',
+    basePath: 'https://gateway.westeurope.dap.c-path.org',
     accessToken: 'your-synapse-bearer-token',
   }),
 )
@@ -59,7 +59,7 @@ import {
 // Configure the client with Aridhia access token
 // All FAIR API calls must go through the gateway using the /fair path
 const config = new Configuration({
-  basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+  basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
   accessToken: aridhiaToken,
 })
 
