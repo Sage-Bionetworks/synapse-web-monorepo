@@ -1,6 +1,5 @@
 import { GoalsV2DataProps } from './GoalsV2'
 import QueryCount from '../QueryCount/QueryCount'
-import IconButton from '@mui/material/IconButton'
 import NavigateNextIcon from '@mui/icons-material/NavigateNext'
 import { Typography } from '@mui/material'
 import { Card, CardActionArea, CardContent, CardMedia } from '@mui/material'
