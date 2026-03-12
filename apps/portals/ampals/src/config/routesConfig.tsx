@@ -15,13 +15,6 @@ const routes: RouteObject[] = [
       <App>
         {/* PORTALS-3627 */}
         <RepositoryUnderReviewAlert />
-        <SurveyToast
-          localStorageKey="org.sagebionetworks.security.cookies.portal.ampals921webinar.dismissed"
-          title="Want to learn how to use the ALS Knowledge Portal?"
-          description="Join our live webinar on Sept. 29!"
-          surveyButtonText="Register Now"
-          surveyURL="https://us02web.zoom.us/webinar/register/WN_alQS7coBQkSvQZC-FIecXg#/registration"
-        />
       </App>
     ),
     children: [
