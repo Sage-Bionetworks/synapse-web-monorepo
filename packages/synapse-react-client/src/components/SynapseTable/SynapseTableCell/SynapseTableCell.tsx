@@ -198,21 +198,21 @@ function SynapseTableCell(props: SynapseTableCellProps) {
       const displayTextField = getDisplayTextFieldForEntityIdColumn(columnName)
       const jsonData: string[] = JSON.parse(columnValue)
       return (
-        <p>
+        <div>
           <EntityIdList
             entityIdList={jsonData}
             displayTextField={displayTextField}
             showIcon={false}
           />
-        </p>
+        </div>
       )
     }
     case ColumnTypeEnum.USERID_LIST: {
       const jsonData: string[] = JSON.parse(columnValue)
       return (
-        <p>
+        <div>
           <UserIdList userIds={jsonData} />
-        </p>
+        </div>
       )
     }
     // handle other list types

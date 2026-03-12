@@ -18,7 +18,7 @@ export function MarkdownPopover(props: MarkdownPopoverProps) {
     <StyledPopover
       {...rest}
       popoverContent={
-        <Typography variant="body1">
+        <Typography variant="body1" component={'div'}>
           <MarkdownSynapse {...contentProps} />
         </Typography>
       }

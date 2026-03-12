@@ -208,6 +208,38 @@ function RenderMarkdown(props: {
  * @param {string} markdown The original markdown, its kept as a special case for the table of contents widget
  * @returns {*}
  */
+
+const blockLevelElements = [
+  'p',
+  'div',
+  'ul',
+  'ol',
+  'section',
+  'article',
+  'table',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+]
+
+// Handle elements that have children that would cause invalid nesting
+const isBlockLevelElement = (node: Node): boolean => {
+  if (node.nodeType !== Node.ELEMENT_NODE) {
+    return false
+  }
+
+  const element = node as HTMLElement
+  const tag = element.tagName.toLowerCase()
+  const isStandardBlock = blockLevelElements.includes(tag)
+
+  const isWidget = element.hasAttribute('data-widgetparams')
+
+  return isStandardBlock || isWidget
+}
+
 function RecursiveRender(props: { element: Node; markdown: string }) {
   const { element, markdown } = props
   /*
@@ -221,6 +253,10 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
   */
   if (element.nodeType === Node.TEXT_NODE) {
     // case 1.
+    // In HTML, whitespace text nodes cannot be a child of <table>.
+    if (!element.textContent?.trim()) {
+      return null
+    }
     return <>{element.textContent}</>
   } else if (
     element.nodeType === Node.ELEMENT_NODE &&
@@ -229,6 +265,7 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
     const Tag: keyof JSX.IntrinsicElements =
       element.tagName.toLowerCase() as keyof JSX.IntrinsicElements
     const widgetParams = element.getAttribute('data-widgetparams')
+
     if (widgetParams) {
       // case 2
       // process widget
@@ -271,7 +308,13 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
       // e.g. self closing tag like <br/> or <img>
       return <Tag {...props} />
     }
-    // case 3
+
+    // case 3 block level child elements
+    const hasBlockLevelChild = Array.from(element.childNodes).some(node =>
+      isBlockLevelElement(node),
+    )
+
+    // case 4
     // recursively render children
     const children = Array.from(element.childNodes).map((el, index) => {
       return <RecursiveRender key={index} element={el} markdown={markdown} />
@@ -280,13 +323,21 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
     switch (Tag) {
       case 'p':
         return (
-          <Typography variant={'body1'} {...props} component={Tag}>
+          <Typography
+            variant={'body1'}
+            {...props}
+            component={hasBlockLevelChild ? 'div' : 'p'}
+          >
             {children}
           </Typography>
         )
       case 'span':
         return (
-          <Typography variant={'body1'} {...props} component={Tag}>
+          <Typography
+            variant={'body1'}
+            {...props}
+            component={hasBlockLevelChild ? 'div' : 'span'}
+          >
             {children}
           </Typography>
         )
@@ -322,7 +373,7 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
         )
       case 'a':
         return (
-          <Link {...props} component={Tag}>
+          <Link {...props} component={hasBlockLevelChild ? 'div' : 'a'}>
             {children}
           </Link>
         )

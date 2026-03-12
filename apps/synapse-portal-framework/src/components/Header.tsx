@@ -30,7 +30,9 @@ function Header() {
         >
           {title}
         </Typography>
-        <Typography variant="body1">{summary}</Typography>
+        <Typography variant="body1" component={'div'}>
+          {summary}
+        </Typography>
       </div>
     </>
   )

@@ -216,8 +216,10 @@ export const EntityBadgeIcons = (
     <div className="EntityBadgeTooltip">
       {schemaValidationResults ? <p>{schemaConformance} Annotations</p> : ''}
       <table>
-        {annotationsTableRows ? annotationsTableRows : ''}
-        {valiationSchemaTableRow}
+        <tbody>
+          {annotationsTableRows ? annotationsTableRows : ''}
+          {valiationSchemaTableRow}
+        </tbody>
       </table>
       {annotationsCount > maxAnnosToShow ? (
         <p>and {annotationsCount - maxAnnosToShow} more</p>

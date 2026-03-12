@@ -45,9 +45,7 @@ export default function GoalsV2Desktop({
             )}
           </Typography>
           <Typography variant="body1">{title}</Typography>
-          <IconButton sx={{ color: 'primary.main' }}>
-            <NavigateNextIcon />
-          </IconButton>
+          <NavigateNextIcon sx={{ color: 'primary.main' }} />
         </CardContent>
       </CardActionArea>
     </Card>

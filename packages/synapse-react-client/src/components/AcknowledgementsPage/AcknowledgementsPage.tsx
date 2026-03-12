@@ -71,6 +71,7 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
         </Typography>
         <Typography
           variant="body1"
+          component={'div'}
           sx={{
             mb: '2em',
             '& li::marker': {
@@ -119,7 +120,7 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
             </li>
           </ol>
         </Typography>
-        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+        <Typography component={'div'} variant="h5" sx={{ fontWeight: 'bold' }}>
           <ol start={1} style={{ paddingInlineStart: '20px' }}>
             <li>Select study acknowledgement statements</li>
           </ol>
@@ -152,7 +153,7 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
             setAcknowledgementItems([...acknowledgementItems])
           }}
         />
-        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+        <Typography variant="h5" component={'div'} sx={{ fontWeight: 'bold' }}>
           <ol start={2} style={{ paddingInlineStart: '25px' }}>
             <li>Generate compiled statement</li>
           </ol>
@@ -216,7 +217,7 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
           )}
         </ComponentCollapse>
         <hr />
-        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+        <Typography variant="h5" component={'div'} sx={{ fontWeight: 'bold' }}>
           <ol start={3} style={{ paddingInlineStart: '25px' }}>
             <li>Create a DOI for your dataset</li>
           </ol>
