@@ -3,8 +3,22 @@ import { NavbarConfig } from '@sage-bionetworks/synapse-portal-framework/compone
 export const navbarConfig: NavbarConfig = {
   routes: [
     {
-      name: 'Home',
-      path: '/',
+      name: 'About',
+      path: '/About',
+      children: [
+        {
+          name: 'Overview',
+          path: '/Overview',
+        },
+        {
+          name: 'Data Coordinating Center',
+          path: '/Data Coordinating Center',
+        },
+        {
+          name: 'Data Contribution',
+          path: '/Data Contribution',
+        },
+      ],
     },
     {
       name: 'Explore',
@@ -30,10 +44,6 @@ export const navbarConfig: NavbarConfig = {
       ],
     },
     {
-      name: 'Analysis Platforms',
-      path: '/Analysis Platforms',
-    },
-    {
       name: 'Data Access',
       path: '/Data Access',
       children: [
@@ -52,16 +62,16 @@ export const navbarConfig: NavbarConfig = {
       ],
     },
     {
-      name: 'Contribute Data',
-      path: '/Contribute Data',
-    },
-    {
-      name: 'News',
-      path: 'https://news.eliteportal.org/',
+      name: 'Analysis Platforms',
+      path: '/Analysis Platforms',
     },
     {
       name: 'Help',
       path: 'https://help.eliteportal.org/help/',
+    },
+    {
+      name: 'News',
+      path: 'https://news.eliteportal.org/',
     },
   ],
   isPortalsDropdownEnabled: true,
