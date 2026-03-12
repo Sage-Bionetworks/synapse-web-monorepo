@@ -1,0 +1,114 @@
+import filterRowsByLandingPageSection from '@/utils/filterRowsByLandingPageSection'
+import { Box, Typography } from '@mui/material'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import React from 'react'
+import { SynapseConstants } from 'synapse-react-client'
+import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
+import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
+import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions'
+import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
+import getChallengeChipsFromRow from '../../../utils/getChallengeChipsFromRow'
+// TODO: update with vectors for Open Challenges section
+import { ReactComponent as Vectors } from '../assets/popularChallengesVectors.svg'
+import styles from './OpenChallengesSection.module.scss'
+
+type OpenChallengesSectionProps = {
+  sql: string
+  borderRadiusPx?: number
+}
+
+const OpenChallengesSection = ({
+  sql,
+  borderRadiusPx,
+}: OpenChallengesSectionProps): React.ReactNode => {
+  const { entityId } = parseEntityIdAndVersionFromSqlStatement(sql)
+
+  const queryBundleRequest: QueryBundleRequest = {
+    partMask:
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId: entityId ?? '',
+    query: { sql },
+  }
+
+  const { data: queryResultBundle } =
+    useGetFullTableQueryResults(queryBundleRequest)
+
+  const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
+
+  // TODO: determine how many challenges to show in this section
+  const filteredDataRows = filterRowsByLandingPageSection(
+    'external',
+    dataRows,
+    queryResultBundle!,
+  ).slice(0, 6)
+
+  return (
+    <Box className={styles.OpenChallengesSection__root}>
+      <Box className={styles.OpenChallengesSection__headerSection}>
+        <Box className={styles.OpenChallengesSection__titleWrapper}>
+          <Vectors
+            className={styles.OpenChallengesSection__titleSectionVectors}
+          />
+          <Typography
+            variant="headline1"
+            className={styles.OpenChallengesSection__sectionTitle}
+          >
+            Open Challenges
+          </Typography>
+        </Box>
+        <Typography
+          variant="body1"
+          className={styles.OpenChallengesSection__sectionSubtitle}
+        >
+          Curated list of crowdsourced challenges outside of the Sage ecosystem
+        </Typography>
+      </Box>
+      <Box className={styles.OpenChallengesSection__container}>
+        {filteredDataRows.map(row => {
+          const chipsArray = getChallengeChipsFromRow(row, queryResultBundle)
+
+          return (
+            <ColorfulPortalCardWithChips
+              key={row.rowId}
+              title={
+                row.values[getFieldIndex('title', queryResultBundle)] ?? ''
+              }
+              subtitle={
+                row.values[getFieldIndex('challengeName', queryResultBundle)] ??
+                ''
+              }
+              description={
+                row.values[getFieldIndex('description', queryResultBundle)] ??
+                ''
+              }
+              learnMoreLink={
+                row.values[getFieldIndex('learnMoreLink', queryResultBundle)] ??
+                ''
+              }
+              chips={chipsArray}
+              tag={
+                row.values[
+                  getFieldIndex('registrationStatus', queryResultBundle)
+                ] ?? ''
+              }
+              backgroundImage={
+                row.values[
+                  getFieldIndex('backgroundImage', queryResultBundle)
+                ] ?? ''
+              }
+              backgroundColor={
+                row.values[getFieldIndex('cardColor', queryResultBundle)] ?? ''
+              }
+              entityId={entityId}
+              borderRadiusPx={borderRadiusPx}
+            />
+          )
+        })}
+      </Box>
+    </Box>
+  )
+}
+
+export default OpenChallengesSection

@@ -7,3 +7,4 @@ export const popularChallengesSql = `SELECT * FROM syn70984047`
 export const getInvolvedSql = `SELECT * FROM syn71103115`
 export const newsSql = `SELECT * FROM syn71103117`
 export const allChallengesSql = `SELECT * FROM syn71324868`
+export const homeChallengesSql = `SELECT * FROM syn71324868 WHERE landingPageSection HAS_LIKE('%')`

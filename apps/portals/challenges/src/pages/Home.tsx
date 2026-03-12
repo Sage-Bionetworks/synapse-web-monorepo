@@ -1,20 +1,21 @@
-import ChallengeHeader from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeHeader/ChallengeHeader'
-import ChallengeMetrics from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeMetrics/ChallengeMetrics'
-import ChallengeFeaturedTeam from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeFeaturedTeam/ChallengeFeaturedTeam'
 import {
-  metricsSql,
-  partnersSql,
   featuredTeamSql,
   getInvolvedSql,
+  homeChallengesSql,
+  metricsSql,
   newsSql,
-  allChallengesSql,
+  partnersSql,
 } from '@/config/resources'
-import PortalFeaturedPartners from 'synapse-react-client/components/PortalFeaturedPartners/PortalFeaturedPartners'
-import NewChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/NewChallengesSection/NewChallengesSection'
-import ChallengeNewsSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeNewsSection/ChallengeNewsSection'
-import PopularChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/PopularChallengesSection/PopularChallengesSection'
-import GetInvolvedSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/GetInvolvedSection/GetInvolvedSection'
 import AllChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/AllChallengesSection/AllChallengesSection'
+import ChallengeFeaturedTeam from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeFeaturedTeam/ChallengeFeaturedTeam'
+import ChallengeHeader from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeHeader/ChallengeHeader'
+import ChallengeMetrics from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeMetrics/ChallengeMetrics'
+import ChallengeNewsSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeNewsSection/ChallengeNewsSection'
+import GetInvolvedSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/GetInvolvedSection/GetInvolvedSection'
+import NewChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/NewChallengesSection/NewChallengesSection'
+import OpenChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/OpenChallengesSection/OpenChallengesSection'
+import PopularChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/PopularChallengesSection/PopularChallengesSection'
+import PortalFeaturedPartners from 'synapse-react-client/components/PortalFeaturedPartners/PortalFeaturedPartners'
 
 const CARD_BORDER_RADIUS_PX = 4
 
@@ -29,11 +30,15 @@ function Home() {
         titleText="Our Challenge Partners"
       />
       <NewChallengesSection
-        sql={allChallengesSql}
+        sql={homeChallengesSql}
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
       />
       <PopularChallengesSection
-        sql={allChallengesSql}
+        sql={homeChallengesSql}
+        borderRadiusPx={CARD_BORDER_RADIUS_PX}
+      />
+      <OpenChallengesSection
+        sql={homeChallengesSql}
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
       />
       <ChallengeFeaturedTeam sql={featuredTeamSql} />
@@ -48,7 +53,7 @@ function Home() {
         cardSize="large"
       />
       <AllChallengesSection
-        sql={allChallengesSql}
+        sql={homeChallengesSql}
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
       />
     </>
