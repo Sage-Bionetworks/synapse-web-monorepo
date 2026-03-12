@@ -7,6 +7,7 @@ export type CardLabel = {
   columnDisplayName: string
   value: React.ReactNode
   columnName?: string
+  rawValue?: string
 }
 
 type State = {
@@ -53,14 +54,42 @@ class CardFooter extends Component<CardFooterProps, State> {
     this.setState({ isDesktop: window.innerWidth > 600 })
   }
 
+  getIconForValue = (
+    tableColumnName: string | undefined,
+    value: string | undefined,
+  ) => {
+    const columnIconOptions = this.props.columnIconOptions
+    if (
+      !columnIconOptions?.columns ||
+      !tableColumnName ||
+      !value ||
+      !Object.keys(columnIconOptions.columns).includes(tableColumnName)
+    ) {
+      return undefined
+    }
+    return columnIconOptions.columns[tableColumnName][value]
+  }
+
   renderRowValue = (
     key: string,
     value: React.ReactNode,
     tableColumnName?: string,
+    rawValue?: string,
   ) => {
-    const columnIconOptions = this.props.columnIconOptions
     if (typeof value !== 'string') {
-      // value can sometimes be a react element
+      // value can sometimes be a react element — check if we should prepend an icon
+      const iconProps = this.getIconForValue(tableColumnName, rawValue)
+      if (iconProps) {
+        return (
+          <>
+            <IconSVG
+              {...iconProps}
+              sx={{ ...iconProps.sx, paddingRight: '0.2rem' }}
+            />
+            {value}
+          </>
+        )
+      }
       return value
     }
     const valueAsString = value.trim()
@@ -73,38 +102,36 @@ class CardFooter extends Component<CardFooterProps, State> {
         </a>
       )
     }
-    // Only display icon when columnIconOptions is set in config file
-    if (
-      columnIconOptions &&
-      columnIconOptions.columns &&
-      tableColumnName &&
-      Object.keys(columnIconOptions.columns).includes(tableColumnName)
-    ) {
-      const iconProps = columnIconOptions.columns[tableColumnName][value]
-      if (!iconProps) {
-        // if we can't find an icon to match, just return the value
-        return <span>{value}</span>
-      } else {
-        iconProps.sx = { ...iconProps.sx, paddingRight: '0.2rem' }
-        return (
-          <>
-            <IconSVG {...iconProps}></IconSVG>
-            <span style={{ verticalAlign: 'middle' }}>{value}</span>
-          </>
-        )
-      }
+
+    const iconProps = this.getIconForValue(tableColumnName, valueAsString)
+    if (iconProps) {
+      return (
+        <>
+          <IconSVG
+            {...iconProps}
+            sx={{ ...iconProps.sx, paddingRight: '0.2rem' }}
+          />
+          <span style={{ verticalAlign: 'middle' }}>{valueAsString}</span>
+        </>
+      )
     }
 
     return value
   }
   renderRows = (values: CardLabel[], limit: number, isDesktop: boolean) => {
     return values.map((label, index) => {
-      const { columnDisplayName, value: labelValue, columnName } = label
+      const {
+        columnDisplayName,
+        value: labelValue,
+        columnName,
+        rawValue,
+      } = label
       const hideClass = index >= limit ? 'SRC-hidden' : ''
       const value = this.renderRowValue(
         columnDisplayName,
         labelValue,
         columnName,
+        rawValue,
       )
       if (isDesktop) {
         return (

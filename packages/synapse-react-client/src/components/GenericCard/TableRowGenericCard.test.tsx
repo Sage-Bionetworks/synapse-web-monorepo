@@ -35,6 +35,7 @@ import TableRowGenericCard, {
   TableRowGenericCardProps,
   TableToGenericCardMapping,
 } from './TableRowGenericCard'
+import { ColumnIconConfigs } from '../CardContainerLogic'
 import userEvent from '@testing-library/user-event'
 
 vi.mock('@/components/GenericCard/PortalDOI/PortalDOI', () => ({
@@ -660,5 +661,55 @@ describe('TableRowGenericCard tests', () => {
     expect(screen.queryByTestId('PortalDOI')).not.toBeInTheDocument()
 
     expect(PortalDOI).not.toHaveBeenCalled()
+  })
+
+  test('renders column icons inline with secondary label values when columnIconOptions is configured', async () => {
+    const columnIconOptions: ColumnIconConfigs = {
+      columns: {
+        [labelOneColumnName]: {
+          [MOCKED_LABELONE]: { icon: 'data', sx: { color: '#28A745' } },
+        },
+      },
+    }
+
+    renderComponent(
+      {
+        ...propsForNonHeaderMode,
+        columnIconOptions,
+      },
+      'TableEntity',
+    )
+
+    await screen.findByTestId('CardFooter')
+
+    expect(mockIconSvg).toHaveBeenRenderedWithProps({
+      icon: 'data',
+      sx: { color: '#28A745', paddingRight: '0.2rem' },
+    })
+  })
+
+  test('does not render a column icon when the row value does not match any configured icon', async () => {
+    const columnIconOptions: ColumnIconConfigs = {
+      columns: {
+        [labelOneColumnName]: {
+          SOME_OTHER_VALUE: { icon: 'data', sx: { color: '#28A745' } },
+        },
+      },
+    }
+
+    renderComponent(
+      {
+        ...propsForNonHeaderMode,
+        columnIconOptions,
+      },
+      'TableEntity',
+    )
+
+    await screen.findByTestId('CardFooter')
+
+    expect(mockIconSvg).not.toHaveBeenRenderedWithProps({
+      icon: 'data',
+      sx: expect.objectContaining({ color: '#28A745' }),
+    })
   })
 })
