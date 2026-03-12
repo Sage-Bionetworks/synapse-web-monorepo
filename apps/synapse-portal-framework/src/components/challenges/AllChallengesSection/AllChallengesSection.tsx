@@ -1,16 +1,16 @@
-import React from 'react'
+import filterRowsByLandingPageSection from '@/utils/filterRowsByLandingPageSection'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { Box, Button, Stack, Typography } from '@mui/material'
-import { Link as RouterLink } from 'react-router'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import React from 'react'
+import { Link as RouterLink } from 'react-router'
+import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
 import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions/index'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import getChallengeChipsFromRow from '../../../utils/getChallengeChipsFromRow'
 import styles from './AllChallengesSection.module.scss'
-import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import filterRowsByLandingPageSection from '@/utils/filterRowsByLandingPageSection'
-import { stringListToArray } from 'synapse-react-client/utils/functions/StringUtils'
 
 type AllChallengesSectionProps = {
   sql: string
@@ -55,9 +55,7 @@ const AllChallengesSection = ({
       </Box>
       <Box className={styles.AllChallengesSection__container}>
         {filteredDataRows.map(row => {
-          const chips =
-            row.values[getFieldIndex('chips', queryResultBundle)] ?? ''
-          const chipsArray = stringListToArray(chips)
+          const chipsArray = getChallengeChipsFromRow(row, queryResultBundle)
 
           return (
             <ColorfulPortalCardWithChips
