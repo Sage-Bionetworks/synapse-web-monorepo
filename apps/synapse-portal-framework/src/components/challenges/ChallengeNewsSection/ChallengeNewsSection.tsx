@@ -1,13 +1,13 @@
-import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import React from 'react'
+import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions/index'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
-import styles from './ChallengeNewsSection.module.scss'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { ReactComponent as Vectors } from '../assets/newsVectors.svg'
-import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
+import styles from './ChallengeNewsSection.module.scss'
 
 type ChallengeNewsSectionProps = {
   sql: string
@@ -53,33 +53,10 @@ const ChallengeNewsSection = ({
       </Box>
       <Box className={styles.ChallengeNewsSection__container}>
         {dataRows.map(row => {
-          const chips = row.values[getFieldIndex('chips', queryResultBundle)]
-          let chipsArray: string[]
-
-          if (Array.isArray(chips)) {
-            chipsArray = chips.map(String)
-          } else {
-            try {
-              const parsed = JSON.parse(chips ?? '[]')
-              chipsArray = Array.isArray(parsed)
-                ? parsed.map(String)
-                : [String(parsed)]
-            } catch {
-              chipsArray = chips ? [String(chips)] : []
-            }
-          }
-
           return (
             <ColorfulPortalCardWithChips
               cardSize={cardSize}
               key={row.rowId}
-              title={
-                row.values[getFieldIndex('title', queryResultBundle)] ?? ''
-              }
-              subtitle={
-                row.values[getFieldIndex('challengeName', queryResultBundle)] ??
-                ''
-              }
               description={
                 row.values[getFieldIndex('description', queryResultBundle)] ??
                 ''
@@ -96,12 +73,6 @@ const ChallengeNewsSection = ({
               buttonOverrideText={
                 row.values[
                   getFieldIndex('buttonOverrideText', queryResultBundle)
-                ] ?? ''
-              }
-              chips={chipsArray}
-              tag={
-                row.values[
-                  getFieldIndex('registrationStatus', queryResultBundle)
                 ] ?? ''
               }
               backgroundImage={

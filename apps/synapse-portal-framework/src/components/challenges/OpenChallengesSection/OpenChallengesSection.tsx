@@ -7,7 +7,7 @@ import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePor
 import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
-import getChallengeChipsFromRow from '../../../utils/getChallengeChipsFromRow'
+import getChallengeKeywordsFromRow from '../../../utils/getChallengeKeywordsFromRow'
 // TODO: update with vectors for Open Challenges section
 import { ReactComponent as Vectors } from '../assets/popularChallengesVectors.svg'
 import styles from './OpenChallengesSection.module.scss'
@@ -67,17 +67,13 @@ const OpenChallengesSection = ({
       </Box>
       <Box className={styles.OpenChallengesSection__container}>
         {filteredDataRows.map(row => {
-          const chipsArray = getChallengeChipsFromRow(row, queryResultBundle)
+          const chipsArray = getChallengeKeywordsFromRow(row, queryResultBundle)
 
           return (
             <ColorfulPortalCardWithChips
               key={row.rowId}
               title={
                 row.values[getFieldIndex('title', queryResultBundle)] ?? ''
-              }
-              subtitle={
-                row.values[getFieldIndex('challengeName', queryResultBundle)] ??
-                ''
               }
               description={
                 row.values[getFieldIndex('description', queryResultBundle)] ??
@@ -88,11 +84,7 @@ const OpenChallengesSection = ({
                 ''
               }
               chips={chipsArray}
-              tag={
-                row.values[
-                  getFieldIndex('registrationStatus', queryResultBundle)
-                ] ?? ''
-              }
+              tag={row.values[getFieldIndex('status', queryResultBundle)] ?? ''}
               backgroundImage={
                 row.values[
                   getFieldIndex('backgroundImage', queryResultBundle)

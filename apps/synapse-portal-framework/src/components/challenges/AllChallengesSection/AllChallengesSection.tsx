@@ -9,7 +9,7 @@ import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-querie
 import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions/index'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import getChallengeChipsFromRow from '../../../utils/getChallengeChipsFromRow'
+import getChallengeKeywordsFromRow from '../../../utils/getChallengeKeywordsFromRow'
 import styles from './AllChallengesSection.module.scss'
 
 type AllChallengesSectionProps = {
@@ -55,17 +55,13 @@ const AllChallengesSection = ({
       </Box>
       <Box className={styles.AllChallengesSection__container}>
         {filteredDataRows.map(row => {
-          const chipsArray = getChallengeChipsFromRow(row, queryResultBundle)
+          const chipsArray = getChallengeKeywordsFromRow(row, queryResultBundle)
 
           return (
             <ColorfulPortalCardWithChips
               key={row.rowId}
               title={
                 row.values[getFieldIndex('title', queryResultBundle)] ?? ''
-              }
-              subtitle={
-                row.values[getFieldIndex('challengeName', queryResultBundle)] ??
-                ''
               }
               description={
                 row.values[getFieldIndex('description', queryResultBundle)] ??
@@ -76,11 +72,7 @@ const AllChallengesSection = ({
                 ''
               }
               chips={chipsArray}
-              tag={
-                row.values[
-                  getFieldIndex('registrationStatus', queryResultBundle)
-                ] ?? ''
-              }
+              tag={row.values[getFieldIndex('status', queryResultBundle)] ?? ''}
               backgroundImage={
                 row.values[
                   getFieldIndex('backgroundImage', queryResultBundle)
