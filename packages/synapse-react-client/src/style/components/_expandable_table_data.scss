@@ -1,12 +1,12 @@
 .ExpandableTableData {
   max-width: 250px;
 
-  p {
+  .SynapseTableCellContent {
     text-overflow: ellipsis;
   }
 
   &[aria-expanded='true'] {
-    p {
+    .SynapseTableCellContent {
       white-space: normal;
       overflow-wrap: break-word;
       overflow: hidden;
@@ -14,7 +14,7 @@
   }
 
   &[aria-expanded='false'] {
-    p {
+    .SynapseTableCellContent {
       white-space: nowrap;
       overflow: hidden;
     }

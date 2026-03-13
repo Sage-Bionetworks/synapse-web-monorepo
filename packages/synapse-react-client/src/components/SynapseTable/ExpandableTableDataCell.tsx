@@ -17,15 +17,9 @@ export default function ExpandableTableDataCell(
     // Don't check overflow if the cell has been expanded by the user!
     if (!isExpanded) {
       if (target) {
-        /**
-         * TODO: Not all content elements are <p> tags
-         *
-         * Doing this "right" would require a major SynapseTableCell refactor.
-         * Should we forward a ref to the <p>? Should we not wrap content so the `td` gets the correct scrollWidth?
-         *
-         * Note that the CSS also assumes that the table cell content is always wrapped in a <p>
-         */
-        const contentElement = target.getElementsByTagName('p')[0]
+        const contentElement = target.getElementsByClassName(
+          'SynapseTableCellContent',
+        )[0]
         if (contentElement) {
           // Add 2px threshold to account for sub-pixel rounding errors
           const threshold = 2
