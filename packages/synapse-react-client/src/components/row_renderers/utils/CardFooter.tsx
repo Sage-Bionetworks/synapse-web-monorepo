@@ -1,4 +1,5 @@
 import { convertDoiToLink } from '@/utils/functions/RegularExpressions'
+import { Box } from '@mui/material'
 import { Component, Fragment } from 'react'
 import { ColumnIconConfigs } from '../../CardContainerLogic'
 import IconSVG from '../../IconSvg/IconSvg'
@@ -70,6 +71,26 @@ class CardFooter extends Component<CardFooterProps, State> {
     return columnIconOptions.columns[tableColumnName][value]
   }
 
+  renderIcon = (
+    iconProps: NonNullable<ReturnType<typeof this.getIconForValue>>,
+  ) => {
+    const { containerSx, ...svgProps } = iconProps
+    return (
+      <Box
+        sx={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          verticalAlign: 'middle',
+          marginRight: '0.2rem',
+          ...containerSx,
+        }}
+      >
+        <IconSVG wrap={false} {...svgProps} />
+      </Box>
+    )
+  }
+
   renderRowValue = (
     key: string,
     value: React.ReactNode,
@@ -82,10 +103,7 @@ class CardFooter extends Component<CardFooterProps, State> {
       if (iconProps) {
         return (
           <>
-            <IconSVG
-              {...iconProps}
-              sx={{ ...iconProps.sx, paddingRight: '0.2rem' }}
-            />
+            {this.renderIcon(iconProps)}
             {value}
           </>
         )
@@ -107,10 +125,7 @@ class CardFooter extends Component<CardFooterProps, State> {
     if (iconProps) {
       return (
         <>
-          <IconSVG
-            {...iconProps}
-            sx={{ ...iconProps.sx, paddingRight: '0.2rem' }}
-          />
+          {this.renderIcon(iconProps)}
           <span style={{ verticalAlign: 'middle' }}>{valueAsString}</span>
         </>
       )

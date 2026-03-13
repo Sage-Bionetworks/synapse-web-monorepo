@@ -1,5 +1,6 @@
 export type {
   SortConfiguration,
+  ColumnIconConfig,
   ColumnIconConfigs,
   MarkdownLink,
   LabelLinkConfig,
