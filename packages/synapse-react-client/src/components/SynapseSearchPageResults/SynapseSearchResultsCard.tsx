@@ -61,8 +61,6 @@ const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
 })
 
 export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
-  const HIT_DESCRIPTION_LENGTH_CHAR = 200
-
   const { ref, inView } = useInView({
     triggerOnce: true,
     rootMargin: '250px 0px',
@@ -84,7 +82,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
     : ''
 
   const plainDescription = props.description
-    ? markdownToPlainText(props.description, HIT_DESCRIPTION_LENGTH_CHAR)
+    ? markdownToPlainText(props.description)
     : ''
 
   return (
@@ -155,7 +153,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
           gap: '8px',
         }}
       >
-        <Stack sx={{ gap: '20px' }}>
+        <Stack sx={{ gap: '20px', minWidth: 0, width: '100%' }}>
           <Box sx={{ display: 'flex' }}>
             <UpdateIcon className={styles.cardMetadataIcon} />
             <Typography className={styles.cardMetadataTypographyWithIcon}>
@@ -167,7 +165,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
             <Box sx={{ display: 'flex' }}>
               <ArticleOutlined className={styles.cardMetadataIcon} />
               <HighlightedTypography
-                className={styles.cardMetadataTypographyWithIcon}
+                className={`${styles.cardMetadataTypographyWithIcon} ${styles.cardDescription}`}
                 text={plainDescription}
                 searchTerms={props.searchTerms ?? []}
               />
