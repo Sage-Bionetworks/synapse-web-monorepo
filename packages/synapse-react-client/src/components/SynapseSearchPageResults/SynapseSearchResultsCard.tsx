@@ -152,7 +152,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
           gap: '8px',
         }}
       >
-        <Stack sx={{ gap: '20px' }}>
+        <Stack sx={{ gap: '20px', minWidth: 0, width: '100%' }}>
           <Box sx={{ display: 'flex' }}>
             <UpdateIcon className={styles.cardMetadataIcon} />
             <Typography className={styles.cardMetadataTypographyWithIcon}>
