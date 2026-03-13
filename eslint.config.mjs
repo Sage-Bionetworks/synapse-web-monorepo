@@ -57,11 +57,6 @@ export default tseslint.config(
             `packages/synapse-react-client/.storybook/*.tsx`,
           ],
         },
-        project: [
-          './tsconfig.json',
-          './packages/**/*/tsconfig.json',
-          './apps/**/*/tsconfig.json',
-        ],
         tsconfigRootDir: import.meta.dirname,
       },
       globals: {

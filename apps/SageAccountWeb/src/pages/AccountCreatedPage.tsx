@@ -63,10 +63,9 @@ function AccountCreatedPage() {
                     onClick={() => {
                       // take user back to page they came from in the source app, if stored in a cookie
                       const isProcessed = processRedirectURLInOneSage()
-                      if (!isProcessed) {
+                      if (!isProcessed && appContext?.redirectURL) {
                         // if not processed, fall back to the source app config redirect URL
-                        appContext?.redirectURL &&
-                          window.location.assign(appContext.redirectURL)
+                        window.location.assign(appContext.redirectURL)
                       }
                     }}
                   >
