@@ -82,7 +82,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
     : ''
 
   const plainDescription = props.description
-    ? markdownToPlainText(props.description, HIT_DESCRIPTION_LENGTH_CHAR)
+    ? markdownToPlainText(props.description)
     : ''
 
   return (
@@ -164,7 +164,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
             <Box sx={{ display: 'flex' }}>
               <ArticleOutlined className={styles.cardMetadataIcon} />
               <HighlightedTypography
-                className={styles.cardMetadataTypographyWithIcon}
+                className={`${styles.cardMetadataTypographyWithIcon} ${styles.cardDescription}`}
                 text={plainDescription}
                 searchTerms={props.searchTerms ?? []}
               />
