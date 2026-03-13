@@ -17,3 +17,7 @@
 .locatedInLink:global(.MuiTypography-root):hover {
   text-decoration-color: var(--synapse-gray-900) !important;
 }
+
+:global(.MuiTypography-root).cardTitle {
+  line-height: 30px;
+}

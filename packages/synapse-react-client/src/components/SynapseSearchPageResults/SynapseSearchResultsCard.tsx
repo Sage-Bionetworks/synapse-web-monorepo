@@ -107,6 +107,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
           }}
         >
           <HighlightedTypography
+            className={styles.cardTitle}
             variant="headline3"
             text={props.name}
             searchTerms={props.searchTerms ?? []}
