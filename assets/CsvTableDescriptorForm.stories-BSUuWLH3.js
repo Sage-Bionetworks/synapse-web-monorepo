@@ -1,3 +1,0 @@
-import{C as o}from"./CsvTableDescriptorForm-2H6jhRHM.js";import"./iframe-DMCVtv3C.js";import"./index-Chi_LkuB.js";import"./RadioGroup-vzTaSqYK.js";import"./Radio-DNTroSdi.js";import"./SwitchBase-CZ_AC8D4.js";import"./FormGroup-Ckf5a08v.js";import"./FormControlLabel-lt0TjqJi.js";import"./Grid-B6Ri9mCx.js";import"./Checkbox-DcdUAgDt.js";const{fn:e}=__STORYBOOK_MODULE_TEST__,_={title:"Components/Table/CSV Table Descriptor Form",component:o,args:{onChange:e()}},r={name:"CSV Table Descriptor Form"};r.parameters={...r.parameters,docs:{...r.parameters?.docs,source:{originalSource:`{
-  name: 'CSV Table Descriptor Form'
-}`,...r.parameters?.docs?.source}}};const C=["Demo"];export{r as Demo,C as __namedExportsOrder,_ as default};
