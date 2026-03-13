@@ -253,7 +253,7 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
   */
   if (element.nodeType === Node.TEXT_NODE) {
     // case 1.
-    // In HTML, whitespace text nodes cannot be a child of <table>.
+    // Discard empty text nodes. Prevents invalid HTML in some cases, for example whitespace text nodes cannot be a child of <table>.
     if (!element.textContent?.trim()) {
       return null
     }
