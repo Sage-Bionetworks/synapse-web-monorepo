@@ -1,0 +1,11 @@
+import{S as r}from"./SynapseFormWrapper-CtPaEwCH.js";import"./iframe-SpTPUL8m.js";import"./index-Chi_LkuB.js";import"./index-BNnLEJV-.js";import"./enums-eDdn3xOo.js";import"./_baseIteratee-CaM8Iugn.js";import"./isString-CRjJcNPG.js";import"./_arrayReduce-CrxnWFSq.js";import"./_baseEach-Dahxdq_T.js";import"./uniq-DWZFezQD.js";import"./forEach-CWOCpBhE.js";import"./pickBy-lVBueDr9.js";import"./Add-DbKCdcmW.js";import"./Grid-BjgyTgS9.js";import"./ListItem-C5FE55VF.js";import"./listItemButtonClasses-DD21Mqvg.js";import"./ListItemIcon-Pl_lgpo6.js";import"./MenuItem-DMW1-yIZ.js";import"./ListItemText-C8qeeOkT.js";import"./ArrowUpward-D5j68rmO.js";import"./ContentCopy-CPEJ87sr.js";import"./FormControlLabel-DqLQJsL_.js";import"./Checkbox-BJ4YMl8f.js";import"./SwitchBase-BbkaKoSO.js";import"./FormGroup-BRBfqQ_H.js";import"./RadioGroup-Bjuhxd8P.js";import"./Radio-CKRg1lRQ.js";import"./Slider-DHB0Y3k0.js";import"./visuallyHidden-Dan1xhjv.js";import"./events-DQ172AOg.js";import"./_stringToArray-RgUygvco.js";import"./index.prod-BJ6IzyMD.js";import"./ConfirmationDialog-Dh3Su1ip.js";import"./DialogBase-BJEwHP0p.js";import"./Close-CXggAjW9.js";import"./HelpPopover-BfVFLmxW.js";import"./MarkdownPopover-DmG1p_lZ.js";import"./LightTooltip-thM4wO9l.js";import"./MarkdownSynapse-D10-Vf-V.js";import"./SkeletonButton-BZ4aKRQm.js";import"./SkeletonInlineBlock-QplUKVpF.js";import"./SkeletonTable-BuAR6CBE.js";import"./SkeletonParagraph-CB5oiNEg.js";import"./types-CP9zjM1W.js";import"./head-aneRfQQJ.js";import"./SynapseFormRadioWidget-CHHi_IYq.js";import"./WarningDialog-BKLE9oMr.js";const Q={title:"Synapse/SynapseFormWrapper",component:r,parameters:{withRouter:!0}},o={args:{formGroupId:"9",formSchemaEntityId:"syn20680102",fileNamePath:"naming.compound_name",formUiSchemaEntityId:"syn20693568",formNavSchemaEntityId:"syn20680027",formTitle:"Your Submission",formClass:"drug-upload-tool"}};o.parameters={...o.parameters,docs:{...o.parameters?.docs,source:{originalSource:`{
+  args: {
+    formGroupId: '9',
+    formSchemaEntityId: 'syn20680102',
+    fileNamePath: 'naming.compound_name',
+    formUiSchemaEntityId: 'syn20693568',
+    formNavSchemaEntityId: 'syn20680027',
+    formTitle: 'Your Submission',
+    formClass: 'drug-upload-tool'
+  }
+}`,...o.parameters?.docs?.source}}};const V=["StopADDemo"];export{o as StopADDemo,V as __namedExportsOrder,Q as default};
