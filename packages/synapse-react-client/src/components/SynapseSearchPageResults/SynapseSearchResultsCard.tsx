@@ -81,6 +81,10 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
     ? calculateFriendlyFileSize(file?.contentSize)
     : ''
 
+  const plainDescription = props.description
+    ? markdownToPlainText(props.description, HIT_DESCRIPTION_LENGTH_CHAR)
+    : ''
+
   return (
     <SynapseSearchResultsCardContainer ref={ref}>
       <Box
@@ -156,14 +160,14 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
               {formatDate(dayjs.unix(props.modifiedOn), 'M/D/YYYY')}
             </Typography>
           </Box>
-          {props.description && (
+          {plainDescription && (
             <Box sx={{ display: 'flex' }}>
               <ArticleOutlined className={styles.cardMetadataIcon} />
-              <Typography
-                className={`${styles.cardMetadataTypographyWithIcon} ${styles.cardDescription}`}
-              >
-                {markdownToPlainText(props.description)}
-              </Typography>
+              <HighlightedTypography
+                className={styles.cardMetadataTypographyWithIcon}
+                text={plainDescription}
+                searchTerms={props.searchTerms ?? []}
+              />
             </Box>
           )}
 

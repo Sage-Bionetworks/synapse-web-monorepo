@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://gateway.westus2.c-path-dev.aridhia.io",
+      "url": "https://gateway.westeurope.dap.c-path.org",
       "description": "C-Path Gateway (Development)"
     }
   ],
@@ -21,7 +21,7 @@
       "get": {
         "servers": [
           {
-            "url": "https://gateway.westus2.c-path-dev.aridhia.io/fair"
+            "url": "https://gateway.westeurope.dap.c-path.org/fair"
           }
         ],
         "tags": ["workflows"],
@@ -76,7 +76,7 @@
       "get": {
         "servers": [
           {
-            "url": "https://gateway.westus2.c-path-dev.aridhia.io/fair"
+            "url": "https://gateway.westeurope.dap.c-path.org/fair"
           }
         ],
         "tags": ["workflows"],
@@ -155,7 +155,7 @@
       "get": {
         "servers": [
           {
-            "url": "https://gateway.westus2.c-path-dev.aridhia.io/fair"
+            "url": "https://gateway.westeurope.dap.c-path.org/fair"
           }
         ],
         "tags": ["requests"],
@@ -214,7 +214,7 @@
       "post": {
         "servers": [
           {
-            "url": "https://gateway.westus2.c-path-dev.aridhia.io/fair"
+            "url": "https://gateway.westeurope.dap.c-path.org/fair"
           }
         ],
         "tags": ["requests"],
@@ -256,7 +256,7 @@
       "get": {
         "servers": [
           {
-            "url": "https://gateway.westus2.c-path-dev.aridhia.io/fair"
+            "url": "https://gateway.westeurope.dap.c-path.org/fair"
           }
         ],
         "tags": ["requests"],
@@ -298,7 +298,7 @@
       "get": {
         "servers": [
           {
-            "url": "https://gateway.westus2.c-path-dev.aridhia.io/fair"
+            "url": "https://gateway.westeurope.dap.c-path.org/fair"
           }
         ],
         "tags": ["datasets"],
@@ -368,7 +368,7 @@
       "get": {
         "servers": [
           {
-            "url": "https://gateway.westus2.c-path-dev.aridhia.io/fair"
+            "url": "https://gateway.westeurope.dap.c-path.org/fair"
           }
         ],
         "tags": ["datasets"],
@@ -410,7 +410,7 @@
       "post": {
         "servers": [
           {
-            "url": "https://gateway.westus2.c-path-dev.aridhia.io"
+            "url": "https://gateway.westeurope.dap.c-path.org"
           }
         ],
         "tags": ["authentication"],

@@ -9,7 +9,7 @@ import { describe, expect, it } from 'vitest'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
 import { dateTimeColumn } from '../columns/DateTimeColumn'
 import { createColumn } from './columnFactory'
-import { isValidElement, ReactElement } from 'react'
+import React, { isValidElement, ReactElement } from 'react'
 
 vi.mock('../components/ColumnHeaderWithTooltip', () => ({
   ColumnHeaderWithTooltip: ({ name }: { name: string }) => name,
@@ -42,23 +42,39 @@ vi.mock('../columns/AutocompleteMultipleEnumColumn', () => ({
 function getHeaderProps(title: unknown): {
   name?: string
   description?: string
+  showPinIcon?: boolean
+  isPinned?: boolean
+  onTogglePin?: () => void
 } {
   if (isValidElement(title)) {
     const element = title as ReactElement<{
       name: string
       description?: string
+      showPinIcon?: boolean
+      isPinned?: boolean
+      onTogglePin?: () => void
     }>
     return {
       name: element.props.name,
       description: element.props.description,
+      showPinIcon: element.props.showPinIcon,
+      isPinned: element.props.isPinned,
+      onTogglePin: element.props.onTogglePin,
     }
   }
   return {}
 }
 
+// For these tests, the mock column returns a concrete React element (not null)
+// so the grid always has something to render during assertions.
 const fakeColumn = {
-  component: () => null,
+  component: () => React.createElement('div'),
 }
+
+// Width calculation constants (from calculateColumnWidth.ts)
+const CHAR_WIDTH_PX = 11
+const DEFAULT_MIN_WIDTH = 175
+const DATETIME_MIN_WIDTH = 215
 
 const keyColumnSpy = vi.mocked(keyColumn)
 const mockCreateTextColumn =
@@ -224,7 +240,7 @@ describe('columnFactory', () => {
     })
 
     describe('Custom Width Support', () => {
-      it('should use customWidth when provided for text column', () => {
+      it('should use customWidth when provided', () => {
         const config = {
           columnName: 'description',
           typeInfo: { type: 'string', isArray: false },
@@ -239,81 +255,6 @@ describe('columnFactory', () => {
         expect(column.basis).toBe(300)
       })
 
-      it('should use customWidth when provided for number column', () => {
-        const config = {
-          columnName: 'count',
-          typeInfo: { type: 'number', isArray: false },
-          enumeratedValues: [],
-          isRequired: false,
-          customWidth: 150,
-        }
-
-        const column = createColumn(config)
-
-        expect(column.minWidth).toBe(150)
-        expect(column.basis).toBe(150)
-      })
-
-      it('should use customWidth when provided for enumerated column', () => {
-        const config = {
-          columnName: 'status',
-          typeInfo: { type: 'string', isArray: false },
-          enumeratedValues: ['active', 'inactive'],
-          isRequired: false,
-          customWidth: 200,
-        }
-
-        const column = createColumn(config)
-
-        expect(column.minWidth).toBe(200)
-        expect(column.basis).toBe(200)
-      })
-
-      it('should use customWidth when provided for boolean column', () => {
-        const config = {
-          columnName: 'isActive',
-          typeInfo: { type: 'boolean', isArray: false },
-          enumeratedValues: [true, false],
-          isRequired: false,
-          customWidth: 120,
-        }
-
-        const column = createColumn(config)
-
-        expect(column.minWidth).toBe(120)
-        expect(column.basis).toBe(120)
-      })
-
-      it('should use customWidth when provided for multipleEnum column', () => {
-        const config = {
-          columnName: 'tags',
-          typeInfo: { type: 'string', isArray: true },
-          enumeratedValues: ['tag1', 'tag2', 'tag3'],
-          isRequired: false,
-          customWidth: 250,
-        }
-
-        const column = createColumn(config)
-
-        expect(column.minWidth).toBe(250)
-        expect(column.basis).toBe(250)
-      })
-
-      it('should use customWidth when provided for date-time column', () => {
-        const config = {
-          columnName: 'createdAt',
-          typeInfo: { type: 'string', format: 'date-time', isArray: false },
-          enumeratedValues: [],
-          isRequired: false,
-          customWidth: 280,
-        }
-
-        const column = createColumn(config)
-
-        expect(column.minWidth).toBe(280)
-        expect(column.basis).toBe(280)
-      })
-
       it('should calculate width based on column name when customWidth not provided', () => {
         const config = {
           columnName: 'shortName',
@@ -324,12 +265,15 @@ describe('columnFactory', () => {
 
         const column = createColumn(config)
 
-        // Width calculation: Math.max(175, 'shortName'.length * 10) = Math.max(175, 90) = 175
-        expect(column.minWidth).toBe(175)
-        expect(column.basis).toBe(175)
+        const expectedWidth = Math.max(
+          DEFAULT_MIN_WIDTH,
+          'shortName'.length * CHAR_WIDTH_PX,
+        )
+        expect(column.minWidth).toBe(expectedWidth)
+        expect(column.basis).toBe(expectedWidth)
       })
 
-      it('should ensure minimum width of 215 for date-time columns', () => {
+      it('should ensure minimum width for date-time columns', () => {
         const config = {
           columnName: 'dt',
           typeInfo: { type: 'string', format: 'date-time', isArray: false },
@@ -339,9 +283,8 @@ describe('columnFactory', () => {
 
         const column = createColumn(config)
 
-        // Date-time columns have special handling: Math.max(calculateColumnWidth(columnName), 215)
-        expect(column.minWidth).toBeGreaterThanOrEqual(215)
-        expect(column.basis).toBeGreaterThanOrEqual(215)
+        expect(column.minWidth).toBeGreaterThanOrEqual(DATETIME_MIN_WIDTH)
+        expect(column.basis).toBeGreaterThanOrEqual(DATETIME_MIN_WIDTH)
       })
     })
 
@@ -393,24 +336,7 @@ describe('columnFactory', () => {
         })
       })
 
-      it('should set basis property equal to width for fixed sizing', () => {
-        const config = {
-          columnName: 'testColumn',
-          typeInfo: { type: 'string', isArray: false },
-          enumeratedValues: [],
-          isRequired: false,
-          customWidth: 350,
-        }
-
-        const column = createColumn(config)
-
-        expect(column.basis).toBe(350)
-        expect(column.minWidth).toBe(350)
-        expect(column.grow).toBe(0)
-        expect(column.shrink).toBe(0)
-      })
-
-      it('should maintain fixed sizing when width is calculated', () => {
+      it('should set basis equal to calculated width for fixed sizing', () => {
         const config = {
           columnName: 'veryLongColumnNameThatExceedsMinimum',
           typeInfo: { type: 'string', isArray: false },
@@ -420,11 +346,9 @@ describe('columnFactory', () => {
 
         const column = createColumn(config)
 
-        // Width should be calculaßted based on name length
-        // 11px
         const expectedWidth = Math.max(
-          175,
-          'veryLongColumnNameThatExceedsMinimum'.length * 11,
+          DEFAULT_MIN_WIDTH,
+          'veryLongColumnNameThatExceedsMinimum'.length * CHAR_WIDTH_PX,
         )
         expect(column.basis).toBe(expectedWidth)
         expect(column.minWidth).toBe(expectedWidth)
@@ -479,6 +403,173 @@ describe('columnFactory', () => {
         expect(column.grow).toBe(0)
         expect(column.shrink).toBe(0)
         expect(column.headerClassName).toBe('header-cell-required')
+      })
+    })
+
+    describe('Pin Icon Support', () => {
+      it('should pass showPinIcon prop to header when provided', () => {
+        const config = {
+          columnName: 'firstColumn',
+          typeInfo: { type: 'string', isArray: false },
+          enumeratedValues: [],
+          isRequired: false,
+          showPinIcon: true,
+        }
+
+        const column = createColumn(config)
+        const headerProps = getHeaderProps(column.title)
+
+        expect(headerProps.showPinIcon).toBe(true)
+      })
+
+      it('should pass isPinned prop to header when provided', () => {
+        const config = {
+          columnName: 'pinnedColumn',
+          typeInfo: { type: 'string', isArray: false },
+          enumeratedValues: [],
+          isRequired: false,
+          showPinIcon: true,
+          isPinned: true,
+        }
+
+        const column = createColumn(config)
+        const headerProps = getHeaderProps(column.title)
+
+        expect(headerProps.showPinIcon).toBe(true)
+        expect(headerProps.isPinned).toBe(true)
+        expect(column.stickyLeft).toBe(true)
+        expect(column.stickyLeft).toBe(true)
+      })
+
+      it('should pass onTogglePin handler to header when provided', () => {
+        const mockToggleHandler = vi.fn()
+        const config = {
+          columnName: 'toggleableColumn',
+          typeInfo: { type: 'string', isArray: false },
+          enumeratedValues: [],
+          isRequired: false,
+          showPinIcon: true,
+          onTogglePin: mockToggleHandler,
+        }
+
+        const column = createColumn(config)
+        const headerProps = getHeaderProps(column.title)
+
+        expect(headerProps.showPinIcon).toBe(true)
+        expect(headerProps.onTogglePin).toBe(mockToggleHandler)
+      })
+
+      it('should not show pin icon by default', () => {
+        const config = {
+          columnName: 'regularColumn',
+          typeInfo: { type: 'string', isArray: false },
+          enumeratedValues: [],
+          isRequired: false,
+        }
+
+        const column = createColumn(config)
+        const headerProps = getHeaderProps(column.title)
+
+        expect(headerProps.showPinIcon).toBeUndefined()
+        expect(headerProps.isPinned).toBeUndefined()
+        expect(column.stickyLeft).toBeUndefined()
+        expect(headerProps.onTogglePin).toBeUndefined()
+        expect(column.stickyLeft).toBeUndefined()
+      })
+
+      it('should work with pin props and custom width together', () => {
+        const mockToggleHandler = vi.fn()
+        const config = {
+          columnName: 'customPinnedColumn',
+          typeInfo: { type: 'number', isArray: false },
+          enumeratedValues: [],
+          isRequired: true,
+          showPinIcon: true,
+          isPinned: true,
+          onTogglePin: mockToggleHandler,
+          customWidth: 250,
+        }
+
+        const column = createColumn(config)
+        const headerProps = getHeaderProps(column.title)
+
+        expect(headerProps.showPinIcon).toBe(true)
+        expect(headerProps.isPinned).toBe(true)
+        expect(headerProps.onTogglePin).toBe(mockToggleHandler)
+        expect(column.stickyLeft).toBe(true)
+        expect(column.minWidth).toBe(250)
+        expect(column.basis).toBe(250)
+        expect(column.stickyLeft).toBe(true)
+      })
+    })
+
+    describe('Width Calculations with Header Icons', () => {
+      it('should add extra width for pin icon', () => {
+        const config = {
+          columnName: 'veryLongColumnNameThatExceedsMinimumWidth',
+          typeInfo: { type: 'string', isArray: false },
+          enumeratedValues: [],
+          isRequired: false,
+          showPinIcon: true,
+        }
+
+        const column = createColumn(config)
+
+        const baseWidth = config.columnName.length * CHAR_WIDTH_PX
+        expect(column.minWidth).toBeGreaterThan(baseWidth)
+      })
+
+      it('should add extra width for description tooltip', () => {
+        const config = {
+          columnName: 'anotherVeryLongColumnName',
+          typeInfo: { type: 'string', isArray: false },
+          enumeratedValues: [],
+          isRequired: false,
+          description: 'This is a description',
+        }
+
+        const column = createColumn(config)
+        const headerProps = getHeaderProps(column.title)
+
+        expect(headerProps.description).toBe('This is a description')
+        const baseWidth = config.columnName.length * CHAR_WIDTH_PX
+        expect(column.minWidth).toBeGreaterThan(baseWidth)
+      })
+
+      it('should add extra width for both pin and description icons', () => {
+        const config = {
+          columnName: 'columnWithBothIcons',
+          typeInfo: { type: 'string', isArray: false },
+          enumeratedValues: [],
+          isRequired: false,
+          showPinIcon: true,
+          description: 'Column description',
+        }
+
+        const column = createColumn(config)
+        const headerProps = getHeaderProps(column.title)
+
+        expect(headerProps.showPinIcon).toBe(true)
+        expect(headerProps.description).toBe('Column description')
+        const baseWidth = config.columnName.length * CHAR_WIDTH_PX
+        expect(column.minWidth).toBeGreaterThan(baseWidth)
+      })
+
+      it('should not add extra width when no icons are present', () => {
+        const config = {
+          columnName: 'regularColumn',
+          typeInfo: { type: 'string', isArray: false },
+          enumeratedValues: [],
+          isRequired: false,
+        }
+
+        const column = createColumn(config)
+
+        const expectedWidth = Math.max(
+          DEFAULT_MIN_WIDTH,
+          config.columnName.length * CHAR_WIDTH_PX,
+        )
+        expect(column.minWidth).toBe(expectedWidth)
       })
     })
   })

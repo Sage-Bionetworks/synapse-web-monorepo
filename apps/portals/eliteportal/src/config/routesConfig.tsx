@@ -187,9 +187,20 @@ const routes: RouteObject[] = [
           import('@/pages/AnalysisPlatforms').then(convertModuleToRouteObject),
       },
       {
-        path: 'Contribute Data',
+        path: 'Data Contribution',
         lazy: () =>
           import('@/pages/ContributeData').then(convertModuleToRouteObject),
+      },
+      {
+        path: 'Data Coordinating Center',
+        lazy: () =>
+          import('@/pages/DataCoordinatingCenter').then(
+            convertModuleToRouteObject,
+          ),
+      },
+      {
+        path: 'Overview',
+        lazy: () => import('@/pages/Overview').then(convertModuleToRouteObject),
       },
       {
         path: 'Comparative Biology',

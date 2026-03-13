@@ -1,18 +1,17 @@
 import { useGetCurrentUserProfile } from '@/synapse-queries'
 import { useGetModerators } from '@/synapse-queries/forum/useForum'
 import { useSubscription } from '@/synapse-queries/subscription/useSubscription'
-import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { Button, Typography } from '@mui/material'
 import {
   DiscussionFilter,
   SubscriptionObjectType,
 } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
-import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import { ForumTable } from './ForumTable'
 import { ForumThreadEditor } from './ForumThreadEditor'
 import { SubscribersModal } from './SubscribersModal'
+import { SignInRequiredModal } from '../SignInRequiredModal/SignInRequiredModal'
 
 export type ForumPageProps = {
   forumId: string
@@ -114,17 +113,11 @@ export function ForumPage({ forumId, limit, onClickLink }: ForumPageProps) {
         isDialog={true}
         openDialog={showThreadModal}
       />
-      <ConfirmationDialog
+      <SignInRequiredModal
         open={showSignInModal}
-        title="Sign In Required"
         content={SIGN_IN_TEXT}
-        onCancel={() => setShowSignInModal(false)}
         hasCancelButton={false}
-        onConfirm={() => setShowSignInModal(false)}
-        confirmButtonProps={{
-          children: 'Sign In',
-          className: SRC_SIGN_IN_CLASS,
-        }}
+        onHide={() => setShowSignInModal(false)}
       />
     </div>
   )

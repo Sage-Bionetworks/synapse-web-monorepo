@@ -1,6 +1,5 @@
-import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { Link, Typography } from '@mui/material'
-import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
+import { SignInRequiredModal } from '@/components/SignInRequiredModal/SignInRequiredModal'
 
 export type DownloadLoginModalProps = {
   showModal?: boolean
@@ -44,17 +43,5 @@ const content = (
 )
 
 export function DownloadLoginModal(props: DownloadLoginModalProps) {
-  return (
-    <ConfirmationDialog
-      open={true}
-      title="Sign In Required"
-      content={content}
-      onCancel={() => props.onHide()}
-      onConfirm={() => props.onHide()}
-      confirmButtonProps={{
-        children: CONFIRM_BUTTON_TEXT,
-        className: SRC_SIGN_IN_CLASS,
-      }}
-    />
-  )
+  return <SignInRequiredModal onHide={props.onHide} content={content} />
 }
