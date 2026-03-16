@@ -4,6 +4,7 @@ import {
   decodeXml,
   handleLinkClicks,
   processMath,
+  hasBlockLevelDescendant,
 } from '@/components/Markdown/MarkdownUtils'
 import {
   useGetWikiPage,
@@ -208,48 +209,6 @@ function RenderMarkdown(props: {
  * @param {string} markdown The original markdown, its kept as a special case for the table of contents widget
  * @returns {*}
  */
-
-const blockLevelElements = [
-  'p',
-  'div',
-  'ul',
-  'ol',
-  'section',
-  'article',
-  'table',
-  'h1',
-  'h2',
-  'h3',
-  'h4',
-  'h5',
-  'h6',
-]
-
-// Check if a node is a block level element
-const isBlockLevelElement = (node: Node): boolean => {
-  if (node.nodeType !== Node.ELEMENT_NODE) {
-    return false
-  }
-
-  const element = node as HTMLElement
-  const tag = element.tagName.toLowerCase()
-  const isStandardBlock = blockLevelElements.includes(tag)
-
-  const isWidget = element.hasAttribute('data-widgetparams')
-
-  return isStandardBlock || isWidget
-}
-
-// Check if a node has any block level descendants
-const hasBlockLevelDescendant = (node: Node): boolean => {
-  if (isBlockLevelElement(node)) {
-    return true
-  }
-
-  return Array.from(node.childNodes).some(child =>
-    hasBlockLevelDescendant(child),
-  )
-}
 
 function RecursiveRender(props: { element: Node; markdown: string }) {
   const { element, markdown } = props
