@@ -1,7 +1,5 @@
 import { convertDoiToLink } from '@/utils/functions/RegularExpressions'
-import { Box } from '@mui/material'
 import { Component, Fragment } from 'react'
-import { ColumnIconConfigs } from '../../CardContainerLogic'
 import IconSVG from '../../IconSvg/IconSvg'
 
 export type CardLabel = {
@@ -20,7 +18,6 @@ type CardFooterProps = {
   values: CardLabel[]
   isHeader: boolean
   secondaryLabelLimit?: number
-  columnIconOptions?: ColumnIconConfigs
   className?: string
   cardTopContent?: React.ReactNode
 }
@@ -55,64 +52,12 @@ class CardFooter extends Component<CardFooterProps, State> {
     this.setState({ isDesktop: window.innerWidth > 600 })
   }
 
-  getIconForValue = (
-    tableColumnName: string | undefined,
-    value: string | undefined,
-  ) => {
-    const columnIconOptions = this.props.columnIconOptions
-    if (
-      !columnIconOptions?.columns ||
-      !tableColumnName ||
-      !value ||
-      !Object.keys(columnIconOptions.columns).includes(tableColumnName)
-    ) {
-      return undefined
-    }
-    return columnIconOptions.columns[tableColumnName][value]
-  }
-
-  renderIcon = (
-    iconProps: NonNullable<ReturnType<typeof this.getIconForValue>>,
-  ) => {
-    const { containerSx, ...svgProps } = iconProps
-    return (
-      <Box
-        sx={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          verticalAlign: 'middle',
-          marginRight: '0.2rem',
-          ...containerSx,
-        }}
-      >
-        <IconSVG wrap={false} {...svgProps} />
-      </Box>
-    )
-  }
-
-  renderRowValue = (
-    key: string,
-    value: React.ReactNode,
-    tableColumnName?: string,
-    rawValue?: string,
-  ) => {
+  renderRowValue = (value: React.ReactNode) => {
     if (typeof value !== 'string') {
-      // value can sometimes be a react element — check if we should prepend an icon
-      const iconProps = this.getIconForValue(tableColumnName, rawValue)
-      if (iconProps) {
-        return (
-          <>
-            {this.renderIcon(iconProps)}
-            {value}
-          </>
-        )
-      }
       return value
     }
     const valueAsString = value.trim()
     const doiLink = convertDoiToLink(valueAsString)
-
     if (doiLink) {
       return (
         <a target="_blank" rel="noopener noreferrer" href={doiLink}>
@@ -120,34 +65,13 @@ class CardFooter extends Component<CardFooterProps, State> {
         </a>
       )
     }
-
-    const iconProps = this.getIconForValue(tableColumnName, valueAsString)
-    if (iconProps) {
-      return (
-        <>
-          {this.renderIcon(iconProps)}
-          <span style={{ verticalAlign: 'middle' }}>{valueAsString}</span>
-        </>
-      )
-    }
-
     return value
   }
   renderRows = (values: CardLabel[], limit: number, isDesktop: boolean) => {
     return values.map((label, index) => {
-      const {
-        columnDisplayName,
-        value: labelValue,
-        columnName,
-        rawValue,
-      } = label
+      const { columnDisplayName, value: labelValue } = label
       const hideClass = index >= limit ? 'SRC-hidden' : ''
-      const value = this.renderRowValue(
-        columnDisplayName,
-        labelValue,
-        columnName,
-        rawValue,
-      )
+      const value = this.renderRowValue(labelValue)
       if (isDesktop) {
         return (
           <tr className={'SRC-cardRowDesktop ' + hideClass} key={index}>

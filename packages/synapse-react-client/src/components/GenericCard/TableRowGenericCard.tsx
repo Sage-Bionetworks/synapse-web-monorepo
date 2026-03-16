@@ -395,6 +395,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
             selectColumns={selectColumns}
             columnModels={columnModels}
             rowData={data}
+            columnIconOptions={columnIconOptions}
           />
         )
         columnDisplayName = getColumnDisplayName(columnName)
@@ -512,7 +513,6 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       charCountCutoff={charCountCutoff}
       labels={values}
       secondaryLabelLimit={secondaryLabelLimit}
-      columnIconOptions={columnIconOptions}
       useStylesForDisplayedImage={Boolean(imageFileHandleIdValue)}
       cardTopContent={
         resolvedDownloadCartSynIdValue && (

@@ -3,7 +3,7 @@ import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
 import { Box, Stack } from '@mui/material'
 import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
 import React, { CSSProperties, forwardRef } from 'react'
-import { ColumnIconConfigs, DescriptionConfig } from '../CardContainerLogic'
+import { DescriptionConfig } from '../CardContainerLogic'
 import HeaderCard, { HeaderCardVariant } from '../HeaderCard'
 import { CardFooter } from '../row_renderers/utils'
 import { FileHandleLink } from '../widgets/FileHandleLink'
@@ -67,10 +67,6 @@ export type GenericCardProps = {
    */
   secondaryLabelLimit?: number
   /**
-   * Options for displaying icons with the labels in the card footer
-   */
-  columnIconOptions?: ColumnIconConfigs
-  /**
    * Optional configuration for displaying CTA button(s) on the card. Accepts a single config or an array.
    */
   ctaLinkConfig?: CTALinkConfig | CTALinkConfig[]
@@ -119,7 +115,6 @@ export const GenericCard = forwardRef(function GenericCard(
     useStylesForDisplayedImage = false,
     labels = EMPTY_CARD_LABEL_ARRAY,
     secondaryLabelLimit,
-    columnIconOptions,
     ctaLinkConfig,
     renderedIconList,
     sustainabilityScorecard,
@@ -250,7 +245,6 @@ export const GenericCard = forwardRef(function GenericCard(
           isHeader={false}
           secondaryLabelLimit={secondaryLabelLimit}
           values={labels}
-          columnIconOptions={columnIconOptions}
           className={useStylesForDisplayedImage ? undefined : 'hasIcon'}
           cardTopContent={cardTopContent}
         />
