@@ -44,5 +44,5 @@ jobs:
       - name: setup-outputbucket-staging
         run: |
           cd ${{ steps.package-path.outputs.packagePath }}
-          chmod +x ../../synapse-portal-framework/deploy.sh
-          ../../synapse-portal-framework/deploy.sh push-staging ${{ inputs.portal-name }}
+          chmod +x ../../synapse-portal-framework/run.sh
+          ../../synapse-portal-framework/run.sh push-staging ${{ inputs.portal-name }}
