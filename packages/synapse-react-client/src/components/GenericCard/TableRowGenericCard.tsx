@@ -23,7 +23,7 @@ import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { getColumnIndex } from '@/utils/functions/SqlFunctions'
 import { parseSynId } from '@/utils/functions/RegularExpressions'
 import { GetAppTwoTone } from '@mui/icons-material'
-import { Box, Collapse, Link } from '@mui/material'
+import { Box, Collapse, Link, Stack, Typography } from '@mui/material'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -128,6 +128,11 @@ export type TableToGenericCardMapping = {
   link?: string
   /** Column name of the STRING_LIST column that includes icon names that represent icons that should be displayed on the card */
   dataTypeIconNames?: string
+  /**
+   * Ordered list of name/column pairs to display to the right of the title area.
+   * Each renders as "Name: Value" on its own line. Rows with empty values are skipped.
+   */
+  titleAreaDetails?: Array<{ name: string; columnName: string }>
   /** Configuration for resolving the Synapse entity ID/version represented by each card row.
    *  The ID and version sources must both reference either row-based values or column-based values.
    */
@@ -281,6 +286,28 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     },
     [schema, data],
   )
+
+  const resolvedTitleAreaRightContent = useMemo(() => {
+    const { titleAreaDetails } = genericCardSchema
+    if (!titleAreaDetails || titleAreaDetails.length === 0) return undefined
+    const rows = titleAreaDetails
+      .map(({ name, columnName }) => {
+        const value = getColumnValue(columnName)
+        if (!value) return null
+        return { name, value }
+      })
+      .filter(Boolean) as { name: string; value: string }[]
+    if (rows.length === 0) return undefined
+    return (
+      <Stack direction="column" gap="4px">
+        {rows.map(({ name, value }) => (
+          <Typography key={name} variant="body1" sx={{ whiteSpace: 'nowrap' }}>
+            {name}: {value}
+          </Typography>
+        ))}
+      </Stack>
+    )
+  }, [genericCardSchema, getColumnValue])
 
   const {
     entityId: resolvedSynapseEntityId,
@@ -507,6 +534,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       ctaLinkConfig={
         resolvedCtaLinkConfigs.length > 0 ? resolvedCtaLinkConfigs : undefined
       }
+      titleAreaRightContent={resolvedTitleAreaRightContent}
       description={description}
       descriptionSubTitle={descriptionSubTitle}
       descriptionConfig={descriptionConfig}

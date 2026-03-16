@@ -239,6 +239,25 @@
     @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
       flex: 1;
     }
+
+    .SRC-cardTitleArea {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: var(--baseline-grid);
+      @media (max-width: map.get(SRC.$breakpoints, 'medium')) {
+        flex-direction: column;
+      }
+    }
+
+    .SRC-cardTitleAreaDetails {
+      flex-shrink: 0;
+      padding-top: var(--baseline-grid);
+      @media (max-width: map.get(SRC.$breakpoints, 'medium')) {
+        padding-top: 0;
+        margin-top: var(--baseline-grid);
+      }
+    }
   }
 
   .SRC-cardAction {
