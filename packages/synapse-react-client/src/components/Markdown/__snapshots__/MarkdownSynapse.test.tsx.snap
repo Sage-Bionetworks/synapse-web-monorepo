@@ -1,5 +1,30 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`MarkdownSynapse tests > Snapshot tests > renders inline html block-level element nested inside inline element 1`] = `
+<div>
+  <div
+    class="markdown"
+    data-testid="markdown"
+  >
+    <p
+      class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
+    >
+      text 
+      <span
+        class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
+      >
+        span text 
+      </span>
+    </p>
+    <div>
+      div text
+    </div>
+     more text
+    <p />
+  </div>
+</div>
+`;
+
 exports[`MarkdownSynapse tests > Snapshot tests > supports bootstrap rows and columns 1`] = `
 <div>
   <div

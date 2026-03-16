@@ -367,6 +367,16 @@ describe('MarkdownSynapse tests', () => {
   })
 
   describe('Snapshot tests', () => {
+    let consoleErrorSpy: ReturnType<typeof vi.spyOn>
+
+    beforeEach(() => {
+      consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    })
+
+    afterEach(() => {
+      consoleErrorSpy.mockRestore()
+    })
+
     it('works with header and a link', () => {
       const { container } = renderComponent({
         markdown: '# header [text](https://synapse.org)',
@@ -414,6 +424,26 @@ describe('MarkdownSynapse tests', () => {
           '{row}',
       })
       expect(container).toMatchSnapshot()
+    })
+
+    it('should render a widget inside a paragraph without nesting warnings', () => {
+      const markdown = 'Some widget: {synapsewidget?params=...}'
+
+      render(<MarkdownSynapse markdown={markdown} />)
+
+      // The global afterEach will fail this test if console.error(validateDOMNesting) was called.
+      // We can also explicitly check the spy here for clarity:
+      expect(consoleErrorSpy).not.toHaveBeenCalled()
+    })
+
+    it('should handle block-level elements inside a link', () => {
+      // Case: User places a widget (block-level) inside a markdown link.
+      // This should trigger the component swap from <a> to <div>.
+      const markdown = '[{synapsewidget?params=...}](https://synapse.org)'
+
+      render(<MarkdownSynapse markdown={markdown} />)
+
+      expect(consoleErrorSpy).not.toHaveBeenCalled()
     })
   })
 })

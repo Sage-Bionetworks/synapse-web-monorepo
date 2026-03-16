@@ -225,7 +225,7 @@ const blockLevelElements = [
   'h6',
 ]
 
-// Handle elements that have children that would cause invalid nesting
+// Check if a node is a block level element
 const isBlockLevelElement = (node: Node): boolean => {
   if (node.nodeType !== Node.ELEMENT_NODE) {
     return false
@@ -238,6 +238,17 @@ const isBlockLevelElement = (node: Node): boolean => {
   const isWidget = element.hasAttribute('data-widgetparams')
 
   return isStandardBlock || isWidget
+}
+
+// Check if a node has any block level descendants
+const hasBlockLevelDescendant = (node: Node): boolean => {
+  if (isBlockLevelElement(node)) {
+    return true
+  }
+
+  return Array.from(node.childNodes).some(child =>
+    hasBlockLevelDescendant(child),
+  )
 }
 
 function RecursiveRender(props: { element: Node; markdown: string }) {
@@ -311,7 +322,7 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
 
     // case 3 block level child elements
     const hasBlockLevelChild = Array.from(element.childNodes).some(node =>
-      isBlockLevelElement(node),
+      hasBlockLevelDescendant(node),
     )
 
     // case 4
