@@ -426,20 +426,19 @@ describe('MarkdownSynapse tests', () => {
       expect(container).toMatchSnapshot()
     })
 
-    it('should render a widget inside a paragraph without nesting warnings', () => {
-      const markdown = 'Some widget: {synapsewidget?params=...}'
+    it('should swap <a> to <div> when a widget is nested inside a link', () => {
+      // Case: User places a widget (block-level) inside a markdown link.
+      const markdown = '[{synapsewidget?params=...}](https://synapse.org)'
 
       render(<MarkdownSynapse markdown={markdown} />)
 
-      // The global afterEach will fail this test if console.error(validateDOMNesting) was called.
-      // We can also explicitly check the spy here for clarity:
+      // The global afterEach validates that no console.error was triggered.
       expect(consoleErrorSpy).not.toHaveBeenCalled()
     })
 
-    it('should handle block-level elements inside a link', () => {
-      // Case: User places a widget (block-level) inside a markdown link.
-      // This should trigger the component swap from <a> to <div>.
-      const markdown = '[{synapsewidget?params=...}](https://synapse.org)'
+    it('should swap <p> to <div> when a widget contains a block-level element', () => {
+      const markdown =
+        '## Overview \n Check this out: ${entitypreview?entityId=syn70754793}'
 
       render(<MarkdownSynapse markdown={markdown} />)
 
