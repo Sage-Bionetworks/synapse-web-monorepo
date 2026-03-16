@@ -25,7 +25,7 @@ export function LabelMaybeWithIcon({
           alignItems: 'center',
           justifyContent: 'center',
           verticalAlign: 'middle',
-          marginRight: '0.2rem',
+          marginRight: '7px',
           ...containerSx,
         }}
       >
