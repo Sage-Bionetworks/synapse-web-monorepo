@@ -79,6 +79,7 @@ type QueryWrapperPlotNavOwnProps = {
   lockedColumn?: QueryWrapperProps['lockedColumn']
   onViewSharingSettingsClicked?: (benefactorId: string) => void
   initialLimit?: number
+  hideTopLevelControls?: boolean
 } & Omit<TopLevelControlsProps, 'entityId'> &
   Pick<QueryWrapperPlotNavCustomPlotParams, 'onCustomPlotClick'> &
   Pick<
@@ -134,6 +135,7 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'fileVersionColumnName'
   | 'initialLimit'
   | 'initialPlotType'
+  | 'hideTopLevelControls'
 > & {
   isFullTextSearchEnabled: boolean
   remount: () => void
@@ -159,6 +161,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     customPlots,
     initialLimit,
     initialPlotType,
+    hideTopLevelControls,
   } = props
   const queryContext = useQueryContext()
   const [showExportMetadata, setShowExportMetadata] = useState(false)
@@ -222,22 +225,24 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                   }
                 />
               )}
-              <SynapseErrorBoundary>
-                <TopLevelControls
-                  showColumnSelection={tableConfiguration !== undefined}
-                  name={name}
-                  hideDownload={hideDownload}
-                  hideQueryCount={hideQueryCount}
-                  hideFacetFilterControl={!isFaceted}
-                  hideVisualizationsControl={
-                    !isFaceted || hideVisualizationsControl
-                  }
-                  hideSqlEditorControl={hideSqlEditorControl}
-                  cavaticaConnectAccountURL={cavaticaConnectAccountURL}
-                  remount={remount}
-                  customControls={customControls}
-                />
-              </SynapseErrorBoundary>
+              {!hideTopLevelControls && (
+                <SynapseErrorBoundary>
+                  <TopLevelControls
+                    showColumnSelection={tableConfiguration !== undefined}
+                    name={name}
+                    hideDownload={hideDownload}
+                    hideQueryCount={hideQueryCount}
+                    hideFacetFilterControl={!isFaceted}
+                    hideVisualizationsControl={
+                      !isFaceted || hideVisualizationsControl
+                    }
+                    hideSqlEditorControl={hideSqlEditorControl}
+                    cavaticaConnectAccountURL={cavaticaConnectAccountURL}
+                    remount={remount}
+                    customControls={customControls}
+                  />
+                </SynapseErrorBoundary>
+              )}
               {isFaceted && (
                 <>
                   <FacetFilterControls
