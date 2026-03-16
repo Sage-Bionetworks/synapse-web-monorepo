@@ -172,23 +172,44 @@ export const markdownToPlainText = (markdown: string, maxLength?: number) => {
 }
 
 const blockLevelElements = [
-  'p',
-  'div',
-  'ul',
-  'ol',
-  'section',
+  'address',
   'article',
-  'table',
+  'aside',
+  'blockquote',
+  'canvas',
+  'dd',
+  'div',
+  'dl',
+  'dt',
+  'fieldset',
+  'figcaption',
+  'figure',
+  'footer',
+  'form',
   'h1',
   'h2',
   'h3',
   'h4',
   'h5',
   'h6',
+  'header',
+  'hr',
+  'li',
+  'main',
+  'nav',
+  'noscript',
+  'ol',
+  'p',
+  'pre',
+  'section',
+  'table',
+  'tfoot',
+  'ul',
+  'video',
 ]
 
 // Check if a node is a block level element
-const isBlockLevelElement = (node: Node): boolean => {
+export const isBlockLevelElement = (node: Node): boolean => {
   if (node.nodeType !== Node.ELEMENT_NODE) {
     return false
   }
