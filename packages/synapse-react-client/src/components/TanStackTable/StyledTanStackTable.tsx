@@ -2,8 +2,13 @@ import {
   StyledTableContainer,
   StyledTableContainerProps,
 } from '@/components/styled/StyledTableContainer'
-import { flexRender, Row, Table } from '@tanstack/react-table'
-import { useMemo } from 'react'
+import {
+  ColumnSizingState,
+  flexRender,
+  Row,
+  Table,
+} from '@tanstack/react-table'
+import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 import { MemoizedTableBody, TableBody, TableBodyProps } from './TableBody'
 import {
   getColumnSizeCssVariable,
@@ -16,6 +21,13 @@ export type StyledTanStackTableProps<TData = unknown, TRowType = Row<TData>> = {
   table: Table<TData>
   styledTableContainerProps?: StyledTableContainerProps
   fullWidth?: boolean
+  /**
+   * When true, uses `table-layout: auto` so the browser sizes columns to fit their content.
+   * Column sizes from TanStack act as minimum widths, and columns expand to fit wider content.
+   * Resizing still works — dragging a column sets a new minimum width.
+   * Defaults to false (fixed layout).
+   */
+  autoColumnSizing?: boolean
   slots?: StyledTanStackTableSlots<TData, TRowType>
   slotProps?: StyledTanStackTableSlotProps<TData, TRowType>
 } & Pick<TableBodyProps<TData, TRowType>, 'rows' | 'rowTransform'>
@@ -32,6 +44,7 @@ export default function StyledTanStackTable<
     table,
     styledTableContainerProps,
     fullWidth = true,
+    autoColumnSizing = false,
     slots = {},
     slotProps = {},
   } = props
@@ -55,6 +68,55 @@ export default function StyledTanStackTable<
     rows: props.rows!,
     rowTransform: props.rowTransform!,
   }
+
+  /**
+   * When autoColumnSizing is true we do a two-phase render:
+   *  1. Render with table-layout: auto and no width constraints so the browser
+   *     natively sizes each column to its content.
+   *  2. After the first paint, measure each <th> and write the real pixel widths
+   *     into TanStack's columnSizing state, then switch to table-layout: fixed.
+   *
+   * This gives content-based initial sizes while still allowing the user to drag
+   * a column narrower than its content.
+   */
+  const tableRef = useRef<HTMLTableElement | null>(null)
+  const [hasMeasured, setHasMeasured] = useState(!autoColumnSizing)
+
+  // Column identity string — if the set of visible columns changes, re-measure.
+  const columnKey = table
+    .getFlatHeaders()
+    .map(h => h.id)
+    .join(',')
+
+  // Reset measurement whenever the visible column set changes.
+  useEffect(() => {
+    if (autoColumnSizing) {
+      setHasMeasured(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [columnKey])
+
+  // After the browser has laid out the auto-sized table, capture the widths and
+  // switch to fixed layout so that the user can resize below the content width.
+  useEffect(() => {
+    if (!autoColumnSizing || hasMeasured || !tableRef.current) return
+
+    const ths = tableRef.current.querySelectorAll(
+      ':scope > thead > tr:first-child > th',
+    )
+    const headers = table.getFlatHeaders()
+    const newSizes: ColumnSizingState = {}
+    headers.forEach((header, i) => {
+      const th = ths[i] as HTMLElement | undefined
+      if (th) {
+        newSizes[header.column.id] = Math.ceil(th.getBoundingClientRect().width)
+      }
+    })
+    if (Object.keys(newSizes).length > 0) {
+      table.setColumnSizing(newSizes)
+      setHasMeasured(true)
+    }
+  }, [autoColumnSizing, hasMeasured, table])
 
   /**
    * Instead of calling `column.getSize()` on every render for every header
@@ -82,7 +144,16 @@ export default function StyledTanStackTable<
     table.getState().columnVisibility, // If a column is added, its width should be recalculated
   ])
 
-  const tableWidth = fullWidth ? '100%' : `${table.getTotalSize()}px`
+  // Before measurement: let the browser shrink the table to content width so we
+  // can read accurate sizes. After measurement: use the exact measured total.
+  let tableWidth: string
+  if (fullWidth) {
+    tableWidth = '100%'
+  } else if (!hasMeasured) {
+    tableWidth = 'max-content'
+  } else {
+    tableWidth = `${table.getTotalSize()}px`
+  }
 
   /* When resizing any column we will render this special memoized version of our table body */
   const TableBodyElement = table.getState().columnSizingInfo.isResizingColumn
@@ -93,9 +164,12 @@ export default function StyledTanStackTable<
     <StyledTableContainer {...styledTableContainerProps}>
       <Table
         {...tableSlotProps}
+        ref={tableRef as RefObject<HTMLTableElement>}
         style={{
           ...columnSizeVars,
-          tableLayout: 'fixed',
+          // Pre-measurement: auto layout so the browser can size columns to content.
+          // Post-measurement: fixed layout so the user can resize below content width.
+          tableLayout: hasMeasured ? 'fixed' : 'auto',
           width: tableWidth,
           ...tableSlotProps['style'],
         }}
@@ -110,9 +184,13 @@ export default function StyledTanStackTable<
                     colSpan={header.colSpan}
                     {...thSlotProps}
                     style={{
-                      width: `calc(var(${getHeaderSizeCssVariable(
-                        header.id,
-                      )}) * 1px)`,
+                      // Pre-measurement: no width hint — let the browser size freely.
+                      // Post-measurement: exact width from the measured/resized value.
+                      ...(hasMeasured && {
+                        width: `calc(var(${getHeaderSizeCssVariable(
+                          header.id,
+                        )}) * 1px)`,
+                      }),
                       ...getCommonPinningStyles(header.column),
                       ...thSlotProps['style'],
                     }}
