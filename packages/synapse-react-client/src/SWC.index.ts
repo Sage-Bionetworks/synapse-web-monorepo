@@ -6,13 +6,6 @@
  */
 
 import { lazy } from 'react'
-/**
- * Injected at build time by Vite's `define` (see vite.config.ts).
- * Using a compile-time constant avoids importing ../package.json, which
- * caused Rollup to resolve through the package.json exports map and emit
- * a stray `dist/packages/synapse-react-client/package.json.js` file.
- */
-declare const __SRC_VERSION__: string
 import {
   displayToast,
   SynapseToastContainer,
@@ -41,6 +34,10 @@ import { SynapseSessionManager } from './utils/AppUtils'
 
 // Also include scss in the bundle
 import './style/main.scss'
+
+// Injected at build time by Vite's `define`
+declare const __SRC_VERSION__: string
+
 
 const SynapseEnums = {
   BackendDestinationEnum,

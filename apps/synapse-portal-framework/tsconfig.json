@@ -7,7 +7,7 @@
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false,
-    "types": ["vite/client", "@testing-library/jest-dom"],
+    "types": ["vite/client", "node", "@testing-library/jest-dom"],
     "paths": {
       "@/*": ["./src/*"]
     }

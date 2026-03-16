@@ -1,4 +1,5 @@
 import { useCreateLockAccessRequirement } from '@/synapse-queries'
+import { SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL } from '@/utils/SynapseConstants'
 import {
   FormControl,
   FormControlLabel,
@@ -78,7 +79,7 @@ export default function ImposeRestrictionDialog(
         markdownText:
           'Conditions for use describes data use requirements that must be fulfilled before downloading.',
         helpUrl:
-          'https://help.synapse.org/docs/Sharing-Settings,-Permissions,-and-Conditions-for-Use.2024276030.html#SharingSettings,Permissions,andConditionsforUse-ConditionsforUse',
+          SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL,
       }}
       confirmButtonProps={{
         disabled: isSensitiveHumanData == null || createLockedARIsPending,

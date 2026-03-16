@@ -1,5 +1,13 @@
-import { resourceAccessListIsEqual } from './AccessControlListUtils'
+import {
+  MOCK_ANONYMOUS_PRINCIPAL_ID,
+  MOCK_AUTHENTICATED_PRINCIPAL_ID,
+  MOCK_PUBLIC_PRINCIPAL_ID,
+} from '@/mocks/realm/mockRealmPrincipal'
 import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
+import {
+  isEntityPublic,
+  resourceAccessListIsEqual,
+} from './AccessControlListUtils'
 
 describe('AccessControlListUtils', () => {
   describe('resourceAccessListIsEqual', () => {
@@ -110,6 +118,147 @@ describe('AccessControlListUtils', () => {
         },
       ]
       expect(resourceAccessListIsEqual(a, b)).toBe(false)
+    })
+  })
+
+  describe('isEntityPublic', () => {
+    test('returns true when public group principal present', () => {
+      const resourceAccess: ResourceAccess[] = [
+        {
+          principalId: 123,
+          accessType: [ACCESS_TYPE.READ],
+        },
+        {
+          principalId: MOCK_PUBLIC_PRINCIPAL_ID,
+          accessType: [ACCESS_TYPE.READ],
+        },
+      ]
+
+      const result = isEntityPublic(resourceAccess, {
+        publicGroup: String(MOCK_PUBLIC_PRINCIPAL_ID),
+      })
+
+      expect(result).toBe(true)
+    })
+
+    test('returns true when authenticated users principal present', () => {
+      const resourceAccess: ResourceAccess[] = [
+        {
+          principalId: 123,
+          accessType: [ACCESS_TYPE.READ],
+        },
+        {
+          principalId: MOCK_AUTHENTICATED_PRINCIPAL_ID,
+          accessType: [ACCESS_TYPE.READ],
+        },
+      ]
+
+      const result = isEntityPublic(resourceAccess, {
+        authenticatedUsers: String(MOCK_AUTHENTICATED_PRINCIPAL_ID),
+      })
+
+      expect(result).toBe(true)
+    })
+
+    test('returns true when anonymous user principal present', () => {
+      const resourceAccess: ResourceAccess[] = [
+        {
+          principalId: 123,
+          accessType: [ACCESS_TYPE.READ],
+        },
+        {
+          principalId: MOCK_ANONYMOUS_PRINCIPAL_ID,
+          accessType: [ACCESS_TYPE.READ],
+        },
+      ]
+
+      const result = isEntityPublic(resourceAccess, {
+        anonymousUser: String(MOCK_ANONYMOUS_PRINCIPAL_ID),
+      })
+
+      expect(result).toBe(true)
+    })
+
+    test('returns true when multiple public principals present', () => {
+      const resourceAccess: ResourceAccess[] = [
+        {
+          principalId: MOCK_PUBLIC_PRINCIPAL_ID,
+          accessType: [ACCESS_TYPE.READ],
+        },
+        {
+          principalId: MOCK_AUTHENTICATED_PRINCIPAL_ID,
+          accessType: [ACCESS_TYPE.READ],
+        },
+      ]
+
+      const result = isEntityPublic(resourceAccess, {
+        publicGroup: String(MOCK_PUBLIC_PRINCIPAL_ID),
+        authenticatedUsers: String(MOCK_AUTHENTICATED_PRINCIPAL_ID),
+      })
+
+      expect(result).toBe(true)
+    })
+
+    test('returns false when no public principals present', () => {
+      const resourceAccess: ResourceAccess[] = [
+        {
+          principalId: 123,
+          accessType: [ACCESS_TYPE.READ],
+        },
+        {
+          principalId: 456,
+          accessType: [ACCESS_TYPE.READ],
+        },
+      ]
+
+      const result = isEntityPublic(resourceAccess, {
+        publicGroup: String(MOCK_PUBLIC_PRINCIPAL_ID),
+        authenticatedUsers: String(MOCK_AUTHENTICATED_PRINCIPAL_ID),
+        anonymousUser: String(MOCK_ANONYMOUS_PRINCIPAL_ID),
+      })
+
+      expect(result).toBe(false)
+    })
+
+    test('returns false when resource access array is empty', () => {
+      const resourceAccess: ResourceAccess[] = []
+
+      const result = isEntityPublic(resourceAccess, {
+        publicGroup: String(MOCK_PUBLIC_PRINCIPAL_ID),
+        authenticatedUsers: String(MOCK_AUTHENTICATED_PRINCIPAL_ID),
+      })
+
+      expect(result).toBe(false)
+    })
+
+    test('returns false when realm principals are undefined', () => {
+      const resourceAccess: ResourceAccess[] = [
+        {
+          principalId: MOCK_PUBLIC_PRINCIPAL_ID,
+          accessType: [ACCESS_TYPE.READ],
+        },
+      ]
+
+      const result = isEntityPublic(resourceAccess, {})
+
+      expect(result).toBe(false)
+    })
+
+    test('returns false when realm principals have undefined values', () => {
+      const resourceAccess: ResourceAccess[] = [
+        {
+          principalId: MOCK_PUBLIC_PRINCIPAL_ID,
+          accessType: [ACCESS_TYPE.READ],
+        },
+      ]
+
+      const result = isEntityPublic(resourceAccess, {
+        publicGroup: undefined,
+        authenticatedUsers: undefined,
+        anonymousUser: undefined,
+      })
+
+      expect(result).toBe(false)
     })
   })
 })

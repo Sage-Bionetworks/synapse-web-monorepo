@@ -6,13 +6,13 @@ import { entityTypeToFriendlyName } from '../../../utils/functions/EntityTypeUti
 import {
   Box,
   FormControlLabel,
-  Checkbox,
   Button,
   RadioGroup,
   Radio,
   Typography,
   Chip,
   Tooltip,
+  Collapse,
 } from '@mui/material'
 import UTurnLeftIcon from '@mui/icons-material/UTurnLeft'
 import CloseIcon from '@mui/icons-material/Close'
@@ -39,11 +39,13 @@ type SearchFacetPanelProps = {
   query: SearchQuery
   setQuery: (newQuery: SearchQuery) => void
   facets: Facet[]
+  disabled?: boolean
+  expanded: boolean
+  onCollapse: () => void
   onAddFacet: (facetName: string, facetValue: string) => void
   onRemoveFacet: (facetName: string, facetValue: string) => void
   onSetRangeFacet: (facetName: string, minValue: string) => void
   onRemoveRangeFacet: (facetName: string) => void
-  isFacetApplied: (facetName: string, facetValue: string) => boolean
   isRangeFacetApplied: (facetName: string) => boolean
   getAppliedRangeFacet: (facetName: string) => { min: string } | undefined
 }
@@ -55,13 +57,15 @@ export function SearchFacetPanel({
   query,
   setQuery,
   facets,
+  disabled = false,
   onAddFacet,
   onRemoveFacet,
   onSetRangeFacet,
   onRemoveRangeFacet,
-  isFacetApplied,
   isRangeFacetApplied,
   getAppliedRangeFacet,
+  expanded,
+  onCollapse,
 }: SearchFacetPanelProps) {
   const hasAppliedFacets =
     (query.booleanQuery && query.booleanQuery.length > 0) ||
@@ -77,58 +81,78 @@ export function SearchFacetPanel({
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      {hasAppliedFacets && (
-        <Button
-          onClick={handleResetFilters}
-          variant="text"
-          size="small"
-          className={styles.resetFilterButton}
+    <Collapse
+      in={expanded}
+      id="filter-search-results-panel"
+      aria-labelledby="filter-results-button-label"
+    >
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {hasAppliedFacets && (
+            <Button
+              onClick={handleResetFilters}
+              variant="text"
+              size="small"
+              className={styles.resetFilterButton}
+              disabled={disabled}
+            >
+              <UTurnLeftIcon sx={{ transform: 'rotate(90deg)' }} />
+              <Typography sx={{ fontSize: '16px', fontWeight: 700 }}>
+                Reset Filters
+              </Typography>
+            </Button>
+          )}
+          <CloseIcon
+            sx={{ marginLeft: 'auto', cursor: 'pointer' }}
+            onClick={onCollapse}
+            aria-expanded={expanded}
+            aria-controls="filter-search-results-panel"
+          />
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: 3,
+            flexWrap: 'wrap',
+          }}
         >
-          <UTurnLeftIcon sx={{ transform: 'rotate(90deg)' }} />
-          <Typography sx={{ fontSize: '16px', fontWeight: 700 }}>
-            Reset Filters
-          </Typography>
-        </Button>
-      )}
-      <Box
-        sx={{ display: 'flex', flexDirection: 'row', gap: 3, flexWrap: 'wrap' }}
-      >
-        {FACET_DISPLAY_ORDER.map(facetName => {
-          const facet = facets.find(f => f.name === facetName)
+          {FACET_DISPLAY_ORDER.map(facetName => {
+            const facet = facets.find(f => f.name === facetName)
 
-          if (!facet || !shouldRenderFacet(facet)) {
-            return null
-          }
+            if (!facet || !shouldRenderFacet(facet)) {
+              return null
+            }
 
-          return (
-            <SearchFacetGroup
-              key={facet.name}
-              facet={facet}
-              query={query}
-              onAddFacet={onAddFacet}
-              onRemoveFacet={onRemoveFacet}
-              onSetRangeFacet={onSetRangeFacet}
-              onRemoveRangeFacet={onRemoveRangeFacet}
-              isFacetApplied={isFacetApplied}
-              isRangeFacetApplied={isRangeFacetApplied}
-              getAppliedRangeFacet={getAppliedRangeFacet}
-            />
-          )
-        })}
+            return (
+              <SearchFacetGroup
+                disabled={disabled}
+                key={facet.name}
+                facet={facet}
+                query={query}
+                onAddFacet={onAddFacet}
+                onRemoveFacet={onRemoveFacet}
+                onSetRangeFacet={onSetRangeFacet}
+                onRemoveRangeFacet={onRemoveRangeFacet}
+                isRangeFacetApplied={isRangeFacetApplied}
+                getAppliedRangeFacet={getAppliedRangeFacet}
+              />
+            )
+          })}
+        </Box>
       </Box>
-    </Box>
+    </Collapse>
   )
 }
 
 type SearchFacetGroupProps = {
   facet: Facet
   query: SearchQuery
+  disabled?: boolean
   onAddFacet: (facetName: string, facetValue: string) => void
   onRemoveFacet: (facetName: string, facetValue: string) => void
   onSetRangeFacet: (facetName: string, minValue: string) => void
   onRemoveRangeFacet: (facetName: string) => void
-  isFacetApplied: (facetName: string, facetValue: string) => boolean
   isRangeFacetApplied: (facetName: string) => boolean
   getAppliedRangeFacet: (facetName: string) => { min: string } | undefined
 }
@@ -139,12 +163,12 @@ type SearchFacetGroupProps = {
  */
 function SearchFacetGroup({
   facet,
+  disabled = false,
   query,
   onAddFacet,
   onRemoveFacet,
   onSetRangeFacet,
   onRemoveRangeFacet,
-  isFacetApplied,
   isRangeFacetApplied,
   getAppliedRangeFacet,
 }: SearchFacetGroupProps) {
@@ -157,14 +181,15 @@ function SearchFacetGroup({
       </Typography>
       {facet.type === FacetTypeNames.LITERAL ? (
         <LiteralFacetValues // checkbox list for literal facets
+          disabled={disabled}
           facet={facet}
           query={query}
           onAddFacet={onAddFacet}
           onRemoveFacet={onRemoveFacet}
-          isFacetApplied={isFacetApplied}
         />
       ) : (
         <DateRangeFacetValues // radio buttons for date/continuous facets (can only select one range at a time)
+          disabled={disabled}
           facet={facet}
           query={query}
           onSetRangeFacet={onSetRangeFacet}
@@ -180,20 +205,22 @@ function SearchFacetGroup({
 type LiteralFacetValuesProps = {
   facet: Facet
   query: SearchQuery
+  disabled?: boolean
   onAddFacet: (facetName: string, facetValue: string) => void
   onRemoveFacet: (facetName: string, facetValue: string) => void
-  isFacetApplied: (facetName: string, facetValue: string) => boolean
 }
 
+const ALL_FACET_VALUE = '__all__'
+
 /**
- * Component for rendering literal facet values as checkboxes
+ * Component for rendering literal facet values as radio buttons since the backend ANDs boolean query values
  */
 function LiteralFacetValues({
   facet,
   query,
+  disabled = false,
   onAddFacet,
   onRemoveFacet,
-  isFacetApplied,
 }: LiteralFacetValuesProps) {
   const [showAll, setShowAll] = useState(false)
 
@@ -203,7 +230,7 @@ function LiteralFacetValues({
       ?.filter(kv => kv.key === facet.name)
       .map(kv => kv.value) || []
 
-  const isAllChecked = appliedValues.length === 0
+  const selectedValue = appliedValues[0] ?? ALL_FACET_VALUE
 
   // Get values returned by the search results response
   const availableValues = facet.constraints.map(c => c.value)
@@ -218,32 +245,24 @@ function LiteralFacetValues({
     ? filteredValues
     : filteredValues.slice(0, MAX_FACET_VALUES_SHOWN)
 
-  const handleToggle = (value: string, checked: boolean) => {
-    if (checked) {
-      onAddFacet(facet.name, value)
-    } else {
-      onRemoveFacet(facet.name, value)
-    }
-  }
-
-  const handleToggleAll = (checked: boolean) => {
-    // If "All" is checked, remove all specific facet values from the query
-    if (checked) {
-      appliedValues.forEach(value => onRemoveFacet(facet.name, value))
+  const handleChange = (newValue: string) => {
+    appliedValues.forEach(v => onRemoveFacet(facet.name, v))
+    if (newValue !== ALL_FACET_VALUE) {
+      onAddFacet(facet.name, newValue)
     }
   }
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+    <RadioGroup
+      name={`literal-facet-${facet.name}`}
+      value={selectedValue}
+      onChange={e => handleChange(e.target.value)}
+    >
       <FormControlLabel
         sx={{ mb: '8px' }}
-        control={
-          <Checkbox
-            checked={isAllChecked}
-            onChange={e => handleToggleAll(e.target.checked)}
-            size="small"
-          />
-        }
+        disabled={disabled}
+        value={ALL_FACET_VALUE}
+        control={<Radio size="small" />}
         label={
           <Typography variant="smallText1" sx={{ lineHeight: '20px' }}>
             {getAllFacetLabel(facet.name)}
@@ -257,37 +276,29 @@ function LiteralFacetValues({
           ...(showAll && { maxHeight: '280px', overflowY: 'auto' }),
         }}
       >
-        {displayValues.map(value => {
-          const isChecked = isFacetApplied(facet.name, value)
-
-          return (
-            <FormControlLabel
-              key={value}
-              sx={{ mb: '8px' }}
-              control={
-                <Checkbox
-                  checked={isChecked}
-                  onChange={e => handleToggle(value, e.target.checked)}
-                  size="small"
-                />
-              }
-              label={
-                isUserFacet(facet.name) ? (
-                  <UserBadge userId={value} />
-                ) : (
-                  <Typography variant="smallText1" sx={{ lineHeight: '20px' }}>
-                    {facet.name === 'node_type'
-                      ? entityTypeToFriendlyName(value as EntityType) || value
-                      : value}
-                  </Typography>
-                )
-              }
-            />
-          )
-        })}
+        {displayValues.map(value => (
+          <FormControlLabel
+            disabled={disabled}
+            key={value}
+            value={value}
+            control={<Radio size="small" />}
+            label={
+              isUserFacet(facet.name) ? (
+                <UserBadge userId={value} />
+              ) : (
+                <Typography variant="smallText1" sx={{ lineHeight: '20px' }}>
+                  {facet.name === 'node_type'
+                    ? entityTypeToFriendlyName(value as EntityType) || value
+                    : value}
+                </Typography>
+              )
+            }
+          />
+        ))}
       </Box>
       {filteredValues.length > MAX_FACET_VALUES_SHOWN && !showAll && (
         <Button
+          disabled={disabled}
           onClick={() => setShowAll(true)}
           variant="text"
           size="small"
@@ -296,13 +307,14 @@ function LiteralFacetValues({
           Show all {filteredValues.length}
         </Button>
       )}
-    </Box>
+    </RadioGroup>
   )
 }
 
 type DateRangeFacetValuesProps = {
   facet: Facet
   query: SearchQuery
+  disabled?: boolean
   onSetRangeFacet: (facetName: string, minValue: string) => void
   onRemoveRangeFacet: (facetName: string) => void
   isRangeFacetApplied: (facetName: string) => boolean
@@ -315,6 +327,7 @@ type DateRangeFacetValuesProps = {
  */
 function DateRangeFacetValues({
   facet,
+  disabled = false,
   onSetRangeFacet,
   onRemoveRangeFacet,
   getAppliedRangeFacet,
@@ -361,6 +374,7 @@ function DateRangeFacetValues({
     >
       {timeRanges.map(range => (
         <FormControlLabel
+          disabled={disabled}
           key={range.label}
           value={range.id}
           control={<Radio size="small" />}

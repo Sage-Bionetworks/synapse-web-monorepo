@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "3.4.78",
+  "version": "3.4.80",
   "private": false,
   "type": "module",
   "main": "./dist/index.js",
@@ -17,6 +17,7 @@
     "./style/*": "./dist/style/*",
     "./template_style/*": "./dist/template_style/*",
     "./package.json": "./package.json",
+    "./synapse-react-client.css": "./dist/synapse-react-client.css",
     "./ThemeTypes": "./dist/types/ThemeTypes.d.ts"
   },
   "homepage": "https://sage-bionetworks.github.io/synapse-web-monorepo/",
@@ -49,7 +50,7 @@
     "@rjsf/utils": "6.0.0-beta.10",
     "@rjsf/validator-ajv8": "6.0.0-beta.10",
     "@sage-bionetworks/markdown-it-container": "workspace:*",
-    "@sage-bionetworks/react-datasheet-grid": "4.11.5-sage.3",
+    "@sage-bionetworks/react-datasheet-grid": "4.11.5-sage.6",
     "@sage-bionetworks/synapse-client": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "@tanstack/query-core": "5.80.10",
@@ -151,6 +152,7 @@
     "@types/dagre": "^0.7.52",
     "@types/google.maps": "^3.58.1",
     "@types/history": "^4.7.11",
+    "@types/jsdom": "^28.0.0",
     "@types/json-schema": "^7.0.15",
     "@types/jsonpath": "^0.2.4",
     "@types/katex": "^0.16.7",

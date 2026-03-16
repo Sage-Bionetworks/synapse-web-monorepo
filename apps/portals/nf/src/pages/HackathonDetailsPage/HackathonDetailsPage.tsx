@@ -21,6 +21,7 @@ import {
   HACKATHONS_DETAILS_PAGE_BACKGROUND_AND_RESULTS_TAB_PATH,
   HACKATHONS_DETAILS_PAGE_METHODOLOGY_TAB_PATH,
 } from '@/config/routeConstants'
+import { Outlet } from 'react-router'
 
 const metadataConfig: DetailPageMetadataConfig = {
   sql: hackathonsSql,

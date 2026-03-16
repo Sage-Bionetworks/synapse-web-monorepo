@@ -19,6 +19,8 @@ export default function RedirectToURL(props: RedirectToURLProps) {
   const isSearchMatch =
     search == undefined ? true : `?${search}` == currentSearch
   useEffect(() => {
+    // Check match and redirect
+    // `window` access is safe in useEffect; only runs in browser
     if (isSearchMatch) {
       window.location.replace(toURL)
     }

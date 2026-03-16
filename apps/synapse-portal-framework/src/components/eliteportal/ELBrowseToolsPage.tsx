@@ -10,7 +10,6 @@ import pluralize from 'pluralize'
 import EcosystemLayout from 'synapse-react-client/components/Ecosystem/EcosystemLayout'
 import Search from '../Search'
 import { useNavigate } from 'react-router'
-// import PopularSearches from '../PopularSearches'
 
 type Category = {
   resourceName: string
@@ -55,7 +54,6 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps): React.ReactNode => {
     }
     const url = await generateCompressedQueryURL(
       '/Explore/Computational%20Tools',
-      'qw',
       0,
       currentQuery,
       initQuery,
@@ -80,7 +78,6 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps): React.ReactNode => {
     }
     const url = await generateCompressedQueryURL(
       '/Explore/Computational%20Tools',
-      'qw',
       0,
       currentQuery,
       initQuery,

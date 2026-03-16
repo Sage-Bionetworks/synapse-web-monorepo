@@ -1,4 +1,4 @@
-import { PropsWithChildren, useCallback } from 'react'
+import { PropsWithChildren, useCallback, useMemo } from 'react'
 import { useSearchParams } from 'react-router'
 import { ApplicationSessionManager } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionManager'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
@@ -11,7 +11,7 @@ import useGoogleAnalytics from 'synapse-react-client/utils/analytics/useGoogleAn
 function AppInitializer(props: PropsWithChildren<Record<string, unknown>>) {
   useGoogleAnalytics()
   const [searchParams] = useSearchParams()
-  const cookies = new UniversalCookies()
+  const cookies = useMemo(() => new UniversalCookies(), [])
   const accountSitePrompted =
     cookies.get(SynapseConstants.ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY) ==
     'true' // short-lived cookie

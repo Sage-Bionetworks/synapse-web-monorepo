@@ -1,5 +1,8 @@
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
-import type { QueryWrapperSynapsePlotProps, QueryWrapperSynapsePlotRowClickEvent } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperSynapsePlot'
+import type {
+  QueryWrapperSynapsePlotProps,
+  QueryWrapperSynapsePlotRowClickEvent,
+} from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperSynapsePlot'
 import * as SynapseUtilityFunctions from 'synapse-react-client/utils/functions/index'
 import {
   cavaticaConnectAccountURL,

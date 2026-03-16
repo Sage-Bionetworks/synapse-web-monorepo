@@ -1,6 +1,6 @@
 import { createTheme, ThemeProvider } from '@mui/material'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import { CookiesProvider } from 'react-cookie'
 import { createBrowserRouter, RouteObject } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
@@ -26,11 +26,13 @@ function addErrorBoundaryToRoutes(
 
 function Portal(props: PortalProps) {
   const { palette, ...context } = props
-  // Per-component QueryClient instance (stable via useState initializer).
+  // Per-app QueryClient instance (stable via useRef).
   // Prevents cross-render cache leakage during SSR and avoids stale HMR state.
-  const [queryClient] = useState(
-    () => new QueryClient(defaultQueryClientConfig),
-  )
+  const queryClientRef = useRef<QueryClient | null>(null)
+  if (!queryClientRef.current) {
+    queryClientRef.current = new QueryClient(defaultQueryClientConfig)
+  }
+  const queryClient = queryClientRef.current
   const routesWithErrorBoundary = useMemo(
     () =>
       addErrorBoundaryToRoutes(
@@ -39,7 +41,10 @@ function Portal(props: PortalProps) {
       ),
     [props.routeConfig, context.logoHeaderConfig?.icon],
   )
-  const router = createBrowserRouter(routesWithErrorBoundary)
+  const router = useMemo(
+    () => createBrowserRouter(routesWithErrorBoundary),
+    [routesWithErrorBoundary],
+  )
   const theme = useMemo(() => createTheme(mergeTheme({ palette })), [palette])
   const defaultTitle = props.portalName || undefined
 

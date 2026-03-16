@@ -63,7 +63,7 @@ function PortalDOI(props: PortalDOIProps) {
             </Link>
             <CopyToClipboardIcon
               size="small"
-              value={doi.doiUrl!}
+              value={doiOrgUrl || ''}
               sx={{ color: 'inherit' }}
             />
 

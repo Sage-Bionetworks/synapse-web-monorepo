@@ -96,8 +96,6 @@ describe('CookiesNotification', () => {
     }
     cookies.set(COOKIES_AGREEMENT_COOKIE_KEY, cookiePrefence)
     renderComponent()
-    // The cookie check is deferred to useEffect so the alert may briefly
-    // appear before being dismissed after hydration.
     await waitFor(() => {
       expect(screen.queryByRole('alert')).not.toBeInTheDocument()
     })

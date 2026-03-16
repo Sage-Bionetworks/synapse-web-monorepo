@@ -1,6 +1,8 @@
 import katex from 'katex'
 import { RefObject } from 'react'
 import { MarkdownSynapseProps } from './MarkdownSynapse'
+import MarkdownIt from 'markdown-it'
+import { truncateString } from '@/utils/functions/StringUtils'
 
 /**
  * Find all math identified elements of the form [id^=\"mathjax-\"]
@@ -151,4 +153,20 @@ export function transformStringIntoMarkdownProps(
     }
   }
   return newProps
+}
+
+const md = new MarkdownIt()
+
+export const markdownToPlainText = (markdown: string, maxLength?: number) => {
+  if (!markdown || markdown.length === 0) {
+    return ''
+  }
+
+  const html = md.render(markdown)
+  const plainText = stripHTML(html)
+    .replace(/\|/g, '')
+    .replace(/#/g, '')
+    .replace(/<Synapse widget>/g, '')
+
+  return maxLength ? truncateString(plainText, maxLength) : plainText
 }

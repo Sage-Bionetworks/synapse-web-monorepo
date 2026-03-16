@@ -20,13 +20,9 @@ const SurveyToast = (props: SurveyToastProps): React.ReactNode => {
     surveyButtonText = 'Take The Survey',
   } = props
   const [cookiePreferences] = useCookiePreferences()
-  // Initialize to false to match the server-rendered HTML, then check
-  // localStorage in useEffect to avoid hydration mismatch.
   const [showBanner, setShowBanner] = useState(false)
   useEffect(() => {
-    if (localStorage.getItem(localStorageKey) === null) {
-      setShowBanner(true)
-    }
+    setShowBanner(localStorage.getItem(localStorageKey) === null)
   }, [localStorageKey])
   return !showBanner ? (
     <></>

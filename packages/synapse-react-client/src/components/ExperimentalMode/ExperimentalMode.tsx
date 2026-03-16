@@ -29,13 +29,21 @@ function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
     }
   }, [])
 
-  const createExperimentalModeCookie = () => {
-    const cookies = new UniversalCookies()
+  const getExperimentalModeCookieOptions = () => {
     const hostname = window.location.hostname.toLowerCase()
-    cookies.set(EXPERIMENTAL_MODE_COOKIE, 'true', {
+    return {
       path: '/',
       domain: hostname.endsWith('.synapse.org') ? 'synapse.org' : undefined,
-    })
+    }
+  }
+
+  const createExperimentalModeCookie = () => {
+    const cookies = new UniversalCookies()
+    cookies.set(
+      EXPERIMENTAL_MODE_COOKIE,
+      'true',
+      getExperimentalModeCookieOptions(),
+    )
     setIsExperimentalModeOn(true)
     if (onExperimentalModeToggle) {
       onExperimentalModeToggle(true)
@@ -44,7 +52,7 @@ function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
 
   const deleteExperimentalModeCookie = () => {
     const cookies = new UniversalCookies()
-    cookies.remove(EXPERIMENTAL_MODE_COOKIE, { path: '/' })
+    cookies.remove(EXPERIMENTAL_MODE_COOKIE, getExperimentalModeCookieOptions())
     setIsExperimentalModeOn(false)
     if (onExperimentalModeToggle) {
       onExperimentalModeToggle(false)

@@ -68,12 +68,6 @@ export default function Navbar() {
   useEffect(() => {
     function handleClickOutside(e: Event) {
       const node = e.target as HTMLElement
-      // Close the mobile menu when clicking outside the entire nav bar.
-      // Note: we use DOM containment check instead of stopPropagation()
-      // because React Router Framework Mode uses hydrateRoot(document, ...),
-      // which attaches React event delegation to `document` — the same level
-      // as this native listener. stopPropagation() inside React handlers
-      // cannot prevent this listener from firing in that scenario.
       if (navRef.current && !navRef.current.contains(node)) {
         setShowMenu(false)
       }

@@ -1725,8 +1725,8 @@ importers:
         specifier: workspace:*
         version: link:../markdown-it-container
       '@sage-bionetworks/react-datasheet-grid':
-        specifier: 4.11.5-sage.3
-        version: 4.11.5-sage.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 4.11.5-sage.6
+        version: 4.11.5-sage.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@sage-bionetworks/synapse-client':
         specifier: workspace:*
         version: link:../synapse-client
@@ -1995,6 +1995,9 @@ importers:
       '@types/history':
         specifier: ^4.7.11
         version: 4.7.11
+      '@types/jsdom':
+        specifier: ^28.0.0
+        version: 28.0.0
       '@types/json-schema':
         specifier: ^7.0.15
         version: 7.0.15
@@ -4389,8 +4392,8 @@ packages:
   '@rushstack/ts-command-line@5.0.1':
     resolution: {integrity: sha512-bsbUucn41UXrQK7wgM8CNM/jagBytEyJqXw/umtI8d68vFm1Jwxh1OtLrlW7uGZgjCWiiPH6ooUNa1aVsuVr3Q==}
 
-  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.3':
-    resolution: {integrity: sha512-7DiTKFDE9TljK70PnT3j0ySlbY0OgvUNcvgmS+VoLZDCXQNWRLfFZe4HxkLiHQJah9GJyhSIVHGCheqrui0tJw==}
+  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.6':
+    resolution: {integrity: sha512-4tESmKVme17Z7LnEbanuzNMetv9F+eA73bL3yDVPuczySa9DOawSv9HxuE9xipJhpBL+Waa/zMaOOOSQ9WQOdQ==}
     peerDependencies:
       react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -5063,6 +5066,9 @@ packages:
 
   '@types/jsdom@20.0.1':
     resolution: {integrity: sha512-d0r18sZPmMQr1eG35u12FZfhIXNrnsPU/g5wvRKCUf/tOGilKKwYMYGqh33BNR6ba+2gkHw1EUiHoN3mn7E5IQ==}
+
+  '@types/jsdom@28.0.0':
+    resolution: {integrity: sha512-A8TBQQC/xAOojy9kM8E46cqT00sF0h7dWjV8t8BJhUi2rG6JRh7XXQo/oLoENuZIQEpXsxLccLCnknyQd7qssQ==}
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -10562,6 +10568,9 @@ packages:
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
 
+  undici-types@7.22.0:
+    resolution: {integrity: sha512-RKZvifiL60xdsIuC80UY0dq8Z7DbJUV8/l2hOVbyZAxBzEeQU4Z58+4ZzJ6WN2Lidi9KzT5EbiGX+PI/UGYuRw==}
+
   undici@6.21.2:
     resolution: {integrity: sha512-uROZWze0R0itiAKVPsYhFov9LxrPMHLMEQFszeI2gCN6bnIIZ8twzBCJcN2LJrBBLfrP0t1FW0g+JmKVl8Vk1g==}
     engines: {node: '>=18.17'}
@@ -13586,7 +13595,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@tanstack/react-virtual': 3.13.8(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       classnames: 2.5.1
@@ -14435,6 +14444,13 @@ snapshots:
       '@types/node': 22.19.13
       '@types/tough-cookie': 4.0.5
       parse5: 7.3.0
+
+  '@types/jsdom@28.0.0':
+    dependencies:
+      '@types/node': 22.19.13
+      '@types/tough-cookie': 4.0.5
+      parse5: 7.3.0
+      undici-types: 7.22.0
 
   '@types/json-schema@7.0.15': {}
 
@@ -20968,6 +20984,8 @@ snapshots:
       which-boxed-primitive: 1.1.1
 
   undici-types@6.21.0: {}
+
+  undici-types@7.22.0: {}
 
   undici@6.21.2: {}
 

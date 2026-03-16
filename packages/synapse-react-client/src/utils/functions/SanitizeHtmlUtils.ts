@@ -135,11 +135,9 @@ const ALLOWED_STYLES: Record<string, boolean> = {
 // Regex to allow only secure image sources
 const ALLOWED_URI_REGEXP: RegExp = /^(https?:|data:image\/)/
 
-// DOMPurify requires a DOM environment (window + document) to initialize.
-// Guard all DOMPurify configuration so it is a no-op in Node.js (SSR / pre-rendering).
-if (typeof window !== 'undefined') {
+function configureDomPurify(instance: typeof DOMPurify): void {
   // Configure DOMPurify with TypeScript support
-  DOMPurify.setConfig({
+  instance.setConfig({
     ALLOWED_TAGS,
     ALLOWED_ATTR,
     KEEP_CONTENT: true,
@@ -148,7 +146,7 @@ if (typeof window !== 'undefined') {
   })
 
   // Hook: Sanitize attributes (equivalent to safeAttrValue)
-  DOMPurify.addHook('uponSanitizeAttribute', (node, data) => {
+  instance.addHook('uponSanitizeAttribute', (node, data) => {
     const { attrName, attrValue } = data
 
     // Ensure only safe src values for images
@@ -171,12 +169,12 @@ if (typeof window !== 'undefined') {
         .join('; ')
       data.attrValue = safeStyles
     } else {
-      data.attrValue = DOMPurify.sanitize(attrValue)
+      data.attrValue = instance.sanitize(attrValue)
     }
   })
 
   // Hook: Prevent removal of `!doctype` (equivalent to onIgnoreTag)
-  DOMPurify.addHook('uponSanitizeElement', (node, data) => {
+  instance.addHook('uponSanitizeElement', (node, data) => {
     if (data.tagName === '!doctype') {
       // Reinsert the doctype manually after sanitization
       if (node.parentNode) {
@@ -189,12 +187,24 @@ if (typeof window !== 'undefined') {
   })
 }
 
-// Sanitize function with TypeScript type safety.
-// In SSR (no DOM), return the input unchanged — the HTML is not rendered to the DOM,
-// so DOMPurify sanitization is not needed and not possible without a DOM.
+let domPurifyInstance: typeof DOMPurify | null = null
+
+if (typeof window === 'undefined') {
+  // Running in a Node.js environment; initialize JSDOM and create a DOMPurify instance
+  // Cannot use top-level await is unsafe in Safari: https://caniuse.com/wf-top-level-await
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { JSDOM } = require('jsdom')
+  domPurifyInstance = DOMPurify(new JSDOM('<!DOCTYPE html>').window)
+  configureDomPurify(domPurifyInstance)
+} else {
+  domPurifyInstance = DOMPurify
+  configureDomPurify(domPurifyInstance)
+}
+
 export function sanitize(input: string): string {
-  if (typeof window === 'undefined') {
-    return input
+  if (domPurifyInstance == null) {
+    throw new Error('DOMPurify instance not initialized')
   }
-  return DOMPurify.sanitize(input)
+
+  return domPurifyInstance.sanitize(input)
 }

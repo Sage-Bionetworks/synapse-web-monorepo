@@ -40,16 +40,14 @@ const defaultQuery: SearchQuery = {
 
 const defaultPanelProps = {
   query: defaultQuery,
+  expanded: true,
+  onCollapse: vi.fn(),
   setQuery: vi.fn() as (newQuery: SearchQuery) => void,
   facets: [] as Facet[],
   onAddFacet: vi.fn() as (facetName: string, facetValue: string) => void,
   onRemoveFacet: vi.fn() as (facetName: string, facetValue: string) => void,
   onSetRangeFacet: vi.fn() as (facetName: string, minValue: string) => void,
   onRemoveRangeFacet: vi.fn() as (facetName: string) => void,
-  isFacetApplied: vi.fn(() => false) as (
-    facetName: string,
-    facetValue: string,
-  ) => boolean,
   isRangeFacetApplied: vi.fn(() => false) as (facetName: string) => boolean,
   getAppliedRangeFacet: vi.fn(() => undefined) as (
     facetName: string,
@@ -126,6 +124,19 @@ describe('SearchFacetPanel', () => {
     })
   })
 
+  it('calls onCollapse when the close button is clicked', async () => {
+    const onCollapse = vi.fn()
+    render(
+      <SearchFacetPanel
+        {...defaultPanelProps}
+        onCollapse={onCollapse}
+        expanded={true}
+      />,
+    )
+    await userEvent.click(screen.getByTestId('CloseIcon'))
+    expect(onCollapse).toHaveBeenCalled()
+  })
+
   it('does not render a facet with empty constraints', () => {
     render(
       <SearchFacetPanel
@@ -168,33 +179,27 @@ describe('LiteralFacetValues', () => {
     overrides: Partial<typeof defaultPanelProps> = {},
   ) => renderWithLiteralFacet('node_type', values, overrides)
 
-  it('renders a checkbox for each visible value', () => {
+  it('renders a radio for each visible value', () => {
     renderWithNodeTypeFacet(['dataset', 'file', 'folder'])
 
-    expect(
-      screen.getByRole('checkbox', { name: /dataset/i }),
-    ).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: /dataset/i })).toBeInTheDocument()
 
-    expect(screen.getByRole('checkbox', { name: /file/i })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: /file/i })).toBeInTheDocument()
 
-    expect(
-      screen.getByRole('checkbox', { name: /folder/i }),
-    ).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: /folder/i })).toBeInTheDocument()
   })
 
   it('does not render the "link" entity type', () => {
     renderWithNodeTypeFacet(['dataset', 'link', 'file'])
 
     expect(
-      screen.queryByRole('checkbox', { name: /^link$/i }),
+      screen.queryByRole('radio', { name: /^link$/i }),
     ).not.toBeInTheDocument()
 
-    expect(
-      screen.getByRole('checkbox', { name: /dataset/i }),
-    ).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: /dataset/i })).toBeInTheDocument()
   })
 
-  it('shows only MAX_FACET_VALUES_SHOWN checkboxes by default when there are more', async () => {
+  it('shows only MAX_FACET_VALUES_SHOWN radios by default when there are more', async () => {
     const dataLength = MAX_FACET_VALUES_SHOWN + 5
     const values = Array.from(
       { length: dataLength },
@@ -203,34 +208,38 @@ describe('LiteralFacetValues', () => {
 
     renderWithLiteralFacet('consortium', values)
     // Render with 16 values (including "all" facet), but only MAX_FACET_VALUES_SHOWN should be shown initially
-    expect(screen.getAllByRole('checkbox')).toHaveLength(
+    expect(screen.getAllByRole('radio')).toHaveLength(
       MAX_FACET_VALUES_SHOWN + 1,
     ) // +1 for the "All" option
 
     expect(screen.getByText(`Show all ${dataLength}`)).toBeInTheDocument()
 
-    // After clicking "Show all", all checkboxes should be visible
+    // After clicking "Show all", all radios should be visible
     await userEvent.click(screen.getByText(`Show all ${dataLength}`))
-    expect(screen.getAllByRole('checkbox')).toHaveLength(dataLength + 1)
+    expect(screen.getAllByRole('radio')).toHaveLength(dataLength + 1)
   })
 
-  it('calls onAddFacet when an unchecked checkbox is clicked', async () => {
+  it('calls onAddFacet when an unchecked radio is clicked', async () => {
     const onAddFacet = vi.fn()
     renderWithNodeTypeFacet(['dataset'], { onAddFacet })
 
-    await userEvent.click(screen.getByRole('checkbox', { name: /dataset/i }))
+    await userEvent.click(screen.getByRole('radio', { name: /dataset/i }))
     expect(onAddFacet).toHaveBeenCalledWith('node_type', 'dataset')
   })
 
-  it('calls onRemoveFacet when a checked checkbox is clicked', async () => {
+  it('calls onRemoveFacet when the All radio is clicked with a filter applied', async () => {
     const onRemoveFacet = vi.fn()
     renderWithNodeTypeFacet(['dataset'], {
       onRemoveFacet,
-      isFacetApplied: (name: string, value: string) =>
-        name === 'node_type' && value === 'dataset',
+      query: {
+        ...defaultQuery,
+        booleanQuery: [{ key: 'node_type', value: 'dataset', not: false }],
+      },
     })
 
-    await userEvent.click(screen.getByRole('checkbox', { name: /dataset/i }))
+    await userEvent.click(
+      screen.getByRole('radio', { name: /all entity types/i }),
+    )
     expect(onRemoveFacet).toHaveBeenCalledWith('node_type', 'dataset')
   })
 })

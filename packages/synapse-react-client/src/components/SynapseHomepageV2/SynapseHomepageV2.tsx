@@ -10,7 +10,10 @@ import {
   titleSx,
   visuallyHidden,
 } from '@/components/SynapseHomepageV2/HomepageStyles'
-import { SAGE_OFFERINGS_HELP_URL } from '@/utils/SynapseConstants'
+import {
+  DATA_CATALOG_PATH_SEGMENT,
+  SAGE_OFFERINGS_HELP_URL,
+} from '@/utils/SynapseConstants'
 import {
   Box,
   Button,
@@ -26,13 +29,13 @@ import { SynapseFeaturedDatasets } from './SynapseFeaturedDatasets'
 import { SynapseFeatures } from './SynapseFeatures'
 import { SynapseHomepageChatSearch } from './SynapseHomepageChatSearch'
 import { SynapseHomepageNavBar } from './SynapseHomepageNavBar'
+import { SynapseHotDrops } from './SynapseHotdrops'
+import SynapseHotdropsBackground from './SynapseHotdropsBackground'
 import { SynapseInAction } from './SynapseInAction'
 import { SynapsePartners } from './SynapsePartners'
 import { SynapsePlans } from './SynapsePlans'
 import { SynapseSearchChips } from './SynapseSearchChips'
 import { SynapseTrendingProjects } from './SynapseTrendingProjects'
-import SynapseHotdropsBackground from './SynapseHotdropsBackground'
-import { SynapseHotDrops } from './SynapseHotdrops'
 
 export const synapseInActionTable = 'syn61670075'
 export const past30DaysDownloadMetricsTable = 'syn61597084'
@@ -463,7 +466,7 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
                 variant="contained"
                 color="secondary"
                 onClick={() => {
-                  gotoPlace('/DataCatalog:0')
+                  gotoPlace(`/${DATA_CATALOG_PATH_SEGMENT}`)
                 }}
                 sx={{
                   m: 'auto',

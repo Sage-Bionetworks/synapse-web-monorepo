@@ -61,7 +61,7 @@ const CookiesNotification = (
   const [notificationDismissed, setNotificationDismissed] = useState(true)
   useEffect(() => {
     const cookies = new UniversalCookies()
-    setNotificationDismissed(cookies.get(COOKIES_AGREEMENT_COOKIE_KEY))
+    setNotificationDismissed(!!cookies.get(COOKIES_AGREEMENT_COOKIE_KEY))
   }, [])
 
   const [isCookiePrefsDialogVisible, setIsCookiePrefsDialogVisible] =
