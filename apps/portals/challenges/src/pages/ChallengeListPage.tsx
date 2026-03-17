@@ -7,7 +7,12 @@ const ChallengeListPage = (): React.ReactNode => {
   return (
     <>
       <Box px="60px" py="20px" display="flex" justifyContent="center">
-        <Typography variant="h3" fontWeight="700" color="black">
+        <Typography
+          variant="h3"
+          fontWeight="700"
+          color="black"
+          lineHeight="80px"
+        >
           Listed Challenges
         </Typography>
       </Box>
