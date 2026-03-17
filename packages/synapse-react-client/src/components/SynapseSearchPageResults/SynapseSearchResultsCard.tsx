@@ -61,8 +61,6 @@ const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
 })
 
 export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
-  const HIT_DESCRIPTION_LENGTH_CHAR = 200
-
   const { ref, inView } = useInView({
     triggerOnce: true,
     rootMargin: '250px 0px',
@@ -81,6 +79,10 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
 
   const friendlySize = file?.contentSize
     ? calculateFriendlyFileSize(file?.contentSize)
+    : ''
+
+  const plainDescription = props.description
+    ? markdownToPlainText(props.description)
     : ''
 
   return (
@@ -103,6 +105,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
           }}
         >
           <HighlightedTypography
+            className={styles.cardTitle}
             variant="headline3"
             text={props.name}
             searchTerms={props.searchTerms ?? []}
@@ -150,7 +153,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
           gap: '8px',
         }}
       >
-        <Stack sx={{ gap: '20px' }}>
+        <Stack sx={{ gap: '20px', minWidth: 0, width: '100%' }}>
           <Box sx={{ display: 'flex' }}>
             <UpdateIcon className={styles.cardMetadataIcon} />
             <Typography className={styles.cardMetadataTypographyWithIcon}>
@@ -158,15 +161,14 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
               {formatDate(dayjs.unix(props.modifiedOn), 'M/D/YYYY')}
             </Typography>
           </Box>
-          {props.description && (
+          {plainDescription && (
             <Box sx={{ display: 'flex' }}>
               <ArticleOutlined className={styles.cardMetadataIcon} />
-              <Typography className={styles.cardMetadataTypographyWithIcon}>
-                {markdownToPlainText(
-                  props.description,
-                  HIT_DESCRIPTION_LENGTH_CHAR,
-                )}
-              </Typography>
+              <HighlightedTypography
+                className={`${styles.cardMetadataTypographyWithIcon} ${styles.cardDescription}`}
+                text={plainDescription}
+                searchTerms={props.searchTerms ?? []}
+              />
             </Box>
           )}
 

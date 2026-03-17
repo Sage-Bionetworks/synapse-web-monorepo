@@ -40,8 +40,8 @@ const routesConfig: RouteConfig = {
     links: ['About', 'Help'],
   },
   eliteportal: {
-    buttons: ['Explore', 'Data Access', 'Sign In'],
-    links: ['Home', 'Analysis Platforms', 'Contribute Data', 'News', 'Help'],
+    buttons: ['About', 'Explore', 'Data Access', 'Sign In'],
+    links: ['Analysis Platforms', 'Help', 'News'],
   },
   nf: {
     buttons: [

@@ -33,6 +33,9 @@ import {
 } from './TopLevelControlsUtils'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 import { CustomControlButton } from '../CustomControls/CustomControlButton'
+import { useSynapseContext } from '@/utils'
+import { SignInRequiredModal } from '@/components/SignInRequiredModal/SignInRequiredModal'
+import { SEND_TO_ANALYSIS_PLATFORM_SIGN_IN_MESSAGE } from '../SynapseTableUtils'
 
 const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
   'SendToAnalysisPlatformTopLevelControlButton'
@@ -76,6 +79,9 @@ export type CustomControl = {
 }
 
 const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  const { isAuthenticated } = useSynapseContext()
+
   const {
     name,
     showColumnSelection = false,
@@ -244,7 +250,9 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
                   variant="text"
                   disabled={!numberOfResultsToInvokeAction}
                   onClick={() => {
-                    setIsShowingExportToAnalysisPlatformModal(true)
+                    return isAuthenticated
+                      ? setIsShowingExportToAnalysisPlatformModal(true)
+                      : setShowLoginModal(true)
                   }}
                   id={SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID}
                 >
@@ -254,6 +262,12 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
               </Tooltip>
               <Divider orientation="vertical" variant="middle" flexItem />
             </>
+          )}
+          {showLoginModal && (
+            <SignInRequiredModal
+              onHide={() => setShowLoginModal(false)}
+              content={SEND_TO_ANALYSIS_PLATFORM_SIGN_IN_MESSAGE}
+            />
           )}
           {!hideSearchBarControl && (
             <ElementWithTooltip

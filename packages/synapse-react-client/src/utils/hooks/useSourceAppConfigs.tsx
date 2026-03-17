@@ -52,7 +52,7 @@ export const useSourceAppConfigs = (
   sourceAppConfigTableID: string,
   additionalFilters?: QueryFilter[],
 ): SourceAppConfig[] | undefined => {
-  const { accessToken, synapseClient, keyFactory } = useSynapseContext()
+  const { synapseClient, keyFactory } = useSynapseContext()
 
   const queryBundleRequest = {
     entityId: sourceAppConfigTableID,
@@ -76,7 +76,7 @@ export const useSourceAppConfigs = (
       try {
         return await SynapseClient.getQueryTableAsyncJobResults(
           queryBundleRequest,
-          accessToken,
+          undefined, // use an undefined access token to query a table in the default realm
         )
       } catch (_error) {
         // Return null on error to signal fallback behavior

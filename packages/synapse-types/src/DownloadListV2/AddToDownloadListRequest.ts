@@ -4,6 +4,7 @@ import { Query } from '../Table'
 export type AddToDownloadListRequest = {
   concreteType: 'org.sagebionetworks.repo.model.download.AddToDownloadListRequest'
   query?: Query
-  parentId?: string //The synID of a folder or project to add all of the children files to the user's download list. This parameter should be excluded when adding files from a query. Note: This is not recursive.
+  parentId?: string //The synID of a folder, project, dataset or dataset collection to add all of the children files to the user's download list. This parameter should be excluded when adding files from a query. Note: This is not recursive, unless the recursive property is set to true.
+  recursive?: boolean //When the parentId is specified and this property is set to true all the files in a folder or project will be added to the user's download list, including files contained in sub-folders. When set to false (default) only the direct children of the provided parentId will be added to the download list. Note: the property cannot be true when a query is specified or when the parentId is a dataset.
   useVersionNumber?: boolean //When true (default), the version number will be included for each file added to the user's download list. When set to false, the version number will be excluded, indicating that the 'current' version should always be downloaded.
 }

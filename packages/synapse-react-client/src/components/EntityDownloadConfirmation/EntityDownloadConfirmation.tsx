@@ -1,5 +1,8 @@
 import AddToDownloadListConfirmationAlert from '@/components/download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert'
-import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
+import {
+  convertToEntityType,
+  isContainerType,
+} from '@/utils/functions/EntityTypeUtils'
 import {
   AddToDownloadListRequest,
   EntityType,
@@ -81,6 +84,7 @@ export function EntityDownloadConfirmation({
           // TODO: Specify version of dataset/dataset collection (PLFM-9311)
           parentId: entityId,
           useVersionNumber,
+          recursive: isContainerType(entityType),
         }
       }
 

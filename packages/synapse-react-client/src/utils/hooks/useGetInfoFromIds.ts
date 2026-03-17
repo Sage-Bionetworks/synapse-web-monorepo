@@ -68,9 +68,9 @@ const evaluationTemplate: Evaluation = {
 
 const getEntityHeaderItems = async (
   lookupList: ReferenceList,
-  token: string | undefined,
+  accessToken: string | undefined,
 ): Promise<EntityHeader[]> => {
-  const newData = await getEntityHeaders(lookupList, token)
+  const newData = await getEntityHeaders(lookupList, accessToken)
   const notFound = lookupList.filter(
     item => newData.results.map(item => item.id).indexOf(item.targetId) === -1,
   )
@@ -85,8 +85,9 @@ const getEntityHeaderItems = async (
 
 const getUserGroupHeaderItems = async (
   lookupList: string[],
+  accessToken: string | undefined,
 ): Promise<UserGroupHeader[]> => {
-  const newData = (await getGroupHeadersBatch(lookupList)).children
+  const newData = (await getGroupHeadersBatch(lookupList, accessToken)).children
   const notFound = lookupList.filter(
     item => newData.map(item => item.ownerId).indexOf(item) === -1,
   )
@@ -101,9 +102,12 @@ const getUserGroupHeaderItems = async (
 
 const getEvaluationItems = async (
   lookupList: string[],
-  token: string | undefined,
+  accessToken: string | undefined,
 ): Promise<Evaluation[]> => {
-  const newData = await getEvaluations({ evaluationIds: lookupList }, token)
+  const newData = await getEvaluations(
+    { evaluationIds: lookupList },
+    accessToken,
+  )
   const notFound = lookupList.filter(
     item => newData.results.map(item => item.id).indexOf(item) === -1,
   )
@@ -204,6 +208,7 @@ export default function useGetInfoFromIds<
               case 'USER_PROFILE':
                 newData = (await getUserGroupHeaderItems(
                   newReferences as string[],
+                  accessToken,
                 )) as T[]
                 break
               case 'ENTITY_HEADER':

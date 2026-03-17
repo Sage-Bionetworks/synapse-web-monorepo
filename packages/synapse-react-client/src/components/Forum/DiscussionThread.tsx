@@ -7,7 +7,6 @@ import {
 } from '@/synapse-queries/forum/useThread'
 import { useSubscription } from '@/synapse-queries/subscription/useSubscription'
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import {
   Box,
   Button,
@@ -23,7 +22,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { useMemo, useState } from 'react'
-import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import IconSvg from '../IconSvg/IconSvg'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 import WarningDialog from '../SynapseForm/WarningDialog'
@@ -35,6 +33,7 @@ import { SubscribersModal } from './SubscribersModal'
 import { useGetModerators } from '@/synapse-queries/forum/useForum'
 import { useNativeSearchParams } from '@/utils/hooks/useNativeSearchParams'
 import { REPLY_ID_PARAM_KEY } from './DiscussionConstants'
+import { SignInRequiredModal } from '../SignInRequiredModal/SignInRequiredModal'
 
 export type DiscussionThreadProps = {
   threadId: string
@@ -43,7 +42,6 @@ export type DiscussionThreadProps = {
 
 const FOLLOWING_TEXT = 'You are following this topic. Click to stop following.'
 const UNFOLLOWING_TEXT = 'You are not following this topic. Click to follow.'
-const SIGN_IN_TEXT = 'You will need to sign in for access to that resource'
 const INPUT_PLACEHOLDER = 'Write a reply...'
 
 export function DiscussionThread(props: DiscussionThreadProps) {
@@ -380,17 +378,10 @@ export function DiscussionThread(props: DiscussionThreadProps) {
         confirmButtonColor="info"
         confirmButtonText="Restore"
       />
-      <ConfirmationDialog
+      <SignInRequiredModal
         open={showSignInModal}
-        title="Sign In Required"
-        content={SIGN_IN_TEXT}
-        onCancel={() => setShowSignInModal(false)}
+        onHide={() => setShowSignInModal(false)}
         hasCancelButton={false}
-        onConfirm={() => setShowSignInModal(false)}
-        confirmButtonProps={{
-          children: 'Sign In',
-          className: SRC_SIGN_IN_CLASS,
-        }}
       />
     </div>
   )

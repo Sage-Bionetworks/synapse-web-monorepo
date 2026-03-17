@@ -1,37 +1,35 @@
-import { DropdownMenu, DropdownMenuItem } from '../menu/DropdownMenu'
+import { useGetEntity, useGetVersions } from '@/synapse-queries'
+import {
+  useAddFileToDownloadList,
+  useAddToDownloadList,
+  useGetAddToDownloadListStats,
+} from '@/synapse-queries/index'
+import { useSynapseContext } from '@/utils'
+import {
+  entityTypeToFriendlyName,
+  hasFilesInView,
+  isContainerType,
+  isDataset,
+  isEntityView,
+  isVersionableEntity,
+} from '@/utils/functions/EntityTypeUtils'
+import { useDirectDownloadHandler } from '@/utils/hooks/useDirectDownloadHandler'
+import { isFileEntity } from '@/utils/types/IsType'
 import { DownloadOutlined as DownloadIcon } from '@mui/icons-material'
 import {
   AddToDownloadListRequest,
   EntityType,
 } from '@sage-bionetworks/synapse-client'
-import { useState } from 'react'
-import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
-import { ModalDownload } from '../ModalDownload/ModalDownload'
-import {
-  useGetEntity,
-  useGetVersions,
-  useGetEntityChildren,
-} from '@/synapse-queries'
-import {
-  entityTypeToFriendlyName,
-  hasFilesInView,
-  isDataset,
-  isEntityView,
-  isVersionableEntity,
-} from '@/utils/functions/EntityTypeUtils'
 import {
   FileHandleAssociateType,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import { useSynapseContext } from '@/utils'
-import {
-  useAddFileToDownloadList,
-  useAddToDownloadList,
-} from '@/synapse-queries/index'
+import { useState } from 'react'
 import { displayFilesWereAddedToDownloadListSuccess } from '../download_list/DownloadConfirmationUtils'
+import { DropdownMenu, DropdownMenuItem } from '../menu/DropdownMenu'
+import { ModalDownload } from '../ModalDownload/ModalDownload'
+import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import { displayToast } from '../ToastMessage/index'
-import { useDirectDownloadHandler } from '@/utils/hooks/useDirectDownloadHandler'
-import { isFileEntity } from '@/utils/types/IsType'
 
 // WIP
 // Per Nick Grosenbacher: For this to be reusable, I think we would also need to accept versionNumber as a prop. Where we would have the following behavior:
@@ -183,6 +181,7 @@ function getMenuItemForAction(
               parentId: entityId,
               concreteType:
                 'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+              recursive: isContainerType(entityType),
             })
           }
         },
@@ -240,7 +239,6 @@ export function getDownloadActionsForEntityType(
         [DownloadAction.addToCart, DownloadAction.programmaticAccess],
       ]
     case EntityType.project:
-      return [[DownloadAction.programmaticAccess]]
     case EntityType.folder:
       return [[DownloadAction.addToCart, DownloadAction.programmaticAccess]]
     case EntityType.dockerrepo:
@@ -394,23 +392,30 @@ export function EntityDownloadButton(props: {
     setShowProgrammaticAccess(false)
   }
 
-  const isFolderOrProject =
-    props.entityType === EntityType.folder ||
-    props.entityType === EntityType.project
+  const isFolderOrProject = isContainerType(props.entityType)
 
-  const { data: entityChildren } = useGetEntityChildren(
+  const {
+    data: folderOrProjectStats,
+    isLoading: isLoadingFolderOrProjectStats,
+  } = useGetAddToDownloadListStats(
     {
-      parentId: props.entityId,
-      includeTypes: [EntityType.file],
-      includeTotalChildCount: true,
+      concreteType:
+        'org.sagebionetworks.repo.model.download.AddToDownloadListStatsRequest',
+      request: {
+        parentId: props.entityId,
+        concreteType:
+          'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+        recursive: true,
+      },
     },
     {
       enabled: isFolderOrProject,
     },
   )
 
-  const hasNoImmediateFileChildren =
-    isFolderOrProject && entityChildren?.totalChildCount === 0
+  const folderOrProjectHasNoFiles =
+    isFolderOrProject &&
+    (isLoadingFolderOrProjectStats || folderOrProjectStats?.fileCount === 0)
 
   const { data: entityData } = useGetEntity(props.entityId)
 
@@ -440,7 +445,7 @@ export function EntityDownloadButton(props: {
     (!entityData.items || entityData.items.length === 0)
 
   const addToCartDisabled =
-    hasNoImmediateFileChildren || entityViewHasNoFiles || datasetHasNoFiles
+    folderOrProjectHasNoFiles || entityViewHasNoFiles || datasetHasNoFiles
 
   // state to manage export metadata modal visibility
   const [showExportMetadata, setShowExportMetadata] = useState<boolean>(false)

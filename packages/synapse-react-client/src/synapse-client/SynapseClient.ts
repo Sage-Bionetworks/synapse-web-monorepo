@@ -961,11 +961,12 @@ export const getUserGroupHeaders = (
   typeFilter: TYPE_FILTER = TYPE_FILTER.ALL,
   offset: number = 0,
   limit: number = 20,
+  accessToken?: string,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
     USER_GROUP_HEADERS +
       `?prefix=${prefix}&typeFilter=${typeFilter}&offset=${offset}&limit=${limit}`,
-    undefined,
+    accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -974,11 +975,14 @@ export const getUserGroupHeaders = (
  * Get Users and Groups that match the given list of aliases.
  * https://repo-prod.prod.sagebase.org/repo/v1/userGroupHeaders/aliases
  */
-export const postUserGroupHeadersWithAlias = (aliases: string[]) => {
+export const postUserGroupHeadersWithAlias = (
+  aliases: string[],
+  accessToken?: string,
+) => {
   return doPost<UserGroupHeaderResponse>(
     `${USER_GROUP_HEADERS}/aliases`,
     { list: aliases },
-    undefined,
+    accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -989,10 +993,11 @@ export const postUserGroupHeadersWithAlias = (aliases: string[]) => {
  */
 export const getGroupHeadersBatch = (
   ids: string[],
+  accessToken?: string,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
     USER_GROUP_HEADERS_BATCH + `?ids=${ids.join(',')}`,
-    undefined,
+    accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
