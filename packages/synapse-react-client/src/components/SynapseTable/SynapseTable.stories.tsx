@@ -61,7 +61,7 @@ const meta: Meta = {
   decorators: [
     Story => (
       <QueryWrapper initQueryRequest={request}>
-        <QueryVisualizationWrapper visibleColumnCount={2}>
+        <QueryVisualizationWrapper visibleColumnCount={5}>
           <Story />
         </QueryVisualizationWrapper>
       </QueryWrapper>
