@@ -348,7 +348,6 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     columnDisplayName: string
     value: React.ReactNode
     columnName?: string
-    rawValue?: string
   }[] = []
   const { secondaryLabels = [] } = genericCardSchema
   const customLabelConfig = genericCardSchema.customSecondaryLabelConfig
@@ -427,12 +426,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         )
         columnDisplayName = getColumnDisplayName(columnName)
       }
-      values.push({
-        columnDisplayName,
-        value: renderedValue,
-        columnName,
-        rawValue,
-      })
+      values.push({ columnDisplayName, value: renderedValue, columnName })
     }
   }
 

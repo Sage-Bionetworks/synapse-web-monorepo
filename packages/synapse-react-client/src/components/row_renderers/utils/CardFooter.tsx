@@ -6,7 +6,6 @@ export type CardLabel = {
   columnDisplayName: string
   value: React.ReactNode
   columnName?: string
-  rawValue?: string
 }
 
 type State = {
@@ -54,6 +53,7 @@ class CardFooter extends Component<CardFooterProps, State> {
 
   renderRowValue = (value: React.ReactNode) => {
     if (typeof value !== 'string') {
+      // value can sometimes be a react element
       return value
     }
     const valueAsString = value.trim()
