@@ -5,7 +5,7 @@ import React from 'react'
 import { SynapseConstants } from 'synapse-react-client'
 import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
 import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
-import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions'
+import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions/index'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 import getChallengeKeywordsFromRow from '../../../utils/getChallengeKeywordsFromRow'
 // TODO: update with vectors for Open Challenges section
