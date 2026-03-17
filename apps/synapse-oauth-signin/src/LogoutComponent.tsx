@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
-import { useApplicationSessionContext } from 'synapse-react-client'
-import { useSynapseContext } from 'synapse-react-client'
+import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 
 export function LogoutComponent() {
   const { isAuthenticated } = useSynapseContext()

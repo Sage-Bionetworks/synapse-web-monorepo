@@ -16,6 +16,7 @@
   "scripts": {
     "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
     "build": "vite build",
+    "type-check": "tsc --build",
     "lint": "eslint src/*",
     "test": "vitest",
     "coverage": "vitest --coverage",

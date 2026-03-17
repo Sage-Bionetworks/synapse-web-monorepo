@@ -1,10 +1,8 @@
 import experimentalDataSvg from '@/config/style/experimentalData.svg?url'
 import publicationDataSvg from '@/config/style/publicationData.svg?url'
-import type {
-  CardConfiguration,
-  LabelLinkConfig,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
+import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
+import type { LabelLinkConfig } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'

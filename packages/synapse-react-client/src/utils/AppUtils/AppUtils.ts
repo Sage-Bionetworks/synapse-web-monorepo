@@ -10,7 +10,7 @@ export function storeLastPlace() {
   // save current route (so that we can go back here after SSO)
   localStorage.setItem(LAST_PLACE_LOCALSTORAGE_KEY, window.location.href)
 }
-const cookies = new UniversalCookies()
+
 export const ONE_SAGE_REDIRECT_COOKIE_KEY =
   'org.sagebionetworks.cookies.redirect-after-login'
 
@@ -26,6 +26,7 @@ export const getCookieDomain = () => {
 
 export function storeRedirectURLForOneSageLoginAndGotoURL(href: string) {
   // save current URL in a cookie that One Sage will use to send you back to the correct page
+  const cookies = new UniversalCookies()
   const twoHoursFromNow = new Date()
   twoHoursFromNow.setTime(twoHoursFromNow.getTime() + 60 * 60 * 1000)
 
@@ -41,6 +42,7 @@ export function storeRedirectURLForOneSageLoginAndGotoURL(href: string) {
 
 export function processRedirectURLInOneSage() {
   // PORTALS-3299 : Indicate that we have completed the login workflow (cookie expires in a minute) to break out of a cycle
+  const cookies = new UniversalCookies()
   const expireDate = new Date()
   expireDate.setMinutes(expireDate.getMinutes() + 1)
   cookies.set(ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY, 'true', {

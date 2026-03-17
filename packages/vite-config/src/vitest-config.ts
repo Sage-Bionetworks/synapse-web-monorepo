@@ -1,7 +1,11 @@
 import { defineConfig } from 'vitest/config'
 
 /**
- * Partial config used to add a Vitest configuration to a Vite project.
+ * Shared Vitest configuration defaults used across all packages.
+ *
+ * This includes only settings that are universal. Per-package settings like
+ * `test.setupFiles`, `test.include`, `test.silent`, and `test.testTimeout`
+ * should be specified in each consumer's vite.config.ts override.
  */
 export default defineConfig({
   optimizeDeps: {

@@ -1,11 +1,9 @@
 import React from 'react'
 import { Alert } from '@mui/material'
-import {
-  AppUtils,
-  ChallengeDataDownload,
-  ChallengeDataDownloadProps,
-  SynapseQueries,
-} from 'synapse-react-client'
+import * as AppUtils from 'synapse-react-client/utils/AppUtils/index'
+import { ChallengeDataDownload } from 'synapse-react-client/components/ChallengeDataDownload/ChallengeDataDownload'
+import type { ChallengeDataDownloadProps } from 'synapse-react-client/components/ChallengeDataDownload/ChallengeDataDownload'
+import * as SynapseQueries from 'synapse-react-client/synapse-queries/index'
 
 const ChallengeSubmissionWrapper = (
   props: ChallengeDataDownloadProps,

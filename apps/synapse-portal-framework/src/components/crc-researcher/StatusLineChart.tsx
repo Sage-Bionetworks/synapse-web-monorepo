@@ -1,11 +1,9 @@
 import { CSSProperties, useEffect, useState } from 'react'
 import Plotly from 'plotly.js-basic-dist'
-import {
-  GraphItem,
-  SynapseClient,
-  SynapseConstants,
-  SynapseUtilityFunctions,
-} from 'synapse-react-client'
+import type { GraphItem } from 'synapse-react-client/components/Plot/types'
+import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClient'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import * as SynapseUtilityFunctions from 'synapse-react-client/utils/functions/index'
 import {
   QueryBundleRequest,
   QueryResultBundle,

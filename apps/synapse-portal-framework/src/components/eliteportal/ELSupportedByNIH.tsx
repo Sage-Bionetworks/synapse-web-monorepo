@@ -1,7 +1,7 @@
 import { Box, alpha, Typography, useTheme } from '@mui/material'
 import React from 'react'
 import NIHLogo from './assets/nia_logo.png'
-import { PortalSectionHeader } from 'synapse-react-client'
+import PortalSectionHeader from 'synapse-react-client/components/PortalSectionHeader/PortalSectionHeader'
 
 const ELSupportedByNIH: React.FC = () => {
   const theme = useTheme()

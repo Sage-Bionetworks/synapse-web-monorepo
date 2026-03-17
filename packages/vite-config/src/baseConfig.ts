@@ -1,14 +1,9 @@
-import { dirname, resolve } from 'path'
-import { fileURLToPath } from 'url'
 import { defineConfig, UserConfig } from 'vite'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
-import tsconfigPaths from 'vite-tsconfig-paths'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
 
 /**
- * Vite config properties that are shared across all Vite configurations.
+ * Vite config properties shared across all configurations in this monorepo.
+ *
+ * This intentionally does NOT include plugins (compose them explicitly in each consumer)
  */
 const baseConfig: UserConfig = defineConfig({
   server: { port: 3000 },
@@ -18,7 +13,6 @@ const baseConfig: UserConfig = defineConfig({
       transformMixedEsModules: true,
     },
   },
-  plugins: [nodePolyfills(), tsconfigPaths()],
   define: {
     __TEST__: JSON.stringify(false),
     __DEV__: JSON.stringify(false),
@@ -29,20 +23,6 @@ const baseConfig: UserConfig = defineConfig({
       define: {
         global: 'globalThis',
       },
-    },
-  },
-  resolve: {
-    alias: {
-      src: resolve(__dirname, '/src'),
-      process: 'process/browser',
-      path: 'path-browserify',
-      timers: 'timers-browserify',
-      fs: 'memfs',
-      https: 'https-browserify',
-      stream: 'stream-browserify',
-      http: 'stream-http',
-      buffer: 'buffer/',
-      util: 'util',
     },
   },
 })

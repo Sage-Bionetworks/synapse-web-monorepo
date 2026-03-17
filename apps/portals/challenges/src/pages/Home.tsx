@@ -9,7 +9,7 @@ import {
   newsSql,
   allChallengesSql,
 } from '@/config/resources'
-import { PortalFeaturedPartners } from 'synapse-react-client'
+import PortalFeaturedPartners from 'synapse-react-client/components/PortalFeaturedPartners/PortalFeaturedPartners'
 import NewChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/NewChallengesSection/NewChallengesSection'
 import ChallengeNewsSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeNewsSection/ChallengeNewsSection'
 import PopularChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/PopularChallengesSection/PopularChallengesSection'

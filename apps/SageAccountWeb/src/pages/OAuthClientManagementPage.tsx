@@ -6,7 +6,7 @@ import {
   SourceAppProvider,
   SYNAPSE_SOURCE_APP_ID,
 } from '@/components/useSourceApp'
-import OAuthClientManagement from 'synapse-react-client/components/OAuthClientManagement'
+import OAuthClientManagement from 'synapse-react-client/components/OAuthClientManagement/index'
 
 function OAuthClientManagementPageInternal() {
   return (

@@ -19,7 +19,7 @@ export default function ForumTopic(props: SubscriptionItemProps) {
   const { subscription } = props
 
   const { data: forum } = useGetForumMetadata(subscription.objectId)
-  const { data: project } = useGetEntity(forum?.projectId!, undefined, {
+  const { data: project } = useGetEntity(forum?.projectId, undefined, {
     enabled: !!forum,
   })
   const { isSubscribed, isLoading, toggleSubscribed } = useSubscription(

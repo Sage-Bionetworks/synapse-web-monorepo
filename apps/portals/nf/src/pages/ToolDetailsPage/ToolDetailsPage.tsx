@@ -5,20 +5,19 @@ import {
   TOOLS_DETAILS_PAGE_OBSERVATIONS_TAB_PATH,
 } from '@/config/routeConstants'
 import { toolsSchema } from '@/config/synapseConfigs/tools'
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import {
   DetailsPageTabConfig,
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { Outlet } from 'react-router'
-import {
-  CardContainerLogic,
-  ErrorPage,
-  SynapseConstants,
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import ErrorPage, {
   SynapseErrorType,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/error/ErrorPage'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { Outlet } from 'react-router'
 
 export const toolDetailsPageTabConfig: DetailsPageTabConfig[] = [
   {

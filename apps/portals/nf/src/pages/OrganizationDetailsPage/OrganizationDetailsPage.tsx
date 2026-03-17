@@ -1,6 +1,6 @@
 import { fundersSql } from '@/config/resources'
 import { organizationCardSchema } from '@/config/synapseConfigs/organizations'
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import {
   DetailsPageTabConfig,
   DetailsPageTabs,

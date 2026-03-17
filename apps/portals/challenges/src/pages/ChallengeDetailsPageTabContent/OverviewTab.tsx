@@ -2,7 +2,7 @@ import ChallengeParticipantGoogleMap from '@sage-bionetworks/synapse-portal-fram
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
-import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/index'
 import NoContentAvailable from 'synapse-react-client/components/SynapseTable/NoContentAvailable'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 

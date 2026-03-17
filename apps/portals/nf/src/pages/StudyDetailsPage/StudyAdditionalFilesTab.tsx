@@ -1,7 +1,7 @@
 import { metadataFilesSql } from '@/config/resources'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
-import { StandaloneQueryWrapper } from 'synapse-react-client'
+import StandaloneQueryWrapper from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
 
 function StudyAdditionalFilesTab() {
   const { value: studyId } = useDetailsPageContext('studyId')

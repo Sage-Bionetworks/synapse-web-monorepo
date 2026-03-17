@@ -8,6 +8,7 @@ import TestWrapper, { TestWrapperProps } from '../../tests/TestWrapper'
 import ResetTwoFactorAuth from '../../pages/ResetTwoFactorAuth'
 import { SourceAppContext } from '@/components/useSourceApp'
 import { STATIC_SOURCE_APP_CONFIG } from 'synapse-react-client/utils/hooks/useSourceAppConfigs'
+import { MOCK_APPLICATION_SESSION_CONTEXT } from 'synapse-react-client/mocks/applicationSessionContext/MockApplicationSessionContext'
 
 describe('ResetTwoFactorAuth', () => {
   beforeAll(() => {
@@ -104,11 +105,6 @@ describe('ResetTwoFactorAuth', () => {
   })
 
   it('Handles resetting 2FA with twoFaToken retrieved via 3rd party login', async () => {
-    // Import MOCK_APPLICATION_SESSION_CONTEXT at the top
-    const { MOCK_APPLICATION_SESSION_CONTEXT } = await import(
-      'synapse-react-client/mocks'
-    )
-
     // Simulate that the user has completed SSO and received a 2FA error response
     const twoFactorAuthSSOErrorResponse = {
       concreteType:

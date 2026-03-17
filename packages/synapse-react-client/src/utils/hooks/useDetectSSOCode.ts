@@ -76,7 +76,11 @@ export default function useDetectSSOCode(
   } = opts
   const redirectURL = getRootURL()
   // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
-  const fullUrl: URL = new URL(window.location.href)
+  // Use 'http://localhost/' as a placeholder during SSR (no browser URL available).
+  // Since there is no 'code' or 'provider' in this placeholder URL, the rest of the hook is a no-op.
+  const fullUrl: URL = new URL(
+    typeof window !== 'undefined' ? window.location.href : 'http://localhost/',
+  )
   // in test environment the searchParams isn't defined
   const { searchParams } = fullUrl
   const code = searchParams?.get('code')

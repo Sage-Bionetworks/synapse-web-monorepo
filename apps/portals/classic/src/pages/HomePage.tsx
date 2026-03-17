@@ -4,18 +4,16 @@ import { TypeAnimation } from 'react-type-animation'
 
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import {
-  Goals,
-  ImageCardGridWithLinks,
-  PortalHomePageHeader,
-  RssFeedCards,
-} from 'synapse-react-client'
+import { Goals } from 'synapse-react-client/components/Goals/Goals'
+import ImageCardGridWithLinks from 'synapse-react-client/components/ImageCardGridWithLinks/ImageCardGridWithLinks'
+import PortalHomePageHeader from 'synapse-react-client/components/PortalHomePageHeader/PortalHomePageHeader'
+import { RssFeedCards } from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
 import {
   featuredResearchSql,
   goalsTable,
   whatWeDoSql,
 } from '@/config/resources'
-import { FeaturedResearch } from 'synapse-react-client'
+import FeaturedResearch from 'synapse-react-client/components/FeaturedResearch/FeaturedResearch'
 import ClassicSupportedByNIABanner from '@sage-bionetworks/synapse-portal-framework/components/classic/ClassicSupportedByNIABanner/ClassicSupportedByNIABanner'
 import ClassicDevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/classic/ClassicDevelopedBySage'
 import { visuallyHidden } from 'synapse-react-client'

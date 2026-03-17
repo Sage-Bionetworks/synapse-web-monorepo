@@ -3,7 +3,7 @@ import App from '@sage-bionetworks/synapse-portal-framework/App'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import { RouteObject } from 'react-router'
-import { FullWidthAlert } from 'synapse-react-client'
+import FullWidthAlert from 'synapse-react-client/components/FullWidthAlert/FullWidthAlert'
 import { HasAccessV2 } from 'synapse-react-client/components/HasAccess/HasAccessV2'
 
 const routes: RouteObject[] = [

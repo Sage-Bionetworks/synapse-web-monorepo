@@ -16,7 +16,6 @@ export type ExperimentalModeProps = {
 function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
   const [isExperimentalModeOn, setIsExperimentalModeOn] =
     useState<boolean>(false)
-  const cookies = new UniversalCookies()
   let mounted = true
   const theme = useTheme()
   useEffect(() => {
@@ -39,6 +38,7 @@ function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
   }
 
   const createExperimentalModeCookie = () => {
+    const cookies = new UniversalCookies()
     cookies.set(
       EXPERIMENTAL_MODE_COOKIE,
       'true',
@@ -51,6 +51,7 @@ function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
   }
 
   const deleteExperimentalModeCookie = () => {
+    const cookies = new UniversalCookies()
     cookies.remove(EXPERIMENTAL_MODE_COOKIE, getExperimentalModeCookieOptions())
     setIsExperimentalModeOn(false)
     if (onExperimentalModeToggle) {

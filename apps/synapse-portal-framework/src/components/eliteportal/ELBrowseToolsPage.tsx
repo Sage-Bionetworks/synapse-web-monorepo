@@ -1,5 +1,5 @@
 import React from 'react'
-import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList'
+import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList/index'
 import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { WideButton } from 'synapse-react-client/components/styled/WideButton'
 import Layout from '../Layout'
@@ -10,6 +10,7 @@ import { generateCompressedQueryURL } from 'synapse-react-client/utils/functions
 import pluralize from 'pluralize'
 import EcosystemLayout from 'synapse-react-client/components/Ecosystem/EcosystemLayout'
 import Search from '../Search'
+import { useNavigate } from 'react-router'
 
 type Category = {
   resourceName: string
@@ -28,10 +29,11 @@ export type ELBrowseToolsPageProps = {
 }
 
 const ELBrowseToolsPage = (props: ELBrowseToolsPageProps): React.ReactNode => {
+  const navigate = useNavigate()
   const { toolsSql } = props
   // const { popularSearchesSql } = props
   const gotoExploreTools = () => {
-    window.location.assign('/Explore/Computational%20Tools')
+    navigate('/Explore/Computational%20Tools')
   }
 
   const gotoExploreToolsWithSelectedResource = async (
@@ -57,7 +59,7 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps): React.ReactNode => {
       currentQuery,
       initQuery,
     )
-    window.location.assign(url)
+    navigate(url)
   }
 
   const gotoExploreToolsWithFullTextSearch = async (
@@ -81,7 +83,7 @@ const ELBrowseToolsPage = (props: ELBrowseToolsPageProps): React.ReactNode => {
       currentQuery,
       initQuery,
     )
-    window.location.assign(url)
+    navigate(url)
   }
 
   const wideButtonSx = { marginTop: '50px' }

@@ -1,4 +1,4 @@
-import type { SitemapConfig } from '@sage-bionetworks/synapse-portal-framework/src/sitemap'
+import type { SitemapConfig } from '@sage-bionetworks/synapse-portal-framework/sitemap/index'
 import {
   datasetsSql,
   fundersSql,

@@ -1,19 +1,19 @@
 import { hackathonsSql } from '@/config/resources'
 import { columnAliases } from '@/config/synapseConfigs/commonProps'
 import { hackathonCardConfiguration } from '@/config/synapseConfigs/hackathons'
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import {
   DetailsPageTabConfig,
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { Outlet } from 'react-router'
-import { CardContainerLogic } from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import {
   HACKATHONS_DETAILS_PAGE_BACKGROUND_AND_RESULTS_TAB_PATH,
   HACKATHONS_DETAILS_PAGE_METHODOLOGY_TAB_PATH,
 } from '@/config/routeConstants'
+import { Outlet } from 'react-router'
 
 const tabConfig: DetailsPageTabConfig[] = [
   {

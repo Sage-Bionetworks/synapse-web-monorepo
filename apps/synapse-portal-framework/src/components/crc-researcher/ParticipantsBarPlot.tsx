@@ -7,12 +7,10 @@ import cloneDeep from 'lodash-es/cloneDeep'
 import Plotly from 'plotly.js-basic-dist'
 import { CSSProperties, useEffect, useState } from 'react'
 import { PlotParams } from 'react-plotly.js'
-import {
-  GraphItem,
-  SynapseClient,
-  SynapseConstants,
-  SynapseUtilityFunctions,
-} from 'synapse-react-client'
+import type { GraphItem } from 'synapse-react-client/components/Plot/types'
+import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClient'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import * as SynapseUtilityFunctions from 'synapse-react-client/utils/functions/index'
 import Plot from 'synapse-react-client/components/Plot/Plot'
 
 export type ParticipantsBarPlotProps = {

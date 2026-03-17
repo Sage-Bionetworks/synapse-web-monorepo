@@ -1,12 +1,33 @@
+import { mergeConfig } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
-import { ConfigBuilder } from './ConfigBuilder.js'
+import baseConfig from './baseConfig.js'
+import vitestConfig from './vitest-config.js'
+import {
+  reactPlugins,
+  nodePolyfillsPlugin,
+  tsconfigPathsPlugin,
+} from './plugins.js'
 
-const portalsSharedViteConfig = new ConfigBuilder()
-  .setIncludeReactConfig(true)
-  .setIncludeVitestConfig(true)
-  .setConfigOverrides({
-    port: 3001, // Reserve port 3000 for SageAccountWeb
+/**
+ * Pre-composed Vite configuration for standard (SPA) portal apps.
+ *
+ * Includes: base config, vitest config, React plugins, nodePolyfills,
+ * tsconfigPaths, and the HTML injection plugin for social meta tags + GTM.
+ *
+ * Individual portal vite.config.ts files can simply re-export this:
+ * ```ts
+ * import { portalsViteConfig } from 'vite-config'
+ * export default portalsViteConfig
+ * ```
+ */
+const portalsViteConfig = mergeConfig(
+  baseConfig,
+  mergeConfig(vitestConfig, {
+    server: { port: 3001 }, // Reserve port 3000 for SageAccountWeb
     plugins: [
+      nodePolyfillsPlugin(),
+      tsconfigPathsPlugin(),
+      ...reactPlugins(),
       createHtmlPlugin({
         inject: {
           data: {
@@ -66,7 +87,7 @@ const portalsSharedViteConfig = new ConfigBuilder()
         },
       }),
     ],
-  })
-  .build()
+  }),
+)
 
-export default portalsSharedViteConfig
+export default portalsViteConfig

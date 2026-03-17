@@ -1,20 +1,54 @@
-import { defineConfig } from 'vite'
+import type { UserConfig } from 'vite'
 
 /**
- * Vite configuration snippet for generating an esm/cjs library bundle.
+ * Returns a Vite configuration for generating an ESM + CJS library bundle
+ * with code-split chunks.
+ *
+ * @param entry - The library entry point(s).
  */
-const viteLibraryConfig = defineConfig({
-  build: {
-    sourcemap: true,
-    emptyOutDir: true,
-    outDir: './dist',
-    lib: {
-      // Note: entry MUST be overridden by an overridden config.
-      entry: '',
-      fileName: 'index',
-      formats: ['es', 'cjs'],
+export function libraryBuildConfig(entry: string | string[]): UserConfig {
+  return {
+    build: {
+      sourcemap: true,
+      emptyOutDir: true,
+      outDir: './dist',
+      lib: {
+        entry,
+        fileName: 'index',
+        formats: ['es', 'cjs'],
+      },
     },
-  },
-})
+  }
+}
 
-export default viteLibraryConfig
+/**
+ * Returns a Vite configuration for generating an ESM-only library build
+ * that preserves the source module structure (one output file per source file).
+ *
+ * This enables deep imports like `my-package/components/Foo` to resolve
+ * to `dist/components/Foo.js` without needing complex exports map configuration.
+ *
+ * @param entry - The library entry point(s), typically a glob of all source files.
+ */
+export function preserveModulesBuildConfig(
+  entry: string | string[],
+): UserConfig {
+  return {
+    build: {
+      sourcemap: true,
+      emptyOutDir: true,
+      outDir: './dist',
+      lib: {
+        entry,
+        formats: ['es'],
+      },
+      rollupOptions: {
+        output: {
+          preserveModules: true,
+          preserveModulesRoot: 'src',
+          entryFileNames: '[name].js',
+        },
+      },
+    },
+  }
+}

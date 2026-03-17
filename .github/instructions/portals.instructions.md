@@ -166,7 +166,7 @@ Resource-specific configurations for portal objects. Each file contains UI setti
 Example `_variable_overrides.scss`:
 
 ```scss
-@use '@sage-bionetworks/synapse-portal-framework/src/style/variables' with (
+@use '@sage-bionetworks/synapse-portal-framework/style/variables' with (
   $primary-action-color: #125e81,
   $secondary-action-color: #404b63,
   $header-url: 'config/style/molecule-back.svg'

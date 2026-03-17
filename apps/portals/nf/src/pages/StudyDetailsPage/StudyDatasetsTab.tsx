@@ -3,7 +3,7 @@ import { datasetCardConfiguration } from '@/config/synapseConfigs/datasets'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { CardContainerLogic } from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 
 function StudyDatasetsTab() {
   const { value: studyId } = useDetailsPageContext('studyId')

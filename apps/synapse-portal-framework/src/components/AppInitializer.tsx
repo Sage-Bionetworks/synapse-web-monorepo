@@ -7,9 +7,10 @@ import { useCookiePreferences } from 'synapse-react-client/utils/hooks/useCookie
 import {
   storeRedirectURLForOneSageLoginAndGotoURL,
   useFramebuster,
-} from 'synapse-react-client/utils/AppUtils'
+} from 'synapse-react-client/utils/AppUtils/index'
 import { useOneSageURL } from 'synapse-react-client/utils/hooks/useOneSageURL'
 import { KNOWN_SYNAPSE_ORG_URLS } from 'synapse-react-client/utils/functions/getEndpoint'
+import { usePortalContext } from './PortalContext'
 
 export type AppInitializerProps = PropsWithChildren<{
   /** The default realm ID to use for the application. Anonymous users will use this realm. */
@@ -19,6 +20,7 @@ export type AppInitializerProps = PropsWithChildren<{
 
 function AppInitializer(props: AppInitializerProps) {
   const { requireAuthentication, defaultRealmId } = props
+  const { portalKey } = usePortalContext()
   const [cookiePreferences] = useCookiePreferences()
   const [redirectUrl, setRedirectUrl] = useState<string | undefined>(undefined)
 
@@ -71,7 +73,7 @@ function AppInitializer(props: AppInitializerProps) {
     <ApplicationSessionManager
       defaultRealmId={defaultRealmId}
       downloadCartPageUrl={'/DownloadCart'}
-      appId={import.meta.env.VITE_PORTAL_KEY}
+      appId={portalKey}
       requireAuthentication={requireAuthentication}
     >
       {!isFramed && props.children}

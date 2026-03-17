@@ -3,24 +3,22 @@
   "version": "3.4.82",
   "private": false,
   "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./dist/*": {
-      "import": "./dist/*",
-      "require": "./dist/*"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./*": {
-      "import": "./dist/*",
-      "require": "./dist/*"
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js"
     },
     "./package.json": "./package.json",
-    "./ThemeTypes": "./src/types/ThemeTypes.d.ts"
+    "./style/*": "./dist/style/*",
+    "./synapse-react-client.css": "./dist/synapse-react-client.css",
+    "./template_style/*": "./dist/template_style/*",
+    "./ThemeTypes": "./dist/types/ThemeTypes.d.ts"
   },
   "homepage": "https://sage-bionetworks.github.io/synapse-web-monorepo/",
   "files": [
@@ -154,6 +152,7 @@
     "@types/dagre": "^0.7.52",
     "@types/google.maps": "^3.58.1",
     "@types/history": "^4.7.11",
+    "@types/jsdom": "^28.0.0",
     "@types/json-schema": "^7.0.15",
     "@types/jsonpath": "^0.2.4",
     "@types/katex": "^0.16.7",
@@ -225,9 +224,8 @@
     "prepublishOnly": "pnpm install && pnpm nx run synapse-react-client:build",
     "start": "storybook dev -p 6060",
     "test": "vitest",
-    "build": "rimraf dist && pnpm --parallel run \"/^build:.*/\"",
-    "build:copy-assets": "copyfiles -u 1 \"src/**/*.{css,scss,svg}\" dist",
-    "build:js": "vite build",
+    "build": "vite build && tsc -p tsconfig.build.json && pnpm run build:copy-assets",
+    "build:copy-assets": "copyfiles -u 1 \"src/**/*.{css,scss,svg}\" \"src/types/*.d.ts\" dist",
     "storybook:build": "pnpm storybook build",
     "type-check": "tsc --build",
     "lint": "eslint src",

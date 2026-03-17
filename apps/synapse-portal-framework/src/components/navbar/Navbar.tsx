@@ -1,6 +1,6 @@
 import { RESPONSIVE_SIDE_PADDING } from '@/utils'
 import { Box, Button, Divider, Link, Menu, MenuItem } from '@mui/material'
-import { MouseEvent, useEffect, useRef, useState } from 'react'
+import { MouseEvent, Suspense, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import ShowDownloadV2 from 'synapse-react-client/components/DownloadCart/ShowDownloadV2'
 import SageResourcesPopover from 'synapse-react-client/components/SageResourcesPopover/index'
@@ -8,8 +8,8 @@ import { useGetCurrentUserProfile } from 'synapse-react-client/synapse-queries/u
 import {
   storeRedirectURLForOneSageLoginAndGotoURL,
   useApplicationSessionContext,
-} from 'synapse-react-client/utils/AppUtils/'
-import { useSynapseContext } from 'synapse-react-client/utils/context'
+} from 'synapse-react-client/utils/AppUtils/index'
+import { useSynapseContext } from 'synapse-react-client/utils/context/index'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -61,17 +61,14 @@ export default function Navbar() {
   const { data: userProfile } = useGetCurrentUserProfile()
   const { isPortalsDropdownEnabled } = navbarConfig
   const [showMenu, setShowMenu] = useState(false)
-  const openBtnRef = useRef<HTMLDivElement>(null)
+  const navRef = useRef<HTMLElement>(null)
 
   const { clearSession } = useApplicationSessionContext()
 
   useEffect(() => {
     function handleClickOutside(e: Event) {
       const node = e.target as HTMLElement
-      if (
-        openBtnRef &&
-        !(openBtnRef.current === node || node?.closest('.dropdown-toggle'))
-      ) {
+      if (navRef.current && !navRef.current.contains(node)) {
         setShowMenu(false)
       }
     }
@@ -131,6 +128,7 @@ export default function Navbar() {
   return (
     <>
       <Box
+        ref={navRef}
         component={'nav'}
         className={
           !showMenu
@@ -156,7 +154,6 @@ export default function Navbar() {
           onClick={() => {
             setShowMenu(true)
           }}
-          ref={openBtnRef}
         >
           MENU
         </div>
@@ -328,11 +325,13 @@ export default function Navbar() {
               >
                 Portals
               </a>
-              <SageResourcesPopover
-                filterByType="SynapsePortal"
-                anchorEl={portalResourcesAnchorEl}
-                onClose={handleClosePortalResources}
-              />
+              <Suspense fallback={null}>
+                <SageResourcesPopover
+                  filterByType="SynapsePortal"
+                  anchorEl={portalResourcesAnchorEl}
+                  onClose={handleClosePortalResources}
+                />
+              </Suspense>
             </>
           )}
           {navbarConfig.routes.toReversed().map(route => {
