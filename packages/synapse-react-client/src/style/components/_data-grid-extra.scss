@@ -213,6 +213,40 @@ $color-text-disabled: #71767f; // gray-700
   }
 }
 
+// Allow selected cell to overflow and appear above neighbors
+.dsg-cell.cell-selected {
+  overflow: visible;
+  z-index: 30; // above regular cells (z:1), below sticky (z:35) and selection overlay (z:50)
+}
+
+// Modern browsers except Firefox use field-sizing for
+// content-based automatic sizing of the input.
+@supports (field-sizing: content) {
+  .dsg-cell.cell-selected .dsg-input {
+    field-sizing: content;
+    min-width: 100%; // at least as wide as the cell
+    flex: none; // remove flex stretch so field-sizing can take effect
+    background: var(
+      --dsg-cell-background-color,
+      white
+    ); // cover neighboring cells cleanly
+  }
+}
+
+// Fallback for browsers without field-sizing support (primarily Firefox).
+// Only expand the focused cell (the one being edited) to avoid visual noise
+// when a multi-cell range is selected. :has() is supported in Firefox 121+.
+@supports not (field-sizing: content) {
+  .dsg-cell.cell-selected:has(input:focus) .dsg-input {
+    min-width: max(
+      100%,
+      400px
+    ); // generous fixed minimum; user can resize column if needed
+    flex: none;
+    background: var(--dsg-cell-background-color, white);
+  }
+}
+
 // Global cursor during resize
 body.col-resizing {
   cursor: col-resize;
