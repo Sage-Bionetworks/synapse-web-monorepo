@@ -233,3 +233,48 @@ export const hasBlockLevelDescendant = (node: Node): boolean => {
     hasBlockLevelDescendant(child),
   )
 }
+
+/**
+ * Normalizes the DOM tree to be "React-safe" by fixing invalid HTML nesting
+ * BEFORE the tree is passed to RecursiveRender.
+ * This pre-processing ensures that inline containers (<p>, <span>, <a>) do not house block-level descendants
+ * (like <div> or <figure>), which would otherwise trigger React hydration errors.
+ * This function recursively walks the tree and swaps violating containers with
+ * <div> elements while preserving all original attributes and child nodes.
+ */
+export function transformTree(node: Node): void {
+  if (node.nodeType !== Node.ELEMENT_NODE) return
+
+  const element = node as HTMLElement
+  const tag = element.tagName.toLowerCase()
+
+  // Define tags that are restricted to inline-only content in React/HTML
+  const isInlineContainer = tag === 'p' || tag === 'span' || tag === 'a'
+
+  if (
+    isInlineContainer &&
+    Array.from(element.childNodes).some(child => hasBlockLevelDescendant(child))
+  ) {
+    const div = element.ownerDocument.createElement('div')
+
+    // Preserve all original attributes
+    Array.from(element.attributes).forEach(attr =>
+      div.setAttribute(attr.name, attr.value),
+    )
+
+    // Move all children from the old element to the new <div>
+    while (element.firstChild) {
+      div.appendChild(element.firstChild)
+    }
+
+    // Swap the invalid element out in the DOM tree
+    element.parentNode!.replaceChild(div, element)
+
+    // Recursively process the children of the new <div> to catch nested violations
+    Array.from(div.childNodes).forEach(child => transformTree(child))
+    return
+  }
+
+  // If no swap was needed, continue walking the tree
+  Array.from(element.childNodes).forEach(child => transformTree(child))
+}

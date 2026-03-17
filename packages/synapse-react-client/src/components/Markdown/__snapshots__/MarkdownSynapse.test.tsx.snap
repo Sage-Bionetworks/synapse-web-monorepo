@@ -1,26 +1,55 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`MarkdownSynapse tests > Snapshot tests > renders inline html block-level element nested inside inline element 1`] = `
+exports[`MarkdownSynapse tests > Snapshot tests > should not warn when a plot widget is a direct child of a paragraph 1`] = `
 <div>
   <div
     class="markdown"
     data-testid="markdown"
   >
-    <p
-      class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
-    >
-      text 
-      <span
-        class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
-      >
-        span text 
-      </span>
-    </p>
     <div>
-      div text
+      Some plot: 
+      <figure
+        data-testid="MarkdownSynapsePlot"
+      />
     </div>
-     more text
-    <p />
+  </div>
+</div>
+`;
+
+exports[`MarkdownSynapse tests > Snapshot tests > should not warn when a plot widget is nested inside a link 1`] = `
+<div>
+  <div
+    class="markdown"
+    data-testid="markdown"
+  >
+    <div>
+      <div
+        href="https://synapse.org"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <figure
+          data-testid="MarkdownSynapsePlot"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`MarkdownSynapse tests > Snapshot tests > should not warn when a plot widget is nested inside italic text 1`] = `
+<div>
+  <div
+    class="markdown"
+    data-testid="markdown"
+  >
+    <div>
+      <em>
+        <figure
+          data-testid="MarkdownSynapsePlot"
+        />
+      </em>
+    </div>
   </div>
 </div>
 `;
@@ -128,9 +157,7 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 
     class="markdown"
     data-testid="markdown"
   >
-    <div
-      class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
-    >
+    <div>
       <span>
         <a
           class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-i9dpmq-MuiButtonBase-root-MuiButton-root-WideButton"
@@ -160,9 +187,7 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 
     class="markdown"
     data-testid="markdown"
   >
-    <div
-      class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
-    >
+    <div>
       <span>
         <a
           class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-i9dpmq-MuiButtonBase-root-MuiButton-root-WideButton"

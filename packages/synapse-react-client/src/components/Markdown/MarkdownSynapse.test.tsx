@@ -426,23 +426,35 @@ describe('MarkdownSynapse tests', () => {
       expect(container).toMatchSnapshot()
     })
 
-    it('should swap <a> to <div> when a widget is nested inside a link', () => {
-      // Case: User places a widget (block-level) inside a markdown link.
-      const markdown = '[{synapsewidget?params=...}](https://synapse.org)'
+    it('should not warn when a plot widget is a direct child of a paragraph', () => {
+      // <p> contains a widget directly, transformTree transforms <p> to <div>
+      const { container } = renderComponent({
+        markdown: 'Some plot: ${plot?query=select}',
+      })
 
-      render(<MarkdownSynapse markdown={markdown} />)
-
-      // The global afterEach validates that no console.error was triggered.
       expect(consoleErrorSpy).not.toHaveBeenCalled()
+      expect(container).toMatchSnapshot()
     })
 
-    it('should swap <p> to <div> when a widget contains a block-level element', () => {
-      const markdown =
-        '## Overview \n Check this out: ${entitypreview?entityId=syn70754793}'
-
-      render(<MarkdownSynapse markdown={markdown} />)
+    it('should not warn when a plot widget is nested inside italic text', () => {
+      // <p><em><span data-widgetparams/></em></p>,  shallow check would miss this
+      // transformTree sees the block descendant and transforms <p> to <div>
+      const { container } = renderComponent({
+        markdown: '*${plot?query=select}*',
+      })
 
       expect(consoleErrorSpy).not.toHaveBeenCalled()
+      expect(container).toMatchSnapshot()
+    })
+
+    it('should not warn when a plot widget is nested inside a link', () => {
+      // <a> contains a widget, transformTree transforms <a> to <div>
+      const { container } = renderComponent({
+        markdown: '[${plot?query=select}](https://synapse.org)',
+      })
+
+      expect(consoleErrorSpy).not.toHaveBeenCalled()
+      expect(container).toMatchSnapshot()
     })
   })
 })

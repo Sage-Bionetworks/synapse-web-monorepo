@@ -4,7 +4,7 @@ import {
   decodeXml,
   handleLinkClicks,
   processMath,
-  hasBlockLevelDescendant,
+  transformTree,
 } from '@/components/Markdown/MarkdownUtils'
 import {
   useGetWikiPage,
@@ -188,6 +188,9 @@ function RenderMarkdown(props: {
   if (markup.length > 0) {
     const domParser = new DOMParser()
     const document = domParser.parseFromString(markup, 'text/html')
+
+    transformTree(document.body)
+
     return <RecursiveRender element={document.body} markdown={markup} />
   }
 
@@ -279,11 +282,6 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
       return <Tag {...props} />
     }
 
-    // case 3 block level child elements
-    const hasBlockLevelChild = Array.from(element.childNodes).some(node =>
-      hasBlockLevelDescendant(node),
-    )
-
     // case 4
     // recursively render children
     const children = Array.from(element.childNodes).map((el, index) => {
@@ -293,21 +291,13 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
     switch (Tag) {
       case 'p':
         return (
-          <Typography
-            variant={'body1'}
-            {...props}
-            component={hasBlockLevelChild ? 'div' : 'p'}
-          >
+          <Typography variant={'body1'} {...props} component={Tag}>
             {children}
           </Typography>
         )
       case 'span':
         return (
-          <Typography
-            variant={'body1'}
-            {...props}
-            component={hasBlockLevelChild ? 'div' : 'span'}
-          >
+          <Typography variant={'body1'} {...props} component={Tag}>
             {children}
           </Typography>
         )
@@ -343,7 +333,7 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
         )
       case 'a':
         return (
-          <Link {...props} component={hasBlockLevelChild ? 'div' : 'a'}>
+          <Link {...props} component={Tag}>
             {children}
           </Link>
         )
