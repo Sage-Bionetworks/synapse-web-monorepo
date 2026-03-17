@@ -1,4 +1,5 @@
 import type { UserConfig } from 'vite'
+import { libInjectCss } from 'vite-plugin-lib-inject-css'
 
 /**
  * Returns a Vite configuration for generating an ESM + CJS library bundle
@@ -34,6 +35,7 @@ export function preserveModulesBuildConfig(
   entry: string | string[],
 ): UserConfig {
   return {
+    plugins: [libInjectCss()],
     build: {
       sourcemap: true,
       emptyOutDir: true,
@@ -47,6 +49,15 @@ export function preserveModulesBuildConfig(
           preserveModules: true,
           preserveModulesRoot: 'src',
           entryFileNames: '[name].js',
+          // Strip '.module' from CSS asset filenames so that consumers' bundlers do not re-process already-compiled CSS Modules.
+          // Without this, a file like `Foo.module.css` would be treated as a CSS Module by the consumer, causing class names to be double-hashed.
+          assetFileNames: assetInfo => {
+            const name = assetInfo.names?.[0] ?? assetInfo.name ?? ''
+            if (name.endsWith('.module.css')) {
+              return name.replace('.module.css', '.css')
+            }
+            return name
+          },
         },
       },
     },
