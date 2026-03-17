@@ -1,7 +1,7 @@
 import { allChallenges } from '@/config/synapseConfig/allChallenges'
 import { Box, Typography } from '@mui/material'
 import React from 'react'
-import QueryWrapperPlotNav from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
 const ChallengeListPage = (): React.ReactNode => {
   return (

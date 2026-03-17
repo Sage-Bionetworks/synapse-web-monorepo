@@ -1,8 +1,8 @@
 import { ColumnIconConfigs } from 'synapse-react-client'
-import { CardConfiguration } from 'synapse-react-client/components/CardContainer'
+import { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import { CardLink } from 'synapse-react-client/components/CardContainer/CardLink'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
-import { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav'
+import { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { allChallengesSql } from '../resources'
 
