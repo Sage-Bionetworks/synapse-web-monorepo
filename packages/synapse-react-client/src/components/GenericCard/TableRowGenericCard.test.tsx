@@ -1,5 +1,5 @@
-import PortalDOI from '@/components/GenericCard/PortalDOI/PortalDOI'
 import CroissantButton from '@/components/GenericCard/CroissantButton/CroissantButton'
+import PortalDOI from '@/components/GenericCard/PortalDOI/PortalDOI'
 import {
   getCandidateDoiId,
   useShowDoiCardLabel,
@@ -22,9 +22,11 @@ import {
   FileHandleAssociateType,
 } from '@sage-bionetworks/synapse-types'
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { beforeEach, describe, it, test, vi } from 'vitest'
+import { ColumnIconConfigs } from '../CardContainerLogic'
 import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
@@ -35,8 +37,6 @@ import TableRowGenericCard, {
   TableRowGenericCardProps,
   TableToGenericCardMapping,
 } from './TableRowGenericCard'
-import { ColumnIconConfigs } from '../CardContainerLogic'
-import userEvent from '@testing-library/user-event'
 
 vi.mock('@/components/GenericCard/PortalDOI/PortalDOI', () => ({
   __esModule: true,
@@ -684,7 +684,8 @@ describe('TableRowGenericCard tests', () => {
 
     expect(mockIconSvg).toHaveBeenRenderedWithProps({
       icon: 'data',
-      sx: { color: '#28A745', paddingRight: '0.2rem' },
+      sx: { color: '#28A745' },
+      wrap: false,
     })
   })
 
@@ -710,6 +711,7 @@ describe('TableRowGenericCard tests', () => {
     expect(mockIconSvg).not.toHaveBeenRenderedWithProps({
       icon: 'data',
       sx: expect.objectContaining({ color: '#28A745' }),
+      wrap: false,
     })
   })
 })
