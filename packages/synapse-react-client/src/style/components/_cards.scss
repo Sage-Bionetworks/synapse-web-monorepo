@@ -251,7 +251,7 @@
     }
 
     .SRC-cardTitleAreaDetails {
-      flex-shrink: 0;
+      flex: 0 0 25%;
       padding-top: var(--baseline-grid);
       @media (max-width: map.get(SRC.$breakpoints, 'medium')) {
         padding-top: 0;

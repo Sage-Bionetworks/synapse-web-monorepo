@@ -301,7 +301,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     return (
       <Stack direction="column" gap="4px">
         {rows.map(({ name, value }) => (
-          <Typography key={name} variant="body1" sx={{ whiteSpace: 'nowrap' }}>
+          <Typography key={name} variant="body1">
             {name}: {value}
           </Typography>
         ))}
