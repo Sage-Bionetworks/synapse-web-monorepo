@@ -114,7 +114,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
   if (!labelLink) {
     if (strList) {
       return (
-        <p>
+        <>
           {strList.map((el, index) => (
             <Fragment key={el}>
               <LabelMaybeWithIcon value={el} iconConfig={iconConfig}>
@@ -123,7 +123,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
               {index < strList.length - 1 && separator}
             </Fragment>
           ))}
-        </p>
+        </>
       )
     }
     return (
