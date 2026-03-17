@@ -7,6 +7,7 @@ import { TTLCache } from './cache'
 import { createAnonymousSynapseClient } from './synapseClient'
 
 const BUNDLE_MASK_QUERY_RESULTS = 0x1
+const BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE = 0x8
 
 /**
  * Configuration for fetching metadata for a single detail page resource.
@@ -82,6 +83,159 @@ export async function fetchDetailPageMetadata(
   return metadataCache.get(key, () =>
     fetchDetailPageMetadataFromApi(config, paramValue),
   )
+}
+
+/**
+ * Batch-preloads metadata for ALL records in a Synapse table into the cache.
+ *
+ * Designed to be called once from `prerender()` in `react-router.config.ts`
+ * during SSG builds. After calling this function, individual
+ * {@link fetchDetailPageMetadata} calls for the same table become instant
+ * cache lookups instead of per-record API calls.
+ *
+ * The function queries the table for ALL rows (paginated), extracts the
+ * title and description columns, and pre-populates {@link metadataCache}
+ * using its `set()` method.
+ *
+ * Safe to call multiple times — subsequent calls are no-ops if the cache
+ * is still populated.
+ *
+ * @param config - Describes which table and columns to query
+ * @returns The number of entries preloaded
+ */
+export async function preloadDetailPageMetadata(
+  config: DetailPageMetadataConfig,
+): Promise<number> {
+  const entityId = extractEntityIdFromSql(config.sql)
+  if (!entityId) {
+    console.warn(
+      `preloadDetailPageMetadata: Could not extract entity ID from SQL: ${config.sql}`,
+    )
+    return 0
+  }
+
+  const client = createAnonymousSynapseClient()
+
+  let offset = 0
+  let hasMore = true
+  let limit: number | undefined = undefined
+  let preloadedCount = 0
+  console.log(
+    `preloadDetailPageMetadata: Preloading entries for entity ${entityId}...`,
+  )
+
+  try {
+    while (hasMore) {
+      // On first query, also request maxRowsPerPage to determine optimal page size
+      const partMask =
+        limit === undefined
+          ? BUNDLE_MASK_QUERY_RESULTS | BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE
+          : BUNDLE_MASK_QUERY_RESULTS
+
+      const queryBundleRequest = {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.QueryBundleRequest' as const,
+        entityId,
+        partMask,
+        query: {
+          sql: config.sql,
+          offset,
+          limit,
+        },
+      }
+
+      const asyncJobId =
+        await client.tableServicesClient.postRepoV1EntityIdTableQueryAsyncStart(
+          {
+            id: entityId,
+            queryBundleRequest,
+          },
+        )
+
+      const result = await waitForAsyncResult(() =>
+        client.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId({
+          jobId: asyncJobId.token!,
+        }),
+      )
+
+      const responseBody = result.responseBody as QueryResultBundle | undefined
+
+      // On first query, extract maxRowsPerPage to use as limit for subsequent queries
+      if (limit === undefined && responseBody?.maxRowsPerPage) {
+        limit = responseBody.maxRowsPerPage
+      }
+
+      const queryResults = responseBody?.queryResult?.queryResults
+      if (!queryResults?.rows || queryResults.rows.length === 0) {
+        hasMore = false
+        continue
+      }
+
+      const rows = queryResults.rows
+      const headers = queryResults.headers
+
+      // Find column indices
+      const paramIndex = headers?.findIndex(
+        h => h.name?.toLowerCase() === config.paramName.toLowerCase(),
+      )
+      const titleIndex = headers?.findIndex(
+        h => h.name?.toLowerCase() === config.titleColumn.toLowerCase(),
+      )
+      const descriptionIndex = config.descriptionColumn
+        ? headers?.findIndex(
+            h =>
+              h.name?.toLowerCase() === config.descriptionColumn!.toLowerCase(),
+          )
+        : -1
+
+      if (paramIndex === undefined || paramIndex === -1) {
+        console.warn(
+          `preloadDetailPageMetadata: Column "${config.paramName}" not found in query results for entity ${entityId}`,
+        )
+        return preloadedCount
+      }
+
+      // Extract metadata from each row and populate the cache
+      for (const row of rows) {
+        const paramValue = row.values?.[paramIndex]
+        if (paramValue == null || paramValue === '') continue
+
+        const title =
+          titleIndex !== undefined && titleIndex >= 0
+            ? row.values?.[titleIndex] ?? null
+            : null
+        const description =
+          descriptionIndex !== undefined && descriptionIndex >= 0
+            ? row.values?.[descriptionIndex] ?? null
+            : null
+
+        metadataCache.set(cacheKey(config, String(paramValue)), {
+          title,
+          description,
+        })
+        preloadedCount++
+      }
+
+      // Move to next page
+      offset += rows.length
+
+      // If we got fewer rows than the limit, we've reached the end
+      if (limit !== undefined && rows.length < limit) {
+        hasMore = false
+      }
+    }
+
+    console.log(
+      `preloadDetailPageMetadata: Preloaded ${preloadedCount} entries for entity ${entityId}`,
+    )
+    return preloadedCount
+  } catch (error) {
+    console.warn(
+      `preloadDetailPageMetadata: Failed to preload metadata for entity ${entityId}:`,
+      error instanceof Error ? error.message : error,
+    )
+    return preloadedCount
+  }
 }
 
 /**

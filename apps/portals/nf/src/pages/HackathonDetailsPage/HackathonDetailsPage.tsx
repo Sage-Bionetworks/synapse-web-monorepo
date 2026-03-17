@@ -21,7 +21,6 @@ import {
   HACKATHONS_DETAILS_PAGE_BACKGROUND_AND_RESULTS_TAB_PATH,
   HACKATHONS_DETAILS_PAGE_METHODOLOGY_TAB_PATH,
 } from '@/config/routeConstants'
-import { Outlet } from 'react-router'
 
 const metadataConfig: DetailPageMetadataConfig = {
   sql: hackathonsSql,
@@ -70,19 +69,6 @@ export function meta({
     descriptors.push({ name: 'description', content: loaderData.description })
   }
   return descriptors
-}
-
-/**
- * Sets HTTP cache headers on the SSR response for this route.
- *
- * - `max-age=300` (5 min): CDN/browser serves cached HTML without revalidation.
- * - `stale-while-revalidate=3600` (1 hr): After max-age, serves stale while
- *   refreshing in the background.
- */
-export function headers() {
-  return {
-    'Cache-Control': 'public, max-age=300, stale-while-revalidate=3600',
-  }
 }
 
 const tabConfig: DetailsPageTabConfig[] = [

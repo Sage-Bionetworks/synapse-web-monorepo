@@ -40,6 +40,10 @@ export function getOneSageBaseUrl(
     return `http://${currentHostname}:3000`
   }
 
+  if (!currentHostname) {
+    return ONE_SAGE_PRODUCTION_URL
+  }
+
   console.warn(
     `No accounts URL found for host: ${currentHostname} with backend endpoint: ${currentBackendEndpointWithoutSlash}`,
   )

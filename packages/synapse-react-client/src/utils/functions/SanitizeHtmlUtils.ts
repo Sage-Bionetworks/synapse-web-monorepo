@@ -1,6 +1,7 @@
 import DOMPurify from 'dompurify'
 import xssLib from 'xss'
 import type { IFilterXSSOptions } from 'xss'
+import { JSDOM } from 'jsdom'
 
 // xss is a CJS-only module; pull runtime values from the default import to
 // avoid "named export not found" errors in Vite dev mode (native ESM).
@@ -135,7 +136,8 @@ const ALLOWED_STYLES: Record<string, boolean> = {
 // Regex to allow only secure image sources
 const ALLOWED_URI_REGEXP: RegExp = /^(https?:|data:image\/)/
 
-function configureDomPurify(instance: typeof DOMPurify): void {
+let domPurifyInstance: typeof DOMPurify | null = null
+function configureDomPurify(instance: typeof DOMPurify): typeof DOMPurify {
   // Configure DOMPurify with TypeScript support
   instance.setConfig({
     ALLOWED_TAGS,
@@ -185,25 +187,21 @@ function configureDomPurify(instance: typeof DOMPurify): void {
       }
     }
   })
-}
-
-let domPurifyInstance: typeof DOMPurify | null = null
-
-if (typeof window === 'undefined') {
-  // Running in a Node.js environment; initialize JSDOM and create a DOMPurify instance
-  // Cannot use top-level await is unsafe in Safari: https://caniuse.com/wf-top-level-await
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { JSDOM } = require('jsdom')
-  domPurifyInstance = DOMPurify(new JSDOM('<!DOCTYPE html>').window)
-  configureDomPurify(domPurifyInstance)
-} else {
-  domPurifyInstance = DOMPurify
-  configureDomPurify(domPurifyInstance)
+  return instance
 }
 
 export function sanitize(input: string): string {
   if (domPurifyInstance == null) {
-    throw new Error('DOMPurify instance not initialized')
+    if (typeof window === 'undefined') {
+      // Running in a Node.js environment; initialize JSDOM and create a DOMPurify instance
+      // Cannot use top-level await is unsafe in Safari: https://caniuse.com/wf-top-level-await
+
+      domPurifyInstance = configureDomPurify(
+        DOMPurify(new JSDOM('<!DOCTYPE html>').window),
+      )
+    } else {
+      domPurifyInstance = configureDomPurify(DOMPurify)
+    }
   }
 
   return domPurifyInstance.sanitize(input)
