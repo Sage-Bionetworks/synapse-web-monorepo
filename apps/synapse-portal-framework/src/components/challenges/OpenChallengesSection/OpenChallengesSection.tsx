@@ -8,8 +8,7 @@ import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-querie
 import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions/index'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 import getChallengeKeywordsFromRow from '../../../utils/getChallengeKeywordsFromRow'
-// TODO: update with vectors for Open Challenges section
-import { ReactComponent as Vectors } from '../assets/popularChallengesVectors.svg'
+import { ReactComponent as Vectors } from '../assets/openChallengesVectors.svg'
 import styles from './OpenChallengesSection.module.scss'
 
 type OpenChallengesSectionProps = {
@@ -37,12 +36,11 @@ const OpenChallengesSection = ({
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
-  // TODO: determine how many challenges to show in this section
   const filteredDataRows = filterRowsByLandingPageSection(
     'external',
     dataRows,
     queryResultBundle!,
-  ).slice(0, 6)
+  )
 
   return (
     <Box className={styles.OpenChallengesSection__root}>
