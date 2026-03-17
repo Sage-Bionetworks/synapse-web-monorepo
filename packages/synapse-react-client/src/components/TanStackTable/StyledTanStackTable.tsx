@@ -8,7 +8,7 @@ import {
   Row,
   Table,
 } from '@tanstack/react-table'
-import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { MemoizedTableBody, TableBody, TableBodyProps } from './TableBody'
 import {
   getColumnSizeCssVariable,
@@ -79,26 +79,28 @@ export default function StyledTanStackTable<
    * This gives content-based initial sizes while still allowing the user to drag
    * a column narrower than its content.
    */
-  const tableRef = useRef<HTMLTableElement | null>(null)
-  const [hasMeasured, setHasMeasured] = useState(!autoColumnSizing)
+  const tableRef = useRef<HTMLTableElement>(null)
 
-  // Column identity string — if the set of visible columns changes, re-measure.
-  const columnKey = table
-    .getFlatHeaders()
-    .map(h => h.id)
-    .join(',')
+  // Track what columns+visibility combination was last measured so we know when
+  // a re-measurement is needed (e.g. columns change or visibility is toggled).
+  const columnVisibility = table.getState().columnVisibility
+  const [lastMeasuredState, setLastMeasuredState] = useState<{
+    columns: typeof table.options.columns
+    columnVisibility: typeof columnVisibility
+  } | null>(null)
 
-  // Reset measurement whenever the visible column set changes.
-  useEffect(() => {
-    if (autoColumnSizing) {
-      setHasMeasured(false)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [columnKey])
+  // hasMeasured is true when auto-sizing is disabled (nothing to do) OR when the
+  // current columns+visibility matches the last measured snapshot.
+  const hasMeasured =
+    !autoColumnSizing ||
+    (lastMeasuredState?.columns === table.options.columns &&
+      lastMeasuredState?.columnVisibility === columnVisibility)
 
   // After the browser has laid out the auto-sized table, capture the widths and
   // switch to fixed layout so that the user can resize below the content width.
-  useEffect(() => {
+  // useLayoutEffect runs synchronously after DOM mutations, before the browser
+  // paints, which is required for accurate DOM measurements.
+  useLayoutEffect(() => {
     if (!autoColumnSizing || hasMeasured || !tableRef.current) return
 
     const ths = tableRef.current.querySelectorAll(
@@ -114,9 +116,12 @@ export default function StyledTanStackTable<
     })
     if (Object.keys(newSizes).length > 0) {
       table.setColumnSizing(newSizes)
-      setHasMeasured(true)
+      setLastMeasuredState({
+        columns: table.options.columns,
+        columnVisibility,
+      })
     }
-  }, [autoColumnSizing, hasMeasured, table])
+  }, [autoColumnSizing, columnVisibility, hasMeasured, table])
 
   /**
    * Instead of calling `column.getSize()` on every render for every header
@@ -164,7 +169,7 @@ export default function StyledTanStackTable<
     <StyledTableContainer {...styledTableContainerProps}>
       <Table
         {...tableSlotProps}
-        ref={tableRef as RefObject<HTMLTableElement>}
+        ref={tableRef}
         style={{
           ...columnSizeVars,
           // Pre-measurement: auto layout so the browser can size columns to content.
