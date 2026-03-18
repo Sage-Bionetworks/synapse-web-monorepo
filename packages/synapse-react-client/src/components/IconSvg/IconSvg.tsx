@@ -4,6 +4,7 @@ import { ReactComponent as AccessPending } from '@/assets/icons/AccessPending.sv
 import { ReactComponent as AccessPendingCloud } from '@/assets/icons/AccessPendingCloud.svg'
 import CreateVersion from '@/assets/icons/CreateVersion'
 import FileWithShield from '@/assets/icons/FileWithShield'
+import MultiFile from '@/assets/icons/MultiFile'
 import { ORCIDIcon } from '@/assets/icons/ORCIDIcon'
 import { TasksIcon } from '@/assets/icons/TasksIcon'
 import AccessManagement from '@/assets/mui_components/AccessManagement'
@@ -280,6 +281,7 @@ export const IconStrings = [
   'openInFull',
   'tableview',
   'fileWithShield',
+  'multifile',
 ] as const
 
 export type IconName = (typeof IconStrings)[number]
@@ -589,6 +591,9 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <OpenInFull {...otherProps} />
     case 'fileWithShield':
       return <FileWithShield {...otherProps} />
+    case 'multifile':
+      return <MultiFile {...otherProps} />
+
     default:
       return <></>
   }

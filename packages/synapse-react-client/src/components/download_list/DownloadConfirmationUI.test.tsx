@@ -54,7 +54,7 @@ describe('DownloadConfirmationUI', () => {
 
     await screen.findByTestId(DOWNLOAD_DETAILS_TEST_ID)
     await screen.findByText(
-      /Would you like to add these files to the download cart?/i,
+      /Would you like to add these files to the download list?/i,
     )
 
     expect(addButton).toBeInTheDocument()
@@ -95,7 +95,7 @@ describe('DownloadConfirmationUI', () => {
     }
     const { addButton, cancelButton } = await setUp(props)
 
-    await screen.findByText(/Adding files to download cart/i)
+    await screen.findByText(/Adding files to download list/i)
 
     expect(addButton).not.toBeInTheDocument()
 

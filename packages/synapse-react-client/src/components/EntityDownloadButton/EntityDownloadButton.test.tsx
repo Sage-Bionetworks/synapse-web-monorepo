@@ -144,7 +144,7 @@ describe('EntityDownloadButton', () => {
       vi.mocked(useAddToDownloadList).mockReturnValue(mockAddToDownloadList)
     })
 
-    it('sets recursive: true when adding a folder to download cart', async () => {
+    it('sets recursive: true when adding a folder to download list', async () => {
       const folderId = 'syn123456'
       vi.mocked(useGetEntity).mockReturnValue(
         getUseQuerySuccessMock({
@@ -163,7 +163,7 @@ describe('EntityDownloadButton', () => {
       )
 
       await openDropdown()
-      const addToCartMenuItem = screen.getByText('Add to Download Cart')
+      const addToCartMenuItem = screen.getByText('Add to Download List')
       await userEvent.click(addToCartMenuItem)
 
       expect(mockAddToDownloadList.mutate).toHaveBeenCalledWith({
@@ -174,7 +174,7 @@ describe('EntityDownloadButton', () => {
       } satisfies AddToDownloadListRequest)
     })
 
-    it('enables Add to Download Cart when folder has files in nested subfolders', async () => {
+    it('enables Add to Download List when folder has files in nested subfolders', async () => {
       const folderId = 'syn123456'
       vi.mocked(useGetEntity).mockReturnValue(
         getUseQuerySuccessMock({
@@ -203,12 +203,12 @@ describe('EntityDownloadButton', () => {
       await openDropdown()
 
       const addToCartMenuItem = screen
-        .getByText('Add to Download Cart')
+        .getByText('Add to Download List')
         .closest('[role="menuitem"]') as HTMLElement
       expect(addToCartMenuItem).not.toHaveAttribute('aria-disabled', 'true')
     })
 
-    it('disables Add to Download Cart when folder has no files recursively', async () => {
+    it('disables Add to Download List when folder has no files recursively', async () => {
       const folderId = 'syn123456'
       vi.mocked(useGetEntity).mockReturnValue(
         getUseQuerySuccessMock({
@@ -237,7 +237,7 @@ describe('EntityDownloadButton', () => {
       await openDropdown()
 
       const addToCartMenuItem = screen
-        .getByText('Add to Download Cart')
+        .getByText('Add to Download List')
         .closest('[role="menuitem"]') as HTMLElement
       expect(addToCartMenuItem).toHaveAttribute('aria-disabled', 'true')
     })
@@ -281,7 +281,7 @@ describe('EntityDownloadButton', () => {
       )
 
       await openDropdown()
-      const addToCartMenuItem = screen.getByText('Add to Download Cart')
+      const addToCartMenuItem = screen.getByText('Add to Download List')
       await userEvent.click(addToCartMenuItem)
 
       expect(mockAddToDownloadList.mutate).toHaveBeenCalledWith({
@@ -312,7 +312,7 @@ describe('EntityDownloadButton', () => {
       )
 
       await openDropdown()
-      const addToCartMenuItem = screen.getByText('Add to Download Cart')
+      const addToCartMenuItem = screen.getByText('Add to Download List')
       await userEvent.click(addToCartMenuItem)
 
       expect(mockAddToDownloadList.mutate).toHaveBeenCalledWith({

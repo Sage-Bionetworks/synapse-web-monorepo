@@ -67,7 +67,7 @@ function RemoveFromDownloadListButton(props: {
 
   return (
     <Tooltip
-      title="Remove from Download Cart"
+      title="Remove from Download List"
       placement="left"
       enterNextDelay={TOOLTIP_DELAY_SHOW}
     >

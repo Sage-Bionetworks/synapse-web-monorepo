@@ -4,7 +4,7 @@ import pluralize from 'pluralize'
 import { upperFirst } from 'lodash-es'
 import { Row } from '@sage-bionetworks/synapse-types'
 
-const TO_DOWNLOAD_CART = 'to Download Cart'
+const TO_DOWNLOAD_CART = 'to Download List'
 
 /**
  * If the user invokes an action on the table (such as "Send to CAVATICA"), we want to tell the user how many rows they

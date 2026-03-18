@@ -16,7 +16,7 @@ export const Demo: Story = {
   args: {
     actionConfiguration: {
       ['ADD_TO_DOWNLOAD_CART']: {
-        text: 'Add to Download Cart',
+        text: 'Add to Download List',
         onClick: onClickHandler('ADD_TO_DOWNLOAD_CART'),
         disabled: true,
         tooltipText: 'You must have some permission to download this thing.',
@@ -96,7 +96,7 @@ export const DisabledDownloadMenu: Story = {
   args: {
     actionConfiguration: {
       ['ADD_TO_DOWNLOAD_CART']: {
-        text: 'Add to Download Cart',
+        text: 'Add to Download List',
         onClick: onClickHandler('ADD_TO_DOWNLOAD_CART'),
         disabled: true,
         tooltipText: 'You must have some permission to download this thing.',

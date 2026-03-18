@@ -1,8 +1,8 @@
 import React from 'react'
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon'
-import { ReactComponent as Svg } from './PackagableFile.svg'
+import { ReactComponent as Svg } from './MultiFile.svg'
 
-const PackagableFile = (props: SvgIconProps): React.ReactNode => {
+const MultiFile = (props: SvgIconProps): React.ReactNode => {
   return (
     <SvgIcon {...props}>
       <Svg />
@@ -10,4 +10,4 @@ const PackagableFile = (props: SvgIconProps): React.ReactNode => {
   )
 }
 
-export default PackagableFile
+export default MultiFile

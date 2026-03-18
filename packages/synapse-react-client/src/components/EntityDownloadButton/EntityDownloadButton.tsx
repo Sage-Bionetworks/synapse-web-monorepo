@@ -145,7 +145,7 @@ function getMenuItemForAction(
       }
     case DownloadAction.addToCart:
       return {
-        text: 'Add to Download Cart',
+        text: 'Add to Download List',
         disabled: addToCartDisabled,
         tooltipText: getAddToCartTooltip(entityType, !!addToCartDisabled),
         onClick: () => {
@@ -221,7 +221,7 @@ const getAddToCartTooltip = (
   isDisabled: boolean,
 ): string => {
   if (!isDisabled) {
-    return 'Add file(s) to your download cart'
+    return 'Add file(s) to your download list'
   }
   const entityFriendlyName = entityTypeToFriendlyName(entityType)
   return `This ${entityFriendlyName} has no accessible files`
@@ -363,7 +363,7 @@ export function EntityDownloadButton(props: {
       if (data.numberOfFilesAdded > 0) {
         displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)
       } else {
-        displayToast('0 Files added to your Download Cart', 'info')
+        displayToast('0 Files added to your Download List', 'info')
       }
     },
     onError: error => {
@@ -376,7 +376,7 @@ export function EntityDownloadButton(props: {
       if (data.numberOfFilesAdded != null && data.numberOfFilesAdded > 0) {
         displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)
       } else {
-        displayToast('0 Files added to your Download Cart', 'info')
+        displayToast('0 Files added to your Download List', 'info')
       }
     },
     onError: error => {

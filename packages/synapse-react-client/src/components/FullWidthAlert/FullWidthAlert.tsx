@@ -85,8 +85,8 @@ function ButtonFromConfig(props: {
 }
 
 /**
- * Nav bar item, displayed when files have been added to the Download Cart.
- * This must be configured with the URL of a page dedicated to showing the Download Cart.
+ * Nav bar item, displayed when files have been added to the Download List.
+ * This must be configured with the URL of a page dedicated to showing the Download List.
  */
 function FullWidthAlert(props: FullWidthAlertProps) {
   const {

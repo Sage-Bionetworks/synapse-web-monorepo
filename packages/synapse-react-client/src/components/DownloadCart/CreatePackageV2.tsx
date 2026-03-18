@@ -1,3 +1,4 @@
+import styles from './CreatePackageV2.module.scss'
 import {
   createPackageFromDownloadListV2,
   getFileHandleByIdURL,
@@ -82,12 +83,12 @@ export const CreatePackageV2 = (
 
   return (
     <>
-      <div className="CreatePackageV2">
-        <div className="createPackageStep">
-          <span className="createPackageTitle">
+      <div className={styles.CreatePackageV2}>
+        <div className={styles.createPackageStep}>
+          <span className={styles.createPackageTitle}>
             Create your Download Package
           </span>
-          <span className="createPackageDescription">
+          <span className={styles.createPackageDescription}>
             Name your download package and select Download Package to get
             started.
           </span>

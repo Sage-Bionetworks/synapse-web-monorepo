@@ -168,7 +168,7 @@ describe('TopLevelControlsUtils', () => {
           queryCount,
           unitDescription,
         ),
-      ).toEqual('Add All Files to Download Cart')
+      ).toEqual('Add All Files to Download List')
     })
     it('is unfiltered and has no selected rows', () => {
       const hasResettableFilters = false
@@ -184,7 +184,7 @@ describe('TopLevelControlsUtils', () => {
           queryCount,
           unitDescription,
         ),
-      ).toEqual('Add All Files to Download Cart')
+      ).toEqual('Add All Files to Download List')
     })
     it('has selected rows', () => {
       const hasResettableFilters = false
@@ -200,7 +200,7 @@ describe('TopLevelControlsUtils', () => {
           queryCount,
           unitDescription,
         ),
-      ).toEqual('Add 2 Selected Files to Download Cart')
+      ).toEqual('Add 2 Selected Files to Download List')
     })
     it('is filtered without selection', () => {
       const hasResettableFilters = true
@@ -216,7 +216,7 @@ describe('TopLevelControlsUtils', () => {
           queryCount,
           unitDescription,
         ),
-      ).toEqual('Add 200 Selected Files to Download Cart')
+      ).toEqual('Add 200 Selected Files to Download List')
     })
     it('is filtered with selection', () => {
       const hasResettableFilters = true
@@ -232,7 +232,7 @@ describe('TopLevelControlsUtils', () => {
           queryCount,
           unitDescription,
         ),
-      ).toEqual('Add 2 Selected Files to Download Cart')
+      ).toEqual('Add 2 Selected Files to Download List')
     })
 
     it('is filtered without selection, count is not available', () => {
@@ -249,7 +249,7 @@ describe('TopLevelControlsUtils', () => {
           queryCount,
           unitDescription,
         ),
-      ).toEqual('Add to Download Cart')
+      ).toEqual('Add to Download List')
     })
   })
 })

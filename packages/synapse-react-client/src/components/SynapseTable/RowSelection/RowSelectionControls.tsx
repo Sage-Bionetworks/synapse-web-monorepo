@@ -139,7 +139,7 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
               }}
               startIcon={<GetAppTwoTone />}
             >
-              Add to Download Cart
+              Add to Download List
             </Button>
           )}
         </>

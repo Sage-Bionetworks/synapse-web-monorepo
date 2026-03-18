@@ -934,7 +934,7 @@ describe('DetailsView tests', () => {
 
       await screen.findByLabelText('MD5')
       expect(screen.findByText(mockFileHandle.contentMd5!)).toBeDefined()
-      await screen.findByLabelText('Add to Download Cart')
+      await screen.findByLabelText('Add to Download List')
       const fileSize = calculateFriendlyFileSize(mockFileHandle.contentSize)
       expect(screen.findByText(fileSize)).toBeDefined()
     })
@@ -946,7 +946,7 @@ describe('DetailsView tests', () => {
       })
       expect(screen.queryByLabelText('MD5')).not.toBeInTheDocument()
       expect(
-        screen.queryByLabelText('Add to Download Cart'),
+        screen.queryByLabelText('Add to Download List'),
       ).not.toBeInTheDocument()
     })
   })
