@@ -119,6 +119,22 @@ describe('MarkdownUtils DOM', () => {
       expect(div?.getAttribute('data-test')).toBe('bar')
     })
 
+    it('should remove empty/whitespace-only text nodes', () => {
+      const doc = new DOMParser().parseFromString(
+        '<table><tbody><tr>   <td>test</td></tr></tbody></table>',
+        'text/html',
+      )
+
+      transformTree(doc.body)
+
+      const tr = doc.body.querySelector('tr')!
+      // The whitespace text node between <tr> and <td> should be removed
+      const textNodes = Array.from(tr.childNodes).filter(
+        n => n.nodeType === Node.TEXT_NODE,
+      )
+      expect(textNodes).toHaveLength(0)
+    })
+
     it('should not modify valid inline nesting', () => {
       const html = '<p>Just some <span>text</span></p>'
       const doc = new DOMParser().parseFromString(html, 'text/html')

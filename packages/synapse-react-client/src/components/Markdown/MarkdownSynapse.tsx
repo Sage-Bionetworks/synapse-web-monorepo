@@ -226,10 +226,6 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
   */
   if (element.nodeType === Node.TEXT_NODE) {
     // case 1.
-    // Discard empty text nodes. Prevents invalid HTML in some cases, for example whitespace text nodes cannot be a child of <table>.
-    if (!element.textContent?.trim()) {
-      return null
-    }
     return <>{element.textContent}</>
   } else if (
     element.nodeType === Node.ELEMENT_NODE &&

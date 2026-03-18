@@ -243,6 +243,14 @@ export const hasBlockLevelDescendant = (node: Node): boolean => {
  * <div> elements while preserving all original attributes and child nodes.
  */
 export function transformTree(node: Node): void {
+  // Discard empty text nodes. Prevents invalid HTML in some cases, for example whitespace text nodes cannot be a child of <table>.
+  if (node.nodeType === Node.TEXT_NODE) {
+    if (!node.textContent?.trim()) {
+      node.parentNode?.removeChild(node)
+    }
+    return
+  }
+
   if (node.nodeType !== Node.ELEMENT_NODE) return
 
   const element = node as HTMLElement
