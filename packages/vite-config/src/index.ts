@@ -21,5 +21,8 @@ export type { LibraryPluginsOptions } from './plugins.js'
 export { clientOnly } from './clientOnly.js'
 
 // Pre-composed configs (convenience exports for common cases)
-export { default as portalsViteConfig } from './portals-vite-config.js'
+export {
+  default as portalsViteConfig,
+  jsdomStubPath,
+} from './portals-vite-config.js'
 export { default as sitemapViteConfig } from './sitemap-vite-config.js'

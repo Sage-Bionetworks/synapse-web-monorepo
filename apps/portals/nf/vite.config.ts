@@ -1,10 +1,10 @@
 import { reactRouter } from '@react-router/dev/vite'
-import { resolve } from 'path'
 import { mergeConfig, defineConfig, type Plugin } from 'vite'
 import {
   baseConfig,
   vitestConfig,
   clientOnly,
+  jsdomStubPath,
   nodePolyfillsPlugin,
   reactPlugins,
   tsconfigPathsPlugin,
@@ -26,14 +26,9 @@ export default defineConfig(({ isSsrBuild }) =>
       ],
       resolve: {
         alias: {
-          // jsdom is statically imported by SanitizeHtmlUtils.ts but only used
-          // inside a `typeof window === 'undefined'` guard. The static import
-          // pulls Node.js-only transitive deps (agent-base → http.Agent) into
-          // the client bundle, crashing the browser. Stub it for the client
-          // build; the SSR/prerender build uses the real jsdom in Node.js.
-          ...(!isSsrBuild
-            ? { jsdom: resolve(__dirname, 'src/shims/jsdom.ts') }
-            : {}),
+          // Stub jsdom for client builds; the SSR/prerender build uses the
+          // real jsdom in Node.js.
+          ...(!isSsrBuild ? { jsdom: jsdomStubPath } : {}),
         },
       },
       ssr: {

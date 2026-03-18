@@ -1,3 +1,5 @@
+import { resolve } from 'path'
+import { fileURLToPath } from 'url'
 import { mergeConfig } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
 import baseConfig from './baseConfig.js'
@@ -7,6 +9,22 @@ import {
   nodePolyfillsPlugin,
   tsconfigPathsPlugin,
 } from './plugins.js'
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url))
+
+/**
+ * Absolute path to the jsdom client-side stub module.
+ *
+ * jsdom is statically imported by SanitizeHtmlUtils.ts but only used at
+ * runtime in Node.js (behind a `typeof window === 'undefined'` guard).
+ * Aliasing jsdom to this stub in client builds prevents Node.js-only
+ * transitive dependencies from being bundled.
+ *
+ * Exported so that SSG portals (e.g. NF) can reuse the same stub in their
+ * own vite.config.ts for client-only builds while keeping the real jsdom
+ * for SSR/prerender builds.
+ */
+export const jsdomStubPath = resolve(__dirname, 'shims/jsdom-stub.js')
 
 /**
  * Pre-composed Vite configuration for standard (SPA) portal apps.
@@ -24,6 +42,12 @@ const portalsViteConfig = mergeConfig(
   baseConfig,
   mergeConfig(vitestConfig, {
     server: { port: 3001 }, // Reserve port 3000 for SageAccountWeb
+    resolve: {
+      alias: {
+        // Stub jsdom for browser builds to avoid bundling Node.js-only deps
+        jsdom: jsdomStubPath,
+      },
+    },
     plugins: [
       nodePolyfillsPlugin(),
       tsconfigPathsPlugin(),

@@ -20,6 +20,18 @@ export function meta(): MetaDescriptor[] {
   ]
 }
 
+export function links() {
+  return [
+    {
+      rel: 'stylesheet',
+      href: 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css',
+      integrity:
+        'sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u',
+      crossOrigin: 'anonymous',
+    },
+  ]
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
   const portalKey = import.meta.env.VITE_PORTAL_KEY ?? ''
   const portalName = import.meta.env.VITE_PORTAL_NAME ?? ''
@@ -60,26 +72,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
         <link rel="shortcut icon" href="/favicon.svg" />
 
-        {/* Bootstrap CSS — SRC dependency */}
-        <link
-          rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-          crossOrigin="anonymous"
-        />
-
-        {/* Google Tag Manager */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-KPW4KS62');`,
-          }}
-        />
-        {/* End Google Tag Manager */}
-
         {/* React Router injects route-level <title>, <meta>, and stylesheet <link> elements here */}
         <Meta />
         <Links />
@@ -97,9 +89,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         {/* End Google Tag Manager (noscript) */}
 
         <noscript>You need to enable JavaScript to run this app.</noscript>
-
         {children}
-
         <ScrollRestoration />
         <Scripts />
       </body>

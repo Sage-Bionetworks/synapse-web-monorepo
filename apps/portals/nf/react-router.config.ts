@@ -59,6 +59,7 @@ const metadataConfigs: DetailPageMetadataConfig[] = [
 ]
 
 async function paths() {
+  const isProduction = process.env.NODE_ENV === 'production'
   console.log('[prerender] Generating static routes...')
   const staticRoutes = [
     '/',
@@ -75,9 +76,14 @@ async function paths() {
 
   const dynamicRoutes: string[] = []
 
-  // Enumerate all record IDs for each detail page type
+  // Enumerate record IDs for each detail page type.
+  // In dev mode, fetch only 1 ID per type to keep startup fast while still
+  // satisfying React Router's prerender validation for loader exports.
   for (const detailPage of sitemapConfig.detailPages) {
-    const result = await fetchResourceIds(detailPage)
+    const result = await fetchResourceIds(
+      detailPage,
+      isProduction ? undefined : 1,
+    )
     if (!result.success) {
       console.warn(`[prerender] Skipping ${detailPage.path}: ${result.error}`)
       continue
@@ -87,11 +93,14 @@ async function paths() {
     }
   }
 
-  // Hydrate caches so individual loader() calls are instant hits
-  await Promise.all([
-    ...metadataConfigs.map(mc => preloadDetailPageMetadata(mc)),
-    preloadAllCroissantMetadata(),
-  ])
+  // Hydrate caches so individual loader() calls are instant hits.
+  // Only needed for production builds where all routes are pre-rendered.
+  if (isProduction) {
+    await Promise.all([
+      ...metadataConfigs.map(mc => preloadDetailPageMetadata(mc)),
+      preloadAllCroissantMetadata(),
+    ])
+  }
 
   console.log(
     `[prerender] ${staticRoutes.length} static + ${dynamicRoutes.length} dynamic routes`,

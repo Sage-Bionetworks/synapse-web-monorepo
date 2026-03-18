@@ -31,14 +31,19 @@ function createAnonymousSynapseClient(): SynapseClient {
 }
 
 /**
- * Queries Synapse anonymously to fetch all resource IDs for a detail page.
+ * Queries Synapse anonymously to fetch resource IDs for a detail page.
  * Uses pagination to handle large result sets.
  *
  * @param config - The detail page configuration
+ * @param limit - Optional maximum number of IDs to return. When provided, the
+ *   query is bounded to this many rows and pagination is skipped, which is
+ *   useful for fast dev-mode prerendering where only a representative sample
+ *   of routes is needed.
  * @returns A promise that resolves to the query result with IDs
  */
 export async function fetchResourceIds(
   config: DetailPageConfig,
+  limit?: number,
 ): Promise<ResourceQueryResult> {
   const entityId = extractEntityIdFromSql(config.sql)
   if (!entityId) {
@@ -53,7 +58,7 @@ export async function fetchResourceIds(
   const ids: string[] = []
   let offset = 0
   let hasMore = true
-  let limit: number | undefined = undefined // Will be set from maxRowsPerPage on first query
+  let pageSize: number | undefined = limit // Will be set from maxRowsPerPage on first query if not caller-provided
 
   const client = createAnonymousSynapseClient()
 
@@ -61,7 +66,7 @@ export async function fetchResourceIds(
     while (hasMore) {
       // On first query, also request maxRowsPerPage to determine optimal page size
       const partMask =
-        limit === undefined
+        pageSize === undefined
           ? BUNDLE_MASK_QUERY_RESULTS | BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE
           : BUNDLE_MASK_QUERY_RESULTS
 
@@ -73,7 +78,7 @@ export async function fetchResourceIds(
         query: {
           sql: config.sql,
           offset,
-          limit,
+          limit: pageSize,
         },
       }
 
@@ -95,9 +100,9 @@ export async function fetchResourceIds(
       // Cast the asynchronous job result `responseBody` to our QueryResultBundle
       const responseBody = result.responseBody as QueryResultBundle | undefined
 
-      // On first query, extract maxRowsPerPage to use as limit for subsequent queries
-      if (limit === undefined && responseBody?.maxRowsPerPage) {
-        limit = responseBody.maxRowsPerPage
+      // On first query, extract maxRowsPerPage to use as page size for subsequent queries
+      if (pageSize === undefined && responseBody?.maxRowsPerPage) {
+        pageSize = responseBody.maxRowsPerPage
       }
 
       const queryResults = responseBody?.queryResult?.queryResults
@@ -132,12 +137,18 @@ export async function fetchResourceIds(
         }
       }
 
+      // If a limit was provided and we've collected enough IDs, stop
+      if (limit !== undefined && ids.length >= limit) {
+        ids.length = limit // Truncate to exactly the requested limit
+        hasMore = false
+        continue
+      }
+
       // Move to next page
       offset += rows.length
 
-      // If we got fewer rows than the limit, we've reached the end
-      // If limit is undefined (shouldn't happen), fall back to checking for empty results on next iteration
-      if (limit !== undefined && rows.length < limit) {
+      // If we got fewer rows than the page size, we've reached the end
+      if (pageSize !== undefined && rows.length < pageSize) {
         hasMore = false
       }
     }
