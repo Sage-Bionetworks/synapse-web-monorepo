@@ -14,9 +14,7 @@ import {
   Typography,
 } from '@mui/material'
 import { TotpSecret } from '@sage-bionetworks/synapse-types'
-import * as qrcode from 'qrcode'
-// qrcode is CJS-only; use namespace import for Vite dev mode CJS interop.
-const { toCanvas } = qrcode
+import { toCanvas } from 'qrcode'
 import { useEffect, useRef, useState } from 'react'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import IconSvg from '../IconSvg/IconSvg'

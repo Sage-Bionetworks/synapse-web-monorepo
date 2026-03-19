@@ -11,9 +11,7 @@ import TextField from '../TextField'
 import { CreateTeamRequest, Team } from '@sage-bionetworks/synapse-types'
 import useCreateAndRegisterChallengeTeam from './useCreateAndRegisterChallengeTeam'
 import { isEmpty, noop } from 'lodash-es'
-import papaparseLib from 'papaparse'
-// papaparse is CJS-only; pull named values from the default export.
-const { parse } = papaparseLib
+import { parse } from 'papaparse'
 
 export type CreateChallengeTeamProps = {
   challengeId: string

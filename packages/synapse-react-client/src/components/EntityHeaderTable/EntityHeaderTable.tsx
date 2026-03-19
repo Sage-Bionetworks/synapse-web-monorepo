@@ -34,9 +34,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { noop, upperFirst } from 'lodash-es'
-import papaparseLib from 'papaparse'
-// papaparse is CJS-only; pull named values from the default export.
-const { parse } = papaparseLib
+import { parse } from 'papaparse'
 import pluralize from 'pluralize'
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import {

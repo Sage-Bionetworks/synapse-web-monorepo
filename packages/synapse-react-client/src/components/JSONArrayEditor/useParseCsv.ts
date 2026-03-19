@@ -1,8 +1,5 @@
 import { JSONSchema7Definition } from 'json-schema'
-import papaparseLib from 'papaparse'
-import type { ParseError } from 'papaparse'
-// papaparse is CJS-only; pull named values from the default export.
-const { parse: papaparse } = papaparseLib
+import { parse as papaparse, ParseError } from 'papaparse'
 import { useCallback, useMemo } from 'react'
 import { isObject } from 'lodash-es'
 

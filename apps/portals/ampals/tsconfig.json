@@ -1,26 +1,15 @@
 {
   "extends": "../../../shared/tsconfig.base.json",
   "compilerOptions": {
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "noImplicitAny": false,
-    "types": [
-      "vite/client"
-    ],
+    "types": ["vite/client"],
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "src/**/*.tsx",
-    "src/**/*.ts"
-  ],
-  "files": [
-    "src/types.d.ts"
-  ],
+  "include": ["src/**/*.tsx", "src/**/*.ts"],
+  "files": ["src/types.d.ts"],
   "references": [
     {
       "path": "../../synapse-portal-framework"

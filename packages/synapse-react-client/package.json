@@ -14,10 +14,9 @@
       "types": "./dist/*.d.ts",
       "import": "./dist/*.js"
     },
+    "./package.json": "./package.json",
     "./style/*": "./dist/style/*",
     "./template_style/*": "./dist/template_style/*",
-    "./package.json": "./package.json",
-    "./synapse-react-client.css": "./dist/synapse-react-client.css",
     "./ThemeTypes": "./dist/types/ThemeTypes.d.ts"
   },
   "homepage": "https://sage-bionetworks.github.io/synapse-web-monorepo/",

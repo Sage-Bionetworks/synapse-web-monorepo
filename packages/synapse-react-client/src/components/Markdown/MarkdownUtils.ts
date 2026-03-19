@@ -56,7 +56,7 @@ export function decodeXml(xml: string) {
 
 export function addIdsToReferenceWidgets(text: string) {
   const referenceRegex =
-    /<span id="wikiReference\d+"><\/span><span[^>]* data-widgetparams[^>]*>[^<]*<\/span>/g
+    /<span.*?id="wikiReference.*?<span.*? data-widgetparams.*?span>/g
   let referenceCount = 1
 
   return text.replace(referenceRegex, () => {
@@ -70,7 +70,7 @@ export function addIdsToReferenceWidgets(text: string) {
 export function addIdsToTocWidgets(text: string) {
   const tocId = 'SRC-header-'
   let tocIdCount = 1
-  const TOC_HEADER_REGEX = /<h([1-6]) toc="true">.*?<\/h\1>/gm
+  const TOC_HEADER_REGEX = /<h[1-6] toc="true">.*<\/h[1-6]>/gm
 
   return text.replace(TOC_HEADER_REGEX, (match: string) => {
     // replace with id of the form id="toc" so we can read them with onclick events

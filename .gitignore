@@ -51,7 +51,7 @@ debug-storybook.log
 .nx/workspace-data
 
 # React Router Framework Mode generated types
-apps/portals/nf/.react-router/
+.react-router/
 
 apps/portals/*/public/build-date.txt
 apps/portals/*/public/deploy-date.txt

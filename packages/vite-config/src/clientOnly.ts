@@ -14,19 +14,27 @@ import type { Plugin } from 'vite'
  *
  * @example
  * ```ts
- * import { clientOnly, nodePolyfillsPlugin } from 'vite-config'
+ * import { pluginThatShouldRunOnlyInClient } from 'some-vite-plugin'
+ * import { clientOnly } from 'vite-config'
  *
  * export default defineConfig({
  *   plugins: [
- *     clientOnly(nodePolyfillsPlugin() as Plugin),
+ *     clientOnly(pluginThatShouldRunOnlyInClient() as Plugin),
  *   ],
  * })
  * ```
  */
 export function clientOnly(plugin: Plugin): Plugin {
+  /*
+   * Uses the environments API added in Vite 6 to conditionally run plugin hooks only in the client environment.
+   * In the long term, plugins should be updated to use this API directly instead of needing to be wrapped with clientOnly().
+   * At the time this was written, this API has not yet been widely adopted by plugin authors, so we use this wrapper.
+   * https://vite.dev/guide/api-environment
+   */
+
   return {
     ...plugin,
-    // Don't run config hook — it would add browser aliases to resolve.alias for all envs
+    // Don't run config hook — nodePolyfillsPlugin would add browser aliases to resolve.alias for all envs
     config: undefined,
     configResolved: undefined,
     resolveId: plugin.resolveId
