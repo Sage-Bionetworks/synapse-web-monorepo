@@ -1,11 +1,11 @@
+import MarkdownSynapse from '@/components/Markdown/MarkdownSynapse'
+import { hashCode } from '@/utils/functions/StringUtils'
+import { useImageUrl } from '@/utils/hooks/useImageUrlUtils'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import { Box, Button, Chip, Stack, Typography } from '@mui/material'
 import React from 'react'
 import BasePortalCard from '../BasePortalCard'
-import { Chip, Box, Button, Stack, Typography } from '@mui/material'
 import styles from './ColorfulPortalCardWithChips.module.scss'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import { useImageUrl } from '@/utils/hooks/useImageUrlUtils'
-import { hashCode } from '@/utils/functions/StringUtils'
-import MarkdownSynapse from '@/components/Markdown/MarkdownSynapse'
 
 type ColorfulPortalCardWithChipsProps = {
   title?: string
@@ -73,7 +73,7 @@ const ColorfulPortalCardWithChips = ({
       cardSize={cardSize}
       borderRadiusPx={borderRadiusPx}
       backgroundImage={backgroundImageValue}
-      backgroundColor={backgroundColor ?? ''}
+      backgroundColor={backgroundColor || colors[0]}
       contentBelowCard={chips && chips.length > 0 && <Chips values={chips} />}
     >
       <Stack className={styles.ColorfulPortalCardWithChips__sectionContainer}>
