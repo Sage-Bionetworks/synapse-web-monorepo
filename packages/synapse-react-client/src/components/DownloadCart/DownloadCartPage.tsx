@@ -287,33 +287,34 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                       </a>
                     </Typography>
                   </div>
-                  <div className={styles.subSection}>
-                    <div className={styles.subSectionHeader}>
-                      <div className={styles.headline}>
-                        <Typography variant={'headline3'}>
-                          <IconSvg icon="multifile" /> Multi-file Download
-                        </Typography>
-                      </div>
-                      <div className={styles.subSectionActions}>
-                        {isDownloadAllEnabled &&
-                          data.numberOfFilesAvailableForDownloadAndEligibleForPackaging <
-                            data.numberOfFilesAvailableForDownload && (
+                  {isDownloadAllEnabled &&
+                    data.numberOfFilesAvailableForDownloadAndEligibleForPackaging <
+                      data.numberOfFilesAvailableForDownload && (
+                      <div className={styles.subSection}>
+                        <div className={styles.subSectionHeader}>
+                          <div className={styles.headline}>
+                            <Typography variant={'headline3'}>
+                              <IconSvg icon="multifile" /> Multi-file Download
+                            </Typography>
+                          </div>
+                          <div className={styles.subSectionActions}>
                             <div className={styles.ineligibleDownloadContainer}>
                               <DownloadIneligibleForPackagingFilesFromListButton />
                             </div>
-                          )}
+                          </div>
+                        </div>
+                        <Typography
+                          className={styles.subSectionText}
+                          variant={'body1'}
+                          component={'div'}
+                          sx={{ display: { xs: 'none', md: 'block' } }}
+                        >
+                          Files which <strong>aren't</strong> included in a ZIP
+                          package may be downloaded as a multi-file
+                          download.&nbsp;
+                        </Typography>
                       </div>
-                    </div>
-                    <Typography
-                      className={styles.subSectionText}
-                      variant={'body1'}
-                      component={'div'}
-                      sx={{ display: { xs: 'none', md: 'block' } }}
-                    >
-                      Files which <strong>aren't</strong> included in a ZIP
-                      package may be downloaded as a multi-file download.&nbsp;
-                    </Typography>
-                  </div>
+                    )}
                 </div>
               </div>
 
