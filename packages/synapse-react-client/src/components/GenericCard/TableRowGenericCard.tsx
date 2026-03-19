@@ -13,15 +13,16 @@ import {
 } from '@/components/GenericCard/PortalDOI/PortalDOIUtils'
 import { mapRowToRecord } from '@/components/SynapseTable/SynapseTableUtils'
 import { useGetEntity } from '@/synapse-queries'
-import * as SynapseConstants from '@/utils/SynapseConstants'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import {
   isDatasetCollection,
   isTableEntity,
 } from '@/utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { getColumnIndex } from '@/utils/functions/SqlFunctions'
 import { parseSynId } from '@/utils/functions/RegularExpressions'
+import { getColumnIndex } from '@/utils/functions/SqlFunctions'
+import { TargetEnum } from '@/utils/html/TargetEnum'
+import * as SynapseConstants from '@/utils/SynapseConstants'
 import { GetAppTwoTone } from '@mui/icons-material'
 import { Box, Collapse, Link, Stack, Typography } from '@mui/material'
 import {
@@ -33,21 +34,20 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import React, { useCallback, useMemo, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { TargetEnum } from '@/utils/html/TargetEnum'
 import CitationPopover from '../CitationPopover'
 import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import { HeaderCardVariant } from '../HeaderCard'
 import IconList from '../IconList'
 import { useQueryContext } from '../QueryContext/QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import GenericCard from './GenericCard'
-import GenericCardActionButton from './GenericCardActionButton'
-import { SynapseCardLabel } from './SynapseCardLabel'
-import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
-import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
 import ShareThisPage, {
   ShareThisPageProps,
 } from '../ShareThisPage/ShareThisPage'
+import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
+import GenericCard from './GenericCard'
+import GenericCardActionButton from './GenericCardActionButton'
+import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
+import { SynapseCardLabel } from './SynapseCardLabel'
 import { useResolvedSynapseEntity } from './useResolvedSynapseEntity'
 
 type RowSynapseEntityConfig = {
@@ -293,22 +293,47 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     if (!titleAreaDetails || titleAreaDetails.length === 0) return undefined
     const rows = titleAreaDetails
       .map(columnName => {
-        const value = getColumnValue(columnName)
-        if (!value) return null
-        return { name: getColumnDisplayName(columnName), value }
+        const rawValue: string | undefined = data[schema[columnName]]
+        if (!rawValue) return null
+        return { name: getColumnDisplayName(columnName), rawValue, columnName }
       })
-      .filter(Boolean) as { name: string; value: string }[]
+      .filter(Boolean) as {
+      name: string
+      rawValue: string
+      columnName: string
+    }[]
     if (rows.length === 0) return undefined
     return (
       <Stack direction="column" gap="4px">
-        {rows.map(({ name, value }) => (
-          <Typography key={name} variant="body1">
-            {name}: {value}
-          </Typography>
+        {rows.map(({ name, rawValue, columnName }) => (
+          <Stack key={columnName} direction="row" gap="4px" alignItems="center">
+            <Typography component="span" variant="body1">
+              {name}:
+            </Typography>
+            <SynapseCardLabel
+              value={rawValue}
+              columnName={columnName}
+              labelLink={undefined}
+              isHeader={isHeader}
+              selectColumns={selectColumns}
+              columnModels={columnModels}
+              rowData={data}
+              columnIconOptions={columnIconOptions}
+            />
+          </Stack>
         ))}
       </Stack>
     )
-  }, [genericCardSchema, getColumnValue, getColumnDisplayName])
+  }, [
+    genericCardSchema,
+    data,
+    schema,
+    getColumnDisplayName,
+    isHeader,
+    selectColumns,
+    columnModels,
+    columnIconOptions,
+  ])
 
   const {
     entityId: resolvedSynapseEntityId,
