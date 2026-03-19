@@ -199,7 +199,9 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
               queryVisualizationContext.showFacetFilter
                 ? QUERY_FILTERS_EXPANDED_CSS
                 : QUERY_FILTERS_COLLAPSED_CSS
-            } ${isRowSelectionVisible ? HAS_SELECTED_ROWS_CSS : ''}`}
+            } ${isRowSelectionVisible ? HAS_SELECTED_ROWS_CSS : ''} ${
+              hideTopLevelControls ? 'isHidingTopLevelControls' : ''
+            }`}
             sx={{
               '*': {
                 cursor: isLoadingQueryMetadata ? 'wait' : undefined,

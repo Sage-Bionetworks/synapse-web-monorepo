@@ -93,6 +93,15 @@
     grid-row: 10 / span 1;
   }
 
+  &.isHidingTopLevelControls {
+    .FacetFilterControls {
+      padding: 0;
+    }
+    .FacetFilterHeader {
+      margin-top: 0;
+    }
+  }
+
   &.isHidingFacetFilters {
     .FacetFilterControls {
       grid-column: 1 / span 1;
