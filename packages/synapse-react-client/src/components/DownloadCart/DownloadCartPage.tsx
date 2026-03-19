@@ -9,7 +9,7 @@ import {
   AvailableFilter,
   FeatureFlagEnum,
 } from '@sage-bionetworks/synapse-types'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ErrorBanner } from '../error/ErrorBanner'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import IconSvg from '../IconSvg/IconSvg'
@@ -54,6 +54,16 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
   }
   const [isShowingCreatePackageUI, setIsShowingCreatePackageUI] =
     useState<boolean>(false)
+  const createPackageRef = useRef<HTMLDivElement>(null)
+  // scroll to the CreatePackageV2 component when it is shown so that the user is aware of the next steps after clicking the button to create a package
+  useEffect(() => {
+    if (isShowingCreatePackageUI) {
+      createPackageRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+    }
+  }, [isShowingCreatePackageUI])
   const [isShowingModal, setIsShowingModal] = useState<boolean>(false)
   const [isShowingDownloadSuccessAlert, setIsShowingDownloadSuccessAlert] =
     useState(false)
@@ -320,13 +330,15 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
 
               <div className="container">
                 {isShowingCreatePackageUI && (
-                  <CreatePackageV2
-                    onPackageCreation={() => {
-                      setIsShowingDownloadSuccessAlert(true)
-                      // we refetch the data because the backend will instantly remove the downloadable files from the download list after a package has been created
-                      refetch()
-                    }}
-                  />
+                  <div ref={createPackageRef}>
+                    <CreatePackageV2
+                      onPackageCreation={() => {
+                        setIsShowingDownloadSuccessAlert(true)
+                        // we refetch the data because the backend will instantly remove the downloadable files from the download list after a package has been created
+                        refetch()
+                      }}
+                    />
+                  </div>
                 )}
                 <h3 className={`${styles.sectionTitle} pageHeaderTitle`}>
                   Download Individual Files

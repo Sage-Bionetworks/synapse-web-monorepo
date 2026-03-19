@@ -5,7 +5,7 @@ import {
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { Box, Button, Tooltip } from '@mui/material'
+import { Box, Button, Tooltip, Typography } from '@mui/material'
 import {
   AvailableFilter,
   DownloadListItem,
@@ -403,6 +403,11 @@ export default function DownloadListTable({
             </Box>
           )}
         </div>
+      )}
+      {allRows.length === 0 && !isLoading && (
+        <Typography variant="body1Italic">
+          You have no matching files in your download list.
+        </Typography>
       )}
       {isLoading && <SkeletonTable numCols={5} numRows={3} />}
     </div>

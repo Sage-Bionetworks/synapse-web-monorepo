@@ -5,6 +5,7 @@ import {
 } from '@/synapse-client/SynapseClient'
 import React from 'react'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { useQueryClient } from '@tanstack/react-query'
 import { Box, Button, InputAdornment, TextField } from '@mui/material'
 import { DownloadListPackageResponse } from '@sage-bionetworks/synapse-types'
 import { ChangeEvent, SyntheticEvent, useState } from 'react'
@@ -27,7 +28,8 @@ export const TEMPLATE_ERROR_FILE_NAME =
 export const CreatePackageV2 = (
   props: CreatePackageV2Props,
 ): React.ReactNode => {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
   const [isLoading, setIsLoading] = useState(false)
   const [fileName, setZipFileName] = useState('')
   const [alert, setAlert] = useState<AlertConfig>()
@@ -63,6 +65,9 @@ export const CreatePackageV2 = (
         )
         setZipFileName('')
         setBulkFileDownloadResponse(undefined)
+        await queryClient.invalidateQueries({
+          queryKey: keyFactory.getDownloadListBaseQueryKey(),
+        })
         onPackageCreation()
       } catch (err) {
         console.error('Err on getFileHandleByIdURL = ', err)
