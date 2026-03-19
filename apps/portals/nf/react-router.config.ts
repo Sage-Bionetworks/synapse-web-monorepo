@@ -113,6 +113,6 @@ export default {
   ssr: false,
   prerender: {
     paths,
-    unstable_concurrency: 4,
+    // unstable_concurrency: 4,
   },
 } satisfies Config
