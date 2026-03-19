@@ -19,10 +19,7 @@ const allChallengesSchema: TableToGenericCardMapping = {
     'submissionType',
     'inputDataType',
   ],
-  titleAreaDetails: [
-    { name: 'Start Date', columnName: 'startDate' },
-    { name: 'Status', columnName: 'registrationStatus' },
-  ],
+  titleAreaDetails: ['startDate', 'status'],
 }
 const allChallengesTitleLinkConfig: CardLink = {
   isMarkdown: false,

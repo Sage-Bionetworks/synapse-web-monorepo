@@ -129,10 +129,11 @@ export type TableToGenericCardMapping = {
   /** Column name of the STRING_LIST column that includes icon names that represent icons that should be displayed on the card */
   dataTypeIconNames?: string
   /**
-   * Ordered list of name/column pairs to display to the right of the title area.
-   * Each renders as "Name: Value" on its own line. Rows with empty values are skipped.
+   * Ordered list of column names to display to the right of the title area.
+   * Each renders as "Display Name: Value" on its own line. Rows with empty values are skipped.
+   * The display name is derived from getColumnDisplayName (respects column aliases and unCamelCase).
    */
-  titleAreaDetails?: Array<{ name: string; columnName: string }>
+  titleAreaDetails?: string[]
   /** Configuration for resolving the Synapse entity ID/version represented by each card row.
    *  The ID and version sources must both reference either row-based values or column-based values.
    */
@@ -291,10 +292,10 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     const { titleAreaDetails } = genericCardSchema
     if (!titleAreaDetails || titleAreaDetails.length === 0) return undefined
     const rows = titleAreaDetails
-      .map(({ name, columnName }) => {
+      .map(columnName => {
         const value = getColumnValue(columnName)
         if (!value) return null
-        return { name, value }
+        return { name: getColumnDisplayName(columnName), value }
       })
       .filter(Boolean) as { name: string; value: string }[]
     if (rows.length === 0) return undefined
@@ -307,7 +308,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         ))}
       </Stack>
     )
-  }, [genericCardSchema, getColumnValue])
+  }, [genericCardSchema, getColumnValue, getColumnDisplayName])
 
   const {
     entityId: resolvedSynapseEntityId,
