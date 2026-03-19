@@ -1,4 +1,3 @@
-import filterRowsByLandingPageSection from '@/utils/filterRowsByLandingPageSection'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { Box, Button, Stack, Typography } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
@@ -37,12 +36,6 @@ const AllChallengesSection = ({
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
-  const filteredDataRows = filterRowsByLandingPageSection(
-    'all',
-    dataRows,
-    queryResultBundle!,
-  )
-
   return (
     <Stack className={styles.AllChallengesSection__root}>
       <Box className={styles.AllChallengesSection__header}>
@@ -54,7 +47,7 @@ const AllChallengesSection = ({
         </Typography>
       </Box>
       <Box className={styles.AllChallengesSection__container}>
-        {filteredDataRows.map(row => {
+        {dataRows.map(row => {
           const chipsArray = getChallengeKeywordsFromRow(row, queryResultBundle)
 
           return (

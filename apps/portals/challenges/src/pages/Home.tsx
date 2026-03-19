@@ -1,7 +1,10 @@
 import {
   featuredTeamSql,
   getInvolvedSql,
-  homeChallengesSql,
+  homeAllChallengesSql,
+  homeNewChallengesSql,
+  homeOpenChallengesSql,
+  homePopularChallengesSql,
   metricsSql,
   newsSql,
   partnersSql,
@@ -30,15 +33,15 @@ function Home() {
         titleText="Our Challenge Partners"
       />
       <NewChallengesSection
-        sql={homeChallengesSql}
+        sql={homeNewChallengesSql}
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
       />
       <PopularChallengesSection
-        sql={homeChallengesSql}
+        sql={homePopularChallengesSql}
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
       />
       <OpenChallengesSection
-        sql={homeChallengesSql}
+        sql={homeOpenChallengesSql}
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
       />
       <ChallengeFeaturedTeam sql={featuredTeamSql} />
@@ -53,7 +56,7 @@ function Home() {
         cardSize="large"
       />
       <AllChallengesSection
-        sql={homeChallengesSql}
+        sql={homeAllChallengesSql}
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
       />
     </>

@@ -1,4 +1,3 @@
-import filterRowsByLandingPageSection from '@/utils/filterRowsByLandingPageSection'
 import { Box, Typography } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import React from 'react'
@@ -35,11 +34,6 @@ const PopularChallengesSection = ({
     useGetFullTableQueryResults(queryBundleRequest)
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
-  const filteredDataRows = filterRowsByLandingPageSection(
-    'popular',
-    dataRows,
-    queryResultBundle!,
-  )
 
   return (
     <Box className={styles.PopularChallengesSection__root}>
@@ -55,7 +49,7 @@ const PopularChallengesSection = ({
         </Typography>
       </Box>
       <Box className={styles.PopularChallengesSection__container}>
-        {filteredDataRows.map(row => {
+        {dataRows.map(row => {
           const chipsArray = getChallengeKeywordsFromRow(row, queryResultBundle)
 
           return (

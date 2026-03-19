@@ -1,4 +1,3 @@
-import filterRowsByLandingPageSection from '@/utils/filterRowsByLandingPageSection'
 import { Box, Typography } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import React from 'react'
@@ -36,12 +35,6 @@ const OpenChallengesSection = ({
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
-  const filteredDataRows = filterRowsByLandingPageSection(
-    'external',
-    dataRows,
-    queryResultBundle!,
-  )
-
   return (
     <Box className={styles.OpenChallengesSection__root}>
       <Box className={styles.OpenChallengesSection__headerSection}>
@@ -64,7 +57,7 @@ const OpenChallengesSection = ({
         </Typography>
       </Box>
       <Box className={styles.OpenChallengesSection__container}>
-        {filteredDataRows.map(row => {
+        {dataRows.map(row => {
           const chipsArray = getChallengeKeywordsFromRow(row, queryResultBundle)
 
           return (

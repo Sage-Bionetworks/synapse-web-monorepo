@@ -6,7 +6,6 @@ import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-querie
 import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions/index'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import filterRowsByLandingPageSection from '../../../utils/filterRowsByLandingPageSection'
 import getChallengeKeywordsFromRow from '../../../utils/getChallengeKeywordsFromRow'
 import { ReactComponent as Vectors } from '../assets/newChallengesVectors.svg'
 import styles from './NewChallengesSection.module.scss'
@@ -36,12 +35,6 @@ const NewChallengesSection = ({
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
-  const filteredDataRows = filterRowsByLandingPageSection(
-    'new',
-    dataRows,
-    queryResultBundle!,
-  )
-
   return (
     <Box className={styles.NewChallengesSection__root}>
       <Box className={styles.NewChallengesSection__headerSection}>
@@ -54,7 +47,7 @@ const NewChallengesSection = ({
         </Typography>
       </Box>
       <Box className={styles.NewChallengesSection__container}>
-        {filteredDataRows.map(row => {
+        {dataRows.map(row => {
           const chipsArray = getChallengeKeywordsFromRow(row, queryResultBundle)
 
           return (
