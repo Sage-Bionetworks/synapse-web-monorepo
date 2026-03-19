@@ -5,7 +5,10 @@ import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureF
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { DeleteTwoTone } from '@mui/icons-material'
 import { Button, Tooltip, Typography } from '@mui/material'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import {
+  AvailableFilter,
+  FeatureFlagEnum,
+} from '@sage-bionetworks/synapse-types'
 import { useEffect, useState } from 'react'
 import { ErrorBanner } from '../error/ErrorBanner'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
@@ -31,6 +34,14 @@ const cliDownloadCode = `synapse get-download-list`
 export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
   const { accessToken } = useSynapseContext()
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
+  const [selectedFilterTabIndex, setSelectedFilterTabIndex] =
+    useState<number>(0)
+  const filterTabs: { label: string; filter: AvailableFilter }[] = [
+    { label: 'All Files', filter: undefined },
+    { label: 'Files included in ZIP', filter: 'eligibleForPackaging' },
+    { label: 'Files not included in ZIP', filter: 'ineligibleForPackaging' },
+  ]
+  const selectedFilter = filterTabs[selectedFilterTabIndex].filter
   const [isShowingCreatePackageUI, setIsShowingCreatePackageUI] =
     useState<boolean>(false)
   const [isShowingModal, setIsShowingModal] = useState<boolean>(false)
@@ -306,7 +317,33 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                     }}
                   />
                 )}
-                <AvailableForDownloadTable />
+                <h3 className={`${styles.sectionTitle} pageHeaderTitle`}>
+                  Download Individual Files
+                </h3>
+                <div className={styles.tabsContainer}>
+                  <ul className={styles.navTabs}>
+                    <li className={styles.navLabel}>View:</li>
+                    {filterTabs.map((tab, index) => (
+                      <li
+                        key={tab.label}
+                        className={`${styles.navItem}${
+                          selectedFilterTabIndex === index
+                            ? ` ${styles.active}`
+                            : ''
+                        }`}
+                        aria-selected={selectedFilterTabIndex === index}
+                      >
+                        <button
+                          onClick={() => setSelectedFilterTabIndex(index)}
+                        >
+                          {tab.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <AvailableForDownloadTable filter={selectedFilter} />
               </div>
             </div>
           )}

@@ -5,7 +5,7 @@ import {
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { Box, Button, Select, Tooltip } from '@mui/material'
+import { Box, Button, Tooltip } from '@mui/material'
 import {
   AvailableFilter,
   DownloadListItem,
@@ -264,7 +264,11 @@ function getSortApiRequestFromTableSortState(
   }
 }
 
-export default function DownloadListTable() {
+export default function DownloadListTable({
+  filter,
+}: {
+  filter?: AvailableFilter
+}) {
   const handleError = useErrorHandler()
 
   const [copyingAllSynapseIDs, setCopyingAllSynapseIDs] =
@@ -276,7 +280,6 @@ export default function DownloadListTable() {
     },
   ])
 
-  const [filter, setFilter] = useState<AvailableFilter | undefined>(undefined)
   const {
     data,
     status,
@@ -388,21 +391,6 @@ export default function DownloadListTable() {
     allRows,
   ])
 
-  const getFilterDisplayText = (f: AvailableFilter) => {
-    if (!f) {
-      return 'All'
-    } else if (f == 'eligibleForPackaging') {
-      return 'Only Eligible'
-    } else {
-      return 'Only Ineligible'
-    }
-  }
-
-  const availableFiltersArray: AvailableFilter[] = [
-    undefined,
-    'eligibleForPackaging',
-    'ineligibleForPackaging',
-  ]
   return (
     <div>
       <BlockingLoader show={copyingAllSynapseIDs} />
@@ -420,43 +408,6 @@ export default function DownloadListTable() {
         }}
       >
         <DownloadListStats />
-        <Box
-          sx={{
-            display: 'flex',
-            gap: '10px',
-            alignItems: 'inherit',
-            justifyContent: 'end',
-          }}
-        >
-          <Box
-            sx={{
-              fontWeight: '700',
-              fontSize: '14px',
-            }}
-          >
-            Filter Files By
-          </Box>
-          <Box
-            sx={{
-              button: {
-                width: '144px',
-              },
-            }}
-          >
-            <Select native fullWidth value={getFilterDisplayText(filter)}>
-              {availableFiltersArray.map(availableFilter => (
-                <option
-                  key={`${getFilterDisplayText(availableFilter)}-filter-option`}
-                  onClick={() => {
-                    setFilter(availableFilter)
-                  }}
-                >
-                  {getFilterDisplayText(availableFilter)}
-                </option>
-              ))}
-            </Select>
-          </Box>
-        </Box>
       </Box>
       {allRows.length > 0 && (
         <div className="DownloadListTableV2">

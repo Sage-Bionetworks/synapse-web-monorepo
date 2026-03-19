@@ -49,6 +49,18 @@
       }
     }
 
+    .navLabel {
+      display: flex;
+      align-items: center;
+      padding-right: 16px;
+      font-size: 18px;
+      font-weight: 700;
+      white-space: nowrap;
+      height: 50px;
+      padding-bottom: 26px;
+      padding-right: 60px;
+    }
+
     .navItem {
       font-weight: bold;
       height: 50px;
@@ -83,6 +95,7 @@
   }
 
   .sectionTitle {
+    padding-top: 30px;
     padding-bottom: 20px;
   }
   .subSectionContainer {
@@ -94,7 +107,6 @@
   }
 
   .DownloadListTabContent {
-    padding-top: 40px;
     .subSectionOverview {
       display: grid;
       grid-template-columns: 1fr 1fr;
