@@ -89,6 +89,13 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
     if (data && data.numberOfFilesRequiringAction == 0) {
       setSelectedTabIndex(1)
     }
+    // also hide the Create Package UI if there are no files available for download
+    if (
+      data &&
+      data.numberOfFilesAvailableForDownloadAndEligibleForPackaging === 0
+    ) {
+      setIsShowingCreatePackageUI(false)
+    }
   }, [data])
 
   if (error) {
@@ -379,7 +386,9 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
           )}
           {data.numberOfFilesAvailableForDownload === 0 && (
             <div className={styles.placeholder}>
-              <div>Your Download List is currently empty.</div>
+              <Typography variant="body1Italic">
+                Your Download List is currently empty.
+              </Typography>
             </div>
           )}
         </div>

@@ -151,6 +151,7 @@
 
   .placeholder {
     @include SrcMixins.placeholder;
+    margin-top: 30px;
   }
 
   .subSection {
