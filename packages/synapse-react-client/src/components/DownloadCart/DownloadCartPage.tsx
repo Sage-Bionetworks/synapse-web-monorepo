@@ -30,6 +30,12 @@ dl_list_file_entities = syn.get_download_list()`
 
 const cliDownloadCode = `synapse get-download-list`
 
+const filterTabs: { label: string; filter: AvailableFilter }[] = [
+  { label: 'All Files', filter: undefined },
+  { label: 'Files included in ZIP', filter: 'eligibleForPackaging' },
+  { label: 'Files not included in ZIP', filter: 'ineligibleForPackaging' },
+]
+
 /**
  * Show the Download Cart page.
  */
@@ -38,22 +44,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
   const [selectedFilterTabIndex, setSelectedFilterTabIndex] =
     useState<number>(0)
-  const filterTabs: { label: string; filter: AvailableFilter }[] = [
-    { label: 'All Files', filter: undefined },
-    { label: 'Files included in ZIP', filter: 'eligibleForPackaging' },
-    { label: 'Files not included in ZIP', filter: 'ineligibleForPackaging' },
-  ]
   const selectedFilter = filterTabs[selectedFilterTabIndex].filter
-  const getFilterCount = (filter: AvailableFilter) => {
-    if (!data) return undefined
-    if (filter === undefined) return data.numberOfFilesAvailableForDownload
-    if (filter === 'eligibleForPackaging')
-      return data.numberOfFilesAvailableForDownloadAndEligibleForPackaging
-    return (
-      data.numberOfFilesAvailableForDownload -
-      data.numberOfFilesAvailableForDownloadAndEligibleForPackaging
-    )
-  }
   const [isShowingCreatePackageUI, setIsShowingCreatePackageUI] =
     useState<boolean>(false)
   const createPackageRef = useRef<HTMLDivElement>(null)
@@ -86,6 +77,16 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
     }
   }, [isError, newError])
 
+  const getFilterCount = (filter: AvailableFilter) => {
+    if (!data) return undefined
+    if (filter === undefined) return data.numberOfFilesAvailableForDownload
+    if (filter === 'eligibleForPackaging')
+      return data.numberOfFilesAvailableForDownloadAndEligibleForPackaging
+    return (
+      data.numberOfFilesAvailableForDownload -
+      data.numberOfFilesAvailableForDownloadAndEligibleForPackaging
+    )
+  }
   // SWC-5874: When arriving at the download cart when there are no ARs, the user should start in the Download list
   useEffect(() => {
     if (data && data.numberOfFilesRequiringAction == 0) {
@@ -275,7 +276,6 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                     <ComponentToComponentCollapse
                       component={
                         <Typography
-                          className={styles.subSectionText}
                           variant={'body1'}
                           component={'div'}
                           sx={{ display: { xs: 'none', md: 'block' } }}
@@ -286,7 +286,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                           <a
                             href="https://help.synapse.org/docs/Downloading-Data-From-the-Synapse-UI.2004254837.html"
                             target="_blank"
-                            rel="noopener"
+                            rel="noopener noreferrer"
                           >
                             More Information.
                           </a>
@@ -347,7 +347,6 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                     <ComponentToComponentCollapse
                       component={
                         <Typography
-                          className={styles.subSectionText}
                           variant={'body1'}
                           component={'div'}
                           sx={{ display: { xs: 'none', md: 'block' } }}
@@ -357,7 +356,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                           <a
                             href="https://help.synapse.org/docs/Downloading-Data-Programmatically.2003796248.html"
                             target="_blank"
-                            rel="noopener"
+                            rel="noopener noreferrer"
                           >
                             More Information.
                           </a>
@@ -404,7 +403,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                         <div className={styles.subSectionHeader}>
                           <div className={styles.headline}>
                             <Typography variant={'headline3'}>
-                              <IconSvg icon="multifile" /> Multi-file Download
+                              <IconSvg icon="multiFile" /> Multi-file Download
                             </Typography>
                           </div>
                           <div className={styles.subSectionActions}>
@@ -416,7 +415,6 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                         <ComponentToComponentCollapse
                           component={
                             <Typography
-                              className={styles.subSectionText}
                               variant={'body1'}
                               component={'div'}
                               sx={{ display: { xs: 'none', md: 'block' } }}
@@ -467,8 +465,6 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                     <CreatePackageV2
                       onPackageCreation={() => {
                         setIsShowingDownloadSuccessAlert(true)
-                        // we refetch the data because the backend will instantly remove the downloadable files from the download list after a package has been created
-                        refetch()
                       }}
                     />
                   </div>
@@ -505,7 +501,10 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                 </div>
 
                 <div className={styles.availableForDownloadTableContainer}>
-                  <AvailableForDownloadTable filter={selectedFilter} />
+                  <AvailableForDownloadTable
+                    key={selectedFilter ?? 'all'}
+                    filter={selectedFilter}
+                  />
                 </div>
               </div>
             </div>

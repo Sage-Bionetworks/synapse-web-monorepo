@@ -61,7 +61,7 @@ const DirectDownloadIcon = forwardRef<
       >
         <a
           className="ignoreLink"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           href={externalURL}
           target="_blank"
         >

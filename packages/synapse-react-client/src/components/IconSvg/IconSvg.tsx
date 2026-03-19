@@ -283,7 +283,7 @@ export const IconStrings = [
   'openInFull',
   'tableview',
   'fileWithShield',
-  'multifile',
+  'multiFile',
 ] as const
 
 export type IconName = (typeof IconStrings)[number]
@@ -595,7 +595,7 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <OpenInFull {...otherProps} />
     case 'fileWithShield':
       return <FileWithShield {...otherProps} />
-    case 'multifile':
+    case 'multiFile':
       return <MultiFile {...otherProps} />
 
     default:

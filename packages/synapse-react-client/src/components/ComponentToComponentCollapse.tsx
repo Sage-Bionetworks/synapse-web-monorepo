@@ -4,7 +4,13 @@ import {
   KeyboardArrowUpTwoTone,
 } from '@mui/icons-material'
 import { Box, Collapse, SxProps } from '@mui/material'
-import { PropsWithChildren, ReactNode, useState } from 'react'
+import {
+  KeyboardEvent,
+  PropsWithChildren,
+  ReactNode,
+  useId,
+  useState,
+} from 'react'
 
 export type ComponentToComponentCollapseProps = PropsWithChildren<{
   component: ReactNode
@@ -26,6 +32,7 @@ export default function ComponentToComponentCollapse({
   children,
 }: ComponentToComponentCollapseProps) {
   const [show, setShow] = useState(defaultVisible)
+  const collapseId = useId()
   const allIconSx: SxProps = {
     color: 'grey.700',
     marginBottom: '-5px !important',
@@ -35,6 +42,7 @@ export default function ComponentToComponentCollapse({
 
   const componentContainerDefaultSx: SxProps = {
     display: 'flex',
+    textAlign: 'left',
     justifyContent: 'space-between',
     backgroundColor: 'grey.200',
     padding: '15px',
@@ -50,9 +58,16 @@ export default function ComponentToComponentCollapse({
   return (
     <div className="MarkdownCollapse">
       <Box
+        component="button"
         sx={spreadSx(componentContainerDefaultSx, componentContainerSx)}
         onClick={() => setShow(!show)}
-        aria-controls="collapse-text"
+        onKeyDown={(e: KeyboardEvent) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            setShow(!show)
+          }
+        }}
+        aria-controls={collapseId}
         aria-expanded={show}
       >
         {component}
@@ -64,7 +79,7 @@ export default function ComponentToComponentCollapse({
       </Box>
       <Collapse in={show}>
         <Box sx={spreadSx(collapseBoxDefaultSx, collapseBoxSx)}>
-          <div id="collapse-text">{children}</div>
+          <div id={collapseId}>{children}</div>
         </Box>
       </Collapse>
     </div>
