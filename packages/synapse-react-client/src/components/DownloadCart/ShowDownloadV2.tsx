@@ -52,7 +52,7 @@ function ShowDownloadV2Internal({ to, className = '' }: ShowDownloadV2Props) {
     >
       <span>
         <span className="SRC-primary-text-color">
-          <IconSvg icon="cart" />
+          <IconSvg icon="download" />
         </span>
         <span className={`download-cart-size`}>{size}</span>
       </span>

@@ -111,25 +111,27 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
   return (
     <div className={styles.DownloadCartPage}>
       <div>
-        <div className={`container ${styles.pageHeader}`}>
-          <div className={styles.grid}>
-            <h3 className="pageHeaderTitle">Your Download List</h3>
-            <Tooltip
-              title="Immediately removes all items from your download list"
-              enterNextDelay={300}
-              placement="right"
-            >
-              <Button
-                onClick={() => {
-                  clearDownloadList()
-                }}
-                variant="text"
-                color="primary"
-                startIcon={<DeleteTwoTone />}
+        <div className={`${styles.pageHeader}`}>
+          <div className="container">
+            <div className={styles.grid}>
+              <h3 className="pageHeaderTitle">Your Download List</h3>
+              <Tooltip
+                title="Immediately removes all items from your download list"
+                enterNextDelay={300}
+                placement="right"
               >
-                Clear Your Download List
-              </Button>
-            </Tooltip>
+                <Button
+                  onClick={() => {
+                    clearDownloadList()
+                  }}
+                  variant="text"
+                  color="primary"
+                  startIcon={<DeleteTwoTone />}
+                >
+                  Clear Your Download List
+                </Button>
+              </Tooltip>
+            </div>
           </div>
         </div>
       </div>
