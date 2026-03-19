@@ -3,9 +3,9 @@ import AcknowledgementPage from './AcknowledgementsPage'
 import userEvent from '@testing-library/user-event'
 
 // Mock child components
-vi.mock('../ComponentCollapse', () => ({
+vi.mock('../TextToComponentCollapse', () => ({
   default: ({ children }: any) => (
-    <div data-testid="ComponentCollapse">{children}</div>
+    <div data-testid="TextToComponentCollapse">{children}</div>
   ),
 }))
 vi.mock('./AcknowledgementsDialog', () => ({
@@ -78,12 +78,12 @@ describe('AcknowledgementPage', () => {
     )
   })
 
-  it('renders ComponentCollapse with portal and data availability statements', () => {
+  it('renders TextToComponentCollapse with portal and data availability statements', () => {
     render(<AcknowledgementPage {...defaultProps} />)
     expect(
       screen.getAllByTestId('MarkdownCollapse').length,
     ).toBeGreaterThanOrEqual(2)
-    expect(screen.getByTestId('ComponentCollapse')).toBeInTheDocument()
+    expect(screen.getByTestId('TextToComponentCollapse')).toBeInTheDocument()
   })
 
   it('renders the DOI help button', () => {

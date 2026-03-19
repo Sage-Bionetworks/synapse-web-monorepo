@@ -17,11 +17,13 @@ import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/
 import AvailableForDownloadTable from './AvailableForDownloadTable'
 import { CreatePackageV2 } from './CreatePackageV2'
 import { PYTHON_CLIENT_IMPORT_AND_LOGIN } from './DirectProgrammaticDownload'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { DownloadIneligibleForPackagingFilesFromListButton } from './DownloadIneligibleForPackagingFilesFromListButton'
 import {
   DownloadListActionsRequired,
   DownloadListActionsRequiredProps,
 } from './DownloadListActionsRequired'
+import ComponentToComponentCollapse from '../ComponentToComponentCollapse'
 
 const pythonDownloadCode = `${PYTHON_CLIENT_IMPORT_AND_LOGIN}
 dl_list_file_entities = syn.get_download_list()`
@@ -205,6 +207,26 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
             <div className={`container ${styles.DownloadListTabContent}`}>
               <h3 className={`${styles.sectionTitle} pageHeaderTitle`}>
                 Bulk Download Options
+                {data.sumOfFileSizesAvailableForDownload != null && (
+                  <Tooltip
+                    placement="right"
+                    title={
+                      <>
+                        Total file size
+                        <br />
+                        Does not include files hosted outside Synapse
+                      </>
+                    }
+                    slotProps={{ tooltip: { sx: { maxWidth: 400 } } }}
+                  >
+                    <span className={styles.totalFileSize}>
+                      {calculateFriendlyFileSize(
+                        data.sumOfFileSizesAvailableForDownload,
+                      )}{' '}
+                      total*
+                    </span>
+                  </Tooltip>
+                )}
               </h3>
               <div>
                 <div className={styles.subSectionOverview}>
@@ -250,23 +272,58 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                         )}
                       </div>
                     </div>
-                    <Typography
-                      className={styles.subSectionText}
-                      variant={'body1'}
-                      component={'div'}
-                      sx={{ display: { xs: 'none', md: 'block' } }}
+                    <ComponentToComponentCollapse
+                      component={
+                        <Typography
+                          className={styles.subSectionText}
+                          variant={'body1'}
+                          component={'div'}
+                          sx={{ display: { xs: 'none', md: 'block' } }}
+                        >
+                          Only some files may be eligible for packaging as ZIP.
+                          Use the Individual Downloads tab, below, to download
+                          non-packageable files.&nbsp;
+                          <a
+                            href="https://help.synapse.org/docs/Downloading-Data-From-the-Synapse-UI.2004254837.html"
+                            target="_blank"
+                            rel="noopener"
+                          >
+                            More Information.
+                          </a>
+                        </Typography>
+                      }
+                      collapseBoxSx={{
+                        backgroundColor: 'transparent',
+                        p: 0,
+                        mt: '15px',
+                      }}
+                      componentContainerSx={{
+                        backgroundColor: 'transparent',
+                        p: 0,
+                      }}
+                      iconSx={{ width: '25px', height: '25px' }}
                     >
-                      Only some files may be eligible for packaging as ZIP. Use
-                      the Individual Downloads tab, below, to download
-                      non-packageable files.&nbsp;
-                      <a
-                        href="https://help.synapse.org/docs/Downloading-Data-From-the-Synapse-UI.2004254837.html"
-                        target="_blank"
-                        rel="noopener"
+                      <Typography
+                        variant={'body1'}
+                        component={'div'}
+                        sx={{ marginBottom: '15px' }}
                       >
-                        More Information.
-                      </a>
-                    </Typography>
+                        <ul>
+                          <li>Files are bundled into .ZIPs up to 1 GB each.</li>
+                          <li>
+                            Larger selections are split into multiple packages.
+                          </li>
+                          <li>
+                            Includes only files stored in Synapse native
+                            storage.
+                          </li>
+                          <li>
+                            Each package contains a CSV manifest with file
+                            annotations and metadata.
+                          </li>
+                        </ul>
+                      </Typography>
+                    </ComponentToComponentCollapse>
                   </div>
                   <div className={styles.subSection}>
                     <div className={styles.subSectionHeader}>
@@ -287,22 +344,58 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                         </Button>
                       </div>
                     </div>
-                    <Typography
-                      className={styles.subSectionText}
-                      variant={'body1'}
-                      component={'div'}
-                      sx={{ display: { xs: 'none', md: 'block' } }}
+                    <ComponentToComponentCollapse
+                      component={
+                        <Typography
+                          className={styles.subSectionText}
+                          variant={'body1'}
+                          component={'div'}
+                          sx={{ display: { xs: 'none', md: 'block' } }}
+                        >
+                          Use our Python, R, or command line clients to download
+                          files quickly.&nbsp;
+                          <a
+                            href="https://help.synapse.org/docs/Downloading-Data-Programmatically.2003796248.html"
+                            target="_blank"
+                            rel="noopener"
+                          >
+                            More Information.
+                          </a>
+                        </Typography>
+                      }
+                      collapseBoxSx={{
+                        backgroundColor: 'transparent',
+                        p: 0,
+                        mt: '15px',
+                      }}
+                      componentContainerSx={{
+                        backgroundColor: 'transparent',
+                        p: 0,
+                      }}
+                      iconSx={{ width: '25px', height: '25px' }}
                     >
-                      Use our Python, R, or command line clients to download
-                      files quickly.&nbsp;
-                      <a
-                        href="https://help.synapse.org/docs/Downloading-Data-Programmatically.2003796248.html"
-                        target="_blank"
-                        rel="noopener"
+                      <Typography
+                        variant={'body1'}
+                        component={'div'}
+                        sx={{ marginBottom: '15px' }}
                       >
-                        More Information.
-                      </a>
-                    </Typography>
+                        <ul>
+                          <li>Requires a client (R, Python, or CLI).</li>
+                          <li>
+                            No limits on individual file size or total download
+                            size.
+                          </li>
+                          <li>
+                            Includes files stored both on and off Synapse native
+                            storage.
+                          </li>
+                          <li>
+                            Downloads include a CSV manifest with file
+                            annotations and metadata.
+                          </li>
+                        </ul>
+                      </Typography>
+                    </ComponentToComponentCollapse>
                   </div>
                   {isDownloadAllEnabled &&
                     data.numberOfFilesAvailableForDownloadAndEligibleForPackaging <
@@ -320,16 +413,49 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                             </div>
                           </div>
                         </div>
-                        <Typography
-                          className={styles.subSectionText}
-                          variant={'body1'}
-                          component={'div'}
-                          sx={{ display: { xs: 'none', md: 'block' } }}
+                        <ComponentToComponentCollapse
+                          component={
+                            <Typography
+                              className={styles.subSectionText}
+                              variant={'body1'}
+                              component={'div'}
+                              sx={{ display: { xs: 'none', md: 'block' } }}
+                            >
+                              Files which <strong>aren't</strong> included in a
+                              ZIP package may be downloaded as a multi-file
+                              download.&nbsp;
+                            </Typography>
+                          }
+                          collapseBoxSx={{
+                            backgroundColor: 'transparent',
+                            p: 0,
+                            mt: '15px',
+                          }}
+                          componentContainerSx={{
+                            backgroundColor: 'transparent',
+                            p: 0,
+                          }}
+                          iconSx={{ width: '25px', height: '25px' }}
                         >
-                          Files which <strong>aren't</strong> included in a ZIP
-                          package may be downloaded as a multi-file
-                          download.&nbsp;
-                        </Typography>
+                          <Typography
+                            variant={'body1'}
+                            component={'div'}
+                            sx={{ marginBottom: '15px' }}
+                          >
+                            Clicking “Start Multi-file Download” initiates a
+                            download of all files in your Download List that
+                            can’t be bundled into a ZIP—such as large files or
+                            external links—in one step. Files are saved one by
+                            one with clear progress updates, automatic handling
+                            of duplicate names, and retry support if something
+                            fails. You can cancel anytime.
+                            <br />
+                            <br />
+                            Note: in some browsers, files download individually
+                            to your default Downloads folder instead of a
+                            selected location.
+                          </Typography>
+                        </ComponentToComponentCollapse>
                       </div>
                     )}
                 </div>

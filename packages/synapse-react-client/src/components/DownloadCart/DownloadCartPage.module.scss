@@ -102,6 +102,16 @@
   .sectionTitle {
     padding-top: 30px;
     padding-bottom: 20px;
+
+    .totalFileSize {
+      font-size: 18px;
+      font-weight: 400;
+      margin-left: 16px;
+      background-color: var(--synapse-secondary-action-color);
+      border-radius: 6px;
+      padding: 2px 6px;
+      color: white;
+    }
   }
   .subSectionContainer {
     display: flex;
@@ -123,7 +133,7 @@
     }
 
     // make design adjustments for mobile
-    @media (max-width: 768px) {
+    @media (max-width: 1000px) {
       .subSectionOverview {
         grid-template-columns: 1fr;
 

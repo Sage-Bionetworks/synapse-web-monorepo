@@ -3,40 +3,28 @@ import {
   KeyboardArrowDownTwoTone,
   KeyboardArrowUpTwoTone,
 } from '@mui/icons-material'
-import {
-  Box,
-  Collapse,
-  SxProps,
-  Typography,
-  TypographyOwnProps,
-} from '@mui/material'
-import { PropsWithChildren, useState } from 'react'
+import { Box, Collapse, SxProps } from '@mui/material'
+import { PropsWithChildren, ReactNode, useState } from 'react'
 
-export type ComponentCollapseProps = PropsWithChildren<{
-  text: string
+export type ComponentToComponentCollapseProps = PropsWithChildren<{
+  component: ReactNode
   defaultVisible?: boolean // default to false (collapsed)
-  textVariant?: TypographyOwnProps['variant']
-  textSx?: SxProps
-  textContainerSx?: SxProps
+  componentContainerSx?: SxProps
   collapseBoxSx?: SxProps
   iconSx?: SxProps
 }>
 
 /**
- * Wrap any Synapse config object in a collapse
- * @param props
- * @returns
+ * Wrap any child components in a collapse, using a custom component as the trigger
  */
-export default function ComponentCollapse({
-  text,
+export default function ComponentToComponentCollapse({
+  component,
   defaultVisible,
-  textVariant = 'smallLink',
-  textSx,
-  textContainerSx,
+  componentContainerSx,
   collapseBoxSx,
   iconSx,
   children,
-}: ComponentCollapseProps) {
+}: ComponentToComponentCollapseProps) {
   const [show, setShow] = useState(defaultVisible)
   const allIconSx: SxProps = {
     color: 'grey.700',
@@ -45,7 +33,7 @@ export default function ComponentCollapse({
     ...iconSx,
   }
 
-  const textContainerDefaultSx: SxProps = {
+  const componentContainerDefaultSx: SxProps = {
     display: 'flex',
     justifyContent: 'space-between',
     backgroundColor: 'grey.200',
@@ -58,21 +46,16 @@ export default function ComponentCollapse({
     backgroundColor: 'grey.100',
     padding: '25px',
   }
+
   return (
     <div className="MarkdownCollapse">
       <Box
-        sx={spreadSx(textContainerDefaultSx, textContainerSx)}
+        sx={spreadSx(componentContainerDefaultSx, componentContainerSx)}
         onClick={() => setShow(!show)}
+        aria-controls="collapse-text"
+        aria-expanded={show}
       >
-        <Typography
-          variant={textVariant}
-          aria-controls="collapse-text"
-          aria-expanded={show}
-          sx={textSx}
-        >
-          {text}
-        </Typography>
-
+        {component}
         {show ? (
           <KeyboardArrowUpTwoTone sx={allIconSx} />
         ) : (

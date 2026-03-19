@@ -35,7 +35,6 @@ import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import { displayToast } from '../ToastMessage'
 import { UserBadge } from '../UserCard/UserBadge'
 import DirectProgrammaticDownload from './DirectProgrammaticDownload'
-import DownloadListStats from './DownloadListStats'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
@@ -105,7 +104,16 @@ const getColumns = (args: {
         <div>
           {!ctx.getValue() && (
             <Tooltip
-              title="This file is ineligible for Web packaging because it is >100MB, or it is an external link, or it is not stored on Synapse native storage"
+              title={
+                <>
+                  This file is can’t be packaged as a ZIP because it is {'>'}
+                  100MB, or it is an external link, or it is not stored on
+                  Synapse native storage.
+                  <br />
+                  Try clicking the “download” icon at the end of the row, or
+                  download programmatically.
+                </>
+              }
               enterNextDelay={TOOLTIP_DELAY_SHOW}
               placement="right"
             >
@@ -140,7 +148,9 @@ const getColumns = (args: {
         ctx.getValue() != null && ctx.getValue() > 0 ? (
           calculateFriendlyFileSize(ctx.getValue())
         ) : (
-          <></>
+          <Typography variant="smallText1" sx={{ color: 'grey.600' }}>
+            Unknown
+          </Typography>
         ),
       enableColumnFilter: false,
       size: 100,

@@ -65,7 +65,7 @@ const DirectDownloadIcon = forwardRef<
           href={externalURL}
           target="_blank"
         >
-          <IconSvg icon="openInNewWindow" {...iconSvgPropOverrides} />
+          <IconSvg icon="download" {...iconSvgPropOverrides} />
         </a>
       </button>
     )
@@ -140,25 +140,23 @@ function DirectDownload(props: DirectFileDownloadProps) {
 
   return (
     <Tooltip
-      title={
-        isExternalFile
-          ? 'Navigate to external link'
-          : 'Download this file individually'
-      }
+      title="Click to begin download of this file"
       enterNextDelay={TOOLTIP_DELAY_SHOW}
       placement="left"
     >
-      <DirectDownloadIcon
-        isExternalFile={isExternalFile}
-        hasFileAccess={hasFileAccess}
-        onClick={onClickCallback}
-        getDownloadLink={getDownloadLink}
-        stopPropagation={stopPropagation}
-        externalURL={externalURL}
-        displayFileName={displayFileName}
-        fileName={fileName}
-        iconSvgPropOverrides={iconSvgPropOverrides}
-      />
+      <span>
+        <DirectDownloadIcon
+          isExternalFile={isExternalFile}
+          hasFileAccess={hasFileAccess}
+          onClick={onClickCallback}
+          getDownloadLink={getDownloadLink}
+          stopPropagation={stopPropagation}
+          externalURL={externalURL}
+          displayFileName={displayFileName}
+          fileName={fileName}
+          iconSvgPropOverrides={iconSvgPropOverrides}
+        />
+      </span>
     </Tooltip>
   )
 }
