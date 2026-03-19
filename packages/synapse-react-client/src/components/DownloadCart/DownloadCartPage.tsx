@@ -277,11 +277,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                     </div>
                     <ComponentToComponentCollapse
                       component={
-                        <Typography
-                          variant={'body1'}
-                          component={'div'}
-                          sx={{ display: { xs: 'none', md: 'block' } }}
-                        >
+                        <Typography variant={'body1'} component={'div'}>
                           Only some files may be eligible for packaging as ZIP.
                           Use the Individual Downloads tab, below, to download
                           non-packageable files.&nbsp;
@@ -348,11 +344,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                     </div>
                     <ComponentToComponentCollapse
                       component={
-                        <Typography
-                          variant={'body1'}
-                          component={'div'}
-                          sx={{ display: { xs: 'none', md: 'block' } }}
-                        >
+                        <Typography variant={'body1'} component={'div'}>
                           Use our Python, R, or command line clients to download
                           files quickly.&nbsp;
                           <a
@@ -416,11 +408,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                         </div>
                         <ComponentToComponentCollapse
                           component={
-                            <Typography
-                              variant={'body1'}
-                              component={'div'}
-                              sx={{ display: { xs: 'none', md: 'block' } }}
-                            >
+                            <Typography variant={'body1'} component={'div'}>
                               Files which <strong>aren't</strong> included in a
                               ZIP package may be downloaded as a multi-file
                               download.&nbsp;

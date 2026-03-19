@@ -116,6 +116,13 @@
       border-radius: 6px;
       padding: 2px 6px;
       color: white;
+
+      @media (max-width: 768px) {
+        display: block;
+        margin-left: 0;
+        margin-top: 8px;
+        text-align: center;
+      }
     }
   }
   .subSectionContainer {
@@ -181,6 +188,11 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
 
     .subSectionActions {
