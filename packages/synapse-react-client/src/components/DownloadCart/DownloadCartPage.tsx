@@ -42,6 +42,16 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
     { label: 'Files not included in ZIP', filter: 'ineligibleForPackaging' },
   ]
   const selectedFilter = filterTabs[selectedFilterTabIndex].filter
+  const getFilterCount = (filter: AvailableFilter) => {
+    if (!data) return undefined
+    if (filter === undefined) return data.numberOfFilesAvailableForDownload
+    if (filter === 'eligibleForPackaging')
+      return data.numberOfFilesAvailableForDownloadAndEligibleForPackaging
+    return (
+      data.numberOfFilesAvailableForDownload -
+      data.numberOfFilesAvailableForDownloadAndEligibleForPackaging
+    )
+  }
   const [isShowingCreatePackageUI, setIsShowingCreatePackageUI] =
     useState<boolean>(false)
   const [isShowingModal, setIsShowingModal] = useState<boolean>(false)
@@ -337,13 +347,20 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                           onClick={() => setSelectedFilterTabIndex(index)}
                         >
                           {tab.label}
+                          {!isError && !isLoading && data && (
+                            <span className={styles.fileCount}>
+                              {getFilterCount(tab.filter)}
+                            </span>
+                          )}
                         </button>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <AvailableForDownloadTable filter={selectedFilter} />
+                <div className={styles.availableForDownloadTableContainer}>
+                  <AvailableForDownloadTable filter={selectedFilter} />
+                </div>
               </div>
             </div>
           )}

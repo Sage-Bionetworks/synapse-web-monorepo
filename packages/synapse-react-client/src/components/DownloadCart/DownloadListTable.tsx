@@ -103,17 +103,6 @@ const getColumns = (args: {
       header: () => <></>,
       cell: ctx => (
         <div>
-          {ctx.getValue() && (
-            <Tooltip
-              title="Eligible for packaging"
-              enterNextDelay={TOOLTIP_DELAY_SHOW}
-              placement="right"
-            >
-              <span className="eligibileIcon">
-                <IconSvg wrap={false} icon="packagableFile" />
-              </span>
-            </Tooltip>
-          )}
           {!ctx.getValue() && (
             <Tooltip
               title="This file is ineligible for Web packaging because it is >100MB, or it is an external link, or it is not stored on Synapse native storage"
@@ -121,7 +110,7 @@ const getColumns = (args: {
               placement="right"
             >
               <span className="ineligibileIcon">
-                <IconSvg wrap={false} icon="warningOutlined" />
+                <IconSvg wrap={false} icon="unpackagableFile" />
               </span>
             </Tooltip>
           )}
@@ -148,7 +137,7 @@ const getColumns = (args: {
     columnHelper.accessor('fileSizeBytes', {
       header: props => <ColumnHeader {...props} title={'Size'} />,
       cell: ctx =>
-        ctx.getValue() != null ? (
+        ctx.getValue() != null && ctx.getValue() > 0 ? (
           calculateFriendlyFileSize(ctx.getValue())
         ) : (
           <></>
@@ -394,21 +383,6 @@ export default function DownloadListTable({
   return (
     <div>
       <BlockingLoader show={copyingAllSynapseIDs} />
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: {
-            xs: 'column',
-            md: 'row',
-          },
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          py: '15px',
-          rowGap: '15px',
-        }}
-      >
-        <DownloadListStats />
-      </Box>
       {allRows.length > 0 && (
         <div className="DownloadListTableV2">
           {/* TODO: This table can be very large, so it should be refactored to use row virtualization or discrete pagination */}

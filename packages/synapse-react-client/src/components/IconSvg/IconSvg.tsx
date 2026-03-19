@@ -5,6 +5,7 @@ import { ReactComponent as AccessPendingCloud } from '@/assets/icons/AccessPendi
 import CreateVersion from '@/assets/icons/CreateVersion'
 import FileWithShield from '@/assets/icons/FileWithShield'
 import MultiFile from '@/assets/icons/MultiFile'
+import UnpackagableFile from '@/assets/icons/UnpackagableFile'
 import { ORCIDIcon } from '@/assets/icons/ORCIDIcon'
 import { TasksIcon } from '@/assets/icons/TasksIcon'
 import AccessManagement from '@/assets/mui_components/AccessManagement'
@@ -206,6 +207,7 @@ export const IconStrings = [
   'kinomics',
   'proteomics',
   'packagableFile',
+  'unpackagableFile',
   'other',
   'wiki',
   'file',
@@ -467,6 +469,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <Proteomics {...otherProps} />
     case 'packagableFile':
       return <PackagableFile {...otherProps} />
+    case 'unpackagableFile':
+      return <UnpackagableFile {...otherProps} />
     case 'other':
       return <Other fill={color} {...otherProps} />
     case 'wiki':
