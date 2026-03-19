@@ -1,9 +1,10 @@
+import { useGetEntityBundle } from '@/synapse-queries'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { useInView } from 'react-intersection-observer'
 import { StyledComponent } from '@emotion/styled'
 import {
   ArticleOutlined,
@@ -21,19 +22,19 @@ import {
   styled,
   Typography,
 } from '@mui/material'
-import dayjs from 'dayjs'
-import { EntityTypeIcon } from '../EntityIcon'
 import { EntityType } from '@sage-bionetworks/synapse-client'
-import FavoriteButton from '../favorites/FavoriteButton'
+import dayjs from 'dayjs'
+import { useRef } from 'react'
+import { useInView } from 'react-intersection-observer'
 import { EntityDownloadButton } from '../EntityDownloadButton/EntityDownloadButton'
-import HasAccessChip from './HasAccessChip'
-import { searchResultsCardChipStyles } from './chipStyles'
-import styles from './SynapseSearchResultsCard.module.scss'
-import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
-import { useGetEntityBundle } from '@/synapse-queries'
 import { FileHandleWithPreview } from '../EntityFinder/details/view/table/TableCellTypes'
-import { HighlightedTypography } from './HighlightedTypography'
+import { EntityTypeIcon } from '../EntityIcon'
+import FavoriteButton from '../favorites/FavoriteButton'
 import { markdownToPlainText } from '../Markdown/MarkdownUtils'
+import { searchResultsCardChipStyles } from './chipStyles'
+import HasAccessChip from './HasAccessChip'
+import { HighlightedTypography } from './HighlightedTypography'
+import styles from './SynapseSearchResultsCard.module.scss'
 
 export type SynapseSearchResultsCardProps = {
   entityId: string
@@ -61,6 +62,8 @@ const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
 })
 
 export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
+  const downloadConfirmationRef = useRef<HTMLDivElement>(null)
+
   const { ref, inView } = useInView({
     triggerOnce: true,
     rootMargin: '250px 0px',
@@ -124,9 +127,12 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
             entityId={props.entityId}
             name={props.name}
             entityType={props.entityType}
+            downloadConfirmationContainer={downloadConfirmationRef}
           />
         </Box>
       </Box>
+      {/* Portal target for EntityDownloadButton's download confirmation dialog */}
+      <div ref={downloadConfirmationRef} />
       <Box
         sx={{
           display: 'flex',
