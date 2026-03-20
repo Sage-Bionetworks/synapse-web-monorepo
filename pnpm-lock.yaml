@@ -1727,6 +1727,9 @@ importers:
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
+      clickable-json:
+        specifier: ^1.15.1
+        version: 1.15.1(@jsonjoy.com/json-pointer@17.65.0(tslib@2.8.1))(@jsonjoy.com/util@17.65.0(tslib@2.8.1))(json-joy@17.65.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tslib@2.8.1))(nano-theme@1.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tslib@2.8.1))(nice-ui@1.32.0(@types/react@19.1.8)(csstype@3.2.3)(encoding@0.1.13)(prop-types@15.8.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tslib@2.8.1))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tslib@2.8.1)
       dagre:
         specifier: ^0.8.5
         version: 0.8.5
@@ -1734,8 +1737,8 @@ importers:
         specifier: ^1.11.13
         version: 1.11.13
       dompurify:
-        specifier: ^3.2.5
-        version: 3.2.5
+        specifier: ^3.3.2
+        version: 3.3.2
       immutable:
         specifier: 4.1.0
         version: 4.1.0
@@ -2058,9 +2061,6 @@ importers:
       chromatic:
         specifier: ^11.28.2
         version: 11.28.2
-      clickable-json:
-        specifier: ^1.15.1
-        version: 1.15.1(@jsonjoy.com/json-pointer@17.65.0(tslib@2.8.1))(@jsonjoy.com/util@17.65.0(tslib@2.8.1))(json-joy@17.65.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tslib@2.8.1))(nano-theme@1.5.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tslib@2.8.1))(nice-ui@1.32.0(@types/react@19.1.8)(csstype@3.2.3)(encoding@0.1.13)(prop-types@15.8.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tslib@2.8.1))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxjs@7.8.2)(tslib@2.8.1)
       copyfiles:
         specifier: ^2.4.1
         version: 2.4.1
@@ -3075,6 +3075,9 @@ packages:
   '@hyperjump/json-pointer@1.1.1':
     resolution: {integrity: sha512-M0T3s7TC2JepoWPMZQn1W6eYhFh06OXwpMqL+8c5wMVpvnCKNsPgpu9u7WyCI03xVQti8JAeAy4RzUa6SYlJLA==}
 
+  '@hyperjump/json-pointer@1.1.2':
+    resolution: {integrity: sha512-zPNgu1zdhtjQHFNLGzvEsLDsLOEvhRj6u6ktIQmlz7YPESv5uF8SnAe3Dq0oL6gZ6OGWSLq2n7pphRNF6Hpg6w==}
+
   '@hyperjump/json-schema@1.16.1':
     resolution: {integrity: sha512-GCGQCOJMwAUTcCn7eDFOx5G6uOPFLG2O3tv+vMrHJUHwqeFo4GVO03BcsmX/Xy7dfTP4VgucXyoNjrtyoqb5wA==}
     peerDependencies:
@@ -3085,6 +3088,9 @@ packages:
 
   '@hyperjump/uri@1.3.2':
     resolution: {integrity: sha512-OFo5oxuSEz1ktF/LDdBTptlnPyZ66jywLO4fJRuAhnr7NGnsiL2CPoj1JRVaDqVy0nXvWNsC8O8Muw9DR++eEg==}
+
+  '@hyperjump/uri@1.3.3':
+    resolution: {integrity: sha512-rUqeUdL2aW7lzvSnCL6yUetXYzqxhsBEw9Z7Y1bEhgiRzcfO3kjY0UdD6c4H/bzxe0fXIjYuocjWQzinio8JTQ==}
 
   '@inquirer/confirm@5.1.9':
     resolution: {integrity: sha512-NgQCnHqFTjF7Ys2fsqK2WtnA8X1kHyInyG+nMIuHowVTIgIuS10T4AznI/PvbqSpJqjCUqNBlKGh1v3bwLFL4w==}
@@ -6540,8 +6546,9 @@ packages:
     resolution: {integrity: sha512-cgwlv/1iFQiFnU96XXgROh8xTeetsnJiDsTc7TYCLFd9+/WNkIqPTxiM/8pSd8VIrhXGTf1Ny1q1hquVqDJB5w==}
     engines: {node: '>= 4'}
 
-  dompurify@3.2.5:
-    resolution: {integrity: sha512-mLPd29uoRe9HpvwP2TxClGQBzGXeEC/we/q+bFlmPPmj2p2Ugl3r6ATu/UU1v77DXNcehiBg9zsr1dREyA/dJQ==}
+  dompurify@3.3.2:
+    resolution: {integrity: sha512-6obghkliLdmKa56xdbLOpUZ43pAR6xFy1uOrxBaIDjT+yaRuuybLjGS9eVBoSR/UPU5fq3OXClEHLJNGvbxKpQ==}
+    engines: {node: '>=20'}
 
   domutils@2.8.0:
     resolution: {integrity: sha512-w96Cjofp72M5IIhpjgobBimYEfoPjx1Vx0BSX9P30WBdZW2WIKU0T1Bd0kz2eNZ9ikjKgHbEyKx8BB6H1L3h3A==}
@@ -7121,6 +7128,9 @@ packages:
 
   flatted@3.3.3:
     resolution: {integrity: sha512-GX+ysw4PBCz0PzosHDepZGANEuFCMLrnRTiEy9McGjmkCQYwRq4A/X786G/fjM/+OjsWSU1ZrY5qyARZmO/uwg==}
+
+  flatted@3.4.1:
+    resolution: {integrity: sha512-IxfVbRFVlV8V/yRaGzk0UVIcsKKHMSfYw66T/u4nTwlWteQePsxe//LjudR1AMX4tZW3WFCh3Zqa/sjlqpbURQ==}
 
   flatten-vertex-data@1.0.2:
     resolution: {integrity: sha512-BvCBFK2NZqerFTdMDgqfHBwxYWnxeCkwONsw6PvBMcUXqo8U/KDWwmXhqx1x2kLIg7DqIsJfOaJFOmlua3Lxuw==}
@@ -9810,8 +9820,8 @@ packages:
     resolution: {integrity: sha512-bSiSngZ/jWeX93BqeIAbImyTbEihizcwNjFoRUIY/T1wWQsfsm2Vw1agPKylXvQTU7iASGdHhyqRlqQzfz+Htg==}
     engines: {node: '>=18'}
 
-  slugify@1.6.6:
-    resolution: {integrity: sha512-h+z7HKHYXj6wJU+AnS/+IH8Uh9fdcX1Lrhg1/VMdf9PwoBQXFcXiAdsy2tSK0P6gKwJLXp02r90ahUCqHk9rrw==}
+  slugify@1.6.8:
+    resolution: {integrity: sha512-HVk9X1E0gz3mSpoi60h/saazLKXKaZThMLU3u/aNwoYn8/xQyX2MGxL0ui2eaokkD7tF+Zo+cKTHUbe1mmmGzA==}
     engines: {node: '>=8.0.0'}
 
   smart-buffer@4.2.0:
@@ -10153,8 +10163,8 @@ packages:
   tinyexec@0.3.2:
     resolution: {integrity: sha512-KQQR9yN7R5+OSwaK0XQoj22pwHoTlgYqmUscPYoknOoWCWfj/5/ABTMRi69FrKU5ffPVh5QcFikpWJI/P1ocHA==}
 
-  tinyexec@1.0.2:
-    resolution: {integrity: sha512-W/KYk+NFhkmsYpuHq5JykngiOCnxeVL8v8dFnqxSD8qEEdRfXk1SDM6JzNqcERbcGYj9tMrDQBYV9cjgnunFIg==}
+  tinyexec@1.0.4:
+    resolution: {integrity: sha512-u9r3uZC0bdpGOXtlxUIdwf9pkmvhqJdrVCH9fapQtgy/OeTTMZ1nqH7agtvEfmGui6e1XxjcdrlxvxJvc3sMqw==}
     engines: {node: '>=18'}
 
   tinyglobby@0.2.15:
@@ -10172,8 +10182,8 @@ packages:
     resolution: {integrity: sha512-op4nsTR47R6p0vMUUoYl/a+ljLFVtlfaXkLQmqfLR1qHma1h/ysYk4hEXZ880bf2CYgTskvTa/e196Vd5dDQXw==}
     engines: {node: '>=14.0.0'}
 
-  tinyrainbow@3.0.3:
-    resolution: {integrity: sha512-PSkbLUoxOFRzJYjjxHJt9xro7D+iilgMX/C9lawzVuYiIdcihh9DXmVibBe8lmcFrRi/VzlPjBxbN7rH24q8/Q==}
+  tinyrainbow@3.1.0:
+    resolution: {integrity: sha512-Bf+ILmBgretUrdJxzXM0SgXLZ3XfiaUuOj/IKQHuTXip+05Xn+uyEYdVg0kYDipTBcLrCVyUzAPz7QmArb0mmw==}
     engines: {node: '>=14.0.0'}
 
   tinyspy@4.0.3:
@@ -12066,12 +12076,14 @@ snapshots:
 
   '@hyperjump/browser@1.3.1':
     dependencies:
-      '@hyperjump/json-pointer': 1.1.1
-      '@hyperjump/uri': 1.3.2
+      '@hyperjump/json-pointer': 1.1.2
+      '@hyperjump/uri': 1.3.3
       content-type: 1.0.5
       just-curry-it: 5.3.0
 
   '@hyperjump/json-pointer@1.1.1': {}
+
+  '@hyperjump/json-pointer@1.1.2': {}
 
   '@hyperjump/json-schema@1.16.1(@hyperjump/browser@1.3.1)':
     dependencies:
@@ -12087,6 +12099,8 @@ snapshots:
   '@hyperjump/pact@1.4.0': {}
 
   '@hyperjump/uri@1.3.2': {}
+
+  '@hyperjump/uri@1.3.3': {}
 
   '@inquirer/confirm@5.1.9(@types/node@22.19.13)':
     dependencies:
@@ -14452,7 +14466,7 @@ snapshots:
       '@vitest/spy': 4.0.18
       '@vitest/utils': 4.0.18
       chai: 6.2.2
-      tinyrainbow: 3.0.3
+      tinyrainbow: 3.1.0
     optional: true
 
   '@vitest/mocker@3.2.2(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(vite@7.3.1(@types/node@22.19.13)(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))':
@@ -14493,7 +14507,7 @@ snapshots:
 
   '@vitest/pretty-format@4.0.18':
     dependencies:
-      tinyrainbow: 3.0.3
+      tinyrainbow: 3.1.0
     optional: true
 
   '@vitest/runner@3.2.2':
@@ -14535,7 +14549,7 @@ snapshots:
     dependencies:
       '@vitest/utils': 3.2.2
       fflate: 0.8.2
-      flatted: 3.3.3
+      flatted: 3.4.1
       pathe: 2.0.3
       sirv: 3.0.2
       tinyglobby: 0.2.15
@@ -14558,11 +14572,11 @@ snapshots:
     dependencies:
       '@vitest/utils': 4.0.18
       fflate: 0.8.2
-      flatted: 3.3.3
+      flatted: 3.4.1
       pathe: 2.0.3
       sirv: 3.0.2
       tinyglobby: 0.2.15
-      tinyrainbow: 3.0.3
+      tinyrainbow: 3.1.0
       vitest: 4.0.18(@types/node@22.19.13)(@vitest/ui@4.0.18)(jsdom@26.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
     optional: true
 
@@ -14581,7 +14595,7 @@ snapshots:
   '@vitest/utils@4.0.18':
     dependencies:
       '@vitest/pretty-format': 4.0.18
-      tinyrainbow: 3.0.3
+      tinyrainbow: 3.1.0
     optional: true
 
   '@volar/language-core@2.4.13':
@@ -15915,7 +15929,7 @@ snapshots:
     dependencies:
       domelementtype: 2.3.0
 
-  dompurify@3.2.5:
+  dompurify@3.3.2:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
@@ -16678,6 +16692,9 @@ snapshots:
   flat@5.0.2: {}
 
   flatted@3.3.3: {}
+
+  flatted@3.4.1:
+    optional: true
 
   flatten-vertex-data@1.0.2:
     dependencies:
@@ -18338,7 +18355,7 @@ snapshots:
       react-use: 17.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       rx-use: 1.9.0(rxjs@7.8.2)
       rxjs: 7.8.2
-      slugify: 1.6.6
+      slugify: 1.6.8
       thingies: 2.5.0(tslib@2.8.1)
       tslib: 2.8.1
       use-t: 1.6.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -19990,7 +20007,7 @@ snapshots:
       ansi-styles: 6.2.1
       is-fullwidth-code-point: 5.0.0
 
-  slugify@1.6.6: {}
+  slugify@1.6.8: {}
 
   smart-buffer@4.2.0: {}
 
@@ -20395,7 +20412,7 @@ snapshots:
 
   tinyexec@0.3.2: {}
 
-  tinyexec@1.0.2:
+  tinyexec@1.0.4:
     optional: true
 
   tinyglobby@0.2.15:
@@ -20409,7 +20426,7 @@ snapshots:
 
   tinyrainbow@2.0.0: {}
 
-  tinyrainbow@3.0.3:
+  tinyrainbow@3.1.0:
     optional: true
 
   tinyspy@4.0.3: {}
@@ -21019,9 +21036,9 @@ snapshots:
       picomatch: 4.0.3
       std-env: 3.10.0
       tinybench: 2.9.0
-      tinyexec: 1.0.2
+      tinyexec: 1.0.4
       tinyglobby: 0.2.15
-      tinyrainbow: 3.0.3
+      tinyrainbow: 3.1.0
       vite: 7.3.1(@types/node@22.19.13)(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
       why-is-node-running: 2.3.0
     optionalDependencies:
