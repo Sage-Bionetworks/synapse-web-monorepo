@@ -1,6 +1,6 @@
 import { Optional } from '@/utils/types/Optional'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import React, { PropsWithChildren } from 'react'
+import React, { PropsWithChildren, useMemo } from 'react'
 import {
   ErrorBoundary,
   ErrorBoundaryPropsWithComponent,
@@ -9,11 +9,16 @@ import {
 import FullWidthAlert from '../FullWidthAlert'
 import { AlertButtonConfig } from '../FullWidthAlert/FullWidthAlert'
 import SignInButton from '../SignInButton'
-import { ClientError } from './ClientError'
+import ClientError from './ClientError'
+import { BlockingLoader } from '../LoadingScreen/LoadingScreen'
 
 type ErrorBannerProps = {
   error?: string | Error | SynapseClientError | null
   reloadButtonFn?: () => void
+  /** The loading indicator to display if the error is automatically recoverable (e.g. a login error before the session was initialized)
+   * @default BlockingLoader A blocking loader that covers the entire screen
+   */
+  loadingIndicator?: React.ReactNode
 }
 
 export const YOU_ARE_NOT_AUTHORIZED_MESSAGE =
@@ -26,8 +31,15 @@ export const SignInPrompt = (): React.ReactNode => {
     </>
   )
 }
+
+const defaultErrorBannerLoader = <BlockingLoader show />
+
 export const ErrorBanner = (props: ErrorBannerProps): React.ReactNode => {
-  const { error, reloadButtonFn } = props
+  const {
+    error,
+    reloadButtonFn,
+    loadingIndicator = defaultErrorBannerLoader,
+  } = props
 
   if (!error) {
     return <></>
@@ -70,7 +82,11 @@ export const ErrorBanner = (props: ErrorBannerProps): React.ReactNode => {
       description={
         <>
           {synapseClientError && (
-            <ClientError error={synapseClientError} reloadFn={reloadButtonFn} />
+            <ClientError
+              error={synapseClientError}
+              reloadFn={reloadButtonFn}
+              loadingIndicator={loadingIndicator}
+            />
           )}
           {jsError && jsError.message}
           {stringError && stringError}
@@ -81,42 +97,34 @@ export const ErrorBanner = (props: ErrorBannerProps): React.ReactNode => {
   )
 }
 
-export function ErrorFallbackComponent({
-  error,
-  resetErrorBoundary,
-}: FallbackProps) {
-  return (
-    <div className="SRC-marginBottomTop">
-      <ErrorBanner
-        error={error}
-        reloadButtonFn={resetErrorBoundary}
-      ></ErrorBanner>
-    </div>
-  )
-}
-
-export function TableRowFallbackComponent({
-  error,
-  resetErrorBoundary,
-}: FallbackProps) {
-  return (
-    <tr>
-      <td colSpan={999}>
-        <ErrorBanner error={error} reloadButtonFn={resetErrorBoundary} />
-      </td>
-    </tr>
-  )
+function createErrorFallbackComponent(
+  loadingIndicator: React.ReactNode,
+): React.ComponentType<FallbackProps> {
+  return function ErrorFallbackComponent({ error, resetErrorBoundary }) {
+    return (
+      <div className="SRC-marginBottomTop">
+        <ErrorBanner
+          error={error}
+          reloadButtonFn={resetErrorBoundary}
+          loadingIndicator={loadingIndicator}
+        ></ErrorBanner>
+      </div>
+    )
+  }
 }
 
 /**
  * This error boundary fallback component does not have a UI, it only outputs the error to console.error
  */
-export function EmptyFallbackComponent({
-  error,
-  resetErrorBoundary,
-}: FallbackProps) {
+export function EmptyFallbackComponent({ error }: FallbackProps) {
   console.error(error)
   return <></>
+}
+
+type SynapseErrorBoundaryProps = PropsWithChildren<
+  Optional<ErrorBoundaryPropsWithComponent, 'FallbackComponent'>
+> & {
+  loadingIndicator?: React.ReactNode
 }
 
 /**
@@ -129,10 +137,19 @@ export function EmptyFallbackComponent({
  * @param props
  * @returns
  */
-export const SynapseErrorBoundary = (
-  props: PropsWithChildren<
-    Optional<ErrorBoundaryPropsWithComponent, 'FallbackComponent'>
-  >,
-): React.ReactNode => (
-  <ErrorBoundary FallbackComponent={ErrorFallbackComponent} {...props} />
-)
+export function SynapseErrorBoundary(
+  props: SynapseErrorBoundaryProps,
+): React.ReactNode {
+  if (props.loadingIndicator && props.FallbackComponent) {
+    console.warn(
+      "SynapseErrorBoundary: 'loadingIndicator' prop will be ignored because a custom 'FallbackComponent' was provided.",
+    )
+  }
+
+  const FallbackComponent = useMemo(
+    () => createErrorFallbackComponent(props.loadingIndicator),
+    [props.loadingIndicator],
+  )
+
+  return <ErrorBoundary FallbackComponent={FallbackComponent} {...props} />
+}

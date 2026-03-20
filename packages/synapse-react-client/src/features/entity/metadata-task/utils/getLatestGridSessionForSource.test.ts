@@ -5,7 +5,7 @@ import { KeyFactory } from '@/synapse-queries/KeyFactory'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
 import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
 
-const mockKeyFactory = new KeyFactory(undefined)
+const mockKeyFactory = new KeyFactory('realm1', undefined, false)
 const mockSynapseClient = new SynapseClient()
 
 const baseContext: SynapseContextType = {
@@ -17,6 +17,7 @@ const baseContext: SynapseContextType = {
   utcTime: false,
   withErrorBoundary: false,
   downloadCartPageUrl: '',
+  realmId: 'realm1',
 }
 
 describe('getLatestGridSessionForSource', () => {

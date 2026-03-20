@@ -8,7 +8,7 @@ import * as SynapseContextModule from '@/utils/context/SynapseContext'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
 import { MOCK_APPLICATION_SESSION_CONTEXT } from '@/mocks/applicationSessionContext/MockApplicationSessionContext'
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
-import { ClientError } from './ClientError'
+import ClientError from './ClientError'
 
 vi.mock('@/utils/AppUtils/session/ApplicationSessionContext', () => ({
   useApplicationSessionContext: vi.fn(),
@@ -55,6 +55,8 @@ const error500 = new SynapseClientError(
   'https://repo-prod.prod.sagebase.org',
 )
 
+const loader = <div role="progressbar">Loading...</div>
+
 describe('ClientError', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -65,7 +67,13 @@ describe('ClientError', () => {
       mockSession({ hasInitializedSession: false })
       mockSynapse({ isAuthenticated: false, accessToken: undefined })
 
-      render(<ClientError error={error401} reloadFn={vi.fn()} />)
+      render(
+        <ClientError
+          error={error401}
+          reloadFn={vi.fn()}
+          loadingIndicator={loader}
+        />,
+      )
 
       expect(screen.getByRole('progressbar')).toBeInTheDocument()
     })
@@ -74,7 +82,7 @@ describe('ClientError', () => {
       mockSession({ hasInitializedSession: false })
       mockSynapse({ isAuthenticated: false, accessToken: undefined })
 
-      render(<ClientError error={error401} />)
+      render(<ClientError error={error401} loadingIndicator={loader} />)
 
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
       expect(screen.getByText(error401.reason)).toBeInTheDocument()
@@ -88,13 +96,13 @@ describe('ClientError', () => {
     })
 
     it('shows a sign-in prompt for a 401 error', () => {
-      render(<ClientError error={error401} />)
+      render(<ClientError error={error401} loadingIndicator={loader} />)
 
       expect(screen.getByText(/to view this resource/)).toBeInTheDocument()
     })
 
     it('shows a sign-in prompt for a 403 error', () => {
-      render(<ClientError error={error403} />)
+      render(<ClientError error={error403} loadingIndicator={loader} />)
 
       expect(screen.getByText(/to view this resource/)).toBeInTheDocument()
     })
@@ -107,7 +115,7 @@ describe('ClientError', () => {
     })
 
     it('shows an access denied message for a 403 error', () => {
-      render(<ClientError error={error403} />)
+      render(<ClientError error={error403} loadingIndicator={loader} />)
 
       expect(
         screen.getByText('You are not authorized to access this resource.'),
@@ -115,14 +123,14 @@ describe('ClientError', () => {
     })
 
     it('shows the error reason for a 500 error', () => {
-      render(<ClientError error={error500} />)
+      render(<ClientError error={error500} loadingIndicator={loader} />)
 
       expect(screen.getByText(error500.reason)).toBeInTheDocument()
     })
 
     it('toggles the error details for a 403 access denied error', async () => {
       const user = userEvent.setup()
-      render(<ClientError error={error403} />)
+      render(<ClientError error={error403} loadingIndicator={loader} />)
 
       // "Show details" button is visible; details are not yet expanded
       const showButton = screen.getByRole('button', { name: 'Show details' })
@@ -150,14 +158,24 @@ describe('ClientError', () => {
       mockSynapse({ isAuthenticated: false, accessToken: undefined })
 
       const { rerender } = render(
-        <ClientError error={error401} reloadFn={reloadFn} />,
+        <ClientError
+          error={error401}
+          reloadFn={reloadFn}
+          loadingIndicator={loader}
+        />,
       )
 
       expect(reloadFn).not.toHaveBeenCalled()
 
       // Session finishes initializing
       mockSession({ hasInitializedSession: true })
-      rerender(<ClientError error={error401} reloadFn={reloadFn} />)
+      rerender(
+        <ClientError
+          error={error401}
+          reloadFn={reloadFn}
+          loadingIndicator={loader}
+        />,
+      )
 
       await waitFor(() => {
         expect(reloadFn).toHaveBeenCalledTimes(1)
@@ -170,7 +188,13 @@ describe('ClientError', () => {
       mockSession({ hasInitializedSession: true })
       mockSynapse({ isAuthenticated: false, accessToken: undefined })
 
-      render(<ClientError error={error401} reloadFn={reloadFn} />)
+      render(
+        <ClientError
+          error={error401}
+          reloadFn={reloadFn}
+          loadingIndicator={loader}
+        />,
+      )
 
       // Allow effects to run
       await waitFor(() => {
@@ -186,11 +210,21 @@ describe('ClientError', () => {
       mockSynapse({ isAuthenticated: false, accessToken: undefined })
 
       const { rerender } = render(
-        <ClientError error={error500} reloadFn={reloadFn} />,
+        <ClientError
+          error={error500}
+          reloadFn={reloadFn}
+          loadingIndicator={loader}
+        />,
       )
 
       mockSession({ hasInitializedSession: true })
-      rerender(<ClientError error={error500} reloadFn={reloadFn} />)
+      rerender(
+        <ClientError
+          error={error500}
+          reloadFn={reloadFn}
+          loadingIndicator={loader}
+        />,
+      )
 
       await waitFor(() => {
         expect(reloadFn).not.toHaveBeenCalled()

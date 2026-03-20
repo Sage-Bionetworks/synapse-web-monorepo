@@ -212,9 +212,27 @@ const DATA_ACCESS_SUBMISSION_QUERY_KEY = 'dataAccessSubmission'
  * For more information, see https://tkdodo.eu/blog/leveraging-the-query-function-context
  */
 export class KeyFactory {
-  accessToken: string | undefined = undefined
-  constructor(accessToken: string | undefined) {
-    this.accessToken = accessToken
+  private realmId: string
+  private accessToken: string | undefined
+
+  /**
+   * @param realmId the current realm, used to scope the cache.
+   * @param accessToken the access token of the current user.
+   * @param isAuthenticated whether the user is authenticated. Used to deduplicate cache keys for anonymous users.
+   */
+  constructor(
+    realmId: string,
+    accessToken: string | undefined,
+    isAuthenticated: boolean | undefined,
+  ) {
+    this.realmId = realmId
+    if (isAuthenticated === false) {
+      // If the user is not authenticated, then set the access token to `undefined`.
+      // This ensures we reuse any other cache data made while anonymous (with a different token or no token at all).
+      this.accessToken = undefined
+    } else {
+      this.accessToken = accessToken
+    }
   }
 
   /**
@@ -225,6 +243,7 @@ export class KeyFactory {
    */
   private getKey(...args: unknown[]): QueryKey {
     return [
+      this.realmId,
       this.accessToken == null
         ? 'anonymous'
         : btoa(String(hashCode(this.accessToken))),

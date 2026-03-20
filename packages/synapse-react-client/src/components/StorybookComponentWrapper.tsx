@@ -187,12 +187,13 @@ export function StorybookComponentWrapper(props: {
     () => ({
       accessToken: effectiveToken,
       isAuthenticated: effectiveIsAuthenticated,
+      realmId: sessionState.realmId,
       isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
       utcTime: SynapseClient.getUseUtcTimeFromCookie(),
       withErrorBoundary: true,
       downloadCartPageUrl: '/?path=/story/download-downloadcartpage--demo',
     }),
-    [effectiveToken, effectiveIsAuthenticated],
+    [effectiveToken, effectiveIsAuthenticated, sessionState.realmId],
   )
 
   const wrappedStory = (

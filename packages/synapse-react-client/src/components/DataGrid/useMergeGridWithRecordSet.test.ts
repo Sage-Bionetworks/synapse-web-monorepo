@@ -3,6 +3,7 @@ import { vi, describe, it, expect, beforeEach } from 'vitest'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import useMergeGridWithRecordSet from './useMergeGridWithRecordSet'
 import { KeyFactory } from '@/synapse-queries'
+import { SYNAPSE_REALM } from '@/utils/SynapseConstants'
 
 const mockPostRepoV1GridExportRecordsetAsyncStart = vi.fn()
 const mockGetRepoV1AsynchronousJobJobId = vi.fn()
@@ -22,7 +23,7 @@ const mockAccessToken = 'mock-token'
 vi.mock('@/utils', () => ({
   useSynapseContext: () => ({
     synapseClient: mockSynapseClient,
-    keyFactory: new KeyFactory(mockAccessToken),
+    keyFactory: new KeyFactory(SYNAPSE_REALM, mockAccessToken, true),
     accessToken: mockAccessToken,
     isAuthenticated: true,
   }),
