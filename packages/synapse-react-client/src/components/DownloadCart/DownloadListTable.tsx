@@ -3,6 +3,7 @@ import {
   useRemoveFilesFromDownloadList,
 } from '@/synapse-queries'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
+import { formatDate } from '@/utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { Box, Button, Tooltip, Typography } from '@mui/material'
 import {
@@ -20,6 +21,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
+import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
@@ -137,7 +139,7 @@ const getColumns = (args: {
         </a>
       ),
       enableColumnFilter: false,
-      size: 430,
+      size: 360,
     }),
     columnHelper.accessor('fileSizeBytes', {
       header: props => <ColumnHeader {...props} title={'Size'} />,
@@ -166,10 +168,16 @@ const getColumns = (args: {
       enableColumnFilter: false,
       size: 143,
     }),
+    columnHelper.accessor('addedOn', {
+      header: props => <ColumnHeader {...props} title={'Added On'} />,
+      cell: ctx => formatDate(dayjs(ctx.getValue())),
+      enableColumnFilter: false,
+      size: 150,
+    }),
     columnHelper.accessor('projectName', {
       header: props => <ColumnHeader {...props} title={'Project'} />,
       enableColumnFilter: false,
-      size: 252,
+      size: 170,
     }),
     columnHelper.display({
       id: 'actions',
