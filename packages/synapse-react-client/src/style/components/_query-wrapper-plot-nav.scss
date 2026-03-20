@@ -100,6 +100,10 @@
     .FacetFilterHeader {
       margin-top: 0;
     }
+
+    .TotalQueryResults.hasFilters {
+      margin-bottom: 5px;
+    }
   }
 
   &.isHidingFacetFilters {
