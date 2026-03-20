@@ -30,27 +30,27 @@ export default function AppWrapper(
   return (
     <StyledEngineProvider injectFirst>
       <QueryClientProvider client={queryClient}>
-        <SynapseErrorBoundary
-          onReset={() => {
-            // Navigate to root instead of reloading the page
-            navigate('/')
+        <ApplicationSessionManager
+          onTwoFactorAuthResetThroughSSO={(twoFaError, twoFaResetCode) => {
+            // The user completed SSO with a twoFaResetCode
+            // Send them to the reset 2FA page with the token
+            navigate(
+              `${RESET_2FA_ROUTE}?${RESET_2FA_SIGNED_TOKEN_PARAM}=${twoFaResetCode}`,
+            )
           }}
         >
-          <ApplicationSessionManager
-            onTwoFactorAuthResetThroughSSO={(twoFaError, twoFaResetCode) => {
-              // The user completed SSO with a twoFaResetCode
-              // Send them to the reset 2FA page with the token
-              navigate(
-                `${RESET_2FA_ROUTE}?${RESET_2FA_SIGNED_TOKEN_PARAM}=${twoFaResetCode}`,
-              )
+          <SynapseErrorBoundary
+            onReset={() => {
+              // Navigate to root instead of reloading the page
+              navigate('/')
             }}
           >
             <SourceAppProvider>
               <SynapseToastContainer />
               <AppInitializer>{props.children}</AppInitializer>
             </SourceAppProvider>
-          </ApplicationSessionManager>
-        </SynapseErrorBoundary>
+          </SynapseErrorBoundary>
+        </ApplicationSessionManager>
       </QueryClientProvider>
     </StyledEngineProvider>
   )

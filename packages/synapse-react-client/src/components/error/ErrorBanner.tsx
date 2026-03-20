@@ -123,6 +123,8 @@ export function EmptyFallbackComponent({
  * ErrorBoundary component that uses the default error fallback component, unless overridden.
  * Internally uses `react-error-boundary`.
  *
+ * This component must always be used within an ApplicationSessionContext provider.
+ *
  * Use with {@link react-error-boundary#handleError | handleError}
  * @param props
  * @returns
