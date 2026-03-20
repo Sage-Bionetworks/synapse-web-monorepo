@@ -64,4 +64,7 @@ export const allChallenges: QueryWrapperPlotNavProps = {
   name: 'Challenges',
   hideTopLevelControls: true,
   defaultShowPlots: false,
+  columnAliases: {
+    metadataCompletenessTier: 'Metadata Completeness',
+  },
 }
