@@ -1,17 +1,15 @@
-import React from 'react'
-import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { Optional } from '@/utils/types/Optional'
-import { Box, Button, Collapse, Stack } from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { PropsWithChildren, useState } from 'react'
+import React, { PropsWithChildren } from 'react'
 import {
   ErrorBoundary,
   ErrorBoundaryPropsWithComponent,
   FallbackProps,
 } from 'react-error-boundary'
 import FullWidthAlert from '../FullWidthAlert'
-import SignInButton from '../SignInButton'
 import { AlertButtonConfig } from '../FullWidthAlert/FullWidthAlert'
+import SignInButton from '../SignInButton'
+import { ClientError } from './ClientError'
 
 type ErrorBannerProps = {
   error?: string | Error | SynapseClientError | null
@@ -28,54 +26,6 @@ export const SignInPrompt = (): React.ReactNode => {
     </>
   )
 }
-
-export const ClientError = (props: {
-  error: SynapseClientError
-}): React.ReactNode => {
-  const [showDetailedError, setShowDetailedError] = useState(false)
-  const { isAuthenticated } = useSynapseContext()
-  const { error } = props
-  const loginError =
-    (error.status === 403 || error.status === 401) && !isAuthenticated
-  const accessDenied = error.status === 403 && isAuthenticated
-
-  if (loginError) {
-    return <SignInPrompt />
-  } else if (accessDenied) {
-    return (
-      <>
-        <Stack direction="row" spacing={2}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            {YOU_ARE_NOT_AUTHORIZED_MESSAGE}
-          </Box>
-          <Button
-            variant="text"
-            onClick={() => setShowDetailedError(show => !show)}
-          >
-            {showDetailedError ? 'Hide' : 'Show'} details
-          </Button>
-        </Stack>
-        <Collapse in={showDetailedError}>
-          <Box
-            sx={{
-              paddingTop: 1,
-            }}
-          >
-            <pre>{error.reason}</pre>
-          </Box>
-        </Collapse>
-      </>
-    )
-  } else {
-    return <>{error.reason}</>
-  }
-}
-
 export const ErrorBanner = (props: ErrorBannerProps): React.ReactNode => {
   const { error, reloadButtonFn } = props
 
@@ -119,7 +69,9 @@ export const ErrorBanner = (props: ErrorBannerProps): React.ReactNode => {
       isGlobal={false}
       description={
         <>
-          {synapseClientError && <ClientError error={synapseClientError} />}
+          {synapseClientError && (
+            <ClientError error={synapseClientError} reloadFn={reloadButtonFn} />
+          )}
           {jsError && jsError.message}
           {stringError && stringError}
         </>
