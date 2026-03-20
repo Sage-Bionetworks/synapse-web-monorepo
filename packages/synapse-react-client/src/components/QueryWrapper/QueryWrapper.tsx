@@ -54,7 +54,7 @@ export type QueryWrapperProps = PropsWithChildren<{
 }>
 
 /**
- * Internal component that renders after session is initialized
+ * Internal implementation of the QueryWrapper component (wrapped by QueryWrapper).
  */
 function QueryWrapperInternal(props: QueryWrapperProps) {
   const {
