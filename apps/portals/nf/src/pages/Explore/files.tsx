@@ -3,7 +3,7 @@ import type { MetaDescriptor } from 'react-router'
 import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
 export function meta(): MetaDescriptor[] {
-  return [{ title: 'Explore Files | NF Data Portal' }]
+  return [{ title: `Explore Files | ${import.meta.env.VITE_PORTAL_NAME}` }]
 }
 
 function ExploreFiles() {

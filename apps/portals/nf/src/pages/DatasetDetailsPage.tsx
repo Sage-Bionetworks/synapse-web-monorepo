@@ -80,7 +80,7 @@ export function meta({
     return matches.flatMap(match => match.meta ?? [])
   }
   const descriptors: MetaDescriptor[] = [
-    { title: `${loaderData.title} | NF Data Portal` },
+    { title: `${loaderData.title} | ${import.meta.env.VITE_PORTAL_NAME}` },
   ]
   if (loaderData.description) {
     descriptors.push({ name: 'description', content: loaderData.description })

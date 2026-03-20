@@ -10,8 +10,8 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
  * `meta()` inherit these.
  */
 export function meta(): MetaDescriptor[] {
-  const portalName = import.meta.env.VITE_PORTAL_NAME ?? 'NF Data Portal'
-  const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION ?? ''
+  const portalName = import.meta.env.VITE_PORTAL_NAME
+  const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION
   return [
     { title: portalName },
     ...(portalDescription

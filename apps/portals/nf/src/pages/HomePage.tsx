@@ -19,12 +19,10 @@ import {
 } from '../config/synapseConfigs/studies'
 
 export function meta(): MetaDescriptor[] {
-  const portalDescription =
-    import.meta.env.VITE_PORTAL_DESCRIPTION ??
-    'An open science platform for neurofibromatosis research data.'
+  const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION
   const portalUrl = `https://${import.meta.env.VITE_PORTAL_KEY}.synapse.org`
   return [
-    { title: 'NF Data Portal' },
+    { title: import.meta.env.VITE_PORTAL_NAME },
     { name: 'description', content: portalDescription },
     {
       'script:ld+json': {
