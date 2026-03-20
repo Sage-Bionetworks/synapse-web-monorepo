@@ -3,7 +3,6 @@ import {
   useRemoveFilesFromDownloadList,
 } from '@/synapse-queries'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
-import { formatDate } from '@/utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { Box, Button, Tooltip, Typography } from '@mui/material'
 import {
@@ -21,7 +20,6 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
-import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useErrorHandler } from 'react-error-boundary'
 import FileEntityDirectDownload from '../DirectDownload/FileEntityDirectDownload'
@@ -33,7 +31,6 @@ import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import { displayToast } from '../ToastMessage'
-import { UserBadge } from '../UserCard/UserBadge'
 import DirectProgrammaticDownload from './DirectProgrammaticDownload'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
@@ -140,7 +137,7 @@ const getColumns = (args: {
         </a>
       ),
       enableColumnFilter: false,
-      size: 160,
+      size: 430,
     }),
     columnHelper.accessor('fileSizeBytes', {
       header: props => <ColumnHeader {...props} title={'Size'} />,
@@ -153,7 +150,7 @@ const getColumns = (args: {
           </Typography>
         ),
       enableColumnFilter: false,
-      size: 100,
+      size: 117,
     }),
     columnHelper.accessor('fileEntityId', {
       header: props => (
@@ -167,26 +164,12 @@ const getColumns = (args: {
       ),
       cell: ctx => `${ctx.getValue()}.${ctx.row.original.versionNumber}`,
       enableColumnFilter: false,
-      size: 100,
+      size: 143,
     }),
     columnHelper.accessor('projectName', {
       header: props => <ColumnHeader {...props} title={'Project'} />,
       enableColumnFilter: false,
-    }),
-    columnHelper.accessor('addedOn', {
-      header: props => <ColumnHeader {...props} title={'Added On'} />,
-      cell: ctx => formatDate(dayjs(ctx.getValue())),
-      enableColumnFilter: false,
-    }),
-    columnHelper.accessor('createdBy', {
-      header: props => <ColumnHeader {...props} title={'Created By'} />,
-      cell: ctx => <UserBadge userId={ctx.getValue()} />,
-      enableColumnFilter: false,
-    }),
-    columnHelper.accessor('createdOn', {
-      header: props => <ColumnHeader {...props} title={'Created On'} />,
-      cell: ctx => formatDate(dayjs(ctx.getValue())),
-      enableColumnFilter: false,
+      size: 252,
     }),
     columnHelper.display({
       id: 'actions',
