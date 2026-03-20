@@ -251,11 +251,14 @@
     }
 
     .SRC-cardTitleAreaDetails {
+      display: flex;
       flex: 0 0 25%;
       padding-top: var(--baseline-grid);
+      justify-content: flex-end;
       @media (max-width: map.get(SRC.$breakpoints, 'medium')) {
         flex: none;
         padding-top: 0;
+        justify-content: flex-start;
       }
     }
   }
