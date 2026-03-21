@@ -1,6 +1,5 @@
 import { convertDoiToLink } from '@/utils/functions/RegularExpressions'
 import { Component, Fragment } from 'react'
-import { ColumnIconConfigs } from '../../CardContainerLogic'
 import IconSVG from '../../IconSvg/IconSvg'
 
 export type CardLabel = {
@@ -18,7 +17,6 @@ type CardFooterProps = {
   values: CardLabel[]
   isHeader: boolean
   secondaryLabelLimit?: number
-  columnIconOptions?: ColumnIconConfigs
   className?: string
   cardTopContent?: React.ReactNode
 }
@@ -53,19 +51,13 @@ class CardFooter extends Component<CardFooterProps, State> {
     this.setState({ isDesktop: window.innerWidth > 600 })
   }
 
-  renderRowValue = (
-    key: string,
-    value: React.ReactNode,
-    tableColumnName?: string,
-  ) => {
-    const columnIconOptions = this.props.columnIconOptions
+  renderRowValue = (value: React.ReactNode) => {
     if (typeof value !== 'string') {
       // value can sometimes be a react element
       return value
     }
     const valueAsString = value.trim()
     const doiLink = convertDoiToLink(valueAsString)
-
     if (doiLink) {
       return (
         <a target="_blank" rel="noopener noreferrer" href={doiLink}>
@@ -73,39 +65,13 @@ class CardFooter extends Component<CardFooterProps, State> {
         </a>
       )
     }
-    // Only display icon when columnIconOptions is set in config file
-    if (
-      columnIconOptions &&
-      columnIconOptions.columns &&
-      tableColumnName &&
-      Object.keys(columnIconOptions.columns).includes(tableColumnName)
-    ) {
-      const iconProps = columnIconOptions.columns[tableColumnName][value]
-      if (!iconProps) {
-        // if we can't find an icon to match, just return the value
-        return <span>{value}</span>
-      } else {
-        iconProps.sx = { ...iconProps.sx, paddingRight: '0.2rem' }
-        return (
-          <>
-            <IconSVG {...iconProps}></IconSVG>
-            <span style={{ verticalAlign: 'middle' }}>{value}</span>
-          </>
-        )
-      }
-    }
-
     return value
   }
   renderRows = (values: CardLabel[], limit: number, isDesktop: boolean) => {
     return values.map((label, index) => {
-      const { columnDisplayName, value: labelValue, columnName } = label
+      const { columnDisplayName, value: labelValue } = label
       const hideClass = index >= limit ? 'SRC-hidden' : ''
-      const value = this.renderRowValue(
-        columnDisplayName,
-        labelValue,
-        columnName,
-      )
+      const value = this.renderRowValue(labelValue)
       if (isDesktop) {
         return (
           <tr className={'SRC-cardRowDesktop ' + hideClass} key={index}>
