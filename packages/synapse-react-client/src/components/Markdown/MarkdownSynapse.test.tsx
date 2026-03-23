@@ -427,7 +427,7 @@ describe('MarkdownSynapse tests', () => {
     })
 
     it('should not warn when a plot widget is a direct child of a paragraph', () => {
-      // <p> contains a widget directly, transformTree transforms <p> to <div>
+      // <p> contains a widget directly, fixInvalidNesting transforms <p> to <div>
       const { container } = renderComponent({
         markdown: 'Some plot: ${plot?query=select}',
       })
@@ -438,7 +438,7 @@ describe('MarkdownSynapse tests', () => {
 
     it('should not warn when a plot widget is nested inside italic text', () => {
       // <p><em><span data-widgetparams/></em></p>,  shallow check would miss this
-      // transformTree sees the block descendant and transforms <p> to <div>
+      // fixInvalidNesting sees the block descendant and transforms <p> to <div>
       const { container } = renderComponent({
         markdown: '*${plot?query=select}*',
       })
@@ -448,7 +448,7 @@ describe('MarkdownSynapse tests', () => {
     })
 
     it('should not warn when a plot widget is nested inside a link', () => {
-      // <a> contains a widget, transformTree transforms <a> to <div>
+      // <a> contains a widget, fixInvalidNesting transforms <a> to <div>
       const { container } = renderComponent({
         markdown: '[${plot?query=select}](https://synapse.org)',
       })

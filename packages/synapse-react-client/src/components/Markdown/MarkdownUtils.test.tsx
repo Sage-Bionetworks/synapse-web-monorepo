@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   isBlockLevelElement,
   hasBlockLevelDescendant,
-  transformTree,
+  fixInvalidNesting,
 } from './MarkdownUtils'
 
 vi.mock('./widget/MarkdownSynapsePlot', () => ({
@@ -65,14 +65,14 @@ describe('MarkdownUtils DOM', () => {
     })
   })
 
-  describe('transformTree', () => {
+  describe('fixInvalidNesting', () => {
     it('should swap <p> for <div> when it contains a block descendant', () => {
       const doc = new DOMParser().parseFromString(
         '<p><span data-widgetparams="foo"></span></p>',
         'text/html',
       )
 
-      transformTree(doc.body)
+      fixInvalidNesting(doc.body)
 
       expect(doc.body.querySelector('p')).toBeNull()
       expect(doc.body.querySelector('div')).not.toBeNull()
@@ -84,7 +84,7 @@ describe('MarkdownUtils DOM', () => {
         'text/html',
       )
 
-      transformTree(doc.body)
+      fixInvalidNesting(doc.body)
 
       expect(doc.body.querySelector('a')).toBeNull()
       const divLink = doc.body.querySelector('div')
@@ -98,7 +98,7 @@ describe('MarkdownUtils DOM', () => {
         'text/html',
       )
 
-      transformTree(doc.body)
+      fixInvalidNesting(doc.body)
 
       // The outer <p> should now be a <div>
       const outer = doc.body.querySelector('.outer')
@@ -111,7 +111,7 @@ describe('MarkdownUtils DOM', () => {
         'text/html',
       )
 
-      transformTree(doc.body)
+      fixInvalidNesting(doc.body)
 
       const div = doc.body.querySelector('div')
       expect(div?.id).toBe('main')
@@ -125,7 +125,7 @@ describe('MarkdownUtils DOM', () => {
         'text/html',
       )
 
-      transformTree(doc.body)
+      fixInvalidNesting(doc.body)
 
       const tr = doc.body.querySelector('tr')!
       // The whitespace text node between <tr> and <td> should be removed
@@ -139,7 +139,7 @@ describe('MarkdownUtils DOM', () => {
       const html = '<p>Just some <span>text</span></p>'
       const doc = new DOMParser().parseFromString(html, 'text/html')
 
-      transformTree(doc.body)
+      fixInvalidNesting(doc.body)
 
       expect(doc.body.querySelector('p')).not.toBeNull()
       expect(doc.body.querySelector('span')).not.toBeNull()

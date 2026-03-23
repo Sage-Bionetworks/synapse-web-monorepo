@@ -4,7 +4,8 @@ import {
   decodeXml,
   handleLinkClicks,
   processMath,
-  transformTree,
+  // transformTree,
+  fixInvalidNesting,
 } from '@/components/Markdown/MarkdownUtils'
 import {
   useGetWikiPage,
@@ -185,11 +186,16 @@ function RenderMarkdown(props: {
     return markup
   }, [markdown, renderInline])
 
+  // memoize
   if (markup.length > 0) {
     const domParser = new DOMParser()
     const document = domParser.parseFromString(markup, 'text/html')
 
-    transformTree(document.body)
+    // transformTree(document.body)
+    // const test = fixInvalidNesting(document.body)
+    // console.log('test', test)
+
+    fixInvalidNesting(document.body)
 
     return <RecursiveRender element={document.body} markdown={markup} />
   }
