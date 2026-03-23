@@ -14,13 +14,19 @@ import {
 import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
 import {
   Badge,
+  Box,
   Drawer,
+  Fab,
+  IconButton,
   InputAdornment,
   List,
   ListItemButton,
   TextField,
   Tooltip,
+  Typography,
 } from '@mui/material'
+import ChatIcon from '@mui/icons-material/Chat'
+import CloseIcon from '@mui/icons-material/Close'
 import {
   Direction,
   SubmissionSortField,
@@ -32,6 +38,7 @@ import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
 import UserCard from '../UserCard/UserCard'
 import { DEFAULT_SEARCH_QUERY } from '@/utils/searchDefaults'
+import { SynapseChat } from '@/components/SynapseChat/SynapseChat'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
@@ -157,6 +164,7 @@ export function SynapseNavDrawer({
   const [docSiteSearchText, setDocSiteSearchText] = useState<string>('')
   const [isShowingCreateProjectModal, setIsShowingCreateProjectModal] =
     useState<boolean>(false)
+  const [isChatOpen, setIsChatOpen] = useState(false)
 
   const { clearSession } = useApplicationSessionContext()
 
@@ -615,6 +623,59 @@ export function SynapseNavDrawer({
           </div>
         </Drawer>
       </div>
+      <Fab
+        color="primary"
+        aria-label="Open chat"
+        onClick={() => setIsChatOpen(true)}
+        sx={{
+          position: 'fixed',
+          bottom: 20,
+          right: 20,
+          zIndex: 1200,
+        }}
+      >
+        <ChatIcon />
+      </Fab>
+      <Drawer
+        anchor="right"
+        open={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        variant="persistent"
+        className="SynapseChatPanel"
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: {
+              xs: '100%',
+              sm: '400px',
+              md: '450px',
+            },
+            maxWidth: '100vw',
+            height: '100vh',
+            boxShadow: '-4px 0 8px rgba(0,0,0,0.1)',
+            zIndex: 1300,
+          },
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            p: 2,
+            borderBottom: '1px solid',
+            borderColor: 'grey.300',
+            backgroundColor: 'white',
+          }}
+        >
+          <Typography variant="h6">Synapse Assistant</Typography>
+          <IconButton
+            onClick={() => setIsChatOpen(false)}
+            aria-label="Close chat"
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+      </Drawer>
       <CreateProjectModal
         onClose={() => setIsShowingCreateProjectModal(false)}
         isShowingModal={isShowingCreateProjectModal}
