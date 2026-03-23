@@ -11,6 +11,7 @@ import {
   useApplicationSessionContext,
   useSynapseContext,
 } from '@/utils'
+import { extractSynIdFromCurrentUrl } from '@/utils/functions/synIdUtils'
 import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
 import {
   Badge,
@@ -33,6 +34,7 @@ import {
   SubmissionState,
   AgentSession,
 } from '@sage-bionetworks/synapse-types'
+import { AgentPromptSessionContext } from '@sage-bionetworks/synapse-client'
 import { KeyboardEvent, ReactNode, useState } from 'react'
 import { CreateProjectModal } from '../CreateProjectModal/CreateProjectModal'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
@@ -168,7 +170,60 @@ export function SynapseNavDrawer({
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [chatSession, setChatSession] = useState<AgentSession>()
   const [hasUnreadMessage, setHasUnreadMessage] = useState(false)
+  const [promptContext, setPromptContext] = useState<
+    AgentPromptSessionContext[]
+  >([])
   const isChatOpenRef = useRef(isChatOpen)
+  const lastUrlRef = useRef<string>('')
+
+  // Update context when URL changes
+  React.useEffect(() => {
+    const updateContext = () => {
+      const parsed = extractSynIdFromCurrentUrl()
+      if (parsed) {
+        const entityContext: AgentPromptSessionContext = {
+          concreteType: 'org.sagebionetworks.repo.model.agent.EntityContext',
+          entityId: parsed.entityId,
+          ...(parsed.versionNumber && {
+            versionNumber: parsed.versionNumber,
+          }),
+        }
+        setPromptContext([entityContext])
+      } else {
+        setPromptContext([])
+      }
+    }
+
+    // Run on mount and when chat opens
+    updateContext()
+    lastUrlRef.current = window.location.href
+
+    // Only poll for URL changes when chat is open
+    let pollInterval: NodeJS.Timeout | undefined
+    if (isChatOpen) {
+      pollInterval = setInterval(() => {
+        const currentUrl = window.location.href
+        if (currentUrl !== lastUrlRef.current) {
+          lastUrlRef.current = currentUrl
+          updateContext()
+        }
+      }, 100) // Check every 100ms
+    }
+
+    // Also listen for browser navigation events (back/forward buttons)
+    const handlePopState = () => {
+      lastUrlRef.current = window.location.href
+      updateContext()
+    }
+    window.addEventListener('popstate', handlePopState)
+
+    return () => {
+      if (pollInterval) {
+        clearInterval(pollInterval)
+      }
+      window.removeEventListener('popstate', handlePopState)
+    }
+  }, [isChatOpen])
 
   // Keep ref in sync with state
   React.useEffect(() => {
@@ -745,6 +800,9 @@ export function SynapseNavDrawer({
             showAccessLevelMenu={true}
             textboxPositionOffset="0px"
             onNewMessage={handleNewMessage}
+            promptContext={promptContext}
+            onPromptContextChange={setPromptContext}
+            isContextEditable={true}
           />
         </Box>
       </Drawer>

@@ -10,6 +10,9 @@ import {
 } from '@mui/material'
 import { useGetEntity } from 'synapse-react-client/synapse-queries/index'
 import { isFileEntity } from 'synapse-react-client/utils/types/IsType'
+import { useGetEntity } from 'synapse-react-client/synapse-queries'
+import { isFileEntity } from 'synapse-react-client'
+import { parseSynId } from 'synapse-react-client/utils/functions/synIdUtils'
 import { useLocation, useNavigate } from 'react-router'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 import { ReactComponent as RDCADAP } from '../portal-assets/RDCADAP.svg'
@@ -84,20 +87,6 @@ const isRdcapUrl = (url: string) => {
   return parsedURL.hostname.toLowerCase() === RdcaDapUrl
 }
 
-const parseSynIdFromRedirectUrl = (redirectUrl: string | undefined) => {
-  if (!redirectUrl) return null
-  const regex = /Synapse:(syn\d+)(?:\.(\d+))?/i
-  const matches = regex.exec(redirectUrl)
-  if (!matches) {
-    return null
-  }
-
-  return {
-    entityId: matches[1],
-    versionNumber: matches[2] ? parseInt(matches[2]) : undefined,
-  }
-}
-
 const RedirectDialog = (props: RedirectDialogProps): React.ReactNode => {
   const [countdownSeconds, setCountdownSeconds] = useState<number | undefined>()
   const { redirectUrl, onCancelRedirect } = props
@@ -106,8 +95,7 @@ const RedirectDialog = (props: RedirectDialogProps): React.ReactNode => {
   >()
   const navigate = useNavigate()
 
-  const { entityId, versionNumber } =
-    parseSynIdFromRedirectUrl(redirectUrl) ?? {}
+  const { entityId, versionNumber } = parseSynId(redirectUrl) ?? {}
   const { data: entity, isLoading } = useGetEntity(entityId)
   const location = useLocation()
 
