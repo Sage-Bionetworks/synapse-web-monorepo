@@ -45,6 +45,16 @@ export function processResponseDocument(
         } else {
           window.location.href = redirectPath
         }
+
+        // Append a markdown link so the rendered response shows a clickable redirect
+        const markdownLink = `\n[Showing relevant page](${redirectPath})`
+        const chatElement = doc.querySelector('chat')
+        if (chatElement) {
+          chatElement.textContent =
+            (chatElement.textContent ?? '') + markdownLink
+        } else {
+          doc.body.textContent = (doc.body.textContent ?? '') + markdownLink
+        }
       }
     }
     // Remove the actions element from the displayed content
