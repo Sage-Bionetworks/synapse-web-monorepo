@@ -15,10 +15,15 @@
 
 .BasePortalCard__media {
   height: 50%;
+  overflow: hidden;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
     height: 60%;
+  }
+
+  :global(.MuiCardMedia-root) {
+    height: 100%;
   }
 }
 
