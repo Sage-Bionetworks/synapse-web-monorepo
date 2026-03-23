@@ -1,10 +1,13 @@
 import { useSendChatMessageToAgent } from '@/synapse-queries/chat/useChat'
 import {
-  AgentChatRequest,
   AgentChatResponse,
   AgentSession,
   AsynchronousJobStatus,
 } from '@sage-bionetworks/synapse-types'
+import {
+  AgentChatRequest,
+  AgentPromptSessionContext,
+} from '@sage-bionetworks/synapse-client'
 import { useCallback, useMemo, useState } from 'react'
 
 export type ChatState = {
@@ -13,7 +16,10 @@ export type ChatState = {
   chatJobIds: string[]
 }
 
-export function useChatState(agentSession?: AgentSession): ChatState {
+export function useChatState(
+  agentSession?: AgentSession,
+  context?: AgentPromptSessionContext[],
+): ChatState {
   const [chatJobIds, setChatJobIds] = useState<string[]>([])
   // Optimistic update state for latest unprocessed message
   const [pendingMessage, setPendingMessage] = useState<string | null>(null)
@@ -22,7 +28,7 @@ export function useChatState(agentSession?: AgentSession): ChatState {
     {
       onMutate: (newChatMessage: AgentChatRequest) => {
         // set the pending message to the new chat message
-        setPendingMessage(newChatMessage.chatText)
+        setPendingMessage(newChatMessage.chatText ?? null)
       },
     },
     (status: AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>) => {
@@ -42,9 +48,11 @@ export function useChatState(agentSession?: AgentSession): ChatState {
         chatText: message,
         sessionId: agentSession.sessionId,
         enableTrace: true,
+        concreteType: 'org.sagebionetworks.repo.model.agent.AgentChatRequest',
+        context: context,
       })
     },
-    [agentSession?.sessionId, sendChatMessageToAgent],
+    [agentSession?.sessionId, sendChatMessageToAgent, context],
   )
 
   return useMemo(

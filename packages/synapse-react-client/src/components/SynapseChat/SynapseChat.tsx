@@ -15,7 +15,10 @@ import {
   useTheme,
 } from '@mui/material'
 import { Color } from '@mui/material/styles'
-import { GridAgentSessionContext } from '@sage-bionetworks/synapse-client'
+import {
+  AgentPromptSessionContext,
+  GridAgentSessionContext,
+} from '@sage-bionetworks/synapse-client'
 import {
   AgentAccessLevel,
   AgentSession,
@@ -48,6 +51,12 @@ export type SynapseChatProps = {
   showAccessLevelMenu?: boolean
   /* Callback invoked when a new message is received */
   onNewMessage?: () => void
+  /* Optional context to include with each chat message */
+  promptContext?: AgentPromptSessionContext[]
+  /* Callback invoked when prompt context is modified */
+  onPromptContextChange?: (contexts: AgentPromptSessionContext[]) => void
+  /* Whether the context chips should be editable (removable). Default: false */
+  isContextEditable?: boolean
 }
 
 export type ChatInteraction = {
@@ -73,6 +82,9 @@ export function SynapseChat({
   externalChatState,
   showAccessLevelMenu = true,
   onNewMessage,
+  promptContext,
+  onPromptContextChange,
+  isContextEditable = false,
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
   const [localAgentSession, setLocalAgentSession] = useState<AgentSession>()
@@ -99,7 +111,7 @@ export function SynapseChat({
       : AgentAccessLevel.PUBLICLY_ACCESSIBLE,
   )
 
-  const internalChatState = useChatState(agentSession)
+  const internalChatState = useChatState(agentSession, promptContext)
   const chatState = externalChatState ?? internalChatState
   const { pendingMessage, chatJobIds, sendChat } = chatState
 

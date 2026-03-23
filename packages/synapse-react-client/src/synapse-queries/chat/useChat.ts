@@ -4,7 +4,6 @@
 import SynapseClient from '@/synapse-client'
 import { SynapseClientError, useSynapseContext } from '@/utils'
 import {
-  AgentChatRequest,
   AgentChatResponse,
   AgentSession,
   AsynchronousJobStatus,
@@ -15,6 +14,7 @@ import {
   TraceEventsResponse,
   UpdateAgentSessionRequest,
 } from '@sage-bionetworks/synapse-types'
+import { AgentChatRequest } from '@sage-bionetworks/synapse-client'
 import {
   InfiniteData,
   QueryKey,
