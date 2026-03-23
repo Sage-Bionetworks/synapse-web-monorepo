@@ -88,7 +88,7 @@ export function SynapseChat({
   onChatStateChange,
   promptContext,
   onPromptContextChange,
-  isContextEditable = false,
+  isContextEditable = true, // FIXME: should make this default false
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
   const [localAgentSession, setLocalAgentSession] = useState<AgentSession>()
