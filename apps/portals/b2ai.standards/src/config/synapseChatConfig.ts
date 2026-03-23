@@ -2,7 +2,7 @@ import { processResponseDocument } from '@sage-bionetworks/synapse-portal-framew
 import { SynapseChatProps } from 'synapse-react-client'
 
 const synapseChatConfig: SynapseChatProps = {
-  agentRegistrationId: '174',
+  agentRegistrationId: '236',
   chatbotName: 'Bridge2AI Standards Portal Assistant',
   processResponseDocument,
 }
