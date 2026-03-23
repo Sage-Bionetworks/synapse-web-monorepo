@@ -21,6 +21,7 @@ import {
   SEARCH_TERM,
   SEARCH_ROLE,
 } from 'synapse-react-client/utils/functions/SqlFunctions'
+import { useChatDialogContext } from './ChatDialogContext'
 
 type HeaderSearchBoxProps = {
   searchPlaceholder?: string
@@ -41,24 +42,29 @@ const HeaderSearchBox = ({
   roles,
 }: HeaderSearchBoxProps): React.ReactNode => {
   const [role, setRole] = useState('')
+  const [mode, setMode] = useState<'Chat' | 'Search'>('Chat')
   const theme = useTheme()
   const navigate = useNavigate()
-
+  const chatDialogContext = useChatDialogContext()
   const handleTermClick = (term: string) => {
     const trimmedTerm = term.trim()
-    if (path) {
-      const params = new URLSearchParams()
-      params.set(SEARCH_TERM, trimmedTerm)
-      if (role) {
-        params.set(SEARCH_ROLE, role)
+    if (chatDialogContext && mode === 'Chat') {
+      chatDialogContext.openChat(trimmedTerm)
+    } else {
+      if (path) {
+        const params = new URLSearchParams()
+        params.set(SEARCH_TERM, trimmedTerm)
+        if (role) {
+          params.set(SEARCH_ROLE, role)
+        }
+        navigate({
+          pathname: path,
+          search: `?${params.toString()}`,
+        })
       }
-      navigate({
-        pathname: path,
-        search: `?${params.toString()}`,
-      })
-    }
-    if (callback) {
-      callback(trimmedTerm)
+      if (callback) {
+        callback(trimmedTerm)
+      }
     }
   }
 
@@ -94,7 +100,7 @@ const HeaderSearchBox = ({
             },
           })}
         >
-          {roles && (
+          {chatDialogContext ? (
             <FormControl
               sx={theme => ({
                 minWidth: '187px',
@@ -119,40 +125,82 @@ const HeaderSearchBox = ({
                     marginRight: '10px',
                   },
                 }}
-                displayEmpty
-                label="Select a Role"
-                value={role}
-                onChange={handleChange}
+                value={mode}
+                onChange={e => setMode(e.target.value)}
                 IconComponent={KeyboardArrowDown}
               >
-                <MenuItem disabled value="">
-                  <Typography
-                    sx={{
-                      fontStyle: 'italic',
-                      color: 'grey.700',
-                    }}
-                  >
-                    Select a Role
-                  </Typography>
+                <MenuItem value="Chat" sx={{ fontSize: '16px' }}>
+                  <Typography sx={{ display: 'inline' }}>Chat</Typography>
                 </MenuItem>
-                {roles.map(({ value, label }) => (
-                  <MenuItem key={value} value={value} sx={{ fontSize: '16px' }}>
-                    <Typography
-                      sx={{
-                        display: 'inline',
-                      }}
-                    >
-                      {label}
-                    </Typography>
-                  </MenuItem>
-                ))}
+                <MenuItem value="Search" sx={{ fontSize: '16px' }}>
+                  <Typography sx={{ display: 'inline' }}>Search</Typography>
+                </MenuItem>
               </Select>
             </FormControl>
+          ) : (
+            roles && (
+              <FormControl
+                sx={theme => ({
+                  minWidth: '187px',
+                  minHeight: '38px',
+                  height: '100%',
+                  [theme.breakpoints.down('md')]: {
+                    width: '100%',
+                  },
+                })}
+              >
+                <Select
+                  sx={{
+                    backgroundColor: '#FFFF',
+                    height: '48px',
+                    svg: {
+                      color: '#878E95',
+                      width: '24px',
+                      height: '24px',
+                      right: '10px',
+                    },
+                    '.MuiSelect-select': {
+                      marginRight: '10px',
+                    },
+                  }}
+                  displayEmpty
+                  label="Select a Role"
+                  value={role}
+                  onChange={handleChange}
+                  IconComponent={KeyboardArrowDown}
+                >
+                  <MenuItem disabled value="">
+                    <Typography
+                      sx={{
+                        fontStyle: 'italic',
+                        color: 'grey.700',
+                      }}
+                    >
+                      Select a Role
+                    </Typography>
+                  </MenuItem>
+                  {roles.map(({ value, label }) => (
+                    <MenuItem
+                      key={value}
+                      value={value}
+                      sx={{ fontSize: '16px' }}
+                    >
+                      <Typography
+                        sx={{
+                          display: 'inline',
+                        }}
+                      >
+                        {label}
+                      </Typography>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )
           )}
           <PortalFullTextSearchField
             placeholder={searchPlaceholder}
-            path={path}
-            callback={callback}
+            callback={handleTermClick}
             role={role}
             sx={{
               boxShadow: 'none',
