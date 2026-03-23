@@ -18,8 +18,8 @@ import { useNavigate } from 'react-router'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import { useState } from 'react'
 import {
-  FTS_SEARCH_TERM,
-  FTS_SEARCH_ROLE,
+  SEARCH_TERM,
+  SEARCH_ROLE,
 } from 'synapse-react-client/utils/functions/SqlFunctions'
 
 type HeaderSearchBoxProps = {
@@ -48,9 +48,9 @@ const HeaderSearchBox = ({
     const trimmedTerm = term.trim()
     if (path) {
       const params = new URLSearchParams()
-      params.set(FTS_SEARCH_TERM, trimmedTerm)
+      params.set(SEARCH_TERM, trimmedTerm)
       if (role) {
-        params.set(FTS_SEARCH_ROLE, role)
+        params.set(SEARCH_ROLE, role)
       }
       navigate({
         pathname: path,

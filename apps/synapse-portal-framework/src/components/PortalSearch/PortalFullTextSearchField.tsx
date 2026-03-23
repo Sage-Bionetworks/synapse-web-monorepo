@@ -8,8 +8,8 @@ import {
 } from '@mui/material'
 import { useSearchParams, useNavigate } from 'react-router'
 import {
-  FTS_SEARCH_TERM,
-  FTS_SEARCH_ROLE,
+  SEARCH_TERM,
+  SEARCH_ROLE,
 } from 'synapse-react-client/utils/functions/SqlFunctions'
 
 type PortalFullTextSearchFieldProps = TextFieldProps & {
@@ -27,9 +27,7 @@ export function PortalFullTextSearchField({
   ...props
 }: PortalFullTextSearchFieldProps) {
   const [searchParams] = useSearchParams()
-  const [searchInput, setSearchInput] = useState(
-    searchParams.get(FTS_SEARCH_TERM),
-  )
+  const [searchInput, setSearchInput] = useState(searchParams.get(SEARCH_TERM))
   const theme = useTheme()
   const navigate = useNavigate()
 
@@ -47,9 +45,9 @@ export function PortalFullTextSearchField({
         if (event.key === 'Enter' && trimmedInput.length > 0) {
           if (path) {
             const params = new URLSearchParams()
-            params.set(FTS_SEARCH_TERM, trimmedInput)
+            params.set(SEARCH_TERM, trimmedInput)
             if (role) {
-              params.set(FTS_SEARCH_ROLE, role)
+              params.set(SEARCH_ROLE, role)
             }
             navigate({
               pathname: path,
