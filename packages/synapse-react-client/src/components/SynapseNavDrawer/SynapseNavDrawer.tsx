@@ -49,8 +49,6 @@ import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
 import UserCard from '../UserCard/UserCard'
 import { DEFAULT_SEARCH_QUERY } from '@/utils/searchDefaults'
 import { SynapseChat } from '@/components/SynapseChat/SynapseChat'
-import { EntityFinderModal } from '@/components/EntityFinder/EntityFinderModal'
-import { FinderScope } from '@/components/EntityFinder/tree/EntityTree'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
@@ -185,7 +183,6 @@ export function SynapseNavDrawer({
   const [isShowingNewChatConfirmation, setIsShowingNewChatConfirmation] =
     useState(false)
   const [chatJobCount, setChatJobCount] = useState(0)
-  const [isShowingEntityFinder, setIsShowingEntityFinder] = useState(false)
   const isChatOpenRef = useRef(isChatOpen)
   const lastUrlRef = useRef<string>('')
 
@@ -272,10 +269,6 @@ export function SynapseNavDrawer({
 
     setIsShowingNewChatConfirmation(true)
   }, [chatJobCount, startNewChat])
-
-  const handleAddEntity = useCallback(() => {
-    setIsShowingEntityFinder(true)
-  }, [])
 
   // Clear unread indicator whenever chat opens
   React.useEffect(() => {
@@ -856,7 +849,6 @@ export function SynapseNavDrawer({
             promptContext={promptContext}
             onPromptContextChange={setPromptContext}
             isContextEditable={true}
-            onAdd={handleAddEntity}
           />
         </Box>
       </Drawer>
@@ -880,49 +872,6 @@ export function SynapseNavDrawer({
           </Button>
         </DialogActions>
       </Dialog>
-      <EntityFinderModal
-        configuration={{
-          selectMultiple: false,
-          initialScope: FinderScope.ALL_PROJECTS,
-          initialContainer: null,
-        }}
-        show={isShowingEntityFinder}
-        title="Add Entity to Chat Context"
-        confirmButtonCopy="Add"
-        onConfirm={selected => {
-          const newContexts: AgentPromptSessionContext[] = selected.map(
-            (ref): AgentPromptSessionContext => ({
-              concreteType:
-                'org.sagebionetworks.repo.model.agent.EntityContext',
-              entityId: ref.targetId,
-              versionNumber: ref.targetVersionNumber,
-            }),
-          )
-          setPromptContext(prev => {
-            const next = [...prev]
-            for (const ctx of newContexts) {
-              if (
-                ctx.concreteType !==
-                'org.sagebionetworks.repo.model.agent.EntityContext'
-              ) {
-                continue
-              }
-              const alreadyAdded = next.some(
-                c =>
-                  c.concreteType ===
-                    'org.sagebionetworks.repo.model.agent.EntityContext' &&
-                  c.entityId === ctx.entityId,
-              )
-              if (!alreadyAdded) {
-                next.push(ctx)
-              }
-            }
-            return next
-          })
-          setIsShowingEntityFinder(false)
-        }}
-        onCancel={() => setIsShowingEntityFinder(false)}
-      />
       <CreateProjectModal
         onClose={() => setIsShowingCreateProjectModal(false)}
         isShowingModal={isShowingCreateProjectModal}
