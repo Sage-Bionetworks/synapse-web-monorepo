@@ -1,3 +1,4 @@
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import {
   Box,
   Stack,
@@ -23,6 +24,7 @@ import {
 } from 'synapse-react-client/utils/functions/SqlFunctions'
 import { useChatDialogContext } from './ChatDialogContext'
 import { useSynapseContext } from 'synapse-react-client'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
 
 type HeaderSearchBoxProps = {
   searchPlaceholder?: string
@@ -47,9 +49,10 @@ const HeaderSearchBox = ({
   const theme = useTheme()
   const navigate = useNavigate()
   const { isAuthenticated } = useSynapseContext()
+  const isChatEnabled = useGetFeatureFlag(FeatureFlagEnum.SYNAPSE_CHAT)
   const chatDialogContext = useChatDialogContext()
 
-  const showChatOption = isAuthenticated && chatDialogContext
+  const showChatOption = isAuthenticated && chatDialogContext && isChatEnabled
 
   const handleTermClick = (term: string) => {
     const trimmedTerm = term.trim()

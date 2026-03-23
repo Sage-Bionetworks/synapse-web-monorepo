@@ -1,6 +1,3 @@
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
-import { useSynapseContext } from '@/utils'
-import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
 import DraggableDialog from '../DraggableDialog/DraggableDialog'
 import SynapseChat, { SynapseChatProps } from './SynapseChat'
 
@@ -18,12 +15,6 @@ export function SynapsePortalChatDialog({
   onClose,
   ...chatDialogProps
 }: SynapsePortalChatDialogProps) {
-  const { isAuthenticated } = useSynapseContext()
-  const isChatEnabled = useGetFeatureFlag(FeatureFlagEnum.SYNAPSE_CHAT)
-  if (!isAuthenticated || !isChatEnabled) {
-    return null
-  }
-
   return (
     <DraggableDialog
       open={open}
