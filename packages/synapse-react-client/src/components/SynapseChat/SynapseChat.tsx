@@ -31,6 +31,8 @@ import AccessLevelMenu from './AccessLevelMenu'
 import SynapseChatInteraction from './SynapseChatInteraction'
 import SynapseChatMessage from './SynapseChatMessage'
 import { SynapseChatContextChips } from './SynapseChatContextChips'
+import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
+import { FinderScope } from '../EntityFinder/tree/EntityTree'
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
@@ -60,8 +62,6 @@ export type SynapseChatProps = {
   onPromptContextChange?: (contexts: AgentPromptSessionContext[]) => void
   /* Whether the context chips should be editable (removable). Default: false */
   isContextEditable?: boolean
-  /* Callback invoked when the user clicks "Add entity" in the context chips */
-  onAdd?: () => void
 }
 
 export type ChatInteraction = {
@@ -91,7 +91,6 @@ export function SynapseChat({
   promptContext,
   onPromptContextChange,
   isContextEditable = true, // FIXME: should make this default false
-  onAdd,
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
   const [localAgentSession, setLocalAgentSession] = useState<AgentSession>()
@@ -121,6 +120,8 @@ export function SynapseChat({
   const internalChatState = useChatState(agentSession, promptContext)
   const chatState = externalChatState ?? internalChatState
   const { pendingMessage, chatJobIds, sendChat } = chatState
+
+  const [isShowingEntityFinder, setIsShowingEntityFinder] = useState(false)
 
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
@@ -304,7 +305,7 @@ export function SynapseChat({
           backgroundColor: 'white',
         }}
       >
-        {((promptContext && promptContext.length > 0) || onAdd) && (
+        {((promptContext && promptContext.length > 0) || isContextEditable) && (
           <Box sx={{ mb: 1 }}>
             <SynapseChatContextChips
               contexts={promptContext ?? []}
@@ -317,7 +318,11 @@ export function SynapseChat({
                     }
                   : undefined
               }
-              onAdd={onAdd}
+              onAdd={
+                isContextEditable
+                  ? () => setIsShowingEntityFinder(true)
+                  : undefined
+              }
               variant="compact"
             />
           </Box>
@@ -370,6 +375,40 @@ export function SynapseChat({
           </Typography>
         </Box>
       </Box>
+      <EntityFinderModal
+        configuration={{
+          selectMultiple: true,
+          initialScope: FinderScope.ALL_PROJECTS,
+          initialContainer: 'root',
+        }}
+        initialSelected={(promptContext ?? [])
+          .filter(
+            c =>
+              c.concreteType ===
+              'org.sagebionetworks.repo.model.agent.EntityContext',
+          )
+          .map(c => ({
+            targetId: c.entityId!,
+            targetVersionNumber: c.versionNumber,
+          }))}
+        show={isShowingEntityFinder}
+        title="Add Entity to Chat Context"
+        confirmButtonCopy="Add"
+        onConfirm={selected => {
+          if (onPromptContextChange) {
+            onPromptContextChange(
+              selected.map(ref => ({
+                concreteType:
+                  'org.sagebionetworks.repo.model.agent.EntityContext',
+                entityId: ref.targetId,
+                versionNumber: ref.targetVersionNumber,
+              })),
+            )
+          }
+          setIsShowingEntityFinder(false)
+        }}
+        onCancel={() => setIsShowingEntityFinder(false)}
+      />
     </Box>
   )
 }
