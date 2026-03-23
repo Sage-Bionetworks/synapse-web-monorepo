@@ -1,11 +1,12 @@
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useState, useCallback } from 'react'
 import { Outlet } from 'react-router'
 import CookiesNotification from 'synapse-react-client/components/CookiesNotification/CookiesNotification'
 import { SynapseErrorBoundary } from 'synapse-react-client/components/error/ErrorBanner'
 import { SynapseToastContainer } from 'synapse-react-client/components/ToastMessage/index'
-import { SynapsePortalChatFloatingActionButton } from 'synapse-react-client'
+import { SynapsePortalChatDialog } from 'synapse-react-client/components/SynapseChat/SynapsePortalChatDialog'
 import AppInitializer from './components/AppInitializer'
 import { AridhiaIntegration } from './components/AridhiaIntegration'
+import { ChatDialogContext } from './components/ChatDialogContext'
 import Footer from './components/Footer'
 import Navbar from './components/navbar/Navbar'
 import { usePortalContext } from './components/PortalContext'
@@ -22,9 +23,17 @@ export default function App(props: AppProps) {
   const { defaultRealmId, requireAuthentication } = props
   useDocumentTitleFromRoutes()
   const { aridhiaConfig, synapseChatProps } = usePortalContext()
+  const [chatOpen, setChatOpen] = useState(false)
+  const [chatInitialMessage, setChatInitialMessage] = useState<
+    string | undefined
+  >(undefined)
+  const openChat = useCallback((initialMessage: string) => {
+    setChatInitialMessage(initialMessage)
+    setChatOpen(true)
+  }, [])
 
   const content = (
-    <>
+    <ChatDialogContext.Provider value={{ openChat }}>
       <SynapseToastContainer />
       <Navbar />
       <CookiesNotification />
@@ -34,9 +43,14 @@ export default function App(props: AppProps) {
       </main>
       <Footer />
       {synapseChatProps && (
-        <SynapsePortalChatFloatingActionButton {...synapseChatProps} />
+        <SynapsePortalChatDialog
+          open={chatOpen}
+          onClose={() => setChatOpen(false)}
+          initialMessage={chatInitialMessage}
+          {...synapseChatProps}
+        />
       )}
-    </>
+    </ChatDialogContext.Provider>
   )
 
   return (
