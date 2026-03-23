@@ -21,11 +21,10 @@ export function SynapsePortalChatFloatingActionButton({
   ...chatDialogProps
 }: SynapsePortalChatFloatingActionButtonProps) {
   const [open, setOpen] = useState(false)
-  const { accessToken } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
   const isChatEnabled = useGetFeatureFlag(FeatureFlagEnum.SYNAPSE_CHAT)
-
   // Only show the button if the user is logged in and the feature flag is enabled
-  if (!accessToken || !isChatEnabled) {
+  if (!isAuthenticated || !isChatEnabled) {
     return null
   }
 
