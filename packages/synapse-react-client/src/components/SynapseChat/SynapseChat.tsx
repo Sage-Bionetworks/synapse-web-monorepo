@@ -60,6 +60,8 @@ export type SynapseChatProps = {
   onPromptContextChange?: (contexts: AgentPromptSessionContext[]) => void
   /* Whether the context chips should be editable (removable). Default: false */
   isContextEditable?: boolean
+  /* Callback invoked when the user clicks "Add entity" in the context chips */
+  onAdd?: () => void
 }
 
 export type ChatInteraction = {
@@ -89,6 +91,7 @@ export function SynapseChat({
   promptContext,
   onPromptContextChange,
   isContextEditable = true, // FIXME: should make this default false
+  onAdd,
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
   const [localAgentSession, setLocalAgentSession] = useState<AgentSession>()
@@ -301,19 +304,20 @@ export function SynapseChat({
           backgroundColor: 'white',
         }}
       >
-        {promptContext && promptContext.length > 0 && (
+        {((promptContext && promptContext.length > 0) || onAdd) && (
           <Box sx={{ mb: 1 }}>
             <SynapseChatContextChips
-              contexts={promptContext}
+              contexts={promptContext ?? []}
               onRemove={
                 isContextEditable && onPromptContextChange
                   ? context => {
                       onPromptContextChange(
-                        promptContext.filter(c => c !== context),
+                        promptContext!.filter(c => c !== context),
                       )
                     }
                   : undefined
               }
+              onAdd={onAdd}
               variant="compact"
             />
           </Box>
