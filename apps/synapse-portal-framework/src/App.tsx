@@ -2,7 +2,8 @@ import { PropsWithChildren } from 'react'
 import { Outlet } from 'react-router'
 import CookiesNotification from 'synapse-react-client/components/CookiesNotification/CookiesNotification'
 import { SynapseErrorBoundary } from 'synapse-react-client/components/error/ErrorBanner'
-import { SynapseToastContainer } from 'synapse-react-client/components/ToastMessage/index'
+import { SynapseToastContainer } from 'synapse-react-client/components/ToastMessage'
+import { SynapsePortalChatFloatingActionButton } from 'synapse-react-client'
 import AppInitializer from './components/AppInitializer'
 import { AridhiaIntegration } from './components/AridhiaIntegration'
 import Footer from './components/Footer'
@@ -20,7 +21,7 @@ export type AppProps = PropsWithChildren<{
 export default function App(props: AppProps) {
   const { defaultRealmId, requireAuthentication } = props
   useDocumentTitleFromRoutes()
-  const { aridhiaConfig } = usePortalContext()
+  const { aridhiaConfig, synapseChatProps } = usePortalContext()
 
   const content = (
     <>
@@ -32,6 +33,9 @@ export default function App(props: AppProps) {
         <Outlet />
       </main>
       <Footer />
+      {synapseChatProps && (
+        <SynapsePortalChatFloatingActionButton {...synapseChatProps} />
+      )}
     </>
   )
 

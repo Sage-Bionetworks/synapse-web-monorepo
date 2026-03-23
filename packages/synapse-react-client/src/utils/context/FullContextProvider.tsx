@@ -36,6 +36,7 @@ export type FullContextProviderProps = PropsWithChildren<{
   queryClient?: QueryClient
   theme?: ThemeOptions
   applicationSessionContext: ApplicationSessionContextType
+  navigate?: (to: string) => void | Promise<void>
 }>
 
 /**
@@ -61,6 +62,7 @@ export function FullContextProvider(props: FullContextProviderProps) {
     theme,
     isEditingStore: isEditingStoreFromProps,
     applicationSessionContext,
+    navigate,
   } = props
   const isEditingStore = isEditingStoreFromProps || {
     subscribe: () => () => {},
@@ -71,7 +73,9 @@ export function FullContextProvider(props: FullContextProviderProps) {
   return (
     <QueryClientProvider client={queryClient ?? defaultQueryClient}>
       <ThemeProvider theme={theme}>
-        <SynapseContextProvider synapseContext={synapseContext}>
+        <SynapseContextProvider
+          synapseContext={{ ...synapseContext, navigate }}
+        >
           <ApplicationSessionContextProvider
             context={applicationSessionContext}
           >

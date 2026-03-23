@@ -46,6 +46,12 @@ export type SynapseChatProps = {
   defaultAgentAccessLevel?: AgentAccessLevel
   // Whether to show the access level menu for the agent session.
   showAccessLevelMenu?: boolean
+  // Optional function to process the response document before extracting text content
+  // The navigate function will be provided if available (when used within a Router context)
+  processResponseDocument?: (
+    doc: Document,
+    navigate?: (to: string) => void | Promise<void>,
+  ) => void
 }
 
 export type ChatInteraction = {
@@ -70,6 +76,7 @@ export function SynapseChat({
   setExternalSession,
   externalChatState,
   showAccessLevelMenu = true,
+  processResponseDocument,
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
   const [localAgentSession, setLocalAgentSession] = useState<AgentSession>()
@@ -243,7 +250,13 @@ export function SynapseChat({
               )
             })} */}
             {chatJobIds.map(jobId => {
-              return <SynapseChatMessage key={jobId} chatJobId={jobId} />
+              return (
+                <SynapseChatMessage
+                  key={jobId}
+                  chatJobId={jobId}
+                  processResponseDocument={processResponseDocument}
+                />
+              )
             })}
             {pendingMessage && (
               <SynapseChatInteraction
@@ -251,6 +264,7 @@ export function SynapseChat({
                 chatResponseText={''}
                 chatErrorReason={''}
                 scrollIntoView
+                processResponseDocument={processResponseDocument}
               />
             )}
           </List>
