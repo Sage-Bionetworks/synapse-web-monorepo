@@ -1,11 +1,20 @@
 import { AgentPromptSessionContext } from '@sage-bionetworks/synapse-client'
-import { Box, Chip, Stack, Typography } from '@mui/material'
+import { AddCircleOutline } from '@mui/icons-material'
+import {
+  Box,
+  Chip,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import { useState } from 'react'
 import SynapseChatContextChip from './SynapseChatContextChip'
 
 export type SynapseChatContextChipsProps = {
   contexts: AgentPromptSessionContext[]
   onRemove?: (context: AgentPromptSessionContext) => void
+  onAdd?: () => void
   maxVisible?: number
   variant?: 'default' | 'compact'
 }
@@ -13,13 +22,14 @@ export type SynapseChatContextChipsProps = {
 export function SynapseChatContextChips({
   contexts,
   onRemove,
+  onAdd,
   maxVisible,
   variant = 'default',
 }: SynapseChatContextChipsProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
-  // Don't render anything if there are no contexts
-  if (!contexts || contexts.length === 0) {
+  // Don't render anything if there are no contexts and no add handler
+  if ((!contexts || contexts.length === 0) && !onAdd) {
     return null
   }
 
@@ -40,12 +50,21 @@ export function SynapseChatContextChips({
         borderColor: 'grey.200',
       }}
     >
-      <Typography
-        variant="smallText1"
-        sx={{ mb: 1, color: 'grey.700', fontWeight: 500 }}
-      >
-        Context included with your message:
-      </Typography>
+      <Stack direction="row" sx={{ alignItems: 'center', mb: 1 }}>
+        <Typography
+          variant="smallText1"
+          sx={{ color: 'grey.700', fontWeight: 500, flexGrow: 1 }}
+        >
+          Context included with your message:
+        </Typography>
+        {onAdd && (
+          <Tooltip title="Add entity">
+            <IconButton size="medium" onClick={onAdd} aria-label="Add entity">
+              <AddCircleOutline fontSize="medium" />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Stack>
       <Stack
         direction="row"
         sx={{
