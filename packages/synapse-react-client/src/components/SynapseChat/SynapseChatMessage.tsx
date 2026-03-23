@@ -50,10 +50,11 @@ type SynapseChatMessageProps = {
     doc: Document,
     navigate?: (to: string) => void | Promise<void>,
   ) => void
+  onSendChat?: (message: string) => void
 }
 
 export default function SynapseChatMessage(props: SynapseChatMessageProps) {
-  const { chatJobId, processResponseDocument } = props
+  const { chatJobId, processResponseDocument, onSendChat } = props
   const { data: asyncJobStatus } = usePollAsynchronousJob(chatJobId)
 
   const chatRequest = asyncJobStatus?.requestBody as AgentChatRequest
@@ -75,6 +76,7 @@ export default function SynapseChatMessage(props: SynapseChatMessageProps) {
       chatResponseTrace={traceEvents}
       chatErrorReason={chatError}
       processResponseDocument={processResponseDocument}
+      onSendChat={onSendChat}
     />
   )
 }

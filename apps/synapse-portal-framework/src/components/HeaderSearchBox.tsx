@@ -22,6 +22,7 @@ import {
   SEARCH_ROLE,
 } from 'synapse-react-client/utils/functions/SqlFunctions'
 import { useChatDialogContext } from './ChatDialogContext'
+import { useSynapseContext } from 'synapse-react-client'
 
 type HeaderSearchBoxProps = {
   searchPlaceholder?: string
@@ -45,7 +46,11 @@ const HeaderSearchBox = ({
   const [mode, setMode] = useState<'Chat' | 'Search'>('Chat')
   const theme = useTheme()
   const navigate = useNavigate()
+  const { isAuthenticated } = useSynapseContext()
   const chatDialogContext = useChatDialogContext()
+
+  const showChatOption = isAuthenticated && chatDialogContext
+
   const handleTermClick = (term: string) => {
     const trimmedTerm = term.trim()
     if (chatDialogContext && mode === 'Chat') {
@@ -100,7 +105,7 @@ const HeaderSearchBox = ({
             },
           })}
         >
-          {chatDialogContext ? (
+          {showChatOption ? (
             <FormControl
               sx={theme => ({
                 minWidth: '187px',

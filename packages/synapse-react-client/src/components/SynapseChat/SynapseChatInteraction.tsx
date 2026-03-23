@@ -11,9 +11,12 @@ import {
   Alert,
   Box,
   Button,
+  Chip,
   Collapse,
   ListItem,
   ListItemText,
+  Stack,
+  Tooltip,
   useTheme,
 } from '@mui/material'
 import { Color } from '@mui/material/styles'
@@ -32,6 +35,7 @@ export type SynapseChatInteractionProps = {
     doc: Document,
     navigate?: (to: string) => void | Promise<void>,
   ) => void
+  onSendChat?: (message: string) => void
 }
 
 // Show tool calls in the trace. Useful for development. We may want to show them to users in the future.
@@ -60,6 +64,7 @@ export function SynapseChatInteraction({
   chatResponseTrace,
   scrollIntoView = false,
   processResponseDocument,
+  onSendChat,
 }: SynapseChatInteractionProps) {
   const theme = useTheme()
   const ref = useRef<HTMLLIElement | null>(null)
@@ -102,26 +107,47 @@ export function SynapseChatInteraction({
     : `${showTrace ? 'Hide' : 'Show'} Trace`
 
   const textContent = useMemo(() => {
-    const parser = new DOMParser()
-    const doc = parser.parseFromString(chatResponseText ?? '', 'text/html')
+    try {
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(chatResponseText ?? '', 'text/html')
 
-    // Remove tool_name elements
-    const elementsToRemove = doc.querySelectorAll('tool_name')
-    elementsToRemove.forEach(element => element.remove())
+      // Remove tool_name elements
+      const elementsToRemove = doc.querySelectorAll('tool_name')
+      elementsToRemove.forEach(element => element.remove())
 
-    // Allow custom processing of the response document
-    if (processResponseDocument) {
-      processResponseDocument(doc, navigate)
+      // Remove guideprompt elements
+      const guidePromptElements = doc.querySelectorAll('guideprompt')
+      guidePromptElements.forEach(element => element.remove())
+
+      // Allow custom processing of the response document
+      if (processResponseDocument) {
+        processResponseDocument(doc, navigate)
+      }
+
+      // Extract text from <chat> element if present, otherwise use full body text
+      const chatElement = doc.querySelector('chat')
+      if (chatElement) {
+        return chatElement.textContent ?? ''
+      }
+
+      return doc.body.textContent ?? ''
+    } catch (e) {
+      console.error(e)
+      return chatResponseText ?? ''
     }
-
-    // Extract text from <chat> element if present, otherwise use full body text
-    const chatElement = doc.querySelector('chat')
-    if (chatElement) {
-      return chatElement.textContent ?? ''
-    }
-
-    return doc.body.textContent ?? ''
   }, [chatResponseText, processResponseDocument, navigate])
+  const guidePrompts = useMemo(() => {
+    try {
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(chatResponseText ?? '', 'text/html')
+      return Array.from(doc.querySelectorAll('guideprompt'))
+        .map(el => el.textContent?.trim())
+        .filter((t): t is string => !!t)
+    } catch (e) {
+      console.error(e)
+      return []
+    }
+  }, [chatResponseText])
 
   return (
     <>
@@ -232,6 +258,22 @@ export function SynapseChatInteraction({
             )}
           </Box>
           {textContent && <MarkdownSynapse markdown={textContent} />}
+          {onSendChat && guidePrompts.length > 0 && (
+            <Stack direction="row" flexWrap="wrap" gap={1} mt={1}>
+              {guidePrompts.map(prompt => (
+                <Tooltip key={prompt} title={prompt}>
+                  <Chip
+                    label={prompt}
+                    variant="outlined"
+                    color="primary"
+                    clickable
+                    onClick={() => onSendChat(prompt)}
+                    sx={{ maxWidth: 200 }}
+                  />
+                </Tooltip>
+              ))}
+            </Stack>
+          )}
         </Box>
       </ListItem>
       {chatErrorReason && (

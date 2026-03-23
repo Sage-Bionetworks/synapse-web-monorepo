@@ -255,6 +255,7 @@ export function SynapseChat({
                   key={jobId}
                   chatJobId={jobId}
                   processResponseDocument={processResponseDocument}
+                  onSendChat={sendChat}
                 />
               )
             })}
@@ -265,6 +266,7 @@ export function SynapseChat({
                 chatErrorReason={''}
                 scrollIntoView
                 processResponseDocument={processResponseDocument}
+                onSendChat={sendChat}
               />
             )}
           </List>
