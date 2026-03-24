@@ -66,8 +66,8 @@ export default [
         'Explore/Studies/:studyId',
         'pages/StudyDetailsPage/StudyDetailsPage.tsx',
         [
-          index('pages/StudyDetailsPage/StudyDetailsTabIndex.tsx'),
-          route('*', 'pages/StudyDetailsPage/StudyDetailsTabWildcard.tsx'),
+          index('pages/StudyDetailsPage/StudyDetailsPageIndex.tsx'),
+          route('*', 'pages/StudyDetailsPage/StudyDetailsPageWildcard.tsx'),
           route('Details', 'pages/StudyDetailsPage/StudyDetailsTab.tsx'),
           route('Datasets', 'pages/StudyDetailsPage/StudyDatasetsTab.tsx'),
           route('Files', 'pages/StudyDetailsPage/StudyFilesTab.tsx'),
@@ -117,10 +117,12 @@ export default [
         'Organizations/:abbreviation',
         'pages/OrganizationDetailsPage/OrganizationDetailsPage.tsx',
         [
-          index('pages/OrganizationDetailsPage/OrganizationDetailsIndex.tsx'),
+          index(
+            'pages/OrganizationDetailsPage/OrganizationDetailsPageIndex.tsx',
+          ),
           route(
             '*',
-            'pages/OrganizationDetailsPage/OrganizationDetailsWildcard.tsx',
+            'pages/OrganizationDetailsPage/OrganizationDetailsPageWildcard.tsx',
           ),
           route(
             'Details',

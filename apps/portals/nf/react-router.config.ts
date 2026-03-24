@@ -4,58 +4,25 @@ import { preloadDetailPageMetadata } from '@sage-bionetworks/synapse-portal-fram
 import type { DetailPageMetadataConfig } from '@sage-bionetworks/synapse-portal-framework/utils/fetchDetailPageMetadata'
 import { preloadAllCroissantMetadata } from '@sage-bionetworks/synapse-portal-framework/utils/fetchCroissantMetadata'
 import sitemapConfig from './src/config/sitemapConfig'
-import {
-  datasetsSql,
-  fundersSql,
-  hackathonsSql,
-  initiativesSql,
-  studiesSql,
-  toolsSql,
-} from './src/config/resources'
+import { metadataConfig as initiativeMetadata } from './src/pages/InitiativeDetailsPage.config'
+import { metadataConfig as datasetMetadata } from './src/pages/DatasetDetailsPage.config'
+import { metadataConfig as studyMetadata } from './src/pages/StudyDetailsPage/StudyDetailsPage.config'
+import { metadataConfig as toolMetadata } from './src/pages/ToolDetailsPage/ToolDetailsPage.config'
+import { metadataConfig as hackathonMetadata } from './src/pages/HackathonDetailsPage/HackathonDetailsPage.config'
+import { metadataConfig as orgMetadata } from './src/pages/OrganizationDetailsPage/OrganizationDetailsPage.config'
 
 /**
  * Metadata configs for each detail page type.
- * These map to the DetailPageMetadataConfig defined in each detail page component.
- * The `paramName` must match the `primaryKeyColumn` in sitemapConfig for the
- * same table, so that cache keys align with what the loader() functions produce.
+ * Imported from their respective detail page modules so there is a single
+ * source of truth — no duplicate config objects between here and the loaders.
  */
 const metadataConfigs: DetailPageMetadataConfig[] = [
-  {
-    sql: initiativesSql,
-    titleColumn: 'initiative',
-    descriptionColumn: 'summary',
-    paramName: 'initiative',
-  },
-  {
-    sql: datasetsSql,
-    titleColumn: 'title',
-    descriptionColumn: 'description',
-    paramName: 'id',
-  },
-  {
-    sql: studiesSql,
-    titleColumn: 'studyName',
-    descriptionColumn: 'summary',
-    paramName: 'studyId',
-  },
-  {
-    sql: toolsSql,
-    titleColumn: 'resourceName',
-    descriptionColumn: 'description',
-    paramName: 'resourceId',
-  },
-  {
-    sql: hackathonsSql,
-    titleColumn: 'name',
-    descriptionColumn: 'summary',
-    paramName: 'id',
-  },
-  {
-    sql: fundersSql,
-    titleColumn: 'organizationName',
-    descriptionColumn: 'summary',
-    paramName: 'abbreviation',
-  },
+  initiativeMetadata,
+  datasetMetadata,
+  studyMetadata,
+  toolMetadata,
+  hackathonMetadata,
+  orgMetadata,
 ]
 
 export default {

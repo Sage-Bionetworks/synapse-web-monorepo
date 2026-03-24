@@ -1,11 +1,7 @@
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import {
-  fetchDetailPageMetadata,
-  type DetailPageMetadataConfig,
-} from '@sage-bionetworks/synapse-portal-framework/utils/fetchDetailPageMetadata'
+import { createDetailPageRouteExports } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import type { MetaDescriptor } from 'react-router'
 import { useParams } from 'react-router'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import ErrorPage, {
@@ -15,55 +11,16 @@ import { initiativesSql, studiesSql } from '../config/resources'
 import { columnAliases } from '../config/synapseConfigs/commonProps'
 import { initiativeCardConfiguration } from '../config/synapseConfigs/initiatives'
 import { studyCardConfiguration } from '../config/synapseConfigs/studies'
+import { metadataConfig } from './InitiativeDetailsPage.config'
 
-const metadataConfig: DetailPageMetadataConfig = {
-  sql: initiativesSql,
-  titleColumn: 'initiative',
-  descriptionColumn: 'summary',
-  paramName: 'initiative',
-}
+export { metadataConfig }
 
-export async function loader({ params }: { params: { initiative?: string } }) {
-  if (!params.initiative) return { title: null, description: null }
-  return fetchDetailPageMetadata(metadataConfig, params.initiative)
-}
-
-export async function clientLoader({
-  params,
-  serverLoader,
-}: {
-  params: { initiative?: string }
-  serverLoader: () => Promise<{
-    title: string | null
-    description: string | null
-  }>
-}) {
-  try {
-    return await serverLoader()
-  } catch {
-    if (!params.initiative) return { title: null, description: null }
-    return fetchDetailPageMetadata(metadataConfig, params.initiative)
-  }
-}
-
-export function meta({
-  loaderData,
-  matches,
-}: {
-  loaderData?: { title: string | null; description: string | null }
-  matches: Array<{ meta: MetaDescriptor[] }>
-}): MetaDescriptor[] {
-  if (!loaderData?.title) {
-    return matches.flatMap(match => match.meta ?? [])
-  }
-  const descriptors: MetaDescriptor[] = [
-    { title: `${loaderData.title} | ${import.meta.env.VITE_PORTAL_NAME}` },
-  ]
-  if (loaderData.description) {
-    descriptors.push({ name: 'description', content: loaderData.description })
-  }
-  return descriptors
-}
+const _routeExports = createDetailPageRouteExports(metadataConfig, {
+  portalName: import.meta.env.VITE_PORTAL_NAME,
+})
+export const loader = _routeExports.loader
+export const clientLoader = _routeExports.clientLoader
+export const meta = _routeExports.meta
 
 function InitiativeDetailsPage() {
   const { initiative } = useParams<{ initiative: string }>()

@@ -5,11 +5,7 @@ import {
   DetailsPageTabConfig,
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
-import {
-  fetchDetailPageMetadata,
-  type DetailPageMetadataConfig,
-} from '@sage-bionetworks/synapse-portal-framework/utils/fetchDetailPageMetadata'
-import type { MetaDescriptor } from 'react-router'
+import { createDetailPageRouteExports } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
 import { Outlet, useParams } from 'react-router'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
@@ -17,59 +13,16 @@ import {
   ORGANIZATION_DATA_TAB_PATH,
   ORGANIZATION_DETAILS_TAB_PATH,
 } from '@/config/routeConstants'
+import { metadataConfig } from './OrganizationDetailsPage.config'
 
-const metadataConfig: DetailPageMetadataConfig = {
-  sql: fundersSql,
-  titleColumn: 'organizationName',
-  descriptionColumn: 'summary',
-  paramName: 'abbreviation',
-}
+export { metadataConfig }
 
-export async function loader({
-  params,
-}: {
-  params: { abbreviation?: string }
-}) {
-  if (!params.abbreviation) return { title: null, description: null }
-  return fetchDetailPageMetadata(metadataConfig, params.abbreviation)
-}
-
-export async function clientLoader({
-  params,
-  serverLoader,
-}: {
-  params: { abbreviation?: string }
-  serverLoader: () => Promise<{
-    title: string | null
-    description: string | null
-  }>
-}) {
-  try {
-    return await serverLoader()
-  } catch {
-    if (!params.abbreviation) return { title: null, description: null }
-    return fetchDetailPageMetadata(metadataConfig, params.abbreviation)
-  }
-}
-
-export function meta({
-  loaderData,
-  matches,
-}: {
-  loaderData?: { title: string | null; description: string | null }
-  matches: Array<{ meta: MetaDescriptor[] }>
-}): MetaDescriptor[] {
-  if (!loaderData?.title) {
-    return matches.flatMap(match => match.meta ?? [])
-  }
-  const descriptors: MetaDescriptor[] = [
-    { title: `${loaderData.title} | ${import.meta.env.VITE_PORTAL_NAME}` },
-  ]
-  if (loaderData.description) {
-    descriptors.push({ name: 'description', content: loaderData.description })
-  }
-  return descriptors
-}
+const _routeExports = createDetailPageRouteExports(metadataConfig, {
+  portalName: import.meta.env.VITE_PORTAL_NAME,
+})
+export const loader = _routeExports.loader
+export const clientLoader = _routeExports.clientLoader
+export const meta = _routeExports.meta
 
 const tabConfig: DetailsPageTabConfig[] = [
   {

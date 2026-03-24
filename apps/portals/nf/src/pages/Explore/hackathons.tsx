@@ -1,14 +1,11 @@
 import hackathons from '@/config/synapseConfigs/hackathons'
-import type { MetaDescriptor } from 'react-router'
+import { createStaticMeta } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
 import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
-export function meta(): MetaDescriptor[] {
-  return [
-    {
-      title: `Explore Hackathon Projects | ${import.meta.env.VITE_PORTAL_NAME}`,
-    },
-  ]
-}
+export const meta = createStaticMeta(
+  'Explore Hackathon Projects',
+  import.meta.env.VITE_PORTAL_NAME,
+)
 
 function ExploreHackathons() {
   return <QueryWrapperPlotNav {...hackathons} />
