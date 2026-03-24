@@ -38,15 +38,20 @@ export function processResponseDocument(
 
         // If there's a query element, format the path with encoded query
         if (queryElement) {
-          // Use innerHTML to access CDATA content (textContent is empty for CDATA sections)
-          // This is safe because we immediately extract just the text and URI-encode it
-          let query = queryElement.innerHTML.trim()
-          // Remove CDATA wrapper if present (<!--[CDATA[ ... ]]-->)
-          query = query
-            .replace(/^<!--\[CDATA\[/, '')
-            .replace(/\]\]-->$/, '')
+          // Read child nodes directly to avoid innerHTML re-parsing HTML.
+          // In HTML-parsed documents, CDATA sections become comment nodes whose
+          // .data contains the raw content wrapped in [CDATA[ ... ]].
+          const query = Array.from(queryElement.childNodes)
+            .map(node => {
+              if (node.nodeType === Node.COMMENT_NODE) {
+                return (node as Comment).data
+                  .replace(/^\[CDATA\[/, '')
+                  .replace(/\]\]$/, '')
+              }
+              return node.textContent ?? ''
+            })
+            .join('')
             .trim()
-          // encodeURIComponent ensures any HTML/script content is safely encoded
           redirectPath = `${target}?QueryWrapper0=${encodeURIComponent(query)}`
         }
 
