@@ -11,8 +11,6 @@ import { Color } from '@mui/material/styles'
 import { FormEventHandler, KeyboardEventHandler, useState } from 'react'
 import { getSearchToken } from '../SynapseNavDrawer/SynapseNavDrawer'
 import { parseSynId } from '@/utils/functions/RegularExpressions'
-import { useGetFeatureFlag } from '../../synapse-queries/featureflags/useGetFeatureFlag'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 
 export type SynapseHomepageChatSearchProps = {
   gotoPlace: (href: string) => void
@@ -34,7 +32,6 @@ export function SynapseHomepageChatSearch({
   const [searchValue, setSearchValue] = useState('')
   const [chatValue, setChatValue] = useState('')
   const [mode, setMode] = useState(SearchMode.SEARCH)
-  const searchV2Enabled = useGetFeatureFlag(FeatureFlagEnum.SEARCHV2_ENABLED)
 
   const executeSearch = () => {
     if (mode == SearchMode.SEARCH) {
@@ -47,17 +44,11 @@ export function SynapseHomepageChatSearch({
         gotoPlace(`/Synapse:${synIdWithVersion}`)
         return
       }
-      if (searchV2Enabled) {
-        gotoPlace(
-          `/SearchV2:default?query=${getSearchToken(
-            searchValueCleaned.split(/[ ,]+/),
-          )}`,
-        )
-      } else {
-        gotoPlace(
-          `/Search:${getSearchToken(searchValueCleaned.split(/[ ,]+/))}`,
-        )
-      }
+      gotoPlace(
+        `/SearchV2:default?query=${getSearchToken(
+          searchValueCleaned.split(/[ ,]+/),
+        )}`,
+      )
     } else {
       gotoPlace(`/Chat:initialMessage=${encodeURIComponent(chatValue)}`)
     }

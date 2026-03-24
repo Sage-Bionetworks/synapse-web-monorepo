@@ -1,7 +1,6 @@
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
 import {
   useAddFileToDownloadList,
-  useAddToDownloadList,
   useGetAddToDownloadListStats,
   useGetEntity,
   useGetVersions,
@@ -19,13 +18,13 @@ import {
   EntityType,
 } from '@sage-bionetworks/synapse-client'
 import {
-  AddToDownloadListRequest,
   ENTITY_VIEW_TYPE_MASK_FILE,
   PaginatedResults,
   VersionInfo,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { createRef } from 'react'
 import {
   EntityDownloadButton,
   getDownloadActionsForEntityType,
@@ -34,6 +33,19 @@ import {
 vi.mock('@/utils/context/SynapseContext')
 vi.mock('@/synapse-queries')
 vi.mock('@/utils/hooks/useDirectDownloadHandler')
+
+vi.mock('../EntityDownloadConfirmation', () => ({
+  EntityDownloadConfirmation: (props: {
+    entityId: string
+    handleClose: () => void
+    onIsLoadingChange: (isLoading: boolean) => void
+  }) => (
+    <div data-testid="download-confirmation">
+      <span>{props.entityId}</span>
+      <button onClick={props.handleClose}>Close Confirmation</button>
+    </div>
+  ),
+}))
 
 // This test will fail if a new EntityType is added and not handled in getDownloadActionsForEntityType
 describe('getDownloadActionsForEntityType', () => {
@@ -48,7 +60,12 @@ describe('getDownloadActionsForEntityType', () => {
 })
 
 describe('EntityDownloadButton', () => {
+  let confirmationContainer: HTMLDivElement
+
   beforeEach(() => {
+    confirmationContainer = document.createElement('div')
+    document.body.appendChild(confirmationContainer)
+
     vi.mocked(useGetEntity).mockReturnValue(
       getUseQuerySuccessMock(mockFileEntityData.entity),
     )
@@ -64,10 +81,13 @@ describe('EntityDownloadButton', () => {
     vi.mocked(useAddFileToDownloadList).mockReturnValue(
       getUseMutationIdleMock(),
     )
-    vi.mocked(useAddToDownloadList).mockReturnValue(getUseMutationIdleMock())
     vi.mocked(useDirectDownloadHandler).mockReturnValue({
       downloadFile: vi.fn(),
     })
+  })
+
+  afterEach(() => {
+    document.body.removeChild(confirmationContainer)
   })
 
   async function openDropdown() {
@@ -133,18 +153,14 @@ describe('EntityDownloadButton', () => {
   })
 
   describe('recursive downloads for folders', () => {
-    let mockAddToDownloadList: ReturnType<typeof getUseMutationIdleMock>
     beforeEach(() => {
       vi.mocked(useSynapseContext).mockReturnValue({
         isAuthenticated: true,
         downloadCartPageUrl: '/DownloadCart',
       } as unknown as ReturnType<typeof useSynapseContext>)
-
-      mockAddToDownloadList = getUseMutationIdleMock()
-      vi.mocked(useAddToDownloadList).mockReturnValue(mockAddToDownloadList)
     })
 
-    it('sets recursive: true when adding a folder to download cart', async () => {
+    it('shows download confirmation when adding a folder to download cart', async () => {
       const folderId = 'syn123456'
       vi.mocked(useGetEntity).mockReturnValue(
         getUseQuerySuccessMock({
@@ -162,16 +178,48 @@ describe('EntityDownloadButton', () => {
         />,
       )
 
+      expect(
+        screen.queryByTestId('download-confirmation'),
+      ).not.toBeInTheDocument()
+
       await openDropdown()
       const addToCartMenuItem = screen.getByText('Add to Download Cart')
       await userEvent.click(addToCartMenuItem)
 
-      expect(mockAddToDownloadList.mutate).toHaveBeenCalledWith({
-        parentId: folderId,
-        concreteType:
-          'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-        recursive: true,
-      } satisfies AddToDownloadListRequest)
+      expect(screen.getByTestId('download-confirmation')).toBeInTheDocument()
+    })
+
+    it('renders download confirmation into the portal container when provided', async () => {
+      const folderId = 'syn123456'
+      vi.mocked(useGetEntity).mockReturnValue(
+        getUseQuerySuccessMock({
+          ...mockFileEntityData.entity,
+          id: folderId,
+          concreteType: convertToConcreteEntityType(EntityType.folder),
+        }),
+      )
+
+      const portalRef = createRef<HTMLDivElement>()
+      // Manually assign since the container is not rendered by React
+      ;(portalRef as { current: HTMLDivElement }).current =
+        confirmationContainer
+
+      render(
+        <EntityDownloadButton
+          entityId={folderId}
+          name="Test Folder"
+          entityType={EntityType.folder}
+          downloadConfirmationContainer={portalRef}
+        />,
+      )
+
+      await openDropdown()
+      await userEvent.click(screen.getByText('Add to Download Cart'))
+
+      // Confirmation renders inside the portal container, not inline with the button
+      expect(confirmationContainer).toContainElement(
+        screen.getByTestId('download-confirmation'),
+      )
     })
 
     it('enables Add to Download Cart when folder has files in nested subfolders', async () => {
@@ -242,7 +290,7 @@ describe('EntityDownloadButton', () => {
       expect(addToCartMenuItem).toHaveAttribute('aria-disabled', 'true')
     })
 
-    it('sets recursive: false when adding a dataset to download cart', async () => {
+    it('shows download confirmation when adding a dataset to download cart', async () => {
       const datasetId = 'syn789012'
       vi.mocked(useGetEntity).mockReturnValue(
         getUseQuerySuccessMock({
@@ -271,6 +319,10 @@ describe('EntityDownloadButton', () => {
           totalNumberOfResults: 1,
         }),
       )
+      const mockAddFileToDownloadList = getUseMutationIdleMock()
+      vi.mocked(useAddFileToDownloadList).mockReturnValue(
+        mockAddFileToDownloadList,
+      )
 
       render(
         <EntityDownloadButton
@@ -280,19 +332,19 @@ describe('EntityDownloadButton', () => {
         />,
       )
 
+      expect(
+        screen.queryByTestId('download-confirmation'),
+      ).not.toBeInTheDocument()
+
       await openDropdown()
       const addToCartMenuItem = screen.getByText('Add to Download Cart')
       await userEvent.click(addToCartMenuItem)
 
-      expect(mockAddToDownloadList.mutate).toHaveBeenCalledWith({
-        parentId: datasetId,
-        useVersionNumber: true,
-        concreteType:
-          'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-      } satisfies AddToDownloadListRequest)
+      expect(screen.getByTestId('download-confirmation')).toBeInTheDocument()
+      expect(mockAddFileToDownloadList.mutate).not.toHaveBeenCalled()
     })
 
-    it('uses a query (no recursive param) when adding an entityview to download cart', async () => {
+    it('shows download confirmation when adding an entityview to download cart', async () => {
       const entityViewId = 'syn345678'
       vi.mocked(useGetEntity).mockReturnValue(
         getUseQuerySuccessMock({
@@ -311,17 +363,41 @@ describe('EntityDownloadButton', () => {
         />,
       )
 
+      expect(
+        screen.queryByTestId('download-confirmation'),
+      ).not.toBeInTheDocument()
+
       await openDropdown()
       const addToCartMenuItem = screen.getByText('Add to Download Cart')
       await userEvent.click(addToCartMenuItem)
 
-      expect(mockAddToDownloadList.mutate).toHaveBeenCalledWith({
-        concreteType:
-          'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-        query: {
-          sql: `SELECT * FROM ${entityViewId}`,
-        },
-      } satisfies AddToDownloadListRequest)
+      expect(screen.getByTestId('download-confirmation')).toBeInTheDocument()
+    })
+  })
+
+  it('directly adds file to download list without showing confirmation', async () => {
+    const mockAddFileToDownloadList = getUseMutationIdleMock()
+    vi.mocked(useAddFileToDownloadList).mockReturnValue(
+      mockAddFileToDownloadList,
+    )
+
+    render(
+      <EntityDownloadButton
+        entityId={mockFileEntityData.id}
+        name={mockFileEntityData.name}
+        entityType={EntityType.file}
+      />,
+    )
+
+    await openDropdown()
+    await userEvent.click(screen.getByText('Add to Download Cart'))
+
+    expect(
+      screen.queryByTestId('download-confirmation'),
+    ).not.toBeInTheDocument()
+    expect(mockAddFileToDownloadList.mutate).toHaveBeenCalledWith({
+      entityId: mockFileEntityData.id,
+      entityVersionNumber: 3,
     })
   })
 })

@@ -3,13 +3,13 @@ import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
 import { Box, Stack } from '@mui/material'
 import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
 import React, { CSSProperties, forwardRef } from 'react'
-import { ColumnIconConfigs, DescriptionConfig } from '../CardContainerLogic'
+import { DescriptionConfig } from '../CardContainerLogic'
 import HeaderCard, { HeaderCardVariant } from '../HeaderCard'
 import { CardFooter } from '../row_renderers/utils'
+import { SmartLink } from '../SmartLink/SmartLink'
+import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
 import { FileHandleLink } from '../widgets/FileHandleLink'
 import { CollapsibleDescription } from './CollapsibleDescription'
-import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
-import { SmartLink } from '../SmartLink/SmartLink'
 
 /** Resolved CTA link configuration with actual href values (as opposed to CTACardLink which uses column names) */
 export type CTALinkConfig = {
@@ -67,10 +67,6 @@ export type GenericCardProps = {
    */
   secondaryLabelLimit?: number
   /**
-   * Options for displaying icons with the labels in the card footer
-   */
-  columnIconOptions?: ColumnIconConfigs
-  /**
    * Optional configuration for displaying CTA button(s) on the card. Accepts a single config or an array.
    */
   ctaLinkConfig?: CTALinkConfig | CTALinkConfig[]
@@ -86,6 +82,10 @@ export type GenericCardProps = {
    * Optional ReactNode to be rendered next to the card type
    */
   cardTypeAdornment?: React.ReactNode
+  /**
+   * Optional content to render to the right of the title/subtitle/description area.
+   */
+  titleAreaRightContent?: React.ReactNode
   /**
    * Character count threshold for truncating description
    * @default 400
@@ -119,11 +119,11 @@ export const GenericCard = forwardRef(function GenericCard(
     useStylesForDisplayedImage = false,
     labels = EMPTY_CARD_LABEL_ARRAY,
     secondaryLabelLimit,
-    columnIconOptions,
     ctaLinkConfig,
     renderedIconList,
     sustainabilityScorecard,
     cardTypeAdornment,
+    titleAreaRightContent,
     charCountCutoff,
   } = props
 
@@ -192,57 +192,68 @@ export const GenericCard = forwardRef(function GenericCard(
             {cardTypeAdornment}
           </Stack>
           {renderedIconList}
-          <div>
-            <h3
-              className="SRC-boldText SRC-blackText"
-              style={{ margin: 'none' }}
-            >
-              {!titleAsFileHandleLinkConfiguration && (
-                <GenericCardTitle
-                  title={title}
-                  href={titleLinkConfiguration?.href}
-                  target={titleLinkConfiguration?.target}
-                />
-              )}
-              {titleAsFileHandleLinkConfiguration && (
-                <FileHandleLink
-                  fileHandleAssociation={
-                    titleAsFileHandleLinkConfiguration.fileHandleAssociation
-                  }
-                  showDownloadIcon={
-                    titleAsFileHandleLinkConfiguration.showDownloadIcon
-                  }
-                  displayValue={title}
-                />
-              )}
-            </h3>
-          </div>
-          {subtitle && <div className="SRC-author">{subtitle}</div>}
-          <CollapsibleDescription
-            description={description}
-            descriptionSubTitle={descriptionSubTitle}
-            descriptionConfig={descriptionConfig}
-          />
-          {ctaLinkConfig && (
-            <Box sx={{ mt: '20px', display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-              {(Array.isArray(ctaLinkConfig)
-                ? ctaLinkConfig
-                : [ctaLinkConfig]
-              ).map(
-                (config, index) =>
-                  config.text &&
-                  config.href && (
-                    <SmartLink
-                      key={index}
-                      href={config.href}
-                      target={config.target}
-                    >
-                      {config.text}
-                    </SmartLink>
-                  ),
+          <Box className="SRC-cardTitleArea">
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <div>
+                <h3
+                  className="SRC-boldText SRC-blackText"
+                  style={{ margin: 'none' }}
+                >
+                  {!titleAsFileHandleLinkConfiguration && (
+                    <GenericCardTitle
+                      title={title}
+                      href={titleLinkConfiguration?.href}
+                      target={titleLinkConfiguration?.target}
+                    />
+                  )}
+                  {titleAsFileHandleLinkConfiguration && (
+                    <FileHandleLink
+                      fileHandleAssociation={
+                        titleAsFileHandleLinkConfiguration.fileHandleAssociation
+                      }
+                      showDownloadIcon={
+                        titleAsFileHandleLinkConfiguration.showDownloadIcon
+                      }
+                      displayValue={title}
+                    />
+                  )}
+                </h3>
+              </div>
+              {subtitle && <div className="SRC-author">{subtitle}</div>}
+              <CollapsibleDescription
+                description={description}
+                descriptionSubTitle={descriptionSubTitle}
+                descriptionConfig={descriptionConfig}
+              />
+              {ctaLinkConfig && (
+                <Box
+                  sx={{ mt: '20px', display: 'flex', gap: 2, flexWrap: 'wrap' }}
+                >
+                  {(Array.isArray(ctaLinkConfig)
+                    ? ctaLinkConfig
+                    : [ctaLinkConfig]
+                  ).map(
+                    (config, index) =>
+                      config.text &&
+                      config.href && (
+                        <SmartLink
+                          key={index}
+                          href={config.href}
+                          target={config.target}
+                        >
+                          {config.text}
+                        </SmartLink>
+                      ),
+                  )}
+                </Box>
               )}
             </Box>
-          )}
+            {titleAreaRightContent && (
+              <div className="SRC-cardTitleAreaDetails">
+                {titleAreaRightContent}
+              </div>
+            )}
+          </Box>
         </div>
       </div>
       {showFooter && (
@@ -250,7 +261,6 @@ export const GenericCard = forwardRef(function GenericCard(
           isHeader={false}
           secondaryLabelLimit={secondaryLabelLimit}
           values={labels}
-          columnIconOptions={columnIconOptions}
           className={useStylesForDisplayedImage ? undefined : 'hasIcon'}
           cardTopContent={cardTopContent}
         />
