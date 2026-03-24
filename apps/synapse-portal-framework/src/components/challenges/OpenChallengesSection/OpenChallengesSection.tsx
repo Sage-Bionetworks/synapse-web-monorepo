@@ -1,24 +1,24 @@
 import { Box, Typography } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import React from 'react'
+import { SynapseConstants } from 'synapse-react-client'
 import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
-import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
+import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions/index'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
-import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import styles from './GetInvolvedSection.module.scss'
+import getChallengeKeywordsFromRow from '../../../utils/getChallengeKeywordsFromRow'
+import { ReactComponent as Vectors } from '../assets/openChallengesVectors.svg'
+import styles from './OpenChallengesSection.module.scss'
 
-type GetInvolvedSectionProps = {
+type OpenChallengesSectionProps = {
   sql: string
   borderRadiusPx?: number
-  cardSize?: 'small' | 'medium' | 'large'
 }
 
-const GetInvolvedSection = ({
+const OpenChallengesSection = ({
   sql,
   borderRadiusPx,
-  cardSize,
-}: GetInvolvedSectionProps): React.ReactNode => {
+}: OpenChallengesSectionProps): React.ReactNode => {
   const { entityId } = parseEntityIdAndVersionFromSqlStatement(sql)
 
   const queryBundleRequest: QueryBundleRequest = {
@@ -31,39 +31,51 @@ const GetInvolvedSection = ({
   }
 
   const { data: queryResultBundle } =
-    useGetQueryResultBundle(queryBundleRequest)
+    useGetFullTableQueryResults(queryBundleRequest)
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
   return (
-    <Box className={styles.GetInvolvedSection__root}>
-      <Box className={styles.GetInvolvedSection__header}>
+    <Box className={styles.OpenChallengesSection__root}>
+      <Box className={styles.OpenChallengesSection__headerSection}>
+        <Box className={styles.OpenChallengesSection__titleWrapper}>
+          <Vectors
+            className={styles.OpenChallengesSection__titleSectionVectors}
+          />
+          <Typography
+            variant="headline1"
+            className={styles.OpenChallengesSection__sectionTitle}
+          >
+            Open Challenges
+          </Typography>
+        </Box>
         <Typography
-          variant="headline1"
-          className={styles.GetInvolvedSection__sectionTitle}
+          variant="body1"
+          className={styles.OpenChallengesSection__sectionSubtitle}
         >
-          Get Involved
+          Curated list of crowdsourced challenges outside of the Sage ecosystem
         </Typography>
       </Box>
-      <Box className={styles.GetInvolvedSection__container}>
+      <Box className={styles.OpenChallengesSection__container}>
         {dataRows.map(row => {
+          const chipsArray = getChallengeKeywordsFromRow(row, queryResultBundle)
+
           return (
             <ColorfulPortalCardWithChips
-              cardSize={cardSize}
               key={row.rowId}
+              title={
+                row.values[getFieldIndex('title', queryResultBundle)] ?? ''
+              }
               description={
                 row.values[getFieldIndex('description', queryResultBundle)] ??
                 ''
-              }
-              descriptionTitle={
-                row.values[
-                  getFieldIndex('descriptionTitle', queryResultBundle)
-                ] ?? ''
               }
               learnMoreLink={
                 row.values[getFieldIndex('learnMoreLink', queryResultBundle)] ??
                 ''
               }
+              chips={chipsArray}
+              tag={row.values[getFieldIndex('status', queryResultBundle)] ?? ''}
               backgroundImage={
                 row.values[
                   getFieldIndex('backgroundImage', queryResultBundle)
@@ -82,4 +94,4 @@ const GetInvolvedSection = ({
   )
 }
 
-export default GetInvolvedSection
+export default OpenChallengesSection

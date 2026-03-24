@@ -15,6 +15,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import React, { useMemo } from 'react'
 import ColumnFilter from '../ColumnFilter/ColumnFilter'
+import { SxProps } from '@mui/material'
 import { IconSvgProps } from '../IconSvg'
 import QuerySortSelector from '../QuerySortSelector'
 import {
@@ -100,10 +101,14 @@ export type LabelLinkConfig = (
   | MapValueToReactComponentConfig
 )[]
 
+export type ColumnIconConfig = IconSvgProps & {
+  containerSx?: SxProps
+}
+
 export type ColumnIconConfigs = {
   columns: {
     [index: string]: {
-      [index: string]: IconSvgProps
+      [index: string]: ColumnIconConfig
     }
   }
 }

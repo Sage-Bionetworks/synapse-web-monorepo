@@ -1,15 +1,14 @@
-import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
+import React from 'react'
+import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
+import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions/index'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
-import styles from './PopularChallengesSection.module.scss'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import getChallengeKeywordsFromRow from '../../../utils/getChallengeKeywordsFromRow'
 import { ReactComponent as Vectors } from '../assets/popularChallengesVectors.svg'
-import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
-import { stringListToArray } from 'synapse-react-client/utils/functions/StringUtils'
-import filterRowsByLandingPageSection from '@/utils/filterRowsByLandingPageSection'
+import styles from './PopularChallengesSection.module.scss'
 
 type PopularChallengesSectionProps = {
   sql: string
@@ -32,14 +31,9 @@ const PopularChallengesSection = ({
   }
 
   const { data: queryResultBundle } =
-    useGetQueryResultBundle(queryBundleRequest)
+    useGetFullTableQueryResults(queryBundleRequest)
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
-  const filteredDataRows = filterRowsByLandingPageSection(
-    'popular',
-    dataRows,
-    queryResultBundle!,
-  )
 
   return (
     <Box className={styles.PopularChallengesSection__root}>
@@ -55,20 +49,14 @@ const PopularChallengesSection = ({
         </Typography>
       </Box>
       <Box className={styles.PopularChallengesSection__container}>
-        {filteredDataRows.map(row => {
-          const chips =
-            row.values[getFieldIndex('chips', queryResultBundle)] ?? ''
-          const chipsArray = stringListToArray(chips)
+        {dataRows.map(row => {
+          const chipsArray = getChallengeKeywordsFromRow(row, queryResultBundle)
 
           return (
             <ColorfulPortalCardWithChips
               key={row.rowId}
               title={
                 row.values[getFieldIndex('title', queryResultBundle)] ?? ''
-              }
-              subtitle={
-                row.values[getFieldIndex('challengeName', queryResultBundle)] ??
-                ''
               }
               description={
                 row.values[getFieldIndex('description', queryResultBundle)] ??
@@ -79,11 +67,7 @@ const PopularChallengesSection = ({
                 ''
               }
               chips={chipsArray}
-              tag={
-                row.values[
-                  getFieldIndex('registrationStatus', queryResultBundle)
-                ] ?? ''
-              }
+              tag={row.values[getFieldIndex('status', queryResultBundle)] ?? ''}
               backgroundImage={
                 row.values[
                   getFieldIndex('backgroundImage', queryResultBundle)
