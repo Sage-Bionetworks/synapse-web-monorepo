@@ -1,0 +1,117 @@
+// MUI default breakpoints: md = 900px, lg = 1200px
+
+.root {
+  padding: 40px;
+  width: 100%;
+
+  @media (min-width: 1200px) {
+    padding: 40px 80px 40px 0;
+  }
+}
+
+.stack {
+  padding: 40px;
+  gap: 30px;
+  border-radius: 6px;
+  backdrop-filter: blur(15px);
+
+  @media (min-width: 1200px) {
+    min-width: 660px;
+  }
+}
+
+.searchRow {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+
+  @media (max-width: 899px) {
+    flex-direction: column;
+  }
+}
+
+.formControl {
+  min-width: 187px;
+  min-height: 38px;
+  height: 100%;
+
+  @media (max-width: 899px) {
+    width: 100%;
+  }
+}
+
+.select {
+  background-color: #ffff;
+  height: 48px;
+
+  svg {
+    color: #878e95;
+    width: 24px;
+    height: 24px;
+    right: 10px;
+  }
+
+  :global(.MuiSelect-select) {
+    margin-right: 10px;
+  }
+}
+
+.searchField {
+  box-shadow: none;
+  margin: 0;
+  height: 48px;
+  border-radius: 3px;
+
+  :global(.MuiInputBase-root) {
+    height: 100%;
+    border-radius: 3px;
+    font-size: 16px;
+  }
+
+  :global(.MuiInputBase-input)::placeholder {
+    font-style: italic;
+    opacity: 1;
+    color: #616161; // grey.700
+  }
+}
+
+.exampleSearchesSection {
+  gap: 8px;
+}
+
+.exampleSearchesLabel {
+  color: #212121; // grey.900
+  font-weight: 700;
+}
+
+.exampleTermsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 6px;
+}
+
+.exampleTermButton {
+  box-shadow: none !important;
+  border-radius: 30px;
+  border: 1px solid;
+  padding: 1px 9px;
+  text-decoration: none !important;
+  text-transform: none;
+}
+
+.exampleTermLabel {
+  color: #424242; // grey.800
+}
+
+.menuItem {
+  font-size: 16px;
+}
+
+.roleMenuItemLabel {
+  display: inline;
+}
+
+.roleMenuItemPlaceholder {
+  font-style: italic;
+  color: #616161; // grey.700
+}

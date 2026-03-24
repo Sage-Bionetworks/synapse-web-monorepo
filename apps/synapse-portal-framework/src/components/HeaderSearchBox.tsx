@@ -14,8 +14,8 @@ import {
 } from '@mui/material'
 import React from 'react'
 import PortalFullTextSearchField from './PortalSearch/PortalFullTextSearchField'
-import { spreadSx } from 'synapse-react-client/theme/spreadSx'
 import { useNavigate } from 'react-router'
+import styles from './HeaderSearchBox.module.scss'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import { useState } from 'react'
 import {
@@ -81,96 +81,34 @@ const HeaderSearchBox = ({
   }
 
   return (
-    <Box
-      sx={spreadSx(sx, {
-        padding: { xs: '40px', lg: '40px 80px 40px 0' },
-        width: '100%',
-      })}
-    >
-      <Stack
-        sx={theme => ({
-          padding: '40px',
-          gap: '30px',
-          borderRadius: '6px',
-          backdropFilter: 'blur(15px)',
-          [theme.breakpoints.up('lg')]: {
-            minWidth: '660px',
-          },
-        })}
-      >
-        <Box
-          sx={theme => ({
-            display: 'flex',
-            gap: '20px',
-            alignItems: 'center',
-            [theme.breakpoints.down('md')]: {
-              flexDirection: 'column',
-            },
-          })}
-        >
+    <Box className={styles.root} sx={sx}>
+      <Stack className={styles.stack}>
+        <Box className={styles.searchRow}>
           {showChatOption ? (
-            <FormControl
-              sx={theme => ({
-                minWidth: '187px',
-                minHeight: '38px',
-                height: '100%',
-                [theme.breakpoints.down('md')]: {
-                  width: '100%',
-                },
-              })}
-            >
+            <FormControl className={styles.formControl}>
               <Select
-                sx={{
-                  backgroundColor: '#FFFF',
-                  height: '48px',
-                  svg: {
-                    color: '#878E95',
-                    width: '24px',
-                    height: '24px',
-                    right: '10px',
-                  },
-                  '.MuiSelect-select': {
-                    marginRight: '10px',
-                  },
-                }}
+                className={styles.select}
                 value={mode}
                 onChange={e => setMode(e.target.value)}
                 IconComponent={KeyboardArrowDown}
               >
-                <MenuItem value="Chat" sx={{ fontSize: '16px' }}>
-                  <Typography sx={{ display: 'inline' }}>Chat</Typography>
+                <MenuItem value="Chat" className={styles.menuItem}>
+                  <Typography className={styles.roleMenuItemLabel}>
+                    Chat
+                  </Typography>
                 </MenuItem>
-                <MenuItem value="Search" sx={{ fontSize: '16px' }}>
-                  <Typography sx={{ display: 'inline' }}>Search</Typography>
+                <MenuItem value="Search" className={styles.menuItem}>
+                  <Typography className={styles.roleMenuItemLabel}>
+                    Search
+                  </Typography>
                 </MenuItem>
               </Select>
             </FormControl>
           ) : (
             roles && (
-              <FormControl
-                sx={theme => ({
-                  minWidth: '187px',
-                  minHeight: '38px',
-                  height: '100%',
-                  [theme.breakpoints.down('md')]: {
-                    width: '100%',
-                  },
-                })}
-              >
+              <FormControl className={styles.formControl}>
                 <Select
-                  sx={{
-                    backgroundColor: '#FFFF',
-                    height: '48px',
-                    svg: {
-                      color: '#878E95',
-                      width: '24px',
-                      height: '24px',
-                      right: '10px',
-                    },
-                    '.MuiSelect-select': {
-                      marginRight: '10px',
-                    },
-                  }}
+                  className={styles.select}
                   displayEmpty
                   label="Select a Role"
                   value={role}
@@ -178,12 +116,7 @@ const HeaderSearchBox = ({
                   IconComponent={KeyboardArrowDown}
                 >
                   <MenuItem disabled value="">
-                    <Typography
-                      sx={{
-                        fontStyle: 'italic',
-                        color: 'grey.700',
-                      }}
-                    >
+                    <Typography className={styles.roleMenuItemPlaceholder}>
                       Select a Role
                     </Typography>
                   </MenuItem>
@@ -191,13 +124,9 @@ const HeaderSearchBox = ({
                     <MenuItem
                       key={value}
                       value={value}
-                      sx={{ fontSize: '16px' }}
+                      className={styles.menuItem}
                     >
-                      <Typography
-                        sx={{
-                          display: 'inline',
-                        }}
-                      >
+                      <Typography className={styles.roleMenuItemLabel}>
                         {label}
                       </Typography>
                     </MenuItem>
@@ -210,60 +139,30 @@ const HeaderSearchBox = ({
             placeholder={searchPlaceholder}
             callback={handleTermClick}
             role={role}
-            sx={{
-              boxShadow: 'none',
-              margin: 0,
-              height: '48px',
-              borderRadius: '3px',
-              '.MuiInputBase-root': {
-                height: '100%',
-                borderRadius: '3px',
-                fontSize: '16px',
-              },
-              '.MuiInputBase-input::placeholder': {
-                fontStyle: 'italic',
-                opacity: 1,
-                color: 'grey.700',
-              },
-            }}
+            className={styles.searchField}
           />
         </Box>
-        <Stack sx={{ gap: '8px' }}>
-          <Typography sx={{ color: 'grey.900', fontWeight: 700 }}>
+        <Stack className={styles.exampleSearchesSection}>
+          <Typography className={styles.exampleSearchesLabel}>
             Example searches
           </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '8px 6px;',
-            }}
-          >
+          <Box className={styles.exampleTermsContainer}>
             {searchExampleTerms &&
               searchExampleTerms.map(term => (
                 <Button
                   key={term}
                   variant="contained"
                   onClick={() => handleTermClick(term)}
+                  className={styles.exampleTermButton}
                   sx={{
-                    boxShadow: 'none !important',
-                    borderRadius: '30px',
-                    border: '1px solid',
                     borderColor: lighten(theme.palette.primary.main, 0.9),
-                    padding: '1px 9px',
-                    textDecoration: 'none !important',
                     backgroundColor: lighten(theme.palette.primary.main, 0.8),
                     '&:hover': {
                       background: lighten(theme.palette.primary.main, 0.7),
                     },
-                    textTransform: 'none',
                   }}
                 >
-                  <Typography
-                    sx={{
-                      color: 'grey.800',
-                    }}
-                  >
+                  <Typography className={styles.exampleTermLabel}>
                     {term}
                   </Typography>
                 </Button>
