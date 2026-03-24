@@ -18,7 +18,12 @@ export default [
       route('*', 'pages/ErrorPage.tsx'),
       route('Home', 'pages/HomeRedirect.tsx'),
       route('DownloadCart', 'pages/DownloadCartPage.tsx'),
-      route('FileEntity', 'pages/FileEntityPage.tsx'),
+      route('FileEntity/:entityId', 'pages/FileEntityPage.tsx'),
+      route(
+        'FileEntity/:entityId/version/:versionNumber',
+        'pages/FileEntityPage.tsx',
+        { id: 'file-entity-versioned' },
+      ),
       route('test-init-error', 'pages/TestInitError.tsx'),
 
       // Index — HomePage

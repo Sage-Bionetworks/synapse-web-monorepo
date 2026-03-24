@@ -207,7 +207,10 @@ describe('flattenRoutePaths', () => {
   it('handles shared routes spread into children', () => {
     const sharedRoutes: RouteObject[] = [
       { path: 'DownloadCart' },
-      { path: 'FileEntity' },
+      // FileEntity uses dynamic segments (:entityId) so it is excluded from
+      // static path extraction (dynamic routes are enumerated via sitemapConfig)
+      { path: 'FileEntity/:entityId' },
+      { path: 'FileEntity/:entityId/version/:versionNumber' },
     ]
 
     const routes: RouteObject[] = [
@@ -219,7 +222,7 @@ describe('flattenRoutePaths', () => {
 
     const paths = flattenRoutePaths(routes)
     expect(paths).toContain('/DownloadCart')
-    expect(paths).toContain('/FileEntity')
+    expect(paths).not.toContain('/FileEntity')
     expect(paths).toContain('/Home')
   })
 

@@ -1,4 +1,4 @@
-import { useGetPortalComponentSearchParams } from '@/utils/UseGetPortalComponentSearchParams'
+import { useParams } from 'react-router'
 import { Box, Container, Stack } from '@mui/material'
 import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
 import ProvenanceGraph from 'synapse-react-client/components/ProvenanceGraph/ProvenanceGraph'
@@ -18,11 +18,11 @@ import { usePortalContext } from '@/components/PortalContext'
 import { AnnotationsTable } from 'synapse-react-client/components/entity/metadata/AnnotationsTable'
 
 function FileEntityPage() {
-  const searchParams = useGetPortalComponentSearchParams()
-  const entityId = searchParams?.entityId
-  const version = searchParams?.version
-    ? Number(searchParams.version)
-    : undefined
+  const { entityId, versionNumber } = useParams<{
+    entityId?: string
+    versionNumber?: string
+  }>()
+  const version = versionNumber ? Number(versionNumber) : undefined
 
   const { fileEntityPageConfig, portalName } = usePortalContext()
   const {
@@ -33,7 +33,7 @@ function FileEntityPage() {
   } = fileEntityPageConfig ?? {}
 
   const { data: entityBundle, isLoading } = useGetEntityBundle(
-    entityId,
+    entityId ?? '',
     version,
     {
       includeEntity: true,
@@ -43,7 +43,11 @@ function FileEntityPage() {
     },
   )
 
-  const { data: entityPermissions } = useGetEntityPermissions(entityId)
+  const { data: entityPermissions } = useGetEntityPermissions(entityId ?? '')
+
+  if (!entityId) {
+    return null
+  }
 
   const showLinkCard: boolean =
     !restrictSynapseLinkCardToEditableEntity ||
