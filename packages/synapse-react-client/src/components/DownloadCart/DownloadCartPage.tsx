@@ -452,7 +452,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                 </div>
               </div>
 
-              <div className="container">
+              <div>
                 {isShowingCreatePackageUI && (
                   <div ref={createPackageRef}>
                     <CreatePackageV2
