@@ -6,7 +6,7 @@ import {
 import React from 'react'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { useQueryClient } from '@tanstack/react-query'
-import { Box, Button, InputAdornment, TextField } from '@mui/material'
+import { Box, Button, Card, InputAdornment, TextField } from '@mui/material'
 import { DownloadListPackageResponse } from '@sage-bionetworks/synapse-types'
 import { ChangeEvent, SyntheticEvent, useState } from 'react'
 import FullWidthAlert, {
@@ -65,7 +65,7 @@ export const CreatePackageV2 = (
         )
         setZipFileName('')
         setBulkFileDownloadResponse(undefined)
-        await queryClient.invalidateQueries({
+        queryClient.invalidateQueries({
           queryKey: keyFactory.getDownloadListBaseQueryKey(),
         })
         onPackageCreation()
@@ -88,7 +88,7 @@ export const CreatePackageV2 = (
 
   return (
     <>
-      <div className={styles.CreatePackageV2}>
+      <Card className={styles.CreatePackageV2}>
         <div className={styles.createPackageStep}>
           <span className={styles.createPackageTitle}>
             Create your Download Package
@@ -137,7 +137,7 @@ export const CreatePackageV2 = (
             </div>
           )}
         </div>
-      </div>
+      </Card>
       <FullWidthAlert
         show={!!alert}
         variant={alert?.variant ? alert.variant : 'success'}

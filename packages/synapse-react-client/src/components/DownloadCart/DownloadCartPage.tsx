@@ -8,6 +8,7 @@ import { Button, Tooltip, Typography } from '@mui/material'
 import {
   AvailableFilter,
   FeatureFlagEnum,
+  FilesStatisticsResponse,
 } from '@sage-bionetworks/synapse-types'
 import { useEffect, useRef, useState } from 'react'
 import { ErrorBanner } from '../error/ErrorBanner'
@@ -23,7 +24,7 @@ import {
   DownloadListActionsRequired,
   DownloadListActionsRequiredProps,
 } from './DownloadListActionsRequired'
-import ComponentToComponentCollapse from '../ComponentToComponentCollapse'
+import ComponentCollapse from '../ComponentCollapse'
 
 const pythonDownloadCode = `${PYTHON_CLIENT_IMPORT_AND_LOGIN}
 dl_list_file_entities = syn.get_download_list()`
@@ -53,7 +54,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
     if (isShowingCreatePackageUI) {
       createPackageRef.current?.scrollIntoView({
         behavior: 'smooth',
-        block: 'start',
+        block: 'center',
       })
     }
   }, [isShowingCreatePackageUI])
@@ -77,8 +78,10 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
     }
   }, [isError, newError])
 
-  const getFilterCount = (filter: AvailableFilter) => {
-    if (!data) return undefined
+  const getFilterCount = (
+    data: FilesStatisticsResponse,
+    filter: AvailableFilter,
+  ) => {
     if (filter === undefined) return data.numberOfFilesAvailableForDownload
     if (filter === 'eligibleForPackaging')
       return data.numberOfFilesAvailableForDownloadAndEligibleForPackaging
@@ -275,7 +278,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                         )}
                       </div>
                     </div>
-                    <ComponentToComponentCollapse
+                    <ComponentCollapse
                       component={
                         <Typography variant={'body1'} component={'div'}>
                           Only some files may be eligible for packaging as ZIP.
@@ -321,7 +324,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                           </li>
                         </ul>
                       </Typography>
-                    </ComponentToComponentCollapse>
+                    </ComponentCollapse>
                   </div>
                   <div className={styles.subSection}>
                     <div className={styles.subSectionHeader}>
@@ -342,7 +345,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                         </Button>
                       </div>
                     </div>
-                    <ComponentToComponentCollapse
+                    <ComponentCollapse
                       component={
                         <Typography variant={'body1'} component={'div'}>
                           Use our Python, R, or command line clients to download
@@ -388,7 +391,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                           </li>
                         </ul>
                       </Typography>
-                    </ComponentToComponentCollapse>
+                    </ComponentCollapse>
                   </div>
                   {isDownloadAllEnabled &&
                     data.numberOfFilesAvailableForDownloadAndEligibleForPackaging <
@@ -406,7 +409,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                             </div>
                           </div>
                         </div>
-                        <ComponentToComponentCollapse
+                        <ComponentCollapse
                           component={
                             <Typography variant={'body1'} component={'div'}>
                               Files which <strong>aren't</strong> included in a
@@ -443,7 +446,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                             to your default Downloads folder instead of a
                             selected location.
                           </Typography>
-                        </ComponentToComponentCollapse>
+                        </ComponentCollapse>
                       </div>
                     )}
                 </div>
@@ -481,7 +484,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                           {tab.label}
                           {!isError && !isLoading && data && (
                             <span className={styles.fileCount}>
-                              {getFilterCount(tab.filter)}
+                              {getFilterCount(data, tab.filter)}
                             </span>
                           )}
                         </button>

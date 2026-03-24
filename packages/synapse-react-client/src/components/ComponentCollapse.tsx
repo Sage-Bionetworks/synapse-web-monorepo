@@ -12,7 +12,7 @@ import {
   useState,
 } from 'react'
 
-export type ComponentToComponentCollapseProps = PropsWithChildren<{
+export type ComponentCollapseProps = PropsWithChildren<{
   component: ReactNode
   defaultVisible?: boolean // default to false (collapsed)
   componentContainerSx?: SxProps
@@ -23,14 +23,14 @@ export type ComponentToComponentCollapseProps = PropsWithChildren<{
 /**
  * Wrap any child components in a collapse, using a custom component as the trigger
  */
-export default function ComponentToComponentCollapse({
+export default function ComponentCollapse({
   component,
   defaultVisible,
   componentContainerSx,
   collapseBoxSx,
   iconSx,
   children,
-}: ComponentToComponentCollapseProps) {
+}: ComponentCollapseProps) {
   const [show, setShow] = useState(defaultVisible)
   const collapseId = useId()
   const allIconSx: SxProps = {

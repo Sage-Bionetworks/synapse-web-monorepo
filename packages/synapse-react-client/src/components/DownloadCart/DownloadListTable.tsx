@@ -105,7 +105,7 @@ const getColumns = (args: {
             <Tooltip
               title={
                 <>
-                  This file is can’t be packaged as a ZIP because it is {'>'}
+                  This file can’t be packaged as a ZIP because it is {'>'}
                   100MB, or it is an external link, or it is not stored on
                   Synapse native storage.
                   <br />

@@ -4,7 +4,7 @@ import { ReactComponent as Svg } from './UnpackagableFile.svg'
 
 const UnpackagableFile = (props: SvgIconProps): React.ReactNode => {
   return (
-    <SvgIcon {...props}>
+    <SvgIcon {...props} viewBox="0 0 25 24">
       <Svg />
     </SvgIcon>
   )

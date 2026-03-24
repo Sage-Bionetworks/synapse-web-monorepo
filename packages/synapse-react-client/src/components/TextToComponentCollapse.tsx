@@ -1,6 +1,6 @@
 import { SxProps, Typography, TypographyOwnProps } from '@mui/material'
 import { PropsWithChildren } from 'react'
-import ComponentToComponentCollapse from './ComponentToComponentCollapse'
+import ComponentCollapse from './ComponentCollapse'
 
 export type TextToComponentCollapseProps = PropsWithChildren<{
   text: string
@@ -26,7 +26,7 @@ export default function TextToComponentCollapse({
   children,
 }: TextToComponentCollapseProps) {
   return (
-    <ComponentToComponentCollapse
+    <ComponentCollapse
       component={
         <Typography variant={textVariant} sx={textSx}>
           {text}
@@ -38,6 +38,6 @@ export default function TextToComponentCollapse({
       iconSx={iconSx}
     >
       {children}
-    </ComponentToComponentCollapse>
+    </ComponentCollapse>
   )
 }
