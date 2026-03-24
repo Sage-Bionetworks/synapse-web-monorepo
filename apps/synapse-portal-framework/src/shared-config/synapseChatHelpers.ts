@@ -55,15 +55,20 @@ export function processResponseDocument(
           redirectPath = `${target}?QueryWrapper0=${encodeURIComponent(query)}`
         }
 
+        // Parse through URL to extract only the safe pathname+search components,
+        // preventing any protocol-based XSS (e.g. javascript:) reaching location.href.
+        const safeURL = new URL(redirectPath, window.location.origin)
+        const safePath = safeURL.pathname + safeURL.search
+
         // Navigate using React Router if available, otherwise use window.location
         if (navigate) {
-          navigate(redirectPath)
+          navigate(safePath)
         } else {
-          window.location.href = redirectPath
+          window.location.href = safePath
         }
 
         // Append a markdown link so the rendered response shows a clickable redirect
-        const markdownLink = `\n[Showing relevant page](${redirectPath})`
+        const markdownLink = `\n[Showing relevant page](${safePath})`
         const chatElement = doc.querySelector('chat')
         if (chatElement) {
           chatElement.textContent =
