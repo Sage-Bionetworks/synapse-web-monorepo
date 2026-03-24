@@ -69,6 +69,8 @@ export function SynapseChatInteraction({
   const theme = useTheme()
   const ref = useRef<HTMLLIElement | null>(null)
   const [showTrace, setShowTrace] = useState(false)
+  const [textContent, setTextContent] = useState('')
+  const [guidePrompts, setGuidePrompts] = useState<string[]>([])
   const { navigate } = useSynapseContext()
 
   useEffect(() => {
@@ -106,48 +108,46 @@ export function SynapseChatInteraction({
     ? traceButtonLoadingText
     : `${showTrace ? 'Hide' : 'Show'} Trace`
 
-  const textContent = useMemo(() => {
+  // Parse the response text once per update, extracting display text and guide prompts.
+  // processResponseDocument may have navigation side effects, so this must be a useEffect
+  // (not useMemo) to avoid side effects running during React's render phase.
+  useEffect(() => {
     try {
       const parser = new DOMParser()
       const doc = parser.parseFromString(chatResponseText ?? '', 'text/html')
 
       // Remove tool_name elements
-      const elementsToRemove = doc.querySelectorAll('tool_name')
-      elementsToRemove.forEach(element => element.remove())
+      doc.querySelectorAll('tool_name').forEach(element => element.remove())
+
+      // Extract guideprompts before removing them
+      const extractedGuidePrompts = Array.from(
+        doc.querySelectorAll('guideprompt'),
+      )
+        .map(el => el.textContent?.trim())
+        .filter((t): t is string => !!t)
 
       // Remove guideprompt elements
-      const guidePromptElements = doc.querySelectorAll('guideprompt')
-      guidePromptElements.forEach(element => element.remove())
+      doc.querySelectorAll('guideprompt').forEach(element => element.remove())
 
-      // Allow custom processing of the response document
+      // Allow custom processing of the response document (may trigger navigation)
       if (processResponseDocument) {
         processResponseDocument(doc, navigate)
       }
 
       // Extract text from <chat> element if present, otherwise use full body text
       const chatElement = doc.querySelector('chat')
-      if (chatElement) {
-        return chatElement.textContent ?? ''
-      }
-
-      return doc.body.textContent ?? ''
+      setTextContent(
+        chatElement
+          ? chatElement.textContent ?? ''
+          : doc.body.textContent ?? '',
+      )
+      setGuidePrompts(extractedGuidePrompts)
     } catch (e) {
       console.error(e)
-      return chatResponseText ?? ''
+      setTextContent(chatResponseText ?? '')
+      setGuidePrompts([])
     }
   }, [chatResponseText, processResponseDocument, navigate])
-  const guidePrompts = useMemo(() => {
-    try {
-      const parser = new DOMParser()
-      const doc = parser.parseFromString(chatResponseText ?? '', 'text/html')
-      return Array.from(doc.querySelectorAll('guideprompt'))
-        .map(el => el.textContent?.trim())
-        .filter((t): t is string => !!t)
-    } catch (e) {
-      console.error(e)
-      return []
-    }
-  }, [chatResponseText])
 
   return (
     <>

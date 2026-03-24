@@ -56,6 +56,7 @@ export function PortalFullTextSearchField({
           }
           if (callback) {
             callback(trimmedInput)
+            setSearchInput('')
           }
         }
       }}

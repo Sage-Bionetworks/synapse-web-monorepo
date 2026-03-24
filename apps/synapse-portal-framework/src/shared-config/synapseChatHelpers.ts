@@ -23,6 +23,17 @@ export function processResponseDocument(
 
       if (targetElement && targetElement.textContent) {
         const target = targetElement.textContent.trim()
+
+        // Guard against open redirect: only allow site-relative paths (/foo, not //evil.com or https://...)
+        if (!target.startsWith('/') || target.startsWith('//')) {
+          console.warn(
+            'SynapseChatHelpers: ignoring unsafe redirect target',
+            target,
+          )
+          actionsElement.remove()
+          return
+        }
+
         let redirectPath = target
 
         // If there's a query element, format the path with encoded query
