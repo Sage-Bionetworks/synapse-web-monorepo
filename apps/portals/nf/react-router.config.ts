@@ -58,61 +58,55 @@ const metadataConfigs: DetailPageMetadataConfig[] = [
   },
 ]
 
-async function paths() {
-  const isProduction = process.env.NODE_ENV === 'production'
-  console.log('[prerender] Generating static routes...')
-  const staticRoutes = [
-    '/',
-    '/Explore/Studies',
-    '/Explore/Datasets',
-    '/Explore/Files',
-    '/Explore/Publications',
-    '/Explore/Tools',
-    '/Explore/Initiatives',
-    '/Explore/Hackathon',
-    '/Research Tools Central/Browse Tools',
-    '/Search',
-  ]
-
-  const dynamicRoutes: string[] = []
-
-  // Enumerate record IDs for each detail page type.
-  // In dev mode, fetch only 1 ID per type to keep startup fast while still
-  // satisfying React Router's prerender validation for loader exports.
-  for (const detailPage of sitemapConfig.detailPages) {
-    const result = await fetchResourceIds(
-      detailPage,
-      isProduction ? undefined : 1,
-    )
-    if (!result.success) {
-      console.warn(`[prerender] Skipping ${detailPage.path}: ${result.error}`)
-      continue
-    }
-    for (const id of result.ids) {
-      dynamicRoutes.push(`/${detailPage.path}/${id}`)
-    }
-  }
-
-  // Hydrate caches so individual loader() calls are instant hits.
-  // Only needed for production builds where all routes are pre-rendered.
-  if (isProduction) {
-    await Promise.all([
-      ...metadataConfigs.map(mc => preloadDetailPageMetadata(mc)),
-      preloadAllCroissantMetadata(),
-    ])
-  }
-
-  console.log(
-    `[prerender] ${staticRoutes.length} static + ${dynamicRoutes.length} dynamic routes`,
-  )
-  return [...staticRoutes, ...dynamicRoutes]
-}
-
 export default {
   appDirectory: 'src',
   ssr: false,
   prerender: {
-    paths,
-    // unstable_concurrency: 4,
+    paths: async ({ getStaticPaths }) => {
+      const isProduction = process.env.NODE_ENV === 'production'
+      console.log('[prerender] Starting prerender...')
+
+      const dynamicRoutes: string[] = []
+
+      // Enumerate record IDs for each detail page type.
+      // In dev mode, fetch only 1 ID per type to keep startup fast while still
+      // satisfying React Router's prerender validation for loader exports.
+      for (const detailPage of sitemapConfig.detailPages) {
+        const result = await fetchResourceIds(
+          detailPage,
+          isProduction ? undefined : 1,
+        )
+        if (!result.success) {
+          console.warn(
+            `[prerender] Skipping ${detailPage.path}: ${result.error}`,
+          )
+          continue
+        }
+        for (const id of result.ids) {
+          dynamicRoutes.push(`/${detailPage.path}/${id}`)
+        }
+      }
+
+      console.log(
+        `[prerender] ${getStaticPaths().length} static + ${
+          dynamicRoutes.length
+        } dynamic routes`,
+      )
+
+      // Hydrate caches so individual loader() calls are instant hits.
+      // Only needed for production builds where all routes are pre-rendered.
+      if (isProduction) {
+        await Promise.all([
+          ...metadataConfigs.map(mc => preloadDetailPageMetadata(mc)),
+          preloadAllCroissantMetadata(),
+        ])
+      }
+
+      console.log(
+        `[prerender] Preloaded metadata for ${metadataConfigs.length} detail page types and Croissant`,
+      )
+      return [...getStaticPaths(), ...dynamicRoutes]
+    },
+    unstable_concurrency: 4,
   },
 } satisfies Config

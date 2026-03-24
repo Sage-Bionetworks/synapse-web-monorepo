@@ -47,14 +47,16 @@ export async function generateDynamicUrls(
 
     console.log(`  Found ${result.ids.length} resources`)
 
+    const encodedParamName = encodeURIComponent(config.primaryKeyColumn)
     for (const id of result.ids) {
       const encodedId = encodeURIComponent(id)
-      // Use path-segment URLs now that detail pages use /:param routing
-      // e.g. /Explore/Datasets/syn123 instead of /Explore/Datasets/DetailsPage?id=syn123
-      urls.push({
-        loc: `${baseUrl}/${config.path}/${encodedId}`,
-        lastmod,
-      })
+      const loc =
+        config.urlStyle === 'path-segment'
+          ? // SSR portals with /:param routing — e.g. /Explore/Datasets/syn123
+            `${baseUrl}/${config.path}/${encodedId}`
+          : // Legacy SPA portals with query-param routing — e.g. /Explore/Datasets/DetailsPage?id=syn123
+            `${baseUrl}/${config.path}?${encodedParamName}=${encodedId}`
+      urls.push({ loc, lastmod })
     }
   }
 

@@ -18,31 +18,37 @@ const sitemapConfig: SitemapConfig = {
       path: 'Explore/Initiatives',
       sql: initiativesSql,
       primaryKeyColumn: 'initiative',
+      urlStyle: 'path-segment',
     },
     {
       path: 'Explore/Datasets',
       sql: datasetsSql,
       primaryKeyColumn: 'id',
+      urlStyle: 'path-segment',
     },
     {
       path: 'Explore/Studies',
       sql: studiesSql,
       primaryKeyColumn: 'studyId',
+      urlStyle: 'path-segment',
     },
     {
       path: 'Explore/Tools',
       sql: toolsSql,
       primaryKeyColumn: 'resourceId',
+      urlStyle: 'path-segment',
     },
     {
       path: 'Explore/Hackathon',
       sql: hackathonsSql,
       primaryKeyColumn: 'id',
+      urlStyle: 'path-segment',
     },
     {
       path: 'Organizations',
       sql: fundersSql,
       primaryKeyColumn: 'abbreviation',
+      urlStyle: 'path-segment',
     },
   ],
 }
