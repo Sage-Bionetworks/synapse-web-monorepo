@@ -63,8 +63,7 @@ export const navbarConfig: NavbarConfig = {
         },
         {
           name: 'NCI DHART SPORE',
-          // NCI DHART SPORE has no abbreviation; identified by fundingAgency = NIH-NCI
-          path: '/Organizations/NIH-NCI',
+          path: '/Organizations/DHART SPORE',
         },
         {
           name: 'CDMRP NFRP',

@@ -9,23 +9,16 @@ import { Navigate, useLocation } from 'react-router'
  *   /Explore/Studies/DetailsPage?studyId=syn456       → /Explore/Studies/syn456
  *   /Organizations/DetailsPage?abbreviation=CTF       → /Organizations/CTF
  *
- * @param paramName - The primary query parameter name to promote to a path segment.
- * @param fallbackParamName - An alternative parameter to try when the primary
- *   is absent (e.g. `fundingAgency` for Organization pages that can also be
- *   identified by that value).
+ * @param paramName - The query parameter name to promote to a path segment.
  */
 export default function LegacyDetailsPageRedirect({
   paramName,
-  fallbackParamName,
 }: {
   paramName: string
-  fallbackParamName?: string
 }) {
   const { search, pathname } = useLocation()
   const params = new URLSearchParams(search)
-  const id =
-    params.get(paramName) ??
-    (fallbackParamName ? params.get(fallbackParamName) : null)
+  const id = params.get(paramName)
 
   // Strip the trailing /DetailsPage segment from the current pathname to get
   // the new base, e.g. /Explore/Datasets/DetailsPage → /Explore/Datasets
