@@ -3,7 +3,7 @@ import {
   waitForAsyncResult,
 } from '@sage-bionetworks/synapse-client'
 import { extractEntityIdFromSql } from '../sitemap/queryTableForSitemap'
-import { TTLCache } from './cache'
+import { PrerenderCache } from './cache'
 import { createAnonymousSynapseClient } from './synapseClient'
 
 const BUNDLE_MASK_QUERY_RESULTS = 0x1
@@ -32,21 +32,16 @@ export interface DetailPageMetadata {
 }
 
 // ---------------------------------------------------------------------------
-// In-memory cache with stale-while-revalidate
+// In-memory cache
 // ---------------------------------------------------------------------------
 
 /**
  * Module-level cache for detail page metadata.
  *
- * - **TTL**: 1 hour — metadata (titles/descriptions) changes infrequently.
- * - **Stale-while-revalidate**: After TTL expires, stale data is returned
- *   immediately while a background refresh is triggered.
- * - **Request deduplication**: Concurrent requests for the same key share
- *   a single in-flight fetch (thundering herd protection).
- *
+ * Pre-populated via {@link preloadDetailPageMetadata} during SSG builds.
  * Cache key format: `${sql}:${paramValue}`
  */
-const metadataCache = new TTLCache<string, DetailPageMetadata>()
+const metadataCache = new PrerenderCache<string, DetailPageMetadata>()
 
 /**
  * Builds a cache key from the SQL query and filter parameter value.
@@ -68,8 +63,8 @@ function cacheKey(
  *
  * This function is isomorphic — it works in both Node.js and browser environments.
  *
- * Results are cached in memory with a 1-hour TTL and stale-while-revalidate
- * semantics. See {@link metadataCache} for details.
+ * Results are cached in memory for the lifetime of the build process.
+ * See {@link metadataCache} for details.
  *
  * @param config - Describes which table, columns, and filter to use
  * @param paramValue - The URL parameter value to filter by (e.g. 'syn12345')

@@ -2,7 +2,7 @@ import {
   QueryResultBundle,
   waitForAsyncResult,
 } from '@sage-bionetworks/synapse-client'
-import { TTLCache } from './cache'
+import { PrerenderCache } from './cache'
 import { mapWithConcurrency } from './concurrency'
 import { createAnonymousSynapseClient } from './synapseClient'
 
@@ -18,31 +18,18 @@ const CROISSANT_DATA_TABLE = 'syn65903895'
 /** Maximum number of concurrent S3 file fetches during batch pre-loading. */
 const FETCH_CONCURRENCY = 20
 
-/**
- * How long cached data remains valid.
- *
- * - During SSG builds the process is short-lived, so this TTL is effectively
- *   infinite — data is fetched once and reused for the entire build.
- * - During SSR the server runs indefinitely, so this TTL ensures Croissant
- *   data is refreshed periodically without manual intervention.
- */
-const CACHE_TTL_MS = 60 * 60 * 1000 // 1 hour
-
 // ---------------------------------------------------------------------------
 // URL index cache: dataset entity ID → S3 URL
 // ---------------------------------------------------------------------------
 
 /**
- * Cache for the URL index. Uses TTLCache for TTL + stale-while-revalidate
- * semantics. The single key 'index' holds the entire Map.
+ * Cache for the URL index. The single key 'index' holds the entire Map.
  */
-const urlIndexCache = new TTLCache<string, Map<string, string>>({
-  ttlMs: CACHE_TTL_MS,
-})
+const urlIndexCache = new PrerenderCache<string, Map<string, string>>()
 
 /**
  * Fetches the entire Croissant table and builds a Map of dataset → S3 URL.
- * The result is cached with a TTL; concurrent calls are de-duplicated.
+ * The result is cached; concurrent calls are de-duplicated.
  */
 async function loadCroissantUrlIndex(): Promise<Map<string, string>> {
   return urlIndexCache.get('index', async () => {
@@ -105,9 +92,7 @@ async function loadCroissantUrlIndex(): Promise<Map<string, string>> {
 // Content cache: dataset entity ID → parsed JSON-LD object
 // ---------------------------------------------------------------------------
 
-const contentCache = new TTLCache<string, Record<string, unknown>>({
-  ttlMs: CACHE_TTL_MS,
-})
+const contentCache = new PrerenderCache<string, Record<string, unknown>>()
 
 /**
  * Fetches a single Croissant file from S3 and parses it as JSON.
@@ -139,12 +124,8 @@ let preloadPromise: Promise<void> | null = null
  * SSG pre-rendering. Subsequent {@link fetchCroissantMetadata} calls become
  * instant cache lookups.
  *
- * In SSR mode this also works: the first request triggers the preload, and
- * subsequent requests within the TTL window are cache hits. After the TTL
- * expires the next call re-fetches.
- *
  * Safe to call multiple times — concurrent invocations are de-duplicated and
- * a no-op is returned if the cache is still valid.
+ * a no-op is returned if the cache is already populated.
  */
 export async function preloadAllCroissantMetadata(): Promise<void> {
   // If the index is still fresh and we have content cached, skip.
@@ -196,17 +177,14 @@ export async function preloadAllCroissantMetadata(): Promise<void> {
  * Synapse dataset entity.
  *
  * This function is isomorphic — it works in both Node.js (build-time
- * pre-rendering / SSR) and browser environments.
+ * pre-rendering) and browser environments.
  *
- * **SSG / SSR server-side:** If {@link preloadAllCroissantMetadata} was called
+ * **SSG server-side:** If {@link preloadAllCroissantMetadata} was called
  * first (recommended), this is an instant cache lookup. Otherwise it falls
  * back to fetching the URL index + individual S3 file.
  *
  * **Client-side (CSR fallback):** Fetches the URL index once (cached) then
  * the individual S3 file.
- *
- * All cached data respects the configured TTL so long-running SSR servers
- * automatically refresh stale entries.
  *
  * @param entityId - The Synapse entity ID of the dataset (e.g. 'syn12345678')
  * @returns The parsed JSON-LD object, or null if not available
@@ -214,11 +192,10 @@ export async function preloadAllCroissantMetadata(): Promise<void> {
 export async function fetchCroissantMetadata(
   entityId: string,
 ): Promise<Record<string, unknown> | null> {
-  // Fast path: content cache hit (TTLCache handles TTL + SWR internally)
+  // Fast path: content cache hit
   if (contentCache.has(entityId)) {
     return contentCache.get(entityId, async () => {
-      // This fetcher is only called on cache miss or stale-while-revalidate.
-      // For a SWR refresh, re-fetch from S3.
+      // Fetcher is only called on cache miss — re-fetch from S3.
       const index = await loadCroissantUrlIndex()
       const s3Url = index.get(entityId)
       if (!s3Url) return {} as Record<string, unknown>
