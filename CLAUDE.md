@@ -7,8 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a **pnpm + Nx monorepo** for Sage Bionetworks' Synapse web applications. Key packages:
 
 - `packages/synapse-react-client` — Main React component library, published to npm as `synapse-react-client`
-- `packages/synapse-client` — REST API client generated from the Synapse OpenAPI spec
-- `packages/synapse-types` — TypeScript type definitions for the Synapse API
+- `packages/synapse-client` — REST API client and TypeScript types generated from the Synapse OpenAPI spec
+- `packages/synapse-types` — Legacy TypeScript type definitions for the Synapse API (prefer using synapse-client over synapse-types)
 - `packages/vite-config` — Shared Vite/Vitest config builder used by all packages
 - `apps/synapse-portal-framework` — Shared library for data portals
 - `apps/portals/` — 14 individual data portal apps (adknowledgeportal, nf, genie, etc.)
@@ -16,7 +16,7 @@ This is a **pnpm + Nx monorepo** for Sage Bionetworks' Synapse web applications.
 - `apps/synapse-oauth-signin` — OAuth2/OIDC authentication app
 - `apps/portals-e2e` — Playwright E2E tests for data portal apps
 
-**Dependency order:** `synapse-types` → `synapse-client` → `synapse-react-client` → portal apps
+**Dependency order:** `synapse-client` → `synapse-react-client` → `synapse-portal-framework` → portal apps
 
 ## Commands
 
@@ -66,6 +66,7 @@ pnpm start
 cd packages/synapse-client
 pnpm get-spec:prod   # or get-spec:staging
 pnpm generate
+pnpm build
 ```
 
 ## Architecture
@@ -92,7 +93,7 @@ const config = new ConfigBuilder()
 
 ### CSS/Theming
 
-Runtime theming uses CSS variables prefixed `--synapse-*` (e.g., `--synapse-primary-action-color`). Sass compile-time functions (`color.adjust`, `color.mix`) cannot use CSS vars—use hardcoded values there. Global variables are defined in `_cssVariables.scss`.
+Prefer using SCSS module files. Runtime theming uses CSS variables prefixed `--synapse-*` (e.g., `--synapse-primary-action-color`). Sass compile-time functions (`color.adjust`, `color.mix`) cannot use CSS vars—use hardcoded values there. Global variables are defined in `_cssVariables.scss`.
 
 ### Nx Caching & Build Order
 
