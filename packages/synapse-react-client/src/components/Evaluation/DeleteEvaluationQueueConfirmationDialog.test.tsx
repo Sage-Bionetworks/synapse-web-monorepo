@@ -25,7 +25,7 @@ describe('DeleteEvaluationQueueConfirmationDialog', () => {
   test('renders the dialog with warning text and checkbox when open', () => {
     renderComponent()
     const dialog = screen.getByRole('dialog')
-    within(dialog).getByText('Delete Evaluation Queue')
+    within(dialog).getByText('Delete Evaluation Queue?')
     within(dialog).getByText(/permanently erase all associated submissions/)
     within(dialog).getByRole('checkbox')
   })
