@@ -16,8 +16,8 @@ import { Evaluation } from '@sage-bionetworks/synapse-types'
 import { MouseEvent, useEffect, useState } from 'react'
 import { ErrorBanner } from '../error/ErrorBanner'
 import IconSvg from '../IconSvg/IconSvg'
-import WarningDialog from '../SynapseForm/WarningDialog'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
+import { DeleteEvaluationQueueConfirmationDialog } from './DeleteEvaluationQueueConfirmationDialog'
 
 export type EvaluationEditorProps = {
   /** Use if UPDATING an existing Evaluation. Id of the evaluation to edit */
@@ -217,20 +217,13 @@ function EvaluationEditorDropdown({
   return (
     <>
       {onDelete && (
-        <WarningDialog
-          title="Delete Evaluation Queue"
-          content="Are you sure you want to delete this Evaluation Queue?"
+        <DeleteEvaluationQueueConfirmationDialog
           open={deleteWarningShow}
-          confirmButtonText="Delete"
           onConfirm={() => {
             onDelete()
             setDeleteWarningShow(false)
           }}
-          onConfirmCallbackArgs={[]}
-          onCancel={() => {
-            setDeleteWarningShow(false)
-          }}
-          confirmButtonColor="error"
+          onCancel={() => setDeleteWarningShow(false)}
         />
       )}
 
