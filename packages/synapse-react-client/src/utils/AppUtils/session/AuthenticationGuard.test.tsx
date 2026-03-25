@@ -7,6 +7,7 @@ import * as AppUtilsModule from '../AppUtils'
 import * as UseOneSageURLModule from '../../hooks/useOneSageURL'
 import { ApplicationSessionContextType } from './ApplicationSessionContext'
 import { SynapseContextType } from '../../context/SynapseContext'
+import { SYNAPSE_REALM } from '@/utils/SynapseConstants'
 
 vi.mock('../../context/SynapseContext', () => ({
   useSynapseContext: vi.fn(),
@@ -64,6 +65,7 @@ function createMockSynapseContext(
     keyFactory: {} as any,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     synapseClient: {} as any,
+    realmId: SYNAPSE_REALM,
     ...overrides,
   }
 }

@@ -65,6 +65,7 @@ export function ApplicationSessionManager(
           utcTime: SynapseClient.getUseUtcTimeFromCookie(),
           downloadCartPageUrl,
           appId: appId,
+          realmId: sessionContext.realmId,
         }}
       >
         {requireAuthentication ? (

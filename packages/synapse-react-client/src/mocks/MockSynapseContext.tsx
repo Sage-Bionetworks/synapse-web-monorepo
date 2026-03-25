@@ -4,6 +4,7 @@ import { SynapseContextType } from '@/utils/context/SynapseContext'
 import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
 import { createContext, PropsWithChildren } from 'react'
 import { MOCK_APPLICATION_SESSION_CONTEXT } from './applicationSessionContext/MockApplicationSessionContext'
+import { SYNAPSE_REALM } from '@/utils/SynapseConstants'
 
 export const MOCK_ACCESS_TOKEN = 'mock-access-token'
 
@@ -14,10 +15,11 @@ export const MOCK_CONTEXT_VALUE: SynapseContextType = {
   isInExperimentalMode: false,
   downloadCartPageUrl: '/DownloadCart',
   withErrorBoundary: false,
-  keyFactory: new KeyFactory(MOCK_ACCESS_TOKEN),
+  keyFactory: new KeyFactory(SYNAPSE_REALM, MOCK_ACCESS_TOKEN, true),
   synapseClient: new SynapseClient({
     accessToken: MOCK_ACCESS_TOKEN,
   }),
+  realmId: SYNAPSE_REALM,
 }
 
 export const MOCK_CONTEXT = createContext(MOCK_CONTEXT_VALUE)

@@ -13,6 +13,7 @@ import { EntityType } from '@sage-bionetworks/synapse-client'
 import { KeyFactory } from '@/synapse-queries/KeyFactory'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
 import { createWrapperAndQueryClient } from '@/testutils/TestingLibraryUtils'
+import { SYNAPSE_REALM } from '@/utils/SynapseConstants'
 
 // Mock the query hooks
 vi.mock('@/synapse-queries', async () => {
@@ -45,7 +46,7 @@ const renderUseEntityTreeState = (
 
   return { ...renderResult, queryClient }
 }
-const contextKeyFactory = new KeyFactory(MOCK_ACCESS_TOKEN)
+const contextKeyFactory = new KeyFactory(SYNAPSE_REALM, MOCK_ACCESS_TOKEN, true)
 
 const rootIncludeTypes: EntityType[] = [
   EntityType.folder,

@@ -26,7 +26,7 @@ import {
 import useComputeRowSelectionPrimaryKey from './useComputeRowSelectionPrimaryKey'
 import useHasFacetedSelectColumn from './useHasFacetedSelectColumn'
 import useOnQueryDataChange from './useOnQueryDataChange'
-import { SessionInitializedGuard } from '@/utils/AppUtils/session/SessionInitializedGuard'
+import { SynapseErrorBoundary } from '../error/ErrorBanner'
 
 export type QueryWrapperProps = PropsWithChildren<{
   initQueryRequest: QueryBundleRequest
@@ -54,21 +54,9 @@ export type QueryWrapperProps = PropsWithChildren<{
 }>
 
 /**
- * Component that manages the state of a Synapse table query. Data can be accessed via QueryContext using
- * either `useQueryContext` or `QueryContextConsumer`.
+ * Internal implementation of the QueryWrapper component (wrapped by QueryWrapper).
  */
 function QueryWrapperInternal(props: QueryWrapperProps) {
-  return (
-    <SessionInitializedGuard>
-      <QueryWrapperInternalWithSession {...props} />
-    </SessionInitializedGuard>
-  )
-}
-
-/**
- * Internal component that renders after session is initialized
- */
-function QueryWrapperInternalWithSession(props: QueryWrapperProps) {
   const {
     initQueryRequest,
     onQueryChange,
@@ -239,8 +227,10 @@ export function QueryWrapper(props: QueryWrapperProps) {
   // Wrap in a Jotai provider to ensure the Jotai atomic state is unique to this component tree
   // i.e. other instances of QueryWrapper will not share state with this instance
   return (
-    <Provider>
-      <QueryWrapperInternal {...props} />
-    </Provider>
+    <SynapseErrorBoundary>
+      <Provider>
+        <QueryWrapperInternal {...props} />
+      </Provider>
+    </SynapseErrorBoundary>
   )
 }

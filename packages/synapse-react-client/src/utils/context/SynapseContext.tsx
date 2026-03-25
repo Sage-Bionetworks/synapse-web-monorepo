@@ -3,12 +3,15 @@ import { KeyFactory } from '@/synapse-queries/KeyFactory'
 import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
 import { createContext, PropsWithChildren, useContext, useMemo } from 'react'
 import { BackendDestinationEnum, getEndpoint } from '../functions/getEndpoint'
+import { SYNAPSE_REALM } from '../SynapseConstants'
 
 export type SynapseContextType = {
   /** The user's access token. If undefined, the user is not logged in */
   accessToken: string | undefined
   /** Whether the user is authenticated */
   isAuthenticated: boolean
+  /** The current realm of the user */
+  realmId: string
   /** If the user has enabled experimental mode */
   isInExperimentalMode: boolean
   /** If the user prefers time to be displayed in UTC format */
@@ -33,7 +36,8 @@ const defaultContext = {
   isInExperimentalMode: false,
   utcTime: false,
   withErrorBoundary: false,
-  keyFactory: new KeyFactory(undefined),
+  realmId: SYNAPSE_REALM,
+  keyFactory: new KeyFactory(SYNAPSE_REALM, undefined, false),
   downloadCartPageUrl: '/DownloadCart',
   peopleSearchPageUrl: '/PeopleSearch:',
   appId: undefined,
@@ -58,8 +62,17 @@ export type SynapseContextProviderProps = PropsWithChildren<{
 export function SynapseContextProvider(props: SynapseContextProviderProps) {
   const { children, synapseContext: providedContext } = props
   const queryKeyFactory = useMemo(
-    () => new KeyFactory(providedContext?.accessToken),
-    [providedContext?.accessToken],
+    () =>
+      new KeyFactory(
+        providedContext?.realmId ?? SYNAPSE_REALM,
+        providedContext?.accessToken,
+        providedContext?.isAuthenticated,
+      ),
+    [
+      providedContext?.accessToken,
+      providedContext?.isAuthenticated,
+      providedContext?.realmId,
+    ],
   )
 
   const basePath = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
@@ -87,17 +100,20 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
       peopleSearchPageUrl:
         providedContext?.peopleSearchPageUrl ?? '/PeopleSearch:',
       keyFactory: providedContext?.keyFactory ?? queryKeyFactory,
+      realmId: providedContext?.realmId ?? SYNAPSE_REALM,
       appId: providedContext?.appId,
       synapseClient: synapseApiClient,
     }),
     [
       providedContext?.accessToken,
       providedContext?.isAuthenticated,
-      providedContext?.downloadCartPageUrl,
       providedContext?.isInExperimentalMode,
-      providedContext?.keyFactory,
       providedContext?.utcTime,
       providedContext?.withErrorBoundary,
+      providedContext?.downloadCartPageUrl,
+      providedContext?.peopleSearchPageUrl,
+      providedContext?.keyFactory,
+      providedContext?.realmId,
       providedContext?.appId,
       queryKeyFactory,
       synapseApiClient,

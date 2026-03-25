@@ -28,7 +28,7 @@ describe('useGetOrCreateGridSessionForSource', () => {
       mutateAsync: vi.fn(),
     } as any)
     vi.spyOn(context, 'useSynapseContext').mockReturnValue({
-      keyFactory: new KeyFactory('mock-token'),
+      keyFactory: new KeyFactory('mock-realm', 'mock-token', true),
       synapseClient: {} as any,
     } as any)
     const { result } = renderHook(() => useGetOrCreateGridSessionForSource(), {
@@ -50,7 +50,7 @@ describe('useGetOrCreateGridSessionForSource', () => {
       mutateAsync,
     } as any)
     vi.spyOn(context, 'useSynapseContext').mockReturnValue({
-      keyFactory: new KeyFactory('mock-token'),
+      keyFactory: new KeyFactory('mock-realm', 'mock-token', true),
       synapseClient: {} as any,
     } as any)
     const { result } = renderHook(() => useGetOrCreateGridSessionForSource(), {

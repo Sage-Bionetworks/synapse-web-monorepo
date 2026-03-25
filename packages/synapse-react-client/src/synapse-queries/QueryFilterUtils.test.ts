@@ -2,6 +2,7 @@ import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
 import {
   BUNDLE_MASK_ACTIONS_REQUIRED,
   BUNDLE_MASK_QUERY_RESULTS,
+  SYNAPSE_REALM,
 } from '@/utils/SynapseConstants'
 import { Query, QueryClient } from '@tanstack/query-core'
 import { KeyFactory } from './KeyFactory'
@@ -11,13 +12,13 @@ import {
 } from './QueryFilterUtils'
 import { doesQueryFilterMatch } from './QueryMatching.test-utils'
 
-const keyFactory = new KeyFactory(MOCK_ACCESS_TOKEN)
+const keyFactory = new KeyFactory(SYNAPSE_REALM, MOCK_ACCESS_TOKEN, true)
 
 describe('QueryFilterUtils', () => {
   describe('invalidateAllQueriesForEntity', () => {
     test('invalidates/resets queries', async () => {
       const queryClient = new QueryClient()
-      const keyFactory = new KeyFactory(undefined)
+      const keyFactory = new KeyFactory(SYNAPSE_REALM, undefined, false)
       const entityId = 'syn123'
 
       const resetQueriesSpy = vi.spyOn(queryClient, 'resetQueries')
@@ -99,7 +100,7 @@ describe('QueryFilterUtils', () => {
     })
     test('excludes invalidating a specified QueryKey', async () => {
       const queryClient = new QueryClient()
-      const keyFactory = new KeyFactory(undefined)
+      const keyFactory = new KeyFactory('realm1', undefined, false)
       const entityId = 'syn123'
 
       const resetQueriesSpy = vi.spyOn(queryClient, 'resetQueries')

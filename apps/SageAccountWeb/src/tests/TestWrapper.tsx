@@ -51,43 +51,43 @@ function TestWrapperInner(props: TestWrapperProps) {
   const { applicationSessionContext } = props
 
   const content = (
-    <SourceAppContext.Provider value={testSourceAppConfig}>
-      <ThemeProvider theme={theme}>
-        <SynapseToastContainer />
-        <AppInitializer>{props.children}</AppInitializer>
-      </ThemeProvider>
-    </SourceAppContext.Provider>
+    <SynapseErrorBoundary
+      onReset={() => {
+        // Navigate to root instead of reloading the page
+        navigate('/')
+      }}
+    >
+      <SourceAppContext.Provider value={testSourceAppConfig}>
+        <ThemeProvider theme={theme}>
+          <SynapseToastContainer />
+          <AppInitializer>{props.children}</AppInitializer>
+        </ThemeProvider>
+      </SourceAppContext.Provider>
+    </SynapseErrorBoundary>
   )
 
   return (
     <StyledEngineProvider injectFirst>
       <QueryClientProvider client={queryClient}>
-        <SynapseErrorBoundary
-          onReset={() => {
-            // Navigate to root instead of reloading the page
-            navigate('/')
-          }}
-        >
-          {applicationSessionContext ? (
-            <ApplicationSessionContextProvider
-              context={applicationSessionContext}
-            >
-              {content}
-            </ApplicationSessionContextProvider>
-          ) : (
-            <ApplicationSessionManager
-              onTwoFactorAuthResetThroughSSO={(twoFaError, twoFaResetCode) => {
-                // The user completed SSO with a twoFaResetCode
-                // Send them to the reset 2FA page with the token
-                navigate(
-                  `${RESET_2FA_ROUTE}?${RESET_2FA_SIGNED_TOKEN_PARAM}=${twoFaResetCode}`,
-                )
-              }}
-            >
-              {content}
-            </ApplicationSessionManager>
-          )}
-        </SynapseErrorBoundary>
+        {applicationSessionContext ? (
+          <ApplicationSessionContextProvider
+            context={applicationSessionContext}
+          >
+            {content}
+          </ApplicationSessionContextProvider>
+        ) : (
+          <ApplicationSessionManager
+            onTwoFactorAuthResetThroughSSO={(twoFaError, twoFaResetCode) => {
+              // The user completed SSO with a twoFaResetCode
+              // Send them to the reset 2FA page with the token
+              navigate(
+                `${RESET_2FA_ROUTE}?${RESET_2FA_SIGNED_TOKEN_PARAM}=${twoFaResetCode}`,
+              )
+            }}
+          >
+            {content}
+          </ApplicationSessionManager>
+        )}
       </QueryClientProvider>
     </StyledEngineProvider>
   )

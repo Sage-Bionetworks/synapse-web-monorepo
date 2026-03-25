@@ -277,7 +277,7 @@ describe('ChangePassword tests', () => {
     } = setUp(
       {},
       {
-        keyFactory: new KeyFactory(undefined),
+        keyFactory: new KeyFactory('realm', undefined, false),
         accessToken: 'anon-token',
         isAuthenticated: false,
       },

@@ -36,11 +36,11 @@ export default function App(props: AppProps) {
   )
 
   return (
-    <SynapseErrorBoundary>
-      <AppInitializer
-        defaultRealmId={defaultRealmId}
-        requireAuthentication={requireAuthentication}
-      >
+    <AppInitializer
+      defaultRealmId={defaultRealmId}
+      requireAuthentication={requireAuthentication}
+    >
+      <SynapseErrorBoundary>
         {aridhiaConfig?.apiBasePath ? (
           <AridhiaIntegration apiBasePath={aridhiaConfig.apiBasePath}>
             {content}
@@ -48,7 +48,7 @@ export default function App(props: AppProps) {
         ) : (
           content
         )}
-      </AppInitializer>
-    </SynapseErrorBoundary>
+      </SynapseErrorBoundary>
+    </AppInitializer>
   )
 }

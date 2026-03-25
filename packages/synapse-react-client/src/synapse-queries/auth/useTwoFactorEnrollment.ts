@@ -18,6 +18,7 @@ import {
 import { getAllActionsRequiredQueryFilters } from '../QueryFilterUtils'
 import { KeyFactory } from '../KeyFactory'
 import { useMemo } from 'react'
+import { SYNAPSE_REALM } from '@/utils/SynapseConstants'
 
 export function useStartTwoFactorEnrollment(
   options?: Partial<UseMutationOptions<TotpSecret, SynapseClientError>>,
@@ -109,7 +110,7 @@ export function useGetTwoFactorEnrollmentStatusWithAccessToken(
   options?: Partial<UseQueryOptions<TwoFactorAuthStatus, SynapseClientError>>,
 ) {
   const queryKeyFactory = useMemo(
-    () => new KeyFactory(accessToken),
+    () => new KeyFactory(SYNAPSE_REALM, accessToken, true),
     [accessToken],
   )
   return useQuery({

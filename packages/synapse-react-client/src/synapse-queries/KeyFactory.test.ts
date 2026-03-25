@@ -12,9 +12,127 @@ import {
 } from './QueryMatching.test-utils'
 
 describe('KeyFactory tests', () => {
-  let keyFactory = new KeyFactory(MOCK_ACCESS_TOKEN)
+  let keyFactory = new KeyFactory('realm1', MOCK_ACCESS_TOKEN, true)
   beforeEach(() => {
-    keyFactory = new KeyFactory(MOCK_ACCESS_TOKEN)
+    keyFactory = new KeyFactory('realm1', MOCK_ACCESS_TOKEN, true)
+  })
+
+  describe('key matching based on constructor args', () => {
+    it('matches authenticated users with the same token in the same realm', () => {
+      const isAuthenticated = true
+      const kf1 = new KeyFactory('realm1', MOCK_ACCESS_TOKEN, isAuthenticated)
+      const kf2 = new KeyFactory('realm1', MOCK_ACCESS_TOKEN, isAuthenticated)
+      expect(kf1.getAllEntityDataQueryKey()).toEqual(
+        kf2.getAllEntityDataQueryKey(),
+      )
+    })
+
+    it('does not match authenticated users with different tokens in the same realm', () => {
+      const isAuthenticated = true
+      const kf1 = new KeyFactory('realm1', MOCK_ACCESS_TOKEN, isAuthenticated)
+      const kf2 = new KeyFactory(
+        'realm1',
+        MOCK_ACCESS_TOKEN + '-differentToken',
+        isAuthenticated,
+      )
+      expect(kf1.getAllEntityDataQueryKey()).not.toEqual(
+        kf2.getAllEntityDataQueryKey(),
+      )
+    })
+
+    it('matches anonymous users with the same token in the same realm', () => {
+      const isAuthenticated = false
+      const kf1 = new KeyFactory('realm1', MOCK_ACCESS_TOKEN, isAuthenticated)
+      const kf2 = new KeyFactory('realm1', MOCK_ACCESS_TOKEN, isAuthenticated)
+      expect(kf1.getAllEntityDataQueryKey()).toEqual(
+        kf2.getAllEntityDataQueryKey(),
+      )
+    })
+
+    it('matches anonymous users with different tokens in the same realm', () => {
+      const isAuthenticated = false
+      const kf1 = new KeyFactory('realm1', MOCK_ACCESS_TOKEN, isAuthenticated)
+      const kf2 = new KeyFactory(
+        'realm1',
+        MOCK_ACCESS_TOKEN + '-differentToken',
+        isAuthenticated,
+      )
+      expect(kf1.getAllEntityDataQueryKey()).toEqual(
+        kf2.getAllEntityDataQueryKey(),
+      )
+    })
+
+    it('matches anonymous users with or without a token in the same realm', () => {
+      const isAuthenticated = false
+      const kf1 = new KeyFactory('realm1', MOCK_ACCESS_TOKEN, isAuthenticated)
+      const kf2 = new KeyFactory('realm1', undefined, isAuthenticated)
+      expect(kf1.getAllEntityDataQueryKey()).toEqual(
+        kf2.getAllEntityDataQueryKey(),
+      )
+    })
+
+    it('never matches authenticated users in different realms', () => {
+      const isAuthenticated = true
+      const kf1 = new KeyFactory('realm1', MOCK_ACCESS_TOKEN, isAuthenticated)
+      const kf2 = new KeyFactory('realm2', MOCK_ACCESS_TOKEN, isAuthenticated)
+      expect(kf1.getAllEntityDataQueryKey()).not.toEqual(
+        kf2.getAllEntityDataQueryKey(),
+      )
+    })
+
+    it('does not treat undefined `isAuthenticated` as anonymous', () => {
+      // FIXME: We have two different cases and need to think what gives the best UX
+      //   - this is an anonymous token (so the cache should match)
+      //   - this is a valid auth token (so the cache should be blown away)
+      //   - invalid auth token will cause the page to reload, so not worried about that case
+      const kf1 = new KeyFactory('realm1', MOCK_ACCESS_TOKEN, undefined)
+      const kf2 = new KeyFactory('realm2', MOCK_ACCESS_TOKEN, false)
+      expect(kf1.getAllEntityDataQueryKey()).not.toEqual(
+        kf2.getAllEntityDataQueryKey(),
+      )
+    })
+
+    it('never matches anonymous users in different realms', () => {
+      const isAuthenticated = false
+      const realm1WithToken = new KeyFactory(
+        'realm1',
+        MOCK_ACCESS_TOKEN,
+        isAuthenticated,
+      )
+      const realm1NoToken = new KeyFactory('realm1', undefined, isAuthenticated)
+      const realm2WithToken = new KeyFactory(
+        'realm2',
+        MOCK_ACCESS_TOKEN,
+        isAuthenticated,
+      )
+      const realm2NoToken = new KeyFactory('realm2', undefined, isAuthenticated)
+
+      expect(realm1WithToken.getAllEntityDataQueryKey()).not.toEqual(
+        realm2WithToken.getAllEntityDataQueryKey(),
+      )
+      expect(realm1WithToken.getAllEntityDataQueryKey()).not.toEqual(
+        realm2NoToken.getAllEntityDataQueryKey(),
+      )
+      expect(realm1NoToken.getAllEntityDataQueryKey()).not.toEqual(
+        realm2WithToken.getAllEntityDataQueryKey(),
+      )
+      expect(realm1NoToken.getAllEntityDataQueryKey()).not.toEqual(
+        realm2NoToken.getAllEntityDataQueryKey(),
+      )
+    })
+
+    it('never matches authenticated users with anonymous users', () => {
+      const isAuthenticated = false
+      const authKf = new KeyFactory('realm1', MOCK_ACCESS_TOKEN, true)
+      const anonKfWithToken = new KeyFactory('realm1', MOCK_ACCESS_TOKEN, false)
+      const anonKfNoToken = new KeyFactory('realm1', undefined, isAuthenticated)
+      expect(authKf.getAllEntityDataQueryKey()).not.toEqual(
+        anonKfWithToken.getAllEntityDataQueryKey(),
+      )
+      expect(authKf.getAllEntityDataQueryKey()).not.toEqual(
+        anonKfNoToken.getAllEntityDataQueryKey(),
+      )
+    })
   })
 
   describe('Entity QueryKeys', () => {
