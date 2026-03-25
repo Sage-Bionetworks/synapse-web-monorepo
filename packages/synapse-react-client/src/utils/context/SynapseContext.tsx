@@ -25,8 +25,6 @@ export type SynapseContextType = {
   appId?: string
   /* API client objects for Synapse. Generated automatically. */
   synapseClient: SynapseClient
-  /** Optional navigate function from React Router for client-side navigation */
-  navigate?: (to: string) => void | Promise<void>
 }
 
 const defaultContext = {
@@ -40,7 +38,6 @@ const defaultContext = {
   peopleSearchPageUrl: '/PeopleSearch:',
   appId: undefined,
   synapseClient: new SynapseClient(),
-  navigate: undefined,
 } satisfies SynapseContextType
 
 /**
@@ -92,18 +89,17 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
       keyFactory: providedContext?.keyFactory ?? queryKeyFactory,
       appId: providedContext?.appId,
       synapseClient: synapseApiClient,
-      navigate: providedContext?.navigate,
     }),
     [
       providedContext?.accessToken,
       providedContext?.isAuthenticated,
       providedContext?.downloadCartPageUrl,
+      providedContext?.peopleSearchPageUrl,
       providedContext?.isInExperimentalMode,
       providedContext?.keyFactory,
       providedContext?.utcTime,
       providedContext?.withErrorBoundary,
       providedContext?.appId,
-      providedContext?.navigate,
       queryKeyFactory,
       synapseApiClient,
     ],

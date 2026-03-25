@@ -1,5 +1,5 @@
-import { PropsWithChildren, useState, useCallback } from 'react'
-import { Outlet } from 'react-router'
+import { PropsWithChildren, useState, useCallback, useMemo } from 'react'
+import { Outlet, useNavigate } from 'react-router'
 import CookiesNotification from 'synapse-react-client/components/CookiesNotification/CookiesNotification'
 import { SynapseErrorBoundary } from 'synapse-react-client/components/error/ErrorBanner'
 import { SynapseToastContainer } from 'synapse-react-client/components/ToastMessage/index'
@@ -10,6 +10,7 @@ import { ChatDialogContext } from './components/ChatDialogContext'
 import Footer from './components/Footer'
 import Navbar from './components/navbar/Navbar'
 import { usePortalContext } from './components/PortalContext'
+import { processResponseDocument } from './shared-config/synapseChatHelpers'
 import { useDocumentTitleFromRoutes } from './utils/useDocumentTitleFromRoutes'
 
 export type AppProps = PropsWithChildren<{
@@ -23,6 +24,7 @@ export default function App(props: AppProps) {
   const { defaultRealmId, requireAuthentication } = props
   useDocumentTitleFromRoutes()
   const { aridhiaConfig, synapseChatProps } = usePortalContext()
+  const navigate = useNavigate()
   const [chatOpen, setChatOpen] = useState(false)
   const [chatInitialMessage, setChatInitialMessage] = useState<
     string | undefined
@@ -31,6 +33,19 @@ export default function App(props: AppProps) {
     setChatInitialMessage(initialMessage)
     setChatOpen(true)
   }, [])
+
+  // Create onChatResponse handler that processes XML-based navigation directives
+  // in the AI response. Defined here so it captures navigate from the Router context.
+  const onChatResponse = useMemo(() => {
+    if (!synapseChatProps) return undefined
+    return (responseText: string) => {
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(responseText, 'text/html')
+      processResponseDocument(doc, to => {
+        navigate(to)
+      })
+    }
+  }, [navigate, synapseChatProps])
 
   const content = (
     <ChatDialogContext.Provider value={{ openChat }}>
@@ -47,6 +62,7 @@ export default function App(props: AppProps) {
           open={chatOpen}
           onClose={() => setChatOpen(false)}
           initialMessage={chatInitialMessage}
+          onChatResponse={onChatResponse}
           {...synapseChatProps}
         />
       )}

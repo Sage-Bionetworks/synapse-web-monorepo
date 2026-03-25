@@ -22,7 +22,6 @@ import {
 import { Color } from '@mui/material/styles'
 import { TraceEvent } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useSynapseContext } from '@/utils'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
 
 export type SynapseChatInteractionProps = {
@@ -31,10 +30,6 @@ export type SynapseChatInteractionProps = {
   chatResponseTrace?: TraceEvent[]
   scrollIntoView?: boolean
   chatErrorReason?: string
-  processResponseDocument?: (
-    doc: Document,
-    navigate?: (to: string) => void | Promise<void>,
-  ) => void
   onSendChat?: (message: string) => void
 }
 
@@ -63,15 +58,11 @@ export function SynapseChatInteraction({
   chatErrorReason,
   chatResponseTrace,
   scrollIntoView = false,
-  processResponseDocument,
   onSendChat,
 }: SynapseChatInteractionProps) {
   const theme = useTheme()
   const ref = useRef<HTMLLIElement | null>(null)
   const [showTrace, setShowTrace] = useState(false)
-  const [textContent, setTextContent] = useState('')
-  const [guidePrompts, setGuidePrompts] = useState<string[]>([])
-  const { navigate } = useSynapseContext()
 
   useEffect(() => {
     // on mount, scroll into view if instructed
@@ -108,16 +99,15 @@ export function SynapseChatInteraction({
     ? traceButtonLoadingText
     : `${showTrace ? 'Hide' : 'Show'} Trace`
 
-  // Parse the response text once per update, extracting display text and guide prompts.
-  // processResponseDocument may have navigation side effects, so this must be a useEffect
-  // (not useMemo) to avoid side effects running during React's render phase.
-  useEffect(() => {
+  const { textContent, guidePrompts } = useMemo(() => {
     try {
       const parser = new DOMParser()
       const doc = parser.parseFromString(chatResponseText ?? '', 'text/html')
 
-      // Remove tool_name elements
-      doc.querySelectorAll('tool_name').forEach(element => element.remove())
+      // Remove tool_name and actions elements (AI XML tags not for display)
+      doc
+        .querySelectorAll('tool_name, actions')
+        .forEach(element => element.remove())
 
       // Extract guideprompts before removing them
       const extractedGuidePrompts = Array.from(
@@ -129,25 +119,19 @@ export function SynapseChatInteraction({
       // Remove guideprompt elements
       doc.querySelectorAll('guideprompt').forEach(element => element.remove())
 
-      // Allow custom processing of the response document (may trigger navigation)
-      if (processResponseDocument) {
-        processResponseDocument(doc, navigate)
-      }
-
       // Extract text from <chat> element if present, otherwise use full body text
       const chatElement = doc.querySelector('chat')
-      setTextContent(
-        chatElement
+      return {
+        textContent: chatElement
           ? chatElement.textContent ?? ''
           : doc.body.textContent ?? '',
-      )
-      setGuidePrompts(extractedGuidePrompts)
+        guidePrompts: extractedGuidePrompts,
+      }
     } catch (e) {
       console.error(e)
-      setTextContent(chatResponseText ?? '')
-      setGuidePrompts([])
+      return { textContent: chatResponseText ?? '', guidePrompts: [] }
     }
-  }, [chatResponseText, processResponseDocument, navigate])
+  }, [chatResponseText])
 
   return (
     <>

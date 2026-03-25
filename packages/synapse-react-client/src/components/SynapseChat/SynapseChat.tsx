@@ -46,12 +46,12 @@ export type SynapseChatProps = {
   defaultAgentAccessLevel?: AgentAccessLevel
   // Whether to show the access level menu for the agent session.
   showAccessLevelMenu?: boolean
-  // Optional function to process the response document before extracting text content
-  // The navigate function will be provided if available (when used within a Router context)
-  processResponseDocument?: (
-    doc: Document,
-    navigate?: (to: string) => void | Promise<void>,
-  ) => void
+  /**
+   * Optional callback invoked once when a chat response is received from the server.
+   * Use this for side effects such as navigation based on the response content.
+   * Called in the mutation onSuccess handler so it runs exactly once per response.
+   */
+  onChatResponse?: (responseText: string) => void
 }
 
 export type ChatInteraction = {
@@ -76,7 +76,7 @@ export function SynapseChat({
   setExternalSession,
   externalChatState,
   showAccessLevelMenu = true,
-  processResponseDocument,
+  onChatResponse,
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
   const [localAgentSession, setLocalAgentSession] = useState<AgentSession>()
@@ -103,7 +103,7 @@ export function SynapseChat({
       : AgentAccessLevel.PUBLICLY_ACCESSIBLE,
   )
 
-  const internalChatState = useChatState(agentSession)
+  const internalChatState = useChatState(agentSession, onChatResponse)
   const chatState = externalChatState ?? internalChatState
   const { pendingMessage, chatJobIds, sendChat } = chatState
 
@@ -254,7 +254,6 @@ export function SynapseChat({
                 <SynapseChatMessage
                   key={jobId}
                   chatJobId={jobId}
-                  processResponseDocument={processResponseDocument}
                   onSendChat={sendChat}
                 />
               )
@@ -265,7 +264,6 @@ export function SynapseChat({
                 chatResponseText={''}
                 chatErrorReason={''}
                 scrollIntoView
-                processResponseDocument={processResponseDocument}
                 onSendChat={sendChat}
               />
             )}

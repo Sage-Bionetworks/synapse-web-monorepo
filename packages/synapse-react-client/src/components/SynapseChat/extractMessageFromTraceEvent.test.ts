@@ -113,4 +113,13 @@ describe('extractMessageFromTraceEvent', () => {
       },
     ])
   })
+
+  it('returns the raw message as reasoningText when message is not valid JSON', () => {
+    const nonJsonMessage = 'This is a plain text trace message, not JSON.'
+    const actual = extractMessageFromTraceEvent({
+      timestamp: 0,
+      message: nonJsonMessage,
+    })
+    expect(actual).toEqual([{ reasoningText: nonJsonMessage }])
+  })
 })

@@ -35,6 +35,11 @@
   min-height: 38px;
   height: 100%;
 
+  // Double the class to beat MUI's specificity without !important
+  &.formControl {
+    min-width: 187px;
+  }
+
   @media (max-width: 899px) {
     width: 100%;
   }

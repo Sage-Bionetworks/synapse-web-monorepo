@@ -13,7 +13,10 @@ export type ChatState = {
   chatJobIds: string[]
 }
 
-export function useChatState(agentSession?: AgentSession): ChatState {
+export function useChatState(
+  agentSession?: AgentSession,
+  onChatResponse?: (responseText: string) => void,
+): ChatState {
   const [chatJobIds, setChatJobIds] = useState<string[]>([])
   // Optimistic update state for latest unprocessed message
   const [pendingMessage, setPendingMessage] = useState<string | null>(null)
@@ -23,6 +26,9 @@ export function useChatState(agentSession?: AgentSession): ChatState {
       onMutate: (newChatMessage: AgentChatRequest) => {
         // set the pending message to the new chat message
         setPendingMessage(newChatMessage.chatText)
+      },
+      onSuccess: (response: AgentChatResponse) => {
+        onChatResponse?.(response.responseText)
       },
     },
     (status: AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>) => {

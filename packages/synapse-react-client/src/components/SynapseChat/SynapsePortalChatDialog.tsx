@@ -8,7 +8,7 @@ export type SynapsePortalChatDialogProps = SynapseChatProps & {
 
 /**
  * A dialog that wraps SynapseChat with externally-controlled open/close state.
- * Only shown when the user is logged in and the SYNAPSE_CHAT feature flag is enabled.
+ * Only shown when the user is logged in and the PORTAL_CHAT feature flag is enabled.
  */
 export function SynapsePortalChatDialog({
   open,

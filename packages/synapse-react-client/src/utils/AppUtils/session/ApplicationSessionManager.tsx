@@ -5,7 +5,6 @@ import { SynapseContextProvider, SynapseContextType } from '../../context'
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
 import { AuthenticationGuard } from './AuthenticationGuard'
 import { useSessionManager } from './useSessionManager'
-import { useNavigate } from 'react-router'
 
 export type ApplicationSessionManagerProps = PropsWithChildren<{
   /** The realm that an unauthenticated user should be signed in to. Defaults to "0", the public Synapse realm */
@@ -53,7 +52,6 @@ export function ApplicationSessionManager(
     requireAuthentication,
     ...hookOptions
   } = props
-  const navigate = useNavigate()
   const { sessionContext, token } = useSessionManager(hookOptions)
 
   return (
@@ -66,7 +64,6 @@ export function ApplicationSessionManager(
           utcTime: SynapseClient.getUseUtcTimeFromCookie(),
           downloadCartPageUrl,
           appId: appId,
-          navigate,
         }}
       >
         {requireAuthentication ? (
