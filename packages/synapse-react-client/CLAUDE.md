@@ -44,7 +44,7 @@ src/
     hooks/          Reusable custom hooks
     functions/      Pure utility functions
   theme/            MUI theme definitions and palette
-  style/            SCSS stylesheets (BEM methodology)
+  style/            Legacy global SCSS (prefer CSS Modules in new components)
   mocks/            Mock data and MSW request handlers for tests/Storybook
   testutils/        Test helper utilities (wrappers, custom matchers)
   stories/          Storybook stories
@@ -65,8 +65,10 @@ All components require `SynapseContextProvider` (or the higher-level `FullContex
 
 API calls are organized in two layers:
 
-1. `src/synapse-client/` — raw async functions calling the REST API
+1. `src/synapse-client/` — raw async functions calling the REST API (legacy; prefer the generated client instead)
 2. `src/synapse-queries/` — TanStack Query hooks (`useQuery`, `useMutation`, `useInfiniteQuery`) per domain (entity, user, table, etc.)
+
+**Preferred pattern**: Call the generated `@sage-bionetworks/synapse-client` directly inside hooks rather than adding new functions to `src/synapse-client/`. The `src/synapse-client/` layer is legacy and should not be extended.
 
 Cache keys are centralized in `src/synapse-queries/KeyFactory.ts`.
 
@@ -81,10 +83,9 @@ Cache keys are centralized in `src/synapse-queries/KeyFactory.ts`.
 ### Styling
 
 - Primary: MUI v7 with custom theme in `src/theme/`
-- Secondary: SCSS (`src/style/`, `src/template_style/`) using BEM methodology
-  - Top-level block class names are PascalCase (e.g., `UserProfile`)
-  - Elements: `ComponentName__element` (e.g., `UserProfile__icon`)
-  - Modifiers: `ComponentName--modifier` (e.g., `UserProfile--disabled`)
+- Secondary: CSS Modules (`*.module.scss`) with simple camelCase class names (e.g., `.searchField`, `.portalCard`)
+  - BEM naming (`ComponentName__element`) is legacy — CSS Modules provide scoping, so BEM is unnecessary
+  - Prefer simple descriptive names over BEM structure in new components
 - Do not add to `src/style/base/_core.scss` — it is legacy and scheduled for removal
 
 ### Exposing new components
