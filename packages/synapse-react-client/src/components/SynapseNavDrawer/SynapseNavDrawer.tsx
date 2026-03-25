@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useRef } from 'react'
 import SynapseIconWhite from '@/assets/icons/SynapseIconWhite'
 import SynapseLogoName from '@/assets/icons/SynapseLogoName'
 import {
@@ -11,27 +11,44 @@ import {
   useApplicationSessionContext,
   useSynapseContext,
 } from '@/utils'
+import { extractSynIdFromCurrentUrl } from '@/utils/functions/synIdUtils'
 import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
 import {
   Badge,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Drawer,
+  Fab,
+  IconButton,
   InputAdornment,
   List,
   ListItemButton,
   TextField,
   Tooltip,
+  Typography,
 } from '@mui/material'
+import ChatIcon from '@mui/icons-material/Chat'
+import CloseIcon from '@mui/icons-material/Close'
+import AddCommentIcon from '@mui/icons-material/AddComment'
 import {
   Direction,
   SubmissionSortField,
   SubmissionState,
+  AgentSession,
 } from '@sage-bionetworks/synapse-types'
+import { AgentPromptSessionContext } from '@sage-bionetworks/synapse-client'
 import { KeyboardEvent, ReactNode, useState } from 'react'
 import { CreateProjectModal } from '../CreateProjectModal/CreateProjectModal'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
 import UserCard from '../UserCard/UserCard'
 import { DEFAULT_SEARCH_QUERY } from '@/utils/searchDefaults'
+import { SynapseChat } from '@/components/SynapseChat/SynapseChat'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
@@ -157,6 +174,108 @@ export function SynapseNavDrawer({
   const [docSiteSearchText, setDocSiteSearchText] = useState<string>('')
   const [isShowingCreateProjectModal, setIsShowingCreateProjectModal] =
     useState<boolean>(false)
+  const [isChatOpen, setIsChatOpen] = useState(false)
+  const [chatSession, setChatSession] = useState<AgentSession>()
+  const [hasUnreadMessage, setHasUnreadMessage] = useState(false)
+  const [promptContext, setPromptContext] = useState<
+    AgentPromptSessionContext[]
+  >([])
+  const [isShowingNewChatConfirmation, setIsShowingNewChatConfirmation] =
+    useState(false)
+  const [chatJobCount, setChatJobCount] = useState(0)
+  const isChatOpenRef = useRef(isChatOpen)
+  const lastUrlRef = useRef<string>('')
+
+  // Helper function to extract and set context from current URL
+  const updateContextFromUrl = useCallback(() => {
+    const parsed = extractSynIdFromCurrentUrl()
+    if (parsed) {
+      const entityContext: AgentPromptSessionContext = {
+        concreteType: 'org.sagebionetworks.repo.model.agent.EntityContext',
+        entityId: parsed.entityId,
+        ...(parsed.versionNumber && {
+          versionNumber: parsed.versionNumber,
+        }),
+      }
+      setPromptContext([entityContext])
+    } else {
+      setPromptContext([])
+    }
+  }, [])
+
+  // Update context when URL changes
+  React.useEffect(() => {
+    const updateContext = updateContextFromUrl
+
+    // Run on mount and when chat opens
+    updateContext()
+    lastUrlRef.current = window.location.href
+
+    // Only poll for URL changes when chat is open
+    let pollInterval: NodeJS.Timeout | undefined
+    if (isChatOpen) {
+      pollInterval = setInterval(() => {
+        const currentUrl = window.location.href
+        if (currentUrl !== lastUrlRef.current) {
+          lastUrlRef.current = currentUrl
+          updateContext()
+        }
+      }, 100) // Check every 100ms
+    }
+
+    // Also listen for browser navigation events (back/forward buttons)
+    const handlePopState = () => {
+      lastUrlRef.current = window.location.href
+      updateContext()
+    }
+    window.addEventListener('popstate', handlePopState)
+
+    return () => {
+      if (pollInterval) {
+        clearInterval(pollInterval)
+      }
+      window.removeEventListener('popstate', handlePopState)
+    }
+  }, [isChatOpen, updateContextFromUrl])
+
+  // Keep ref in sync with state
+  React.useEffect(() => {
+    isChatOpenRef.current = isChatOpen
+  }, [isChatOpen])
+
+  const handleNewMessage = useCallback(() => {
+    if (!isChatOpenRef.current) {
+      setHasUnreadMessage(true)
+    }
+  }, [])
+
+  const handleChatStateChange = useCallback((chatJobIds: string[]) => {
+    setChatJobCount(chatJobIds.length)
+  }, [])
+
+  const startNewChat = useCallback(() => {
+    setChatSession(undefined)
+    updateContextFromUrl()
+    setHasUnreadMessage(false)
+    setChatJobCount(0)
+    setIsShowingNewChatConfirmation(false)
+  }, [updateContextFromUrl])
+
+  const handleNewChat = useCallback(() => {
+    if (chatJobCount === 0) {
+      startNewChat()
+      return
+    }
+
+    setIsShowingNewChatConfirmation(true)
+  }, [chatJobCount, startNewChat])
+
+  // Clear unread indicator whenever chat opens
+  React.useEffect(() => {
+    if (isChatOpen) {
+      setHasUnreadMessage(false)
+    }
+  }, [isChatOpen])
 
   const { clearSession } = useApplicationSessionContext()
 
@@ -217,6 +336,19 @@ export function SynapseNavDrawer({
 
   const oneSageURL = useOneSageURL()
   const accountSettingsURL = useOneSageURL('/authenticated/myaccount')
+
+  // Keyboard shortcut: Cmd/Ctrl+K to toggle chat
+  React.useEffect(() => {
+    const handleKeyPress = (e: globalThis.KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        setIsChatOpen(prev => !prev)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [])
 
   return (
     <>
@@ -615,6 +747,131 @@ export function SynapseNavDrawer({
           </div>
         </Drawer>
       </div>
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: 20,
+          right: 20,
+          transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          zIndex: 1200,
+          '&:hover': {
+            transform: 'scale(1.1)',
+          },
+        }}
+      >
+        <Badge variant="dot" color="error" invisible={!hasUnreadMessage}>
+          <Fab
+            color="primary"
+            aria-label="Open chat assistant"
+            onClick={() => setIsChatOpen(true)}
+          >
+            <ChatIcon />
+          </Fab>
+        </Badge>
+      </Box>
+      <Drawer
+        anchor="right"
+        open={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        variant="persistent"
+        className="SynapseChatPanel"
+        SlideProps={{
+          unmountOnExit: false,
+        }}
+        ModalProps={{
+          BackdropProps: {
+            sx: {
+              backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            },
+          },
+        }}
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: {
+              xs: '100%',
+              sm: '400px',
+              md: '450px',
+            },
+            maxWidth: '100vw',
+            height: '100vh',
+            boxShadow: '-4px 0 8px rgba(0,0,0,0.1)',
+            zIndex: 1300,
+          },
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            p: 2,
+            borderBottom: '1px solid',
+            borderColor: 'grey.300',
+            backgroundColor: 'white',
+          }}
+        >
+          <Typography variant="h6">Synapse Assistant</Typography>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Tooltip title="Start new chat" placement="bottom">
+              <IconButton
+                onClick={handleNewChat}
+                aria-label="Start new chat"
+                disabled={!chatSession}
+              >
+                <AddCommentIcon />
+              </IconButton>
+            </Tooltip>
+            <IconButton
+              onClick={() => setIsChatOpen(false)}
+              aria-label="Close chat"
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            flexGrow: 1,
+            height: 'calc(100vh - 73px)',
+            overflow: 'hidden',
+            padding: '16px',
+          }}
+        >
+          <SynapseChat
+            chatbotName="Synapse Assistant"
+            hideTitle={true}
+            externalSession={chatSession}
+            setExternalSession={setChatSession}
+            showAccessLevelMenu={true}
+            textboxPositionOffset="0px"
+            onNewMessage={handleNewMessage}
+            onChatStateChange={handleChatStateChange}
+            promptContext={promptContext}
+            onPromptContextChange={setPromptContext}
+            isContextEditable={true}
+          />
+        </Box>
+      </Drawer>
+      <Dialog
+        open={isShowingNewChatConfirmation}
+        onClose={() => setIsShowingNewChatConfirmation(false)}
+      >
+        <DialogTitle>Start New Chat?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Starting a new chat will clear your current conversation. This
+            action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsShowingNewChatConfirmation(false)}>
+            Cancel
+          </Button>
+          <Button onClick={startNewChat} variant="contained" autoFocus>
+            Start New Chat
+          </Button>
+        </DialogActions>
+      </Dialog>
       <CreateProjectModal
         onClose={() => setIsShowingCreateProjectModal(false)}
         isShowingModal={isShowingCreateProjectModal}

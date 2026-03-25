@@ -30,7 +30,7 @@ export type SynapseChatInteractionProps = {
 }
 
 // Show tool calls in the trace. Useful for development. We may want to show them to users in the future.
-const SHOW_TOOL_USE = false
+const SHOW_TOOL_USE = true
 
 function getMarkdownForTraceMessage(traceMessage: TraceMessage): string {
   if ('reasoningText' in traceMessage) {

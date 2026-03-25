@@ -15,7 +15,10 @@ import {
   useTheme,
 } from '@mui/material'
 import { Color } from '@mui/material/styles'
-import { GridAgentSessionContext } from '@sage-bionetworks/synapse-client'
+import {
+  AgentPromptSessionContext,
+  GridAgentSessionContext,
+} from '@sage-bionetworks/synapse-client'
 import {
   AgentAccessLevel,
   AgentSession,
@@ -27,6 +30,9 @@ import { displayToast } from '../ToastMessage'
 import AccessLevelMenu from './AccessLevelMenu'
 import SynapseChatInteraction from './SynapseChatInteraction'
 import SynapseChatMessage from './SynapseChatMessage'
+import { SynapseChatContextChips } from './SynapseChatContextChips'
+import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
+import { FinderScope } from '../EntityFinder/tree/EntityTree'
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
@@ -46,6 +52,16 @@ export type SynapseChatProps = {
   defaultAgentAccessLevel?: AgentAccessLevel
   // Whether to show the access level menu for the agent session.
   showAccessLevelMenu?: boolean
+  /* Callback invoked when a new message is received */
+  onNewMessage?: () => void
+  /* Callback invoked when chat state changes (for tracking message count) */
+  onChatStateChange?: (chatJobIds: string[]) => void
+  /* Optional context to include with each chat message */
+  promptContext?: AgentPromptSessionContext[]
+  /* Callback invoked when prompt context is modified */
+  onPromptContextChange?: (contexts: AgentPromptSessionContext[]) => void
+  /* Whether the context chips should be editable (removable). Default: false */
+  isContextEditable?: boolean
 }
 
 export type ChatInteraction = {
@@ -70,6 +86,11 @@ export function SynapseChat({
   setExternalSession,
   externalChatState,
   showAccessLevelMenu = true,
+  onNewMessage,
+  onChatStateChange,
+  promptContext,
+  onPromptContextChange,
+  isContextEditable = true, // FIXME: should make this default false
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
   const [localAgentSession, setLocalAgentSession] = useState<AgentSession>()
@@ -96,9 +117,11 @@ export function SynapseChat({
       : AgentAccessLevel.PUBLICLY_ACCESSIBLE,
   )
 
-  const internalChatState = useChatState(agentSession)
+  const internalChatState = useChatState(agentSession, promptContext)
   const chatState = externalChatState ?? internalChatState
   const { pendingMessage, chatJobIds, sendChat } = chatState
+
+  const [isShowingEntityFinder, setIsShowingEntityFinder] = useState(false)
 
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
@@ -152,6 +175,19 @@ export function SynapseChat({
       setInitialMessageProcessed(true)
     }
   }, [agentSession, initialMessage, initialMessageProcessed, sendChat])
+
+  useEffect(() => {
+    // Notify parent when chat job IDs change
+    if (onChatStateChange) {
+      onChatStateChange(chatJobIds)
+    }
+  }, [chatJobIds, onChatStateChange])
+
+  useEffect(() => {
+    // Clear the text input field when session changes (new chat started)
+    setUserChatTextfieldValue('')
+    setInitialMessageProcessed(false)
+  }, [agentSession?.sessionId])
 
   const handleSendMessage = () => {
     if (userChatTextfieldValue.trim()) {
@@ -243,7 +279,13 @@ export function SynapseChat({
               )
             })} */}
             {chatJobIds.map(jobId => {
-              return <SynapseChatMessage key={jobId} chatJobId={jobId} />
+              return (
+                <SynapseChatMessage
+                  key={jobId}
+                  chatJobId={jobId}
+                  onResponseReceived={onNewMessage}
+                />
+              )
             })}
             {pendingMessage && (
               <SynapseChatInteraction
@@ -263,6 +305,28 @@ export function SynapseChat({
           backgroundColor: 'white',
         }}
       >
+        {((promptContext && promptContext.length > 0) || isContextEditable) && (
+          <Box sx={{ mb: 1 }}>
+            <SynapseChatContextChips
+              contexts={promptContext ?? []}
+              onRemove={
+                isContextEditable && onPromptContextChange
+                  ? context => {
+                      onPromptContextChange(
+                        promptContext!.filter(c => c !== context),
+                      )
+                    }
+                  : undefined
+              }
+              onAdd={
+                isContextEditable
+                  ? () => setIsShowingEntityFinder(true)
+                  : undefined
+              }
+              variant="compact"
+            />
+          </Box>
+        )}
         <Box
           component="form"
           sx={{
@@ -311,6 +375,40 @@ export function SynapseChat({
           </Typography>
         </Box>
       </Box>
+      <EntityFinderModal
+        configuration={{
+          selectMultiple: true,
+          initialScope: FinderScope.ALL_PROJECTS,
+          initialContainer: 'root',
+        }}
+        initialSelected={(promptContext ?? [])
+          .filter(
+            c =>
+              c.concreteType ===
+              'org.sagebionetworks.repo.model.agent.EntityContext',
+          )
+          .map(c => ({
+            targetId: c.entityId!,
+            targetVersionNumber: c.versionNumber,
+          }))}
+        show={isShowingEntityFinder}
+        title="Add Entity to Chat Context"
+        confirmButtonCopy="Add"
+        onConfirm={selected => {
+          if (onPromptContextChange) {
+            onPromptContextChange(
+              selected.map(ref => ({
+                concreteType:
+                  'org.sagebionetworks.repo.model.agent.EntityContext',
+                entityId: ref.targetId,
+                versionNumber: ref.targetVersionNumber,
+              })),
+            )
+          }
+          setIsShowingEntityFinder(false)
+        }}
+        onCancel={() => setIsShowingEntityFinder(false)}
+      />
     </Box>
   )
 }

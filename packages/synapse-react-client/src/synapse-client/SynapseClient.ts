@@ -106,6 +106,7 @@ import {
   DoiAssociation,
   EntityType,
   ViewEntityType,
+  AgentChatRequest,
 } from '@sage-bionetworks/synapse-client'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import {
@@ -135,7 +136,6 @@ import {
   AddPartResponse,
   AddToDownloadListRequest,
   AddToDownloadListResponse,
-  AgentChatRequest,
   AgentChatResponse,
   AgentSession,
   AliasCheckRequest,

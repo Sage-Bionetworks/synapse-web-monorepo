@@ -16,3 +16,25 @@ export const Demo: Story = {
     },
   },
 }
+
+export const WithEntityInURL: Story = {
+  args: {
+    initIsOpen: false,
+    gotoPlace: (href: string) => {
+      // Simulate SWC navigation by updating the hash
+      window.location.hash = href
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Demonstrates automatic context detection from URL. Navigate to an entity page (e.g., click Projects menu items) and then open the chat panel to see the entity context chip.',
+      },
+    },
+  },
+  play: () => {
+    // Set initial URL with an entity ID
+    window.location.hash = '/Synapse:syn9602637'
+  },
+}
