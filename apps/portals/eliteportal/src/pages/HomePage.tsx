@@ -9,18 +9,16 @@ import ElNewsletterSection from '@sage-bionetworks/synapse-portal-framework/comp
 import ELSupportedByNIH from '@sage-bionetworks/synapse-portal-framework/components/eliteportal/ELSupportedByNIH'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { TypeAnimation } from 'react-type-animation'
-import {
-  FeaturedDataTabs,
-  FeaturedResearch,
-  GoalsV2,
-  ImageCardGridWithLinks,
-  PortalFeaturedPartners,
-  PortalFeatureHighlights,
-  PortalHomePageHeader,
-  PortalSectionHeader,
-  RecentPublicationsGrid,
-  UpsetPlot,
-} from 'synapse-react-client'
+import FeaturedDataTabs from 'synapse-react-client/components/FeaturedDataTabs/FeaturedDataTabs'
+import FeaturedResearch from 'synapse-react-client/components/FeaturedResearch/FeaturedResearch'
+import { GoalsV2 } from 'synapse-react-client/components/GoalsV2/GoalsV2'
+import ImageCardGridWithLinks from 'synapse-react-client/components/ImageCardGridWithLinks/ImageCardGridWithLinks'
+import PortalFeaturedPartners from 'synapse-react-client/components/PortalFeaturedPartners/PortalFeaturedPartners'
+import PortalFeatureHighlights from 'synapse-react-client/components/PortalFeatureHighlights/PortalFeatureHighlights'
+import PortalHomePageHeader from 'synapse-react-client/components/PortalHomePageHeader/PortalHomePageHeader'
+import PortalSectionHeader from 'synapse-react-client/components/PortalSectionHeader/PortalSectionHeader'
+import RecentPublicationsGrid from 'synapse-react-client/components/RecentPublicationsGrid/RecentPublicationsGrid'
+import { UpsetPlot } from 'synapse-react-client/components/Plot/UpsetPlot'
 import {
   cohortBuilderSql,
   dataSql,
@@ -33,10 +31,23 @@ import {
 } from '../config/resources'
 import { useNavigate } from 'react-router'
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
+import { visuallyHidden } from 'synapse-react-client'
 
 function HomePageInternal() {
   const theme = useTheme()
   const navigate = useNavigate()
+
+  const animationPhrases = [
+    'exceptional longevity',
+    'healthy aging',
+    'life span',
+    'health span',
+    'familial longevity',
+    'centenarians',
+    'cross-species studies',
+    'longevity-associated genes',
+    'longevity-associated omics',
+  ]
 
   const styledPortalFeatureHighlightsSummaryText = (
     <>
@@ -88,26 +99,8 @@ function HomePageInternal() {
         })}
       >
         <TypeAnimation
-          sequence={[
-            'exceptional longevity',
-            3000,
-            'healthy aging',
-            3000,
-            'life span',
-            3000,
-            'health span',
-            3000,
-            'familial longevity',
-            3000,
-            'centenarians',
-            3000,
-            'cross-species studies',
-            3000,
-            'longevity-associated genes',
-            3000,
-            'longevity-associated omics',
-            3000,
-          ]}
+          aria-hidden="true"
+          sequence={animationPhrases.flatMap(phrase => [phrase, 3000])}
           wrapper="span"
           speed={20}
           repeat={Infinity}
@@ -116,6 +109,10 @@ function HomePageInternal() {
             color: '#35E7C6',
           }}
         />
+        {/* Screen reader only text */}
+        <Box component="span" sx={visuallyHidden}>
+          {animationPhrases.join(', ')}
+        </Box>
       </Box>
     </Box>
   )

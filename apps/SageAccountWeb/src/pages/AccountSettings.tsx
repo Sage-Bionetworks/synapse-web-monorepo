@@ -37,7 +37,7 @@ import { useCookiePreferences } from 'synapse-react-client/utils/hooks/useCookie
 import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/featureflags/useGetFeatureFlag'
 import { useGetCurrentRealm } from 'synapse-react-client/synapse-queries/realm/useRealmPrincipals'
-import SynapseClient from 'synapse-react-client/synapse-client'
+import SynapseClient from 'synapse-react-client/synapse-client/index'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 import ChangePassword from 'synapse-react-client/components/ChangePassword/ChangePassword'
 import TwoFactorAuthSettingsPanel from 'synapse-react-client/components/Authentication/TwoFactorAuthSettingsPanel'
@@ -101,8 +101,9 @@ const AccountSettings = (): React.ReactNode => {
 
   const { clearSession } = useApplicationSessionContext()
   const showWebhooks = useGetFeatureFlag(FeatureFlagEnum.WEBHOOKS_UI)
-  const { data: currentRealm } = useGetCurrentRealm()
-  const cookies = new UniversalCookies()
+  const { data: currentRealm } = useGetCurrentRealm({
+    select: realm => realm.id,
+  })
   const [isUTCTime, setUTCTime] = useState<string>(
     SynapseClient.getUseUtcTimeFromCookie().toString(),
   )
@@ -111,6 +112,7 @@ const AccountSettings = (): React.ReactNode => {
     navigate(`/authenticated/${val}`)
   }
   useEffect(() => {
+    const cookies = new UniversalCookies()
     const current = new Date()
     const nextYear = new Date()
     nextYear.setFullYear(current.getFullYear() + 1)

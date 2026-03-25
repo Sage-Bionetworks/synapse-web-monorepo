@@ -6,7 +6,8 @@ import {
   StyledInnerContainer,
   StyledOuterContainer,
 } from '../components/StyledComponents.js'
-import { useSourceApp, useSourceAppId } from '../components/useSourceApp.js'
+
+import { useSourceApp } from '../components/useSourceApp.js'
 import { RESET_2FA_ROUTE, RESET_2FA_SIGNED_TOKEN_PARAM } from '../Constants.js'
 import StandaloneLoginForm from 'synapse-react-client/components/Authentication/StandaloneLoginForm'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
@@ -47,7 +48,6 @@ function LoginPage(props: LoginPageProps) {
   const { revalidate } = useRevalidator()
   const navigate = useNavigate()
   const sourceApp = useSourceApp()
-  const appId = useSourceAppId()
 
   const {
     lastLoginDateState,
@@ -55,7 +55,6 @@ function LoginPage(props: LoginPageProps) {
     lastLoginSourceAppNameState,
     lastLoginSourceAppURLState,
   } = useLastLoginInfoState()
-
   return (
     <StyledOuterContainer>
       <StyledInnerContainer
@@ -108,7 +107,7 @@ function LoginPage(props: LoginPageProps) {
                 }}
                 twoFactorAuthenticationRequired={twoFactorAuthSSOErrorResponse}
                 twoFactorAuthResetUri={`${window.location.origin}/${RESET_2FA_ROUTE}?${RESET_2FA_SIGNED_TOKEN_PARAM}=`}
-                sourceAppId={appId}
+                realm={sourceApp?.defaultRealm}
               />
             </Box>
           </Box>

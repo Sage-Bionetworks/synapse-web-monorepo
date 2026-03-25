@@ -3,7 +3,7 @@ import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynap
 
 function ContributeData() {
   return (
-    <SectionLayout title={'Contribute Data'}>
+    <SectionLayout title={'Data Contribution'}>
       <Markdown
         ownerId="syn27229419"
         wikiId="621277"

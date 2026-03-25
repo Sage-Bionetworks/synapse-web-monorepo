@@ -1,11 +1,10 @@
-import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
-import SynapseClient from '@/synapse-client'
-import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { ApplicationSessionManager } from '@/utils'
+import { useSynapseContext } from '@/utils'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { LoginAwareButton, LoginAwareButtonProps } from './LoginAwareButton'
+
+vi.mock('@/utils/context/SynapseContext')
 
 const defaultProps: LoginAwareButtonProps = {
   children: 'Register for this Challenge',
@@ -20,33 +19,27 @@ const toProps: LoginAwareButtonProps = {
 function renderComponent(props: LoginAwareButtonProps = defaultProps) {
   return render(
     <MemoryRouter>
-      <ApplicationSessionManager>
-        <LoginAwareButton {...props} />
-      </ApplicationSessionManager>
+      <LoginAwareButton {...props} />
     </MemoryRouter>,
-    {
-      wrapper: createWrapper(),
-    },
   )
 }
 
 describe('LoginAwareButton tests', () => {
+  const mockUseSynapseContext = vi.mocked(useSynapseContext)
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  const mockGetAccessToken = vi.spyOn(SynapseClient, 'getAccessTokenFromCookie')
-
   /* User is logged out */
   it('Renders as a button when user is logged out', () => {
-    mockGetAccessToken.mockResolvedValue(undefined)
+    mockUseSynapseContext.mockReturnValue({ isAuthenticated: false } as any)
     renderComponent()
     const btn = screen.getByRole('button')
     expect(btn).toHaveTextContent(defaultProps.children as string)
   })
 
   it('Has no href or to attribute when user is logged out', () => {
-    mockGetAccessToken.mockResolvedValue(undefined)
+    mockUseSynapseContext.mockReturnValue({ isAuthenticated: false } as any)
     renderComponent()
     const btn = screen.getByRole('button')
     expect(btn).not.toHaveAttribute('href')
@@ -54,7 +47,7 @@ describe('LoginAwareButton tests', () => {
   })
 
   it('Has SRC_SIGN_IN_CLASS class when user is logged out', () => {
-    mockGetAccessToken.mockResolvedValue(undefined)
+    mockUseSynapseContext.mockReturnValue({ isAuthenticated: false } as any)
     renderComponent()
     const btn = screen.getByRole('button')
     expect(btn).toHaveClass(SRC_SIGN_IN_CLASS)
@@ -62,7 +55,7 @@ describe('LoginAwareButton tests', () => {
 
   /* User is logged in */
   it('Renders as a link when user is logged in', async () => {
-    mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
+    mockUseSynapseContext.mockReturnValue({ isAuthenticated: true } as any)
     renderComponent()
     await waitFor(() => {
       const btn = screen.getByRole('link')
@@ -71,7 +64,7 @@ describe('LoginAwareButton tests', () => {
   })
 
   it('Renders as a link when "href" is passed and user is logged in', async () => {
-    mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
+    mockUseSynapseContext.mockReturnValue({ isAuthenticated: true } as any)
     renderComponent()
     await waitFor(() => {
       const btn = screen.getByRole('link')
@@ -82,7 +75,7 @@ describe('LoginAwareButton tests', () => {
   })
 
   it('Renders as a link when "to" is passed and user is logged in', async () => {
-    mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
+    mockUseSynapseContext.mockReturnValue({ isAuthenticated: true } as any)
     renderComponent(toProps)
     await waitFor(() => {
       const btn = screen.getByRole('link')
@@ -93,7 +86,7 @@ describe('LoginAwareButton tests', () => {
   })
 
   it('Does not have SRC_SIGN_IN_CLASS class when user is logged in', async () => {
-    mockGetAccessToken.mockResolvedValue(MOCK_ACCESS_TOKEN)
+    mockUseSynapseContext.mockReturnValue({ isAuthenticated: true } as any)
     renderComponent()
     await waitFor(() => {
       const btn = screen.getByRole('link')

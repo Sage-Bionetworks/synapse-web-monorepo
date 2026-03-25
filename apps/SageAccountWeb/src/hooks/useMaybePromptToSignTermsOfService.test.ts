@@ -33,6 +33,7 @@ vi.mock('react-router', () => {
 })
 
 const mockApplicationSessionContext: ApplicationSessionContextType = {
+  isAuthenticated: true,
   hasInitializedSession: true,
   refreshSession: vi.fn(),
   clearSession: vi.fn(),

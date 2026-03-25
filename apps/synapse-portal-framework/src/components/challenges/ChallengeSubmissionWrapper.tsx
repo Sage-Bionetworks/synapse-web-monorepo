@@ -1,6 +1,7 @@
 import React from 'react'
 import { EntityType } from '@sage-bionetworks/synapse-client'
-import { AppUtils, ChallengeSubmission } from 'synapse-react-client'
+import * as AppUtils from 'synapse-react-client/utils/AppUtils/index'
+import { ChallengeSubmission } from 'synapse-react-client/components/ChallengeSubmission/ChallengeSubmission'
 
 export type ChallengeSubmissionWrapperProps = {
   entityType?: typeof EntityType.dockerrepo | typeof EntityType.file

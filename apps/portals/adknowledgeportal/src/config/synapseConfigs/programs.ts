@@ -1,4 +1,4 @@
-import type { CardConfiguration } from 'synapse-react-client'
+import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 export const PROGRAM_TABLE_COLUMN_NAMES = {

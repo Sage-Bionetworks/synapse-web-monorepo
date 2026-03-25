@@ -40,6 +40,7 @@ function createMockSessionContext(
   overrides: Partial<ApplicationSessionContextType> = {},
 ): ApplicationSessionContextType {
   return {
+    isAuthenticated: false,
     hasInitializedSession: false,
     refreshSession: vi.fn(),
     clearSession: vi.fn(),

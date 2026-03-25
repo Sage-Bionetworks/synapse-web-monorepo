@@ -1,4 +1,3 @@
-import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   ErrorResponseCode,
@@ -79,6 +78,7 @@ describe('useDetectSSOCode tests', () => {
     const hookReturn = renderHook({
       onSignInComplete: onSignInComplete,
       isInitializingSession: false,
+      isAuthenticated: false,
     })
 
     expect(mockOAuthSessionRequest).not.toHaveBeenCalled()
@@ -101,6 +101,7 @@ describe('useDetectSSOCode tests', () => {
     const hookReturn = renderHook({
       onSignInComplete,
       isInitializingSession: false,
+      isAuthenticated: false,
     })
     expect(hookReturn.result.current.isLoading).toBe(true)
 
@@ -122,7 +123,7 @@ describe('useDetectSSOCode tests', () => {
       expect(hookReturn.result.current.isLoading).toBe(false)
     })
   })
-  it('Handles ORCID binding', async () => {
+  it('Handles ORCID binding to existing account if user is authenticated', async () => {
     const encodedState = encodeAndStoreState(buildOAuthState())
     history.replaceState(
       {},
@@ -134,7 +135,7 @@ describe('useDetectSSOCode tests', () => {
     const hookReturn = renderHook(
       {
         onSignInComplete,
-        token: MOCK_ACCESS_TOKEN,
+        isAuthenticated: true,
         isInitializingSession: false,
       }, // User is logged in
     )
@@ -153,6 +154,7 @@ describe('useDetectSSOCode tests', () => {
       expect(hookReturn.result.current.isLoading).toBe(false)
     })
   })
+
   it('Handles ORCID binding failure', async () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
     const encodedState = encodeAndStoreState(buildOAuthState())
@@ -174,7 +176,7 @@ describe('useDetectSSOCode tests', () => {
       {
         onSignInComplete,
         onError: mockOnError,
-        token: MOCK_ACCESS_TOKEN,
+        isAuthenticated: true,
         isInitializingSession: false,
       }, // User is logged in
     )
@@ -212,6 +214,7 @@ describe('useDetectSSOCode tests', () => {
       const hookReturn = renderHook({
         onSignInComplete: onSignInComplete,
         isInitializingSession: false,
+        isAuthenticated: false,
       })
 
       // Should initially be loading
@@ -250,6 +253,7 @@ describe('useDetectSSOCode tests', () => {
         onSignInComplete,
         onTwoFactorAuthRequired: mockOn2fa,
         isInitializingSession: false,
+        isAuthenticated: false,
       })
 
       expect(hookReturn.result.current.isLoading).toBe(true)
@@ -286,6 +290,7 @@ describe('useDetectSSOCode tests', () => {
         onSignInComplete,
         onTwoFactorAuthResetTokenPresent: mockOn2faReset,
         isInitializingSession: false,
+        isAuthenticated: false,
       })
 
       expect(hookReturn.result.current.isLoading).toBe(true)
@@ -329,6 +334,7 @@ describe('useDetectSSOCode tests', () => {
       const hookReturn = renderHook({
         onSignInComplete,
         isInitializingSession: false,
+        isAuthenticated: false,
       })
 
       expect(hookReturn.result.current.isLoading).toBe(true)
@@ -375,6 +381,7 @@ describe('useDetectSSOCode tests', () => {
         onSignInComplete,
         onError: mockOnError,
         isInitializingSession: false,
+        isAuthenticated: false,
       })
       expect(hookReturn.result.current.isLoading).toBe(true)
 
@@ -416,6 +423,7 @@ describe('useDetectSSOCode tests', () => {
       onSignInComplete,
       onError: mockOnError,
       isInitializingSession: false,
+      isAuthenticated: false,
     })
 
     await waitFor(() => {
@@ -452,6 +460,7 @@ describe('useDetectSSOCode tests', () => {
       onSignInComplete,
       onTwoFactorAuthResetTokenPresent: mockOn2faReset,
       isInitializingSession: false,
+      isAuthenticated: false,
     })
 
     await waitFor(() => {

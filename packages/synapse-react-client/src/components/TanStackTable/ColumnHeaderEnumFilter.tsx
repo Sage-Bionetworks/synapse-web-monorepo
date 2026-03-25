@@ -46,19 +46,19 @@ type ColumnHeaderEnumFilterProps<TData = unknown, TValue = unknown> = {
   title: string
 }
 
-function getMaybeFacetedUniqueValues<TData = unknown, TValue = unknown>(
-  column: Column<TData, TValue>,
+function getMaybeFacetedUniqueValues<TValue = unknown>(
+  columnFacetedUniqueValues: Map<TValue, number>,
 ): {
   value: TValue
   count?: number
 }[] {
-  if (column.getFacetedUniqueValues()) {
+  if (columnFacetedUniqueValues) {
     // @tanstack/table currently has no API to define a unique set of values for a column without count statistics
     // In each instance, we manually defined a set of unique values and set the count to 0
-    const hasFacetCounts = Array.from(
-      column.getFacetedUniqueValues().values(),
-    ).some(v => v != 0)
-    return Array.from(column.getFacetedUniqueValues().entries()).map(
+    const hasFacetCounts = Array.from(columnFacetedUniqueValues.values()).some(
+      v => v != 0,
+    )
+    return Array.from(columnFacetedUniqueValues.entries()).map(
       (entry: [TValue, number]) => ({
         value: entry[0],
         count: hasFacetCounts ? entry[1] : undefined,
@@ -90,9 +90,13 @@ export function ColumnHeaderEnumFilter<TData = unknown, TValue = unknown>(
   )
 
   // Use the column's enumValues and filterValues to create the facet value objects used by EnumFacetFilterUI
+  const facetedUniqueValues = column.getFacetedUniqueValues() as Map<
+    TValue,
+    number
+  >
   const transformedFilterValues: RenderedFacetValue<TValue>[] = useMemo(
     () =>
-      getMaybeFacetedUniqueValues(column).map(
+      getMaybeFacetedUniqueValues(facetedUniqueValues).map(
         (facetValue): RenderedFacetValue<TValue> => {
           let displayText: string = facetValue.value as unknown as string
           if (column.columnDef?.meta?.getDisplayText) {
@@ -107,7 +111,7 @@ export function ColumnHeaderEnumFilter<TData = unknown, TValue = unknown>(
           return { ...facetValue, displayText, isSelected }
         },
       ),
-    [column, filterValues],
+    [column, filterValues, facetedUniqueValues],
   )
   return (
     <EnumFacetFilterUI

@@ -35,7 +35,7 @@ type State = {
  */
 export default function DownloadDetails(props: DownloadDetailsProps) {
   const { numFiles, numBytes } = props
-  const { accessToken } = useSynapseContext()
+  const { accessToken, isAuthenticated } = useSynapseContext()
   const hasNumBytes = !!numBytes
 
   const [state, setState] = useState<State>({
@@ -45,15 +45,15 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
   const { isLoading, downloadSpeed } = state
 
   useEffect(() => {
-    if (accessToken) {
-      testDownloadSpeed(accessToken).then(speed => {
+    if (isAuthenticated) {
+      testDownloadSpeed(accessToken!).then(speed => {
         setState({
           isLoading: false,
           downloadSpeed: speed,
         })
       })
     }
-  }, [accessToken])
+  }, [isAuthenticated, accessToken])
 
   const timeEstimateInSeconds =
     isLoading || downloadSpeed === 0 || !numBytes ? 0 : numBytes / downloadSpeed

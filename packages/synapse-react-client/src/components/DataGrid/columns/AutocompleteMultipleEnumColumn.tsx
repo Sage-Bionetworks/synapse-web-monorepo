@@ -1,7 +1,7 @@
 import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseFreeTextUsingJsonSchemaType'
 import { Autocomplete, SxProps, TextField, Theme, Tooltip } from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
-import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { CellComponent, Column } from '@sage-bionetworks/react-datasheet-grid'
 import {
   AutocompleteCellProps,
@@ -89,15 +89,20 @@ function AutocompleteMultipleEnumCell({
   clearValue = undefined,
 }: AutocompleteMultipleEnumCellProps) {
   const ref = useRef<HTMLInputElement>(null)
+  const [menuIsOpen, setMenuIsOpen] = useState(false)
+  const [localInputState, setLocalInputState] = useState<string>('')
 
-  useLayoutEffect(() => {
-    if (focus) {
+  useEffect(() => {
+    // Treat `active` as the source of truth for focus/blur and menu state
+    // If we listen to Autocomplete's onBlur, it will fire when selecting an option from the dropdown,
+    // in which case we do not want to update rowData
+    if (active) {
       ref.current?.focus()
     } else {
+      setMenuIsOpen(false)
       ref.current?.blur()
     }
-  }, [focus])
-  const [localInputState, setLocalInputState] = useState<string>('')
+  }, [active])
 
   const safeRowData = createSafeRowData(rowData)
   const optionsWithLabels = choices.map(createOptionFromValue)
@@ -174,7 +179,10 @@ function AutocompleteMultipleEnumCell({
           disableClearable={!hasValue}
           multiple
           freeSolo
-          open={!!focus}
+          open={menuIsOpen}
+          onOpen={() => {
+            setMenuIsOpen(true)
+          }}
           disablePortal={false}
           limitTags={effectiveLimitTags}
           options={optionsWithLabels}
@@ -194,7 +202,10 @@ function AutocompleteMultipleEnumCell({
           onInputChange={(_, newInputValue) => {
             setLocalInputState(newInputValue)
           }}
-          onClose={() => stopEditing({ nextRow: false })}
+          onClose={() => {
+            setMenuIsOpen(false)
+            stopEditing({ nextRow: false })
+          }}
           onChange={(_e, newVal, _reason) => {
             // Handle both selection/deselection and free text creation the same way
             const values = (newVal || []).map(item => {

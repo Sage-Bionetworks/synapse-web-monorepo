@@ -1,0 +1,43 @@
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+@use '../ChallengeCardsSection.module.scss' as Base;
+@use 'sass:map';
+
+.OpenChallengesSection__root {
+  margin: 120px 0;
+}
+
+.OpenChallengesSection__sectionTitle:global(.MuiTypography-root) {
+  @include Base.sectionTitle;
+}
+
+.OpenChallengesSection__sectionSubtitle:global(.MuiTypography-root) {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.OpenChallengesSection__container {
+  @include Base.sectionContainer;
+}
+
+.OpenChallengesSection__titleSectionVectors {
+  position: absolute;
+  bottom: 21%;
+  left: 5%;
+  width: 90%;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    width: 100%;
+    left: -1%;
+  }
+}
+
+.OpenChallengesSection__titleWrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.OpenChallengesSection__headerSection {
+  display: flex;
+  flex-direction: column;
+}

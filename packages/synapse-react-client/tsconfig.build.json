@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationMap": true,
+    // Disable composite — not needed for declaration-only emit and avoids conflicts with the main tsconfig's tsbuildinfo
+    "composite": false,
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/tsconfig.build.tsbuildinfo",
+    // Storybook/test types are not needed for library declarations
+    "types": []
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": [
+    "src/**/*.test.*",
+    "src/**/*.stories.*",
+    "src/**/*.test-utils.*",
+    "src/testutils/**"
+  ]
+}

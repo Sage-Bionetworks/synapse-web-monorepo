@@ -8,6 +8,10 @@ import {
   ALL_QUERY_BUNDLE_PARTS,
   DEFAULT_PAGE_SIZE,
 } from '@/utils/SynapseConstants'
+import {
+  getQueryRequestFromLink,
+  generateCompressedQueryURL,
+} from '@/utils/functions/deepLinkingUtils'
 import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -156,12 +160,14 @@ describe('QueryWrapper', () => {
         })
       })
 
-      await waitFor(() => {
-        expect(location.search).toContain('QueryWrapper0')
-        const query = JSON.parse(
-          new URLSearchParams(location.search).get('QueryWrapper0')!,
+      await waitFor(async () => {
+        expect(location.search).toContain('qw0')
+        const queryRequest = await getQueryRequestFromLink(
+          0,
+          initialQueryRequest.query,
         )
-        expect(query.sql).toEqual(newSql)
+        expect(queryRequest).toBeDefined()
+        expect(queryRequest?.query?.sql).toEqual(newSql)
         expect(getQueryTableAsyncJobResultsSpy).toHaveBeenCalled()
       })
     })
@@ -247,12 +253,13 @@ describe('QueryWrapper', () => {
 
       registerTableQueryResult(lqr.query, mockQueryResponseData)
 
-      window.history.pushState(
-        {},
-        'Page Title',
-        '/any/url/you/like?QueryWrapper0=' +
-          encodeURIComponent(JSON.stringify(lqr.query)),
+      const url = await generateCompressedQueryURL(
+        '/any/url/you/like',
+        0,
+        lqr.query,
+        initialQueryRequest.query,
       )
+      window.history.pushState({}, 'Page Title', url)
       renderComponent({
         initQueryRequest: initialQueryRequest,
         shouldDeepLink: true,
@@ -274,7 +281,7 @@ describe('QueryWrapper', () => {
       window.history.pushState(
         {},
         'Page Title',
-        '/any/url/you/like?QueryWrapper0=' +
+        '/any/url/you/like?qw0=' +
           encodeURIComponent(JSON.stringify(lqr.query)),
       )
       renderComponent({
@@ -295,18 +302,28 @@ describe('QueryWrapper', () => {
 
       registerTableQueryResult(lqr.query, mockQueryResponseData)
 
-      window.history.pushState(
-        {},
-        'Page Title',
-        '/any/url/you/like?someotherParam=param&QueryWrapper0=' +
-          encodeURIComponent(JSON.stringify(lqr.query)) +
-          '&anotherPram=somethingElse',
+      const baseUrl = await generateCompressedQueryURL(
+        '/any/url/you/like',
+        0,
+        lqr.query,
+        initialQueryRequest.query,
       )
+      // Extract the query param value (it's already URL-encoded)
+      const qwParamWithValue = baseUrl.split('?')[1] // Gets 'qw0=...'
+      const url =
+        '/any/url/you/like?someotherParam=param&' +
+        qwParamWithValue +
+        '&anotherPram=somethingElse'
+      window.history.pushState({}, 'Page Title', url)
       renderComponent({
         initQueryRequest: initialQueryRequest,
         shouldDeepLink: true,
       })
-      await waitFor(() => expect(providedContext).toBeDefined())
+      await waitFor(() => {
+        expect(providedContext).toBeDefined()
+        const lastQuery = providedContext!.getCurrentQueryRequest()
+        expect(lastQuery.query.sql).toBe(lqr.query.sql)
+      })
 
       const lastQuery = providedContext!.getCurrentQueryRequest()
       expect(lastQuery).not.toEqual(initialQueryRequest)

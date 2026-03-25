@@ -2,11 +2,9 @@ import { ThemeProvider } from '@mui/material'
 import { createTheme, StyledEngineProvider } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Outlet } from 'react-router'
-import {
-  defaultQueryClientConfig,
-  SynapseErrorBoundary,
-  SynapseTheme,
-} from 'synapse-react-client'
+import { defaultQueryClientConfig } from 'synapse-react-client/utils/context/FullContextProvider'
+import { SynapseErrorBoundary } from 'synapse-react-client/components/error/ErrorBanner'
+import * as SynapseTheme from 'synapse-react-client/theme/index'
 import './App.scss'
 import AppInitializer from './AppInitializer'
 import generalTheme from './style/theme'

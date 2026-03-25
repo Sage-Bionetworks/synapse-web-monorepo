@@ -5,6 +5,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { ISetCombination, ISet, UpSetSelectionProps } from '@upsetjs/react'
 import { NavigateFunction } from 'react-router'
+import { generateCompressedQueryURL } from 'synapse-react-client/utils/functions/deepLinkingUtils'
 
 type HandleUpsetPlotClickOptions = {
   sql: string
@@ -20,28 +21,37 @@ export function handleUpsetPlotClick({
   navigate,
 }: HandleUpsetPlotClickOptions): UpSetSelectionProps['onClick'] {
   return selection => {
-    const clickedSets = Array.from(
-      (selection as ISetCombination)?.sets.values(),
-    )
-    const columnValues = clickedSets.map((v: ISet<any>) => v.name)
+    void (async () => {
+      const clickedSets = Array.from(
+        (selection as ISetCombination)?.sets.values(),
+      )
+      const columnValues = clickedSets.map((v: ISet<string>) => v.name)
 
-    const query: Query = {
-      sql,
-      additionalFilters: columnValues.map(value => ({
-        concreteType:
-          COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE_VALUE,
-        columnName: columnName,
-        function: ColumnMultiValueFunction.HAS,
-        _function: ColumnMultiValueFunction.HAS,
-        values: [value],
-      })),
-    }
+      const currentQuery: Query = {
+        sql,
+        additionalFilters: columnValues.map(value => ({
+          concreteType:
+            COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+          columnName: columnName,
+          function: ColumnMultiValueFunction.HAS,
+          _function: ColumnMultiValueFunction.HAS,
+          values: [value],
+        })),
+      }
 
-    const encodedExplorePath = encodeURIComponent(explorePath)
-    const url = `/Explore/${encodedExplorePath}?QueryWrapper0=${encodeURIComponent(
-      JSON.stringify(query),
-    )}`
+      const initQuery: Query = {
+        sql,
+      }
 
-    navigate(url)
+      const encodedExplorePath = encodeURIComponent(explorePath)
+      const url = await generateCompressedQueryURL(
+        `/Explore/${encodedExplorePath}`,
+        0,
+        currentQuery,
+        initQuery,
+      )
+
+      navigate(url)
+    })()
   }
 }

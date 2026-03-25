@@ -38,7 +38,7 @@ import {
   confirmItemViaQuery,
   queryForAddUserCombobox,
   updatePermissionLevel,
-} from '../AclEditor/AclEditorTestUtils'
+} from '../AclEditor/AclEditor.test-utils'
 import {
   AUTHENTICATED_GROUP_DISPLAY_TEXT,
   PUBLIC_GROUP_DISPLAY_TEXT,

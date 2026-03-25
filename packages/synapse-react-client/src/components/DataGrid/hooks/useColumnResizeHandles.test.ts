@@ -100,11 +100,11 @@ describe('useColumnResizeHandles', () => {
 
     mockWrapperRef = { current: wrapperDiv }
 
-    // Mock columns
+    // Mock columns - id must match cell textContent (as in production where keyColumn sets id)
     mockColValues = [
-      { id: 'columnA', title: 'Column A' } as Column,
-      { id: 'columnB', title: 'Column B' } as Column,
-      { id: 'columnC', title: 'Column C' } as Column,
+      { id: 'Column A', title: 'Column A' } as Column,
+      { id: 'Column B', title: 'Column B' } as Column,
+      { id: 'Column C', title: 'Column C' } as Column,
     ]
 
     // Mock callback
@@ -592,7 +592,7 @@ describe('useColumnResizeHandles', () => {
       // Add the column to colValues
       const updatedColValues = [
         ...mockColValues,
-        { id: 'columnD', title: 'Column D' } as Column,
+        { id: 'Column D', title: 'Column D' } as Column,
       ]
       rerender({ colValues: updatedColValues })
       // Trigger MutationObserver via requestAnimationFrame
@@ -859,7 +859,7 @@ describe('useColumnResizeHandles', () => {
       // Change colValues - this now updates columns without full cleanup
       const newColValues = [
         ...mockColValues,
-        { id: 'columnD', title: 'Column D' } as Column,
+        { id: 'Column D', title: 'Column D' } as Column,
       ]
       rerender({ colValues: newColValues })
 
@@ -923,8 +923,8 @@ describe('useColumnResizeHandles', () => {
 
       // Update colValues
       const newColValues = [
-        { id: 'columnX', title: 'Column X' } as Column,
-        { id: 'columnY', title: 'Column Y' } as Column,
+        { id: 'Column X', title: 'Column X' } as Column,
+        { id: 'Column Y', title: 'Column Y' } as Column,
       ]
 
       // Update header cells to match

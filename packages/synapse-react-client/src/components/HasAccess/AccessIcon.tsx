@@ -8,6 +8,7 @@ export enum RestrictionUiType {
   AccessBlockedByRestrictionWithPendingRequest = 'AccessBlockedByRestrictionWithPendingRequest',
   AccessBlockedByRestrictionWithPendingExternalRequest = 'AccessBlockedByRestrictionWithPendingExternalRequest',
   AccessBlockedByRestrictionWithPendingRDCADAPRequest = 'AccessBlockedByRestrictionWithPendingRDCADAPRequest',
+  AccessBlockedByRestrictionWithRejectedRDCADAPRequest = 'AccessBlockedByRestrictionWithRejectedRDCADAPRequest',
   AccessBlockedByACL = 'AccessBlockedByACL',
   AccessBlockedToAnonymous = 'AccessBlockedToAnonymous',
   AccessibleExternalFileHandle = 'AccessibleExternalFileHandle',
@@ -43,7 +44,11 @@ const iconConfiguration: Record<
     color: theme => theme.palette.warning.main,
     tooltipText: 'Your access request is pending approval by RDCA-DAP.',
   },
-
+  [RestrictionUiType.AccessBlockedByRestrictionWithRejectedRDCADAPRequest]: {
+    icon: 'accessClosed',
+    color: theme => theme.palette.warning.main,
+    tooltipText: 'Your access request has been denied by RDCA-DAP.',
+  },
   [RestrictionUiType.AccessBlockedByACL]: {
     icon: 'accessClosed',
     color: theme => theme.palette.warning.main,

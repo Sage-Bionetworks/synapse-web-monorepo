@@ -1,6 +1,5 @@
 import React from 'react'
 import { Box, BoxProps, Typography } from '@mui/material'
-import Skeleton from '@mui/material/Skeleton'
 import { useSourceApp } from './useSourceApp'
 import { SkeletonTable } from 'synapse-react-client/components/Skeleton/SkeletonTable'
 
@@ -35,11 +34,7 @@ export function SourceAppLogo(props: Omit<BoxProps, 'children' | 'className'>) {
   const sourceAppConfig = useSourceApp()
   return (
     <Box className="SourceAppLogo" {...props}>
-      {sourceAppConfig ? (
-        sourceAppConfig.logo
-      ) : (
-        <Skeleton variant="rectangular" width={250} height={65} />
-      )}
+      {sourceAppConfig && sourceAppConfig.logo}
     </Box>
   )
 }

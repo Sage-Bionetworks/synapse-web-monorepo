@@ -2,6 +2,7 @@ import { CardLink } from '@/components/CardContainer/CardLink'
 import { getValueOrMultiValue } from '@/components/GenericCard/CardUtils'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { getColumnIndex } from '@/utils/functions/index'
+import { TargetEnum } from '@/utils/html/TargetEnum'
 import { Tooltip } from '@mui/material'
 import {
   ColumnModel,
@@ -12,18 +13,22 @@ import {
 import dayjs from 'dayjs'
 import { isEmpty } from 'lodash-es'
 import { CSSProperties, Fragment, ReactNode } from 'react'
-import { ColumnSpecifiedLink, MarkdownLink } from '../CardContainerLogic'
-import { TargetEnum } from '@/utils/html/TargetEnum'
+import {
+  ColumnIconConfigs,
+  ColumnSpecifiedLink,
+  MarkdownLink,
+} from '../CardContainerLogic'
 import {
   EntityImage,
   MapValueToReactComponentConfig,
 } from '../CardContainerLogic/CardContainerLogic'
 import { EntityLink } from '../EntityLink'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import { SmartLink } from '../SmartLink/SmartLink'
 import { UserBadge } from '../UserCard/UserBadge'
 import { EntityColumnImage } from '../widgets/EntityColumnImage'
+import { LabelMaybeWithIcon } from './LabelMaybeWithIcon'
 import Linkify from './Linkify'
-import { SmartLink } from '../SmartLink/SmartLink'
 
 type SynapseCardLabelProps = {
   value: string
@@ -41,6 +46,7 @@ type SynapseCardLabelProps = {
   className?: string
   rowData: Row['values']
   rowId?: string
+  columnIconOptions?: ColumnIconConfigs
 }
 export function SynapseCardLabel(props: SynapseCardLabelProps) {
   const {
@@ -53,6 +59,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
     className,
     rowData,
     rowId,
+    columnIconOptions,
   } = props
 
   if (!value) {
@@ -66,6 +73,9 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
   })
 
   const columnModelType = selectColumn?.columnType
+  const iconConfig = columnIconOptions?.columns?.[columnName]
+  //  \u00a0 is a nbsp;
+  const separator = ',\u00a0\u00a0'
 
   if (!str) {
     // the array came back empty
@@ -85,8 +95,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
           return (
             <Fragment key={val}>
               <UserBadge userId={val} className={newClassName} />
-              {/* \u00a0 is a nbsp; */}
-              {index < strList.length - 1 && ',\u00a0\u00a0'}
+              {index < strList.length - 1 && separator}
             </Fragment>
           )
         })}
@@ -103,7 +112,25 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
   }
 
   if (!labelLink) {
-    return <Linkify text={str} className={newClassName} />
+    if (strList) {
+      return (
+        <>
+          {strList.map((el, index) => (
+            <Fragment key={el}>
+              <LabelMaybeWithIcon value={el} iconConfig={iconConfig}>
+                <Linkify text={el} className={newClassName} />
+              </LabelMaybeWithIcon>
+              {index < strList.length - 1 && separator}
+            </Fragment>
+          ))}
+        </>
+      )
+    }
+    return (
+      <LabelMaybeWithIcon value={str} iconConfig={iconConfig}>
+        <Linkify text={str} className={newClassName} />
+      </LabelMaybeWithIcon>
+    )
   }
 
   if ('resolveEntityName' in labelLink && labelLink.resolveEntityName && str) {
@@ -130,8 +157,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
             return (
               <Fragment key={el}>
                 <MarkdownSynapse key={el} renderInline={true} markdown={el} />
-                {/* \u00a0 is a nbsp; */}
-                {index < strList.length - 1 && ',\u00a0\u00a0'}
+                {index < strList.length - 1 && separator}
               </Fragment>
             )
           })}
@@ -148,9 +174,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
             return (
               <Fragment key={el}>
                 <EntityColumnImage entityId={el} />
-
-                {/* \u00a0 is a nbsp; */}
-                {index < strList.length - 1 && ',\u00a0\u00a0'}
+                {index < strList.length - 1 && separator}
               </Fragment>
             )
           })}

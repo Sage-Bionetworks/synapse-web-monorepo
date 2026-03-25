@@ -35,14 +35,16 @@ describe('aridhiaAccessStatusUtils', () => {
       )
     })
 
-    test('should return AccessBlockedByACL when request status is denied', () => {
+    test('should return AccessBlockedByRestrictionWithRejectedRDCADAPRequest when request status is denied', () => {
       const request: Request = {
         status: 'denied',
         id: 3,
         code: 'REQ003',
       }
       const result = getRestrictionUiTypeFromAridhiaRequest(request)
-      expect(result).toBe(RestrictionUiType.AccessBlockedByACL)
+      expect(result).toBe(
+        RestrictionUiType.AccessBlockedByRestrictionWithRejectedRDCADAPRequest,
+      )
     })
 
     test('should return AccessBlockedByACL when request status is error', () => {
@@ -148,7 +150,86 @@ describe('aridhiaAccessStatusUtils', () => {
       expect(result).toBeUndefined()
     })
 
-    test('should return first matching request when multiple requests contain the dataset', () => {
+    test('should return most recently updated request when multiple requests contain the dataset', () => {
+      const requests: Request[] = [
+        {
+          id: 1,
+          code: 'REQ001',
+          status: 'approved',
+          datasets: [{ code: 'DATASET_A', name: 'Dataset A' }],
+          updated_at: new Date('2024-01-01T10:00:00Z'),
+        },
+        {
+          id: 2,
+          code: 'REQ002',
+          status: 'pending',
+          datasets: [{ code: 'DATASET_A', name: 'Dataset A' }],
+          updated_at: new Date('2024-01-02T10:00:00Z'),
+        },
+      ]
+
+      const result = findRequestForDataset(requests, 'DATASET_A')
+      expect(result).toBeDefined()
+      expect(result?.id).toBe(2)
+      expect(result?.code).toBe('REQ002')
+    })
+
+    test('should return most recently updated request even when not in order', () => {
+      const requests: Request[] = [
+        {
+          id: 1,
+          code: 'REQ001',
+          status: 'approved',
+          datasets: [{ code: 'DATASET_A', name: 'Dataset A' }],
+          updated_at: new Date('2024-01-03T10:00:00Z'), // Most recent
+        },
+        {
+          id: 2,
+          code: 'REQ002',
+          status: 'pending',
+          datasets: [{ code: 'DATASET_A', name: 'Dataset A' }],
+          updated_at: new Date('2024-01-01T10:00:00Z'), // Oldest
+        },
+        {
+          id: 3,
+          code: 'REQ003',
+          status: 'denied',
+          datasets: [{ code: 'DATASET_A', name: 'Dataset A' }],
+          updated_at: new Date('2024-01-02T10:00:00Z'), // Middle
+        },
+      ]
+
+      const result = findRequestForDataset(requests, 'DATASET_A')
+      expect(result).toBeDefined()
+      expect(result?.id).toBe(1)
+      expect(result?.code).toBe('REQ001')
+    })
+
+    test('should handle requests with undefined updated_at', () => {
+      const requests: Request[] = [
+        {
+          id: 1,
+          code: 'REQ001',
+          status: 'approved',
+          datasets: [{ code: 'DATASET_A', name: 'Dataset A' }],
+          // No updated_at
+        },
+        {
+          id: 2,
+          code: 'REQ002',
+          status: 'pending',
+          datasets: [{ code: 'DATASET_A', name: 'Dataset A' }],
+          updated_at: new Date('2024-01-01T10:00:00Z'),
+        },
+      ]
+
+      const result = findRequestForDataset(requests, 'DATASET_A')
+      expect(result).toBeDefined()
+      // Should return the one with updated_at when the other doesn't have it
+      expect(result?.id).toBe(2)
+    })
+
+    test('should return any matching request when all have undefined updated_at', () => {
       const requests: Request[] = [
         {
           id: 1,
@@ -166,8 +247,8 @@ describe('aridhiaAccessStatusUtils', () => {
 
       const result = findRequestForDataset(requests, 'DATASET_A')
       expect(result).toBeDefined()
-      expect(result?.id).toBe(1)
-      expect(result?.code).toBe('REQ001')
+      // Should return one of them (the reduce logic will handle this)
+      expect([1, 2]).toContain(result?.id)
     })
 
     test('should match dataset code case-sensitively', () => {

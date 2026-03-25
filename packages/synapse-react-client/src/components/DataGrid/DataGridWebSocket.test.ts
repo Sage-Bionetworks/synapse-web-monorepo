@@ -83,11 +83,30 @@ function createTestModel(): GridModel {
  */
 function buildPatchResponseMessage(model: GridModel): unknown[] {
   // Make a change to generate a patch
-  ;(model as unknown as Model).api.vec(['columnNames']).set([[0, 'test_col']])
-  const patch = (model as unknown as Model).api.flush()
+  model.api.vec(['columnNames']).set([[0, 'test_col']])
+  const patch = model.api.flush()
   const encoded = encode(patch)
   // JsonRxResponse type code is 4
   return [4, 1, { type: 'patch', body: encoded }]
+}
+
+/**
+ * Build the raw JSON-Rx array for a JsonRxResponse carrying multiple compact-encoded patches.
+ * Format: [4, subscriptionId, { type: 'patches', body: CompactCodecPatch[] }]
+ */
+function buildPatchesResponseMessage(model: GridModel): unknown[] {
+  // First patch: set first column name
+  model.api.vec(['columnNames']).set([[0, 'col_a']])
+  const patch1 = model.api.flush()
+  const encoded1 = encode(patch1)
+
+  // Second patch: set second column name
+  model.api.vec(['columnNames']).set([[1, 'col_b']])
+  const patch2 = model.api.flush()
+  const encoded2 = encode(patch2)
+
+  // JsonRxResponse type code is 4
+  return [4, 1, { type: 'patches', body: [encoded1, encoded2] }]
 }
 
 describe('DataGridWebSocket', () => {
@@ -241,33 +260,6 @@ describe('DataGridWebSocket', () => {
       expect(onModelCreate).not.toHaveBeenCalled()
     })
 
-    it('handles a raw patch array', () => {
-      // TODO: This can be removed once PLFM-9398 is safely released to production
-      const onModelCreate = vi.fn()
-      vi.spyOn(console, 'debug').mockImplementation(() => {})
-      vi.spyOn(console, 'log').mockImplementation(() => {})
-      const { mockSocket } = createDataGridWebSocket({
-        onModelCreate,
-        model: null,
-      })
-
-      const sourceModel = createTestModel()
-      ;(sourceModel as unknown as Model).api
-        .vec(['columnNames'])
-        .set([[0, 'wrapped_col']])
-      const patch = (sourceModel as unknown as Model).api.flush()
-      const encoded = encode(patch)
-
-      // Wrap in the object format
-      const rawPatchMessage = [4, 1, encoded]
-
-      mockSocket.simulateMessage(rawPatchMessage)
-
-      expect(onModelCreate).toHaveBeenCalledTimes(1)
-      const createdModel = onModelCreate.mock.calls[0][0] as GridModel
-      expect(createdModel.clock.sid).toEqual(replicaId)
-    })
-
     it('sends a sync message after applying a patch', () => {
       vi.spyOn(console, 'debug').mockImplementation(() => {})
       vi.spyOn(console, 'log').mockImplementation(() => {})
@@ -303,14 +295,73 @@ describe('DataGridWebSocket', () => {
       const { mockSocket } = createDataGridWebSocket({ model: null })
 
       // The outer array is what isArray() sees as a compact patch
-      const badPatchMessage = [4, 1, [[1, 1]]]
+      const badPatchMessage = [4, 1, { type: 'patches', body: [[1, 1]] }]
 
       mockSocket.simulateMessage(badPatchMessage)
 
       expect(consoleError).toHaveBeenCalledWith(
-        'Failed to apply patch or send clock:',
+        'Failed to apply patches or send clock:',
         expect.anything(),
       )
+    })
+  })
+
+  describe('messageHandler — patches response', () => {
+    it('creates a new model and calls onModelCreate when receiving patches with no existing model', () => {
+      const onModelCreate = vi.fn()
+      vi.spyOn(console, 'debug').mockImplementation(() => {})
+      vi.spyOn(console, 'log').mockImplementation(() => {})
+      const { mockSocket } = createDataGridWebSocket({
+        onModelCreate,
+        model: null,
+      })
+
+      const sourceModel = createTestModel()
+      const patchesMessage = buildPatchesResponseMessage(sourceModel)
+
+      mockSocket.simulateMessage(patchesMessage)
+
+      expect(onModelCreate).toHaveBeenCalledTimes(1)
+      const createdModel = onModelCreate.mock.calls[0][0] as GridModel
+      expect(createdModel).toBeDefined()
+    })
+
+    it('applies all patches in a "patches" message to an existing model without calling onModelCreate', () => {
+      const onModelCreate = vi.fn()
+      vi.spyOn(console, 'debug').mockImplementation(() => {})
+      vi.spyOn(console, 'log').mockImplementation(() => {})
+
+      const existingModel = createTestModel()
+      const { mockSocket } = createDataGridWebSocket({
+        onModelCreate,
+        model: existingModel,
+      })
+
+      const sourceModel = createTestModel()
+      const patchesMessage = buildPatchesResponseMessage(sourceModel)
+
+      mockSocket.simulateMessage(patchesMessage)
+
+      // onModelCreate should NOT be called since the model already existed
+      expect(onModelCreate).not.toHaveBeenCalled()
+    })
+
+    it('sends a sync message after applying all patches', () => {
+      vi.spyOn(console, 'debug').mockImplementation(() => {})
+      vi.spyOn(console, 'log').mockImplementation(() => {})
+      const { mockSocket } = createDataGridWebSocket({ model: null })
+
+      const sourceModel = createTestModel()
+      const patchesMessage = buildPatchesResponseMessage(sourceModel)
+
+      mockSocket.simulateMessage(patchesMessage)
+
+      expect(mockSocket.sentMessages.length).toBeGreaterThanOrEqual(1)
+      const sent = parseSentMessages(mockSocket)
+      const methods = sent.map(arr => arr[2])
+      expect(
+        methods.some(m => m === 'patch' || m === 'synchronize-clock'),
+      ).toBe(true)
     })
   })
 

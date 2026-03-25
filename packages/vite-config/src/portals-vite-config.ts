@@ -1,12 +1,33 @@
+import { mergeConfig } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
-import { ConfigBuilder } from './ConfigBuilder.js'
+import baseConfig from './baseConfig.js'
+import vitestConfig from './vitest-config.js'
+import {
+  reactPlugins,
+  nodePolyfillsPlugin,
+  tsconfigPathsPlugin,
+} from './plugins.js'
 
-const portalsSharedViteConfig = new ConfigBuilder()
-  .setIncludeReactConfig(true)
-  .setIncludeVitestConfig(true)
-  .setConfigOverrides({
-    port: 3001, // Reserve port 3000 for SageAccountWeb
+/**
+ * Pre-composed Vite configuration for standard (SPA) portal apps.
+ *
+ * Includes: base config, vitest config, React plugins, nodePolyfills,
+ * tsconfigPaths, and the HTML injection plugin for social meta tags + GTM.
+ *
+ * Individual portal vite.config.ts files can simply re-export this:
+ * ```ts
+ * import { portalsViteConfig } from 'vite-config'
+ * export default portalsViteConfig
+ * ```
+ */
+const portalsViteConfig = mergeConfig(
+  baseConfig,
+  mergeConfig(vitestConfig, {
+    server: { port: 3001 }, // Reserve port 3000 for SageAccountWeb
     plugins: [
+      nodePolyfillsPlugin(),
+      tsconfigPathsPlugin(),
+      ...reactPlugins(),
       createHtmlPlugin({
         inject: {
           data: {
@@ -56,15 +77,6 @@ const portalsSharedViteConfig = new ConfigBuilder()
       integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
       crossorigin="anonymous"
     />
-
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','GTM-KPW4KS62');
-    </script>
-    <!-- End Google Tag Manager -->
     `,
             gtmNoscript: `    <!-- Google Tag Manager (noscript) -->
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KPW4KS62"
@@ -75,7 +87,7 @@ const portalsSharedViteConfig = new ConfigBuilder()
         },
       }),
     ],
-  })
-  .build()
+  }),
+)
 
-export default portalsSharedViteConfig
+export default portalsViteConfig

@@ -9,7 +9,10 @@ export const useNativeSearchParams = (
   param: string,
 ): [string | null, (newValue: string | null) => void] => {
   const getValue = useCallback(
-    () => new URLSearchParams(window.location.search).get(param),
+    () =>
+      new URLSearchParams(
+        typeof window !== 'undefined' ? window.location.search : '',
+      ).get(param),
     [param],
   )
 

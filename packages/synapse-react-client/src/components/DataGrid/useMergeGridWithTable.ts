@@ -15,7 +15,10 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 
-export default function useMergeGridWithEntityView(
+/**
+ * Mutation hook that exports a grid session to CSV and applies the changes to a Synapse table.
+ */
+export default function useMergeGridWithTable(
   options?: Omit<
     UseMutationOptions<
       TableUpdateTransactionResponse,

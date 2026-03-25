@@ -36,6 +36,11 @@ export function useEntitySelection(
         type: 'setSelection'
         selection: EntitySelectionMapType
       }
+    | {
+        type: 'setInitialVersion'
+        entityId: string
+        version: number
+      }
 
   /**
    * Given the existing selections and a list of toggled references, return the new list of selections
@@ -50,6 +55,18 @@ export function useEntitySelection(
     ): EntitySelectionMapType => {
       if (action.type === 'setSelection') {
         return action.selection
+      }
+      if (action.type === 'setInitialVersion') {
+        // Safe to call from effects multiple times — only acts the first time
+        const existing = currentState.get(action.entityId)
+        if (existing != null && existing.targetVersionNumber == null) {
+          return currentState.set(action.entityId, {
+            targetId: action.entityId,
+            targetVersionNumber: action.version,
+          })
+        }
+        // Entity not selected, or already has a version - no-op
+        return currentState
       }
       if (action.type === 'toggleSelection') {
         let toggledReferences = action.toggledReferences
@@ -94,5 +111,16 @@ export function useEntitySelection(
     [],
   )
 
-  return { selectedEntities, toggleSelection, setSelection }
+  const setInitialVersion = useCallback(
+    (entityId: string, version: number) =>
+      dispatch({ type: 'setInitialVersion', entityId, version }),
+    [],
+  )
+
+  return {
+    selectedEntities,
+    toggleSelection,
+    setSelection,
+    setInitialVersion,
+  }
 }

@@ -100,6 +100,7 @@ export * from './PortalFeaturedPartners'
 export * from './PortalList'
 export * from './PortalAclEditor'
 export * from './PortalSectionHeader'
+export { visuallyHidden } from './SynapseHomepageV2/HomepageStyles'
 
 // TODO: Find a better way to expose Icon components
 export { Project as ProjectIcon } from '@/assets/themed_icons/Project'

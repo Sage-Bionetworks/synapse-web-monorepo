@@ -1,3 +1,4 @@
+import { Realm } from '@sage-bionetworks/synapse-client'
 import { RealmPrincipal } from '@sage-bionetworks/synapse-client/generated/models/RealmPrincipal'
 
 /**
@@ -13,6 +14,13 @@ export const MOCK_PUBLIC_PRINCIPAL_IDS = [
   MOCK_PUBLIC_PRINCIPAL_ID,
   MOCK_ANONYMOUS_PRINCIPAL_ID,
 ]
+
+export const MOCK_REALM: Realm = {
+  id: '0',
+  name: 'Mock Realm',
+  createdOn: new Date().toISOString(),
+  identityProvider: [],
+}
 
 /**
  * Mock realm principals for testing.

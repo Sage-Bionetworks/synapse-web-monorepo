@@ -5,7 +5,7 @@ import { AuthenticationApi } from './generated/apis/AuthenticationApi.js'
 describe('AridhiaClient', () => {
   it('should create an AuthenticationApi instance with configuration', () => {
     const config = new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io',
+      basePath: 'https://gateway.westeurope.dap.c-path.org',
       accessToken: 'test-token',
     })
 
@@ -15,7 +15,7 @@ describe('AridhiaClient', () => {
   })
 
   it('should create a Configuration with correct basePath', () => {
-    const basePath = 'https://gateway.westus2.c-path-dev.aridhia.io'
+    const basePath = 'https://gateway.westeurope.dap.c-path.org'
     const config = new Configuration({ basePath })
 
     expect(config.basePath).toBe(basePath)

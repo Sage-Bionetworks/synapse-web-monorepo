@@ -1,10 +1,14 @@
 import { useEffect } from 'react'
-import { SynapseClient, useSynapseContext } from 'synapse-react-client'
+import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
+import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 
 export function LogoutComponent() {
-  const { accessToken } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
+  const { clearSession } = useApplicationSessionContext()
   useEffect(() => {
-    SynapseClient.signOut()
-  }, [])
-  return <p style={{ margin: 10 }}>{accessToken ? 'Logging' : 'Logged'} out</p>
+    clearSession()
+  }, [clearSession])
+  return (
+    <p style={{ margin: 10 }}>{isAuthenticated ? 'Logging' : 'Logged'} out</p>
+  )
 }

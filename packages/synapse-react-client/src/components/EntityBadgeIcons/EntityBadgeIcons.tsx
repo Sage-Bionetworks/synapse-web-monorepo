@@ -5,8 +5,8 @@ import {
   useGetSchemaBinding,
   useGetValidationResults,
 } from '@/synapse-queries'
-import React from 'react'
 import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
+import { isEntityPublic } from '@/utils/functions/AccessControlListUtils'
 import {
   ChatBubbleTwoTone,
   CheckTwoTone,
@@ -18,22 +18,13 @@ import {
 } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
-import {
-  ALL_ENTITY_BUNDLE_FIELDS,
-  EntityBundle,
-} from '@sage-bionetworks/synapse-types'
+import { ALL_ENTITY_BUNDLE_FIELDS } from '@sage-bionetworks/synapse-types'
 import { isEmpty } from 'lodash-es'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { getDisplayedAnnotation } from '../entity/metadata/AnnotationsTable'
 import { EntityModal } from '../entity/metadata/EntityModal'
 import WarningDialog from '../SynapseForm/WarningDialog'
-
-function isPublic(bundle: EntityBundle, publicPrincipalIds: string[]): boolean {
-  return bundle.benefactorAcl.resourceAccess.some(ra => {
-    return publicPrincipalIds.includes(String(ra.principalId))
-  })
-}
 
 export type EntityBadgeIconsProps = {
   entityId: string
@@ -95,12 +86,7 @@ export const EntityBadgeIcons = (
   } = props
 
   const { data } = useGetRealmPrincipals()
-  const { authenticatedUsersId, publicGroupId, anonymousUserId } = data
-  const publicPrincipalIds = [
-    authenticatedUsersId,
-    publicGroupId,
-    anonymousUserId,
-  ].filter((id): id is string => id !== undefined)
+  const realmPrincipals = data || {}
 
   enum SchemaConformanceState {
     NO_SCHEMA = '', // or not in experimental mode
@@ -256,7 +242,10 @@ export const EntityBadgeIcons = (
           </div>
           {showIsPublicPrivate &&
           bundle.benefactorAcl &&
-          isPublic(bundle, publicPrincipalIds) ? (
+          isEntityPublic(
+            bundle.benefactorAcl.resourceAccess,
+            realmPrincipals,
+          ) ? (
             <Tooltip title="Public" enterNextDelay={100} placement="right">
               <PublicTwoTone
                 aria-hidden={false}
@@ -268,7 +257,10 @@ export const EntityBadgeIcons = (
           ) : null}
           {showIsPublicPrivate &&
           bundle.benefactorAcl &&
-          !isPublic(bundle, publicPrincipalIds) ? (
+          !isEntityPublic(
+            bundle.benefactorAcl.resourceAccess,
+            realmPrincipals,
+          ) ? (
             <Tooltip title="Private" enterNextDelay={100} placement="right">
               <LockTwoTone
                 aria-hidden={false}

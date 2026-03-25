@@ -161,6 +161,48 @@ describe('AutocompleteColumn', () => {
     })
   })
 
+  it('should close the dropdown menu when active becomes false', async () => {
+    const mockSetRowData = vi.fn()
+    const mockStopEditing = vi.fn()
+    const mockCellProps: Partial<AutocompleteCellProps> = {
+      rowData: 'option1',
+      setRowData: mockSetRowData,
+      choices: ['option1', 'option2'],
+      focus: true,
+      active: true,
+      stopEditing: mockStopEditing,
+    }
+
+    const { rerender } = render(
+      <AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />,
+    )
+
+    // Open dropdown
+    const dropdownButton = screen.getByRole('button', { name: /open/i })
+    await userEvent.click(dropdownButton)
+
+    // Verify options are displayed
+    expect(
+      await screen.findByRole('option', { name: 'option1' }),
+    ).toBeInTheDocument()
+
+    // Simulate cell becoming inactive
+    act(() => {
+      rerender(
+        <AutocompleteCell
+          {...(mockCellProps as AutocompleteCellProps)}
+          active={false}
+          focus={false}
+        />,
+      )
+    })
+
+    // Dropdown should close (no options visible)
+    await waitFor(() => {
+      expect(screen.queryByRole('option')).not.toBeInTheDocument()
+    })
+  })
+
   describe('Memoization and Performance', () => {
     it('should memoize cell component with custom comparison', () => {
       const mockSetRowData = vi.fn()

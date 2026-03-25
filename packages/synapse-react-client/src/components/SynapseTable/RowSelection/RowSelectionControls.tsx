@@ -6,15 +6,21 @@ import { GetAppTwoTone } from '@mui/icons-material'
 import { Box, Button } from '@mui/material'
 import { Table } from '@sage-bionetworks/synapse-types'
 import { useAtom } from 'jotai'
+import { useState } from 'react'
 import { toast } from 'react-hot-toast'
+import { useSynapseContext } from '@/utils'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import { selectedRowsAtom } from '../../QueryWrapper/TableRowSelectionState'
 import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
-import { getFileColumnModelId } from '../SynapseTableUtils'
+import {
+  getFileColumnModelId,
+  SEND_TO_ANALYSIS_PLATFORM_SIGN_IN_MESSAGE,
+} from '../SynapseTableUtils'
 import { CustomControlButton } from '../CustomControls/CustomControlButton'
 import { CustomControl } from '../TopLevelControls/TopLevelControls'
 import { RowSelectionUI } from './RowSelectionUI'
+import { SignInRequiredModal } from '@/components/SignInRequiredModal/SignInRequiredModal'
 
 const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
   'SendToAnalysisPlatformRowSelectionControlButton'
@@ -32,6 +38,8 @@ export type RowSelectionControlsProps = {
  */
 export function RowSelectionControls(props: RowSelectionControlsProps) {
   const { customControls = [], remount } = props
+  const { isAuthenticated } = useSynapseContext()
+  const [showLoginModal, setShowLoginModal] = useState(false)
   const { entityId, versionNumber, getCurrentQueryRequest } = useQueryContext()
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
   const { data: queryMetadata } = useGetQueryMetadata()
@@ -90,12 +98,22 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
             <Button
               variant="outlined"
               onClick={() => {
-                setIsShowingExportToAnalysisPlatformModal(true)
+                if (isAuthenticated) {
+                  setIsShowingExportToAnalysisPlatformModal(true)
+                } else {
+                  setShowLoginModal(true)
+                }
               }}
               id={SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID}
             >
               Send to Analysis Platform
             </Button>
+          )}
+          {showLoginModal && (
+            <SignInRequiredModal
+              onHide={() => setShowLoginModal(false)}
+              content={SEND_TO_ANALYSIS_PLATFORM_SIGN_IN_MESSAGE}
+            />
           )}
           {showAddToDownloadCart && (
             <Button
@@ -121,7 +139,7 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
               }}
               startIcon={<GetAppTwoTone />}
             >
-              Add to Download Cart
+              Add to Download List
             </Button>
           )}
         </>

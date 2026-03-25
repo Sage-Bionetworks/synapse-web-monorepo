@@ -6,11 +6,10 @@ import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/D
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { Outlet } from 'react-router'
-import {
-  CardContainerLogic,
-  ErrorPage,
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import ErrorPage, {
   SynapseErrorType,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/error/ErrorPage'
 import { studiesSql } from '../../config/resources'
 import { columnAliases } from '../../config/synapseConfigs/commonProps'
 import {

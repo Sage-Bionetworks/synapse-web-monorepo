@@ -2,7 +2,7 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
 import { studyCardConfiguration } from '../../config/synapseConfigs/studies'
 import { studiesSql } from '@/config/resources'
 

@@ -54,12 +54,18 @@ export default function ColumnHeader<TData = unknown, TValue = unknown>(
         alignContent: 'center',
         alignItems: 'center',
         justifyContent: 'space-between',
+        overflow: 'hidden',
+        minWidth: 0,
       }}
     >
       <span
         style={{
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',
+          minWidth: 0,
         }}
+        title={title}
       >
         {title}
       </span>

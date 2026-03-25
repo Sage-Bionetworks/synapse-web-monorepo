@@ -1,18 +1,32 @@
-import { DropdownMenu, DropdownMenuItem } from '../menu/DropdownMenu'
-import { DownloadOutlined as DownloadIcon } from '@mui/icons-material'
-import { EntityType } from '@sage-bionetworks/synapse-client'
-import { useState } from 'react'
-import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
-import { ModalDownload } from '../ModalDownload/ModalDownload'
 import { useGetEntity, useGetVersions } from '@/synapse-queries'
-import { isVersionableEntity } from '@/utils/functions/EntityTypeUtils'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { useSynapseContext } from '@/utils'
 import {
   useAddFileToDownloadList,
-  useAddToDownloadList,
+  useGetAddToDownloadListStats,
 } from '@/synapse-queries/index'
+import { useSynapseContext } from '@/utils'
+import {
+  entityTypeToFriendlyName,
+  hasFilesInView,
+  isContainerType,
+  isDataset,
+  isEntityView,
+  isVersionableEntity,
+} from '@/utils/functions/EntityTypeUtils'
+import { useDirectDownloadHandler } from '@/utils/hooks/useDirectDownloadHandler'
+import { isFileEntity } from '@/utils/types/IsType'
+import { DownloadOutlined as DownloadIcon } from '@mui/icons-material'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import {
+  FileHandleAssociateType,
+  QueryBundleRequest,
+} from '@sage-bionetworks/synapse-types'
+import { RefObject, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { displayFilesWereAddedToDownloadListSuccess } from '../download_list/DownloadConfirmationUtils'
+import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
+import { DropdownMenu, DropdownMenuItem } from '../menu/DropdownMenu'
+import { ModalDownload } from '../ModalDownload/ModalDownload'
+import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import { displayToast } from '../ToastMessage/index'
 
 // WIP
@@ -109,46 +123,42 @@ function getMenuItemForAction(
     entityId: string
     entityVersionNumber: number | undefined
   }) => void,
-  addQueryToDownloadList: (request: {
-    parentId: string
-    concreteType: 'org.sagebionetworks.repo.model.download.AddToDownloadListRequest'
-  }) => void,
+  setShowDownloadConfirmation: (show: boolean) => void,
   versionNumber?: number,
+  addToCartDisabled?: boolean,
+  onDownloadFile?: () => void,
+  isAuthenticated?: boolean,
 ): DropdownMenuItem {
   switch (downloadAction) {
     case DownloadAction.downloadFile:
       return {
         text: 'Download File',
         onClick: () => {
-          console.log('Download file:', entityId, entityName)
-          // TODO: Implement file download functionality
+          if (onDownloadFile) onDownloadFile()
         },
-        tooltipText: 'Download this file directly',
+        tooltipText: isAuthenticated
+          ? 'Download this file directly'
+          : 'Sign in to download this file',
+        disabled: !isAuthenticated,
       }
     case DownloadAction.addToCart:
       return {
-        text: 'Add to Download Cart',
+        text: 'Add to Download List',
+        disabled: addToCartDisabled,
+        tooltipText: getAddToCartTooltip(entityType, !!addToCartDisabled),
         onClick: () => {
-          // Use different functions based on entity type
           if (
             entityType === EntityType.file ||
-            entityType === EntityType.recordset ||
-            entityType === EntityType.dataset ||
-            entityType === EntityType.datasetcollection
+            entityType === EntityType.recordset
           ) {
             addFileToDownloadList({
               entityId,
               entityVersionNumber: versionNumber,
             })
           } else {
-            addQueryToDownloadList({
-              parentId: entityId,
-              concreteType:
-                'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
-            })
+            setShowDownloadConfirmation(true)
           }
         },
-        tooltipText: 'Add file(s) to your download cart',
       }
     case DownloadAction.programmaticAccess:
       return {
@@ -177,6 +187,20 @@ function getMenuItemForAction(
   }
 }
 
+/**
+ * Determines the tooltip message based on the entity type and its "add to cart" status.
+ */
+const getAddToCartTooltip = (
+  entityType: EntityType,
+  isDisabled: boolean,
+): string => {
+  if (!isDisabled) {
+    return 'Add file(s) to your download list'
+  }
+  const entityFriendlyName = entityTypeToFriendlyName(entityType)
+  return `This ${entityFriendlyName} has no accessible files`
+}
+
 // Function that returns DropdownMenuItem
 export function getDownloadActionsForEntityType(
   type: EntityType,
@@ -195,8 +219,6 @@ export function getDownloadActionsForEntityType(
       return [[DownloadAction.programmaticAccessDocker]]
     case EntityType.entityview:
     case EntityType.dataset:
-    case EntityType.table:
-    case EntityType.datasetcollection:
       return [
         [
           DownloadAction.exportTable,
@@ -204,6 +226,8 @@ export function getDownloadActionsForEntityType(
           DownloadAction.addToCart,
         ],
       ]
+    case EntityType.datasetcollection:
+    case EntityType.table:
     case EntityType.materializedview:
     case EntityType.submissionview:
     case EntityType.virtualtable:
@@ -293,6 +317,8 @@ export function EntityDownloadButton(props: {
   entityId: string
   name: string
   entityType: EntityType
+  downloadConfirmationContainer?: RefObject<HTMLElement | null>
+  disabled?: boolean
 }) {
   // get the appropriate version number for the entity
   const { latestVersionNumber } = useGetLatestVersionNumber(
@@ -307,26 +333,13 @@ export function EntityDownloadButton(props: {
   )
 
   // Get context and download functionality
-  const { downloadCartPageUrl } = useSynapseContext()
+  const { downloadCartPageUrl, isAuthenticated } = useSynapseContext()
   const { mutate: addFileToDownloadList } = useAddFileToDownloadList({
     onSuccess: data => {
       if (data.numberOfFilesAdded > 0) {
         displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)
       } else {
-        displayToast('0 Files added to your Download Cart', 'info')
-      }
-    },
-    onError: error => {
-      displayToast(error.reason, 'danger')
-    },
-  })
-
-  const { mutate: addQueryToDownloadList } = useAddToDownloadList({
-    onSuccess: data => {
-      if (data.numberOfFilesAdded != null && data.numberOfFilesAdded > 0) {
-        displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl)
-      } else {
-        displayToast('0 Files added to your Download Cart', 'info')
+        displayToast('0 Files added to your Download List', 'info')
       }
     },
     onError: error => {
@@ -338,9 +351,70 @@ export function EntityDownloadButton(props: {
   const [showProgrammaticAccess, setShowProgrammaticAccess] =
     useState<boolean>(false)
 
+  // state to manage download confirmation visibility and loading
+  const [showDownloadConfirmation, setShowDownloadConfirmation] =
+    useState<boolean>(false)
+  const [downloadConfirmationLoading, setDownloadConfirmationLoading] =
+    useState<boolean>(false)
+
   const handleCloseProgrammaticAccess = () => {
     setShowProgrammaticAccess(false)
   }
+
+  const isFolderOrProject = isContainerType(props.entityType)
+
+  const {
+    data: folderOrProjectStats,
+    isLoading: isLoadingFolderOrProjectStats,
+  } = useGetAddToDownloadListStats(
+    {
+      concreteType:
+        'org.sagebionetworks.repo.model.download.AddToDownloadListStatsRequest',
+      request: {
+        parentId: props.entityId,
+        concreteType:
+          'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+        recursive: true,
+      },
+    },
+    {
+      enabled: isFolderOrProject,
+    },
+  )
+
+  const folderOrProjectHasNoFiles =
+    isFolderOrProject &&
+    (isLoadingFolderOrProjectStats || folderOrProjectStats?.fileCount === 0)
+
+  const { data: entityData } = useGetEntity(props.entityId)
+
+  const { downloadFile } = useDirectDownloadHandler()
+
+  const fileHandleId =
+    entityData && isFileEntity(entityData)
+      ? entityData.dataFileHandleId
+      : undefined
+
+  const onDownloadFile = fileHandleId
+    ? () => {
+        void downloadFile({
+          fileHandleId,
+          associatedObjectId: props.entityId,
+          associatedObjectType: FileHandleAssociateType.FileEntity,
+        })
+      }
+    : undefined
+
+  const entityViewHasNoFiles =
+    entityData && isEntityView(entityData) && !hasFilesInView(entityData)
+
+  const datasetHasNoFiles =
+    entityData &&
+    isDataset(entityData) &&
+    (!entityData.items || entityData.items.length === 0)
+
+  const addToCartDisabled =
+    folderOrProjectHasNoFiles || entityViewHasNoFiles || datasetHasNoFiles
 
   // state to manage export metadata modal visibility
   const [showExportMetadata, setShowExportMetadata] = useState<boolean>(false)
@@ -361,8 +435,11 @@ export function EntityDownloadButton(props: {
         setShowProgrammaticAccess,
         setShowExportMetadata,
         addFileToDownloadList,
-        addQueryToDownloadList,
+        setShowDownloadConfirmation,
         latestVersionNumber,
+        addToCartDisabled,
+        onDownloadFile,
+        isAuthenticated,
       ),
     ),
   )
@@ -374,6 +451,14 @@ export function EntityDownloadButton(props: {
     latestVersionNumber,
   )
 
+  const downloadConfirmation = showDownloadConfirmation ? (
+    <EntityDownloadConfirmation
+      entityId={props.entityId}
+      handleClose={() => setShowDownloadConfirmation(false)}
+      onIsLoadingChange={setDownloadConfirmationLoading}
+    />
+  ) : null
+
   return (
     <>
       <DropdownMenu
@@ -383,8 +468,16 @@ export function EntityDownloadButton(props: {
         buttonProps={{
           variant: 'outlined',
           startIcon: <DownloadIcon />,
+          disabled: props.disabled || downloadConfirmationLoading,
         }}
       />
+      {downloadConfirmation &&
+        (props.downloadConfirmationContainer?.current
+          ? createPortal(
+              downloadConfirmation,
+              props.downloadConfirmationContainer.current,
+            )
+          : downloadConfirmation)}
       <ProgrammaticInstructionsModal
         show={showProgrammaticAccess}
         title={`Programmatic Access: ${props.name}`}

@@ -19,7 +19,10 @@ import { DataGridRow, Operation } from './DataGridTypes'
 import { GRID_ROW_REACT_KEY_PROPERTY } from './utils/DataGridUtils'
 import { getCellClassName } from './utils/getCellClassName'
 import { useColumnResizeHandles } from './hooks/useColumnResizeHandles'
-import { calculateDefaultColumnWidth } from './utils/calculateColumnWidth'
+import {
+  calculateDefaultColumnWidth,
+  HeaderOptions,
+} from './utils/calculateColumnWidth'
 
 type DataGridProps = {
   gridRef: React.RefObject<DataSheetGridRef | null>
@@ -61,6 +64,9 @@ export default function DataGrid(props: DataGridProps) {
   // Move columnWidths state into DataGrid
   const [columnWidths, setColumnWidths] = useState<Record<string, number>>({})
 
+  // Pin state management for first column
+  const [isPinned, setIsPinned] = useState(false)
+
   // Initialize column widths with defaults when columns first become available
   useEffect(() => {
     if (!columnNames || !columnOrder) {
@@ -79,19 +85,49 @@ export default function DataGrid(props: DataGridProps) {
       }
 
       const newWidths = { ...prev }
-      modelColumnNames.forEach(columnName => {
+      modelColumnNames.forEach((columnName, arrayIndex) => {
         if (!newWidths[columnName]) {
           // Calculate default width using centralized function
           const propertyInfo = schemaPropertiesInfo[columnName]
+          const headerOptions: HeaderOptions = {
+            showPinIcon: arrayIndex === 0,
+            hasDescription: !!propertyInfo?.description,
+          }
           newWidths[columnName] = calculateDefaultColumnWidth(
             columnName,
             propertyInfo,
+            headerOptions,
           )
         }
       })
       return newWidths
     })
   }, [columnNames, columnOrder, schemaPropertiesInfo])
+
+  // Handler to toggle pin state for the first column only
+  const handleTogglePin = useCallback(
+    (columnIndex: number) => {
+      // Validate columnIndex
+      if (
+        typeof columnIndex !== 'number' ||
+        columnIndex < 0 ||
+        !columnOrder ||
+        columnIndex >= columnOrder.length
+      ) {
+        return
+      }
+
+      if (columnIndex !== 0) return // Only allow first column pinning
+
+      setIsPinned(prev => !prev)
+    },
+    [columnOrder],
+  )
+
+  // Memoize the pinned columns set to prevent recalculation during scroll
+  const pinnedColumnsSet = useMemo<Set<number>>(() => {
+    return isPinned ? new Set([0]) : new Set()
+  }, [isPinned])
 
   const colValues = useMemo(
     () =>
@@ -100,8 +136,17 @@ export default function DataGrid(props: DataGridProps) {
         columnOrder,
         schemaPropertiesInfo,
         columnWidths,
+        pinnedColumnsSet,
+        handleTogglePin,
       ),
-    [columnNames, columnOrder, schemaPropertiesInfo, columnWidths],
+    [
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+      columnWidths,
+      pinnedColumnsSet,
+      handleTogglePin,
+    ],
   )
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
 

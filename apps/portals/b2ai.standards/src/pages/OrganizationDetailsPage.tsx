@@ -1,15 +1,13 @@
 import { LinearProgress } from '@mui/material'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import {
-  CardConfiguration,
-  CardContainerLogic,
-  ErrorBanner,
-  ErrorPage,
-  StandaloneQueryWrapper,
-  SynapseConstants,
-  SynapseErrorType,
-} from 'synapse-react-client'
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
+import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import { ErrorBanner } from 'synapse-react-client/components/error/ErrorBanner'
+import ErrorPage from 'synapse-react-client/components/error/ErrorPage'
+import { SynapseErrorType } from 'synapse-react-client/components/error/ErrorPage'
+import StandaloneQueryWrapper from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageSectionLayoutType } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageSectionLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'

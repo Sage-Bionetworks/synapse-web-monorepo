@@ -959,6 +959,10 @@ export class KeyFactory {
     return this.getKey('currentRealm')
   }
 
+  public getRealmByIdQueryKey(realmId: string) {
+    return this.getKey('realm', realmId)
+  }
+
   public getProjectStorageUsageKey(projectId: string) {
     return this.getKey('projectstorageusage', projectId)
   }

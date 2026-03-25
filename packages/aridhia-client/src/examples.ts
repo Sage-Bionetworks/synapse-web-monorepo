@@ -19,7 +19,7 @@ async function authenticateExample() {
 
   const authApi = new AuthenticationApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io',
+      basePath: 'https://gateway.westeurope.dap.c-path.org',
       accessToken: synapseToken,
     }),
   )
@@ -40,7 +40,7 @@ async function authenticateExample() {
 async function listWorkflowsExample(token: string) {
   const workflowsApi = new WorkflowsApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
       accessToken: token,
     }),
   )
@@ -57,7 +57,7 @@ async function listWorkflowsExample(token: string) {
 async function getWorkflowExample(token: string, workflowCode: string) {
   const workflowsApi = new WorkflowsApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
       accessToken: token,
     }),
   )
@@ -74,7 +74,7 @@ async function getWorkflowExample(token: string, workflowCode: string) {
 async function listDatasetsExample(token: string) {
   const datasetsApi = new DatasetsApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
       accessToken: token,
     }),
   )
@@ -93,7 +93,7 @@ async function listDatasetsExample(token: string) {
 async function getDatasetExample(token: string, datasetCode: string) {
   const datasetsApi = new DatasetsApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
       accessToken: token,
     }),
   )
@@ -110,7 +110,7 @@ async function getDatasetExample(token: string, datasetCode: string) {
 async function getDatasetSettingsExample(token: string, datasetCode: string) {
   const datasetsApi = new DatasetsApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
       accessToken: token,
     }),
   )
@@ -127,7 +127,7 @@ async function getDatasetSettingsExample(token: string, datasetCode: string) {
 async function createRequestExample(token: string) {
   const requestsApi = new RequestsApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
       accessToken: token,
     }),
   )
@@ -153,7 +153,7 @@ async function createRequestExample(token: string) {
 async function listRequestsExample(token: string) {
   const requestsApi = new RequestsApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
       accessToken: token,
     }),
   )
@@ -171,7 +171,7 @@ async function listRequestsExample(token: string) {
 async function getRequestExample(token: string, requestCode: string) {
   const requestsApi = new RequestsApi(
     new Configuration({
-      basePath: 'https://gateway.westus2.c-path-dev.aridhia.io/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
       accessToken: token,
     }),
   )
@@ -264,27 +264,27 @@ async function fullWorkflowExample() {
     const token = await authenticateExample()
 
     // Step 2: List available workflows
-    await listWorkflowsExample(token!)
+    await listWorkflowsExample(token)
 
     // Step 3: List requestable datasets
-    const datasets = await listDatasetsExample(token!)
+    const datasets = await listDatasetsExample(token)
 
     // Step 4: Get dataset settings for a specific dataset
     if (datasets.items && datasets.items.length > 0) {
       const datasetCode = datasets.items[0].code!
-      await getDatasetSettingsExample(token!, datasetCode)
+      await getDatasetSettingsExample(token, datasetCode)
     }
 
     // Step 5: Create a data access request
-    const request = await createRequestExample(token!)
+    const request = await createRequestExample(token)
 
     // Step 6: Check request status
     if (request.code) {
-      await getRequestExample(token!, request.code)
+      await getRequestExample(token, request.code)
     }
 
     // Step 7: Search for workspaces
-    await searchWorkspacesExample(token!)
+    await searchWorkspacesExample(token)
   } catch (error) {
     console.error('Error in workflow:', error)
   }

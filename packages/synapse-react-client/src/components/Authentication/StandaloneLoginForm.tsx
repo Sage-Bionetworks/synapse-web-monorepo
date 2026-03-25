@@ -2,6 +2,7 @@ import { OAuth2State } from '@/utils'
 import useLogin from '@/utils/hooks/useLogin'
 import { Box, Typography } from '@mui/material'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
+import { Realm } from '@sage-bionetworks/synapse-client'
 import {
   RECOVERY_CODE_GUIDANCE_TEXT_SHORT,
   TOTP_GUIDANCE_TEXT,
@@ -32,7 +33,7 @@ export type StandaloneLoginFormProps = {
   twoFactorAuthResetUri?: string
   /* Invoked when password login is selected */
   onPasswordLoginSelected?: () => void
-  sourceAppId?: string
+  realm?: Realm
 }
 
 export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
@@ -48,7 +49,7 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
     ssoState,
     twoFactorAuthResetUri,
     onPasswordLoginSelected,
-    sourceAppId,
+    realm,
   } = props
 
   const {
@@ -112,7 +113,7 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
         ssoState={ssoState}
         twoFactorAuthResetUri={twoFactorAuthResetUri}
         onPasswordLoginSelected={onPasswordLoginSelected}
-        sourceAppId={sourceAppId}
+        realm={realm}
       />
     </Box>
   )

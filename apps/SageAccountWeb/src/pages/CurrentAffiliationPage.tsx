@@ -8,7 +8,7 @@ import { StyledFormControl } from '../components/StyledComponents'
 import { useSourceApp } from '../components/useSourceApp'
 import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import { useGetCurrentUserProfile } from 'synapse-react-client/synapse-queries/user/useUserBundle'
-import SynapseClient from 'synapse-react-client/synapse-client'
+import SynapseClient from 'synapse-react-client/synapse-client/index'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 
 function CurrentAffiliationPage() {

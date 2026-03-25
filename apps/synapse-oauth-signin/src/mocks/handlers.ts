@@ -8,6 +8,9 @@ import {
 import { http, HttpResponse } from 'msw'
 import { SynapseApiResponse } from 'synapse-react-client/mocks/msw/handlers'
 import mockOauthClient from './MockOAuthClient'
+import { MOCK_ANONYMOUS_PRINCIPAL_ID } from 'synapse-react-client/mocks/realm/mockRealmPrincipal'
+import { MOCK_PUBLIC_PRINCIPAL_ID } from 'synapse-react-client/mocks/realm/mockRealmPrincipal'
+import { MOCK_AUTHENTICATED_PRINCIPAL_ID } from 'synapse-react-client/mocks/realm/mockRealmPrincipal'
 
 let hasConsented = false
 
@@ -56,6 +59,25 @@ export const handlers = [
     },
   ),
 
+  http.get('https://repo-prod.prod.sagebase.org/repo/v1/realm/:id', () => {
+    return HttpResponse.json({ id: '0', name: 'Synapse' }, { status: 200 })
+  }),
+
+  http.get(
+    'https://repo-prod.prod.sagebase.org/repo/v1/realm/principals',
+    () => {
+      return HttpResponse.json(
+        {
+          realmId: '0',
+          anonymousUser: MOCK_ANONYMOUS_PRINCIPAL_ID,
+          publicGroup: MOCK_PUBLIC_PRINCIPAL_ID,
+          authenticatedUsers: MOCK_AUTHENTICATED_PRINCIPAL_ID,
+        },
+        { status: 200 },
+      )
+    },
+  ),
+
   http.post(
     'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/description',
     () =>
@@ -66,6 +88,25 @@ export const handlers = [
           scope: [
             'To see your Synapse user ID, which can be used to access your public profile',
           ],
+        },
+        { status: 200 },
+      ),
+  ),
+
+  http.get('https://repo-prod.prod.sagebase.org/auth/v1/anonymousToken', () =>
+    HttpResponse.json({ accessToken: 'an-anonymous-token' }, { status: 200 }),
+  ),
+
+  http.post(
+    'https://repo-prod.prod.sagebase.org/auth/v1/oauth2/introspect',
+    () =>
+      HttpResponse.json(
+        {
+          active: true,
+          scope: 'authorize openid',
+          aud: '0',
+          sub: '1234',
+          token_type: 'OIDC_ACCESS_TOKEN',
         },
         { status: 200 },
       ),

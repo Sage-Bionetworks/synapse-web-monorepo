@@ -8,6 +8,7 @@ import {
   EntityUpdateResults,
   instanceOfEntityUpdateResults,
   instanceOfUploadToTableResult,
+  SynchronizeGridResponse,
   TableUpdateTransactionResponse,
 } from '@sage-bionetworks/synapse-client'
 
@@ -31,8 +32,10 @@ export default function MergeGridWithSourceTableButton(
 
   const { mutate: mergeGrid, isPending } = useMergeGridWithSource({
     onSuccess: result => {
-      if (result.type === 'table') {
-        onMergeSuccess(result.data)
+      if (result.type === 'entityview') {
+        onSynchronizeSuccess(result.data)
+      } else if (result.type === 'table') {
+        onMergeTableSuccess(result.data)
       } else {
         displayToast('Successfully updated RecordSet.', 'success')
       }
@@ -40,21 +43,40 @@ export default function MergeGridWithSourceTableButton(
     onError: e => displayToast(e.message, 'danger'),
   })
 
+  const buttonText =
+    sourceEntityType === 'entityview' ? 'Sync changes' : 'Apply changes'
+
   return (
     <GridMenuButton
       loading={isPending}
       disabled={entityLoading}
-      onClick={() =>
+      onClick={() => {
         mergeGrid({ gridSessionId, sourceEntityId, sourceEntityType })
-      }
+      }}
       variant="contained"
     >
-      Apply changes
+      {buttonText}
     </GridMenuButton>
   )
 }
 
-function onMergeSuccess(result: TableUpdateTransactionResponse) {
+function onSynchronizeSuccess(result: SynchronizeGridResponse) {
+  if (result.errorMessages == null || result.errorMessages.length === 0) {
+    displayToast('Successfully synchronized metadata.', 'success')
+  } else {
+    displayToast(
+      <ul>
+        {result.errorMessages.map((msg, index) => (
+          <li key={index}>{msg}</li>
+        ))}
+      </ul>,
+      'warning',
+      { title: 'Some changes could not be applied' },
+    )
+  }
+}
+
+function onMergeTableSuccess(result: TableUpdateTransactionResponse) {
   if (result.results?.length) {
     // There should only be one result since the CSV upload is done in one step
     const updateResult = result.results[0]

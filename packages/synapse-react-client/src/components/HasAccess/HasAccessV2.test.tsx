@@ -146,7 +146,8 @@ describe('HasAccess tests', () => {
     })
     it('Handles a file entity where download access is blocked because of missing DOWNLOAD permission, and the user is not signed in', async () => {
       const wrapperProps: Partial<SynapseContextType> = {
-        accessToken: undefined,
+        accessToken: 'anon-token',
+        isAuthenticated: false,
       }
 
       useMswRestrictionInformation({
@@ -170,7 +171,7 @@ describe('HasAccess tests', () => {
 
       expect(getRestrictionInformationSpy).toHaveBeenLastCalledWith(
         expectedRestrictionInformationRequest,
-        undefined,
+        'anon-token',
       )
     })
   })

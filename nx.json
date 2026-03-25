@@ -1,21 +1,8 @@
 {
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [
-          "build",
-          "test",
-          "lint",
-          "type-check",
-          "generate"
-        ]
-      }
-    }
-  },
   "targetDefaults": {
     "build": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "cache": true
     },
     "preview": {
       "//": "Serves the app artifact created in the build target",
@@ -23,17 +10,29 @@
     },
     "lint": {
       "//": "We use @typescript-eslint/parser for type-aware linting, so we must build dependencies prior to linting",
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "cache": true
     },
     "test": {
       "//": "Tests don't depend a build for their own package, but they do depend on their dependencies being built",
+      "dependsOn": ["^build"],
+      "cache": true
+    },
+    "dev": {
       "dependsOn": ["^build"]
     },
     "start": {
       "dependsOn": ["^build"]
     },
     "type-check": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "cache": true
+    },
+    "typegen": {
+      "cache": true
+    },
+    "generate": {
+      "cache": true
     }
   },
   "defaultBase": "main"

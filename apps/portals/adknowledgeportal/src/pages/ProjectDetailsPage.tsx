@@ -33,14 +33,14 @@ import {
   TARGET_ENABLING_RESOURCES_COLUMN_NAMES,
   targetEnablingResourcesCardConfiguration,
 } from '@/config/synapseConfigs/target_enabling_resources'
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import ToggleSynapseObjects from '@sage-bionetworks/synapse-portal-framework/components/ToggleSynapseObjects'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic'
-import StandaloneQueryWrapper from 'synapse-react-client/components/StandaloneQueryWrapper'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
+import StandaloneQueryWrapper from 'synapse-react-client/components/StandaloneQueryWrapper/index'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 function ProjectDetailsPage() {

@@ -1,8 +1,10 @@
 import React from 'react'
 import { Box, SxProps, Typography, useMediaQuery } from '@mui/material'
 import Background from './assets/genie-homepage-background.jpg?url'
+import { usePortalContext } from '@/components/PortalContext'
 
 const GenieHomePageHeader = (): React.ReactNode => {
+  const { portalName, portalDescription } = usePortalContext()
   const isDesktop = useMediaQuery(`(min-width: ${1250}px)`)
   // if larger screen, show an additional extra background and show GreenPolygon's right side (which is angled)
   const additionalGreenBackgroundProps: SxProps = isDesktop
@@ -17,11 +19,11 @@ const GenieHomePageHeader = (): React.ReactNode => {
     >
       <Box sx={{ color: 'grey.100', padding: '50px 10% 50px 100px' }}>
         <Typography variant="h1" sx={{ fontSize: '36px' }}>
-          Welcome to the {import.meta.env.VITE_PORTAL_NAME}
+          Welcome to the {portalName}
         </Typography>
 
         <Typography variant="body1" sx={{ marginTop: '20px' }}>
-          {import.meta.env.VITE_PORTAL_DESCRIPTION}
+          {portalDescription}
         </Typography>
         <Typography variant="body1" sx={{ marginTop: '20px' }}>
           Experience the power of collaboration with our consortium, fueled by

@@ -1,5 +1,16 @@
-import { ConfigBuilder } from 'vite-config'
+import { mergeConfig } from 'vite'
+import {
+  baseConfig,
+  vitestConfig,
+  nodePolyfillsPlugin,
+  tsconfigPathsPlugin,
+} from 'vite-config'
 
-const config = new ConfigBuilder().setIncludeVitestConfig(true).build()
+const config = mergeConfig(
+  baseConfig,
+  mergeConfig(vitestConfig, {
+    plugins: [nodePolyfillsPlugin(), tsconfigPathsPlugin()],
+  }),
+)
 
 export default config

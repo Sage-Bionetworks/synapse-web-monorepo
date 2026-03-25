@@ -14,6 +14,8 @@ export type AridhiaConfig = {
 
 export type PortalContextType = {
   portalName: string
+  portalDescription?: string
+  portalKey?: string
   routeConfig: RouteObject[]
   headerConfig: HomePageHeaderConfig
   footerConfig: FooterConfig

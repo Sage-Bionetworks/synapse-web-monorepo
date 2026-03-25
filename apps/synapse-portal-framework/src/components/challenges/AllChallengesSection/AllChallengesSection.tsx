@@ -1,16 +1,15 @@
-import React from 'react'
-import { Box, Button, Stack, Typography } from '@mui/material'
-import { Link as RouterLink } from 'react-router'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from 'synapse-react-client'
-import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
-import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions'
-import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
-import styles from './AllChallengesSection.module.scss'
-import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import filterRowsByLandingPageSection from '@/utils/filterRowsByLandingPageSection'
-import { stringListToArray } from 'synapse-react-client/utils/functions/StringUtils'
+import { Box, Button, Stack, Typography } from '@mui/material'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import React from 'react'
+import { Link as RouterLink } from 'react-router'
+import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
+import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
+import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions/index'
+import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import getChallengeKeywordsFromRow from '../../../utils/getChallengeKeywordsFromRow'
+import styles from './AllChallengesSection.module.scss'
 
 type AllChallengesSectionProps = {
   sql: string
@@ -37,12 +36,6 @@ const AllChallengesSection = ({
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
-  const filteredDataRows = filterRowsByLandingPageSection(
-    'all',
-    dataRows,
-    queryResultBundle!,
-  )
-
   return (
     <Stack className={styles.AllChallengesSection__root}>
       <Box className={styles.AllChallengesSection__header}>
@@ -54,20 +47,14 @@ const AllChallengesSection = ({
         </Typography>
       </Box>
       <Box className={styles.AllChallengesSection__container}>
-        {filteredDataRows.map(row => {
-          const chips =
-            row.values[getFieldIndex('chips', queryResultBundle)] ?? ''
-          const chipsArray = stringListToArray(chips)
+        {dataRows.map(row => {
+          const chipsArray = getChallengeKeywordsFromRow(row, queryResultBundle)
 
           return (
             <ColorfulPortalCardWithChips
               key={row.rowId}
               title={
                 row.values[getFieldIndex('title', queryResultBundle)] ?? ''
-              }
-              subtitle={
-                row.values[getFieldIndex('challengeName', queryResultBundle)] ??
-                ''
               }
               description={
                 row.values[getFieldIndex('description', queryResultBundle)] ??
@@ -78,11 +65,7 @@ const AllChallengesSection = ({
                 ''
               }
               chips={chipsArray}
-              tag={
-                row.values[
-                  getFieldIndex('registrationStatus', queryResultBundle)
-                ] ?? ''
-              }
+              tag={row.values[getFieldIndex('status', queryResultBundle)] ?? ''}
               backgroundImage={
                 row.values[
                   getFieldIndex('backgroundImage', queryResultBundle)

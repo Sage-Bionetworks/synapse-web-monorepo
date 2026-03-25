@@ -1,30 +1,30 @@
-import { MOCK_REALM_PRINCIPAL } from '@/mocks/realm/mockRealmPrincipal'
+import {
+  MOCK_REALM,
+  MOCK_REALM_PRINCIPAL,
+} from '@/mocks/realm/mockRealmPrincipal'
 import { http, HttpResponse } from 'msw'
-import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 
-export const getRealmPrincipalsHandler = () => {
-  return http.get(
-    `${getEndpoint(
-      BackendDestinationEnum.REPO_ENDPOINT,
-    )}/repo/v1/realm/principals`,
-    () => {
-      return HttpResponse.json(MOCK_REALM_PRINCIPAL)
-    },
-  )
+export const getRealmByIdHandler = (backendOrigin: string) => {
+  return http.get(`${backendOrigin}/repo/v1/realm/:id`, () => {
+    return HttpResponse.json(MOCK_REALM)
+  })
 }
 
-export const getRealmPrincipalsByIdHandler = (realmId: string = '0') => {
-  return http.get(
-    `${getEndpoint(
-      BackendDestinationEnum.REPO_ENDPOINT,
-    )}/repo/v1/realm/${realmId}/principals`,
-    () => {
-      return HttpResponse.json(MOCK_REALM_PRINCIPAL)
-    },
-  )
+export const getRealmPrincipalsHandler = (backendOrigin: string) => {
+  return http.get(`${backendOrigin}/repo/v1/realm/principals`, () => {
+    return HttpResponse.json(MOCK_REALM_PRINCIPAL)
+  })
 }
 
-export const realmHandlers = [
-  getRealmPrincipalsHandler(),
-  getRealmPrincipalsByIdHandler(),
+export const getRealmPrincipalsByIdHandler = (backendOrigin: string) => {
+  return http.get(`${backendOrigin}/repo/v1/realm/:realmId/principals`, () => {
+    return HttpResponse.json(MOCK_REALM_PRINCIPAL)
+  })
+}
+
+export const getRealmHandlers = (backendOrigin: string) => [
+  // More specific routes must come before the wildcard `:id` handler
+  getRealmPrincipalsHandler(backendOrigin),
+  getRealmPrincipalsByIdHandler(backendOrigin),
+  getRealmByIdHandler(backendOrigin),
 ]

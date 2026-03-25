@@ -1,4 +1,5 @@
-import { CardContainerLogicProps, SynapseConstants } from 'synapse-react-client'
+import type { CardContainerLogicProps } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { currentDataReleasesSql } from '../resources'
 
 const sourceTablePathColumnName = 'releaseExplorePath'

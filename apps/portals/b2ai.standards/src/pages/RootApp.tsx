@@ -1,5 +1,5 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
-import { FullWidthAlert } from 'synapse-react-client'
+import FullWidthAlert from 'synapse-react-client/components/FullWidthAlert/FullWidthAlert'
 
 function RootApp() {
   return (

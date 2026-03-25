@@ -15,7 +15,11 @@ export default function useSortResourceAccessList(
   resourceAccessList: ResourceAccess[],
 ) {
   const { data } = useGetRealmPrincipals()
-  const { authenticatedUsersId, publicGroupId } = data
+  const realmPrincipals = data || {}
+  const {
+    authenticatedUsers: authenticatedUsersId,
+    publicGroup: publicGroupId,
+  } = realmPrincipals
   const principalIdsOnResourceAccessList = useMemo(
     () => resourceAccessList.map(ra => ra.principalId),
     [resourceAccessList],

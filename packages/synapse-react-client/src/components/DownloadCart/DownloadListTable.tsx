@@ -5,7 +5,7 @@ import {
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { Box, Button, Select, Tooltip } from '@mui/material'
+import { Box, Button, Tooltip, Typography } from '@mui/material'
 import {
   AvailableFilter,
   DownloadListItem,
@@ -33,9 +33,7 @@ import { TOOLTIP_DELAY_SHOW } from '../SynapseTable/SynapseTableConstants'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import { displayToast } from '../ToastMessage'
-import { UserBadge } from '../UserCard/UserBadge'
 import DirectProgrammaticDownload from './DirectProgrammaticDownload'
-import DownloadListStats from './DownloadListStats'
 import { copyStringToClipboard } from '@/utils/functions/StringUtils'
 
 export const TESTING_TRASH_BTN_CLASS = 'TESTING_TRASH_BTN_CLASS'
@@ -67,7 +65,7 @@ function RemoveFromDownloadListButton(props: {
 
   return (
     <Tooltip
-      title="Remove from Download Cart"
+      title="Remove from Download List"
       placement="left"
       enterNextDelay={TOOLTIP_DELAY_SHOW}
     >
@@ -103,25 +101,23 @@ const getColumns = (args: {
       header: () => <></>,
       cell: ctx => (
         <div>
-          {ctx.getValue() && (
-            <Tooltip
-              title="Eligible for packaging"
-              enterNextDelay={TOOLTIP_DELAY_SHOW}
-              placement="right"
-            >
-              <span className="eligibileIcon">
-                <IconSvg wrap={false} icon="packagableFile" />
-              </span>
-            </Tooltip>
-          )}
           {!ctx.getValue() && (
             <Tooltip
-              title="This file is ineligible for Web packaging because it is >100MB, or it is an external link, or it is not stored on Synapse native storage"
+              title={
+                <>
+                  This file can’t be packaged as a ZIP because it is {'>'}
+                  100MB, or it is an external link, or it is not stored on
+                  Synapse native storage.
+                  <br />
+                  Try clicking the “download” icon at the end of the row, or
+                  download programmatically.
+                </>
+              }
               enterNextDelay={TOOLTIP_DELAY_SHOW}
               placement="right"
             >
               <span className="ineligibileIcon">
-                <IconSvg wrap={false} icon="warningOutlined" />
+                <IconSvg wrap={false} icon="unpackagableFile" />
               </span>
             </Tooltip>
           )}
@@ -143,18 +139,20 @@ const getColumns = (args: {
         </a>
       ),
       enableColumnFilter: false,
-      size: 160,
+      size: 360,
     }),
     columnHelper.accessor('fileSizeBytes', {
       header: props => <ColumnHeader {...props} title={'Size'} />,
       cell: ctx =>
-        ctx.getValue() != null ? (
+        ctx.getValue() != null && ctx.getValue() > 0 ? (
           calculateFriendlyFileSize(ctx.getValue())
         ) : (
-          <></>
+          <Typography variant="smallText1" sx={{ color: 'grey.600' }}>
+            Unknown
+          </Typography>
         ),
       enableColumnFilter: false,
-      size: 100,
+      size: 117,
     }),
     columnHelper.accessor('fileEntityId', {
       header: props => (
@@ -168,26 +166,18 @@ const getColumns = (args: {
       ),
       cell: ctx => `${ctx.getValue()}.${ctx.row.original.versionNumber}`,
       enableColumnFilter: false,
-      size: 100,
-    }),
-    columnHelper.accessor('projectName', {
-      header: props => <ColumnHeader {...props} title={'Project'} />,
-      enableColumnFilter: false,
+      size: 143,
     }),
     columnHelper.accessor('addedOn', {
       header: props => <ColumnHeader {...props} title={'Added On'} />,
       cell: ctx => formatDate(dayjs(ctx.getValue())),
       enableColumnFilter: false,
+      size: 150,
     }),
-    columnHelper.accessor('createdBy', {
-      header: props => <ColumnHeader {...props} title={'Created By'} />,
-      cell: ctx => <UserBadge userId={ctx.getValue()} />,
+    columnHelper.accessor('projectName', {
+      header: props => <ColumnHeader {...props} title={'Project'} />,
       enableColumnFilter: false,
-    }),
-    columnHelper.accessor('createdOn', {
-      header: props => <ColumnHeader {...props} title={'Created On'} />,
-      cell: ctx => formatDate(dayjs(ctx.getValue())),
-      enableColumnFilter: false,
+      size: 170,
     }),
     columnHelper.display({
       id: 'actions',
@@ -264,7 +254,11 @@ function getSortApiRequestFromTableSortState(
   }
 }
 
-export default function DownloadListTable() {
+export default function DownloadListTable({
+  filter,
+}: {
+  filter?: AvailableFilter
+}) {
   const handleError = useErrorHandler()
 
   const [copyingAllSynapseIDs, setCopyingAllSynapseIDs] =
@@ -276,7 +270,6 @@ export default function DownloadListTable() {
     },
   ])
 
-  const [filter, setFilter] = useState<AvailableFilter | undefined>(undefined)
   const {
     data,
     status,
@@ -388,76 +381,9 @@ export default function DownloadListTable() {
     allRows,
   ])
 
-  const getFilterDisplayText = (f: AvailableFilter) => {
-    if (!f) {
-      return 'All'
-    } else if (f == 'eligibleForPackaging') {
-      return 'Only Eligible'
-    } else {
-      return 'Only Ineligible'
-    }
-  }
-
-  const availableFiltersArray: AvailableFilter[] = [
-    undefined,
-    'eligibleForPackaging',
-    'ineligibleForPackaging',
-  ]
   return (
     <div>
       <BlockingLoader show={copyingAllSynapseIDs} />
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: {
-            xs: 'column',
-            md: 'row',
-          },
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          py: '15px',
-          rowGap: '15px',
-        }}
-      >
-        <DownloadListStats />
-        <Box
-          sx={{
-            display: 'flex',
-            gap: '10px',
-            alignItems: 'inherit',
-            justifyContent: 'end',
-          }}
-        >
-          <Box
-            sx={{
-              fontWeight: '700',
-              fontSize: '14px',
-            }}
-          >
-            Filter Files By
-          </Box>
-          <Box
-            sx={{
-              button: {
-                width: '144px',
-              },
-            }}
-          >
-            <Select native fullWidth value={getFilterDisplayText(filter)}>
-              {availableFiltersArray.map(availableFilter => (
-                <option
-                  key={`${getFilterDisplayText(availableFilter)}-filter-option`}
-                  onClick={() => {
-                    setFilter(availableFilter)
-                  }}
-                >
-                  {getFilterDisplayText(availableFilter)}
-                </option>
-              ))}
-            </Select>
-          </Box>
-        </Box>
-      </Box>
       {allRows.length > 0 && (
         <div className="DownloadListTableV2">
           {/* TODO: This table can be very large, so it should be refactored to use row virtualization or discrete pagination */}
@@ -478,6 +404,11 @@ export default function DownloadListTable() {
             </Box>
           )}
         </div>
+      )}
+      {allRows.length === 0 && !isLoading && (
+        <Typography variant="body1Italic">
+          You have no matching files in your download list.
+        </Typography>
       )}
       {isLoading && <SkeletonTable numCols={5} numRows={3} />}
     </div>

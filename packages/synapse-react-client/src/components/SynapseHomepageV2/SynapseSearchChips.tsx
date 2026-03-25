@@ -1,10 +1,5 @@
 import { Chip, Typography } from '@mui/material'
-import {
-  SearchQuery,
-  KeyValue,
-  FeatureFlagEnum,
-} from '@sage-bionetworks/synapse-types'
-import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
+import { SearchQuery, KeyValue } from '@sage-bionetworks/synapse-types'
 import { DEFAULT_SEARCH_QUERY } from '@/utils/searchDefaults'
 
 const searchValues = [
@@ -29,8 +24,6 @@ export type SynapseSearchChipsProps = {
 }
 
 export function SynapseSearchChips({ gotoPlace }: SynapseSearchChipsProps) {
-  const searchV2Enabled = useGetFeatureFlag(FeatureFlagEnum.SEARCHV2_ENABLED)
-
   return (
     <>
       {searchValues.map(value => {
@@ -57,15 +50,11 @@ export function SynapseSearchChips({ gotoPlace }: SynapseSearchChipsProps) {
                 queryTerm: [value],
                 booleanQuery: value == 'Cancer' ? [projectKeyValue] : undefined,
               }
-              if (searchV2Enabled) {
-                gotoPlace(
-                  `/SearchV2:default?query=${encodeURIComponent(
-                    JSON.stringify(searchQuery),
-                  )}`,
-                )
-              } else {
-                gotoPlace(`/Search:${JSON.stringify(searchQuery)}`)
-              }
+              gotoPlace(
+                `/SearchV2:default?query=${encodeURIComponent(
+                  JSON.stringify(searchQuery),
+                )}`,
+              )
             }}
             variant="outlined"
             // by default, on hover the background color changes to mostly transparent (4%), which looks terrible on top of the header splash image

@@ -22,6 +22,8 @@ root.render(
   <StrictMode>
     <Portal
       portalName={import.meta.env.VITE_PORTAL_NAME}
+      portalDescription={import.meta.env.VITE_PORTAL_DESCRIPTION}
+      portalKey={import.meta.env.VITE_PORTAL_KEY}
       palette={palette}
       routeConfig={routes}
       headerConfig={headerConfig}
@@ -30,7 +32,7 @@ root.render(
       logoFooterConfig={logoFooterConfig}
       navbarConfig={navbarConfig}
       aridhiaConfig={{
-        apiBasePath: 'https://gateway.westus2.c-path-dev.aridhia.io',
+        apiBasePath: 'https://gateway.westeurope.dap.c-path.org',
       }}
     />
   </StrictMode>,

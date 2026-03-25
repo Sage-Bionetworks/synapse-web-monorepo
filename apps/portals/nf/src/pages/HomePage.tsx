@@ -1,4 +1,10 @@
+import NFHeader from '@sage-bionetworks/synapse-portal-framework/components/nf/NFHeader'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import { Goals } from 'synapse-react-client/components/Goals/Goals'
+import RssFeedCards from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
+import { UserCardListRotate } from 'synapse-react-client/components/UserCardList/UserCardListRotate'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { fundersSql, peopleSql, topProjectsSql } from '../config/resources'
 import { columnAliases } from '../config/synapseConfigs/commonProps'
 import {
@@ -10,15 +16,7 @@ import {
   studyCardConfiguration,
   studyColumnIconConfigs,
 } from '../config/synapseConfigs/studies'
-import {
-  CardContainerLogic,
-  Goals,
-  RssFeedCards,
-  SynapseConstants,
-  UserCardListRotate,
-  JsonLdScript,
-} from 'synapse-react-client'
-import NFHeader from '@sage-bionetworks/synapse-portal-framework/components/nf/NFHeader'
+import { JsonLdScript } from 'synapse-react-client/components/JsonLdScript'
 
 const limit = 3
 

@@ -14,7 +14,7 @@ import { projectCardConfiguration } from '../config/synapseConfigs/projects'
 import { publicationsCardConfiguration } from '../config/synapseConfigs/publications'
 import { studyCardConfiguration } from '../config/synapseConfigs/studies'
 import { toolCardConfiguration } from '../config/synapseConfigs/tools'
-import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
 
 function ProjectDetailsPage() {
   const searchParams = useGetPortalComponentSearchParams()

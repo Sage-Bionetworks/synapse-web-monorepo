@@ -6,8 +6,8 @@ import {
   toolsSql,
   projectsSql,
 } from '../resources'
-import type { ClickCallbackParams } from 'synapse-react-client'
-import { generateEncodedPathAndQueryForSelectedFacetURL } from 'synapse-react-client/components/QueryWrapper'
+import type { ClickCallbackParams } from 'synapse-react-client/components/Plot/types'
+import { generateEncodedPathAndQueryForSelectedFacetURL } from 'synapse-react-client/components/QueryWrapper/index'
 
 const sqlAndEntityMap: {
   [value: string]: string
@@ -20,7 +20,7 @@ const sqlAndEntityMap: {
   Files: filesSql,
 }
 
-export const onPointClick = ({
+export const onPointClick = async ({
   facetValue,
   type,
   event,
@@ -31,7 +31,7 @@ export const onPointClick = ({
     facet = 'consortium'
   }
 
-  const url = generateEncodedPathAndQueryForSelectedFacetURL(
+  const url = await generateEncodedPathAndQueryForSelectedFacetURL(
     `/Explore/${typeUpperCase}`,
     sqlAndEntityMap[typeUpperCase],
     [{ facet, facetValue }],
@@ -41,14 +41,14 @@ export const onPointClick = ({
   window.open(url, target)
 }
 
-export const onIndividualThemeBarPlotPointClick = ({
+export const onIndividualThemeBarPlotPointClick = async ({
   facetValue,
   type,
   event,
 }: ClickCallbackParams) => {
   //facetValue in this case is the Theme facet value (ie "Microenvironment"), and the type is Consortium facet value (ie "CSBC")
   const targetType = 'Grants'
-  const url = generateEncodedPathAndQueryForSelectedFacetURL(
+  const url = await generateEncodedPathAndQueryForSelectedFacetURL(
     `/Explore/${targetType}`,
     sqlAndEntityMap[targetType],
     [

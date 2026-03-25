@@ -4,23 +4,28 @@ import { TypeAnimation } from 'react-type-animation'
 
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import {
-  Goals,
-  ImageCardGridWithLinks,
-  PortalHomePageHeader,
-  RssFeedCards,
-} from 'synapse-react-client'
+import { Goals } from 'synapse-react-client/components/Goals/Goals'
+import ImageCardGridWithLinks from 'synapse-react-client/components/ImageCardGridWithLinks/ImageCardGridWithLinks'
+import PortalHomePageHeader from 'synapse-react-client/components/PortalHomePageHeader/PortalHomePageHeader'
+import { RssFeedCards } from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
 import {
   featuredResearchSql,
   goalsTable,
   whatWeDoSql,
 } from '@/config/resources'
-import { FeaturedResearch } from 'synapse-react-client'
+import FeaturedResearch from 'synapse-react-client/components/FeaturedResearch/FeaturedResearch'
 import ClassicSupportedByNIABanner from '@sage-bionetworks/synapse-portal-framework/components/classic/ClassicSupportedByNIABanner/ClassicSupportedByNIABanner'
 import ClassicDevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/classic/ClassicDevelopedBySage'
+import { visuallyHidden } from 'synapse-react-client'
 
 function HomePageInternal() {
   const theme = useTheme()
+
+  const animationPhrases = [
+    'richly phenotyped longitudinal behavioral focused studies',
+    'social science studies',
+    'small and mid sized studies',
+  ]
 
   const title = (
     <Box sx={{ color: 'grey.100' }}>
@@ -36,14 +41,8 @@ function HomePageInternal() {
         })}
       >
         <TypeAnimation
-          sequence={[
-            'richly phenotyped longitudinal behavioral focused studies',
-            3000,
-            'social science studies',
-            3000,
-            'small and mid sized studies',
-            3000,
-          ]}
+          aria-hidden="true"
+          sequence={animationPhrases.flatMap(phrase => [phrase, 3000])}
           wrapper="span"
           speed={20}
           repeat={Infinity}
@@ -52,6 +51,10 @@ function HomePageInternal() {
             color: '#27FF81',
           }}
         />
+        {/* Screen reader only text */}
+        <Box component="span" sx={visuallyHidden}>
+          {animationPhrases.join(', ')}
+        </Box>
       </Box>
     </Box>
   )

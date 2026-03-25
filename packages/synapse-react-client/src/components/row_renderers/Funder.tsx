@@ -32,7 +32,9 @@ export default class Funder extends Component<FunderProps, never> {
         websiteDisplayName.length - 1,
       )
     }
-    const isOnOrgPath = window.location.hash.substring(1) === organizationPath
+    const isOnOrgPath =
+      typeof window !== 'undefined' &&
+      window.location.hash.substring(1) === organizationPath
     const style: any = {}
     let showOrgLink
     if (!isOnOrgPath) {

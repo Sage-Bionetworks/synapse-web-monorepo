@@ -1,8 +1,8 @@
 import Header from '@sage-bionetworks/synapse-portal-framework/components/Header'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import Goals from 'synapse-react-client/components/Goals'
+import Goals from 'synapse-react-client/components/Goals/index'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
-import { UserCardListGroups } from 'synapse-react-client/components/UserCardList'
+import { UserCardListGroups } from 'synapse-react-client/components/UserCardList/index'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 function Home() {

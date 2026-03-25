@@ -1,4 +1,5 @@
-import { CTASectionWrapper, PortalSectionHeader } from 'synapse-react-client'
+import CTASectionWrapper from 'synapse-react-client/components/CTASectionWrapper/CTASectionWrapper'
+import PortalSectionHeader from 'synapse-react-client/components/PortalSectionHeader/PortalSectionHeader'
 
 function ELContributeYourData() {
   const content = (

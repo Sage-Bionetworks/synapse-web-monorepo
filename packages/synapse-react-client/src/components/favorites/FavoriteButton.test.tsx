@@ -102,7 +102,8 @@ describe('FavoriteButton tests', () => {
   it('Disables the button with a useful tooltip for an unauthenticated user', async () => {
     renderComponent({
       ...MOCK_CONTEXT_VALUE,
-      accessToken: undefined,
+      accessToken: 'anon-token',
+      isAuthenticated: false,
     })
 
     await screen.findByLabelText('Sign in to add this to your favorites')

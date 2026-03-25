@@ -17,7 +17,6 @@ import { SynapseNavDrawer, SynapseNavDrawerProps } from './SynapseNavDrawer'
 
 const defaultProps: SynapseNavDrawerProps = {
   initIsOpen: false,
-  signoutCallback: vi.fn(),
   gotoPlace: vi.fn(),
 }
 
@@ -63,7 +62,7 @@ const mockGetUserBundle = vi.spyOn(SynapseClient, 'getMyUserBundle')
 describe('SynapseNavDrawer tests', () => {
   it('Shows logged-out user items', async () => {
     renderComponent({
-      accessToken: undefined,
+      isAuthenticated: false,
     })
 
     const buttonGroups = await screen.findAllByRole('list')
@@ -77,7 +76,7 @@ describe('SynapseNavDrawer tests', () => {
     expect(screen.queryByLabelText('Favorites')).not.toBeInTheDocument()
     expect(screen.queryByLabelText('Teams')).not.toBeInTheDocument()
     expect(screen.queryByLabelText('Challenges')).not.toBeInTheDocument()
-    expect(screen.queryByLabelText('Download Cart')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Download List')).not.toBeInTheDocument()
     expect(screen.queryByLabelText('Trash Can')).not.toBeInTheDocument()
     expect(
       screen.queryByLabelText('Data Access Management'),
@@ -107,7 +106,7 @@ describe('SynapseNavDrawer tests', () => {
     await within(topButtonGroup).findByLabelText('Teams')
     await within(topButtonGroup).findByLabelText('Challenges')
     const downloadCartButton = await within(topButtonGroup).findByLabelText(
-      'Download Cart',
+      'Download List',
     )
     await within(downloadCartButton).findByText(`${numFilesInDownloadList}`)
     await within(topButtonGroup).findByLabelText('Trash Can')
@@ -140,7 +139,7 @@ describe('SynapseNavDrawer tests', () => {
     await within(topButtonGroup).findByLabelText('Teams')
     await within(topButtonGroup).findByLabelText('Challenges')
     const downloadCartButton = await within(topButtonGroup).findByLabelText(
-      'Download Cart',
+      'Download List',
     )
     await within(downloadCartButton).findByText(`${numFilesInDownloadList}`)
     await within(topButtonGroup).findByLabelText('Trash Can')

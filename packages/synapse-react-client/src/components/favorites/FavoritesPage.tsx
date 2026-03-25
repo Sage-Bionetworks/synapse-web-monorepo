@@ -88,7 +88,7 @@ const columns = [
 ]
 
 export default function FavoritesPage() {
-  const { accessToken } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
   const [searchText, setSearchText] = useState<string>('')
   const [error, setError] = useState<Error>()
   const { data, isLoading, isError, error: newError } = useGetFavorites()
@@ -117,12 +117,12 @@ export default function FavoritesPage() {
   }, [isError, newError])
 
   useEffect(() => {
-    if (!accessToken) {
+    if (!isAuthenticated) {
       setError(new Error('Please sign in to access your favorites.'))
     } else {
       setError(undefined)
     }
-  }, [accessToken])
+  }, [isAuthenticated])
 
   if (error) {
     return <ErrorBanner error={error} />

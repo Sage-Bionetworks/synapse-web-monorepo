@@ -1,7 +1,6 @@
 import React from 'react'
 import SynapseIconWhite from '@/assets/icons/SynapseIconWhite'
 import SynapseLogoName from '@/assets/icons/SynapseLogoName'
-import SynapseClient from '@/synapse-client'
 import {
   useGetCurrentUserBundle,
   useGetDownloadListStatistics,
@@ -9,6 +8,7 @@ import {
 } from '@/synapse-queries'
 import {
   storeRedirectURLForOneSageLoginAndGotoURL,
+  useApplicationSessionContext,
   useSynapseContext,
 } from '@/utils'
 import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
@@ -25,19 +25,16 @@ import {
   Direction,
   SubmissionSortField,
   SubmissionState,
-  FeatureFlagEnum,
 } from '@sage-bionetworks/synapse-types'
 import { KeyboardEvent, ReactNode, useState } from 'react'
 import { CreateProjectModal } from '../CreateProjectModal/CreateProjectModal'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
 import UserCard from '../UserCard/UserCard'
-import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
 import { DEFAULT_SEARCH_QUERY } from '@/utils/searchDefaults'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
-  signoutCallback?: () => void
   gotoPlace: (href: string) => void
 }
 
@@ -152,7 +149,6 @@ const NavDrawerListItem = (props: MenuItemParams): React.ReactNode => {
  */
 export function SynapseNavDrawer({
   initIsOpen = false,
-  signoutCallback,
   gotoPlace,
 }: SynapseNavDrawerProps) {
   const [isOpen, setOpen] = useState(initIsOpen)
@@ -161,6 +157,8 @@ export function SynapseNavDrawer({
   const [docSiteSearchText, setDocSiteSearchText] = useState<string>('')
   const [isShowingCreateProjectModal, setIsShowingCreateProjectModal] =
     useState<boolean>(false)
+
+  const { clearSession } = useApplicationSessionContext()
 
   const { isAuthenticated } = useSynapseContext()
 
@@ -177,8 +175,6 @@ export function SynapseNavDrawer({
   })
 
   const numberOfFilesInDownloadList = downloadListStatistics?.totalNumberOfFiles
-
-  const searchV2Enabled = useGetFeatureFlag(FeatureFlagEnum.SEARCHV2_ENABLED)
 
   const { data: openSubmissionData } = useSearchAccessSubmissionsInfinite(
     {
@@ -201,15 +197,6 @@ export function SynapseNavDrawer({
     countOfOpenSubmissionsForReview = `${countOfOpenSubmissionsForReview}+`
   }
 
-  const signOut = async () => {
-    if (signoutCallback) {
-      signoutCallback()
-    } else {
-      await SynapseClient.signOut()
-      window.location.reload()
-    }
-  }
-
   const handleDrawerOpen = (navItem?: NavItem) => {
     setOpen(true)
     setSelectedItem(navItem)
@@ -221,15 +208,11 @@ export function SynapseNavDrawer({
   }
 
   const onProjectSearch = (searchTerm: string) => {
-    if (searchV2Enabled) {
-      gotoPlace(
-        `/SearchV2:default?query=${getProjectSearchToken(
-          searchTerm.split(/[ ,]+/),
-        )}`,
-      )
-    } else {
-      gotoPlace(`/Search:${getProjectSearchToken(searchTerm.split(/[ ,]+/))}`)
-    }
+    gotoPlace(
+      `/SearchV2:default?query=${getProjectSearchToken(
+        searchTerm.split(/[ ,]+/),
+      )}`,
+    )
   }
 
   const oneSageURL = useOneSageURL()
@@ -295,7 +278,7 @@ export function SynapseNavDrawer({
                   handleDrawerOpen={handleDrawerOpen}
                 />
                 <NavDrawerListItem
-                  tooltip="Download Cart"
+                  tooltip="Download List"
                   iconName="download"
                   onClickGoToPlace={() => gotoPlace('/DownloadCart:0')}
                   badgeContent={numberOfFilesInDownloadList}
@@ -326,9 +309,7 @@ export function SynapseNavDrawer({
             <NavDrawerListItem
               tooltip="Search"
               iconName="search"
-              onClickGoToPlace={() =>
-                gotoPlace(searchV2Enabled ? '/SearchV2:default' : '/Search:')
-              }
+              onClickGoToPlace={() => gotoPlace('/SearchV2:default')}
               handleDrawerClose={handleDrawerClose}
               handleDrawerOpen={handleDrawerOpen}
             />
@@ -529,7 +510,7 @@ export function SynapseNavDrawer({
                   <a
                     className="SRC-whiteText"
                     onClick={() => {
-                      void signOut()
+                      void clearSession()
                     }}
                     rel="noopener noreferrer"
                   >

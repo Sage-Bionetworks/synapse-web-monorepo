@@ -1,18 +1,19 @@
 import SageFullLogo from '@/assets/icons/SageFullLogo'
-import SynapseClient from '@/synapse-client'
 import { Button, Paper, Typography } from '@mui/material'
 import { ReactNode } from 'react'
-import { displayToast } from '../ToastMessage'
+import { useApplicationSessionContext } from '@/utils'
 
 export type RegisterPageLogoutPromptProps = {
-  onLogout: () => void
   logo?: ReactNode
 }
 
 export default function RegisterPageLogoutPrompt(
   props: RegisterPageLogoutPromptProps,
 ) {
-  const { onLogout, logo = <SageFullLogo width={'100%'} /> } = props
+  const { logo = <SageFullLogo width={'100%'} /> } = props
+
+  const { clearSession } = useApplicationSessionContext()
+
   return (
     <Paper
       sx={{
@@ -47,13 +48,7 @@ export default function RegisterPageLogoutPrompt(
         fullWidth
         sx={{ p: 1.5, mt: 5, fontSize: '16px' }}
         onClick={() => {
-          SynapseClient.signOut()
-            .then(() => {
-              onLogout()
-            })
-            .catch(err => {
-              displayToast(err.message, 'danger')
-            })
+          clearSession()
         }}
       >
         Log Out

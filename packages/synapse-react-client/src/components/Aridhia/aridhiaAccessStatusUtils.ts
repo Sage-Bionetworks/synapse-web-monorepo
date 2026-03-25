@@ -21,6 +21,7 @@ export function getRestrictionUiTypeFromAridhiaRequest(
     case 'pending':
       return RestrictionUiType.AccessBlockedByRestrictionWithPendingRDCADAPRequest
     case 'denied':
+      return RestrictionUiType.AccessBlockedByRestrictionWithRejectedRDCADAPRequest
     case 'error':
       return RestrictionUiType.AccessBlockedByACL
     default:
@@ -30,16 +31,32 @@ export function getRestrictionUiTypeFromAridhiaRequest(
 
 /**
  * Finds the Aridhia request for a specific dataset from a list of requests.
+ * If multiple requests match, returns the most recently updated one.
  *
  * @param requests - Array of Aridhia requests
  * @param datasetCode - The dataset code to search for
- * @returns The request that contains the specified dataset, or undefined if not found
+ * @returns The most recently updated request that contains the specified dataset, or undefined if not found
  */
 export function findRequestForDataset(
   requests: Request[],
   datasetCode: string,
 ): Request | undefined {
-  return requests.find(request =>
+  const matchingRequests = requests.filter(request =>
     request.datasets?.some(dataset => dataset.code === datasetCode),
   )
+
+  if (matchingRequests.length === 0) {
+    return undefined
+  }
+
+  // Return the most recently updated request
+  return matchingRequests.reduce((mostRecent, current) => {
+    if (!mostRecent.updated_at) {
+      return current
+    }
+    if (!current.updated_at) {
+      return mostRecent
+    }
+    return current.updated_at > mostRecent.updated_at ? current : mostRecent
+  })
 }

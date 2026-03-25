@@ -28,22 +28,29 @@ export const getSynapsePortalEndpoint = (hostname: string): string => {
     ? '/'
     : 'https://www.synapse.org/'
 }
-const DEFAULT_SYNAPSE_PORTAL = getSynapsePortalEndpoint(
-  window.location.hostname,
-)
+function getDefaultSynapsePortal(): string {
+  if (typeof window === 'undefined') return getSynapsePortalEndpoint('')
+  return getSynapsePortalEndpoint(window.location.hostname)
+}
 
 export const PRODUCTION_ENDPOINT_CONFIG: EndpointObject = {
   REPO: SYNAPSE_BACKEND_PRODUCTION_URL,
-  PORTAL: DEFAULT_SYNAPSE_PORTAL,
+  // Computed lazily via a getter so this object can be imported in Node.js (SSR/pre-render)
+  // without crashing on the `window.location.hostname` access.
+  get PORTAL() {
+    return getDefaultSynapsePortal()
+  },
 }
 
 // Given an endpoint will return the specific stack object
 export const getEndpoint = (endpoint: BackendDestinationEnum): string => {
   let endpoint_config = PRODUCTION_ENDPOINT_CONFIG
-  // @ts-expect-error if overriding endpoint config
-  if (window.SRC_OVERRIDE_ENDPOINT_CONFIG) {
-    // @ts-expect-error
-    endpoint_config = window.SRC_OVERRIDE_ENDPOINT_CONFIG
+  if (typeof window !== 'undefined') {
+    // @ts-expect-error if overriding endpoint config
+    if (window.SRC_OVERRIDE_ENDPOINT_CONFIG) {
+      // @ts-expect-error
+      endpoint_config = window.SRC_OVERRIDE_ENDPOINT_CONFIG
+    }
   }
   const { PORTAL, REPO } = endpoint_config
   if (!PORTAL || !REPO) {

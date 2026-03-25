@@ -21,13 +21,13 @@ function AddToDownloadListV2(props: AddToDownloadListV2Props) {
       displayToast(
         `${
           entity?.name ?? entityId
-        } was successfully added to your Download Cart.`,
+        } was successfully added to your Download List.`,
         'success',
       )
     },
     onError: e => {
       displayToast(
-        `Unable to add the file to your Download Cart. ${e.reason}`,
+        `Unable to add the file to your Download List. ${e.reason}`,
         'danger',
       )
     },
@@ -40,7 +40,7 @@ function AddToDownloadListV2(props: AddToDownloadListV2Props) {
   return (
     <>
       <Tooltip
-        title="Add this file to your Download Cart"
+        title="Add this file to your Download List"
         placement="right"
         enterNextDelay={300}
       >

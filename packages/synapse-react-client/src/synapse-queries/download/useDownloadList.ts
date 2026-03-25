@@ -306,6 +306,7 @@ export function useRemoveFilesFromDownloadList(
 
 export function useGetAddToDownloadListStats(
   addToDownloadListStatsRequest: AddToDownloadListStatsRequest,
+  options?: { enabled?: boolean },
 ) {
   const { synapseClient, keyFactory } = useSynapseContext()
   return useQuery({
@@ -326,5 +327,6 @@ export function useGetAddToDownloadListStats(
       )
       return asyncJobResponse.responseBody as AddToDownloadListStatsResponse
     },
+    enabled: options?.enabled,
   })
 }

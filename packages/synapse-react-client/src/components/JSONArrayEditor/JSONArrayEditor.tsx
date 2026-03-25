@@ -12,7 +12,7 @@ import {
 import RJSFForm from '@rjsf/core'
 import { GenericObjectType, RJSFSchema } from '@rjsf/utils'
 import { JSONSchema7, JSONSchema7Definition } from 'json-schema'
-import { ParseError } from 'papaparse'
+import type { ParseError } from 'papaparse'
 import { Ref, useCallback, useMemo, useState } from 'react'
 import { transformErrors } from '../SchemaDrivenAnnotationEditor/AnnotationEditorUtils'
 import useParseCsv, { UseParseCsvError } from './useParseCsv'

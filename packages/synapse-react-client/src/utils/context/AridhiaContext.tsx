@@ -20,7 +20,7 @@ export type AridhiaContextProviderProps = PropsWithChildren<{
   /**
    * Base URL for the Aridhia Gateway API.
    * All API calls should go through this gateway.
-   * @default 'https://gateway.westus2.c-path-dev.aridhia.io'
+   * @default 'https://gateway.westeurope.dap.c-path.org'
    */
   apiBasePath?: string
   /**
@@ -36,7 +36,7 @@ export type AridhiaContextProviderProps = PropsWithChildren<{
 export function AridhiaContextProvider(props: AridhiaContextProviderProps) {
   const {
     children,
-    apiBasePath = 'https://gateway.westus2.c-path-dev.aridhia.io',
+    apiBasePath = 'https://gateway.westeurope.dap.c-path.org',
     authenticationRequest,
   } = props
 

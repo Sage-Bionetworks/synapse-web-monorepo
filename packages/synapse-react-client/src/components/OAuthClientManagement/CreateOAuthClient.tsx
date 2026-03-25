@@ -108,10 +108,8 @@ export function CreateOAuthModal({
     setClientUri(client?.client_uri ?? '')
     setSectorUri(client?.sector_identifier_uri ?? '')
     setUserinfoSignedResponseAlg(
-      (client?.userinfo_signed_response_alg ??
-        defaultUserInfoSignedResponseAlgorithm) as
-        | 'JSON'
-        | OIDCSigningAlgorithm,
+      client?.userinfo_signed_response_alg ??
+        defaultUserInfoSignedResponseAlgorithm,
     )
     setTosUri(client?.tos_uri ?? '')
   }, [isShowingModal, client])
@@ -126,7 +124,7 @@ export function CreateOAuthModal({
             oAuthClient: oAuthClient,
           })
           .then(precheckResult => {
-            setWarnTrigger(precheckResult.reverificationRequired!)
+            setWarnTrigger(precheckResult.reverificationRequired)
           })
       }
     },
@@ -473,9 +471,9 @@ export function CreateOAuthModal({
         onCancel={hideConfirmModal}
         onConfirm={() => {
           if (isDelete) {
-            deleteClient(client?.client_id!)
+            deleteClient(client?.client_id)
           } else {
-            updateClient(updatedClient!)
+            updateClient(updatedClient)
           }
           hideConfirmModal()
         }}
