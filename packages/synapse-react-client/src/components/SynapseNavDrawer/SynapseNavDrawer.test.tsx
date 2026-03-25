@@ -76,7 +76,7 @@ describe('SynapseNavDrawer tests', () => {
     expect(screen.queryByLabelText('Favorites')).not.toBeInTheDocument()
     expect(screen.queryByLabelText('Teams')).not.toBeInTheDocument()
     expect(screen.queryByLabelText('Challenges')).not.toBeInTheDocument()
-    expect(screen.queryByLabelText('Download Cart')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Download List')).not.toBeInTheDocument()
     expect(screen.queryByLabelText('Trash Can')).not.toBeInTheDocument()
     expect(
       screen.queryByLabelText('Data Access Management'),
@@ -106,7 +106,7 @@ describe('SynapseNavDrawer tests', () => {
     await within(topButtonGroup).findByLabelText('Teams')
     await within(topButtonGroup).findByLabelText('Challenges')
     const downloadCartButton = await within(topButtonGroup).findByLabelText(
-      'Download Cart',
+      'Download List',
     )
     await within(downloadCartButton).findByText(`${numFilesInDownloadList}`)
     await within(topButtonGroup).findByLabelText('Trash Can')
@@ -139,7 +139,7 @@ describe('SynapseNavDrawer tests', () => {
     await within(topButtonGroup).findByLabelText('Teams')
     await within(topButtonGroup).findByLabelText('Challenges')
     const downloadCartButton = await within(topButtonGroup).findByLabelText(
-      'Download Cart',
+      'Download List',
     )
     await within(downloadCartButton).findByText(`${numFilesInDownloadList}`)
     await within(topButtonGroup).findByLabelText('Trash Can')

@@ -160,7 +160,7 @@ describe('EntityDownloadButton', () => {
       } as unknown as ReturnType<typeof useSynapseContext>)
     })
 
-    it('shows download confirmation when adding a folder to download cart', async () => {
+    it('shows download confirmation when adding a folder to download list', async () => {
       const folderId = 'syn123456'
       vi.mocked(useGetEntity).mockReturnValue(
         getUseQuerySuccessMock({
@@ -183,7 +183,7 @@ describe('EntityDownloadButton', () => {
       ).not.toBeInTheDocument()
 
       await openDropdown()
-      const addToCartMenuItem = screen.getByText('Add to Download Cart')
+      const addToCartMenuItem = screen.getByText('Add to Download List')
       await userEvent.click(addToCartMenuItem)
 
       expect(screen.getByTestId('download-confirmation')).toBeInTheDocument()
@@ -214,7 +214,7 @@ describe('EntityDownloadButton', () => {
       )
 
       await openDropdown()
-      await userEvent.click(screen.getByText('Add to Download Cart'))
+      await userEvent.click(screen.getByText('Add to Download List'))
 
       // Confirmation renders inside the portal container, not inline with the button
       expect(confirmationContainer).toContainElement(
@@ -222,7 +222,7 @@ describe('EntityDownloadButton', () => {
       )
     })
 
-    it('enables Add to Download Cart when folder has files in nested subfolders', async () => {
+    it('enables Add to Download List when folder has files in nested subfolders', async () => {
       const folderId = 'syn123456'
       vi.mocked(useGetEntity).mockReturnValue(
         getUseQuerySuccessMock({
@@ -251,12 +251,12 @@ describe('EntityDownloadButton', () => {
       await openDropdown()
 
       const addToCartMenuItem = screen
-        .getByText('Add to Download Cart')
+        .getByText('Add to Download List')
         .closest('[role="menuitem"]') as HTMLElement
       expect(addToCartMenuItem).not.toHaveAttribute('aria-disabled', 'true')
     })
 
-    it('disables Add to Download Cart when folder has no files recursively', async () => {
+    it('disables Add to Download List when folder has no files recursively', async () => {
       const folderId = 'syn123456'
       vi.mocked(useGetEntity).mockReturnValue(
         getUseQuerySuccessMock({
@@ -285,12 +285,12 @@ describe('EntityDownloadButton', () => {
       await openDropdown()
 
       const addToCartMenuItem = screen
-        .getByText('Add to Download Cart')
+        .getByText('Add to Download List')
         .closest('[role="menuitem"]') as HTMLElement
       expect(addToCartMenuItem).toHaveAttribute('aria-disabled', 'true')
     })
 
-    it('shows download confirmation when adding a dataset to download cart', async () => {
+    it('shows download confirmation when adding a dataset to download list', async () => {
       const datasetId = 'syn789012'
       vi.mocked(useGetEntity).mockReturnValue(
         getUseQuerySuccessMock({
@@ -337,14 +337,14 @@ describe('EntityDownloadButton', () => {
       ).not.toBeInTheDocument()
 
       await openDropdown()
-      const addToCartMenuItem = screen.getByText('Add to Download Cart')
+      const addToCartMenuItem = screen.getByText('Add to Download List')
       await userEvent.click(addToCartMenuItem)
 
       expect(screen.getByTestId('download-confirmation')).toBeInTheDocument()
       expect(mockAddFileToDownloadList.mutate).not.toHaveBeenCalled()
     })
 
-    it('shows download confirmation when adding an entityview to download cart', async () => {
+    it('shows download confirmation when adding an entityview to download list', async () => {
       const entityViewId = 'syn345678'
       vi.mocked(useGetEntity).mockReturnValue(
         getUseQuerySuccessMock({
@@ -368,7 +368,7 @@ describe('EntityDownloadButton', () => {
       ).not.toBeInTheDocument()
 
       await openDropdown()
-      const addToCartMenuItem = screen.getByText('Add to Download Cart')
+      const addToCartMenuItem = screen.getByText('Add to Download List')
       await userEvent.click(addToCartMenuItem)
 
       expect(screen.getByTestId('download-confirmation')).toBeInTheDocument()
@@ -390,7 +390,7 @@ describe('EntityDownloadButton', () => {
     )
 
     await openDropdown()
-    await userEvent.click(screen.getByText('Add to Download Cart'))
+    await userEvent.click(screen.getByText('Add to Download List'))
 
     expect(
       screen.queryByTestId('download-confirmation'),

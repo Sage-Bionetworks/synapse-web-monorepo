@@ -94,7 +94,7 @@ describe('DownloadIneligibleForPackagingFilesFromListButton', () => {
     })
 
     const button = screen.getByRole('button', {
-      name: 'Download Non-Packageable Files',
+      name: 'Start Multi-file Download',
     })
     expect(button).toBeDefined()
   })
@@ -126,7 +126,7 @@ describe('DownloadIneligibleForPackagingFilesFromListButton', () => {
     )
 
     const button = screen.getByRole('button', {
-      name: 'Download Non-Packageable Files',
+      name: 'Start Multi-file Download',
     })
     expect(button).toBeDefined()
     expect(button.className).toContain('MuiButton-outlined')
@@ -168,7 +168,7 @@ describe('DownloadIneligibleForPackagingFilesFromListButton', () => {
     })
 
     const button = screen.getByRole('button', {
-      name: 'Download Non-Packageable Files',
+      name: 'Start Multi-file Download',
     })
 
     await userEvent.click(button)

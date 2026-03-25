@@ -29,7 +29,7 @@ const onClickHandler = (action: string) => () => {
 const actionMenuProps = {
   actionConfiguration: {
     ['ADD_TO_DOWNLOAD_CART']: {
-      text: 'Add to Download Cart',
+      text: 'Add to Download List',
       onClick: onClickHandler('ADD_TO_DOWNLOAD_CART'),
       disabled: true,
       tooltipText: 'You must have some permission to download this thing.',
