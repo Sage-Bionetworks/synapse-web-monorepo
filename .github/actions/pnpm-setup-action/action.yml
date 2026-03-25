@@ -43,6 +43,8 @@ runs:
           ${{ runner.os }}-nx-${{ github.ref }}-${{ github.sha }}
           ${{ runner.os }}-nx-${{ github.ref }}-
           ${{ runner.os }}-nx-
+      env:
+        NX_KEY: ${{ secrets.NX_KEY }}
     - name: Install dependencies (use frozen lockfile)
       run: pnpm install --frozen-lockfile
       shell: bash
