@@ -15,7 +15,13 @@ export default function extractMessageFromTraceEvent(
 ): TraceMessage[] | null {
   // WARNING: The message format may change when we change models.
   const messagesToAdd: TraceMessage[] = []
-  const parsedMessage = JSON.parse(event.message) as object
+  let parsedMessage: object
+  try {
+    parsedMessage = JSON.parse(event.message) as object
+  } catch (e) {
+    console.error(e)
+    return [{ reasoningText: event.message }]
+  }
 
   const messages = JSONPath({
     path: '$.output.message.content[*]',

@@ -9,7 +9,7 @@ import { Query } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import { ReactElement } from 'react'
 import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList/index'
-import { FTS_SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctions'
+import { SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctions'
 import { generateCompressedQueryURL } from 'synapse-react-client/utils/functions/deepLinkingUtils'
 import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { WideButton } from 'synapse-react-client/components/styled/WideButton'
@@ -119,7 +119,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
 
   const gotoExploreToolsWithFullTextSearch = (fullTextSearchString: string) => {
     window.location.assign(
-      `/Search/Tools?${FTS_SEARCH_TERM}=${encodeURIComponent(
+      `/Search/Tools?${SEARCH_TERM}=${encodeURIComponent(
         fullTextSearchString,
       )}`,
     )

@@ -52,7 +52,6 @@ export function ApplicationSessionManager(
     requireAuthentication,
     ...hookOptions
   } = props
-
   const { sessionContext, token } = useSessionManager(hookOptions)
 
   return (

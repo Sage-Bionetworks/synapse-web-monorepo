@@ -5,6 +5,6 @@ const DetailsPageLayout = styled(Box)({
   display: 'flex',
   paddingTop: '50px',
   gap: '50px',
-})
+}) as typeof Box
 
 export default DetailsPageLayout
