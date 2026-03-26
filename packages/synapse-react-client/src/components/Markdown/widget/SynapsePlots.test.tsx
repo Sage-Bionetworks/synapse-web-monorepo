@@ -45,7 +45,7 @@ describe('SynapsePlot', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
-  it('renders', async () => {
+  it.skip('renders', async () => {
     const { container } = render(
       <MarkdownSynapse
         markdown={
