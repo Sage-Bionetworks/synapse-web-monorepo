@@ -1,0 +1,1 @@
+import{al as s,ak as y,a9 as r}from"./iframe-C0AexDGo.js";function l(e,t){const{accessToken:n,keyFactory:a}=s();return y({...t,queryKey:a.getEntityChallengeQueryKey(e),queryFn:()=>r.getEntityChallenge(e,n)})}export{l as u};

@@ -1,1 +1,0 @@
-import{G as t,dR as l}from"./iframe-k6B4MjXD.js";const o=(e,a)=>{const s={associateObjectId:a,associateObjectType:t.TableEntity,fileHandleId:e||""};return l(s,!1,{enabled:!!e})?.dataUrl};export{o as u};
