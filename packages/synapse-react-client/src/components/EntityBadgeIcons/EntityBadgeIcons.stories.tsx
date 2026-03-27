@@ -13,6 +13,11 @@ export const EntityWithNormalAnnotations: Story = {
     entityId: 'syn11916527',
   },
 }
+export const EntityWithManyAnnotations: Story = {
+  args: {
+    entityId: 'syn65596111',
+  },
+}
 
 export const EntityWithDerivedAnnotation: Story = {
   args: {
