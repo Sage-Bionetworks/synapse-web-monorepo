@@ -3,6 +3,7 @@ import {
   deleteEvaluationRound,
   updateEvaluationRound,
 } from '@/synapse-client/SynapseClient'
+import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { useListState } from '@/utils/hooks/useListState'
 import {
@@ -147,8 +148,17 @@ export function EvaluationRoundEditor({
   onDelete,
 }: EvaluationRoundEditorProps) {
   const { accessToken } = useSynapseContext()
+  const { setIsEditing } = useGlobalIsEditingContext()
+  const [isDirty, setIsDirty] = useState(false)
   const [error, setError] = useState<string | SynapseClientError | undefined>()
   const [showSaveSuccess, setShowSaveSuccess] = useState<boolean>(false)
+
+  useEffect(() => {
+    setIsEditing(isDirty)
+    return () => {
+      setIsEditing(false)
+    }
+  }, [isDirty, setIsEditing])
 
   useEffect(() => {
     if (error) {
@@ -179,16 +189,30 @@ export function EvaluationRoundEditor({
   const {
     list: advancedLimits,
     handleListRemove,
-    handleListChange: handleAdvancedLimitsChange,
-    appendToList: addAdvancedLimit,
+    handleListChange: handleAdvancedLimitsChangeBase,
+    appendToList: appendAdvancedLimit,
   } = useListState<EvaluationRoundLimitInput>(evaluationRoundInput.otherLimits)
+
+  const handleAdvancedLimitsChange = (
+    ...args: Parameters<typeof handleAdvancedLimitsChangeBase>
+  ) => {
+    setIsDirty(true)
+    return handleAdvancedLimitsChangeBase(...args)
+  }
+
+  const addAdvancedLimit = (
+    ...args: Parameters<typeof appendAdvancedLimit>
+  ) => {
+    setIsDirty(true)
+    return appendAdvancedLimit(...args)
+  }
 
   // if we remove the last advanced limit, hide the advanced limits
   const handleAdvancedLimitsRemove = (index: number) => {
     const generatedRemoveFunc = handleListRemove(index)
     return () => {
       //we are deleting the last advanced limit
-
+      setIsDirty(true)
       generatedRemoveFunc()
       if (advancedLimits.length === 1) {
         // NOTE: we dont check for length == 0 because we don't modify the original list,
@@ -228,6 +252,7 @@ export function EvaluationRoundEditor({
           //clear out previous error if any
           setError(undefined)
           setShowSaveSuccess(true)
+          setIsDirty(false)
           onSave(newInput)
         })
         .catch(error => setError(error))
@@ -281,7 +306,10 @@ export function EvaluationRoundEditor({
                 <DateTimePicker
                   label="Round Start"
                   value={startDate}
-                  onChange={setStartDate}
+                  onChange={date => {
+                    setStartDate(date)
+                    setIsDirty(true)
+                  }}
                   onError={error => setStartDateError(error)}
                   disabled={disableStartInput}
                   // Don't allow the value to be a past date only if the input is not disabled.
@@ -298,7 +326,10 @@ export function EvaluationRoundEditor({
                 <DateTimePicker
                   label="Round End"
                   value={endDate}
-                  onChange={setEndDate}
+                  onChange={date => {
+                    setEndDate(date)
+                    setIsDirty(true)
+                  }}
                   onError={error => setEndDateError(error)}
                   disablePast={
                     !dayjs(endDate).isSame(evaluationRoundInput.roundEnd)
@@ -316,7 +347,10 @@ export function EvaluationRoundEditor({
               fullWidth
               label="Total Submissions / Round"
               value={totalSubmissionLimit}
-              onChange={event => setTotalSubmissionLimit(event.target.value)}
+              onChange={event => {
+                setTotalSubmissionLimit(event.target.value)
+                setIsDirty(true)
+              }}
               // Chrome for some reason decides to autofill this input box with email address, so we must disable autofill
               // this is a hacky, but consistent way to disable autofill because Chrome does not respect the spec :(
               // https://bugs.chromium.org/p/chromium/issues/detail?id=914451
