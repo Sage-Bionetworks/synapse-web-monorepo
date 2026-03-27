@@ -12,9 +12,9 @@ const allChallengesSchema: TableToGenericCardMapping = {
   subTitle: 'organizingCommunity',
   description: 'description',
   secondaryLabels: [
+    'metadataCompletenessTier',
     'platform',
     'keywords',
-    'metadataCompletenessTier',
     'incentive',
     'submissionType',
     'inputDataType',
