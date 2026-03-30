@@ -175,7 +175,7 @@ export const useSourceAppConfigs = (
           rowVals[realmIdColIndex] == null ? '0' : rowVals[realmIdColIndex]
         const area =
           areaColIndex >= 0 && rowVals[areaColIndex] != null
-            ? rowVals[areaColIndex] ?? undefined
+            ? rowVals[areaColIndex]
             : undefined
         return {
           appId,
