@@ -32,6 +32,9 @@ jobs:
             stopadportal,
           ]
     runs-on: ubuntu-latest
+    env:
+      NX_KEY: ${{ secrets.NX_KEY }}
+      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     steps:
       - uses: actions/checkout@v4
         with:
@@ -40,11 +43,10 @@ jobs:
         uses: nrwl/nx-set-shas@v4
 
       - uses: ./.github/actions/pnpm-setup-action
-        env:
-          NX_KEY: ${{ secrets.NX_KEY }}
         with:
           STORE_NX_CACHE: 'true'
       - name: Determine if portal has had any changes
+        id: portal_changes
         run: |
           affected=$(pnpm nx show projects --affected)
           affected_array=($affected)
@@ -54,28 +56,28 @@ jobs:
           for project in "${affected_array[@]}"; do
             echo "Comparing: '$project' with '${{ matrix.PORTAL }}'"
             if [[ "$project" == "${{ matrix.PORTAL }}" ]]; then
-              echo "Project is affected; setting PROJECT_AFFECTED=true"
-              echo "PROJECT_AFFECTED=true" >> "$GITHUB_ENV"
+              echo "Project is affected; setting project_affected=true"
+              echo "project_affected=true" >> "$GITHUB_OUTPUT"
               exit 0
             fi
             done
-            echo "Project is not affected; setting PROJECT_AFFECTED=false"
-            echo "PROJECT_AFFECTED=false" >> "$GITHUB_ENV"
+            echo "Project is not affected; setting project_affected=false"
+            echo "project_affected=false" >> "$GITHUB_OUTPUT"
 
       - name: Build portal
-        if: ${{ env.PROJECT_AFFECTED == 'true' }}
+        if: ${{ steps.portal_changes.outputs.project_affected == 'true' }}
         run: pnpm nx run portals-e2e:portal:build
         env:
           PORTAL: ${{ matrix.PORTAL }}
 
       - name: Install Playwright Browsers
-        if: ${{ env.PROJECT_AFFECTED == 'true' }}
+        if: ${{ steps.portal_changes.outputs.project_affected == 'true' }}
         run: |
           cd "${{ env.PORTALS_E2E_SUBDIR }}"
           pnpm playwright install --with-deps
 
       - name: Run e2e tests
-        if: ${{ env.PROJECT_AFFECTED == 'true' }}
+        if: ${{ steps.portal_changes.outputs.project_affected == 'true' }}
         run: pnpm nx run portals-e2e:e2e
         env:
           PORTAL: ${{ matrix.PORTAL }}
@@ -98,10 +100,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
-        env:
-          NX_KEY: ${{ secrets.NX_KEY }}
-        with:
-          STORE_NX_CACHE: 'true'
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
         with:
