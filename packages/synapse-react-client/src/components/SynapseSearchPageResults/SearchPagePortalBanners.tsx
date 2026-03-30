@@ -104,7 +104,8 @@ export default function SearchPagePortalBanners({
                 sx={{ color: 'grey.900', mt: '4px', lineHeight: '20px' }}
               >
                 Looks like you’re searching for information about{' '}
-                {appConfig.shortDescription}{' '}
+                {appConfig.area}
+                {'. '}
                 <Link
                   component={'a'}
                   href={appConfig.appURL}
@@ -118,7 +119,7 @@ export default function SearchPagePortalBanners({
                 >
                   Visit the {appConfig.friendlyName}
                 </Link>
-                . {appConfig.description}
+                .
               </Typography>
             </Box>
             <Box
