@@ -15,6 +15,7 @@ import { HasAccessV2 } from '../../../HasAccess/HasAccessV2'
 import { CitationsDialog } from './CitationsDialog'
 import { maxCitationCount, useDataCiteUsage } from './useDataCiteUsage'
 import { useGetMentions } from './useGetMentions'
+import Linkify from '@/components/GenericCard/Linkify'
 
 export type EntityProperty = {
   key: string
@@ -197,7 +198,7 @@ export function useGetEntityTitleBarProperties(
     externalUrl && {
       key: 'externalUrl',
       title: 'URL',
-      value: externalUrl,
+      value: <Linkify text={externalUrl} />,
     },
     bucket && { key: 'externalFileBucket', title: 'Bucket', value: bucket },
     fileKey && { key: 'externalFileKey', title: 'File Key', value: fileKey },
