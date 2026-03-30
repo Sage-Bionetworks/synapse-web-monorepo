@@ -1,14 +1,15 @@
 {
   "extends": "../../../shared/tsconfig.base.json",
   "compilerOptions": {
+    "rootDirs": [".", "./.react-router/types"],
     "lib": ["dom", "dom.iterable", "esnext"],
     "noImplicitAny": false,
-    "types": ["vite/client"],
+    "types": ["vite/client", "node"],
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*.tsx", "src/**/*.ts"],
+  "include": ["src/**/*.tsx", "src/**/*.ts", ".react-router/types/**/*"],
   "files": ["src/types.d.ts"],
   "references": [
     { "path": "../../synapse-portal-framework" },

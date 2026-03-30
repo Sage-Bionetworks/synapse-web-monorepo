@@ -7,16 +7,18 @@ import { mergeTheme } from './mergeTheme'
 
 export type ThemeProviderProps = PropsWithChildren<{
   theme?: ThemeOptions
+  injectFirst?: boolean
 }>
 
 export const ThemeProvider = ({
   theme = defaultMuiThemeOptions,
+  injectFirst,
   children,
 }: ThemeProviderProps): React.ReactNode => {
   const mergedTheme = useMemo(() => mergeTheme(theme), [theme])
   const muiTheme = createTheme(mergedTheme)
   return (
-    <StyledEngineProvider injectFirst>
+    <StyledEngineProvider injectFirst={injectFirst}>
       <MuiThemeProvider theme={muiTheme}>{children}</MuiThemeProvider>
     </StyledEngineProvider>
   )

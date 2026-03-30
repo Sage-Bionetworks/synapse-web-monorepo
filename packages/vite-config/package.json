@@ -14,6 +14,7 @@
     "./baseConfig": "./dist/baseConfig.js",
     "./vitestConfig": "./dist/vitest-config.js",
     "./plugins": "./dist/plugins.js",
+    "./clientOnly": "./dist/clientOnly.js",
     "./libraryConfig": "./dist/vite-library-config.js",
     "./portalsViteConfig": "./dist/portals-vite-config.js",
     "./sitemapViteConfig": "./dist/sitemap-vite-config.js"

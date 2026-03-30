@@ -1,5 +1,6 @@
 import NFHeader from '@sage-bionetworks/synapse-portal-framework/components/nf/NFHeader'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
+import type { MetaDescriptor } from 'react-router'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import { Goals } from 'synapse-react-client/components/Goals/Goals'
 import RssFeedCards from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
@@ -16,45 +17,53 @@ import {
   studyCardConfiguration,
   studyColumnIconConfigs,
 } from '../config/synapseConfigs/studies'
-import { JsonLdScript } from 'synapse-react-client/components/JsonLdScript'
+
+export function meta(): MetaDescriptor[] {
+  const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION
+  const portalUrl = `https://${import.meta.env.VITE_PORTAL_KEY}.synapse.org`
+  return [
+    { title: import.meta.env.VITE_PORTAL_NAME },
+    { name: 'description', content: portalDescription },
+    {
+      'script:ld+json': {
+        '@context': 'https://schema.org',
+        '@type': 'DataCatalog',
+        '@id': portalUrl,
+        keywords: [
+          'neurofibromatosis',
+          'schwannomatosis',
+          'NF1',
+          'NF2',
+          'RASopathies',
+          'rare tumor syndrome',
+          'genetics',
+          'tumor biology',
+          'biomedical research',
+          'Human Data',
+          'Life Science',
+        ],
+        description:
+          'The NF Data Portal provides a data repository for neurofibromatosis type 1 and schwannomatosis research data, aimed at improving understanding and treatment of the disorder.',
+        name: 'NF Data Portal',
+        provider: [
+          {
+            '@type': 'Organization',
+            '@id': 'Sage Bionetworks',
+            name: 'Sage Bionetworks',
+            url: 'https://www.synapse.org/',
+          },
+        ],
+        alternateName: 'Neurofibromatosis Data Portal',
+      },
+    },
+  ]
+}
 
 const limit = 3
 
 export default function HomePage() {
   return (
     <>
-      <JsonLdScript
-        thing={{
-          '@context': 'https://schema.org',
-          '@type': 'DataCatalog',
-          '@id': 'https://nf.synapse.org',
-          keywords: [
-            'neurofibromatosis',
-            'schwannomatosis',
-            'NF1',
-            'NF2',
-            'RASopathies',
-            'rare tumor syndrome',
-            'genetics',
-            'tumor biology',
-            'biomedical research',
-            'Human Data',
-            'Life Science',
-          ],
-          description:
-            'The NF Data Portal provides a data repository for neurofibromatosis type 1 and schwannomatosis research data, aimed at improving understanding and treatment of the disorder.',
-          name: 'NF Data Portal',
-          provider: [
-            {
-              '@type': 'Organization',
-              '@id': 'Sage Bionetworks',
-              name: 'Sage Bionetworks',
-              url: 'https://www.synapse.org/',
-            },
-          ],
-          alternateName: 'Neurofibromatosis Data Portal',
-        }}
-      />
       <NFHeader />
       <SectionLayout
         title={'Resource Overview'}
@@ -163,8 +172,9 @@ export default function HomePage() {
             secondaryLabelLimit: 5,
             titleLinkConfig: {
               isMarkdown: false,
-              baseURL: 'Explore/Studies/DetailsPage',
+              baseURL: 'Explore/Studies',
               URLColumnName: 'studyId',
+              urlParamStyle: 'path-segment',
               matchColumnName: 's.studyId',
             },
           }}

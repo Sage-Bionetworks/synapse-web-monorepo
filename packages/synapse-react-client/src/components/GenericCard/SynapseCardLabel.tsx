@@ -238,9 +238,18 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
             const elOrRowId = cardLink.overrideValueWithRowID ? rowId : el
             let href = ''
             if ('baseURL' in cardLink) {
-              const { baseURL, URLColumnName, wrapValueWithParens } = cardLink
+              const {
+                baseURL,
+                URLColumnName,
+                wrapValueWithParens,
+                urlParamStyle = 'query-param',
+              } = cardLink
               const value = wrapValueWithParens ? `(${elOrRowId})` : elOrRowId
-              href = `/${baseURL}?${URLColumnName}=${value}`
+              if (urlParamStyle === 'path-segment') {
+                href = `/${baseURL}/${encodeURIComponent(String(value))}`
+              } else {
+                href = `/${baseURL}?${URLColumnName}=${value}`
+              }
             } else if ('overrideLinkURLColumnName' in cardLink) {
               const overrideHrefIndex = getColumnIndex(
                 cardLink.overrideLinkURLColumnName,

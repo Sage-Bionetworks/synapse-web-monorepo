@@ -18,7 +18,14 @@ const routes: RouteObject[] = [
       import('@/pages/DownloadCartPage').then(convertModuleToRouteObject),
   },
   {
-    path: 'FileEntity',
+    path: 'FileEntity/:entityId',
+    lazy: () =>
+      import('@/pages/FileEntityPage/FileEntityPage').then(
+        convertModuleToRouteObject,
+      ),
+  },
+  {
+    path: 'FileEntity/:entityId/version/:versionNumber',
     lazy: () =>
       import('@/pages/FileEntityPage/FileEntityPage').then(
         convertModuleToRouteObject,

@@ -10,14 +10,24 @@ import {
   DetailsPageTabConfig,
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import { createDetailPageRouteExports } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { Outlet, useParams } from 'react-router'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import ErrorPage, {
   SynapseErrorType,
 } from 'synapse-react-client/components/error/ErrorPage'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { Outlet } from 'react-router'
+import { metadataConfig } from './ToolDetailsPage.config'
+
+export { metadataConfig }
+
+const _routeExports = createDetailPageRouteExports(metadataConfig, {
+  portalName: import.meta.env.VITE_PORTAL_NAME,
+})
+export const loader = _routeExports.loader
+export const clientLoader = _routeExports.clientLoader
+export const meta = _routeExports.meta
 
 export const toolDetailsPageTabConfig: DetailsPageTabConfig[] = [
   {
@@ -35,7 +45,7 @@ export const toolDetailsPageTabConfig: DetailsPageTabConfig[] = [
 ] satisfies DetailsPageTabConfig[]
 
 function ToolDetailsPage() {
-  const { resourceId } = useGetPortalComponentSearchParams()
+  const { resourceId } = useParams<{ resourceId: string }>()
 
   if (!resourceId) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
@@ -58,6 +68,7 @@ function ToolDetailsPage() {
         </>
       }
       sql={toolsSql}
+      searchParams={{ resourceId }}
       ContainerProps={{ maxWidth: 'xl' }}
       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
       resourcePrimaryKey={['resourceId']}

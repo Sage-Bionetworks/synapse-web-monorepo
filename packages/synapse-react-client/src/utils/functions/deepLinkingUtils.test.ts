@@ -72,13 +72,21 @@ describe('deepLinkingUtils', () => {
     it('should remove the search param when queries are equal', async () => {
       await updateUrlWithNewSearchParam('qw', 0, initQuery, initQuery)
 
-      expect(mockHistoryReplaceState).toHaveBeenCalledWith(null, '', '/test')
+      expect(mockHistoryReplaceState).toHaveBeenCalledWith(
+        undefined,
+        '',
+        '/test',
+      )
     })
 
     it('should remove the search param when currentQuery is null', async () => {
       await updateUrlWithNewSearchParam('qw', 0, null, initQuery)
 
-      expect(mockHistoryReplaceState).toHaveBeenCalledWith(null, '', '/test')
+      expect(mockHistoryReplaceState).toHaveBeenCalledWith(
+        undefined,
+        '',
+        '/test',
+      )
     })
 
     it('should handle complex query differences', async () => {

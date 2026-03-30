@@ -135,8 +135,8 @@ const RedirectDialog = (props: RedirectDialogProps): React.ReactNode => {
   useEffect(() => {
     if (redirectUrl && isRedirectTargetFileEntity && !isLoading) {
       const currentUrl = `${location.pathname}${location.search}`
-      const internalUrl = `/FileEntity?entityId=${entityId}${
-        versionNumber ? `&version=${versionNumber}` : ''
+      const internalUrl = `/FileEntity/${entityId}${
+        versionNumber ? `/version/${versionNumber}` : ''
       }`
 
       if (currentUrl === internalUrl) {

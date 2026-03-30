@@ -5,8 +5,9 @@ import { TableToGenericCardMapping } from 'synapse-react-client/components/Gener
 export const organizationDetailsPageLinkConfig: CardLink = {
   matchColumnName: 'abbreviation',
   isMarkdown: false,
-  baseURL: 'Organizations/DetailsPage',
+  baseURL: 'Organizations',
   URLColumnName: 'abbreviation',
+  urlParamStyle: 'path-segment',
 }
 
 export const organizationCardSchema: TableToGenericCardMapping = {
