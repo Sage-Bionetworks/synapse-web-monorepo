@@ -36,10 +36,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Write Nx key
-        run: |
-          mkdir -p .nx/key
-          echo "${{ secrets.NX_KEY }}" > .nx/key/key.ini
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v4
 
