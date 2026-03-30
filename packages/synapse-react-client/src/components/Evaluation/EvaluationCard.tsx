@@ -166,6 +166,7 @@ function EvaluationCardDropdown({
     <>
       {permissions?.canDelete && (
         <DeleteEvaluationQueueConfirmationDialog
+          key={String(deleteWarningShow)}
           open={deleteWarningShow}
           onConfirm={() => {
             onDelete()

@@ -218,6 +218,7 @@ function EvaluationEditorDropdown({
     <>
       {onDelete && (
         <DeleteEvaluationQueueConfirmationDialog
+          key={String(deleteWarningShow)}
           open={deleteWarningShow}
           onConfirm={() => {
             onDelete()

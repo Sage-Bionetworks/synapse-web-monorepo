@@ -59,33 +59,6 @@ describe('DeleteEvaluationQueueConfirmationDialog', () => {
     expect(mockOnConfirm).not.toHaveBeenCalled()
   })
 
-  test('checkbox resets to unchecked when dialog is reopened', async () => {
-    const { rerender } = renderComponent()
-
-    // Check the checkbox
-    await user.click(screen.getByRole('checkbox'))
-    expect(screen.getByRole('checkbox')).toBeChecked()
-
-    // Close and reopen the dialog
-    rerender(
-      <DeleteEvaluationQueueConfirmationDialog
-        open={false}
-        onConfirm={mockOnConfirm}
-        onCancel={mockOnCancel}
-      />,
-    )
-    rerender(
-      <DeleteEvaluationQueueConfirmationDialog
-        open={true}
-        onConfirm={mockOnConfirm}
-        onCancel={mockOnCancel}
-      />,
-    )
-
-    expect(screen.getByRole('checkbox')).not.toBeChecked()
-    expect(screen.getByRole('button', { name: 'Delete' })).toBeDisabled()
-  })
-
   test('does not render the dialog when open is false', () => {
     renderComponent(false)
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()

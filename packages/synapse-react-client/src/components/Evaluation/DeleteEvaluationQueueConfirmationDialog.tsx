@@ -1,5 +1,5 @@
 import { Checkbox, FormControlLabel, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import WarningDialog from '../SynapseForm/WarningDialog'
 
 type DeleteEvaluationQueueConfirmationDialogProps = {
@@ -14,10 +14,6 @@ export function DeleteEvaluationQueueConfirmationDialog({
   onCancel,
 }: DeleteEvaluationQueueConfirmationDialogProps) {
   const [isChecked, setIsChecked] = useState(false)
-
-  useEffect(() => {
-    if (open) setIsChecked(false)
-  }, [open])
 
   return (
     <WarningDialog
