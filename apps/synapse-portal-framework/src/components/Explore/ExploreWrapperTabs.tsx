@@ -6,8 +6,8 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material'
-import { startTransition, useMemo } from 'react'
-import { useLocation, useNavigate, useNavigation } from 'react-router'
+import { useMemo } from 'react'
+import { useLocation, useNavigate } from 'react-router'
 import { ExploreWrapperProps } from './ExploreWrapperProps'
 import { matchPath } from 'react-router'
 
@@ -36,29 +36,23 @@ export function ExploreWrapperTabs(props: ExploreWrapperProps) {
   const theme = useTheme()
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const navigation = useNavigation()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
 
-  // Use the pending navigation destination (if any) for immediate tab feedback,
-  // falling back to the current committed pathname.
-  const effectivePathname = navigation.location?.pathname ?? pathname
-
-  const effectivePathnameWithoutTrailingSlash = useMemo(
-    () => effectivePathname.replace(/\/$/, ''),
-    [effectivePathname],
+  const pathnameWithoutTrailingSlash = useMemo(
+    () => pathname.replace(/\/$/, ''),
+    [pathname],
   )
 
-  // Determine which tab should be selected based on the effective pathname
-  // (optimistic when navigating, committed when idle)
+  // Determine which tab should be selected based on current pathname
   const selectedTabValue = useMemo(() => {
     for (const route of explorePaths) {
       const routePath = encodeURI(`/Explore/${route.path}`)
-      if (matchPath({ path: routePath, end: false }, effectivePathname)) {
+      if (matchPath({ path: routePath, end: false }, pathname)) {
         return routePath
       }
     }
-    return effectivePathnameWithoutTrailingSlash
-  }, [effectivePathnameWithoutTrailingSlash, explorePaths, effectivePathname])
+    return pathnameWithoutTrailingSlash
+  }, [pathnameWithoutTrailingSlash, explorePaths, pathname])
 
   /**
    * In the desktop view, we use Material UI tabs
@@ -93,7 +87,7 @@ export function ExploreWrapperTabs(props: ExploreWrapperProps) {
             value={encodeURI(path)}
             label={displayName}
             onClick={() => {
-              startTransition(() => navigate(path))
+              void navigate(path)
             }}
             sx={{
               transition: 'all 400ms',
