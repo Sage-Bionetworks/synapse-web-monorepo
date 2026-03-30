@@ -7,7 +7,7 @@ export const organizationDetailsPageLinkConfig: CardLink = {
   isMarkdown: false,
   baseURL: 'Organizations',
   URLColumnName: 'abbreviation',
-  urlParamStyle: 'path',
+  urlParamStyle: 'path-segment',
 }
 
 export const organizationCardSchema: TableToGenericCardMapping = {

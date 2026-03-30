@@ -61,7 +61,7 @@ export const datasetCardConfiguration: CardConfiguration = {
       matchColumnName: 'studyId',
       URLColumnName: 'studyId',
       baseURL: 'Explore/Studies',
-      urlParamStyle: 'path',
+      urlParamStyle: 'path-segment',
       resolveEntityName: true,
     },
   ],
@@ -70,7 +70,7 @@ export const datasetCardConfiguration: CardConfiguration = {
     matchColumnName: 'id',
     URLColumnName: 'id',
     baseURL: 'Explore/Datasets',
-    urlParamStyle: 'path',
+    urlParamStyle: 'path-segment',
   },
   columnIconOptions: studyColumnIconConfigs,
 }

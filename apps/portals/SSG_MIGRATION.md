@@ -852,7 +852,7 @@ route('Explore/Studies/DetailsPage', 'pages/LegacyStudyRedirect.tsx'),
 
 All `CardConfiguration` and card link configs in `src/config/synapseConfigs/`
 that reference `DetailsPage` query-string URLs must be updated to path-segment
-style by adding `urlParamStyle: 'path'` and removing `/DetailsPage` from the
+style by adding `urlParamStyle: 'path-segment'` and removing `/DetailsPage` from the
 base URL:
 
 ```diff
@@ -861,7 +861,7 @@ base URL:
 -  baseURL: 'Explore/Studies/DetailsPage',
 +  baseURL: 'Explore/Studies',
    URLColumnName: 'studyId',
-+  urlParamStyle: 'path',
++  urlParamStyle: 'path-segment',
    matchColumnName: 'studyId',
  },
 ```
@@ -875,7 +875,7 @@ links (e.g. a publication card linking to a study detail page).
 ### Step 15: Update `sitemapConfig.ts`
 
 Change detail page paths from the `/DetailsPage` form to the new base path, and
-add `urlStyle: 'path-segment'` to each entry:
+add `urlParamStyle: 'path-segment'` to each entry:
 
 ```diff
  {
@@ -883,7 +883,7 @@ add `urlStyle: 'path-segment'` to each entry:
 +  path: 'Explore/Studies',
    sql: studiesSql,
    primaryKeyColumn: 'studyId',
-+  urlStyle: 'path-segment',
++  urlParamStyle: 'path-segment',
  },
 ```
 
@@ -1093,8 +1093,8 @@ Use this checklist to track progress during migration:
 
 ### Data and configuration
 
-- [ ] Card/link configs updated (`baseURL`, `urlParamStyle: 'path'`)
-- [ ] `sitemapConfig.ts` updated (paths, `urlStyle: 'path-segment'`)
+- [ ] Card/link configs updated (`baseURL`, `urlParamStyle: 'path-segment'`)
+- [ ] `sitemapConfig.ts` updated (paths, `urlParamStyle: 'path-segment'`)
 
 ### Meta tags
 

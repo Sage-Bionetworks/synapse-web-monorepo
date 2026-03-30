@@ -51,7 +51,7 @@ export async function generateDynamicUrls(
     for (const id of result.ids) {
       const encodedId = encodeURIComponent(id)
       const loc =
-        config.urlStyle === 'path-segment'
+        config.urlParamStyle === 'path-segment'
           ? // SSR portals with /:param routing — e.g. /Explore/Datasets/syn123
             `${baseUrl}/${config.path}/${encodedId}`
           : // Legacy SPA portals with query-param routing — e.g. /Explore/Datasets/DetailsPage?id=syn123

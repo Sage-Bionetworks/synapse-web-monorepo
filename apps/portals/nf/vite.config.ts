@@ -9,7 +9,7 @@ import {
   tsconfigPathsPlugin,
 } from 'vite-config'
 
-export default defineConfig(({ isSsrBuild }) =>
+export default defineConfig(
   mergeConfig(
     baseConfig,
     mergeConfig(vitestConfig, {

@@ -242,10 +242,10 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
                 baseURL,
                 URLColumnName,
                 wrapValueWithParens,
-                urlParamStyle = 'query',
+                urlParamStyle = 'query-param',
               } = cardLink
               const value = wrapValueWithParens ? `(${elOrRowId})` : elOrRowId
-              if (urlParamStyle === 'path') {
+              if (urlParamStyle === 'path-segment') {
                 href = `/${baseURL}/${encodeURIComponent(String(value))}`
               } else {
                 href = `/${baseURL}?${URLColumnName}=${value}`

@@ -45,7 +45,7 @@ export const toolsCardConfiguration: CardConfiguration = {
     isMarkdown: false,
     baseURL: 'Explore/Tools',
     URLColumnName: 'resourceId',
-    urlParamStyle: 'path',
+    urlParamStyle: 'path-segment',
     matchColumnName: 'resourceId',
     overrideLinkURLColumnName: 'biobankURL',
   },

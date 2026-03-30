@@ -153,7 +153,7 @@ describe('generateDynamicUrls', () => {
   const baseUrl = 'https://example.synapse.org'
   const lastmod = '2024-01-01T00:00:00.000Z'
 
-  it('generates query-param style URLs by default (no urlStyle set)', async () => {
+  it('generates query-param style URLs by default (no urlParamStyle set)', async () => {
     vi.mocked(fetchResourceIds).mockResolvedValueOnce({
       config: {} as never,
       ids: ['syn123', 'syn456'],
@@ -166,7 +166,7 @@ describe('generateDynamicUrls', () => {
           path: 'Explore/Studies/DetailsPage',
           sql: 'SELECT studyId FROM syn111',
           primaryKeyColumn: 'studyId',
-          // urlStyle intentionally omitted — should default to query-param
+          // urlParamStyle intentionally omitted — should default to query-param
         },
       ],
       baseUrl,
@@ -183,7 +183,7 @@ describe('generateDynamicUrls', () => {
     )
   })
 
-  it('generates query-param style URLs when urlStyle is query-param', async () => {
+  it('generates query-param style URLs when urlParamStyle is query-param', async () => {
     vi.mocked(fetchResourceIds).mockResolvedValueOnce({
       config: {} as never,
       ids: ['syn123'],
@@ -196,7 +196,7 @@ describe('generateDynamicUrls', () => {
           path: 'Explore/Projects/DetailsPage',
           sql: 'SELECT id FROM syn222',
           primaryKeyColumn: 'id',
-          urlStyle: 'query-param',
+          urlParamStyle: 'query-param',
         },
       ],
       baseUrl,
@@ -208,7 +208,7 @@ describe('generateDynamicUrls', () => {
     )
   })
 
-  it('generates path-segment style URLs when urlStyle is path-segment', async () => {
+  it('generates path-segment style URLs when urlParamStyle is path-segment', async () => {
     vi.mocked(fetchResourceIds).mockResolvedValueOnce({
       config: {} as never,
       ids: ['syn123', 'syn456'],
@@ -221,7 +221,7 @@ describe('generateDynamicUrls', () => {
           path: 'Explore/Studies',
           sql: 'SELECT studyId FROM syn333',
           primaryKeyColumn: 'studyId',
-          urlStyle: 'path-segment',
+          urlParamStyle: 'path-segment',
         },
       ],
       baseUrl,
@@ -257,7 +257,7 @@ describe('generateDynamicUrls', () => {
           path: 'Explore/Programs/DetailsPage',
           sql: 'SELECT Program FROM syn444',
           primaryKeyColumn: 'Program',
-          urlStyle: 'query-param',
+          urlParamStyle: 'query-param',
         },
       ],
       baseUrl,
@@ -273,7 +273,7 @@ describe('generateDynamicUrls', () => {
           path: 'Explore/Programs',
           sql: 'SELECT Program FROM syn444',
           primaryKeyColumn: 'Program',
-          urlStyle: 'path-segment',
+          urlParamStyle: 'path-segment',
         },
       ],
       baseUrl,

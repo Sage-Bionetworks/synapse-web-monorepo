@@ -15,7 +15,7 @@ export const publicationsCardConfiguration: CardConfiguration = {
       isMarkdown: false,
       baseURL: 'Explore/Studies',
       URLColumnName: 'studyName',
-      urlParamStyle: 'path',
+      urlParamStyle: 'path-segment',
       matchColumnName: 'studyName',
     },
     {

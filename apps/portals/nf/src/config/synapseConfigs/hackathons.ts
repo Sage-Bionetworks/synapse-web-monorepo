@@ -43,7 +43,7 @@ export const hackathonCardConfiguration: CardConfiguration = {
     isMarkdown: false,
     baseURL: 'Explore/Hackathon',
     URLColumnName: 'id',
-    urlParamStyle: 'path',
+    urlParamStyle: 'path-segment',
     matchColumnName: 'id',
   },
   columnIconOptions: {

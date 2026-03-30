@@ -174,7 +174,7 @@ export default function HomePage() {
               isMarkdown: false,
               baseURL: 'Explore/Studies',
               URLColumnName: 'studyId',
-              urlParamStyle: 'path',
+              urlParamStyle: 'path-segment',
               matchColumnName: 's.studyId',
             },
           }}
