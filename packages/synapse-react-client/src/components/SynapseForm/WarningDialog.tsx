@@ -11,6 +11,7 @@ export type WarningDialogProps<T = any> = {
   onConfirm: (...args: T[]) => unknown
   onConfirmCallbackArgs?: Parameters<WarningDialogProps['onConfirm']>
   confirmButtonColor?: ButtonProps['color']
+  confirmButtonDisabled?: boolean
   onCancel: () => void
 }
 
@@ -23,6 +24,7 @@ export function WarningDialog(props: WarningDialogProps) {
     open,
     onConfirm,
     confirmButtonColor = 'primary',
+    confirmButtonDisabled,
     onCancel,
     onConfirmCallbackArgs,
   } = props
@@ -35,6 +37,7 @@ export function WarningDialog(props: WarningDialogProps) {
       confirmButtonProps={{
         children: confirmButtonText,
         color: confirmButtonColor,
+        disabled: confirmButtonDisabled,
       }}
       onCancel={onCancel}
       onConfirm={() => onConfirm(...(onConfirmCallbackArgs ?? []))}
