@@ -22,6 +22,7 @@ export type SourceAppConfig = {
   isPublicized: boolean // If set to true, this will be included in the list of the available Sage Resources
   shortDescription: string
   defaultRealm: Realm
+  area?: string
 }
 
 // A static SourceAppConfig to use as a fallback in case the request to get source app configs fails
@@ -122,6 +123,8 @@ export const useSourceAppConfigs = (
   const realmIdColIndex = headers?.findIndex(
     selectColumn => selectColumn.name == 'realmId',
   )!
+  const areaColIndex =
+    headers?.findIndex(selectColumn => selectColumn.name == 'area') ?? -1
 
   const rows = rowSet?.rows
 
@@ -170,6 +173,10 @@ export const useSourceAppConfigs = (
             : rowVals[isPublicizedColIndex] == 'true'
         const realmId =
           rowVals[realmIdColIndex] == null ? '0' : rowVals[realmIdColIndex]
+        const area =
+          areaColIndex >= 0 && rowVals[areaColIndex] != null
+            ? rowVals[areaColIndex]
+            : undefined
         return {
           appId,
           appURL,
@@ -181,6 +188,7 @@ export const useSourceAppConfigs = (
           palette: appPalette,
           shortDescription,
           realmId,
+          area,
         }
       }),
     [
@@ -197,6 +205,7 @@ export const useSourceAppConfigs = (
       requestAffiliationColIndex,
       isPublicizedColIndex,
       realmIdColIndex,
+      areaColIndex,
     ],
   )
 
