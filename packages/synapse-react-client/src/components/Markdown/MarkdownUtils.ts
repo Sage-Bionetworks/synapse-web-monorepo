@@ -263,8 +263,6 @@ function isValidNesting(child: HTMLElement, ancestor: HTMLElement): boolean {
   return true
 }
 
-// new implementation
-// hopefully o(n)
 /**
  * Fixes invalid HTML nesting (e.g., <div> inside <p>) in a single O(n) pass.
  * It compares the current 'node' against a stack of its 'ancestors'.
