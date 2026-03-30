@@ -65,7 +65,7 @@
     "clickable-json": "^1.15.1",
     "dagre": "^0.8.5",
     "dayjs": "^1.11.13",
-    "immutable": "4.1.0",
+    "immutable": "4.3.8",
     "isomorphic-dompurify": "^3.7.1",
     "jotai": "^2.12.4",
     "json-joy": "^17.65.0",
