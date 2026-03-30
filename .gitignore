@@ -52,3 +52,5 @@ debug-storybook.log
 
 apps/portals/*/public/build-date.txt
 apps/portals/*/public/deploy-date.txt
+
+.nx/key
