@@ -34,7 +34,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NX_KEY: ${{ secrets.NX_KEY }}
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     steps:
       - uses: actions/checkout@v4
         with:
