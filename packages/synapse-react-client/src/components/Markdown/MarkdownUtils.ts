@@ -210,59 +210,6 @@ const blockLevelTags = [
 
 const inlineTags = ['p', 'span', 'a']
 
-/**
- * Normalizes the DOM tree to be "React-safe" by fixing invalid HTML nesting
- * BEFORE the tree is passed to RecursiveRender.
- * This pre-processing ensures that inline containers (<p>, <span>, <a>) do not house block-level descendants
- * (like <div> or <figure>), which would otherwise trigger React hydration errors.
- * This function recursively walks the tree and swaps violating containers with
- * <div> elements while preserving all original attributes and child nodes.
- */
-// export function transformTree(node: Node): void {
-//   // Discard empty text nodes. Prevents invalid HTML in some cases, for example whitespace text nodes cannot be a child of <table>.
-//   if (node.nodeType === Node.TEXT_NODE) {
-//     if (!node.textContent?.trim()) {
-//       node.parentNode?.removeChild(node)
-//     }
-//     return
-//   }
-
-//   if (node.nodeType !== Node.ELEMENT_NODE) return
-
-//   const element = node as HTMLElement
-//   const tag = element.tagName.toLowerCase()
-
-//   // Define tags that are restricted to inline-only content in React/HTML
-//   const isInlineContainer = tag === 'p' || tag === 'span' || tag === 'a'
-
-//   if (
-//     isInlineContainer &&
-//     Array.from(element.childNodes).some(child => hasBlockLevelDescendant(child))
-//   ) {
-//     const div = element.ownerDocument.createElement('div')
-
-//     // Preserve all original attributes
-//     Array.from(element.attributes).forEach(attr =>
-//       div.setAttribute(attr.name, attr.value),
-//     )
-
-//     // Move all children from the old element to the new <div>
-//     while (element.firstChild) {
-//       div.appendChild(element.firstChild)
-//     }
-
-//     // Swap the invalid element out in the DOM tree
-//     element.parentNode!.replaceChild(div, element)
-
-//     // Recursively process the children of the new <div> to catch nested violations
-//     Array.from(div.childNodes).forEach(child => transformTree(child))
-//     return
-//   }
-
-//   // If no swap was needed, continue walking the tree
-//   Array.from(element.childNodes).forEach(child => transformTree(child))
-// }
-
 // Check if a node has any block level descendants
 export const hasBlockLevelDescendant = (node: Node): boolean => {
   if (isBlockLevelElement(node)) {
@@ -305,22 +252,7 @@ function isValidNesting(child: HTMLElement, ancestor: HTMLElement): boolean {
     return false
   }
 
-  // p nested inside of p is invalid
-  // if (
-  //   ancestor.tagName.toLowerCase() === 'p' &&
-  //   child.tagName.toLowerCase() === 'p'
-  // ) {
-  //   return false
-  // }
-
-  // case 2: buttons cannot be inside of buttons
-
-  console.log(
-    'ancestor',
-    ancestor.tagName.toLowerCase(),
-    'tagname',
-    child.tagName.toLowerCase(),
-  )
+  // case 2: buttons cannot be nested inside of other buttons
   if (
     ancestor.tagName.toLowerCase() === 'button' &&
     child.tagName.toLowerCase() === 'button'
@@ -328,17 +260,21 @@ function isValidNesting(child: HTMLElement, ancestor: HTMLElement): boolean {
     return false
   }
 
-  // case 2: block level elements cannot be inside 'a' tags
-
-  // other cases
   return true
 }
 
 // new implementation
 // hopefully o(n)
-// If 'node' is a block-level element and one or more ancestors are inline containers, change the ancestors to 'div' elements
-export function fixInvalidNesting(node: Node, ancestors: Node[] = []): void {
-  // console.log('checking node', node.nodeName, 'with ancestors', ancestors)
+/**
+ * Fixes invalid HTML nesting (e.g., <div> inside <p>) in a single O(n) pass.
+ * It compares the current 'node' against a stack of its 'ancestors'.
+ * @param node - The current DOM node being inspected.
+ * @param ancestors - An array of the current node's parent elements
+ */
+export function fixInvalidNesting(
+  node: Node,
+  ancestors: HTMLElement[] = [],
+): void {
   // Discard empty text nodes. Prevents invalid HTML in some cases, for example whitespace text nodes cannot be a child of <table>.
   if (node.nodeType === Node.TEXT_NODE) {
     if (!node.textContent?.trim()) {
@@ -347,53 +283,43 @@ export function fixInvalidNesting(node: Node, ancestors: Node[] = []): void {
     return
   }
 
+  // We only care about element nodes
   if (node.nodeType !== Node.ELEMENT_NODE) {
     return
   }
 
   const element = node as HTMLElement
 
-  const currentAncestors = [...ancestors]
+  // We check the current element against every ancestor in the stack to see if there is any invalid nesting.
+  // We iterate backwards (from immediate parent to root) so we fix the closest invalid container first.
+  for (let i = ancestors.length - 1; i >= 0; i--) {
+    const ancestor = ancestors[i]
 
-  // console.log(
-  //   'current ancestors',
-  //   currentAncestors.map(a => (a as HTMLElement).tagName),
-  // )
-
-  // check the current node against all of its ancestors to see if there is any invalid nesting
-  for (let i = 0; i < currentAncestors.length; i++) {
-    const ancestor = currentAncestors[i]
-
-    // if the nesting is valid, continue to next ancestor
-    if (isValidNesting(element, ancestor as HTMLElement)) {
-      continue
-    }
-
-    // if the nesting is invalid, change the ancestor to a div
-    else {
-      const ancestorElement = ancestor as HTMLElement
+    // if the nesting is invalid
+    if (!isValidNesting(element, ancestor)) {
+      // change the ancestor to a div
       const div = element.ownerDocument.createElement('div')
 
       // Preserve all original attributes
-      Array.from(ancestorElement.attributes).forEach(attr =>
+      Array.from(ancestor.attributes).forEach(attr =>
         div.setAttribute(attr.name, attr.value),
       )
 
       // Move all children from the old element to the new <div>
-      while (ancestorElement.firstChild) {
-        div.appendChild(ancestorElement.firstChild)
+      while (ancestor.firstChild) {
+        div.appendChild(ancestor.firstChild)
       }
 
       // replace the ancestor with the new div
-      if (ancestorElement.parentNode) {
-        ancestorElement.parentNode.replaceChild(div, ancestor)
+      if (ancestor.parentNode) {
+        ancestor.parentNode.replaceChild(div, ancestor)
       }
 
-      currentAncestors[i] = div // update the current ancestor to the new div for future checks in this loop
+      ancestors[i] = div // Update our local stack to reference to the new div
     }
   }
 
-  const newAncestors = [...currentAncestors, node] // combine current node with ancestors
+  const newAncestors = [...ancestors, element] // combine current element with ancestors
 
   Array.from(element.childNodes).forEach(child => {
     fixInvalidNesting(child, newAncestors)

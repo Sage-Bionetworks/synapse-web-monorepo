@@ -4,7 +4,6 @@ import {
   decodeXml,
   handleLinkClicks,
   processMath,
-  // transformTree,
   fixInvalidNesting,
 } from '@/components/Markdown/MarkdownUtils'
 import {
@@ -186,18 +185,20 @@ function RenderMarkdown(props: {
     return markup
   }, [markdown, renderInline])
 
-  // memoize
-  if (markup.length > 0) {
-    const domParser = new DOMParser()
-    const document = domParser.parseFromString(markup, 'text/html')
+  const processedDocuments = useMemo(() => {
+    if (markup.length > 0) {
+      const domParser = new DOMParser()
+      const document = domParser.parseFromString(markup, 'text/html')
 
-    // transformTree(document.body)
-    // const test = fixInvalidNesting(document.body)
-    // console.log('test', test)
+      fixInvalidNesting(document.body)
 
-    fixInvalidNesting(document.body)
+      return document.body
+    }
+    return null
+  }, [markup])
 
-    return <RecursiveRender element={document.body} markdown={markup} />
+  if (processedDocuments) {
+    return <RecursiveRender element={processedDocuments} markdown={markup} />
   }
 
   if (!isLoading && showPlaceholderIfNoWikiContent && markup === '') {

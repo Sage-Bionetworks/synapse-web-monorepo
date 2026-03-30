@@ -92,18 +92,20 @@ describe('MarkdownUtils DOM', () => {
     })
 
     it('should swap <button> for <div> when it contains a nested button', () => {
-      const doc = new DOMParser().parseFromString(
-        '<button><button>Nested</button></button>',
-        'text/html',
-      )
+      // Create elements manually to bypass DOMParser auto-correction
+      const outerButton = document.createElement('button')
+      const innerButton = document.createElement('button')
+      innerButton.textContent = 'Nested'
+      outerButton.appendChild(innerButton)
 
-      fixInvalidNesting(doc.body)
+      const container = document.createElement('div')
+      container.appendChild(outerButton)
 
-      // Outer button should be replaced by a div
-      expect(doc.body.querySelector('div')).not.toBeNull()
+      fixInvalidNesting(container)
 
-      // Inner button should still exist (not removed)
-      const buttons = doc.body.querySelectorAll('button')
+      expect(container.querySelector('div')).not.toBeNull()
+
+      const buttons = container.querySelectorAll('button')
       expect(buttons).toHaveLength(1)
       expect(buttons[0].textContent).toBe('Nested')
     })
