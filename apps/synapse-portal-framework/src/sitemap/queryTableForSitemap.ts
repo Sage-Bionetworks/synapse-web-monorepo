@@ -1,6 +1,6 @@
+import { createAnonymousSynapseClient } from '@/utils/synapseClient'
 import {
   QueryResultBundle,
-  SynapseClient,
   waitForAsyncResult,
 } from '@sage-bionetworks/synapse-client'
 import type { DetailPageConfig, ResourceQueryResult } from './types'
@@ -19,15 +19,6 @@ const BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE = 0x8
 export function extractEntityIdFromSql(sql: string): string | null {
   const matches = sql.match(/from\s+(syn\d+)(?:\.\d+)?/i)
   return matches ? matches[1] : null
-}
-
-/**
- * Creates an anonymous SynapseClient instance (no access token)
- */
-function createAnonymousSynapseClient(): SynapseClient {
-  return new SynapseClient({
-    basePath: 'https://repo-prod.prod.sagebase.org',
-  })
 }
 
 /**

@@ -32,6 +32,7 @@
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "plotly.js-basic-dist": "^2.35.3",
+    "p-limit": "^6.2.0",
     "react-cookie": "4.0.0",
     "react-plotly.js": "^2.6.0",
     "react-router": "^7.13.1",

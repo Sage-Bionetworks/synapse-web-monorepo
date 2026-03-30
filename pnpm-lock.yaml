@@ -1321,6 +1321,9 @@ importers:
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
+      p-limit:
+        specifier: ^6.2.0
+        version: 6.2.0
       plotly.js-basic-dist:
         specifier: ^2.35.3
         version: 2.35.3

@@ -2,8 +2,8 @@ import {
   QueryResultBundle,
   waitForAsyncResult,
 } from '@sage-bionetworks/synapse-client'
+import pLimit from 'p-limit'
 import { PrerenderCache } from './cache'
-import { mapWithConcurrency } from './concurrency'
 import { createAnonymousSynapseClient } from './synapseClient'
 
 const BUNDLE_MASK_QUERY_RESULTS = 0x1
@@ -144,14 +144,17 @@ export async function preloadAllCroissantMetadata(): Promise<void> {
         `Pre-fetching ${entries.length} Croissant metadata files (concurrency: ${FETCH_CONCURRENCY})...`,
       )
 
-      const results = await mapWithConcurrency(
-        entries,
-        FETCH_CONCURRENCY,
-        async ([datasetId, s3Url]) => {
-          const jsonLd = await fetchSingleCroissantFile(s3Url)
-          return { datasetId, jsonLd }
-        },
-      )
+      const limit = pLimit(FETCH_CONCURRENCY)
+
+      const limitedFetch = ([datasetId, s3Url]: [string, string]) =>
+        limit(() =>
+          fetchSingleCroissantFile(s3Url).then(jsonLd => ({
+            datasetId,
+            jsonLd,
+          })),
+        )
+
+      const results = await Promise.all(entries.map(limitedFetch))
 
       let successCount = 0
       for (const { datasetId, jsonLd } of results) {

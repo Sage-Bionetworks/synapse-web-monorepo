@@ -32,28 +32,21 @@ export function clientOnly(plugin: Plugin): Plugin {
    * https://vite.dev/guide/api-environment
    */
 
+  const wrapClientHook = (hook?: any) =>
+    hook
+      ? function (this: any, ...args: any[]) {
+          if (this.environment?.name !== 'client') return undefined
+          return hook.apply(this, args)
+        }
+      : undefined
+
   return {
     ...plugin,
     // Don't run config hook — nodePolyfillsPlugin would add browser aliases to resolve.alias for all envs
     config: undefined,
     configResolved: undefined,
-    resolveId: plugin.resolveId
-      ? function (this: any, ...args: any[]) {
-          if (this.environment?.name !== 'client') return undefined
-          return (plugin.resolveId as any).apply(this, args)
-        }
-      : undefined,
-    load: plugin.load
-      ? function (this: any, ...args: any[]) {
-          if (this.environment?.name !== 'client') return undefined
-          return (plugin.load as any).apply(this, args)
-        }
-      : undefined,
-    transform: plugin.transform
-      ? function (this: any, ...args: any[]) {
-          if (this.environment?.name !== 'client') return undefined
-          return (plugin.transform as any).apply(this, args)
-        }
-      : undefined,
+    resolveId: wrapClientHook(plugin.resolveId),
+    load: wrapClientHook(plugin.load),
+    transform: wrapClientHook(plugin.transform),
   }
 }
