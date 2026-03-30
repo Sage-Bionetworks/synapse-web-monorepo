@@ -286,8 +286,12 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
 
     const handleSelectedRowChange = useCallback(
       (rowIndex: number | null, _row: DataGridRow | null) => {
-        selectedRowIndexRef.current = rowIndex
-        forceUpdate({}) // Force re-render to update validation display
+        // Only update when a real row is selected — don't clear on blur/click-away
+        // so the ValidationAlert stays open while the user interacts with it.
+        if (rowIndex !== null) {
+          selectedRowIndexRef.current = rowIndex
+          forceUpdate({})
+        }
       },
       [],
     )
