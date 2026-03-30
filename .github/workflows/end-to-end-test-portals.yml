@@ -40,6 +40,10 @@ jobs:
         uses: nrwl/nx-set-shas@v4
 
       - uses: ./.github/actions/pnpm-setup-action
+        env:
+          NX_KEY: ${{ secrets.NX_KEY }}
+        with:
+          STORE_NX_CACHE: 'true'
       - name: Determine if portal has had any changes
         run: |
           affected=$(pnpm nx show projects --affected)
@@ -94,6 +98,10 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
+        env:
+          NX_KEY: ${{ secrets.NX_KEY }}
+        with:
+          STORE_NX_CACHE: 'true'
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
         with:

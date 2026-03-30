@@ -17,6 +17,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
+        env:
+          NX_KEY: ${{ secrets.NX_KEY }}
         with:
           STORE_NX_CACHE: 'true'
       - run: pnpm nx affected --target=build --base=remotes/origin/main
@@ -33,6 +35,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
+        env:
+          NX_KEY: ${{ secrets.NX_KEY }}
         with:
           STORE_NX_CACHE: 'true'
       - id: test
@@ -56,6 +60,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
+        env:
+          NX_KEY: ${{ secrets.NX_KEY }}
         with:
           STORE_NX_CACHE: 'true'
       - run: pnpm nx affected --target=lint --base=remotes/origin/main
@@ -69,6 +75,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
+        env:
+          NX_KEY: ${{ secrets.NX_KEY }}
         with:
           STORE_NX_CACHE: 'true'
       - run: pnpm nx affected --target=type-check --base=remotes/origin/main
