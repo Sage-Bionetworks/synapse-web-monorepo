@@ -1,4 +1,4 @@
-import { createAnonymousSynapseClient } from '@/utils/synapseClient'
+import { createAnonymousSynapseClient } from '../utils/synapseClient'
 import {
   QueryResultBundle,
   waitForAsyncResult,
