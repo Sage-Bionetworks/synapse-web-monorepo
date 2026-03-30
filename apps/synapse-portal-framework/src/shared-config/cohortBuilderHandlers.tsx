@@ -160,7 +160,7 @@ export const createViewAssociatedParticipantsCustomControl = (
   },
   title: 'Refining & Exporting Data',
   description:
-    'Fine-tune your results using dataset or file-level filters. Once ready, add your files to the download cart or transfer them directly to an analysis platform. To adjust your source cohort, select "View participants" to return to the participant records associated with your current file selection.',
+    'Fine-tune your results using dataset or file-level filters. Once ready, add your files to the download list or transfer them directly to an analysis platform. To adjust your source cohort, select "View participants" to return to the participant records associated with your current file selection.',
 })
 
 /**
@@ -177,7 +177,7 @@ export const createViewAssociatedFilesCustomControl = (
   buttonID: 'ViewAllFilesButton',
   title: 'Cohort Discovery',
   description:
-    'Use the Cohort Builder to define your custom research cohort. Filter for human research participants based on demographic or clinical attributes, browse their associated data files, then refine your selection using specific dataset or file-level properties. Once you have identified the data you need, add the files to your download cart or send results to an analysis platform. ',
+    'Use the Cohort Builder to define your custom research cohort. Filter for human research participants based on demographic or clinical attributes, browse their associated data files, then refine your selection using specific dataset or file-level properties. Once you have identified the data you need, add the files to your download list or send results to an analysis platform. ',
 })
 
 /**

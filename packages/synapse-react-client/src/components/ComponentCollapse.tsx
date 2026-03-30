@@ -3,41 +3,36 @@ import {
   KeyboardArrowDownTwoTone,
   KeyboardArrowUpTwoTone,
 } from '@mui/icons-material'
+import { Box, Collapse, SxProps } from '@mui/material'
 import {
-  Box,
-  Collapse,
-  SxProps,
-  Typography,
-  TypographyOwnProps,
-} from '@mui/material'
-import { PropsWithChildren, useState } from 'react'
+  KeyboardEvent,
+  PropsWithChildren,
+  ReactNode,
+  useId,
+  useState,
+} from 'react'
 
 export type ComponentCollapseProps = PropsWithChildren<{
-  text: string
+  component: ReactNode
   defaultVisible?: boolean // default to false (collapsed)
-  textVariant?: TypographyOwnProps['variant']
-  textSx?: SxProps
-  textContainerSx?: SxProps
+  componentContainerSx?: SxProps
   collapseBoxSx?: SxProps
   iconSx?: SxProps
 }>
 
 /**
- * Wrap any Synapse config object in a collapse
- * @param props
- * @returns
+ * Wrap any child components in a collapse, using a custom component as the trigger
  */
 export default function ComponentCollapse({
-  text,
+  component,
   defaultVisible,
-  textVariant = 'smallLink',
-  textSx,
-  textContainerSx,
+  componentContainerSx,
   collapseBoxSx,
   iconSx,
   children,
 }: ComponentCollapseProps) {
   const [show, setShow] = useState(defaultVisible)
+  const collapseId = useId()
   const allIconSx: SxProps = {
     color: 'grey.700',
     marginBottom: '-5px !important',
@@ -45,8 +40,9 @@ export default function ComponentCollapse({
     ...iconSx,
   }
 
-  const textContainerDefaultSx: SxProps = {
+  const componentContainerDefaultSx: SxProps = {
     display: 'flex',
+    textAlign: 'left',
     justifyContent: 'space-between',
     backgroundColor: 'grey.200',
     padding: '15px',
@@ -58,21 +54,23 @@ export default function ComponentCollapse({
     backgroundColor: 'grey.100',
     padding: '25px',
   }
+
   return (
     <div className="MarkdownCollapse">
       <Box
-        sx={spreadSx(textContainerDefaultSx, textContainerSx)}
+        component="button"
+        sx={spreadSx(componentContainerDefaultSx, componentContainerSx)}
         onClick={() => setShow(!show)}
+        onKeyDown={(e: KeyboardEvent) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            setShow(!show)
+          }
+        }}
+        aria-controls={collapseId}
+        aria-expanded={show}
       >
-        <Typography
-          variant={textVariant}
-          aria-controls="collapse-text"
-          aria-expanded={show}
-          sx={textSx}
-        >
-          {text}
-        </Typography>
-
+        {component}
         {show ? (
           <KeyboardArrowUpTwoTone sx={allIconSx} />
         ) : (
@@ -81,7 +79,7 @@ export default function ComponentCollapse({
       </Box>
       <Collapse in={show}>
         <Box sx={spreadSx(collapseBoxDefaultSx, collapseBoxSx)}>
-          <div id="collapse-text">{children}</div>
+          <div id={collapseId}>{children}</div>
         </Box>
       </Collapse>
     </div>

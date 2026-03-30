@@ -22,6 +22,7 @@ import logoHeaderConfig from '../config/logoHeaderConfig'
 import logoFooterConfig from '../config/logoFooterConfig'
 import headerConfig from '../config/headerConfig'
 import { CssBaseline } from '@mui/material'
+import synapseChatConfig from '@/config/synapseChatConfig'
 
 // KaTeX CSS is not included in the SRC style bundle since it includes many large font files.
 import 'katex/dist/katex.css'
@@ -38,6 +39,7 @@ const portalContext = {
   logoHeaderConfig,
   logoFooterConfig,
   navbarConfig,
+  synapseChatProps: synapseChatConfig,
 }
 
 export default function PortalRoot() {

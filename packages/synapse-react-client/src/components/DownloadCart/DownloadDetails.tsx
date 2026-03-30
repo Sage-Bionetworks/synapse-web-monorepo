@@ -48,7 +48,7 @@ export default function DownloadDetails(props: DownloadDetailsProps) {
       </span>
       {numBytes > 0 && (
         <Tooltip
-          title="This is the total size of all files in the Download Cart that are available to download."
+          title="This is the total size of all files in the Download List that are available to download."
           enterNextDelay={TOOLTIP_DELAY_SHOW}
           placement="top"
         >

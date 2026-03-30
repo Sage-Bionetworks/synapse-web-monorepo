@@ -9,7 +9,7 @@
     color: var(--synapse-warning);
   }
   .ineligibleForPackaging > td:first-of-type {
-    background-color: #f9f5e7;
+    background-color: var(--synapse-gray-200);
   }
 }
 

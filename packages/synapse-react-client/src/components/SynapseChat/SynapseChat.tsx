@@ -46,6 +46,12 @@ export type SynapseChatProps = {
   defaultAgentAccessLevel?: AgentAccessLevel
   // Whether to show the access level menu for the agent session.
   showAccessLevelMenu?: boolean
+  /**
+   * Optional callback invoked once when a chat response is received from the server.
+   * Use this for side effects such as navigation based on the response content.
+   * Called in the mutation onSuccess handler so it runs exactly once per response.
+   */
+  onChatResponse?: (responseText: string) => void
 }
 
 export type ChatInteraction = {
@@ -70,6 +76,7 @@ export function SynapseChat({
   setExternalSession,
   externalChatState,
   showAccessLevelMenu = true,
+  onChatResponse,
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
   const [localAgentSession, setLocalAgentSession] = useState<AgentSession>()
@@ -96,7 +103,7 @@ export function SynapseChat({
       : AgentAccessLevel.PUBLICLY_ACCESSIBLE,
   )
 
-  const internalChatState = useChatState(agentSession)
+  const internalChatState = useChatState(agentSession, onChatResponse)
   const chatState = externalChatState ?? internalChatState
   const { pendingMessage, chatJobIds, sendChat } = chatState
 
@@ -243,7 +250,13 @@ export function SynapseChat({
               )
             })} */}
             {chatJobIds.map(jobId => {
-              return <SynapseChatMessage key={jobId} chatJobId={jobId} />
+              return (
+                <SynapseChatMessage
+                  key={jobId}
+                  chatJobId={jobId}
+                  onSendChat={sendChat}
+                />
+              )
             })}
             {pendingMessage && (
               <SynapseChatInteraction
@@ -251,6 +264,7 @@ export function SynapseChat({
                 chatResponseText={''}
                 chatErrorReason={''}
                 scrollIntoView
+                onSendChat={sendChat}
               />
             )}
           </List>

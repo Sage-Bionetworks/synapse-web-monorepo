@@ -445,7 +445,7 @@ describe('TableRowGenericCard tests', () => {
         },
         'TableEntity',
       )
-      const howToDownloadLabel = await screen.findByText(/download cart/i, {})
+      const howToDownloadLabel = await screen.findByText(/download list/i, {})
       expect(howToDownloadLabel).toBeVisible()
     })
 
@@ -457,7 +457,7 @@ describe('TableRowGenericCard tests', () => {
             ...genericCardSchema,
             customSecondaryLabelConfig: {
               key: 'How to Download',
-              value: 'Explain how to add to download cart',
+              value: 'Explain how to add to download list',
               isVisible: (schema: Record<string, number>, data: string[]) => {
                 return Boolean(
                   data[schema['externalLink']] || data[schema['datasetAlias']],
@@ -469,7 +469,7 @@ describe('TableRowGenericCard tests', () => {
         'TableEntity',
       )
       const howToDownloadLabel = await screen.findByText(
-        /how to add to download cart/i,
+        /how to add to download list/i,
         {},
       )
       expect(howToDownloadLabel).toBeVisible()

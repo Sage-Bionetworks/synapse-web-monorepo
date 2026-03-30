@@ -63,7 +63,7 @@ export type DownloadIneligibleForPackagingFilesFromListButtonProps = {
 export function DownloadIneligibleForPackagingFilesFromListButton(
   props: DownloadIneligibleForPackagingFilesFromListButtonProps,
 ) {
-  const { buttonText = 'Download Non-Packageable Files', variant = 'text' } =
+  const { buttonText = 'Start Multi-file Download', variant = 'contained' } =
     props
   const { accessToken, isAuthenticated } = useSynapseContext()
   const queryClient = useQueryClient()

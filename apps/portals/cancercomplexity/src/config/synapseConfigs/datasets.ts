@@ -41,7 +41,7 @@ export const datasetSchema: TableToGenericCardMapping = {
     'consortium',
   ],
   dataTypeIconNames: 'dataType',
-  // override Download Cart to use datasetAlias
+  // override Download List to use datasetAlias
   downloadCartSynId: 'datasetAlias',
   synapseEntityConfig: {
     id: {

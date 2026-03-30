@@ -278,7 +278,7 @@ export function SynapseNavDrawer({
                   handleDrawerOpen={handleDrawerOpen}
                 />
                 <NavDrawerListItem
-                  tooltip="Download Cart"
+                  tooltip="Download List"
                   iconName="download"
                   onClickGoToPlace={() => gotoPlace('/DownloadCart:0')}
                   badgeContent={numberOfFilesInDownloadList}

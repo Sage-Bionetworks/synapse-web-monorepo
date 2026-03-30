@@ -7,6 +7,8 @@ import Baseline from '@/assets/icons/Baseline'
 import ClappingHands from '@/assets/icons/ClappingHands'
 import CreateVersion from '@/assets/icons/CreateVersion'
 import FileWithShield from '@/assets/icons/FileWithShield'
+import MultiFile from '@/assets/icons/MultiFile'
+import UnpackagableFile from '@/assets/icons/UnpackagableFile'
 import HandWithMoney from '@/assets/icons/HandWithMoney'
 import { ORCIDIcon } from '@/assets/icons/ORCIDIcon'
 import OpenBook from '@/assets/icons/OpenBook'
@@ -214,6 +216,7 @@ export const IconStrings = [
   'kinomics',
   'proteomics',
   'packagableFile',
+  'unpackagableFile',
   'other',
   'wiki',
   'file',
@@ -298,6 +301,7 @@ export const IconStrings = [
   'openBook',
   'handWithMoney',
   'threeStars',
+  'multiFile',
 ] as const
 
 export type IconName = (typeof IconStrings)[number]
@@ -483,6 +487,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <Proteomics {...otherProps} />
     case 'packagableFile':
       return <PackagableFile {...otherProps} />
+    case 'unpackagableFile':
+      return <UnpackagableFile {...otherProps} />
     case 'other':
       return <Other fill={color} {...otherProps} />
     case 'wiki':
@@ -625,6 +631,9 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <HandWithMoney {...otherProps} />
     case 'threeStars':
       return <ThreeStars {...otherProps} />
+    case 'multiFile':
+      return <MultiFile {...otherProps} />
+
     default:
       return <></>
   }
