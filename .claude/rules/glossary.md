@@ -1,7 +1,3 @@
----
-applyTo: '**'
----
-
 # Glossary of Terms
 
 When working with this codebase, use these standard terms and abbreviations consistently:
