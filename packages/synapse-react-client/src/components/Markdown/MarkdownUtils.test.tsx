@@ -91,6 +91,23 @@ describe('MarkdownUtils DOM', () => {
       expect(divLink?.getAttribute('href')).toBe('https://synapse.org')
     })
 
+    it('should swap <button> for <div> when it contains a nested button', () => {
+      const doc = new DOMParser().parseFromString(
+        '<button><button>Nested</button></button>',
+        'text/html',
+      )
+
+      fixInvalidNesting(doc.body)
+
+      // Outer button should be replaced by a div
+      expect(doc.body.querySelector('div')).not.toBeNull()
+
+      // Inner button should still exist (not removed)
+      const buttons = doc.body.querySelectorAll('button')
+      expect(buttons).toHaveLength(1)
+      expect(buttons[0].textContent).toBe('Nested')
+    })
+
     it('should recursively fix nested violations', () => {
       // p > span > widget
       const doc = new DOMParser().parseFromString(

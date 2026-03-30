@@ -210,42 +210,6 @@ const blockLevelTags = [
 
 const inlineTags = ['p', 'span', 'a']
 
-// Check if a node is a block level element
-export const isBlockLevelElement = (node: Node): boolean => {
-  if (node.nodeType !== Node.ELEMENT_NODE) {
-    return false
-  }
-
-  const element = node as HTMLElement
-  const tag = element.tagName.toLowerCase()
-  const isStandardBlock = blockLevelTags.includes(tag)
-
-  const isWidget = element.hasAttribute('data-widgetparams')
-
-  return isStandardBlock || isWidget
-}
-
-const isInlineContainer = (node: Node): boolean => {
-  if (node.nodeType !== Node.ELEMENT_NODE) {
-    return false
-  }
-
-  const element = node as HTMLElement
-  const tag = element.tagName.toLowerCase()
-  return inlineTags.includes(tag)
-}
-
-// Check if a node has any block level descendants
-export const hasBlockLevelDescendant = (node: Node): boolean => {
-  if (isBlockLevelElement(node)) {
-    return true
-  }
-
-  return Array.from(node.childNodes).some(child =>
-    hasBlockLevelDescendant(child),
-  )
-}
-
 /**
  * Normalizes the DOM tree to be "React-safe" by fixing invalid HTML nesting
  * BEFORE the tree is passed to RecursiveRender.
@@ -299,23 +263,83 @@ export const hasBlockLevelDescendant = (node: Node): boolean => {
 //   Array.from(element.childNodes).forEach(child => transformTree(child))
 // }
 
+// Check if a node has any block level descendants
+export const hasBlockLevelDescendant = (node: Node): boolean => {
+  if (isBlockLevelElement(node)) {
+    return true
+  }
+
+  return Array.from(node.childNodes).some(child =>
+    hasBlockLevelDescendant(child),
+  )
+}
+
+const isInlineContainer = (node: Node): boolean => {
+  if (node.nodeType !== Node.ELEMENT_NODE) {
+    return false
+  }
+
+  const element = node as HTMLElement
+  const tag = element.tagName.toLowerCase()
+  return inlineTags.includes(tag)
+}
+
+// Check if a node is a block level element
+export const isBlockLevelElement = (node: Node): boolean => {
+  if (node.nodeType !== Node.ELEMENT_NODE) {
+    return false
+  }
+
+  const element = node as HTMLElement
+  const tag = element.tagName.toLowerCase()
+  const isStandardBlock = blockLevelTags.includes(tag)
+
+  const isWidget = element.hasAttribute('data-widgetparams')
+
+  return isStandardBlock || isWidget
+}
+
 function isValidNesting(child: HTMLElement, ancestor: HTMLElement): boolean {
   // case 1: block level elements cannot be inside of inline containers
   if (isBlockLevelElement(child) && isInlineContainer(ancestor)) {
     return false
   }
 
+  // p nested inside of p is invalid
+  // if (
+  //   ancestor.tagName.toLowerCase() === 'p' &&
+  //   child.tagName.toLowerCase() === 'p'
+  // ) {
+  //   return false
+  // }
+
+  // case 2: buttons cannot be inside of buttons
+
+  console.log(
+    'ancestor',
+    ancestor.tagName.toLowerCase(),
+    'tagname',
+    child.tagName.toLowerCase(),
+  )
+  if (
+    ancestor.tagName.toLowerCase() === 'button' &&
+    child.tagName.toLowerCase() === 'button'
+  ) {
+    return false
+  }
+
   // case 2: block level elements cannot be inside 'a' tags
 
-  // other cases, buttons cannot be inside of buttons
+  // other cases
   return true
 }
 
 // new implementation
 // hopefully o(n)
+// If 'node' is a block-level element and one or more ancestors are inline containers, change the ancestors to 'div' elements
 export function fixInvalidNesting(node: Node, ancestors: Node[] = []): void {
-  // If 'node' is a block-level element and one or more ancestors are inline containers, change the ancestors to 'div' elements
-
+  // console.log('checking node', node.nodeName, 'with ancestors', ancestors)
+  // Discard empty text nodes. Prevents invalid HTML in some cases, for example whitespace text nodes cannot be a child of <table>.
   if (node.nodeType === Node.TEXT_NODE) {
     if (!node.textContent?.trim()) {
       node.parentNode?.removeChild(node)
@@ -329,13 +353,22 @@ export function fixInvalidNesting(node: Node, ancestors: Node[] = []): void {
 
   const element = node as HTMLElement
 
+  const currentAncestors = [...ancestors]
+
+  // console.log(
+  //   'current ancestors',
+  //   currentAncestors.map(a => (a as HTMLElement).tagName),
+  // )
+
   // check the current node against all of its ancestors to see if there is any invalid nesting
-  for (let i = 0; i < ancestors.length; i++) {
-    const ancestor = ancestors[i]
+  for (let i = 0; i < currentAncestors.length; i++) {
+    const ancestor = currentAncestors[i]
+
     // if the nesting is valid, continue to next ancestor
     if (isValidNesting(element, ancestor as HTMLElement)) {
       continue
     }
+
     // if the nesting is invalid, change the ancestor to a div
     else {
       const ancestorElement = ancestor as HTMLElement
@@ -351,13 +384,16 @@ export function fixInvalidNesting(node: Node, ancestors: Node[] = []): void {
         div.appendChild(ancestorElement.firstChild)
       }
 
+      // replace the ancestor with the new div
       if (ancestorElement.parentNode) {
         ancestorElement.parentNode.replaceChild(div, ancestor)
       }
+
+      currentAncestors[i] = div // update the current ancestor to the new div for future checks in this loop
     }
   }
 
-  const newAncestors = [...ancestors, node] // combine current node with ancestors
+  const newAncestors = [...currentAncestors, node] // combine current node with ancestors
 
   Array.from(element.childNodes).forEach(child => {
     fixInvalidNesting(child, newAncestors)
