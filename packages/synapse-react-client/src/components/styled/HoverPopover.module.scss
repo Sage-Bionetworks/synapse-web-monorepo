@@ -1,0 +1,25 @@
+.triggerWrapper {
+  display: inline-block;
+}
+
+.paper {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.titleContainer {
+  padding: 16px 20px 8px;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.contentArea {
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.actionButtonContainer {
+  padding: 0 20px 16px;
+  flex-shrink: 0;
+}

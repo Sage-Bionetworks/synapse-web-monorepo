@@ -7,6 +7,7 @@ import {
   Typography,
 } from '@mui/material'
 import { PropsWithChildren, ReactNode, useRef, useState } from 'react'
+import styles from './HoverPopover.module.scss'
 
 export type HoverPopoverPlacement = 'top' | 'bottom' | 'left' | 'right'
 
@@ -104,7 +105,7 @@ export function HoverPopover({
           setAnchorEl(e.currentTarget)
         }}
         onMouseLeave={scheduleClose}
-        sx={{ display: 'inline-block' }}
+        className={styles.triggerWrapper}
       >
         {children}
       </Box>
@@ -122,37 +123,23 @@ export function HoverPopover({
           paper: {
             onMouseEnter: cancelClose,
             onMouseLeave: scheduleClose,
-            sx: {
-              maxWidth,
-              minWidth,
-              display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden',
-            },
+            className: styles.paper,
+            sx: { maxWidth, minWidth },
           },
         }}
       >
         {title && (
-          <Box
-            sx={{
-              px: '20px',
-              pt: '16px',
-              pb: '8px',
-              flexShrink: 0,
-              borderBottom: '1px solid',
-              borderColor: 'divider',
-            }}
-          >
+          <Box className={styles.titleContainer}>
             <Typography variant="smallText1" fontWeight={700}>
               {title}
             </Typography>
           </Box>
         )}
-        <Box sx={{ overflowY: 'auto', maxHeight, p: '20px' }}>
+        <Box className={styles.contentArea} sx={{ maxHeight }}>
           {popoverContent}
         </Box>
         {actionButton && (
-          <Box sx={{ px: '20px', pb: '16px', flexShrink: 0 }}>
+          <Box className={styles.actionButtonContainer}>
             <Button
               color={actionButton.color ?? 'primary'}
               variant={actionButton.variant ?? 'contained'}
