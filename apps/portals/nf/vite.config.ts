@@ -4,7 +4,6 @@ import {
   baseConfig,
   vitestConfig,
   clientOnly,
-  jsdomStubPath,
   nodePolyfillsPlugin,
   reactPlugins,
   tsconfigPathsPlugin,
@@ -24,15 +23,7 @@ export default defineConfig(({ isSsrBuild }) =>
         // Since we are using the reactRouter plugin, do not use the @vitejs/plugin-react plugin
         ...reactPlugins({ skipReactPlugin: true }),
       ],
-      resolve: {
-        alias: {
-          // Stub jsdom for client builds; the SSR/prerender build uses the
-          // real jsdom in Node.js.
-          ...(!isSsrBuild ? { jsdom: jsdomStubPath } : {}),
-        },
-      },
       ssr: {
-        external: ['jsdom'],
         noExternal: [/^@mui\//, /^@emotion\//],
         optimizeDeps: {
           include: ['@emotion/*', '@mui/*'],

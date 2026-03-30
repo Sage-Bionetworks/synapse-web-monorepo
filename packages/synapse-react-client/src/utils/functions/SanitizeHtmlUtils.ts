@@ -1,7 +1,6 @@
-import DOMPurify from 'dompurify'
+import DOMPurify, { clearWindow, removeAllHooks } from 'isomorphic-dompurify'
 import xssLib from 'xss'
 import type { IFilterXSSOptions } from 'xss'
-import { JSDOM } from 'jsdom'
 
 // xss is a CJS-only module; pull runtime values from the default import to
 // avoid "named export not found" errors in Vite dev mode (native ESM).
@@ -136,19 +135,20 @@ const ALLOWED_STYLES: Record<string, boolean> = {
 // Regex to allow only secure image sources
 const ALLOWED_URI_REGEXP: RegExp = /^(https?:|data:image\/)/
 
-let domPurifyInstance: typeof DOMPurify | null = null
-function configureDomPurify(instance: typeof DOMPurify): typeof DOMPurify {
+const domPurifyConfig = {
+  ALLOWED_TAGS,
+  ALLOWED_ATTR,
+  KEEP_CONTENT: true,
+  RETURN_DOM_FRAGMENT: false,
+  RETURN_TRUSTED_TYPE: false,
+}
+
+function configureDomPurify() {
   // Configure DOMPurify with TypeScript support
-  instance.setConfig({
-    ALLOWED_TAGS,
-    ALLOWED_ATTR,
-    KEEP_CONTENT: true,
-    RETURN_DOM_FRAGMENT: false,
-    RETURN_TRUSTED_TYPE: false,
-  })
+  DOMPurify.setConfig(domPurifyConfig)
 
   // Hook: Sanitize attributes (equivalent to safeAttrValue)
-  instance.addHook('uponSanitizeAttribute', (node, data) => {
+  DOMPurify.addHook('uponSanitizeAttribute', (node, data) => {
     const { attrName, attrValue } = data
 
     // Ensure only safe src values for images
@@ -171,12 +171,12 @@ function configureDomPurify(instance: typeof DOMPurify): typeof DOMPurify {
         .join('; ')
       data.attrValue = safeStyles
     } else {
-      data.attrValue = instance.sanitize(attrValue)
+      data.attrValue = DOMPurify.sanitize(attrValue, domPurifyConfig)
     }
   })
 
   // Hook: Prevent removal of `!doctype` (equivalent to onIgnoreTag)
-  instance.addHook('uponSanitizeElement', (node, data) => {
+  DOMPurify.addHook('uponSanitizeElement', (node, data) => {
     if (data.tagName === '!doctype') {
       // Reinsert the doctype manually after sanitization
       if (node.parentNode) {
@@ -187,22 +187,13 @@ function configureDomPurify(instance: typeof DOMPurify): typeof DOMPurify {
       }
     }
   })
-  return instance
 }
 
 export function sanitize(input: string): string {
-  if (domPurifyInstance == null) {
-    if (typeof window === 'undefined') {
-      // Running in a Node.js environment; initialize JSDOM and create a DOMPurify instance
-      // Cannot use top-level await is unsafe in Safari: https://caniuse.com/wf-top-level-await
-
-      domPurifyInstance = configureDomPurify(
-        DOMPurify(new JSDOM('<!DOCTYPE html>').window),
-      )
-    } else {
-      domPurifyInstance = configureDomPurify(DOMPurify)
-    }
-  }
-
-  return domPurifyInstance.sanitize(input)
+  configureDomPurify()
+  const result = DOMPurify.sanitize(input, domPurifyConfig)
+  // clearWindow clears memory usage in Node.js, noop in browser:
+  clearWindow()
+  removeAllHooks()
+  return result
 }

@@ -334,7 +334,7 @@ importers:
         version: link:../../../packages/vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   apps/portals/ampals:
     dependencies:
@@ -392,7 +392,7 @@ importers:
         version: link:../../../packages/vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   apps/portals/arcusbio:
     dependencies:
@@ -456,7 +456,7 @@ importers:
         version: link:../../../packages/vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   apps/portals/arkportal:
     dependencies:
@@ -505,7 +505,7 @@ importers:
         version: link:../../../packages/vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   apps/portals/b2ai.standards:
     dependencies:
@@ -569,7 +569,7 @@ importers:
         version: link:../../../packages/vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   apps/portals/bsmn:
     dependencies:
@@ -618,7 +618,7 @@ importers:
         version: link:../../../packages/vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   apps/portals/cancercomplexity:
     dependencies:
@@ -670,7 +670,7 @@ importers:
         version: link:../../../packages/vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   apps/portals/challenges:
     dependencies:
@@ -725,7 +725,7 @@ importers:
         version: link:../../../packages/vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   apps/portals/classic:
     dependencies:
@@ -792,7 +792,7 @@ importers:
         version: link:../../../packages/vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   apps/portals/digitalhealth:
     dependencies:
@@ -844,7 +844,7 @@ importers:
         version: link:../../../packages/vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   apps/portals/eliteportal:
     dependencies:
@@ -911,7 +911,7 @@ importers:
         version: link:../../../packages/vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   apps/portals/genie:
     dependencies:
@@ -963,7 +963,7 @@ importers:
         version: link:../../../packages/vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   apps/portals/nf:
     dependencies:
@@ -1103,7 +1103,7 @@ importers:
         version: link:../../../packages/vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   apps/synapse-oauth-signin:
     dependencies:
@@ -1504,7 +1504,7 @@ importers:
         version: link:../vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   packages/markdown-it-container:
     devDependencies:
@@ -1570,7 +1570,7 @@ importers:
         version: link:../vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   packages/markdown-it-synapse-table:
     devDependencies:
@@ -1606,7 +1606,7 @@ importers:
         version: link:../vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   packages/synapse-client:
     devDependencies:
@@ -1654,7 +1654,7 @@ importers:
         version: link:../vite-config
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   packages/synapse-react-client:
     dependencies:
@@ -1766,12 +1766,12 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
-      dompurify:
-        specifier: ^3.3.2
-        version: 3.3.2
       immutable:
         specifier: 4.1.0
         version: 4.1.0
+      isomorphic-dompurify:
+        specifier: ^3.7.1
+        version: 3.7.1
       jotai:
         specifier: ^2.12.4
         version: 2.12.4(@types/react@19.1.8)(react@19.1.0)
@@ -2244,7 +2244,7 @@ importers:
         version: 5.1.4(typescript@5.8.3)(vite@7.3.1(@types/node@22.19.13)(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
       vitest:
         specifier: ^3.2.2
-        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+        version: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
 packages:
 
@@ -2271,6 +2271,10 @@ packages:
 
   '@asamuzakjp/dom-selector@6.8.1':
     resolution: {integrity: sha512-MvRz1nCqW0fsy8Qz4dnLIvhOlMzqDVBabZx6lH+YywFDdjXhMY37SmpV1XFX3JzG5GWHn63j6HX6QPr3lZXHvQ==}
+
+  '@asamuzakjp/dom-selector@7.0.4':
+    resolution: {integrity: sha512-jXR6x4AcT3eIrS2fSNAwJpwirOkGcd+E7F7CP3zjdTqz9B/2huHOL8YJZBgekKwLML+u7qB/6P1LXQuMScsx0w==}
+    engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
 
   '@asamuzakjp/nwsapi@2.3.9':
     resolution: {integrity: sha512-n8GuYSrI9bF7FFZ/SjhwevlHc8xaVlb/7HmHelnc/PZXBD2ZR49NnN9sMMuDdEGPeeRQ5d0hqlSlEpgCX3Wl0Q==}
@@ -2720,6 +2724,14 @@ packages:
 
   '@csstools/css-syntax-patches-for-csstree@1.1.0':
     resolution: {integrity: sha512-H4tuz2nhWgNKLt1inYpoVCfbJbMwX/lQKp3g69rrrIMIYlFD9+zTykOKhNR8uGrAmbS/kT9n6hTFkmDkxLgeTA==}
+
+  '@csstools/css-syntax-patches-for-csstree@1.1.2':
+    resolution: {integrity: sha512-5GkLzz4prTIpoyeUiIu3iV6CSG3Plo7xRVOFPKI7FVEJ3mZ0A8SwK0XU3Gl7xAkiQ+mDyam+NNp875/C5y+jSA==}
+    peerDependencies:
+      css-tree: ^3.2.1
+    peerDependenciesMeta:
+      css-tree:
+        optional: true
 
   '@csstools/css-tokenizer@3.0.4':
     resolution: {integrity: sha512-Vd/9EVDiu6PPJt9yAh6roZP6El1xHrdvIVGjyBsHR0RYwNHgL7FJPyIIW4fANJNG6FtyZfvlRPpFI4ZM/lubvw==}
@@ -6760,9 +6772,8 @@ packages:
     resolution: {integrity: sha512-cgwlv/1iFQiFnU96XXgROh8xTeetsnJiDsTc7TYCLFd9+/WNkIqPTxiM/8pSd8VIrhXGTf1Ny1q1hquVqDJB5w==}
     engines: {node: '>= 4'}
 
-  dompurify@3.3.2:
-    resolution: {integrity: sha512-6obghkliLdmKa56xdbLOpUZ43pAR6xFy1uOrxBaIDjT+yaRuuybLjGS9eVBoSR/UPU5fq3OXClEHLJNGvbxKpQ==}
-    engines: {node: '>=20'}
+  dompurify@3.3.3:
+    resolution: {integrity: sha512-Oj6pzI2+RqBfFG+qOaOLbFXLQ90ARpcGG6UePL82bJLtdsa6CYJD7nmiU8MW9nQNOtCHV3lZ/Bzq1X0QYbBZCA==}
 
   domutils@2.8.0:
     resolution: {integrity: sha512-w96Cjofp72M5IIhpjgobBimYEfoPjx1Vx0BSX9P30WBdZW2WIKU0T1Bd0kz2eNZ9ikjKgHbEyKx8BB6H1L3h3A==}
@@ -8081,6 +8092,10 @@ packages:
     resolution: {integrity: sha512-WhB9zCku7EGTj/HQQRz5aUQEUeoQZH2bWcltRErOpymJ4boYE6wL9Tbr23krRPSZ+C5zqNSrSw+Cc7sZZ4b7vg==}
     engines: {node: '>=0.10.0'}
 
+  isomorphic-dompurify@3.7.1:
+    resolution: {integrity: sha512-ChhzwwCm7k8h8ANiq1Vc7geCWeHGaAPusgXU5N4mu7Y2wChgn2JHvbUe6aH/XQOUG3+KV+GmqSq95MntW/V1ng==}
+    engines: {node: ^20.19.0 || ^22.13.0 || >=24.0.0}
+
   isomorphic-fetch@2.2.1:
     resolution: {integrity: sha512-9c4TNAKYXM5PRyVcwUZrF3W09nQ+sO7+jydgs4ZGW9dhsLG2VOlISJABombdQqQRXCwuYG3sYV/puGf5rp0qmA==}
 
@@ -8211,6 +8226,15 @@ packages:
   jsdom@28.1.0:
     resolution: {integrity: sha512-0+MoQNYyr2rBHqO1xilltfDjV9G7ymYGlAUazgcDLQaUf8JDHbuGwsxN6U9qWaElZ4w1B2r7yEGIL3GdeW3Rug==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
+    peerDependencies:
+      canvas: ^3.0.0
+    peerDependenciesMeta:
+      canvas:
+        optional: true
+
+  jsdom@29.0.1:
+    resolution: {integrity: sha512-z6JOK5gRO7aMybVq/y/MlIpKh8JIi68FBKMUtKkK2KH/wMSRlCxQ682d08LB9fYXplyY/UXG8P4XXTScmdjApg==}
+    engines: {node: ^20.19.0 || ^22.13.0 || >=24.0.0}
     peerDependencies:
       canvas: ^3.0.0
     peerDependenciesMeta:
@@ -10730,6 +10754,10 @@ packages:
     resolution: {integrity: sha512-5xoBibbmnjlcR3jdqtY2Lnx7WbrD/tHlT01TmvqZUFVc9Q1w4+j5hbnapTqbcXITMH1ovjq/W7BkqBilHiVAaA==}
     engines: {node: '>=20.18.1'}
 
+  undici@7.24.6:
+    resolution: {integrity: sha512-Xi4agocCbRzt0yYMZGMA6ApD7gvtUFaxm4ZmeacWI4cZxaF6C+8I8QfofC20NAePiB/IcvZmzkJ7XPa471AEtA==}
+    engines: {node: '>=20.18.1'}
+
   universal-cookie@4.0.4:
     resolution: {integrity: sha512-lbRVHoOMtItjWbM7TwDLdl8wug7izB0tq3/YVKhT/ahB4VDvWMyvnADfnJI8y6fSvsjh51Ix7lTGC6Tn4rMPhw==}
 
@@ -11387,6 +11415,14 @@ snapshots:
       lru-cache: 11.2.7
 
   '@asamuzakjp/dom-selector@6.8.1':
+    dependencies:
+      '@asamuzakjp/nwsapi': 2.3.9
+      bidi-js: 1.0.3
+      css-tree: 3.2.1
+      is-potential-custom-element-name: 1.0.1
+      lru-cache: 11.2.7
+
+  '@asamuzakjp/dom-selector@7.0.4':
     dependencies:
       '@asamuzakjp/nwsapi': 2.3.9
       bidi-js: 1.0.3
@@ -12168,6 +12204,10 @@ snapshots:
       '@csstools/css-tokenizer': 4.0.0
 
   '@csstools/css-syntax-patches-for-csstree@1.1.0': {}
+
+  '@csstools/css-syntax-patches-for-csstree@1.1.2(css-tree@3.2.1)':
+    optionalDependencies:
+      css-tree: 3.2.1
 
   '@csstools/css-tokenizer@3.0.4': {}
 
@@ -14948,7 +14988,7 @@ snapshots:
       eslint: 9.26.0
     optionalDependencies:
       typescript: 5.8.3
-      vitest: 4.0.18(@types/node@22.19.13)(@vitest/ui@4.0.18)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+      vitest: 4.0.18(@types/node@22.19.13)(@vitest/ui@4.0.18)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -15063,7 +15103,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 2.0.0
-      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
     optional: true
 
   '@vitest/ui@3.2.4(vitest@3.2.2)':
@@ -15086,7 +15126,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.1.0
-      vitest: 4.0.18(@types/node@22.19.13)(@vitest/ui@4.0.18)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+      vitest: 4.0.18(@types/node@22.19.13)(@vitest/ui@4.0.18)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
     optional: true
 
   '@vitest/utils@3.2.2':
@@ -16476,7 +16516,7 @@ snapshots:
     dependencies:
       domelementtype: 2.3.0
 
-  dompurify@3.3.2:
+  dompurify@3.3.3:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
 
@@ -18037,6 +18077,14 @@ snapshots:
 
   isobject@3.0.1: {}
 
+  isomorphic-dompurify@3.7.1:
+    dependencies:
+      dompurify: 3.3.3
+      jsdom: 29.0.1
+    transitivePeerDependencies:
+      - '@noble/hashes'
+      - canvas
+
   isomorphic-fetch@2.2.1(encoding@0.1.13):
     dependencies:
       node-fetch: 2.7.0(encoding@0.1.13)
@@ -18260,6 +18308,32 @@ snapshots:
     transitivePeerDependencies:
       - '@noble/hashes'
       - supports-color
+
+  jsdom@29.0.1:
+    dependencies:
+      '@asamuzakjp/css-color': 5.0.1
+      '@asamuzakjp/dom-selector': 7.0.4
+      '@bramus/specificity': 2.4.2
+      '@csstools/css-syntax-patches-for-csstree': 1.1.2(css-tree@3.2.1)
+      '@exodus/bytes': 1.15.0
+      css-tree: 3.2.1
+      data-urls: 7.0.0
+      decimal.js: 10.6.0
+      html-encoding-sniffer: 6.0.0
+      is-potential-custom-element-name: 1.0.1
+      lru-cache: 11.2.7
+      parse5: 8.0.0
+      saxes: 6.0.0
+      symbol-tree: 3.2.4
+      tough-cookie: 6.0.1
+      undici: 7.24.6
+      w3c-xmlserializer: 5.0.0
+      webidl-conversions: 8.0.1
+      whatwg-mimetype: 5.0.0
+      whatwg-url: 16.0.1
+      xml-name-validator: 5.0.0
+    transitivePeerDependencies:
+      - '@noble/hashes'
 
   jsep@1.4.0: {}
 
@@ -21296,6 +21370,8 @@ snapshots:
 
   undici@7.24.1: {}
 
+  undici@7.24.6: {}
+
   universal-cookie@4.0.4:
     dependencies:
       '@types/cookie': 0.3.3
@@ -21609,6 +21685,50 @@ snapshots:
       - tsx
       - yaml
 
+  vitest@3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.2)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1):
+    dependencies:
+      '@types/chai': 5.2.3
+      '@vitest/expect': 3.2.2
+      '@vitest/mocker': 3.2.2(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(vite@7.3.1(@types/node@22.19.13)(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
+      '@vitest/pretty-format': 3.2.4
+      '@vitest/runner': 3.2.2
+      '@vitest/snapshot': 3.2.2
+      '@vitest/spy': 3.2.2
+      '@vitest/utils': 3.2.2
+      chai: 5.2.0
+      debug: 4.4.3(supports-color@8.1.1)
+      expect-type: 1.3.0
+      magic-string: 0.30.21
+      pathe: 2.0.3
+      picomatch: 4.0.3
+      std-env: 3.10.0
+      tinybench: 2.9.0
+      tinyexec: 0.3.2
+      tinyglobby: 0.2.15
+      tinypool: 1.1.0
+      tinyrainbow: 2.0.0
+      vite: 7.3.1(@types/node@22.19.13)(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+      vite-node: 3.2.2(@types/node@22.19.13)(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+      why-is-node-running: 2.3.0
+    optionalDependencies:
+      '@types/debug': 4.1.12
+      '@types/node': 22.19.13
+      '@vitest/ui': 3.2.2(vitest@3.2.2)
+      jsdom: 29.0.1
+    transitivePeerDependencies:
+      - jiti
+      - less
+      - lightningcss
+      - msw
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+      - tsx
+      - yaml
+
   vitest@3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@26.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1):
     dependencies:
       '@types/chai': 5.2.3
@@ -21653,7 +21773,7 @@ snapshots:
       - tsx
       - yaml
 
-  vitest@3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1):
+  vitest@3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1):
     dependencies:
       '@types/chai': 5.2.3
       '@vitest/expect': 3.2.2
@@ -21682,7 +21802,7 @@ snapshots:
       '@types/debug': 4.1.12
       '@types/node': 22.19.13
       '@vitest/ui': 3.2.4(vitest@3.2.2)
-      jsdom: 28.1.0
+      jsdom: 29.0.1
     transitivePeerDependencies:
       - jiti
       - less
@@ -21697,7 +21817,7 @@ snapshots:
       - tsx
       - yaml
 
-  vitest@4.0.18(@types/node@22.19.13)(@vitest/ui@4.0.18)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1):
+  vitest@4.0.18(@types/node@22.19.13)(@vitest/ui@4.0.18)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1):
     dependencies:
       '@vitest/expect': 4.0.18
       '@vitest/mocker': 4.0.18(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(vite@7.3.1(@types/node@22.19.13)(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
@@ -21722,7 +21842,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.19.13
       '@vitest/ui': 4.0.18(vitest@4.0.18)
-      jsdom: 28.1.0
+      jsdom: 29.0.1
     transitivePeerDependencies:
       - jiti
       - less
