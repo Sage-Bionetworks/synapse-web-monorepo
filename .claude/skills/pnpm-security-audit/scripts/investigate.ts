@@ -222,20 +222,13 @@ for (const block of blocks) {
       `      Declared: ${pkg}@"${range}"  ${icon(rangeOk)}${peerNote}`,
     )
 
-    if (rangeOk) {
-      if (isPeer) {
-        console.log(
-          yellow(
-            `      → FIX: update the workspace package(s) that depend on ${parent.name}, then run pnpm install`,
-          ),
-        )
-      } else {
-        console.log(green(`      → FIX: pnpm update ${pkg} --recursive`))
-      }
+    if (rangeOk && !isPeer) {
+      console.log(green(`      → FIX: pnpm update ${pkg} --recursive`))
       continue
     }
 
-    // Range too tight — inspect latest parent
+    // For peer deps with a flexible range, or any range that's too tight:
+    // check the latest parent version to see if updating the parent fixes it.
     const latestInfo = runJSON(['info', `${parent.name}@latest`, '--json'])
     if (!latestInfo) {
       console.log(
@@ -253,18 +246,50 @@ for (const block of blocks) {
     const latestVer = latestInfo.version
     const latestRange = allDeps(latestInfo)[pkg] ?? null
     const isRemoved = !latestRange
-    const latestOk = latestRange
-      ? satisfies(patchedVersion, latestRange)
-      : false
+    const latestOk = !isPeer
+      ? latestRange
+        ? satisfies(patchedVersion, latestRange)
+        : false
+      : true // for peer deps the parent version itself is what matters, not its declared range for pkg
 
     console.log(`      Latest:   ${parent.name}@${latestVer}`)
 
-    if (isRemoved) {
+    const alreadyLatest = latestVer === parent.version
+    const pinNote = isPeer
+      ? dim(
+          `  (if exact-pinned in workspace package.json, bump to ${latestVer} directly)`,
+        )
+      : ''
+
+    if (rangeOk && isPeer) {
+      // Parent's current range already covers the fix — just need to update the parent itself
+      if (alreadyLatest) {
+        console.log(
+          yellow(
+            `      Already at latest — run pnpm install to re-resolve peer deps`,
+          ),
+        )
+      } else {
+        console.log(
+          green(
+            `      → FIX: pnpm update ${parent.name} --recursive${
+              pinNote ? '' : ''
+            }`,
+          ),
+        )
+        if (pinNote) console.log(dim(`             ${pinNote.trim()}`))
+      }
+    } else if (isRemoved) {
       console.log(green(`      Latest dropped ${pkg} entirely`))
       console.log(green(`      → FIX: pnpm update ${parent.name} --recursive`))
+      if (isPeer && pinNote) console.log(dim(`             ${pinNote.trim()}`))
     } else if (latestOk) {
-      console.log(`      Latest range: ${pkg}@"${latestRange}"  ${icon(true)}`)
+      if (!isPeer)
+        console.log(
+          `      Latest range: ${pkg}@"${latestRange}"  ${icon(true)}`,
+        )
       console.log(green(`      → FIX: pnpm update ${parent.name} --recursive`))
+      if (isPeer && pinNote) console.log(dim(`             ${pinNote.trim()}`))
     } else {
       console.log(
         `      Latest range: ${pkg}@"${latestRange}"  ${icon(false)}  ${dim(
