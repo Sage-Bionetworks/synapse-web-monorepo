@@ -285,7 +285,7 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
       return <Tag {...props} />
     }
 
-    // case 4
+    // case 3
     // recursively render children
     const children = Array.from(element.childNodes).map((el, index) => {
       return <RecursiveRender key={index} element={el} markdown={markdown} />

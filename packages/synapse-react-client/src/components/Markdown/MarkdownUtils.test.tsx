@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  isBlockLevelElement,
-  hasBlockLevelDescendant,
-  fixInvalidNesting,
-} from './MarkdownUtils'
+import { isBlockLevelElement, fixInvalidNesting } from './MarkdownUtils'
 
 vi.mock('./widget/MarkdownSynapsePlot', () => ({
   default: vi
@@ -39,60 +35,41 @@ describe('MarkdownUtils DOM', () => {
     })
   })
 
-  describe('hasBlockLevelDescendant', () => {
-    it('should return true if the element itself is block-level', () => {
-      const div = document.createElement('div')
-      expect(hasBlockLevelDescendant(div)).toBe(true)
-    })
-
-    it('should return true if a deep child is a block-level widget', () => {
-      // Create: span -> span -> div[data-widgetparams]
-      const outerSpan = document.createElement('span')
-      const innerSpan = document.createElement('span')
-      const widget = document.createElement('div')
-      widget.setAttribute('data-widgetparams', 'somesettings')
-
-      outerSpan.appendChild(innerSpan)
-      innerSpan.appendChild(widget)
-
-      // <span>
-      //   <span>
-      //     <div data-widgetparams="somesettings"></div>
-      //   </span>
-      // </span>
-
-      expect(hasBlockLevelDescendant(outerSpan)).toBe(true)
-    })
-  })
-
   describe('fixInvalidNesting', () => {
     it('should swap <p> for <div> when it contains a block descendant', () => {
-      const doc = new DOMParser().parseFromString(
-        '<p><span data-widgetparams="foo"></span></p>',
-        'text/html',
-      )
+      // p > div
+      const p = document.createElement('p')
+      const inner = document.createElement('div')
+      inner.textContent = 'block'
+      p.appendChild(inner)
+      const container = document.createElement('div')
+      container.appendChild(p)
 
-      fixInvalidNesting(doc.body)
+      fixInvalidNesting(container)
 
-      expect(doc.body.querySelector('p')).toBeNull()
-      expect(doc.body.querySelector('div')).not.toBeNull()
+      expect(container.querySelector('p')).toBeNull()
+      expect(container.querySelector('div')).not.toBeNull()
     })
 
     it('should swap <a> for <div> when it contains a block descendant', () => {
-      const doc = new DOMParser().parseFromString(
-        '<a href="https://synapse.org"><span data-widgetparams="foo"></span></a>',
-        'text/html',
-      )
+      // a > div
+      const a = document.createElement('a')
+      a.setAttribute('href', 'https://synapse.org')
+      const inner = document.createElement('div')
+      inner.textContent = 'block'
+      a.appendChild(inner)
+      const container = document.createElement('div')
+      container.appendChild(a)
 
-      fixInvalidNesting(doc.body)
+      fixInvalidNesting(container)
 
-      expect(doc.body.querySelector('a')).toBeNull()
-      const divLink = doc.body.querySelector('div')
-      expect(divLink?.getAttribute('href')).toBe('https://synapse.org')
+      expect(container.querySelector('a')).toBeNull()
+      const result = container.querySelector('[href]')
+      expect(result?.getAttribute('href')).toBe('https://synapse.org')
     })
 
     it('should swap <button> for <div> when it contains a nested button', () => {
-      // Create elements manually to bypass DOMParser auto-correction
+      // button > button
       const outerButton = document.createElement('button')
       const innerButton = document.createElement('button')
       innerButton.textContent = 'Nested'
@@ -111,50 +88,81 @@ describe('MarkdownUtils DOM', () => {
     })
 
     it('should recursively fix nested violations', () => {
-      // p > span > widget
-      const doc = new DOMParser().parseFromString(
-        '<p class="outer"><span><span data-widgetparams="foo"></span></span></p>',
-        'text/html',
-      )
+      // p > span > div
+      const p = document.createElement('p')
+      p.className = 'outer'
+      const span = document.createElement('span')
+      const inner = document.createElement('div')
+      inner.textContent = 'block'
+      span.appendChild(inner)
+      p.appendChild(span)
+      const container = document.createElement('div')
+      container.appendChild(p)
 
-      fixInvalidNesting(doc.body)
+      fixInvalidNesting(container)
 
       // The outer <p> should now be a <div>
-      const outer = doc.body.querySelector('.outer')
+      const outer = container.querySelector('.outer')
       expect(outer?.tagName.toLowerCase()).toBe('div')
     })
 
     it('should preserve all attributes during swap', () => {
-      const doc = new DOMParser().parseFromString(
-        '<p id="main" class="foo" data-test="bar"><span data-widgetparams="x"></span></p>',
-        'text/html',
-      )
+      // p > div
+      const p = document.createElement('p')
+      p.id = 'main'
+      p.className = 'foo'
+      p.setAttribute('data-test', 'bar')
+      const inner = document.createElement('div')
+      inner.textContent = 'block'
+      p.appendChild(inner)
+      const container = document.createElement('div')
+      container.appendChild(p)
 
-      fixInvalidNesting(doc.body)
+      fixInvalidNesting(container)
 
-      const div = doc.body.querySelector('div')
-      expect(div?.id).toBe('main')
-      expect(div?.className).toBe('foo')
-      expect(div?.getAttribute('data-test')).toBe('bar')
+      const result = container.querySelector('#main')
+      expect(result?.tagName.toLowerCase()).toBe('div')
+      expect(result?.className).toBe('foo')
+      expect(result?.getAttribute('data-test')).toBe('bar')
     })
 
-    it('should remove empty/whitespace-only text nodes', () => {
+    it('should preserve intentional whitespace but strip invalid table whitespace', () => {
+      // p > span > text, table > tr > td
+      const html = `
+    <p>Word<span> </span>Word</p>
+    <table>  <tr><td>Test</td></tr>  </table>
+  `
+      const doc = new DOMParser().parseFromString(html, 'text/html')
+
+      fixInvalidNesting(doc.body)
+
+      // intentional whitespace is preserved
+      const p = doc.body.querySelector('p')
+      expect(p?.textContent).toBe('Word Word')
+      expect(doc.body.querySelector('span')?.textContent).toBe(' ')
+
+      // whitespace in table is stripped
+      const tr = doc.body.querySelector('tr')!
+      // tr should only have one child (the <td>), no whitespace text nodes
+      expect(tr.childNodes).toHaveLength(1)
+      expect(tr.firstChild?.nodeName.toLowerCase()).toBe('td')
+    })
+
+    it('should swap <p> for <div> when it contains a block widget', () => {
+      // p > span[data-widgetparams]
       const doc = new DOMParser().parseFromString(
-        '<table><tbody><tr>   <td>test</td></tr></tbody></table>',
+        '<p><span data-widgetparams="plot?synapseId=syn123"></span></p>',
         'text/html',
       )
 
       fixInvalidNesting(doc.body)
 
-      const tr = doc.body.querySelector('tr')!
-      // The whitespace text node between <tr> and <td> should be removed
-      const textNodes = Array.from(tr.childNodes).filter(
-        n => n.nodeType === Node.TEXT_NODE,
-      )
-      expect(textNodes).toHaveLength(0)
+      expect(doc.body.querySelector('p')).toBeNull()
+      expect(doc.body.querySelector('[data-widgetparams]')).not.toBeNull()
     })
 
     it('should not modify valid inline nesting', () => {
+      // p > span
       const html = '<p>Just some <span>text</span></p>'
       const doc = new DOMParser().parseFromString(html, 'text/html')
 

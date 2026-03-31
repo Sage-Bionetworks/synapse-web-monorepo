@@ -208,18 +208,9 @@ const blockLevelTags = [
   'video',
 ]
 
-const inlineTags = ['p', 'span', 'a']
+const inlineTags = ['span', 'a']
 
-// Check if a node has any block level descendants
-export const hasBlockLevelDescendant = (node: Node): boolean => {
-  if (isBlockLevelElement(node)) {
-    return true
-  }
-
-  return Array.from(node.childNodes).some(child =>
-    hasBlockLevelDescendant(child),
-  )
-}
+const tableTags = ['table', 'thead', 'tbody', 'tr', 'tfoot']
 
 const isInlineContainer = (node: Node): boolean => {
   if (node.nodeType !== Node.ELEMENT_NODE) {
@@ -260,6 +251,11 @@ function isValidNesting(child: HTMLElement, ancestor: HTMLElement): boolean {
     return false
   }
 
+  // A <p> tag cannot contain block-level elements (including other <p> tags)
+  if (ancestor.tagName.toLowerCase() === 'p' && isBlockLevelElement(child)) {
+    return false
+  }
+
   return true
 }
 
@@ -273,11 +269,14 @@ export function fixInvalidNesting(
   node: Node,
   ancestors: HTMLElement[] = [],
 ): void {
-  // Discard empty text nodes. Prevents invalid HTML in some cases, for example whitespace text nodes cannot be a child of <table>.
+  // Whitespace-only text nodes are invalid children of table structure elements and must be removed.
   if (node.nodeType === Node.TEXT_NODE) {
-    if (!node.textContent?.trim()) {
+    const parentTag = (node.parentNode as HTMLElement)?.tagName?.toLowerCase()
+
+    if (tableTags.includes(parentTag) && !node.textContent?.trim()) {
       node.parentNode?.removeChild(node)
     }
+
     return
   }
 
@@ -317,9 +316,13 @@ export function fixInvalidNesting(
     }
   }
 
-  const newAncestors = [...ancestors, element] // combine current element with ancestors
+  // Push the current element to the stack before traversing children
+  ancestors.push(element)
 
   Array.from(element.childNodes).forEach(child => {
-    fixInvalidNesting(child, newAncestors)
+    fixInvalidNesting(child, ancestors)
   })
+
+  // Pop the current element off the stack after traversing its children
+  ancestors.pop()
 }
