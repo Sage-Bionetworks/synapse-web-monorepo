@@ -45,13 +45,13 @@ const HeaderSearchBox = ({
   roles,
 }: HeaderSearchBoxProps): React.ReactNode => {
   const [role, setRole] = useState('')
+  const [mode, setMode] = useState<'Chat' | 'Search'>('Search')
   const theme = useTheme()
   const navigate = useNavigate()
   const { isAuthenticated } = useSynapseContext()
-  const chatDialogContext = useChatDialogContext()
   const isChatEnabled = useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)
+  const chatDialogContext = useChatDialogContext()
   const showChatOption = isAuthenticated && chatDialogContext && isChatEnabled
-  const [mode, setMode] = useState<'Chat' | 'Search'>('Search')
 
   const handleTermClick = (term: string) => {
     const trimmedTerm = term.trim()
