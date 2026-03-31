@@ -13,6 +13,8 @@ import { ReactComponent as Sloan } from '@/assets/homepage/sloan.svg'
 import { Box } from '@mui/material'
 
 export function SynapsePartners() {
+  const PARTNER_LOGO_HEIGHT = 60
+
   return (
     <Box sx={{ m: 'auto', maxWidth: '1200px' }}>
       <Box
@@ -22,51 +24,57 @@ export function SynapsePartners() {
           justifyContent: 'center',
           alignItems: 'center',
           gap: '25px',
+
+          '& > a': {
+            display: 'flex',
+            justifyContent: 'center',
+            width: { xs: '100%', sm: 'auto' },
+          },
         }}
       >
         <a href="https://sloan.org/" target="_blank" rel="noreferrer">
-          <Sloan />
+          <Sloan height={PARTNER_LOGO_HEIGHT} />
         </a>
         <a href="https://www.aacr.org/" target="_blank" rel="noreferrer">
-          <Aacr />
+          <Aacr height={PARTNER_LOGO_HEIGHT} />
         </a>
         <a
           href="https://www.cancerresearch.org/"
           target="_blank"
           rel="noreferrer"
         >
-          <Cri />
+          <Cri height={PARTNER_LOGO_HEIGHT} />
         </a>
         <a href="https://www.ctf.org/" target="_blank" rel="noreferrer">
-          <Ctf />
+          <Ctf height={PARTNER_LOGO_HEIGHT} />
         </a>
         <a
           href="https://gilbertfamilyfoundation.org/"
           target="_blank"
           rel="noreferrer"
         >
-          <Gff />
+          <Gff height={PARTNER_LOGO_HEIGHT} />
         </a>
         <a href="http://grayfoundation.org/" target="_blank" rel="noreferrer">
-          <Gray />
+          <Gray height={PARTNER_LOGO_HEIGHT} />
         </a>
         <a href="https://mlcommons.org/" target="_blank" rel="noreferrer">
-          <MlCommons />
+          <MlCommons height={PARTNER_LOGO_HEIGHT} />
         </a>
         <a href="https://www.cancer.gov/" target="_blank" rel="noreferrer">
-          <Nci />
+          <Nci height={PARTNER_LOGO_HEIGHT} />
         </a>
         <a href="https://www.nhlbi.nih.gov/" target="_blank" rel="noreferrer">
-          <NihHeart />
+          <NihHeart height={PARTNER_LOGO_HEIGHT} />
         </a>
         <a href="https://www.nia.nih.gov/" target="_blank" rel="noreferrer">
-          <NihAging />
+          <NihAging height={PARTNER_LOGO_HEIGHT} />
         </a>
         <a href="https://www.nimh.nih.gov/" target="_blank" rel="noreferrer">
-          <NihMental />
+          <NihMental height={PARTNER_LOGO_HEIGHT} />
         </a>
         <a href="https://www.n-tap.org/" target="_blank" rel="noreferrer">
-          <Ntap />
+          <Ntap height={PARTNER_LOGO_HEIGHT} />
         </a>
       </Box>
     </Box>
