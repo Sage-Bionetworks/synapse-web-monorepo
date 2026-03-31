@@ -62,11 +62,12 @@
 }
 
 .ColorfulPortalCardWithChips__sectionContainer {
-  height: 100%;
+  flex: 1;
 }
 
 .ColorfulPortalCardWithChips__bottomSection {
   min-height: 0;
+  flex: 1;
   gap: 12px;
   padding: 30px;
   align-items: flex-start;
@@ -99,6 +100,7 @@
 
 .ColorfulPortalCardWithChips__learnMoreButton:global(.MuiButton-root) {
   display: flex;
+  margin-top: auto;
   height: 36px;
   padding: 6px 16px;
   border-radius: 8px;
@@ -196,15 +198,21 @@
 }
 
 .ColorfulPortalCardWithChips__description :global(.markdown) {
+  --description-line-height: 20px;
+  --description-max-lines: 3;
+
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: var(--description-max-lines);
   -webkit-box-orient: vertical;
+  min-height: calc(
+    var(--description-max-lines) * var(--description-line-height)
+  );
 }
 
 .ColorfulPortalCardWithChips__description :global(.markdown) p {
   color: var(--synapse-black) !important;
   font-size: 14px;
-  line-height: 20px;
+  line-height: var(--description-line-height);
 }
