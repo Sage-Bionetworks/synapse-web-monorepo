@@ -28,6 +28,12 @@ importers:
       '@nx/shared-fs-cache':
         specifier: ^5.0.2
         version: 5.0.2(nx@22.6.3)
+      '@types/node':
+        specifier: ^22.19.13
+        version: 22.19.13
+      '@types/semver':
+        specifier: ^7.7.1
+        version: 7.7.1
       '@vitest/eslint-plugin':
         specifier: ^1.2.1
         version: 1.2.1(eslint@9.39.4)(typescript@5.8.3)(vitest@4.0.18)
@@ -70,6 +76,9 @@ importers:
       rimraf:
         specifier: ^6.1.2
         version: 6.1.2
+      semver:
+        specifier: ^7.7.4
+        version: 7.7.4
       tsx:
         specifier: ^4.19.4
         version: 4.19.4
@@ -5358,6 +5367,9 @@ packages:
 
   '@types/resolve@1.20.6':
     resolution: {integrity: sha512-A4STmOXPhMUtHH+S6ymgE2GiBSMqf4oTvcQZMcHzokuTLVYzXTB8ttjcgxOVaAp2lGwEdzZ0J+cRbbeevQj1UQ==}
+
+  '@types/semver@7.7.1':
+    resolution: {integrity: sha512-FmgJfu+MOcQ370SD0ev7EI8TlCAfKYU+B4m5T3yXc1CiRN94g/SZPtsCkk506aUDtlMnFZvasDwHHUcZUEaYuA==}
 
   '@types/shortid@0.0.29':
     resolution: {integrity: sha512-9BCYD9btg2CY4kPcpMQ+vCR8U6V8f/KvixYD5ZbxoWlkhddNF5IeZMVL3p+QFUkg+Hb+kPAG9Jgk4bnnF1v/Fw==}
@@ -14778,7 +14790,7 @@ snapshots:
 
   '@types/mute-stream@0.0.4':
     dependencies:
-      '@types/node': 20.19.37
+      '@types/node': 22.19.13
 
   '@types/node@20.19.37':
     dependencies:
@@ -14866,6 +14878,8 @@ snapshots:
   '@types/resolve@1.20.2': {}
 
   '@types/resolve@1.20.6': {}
+
+  '@types/semver@7.7.1': {}
 
   '@types/shortid@0.0.29': {}
 
@@ -15011,7 +15025,7 @@ snapshots:
       std-env: 3.10.0
       test-exclude: 7.0.1
       tinyrainbow: 2.0.0
-      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@26.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -15148,7 +15162,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 2.0.0
-      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@26.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.87.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   '@vitest/ui@4.0.18(vitest@4.0.18)':
     dependencies:

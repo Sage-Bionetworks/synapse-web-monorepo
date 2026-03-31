@@ -61,6 +61,7 @@ export default tseslint.config(
           './tsconfig.json',
           './packages/**/*/tsconfig.json',
           './apps/**/*/tsconfig.json',
+          './.claude/skills/tsconfig.json',
         ],
         tsconfigRootDir: import.meta.dirname,
       },
