@@ -2,9 +2,11 @@ import {
   Box,
   Button,
   ButtonProps,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Popover,
   PopoverOrigin,
-  Typography,
 } from '@mui/material'
 import { PropsWithChildren, ReactNode, useRef, useState } from 'react'
 import styles from './HoverPopover.module.scss'
@@ -129,17 +131,15 @@ export function HoverPopover({
         }}
       >
         {title && (
-          <Box className={styles.titleContainer}>
-            <Typography variant="smallText1" fontWeight={700}>
-              {title}
-            </Typography>
-          </Box>
+          <DialogTitle sx={{ fontSize: '18px', padding: '16px 10px' }}>
+            {title}
+          </DialogTitle>
         )}
-        <Box className={styles.contentArea} sx={{ maxHeight }}>
+        <DialogContent sx={{ maxHeight, padding: '10px' }}>
           {popoverContent}
-        </Box>
+        </DialogContent>
         {actionButton && (
-          <Box className={styles.actionButtonContainer}>
+          <DialogActions sx={{ paddingX: '10px' }}>
             <Button
               color={actionButton.color ?? 'primary'}
               variant={actionButton.variant ?? 'contained'}
@@ -153,7 +153,7 @@ export function HoverPopover({
             >
               {actionButton.content}
             </Button>
-          </Box>
+          </DialogActions>
         )}
       </Popover>
     </>
